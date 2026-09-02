@@ -123,7 +123,7 @@ export const AddFile = (props: AddFileProps) => {
     onStatusChange,
     onDismissItem,
   } = useFileUploadList({
-    collectiviteId: collectiviteId,
+    collectiviteId,
     initialItems: initialSelection,
     constraints: fileConstraints,
   });
@@ -191,7 +191,7 @@ export const AddFile = (props: AddFileProps) => {
         await Promise.all(
           uploadedFiles.map(({ status }) =>
             updateDocument({
-              collectiviteId: collectiviteId,
+              collectiviteId,
               hash: (status as UploadStatusCompleted).hash,
               confidentiel,
             })

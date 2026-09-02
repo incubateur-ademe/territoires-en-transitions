@@ -152,7 +152,7 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         ...requestableCycle.parcours,
         isCot: true,
         etoiles: 1,
-        completudeOk: completudeOk,
+        completudeOk,
       } as ParcoursForAuditRequest,
       isCOT: true,
       maximumRequestableStar: 1,

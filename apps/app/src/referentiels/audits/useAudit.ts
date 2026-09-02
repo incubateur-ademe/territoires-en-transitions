@@ -13,7 +13,7 @@ export const useAudit = () => {
   const referentiel = useReferentielId();
 
   const { parcours } = useLabellisationParcours({
-    collectiviteId: collectiviteId,
+    collectiviteId,
     referentielId: referentiel,
   });
   const auditEnCours =

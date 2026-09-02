@@ -10,7 +10,7 @@ export const openPreuve = async (preuve: Preuve) => {
   const { fichier, lien } = preuve;
   if (fichier) {
     const { filename, hash, bucketId } = fichier;
-    downloadFichier({ bucketId: bucketId, hash, filename });
+    downloadFichier({ bucketId, hash, filename });
   } else if (lien) {
     const { url } = lien;
     window.open(url);

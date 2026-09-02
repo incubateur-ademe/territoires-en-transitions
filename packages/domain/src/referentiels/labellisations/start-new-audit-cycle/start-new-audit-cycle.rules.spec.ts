@@ -33,7 +33,7 @@ const buildParcours = ({
       : null,
   labellisation: obtenueLe
     ? ({
-        obtenueLe: obtenueLe,
+        obtenueLe,
       } as MinimalParcours['labellisation'])
     : null,
 });

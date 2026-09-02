@@ -85,7 +85,7 @@ async function applyAvancementToAllReferentielActions(
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
       referentielId: referentiel,
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
 
   const actionStatusesToCreate: ActionStatutCreate[] =
@@ -159,7 +159,7 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
       referentielId: referentiel,
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
   console.log(
     `Score for referentiel ${referentiel}: ${scoreSnapshot.scoresPayload.scores.score.pointFait} / ${scoreSnapshot.scoresPayload.scores.score.pointPotentiel}, search for actions to complete`
@@ -167,7 +167,7 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
 
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
-      collectiviteId: collectiviteId,
+      collectiviteId,
       referentielId: referentiel,
     });
 

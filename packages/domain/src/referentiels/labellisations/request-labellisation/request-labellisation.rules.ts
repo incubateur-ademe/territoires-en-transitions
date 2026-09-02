@@ -1,4 +1,3 @@
-import { ObjectToSnake } from 'ts-case-convert';
 import { LabellisationAudit } from '../labellisation-audit.schema';
 import {
   LabellisationDemande,
@@ -233,7 +232,7 @@ export function areAuditPrerequisitesMet(
 
 export function isPremiereEtoileDemande(
   demande:
-    | Pick<ObjectToSnake<LabellisationDemande>, 'etoiles' | 'sujet'>
+    | Pick<LabellisationDemande, 'etoiles' | 'sujet'>
     | null
     | undefined
 ): boolean {

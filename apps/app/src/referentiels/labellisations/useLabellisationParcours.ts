@@ -37,13 +37,5 @@ export const useLabellisationParcours = ({
     )
   );
 
-  const parcours = parcoursListFromSnapshot
-    ? {
-        ...parcoursListFromSnapshot,
-        collectiviteId: collectiviteId,
-        referentiel: referentielId,
-      }
-    : null;
-
-  return { parcours, isLoading, isError };
+  return { parcours: parcoursListFromSnapshot ?? null, isLoading, isError };
 };
