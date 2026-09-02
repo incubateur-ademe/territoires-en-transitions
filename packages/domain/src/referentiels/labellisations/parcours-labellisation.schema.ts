@@ -15,6 +15,10 @@ export type ConditionFichiers = {
   preuveNombre: number;
 };
 
+export type LabellisationAvecProchaineEtoile = Labellisation & {
+  prochaineEtoile: Etoile | null;
+};
+
 export type ParcoursLabellisation = {
   collectiviteId: number;
   referentiel: ReferentielId;
@@ -31,7 +35,7 @@ export type ParcoursLabellisation = {
     proportionProgramme: number;
     statutOuScore: string;
   })[];
-  labellisation: (Labellisation & { prochaineEtoile: Etoile | null }) | null;
+  labellisation: LabellisationAvecProchaineEtoile | null;
   demande: LabellisationDemande | null;
   audit: LabellisationAudit | null;
   isCot: boolean;

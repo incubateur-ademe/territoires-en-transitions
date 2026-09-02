@@ -1,45 +1,33 @@
-import { TCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import {
+  LabellisationAudit,
+  ParcoursLabellisationStatus,
   ParcoursLabellisationStatusEnum,
   ParcoursLabellisationStatusValues,
 } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
-import { isAuditActif } from './is-audit-actif';
+import { CycleForAuditActif, isAuditActif } from './is-audit-actif';
 
-function makeCycle(
-  overrides: Partial<TCycleLabellisation> & {
-    parcoursOverrides?: Partial<NonNullable<TCycleLabellisation['parcours']>>;
-  } = {}
-): TCycleLabellisation {
-  const { parcoursOverrides, ...rest } = overrides;
-  const audit = {
-    id: 42,
-    collectiviteId: 1,
-    referentielId: 'cae',
-    demandeId: null,
-    dateDebut: null,
-    dateFin: null,
-    dateCnl: null,
-    valide: false,
-    valideLabellisation: false,
-    clos: false,
-  } as NonNullable<TCycleLabellisation['parcours']>['audit'];
+const auditEnCours: LabellisationAudit = {
+  id: 42,
+  collectiviteId: 1,
+  referentielId: 'cae',
+  demandeId: null,
+  dateDebut: null,
+  dateFin: null,
+  dateCnl: null,
+  valide: false,
+  valideLabellisation: false,
+  clos: false,
+};
 
-  const defaultParcours = {
-    status: 'audit_en_cours',
-    audit,
-  } as NonNullable<TCycleLabellisation['parcours']>;
-
-  return {
-    parcours: { ...defaultParcours, ...parcoursOverrides },
-    isLoading: false,
-    isError: false,
-    status: 'audit_en_cours',
-    isAuditeur: true,
-    isCOT: false,
-    peutCommencerAudit: false,
-    ...rest,
-  } as TCycleLabellisation;
+function makeCycle({
+  status = ParcoursLabellisationStatusEnum.AUDIT_EN_COURS,
+  audit = auditEnCours,
+}: {
+  status?: ParcoursLabellisationStatus;
+  audit?: LabellisationAudit | null;
+} = {}): CycleForAuditActif {
+  return { parcours: { status, audit } };
 }
 
 describe('isAuditActif', () => {
@@ -53,19 +41,15 @@ describe('isAuditActif', () => {
     );
 
     statutsNonAuditEnCours.forEach((status) => {
-      expect(
-        isAuditActif(makeCycle({ parcoursOverrides: { status } }))
-      ).toBe(false);
+      expect(isAuditActif(makeCycle({ status }))).toBe(false);
     });
   });
 
   it("est faux quand le parcours n'est pas chargé", () => {
-    expect(isAuditActif(makeCycle({ parcours: null }))).toBe(false);
+    expect(isAuditActif({ parcours: null })).toBe(false);
   });
 
   it("est faux quand l'audit est null malgré le statut audit_en_cours", () => {
-    expect(
-      isAuditActif(makeCycle({ parcoursOverrides: { audit: null } }))
-    ).toBe(false);
+    expect(isAuditActif(makeCycle({ audit: null }))).toBe(false);
   });
 });
