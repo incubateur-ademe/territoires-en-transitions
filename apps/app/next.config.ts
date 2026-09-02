@@ -31,6 +31,13 @@ const nextConfig: NextConfig = {
 
   transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
 
+  // Next's output file tracing sometimes misses the ESM variant of
+  // @swc/helpers (only copies cjs/), which the standalone server needs
+  // at runtime for the proxy. Force the whole package into the trace.
+  outputFileTracingIncludes: {
+    '/**': ['../../node_modules/@swc/helpers/**/*'],
+  },
+
   turbopack: {
     rules: {
       '*.svg': {
