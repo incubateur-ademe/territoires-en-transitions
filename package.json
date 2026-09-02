@@ -253,7 +253,7 @@
     "react-email": "5.2.11",
     "smtp-server": "3.16.1",
     "storybook": "10.4.1",
-    "supabase": "2.69.0",
+    "supabase": "2.116.0",
     "supertest": "7.1.4",
     "trpc-ui": "npm:trpc-ui-zod4@1.1.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
