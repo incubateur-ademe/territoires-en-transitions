@@ -10,7 +10,7 @@ export type AuditReportInput = {
   commentaire: string | null;
   modifiedAt: string | null;
   modifiedBy: string | null;
-  createdByNom: string | null;
+  modifiedByNom: string | null;
   fichier: {
     hash: string;
     filename: string;
@@ -39,7 +39,7 @@ export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
     commentaire: report.commentaire,
     modifiedAt: report.modifiedAt,
     modifiedBy: report.modifiedBy,
-    modifiedByNom: report.createdByNom,
+    modifiedByNom: report.modifiedByNom,
     preuveType: 'audit' as const,
     audit: report.audit,
     demande: null,
