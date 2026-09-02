@@ -6,13 +6,13 @@ import {
   makeCollectiviteModifierUrl,
   makeDemandesAvisUrl,
 } from '@/app/app/paths';
-import { isTypeInstructeur } from '@tet/domain/demarches';
 import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   getReferentielDisplayMap,
   ReferentielDisplayMap,
 } from '@tet/domain/collectivites';
+import { isTypeInstructeur } from '@tet/domain/demarches';
 import {
   hasRole,
   isUserVisitor,
@@ -111,6 +111,11 @@ export const makeCollectiviteNav = ({
         getReferentielDisplayMap(
           currentCollectivite.collectivitePreferences.referentiels
         ),
+      // `mode` par référentiel : sert à suffixer "(archivé)" dans la nav.
+      // Non pertinent quand l'affichage est forcé (feature flag TE désactivé).
+      referentielsPreferences: referentielDisplay
+        ? undefined
+        : currentCollectivite.collectivitePreferences.referentiels,
       isDemarchePcaetEnabled,
     }),
     {
