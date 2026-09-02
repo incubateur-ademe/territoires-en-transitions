@@ -1,8 +1,23 @@
+import { LabellisationDemande } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
+
 import {
   AuditReportInput,
   auditReportToPreuve,
 } from './audit-report-to-preuve';
+
+const demande: LabellisationDemande = {
+  id: 7,
+  collectiviteId: 7,
+  referentiel: 'cae',
+  enCours: false,
+  etoiles: '2',
+  sujet: 'labellisation',
+  modifiedAt: null,
+  envoyeeLe: '2026-01-10T10:00:00Z',
+  demandeur: null,
+  associatedCollectiviteId: null,
+};
 
 const baseInput: AuditReportInput = {
   id: 42,
@@ -29,6 +44,11 @@ describe('auditReportToPreuve', () => {
       modifiedByNom: 'Alice Dupont',
       preuveType: 'audit',
     });
+  });
+
+  it('propage la demande, dont depend l invalidation du parcours apres suppression', () => {
+    const preuve = auditReportToPreuve({ ...baseInput, demande });
+    expect(preuve.demande).toEqual(demande);
   });
 
   it('cas fichier : conserve le fichier, force lien=null', () => {
