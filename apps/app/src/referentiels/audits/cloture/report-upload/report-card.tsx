@@ -101,7 +101,7 @@ export const PersistedReportCard = ({
         />
       </div>
       <ReportMetadata
-        text={getAuthorAndDate(report.modifiedAt, report.createdByNom)}
+        text={getAuthorAndDate(report.modifiedAt, report.modifiedByNom)}
       />
     </Card>
   );

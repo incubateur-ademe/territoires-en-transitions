@@ -10,7 +10,7 @@ const baseInput: AuditReportInput = {
   commentaire: null,
   modifiedAt: '2026-01-15T10:00:00Z',
   modifiedBy: 'user-uuid',
-  createdByNom: 'Alice Dupont',
+  modifiedByNom: 'Alice Dupont',
   fichier: null,
   lien: null,
   audit: null,
