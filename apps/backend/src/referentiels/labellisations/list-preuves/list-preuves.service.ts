@@ -17,7 +17,6 @@ import {
 } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
-import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
 import { auditTable } from '../audit.table';
 import { GetLabellisationService } from '../get-labellisation.service';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
@@ -45,9 +44,7 @@ export class ListPreuvesService {
   async listPreuvesAudit(
     { auditId }: ListPreuvesAuditInput,
     user: AuthenticatedUser
-  ): Promise<
-    Result<ObjectToSnake<LegacyPreuveAuditWithFichier>[], ListPreuvesAuditError>
-  > {
+  ): Promise<Result<LegacyPreuveAuditWithFichier[], ListPreuvesAuditError>> {
     const auditResult = await this.getLabellisationService.getAudit(auditId);
     if (!auditResult.success) {
       if (auditResult.error === 'NOT_FOUND') {
@@ -125,7 +122,7 @@ export class ListPreuvesService {
 
       return {
         success: true,
-        data: preuves.map((preuve) => objectToSnake(preuve)),
+        data: preuves,
       };
     } catch (error) {
       this.logger.error(error);

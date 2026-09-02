@@ -6,11 +6,11 @@ import {
 
 const baseInput: AuditReportInput = {
   id: 42,
-  collectivite_id: 7,
+  collectiviteId: 7,
   commentaire: null,
-  modified_at: '2026-01-15T10:00:00Z',
-  modified_by: 'user-uuid',
-  created_by_nom: 'Alice Dupont',
+  modifiedAt: '2026-01-15T10:00:00Z',
+  modifiedBy: 'user-uuid',
+  createdByNom: 'Alice Dupont',
   fichier: null,
   lien: null,
   audit: null,
@@ -33,7 +33,7 @@ describe('auditReportToPreuve', () => {
 
   it('cas fichier : conserve le fichier, force lien=null', () => {
     const fichier = {
-      bucket_id: 'b1',
+      bucketId: 'b1',
       filename: 'rapport.pdf',
       filesize: 1024,
       hash: 'sha-1',
@@ -65,7 +65,7 @@ describe('auditReportToPreuve', () => {
 
   it('priorise fichier sur lien si les deux sont fournis (input pathologique)', () => {
     const fichier = {
-      bucket_id: 'b1',
+      bucketId: 'b1',
       filename: 'a.pdf',
       filesize: 1,
       hash: 'h',
