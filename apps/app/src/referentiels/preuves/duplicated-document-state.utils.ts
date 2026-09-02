@@ -26,7 +26,7 @@ export const buildDuplicatedDocumentInformationByKey = (
 ): DuplicatedDocumentInformationByKey =>
   Object.fromEntries(
     documents.map(({ preuveId, preuveType, storedFilenameKept }) => [
-      getDuplicatedDocumentKey({ preuveType: preuveType, id: preuveId }),
+      getDuplicatedDocumentKey({ preuveType, id: preuveId }),
       { storedFilenameKept },
     ])
   );
