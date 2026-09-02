@@ -24,7 +24,14 @@ import {
 } from './depot-permissions.errors';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
 
-export type ContexteInstruction = PerimetreInstructeurEntree &
+/**
+ * Ce qu'il faut savoir d'une demande d'avis pour juger une action dessus.
+ *
+ * À ne pas confondre avec `ContexteInstruction` (`@tet/domain/demarches`), qui
+ * dit au titre de quel service on consulte une collectivité — celui-ci sert les
+ * gardes, celui-là l'affichage.
+ */
+export type ContexteDemandeAvis = PerimetreInstructeurEntree &
   FenetreAvisEntree & { instructeurCollectiviteId: number };
 
 @Injectable()
@@ -81,7 +88,7 @@ export class DepotPermissionsService {
   async canDeposerAvis(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<ContexteInstruction, DepotPermissionsError>> {
+  ): Promise<Result<ContexteDemandeAvis, DepotPermissionsError>> {
     const contexteResult = await this.resolveContexteInstruction(
       demandeAvisId,
       {
@@ -133,7 +140,7 @@ export class DepotPermissionsService {
   private async resolveContexteInstruction(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<ContexteInstruction, DepotPermissionsError>> {
+  ): Promise<Result<ContexteDemandeAvis, DepotPermissionsError>> {
     const contexte = await this.getDemandeContexte(demandeAvisId, tx);
     if (!contexte) {
       return failure(DepotPermissionsErrorEnum.DEMANDE_AVIS_NOT_FOUND);
@@ -159,7 +166,7 @@ export class DepotPermissionsService {
   private async getDemandeContexte(
     demandeAvisId: number,
     tx?: Transaction
-  ): Promise<ContexteInstruction | null> {
+  ): Promise<ContexteDemandeAvis | null> {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
 

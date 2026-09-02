@@ -11,6 +11,23 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 
 /**
+ * Un code de région libre, pour une collectivité instructrice de test.
+ *
+ * Un index unique interdit deux DREAL sur la même région : un code en dur rend
+ * le test jouable une seule fois, puis il échoue sur la collectivité qu'il a
+ * lui-même laissée — et il ne peut jamais tourner en parallèle d'un autre.
+ * Deux lettres suffisent (la colonne fait 2 caractères) et ne peuvent croiser
+ * aucun code réel, qui sont numériques.
+ *
+ * Le tirage ne dispense pas de nettoyer : l'espace fait 676 valeurs, des
+ * collectivités laissées derrière finiraient par se croiser.
+ */
+export function randomRegionCode(): string {
+  const lettre = () => String.fromCharCode(65 + Math.floor(Math.random() * 26));
+  return `${lettre()}${lettre()}`;
+}
+
+/**
  * Ajoute un fichier dans la bibliothèque de la collectivité, sans passer par le
  * stockage : le type reste inconnu côté `storage.objects`, ce que les règles du
  * dossier PCAET acceptent en se rabattant sur l'extension.

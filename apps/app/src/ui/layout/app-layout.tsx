@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 
+import { ContexteInstructionBanner } from '@/app/demarches/pcaet/instruction/contexte-instruction.banner';
 import { Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
@@ -58,6 +59,9 @@ export const AppLayout = ({
     <>
       <OfflineAlert />
       <Header />
+      {/* Hors du conteneur de `ContentWrapper`, qui est centré et borné : le
+          bandeau doit tenir toute la largeur de l'écran. */}
+      <ContexteInstructionBanner />
       <ContentWrapper belowFooterSlot={belowFooterSlot}>
         {children}
       </ContentWrapper>

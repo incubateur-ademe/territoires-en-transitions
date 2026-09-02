@@ -22,6 +22,8 @@ const guardModule = 'standard-only.layout';
 const segmentsHorsGardeStandard: Record<string, string> = {
   '(commun)': 'routes partagées par tous les contextes (gestion des membres)',
   '(instruction)': 'réservé aux services déconcentrés — porte la garde inverse',
+  instruction:
+    "dossier consulté par un service sur la collectivité instruite — gardé par la saisine, pas par le type de collectivité",
 };
 
 describe('garde standard des routes de collectivité', () => {

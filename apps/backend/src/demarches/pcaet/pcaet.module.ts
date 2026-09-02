@@ -64,6 +64,8 @@ import { ListPlansService } from './list-plans/list-plans.service';
 import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
 import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
 import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
+import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
+import { GetContexteInstructionService } from './get-contexte-instruction/get-contexte-instruction.service';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
 import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
@@ -177,6 +179,8 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     GetAvisFileUrlRouter,
     DemarchePlansContenuRepository,
     GetDossierInstructionRouter,
+    GetContexteInstructionService,
+    GetContexteInstructionRouter,
     GetDiagnosticInstructionService,
     GetDiagnosticInstructionRouter,
     GetDossierDocumentUrlService,

@@ -1,12 +1,12 @@
 'use client';
 
-import {
-  CollectiviteRolesAndPermissions,
-  UserWithRolesAndPermissions,
-} from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
-import { CollectiviteCurrent } from './type';
+import {
+  CollectiviteCurrent,
+  CollectiviteWithContexteInstruction,
+} from './type';
 import { toCollectiviteCurrent } from './utils';
 
 const STORAGE_KEY_PREFIX = 'tet_collectivite';
@@ -18,7 +18,7 @@ type StoredCollectivite = {
 type ContextProps = {
   collectiviteId: number | undefined;
   collectivite: CollectiviteCurrent | null;
-  setCollectivite: (collectivite: CollectiviteRolesAndPermissions) => void;
+  setCollectivite: (collectivite: CollectiviteWithContexteInstruction) => void;
 };
 
 export const CollectiviteContext = createContext<ContextProps | null>(null);
@@ -30,14 +30,17 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   user: UserWithRolesAndPermissions;
   children: ReactNode;
 }) {
-  const defaultCollectivite =
-    user.collectivites.length > 0 ? user.collectivites[0] : null;
+  // Une collectivité dont on est membre : on n'y est jamais en instructeur.
+  const defaultCollectivite: CollectiviteWithContexteInstruction | null =
+    user.collectivites.length > 0
+      ? { ...user.collectivites[0], contexteInstruction: null }
+      : null;
 
   const [storedCollectivite, setStoredCollectivite] =
     useLocalStorage<StoredCollectivite>(getStorageKey(user.id));
 
   const [collectivite, setCollectivite] =
-    useState<CollectiviteRolesAndPermissions | null>(null);
+    useState<CollectiviteWithContexteInstruction | null>(null);
 
   if (
     collectivite &&
@@ -57,7 +60,10 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
         (c) => c.collectiviteId === storedCollectivite.collectiviteId
       );
       if (collectiviteBasedOnStorage) {
-        setCollectivite(collectiviteBasedOnStorage);
+        setCollectivite({
+          ...collectiviteBasedOnStorage,
+          contexteInstruction: null,
+        });
       } else if (defaultCollectivite) {
         // Related to historical reasons (stored collectiviteId before this fix), not supposed to happen
         setStoredCollectivite({

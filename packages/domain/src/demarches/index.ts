@@ -3,6 +3,7 @@ export * from './demarche-document.schema';
 export * from './demarche-documents.rules';
 export * from './demarche-type.enum.schema';
 export * from './demarche.schema';
+export * from './pcaet/contexte-instruction.schema';
 export * from './pcaet/demarche-pcaet-modifiable.rules';
 export * from './pcaet/demarche-pcaet-obligation.enum.schema';
 export * from './pcaet/demarche-pcaet-plan-type';

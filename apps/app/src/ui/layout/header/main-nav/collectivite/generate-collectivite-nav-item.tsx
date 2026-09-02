@@ -75,7 +75,12 @@ export const generateCollectiviteNavItem = ({
     ...user.collectivites.map((collectivite) => ({
       children: (
         <CollectiviteWithBadge
-          collectivite={toCollectiviteCurrent(collectivite, user)}
+          collectivite={toCollectiviteCurrent(
+            // Le sélecteur ne liste que les collectivités dont on est membre :
+            // aucune n'y est consultée au titre d'un service.
+            { ...collectivite, contexteInstruction: null },
+            user
+          )}
         />
       ),
       href: makeCollectiviteRootUrl({

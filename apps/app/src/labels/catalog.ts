@@ -6,6 +6,7 @@ import type {
 import { ReferentielId } from '@tet/domain/referentiels';
 import { plural } from '@tet/ui/labels/plural';
 import { collectivitesLabels } from './collectivites.labels';
+import { demarchesLabels } from './demarches.labels';
 import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
@@ -31,6 +32,7 @@ const formatsSupportes = plural({
 export const appLabels = {
   ...sharedLabels,
   ...collectivitesLabels,
+  ...demarchesLabels,
   ...referentielsLabels,
   ...utilisateursAndEntityLabels,
   ...plansLabels,
@@ -1841,7 +1843,6 @@ export const appLabels = {
   instructionEtatAvisRendu: 'Instruit',
   instructionEtatDelaiEcoule: 'Pas d’avis déposé',
   instructionEtatClos: 'Archivé',
-  instructionDossierRetourListe: 'Retour aux demandes d’avis',
   instructionDossierMetaCollectivite: 'Collectivité',
   instructionDossierMetaTransmis: 'Transmis le',
   instructionDossierMetaEcheance: 'Échéance des avis',

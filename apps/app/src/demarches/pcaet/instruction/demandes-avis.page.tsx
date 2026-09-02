@@ -5,7 +5,6 @@ import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
 import { EmptyCard, Pagination } from '@tet/ui';
@@ -14,7 +13,6 @@ import { DemandesAvisTable } from './demandes-avis.table';
 import { DELAI_INSTRUCTION_PLAFOND_JOURS } from './instruction.constants';
 
 export const DemandesAvisPage = () => {
-  const { collectiviteId } = useCurrentCollectivite();
   const user = useUser();
   const { data, isLoading, isError, refetch, page, limit, setPage, trierPar } =
     useListDemandesAvis();
@@ -92,7 +90,6 @@ export const DemandesAvisPage = () => {
           <>
             <DemandesAvisTable
               demandes={data.items}
-              collectiviteId={collectiviteId}
               onTrierParCollectivite={() => trierPar('collectivite')}
               onTrierParContact={() => trierPar('contact')}
               onTrierParStatut={() => trierPar('statut')}

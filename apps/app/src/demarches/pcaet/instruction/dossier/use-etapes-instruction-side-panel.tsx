@@ -1,6 +1,6 @@
 'use client';
 
-import { makeDemandeAvisDossierUrl } from '@/app/app/paths';
+import { makeDossierInstructionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useCallback, useEffect, useRef } from 'react';
@@ -12,6 +12,7 @@ import {
 const PANEL_TITLE = appLabels.instructionDossierEtapesTitre;
 
 type Options = {
+  /** La collectivité instruite : celle dont le contexte porte le dossier. */
   collectiviteId: number;
   demandeAvisId: number;
 };
@@ -29,8 +30,8 @@ export function useEtapesInstructionSidePanel(
 
   const isOpen = panel.isOpen && panel.title === PANEL_TITLE;
 
-  const dossierPath = makeDemandeAvisDossierUrl({
-    collectiviteId,
+  const dossierPath = makeDossierInstructionUrl({
+    collectiviteInstruiteId: collectiviteId,
     demandeAvisId,
   });
 
