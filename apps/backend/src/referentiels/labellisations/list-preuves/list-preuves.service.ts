@@ -145,10 +145,7 @@ export class ListPreuvesService {
     { demandeId }: ListPreuvesLabellisationInput,
     user: AuthenticatedUser
   ): Promise<
-    Result<
-      ObjectToSnake<LegacyPreuveLabellisationWithFichier>[],
-      ListPreuvesLabellisationError
-    >
+    Result<LegacyPreuveLabellisationWithFichier[], ListPreuvesLabellisationError>
   > {
     const demandeResult = await this.getLabellisationService.getDemande(
       demandeId
@@ -233,7 +230,7 @@ export class ListPreuvesService {
 
       return {
         success: true,
-        data: preuves.map((preuve) => objectToSnake(preuve)),
+        data: preuves,
       };
     } catch (error) {
       this.logger.error(error);
