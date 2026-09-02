@@ -21,13 +21,13 @@ import {
 } from './request-labellisation.rules-errors';
 
 // détermine l'état consolidé du cycle
-type TDemandeEtOuAudit = {
+type DemandeEtOuAudit = {
   demande: Pick<LabellisationDemande, 'enCours'> | null;
   audit: Pick<LabellisationAudit, 'valide' | 'dateDebut' | 'dateFin'> | null;
 };
 
 export const getParcoursLabellisationStatus = (
-  demandeEtOuAudit: TDemandeEtOuAudit | null | undefined
+  demandeEtOuAudit: DemandeEtOuAudit | null
 ): ParcoursLabellisationStatus => {
   if (!demandeEtOuAudit) {
     return 'non_demandee';
