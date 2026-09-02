@@ -1,13 +1,13 @@
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { PlanListItem } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { TProfondeurAxe } from '@/app/plans/plans/types';
+import { AxeNode } from '@/app/plans/plans/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useRef } from 'react';
 import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
 import { useGetPlan } from '../data/use-get-plan';
-import { planNodeToProfondeurAxe } from './plan-node-to-profondeur-axe.adapter';
+import { toRootAxeNode } from './axe-node.adapter';
 
 type FicheEmplacement = Pick<FicheWithRelations, 'id' | 'axes'>;
 
@@ -26,7 +26,7 @@ const findCurrentPlanAndAxe = (
   fiche: Pick<FicheWithRelations, 'axes'>,
   collectiviteId: number
 ): {
-  currentPlan: { plan: TProfondeurAxe } | null;
+  currentPlan: { plan: AxeNode } | null;
   currentAxeInPlan: NonNullable<FicheWithRelations['axes']>[number] | undefined;
 } => {
   // trouve le plan courant
@@ -35,15 +35,12 @@ const findCurrentPlanAndAxe = (
     return { currentPlan: null, currentAxeInPlan: undefined };
   }
 
-  // trouve l'axe racine (celui qui n'a pas de parent)
-  const rootAxe = plan.axes.find((axe) => axe.parent === null);
-  if (!rootAxe) {
+  const rootAxeNode = toRootAxeNode(plan.axes);
+  if (!rootAxeNode) {
     return { currentPlan: null, currentAxeInPlan: undefined };
   }
 
-  // adapte le typage pour le rendre compatible avec les composants existants
-  const planProfondeur = planNodeToProfondeurAxe(rootAxe, plan.axes);
-  const currentPlan = { plan: planProfondeur };
+  const currentPlan = { plan: rootAxeNode };
 
   // trouve l'axe actuel de la fiche dans le plan courant
   const currentAxeInPlan = fiche.axes?.find(
@@ -58,9 +55,9 @@ const findCurrentPlanAndAxe = (
  * Retourne un tableau d'axes du plan racine jusqu'à l'axe cible
  */
 const findAxePathInPlan = (
-  plan: TProfondeurAxe,
+  plan: AxeNode,
   targetAxeId: number
-): TProfondeurAxe[] | null => {
+): AxeNode[] | null => {
   // vérifie si l'axe cible est le plan racine
   if (plan.axe.id === targetAxeId) {
     return [plan];
