@@ -11,11 +11,9 @@ import {
 import { CollectiviteWithContexteInstruction } from './collectivite-context/type';
 
 /**
- * @param demandeAvisId Saisine que l'URL désigne, sur la route d'un dossier
- * d'instruction. Sans elle, le contexte rendu est la saisine la plus récente —
- * ce qui convient à une page ordinaire, mais nommerait le mauvais service sur un
- * dossier plus ancien. Tous les appelants d'une même requête doivent passer la
- * même valeur : `cache()` mémoïse par arguments, et deux valeurs distinctes
+ * @param demandeAvisId Saisine désignée par l'URL d'un dossier ; sans elle, le
+ * contexte rendu est la plus récente. **Tous les appelants d'une requête doivent
+ * passer la même valeur** — `cache()` mémoïse par arguments, deux valeurs
  * donneraient deux contextes.
  */
 export const getCollectivite = cache(
@@ -46,14 +44,10 @@ export const getCollectivite = cache(
 /**
  * « Cette collectivité, je la consulte au titre de quel service ? »
  *
- * Court-circuité pour qui n'est membre d'aucun service instructeur — la question
- * n'a alors pas de réponse possible, et la poser coûterait une requête sur
- * chaque page de collectivité visitée.
- *
- * Une panne de cet appel rend `null` plutôt que de propager : le contexte n'est
- * qu'un enrichissement d'affichage sur les pages ordinaires, et il ne doit pas
- * emporter tout le layout de collectivité. Là où il garde une route, `null`
- * ferme l'accès — l'échec reste du bon côté.
+ * Court-circuité pour qui n'est membre d'aucun service instructeur, sinon la
+ * question coûterait une requête sur chaque page visitée. Une panne rend `null`
+ * plutôt que d'emporter le layout : là où le contexte garde une route, `null`
+ * ferme l'accès.
  */
 const fetchContexteInstruction = cache(
   async (
