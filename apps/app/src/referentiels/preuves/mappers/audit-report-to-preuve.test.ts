@@ -1,4 +1,4 @@
-import { TAuditEnCours } from '@/app/referentiels/audits/types';
+import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 
@@ -20,7 +20,7 @@ const demande: LabellisationDemande = {
   associatedCollectiviteId: null,
 };
 
-const audit: TAuditEnCours = {
+const audit: AuditEnCours = {
   id: 12,
   collectiviteId: 7,
   referentielId: 'cae',
@@ -58,7 +58,7 @@ describe('auditReportToPreuve', () => {
     });
   });
 
-  it('propage la demande, dont depend l invalidation du parcours apres suppression', () => {
+  it('propage la demande de labellisation associee au rapport', () => {
     const preuve = auditReportToPreuve({ ...baseInput, demande });
     expect(preuve.demande).toEqual(demande);
   });

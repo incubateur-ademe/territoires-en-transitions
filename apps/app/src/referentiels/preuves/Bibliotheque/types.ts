@@ -1,4 +1,4 @@
-import { TAuditEnCours } from '@/app/referentiels/audits/types';
+import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { LabellisationDemande, ObjetPreuve } from '@tet/domain/referentiels';
 import { EditState } from './useEditState';
 
@@ -91,7 +91,7 @@ type PreuveLabellisationFields = {
 type PreuveAuditFields = {
   preuveType: 'audit';
   demande: LabellisationDemande | null;
-  audit: TAuditEnCours;
+  audit: AuditEnCours;
 };
 
 // champs propres aux rapports de visite annuelle

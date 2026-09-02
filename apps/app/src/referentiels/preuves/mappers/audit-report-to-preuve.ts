@@ -1,19 +1,18 @@
 import { PreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
 
-// Forme structurelle minimale attendue côté input ; documente la frontière
-// entre le contexte audit-cloture et celui des preuves sans dépendre du
-// type trpc-output de l'autre côté.
-export type AuditReportInput = {
-  id: number;
-  collectiviteId: number;
-  commentaire: string | null;
-  modifiedAt: string | null;
-  modifiedBy: string | null;
-  modifiedByNom: string | null;
+export type AuditReportInput = Pick<
+  PreuveAudit,
+  | 'id'
+  | 'collectiviteId'
+  | 'commentaire'
+  | 'modifiedAt'
+  | 'modifiedBy'
+  | 'modifiedByNom'
+  | 'audit'
+  | 'demande'
+> & {
   fichier: PreuveAudit['fichier'];
   lien: PreuveAudit['lien'];
-  audit: PreuveAudit['audit'];
-  demande: PreuveAudit['demande'];
 };
 
 export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {

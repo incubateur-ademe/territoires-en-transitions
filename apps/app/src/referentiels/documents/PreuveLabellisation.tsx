@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { TAuditEnCours } from '@/app/referentiels/audits/types';
+import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { canUserUpdateAuditReport } from '@/app/referentiels/preuves/Bibliotheque/canUserUpdateAuditReport';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import {
@@ -121,7 +121,7 @@ const canUpdateAuditOrLabellisationPreuve = ({
 }: {
   preuve: PreuveAuditEtLabellisation;
   user: UserRolesAndPermissions;
-  audit: TAuditEnCours | null;
+  audit: AuditEnCours | null;
   canMutateReferentiels: boolean;
 }): boolean => {
   if (preuve.preuveType === 'audit') {
@@ -174,8 +174,8 @@ const isPreuveAudit = (
 const getCycleInfo = (preuves: PreuveAuditEtLabellisation[]) => {
   const demande = preuves.find((preuve) => preuve.demande)?.demande ?? null;
   const audit = preuves.find(isPreuveAudit)?.audit ?? null;
-  const d = audit?.dateFin || audit?.dateDebut || demande?.date;
-  const date = d ? new Date(d) : new Date();
+  const dateCycle = audit?.dateFin || audit?.dateDebut || demande?.date;
+  const date = dateCycle ? new Date(dateCycle) : new Date();
   const annee = date.getFullYear();
   const status = getParcoursLabellisationStatus({ demande, audit });
   const timestamp = date.getTime();

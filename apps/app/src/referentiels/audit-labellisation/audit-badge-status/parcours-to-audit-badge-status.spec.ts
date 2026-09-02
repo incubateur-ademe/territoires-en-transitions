@@ -1,6 +1,6 @@
 import {
   EtoileAsString,
-  LabellisationAvecProchaineEtoile,
+  LabellisationWithProchaineEtoile,
   LabellisationDemande,
   ParcoursLabellisationStatus,
   SujetDemande,
@@ -33,7 +33,7 @@ const toDemande = ({
 
 const toLabellisation = (
   obtenueLe: string
-): LabellisationAvecProchaineEtoile => ({
+): LabellisationWithProchaineEtoile => ({
   id: 1,
   collectiviteId: 1,
   referentiel: 'cae',
