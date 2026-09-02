@@ -9,7 +9,7 @@ export const canUserUpdateAuditReport = (
   user: UserRolesAndPermissions,
   preuve: Preuve
 ): boolean => {
-  if (preuve.preuveType !== 'audit' || preuve.audit === null) {
+  if (preuve.preuveType !== 'audit') {
     return false;
   }
   return canUpdateAuditReport({

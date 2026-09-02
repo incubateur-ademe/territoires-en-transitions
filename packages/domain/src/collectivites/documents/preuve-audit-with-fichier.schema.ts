@@ -13,7 +13,7 @@ export const preuveAuditWithFichierSchema = z.extend(preuveAuditSchema, {
   demande: z.nullable(labellisationDemandeSchema),
   modifiedByNom: z.nullable(z.string()),
   preuveType: z.literal('audit'),
-  audit: z.nullable(labellisationAuditSchema),
+  audit: labellisationAuditSchema,
 });
 
 export type LegacyPreuveAuditWithFichier = z.infer<

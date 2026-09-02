@@ -91,7 +91,7 @@ type PreuveLabellisationFields = {
 type PreuveAuditFields = {
   preuveType: 'audit';
   demande: LabellisationDemande | null;
-  audit: TAuditEnCours | null;
+  audit: TAuditEnCours;
 };
 
 // champs propres aux rapports de visite annuelle
