@@ -68,6 +68,10 @@ export const useCreateAxe = ({
       }
     },
     onSuccess: async (data) => {
+      void queryClient.invalidateQueries({
+        queryKey: trpc.plans.plans.list.pathKey(),
+      });
+
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: trpc.plans.plans.get.queryKey({ planId }),

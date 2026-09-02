@@ -127,6 +127,9 @@ export const useUpdateAxe = ({
       if (variables.indicateurs) {
         await queryClient.invalidateQueries({ queryKey: queryKeyIndicateurs });
       }
+      await queryClient.invalidateQueries({
+        queryKey: trpc.plans.plans.list.pathKey(),
+      });
     },
     onError: (err, variables, context) => {
       // rollback : restaure les données précédentes en cas d'erreur

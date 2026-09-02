@@ -1,6 +1,5 @@
 import { naturalSort } from '@/app/utils/naturalSort';
 import { PlanNode } from '@tet/domain/plans';
-import { TProfondeurAxe } from './types';
 
 /**
  * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
@@ -21,30 +20,6 @@ export const checkAxeHasFiche = (axe: PlanNode, axes: PlanNode[]): boolean => {
     }
   }
   return false;
-};
-
-/**
- * Fonction recursive qui vérifie si un axe est présent dans un plan.
- * @param plan plan action complet
- * @param axeId id de l'axe à vérifier
- * @return boolean
- */
-export const checkAxeExistInPlanProfondeur = (
-  plan: TProfondeurAxe,
-  axeId: number
-): boolean => {
-  const getAllAxeIds = (plan: TProfondeurAxe): number[] => {
-    let ids: number[] = [];
-    ids.push(plan.axe.id);
-    if (plan.enfants) {
-      plan.enfants.forEach((enfant) => {
-        ids = ids.concat(getAllAxeIds(enfant));
-      });
-    }
-    return ids;
-  };
-
-  return getAllAxeIds(plan).includes(axeId);
 };
 
 export const sortPlanNodes = (axes: PlanNode[]): PlanNode[] => {

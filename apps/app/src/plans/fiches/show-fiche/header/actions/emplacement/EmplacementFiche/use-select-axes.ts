@@ -1,5 +1,5 @@
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
-import { TProfondeurAxe } from '@/app/plans/plans/types';
+import { AxeNode } from '@/app/plans/plans/types';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import { useState } from 'react';
 
@@ -11,7 +11,7 @@ import { useState } from 'react';
  * et la fonction pour ouvrir les axes parents et scroller vers un élément
  */
 export const useSelectAxes = () => {
-  const [selectedAxes, setSelectedAxes] = useState<TProfondeurAxe[]>([]);
+  const [selectedAxes, setSelectedAxes] = useState<AxeNode[]>([]);
 
   // Gestion de l'état d'ouverture des axes dans l'arborescence principale
   const [, setOpenAxes] = useQueryState(
@@ -19,9 +19,9 @@ export const useSelectAxes = () => {
     parseAsArrayOf(parseAsInteger).withDefault([])
   );
 
-  const handleSelectAxe = (selectedAxe: TProfondeurAxe) => {
+  const handleSelectAxe = (selectedAxe: AxeNode) => {
     setSelectedAxes((prevSelectedAxes) => {
-      const selectedDepth = selectedAxe.profondeur;
+      const selectedDepth = selectedAxe.depth;
       const currentDepth = prevSelectedAxes.length - 1;
       const isAlreadySelected = prevSelectedAxes.some(
         (axe) => axe.axe.id === selectedAxe.axe.id
@@ -32,7 +32,7 @@ export const useSelectAxes = () => {
       }
 
       const newSelectedAxes = [
-        ...prevSelectedAxes.filter((axe) => axe.profondeur < selectedDepth),
+        ...prevSelectedAxes.filter((axe) => axe.depth < selectedDepth),
       ];
 
       if (

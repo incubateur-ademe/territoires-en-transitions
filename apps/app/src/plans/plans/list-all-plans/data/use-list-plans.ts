@@ -1,8 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryObserverResult, useQuery } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
 
 export type PlanListItem =
   RouterOutput['plans']['plans']['list']['plans'][number];
+
+type ListPlansOutput = RouterOutput['plans']['plans']['list'];
 
 export const useListPlans = (
   collectiviteId: number,
@@ -26,11 +28,12 @@ export const useListPlans = (
   plans: PlanListItem[];
   totalCount: number;
   isLoading: boolean;
-  error: any;
+  error: unknown;
+  refetch: () => Promise<QueryObserverResult<ListPlansOutput, unknown>>;
 } => {
   const trpc = useTRPC();
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading, error, refetch } = useQuery(
     trpc.plans.plans.list.queryOptions(
       {
         collectiviteId,
@@ -48,5 +51,6 @@ export const useListPlans = (
     totalCount: data?.totalCount ?? 0,
     isLoading,
     error,
+    refetch,
   };
 };

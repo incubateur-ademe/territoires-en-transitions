@@ -4,8 +4,10 @@ import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/creat
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PageHeader, Spacer, VisibleWhen } from '@tet/ui';
+import { isNotNil } from 'es-toolkit';
 import { useQueryStates } from 'nuqs';
 import { useState } from 'react';
 import { PlanCardDisplay } from '../components/card/plan.card';
@@ -30,12 +32,14 @@ export const AllPlansView = ({ panierId }: Props) => {
   const [planCardDisplay, setPlanCardDisplay] =
     useState<PlanCardDisplay>('row');
 
-  const { plans, totalCount, isLoading } = useListPlans(collectiviteId, {
-    sort: sortParams,
-  });
+  const { plans, totalCount, isLoading, error, refetch } = useListPlans(
+    collectiviteId,
+    { sort: sortParams }
+  );
 
-  const plansAvailable = !isLoading && plans.length > 0;
-  const noPlanAvailable = !isLoading && plans.length === 0;
+  const hasFailed = isNotNil(error);
+  const plansAvailable = !isLoading && !hasFailed && plans.length > 0;
+  const noPlanAvailable = !isLoading && !hasFailed && plans.length === 0;
   return (
     <>
       <PageHeader>
@@ -66,6 +70,13 @@ export const AllPlansView = ({ panierId }: Props) => {
         <div className="flex justify-center items-center h-96">
           <SpinnerLoader className="w-8 h-8" />
         </div>
+      </VisibleWhen>
+      <VisibleWhen condition={hasFailed}>
+        <Spacer height={3} />
+        <ErrorCard
+          title={appLabels.uneErreurEstSurvenue}
+          retry={() => refetch()}
+        />
       </VisibleWhen>
       <VisibleWhen condition={noPlanAvailable}>
         <Spacer height={3} />

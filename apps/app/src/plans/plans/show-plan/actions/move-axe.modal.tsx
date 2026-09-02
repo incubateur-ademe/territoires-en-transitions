@@ -1,4 +1,4 @@
-import { TProfondeurAxe } from '@/app/plans/plans/types';
+import { AxeNode } from '@/app/plans/plans/types';
 import { PlanNode } from '@tet/domain/plans';
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -6,7 +6,7 @@ import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/act
 import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
 import { useUpdateAxe } from '../data/use-update-axe';
 import { getChildrenAxeIds } from '../plan-arborescence.view/get-children-axe-ids';
-import { planNodeToProfondeurAxe } from './plan-node-to-profondeur-axe.adapter';
+import { toAxeNode } from './axe-node.adapter';
 
 type Props = {
   collectiviteId: number;
@@ -20,9 +20,9 @@ type Props = {
  * Filtre récursivement les axes invalides (l'axe actuel et ses descendants)
  */
 const filterInvalidAxes = (
-  plan: TProfondeurAxe,
+  plan: AxeNode,
   invalidAxeIds: number[]
-): TProfondeurAxe | null => {
+): AxeNode | null => {
   // Si l'axe est invalide, on le filtre
   if (invalidAxeIds.includes(plan.axe.id)) {
     return null;
@@ -31,10 +31,10 @@ const filterInvalidAxes = (
   // Filtrer les enfants récursivement
   const filteredEnfants =
     plan.enfants
-      ?.map((enfant: TProfondeurAxe) =>
+      ?.map((enfant: AxeNode) =>
         filterInvalidAxes(enfant, invalidAxeIds)
       )
-      .filter((enfant): enfant is TProfondeurAxe => enfant !== null) || [];
+      .filter((enfant): enfant is AxeNode => enfant !== null) || [];
 
   return {
     ...plan,
@@ -58,8 +58,7 @@ export const MoveAxeModal = ({
   // IDs des axes invalides (l'axe actuel et tous ses descendants)
   const invalidAxeIds = [axe.id, ...getChildrenAxeIds(axe, axes)];
 
-  // Construire la structure TProfondeurAxe à partir des axes fournis
-  const currentPlan = rootAxe ? planNodeToProfondeurAxe(rootAxe, axes) : null;
+  const currentPlan = rootAxe ? toAxeNode(rootAxe, axes) : null;
 
   // Filtrer les axes invalides dans le plan actuel
   const filteredPlan = currentPlan
