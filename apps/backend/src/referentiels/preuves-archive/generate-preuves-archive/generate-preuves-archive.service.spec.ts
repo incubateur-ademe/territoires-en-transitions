@@ -85,8 +85,8 @@ function buildService({
     updateProgress: vi.fn().mockResolvedValue(success(initialArchive)),
   };
 
-  const listAuditPreuves = {
-    list: vi.fn().mockResolvedValue(
+  const collectAuditPreuves = {
+    collect: vi.fn().mockResolvedValue(
       success({
         mesure: { files: [], links: [] },
         demande: { files: [], links: [] },
@@ -121,7 +121,7 @@ function buildService({
 
   const service = new GeneratePreuvesArchiveService(
     repository as never,
-    listAuditPreuves as never,
+    collectAuditPreuves as never,
     getReferentielService as never,
     buildArchiveService as never,
     getLabellisationService as never,

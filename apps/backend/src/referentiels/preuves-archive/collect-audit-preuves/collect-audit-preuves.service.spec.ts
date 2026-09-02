@@ -6,7 +6,7 @@ import type {
   CollectedFilePreuve,
   CollectedLinkPreuve,
 } from './collect-preuves.repository';
-import { ListAuditPreuvesService } from './list-audit-preuves.service';
+import { CollectAuditPreuvesService } from './collect-audit-preuves.service';
 
 const user = { id: 'user-id' } as AuthenticatedUser;
 
@@ -40,7 +40,7 @@ function buildService({
   audit?: PreuvesPayload;
   canReadConfidentiel?: boolean;
 } = {}): {
-  service: ListAuditPreuvesService;
+  service: CollectAuditPreuvesService;
   permissionsIsAllowed: ReturnType<typeof vi.fn>;
   getComplementairePreuves: ReturnType<typeof vi.fn>;
   getReglementairePreuves: ReturnType<typeof vi.fn>;
@@ -67,7 +67,7 @@ function buildService({
   );
   const permissions = { isAllowed: permissionsIsAllowed } as unknown;
 
-  const service = new ListAuditPreuvesService(
+  const service = new CollectAuditPreuvesService(
     repository as never,
     permissions as never
   );
@@ -93,11 +93,11 @@ function makeFile(
   };
 }
 
-describe('ListAuditPreuvesService', () => {
+describe('CollectAuditPreuvesService', () => {
   it('interroge la permission `collectivites.documents.read_confidentiel` sur la collectivité', async () => {
     const { service, permissionsIsAllowed } = buildService();
 
-    await service.list(baseInput);
+    await service.collect(baseInput);
 
     expect(permissionsIsAllowed).toHaveBeenCalledWith(
       user,
@@ -111,7 +111,7 @@ describe('ListAuditPreuvesService', () => {
     const { service, getComplementairePreuves, getReglementairePreuves } =
       buildService();
 
-    await service.list(baseInput);
+    await service.collect(baseInput);
 
     expect(getComplementairePreuves).toHaveBeenCalledWith(
       expect.objectContaining({ referentielId })
@@ -133,7 +133,7 @@ describe('ListAuditPreuvesService', () => {
       },
     });
 
-    const result = await service.list(baseInput);
+    const result = await service.collect(baseInput);
 
     expect(result.success).toBe(true);
     if (!result.success) return;
@@ -158,7 +158,7 @@ describe('ListAuditPreuvesService', () => {
         .fn()
         .mockResolvedValue({ success: true, data: empty }),
     } as unknown;
-    const service = new ListAuditPreuvesService(
+    const service = new CollectAuditPreuvesService(
       repository as never,
       {
         isAllowed: vi
@@ -167,7 +167,7 @@ describe('ListAuditPreuvesService', () => {
       } as never
     );
 
-    const result = await service.list(baseInput);
+    const result = await service.collect(baseInput);
 
     expect(result.success).toBe(false);
     if (result.success) return;

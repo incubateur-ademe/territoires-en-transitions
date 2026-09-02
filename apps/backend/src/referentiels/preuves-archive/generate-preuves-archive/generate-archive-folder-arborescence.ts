@@ -1,7 +1,7 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { groupBy } from 'es-toolkit';
-import type { PreuvesByOrigin } from '../list-audit-preuves/list-audit-preuves.service';
+import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
 import {
   PreuvesArchiveErrorEnum,
   type PreuvesArchiveError,
@@ -9,7 +9,7 @@ import {
 import type {
   CollectedFilePreuve,
   CollectedLinkPreuve,
-} from '../list-audit-preuves/collect-preuves.repository';
+} from '../collect-audit-preuves/collect-preuves.repository';
 import type { LienPreuve } from '../build-archive/build-liens-csv';
 
 const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;

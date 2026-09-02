@@ -1,10 +1,10 @@
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
-import type { PreuvesByOrigin, PreuvesSource } from '../list-audit-preuves/list-audit-preuves.service';
+import type { PreuvesByOrigin, PreuvesSource } from '../collect-audit-preuves/collect-audit-preuves.service';
 import type {
   CollectedFilePreuve,
   CollectedLinkPreuve,
-} from '../list-audit-preuves/collect-preuves.repository';
+} from '../collect-audit-preuves/collect-preuves.repository';
 import {
   generateArchiveFolderArborescence,
   type GenerateArchiveFolderArborescenceInput,

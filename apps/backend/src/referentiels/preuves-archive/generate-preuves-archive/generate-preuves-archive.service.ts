@@ -14,7 +14,7 @@ import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetReferentielService } from '../../get-referentiel/get-referentiel.service';
 import { BuildArchiveService } from '../build-archive/build-archive.service';
-import { ListAuditPreuvesService } from '../list-audit-preuves/list-audit-preuves.service';
+import { CollectAuditPreuvesService } from '../collect-audit-preuves/collect-audit-preuves.service';
 import {
   AuditPreuvesArchiveStatusEnum,
   type AuditPreuvesArchive,
@@ -82,7 +82,7 @@ export class GeneratePreuvesArchiveService {
 
   constructor(
     private readonly repository: PreuvesArchiveRepository,
-    private readonly listAuditPreuvesService: ListAuditPreuvesService,
+    private readonly collectAuditPreuvesService: CollectAuditPreuvesService,
     private readonly getReferentielService: GetReferentielService,
     private readonly buildArchiveService: BuildArchiveService,
     private readonly getLabellisationService: GetLabellisationService,
@@ -213,7 +213,7 @@ export class GeneratePreuvesArchiveService {
     archive: AuditPreuvesArchive,
     context: JobContext
   ): Promise<Result<ArchiveFolderArborescence, GenerateArchiveFailure>> {
-    const preuvesResult = await this.listAuditPreuvesService.list({
+    const preuvesResult = await this.collectAuditPreuvesService.collect({
       collectiviteId: archive.collectiviteId,
       referentielId: context.referentielId,
       auditId: archive.auditId,

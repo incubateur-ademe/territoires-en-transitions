@@ -26,7 +26,7 @@ export interface PreuvesByOrigin {
   audit: PreuvesSource;
 }
 
-export interface ListPreuvesForAuditInput {
+export interface CollectAuditPreuvesInput {
   collectiviteId: number;
   referentielId: ReferentielId;
   demandeId: number;
@@ -35,16 +35,16 @@ export interface ListPreuvesForAuditInput {
 }
 
 @Injectable()
-export class ListAuditPreuvesService {
-  private readonly logger = new Logger(ListAuditPreuvesService.name);
+export class CollectAuditPreuvesService {
+  private readonly logger = new Logger(CollectAuditPreuvesService.name);
 
   constructor(
     private readonly repository: CollectPreuvesRepository,
     private readonly permissions: PermissionService
   ) {}
 
-  async list(
-    input: ListPreuvesForAuditInput
+  async collect(
+    input: CollectAuditPreuvesInput
   ): Promise<Result<PreuvesByOrigin, PreuvesArchiveError>> {
     const { collectiviteId, referentielId, demandeId, auditId, user } = input;
 
