@@ -18,6 +18,7 @@ const JOBS_PROPRES = [
   'compute-all-outdated-trajectoires',
   'send-notifications',
   'clore-instructions-pcaet',
+  'posthog-collectivites-group-sync',
 ] as const;
 
 describe('cron.config', () => {

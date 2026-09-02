@@ -137,6 +137,11 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe("Clé de connexion à l'API Connect"),
+  POSTHOG_KEY: z
+    .string()
+    .optional()
+    .describe('Clé projet PostHog pour la synchro du groupe collectivite'),
+  POSTHOG_HOST: z.string().optional().describe('URL instance PostHog'),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema

@@ -13,6 +13,7 @@ import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
 import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
+import { PostHogCollectivitesSyncService } from '../posthog/posthog-collectivites-sync.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
 
@@ -27,6 +28,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly cronNotificationsService: CronNotificationsService,
     private readonly cronCloreInstructionsService: CronCloreInstructionsService,
     private readonly airtableCrmSyncService: AirtableCrmSyncService,
+    private readonly postHogCollectivitesSyncService: PostHogCollectivitesSyncService,
     private readonly contextStoreService: ContextStoreService
   ) {
     super();
@@ -60,6 +62,9 @@ export class CronConsumerService extends WorkerHost {
         case 'clore-instructions-pcaet':
           result =
             await this.cronCloreInstructionsService.cloreInstructions();
+          break;
+        case 'posthog-collectivites-group-sync':
+          result = await this.postHogCollectivitesSyncService.process();
           break;
         default:
           if (isCrmSyncJobName(job.name)) {

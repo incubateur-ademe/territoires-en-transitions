@@ -7,6 +7,7 @@ import {
   DEFAULT_JOB_OPTIONS,
 } from './cron.config';
 import { ToolsIndicateursModule } from '../indicateurs/tools-indicateurs.module';
+import { PosthogModule } from '../posthog/posthog.module';
 import { UtilsModule } from '../utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -33,6 +34,7 @@ import { CronService } from './cron.service';
     CalendlyModule,
     ConnectModule,
     ToolsIndicateursModule,
+    PosthogModule,
   ],
   controllers: [],
   providers: [

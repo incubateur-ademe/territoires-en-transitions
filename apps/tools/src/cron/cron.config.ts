@@ -62,6 +62,13 @@ export const JOBS_CONFIG = [
     cronExpression: CronExpression.EVERY_DAY_AT_MIDNIGHT,
     data: {},
   },
+  {
+    // Re-sync quotidien complet du group type PostHog "collectivite" à partir de
+    // la table `collectivite`.
+    name: 'posthog-collectivites-group-sync',
+    cronExpression: CronExpression.EVERY_DAY_AT_2AM,
+    data: {},
+  },
   ...CRM_SYNC_JOBS_CONFIG,
 ] as const;
 
