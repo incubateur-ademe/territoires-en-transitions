@@ -14,20 +14,13 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 
 /**
- * Un code de région **libre**, pour une collectivité instructrice de test.
+ * Un code de région libre, pour une collectivité instructrice de test : un index
+ * unique interdit deux DREAL sur la même région, et un code en dur ferait échouer
+ * la seconde exécution sur la collectivité laissée par la première. Deux lettres,
+ * hors des codes réels qui sont numériques.
  *
- * Un index unique interdit deux DREAL sur la même région : un code en dur rend
- * le test jouable une seule fois, puis il échoue sur la collectivité qu'il a
- * lui-même laissée. Deux lettres suffisent (la colonne fait 2 caractères) et ne
- * peuvent croiser aucun code réel, qui sont numériques.
- *
- * Le tirage seul ne suffit pas : 676 valeurs, et une exécution précédente peut
- * en avoir laissé. Les codes déjà pris pour ce type sont donc lus, et le tirage
- * se fait dans le complément. Reste une fenêtre entre cette lecture et
- * l'insertion, où deux workers pourraient viser le même code ; si une flakiness
- * apparaît, le pas suivant est un retry sur violation d'unicité — que
- * `addTestCollectivite` ne permet pas aujourd'hui, ses erreurs étant
- * réencapsulées dans une `Error` générique.
+ * Les codes pris sont lus avant de tirer, ce qui laisse une fenêtre de course
+ * entre la lecture et l'insertion.
  */
 export async function pickFreeRegionCode(
   { db }: DatabaseServiceInterface,

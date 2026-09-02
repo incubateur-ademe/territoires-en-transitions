@@ -5,20 +5,14 @@ import { ReactNode } from 'react';
 import z from 'zod';
 
 /**
- * Le dossier d'instruction vit sous la collectivité **instruite** : l'ouvrir
- * bascule le contexte sur la déposante, alors que l'agent n'en est pas membre.
+ * Le dossier vit sous la collectivité **instruite**, dont l'agent n'est pas
+ * membre : ni la garde des routes standard ni celle de l'espace d'instruction ne
+ * conviennent ici. C'est la saisine qui ouvre la route, et elle doit être celle
+ * de l'utilisateur *et* porter sur la collectivité de l'URL — sinon une URL
+ * forgée afficherait un dossier sous le nom d'une autre collectivité.
  *
- * D'où une garde à part, ni celle des routes standard (une collectivité
- * instruite est une collectivité ordinaire, elle ne doit pas être écartée) ni
- * celle de l'espace d'instruction (qui exige d'être membre du service). Ce qui
- * ouvre cette route, c'est la **saisine**, résolue côté serveur : elle doit être
- * celle de l'utilisateur *et* porter sur la collectivité de l'URL — sans ce
- * second contrôle, une URL forgée afficherait le dossier d'une collectivité sous
- * le nom d'une autre.
- *
- * Le contexte lu ici est celui que le layout de collectivité a résolu pour cette
- * même saisine, et que la bannière affiche : une seule valeur, donc aucun risque
- * qu'elles se contredisent.
+ * Le contexte lu est celui que le layout de collectivité a résolu et que la
+ * bannière affiche : une seule valeur, donc pas de contradiction possible.
  */
 export default async function Layout({
   children,

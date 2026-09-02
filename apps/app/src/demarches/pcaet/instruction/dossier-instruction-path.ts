@@ -1,25 +1,17 @@
 import { collectiviteBasePath } from '@/app/app/paths';
 
-/**
- * `/collectivite/<id>/instruction/<demandeAvisId>` — la route d'un dossier
- * d'instruction, seule à porter une saisine dans son URL.
- */
+/** La route d'un dossier, seule à porter une saisine dans son URL. */
 const DOSSIER_INSTRUCTION_PATH = new RegExp(
   `^${collectiviteBasePath}/\\d+/instruction/(\\d+)/?$`
 );
 
 /**
- * La saisine visée par un chemin de dossier d'instruction, `null` pour tout
- * autre chemin.
+ * La saisine visée par un chemin de dossier, `null` pour tout autre chemin. Le
+ * layout de collectivité s'en sert pour résoudre le contexte de la saisine
+ * ouverte, et non la plus récente.
  *
- * Sert au layout de collectivité à résoudre le contexte de la saisine que l'URL
- * désigne, et non la plus récente : la bannière et la garde du dossier lisent
- * ainsi la même valeur, et ne peuvent pas nommer deux services différents.
- *
- * Le chemin vient de l'en-tête `x-current-path`, que le proxy réécrit
- * systématiquement depuis `request.nextUrl.pathname` (cf. `proxy.ts`) : il n'est
- * pas falsifiable côté client. Par défense en profondeur on retire malgré tout
- * une éventuelle query string ou ancre avant de comparer — même précaution que
+ * Le chemin vient de `x-current-path`, réécrit par le proxy, donc non
+ * falsifiable ; la query string est malgré tout retirée, comme dans
  * `isAllowedWithoutCollectivite`.
  */
 export function extractDemandeAvisIdFromPath(

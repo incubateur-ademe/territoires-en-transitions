@@ -9,12 +9,10 @@ import { useUserContext } from '@tet/api/users';
 import { useInstructeurCollectiviteId } from '../../data/use-contexte-instruction';
 
 /**
- * Verse la pièce d'un avis dans la bibliothèque de la collectivité
- * **instructrice**, et non dans celle du dossier consulté : le serveur résout le
- * fichier d'un avis par son émetteur (cf. `get-avis-file-url`). Depuis la
- * bascule de contexte, la collectivité courante est la déposante — s'y fier
- * enverrait le rapport dans une bibliothèque où l'agent n'a aucun droit, et
- * rendrait l'avis validé impossible à télécharger.
+ * Verse la pièce d'un avis dans la bibliothèque du service **instructeur**, où
+ * `get-avis-file-url` la résout par l'émetteur. La collectivité courante étant
+ * la déposante depuis la bascule de contexte, s'y fier enverrait le rapport dans
+ * une bibliothèque interdite à l'agent, et l'avis validé serait introuvable.
  */
 export const useUploadAvisFile = (): ((
   file: File

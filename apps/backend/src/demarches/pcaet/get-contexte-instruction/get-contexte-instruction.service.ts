@@ -19,25 +19,15 @@ import { GetContexteInstructionInput } from './get-contexte-instruction.input';
  * « Est-ce que je consulte cette collectivité au titre d'un service qui
  * l'instruit ? »
  *
- * C'est ce qui autorise la bascule de contexte : l'agent d'un service n'est pas
- * membre de la collectivité qu'il instruit, son droit d'y entrer découle de la
- * saisine. Même esprit que les auditeurs, qui interviennent sur une collectivité
- * dont ils ne sont pas membres — la source du droit est ailleurs que
- * l'appartenance, et elle est vérifiée ici, côté serveur.
+ * L'agent d'un service n'est pas membre de la collectivité qu'il instruit : son
+ * droit d'y entrer découle de la saisine, comme celui d'un auditeur. Ce service
+ * ne donne accès à rien, il dit seulement dans quel contexte l'écran se
+ * présente ; le dossier reste servi par `getDossierInstruction`, dont il reprend
+ * les conditions (membre actif du service saisi, périmètre couvrant).
  *
- * Ce service ne donne accès à rien par lui-même : il dit seulement dans quel
- * contexte l'écran doit se présenter. Le contenu du dossier reste servi par
- * `getDossierInstruction`, sous son propre contrôle — dont il reprend, ici, les
- * mêmes conditions (membre actif du service saisi, périmètre couvrant).
- *
- * La condition est la **saisine**, jamais le statut du dossier : `canConsulterDepot`
- * n'en tient pas compte non plus, et fermer le contexte sur un statut ferait dire
- * « non » à la bannière là où le dossier répond « oui ». En pratique le cas ne se
- * présente pas — une demande d'avis naît de `saisirInstructeurs`, à la
- * transmission, et rien ne ramène un dossier en élaboration.
- *
- * `success(null)` quand aucune saisine ne répond : ce n'est pas un refus, c'est
- * la réponse.
+ * La condition est la saisine, jamais le statut du dossier — `canConsulterDepot`
+ * ne le regarde pas non plus, et fermer ici ferait dire « non » à la bannière là
+ * où le dossier répond « oui ».
  */
 @Injectable()
 export class GetContexteInstructionService {
