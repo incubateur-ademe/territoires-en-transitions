@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Result } from '@tet/backend/utils/result.type';
 import {
   LegacyPreuveAuditWithFichier,
   LegacyPreuveLabellisationWithFichier,
+  preuveAuditWithFichierSchema,
+  preuveLabellisationWithFichierSchema,
 } from '@tet/domain/collectivites';
+import * as z from 'zod/mini';
 import { ReferentielDocumentsAccessService } from '../../documents/referentiel-documents-access.service';
 import { GetLabellisationService } from '../get-labellisation.service';
 import {
@@ -21,6 +24,8 @@ import { ListPreuvesRepository } from './list-preuves.repository';
 
 @Injectable()
 export class ListPreuvesService {
+  private readonly logger = new Logger(ListPreuvesService.name);
+
   constructor(
     private readonly listPreuvesRepository: ListPreuvesRepository,
     private readonly getLabellisationService: GetLabellisationService,
@@ -63,10 +68,26 @@ export class ListPreuvesService {
 
     const { canReadConfidentiel } = accessResult.data;
 
-    return this.listPreuvesRepository.listPreuvesAudit({
+    const preuves = await this.listPreuvesRepository.listPreuvesAudit({
       auditId,
       canReadConfidentiel,
     });
+    if (!preuves.success) {
+      return preuves;
+    }
+
+    const parsed = z.array(preuveAuditWithFichierSchema).safeParse(preuves.data);
+    if (!parsed.success) {
+      this.logger.error(
+        `Preuves hors contrat pour l'audit ${auditId}: ${parsed.error.message}`
+      );
+      return {
+        success: false,
+        error: ListPreuvesAuditErrorEnum.DOCUMENT_SCHEMA_MISMATCH,
+      };
+    }
+
+    return { success: true, data: parsed.data };
   }
 
   async listPreuvesLabellisation(
@@ -110,9 +131,27 @@ export class ListPreuvesService {
 
     const { canReadConfidentiel } = accessResult.data;
 
-    return this.listPreuvesRepository.listPreuvesLabellisation({
+    const preuves = await this.listPreuvesRepository.listPreuvesLabellisation({
       demandeId,
       canReadConfidentiel,
     });
+    if (!preuves.success) {
+      return preuves;
+    }
+
+    const parsed = z
+      .array(preuveLabellisationWithFichierSchema)
+      .safeParse(preuves.data);
+    if (!parsed.success) {
+      this.logger.error(
+        `Preuves hors contrat pour la demande ${demandeId}: ${parsed.error.message}`
+      );
+      return {
+        success: false,
+        error: ListPreuvesLabellisationErrorEnum.DOCUMENT_SCHEMA_MISMATCH,
+      };
+    }
+
+    return { success: true, data: parsed.data };
   }
 }
