@@ -72,7 +72,7 @@ export const IndicateursListFilters = ({
           />
         </Field>
         <Checkbox
-          label="Participe au score Climat Air Énergie"
+          label={appLabels.indicateurParticipeAuScore}
           checked={filters.participationScore}
           onChange={() => {
             const { participationScore, ...rest } = filters;

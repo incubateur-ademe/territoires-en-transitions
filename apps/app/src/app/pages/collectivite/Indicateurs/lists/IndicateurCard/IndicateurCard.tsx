@@ -298,7 +298,7 @@ export const IndicateurCardBase = ({
                           )}
                         {/** Participation au score */}
                         {definition.participationScore && (
-                          <div>{appLabels.participeAuScoreCae}</div>
+                          <div>{appLabels.indicateurParticipeAuScore}</div>
                         )}
                       </div>
                     </>

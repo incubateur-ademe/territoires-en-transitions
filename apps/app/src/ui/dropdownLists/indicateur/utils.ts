@@ -1,9 +1,11 @@
 export function getCategorieLabel(categorieNom: string) {
   switch (categorieNom) {
     case 'cae':
-      return 'Référentiel ADEME CAE';
+      return 'Référentiel CAE';
     case 'eci':
-      return 'Référentiel ADEME ECI';
+      return 'Référentiel ECi';
+    case 'CR':
+      return 'Référentiel CR';
     case 'crte':
       return 'Indicateurs Contrat de relance et de transition écologique (CRTE)';
     case 'clef':
