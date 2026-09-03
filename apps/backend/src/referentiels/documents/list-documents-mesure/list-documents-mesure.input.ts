@@ -1,11 +1,11 @@
 import z from 'zod';
 
-export const listMesureDocumentsInputSchema = z.object({
+export const listDocumentsMesureInputSchema = z.object({
   collectiviteId: z.number().int().positive(),
   actionId: z.string().min(1),
   withSubActions: z.boolean().optional(),
 });
 
-export type ListMesureDocumentsInput = z.infer<
-  typeof listMesureDocumentsInputSchema
+export type ListDocumentsMesureInput = z.infer<
+  typeof listDocumentsMesureInputSchema
 >;

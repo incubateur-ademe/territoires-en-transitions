@@ -18,7 +18,7 @@ type ReferentielDocumentsQuery =
   | { status: 'error' }
   | { status: 'loaded'; documents: ReferentielDocuments };
 
-export const useListDocuments = ({
+export const useListDocumentsReferentiel = ({
   collectiviteId,
   referentielId,
 }: {
@@ -28,7 +28,7 @@ export const useListDocuments = ({
   const trpc = useTRPC();
 
   const { data, isError } = useQuery(
-    trpc.referentiels.documents.listDocuments.queryOptions({
+    trpc.referentiels.documents.listDocumentsReferentiel.queryOptions({
       collectiviteId,
       referentielId,
     })

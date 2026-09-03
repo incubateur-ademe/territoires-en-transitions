@@ -143,7 +143,7 @@ describe('List Mesure Documents Router', () => {
     const { collectiviteId, membreCaller } = await createCollectivite();
 
     const { attendus } =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       });
@@ -167,7 +167,7 @@ describe('List Mesure Documents Router', () => {
     await addAttenduDepot({ preuveId: MESURE.attendus[0], titre: 'second' });
 
     const { attendus } =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       });
@@ -198,7 +198,7 @@ describe('List Mesure Documents Router', () => {
     });
 
     const { attendus } =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       });
@@ -224,7 +224,7 @@ describe('List Mesure Documents Router', () => {
     });
 
     const { complementaires } =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       });
@@ -248,7 +248,7 @@ describe('List Mesure Documents Router', () => {
     });
 
     const { complementaires } =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
         withSubActions: true,
@@ -274,7 +274,7 @@ describe('List Mesure Documents Router', () => {
     });
 
     const { complementaires } =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.sousMesure,
         withSubActions: true,
@@ -307,12 +307,12 @@ describe('List Mesure Documents Router', () => {
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
     const visiteurView =
-      await visiteurCaller.referentiels.documents.listMesureDocuments({
+      await visiteurCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       });
     const membreView =
-      await membreCaller.referentiels.documents.listMesureDocuments({
+      await membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       });
@@ -337,7 +337,7 @@ describe('List Mesure Documents Router', () => {
     const visiteurCaller = router.createCaller({ user: visiteurUser });
 
     await expect(
-      visiteurCaller.referentiels.documents.listMesureDocuments({
+      visiteurCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: MESURE.actionId,
       })
@@ -350,7 +350,7 @@ describe('List Mesure Documents Router', () => {
     const { collectiviteId, membreCaller } = await createCollectivite();
 
     await expect(
-      membreCaller.referentiels.documents.listMesureDocuments({
+      membreCaller.referentiels.documents.listDocumentsMesure({
         collectiviteId,
         actionId: 'inconnu_1.1.4',
       })

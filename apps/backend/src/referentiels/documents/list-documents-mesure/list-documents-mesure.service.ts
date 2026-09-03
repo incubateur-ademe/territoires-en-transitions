@@ -3,34 +3,34 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { tryGetReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { ReferentielDocumentsAccessService } from '../referentiel-documents-access.service';
-import { toAttendus } from './list-mesure-documents.adapter';
+import { toAttendus } from './list-documents-mesure.adapter';
 import {
-  ListMesureDocumentsError,
-  ListMesureDocumentsErrorEnum,
-} from './list-mesure-documents.errors';
-import { ListMesureDocumentsInput } from './list-mesure-documents.input';
+  ListDocumentsMesureError,
+  ListDocumentsMesureErrorEnum,
+} from './list-documents-mesure.errors';
+import { ListDocumentsMesureInput } from './list-documents-mesure.input';
 import {
-  ListMesureDocumentsOutput,
-  listMesureDocumentsOutputSchema,
-} from './list-mesure-documents.output';
-import { ListMesureDocumentsRepository } from './list-mesure-documents.repository';
+  ListDocumentsMesureOutput,
+  listDocumentsMesureOutputSchema,
+} from './list-documents-mesure.output';
+import { ListDocumentsMesureRepository } from './list-documents-mesure.repository';
 
 @Injectable()
-export class ListMesureDocumentsService {
-  private readonly logger = new Logger(ListMesureDocumentsService.name);
+export class ListDocumentsMesureService {
+  private readonly logger = new Logger(ListDocumentsMesureService.name);
 
   constructor(
-    private readonly listMesureDocumentsRepository: ListMesureDocumentsRepository,
+    private readonly listDocumentsMesureRepository: ListDocumentsMesureRepository,
     private readonly referentielDocumentsAccess: ReferentielDocumentsAccessService
   ) {}
 
-  async listMesureDocuments(
-    { collectiviteId, actionId, withSubActions }: ListMesureDocumentsInput,
+  async listDocumentsMesure(
+    { collectiviteId, actionId, withSubActions }: ListDocumentsMesureInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<ListMesureDocumentsOutput, ListMesureDocumentsError>> {
+  ): Promise<Result<ListDocumentsMesureOutput, ListDocumentsMesureError>> {
     const referentielId = tryGetReferentielIdFromActionId(actionId);
     if (!referentielId) {
-      return failure(ListMesureDocumentsErrorEnum.UNKNOWN_REFERENTIEL);
+      return failure(ListDocumentsMesureErrorEnum.UNKNOWN_REFERENTIEL);
     }
 
     const accessResult =
@@ -39,7 +39,7 @@ export class ListMesureDocumentsService {
         { user, tx }
       );
     if (!accessResult.success) {
-      return failure(ListMesureDocumentsErrorEnum.UNAUTHORIZED);
+      return failure(ListDocumentsMesureErrorEnum.UNAUTHORIZED);
     }
 
     const { canReadConfidentiel } = accessResult.data;
@@ -51,8 +51,8 @@ export class ListMesureDocumentsService {
     };
 
     const [attendusResult, complementairesResult] = await Promise.all([
-      this.listMesureDocumentsRepository.listAttendus(scope, tx),
-      this.listMesureDocumentsRepository.listComplementaires(scope, tx),
+      this.listDocumentsMesureRepository.listAttendus(scope, tx),
+      this.listDocumentsMesureRepository.listComplementaires(scope, tx),
     ]);
 
     if (!attendusResult.success) {
@@ -62,7 +62,7 @@ export class ListMesureDocumentsService {
       return failure(complementairesResult.error);
     }
 
-    const parsing = listMesureDocumentsOutputSchema.safeParse({
+    const parsing = listDocumentsMesureOutputSchema.safeParse({
       attendus: toAttendus(attendusResult.data),
       complementaires: complementairesResult.data,
     });
@@ -71,7 +71,7 @@ export class ListMesureDocumentsService {
       this.logger.error(
         `Documents hors contrat pour la mesure ${actionId} de la collectivité ${collectiviteId}: ${parsing.error.message}`
       );
-      return failure(ListMesureDocumentsErrorEnum.DOCUMENT_SCHEMA_MISMATCH);
+      return failure(ListDocumentsMesureErrorEnum.DOCUMENT_SCHEMA_MISMATCH);
     }
 
     return success(parsing.data);

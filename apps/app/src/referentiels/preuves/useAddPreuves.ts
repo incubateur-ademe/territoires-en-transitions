@@ -186,10 +186,10 @@ export const invalidateQueries = (
   }: { invalidateParcours: boolean; trpc: ReturnType<typeof useTRPC> }
 ) => {
   queryClient.invalidateQueries({
-    queryKey: trpc.referentiels.documents.listDocuments.pathKey(),
+    queryKey: trpc.referentiels.documents.listDocumentsReferentiel.pathKey(),
   });
   queryClient.invalidateQueries({
-    queryKey: trpc.referentiels.documents.listMesureDocuments.pathKey(),
+    queryKey: trpc.referentiels.documents.listDocumentsMesure.pathKey(),
   });
   queryClient.invalidateQueries({
     queryKey: ['fiche_action'],

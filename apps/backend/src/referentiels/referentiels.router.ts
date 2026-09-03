@@ -5,8 +5,8 @@ import { ActionPersonnalisationsRouter } from './action-personnalisations/action
 import { AddPreuveRouter } from './add-preuve/add-preuve.router';
 import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
-import { ListDocumentsRouter } from './documents/list-documents/list-documents.router';
-import { ListMesureDocumentsRouter } from './documents/list-mesure-documents/list-mesure-documents.router';
+import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
+import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { HistoriqueRouter } from './historique/historique.router';
@@ -45,8 +45,8 @@ export class ReferentielsRouter {
     private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
     private readonly listPreuves: ListPreuvesRouter,
-    private readonly listDocumentsRouter: ListDocumentsRouter,
-    private readonly listMesureDocumentsRouter: ListMesureDocumentsRouter,
+    private readonly listDocumentsReferentielRouter: ListDocumentsReferentielRouter,
+    private readonly listDocumentsMesureRouter: ListDocumentsMesureRouter,
     private readonly updateAuditReport: UpdateAuditReportRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
@@ -98,8 +98,8 @@ export class ReferentielsRouter {
     ),
 
     documents: this.trpc.mergeRouters(
-      this.listDocumentsRouter.router,
-      this.listMesureDocumentsRouter.router
+      this.listDocumentsReferentielRouter.router,
+      this.listDocumentsMesureRouter.router
     ),
 
     definitions: this.getReferentielDefinitionRouter.router,

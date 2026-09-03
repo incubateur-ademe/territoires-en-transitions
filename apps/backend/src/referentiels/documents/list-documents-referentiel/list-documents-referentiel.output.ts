@@ -88,10 +88,10 @@ const documentRapportSchema = documentBaseSchema
   })
   .and(supportSchema);
 
-export const listDocumentsOutputSchema = z.object({
+export const listDocumentsReferentielOutputSchema = z.object({
   labellisation: z.array(documentLabellisationSchema),
   audit: z.array(documentAuditSchema),
   rapport: z.array(documentRapportSchema),
 });
 
-export type ListDocumentsOutput = z.infer<typeof listDocumentsOutputSchema>;
+export type ListDocumentsReferentielOutput = z.infer<typeof listDocumentsReferentielOutputSchema>;

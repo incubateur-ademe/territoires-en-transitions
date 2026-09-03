@@ -54,12 +54,12 @@ import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-a
 import { LabellisationService } from './labellisations/labellisation.service';
 import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
 import { ReferentielDocumentsAccessService } from './documents/referentiel-documents-access.service';
-import { ListDocumentsRepository } from './documents/list-documents/list-documents.repository';
-import { ListDocumentsRouter } from './documents/list-documents/list-documents.router';
-import { ListDocumentsService } from './documents/list-documents/list-documents.service';
-import { ListMesureDocumentsRepository } from './documents/list-mesure-documents/list-mesure-documents.repository';
-import { ListMesureDocumentsRouter } from './documents/list-mesure-documents/list-mesure-documents.router';
-import { ListMesureDocumentsService } from './documents/list-mesure-documents/list-mesure-documents.service';
+import { ListDocumentsReferentielRepository } from './documents/list-documents-referentiel/list-documents-referentiel.repository';
+import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
+import { ListDocumentsReferentielService } from './documents/list-documents-referentiel/list-documents-referentiel.service';
+import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
+import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
+import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
 import { ListPreuvesRepository } from './labellisations/list-preuves/list-preuves.repository';
 import { ListPreuvesService } from './labellisations/list-preuves/list-preuves.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
@@ -196,12 +196,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListPreuvesRepository,
     ListPreuvesService,
     ListPreuvesRouter,
-    ListDocumentsRepository,
-    ListDocumentsService,
-    ListDocumentsRouter,
-    ListMesureDocumentsRepository,
-    ListMesureDocumentsService,
-    ListMesureDocumentsRouter,
+    ListDocumentsReferentielRepository,
+    ListDocumentsReferentielService,
+    ListDocumentsReferentielRouter,
+    ListDocumentsMesureRepository,
+    ListDocumentsMesureService,
+    ListDocumentsMesureRouter,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
     ValidateAuditService,

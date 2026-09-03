@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
 
 type MesureDocuments =
-  RouterOutput['referentiels']['documents']['listMesureDocuments'];
+  RouterOutput['referentiels']['documents']['listDocumentsMesure'];
 
 export type MesureDocumentsState =
   | { status: 'loading' }
   | { status: 'error' }
   | ({ status: 'loaded' } & MesureDocuments);
 
-export const useListMesureDocuments = ({
+export const useListDocumentsMesure = ({
   collectiviteId,
   actionId,
   withSubActions,
@@ -21,7 +21,7 @@ export const useListMesureDocuments = ({
   const trpc = useTRPC();
 
   const { data, isError } = useQuery(
-    trpc.referentiels.documents.listMesureDocuments.queryOptions({
+    trpc.referentiels.documents.listDocumentsMesure.queryOptions({
       collectiviteId,
       actionId,
       withSubActions,

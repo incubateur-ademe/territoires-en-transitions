@@ -3,8 +3,8 @@ import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Fichier, Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   MesureDocumentsState,
-  useListMesureDocuments,
-} from '@/app/referentiels/preuves/data/use-list-mesure-documents';
+  useListDocumentsMesure,
+} from '@/app/referentiels/preuves/data/use-list-documents-mesure';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import {
@@ -79,7 +79,7 @@ const useDownloadDocs = (action: ActionListItem) => {
   const { nom } = collectivite || {};
 
   const collectiviteId = useCollectiviteId();
-  const documents = useListMesureDocuments({
+  const documents = useListDocumentsMesure({
     collectiviteId,
     actionId: action.actionId,
     withSubActions: true,
