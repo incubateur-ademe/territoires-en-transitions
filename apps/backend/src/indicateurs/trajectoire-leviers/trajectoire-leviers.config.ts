@@ -1,4 +1,8 @@
-import { TrajectoireSecteursEnum } from '../trajectoires/domain/trajectoire-secteurs.enum';
+import { Levier } from '@tet/domain/shared';
+import {
+  TrajectoireSecteursEnum,
+  TrajectoireSecteursType,
+} from '../trajectoires/domain/trajectoire-secteurs.enum';
 
 const REGIONS_FRANCAISES = {
   AUVERGNE_RHONE_ALPES: { code: '84' },
@@ -21,13 +25,13 @@ export type RegionCode =
 type PourcentagesRegionaux = Record<RegionCode, number>;
 
 export interface LevierConfiguration {
-  nom: string;
+  nom: Levier;
   pourcentagesRegionaux: PourcentagesRegionaux;
   sousSecteursIdentifiants?: string[];
 }
 
 export interface SecteurConfiguration {
-  nom: string;
+  nom: TrajectoireSecteursType;
   identifiants: string[];
   couleur?: string;
   leviers: LevierConfiguration[];
