@@ -88,7 +88,11 @@ export class UpdateAuditReportService {
 
       await this.databaseService.db
         .update(preuveAuditTable)
-        .set({ fichierId })
+        .set({
+          fichierId,
+          modifiedBy: user.id,
+          modifiedAt: new Date().toISOString(),
+        })
         .where(eq(preuveAuditTable.id, preuveId));
 
       return { success: true, data: { preuveId } };
