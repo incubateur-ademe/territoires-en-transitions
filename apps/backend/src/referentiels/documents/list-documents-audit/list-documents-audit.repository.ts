@@ -16,6 +16,7 @@ import { labellisationDemandeTable } from '../../labellisations/labellisation-de
 import { ListDocumentsAuditErrorEnum } from './list-documents-audit.errors';
 
 type AuditScope = {
+  collectiviteId: number;
   auditId: number;
   canReadConfidentiel: boolean;
 };
@@ -26,7 +27,11 @@ export class ListDocumentsAuditRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listDocumentsAudit({ auditId, canReadConfidentiel }: AuditScope) {
+  async listDocumentsAudit({
+    collectiviteId,
+    auditId,
+    canReadConfidentiel,
+  }: AuditScope) {
     const db = this.databaseService.db;
     const fichier = buildFichierSubquery(db);
 
@@ -52,7 +57,13 @@ export class ListDocumentsAuditRepository {
           preuveType: sql<'audit'>`'audit'`,
         })
         .from(preuveAuditTable)
-        .leftJoin(fichier, eq(preuveAuditTable.fichierId, fichier.id))
+        .leftJoin(
+          fichier,
+          and(
+            eq(preuveAuditTable.fichierId, fichier.id),
+            eq(fichier.collectiviteId, collectiviteId)
+          )
+        )
         .innerJoin(auditTable, eq(preuveAuditTable.auditId, auditTable.id))
         .leftJoin(
           labellisationDemandeTable,
@@ -62,6 +73,7 @@ export class ListDocumentsAuditRepository {
         .where(
           and(
             eq(preuveAuditTable.auditId, auditId),
+            eq(preuveAuditTable.collectiviteId, collectiviteId),
             hideConfidentielFilter({
               fichierIdColumn: preuveAuditTable.fichierId,
               confidentielColumn: fichier.confidentiel,

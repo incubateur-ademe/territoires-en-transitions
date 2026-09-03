@@ -7,6 +7,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -77,6 +78,53 @@ describe('List Documents Audit Router', () => {
     ).rejects.toThrow(
       "Vous n'avez pas les permissions nécessaires pour lister les documents de cet audit."
     );
+  });
+
+  test("n'expose pas le document d'une autre collectivite reference par une preuve d'audit", async () => {
+    const cycle = await createCollectiviteAvecCycle({
+      db,
+      router,
+      app,
+      accesRestreint: false,
+    });
+    const otherCycle = await createCollectiviteAvecCycle({
+      db,
+      router,
+      app,
+      accesRestreint: false,
+    });
+
+    await cycle.deposeUnDocumentDAudit({ fileName: 'audit-legitime.pdf' });
+    const fichierFromOtherCollectivite = await otherCycle.deposeUnDocumentDAudit({
+      fileName: 'audit-autre-collectivite.pdf',
+      sampleFileName: OTHER_PDF_SAMPLE_FILE,
+    });
+
+    await db.db.insert(preuveAuditTable).values([
+      {
+        collectiviteId: cycle.collectiviteId,
+        auditId: cycle.auditId,
+        fichierId: fichierFromOtherCollectivite.id,
+        commentaire: '',
+        modifiedBy: cycle.membreId,
+      },
+      {
+        collectiviteId: otherCycle.collectiviteId,
+        auditId: cycle.auditId,
+        fichierId: fichierFromOtherCollectivite.id,
+        commentaire: '',
+        modifiedBy: otherCycle.membreId,
+      },
+    ]);
+
+    const documents =
+      await cycle.membreCaller.referentiels.documents.listDocumentsAudit({
+        auditId: cycle.auditId,
+      });
+
+    const filenames = documents.map((document) => document.fichier?.filename);
+    expect(filenames).toContain('audit-legitime.pdf');
+    expect(filenames).not.toContain('audit-autre-collectivite.pdf');
   });
 
   test("masque les documents d'audit confidentiels a un utilisateur non membre", async () => {

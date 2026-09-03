@@ -72,7 +72,11 @@ export class ListDocumentsDemandeLabellisationService {
 
     const documents =
       await this.listDocumentsDemandeLabellisationRepository.listDocumentsDemandeLabellisation(
-        { demandeId, canReadConfidentiel }
+        {
+          collectiviteId: demande.collectiviteId,
+          demandeId,
+          canReadConfidentiel,
+        }
       );
     if (!documents.success) {
       return documents;

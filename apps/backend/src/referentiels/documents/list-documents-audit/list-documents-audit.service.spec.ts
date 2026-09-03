@@ -36,8 +36,9 @@ const documentSansAudit = {
 };
 
 function buildService(documents: unknown[]) {
-  return new ListDocumentsAuditService(
-    { listDocumentsAudit: vi.fn().mockResolvedValue(success(documents)) } as never,
+  const listDocumentsAudit = vi.fn().mockResolvedValue(success(documents));
+  const service = new ListDocumentsAuditService(
+    { listDocumentsAudit } as never,
     { getAudit: vi.fn().mockResolvedValue(success(audit)) } as never,
     {
       checkUserCanReadDocuments: vi
@@ -45,11 +46,25 @@ function buildService(documents: unknown[]) {
         .mockResolvedValue(success({ canReadConfidentiel: true })),
     } as never
   );
+
+  return { service, listDocumentsAudit };
 }
 
 describe('ListDocumentsAuditService', () => {
+  it("transmet au repository la collectivité portée par l'audit chargé", async () => {
+    const { service, listDocumentsAudit } = buildService([]);
+
+    await service.listDocumentsAudit({ auditId: 10 }, user);
+
+    expect(listDocumentsAudit).toHaveBeenCalledWith({
+      collectiviteId: audit.collectiviteId,
+      auditId: 10,
+      canReadConfidentiel: true,
+    });
+  });
+
   it("refuse un document d'audit dont l'audit manque, au lieu de le rendre", async () => {
-    const service = buildService([documentSansAudit]);
+    const { service } = buildService([documentSansAudit]);
 
     const result = await service.listDocumentsAudit({ auditId: 10 }, user);
 

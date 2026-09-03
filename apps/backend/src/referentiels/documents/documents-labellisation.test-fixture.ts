@@ -68,6 +68,7 @@ export const createCollectiviteAvecCycle = async ({
     collectiviteId: collectivite.id,
     auditId: audit.id,
     demandeId: demande.id,
+    membreId: membre.id,
     membreCaller,
 
     deposeUnDocumentDeDemande: (document?: {
@@ -106,6 +107,8 @@ export const createCollectiviteAvecCycle = async ({
         commentaire: '',
         modifiedBy: membre.id,
       });
+
+      return fichier;
     },
   };
 };
