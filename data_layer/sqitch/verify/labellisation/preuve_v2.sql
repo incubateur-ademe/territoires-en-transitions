@@ -28,7 +28,5 @@ select collectivite_id, nom, referentiel, action, preuve_type, fichier, lien, cr
 from retool_preuves
 where false;
 
-select has_function_privilege('update_bibliotheque_fichier_confidentiel(integer, character varying, boolean)', 'execute');
-
 
 ROLLBACK;
