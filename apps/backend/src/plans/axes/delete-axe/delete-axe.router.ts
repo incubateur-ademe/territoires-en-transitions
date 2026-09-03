@@ -18,8 +18,8 @@ export class DeleteAxeRouter {
   router = this.trpc.router({
     delete: this.trpc.authedProcedure
       .input(deleteAxeInputSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.deleteAxeService.deleteAxe(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.deleteAxeService.deleteAxe(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

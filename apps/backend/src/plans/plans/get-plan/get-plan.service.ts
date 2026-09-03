@@ -48,7 +48,10 @@ export class GetPlanService {
       const plan = planResult.data;
 
       if (user) {
-        const isAllowed = await this.checkPermission(plan.collectiviteId, user);
+        const isAllowed = await this.checkPermission(
+          plan.collectiviteId,
+          user
+        );
         if (!isAllowed) {
           return {
             success: false,

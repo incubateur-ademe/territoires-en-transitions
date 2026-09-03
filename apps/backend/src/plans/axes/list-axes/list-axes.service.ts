@@ -3,6 +3,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
@@ -22,10 +23,12 @@ export class ListAxesService {
 
   async listAxes(
     input: ListAxesInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<ListAxesOutput, ListAxesError>> {
-    const permissionResult = await this.checkPermission(input.collectiviteId, user);
+    const permissionResult = await this.checkPermission(
+      input.collectiviteId,
+      user
+    );
     if (!permissionResult) {
       return {
         success: false,
@@ -42,7 +45,10 @@ export class ListAxesService {
     tx?: Transaction
   ): Promise<Result<PlanNode[], ListAxesError>> {
     if (user) {
-      const permissionResult = await this.checkPermission(input.collectiviteId, user);
+      const permissionResult = await this.checkPermission(
+        input.collectiviteId,
+        user
+      );
       if (!permissionResult) {
         return {
           success: false,

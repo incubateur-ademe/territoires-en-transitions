@@ -18,8 +18,8 @@ export class GetAxeRouter {
   router = this.trpc.router({
     get: this.trpc.authedProcedure
       .input(getAxeInputSchema)
-      .query(async ({ input, ctx }) => {
-        const result = await this.getAxeService.getAxe(input, ctx.user);
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.getAxeService.getAxe(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

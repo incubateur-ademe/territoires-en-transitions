@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetAxeErrorEnum } from '../get-axe/get-axe.errors';
@@ -24,14 +23,12 @@ export class DeleteAxeService {
 
   async deleteAxe(
     input: DeleteAxeInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<void, DeleteAxeError>> {
     // Récupérer l'axe pour obtenir le collectiviteId
     const axeResult = await this.getAxeService.getAxe(
       { axeId: input.axeId },
-      user,
-      tx
+      { user, tx }
     );
 
     if (!axeResult.success) {

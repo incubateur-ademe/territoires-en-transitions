@@ -19,8 +19,8 @@ export class DeletePlanRouter {
   router = this.trpc.router({
     delete: this.trpc.authedProcedure
       .input(deletePlanInputSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.deletePlanService.deletePlan(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.deletePlanService.deletePlan(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

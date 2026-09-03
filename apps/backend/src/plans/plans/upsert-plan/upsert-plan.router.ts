@@ -25,23 +25,23 @@ export class UpsertPlanRouter {
   router = this.trpc.router({
     create: this.trpc.authedProcedure
       .input(createPlanSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.upsertPlanService.upsertPlan(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.upsertPlanService.upsertPlan(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
     update: this.trpc.authedProcedure
       .input(updatePlanSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.upsertPlanService.upsertPlan(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.upsertPlanService.upsertPlan(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
     setFichesPrivate: this.trpc.authedProcedure
       .input(setFichesPrivateSchema)
-      .mutation(async ({ input, ctx }) => {
+      .mutation(async ({ input, ctx: { user } }) => {
         const result = await this.upsertPlanService.setFichesPrivate({
           planId: input.planId,
           isPrivate: input.isPrivate,
-          user: ctx.user,
+          user,
         });
         return this.getResultDataOrThrowError(result);
       }),

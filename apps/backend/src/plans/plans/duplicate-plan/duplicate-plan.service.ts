@@ -5,6 +5,7 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Personne, PersonneId } from '@tet/domain/collectivites';
@@ -62,8 +63,7 @@ export class DuplicatePlanService {
 
   async duplicate(
     { planId, nom }: DuplicatePlanInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<{ planId: number }, DuplicatePlanError>> {
     return this.transactionManager.executeSingle<
       { planId: number },
@@ -104,8 +104,7 @@ export class DuplicatePlanService {
           dateDebut: source.dateDebut,
           dateFin: source.dateFin,
         },
-        user,
-        transaction
+        { user, tx: transaction }
       );
       if (!newPlanResult.success) {
         return failure(
@@ -222,9 +221,13 @@ export class DuplicatePlanService {
       }
 
       const createdAxe = await this.upsertAxeService.upsertAxe(
-        { planId: newPlanId, parent: parentNewId, collectiviteId, nom: axe.nom },
-        user,
-        tx
+        {
+          planId: newPlanId,
+          parent: parentNewId,
+          collectiviteId,
+          nom: axe.nom,
+        },
+        { user, tx }
       );
       if (!createdAxe.success) {
         return failure(DuplicatePlanErrorEnum.DUPLICATE_PLAN_ERROR);
