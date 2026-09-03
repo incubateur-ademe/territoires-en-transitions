@@ -78,6 +78,7 @@ function createScoreComparisonData(
     pilotes: {},
     services: {},
     fichesActionLiees: {},
+    personnalisationQuestions: [],
   };
 }
 
