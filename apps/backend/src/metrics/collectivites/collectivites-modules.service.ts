@@ -190,7 +190,7 @@ export class CollectivitesModulesService {
     } else if (request.defaultKey) {
       const planActionIdsResult = await this.listPlansService.listPlans(
         { collectiviteId: request.collectiviteId },
-        authUser
+        { user: authUser }
       );
       const planActionIds = planActionIdsResult.success
         ? planActionIdsResult.data.plans.map((plan) => plan.id)
@@ -219,7 +219,7 @@ export class CollectivitesModulesService {
   ) {
     const planActionIdsResult = await this.listPlansService.listPlans(
       { collectiviteId },
-      authUser
+      { user: authUser }
     );
 
     const planActionIds = planActionIdsResult.success

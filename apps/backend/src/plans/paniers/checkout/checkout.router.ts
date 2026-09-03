@@ -18,8 +18,8 @@ export class CheckoutRouter {
   router = this.trpc.router({
     checkout: this.trpc.authedProcedure
       .input(checkoutInputSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.checkoutService.execute(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.checkoutService.execute(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

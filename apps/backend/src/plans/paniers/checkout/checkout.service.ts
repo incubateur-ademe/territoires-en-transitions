@@ -6,6 +6,7 @@ import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-p
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import {
   combineResults,
   failure,
@@ -36,8 +37,7 @@ export class CheckoutService {
 
   async execute(
     input: CheckoutInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<{ planId: number }, CheckoutError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
@@ -183,8 +183,7 @@ export class CheckoutService {
     }
     const planResult = await this.upsertPlanService.upsertPlan(
       { nom: "Plan d'action à impact", collectiviteId: input.collectiviteId },
-      user,
-      tx
+      { user, tx }
     );
     if (!planResult.success) {
       this.logger.error(

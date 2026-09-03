@@ -3,12 +3,10 @@ import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-b
 import { getBudgetsRequest } from '@tet/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import {
-  AuthenticatedUser,
-  AuthUser,
-} from '@tet/backend/users/models/auth.models';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   assertNoDuplicateBudgets,
@@ -120,7 +118,7 @@ export class FicheActionBudgetService {
 
   async upsert(
     budgets: FicheBudgetCreate[],
-    user: AuthenticatedUser
+    { user }: ServiceSecondArg
   ): Promise<FicheBudget[]> {
     if (budgets.length === 0) {
       return [];
@@ -163,7 +161,11 @@ export class FicheActionBudgetService {
     }
   }
 
-  async delete(ficheId: number, budgetsIds: number[], user: AuthenticatedUser) {
+  async delete(
+    ficheId: number,
+    budgetsIds: number[],
+    { user }: ServiceSecondArg
+  ) {
     if (budgetsIds.length === 0) {
       return;
     }

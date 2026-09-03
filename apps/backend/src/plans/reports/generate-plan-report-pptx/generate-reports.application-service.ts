@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
@@ -147,7 +147,7 @@ export class GenerateReportsApplicationService {
 
   async get(
     reportId: string,
-    user: AuthenticatedUser
+    { user }: ServiceSecondArg
   ): Promise<Result<ReportGeneration, GenerateReportError>> {
     const reportGenerationResult = await this.reportGenerationRepository.get(
       reportId
@@ -188,7 +188,7 @@ export class GenerateReportsApplicationService {
 
   async createPendingPlanReportGeneration(
     request: GenerateReportInput,
-    user: AuthenticatedUser
+    { user }: ServiceSecondArg
   ): Promise<Result<ReportGeneration, GenerateReportError>> {
     this.logger.log(
       `Creating pending plan report generation for plan ${request.planId} with template ${request.templateKey}`

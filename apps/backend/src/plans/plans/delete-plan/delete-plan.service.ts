@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DeleteFicheService } from '../../fiches/delete-fiche/delete-fiche.service';
@@ -26,8 +26,7 @@ export class DeletePlanService {
 
   async deletePlan(
     input: DeletePlanInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<void, DeletePlanError>> {
     const executeInTransaction = async (
       transaction: Transaction

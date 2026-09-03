@@ -130,8 +130,7 @@ export class CreateAndLinkPlanService {
           dateDebut: input.dateDebut,
           dateFin: input.dateFin,
         },
-        user,
-        transaction
+        { user, tx: transaction }
       );
       if (!planResult.success) {
         return failure(

@@ -19,11 +19,8 @@ export class DuplicatePlanRouter {
   router = this.trpc.router({
     duplicate: this.trpc.authedProcedure
       .input(duplicatePlanInputSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.duplicatePlanService.duplicate(
-          input,
-          ctx.user
-        );
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.duplicatePlanService.duplicate(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

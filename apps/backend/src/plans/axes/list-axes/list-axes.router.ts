@@ -18,16 +18,16 @@ export class ListAxesRouter {
   router = this.trpc.router({
     list: this.trpc.authedProcedure
       .input(listAxesInputSchema)
-      .query(async ({ input, ctx }) => {
-        const result = await this.listAxesService.listAxes(input, ctx.user);
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.listAxesService.listAxes(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
     listRecursively: this.trpc.authedProcedure
       .input(listAxesInputSchema)
-      .query(async ({ input, ctx }) => {
+      .query(async ({ input, ctx: { user } }) => {
         const result = await this.listAxesService.listAxesRecursively(
           input,
-          ctx.user
+          user
         );
         return this.getResultDataOrThrowError(result);
       }),

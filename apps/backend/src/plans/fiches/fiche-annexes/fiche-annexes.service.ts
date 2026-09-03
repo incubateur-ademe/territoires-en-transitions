@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   CommonError,
@@ -34,7 +34,7 @@ export class FicheAnnexesService {
 
   async listForFiches(
     input: FicheAnnexesInput,
-    user: AuthenticatedUser
+    { user }: ServiceSecondArg
   ): Promise<Result<FicheAnnexesOutput, CommonError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,

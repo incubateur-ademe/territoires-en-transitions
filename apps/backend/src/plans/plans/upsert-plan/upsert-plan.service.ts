@@ -3,6 +3,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -26,8 +27,7 @@ export class UpsertPlanService {
 
   async upsertPlan(
     plan: UpsertPlanInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<AxeLight, UpsertPlanError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
