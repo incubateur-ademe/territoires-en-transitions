@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
-import { canUserUpdateAuditReport } from '@/app/referentiels/preuves/Bibliotheque/canUserUpdateAuditReport';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import {
   CarteDocumentAction,
@@ -13,11 +12,15 @@ import {
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
-  canUserUpdateCandidatureDocuments,
+  canUpdateAuditReport,
+  canUpdateCandidatureDocuments,
   Etoile,
   getParcoursLabellisationStatus,
 } from '@tet/domain/referentiels';
-import { UserRolesAndPermissions } from '@tet/domain/users';
+import {
+  isUserAuditeurForAudit,
+  UserRolesAndPermissions,
+} from '@tet/domain/users';
 import { Fragment } from 'react';
 import { numLabels } from '../labellisations/numLabels';
 
@@ -126,14 +129,19 @@ const canUpdateAuditOrLabellisationPreuve = ({
   canMutateLabellisationDocuments: boolean;
 }): boolean => {
   if (preuve.preuveType === 'audit') {
-    return canUserUpdateAuditReport(user, preuve);
+    return canUpdateAuditReport({
+      isAuditeur: isUserAuditeurForAudit(user, preuve.audit.id),
+      canMutateLabellisationDocuments,
+      audit: preuve.audit,
+      now: new Date(),
+    });
   }
-  return canUserUpdateCandidatureDocuments({
-    preuveType: preuve.preuveType,
-    canMutateReferentiels,
+  const isAuditeur = audit !== null && isUserAuditeurForAudit(user, audit.id);
+  return canUpdateCandidatureDocuments({
+    isAuditee: !isAuditeur && canMutateReferentiels,
     canMutateLabellisationDocuments,
     audit,
-  });
+  }).canUpdate;
 };
 
 /**

@@ -5,7 +5,8 @@ import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
 import {
-  canModifyCandidatureDocuments,
+  CandidatureDocumentsUpdate,
+  canUpdateCandidatureDocuments,
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -94,14 +95,14 @@ export class EditPreuveDocumentService {
     const isEditingLienOrCommentaire =
       lien !== undefined || commentaire !== undefined;
     if (isEditingLienOrCommentaire) {
-      const isPreuveEditable = await this.canModifyPreuve({
+      const preuveUpdate = await this.canUpdatePreuve({
         preuveType,
         preuveId,
         collectiviteId: preuve.collectiviteId,
         user,
       });
-      if (!isPreuveEditable) {
-        return failure(EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS);
+      if (!preuveUpdate.canUpdate) {
+        return failure(this.toEditPreuveError(preuveUpdate));
       }
     }
 
@@ -150,14 +151,14 @@ export class EditPreuveDocumentService {
       return failure(modeError);
     }
 
-    const isPreuveRemovable = await this.canModifyPreuve({
+    const preuveRemoval = await this.canUpdatePreuve({
       preuveType,
       preuveId,
       collectiviteId: preuve.collectiviteId,
       user,
     });
-    if (!isPreuveRemovable) {
-      return failure(EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS);
+    if (!preuveRemoval.canUpdate) {
+      return failure(this.toEditPreuveError(preuveRemoval));
     }
 
     return this.editPreuveDocumentRepository.deleteById(preuveType, preuveId);
@@ -178,7 +179,7 @@ export class EditPreuveDocumentService {
     return permissionResult.success;
   }
 
-  private async canModifyPreuve({
+  private async canUpdatePreuve({
     preuveType,
     preuveId,
     collectiviteId,
@@ -188,18 +189,52 @@ export class EditPreuveDocumentService {
     preuveId: number;
     collectiviteId: number;
     user: AuthenticatedUser;
-  }): Promise<boolean> {
+  }): Promise<CandidatureDocumentsUpdate> {
     if (preuveType !== 'labellisation') {
-      return true;
+      return { canUpdate: true };
     }
+    const canMutateLabellisationDocuments =
+      await this.canMutateLabellisationDocuments(user, collectiviteId);
+    if (canMutateLabellisationDocuments) {
+      return { canUpdate: true };
+    }
+    const referentielId =
+      await this.editPreuveDocumentRepository.findReferentielByLabellisationPreuve(
+        preuveId
+      );
+    const canMutateReferentiels =
+      referentielId !== null &&
+      (
+        await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
+          ResourceType.REFERENTIEL,
+          { collectiviteId, referentielId }
+        )
+      ).success;
+    const isAuditeur =
+      await this.editPreuveDocumentRepository.isAuditeurForLabellisationPreuve(
+        preuveId,
+        user.id
+      );
     const audit =
       await this.editPreuveDocumentRepository.findAuditByLabellisationPreuve(
         preuveId
       );
-    return canModifyCandidatureDocuments({
+    return canUpdateCandidatureDocuments({
+      isAuditee: !isAuditeur && canMutateReferentiels,
+      canMutateLabellisationDocuments,
       audit,
-      canMutateLabellisationDocuments:
-        await this.canMutateLabellisationDocuments(user, collectiviteId),
     });
+  }
+
+  private toEditPreuveError({
+    reason,
+  }: {
+    reason: 'not_auditee' | 'frozen';
+  }): EditPreuveDocumentError {
+    return reason === 'not_auditee'
+      ? CommonErrorEnum.UNAUTHORIZED
+      : EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS;
   }
 }

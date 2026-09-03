@@ -9,6 +9,7 @@ import {
   ActionId,
   AuditLabellisationReferentielId,
   EtoileEnum,
+  canUpdateCandidatureDocuments,
   getExpectedDocuments,
   ObjetPreuveEnum,
 } from '@tet/domain/referentiels';
@@ -31,7 +32,7 @@ export type ChecklistContextValue = {
   premiereEtoileObtenue: boolean;
   showActeEngagement: boolean;
   showCandidatureDocuments: boolean;
-  canMutateLabellisationDocuments: boolean;
+  canUpdateCandidatureDocuments: boolean;
 };
 
 type RoleDropdownContextValue = {
@@ -62,11 +63,8 @@ const ChecklistParcoursProvider = ({
   );
 
   const parcours = useMemo(
-    () =>
-      cycle.parcours
-        ? parcoursToChecklist(cycle.parcours, canMutateLabellisationDocuments)
-        : null,
-    [cycle.parcours, canMutateLabellisationDocuments]
+    () => (cycle.parcours ? parcoursToChecklist(cycle.parcours) : null),
+    [cycle.parcours]
   );
 
   const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
@@ -90,7 +88,11 @@ const ChecklistParcoursProvider = ({
       premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
-      canMutateLabellisationDocuments,
+      canUpdateCandidatureDocuments: canUpdateCandidatureDocuments({
+        isAuditee: cycle.viewerRole === 'auditee',
+        canMutateLabellisationDocuments,
+        audit: cycle.parcours?.audit ?? null,
+      }).canUpdate,
     }),
     [
       cycle,

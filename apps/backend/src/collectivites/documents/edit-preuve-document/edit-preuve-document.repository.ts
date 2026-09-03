@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
+import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { labellisationDemandeTable } from '@tet/backend/referentiels/labellisations/labellisation-demande.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
@@ -7,9 +9,9 @@ import {
   CommonErrorEnum,
 } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
-import { LabellisationAudit } from '@tet/domain/referentiels';
+import { LabellisationAudit, ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { DocumentBase } from '../models/document.basetable';
 import { preuveLabellisationTable } from '../models/preuve-labellisation.table';
 import { preuveComplementaireTable } from '../models/preuve-complementaire.table';
@@ -67,6 +69,44 @@ export class EditPreuveDocumentRepository {
       .orderBy(desc(auditTable.dateDebut))
       .limit(1);
     return row ?? null;
+  }
+
+  async findReferentielByLabellisationPreuve(
+    preuveId: number
+  ): Promise<ReferentielId | null> {
+    const [row] = await this.databaseService.db
+      .select({ referentielId: labellisationDemandeTable.referentiel })
+      .from(preuveLabellisationTable)
+      .innerJoin(
+        labellisationDemandeTable,
+        eq(labellisationDemandeTable.id, preuveLabellisationTable.demandeId)
+      )
+      .where(eq(preuveLabellisationTable.id, preuveId))
+      .limit(1);
+    return row?.referentielId ?? null;
+  }
+
+  async isAuditeurForLabellisationPreuve(
+    preuveId: number,
+    auditeur: string
+  ): Promise<boolean> {
+    const [row] = await this.databaseService.db
+      .select({ auditId: auditeurTable.auditId })
+      .from(preuveLabellisationTable)
+      .innerJoin(
+        auditTable,
+        eq(auditTable.demandeId, preuveLabellisationTable.demandeId)
+      )
+      .innerJoin(
+        auditeurTable,
+        and(
+          eq(auditeurTable.auditId, auditTable.id),
+          eq(auditeurTable.auditeur, auditeur)
+        )
+      )
+      .where(eq(preuveLabellisationTable.id, preuveId))
+      .limit(1);
+    return row !== undefined;
   }
 
   async updateById(

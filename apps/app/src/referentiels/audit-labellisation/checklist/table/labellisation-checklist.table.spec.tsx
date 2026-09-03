@@ -42,7 +42,6 @@ const emptyParcours: Parcours = {
   mesures: [],
   roleMesures: { eluReferent: null, referentTechnique: null },
   acteEngagement: { demandeId: null },
-  canModifyCandidatureDocuments: false,
 };
 
 describe('LabellisationChecklistTable', () => {
