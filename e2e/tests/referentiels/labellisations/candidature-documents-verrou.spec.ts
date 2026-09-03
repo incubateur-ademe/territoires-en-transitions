@@ -85,7 +85,10 @@ test.describe('Documents de candidature — verrou apres validation', () => {
       auditLabellisationPom.ajouterDocumentCandidatureButton
     ).toHaveCount(0);
     await expect(
-      page.getByRole('button', { name: 'Renommer le fichier' })
+      auditLabellisationPom.renommerDocumentCandidatureButton
+    ).toHaveCount(0);
+    await expect(
+      auditLabellisationPom.supprimerDocumentCandidatureButton
     ).toHaveCount(0);
   });
 
@@ -115,7 +118,10 @@ test.describe('Documents de candidature — verrou apres validation', () => {
       auditLabellisationPom.ajouterDocumentCandidatureButton
     ).toHaveCount(1);
     await expect(
-      page.getByRole('button', { name: 'Supprimer' }).first()
-    ).toBeVisible();
+      auditLabellisationPom.renommerDocumentCandidatureButton
+    ).toHaveCount(1);
+    await expect(
+      auditLabellisationPom.supprimerDocumentCandidatureButton
+    ).toHaveCount(1);
   });
 });
