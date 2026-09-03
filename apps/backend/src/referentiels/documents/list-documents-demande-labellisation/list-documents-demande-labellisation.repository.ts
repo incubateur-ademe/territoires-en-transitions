@@ -15,6 +15,7 @@ import { labellisationDemandeTable } from '../../labellisations/labellisation-de
 import { ListDocumentsDemandeLabellisationErrorEnum } from './list-documents-demande-labellisation.errors';
 
 type DemandeScope = {
+  collectiviteId: number;
   demandeId: number;
   canReadConfidentiel: boolean;
 };
@@ -28,6 +29,7 @@ export class ListDocumentsDemandeLabellisationRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async listDocumentsDemandeLabellisation({
+    collectiviteId,
     demandeId,
     canReadConfidentiel,
   }: DemandeScope) {
@@ -50,7 +52,13 @@ export class ListDocumentsDemandeLabellisationRepository {
           preuveType: sql<'labellisation'>`'labellisation'`,
         })
         .from(preuveLabellisationTable)
-        .leftJoin(fichier, eq(preuveLabellisationTable.fichierId, fichier.id))
+        .leftJoin(
+          fichier,
+          and(
+            eq(preuveLabellisationTable.fichierId, fichier.id),
+            eq(fichier.collectiviteId, collectiviteId)
+          )
+        )
         .leftJoin(
           labellisationDemandeTable,
           eq(preuveLabellisationTable.demandeId, labellisationDemandeTable.id)
@@ -62,6 +70,7 @@ export class ListDocumentsDemandeLabellisationRepository {
         .where(
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
+            eq(preuveLabellisationTable.collectiviteId, collectiviteId),
             hideConfidentielFilter({
               fichierIdColumn: preuveLabellisationTable.fichierId,
               confidentielColumn: fichier.confidentiel,

@@ -62,7 +62,11 @@ export class ListDocumentsAuditService {
     const { canReadConfidentiel } = accessResult.data;
 
     const documents = await this.listDocumentsAuditRepository.listDocumentsAudit(
-      { auditId, canReadConfidentiel }
+      {
+        collectiviteId: auditData.collectiviteId,
+        auditId,
+        canReadConfidentiel,
+      }
     );
     if (!documents.success) {
       return documents;
