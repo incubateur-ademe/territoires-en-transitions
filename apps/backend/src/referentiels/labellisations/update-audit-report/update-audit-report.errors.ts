@@ -25,7 +25,7 @@ export const updateAuditReportErrorConfig: TrpcErrorHandlerConfig<SpecificError>
       UPDATE_NOT_ALLOWED: {
         code: 'UNAUTHORIZED',
         message:
-          "Seul l'auditeur de cet audit peut remplacer le rapport, et uniquement dans les 15 jours suivant la clôture.",
+          "Le remplacement du rapport est réservé à l'auditeur de cet audit, dans les 15 jours suivant la clôture.",
       },
       DATABASE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
