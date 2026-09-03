@@ -58,7 +58,6 @@ insert into labellisation.bibliotheque_fichier (collectivite_id, hash, filename)
 select f.collectivite_id, f.hash, f.filename
 from test.file f;
 
--- check l'insertion dans la bibliothèque qui est testée dans `fichier_preuve`
 select isnt_empty('select * from bibliotheque_fichier');
 
 -- Puis on attache le fichier à une action comme preuve complémentaire.
