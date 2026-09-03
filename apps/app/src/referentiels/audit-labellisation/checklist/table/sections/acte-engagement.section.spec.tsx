@@ -2,8 +2,22 @@ import { ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
-import { ActeEngagementSection } from './acte-engagement.section';
+import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
+import { AuditViewerRole } from '../../../audit-badge-status/types';
+import { Parcours } from '../../../checklist-view-model';
+import {
+  ChecklistContext,
+  ChecklistContextValue,
+} from '../../../checklist.context';
+import {
+  ActeEngagementRow,
+  ActeEngagementSection,
+} from './acte-engagement.section';
 import { ChecklistPreuve } from './checklist-preuve';
+
+vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
+  usePreuvesLabellisation: vi.fn(),
+}));
 
 vi.mock('./upload-preuve-button', () => ({
   UploadPreuveButton: ({ label }: { label: string }) => (
@@ -178,5 +192,60 @@ describe('ActeEngagementSection — chargement', () => {
         name: appLabels.ajouterDocument,
       })
     ).toBeNull();
+  });
+});
+
+describe("ActeEngagementRow — qui peut éditer l'acte", () => {
+  const renderRow = ({
+    viewerRole,
+    canMutateLabellisationDocuments,
+  }: {
+    viewerRole: AuditViewerRole;
+    canMutateLabellisationDocuments: boolean;
+  }) => {
+    vi.mocked(usePreuvesLabellisation).mockReturnValue({
+      data: [toActeDepose('acte-signe.pdf')],
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePreuvesLabellisation>);
+
+    const checklist = {
+      parcours: { acteEngagement: { demandeId: 42 } } as unknown as Parcours,
+      referentielId: 'cae',
+      cycle: { viewerRole },
+      canMutateLabellisationDocuments,
+    } as unknown as ChecklistContextValue;
+
+    render(
+      <ChecklistContext.Provider value={checklist}>
+        <ActeEngagementRow />
+      </ChecklistContext.Provider>
+    );
+  };
+
+  it("laisse l'audité supprimer l'acte", () => {
+    renderRow({
+      viewerRole: 'auditee',
+      canMutateLabellisationDocuments: false,
+    });
+
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
+    ).toBeDefined();
+  });
+
+  it("refuse la suppression à qui n'est ni l'audité ni porteur de la permission", () => {
+    renderRow({ viewerRole: 'other', canMutateLabellisationDocuments: false });
+
+    expect(
+      screen.queryByRole('button', { name: appLabels.supprimer })
+    ).toBeNull();
+  });
+
+  it("laisse le porteur de la permission supprimer l'acte sans être l'audité", () => {
+    renderRow({ viewerRole: 'other', canMutateLabellisationDocuments: true });
+
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
+    ).toBeDefined();
   });
 });

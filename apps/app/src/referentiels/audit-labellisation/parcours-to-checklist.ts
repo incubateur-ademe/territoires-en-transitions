@@ -78,7 +78,8 @@ const getMinimumScore = (
 };
 
 export const parcoursToChecklist = (
-  parcours: ParcoursLabellisation
+  parcours: ParcoursLabellisation,
+  canMutateLabellisationDocuments: boolean
 ): Parcours => {
   return {
     etoileObjectif: parcours.etoiles,
@@ -109,6 +110,7 @@ export const parcoursToChecklist = (
     },
     canModifyCandidatureDocuments: canModifyCandidatureDocuments({
       audit: parcours.audit ? { valide: parcours.audit.valide } : null,
+      canMutateLabellisationDocuments,
     }),
   };
 };

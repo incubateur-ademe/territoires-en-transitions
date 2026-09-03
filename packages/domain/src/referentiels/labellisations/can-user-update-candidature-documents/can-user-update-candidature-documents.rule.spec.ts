@@ -7,6 +7,7 @@ describe('canUserUpdateCandidatureDocuments', () => {
       canUserUpdateCandidatureDocuments({
         preuveType: 'audit',
         canMutateReferentiels: true,
+        canMutateLabellisationDocuments: false,
         audit: null,
       })
     ).toBe(false);
@@ -17,6 +18,7 @@ describe('canUserUpdateCandidatureDocuments', () => {
       canUserUpdateCandidatureDocuments({
         preuveType: 'labellisation',
         canMutateReferentiels: true,
+        canMutateLabellisationDocuments: false,
         audit: null,
       })
     ).toBe(true);
@@ -27,6 +29,7 @@ describe('canUserUpdateCandidatureDocuments', () => {
       canUserUpdateCandidatureDocuments({
         preuveType: 'labellisation',
         canMutateReferentiels: true,
+        canMutateLabellisationDocuments: false,
         audit: { valide: false },
       })
     ).toBe(true);
@@ -37,6 +40,7 @@ describe('canUserUpdateCandidatureDocuments', () => {
       canUserUpdateCandidatureDocuments({
         preuveType: 'labellisation',
         canMutateReferentiels: true,
+        canMutateLabellisationDocuments: false,
         audit: { valide: true },
       })
     ).toBe(false);
@@ -47,7 +51,30 @@ describe('canUserUpdateCandidatureDocuments', () => {
       canUserUpdateCandidatureDocuments({
         preuveType: 'labellisation',
         canMutateReferentiels: false,
+        canMutateLabellisationDocuments: false,
         audit: { valide: false },
+      })
+    ).toBe(false);
+  });
+
+  it("autorise le porteur de la permission sur un audit validé, sans droit de mutation", () => {
+    expect(
+      canUserUpdateCandidatureDocuments({
+        preuveType: 'labellisation',
+        canMutateReferentiels: false,
+        canMutateLabellisationDocuments: true,
+        audit: { valide: true },
+      })
+    ).toBe(true);
+  });
+
+  it("refuse la permission sur un document qui n'est pas de candidature", () => {
+    expect(
+      canUserUpdateCandidatureDocuments({
+        preuveType: 'audit',
+        canMutateReferentiels: false,
+        canMutateLabellisationDocuments: true,
+        audit: { valide: true },
       })
     ).toBe(false);
   });
