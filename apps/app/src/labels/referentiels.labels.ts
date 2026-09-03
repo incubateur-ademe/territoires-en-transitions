@@ -1,15 +1,6 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const referentielsLabels = {
-  reclasserDocument: 'Reclasser le document',
-  reclasserDocumentTitre: "Reclasser l'objet du document",
-  reclasserDocumentLegende:
-    'À quel attendu de la candidature ce document répond-il ?',
-  reclasserDocumentActeEngagement: "Acte d'engagement",
-  reclasserDocumentCandidature: 'Document de candidature',
-  reclasserDocumentNonClasse: 'Non classé',
-  reclasserDocumentSucces: "L'objet du document a été modifié",
-  reclasserDocumentEchec: "Échec de la modification de l'objet du document",
   /** Noms */
   referentielCae: 'Climat Air Énergie',
   referentielEci: 'Économie Circulaire',

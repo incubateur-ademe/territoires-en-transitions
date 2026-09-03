@@ -22,7 +22,6 @@ import {
   isActionCarriedBy,
 } from './carte-document-action';
 import DocumentInput from './DocumentInput';
-import { ReclassifyDocumentModal } from '@/app/referentiels/documents/reclassify-document/reclassify-document.modal';
 import { DuplicatedDocumentAlert } from './duplicated-document.alert';
 import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
@@ -153,9 +152,6 @@ const CarteDocument = ({
               replace: isShown('replace')
                 ? () => setOpenAction('replace')
                 : undefined,
-              reclassify: isShown('reclassify')
-                ? () => setOpenAction('reclassify')
-                : undefined,
               delete: isShown('delete')
                 ? () => setOpenAction('delete')
                 : undefined,
@@ -248,18 +244,6 @@ const CarteDocument = ({
           )}
         </Card>
       </div>
-
-      {document.preuveType === 'labellisation' && (
-        <VisibleWhen condition={openAction === 'reclassify'}>
-          <ReclassifyDocumentModal
-            preuveId={document.id}
-            collectiviteId={document.collectiviteId}
-            objet={document.objet}
-            isOpen={openAction === 'reclassify'}
-            setIsOpen={closeAction}
-          />
-        </VisibleWhen>
-      )}
       {openAction === 'delete' && (
         <AlerteSuppression
           isOpen={true}

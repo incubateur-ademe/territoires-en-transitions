@@ -44,25 +44,10 @@ const DeleteDocumentButton = ({ onDelete }: { onDelete: () => void }) => (
   <DeleteButton title={appLabels.supprimer} size="xs" onClick={onDelete} />
 );
 
-const ReclassifyDocumentButton = ({
-  onReclassify,
-}: {
-  onReclassify: () => void;
-}) => (
-  <Button
-    title={appLabels.reclasserDocument}
-    icon="price-tag-3-line"
-    variant="grey"
-    size="xs"
-    onClick={onReclassify}
-  />
-);
-
 export type CarteDocumentActions = {
   edit?: () => void;
   replace?: () => void;
   comment?: () => void;
-  reclassify?: () => void;
   delete?: () => void;
 };
 
@@ -83,9 +68,6 @@ const MenuCarteDocument = ({
     )}
     {actions.replace && <ReplaceFileButton onReplace={actions.replace} />}
     {actions.comment && <CommentButton onComment={actions.comment} />}
-    {actions.reclassify && (
-      <ReclassifyDocumentButton onReclassify={actions.reclassify} />
-    )}
     {actions.delete && <DeleteDocumentButton onDelete={actions.delete} />}
   </div>
 );

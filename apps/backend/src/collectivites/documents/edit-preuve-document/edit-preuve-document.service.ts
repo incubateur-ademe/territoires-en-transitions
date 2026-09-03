@@ -61,7 +61,7 @@ export class EditPreuveDocumentService {
     input: UpdatePreuveInput,
     user: AuthenticatedUser
   ): Promise<Result<PreuveBase, EditPreuveDocumentError>> {
-    const { preuveId, preuveType, lien, commentaire, objet } = input;
+    const { preuveId, preuveType, lien, commentaire } = input;
 
     const preuve = await this.editPreuveDocumentRepository.findById(
       preuveType,
@@ -89,18 +89,6 @@ export class EditPreuveDocumentService {
     );
     if (modeError) {
       return failure(modeError);
-    }
-
-    if (objet !== undefined) {
-      const objetPermissionResult = await this.permissionService.isAllowed(
-        user,
-        'collectivites.documents.mutate_objet',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: preuve.collectiviteId }
-      );
-      if (!objetPermissionResult.success) {
-        return failure(CommonErrorEnum.UNAUTHORIZED);
-      }
     }
 
     const isEditingLienOrCommentaire =

@@ -12,24 +12,13 @@ import {
   signInWith,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import {
-  addAndEnableUserSuperAdminMode,
-  addTestUser,
-} from '@tet/backend/users/users/users.test-fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import {
-  ObjetPreuve,
-  ObjetPreuveEnum,
-  ReferentielIdEnum,
-} from '@tet/domain/referentiels';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
 import request from 'supertest';
-import { onTestFinished } from 'vitest';
-import { preuveLabellisationTable } from '../models/preuve-labellisation.table';
-import { updatePreuveInputSchema } from './edit-preuve-document.input';
 
 describe('EditPreuveDocumentRouter', () => {
   let app: INestApplication;
@@ -38,7 +27,6 @@ describe('EditPreuveDocumentRouter', () => {
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
-  let adminUser: AuthenticatedUser;
   let visiteurUser: AuthenticatedUser;
   let editorAuthToken: string;
   let fichierId: number;
@@ -51,19 +39,13 @@ describe('EditPreuveDocumentRouter', () => {
     const testCollectiviteAndUsersResult = await addTestCollectiviteAndUsers(
       db,
       {
-        users: [
-          { role: CollectiviteRole.EDITION },
-          { role: CollectiviteRole.ADMIN },
-        ],
+        users: [{ role: CollectiviteRole.EDITION }],
       }
     );
 
     collectivite = testCollectiviteAndUsersResult.collectivite;
     const editorFixture = testCollectiviteAndUsersResult.users[0];
     editorUser = getAuthUserFromUserCredentials(editorFixture);
-    adminUser = getAuthUserFromUserCredentials(
-      testCollectiviteAndUsersResult.users[1]
-    );
 
     const signIn = await signInWith({
       email: editorFixture.email,
@@ -244,7 +226,7 @@ describe('EditPreuveDocumentRouter', () => {
   });
 
   describe('documents de candidature (preuve labellisation)', () => {
-    const createCandidaturePreuve = async (objet?: ObjetPreuve) => {
+    const createCandidaturePreuve = async () => {
       const caller = router.createCaller({ user: editorUser });
       const { audit, demande } = await createAuditWithOnTestFinished({
         databaseService: db,
@@ -261,7 +243,6 @@ describe('EditPreuveDocumentRouter', () => {
           demandeId: demande.id,
           fichierId,
           commentaire: '',
-          objet,
         });
 
       return { caller, preuve, auditId: audit.id };
@@ -304,157 +285,6 @@ describe('EditPreuveDocumentRouter', () => {
           commentaire: 'tentative de modification',
         })
       ).rejects.toThrowError(/labellisation en cours/i);
-    });
-
-    test("un objet envoye sur un type de preuve qui n'en porte pas est refuse", () => {
-      const rejet = updatePreuveInputSchema.safeParse({
-        preuveId: 1,
-        preuveType: 'annexe',
-        commentaire: 'commentaire modifié',
-        objet: ObjetPreuveEnum.CANDIDATURE,
-      });
-
-      expect(rejet.error?.issues.map((issue) => issue.path)).toEqual([
-        ['objet'],
-      ]);
-    });
-
-    test("un super-admin reclasse l'objet d'un document dont l'audit est validé", async () => {
-      const { caller, preuve, auditId } = await createCandidaturePreuve();
-      await validerAuditEnCours(auditId);
-
-      const { cleanup } = await addAndEnableUserSuperAdminMode({
-        app,
-        caller,
-        userId: editorUser.id,
-      });
-      onTestFinished(cleanup);
-
-      const updated = await caller.collectivites.documents.updatePreuve({
-        preuveId: preuve.id,
-        preuveType: 'labellisation',
-        objet: ObjetPreuveEnum.CANDIDATURE,
-      });
-
-      expect(updated.id).toBe(preuve.id);
-      const [row] = await db.db
-        .select({ objet: preuveLabellisationTable.objet })
-        .from(preuveLabellisationTable)
-        .where(eq(preuveLabellisationTable.id, preuve.id));
-      expect(row.objet).toBe(ObjetPreuveEnum.CANDIDATURE);
-    });
-
-    test("un super-admin qui joint un commentaire au reclassement retombe sous le verrou de l'audit", async () => {
-      const { caller, preuve, auditId } = await createCandidaturePreuve();
-      await validerAuditEnCours(auditId);
-
-      const { cleanup } = await addAndEnableUserSuperAdminMode({
-        app,
-        caller,
-        userId: editorUser.id,
-      });
-      onTestFinished(cleanup);
-
-      await expect(
-        caller.collectivites.documents.updatePreuve({
-          preuveId: preuve.id,
-          preuveType: 'labellisation',
-          objet: ObjetPreuveEnum.CANDIDATURE,
-          commentaire: 'reclassement accompagné d une edition',
-        })
-      ).rejects.toThrowError(/labellisation en cours/i);
-
-      const [row] = await db.db
-        .select({ objet: preuveLabellisationTable.objet })
-        .from(preuveLabellisationTable)
-        .where(eq(preuveLabellisationTable.id, preuve.id));
-      expect(row.objet).toBeNull();
-    });
-
-    test("un super-admin declasse l'objet d'un document en le passant a null", async () => {
-      const { caller, preuve } = await createCandidaturePreuve(
-        ObjetPreuveEnum.CANDIDATURE
-      );
-
-      const { cleanup } = await addAndEnableUserSuperAdminMode({
-        app,
-        caller,
-        userId: editorUser.id,
-      });
-      onTestFinished(cleanup);
-
-      await caller.collectivites.documents.updatePreuve({
-        preuveId: preuve.id,
-        preuveType: 'labellisation',
-        objet: null,
-      });
-
-      const [row] = await db.db
-        .select({ objet: preuveLabellisationTable.objet })
-        .from(preuveLabellisationTable)
-        .where(eq(preuveLabellisationTable.id, preuve.id));
-      expect(row.objet).toBeNull();
-    });
-
-    test("un admin de la collectivite ne peut pas reclasser l'objet d'un document", async () => {
-      const { preuve } = await createCandidaturePreuve();
-      const adminCaller = router.createCaller({ user: adminUser });
-
-      await expect(
-        adminCaller.collectivites.documents.updatePreuve({
-          preuveId: preuve.id,
-          preuveType: 'labellisation',
-          objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
-        })
-      ).rejects.toThrowError(/Droits insuffisants|permissions nécessaires/i);
-    });
-
-    test("un editeur de la collectivite ne peut pas reclasser l'objet d'un document", async () => {
-      const { caller, preuve } = await createCandidaturePreuve();
-
-      await expect(
-        caller.collectivites.documents.updatePreuve({
-          preuveId: preuve.id,
-          preuveType: 'labellisation',
-          objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
-        })
-      ).rejects.toThrowError(/Droits insuffisants|permissions nécessaires/i);
-    });
-
-    test("le reclassement par un tiers preserve le deposant d'origine", async () => {
-      const { preuve } = await createCandidaturePreuve();
-
-      const [preuveBeforeReclassement] = await db.db
-        .select({ modifiedBy: preuveLabellisationTable.modifiedBy })
-        .from(preuveLabellisationTable)
-        .where(eq(preuveLabellisationTable.id, preuve.id));
-      expect(preuveBeforeReclassement.modifiedBy).toBe(editorUser.id);
-
-      const superAdminResult = await addTestUser(db);
-      const superAdminUser = getAuthUserFromUserCredentials(
-        superAdminResult.user
-      );
-      const superAdminCaller = router.createCaller({ user: superAdminUser });
-      const { cleanup } = await addAndEnableUserSuperAdminMode({
-        app,
-        caller: superAdminCaller,
-        userId: superAdminUser.id,
-      });
-      onTestFinished(cleanup);
-
-      await superAdminCaller.collectivites.documents.updatePreuve({
-        preuveId: preuve.id,
-        preuveType: 'labellisation',
-        objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
-      });
-
-      const [preuveAfterReclassement] = await db.db
-        .select({ modifiedBy: preuveLabellisationTable.modifiedBy })
-        .from(preuveLabellisationTable)
-        .where(eq(preuveLabellisationTable.id, preuve.id));
-      expect(preuveAfterReclassement.modifiedBy).toBe(
-        preuveBeforeReclassement.modifiedBy
-      );
     });
   });
 });
