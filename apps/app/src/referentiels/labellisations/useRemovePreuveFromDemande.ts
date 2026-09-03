@@ -32,7 +32,7 @@ export const useRemovePreuveFromDemande = (): {
         }
         await queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey(
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey(
               { demandeId }
             ),
         });

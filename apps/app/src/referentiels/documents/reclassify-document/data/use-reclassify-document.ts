@@ -20,7 +20,7 @@ export const useReclassifyDocument = (collectiviteId: number) => {
         });
         queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.labellisations.listPreuvesLabellisation.pathKey(),
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.pathKey(),
         });
       },
     })

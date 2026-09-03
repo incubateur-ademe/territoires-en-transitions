@@ -22,9 +22,9 @@ import { CollectiviteRole } from '@tet/domain/users';
 import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
-import { createTestDemandePreuve } from '../create-preuve/create-preuve.test-fixture';
+import { createTestDemandePreuve } from '../../labellisations/create-preuve/create-preuve.test-fixture';
 
-describe('List Preuves Router', () => {
+describe('List Documents Labellisation Router', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
   let app: INestApplication;
@@ -69,8 +69,8 @@ describe('List Preuves Router', () => {
     await app.close();
   });
 
-  describe('List Preuves - Visiteur', () => {
-    test('a visiteur can list preuves for a demande (listPreuvesLabellisation)', async () => {
+  describe('List Documents - Visiteur', () => {
+    test('a visiteur can list documents for a demande (listDocumentsDemandeLabellisation)', async () => {
       const { demande } = await createAuditWithOnTestFinished({
         databaseService: db,
         collectiviteId: collectivite.id,
@@ -94,7 +94,7 @@ describe('List Preuves Router', () => {
       const visiteurCaller = router.createCaller({ user: visiteurUser });
 
       const preuves =
-        await visiteurCaller.referentiels.labellisations.listPreuvesLabellisation(
+        await visiteurCaller.referentiels.documents.listDocumentsDemandeLabellisation(
           {
             demandeId: demande?.id ?? 0,
           }
@@ -105,7 +105,7 @@ describe('List Preuves Router', () => {
       expect(preuves.length).toBe(1);
     });
 
-    test('a visiteur can list preuves for an audit (listPreuvesAudit)', async () => {
+    test('a visiteur can list documents for an audit (listDocumentsAudit)', async () => {
       const { audit } = await createAuditWithOnTestFinished({
         databaseService: db,
         collectiviteId: collectivite.id,
@@ -115,7 +115,7 @@ describe('List Preuves Router', () => {
 
       const caller = router.createCaller({ user: visiteurUser });
 
-      const preuves = await caller.referentiels.labellisations.listPreuvesAudit(
+      const preuves = await caller.referentiels.documents.listDocumentsAudit(
         {
           auditId: audit.id,
         }
@@ -126,7 +126,7 @@ describe('List Preuves Router', () => {
     });
   });
 
-  describe('List Preuves - Restrictions de lecture', () => {
+  describe('List Documents - Restrictions de lecture', () => {
     const createCollectiviteAvecDemande = async ({
       accesRestreint,
     }: {
@@ -204,7 +204,7 @@ describe('List Preuves Router', () => {
       };
     };
 
-    test("refuse de lister les preuves d'une collectivite en acces restreint a un utilisateur non membre", async () => {
+    test("refuse de lister les documents d'une collectivite en acces restreint a un utilisateur non membre", async () => {
       const { demandeId, deposeUnePreuve } =
         await createCollectiviteAvecDemande({ accesRestreint: true });
       await deposeUnePreuve();
@@ -212,15 +212,15 @@ describe('List Preuves Router', () => {
       const visiteurCaller = router.createCaller({ user: visiteurUser });
 
       await expect(
-        visiteurCaller.referentiels.labellisations.listPreuvesLabellisation({
+        visiteurCaller.referentiels.documents.listDocumentsDemandeLabellisation({
           demandeId,
         })
       ).rejects.toThrow(
-        "Vous n'avez pas les permissions nécessaires pour lister les preuves de cette demande."
+        "Vous n'avez pas les permissions nécessaires pour lister les documents de cette demande."
       );
     });
 
-    test("refuse de lister les preuves d'audit d'une collectivite en acces restreint a un utilisateur non membre", async () => {
+    test("refuse de lister les documents d'audit d'une collectivite en acces restreint a un utilisateur non membre", async () => {
       const { auditId } = await createCollectiviteAvecDemande({
         accesRestreint: true,
       });
@@ -228,9 +228,9 @@ describe('List Preuves Router', () => {
       const visiteurCaller = router.createCaller({ user: visiteurUser });
 
       await expect(
-        visiteurCaller.referentiels.labellisations.listPreuvesAudit({ auditId })
+        visiteurCaller.referentiels.documents.listDocumentsAudit({ auditId })
       ).rejects.toThrow(
-        "Vous n'avez pas les permissions nécessaires pour lister les preuves de cet audit."
+        "Vous n'avez pas les permissions nécessaires pour lister les documents de cet audit."
       );
     });
 
@@ -247,7 +247,7 @@ describe('List Preuves Router', () => {
 
       const visiteurCaller = router.createCaller({ user: visiteurUser });
       const preuvesVisiteur =
-        await visiteurCaller.referentiels.labellisations.listPreuvesAudit({
+        await visiteurCaller.referentiels.documents.listDocumentsAudit({
           auditId,
         });
 
@@ -256,7 +256,7 @@ describe('List Preuves Router', () => {
       );
 
       const preuvesMembre =
-        await membreCaller.referentiels.labellisations.listPreuvesAudit({
+        await membreCaller.referentiels.documents.listDocumentsAudit({
           auditId,
         });
 
@@ -279,7 +279,7 @@ describe('List Preuves Router', () => {
 
       const visiteurCaller = router.createCaller({ user: visiteurUser });
       const preuvesVisiteur =
-        await visiteurCaller.referentiels.labellisations.listPreuvesLabellisation(
+        await visiteurCaller.referentiels.documents.listDocumentsDemandeLabellisation(
           { demandeId }
         );
 
@@ -288,7 +288,7 @@ describe('List Preuves Router', () => {
       );
 
       const preuvesMembre =
-        await membreCaller.referentiels.labellisations.listPreuvesLabellisation(
+        await membreCaller.referentiels.documents.listDocumentsDemandeLabellisation(
           { demandeId }
         );
 

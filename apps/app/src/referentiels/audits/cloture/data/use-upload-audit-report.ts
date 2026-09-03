@@ -108,7 +108,7 @@ export const useUploadAuditReport = (
       // Attend que la liste des rapports soit re-fetchée avant de libérer
       // l'état d'upload pour éviter les flickering de refetch
       await queryClient.refetchQueries({
-        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
+        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
           auditId,
         }),
       });
@@ -135,7 +135,7 @@ export const useUploadAuditReport = (
     try {
       await removePreuve(auditReportToPreuve(report));
       await queryClient.refetchQueries({
-        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
+        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
           auditId,
         }),
       });

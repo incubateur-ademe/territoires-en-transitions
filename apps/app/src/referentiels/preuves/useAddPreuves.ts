@@ -67,7 +67,7 @@ export const useAddPreuveLabellisation = (
         });
         queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey({
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey({
               demandeId: variables.demandeId,
             }),
         });
@@ -108,7 +108,7 @@ export const useAddPreuveAudit = () => {
         trpc,
       });
       queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
+        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
           auditId: variables.auditId,
         }),
       });

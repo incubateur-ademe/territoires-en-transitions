@@ -8,40 +8,40 @@ import {
   preuveLabellisationWithFichierSchema,
 } from '@tet/domain/collectivites';
 import * as z from 'zod/mini';
-import { ReferentielDocumentsAccessService } from '../../documents/referentiel-documents-access.service';
-import { GetLabellisationService } from '../get-labellisation.service';
+import { ReferentielDocumentsAccessService } from '../referentiel-documents-access.service';
+import { GetLabellisationService } from '../../labellisations/get-labellisation.service';
 import {
-  ListPreuvesAuditError,
-  ListPreuvesAuditErrorEnum,
-} from './list-preuves-audit.errors';
-import { ListPreuvesAuditInput } from './list-preuves-audit.input';
+  ListDocumentsAuditError,
+  ListDocumentsAuditErrorEnum,
+} from './list-documents-audit.errors';
+import { ListDocumentsAuditInput } from './list-documents-audit.input';
 import {
-  ListPreuvesLabellisationError,
-  ListPreuvesLabellisationErrorEnum,
-} from './list-preuves-labellisation.errors';
-import { ListPreuvesLabellisationInput } from './list-preuves-labellisation.input';
-import { ListPreuvesRepository } from './list-preuves.repository';
+  ListDocumentsDemandeLabellisationError,
+  ListDocumentsDemandeLabellisationErrorEnum,
+} from './list-documents-demande-labellisation.errors';
+import { ListDocumentsDemandeLabellisationInput } from './list-documents-demande-labellisation.input';
+import { ListDocumentsLabellisationRepository } from './list-documents-labellisation.repository';
 
 @Injectable()
-export class ListPreuvesService {
-  private readonly logger = new Logger(ListPreuvesService.name);
+export class ListDocumentsLabellisationService {
+  private readonly logger = new Logger(ListDocumentsLabellisationService.name);
 
   constructor(
-    private readonly listPreuvesRepository: ListPreuvesRepository,
+    private readonly listDocumentsLabellisationRepository: ListDocumentsLabellisationRepository,
     private readonly getLabellisationService: GetLabellisationService,
     private readonly referentielDocumentsAccess: ReferentielDocumentsAccessService
   ) {}
 
-  async listPreuvesAudit(
-    { auditId }: ListPreuvesAuditInput,
+  async listDocumentsAudit(
+    { auditId }: ListDocumentsAuditInput,
     user: AuthenticatedUser
-  ): Promise<Result<LegacyPreuveAuditWithFichier[], ListPreuvesAuditError>> {
+  ): Promise<Result<LegacyPreuveAuditWithFichier[], ListDocumentsAuditError>> {
     const auditResult = await this.getLabellisationService.getAudit(auditId);
     if (!auditResult.success) {
       if (auditResult.error === 'NOT_FOUND') {
         return {
           success: false,
-          error: ListPreuvesAuditErrorEnum.AUDIT_NOT_FOUND,
+          error: ListDocumentsAuditErrorEnum.AUDIT_NOT_FOUND,
         };
       } else {
         return {
@@ -68,7 +68,7 @@ export class ListPreuvesService {
 
     const { canReadConfidentiel } = accessResult.data;
 
-    const preuves = await this.listPreuvesRepository.listPreuvesAudit({
+    const preuves = await this.listDocumentsLabellisationRepository.listDocumentsAudit({
       auditId,
       canReadConfidentiel,
     });
@@ -83,18 +83,18 @@ export class ListPreuvesService {
       );
       return {
         success: false,
-        error: ListPreuvesAuditErrorEnum.DOCUMENT_SCHEMA_MISMATCH,
+        error: ListDocumentsAuditErrorEnum.DOCUMENT_SCHEMA_MISMATCH,
       };
     }
 
     return { success: true, data: parsed.data };
   }
 
-  async listPreuvesLabellisation(
-    { demandeId }: ListPreuvesLabellisationInput,
+  async listDocumentsDemandeLabellisation(
+    { demandeId }: ListDocumentsDemandeLabellisationInput,
     user: AuthenticatedUser
   ): Promise<
-    Result<LegacyPreuveLabellisationWithFichier[], ListPreuvesLabellisationError>
+    Result<LegacyPreuveLabellisationWithFichier[], ListDocumentsDemandeLabellisationError>
   > {
     const demandeResult = await this.getLabellisationService.getDemande(
       demandeId
@@ -103,7 +103,7 @@ export class ListPreuvesService {
       if (demandeResult.error === 'NOT_FOUND') {
         return {
           success: false,
-          error: ListPreuvesLabellisationErrorEnum.DEMANDE_NOT_FOUND,
+          error: ListDocumentsDemandeLabellisationErrorEnum.DEMANDE_NOT_FOUND,
         };
       } else {
         return {
@@ -131,7 +131,7 @@ export class ListPreuvesService {
 
     const { canReadConfidentiel } = accessResult.data;
 
-    const preuves = await this.listPreuvesRepository.listPreuvesLabellisation({
+    const preuves = await this.listDocumentsLabellisationRepository.listDocumentsDemandeLabellisation({
       demandeId,
       canReadConfidentiel,
     });
@@ -148,7 +148,7 @@ export class ListPreuvesService {
       );
       return {
         success: false,
-        error: ListPreuvesLabellisationErrorEnum.DOCUMENT_SCHEMA_MISMATCH,
+        error: ListDocumentsDemandeLabellisationErrorEnum.DOCUMENT_SCHEMA_MISMATCH,
       };
     }
 

@@ -15,10 +15,10 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
-import { auditTable } from '../audit.table';
-import { labellisationDemandeTable } from '../labellisation-demande.table';
-import { ListPreuvesAuditErrorEnum } from './list-preuves-audit.errors';
-import { ListPreuvesLabellisationErrorEnum } from './list-preuves-labellisation.errors';
+import { auditTable } from '../../labellisations/audit.table';
+import { labellisationDemandeTable } from '../../labellisations/labellisation-demande.table';
+import { ListDocumentsAuditErrorEnum } from './list-documents-audit.errors';
+import { ListDocumentsDemandeLabellisationErrorEnum } from './list-documents-demande-labellisation.errors';
 
 type AuditScope = {
   auditId: number;
@@ -31,12 +31,12 @@ type LabellisationScope = {
 };
 
 @Injectable()
-export class ListPreuvesRepository {
-  private readonly logger = new Logger(ListPreuvesRepository.name);
+export class ListDocumentsLabellisationRepository {
+  private readonly logger = new Logger(ListDocumentsLabellisationRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listPreuvesAudit({ auditId, canReadConfidentiel }: AuditScope) {
+  async listDocumentsAudit({ auditId, canReadConfidentiel }: AuditScope) {
     const db = this.databaseService.db;
     const fichier = buildFichierSubquery(db);
 
@@ -88,11 +88,11 @@ export class ListPreuvesRepository {
           error
         )}`
       );
-      return failure(ListPreuvesAuditErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsAuditErrorEnum.DATABASE_ERROR);
     }
   }
 
-  async listPreuvesLabellisation({
+  async listDocumentsDemandeLabellisation({
     demandeId,
     canReadConfidentiel,
   }: LabellisationScope) {
@@ -146,7 +146,7 @@ export class ListPreuvesRepository {
           error
         )}`
       );
-      return failure(ListPreuvesLabellisationErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsDemandeLabellisationErrorEnum.DATABASE_ERROR);
     }
   }
 }

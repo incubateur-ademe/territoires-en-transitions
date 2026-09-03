@@ -87,7 +87,7 @@ export const useRemovePreuve = () => {
       }
 
       queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey(
+        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey(
           {}
         ),
       });
@@ -96,7 +96,7 @@ export const useRemovePreuve = () => {
       if (demande) {
         queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey({
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey({
               demandeId: demande.id,
             }),
         });
@@ -197,7 +197,7 @@ export const useUpdateBibliothequeFichier = () => {
         });
         queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.labellisations.listPreuvesLabellisation.pathKey(),
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.pathKey(),
         });
       },
     })

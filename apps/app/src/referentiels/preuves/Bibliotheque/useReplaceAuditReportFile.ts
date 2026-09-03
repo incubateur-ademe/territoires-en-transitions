@@ -14,7 +14,7 @@ export const useReplaceAuditReportFile = (collectiviteId: number) => {
           trpc,
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.labellisations.listPreuvesAudit.pathKey(),
+          queryKey: trpc.referentiels.documents.listDocumentsAudit.pathKey(),
         });
       },
     })

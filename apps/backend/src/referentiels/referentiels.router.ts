@@ -13,7 +13,7 @@ import { HistoriqueRouter } from './historique/historique.router';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
-import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
+import { ListDocumentsLabellisationRouter } from './documents/list-documents-labellisation/list-documents-labellisation.router';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { UpdateAuditReportRouter } from './labellisations/update-audit-report/update-audit-report.router';
@@ -44,7 +44,7 @@ export class ReferentielsRouter {
     private readonly requestLabellisation: RequestLabellisationRouter,
     private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
-    private readonly listPreuves: ListPreuvesRouter,
+    private readonly listDocumentsLabellisationRouter: ListDocumentsLabellisationRouter,
     private readonly listDocumentsReferentielRouter: ListDocumentsReferentielRouter,
     private readonly listDocumentsMesureRouter: ListDocumentsMesureRouter,
     private readonly updateAuditReport: UpdateAuditReportRouter,
@@ -93,12 +93,12 @@ export class ReferentielsRouter {
       this.validateAudit.router,
       this.getLabellisation.router,
       this.handleMesureAuditStatutRouter.router,
-      this.listPreuves.router,
       this.updateAuditReport.router
     ),
 
     documents: this.trpc.mergeRouters(
       this.listDocumentsReferentielRouter.router,
+      this.listDocumentsLabellisationRouter.router,
       this.listDocumentsMesureRouter.router
     ),
 
