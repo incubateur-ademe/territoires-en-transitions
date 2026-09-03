@@ -1,4 +1,4 @@
-import { generatePrompt } from '../../prompts/prompt-template';
+import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { SCORING_PROMPT } from '../../prompts/scoring.prompt';
 
 export type ScoringPromptInput = {

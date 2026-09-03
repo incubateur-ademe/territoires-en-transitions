@@ -1,7 +1,7 @@
 import { DisableableField } from '../../models/disableable-field';
 import { ENRICHMENT_PROMPT } from '../../prompts/enrichment.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
-import { generatePrompt } from '../../prompts/prompt-template';
+import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 
 export type EnrichmentPromptInput = {
   renderedSousActions: string;

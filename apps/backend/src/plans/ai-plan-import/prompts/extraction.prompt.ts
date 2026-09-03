@@ -1,4 +1,4 @@
-import { definePrompt } from './prompt-template';
+import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 
 const instructions = '{instructions}';
 const textePdfAAnalyser = '{texte_pdf_a_analyser}';
