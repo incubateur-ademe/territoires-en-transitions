@@ -1002,15 +1002,6 @@ values
     ('fonction', 'active', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'active', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'active', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction add_bibliotheque_fichier
-    ('fonction', 'add_bibliotheque_fichier', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'connecte', 'non', 'non', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'verifie', 'non', 'non', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'support', 'non', 'non', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'lecture', 'non', 'non', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'add_bibliotheque_fichier', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction add_user
     ('fonction', 'add_user', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'add_user', 'connecte', 'non', 'non', 'non', 'non'),
