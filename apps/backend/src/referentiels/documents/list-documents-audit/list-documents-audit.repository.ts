@@ -5,12 +5,8 @@ import {
 } from '@tet/backend/collectivites/documents/file-info.utils';
 import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
-import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
-import {
-  sqlToDate,
-  sqlToDateTimeISO,
-} from '@tet/backend/utils/column.utils';
+import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -18,21 +14,15 @@ import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { auditTable } from '../../labellisations/audit.table';
 import { labellisationDemandeTable } from '../../labellisations/labellisation-demande.table';
 import { ListDocumentsAuditErrorEnum } from './list-documents-audit.errors';
-import { ListDocumentsDemandeLabellisationErrorEnum } from './list-documents-demande-labellisation.errors';
 
 type AuditScope = {
   auditId: number;
   canReadConfidentiel: boolean;
 };
 
-type LabellisationScope = {
-  demandeId: number;
-  canReadConfidentiel: boolean;
-};
-
 @Injectable()
-export class ListDocumentsLabellisationRepository {
-  private readonly logger = new Logger(ListDocumentsLabellisationRepository.name);
+export class ListDocumentsAuditRepository {
+  private readonly logger = new Logger(ListDocumentsAuditRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -84,69 +74,11 @@ export class ListDocumentsLabellisationRepository {
       return success(preuves);
     } catch (error) {
       this.logger.error(
-        `Echec de la lecture des preuves de l'audit ${auditId}: ${getErrorMessage(
+        `Echec de la lecture des documents de l'audit ${auditId}: ${getErrorMessage(
           error
         )}`
       );
       return failure(ListDocumentsAuditErrorEnum.DATABASE_ERROR);
-    }
-  }
-
-  async listDocumentsDemandeLabellisation({
-    demandeId,
-    canReadConfidentiel,
-  }: LabellisationScope) {
-    const db = this.databaseService.db;
-    const fichier = buildFichierSubquery(db);
-
-    try {
-      const preuves = await db
-        .select({
-          ...getTableColumns(preuveLabellisationTable),
-          modifiedAt: sqlToDateTimeISO(preuveLabellisationTable.modifiedAt),
-          fichier: buildFileInfoSql(fichier),
-          demande: {
-            ...getTableColumns(labellisationDemandeTable),
-            date: sqlToDate(labellisationDemandeTable.date),
-            modifiedAt: sqlToDateTimeISO(labellisationDemandeTable.modifiedAt),
-            envoyeeLe: sqlToDateTimeISO(labellisationDemandeTable.envoyeeLe),
-          },
-          modifiedByNom: createdByNom,
-          preuveType: sql<'labellisation'>`'labellisation'`,
-        })
-        .from(preuveLabellisationTable)
-        .leftJoin(fichier, eq(preuveLabellisationTable.fichierId, fichier.id))
-        .leftJoin(
-          labellisationDemandeTable,
-          eq(preuveLabellisationTable.demandeId, labellisationDemandeTable.id)
-        )
-        .leftJoin(
-          dcpTable,
-          eq(preuveLabellisationTable.modifiedBy, dcpTable.id)
-        )
-        .where(
-          and(
-            eq(preuveLabellisationTable.demandeId, demandeId),
-            hideConfidentielFilter({
-              fichierIdColumn: preuveLabellisationTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
-              canReadConfidentiel,
-            })
-          )
-        )
-        // Ordre stable par id croissant : le front traite `preuves[0]` comme
-        // l'acte d'engagement (déposé en premier), il faut donc un ordre
-        // déterministe et non l'ordre physique arbitraire de Postgres.
-        .orderBy(preuveLabellisationTable.id);
-
-      return success(preuves);
-    } catch (error) {
-      this.logger.error(
-        `Echec de la lecture des preuves de la demande ${demandeId}: ${getErrorMessage(
-          error
-        )}`
-      );
-      return failure(ListDocumentsDemandeLabellisationErrorEnum.DATABASE_ERROR);
     }
   }
 }

@@ -52,7 +52,8 @@ import { GetLabellisationService } from './labellisations/get-labellisation.serv
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
 import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.service';
 import { LabellisationService } from './labellisations/labellisation.service';
-import { ListDocumentsLabellisationRouter } from './documents/list-documents-labellisation/list-documents-labellisation.router';
+import { ListDocumentsAuditRouter } from './documents/list-documents-audit/list-documents-audit.router';
+import { ListDocumentsDemandeLabellisationRouter } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.router';
 import { ReferentielDocumentsAccessService } from './documents/referentiel-documents-access.service';
 import { ListDocumentsReferentielRepository } from './documents/list-documents-referentiel/list-documents-referentiel.repository';
 import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
@@ -60,8 +61,10 @@ import { ListDocumentsReferentielService } from './documents/list-documents-refe
 import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
 import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
-import { ListDocumentsLabellisationRepository } from './documents/list-documents-labellisation/list-documents-labellisation.repository';
-import { ListDocumentsLabellisationService } from './documents/list-documents-labellisation/list-documents-labellisation.service';
+import { ListDocumentsAuditRepository } from './documents/list-documents-audit/list-documents-audit.repository';
+import { ListDocumentsDemandeLabellisationRepository } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.repository';
+import { ListDocumentsAuditService } from './documents/list-documents-audit/list-documents-audit.service';
+import { ListDocumentsDemandeLabellisationService } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
@@ -193,9 +196,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     CreatePreuveService,
     CreatePreuveRouter,
     ReferentielDocumentsAccessService,
-    ListDocumentsLabellisationRepository,
-    ListDocumentsLabellisationService,
-    ListDocumentsLabellisationRouter,
+    ListDocumentsAuditRepository,
+    ListDocumentsAuditService,
+    ListDocumentsAuditRouter,
+    ListDocumentsDemandeLabellisationRepository,
+    ListDocumentsDemandeLabellisationService,
+    ListDocumentsDemandeLabellisationRouter,
     ListDocumentsReferentielRepository,
     ListDocumentsReferentielService,
     ListDocumentsReferentielRouter,
