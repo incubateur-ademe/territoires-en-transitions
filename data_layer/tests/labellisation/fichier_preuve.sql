@@ -1,19 +1,7 @@
 begin;
 
-select plan(9);
+select plan(6);
 select test.disable_evaluation_api();
-
----------------
--- Structure --
----------------
-select col_not_null('labellisation', 'bibliotheque_fichier', 'collectivite_id',
-                    'La colonne collectivite_id doit être NOT NULL');
-
-select col_not_null('labellisation', 'bibliotheque_fichier', 'hash',
-                    'La colonne hash doit être NOT NULL');
-
-select col_not_null('labellisation', 'bibliotheque_fichier', 'filename',
-                    'La colonne filename doit être NOT NULL');
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;

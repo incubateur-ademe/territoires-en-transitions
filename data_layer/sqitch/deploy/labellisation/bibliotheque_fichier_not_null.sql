@@ -2,6 +2,8 @@
 
 BEGIN;
 
+set local lock_timeout = '3s';
+
 alter table labellisation.bibliotheque_fichier
     alter column collectivite_id set not null,
     alter column hash set not null,
