@@ -1050,4 +1050,4 @@ demarche/pcaet_documents_plans_annexes [demarche/demarche_documents_applicabilit
 demarche/pcaet_bilan_renouvellement [demarche/pcaet_documents_plans_annexes] 2026-08-31T15:57:29Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Le bilan du PCAET précédent devient obligatoire, mais n'est attendu que des collectivités ayant déjà mené un dépôt à son terme
 plan_action/drop_plan_action_profondeur 2026-09-02T10:04:07Z Gaël Servaud <gaelservaud@Host-002.lan> # Supprime la vue plan_action_profondeur et la fonction homonyme, sans lecteur depuis le passage du front sur plans.plans.list
 labellisation/bibliotheque_fichier_not_null 2026-09-03T12:23:58Z Gaël Servaud <gaelservaud@Host-002.lan> # Rend non nuls collectivite_id, hash et filename de la bibliotheque de fichiers
-labellisation/drop_add_bibliotheque_fichier 2026-09-03T12:48:23Z Gaël Servaud <gaelservaud@Host-002.lan> # Retire la RPC add_bibliotheque_fichier, sans appelant applicatif
+labellisation/drop_add_bibliotheque_fichier [labellisation/preuve_v2] 2026-09-03T12:48:23Z Gaël Servaud <gaelservaud@Host-002.lan> # Retire la RPC add_bibliotheque_fichier, sans appelant applicatif
