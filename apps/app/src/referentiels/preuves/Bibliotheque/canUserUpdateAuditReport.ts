@@ -15,7 +15,7 @@ export const canUserUpdateAuditReport = (
   }
   return canUpdateAuditReport({
     isAuditeur: isUserAuditeurForAudit(user, preuve.audit.id),
-    canUpdateAnyAuditReport: hasPermission(
+    canMutateLabellisationDocuments: hasPermission(
       user,
       'referentiels.labellisations.mutate_documents',
       { collectiviteId: preuve.collectiviteId }
