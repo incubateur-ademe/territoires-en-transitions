@@ -13,12 +13,12 @@ export const bibliothequeFichierTable = labellisationSchema.table(
   'bibliotheque_fichier',
   {
     id: serial('id'),
-    collectiviteId: integer('collectivite_id').references(
-      () => collectiviteTable.id
-    ),
-    hash: varchar('hash', { length: 160 }),
-    filename: text('filename'),
-    confidentiel: boolean('confidentiel'),
+    collectiviteId: integer('collectivite_id')
+      .notNull()
+      .references(() => collectiviteTable.id),
+    hash: varchar('hash', { length: 160 }).notNull(),
+    filename: text('filename').notNull(),
+    confidentiel: boolean('confidentiel').notNull(),
   },
   (table) => [
     unique('bibliotheque_fichier_collectivite_id_hash_key').on(

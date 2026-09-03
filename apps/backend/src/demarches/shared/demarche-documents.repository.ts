@@ -455,8 +455,8 @@ export class DemarcheDocumentsRepository {
     }
     return {
       id: row.id,
-      filename: row.filename ?? '',
-      hash: row.hash ?? '',
+      filename: row.filename,
+      hash: row.hash,
       bucketId: row.bucketId ?? null,
       filesize: row.filesize ?? null,
       mimeType: row.mimeType ?? null,
