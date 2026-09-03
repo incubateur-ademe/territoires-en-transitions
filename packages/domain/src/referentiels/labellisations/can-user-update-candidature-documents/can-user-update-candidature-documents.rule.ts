@@ -5,17 +5,26 @@ import { LabellisationAudit } from '../labellisation-audit.schema';
 export const canUserUpdateCandidatureDocuments = ({
   preuveType,
   canMutateReferentiels,
+  canMutateLabellisationDocuments,
   audit,
 }: {
   preuveType: PreuveType;
   canMutateReferentiels: boolean;
+  canMutateLabellisationDocuments: boolean;
   audit: Pick<LabellisationAudit, 'valide'> | null;
 }): boolean => {
   if (preuveType !== 'labellisation') {
     return false;
   }
-  if (!canMutateReferentiels) {
+
+  const canWriteDocuments =
+    canMutateReferentiels || canMutateLabellisationDocuments;
+  if (!canWriteDocuments) {
     return false;
   }
-  return canModifyCandidatureDocuments({ audit });
+
+  return canModifyCandidatureDocuments({
+    audit,
+    canMutateLabellisationDocuments,
+  });
 };

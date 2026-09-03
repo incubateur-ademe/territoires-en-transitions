@@ -132,10 +132,12 @@ const ActeEngagementRowWithDemande = ({
 };
 
 export const ActeEngagementRow = (): ReactElement => {
-  const { parcours, cycle, referentielId } = useChecklist();
+  const { parcours, cycle, referentielId, canMutateLabellisationDocuments } =
+    useChecklist();
   const demandeId = parcours?.acteEngagement.demandeId ?? null;
   const hasDemande = demandeId !== null;
-  const isAuditee = cycle.viewerRole === 'auditee';
+  const canEditActes =
+    cycle.viewerRole === 'auditee' || canMutateLabellisationDocuments;
 
   if (!hasDemande) {
     return (
@@ -153,7 +155,7 @@ export const ActeEngagementRow = (): ReactElement => {
     <ActeEngagementRowWithDemande
       referentielId={referentielId}
       demandeId={demandeId}
-      canEdit={isAuditee}
+      canEdit={canEditActes}
     />
   );
 };

@@ -95,6 +95,9 @@ const DocAuditOuLabellisation = ({
     user,
     audit: info.audit,
     canMutateReferentiels,
+    canMutateLabellisationDocuments: hasCollectivitePermission(
+      'referentiels.labellisations.mutate_documents'
+    ),
   });
   const allowedActions: CarteDocumentAction[] = canUpdate
     ? [...MUTATION_ACTIONS, 'replace']
@@ -114,11 +117,13 @@ const canUpdateAuditOrLabellisationPreuve = ({
   user,
   audit,
   canMutateReferentiels,
+  canMutateLabellisationDocuments,
 }: {
   preuve: PreuveAuditEtLabellisation;
   user: UserRolesAndPermissions;
   audit: AuditEnCours | null;
   canMutateReferentiels: boolean;
+  canMutateLabellisationDocuments: boolean;
 }): boolean => {
   if (preuve.preuveType === 'audit') {
     return canUserUpdateAuditReport(user, preuve);
@@ -126,6 +131,7 @@ const canUpdateAuditOrLabellisationPreuve = ({
   return canUserUpdateCandidatureDocuments({
     preuveType: preuve.preuveType,
     canMutateReferentiels,
+    canMutateLabellisationDocuments,
     audit,
   });
 };

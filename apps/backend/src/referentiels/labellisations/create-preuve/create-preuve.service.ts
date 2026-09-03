@@ -27,6 +27,21 @@ export class CreatePreuveService {
     private readonly getLabellisationService: GetLabellisationService
   ) {}
 
+  private async canMutateLabellisationDocuments(
+    user: AuthenticatedUser,
+    collectiviteId: number
+  ): Promise<boolean> {
+    const permissionResult = await this.permissions.isAllowed(
+      user,
+      PermissionOperationEnum[
+        'REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'
+      ],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+    return permissionResult.success;
+  }
+
   async createLabellisationPreuve(
     input: CreateLabellisationPreuveInput,
     user: AuthenticatedUser
@@ -73,9 +88,15 @@ export class CreatePreuveService {
         error: CreateLabellisationPreuveErrorEnum.DATABASE_ERROR,
       };
     }
+    const canMutateLabellisationDocuments =
+      await this.canMutateLabellisationDocuments(user, demande.collectiviteId);
+
     if (
       auditResult.success &&
-      canModifyCandidatureDocuments({ audit: auditResult.data }) === false
+      canModifyCandidatureDocuments({
+        audit: auditResult.data,
+        canMutateLabellisationDocuments,
+      }) === false
     ) {
       return {
         success: false,

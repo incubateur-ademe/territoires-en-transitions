@@ -41,13 +41,15 @@ let checklist: ChecklistContextValue;
 const setChecklist = (
   parcours: Parcours | null,
   viewerRole: AuditViewerRole = 'auditee',
-  expectedDocuments: ObjetPreuve[] = [ObjetPreuveEnum.CANDIDATURE]
+  expectedDocuments: ObjetPreuve[] = [ObjetPreuveEnum.CANDIDATURE],
+  canMutateLabellisationDocuments = false
 ): void => {
   checklist = {
     parcours,
     referentielId: 'cae',
     cycle: { viewerRole },
     expectedDocuments,
+    canMutateLabellisationDocuments,
   } as unknown as ChecklistContextValue;
 };
 
@@ -170,6 +172,21 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
     expect(
       screen.queryByRole('button', { name: appLabels.ajouterDocument })
     ).toBeNull();
+  });
+
+  it("affiche le bouton d'ajout au porteur de la permission, sans être l'audité", () => {
+    setChecklist(
+      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
+      'other',
+      [ObjetPreuveEnum.CANDIDATURE],
+      true
+    );
+
+    renderRow();
+
+    expect(
+      screen.getByRole('button', { name: appLabels.ajouterDocument })
+    ).toBeTruthy();
   });
 
   it("masque le bouton d'ajout pour un visiteur", () => {

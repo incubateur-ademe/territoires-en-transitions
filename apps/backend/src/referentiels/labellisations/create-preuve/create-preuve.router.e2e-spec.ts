@@ -24,7 +24,15 @@ import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { auditTable } from '../audit.table';
-import { addAuditeurPermission } from '../labellisations.test-fixture';
+import {
+  addAuditeurPermission,
+  validateAudit,
+} from '../labellisations.test-fixture';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 
 type Input = inferProcedureInput<
   AppRouter['referentiels']['labellisations']['createLabellisationPreuve']
@@ -116,6 +124,50 @@ describe('CreatePreuveRouter', () => {
       },
     };
   };
+
+  test("le super admin en mode support ajoute un document sur un cycle validé", async () => {
+    const { input, auditId } = await createValidInput();
+    await validateAudit({ databaseService, auditId });
+
+    const { user, cleanup } = await addTestUser(databaseService);
+    onTestFinished(cleanup);
+    const superAdmin = getAuthUserFromUserCredentials(user);
+    const caller = router.createCaller({ user: superAdmin });
+    const superAdminMode = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: superAdmin.id,
+    });
+    onTestFinished(superAdminMode.cleanup);
+
+    const response =
+      await caller.referentiels.labellisations.createLabellisationPreuve(input);
+
+    expect(response).toMatchObject({
+      demandeId: input.demandeId,
+      fichierId: input.fichierId,
+    });
+  });
+
+  test("refuse l'ajout au super admin dont le mode support est éteint", async () => {
+    const { input, auditId } = await createValidInput();
+    await validateAudit({ databaseService, auditId });
+
+    const { user, cleanup } = await addTestUser(databaseService);
+    onTestFinished(cleanup);
+    const supportUser = getAuthUserFromUserCredentials(user);
+    const roleSupport = await addUserRoleSupport({
+      databaseService,
+      userId: supportUser.id,
+    });
+    onTestFinished(roleSupport.cleanup);
+
+    const caller = router.createCaller({ user: supportUser });
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve(input)
+    ).rejects.toThrowError();
+  });
 
   test('a lecteur cannot create a preuve', async () => {
     const caller = router.createCaller({ user: readerUser });

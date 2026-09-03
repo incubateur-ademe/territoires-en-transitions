@@ -34,12 +34,12 @@ const makeParcours = (
 
 describe('parcoursToChecklist', () => {
   it('renvoie completude.done depuis completudeOk', () => {
-    const view = parcoursToChecklist(makeParcours({ completudeOk: true }));
+    const view = parcoursToChecklist(makeParcours({ completudeOk: true }), false);
     expect(view.completude).toEqual({ done: true });
   });
 
   it('affiche minimumScore au seuil 35 % (2e étoile, non atteint) quand la CT est sans étoile (etoiles === 1)', () => {
-    const view = parcoursToChecklist(makeParcours({ etoiles: 1 }));
+    const view = parcoursToChecklist(makeParcours({ etoiles: 1 }), false);
     expect(view.minimumScore).toEqual({ done: false, seuilPercent: 35 });
   });
 
@@ -53,7 +53,8 @@ describe('parcoursToChecklist', () => {
           atteint: true,
           etoiles: 2,
         },
-      })
+      }),
+      false
     );
     expect(view.minimumScore).toEqual({ done: true, seuilPercent: 35 });
   });
@@ -67,7 +68,8 @@ describe('parcoursToChecklist', () => {
           atteint: true,
           etoiles: 2,
         },
-      })
+      }),
+      false
     );
     expect(view.scoreFait).toBe(0.42);
   });
@@ -90,7 +92,8 @@ describe('parcoursToChecklist', () => {
             statutOuScore: '',
           },
         ],
-      })
+      }),
+      false
     );
     expect(view.mesures).toEqual([
       {
@@ -148,7 +151,8 @@ describe('parcoursToChecklist', () => {
             statutOuScore: '',
           },
         ],
-      })
+      }),
+      false
     );
     expect(view.mesures.map((m) => m.actionId)).toEqual([
       'cae_1',
@@ -158,7 +162,7 @@ describe('parcoursToChecklist', () => {
   });
 
   it('renvoie acteEngagement.demandeId null quand pas de demande', () => {
-    const view = parcoursToChecklist(makeParcours({ demande: null }));
+    const view = parcoursToChecklist(makeParcours({ demande: null }), false);
     expect(view.acteEngagement).toEqual({ demandeId: null });
   });
 
@@ -166,14 +170,15 @@ describe('parcoursToChecklist', () => {
     const view = parcoursToChecklist(
       makeParcours({
         demande: { id: 42 } as ParcoursLabellisation['demande'],
-      })
+      }),
+      false
     );
     expect(view.acteEngagement).toEqual({ demandeId: 42 });
   });
 
   describe('canModifyCandidatureDocuments', () => {
     it('true quand aucun audit', () => {
-      const view = parcoursToChecklist(makeParcours({ audit: null }));
+      const view = parcoursToChecklist(makeParcours({ audit: null }), false);
       expect(view.canModifyCandidatureDocuments).toBe(true);
     });
 
@@ -181,7 +186,8 @@ describe('parcoursToChecklist', () => {
       const view = parcoursToChecklist(
         makeParcours({
           audit: { valide: false } as ParcoursLabellisation['audit'],
-        })
+        }),
+        false
       );
       expect(view.canModifyCandidatureDocuments).toBe(true);
     });
@@ -190,9 +196,20 @@ describe('parcoursToChecklist', () => {
       const view = parcoursToChecklist(
         makeParcours({
           audit: { valide: true } as ParcoursLabellisation['audit'],
-        })
+        }),
+        false
       );
       expect(view.canModifyCandidatureDocuments).toBe(false);
+    });
+
+    it("true quand l'audit est validé mais que l'utilisateur porte la permission", () => {
+      const view = parcoursToChecklist(
+        makeParcours({
+          audit: { valide: true } as ParcoursLabellisation['audit'],
+        }),
+        true
+      );
+      expect(view.canModifyCandidatureDocuments).toBe(true);
     });
   });
 
@@ -226,7 +243,8 @@ describe('parcoursToChecklist', () => {
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', false, 2),
           ],
-        })
+        }),
+        false
       );
       expect(view.roleMesures).toEqual({
         eluReferent: { actionId: 'cae_5.1.2.1.1', done: true },
@@ -243,7 +261,8 @@ describe('parcoursToChecklist', () => {
             makeCritereAction('eci_1.1.1.1', true, 1),
             makeCritereAction('eci_1.1.1.3', true, 2),
           ],
-        })
+        }),
+        false
       );
       expect(view.roleMesures).toEqual({
         eluReferent: { actionId: 'eci_1.1.1.1', done: true },
@@ -258,7 +277,8 @@ describe('parcoursToChecklist', () => {
           criteresAction: [
             makeCritereAction('cae_5.1.2.1.1', false, 1),
           ],
-        })
+        }),
+        false
       );
       expect(view.roleMesures).toEqual({
         eluReferent: { actionId: 'cae_5.1.2.1.1', done: false },
@@ -273,7 +293,8 @@ describe('parcoursToChecklist', () => {
           criteresAction: [
             makeCritereAction('te_5.1.2.1.1', true, 1),
           ],
-        })
+        }),
+        false
       );
       expect(view.roleMesures).toEqual({
         eluReferent: null,
@@ -289,7 +310,8 @@ describe('parcoursToChecklist', () => {
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', true, 2),
           ],
-        })
+        }),
+        false
       );
       expect(view.roleMesures).toEqual({
         eluReferent: { actionId: 'cae_5.1.2.1.1', done: false },
@@ -306,7 +328,8 @@ describe('parcoursToChecklist', () => {
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', true, 2),
           ],
-        })
+        }),
+        false
       );
       expect(view.roleMesures).toEqual({
         eluReferent: { actionId: 'cae_5.1.2.1.1', done: false },
@@ -341,7 +364,8 @@ describe('parcoursToChecklist', () => {
           criteresAction: [
             makeRoleCritere('cae_5.1.1.1.3', true),
           ],
-        })
+        }),
+        false
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
       expect(row?.done).toBe(false);
@@ -355,7 +379,8 @@ describe('parcoursToChecklist', () => {
           criteresAction: [
             makeRoleCritere('cae_5.1.1.1.3', true),
           ],
-        })
+        }),
+        false
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
       expect(row?.done).toBe(true);
@@ -368,7 +393,8 @@ describe('parcoursToChecklist', () => {
           criteresAction: [
             makeRoleCritere('cae_5.1.1.1.3', false),
           ],
-        })
+        }),
+        false
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
       expect(row?.done).toBe(false);
@@ -381,7 +407,8 @@ describe('parcoursToChecklist', () => {
           criteresAction: [
             makeRoleCritere('cae_5.1.1.3.2', true),
           ],
-        })
+        }),
+        false
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.3.2');
       expect(row?.done).toBe(true);

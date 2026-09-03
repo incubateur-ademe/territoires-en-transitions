@@ -12,13 +12,18 @@ import {
   signInWith,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import request from 'supertest';
+import { onTestFinished } from 'vitest';
 
 describe('EditPreuveDocumentRouter', () => {
   let app: INestApplication;
@@ -285,6 +290,54 @@ describe('EditPreuveDocumentRouter', () => {
           commentaire: 'tentative de modification',
         })
       ).rejects.toThrowError(/labellisation en cours/i);
+    });
+
+    test("le super admin en mode support supprime un document sur un cycle validé", async () => {
+      const { preuve, auditId } = await createCandidaturePreuve();
+      await validerAuditEnCours(auditId);
+
+      const { user, cleanup } = await addTestUser(db);
+      onTestFinished(cleanup);
+      const superAdmin = getAuthUserFromUserCredentials(user);
+      const superAdminCaller = router.createCaller({ user: superAdmin });
+      const superAdminMode = await addAndEnableUserSuperAdminMode({
+        app,
+        caller: superAdminCaller,
+        userId: superAdmin.id,
+      });
+      onTestFinished(superAdminMode.cleanup);
+
+      const result = await superAdminCaller.collectivites.documents.removePreuve(
+        {
+          preuveId: preuve.id,
+          preuveType: 'labellisation',
+        }
+      );
+
+      expect(result.id).toBe(preuve.id);
+    });
+
+    test("refuse la suppression au super admin dont le mode support est éteint", async () => {
+      const { preuve, auditId } = await createCandidaturePreuve();
+      await validerAuditEnCours(auditId);
+
+      const { user, cleanup } = await addTestUser(db);
+      onTestFinished(cleanup);
+      const supportUser = getAuthUserFromUserCredentials(user);
+      const roleSupport = await addUserRoleSupport({
+        databaseService: db,
+        userId: supportUser.id,
+      });
+      onTestFinished(roleSupport.cleanup);
+
+      const supportCaller = router.createCaller({ user: supportUser });
+
+      await expect(
+        supportCaller.collectivites.documents.removePreuve({
+          preuveId: preuve.id,
+          preuveType: 'labellisation',
+        })
+      ).rejects.toThrowError();
     });
   });
 });

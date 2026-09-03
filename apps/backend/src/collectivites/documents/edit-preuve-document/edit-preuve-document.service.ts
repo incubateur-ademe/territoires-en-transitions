@@ -94,7 +94,12 @@ export class EditPreuveDocumentService {
     const isEditingLienOrCommentaire =
       lien !== undefined || commentaire !== undefined;
     if (isEditingLienOrCommentaire) {
-      const isPreuveEditable = await this.canModifyPreuve(preuveType, preuveId);
+      const isPreuveEditable = await this.canModifyPreuve({
+        preuveType,
+        preuveId,
+        collectiviteId: preuve.collectiviteId,
+        user,
+      });
       if (!isPreuveEditable) {
         return failure(EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS);
       }
@@ -145,17 +150,45 @@ export class EditPreuveDocumentService {
       return failure(modeError);
     }
 
-    if (!(await this.canModifyPreuve(preuveType, preuveId))) {
+    const isPreuveRemovable = await this.canModifyPreuve({
+      preuveType,
+      preuveId,
+      collectiviteId: preuve.collectiviteId,
+      user,
+    });
+    if (!isPreuveRemovable) {
       return failure(EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS);
     }
 
     return this.editPreuveDocumentRepository.deleteById(preuveType, preuveId);
   }
 
-  private async canModifyPreuve(
-    preuveType: PreuveType,
-    preuveId: number
+  private async canMutateLabellisationDocuments(
+    user: AuthenticatedUser,
+    collectiviteId: number
   ): Promise<boolean> {
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum[
+        'REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'
+      ],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+    return permissionResult.success;
+  }
+
+  private async canModifyPreuve({
+    preuveType,
+    preuveId,
+    collectiviteId,
+    user,
+  }: {
+    preuveType: PreuveType;
+    preuveId: number;
+    collectiviteId: number;
+    user: AuthenticatedUser;
+  }): Promise<boolean> {
     if (preuveType !== 'labellisation') {
       return true;
     }
@@ -163,6 +196,10 @@ export class EditPreuveDocumentService {
       await this.editPreuveDocumentRepository.findAuditByLabellisationPreuve(
         preuveId
       );
-    return canModifyCandidatureDocuments({ audit });
+    return canModifyCandidatureDocuments({
+      audit,
+      canMutateLabellisationDocuments:
+        await this.canMutateLabellisationDocuments(user, collectiviteId),
+    });
   }
 }
