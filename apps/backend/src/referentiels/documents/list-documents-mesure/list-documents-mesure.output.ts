@@ -61,13 +61,13 @@ const attenduSchema = z.object({
   documents: z.array(documentReglementaireSchema),
 });
 
-export const listMesureDocumentsOutputSchema = z.object({
+export const listDocumentsMesureOutputSchema = z.object({
   attendus: z.array(attenduSchema),
   complementaires: z.array(documentComplementaireSchema),
 });
 
-export type ListMesureDocumentsOutput = z.infer<
-  typeof listMesureDocumentsOutputSchema
+export type ListDocumentsMesureOutput = z.infer<
+  typeof listDocumentsMesureOutputSchema
 >;
 export type Attendu = z.infer<typeof attenduSchema>;
 export type DocumentReglementaire = z.infer<typeof documentReglementaireSchema>;

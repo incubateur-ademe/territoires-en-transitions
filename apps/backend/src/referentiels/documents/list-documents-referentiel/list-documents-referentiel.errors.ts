@@ -6,7 +6,7 @@ import {
 const specificErrors = ['DOCUMENT_SCHEMA_MISMATCH'] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const listDocumentsErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
+export const listDocumentsReferentielErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   commonErrors: {
     UNAUTHORIZED: {
       code: 'FORBIDDEN',
@@ -23,5 +23,5 @@ export const listDocumentsErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   },
 };
 
-export const ListDocumentsErrorEnum = createErrorsEnum(specificErrors);
-export type ListDocumentsError = keyof typeof ListDocumentsErrorEnum;
+export const ListDocumentsReferentielErrorEnum = createErrorsEnum(specificErrors);
+export type ListDocumentsReferentielError = keyof typeof ListDocumentsReferentielErrorEnum;

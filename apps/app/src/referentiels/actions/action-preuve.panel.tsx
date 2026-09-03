@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useListMesureDocuments } from '@/app/referentiels/preuves/data/use-list-mesure-documents';
+import { useListDocumentsMesure } from '@/app/referentiels/preuves/data/use-list-documents-mesure';
 import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
 import { ActionIdentity } from './use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -35,7 +35,7 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     ...otherProps
   } = props;
   const collectiviteId = useCollectiviteId();
-  const documents = useListMesureDocuments({
+  const documents = useListDocumentsMesure({
     collectiviteId,
     actionId: action.actionId,
     withSubActions,

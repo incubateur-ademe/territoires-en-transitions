@@ -3,44 +3,44 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ReferentielDocumentsAccessService } from '../referentiel-documents-access.service';
 import {
-  ListDocumentsError,
-  ListDocumentsErrorEnum,
-} from './list-documents.errors';
-import { ListDocumentsInput } from './list-documents.input';
+  ListDocumentsReferentielError,
+  ListDocumentsReferentielErrorEnum,
+} from './list-documents-referentiel.errors';
+import { ListDocumentsReferentielInput } from './list-documents-referentiel.input';
 import {
-  ListDocumentsOutput,
-  listDocumentsOutputSchema,
-} from './list-documents.output';
-import { ListDocumentsRepository } from './list-documents.repository';
+  ListDocumentsReferentielOutput,
+  listDocumentsReferentielOutputSchema,
+} from './list-documents-referentiel.output';
+import { ListDocumentsReferentielRepository } from './list-documents-referentiel.repository';
 
 @Injectable()
-export class ListDocumentsService {
-  private readonly logger = new Logger(ListDocumentsService.name);
+export class ListDocumentsReferentielService {
+  private readonly logger = new Logger(ListDocumentsReferentielService.name);
 
   constructor(
-    private readonly listDocumentsRepository: ListDocumentsRepository,
+    private readonly listDocumentsReferentielRepository: ListDocumentsReferentielRepository,
     private readonly referentielDocumentsAccess: ReferentielDocumentsAccessService
   ) {}
 
-  async listDocuments(
-    { collectiviteId, referentielId }: ListDocumentsInput,
+  async listDocumentsReferentiel(
+    { collectiviteId, referentielId }: ListDocumentsReferentielInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<ListDocumentsOutput, ListDocumentsError>> {
+  ): Promise<Result<ListDocumentsReferentielOutput, ListDocumentsReferentielError>> {
     const accessResult =
       await this.referentielDocumentsAccess.checkUserCanReadDocuments(
         { collectiviteId, referentielId },
         { user, tx }
       );
     if (!accessResult.success) {
-      return failure(ListDocumentsErrorEnum.UNAUTHORIZED);
+      return failure(ListDocumentsReferentielErrorEnum.UNAUTHORIZED);
     }
     const { canReadConfidentiel } = accessResult.data;
     const scope = { collectiviteId, referentielId, canReadConfidentiel };
 
     const [labellisation, audit, rapport] = await Promise.all([
-      this.listDocumentsRepository.listLabellisationDocuments(scope, tx),
-      this.listDocumentsRepository.listAuditDocuments(scope, tx),
-      this.listDocumentsRepository.listRapportDocuments(scope, tx),
+      this.listDocumentsReferentielRepository.listLabellisationDocuments(scope, tx),
+      this.listDocumentsReferentielRepository.listAuditDocuments(scope, tx),
+      this.listDocumentsReferentielRepository.listRapportDocuments(scope, tx),
     ]);
 
     if (!labellisation.success) {
@@ -53,7 +53,7 @@ export class ListDocumentsService {
       return failure(rapport.error);
     }
 
-    const documents = listDocumentsOutputSchema.safeParse({
+    const documents = listDocumentsReferentielOutputSchema.safeParse({
       labellisation: labellisation.data,
       audit: audit.data,
       rapport: rapport.data,
@@ -63,7 +63,7 @@ export class ListDocumentsService {
       this.logger.error(
         `Documents hors contrat pour le référentiel ${referentielId} de la collectivité ${collectiviteId}: ${documents.error.message}`
       );
-      return failure(ListDocumentsErrorEnum.DOCUMENT_SCHEMA_MISMATCH);
+      return failure(ListDocumentsReferentielErrorEnum.DOCUMENT_SCHEMA_MISMATCH);
     }
 
     return success(documents.data);

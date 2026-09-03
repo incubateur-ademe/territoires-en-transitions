@@ -15,18 +15,18 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { auditTable } from '../../labellisations/audit.table';
 import { labellisationDemandeTable } from '../../labellisations/labellisation-demande.table';
-import { ListDocumentsErrorEnum } from './list-documents.errors';
-import { ListDocumentsInput } from './list-documents.input';
+import { ListDocumentsReferentielErrorEnum } from './list-documents-referentiel.errors';
+import { ListDocumentsReferentielInput } from './list-documents-referentiel.input';
 
 type DocumentsScope = {
   collectiviteId: number;
-  referentielId: ListDocumentsInput['referentielId'];
+  referentielId: ListDocumentsReferentielInput['referentielId'];
   canReadConfidentiel: boolean;
 };
 
 @Injectable()
-export class ListDocumentsRepository {
-  private readonly logger = new Logger(ListDocumentsRepository.name);
+export class ListDocumentsReferentielRepository {
+  private readonly logger = new Logger(ListDocumentsReferentielRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -90,7 +90,7 @@ export class ListDocumentsRepository {
           error
         )}`
       );
-      return failure(ListDocumentsErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsReferentielErrorEnum.DATABASE_ERROR);
     }
   }
 
@@ -155,7 +155,7 @@ export class ListDocumentsRepository {
           error
         )}`
       );
-      return failure(ListDocumentsErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsReferentielErrorEnum.DATABASE_ERROR);
     }
   }
 
@@ -208,7 +208,7 @@ export class ListDocumentsRepository {
           error
         )}`
       );
-      return failure(ListDocumentsErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsReferentielErrorEnum.DATABASE_ERROR);
     }
   }
 }

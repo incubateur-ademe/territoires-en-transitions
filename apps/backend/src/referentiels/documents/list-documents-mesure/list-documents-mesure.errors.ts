@@ -9,7 +9,7 @@ const specificErrors = [
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const listMesureDocumentsErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const listDocumentsMesureErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     commonErrors: {
       UNAUTHORIZED: {
@@ -31,6 +31,6 @@ export const listMesureDocumentsErrorConfig: TrpcErrorHandlerConfig<SpecificErro
     },
   };
 
-export const ListMesureDocumentsErrorEnum = createErrorsEnum(specificErrors);
-export type ListMesureDocumentsError =
-  keyof typeof ListMesureDocumentsErrorEnum;
+export const ListDocumentsMesureErrorEnum = createErrorsEnum(specificErrors);
+export type ListDocumentsMesureError =
+  keyof typeof ListDocumentsMesureErrorEnum;

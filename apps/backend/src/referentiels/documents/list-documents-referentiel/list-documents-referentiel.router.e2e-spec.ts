@@ -170,7 +170,7 @@ describe('List Documents Router', () => {
       date: '2026-06-15T00:00:00.000Z',
     });
 
-    const documents = await membreCaller.referentiels.documents.listDocuments({
+    const documents = await membreCaller.referentiels.documents.listDocumentsReferentiel({
       collectiviteId,
       referentielId: ReferentielIdEnum.CAE,
     });
@@ -193,7 +193,7 @@ describe('List Documents Router', () => {
       date: '2026-06-15T00:00:00.000Z',
     });
 
-    const documents = await membreCaller.referentiels.documents.listDocuments({
+    const documents = await membreCaller.referentiels.documents.listDocumentsReferentiel({
       collectiviteId,
       referentielId: ReferentielIdEnum.CAE,
     });
@@ -229,7 +229,7 @@ describe('List Documents Router', () => {
     });
 
     const documents =
-      await cycle.membreCaller.referentiels.documents.listDocuments({
+      await cycle.membreCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId: cycle.collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });
@@ -250,7 +250,7 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'dossier-candidature.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocuments(
+    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
       {
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
@@ -271,7 +271,7 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'acte-candidature.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocuments(
+    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
       {
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
@@ -289,7 +289,7 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'piece-du-cycle.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocuments(
+    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
       {
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
@@ -315,7 +315,7 @@ describe('List Documents Router', () => {
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
     const documentsVisiteur =
-      await visiteurCaller.referentiels.documents.listDocuments({
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });
@@ -327,7 +327,7 @@ describe('List Documents Router', () => {
     ).toEqual(['piece-publique.pdf']);
 
     const documentsMembre =
-      await membreCaller.referentiels.documents.listDocuments({
+      await membreCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });
@@ -348,7 +348,7 @@ describe('List Documents Router', () => {
     const visiteurCaller = router.createCaller({ user: visiteurUser });
 
     await expect(
-      visiteurCaller.referentiels.documents.listDocuments({
+      visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       })
@@ -369,7 +369,7 @@ describe('List Documents Router', () => {
     await otherCycle.addPreuve({ fileName: 'document-voisin.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocuments(
+    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
       {
         collectiviteId: cycle.collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
@@ -388,7 +388,7 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'document-cae.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocuments(
+    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
       {
         collectiviteId,
         referentielId: ReferentielIdEnum.ECI,
@@ -413,7 +413,7 @@ describe('List Documents Router', () => {
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
     const documentsVisiteur =
-      await visiteurCaller.referentiels.documents.listDocuments({
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });
@@ -423,7 +423,7 @@ describe('List Documents Router', () => {
     ).toEqual(['rapport-audit.pdf']);
 
     const documentsMembre =
-      await membreCaller.referentiels.documents.listDocuments({
+      await membreCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });
@@ -450,7 +450,7 @@ describe('List Documents Router', () => {
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
     const documentsVisiteur =
-      await visiteurCaller.referentiels.documents.listDocuments({
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });
@@ -461,7 +461,7 @@ describe('List Documents Router', () => {
     expect(documentsVisiteur.rapport[0].rapport.date).toBeDefined();
 
     const documentsMembre =
-      await membreCaller.referentiels.documents.listDocuments({
+      await membreCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
       });

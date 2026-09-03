@@ -7,7 +7,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
 import { useReferentielId } from '../referentiel-context';
-import { useListDocuments } from './data/use-list-documents';
+import { useListDocumentsReferentiel } from './data/use-list-documents-referentiel';
 import { AddRapportVisite } from './AddRapportVisite';
 import { groupeParDemande } from './groupeParDemande';
 import { addInfoToEntry, PreuvesLabellisation } from './PreuveLabellisation';
@@ -24,7 +24,7 @@ export const DocumentsView = () => {
   const referentielId = useReferentielId();
   const tableData = useTableData(referentielId);
 
-  const documents = useListDocuments({ collectiviteId, referentielId });
+  const documents = useListDocumentsReferentiel({ collectiviteId, referentielId });
   const { labellisation, audit, rapport } =
     documents.status === 'loaded'
       ? documents.documents

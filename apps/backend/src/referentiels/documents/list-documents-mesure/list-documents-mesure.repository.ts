@@ -15,7 +15,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, getTableColumns, like, or, SQL, sql } from 'drizzle-orm';
 import { actionDefinitionTable } from '../../models/action-definition.table';
-import { ListMesureDocumentsErrorEnum } from './list-mesure-documents.errors';
+import { ListDocumentsMesureErrorEnum } from './list-documents-mesure.errors';
 
 type MesureScope = {
   collectiviteId: number;
@@ -46,8 +46,8 @@ function buildMesureFilter({
 }
 
 @Injectable()
-export class ListMesureDocumentsRepository {
-  private readonly logger = new Logger(ListMesureDocumentsRepository.name);
+export class ListDocumentsMesureRepository {
+  private readonly logger = new Logger(ListDocumentsMesureRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -126,7 +126,7 @@ export class ListMesureDocumentsRepository {
           error
         )}`
       );
-      return failure(ListMesureDocumentsErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsMesureErrorEnum.DATABASE_ERROR);
     }
   }
 
@@ -190,7 +190,7 @@ export class ListMesureDocumentsRepository {
           error
         )}`
       );
-      return failure(ListMesureDocumentsErrorEnum.DATABASE_ERROR);
+      return failure(ListDocumentsMesureErrorEnum.DATABASE_ERROR);
     }
   }
 }
