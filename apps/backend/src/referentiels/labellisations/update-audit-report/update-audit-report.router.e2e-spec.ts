@@ -114,12 +114,25 @@ describe('UpdateAuditReportRouter', () => {
     };
 
     return {
+      audit,
       auditeurUser,
       otherUser,
       preuve,
       newFichier,
       cleanup: cleanupAll,
     };
+  };
+
+  const getPreuveTrace = async (preuveId: number) => {
+    const [row] = await databaseService.db
+      .select({
+        fichierId: preuveAuditTable.fichierId,
+        modifiedBy: preuveAuditTable.modifiedBy,
+        modifiedAt: preuveAuditTable.modifiedAt,
+      })
+      .from(preuveAuditTable)
+      .where(eq(preuveAuditTable.id, preuveId));
+    return row;
   };
 
   const getPreuveFichierId = async (preuveId: number) => {
@@ -145,6 +158,43 @@ describe('UpdateAuditReportRouter', () => {
     });
 
     expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
+  });
+
+  test('le remplacement enregistre son auteur et sa date', async () => {
+    const { audit, otherUser, preuve, newFichier, cleanup } = await seedReport({
+      clos: false,
+      valide: false,
+    });
+    onTestFinished(cleanup);
+
+    const secondAuditeurPermission = await addAuditeurPermission({
+      databaseService,
+      auditId: audit.id,
+      userId: otherUser.id,
+    });
+    onTestFinished(secondAuditeurPermission.cleanup);
+
+    const traceBeforeReplacement = await getPreuveTrace(preuve.id);
+
+    const caller = router.createCaller({ user: await getAuthUser(otherUser) });
+    await caller.referentiels.labellisations.updateAuditReport({
+      preuveId: preuve.id,
+      fichierId: newFichier.id,
+    });
+
+    const trace = await getPreuveTrace(preuve.id);
+
+    expect({
+      fichierId: trace.fichierId,
+      modifiedBy: trace.modifiedBy,
+      isModifiedAtRefreshed:
+        new Date(trace.modifiedAt) >
+        new Date(traceBeforeReplacement.modifiedAt),
+    }).toEqual({
+      fichierId: newFichier.id,
+      modifiedBy: otherUser.id,
+      isModifiedAtRefreshed: true,
+    });
   });
 
   test("l'auditeur remplace le rapport d'un audit pas encore valide", async () => {
