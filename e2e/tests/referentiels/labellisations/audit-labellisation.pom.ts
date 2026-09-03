@@ -24,6 +24,8 @@ export class AuditLabellisationPom {
   readonly candidatureDocumentsTitle: Locator;
   readonly candidatureDocumentsRow: Locator;
   readonly ajouterDocumentCandidatureButton: Locator;
+  readonly renommerDocumentCandidatureButton: Locator;
+  readonly supprimerDocumentCandidatureButton: Locator;
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
   readonly auditTypeGroup: Locator;
@@ -78,6 +80,10 @@ export class AuditLabellisationPom {
       this.candidatureDocumentsRow.getByRole('button', {
         name: 'Ajouter un document',
       });
+    this.renommerDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByTitle('Renommer le fichier');
+    this.supprimerDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByTitle('Supprimer');
     this.demanderAuditButton = page.getByRole('button', {
       name: 'Demander un audit',
     });
