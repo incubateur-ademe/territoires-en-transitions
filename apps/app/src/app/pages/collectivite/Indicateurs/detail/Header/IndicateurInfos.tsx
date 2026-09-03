@@ -1,4 +1,3 @@
-import { referentielToName } from '@/app/app/labels';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -111,15 +110,13 @@ export const IndicateurInfos = ({
           </>
         )}
 
-        {/* Participe au score CAE */}
+        {/* Participe au score programme TETE */}
         {participationScore && (
           <>
             {(!!modifiedAt || hasPilotes || hasServices) && (
               <div className="w-[1px] h-5 bg-grey-5" />
             )}
-            <span>
-              {appLabels.indicateurParticipeAuScore} {referentielToName.cae}
-            </span>
+            <span>{appLabels.indicateurParticipeAuScore}</span>
           </>
         )}
 

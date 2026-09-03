@@ -52,7 +52,7 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
         <Stack gap={1} className="mt-auto">
           <Divider className="h-[0.5px]" />
           <Paragraph className="text-[0.6rem] text-grey-6">
-            Participe au score Climat Air Énergie
+            Participe au score programme TETE
           </Paragraph>
         </Stack>
       )}
