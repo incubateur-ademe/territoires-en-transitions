@@ -1089,7 +1089,7 @@ export const appLabels = {
     'Nous mettons à votre disposition automatiquement des données issues de sources vérifiées (CEREMA, RARE, SINOE…).',
   enSavoirPlus: 'en savoir plus',
   indicateurModifieLeLabel: 'Modifié le',
-  indicateurParticipeAuScore: 'Participe au score',
+  indicateurParticipeAuScore: 'Participe au score programme TETE',
   parPrenomNom: ({ prenom, nom }: { prenom?: string; nom?: string }): string =>
     `par ${prenom ?? ''} ${nom ?? ''}`,
   recalculerLaTrajectoire: 'Recalculer la trajectoire',
@@ -1259,7 +1259,6 @@ export const appLabels = {
     `${count} indicateur${count > 1 ? 's' : ''} dans ce groupe`,
   sousIndicateurAjoutCount: ({ count }: { count: number }): string =>
     `+${count} sous-indicateur${count > 1 ? 's' : ''}`,
-  participeAuScoreCae: 'Participe au score Climat Air Énergie',
   completerIndicateur: "Compléter l'indicateur",
   derniereValeurIndicateurModePrive:
     'La dernière valeur de cet indicateur est en mode privé',
