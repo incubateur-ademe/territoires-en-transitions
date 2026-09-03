@@ -18,7 +18,7 @@ export const bibliothequeFichierTable = labellisationSchema.table(
       .references(() => collectiviteTable.id),
     hash: varchar('hash', { length: 160 }).notNull(),
     filename: text('filename').notNull(),
-    confidentiel: boolean('confidentiel').notNull(),
+    confidentiel: boolean('confidentiel').notNull().default(false),
   },
   (table) => [
     unique('bibliotheque_fichier_collectivite_id_hash_key').on(
