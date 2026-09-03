@@ -6,6 +6,7 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { Workbook } from 'exceljs';
+import { buildPersonnalisationRows } from './build-personnalisation-rows';
 import { buildRows } from './build-rows';
 import {
   ExportScoreComparisonError,
@@ -56,6 +57,10 @@ export class ExportScoreComparisonService {
 
       if (exportFormat === 'csv') {
         sanitizeWorksheetForCsvExport(worksheet);
+      } else {
+        // la feuille "Personnalisation" n'est ajoutée que pour le format excel
+        const personnalisationSheet = workbook.addWorksheet('Personnalisation');
+        buildPersonnalisationRows(scoreComparisonData, personnalisationSheet);
       }
 
       const buffer =

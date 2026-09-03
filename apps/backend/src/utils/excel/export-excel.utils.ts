@@ -69,6 +69,14 @@ export const getNumberFormat = (value: CellValue, numFmt?: string) => {
   }
 
   if (numFmt === FORMAT_PERCENT) {
+    // Excel / LibreOffice affichent toujours le séparateur décimal littéral du
+    // format, même sans décimale : `0.#%` produit "17,%" pour un pourcentage
+    // entier. On ne garde la décimale optionnelle que si la valeur en affiche
+    // effectivement une (au 1er chiffre près, ce que `0.#%` montrerait).
+    if (typeof value === 'number') {
+      const percent = Math.round(value * 1000) / 10;
+      return Number.isInteger(percent) ? '0%' : '0.#%';
+    }
     return '0.#%';
   }
 
