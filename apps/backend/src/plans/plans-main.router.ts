@@ -3,7 +3,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { AxesRouter } from './axes/axes.router';
 import { FichesRouter } from './fiches/fiches.router';
 import { PaniersRouter } from './paniers/paniers.router';
-import { GetImportStatusRouter } from './plans/ai-plan-import/get-import-status/get-import-status.router';
+import { GetImportStatusRouter } from './ai-plan-import/get-import-status/get-import-status.router';
 import { PlanRouter } from './plans/plans.router';
 import { GenerateReportsRouter } from './reports/generate-plan-report-pptx/generate-reports.router';
 
