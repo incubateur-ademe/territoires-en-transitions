@@ -80,15 +80,15 @@ type FileTriage =
 
 function triageFile({ file, folderSegments }: FileWithFolder): FileTriage {
   const emplacement = folderSegments.join('/');
-  const filename = file.filename ?? file.hash;
+  const { filename } = file;
 
-  if (file.filesize === null || file.bucketId === null) {
+  if (file.filesize === null) {
     return {
       kind: 'skipped',
       entry: {
         filename,
         emplacement,
-        raison: 'Fichier introuvable dans le stockage',
+        raison: 'Taille du fichier inconnue',
       },
     };
   }

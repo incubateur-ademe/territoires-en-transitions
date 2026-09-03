@@ -202,7 +202,7 @@ describe('generateArchiveFolderArborescence', () => {
     });
   });
 
-  it('ignore un fichier introuvable dans le stockage', () => {
+  it('ignore un fichier dont la taille est inconnue', () => {
     const result = generateArchiveFolderArborescence(
       buildInput({
         mesure: {
@@ -223,7 +223,7 @@ describe('generateArchiveFolderArborescence', () => {
     expect(result.data.files).toEqual([]);
     expect(result.data.skippedFiles[0]).toMatchObject({
       filename: 'sans-taille.pdf',
-      raison: 'Fichier introuvable dans le stockage',
+      raison: 'Taille du fichier inconnue',
     });
   });
 

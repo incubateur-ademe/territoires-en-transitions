@@ -1,33 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  buildFichierSubquery,
+  buildFileInfoSql,
+  type FichierSubquery,
+} from '@tet/backend/collectivites/documents/file-info.utils';
 import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
-import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
-import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray, sql, type SQL } from 'drizzle-orm';
-import { z } from 'zod';
+import { and, eq, sql, type SQL } from 'drizzle-orm';
+import { type PgColumn } from 'drizzle-orm/pg-core';
 import {
   PreuvesArchiveErrorEnum,
   type PreuvesArchiveError,
 } from '../preuves-archive.errors';
 
-const storageMetadataSchema = z.object({
-  size: z.union([z.number(), z.string()]),
-});
-
 export interface CollectedFilePreuve {
-  bucketId: string | null;
+  bucketId: string;
   hash: string;
-  filename: string | null;
+  filename: string;
   filesize: number | null;
   actionId: string | null;
 }
@@ -44,6 +42,39 @@ type CollectedPreuves = {
   links: CollectedLinkPreuve[];
 };
 
+type CollectedRow = {
+  actionId: string | null;
+  url: string | null;
+  titre: string | null;
+  commentaire: string | null;
+  fichier: {
+    bucketId: string;
+    hash: string;
+    filename: string;
+    filesize: number | null;
+  } | null;
+};
+
+const AUCUNE_MESURE = sql<string | null>`null`;
+
+const splitFilesAndLinks = (rows: CollectedRow[]): CollectedPreuves => ({
+  files: rows.flatMap((row) =>
+    row.fichier ? [{ ...row.fichier, actionId: row.actionId }] : []
+  ),
+  links: rows.flatMap((row) =>
+    !row.fichier && row.url
+      ? [
+          {
+            url: row.url,
+            titre: row.titre,
+            commentaire: row.commentaire,
+            actionId: row.actionId,
+          },
+        ]
+      : []
+  ),
+});
+
 @Injectable()
 export class CollectPreuvesRepository {
   private readonly db = this.database.db;
@@ -57,18 +88,16 @@ export class CollectPreuvesRepository {
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
     const { collectiviteId, referentielId, canReadConfidentiel } = input;
+    const fichier = buildFichierSubquery(this.db);
+
     try {
       const rows = await this.db
         .select({
           actionId: preuveComplementaireTable.actionId,
-          fichierId: preuveComplementaireTable.fichierId,
           url: preuveComplementaireTable.url,
           titre: preuveComplementaireTable.titre,
           commentaire: preuveComplementaireTable.commentaire,
-          bucketId: storageObjectTable.bucketId,
-          hash: bibliothequeFichierTable.hash,
-          filename: bibliothequeFichierTable.filename,
-          metadata: storageObjectTable.metadata,
+          fichier: buildFileInfoSql(fichier),
         })
         .from(preuveComplementaireTable)
         .innerJoin(
@@ -82,42 +111,26 @@ export class CollectPreuvesRepository {
           )
         )
         .leftJoin(
-          bibliothequeFichierTable,
+          fichier,
           and(
-            eq(
-              preuveComplementaireTable.fichierId,
-              bibliothequeFichierTable.id
-            ),
-            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          storageObjectTable,
-          and(
-            eq(storageObjectTable.name, bibliothequeFichierTable.hash),
-            this.storageObjectInCollectiviteBuckets(collectiviteId)
+            eq(preuveComplementaireTable.fichierId, fichier.id),
+            eq(fichier.collectiviteId, collectiviteId)
           )
         )
         .where(
           and(
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
-              fichierIdColumn: preuveComplementaireTable.fichierId,
-              confidentielColumn: bibliothequeFichierTable.confidentiel,
-              canReadConfidentiel,
-            })
+            this.masqueLesConfidentiels(
+              preuveComplementaireTable.fichierId,
+              fichier,
+              canReadConfidentiel
+            )
           )
         );
 
-      return success(this.splitFilesAndLinks(rows));
+      return success(splitFilesAndLinks(rows));
     } catch (error) {
-      this.logger.error(
-        `Collecte des preuves complémentaires: ${getErrorMessage(error)}`
-      );
-      return failure(
-        PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return this.echecDeCollecte('complémentaires', error);
     }
   }
 
@@ -127,23 +140,21 @@ export class CollectPreuvesRepository {
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
     const { collectiviteId, referentielId, canReadConfidentiel } = input;
+    const fichier = buildFichierSubquery(this.db);
+
     try {
       const rows = await this.db
         .select({
           actionId: preuveActionTable.actionId,
-          fichierId: preuveReglementaireTable.fichierId,
           url: preuveReglementaireTable.url,
           titre: preuveReglementaireTable.titre,
           commentaire: preuveReglementaireTable.commentaire,
-          bucketId: storageObjectTable.bucketId,
-          hash: bibliothequeFichierTable.hash,
-          filename: bibliothequeFichierTable.filename,
-          metadata: storageObjectTable.metadata,
+          fichier: buildFileInfoSql(fichier),
         })
         .from(preuveReglementaireTable)
         .innerJoin(
           preuveActionTable,
-          eq(preuveReglementaireTable.preuveId, preuveActionTable.preuveId)
+          eq(preuveActionTable.preuveId, preuveReglementaireTable.preuveId)
         )
         .innerJoin(
           actionDefinitionTable,
@@ -153,39 +164,26 @@ export class CollectPreuvesRepository {
           )
         )
         .leftJoin(
-          bibliothequeFichierTable,
+          fichier,
           and(
-            eq(preuveReglementaireTable.fichierId, bibliothequeFichierTable.id),
-            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          storageObjectTable,
-          and(
-            eq(storageObjectTable.name, bibliothequeFichierTable.hash),
-            this.storageObjectInCollectiviteBuckets(collectiviteId)
+            eq(preuveReglementaireTable.fichierId, fichier.id),
+            eq(fichier.collectiviteId, collectiviteId)
           )
         )
         .where(
           and(
             eq(preuveReglementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
-              fichierIdColumn: preuveReglementaireTable.fichierId,
-              confidentielColumn: bibliothequeFichierTable.confidentiel,
-              canReadConfidentiel,
-            })
+            this.masqueLesConfidentiels(
+              preuveReglementaireTable.fichierId,
+              fichier,
+              canReadConfidentiel
+            )
           )
         );
 
-      return success(this.splitFilesAndLinks(rows));
+      return success(splitFilesAndLinks(rows));
     } catch (error) {
-      this.logger.error(
-        `Collecte des preuves réglementaires: ${getErrorMessage(error)}`
-      );
-      return failure(
-        PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return this.echecDeCollecte('réglementaires', error);
     }
   }
 
@@ -195,55 +193,40 @@ export class CollectPreuvesRepository {
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
     const { collectiviteId, demandeId, canReadConfidentiel } = input;
+    const fichier = buildFichierSubquery(this.db);
+
     try {
       const rows = await this.db
         .select({
-          actionId: sql<string | null>`null`,
-          fichierId: preuveLabellisationTable.fichierId,
+          actionId: AUCUNE_MESURE,
           url: preuveLabellisationTable.url,
           titre: preuveLabellisationTable.titre,
           commentaire: preuveLabellisationTable.commentaire,
-          bucketId: storageObjectTable.bucketId,
-          hash: bibliothequeFichierTable.hash,
-          filename: bibliothequeFichierTable.filename,
-          metadata: storageObjectTable.metadata,
+          fichier: buildFileInfoSql(fichier),
         })
         .from(preuveLabellisationTable)
         .leftJoin(
-          bibliothequeFichierTable,
+          fichier,
           and(
-            eq(preuveLabellisationTable.fichierId, bibliothequeFichierTable.id),
-            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          storageObjectTable,
-          and(
-            eq(storageObjectTable.name, bibliothequeFichierTable.hash),
-            this.storageObjectInCollectiviteBuckets(collectiviteId)
+            eq(preuveLabellisationTable.fichierId, fichier.id),
+            eq(fichier.collectiviteId, collectiviteId)
           )
         )
         .where(
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
-              fichierIdColumn: preuveLabellisationTable.fichierId,
-              confidentielColumn: bibliothequeFichierTable.confidentiel,
-              canReadConfidentiel,
-            })
+            this.masqueLesConfidentiels(
+              preuveLabellisationTable.fichierId,
+              fichier,
+              canReadConfidentiel
+            )
           )
         );
 
-      return success(this.splitFilesAndLinks(rows));
+      return success(splitFilesAndLinks(rows));
     } catch (error) {
-      this.logger.error(
-        `Collecte des preuves de labellisation: ${getErrorMessage(error)}`
-      );
-      return failure(
-        PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return this.echecDeCollecte('de labellisation', error);
     }
   }
 
@@ -253,119 +236,65 @@ export class CollectPreuvesRepository {
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
     const { collectiviteId, auditId, canReadConfidentiel } = input;
+    const fichier = buildFichierSubquery(this.db);
+
     try {
       const rows = await this.db
         .select({
-          actionId: sql<string | null>`null`,
-          fichierId: preuveAuditTable.fichierId,
+          actionId: AUCUNE_MESURE,
           url: preuveAuditTable.url,
           titre: preuveAuditTable.titre,
           commentaire: preuveAuditTable.commentaire,
-          bucketId: storageObjectTable.bucketId,
-          hash: bibliothequeFichierTable.hash,
-          filename: bibliothequeFichierTable.filename,
-          metadata: storageObjectTable.metadata,
+          fichier: buildFileInfoSql(fichier),
         })
         .from(preuveAuditTable)
         .leftJoin(
-          bibliothequeFichierTable,
+          fichier,
           and(
-            eq(preuveAuditTable.fichierId, bibliothequeFichierTable.id),
-            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          storageObjectTable,
-          and(
-            eq(storageObjectTable.name, bibliothequeFichierTable.hash),
-            this.storageObjectInCollectiviteBuckets(collectiviteId)
+            eq(preuveAuditTable.fichierId, fichier.id),
+            eq(fichier.collectiviteId, collectiviteId)
           )
         )
         .where(
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
-              fichierIdColumn: preuveAuditTable.fichierId,
-              confidentielColumn: bibliothequeFichierTable.confidentiel,
-              canReadConfidentiel,
-            })
+            this.masqueLesConfidentiels(
+              preuveAuditTable.fichierId,
+              fichier,
+              canReadConfidentiel
+            )
           )
         );
 
-      return success(this.splitFilesAndLinks(rows));
+      return success(splitFilesAndLinks(rows));
     } catch (error) {
-      this.logger.error(
-        `Collecte des preuves d'audit: ${getErrorMessage(error)}`
-      );
-      return failure(
-        PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return this.echecDeCollecte("d'audit", error);
     }
   }
 
-  private storageObjectInCollectiviteBuckets(collectiviteId: number): SQL {
-    return inArray(
-      storageObjectTable.bucketId,
-      this.db
-        .select({ bucketId: collectiviteBucketTable.bucketId })
-        .from(collectiviteBucketTable)
-        .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId))
+  private masqueLesConfidentiels(
+    fichierIdColumn: PgColumn,
+    fichier: FichierSubquery,
+    canReadConfidentiel: boolean
+  ): SQL | undefined {
+    return hideConfidentielFilter({
+      fichierIdColumn,
+      confidentielColumn: fichier.confidentiel,
+      canReadConfidentiel,
+    });
+  }
+
+  private echecDeCollecte(
+    nature: string,
+    error: unknown
+  ): Result<never, PreuvesArchiveError> {
+    this.logger.error(
+      `Collecte des preuves ${nature}: ${getErrorMessage(error)}`
     );
-  }
-
-  private splitFilesAndLinks(
-    rows: Array<{
-      actionId: string | null;
-      fichierId: number | null;
-      url: string | null;
-      titre: string | null;
-      commentaire: string | null;
-      bucketId: string | null;
-      hash: string | null;
-      filename: string | null;
-      metadata: unknown;
-    }>
-  ): CollectedPreuves {
-    const files = rows
-      .filter(
-        (
-          row
-        ): row is typeof row & {
-          fichierId: number;
-          hash: string;
-        } => row.fichierId !== null && row.hash !== null
-      )
-      .map((row) => ({
-        bucketId: row.bucketId,
-        hash: row.hash,
-        filename: row.filename,
-        filesize: this.readFilesize(row.metadata),
-        actionId: row.actionId,
-      }));
-
-    const links = rows
-      .filter(
-        (row): row is typeof row & { url: string } =>
-          row.fichierId === null && row.url !== null && row.url !== ''
-      )
-      .map((row) => ({
-        url: row.url,
-        titre: row.titre,
-        commentaire: row.commentaire,
-        actionId: row.actionId,
-      }));
-
-    return { files, links };
-  }
-
-  private readFilesize(metadata: unknown): number | null {
-    const parsed = storageMetadataSchema.safeParse(metadata);
-    if (!parsed.success) {
-      return null;
-    }
-    const size = Number(parsed.data.size);
-    return Number.isFinite(size) ? size : null;
+    return failure(
+      PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
+      error instanceof Error ? error : new Error(getErrorMessage(error))
+    );
   }
 }
