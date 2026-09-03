@@ -117,6 +117,35 @@ test.describe("Rapport d'audit dans la bibliothèque", () => {
     await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
   });
 
+  test('le super admin en mode support voit le bouton « Remplacer le fichier » une fois la fenêtre dépassée', async ({
+    page,
+    collectivites,
+    referentiels,
+    closedAuditReport,
+  }) => {
+    const { collectiviteId } = closedAuditReport;
+
+    await referentiels.expireAuditReportEditWindow({
+      collectiviteId,
+      referentielId: referentiel,
+    });
+
+    const { user: superAdminUser } = await collectivites.addCollectiviteAndUser({
+      userArgs: {
+        autoLogin: true,
+        isSupport: true,
+        isSuperAdminRoleEnabled: true,
+      },
+    });
+
+    await superAdminUser.login();
+    await page.goto(
+      `/collectivite/${collectiviteId}/referentiel/eci/documents`
+    );
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+    await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(1);
+  });
+
   test('un visiteur en lecture seule ne voit pas le bouton « Remplacer le fichier »', async ({
     page,
     closedAuditReport,

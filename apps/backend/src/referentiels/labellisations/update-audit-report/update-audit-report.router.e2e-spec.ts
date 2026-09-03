@@ -7,7 +7,16 @@ import {
   addAuditeurPermission,
   createAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
-import { getAuthUser, getTestApp } from '@tet/backend/test';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+} from '@tet/backend/test';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
@@ -280,6 +289,60 @@ describe('UpdateAuditReportRouter', () => {
     });
 
     expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
+  });
+
+  test("autorise le super admin en mode support sur un audit clos hors fenêtre", async () => {
+    const { preuve, newFichier, cleanup } = await seedReport({
+      clos: true,
+      valide: true,
+      dateFin: new Date(Date.now() - 16 * DAY_IN_MS).toISOString(),
+    });
+    onTestFinished(cleanup);
+
+    const { user, cleanup: cleanupUser } = await addTestUser(databaseService);
+    onTestFinished(cleanupUser);
+    const superAdmin = getAuthUserFromUserCredentials(user);
+    const caller = router.createCaller({ user: superAdmin });
+    const superAdminMode = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: superAdmin.id,
+    });
+    onTestFinished(superAdminMode.cleanup);
+
+    await caller.referentiels.labellisations.updateAuditReport({
+      preuveId: preuve.id,
+      fichierId: newFichier.id,
+    });
+
+    expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
+  });
+
+  test('refuse le super admin dont le mode support est éteint', async () => {
+    const { preuve, newFichier, cleanup } = await seedReport({
+      clos: true,
+      valide: true,
+      dateFin: new Date(Date.now() - 16 * DAY_IN_MS).toISOString(),
+    });
+    onTestFinished(cleanup);
+
+    const { user, cleanup: cleanupUser } = await addTestUser(databaseService);
+    onTestFinished(cleanupUser);
+    const supportUser = getAuthUserFromUserCredentials(user);
+    const roleSupport = await addUserRoleSupport({
+      databaseService,
+      userId: supportUser.id,
+    });
+    onTestFinished(roleSupport.cleanup);
+
+    const caller = router.createCaller({ user: supportUser });
+
+    await expect(
+      caller.referentiels.labellisations.updateAuditReport({
+        preuveId: preuve.id,
+        fichierId: newFichier.id,
+      })
+    ).rejects.toThrow(/réservé à l'auditeur/);
   });
 
   test("refuse un fichier appartenant à une autre collectivité", async () => {

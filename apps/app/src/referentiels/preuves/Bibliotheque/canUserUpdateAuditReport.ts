@@ -1,5 +1,6 @@
 import { canUpdateAuditReport } from '@tet/domain/referentiels';
 import {
+  hasPermission,
   isUserAuditeurForAudit,
   UserRolesAndPermissions,
 } from '@tet/domain/users';
@@ -14,6 +15,11 @@ export const canUserUpdateAuditReport = (
   }
   return canUpdateAuditReport({
     isAuditeur: isUserAuditeurForAudit(user, preuve.audit.id),
+    canUpdateAnyAuditReport: hasPermission(
+      user,
+      'referentiels.labellisations.mutate_documents',
+      { collectiviteId: preuve.collectiviteId }
+    ),
     audit: {
       clos: preuve.audit.clos,
       valide: preuve.audit.valide,

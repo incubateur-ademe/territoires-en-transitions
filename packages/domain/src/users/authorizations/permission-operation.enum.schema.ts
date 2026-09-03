@@ -30,6 +30,7 @@ export const PermissionOperations = [
   'referentiels.labellisations.start_audit',
   'referentiels.labellisations.validate_audit',
   'referentiels.labellisations.mutate_action_audit_statut',
+  'referentiels.labellisations.mutate_documents',
   'referentiels.discussions.read',
   'referentiels.discussions.mutate',
 

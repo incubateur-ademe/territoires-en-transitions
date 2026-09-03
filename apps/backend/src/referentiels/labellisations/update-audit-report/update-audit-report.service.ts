@@ -2,10 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import { canUpdateAuditReport } from '@tet/domain/referentiels';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq } from 'drizzle-orm';
 import { auditTable } from '../audit.table';
@@ -19,7 +21,25 @@ import { UpdateAuditReportInput } from './update-audit-report.input';
 export class UpdateAuditReportService {
   private readonly logger = new Logger(UpdateAuditReportService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissions: PermissionService
+  ) {}
+
+  private async canUpdateAnyAuditReport(
+    user: AuthenticatedUser,
+    collectiviteId: number
+  ): Promise<boolean> {
+    const permissionResult = await this.permissions.isAllowed(
+      user,
+      PermissionOperationEnum[
+        'REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'
+      ],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+    return permissionResult.success;
+  }
 
   async updateAuditReport(
     { preuveId, fichierId }: UpdateAuditReportInput,
@@ -54,6 +74,10 @@ export class UpdateAuditReportService {
 
       const allowed = canUpdateAuditReport({
         isAuditeur: context.auditeur !== null,
+        canUpdateAnyAuditReport: await this.canUpdateAnyAuditReport(
+          user,
+          context.collectiviteId
+        ),
         audit: {
           clos: context.clos,
           valide: context.valide,
