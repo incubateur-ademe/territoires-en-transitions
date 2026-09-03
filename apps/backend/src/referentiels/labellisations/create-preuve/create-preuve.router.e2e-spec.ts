@@ -233,7 +233,7 @@ describe('CreatePreuveRouter', () => {
     ).rejects.toThrowError(/permissions nécessaires/i);
   });
 
-  test('an auditeur can create a preuve if the audit has started', async () => {
+  test("refuse le depot a l'auditeur meme pendant son audit", async () => {
     const caller = router.createCaller({ user: readerUser });
     const { input, auditId } = await createValidInput();
 
@@ -243,17 +243,27 @@ describe('CreatePreuveRouter', () => {
       userId: readerUser.id,
     });
 
-    const response =
-      await caller.referentiels.labellisations.createLabellisationPreuve(input);
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve(input)
+    ).rejects.toThrowError(/permissions nécessaires/i);
+  });
 
-    expect(response).toMatchObject({
-      id: expect.any(Number),
-      collectiviteId: collectivite.id,
-      demandeId: input.demandeId,
-      fichierId: input.fichierId,
-      commentaire: '',
-      modifiedBy: readerUser.id,
+  test("refuse un document de candidature a l'auditeur pendant son audit", async () => {
+    const caller = router.createCaller({ user: readerUser });
+    const { input, auditId } = await createValidInput();
+
+    await addAuditeurPermission({
+      databaseService,
+      auditId,
+      userId: readerUser.id,
     });
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      })
+    ).rejects.toThrowError(/permissions nécessaires/i);
   });
 
   const addFichier = async (collectiviteId: number): Promise<number> => {

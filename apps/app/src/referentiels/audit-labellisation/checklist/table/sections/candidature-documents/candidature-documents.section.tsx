@@ -83,7 +83,7 @@ const CandidatureDocumentsRowWithDemande = ({
 };
 
 export const CandidatureDocumentsRow = (): ReactElement | null => {
-  const { parcours, referentielId, cycle, canMutateLabellisationDocuments } =
+  const { parcours, referentielId, canUpdateCandidatureDocuments } =
     useChecklist();
 
   if (!parcours) {
@@ -110,10 +110,7 @@ export const CandidatureDocumentsRow = (): ReactElement | null => {
     <CandidatureDocumentsRowWithDemande
       referentielId={referentielId}
       demandeId={demandeId}
-      canEdit={
-        parcours.canModifyCandidatureDocuments &&
-        (cycle.viewerRole === 'auditee' || canMutateLabellisationDocuments)
-      }
+      canEdit={canUpdateCandidatureDocuments}
     />
   );
 };

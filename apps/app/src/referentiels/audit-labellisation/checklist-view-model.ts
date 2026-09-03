@@ -29,5 +29,4 @@ export type Parcours = {
   mesures: MesureViewModel[];
   roleMesures: RoleMesures;
   acteEngagement: { demandeId: number | null };
-  canModifyCandidatureDocuments: boolean;
 };

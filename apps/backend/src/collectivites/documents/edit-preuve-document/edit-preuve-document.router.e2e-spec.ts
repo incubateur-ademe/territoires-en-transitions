@@ -2,7 +2,10 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
-import { validateAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import {
+  addAuditeurPermission,
+  validateAudit,
+} from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -290,6 +293,49 @@ describe('EditPreuveDocumentRouter', () => {
           commentaire: 'tentative de modification',
         })
       ).rejects.toThrowError(/labellisation en cours/i);
+    });
+
+    test("refuse la suppression a l'auditeur pendant son audit", async () => {
+      const { preuve, auditId } = await createCandidaturePreuve();
+
+      const { user, cleanup } = await addTestUser(db);
+      onTestFinished(cleanup);
+      const auditeurUser = getAuthUserFromUserCredentials(user);
+      const auditeurPermission = await addAuditeurPermission({
+        databaseService: db,
+        auditId,
+        userId: auditeurUser.id,
+      });
+      onTestFinished(auditeurPermission.cleanup);
+
+      await expect(
+        router.createCaller({ user: auditeurUser }).collectivites.documents.removePreuve({
+          preuveId: preuve.id,
+          preuveType: 'labellisation',
+        })
+      ).rejects.toThrowError(/permissions nécessaires/i);
+    });
+
+    test("refuse la modification a l'auditeur pendant son audit", async () => {
+      const { preuve, auditId } = await createCandidaturePreuve();
+
+      const { user, cleanup } = await addTestUser(db);
+      onTestFinished(cleanup);
+      const auditeurUser = getAuthUserFromUserCredentials(user);
+      const auditeurPermission = await addAuditeurPermission({
+        databaseService: db,
+        auditId,
+        userId: auditeurUser.id,
+      });
+      onTestFinished(auditeurPermission.cleanup);
+
+      await expect(
+        router.createCaller({ user: auditeurUser }).collectivites.documents.updatePreuve({
+          preuveId: preuve.id,
+          preuveType: 'labellisation',
+          commentaire: "tentative de l'auditeur",
+        })
+      ).rejects.toThrowError(/permissions nécessaires/i);
     });
 
     test("le super admin en mode support supprime un document sur un cycle validé", async () => {

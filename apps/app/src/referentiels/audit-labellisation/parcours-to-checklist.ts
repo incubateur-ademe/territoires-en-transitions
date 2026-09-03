@@ -5,7 +5,6 @@ import {
   isAuditLabellisationReferentiel,
   isReferentRoleDefined,
   ParcoursLabellisation,
-  canModifyCandidatureDocuments,
   ROLE_IDENTIFIANTS,
   RoleKey,
 } from '@tet/domain/referentiels';
@@ -78,8 +77,7 @@ const getMinimumScore = (
 };
 
 export const parcoursToChecklist = (
-  parcours: ParcoursLabellisation,
-  canMutateLabellisationDocuments: boolean
+  parcours: ParcoursLabellisation
 ): Parcours => {
   return {
     etoileObjectif: parcours.etoiles,
@@ -108,9 +106,5 @@ export const parcoursToChecklist = (
     acteEngagement: {
       demandeId: parcours.demande?.id ?? null,
     },
-    canModifyCandidatureDocuments: canModifyCandidatureDocuments({
-      audit: parcours.audit ? { valide: parcours.audit.valide } : null,
-      canMutateLabellisationDocuments,
-    }),
   };
 };

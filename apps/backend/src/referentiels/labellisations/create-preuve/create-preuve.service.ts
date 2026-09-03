@@ -6,7 +6,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result, failure } from '@tet/backend/utils/result.type';
 import { PreuveLabellisation } from '@tet/domain/collectivites';
-import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
+import { canUpdateCandidatureDocuments } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq } from 'drizzle-orm';
@@ -90,17 +90,25 @@ export class CreatePreuveService {
     }
     const canMutateLabellisationDocuments =
       await this.canMutateLabellisationDocuments(user, demande.collectiviteId);
+    const isAuditeur = auditResult.success
+      ? await this.getLabellisationService.isAuditeurForAudit(
+          auditResult.data.id,
+          user.id
+        )
+      : false;
 
-    if (
-      auditResult.success &&
-      canModifyCandidatureDocuments({
-        audit: auditResult.data,
-        canMutateLabellisationDocuments,
-      }) === false
-    ) {
+    const preuveCreation = canUpdateCandidatureDocuments({
+      isAuditee: !isAuditeur,
+      canMutateLabellisationDocuments,
+      audit: auditResult.success ? auditResult.data : null,
+    });
+    if (!preuveCreation.canUpdate) {
       return {
         success: false,
-        error: CreateLabellisationPreuveErrorEnum.LABELLISATION_IN_PROGRESS,
+        error:
+          preuveCreation.reason === 'not_auditee'
+            ? CreateLabellisationPreuveErrorEnum.UNAUTHORIZED
+            : CreateLabellisationPreuveErrorEnum.LABELLISATION_IN_PROGRESS,
       };
     }
 
