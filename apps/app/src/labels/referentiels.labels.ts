@@ -102,6 +102,8 @@ export const referentielsLabels = {
     'Sélectionner la ou les versions à télécharger',
 
   voirLaMesure: 'Voir la mesure',
+  voirLaSousMesure: 'Voir la sous-mesure',
+  voirLaTache: 'Voir la tâche',
   ouvrirLaMesure: 'Ouvrir la mesure',
   dissocierLaMesure: 'Dissocier la mesure',
   saisirLetatDavancement: "Saisir l'état d'avancement",
