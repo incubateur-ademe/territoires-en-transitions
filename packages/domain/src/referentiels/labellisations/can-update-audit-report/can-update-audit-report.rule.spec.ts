@@ -7,15 +7,15 @@ const daysAgo = (days: number) =>
 
 describe('canUpdateAuditReport', () => {
   it("refuse une preuve sans rapport d'audit", () => {
-    expect(canUpdateAuditReport({ isAuditeur: true, audit: null, now })).toBe(
-      false
-    );
+    expect(
+      canUpdateAuditReport({ editor: 'auditeur', audit: null, now })
+    ).toBe(false);
   });
 
-  it("refuse si l'utilisateur n'est pas l'auditeur de cet audit", () => {
+  it("refuse un tiers à l'audit", () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: false,
+        editor: 'tiers',
         audit: { clos: false, valide: false, dateFin: null },
         now,
       })
@@ -25,7 +25,7 @@ describe('canUpdateAuditReport', () => {
   it("autorise l'auditeur tant que l'audit n'est pas valide", () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: true,
+        editor: 'auditeur',
         audit: { clos: false, valide: false, dateFin: null },
         now,
       })
@@ -35,7 +35,7 @@ describe('canUpdateAuditReport', () => {
   it('autorise dans les 15 jours suivant la validation', () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: true,
+        editor: 'auditeur',
         audit: { clos: false, valide: true, dateFin: daysAgo(14) },
         now,
       })
@@ -45,7 +45,7 @@ describe('canUpdateAuditReport', () => {
   it('refuse plus de 15 jours apres la validation', () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: true,
+        editor: 'auditeur',
         audit: { clos: false, valide: true, dateFin: daysAgo(16) },
         now,
       })
@@ -55,7 +55,7 @@ describe('canUpdateAuditReport', () => {
   it('autorise dans les 15 jours même si l’audit est clos', () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: true,
+        editor: 'auditeur',
         audit: { clos: true, valide: true, dateFin: daysAgo(14) },
         now,
       })
@@ -65,7 +65,7 @@ describe('canUpdateAuditReport', () => {
   it("refuse plus de 15 jours après la clôture, même si l'audit est clos", () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: true,
+        editor: 'auditeur',
         audit: { clos: true, valide: true, dateFin: daysAgo(16) },
         now,
       })
@@ -75,7 +75,7 @@ describe('canUpdateAuditReport', () => {
   it('refuse un audit valide sans date de fin', () => {
     expect(
       canUpdateAuditReport({
-        isAuditeur: true,
+        editor: 'auditeur',
         audit: { clos: false, valide: true, dateFin: null },
         now,
       })

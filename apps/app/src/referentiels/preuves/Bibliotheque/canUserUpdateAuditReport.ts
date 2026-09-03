@@ -13,7 +13,7 @@ export const canUserUpdateAuditReport = (
     return false;
   }
   return canUpdateAuditReport({
-    isAuditeur: isUserAuditeurForAudit(user, preuve.audit.id),
+    editor: isUserAuditeurForAudit(user, preuve.audit.id) ? 'auditeur' : 'tiers',
     audit: {
       clos: preuve.audit.clos,
       valide: preuve.audit.valide,

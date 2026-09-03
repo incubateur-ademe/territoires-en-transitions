@@ -53,7 +53,7 @@ export class UpdateAuditReportService {
       }
 
       const allowed = canUpdateAuditReport({
-        isAuditeur: context.auditeur !== null,
+        editor: context.auditeur !== null ? 'auditeur' : 'tiers',
         audit: {
           clos: context.clos,
           valide: context.valide,
