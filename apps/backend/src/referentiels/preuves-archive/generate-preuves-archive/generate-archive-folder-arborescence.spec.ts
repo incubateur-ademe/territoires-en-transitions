@@ -1,9 +1,10 @@
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
-import type { PreuvesByOrigin, PreuvesSource } from '../collect-audit-preuves/collect-audit-preuves.service';
+import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
 import type {
   CollectedFilePreuve,
   CollectedLinkPreuve,
+  CollectedPreuves,
 } from '../collect-audit-preuves/collect-preuves.repository';
 import {
   generateArchiveFolderArborescence,
@@ -83,17 +84,16 @@ function makeLink(
   };
 }
 
-const empty: PreuvesSource = { files: [], links: [] };
+const empty: CollectedPreuves = { files: [], missingFiles: [], links: [] };
 
 function buildInput(
-  preuves: Partial<PreuvesByOrigin> = {}
+  preuves: Partial<Record<keyof PreuvesByOrigin, Partial<CollectedPreuves>>> = {}
 ): GenerateArchiveFolderArborescenceInput {
   return {
     preuves: {
-      mesure: empty,
-      demande: empty,
-      audit: empty,
-      ...preuves,
+      mesure: { ...empty, ...preuves.mesure },
+      demande: { ...empty, ...preuves.demande },
+      audit: { ...empty, ...preuves.audit },
     },
     referentielTree,
   };
@@ -200,6 +200,76 @@ describe('generateArchiveFolderArborescence', () => {
       filename: 'gros.zip',
       emplacement: 'mesures/1 Axe un/1.1 Sous-axe un/1.1.1 Mesure un',
     });
+  });
+
+  it('consigne un fichier absent du stockage dans le dossier de sa mesure', () => {
+    const result = generateArchiveFolderArborescence(
+      buildInput({
+        mesure: {
+          missingFiles: [
+            {
+              hash: 'hash-purge',
+              filename: 'avis-technique.pdf',
+              actionId: 'cae_1.1.1',
+            },
+          ],
+        },
+      })
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files).toEqual([]);
+    expect(result.data.skippedFiles).toEqual([
+      {
+        filename: 'avis-technique.pdf',
+        emplacement: 'mesures/1 Axe un/1.1 Sous-axe un/1.1.1 Mesure un',
+        raison: 'Fichier introuvable dans le stockage',
+      },
+    ]);
+  });
+
+  it('consigne un fichier absent du stockage sans filename sous son hash', () => {
+    const result = generateArchiveFolderArborescence(
+      buildInput({
+        audit: {
+          missingFiles: [
+            { hash: 'hash-sans-nom', filename: null, actionId: null },
+          ],
+        },
+      })
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.skippedFiles).toEqual([
+      {
+        filename: 'hash-sans-nom',
+        emplacement: 'cycle-labellisation/audit',
+        raison: 'Fichier introuvable dans le stockage',
+      },
+    ]);
+  });
+
+  it('nomme un fichier sans filename par son hash', () => {
+    const result = generateArchiveFolderArborescence(
+      buildInput({
+        mesure: {
+          files: [
+            makeFile({
+              actionId: 'cae_1.1.1',
+              filename: null,
+              hash: 'hash-sans-nom',
+            }),
+          ],
+          links: [],
+        },
+      })
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files[0].filename).toBe('hash-sans-nom');
   });
 
   it('ignore un fichier dont la taille est inconnue', () => {

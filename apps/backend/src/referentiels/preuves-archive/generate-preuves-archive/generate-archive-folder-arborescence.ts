@@ -9,6 +9,7 @@ import {
 import type {
   CollectedFilePreuve,
   CollectedLinkPreuve,
+  MissingFilePreuve,
 } from '../collect-audit-preuves/collect-preuves.repository';
 import type { LienPreuve } from '../build-archive/build-liens-csv';
 
@@ -74,13 +75,32 @@ type LinkWithFolder = {
   folderSegments: string[];
 };
 
+type MissingFileWithFolder = {
+  missingFile: MissingFilePreuve;
+  folderSegments: string[];
+};
+
+const FILE_MISSING_FROM_STORAGE = 'Fichier introuvable dans le stockage';
+const FILE_SIZE_UNKNOWN = 'Taille du fichier inconnue';
+
+function toSkippedMissingFile({
+  missingFile,
+  folderSegments,
+}: MissingFileWithFolder): SkippedFile {
+  return {
+    filename: missingFile.filename ?? missingFile.hash,
+    emplacement: folderSegments.join('/'),
+    raison: FILE_MISSING_FROM_STORAGE,
+  };
+}
+
 type FileTriage =
   | { kind: 'collected'; file: ArchiveFile }
   | { kind: 'skipped'; entry: SkippedFile };
 
 function triageFile({ file, folderSegments }: FileWithFolder): FileTriage {
   const emplacement = folderSegments.join('/');
-  const { filename } = file;
+  const filename = file.filename ?? file.hash;
 
   if (file.filesize === null) {
     return {
@@ -88,7 +108,7 @@ function triageFile({ file, folderSegments }: FileWithFolder): FileTriage {
       entry: {
         filename,
         emplacement,
-        raison: 'Taille du fichier inconnue',
+        raison: FILE_SIZE_UNKNOWN,
       },
     };
   }
@@ -216,6 +236,21 @@ export function generateArchiveFolderArborescence(
     folderSegments: [CYCLE_FOLDER, AUDIT_FOLDER],
   }));
 
+  const mesureMissingFiles = preuves.mesure.missingFiles.map((missingFile) => ({
+    missingFile,
+    folderSegments: mesureFolderSegments(missingFile.actionId, mesureFolders),
+  }));
+  const demandeMissingFiles = preuves.demande.missingFiles.map(
+    (missingFile) => ({
+      missingFile,
+      folderSegments: [CYCLE_FOLDER, DEMANDE_FOLDER],
+    })
+  );
+  const auditMissingFiles = preuves.audit.missingFiles.map((missingFile) => ({
+    missingFile,
+    folderSegments: [CYCLE_FOLDER, AUDIT_FOLDER],
+  }));
+
   const mesureLinks = preuves.mesure.links.map((link) => ({
     link,
     folderSegments: mesureFolderSegments(link.actionId, mesureFolders),
@@ -233,9 +268,16 @@ export function generateArchiveFolderArborescence(
   const collectedFiles = triaged.flatMap((entry) =>
     entry.kind === 'collected' ? [entry.file] : []
   );
-  const skippedFiles = triaged.flatMap((entry) =>
-    entry.kind === 'skipped' ? [entry.entry] : []
-  );
+  const skippedFiles = [
+    ...triaged.flatMap((entry) =>
+      entry.kind === 'skipped' ? [entry.entry] : []
+    ),
+    ...[
+      ...mesureMissingFiles,
+      ...demandeMissingFiles,
+      ...auditMissingFiles,
+    ].map(toSkippedMissingFile),
+  ];
 
   const limits = checkArchiveLimits(collectedFiles);
   if (!limits.success) {

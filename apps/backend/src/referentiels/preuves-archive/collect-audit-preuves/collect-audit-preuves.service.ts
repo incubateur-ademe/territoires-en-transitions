@@ -11,19 +11,13 @@ import {
 } from '../preuves-archive.errors';
 import {
   CollectPreuvesRepository,
-  type CollectedFilePreuve,
-  type CollectedLinkPreuve,
+  type CollectedPreuves,
 } from './collect-preuves.repository';
 
-export interface PreuvesSource {
-  files: CollectedFilePreuve[];
-  links: CollectedLinkPreuve[];
-}
-
 export interface PreuvesByOrigin {
-  mesure: PreuvesSource;
-  demande: PreuvesSource;
-  audit: PreuvesSource;
+  mesure: CollectedPreuves;
+  demande: CollectedPreuves;
+  audit: CollectedPreuves;
 }
 
 export interface CollectAuditPreuvesInput {
@@ -89,6 +83,10 @@ export class CollectAuditPreuvesService {
       return success({
         mesure: {
           files: [...complementaire.data.files, ...reglementaire.data.files],
+          missingFiles: [
+            ...complementaire.data.missingFiles,
+            ...reglementaire.data.missingFiles,
+          ],
           links: [...complementaire.data.links, ...reglementaire.data.links],
         },
         demande: labellisation.data,

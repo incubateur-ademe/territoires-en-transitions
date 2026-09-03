@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   buildFichierSubquery,
   buildFileInfoSql,
-  type FichierSubquery,
 } from '@tet/backend/collectivites/documents/file-info.utils';
 import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
@@ -13,10 +13,9 @@ import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/m
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ActionId, ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, sql, type SQL } from 'drizzle-orm';
-import { type PgColumn } from 'drizzle-orm/pg-core';
+import { and, eq, sql } from 'drizzle-orm';
 import {
   PreuvesArchiveErrorEnum,
   type PreuvesArchiveError,
@@ -25,55 +24,111 @@ import {
 export interface CollectedFilePreuve {
   bucketId: string;
   hash: string;
-  filename: string;
+  filename: string | null;
   filesize: number | null;
-  actionId: string | null;
+  actionId: ActionId | null;
 }
+
+export type MissingFilePreuve = Pick<
+  CollectedFilePreuve,
+  'hash' | 'filename' | 'actionId'
+>;
 
 export interface CollectedLinkPreuve {
   url: string;
   titre: string | null;
   commentaire: string | null;
-  actionId: string | null;
+  actionId: ActionId | null;
 }
 
-type CollectedPreuves = {
+export type CollectedPreuves = {
   files: CollectedFilePreuve[];
+  missingFiles: MissingFilePreuve[];
   links: CollectedLinkPreuve[];
 };
 
-type CollectedRow = {
-  actionId: string | null;
+type CollectedRow = Pick<CollectedFilePreuve, 'actionId' | 'filename'> & {
+  fichierId: number | null;
+  hash: string | null;
   url: string | null;
   titre: string | null;
   commentaire: string | null;
   fichier: {
     bucketId: string;
-    hash: string;
-    filename: string;
     filesize: number | null;
   } | null;
 };
 
-const AUCUNE_MESURE = sql<string | null>`null`;
+type TriagedPreuve =
+  | { kind: 'file'; file: CollectedFilePreuve }
+  | { kind: 'missingFile'; missingFile: MissingFilePreuve }
+  | { kind: 'link'; link: CollectedLinkPreuve };
 
-const splitFilesAndLinks = (rows: CollectedRow[]): CollectedPreuves => ({
-  files: rows.flatMap((row) =>
-    row.fichier ? [{ ...row.fichier, actionId: row.actionId }] : []
-  ),
-  links: rows.flatMap((row) =>
-    !row.fichier && row.url
-      ? [
-          {
-            url: row.url,
-            titre: row.titre,
-            commentaire: row.commentaire,
-            actionId: row.actionId,
-          },
-        ]
-      : []
-  ),
-});
+type PreuveKind =
+  | 'complementaire'
+  | 'reglementaire'
+  | 'labellisation'
+  | 'audit';
+
+function triagePreuve(row: CollectedRow): TriagedPreuve[] {
+  const { actionId, fichierId, hash, filename, fichier, url } = row;
+
+  const isLinkPreuve = fichierId === null;
+  if (isLinkPreuve) {
+    if (!url) {
+      return [];
+    }
+    return [
+      {
+        kind: 'link',
+        link: {
+          url,
+          titre: row.titre,
+          commentaire: row.commentaire,
+          actionId,
+        },
+      },
+    ];
+  }
+
+  const belongsToAnotherCollectivite = hash === null;
+  if (belongsToAnotherCollectivite) {
+    return [];
+  }
+
+  if (!fichier) {
+    return [{ kind: 'missingFile', missingFile: { hash, filename, actionId } }];
+  }
+
+  return [
+    {
+      kind: 'file',
+      file: {
+        bucketId: fichier.bucketId,
+        filesize: fichier.filesize,
+        hash,
+        filename,
+        actionId,
+      },
+    },
+  ];
+}
+
+function splitByKind(rows: CollectedRow[]): CollectedPreuves {
+  const triaged = rows.flatMap(triagePreuve);
+
+  return {
+    files: triaged.flatMap((entry) =>
+      entry.kind === 'file' ? [entry.file] : []
+    ),
+    missingFiles: triaged.flatMap((entry) =>
+      entry.kind === 'missingFile' ? [entry.missingFile] : []
+    ),
+    links: triaged.flatMap((entry) =>
+      entry.kind === 'link' ? [entry.link] : []
+    ),
+  };
+}
 
 @Injectable()
 export class CollectPreuvesRepository {
@@ -94,6 +149,9 @@ export class CollectPreuvesRepository {
       const rows = await this.db
         .select({
           actionId: preuveComplementaireTable.actionId,
+          fichierId: preuveComplementaireTable.fichierId,
+          hash: bibliothequeFichierTable.hash,
+          filename: bibliothequeFichierTable.filename,
           url: preuveComplementaireTable.url,
           titre: preuveComplementaireTable.titre,
           commentaire: preuveComplementaireTable.commentaire,
@@ -111,26 +169,27 @@ export class CollectPreuvesRepository {
           )
         )
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveComplementaireTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
+            eq(preuveComplementaireTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .where(
           and(
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            this.masqueLesConfidentiels(
-              preuveComplementaireTable.fichierId,
-              fichier,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveComplementaireTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
-      return success(splitFilesAndLinks(rows));
+      return success(splitByKind(rows));
     } catch (error) {
-      return this.echecDeCollecte('complémentaires', error);
+      return this.collectFailure('complementaire', error);
     }
   }
 
@@ -146,6 +205,9 @@ export class CollectPreuvesRepository {
       const rows = await this.db
         .select({
           actionId: preuveActionTable.actionId,
+          fichierId: preuveReglementaireTable.fichierId,
+          hash: bibliothequeFichierTable.hash,
+          filename: bibliothequeFichierTable.filename,
           url: preuveReglementaireTable.url,
           titre: preuveReglementaireTable.titre,
           commentaire: preuveReglementaireTable.commentaire,
@@ -164,26 +226,27 @@ export class CollectPreuvesRepository {
           )
         )
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveReglementaireTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
+            eq(preuveReglementaireTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .where(
           and(
             eq(preuveReglementaireTable.collectiviteId, collectiviteId),
-            this.masqueLesConfidentiels(
-              preuveReglementaireTable.fichierId,
-              fichier,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveReglementaireTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
-      return success(splitFilesAndLinks(rows));
+      return success(splitByKind(rows));
     } catch (error) {
-      return this.echecDeCollecte('réglementaires', error);
+      return this.collectFailure('reglementaire', error);
     }
   }
 
@@ -198,7 +261,10 @@ export class CollectPreuvesRepository {
     try {
       const rows = await this.db
         .select({
-          actionId: AUCUNE_MESURE,
+          actionId: sql<null>`null`,
+          fichierId: preuveLabellisationTable.fichierId,
+          hash: bibliothequeFichierTable.hash,
+          filename: bibliothequeFichierTable.filename,
           url: preuveLabellisationTable.url,
           titre: preuveLabellisationTable.titre,
           commentaire: preuveLabellisationTable.commentaire,
@@ -206,27 +272,28 @@ export class CollectPreuvesRepository {
         })
         .from(preuveLabellisationTable)
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveLabellisationTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
+            eq(preuveLabellisationTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .where(
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            this.masqueLesConfidentiels(
-              preuveLabellisationTable.fichierId,
-              fichier,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveLabellisationTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
-      return success(splitFilesAndLinks(rows));
+      return success(splitByKind(rows));
     } catch (error) {
-      return this.echecDeCollecte('de labellisation', error);
+      return this.collectFailure('labellisation', error);
     }
   }
 
@@ -241,7 +308,10 @@ export class CollectPreuvesRepository {
     try {
       const rows = await this.db
         .select({
-          actionId: AUCUNE_MESURE,
+          actionId: sql<null>`null`,
+          fichierId: preuveAuditTable.fichierId,
+          hash: bibliothequeFichierTable.hash,
+          filename: bibliothequeFichierTable.filename,
           url: preuveAuditTable.url,
           titre: preuveAuditTable.titre,
           commentaire: preuveAuditTable.commentaire,
@@ -249,52 +319,40 @@ export class CollectPreuvesRepository {
         })
         .from(preuveAuditTable)
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveAuditTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
+            eq(preuveAuditTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .where(
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            this.masqueLesConfidentiels(
-              preuveAuditTable.fichierId,
-              fichier,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveAuditTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
-      return success(splitFilesAndLinks(rows));
+      return success(splitByKind(rows));
     } catch (error) {
-      return this.echecDeCollecte("d'audit", error);
+      return this.collectFailure('audit', error);
     }
   }
 
-  private masqueLesConfidentiels(
-    fichierIdColumn: PgColumn,
-    fichier: FichierSubquery,
-    canReadConfidentiel: boolean
-  ): SQL | undefined {
-    return hideConfidentielFilter({
-      fichierIdColumn,
-      confidentielColumn: fichier.confidentiel,
-      canReadConfidentiel,
-    });
-  }
-
-  private echecDeCollecte(
-    nature: string,
+  private collectFailure(
+    kind: PreuveKind,
     error: unknown
   ): Result<never, PreuvesArchiveError> {
     this.logger.error(
-      `Collecte des preuves ${nature}: ${getErrorMessage(error)}`
+      `Failed to collect preuves ${kind}: ${getErrorMessage(error)}`
     );
-    return failure(
-      PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-      error instanceof Error ? error : new Error(getErrorMessage(error))
-    );
+    const cause =
+      error instanceof Error ? error : new Error(getErrorMessage(error));
+    return failure(PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR, cause);
   }
 }
