@@ -95,7 +95,7 @@ export const useCycleLabellisation = (
 export const usePreuvesLabellisation = (demandeId?: number) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.referentiels.labellisations.listPreuvesLabellisation.queryOptions(
+    trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryOptions(
       { demandeId: demandeId ?? 0 },
       { enabled: Boolean(demandeId) }
     )

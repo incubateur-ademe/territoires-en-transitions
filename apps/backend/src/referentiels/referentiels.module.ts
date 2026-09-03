@@ -52,7 +52,7 @@ import { GetLabellisationService } from './labellisations/get-labellisation.serv
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
 import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.service';
 import { LabellisationService } from './labellisations/labellisation.service';
-import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
+import { ListDocumentsLabellisationRouter } from './documents/list-documents-labellisation/list-documents-labellisation.router';
 import { ReferentielDocumentsAccessService } from './documents/referentiel-documents-access.service';
 import { ListDocumentsReferentielRepository } from './documents/list-documents-referentiel/list-documents-referentiel.repository';
 import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
@@ -60,8 +60,8 @@ import { ListDocumentsReferentielService } from './documents/list-documents-refe
 import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
 import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
-import { ListPreuvesRepository } from './labellisations/list-preuves/list-preuves.repository';
-import { ListPreuvesService } from './labellisations/list-preuves/list-preuves.service';
+import { ListDocumentsLabellisationRepository } from './documents/list-documents-labellisation/list-documents-labellisation.repository';
+import { ListDocumentsLabellisationService } from './documents/list-documents-labellisation/list-documents-labellisation.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
@@ -193,9 +193,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     CreatePreuveService,
     CreatePreuveRouter,
     ReferentielDocumentsAccessService,
-    ListPreuvesRepository,
-    ListPreuvesService,
-    ListPreuvesRouter,
+    ListDocumentsLabellisationRepository,
+    ListDocumentsLabellisationService,
+    ListDocumentsLabellisationRouter,
     ListDocumentsReferentielRepository,
     ListDocumentsReferentielService,
     ListDocumentsReferentielRouter,

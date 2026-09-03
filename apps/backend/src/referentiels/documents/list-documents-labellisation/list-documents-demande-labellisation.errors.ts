@@ -5,24 +5,24 @@ import {
 
 const specificErrors = [
   'UNAUTHORIZED',
-  'AUDIT_NOT_FOUND',
+  'DEMANDE_NOT_FOUND',
   'DATABASE_ERROR',
   'DOCUMENT_SCHEMA_MISMATCH',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const listPreuvesAuditErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const listDocumentsDemandeLabellisationErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     specificErrors: {
       UNAUTHORIZED: {
         code: 'UNAUTHORIZED',
         message:
-          "Vous n'avez pas les permissions nécessaires pour lister les preuves de cet audit.",
+          "Vous n'avez pas les permissions nécessaires pour lister les documents de cette demande.",
       },
-      AUDIT_NOT_FOUND: {
+      DEMANDE_NOT_FOUND: {
         code: 'BAD_REQUEST',
         message:
-          'Aucun audit trouvé pour cette collectivité et ce référentiel.',
+          'Aucune demande de labellisation trouvée pour cette collectivité et ce référentiel.',
       },
       DOCUMENT_SCHEMA_MISMATCH: {
         code: 'INTERNAL_SERVER_ERROR',
@@ -32,10 +32,12 @@ export const listPreuvesAuditErrorConfig: TrpcErrorHandlerConfig<SpecificError> 
       DATABASE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message:
-          "Une erreur de base de données s'est produite lors de la récupération des preuves de cet audit.",
+          "Une erreur de base de données s'est produite lors de la récupération des documents.",
       },
     },
   };
 
-export const ListPreuvesAuditErrorEnum = createErrorsEnum(specificErrors);
-export type ListPreuvesAuditError = keyof typeof ListPreuvesAuditErrorEnum;
+export const ListDocumentsDemandeLabellisationErrorEnum =
+  createErrorsEnum(specificErrors);
+export type ListDocumentsDemandeLabellisationError =
+  keyof typeof ListDocumentsDemandeLabellisationErrorEnum;

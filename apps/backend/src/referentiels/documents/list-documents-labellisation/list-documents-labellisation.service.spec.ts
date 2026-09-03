@@ -1,7 +1,7 @@
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
-import { ListPreuvesService } from './list-preuves.service';
+import { ListDocumentsLabellisationService } from './list-documents-labellisation.service';
 
 const user = { id: 'user-id' } as AuthenticatedUser;
 
@@ -50,11 +50,11 @@ const preuveAuditHorsContrat = {
 };
 
 function buildService(preuves: unknown[]) {
-  const listPreuvesAudit = vi.fn().mockResolvedValue(success(preuves));
-  const listPreuvesLabellisation = vi.fn().mockResolvedValue(success(preuves));
+  const listDocumentsAudit = vi.fn().mockResolvedValue(success(preuves));
+  const listDocumentsDemandeLabellisation = vi.fn().mockResolvedValue(success(preuves));
 
-  const service = new ListPreuvesService(
-    { listPreuvesAudit, listPreuvesLabellisation } as never,
+  const service = new ListDocumentsLabellisationService(
+    { listDocumentsAudit, listDocumentsDemandeLabellisation } as never,
     {
       getAudit: vi.fn().mockResolvedValue(success(audit)),
       getDemande: vi.fn().mockResolvedValue(success(demande)),
@@ -69,11 +69,11 @@ function buildService(preuves: unknown[]) {
   return service;
 }
 
-describe('ListPreuvesService', () => {
+describe('ListDocumentsLabellisationService', () => {
   it("refuse une preuve d'audit dont l'audit manque, au lieu de la rendre", async () => {
     const service = buildService([preuveAuditHorsContrat]);
 
-    const result = await service.listPreuvesAudit({ auditId: 10 }, user);
+    const result = await service.listDocumentsAudit({ auditId: 10 }, user);
 
     expect(result).toEqual({
       success: false,
@@ -86,7 +86,7 @@ describe('ListPreuvesService', () => {
       { ...preuveAuditHorsContrat, preuveType: 'labellisation' },
     ]);
 
-    const result = await service.listPreuvesLabellisation(
+    const result = await service.listDocumentsDemandeLabellisation(
       { demandeId: 20 },
       user
     );
