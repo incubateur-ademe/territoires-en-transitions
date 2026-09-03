@@ -6,6 +6,7 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
+import { useReferentielModeById } from '@/app/referentiels/referentiel-mode/use-referentiel-mode';
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
@@ -39,6 +40,9 @@ export const ScoreRempli = ({
   const tracker = useEventTracker();
   const { parcours, status } = useCycleLabellisation(referentiel);
   const data = getAggregatedScore(axes);
+
+  // référentiel archivé (post-bascule) : plus aucune action de labellisation
+  const isArchived = useReferentielModeById(referentiel) === 'archived';
 
   const chartOption: EChartsOption = {
     tooltip: {
@@ -123,21 +127,25 @@ export const ScoreRempli = ({
         <LabellisationInfo parcours={parcours} score={data} />
 
         {/* Call to action */}
-        <Button
-          onClick={() => tracker(Event.referentiels.viewLabellisation)}
-          href={makeReferentielAuditLabellisationUrl({
-            collectiviteId,
-            referentielId: referentiel,
-          })}
-          disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
-          size="sm"
-        >
-          {isReadonly
-            ? 'Suivre la labellisation'
-            : status === 'audit_en_cours' || status === 'demande_envoyee'
-            ? 'Demande envoyée'
-            : appLabels.obtenirDesEtoiles}
-        </Button>
+        {!isArchived && (
+          <Button
+            onClick={() => tracker(Event.referentiels.viewLabellisation)}
+            href={makeReferentielAuditLabellisationUrl({
+              collectiviteId,
+              referentielId: referentiel,
+            })}
+            disabled={
+              status === 'audit_en_cours' || status === 'demande_envoyee'
+            }
+            size="sm"
+          >
+            {isReadonly
+              ? 'Suivre la labellisation'
+              : status === 'audit_en_cours' || status === 'demande_envoyee'
+              ? 'Demande envoyée'
+              : appLabels.obtenirDesEtoiles}
+          </Button>
+        )}
       </div>
     </AccueilCard>
   );
