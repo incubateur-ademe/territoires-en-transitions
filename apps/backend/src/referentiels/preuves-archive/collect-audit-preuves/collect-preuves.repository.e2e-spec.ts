@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
@@ -14,6 +15,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, like } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { createAudit } from '../../labellisations/labellisations.test-fixture';
 import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
 import { CollectPreuvesRepository } from './collect-preuves.repository';
 
@@ -29,6 +31,12 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
 
   let publicHash: string;
   let confidentielHash: string;
+
+  let collectiviteEtrangere: Collectivite;
+  let cleanupEtrangere: () => Promise<void>;
+  let hashEtranger: string;
+  let auditId: number;
+  let cleanupAudit: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -67,6 +75,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       ])
       .returning();
 
+    const [fichierPublic] = fichiers;
+
     await db.db.insert(storageObjectTable).values(
       fichiers.map((fichier) => ({
         bucketId: PREUVES_ARCHIVES_BUCKET,
@@ -90,12 +100,83 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
         modifiedBy: adminUserId,
       },
     ]);
+
+    const fixtureEtrangere = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectiviteEtrangere = fixtureEtrangere.collectivite;
+    cleanupEtrangere = fixtureEtrangere.cleanup;
+    hashEtranger = `hash-etranger-${collectiviteEtrangere.id}`;
+
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectiviteEtrangere.id,
+    });
+
+    const [fichierEtranger] = await db.db
+      .insert(bibliothequeFichierTable)
+      .values({
+        collectiviteId: collectiviteEtrangere.id,
+        hash: hashEtranger,
+        filename: 'document-d-une-autre-collectivite.pdf',
+        confidentiel: false,
+      })
+      .returning();
+
+    await db.db.insert(storageObjectTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      name: fichierEtranger.hash,
+      metadata: { size: 2048 },
+    });
+
+    const auditFixture = await createAudit({
+      databaseService: db,
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      withDemande: true,
+    });
+    auditId = auditFixture.audit.id;
+    cleanupAudit = auditFixture.cleanup;
+
+    await db.db.insert(preuveComplementaireTable).values({
+      collectiviteId: collectivite.id,
+      actionId: ACTION_ID,
+      fichierId: fichierEtranger.id,
+      modifiedBy: adminUserId,
+    });
+
+    await db.db.insert(preuveAuditTable).values([
+      {
+        collectiviteId: collectivite.id,
+        auditId,
+        fichierId: fichierPublic.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        auditId,
+        fichierId: fichierEtranger.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
   });
 
   afterAll(async () => {
+    await cleanupAudit();
     await db.db
-      .delete(preuveComplementaireTable)
-      .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          eq(storageObjectTable.name, hashEtranger)
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(
+        eq(bibliothequeFichierTable.collectiviteId, collectiviteEtrangere.id)
+      );
+    await cleanupEtrangere();
     await db.db
       .delete(storageObjectTable)
       .where(
@@ -109,6 +190,34 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
     await cleanupCollectivite();
     await app.close();
+  });
+
+  test("une preuve pointant vers le fichier d'une autre collectivite n'entre pas dans l'archive", async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(hashEtranger);
+  });
+
+  test("une preuve d'audit pointant vers le fichier d'une autre collectivite n'entre pas dans l'archive", async () => {
+    const result = await repository.getAuditPreuves({
+      collectiviteId: collectivite.id,
+      auditId,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(hashEtranger);
   });
 
   test('canReadConfidentiel=true : expose le fichier public ET le confidentiel', async () => {
