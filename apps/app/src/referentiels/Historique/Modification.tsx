@@ -47,12 +47,35 @@ const Modification = ({
     : null;
   const modifiedAt = new Date(modifiedAtIso);
 
+  const pageLinkLabel = (() => {
+    if (historique.type === 'reponse' || historique.type === 'justification') {
+      return appLabels.voirLaQuestion;
+    }
+    if (historique.actionType === 'sous-action')
+      return appLabels.voirLaSousMesure;
+    if (historique.actionType === 'tache') return appLabels.voirLaTache;
+    return appLabels.voirLaMesure;
+  })();
+
   const pageLinkWithPanel = (() => {
     if (!pageLink) return undefined;
-    const panel = searchParams.get('panel');
+    // On ne propage le panneau ouvert que pour la navigation interne au
+    // référentiel (mesure / sous-mesure), où il a un sens. Les liens
+    // "Voir la question" quittent le référentiel : `panel=historique`
+    // n'y serait qu'un paramètre mort.
+    const isReferentielNavigation =
+      historique.type === 'action_statut' ||
+      historique.type === 'action_precision';
+    const panel = isReferentielNavigation ? searchParams.get('panel') : null;
     if (!panel) return pageLink;
-    const [pathname, hash] = pageLink.split('#');
-    return { pathname, query: { panel }, hash };
+    // `pageLink` peut déjà porter une query (`?actionId=…` pour TE) et/ou un
+    // hash : on fusionne `panel` dans la query existante plutôt que de tout
+    // écraser.
+    const [beforeHash, hash] = pageLink.split('#');
+    const [pathname, search] = beforeHash.split('?');
+    const query = new URLSearchParams(search);
+    query.set('panel', panel);
+    return { pathname, query: Object.fromEntries(query), hash };
   })();
 
   return (
@@ -80,7 +103,7 @@ const Modification = ({
               className="text-primary-9 text-sm border-b-transparent"
               href={pageLinkWithPanel}
             >
-              {appLabels.voirAction}
+              {pageLinkLabel}
             </Button>
           )}
         </div>

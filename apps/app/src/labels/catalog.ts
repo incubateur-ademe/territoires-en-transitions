@@ -153,7 +153,7 @@ export const appLabels = {
   ajouterDocumentAttendu: 'Ajouter un document attendu',
   ajouterPreuve: 'Ajouter une preuve',
   ajouterDocumentComplementaire: 'Ajouter un document complémentaire',
-  sousActionAssociee: 'Sous-action associée (obligatoire)',
+  sousActionAssociee: 'Sous-mesure associée (obligatoire)',
   ajouterDocument: 'Ajouter un document',
   ajouterRapportAudit: "Ajouter le rapport d'audit",
 
@@ -404,7 +404,6 @@ export const appLabels = {
 
   filtrerHistorique: "Filtrer l'historique des modifications par",
   aucunHistorique: 'Aucun historique de modification',
-  voirAction: "Voir l'action",
   par: 'Par',
   masquerDetail: 'Masquer le détail',
   afficherDetail: 'Afficher le détail',
@@ -1655,6 +1654,7 @@ export const appLabels = {
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   voirLaMesure: 'Voir la mesure',
+  voirLaQuestion: 'Voir la question',
   voirLesMesures: 'Voir les mesures',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',
