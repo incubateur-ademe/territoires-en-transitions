@@ -2,7 +2,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
-import { PlanModule } from '../plans.module';
+import { PlanModule } from '../plans/plans.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
