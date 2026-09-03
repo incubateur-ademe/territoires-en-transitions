@@ -39,7 +39,6 @@ describe('groupeParDemande', () => {
 const preuves_demande1: PreuveAuditEtLabellisation[] = [
   {
     preuveType: 'labellisation',
-    objet: null,
     id: 8,
     collectiviteId: 1,
     fichier: {
@@ -70,7 +69,6 @@ const preuves_demande1: PreuveAuditEtLabellisation[] = [
   },
   {
     preuveType: 'labellisation',
-    objet: null,
     id: 7,
     collectiviteId: 1,
     fichier: {
@@ -144,7 +142,6 @@ const preuves_demande1: PreuveAuditEtLabellisation[] = [
 const preuves_demande2: PreuveAuditEtLabellisation[] = [
   {
     preuveType: 'labellisation',
-    objet: null,
     id: 9,
     collectiviteId: 1,
     fichier: {

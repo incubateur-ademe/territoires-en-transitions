@@ -1,5 +1,5 @@
 import { AuditEnCours } from '@/app/referentiels/audits/types';
-import { LabellisationDemande, ObjetPreuve } from '@tet/domain/referentiels';
+import { LabellisationDemande } from '@tet/domain/referentiels';
 import { EditState } from './useEditState';
 
 // un fichier de la bibliothèque
@@ -84,7 +84,6 @@ export type PreuveAction = {
 type PreuveLabellisationFields = {
   preuveType: 'labellisation';
   demande: LabellisationDemande;
-  objet: ObjetPreuve | null;
 };
 
 // champs propres aux rapports d'audit
