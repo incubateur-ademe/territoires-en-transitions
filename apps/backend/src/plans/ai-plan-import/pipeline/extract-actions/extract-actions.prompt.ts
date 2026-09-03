@@ -1,7 +1,7 @@
 import { DisableableField } from '../../models/disableable-field';
 import { EXTRACTION_PROMPT } from '../../prompts/extraction.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
-import { generatePrompt } from '../../prompts/prompt-template';
+import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 
 export type ExtractionPromptInput = {
   text: string;

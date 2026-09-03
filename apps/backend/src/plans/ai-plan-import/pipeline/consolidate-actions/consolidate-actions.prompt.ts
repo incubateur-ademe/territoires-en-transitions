@@ -1,7 +1,7 @@
 import { DisableableField } from '../../models/disableable-field';
 import { CONSOLIDATION_PROMPT } from '../../prompts/consolidation.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
-import { generatePrompt } from '../../prompts/prompt-template';
+import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 
 export type ConsolidationPromptInput = {
   renderedActionsToImprove: string;

@@ -1,4 +1,4 @@
-import { generatePrompt } from '../../prompts/prompt-template';
+import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { QUALITATIVE_REVIEW_PROMPT } from '../../prompts/qualitative-review.prompt';
 
 export type QualitativeReviewPromptInput = {
