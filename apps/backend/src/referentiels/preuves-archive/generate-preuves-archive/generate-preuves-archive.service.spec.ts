@@ -88,9 +88,9 @@ function buildService({
   const collectAuditPreuves = {
     collect: vi.fn().mockResolvedValue(
       success({
-        mesure: { files: [], links: [] },
-        demande: { files: [], links: [] },
-        audit: { files: [], links: [] },
+        mesure: { files: [], missingFiles: [], links: [] },
+        demande: { files: [], missingFiles: [], links: [] },
+        audit: { files: [], missingFiles: [], links: [] },
       })
     ),
   } as unknown;

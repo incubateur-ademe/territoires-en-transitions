@@ -2,7 +2,11 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
+import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
+import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
+import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import {
@@ -13,13 +17,14 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq, inArray, like } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { createAudit } from '../../labellisations/labellisations.test-fixture';
 import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
 import { CollectPreuvesRepository } from './collect-preuves.repository';
 
 const ACTION_ID = 'cae_1.1.3';
+const PREUVE_REGLEMENTAIRE_ID = 'preuve-reglementaire-cloisonnement';
 
 describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   let app: INestApplication;
@@ -31,11 +36,14 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
 
   let publicHash: string;
   let confidentielHash: string;
+  let purgeHash: string;
+  let purgeConfidentielHash: string;
 
-  let collectiviteEtrangere: Collectivite;
-  let cleanupEtrangere: () => Promise<void>;
-  let hashEtranger: string;
+  let otherCollectivite: Collectivite;
+  let cleanupOtherCollectivite: () => Promise<void>;
+  let otherCollectiviteHash: string;
   let auditId: number;
+  let demandeId: number;
   let cleanupAudit: () => Promise<void>;
 
   beforeAll(async () => {
@@ -43,15 +51,17 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     db = await getTestDatabase(app);
     repository = app.get(CollectPreuvesRepository);
 
-    const fixture = await addTestCollectiviteAndUser(db, {
+    const collectiviteFixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    collectivite = fixture.collectivite;
-    adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
-    cleanupCollectivite = fixture.cleanup;
+    collectivite = collectiviteFixture.collectivite;
+    adminUserId = getAuthUserFromUserCredentials(collectiviteFixture.user).id;
+    cleanupCollectivite = collectiviteFixture.cleanup;
 
     publicHash = `hash-public-${collectivite.id}`;
     confidentielHash = `hash-confidentiel-${collectivite.id}`;
+    purgeHash = `hash-purge-${collectivite.id}`;
+    purgeConfidentielHash = `hash-purge-confidentiel-${collectivite.id}`;
 
     await db.db
       .insert(collectiviteBucketTable)
@@ -72,17 +82,35 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
           filename: 'secret.pdf',
           confidentiel: true,
         },
+        {
+          collectiviteId: collectivite.id,
+          hash: purgeHash,
+          filename: 'avis-technique-purge.pdf',
+          confidentiel: false,
+        },
+        {
+          collectiviteId: collectivite.id,
+          hash: purgeConfidentielHash,
+          filename: 'secret-purge.pdf',
+          confidentiel: true,
+        },
       ])
       .returning();
 
     const [fichierPublic] = fichiers;
 
     await db.db.insert(storageObjectTable).values(
-      fichiers.map((fichier) => ({
-        bucketId: PREUVES_ARCHIVES_BUCKET,
-        name: fichier.hash,
-        metadata: { size: 1024 },
-      }))
+      fichiers
+        .filter(
+          (fichier) =>
+            fichier.hash !== purgeHash &&
+            fichier.hash !== purgeConfidentielHash
+        )
+        .map((fichier) => ({
+          bucketId: PREUVES_ARCHIVES_BUCKET,
+          name: fichier.hash,
+          metadata: { size: 1024 },
+        }))
     );
 
     await db.db.insert(preuveComplementaireTable).values([
@@ -101,23 +129,23 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       },
     ]);
 
-    const fixtureEtrangere = await addTestCollectiviteAndUser(db, {
+    const otherCollectiviteFixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    collectiviteEtrangere = fixtureEtrangere.collectivite;
-    cleanupEtrangere = fixtureEtrangere.cleanup;
-    hashEtranger = `hash-etranger-${collectiviteEtrangere.id}`;
+    otherCollectivite = otherCollectiviteFixture.collectivite;
+    cleanupOtherCollectivite = otherCollectiviteFixture.cleanup;
+    otherCollectiviteHash = `hash-autre-collectivite-${otherCollectivite.id}`;
 
     await db.db.insert(collectiviteBucketTable).values({
       bucketId: PREUVES_ARCHIVES_BUCKET,
-      collectiviteId: collectiviteEtrangere.id,
+      collectiviteId: otherCollectivite.id,
     });
 
-    const [fichierEtranger] = await db.db
+    const [otherCollectiviteFichier] = await db.db
       .insert(bibliothequeFichierTable)
       .values({
-        collectiviteId: collectiviteEtrangere.id,
-        hash: hashEtranger,
+        collectiviteId: otherCollectivite.id,
+        hash: otherCollectiviteHash,
         filename: 'document-d-une-autre-collectivite.pdf',
         confidentiel: false,
       })
@@ -125,7 +153,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
 
     await db.db.insert(storageObjectTable).values({
       bucketId: PREUVES_ARCHIVES_BUCKET,
-      name: fichierEtranger.hash,
+      name: otherCollectiviteFichier.hash,
       metadata: { size: 2048 },
     });
 
@@ -137,11 +165,57 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     });
     auditId = auditFixture.audit.id;
     cleanupAudit = auditFixture.cleanup;
+    const { demande } = auditFixture;
+    if (!demande) {
+      throw new Error('createAudit with withDemande must produce a demande');
+    }
+    demandeId = demande.id;
+
+    await db.db.insert(preuveReglementaireDefinitionTable).values({
+      id: PREUVE_REGLEMENTAIRE_ID,
+      nom: 'Preuve réglementaire de cloisonnement',
+      description: '',
+    });
+
+    await db.db.insert(preuveActionTable).values({
+      preuveId: PREUVE_REGLEMENTAIRE_ID,
+      actionId: ACTION_ID,
+    });
+
+    await db.db.insert(preuveReglementaireTable).values([
+      {
+        collectiviteId: collectivite.id,
+        preuveId: PREUVE_REGLEMENTAIRE_ID,
+        fichierId: fichierPublic.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        preuveId: PREUVE_REGLEMENTAIRE_ID,
+        fichierId: otherCollectiviteFichier.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+
+    await db.db.insert(preuveLabellisationTable).values([
+      {
+        collectiviteId: collectivite.id,
+        demandeId,
+        fichierId: fichierPublic.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        demandeId,
+        fichierId: otherCollectiviteFichier.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
 
     await db.db.insert(preuveComplementaireTable).values({
       collectiviteId: collectivite.id,
       actionId: ACTION_ID,
-      fichierId: fichierEtranger.id,
+      fichierId: otherCollectiviteFichier.id,
       modifiedBy: adminUserId,
     });
 
@@ -155,7 +229,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       {
         collectiviteId: collectivite.id,
         auditId,
-        fichierId: fichierEtranger.id,
+        fichierId: otherCollectiviteFichier.id,
         modifiedBy: adminUserId,
       },
     ]);
@@ -164,25 +238,31 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   afterAll(async () => {
     await cleanupAudit();
     await db.db
+      .delete(preuveActionTable)
+      .where(eq(preuveActionTable.preuveId, PREUVE_REGLEMENTAIRE_ID));
+    await db.db
+      .delete(preuveReglementaireDefinitionTable)
+      .where(eq(preuveReglementaireDefinitionTable.id, PREUVE_REGLEMENTAIRE_ID));
+    await db.db
       .delete(storageObjectTable)
       .where(
         and(
           eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
-          eq(storageObjectTable.name, hashEtranger)
+          eq(storageObjectTable.name, otherCollectiviteHash)
         )
       );
     await db.db
       .delete(bibliothequeFichierTable)
       .where(
-        eq(bibliothequeFichierTable.collectiviteId, collectiviteEtrangere.id)
+        eq(bibliothequeFichierTable.collectiviteId, otherCollectivite.id)
       );
-    await cleanupEtrangere();
+    await cleanupOtherCollectivite();
     await db.db
       .delete(storageObjectTable)
       .where(
         and(
           eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
-          like(storageObjectTable.name, `%${collectivite.id}`)
+          inArray(storageObjectTable.name, [publicHash, confidentielHash])
         )
       );
     await db.db
@@ -192,7 +272,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     await app.close();
   });
 
-  test("une preuve pointant vers le fichier d'une autre collectivite n'entre pas dans l'archive", async () => {
+  test("une preuve complémentaire pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
       referentielId: 'cae',
@@ -203,10 +283,10 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     if (!result.success) return;
     const hashes = result.data.files.map((file) => file.hash);
     expect(hashes).toContain(publicHash);
-    expect(hashes).not.toContain(hashEtranger);
+    expect(hashes).not.toContain(otherCollectiviteHash);
   });
 
-  test("une preuve d'audit pointant vers le fichier d'une autre collectivite n'entre pas dans l'archive", async () => {
+  test("une preuve d'audit pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
     const result = await repository.getAuditPreuves({
       collectiviteId: collectivite.id,
       auditId,
@@ -217,7 +297,86 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     if (!result.success) return;
     const hashes = result.data.files.map((file) => file.hash);
     expect(hashes).toContain(publicHash);
-    expect(hashes).not.toContain(hashEtranger);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve réglementaire pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
+    const result = await repository.getReglementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve de labellisation pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
+    const result = await repository.getLabellisationPreuves({
+      collectiviteId: collectivite.id,
+      demandeId,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve dont l'objet de stockage a disparu ressort en fichier manquant", async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).not.toContain(purgeHash);
+    expect(result.data.missingFiles).toContainEqual({
+      hash: purgeHash,
+      filename: 'avis-technique-purge.pdf',
+      actionId: ACTION_ID,
+    });
+    expect(result.data.missingFiles.map((file) => file.hash)).toContain(
+      purgeConfidentielHash
+    );
+  });
+
+  test("un fichier public dont l'objet a disparu reste signalé sans droit confidentiel", async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.missingFiles.map((file) => file.hash)).toContain(
+      purgeHash
+    );
+  });
+
+  test("un fichier confidentiel dont l'objet a disparu ne fuite pas son nom sans droit confidentiel", async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.missingFiles.map((file) => file.hash)).not.toContain(
+      purgeConfidentielHash
+    );
+    expect(result.data.missingFiles.map((file) => file.filename)).not.toContain(
+      'secret-purge.pdf'
+    );
   });
 
   test('canReadConfidentiel=true : expose le fichier public ET le confidentiel', async () => {

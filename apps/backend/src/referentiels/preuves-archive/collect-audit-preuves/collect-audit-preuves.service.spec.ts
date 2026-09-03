@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type {
   CollectedFilePreuve,
   CollectedLinkPreuve,
+  MissingFilePreuve,
 } from './collect-preuves.repository';
 import { CollectAuditPreuvesService } from './collect-audit-preuves.service';
 
@@ -20,10 +21,11 @@ const baseInput = {
   user,
 };
 
-const empty = { files: [], links: [] };
+const empty = { files: [], missingFiles: [], links: [] };
 
 type PreuvesPayload = {
   files: CollectedFilePreuve[];
+  missingFiles: MissingFilePreuve[];
   links: CollectedLinkPreuve[];
 };
 
@@ -125,10 +127,12 @@ describe('CollectAuditPreuvesService', () => {
     const { service } = buildService({
       complementaire: {
         files: [makeFile({ actionId: 'cae_1.1.1', filename: 'comp.pdf' })],
+        missingFiles: [],
         links: [],
       },
       reglementaire: {
         files: [makeFile({ actionId: 'cae_1.1.1', filename: 'regl.pdf' })],
+        missingFiles: [],
         links: [],
       },
     });
