@@ -1,10 +1,14 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ParcoursLabellisation } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { AuditViewerRole } from './audit-badge-status/types';
+import {
+  EMPTY_CYCLE,
+  toAudit,
+  toParcoursLabellisation,
+} from './checklist.test-fixture';
 import { ChecklistProvider, useChecklist } from './checklist.context';
 
 vi.mock('../labellisations/useCycleLabellisation', () => ({
@@ -15,31 +19,6 @@ vi.mock('../labellisations/useCycleLabellisation', () => ({
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),
 }));
-
-const toParcours = (
-  audit: { valide: boolean } | null
-): ParcoursLabellisation =>
-  ({
-    collectiviteId: 1,
-    referentiel: 'cae',
-    status: 'non_demandee',
-    etoiles: 1,
-    completudeOk: false,
-    critereScore: {
-      scoreARealiser: 0,
-      scoreFait: 0,
-      atteint: false,
-      etoiles: 1,
-    },
-    criteresAction: [],
-    labellisation: null,
-    demande: { id: 42 },
-    audit,
-    isCot: false,
-    conditionFichiers: { referentiel: 'cae', preuveNombre: 0 },
-    auditeurs: [],
-    referentRolesDefined: { eluReferent: false, referentTechnique: false },
-  } as unknown as ParcoursLabellisation);
 
 const CanUpdateProbe = (): ReactElement => {
   const { canUpdateCandidatureDocuments } = useChecklist();
@@ -56,10 +35,12 @@ const renderProbe = ({
   canMutateLabellisationDocuments: boolean;
 }): void => {
   vi.mocked(useCycleLabellisation).mockReturnValue({
-    parcours: toParcours(audit),
+    ...EMPTY_CYCLE,
+    parcours: toParcoursLabellisation({
+      audit: audit === null ? null : toAudit(audit),
+    }),
     viewerRole,
-    isCOT: false,
-  } as unknown as ReturnType<typeof useCycleLabellisation>);
+  });
   vi.mocked(useCurrentCollectivite).mockReturnValue({
     hasCollectivitePermission: () => canMutateLabellisationDocuments,
   } as unknown as ReturnType<typeof useCurrentCollectivite>);

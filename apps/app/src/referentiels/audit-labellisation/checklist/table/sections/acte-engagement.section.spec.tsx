@@ -1,9 +1,9 @@
-import { ObjetPreuveEnum } from '@tet/domain/referentiels';
+import { EtoileEnum, ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
 import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
-import { Parcours } from '../../../checklist-view-model';
+import { EMPTY_CYCLE } from '../../../checklist.test-fixture';
 import {
   ChecklistContext,
   ChecklistContextValue,
@@ -205,11 +205,23 @@ describe("ActeEngagementRow — qui peut éditer l'acte", () => {
       isLoading: false,
     } as unknown as ReturnType<typeof usePreuvesLabellisation>);
 
-    const checklist = {
-      parcours: { acteEngagement: { demandeId: 42 } } as unknown as Parcours,
+    const checklist: ChecklistContextValue = {
+      cycle: EMPTY_CYCLE,
+      parcours: {
+        etoileObjectif: EtoileEnum.PREMIERE_ETOILE,
+        completude: { done: false },
+        minimumScore: { done: false, seuilPercent: 0 },
+        scoreFait: 0,
+        mesures: [],
+        roleMesures: { eluReferent: null, referentTechnique: null },
+        acteEngagement: { demandeId: 42 },
+      },
       referentielId: 'cae',
+      premiereEtoileObtenue: false,
+      showActeEngagement: true,
+      showCandidatureDocuments: false,
       canUpdateCandidatureDocuments,
-    } as unknown as ChecklistContextValue;
+    };
 
     render(
       <ChecklistContext.Provider value={checklist}>

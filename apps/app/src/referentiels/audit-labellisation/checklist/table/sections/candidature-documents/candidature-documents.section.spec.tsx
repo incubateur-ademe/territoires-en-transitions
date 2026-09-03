@@ -1,4 +1,9 @@
-import { ObjetPreuve, ObjetPreuveEnum } from '@tet/domain/referentiels';
+import {
+  EtoileEnum,
+  ObjetPreuve,
+  ObjetPreuveEnum,
+} from '@tet/domain/referentiels';
+import { EMPTY_CYCLE } from '../../../../checklist.test-fixture';
 import { render, screen } from '@testing-library/react';
 import { appLabels } from '../../../../../../labels/catalog';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -42,18 +47,25 @@ const setChecklist = (
   canUpdateCandidatureDocuments = true
 ): void => {
   checklist = {
+    cycle: EMPTY_CYCLE,
     parcours,
     referentielId: 'cae',
+    premiereEtoileObtenue: false,
+    showActeEngagement: false,
+    showCandidatureDocuments: true,
     canUpdateCandidatureDocuments,
-  } as unknown as ChecklistContextValue;
+  };
 };
 
-const toParcours = ({
-  demandeId,
-}: {
-  demandeId: number | null;
-}): Parcours =>
-  ({ acteEngagement: { demandeId } } as unknown as Parcours);
+const toParcours = ({ demandeId }: { demandeId: number | null }): Parcours => ({
+  etoileObjectif: EtoileEnum.PREMIERE_ETOILE,
+  completude: { done: false },
+  minimumScore: { done: false, seuilPercent: 0 },
+  scoreFait: 0,
+  mesures: [],
+  roleMesures: { eluReferent: null, referentTechnique: null },
+  acteEngagement: { demandeId },
+});
 
 const setPreuves = (preuves: readonly ChecklistPreuve[]): void => {
   mockedUsePreuvesLabellisation.mockReturnValue({
