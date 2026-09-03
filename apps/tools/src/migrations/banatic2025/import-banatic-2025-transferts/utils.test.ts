@@ -51,6 +51,10 @@ describe('Banatic 2025 transferts import', () => {
 
       expect(transfertsByEpci.size).toBe(2);
 
+      // nb de communes transférées = communes distinctes, tous syndicats confondus
+      expect(transfertsByEpci.get('200070407')?.communesTransferees.size).toBe(2);
+      expect(transfertsByEpci.get('200069169')?.communesTransferees.size).toBe(3);
+
       // CA Agglo Pays d'Issoire -> SICTOM Issoire-Brioude (2 communes)
       const caAgglo = transfertsByEpci.get('200070407');
       if (!caAgglo) throw new Error('CA Agglo not found');
@@ -67,6 +71,26 @@ describe('Banatic 2025 transferts import', () => {
       expect(natureTransfert).toBe(
         'SM de collecte des déchets ménagers Dômes et Combrailles (1 commune), SMCTOM de la Haute Dordogne (2 communes)'
       );
+    });
+
+    it('compte une commune une seule fois même listée sous deux syndicats', () => {
+      const baseRow = {
+        communeName: '',
+        departementCode: '63',
+        epciSiren: '200070407',
+        epciName: "CA Agglo Pays d'Issoire",
+      };
+      const parsedRows: ParsedRow[] = [
+        { ...baseRow, communeCode: '63005', syndicatSiren: 'A', syndicatName: 'Syndicat A' },
+        { ...baseRow, communeCode: '63006', syndicatSiren: 'A', syndicatName: 'Syndicat A' },
+        // 63006 également rattachée au syndicat B (cas limite Banatic)
+        { ...baseRow, communeCode: '63006', syndicatSiren: 'B', syndicatName: 'Syndicat B' },
+      ];
+
+      const info = groupByEpci(parsedRows).get('200070407');
+      if (!info) throw new Error('EPCI not found');
+
+      expect(info.communesTransferees.size).toBe(2);
     });
   });
 });

@@ -31,6 +31,8 @@ export type TransfertInfo = {
   epciSiren: string;
   epciName: string;
   syndicats: Map<string, SyndicatInfo>;
+  /** codes INSEE distincts des communes dont la compétence transite par l'EPCI */
+  communesTransferees: Set<string>;
 };
 
 const buildColumnIndices = (headerRow: string[]): ColumnIndices => {
@@ -99,6 +101,7 @@ export const groupByEpci = (rows: ParsedRow[]): Map<string, TransfertInfo> =>
       epciSiren: row.epciSiren,
       epciName: row.epciName,
       syndicats: new Map<string, SyndicatInfo>(),
+      communesTransferees: new Set<string>(),
     };
 
     const syndicatInfo = existing.syndicats.get(row.syndicatSiren) ?? {
@@ -110,6 +113,8 @@ export const groupByEpci = (rows: ParsedRow[]): Map<string, TransfertInfo> =>
       ...syndicatInfo,
       communeCount: syndicatInfo.communeCount + 1,
     });
+
+    existing.communesTransferees.add(row.communeCode);
 
     return acc.set(row.epciSiren, existing);
   }, new Map<string, TransfertInfo>());

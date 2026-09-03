@@ -55,6 +55,48 @@ describe('PersonnalisationReponsesEffectivesRepository', () => {
     expect(payload[questionBinaireCompetenceBanaticId]).toBe(true);
   });
 
+  test('infère false quand la délégation au syndicat est totale (toutes les communes membres)', async () => {
+    const { questionBinaireCompetenceBanaticId, cleanup } =
+      await addTestQuestionBanaticCompetencePourCollectivite(databaseService, {
+        collectiviteId: testData.collectivite.id,
+        thematiqueId: testData.thematiqueId,
+        collectiviteType: testData.collectivite.type,
+        nbCommunesMembres: 71,
+        nbCommunesTransferees: 71,
+      });
+    onTestFinished(cleanup);
+
+    const payload = await databaseService.db.transaction((tx) =>
+      reponsesEffectivesService.getReponsesEffectivesPayload(
+        testData.collectivite.id,
+        tx
+      )
+    );
+
+    expect(payload[questionBinaireCompetenceBanaticId]).toBe(false);
+  });
+
+  test('garde true quand la délégation au syndicat est partielle', async () => {
+    const { questionBinaireCompetenceBanaticId, cleanup } =
+      await addTestQuestionBanaticCompetencePourCollectivite(databaseService, {
+        collectiviteId: testData.collectivite.id,
+        thematiqueId: testData.thematiqueId,
+        collectiviteType: testData.collectivite.type,
+        nbCommunesMembres: 71,
+        nbCommunesTransferees: 40,
+      });
+    onTestFinished(cleanup);
+
+    const payload = await databaseService.db.transaction((tx) =>
+      reponsesEffectivesService.getReponsesEffectivesPayload(
+        testData.collectivite.id,
+        tx
+      )
+    );
+
+    expect(payload[questionBinaireCompetenceBanaticId]).toBe(true);
+  });
+
   test('inclut une réponse choix valide et omet les questions sans réponse', async () => {
     await databaseService.db.insert(reponseChoixTable).values({
       collectiviteId: testData.collectivite.id,
