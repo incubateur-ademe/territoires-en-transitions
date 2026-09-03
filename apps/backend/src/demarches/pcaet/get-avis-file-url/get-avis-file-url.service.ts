@@ -166,8 +166,6 @@ export class GetAvisFileUrlService {
     if (!fichier) {
       return null;
     }
-    // Le nom est optionnel en base ; le hash fait un nom de repli acceptable
-    // pour un téléchargement.
-    return { bucketId: fichier.bucketId, filename: fichier.filename ?? hash };
+    return { bucketId: fichier.bucketId, filename: fichier.filename };
   }
 }
