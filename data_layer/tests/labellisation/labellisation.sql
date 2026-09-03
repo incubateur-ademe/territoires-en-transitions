@@ -43,11 +43,8 @@ select bucket_id, hash, auth.uid(), metadata
 from test.file;
 
 -- Puis à la bibliothèque
-select add_bibliotheque_fichier(
-               f.collectivite_id,
-               f.hash,
-               f.filename
-           )
+insert into labellisation.bibliotheque_fichier (collectivite_id, hash, filename)
+select f.collectivite_id, f.hash, f.filename
 from test.file f;
 -----------------------------------
 ------- Test base functions -------
