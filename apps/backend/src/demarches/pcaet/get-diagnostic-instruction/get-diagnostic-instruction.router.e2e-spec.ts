@@ -24,7 +24,10 @@ describe('getDiagnosticInstruction', () => {
   let demarcheId: number;
   let demandeAvisId: number;
 
-  const REGION = '52';
+  // Un code région propre à cette spec, pris hors de la plage réelle : les dix-huit
+  // codes numériques portent les DREAL de l'import (collectivite/service_etat_import),
+  // et l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  const REGION = 'DI';
 
   beforeAll(async () => {
     app = await getTestApp();

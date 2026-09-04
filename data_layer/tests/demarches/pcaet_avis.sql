@@ -1,6 +1,10 @@
 begin;
 select plan(18);
 
+-- Codes de région à deux lettres : les dix-huit codes réels sont numériques et
+-- tous occupés par l'import des services (collectivite/service_etat_import), qui
+-- pose une DREAL et une DR ADEME sur chacun.
+
 create temp table ctx (
     dreal_id integer,
     dr_ademe_id integer,
@@ -12,14 +16,14 @@ create temp table ctx (
 
 with d as (
     insert into collectivite (nom, type, region_code)
-    values ('DREAL test pgTAP', 'dreal', '93')
+    values ('DREAL test pgTAP', 'dreal', 'ZC')
     returning id
 )
 insert into ctx (dreal_id) select id from d;
 
 with a as (
     insert into collectivite (nom, type, region_code)
-    values ('DR ADEME test pgTAP', 'dr_ademe', '93')
+    values ('DR ADEME test pgTAP', 'dr_ademe', 'ZC')
     returning id
 )
 update ctx set dr_ademe_id = (select id from a);
@@ -31,7 +35,20 @@ with n as (
 )
 update ctx set national_id = (select id from n);
 
-update ctx set epci_id = (select id from collectivite where type = 'epci' limit 1);
+-- Un EPCI qui ne porte aucune démarche PCAET : `demarche_active_unique` en
+-- interdit une seconde, et le seed en pose déjà sur des collectivités de test.
+-- L'`order by` rend le choix reproductible, là où `limit 1` seul dépendait de
+-- l'ordre physique des lignes.
+update ctx set epci_id = (
+    select c.id from collectivite c
+    where c.type = 'epci'
+      and not exists (
+          select 1 from demarche d
+          where d.collectivite_id = c.id and d.type = 'pcaet'
+      )
+    order by c.id
+    limit 1
+);
 
 with dem as (
     insert into demarche (collectivite_id, type, titre)

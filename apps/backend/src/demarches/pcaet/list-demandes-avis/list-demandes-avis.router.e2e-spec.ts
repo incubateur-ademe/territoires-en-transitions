@@ -27,8 +27,11 @@ describe('listDemandesAvis', () => {
   let serviceNationalId: number;
   const demarcheIds: number[] = [];
 
-  const REGION = '44';
-  const AUTRE_REGION = '75';
+  // Un code région propre à cette spec, pris hors de la plage réelle : les dix-huit
+  // codes numériques portent les DREAL de l'import (collectivite/service_etat_import),
+  // et l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  const REGION = 'LA';
+  const AUTRE_REGION = 'LB';
 
   const dansNJours = (n: number) =>
     new Date(Date.now() + n * 24 * 3600 * 1000).toISOString();
