@@ -128,8 +128,13 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           // Destinataire en lecture d'une transmission PCAET, créée par le même
           // seed que la DREAL — identifiant de séquence, donc non comparable.
+          //
+          // Les noms sont ceux de l'import des services
+          // (collectivite/service_etat_import) : la dénomination officielle du
+          // service, pas une forme courte. La liste est triée par nom.
           collectiviteId: expect.any(Number),
-          collectiviteNom: "DDT de l'Ain",
+          collectiviteNom:
+            'Direction départementale des territoires (DDT) - Ain',
           collectiviteType: collectiviteTypeEnum.DDT,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
@@ -139,9 +144,9 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           audits: [],
         },
         {
-          // Service national : la DGEC est une ligne de ce type, pas un type.
           collectiviteId: expect.any(Number),
-          collectiviteNom: 'DGEC',
+          collectiviteNom:
+            "Direction Générale de l'Énergie et du Climat (DGEC)",
           collectiviteType: collectiviteTypeEnum.SERVICE_NATIONAL,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
@@ -152,7 +157,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         },
         {
           collectiviteId: expect.any(Number),
-          collectiviteNom: 'DR ADEME Auvergne-Rhône-Alpes',
+          collectiviteNom: 'Direction Régionale Auvergne-Rhône-Alpes',
           collectiviteType: collectiviteTypeEnum.DR_ADEME,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
@@ -165,7 +170,8 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           // Collectivité créée par le seed : son identifiant vient d'une
           // séquence, il n'est pas comparable d'une base à l'autre.
           collectiviteId: expect.any(Number),
-          collectiviteNom: 'DREAL Auvergne-Rhône-Alpes',
+          collectiviteNom:
+            "Direction Régionale de l'Environnement, de l'Aménagement et du Logement Auvergne-Rhône-Alpes (DREAL)",
           collectiviteType: collectiviteTypeEnum.DREAL,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,

@@ -1,0 +1,93 @@
+region_code;departement_code;siren;nom
+84;01;130009368;Direction départementale des territoires (DDT) - Ain
+32;02;130009780;Direction départementale des territoires (DDT) - Aisne
+84;03;130008196;Direction départementale des territoires (DDT) - Allier
+93;04;130009517;Direction départementale des territoires (DDT) - Alpes-de-Haute-Provence
+93;05;130007818;Direction départementale des territoires (DDT) - Hautes-Alpes
+93;06;130011232;Direction départementale des territoires et de la mer (DDTM) - Alpes-Maritimes
+84;07;130011349;Direction départementale des territoires (DDT) - Ardèche
+44;08;130010390;Direction départementale des territoires (DDT) - Ardennes
+76;09;130011786;Direction départementale des territoires (DDT) - Ariège
+44;10;130009285;Direction départementale des territoires (DDT) - Aube
+76;11;130009004;Direction départementale des territoires et de la mer (DDTM) - Aude
+76;12;130007784;Direction départementale des territoires (DDT) - Aveyron
+93;13;130010135;Direction départementale des territoires et de la mer (DDTM) - Bouches-du-Rhône
+28;14;130009020;Direction départementale des territoires et de la mer (DDTM) - Calvados
+84;15;130008345;Direction départementale des territoires (DDT) - Cantal
+75;16;130010986;Direction départementale des territoires (DDT) - Charente
+75;17;130010291;Direction départementale des territoires et de la mer (DDTM) - Charente-Maritime
+24;18;130008634;Direction départementale des territoires (DDT) - Cher
+75;19;130010903;Direction départementale des territoires (DDT) - Corrèze
+27;21;130009525;Direction départementale des territoires (DDT) - Côte-d'Or
+53;22;130010671;Direction départementale des territoires et de la mer (DDTM) - Côtes-d'Armor
+75;23;130009657;Direction départementale des territoires (DDT) - Creuse
+75;24;130010820;Direction départementale des territoires (DDT) - Dordogne
+27;25;130009988;Direction départementale des territoires (DDT) - Doubs
+84;26;130007750;Direction départementale des territoires (DDT) - Drôme
+28;27;130011158;Direction départementale des territoires et de la mer (DDTM) - Eure
+24;28;130009061;Direction départementale des territoires (DDT) - Eure-et-Loir
+53;29;130010473;Direction départementale des territoires et de la mer (DDTM) - Finistère
+94;2A;130010812;Direction départementale des territoires (DDT) - Corse-du-Sud
+94;2B;130010911;Direction départementale des territoires (DDT) - Haute-Corse
+76;30;130010283;Direction départementale des territoires et de la mer (DDTM) - Gard
+76;31;130010747;Direction départementale des territoires (DDT) - Haute-Garonne
+76;32;130008642;Direction départementale des territoires (DDT) - Gers
+75;33;130011240;Direction départementale des territoires et de la mer (DDTM) - Gironde
+76;34;130008568;Direction départementale des territoires et de la mer (DDTM) - Hérault
+53;35;130010937;Direction départementale des territoires et de la mer (DDTM) - Ille-et-Vilaine
+24;36;130009939;Direction départementale des territoires (DDT) - Indre
+24;37;130010275;Direction départementale des territoires (DDT) - Indre-et-Loire
+84;38;130010960;Direction départementale des territoires (DDT) - Isère
+27;39;130012602;Direction départementale des territoires (DDT) - Jura
+75;40;130010481;Direction départementale des territoires et de la mer (DDTM) - Landes
+24;41;130010325;Direction départementale des territoires (DDT) - Loir-et-Cher
+84;42;130010622;Direction départementale des territoires (DDT) - Loire
+84;43;130008915;Direction départementale des territoires (DDT) - Haute-Loire
+52;44;130008311;Direction départementale des territoires et de la mer (DDTM) - Loire-Atlantique
+24;45;130011000;Direction départementale des territoires (DDT) - Loiret
+76;46;130010408;Direction départementale des territoires (DDT) - Lot
+75;47;130010523;Direction départementale des territoires (DDT) - Lot-et-Garonne
+76;48;130011273;Direction départementale des territoires (DDT) - Lozère
+52;49;130010341;Direction départementale des territoires (DDT) - Maine-et-Loire
+28;50;130008170;Direction départementale des territoires et de la mer (DDTM) - Manche
+44;51;130008527;Direction départementale des territoires (DDT) - Marne
+44;52;130011323;Direction départementale des territoires (DDT) - Haute-Marne
+52;53;130009806;Direction départementale des territoires (DDT) - Mayenne
+44;54;130010465;Direction départementale des territoires (DDT) - Meurthe-et-Moselle
+44;55;130009954;Direction départementale des territoires (DDT) - Meuse
+53;56;130008675;Direction départementale des territoires et de la mer (DDTM) - Morbihan
+44;57;130010697;Direction départementale des territoires (DDT) - Moselle
+27;58;130010572;Direction départementale des territoires (DDT) - Nièvre
+32;59;130009970;Direction départementale des territoires et de la mer (DDTM) - Nord
+32;60;130010853;Direction départementale des territoires (DDT) - Oise
+28;61;130010788;Direction départementale des territoires (DDT) - Orne
+32;62;130010366;Direction départementale des territoires et de la mer (DDTM) - Pas-de-Calais
+84;63;130008147;Direction départementale des territoires (DDT) - Puy-de-Dôme
+75;64;130011570;Direction départementale des territoires et de la mer (DDTM) - Pyrénées-Atlantiques
+76;65;130008931;Direction départementale des territoires (DDT) - Hautes-Pyrénées
+76;66;130009095;Direction départementale des territoires et de la mer (DDTM) - Pyrénées-Orientales
+44;67;130010218;Direction départementale des territoires (DDT) - Bas-Rhin
+44;68;130011083;Direction départementale des territoires (DDT) - Haut-Rhin
+84;69;130008493;Direction départementale des territoires (DDT) - Rhône
+27;70;130008329;Direction départementale des territoires (DDT) - Haute-Saône
+27;71;130010739;Direction départementale des territoires (DDT) - Saône-et-Loire
+52;72;130009434;Direction départementale des territoires (DDT) - Sarthe
+84;73;130008246;Direction départementale des territoires (DDT) - Savoie
+84;74;130009764;Direction départementale des territoires (DDT) - Haute-Savoie
+28;76;130008154;Direction départementale des territoires et de la mer (DDTM) - Seine-Maritime
+11;77;130012339;Direction départementale des territoires (DDT) - Seine-et-Marne
+11;78;130012073;Direction départementale des territoires (DDT) - Yvelines
+75;79;130009616;Direction départementale des territoires (DDT) - Deux-Sèvres
+32;80;130010846;Direction départementale des territoires et de la mer (DDTM) - Somme
+76;81;130008188;Direction départementale des territoires (DDT) - Tarn
+76;82;130011224;Direction départementale des territoires (DDT) - Tarn-et-Garonne
+93;83;130011026;Direction départementale des territoires et de la mer (DDTM) - Var
+93;84;130011398;Direction départementale des territoires (DDT) - Vaucluse
+52;85;130009111;Direction départementale des territoires et de la mer (DDTM) - Vendée
+75;86;130009483;Direction départementale des territoires (DDT) - Vienne
+75;87;130008501;Direction départementale des territoires (DDT) - Haute-Vienne
+44;88;130008592;Direction départementale des territoires (DDT) - Vosges
+27;89;130009400;Direction départementale des territoires (DDT) - Yonne
+27;90;130011331;Direction départementale des territoires (DDT) - Territoire de Belfort
+11;91;130012107;Direction départementale des territoires (DDT) - Essonne
+11;95;130012115;Direction départementale des territoires (DDT) - Val-d'Oise
