@@ -3,9 +3,13 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   getDemandeAvisEtat,
+  getEtatDossierEnLecture,
   pcaetDemandeAvisEtatValues,
+  peutDeposerAvisInstructeur,
+  type DemandeAvisAchevement,
 } from '@tet/domain/demarches';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
+import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import {
   ListDemandesAvisError,
   ListDemandesAvisErrorEnum,
@@ -28,7 +32,8 @@ const MILLISECONDES_PAR_JOUR = 24 * 60 * 60 * 1000;
 export class ListDemandesAvisService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
-    private readonly listDemandesAvisRepository: ListDemandesAvisRepository
+    private readonly listDemandesAvisRepository: ListDemandesAvisRepository,
+    private readonly pcaetAvisRepository: PcaetAvisRepository
   ) {}
 
   async listDemandesAvis(
@@ -52,15 +57,30 @@ export class ListDemandesAvisService {
     if (!rowsResult.success) {
       return rowsResult;
     }
+    const { instructeurType, rows } = rowsResult.data;
+
+    // Un service qui dépose un avis lit où *il* en est, ligne par ligne. Un
+    // destinataire en lecture — DDT, DR ADEME, service national — lit où en est
+    // *le dossier* : sa propre demande restera vide par nature, et son délai
+    // passé la faisait afficher « Pas d'avis déposé » sur un dossier instruit.
+    //
+    // Une seule requête d'achèvement pour la page entière, pas une par ligne.
+    const deposeAvis = peutDeposerAvisInstructeur(instructeurType);
+    const achevementParDemarche = deposeAvis
+      ? new Map<number, DemandeAvisAchevement[]>()
+      : await this.pcaetAvisRepository.listAchevementParDemarche(
+          [...new Set(rows.map((row) => row.demarcheId))],
+          tx
+        );
 
     const contactsParCollectivite =
       await this.listDemandesAvisRepository.listContactsParCollectivite(
-        [...new Set(rowsResult.data.map((row) => row.collectiviteId))],
+        [...new Set(rows.map((row) => row.collectiviteId))],
         tx
       );
 
     const now = new Date();
-    const lignes: DemandeAvisLigne[] = rowsResult.data.map((row) => ({
+    const lignes: DemandeAvisLigne[] = rows.map((row) => ({
       demandeAvisId: row.demandeAvisId,
       demarcheId: row.demarcheId,
       demarcheTitre: row.demarcheTitre,
@@ -73,7 +93,16 @@ export class ListDemandesAvisService {
         departementCode: row.collectiviteDepartementCode,
       },
       contacts: contactsParCollectivite.get(row.collectiviteId) ?? [],
-      etat: getDemandeAvisEtat(row, now),
+      etat: deposeAvis
+        ? getDemandeAvisEtat(row, now)
+        : getEtatDossierEnLecture(
+            {
+              demarcheStatus: row.demarcheStatus,
+              avisDeadlineAt: row.avisDeadlineAt,
+              achevement: achevementParDemarche.get(row.demarcheId) ?? [],
+            },
+            now
+          ),
       nbAvisValides: row.nbAvisValides,
       nbAvisBrouillons: row.nbAvisBrouillons,
     }));
@@ -82,7 +111,7 @@ export class ListDemandesAvisService {
     for (const ligne of lignes) {
       countByEtat[ligne.etat] += 1;
     }
-    const stats = this.calculerStats(rowsResult.data);
+    const stats = this.calculerStats(rows);
 
     const filtrees = lignes.filter((ligne) => {
       if (input.etats && !input.etats.includes(ligne.etat)) {
