@@ -30,9 +30,10 @@ describe('getAvisFileUrl', () => {
   let avisSansPieceId: string;
   let instructeurCollectiviteId: number;
 
-  // Un code région propre à cette spec : l'index unique « une DREAL par région »
-  // ne tolère pas deux specs sur le même code.
-  const REGION = '24';
+  // Un code région propre à cette spec, pris hors de la plage réelle : les dix-huit
+  // codes numériques portent les DREAL de l'import (collectivite/service_etat_import),
+  // et l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  const REGION = 'AF';
 
   beforeAll(async () => {
     app = await getTestApp();
