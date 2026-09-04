@@ -17,6 +17,7 @@ import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
@@ -289,6 +290,90 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       .from(indicateurValeurTable)
       .where(eq(indicateurValeurTable.id, openDataValeur.id));
     expect(row.resultat).toBe(5);
+  });
+
+  test('Le filtre metadonneeId ne remonte que les valeurs de cette métadonnée', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+    const sourceId = `test-metadonnee-filter-${collectiviteId}`;
+
+    await databaseService.db
+      .insert(indicateurSourceTable)
+      .values({
+        id: sourceId,
+        libelle: 'Source test filtre métadonnée',
+        ordreAffichage: null,
+      })
+      .onConflictDoNothing();
+
+    const [metadonneeA, metadonneeB] = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values([
+        {
+          sourceId,
+          dateVersion: '2020-01-01T00:00:00.000Z',
+          nomDonnees: null,
+          diffuseur: null,
+          producteur: null,
+          methodologie: null,
+          limites: null,
+        },
+        {
+          sourceId,
+          dateVersion: '2021-01-01T00:00:00.000Z',
+          nomDonnees: null,
+          diffuseur: null,
+          producteur: null,
+          methodologie: null,
+          limites: null,
+        },
+      ])
+      .returning({ id: indicateurSourceMetadonneeTable.id });
+
+    await databaseService.db.insert(indicateurValeurTable).values([
+      {
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2019-01-01',
+        resultat: 11,
+        metadonneeId: metadonneeA.id,
+      },
+      {
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2020-01-01',
+        resultat: 22,
+        metadonneeId: metadonneeB.id,
+      },
+    ]);
+
+    const filtreA = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+      metadonneeId: metadonneeA.id,
+    });
+    const filtreB = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+      metadonneeId: metadonneeB.id,
+    });
+
+    expect(filtreA.indicateurs).toHaveLength(1);
+    expect(filtreA.indicateurs[0].sources[sourceId]?.valeurs).toEqual([
+      expect.objectContaining({
+        dateValeur: '2019-01-01',
+        resultat: 11,
+        metadonneeId: metadonneeA.id,
+      }),
+    ]);
+
+    expect(filtreB.indicateurs).toHaveLength(1);
+    expect(filtreB.indicateurs[0].sources[sourceId]?.valeurs).toEqual([
+      expect.objectContaining({
+        dateValeur: '2020-01-01',
+        resultat: 22,
+        metadonneeId: metadonneeB.id,
+      }),
+    ]);
   });
 
   test('Un second upsert sur la même date met à jour au lieu de dupliquer', async () => {

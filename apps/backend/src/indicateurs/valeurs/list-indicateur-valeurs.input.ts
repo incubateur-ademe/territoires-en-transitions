@@ -20,6 +20,12 @@ export const listIndicateurValeursInputSchema = z
       .describe(
         'Liste des sources. `collectivite` pour les valeurs renseignées par la collectivité'
       ),
+    metadonneeId: z
+      .int()
+      .optional()
+      .describe(
+        "Identifiant d'une métadonnée source (ex. version PCAET d'une démarche)"
+      ),
     dateDebut: z
       .string()
       .length(10)
