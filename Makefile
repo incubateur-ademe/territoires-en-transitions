@@ -357,8 +357,19 @@ lint-target: preflight-env-keys ## Lance le lint d'un projet Nx : make lint-targ
 typecheck: preflight-env-keys ## Lance le typecheck : make typecheck [project=<nx-project>]
 	@$(call run_node,pnpm exec nx $(if $(project),typecheck "$(project)",run-many -t typecheck --parallel=3))
 
-test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
-	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
+# Goals après `test` (ex. make test project=backend diagnostic) : patterns
+# transmis à nx, pas des cibles Make. Sans ce no-op, make s'arrête sur
+# « No rule to make target ».
+ifeq ($(firstword $(MAKECMDGOALS)),test)
+TEST_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+ifneq ($(TEST_ARGS),)
+$(TEST_ARGS):
+	@:
+endif
+endif
+
+test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>] [<pattern>...]
+	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)" $(TEST_ARGS),run-many -t test))
 
 hooks: ## Active les hooks git du dépôt (.githooks)
 	@node scripts/toggle-hooks.mts on
