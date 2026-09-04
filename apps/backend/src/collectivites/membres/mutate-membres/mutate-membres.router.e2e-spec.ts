@@ -176,9 +176,9 @@ describe('CollectiviteMembresRouter mutate', () => {
       const { collectivite: dreal, cleanup: drealCleanup } =
         await addTestCollectivite(db, {
           type: 'dreal',
-          // Hors de la plage réelle : les dix-huit codes numériques portent les
-          // DREAL de l'import (collectivite/service_etat_import).
-          regionCode: 'MM',
+          // Espace disjoint : codes réels à deux chiffres, `pickFreeRegionCode`
+          // à deux lettres, les specs à une lettre puis un chiffre.
+          regionCode: 'M1',
           nom: 'DREAL test join',
         });
       const { user: joiner, cleanup: userCleanup } = await addTestUser(db, {
