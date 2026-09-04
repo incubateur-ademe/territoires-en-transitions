@@ -1844,7 +1844,15 @@ export const appLabels = {
    */
   instructionListeVide:
     'Les dépôts PCAET qui vous sont transmis apparaîtront ici.',
-  instructionListeIntitule: 'Dépôts PCAET qui vous sont transmis',
+  /**
+   * Nom accessible du tableau : il suit la même famille que le titre visible
+   * juste au-dessus, sinon un lecteur d'écran annonce à une DREAL la formulation
+   * réservée aux destinataires en lecture.
+   */
+  instructionListeIntitule: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis
+      ? 'Instructions dont je suis en charge'
+      : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   instructionListeColonneContact: 'Contact',
   instructionListeColonneStatut: 'Statut',

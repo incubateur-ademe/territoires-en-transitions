@@ -109,6 +109,7 @@ export const DemandesAvisPage = ({ serviceId }: { serviceId: number }) => {
           <>
             <DemandesAvisTable
               demandes={data.items}
+              deposeAvis={deposeAvis}
               onTrierParCollectivite={() => trierPar('collectivite')}
               onTrierParContact={() => trierPar('contact')}
               onTrierParStatut={() => trierPar('statut')}
