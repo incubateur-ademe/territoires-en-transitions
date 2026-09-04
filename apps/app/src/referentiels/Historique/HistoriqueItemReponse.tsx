@@ -1,4 +1,3 @@
-import { makeMaCollectiviteUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
   DetailNouvelleModificationWrapper,
@@ -6,7 +5,7 @@ import {
 } from './DetailModificationWrapper';
 import Modification from './Modification';
 import { HistoriqueItemPropsOf } from './types';
-import { formatReponseValue } from './utils';
+import { formatReponseValue, makePersonnalisationQuestionLink } from './utils';
 
 type Props = HistoriqueItemPropsOf<'reponse'>;
 
@@ -14,7 +13,7 @@ type Props = HistoriqueItemPropsOf<'reponse'>;
  * Modification d'une réponse à une question de personnalisation du référentiel
  */
 const HistoriqueItemReponse = ({ item }: Props) => {
-  const { collectiviteId, thematiqueNom, thematiqueId } = item;
+  const { collectiviteId, thematiqueNom, thematiqueId, questionId } = item;
 
   return (
     <Modification
@@ -22,12 +21,10 @@ const HistoriqueItemReponse = ({ item }: Props) => {
       nom="Caractéristique de la collectivité modifiée"
       descriptions={[{ titre: 'Thématique', description: thematiqueNom ?? '' }]}
       detail={<HistoriqueItemReponseDetails item={item} />}
-      pageLink={makeMaCollectiviteUrl({
-        collectiviteId: collectiviteId,
-        view: 'personnalisation',
-        searchParams: thematiqueId
-          ? { t: thematiqueId, ot: thematiqueId }
-          : undefined,
+      pageLink={makePersonnalisationQuestionLink({
+        collectiviteId,
+        thematiqueId,
+        questionId,
       })}
     />
   );
