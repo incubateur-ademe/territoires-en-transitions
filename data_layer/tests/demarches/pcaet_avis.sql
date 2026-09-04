@@ -1,9 +1,9 @@
 begin;
 select plan(18);
 
--- Codes de région à deux lettres : les dix-huit codes réels sont numériques et
--- tous occupés par l'import des services (collectivite/service_etat_import), qui
--- pose une DREAL et une DR ADEME sur chacun.
+-- Codes dans l'espace « lettre + chiffre » réservé aux tests : les codes réels
+-- sont numériques et tous occupés par l'import des services, et
+-- `pickFreeRegionCode` (fixtures e2e) tire deux lettres.
 
 create temp table ctx (
     dreal_id integer,
@@ -16,14 +16,14 @@ create temp table ctx (
 
 with d as (
     insert into collectivite (nom, type, region_code)
-    values ('DREAL test pgTAP', 'dreal', 'ZC')
+    values ('DREAL test pgTAP', 'dreal', 'T3')
     returning id
 )
 insert into ctx (dreal_id) select id from d;
 
 with a as (
     insert into collectivite (nom, type, region_code)
-    values ('DR ADEME test pgTAP', 'dr_ademe', 'ZC')
+    values ('DR ADEME test pgTAP', 'dr_ademe', 'T3')
     returning id
 )
 update ctx set dr_ademe_id = (select id from a);
@@ -71,7 +71,13 @@ select lives_ok(
     'une demande d''avis visant une dreal est acceptée'
 );
 
-update ctx set demande_id = (select id from demarche_pcaet_demande_avis limit 1);
+-- Bornée à la démarche du test : sans le `where`, le `limit 1` ramenait une
+-- demande posée par `26-insert_fake_pcaet_avis.sql`, et les assertions suivantes
+-- portaient sur un dossier du seed plutôt que sur celui qu'on vient de créer.
+update ctx set demande_id = (
+    select id from demarche_pcaet_demande_avis
+    where demarche_id = (select demarche_id from ctx)
+);
 
 select throws_ok(
     $$ delete from demarche where id = (select demarche_id from ctx) $$,

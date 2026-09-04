@@ -260,10 +260,10 @@ describe('Test upsert collectivite', () => {
 
     onTestFinished(cleanup);
 
-    // Hors de la plage réelle : les dix-huit codes numériques portent les DREAL de
-    // l'import (collectivite/service_etat_import), et l'index unique « une DREAL
+    // Espace disjoint : codes réels à deux chiffres, `pickFreeRegionCode` à deux
+    // lettres, les specs à une lettre puis un chiffre — l'index unique « une DREAL
     // par région » ne tolère pas deux occupants.
-    const regionCode = 'CU';
+    const regionCode = 'C2';
 
     const input: UpsertInput = {
       type: collectiviteTypeEnum.DREAL,
@@ -314,10 +314,9 @@ describe('Test upsert collectivite', () => {
     const nomB = 'DREAL région B test';
     const nomDoublon = 'DREAL doublon même région test';
     // L'unicité porte sur (type, region_code) : ces deux codes doivent rester
-    // libres de toute DREAL. Les dix-huit codes numériques sont tous occupés
-    // depuis l'import (collectivite/service_etat_import), d'où des lettres.
-    const regionA = 'CW';
-    const regionB = 'CX';
+    // libres de toute DREAL, d'où l'espace « lettre + chiffre » propre aux specs.
+    const regionA = 'C3';
+    const regionB = 'C4';
 
     const cleanupCollectivites = async () => {
       const rows = await databaseService.db
@@ -389,13 +388,11 @@ describe('Test upsert collectivite', () => {
     onTestFinished(cleanupCollectivites);
 
     const values = {
-      // Un code par spec, hors de la plage réelle : les dix-huit codes
-      // numériques portent les DREAL de l'import
-      // (collectivite/service_etat_import), et les autres specs tournent en
-      // parallèle sur la même base.
+      // Un code par spec, dans l'espace « lettre + chiffre » : les autres specs
+      // tournent en parallèle sur la même base.
       type: collectiviteTypeEnum.DREAL,
       nom,
-      regionCode: 'CV',
+      regionCode: 'C5',
       preferences: defaultCollectivitePreferences,
     };
 

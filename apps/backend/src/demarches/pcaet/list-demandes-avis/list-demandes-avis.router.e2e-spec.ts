@@ -27,11 +27,13 @@ describe('listDemandesAvis', () => {
   let serviceNationalId: number;
   const demarcheIds: number[] = [];
 
-  // Un code région propre à cette spec, pris hors de la plage réelle : les dix-huit
-  // codes numériques portent les DREAL de l'import (collectivite/service_etat_import),
-  // et l'index unique « une DREAL par région » ne tolère pas deux occupants.
-  const REGION = 'LA';
-  const AUTRE_REGION = 'LB';
+  // Un code région propre à cette spec, dans un espace que personne d'autre
+  // n'occupe : les codes réels sont deux chiffres (et tous pris par l'import des
+  // services), `pickFreeRegionCode` tire deux lettres. Une lettre suivie d'un
+  // chiffre ne peut donc collisionner ni avec l'un ni avec l'autre, là où
+  // l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  const REGION = 'L1';
+  const AUTRE_REGION = 'L2';
 
   const dansNJours = (n: number) =>
     new Date(Date.now() + n * 24 * 3600 * 1000).toISOString();
