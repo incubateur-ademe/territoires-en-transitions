@@ -11,14 +11,10 @@ set search_path to public;
 -- ceux du préfet de région et de l'autorité environnementale, la seconde celui
 -- de son président ; la DDT reçoit le dossier en lecture.
 --
--- Ni SIREN ni population pour la DDT : comme une DREAL, elle n'a pas de
--- territoire propre. Le conseil régional, lui, existe déjà comme collectivité
--- (type `region`) — il n'est pas créé ici, seulement rattaché.
+-- Aucun des trois n'est créé ici : la DDT et la DREAL viennent de l'import des
+-- services réels (collectivite/service_etat_import), le conseil régional existe
+-- déjà comme collectivité de type `region`. Ce seed ne fait que rattacher.
 -- ===========================================================================
-
-INSERT INTO collectivite (nom, type, departement_code, region_code)
-VALUES ('DDT de l''Ain', 'ddt', '01', '84')
-ON CONFLICT DO NOTHING;
 
 -- ===========================================================================
 -- Le compte de dev sur les trois instructeurs, en admin — le seul niveau qui
@@ -54,5 +50,10 @@ BEGIN
     IF departement_1 IS DISTINCT FROM '01' THEN
         RAISE EXCEPTION
             'La collectivité 1 est dans le département % : la DDT 01 ne la couvre pas', departement_1;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM collectivite WHERE type = 'ddt' AND departement_code = '01') THEN
+        RAISE EXCEPTION
+            'Aucune DDT sur le département 01 : le change collectivite/service_etat_import n''est pas déployé';
     END IF;
 END $$;
