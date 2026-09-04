@@ -157,7 +157,8 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         },
         {
           collectiviteId: expect.any(Number),
-          collectiviteNom: 'Direction Régionale Auvergne-Rhône-Alpes',
+          collectiviteNom:
+            'Direction Régionale (DR) Ademe Auvergne-Rhône-Alpes',
           collectiviteType: collectiviteTypeEnum.DR_ADEME,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,

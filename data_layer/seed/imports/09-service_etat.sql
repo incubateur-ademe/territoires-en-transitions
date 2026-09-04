@@ -6,12 +6,12 @@
 -- `make seeds_rebuild_from_source`
 -- (script : data_layer/scripts/generate_service_etat.py).
 --
--- Le même corps est porté par le change sqitch
--- `collectivite/service_etat_import` : ce fichier sert les bases neuves
--- (`make db-init` / `db-reset`), le change sert les bases déjà peuplées, où le
--- seed ne repasse jamais. Les deux sont idempotents et se recoupent sans dégât.
-
-begin;
+-- Ce fichier est le **seul** exemplaire des données, et il a deux lecteurs :
+-- `seed.sh` le charge sur une base neuve, et le change sqitch
+-- `collectivite/service_etat_import` l'inclut par `\ir` pour les bases déjà
+-- peuplées, où le seed ne repasse jamais. D'où l'absence de `begin`/`commit`
+-- ici : c'est le change sqitch qui ouvre la transaction, et un `commit` au
+-- milieu refermerait la sienne. `seed.sh` s'appuie sur `ON_ERROR_STOP`.
 
 -- Ce corps est joué à deux endroits — le change sqitch
 -- `collectivite/service_etat_import` et ce seed — et chaque bloc porte
@@ -183,24 +183,24 @@ do update set siren       = excluded.siren,
 insert into collectivite (nom, type, region_code, siren, nic)
 select v.nom, v.type, v.region_code, v.siren, v.nic
 from (values
-        ('Direction Régionale (DR) Ademe - Guadeloupe', 'dr_ademe', '01', '385290309', '00389'),
-        ('Direction Régionale (DR) Ademe - Martinique', 'dr_ademe', '02', '385290309', '00595'),
-        ('Direction Régionale (DR) Ademe - Guyane', 'dr_ademe', '03', '385290309', '00538'),
-        ('Direction Régionale (DR) Ademe - Océan Indien', 'dr_ademe', '04', '385290309', '00397'),
-        ('Direction Régionale (DR) Ademe - Océan Indien', 'dr_ademe', '06', '385290309', '00397'),
-        ('Direction Régionale (DR) Ademe - Île-de-France', 'dr_ademe', '11', '385290309', '00199'),
-        ('Direction Régionale (DR) Ademe - Centre-Val de Loire', 'dr_ademe', '24', '385290309', '00579'),
-        ('Direction Régionale (DR) Ademe - Bourgogne-Franche-Comté', 'dr_ademe', '27', '385290309', '00520'),
-        ('Direction Régionale (DR) Ademe - Normandie', 'dr_ademe', '28', '385290309', '00314'),
-        ('Direction Régionale (DR) Ademe - Hauts-de-France', 'dr_ademe', '32', '385290309', '00561'),
-        ('Direction Régionale (DR) Ademe - Grand Est', 'dr_ademe', '44', '385290309', '00611'),
-        ('Direction Régionale (DR) Ademe - Pays de la Loire', 'dr_ademe', '52', '385290309', '00686'),
-        ('Direction Régionale (DR) Ademe - Bretagne', 'dr_ademe', '53', '385290309', '00546'),
-        ('Direction Régionale (DR) Ademe - Nouvelle-Aquitaine', 'dr_ademe', '75', '385290309', '00496'),
-        ('Direction Régionale (DR) Ademe - Occitanie', 'dr_ademe', '76', '385290309', '00603'),
-        ('Direction Régionale (DR) Ademe - Auvergne-Rhône-Alpes', 'dr_ademe', '84', '385290309', '00371'),
-        ('Direction Régionale (DR) Ademe - Provence-Alpes-Côte d''Azur', 'dr_ademe', '93', '385290309', '00629'),
-        ('Direction Régionale (DR) Ademe - Corse', 'dr_ademe', '94', '385290309', '00504')
+        ('Direction Régionale (DR) Ademe Guadeloupe', 'dr_ademe', '01', '385290309', '00389'),
+        ('Direction Régionale (DR) Ademe Martinique', 'dr_ademe', '02', '385290309', '00595'),
+        ('Direction Régionale (DR) Ademe Guyane', 'dr_ademe', '03', '385290309', '00538'),
+        ('Direction Régionale (DR) Ademe Océan Indien', 'dr_ademe', '04', '385290309', '00397'),
+        ('Direction Régionale (DR) Ademe Océan Indien', 'dr_ademe', '06', '385290309', '00397'),
+        ('Direction Régionale (DR) Ademe Île-de-France', 'dr_ademe', '11', '385290309', '00199'),
+        ('Direction Régionale (DR) Ademe Centre-Val de Loire', 'dr_ademe', '24', '385290309', '00579'),
+        ('Direction Régionale (DR) Ademe Bourgogne-Franche-Comté', 'dr_ademe', '27', '385290309', '00520'),
+        ('Direction Régionale (DR) Ademe Normandie', 'dr_ademe', '28', '385290309', '00314'),
+        ('Direction Régionale (DR) Ademe Hauts-de-France', 'dr_ademe', '32', '385290309', '00561'),
+        ('Direction Régionale (DR) Ademe Grand Est', 'dr_ademe', '44', '385290309', '00611'),
+        ('Direction Régionale (DR) Ademe Pays de la Loire', 'dr_ademe', '52', '385290309', '00686'),
+        ('Direction Régionale (DR) Ademe Bretagne', 'dr_ademe', '53', '385290309', '00546'),
+        ('Direction Régionale (DR) Ademe Nouvelle-Aquitaine', 'dr_ademe', '75', '385290309', '00496'),
+        ('Direction Régionale (DR) Ademe Occitanie', 'dr_ademe', '76', '385290309', '00603'),
+        ('Direction Régionale (DR) Ademe Auvergne-Rhône-Alpes', 'dr_ademe', '84', '385290309', '00371'),
+        ('Direction Régionale (DR) Ademe Provence-Alpes-Côte d''Azur', 'dr_ademe', '93', '385290309', '00629'),
+        ('Direction Régionale (DR) Ademe Corse', 'dr_ademe', '94', '385290309', '00504')
 ) as v (nom, type, region_code, siren, nic)
 where exists (select 1 from collectivite)
 on conflict (type, region_code) where type = 'dr_ademe'
@@ -218,15 +218,20 @@ do update set siren = excluded.siren,
 -- touchées : un service déjà identifié au répertoire SIRENE n'est jamais renommé.
 -- Les noms antérieurs sont déclarés dans la colonne `nom_anterieur` de
 -- service-national.csv.
+--
+-- La dénomination officielle est reconnue au même titre que le nom antérieur :
+-- sans cela, une ligne déjà nommée mais sans SIREN — un ajout à la main, ou un
+-- passage interrompu — ne serait ni adoptée ici ni insérée plus bas (le `not
+-- exists` la voit), resterait sans identité, et ferait échouer le `verify`.
 update collectivite
 set nom   = v.nom,
     siren = v.siren,
     nic   = v.nic
 from (values
-        ('Direction Générale de l''Énergie et du climat (DGEC)', '120087010', '00068', 'DGEC')
+        ('Direction Générale de l''Énergie et du Climat (DGEC)', '120087010', '00068', 'DGEC')
 ) as v (nom, siren, nic, nom_anterieur)
 where type = 'service_national'
-  and collectivite.nom = v.nom_anterieur
+  and collectivite.nom in (v.nom_anterieur, v.nom)
   and collectivite.siren is null;
 
 -- Les services nationaux. `service_national` est une famille, pas un service : la
@@ -238,7 +243,7 @@ insert into collectivite (nom, type, siren, nic)
 select v.nom, 'service_national', v.siren, v.nic
 from (values
         ('ADEME', '385290309', '00454'),
-        ('Direction Générale de l''Énergie et du climat (DGEC)', '120087010', '00068')
+        ('Direction Générale de l''Énergie et du Climat (DGEC)', '120087010', '00068')
 ) as v (nom, siren, nic)
 where exists (select 1 from collectivite)
   and not exists (
@@ -247,9 +252,17 @@ where exists (select 1 from collectivite)
 );
 
 -- Les conseils régionaux existent déjà comme collectivités de type `region`,
--- créées depuis `imports.region`, mais sans SIREN — départements et régions
--- n'étaient couverts par aucun import. On ne fait que le renseigner : jamais de
--- création, jamais de renommage.
+-- créées depuis `imports.region`. On ne fait que renseigner leur identité SIRENE :
+-- jamais de création, jamais de renommage.
+--
+-- Attention, ils ne partaient pas de rien : `collectivite/fusion.sql` en avait
+-- posé des SIREN, sur la carte des régions d'avant 2016. Deux d'entre eux
+-- désignent un conseil régional dissous et **sont délibérément remplacés** —
+-- Martinique 239720014 et Guyane 239730013 sont fermés au répertoire SIRENE,
+-- au profit des collectivités territoriales qui leur ont succédé (200055507 et
+-- 200052678). Mayotte, elle, n'en avait aucun. Les quinze autres codes de
+-- `fusion.sql` visent des régions qui n'existent plus comme collectivités : ils
+-- ne rencontrent aucune ligne.
 --
 -- Comme les blocs précédents, cet `update` ne rencontre rien au moment des
 -- migrations sur une base neuve : les régions n'arrivent qu'avec
@@ -283,5 +296,3 @@ from (values
 where type = 'region'
   and collectivite.region_code = v.region_code
   and (collectivite.siren, collectivite.nic) is distinct from (v.siren, v.nic);
-
-commit;

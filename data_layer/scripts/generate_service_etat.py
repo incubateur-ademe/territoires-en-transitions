@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Régénère l'import des services de l'État depuis `seed/sources/service-etat/`.
 
-Écrit deux fichiers portant **le même corps SQL** :
+Écrit **un seul** fichier, `seed/imports/09-service_etat.sql` : `seed.sh` le
+charge sur une base neuve, et le change sqitch
+`collectivite/service_etat_import` l'inclut par `\\ir` pour les bases déjà
+peuplées (staging, production), où le seed ne repasse jamais.
 
-- `seed/imports/09-service_etat.sql`, chargé par `seed.sh` sur une base neuve ;
-- `sqitch/deploy/collectivite/service_etat_import.sql`, pour les bases déjà
-  peuplées (staging, production), où le seed ne repasse jamais.
+Un seul exemplaire des données, donc : générer les deux fichiers les avait fait
+diverger en une journée. Le script de deploy sqitch, lui, ne bouge jamais — son
+empreinte reste stable quand la liste est régénérée.
 
 Le corps est idempotent : il s'apparie sur la famille et le code géographique,
 qui sont les clés que la base impose déjà (index uniques partiels), et ne réécrit
@@ -33,10 +36,7 @@ import urllib.request
 
 DATA_LAYER = pathlib.Path(__file__).resolve().parents[1]
 SOURCES = DATA_LAYER / 'seed' / 'sources' / 'service-etat'
-SEED_DESTINATION = DATA_LAYER / 'seed' / 'imports' / '09-service_etat.sql'
-SQITCH_DESTINATION = (
-    DATA_LAYER / 'sqitch' / 'deploy' / 'collectivite' / 'service_etat_import.sql'
-)
+DESTINATION = DATA_LAYER / 'seed' / 'imports' / '09-service_etat.sql'
 
 # Le NIC du siège vient du répertoire SIRENE, exposé sans clé par la DINUM.
 API = 'https://recherche-entreprises.api.gouv.fr/search'
@@ -67,7 +67,7 @@ def fail(message: str) -> None:
 # ————————————————————————— lecture des sources —————————————————————————
 
 
-def codes_geographiques() -> tuple[frozenset[str], frozenset[str]]:
+def codes_geographiques() -> tuple[frozenset[str], dict[str, str]]:
     """Les codes que le seed connaît, lus dans les fichiers qui les portent.
 
     C'est le garde-fou qui attrape un code hors du référentiel TeT : le
@@ -76,14 +76,18 @@ def codes_geographiques() -> tuple[frozenset[str], frozenset[str]]:
     """
     imports = DATA_LAYER / 'seed' / 'imports'
     regions = re.findall(r"\('(\d{2})',", (imports / '01-region.sql').read_text())
-    departements = re.findall(
-        r"\('([0-9AB]{2,3})', '\d{2}',", (imports / '02-departement.sql').read_text()
+    # Le rattachement est retenu, pas seulement le code : c'est ce qui permet de
+    # refuser une DDT dont le département n'appartient pas à la région annoncée.
+    departements = dict(
+        re.findall(
+            r"\('([0-9AB]{2,3})', '(\d{2})',", (imports / '02-departement.sql').read_text()
+        )
     )
     if len(regions) != 18:
         fail(f'01-region.sql : 18 régions attendues, {len(regions)} lues')
     if len(departements) != 101:
         fail(f'02-departement.sql : 101 départements attendus, {len(departements)} lus')
-    return frozenset(regions), frozenset(departements)
+    return frozenset(regions), departements
 
 
 def read_csv(name: str, colonnes: tuple[str, ...]) -> list[dict[str, str]]:
@@ -212,6 +216,11 @@ ADOPTION = """-- Adoption des lignes antérieures à l'import. `service_national
 -- touchées : un service déjà identifié au répertoire SIRENE n'est jamais renommé.
 -- Les noms antérieurs sont déclarés dans la colonne `nom_anterieur` de
 -- service-national.csv.
+--
+-- La dénomination officielle est reconnue au même titre que le nom antérieur :
+-- sans cela, une ligne déjà nommée mais sans SIREN — un ajout à la main, ou un
+-- passage interrompu — ne serait ni adoptée ici ni insérée plus bas (le `not
+-- exists` la voit), resterait sans identité, et ferait échouer le `verify`.
 update collectivite
 set nom   = v.nom,
     siren = v.siren,
@@ -220,7 +229,7 @@ from (values
 {valeurs}
 ) as v (nom, siren, nic, nom_anterieur)
 where type = 'service_national'
-  and collectivite.nom = v.nom_anterieur
+  and collectivite.nom in (v.nom_anterieur, v.nom)
   and collectivite.siren is null;
 
 """
@@ -325,9 +334,17 @@ from (values
 );
 
 -- Les conseils régionaux existent déjà comme collectivités de type `region`,
--- créées depuis `imports.region`, mais sans SIREN — départements et régions
--- n'étaient couverts par aucun import. On ne fait que le renseigner : jamais de
--- création, jamais de renommage.
+-- créées depuis `imports.region`. On ne fait que renseigner leur identité SIRENE :
+-- jamais de création, jamais de renommage.
+--
+-- Attention, ils ne partaient pas de rien : `collectivite/fusion.sql` en avait
+-- posé des SIREN, sur la carte des régions d'avant 2016. Deux d'entre eux
+-- désignent un conseil régional dissous et **sont délibérément remplacés** —
+-- Martinique 239720014 et Guyane 239730013 sont fermés au répertoire SIRENE,
+-- au profit des collectivités territoriales qui leur ont succédé (200055507 et
+-- 200052678). Mayotte, elle, n'en avait aucun. Les quinze autres codes de
+-- `fusion.sql` visent des régions qui n'existent plus comme collectivités : ils
+-- ne rencontrent aucune ligne.
 --
 -- Comme les blocs précédents, cet `update` ne rencontre rien au moment des
 -- migrations sur une base neuve : les régions n'arrivent qu'avec
@@ -347,7 +364,7 @@ where type = 'region'
 """
 
 
-SEED_HEADER = """-- Services de l'État instructeurs du dépôt PCAET : DREAL, DDT, DR ADEME et
+HEADER = """-- Services de l'État instructeurs du dépôt PCAET : DREAL, DDT, DR ADEME et
 -- services nationaux, plus le SIREN et le NIC des conseils régionaux.
 --
 -- Source : data_layer/seed/sources/service-etat/*.csv (classeur remis par l'ADEME,
@@ -355,38 +372,16 @@ SEED_HEADER = """-- Services de l'État instructeurs du dépôt PCAET : DREAL, D
 -- `make seeds_rebuild_from_source`
 -- (script : data_layer/scripts/generate_service_etat.py).
 --
--- Le même corps est porté par le change sqitch
--- `collectivite/service_etat_import` : ce fichier sert les bases neuves
--- (`make db-init` / `db-reset`), le change sert les bases déjà peuplées, où le
--- seed ne repasse jamais. Les deux sont idempotents et se recoupent sans dégât.
-
-begin;
-
-"""
-
-SQITCH_HEADER = """-- Deploy tet:collectivite/service_etat_import to pg
--- requires: collectivite/type_add_dr_ademe_service_national
--- requires: collectivite/nic
-
--- Peuple les services de l'État instructeurs du dépôt PCAET : DREAL, DDT,
--- DR ADEME et services nationaux, plus le SIREN et le NIC des conseils régionaux.
---
--- Source : data_layer/seed/sources/service-etat/*.csv. Corps **généré** par
--- data_layer/scripts/generate_service_etat.py, identique à celui de
--- data_layer/seed/imports/09-service_etat.sql : le seed sert les bases neuves,
--- ce change sert les bases déjà peuplées (staging, production).
---
--- Sqitch n'enregistre que l'empreinte du script au moment du déploiement : une
--- correction de la liste après passage en production ne doit PAS régénérer ce
--- fichier, elle demande un nouveau change. Régénérer reste sans risque tant que
--- le change n'est pas déployé.
-
-BEGIN;
+-- Ce fichier est le **seul** exemplaire des données, et il a deux lecteurs :
+-- `seed.sh` le charge sur une base neuve, et le change sqitch
+-- `collectivite/service_etat_import` l'inclut par `\\ir` pour les bases déjà
+-- peuplées, où le seed ne repasse jamais. D'où l'absence de `begin`/`commit`
+-- ici : c'est le change sqitch qui ouvre la transaction, et un `commit` au
+-- milieu refermerait la sienne. `seed.sh` s'appuie sur `ON_ERROR_STOP`.
 
 """
 
-FOOTER_SEED = '\ncommit;\n'
-FOOTER_SQITCH = '\nCOMMIT;\n'
+FOOTER = ''
 
 
 # ————————————————————————————————— main —————————————————————————————————
@@ -437,10 +432,18 @@ def main() -> None:
     )
     check_unique(fichier, 'SIREN', [(l['siren'], l['_ligne']) for l in lignes])
     for ligne in lignes:
-        if ligne['departement_code'] not in departements:
+        code_dep = ligne['departement_code']
+        if code_dep not in departements:
             fail(
                 f'{fichier}:{ligne["_ligne"]} : code département '
-                f'{ligne["departement_code"]!r} inconnu de 02-departement.sql'
+                f'{code_dep!r} inconnu de 02-departement.sql'
+            )
+        # L'insert reporte `region_code` sur la DDT existante : une paire fausse
+        # déplacerait le service hors du périmètre de sa DREAL, sans bruit.
+        if departements[code_dep] != ligne['region_code']:
+            fail(
+                f'{fichier}:{ligne["_ligne"]} : le département {code_dep} appartient à la '
+                f'région {departements[code_dep]}, pas à {ligne["region_code"]!r}'
             )
     print(f'⏳ {fichier} : {len(lignes)} NIC à récupérer au répertoire SIRENE')
     services['ddt'] = [
@@ -501,9 +504,7 @@ def main() -> None:
 
     # Rien n'est écrit avant que tout soit lu, validé et complété : une source
     # abîmée laisse les deux SQL en place.
-    sql = corps(services)
-    SEED_DESTINATION.write_text(SEED_HEADER + sql + FOOTER_SEED, encoding='utf-8')
-    SQITCH_DESTINATION.write_text(SQITCH_HEADER + sql + FOOTER_SQITCH, encoding='utf-8')
+    DESTINATION.write_text(HEADER + corps(services) + FOOTER, encoding='utf-8')
 
     print(
         f'✓ {len(services["dreal"])} DREAL, {len(services["ddt"])} DDT, '
@@ -511,8 +512,7 @@ def main() -> None:
         f'{len(services["service_national"])} services nationaux, '
         f'{len(services["conseil_regional"])} conseils régionaux'
     )
-    print(f'  → {SEED_DESTINATION.relative_to(DATA_LAYER.parent)}')
-    print(f'  → {SQITCH_DESTINATION.relative_to(DATA_LAYER.parent)}')
+    print(f'  → {DESTINATION.relative_to(DATA_LAYER.parent)}')
 
 
 if __name__ == '__main__':
