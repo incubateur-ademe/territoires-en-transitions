@@ -263,14 +263,18 @@ db-migrate: warn-shared-db ## Applique les migrations sqitch
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).
+# La garde compte `imports.region`, que seul le seed remplit (01-region.sql), et
+# non `collectivite` : les migrations peuplent désormais des collectivités (les
+# services de l'État, cf. collectivite/service_etat_import) et feraient passer
+# une base fraîchement migrée pour déjà peuplée.
 db-seed: warn-shared-db ## Charge les données de test si la base est vide
-	@count=$$($(COMPOSE) exec -T db psql -U postgres -tAc 'select count(*) from collectivite' 2>/dev/null || echo -1); \
+	@count=$$($(COMPOSE) exec -T db psql -U postgres -tAc 'select count(*) from imports.region' 2>/dev/null || echo -1); \
 	if [ "$$count" = "0" ]; then \
 		{ $(COMPOSE) --profile dbtools --profile supabase run --rm -T seeder seed/seed.sh && \
 		  $(COMPOSE) --profile dbtools --profile supabase run --rm -T seeder seed/geojson.sh; } || \
 		{ echo "✗ seed interrompu : la base est dans un état partiel — make db-reset après correction"; exit 1; }; \
 	elif [ "$$count" = "-1" ]; then echo "✗ base inaccessible ou non migrée (make db-init)"; exit 1; \
-	else echo "✓ base déjà peuplée ($$count collectivités) — make db-reset pour repartir de zéro"; fi
+	else echo "✓ base déjà seedée ($$count régions) — make db-reset pour repartir de zéro"; fi
 
 # Les specs d'import lisent les CSV du dépôt (pas les Google Sheets), mais le
 # backend qu'elles démarrent exige un env complet → .env.keys nécessaire.
