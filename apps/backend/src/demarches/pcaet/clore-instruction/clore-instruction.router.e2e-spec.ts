@@ -20,11 +20,8 @@ describe('Clôture de l’instruction PCAET', () => {
   let service: CloreInstructionService;
   let instructeurCollectiviteId: number;
 
-  // Un code région propre à cette spec, dans un espace que personne d'autre
-  // n'occupe : les codes réels sont deux chiffres (et tous pris par l'import des
-  // services), `pickFreeRegionCode` tire deux lettres. Une lettre suivie d'un
-  // chiffre ne peut donc collisionner ni avec l'un ni avec l'autre, là où
-  // l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
   const REGION = 'C1';
 
   /** Démontage des collectivités créées par les cas, dans l'ordre inverse. */
