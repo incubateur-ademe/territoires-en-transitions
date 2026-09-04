@@ -48,7 +48,6 @@ export const ContexteInstructionBanner = () => {
         <Icon icon="information-line" size="sm" className="shrink-0" />
         <span className="min-w-0">
           {appLabels.contexteInstructionTitre({
-            collectiviteNom: collectivite.collectiviteNom,
             instructeurNom: contexte.instructeur.nom,
           })}
         </span>
