@@ -1,4 +1,5 @@
-import { makeReferentielActionUrl } from '@/app/app/paths';
+import { makeMaCollectiviteUrl, makeReferentielActionUrl } from '@/app/app/paths';
+import { HIGHLIGHTED_QUESTION_PARAM } from '@/app/collectivites/personnalisations/data/use-highlighted-question-id';
 import { appLabels } from '@/app/labels/catalog';
 import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.constants';
 import { toPercentString } from '@/app/utils/to-percent-string';
@@ -118,6 +119,29 @@ export const getItemActionProps = (
 
   return { descriptions, pageLink };
 };
+
+/**
+ * Lien vers une question de personnalisation dans la page "Personnalisation" :
+ * filtre + ouvre sa thématique et la met en exergue via `q`
+ * (lu par `useHighlightedQuestionId`).
+ */
+export const makePersonnalisationQuestionLink = ({
+  collectiviteId,
+  thematiqueId,
+  questionId,
+}: {
+  collectiviteId: number;
+  thematiqueId: string | null;
+  questionId: string;
+}): string =>
+  makeMaCollectiviteUrl({
+    collectiviteId,
+    view: 'personnalisation',
+    searchParams: {
+      ...(thematiqueId ? { t: thematiqueId, ot: thematiqueId } : {}),
+      [HIGHLIGHTED_QUESTION_PARAM]: questionId,
+    },
+  });
 
 export const formatReponseValue = (value: unknown, type: string | null) => {
   if (value === null || value === undefined) {

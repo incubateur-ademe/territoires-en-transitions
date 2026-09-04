@@ -1,4 +1,3 @@
-import { makeMaCollectiviteUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
   DetailNouvelleModificationWrapper,
@@ -6,7 +5,7 @@ import {
 } from './DetailModificationWrapper';
 import Modification from './Modification';
 import { HistoriqueItemPropsOf } from './types';
-import { formatReponseValue } from './utils';
+import { formatReponseValue, makePersonnalisationQuestionLink } from './utils';
 
 type Props = HistoriqueItemPropsOf<'justification'>;
 
@@ -15,7 +14,7 @@ type Props = HistoriqueItemPropsOf<'justification'>;
  * personnalisation du référentiel
  */
 const HistoriqueItemJustification = ({ item }: Props) => {
-  const { collectiviteId, thematiqueNom, thematiqueId } = item;
+  const { collectiviteId, thematiqueNom, thematiqueId, questionId } = item;
 
   return (
     <Modification
@@ -23,12 +22,10 @@ const HistoriqueItemJustification = ({ item }: Props) => {
       nom="Justification d'une caractéristique de la collectivité modifiée"
       descriptions={[{ titre: 'Thématique', description: thematiqueNom ?? '' }]}
       detail={<HistoriqueItemJustificationDetails item={item} />}
-      pageLink={makeMaCollectiviteUrl({
-        collectiviteId: collectiviteId,
-        view: 'personnalisation',
-        searchParams: thematiqueId
-          ? { t: thematiqueId, ot: thematiqueId }
-          : undefined,
+      pageLink={makePersonnalisationQuestionLink({
+        collectiviteId,
+        thematiqueId,
+        questionId,
       })}
     />
   );
