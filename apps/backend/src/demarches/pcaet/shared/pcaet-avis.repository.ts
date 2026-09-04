@@ -12,7 +12,7 @@ import {
   getTitresAvisInstructeur,
   typesInstructeurDeposantAvis,
 } from '@tet/domain/demarches';
-import { and, asc, eq, inArray, isNotNull } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNotNull, ne } from 'drizzle-orm';
 import { PcaetAvis, pcaetAvisSelectColumns } from './models/pcaet-avis.dto';
 import { pcaetAvisTable } from './models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
@@ -90,9 +90,28 @@ export class PcaetAvisRepository {
     demarcheId: number,
     tx?: Transaction
   ): Promise<DemandeAvisAchevement[]> {
+    const parDemarche = await this.listAchevementParDemarche([demarcheId], tx);
+    return parDemarche.get(demarcheId) ?? [];
+  }
+
+  /**
+   * L'achèvement des avis pour plusieurs dossiers d'un coup.
+   *
+   * La liste des dossiers d'un service en a besoin par ligne : un destinataire
+   * en lecture y lit l'avancement du dossier, pas celui de sa propre demande.
+   * Une requête pour la page entière, plutôt qu'une par ligne.
+   */
+  async listAchevementParDemarche(
+    demarcheIds: number[],
+    tx?: Transaction
+  ): Promise<Map<number, DemandeAvisAchevement[]>> {
+    if (demarcheIds.length === 0) {
+      return new Map();
+    }
     const rows = await (tx ?? this.databaseService.db)
       .select({
         demandeAvisId: pcaetDemandeAvisTable.id,
+        demarcheId: pcaetDemandeAvisTable.demarcheId,
         instructeurType: collectiviteTable.type,
         auTitreDe: pcaetAvisTable.auTitreDe,
       })
@@ -118,10 +137,12 @@ export class PcaetAvisRepository {
           inArray(collectiviteTable.type, typesInstructeurDeposantAvis)
         )
       )
-      .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+      .where(inArray(pcaetDemandeAvisTable.demarcheId, demarcheIds));
 
     const demandes = new Map<number, DemandeAvisAchevement>();
+    const demarcheParDemande = new Map<number, number>();
     for (const row of rows) {
+      demarcheParDemande.set(row.demandeAvisId, row.demarcheId);
       const demande = demandes.get(row.demandeAvisId) ?? {
         // Ce que la règle attend de ce destinataire-là : la DREAL ne répond pas
         // du titre du président de région, et réciproquement.
@@ -134,7 +155,18 @@ export class PcaetAvisRepository {
       demandes.set(row.demandeAvisId, demande);
     }
 
-    return [...demandes.values()];
+    const parDemarche = new Map<number, DemandeAvisAchevement[]>();
+    for (const [demandeAvisId, demande] of demandes) {
+      const demarcheId = demarcheParDemande.get(demandeAvisId);
+      if (demarcheId === undefined) {
+        continue;
+      }
+      parDemarche.set(demarcheId, [
+        ...(parDemarche.get(demarcheId) ?? []),
+        demande,
+      ]);
+    }
+    return parDemarche;
   }
 
   async findByTitre(
@@ -209,6 +241,44 @@ export class PcaetAvisRepository {
       .from(pcaetAvisTable)
       .where(eq(pcaetAvisTable.demandeAvisId, demandeAvisId))
       .orderBy(asc(pcaetAvisTable.deposeLe), asc(pcaetAvisTable.auTitreDe));
+  }
+
+  /**
+   * Les avis **validés** des autres destinataires du même dossier.
+   *
+   * Un avis appartient à une demande, et chaque destinataire a la sienne : sans
+   * cette lecture, une DDT ou une DR ADEME ne verrait jamais l'avis de la DREAL,
+   * alors qu'elles suivent la même instruction. Le brouillon d'un autre, lui, ne
+   * sort pas de son espace — d'où `isNotNull(valideLe)`, la règle qui garde déjà
+   * `listAvisRecus` côté collectivité déposante.
+   *
+   * La demande courante est exclue : ses avis, brouillons compris, sont servis
+   * par `listByDemande`.
+   */
+  async listValidesAutresDemandes(
+    demandeAvisId: number,
+    tx?: Transaction
+  ): Promise<PcaetAvis[]> {
+    const courante = (tx ?? this.databaseService.db)
+      .select({ demarcheId: pcaetDemandeAvisTable.demarcheId })
+      .from(pcaetDemandeAvisTable)
+      .where(eq(pcaetDemandeAvisTable.id, demandeAvisId));
+
+    return (tx ?? this.databaseService.db)
+      .select(pcaetAvisSelectColumns)
+      .from(pcaetAvisTable)
+      .innerJoin(
+        pcaetDemandeAvisTable,
+        eq(pcaetDemandeAvisTable.id, pcaetAvisTable.demandeAvisId)
+      )
+      .where(
+        and(
+          inArray(pcaetDemandeAvisTable.demarcheId, courante),
+          ne(pcaetAvisTable.demandeAvisId, demandeAvisId),
+          isNotNull(pcaetAvisTable.valideLe)
+        )
+      )
+      .orderBy(asc(pcaetAvisTable.valideLe), asc(pcaetAvisTable.auTitreDe));
   }
 
   async upsert(

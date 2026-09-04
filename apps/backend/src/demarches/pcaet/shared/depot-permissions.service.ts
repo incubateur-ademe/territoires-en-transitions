@@ -23,6 +23,7 @@ import {
   DepotPermissionsErrorEnum,
 } from './depot-permissions.errors';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
+import { perimetreInstructeurColumns } from './perimetre-instructeur.columns';
 
 /**
  * Ce qu'il faut savoir d'une demande d'avis pour juger une action dessus.
@@ -85,6 +86,86 @@ export class DepotPermissionsService {
    * Rend le contexte de l'instruction : l'appelant qui choisit un titre d'avis y
    * lit le type de l'instructeur pour vérifier qu'il en répond bien.
    */
+  /**
+   * Peut-on lire un avis **validé** rendu par un autre destinataire du même
+   * dossier ?
+   *
+   * Le droit vient d'avoir été saisi sur cette démarche, pas d'avoir été saisi
+   * sur cette demande-là : une DDT ou une DR ADEME suit l'instruction sans y
+   * prendre part, et le rapport de la DREAL fait partie de ce qu'elle suit. La
+   * condition reste celle du dossier — membre actif d'un service saisi, et
+   * périmètre couvrant la déposante — appliquée à *l'une* des saisines.
+   *
+   * Ne dit rien de la validation de l'avis : c'est à l'appelant de refuser un
+   * brouillon, qui ne sort pas de l'espace de son auteur.
+   */
+  async canConsulterAvisDuneAutreSaisine(
+    demandeAvisId: number,
+    { user, tx }: ServiceSecondArg
+  ): Promise<boolean> {
+    const saisines = await this.listSaisinesDeLaDemarche(
+      demandeAvisId,
+      user.id,
+      tx
+    );
+    return saisines.some(instructeurCouvreCollectivite);
+  }
+
+  /**
+   * Les saisines de la même démarche dont cet utilisateur est membre actif, avec
+   * de quoi rejouer la couverture géographique.
+   *
+   * La sous-requête part de la demande donnée pour retrouver sa démarche : c'est
+   * la seule chose que l'appelant connaisse.
+   */
+  private async listSaisinesDeLaDemarche(
+    demandeAvisId: number,
+    userId: string,
+    tx?: Transaction
+  ): Promise<PerimetreInstructeurEntree[]> {
+    const db = tx ?? this.databaseService.db;
+    const deposante = alias(collectiviteTable, 'deposante');
+    const instructrice = alias(collectiviteTable, 'instructrice');
+    const demandeCourante = alias(pcaetDemandeAvisTable, 'demande_courante');
+
+    return (
+      db
+        .select({
+          ...perimetreInstructeurColumns(deposante, instructrice),
+        })
+        .from(pcaetDemandeAvisTable)
+        .innerJoin(
+          demandeCourante,
+          and(
+            eq(demandeCourante.id, demandeAvisId),
+            eq(demandeCourante.demarcheId, pcaetDemandeAvisTable.demarcheId)
+          )
+        )
+        .innerJoin(
+          demarcheTable,
+          eq(demarcheTable.id, pcaetDemandeAvisTable.demarcheId)
+        )
+        .innerJoin(deposante, eq(deposante.id, demarcheTable.collectiviteId))
+        .innerJoin(
+          instructrice,
+          eq(instructrice.id, pcaetDemandeAvisTable.instructeurCollectiviteId)
+        )
+        // Membre actif du service saisi : c'est l'appartenance au *service* qui
+        // vaut, comme pour la consultation du dossier.
+        .innerJoin(
+          utilisateurCollectiviteAccessTable,
+          and(
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              pcaetDemandeAvisTable.instructeurCollectiviteId
+            ),
+            eq(utilisateurCollectiviteAccessTable.userId, userId),
+            eq(utilisateurCollectiviteAccessTable.isActive, true)
+          )
+        )
+    );
+  }
+
   async canDeposerAvis(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
@@ -176,11 +257,7 @@ export class DepotPermissionsService {
           pcaetDemandeAvisTable.instructeurCollectiviteId,
         demarcheStatus: demarcheTable.status,
         avisDeadlineAt: demarcheTable.avisDeadlineAt,
-        instructeurType: instructrice.type,
-        instructeurRegionCode: instructrice.regionCode,
-        instructeurDepartementCode: instructrice.departementCode,
-        collectiviteRegionCode: deposante.regionCode,
-        collectiviteDepartementCode: deposante.departementCode,
+        ...perimetreInstructeurColumns(deposante, instructrice),
       })
       .from(pcaetDemandeAvisTable)
       .innerJoin(

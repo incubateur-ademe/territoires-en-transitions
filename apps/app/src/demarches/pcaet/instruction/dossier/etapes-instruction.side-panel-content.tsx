@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import type { PcaetInstructionPartie } from '@tet/domain/demarches';
 import { cn } from '@tet/ui';
 import type { ReactNode } from 'react';
@@ -33,8 +34,6 @@ export const EtapesInstructionSidePanelContent = ({
   footer,
 }: EtapesInstructionSidePanelContentProps) => (
   <div className="flex flex-col gap-3 p-4">
-    <AvisDeposesList demandeAvisId={demandeAvisId} avis={avis} />
-
     {etapes.map((etape, index) => {
       const isActive = etape.key === activeEtape;
 
@@ -72,6 +71,14 @@ export const EtapesInstructionSidePanelContent = ({
         </button>
       );
     })}
+    {/* Sous les étapes : on lit d'abord ce qu'il y a à instruire, puis ce qui a
+        déjà été rendu — et le dépôt de son propre avis vient en dernier. */}
+    <AvisDeposesList
+      demandeAvisId={demandeAvisId}
+      avis={avis}
+      titre={appLabels.instructionDossierAvisRendusTitre}
+    />
+
     {footer && <div className="mt-3">{footer}</div>}
   </div>
 );

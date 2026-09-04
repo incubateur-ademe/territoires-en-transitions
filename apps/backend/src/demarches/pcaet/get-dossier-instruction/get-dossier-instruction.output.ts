@@ -51,6 +51,16 @@ export const dossierInstructionSchema = z.object({
    * proposé à la finalisation.
    */
   avis: pcaetAvisSchema.array(),
+  /**
+   * Avis **validés** rendus par les autres destinataires du même dossier. Une
+   * DDT ou une DR ADEME suit ainsi l'instruction sans y prendre part, comme la
+   * collectivité déposante le fait dans son étape aval.
+   *
+   * Volontairement à part de `avis` : la finalisation se décide sur les seuls
+   * avis de cette demande, et les mêler ferait dépendre les titres restants
+   * d'avis qui ne sont pas les siens.
+   */
+  avisAutresDestinataires: pcaetAvisSchema.array(),
 });
 
 export type DossierInstruction = z.infer<typeof dossierInstructionSchema>;
