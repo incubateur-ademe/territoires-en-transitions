@@ -121,18 +121,21 @@ const ActionsCell = ({ demande }: { demande: Demande }) => {
 
 export const DemandesAvisTable = ({
   demandes,
+  deposeAvis,
   onTrierParCollectivite,
   onTrierParContact,
   onTrierParStatut,
   onTrierParEcheance,
 }: {
   demandes: Demande[];
+  /** Le nom accessible du tableau suit la famille, comme le titre visible. */
+  deposeAvis: boolean;
   onTrierParCollectivite: () => void;
   onTrierParContact: () => void;
   onTrierParStatut: () => void;
   onTrierParEcheance: () => void;
 }) => (
-  <Table aria-label={appLabels.instructionListeIntitule}>
+  <Table aria-label={appLabels.instructionListeIntitule({ deposeAvis })}>
     <TableHead>
       <TableRow>
         <TableHeaderCell
