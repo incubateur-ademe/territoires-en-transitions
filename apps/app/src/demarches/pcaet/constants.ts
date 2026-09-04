@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
+import type { ColorVariant } from '@tet/design-tokens';
 import type {
   DemarchePcaetTransition,
-  PcaetAvisSens,
   DemarchePcaetVulnerabiliteNiveau,
+  PcaetAvisSens,
 } from '@tet/domain/demarches';
-import type { ColorVariant } from '@tet/design-tokens';
 import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import type { PlanType } from '@tet/domain/plans';
 import type { DemarchePcaetStatut } from '../types';

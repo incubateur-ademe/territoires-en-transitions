@@ -1818,7 +1818,7 @@ export const appLabels = {
   instructionStatDelaiMoyenPlafonne: ({ plafond }: { plafond: number }) =>
     `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
   instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
-  instructionListeTitre: 'Instructions dont je suis en charge',
+  instructionListeTitre: 'Instructions dont la DREAL a la charge',
   instructionListeVide:
     'Les dépôts PCAET transmis par les collectivités de votre région apparaîtront ici.',
   instructionListeIntitule: 'Demandes d’avis des collectivités de la région',
