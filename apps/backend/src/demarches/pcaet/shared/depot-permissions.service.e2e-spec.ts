@@ -33,7 +33,10 @@ describe('DepotPermissionsService', () => {
   // Un code région propre à cette spec. L'index unique « une DREAL par région »
   // fait échouer toute spec qui partage le sien avec une autre, ou avec les
   // DREAL du seed (27 et 84) : chaque spec du domaine a donc le sien.
-  const REGION = '11';
+  // Un code région propre à cette spec, pris hors de la plage réelle : les dix-huit
+  // codes numériques portent les DREAL de l'import (collectivite/service_etat_import),
+  // et l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  const REGION = 'DP';
   const dansUnMois = () =>
     new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
   const hier = () => new Date(Date.now() - 24 * 3600 * 1000).toISOString();
