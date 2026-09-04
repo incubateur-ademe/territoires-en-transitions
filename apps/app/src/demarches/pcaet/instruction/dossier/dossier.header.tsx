@@ -5,7 +5,7 @@ import { DepotDateItem } from '@/app/demarches/pcaet/components/header/depot-dat
 import { Separator } from '@/app/demarches/pcaet/components/header/separator';
 import { appLabels } from '@/app/labels/catalog';
 import {
-  DEMANDE_AVIS_ETAT_LABELS,
+  demandeAvisEtatLabel,
   DEMANDE_AVIS_ETAT_VARIANTS,
 } from '../instruction.constants';
 import { MetadataItem, MetadataLine } from '@/app/ui/metadata-line';
@@ -99,7 +99,10 @@ export const DossierInstructionHeader = ({
           )}
           <Separator />
           <Badge
-            title={DEMANDE_AVIS_ETAT_LABELS[dossier.etat]}
+            title={demandeAvisEtatLabel(dossier.etat, {
+              // Aucun titre à déposer : le dossier se suit, il ne s'instruit pas.
+              deposeAvis: dossier.titresDeposables.length > 0,
+            })}
             variant={DEMANDE_AVIS_ETAT_VARIANTS[dossier.etat]}
             size="sm"
           />

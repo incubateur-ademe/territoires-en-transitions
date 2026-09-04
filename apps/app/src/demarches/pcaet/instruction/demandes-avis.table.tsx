@@ -19,7 +19,7 @@ import {
 } from '@tet/ui';
 import Link from 'next/link';
 import {
-  DEMANDE_AVIS_ETAT_LABELS,
+  demandeAvisEtatLabel,
   DEMANDE_AVIS_ETAT_VARIANTS,
 } from './instruction.constants';
 
@@ -182,7 +182,7 @@ export const DemandesAvisTable = ({
           </TableCell>
           <TableCell>
             <Badge
-              title={DEMANDE_AVIS_ETAT_LABELS[demande.etat]}
+              title={demandeAvisEtatLabel(demande.etat, { deposeAvis })}
               variant={DEMANDE_AVIS_ETAT_VARIANTS[demande.etat]}
               size="sm"
             />
