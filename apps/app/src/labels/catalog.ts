@@ -1824,9 +1824,17 @@ export const appLabels = {
     `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
   instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
   instructionListeTitre: 'Instructions dont je suis en charge',
+  /**
+   * Sans territoire : l'écran sert les cinq familles d'instructeurs, dont les
+   * périmètres diffèrent — région pour une DREAL ou un conseil régional,
+   * département pour une DDT, aucun pour un service national comme la DGEC. Ne
+   * pas y réintroduire « de votre région ». Et « transmis » plutôt que
+   * « à instruire » : seules la DREAL et la région déposent un avis, les autres
+   * reçoivent le dossier en lecture.
+   */
   instructionListeVide:
-    'Les dépôts PCAET transmis par les collectivités de votre région apparaîtront ici.',
-  instructionListeIntitule: 'Demandes d’avis des collectivités de la région',
+    'Les dépôts PCAET qui vous sont transmis apparaîtront ici.',
+  instructionListeIntitule: 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   instructionListeColonneContact: 'Contact',
   instructionListeColonneStatut: 'Statut',
