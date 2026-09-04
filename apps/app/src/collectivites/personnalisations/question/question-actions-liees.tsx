@@ -7,6 +7,7 @@ import {
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonnalisationRegle } from '@tet/domain/collectivites';
+import { isNewReferentiel } from '@tet/domain/referentiels';
 import { AccordionControlled, InfoTooltip } from '@tet/ui';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
@@ -81,7 +82,7 @@ const ActionsLiees = ({
         return (
           <div key={actionId} className="flex flex-row gap-2 items-center">
             <Link href={url} className="underline">
-              {`${referentiel} ${
+              {`${isNewReferentiel(referentiel) ? 'CR' : referentiel} ${
                 referentiel === 'te' ? '' : identifiant
               } - ${nom}`}
             </Link>

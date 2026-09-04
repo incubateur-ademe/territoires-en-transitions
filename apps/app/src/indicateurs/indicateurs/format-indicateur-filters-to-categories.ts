@@ -57,7 +57,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.participationScore) {
     categories.push({
       key: 'participationScore',
-      title: appLabels.participeAuScoreCae,
+      title: appLabels.indicateurParticipeAuScore,
       selectedFilters: [],
       onlyShowCategory: true,
     });

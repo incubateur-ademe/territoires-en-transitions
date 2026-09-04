@@ -2,52 +2,36 @@
 
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
-import { Alert, Button } from '@tet/ui';
-import { getReferentielModeBannerProps } from './get-referentiel-mode-banner-props';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { ReferentielModeArchivedBanner } from './referentiel-mode-archived.banner';
+import { ReferentielModeReadonlyBanner } from './referentiel-mode-readonly.banner';
+import { SwitchToTeBanner } from '../switch-to-te.banner/switch-to-te.banner';
 import { useReferentielMode } from './use-referentiel-mode';
 
 export const ReferentielModeBanner = () => {
   const isReferentielTeEnabled = useReferentielTeEnabled();
   const referentielId = useReferentielId();
   const mode = useReferentielMode();
+  const isVisitor = useIsVisitor();
 
-  if (!isReferentielTeEnabled || !mode) {
+  if (!isReferentielTeEnabled || !mode || isVisitor) {
     return null;
   }
 
-  const bannerProps = getReferentielModeBannerProps({
-    referentielId,
-    mode,
-  });
-
-  if (!bannerProps) {
-    return null;
+  // le référentiel TE en lecture seule a ses propres variantes de bandeau
+  // selon l'éligibilité / les blocages à la bascule (COT, audit, droits…).
+  if (referentielId === 'te' && mode === 'readonly') {
+    return <SwitchToTeBanner />;
   }
 
-  return (
-    <div
-      role="status"
-      data-test="referentiels.mode-banner"
-      data-referentiel-mode={mode}
-    >
-      <Alert
-        className="mb-8"
-        title={bannerProps.title}
-        description={
-          <div className="flex gap-2 text-sm">
-            <p className="mb-0">{bannerProps.description}</p>
-            <Button
-              external
-              variant="underlined"
-              size="sm"
-              href={bannerProps.link}
-            >
-              {bannerProps.linkLabel}
-            </Button>
-          </div>
-        }
-        state={bannerProps.state}
-      />
-    </div>
-  );
+  if (mode === 'readonly') {
+    return <ReferentielModeReadonlyBanner />;
+  }
+
+  if (mode === 'archived') {
+    return <ReferentielModeArchivedBanner />;
+  }
+
+  return null;
 };
+

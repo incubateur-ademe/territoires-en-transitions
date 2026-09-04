@@ -18,9 +18,11 @@ export const switchToTeStatusOutputSchema = z.discriminatedUnion('value', [
   z.object({ value: z.literal('CAN_SWITCH') }),
   z.object({ value: z.literal('NOT_ELIGIBLE') }),
   z.object({ value: z.literal('UNAUTHORIZED') }),
+  z.object({ value: z.literal('SWITCH_TO_TE_DISABLED') }),
   z.object({
     value: z.literal('ALREADY_SWITCHED'),
     populatedAt: z.iso.datetime(),
+    populatedBy: z.string(),
   }),
   z.object({
     value: z.literal('BLOCKED'),

@@ -17,6 +17,7 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetLabellisationService } from '../labellisations/get-labellisation.service';
+import { ComputeReferentielEngagementService } from '../reset-display-preferences/compute-referentiel-engagement.service';
 import { SNAPSHOTS } from '../snapshots/snapshots.constants';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
@@ -47,7 +48,8 @@ export class SwitchToTeService {
     private readonly transactionManager: TransactionManager,
     private readonly createPreSwitchSnapshotsService: CreatePreSwitchSnapshotsService,
     private readonly migrateCollectiviteDataService: MigrateCollectiviteDataService,
-    private readonly snapshotsService: SnapshotsService
+    private readonly snapshotsService: SnapshotsService,
+    private readonly computeReferentielEngagementService: ComputeReferentielEngagementService
   ) {}
 
   // référentiels sources pouvant bloquer la bascule
@@ -162,6 +164,15 @@ export class SwitchToTeService {
       return failure(SwitchToTeErrorEnum.REFERENTIEL_TE_DISABLED);
     }
 
+    const isSwitchToTeEnabled = await this.trackingService.isFeatureEnabled(
+      'is-switch-to-te-enabled',
+      user.id,
+      collectiviteId
+    );
+    if (!isSwitchToTeEnabled) {
+      return success({ value: SwitchToTeErrorEnum.SWITCH_TO_TE_DISABLED });
+    }
+
     const preferencesResult =
       await this.collectiviteReferentielModeService.getReferentielPreferences(
         collectiviteId
@@ -188,6 +199,7 @@ export class SwitchToTeService {
       return success({
         value: 'ALREADY_SWITCHED',
         populatedAt: prefs.te.populatedFromCaeEci.populatedAt,
+        populatedBy: prefs.te.populatedFromCaeEci.populatedBy,
       });
     }
 
@@ -219,6 +231,8 @@ export class SwitchToTeService {
       switch (status.value) {
         case 'UNAUTHORIZED':
           return failure('UNAUTHORIZED');
+        case 'SWITCH_TO_TE_DISABLED':
+          return failure(SwitchToTeErrorEnum.SWITCH_TO_TE_DISABLED);
         case 'NOT_ELIGIBLE':
           return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
         case 'BLOCKED':
@@ -262,6 +276,7 @@ export class SwitchToTeService {
           return success({
             status: 'switched',
             populatedAt: status.populatedAt,
+            populatedBy: status.populatedBy,
           });
         }
         default:
@@ -269,6 +284,22 @@ export class SwitchToTeService {
           return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
       }
     }
+
+    // Engagement CAE/ECI (activité réelle, indépendant des préférences) : sert à
+    // décider, pour chaque référentiel archivé par la bascule, s'il reste listé
+    // dans la navigation ("(archivé)") ou en disparaît. Calculé hors
+    // transaction, comme le reset des préférences d'affichage.
+    const engagementResult =
+      await this.computeReferentielEngagementService.computeEngagement(
+        collectiviteId
+      );
+    if (!engagementResult.success) {
+      return failure(
+        SwitchToTeErrorEnum.DATABASE_ERROR,
+        engagementResult.cause
+      );
+    }
+    const engagement = engagementResult.data;
 
     // ── Transaction unique : données SOURCES (rollback total sur échec) ──────
     const populatedAt = new Date().toISOString();
@@ -316,10 +347,11 @@ export class SwitchToTeService {
       const prefsResult =
         await this.collectiviteReferentielModeService.updateReferentielPreferences(
           collectiviteId,
-          buildPostSwitchPreferences(lockedPrefs, {
-            populatedAt,
-            populatedBy: user.id,
-          }),
+          buildPostSwitchPreferences(
+            lockedPrefs,
+            { populatedAt, populatedBy: user.id },
+            engagement
+          ),
           tx
         );
       if (!prefsResult.success) return prefsResult;
@@ -357,7 +389,7 @@ export class SwitchToTeService {
       );
     }
 
-    return success({ status: 'switched', populatedAt });
+    return success({ status: 'switched', populatedAt, populatedBy: user.id });
   }
 
   private async recomputeSnapshotsAfterSwitchTe(
