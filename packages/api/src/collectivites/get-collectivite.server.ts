@@ -26,15 +26,24 @@ export const getCollectivite = cache(
       (c) => c.collectiviteId === collectiviteId
     );
 
-    // Être membre exclut d'y être en instructeur : on y est chez soi, et le
-    // contexte n'a rien à annoncer. Cela évite aussi la requête pour la quasi
-    // totalité des pages de collectivité.
+    // Hors route de dossier, être membre dispense de chercher un contexte : on y
+    // est chez soi, la bannière n'a rien à annoncer, et la question coûterait une
+    // requête sur la quasi totalité des pages de collectivité.
+    //
+    // Sur la route d'un dossier, en revanche, le contexte est ce qui *autorise*
+    // — et ce droit vient de la saisine, pas de la non-appartenance. Un agent
+    // porte parfois deux casquettes, membre d'un EPCI et correspondant d'un
+    // service saisi ; court-circuiter ici l'enfermait dehors, et le compte de
+    // développement du seed, membre de tout, ne pouvait ouvrir aucun dossier.
+    const contexteAResoudre =
+      demandeAvisId !== undefined || !collectiviteUserIsMemberOf;
+
     const [collectivite, contexteInstruction] = await Promise.all([
       collectiviteUserIsMemberOf ??
         fetchCollectiviteWhenVisiteMode(collectiviteId),
-      collectiviteUserIsMemberOf
-        ? null
-        : fetchContexteInstruction(collectiviteId, demandeAvisId),
+      contexteAResoudre
+        ? fetchContexteInstruction(collectiviteId, demandeAvisId)
+        : null,
     ]);
 
     return { ...collectivite, contexteInstruction };
