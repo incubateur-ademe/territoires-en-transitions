@@ -10,7 +10,11 @@ import {
   IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import { useCallback, useMemo, useState } from 'react';
-import { type IndicateurTableRow } from '../../../../indicateurs/valeurs/grid/types';
+import {
+  isUnsetReferenceYear,
+  type IndicateurTableRow,
+} from '../../../../indicateurs/valeurs/grid/types';
+import { useSetDiagnosticReferenceYear } from '../data/use-set-diagnostic-reference-year';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
 
 const OBJECTIF_YEARS = PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS;
@@ -63,12 +67,15 @@ type DiagnosticIndicateurValeursTable = {
 };
 
 export const useDiagnosticIndicateurValeursTable = ({
+  demarcheId,
   table,
   isReadonly,
 }: {
+  demarcheId: number;
   table: DiagnosticIndicateurTable;
   isReadonly: boolean;
 }): DiagnosticIndicateurValeursTable => {
+  const { setReferenceYear } = useSetDiagnosticReferenceYear(demarcheId);
   const rows = useMemo(() => toGridRows(table), [table]);
   const derivedReferenceYear = useMemo(
     () =>
@@ -92,19 +99,28 @@ export const useDiagnosticIndicateurValeursTable = ({
 
   const unit = rows[0]?.indicateurDefinition.unite;
 
-  const onReferenceYearChange = useCallback((nextYear: number) => {
-    // if (referenceYear !== null && referenceYear !== nextYear) {
-    //   const inputs = migrateReferenceYearValues({
-    //     indicateurIds: rows.map((row) => row.indicateurId),
-    //     fromYear: toYear(referenceYear),
-    //     toYear: nextYear,
-    //   });
-    //   if (inputs.length > 0) {
-    //     void updateValeurs({ valeurs: inputs });
-    //   }
-    // }
-    setReferenceYearOverride(nextYear);
-  }, []);
+  /**
+   * L'année affichée passe tout de suite à `nextYear` : le serveur ne stocke
+   * pas l'année de référence, il ne peut donc pas la confirmer quand le tableau
+   * est encore vierge. Il ne reste qu'à lui faire suivre les valeurs déjà
+   * saisies.
+   */
+  const onReferenceYearChange = useCallback(
+    (nextYear: number) => {
+      setReferenceYearOverride(nextYear);
+
+      if (isUnsetReferenceYear(referenceYear) || referenceYear === nextYear) {
+        return;
+      }
+
+      void setReferenceYear({
+        indicateurIds: rows.map((row) => row.indicateurId),
+        fromYear: referenceYear,
+        toYear: nextYear,
+      });
+    },
+    [referenceYear, rows, setReferenceYear]
+  );
 
   return {
     rows,

@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
@@ -14,20 +13,11 @@ import {
   type PcaetDiagnosticVulnerabiliteConfig,
 } from '@tet/domain/demarches';
 import type { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
-import { and, eq } from 'drizzle-orm';
-import { demarchePcaetSourceMetadonneeTable } from './models/demarche-pcaet-source-metadonnee.table';
+import {
+  DemarchePcaetSourceMetadonneeRepository,
+  PCAET_COLLECTIVITE_SOURCE_ID,
+} from './demarche-pcaet-source-metadonnee.repository';
 import { DemarchePcaetVulnerabiliteReadService } from './demarche-pcaet-vulnerabilite-read.service';
-
-/**
- * Source interne dédiée au dépôt PCAET : les valeurs portent une metadonnée,
- * mais dans la payload du diagnostic elles doivent être traitées comme des
- * saisies (donc publiées dans `resultat` / `objectif`, pas dans `references`).
- *
- * Chaque couple (démarche, collectivité) a sa propre `indicateur_source_metadonnee`
- * via `demarche_pcaet_source_metadonnee` : on ne doit jamais mélanger les
- * valeurs de deux PCAET, même s'ils partagent le même `source_id`.
- */
-const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
 
 /**
  * Assemble le diagnostic d'une démarche : indicateurs (grille CAE) et
@@ -42,7 +32,7 @@ export class DemarchePcaetDiagnosticService {
     private readonly vulnerabiliteReadService: DemarchePcaetVulnerabiliteReadService,
     private readonly crudValeursService: CrudValeursService,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
-    private readonly databaseService: DatabaseService
+    private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository
   ) {}
 
   async loadPayload(
@@ -90,18 +80,12 @@ export class DemarchePcaetDiagnosticService {
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
-    const [link] = await (tx ?? this.databaseService.db)
-      .select({ metadonneeId: demarchePcaetSourceMetadonneeTable.metadonneeId })
-      .from(demarchePcaetSourceMetadonneeTable)
-      .where(
-        and(
-          eq(demarchePcaetSourceMetadonneeTable.demarcheId, demarcheId),
-          eq(demarchePcaetSourceMetadonneeTable.collectiviteId, collectiviteId)
-        )
-      )
-      .limit(1);
+    const metadonneeId = await this.sourceMetadonneeRepository.findMetadonneeId(
+      { demarcheId, collectiviteId },
+      tx
+    );
 
-    if (link?.metadonneeId === undefined) {
+    if (metadonneeId === null) {
       return [];
     }
 
@@ -110,7 +94,7 @@ export class DemarchePcaetDiagnosticService {
         collectiviteId,
         identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
         sources: [PCAET_COLLECTIVITE_SOURCE_ID],
-        metadonneeId: link.metadonneeId,
+        metadonneeId,
       },
       undefined,
       tx

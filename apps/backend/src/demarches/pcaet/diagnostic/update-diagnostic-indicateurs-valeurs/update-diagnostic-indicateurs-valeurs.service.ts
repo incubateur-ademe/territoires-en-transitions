@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -16,15 +14,12 @@ import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DemarchePcaetDiagnosticService } from '../../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
-import { demarchePcaetSourceMetadonneeTable } from '../../shared/models/demarche-pcaet-source-metadonnee.table';
+import { DemarchePcaetSourceMetadonneeRepository } from '../../shared/demarche-pcaet-source-metadonnee.repository';
 import {
   UpdateDiagnosticIndicateursValeursErrorEnum,
   type UpdateDiagnosticIndicateursValeursError,
 } from './update-diagnostic-indicateurs-valeurs.errors';
 import type { UpdateDiagnosticIndicateursValeursInput } from './update-diagnostic-indicateurs-valeurs.input';
-
-const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
-const PCAET_COLLECTIVITE_SOURCE_LABEL = 'PCAET collectivité';
 
 const dateValeurForYear = (year: number): string => `${year}-01-01`;
 
@@ -34,6 +29,7 @@ export class UpdateDiagnosticIndicateursValeursService {
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
     private readonly refRepository: DemarchePcaetRefRepository,
+    private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly crudValeursService: CrudValeursService
   ) {}
@@ -78,10 +74,11 @@ export class UpdateDiagnosticIndicateursValeursService {
       );
     }
 
-    const metadonneeId = await this.getOrCreatePcaetSourceMetadonneeId({
-      demarcheId,
-      collectiviteId,
-    });
+    const metadonneeId =
+      await this.sourceMetadonneeRepository.getOrCreateMetadonneeId({
+        demarcheId,
+        collectiviteId,
+      });
 
     const upsertRecords = await this.buildUpsertValeurs({
       collectiviteId,
@@ -97,82 +94,6 @@ export class UpdateDiagnosticIndicateursValeursService {
     );
 
     return success(payload);
-  }
-
-  /**
-   * Un identifiant de métadonnée dépend uniquement de (démarche, collectivité).
-   * On crée tout à la volée si nécessaire.
-   */
-  private async getOrCreatePcaetSourceMetadonneeId({
-    demarcheId,
-    collectiviteId,
-  }: {
-    demarcheId: number;
-    collectiviteId: number;
-  }): Promise<number> {
-    const [existing] = await this.databaseService.db
-      .select({ metadonneeId: demarchePcaetSourceMetadonneeTable.metadonneeId })
-      .from(demarchePcaetSourceMetadonneeTable)
-      .where(
-        and(
-          eq(demarchePcaetSourceMetadonneeTable.demarcheId, demarcheId),
-          eq(demarchePcaetSourceMetadonneeTable.collectiviteId, collectiviteId)
-        )
-      )
-      .limit(1);
-
-    if (existing?.metadonneeId) {
-      return existing.metadonneeId;
-    }
-
-    // La source PCAET existe côté métadonnées indicateurs : on l'upsert pour
-    // que `indicateur_source_metadonnee.source_id` soit toujours resolvable.
-    await this.databaseService.db
-      .insert(indicateurSourceTable)
-      .values({
-        id: PCAET_COLLECTIVITE_SOURCE_ID,
-        libelle: PCAET_COLLECTIVITE_SOURCE_LABEL,
-        ordreAffichage: null,
-      })
-      .onConflictDoUpdate({
-        target: indicateurSourceTable.id,
-        set: { libelle: PCAET_COLLECTIVITE_SOURCE_LABEL },
-      });
-
-    const [metadonnee] = await this.databaseService.db
-      .insert(indicateurSourceMetadonneeTable)
-      .values({
-        sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
-        dateVersion: new Date().toISOString(),
-        nomDonnees: null,
-        diffuseur: null,
-        producteur: null,
-        methodologie: null,
-        limites: null,
-      })
-      .returning({ id: indicateurSourceMetadonneeTable.id });
-
-    await this.databaseService.db
-      .insert(demarchePcaetSourceMetadonneeTable)
-      .values({
-        demarcheId,
-        collectiviteId,
-        metadonneeId: metadonnee.id,
-      })
-      .onConflictDoNothing();
-
-    const [link] = await this.databaseService.db
-      .select({ metadonneeId: demarchePcaetSourceMetadonneeTable.metadonneeId })
-      .from(demarchePcaetSourceMetadonneeTable)
-      .where(
-        and(
-          eq(demarchePcaetSourceMetadonneeTable.demarcheId, demarcheId),
-          eq(demarchePcaetSourceMetadonneeTable.collectiviteId, collectiviteId)
-        )
-      )
-      .limit(1);
-
-    return link?.metadonneeId ?? metadonnee.id;
   }
 
   private async buildUpsertValeurs({

@@ -1953,6 +1953,10 @@ export const appLabels = {
   indicateurValeurRequise: 'Requis',
   pcaetDiagnosticIndicateurValeurRequiseAide:
     "Les années marquées d'une étoile sont requises.",
+  pcaetDiagnosticAnneeReferenceBasculee:
+    'Année de référence mise à jour, les valeurs saisies ont suivi.',
+  pcaetDiagnosticAnneeReferenceEchec:
+    "L'année de référence n'a pas pu être modifiée.",
   indicateurAjouterAnnee: 'Ajouter une année',
   indicateurAjouterAnneeChamp: 'Année',
   /** Une même année peut porter un résultat et un objectif : le message ne dit

@@ -38,6 +38,19 @@ export const deriveReferenceYearFromIndicateurValeurYears = ({
 };
 
 /**
+ * Une année de référence désigne l'année du constat : elle est révolue, dans
+ * les bornes saisissables, et n'empiète pas sur un horizon d'objectif, qui a
+ * sa propre colonne.
+ */
+export const isPcaetDiagnosticReferenceYear = (
+  year: number,
+  currentYear: number = new Date().getFullYear()
+): boolean =>
+  year >= REFERENCE_YEAR_MIN &&
+  year <= currentYear &&
+  !PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.includes(year);
+
+/**
  * Un topic indicateur est complet quand chacune de ses lignes requises porte un
  * constat et une cible : un résultat sur l'année de comptabilisation et un
  * objectif sur au moins un horizon. Les années ajoutées ouvrent des colonnes

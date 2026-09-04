@@ -4,6 +4,7 @@ import {
   deriveReferenceYearFromIndicateurValeurYears,
   isDemarchePcaetDiagnosticComplet,
   isPcaetDiagnosticIndicateurComplet,
+  isPcaetDiagnosticReferenceYear,
   REFERENCE_YEAR_MIN,
 } from './demarche-pcaet-diagnostic.rules';
 import type {
@@ -100,6 +101,23 @@ describe('deriveReferenceYearFromIndicateurValeurYears', () => {
         currentYear: 2026,
       })
     ).toBeNull();
+  });
+});
+
+describe('isPcaetDiagnosticReferenceYear', () => {
+  it('accepte une année révolue dans les bornes', () => {
+    expect(isPcaetDiagnosticReferenceYear(2021, 2026)).toBe(true);
+  });
+
+  it('refuse une année à venir ou sous la borne basse', () => {
+    expect(isPcaetDiagnosticReferenceYear(2027, 2026)).toBe(false);
+    expect(isPcaetDiagnosticReferenceYear(REFERENCE_YEAR_MIN - 1, 2026)).toBe(
+      false
+    );
+  });
+
+  it('refuse un horizon d’objectif, qui a sa propre colonne', () => {
+    expect(isPcaetDiagnosticReferenceYear(2030, 2036)).toBe(false);
   });
 });
 
