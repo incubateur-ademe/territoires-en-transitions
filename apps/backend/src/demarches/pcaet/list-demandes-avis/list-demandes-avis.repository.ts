@@ -10,6 +10,7 @@ import {
   getPerimetreInstructeur,
   PerimetreInstructeurEnum,
 } from '@tet/domain/demarches';
+import type { CollectiviteType } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
@@ -46,10 +47,20 @@ export class ListDemandesAvisRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
+  /**
+   * Les demandes couvertes par ce service, **et sa famille** : l'appelant en a
+   * besoin pour savoir si le statut d'une ligne se lit sur la demande — un
+   * service qui dépose un avis — ou sur le dossier entier.
+   */
   async listDemandesCouvertes(
     instructeurCollectiviteId: number,
     tx?: Transaction
-  ): Promise<Result<DemandeAvisRow[], ListDemandesAvisError>> {
+  ): Promise<
+    Result<
+      { instructeurType: CollectiviteType; rows: DemandeAvisRow[] },
+      ListDemandesAvisError
+    >
+  > {
     const db = tx ?? this.databaseService.db;
 
     try {
@@ -65,12 +76,12 @@ export class ListDemandesAvisRepository {
 
       const instructrice = instructrices[0];
       if (!instructrice) {
-        return success([]);
+        return success({ instructeurType: 'test', rows: [] });
       }
 
       const perimetre = getPerimetreInstructeur(instructrice.type);
       if (!perimetre) {
-        return success([]);
+        return success({ instructeurType: instructrice.type, rows: [] });
       }
 
       // Aucun filtre au national : le service voit toutes les déposantes.
@@ -83,7 +94,7 @@ export class ListDemandesAvisRepository {
             : instructrice.departementCode;
 
         if (!codeInstructrice) {
-          return success([]);
+          return success({ instructeurType: instructrice.type, rows: [] });
         }
 
         filtrePerimetre = eq(
@@ -139,7 +150,7 @@ export class ListDemandesAvisRepository {
           )
         );
 
-      return success(rows);
+      return success({ instructeurType: instructrice.type, rows });
     } catch (error) {
       this.logger.error(
         `Error listing demandes avis for collectivite ${instructeurCollectiviteId}: ${error}`

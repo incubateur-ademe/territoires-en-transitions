@@ -1865,6 +1865,12 @@ export const appLabels = {
     'Le téléchargement du dossier complet arrive prochainement.',
   instructionListeSansContact: 'Aucun référent renseigné',
   instructionEtatATraiter: 'À instruire',
+  /**
+   * Le même état, dit à un destinataire en lecture : « À instruire » lui
+   * demanderait un travail qu'il n'a pas à faire — une DDT, une DR ADEME et un
+   * service national ne déposent aucun avis, ils suivent le dossier.
+   */
+  instructionEtatInstructionEnCours: 'Instruction en cours',
   instructionEtatBrouillonEnCours: 'Brouillon en cours',
   instructionEtatAvisRendu: 'Instruit',
   instructionEtatDelaiEcoule: 'Pas d’avis déposé',
@@ -1918,6 +1924,12 @@ export const appLabels = {
   instructionDossierAvisTelecharger: 'Rapport',
   instructionDossierAvisTelechargerAria: ({ titre }: { titre: string }) =>
     `Télécharger le rapport de l’avis au titre de ${titre}`,
+  /**
+   * « Rendus » et non « reçus » : la liste mêle les avis des autres
+   * destinataires et, pour une DREAL ou un conseil régional, les siens — qu'il
+   * a rendus, pas reçus.
+   */
+  instructionDossierAvisRendusTitre: 'Avis rendus sur ce dossier',
   instructionDossierAvisRenduLe: ({ date }: { date: string }) =>
     `Avis rendu le ${date}`,
   instructionDossierAvisBrouillonDepuis: ({ date }: { date: string }) =>
