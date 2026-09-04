@@ -70,17 +70,17 @@ select is(
 -- identité SIRENE. C'est ce qui préserve la DREAL Pays de la Loire créée à la
 -- main en production.
 insert into collectivite (nom, type, region_code)
-values ('DREAL témoin', 'dreal', 'ZD');
+values ('DREAL témoin', 'dreal', 'T4');
 
 insert into collectivite (nom, type, region_code, siren, nic)
-values ('Dénomination officielle interminable', 'dreal', 'ZD', '130006109', '00057')
+values ('Dénomination officielle interminable', 'dreal', 'T4', '130006109', '00057')
 on conflict (type, region_code) where type = 'dreal'
 do update set siren = excluded.siren,
               nic   = excluded.nic;
 
 select is(
     (select nom || ' / ' || siren || ' / ' || nic from collectivite
-     where type = 'dreal' and region_code = 'ZD'),
+     where type = 'dreal' and region_code = 'T4'),
     'DREAL témoin / 130006109 / 00057',
     'un second passage renseigne le SIREN et le NIC sans renommer le service'
 );
