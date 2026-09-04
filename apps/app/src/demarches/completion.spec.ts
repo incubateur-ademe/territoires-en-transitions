@@ -233,13 +233,29 @@ describe('getDemarchePcaetCompletion', () => {
         indicateurValeurs: [
           valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
           valeur({ identifiant: 'cae_1.c', year: 2030, objectif: 8 }),
-          valeur({ identifiant: 'cae_1.c', year: 2036, objectif: 6 }),
+          // 2036 requis ; 2050 est hors exigence via optionalYears
         ],
       }),
       completeSnapshot
     );
 
     expect(completion.diagnostic).toBe('incomplete');
+  });
+
+  it('laisse le diagnostic complete sans 2050 quand optionalYears l’exclut', () => {
+    const completion = getDemarchePcaetCompletion(
+      completeDemarche,
+      completeDiagnostic({
+        indicateurValeurs: [
+          valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
+          valeur({ identifiant: 'cae_1.c', year: 2030, objectif: 8 }),
+          valeur({ identifiant: 'cae_1.c', year: 2036, objectif: 6 }),
+        ],
+      }),
+      completeSnapshot
+    );
+
+    expect(completion.diagnostic).toBe('complete');
   });
 
   it("laisse le diagnostic incomplete tant que les topics ne sont pas chargés : on ne déclare pas complet ce qu'on n'a pas lu", () => {

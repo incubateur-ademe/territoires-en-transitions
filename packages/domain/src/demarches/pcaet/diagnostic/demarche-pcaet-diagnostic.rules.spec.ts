@@ -30,25 +30,36 @@ const parentConfig = (
   ...overrides,
 });
 
-const valeur = (
-  year: number,
-  identifiantReferentiel = 'cae_1.c'
-): PcaetDiagnostic['indicateurValeurs'][number] =>
+const valeur = ({
+  year,
+  identifiantReferentiel = 'cae_1.c',
+  resultat = null,
+  objectif = null,
+}: {
+  year: number;
+  identifiantReferentiel?: string;
+  resultat?: number | null;
+  objectif?: number | null;
+}): PcaetDiagnostic['indicateurValeurs'][number] =>
   ({
     indicateurValeur: {
       indicateurId: 1,
       dateValeur: `${year}-01-01`,
-      resultat: null,
-      objectif: null,
+      resultat,
+      objectif,
     },
     indicateurDefinition: { identifiantReferentiel },
   }) as PcaetDiagnostic['indicateurValeurs'][number];
 
-/** Une valeur par horizon d'objectif requis — le minimum pour un topic non optionnel. */
-const valeursCompletes = (): PcaetDiagnostic['indicateurValeurs'] =>
-  PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map((year) =>
-    valeur(year)
-  );
+/** Constat + objectifs requis (2050 exclu via optionalYears). */
+const valeursCompletes = (
+  identifiantReferentiel = 'cae_1.c'
+): PcaetDiagnostic['indicateurValeurs'] => [
+  valeur({ year: 2021, identifiantReferentiel, resultat: 12 }),
+  ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+    (year) => year !== 2050
+  ).map((year) => valeur({ year, identifiantReferentiel, objectif: 8 })),
+];
 
 const vulnerabiliteTopic = (): PcaetDiagnostic['vulnerabilite'] => ({
   code: 'vulnerabilite_territoire',
@@ -122,7 +133,7 @@ describe('isPcaetDiagnosticReferenceYear', () => {
 });
 
 describe('isPcaetDiagnosticIndicateurComplet', () => {
-  it('exige une valeur sur chaque horizon d’objectif requis', () => {
+  it('exige un constat et un objectif sur chaque horizon requis de chaque ligne', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         config: parentConfig(),
@@ -131,33 +142,149 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     ).toBe(true);
   });
 
-  it('échoue dès qu’un horizon requis manque', () => {
+  it('échoue sans constat sur une année de référence', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         config: parentConfig(),
-        indicateurs: [valeur(2030), valeur(2036)],
+        indicateurs: PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+          (year) => year !== 2050
+        ).map((year) => valeur({ year, objectif: 8 })),
       })
     ).toBe(false);
+  });
+
+  it('échoue dès qu’un horizon d’objectif requis manque', () => {
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config: parentConfig(),
+        indicateurs: [
+          valeur({ year: 2021, resultat: 12 }),
+          valeur({ year: 2030, objectif: 8 }),
+        ],
+      })
+    ).toBe(false);
+  });
+
+  it('n’exige pas un horizon listé dans optionalYears', () => {
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config: parentConfig(),
+        indicateurs: [
+          valeur({ year: 2021, resultat: 12 }),
+          valeur({ year: 2030, objectif: 8 }),
+          valeur({ year: 2036, objectif: 6 }),
+        ],
+      })
+    ).toBe(true);
   });
 
   it('ignore les valeurs saisies sur les indicateurs d’un autre topic', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         config: parentConfig(),
-        indicateurs: PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
-          (year) => valeur(year, 'cae_2.e')
-        ),
+        indicateurs: valeursCompletes('cae_2.e'),
       })
     ).toBe(false);
   });
 
-  it('accepte une saisie portée par l’indicateur parent', () => {
+  it('n’est pas complet sur la seule saisie de l’agrégat parent', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         config: parentConfig(),
-        indicateurs: PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
-          (year) => valeur(year, 'cae_1.a')
-        ),
+        indicateurs: valeursCompletes('cae_1.a'),
+      })
+    ).toBe(false);
+  });
+
+  it('exige chaque ligne feuille, pas seulement une parmi plusieurs', () => {
+    const config = parentConfig({
+      children: [
+        {
+          label: 'Résidentiel',
+          indicateurDefinitionId: 'cae_1.c',
+          optionalYears: [2050],
+        },
+        {
+          label: 'Tertiaire',
+          indicateurDefinitionId: 'cae_1.d',
+          optionalYears: [2050],
+        },
+      ],
+    });
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config,
+        indicateurs: valeursCompletes('cae_1.c'),
+      })
+    ).toBe(false);
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config,
+        indicateurs: [
+          ...valeursCompletes('cae_1.c'),
+          ...valeursCompletes('cae_1.d'),
+        ],
+      })
+    ).toBe(true);
+  });
+
+  it('exige les feuilles imbriquées (ex. secteurs d’un polluant)', () => {
+    const config = parentConfig({
+      code: 'polluants_atmospheriques',
+      referenceYearApplyLevel: 'child',
+      indicateurDefinitionId: 'emission_polluants_atmo',
+      children: [
+        {
+          label: 'NOx',
+          indicateurDefinitionId: 'cae_4.a',
+          children: [
+            { label: 'Résidentiel', indicateurDefinitionId: 'cae_4.aa' },
+            { label: 'Tertiaire', indicateurDefinitionId: 'cae_4.ab' },
+          ],
+        },
+      ],
+    });
+
+    const completeLeaf = (identifiantReferentiel: string) => [
+      valeur({ year: 2010, identifiantReferentiel, resultat: 10 }),
+      ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map((year) =>
+        valeur({ year, identifiantReferentiel, objectif: 5 })
+      ),
+    ];
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config,
+        indicateurs: completeLeaf('cae_4.aa'),
+      })
+    ).toBe(false);
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config,
+        indicateurs: [
+          ...completeLeaf('cae_4.aa'),
+          ...completeLeaf('cae_4.ab'),
+        ],
+      })
+    ).toBe(true);
+  });
+
+  it('ignore une ligne entièrement optionnelle (optionalYears all)', () => {
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        config: parentConfig({
+          children: [
+            {
+              label: 'Forêt',
+              indicateurDefinitionId: 'cae_63.b',
+              optionalYears: 'all',
+            },
+          ],
+        }),
+        indicateurs: [],
       })
     ).toBe(true);
   });
@@ -181,9 +308,20 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
         diagnostic({
           indicateurParentConfigs: [
             parentConfig(),
-            parentConfig({ code: 'consommation_energetique' }),
+            parentConfig({
+              code: 'consommation_energetique',
+              indicateurDefinitionId: 'cae_2.a',
+              children: [
+                {
+                  label: 'Résidentiel',
+                  indicateurDefinitionId: 'cae_2.e',
+                  optionalYears: [2050],
+                },
+              ],
+            }),
           ],
-          indicateurValeurs: [valeur(2030), valeur(2036)],
+          // Seul le premier topic est saisi : le second reste incomplet.
+          indicateurValeurs: valeursCompletes('cae_1.c'),
         })
       )
     ).toBe(false);

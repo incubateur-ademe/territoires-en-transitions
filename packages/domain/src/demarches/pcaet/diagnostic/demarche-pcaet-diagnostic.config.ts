@@ -520,6 +520,52 @@ export const listPcaetDiagnosticIndicateurDefinitionIds = (
   config: PcaetDiagnosticIndicateurParentConfig
 ): string[] => [...new Set(collectIndicateurDefinitionIds(config))];
 
+/** Ligne feuille exigée pour la complétude d'un topic indicateur. */
+export type PcaetDiagnosticIndicateurRequiredLeaf = {
+  indicateurDefinitionId: string;
+  /** Horizons d'objectif non exigés pour cette ligne (hors `'all'`). */
+  optionalYears: readonly number[];
+};
+
+/**
+ * Feuilles saisissables qui retiennent la complétude : pas les agrégats
+ * parents, pas les `TBD`, pas les lignes `optionalYears: 'all'`.
+ */
+export const listPcaetDiagnosticIndicateurRequiredLeaves = (
+  config: PcaetDiagnosticIndicateurParentConfig
+): PcaetDiagnosticIndicateurRequiredLeaf[] => {
+  const leaves: PcaetDiagnosticIndicateurRequiredLeaf[] = [];
+
+  const pushLeaf = (node: {
+    indicateurDefinitionId: string;
+    optionalYears?: readonly number[] | 'all';
+  }) => {
+    if (
+      node.indicateurDefinitionId.length === 0 ||
+      node.indicateurDefinitionId === 'TBD' ||
+      node.optionalYears === 'all'
+    ) {
+      return;
+    }
+    leaves.push({
+      indicateurDefinitionId: node.indicateurDefinitionId,
+      optionalYears: node.optionalYears ?? [],
+    });
+  };
+
+  for (const child of config.children) {
+    if (child.children !== undefined && child.children.length > 0) {
+      for (const leaf of child.children) {
+        pushLeaf(leaf);
+      }
+    } else {
+      pushLeaf(child);
+    }
+  }
+
+  return leaves;
+};
+
 /** Identifiants référentiel de toutes les lignes saisissables (indicateurs). */
 const collectPcaetDiagnosticIndicateurDefinitionIds = (): string[] => [
   ...new Set(
