@@ -5,6 +5,7 @@ import { GetDiagnosticRouter } from '../get-diagnostic/get-diagnostic.router';
 import { RemoveVulnerabiliteThematiqueRouter } from '../remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.router';
 import { SetVulnerabiliteLigneRouter } from '../set-vulnerabilite-ligne/set-vulnerabilite-ligne.router';
 import { UpdateVulnerabiliteThematiqueRouter } from '../update-vulnerabilite-thematique/update-vulnerabilite-thematique.router';
+import { SetDiagnosticReferenceYearRouter } from './set-diagnostic-reference-year/set-diagnostic-reference-year.router';
 import { UpdateDiagnosticIndicateursValeursRouter } from './update-diagnostic-indicateurs-valeurs/update-diagnostic-indicateurs-valeurs.router';
 
 @Injectable()
@@ -16,7 +17,8 @@ export class PcaetDiagnosticRouter {
     private readonly addVulnerabiliteThematiqueRouter: AddVulnerabiliteThematiqueRouter,
     private readonly updateVulnerabiliteThematiqueRouter: UpdateVulnerabiliteThematiqueRouter,
     private readonly removeVulnerabiliteThematiqueRouter: RemoveVulnerabiliteThematiqueRouter,
-    private readonly updateDiagnosticIndicateursValeursRouter: UpdateDiagnosticIndicateursValeursRouter
+    private readonly updateDiagnosticIndicateursValeursRouter: UpdateDiagnosticIndicateursValeursRouter,
+    private readonly setDiagnosticReferenceYearRouter: SetDiagnosticReferenceYearRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -25,6 +27,13 @@ export class PcaetDiagnosticRouter {
     this.addVulnerabiliteThematiqueRouter.router,
     this.updateVulnerabiliteThematiqueRouter.router,
     this.removeVulnerabiliteThematiqueRouter.router,
-    this.updateDiagnosticIndicateursValeursRouter.router
+    // `mergeRouters` refuse deux fois la même clé : les routes indicateurs
+    // restent donc plates dans leur slice et se regroupent ici.
+    this.trpc.router({
+      indicateurs: this.trpc.mergeRouters(
+        this.updateDiagnosticIndicateursValeursRouter.router,
+        this.setDiagnosticReferenceYearRouter.router
+      ),
+    })
   );
 }

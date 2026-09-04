@@ -32,6 +32,9 @@ import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demar
 import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
 import { DepublierDemarchePcaetService } from './depublier-demarche/depublier-demarche.service';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
+import { SetDiagnosticReferenceYearRepository } from './diagnostic/set-diagnostic-reference-year/set-diagnostic-reference-year.repository';
+import { SetDiagnosticReferenceYearRouter } from './diagnostic/set-diagnostic-reference-year/set-diagnostic-reference-year.router';
+import { SetDiagnosticReferenceYearService } from './diagnostic/set-diagnostic-reference-year/set-diagnostic-reference-year.service';
 import { UpdateDiagnosticIndicateursValeursRouter } from './diagnostic/update-diagnostic-indicateurs-valeurs/update-diagnostic-indicateurs-valeurs.router';
 import { UpdateDiagnosticIndicateursValeursService } from './diagnostic/update-diagnostic-indicateurs-valeurs/update-diagnostic-indicateurs-valeurs.service';
 import { AddDemarchePcaetDocumentRouter } from './documents/add-document/add-document.router';
@@ -88,6 +91,7 @@ import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnost
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetSourceMetadonneeRepository } from './shared/demarche-pcaet-source-metadonnee.repository';
 import { DemarchePcaetTransitionRepository } from './shared/demarche-pcaet-transition.repository';
 import { DemarchePcaetTransitionService } from './shared/demarche-pcaet-transition.service';
 import { DemarchePcaetVulnerabiliteReadService } from './shared/demarche-pcaet-vulnerabilite-read.service';
@@ -160,8 +164,12 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     RemoveVulnerabiliteThematiqueService,
     RemoveVulnerabiliteThematiqueRouter,
     PcaetDiagnosticRouter,
+    DemarchePcaetSourceMetadonneeRepository,
     UpdateDiagnosticIndicateursValeursService,
     UpdateDiagnosticIndicateursValeursRouter,
+    SetDiagnosticReferenceYearRepository,
+    SetDiagnosticReferenceYearService,
+    SetDiagnosticReferenceYearRouter,
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
     ListDemarchesPcaetRouter,

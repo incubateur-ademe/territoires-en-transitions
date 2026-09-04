@@ -21,6 +21,7 @@ export const DiagnosticIndicateurValeursTable = ({
 }: Props): JSX.Element => {
   const { rows, years, referenceYear, unit, onReferenceYearChange } =
     useDiagnosticIndicateurValeursTable({
+      demarcheId,
       table,
       isReadonly,
     });
