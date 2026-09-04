@@ -25,7 +25,9 @@ describe('upsertAvis', () => {
   let demarcheId: number;
   let demandeAvisId: number;
 
-  const REGION = '75';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'U1';
 
   beforeAll(async () => {
     app = await getTestApp();

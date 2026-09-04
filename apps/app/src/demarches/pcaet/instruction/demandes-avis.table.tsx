@@ -19,7 +19,7 @@ import {
 } from '@tet/ui';
 import Link from 'next/link';
 import {
-  DEMANDE_AVIS_ETAT_LABELS,
+  demandeAvisEtatLabel,
   DEMANDE_AVIS_ETAT_VARIANTS,
 } from './instruction.constants';
 
@@ -121,18 +121,21 @@ const ActionsCell = ({ demande }: { demande: Demande }) => {
 
 export const DemandesAvisTable = ({
   demandes,
+  deposeAvis,
   onTrierParCollectivite,
   onTrierParContact,
   onTrierParStatut,
   onTrierParEcheance,
 }: {
   demandes: Demande[];
+  /** Le nom accessible du tableau suit la famille, comme le titre visible. */
+  deposeAvis: boolean;
   onTrierParCollectivite: () => void;
   onTrierParContact: () => void;
   onTrierParStatut: () => void;
   onTrierParEcheance: () => void;
 }) => (
-  <Table aria-label={appLabels.instructionListeIntitule}>
+  <Table aria-label={appLabels.instructionListeIntitule({ deposeAvis })}>
     <TableHead>
       <TableRow>
         <TableHeaderCell
@@ -179,7 +182,7 @@ export const DemandesAvisTable = ({
           </TableCell>
           <TableCell>
             <Badge
-              title={DEMANDE_AVIS_ETAT_LABELS[demande.etat]}
+              title={demandeAvisEtatLabel(demande.etat, { deposeAvis })}
               variant={DEMANDE_AVIS_ETAT_VARIANTS[demande.etat]}
               size="sm"
             />

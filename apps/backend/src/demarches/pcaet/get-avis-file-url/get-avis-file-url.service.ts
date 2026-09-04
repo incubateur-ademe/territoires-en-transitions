@@ -48,14 +48,18 @@ export class GetAvisFileUrlService {
       return failure(GetAvisFileUrlErrorEnum.AVIS_NOT_FOUND);
     }
 
-    // Deux lecteurs légitimes, deux barrières distinctes, réunies ici pour ne
+    // Trois lecteurs légitimes, trois barrières distinctes, réunies ici pour ne
     // pas dupliquer la fabrication de l'URL signée :
     //
-    // - l'instructeur, à la même condition que la consultation du dossier — un
-    //   rôle LECTURE lit les avis sans pouvoir les déposer, et voit donc aussi
-    //   ses propres brouillons ;
-    // - la collectivité déposante, mais sur les avis **validés** seulement : un
-    //   brouillon ne doit pas sortir de l'espace d'instruction.
+    // - l'instructeur saisi sur cette demande, à la même condition que la
+    //   consultation du dossier — un rôle LECTURE lit les avis sans pouvoir les
+    //   déposer, et voit donc aussi ses propres brouillons ;
+    // - un autre destinataire du même dossier, sur les avis **validés** : une
+    //   DDT ou une DR ADEME suit l'instruction sans y prendre part ;
+    // - la collectivité déposante, sur les avis **validés** également.
+    //
+    // Le brouillon ne sort jamais de l'espace de son auteur : les deux dernières
+    // barrières sont derrière le même test de validation.
     const autorise = await this.isAutorise(avis, demandeAvisId, { user, tx });
     if (!autorise) {
       return failure(GetAvisFileUrlErrorEnum.UNAUTHORIZED);
@@ -114,6 +118,15 @@ export class GetAvisFileUrlService {
 
     if (avis.valideLe === null) {
       return false;
+    }
+
+    const autreDestinataire =
+      await this.depotPermissionsService.canConsulterAvisDuneAutreSaisine(
+        demandeAvisId,
+        { user, tx }
+      );
+    if (autreDestinataire) {
+      return true;
     }
 
     const deposanteCollectiviteId =

@@ -27,7 +27,9 @@ describe('deleteAvis', () => {
   let avisValideId: string;
   let avisAutreDemandeId: string;
 
-  const REGION = '94';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'D1';
 
   beforeAll(async () => {
     app = await getTestApp();

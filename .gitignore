@@ -112,3 +112,7 @@ worktrees
 tsconfig.tsbuildinfo
 
 .nx/migrate-runs
+
+# Générateurs de seeds (data_layer/scripts/generate_*.py)
+__pycache__/
+*.pyc

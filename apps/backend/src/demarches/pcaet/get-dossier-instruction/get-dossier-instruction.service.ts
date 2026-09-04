@@ -8,6 +8,8 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
   getDemandeAvisEtat,
+  getEtatDossierEnLecture,
+  peutDeposerAvisInstructeur,
   isDemarchePcaetAvisTousRendus,
   getTitresAvisInstructeur,
 } from '@tet/domain/demarches';
@@ -116,6 +118,12 @@ export class GetDossierInstructionService {
       tx
     );
 
+    const avisAutresDestinataires =
+      await this.pcaetAvisRepository.listValidesAutresDemandes(
+        demandeAvisId,
+        tx
+      );
+
     const avis = await this.pcaetAvisRepository.listByDemande(
       demandeAvisId,
       tx
@@ -130,23 +138,39 @@ export class GetDossierInstructionService {
       ({ nom }) => nom
     );
 
-    // « Instruit » ne se dit qu'une fois rendus **tous les titres attendus de ce
-    // destinataire**, et par la règle du guard `avisTousRendus` elle-même : le
-    // badge de l'écran et la bascule de statut ne peuvent ainsi pas diverger. Un
-    // seul avis validé sur les deux de la DREAL laisse l'échéance affichée — il
-    // en reste un à produire.
+    // Deux lectures du même dossier, selon ce que le destinataire y fait.
     //
-    // La vue porte sur cette demande seule : l'écran dit où en est l'instructeur
-    // qui la consulte, pas si les autres instances ont rendu la leur.
+    // Celui qui dépose un avis — DREAL, conseil régional — lit où *il* en est :
+    // « instruit » ne se dit qu'une fois rendus tous les titres attendus de lui,
+    // et par la règle du guard `avisTousRendus` elle-même, si bien que le badge
+    // de l'écran et la bascule de statut ne peuvent pas diverger. Un seul avis
+    // validé sur les deux de la DREAL laisse l'échéance affichée.
+    //
+    // Celui qui n'en dépose aucun — DDT, DR ADEME, service national — lit où en
+    // est *le dossier* : l'état de sa propre demande ne lui dit rien, elle
+    // restera vide par nature, et son délai passé la faisait afficher « Pas
+    // d'avis déposé » sur un dossier pourtant instruit.
     const titresAttendus = getTitresAvisInstructeur(dossier.instructeurType);
+    const deposeAvis = peutDeposerAvisInstructeur(dossier.instructeurType);
+
     const avisValides = avis.filter(({ valideLe }) => valideLe !== null);
-    const instruitLe = isDemarchePcaetAvisTousRendus([
-      {
-        titresAttendus,
-        titresValides: avisValides.map(({ auTitreDe }) => auTitreDe),
-      },
-    ])
-      ? avisValides.reduce<string | null>(
+    const achevement = deposeAvis
+      ? [
+          {
+            titresAttendus,
+            titresValides: avisValides.map(({ auTitreDe }) => auTitreDe),
+          },
+        ]
+      : await this.pcaetAvisRepository.listAchevementDemandes(
+          dossier.demarcheId,
+          tx
+        );
+
+    // La date qui datera l'instruction : la plus récente des validations que ce
+    // destinataire a sous les yeux — les siennes, ou celles du dossier.
+    const validesVisibles = deposeAvis ? avisValides : avisAutresDestinataires;
+    const instruitLe = isDemarchePcaetAvisTousRendus(achevement)
+      ? validesVisibles.reduce<string | null>(
           (plusRecente, { valideLe }) =>
             plusRecente === null ||
             (valideLe !== null && valideLe > plusRecente)
@@ -161,15 +185,24 @@ export class GetDossierInstructionService {
       demarcheId: dossier.demarcheId,
       titre: dossier.titre,
       status: dossier.status,
-      etat: getDemandeAvisEtat(
-        {
-          demarcheStatus: dossier.status,
-          avisDeadlineAt: dossier.avisDeadlineAt,
-          nbAvisValides: dossier.nbAvisValides,
-          nbAvisBrouillons: dossier.nbAvisBrouillons,
-        },
-        new Date()
-      ),
+      etat: deposeAvis
+        ? getDemandeAvisEtat(
+            {
+              demarcheStatus: dossier.status,
+              avisDeadlineAt: dossier.avisDeadlineAt,
+              nbAvisValides: dossier.nbAvisValides,
+              nbAvisBrouillons: dossier.nbAvisBrouillons,
+            },
+            new Date()
+          )
+        : getEtatDossierEnLecture(
+            {
+              demarcheStatus: dossier.status,
+              avisDeadlineAt: dossier.avisDeadlineAt,
+              achevement,
+            },
+            new Date()
+          ),
       transmittedAt: dossier.transmittedAt,
       avisDeadlineAt: dossier.avisDeadlineAt,
       instruitLe,
@@ -185,6 +218,7 @@ export class GetDossierInstructionService {
       documents,
       plans,
       avis,
+      avisAutresDestinataires,
     });
   }
 }

@@ -260,10 +260,15 @@ describe('Test upsert collectivite', () => {
 
     onTestFinished(cleanup);
 
+    // Espace disjoint : codes réels à deux chiffres, `pickFreeRegionCode` à deux
+    // lettres, les specs à une lettre puis un chiffre — l'index unique « une DREAL
+    // par région » ne tolère pas deux occupants.
+    const regionCode = 'C2';
+
     const input: UpsertInput = {
       type: collectiviteTypeEnum.DREAL,
       nom: 'DREAL Pays de la Loire test',
-      regionCode: '52',
+      regionCode,
     };
 
     const cleanupCollectivites = async () => {
@@ -291,7 +296,7 @@ describe('Test upsert collectivite', () => {
     expect(insert.nom).toEqual(input.nom);
     expect(insert.siren).toBeNull();
     expect(insert.departementCode).toBeNull();
-    expect(insert.regionCode).toEqual('52');
+    expect(insert.regionCode).toEqual(regionCode);
   });
 
   test('Test upsert de deux DREAL : régions différentes acceptées, même région refusée', async () => {
@@ -308,10 +313,10 @@ describe('Test upsert collectivite', () => {
     const nomA = 'DREAL région A test';
     const nomB = 'DREAL région B test';
     const nomDoublon = 'DREAL doublon même région test';
-    // L'unicité porte sur (type, region_code) : ces deux régions doivent rester
-    // libres de toute DREAL du seed, qui occupe 27 et 84.
-    const regionA = '11';
-    const regionB = '93';
+    // L'unicité porte sur (type, region_code) : ces deux codes doivent rester
+    // libres de toute DREAL, d'où l'espace « lettre + chiffre » propre aux specs.
+    const regionA = 'C3';
+    const regionB = 'C4';
 
     const cleanupCollectivites = async () => {
       const rows = await databaseService.db
@@ -383,11 +388,11 @@ describe('Test upsert collectivite', () => {
     onTestFinished(cleanupCollectivites);
 
     const values = {
-      // La 76 est déjà prise par la DREAL de get-dossier-document-url, qui
-      // tourne dans un autre fichier — donc en parallèle sur la même base.
+      // Un code par spec, dans l'espace « lettre + chiffre » : les autres specs
+      // tournent en parallèle sur la même base.
       type: collectiviteTypeEnum.DREAL,
       nom,
-      regionCode: '44',
+      regionCode: 'C5',
       preferences: defaultCollectivitePreferences,
     };
 

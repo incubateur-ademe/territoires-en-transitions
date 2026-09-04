@@ -1,13 +1,12 @@
 set search_path to public;
 
--- DREAL Auvergne-Rhône-Alpes, avec un dossier prêt à être instruit : de quoi
+-- Un dossier prêt à être instruit sur la DREAL Auvergne-Rhône-Alpes : de quoi
 -- dérouler le dépôt d'avis de bout en bout sans passer par la DREAL
 -- Bourgogne-Franche-Comté, dont les cinq dossiers couvrent déjà les autres
 -- états du circuit (cf. 25-insert_fake_dreal.sql et 26-insert_fake_pcaet_avis.sql).
--- Ni SIREN ni population : une DREAL n'a pas de territoire propre.
-INSERT INTO collectivite (nom, type, region_code)
-VALUES ('DREAL Auvergne-Rhône-Alpes', 'dreal', '84')
-ON CONFLICT DO NOTHING;
+--
+-- La DREAL elle-même vient de l'import des services réels
+-- (collectivite/service_etat_import) : on la retrouve par sa région.
 
 -- Correspondant DREAL : le compte de dev historique (11-insert_fake_user.sql),
 -- rattaché en admin — le seul niveau qui ouvre l'invitation d'autres

@@ -12,6 +12,7 @@ import {
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+import { perimetreInstructeurColumns } from '../shared/perimetre-instructeur.columns';
 import { GetContexteInstructionError } from './get-contexte-instruction.errors';
 import { GetContexteInstructionInput } from './get-contexte-instruction.input';
 
@@ -36,9 +37,7 @@ export class GetContexteInstructionService {
   async getContexteInstruction(
     { collectiviteId, demandeAvisId }: GetContexteInstructionInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<
-    Result<ContexteInstruction | null, GetContexteInstructionError>
-  > {
+  ): Promise<Result<ContexteInstruction | null, GetContexteInstructionError>> {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
 
@@ -47,11 +46,7 @@ export class GetContexteInstructionService {
         demandeAvisId: pcaetDemandeAvisTable.id,
         instructeurCollectiviteId: instructrice.id,
         instructeurNom: instructrice.nom,
-        instructeurType: instructrice.type,
-        instructeurRegionCode: instructrice.regionCode,
-        instructeurDepartementCode: instructrice.departementCode,
-        collectiviteRegionCode: deposante.regionCode,
-        collectiviteDepartementCode: deposante.departementCode,
+        ...perimetreInstructeurColumns(deposante, instructrice),
       })
       .from(pcaetDemandeAvisTable)
       .innerJoin(

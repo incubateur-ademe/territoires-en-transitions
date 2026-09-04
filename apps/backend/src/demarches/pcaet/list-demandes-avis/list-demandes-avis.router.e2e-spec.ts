@@ -10,6 +10,7 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
+import { onTestFinished } from 'vitest';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inArray } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
@@ -25,10 +26,13 @@ describe('listDemandesAvis', () => {
   let agentNational: AuthenticatedUser;
   let drealId: number;
   let serviceNationalId: number;
+  let demandeHorsPerimetreId: number;
   const demarcheIds: number[] = [];
 
-  const REGION = '44';
-  const AUTRE_REGION = '75';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'L1';
+  const AUTRE_REGION = 'L2';
 
   const dansNJours = (n: number) =>
     new Date(Date.now() + n * 24 * 3600 * 1000).toISOString();
@@ -143,6 +147,7 @@ describe('listDemandesAvis', () => {
       status: 'transmis_pour_avis',
       avisDeadlineAt: dansNJours(20),
     });
+    demandeHorsPerimetreId = dossierHorsPerimetre.demandeId;
 
     // Le périmètre national, sur le seul dossier hors de la DREAL de la spec.
     const serviceNational = await addTestCollectiviteAndUser(db, {
@@ -294,6 +299,54 @@ describe('listDemandesAvis', () => {
 
   it("refuse l'agente d'une collectivité déposante", async () => {
     await expect(appeler(marie, {})).rejects.toThrow();
+  });
+
+  /**
+   * Le statut d'un destinataire en lecture porte sur le **dossier**, pas sur sa
+   * propre demande — qui restera vide par nature. Sans quoi la liste dit « À
+   * instruire » ou « Pas d'avis déposé » là où l'entête du dossier dit
+   * « Instruit », et les deux écrans se contredisent.
+   */
+  it('donne au service national le statut du dossier, pas celui de sa demande vide', async () => {
+    const lister = () =>
+      router
+        .createCaller({ user: agentNational })
+        .demarches.pcaet.listDemandesAvis({
+          collectiviteId: serviceNationalId,
+          recherche: 'melon',
+        });
+
+    // Aucun avis rendu sur ce dossier : l'instruction est en cours.
+    const avant = await lister();
+    expect(avant.items[0].etat).toBe(PcaetDemandeAvisEtatEnum.A_TRAITER);
+
+    // Les deux titres de la DREAL, seule saisie pour avis sur ce dossier.
+    const rendus = await db.db
+      .insert(pcaetAvisTable)
+      .values(
+        (['prefet_region', 'autorite_environnementale'] as const).map(
+          (auTitreDe) => ({
+            demandeAvisId: demandeHorsPerimetreId,
+            emetteurCollectiviteId: drealId,
+            auTitreDe,
+            sens: 'favorable' as const,
+            fichierRef: `avis/${auTitreDe}.pdf`,
+            valideLe: new Date().toISOString(),
+          })
+        )
+      )
+      .returning({ id: pcaetAvisTable.id });
+    onTestFinished(async () => {
+      await db.db.delete(pcaetAvisTable).where(
+        inArray(
+          pcaetAvisTable.id,
+          rendus.map(({ id }) => id)
+        )
+      );
+    });
+
+    const apres = await lister();
+    expect(apres.items[0].etat).toBe(PcaetDemandeAvisEtatEnum.AVIS_RENDU);
   });
 
   it('un service national voit un dossier hors de tout périmètre régional', async () => {

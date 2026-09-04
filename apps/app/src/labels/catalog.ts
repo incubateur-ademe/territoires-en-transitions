@@ -1810,7 +1810,14 @@ export const appLabels = {
 
   instructionTitre: 'Suivi des demandes d’avis',
   instructionBonjour: ({ prenom }: { prenom: string }) => `Bonjour ${prenom} !`,
-  instructionStatATraiter: 'PCAET à instruire',
+  /**
+   * Seules la DREAL et le conseil régional déposent un avis ; la DDT, la
+   * DR ADEME et les services nationaux reçoivent le dossier en lecture. Le
+   * compteur et le titre de la liste suivent donc la famille, plutôt que de
+   * présenter tout le monde comme responsable d'une instruction.
+   */
+  instructionStatATraiter: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis ? 'PCAET à instruire' : 'PCAET en instruction',
   instructionStatInstruits: plural({
     one: 'PCAET instruit',
     other: 'PCAET instruits',
@@ -1823,10 +1830,29 @@ export const appLabels = {
   instructionStatDelaiMoyenPlafonne: ({ plafond }: { plafond: number }) =>
     `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
   instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
-  instructionListeTitre: 'Instructions dont je suis en charge',
+  instructionListeTitre: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis
+      ? 'Instructions dont je suis en charge'
+      : 'Dépôts PCAET que je suis',
+  /**
+   * Sans territoire : l'écran sert les cinq familles d'instructeurs, dont les
+   * périmètres diffèrent — région pour une DREAL ou un conseil régional,
+   * département pour une DDT, aucun pour un service national comme la DGEC. Ne
+   * pas y réintroduire « de votre région ». Et « transmis » plutôt que
+   * « à instruire » : seules la DREAL et la région déposent un avis, les autres
+   * reçoivent le dossier en lecture.
+   */
   instructionListeVide:
-    'Les dépôts PCAET transmis par les collectivités de votre région apparaîtront ici.',
-  instructionListeIntitule: 'Demandes d’avis des collectivités de la région',
+    'Les dépôts PCAET qui vous sont transmis apparaîtront ici.',
+  /**
+   * Nom accessible du tableau : il suit la même famille que le titre visible
+   * juste au-dessus, sinon un lecteur d'écran annonce à une DREAL la formulation
+   * réservée aux destinataires en lecture.
+   */
+  instructionListeIntitule: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis
+      ? 'Instructions dont je suis en charge'
+      : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   instructionListeColonneContact: 'Contact',
   instructionListeColonneStatut: 'Statut',
@@ -1839,6 +1865,12 @@ export const appLabels = {
     'Le téléchargement du dossier complet arrive prochainement.',
   instructionListeSansContact: 'Aucun référent renseigné',
   instructionEtatATraiter: 'À instruire',
+  /**
+   * Le même état, dit à un destinataire en lecture : « À instruire » lui
+   * demanderait un travail qu'il n'a pas à faire — une DDT, une DR ADEME et un
+   * service national ne déposent aucun avis, ils suivent le dossier.
+   */
+  instructionEtatInstructionEnCours: 'Instruction en cours',
   instructionEtatBrouillonEnCours: 'Brouillon en cours',
   instructionEtatAvisRendu: 'Instruit',
   instructionEtatDelaiEcoule: 'Pas d’avis déposé',
@@ -1892,6 +1924,12 @@ export const appLabels = {
   instructionDossierAvisTelecharger: 'Rapport',
   instructionDossierAvisTelechargerAria: ({ titre }: { titre: string }) =>
     `Télécharger le rapport de l’avis au titre de ${titre}`,
+  /**
+   * « Rendus » et non « reçus » : la liste mêle les avis des autres
+   * destinataires et, pour une DREAL ou un conseil régional, les siens — qu'il
+   * a rendus, pas reçus.
+   */
+  instructionDossierAvisRendusTitre: 'Avis rendus sur ce dossier',
   instructionDossierAvisRenduLe: ({ date }: { date: string }) =>
     `Avis rendu le ${date}`,
   instructionDossierAvisBrouillonDepuis: ({ date }: { date: string }) =>

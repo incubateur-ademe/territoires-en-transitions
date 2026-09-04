@@ -4,15 +4,15 @@
  * les anciens y seront repris au fil des passages.
  */
 export const demarchesLabels = {
-  contexteInstructionTitre: ({
-    collectiviteNom,
-    instructeurNom,
-  }: {
-    collectiviteNom: string;
-    instructeurNom: string;
-  }) => `Vous consultez ${collectiviteNom} au titre de ${instructeurNom}`,
+  /**
+   * Sans le nom de la collectivité : il est déjà affiché juste au-dessus, dans
+   * le sélecteur de contexte du header. Ce que la bannière ajoute, c'est la
+   * casquette — à quel titre on est là.
+   */
+  contexteInstructionTitre: ({ instructeurNom }: { instructeurNom: string }) =>
+    `Vous naviguez ici au titre de ${instructeurNom}`,
 
-  contexteInstructionRetourDossier: 'Revenir au dossier PCAET',
+  contexteInstructionRetourDossier: 'Revenir à l’instruction',
 
-  contexteInstructionRetour: 'Revenir à mes dossiers à instruire',
+  contexteInstructionRetour: 'Revenir à mes dossiers PCAET',
 };

@@ -111,12 +111,17 @@ jobs:
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: pnpm nx test backend -- --project already-run-by-init-db-seed
 
+      # Compte `imports.region`, que seul le seed remplit (01-region.sql), et non
+      # `collectivite` : les migrations peuplent désormais des collectivités (les
+      # services de l'État, cf. collectivite/service_etat_import) et feraient
+      # passer une base fraîchement migrée pour déjà peuplée — le seed entier
+      # serait sauté, et avec lui toute la suite de tests.
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         id: get_collectivites_count
         uses: ./.github/actions/psql
         with:
-          command: 'select count(*) from collectivite;'
+          command: 'select count(*) from imports.region;'
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 

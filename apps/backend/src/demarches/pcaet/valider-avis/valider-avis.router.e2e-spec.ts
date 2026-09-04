@@ -27,7 +27,9 @@ describe('validerAvis', () => {
   let avisSansPjId: string;
   let premiereValidation: string | null;
 
-  const REGION = '93';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'V1';
 
   beforeAll(async () => {
     app = await getTestApp();

@@ -20,9 +20,9 @@ describe('Clôture de l’instruction PCAET', () => {
   let service: CloreInstructionService;
   let instructeurCollectiviteId: number;
 
-  // Un code région propre à cette spec : l'index unique « une DREAL par région »
-  // ne tolère pas deux specs sur le même code.
-  const REGION = '02';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'C1';
 
   /** Démontage des collectivités créées par les cas, dans l'ordre inverse. */
   const nettoyages: (() => Promise<void>)[] = [];

@@ -16,8 +16,12 @@ import { CloreInstructionService } from './clore-instruction/clore-instruction.s
 /**
  * Un code de région libre, pour une collectivité instructrice de test : un index
  * unique interdit deux DREAL sur la même région, et un code en dur ferait échouer
- * la seconde exécution sur la collectivité laissée par la première. Deux lettres,
- * hors des codes réels qui sont numériques.
+ * la seconde exécution sur la collectivité laissée par la première.
+ *
+ * **Deux lettres**, et c'est un espace réservé : les codes réels sont deux
+ * chiffres, et les specs qui figent leur code prennent une lettre puis un chiffre
+ * (`C1`, `L2`…). Les trois espaces sont disjoints, donc ce tirage ne peut pas
+ * tomber sur un code qu'une autre spec s'est réservé.
  *
  * Les codes pris sont lus avant de tirer, ce qui laisse une fenêtre de course
  * entre la lecture et l'insertion.

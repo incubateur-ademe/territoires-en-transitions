@@ -13,13 +13,29 @@ import type { PcaetDemandeAvisEtat } from '@tet/domain/demarches';
  */
 export const DELAI_INSTRUCTION_PLAFOND_JOURS = 60;
 
-export const DEMANDE_AVIS_ETAT_LABELS: Record<PcaetDemandeAvisEtat, string> = {
+const DEMANDE_AVIS_ETAT_LABELS: Record<PcaetDemandeAvisEtat, string> = {
   a_traiter: appLabels.instructionEtatATraiter,
   brouillon_en_cours: appLabels.instructionEtatBrouillonEnCours,
   avis_rendu: appLabels.instructionEtatAvisRendu,
   delai_ecoule: appLabels.instructionEtatDelaiEcoule,
   clos: appLabels.instructionEtatClos,
 };
+
+/**
+ * Le libellé d'un état, selon que le service dépose un avis ou suit le dossier.
+ *
+ * Seul `a_traiter` diffère : c'est le seul qui réclame quelque chose de celui
+ * qui le lit. Les autres décrivent le dossier et se disent pareil des deux
+ * côtés — et `brouillon_en_cours` ne se produit jamais en lecture, l'état y
+ * étant calculé sur les seuls avis validés.
+ */
+export const demandeAvisEtatLabel = (
+  etat: PcaetDemandeAvisEtat,
+  { deposeAvis }: { deposeAvis: boolean }
+): string =>
+  etat === 'a_traiter' && !deposeAvis
+    ? appLabels.instructionEtatInstructionEnCours
+    : DEMANDE_AVIS_ETAT_LABELS[etat];
 
 export const DEMANDE_AVIS_ETAT_VARIANTS: Record<
   PcaetDemandeAvisEtat,

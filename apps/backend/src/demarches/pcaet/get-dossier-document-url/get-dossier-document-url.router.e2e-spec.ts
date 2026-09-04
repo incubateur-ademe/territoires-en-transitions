@@ -28,7 +28,9 @@ describe('getDossierDocumentUrl', () => {
   let demandeAvisId: number;
   let filename: string;
 
-  const REGION = '76';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'G2';
 
   beforeAll(async () => {
     app = await getTestApp();

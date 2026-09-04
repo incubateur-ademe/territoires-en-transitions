@@ -1,6 +1,10 @@
 begin;
 select plan(18);
 
+-- Codes dans l'espace « lettre + chiffre » réservé aux tests : les codes réels
+-- sont numériques et tous occupés par l'import des services, et
+-- `pickFreeRegionCode` (fixtures e2e) tire deux lettres.
+
 create temp table ctx (
     dreal_id integer,
     dr_ademe_id integer,
@@ -12,14 +16,14 @@ create temp table ctx (
 
 with d as (
     insert into collectivite (nom, type, region_code)
-    values ('DREAL test pgTAP', 'dreal', '93')
+    values ('DREAL test pgTAP', 'dreal', 'T3')
     returning id
 )
 insert into ctx (dreal_id) select id from d;
 
 with a as (
     insert into collectivite (nom, type, region_code)
-    values ('DR ADEME test pgTAP', 'dr_ademe', '93')
+    values ('DR ADEME test pgTAP', 'dr_ademe', 'T3')
     returning id
 )
 update ctx set dr_ademe_id = (select id from a);
@@ -31,7 +35,20 @@ with n as (
 )
 update ctx set national_id = (select id from n);
 
-update ctx set epci_id = (select id from collectivite where type = 'epci' limit 1);
+-- Un EPCI qui ne porte aucune démarche PCAET : `demarche_active_unique` en
+-- interdit une seconde, et le seed en pose déjà sur des collectivités de test.
+-- L'`order by` rend le choix reproductible, là où `limit 1` seul dépendait de
+-- l'ordre physique des lignes.
+update ctx set epci_id = (
+    select c.id from collectivite c
+    where c.type = 'epci'
+      and not exists (
+          select 1 from demarche d
+          where d.collectivite_id = c.id and d.type = 'pcaet'
+      )
+    order by c.id
+    limit 1
+);
 
 with dem as (
     insert into demarche (collectivite_id, type, titre)
@@ -54,7 +71,13 @@ select lives_ok(
     'une demande d''avis visant une dreal est acceptée'
 );
 
-update ctx set demande_id = (select id from demarche_pcaet_demande_avis limit 1);
+-- Bornée à la démarche du test : sans le `where`, le `limit 1` ramenait une
+-- demande posée par `26-insert_fake_pcaet_avis.sql`, et les assertions suivantes
+-- portaient sur un dossier du seed plutôt que sur celui qu'on vient de créer.
+update ctx set demande_id = (
+    select id from demarche_pcaet_demande_avis
+    where demarche_id = (select demarche_id from ctx)
+);
 
 select throws_ok(
     $$ delete from demarche where id = (select demarche_id from ctx) $$,

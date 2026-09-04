@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { pcaetDemandeAvisTable } from '@tet/backend/demarches/pcaet/shared/models/pcaet-demande-avis.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DemarchePcaetStatus } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -113,6 +114,63 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     });
 
     await pom.goBackToDemandesAvis(dreal.data.id, demandeAvisId);
+  });
+
+  /**
+   * Le droit d'ouvrir un dossier vient de la saisine, pas de la non-appartenance
+   * à la collectivité déposante. Un agent peut porter deux casquettes — membre
+   * d'un EPCI et correspondant d'un service instructeur — et la seconde ne doit
+   * pas s'effacer devant la première.
+   */
+  test('un agent membre de la collectivité déposante ouvre quand même le dossier', async ({
+    collectivites,
+    page,
+  }) => {
+    const REGION = await pickFreeRegionCode(databaseService, 'dreal');
+
+    const { collectivite: service, user: agent } =
+      await collectivites.addCollectiviteAndUser({
+        collectiviteArgs: {
+          type: 'dreal',
+          regionCode: REGION,
+          nom: 'DREAL e2e deux casquettes',
+        },
+        userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
+      });
+
+    const deposante = await collectivites.addCollectivite({
+      regionCode: REGION,
+      departementCode: '54',
+      nom: 'Deposante e2e deux casquettes',
+    });
+
+    // La seconde casquette : le même agent est aussi membre de la déposante,
+    // ce qui reproduit le compte de développement du seed.
+    await databaseService.db.insert(utilisateurCollectiviteAccessTable).values({
+      userId: agent.data.id,
+      collectiviteId: deposante.data.id,
+      role: CollectiviteRole.ADMIN,
+      isActive: true,
+    });
+
+    const demandeAvisId = await createDossierTransmis({
+      collectiviteId: deposante.data.id,
+      serviceId: service.data.id,
+    });
+
+    const pom = new InstructionPom(page);
+    await pom.hideOidcModal();
+
+    await page.goto(
+      `/collectivite/${deposante.data.id}/instruction/${demandeAvisId}`
+    );
+
+    await pom.expectContexte({
+      collectiviteInstruiteId: deposante.data.id,
+      demandeAvisId,
+      serviceNom: service.data.nom,
+    });
+    await expect(pom.accessError).toBeHidden();
   });
 
   test('une saisine qui porte sur une autre collectivité est refusée', async ({

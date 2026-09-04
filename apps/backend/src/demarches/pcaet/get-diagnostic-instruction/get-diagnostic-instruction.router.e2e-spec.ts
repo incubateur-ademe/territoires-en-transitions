@@ -24,7 +24,9 @@ describe('getDiagnosticInstruction', () => {
   let demarcheId: number;
   let demandeAvisId: number;
 
-  const REGION = '52';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'G1';
 
   beforeAll(async () => {
     app = await getTestApp();

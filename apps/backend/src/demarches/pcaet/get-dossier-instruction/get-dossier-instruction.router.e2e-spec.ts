@@ -11,7 +11,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { onTestFinished } from 'vitest';
@@ -30,7 +30,10 @@ describe('getDossierInstruction', () => {
   let instructeurCollectiviteId: number;
   let demandeAvisId: number;
 
-  const REGION = '32';
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
+  const REGION = 'G3';
+  const DEPARTEMENT = 'G30';
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -39,7 +42,13 @@ describe('getDossierInstruction', () => {
 
     const deposante = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
-      collectivite: { regionCode: REGION, nom: 'Agglo test consultation' },
+      // Le département est nécessaire au cas de la DDT ci-dessous : son
+      // périmètre se lit sur le département, pas sur la région.
+      collectivite: {
+        regionCode: REGION,
+        departementCode: DEPARTEMENT,
+        nom: 'Agglo test consultation',
+      },
     });
     marie = getAuthUserFromUserCredentials(deposante.user);
     deposanteCollectiviteId = deposante.collectivite.id;
@@ -205,10 +214,167 @@ describe('getDossierInstruction', () => {
     expect(dossier.avis[0].valideLe).not.toBeNull();
   });
 
+  /**
+   * Un destinataire en lecture — la DDT ici — ne dépose aucun avis mais suit
+   * l'instruction : il voit ce que les autres ont rendu, comme la collectivité
+   * déposante le voit dans son étape aval. Un brouillon, lui, ne sort jamais de
+   * l'espace de son auteur.
+   */
+  it('montre à un destinataire en lecture les avis validés des autres', async () => {
+    const ddt = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'ddt',
+        regionCode: REGION,
+        departementCode: DEPARTEMENT,
+        nom: 'DDT test consultation',
+      },
+    });
+    const [demandeDdt] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId,
+        instructeurCollectiviteId: ddt.collectivite.id,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+
+    const [valide] = await db.db
+      .insert(pcaetAvisTable)
+      .values({
+        demandeAvisId,
+        emetteurCollectiviteId: instructeurCollectiviteId,
+        auTitreDe: 'prefet_region',
+        sens: 'favorable',
+        fichierRef: 'avis-prefet.pdf',
+        deposePar: camille.id,
+        valideLe: new Date().toISOString(),
+      })
+      .returning({ id: pcaetAvisTable.id });
+    const [brouillon] = await db.db
+      .insert(pcaetAvisTable)
+      .values({
+        demandeAvisId,
+        emetteurCollectiviteId: instructeurCollectiviteId,
+        auTitreDe: 'autorite_environnementale',
+        sens: 'defavorable',
+        deposePar: camille.id,
+      })
+      .returning({ id: pcaetAvisTable.id });
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(pcaetAvisTable)
+        .where(inArray(pcaetAvisTable.id, [valide.id, brouillon.id]));
+      await db.db
+        .delete(pcaetDemandeAvisTable)
+        .where(eq(pcaetDemandeAvisTable.id, demandeDdt.id));
+      await ddt.cleanup();
+    });
+
+    const dossier = await router
+      .createCaller({ user: getAuthUserFromUserCredentials(ddt.user) })
+      .demarches.pcaet.getDossierInstruction({
+        demandeAvisId: demandeDdt.id,
+      });
+
+    // Rien à elle : la DDT ne dépose aucun avis, et aucun titre ne lui est
+    // proposé.
+    expect(dossier.avis).toEqual([]);
+    expect(dossier.titresDeposables).toEqual([]);
+
+    // L'avis validé de la DREAL, et lui seul.
+    expect(dossier.avisAutresDestinataires).toHaveLength(1);
+    expect(dossier.avisAutresDestinataires[0]).toMatchObject({
+      id: valide.id,
+      demandeAvisId,
+      auTitreDe: 'prefet_region',
+      sens: 'favorable',
+    });
+    expect(
+      dossier.avisAutresDestinataires.map(({ auTitreDe }) => auTitreDe)
+    ).not.toContain('autorite_environnementale');
+  });
+
+  /**
+   * Le défaut corrigé : une DDT lisait « Pas d'avis déposé » sur un dossier dont
+   * tous les avis étaient rendus, parce que l'état se calculait sur sa propre
+   * demande — vide par nature, et dont le délai finit par passer.
+   */
+  it('dit le dossier instruit à un destinataire en lecture quand tous les avis sont rendus', async () => {
+    const ddt = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'ddt',
+        regionCode: REGION,
+        departementCode: DEPARTEMENT,
+        nom: 'DDT test etat dossier',
+      },
+    });
+    const [demandeDdt] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId,
+        instructeurCollectiviteId: ddt.collectivite.id,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(ddt.user),
+    });
+
+    // Aucun avis encore : le dossier est bien en cours d'instruction.
+    const avant = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId: demandeDdt.id,
+    });
+    expect(avant.etat).toBe(PcaetDemandeAvisEtatEnum.A_TRAITER);
+    expect(avant.instruitLe).toBeNull();
+
+    // Les deux titres de la DREAL, seule saisie pour avis sur ce dossier.
+    const rendus = await db.db
+      .insert(pcaetAvisTable)
+      .values(
+        (['prefet_region', 'autorite_environnementale'] as const).map(
+          (auTitreDe) => ({
+            demandeAvisId,
+            emetteurCollectiviteId: instructeurCollectiviteId,
+            auTitreDe,
+            sens: 'favorable' as const,
+            fichierRef: `avis-${auTitreDe}.pdf`,
+            deposePar: camille.id,
+            valideLe: new Date().toISOString(),
+          })
+        )
+      )
+      .returning({ id: pcaetAvisTable.id });
+
+    onTestFinished(async () => {
+      await db.db.delete(pcaetAvisTable).where(
+        inArray(
+          pcaetAvisTable.id,
+          rendus.map(({ id }) => id)
+        )
+      );
+      await db.db
+        .delete(pcaetDemandeAvisTable)
+        .where(eq(pcaetDemandeAvisTable.id, demandeDdt.id));
+      await ddt.cleanup();
+    });
+
+    const apres = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId: demandeDdt.id,
+    });
+    expect(apres.etat).toBe(PcaetDemandeAvisEtatEnum.AVIS_RENDU);
+    expect(apres.instruitLe).not.toBeNull();
+  });
+
   it("ne dit le dossier instruit qu'une fois les deux titres rendus", async () => {
     const caller = router.createCaller({ user: camille });
 
-    const deposerAvis = async (auTitreDe: 'prefet_region' | 'autorite_environnementale') => {
+    const deposerAvis = async (
+      auTitreDe: 'prefet_region' | 'autorite_environnementale'
+    ) => {
       const [avis] = await db.db
         .insert(pcaetAvisTable)
         .values({
@@ -222,7 +388,9 @@ describe('getDossierInstruction', () => {
         })
         .returning({ id: pcaetAvisTable.id });
       onTestFinished(async () => {
-        await db.db.delete(pcaetAvisTable).where(eq(pcaetAvisTable.id, avis.id));
+        await db.db
+          .delete(pcaetAvisTable)
+          .where(eq(pcaetAvisTable.id, avis.id));
       });
     };
 
