@@ -3,7 +3,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../../../indicateurs';
 import {
-  listPcaetDiagnosticIndicateurDefinitionIds,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
 } from './demarche-pcaet-diagnostic.config';
 import type {
@@ -50,14 +50,44 @@ export const isPcaetDiagnosticReferenceYear = (
   year <= currentYear &&
   !PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.includes(year);
 
+const isLeafComplet = ({
+  optionalYears,
+  valeurs,
+}: {
+  optionalYears: readonly number[];
+  valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
+}): boolean => {
+  const hasReferenceResultat = valeurs.some(({ indicateurValeur }) => {
+    const year = getYearFromIsoDate(indicateurValeur.dateValeur);
+    return (
+      isPcaetDiagnosticReferenceYear(year) && indicateurValeur.resultat !== null
+    );
+  });
+  if (!hasReferenceResultat) {
+    return false;
+  }
+
+  const requiredObjectifYears =
+    PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+      (year) => !optionalYears.includes(year)
+    );
+
+  return requiredObjectifYears.every((year) =>
+    valeurs.some(
+      ({ indicateurValeur }) =>
+        getYearFromIsoDate(indicateurValeur.dateValeur) === year &&
+        indicateurValeur.objectif !== null
+    )
+  );
+};
+
 /**
  * Un topic indicateur est complet quand chacune de ses lignes requises porte un
  * constat et une cible : un résultat sur l'année de comptabilisation et un
- * objectif sur au moins un horizon. Les années ajoutées ouvrent des colonnes
- * sans rien exiger. Un topic qui n'exige rien est complet, faute de quoi il
- * retiendrait le dossier sur une saisie qu'on ne lui demande pas — voir
- * `isDemarchePcaetIndicateurTopicOptional`, qui décide de l'affichage de ces
- * volets.
+ * objectif sur chaque horizon requis (hors `optionalYears`). Les années ajoutées
+ * ouvrent des colonnes sans rien exiger. Un topic optionnel, ou sans aucune
+ * ligne exigée, est complet — sinon il retiendrait le dossier sur une saisie
+ * qu'on ne lui demande pas.
  */
 export const isPcaetDiagnosticIndicateurComplet = ({
   config,
@@ -70,23 +100,33 @@ export const isPcaetDiagnosticIndicateurComplet = ({
     return true;
   }
 
-  // Les valeurs sont servies pour tout le diagnostic : sans ce filtrage, la
-  // saisie d'un volet suffirait à déclarer les autres complets.
-  const definitionIds = new Set(
-    listPcaetDiagnosticIndicateurDefinitionIds(config)
-  );
-  const saisieYears = new Set(
-    indicateurs
-      .filter(({ indicateurDefinition }) =>
-        definitionIds.has(indicateurDefinition?.identifiantReferentiel ?? '')
-      )
-      .map(({ indicateurValeur }) =>
-        getYearFromIsoDate(indicateurValeur.dateValeur)
-      )
-  );
+  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeaves(config);
+  if (requiredLeaves.length === 0) {
+    return true;
+  }
 
-  return PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.every((year) =>
-    saisieYears.has(year)
+  // Les valeurs sont servies pour tout le diagnostic : on indexe par
+  // identifiant pour ne juger chaque feuille que sur sa propre saisie.
+  const valeursByIdentifiant = new Map<
+    string,
+    IndicateurValeurAvecMetadonnesDefinition[]
+  >();
+  for (const indicateur of indicateurs) {
+    const identifiant =
+      indicateur.indicateurDefinition?.identifiantReferentiel ?? '';
+    if (identifiant.length === 0) {
+      continue;
+    }
+    const bucket = valeursByIdentifiant.get(identifiant) ?? [];
+    bucket.push(indicateur);
+    valeursByIdentifiant.set(identifiant, bucket);
+  }
+
+  return requiredLeaves.every((leaf) =>
+    isLeafComplet({
+      optionalYears: leaf.optionalYears,
+      valeurs: valeursByIdentifiant.get(leaf.indicateurDefinitionId) ?? [],
+    })
   );
 };
 

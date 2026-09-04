@@ -1,4 +1,4 @@
-export const MIN_REFERENCE_YEAR = 2010;
+export const MIN_REFERENCE_YEAR = 1990;
 
 export const maxReferenceYear = (): number => new Date().getFullYear();
 
