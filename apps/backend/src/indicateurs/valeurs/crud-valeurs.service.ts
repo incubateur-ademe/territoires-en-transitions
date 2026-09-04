@@ -162,6 +162,11 @@ export default class CrudValeursService {
         );
       }
     }
+    if (options.metadonneeId !== undefined) {
+      conditions.push(
+        eq(indicateurValeurTable.metadonneeId, options.metadonneeId)
+      );
+    }
     return conditions;
   }
 
