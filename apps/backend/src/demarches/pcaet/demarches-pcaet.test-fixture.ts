@@ -14,7 +14,7 @@ import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-s
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteType } from '@tet/domain/collectivites';
 import {
-  listPcaetDiagnosticIndicateurDefinitionIds,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurParentConfig,
@@ -25,17 +25,21 @@ import { CloreInstructionService } from './clore-instruction/clore-instruction.s
 import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pcaet-source-metadonnee.table';
 
 /**
- * Une feuille `cae_*` par topic non optionnel : le guard exige désormais une
- * saisie sur chaque volet (filtrage par définition), pas une seule pour tous.
+ * Toutes les feuilles exigées des topics non optionnels : la complétude juge
+ * chaque ligne (référence + horizons hors optionalYears), pas un seul indicateur
+ * pour tout le volet.
  */
-const DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS = (
+const DIAGNOSTIC_COMPLETION_LEAVES = (
   PCAET_DIAGNOSTIC_INDICATEURS as readonly PcaetDiagnosticIndicateurParentConfig[]
 )
   .filter((topic) => topic.optional !== true)
-  .map((topic) => {
-    const ids = listPcaetDiagnosticIndicateurDefinitionIds(topic);
-    return ids.find((id) => id.startsWith('cae_')) ?? ids[0];
-  });
+  .flatMap((topic) => listPcaetDiagnosticIndicateurRequiredLeaves(topic));
+
+const DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS = [
+  ...new Set(
+    DIAGNOSTIC_COMPLETION_LEAVES.map((leaf) => leaf.indicateurDefinitionId)
+  ),
+];
 
 const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
 const PCAET_COLLECTIVITE_SOURCE_LABEL = 'PCAET collectivité';
@@ -191,9 +195,9 @@ export async function coverTestDocumentsPcaet(
 }
 
 /**
- * Renseigne le diagnostic au sens du guard : un résultat sur l'année de
- * comptabilisation et un objectif sur chaque horizon requis. Écrit via la
- * source dédiée `pcaet-collectivite`.
+ * Renseigne le diagnostic au sens du guard : sur chaque feuille exigée, un
+ * résultat sur l'année de référence et un objectif sur chaque horizon requis
+ * (hors `optionalYears`). Écrit via la source dédiée `pcaet-collectivite`.
  */
 export async function completeTestDiagnosticPcaet(
   db: DatabaseService,
@@ -240,13 +244,19 @@ export async function completeTestDiagnosticPcaet(
   await db.db
     .insert(indicateurValeurTable)
     .values(
-      DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.flatMap((referentielId) => {
-        const indicateurId = definitionByReferentiel.get(referentielId);
+      DIAGNOSTIC_COMPLETION_LEAVES.flatMap((leaf) => {
+        const indicateurId = definitionByReferentiel.get(
+          leaf.indicateurDefinitionId
+        );
         if (indicateurId === undefined) {
           throw new Error(
-            `Indicateur ${referentielId} absent du référentiel pour saturer le diagnostic`
+            `Indicateur ${leaf.indicateurDefinitionId} absent du référentiel pour saturer le diagnostic`
           );
         }
+        const requiredObjectifYears =
+          PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+            (year) => !leaf.optionalYears.includes(year)
+          );
         return [
           {
             indicateurId,
@@ -256,16 +266,14 @@ export async function completeTestDiagnosticPcaet(
             resultat: 100,
             objectif: null,
           },
-          ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
-            (year) => ({
-              indicateurId,
-              collectiviteId,
-              dateValeur: `${year}-01-01`,
-              metadonneeId,
-              resultat: null,
-              objectif: 80,
-            })
-          ),
+          ...requiredObjectifYears.map((year) => ({
+            indicateurId,
+            collectiviteId,
+            dateValeur: `${year}-01-01`,
+            metadonneeId,
+            resultat: null,
+            objectif: 80,
+          })),
         ];
       })
     )
