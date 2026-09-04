@@ -115,7 +115,10 @@ export default class ValeursMoyenneService {
             sql`${typeCollectiviteExpr} IS NOT DISTINCT FROM ${typeCollectivite}`,
             isNotNull(iv.resultat),
             isNotNull(iv.metadonneeId),
+            // Sources hors moyenne nationale : SNBC (trajectoire) et PCAET
+            // collectivité (valeurs de démarche, pas une source ouverte partagée).
             ne(ism.sourceId, 'snbc'),
+            ne(ism.sourceId, 'pcaet-collectivite'),
             eq(iv.indicateurId, indicateurId)
           )
         )
