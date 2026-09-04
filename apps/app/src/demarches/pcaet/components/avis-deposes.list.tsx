@@ -39,6 +39,7 @@ export type AvisAffiche = {
 export const AvisDeposesList = ({
   demandeAvisId,
   avis,
+  titre,
   className,
 }: {
   /**
@@ -48,6 +49,11 @@ export const AvisDeposesList = ({
    */
   demandeAvisId?: number;
   avis: AvisAffiche[];
+  /**
+   * Intitulé de la section, quand le contexte ne le donne pas déjà. Optionnel :
+   * l'étape aval de la collectivité présente la liste sous son propre titre.
+   */
+  titre?: string;
   className?: string;
 }) => {
   const trpc = useTRPC();
@@ -81,6 +87,10 @@ export const AvisDeposesList = ({
       className={cn('flex flex-col gap-2', className)}
       data-test="demarches.pcaet.avis-deposes"
     >
+      {titre && (
+        <h3 className="m-0 text-sm font-bold text-primary-9">{titre}</h3>
+      )}
+
       {avis.map((unAvis) => {
         const titre =
           appLabels.demarchePcaetAvisAuTitreDeLabels[unAvis.auTitreDe];
