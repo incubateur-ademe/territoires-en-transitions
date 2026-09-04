@@ -1,9 +1,22 @@
-import { ObjetPreuveEnum } from '@tet/domain/referentiels';
+import { EtoileEnum, ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
-import { ActeEngagementSection } from './acte-engagement.section';
+import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
+import { EMPTY_CYCLE } from '../../../checklist.test-fixture';
+import {
+  ChecklistContext,
+  ChecklistContextValue,
+} from '../../../checklist.context';
+import {
+  ActeEngagementRow,
+  ActeEngagementSection,
+} from './acte-engagement.section';
 import { ChecklistPreuve } from './checklist-preuve';
+
+vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
+  usePreuvesLabellisation: vi.fn(),
+}));
 
 vi.mock('./upload-preuve-button', () => ({
   UploadPreuveButton: ({ label }: { label: string }) => (
@@ -177,6 +190,59 @@ describe('ActeEngagementSection — chargement', () => {
       screen.queryByRole('button', {
         name: appLabels.ajouterDocument,
       })
+    ).toBeNull();
+  });
+});
+
+describe("ActeEngagementRow — qui peut éditer l'acte", () => {
+  const renderRow = ({
+    canUpdateCandidatureDocuments,
+  }: {
+    canUpdateCandidatureDocuments: boolean;
+  }) => {
+    vi.mocked(usePreuvesLabellisation).mockReturnValue({
+      data: [toActeDepose('acte-signe.pdf')],
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePreuvesLabellisation>);
+
+    const checklist: ChecklistContextValue = {
+      cycle: EMPTY_CYCLE,
+      parcours: {
+        etoileObjectif: EtoileEnum.PREMIERE_ETOILE,
+        completude: { done: false },
+        minimumScore: { done: false, seuilPercent: 0 },
+        scoreFait: 0,
+        mesures: [],
+        roleMesures: { eluReferent: null, referentTechnique: null },
+        acteEngagement: { demandeId: 42 },
+      },
+      referentielId: 'cae',
+      premiereEtoileObtenue: false,
+      showActeEngagement: true,
+      showCandidatureDocuments: false,
+      canUpdateCandidatureDocuments,
+    };
+
+    render(
+      <ChecklistContext.Provider value={checklist}>
+        <ActeEngagementRow />
+      </ChecklistContext.Provider>
+    );
+  };
+
+  it("laisse supprimer l'acte quand les documents du cycle sont modifiables", () => {
+    renderRow({ canUpdateCandidatureDocuments: true });
+
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
+    ).toBeDefined();
+  });
+
+  it("refuse la suppression de l'acte quand ils ne le sont pas", () => {
+    renderRow({ canUpdateCandidatureDocuments: false });
+
+    expect(
+      screen.queryByRole('button', { name: appLabels.supprimer })
     ).toBeNull();
   });
 });

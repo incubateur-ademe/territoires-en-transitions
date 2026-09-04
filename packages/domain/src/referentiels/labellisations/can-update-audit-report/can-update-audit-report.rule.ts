@@ -22,19 +22,19 @@ function isAuditeurUpdateWindowOpen(audit: Audit, now: Date): boolean {
 
 export function canUpdateAuditReport({
   isAuditeur,
-  canUpdateAnyAuditReport,
+  canMutateLabellisationDocuments,
   audit,
   now,
 }: {
   isAuditeur: boolean;
-  canUpdateAnyAuditReport: boolean;
+  canMutateLabellisationDocuments: boolean;
   audit: Audit | null;
   now: Date;
 }): boolean {
   if (audit === null) {
     return false;
   }
-  if (canUpdateAnyAuditReport) {
+  if (canMutateLabellisationDocuments) {
     return true;
   }
   return isAuditeur && isAuditeurUpdateWindowOpen(audit, now);

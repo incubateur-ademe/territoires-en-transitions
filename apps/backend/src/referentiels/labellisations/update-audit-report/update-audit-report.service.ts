@@ -26,7 +26,7 @@ export class UpdateAuditReportService {
     private readonly permissions: PermissionService
   ) {}
 
-  private async canUpdateAnyAuditReport(
+  private async canMutateLabellisationDocuments(
     user: AuthenticatedUser,
     collectiviteId: number
   ): Promise<boolean> {
@@ -74,7 +74,7 @@ export class UpdateAuditReportService {
 
       const allowed = canUpdateAuditReport({
         isAuditeur: context.auditeur !== null,
-        canUpdateAnyAuditReport: await this.canUpdateAnyAuditReport(
+        canMutateLabellisationDocuments: await this.canMutateLabellisationDocuments(
           user,
           context.collectiviteId
         ),

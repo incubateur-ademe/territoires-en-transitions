@@ -15,6 +15,7 @@ export class AuditLabellisationPom {
   readonly demanderPremiereEtoileButton: Locator;
   readonly acteEngagementRow: Locator;
   readonly ajouterActeEngagementButton: Locator;
+  readonly supprimerActeEngagementButton: Locator;
   readonly acteUploadModalTitle: Locator;
   readonly envoyerDemandeButton: Locator;
   readonly successMessage: Locator;
@@ -24,6 +25,8 @@ export class AuditLabellisationPom {
   readonly candidatureDocumentsTitle: Locator;
   readonly candidatureDocumentsRow: Locator;
   readonly ajouterDocumentCandidatureButton: Locator;
+  readonly renommerDocumentCandidatureButton: Locator;
+  readonly supprimerDocumentCandidatureButton: Locator;
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
   readonly auditTypeGroup: Locator;
@@ -52,6 +55,8 @@ export class AuditLabellisationPom {
       'button',
       { name: 'Ajouter un document' }
     );
+    this.supprimerActeEngagementButton =
+      this.acteEngagementRow.getByTitle('Supprimer');
     this.acteUploadModalTitle = page.getByRole('heading', {
       name: "Téléverser l'acte d'engagement signé",
     });
@@ -78,6 +83,10 @@ export class AuditLabellisationPom {
       this.candidatureDocumentsRow.getByRole('button', {
         name: 'Ajouter un document',
       });
+    this.renommerDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByTitle('Renommer le fichier');
+    this.supprimerDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByTitle('Supprimer');
     this.demanderAuditButton = page.getByRole('button', {
       name: 'Demander un audit',
     });
@@ -151,7 +160,7 @@ export class AuditLabellisationPom {
   }
 
   async deleteActeEngagement(): Promise<void> {
-    await this.acteEngagementRow.getByTitle('Supprimer').click();
+    await this.supprimerActeEngagementButton.click();
     await expect(
       this.documentsPom.deleteButtonConfirmationModalTitle
     ).toBeVisible();

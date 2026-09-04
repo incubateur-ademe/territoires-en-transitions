@@ -171,31 +171,6 @@ describe('parcoursToChecklist', () => {
     expect(view.acteEngagement).toEqual({ demandeId: 42 });
   });
 
-  describe('canModifyCandidatureDocuments', () => {
-    it('true quand aucun audit', () => {
-      const view = parcoursToChecklist(makeParcours({ audit: null }));
-      expect(view.canModifyCandidatureDocuments).toBe(true);
-    });
-
-    it("true quand l'audit n'est pas validé", () => {
-      const view = parcoursToChecklist(
-        makeParcours({
-          audit: { valide: false } as ParcoursLabellisation['audit'],
-        })
-      );
-      expect(view.canModifyCandidatureDocuments).toBe(true);
-    });
-
-    it("false quand l'audit est validé", () => {
-      const view = parcoursToChecklist(
-        makeParcours({
-          audit: { valide: true } as ParcoursLabellisation['audit'],
-        })
-      );
-      expect(view.canModifyCandidatureDocuments).toBe(false);
-    });
-  });
-
   describe('roleMesures', () => {
     const makeCritereAction = (
       actionId: string,

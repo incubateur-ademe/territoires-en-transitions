@@ -5,9 +5,9 @@ const now = new Date('2026-06-22T12:00:00.000Z');
 const daysAgo = (days: number) =>
   new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
 
-const auditeur = { isAuditeur: true, canUpdateAnyAuditReport: false };
-const tiers = { isAuditeur: false, canUpdateAnyAuditReport: false };
-const porteurPermission = { isAuditeur: false, canUpdateAnyAuditReport: true };
+const auditeur = { isAuditeur: true, canMutateLabellisationDocuments: false };
+const tiers = { isAuditeur: false, canMutateLabellisationDocuments: false };
+const porteurPermission = { isAuditeur: false, canMutateLabellisationDocuments: true };
 
 describe('canUpdateAuditReport', () => {
   it("refuse une preuve sans rapport d'audit", () => {
@@ -108,7 +108,7 @@ describe('canUpdateAuditReport', () => {
     expect(
       canUpdateAuditReport({
         isAuditeur: true,
-        canUpdateAnyAuditReport: true,
+        canMutateLabellisationDocuments: true,
         audit: { clos: true, valide: true, dateFin: daysAgo(16) },
         now,
       })

@@ -5,7 +5,6 @@ import {
   isAuditLabellisationReferentiel,
   isReferentRoleDefined,
   ParcoursLabellisation,
-  canModifyCandidatureDocuments,
   ROLE_IDENTIFIANTS,
   RoleKey,
 } from '@tet/domain/referentiels';
@@ -107,8 +106,5 @@ export const parcoursToChecklist = (
     acteEngagement: {
       demandeId: parcours.demande?.id ?? null,
     },
-    canModifyCandidatureDocuments: canModifyCandidatureDocuments({
-      audit: parcours.audit ? { valide: parcours.audit.valide } : null,
-    }),
   };
 };

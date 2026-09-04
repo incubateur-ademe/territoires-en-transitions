@@ -1,9 +1,13 @@
-import { ObjetPreuve, ObjetPreuveEnum } from '@tet/domain/referentiels';
+import {
+  EtoileEnum,
+  ObjetPreuve,
+  ObjetPreuveEnum,
+} from '@tet/domain/referentiels';
+import { EMPTY_CYCLE } from '../../../../checklist.test-fixture';
 import { render, screen } from '@testing-library/react';
 import { appLabels } from '../../../../../../labels/catalog';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePreuvesLabellisation } from '../../../../../labellisations/useCycleLabellisation';
-import { AuditViewerRole } from '../../../../audit-badge-status/types';
 import { Parcours } from '../../../../checklist-view-model';
 import {
   ChecklistContext,
@@ -40,28 +44,28 @@ let checklist: ChecklistContextValue;
 
 const setChecklist = (
   parcours: Parcours | null,
-  viewerRole: AuditViewerRole = 'auditee',
-  expectedDocuments: ObjetPreuve[] = [ObjetPreuveEnum.CANDIDATURE]
+  canUpdateCandidatureDocuments = true
 ): void => {
   checklist = {
+    cycle: EMPTY_CYCLE,
     parcours,
     referentielId: 'cae',
-    cycle: { viewerRole },
-    expectedDocuments,
-  } as unknown as ChecklistContextValue;
+    premiereEtoileObtenue: false,
+    showActeEngagement: false,
+    showCandidatureDocuments: true,
+    canUpdateCandidatureDocuments,
+  };
 };
 
-const toParcours = ({
-  demandeId,
-  canModifyCandidatureDocuments,
-}: {
-  demandeId: number | null;
-  canModifyCandidatureDocuments: boolean;
-}): Parcours =>
-  ({
-    acteEngagement: { demandeId },
-    canModifyCandidatureDocuments,
-  } as unknown as Parcours);
+const toParcours = ({ demandeId }: { demandeId: number | null }): Parcours => ({
+  etoileObjectif: EtoileEnum.PREMIERE_ETOILE,
+  completude: { done: false },
+  minimumScore: { done: false, seuilPercent: 0 },
+  scoreFait: 0,
+  mesures: [],
+  roleMesures: { eluReferent: null, referentTechnique: null },
+  acteEngagement: { demandeId },
+});
 
 const setPreuves = (preuves: readonly ChecklistPreuve[]): void => {
   mockedUsePreuvesLabellisation.mockReturnValue({
@@ -120,7 +124,7 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
 
   it("affiche le critère sans bouton d'ajout quand aucune demande n'existe", () => {
     setChecklist(
-      toParcours({ demandeId: null, canModifyCandidatureDocuments: true })
+      toParcours({ demandeId: null })
     );
 
     renderRow();
@@ -137,7 +141,7 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
 
   it("affiche le bouton d'ajout pour un éditeur quand les documents sont modifiables", () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
+      toParcours({ demandeId: 42 })
     );
 
     renderRow();
@@ -149,7 +153,8 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
 
   it("masque le bouton d'ajout une fois l'audit validé", () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: false })
+      toParcours({ demandeId: 42 }),
+      false
     );
 
     renderRow();
@@ -159,37 +164,12 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
     ).toBeNull();
   });
 
-  it("masque le bouton d'ajout pour un auditeur", () => {
-    setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
-      'auditor'
-    );
-
-    renderRow();
-
-    expect(
-      screen.queryByRole('button', { name: appLabels.ajouterDocument })
-    ).toBeNull();
-  });
-
-  it("masque le bouton d'ajout pour un visiteur", () => {
-    setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
-      'other'
-    );
-
-    renderRow();
-
-    expect(
-      screen.queryByRole('button', { name: appLabels.ajouterDocument })
-    ).toBeNull();
-  });
 });
 
 describe('CandidatureDocumentsRow — filtrage par objet', () => {
   it("n'affiche pas les actes d'engagement", () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
+      toParcours({ demandeId: 42 })
     );
     setPreuves([
       toPreuve({
@@ -212,7 +192,7 @@ describe('CandidatureDocumentsRow — filtrage par objet', () => {
 
   it("n'affiche pas une preuve sans objet", () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
+      toParcours({ demandeId: 42 })
     );
     setPreuves([toPreuve({ id: 1, filename: 'legacy.pdf', objet: null })]);
 
@@ -225,7 +205,7 @@ describe('CandidatureDocumentsRow — filtrage par objet', () => {
 describe('CandidatureDocumentsRow — actions par document', () => {
   it('affiche « Renommer » et « Supprimer » par document pour un éditeur quand les documents sont modifiables', () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
+      toParcours({ demandeId: 42 })
     );
     setPreuves([
       toPreuve({
@@ -252,53 +232,8 @@ describe('CandidatureDocumentsRow — actions par document', () => {
 
   it("masque « Renommer » et « Supprimer » une fois l'audit validé", () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: false })
-    );
-    setPreuves([
-      toPreuve({
-        id: 1,
-        filename: 'doc-a.pdf',
-        objet: ObjetPreuveEnum.CANDIDATURE,
-      }),
-    ]);
-
-    renderRow();
-
-    expect(
-      screen.queryByRole('button', { name: appLabels.renommerLeFichier })
-    ).toBeNull();
-    expect(
-      screen.queryByRole('button', { name: appLabels.supprimer })
-    ).toBeNull();
-  });
-
-  it('masque « Renommer » et « Supprimer » pour un auditeur', () => {
-    setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
-      'auditor'
-    );
-    setPreuves([
-      toPreuve({
-        id: 1,
-        filename: 'doc-a.pdf',
-        objet: ObjetPreuveEnum.CANDIDATURE,
-      }),
-    ]);
-
-    renderRow();
-
-    expect(
-      screen.queryByRole('button', { name: appLabels.renommerLeFichier })
-    ).toBeNull();
-    expect(
-      screen.queryByRole('button', { name: appLabels.supprimer })
-    ).toBeNull();
-  });
-
-  it('masque « Renommer » et « Supprimer » pour un visiteur', () => {
-    setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
-      'other'
+      toParcours({ demandeId: 42 }),
+      false
     );
     setPreuves([
       toPreuve({
@@ -320,8 +255,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
 
   it('affiche « Télécharger » quel que soit le profil', () => {
     setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
-      'other'
+      toParcours({ demandeId: 42 })
     );
     setPreuves([
       toPreuve({

@@ -4,10 +4,12 @@ import {
   TCycleLabellisation,
   useCycleLabellisation,
 } from '@/app/referentiels/labellisations/useCycleLabellisation';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionId,
   AuditLabellisationReferentielId,
   EtoileEnum,
+  canUpdateCandidatureDocuments,
   getExpectedDocuments,
   ObjetPreuveEnum,
 } from '@tet/domain/referentiels';
@@ -30,6 +32,7 @@ export type ChecklistContextValue = {
   premiereEtoileObtenue: boolean;
   showActeEngagement: boolean;
   showCandidatureDocuments: boolean;
+  canUpdateCandidatureDocuments: boolean;
 };
 
 type RoleDropdownContextValue = {
@@ -54,6 +57,10 @@ const ChecklistParcoursProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const cycle = useCycleLabellisation(referentielId);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canMutateLabellisationDocuments = hasCollectivitePermission(
+    'referentiels.labellisations.mutate_documents'
+  );
 
   const parcours = useMemo(
     () => (cycle.parcours ? parcoursToChecklist(cycle.parcours) : null),
@@ -81,6 +88,11 @@ const ChecklistParcoursProvider = ({
       premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
+      canUpdateCandidatureDocuments: canUpdateCandidatureDocuments({
+        isAuditee: cycle.viewerRole === 'auditee',
+        canMutateLabellisationDocuments,
+        audit: cycle.parcours?.audit ?? null,
+      }).canUpdate,
     }),
     [
       cycle,
@@ -89,6 +101,7 @@ const ChecklistParcoursProvider = ({
       premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
+      canMutateLabellisationDocuments,
     ]
   );
 

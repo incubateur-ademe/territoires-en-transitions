@@ -242,6 +242,24 @@ export class GetLabellisationService {
     }
   }
 
+  async isAuditeurForAudit(
+    auditId: number,
+    auditeur: string,
+    tx?: Transaction
+  ): Promise<boolean> {
+    const rows = await (tx ?? this.db)
+      .select({ auditId: auditeurTable.auditId })
+      .from(auditeurTable)
+      .where(
+        and(
+          eq(auditeurTable.auditId, auditId),
+          eq(auditeurTable.auditeur, auditeur)
+        )
+      )
+      .limit(1);
+    return rows.length > 0;
+  }
+
   async getCurrentAudit(
     collectiviteId: number,
     referentielId: ReferentielId,
