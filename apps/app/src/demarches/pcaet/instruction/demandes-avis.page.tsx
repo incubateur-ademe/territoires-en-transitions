@@ -6,7 +6,10 @@ import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api/users';
-import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
+import {
+  PcaetDemandeAvisEtatEnum,
+  peutDeposerAvisInstructeur,
+} from '@tet/domain/demarches';
 import { EmptyCard, Pagination } from '@tet/ui';
 import { useListDemandesAvis } from './data/use-list-demandes-avis';
 import { DemandesAvisTable } from './demandes-avis.table';
@@ -21,6 +24,17 @@ export const DemandesAvisPage = ({ serviceId }: { serviceId: number }) => {
   const user = useUser();
   const { data, isLoading, isError, refetch, page, limit, setPage, trierPar } =
     useListDemandesAvis(serviceId);
+
+  // La famille du service est lue sur l'accès désigné par l'URL, pour la même
+  // raison que la requête : le store est en retard d'un rendu quand on arrive
+  // d'un dossier. Sans accès identifiable, on retient la formulation de lecture
+  // — ne rien réclamer de l'agent vaut mieux que le dire à tort.
+  const typeDuService = user.collectivites.find(
+    (acces) => acces.collectiviteId === serviceId
+  )?.collectiviteType;
+  const deposeAvis = typeDuService
+    ? peutDeposerAvisInstructeur(typeDuService)
+    : false;
 
   const aInstruire = data
     ? data.countByEtat[PcaetDemandeAvisEtatEnum.A_TRAITER] +
@@ -45,7 +59,7 @@ export const DemandesAvisPage = ({ serviceId }: { serviceId: number }) => {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         <MetricCard
-          title={appLabels.instructionStatATraiter}
+          title={appLabels.instructionStatATraiter({ deposeAvis })}
           count={aInstruire}
         />
         <MetricCard
@@ -74,7 +88,7 @@ export const DemandesAvisPage = ({ serviceId }: { serviceId: number }) => {
 
       <section className="flex flex-col gap-4 rounded-xl border border-grey-3 bg-white p-6">
         <h2 className="text-lg font-bold text-primary-9 m-0">
-          {appLabels.instructionListeTitre}
+          {appLabels.instructionListeTitre({ deposeAvis })}
         </h2>
 
         {isLoading ? (

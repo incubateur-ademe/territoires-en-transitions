@@ -1810,7 +1810,14 @@ export const appLabels = {
 
   instructionTitre: 'Suivi des demandes d’avis',
   instructionBonjour: ({ prenom }: { prenom: string }) => `Bonjour ${prenom} !`,
-  instructionStatATraiter: 'PCAET à instruire',
+  /**
+   * Seules la DREAL et le conseil régional déposent un avis ; la DDT, la
+   * DR ADEME et les services nationaux reçoivent le dossier en lecture. Le
+   * compteur et le titre de la liste suivent donc la famille, plutôt que de
+   * présenter tout le monde comme responsable d'une instruction.
+   */
+  instructionStatATraiter: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis ? 'PCAET à instruire' : 'PCAET en instruction',
   instructionStatInstruits: plural({
     one: 'PCAET instruit',
     other: 'PCAET instruits',
@@ -1823,7 +1830,10 @@ export const appLabels = {
   instructionStatDelaiMoyenPlafonne: ({ plafond }: { plafond: number }) =>
     `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
   instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
-  instructionListeTitre: 'Instructions dont je suis en charge',
+  instructionListeTitre: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis
+      ? 'Instructions dont je suis en charge'
+      : 'Dépôts PCAET que je suis',
   /**
    * Sans territoire : l'écran sert les cinq familles d'instructeurs, dont les
    * périmètres diffèrent — région pour une DREAL ou un conseil régional,
