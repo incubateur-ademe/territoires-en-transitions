@@ -12,6 +12,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
+import { onTestFinished } from 'vitest';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
@@ -29,13 +30,12 @@ describe('getAvisFileUrl', () => {
   let demandeAvisId: number;
   let avisSansPieceId: string;
   let instructeurCollectiviteId: number;
+  let demarcheId: number;
 
-  // Un code région propre à cette spec, dans un espace que personne d'autre
-  // n'occupe : les codes réels sont deux chiffres (et tous pris par l'import des
-  // services), `pickFreeRegionCode` tire deux lettres. Une lettre suivie d'un
-  // chiffre ne peut donc collisionner ni avec l'un ni avec l'autre, là où
-  // l'index unique « une DREAL par région » ne tolère pas deux occupants.
+  // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
+  // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
   const REGION = 'A1';
+  const DEPARTEMENT = 'A10';
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -44,7 +44,13 @@ describe('getAvisFileUrl', () => {
 
     const deposante = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
-      collectivite: { regionCode: REGION, nom: 'Agglo test avis file' },
+      // Le département sert au cas de la DDT ci-dessous, dont le périmètre se
+      // lit sur le département et non sur la région.
+      collectivite: {
+        regionCode: REGION,
+        departementCode: DEPARTEMENT,
+        nom: 'Agglo test avis file',
+      },
     });
     marie = getAuthUserFromUserCredentials(deposante.user);
 
@@ -71,6 +77,7 @@ describe('getAvisFileUrl', () => {
         ).toISOString(),
       })
       .returning({ id: demarcheTable.id });
+    demarcheId = demarche.id;
 
     const [demande] = await db.db
       .insert(pcaetDemandeAvisTable)
@@ -128,6 +135,77 @@ describe('getAvisFileUrl', () => {
         avisId: randomUUID(),
       })
     ).rejects.toThrow("L'avis n'a pas été trouvé");
+  });
+
+  /**
+   * Un destinataire en lecture suit l'instruction : il télécharge le rapport
+   * qu'un autre a rendu, parce que son droit vient d'avoir été saisi sur ce
+   * dossier — pas d'avoir été saisi sur cette demande-là.
+   *
+   * Le rapport n'existe pas en bibliothèque : la barrière franchie, le service
+   * échoue plus loin sur la pièce absente. C'est ce déplacement de l'erreur qui
+   * distingue « autorisé » de « refusé », sans monter un fichier de test.
+   */
+  it('laisse un destinataire en lecture télécharger un avis validé', async () => {
+    const ddt = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'ddt',
+        regionCode: REGION,
+        departementCode: DEPARTEMENT,
+        nom: 'DDT test avis file',
+      },
+    });
+    const [demandeDdt] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId,
+        instructeurCollectiviteId: ddt.collectivite.id,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+
+    // Validé, donc avec un rapport : la table refuse une validation sans pièce.
+    const [valide] = await db.db
+      .insert(pcaetAvisTable)
+      .values({
+        demandeAvisId,
+        emetteurCollectiviteId: instructeurCollectiviteId,
+        auTitreDe: 'autorite_environnementale',
+        sens: 'favorable',
+        fichierRef: 'rapport-inexistant.pdf',
+        valideLe: new Date().toISOString(),
+      })
+      .returning({ id: pcaetAvisTable.id });
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(pcaetAvisTable)
+        .where(eq(pcaetAvisTable.id, valide.id));
+      await db.db
+        .delete(pcaetDemandeAvisTable)
+        .where(eq(pcaetDemandeAvisTable.id, demandeDdt.id));
+      await ddt.cleanup();
+    });
+
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(ddt.user),
+    });
+
+    await expect(
+      caller.demarches.pcaet.getAvisFileUrl({
+        demandeAvisId,
+        avisId: valide.id,
+      })
+    ).rejects.toThrow("Cet avis n'a pas de rapport joint");
+
+    // Le brouillon de la DREAL, lui, ne sort pas de son espace.
+    await expect(
+      caller.demarches.pcaet.getAvisFileUrl({
+        demandeAvisId,
+        avisId: avisSansPieceId,
+      })
+    ).rejects.toThrow(/permission/i);
   });
 
   // La déposante n'instruit pas son propre dossier : elle n'a rien à lire ici.
