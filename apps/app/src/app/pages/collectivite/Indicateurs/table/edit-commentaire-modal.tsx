@@ -13,8 +13,8 @@ import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
 import { SourceType } from '../types';
 
-export type EditCommentaireModalProps = {
-  annee: number;
+type EditCommentaireModalProps = {
+  periodeLabel: string;
   commentaire: string;
   definition: IndicateurDefinition;
   type: SourceType;
@@ -29,7 +29,7 @@ export type EditCommentaireModalProps = {
 export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
   const {
     definition,
-    annee,
+    periodeLabel,
     commentaire: commentaireInitial,
     type,
     openState,
@@ -45,10 +45,9 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
       openState={openState}
       disableDismiss
       title={appLabels.commentaireIndicateurTitre({
-        sourceTypeLabel:
-          getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
+        sourceTypeLabel: getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
         unite: definition.unite,
-        annee,
+        periode: periodeLabel,
       })}
       render={() => {
         return (
