@@ -1,24 +1,25 @@
-import {Ref, forwardRef} from 'react';
-import {InputBase, InputBaseProps} from './InputBase';
-import {InputDate, InputDateProps} from './InputDate';
-import {InputSearch, InputSearchProps} from './InputSearch';
-import {InputPassword, InputPasswordProps} from './InputPassword';
-import {InputNumber, InputNumberProps} from './InputNumber';
-import {InputPattern, InputPatternProps} from './InputPattern';
-import {InputOTP, InputOTPProps} from './InputOTP';
-import {InputTel, InputTelProps} from './InputTel';
-import {InputFile, InputFileProps} from './InputFile';
+import { Ref, forwardRef } from 'react';
+import { InputBase, InputBaseProps } from './InputBase';
+import { InputDate, InputDateProps } from './InputDate';
+import { InputSearch, InputSearchProps } from './InputSearch';
+import { InputPassword, InputPasswordProps } from './InputPassword';
+import { InputNumber, InputNumberProps } from './InputNumber';
+import { InputPattern, InputPatternProps } from './InputPattern';
+import { InputOTP, InputOTPProps } from './InputOTP';
+import { InputTel, InputTelProps } from './InputTel';
+import { InputFile, InputFileProps } from './InputFile';
 
 type InputProps =
-  | (Omit<InputBaseProps, 'type'> & {type: 'text'})
-  | (InputNumberProps & {type: 'number'})
-  | (InputDateProps & {type: 'date'})
-  | (InputSearchProps & {type: 'search'})
-  | (InputPasswordProps & {type: 'password'})
-  | (InputPatternProps & {type: 'pattern'})
-  | (InputTelProps & {type: 'tel'})
-  | (InputOTPProps & {type: 'otp'})
-  | (InputFileProps & {type: 'file'});
+  | (Omit<InputBaseProps, 'type'> & { type: 'text' })
+  | (InputNumberProps & { type: 'number' })
+  | (InputDateProps & { type: 'date' })
+  | (Omit<InputBaseProps, 'type'> & { type: 'month' })
+  | (InputSearchProps & { type: 'search' })
+  | (InputPasswordProps & { type: 'password' })
+  | (InputPatternProps & { type: 'pattern' })
+  | (InputTelProps & { type: 'tel' })
+  | (InputOTPProps & { type: 'otp' })
+  | (InputFileProps & { type: 'file' });
 
 /**
  * Affiche un champ de saisie, éventuellement combiné à une zone d'icône (ou de
@@ -27,9 +28,15 @@ type InputProps =
  * - type : restreint à un sous-ensemble des types standards
  */
 export const Input = forwardRef(
-  ({type = 'text', ...props}: InputProps, ref?: Ref<HTMLInputElement>) => {
+  ({ type = 'text', ...props }: InputProps, ref?: Ref<HTMLInputElement>) => {
     if (type === 'date') {
       return <InputDate {...(props as InputDateProps)} ref={ref} />;
+    }
+
+    if (type === 'month') {
+      return (
+        <InputBase {...(props as InputBaseProps)} type="month" ref={ref} />
+      );
     }
 
     if (type === 'search') {
