@@ -1,3 +1,4 @@
+import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
 import { IndicateurSourcesRepository } from './sources/indicateur-sources.repository';
 import { HandleDefinitionFichesRepository } from './indicateurs/handle-definition-fiches/handle-definition-fiches.repository';
 import { HandleDefinitionPilotesRepository } from './indicateurs/handle-definition-pilotes/handle-definition-pilotes.repository';
@@ -78,6 +79,7 @@ const DEFINITIONS_PROVIDERS = [
     TransactionModule,
   ],
   providers: [
+    ListPlatformDefinitionsService,
     IndicateurSourcesRepository,
     HandleDefinitionFichesRepository,
     HandleDefinitionPilotesRepository,
@@ -109,6 +111,7 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
+    ListPlatformDefinitionsService,
     ListCollectiviteDefinitionsRepository,
     ListPlatformDefinitionsRepository,
     ListIndicateursService,

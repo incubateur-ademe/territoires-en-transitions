@@ -4,6 +4,7 @@ import { groupementTable } from '@tet/backend/collectivites/shared/models/groupe
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurGroupeTable } from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfants,
@@ -14,6 +15,7 @@ import {
   eq,
   getTableColumns,
   inArray,
+  isNotNull,
   isNull,
   or,
   sql,
@@ -29,15 +31,18 @@ export class ListCollectiviteDefinitionsRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listCollectiviteDefinitions({
-    identifiantsReferentiel,
-    indicateurIds,
-    collectiviteId,
-  }: {
-    identifiantsReferentiel?: string[];
-    indicateurIds?: number[];
-    collectiviteId?: number;
-  } = {}): Promise<IndicateurDefinition[]> {
+  async listCollectiviteDefinitions(
+    {
+      identifiantsReferentiel,
+      indicateurIds,
+      collectiviteId,
+    }: {
+      identifiantsReferentiel?: string[];
+      indicateurIds?: number[];
+      collectiviteId?: number;
+    } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     this.logger.log(
       `Récupération des définitions des indicateurs ${identifiantsReferentiel?.join(
         ','
@@ -60,7 +65,12 @@ export class ListCollectiviteDefinitionsRepository {
     const byCollectiviteId = collectiviteId
       ? or(
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          isNull(indicateurDefinitionTable.collectiviteId)
+          isNull(indicateurDefinitionTable.collectiviteId),
+          // Un indicateur de groupement est une restriction d'applicabilité,
+          // pas une définition personnalisée confidentielle. Le groupement
+          // reste donc prioritaire si des données historiques portent les
+          // deux colonnes de périmètre.
+          isNotNull(indicateurDefinitionTable.groupementId)
         )
       : undefined;
 
@@ -70,7 +80,7 @@ export class ListCollectiviteDefinitionsRepository {
       byCollectiviteId,
     ];
 
-    const definitions = await this.databaseService.db
+    const definitions = await (tx ?? this.databaseService.db)
       .select()
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
