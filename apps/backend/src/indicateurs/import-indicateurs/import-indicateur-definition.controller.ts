@@ -1,8 +1,16 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
-import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
+import { TokenInfo } from '../../users/decorators/token-info.decorators';
+import type { AuthenticatedOrServiceRoleUser } from '../../users/models/auth.models';
 import ImportIndicateurDefinitionService from './import-indicateur-definition.service';
 
 @ApiTags('Indicateurs')
@@ -18,24 +26,20 @@ export class ImportIndicateurDefinitionController {
     private readonly importIndicateurService: ImportIndicateurDefinitionService
   ) {}
 
-  /**
-   * Protected because the content of the import is not given:
-   * An attacker must have write access to the spreadhsheet to import it.
-   * @param referentielId
-   * @param tokenInfo
-   * @returns
-   */
-  @AllowAnonymousAccess()
   @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
-  @Get('import')
-  async importIndicateurDefinitions() {
-    return this.importIndicateurService.importIndicateurDefinitions();
+  @Post('import')
+  @HttpCode(HttpStatus.OK)
+  async importIndicateurDefinitions(
+    @TokenInfo() user: AuthenticatedOrServiceRoleUser
+  ) {
+    return this.importIndicateurService.importIndicateurDefinitions(user);
   }
 
-  @AllowAnonymousAccess()
   @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
   @Get('verify')
-  async verifyIndicateurDefinitions() {
-    return this.importIndicateurService.verifyIndicateurDefinitions();
+  async verifyIndicateurDefinitions(
+    @TokenInfo() user: AuthenticatedOrServiceRoleUser
+  ) {
+    return this.importIndicateurService.verifyIndicateurDefinitions(user);
   }
 }
