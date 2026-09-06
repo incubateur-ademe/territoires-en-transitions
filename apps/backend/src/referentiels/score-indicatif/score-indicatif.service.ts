@@ -2,19 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
-import { indicateurCategorieTagTable } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
 } from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
-import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import ValeursReferenceService from '@tet/backend/indicateurs/valeurs/valeurs-reference.service';
-import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
-import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@tet/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import {
   ScoreIndicatifError,
@@ -23,15 +15,14 @@ import {
 import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
   COLLECTIVITE_SOURCE_ID,
-  getYearFromIsoDate,
   IndicateurAvecValeursParSource,
-  IndicateurSourceMetadonnee,
   IndicateurValeurGroupee,
+  toAnnualIndicateurYear,
 } from '@tet/domain/indicateurs';
 import {
   ActionScoreIndicatif,
@@ -48,18 +39,24 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
-import { objectToCamel } from 'ts-case-convert';
 import { GetScoreIndicatifRequest } from './get-score-indicatif.request';
+import {
+  assertAnnualScoreIndicateurs,
+  getAnnualScoreIndicatifPeriodicite,
+} from './score-indicatif-periodicite.rules';
+import {
+  ScoreIndicatifRepository,
+  type ScoreIndicatifSelectionScope,
+} from './score-indicatif.repository';
 
 @Injectable()
 export class ScoreIndicatifService {
   private readonly logger = new Logger(ScoreIndicatifService.name);
-  private readonly db = this.databaseService.db;
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly repository: ScoreIndicatifRepository,
+    private readonly transactionManager: TransactionManager,
     private readonly valeursReferenceService: ValeursReferenceService,
     private readonly collectivitesService: CollectivitesService,
     private readonly personnalisationsService: PersonnalisationsService,
@@ -149,7 +146,10 @@ export class ScoreIndicatifService {
     valeursGroupees: { indicateurs: IndicateurAvecValeursParSource[] },
     valeursUtilisees: ValeurUtilisee[]
   ): ScoreIndicatifActionValeurUtilisable['indicateurs'][number] | null {
-    const { indicateurId, identifiantReferentiel, unite, titre } = indicateur;
+    const { indicateurId, identifiantReferentiel, unite, titre, periodicite } =
+      indicateur;
+    assertAnnualScoreIndicateurs([indicateur]);
+
     const sourcesObj = valeursGroupees.indicateurs.find(
       (ind) => ind.definition.id === indicateurId
     )?.sources;
@@ -180,7 +180,11 @@ export class ScoreIndicatifService {
       const valeur = (
         typeScore === scoreIndicatifTypeEnum.FAIT ? v.resultat : v.objectif
       ) as number;
-      const annee = getYearFromIsoDate(v.dateValeur);
+      const annee = toAnnualIndicateurYear(
+        periodicite,
+        v.dateValeur,
+        `Le score indicatif (${identifiantReferentiel})`
+      );
       if (utilisee) {
         selection[typeScore] = { id: v.id, annee, source, valeur };
       }
@@ -218,6 +222,7 @@ export class ScoreIndicatifService {
       identifiantReferentiel,
       unite,
       titre,
+      periodicite,
       selection,
       sources: Object.values(sourcesObj)
         .map((s) => ({
@@ -253,36 +258,67 @@ export class ScoreIndicatifService {
       return failure(permissionResult.error);
     }
 
+    const selectionScope: ScoreIndicatifSelectionScope = {
+      actionId: input.actionId,
+      collectiviteId: input.collectiviteId,
+      indicateurId: input.indicateurId,
+    };
+
     try {
-      const { actionId, collectiviteId, indicateurId } = getTableColumns(
-        actionScoreIndicateurValeurTable
-      );
-      await this.db.transaction(async (tx) => {
-        await tx
-          .delete(actionScoreIndicateurValeurTable)
-          .where(
-            and(
-              eq(actionId, input.actionId),
-              eq(collectiviteId, input.collectiviteId),
-              eq(indicateurId, input.indicateurId)
-            )
-          );
+      const transactionResult = await this.transactionManager.executeSingle<
+        void,
+        Error
+      >(async (tx) => {
+        await this.repository.lockSelectionScope(selectionScope, tx);
 
         const valeursNonNulles = input.valeurs.filter(
-          (v) => v.indicateurValeurId !== null
+          (valeur): valeur is typeof valeur & { indicateurValeurId: number } =>
+            valeur.indicateurValeurId !== null
         );
         if (valeursNonNulles.length) {
-          await tx.insert(actionScoreIndicateurValeurTable).values(
-            valeursNonNulles.map((v) => ({
-              actionId: input.actionId,
-              collectiviteId: input.collectiviteId,
-              indicateurId: input.indicateurId,
-              indicateurValeurId: v.indicateurValeurId as number,
-              typeScore: v.typeScore,
-            }))
+          const definition = await this.repository.getDefinitionForShare(
+            input.indicateurId,
+            tx
           );
+
+          assertAnnualScoreIndicateurs([
+            {
+              indicateurId: input.indicateurId,
+              identifiantReferentiel: definition?.identifiantReferentiel,
+              periodicite: definition?.periodicite,
+            },
+          ]);
+
+          const valeurIds = [
+            ...new Set(
+              valeursNonNulles.map((valeur) =>
+                Number(valeur.indicateurValeurId)
+              )
+            ),
+          ];
+          const valeursCompatibles =
+            await this.repository.listCompatibleValeurIds(
+              selectionScope,
+              valeurIds,
+              tx
+            );
+          if (valeursCompatibles.length !== valeurIds.length) {
+            throw new Error(
+              'Chaque valeur du score indicatif doit appartenir à la définition et à la collectivité demandées'
+            );
+          }
         }
+
+        await this.repository.replaceValeursUtilisees(
+          selectionScope,
+          valeursNonNulles,
+          tx
+        );
+        return success(undefined);
       });
+      if (!transactionResult.success) {
+        throw transactionResult.cause ?? transactionResult.error;
+      }
 
       return success(undefined);
     } catch (error) {
@@ -393,15 +429,7 @@ export class ScoreIndicatifService {
 
   /** Charge les formules à utiliser pour le calcul du score indicatif des actions */
   private async getFormules(input: GetScoreIndicatifRequest) {
-    const { actionId, exprScore } = getTableColumns(actionDefinitionTable);
-
-    return this.db
-      .select({
-        actionId,
-        exprScore,
-      })
-      .from(actionDefinitionTable)
-      .where(inArray(actionId, input.actionIds));
+    return this.repository.listFormules(input.actionIds);
   }
 
   /**
@@ -413,9 +441,12 @@ export class ScoreIndicatifService {
   private async deriveReferentielContext(
     actionIds: string[]
   ): Promise<
-    Result<{ referentielId: string; version: string }, ScoreIndicatifError>
+    Result<
+      { referentielId: ReferentielId; version: string },
+      ScoreIndicatifError
+    >
   > {
-    const referentielIds = new Set<string>();
+    const referentielIds = new Set<ReferentielId>();
     for (const actionId of actionIds) {
       try {
         referentielIds.add(getReferentielIdFromActionId(actionId));
@@ -436,7 +467,7 @@ export class ScoreIndicatifService {
 
     const refDef =
       await this.getReferentielDefinitionService.getReferentielDefinition(
-        referentielId as any
+        referentielId
       );
 
     return success({ referentielId, version: refDef.version });
@@ -467,32 +498,9 @@ export class ScoreIndicatifService {
       }
     });
 
-    const {
-      identifiantReferentiel,
-      id: indicateurId,
-      unite,
-      titre,
-    } = getTableColumns(indicateurDefinitionTable);
-
-    const indicateurs = await this.db
-      .select({
-        indicateurId,
-        identifiantReferentiel,
-        unite,
-        titre,
-        categories: sql<string[]>`json_agg(${categorieTagTable.nom})`,
-      })
-      .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurCategorieTagTable,
-        eq(indicateurCategorieTagTable.indicateurId, indicateurId)
-      )
-      .leftJoin(
-        categorieTagTable,
-        eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
-      )
-      .where(and(inArray(identifiantReferentiel, identifiantReferentielList)))
-      .groupBy(indicateurId);
+    const indicateurs = await this.repository.listDefinitions(
+      identifiantReferentielList
+    );
 
     // identité de la collectivité
     const identiteCollectivite =
@@ -520,12 +528,13 @@ export class ScoreIndicatifService {
                   );
                   return null;
                 }
-                const { indicateurId, unite, titre } = indicateur;
+                const { indicateurId, unite, titre, periodicite } = indicateur;
                 return {
                   actionId,
                   indicateurId,
                   unite,
                   titre,
+                  periodicite,
                   identifiantReferentiel: identifiant,
                   optional,
                 };
@@ -535,6 +544,8 @@ export class ScoreIndicatifService {
       )
       .filter((action) => action !== null);
 
+    assertAnnualScoreIndicateurs(indicateursAssocies);
+
     return {
       indicateursAssocies,
       identiteCollectivite,
@@ -543,63 +554,16 @@ export class ScoreIndicatifService {
 
   /** Liste les valeurs d'indicateurs utilisées pour le calcul du score indicatif */
   async getValeursUtiliseesParActionId(input: GetScoreIndicatifRequest) {
-    const valeurs = await this.db
-      .select({
-        actionId: actionScoreIndicateurValeurTable.actionId,
-        indicateurValeurId: actionScoreIndicateurValeurTable.indicateurValeurId,
-        typeScore: actionScoreIndicateurValeurTable.typeScore,
-        indicateurId: actionScoreIndicateurValeurTable.indicateurId,
-        dateValeur: indicateurValeurTable.dateValeur,
-        resultat: indicateurValeurTable.resultat,
-        objectif: indicateurValeurTable.objectif,
-        sourceLibelle: indicateurSourceTable.libelle,
-        sourceMetadonnee:
-          sql<IndicateurSourceMetadonnee | null>`to_jsonb(${indicateurSourceMetadonneeTable})`.as(
-            'sourceMetadonnee'
-          ),
-      })
-      .from(actionScoreIndicateurValeurTable)
-      .innerJoin(
-        indicateurValeurTable,
-        eq(
-          indicateurValeurTable.id,
-          actionScoreIndicateurValeurTable.indicateurValeurId
-        )
-      )
-      .leftJoin(
-        indicateurSourceMetadonneeTable,
-        eq(
-          indicateurSourceMetadonneeTable.id,
-          indicateurValeurTable.metadonneeId
-        )
-      )
-      .leftJoin(
-        indicateurSourceTable,
-        eq(indicateurSourceTable.id, indicateurSourceMetadonneeTable.sourceId)
-      )
-      .where(
-        and(
-          inArray(actionScoreIndicateurValeurTable.actionId, input.actionIds),
-          eq(
-            actionScoreIndicateurValeurTable.collectiviteId,
-            input.collectiviteId
-          )
-        )
-      );
-
-    const valeursNonNulles = objectToCamel(valeurs)
-      .map(({ objectif, resultat, ...v }) => ({
-        ...v,
-        valeur: (v.typeScore === scoreIndicatifTypeEnum.FAIT
-          ? resultat
-          : objectif) as number,
+    const rows = await this.repository.listValeursUtilisees(input);
+    const valeurs = rows
+      .map(({ objectif, resultat, ...row }) => ({
+        ...row,
+        valeur:
+          row.typeScore === scoreIndicatifTypeEnum.FAIT ? resultat : objectif,
       }))
-      .filter((v) => v.valeur !== null);
+      .filter((valeur): valeur is ValeurUtilisee => valeur.valeur !== null);
 
-    return groupBy(
-      valeursNonNulles,
-      ({ actionId }: { actionId: string }) => actionId
-    );
+    return groupBy(valeurs, ({ actionId }) => actionId);
   }
 
   /** Charge et agrège les données nécessaires au calcul */
@@ -607,7 +571,7 @@ export class ScoreIndicatifService {
     input: GetScoreIndicatifRequest,
     indicateursAssocies: IndicateurAssocie[],
     identiteCollectivite: CollectiviteAvecType,
-    referentielContext: { referentielId: string; version: string }
+    referentielContext: { referentielId: ReferentielId; version: string }
   ) {
     // réponses aux questions de personnalisation
     const personnalisationReponses =
@@ -628,7 +592,7 @@ export class ScoreIndicatifService {
         collectiviteAvecType: identiteCollectivite,
         personnalisationReponses,
         referentielContext: {
-          referentielId: referentielContext.referentielId as any,
+          referentielId: referentielContext.referentielId,
           version: referentielContext.version,
         },
       });
@@ -768,13 +732,7 @@ export class ScoreIndicatifService {
   }
 
   private async extractActionIdsWithExprScore() {
-    const rows = await this.db
-      .select({
-        actionId: actionDefinitionTable.actionId,
-      })
-      .from(actionDefinitionTable)
-      .where(not(eq(actionDefinitionTable.exprScore, '')));
-    return rows.map((r) => r.actionId);
+    return this.repository.listActionIdsWithExprScore();
   }
 
   /**
@@ -785,7 +743,12 @@ export class ScoreIndicatifService {
   private formatScoreIndicatifForPayload(
     scoreIndicatif: ActionScoreIndicatif
   ): ScoreIndicatifPayload {
+    const periodicite = getAnnualScoreIndicatifPeriodicite(
+      scoreIndicatif.indicateurs
+    );
+
     return {
+      periodicite,
       unite: scoreIndicatif.indicateurs?.[0].unite,
       fait: this.formatValeursForPayload(
         scoreIndicatif,

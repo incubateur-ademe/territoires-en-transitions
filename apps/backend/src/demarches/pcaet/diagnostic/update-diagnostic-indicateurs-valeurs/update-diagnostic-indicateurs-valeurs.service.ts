@@ -1,15 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.service';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   isDemarchePcaetAmontModifiable,
   type PcaetDiagnostic,
 } from '@tet/domain/demarches';
-import type { IndicateurValeurCreate } from '@tet/domain/indicateurs';
+import {
+  assertAnnualIndicateurPeriodicite,
+  type IndicateurValeurCreate,
+} from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DemarchePcaetDiagnosticService } from '../../shared/demarche-pcaet-diagnostic.service';
@@ -31,7 +36,8 @@ export class UpdateDiagnosticIndicateursValeursService {
     private readonly refRepository: DemarchePcaetRefRepository,
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
-    private readonly crudValeursService: CrudValeursService
+    private readonly crudValeursService: CrudValeursService,
+    private readonly definitionsService: ListPlatformDefinitionsService
   ) {}
 
   async updateValeurs(
@@ -74,17 +80,42 @@ export class UpdateDiagnosticIndicateursValeursService {
       );
     }
 
-    const metadonneeId =
-      await this.sourceMetadonneeRepository.getOrCreateMetadonneeId({
-        demarcheId,
-        collectiviteId,
-      });
+    const indicateurIds = [
+      ...new Set(valeurs.map(({ indicateurId }) => indicateurId)),
+    ];
+    const definitions = await this.definitionsService.listPlatformDefinitions(
+      { indicateurIds },
+      { user, tx }
+    );
+    if (!definitions.success) return definitions;
+    if (definitions.data.length !== indicateurIds.length) {
+      return failure(
+        UpdateDiagnosticIndicateursValeursErrorEnum.INDICATEUR_NON_ANNUEL
+      );
+    }
+    try {
+      for (const definition of definitions.data) {
+        assertAnnualIndicateurPeriodicite(
+          definition.periodicite,
+          'Le diagnostic PCAET'
+        );
+      }
+    } catch {
+      return failure(
+        UpdateDiagnosticIndicateursValeursErrorEnum.INDICATEUR_NON_ANNUEL
+      );
+    }
 
-    const upsertRecords = await this.buildUpsertValeurs({
-      collectiviteId,
-      metadonneeId,
-      valeurs,
-    });
+    const metadonneeId =
+      await this.sourceMetadonneeRepository.getOrCreateMetadonneeId(
+        { demarcheId, collectiviteId },
+        tx
+      );
+
+    const upsertRecords = await this.buildUpsertValeurs(
+      { collectiviteId, metadonneeId, valeurs },
+      tx
+    );
 
     await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
       user,
@@ -99,15 +130,18 @@ export class UpdateDiagnosticIndicateursValeursService {
     return success(payload);
   }
 
-  private async buildUpsertValeurs({
-    collectiviteId,
-    metadonneeId,
-    valeurs,
-  }: {
-    collectiviteId: number;
-    metadonneeId: number;
-    valeurs: UpdateDiagnosticIndicateursValeursInput['valeurs'];
-  }): Promise<IndicateurValeurCreate[]> {
+  private async buildUpsertValeurs(
+    {
+      collectiviteId,
+      metadonneeId,
+      valeurs,
+    }: {
+      collectiviteId: number;
+      metadonneeId: number;
+      valeurs: UpdateDiagnosticIndicateursValeursInput['valeurs'];
+    },
+    tx?: Transaction
+  ): Promise<IndicateurValeurCreate[]> {
     const byCellKey = new Map<
       string,
       {
@@ -147,7 +181,7 @@ export class UpdateDiagnosticIndicateursValeursService {
       }
     }
 
-    const existingRows = await this.databaseService.db
+    const existingRows = await (tx ?? this.databaseService.db)
       .select({
         indicateurId: indicateurValeurTable.indicateurId,
         dateValeur: indicateurValeurTable.dateValeur,

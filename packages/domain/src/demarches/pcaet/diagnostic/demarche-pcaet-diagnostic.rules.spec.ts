@@ -48,8 +48,8 @@ const valeur = ({
       resultat,
       objectif,
     },
-    indicateurDefinition: { identifiantReferentiel },
-  }) as PcaetDiagnostic['indicateurValeurs'][number];
+    indicateurDefinition: { identifiantReferentiel, periodicite: 'annuelle' },
+  } as PcaetDiagnostic['indicateurValeurs'][number]);
 
 /** Constat + objectifs requis (2050 exclu via optionalYears). */
 const valeursCompletes = (
@@ -93,13 +93,7 @@ describe('deriveReferenceYearFromIndicateurValeurYears', () => {
   it('exclut les horizons d’objectif et les années hors bornes', () => {
     expect(
       deriveReferenceYearFromIndicateurValeurYears({
-        resultYears: [
-          REFERENCE_YEAR_MIN - 1,
-          2030,
-          2036,
-          2050,
-          2027,
-        ],
+        resultYears: [REFERENCE_YEAR_MIN - 1, 2030, 2036, 2050, 2027],
         currentYear: 2026,
       })
     ).toBeNull();
@@ -146,9 +140,10 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         config: parentConfig(),
-        indicateurs: PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
-          (year) => year !== 2050
-        ).map((year) => valeur({ year, objectif: 8 })),
+        indicateurs:
+          PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+            (year) => year !== 2050
+          ).map((year) => valeur({ year, objectif: 8 })),
       })
     ).toBe(false);
   });
@@ -264,10 +259,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         config,
-        indicateurs: [
-          ...completeLeaf('cae_4.aa'),
-          ...completeLeaf('cae_4.ab'),
-        ],
+        indicateurs: [...completeLeaf('cae_4.aa'), ...completeLeaf('cae_4.ab')],
       })
     ).toBe(true);
   });
@@ -370,5 +362,20 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
         })
       )
     ).toBe(true);
+  });
+});
+
+describe('PCAET annual boundary', () => {
+  it('rejects a monthly observation in annual completeness', () => {
+    const monthlyValeur = valeur({ year: 2021, resultat: 12 });
+    if (!monthlyValeur.indicateurDefinition)
+      throw new Error('Missing test definition');
+    monthlyValeur.indicateurDefinition.periodicite = 'mensuelle';
+    expect(() =>
+      isPcaetDiagnosticIndicateurComplet({
+        config: parentConfig(),
+        indicateurs: [monthlyValeur],
+      })
+    ).toThrow('annuelle');
   });
 });

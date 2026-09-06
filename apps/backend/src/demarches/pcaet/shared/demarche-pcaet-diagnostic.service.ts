@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.service';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -12,7 +12,10 @@ import {
   type PcaetDiagnosticVulnerabilite,
   type PcaetDiagnosticVulnerabiliteConfig,
 } from '@tet/domain/demarches';
-import type { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
+import {
+  assertAnnualIndicateurPeriodicite,
+  type IndicateurValeurAvecMetadonnesDefinition,
+} from '@tet/domain/indicateurs';
 import {
   DemarchePcaetSourceMetadonneeRepository,
   PCAET_COLLECTIVITE_SOURCE_ID,
@@ -31,7 +34,7 @@ export class DemarchePcaetDiagnosticService {
   constructor(
     private readonly vulnerabiliteReadService: DemarchePcaetVulnerabiliteReadService,
     private readonly crudValeursService: CrudValeursService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listPlatformDefinitionsService: ListPlatformDefinitionsService,
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository
   ) {}
 
@@ -44,9 +47,7 @@ export class DemarchePcaetDiagnosticService {
   ): Promise<PcaetDiagnostic> {
     const [indicateurDefinitions, indicateurValeurs, vulnerabilite] =
       await Promise.all([
-        this.listPlatformDefinitionsRepository.listPlatformDefinitions({
-          identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
-        }),
+        this.listDefinitions(tx),
         this.loadIndicateurValeursForDemarche(
           { demarcheId, collectiviteId },
           tx
@@ -57,6 +58,15 @@ export class DemarchePcaetDiagnosticService {
         ),
       ]);
 
+    for (const definition of indicateurDefinitions) {
+      assertAnnualIndicateurPeriodicite(
+        definition.periodicite,
+        `Le diagnostic PCAET (${
+          definition.identifiantReferentiel ?? definition.id
+        })`
+      );
+    }
+
     return {
       indicateurParentConfigs: PCAET_DIAGNOSTIC_INDICATEURS,
       indicateurDefinitions,
@@ -66,6 +76,16 @@ export class DemarchePcaetDiagnosticService {
         vulnerabilite
       ),
     };
+  }
+
+  private async listDefinitions(tx?: Transaction) {
+    const result =
+      await this.listPlatformDefinitionsService.listPlatformDefinitions(
+        { identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS },
+        { user: null, isUserTrusted: true, tx }
+      );
+    if (!result.success) throw result.cause ?? new Error(result.error);
+    return result.data;
   }
 
   /**

@@ -1,7 +1,7 @@
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { getYearFromIsoDate } from '@tet/domain/indicateurs';
+import { toAnnualIndicateurYear } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -18,7 +18,7 @@ import {
 } from './score-indicatif.types';
 import { useGetValeursUtilisees } from './use-get-valeurs-utilisees';
 
-export type ScoreIndicatifModalProps = {
+type ScoreIndicatifModalProps = {
   scoreIndicatif: ScoreIndicatifAction;
   openState: OpenState;
 };
@@ -77,9 +77,16 @@ const anneesDifferentesSelectionnees = (
   scoreIndicatif: ScoreIndicatifAction,
   typeScore: ScoreIndicatifType
 ) =>
-  uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (v) =>
-    getYearFromIsoDate(v.dateValeur)
-  ).length > 1;
+  uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (valeur) => {
+    const periodicite = scoreIndicatif.indicateurs.find(
+      ({ indicateurId }) => indicateurId === valeur.indicateurId
+    )?.periodicite;
+    return toAnnualIndicateurYear(
+      periodicite,
+      valeur.dateValeur,
+      `Le score indicatif (${valeur.indicateurId})`
+    );
+  }).length > 1;
 
 /**
  * Affiche le sélecteur d'indicateurs quand le calcul utilise plusieurs indicateurs
@@ -157,13 +164,13 @@ const ScoreIndicatifModalIndicateurCard = (
     idx: number;
     indicateur: Pick<
       ScoreIndicatifValeursIndicateur,
-      'indicateurId' | 'titre' | 'unite'
+      'indicateurId' | 'titre' | 'unite' | 'periodicite'
     >;
     onSelect: (index: number) => void;
   }
 ) => {
   const { scoreIndicatif, idx, indicateur, onSelect } = props;
-  const { indicateurId, titre, unite } = indicateur;
+  const { indicateurId, titre, unite, periodicite } = indicateur;
   const { data: valeurUtilisees } = useGetValeursUtilisees(
     scoreIndicatif.actionId,
     indicateurId
@@ -181,6 +188,7 @@ const ScoreIndicatifModalIndicateurCard = (
             indicateurId={indicateurId}
             unite={unite}
             valeurUtilisees={valeurUtilisees}
+            periodicite={periodicite}
             typeScore="fait"
           />
         </li>
@@ -189,6 +197,7 @@ const ScoreIndicatifModalIndicateurCard = (
             indicateurId={indicateurId}
             unite={unite}
             valeurUtilisees={valeurUtilisees}
+            periodicite={periodicite}
             typeScore="programme"
           />
         </li>
