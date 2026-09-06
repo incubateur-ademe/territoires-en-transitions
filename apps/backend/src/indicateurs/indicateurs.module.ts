@@ -1,3 +1,7 @@
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { WriteIndicateurValeursService } from './valeurs/write-indicateur-valeurs.service';
+import { ValidateIndicateurValeursWriteService } from './valeurs/validate-indicateur-valeurs-write.service';
+import { ReconcileIndicateurValeursService } from './valeurs/reconcile-indicateur-valeurs.service';
 import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
 import { IndicateurValeurLockRepository } from './valeurs/indicateur-valeur-lock.repository';
 import { ComputeValeursRepository } from './valeurs/compute-valeurs.repository';
@@ -23,7 +27,6 @@ import { PersonnalisationsModule } from '../collectivites/personnalisations/pers
 import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
-import { TransactionModule } from '../utils/transaction/transaction.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
@@ -77,14 +80,17 @@ const DEFINITIONS_PROVIDERS = [
 
 @Module({
   imports: [
+    TransactionModule,
     UsersModule,
     CollectivitesModule,
     SheetModule,
     PersonnalisationsModule,
     ReferentielsCoreModule,
-    TransactionModule,
   ],
   providers: [
+    WriteIndicateurValeursService,
+    ValidateIndicateurValeursWriteService,
+    ReconcileIndicateurValeursService,
     IndicateurDefinitionLockRepository,
     IndicateurValeurLockRepository,
     ComputeValeursRepository,

@@ -115,7 +115,7 @@ describe('ScoreIndicatifRouter', () => {
                 programme: [
                   {
                     annee: 2025,
-                    dateValeur: '2025-05-29',
+                    dateValeur: '2025-01-01',
                     utilisee: true,
                     valeur: 44,
                   },
@@ -130,7 +130,7 @@ describe('ScoreIndicatifRouter', () => {
                 fait: [
                   {
                     annee: 2025,
-                    dateValeur: '2025-05-29',
+                    dateValeur: '2025-01-01',
                     utilisee: true,
                     valeur: 63,
                   },
@@ -165,7 +165,7 @@ describe('ScoreIndicatifRouter', () => {
       'cae_1.2.3.3.4': [
         {
           actionId: 'cae_1.2.3.3.4',
-          dateValeur: '2025-05-29',
+          dateValeur: '2025-01-01',
           indicateurId: expect.any(Number),
           indicateurValeurId: expect.any(Number),
           sourceLibelle: null,
@@ -175,7 +175,7 @@ describe('ScoreIndicatifRouter', () => {
         },
         {
           actionId: 'cae_1.2.3.3.4',
-          dateValeur: '2025-05-29',
+          dateValeur: '2025-01-01',
           indicateurId: expect.any(Number),
           indicateurValeurId: expect.any(Number),
           sourceLibelle: 'CITEPA',
@@ -459,7 +459,7 @@ describe('ScoreIndicatifRouter', () => {
           score: 0,
           valeursUtilisees: [
             {
-              dateValeur: '2025-05-29',
+              dateValeur: '2025-01-01',
               indicateurId,
               sourceLibelle: 'CITEPA',
               sourceMetadonnee: {
@@ -481,7 +481,7 @@ describe('ScoreIndicatifRouter', () => {
           score: 0,
           valeursUtilisees: [
             {
-              dateValeur: '2025-05-29',
+              dateValeur: '2025-01-01',
               indicateurId,
               sourceLibelle: null,
               sourceMetadonnee: null,

@@ -95,7 +95,7 @@ export class ScoreIndicatifService {
           collectiviteId: input.collectiviteId,
           indicateurIds,
         },
-        user
+        { user }
       );
 
     const valeursUtiliseesParActionId =

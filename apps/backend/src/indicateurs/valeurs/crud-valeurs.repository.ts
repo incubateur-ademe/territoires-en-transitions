@@ -201,6 +201,17 @@ export class CrudValeursRepository {
       .where(inArray(indicateurSourceTable.id, sourceIds));
   }
 
+  async listMetadataSources(metadataIds: number[], tx: Transaction) {
+    if (metadataIds.length === 0) return [];
+    return tx
+      .select({
+        id: indicateurSourceMetadonneeTable.id,
+        sourceId: indicateurSourceMetadonneeTable.sourceId,
+      })
+      .from(indicateurSourceMetadonneeTable)
+      .where(inArray(indicateurSourceMetadonneeTable.id, metadataIds));
+  }
+
   /**
    * Verrouille les appartenances utilisées pour autoriser le lot d'écriture.
    * Une suppression concurrente attend ainsi la fin de la transaction qui a

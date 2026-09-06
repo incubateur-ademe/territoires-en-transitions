@@ -1,833 +1,323 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceSourceCalculTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
-import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import { Injectable } from '@nestjs/common';
 import IndicateurSourcesService from '@tet/backend/indicateurs/sources/indicateur-sources.service';
-import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
-import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurDefinition,
   IndicateurValeur,
   IndicateurValeurCreate,
-  IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
+import type {
+  CalculSourceGroups,
+  CalculSourceValeur,
+  IndicateurFormula,
+  RecomputedIndicateurValeurs,
+  SourceCalculPolicy,
+} from './calcul-indicateur.types';
+import { ComputeValeursRepository } from './compute-valeurs.repository';
 import {
-  and,
-  eq,
-  getTableColumns,
-  inArray,
-  isNull,
-  or,
-  sql,
-  SQLWrapper,
-} from 'drizzle-orm';
-import { isNil, round } from 'es-toolkit';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+  evaluateCalculIndicateur,
+  getCalculatedValeurIdentity,
+} from './evaluate-calcul-indicateur.rules';
+import {
+  fillCalculSourceGroups,
+  getCalculSourceGroupKey,
+  normalizeCalculSourceId,
+} from './group-calcul-indicateur-sources.rules';
+import IndicateurExpressionService from './indicateur-expression.service';
+import {
+  dehydrateIndicateurPeriod,
+  hydrateIndicateurPeriod,
+} from './indicateur-period.adapter';
+import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
+import { LoadIndicateurCalculGraphService } from './load-indicateur-calcul-graph.service';
 
-type IndicateurValeurInsert = IndicateurValeurCreate;
+type ReconciledValeurs = Pick<
+  RecomputedIndicateurValeurs,
+  'valeursToUpsert' | 'valeurIdsToDelete'
+>;
 
 @Injectable()
 export default class ComputeValeursService {
-  private readonly logger = new Logger(ComputeValeursService.name);
-
-  /**
-   * By default, we can use the INSEE source to calculate the values for other sources
-   */
   static DEFAULT_SOURCE_CALCUL_IDS = ['insee'];
 
   constructor(
-    private readonly databaseService: DatabaseService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly repository: ComputeValeursRepository,
+    private readonly graphService: LoadIndicateurCalculGraphService,
     private readonly indicateurSourceService: IndicateurSourcesService,
-    private readonly indicateurExpressionService: IndicateurExpressionService
+    private readonly expressions: IndicateurExpressionService,
+    private readonly valeurLockRepository: IndicateurValeurLockRepository
   ) {}
 
-  async getSourcesCalcul() {
-    const sourceSourceCalculIds = await this.databaseService.db
-      .select({
-        sourceId: indicateurSourceTable.id,
-        sourceCalculIds: sql<
-          string[]
-        >`array_agg(${indicateurSourceSourceCalculTable.sourceCalculId})`.as(
-          'source_calcul_ids'
-        ),
-      })
-      .from(indicateurSourceTable)
-      .leftJoin(
-        indicateurSourceSourceCalculTable,
-        eq(indicateurSourceTable.id, indicateurSourceSourceCalculTable.sourceId)
-      )
-      .groupBy(indicateurSourceTable.id);
-    sourceSourceCalculIds.forEach((source) => {
-      if (!source.sourceCalculIds) {
-        source.sourceCalculIds = [];
-      } else {
-        source.sourceCalculIds = source.sourceCalculIds.filter(
-          (id) => id !== null
-        );
-      }
-      ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS.forEach(
-        (defaultSourceCalculId) => {
-          if (
-            source.sourceId !== defaultSourceCalculId &&
-            !source.sourceCalculIds.includes(defaultSourceCalculId)
-          ) {
-            source.sourceCalculIds.push(defaultSourceCalculId);
-            this.logger.log(
-              `Allow to use ${defaultSourceCalculId} to compute ${source.sourceId} indicateur values`
-            );
-          }
-        }
-      );
-    });
-    sourceSourceCalculIds.push({
-      sourceId: COLLECTIVITE_SOURCE_ID,
-      sourceCalculIds: ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS,
-    });
-
-    return sourceSourceCalculIds;
+  async getSourcesCalcul(tx?: Transaction): Promise<SourceCalculPolicy[]> {
+    const stored = await this.repository.listSourceCalculs(tx);
+    return [
+      ...stored.map(({ sourceId, sourceCalculIds }) => ({
+        sourceId,
+        sourceCalculIds: [
+          ...new Set([
+            ...(sourceCalculIds?.filter(Boolean) ?? []),
+            ...ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS.filter(
+              (id) => id !== sourceId
+            ),
+          ]),
+        ],
+      })),
+      {
+        sourceId: COLLECTIVITE_SOURCE_ID,
+        sourceCalculIds: ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS,
+      },
+    ];
   }
 
   async getAllSourceIdentifiants(
-    forComputedIndicateurDefinitions?: IndicateurDefinition[]
+    definitions?: IndicateurDefinition[]
   ): Promise<string[]> {
-    if (!forComputedIndicateurDefinitions) {
-      forComputedIndicateurDefinitions =
-        await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue();
+    if (!definitions) {
+      const result = await this.graphService.loadAllComputedDefinitions();
+      if (!result.success) throw result.cause ?? result.error;
+      definitions = result.data;
     }
-
-    this.logger.log(
-      `Recompute all calculated indicateur valeurs for ${
-        forComputedIndicateurDefinitions.length
-      } computed indicateur definitions: ${forComputedIndicateurDefinitions
-        .map((d) => d.identifiantReferentiel)
-        .join(',')}`
-    );
-
-    const allSourceIdentifiants: string[] = [];
-    forComputedIndicateurDefinitions.forEach((computedIndicateurDefinition) => {
-      const sourceIdentifiants =
-        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          computedIndicateurDefinition.valeurCalcule ?? ''
-        );
-      sourceIdentifiants.forEach((source) => {
-        if (!allSourceIdentifiants.includes(source.identifiant)) {
-          allSourceIdentifiants.push(source.identifiant);
-        }
-      });
-    });
-    this.logger.log(
-      `Found ${
-        allSourceIdentifiants.length
-      } source indicateur identifiants: ${allSourceIdentifiants.join(',')}`
-    );
-    return allSourceIdentifiants;
-  }
-
-  private getSourceIndicateurKeyForCalculatedIndicateurValeur(
-    indicateurValeur: IndicateurValeurWithIdentifiant,
-    forceSourceId?: string
-  ): string | null {
-    return `${indicateurValeur.collectiviteId}_${indicateurValeur.dateValeur}_${
-      forceSourceId || indicateurValeur.sourceId || COLLECTIVITE_SOURCE_ID
-    }`;
-  }
-
-  /**
-   * TODO: unit test
-   * @param targetIndicateurDefinition
-   * @param sourceIndicateurValeurs
-   * @param allowedExtraSourcesForCalculatedValues
-   * @param relatedSourceIndicateurValeursByDate
-   * @param allowToAddEntry
-   * @returns
-   */
-  private fillRelatedSourceIndicateurValeursByDate(
-    targetIndicateurDefinition: IndicateurDefinition,
-    sourceIndicateurValeurs: IndicateurValeurWithIdentifiant[],
-    allowedExtraSourcesForCalculatedValues: {
-      sourceId: string;
-      sourceCalculIds: string[];
-    }[],
-    relatedSourceIndicateurValeursByDate: {
-      [collectiviteIdDateSourceIdKey: string]: {
-        collectiviteId: number;
-        valeurs: IndicateurValeurWithIdentifiant[];
-        sourceId?: string | null;
-        metadonneeId: number | null;
-        missingIdentifiants: string[];
-        date: string;
-      };
-    },
-    allowToAddEntry: boolean
-  ) {
-    // Find related source indicateur valeurs grouped by date/sourceId
-    if (targetIndicateurDefinition.valeurCalcule) {
-      const neededSourceIndicateurs =
-        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          targetIndicateurDefinition.valeurCalcule
-        );
-
-      const neededSourceIndicateurValeurs = sourceIndicateurValeurs.filter(
-        (v) =>
-          v.indicateurIdentifiant &&
-          neededSourceIndicateurs.find(
-            (ind) => ind.identifiant === v.indicateurIdentifiant
-          )
-      );
-
-      neededSourceIndicateurValeurs.forEach((v) => {
-        const collectiviteIdDateSourceIdKey =
-          this.getSourceIndicateurKeyForCalculatedIndicateurValeur(v);
-        if (collectiviteIdDateSourceIdKey) {
-          if (
-            !relatedSourceIndicateurValeursByDate[
-              collectiviteIdDateSourceIdKey
-            ] &&
-            allowToAddEntry
-          ) {
-            relatedSourceIndicateurValeursByDate[
-              collectiviteIdDateSourceIdKey
-            ] = {
-              collectiviteId: v.collectiviteId,
-              valeurs: [],
-              sourceId: v.sourceId,
-              metadonneeId: v.metadonneeId,
-              date: v.dateValeur,
-              missingIdentifiants: [],
-            };
-          }
-
-          if (
-            relatedSourceIndicateurValeursByDate[collectiviteIdDateSourceIdKey]
-          ) {
-            const dateRelatedSourceIndicateurValeurs =
-              relatedSourceIndicateurValeursByDate[
-                collectiviteIdDateSourceIdKey
-              ];
-            // If we didn't know the metadonneeId yet, we set it to the current one
-            if (
-              dateRelatedSourceIndicateurValeurs.metadonneeId &&
-              dateRelatedSourceIndicateurValeurs.metadonneeId < 0
-            ) {
-              dateRelatedSourceIndicateurValeurs.metadonneeId = v.metadonneeId;
-            }
-            dateRelatedSourceIndicateurValeurs.valeurs.push(v);
-          }
-        }
-
-        for (const source of allowedExtraSourcesForCalculatedValues) {
-          if (
-            source.sourceCalculIds.includes(
-              v.sourceId || COLLECTIVITE_SOURCE_ID
-            )
-          ) {
-            this.logger.log(
-              `Value of indicateur ${v.indicateurIdentifiant} for source ${v.sourceId} can be used to calculate source ${source.sourceId}`
-            );
-
-            const collectiviteIdDateSourceIdKey =
-              this.getSourceIndicateurKeyForCalculatedIndicateurValeur(
-                v,
-                source.sourceId
-              );
-            if (collectiviteIdDateSourceIdKey) {
-              if (
-                !relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ] &&
-                allowToAddEntry
-              ) {
-                relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ] = {
-                  collectiviteId: v.collectiviteId,
-                  valeurs: [],
-                  sourceId: source.sourceId,
-                  metadonneeId: -1, // Set the metadonneeId to -1 to indicate that we don't know it yet
-                  date: v.dateValeur,
-                  missingIdentifiants: [],
-                };
-              }
-
-              if (
-                relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ]
-              ) {
-                relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ].valeurs.push(v);
-              }
-            }
-          }
-        }
-      });
-
-      this.logger.log(
-        `Found related source indicateur valeurs associated to ${
-          Object.keys(relatedSourceIndicateurValeursByDate).length
-        } collectiviteId/date/sourceId keys to compute ${
-          targetIndicateurDefinition.identifiantReferentiel
-        } (${targetIndicateurDefinition.id})`
-      );
-
-      // For each date get missing indicateur valeurs
-      for (const collectiviteIdDateSourceIdKey in relatedSourceIndicateurValeursByDate) {
-        const relatedSourceIndicateurInfo =
-          relatedSourceIndicateurValeursByDate[collectiviteIdDateSourceIdKey];
-
-        // Check that we have all needed values
-        const missingIndicateurIdentifiants = neededSourceIndicateurs
-          .filter(
-            (neededIndicateur) =>
-              !relatedSourceIndicateurInfo.valeurs.find(
-                (v) => v.indicateurIdentifiant === neededIndicateur.identifiant
-              )
-          )
-          .map((ind) => ind.identifiant);
-
-        this.logger.log(
-          `${
-            missingIndicateurIdentifiants.length
-          } missing values (identifiants: ${missingIndicateurIdentifiants.join(
-            ','
-          )}) to compute ${
-            targetIndicateurDefinition.identifiantReferentiel
-          } (${targetIndicateurDefinition.id}) for collectivite ${
-            relatedSourceIndicateurInfo.collectiviteId
-          } at date ${relatedSourceIndicateurInfo.date} with sourceId ${
-            relatedSourceIndicateurInfo.sourceId
-          }`
-        );
-
-        relatedSourceIndicateurInfo.missingIdentifiants =
-          missingIndicateurIdentifiants;
-      }
-    }
-
-    return relatedSourceIndicateurValeursByDate;
-  }
-
-  private computeCalculatedIndicateurValeur(
-    targetIndicateurDefinition: IndicateurDefinition,
-    relatedSourceIndicateurValeursByDate: {
-      [collectiviteIdDateSourceIdKey: string]: {
-        collectiviteId: number;
-        valeurs: IndicateurValeurWithIdentifiant[];
-        sourceId?: string | null;
-        metadonneeId: number | null;
-        missingIdentifiants: string[];
-        date: string;
-      };
-    }
-  ): IndicateurValeurInsert[] {
-    const computedIndicateurValeurs: IndicateurValeurInsert[] = [];
-
-    if (targetIndicateurDefinition.valeurCalcule) {
-      this.logger.log(
-        `Compute calculated value for ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id})`
-      );
-      const neededSourceIndicateurs =
-        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          targetIndicateurDefinition.valeurCalcule
-        );
-      const neededSourceIndicateurIdentifiants = neededSourceIndicateurs.map(
-        (ind) => ind.identifiant
-      );
-
-      // For each date check that we can compute the value
-      for (const collectiviteIdDateSourceIdKey in relatedSourceIndicateurValeursByDate) {
-        const relatedSourceIndicateurInfo =
-          relatedSourceIndicateurValeursByDate[collectiviteIdDateSourceIdKey];
-
-        // Check that we were able to define the metadonneeId, otherwise we can't save it
-        // WARNING: can happen in once case: we have filled insee data for all sources  but we don't have have other source data
-        if (
-          !relatedSourceIndicateurInfo.metadonneeId ||
-          relatedSourceIndicateurInfo.metadonneeId > 0
-        ) {
-          // Check that we have all needed values
-          const missingMandatoryIndicateurIdentifiants = neededSourceIndicateurs
-            .filter(
-              (neededIndicateur) =>
-                !neededIndicateur.optional &&
-                !relatedSourceIndicateurInfo.valeurs.find(
-                  (v) =>
-                    v.indicateurIdentifiant === neededIndicateur.identifiant
-                )
-            )
-            .map((ind) => ind.identifiant);
-          const missingOptionalIndicateurIdentifiants = neededSourceIndicateurs
-            .filter(
-              (neededIndicateur) =>
-                neededIndicateur.optional &&
-                !relatedSourceIndicateurInfo.valeurs.find(
-                  (v) =>
-                    v.indicateurIdentifiant === neededIndicateur.identifiant
-                )
-            )
-            .map((ind) => ind.identifiant);
-          if (missingMandatoryIndicateurIdentifiants.length) {
-            this.logger.warn(
-              `Missing mandatory values (identifiants: ${missingMandatoryIndicateurIdentifiants.join(
-                ','
-              )}) to compute ${
-                targetIndicateurDefinition.identifiantReferentiel
-              } (${targetIndicateurDefinition.id}) for collectivite ${
-                relatedSourceIndicateurInfo.collectiviteId
-              } at date ${relatedSourceIndicateurInfo.date} with sourceId ${
-                relatedSourceIndicateurInfo.sourceId
-              }`
-            );
-          } else {
-            this.logger.log(
-              `All mandatory values are present to compute ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id}) for collectivite ${relatedSourceIndicateurInfo.collectiviteId} at date ${relatedSourceIndicateurInfo.date} with sourceId ${relatedSourceIndicateurInfo.sourceId}`
-            );
-            const resultatSourceValues: {
-              [indicateurIdentifiant: string]: number | null;
-            } = {};
-            const objectifSourceValues: {
-              [indicateurIdentifiant: string]: number | null;
-            } = {};
-            // TODO: use in priority value with the same sourceId
-            relatedSourceIndicateurInfo.valeurs.forEach((v) => {
-              if (
-                v.sourceId === relatedSourceIndicateurInfo.sourceId &&
-                v.indicateurIdentifiant &&
-                neededSourceIndicateurIdentifiants.includes(
-                  v.indicateurIdentifiant
-                )
-              ) {
-                this.logger.log(
-                  `Use source ${v.sourceId} for ${v.indicateurIdentifiant} indicateur values`
-                );
-                resultatSourceValues[v.indicateurIdentifiant] = v.resultat;
-                objectifSourceValues[v.indicateurIdentifiant] = v.objectif;
-              }
-            });
-
-            // No value for the source, we don't want to use only value from other sources. Other sources are used only to be combined
-            if (
-              !Object.keys(resultatSourceValues).length &&
-              !Object.keys(objectifSourceValues).length
-            ) {
-              continue;
-            }
-
-            relatedSourceIndicateurInfo.valeurs.forEach((v) => {
-              if (
-                v.indicateurIdentifiant &&
-                isNil(resultatSourceValues[v.indicateurIdentifiant]) &&
-                !isNil(v.resultat) &&
-                neededSourceIndicateurIdentifiants.includes(
-                  v.indicateurIdentifiant
-                )
-              ) {
-                this.logger.log(
-                  `Use source ${v.sourceId} for ${v.indicateurIdentifiant} resultat indicateur values`
-                );
-                resultatSourceValues[v.indicateurIdentifiant] = v.resultat;
-              }
-
-              if (
-                v.indicateurIdentifiant &&
-                isNil(objectifSourceValues[v.indicateurIdentifiant]) &&
-                !isNil(v.objectif) &&
-                neededSourceIndicateurIdentifiants.includes(
-                  v.indicateurIdentifiant
-                )
-              ) {
-                this.logger.log(
-                  `Use source ${v.sourceId} for ${v.indicateurIdentifiant} objectif indicateur values`
-                );
-                objectifSourceValues[v.indicateurIdentifiant] = v.objectif;
-              }
-            });
-
-            const atLeastOneResult = Object.values(resultatSourceValues).some(
-              (v) => !isNil(v)
-            );
-            const computedResultat = atLeastOneResult
-              ? this.indicateurExpressionService.parseAndEvaluateExpression(
-                  targetIndicateurDefinition.valeurCalcule.toLowerCase(),
-                  resultatSourceValues
-                )
-              : null;
-
-            // Check if at least one non null objectif value is present
-            // otherwise if only optional values are used in the formuat may result in zero instead of null
-            const atLeastOneObjectif = Object.values(objectifSourceValues).some(
-              (v) => !isNil(v)
-            );
-            const computedObjectif = atLeastOneObjectif
-              ? this.indicateurExpressionService.parseAndEvaluateExpression(
-                  targetIndicateurDefinition.valeurCalcule.toLowerCase(),
-                  objectifSourceValues
-                )
-              : null;
-
-            const indicateurPrecision = !isNil(
-              targetIndicateurDefinition.precision
-            )
-              ? targetIndicateurDefinition.precision
-              : DEFAULT_ROUNDING_PRECISION;
-            const indicateurValeur: IndicateurValeurInsert = {
-              collectiviteId: relatedSourceIndicateurInfo.collectiviteId,
-              indicateurId: targetIndicateurDefinition.id,
-              dateValeur: relatedSourceIndicateurInfo.date,
-              resultat:
-                computedResultat !== null
-                  ? round(computedResultat, indicateurPrecision)
-                  : null,
-              objectif:
-                computedObjectif !== null
-                  ? round(computedObjectif, indicateurPrecision)
-                  : null,
-              metadonneeId: relatedSourceIndicateurInfo.metadonneeId,
-              calculAuto: true,
-              calculAutoIdentifiantsManquants:
-                missingOptionalIndicateurIdentifiants,
-            };
-            computedIndicateurValeurs.push(indicateurValeur);
-          }
-        }
-      }
-    }
-
-    return computedIndicateurValeurs;
-  }
-
-  private async fetchMissingIndicateurValeurs(
-    missingIndicateurValeurs: {
-      collectiviteId: number;
-      identifiants: string[];
-      sourceId?: string | null;
-      date: string;
-    }[],
-    allowedExtraSourcesForCalculatedValues: {
-      sourceId: string;
-      sourceCalculIds: string[];
-    }[]
-  ): Promise<IndicateurValeurWithIdentifiant[]> {
-    if (!missingIndicateurValeurs.length) {
-      return [];
-    }
-
-    const condition: (SQLWrapper | undefined)[] = [];
-    missingIndicateurValeurs.forEach((missing) => {
-      let extraSourceCalculIds = allowedExtraSourcesForCalculatedValues.find(
-        (source) =>
-          source.sourceId === (missing.sourceId || COLLECTIVITE_SOURCE_ID)
-      )?.sourceCalculIds;
-      if (!extraSourceCalculIds) {
-        // Allow to use Insee data for collectivite data
-        extraSourceCalculIds = ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS;
-      }
-      this.logger.log(
-        `Search missing values for source ${
-          missing.sourceId || COLLECTIVITE_SOURCE_ID
-        } including allowed extra sources: ${extraSourceCalculIds.join(',')}`
-      );
-
-      const missingConditions: (SQLWrapper | undefined)[] = [];
-      missingConditions.push(
-        eq(indicateurValeurTable.collectiviteId, missing.collectiviteId)
-      );
-      missingConditions.push(
-        eq(indicateurValeurTable.dateValeur, missing.date)
-      );
-      missingConditions.push(
-        inArray(
-          indicateurDefinitionTable.identifiantReferentiel,
-          missing.identifiants
+    return [
+      ...new Set(
+        definitions.flatMap((definition) =>
+          this.graphService
+            .getFormula(definition)
+            .references.map(({ identifiant }) => identifiant)
         )
-      );
-      if (missing.sourceId) {
-        missingConditions.push(
-          or(
-            eq(indicateurSourceMetadonneeTable.sourceId, missing.sourceId),
-            inArray(
-              indicateurSourceMetadonneeTable.sourceId,
-              extraSourceCalculIds
-            )
-          )
-        );
-      } else {
-        missingConditions.push(
-          or(
-            isNull(indicateurSourceMetadonneeTable.sourceId),
-            inArray(
-              indicateurSourceMetadonneeTable.sourceId,
-              extraSourceCalculIds
-            )
-          )
-        );
-      }
-      condition.push(and(...missingConditions));
-    });
-
-    const result = await this.databaseService.db
-      .select({
-        ...getTableColumns(indicateurValeurTable),
-        indicateurIdentifiant: indicateurDefinitionTable.identifiantReferentiel,
-        sourceId: indicateurSourceMetadonneeTable.sourceId,
-      })
-      .from(indicateurValeurTable)
-      .leftJoin(
-        indicateurDefinitionTable,
-        eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        indicateurSourceMetadonneeTable,
-        eq(
-          indicateurValeurTable.metadonneeId,
-          indicateurSourceMetadonneeTable.id
-        )
-      )
-      .where(or(...condition));
-
-    return result;
-  }
-
-  private mapIndicateurIdToIdentifiantReferentiel(
-    indicateurDefinitions: Pick<
-      IndicateurDefinition,
-      'id' | 'identifiantReferentiel'
-    >[]
-  ): Record<number, string> {
-    return indicateurDefinitions.reduce((acc, def) => {
-      if (!def.identifiantReferentiel) {
-        return acc;
-      } else {
-        return { ...acc, [def.id]: def.identifiantReferentiel };
-      }
-    }, {});
+      ),
+    ];
   }
 
   async updateCalculatedIndicateurValeurs(
-    updatedSourceIndicateurValeurs: IndicateurValeur[],
-    sourceIndicateurDefinitions: Omit<
-      IndicateurDefinition,
-      'modifiedBy' | 'modifiedAt'
-    >[] = []
-  ): Promise<IndicateurValeurInsert[]> {
-    const indicateurIds = [
-      ...new Set(updatedSourceIndicateurValeurs.map((v) => v.indicateurId)),
-    ];
+    valeurs: IndicateurValeur[],
+    tx: Transaction
+  ): Promise<IndicateurValeurCreate[]> {
+    return (await this.computeDependants(valeurs, new Set(), tx))
+      .valeursToUpsert;
+  }
 
-    if (!sourceIndicateurDefinitions.length) {
-      sourceIndicateurDefinitions =
-        await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
-          indicateurIds,
-        });
-    } else {
-      const missingIds = indicateurIds.filter(
-        (id) => !sourceIndicateurDefinitions.find((d) => d.id === id)
+  /** Deleted rows identify affected groups; only surviving rows supply values. */
+  async reconcileDeletedIndicateurValeurs(
+    valeurs: IndicateurValeur[],
+    tx: Transaction
+  ): Promise<ReconciledValeurs> {
+    if (!valeurs.length) return { valeursToUpsert: [], valeurIdsToDelete: [] };
+    const { valeursToUpsert, groupsByIndicateur } =
+      await this.computeDependants(
+        valeurs,
+        new Set(valeurs.map(({ id }) => id)),
+        tx
       );
-      if (missingIds.length) {
-        const missingIndicateurDefinitions =
-          await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
-            indicateurIds: missingIds,
-          });
-        sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);
-      }
-    }
-    const indicateurIdToIdentifiant =
-      this.mapIndicateurIdToIdentifiantReferentiel(sourceIndicateurDefinitions);
-
-    const sourceMetadonnees =
-      await this.indicateurSourceService.getAllIndicateurSourceMetadonnees();
-
-    const allowedExtraSourcesForCalculatedValeurs =
-      await this.getSourcesCalcul();
-
-    const updatedSourceIndicateurValeursAvecIdentifiant =
-      updatedSourceIndicateurValeurs as IndicateurValeurWithIdentifiant[];
-    updatedSourceIndicateurValeursAvecIdentifiant.forEach((v) => {
-      v.indicateurIdentifiant = indicateurIdToIdentifiant[v.indicateurId];
-      const sourceMetadonnee = v.metadonneeId
-        ? sourceMetadonnees.find((sm) => sm.id === v.metadonneeId)
-        : undefined;
-      if (sourceMetadonnee) {
-        v.sourceId = sourceMetadonnee.sourceId;
-      }
+    const groups = [...groupsByIndicateur.values()].flatMap(Object.values);
+    if (!groups.length) return { valeursToUpsert, valeurIdsToDelete: [] };
+    const stored = await this.repository.listStoredCalculatedValeurs(
+      {
+        indicateurIds: [...groupsByIndicateur.keys()],
+        collectiviteIds: [
+          ...new Set(groups.map(({ collectiviteId }) => collectiviteId)),
+        ],
+        dateValeurs: [
+          ...new Set(
+            groups.map(({ period }) => dehydrateIndicateurPeriod(period))
+          ),
+        ],
+      },
+      tx
+    );
+    const expected = new Set(valeursToUpsert.map(getCalculatedValeurIdentity));
+    const valeurIdsToDelete = stored.flatMap((valeur) => {
+      if (!valeur.periodicite) return [];
+      const period = hydrateIndicateurPeriod({
+        periodicite: valeur.periodicite,
+        dateValeur: valeur.dateValeur,
+      });
+      const key = getCalculSourceGroupKey(
+        valeur.collectiviteId,
+        period,
+        valeur.sourceId,
+        valeur.metadonneeId
+      );
+      return groupsByIndicateur.get(valeur.indicateurId)?.[key] &&
+        !expected.has(getCalculatedValeurIdentity(valeur))
+        ? [valeur.id]
+        : [];
     });
+    return { valeursToUpsert, valeurIdsToDelete };
+  }
 
-    const computedIndicateurDefinitions =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue(
+  private async computeDependants(
+    valeurs: IndicateurValeur[],
+    deletedIds: ReadonlySet<number>,
+    tx: Transaction
+  ) {
+    const graphResult = await this.graphService.loadDependants(
+      [...new Set(valeurs.map(({ indicateurId }) => indicateurId))],
+      { tx }
+    );
+    if (!graphResult.success) throw graphResult.cause ?? graphResult.error;
+    const { formulas, sourceDefinitions } = graphResult.data;
+    const groupsByIndicateur = new Map<number, CalculSourceGroups>();
+    if (!formulas.length) return { valeursToUpsert: [], groupsByIndicateur };
+    const metadonnees =
+      await this.indicateurSourceService.getAllIndicateurSourceMetadonnees(tx);
+    const policies = await this.getSourcesCalcul(tx);
+    const definitionsById = new Map(
+      sourceDefinitions.map((definition) => [definition.id, definition])
+    );
+    const sources = valeurs.flatMap<CalculSourceValeur>((valeur) => {
+      const definition = definitionsById.get(valeur.indicateurId);
+      if (!definition?.identifiantReferentiel) return [];
+      const metadonnee = metadonnees.find(
+        ({ id }) => id === valeur.metadonneeId
+      );
+      return [
         {
-          identifiantsReferentiel: Object.values(indicateurIdToIdentifiant),
-        }
-      );
-
-    if (computedIndicateurDefinitions.length) {
-      // Fill the map (used at the end)
-      computedIndicateurDefinitions.forEach((def) => {
-        if (def.identifiantReferentiel) {
-          indicateurIdToIdentifiant[def.id] = def.identifiantReferentiel;
-        }
-      });
-
-      // Retrieve missing indicateur valeur needed to compute calculated indicateur valeurs
-      const allMissingIndicateurValeurs: {
-        collectiviteId: number;
-        identifiants: string[];
-        sourceId?: string | null;
-        date: string;
-      }[] = [];
-      const indicateurRelatedSourceIndicateurValeursByDate: {
-        [indicateurDefinitionId: string]: {
-          [collectiviteIdDateSourceIdKey: string]: {
-            collectiviteId: number;
-            valeurs: IndicateurValeurWithIdentifiant[];
-            sourceId?: string | null;
-            metadonneeId: number | null;
-            missingIdentifiants: string[];
-            date: string;
-          };
-        };
-      } = {};
-      computedIndicateurDefinitions.forEach((computedIndicateurDefinition) => {
-        const relatedSourceIndicateurValeursByDate =
-          this.fillRelatedSourceIndicateurValeursByDate(
-            computedIndicateurDefinition,
-            updatedSourceIndicateurValeursAvecIdentifiant,
-            allowedExtraSourcesForCalculatedValeurs,
-            {},
-            true
-          );
-        indicateurRelatedSourceIndicateurValeursByDate[
-          `${computedIndicateurDefinition.id}`
-        ] = relatedSourceIndicateurValeursByDate;
-
-        for (const collectiviteIdDateSourceIdKey in relatedSourceIndicateurValeursByDate) {
-          const relatedSourceIndicateurInfo =
-            relatedSourceIndicateurValeursByDate[collectiviteIdDateSourceIdKey];
-          if (relatedSourceIndicateurInfo.missingIdentifiants.length) {
-            allMissingIndicateurValeurs.push({
-              collectiviteId: relatedSourceIndicateurInfo.collectiviteId,
-              identifiants: relatedSourceIndicateurInfo.missingIdentifiants,
-              sourceId: relatedSourceIndicateurInfo.sourceId,
-              date: relatedSourceIndicateurInfo.date,
-            });
-          }
-        }
-      });
-      this.logger.log(
-        `Need to retrieve missing indicateur valeurs (${allMissingIndicateurValeurs.length} sets) to compute calculated indicateur valeurs`
-      );
-      const retrievedMissingIndicateurValeurs =
-        allMissingIndicateurValeurs.length
-          ? await this.fetchMissingIndicateurValeurs(
-              allMissingIndicateurValeurs,
-              allowedExtraSourcesForCalculatedValeurs
-            )
-          : [];
-      this.logger.log(
-        `Retrieved ${retrievedMissingIndicateurValeurs.length} missing indicateur valeurs`
-      );
-
-      // Now that we have retrieved all needed values, we can compute the calculated indicateur valeurs
-      const computedIndicateurValeurs: IndicateurValeurInsert[] = [];
-      computedIndicateurDefinitions.forEach((computedIndicateurDefinition) => {
-        // Fill missing retrieved values. We don't want to add new entry in the map but only fill existing ones
-        const relatedSourceIndicateurValeursByDate =
-          indicateurRelatedSourceIndicateurValeursByDate[
-            `${computedIndicateurDefinition.id}`
-          ];
-        this.fillRelatedSourceIndicateurValeursByDate(
-          computedIndicateurDefinition,
-          retrievedMissingIndicateurValeurs,
-          allowedExtraSourcesForCalculatedValeurs,
-          relatedSourceIndicateurValeursByDate,
-          false
-        );
-
-        const calculateValeur = this.computeCalculatedIndicateurValeur(
-          computedIndicateurDefinition,
-          relatedSourceIndicateurValeursByDate
-        );
-
-        computedIndicateurValeurs.push(...calculateValeur);
-      });
-      return computedIndicateurValeurs;
-    }
-
-    return [];
+          ...valeur,
+          indicateurIdentifiant: definition.identifiantReferentiel,
+          sourceId: normalizeCalculSourceId(metadonnee?.sourceId),
+          metadonneeDateVersion: metadonnee?.dateVersion ?? null,
+          deleted: deletedIds.has(valeur.id),
+          period: hydrateIndicateurPeriod({
+            periodicite: definition.periodicite,
+            dateValeur: valeur.dateValeur,
+          }),
+        },
+      ];
+    });
+    const formulasWithGroups = formulas.map((formula) => {
+      const groups = fillCalculSourceGroups(formula, sources, policies);
+      groupsByIndicateur.set(formula.definition.id, groups);
+      return { formula, groups };
+    });
+    // Updating an older metadata version must still calculate from the newest
+    // stored observation. Re-read every referenced identifier under the same
+    // period locks, including identifiers already present in the incoming batch.
+    const sourceQueries = formulasWithGroups.flatMap(({ formula, groups }) =>
+      Object.values(groups).map((group) => ({
+        collectiviteId: group.collectiviteId,
+        period: group.period,
+        sourceId: group.sourceId,
+        metadonneeId: group.metadonneeId,
+        identifiants: formula.references.map(({ identifiant }) => identifiant),
+        extraSourceCalculIds:
+          policies.find(
+            (policy) =>
+              normalizeCalculSourceId(policy.sourceId) === group.sourceId
+          )?.sourceCalculIds ?? ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS,
+      }))
+    );
+    const storedSources = sourceQueries.length
+      ? await this.repository.listSourceValeurs(sourceQueries, tx)
+      : [];
+    const valeursToUpsert = formulasWithGroups.flatMap(
+      ({ formula, groups }) => {
+        fillCalculSourceGroups(formula, storedSources, policies, groups, false);
+        return this.evaluate(formula, groups);
+      }
+    );
+    return { valeursToUpsert, groupsByIndicateur };
   }
 
   async recomputeCollectiviteCalculatedIndicateurValeurs(
     collectiviteId: number,
-    computedIndicateurDefinitions: IndicateurDefinition[],
-    sourceIdentifiants: string[],
-    allowedExtraSourcesForCalculatedValues: {
-      sourceId: string;
-      sourceCalculIds: string[];
-    }[]
-  ) {
-    this.logger.log(
-      `Recompute calculated indicateur valeurs for collectivite ${collectiviteId}`
+    indicateurIds: number[],
+    tx: Transaction
+  ): Promise<RecomputedIndicateurValeurs> {
+    const graphResult = await this.graphService.loadForRecompute(
+      indicateurIds,
+      { tx }
     );
-
-    const sourceValeurs: IndicateurValeurWithIdentifiant[] =
-      await this.databaseService.db
-        .select({
-          ...getTableColumns(indicateurValeurTable),
-          indicateurIdentifiant:
-            indicateurDefinitionTable.identifiantReferentiel,
-          sourceId: indicateurSourceMetadonneeTable.sourceId,
-        })
-        .from(indicateurValeurTable)
-        .leftJoin(
-          indicateurDefinitionTable,
-          eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
-        )
-        .leftJoin(
-          indicateurSourceMetadonneeTable,
-          eq(
-            indicateurValeurTable.metadonneeId,
-            indicateurSourceMetadonneeTable.id
-          )
-        )
-        .where(
-          and(
-            eq(indicateurValeurTable.collectiviteId, collectiviteId),
-            inArray(
-              indicateurDefinitionTable.identifiantReferentiel,
-              sourceIdentifiants
-            )
-          )
-        );
-    this.logger.log(
-      `Found ${sourceValeurs.length} source indicateur valeurs for collectivite ${collectiviteId}`
+    if (!graphResult.success) throw graphResult.cause ?? graphResult.error;
+    const { formulas, targetDefinitions, sourceDefinitions } = graphResult.data;
+    if (!indicateurIds.length)
+      return {
+        valeursToUpsert: [],
+        valeurIdsToDelete: [],
+        indicateurIdentifiants: [],
+      };
+    const neededIdentifiants = new Set(
+      formulas.flatMap(({ references }) =>
+        references.map(({ identifiant }) => identifiant)
+      )
     );
-
-    // We don't want top call updateCalculatedIndicateurValeurs because it's looking for missing values: we already have all collectivite values
-
-    const computedIndicateurValeurs: IndicateurValeurInsert[] = [];
-    computedIndicateurDefinitions.forEach((computedIndicateurDefinition) => {
-      // Fill the map by date
-      const relatedSourceIndicateurValeursByDate =
-        this.fillRelatedSourceIndicateurValeursByDate(
-          computedIndicateurDefinition,
-          sourceValeurs,
-          allowedExtraSourcesForCalculatedValues,
-          {},
-          true
-        );
-      computedIndicateurValeurs.push(
-        ...this.computeCalculatedIndicateurValeur(
-          computedIndicateurDefinition,
-          relatedSourceIndicateurValeursByDate
+    const sourceIds = new Set(
+      sourceDefinitions
+        .filter(
+          ({ identifiantReferentiel }) =>
+            identifiantReferentiel &&
+            neededIdentifiants.has(identifiantReferentiel)
         )
-      );
-    });
+        .map(({ id }) => id)
+    );
+    const relevantIds = [...new Set([...indicateurIds, ...sourceIds])];
+    const discoveredPeriods = await this.repository.listPeriodKeys(
+      { collectiviteId, indicateurIds: relevantIds },
+      tx
+    );
+    // Discover keys, acquire all period locks, then re-read the values used by
+    // calculation. Writers arriving after discovery perform their own refresh.
+    await this.valeurLockRepository.lock(discoveredPeriods, tx);
+    const lockedDates = new Set(
+      discoveredPeriods.map(({ dateValeur }) => dateValeur)
+    );
+    const stored = (
+      await this.repository.listRelevantValeurs(
+        {
+          collectiviteId,
+          indicateurIds: relevantIds,
+          dateValeurs: [...lockedDates],
+        },
+        tx
+      )
+    ).filter(({ dateValeur }) => lockedDates.has(dateValeur));
+    const sources = stored
+      .filter(({ indicateurId }) => sourceIds.has(indicateurId))
+      .map<CalculSourceValeur>((valeur) => {
+        if (!valeur.indicateurIdentifiant || !valeur.periodicite)
+          throw new Error(
+            `Impossible d'hydrater la période de la valeur d'indicateur ${valeur.indicateurId}`
+          );
+        return {
+          ...valeur,
+          indicateurIdentifiant: valeur.indicateurIdentifiant,
+          sourceId: normalizeCalculSourceId(valeur.sourceId),
+          deleted: false,
+          period: hydrateIndicateurPeriod({
+            periodicite: valeur.periodicite,
+            dateValeur: valeur.dateValeur,
+          }),
+        };
+      });
+    const policies = await this.getSourcesCalcul(tx);
+    const valeursToUpsert = formulas.flatMap((formula) =>
+      this.evaluate(formula, fillCalculSourceGroups(formula, sources, policies))
+    );
+    const expected = new Set(valeursToUpsert.map(getCalculatedValeurIdentity));
+    const targetIds = new Set(indicateurIds);
+    return {
+      valeursToUpsert,
+      valeurIdsToDelete: stored
+        .filter(
+          (valeur) =>
+            targetIds.has(valeur.indicateurId) &&
+            valeur.calculAuto === true &&
+            !expected.has(getCalculatedValeurIdentity(valeur))
+        )
+        .map(({ id }) => id),
+      indicateurIdentifiants: targetDefinitions.flatMap(
+        ({ identifiantReferentiel }) =>
+          identifiantReferentiel ? [identifiantReferentiel] : []
+      ),
+    };
+  }
 
-    return computedIndicateurValeurs;
+  private evaluate(
+    formula: IndicateurFormula,
+    groups: CalculSourceGroups
+  ): IndicateurValeurCreate[] {
+    return evaluateCalculIndicateur(formula, groups, (expression, values) =>
+      this.expressions.parseAndEvaluateExpression(expression, values)
+    );
   }
 }

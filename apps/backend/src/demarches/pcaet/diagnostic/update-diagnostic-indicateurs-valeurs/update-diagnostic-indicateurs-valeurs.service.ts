@@ -86,7 +86,10 @@ export class UpdateDiagnosticIndicateursValeursService {
       valeurs,
     });
 
-    await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, user);
+    await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
+      user,
+      tx,
+    });
 
     const payload = await this.diagnosticService.loadPayload(
       { demarcheId, collectiviteId },

@@ -305,7 +305,7 @@ export class TrajectoireLeviersService {
           dateDebut: `${this.TARGET_YEAR}-01-01`,
           dateFin: `${this.TARGET_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     const indicateurValeursObjectifs2019 =
@@ -317,7 +317,7 @@ export class TrajectoireLeviersService {
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     // On peut extraire la source de données utilisée pour calculer la trajectoire
@@ -342,7 +342,7 @@ export class TrajectoireLeviersService {
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     // On affecte les données aux secteurs à partir de la configuration
