@@ -131,6 +131,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -157,6 +158,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titre: 'Emissions de gaz à effet de serre - tertiaire',
             titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -322,6 +324,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               titreLong:
                 'Emissions de gaz à effet de serre du secteur résidentiel',
               description: '',
+              periodicite: 'annuelle',
               unite: 'teq CO2',
               borneMin: null,
               borneMax: null,
@@ -391,6 +394,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               titreLong:
                 'Emissions de gaz à effet de serre du secteur tertiaire',
               description: '',
+              periodicite: 'annuelle',
               unite: 'teq CO2',
               borneMin: null,
               borneMax: null,
@@ -465,6 +469,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -521,6 +526,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -594,6 +600,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -649,6 +656,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titre: 'Emissions de gaz à effet de serre - tertiaire',
             titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -722,6 +730,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -778,6 +787,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -842,6 +852,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -898,6 +909,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -971,6 +983,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -1027,6 +1040,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong:
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
+            periodicite: 'annuelle',
             unite: 'teq CO2',
             borneMin: null,
             borneMax: null,
@@ -1098,6 +1112,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           titre: 'Emissions de gaz à effet de serre - résidentiel',
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
+          periodicite: 'annuelle',
           unite: 'teq CO2',
           borneMin: null,
           borneMax: null,
@@ -1153,6 +1168,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           titre: 'Emissions de gaz à effet de serre - résidentiel',
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
+          periodicite: 'annuelle',
           unite: 'teq CO2',
           borneMin: null,
           borneMax: null,
@@ -1235,6 +1251,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           titre: 'Emissions de gaz à effet de serre - résidentiel',
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
+          periodicite: 'annuelle',
           unite: 'teq CO2',
           borneMin: null,
           borneMax: null,

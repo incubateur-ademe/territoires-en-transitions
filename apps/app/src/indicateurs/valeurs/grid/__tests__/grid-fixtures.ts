@@ -36,6 +36,7 @@ const fakeIndicateurDefinition = (
   titreLong: null,
   titreCourt: null,
   description: null,
+  periodicite: 'annuelle',
   unite: 't/an',
   precision: 2,
   borneMin: null,
