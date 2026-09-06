@@ -9,10 +9,11 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
-import { describe, expect } from 'vitest';
+import { describe, expect, onTestFinished } from 'vitest';
 import z from 'zod';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
@@ -52,7 +53,10 @@ describe('createIndicateurPerso', () => {
 
     // Create a fiche in the collectivite for the ficheId field
     const fiche = await caller.plans.fiches.create({
-      fiche: { collectiviteId: collectivite.id, titre: 'Fiche test indicateur' },
+      fiche: {
+        collectiviteId: collectivite.id,
+        titre: 'Fiche test indicateur',
+      },
     });
 
     const data = {
@@ -62,6 +66,7 @@ describe('createIndicateurPerso', () => {
       thematiques: [{ id: 1 }, { id: 2 }],
       commentaire: 'Test comment for personal indicator',
       estFavori: true,
+      estConfidentiel: true,
       ficheId: fiche.id,
     } satisfies CreateIndicateurDefinitionInput;
 
@@ -92,6 +97,7 @@ describe('createIndicateurPerso', () => {
     expect(collectiviteData).toHaveLength(1);
     expect(collectiviteData[0].commentaire).toBe(data.commentaire);
     expect(collectiviteData[0].favoris).toBe(data.estFavori);
+    expect(collectiviteData[0].confidentiel).toBe(data.estConfidentiel);
 
     // Verify thematic associations were created
     const thematiqueData = await databaseService.db
@@ -154,6 +160,7 @@ describe('createIndicateurPerso', () => {
     expect(collectiviteData).toHaveLength(1);
     expect(collectiviteData[0].commentaire).toBeNull();
     expect(collectiviteData[0].favoris).toBe(false);
+    expect(collectiviteData[0].confidentiel).toBe(false);
 
     // Verify no thematic associations were created
     const thematiqueData = await databaseService.db
@@ -218,5 +225,38 @@ describe('createIndicateurPerso', () => {
     await expect(
       caller.indicateurs.indicateurs.create(data)
     ).rejects.toThrowError(/Droits insuffisants/);
+  });
+
+  test('should reject a fiche owned by another collectivite and roll back creation', async () => {
+    const other = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    onTestFinished(other.cleanup);
+    const otherCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(other.user),
+    });
+    const foreignFicheId = await createFiche({
+      caller: otherCaller,
+      ficheInput: {
+        collectiviteId: other.collectivite.id,
+        titre: 'Foreign fiche for indicator creation',
+      },
+    });
+    const titre = `Indicator rejected with foreign fiche ${crypto.randomUUID()}`;
+
+    const caller = router.createCaller({ user: authenticatedUser });
+    await expect(
+      caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre,
+        ficheId: foreignFicheId,
+      })
+    ).rejects.toThrow(/fiches doivent appartenir/i);
+
+    const definitions = await databaseService.db
+      .select({ id: indicateurDefinitionTable.id })
+      .from(indicateurDefinitionTable)
+      .where(eq(indicateurDefinitionTable.titre, titre));
+    expect(definitions).toHaveLength(0);
   });
 });

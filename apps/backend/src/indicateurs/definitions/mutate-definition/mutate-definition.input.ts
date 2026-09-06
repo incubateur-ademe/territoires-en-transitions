@@ -1,5 +1,8 @@
 import { serviceTagSchema } from '@tet/domain/collectivites';
-import { indicateurDefinitionSchemaCreate } from '@tet/domain/indicateurs';
+import {
+  indicateurDefinitionSchemaCreate,
+  indicateurPeriodiciteValues,
+} from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
@@ -8,6 +11,13 @@ import { upsertIndicateurDefinitionPilotesInputSchema } from '../../indicateurs/
 export const createIndicateurDefinitionInputSchema = z.object({
   titre: indicateurDefinitionSchemaCreate.shape.titre,
   unite: z.optional(indicateurDefinitionSchemaCreate.shape.unite),
+  // Compatibilité de l'API historique : l'absence de périodicité est
+  // interprétée une seule fois à la frontière d'entrée. Le service reçoit
+  // toujours une périodicité explicite.
+  periodicite: z
+    .enum(indicateurPeriodiciteValues)
+    .optional()
+    .default('annuelle'),
   collectiviteId: z.number(),
   thematiques: z
     .array(z.object({ id: thematiqueSchema.shape.id }))
@@ -55,8 +65,9 @@ export const updateIndicateurDefinitionInputSchema = z.object({
         estConfidentiel: true,
       }).shape,
 
-      // Redéfinis sans `.default(false)` pour que le service puisse distinguer
-      // "absent du payload" de "explicitement mis à false".
+      // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
+      // "absent du payload" d'une mise à jour explicite.
+      periodicite: z.enum(indicateurPeriodiciteValues).optional(),
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),
