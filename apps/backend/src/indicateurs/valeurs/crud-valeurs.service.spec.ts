@@ -20,6 +20,7 @@ import { UpdateDefinitionService } from '../definitions/mutate-definition/update
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from './crud-valeurs.service';
+import { ListIndicateurValeursService } from './list-indicateur-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
@@ -42,6 +43,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === UpdateDefinitionService ||
           token === IndicateurSourcesService ||
           token === ComputeValeursService ||
+          token === ListIndicateurValeursService ||
           token === GetUserRolesAndPermissionsService
         ) {
           return {};

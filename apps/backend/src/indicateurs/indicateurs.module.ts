@@ -1,3 +1,5 @@
+import { CrudValeursRepository } from './valeurs/crud-valeurs.repository';
+import { ListIndicateurValeursService } from './valeurs/list-indicateur-valeurs.service';
 import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
 import { IndicateurSourcesRepository } from './sources/indicateur-sources.repository';
 import { HandleDefinitionFichesRepository } from './indicateurs/handle-definition-fiches/handle-definition-fiches.repository';
@@ -79,6 +81,8 @@ const DEFINITIONS_PROVIDERS = [
     TransactionModule,
   ],
   providers: [
+    CrudValeursRepository,
+    ListIndicateurValeursService,
     ListPlatformDefinitionsService,
     IndicateurSourcesRepository,
     HandleDefinitionFichesRepository,
