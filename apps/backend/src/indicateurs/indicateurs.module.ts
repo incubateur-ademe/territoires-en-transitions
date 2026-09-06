@@ -1,3 +1,7 @@
+import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
+import { IndicateurValeurLockRepository } from './valeurs/indicateur-valeur-lock.repository';
+import { ComputeValeursRepository } from './valeurs/compute-valeurs.repository';
+import { LoadIndicateurCalculGraphService } from './valeurs/load-indicateur-calcul-graph.service';
 import { CrudValeursRepository } from './valeurs/crud-valeurs.repository';
 import { ListIndicateurValeursService } from './valeurs/list-indicateur-valeurs.service';
 import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
@@ -81,6 +85,10 @@ const DEFINITIONS_PROVIDERS = [
     TransactionModule,
   ],
   providers: [
+    IndicateurDefinitionLockRepository,
+    IndicateurValeurLockRepository,
+    ComputeValeursRepository,
+    LoadIndicateurCalculGraphService,
     CrudValeursRepository,
     ListIndicateurValeursService,
     ListPlatformDefinitionsService,
