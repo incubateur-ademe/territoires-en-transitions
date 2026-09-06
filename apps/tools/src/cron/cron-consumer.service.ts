@@ -13,6 +13,7 @@ import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
 import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
+import { CronIndicateurFormulaReconciliationsService } from './cron-indicateur-formula-reconciliations.service';
 import { PostHogCollectivitesSyncService } from '../posthog/posthog-collectivites-sync.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
@@ -26,6 +27,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly connectSynchroService: ConnectSynchroService,
     private readonly cronComputeTrajectoireService: CronComputeTrajectoireService,
     private readonly cronNotificationsService: CronNotificationsService,
+    private readonly cronIndicateurFormulaReconciliationsService: CronIndicateurFormulaReconciliationsService,
     private readonly cronCloreInstructionsService: CronCloreInstructionsService,
     private readonly airtableCrmSyncService: AirtableCrmSyncService,
     private readonly postHogCollectivitesSyncService: PostHogCollectivitesSyncService,
@@ -59,9 +61,12 @@ export class CronConsumerService extends WorkerHost {
           result =
             await this.cronNotificationsService.sendPendingNotifications();
           break;
-        case 'clore-instructions-pcaet':
+        case 'drain-indicateur-formula-reconciliations':
           result =
-            await this.cronCloreInstructionsService.cloreInstructions();
+            await this.cronIndicateurFormulaReconciliationsService.drain();
+          break;
+        case 'clore-instructions-pcaet':
+          result = await this.cronCloreInstructionsService.cloreInstructions();
           break;
         case 'posthog-collectivites-group-sync':
           result = await this.postHogCollectivitesSyncService.process();

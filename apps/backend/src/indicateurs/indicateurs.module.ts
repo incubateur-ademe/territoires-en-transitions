@@ -1,3 +1,6 @@
+import { IndicateurFormulaReconciliationRepository } from './definitions/indicateur-formula-reconciliation.repository';
+import { IndicateurFormulaReconciliationService } from './definitions/indicateur-formula-reconciliation.service';
+import { IndicateurFormulaReconciliationRouter } from './definitions/indicateur-formula-reconciliation.router';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { WriteIndicateurValeursService } from './valeurs/write-indicateur-valeurs.service';
 import { ValidateIndicateurValeursWriteService } from './valeurs/validate-indicateur-valeurs-write.service';
@@ -88,6 +91,9 @@ const DEFINITIONS_PROVIDERS = [
     ReferentielsCoreModule,
   ],
   providers: [
+    IndicateurFormulaReconciliationRepository,
+    IndicateurFormulaReconciliationService,
+    IndicateurFormulaReconciliationRouter,
     WriteIndicateurValeursService,
     ValidateIndicateurValeursWriteService,
     ReconcileIndicateurValeursService,
