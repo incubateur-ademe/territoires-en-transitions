@@ -7396,6 +7396,7 @@ export type Database = {
           modified_at: string;
           modified_by: string | null;
           participation_score: boolean;
+          periodicite: string | null;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;
@@ -7427,6 +7428,7 @@ export type Database = {
           modified_at?: string;
           modified_by?: string | null;
           participation_score?: boolean;
+          periodicite?: string | null;
           precision?: number;
           sans_valeur_utilisateur?: boolean;
           titre: string;
@@ -7452,6 +7454,7 @@ export type Database = {
           modified_at?: string;
           modified_by?: string | null;
           participation_score?: boolean;
+          periodicite?: string | null;
           precision?: number;
           sans_valeur_utilisateur?: boolean;
           titre?: string;
@@ -7657,6 +7660,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'groupement';
             referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'indicateur_definition_periodicite_fkey';
+            columns: ['periodicite'];
+            isOneToOne: false;
+            referencedRelation: 'indicateur_periodicite';
+            referencedColumns: ['code'];
           }
         ];
       };
@@ -7736,6 +7746,27 @@ export type Database = {
             referencedColumns: ['id'];
           }
         ];
+      };
+      indicateur_periodicite: {
+        Row: {
+          code: string;
+          date_ancrage: string;
+          nombre_unites: number;
+          unite_calendaire: string;
+        };
+        Insert: {
+          code: string;
+          date_ancrage: string;
+          nombre_unites: number;
+          unite_calendaire: string;
+        };
+        Update: {
+          code?: string;
+          date_ancrage?: string;
+          nombre_unites?: number;
+          unite_calendaire?: string;
+        };
+        Relationships: [];
       };
       indicateur_pilote: {
         Row: {
@@ -19911,6 +19942,10 @@ export type Database = {
           total: number;
         }[];
       };
+      indicateur_date_debut_periode: {
+        Args: { date_a_classer: string; periodicite_code: string };
+        Returns: string;
+      };
       indicateur_enfants: {
         Args: {
           '': Database['public']['Tables']['indicateur_definition']['Row'];
@@ -19931,6 +19966,7 @@ export type Database = {
           modified_at: string;
           modified_by: string | null;
           participation_score: boolean;
+          periodicite: string | null;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;
@@ -19961,6 +19997,7 @@ export type Database = {
           modified_at: string;
           modified_by: string | null;
           participation_score: boolean;
+          periodicite: string | null;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;
@@ -20683,6 +20720,13 @@ export type Database = {
       unaccent_init: {
         Args: { '': unknown };
         Returns: unknown;
+      };
+      import_indicateur_emt_valeurs: {
+        Args: {
+          collectivite_id_a_ecrire: number;
+          valeurs_a_ecrire: Json;
+        };
+        Returns: number;
       };
       update_bibliotheque_fichier_confidentiel: {
         Args: { collectivite_id: number; hash: string; confidentiel: boolean };

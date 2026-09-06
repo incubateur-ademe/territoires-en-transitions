@@ -1,5 +1,5 @@
-insert into public.indicateur_definition (collectivite_id, titre, unite, modified_by, description)
-values (1, 'Mon indicateur perso', 'm2/hab', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 'Description');
+insert into public.indicateur_definition (collectivite_id, titre, unite, periodicite, modified_by, description)
+values (1, 'Mon indicateur perso', 'm2/hab', 'annuelle', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 'Description');
 
 insert into public.indicateur_collectivite (indicateur_id, collectivite_id, commentaire)
 values ((select id from indicateur_definition where identifiant_referentiel = 'cae_8' limit 1),
@@ -53,8 +53,8 @@ INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, no
 VALUES (5, 'insee', '2020-01-01 00:00:00.000', '', 'CGDD', '', '', '');
 
 -- Insertion de la valeur de population
-insert into public.indicateur_definition(identifiant_referentiel, titre, unite, description) values (
-    'terr_1', 'Population', 'nombre', 'Nombre d habitants par an.') ON CONFLICT DO NOTHING;
+insert into public.indicateur_definition(identifiant_referentiel, titre, unite, periodicite, description) values (
+    'terr_1', 'Population', 'nombre', 'annuelle', 'Nombre d habitants par an.') ON CONFLICT DO NOTHING;
 
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
                                       resultat_commentaire, objectif, objectif_commentaire)

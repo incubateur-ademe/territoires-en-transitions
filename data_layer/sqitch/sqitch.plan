@@ -1056,3 +1056,10 @@ demarches/pcaet_destinataires_dr_ademe_service_national [demarches/pcaet_avis_pr
 demarche/pcaet_diagnostic_indicateur_source_metadonnee [demarche/pcaet_diagnostic indicateur/fusion] 2026-08-19T00:00:00Z System Administrator <root@localhost> # Lien PCAET ↔ source métadonnée pour les valeurs saisies
 
 demarche/pcaet_diagnostic_drop_referentiel_tables [demarche/pcaet_diagnostic_indicateur_source_metadonnee demarche/pcaet_diagnostic_ordre_reglementaire demarche/pcaet_vulnerabilite_thematique_socle_recadre] 2026-08-27T10:00:00Z Farnoux <farnoux@users.noreply.github.com> # Supprime le référentiel SQL du diagnostic PCAET (topics/state/snapshot) désormais porté par le package domain
+
+@indicateur-periodicite-base 2026-09-03T15:59:59Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière stable précédant la migration de périodicité
+indicateur/periodicite [indicateur/referentiel indicateur/indicateurs_gaz_effet_serre demarche/pcaet_diagnostic_drop_referentiel_tables migration_schema] 2026-09-03T16:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute le catalogue des politiques de périodicité et classifie les définitions
+indicateur/import_emt_valeur [indicateur/periodicite] 2026-09-03T16:00:15Z Emilien Escalle <emilien.escalle@escemi.com> # Sérialise l'import EMT annuel avec la périodicité de sa définition
+indicateur/reconciliation_formules [indicateur/periodicite private_schema] 2026-09-03T16:00:20Z Emilien Escalle <emilien.escalle@escemi.com> # Rend durable et bornée la réconciliation déclenchée par un changement de formule
+indicateur/dependances_formules [private_schema] 2026-09-03T16:00:25Z Emilien Escalle <emilien.escalle@escemi.com> # Centralise l'extraction des dépendances de formule dès la phase expand
+@indicateur-periodicite-expand 2026-09-03T16:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière de déploiement expand avant activation de la contrainte stricte

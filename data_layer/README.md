@@ -83,3 +83,24 @@ il faut mettre à jour les variables d'environnement :
   - le websocket `wss://{ID}.supabase.co`
   - la clé privée **service_role**
   - l'url postgres `postgresql://postgres:{PASSWORD}@db.{ID}.supabase.co:5432/postgres`
+
+## Déploiement de la périodicité : phase expand
+
+`make db-migrate-periodicite-expand` déploie ensemble les quatre changements compatibles,
+jusqu'au tag `@indicateur-periodicite-expand`, dans une transaction vérifiée. La colonne
+`periodicite` garde son défaut `annuelle` et reste nullable pour les anciennes applications.
+Les dates historiques sans collision sont normalisées sous audit réversible ; les collisions
+restent dans `migration.indicateur_valeur_periodicite_audit` avec le statut `conflit`.
+
+Avant de déployer les futurs lecteurs et writers qui exigent une date canonique, résoudre
+chaque conflit et vérifier que toutes les valeurs ont une date canonique. Cette étape précède
+la bascule applicative ; elle ne doit pas être reportée au retrait de la compatibilité.
+
+Le passage à la contrainte obligatoire et le retrait du défaut seront livrés séparément,
+après migration de tous les consommateurs et arrêt des anciennes instances. Ne pas activer
+la saisie mensuelle tant que les consommateurs correspondants ne sont pas déployés.
+
+`make db-test-deployment-guards` vérifie les garde-fous sans toucher à la base.
+`make db-test-periodicite-migration` exige une URL `PERIODICITE_MIGRATION_TEST_DATABASE_URL`
+vers une base locale jetable nommée `periodicite_migration_lifecycle_test_*`, préparée avant
+l'expand. Ce test y exerce le déploiement, la concurrence et le revert.
