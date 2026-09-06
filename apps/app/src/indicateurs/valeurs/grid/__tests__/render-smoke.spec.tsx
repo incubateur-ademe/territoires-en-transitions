@@ -93,6 +93,17 @@ describe('IndicateurValeursTable année de référence', () => {
 });
 
 describe('IndicateurValeursTable lecture seule', () => {
+  it('does not expose a reference-year editor when readonly', () => {
+    const onReferenceYearChange = vi.fn();
+    renderGrid({ isReadonly: true, onReferenceYearChange });
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurAnneeReferenceChamp,
+      })
+    ).toBeNull();
+    expect(onReferenceYearChange).not.toHaveBeenCalled();
+  });
+
   it('affiche les valeurs sans ouvrir l’éditeur au clic', () => {
     renderGrid({ isReadonly: true });
 
@@ -117,7 +128,11 @@ describe('IndicateurValeursTable lecture seule', () => {
 });
 
 const secteursDuPolluant: IndicateurTableRow[] = [
-  fakeRow({ indicateurId: 1, indicateurLabel: 'Résidentiel', indicateurValeurs: [] }),
+  fakeRow({
+    indicateurId: 1,
+    indicateurLabel: 'Résidentiel',
+    indicateurValeurs: [],
+  }),
   fakeRow({
     indicateurId: 2,
     indicateurLabel: 'Transport routier',
