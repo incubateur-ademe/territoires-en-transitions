@@ -10,6 +10,7 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteType } from '@tet/domain/collectivites';
@@ -298,7 +299,7 @@ export async function ensureTestPcaetMetadonneeId(
     })
     .onConflictDoUpdate({
       target: indicateurSourceTable.id,
-      set: { libelle: PCAET_COLLECTIVITE_SOURCE_LABEL },
+      set: buildConflictUpdateColumns(indicateurSourceTable, ['libelle']),
     });
 
   const [existingLink] = await db.db
