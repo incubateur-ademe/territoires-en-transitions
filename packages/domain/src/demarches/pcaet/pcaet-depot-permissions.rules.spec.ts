@@ -7,10 +7,10 @@ import {
 
 const perimetre = {
   instructeurType: collectiviteTypeEnum.DREAL,
-  instructeurRegionCode: '27',
-  instructeurDepartementCode: null,
-  collectiviteRegionCode: '27',
-  collectiviteDepartementCode: '25',
+  instructeurRegionCodes: ['27'],
+  instructeurDepartementCodes: [],
+  collectiviteRegionCodes: ['27'],
+  collectiviteDepartementCodes: ['25'],
 };
 
 describe('instructeurCouvreCollectivite', () => {
@@ -22,32 +22,32 @@ describe('instructeurCouvreCollectivite', () => {
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
-        collectiviteRegionCode: '84',
+        collectiviteRegionCodes: ['84'],
       })
     ).toBe(false);
   });
 
-  it('two missing region codes never match', () => {
+  it('two empty territories never match', () => {
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
-        instructeurRegionCode: null,
-        collectiviteRegionCode: null,
+        instructeurRegionCodes: [],
+        collectiviteRegionCodes: [],
       })
     ).toBe(false);
   });
 
-  it('a missing code on either side never matches', () => {
+  it('an empty territory on either side never matches', () => {
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
-        collectiviteRegionCode: null,
+        collectiviteRegionCodes: [],
       })
     ).toBe(false);
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
-        instructeurRegionCode: null,
+        instructeurRegionCodes: [],
       })
     ).toBe(false);
   });
@@ -82,16 +82,16 @@ describe('instructeurCouvreCollectivite', () => {
       instructeurCouvreCollectivite({
         ...perimetre,
         instructeurType: collectiviteTypeEnum.DDT,
-        instructeurDepartementCode: '01',
-        collectiviteDepartementCode: '01',
+        instructeurDepartementCodes: ['01'],
+        collectiviteDepartementCodes: ['01'],
       })
     ).toBe(true);
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
         instructeurType: collectiviteTypeEnum.DDT,
-        instructeurDepartementCode: '01',
-        collectiviteDepartementCode: '69',
+        instructeurDepartementCodes: ['01'],
+        collectiviteDepartementCodes: ['69'],
       })
     ).toBe(false);
   });
@@ -108,9 +108,49 @@ describe('instructeurCouvreCollectivite', () => {
       instructeurCouvreCollectivite({
         ...perimetre,
         instructeurType: collectiviteTypeEnum.DR_ADEME,
-        collectiviteRegionCode: '84',
+        collectiviteRegionCodes: ['84'],
       })
     ).toBe(false);
+  });
+
+  /**
+   * La DR ADEME Océan Indien : une seule ligne, deux régions. La seconde lui
+   * vient d'un périmètre secondaire, et couvre autant que la première.
+   */
+  it('an instructeur covers a collectivite of its secondary region', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.DR_ADEME,
+        instructeurRegionCodes: ['04', '06'],
+        collectiviteRegionCodes: ['06'],
+      })
+    ).toBe(true);
+  });
+
+  /**
+   * Et réciproquement : un EPCI qui chevauche deux régions — Redon
+   * Agglomération, Pays de la Loire et Bretagne — est couvert par la DREAL de
+   * chacune, pas seulement par celle de son siège.
+   */
+  it('an instructeur covers a collectivite spanning into its region', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        collectiviteRegionCodes: ['53', '27'],
+      })
+    ).toBe(true);
+  });
+
+  it('a ddt covers a collectivite spanning into its department', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.DDT,
+        instructeurDepartementCodes: ['35'],
+        collectiviteDepartementCodes: ['44', '56', '35'],
+      })
+    ).toBe(true);
   });
 
   /**
@@ -123,18 +163,18 @@ describe('instructeurCouvreCollectivite', () => {
       instructeurCouvreCollectivite({
         ...perimetre,
         instructeurType: collectiviteTypeEnum.SERVICE_NATIONAL,
-        instructeurRegionCode: null,
-        instructeurDepartementCode: null,
+        instructeurRegionCodes: [],
+        instructeurDepartementCodes: [],
       })
     ).toBe(true);
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
         instructeurType: collectiviteTypeEnum.SERVICE_NATIONAL,
-        instructeurRegionCode: null,
-        instructeurDepartementCode: null,
-        collectiviteRegionCode: null,
-        collectiviteDepartementCode: null,
+        instructeurRegionCodes: [],
+        instructeurDepartementCodes: [],
+        collectiviteRegionCodes: [],
+        collectiviteDepartementCodes: [],
       })
     ).toBe(true);
   });

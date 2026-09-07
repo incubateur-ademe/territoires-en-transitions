@@ -32,6 +32,7 @@ export * from './libre-tag.schema';
 export * from './membres/invitation.schema';
 export * from './membres/membre.schema';
 export * from './partenaire-tag.schema';
+export * from './perimetre-secondaire.enum';
 export * from './personnalisation-reponses-payload.schema';
 export * from './personnalisations/competence-banatic.schema';
 export * from './personnalisations/personnalisation-regle.schema';
