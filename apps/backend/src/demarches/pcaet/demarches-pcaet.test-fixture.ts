@@ -11,12 +11,11 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { getAuthUserFromUserCredentials } from '@tet/backend/test';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import type { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import {
   DemarchePcaet,
@@ -28,6 +27,7 @@ import {
 import { CollectiviteRole } from '@tet/domain/users';
 import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
+import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pcaet-source-metadonnee.table';
 
