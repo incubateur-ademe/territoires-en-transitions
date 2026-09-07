@@ -61,8 +61,6 @@ export const SidePanel = (): JSX.Element => {
   const { panel, setPanel } = useSidePanel();
   useCloseOnRouteChange();
 
-  const Title = panel.Title ?? DefaultSidePanelTitle;
-
   return (
     <aside
       aria-label={panel.title}
@@ -79,7 +77,7 @@ export const SidePanel = (): JSX.Element => {
         <div className="flex items-start gap-2">
           <CloseButton onClick={() => setPanel({ type: 'close' })} />
           <Divider />
-          {panel.title && <Title title={panel.title} />}
+          {panel.title && <DefaultSidePanelTitle title={panel.title} />}
         </div>
       </div>
 

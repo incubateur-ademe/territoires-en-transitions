@@ -135,9 +135,6 @@ function PanelContentManager({
       type: 'open',
       isPersistentWithNextPath: (path) => path.includes('/action/'),
       title: getPanelTitle(activePanel.panelId, panelAction),
-      Title: ({ title }) => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl">{title}</h5>
-      ),
       content: (
         <div className="px-6 py-4">
           <SidePanelInnerContent

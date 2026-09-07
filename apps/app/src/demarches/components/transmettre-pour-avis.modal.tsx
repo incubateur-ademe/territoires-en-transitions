@@ -35,7 +35,6 @@ export const TransmettrePourAvisModal = ({ onConfirm, onClose }: Props) => (
             mois: DEMARCHE_PCAET_DELAI_AVIS_MOIS,
           })}
         </p>
-        <p className="m-0">{appLabels.demarcheTransmettreConfirmationGel}</p>
         <p className="m-0">{appLabels.demarcheTransmettreConfirmationSuite}</p>
       </div>
     )}

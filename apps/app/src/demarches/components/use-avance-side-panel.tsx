@@ -68,11 +68,6 @@ export function useDemarcheAvanceSidePanel(
         props.collectiviteId,
         props.demarcheId
       ),
-      Title: ({ title }) => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl m-0">
-          {title}
-        </h5>
-      ),
       content: <DemarcheAvanceSidePanelContent {...props} />,
     });
   }, [setPanel]);

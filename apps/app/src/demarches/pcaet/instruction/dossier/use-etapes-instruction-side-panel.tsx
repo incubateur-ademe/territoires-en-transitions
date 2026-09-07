@@ -40,11 +40,6 @@ export function useEtapesInstructionSidePanel(
       type: 'open',
       title: PANEL_TITLE,
       isPersistentWithNextPath: (path) => path === dossierPath,
-      Title: ({ title }) => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl m-0">
-          {title}
-        </h5>
-      ),
       content: (
         <EtapesInstructionSidePanelContent {...contentPropsRef.current} />
       ),

@@ -1,6 +1,6 @@
 'use client';
 
-import { EmptyCell } from './empty-cell';
+import { appLabels } from '@/app/labels/catalog';
 import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { ActionCommentsSidePanelContent } from '@/app/referentiels/actions/comments/action-comments-side-panel-content';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
@@ -15,8 +15,8 @@ import {
 } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
+import { EmptyCell } from './empty-cell';
 import { getTableMeta } from './utils';
-import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
@@ -56,8 +56,7 @@ function CommentsCellContent({
 
   const { setPanel, setTitle, panel } = useSidePanel();
 
-  const panelKey = `comments-${action.actionId}`;
-  const isActive = panel.isOpen && panel.title === panelKey;
+  const isActive = panel.isOpen && panel.title === appLabels.commentairesTitre;
 
   const toggleCommentsPanel = useCallback(() => {
     if (isActive) {
@@ -67,12 +66,7 @@ function CommentsCellContent({
 
     setPanel({
       type: 'open',
-      title: panelKey,
-      Title: () => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl">
-          {appLabels.commentairesTitre}
-        </h5>
-      ),
+      title: appLabels.commentairesTitre,
       content: (
         <div className="px-6 py-4">
           <ReferentielProvider referentielId={referentielId}>
@@ -88,7 +82,7 @@ function CommentsCellContent({
         </div>
       ),
     });
-  }, [isActive, setPanel, panelKey, referentielId, action, setTitle]);
+  }, [isActive, setPanel, referentielId, action, setTitle]);
 
   return (
     <TableCell

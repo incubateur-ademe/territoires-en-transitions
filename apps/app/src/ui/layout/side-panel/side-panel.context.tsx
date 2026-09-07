@@ -1,7 +1,6 @@
 'use client';
 
 import React, {
-  ComponentType,
   createContext,
   ReactNode,
   useCallback,
@@ -18,7 +17,6 @@ export type SidePanelTitleProps = {
 type Panel = {
   isPersistentWithNextPath?: (path: string) => boolean;
   title?: string;
-  Title?: ComponentType<SidePanelTitleProps>;
   content?: React.ReactNode;
 };
 
