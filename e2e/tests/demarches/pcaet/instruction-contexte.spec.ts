@@ -89,7 +89,6 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     });
 
     const pom = new InstructionPom(page);
-    await pom.hideOidcModal();
 
     await pom.goToDemandesAvis(dreal.data.id);
     await expect(pom.row(demandeAvisId)).toBeVisible();
@@ -159,7 +158,6 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     });
 
     const pom = new InstructionPom(page);
-    await pom.hideOidcModal();
 
     await page.goto(
       `/collectivite/${deposante.data.id}/instruction/${demandeAvisId}`
@@ -212,7 +210,6 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     });
 
     const pom = new InstructionPom(page);
-    await pom.hideOidcModal();
 
     // La saisine est bien celle de l'agent, mais elle ne porte pas sur la
     // collectivité dont l'URL afficherait le nom.
@@ -263,7 +260,6 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     });
 
     const pom = new InstructionPom(page);
-    await pom.hideOidcModal();
 
     await page.goto(
       `/collectivite/${deposante.data.id}/instruction/${ancienneDemandeAvisId}`
