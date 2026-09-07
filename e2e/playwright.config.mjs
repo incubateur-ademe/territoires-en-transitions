@@ -1,11 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
-import * as dotenv from 'dotenv';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadLocalEnv } from './load-local-env.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-dotenv.config({ path: resolve(__dirname, '.env') });
+// Secrets et URLs de la stack locale, déchiffrés ici pour que n'importe quel
+// lanceur (terminal, --ui, extension de l'IDE) parte du même environnement.
+// Sans effet en CI, qui injecte les variables elle-même.
+loadLocalEnv();
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env.BASE_URL || 'http://localhost:3000';
