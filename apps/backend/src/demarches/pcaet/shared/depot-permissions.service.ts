@@ -83,10 +83,6 @@ export class DepotPermissionsService {
   }
 
   /**
-   * Rend le contexte de l'instruction : l'appelant qui choisit un titre d'avis y
-   * lit le type de l'instructeur pour vérifier qu'il en répond bien.
-   */
-  /**
    * Peut-on lire un avis **validé** rendu par un autre destinataire du même
    * dossier ?
    *
@@ -102,13 +98,17 @@ export class DepotPermissionsService {
   async canConsulterAvisDuneAutreSaisine(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
-  ): Promise<boolean> {
+  ): Promise<Result<void, DepotPermissionsError>> {
     const saisines = await this.listSaisinesDeLaDemarche(
       demandeAvisId,
       user.id,
       tx
     );
-    return saisines.some(instructeurCouvreCollectivite);
+    if (!saisines.some(instructeurCouvreCollectivite)) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    return success(undefined);
   }
 
   /**
@@ -166,6 +166,10 @@ export class DepotPermissionsService {
     );
   }
 
+  /**
+   * Rend le contexte de l'instruction : l'appelant qui choisit un titre d'avis y
+   * lit le type de l'instructeur pour vérifier qu'il en répond bien.
+   */
   async canDeposerAvis(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg

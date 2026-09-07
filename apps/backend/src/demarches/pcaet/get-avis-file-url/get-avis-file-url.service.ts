@@ -125,7 +125,7 @@ export class GetAvisFileUrlService {
         demandeAvisId,
         { user, tx }
       );
-    if (autreDestinataire) {
+    if (autreDestinataire.success) {
       return true;
     }
 
