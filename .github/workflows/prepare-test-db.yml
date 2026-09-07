@@ -15,12 +15,18 @@ on:
         required: false
         default: ''
         type: string
+      nx-cloud-token-secret-name:
+        required: false
+        default: NX_CLOUD_ACCESS_TOKEN_RO
+        type: string
 
 jobs:
   prepare-test-db:
     runs-on: ubuntu-latest
-    environment: ci
     timeout-minutes: 20
+    environment: ci
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
 
     steps:
       - uses: actions/checkout@v7.0.1
@@ -109,7 +115,7 @@ jobs:
       # pas répété ici.
       - name: Import seeds using dedicated backend tests
         if: ${{ steps.is_available.outputs.exists != 'success' }}
-        run: pnpm nx test backend -- --project already-run-by-init-db-seed
+        run: pnpm nx run backend:seed-imports
 
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}

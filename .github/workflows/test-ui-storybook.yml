@@ -11,6 +11,10 @@ on:
       pnpm-cache-key:
         required: true
         type: string
+      nx-cloud-token-secret-name:
+        required: false
+        default: NX_CLOUD_ACCESS_TOKEN_RO
+        type: string
       run-ui:
         description: Run the UI Storybook build, test and Chromatic publish
         required: false
@@ -25,6 +29,9 @@ on:
 jobs:
   ui-storybook:
     if: ${{ inputs.run-ui }}
+    environment: ci
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -53,6 +60,9 @@ jobs:
   publish-storybook:
     if: ${{ inputs.run-ui }}
     needs: [ui-storybook]
+    environment: ci
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -77,6 +87,9 @@ jobs:
 
   app-storybook:
     if: ${{ inputs.run-app }}
+    environment: ci
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 

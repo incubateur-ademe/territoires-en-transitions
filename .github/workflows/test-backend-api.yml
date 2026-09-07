@@ -11,6 +11,10 @@ on:
       pnpm-cache-key:
         required: true
         type: string
+      nx-cloud-token-secret-name:
+        required: false
+        default: NX_CLOUD_ACCESS_TOKEN_RO
+        type: string
       run-backend:
         required: false
         default: true
@@ -22,8 +26,10 @@ on:
 
 jobs:
   test-backend-api:
-    runs-on: ubuntu-latest
     environment: ci
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
+    runs-on: ubuntu-latest
     timeout-minutes: 25
 
     steps:

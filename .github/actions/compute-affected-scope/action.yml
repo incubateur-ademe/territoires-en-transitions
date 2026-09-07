@@ -5,6 +5,14 @@ inputs:
   default-branch:
     description: Repository default branch name used when NX_BASE is not set
     required: true
+  default-nx-cloud-token-secret-name:
+    description: Secret name to use for non-protected refs
+    required: false
+    default: NX_CLOUD_ACCESS_TOKEN_RO
+  protected-nx-cloud-token-secret-name:
+    description: Secret name to use for protected refs
+    required: false
+    default: NX_CLOUD_ACCESS_TOKEN_RW
 
 outputs:
   nx-base:
@@ -40,6 +48,9 @@ outputs:
   run-prepare-test-db:
     description: Whether the test database should be prepared
     value: ${{ steps.compute.outputs.run-prepare-test-db }}
+  nx-cloud-token-secret-name:
+    description: Nx Cloud token secret name to use for downstream reusable workflows
+    value: ${{ steps.compute.outputs.nx-cloud-token-secret-name }}
 
 runs:
   using: composite
@@ -98,6 +109,11 @@ runs:
           run_prepare_test_db=true
         fi
 
+        nx_cloud_token_secret_name='${{ inputs.default-nx-cloud-token-secret-name }}'
+        if [[ '${{ github.ref_protected }}' == 'true' ]]; then
+          nx_cloud_token_secret_name='${{ inputs.protected-nx-cloud-token-secret-name }}'
+        fi
+
         echo "nx-base=$base_sha" >> "$GITHUB_OUTPUT"
         echo "nx-head=$head_sha" >> "$GITHUB_OUTPUT"
         echo "run-backend-api=$run_backend_api" >> "$GITHUB_OUTPUT"
@@ -108,6 +124,7 @@ runs:
         echo "run-ui-storybook=$run_ui_storybook" >> "$GITHUB_OUTPUT"
         echo "run-app-storybook=$run_app_storybook" >> "$GITHUB_OUTPUT"
         echo "run-prepare-test-db=$run_prepare_test_db" >> "$GITHUB_OUTPUT"
+        echo "nx-cloud-token-secret-name=$nx_cloud_token_secret_name" >> "$GITHUB_OUTPUT"
         {
           echo 'affected-projects<<EOF'
           echo "$affected_projects"
