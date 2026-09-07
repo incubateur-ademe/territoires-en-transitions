@@ -35,11 +35,14 @@ par défaut ; les anciens contrats de création conservent explicitement le déf
 
 Un suivi recommandé peut changer même après saisie de valeurs. Par exemple, une collectivité peut
 suivre mensuellement un indicateur annuel recommandé sans affecter les autres collectivités.
-Les historiques restent séparés : revenir au suivi annuel retrouve ses valeurs annuelles.
+Les lectures du suivi local sélectionnent uniquement la cadence effective ; les autres séries restent
+lisibles sur demande explicite de leur cadence. Revenir au suivi annuel retrouve ses valeurs annuelles.
 Aucune donnée n’est convertie. Les imports conservent également leur cadence d’origine.
 
-La cadence par défaut du catalogue, elle, devient immuable dès la première valeur. Imposer une
-cadence exige de valider les préférences et données existantes, sans les effacer ni les réinterpréter.
+La cadence par défaut du catalogue devient immuable dès la première valeur. Le passage à `imposee`
+est refusé tant qu’une préférence locale non nulle ou une valeur d’une autre cadence existe,
+sans suppression ni conversion automatique. Un indicateur ayant des valeurs annuelles ne peut
+donc pas devenir mensuel imposé.
 Les changements locaux sont verrouillés contre les saisies concurrentes.
 
 La **périodicité d’affichage** ne modifie que les repères de l’axe du graphique :
@@ -96,7 +99,8 @@ fallback annuel ou mensuel. Aucun hook ou classe n’est nécessaire pour un sim
 `indicateur_valeur` conserve une `periodicite` explicite et une date canonique de début de période.
 L’unicité inclut collectivité, indicateur, cadence, date et identité de source existante.
 Lectures, dédoublonnage et calculs utilisent cette identité ; les repositories hydratent les périodes.
-Les valeurs historiques deviennent annuelles.
+La migration classe les valeurs historiques sans cadence explicite comme `annuelle`, sans modifier
+leurs valeurs ni leur identité de source. Seules les dates suivent la normalisation auditée.
 
 Le catalogue SQL des cadences décrit unité, pas et ancrage, identiques à ceux du domaine.
 Il est public en lecture, modifiable uniquement par migration et immuable même avant utilisation.
@@ -136,8 +140,9 @@ Le tableau PCAET conserve son architecture et ses sources propres à chaque dém
 ### 5. Garantir les écritures et la réconciliation
 
 Un lot cible une collectivité et des cellules `resultat` ou `objectif`, avec indicateur et période.
-Droits et périodes sont validés pour tout le lot avant écriture ; valeurs et recalculs sont validés
-ou annulés ensemble. Le détail conserve ses mutations unitaires. Les nouveaux contrats portent
+Droits et périodes sont validés pour tout le lot avant écriture ; ses valeurs et leurs recalculs
+synchrones sont validés ou annulés dans la même transaction. Le détail conserve ses mutations unitaires.
+Les nouveaux contrats portent
 une période explicite ; les contrats REST historiques sans cadence restent des adaptateurs annuels,
 même après personnalisation locale.
 
@@ -152,19 +157,26 @@ L’import lit et valide définitions et objectifs avant toute mutation. Version
 objectifs de référence et intentions de réconciliation sont enregistrés atomiquement.
 Une version identique ou inférieure est refusée ; changer le contenu exige une nouvelle version.
 
-Le recalcul global s’exécute après commit pour ne pas bloquer toutes les collectivités.
+Le recalcul global du catalogue s’exécute après commit pour ne pas bloquer toutes les collectivités ;
+son échec n’annule pas le catalogue importé.
 La transaction crée des intentions durables par cible et collectivité, avec formule attendue et
 génération. Sont concernées les collectivités ayant des sources de la nouvelle formule **ou**
 des résultats automatiques existants, y compris lors du retrait d’une formule.
 
-Le traitement est borné, idempotent et concurrent sans double traitement : une intention est
-réconciliée puis supprimée dans une transaction, avec les verrous habituels. Un crash la laisse
-disponible ; une génération obsolète ne peut pas acquitter la suivante. Le drain initial de l’import,
+Le traitement est borné et idempotent. Après le verrou partagé du graphe, la sélection
+`SELECT … FOR UPDATE SKIP LOCKED` réserve une intention jusqu’à la fin de la transaction qui
+la réconcilie et la supprime. La formule attendue est vérifiée sous ce verrou ; une intention
+obsolète est supprimée sans calcul. Chaque génération crée des intentions distinctes :
+l’acquittement ne supprime que la ligne verrouillée, jamais celle d’une génération suivante.
+Un crash annule la transaction et libère le verrou ; l’intention reste disponible pour reprise,
+sans bail à expirer. Le drain initial de l’import,
 un cron et une reprise réservée au rôle de service traitent les intentions persistées sans réimporter
 le tableur. Les reprises ont un délai persisté ; erreurs et travail restant sont observables.
 
 Cette solution accepte une **cohérence éventuelle** entre catalogue et résultats automatiques.
-L’import ne rapporte un succès complet qu’après son drain borné et expose le travail restant.
+La réponse distingue le catalogue validé et la réconciliation terminée, en attente ou en échec,
+avec le travail restant lorsqu’il est connu. Le succès complet exige qu’aucune intention ne reste
+à traiter et qu’aucun échec ne soit signalé.
 Une activation strictement atomique à l’échelle du catalogue exigerait des résultats versionnés,
 hors périmètre de cet import administratif.
 
@@ -196,13 +208,23 @@ Les repositories exécutent les requêtes et acceptent la transaction de l’app
 Les entrées REST suivent `Controller → Application Service → Repository`.
 L’Edge EMT compose son service et son repository Supabase, dont la RPC est la frontière transactionnelle.
 
-Le site public conserve son accès historique en lecture seule à `site_labellisation` depuis un
-Server Component. Cette décision y transporte la cadence sans créer d’autre accès ; migrer ce
-parcours vers une API relève d’un autre chantier.
+Les exceptions suivantes restent temporaires, limitées aux lectures existantes et aux adaptations
+annuelle/mensuelle couvertes par cet ADR. Elles ne constituent pas l’architecture cible :
 
-Les tests d’architecture des projets Nx frontend et backend contrôlent le périmètre modifié.
-Les trois services historiques encore en accès direct restent dans une liste d’exceptions exacte
-et décroissante ; aucun nouveau service n’y entre.
+| Exception                                                                   | Responsable de la migration | Cible                                                               |
+| --------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------- |
+| `ListIndicateursService`                                                    | Mainteneurs backend         | Requêtes dans un repository                                         |
+| `ValeursMoyenneService`                                                     | Mainteneurs backend         | Requêtes dans un repository                                         |
+| `ValeursReferenceService`                                                   | Mainteneurs backend         | Droits dans le service, requêtes dans un repository                 |
+| `fetchCollectivite` du site public (`apps/site/app/collectivites/utils.ts`) | Mainteneurs du site         | API publique conservant le périmètre publié de `site_labellisation` |
+
+Échéance pour chaque exception : migration préalable à toute extension de son accès aux données,
+hors de ces adaptations. La migration conserve les contrôles d’accès et retire
+l’exception backend du test d’architecture dans la même PR.
+Les tests Nx frontend et backend contrôlent le périmètre modifié et la liste backend exacte,
+sans nouvelle exception. L’accès historique du site n’est pas couvert par le test frontend.
+
+<!-- Alias conservé pour les liens existants vers l’ancienne section 10. -->
 
 <a id="10-la-migration-reste-progressive-et-réversible"></a>
 
@@ -255,7 +277,7 @@ est limité à la session Sqitch, fourni par ce chemin et indépendant du flag f
 Un mainteneur exécute, un reviewer DB/plateforme distinct approuve. Les protections GitHub sont
 un prérequis externe vérifié avant mutation : environnement et base identifiés, branche principale
 seule, ni auto-approbation ni contournement administrateur. La connexion est directe ou via pooler
-de session, jamais transactionnel ; l’image Sqitch est épinglée par digest.
+de session, jamais transactionnel. Le workflow protégé exige une image Sqitch épinglée par digest.
 
 Le préflight technique et la validation opérateur vérifient la phase et le schéma, les cadences
 et formules valides, l’audit sans conflit,
@@ -270,9 +292,12 @@ Phase partielle ou incohérence entre registre Sqitch et schéma bloque toute tr
 Audit et intentions sont restaurés du même snapshot ; la projection des dépendances est reconstruite
 et validée sous verrou après chargement. Les dates sont réauditées en expand, validées en contract.
 
-Sqitch utilise le rollback `all` : un échec normal revient à la frontière de départ, avec maintien
-du garde protecteur du reporting. Une interruption peut laisser une phase partielle ; le préflight
-doit permettre de revalider puis reprendre les changements manquants sans rollback improvisé.
+Le déploiement utilise `sqitch deploy --mode all --verify --to <tag>` : le tag borne la phase,
+le mode `all` annule les changements de cette exécution en cas d’échec détecté, si les scripts
+`revert` réussissent. Chaque changement SQL est transactionnel. Une interruption peut laisser
+une phase partielle ; le préflight revalide cet état avant reprise jusqu’au même tag.
+Le garde créé par le `revert` du reporting reste actif jusqu’au redéploiement transactionnel
+du reporting compatible. La reprise et le maintien puis le retrait de ce garde doivent être testés.
 
 Le bootstrap est réservé à une base au registre absent ou vide, **sans tables applicatives**, ou déjà au
 contract. Il refuse une base existante sans registre ou arrêtée à expand. Son acquittement est
