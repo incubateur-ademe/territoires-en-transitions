@@ -103,7 +103,7 @@ export const DemandesAvisPage = ({ serviceId }: { serviceId: number }) => {
         ) : data.items.length === 0 ? (
           <EmptyCard
             picto={(props) => <PictoDashboard {...props} />}
-            title={appLabels.instructionListeVide}
+            title={appLabels.instructionListeVide({ deposeAvis })}
           />
         ) : (
           <>

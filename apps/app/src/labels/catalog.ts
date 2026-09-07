@@ -1836,9 +1836,15 @@ export const appLabels = {
    * pas y réintroduire « de votre région ». Et « transmis » plutôt que
    * « à instruire » : seules la DREAL et la région déposent un avis, les autres
    * reçoivent le dossier en lecture.
+   *
+   * Suit la même famille que le titre juste au-dessus : annoncer des dépôts
+   * « transmis » à une DREAL, qui en est l'instructrice, décrirait le travail
+   * d'un autre.
    */
-  instructionListeVide:
-    'Les dépôts PCAET qui vous sont transmis apparaîtront ici.',
+  instructionListeVide: ({ deposeAvis }: { deposeAvis: boolean }) =>
+    deposeAvis
+      ? 'Les instructions dont vous avez la charge apparaîtront ici.'
+      : 'Les dépôts PCAET qui vous sont transmis apparaîtront ici.',
   /**
    * Nom accessible du tableau : il suit la même famille que le titre visible
    * juste au-dessus, sinon un lecteur d'écran annonce à une DREAL la formulation
