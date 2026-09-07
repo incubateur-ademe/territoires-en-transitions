@@ -30,7 +30,9 @@ export const SubactionIndicateurModalResultats = ({ reference }: Props) => {
         </div>
       </div>
       <Divider className="mt-1.5 mb-2" />
-      <div className="text-sm">{'TODO'}</div>
+      <div className="text-sm py-4">
+        {appLabels.selectionValeurIndicateurNotAvailable}
+      </div>
     </div>
   );
 };
