@@ -68,6 +68,8 @@ Cette approche combine deux niveaux complémentaires :
 
 Les workflows réutilisables qui exécutent des commandes Nx restent rattachés à l'environnement `ci` existant pour leurs autres variables et secrets, et reçoivent le token Nx Cloud sélectionné depuis le workflow appelant sans dupliquer la logique de branche dans chaque job.
 
+La résolution du token référence explicitement les deux secrets `NX_CLOUD_ACCESS_TOKEN_RW` et `NX_CLOUD_ACCESS_TOKEN_RO`, avec un accès en lecture seule par défaut. L'accès dynamique `secrets[inputs.nx-cloud-token-secret-name]` est évité, car il oblige GitHub Actions à transmettre tous les secrets disponibles au runner.
+
 ### 3. Consolider les familles de jobs autour des besoins réels
 
 Les anciens workflows spécialisés mais redondants sont remplacés par des familles plus larges et plus cohérentes :
