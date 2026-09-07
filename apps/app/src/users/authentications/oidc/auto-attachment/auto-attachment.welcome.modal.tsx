@@ -65,16 +65,24 @@ export const AutoAttachmentWelcomeModal = () => {
         },
       }}
       dataTest="oidc.rattachement.accueil"
+      // Le titre et le sous-titre passent par le design system plutôt que par le
+      // corps : c'est lui qui donne le grand titre `primary-9`, la ligne grise
+      // en dessous et le séparateur qui les détache du reste.
+      title={appLabels.accueilRattachementTitre}
+      subTitle={appLabels.accueilRattachementService({
+        nom: service.collectiviteNom,
+      })}
+      // Sous la modale des CGU (`zIndex.modal`, 1000), qui est bloquante : leur
+      // acceptation passe d'abord, l'accueil attend derrière. Sous `dropdown`
+      // (999) aussi, pour ne pas passer par-dessus la liste déroulante d'une
+      // autre surface.
+      zIndex={998}
       render={() => (
         <div>
-          <h4 className="mb-2">{appLabels.accueilRattachementTitre}</h4>
-          <p className="mb-3">
-            {appLabels.accueilRattachementService({
-              nom: service.collectiviteNom,
-            })}
-          </p>
           <p className="mb-3">{appLabels.accueilRattachementIntro}</p>
-          <ul className="mb-0">
+          {/* Tailwind neutralise le `list-style` des `ul` : sans `list-disc`,
+              les trois lignes se lisent comme un paragraphe haché. */}
+          <ul className="mb-0 list-disc pl-4">
             <li>{appLabels.accueilRattachementConsulter}</li>
             <li>{appLabels.accueilRattachementSuivre({ deposeAvis })}</li>
             <li>{appLabels.accueilRattachementVueEnsemble}</li>
