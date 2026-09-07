@@ -47,7 +47,7 @@ export const TableCell = ({
 
   if (edit && canEdit) {
     return (
-      <InlineEditWrapper {...edit}>
+      <InlineEditWrapper tabNavigation {...edit}>
         <Cell
           {...props}
           pinnedLeft={pinnedLeft}
