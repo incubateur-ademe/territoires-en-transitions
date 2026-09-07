@@ -3,6 +3,7 @@
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { SuperAdminModeProvider } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { LinkOidcIdentityBanner } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.banner';
+import { AutoAttachmentWelcomeModal } from '@/app/users/authentications/oidc/auto-attachment/auto-attachment.welcome.modal';
 import { LinkOidcIdentityModal } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.modal';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { CollectiviteProvider } from '@tet/api/collectivites';
@@ -31,6 +32,7 @@ export function AuthedProviders({
         <SuperAdminModeProvider>
           <NPSTracker />
           <AccepterCGUModal />
+          <AutoAttachmentWelcomeModal />
           <LinkOidcIdentityModal />
           <BannerInfo />
           <LinkOidcIdentityBanner />

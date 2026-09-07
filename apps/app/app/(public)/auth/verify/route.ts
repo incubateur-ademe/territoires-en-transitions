@@ -5,6 +5,7 @@ import {
   OIDC_LOGIN_COOKIE_TTL_S,
   OIDC_PROVIDER_COOKIE,
 } from '@/app/users/authentications/oidc/login-user-with-oidc/login-user-with-oidc.cookies';
+import { readAutoAttachmentLanding } from '@/app/users/authentications/oidc/auto-attachment/auto-attachment.landing';
 import { sanitizeNextPath } from '@/app/users/authentications/sanitize-next-path';
 import { getRequestUrl } from '@tet/api';
 import { createSupabaseServerClient } from '@tet/api/utils/supabase/server-client';
@@ -23,6 +24,11 @@ import { NextRequest, NextResponse } from 'next/server';
  * Ce pont n'est emprunté que par les parcours OIDC : le traverser vaut
  * connexion par fournisseur d'identité réussie, d'où le marqueur one-shot
  * `OIDC_LOGIN_COOKIE` posé pour `TrackLoginUserWithOidc`.
+ *
+ * `rattachement` et `rattachement-type` disent qu'un service vient de s'ouvrir
+ * à l'agent — voir `readAutoAttachmentLanding`. Un `next` explicite passe
+ * devant : il vient d'une intention de l'agent, là où ceci n'est qu'un défaut
+ * mieux choisi que la racine.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = getRequestUrl(request);
@@ -48,7 +54,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const destination = new URL(next ?? '/', origin);
+  const destination = new URL(
+    next ?? readAutoAttachmentLanding(searchParams) ?? '/',
+    origin
+  );
   if (liaison) {
     destination.searchParams.set('comptes-associes', '1');
   }

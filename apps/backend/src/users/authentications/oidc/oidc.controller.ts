@@ -352,9 +352,11 @@ export class OidcController {
   /**
    * Signale à l'app que cette connexion vient d'ouvrir un service.
    *
-   * L'identifiant seul, jamais l'URL : c'est l'app qui sait où atterrit un
-   * service et comment l'annoncer. Le backend n'a pas à connaître la forme de
-   * ses routes — il en construit déjà une de trop avec `/auth/verify`.
+   * L'identifiant et le type, jamais l'URL : c'est l'app qui sait où atterrit
+   * une collectivité, et le type est ce qui lui permet de trancher — l'espace
+   * d'un service *est* celui de l'instruction, celui d'un conseil régional non.
+   * Le backend n'a pas à connaître la forme de ses routes ; il en construit
+   * déjà une de trop avec `/auth/verify`.
    */
   private setRattachement(
     verifyUrl: URL,
@@ -365,6 +367,7 @@ export class OidcController {
         'rattachement',
         String(rattachement.collectiviteId)
       );
+      verifyUrl.searchParams.set('rattachement-type', rattachement.type);
     }
   }
 

@@ -20,6 +20,13 @@ export const userPreferencesSchema = z.object({
     modalDisplayCount: z.number(),
     // Dernier affichage de la modale — sert à ne pas la remontrer le même jour.
     modalLastSeenAt: z.nullable(z.iso.datetime()),
+    // Le service qu'un rattachement automatique vient d'ouvrir, tant que
+    // l'agent n'a pas vu l'écran d'accueil qui le lui explique. Remis à `null`
+    // à la fermeture : c'est ce qui fait le « une seule fois ».
+    //
+    // En préférence et non dans l'URL de retour : une modale qui explique tout
+    // un parcours doit survivre à un onglet fermé en cours de route.
+    autoAttachedCollectiviteId: z.nullable(z.number()),
   }),
 });
 
@@ -39,5 +46,6 @@ export const defaultUserPreferences: UserPreferences = {
     isBannerVisible: true,
     modalDisplayCount: 0,
     modalLastSeenAt: null,
+    autoAttachedCollectiviteId: null,
   },
 } as const;

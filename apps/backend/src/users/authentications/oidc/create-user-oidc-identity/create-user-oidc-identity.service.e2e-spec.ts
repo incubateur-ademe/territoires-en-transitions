@@ -4,9 +4,11 @@ import {
   addTestCollectivite,
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
+import { UserPreferencesRepository } from '@tet/backend/users/preferences/user-preferences.repository';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -72,6 +74,7 @@ async function createTestingContext() {
       AttachUserToOrganisationService,
       GetCollectiviteBySiretService,
       UpdateUserRoleService,
+      UserPreferencesRepository,
     ],
   }).compile();
 
@@ -166,13 +169,34 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
     });
   }
 
-  /** Un service de l'État de test, identifié par son SIRET. */
+  /**
+   * Un service de l'État de test, identifié par son SIRET. Le code de région
+   * est tiré libre : une DREAL est unique par région, et les dix-huit codes
+   * réels sont tous occupés par l'import (cf. `pickFreeRegionCode`).
+   */
   async function addService(siren: string, nic: string) {
     const { collectivite, cleanup } = await addTestCollectivite(
       databaseService,
-      { type: 'dreal', regionCode: 'V1', siren, nic }
+      {
+        type: 'dreal',
+        regionCode: await pickFreeRegionCode(databaseService, 'dreal'),
+        siren,
+        nic,
+      }
     );
     onTestFinished(cleanup);
+    // Le droit que le rattachement va poser retient la collectivité (clé
+    // étrangère sans action en cascade). Le défaire ici, et non depuis le
+    // nettoyage du compte, garde la base propre même si une assertion casse
+    // avant : une DREAL laissée derrière soi rend le test infaisable au second
+    // passage — elle est unique par région.
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(utilisateurCollectiviteAccessTable)
+        .where(
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        );
+    });
     return collectivite;
   }
 
@@ -392,6 +416,8 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       expect(result.data.rattachement).toEqual({
         collectiviteId: service_.id,
         nom: service_.nom,
+        // Le type voyage jusqu'à l'app : c'est lui qui dit où atterrir.
+        type: 'dreal',
       });
 
       const [identite] = await databaseService.db
@@ -414,6 +440,16 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
         .from(utilisateurVerifieTable)
         .where(eq(utilisateurVerifieTable.userId, identite.userId));
       expect(verifie?.verifie).toBe(true);
+
+      // Le service à annoncer : c'est ce que l'app lit pour expliquer le
+      // parcours une fois, et qu'elle remet à `null` en refermant.
+      const [dcp] = await databaseService.db
+        .select()
+        .from(dcpTable)
+        .where(eq(dcpTable.id, identite.userId));
+      expect(dcp.preferences?.oidc.autoAttachedCollectiviteId).toBe(
+        service_.id
+      );
     });
 
     /**

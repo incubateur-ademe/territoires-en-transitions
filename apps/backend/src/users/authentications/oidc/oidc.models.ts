@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CollectiviteType } from '@tet/domain/collectivites';
 import {
   oidcProviderSchema,
   oidcProviders,
@@ -139,6 +140,12 @@ export type OidcErrorCode = (typeof oidcErrorCodes)[number];
 export type RattachementAutomatique = {
   collectiviteId: number;
   nom: string;
+  /**
+   * Le type voyage avec l'identifiant : c'est lui qui dit si l'espace du
+   * service *est* celui de l'instruction, et l'app en a besoin pour choisir la
+   * page d'atterrissage sans avoir encore chargé les droits de l'agent.
+   */
+  type: CollectiviteType;
 };
 
 export type LoginUserWithOidcProviderResult =

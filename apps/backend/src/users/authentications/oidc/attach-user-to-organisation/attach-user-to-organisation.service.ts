@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
+import { UserPreferencesRepository } from '@tet/backend/users/preferences/user-preferences.repository';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -11,7 +12,11 @@ import {
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
-import { OidcClaims, OidcProvider } from '../oidc.models';
+import {
+  OidcClaims,
+  OidcProvider,
+  RattachementAutomatique,
+} from '../oidc.models';
 import {
   AttachUserToOrganisationError,
   AttachUserToOrganisationErrorEnum,
@@ -23,7 +28,7 @@ import {
  * s'y branche, et l'utilisateur n'en voit jamais rien.
  */
 export type AutoAttachmentOutcome =
-  | { statut: 'rattache'; collectiviteId: number; nom: string }
+  | ({ statut: 'rattache' } & RattachementAutomatique)
   | { statut: 'aucun'; raison: AutoAttachmentRefus };
 
 type AutoAttachmentRefus =
@@ -71,6 +76,7 @@ export class AttachUserToOrganisationService {
   constructor(
     private readonly getCollectiviteBySiretService: GetCollectiviteBySiretService,
     private readonly updateUserRoleService: UpdateUserRoleService,
+    private readonly userPreferencesRepository: UserPreferencesRepository,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -117,7 +123,7 @@ export class AttachUserToOrganisationService {
       return success({ statut: 'aucun', raison: 'domaine-email-refuse' });
     }
 
-    return this.transactionManager.executeSingle<
+    const resultat = await this.transactionManager.executeSingle<
       AutoAttachmentOutcome,
       AttachUserToOrganisationError
     >(async (transaction) => {
@@ -171,7 +177,37 @@ export class AttachUserToOrganisationService {
         statut: 'rattache',
         collectiviteId: collectivite.collectiviteId,
         nom: collectivite.nom,
+        type: collectivite.type,
       });
     }, tx);
+
+    if (resultat.success && resultat.data.statut === 'rattache') {
+      await this.annoncerLeService(userId, resultat.data.collectiviteId);
+    }
+
+    return resultat;
+  }
+
+  /**
+   * Marque le service à annoncer, pour que l'app en explique le parcours une
+   * fois. Hors de la transaction, et sans conséquence si elle échoue : le droit
+   * est acquis, et c'est lui qui compte — un écran d'accueil manquant n'est pas
+   * un accès manquant. Le dépôt des préférences n'accepte pas de transaction,
+   * et lui en donner une pour cela seul ne vaut pas le détour.
+   */
+  private async annoncerLeService(
+    userId: string,
+    collectiviteId: number
+  ): Promise<void> {
+    const preferences =
+      await this.userPreferencesRepository.updateUserPreferencesFlat(userId, {
+        'oidc.autoAttachedCollectiviteId': collectiviteId,
+      });
+
+    if (!preferences.success) {
+      this.logger.warn(
+        `Le service #${collectiviteId} du compte ${userId} ne sera pas annoncé (${preferences.error}) : le rattachement, lui, est acquis`
+      );
+    }
   }
 }

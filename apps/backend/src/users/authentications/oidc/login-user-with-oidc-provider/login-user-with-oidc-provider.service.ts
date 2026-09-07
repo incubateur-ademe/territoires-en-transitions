@@ -87,12 +87,11 @@ export class LoginUserWithOidcProviderService {
       return undefined;
     }
 
-    return rattachement.data.statut === 'rattache'
-      ? {
-          collectiviteId: rattachement.data.collectiviteId,
-          nom: rattachement.data.nom,
-        }
-      : undefined;
+    if (rattachement.data.statut !== 'rattache') {
+      return undefined;
+    }
+    const { statut: _, ...service } = rattachement.data;
+    return service;
   }
 
   /** Le matching lui-même : quel compte cette identité désigne. */

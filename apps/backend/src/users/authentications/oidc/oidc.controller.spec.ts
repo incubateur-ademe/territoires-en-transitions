@@ -484,7 +484,11 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
         statut: 'connexion',
         userId: 'user-1',
         email: 'agent@developpement-durable.gouv.fr',
-        rattachement: { collectiviteId: 4242, nom: 'DREAL Syldavie' },
+        rattachement: {
+          collectiviteId: 4242,
+          nom: 'DREAL Syldavie',
+          type: 'dreal',
+        },
       });
 
       const response = await request(app.getHttpServer())

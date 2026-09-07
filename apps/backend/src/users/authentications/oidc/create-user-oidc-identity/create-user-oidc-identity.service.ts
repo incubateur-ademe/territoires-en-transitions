@@ -158,13 +158,11 @@ export class CreateUserOidcIdentityService {
       );
     }
 
-    const service =
-      rattachement.success && rattachement.data.statut === 'rattache'
-        ? {
-            collectiviteId: rattachement.data.collectiviteId,
-            nom: rattachement.data.nom,
-          }
-        : undefined;
+    let service: RattachementAutomatique | undefined;
+    if (rattachement.success && rattachement.data.statut === 'rattache') {
+      const { statut: _, ...rattache } = rattachement.data;
+      service = rattache;
+    }
 
     return this.ponterSession(claims.email, true, service);
   }
