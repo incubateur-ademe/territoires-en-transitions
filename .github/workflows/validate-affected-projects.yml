@@ -78,6 +78,11 @@ jobs:
       - name: Print affected projects
         run: pnpm nx show projects --affected --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}"
 
+      # Download once before concurrent Nx commands to avoid racing on bundle extraction.
+      # https://github.com/nrwl/nx/issues/35209
+      - name: Download Nx Cloud client
+        run: pnpm nx download-cloud-client
+
       - name: Lint affected projects
         run: pnpm nx affected -t lint --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=75% --outputStyle=static -- --quiet
         background: true
