@@ -31,8 +31,11 @@ export function AuthedProviders({
       <CollectiviteProvider user={user}>
         <SuperAdminModeProvider>
           <NPSTracker />
-          <AccepterCGUModal />
+          {/* L'accueil du rattachement est déclaré avant les CGU, et porte un
+              z-index plus bas : l'ordre de lecture et l'ordre d'empilement
+              disent la même chose — les CGU passent devant. */}
           <AutoAttachmentWelcomeModal />
+          <AccepterCGUModal />
           <LinkOidcIdentityModal />
           <BannerInfo />
           <LinkOidcIdentityBanner />
