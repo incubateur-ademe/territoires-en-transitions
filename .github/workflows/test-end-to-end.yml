@@ -34,7 +34,7 @@ jobs:
     # boot en erreur si la variable de dépôt n'est pas définie.
     env:
       MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
-      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-name == 'NX_CLOUD_ACCESS_TOKEN_RW' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
 
     strategy:
       fail-fast: false
