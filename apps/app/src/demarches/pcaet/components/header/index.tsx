@@ -1,9 +1,11 @@
 'use client';
 
-import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
-import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
-import type { DemarchePcaet } from '@/app/demarches/types';
+import type {
+  DemarchePcaet,
+  DemarchePcaetUpdatePatch,
+} from '@/app/demarches/types';
 import { MetadataLine } from '@/app/ui/metadata-line';
+import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PageHeader } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
 import { DemarcheMenuButton } from '../demarche-menu.button';
@@ -40,15 +42,7 @@ export const DemarchePcaetHeader = ({
       ].join(' ')}
     >
       <PageHeader compact={compact}>
-        <PageHeader.EditableTitle
-          isReadonly={isPublished}
-          title={demarche.titre}
-          onUpdate={(value) => {
-            // Le backend refuse un titre vide : on ignore l'effacement.
-            const titre = value?.trim();
-            if (titre) onUpdate({ titre });
-          }}
-        />
+        <PageHeader.Title>{demarche.titre}</PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-row items-center gap-2">
             <DemarcheMenuButton />
