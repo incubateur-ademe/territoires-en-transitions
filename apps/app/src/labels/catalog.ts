@@ -486,7 +486,6 @@ export const appLabels = {
     "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.", // Cadre légal propre au PCAET : non paramétrable.
   demarcheCreerChampsObligatoiresLegende:
     'Les champs marqués d’un astérisque (*) sont obligatoires.',
-  demarcheCreerIntitule: 'Intitulé de la démarche *',
   demarcheCreerPilotes: 'Pilotes *',
   demarcheCreerRechercherPilote: 'Rechercher un pilote…',
   demarcheCreerDateDebut: 'Date de début *',

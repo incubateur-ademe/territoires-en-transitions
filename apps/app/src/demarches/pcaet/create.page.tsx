@@ -37,7 +37,6 @@ const createDemarchePcaetSchema = z.object({
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
 
-const TITRE_FIELD_ID = 'create-demarche-pcaet-titre';
 const PILOTES_FIELD_ID = 'create-demarche-pcaet-pilotes';
 const DATE_LANCEMENT_FIELD_ID = 'create-demarche-pcaet-date-lancement';
 
@@ -129,20 +128,6 @@ export const CreateDemarchePcaetPage = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-5"
             >
-              <Field
-                title={appLabels.demarcheCreerIntitule}
-                htmlFor={TITRE_FIELD_ID}
-                state={errors.titre ? 'error' : 'default'}
-                message={errors.titre?.message}
-              >
-                <Input
-                  id={TITRE_FIELD_ID}
-                  type="text"
-                  aria-required="true"
-                  {...register('titre')}
-                />
-              </Field>
-
               <div className="flex flex-col gap-2">
                 <div
                   id={`${PILOTES_FIELD_ID}-label`}
