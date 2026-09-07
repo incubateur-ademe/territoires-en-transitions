@@ -21,7 +21,7 @@ import {
  * reste l'invitation, parce que rien ne garantit qu'un agent public en soit
  * l'employé.
  */
-export const autoAttachableTypes: readonly CollectiviteType[] = [
+const autoAttachableTypes: readonly CollectiviteType[] = [
   collectiviteTypeEnum.DREAL,
   collectiviteTypeEnum.DDT,
   collectiviteTypeEnum.DR_ADEME,
