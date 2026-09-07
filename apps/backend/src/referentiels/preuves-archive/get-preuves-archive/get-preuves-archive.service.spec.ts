@@ -56,7 +56,7 @@ function buildService({
   } as unknown;
 
   const documentStorage = {
-    createDocumentSignedUrl: vi.fn().mockResolvedValue(signedUrlResult),
+    createSignedDownloadUrl: vi.fn().mockResolvedValue(signedUrlResult),
   } as unknown;
 
   return new GetPreuvesArchiveService(

@@ -44,7 +44,7 @@ describe('Archive de preuves - tRPC', () => {
           .overrideProvider(GeneratePreuvesArchiveWorker)
           .useValue({ onModuleInit: () => undefined });
         moduleBuilder.overrideProvider(DocumentStorageService).useValue({
-          createDocumentSignedUrl: async () => ({
+          createSignedDownloadUrl: async () => ({
             success: true,
             data: { signedUrl: FAKE_SIGNED_URL },
           }),

@@ -87,7 +87,7 @@ export class GetAvisFileUrlService {
     }
 
     const signedUrlResult =
-      await this.documentStorageService.createDocumentSignedUrl({
+      await this.documentStorageService.createSignedDownloadUrl({
         bucketId: fichier.bucketId,
         key: avis.fichierRef,
         expiresInSeconds: DOWNLOAD_URL_TTL_SECONDS,
