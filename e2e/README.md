@@ -91,3 +91,11 @@ npx playwright codegen
 ```
 
 TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=LM4yqrOzmFE&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI&index=3) (durée : 7 minutes)
+
+### Modale d'incitation MonCompteAdeme
+
+Elle s'ouvre en overlay sur toutes les pages authentifiées quand le provider est activé — le cas en local, pas en CI — et intercepte alors les clics. [`main.fixture.ts`](./tests/main.fixture.ts) la neutralise donc par défaut. Une suite qui la teste la réclame explicitement :
+
+```ts
+test.use({ oidcModal: 'shown' });
+```

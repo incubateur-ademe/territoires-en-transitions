@@ -21,18 +21,6 @@ export class InstructionPom {
     this.accessError = page.getByTestId('demarches.pcaet.erreur-acces');
   }
 
-  /**
-   * Neutralise la modale d'annonce ProConnect (drapeau de session « déjà vue »),
-   * qui s'ouvre en overlay sur n'importe quelle page et intercepte les clics —
-   * ici ceux de la bannière de contexte. Même mécanique que
-   * `login-user-with-oidc.spec.ts`. À appeler avant la première navigation.
-   */
-  async hideOidcModal() {
-    await this.page.addInitScript(() =>
-      window.sessionStorage.setItem('oidc-modal-seen', '1')
-    );
-  }
-
   /** La liste des dossiers à instruire, sous le service. */
   async goToDemandesAvis(serviceId: number) {
     await this.page.goto(`/collectivite/${serviceId}/demandes-avis`);

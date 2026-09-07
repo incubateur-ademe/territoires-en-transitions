@@ -12,6 +12,9 @@ const OIDC_LINK_HREF = /\/api\/v1\/moncompteademe\/login\?.*mode=link/;
  * le test reste vert que le provider soit activé (dev/local) ou non (CI).
  */
 test.describe('Incitation « connexion unifiée » MonCompteAdeme', () => {
+  // Seule suite à vouloir la modale : la fixture la neutralise partout ailleurs.
+  test.use({ oidcModal: 'shown' });
+
   test("la bannière d'annonce invite à lier MonCompteAdeme et se masque à la fermeture", async ({
     page,
     collectivites,
