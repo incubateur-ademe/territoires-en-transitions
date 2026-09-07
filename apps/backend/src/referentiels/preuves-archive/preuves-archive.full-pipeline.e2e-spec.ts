@@ -86,7 +86,7 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
             await copyFile(sourceFilePath, capturedZipPath);
             return { success: true, data: { key } };
           },
-          createDocumentSignedUrl: async () => ({
+          createSignedDownloadUrl: async () => ({
             success: true,
             data: { signedUrl: 'https://fake.test/archive.zip' },
           }),

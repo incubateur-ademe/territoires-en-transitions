@@ -78,7 +78,7 @@ export class GetDossierDocumentUrlService {
     }
 
     const signedUrlResult =
-      await this.documentStorageService.createDocumentSignedUrl({
+      await this.documentStorageService.createSignedDownloadUrl({
         bucketId: fichier.bucketId,
         key: fichier.hash,
         expiresInSeconds: DOWNLOAD_URL_TTL_SECONDS,
