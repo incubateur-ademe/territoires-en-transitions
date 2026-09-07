@@ -29,6 +29,8 @@ import { OidcController } from './authentications/oidc/oidc.controller';
 import { LinkOidcIdentityToUserSessionRouter } from './authentications/oidc/link-oidc-identity-to-user-session/link-oidc-identity-to-user-session.router';
 import { LinkOidcIdentityToUserSessionService } from './authentications/oidc/link-oidc-identity-to-user-session/link-oidc-identity-to-user-session.service';
 import { OidcClientService } from './authentications/oidc/oidc-client.service';
+import { AttachUserToOrganisationService } from './authentications/oidc/attach-user-to-organisation/attach-user-to-organisation.service';
+import { GetCollectiviteBySiretService } from './authentications/oidc/get-collectivite-by-siret/get-collectivite-by-siret.service';
 import { GetPreselectedCollectiviteRouter } from './authentications/oidc/get-preselected-collectivite/get-preselected-collectivite.router';
 import { GetPreselectedCollectiviteService } from './authentications/oidc/get-preselected-collectivite/get-preselected-collectivite.service';
 import { LinkOidcIdentityToUserService } from './authentications/oidc/link-oidc-identity-to-user/link-oidc-identity-to-user.service';
@@ -89,6 +91,8 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
     ConfirmOidcIdentityLinkedToUserRouter,
     HandleUserOidcIdentitiesService,
     HandleUserOidcIdentitiesRouter,
+    GetCollectiviteBySiretService,
+    AttachUserToOrganisationService,
     GetPreselectedCollectiviteService,
     GetPreselectedCollectiviteRouter,
     GetOidcStatusService,

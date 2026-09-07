@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, desc, eq, isNotNull } from 'drizzle-orm';
+import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oidc.table';
 
 export type PreselectedCollectivite = {
@@ -25,7 +25,10 @@ export type PreselectedCollectivite = {
 export class GetPreselectedCollectiviteService {
   private readonly logger = new Logger(GetPreselectedCollectiviteService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly getCollectiviteBySiretService: GetCollectiviteBySiretService
+  ) {}
 
   async preselectionner(
     userId: string
@@ -53,40 +56,28 @@ export class GetPreselectedCollectiviteService {
       return null;
     }
 
-    // SIRET (14) = SIREN (9) + NIC (5). La table collectivite stocke le SIREN ;
-    // on rapproche au niveau SIREN (une collectivité = un SIREN).
-    const siren = identite.siret.slice(0, 9);
-
-    const collectivites = await db
-      .select({ id: collectiviteTable.id, nom: collectiviteTable.nom })
-      .from(collectiviteTable)
-      .where(eq(collectiviteTable.siren, siren))
-      .limit(2);
-
-    this.logger.log(
-      `Pré-sélection collectivité (compte ${userId}) : siret=${identite.siret} → siren=${siren} → ${collectivites.length} collectivité(s) trouvée(s)` +
-        (collectivites.length > 0
-          ? ` [${collectivites.map((c) => `#${c.id} ${c.nom}`).join(', ')}]`
-          : '')
+    // Le rapprochement lui-même est partagé avec le rattachement automatique :
+    // les deux chemins doivent désigner la même collectivité pour un même
+    // SIRET, sans quoi l'écran de choix proposerait autre chose que ce que
+    // l'identité vaut.
+    const rapprochee = await this.getCollectiviteBySiretService.getBySiret(
+      identite.siret
     );
 
-    // Correspondance unique requise : 0 → pas de collectivité connue pour ce
-    // SIREN ; >1 → ambiguïté (ne devrait pas arriver, SIREN unique) — dans les
-    // deux cas on ne pré-sélectionne rien (sélecteur vide, comportement actuel).
-    if (collectivites.length !== 1) {
+    if (!rapprochee) {
       this.logger.log(
-        `Pas de pré-sélection pour le SIREN ${siren} (compte ${userId}) : ${collectivites.length} collectivité(s) trouvée(s)`
+        `Pas de pré-sélection pour le compte ${userId} : le SIRET ${identite.siret} ne désigne aucune collectivité`
       );
       return null;
     }
 
     this.logger.log(
-      `Pré-sélection retenue pour le compte ${userId} : collectivité #${collectivites[0].id} (${collectivites[0].nom}), siren ${siren}`
+      `Pré-sélection retenue pour le compte ${userId} : collectivité #${rapprochee.collectiviteId} (${rapprochee.nom}), siret ${identite.siret}`
     );
 
     return {
-      collectiviteId: collectivites[0].id,
-      nom: collectivites[0].nom,
+      collectiviteId: rapprochee.collectiviteId,
+      nom: rapprochee.nom,
       siret: identite.siret,
     };
   }

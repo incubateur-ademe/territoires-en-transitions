@@ -3,20 +3,28 @@ import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { LoginUserWithOidcProviderService } from '../login-user-with-oidc-provider/login-user-with-oidc-provider.service';
 import { CreateSupabaseSessionService } from '../create-supabase-session.service';
-import { OidcClaims, OidcProvider } from '../oidc.models';
+import {
+  OidcClaims,
+  OidcProvider,
+  RattachementAutomatique,
+} from '../oidc.models';
 import { LinkOidcIdentityToUserService } from '../link-oidc-identity-to-user/link-oidc-identity-to-user.service';
+import { AttachUserToOrganisationService } from '../attach-user-to-organisation/attach-user-to-organisation.service';
 
 export const creerCompteOidcErrors = [
   'CREATION_COMPTE_ERROR',
   'SESSION_ERROR',
   'EMAIL_NON_VERIFIE',
 ] as const;
-export type CreateUserOidcIdentityError = (typeof creerCompteOidcErrors)[number];
+export type CreateUserOidcIdentityError =
+  (typeof creerCompteOidcErrors)[number];
 
 export type CreateUserOidcIdentityResult = {
   /** `true` si un compte a été créé ; `false` si un compte existait déjà (double-clic, défense en profondeur). */
   compteCree: boolean;
   hashedToken: string;
+  /** Renseigné quand l'organisation du jeton a ouvert un service au compte. */
+  rattachement?: RattachementAutomatique;
 };
 
 /**
@@ -33,13 +41,16 @@ export class CreateUserOidcIdentityService {
     private readonly authentifierOidcService: LoginUserWithOidcProviderService,
     private readonly rattacherIdentiteService: LinkOidcIdentityToUserService,
     private readonly supabaseService: SupabaseService,
-    private readonly creerSessionService: CreateSupabaseSessionService
+    private readonly creerSessionService: CreateSupabaseSessionService,
+    private readonly rattacherOrganisationService: AttachUserToOrganisationService
   ) {}
 
   async creerCompte(
     provider: OidcProvider,
     claims: OidcClaims
-  ): Promise<Result<CreateUserOidcIdentityResult, CreateUserOidcIdentityError>> {
+  ): Promise<
+    Result<CreateUserOidcIdentityResult, CreateUserOidcIdentityError>
+  > {
     // Défense en profondeur contre un double-clic / re-soumission du ticket :
     // on rejoue le même matching que le callback (sub OU email vérifié). S'il
     // trouve désormais un compte (créé entre-temps par une première requête,
@@ -64,7 +75,12 @@ export class CreateUserOidcIdentityService {
       this.logger.log(
         `Création de compte OIDC ${provider} (sub: ${claims.sub}) : compte déjà existant détecté (double-clic ou re-soumission), aucune création — reconnexion normale de ${authentification.userId}`
       );
-      return this.ponterSession(authentification.email, false);
+      // `authentifier` a déjà tenté le rattachement : on le reporte tel quel.
+      return this.ponterSession(
+        authentification.email,
+        false,
+        authentification.rattachement
+      );
     }
 
     if (authentification.statut === 'email-non-verifie') {
@@ -83,7 +99,9 @@ export class CreateUserOidcIdentityService {
   private async creerNouveauCompte(
     provider: OidcProvider,
     claims: OidcClaims
-  ): Promise<Result<CreateUserOidcIdentityResult, CreateUserOidcIdentityError>> {
+  ): Promise<
+    Result<CreateUserOidcIdentityResult, CreateUserOidcIdentityError>
+  > {
     const { data, error } =
       await this.supabaseService.client.auth.admin.createUser({
         email: claims.email,
@@ -125,17 +143,47 @@ export class CreateUserOidcIdentityService {
       `Compte créé via OIDC ${provider} (sub: ${claims.sub}, cas 3-Non, U5) : ${userId}`
     );
 
-    return this.ponterSession(claims.email, true);
+    // Le compte n'existait pas : `authentifier` n'avait aucun droit à poser, et
+    // c'est ici que le service du jeton s'ouvre. Un échec ne perd pas
+    // l'inscription — le compte est créé, la session se ponte, et l'agent
+    // reprendra ses accès par le support.
+    const rattachement = await this.rattacherOrganisationService.attach(
+      userId,
+      provider,
+      claims
+    );
+    if (!rattachement.success) {
+      this.logger.error(
+        `Rattachement automatique du compte ${userId} en échec (${rattachement.error}) : l'inscription se poursuit sans`
+      );
+    }
+
+    const service =
+      rattachement.success && rattachement.data.statut === 'rattache'
+        ? {
+            collectiviteId: rattachement.data.collectiviteId,
+            nom: rattachement.data.nom,
+          }
+        : undefined;
+
+    return this.ponterSession(claims.email, true, service);
   }
 
   private async ponterSession(
     email: string,
-    compteCree: boolean
-  ): Promise<Result<CreateUserOidcIdentityResult, CreateUserOidcIdentityError>> {
+    compteCree: boolean,
+    rattachement?: RattachementAutomatique
+  ): Promise<
+    Result<CreateUserOidcIdentityResult, CreateUserOidcIdentityError>
+  > {
     const session = await this.creerSessionService.creerSession(email);
     if (!session.success) {
       return failure('SESSION_ERROR');
     }
-    return success({ compteCree, hashedToken: session.data.hashedToken });
+    return success({
+      compteCree,
+      hashedToken: session.data.hashedToken,
+      rattachement,
+    });
   }
 }

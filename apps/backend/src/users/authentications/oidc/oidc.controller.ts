@@ -21,6 +21,7 @@ import {
   OIDC_FLOW_COOKIES_TTL_MS,
   OIDC_ID_TOKEN_COOKIE_TTL_MS,
   OidcErrorCode,
+  RattachementAutomatique,
 } from './oidc.models';
 import {
   getRequestCookies,
@@ -275,6 +276,7 @@ export class OidcController {
           if (nextPath) {
             verifyUrl.searchParams.set('next', nextPath);
           }
+          this.setRattachement(verifyUrl, creation.data.rattachement);
           res.redirect(303, verifyUrl.href);
           return;
         }
@@ -338,11 +340,31 @@ export class OidcController {
         // l'URL pour déclencher le toast « comptes associés ».
         verifyUrl.searchParams.set('liaison', '1');
       }
+      this.setRattachement(verifyUrl, authentification.rattachement);
 
       res.redirect(303, verifyUrl.href);
     } catch (error) {
       this.logUnexpectedError('callback', providerConfig.provider, error);
       this.redirectLoginError(res, 'oidc-erreur-interne');
+    }
+  }
+
+  /**
+   * Signale à l'app que cette connexion vient d'ouvrir un service.
+   *
+   * L'identifiant seul, jamais l'URL : c'est l'app qui sait où atterrit un
+   * service et comment l'annoncer. Le backend n'a pas à connaître la forme de
+   * ses routes — il en construit déjà une de trop avec `/auth/verify`.
+   */
+  private setRattachement(
+    verifyUrl: URL,
+    rattachement?: RattachementAutomatique
+  ): void {
+    if (rattachement) {
+      verifyUrl.searchParams.set(
+        'rattachement',
+        String(rattachement.collectiviteId)
+      );
     }
   }
 

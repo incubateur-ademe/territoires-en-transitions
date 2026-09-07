@@ -1,6 +1,13 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
+import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
@@ -25,6 +32,8 @@ import { CreateSupabaseSessionService } from '../create-supabase-session.service
 import { OidcClaims } from '../oidc.models';
 import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oidc.table';
 import { LinkOidcIdentityToUserService } from '../link-oidc-identity-to-user/link-oidc-identity-to-user.service';
+import { AttachUserToOrganisationService } from '../attach-user-to-organisation/attach-user-to-organisation.service';
+import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 import { CreateUserOidcIdentityService } from './create-user-oidc-identity.service';
 
 function buildClaims(overrides: Partial<OidcClaims> & { email: string }) {
@@ -50,6 +59,7 @@ async function createTestingContext() {
     imports: [
       ConfigurationModule,
       DatabaseModule,
+      TransactionModule,
       JwtModule.register({ global: true, secret: 'test-secret' }),
     ],
     providers: [
@@ -57,6 +67,11 @@ async function createTestingContext() {
       LinkOidcIdentityToUserService,
       CreateSupabaseSessionService,
       CreateUserOidcIdentityService,
+      // Le rattachement automatique est monté pour de vrai : c'est à la
+      // création de compte qu'il ouvre le service de l'agent.
+      AttachUserToOrganisationService,
+      GetCollectiviteBySiretService,
+      UpdateUserRoleService,
     ],
   }).compile();
 
@@ -135,11 +150,43 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       await databaseService.db
         .delete(utilisateurIdentiteOidcTable)
         .where(eq(utilisateurIdentiteOidcTable.userId, userId));
+      // Le droit et la vérification que pose un rattachement automatique
+      // référencent `auth.users` sans action en cascade : ils partent d'abord,
+      // sinon la suppression du compte échoue.
+      await databaseService.db
+        .delete(utilisateurCollectiviteAccessTable)
+        .where(eq(utilisateurCollectiviteAccessTable.userId, userId));
+      await databaseService.db
+        .delete(utilisateurVerifieTable)
+        .where(eq(utilisateurVerifieTable.userId, userId));
       await databaseService.db.delete(dcpTable).where(eq(dcpTable.id, userId));
       await databaseService.db
         .delete(authUsersTable)
         .where(eq(authUsersTable.id, userId));
     });
+  }
+
+  /** Un service de l'État de test, identifié par son SIRET. */
+  async function addService(siren: string, nic: string) {
+    const { collectivite, cleanup } = await addTestCollectivite(
+      databaseService,
+      { type: 'dreal', regionCode: 'V1', siren, nic }
+    );
+    onTestFinished(cleanup);
+    return collectivite;
+  }
+
+  async function lireDroit(userId: string, collectiviteId: number) {
+    const [droit] = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, userId),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId)
+        )
+      );
+    return droit;
   }
 
   test('ticket valide, aucun compte existant → compte créé, dcp existe, identité liée, session pontée', async () => {
@@ -325,5 +372,164 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       );
     expect(identite).toBeDefined();
     expect(identite.userId).toBe(user.id);
+  });
+
+  describe("rattachement automatique à l'organisation du jeton", () => {
+    test("un service de l'État reconnu → droit en édition, compte vérifié, service annoncé", async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-rattachement' })
+      );
+      const service_ = await addService('999777111', '00042');
+
+      const email = `agent-${crypto.randomUUID()}@developpement-durable.gouv.fr`;
+      const claims = buildClaims({ email, siret: '99977711100042' });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+      expect(result.data.rattachement).toEqual({
+        collectiviteId: service_.id,
+        nom: service_.nom,
+      });
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      const droit = await lireDroit(identite.userId, service_.id);
+      expect(droit).toMatchObject({
+        role: 'edition',
+        isActive: true,
+        invitationId: null,
+      });
+
+      // Une identité prouvée vaut au moins une invitation par email : sans la
+      // vérification, les gardes de collectivité traitent le compte à part.
+      const [verifie] = await databaseService.db
+        .select()
+        .from(utilisateurVerifieTable)
+        .where(eq(utilisateurVerifieTable.userId, identite.userId));
+      expect(verifie?.verifie).toBe(true);
+    });
+
+    /**
+     * Le second verrou, pour le jour où le fournisseur d'identité se
+     * tromperait d'organisation : en août 2026, MonCompteAdeme renvoyait le
+     * SIRET du siège de l'ADEME au lieu de celui du service choisi.
+     */
+    test("domaine de messagerie hors de celui exigé par l'employeur → aucun droit", async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-refuse' })
+      );
+      // Le SIREN de l'ADEME exige une adresse @ademe.fr.
+      const service_ = await addService('385290309', '99042');
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@example.org`,
+        siret: '38529030999042',
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+      expect(result.data.compteCree).toBe(true);
+      expect(result.data.rattachement).toBeUndefined();
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(await lireDroit(identite.userId, service_.id)).toBeUndefined();
+    });
+
+    test('le domaine exigé, respecté → rattachement', async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-ademe' })
+      );
+      const service_ = await addService('385290309', '99043');
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ademe.fr`,
+        siret: '38529030999043',
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+      expect(result.data.rattachement?.collectiviteId).toBe(service_.id);
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+    });
+
+    /** Rien ne dit qu'un agent public est employé de la commune qu'il désigne. */
+    test("une commune reste sur le parcours d'invitation", async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-commune' })
+      );
+      const { collectivite: commune, cleanup } = await addTestCollectivite(
+        databaseService,
+        { type: 'commune', siren: '999777222', nic: '00042' }
+      );
+      onTestFinished(cleanup);
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        siret: '99977722200042',
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+      expect(result.data.rattachement).toBeUndefined();
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(await lireDroit(identite.userId, commune.id)).toBeUndefined();
+    });
+
+    test('un SIRET que rien ne désigne → aucun droit, le compte est créé', async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-inconnu' })
+      );
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ailleurs.fr`,
+        siret: '99966600000042',
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+      expect(result.data.compteCree).toBe(true);
+      expect(result.data.rattachement).toBeUndefined();
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+    });
   });
 });

@@ -9,7 +9,9 @@ import {
   isEmailVerified,
   OidcClaims,
   OidcProvider,
+  RattachementAutomatique,
 } from '../oidc.models';
+import { AttachUserToOrganisationService } from '../attach-user-to-organisation/attach-user-to-organisation.service';
 import {
   IdentiteOidc,
   utilisateurIdentiteOidcTable,
@@ -32,10 +34,69 @@ export class LoginUserWithOidcProviderService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly rattacherIdentiteService: LinkOidcIdentityToUserService
+    private readonly rattacherIdentiteService: LinkOidcIdentityToUserService,
+    private readonly rattacherOrganisationService: AttachUserToOrganisationService
   ) {}
 
   async authentifier(
+    provider: OidcProvider,
+    claims: OidcClaims,
+    tx?: Transaction
+  ): Promise<LoginUserWithOidcProviderResult> {
+    const compte = await this.resoudreCompte(provider, claims, tx);
+    if (compte.statut !== 'connexion') {
+      return compte;
+    }
+
+    const rattachement = await this.rattacherOrganisation(
+      compte.userId,
+      provider,
+      claims,
+      tx
+    );
+
+    return rattachement ? { ...compte, rattachement } : compte;
+  }
+
+  /**
+   * Le rattachement automatique à l'organisation du jeton, tenté à **chaque**
+   * connexion : il n'agit que si l'agent n'a encore aucun droit sur ce service,
+   * ce qui sert aussi les comptes antérieurs à cette bascule.
+   *
+   * Son échec ne fait jamais échouer la connexion. Un agent authentifié doit
+   * entrer, quitte à ce que ses accès lui manquent : l'inverse le laisserait
+   * dehors sans recours.
+   */
+  private async rattacherOrganisation(
+    userId: string,
+    provider: OidcProvider,
+    claims: OidcClaims,
+    tx?: Transaction
+  ): Promise<RattachementAutomatique | undefined> {
+    const rattachement = await this.rattacherOrganisationService.attach(
+      userId,
+      provider,
+      claims,
+      tx
+    );
+
+    if (!rattachement.success) {
+      this.logger.error(
+        `Rattachement automatique du compte ${userId} en échec (${rattachement.error}) : la connexion se poursuit sans`
+      );
+      return undefined;
+    }
+
+    return rattachement.data.statut === 'rattache'
+      ? {
+          collectiviteId: rattachement.data.collectiviteId,
+          nom: rattachement.data.nom,
+        }
+      : undefined;
+  }
+
+  /** Le matching lui-même : quel compte cette identité désigne. */
+  private async resoudreCompte(
     provider: OidcProvider,
     claims: OidcClaims,
     tx?: Transaction

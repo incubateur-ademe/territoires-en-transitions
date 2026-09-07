@@ -7,6 +7,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import * as oidc from 'openid-client';
 import request from 'supertest';
 import { ConvertJwtToAuthUserService } from '../../convert-jwt-to-auth-user.service';
+import { AttachUserToOrganisationService } from './attach-user-to-organisation/attach-user-to-organisation.service';
 import { LoginUserWithOidcProviderService } from './login-user-with-oidc-provider/login-user-with-oidc-provider.service';
 import { CreateUserOidcIdentityService } from './create-user-oidc-identity/create-user-oidc-identity.service';
 import { CreateSupabaseSessionService } from './create-supabase-session.service';
@@ -71,6 +72,12 @@ const rattacherIdentiteMock = {
   rattacherAvecGardeFous: vi.fn(),
 };
 
+// Le rattachement automatique n'est jamais exercé ici : `authentifier` est
+// systématiquement mocké, et c'est lui qui l'appelle.
+const rattacherOrganisationMock = {
+  attach: vi.fn(),
+};
+
 const creerCompteOidcMock = {
   creerCompte: vi.fn(),
 };
@@ -104,6 +111,10 @@ async function createTestApp(
       {
         provide: LinkOidcIdentityToUserService,
         useValue: rattacherIdentiteMock,
+      },
+      {
+        provide: AttachUserToOrganisationService,
+        useValue: rattacherOrganisationMock,
       },
       {
         provide: ConvertJwtToAuthUserService,
@@ -459,6 +470,51 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
 
       const location = new URL(response.headers.location);
       expect(location.searchParams.get('liaison')).toBe('1');
+    });
+
+    /**
+     * L'identifiant seul : c'est l'app qui sait où atterrit un service et
+     * comment l'annoncer, le backend n'a pas à connaître la forme de ses routes.
+     */
+    test("statut connexion avec un rattachement → /auth/verify porte l'identifiant du service", async () => {
+      vi.spyOn(
+        app.get(LoginUserWithOidcProviderService),
+        'authentifier'
+      ).mockResolvedValue({
+        statut: 'connexion',
+        userId: 'user-1',
+        email: 'agent@developpement-durable.gouv.fr',
+        rattachement: { collectiviteId: 4242, nom: 'DREAL Syldavie' },
+      });
+
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/proconnect/callback?code=un-code&state=un-state')
+        .set('Cookie', ['oidc-state=un-state', 'oidc-nonce=un-nonce'])
+        .expect(303);
+
+      const location = new URL(response.headers.location);
+      expect(location.pathname).toBe('/auth/verify');
+      expect(location.searchParams.get('rattachement')).toBe('4242');
+    });
+
+    test('statut connexion sans rattachement → aucun paramètre de rattachement', async () => {
+      vi.spyOn(
+        app.get(LoginUserWithOidcProviderService),
+        'authentifier'
+      ).mockResolvedValue({
+        statut: 'connexion',
+        userId: 'user-1',
+        email: 'agent@collectivite.fr',
+      });
+
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/proconnect/callback?code=un-code&state=un-state')
+        .set('Cookie', ['oidc-state=un-state', 'oidc-nonce=un-nonce'])
+        .expect(303);
+
+      expect(
+        new URL(response.headers.location).searchParams.get('rattachement')
+      ).toBeNull();
     });
 
     test('échec du pont session → redirection erreur typée', async () => {
