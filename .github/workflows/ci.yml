@@ -75,8 +75,6 @@ jobs:
         id: scope
         with:
           default-branch: ${{ github.event.repository.default_branch }}
-          default-nx-cloud-token-secret-type: read-only
-          protected-nx-cloud-token-secret-type: read-write
 
   validate-affected-projects:
     needs: [analyze-affected]
