@@ -1,10 +1,10 @@
 'use client';
 
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
-import { SuperAdminModeProvider } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
-import { LinkOidcIdentityBanner } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.banner';
 import { AutoAttachmentWelcomeModal } from '@/app/users/authentications/oidc/auto-attachment/auto-attachment.welcome.modal';
+import { LinkOidcIdentityBanner } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.banner';
 import { LinkOidcIdentityModal } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.modal';
+import { SuperAdminModeProvider } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProviderStoreClient } from '@tet/api/users';
@@ -31,9 +31,6 @@ export function AuthedProviders({
       <CollectiviteProvider user={user}>
         <SuperAdminModeProvider>
           <NPSTracker />
-          {/* L'accueil du rattachement est déclaré avant les CGU, et porte un
-              z-index plus bas : l'ordre de lecture et l'ordre d'empilement
-              disent la même chose — les CGU passent devant. */}
           <AutoAttachmentWelcomeModal />
           <AccepterCGUModal />
           <LinkOidcIdentityModal />

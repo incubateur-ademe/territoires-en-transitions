@@ -9,7 +9,19 @@ import {
 import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { Button, Modal, ModalFooter } from '@tet/ui';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+
+/**
+ * Rouvre l'accueil sur une collectivité donnée, sans repasser par un
+ * rattachement : `?rattachement-accueil=<id>`.
+ *
+ * L'accueil ne se montre qu'une fois, et le revoir demandait sinon de rejouer
+ * les seeds et de se reconnecter — de quoi rendre toute retouche coûteuse. Rien
+ * n'est exposé au passage : l'accueil ne nomme qu'une collectivité dont l'agent
+ * est déjà membre, et ne montre rien du tout des autres.
+ */
+const PARAM_RECETTE = 'rattachement-accueil';
 
 /**
  * L'accueil d'un agent rattaché automatiquement à son service.
@@ -29,7 +41,12 @@ export const AutoAttachmentWelcomeModal = () => {
   const { mutate: updatePreferences } = useUpdateUserPreferences();
   const [refermee, setRefermee] = useState(false);
 
-  const collectiviteId = preferences?.oidc.autoAttachedCollectiviteId ?? null;
+  const searchParams = useSearchParams();
+  const forcee = Number(searchParams.get(PARAM_RECETTE));
+  const collectiviteId =
+    Number.isInteger(forcee) && forcee > 0
+      ? forcee
+      : preferences?.oidc.autoAttachedCollectiviteId ?? null;
 
   // Le service tel que l'agent y a accès. Absent si le droit a été retiré
   // entre-temps : mieux vaut ne rien annoncer que d'annoncer un espace fermé.
@@ -37,10 +54,19 @@ export const AutoAttachmentWelcomeModal = () => {
     (acces) => acces.collectiviteId === collectiviteId
   );
 
+  // Les CGU passent devant. Leur modale est bloquante, et deux modales
+  // ouvertes ensemble se départagent mal : à z-index égal c'est la dernière
+  // **ouverte** qui passe devant, et l'accueil l'est forcément — il attend une
+  // requête, là où les CGU se décident depuis l'utilisateur déjà chargé.
+  // Attendre leur acceptation règle l'ordre par la logique plutôt que par
+  // l'empilement, et accueillir quelqu'un qui n'a pas encore accepté n'aurait
+  // de toute façon pas de sens.
+  const cguAcceptees = Boolean(user.cguAccepteesLe);
+
   // Ouverture **dérivée**, sans effet : la préférence dit à elle seule s'il y a
   // quelque chose à annoncer, et `refermee` couvre l'instant entre le clic et
   // la fin de l'écriture, où la préférence vaut encore l'ancien service.
-  const isOpen = Boolean(service) && !refermee;
+  const isOpen = Boolean(service) && cguAcceptees && !refermee;
 
   if (!isOpen || !service) {
     return null;
