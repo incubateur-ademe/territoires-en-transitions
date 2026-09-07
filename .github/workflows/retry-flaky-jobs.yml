@@ -1,7 +1,7 @@
-# Relance automatiquement (une seule fois) le job test-end-to-end quand il est
-# le seul en échec dans le run CI — les tests e2e produisent parfois des
-# faux négatifs (flakiness infra) malgré les retries Playwright.
-name: Retry e2e
+# Relance automatiquement (une seule fois) les jobs CI connus pour leurs faux
+# négatifs — flakiness infra sur l'e2e, sur les tests backend/api — quand ils
+# sont les seuls en échec du run.
+name: Retry flaky jobs
 
 permissions:
   actions: write
@@ -12,18 +12,22 @@ on:
     types: [completed]
 
 jobs:
-  retry-e2e:
+  retry-flaky-jobs:
     # run_attempt == 1 : on ne relance qu'une seule fois
     if: >
       github.event.workflow_run.conclusion == 'failure' &&
       github.event.workflow_run.run_attempt == 1
     runs-on: ubuntu-latest
     steps:
-      - name: Relance les jobs échoués si seul test-end-to-end a échoué
+      - name: Relance les jobs échoués si seuls des jobs flaky ont échoué
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           REPO: ${{ github.repository }}
+          # Préfixes des jobs relançables. Les jobs issus d'un workflow
+          # réutilisable sont nommés « <job appelant> / <job appelé> », d'où le
+          # « / » optionnel en fin de motif.
+          RETRYABLE: '^(test-e2e|test-end-to-end|test-backend-api)( /|$)'
         run: |
           failed_jobs=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs?per_page=100" --paginate \
             --jq '.jobs[] | select(.conclusion == "failure") | .name')
@@ -33,11 +37,12 @@ jobs:
             exit 0
           fi
 
-          if echo "$failed_jobs" | grep -Evq '^test-(e2e|end-to-end)( /|$)'; then
-            echo "Échec en dehors de test-end-to-end, pas de retry automatique :"
+          if echo "$failed_jobs" | grep -Evq "$RETRYABLE"; then
+            echo "Échec en dehors des jobs relançables, pas de retry automatique :"
             echo "$failed_jobs"
             exit 0
           fi
 
-          echo "Seul test-end-to-end a échoué, relance des jobs échoués du run $RUN_ID."
+          echo "Seuls des jobs relançables ont échoué, relance des jobs échoués du run $RUN_ID :"
+          echo "$failed_jobs"
           gh run rerun "$RUN_ID" --failed --repo "$REPO"
