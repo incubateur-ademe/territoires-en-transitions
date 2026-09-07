@@ -1,8 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  addTestCollectiviteAndUser,
-  addTestCollectiviteAndUsers,
-} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -13,6 +10,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import {
   completeTestDossierPcaet,
+  createDemarche,
   publierTestDemarchePcaet,
 } from '../demarches-pcaet.test-fixture';
 import {
@@ -25,21 +23,8 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
-  const freshDemarche = async () => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const caller = router.createCaller({
-      user: getAuthUserFromUserCredentials(fixture.user),
-    });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
-
   const ajouterThematique = async (
-    caller: Awaited<ReturnType<typeof freshDemarche>>['caller'],
+    caller: ReturnType<TrpcRouter['createCaller']>,
     {
       collectiviteId,
       demarcheId,
@@ -73,7 +58,7 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   });
 
   test('Retirer une thématique que cette démarche seule utilise la supprime du catalogue', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const ajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,
@@ -98,7 +83,7 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   });
 
   test('Retirer une thématique utilisée par une autre démarche ne touche que celle-ci', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const ajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,
@@ -158,7 +143,7 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   });
 
   test('Une thématique du socle ne se retire pas', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
@@ -174,8 +159,8 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   });
 
   test('Une thématique inconnue ou d’une autre collectivité est refusée', async () => {
-    const premiere = await freshDemarche();
-    const seconde = await freshDemarche();
+    const premiere = await createDemarche(db, router);
+    const seconde = await createDemarche(db, router);
     const ajout = await ajouterThematique(seconde.caller, {
       collectiviteId: seconde.collectiviteId,
       demarcheId: seconde.demarche.id,
@@ -192,8 +177,8 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   });
 
   test('La démarche d’une autre collectivité reste introuvable', async () => {
-    const premiere = await freshDemarche();
-    const seconde = await freshDemarche();
+    const premiere = await createDemarche(db, router);
+    const seconde = await createDemarche(db, router);
     const ajout = await ajouterThematique(premiere.caller, {
       collectiviteId: premiere.collectiviteId,
       demarcheId: premiere.demarche.id,
@@ -237,7 +222,7 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
   });
 
   test('Le retrait est fermé une fois le dossier transmis', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const ajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,

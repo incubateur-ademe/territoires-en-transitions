@@ -17,6 +17,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import {
   completeTestDossierPcaet,
+  createDemarche,
   ensureTestPcaetMetadonneeId,
 } from '../demarches-pcaet.test-fixture';
 
@@ -51,21 +52,8 @@ describe('Récupérer le diagnostic PCAET', () => {
   let otherCollectivite: Collectivite;
   let otherEditorUser: AuthenticatedUser;
 
-  /** Le diagnostic dépend des valeurs de la collectivité : une par test. */
-  const freshDemarche = async () => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectivite: fixture.collectivite, caller, demarche };
-  };
-
   const getDiagnostic = (
-    caller: Awaited<ReturnType<typeof freshDemarche>>['caller'],
+    caller: ReturnType<TrpcRouter['createCaller']>,
     {
       collectivite,
       demarche,
@@ -107,7 +95,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Renvoie les topics du diagnostic dans l’ordre d’affichage', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
 
@@ -122,7 +110,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Les émissions de GES s’arrêtent aux secteurs du décret', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
     const emissions = diagnostic.indicateurParentConfigs.find(
@@ -149,7 +137,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('La consommation énergétique finale est un topic à part entière', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const conso = (
       await getDiagnostic(caller, { collectivite, demarche })
@@ -164,7 +152,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('La séquestration est optionnelle', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const sequestration = (
       await getDiagnostic(caller, { collectivite, demarche })
@@ -177,7 +165,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Les polluants déclinent chaque total par secteur', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const polluants = (
       await getDiagnostic(caller, { collectivite, demarche })
@@ -199,7 +187,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Sans saisie PCAET, aucune valeur n’est remontée', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
 
@@ -208,7 +196,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('La saisie PCAET remplit les valeurs servies', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
     const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
       collectiviteId: collectivite.id,
@@ -243,7 +231,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Le topic vulnérabilité n’a pas de grille', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const { vulnerabilite } = await getDiagnostic(caller, {
       collectivite,
@@ -261,7 +249,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Après transmission, le diagnostic reste live', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     await completeTestDossierPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -299,8 +287,8 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Les valeurs remontées sont celles de la collectivité de la démarche', async () => {
-    const first = await freshDemarche();
-    const second = await freshDemarche();
+    const first = await createDemarche(db, router);
+    const second = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
     const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
       collectiviteId: first.collectivite.id,
@@ -324,7 +312,7 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test("IDOR : le diagnostic n'est pas lisible via une autre collectivité", async () => {
-    const { demarche } = await freshDemarche();
+    const { demarche } = await createDemarche(db, router);
 
     const otherCaller = router.createCaller({ user: otherEditorUser });
     await expect(

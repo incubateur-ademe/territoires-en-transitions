@@ -1,31 +1,17 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteRole } from '@tet/domain/users';
+import { createDemarche } from '../demarches-pcaet.test-fixture';
 import { vulnerabiliteOf } from '../shared/demarches-pcaet-vulnerabilite.test-fixture';
 
 describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-
-  const freshDemarche = async () => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -38,7 +24,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   });
 
   test('Une thématique ajoutée se range après le socle et n’est pas requise', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
 
     const diagnostic =
       await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
@@ -61,7 +47,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   });
 
   test('Un doublon est refusé, y compris face au socle', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
 
     await expect(
       caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
@@ -86,7 +72,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   });
 
   test('Renommer et supprimer ne valent que pour les thématiques ajoutées', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const apresAjout =
       await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
@@ -135,7 +121,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   });
 
   test('Supprimer une thématique emporte sa saisie dans toutes les démarches', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const apresAjout =
       await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
@@ -166,7 +152,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   });
 
   test('Une thématique ajoutée ne bloque jamais la transmission', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const diagnostic =
       await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,

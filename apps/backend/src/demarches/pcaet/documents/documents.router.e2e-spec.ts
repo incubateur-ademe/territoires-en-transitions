@@ -29,6 +29,7 @@ import {
   cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
+  createDemarche,
 } from '../demarches-pcaet.test-fixture';
 
 describe('Documents d’une démarche PCAET', () => {
@@ -37,7 +38,7 @@ describe('Documents d’une démarche PCAET', () => {
   let db: DatabaseService;
 
   // Une seule démarche active par collectivité : chaque cas part d'une
-  // collectivité neuve.
+  // collectivité neuve. Sans démarrage de démarche quand on n'en a pas besoin.
   const freshEditor = async (
     role: CollectiviteRole = CollectiviteRole.EDITION
   ) => {
@@ -48,33 +49,6 @@ describe('Documents d’une démarche PCAET', () => {
       user,
       caller: router.createCaller({ user }),
     };
-  };
-
-  const freshDemarche = async (role?: CollectiviteRole) => {
-    const editor = await freshEditor(role);
-    const demarche = await editor.caller.demarches.pcaet.create({
-      collectiviteId: editor.collectivite.id,
-    });
-    return { ...editor, demarche };
-  };
-
-  /**
-   * Une collectivité dont l'identité déclenche les pièces conditionnelles. Sans
-   * population ni nature INSEE — le cas des autres tests — aucune ne s'applique.
-   */
-  const freshDemarcheAssujettie = async (
-    collectivite: { population?: number; natureInsee?: 'CA' | 'SMF' } = {}
-  ) => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-      collectivite,
-    });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectivite: fixture.collectivite, user, caller, demarche };
   };
 
   const listDocumentIds = async (
@@ -100,7 +74,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Le modèle de démarche est servi par la base, dossier vide', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const snapshot = await caller.demarches.pcaet.documents.list({
       collectiviteId: collectivite.id,
@@ -211,7 +185,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Le PCAET global couvre les sections qu’il regroupe d’office', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
@@ -279,7 +253,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Retirer le document global découvre les sections', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
@@ -315,7 +289,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Un second dépôt sur la même pièce remplace le fichier', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const premier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
       filename: 'diagnostic-v1.pdf',
@@ -347,7 +321,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Seuls les PDF sont acceptés', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
       filename: 'diagnostic.docx',
@@ -366,7 +340,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Un fichier d’une autre collectivité est introuvable', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const autre = await freshEditor();
     const fichierEtranger = await addTestBibliothequeFichier(db, {
       collectiviteId: autre.collectivite.id,
@@ -385,7 +359,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Une pièce hors modèle de démarche est refusée', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
@@ -401,7 +375,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('La déclaration d’inclusion n’accepte que les pièces éligibles', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     // Seul le modèle décide : l'EES n'est rangée dans aucune autre pièce.
     await expect(
@@ -500,7 +474,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('L’étude d’impact et la délibération d’arrêt se déclarent comprises dans le PCAET global', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
@@ -555,7 +529,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('La couverture refuse de s’appliquer sur une pièce déjà pourvue d’un dépôt', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
@@ -605,7 +579,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Un dossier transmis pour avis n’accepte plus de dépôt ni de retrait', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
@@ -690,7 +664,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('La délibération d’adoption (pièce aval) se dépose une fois le PCAET adopté', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const deliberation = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
       filename: 'deliberation-adoption.pdf',
@@ -752,7 +726,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Une démarche n’est pas accessible via une autre collectivité (IDOR)', async () => {
-    const { collectivite, demarche } = await freshDemarche();
+    const { collectivite, demarche } = await createDemarche(db, router);
     const autre = await freshEditor();
 
     await expect(
@@ -772,7 +746,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Une pièce additionnelle s’ouvre sans nom, puis se nomme et reçoit son fichier', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const dossier = {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -853,7 +827,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Plusieurs pièces additionnelles coexistent, dans leur ordre d’ajout', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const dossier = {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -891,7 +865,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Une pièce additionnelle n’accepte que les formats du dossier', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const dossier = {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -936,8 +910,8 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Une pièce additionnelle d’une autre démarche est introuvable (IDOR)', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
-    const autre = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
+    const autre = await createDemarche(db, router);
     const additionalDAutrui =
       await autre.caller.demarches.pcaet.documents.createAdditional({
         collectiviteId: autre.collectivite.id,
@@ -975,7 +949,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Une pièce additionnelle sans fichier ne retient pas la transmission', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const dossier = {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -995,7 +969,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('La transmission gèle les pièces additionnelles amont, l’adoption ouvre l’aval', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const dossier = {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -1056,7 +1030,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Un type de démarche qui n’ouvre pas le dépôt de pièces additionnelles le refuse', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     // La configuration est une donnée partagée par le type : on relit l'état
     // d'origine pour le rendre tel quel, et ne pas fermer le dépôt de pièces
@@ -1093,7 +1067,7 @@ describe('Documents d’une démarche PCAET', () => {
   });
 
   test('Un rôle lecture ne peut ni lire ni déposer les documents du dossier', async () => {
-    const { collectivite, demarche } = await freshDemarche();
+    const { collectivite, demarche } = await createDemarche(db, router);
     const lecteur = await addTestUser(db, {
       collectiviteId: collectivite.id,
       role: CollectiviteRole.LECTURE,
@@ -1189,7 +1163,7 @@ describe('Documents d’une démarche PCAET', () => {
     };
 
     it('une première élaboration ne se voit pas demander le bilan', async () => {
-      const { caller, collectivite, demarche } = await freshDemarche();
+      const { caller, collectivite, demarche } = await createDemarche(db, router);
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
@@ -1230,7 +1204,7 @@ describe('Documents d’une démarche PCAET', () => {
     it('un dépôt antérieur resté en instruction ne fait pas un renouvellement', async () => {
       // Dans cet ordre : une démarche en instruction est « en cours », elle
       // interdirait la création d'une seconde par l'API.
-      const { caller, collectivite, demarche } = await freshDemarche();
+      const { caller, collectivite, demarche } = await createDemarche(db, router);
       await addDemarcheAnterieure(collectivite.id, 'instruit');
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
@@ -1282,9 +1256,11 @@ describe('Documents d’une démarche PCAET', () => {
     // Sans population ni nature INSEE, la collectivité des autres tests n'est
     // assujettie à rien : les deux plans annexes lui sont invisibles.
     it('un EPCI à fiscalité propre de plus de 100 000 habitants voit les deux plans', async () => {
-      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
-        population: 684371,
-        natureInsee: 'CA',
+      const { caller, collectivite, demarche } = await createDemarche(db, router, {
+        collectivite: {
+          population: 684371,
+          natureInsee: 'CA',
+        },
       });
 
       const snapshot = await caller.demarches.pcaet.documents.list({
@@ -1323,9 +1299,11 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('les deux conditions sont indépendantes : à 60 000 habitants, seul le plan chaleur et froid est attendu', async () => {
-      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
-        population: 60000,
-        natureInsee: 'CA',
+      const { caller, collectivite, demarche } = await createDemarche(db, router, {
+        collectivite: {
+          population: 60000,
+          natureInsee: 'CA',
+        },
       });
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
@@ -1335,9 +1313,11 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('le seuil est strict : à exactement 100 000 habitants la qualité de l’air n’est pas attendue', async () => {
-      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
-        population: 100000,
-        natureInsee: 'CA',
+      const { caller, collectivite, demarche } = await createDemarche(db, router, {
+        collectivite: {
+          population: 100000,
+          natureInsee: 'CA',
+        },
       });
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
@@ -1348,9 +1328,11 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('un syndicat n’est pas assujetti à la qualité de l’air, quelle que soit sa taille', async () => {
-      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
-        population: 200000,
-        natureInsee: 'SMF',
+      const { caller, collectivite, demarche } = await createDemarche(db, router, {
+        collectivite: {
+          population: 200000,
+          natureInsee: 'SMF',
+        },
       });
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
@@ -1360,7 +1342,7 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('une pièce qui ne concerne pas la collectivité ne peut ni être déposée ni être déclarée incluse', async () => {
-      const { caller, collectivite, demarche } = await freshDemarche();
+      const { caller, collectivite, demarche } = await createDemarche(db, router);
       const fichier = await addTestBibliothequeFichier(db, {
         collectiviteId: collectivite.id,
       });
@@ -1385,9 +1367,11 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('déclarer le plan compris dans le programme d’actions suffit à couvrir la pièce', async () => {
-      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
-        population: 60000,
-        natureInsee: 'CA',
+      const { caller, collectivite, demarche } = await createDemarche(db, router, {
+        collectivite: {
+          population: 60000,
+          natureInsee: 'CA',
+        },
       });
       const fichier = await addTestBibliothequeFichier(db, {
         collectiviteId: collectivite.id,
@@ -1420,9 +1404,11 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('une pièce conditionnelle non couverte retient la complétude du dossier', async () => {
-      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
-        population: 60000,
-        natureInsee: 'CA',
+      const { caller, collectivite, demarche } = await createDemarche(db, router, {
+        collectivite: {
+          population: 60000,
+          natureInsee: 'CA',
+        },
       });
       // Dépose le document global, qui couvre d'office les sections requises
       // inconditionnelles — mais pas les deux plans annexes.
