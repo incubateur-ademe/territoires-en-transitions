@@ -15,6 +15,7 @@
     "seed-imports": {
       "command": "pnpm exec vitest run --project already-run-by-init-db-seed",
       "cache": false,
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "apps/backend"
       }
