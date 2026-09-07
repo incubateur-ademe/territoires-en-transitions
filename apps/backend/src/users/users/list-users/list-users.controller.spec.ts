@@ -12,6 +12,25 @@ import {
 } from '@tet/domain/users';
 import request from 'supertest';
 
+/**
+ * Range les rattachements par nom, des deux côtés de l'assertion.
+ *
+ * La liste arrive déjà triée par nom, mais deux services de l'État ne se
+ * départagent que sur la ponctuation — « Direction Régionale (DR) Ademe… »
+ * contre « Direction Régionale de l'Environnement… » — et les collations les
+ * rangent dans un sens ou dans l'autre selon le serveur. Trier ici, en JS,
+ * décroche ce spec de la collation de la base sans rien relâcher : la
+ * comparaison reste exacte, une entrée manquante ou en trop échoue toujours.
+ */
+const parNom = <T extends { collectiviteNom: string }>(collectivites: T[]) =>
+  [...collectivites].sort((a, b) =>
+    a.collectiviteNom === b.collectiviteNom
+      ? 0
+      : a.collectiviteNom < b.collectiviteNom
+      ? -1
+      : 1
+  );
+
 describe("Api pour lister les permissions de l'utilisateur", () => {
   let app: INestApplication;
   let yoloDodoToken: string;
@@ -42,7 +61,10 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
 
     const userInfoResponse: UserWithRolesAndPermissions = response.body;
 
-    expect(userInfoResponse).toEqual({
+    expect({
+      ...userInfoResponse,
+      collectivites: parNom(userInfoResponse.collectivites),
+    }).toEqual({
       id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       email: 'yolo@dodo.com',
       nom: 'Dodo',
@@ -56,7 +78,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         ...permissionsByRole[PlatformRole.VERIFIED],
       ],
 
-      collectivites: [
+      collectivites: parNom([
         {
           collectiviteId: 1,
           collectiviteNom: 'Ambérieu-en-Bugey',
@@ -131,7 +153,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           //
           // Les noms sont ceux de l'import des services
           // (collectivite/service_etat_import) : la dénomination officielle du
-          // service, pas une forme courte. La liste est triée par nom.
+          // service, pas une forme courte.
           collectiviteId: expect.any(Number),
           collectiviteNom:
             'Direction départementale des territoires (DDT) - Ain',
@@ -192,7 +214,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
 
           audits: [],
         },
-      ],
+      ]),
     });
   });
 
