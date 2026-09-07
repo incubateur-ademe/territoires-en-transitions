@@ -1,3 +1,4 @@
+export * from './categorie-action.enum';
 export * from './categorie-fnv.schema';
 export * from './departement.schema';
 export * from './effet-attendu.schema';

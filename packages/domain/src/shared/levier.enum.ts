@@ -1,3 +1,5 @@
+import { TrajectoireSecteursType } from '../indicateurs/trajectoires/trajectoire-secteurs';
+
 export const levierEnumValues = [
   'Changement chaudières fioul + rénovation (résidentiel)',
   'Changement chaudières gaz + rénovation (résidentiel)',
@@ -31,3 +33,37 @@ export const levierEnumValues = [
 ] as const;
 
 export type Levier = (typeof levierEnumValues)[number];
+
+export type LevierSecteur = Exclude<TrajectoireSecteursType, 'CSC'>;
+
+export const LEVIER_SECTEURS = {
+  'Changement chaudières fioul + rénovation (résidentiel)': 'Résidentiel',
+  'Changement chaudières gaz + rénovation (résidentiel)': 'Résidentiel',
+  'Sobriété des bâtiments (résidentiel)': 'Résidentiel',
+  'Changement de chaudière à fioul (tertiaire)': 'Tertiaire',
+  'Changement de chaudière à gaz (tertiaire)': 'Tertiaire',
+  'Sobriété et isolation des bâtiments (tertiaire)': 'Tertiaire',
+  'Réduction des déplacements': 'Transports',
+  Covoiturage: 'Transports',
+  'Vélo et transport en commun': 'Transports',
+  'Véhicules électriques': 'Transports',
+  'Efficacité et carburants décarbonés des véhicules privés': 'Transports',
+  'Bus et cars décarbonés': 'Transports',
+  'Fret décarboné et multimodalité': 'Transports',
+  'Efficacité et sobriété logistique': 'Transports',
+  'Bâtiments & Machines agricoles': 'Agriculture',
+  'Elevage durable': 'Agriculture',
+  'Changements de pratiques de fertilisation azotée': 'Agriculture',
+  'Gestion des forêts et produits bois': 'UTCATF',
+  'Pratiques stockantes': 'UTCATF',
+  'Gestion des haies': 'UTCATF',
+  'Gestion des prairies': 'UTCATF',
+  'Sobriété foncière': 'UTCATF',
+  'Production industrielle': 'Industrie',
+  'Captage de méthane dans les ISDND': 'Déchets',
+  'Prévention des déchets': 'Déchets',
+  'Valorisation matière des déchets': 'Déchets',
+  'Electricité renouvelable': 'Branche énergie',
+  Biogaz: 'Branche énergie',
+  'Réseaux de chaleur décarbonés': 'Branche énergie',
+} satisfies Record<Levier, LevierSecteur>;
