@@ -117,4 +117,5 @@ export const referentielsLabels = {
   documentsVisiblesAvertissement:
     'Tous les documents sont visibles par les membres de la communauté Territoires en Transitions, en dehors des documents en mode privé.',
   fichierModePrive: 'Fichier en mode privé',
+  selectionValeurIndicateurNotAvailable: `La sélection des résultats des indicateurs n'est pas encore disponible. En attendant, vous pouvez déjà renseigner vos données directement depuis la fiche de l'indicateur, en cliquant sur "Voir la fiche de l'indicateur". Nous vous informerons dès que la fonctionnalité sera disponible.`,
 };
