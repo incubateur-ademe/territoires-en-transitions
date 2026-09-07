@@ -37,6 +37,10 @@ runs:
       run: echo "Sqitch image not found"
       # TODO: build and push image
 
+    # Tout `data_layer`, et pas seulement `sqitch` : un change peut inclure un
+    # fichier voisin (`\ir ../../../seed/imports/...`), que sqitch ne suit pas
+    # dans ses dépendances. Le monter à l'identique du service `sqitch` du
+    # docker-compose évite un déploiement vert en local et rouge ici.
     - name: Execute command within image
       shell: bash
       run: >
@@ -44,7 +48,7 @@ runs:
         --rm
         --network ${{ inputs.network }}
         -v ./sqitch.conf:/sqitch.conf
-        -v ./data_layer/sqitch:/data_layer/sqitch
+        -v ./data_layer:/data_layer
         ${{ steps.get_image_path.outputs.path }}
         ${{ inputs.command }}
         --target ${{ inputs.target }}
