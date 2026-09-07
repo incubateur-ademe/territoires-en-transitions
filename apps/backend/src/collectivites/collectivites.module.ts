@@ -4,7 +4,11 @@ import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-cru
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
+import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
 import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
+import { CreateUploadTokenRepository } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.repository';
+import { CreateUploadTokenRouter } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.router';
+import { CreateUploadTokenService } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.service';
 import { EditPreuveDocumentRepository } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.repository';
 import { EditPreuveDocumentRouter } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.router';
 import { EditPreuveDocumentService } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.service';
@@ -79,6 +83,10 @@ import { PersonnesService } from './services/personnes.service';
     ListCategoriesRouter,
     StoreDocumentService,
     StoreDocumentRouter,
+    CollectiviteBucketRepository,
+    CreateUploadTokenRepository,
+    CreateUploadTokenService,
+    CreateUploadTokenRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
     EditPreuveDocumentRepository,
