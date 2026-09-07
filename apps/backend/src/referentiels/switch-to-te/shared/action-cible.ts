@@ -29,6 +29,14 @@ export type ActionCible = {
   actionId: string;
   /** false si désactivée / non concernée par personnalisation TE */
   concernee: boolean;
+  /**
+   * true si cette sous-mesure TE porte des tâches enfant : mergeStatuts n'émet
+   * alors aucune reprise de score sur le parent concerné — les tâches sont
+   * utilisées uniquement pour le calcul de score à partir des indicateurs.
+   * Lu uniquement par mergeStatuts — ignoré par buildCorrespondanceIndexes
+   * (liens fiches inchangés).
+   */
+  aDesTachesEnfant: boolean;
   /** origines brutes (ordre arbre) — pour tri CAE puis ECI côté rules */
   actionsOrigine: CorrelatedAction[];
   /** origines avec score snapshot + filtre concerne !== false */
@@ -68,7 +76,8 @@ const buildActionCible = (
   actionsOrigine: CorrelatedAction[],
   scoreMapsByReferentiel: Map<ReferentielId, Map<string, ActionScore>>,
   teScoreMap: Map<string, ActionScore>,
-  actionsOrigineTexte: CorrelatedActionTexte[] = []
+  actionsOrigineTexte: CorrelatedActionTexte[] = [],
+  aDesTachesEnfant = false
 ): ActionCible => {
   const correlatedActions = buildCorrelatedActionsWithScore(
     actionsOrigine,
@@ -94,6 +103,7 @@ const buildActionCible = (
   return {
     actionId,
     concernee: isCibleConcernee(teScoreMap, actionId),
+    aDesTachesEnfant,
     actionsOrigine,
     originesConcernees,
     originesCommentaire,
@@ -120,7 +130,10 @@ export const listSousActionsEtTachesCibles = (input: {
       teAction.actionsOrigine ?? [],
       input.scoreMapsByReferentiel,
       input.teScoreMap,
-      teAction.actionsOrigineTexte ?? []
+      teAction.actionsOrigineTexte ?? [],
+      (teAction.actionsEnfant ?? []).some(
+        (enfant) => enfant.actionType === ActionTypeEnum.TACHE
+      )
     )
   );
 };

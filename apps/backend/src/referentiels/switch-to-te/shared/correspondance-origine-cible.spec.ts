@@ -43,6 +43,7 @@ const createCible = (
   originesConcernees: overrides.originesConcernees ?? [],
   originesCommentaire: overrides.originesCommentaire ?? [],
   concernee: overrides.concernee ?? true,
+  aDesTachesEnfant: overrides.aDesTachesEnfant ?? false,
 });
 
 describe('buildCorrespondanceIndexes', () => {
