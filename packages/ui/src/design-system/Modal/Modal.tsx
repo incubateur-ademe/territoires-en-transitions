@@ -92,6 +92,7 @@ export const Modal = ({
   noCloseButton,
   renderFooter,
   backdropBlur,
+  zIndex,
   dataTest = 'Modal',
   scrollableContent,
 }: ModalProps) => {
@@ -142,7 +143,12 @@ export const Modal = ({
                 display: 'grid',
                 placeItems: 'center',
                 background: preset.theme.extend.colors.overlay,
-                zIndex: preset.theme.extend.zIndex.modal,
+                // Le prop l'emporte quand il est donné : deux modales ouvertes
+                // en même temps se départagent par lui. À défaut, elles
+                // partagent `zIndex.modal` et c'est la dernière **ouverte** qui
+                // passe devant — l'ordre de déclaration n'y change rien, le
+                // portail n'est créé qu'à l'ouverture.
+                zIndex: zIndex ?? preset.theme.extend.zIndex.modal,
                 backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
               }}
             >
