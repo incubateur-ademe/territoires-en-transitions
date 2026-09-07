@@ -1,8 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  addTestCollectiviteAndUser,
-  addTestCollectiviteAndUsers,
-} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -18,6 +15,7 @@ import {
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
+  createDemarche,
 } from '../demarches-pcaet.test-fixture';
 import {
   ligneOf,
@@ -29,16 +27,6 @@ describe('Vulnérabilité du territoire', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-
-  const freshDemarche = async (role = CollectiviteRole.EDITION) => {
-    const fixture = await addTestCollectiviteAndUser(db, { user: { role } });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
 
   const thematiqueId = (diagnostic: PcaetDiagnostic, code: string): number =>
     thematiqueIdOf(diagnostic, code);
@@ -54,7 +42,7 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('Le socle est servi avec une ligne vierge par thématique', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
 
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
@@ -76,7 +64,7 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('Une saisie de niveau ne touche que l’horizon visé', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const initial = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
@@ -112,7 +100,7 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('Un objectif vidé redevient une absence de saisie', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const initial = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
@@ -140,8 +128,8 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('Une thématique d’une autre collectivité n’est pas adressable', async () => {
-    const premiere = await freshDemarche();
-    const seconde = await freshDemarche();
+    const premiere = await createDemarche(db, router);
+    const seconde = await createDemarche(db, router);
 
     const diagnostic = await seconde.caller.demarches.pcaet.diagnostic.get({
       collectiviteId: seconde.collectiviteId,
@@ -171,8 +159,8 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('La démarche d’une autre collectivité reste introuvable', async () => {
-    const premiere = await freshDemarche();
-    const seconde = await freshDemarche();
+    const premiere = await createDemarche(db, router);
+    const seconde = await createDemarche(db, router);
     const diagnostic = await premiere.caller.demarches.pcaet.diagnostic.get({
       collectiviteId: premiere.collectiviteId,
       demarcheId: premiere.demarche.id,
@@ -216,7 +204,7 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('Le diagnostic n’est plus modifiable une fois le dossier transmis', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
@@ -241,7 +229,7 @@ describe('Vulnérabilité du territoire', () => {
   });
 
   test('La vulnérabilité ne conditionne pas la complétude du diagnostic', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     await attachTestPlanToDemarchePcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,

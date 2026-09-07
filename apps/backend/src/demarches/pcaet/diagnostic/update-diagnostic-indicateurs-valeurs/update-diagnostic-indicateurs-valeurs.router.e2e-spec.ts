@@ -1,10 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
-  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
@@ -12,11 +10,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
 import { getYearFromIsoDate } from '@tet/domain/indicateurs';
-import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import {
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
+  createDemarche,
 } from '../../demarches-pcaet.test-fixture';
 import { demarchePcaetSourceMetadonneeTable } from '../../shared/models/demarche-pcaet-source-metadonnee.table';
 
@@ -24,18 +22,6 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-
-  const freshDemarche = async () => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
 
   const getIndicateurId = async (referentielId: string): Promise<number> => {
     const rows = await db.db
@@ -62,7 +48,7 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   });
 
   test('Écrire une valeur met à jour le diagnostic servi', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
 
     await completeTestDiagnosticPcaet(db, {
       collectiviteId,
@@ -112,7 +98,7 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   });
 
   test('La valeur écrite est liée à demarche_pcaet_source_metadonnee', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -165,7 +151,7 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
 
   test('Deux PCAET d’une même Ct ont des métadonnées et valeurs isolées', async () => {
     const { caller, collectiviteId, demarche: premiere } =
-      await freshDemarche();
+      await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -256,7 +242,7 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   });
 
   test("Refus quand le diagnostic n'est plus modifiable", async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     await completeTestDossierPcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,
@@ -283,8 +269,8 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   });
 
   test("IDOR : la mutation n'est pas applicable via une autre collectivité", async () => {
-    const { collectiviteId, demarche } = await freshDemarche();
-    const autre = await freshDemarche();
+    const { collectiviteId, demarche } = await createDemarche(db, router);
+    const autre = await createDemarche(db, router);
 
     await completeTestDiagnosticPcaet(db, {
       collectiviteId,

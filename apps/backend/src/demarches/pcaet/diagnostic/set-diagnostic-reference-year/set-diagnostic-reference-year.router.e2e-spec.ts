@@ -1,37 +1,23 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import {
-  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { getYearFromIsoDate } from '@tet/domain/indicateurs';
-import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import {
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
+  createDemarche,
 } from '../../demarches-pcaet.test-fixture';
 
 describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-
-  const freshDemarche = async () => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
 
   const getIndicateurId = async (referentielId: string): Promise<number> => {
     const [definition] = await db.db
@@ -80,7 +66,7 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test('Les valeurs suivent la nouvelle année de référence', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -115,7 +101,7 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("Une saisie déjà présente sur l'année visée est écrasée, sans doublon", async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -145,7 +131,7 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test('Seuls les indicateurs du tableau basculent', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const basculeId = await getIndicateurId('cae_1.c');
     const intactId = await getIndicateurId('cae_1.d');
 
@@ -183,7 +169,7 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("Un horizon d'objectif n'est pas une année de référence acceptable", async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await expect(
@@ -198,7 +184,7 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("Refus quand le diagnostic n'est plus modifiable", async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     await completeTestDossierPcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,
@@ -220,8 +206,8 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("IDOR : la mutation n'est pas applicable via une autre collectivité", async () => {
-    const { collectiviteId, demarche } = await freshDemarche();
-    const autre = await freshDemarche();
+    const { collectiviteId, demarche } = await createDemarche(db, router);
+    const autre = await createDemarche(db, router);
 
     await completeTestDiagnosticPcaet(db, {
       collectiviteId,

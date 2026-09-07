@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
@@ -10,16 +11,21 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { getAuthUserFromUserCredentials } from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { CollectiviteType } from '@tet/domain/collectivites';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import {
+  DemarchePcaet,
   listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
+import { CollectiviteRole } from '@tet/domain/users';
 import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
@@ -80,6 +86,46 @@ export async function pickFreeRegionCode(
     `Aucun code de région libre pour le type ${type} après 100 tirages ` +
       `(${pris.size} codes pris) — la base de test doit être nettoyée.`
   );
+}
+
+/**
+ * Collectivité neuve + utilisateur + démarche PCAET créée via le router.
+ * Une seule démarche active par collectivité : chaque cas part d'ici.
+ */
+export async function createDemarche(
+  db: DatabaseService,
+  router: TrpcRouter,
+  {
+    role = CollectiviteRole.EDITION,
+    collectivite: collectiviteArgs,
+  }: {
+    role?: CollectiviteRole;
+    collectivite?: Partial<Collectivite>;
+  } = {}
+): Promise<{
+  collectivite: Collectivite;
+  collectiviteId: number;
+  user: AuthenticatedUser;
+  caller: ReturnType<TrpcRouter['createCaller']>;
+  demarche: DemarchePcaet;
+}> {
+  const fixture = await addTestCollectiviteAndUser(db, {
+    user: { role },
+    collectivite: collectiviteArgs,
+  });
+  const user = getAuthUserFromUserCredentials(fixture.user);
+  const caller = router.createCaller({ user });
+  const demarche = await caller.demarches.pcaet.create({
+    collectiviteId: fixture.collectivite.id,
+  });
+
+  return {
+    collectivite: fixture.collectivite,
+    collectiviteId: fixture.collectivite.id,
+    user,
+    caller,
+    demarche,
+  };
 }
 
 /**
@@ -242,7 +288,9 @@ export async function completeTestDiagnosticPcaet(
   );
   if (missing.length > 0) {
     throw new Error(
-      `Indicateurs absents du référentiel pour saturer le diagnostic : ${missing.join(', ')}`
+      `Indicateurs absents du référentiel pour saturer le diagnostic : ${missing.join(
+        ', '
+      )}`
     );
   }
 
