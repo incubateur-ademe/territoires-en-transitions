@@ -28,8 +28,8 @@ select is(
 
 select is(
     (select count(*) from collectivite where type = 'dr_ademe' and siren is not null)::int,
-    18,
-    'une DR ADEME par région'
+    17,
+    'une DR ADEME par SIRET : dix-sept directions pour dix-huit régions, l''Océan Indien en couvrant deux'
 );
 
 select is(
@@ -40,7 +40,7 @@ select is(
 
 -- Le NIC est ce qui distingue deux services partageant un SIREN — sans lui, le
 -- rattachement automatique par ProConnect ne peut pas trancher entre les
--- dix-huit DR ADEME.
+-- dix-sept DR ADEME.
 select is(
     (select count(*) from collectivite
      where type in ('dreal', 'ddt', 'dr_ademe', 'service_national', 'region')
@@ -55,14 +55,19 @@ select is(
     'les dix-huit conseils régionaux ont gagné leur SIREN'
 );
 
--- La DR ADEME Océan Indien couvre La Réunion et Mayotte : deux lignes, même
--- SIRET. L'index ne portant que sur la région, la base l'accepte — et rien
--- n'impose l'unicité de `siren` sur `collectivite`.
+-- La DR ADEME Océan Indien couvre La Réunion et Mayotte, et n'a pourtant qu'une
+-- ligne. L'index ne portant que sur la région, la base tolérerait le doublon —
+-- mais ce serait deux fois le même service : deux destinataires pour une
+-- transmission, et un SIRET qui ne désigne plus un service en particulier, donc
+-- un rattachement automatique incapable de trancher. La seconde région est un
+-- périmètre secondaire ; la première est celle que l'import rencontre d'abord.
 select is(
-    (select count(distinct region_code) from collectivite
-     where type = 'dr_ademe' and siren = '385290309' and nic = '00397')::int,
-    2,
-    'une même DR ADEME peut couvrir deux régions avec un seul SIRET'
+    (select c.region_code || ' + ' || p.region_code
+     from collectivite as c
+     join collectivite_perimetre_secondaire as p on p.collectivite_id = c.id
+     where c.type = 'dr_ademe' and c.siren = '385290309' and c.nic = '00397'),
+    '04 + 06',
+    'la DR ADEME Océan Indien couvre deux régions avec une seule ligne'
 );
 
 -- L'appariement se fait sur la famille et le code géographique, jamais sur le

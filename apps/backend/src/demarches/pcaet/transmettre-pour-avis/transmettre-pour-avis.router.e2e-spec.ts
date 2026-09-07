@@ -20,6 +20,7 @@ import { onTestFinished, vi } from 'vitest';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
+import { collectivitePerimetreSecondaireTable } from '@tet/backend/collectivites/shared/models/collectivite-perimetre-secondaire.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
@@ -429,6 +430,21 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       return creee;
     };
 
+    /**
+     * Un territoire couvert en plus du principal. Rien à nettoyer : la ligne
+     * cascade avec la collectivité.
+     */
+    const addPerimetreSecondaire = async (
+      collectiviteId: number,
+      perimetre: { regionCode: string } | { departementCode: string }
+    ) => {
+      await db.db.insert(collectivitePerimetreSecondaireTable).values({
+        collectiviteId,
+        source: 'import_service_etat',
+        ...perimetre,
+      });
+    };
+
     const listDestinataires = async (demarcheId: number) =>
       db.db
         .select({
@@ -511,6 +527,110 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       expect(destinataires.every((d) => d.source === 'transmission')).toBe(
         true
       );
+    });
+
+    /**
+     * Le cas de la DR ADEME Océan Indien : une seule ligne pour deux régions,
+     * la seconde portée par un périmètre secondaire. Sans elle, le service ne
+     * serait jamais saisi pour la moitié de son territoire.
+     */
+    test('saisit un service dont un périmètre secondaire couvre la déposante', async () => {
+      const regionDeposante = 'S1';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: regionDeposante,
+        departementCode: 'S1',
+      });
+
+      // Sa région principale est ailleurs : seul le périmètre secondaire la relie.
+      const drAdemeDeuxRegions = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: 'S2',
+      });
+      await addPerimetreSecondaire(drAdemeDeuxRegions.id, {
+        regionCode: regionDeposante,
+      });
+      const drAdemeAilleurs = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: 'S3',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const saisis = (await listDestinataires(created.id)).map(
+        (d) => d.instructeurCollectiviteId
+      );
+      expect(saisis).toContain(drAdemeDeuxRegions.id);
+      expect(saisis).not.toContain(drAdemeAilleurs.id);
+    });
+
+    /**
+     * Et réciproquement, le cas de Redon Agglomération : un EPCI qui chevauche
+     * plusieurs départements relève des instructeurs de chacun, pas seulement de
+     * ceux de son siège.
+     */
+    test('saisit les instructeurs des territoires secondaires de la déposante', async () => {
+      const { caller, collectivite } = await freshEditor({
+        regionCode: 'S4',
+        departementCode: 'S4',
+      });
+      await addPerimetreSecondaire(collectivite.id, {
+        departementCode: 'S5',
+      });
+      await addPerimetreSecondaire(collectivite.id, { regionCode: 'S5' });
+
+      const ddtDuSiege = await addInstructeur({
+        type: 'ddt',
+        regionCode: 'S4',
+        departementCode: 'S4',
+      });
+      const ddtDebordee = await addInstructeur({
+        type: 'ddt',
+        regionCode: 'S5',
+        departementCode: 'S5',
+      });
+      const drealDebordee = await addInstructeur({
+        type: 'dreal',
+        regionCode: 'S5',
+      });
+      const ddtAilleurs = await addInstructeur({
+        type: 'ddt',
+        regionCode: 'S6',
+        departementCode: 'S6',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const saisis = (await listDestinataires(created.id)).map(
+        (d) => d.instructeurCollectiviteId
+      );
+      expect(saisis).toEqual(
+        expect.arrayContaining([
+          ddtDuSiege.id,
+          ddtDebordee.id,
+          drealDebordee.id,
+        ])
+      );
+      expect(saisis).not.toContain(ddtAilleurs.id);
     });
 
     /**

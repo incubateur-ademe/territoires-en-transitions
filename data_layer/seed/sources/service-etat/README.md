@@ -17,7 +17,7 @@ Corriger le CSV concerné, puis :
 
 ```bash
 make seeds_rebuild_from_source   # regénère le SQL, ne touche pas la base
-git diff data_layer/seed/imports/09-service_etat.sql
+git diff data_layer/seed/imports
 ```
 
 Le générateur refuse toute anomalie plutôt que de réécrire un SQL douteux : code
@@ -25,8 +25,13 @@ géographique inconnu, SIREN mal formé, doublon sur une clé, SIREN inactif au
 répertoire SIRENE. Mieux vaut un seed daté qu'un seed corrompu.
 
 Le SQL généré est **idempotent** et sert deux fois : `seed.sh` le charge sur une base
-neuve, et le change sqitch `collectivite/service_etat_import` porte le même corps
-pour les bases déjà peuplées (staging, production).
+neuve, et un change sqitch porte le même corps pour les bases déjà peuplées
+(staging, production). Deux fichiers, donc deux changes :
+`09-service_etat.sql` par `collectivite/service_etat_import`, et
+`10-service_etat_perimetre_secondaire.sql` par `collectivite/perimetre_secondaire`.
+Ils sont séparés parce que le premier change était déjà déployé quand la table des
+périmètres est arrivée : réunis, ils feraient échouer les migrations d'une base
+neuve, où le change antérieur les jouerait avant que la table existe.
 
 ## Les fichiers
 
@@ -34,13 +39,30 @@ pour les bases déjà peuplées (staging, production).
 |---|---|---|---|
 | `ddt.csv` | 92 | `collectivite` type `ddt` | `departement_code` |
 | `dreal.csv` | 18 | type `dreal` | `region_code` |
-| `dr-ademe.csv` | 18 | type `dr_ademe` | `region_code` |
+| `dr-ademe.csv` | 18 | **17** lignes type `dr_ademe` + 1 périmètre secondaire | `region_code` |
 | `service-national.csv` | 2 | type `service_national` | `nom` |
 | `conseil-regional.csv` | 18 | **update** des `type='region'` existants | `region_code` |
 | `dreal-contacts.csv` | 22 | — | réservé à la slice 4 (TETH-11) |
 
 `dreal-contacts.csv` n'est lu par personne aujourd'hui : les correspondants DREAL
 relèvent de l'import des membres et de son mail d'invitation, pas de cette slice.
+
+### Une direction sur deux régions
+
+`dr-ademe.csv` liste dix-huit lignes pour dix-sept directions : l'Océan Indien y
+figure deux fois, une fois par région couverte (La Réunion et Mayotte), avec le
+même nom et le même SIRET.
+
+L'import n'en fait qu'**une** ligne `collectivite`. La première région rencontrée
+devient son périmètre principal, la seconde une ligne de
+`collectivite_perimetre_secondaire`. L'index unique ne portant que sur la région,
+la base tolérerait deux lignes — mais ce serait deux fois le même service : deux
+destinataires pour une transmission, et un SIRET qui ne désigne plus un service en
+particulier, donc un rattachement automatique par ProConnect incapable de trancher.
+
+Le générateur refuse deux dénominations sous un même SIRET : un SIRET est un
+établissement, et deux noms signeraient une erreur de source plutôt qu'un service à
+deux périmètres.
 
 ### La colonne `nom_anterieur` de `service-national.csv`
 
@@ -65,14 +87,18 @@ SIRET, et c'est lui qui distingue deux services partageant un SIREN — sans quo
 rattachement automatique par ProConnect ne peut pas trancher.
 
 - `dr-ademe.csv` et `service-national.csv` portent un **SIRET** : le NIC en est
-  extrait directement. Les 18 DR ADEME partagent le SIREN 385290309 de l'ADEME, seul
+  extrait directement. Les DR ADEME partagent le SIREN 385290309 de l'ADEME, seul
   le NIC les sépare — le NIC ne doit donc **jamais** être cherché ailleurs pour elles
-  (le siège du SIREN 385290309 est Angers, il vaudrait pour les 18).
+  (le siège du SIREN 385290309 est Angers, il vaudrait pour toutes).
 - `ddt.csv`, `dreal.csv` et `conseil-regional.csv` ne portent qu'un **SIREN** : le
   générateur récupère le NIC du siège auprès de `recherche-entreprises.api.gouv.fr`.
 
 Quand un service compte plusieurs implantations, le classeur les liste en
 « Implantation 1..3 » ; c'est la première, le siège de la direction, qui est retenue.
+
+Une fois l'import joué, un SIRET désigne un service et un seul — c'est l'invariant
+que vérifie le `verify` de `collectivite/perimetre_secondaire`, et ce sur quoi
+s'appuie le rattachement automatique.
 
 ## Lignes du classeur écartées (11)
 

@@ -2,11 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { CollectiviteType } from '@tet/domain/collectivites';
 import {
   PerimetreInstructeurEnum,
   typesInstructeurDuPerimetre,
 } from '@tet/domain/demarches';
-import { and, eq, inArray, ne, or } from 'drizzle-orm';
+import { and, eq, inArray, ne, or, SQL } from 'drizzle-orm';
+import {
+  couvreLesCodesSql,
+  perimetreCodesSql,
+} from './perimetre-instructeur.columns';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
 
 /** Le type d'instructeur, ventilé par le périmètre qu'il couvre. */
@@ -44,10 +49,14 @@ export class PcaetInstructeursRepository {
   ): Promise<InstructeurSaisi[]> {
     const db = tx ?? this.databaseService.db;
 
+    // Les territoires de la déposante : son code principal et ses secondaires.
+    // Un EPCI peut chevaucher plusieurs départements — Redon Agglomération
+    // s'étale sur 44, 56 et 35 — et doit alors être saisi par les instructeurs
+    // de chacun, pas seulement par ceux de son siège.
     const deposantes = await db
       .select({
-        regionCode: collectiviteTable.regionCode,
-        departementCode: collectiviteTable.departementCode,
+        regionCodes: perimetreCodesSql(collectiviteTable, 'region'),
+        departementCodes: perimetreCodesSql(collectiviteTable, 'departement'),
       })
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, collectiviteId))
@@ -58,21 +67,30 @@ export class PcaetInstructeursRepository {
       return [];
     }
 
-    // Un code absent ne couvre rien : sans lui, le périmètre correspondant est
-    // simplement écarté plutôt que comparé à NULL.
+    /**
+     * Les services d'une maille qui couvrent l'un des territoires de la
+     * déposante — par leur code propre ou par un périmètre secondaire.
+     */
+    const couvreLaDeposante = (
+      types: readonly CollectiviteType[],
+      maille: 'region' | 'departement',
+      codesDeposante: string[]
+    ): SQL | undefined =>
+      // Une déposante sans territoire à cette maille ne se compare à rien.
+      types.length === 0 || codesDeposante.length === 0
+        ? undefined
+        : and(
+            inArray(collectiviteTable.type, types),
+            couvreLesCodesSql(collectiviteTable, maille, codesDeposante)
+          );
+
     const perimetres = [
-      deposante.regionCode && typesParRegion.length > 0
-        ? and(
-            inArray(collectiviteTable.type, typesParRegion),
-            eq(collectiviteTable.regionCode, deposante.regionCode)
-          )
-        : undefined,
-      deposante.departementCode && typesParDepartement.length > 0
-        ? and(
-            inArray(collectiviteTable.type, typesParDepartement),
-            eq(collectiviteTable.departementCode, deposante.departementCode)
-          )
-        : undefined,
+      couvreLaDeposante(typesParRegion, 'region', deposante.regionCodes),
+      couvreLaDeposante(
+        typesParDepartement,
+        'departement',
+        deposante.departementCodes
+      ),
       // Le national couvre la déposante quels que soient ses codes.
       typesNationaux.length > 0
         ? inArray(collectiviteTable.type, typesNationaux)

@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 """Régénère l'import des services de l'État depuis `seed/sources/service-etat/`.
 
-Écrit **un seul** fichier, `seed/imports/09-service_etat.sql` : `seed.sh` le
-charge sur une base neuve, et le change sqitch
-`collectivite/service_etat_import` l'inclut par `\\ir` pour les bases déjà
-peuplées (staging, production), où le seed ne repasse jamais.
+Écrit deux fichiers, un seul exemplaire des données chacun :
 
-Un seul exemplaire des données, donc : générer les deux fichiers les avait fait
-diverger en une journée. Le script de deploy sqitch, lui, ne bouge jamais — son
-empreinte reste stable quand la liste est régénérée.
+- `seed/imports/09-service_etat.sql` — les services eux-mêmes, inclus par `\\ir`
+  dans le change sqitch `collectivite/service_etat_import` ;
+- `seed/imports/10-service_etat_perimetre_secondaire.sql` — les régions qu'un
+  service couvre au-delà de sa principale, incluses par le change
+  `collectivite/perimetre_secondaire`.
+
+Deux fichiers parce que deux changes : le premier est déjà déployé et ne sera pas
+rejoué, or les périmètres secondaires ont besoin d'une table qui n'existait pas
+quand il a été écrit. Les mettre dans le même fichier ferait échouer les
+migrations d'une base neuve, où le change antérieur les jouerait trop tôt.
+
+`seed.sh` charge les deux dans l'ordre lexicographique, donc dans le bon. Le
+script de deploy sqitch, lui, ne bouge jamais — son empreinte reste stable quand
+la liste est régénérée.
 
 Le corps est idempotent : il s'apparie sur la famille et le code géographique,
 qui sont les clés que la base impose déjà (index uniques partiels), et ne réécrit
@@ -37,6 +45,9 @@ import urllib.request
 DATA_LAYER = pathlib.Path(__file__).resolve().parents[1]
 SOURCES = DATA_LAYER / 'seed' / 'sources' / 'service-etat'
 DESTINATION = DATA_LAYER / 'seed' / 'imports' / '09-service_etat.sql'
+DESTINATION_PERIMETRE = (
+    DATA_LAYER / 'seed' / 'imports' / '10-service_etat_perimetre_secondaire.sql'
+)
 
 # Le NIC du siège vient du répertoire SIRENE, exposé sans clé par la DINUM.
 API = 'https://recherche-entreprises.api.gouv.fr/search'
@@ -302,11 +313,17 @@ do update set siren       = excluded.siren,
               nic         = excluded.nic,
               region_code = excluded.region_code;
 
--- Les DR ADEME, appariées sur la région. Les dix-huit partagent le SIREN 385290309
--- de l'ADEME : seul le NIC les distingue, et c'est ce qui rendra possible le
--- rattachement automatique par ProConnect. La direction Océan Indien couvre deux
--- régions (La Réunion et Mayotte) : deux lignes, même nom et même SIRET, ce que
--- l'index autorise puisqu'il ne porte que sur la région.
+-- Les DR ADEME, appariées sur la région. Elles partagent toutes le SIREN
+-- 385290309 de l'ADEME : seul le NIC les distingue, et c'est ce qui rend
+-- possible le rattachement automatique d'un agent à son service.
+--
+-- Une ligne par SIRET, donc une par direction — et non une par région. La
+-- direction Océan Indien pilote La Réunion et Mayotte : elle a ici sa région
+-- principale, et l'autre lui vient en périmètre secondaire
+-- (`10-service_etat_perimetre_secondaire.sql`). L'index unique ne porte que sur
+-- la région et tolérerait deux lignes, mais ce serait deux fois le même service :
+-- deux destinataires pour une transmission, et un SIRET qui ne désigne plus rien
+-- en particulier.
 insert into collectivite (nom, type, region_code, siren, nic)
 select v.nom, v.type, v.region_code, v.siren, v.nic
 from (values
@@ -384,6 +401,58 @@ HEADER = """-- Services de l'État instructeurs du dépôt PCAET : DREAL, DDT, D
 FOOTER = ''
 
 
+PERIMETRE_HEADER = """-- Périmètres géographiques secondaires des services de l'État.
+--
+-- Une direction régionale peut en piloter plusieurs — l'ADEME Océan Indien
+-- couvre La Réunion et Mayotte. `collectivite` ne porte qu'un code de région et
+-- un code de département, le périmètre principal ; les autres viennent ici.
+--
+-- Source : data_layer/seed/sources/service-etat/*.csv. Fichier généré —
+-- régénérer avec `make seeds_rebuild_from_source`
+-- (script : data_layer/scripts/generate_service_etat.py).
+--
+-- Deux lecteurs, comme son voisin `09-service_etat.sql` : `seed.sh` le charge sur
+-- une base neuve, et le change sqitch `collectivite/perimetre_secondaire`
+-- l'inclut par `\\ir` pour les bases déjà peuplées. D'où l'absence de
+-- `begin`/`commit` : c'est le change qui ouvre la transaction.
+--
+-- Il est séparé de `09-service_etat.sql` parce que la table qu'il peuple est
+-- arrivée après lui : le change qui inclut le premier fichier est déjà déployé,
+-- ne sera pas rejoué, et sur une base neuve il jouerait ces lignes avant que la
+-- table existe.
+
+"""
+
+PERIMETRE_VIDE = """-- Aucun service ne couvre aujourd'hui de périmètre au-delà du sien : les CSV
+-- source ne listent aucune direction sur deux régions. Le fichier reste, pour
+-- que le change sqitch qui l'inclut n'ait pas à s'interroger.
+"""
+
+
+def corps_perimetre(lignes: list[tuple[str, ...]]) -> str:
+    """Les régions couvertes en plus de la principale.
+
+    Pas de `where exists (select 1 from collectivite)` : la jointure sur
+    `collectivite` fait cette garde d'elle-même — sur une base vide, au moment des
+    migrations, elle ne ramène rien. L'appariement se fait sur le SIRET, seule clé
+    qui distingue deux directions partageant le SIREN de l'ADEME.
+    """
+    if not lignes:
+        return PERIMETRE_VIDE
+    return f"""insert into collectivite_perimetre_secondaire (collectivite_id, region_code, source)
+select principale.id, v.region_code, 'import_service_etat'
+from (values
+{valeurs(lignes)}
+) as v (type, siren, nic, region_code)
+join collectivite as principale
+  on principale.type = v.type
+ and principale.siren = v.siren
+ and principale.nic = v.nic
+on conflict (collectivite_id, region_code) where region_code is not null
+do nothing;
+"""
+
+
 # ————————————————————————————————— main —————————————————————————————————
 
 
@@ -459,15 +528,33 @@ def main() -> None:
     ]
 
     # — DR ADEME : SIRET complet au classeur, le NIC n'est jamais cherché ailleurs
+    #
+    # Le classeur liste une direction une fois par région couverte. C'est pourtant
+    # un seul service, avec un seul SIRET : la première région rencontrée devient
+    # son périmètre principal, les suivantes des périmètres secondaires.
     fichier = 'dr-ademe.csv'
     lignes = read_csv(fichier, ('region_code', 'siret', 'nom'))
     check_unique(fichier, 'code région', [(l['region_code'], l['_ligne']) for l in lignes])
     services['dr_ademe'] = []
+    services['perimetre_secondaire'] = []
+    principales: dict[tuple[str, str], str] = {}
     for ligne in lignes:
         siren, nic = decoupe_siret(fichier, ligne)
-        services['dr_ademe'].append(
-            (check_libelle(fichier, ligne), 'dr_ademe', check_region(fichier, ligne), siren, nic)
-        )
+        nom = check_libelle(fichier, ligne)
+        region = check_region(fichier, ligne)
+        deja_vu = principales.get((siren, nic))
+        if deja_vu is None:
+            principales[(siren, nic)] = nom
+            services['dr_ademe'].append((nom, 'dr_ademe', region, siren, nic))
+            continue
+        # Un SIRET est un établissement : deux dénominations sous le même signent
+        # une erreur de source, pas un service à deux périmètres.
+        if deja_vu != nom:
+            fail(
+                f'{fichier}:{ligne["_ligne"]} — le SIRET {siren}{nic} porte deux '
+                f'dénominations, {deja_vu!r} et {nom!r}'
+            )
+        services['perimetre_secondaire'].append(('dr_ademe', siren, nic, region))
 
     # — Services nationaux : appariés sur le nom, donc unique par construction
     fichier = 'service-national.csv'
@@ -505,14 +592,20 @@ def main() -> None:
     # Rien n'est écrit avant que tout soit lu, validé et complété : une source
     # abîmée laisse les deux SQL en place.
     DESTINATION.write_text(HEADER + corps(services) + FOOTER, encoding='utf-8')
+    DESTINATION_PERIMETRE.write_text(
+        PERIMETRE_HEADER + corps_perimetre(services['perimetre_secondaire']),
+        encoding='utf-8',
+    )
 
     print(
         f'✓ {len(services["dreal"])} DREAL, {len(services["ddt"])} DDT, '
         f'{len(services["dr_ademe"])} DR ADEME, '
         f'{len(services["service_national"])} services nationaux, '
-        f'{len(services["conseil_regional"])} conseils régionaux'
+        f'{len(services["conseil_regional"])} conseils régionaux, '
+        f'{len(services["perimetre_secondaire"])} périmètre(s) secondaire(s)'
     )
     print(f'  → {DESTINATION.relative_to(DATA_LAYER.parent)}')
+    print(f'  → {DESTINATION_PERIMETRE.relative_to(DATA_LAYER.parent)}')
 
 
 if __name__ == '__main__':

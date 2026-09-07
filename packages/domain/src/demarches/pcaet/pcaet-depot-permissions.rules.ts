@@ -7,20 +7,38 @@ import {
   PerimetreInstructeurEnum,
 } from './pcaet-instructeur.rules';
 
+/**
+ * Les territoires de part et d'autre, en **listes** et non en codes uniques :
+ * une collectivité peut couvrir plusieurs régions ou départements. Une DR ADEME
+ * en pilote deux (l'Océan Indien couvre La Réunion et Mayotte), un EPCI
+ * chevauche plusieurs départements (Redon Agglomération s'étale sur 44, 56 et
+ * 35, donc sur deux régions).
+ *
+ * Chaque liste réunit le périmètre principal, porté par `collectivite`, et les
+ * secondaires, portés par `collectivite_perimetre_secondaire`. Les codes
+ * manquants n'y figurent pas : une liste vide dit « aucun territoire », ce qui ne
+ * croise jamais rien.
+ */
 export type PerimetreInstructeurEntree = {
   instructeurType: CollectiviteType;
-  instructeurRegionCode: string | null;
-  instructeurDepartementCode: string | null;
-  collectiviteRegionCode: string | null;
-  collectiviteDepartementCode: string | null;
+  instructeurRegionCodes: readonly string[];
+  instructeurDepartementCodes: readonly string[];
+  collectiviteRegionCodes: readonly string[];
+  collectiviteDepartementCodes: readonly string[];
 };
+
+/** Deux territoires se rencontrent-ils ? Deux listes vides, jamais. */
+const seCroisent = (
+  instructeur: readonly string[],
+  collectivite: readonly string[]
+): boolean => instructeur.some((code) => collectivite.includes(code));
 
 export const instructeurCouvreCollectivite = ({
   instructeurType,
-  instructeurRegionCode,
-  instructeurDepartementCode,
-  collectiviteRegionCode,
-  collectiviteDepartementCode,
+  instructeurRegionCodes,
+  instructeurDepartementCodes,
+  collectiviteRegionCodes,
+  collectiviteDepartementCodes,
 }: PerimetreInstructeurEntree): boolean => {
   if (!isTypeInstructeur(instructeurType)) {
     return false;
@@ -32,15 +50,12 @@ export const instructeurCouvreCollectivite = ({
     return true;
   }
   if (perimetre === PerimetreInstructeurEnum.REGION) {
-    return (
-      Boolean(instructeurRegionCode) &&
-      instructeurRegionCode === collectiviteRegionCode
-    );
+    return seCroisent(instructeurRegionCodes, collectiviteRegionCodes);
   }
   if (perimetre === PerimetreInstructeurEnum.DEPARTEMENT) {
-    return (
-      Boolean(instructeurDepartementCode) &&
-      instructeurDepartementCode === collectiviteDepartementCode
+    return seCroisent(
+      instructeurDepartementCodes,
+      collectiviteDepartementCodes
     );
   }
   return false;

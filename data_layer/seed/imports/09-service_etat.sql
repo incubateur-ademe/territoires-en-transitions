@@ -175,11 +175,17 @@ do update set siren       = excluded.siren,
               nic         = excluded.nic,
               region_code = excluded.region_code;
 
--- Les DR ADEME, appariées sur la région. Les dix-huit partagent le SIREN 385290309
--- de l'ADEME : seul le NIC les distingue, et c'est ce qui rendra possible le
--- rattachement automatique par ProConnect. La direction Océan Indien couvre deux
--- régions (La Réunion et Mayotte) : deux lignes, même nom et même SIRET, ce que
--- l'index autorise puisqu'il ne porte que sur la région.
+-- Les DR ADEME, appariées sur la région. Elles partagent toutes le SIREN
+-- 385290309 de l'ADEME : seul le NIC les distingue, et c'est ce qui rend
+-- possible le rattachement automatique d'un agent à son service.
+--
+-- Une ligne par SIRET, donc une par direction — et non une par région. La
+-- direction Océan Indien pilote La Réunion et Mayotte : elle a ici sa région
+-- principale, et l'autre lui vient en périmètre secondaire
+-- (`10-service_etat_perimetre_secondaire.sql`). L'index unique ne porte que sur
+-- la région et tolérerait deux lignes, mais ce serait deux fois le même service :
+-- deux destinataires pour une transmission, et un SIRET qui ne désigne plus rien
+-- en particulier.
 insert into collectivite (nom, type, region_code, siren, nic)
 select v.nom, v.type, v.region_code, v.siren, v.nic
 from (values
@@ -187,7 +193,6 @@ from (values
         ('Direction Régionale (DR) Ademe Martinique', 'dr_ademe', '02', '385290309', '00595'),
         ('Direction Régionale (DR) Ademe Guyane', 'dr_ademe', '03', '385290309', '00538'),
         ('Direction Régionale (DR) Ademe Océan Indien', 'dr_ademe', '04', '385290309', '00397'),
-        ('Direction Régionale (DR) Ademe Océan Indien', 'dr_ademe', '06', '385290309', '00397'),
         ('Direction Régionale (DR) Ademe Île-de-France', 'dr_ademe', '11', '385290309', '00199'),
         ('Direction Régionale (DR) Ademe Centre-Val de Loire', 'dr_ademe', '24', '385290309', '00579'),
         ('Direction Régionale (DR) Ademe Bourgogne-Franche-Comté', 'dr_ademe', '27', '385290309', '00520'),

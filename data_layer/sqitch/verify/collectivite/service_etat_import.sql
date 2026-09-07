@@ -11,7 +11,9 @@ BEGIN;
 --
 -- Des **minimums** par famille plutôt que des totaux exacts : un service ajouté
 -- plus tard ne doit pas faire échouer un `verify` qui n'aurait rien à dire de
--- neuf. Le SIREN sert de marqueur de l'import — les services créés par les tests
+-- neuf. Dix-sept DR ADEME et non dix-huit : l'Océan Indien couvre deux régions
+-- sous un seul SIRET, donc sur une seule ligne (cf.
+-- `collectivite/perimetre_secondaire`). Le SIREN sert de marqueur de l'import — les services créés par les tests
 -- n'en portent pas.
 --
 -- Deux témoins nommément vérifiés, un par mode d'appariement : une DDT (index
@@ -28,7 +30,7 @@ BEGIN
     END IF;
 
     FOR attendu IN
-        SELECT * FROM (VALUES ('ddt', 92), ('dreal', 18), ('dr_ademe', 18), ('service_national', 2))
+        SELECT * FROM (VALUES ('ddt', 92), ('dreal', 18), ('dr_ademe', 17), ('service_national', 2))
             AS v(famille, minimum)
     LOOP
         SELECT count(*) INTO obtenu

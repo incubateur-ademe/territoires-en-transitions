@@ -13,6 +13,10 @@ import {
 import type { CollectiviteType } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, sql, type SQL } from 'drizzle-orm';
+import {
+  couvreLesCodesSql,
+  perimetreCodesSql,
+} from '../shared/perimetre-instructeur.columns';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import type { DemarchePcaetStatus } from '@tet/domain/demarches';
@@ -67,8 +71,8 @@ export class ListDemandesAvisRepository {
       const instructrices = await db
         .select({
           type: collectiviteTable.type,
-          regionCode: collectiviteTable.regionCode,
-          departementCode: collectiviteTable.departementCode,
+          regionCodes: perimetreCodesSql(collectiviteTable, 'region'),
+          departementCodes: perimetreCodesSql(collectiviteTable, 'departement'),
         })
         .from(collectiviteTable)
         .where(eq(collectiviteTable.id, instructeurCollectiviteId))
@@ -85,23 +89,28 @@ export class ListDemandesAvisRepository {
       }
 
       // Aucun filtre au national : le service voit toutes les déposantes.
-      // Ailleurs, un code manquant côté service ne couvre personne.
+      // Ailleurs, un service sans territoire ne couvre personne.
       let filtrePerimetre: SQL | undefined;
       if (perimetre !== PerimetreInstructeurEnum.NATIONAL) {
-        const codeInstructrice =
+        const maille =
           perimetre === PerimetreInstructeurEnum.REGION
-            ? instructrice.regionCode
-            : instructrice.departementCode;
+            ? 'region'
+            : 'departement';
+        const codesInstructrice =
+          maille === 'region'
+            ? instructrice.regionCodes
+            : instructrice.departementCodes;
 
-        if (!codeInstructrice) {
+        if (codesInstructrice.length === 0) {
           return success({ instructeurType: instructrice.type, rows: [] });
         }
 
-        filtrePerimetre = eq(
-          perimetre === PerimetreInstructeurEnum.REGION
-            ? collectiviteTable.regionCode
-            : collectiviteTable.departementCode,
-          codeInstructrice
+        // `collectiviteTable` est ici la déposante : ses territoires — le
+        // principal comme les secondaires — sont confrontés à ceux du service.
+        filtrePerimetre = couvreLesCodesSql(
+          collectiviteTable,
+          maille,
+          codesInstructrice
         );
       }
 
