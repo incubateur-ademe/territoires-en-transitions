@@ -16,7 +16,8 @@ Les principaux problèmes observés étaient les suivants :
 - plusieurs jobs repayaient les mêmes coûts de préparation (installation pnpm, dépendances natives, navigateurs Playwright, variables d'environnement)
 - les frontières historiques entre jobs introduisaient des attentes inutiles sur le chemin critique
 - les tests end-to-end représentaient le principal bottleneck et combinaient plusieurs coûts séquentiels : préparation de la stack Supabase, build runtime, démarrage applicatif puis exécution Playwright
-- l'exécution e2e via une surcouche Nx dédiée augmentait le risque de dérive par rapport au chemin réel d'exécution, alors que le workspace n'utilise pas Nx Cloud (`neverConnectToCloud: true`)
+- le cache local Nx ne permettait pas de réutiliser les résultats entre runners GitHub Actions, ce qui laissait des recalculs évitables entre jobs et entre reruns
+- l'exécution e2e via une surcouche Nx dédiée augmentait le risque de dérive par rapport au chemin réel d'exécution Playwright
 
 Sur la branche de travail ayant conduit à cette ADR, l'objectif explicite a été de réduire le délai total de retour de la CI. Le coût en minutes GitHub Actions n'était pas le critère principal ; la durée totale de la pipeline était prioritaire.
 
@@ -31,6 +32,7 @@ Le workflow racine `ci.yml` doit commencer par un job d'analyse chargé de :
 - déterminer `nx-base` et `nx-head`
 - calculer la liste des projets Nx affectés
 - exposer des booléens de pilotage pour les familles de jobs CI
+- déterminer quel secret Nx Cloud propager aux workflows descendants (`NX_CLOUD_ACCESS_TOKEN_RO` pour les refs non protégées, `NX_CLOUD_ACCESS_TOKEN_RW` pour les refs protégées)
 
 Les workflows descendants sont des workflows réutilisables conditionnés par ces booléens, et non plus des jobs toujours exécutés.
 
@@ -44,7 +46,9 @@ Les gates retenus sont :
 
 Le calcul s'appuie en priorité sur `nx show projects --affected`, complété par un filtrage de fichiers pour les validations de base de données qui ne se projettent pas proprement dans le graphe Nx.
 
-### 2. Mutualiser les coûts de préparation via des actions réutilisables et des caches locaux
+La sélection du secret Nx Cloud est centralisée dans l'action composite `compute-affected-scope`, puis propagée via un unique output aux workflows réutilisables.
+
+### 2. Mutualiser les coûts de préparation via des actions réutilisables, des caches locaux et le cache distant Nx Cloud
 
 La préparation technique d'un job GitHub Actions doit être considérée comme une couche d'architecture à part entière.
 
@@ -54,8 +58,15 @@ Nous retenons les principes suivants :
 - un cache `node_modules` est géré explicitement au niveau du workflow principal
 - des caches dédiés sont introduits pour les navigateurs Playwright, le cache de build Next.js et les dépendances système de `node-canvas`
 - les variables d'environnement applicatives sont injectées via `app-env` plutôt que recopiées dans chaque workflow
+- les cibles Nx cacheables (`build`, `lint`, `test`, `typecheck`, `build-storybook`, cibles SWC/tsc) s'appuient sur Nx Cloud pour réutiliser leurs résultats entre runners CI
+- l'accès à Nx Cloud est séparé par secret GitHub Actions : token read-only pour les refs non protégées, token read-write pour les refs protégées
 
-Cette approche ne repose pas sur un partage de cache entre runners Nx, ni sur Nx Cloud. Elle optimise les préparatifs à l'échelle des workflows GitHub Actions eux-mêmes.
+Cette approche combine deux niveaux complémentaires :
+
+- des caches et préparatifs GitHub Actions pour les dépendances, navigateurs et artefacts non pilotés par Nx
+- le cache distant Nx Cloud pour les tâches Nx déterministes et cacheables
+
+Les workflows réutilisables qui exécutent des commandes Nx restent rattachés à l'environnement `ci` existant pour leurs autres variables et secrets, et reçoivent le token Nx Cloud sélectionné depuis le workflow appelant sans dupliquer la logique de branche dans chaque job.
 
 ### 3. Consolider les familles de jobs autour des besoins réels
 
@@ -66,19 +77,21 @@ Les anciens workflows spécialisés mais redondants sont remplacés par des fami
 - `test-ui-storybook.yml` isole les checks UI/Storybook lorsqu'ils sont nécessaires
 - `prepare-test-db.yml` devient le workflow unique de préparation de la base de test partagée
 
+Les tâches à effet de bord qui ne doivent jamais être rejouées depuis le cache distant restent isolées dans des cibles Nx dédiées non cacheables. C'est le cas de `backend:seed-imports`, utilisée pour peupler la base de test avant les suites dépendantes.
+
 L'objectif n'est pas de minimiser le nombre absolu de jobs, mais de limiter les duplications de setup et les dépendances artificielles entre jobs.
 
 ### 4. Optimiser explicitement le chemin critique e2e
 
 Les tests end-to-end restent la partie la plus coûteuse de la pipeline. Nous retenons donc une stratégie spécifique :
 
-- exécution directe de `playwright test` dans le workflow CI, sans passer par une cible Nx intermédiaire
+- exécution directe de `playwright test` dans le workflow CI principal, sans déléguer ce chemin critique à une orchestration Nx supplémentaire
 - sharding via `strategy.matrix.shard` et `--shard=i/N`
 - séparation entre suite isolée et suite `@serial`
 - conservation de `--workers=50%` en CI (soit 2 sur le runner public 4 vCPU actuel), car l'augmentation du nombre de workers dégrade la fiabilité à cause de la contention sur la base et les pools Postgres
 - production de rapports `blob` en CI, puis fusion dans un job dédié pour générer un rapport HTML unique
 
-Nous privilégions donc le parallélisme horizontal entre shards plutôt que l'augmentation du parallélisme interne de chaque shard.
+Nous privilégions donc le parallélisme horizontal entre shards plutôt que l'augmentation du parallélisme interne de chaque shard. L'activation de Nx Cloud ne remet pas en cause ce choix : le gain principal recherché concerne ici le cache distant des tâches Nx cacheables, pas l'atomisation du chemin e2e principal.
 
 ### 5. Supprimer les attentes sériées inutiles sur le runtime e2e
 
@@ -119,6 +132,7 @@ Le préchargement asynchrone de `TrajectoiresXlsxService` est conservé, mais se
 
 - La CI n'exécute plus systématiquement toutes les familles de checks.
 - Les coûts de préparation sont fortement mutualisés via des actions réutilisables et des caches dédiés.
+- Les tâches Nx cacheables peuvent désormais être réutilisées entre runners et entre reruns via Nx Cloud.
 - Le chemin critique est raccourci, en particulier pour les tests end-to-end.
 - Les tests e2e sont plus observables grâce au sharding explicite, aux rapports `blob` et au rapport HTML fusionné.
 - Le chemin d'exécution e2e CI est rapproché du chemin réel d'exécution Playwright, ce qui réduit le risque de dérive entre la CI et l'usage attendu.
@@ -127,7 +141,8 @@ Le préchargement asynchrone de `TrajectoiresXlsxService` est conservé, mais se
 ### Negatives
 
 - La logique CI devient plus architecturée et demande davantage de rigueur de maintenance sur les actions composites et les booléens de gating.
-- Sans Nx Cloud, les builds et tests restent cachés uniquement localement au runner ; certains calculs sont donc volontairement dupliqués entre jobs ou entre shards.
+- L'introduction de Nx Cloud ajoute une surface de configuration supplémentaire : identifiant de workspace, secrets GitHub Actions distincts pour les accès read-only/read-write et validation régulière des cache hits.
+- Le cache distant Nx ne couvre pas les préparatifs hors graphe Nx ni les tâches volontairement non cacheables ; une partie des calculs reste donc dupliquée par design.
 - Le build runtime e2e est répété dans chaque shard. Ce surcoût est accepté pour réduire le délai global.
 - Le bon comportement du gating dépend de la qualité du mapping entre projets affectés, filtres de fichiers et besoins réels de validation.
 - La limitation à `workers=50%` en e2e est une contrainte structurelle liée aux ressources du runner et à la contention base de données ; sur le runner public actuel cela correspond à 2 workers, et le gain futur passera plutôt par davantage de shards ou par une autre architecture d'exécution.
@@ -140,7 +155,7 @@ Rejeté car cela continue à payer des coûts fixes pour des changements locaux,
 
 ### S'appuyer sur une cible Nx e2e specialisee pour l'atomisation CI
 
-Rejeté car le workspace n'utilise pas Nx Cloud. Dans ce contexte, la surcouche Nx n'apporte pas de bénéfice suffisant face au coût de complexité et au risque de dérive par rapport à l'exécution Playwright directe.
+Rejeté pour le chemin critique principal, même avec Nx Cloud activé pour le cache distant des tâches Nx cacheables. Dans ce contexte, la surcouche Nx n'apporte pas de bénéfice suffisant face au coût de complexité et au risque de dérive par rapport à l'exécution Playwright directe.
 
 ### Centraliser le build runtime e2e dans un workflow amont produisant un artefact
 

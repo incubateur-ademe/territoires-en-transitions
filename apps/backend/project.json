@@ -12,6 +12,13 @@
         "cwd": "apps/backend"
       }
     },
+    "seed-imports": {
+      "command": "pnpm exec vitest run --project already-run-by-init-db-seed",
+      "cache": false,
+      "options": {
+        "cwd": "apps/backend"
+      }
+    },
     "build-deps": {
       "executor": "nx:noop",
       "dependsOn": ["^build"]

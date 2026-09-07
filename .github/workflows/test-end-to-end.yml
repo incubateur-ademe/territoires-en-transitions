@@ -11,6 +11,10 @@ on:
       pnpm-cache-key:
         required: true
         type: string
+      nx-cloud-token-secret-name:
+        required: false
+        default: NX_CLOUD_ACCESS_TOKEN_RO
+        type: string
 
 env:
   LOGS: /tmp/logs
@@ -30,6 +34,7 @@ jobs:
     # boot en erreur si la variable de dépôt n'est pas définie.
     env:
       MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets[inputs.nx-cloud-token-secret-name] }}
 
     strategy:
       fail-fast: false

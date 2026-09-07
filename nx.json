@@ -45,7 +45,6 @@
       "{workspaceRoot}/vitest.workspace.ts"
     ]
   },
-  "neverConnectToCloud": true,
   "tui": {
     "enabled": true
   },
@@ -188,5 +187,6 @@
   "analytics": false,
   "migrate": {
     "agentic": true
-  }
+  },
+  "nxCloudId": "6a9e7d9ccea3eb186f5d93a4"
 }
