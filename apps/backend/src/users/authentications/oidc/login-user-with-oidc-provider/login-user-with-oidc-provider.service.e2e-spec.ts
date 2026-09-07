@@ -1,5 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { getTestApp, getTestDatabase } from '@tet/backend/test';
@@ -413,5 +417,152 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
     );
 
     expect(result).toEqual({ statut: 'non-reconnu' });
+  });
+
+  describe("rattachement automatique à l'organisation du jeton", () => {
+    /**
+     * Un service de l'État de test, avec son SIRET, et le nettoyage de ce que
+     * le rattachement y écrira — les droits retiennent la collectivité (clé
+     * étrangère sans action en cascade), et `onTestFinished` les défait dans
+     * l'ordre inverse de leur déclaration.
+     */
+    async function addService(siren: string, nic: string) {
+      const { collectivite, cleanup } = await addTestCollectivite(
+        databaseService,
+        { type: 'dreal', regionCode: 'V2', siren, nic }
+      );
+      onTestFinished(cleanup);
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(utilisateurCollectiviteAccessTable)
+          .where(
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectivite.id
+            )
+          );
+      });
+      return collectivite;
+    }
+
+    async function connecterAvecSiret(
+      userId: string,
+      email: string,
+      siret: string
+    ) {
+      const sub = `sub-rattachement-${crypto.randomUUID()}`;
+      await databaseService.db.insert(utilisateurIdentiteOidcTable).values({
+        provider: 'proconnect',
+        sub,
+        userId,
+        email,
+      });
+      return service.authentifier(
+        'proconnect',
+        buildClaims({ sub, email, siret })
+      );
+    }
+
+    async function lireDroit(userId: string, collectiviteId: number) {
+      const [droit] = await databaseService.db
+        .select()
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          and(
+            eq(utilisateurCollectiviteAccessTable.userId, userId),
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectiviteId
+            )
+          )
+        );
+      return droit;
+    }
+
+    /**
+     * À chaque connexion, pas seulement à la création du compte : un agent qui
+     * avait déjà un compte TeT avant cette bascule doit lui aussi entrer dans
+     * son service.
+     */
+    test('un compte antérieur entre dans son service à la connexion', async () => {
+      const { user, cleanup } = await addTestCollectiviteAndUser(
+        databaseService
+      );
+      onTestFinished(cleanup);
+      const dreal = await addService('999555111', '00042');
+
+      const resultat = await connecterAvecSiret(
+        user.id,
+        user.email,
+        '99955511100042'
+      );
+
+      expect(resultat).toMatchObject({
+        statut: 'connexion',
+        rattachement: { collectiviteId: dreal.id, nom: dreal.nom },
+      });
+      expect(await lireDroit(user.id, dreal.id)).toMatchObject({
+        role: 'edition',
+        isActive: true,
+      });
+    });
+
+    /**
+     * Un administrateur qui retire un accès laisse une ligne inactive derrière
+     * lui. La voir revenir à la connexion suivante annulerait sa décision.
+     */
+    test('un droit retiré ne revient pas', async () => {
+      const { user, cleanup } = await addTestCollectiviteAndUser(
+        databaseService
+      );
+      onTestFinished(cleanup);
+      const dreal = await addService('999555222', '00042');
+
+      await databaseService.db
+        .insert(utilisateurCollectiviteAccessTable)
+        .values({
+          userId: user.id,
+          collectiviteId: dreal.id,
+          isActive: false,
+          role: CollectiviteRole.EDITION,
+        });
+
+      const resultat = await connecterAvecSiret(
+        user.id,
+        user.email,
+        '99955522200042'
+      );
+
+      expect(resultat).toMatchObject({ statut: 'connexion' });
+      expect(resultat).not.toHaveProperty('rattachement');
+      expect(await lireDroit(user.id, dreal.id)).toMatchObject({
+        isActive: false,
+      });
+    });
+
+    /** Et un droit existant n'est jamais élevé : le rattachement n'ouvre, il ne promeut pas. */
+    test('un droit existant garde son niveau', async () => {
+      const { user, cleanup } = await addTestCollectiviteAndUser(
+        databaseService
+      );
+      onTestFinished(cleanup);
+      const dreal = await addService('999555333', '00042');
+
+      await databaseService.db
+        .insert(utilisateurCollectiviteAccessTable)
+        .values({
+          userId: user.id,
+          collectiviteId: dreal.id,
+          isActive: true,
+          role: CollectiviteRole.LECTURE,
+        });
+
+      await connecterAvecSiret(user.id, user.email, '99955533300042');
+
+      expect(await lireDroit(user.id, dreal.id)).toMatchObject({
+        role: 'lecture',
+        isActive: true,
+      });
+    });
   });
 });

@@ -1,3 +1,4 @@
+export * from './auto-attachment.rules';
 export * from './can-mutate-referentiel.rules';
 export * from './categorie-tag.schema';
 export * from './collectivite-banatic-type.enum';

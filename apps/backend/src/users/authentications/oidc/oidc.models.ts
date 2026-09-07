@@ -127,7 +127,20 @@ export type OidcErrorCode = (typeof oidcErrorCodes)[number];
  *   (rattachement automatique refusé, l'utilisateur doit vérifier son email) ;
  * - aucun match ou `dcp.deleted` (traité comme non trouvé) → `non-reconnu`
  *   (la dialog de bienvenue est branchée ensuite).
+ *
+ * Toute `connexion` passe ensuite par le rattachement automatique à
+ * l'organisation du jeton, qui peut renseigner `rattachement`.
  */
+/**
+ * Le service qu'un rattachement automatique vient d'ouvrir à l'agent, quand la
+ * connexion en a déclenché un. Voyage jusqu'au callback, qui le passe à l'app
+ * pour qu'elle atterrisse sur cet espace et l'annonce.
+ */
+export type RattachementAutomatique = {
+  collectiviteId: number;
+  nom: string;
+};
+
 export type LoginUserWithOidcProviderResult =
   | {
       statut: 'connexion';
@@ -135,6 +148,8 @@ export type LoginUserWithOidcProviderResult =
       email: string;
       /** Liaison automatique venant d'avoir lieu (cas 2) — déclenche le toast one-shot. */
       nouvelleLiaison?: boolean;
+      /** Renseigné uniquement quand cette connexion vient d'ouvrir un service. */
+      rattachement?: RattachementAutomatique;
     }
   | { statut: 'compte-desactive' }
   | { statut: 'email-non-verifie' }
