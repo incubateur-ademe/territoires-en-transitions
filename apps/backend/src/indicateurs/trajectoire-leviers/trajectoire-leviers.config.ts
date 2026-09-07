@@ -1,4 +1,4 @@
-import { Levier } from '@tet/domain/shared';
+import { LEVIER_SECTEURS, Levier } from '@tet/domain/shared';
 import {
   TrajectoireSecteursEnum,
   TrajectoireSecteursType,
@@ -68,8 +68,7 @@ const createUniformPercentage = (percentage: number): PourcentagesRegionaux => {
   return result as PourcentagesRegionaux;
 };
 
-// Configuration des leviers par secteur
-const LEVIERS_RESIDENTIEL: LevierConfiguration[] = [
+const LEVIERS: LevierConfiguration[] = [
   {
     nom: 'Changement chaudières fioul + rénovation (résidentiel)',
     pourcentagesRegionaux: createPourcentagesRegionaux({
@@ -124,9 +123,7 @@ const LEVIERS_RESIDENTIEL: LevierConfiguration[] = [
       PROVENCE_ALPES_COTE_AZUR: 26,
     }),
   },
-];
 
-const LEVIERS_TERTIAIRE: LevierConfiguration[] = [
   {
     nom: 'Changement de chaudière à fioul (tertiaire)',
     pourcentagesRegionaux: createPourcentagesRegionaux({
@@ -181,9 +178,7 @@ const LEVIERS_TERTIAIRE: LevierConfiguration[] = [
       PROVENCE_ALPES_COTE_AZUR: 53,
     }),
   },
-];
 
-const LEVIERS_TRANSPORTS: LevierConfiguration[] = [
   {
     nom: 'Réduction des déplacements',
     pourcentagesRegionaux: createPourcentagesRegionaux({
@@ -328,9 +323,7 @@ const LEVIERS_TRANSPORTS: LevierConfiguration[] = [
       PROVENCE_ALPES_COTE_AZUR: 25,
     }),
   },
-];
 
-const LEVIERS_AGRICULTURE: LevierConfiguration[] = [
   {
     nom: 'Bâtiments & Machines agricoles',
     sousSecteursIdentifiants: ['cae_1.ga'],
@@ -346,9 +339,7 @@ const LEVIERS_AGRICULTURE: LevierConfiguration[] = [
     sousSecteursIdentifiants: ['cae_1.gc'],
     pourcentagesRegionaux: createUniformPercentage(100),
   },
-];
 
-const LEVIERS_UTCATF: LevierConfiguration[] = [
   {
     nom: 'Gestion des forêts et produits bois',
     sousSecteursIdentifiants: ['cae_63.b', 'cae_63.e'],
@@ -402,16 +393,12 @@ const LEVIERS_UTCATF: LevierConfiguration[] = [
     sousSecteursIdentifiants: ['cae_63.db'],
     pourcentagesRegionaux: createUniformPercentage(100),
   },
-];
 
-const LEVIERS_INDUSTRIE: LevierConfiguration[] = [
   {
     nom: 'Production industrielle',
     pourcentagesRegionaux: createUniformPercentage(100),
   },
-];
 
-const LEVIERS_DECHETS: LevierConfiguration[] = [
   {
     nom: 'Captage de méthane dans les ISDND',
     pourcentagesRegionaux: createPourcentagesRegionaux({
@@ -466,9 +453,7 @@ const LEVIERS_DECHETS: LevierConfiguration[] = [
       PROVENCE_ALPES_COTE_AZUR: 40,
     }),
   },
-];
 
-const LEVIERS_ENERGIE: LevierConfiguration[] = [
   {
     nom: 'Electricité renouvelable',
     pourcentagesRegionaux: createPourcentagesRegionaux({
@@ -525,50 +510,30 @@ const LEVIERS_ENERGIE: LevierConfiguration[] = [
   },
 ];
 
+const SECTEURS_INDICATEURS = [
+  { nom: TrajectoireSecteursEnum.RÉSIDENTIEL, identifiants: ['cae_1.c'] },
+  { nom: TrajectoireSecteursEnum.TERTIAIRE, identifiants: ['cae_1.d'] },
+  { nom: TrajectoireSecteursEnum.TRANSPORTS, identifiants: ['cae_1.k'] },
+  { nom: TrajectoireSecteursEnum.AGRICULTURE, identifiants: ['cae_1.g'] },
+  { nom: TrajectoireSecteursEnum.UTCATF, identifiants: ['cae_63.a'] },
+  {
+    nom: TrajectoireSecteursEnum.INDUSTRIE,
+    identifiants: ['cae_1.i', 'cae_1.csc'],
+  },
+  { nom: TrajectoireSecteursEnum.DÉCHETS, identifiants: ['cae_1.h'] },
+  {
+    nom: TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
+    identifiants: ['cae_1.j'],
+  },
+] as const satisfies readonly Omit<SecteurConfiguration, 'leviers'>[];
+
 export const TRAJECTOIRE_LEVIERS_CONFIGURATION: TrajectoireLeviersRegionConfiguration =
   {
-    secteurs: [
-      {
-        nom: TrajectoireSecteursEnum.RÉSIDENTIEL,
-        identifiants: ['cae_1.c'],
-        leviers: LEVIERS_RESIDENTIEL,
-      },
-      {
-        nom: TrajectoireSecteursEnum.TERTIAIRE,
-        identifiants: ['cae_1.d'],
-        leviers: LEVIERS_TERTIAIRE,
-      },
-      {
-        nom: TrajectoireSecteursEnum.TRANSPORTS,
-        identifiants: ['cae_1.k'],
-        leviers: LEVIERS_TRANSPORTS,
-      },
-      {
-        nom: TrajectoireSecteursEnum.AGRICULTURE,
-        identifiants: ['cae_1.g'],
-        leviers: LEVIERS_AGRICULTURE,
-      },
-      {
-        nom: TrajectoireSecteursEnum.UTCATF,
-        identifiants: ['cae_63.a'],
-        leviers: LEVIERS_UTCATF,
-      },
-      {
-        nom: TrajectoireSecteursEnum.INDUSTRIE,
-        identifiants: ['cae_1.i', 'cae_1.csc'],
-        leviers: LEVIERS_INDUSTRIE,
-      },
-      {
-        nom: TrajectoireSecteursEnum.DÉCHETS,
-        identifiants: ['cae_1.h'],
-        leviers: LEVIERS_DECHETS,
-      },
-      {
-        nom: TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
-        identifiants: ['cae_1.j'],
-        leviers: LEVIERS_ENERGIE,
-      },
-    ],
+    secteurs: SECTEURS_INDICATEURS.map(({ nom, identifiants }) => ({
+      nom,
+      identifiants: [...identifiants],
+      leviers: LEVIERS.filter((levier) => LEVIER_SECTEURS[levier.nom] === nom),
+    })),
   };
 
 export const TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS: string[] =
