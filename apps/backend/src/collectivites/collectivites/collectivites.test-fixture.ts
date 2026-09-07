@@ -1,5 +1,7 @@
 import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { pcaetDemandeAvisTable } from '@tet/backend/demarches/pcaet/shared/models/pcaet-demande-avis.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
@@ -19,7 +21,7 @@ import {
 } from '@tet/domain/collectivites';
 import { Dcp } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { DatabaseError } from 'pg';
 import { utilisateurCollectiviteAccessTable } from '../../users/authorizations/utilisateur-collectivite-access.table';
 import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichier.table';
@@ -32,12 +34,41 @@ import { reponseChoixTable } from '../personnalisations/models/reponse-choix.tab
 import { reponseProportionTable } from '../personnalisations/models/reponse-proportion.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 
+/**
+ * Supprime les démarches d'une collectivité. Leurs enfants cascadent, sauf les
+ * demandes d'avis (FK `restrict`), à retirer d'abord.
+ */
+export async function cleanupCollectiviteDemarches(
+  { db }: DatabaseServiceInterface,
+  collectiviteId: number
+): Promise<void> {
+  const demarcheIds = await db
+    .select({ id: demarcheTable.id })
+    .from(demarcheTable)
+    .where(eq(demarcheTable.collectiviteId, collectiviteId))
+    .then((rows) => rows.map(({ id }) => id));
+
+  if (demarcheIds.length === 0) {
+    return;
+  }
+
+  await db
+    .delete(pcaetDemandeAvisTable)
+    .where(inArray(pcaetDemandeAvisTable.demarcheId, demarcheIds));
+  await db.delete(demarcheTable).where(inArray(demarcheTable.id, demarcheIds));
+}
+
 /** Supprime droits et invitations (prérequis avant suppression des users) */
 export async function cleanupCollectivitePrerequisites(
   { db }: DatabaseServiceInterface,
   collectiviteId: number
 ): Promise<void> {
-  // D'abord supprimer les droits (ils référencent invitation_id)
+  // `demarche.created_by` référence `auth.users` en NO ACTION : une démarche
+  // laissée derrière retient son créateur, et le nettoyage échoue en chaîne
+  // (utilisateurs, puis collectivité).
+  await cleanupCollectiviteDemarches({ db }, collectiviteId);
+
+  // Puis supprimer les droits (ils référencent invitation_id)
   await db
     .delete(utilisateurCollectiviteAccessTable)
     .where(
@@ -130,6 +161,10 @@ export async function addTestCollectivite(
           await db
             .delete(justificationTable)
             .where(eq(justificationTable.collectiviteId, collectiviteId));
+
+          // La collectivité cascade ses démarches, mais pas les demandes
+          // d'avis qui les référencent (`restrict`).
+          await cleanupCollectiviteDemarches({ db }, collectiviteId);
 
           await db
             .delete(bibliothequeFichierTable)
