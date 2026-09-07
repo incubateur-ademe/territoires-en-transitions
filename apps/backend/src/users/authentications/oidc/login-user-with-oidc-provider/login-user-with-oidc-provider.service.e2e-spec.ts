@@ -3,6 +3,7 @@ import {
   addTestCollectivite,
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -424,12 +425,18 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
      * Un service de l'État de test, avec son SIRET, et le nettoyage de ce que
      * le rattachement y écrira — les droits retiennent la collectivité (clé
      * étrangère sans action en cascade), et `onTestFinished` les défait dans
-     * l'ordre inverse de leur déclaration.
+     * l'ordre inverse de leur déclaration. Le code de région est tiré libre :
+     * une DREAL est unique par région (cf. `pickFreeRegionCode`).
      */
     async function addService(siren: string, nic: string) {
       const { collectivite, cleanup } = await addTestCollectivite(
         databaseService,
-        { type: 'dreal', regionCode: 'V2', siren, nic }
+        {
+          type: 'dreal',
+          regionCode: await pickFreeRegionCode(databaseService, 'dreal'),
+          siren,
+          nic,
+        }
       );
       onTestFinished(cleanup);
       onTestFinished(async () => {
@@ -499,7 +506,11 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
 
       expect(resultat).toMatchObject({
         statut: 'connexion',
-        rattachement: { collectiviteId: dreal.id, nom: dreal.nom },
+        rattachement: {
+          collectiviteId: dreal.id,
+          nom: dreal.nom,
+          type: 'dreal',
+        },
       });
       expect(await lireDroit(user.id, dreal.id)).toMatchObject({
         role: 'edition',
