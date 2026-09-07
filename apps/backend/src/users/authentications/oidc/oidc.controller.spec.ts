@@ -166,6 +166,10 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    // Par défaut, aucun service à ouvrir : les tests qui en veulent un le disent.
+    rattacherOrganisationMock.attach.mockResolvedValue(
+      success({ statut: 'aucun', raison: 'sans-siret' })
+    );
     creerSessionMock.creerSession.mockResolvedValue(
       success({ hashedToken: 'hashed-token-du-spike' })
     );
@@ -655,6 +659,14 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
           supabaseAuthCookie('jwt-session-active'),
         ])
         .expect(303);
+
+      // La liaison vaut preuve d'appartenance : elle ouvre le service comme le
+      // ferait une connexion.
+      expect(rattacherOrganisationMock.attach).toHaveBeenCalledWith(
+        'user-courant',
+        'proconnect',
+        claims
+      );
 
       expect(rattacherIdentiteMock.rattacherAvecGardeFous).toHaveBeenCalledWith(
         'proconnect',

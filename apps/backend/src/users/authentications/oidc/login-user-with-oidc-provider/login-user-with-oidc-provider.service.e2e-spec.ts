@@ -420,6 +420,35 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
     expect(result).toEqual({ statut: 'non-reconnu' });
   });
 
+  /**
+   * L'agent peut changer d'organisation d'un jour à l'autre. Figer le siret à la
+   * première connexion laissait la pré-sélection désigner un service quitté.
+   */
+  test('cas 1 — le siret stocké suit la dernière connexion', async () => {
+    const { user, cleanup } = await addTestCollectiviteAndUser(databaseService);
+    onTestFinished(cleanup);
+
+    const sub = `sub-siret-${crypto.randomUUID()}`;
+    await databaseService.db.insert(utilisateurIdentiteOidcTable).values({
+      provider: 'proconnect',
+      sub,
+      userId: user.id,
+      email: user.email,
+      siret: '11111111100011',
+    });
+
+    await service.authentifier(
+      'proconnect',
+      buildClaims({ sub, email: user.email, siret: '22222222200022' })
+    );
+
+    const [identite] = await databaseService.db
+      .select({ siret: utilisateurIdentiteOidcTable.siret })
+      .from(utilisateurIdentiteOidcTable)
+      .where(eq(utilisateurIdentiteOidcTable.sub, sub));
+    expect(identite.siret).toBe('22222222200022');
+  });
+
   describe("rattachement automatique à l'organisation du jeton", () => {
     /**
      * Un service de l'État de test, avec son SIRET, et le nettoyage de ce que

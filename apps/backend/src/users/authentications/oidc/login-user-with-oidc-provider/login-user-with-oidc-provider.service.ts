@@ -140,11 +140,17 @@ export class LoginUserWithOidcProviderService {
       );
     }
 
+    // `siret` et `idpId` suivent la connexion, comme `claims` : un agent peut
+    // choisir une autre organisation d'un jour à l'autre, et c'est la dernière
+    // qui fait foi. Les figer à la première connexion laissait la pré-sélection
+    // désigner un service que l'agent avait quitté.
     await db
       .update(utilisateurIdentiteOidcTable)
       .set({
         claims,
         email: claims.email,
+        siret: claims.siret ?? null,
+        idpId: claims.idp_id ?? null,
         lastSignInAt: sql`now()`,
       })
       .where(
