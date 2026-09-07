@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
-      nx-cloud-token-secret-name: ${{ steps.scope.outputs.nx-cloud-token-secret-name }}
+      nx-cloud-token-secret-type: ${{ steps.scope.outputs.nx-cloud-token-secret-type }}
       nx-base: ${{ steps.scope.outputs.nx-base }}
       nx-head: ${{ steps.scope.outputs.nx-head }}
       affected-projects: ${{ steps.scope.outputs.affected-projects }}
@@ -75,14 +75,14 @@ jobs:
         id: scope
         with:
           default-branch: ${{ github.event.repository.default_branch }}
-          default-nx-cloud-token-secret-name: NX_CLOUD_ACCESS_TOKEN_RO
-          protected-nx-cloud-token-secret-name: NX_CLOUD_ACCESS_TOKEN_RW
+          default-nx-cloud-token-secret-type: read-only
+          protected-nx-cloud-token-secret-type: read-write
 
   validate-affected-projects:
     needs: [analyze-affected]
     uses: ./.github/workflows/validate-affected-projects.yml
     with:
-      nx-cloud-token-secret-name: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-name }}
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
       nx-base: ${{ needs.analyze-affected.outputs.nx-base }}
       nx-head: ${{ needs.analyze-affected.outputs.nx-head }}
@@ -93,7 +93,7 @@ jobs:
     needs: [analyze-affected]
     uses: ./.github/workflows/test-ui-storybook.yml
     with:
-      nx-cloud-token-secret-name: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-name }}
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
       run-ui: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
       run-app: ${{ needs.analyze-affected.outputs.run-app-storybook == 'true' }}
@@ -104,7 +104,7 @@ jobs:
     needs: [analyze-affected]
     uses: ./.github/workflows/prepare-test-db.yml
     with:
-      nx-cloud-token-secret-name: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-name }}
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
 
@@ -119,7 +119,7 @@ jobs:
     needs: [analyze-affected, prepare-test-db]
     uses: ./.github/workflows/test-backend-api.yml
     with:
-      nx-cloud-token-secret-name: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-name }}
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
       run-backend: ${{ needs.analyze-affected.outputs.run-backend == 'true' }}
       run-api: ${{ needs.analyze-affected.outputs.run-api == 'true' }}
@@ -130,6 +130,6 @@ jobs:
     needs: [analyze-affected, prepare-test-db]
     uses: ./.github/workflows/test-end-to-end.yml
     with:
-      nx-cloud-token-secret-name: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-name }}
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit

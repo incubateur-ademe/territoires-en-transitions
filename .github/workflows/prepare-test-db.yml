@@ -15,9 +15,10 @@ on:
         required: false
         default: ''
         type: string
-      nx-cloud-token-secret-name:
+      nx-cloud-token-secret-type:
+        description: Nx Cloud token access type (read-only or read-write)
         required: false
-        default: NX_CLOUD_ACCESS_TOKEN_RO
+        default: read-only
         type: string
 
 jobs:
@@ -26,7 +27,7 @@ jobs:
     timeout-minutes: 20
     environment: ci
     env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-name == 'NX_CLOUD_ACCESS_TOKEN_RW' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
 
     steps:
       - uses: actions/checkout@v7.0.1

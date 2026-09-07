@@ -11,9 +11,10 @@ on:
       pnpm-cache-key:
         required: true
         type: string
-      nx-cloud-token-secret-name:
+      nx-cloud-token-secret-type:
+        description: Nx Cloud token access type (read-only or read-write)
         required: false
-        default: NX_CLOUD_ACCESS_TOKEN_RO
+        default: read-only
         type: string
 
 env:
@@ -34,7 +35,7 @@ jobs:
     # boot en erreur si la variable de dépôt n'est pas définie.
     env:
       MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
-      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-name == 'NX_CLOUD_ACCESS_TOKEN_RW' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
 
     strategy:
       fail-fast: false
