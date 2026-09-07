@@ -11,9 +11,10 @@ on:
       pnpm-cache-key:
         required: true
         type: string
-      nx-cloud-token-secret-name:
+      nx-cloud-token-secret-type:
+        description: Nx Cloud token access type (read-only or read-write)
         required: false
-        default: NX_CLOUD_ACCESS_TOKEN_RO
+        default: read-only
         type: string
       run-ui:
         description: Run the UI Storybook build, test and Chromatic publish
@@ -31,7 +32,7 @@ jobs:
     if: ${{ inputs.run-ui }}
     environment: ci
     env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-name == 'NX_CLOUD_ACCESS_TOKEN_RW' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -62,7 +63,7 @@ jobs:
     needs: [ui-storybook]
     environment: ci
     env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-name == 'NX_CLOUD_ACCESS_TOKEN_RW' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -89,7 +90,7 @@ jobs:
     if: ${{ inputs.run-app }}
     environment: ci
     env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-name == 'NX_CLOUD_ACCESS_TOKEN_RW' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 

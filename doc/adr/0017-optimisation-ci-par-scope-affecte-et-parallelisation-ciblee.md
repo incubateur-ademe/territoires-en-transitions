@@ -32,7 +32,7 @@ Le workflow racine `ci.yml` doit commencer par un job d'analyse chargé de :
 - déterminer `nx-base` et `nx-head`
 - calculer la liste des projets Nx affectés
 - exposer des booléens de pilotage pour les familles de jobs CI
-- déterminer quel secret Nx Cloud propager aux workflows descendants (`NX_CLOUD_ACCESS_TOKEN_RO` pour les refs non protégées, `NX_CLOUD_ACCESS_TOKEN_RW` pour les refs protégées)
+- déterminer le type d'accès Nx Cloud à propager aux workflows descendants (`read-only` pour les refs non protégées, `read-write` pour les refs protégées)
 
 Les workflows descendants sont des workflows réutilisables conditionnés par ces booléens, et non plus des jobs toujours exécutés.
 
@@ -46,7 +46,7 @@ Les gates retenus sont :
 
 Le calcul s'appuie en priorité sur `nx show projects --affected`, complété par un filtrage de fichiers pour les validations de base de données qui ne se projettent pas proprement dans le graphe Nx.
 
-La sélection du secret Nx Cloud est centralisée dans l'action composite `compute-affected-scope`, puis propagée via un unique output aux workflows réutilisables.
+La sélection du type d'accès Nx Cloud est centralisée dans l'action composite `compute-affected-scope`, puis propagée via l'output `nx-cloud-token-secret-type` aux workflows réutilisables.
 
 ### 2. Mutualiser les coûts de préparation via des actions réutilisables, des caches locaux et le cache distant Nx Cloud
 
@@ -66,9 +66,9 @@ Cette approche combine deux niveaux complémentaires :
 - des caches et préparatifs GitHub Actions pour les dépendances, navigateurs et artefacts non pilotés par Nx
 - le cache distant Nx Cloud pour les tâches Nx déterministes et cacheables
 
-Les workflows réutilisables qui exécutent des commandes Nx restent rattachés à l'environnement `ci` existant pour leurs autres variables et secrets, et reçoivent le token Nx Cloud sélectionné depuis le workflow appelant sans dupliquer la logique de branche dans chaque job.
+Les workflows réutilisables qui exécutent des commandes Nx restent rattachés à l'environnement `ci` existant pour leurs autres variables et secrets, et reçoivent le type d'accès Nx Cloud sélectionné depuis le workflow appelant sans dupliquer la logique de branche dans chaque job.
 
-La résolution du token référence explicitement les deux secrets `NX_CLOUD_ACCESS_TOKEN_RW` et `NX_CLOUD_ACCESS_TOKEN_RO`, avec un accès en lecture seule par défaut. L'accès dynamique `secrets[inputs.nx-cloud-token-secret-name]` est évité, car il oblige GitHub Actions à transmettre tous les secrets disponibles au runner.
+La résolution du token référence explicitement les deux secrets `NX_CLOUD_ACCESS_TOKEN_RW` et `NX_CLOUD_ACCESS_TOKEN_RO`. Le type `read-write` sélectionne le premier ; toute autre valeur utilise l'accès en lecture seule par défaut. L'accès dynamique au contexte `secrets` est évité, car il oblige GitHub Actions à transmettre tous les secrets disponibles au runner.
 
 ### 3. Consolider les familles de jobs autour des besoins réels
 
