@@ -9,19 +9,7 @@ import {
 import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { Button, Modal, ModalFooter } from '@tet/ui';
-import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-
-/**
- * Rouvre l'accueil sur une collectivité donnée, sans repasser par un
- * rattachement : `?rattachement-accueil=<id>`.
- *
- * L'accueil ne se montre qu'une fois, et le revoir demandait sinon de rejouer
- * les seeds et de se reconnecter — de quoi rendre toute retouche coûteuse. Rien
- * n'est exposé au passage : l'accueil ne nomme qu'une collectivité dont l'agent
- * est déjà membre, et ne montre rien du tout des autres.
- */
-const PARAM_RECETTE = 'rattachement-accueil';
 
 /**
  * L'accueil d'un agent rattaché automatiquement à son service.
@@ -41,12 +29,7 @@ export const AutoAttachmentWelcomeModal = () => {
   const { mutate: updatePreferences } = useUpdateUserPreferences();
   const [refermee, setRefermee] = useState(false);
 
-  const searchParams = useSearchParams();
-  const forcee = Number(searchParams.get(PARAM_RECETTE));
-  const collectiviteId =
-    Number.isInteger(forcee) && forcee > 0
-      ? forcee
-      : preferences?.oidc.autoAttachedCollectiviteId ?? null;
+  const collectiviteId = preferences?.oidc.autoAttachedCollectiviteId ?? null;
 
   // Le service tel que l'agent y a accès. Absent si le droit a été retiré
   // entre-temps : mieux vaut ne rien annoncer que d'annoncer un espace fermé.
