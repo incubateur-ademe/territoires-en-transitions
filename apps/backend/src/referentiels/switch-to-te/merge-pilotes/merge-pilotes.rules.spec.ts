@@ -197,6 +197,7 @@ describe('mergePilotes', () => {
     originesConcernees: overrides.originesConcernees ?? [],
     originesCommentaire: overrides.originesCommentaire ?? [],
     concernee: overrides.concernee ?? true,
+    aDesTachesEnfant: overrides.aDesTachesEnfant ?? false,
   });
 
   const createCtx = (mesures: ActionCible[]): SwitchToTeContext => ({

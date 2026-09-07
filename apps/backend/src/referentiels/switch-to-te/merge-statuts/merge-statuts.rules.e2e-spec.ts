@@ -14,6 +14,8 @@ import {
   type CollectiviteReferentielPreferences,
 } from '@tet/domain/collectivites';
 import {
+  ActionTypeEnum,
+  flatMapActionsEnfants,
   StatutAvancementEnum,
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
@@ -304,5 +306,57 @@ describe('mergeStatuts', () => {
         (statut) => statut.actionId === MERGE_STATUTS_FIXTURE.teNativeActionId
       )
     ).toBe(false);
+  });
+
+  // détecte dans l'arbre TE courant une sous-mesure porteuse de
+  // tâches ; à réviser si la structure du CSV TE change (cf. MERGE_STATUTS_FIXTURE).
+  test('sous-mesure TE porteuse de tâches : pas de reprise de statut sur le parent concerné', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const ctxResult = await buildCtx(prefsEligibleCaeAndEci);
+    expect(ctxResult.success).toBe(true);
+    if (!ctxResult.success) {
+      throw new Error('buildSwitchToTeContext a échoué');
+    }
+    const ctx = ctxResult.data;
+    const noeuds = flatMapActionsEnfants(ctx.referentielTe.itemsTree);
+
+    const parentAvecTaches = noeuds.find(
+      (noeud) =>
+        noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
+        (noeud.actionsOrigine?.length ?? 0) > 0 &&
+        (noeud.actionsEnfant ?? []).some(
+          (enfant) => enfant.actionType === ActionTypeEnum.TACHE
+        )
+    );
+
+    if (!parentAvecTaches) {
+      console.warn(
+        'mergeStatuts e2e : aucune sous-mesure TE avec tâches + origine dans le CSV courant, assertion ignorée'
+      );
+      return;
+    }
+
+    const data = mergeStatuts(ctx);
+
+    expect(
+      data.some((statut) => statut.actionId === parentAvecTaches.actionId)
+    ).toBe(false);
+
+    // non-régression : une sous-mesure feuille avec origine reçoit toujours un statut
+    const feuilleAvecOrigine = noeuds.find(
+      (noeud) =>
+        noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
+        (noeud.actionsOrigine?.length ?? 0) > 0 &&
+        (noeud.actionsEnfant ?? []).every(
+          (enfant) => enfant.actionType !== ActionTypeEnum.TACHE
+        )
+    );
+    if (feuilleAvecOrigine) {
+      expect(
+        data.some((statut) => statut.actionId === feuilleAvecOrigine.actionId)
+      ).toBe(true);
+    }
   });
 });

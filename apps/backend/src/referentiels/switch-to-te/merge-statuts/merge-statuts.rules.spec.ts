@@ -1,4 +1,11 @@
-import { StatutAvancementEnum } from '@tet/domain/referentiels';
+import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
+import {
+  ReferentielIdEnum,
+  StatutAvancementEnum,
+  type ActionScore,
+} from '@tet/domain/referentiels';
+import { type ActionCible } from '../shared/action-cible';
+import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import {
   arrondiTripletCinqPourcent,
   deriveStatutDetailleAuPourcentage,
@@ -7,6 +14,7 @@ import {
   deriveTripletFromProjectedPoints,
   isTripletStatutDiscret,
   MERGE_STATUTS_STATUT_DISCRET_EPSILON,
+  mergeStatuts,
 } from './merge-statuts.rules';
 
 describe('merge-statuts.rules', () => {
@@ -166,5 +174,148 @@ describe('merge-statuts.rules', () => {
         statutDetailleAuPourcentage: [0.95, 0, 0.05],
       });
     });
+  });
+});
+
+describe('mergeStatuts', () => {
+  const origineFait = (
+    actionId = 'cae_x'
+  ): CorrelatedActionWithScore => ({
+    referentielId: ReferentielIdEnum.CAE,
+    actionId,
+    ponderation: 1,
+    nom: null,
+    score: {
+      pointFait: 5,
+      pointProgramme: 0,
+      pointPasFait: 0,
+      pointNonRenseigne: 0,
+      pointPotentiel: 5,
+      pointReferentiel: 5,
+      totalTachesCount: 1,
+      faitTachesAvancement: 1,
+      programmeTachesAvancement: 0,
+      pasFaitTachesAvancement: 0,
+      pasConcerneTachesAvancement: 0,
+    },
+  });
+
+  const createCible = (
+    overrides: Partial<ActionCible> & Pick<ActionCible, 'actionId'>
+  ): ActionCible => ({
+    actionId: overrides.actionId,
+    actionsOrigine: overrides.actionsOrigine ?? [],
+    originesConcernees: overrides.originesConcernees ?? [],
+    originesCommentaire: overrides.originesCommentaire ?? [],
+    concernee: overrides.concernee ?? true,
+    aDesTachesEnfant: overrides.aDesTachesEnfant ?? false,
+  });
+
+  const createCtx = (
+    sousActionsEtTaches: ActionCible[],
+    teScoreMap: Map<string, ActionScore> = new Map()
+  ): SwitchToTeContext => ({
+    collectiviteId: 1,
+    sourceReferentiels: [ReferentielIdEnum.CAE],
+    scoreMapsByReferentiel: new Map(),
+    referentielTe: {} as SwitchToTeContext['referentielTe'],
+    teScoreMap,
+    hierarchiesByReferentielId: new Map(),
+    pilotesByMesureActionId: new Map(),
+    servicesByMesureActionId: new Map(),
+    cibles: { sousActionsEtTaches, mesures: [], commentaires: [] },
+    sourceFicheLinks: [],
+    correspondanceIndexes: {
+      directSousActionByOrigineId: new Map(),
+      mesureByOrigineId: new Map(),
+    },
+  });
+
+  const tePotentiel5 = (actionId: string): Map<string, ActionScore> =>
+    new Map([[actionId, { pointPotentiel: 5 } as ActionScore]]);
+
+  it("n'émet aucune ligne pour une cible concernée porteuse de tâches", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: true,
+          aDesTachesEnfant: true,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  it('émet une ligne pour une sous-action feuille (non-régression)', () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: true,
+          aDesTachesEnfant: false,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1.1',
+        statut: StatutAvancementEnum.FAIT,
+      },
+    ]);
+  });
+
+  it('émet NON_CONCERNE sur le parent porteur de tâches si concernee=false', () => {
+    const ctx = createCtx([
+      createCible({
+        actionId: 'te_1.1.1.1',
+        concernee: false,
+        aDesTachesEnfant: true,
+        originesConcernees: [origineFait()],
+      }),
+    ]);
+
+    expect(mergeStatuts(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1.1',
+        statut: StatutAvancementEnum.NON_CONCERNE,
+      },
+    ]);
+  });
+
+  it('ne saute que la cible marquée aDesTachesEnfant', () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: true,
+          aDesTachesEnfant: true,
+          originesConcernees: [origineFait('cae_parent')],
+        }),
+        createCible({
+          actionId: 'te_1.1.1.1.1',
+          concernee: true,
+          aDesTachesEnfant: false,
+          originesConcernees: [origineFait('cae_tache')],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1.1.1',
+        statut: StatutAvancementEnum.FAIT,
+      },
+    ]);
   });
 });

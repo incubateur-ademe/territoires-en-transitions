@@ -1,13 +1,13 @@
 import {
+  getRatioFromOrigineActions,
+  getScoreFromOrigineActionsAndRatio,
+} from '@tet/backend/referentiels/compute-score/score-from-origines.rules';
+import {
   StatutAvancementEnum,
   type ActionScoreFinal,
   type ActionStatutCreate,
   type StatutDetailleAuPourcentage,
 } from '@tet/domain/referentiels';
-import {
-  getRatioFromOrigineActions,
-  getScoreFromOrigineActionsAndRatio,
-} from '@tet/backend/referentiels/compute-score/score-from-origines.rules';
 import { getPointPotentiel } from '../shared/action-cible';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 
@@ -160,6 +160,11 @@ export const mergeStatuts = (ctx: SwitchToTeContext): ActionStatutCreate[] => {
     // l'action TE désactivée/non concernée prime sur la projection des sources
     if (!cible.concernee) {
       derivedStatut = { statut: StatutAvancementEnum.NON_CONCERNE };
+    } else if (cible.aDesTachesEnfant) {
+      // sous-mesure concernée porteuse de tâches : le lien de la colonne `origine`
+      // du parent est ignoré, pas de reprise de score sur le parent — les tâches
+      // sont utilisées uniquement pour le calcul de score à partir des indicateurs.
+      continue;
     } else if (cible.originesConcernees.length === 0) {
       derivedStatut = deriveStatutFromProjection({
         concernedSourceCount: 0,
