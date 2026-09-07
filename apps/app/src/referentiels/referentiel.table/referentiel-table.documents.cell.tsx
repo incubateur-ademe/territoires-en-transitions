@@ -1,6 +1,5 @@
 'use client';
 
-import { EmptyCell } from './empty-cell';
 import { DownloadDocs } from '@/app/referentiels/actions/action-documents.download-button';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
@@ -15,6 +14,7 @@ import {
 } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
+import { EmptyCell } from './empty-cell';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
@@ -33,8 +33,8 @@ function DocumentsCellContent({
 
   const { setPanel, panel } = useSidePanel();
 
-  const isActive =
-    panel.isOpen && panel.title === `documents-${action.actionId}`;
+  const panelTitle = `${action.identifiant} ${action.nom}`;
+  const isActive = panel.isOpen && panel.title === panelTitle;
 
   const toggleDocumentsPanel = useCallback(() => {
     if (isActive) {
@@ -44,12 +44,12 @@ function DocumentsCellContent({
 
     setPanel({
       type: 'open',
-      title: `documents-${action.actionId}`,
-      Title: () => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl">
-          {action.identifiant} {action.nom}
-        </h5>
-      ),
+      title: panelTitle,
+      // Title: () => (
+      //   <h5 className="text-primary-9 font-bold leading-7 text-xl">
+      //     {action.identifiant} {action.nom}
+      //   </h5>
+      // ),
       content: (
         <div className="px-6 py-4">
           <ReferentielProvider referentielId={referentielId}>
@@ -66,7 +66,7 @@ function DocumentsCellContent({
         </div>
       ),
     });
-  }, [isActive, setPanel, action, referentielId]);
+  }, [isActive, setPanel, panelTitle, referentielId, action]);
 
   return (
     <TableCell

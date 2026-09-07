@@ -574,13 +574,12 @@ export const appLabels = {
   demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarcheAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
-  demarcheTransmettreConfirmationTitre: 'Valider le dépôt pour avis ?',
+  demarcheTransmettreConfirmationTitre:
+    'Votre dossier va être transmis pour avis',
   demarcheTransmettreConfirmationProcessus: ({ mois }: { mois: number }) =>
-    `Votre dossier sera transmis aux instances consultatives, qui disposent de ${mois} mois pour rendre leur avis. Le diagnostic est figé au moment de la transmission : c’est cette photo qu’elles consultent.`,
-  demarcheTransmettreConfirmationGel:
-    'Vous ne pourrez plus modifier votre dossier d’élaboration incluant le diagnostic et les pièces déposées — jusqu’à la fin de l’instruction.',
+    `Votre dossier sera transmis aux instances consultatives, qui disposent de ${mois} mois pour rendre leurs avis. Il sera figé pendant toute la durée de l'instruction : vous ne pourrez plus modifier le diagnostic ni les pièces déposées, jusqu'à la fin de celle-ci.`,
   demarcheTransmettreConfirmationSuite:
-    'Vous reprendrez la main à l’étape suivante, pour déposer les pièces attendues après les avis et adopter votre PCAET.',
+    "Vous reprendrez la main à l'étape suivante, pour déposer les pièces attendues après les avis et adopter votre PCAET.",
   /**
    * Libellés des codes d'erreur renvoyés par l'API (`data.errorKey`) : le
    * serveur nomme la cause, l'app l'écrit.
