@@ -13,6 +13,7 @@ import { Throttle } from '@nestjs/throttler';
 import { AllowPublicAccess } from '@tet/backend/users/decorators/allow-public-access.decorator';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import type { CookieOptions, Request, Response } from 'express';
+import { AttachUserToOrganisationService } from './attach-user-to-organisation/attach-user-to-organisation.service';
 import { LoginUserWithOidcProviderService } from './login-user-with-oidc-provider/login-user-with-oidc-provider.service';
 import { CreateUserOidcIdentityService } from './create-user-oidc-identity/create-user-oidc-identity.service';
 import { CreateSupabaseSessionService } from './create-supabase-session.service';
@@ -58,6 +59,7 @@ export class OidcController {
     private readonly creerSessionService: CreateSupabaseSessionService,
     private readonly ticketOidcService: OidcSessionTicketService,
     private readonly rattacherIdentiteService: LinkOidcIdentityToUserService,
+    private readonly rattacherOrganisationService: AttachUserToOrganisationService,
     private readonly creerCompteOidcService: CreateUserOidcIdentityService,
     private readonly convertJwtToAuthUserService: ConvertJwtToAuthUserService
   ) {}
@@ -230,6 +232,25 @@ export class OidcController {
           return;
         }
 
+        // La liaison volontaire vaut aussi preuve d'appartenance : l'agent
+        // vient de désigner son organisation chez le fournisseur d'identité,
+        // exactement comme à une connexion. Sans ce rattachement, lier son
+        // compte depuis le profil était le seul chemin OIDC à n'ouvrir aucun
+        // service.
+        const service = await this.rattacherOrganisationService.attach(
+          linkUserId,
+          providerConfig.provider,
+          claims
+        );
+        if (!service.success) {
+          this.logger.error(
+            `Rattachement automatique du compte ${linkUserId} en échec (${service.error}) : la liaison, elle, est faite`
+          );
+        }
+
+        // Pas de paramètre d'atterrissage ici : l'agent est déjà dans l'app, et
+        // c'est la modale d'accueil — que le rattachement vient d'armer — qui
+        // lui annonce son service.
         profilUrl.searchParams.set('comptes-associes', '1');
         res.redirect(303, profilUrl.href);
         return;

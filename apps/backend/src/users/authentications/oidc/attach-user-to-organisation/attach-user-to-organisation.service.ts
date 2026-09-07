@@ -87,7 +87,7 @@ export class AttachUserToOrganisationService {
     tx?: Transaction
   ): Promise<Result<AutoAttachmentOutcome, AttachUserToOrganisationError>> {
     if (!claims.siret) {
-      return success({ statut: 'aucun', raison: 'sans-siret' });
+      return this.refuser(userId, 'sans-siret');
     }
 
     const collectivite = await this.getCollectiviteBySiretService.getBySiret(
@@ -107,20 +107,17 @@ export class AttachUserToOrganisationService {
     );
 
     if (!collectivite) {
-      return success({ statut: 'aucun', raison: 'organisation-inconnue' });
+      return this.refuser(userId, 'organisation-inconnue');
     }
 
     if (!isAutoAttachableType(collectivite.type)) {
-      return success({ statut: 'aucun', raison: 'type-non-rattachable' });
+      return this.refuser(userId, 'type-non-rattachable');
     }
 
     if (
       !canAutoAttachEmail({ siren: collectivite.siren, email: claims.email })
     ) {
-      this.logger.warn(
-        `Rattachement automatique refusé : l'adresse de l'agent ne porte pas le domaine exigé par la collectivité #${collectivite.collectiviteId} (siren ${collectivite.siren})`
-      );
-      return success({ statut: 'aucun', raison: 'domaine-email-refuse' });
+      return this.refuser(userId, 'domaine-email-refuse');
     }
 
     const resultat = await this.transactionManager.executeSingle<
@@ -142,7 +139,7 @@ export class AttachUserToOrganisationService {
         .limit(1);
 
       if (droitExistant) {
-        return success({ statut: 'aucun', raison: 'droit-deja-connu' });
+        return this.refuser(userId, 'droit-deja-connu');
       }
 
       try {
@@ -186,6 +183,21 @@ export class AttachUserToOrganisationService {
     }
 
     return resultat;
+  }
+
+  /**
+   * Un refus, dit au journal. Toute la recette d'un rattachement qui n'a pas eu
+   * lieu tient là : sans la raison, il ne reste qu'un agent sans accès et rien
+   * pour dire lequel des quatre verrous a joué.
+   */
+  private refuser(
+    userId: string,
+    raison: AutoAttachmentRefus
+  ): Result<AutoAttachmentOutcome, AttachUserToOrganisationError> {
+    this.logger.log(
+      `Rattachement automatique du compte ${userId} : aucun (${raison})`
+    );
+    return success({ statut: 'aucun', raison });
   }
 
   /**
