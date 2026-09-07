@@ -303,6 +303,12 @@ make test project=app
 
 Comme `make lint`, la commande fonctionne dans les deux modes de développement : localement en mode hôte, ou via `nx-daemon` quand les apps tournent en conteneurs. Elle réutilise le même chargement d'environnement que les autres cibles de développement, puis exécute `nx test <project>` si `project=` est fourni, sinon `nx run-many -t test`.
 
+Les tests de bout en bout (Playwright) sont à part : ils se jouent contre la stack locale déjà démarrée, et déchiffrent leur environnement eux-mêmes — depuis le terminal comme depuis l'extension Playwright de l'éditeur. Voir [`e2e/README.md`](./e2e/README.md).
+
+```sh
+pnpm exec playwright test --config ./e2e/playwright.config.mjs
+```
+
 Pour exécuter les tests en conteneurs, on peut aussi utiliser `earthly` :
 
 ```shell

@@ -1,10 +1,32 @@
 # Test e2e avec Playwright
 
+## Prérequis
+
+- La stack tourne à côté : `make up` (apps en conteneurs) ou `make dev apps=app,backend` (apps sur l'hôte). Dans les deux cas les apps écoutent sur les ports de l'hôte (`network_mode: host`), les tests s'y connectent directement.
+- `.env.keys` est présent à la racine (`make env-keys` sinon) : les secrets lus par les tests vivent chiffrés dans les `.env` du dépôt.
+- Les navigateurs sont installés : `pnpm exec playwright install chromium`. Sur une distribution plus récente que celles publiées par Playwright, préfixer par `PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64`.
+
+### Environnement
+
+Aucune variable n'est à exporter à la main : [`playwright.config.mjs`](./playwright.config.mjs) déchiffre lui-même ce dont les tests ont besoin ([`load-local-env.mjs`](./load-local-env.mjs), via dotenvx). L'environnement est donc le même quel que soit le lanceur — terminal, mode `--ui`, ou extension Playwright de l'éditeur, qui lance `playwright` sans passer par le `Makefile`.
+
+Les variables déjà définies dans l'environnement gagnent toujours, ce qui permet de pointer les tests ailleurs sans toucher au code :
+
+| Variable                                  | Défaut local                               |
+| ----------------------------------------- | ------------------------------------------ |
+| `BASE_URL`                                | `http://localhost:$APP_PORT` (3000)        |
+| `BASE_API_URL`                            | `http://localhost:$BACKEND_PORT` (8080)    |
+| `SUPABASE_API_URL`                        | `SUPABASE_URL` du backend (kong, `:54321`) |
+| `SUPABASE_MAILPIT_URL`                    | `http://127.0.0.1:54324`                   |
+| `SUPABASE_DATABASE_URL`, `SUPABASE_*_KEY` | `apps/backend/.env` et `.env` (chiffrés)   |
+
+Depuis un worktree, `APP_PORT` / `BACKEND_PORT` viennent du `.env.local` généré par `make worktree-env` : les tests visent les ports décalés du worktree, sans réglage supplémentaire.
+
+En CI, ce chargement est court-circuité (`CI=true`) : le workflow injecte les variables lui-même.
+
 ## Jouer les tests existants
 
-Avant tout, il faut lancer le projet : `pnpm dev:app`.
-
-Ensuite, pour exécuter les tests, il y a plusieurs méthodes possibles.
+Pour exécuter les tests, il y a plusieurs méthodes possibles.
 
 TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=Xz6lhEzgI5I&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI) (durée : 7 minutes)
 
@@ -37,11 +59,13 @@ Quelques fonctionnalités intéressantes :
 
 TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=d0u6XhXknzU&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI&index=4) (durée : 6 minutes)
 
-### Méthode 2 : extension VS Code
+### Méthode 2 : extension de l'éditeur
 
-Au préalable, il faut installer l'extension Playwright pour VS Code. Une fois que cela est fait, dans le fichier de test, des flèches permettant de jouer le test apparaissent.
+Au préalable, il faut installer l'extension Playwright (VS Code, Antigravity, Cursor…). Une fois que cela est fait, dans le fichier de test, des flèches permettant de jouer le test apparaissent.
 
 Une fois le test joué, une fenêtre de navigateur s'ouvre et le test qui vient de s'exécuter se rejoue visuellement.
+
+L'extension lance `playwright` directement, sans le `Makefile` : elle hérite de l'environnement de l'éditeur, pas de celui d'un shell de développement. C'est la config qui déchiffre les secrets (cf. [Environnement](#environnement)), il n'y a donc rien à recopier dans `playwright.env` des réglages de l'éditeur.
 
 ### Méthode 3 : dans le terminal
 
