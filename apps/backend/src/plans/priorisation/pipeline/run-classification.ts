@@ -8,7 +8,10 @@ import {
   UnclassifiedFiche,
 } from '../models/classification-draft';
 import { ClassifiedFiche } from './classify-fiches/apply-classification';
-import { classifyFiches } from './classify-fiches/classify-fiches';
+import {
+  ClassifyFichesError,
+  classifyFiches,
+} from './classify-fiches/classify-fiches';
 import { FicheToClassify } from './classify-fiches/render-fiches-text';
 
 export const FICHES_PER_BATCH = 25;
@@ -22,7 +25,11 @@ type BatchOutcome =
       fiches: ClassifiedFiche[];
       tokens: TokenUsage;
     }
-  | { kind: 'failed'; ficheIds: number[]; reason: string };
+  | {
+      kind: 'failed';
+      ficheIds: number[];
+      reason: ClassifyFichesError['kind'];
+    };
 
 export type ClassificationRun =
   | { kind: 'completed'; draft: ClassificationDraft; tokens: TokenUsage }

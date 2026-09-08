@@ -116,6 +116,12 @@ export type FichesReadContext = {
   tx?: Transaction;
 };
 
+export type FicheTextFields = {
+  ficheId: number;
+  titre: string | null;
+  description: string | null;
+};
+
 type ReadableFichesFilters =
   | { kind: 'filters'; filters: ListFichesRequestFilters }
   | { kind: 'no_readable_fiche' };

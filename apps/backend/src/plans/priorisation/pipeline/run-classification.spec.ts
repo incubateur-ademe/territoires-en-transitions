@@ -26,7 +26,7 @@ const toFiche = (ficheId: number): FicheToClassify => ({
   description: 'Aménagement de pistes cyclables',
 });
 
-const toFiches = (count: number): FicheToClassify[] =>
+const toConsecutiveFiches = (count: number): FicheToClassify[] =>
   Array.from({ length: count }, (unused, index) => toFiche(index + 1));
 
 const toFicheClassification = (index: number): FicheClassification => ({
@@ -68,7 +68,7 @@ const llmClassifying = (): StubbedLlm => llmFailingOnBatch([]);
 describe('runClassification', () => {
   it("classe toutes les fiches d'un lot unique", async () => {
     const run = await runClassification(llmClassifying(), {
-      fiches: toFiches(3),
+      fiches: toConsecutiveFiches(3),
     });
     expect(
       run.kind === 'completed' && run.draft.fiches.map(({ ficheId }) => ficheId)
@@ -77,14 +77,14 @@ describe('runClassification', () => {
 
   it('découpe au-delà de 25 fiches sans en perdre', async () => {
     const run = await runClassification(llmClassifying(), {
-      fiches: toFiches(26),
+      fiches: toConsecutiveFiches(26),
     });
     expect(run.kind === 'completed' && run.draft.fiches).toHaveLength(26);
   });
 
   it('cumule les jetons de tous les lots', async () => {
     const run = await runClassification(llmClassifying(), {
-      fiches: toFiches(FICHES_PER_BATCH * 2),
+      fiches: toConsecutiveFiches(FICHES_PER_BATCH * 2),
     });
     expect(run.kind === 'completed' && run.tokens.totalTokens).toBe(
       tokens.totalTokens * 2
@@ -93,7 +93,7 @@ describe('runClassification', () => {
 
   it('conserve les lots réussis quand un lot échoue', async () => {
     const run = await runClassification(llmFailingOnBatch([0]), {
-      fiches: toFiches(FICHES_PER_BATCH * 3),
+      fiches: toConsecutiveFiches(FICHES_PER_BATCH * 3),
     });
     expect(run.kind === 'completed' && run.draft.fiches).toHaveLength(
       FICHES_PER_BATCH * 2
@@ -102,7 +102,7 @@ describe('runClassification', () => {
 
   it('inscrit les fiches du lot en échec dans unclassified, avec leur raison', async () => {
     const run = await runClassification(llmFailingOnBatch([0]), {
-      fiches: toFiches(FICHES_PER_BATCH * 3),
+      fiches: toConsecutiveFiches(FICHES_PER_BATCH * 3),
     });
     expect(
       run.kind === 'completed' && run.draft.unclassified.slice(0, 2)
@@ -114,7 +114,7 @@ describe('runClassification', () => {
 
   it('abandonne au-delà de la moitié des lots en échec', async () => {
     const run = await runClassification(llmFailingOnBatch([0, 1, 2]), {
-      fiches: toFiches(FICHES_PER_BATCH * 4),
+      fiches: toConsecutiveFiches(FICHES_PER_BATCH * 4),
     });
     expect(run).toEqual({
       kind: 'too_many_failed_batches',
@@ -125,18 +125,18 @@ describe('runClassification', () => {
 
   it('accepte exactement la moitié des lots en échec', async () => {
     const run = await runClassification(llmFailingOnBatch([0, 1]), {
-      fiches: toFiches(FICHES_PER_BATCH * 4),
+      fiches: toConsecutiveFiches(FICHES_PER_BATCH * 4),
     });
     expect(run.kind).toBe('completed');
   });
 
   it('signale la progression après chaque lot', async () => {
-    const progression: number[] = [];
+    const processedBatchCounts: number[] = [];
     await runClassification(llmClassifying(), {
-      fiches: toFiches(FICHES_PER_BATCH * 3),
+      fiches: toConsecutiveFiches(FICHES_PER_BATCH * 3),
       onBatchProcessed: (processedBatches) =>
-        progression.push(processedBatches),
+        processedBatchCounts.push(processedBatches),
     });
-    expect(progression).toEqual([1, 2, 3]);
+    expect(processedBatchCounts).toEqual([1, 2, 3]);
   });
 });
