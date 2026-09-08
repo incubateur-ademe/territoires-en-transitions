@@ -71,6 +71,7 @@ describe('LabellisationChecklistTable', () => {
           viewModel={emptyParcours}
           collectiviteId={4172}
           referentielId="eci"
+          hierarchie={[]}
         />
       </UnnavigableLinks>
     );

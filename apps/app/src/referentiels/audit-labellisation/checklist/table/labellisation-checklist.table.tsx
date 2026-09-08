@@ -7,6 +7,7 @@ import { useShowReferentielTableColumn } from '@/app/referentiels/referentiel.ta
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionId,
+  ActionType,
   ReferentielId,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
@@ -14,9 +15,9 @@ import { ChecklistTable, PillButton } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
   MesureViewModel,
+  MinimumScoreViewModel,
   Parcours,
   RoleMesures,
-  MinimumScoreViewModel,
 } from '../../checklist-view-model';
 import { useChecklist, useRoleDropdown } from '../../checklist.context';
 import { formatReponseAttendue } from './format-reponse-attendue';
@@ -51,12 +52,14 @@ const MesureActionButton = ({
   isRoleAction,
   collectiviteId,
   referentielId,
+  hierarchie,
   onOpenDropdown,
 }: {
   mesure: MesureViewModel;
   isRoleAction: boolean;
   collectiviteId: number;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
   onOpenDropdown: () => void;
 }): ReactElement => {
   if (isRoleAction) {
@@ -77,6 +80,7 @@ const MesureActionButton = ({
         collectiviteId,
         actionId: mesure.actionId,
         referentielId,
+        hierarchie,
       })}
     >
       {appLabels.voirLaMesure}
@@ -162,12 +166,14 @@ const MesuresRows = ({
   roleActionIds,
   collectiviteId,
   referentielId,
+  hierarchie,
   onOpenDropdown,
 }: {
   mesures: readonly MesureViewModel[];
   roleActionIds: ReadonlySet<ActionId>;
   collectiviteId: number;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
   onOpenDropdown: (actionId: ActionId) => void;
 }): ReactElement => {
   const { hasReferentielPermission } = useCurrentCollectivite();
@@ -198,6 +204,7 @@ const MesuresRows = ({
                   isRoleAction={isRoleAction}
                   collectiviteId={collectiviteId}
                   referentielId={referentielId}
+                  hierarchie={hierarchie}
                   onOpenDropdown={() => onOpenDropdown(mesure.actionId)}
                 />
               ),
@@ -222,12 +229,14 @@ type LabellisationChecklistTableProps = {
   viewModel: Parcours;
   collectiviteId: number;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
 };
 
 export const LabellisationChecklistTable = ({
   viewModel,
   collectiviteId,
   referentielId,
+  hierarchie,
 }: LabellisationChecklistTableProps): ReactElement => {
   const { openDropdown } = useRoleDropdown();
   const { showActeEngagement, showCandidatureDocuments } = useChecklist();
@@ -250,6 +259,7 @@ export const LabellisationChecklistTable = ({
         roleActionIds={roleActionIds}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
+        hierarchie={hierarchie}
         onOpenDropdown={openDropdown}
       />
       {showActeEngagement && <ActeEngagementRow />}
