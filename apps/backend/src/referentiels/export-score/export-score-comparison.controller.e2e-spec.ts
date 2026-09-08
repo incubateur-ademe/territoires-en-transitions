@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { SnapshotsService } from '@tet/backend/referentiels/snapshots/snapshots.service';
 import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import {
@@ -20,7 +21,11 @@ import { CellValue, Workbook } from 'exceljs';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
 import { getTestApp, getTestRouter } from '../../../test/app-utils';
+import { getAuthToken } from '../../../test/auth-utils';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
+
+// sur la collectivité 1, le référentiel CAE est verrouillé par une demande de labellisation
+const SEEDED_COLLECTIVITE_ID = 2;
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
@@ -29,6 +34,8 @@ describe('Referentiels scoring routes', () => {
   let snapshotsService: SnapshotsService;
   let collectivite: Collectivite;
   let editionUser: AuthenticatedUser;
+  let editionUserToken: string;
+  let collectivite2UserToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -47,7 +54,18 @@ describe('Referentiels scoring routes', () => {
     collectivite = testCollectiviteAndUserResult.collectivite;
     const editionUserFixture = testCollectiviteAndUserResult.user;
     editionUser = getAuthUserFromUserCredentials(editionUserFixture);
-
+    editionUserToken = await getAuthToken({
+      email: editionUserFixture.email ?? '',
+      password: editionUserFixture.password,
+    });
+    const collectivite2UserFixture = await addTestUser(databaseService, {
+      collectiviteId: SEEDED_COLLECTIVITE_ID,
+      role: CollectiviteRole.EDITION,
+    });
+    collectivite2UserToken = await getAuthToken({
+      email: collectivite2UserFixture.user.email ?? '',
+      password: collectivite2UserFixture.user.password,
+    });
   });
 
   afterAll(async () => {
@@ -111,7 +129,7 @@ describe('Referentiels scoring routes', () => {
       .get(
         `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
       )
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .set('Authorization', `Bearer ${editionUserToken}`)
       .query({
         exportFormat: 'excel',
         isAudit: 'false',
@@ -134,7 +152,7 @@ describe('Referentiels scoring routes', () => {
       .get(
         `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
       )
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .set('Authorization', `Bearer ${editionUserToken}`)
       .query({
         exportFormat: 'excel',
         isAudit: 'false',
@@ -154,190 +172,8 @@ describe('Referentiels scoring routes', () => {
     expect(foundWithFlag).toBeUndefined();
   }, 30000);
 
-  test(`Export du snapshot pour un utilisateur anonyme`, async () => {
-    const responseSnapshotExport = await request(app.getHttpServer())
-      .get(
-        `/collectivites/1/referentiels/eci/score-snapshots/export-comparison`
-      )
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
-      .query({
-        exportFormat: 'excel',
-        isAudit: 'false',
-        snapshotReferences: ['score-courant'],
-      })
-      .expect(200)
-      .responseType('blob');
-
-    const currentDate = DateTime.now().toISODate();
-    const exportFileName = responseSnapshotExport.headers['content-disposition']
-      .split('filename=')[1]
-      .split(';')[0];
-
-    expect(exportFileName).toBe(
-      `"Export_ECI_Amberieu-en-Bugey_${currentDate}.xlsx"`
-    );
-    const body = responseSnapshotExport.body as ArrayBuffer;
-    const wb = new Workbook();
-    await wb.xlsx.load(body);
-    const ws = wb.getWorksheet(1);
-    expect(ws).toBeDefined();
-    // vérifie la ligne d'en-têtes
-    const header2 = ws?.getRow(7);
-    expect(header2?.values).toEqual(
-      expect.arrayContaining([
-        'N°',
-        'Intitulé',
-        'Description',
-        'Phase',
-        'Potentiel max',
-        'Potentiel personnalisé',
-        'Points faits',
-        '% fait',
-        'Points programmés',
-        '% programmé',
-        'Points pas faits',
-        '% pas fait',
-        'Statut',
-        "Champs de précision de l'état d'avancement",
-        'Personnes pilotes',
-        'Services ou Directions pilotes',
-        'Documents liés',
-        'Actions liées',
-      ])
-    );
-
-    // vérifie le total du référentiel
-    const row8 = ws?.getRow(8);
-    expect(row8?.values).toEqual([
-      undefined,
-      'Total',
-      '',
-      undefined,
-      '',
-      500,
-      500,
-      {
-        formula: 'G9+G71+G151+G261+G307',
-      },
-      {
-        formula: 'IFERROR(G8/F8,"")',
-      },
-      {
-        formula: 'I9+I71+I151+I261+I307',
-      },
-      {
-        formula: 'IFERROR(I8/F8,"")',
-      },
-      {
-        formula: 'K9+K71+K151+K261+K307',
-      },
-      {
-        formula: 'IFERROR(K8/F8,"")',
-      },
-      '',
-      '',
-      undefined,
-      '',
-      '',
-      undefined,
-      '',
-    ]);
-
-    // vérifie un axe
-    const row9 = ws?.getRow(9);
-    expect(row9?.values).toEqual([
-      undefined,
-      '1',
-      "Définition d'une stratégie globale de la politique économie circulaire et inscription dans le territoire",
-      undefined,
-      '',
-      90,
-      90,
-      {
-        formula: 'G10+G47+G61',
-      },
-      {
-        formula: 'IFERROR(G9/F9,"")',
-      },
-      {
-        formula: 'I10+I47+I61',
-      },
-      {
-        formula: 'IFERROR(I9/F9,"")',
-      },
-      {
-        formula: 'K10+K47+K61',
-      },
-
-      {
-        formula: 'IFERROR(K9/F9,"")',
-      },
-      '',
-      '',
-    ]);
-
-    // vérifie une mesure
-    const row10 = ws?.getRow(10);
-    expect(row10?.values).toEqual([
-      undefined,
-      '1.1',
-      'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort',
-      expect.any(String),
-      '',
-      30,
-      30,
-      {
-        formula: 'G11+G17+G23+G27+G42',
-      },
-      {
-        formula: 'IFERROR(G10/F10,"")',
-      },
-      {
-        formula: 'I11+I17+I23+I27+I42',
-      },
-      {
-        formula: 'IFERROR(I10/F10,"")',
-      },
-      {
-        formula: 'K11+K17+K23+K27+K42',
-      },
-      {
-        formula: 'IFERROR(K10/F10,"")',
-      },
-      '',
-      '',
-    ]);
-
-    // vérifie une sous-mesure
-    const row11 = ws?.getRow(11);
-    expect(row11?.values).toEqual([
-      undefined,
-      '1.1.1',
-      "S'engager politiquement et mettre en place des moyens",
-      expect.any(String),
-      'Bases',
-      6,
-      6,
-      { formula: 'F11*H11' },
-      undefined,
-      { formula: 'F11*J11' },
-      undefined,
-      { formula: 'F11*L11' },
-      undefined,
-      'Non renseigné',
-      '',
-    ]);
-
-    // vérifie la taille
-    const expectedExportSize = 55.9;
-    const exportFileSize = parseInt(
-      responseSnapshotExport.headers['content-length']
-    );
-    expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
-  }, 30000);
-
   test(`Export du snapshot avec un score indicatif`, async () => {
-    const collectiviteId = 2; // sur la 1 CAE est verrouillé par une demande de labellisation
+    const collectiviteId = SEEDED_COLLECTIVITE_ID;
     const fixture = {
       collectiviteId,
       actionId: 'cae_1.2.3.3.1',
@@ -363,7 +199,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .get(
         `/collectivites/${collectiviteId}/referentiels/cae/score-snapshots/export-comparison`
       )
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .set('Authorization', `Bearer ${collectivite2UserToken}`)
       .query({
         exportFormat: 'excel',
         isAudit: 'false',
