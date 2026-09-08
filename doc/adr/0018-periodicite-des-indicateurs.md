@@ -10,7 +10,9 @@ Proposé. À valider avant la revue et la fusion des PRs d’implémentation.
 
 Les indicateurs sont historiquement suivis à l’année. Le programme Électrification nécessite
 un suivi mensuel, sans modifier le sens des données existantes ni les parcours annuels, notamment PCAET.
-Le modèle doit distinguer la cadence de saisie, l’identité d’une valeur et sa présentation.
+Le modèle couvre les **indicateurs prédéfinis et personnalisés** et distingue la cadence de saisie,
+l’identité d’une valeur et sa présentation. Un indicateur personnalisé est une définition appartenant
+à une collectivité ; personnaliser le suivi d’un indicateur prédéfini ne crée pas de nouvelle définition.
 
 Cette décision introduit les cadences **annuelle et mensuelle**. D’autres cadences pourront
 étendre le même modèle. Une grille mensuelle générique et l’agrégation entre cadences restent hors périmètre.
@@ -25,24 +27,30 @@ Chaque indicateur porte une `periodicite` et un `periodicite_mode` :
 - `imposee` : la collectivité ne peut pas personnaliser la cadence. L’API et la base font respecter cette règle.
 
 La préférence locale appartient au couple indicateur/collectivité. Sans préférence, la cadence
-du catalogue s’applique. Seule l’administration du catalogue peut modifier le mode.
+de la définition s’applique. Pour un indicateur prédéfini, l’administration du catalogue fixe le mode ;
+les commandes des collectivités ne permettent pas de le modifier.
 
-**Les indicateurs existants sont classés annuels et recommandés.** Le mode recommandé est le
-défaut des créations ; les anciens contrats de création conservent explicitement le défaut annuel recommandé.
+**Tous les indicateurs existants, y compris personnalisés, sont classés annuels et recommandés.**
+À la création d’un indicateur personnalisé, la collectivité choisit une cadence disponible, annuelle
+ou mensuelle, en mode recommandé. Sans choix explicite, les anciens contrats conservent le défaut
+annuel recommandé. Les modifications restent soumises aux droits de sa collectivité propriétaire.
+Le changement ultérieur de cadence passe par la même préférence locale que pour un indicateur
+prédéfini recommandé ; il ne modifie pas la cadence initiale de la définition et ne permet pas
+de choisir le mode imposé.
 
 Une collectivité peut suivre mensuellement un indicateur annuel recommandé, même après saisie.
 Ses lectures courantes sélectionnent la cadence effective ; les autres séries restent accessibles
 par demande explicite de leur cadence. Revenir à l’annuel retrouve les valeurs annuelles,
 sans conversion, suppression ni effet sur les autres collectivités.
 
-La cadence du catalogue devient immuable dès la première valeur. Le passage à `imposee` est refusé
+La cadence de la définition devient immuable dès la première valeur. Le passage à `imposee` est refusé
 tant qu’une préférence locale non nulle ou une valeur d’une autre cadence existe.
 Les modifications de politique et les écritures concurrentes doivent respecter les mêmes invariants.
 
 ### 2. L’affichage ne change pas la déclaration ni les valeurs
 
-La déclaration détermine les périodes saisies et les séries lues. L’affichage règle uniquement
-les repères temporels du graphique :
+Pour les deux types d’indicateurs, la déclaration détermine les périodes saisies et les séries lues.
+L’affichage règle uniquement les repères temporels du graphique :
 
 | Déclaration | Affichage autorisé | Observations conservées                                       |
 | ----------- | ------------------ | ------------------------------------------------------------- |
@@ -68,13 +76,14 @@ erDiagram
 
     indicateur_definition {
         int id PK
-        string periodicite FK "cadence du catalogue"
+        int collectivite_id FK "null : predefini ; sinon : proprietaire"
+        string periodicite FK "cadence de la definition"
         string periodicite_mode "recommandee ou imposee"
     }
     indicateur_collectivite {
         int indicateur_id PK, FK
         int collectivite_id PK, FK
-        string periodicite FK "nullable : utiliser le catalogue"
+        string periodicite FK "nullable : utiliser la definition"
     }
     indicateur_valeur {
         int id PK
@@ -102,7 +111,7 @@ Une cadence inconnue est refusée, indépendamment par l’application et par la
 
 Les calculs regroupent les valeurs par collectivité, cadence, période et source. Une formule
 recommandée s’évalue séparément sur chaque série disponible ; une cible imposée ne produit que
-sa cadence. Les cadences du catalogue doivent être homogènes entre formule et dépendances,
+sa cadence. Les cadences des définitions doivent être homogènes entre formule et dépendances,
 comme entre parents et enfants d’un groupe.
 
 Aucune conversion n’est implicite : une future agrégation exigera une règle métier distincte.
