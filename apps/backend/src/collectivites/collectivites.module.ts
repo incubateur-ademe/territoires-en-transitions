@@ -6,6 +6,9 @@ import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collec
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
 import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
+import { GetDownloadUrlRepository } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.repository';
+import { GetDownloadUrlRouter } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.router';
+import { GetDownloadUrlService } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.service';
 import { CreateUploadTokenRepository } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.repository';
 import { CreateUploadTokenRouter } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.router';
 import { CreateUploadTokenService } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.service';
@@ -87,6 +90,9 @@ import { PersonnesService } from './services/personnes.service';
     CreateUploadTokenRepository,
     CreateUploadTokenService,
     CreateUploadTokenRouter,
+    GetDownloadUrlRepository,
+    GetDownloadUrlService,
+    GetDownloadUrlRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
     EditPreuveDocumentRepository,
