@@ -1,14 +1,9 @@
-import {
-  Controller,
-  Get,
-  Logger,
-  Param,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Logger, Param, Query, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
@@ -48,7 +43,8 @@ export class ExportScoreComparisonController {
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
     @Query() query: ExportScoreComparisonApiQueryClass,
-    @Res() res: Response
+    @Res() res: Response,
+    @TokenInfo() user: AuthUser
   ) {
     this.logger.log(
       `Export de comparaison des scores du referentiel ${referentielId} pour la collectivite ${collectiviteId}`
@@ -58,7 +54,8 @@ export class ExportScoreComparisonController {
       await this.exportScoreComparisonService.exportComparisonScore(
         collectiviteId,
         referentielId,
-        query
+        query,
+        { user }
       )
     );
 

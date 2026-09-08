@@ -35,10 +35,13 @@ export class BulkEditService {
       request.ficheIds === 'all'
         ? request.filters
         : { ficheIds: request.ficheIds };
-    const currentFiches = await this.listFichesService.getFichesActionResumes({
-      collectiviteId: request.collectiviteId,
-      filters,
-    });
+    const currentFiches = await this.listFichesService.getFichesActionResumes(
+      {
+        collectiviteId: request.collectiviteId,
+        filters,
+      },
+      { user }
+    );
     const actualFicheIds = currentFiches.data.map((fiche) => fiche.id);
 
     const { ficheIds, ...params } = request;
@@ -68,10 +71,13 @@ export class BulkEditService {
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );
         const { data: fiches } =
-          await this.listFichesService.getFichesActionResumes({
-            collectiviteId: c.collectiviteId,
-            filters: { ficheIds: c.ficheIds },
-          });
+          await this.listFichesService.getFichesActionResumes(
+            {
+              collectiviteId: c.collectiviteId,
+              filters: { ficheIds: c.ficheIds },
+            },
+            { user }
+          );
         // TODO: Optimize by avoid checking each fiche independently
         const ficheSharingsChecks = fiches.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(
@@ -267,7 +273,8 @@ export class BulkEditService {
         {
           collectiviteId: request.collectiviteId,
           filters,
-        }
+        },
+        { user }
       );
 
       // prépare les paires de fiches (avant/après)

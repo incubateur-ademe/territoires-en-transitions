@@ -111,6 +111,15 @@ const sortColumn: Record<ListFichesSortValue, PgColumn> = {
   titre: ficheActionTable.titre,
 };
 
+export type FichesReadContext = {
+  user: AuthUser;
+  tx?: Transaction;
+};
+
+type ReadableFichesFilters =
+  | { kind: 'filters'; filters: ListFichesRequestFilters }
+  | { kind: 'no_readable_fiche' };
+
 @Injectable()
 export default class ListFichesService {
   private readonly logger = new Logger(ListFichesService.name);
@@ -1942,6 +1951,32 @@ export default class ListFichesService {
     return result[0]?.count ?? 0;
   }
 
+  private async getReadableFichesFilters(
+    {
+      collectiviteId,
+      filters,
+    }: { collectiviteId: number; filters: ListFichesRequestFilters },
+    { user, tx }: FichesReadContext
+  ): Promise<ReadableFichesFilters> {
+    const canReadFichesRestreintes =
+      await this.fichePermissionService.hasReadFichePermission(
+        { collectiviteId, restreint: true },
+        user,
+        true,
+        tx
+      );
+
+    if (!canReadFichesRestreintes && filters.restreint === true) {
+      return { kind: 'no_readable_fiche' };
+    }
+
+    const readableFilters = canReadFichesRestreintes
+      ? filters
+      : { ...filters, restreint: false };
+
+    return { kind: 'filters', filters: readableFilters };
+  }
+
   /**
    * Get fiches actions resumes from the collectivity matching the given filters.
    * Also returns additional data about fetched fiches actions.
@@ -1954,11 +1989,13 @@ export default class ListFichesService {
     {
       collectiviteId,
       filters,
+      queryOptions,
     }: {
       collectiviteId: number;
       filters: ListFichesRequestFilters;
+      queryOptions?: QueryOptionsSchema;
     },
-    queryOptions?: QueryOptionsSchema
+    { user, tx }: FichesReadContext
   ): Promise<{
     count: number;
     nextPage: number | null;
@@ -1971,10 +2008,19 @@ export default class ListFichesService {
         filterSummary ? `(${filterSummary})` : ''
       }`
     );
+    const readable = await this.getReadableFichesFilters(
+      { collectiviteId, filters },
+      { user, tx }
+    );
+    if (readable.kind === 'no_readable_fiche') {
+      return { count: 0, nextPage: null, nbOfPages: 0, data: [] };
+    }
+
     const { data, count } = await this.listFichesQuery(
       collectiviteId,
-      filters,
-      queryOptions
+      readable.filters,
+      queryOptions,
+      tx
     );
 
     if (queryOptions?.limit === 'all' || queryOptions === undefined) {
@@ -1997,5 +2043,4 @@ export default class ListFichesService {
       data,
     };
   }
-
 }
