@@ -5,6 +5,7 @@ import {
   getDemandeAvisEtat,
   getEtatDossierEnLecture,
   pcaetDemandeAvisEtatValues,
+  peutDeposerAvisInstructeur,
   peutDeposerAvisSaisine,
   type DemandeAvisAchevement,
 } from '@tet/domain/demarches';
@@ -123,11 +124,32 @@ export class ListDemandesAvisService {
       nbAvisBrouillons: row.nbAvisBrouillons,
     }));
 
+    // Les compteurs disent la charge du service, la liste dit ce qu'il voit —
+    // et depuis les périmètres secondaires, ce n'est plus la même chose.
+    //
+    // Un service qui se prononce ne compte que les dossiers dont il répond :
+    // ceux qu'un territoire limitrophe lui donne à lire avancent sans lui, et
+    // les additionner lui ferait surestimer son travail. Un service qui ne se
+    // prononce jamais — DDT, DR ADEME, national — compte tout : son libellé dit
+    // « en instruction », c'est un suivi et non une charge.
+    const serviceSePrononce = peutDeposerAvisInstructeur(instructeurType);
+    const compteesCommeCharge = serviceSePrononce
+      ? lignes.filter((ligne) => ligne.deposeAvis)
+      : lignes;
+
     const countByEtat = emptyCountByEtat();
-    for (const ligne of lignes) {
+    for (const ligne of compteesCommeCharge) {
       countByEtat[ligne.etat] += 1;
     }
-    const stats = this.calculerStats(rows);
+
+    // Le délai moyen souffrirait du même biais : une instruction menée par le
+    // service du siège n'est pas une performance du service voisin.
+    const demandesComptees = new Set(
+      compteesCommeCharge.map(({ demandeAvisId }) => demandeAvisId)
+    );
+    const stats = this.calculerStats(
+      rows.filter((row) => demandesComptees.has(row.demandeAvisId))
+    );
 
     const filtrees = lignes.filter((ligne) => {
       if (input.etats && !input.etats.includes(ligne.etat)) {

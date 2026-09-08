@@ -162,9 +162,9 @@ describe('getContexteInstruction', () => {
         collectiviteId: drealId,
         nom: 'DREAL test contexte',
       },
-      // La saisine est principale — la fixture n'insère aucun périmètre
-      // secondaire —, donc la DREAL se prononce sur ce dossier.
-      deposeAvis: true,
+      // La fixture n'insère aucun périmètre secondaire : la DREAL est saisie
+      // au titre du siège de la déposante, et se prononce donc sur ce dossier.
+      perimetre: 'principal',
     });
   });
 
