@@ -14,6 +14,7 @@ import { onTestFinished } from 'vitest';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inArray } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
+import { collectivitePerimetreSecondaireTable } from '@tet/backend/collectivites/shared/models/collectivite-perimetre-secondaire.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
 describe('listDemandesAvis', () => {
@@ -48,11 +49,14 @@ describe('listDemandesAvis', () => {
     status,
     avisDeadlineAt,
     avis,
+    perimetre = 'principal',
   }: {
     collectiviteId: number;
     status: 'transmis_pour_avis' | 'publie';
     avisDeadlineAt: string;
     avis?: { valide: boolean };
+    /** `secondaire` pour un dossier qui n'arrive que par un territoire voisin. */
+    perimetre?: 'principal' | 'secondaire';
   }) => {
     const [demarche] = await db.db
       .insert(demarcheTable)
@@ -73,6 +77,7 @@ describe('listDemandesAvis', () => {
         demarcheId: demarche.id,
         instructeurCollectiviteId: drealId,
         source: 'seed',
+        perimetre,
       })
       .returning({ id: pcaetDemandeAvisTable.id });
 
@@ -360,5 +365,57 @@ describe('listDemandesAvis', () => {
     expect(result.items.map((item) => item.collectivite.nom)).toContain(
       'Melon Metropole'
     );
+  });
+
+  /**
+   * Une même DREAL tient les deux rôles dans le même tableau : elle se prononce
+   * sur les dossiers de sa région, et lit ceux des EPCI voisins qui débordent
+   * chez elle.
+   */
+  describe('dossier reçu au titre d’un périmètre secondaire', () => {
+    it('apparaît dans la liste, en lecture, et ne pèse pas sur les compteurs', async () => {
+      const avant = await appeler(camille, {});
+
+      // Un EPCI d'à côté, dont une partie des communes tombe dans la région de
+      // la DREAL : c'est ce débordement, et lui seul, qui la fait destinataire.
+      const voisine = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          regionCode: AUTRE_REGION,
+          nom: 'EPCI voisin qui déborde',
+        },
+      });
+      onTestFinished(async () => {
+        await voisine.cleanup();
+      });
+
+      await db.db.insert(collectivitePerimetreSecondaireTable).values({
+        collectiviteId: voisine.collectivite.id,
+        regionCode: REGION,
+        source: 'banatic',
+      });
+
+      const { demandeId } = await creerDossier({
+        collectiviteId: voisine.collectivite.id,
+        status: 'transmis_pour_avis',
+        avisDeadlineAt: dansNJours(30),
+        perimetre: 'secondaire',
+      });
+
+      const apres = await appeler(camille, {});
+
+      // Elle le voit — c'est tout l'objet de la saisine…
+      const ligne = apres.items.find(
+        (item) => item.demandeAvisId === demandeId
+      );
+      expect(ligne).toBeDefined();
+      expect(ligne?.deposeAvis).toBe(false);
+      expect(apres.total).toBe(avant.total + 1);
+
+      // …mais ce n'est pas son travail : les compteurs de charge ne bougent
+      // pas, et le délai moyen non plus.
+      expect(apres.countByEtat).toEqual(avant.countByEtat);
+      expect(apres.stats).toEqual(avant.stats);
+    });
   });
 });

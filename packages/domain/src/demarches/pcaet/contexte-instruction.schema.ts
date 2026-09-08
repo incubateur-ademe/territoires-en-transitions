@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { pcaetPerimetreSaisineSchema } from './pcaet-perimetre-saisine.enum.schema';
 
 /**
  * Ce qui suffit à dire « tu consultes cette collectivité au titre de ce
@@ -18,14 +19,17 @@ export const contexteInstructionSchema = z.object({
     nom: z.string(),
   }),
   /**
-   * Ce service se prononce-t-il sur ce dossier, ou se contente-t-il de le lire ?
+   * Le territoire de la déposante qui vaut cette saisine.
    *
-   * La question se pose par dossier et non par service : une DREAL dépose sur
-   * celui de sa région et lit celui de l'EPCI voisin qui déborde chez elle. La
-   * bannière le dit, pour qu'un agent ne cherche pas un bouton qui n'existera
-   * pas.
+   * Le fait, et non sa conséquence : « ne dépose pas d'avis » est vrai d'une DDT
+   * sur son propre département comme d'une DREAL voisine, et ces deux-là n'ont
+   * pas à lire la même chose à l'écran. Seule la seconde est là parce qu'un EPCI
+   * déborde chez elle.
+   *
+   * La question se pose par dossier et non par service : une DREAL est
+   * principale sur celui de sa région et secondaire sur celui de l'EPCI voisin.
    */
-  deposeAvis: z.boolean(),
+  perimetre: pcaetPerimetreSaisineSchema,
 });
 
 export type ContexteInstruction = z.infer<typeof contexteInstructionSchema>;

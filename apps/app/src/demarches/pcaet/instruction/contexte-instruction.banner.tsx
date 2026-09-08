@@ -6,6 +6,7 @@ import {
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteContext } from '@tet/api/collectivites';
+import { PcaetPerimetreSaisineEnum } from '@tet/domain/demarches';
 import { Button, Icon } from '@tet/ui';
 import { usePathname } from 'next/navigation';
 
@@ -52,8 +53,13 @@ export const ContexteInstructionBanner = () => {
           })}
           {/* Un dossier qui n'arrive que par un territoire limitrophe se lit
               sans se conclure : le dire ici, où l'agent lit déjà à quel titre
-              il est là, plutôt que de le laisser déduire d'un bouton absent. */}
-          {!contexte.deposeAvis && (
+              il est là, plutôt que de le laisser déduire d'un bouton absent.
+
+              Le test porte sur le périmètre et non sur le droit de déposer :
+              une DDT ne dépose jamais, sur son propre département comme
+              ailleurs, et lui dire que ce dossier vient d'un territoire
+              limitrophe serait faux neuf fois sur dix. */}
+          {contexte.perimetre === PcaetPerimetreSaisineEnum.SECONDAIRE && (
             <>
               {' '}
               <span
