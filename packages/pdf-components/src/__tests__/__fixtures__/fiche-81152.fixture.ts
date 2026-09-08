@@ -763,6 +763,7 @@ const annexes: AnnexeDocument[] = [
     modifiedByNom: 'Sophie Boiché',
     commentaire: null,
     fichier: {
+      id: 91,
       filename: 'Collectivité Démo (PA) - Indicateurs - 2026-02-19.xlsx',
       confidentiel: false,
       hash: 'fixture-hash-annexe-1',

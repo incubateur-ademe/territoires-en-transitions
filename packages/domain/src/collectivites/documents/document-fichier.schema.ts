@@ -1,6 +1,7 @@
 import * as z from 'zod/mini';
 
 export const fichierSchema = z.object({
+  id: z.number(),
   filename: z.nullable(z.string()),
   confidentiel: z.nullable(z.boolean()),
   hash: z.nullable(z.string()),

@@ -3,20 +3,26 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import { ReactElement } from 'react';
-import { DownloadableFichier, useDownloadPreuve } from './use-download-preuve';
+import { useDownloadDocument } from '@/app/referentiels/preuves/data/use-download-document';
 
 export const DownloadPreuveButton = ({
-  fichier,
+  collectiviteId,
+  fichierId,
 }: {
-  fichier: DownloadableFichier;
+  collectiviteId: number;
+  fichierId: number;
 }): ReactElement => {
-  const downloadPreuve = useDownloadPreuve();
+  const { mutate: downloadDocument, isPending } = useDownloadDocument({
+    collectiviteId,
+  });
 
   return (
     <Button
       icon="download-line"
       title={appLabels.telechargerFichier}
-      onClick={() => void downloadPreuve(fichier)}
+      onClick={() => downloadDocument(fichierId)}
+      loading={isPending}
+      disabled={isPending}
       size="xs"
       variant="grey"
     />

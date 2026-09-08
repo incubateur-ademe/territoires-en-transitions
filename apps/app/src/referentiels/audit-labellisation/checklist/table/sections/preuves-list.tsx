@@ -16,7 +16,12 @@ const PreuveLine = ({
 }): ReactElement => (
   <li>
     <DocumentLine filename={preuve.fichier?.filename}>
-      {preuve.fichier && <DownloadPreuveButton fichier={preuve.fichier} />}
+      {preuve.fichier && (
+        <DownloadPreuveButton
+          collectiviteId={preuve.collectiviteId}
+          fichierId={preuve.fichier.id}
+        />
+      )}
       {canEdit && (
         <>
           <RenamePreuveButton preuve={preuve} />

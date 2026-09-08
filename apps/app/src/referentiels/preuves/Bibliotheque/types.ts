@@ -15,7 +15,7 @@ export type BibliothequeFichier = {
 
 export type Fichier = Pick<
   BibliothequeFichier,
-  'bucketId' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
+  'id' | 'bucketId' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
 >;
 
 // champs propres aux fichiers

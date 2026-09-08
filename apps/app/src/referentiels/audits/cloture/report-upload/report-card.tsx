@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { openPreuve } from '@/app/referentiels/preuves/Bibliotheque/openPreuve';
+import { useOpenPreuve } from '@/app/referentiels/preuves/Bibliotheque/use-open-preuve';
 import {
   getAuthorAndDate,
   getFormattedTitle,
@@ -85,14 +85,16 @@ export const PersistedReportCard = ({
   onRemove: () => void;
 }): JSX.Element => {
   const preuve = auditReportToPreuve(report);
+  const openPreuve = useOpenPreuve({ collectiviteId: preuve.collectiviteId });
   const filename = preuve.fichier?.filename ?? '';
+  const hasSupport = Boolean(preuve.fichier || preuve.lien);
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
       <div className="flex items-start gap-1">
         <DownloadableTitle
           title={getFormattedTitle(preuve) ?? ''}
           onClick={() => openPreuve(preuve)}
-          disabled={isRemoving}
+          disabled={isRemoving || !hasSupport}
         />
         <RemoveReportButton
           filename={filename}

@@ -80,6 +80,7 @@ export const preuveReglementaireFichier: DocumentReglementaire = {
   id: 2,
   collectiviteId: 1,
   fichier: {
+    id: 21,
     hash: 'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9',
     filename: 'preuve_input.txt',
     filesize: 34,
@@ -148,6 +149,7 @@ export const preuveComplementaireFichier: PreuveComplementaire = {
   id: 4,
   collectiviteId: 1,
   fichier: {
+    id: 21,
     hash: 'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9',
     filename: 'preuve_input.txt',
     filesize: 34,

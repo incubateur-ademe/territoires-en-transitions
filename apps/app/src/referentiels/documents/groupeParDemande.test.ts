@@ -42,6 +42,7 @@ const preuves_demande1: PreuveAuditEtLabellisation[] = [
     id: 8,
     collectiviteId: 1,
     fichier: {
+      id: 81,
       hash: '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee',
       filename: 'doc1.pdf',
       filesize: 978700,
@@ -72,6 +73,7 @@ const preuves_demande1: PreuveAuditEtLabellisation[] = [
     id: 7,
     collectiviteId: 1,
     fichier: {
+      id: 82,
       hash: '071a0b09051aa4cacf39f85860ddb775e668336517eaf1ec3cda16fda9028b3f',
       filename: 'doc2.pdf',
       filesize: 66632,
@@ -102,6 +104,7 @@ const preuves_demande1: PreuveAuditEtLabellisation[] = [
     id: 8,
     collectiviteId: 1,
     fichier: {
+      id: 83,
       hash: '7950d61a98864390bebad094002bcb7a00dabaf8bf2c48dd8d3dc6937aee2a96',
       filename: 'rapport.pdf',
       filesize: 5468713,
@@ -145,6 +148,7 @@ const preuves_demande2: PreuveAuditEtLabellisation[] = [
     id: 9,
     collectiviteId: 1,
     fichier: {
+      id: 84,
       hash: '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee',
       filename: 'doc1.pdf',
       filesize: 978700,
@@ -178,6 +182,7 @@ const preuves_audit_sans_demande: PreuveAuditEtLabellisation[] = [
     id: 10,
     collectiviteId: 1,
     fichier: {
+      id: 85,
       hash: '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee',
       filename: 'doc1.pdf',
       filesize: 978700,
@@ -209,6 +214,7 @@ const closedCyclePreuves: PreuveAuditEtLabellisation[] = [
     id: 12,
     collectiviteId: 1,
     fichier: {
+      id: 86,
       hash: '9c1185a5c5e9fc54612808977ee8f548b2258d31c3b0f4a9e0e0f0e0f0e0f0e0',
       filename: 'rapport-final.pdf',
       filesize: 12345,

@@ -128,6 +128,7 @@ function rowToAnnexeOutputItem(row: AnnexeListRow): AnnexeDocument {
     return {
       ...common,
       fichier: {
+        id: row.fichierId,
         filename: row.filename,
         confidentiel: row.confidentiel,
         hash: row.hash,

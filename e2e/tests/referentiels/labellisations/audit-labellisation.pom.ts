@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Download, expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
@@ -16,6 +16,7 @@ export class AuditLabellisationPom {
   readonly acteEngagementRow: Locator;
   readonly ajouterActeEngagementButton: Locator;
   readonly supprimerActeEngagementButton: Locator;
+  readonly telechargerActeEngagementButton: Locator;
   readonly acteUploadModalTitle: Locator;
   readonly envoyerDemandeButton: Locator;
   readonly successMessage: Locator;
@@ -57,6 +58,9 @@ export class AuditLabellisationPom {
     );
     this.supprimerActeEngagementButton =
       this.acteEngagementRow.getByTitle('Supprimer');
+    this.telechargerActeEngagementButton = this.acteEngagementRow.getByTitle(
+      'Télécharger le fichier'
+    );
     this.acteUploadModalTitle = page.getByRole('heading', {
       name: "Téléverser l'acte d'engagement signé",
     });
@@ -157,6 +161,12 @@ export class AuditLabellisationPom {
   async uploadActeEngagement(): Promise<void> {
     await this.ajouterActeEngagementButton.click();
     await this.documentsPom.setTestDocument();
+  }
+
+  async downloadActeEngagement(): Promise<Download> {
+    const downloadPromise = this.page.waitForEvent('download');
+    await this.telechargerActeEngagementButton.click();
+    return downloadPromise;
   }
 
   async deleteActeEngagement(): Promise<void> {

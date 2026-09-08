@@ -42,9 +42,9 @@ const toActeDepose = (filename: string, id = 99): ChecklistPreuve => ({
   collectiviteId: 1,
   preuveType: 'labellisation',
   fichier: {
+    id,
     filename,
     hash: `hash-${id}`,
-    bucketId: 'bucket',
     confidentiel: false,
   },
 });
