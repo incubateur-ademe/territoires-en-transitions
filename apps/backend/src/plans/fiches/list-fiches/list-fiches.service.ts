@@ -40,6 +40,7 @@ import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mi
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
@@ -109,11 +110,6 @@ const sortColumn: Record<ListFichesSortValue, PgColumn> = {
   created_at: ficheActionTable.createdAt,
   dateDebut: ficheActionTable.dateDebut,
   titre: ficheActionTable.titre,
-};
-
-export type FichesReadContext = {
-  user: AuthUser;
-  tx?: Transaction;
 };
 
 type ReadableFichesFilters =
@@ -1956,7 +1952,7 @@ export default class ListFichesService {
       collectiviteId,
       filters,
     }: { collectiviteId: number; filters: ListFichesRequestFilters },
-    { user, tx }: FichesReadContext
+    { user, tx }: ServiceSecondArg
   ): Promise<ReadableFichesFilters> {
     const canReadFichesRestreintes =
       await this.fichePermissionService.hasReadFichePermission(
@@ -1995,7 +1991,7 @@ export default class ListFichesService {
       filters: ListFichesRequestFilters;
       queryOptions?: QueryOptionsSchema;
     },
-    { user, tx }: FichesReadContext
+    { user, tx }: ServiceSecondArg
   ): Promise<{
     count: number;
     nextPage: number | null;

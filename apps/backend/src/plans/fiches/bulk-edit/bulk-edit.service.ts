@@ -5,7 +5,7 @@ import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-
 import { ficheActionLibreTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, inArray, or, sql } from 'drizzle-orm';
@@ -30,7 +30,10 @@ export class BulkEditService {
     private readonly notificationsFicheService: NotifyPiloteService
   ) {}
 
-  async bulkEdit(request: BulkEditRequest, user: AuthUser): Promise<void> {
+  async bulkEdit(
+    request: BulkEditRequest,
+    user: AuthenticatedUser
+  ): Promise<void> {
     const filters =
       request.ficheIds === 'all'
         ? request.filters

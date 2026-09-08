@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
@@ -54,7 +54,7 @@ export default class PlanActionsService {
   /**
    * Charge les axes et les fiches d'un plan
    */
-  async getPlan(input: GetPlanRequest, user: AuthUser) {
+  async getPlan(input: GetPlanRequest, user: AuthenticatedUser) {
     const { collectiviteId, planId } = input;
 
     this.logger.log(
@@ -97,7 +97,7 @@ export default class PlanActionsService {
     };
   }
 
-  private async fetchPlan(input: GetPlanRequest, user: AuthUser) {
+  private async fetchPlan(input: GetPlanRequest, user: AuthenticatedUser) {
     const { collectiviteId, planId } = input;
 
     // charge les données

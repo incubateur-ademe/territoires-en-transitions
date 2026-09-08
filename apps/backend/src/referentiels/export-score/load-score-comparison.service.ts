@@ -1,4 +1,4 @@
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
@@ -101,7 +101,7 @@ export class LoadScoreComparisonService {
     collectiviteId: number,
     referentielId: ReferentielId,
     query: ExportScoreComparisonRequestQuery,
-    { user }: { user: AuthUser }
+    { user }: ServiceSecondArg
   ): Promise<Result<ScoreComparisonData, ExportScoreComparisonError>> {
     const { exportFormat, isAudit, snapshotReferences } = query;
     const excludeDesactive = query.excludeDesactive === true;
@@ -498,7 +498,7 @@ export class LoadScoreComparisonService {
   private async getFichesActionLiees(
     collectiviteId: number,
     mesureIds: ActionId[],
-    { user }: { user: AuthUser }
+    { user }: ServiceSecondArg
   ): Promise<Record<ActionId, string>> {
     const fichesActionLiees: Record<string, string[]> = {};
 

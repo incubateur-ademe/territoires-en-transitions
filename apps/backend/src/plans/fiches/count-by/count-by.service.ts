@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { countByDateSlots } from '@tet/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import { countByArrayValues } from '@tet/backend/plans/fiches/count-by/utils/count-by-array-value';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
@@ -452,7 +452,7 @@ export class CountByService {
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
     filters: ListFichesRequestFilters,
-    { user }: { user: AuthUser }
+    { user }: { user: AuthenticatedUser }
   ) {
     this.logger.log(
       `Calcul du count by ${countByProperty} des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
