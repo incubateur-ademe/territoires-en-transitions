@@ -6,7 +6,10 @@ import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
-import { useReferentielId } from '../referentiel-context';
+import {
+  useGetReferentielDefinitionFromContext,
+  useReferentielId,
+} from '../referentiel-context';
 import { useListDocumentsReferentiel } from './data/use-list-documents-referentiel';
 import { AddRapportVisite } from './AddRapportVisite';
 import { groupeParDemande } from './groupeParDemande';
@@ -22,6 +25,7 @@ export const DocumentsView = () => {
   const isReadOnly = !hasCollectivitePermission('referentiels.mutate');
 
   const referentielId = useReferentielId();
+  const hierarchie = useGetReferentielDefinitionFromContext()?.hierarchie ?? [];
   const tableData = useTableData(referentielId);
 
   const documents = useListDocumentsReferentiel({ collectiviteId, referentielId });
@@ -36,9 +40,6 @@ export const DocumentsView = () => {
     .map(addInfoToEntry)
     .sort((a, b) => b.info.timestamp - a.info.timestamp);
 
-  const isNewReferentiel =
-    referentielId === 'te' || referentielId === 'te-test';
-
   // COT : rapports visibles sur CAE et ECI ; sinon uniquement sur CAE
   const showRapports =
     referentielId === 'cae' || (isCOT && referentielId === 'eci');
@@ -50,10 +51,6 @@ export const DocumentsView = () => {
 
   const showEmptyRapportsMessage =
     isReadOnly && documents.status === 'loaded' && rapport.length === 0;
-
-  if (isNewReferentiel) {
-    return null;
-  }
 
   return (
     <div data-test="BibliothequeDocs" className="flex flex-col gap-8">
@@ -89,7 +86,15 @@ export const DocumentsView = () => {
         {showDocumentsTitle && (
           <h2 className="mb-6 text-2xl">{appLabels.documents}</h2>
         )}
-        <PreuvesTable tableData={tableData} referentielId={referentielId} />
+        {hierarchie.length ? (
+          <PreuvesTable
+            tableData={tableData}
+            referentielId={referentielId}
+            hierarchie={hierarchie}
+          />
+        ) : (
+          <SpinnerLoader className="m-auto" />
+        )}
       </section>
     </div>
   );

@@ -125,6 +125,24 @@ export function getParentId({
 }
 
 /**
+ * Indique si la hiérarchie d'un référentiel comporte un niveau `sous-axe`.
+ * Source de vérité : `referentiel_definition.hierarchie`.
+ */
+export function hasSousAxeLevel(hierarchie: ActionType[]): boolean {
+  return hierarchie.includes(ActionTypeEnum.SOUS_AXE);
+}
+
+/** Index (racine = 0) du niveau `action` dans la hiérarchie. */
+export function getActionLevelIndex(hierarchie: ActionType[]): number {
+  return hierarchie.indexOf(ActionTypeEnum.ACTION);
+}
+
+/** Index du niveau `sous-action` dans la hiérarchie. */
+export function getSousActionLevelIndex(hierarchie: ActionType[]): number {
+  return hierarchie.indexOf(ActionTypeEnum.SOUS_ACTION);
+}
+
+/**
  * Remonte un actionId jusqu'au nœud de type `action` lorsque le nœud courant
  * est plus profond dans `hierarchie` (ex. sous-action, tâche).
  */
@@ -132,7 +150,7 @@ export function rollUpActionIdToActionLevel(
   actionId: string,
   hierarchie: ActionType[]
 ): string {
-  const actionLevelIndex = hierarchie.indexOf(ActionTypeEnum.ACTION);
+  const actionLevelIndex = getActionLevelIndex(hierarchie);
   if (actionLevelIndex === -1) {
     return actionId;
   }

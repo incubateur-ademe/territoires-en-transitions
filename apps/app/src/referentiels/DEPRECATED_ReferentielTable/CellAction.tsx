@@ -1,7 +1,12 @@
-import { appLabels } from '@/app/labels/catalog';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { Kbd } from '@/app/ui/shared/Kbd';
-import { ReferentielId } from '@tet/domain/referentiels';
+import {
+  ActionType,
+  getActionLevelIndex,
+  hasSousAxeLevel,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
@@ -10,30 +15,27 @@ import { ActionDetailed } from '../use-snapshot';
 
 export type TCellProps = CellProps<ActionListItem & ActionDetailed> & {
   collectiviteId: number | null;
-  referentielId: Exclude<ReferentielId, 'te' | 'te-test'> | null;
+  referentielId: ReferentielId | null;
+  hierarchie?: ActionType[];
   maxDepth?: number | null;
   alwaysShowExpand?: boolean;
 };
 
 // décalage à gauche des lignes en fonction du niveau
-const paddingByLevel: Record<
-  Exclude<ReferentielId, 'te' | 'te-test'>,
-  Record<number, number>
-> = {
-  cae: {
-    1: 0,
-    2: 16,
-    // au dessus de 2 un décalage supplémentaire est appliqué par l'affichage de l'identifiant, il n'est donc pâs reporté ici
-    3: 16,
-    4: 32,
-    5: 48,
-  },
-  eci: {
-    1: 0,
-    2: 16,
-    3: 32,
-    4: 48,
-  },
+const paddingAvecSousAxe: Record<number, number> = {
+  1: 0,
+  2: 16,
+  // au dessus de 2 un décalage supplémentaire est appliqué par l'affichage de l'identifiant, il n'est donc pas reporté ici
+  3: 16,
+  4: 32,
+  5: 48,
+};
+
+const paddingSansSousAxe: Record<number, number> = {
+  1: 0,
+  2: 16,
+  3: 32,
+  4: 48,
 };
 
 // décalage supplémentaire appliqué quand on n'affiche pas le bouton Expand
@@ -49,10 +51,11 @@ export const CellAction = (props: TCellProps) => {
     value,
     collectiviteId,
     referentielId,
+    hierarchie,
     maxDepth,
     alwaysShowExpand,
   } = props;
-  if (!collectiviteId || !referentielId) return null;
+  if (!collectiviteId || !referentielId || !hierarchie?.length) return null;
 
   const { depth, identifiant } = row.original;
   const haveSubrows = row.subRows.length > 0;
@@ -61,18 +64,16 @@ export const CellAction = (props: TCellProps) => {
 
   // applique un décalage en fonction du niveau + un décalage optionnel pour
   // compenser l'absence du bouton Expand lorsque c'est nécessaire
+  const padding = hasSousAxeLevel(hierarchie)
+    ? paddingAvecSousAxe
+    : paddingSansSousAxe;
   const style = {
-    paddingLeft:
-      paddingByLevel[referentielId][depth] +
-      (showExpand ? 0 : NO_EXPAND_OFFSET),
+    paddingLeft: padding[depth] + (showExpand ? 0 : NO_EXPAND_OFFSET),
   };
 
-  const pillDepths = referentielId === 'cae' ? [3, 4] : [2, 3];
-  const idDepth = referentielId === 'cae' ? 2 : 1;
-
-  if (!collectiviteId) {
-    return null;
-  }
+  const profondeurMesure = getActionLevelIndex(hierarchie);
+  const pillDepths = [profondeurMesure, profondeurMesure + 1];
+  const idDepth = profondeurMesure - 1;
 
   return (
     <>
@@ -95,6 +96,7 @@ export const CellAction = (props: TCellProps) => {
                   collectiviteId,
                   actionId: row.original.actionId,
                   referentielId,
+                  hierarchie,
                 })}
               >
                 {value}
@@ -114,14 +116,16 @@ export const CellAction = (props: TCellProps) => {
 // infobulles
 const infoReplier = (
   <p className="font-normal">
-    {appLabels.tooltipReplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd> {appLabels.tooltipMaintienEnfonce}
+    {appLabels.tooltipReplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd>{' '}
+    {appLabels.tooltipMaintienEnfonce}
     <br />
     {appLabels.tooltipReplierLignesFin}
   </p>
 );
 const infoDeplier = (
   <p className="font-normal">
-    {appLabels.tooltipDeplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd> {appLabels.tooltipMaintienEnfoncePourDeplier}
+    {appLabels.tooltipDeplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd>{' '}
+    {appLabels.tooltipMaintienEnfoncePourDeplier}
     <br />
     {appLabels.tooltipDeplierMemeAxe}
     <br />
@@ -130,10 +134,12 @@ const infoDeplier = (
 );
 
 // affiche le picto reflétant l'état plié/déplié
-const Expand = ({ row, referentielId }: TCellProps) => {
+const Expand = ({ row, hierarchie }: TCellProps) => {
   const { isExpanded, original } = row;
   const { level: depth } = original;
-  const invertColor = depth < (referentielId === 'cae' ? 3 : 2);
+  const invertColor = Boolean(
+    hierarchie?.length && depth < getActionLevelIndex(hierarchie)
+  );
   const className = [
     'mr-2 hover:!bg-transparent',
     isExpanded ? 'arrow-down' : 'arrow-right',

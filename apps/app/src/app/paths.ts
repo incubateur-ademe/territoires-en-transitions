@@ -11,9 +11,13 @@ import {
   isServiceDeconcentre,
   type CollectiviteType,
 } from '@tet/domain/collectivites';
-import type { ReferentielId } from '@tet/domain/referentiels';
-import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
+import {
+  rollUpActionIdToActionLevel,
+  type ActionType,
+  type ReferentielId,
+} from '@tet/domain/referentiels';
 import type { UserRolesAndPermissions } from '@tet/domain/users';
+import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
 
 export const homePath = '/';
@@ -321,24 +325,25 @@ export const makeReferentielTacheUrl = ({
   collectiviteId,
   actionId,
   referentielId,
+  hierarchie,
 }: {
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
   searchParams?: URLSearchParams;
 }) => {
-  const levels = actionId?.split('.') || [];
-  const limitedLevels = levels
-    .slice(0, referentielId === 'cae' ? 3 : 2)
-    .join('.');
+  // remonte jusqu'à la mesure (niveau `action`) et ancre le nœud d'origine
+  const mesureId = hierarchie.length
+    ? rollUpActionIdToActionLevel(actionId, hierarchie)
+    : actionId;
 
   const pathname = makeReferentielActionUrl({
     collectiviteId,
     referentielId,
-    actionId: limitedLevels,
+    actionId: mesureId,
   });
-  const hash =
-    levels.length !== limitedLevels.split('.').length ? `#${actionId}` : '';
+  const hash = mesureId === actionId ? '' : `#${actionId}`;
   return pathname + hash;
 };
 

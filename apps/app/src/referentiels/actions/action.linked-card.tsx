@@ -1,6 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { useGetReferentielDefinition } from '@/app/referentiels/definitions/use-get-referentiel-definition';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Action } from '@tet/domain/referentiels';
@@ -26,12 +27,17 @@ const ActionLinkedCard = ({
 }: ActionCardProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
-  const { actionId, identifiant, nom, referentiel } = action;
+  const { actionId, identifiant, nom, referentielId } = action;
+
+  const { data: referentielDefinition } = useGetReferentielDefinition({
+    referentielId,
+  });
 
   const link = makeReferentielTacheUrl({
     collectiviteId: dataCollectiviteId,
     actionId,
-    referentielId: referentiel,
+    referentielId,
+    hierarchie: referentielDefinition?.hierarchie ?? [],
   });
 
   return (
@@ -57,7 +63,8 @@ const ActionLinkedCard = ({
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">
-          {capitalize(appLabels.referentiel())} {referentielToName[referentiel]}
+          {capitalize(appLabels.referentiel())}{' '}
+          {referentielToName[referentielId]}
         </span>
 
         {/* Identifiant et titre de l'action */}

@@ -2,7 +2,13 @@ import { appLabels } from '@/app/labels/catalog';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import {
+  ActionType,
+  getActionLevelIndex,
+  getSousActionLevelIndex,
+  isNewReferentiel,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
 import { Column, useExpanded, useFlexLayout, useTable } from 'react-table';
 import { CellAction } from '../DEPRECATED_ReferentielTable/CellAction';
@@ -11,7 +17,8 @@ import { TableData } from './useTableData';
 
 type TPreuvesTableProps = {
   tableData: TableData;
-  referentielId: Exclude<ReferentielId, 'te' | 'te-test'>;
+  referentielId: ReferentielId;
+  hierarchie: ActionType[];
 };
 
 type TColumn = Column<ActionListItem>;
@@ -25,18 +32,18 @@ const COLUMNS: TColumn[] = [
   },
 ];
 
-const subActionLevel = {
-  cae: 4,
-  eci: 3,
-};
-
 /**
  * Affiche la table "Preuves" d'un référentiel
  */
 export const PreuvesTable = (props: TPreuvesTableProps) => {
   const collectiviteId = useCollectiviteId();
-  const { tableData, referentielId } = props;
-  const maxDepth = subActionLevel[referentielId];
+  const { tableData, referentielId, hierarchie } = props;
+  // sur TE les documents sont portés par la mesure et agrègent les sous-mesures,
+  // comme dans la colonne Documents de l'onglet Mesures
+  const withSubActions = isNewReferentiel(referentielId);
+  const maxDepth = withSubActions
+    ? getActionLevelIndex(hierarchie)
+    : getSousActionLevelIndex(hierarchie);
   const { table, isLoading } = tableData;
 
   // crée l'instance de la table
@@ -122,6 +129,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                           {cell.render('Cell', {
                             collectiviteId,
                             referentielId,
+                            hierarchie,
                             alwaysShowExpand: true,
                           })}
                         </div>
@@ -131,7 +139,11 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                 ) : null}
                 {isExpanded && depth === maxDepth ? (
                   <div className="row py-5 pl-32 pr-5">
-                    <ActionPreuvePanel action={action} hideIdentifier />
+                    <ActionPreuvePanel
+                      action={action}
+                      withSubActions={withSubActions}
+                      hideIdentifier={!withSubActions}
+                    />
                   </div>
                 ) : null}
               </Fragment>

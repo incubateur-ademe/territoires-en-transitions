@@ -1,11 +1,17 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { cn } from '@tet/ui';
+import { ActionType } from '@tet/domain/referentiels';
 import { JSX, useMemo } from 'react';
 import { TableInstance } from 'react-table';
-import { useReferentielId } from '../referentiel-context';
+import {
+  useGetReferentielDefinitionFromContext,
+  useReferentielId,
+} from '../referentiel-context';
 import { makeRowRenderer } from './Row';
 import './styles.css';
+
+const EMPTY_HIERARCHIE: ActionType[] = [];
 
 type Table = <T extends Record<string, unknown>>(props: {
   className?: string;
@@ -33,9 +39,16 @@ export const ReferentielTable: Table = (props) => {
 
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
+  const hierarchie =
+    useGetReferentielDefinitionFromContext()?.hierarchie ?? EMPTY_HIERARCHIE;
   const cellProps = useMemo(
-    () => ({ collectiviteId, referentielId, ...(customCellProps || {}) }),
-    [collectiviteId, referentielId, customCellProps]
+    () => ({
+      collectiviteId,
+      referentielId,
+      hierarchie,
+      ...(customCellProps || {}),
+    }),
+    [collectiviteId, referentielId, hierarchie, customCellProps]
   );
 
   // rendu d'une ligne
