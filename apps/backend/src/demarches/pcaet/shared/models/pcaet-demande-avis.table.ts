@@ -1,6 +1,7 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { createdAt } from '@tet/backend/utils/column.utils';
+import { pcaetPerimetreSaisineValues } from '@tet/domain/demarches';
 import { index, integer, pgTable, text, unique } from 'drizzle-orm/pg-core';
 
 export const demandeAvisSourceValues = ['seed', 'transmission'] as const;
@@ -17,6 +18,18 @@ export const pcaetDemandeAvisTable = pgTable(
       .notNull()
       .references(() => collectiviteTable.id, { onDelete: 'cascade' }),
     source: text('source', { enum: demandeAvisSourceValues }).notNull(),
+    /**
+     * Le territoire de la déposante qui vaut cette saisine. Une saisine
+     * secondaire reçoit le dossier en lecture : elle n'attend aucun avis, et
+     * n'en bloque donc pas la clôture.
+     *
+     * Défaut `principal` en base : les saisines antérieures à cette colonne
+     * l'ont toutes été par le territoire unique que portait alors
+     * `collectivite`.
+     */
+    perimetre: text('perimetre', { enum: pcaetPerimetreSaisineValues })
+      .notNull()
+      .default('principal'),
     createdAt,
   },
   (table) => [

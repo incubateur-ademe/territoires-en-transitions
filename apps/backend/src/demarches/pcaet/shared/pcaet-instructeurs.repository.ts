@@ -4,10 +4,12 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CollectiviteType } from '@tet/domain/collectivites';
 import {
+  PcaetPerimetreSaisineEnum,
   PerimetreInstructeurEnum,
   typesInstructeurDuPerimetre,
+  type PcaetPerimetreSaisine,
 } from '@tet/domain/demarches';
-import { and, eq, inArray, ne, or, SQL } from 'drizzle-orm';
+import { and, eq, inArray, ne, or, sql, SQL } from 'drizzle-orm';
 import {
   couvreLesCodesSql,
   perimetreCodesSql,
@@ -28,6 +30,12 @@ const typesNationaux = typesInstructeurDuPerimetre(
 export type InstructeurSaisi = {
   collectiviteId: number;
   nom: string;
+  /**
+   * Le territoire de la déposante par lequel ce service est atteint. Un service
+   * qui ne la touche que par un périmètre secondaire reçoit le dossier en
+   * lecture : l'avis revient à celui du siège.
+   */
+  perimetre: PcaetPerimetreSaisine;
 };
 
 @Injectable()
@@ -57,6 +65,10 @@ export class PcaetInstructeursRepository {
       .select({
         regionCodes: perimetreCodesSql(collectiviteTable, 'region'),
         departementCodes: perimetreCodesSql(collectiviteTable, 'departement'),
+        // Les codes du siège à part : ce sont eux qui départagent une saisine
+        // principale d'une secondaire.
+        regionPrincipale: collectiviteTable.regionCode,
+        departementPrincipal: collectiviteTable.departementCode,
       })
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, collectiviteId))
@@ -101,10 +113,49 @@ export class PcaetInstructeursRepository {
       return [];
     }
 
+    /**
+     * Le même croisement, mais restreint au territoire du siège : un service qui
+     * y répond est saisi au titre du périmètre principal, les autres ne touchent
+     * la déposante que par un de ses territoires secondaires.
+     *
+     * Le national est principal par construction — il couvre le pays, pas un
+     * territoire qui pourrait être secondaire.
+     *
+     * Mesuré sur les périmètres Banatic : aucun service ne répond aux deux à la
+     * fois, un périmètre secondaire étant par construction distinct du principal.
+     * La formulation tranche quand même en faveur du principal, qui est le plus
+     * favorable — un droit ne se perd pas sur une ambiguïté.
+     */
+    const couvreLeSiege = [
+      typesNationaux.length > 0
+        ? inArray(collectiviteTable.type, typesNationaux)
+        : undefined,
+      couvreLaDeposante(
+        typesParRegion,
+        'region',
+        deposante.regionPrincipale ? [deposante.regionPrincipale] : []
+      ),
+      couvreLaDeposante(
+        typesParDepartement,
+        'departement',
+        deposante.departementPrincipal ? [deposante.departementPrincipal] : []
+      ),
+    ].filter((clause) => clause !== undefined);
+
+    const perimetre =
+      couvreLeSiege.length === 0
+        ? sql<PcaetPerimetreSaisine>`${PcaetPerimetreSaisineEnum.SECONDAIRE}`
+        : sql<PcaetPerimetreSaisine>`case when ${or(
+            ...couvreLeSiege
+          )} then ${PcaetPerimetreSaisineEnum.PRINCIPAL} else ${
+            PcaetPerimetreSaisineEnum.SECONDAIRE
+          } end`;
+
     return db
       .select({
         collectiviteId: collectiviteTable.id,
         nom: collectiviteTable.nom,
+        perimetre,
       })
       .from(collectiviteTable)
       .where(and(or(...perimetres), ne(collectiviteTable.id, collectiviteId)));
@@ -143,6 +194,7 @@ export class PcaetInstructeursRepository {
           demarcheId,
           instructeurCollectiviteId: instructeur.collectiviteId,
           source: 'transmission' as const,
+          perimetre: instructeur.perimetre,
         }))
       )
       .onConflictDoNothing({

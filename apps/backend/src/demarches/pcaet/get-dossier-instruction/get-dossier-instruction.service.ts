@@ -9,9 +9,8 @@ import {
   DemarcheTypeEnum,
   getDemandeAvisEtat,
   getEtatDossierEnLecture,
-  peutDeposerAvisInstructeur,
   isDemarchePcaetAvisTousRendus,
-  getTitresAvisInstructeur,
+  getTitresAvisSaisine,
 } from '@tet/domain/demarches';
 import { eq, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
@@ -69,6 +68,7 @@ export class GetDossierInstructionService {
         collectiviteId: collectiviteTable.id,
         collectiviteNom: collectiviteTable.nom,
         instructeurType: instructrice.type,
+        perimetre: pcaetDemandeAvisTable.perimetre,
         nbAvisValides: sql<number>`(
           select count(*)::int from ${pcaetAvisTable}
           where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
@@ -146,12 +146,16 @@ export class GetDossierInstructionService {
     // de l'écran et la bascule de statut ne peuvent pas diverger. Un seul avis
     // validé sur les deux de la DREAL laisse l'échéance affichée.
     //
-    // Celui qui n'en dépose aucun — DDT, DR ADEME, service national — lit où en
-    // est *le dossier* : l'état de sa propre demande ne lui dit rien, elle
-    // restera vide par nature, et son délai passé la faisait afficher « Pas
-    // d'avis déposé » sur un dossier pourtant instruit.
-    const titresAttendus = getTitresAvisInstructeur(dossier.instructeurType);
-    const deposeAvis = peutDeposerAvisInstructeur(dossier.instructeurType);
+    // Celui qui n'en dépose aucun — DDT, DR ADEME, service national, et depuis
+    // les périmètres secondaires toute famille saisie au titre d'un territoire
+    // qui n'est pas le siège — lit où en est *le dossier* : l'état de sa propre
+    // demande ne lui dit rien, elle restera vide par nature, et son délai passé
+    // la faisait afficher « Pas d'avis déposé » sur un dossier pourtant instruit.
+    const titresAttendus = getTitresAvisSaisine(
+      dossier.instructeurType,
+      dossier.perimetre
+    );
+    const deposeAvis = titresAttendus.length > 0;
 
     const avisValides = avis.filter(({ valideLe }) => valideLe !== null);
     const achevement = deposeAvis

@@ -12,6 +12,14 @@ export const demarchesLabels = {
   contexteInstructionTitre: ({ instructeurNom }: { instructeurNom: string }) =>
     `Vous naviguez ici au titre de ${instructeurNom}`,
 
+  /**
+   * Le même repère, quand le dossier ne vient au service que par un territoire
+   * qu'il ne préside pas : l'EPCI déborde chez lui, l'avis revient au service du
+   * siège. Le dire évite de chercher un bouton de dépôt qui n'apparaîtra pas.
+   */
+  contexteInstructionLectureSeule:
+    'Ce dossier vous est communiqué pour information : il relève d’un territoire limitrophe, et l’avis revient au service dont il dépend.',
+
   contexteInstructionRetourDossier: 'Revenir à l’instruction',
 
   contexteInstructionRetour: 'Revenir à mes dossiers PCAET',

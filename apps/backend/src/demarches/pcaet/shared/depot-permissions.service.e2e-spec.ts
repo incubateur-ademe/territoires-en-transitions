@@ -201,4 +201,41 @@ describe('DepotPermissionsService', () => {
       failure(DepotPermissionsErrorEnum.UNAUTHORIZED)
     );
   });
+
+  /**
+   * Le quatrième axe, après le rôle, la famille et la fenêtre : le territoire
+   * qui vaut la saisine.
+   *
+   * La même DREAL, la même personne, le même dossier — seule change la raison
+   * pour laquelle elle l'a reçu. Un EPCI qui déborde chez elle le lui donne à
+   * lire ; l'avis du préfet de région revient à la DREAL de son siège.
+   */
+  describe('saisine au titre d’un périmètre secondaire', () => {
+    beforeAll(async () => {
+      // Les cas précédents laissent l'instruction close et l'échéance passée :
+      // sans cette remise en état, le refus viendrait de la fenêtre et ne
+      // prouverait rien du périmètre.
+      await db.db
+        .update(demarcheTable)
+        .set({ status: 'transmis_pour_avis', avisDeadlineAt: dansUnMois() })
+        .where(eq(demarcheTable.id, demarcheId));
+
+      await db.db
+        .update(pcaetDemandeAvisTable)
+        .set({ perimetre: 'secondaire' })
+        .where(eq(pcaetDemandeAvisTable.id, demandeId));
+    });
+
+    it('la DREAL consulte toujours le dépôt', async () => {
+      expect(
+        await service.canConsulterDepot(demandeId, { user: camille })
+      ).toEqual(success(undefined));
+    });
+
+    it('mais n’y dépose aucun avis, quel que soit son rôle', async () => {
+      expect(
+        await service.canDeposerAvis(demandeId, { user: camille })
+      ).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
+    });
+  });
 });

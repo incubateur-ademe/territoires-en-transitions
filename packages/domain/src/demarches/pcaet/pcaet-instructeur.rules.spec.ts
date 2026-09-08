@@ -1,14 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { collectiviteTypeEnum } from '../../collectivites';
+import { PcaetAvisAuTitreDeEnum } from './pcaet-avis-au-titre-de.enum.schema';
 import {
   getPerimetreInstructeur,
   getTitresAvisInstructeur,
+  getTitresAvisSaisine,
   isTypeInstructeur,
   PerimetreInstructeurEnum,
   peutDeposerAvisInstructeur,
+  peutDeposerAvisSaisine,
   typesInstructeur,
   typesInstructeurDeposantAvis,
 } from './pcaet-instructeur.rules';
+import { PcaetPerimetreSaisineEnum } from './pcaet-perimetre-saisine.enum.schema';
 
 describe('typesInstructeur', () => {
   it('holds the five bodies a transmitted dossier reaches', () => {
@@ -131,5 +135,59 @@ describe('typesInstructeurDeposantAvis', () => {
       collectiviteTypeEnum.DREAL,
       collectiviteTypeEnum.REGION,
     ]);
+  });
+});
+
+describe('getTitresAvisSaisine', () => {
+  const { PRINCIPAL, SECONDAIRE } = PcaetPerimetreSaisineEnum;
+
+  it('leaves a saisine on the déposante seat untouched', () => {
+    expect(
+      getTitresAvisSaisine(collectiviteTypeEnum.DREAL, PRINCIPAL)
+    ).toEqual(getTitresAvisInstructeur(collectiviteTypeEnum.DREAL));
+    expect(
+      getTitresAvisSaisine(collectiviteTypeEnum.REGION, PRINCIPAL)
+    ).toEqual([PcaetAvisAuTitreDeEnum.PRESIDENT_REGION]);
+  });
+
+  /**
+   * Le cœur de la carte : un EPCI qui déborde saisit la DREAL voisine, mais
+   * l'avis du préfet de région revient à celle de son siège. Rendre `[]` ferme
+   * le dépôt, vide `titresDeposables`, et sort la demande du décompte
+   * d'achèvement — sans quoi le dossier ne s'achèverait jamais.
+   */
+  it('expects nothing from a saisine reached through a secondary territory', () => {
+    expect(getTitresAvisSaisine(collectiviteTypeEnum.DREAL, SECONDAIRE)).toEqual(
+      []
+    );
+    expect(
+      getTitresAvisSaisine(collectiviteTypeEnum.REGION, SECONDAIRE)
+    ).toEqual([]);
+  });
+
+  it('keeps read-only families read-only on both sides', () => {
+    for (const perimetre of [PRINCIPAL, SECONDAIRE]) {
+      expect(getTitresAvisSaisine(collectiviteTypeEnum.DDT, perimetre)).toEqual(
+        []
+      );
+      expect(
+        getTitresAvisSaisine(collectiviteTypeEnum.DR_ADEME, perimetre)
+      ).toEqual([]);
+      expect(
+        getTitresAvisSaisine(collectiviteTypeEnum.SERVICE_NATIONAL, perimetre)
+      ).toEqual([]);
+    }
+  });
+
+  it('mirrors the titles in peutDeposerAvisSaisine', () => {
+    expect(
+      peutDeposerAvisSaisine(collectiviteTypeEnum.DREAL, PRINCIPAL)
+    ).toBe(true);
+    expect(
+      peutDeposerAvisSaisine(collectiviteTypeEnum.DREAL, SECONDAIRE)
+    ).toBe(false);
+    expect(peutDeposerAvisSaisine(collectiviteTypeEnum.DDT, PRINCIPAL)).toBe(
+      false
+    );
   });
 });

@@ -9,7 +9,7 @@ import type {
   PcaetAvisSens,
 } from '@tet/domain/demarches';
 import {
-  getTitresAvisInstructeur,
+  getTitresAvisSaisine,
   typesInstructeurDeposantAvis,
 } from '@tet/domain/demarches';
 import { and, asc, eq, inArray, isNotNull, ne } from 'drizzle-orm';
@@ -113,6 +113,7 @@ export class PcaetAvisRepository {
         demandeAvisId: pcaetDemandeAvisTable.id,
         demarcheId: pcaetDemandeAvisTable.demarcheId,
         instructeurType: collectiviteTable.type,
+        perimetre: pcaetDemandeAvisTable.perimetre,
         auTitreDe: pcaetAvisTable.auTitreDe,
       })
       .from(pcaetDemandeAvisTable)
@@ -123,10 +124,14 @@ export class PcaetAvisRepository {
           isNotNull(pcaetAvisTable.valideLe)
         )
       )
-      // Seules les demandes adressées à un instructeur *saisi pour avis*
-      // comptent dans l'achèvement. La région et la DDT reçoivent le dossier en
-      // lecture : les compter ici bloquerait la clôture pour toujours, puisque
-      // aucun avis ne peut émaner d'elles.
+      // Seules les demandes adressées à une famille *qui dépose* entrent ici. La
+      // DDT, la DR ADEME et les services nationaux reçoivent le dossier en
+      // lecture : les compter bloquerait la clôture pour toujours, puisque aucun
+      // avis ne peut émaner d'eux.
+      //
+      // Ce filtre ne suffit pas : une DREAL saisie au titre d'un périmètre
+      // secondaire est de la bonne famille et passe la jointure. C'est le
+      // `perimetre` de la demande qui l'écarte, plus bas.
       .innerJoin(
         collectiviteTable,
         and(
@@ -144,9 +149,14 @@ export class PcaetAvisRepository {
     for (const row of rows) {
       demarcheParDemande.set(row.demandeAvisId, row.demarcheId);
       const demande = demandes.get(row.demandeAvisId) ?? {
-        // Ce que la règle attend de ce destinataire-là : la DREAL ne répond pas
-        // du titre du président de région, et réciproquement.
-        titresAttendus: getTitresAvisInstructeur(row.instructeurType),
+        // Ce que la règle attend de cette saisine-là : la DREAL ne répond pas du
+        // titre du président de région, et réciproquement — et celle qu'un
+        // périmètre secondaire a saisie ne répond de rien, elle lit le dossier.
+        // La liste vide la sort du décompte d'achèvement.
+        titresAttendus: getTitresAvisSaisine(
+          row.instructeurType,
+          row.perimetre
+        ),
         titresValides: [] as PcaetAvisAuTitreDe[],
       };
       if (row.auTitreDe) {

@@ -11,8 +11,9 @@ import {
   fenetreAvisOuverte,
   instructeurCouvreCollectivite,
   isTypeInstructeur,
-  peutDeposerAvisInstructeur,
+  peutDeposerAvisSaisine,
   type FenetreAvisEntree,
+  type PcaetPerimetreSaisine,
   type PerimetreInstructeurEntree,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -33,7 +34,14 @@ import { perimetreInstructeurColumns } from './perimetre-instructeur.columns';
  * gardes, celui-là l'affichage.
  */
 export type ContexteDemandeAvis = PerimetreInstructeurEntree &
-  FenetreAvisEntree & { instructeurCollectiviteId: number };
+  FenetreAvisEntree & {
+    instructeurCollectiviteId: number;
+    /**
+     * Le territoire de la déposante qui vaut cette saisine. Un service atteint
+     * par un périmètre secondaire lit le dossier sans s'y prononcer.
+     */
+    perimetre: PcaetPerimetreSaisine;
+  };
 
 @Injectable()
 export class DepotPermissionsService {
@@ -186,10 +194,15 @@ export class DepotPermissionsService {
     }
     const contexte = contexteResult.data;
 
-    // Tous les destinataires d'une transmission ne sont pas saisis pour avis :
-    // le conseil régional et la DDT reçoivent le dossier en lecture. Aucun rôle
-    // ne leur ouvre le dépôt, c'est leur type qui le ferme.
-    if (!peutDeposerAvisInstructeur(contexte.instructeurType)) {
+    // Tous les destinataires d'une transmission ne sont pas saisis pour avis.
+    // Deux choses ferment le dépôt, et aucun rôle ne les ouvre : la famille du
+    // service — la DDT, la DR ADEME et les services nationaux reçoivent le
+    // dossier en lecture — et le territoire qui vaut la saisine. Une DREAL
+    // atteinte par un périmètre secondaire de la déposante lit le dossier :
+    // l'avis du préfet de région revient à celle du siège.
+    if (
+      !peutDeposerAvisSaisine(contexte.instructeurType, contexte.perimetre)
+    ) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
@@ -259,6 +272,7 @@ export class DepotPermissionsService {
       .select({
         instructeurCollectiviteId:
           pcaetDemandeAvisTable.instructeurCollectiviteId,
+        perimetre: pcaetDemandeAvisTable.perimetre,
         demarcheStatus: demarcheTable.status,
         avisDeadlineAt: demarcheTable.avisDeadlineAt,
         ...perimetreInstructeurColumns(deposante, instructrice),

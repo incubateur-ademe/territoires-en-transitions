@@ -50,6 +50,20 @@ export const ContexteInstructionBanner = () => {
           {appLabels.contexteInstructionTitre({
             instructeurNom: contexte.instructeur.nom,
           })}
+          {/* Un dossier qui n'arrive que par un territoire limitrophe se lit
+              sans se conclure : le dire ici, où l'agent lit déjà à quel titre
+              il est là, plutôt que de le laisser déduire d'un bouton absent. */}
+          {!contexte.deposeAvis && (
+            <>
+              {' '}
+              <span
+                className="font-medium"
+                data-test="demarches.pcaet.instruction.contexte-banniere.lecture-seule"
+              >
+                {appLabels.contexteInstructionLectureSeule}
+              </span>
+            </>
+          )}
         </span>
         <div className="ml-auto flex items-center gap-2">
           {/* Inutile de proposer le dossier quand on y est déjà. */}

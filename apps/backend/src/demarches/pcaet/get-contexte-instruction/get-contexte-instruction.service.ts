@@ -7,6 +7,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { Result, success } from '@tet/backend/utils/result.type';
 import {
   instructeurCouvreCollectivite,
+  peutDeposerAvisSaisine,
   type ContexteInstruction,
 } from '@tet/domain/demarches';
 import { and, desc, eq, sql } from 'drizzle-orm';
@@ -46,6 +47,8 @@ export class GetContexteInstructionService {
         demandeAvisId: pcaetDemandeAvisTable.id,
         instructeurCollectiviteId: instructrice.id,
         instructeurNom: instructrice.nom,
+        perimetre: pcaetDemandeAvisTable.perimetre,
+        // Fournit `instructeurType`, dont dépend la famille du service.
         ...perimetreInstructeurColumns(deposante, instructrice),
       })
       .from(pcaetDemandeAvisTable)
@@ -111,6 +114,13 @@ export class GetContexteInstructionService {
         collectiviteId: saisine.instructeurCollectiviteId,
         nom: saisine.instructeurNom,
       },
+      // Le droit de *cette* saisine, pas celui du service en général : c'est le
+      // dossier retenu ci-dessus qui décide, et un autre pourrait répondre
+      // l'inverse.
+      deposeAvis: peutDeposerAvisSaisine(
+        saisine.instructeurType,
+        saisine.perimetre
+      ),
     });
   }
 }

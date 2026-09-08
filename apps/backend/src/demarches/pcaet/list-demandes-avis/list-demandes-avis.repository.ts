@@ -9,6 +9,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   getPerimetreInstructeur,
   PerimetreInstructeurEnum,
+  type PcaetPerimetreSaisine,
 } from '@tet/domain/demarches';
 import type { CollectiviteType } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -36,6 +37,12 @@ export type DemandeAvisRow = {
   collectiviteId: number;
   collectiviteNom: string;
   collectiviteDepartementCode: string | null;
+  /**
+   * Le territoire de la déposante qui vaut cette saisine. Il varie d'une ligne à
+   * l'autre : la même DREAL est principale sur un dossier et secondaire sur un
+   * autre, et n'y lit donc pas la même chose.
+   */
+  perimetre: PcaetPerimetreSaisine;
   nbAvisValides: number;
   nbAvisBrouillons: number;
   /**
@@ -125,6 +132,7 @@ export class ListDemandesAvisRepository {
           collectiviteId: collectiviteTable.id,
           collectiviteNom: collectiviteTable.nom,
           collectiviteDepartementCode: collectiviteTable.departementCode,
+          perimetre: pcaetDemandeAvisTable.perimetre,
           nbAvisValides: sql<number>`(
             select count(*)::int from ${pcaetAvisTable}
             where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}

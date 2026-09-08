@@ -128,7 +128,14 @@ export const DemandesAvisTable = ({
   onTrierParEcheance,
 }: {
   demandes: Demande[];
-  /** Le nom accessible du tableau suit la famille, comme le titre visible. */
+  /**
+   * Le nom accessible du tableau suit la famille, comme le titre visible : il
+   * dit ce que ce service fait d'ordinaire.
+   *
+   * L'état de chaque ligne, lui, se lit sur la ligne — `demande.deposeAvis`. Une
+   * DREAL dépose sur le dossier de sa région et lit celui de l'EPCI voisin qui
+   * déborde chez elle : les deux tiennent dans ce tableau.
+   */
   deposeAvis: boolean;
   onTrierParCollectivite: () => void;
   onTrierParContact: () => void;
@@ -182,7 +189,9 @@ export const DemandesAvisTable = ({
           </TableCell>
           <TableCell>
             <Badge
-              title={demandeAvisEtatLabel(demande.etat, { deposeAvis })}
+              title={demandeAvisEtatLabel(demande.etat, {
+                deposeAvis: demande.deposeAvis,
+              })}
               variant={DEMANDE_AVIS_ETAT_VARIANTS[demande.etat]}
               size="sm"
             />
