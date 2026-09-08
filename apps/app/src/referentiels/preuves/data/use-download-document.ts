@@ -1,5 +1,5 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
+import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/toast/download-file-mutation-options';
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
