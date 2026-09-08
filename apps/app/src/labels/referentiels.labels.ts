@@ -38,6 +38,14 @@ export const referentielsLabels = {
   referentielTableThematiquesViewsSgpe: 'Planification Écologique',
   referentielTableThematiquesViewsAxes: 'Axes',
 
+  /** Onglets de la vue référentiel */
+  referentielOngletMesures: 'Mesures',
+  referentielOngletSynthese: 'Synthèse',
+  referentielOngletEvolutions: 'Évolutions du score',
+  referentielOngletCommentaires: 'Commentaires',
+  referentielOngletDocuments: 'Documents',
+  referentielOngletHistorique: "Journal d'activité",
+
   /** Mesure */
   actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
   document: plural({ one: 'document', other: 'documents' }),
