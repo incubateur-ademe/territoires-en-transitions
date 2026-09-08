@@ -21,6 +21,8 @@ import { UpdateDocumentRouter } from '@tet/backend/collectivites/documents/updat
 import { UpdateDocumentService } from '@tet/backend/collectivites/documents/update-document/update-document.service';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.service';
+import { ImportPerimetresEpciRouter } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.router';
+import { ImportPerimetresEpciService } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.service';
 import { ExportConnectService } from '@tet/backend/collectivites/membres/sync-membres-with-crm-connect/export-connect.service';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
@@ -117,6 +119,8 @@ import { PersonnesService } from './services/personnes.service';
     RecherchesRouter,
     ImportCollectiviteRelationsService,
     ImportCollectiviteRelationsRouter,
+    ImportPerimetresEpciService,
+    ImportPerimetresEpciRouter,
     CollectivitePreferencesRepository,
     CollectivitePreferencesService,
     CollectivitePreferencesRouter,
@@ -163,6 +167,8 @@ import { PersonnesService } from './services/personnes.service';
     RecherchesRouter,
     ImportCollectiviteRelationsService,
     ImportCollectiviteRelationsRouter,
+    ImportPerimetresEpciService,
+    ImportPerimetresEpciRouter,
     CollectivitePreferencesRepository,
     CollectivitePreferencesRouter,
     CollectivitePreferencesService,

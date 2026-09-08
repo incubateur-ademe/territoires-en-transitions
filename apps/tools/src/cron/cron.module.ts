@@ -14,6 +14,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../config/configuration.module';
+import { CronImportPerimetresEpciService } from '../collectivites/cron-import-perimetres-epci.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CronService } from './cron.service';
@@ -42,6 +43,7 @@ import { CronService } from './cron.service';
     CronConsumerService,
     CronNotificationsService,
     CronCloreInstructionsService,
+    CronImportPerimetresEpciService,
   ],
 })
 export class CronModule {}

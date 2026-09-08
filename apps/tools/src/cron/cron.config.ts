@@ -69,6 +69,18 @@ export const JOBS_CONFIG = [
     cronExpression: CronExpression.EVERY_DAY_AT_2AM,
     data: {},
   },
+  {
+    // Le 1er janvier à 4 h. `CronExpression` n'a pas de valeur annuelle, d'où
+    // l'expression littérale — comme les jobs CRM.
+    //
+    // La source BANATIC est publiée une fois par an et les périmètres des EPCI
+    // à fiscalité propre bougent peu ; le calcul dure une trentaine de secondes
+    // sur la queue partagée, ce qui décale d'autant le `send-notifications` de
+    // la minute concernée, une fois l'an.
+    name: 'import-perimetres-epci',
+    cronExpression: '0 4 1 1 *',
+    data: {},
+  },
   ...CRM_SYNC_JOBS_CONFIG,
 ] as const;
 
