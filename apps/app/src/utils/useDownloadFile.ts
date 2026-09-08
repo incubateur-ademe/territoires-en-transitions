@@ -1,5 +1,5 @@
-import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/toast/download-file-mutation-options';
 import { useMutation } from '@tanstack/react-query';
 
 /** Télécharge un fichier du dossier "public" */
@@ -14,10 +14,3 @@ export const useDownloadFile = () =>
     },
     ...DOWNLOAD_FILE_MUTATION_OPTIONS,
   });
-
-export const DOWNLOAD_FILE_MUTATION_OPTIONS = {
-  meta: {
-    success: appLabels.telechargementFichierReussi,
-    error: appLabels.telechargementFichierErreur,
-  },
-};
