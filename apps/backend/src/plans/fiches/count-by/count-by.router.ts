@@ -13,12 +13,13 @@ export class CountByRouter {
   router = this.trpc.router({
     countBy: this.trpc.authedProcedure
       .input(countByRequestSchema)
-      .query(({ input }) => {
+      .query(({ input, ctx }) => {
         const { collectiviteId, countByProperty, filter } = input;
         return this.service.countByProperty(
           collectiviteId,
           countByProperty,
-          filter
+          filter,
+          { user: ctx.user }
         );
       }),
   });

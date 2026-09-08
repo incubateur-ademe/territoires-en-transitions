@@ -1,3 +1,4 @@
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Injectable, Logger } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
@@ -99,7 +100,8 @@ export class LoadScoreComparisonService {
   async loadScoreComparison(
     collectiviteId: number,
     referentielId: ReferentielId,
-    query: ExportScoreComparisonRequestQuery
+    query: ExportScoreComparisonRequestQuery,
+    { user }: { user: AuthUser }
   ): Promise<Result<ScoreComparisonData, ExportScoreComparisonError>> {
     const { exportFormat, isAudit, snapshotReferences } = query;
     const excludeDesactive = query.excludeDesactive === true;
@@ -173,7 +175,8 @@ export class LoadScoreComparisonService {
     );
     const fichesActionLiees = await this.getFichesActionLiees(
       collectiviteId,
-      mesureIds
+      mesureIds,
+      { user }
     );
 
     const { snapshot1Label, snapshot2Label } = this.getScoreHeaderLabels(
@@ -257,11 +260,7 @@ export class LoadScoreComparisonService {
       const snapshot1Result =
         snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
           ? await this.getCurrentSnapshot(collectiviteId, referentielId)
-          : await this.getSnapshot(
-              collectiviteId,
-              referentielId,
-              snapshot1Ref
-            );
+          : await this.getSnapshot(collectiviteId, referentielId, snapshot1Ref);
       if (!snapshot1Result.success) {
         return snapshot1Result;
       }
@@ -468,8 +467,9 @@ export class LoadScoreComparisonService {
   private async getActionDescriptions(
     referentielId: ReferentielId
   ): Promise<Record<ActionId, string>> {
-    const referentiel =
-      await this.getReferentielService.getReferentielTree(referentielId);
+    const referentiel = await this.getReferentielService.getReferentielTree(
+      referentielId
+    );
 
     const descriptions: Record<string, string> = {};
 
@@ -497,18 +497,22 @@ export class LoadScoreComparisonService {
 
   private async getFichesActionLiees(
     collectiviteId: number,
-    mesureIds: ActionId[]
+    mesureIds: ActionId[],
+    { user }: { user: AuthUser }
   ): Promise<Record<ActionId, string>> {
     const fichesActionLiees: Record<string, string[]> = {};
 
     try {
       const { data: fiches } =
-        await this.listFichesService.getFichesActionResumes({
-          collectiviteId,
-          filters: {
-            mesureIds,
+        await this.listFichesService.getFichesActionResumes(
+          {
+            collectiviteId,
+            filters: {
+              mesureIds,
+            },
           },
-        });
+          { user }
+        );
 
       if (fiches && fiches.length > 0) {
         for (const fiche of fiches) {

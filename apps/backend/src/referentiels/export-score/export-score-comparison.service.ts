@@ -12,6 +12,7 @@ import {
   ExportScoreComparisonErrorEnum,
 } from './export-score-comparison.errors';
 import { LoadScoreComparisonService } from './load-score-comparison.service';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 
 @Injectable()
 export class ExportScoreComparisonService {
@@ -24,7 +25,8 @@ export class ExportScoreComparisonService {
   async exportComparisonScore(
     collectiviteId: number,
     referentielId: ReferentielId,
-    query: ExportScoreComparisonRequestQuery
+    query: ExportScoreComparisonRequestQuery,
+    { user }: { user: AuthUser }
   ): Promise<
     Result<{ fileName: string; content: Buffer }, ExportScoreComparisonError>
   > {
@@ -38,7 +40,8 @@ export class ExportScoreComparisonService {
       await this.loadScoreComparisonService.loadScoreComparison(
         collectiviteId,
         referentielId,
-        query
+        query,
+        { user }
       );
     if (!scoreComparisonResult.success) {
       return scoreComparisonResult;
