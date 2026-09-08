@@ -7,6 +7,8 @@ import { type DocumentToDownload } from './get-download-url.repository';
 
 const HASH = 'ec07d0538e44a333b23b936c9a4ba37fbd211c6272e632d2173b6abe102a0482';
 
+const FICHIER_ID = 42;
+
 const user: AuthenticatedUser = { id: 'user-id' } as AuthenticatedUser;
 
 const allowed = { success: true, data: undefined };
@@ -100,7 +102,7 @@ describe('GetDownloadUrlService', () => {
     });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -115,7 +117,7 @@ describe('GetDownloadUrlService', () => {
     });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -131,7 +133,7 @@ describe('GetDownloadUrlService', () => {
     });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -146,7 +148,7 @@ describe('GetDownloadUrlService', () => {
     });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -157,7 +159,7 @@ describe('GetDownloadUrlService', () => {
     const { service } = buildService();
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -173,7 +175,7 @@ describe('GetDownloadUrlService', () => {
     });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -182,11 +184,11 @@ describe('GetDownloadUrlService', () => {
     expect(documentStorage.createSignedDownloadUrl).not.toHaveBeenCalled();
   });
 
-  it('rend DOCUMENT_NOT_FOUND quand le hash ne designe aucun document de la collectivite', async () => {
+  it("rend DOCUMENT_NOT_FOUND quand l'identifiant ne designe aucun document de la collectivite", async () => {
     const { service } = buildService({ documentExists: false });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -197,7 +199,7 @@ describe('GetDownloadUrlService', () => {
     const { service, documentStorage } = buildService({ hasBucket: false });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -212,7 +214,7 @@ describe('GetDownloadUrlService', () => {
     const { service } = buildService({ signatureFails: true });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 1, hash: HASH },
+      { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
@@ -229,7 +231,7 @@ describe('GetDownloadUrlService', () => {
     });
 
     const result = await service.getDownloadUrl(
-      { collectiviteId: 404, hash: HASH },
+      { collectiviteId: 404, fichierId: FICHIER_ID },
       { user }
     );
 

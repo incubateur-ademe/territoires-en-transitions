@@ -25,7 +25,7 @@ export class GetDownloadUrlService {
   ) {}
 
   async getDownloadUrl(
-    { collectiviteId, hash }: GetDownloadUrlInput,
+    { collectiviteId, fichierId }: GetDownloadUrlInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<GetDownloadUrlOutput, GetDownloadUrlError>> {
     const [readResult, readConfidentielResult] = await Promise.all([
@@ -63,7 +63,7 @@ export class GetDownloadUrlService {
 
     const document = await this.repository.findDocument({
       collectiviteId,
-      hash,
+      fichierId,
     });
     if (document === undefined) {
       return failure(GetDownloadUrlErrorEnum.DOCUMENT_NOT_FOUND);

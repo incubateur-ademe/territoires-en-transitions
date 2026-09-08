@@ -28,10 +28,10 @@ export class GetDownloadUrlRepository {
 
   async findDocument({
     collectiviteId,
-    hash,
+    fichierId,
   }: {
     collectiviteId: number;
-    hash: string;
+    fichierId: number;
   }): Promise<DocumentToDownload | undefined> {
     const [document] = await this.databaseService.db
       .select({
@@ -43,7 +43,7 @@ export class GetDownloadUrlRepository {
       .where(
         and(
           eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
-          eq(bibliothequeFichierTable.hash, hash)
+          eq(bibliothequeFichierTable.id, fichierId)
         )
       )
       .limit(1);

@@ -87,9 +87,9 @@ const toPreuve = ({
   collectiviteId: 1,
   preuveType: 'labellisation',
   fichier: {
+    id,
     filename,
     hash: `hash-${id}`,
-    bucketId: 'bucket',
     confidentiel: false,
   },
 });

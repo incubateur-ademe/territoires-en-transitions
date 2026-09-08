@@ -9,7 +9,7 @@ import { useDemarchePcaetAvisRecus } from '@/app/demarches/pcaet/data/use-avis-r
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
-import { downloadFichier } from '@/app/referentiels/preuves/Bibliotheque/download-fichier';
+import { useDownloadDocument } from '@/app/referentiels/preuves/data/use-download-document';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
@@ -57,6 +57,8 @@ export const DemarchePcaetDocumentsPage = () => {
     enabled: demarche?.avalModifiable === true,
   });
 
+  const { mutate: downloadDocument } = useDownloadDocument({ collectiviteId });
+
   if (isLoading) {
     return (
       <div className="flex grow items-center justify-center">
@@ -79,14 +81,13 @@ export const DemarchePcaetDocumentsPage = () => {
   const estAval = demarche.avalModifiable;
   const etapeCourante: DemarcheDocumentEtape = estAval ? 'aval' : 'amont';
 
-  const downloadDocument = ({
+  const downloadDemarcheDocument = ({
     fichier,
-  }: DemarcheDocumentDepose | DemarcheDocumentAdditional) =>
-    downloadFichier({
-      bucketId: fichier?.bucketId,
-      hash: fichier?.hash,
-      filename: fichier?.filename,
-    });
+  }: DemarcheDocumentDepose | DemarcheDocumentAdditional): void => {
+    if (fichier) {
+      downloadDocument(fichier.id);
+    }
+  };
 
   return (
     <DemarcheShell
@@ -175,8 +176,8 @@ export const DemarchePcaetDocumentsPage = () => {
               onRenameAdditional={renameDocumentAdditional}
               onAddFichierAdditional={addFichierDocumentAdditional}
               onRemoveAdditional={removeDocumentAdditional}
-              onDownload={downloadDocument}
-              onDownloadAdditional={downloadDocument}
+              onDownload={downloadDemarcheDocument}
+              onDownloadAdditional={downloadDemarcheDocument}
             />
           </div>
         )}

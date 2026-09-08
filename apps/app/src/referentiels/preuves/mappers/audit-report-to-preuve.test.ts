@@ -65,6 +65,7 @@ describe('auditReportToPreuve', () => {
 
   it('cas fichier : conserve le fichier, force lien=null', () => {
     const fichier = {
+      id: 71,
       bucketId: 'b1',
       filename: 'rapport.pdf',
       filesize: 1024,
@@ -91,6 +92,7 @@ describe('auditReportToPreuve', () => {
 
   it('priorise fichier sur lien si les deux sont fournis (input pathologique)', () => {
     const fichier = {
+      id: 71,
       bucketId: 'b1',
       filename: 'a.pdf',
       filesize: 1,

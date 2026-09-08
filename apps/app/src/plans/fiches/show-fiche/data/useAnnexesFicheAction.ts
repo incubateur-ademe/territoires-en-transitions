@@ -22,6 +22,7 @@ export function annexeDocumentToPreuve(annexe: AnnexeDocument): PreuveAnnexe {
     return {
       ...base,
       fichier: {
+        id: annexe.fichier.id,
         bucketId: annexe.fichier.bucketId,
         hash: annexe.fichier.hash,
         filename: annexe.fichier.filename,

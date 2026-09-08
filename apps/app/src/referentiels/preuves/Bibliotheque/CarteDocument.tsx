@@ -26,7 +26,7 @@ import { DuplicatedDocumentAlert } from './duplicated-document.alert';
 import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
 import MenuCarteDocument from './MenuCarteDocument';
-import { openPreuve } from './openPreuve';
+import { useOpenPreuve } from './use-open-preuve';
 import { Preuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
@@ -88,6 +88,7 @@ const CarteDocument = ({
   classComment,
   duplicatedDocumentInformation,
 }: CarteDocumentProps) => {
+  const openPreuve = useOpenPreuve({ collectiviteId: document.collectiviteId });
   const {
     commentaire,
     modifiedAt: dateCreation,
