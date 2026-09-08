@@ -26,9 +26,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * `OIDC_LOGIN_COOKIE` posé pour `TrackLoginUserWithOidc`.
  *
  * `rattachement` et `rattachement-type` disent qu'un service vient de s'ouvrir
- * à l'agent — voir `readAutoAttachmentLanding`. Un `next` explicite passe
- * devant : il vient d'une intention de l'agent, là où ceci n'est qu'un défaut
- * mieux choisi que la racine.
+ * à l'agent (cf. `readAutoAttachmentLanding`). Un `next` explicite passe devant.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = getRequestUrl(request);

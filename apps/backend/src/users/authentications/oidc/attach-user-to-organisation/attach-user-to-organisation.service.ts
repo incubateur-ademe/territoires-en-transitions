@@ -22,11 +22,7 @@ import {
   AttachUserToOrganisationErrorEnum,
 } from './attach-user-to-organisation.errors';
 
-/**
- * Le résultat, dit du point de vue de l'appelant : soit un service à annoncer,
- * soit rien à faire. `raison` n'existe que pour le journal — aucun appelant ne
- * s'y branche, et l'utilisateur n'en voit jamais rien.
- */
+/** `raison` ne sert qu'au journal : aucun appelant ne s'y branche. */
 export type AutoAttachmentOutcome =
   | ({ statut: 'rattache' } & RattachementAutomatique)
   | { statut: 'aucun'; raison: AutoAttachmentRefus };
@@ -39,35 +35,13 @@ type AutoAttachmentRefus =
   | 'droit-deja-connu';
 
 /**
- * Le rattachement automatique d'un agent à son service, sur la seule foi de son
- * identité.
+ * Le rattachement d'un agent à son service, sur la foi de l'organisation que
+ * son fournisseur d'identité atteste.
  *
- * Un agent d'un service de l'État n'avait aucun moyen d'entrer : le parcours
- * « rejoindre une collectivité » refuse ces structures, et l'import des membres
- * n'est pas livré. Or l'organisation que l'agent choisit chez son fournisseur
- * d'identité **fait foi** — elle vaut mieux qu'un formulaire, et personne n'a
- * besoin de l'inviter.
- *
- * Quatre conditions, toutes nécessaires :
- *
- * 1. le jeton porte un SIRET ;
- * 2. ce SIRET désigne une collectivité, et une seule ;
- * 3. son type se rejoint par identité (`isAutoAttachableType`) — une commune
- *    reste sur le parcours d'invitation ;
- * 4. l'adresse de l'agent porte le domaine exigé par cet employeur, là où l'un
- *    est déclaré (`canAutoAttachEmail`).
- *
- * La quatrième est volontairement redondante avec la deuxième. Elle vaut pour le
- * jour où le fournisseur d'identité se tromperait d'organisation : c'est arrivé
- * en août 2026, quand MonCompteAdeme renvoyait le SIRET du siège de l'ADEME au
- * lieu de celui du service choisi. Ce SIRET désigne un service à périmètre
- * national, destinataire de **toute** transmission PCAET — la même erreur y
- * ferait entrer n'importe qui, et le domaine de messagerie est ce qui l'arrête.
- *
- * Le rattachement est **idempotent** et ne réveille rien : il n'agit que s'il
- * n'existe aucune ligne de droit pour ce couple, active ou non. Un droit retiré
- * par un administrateur laisse une ligne inactive derrière lui, et le voir
- * revenir à la connexion suivante annulerait sa décision.
+ * Le verrou de domaine est volontairement redondant avec le rapprochement par
+ * SIRET : en août 2026 MonCompteAdeme renvoyait le SIRET du siège de l'ADEME au
+ * lieu du service choisi, et ce SIRET désigne un service à périmètre national,
+ * destinataire de toute transmission PCAET.
  */
 @Injectable()
 export class AttachUserToOrganisationService {
@@ -86,6 +60,29 @@ export class AttachUserToOrganisationService {
     claims: OidcClaims,
     tx?: Transaction
   ): Promise<Result<AutoAttachmentOutcome, AttachUserToOrganisationError>> {
+    // Aucune exception ne doit sortir d'ici : un échec du rattachement ne fait
+    // jamais échouer la connexion. `executeSingle` relance d'ailleurs
+    // l'exception quand un `tx` lui est passé.
+    try {
+      return await this.rattacher(userId, provider, claims, tx);
+    } catch (error) {
+      this.logger.error(
+        `Rattachement automatique du compte ${userId} interrompu par une exception`,
+        error
+      );
+      return failure(
+        AttachUserToOrganisationErrorEnum.ATTACH_ORGANISATION_ERROR,
+        error instanceof Error ? error : undefined
+      );
+    }
+  }
+
+  private async rattacher(
+    userId: string,
+    provider: OidcProvider,
+    claims: OidcClaims,
+    tx?: Transaction
+  ): Promise<Result<AutoAttachmentOutcome, AttachUserToOrganisationError>> {
     if (!claims.siret) {
       return this.refuser(userId, 'sans-siret');
     }
@@ -95,9 +92,8 @@ export class AttachUserToOrganisationService {
       tx
     );
 
-    // Le SIRET reçu et le service rapproché, tracés à chaque connexion : c'est
-    // le seul endroit d'où l'on verra qu'un fournisseur d'identité s'est remis
-    // à renvoyer la mauvaise organisation.
+    // Seule trace permettant de voir qu'un fournisseur d'identité s'est remis à
+    // renvoyer la mauvaise organisation.
     this.logger.log(
       `Rattachement automatique (${provider}) : siret ${claims.siret} → ${
         collectivite
@@ -142,29 +138,33 @@ export class AttachUserToOrganisationService {
         return this.refuser(userId, 'droit-deja-connu');
       }
 
-      try {
-        await transaction.insert(utilisateurCollectiviteAccessTable).values({
+      // Le `select` porte la règle — ne jamais réveiller un droit retiré ;
+      // l'`on conflict` porte la course, deux callbacks concurrents le passant
+      // tous deux.
+      const [droitPose] = await transaction
+        .insert(utilisateurCollectiviteAccessTable)
+        .values({
           userId,
           collectiviteId: collectivite.collectiviteId,
           isActive: true,
           role: CollectiviteRole.EDITION,
           invitationId: null,
-        });
+        })
+        .onConflictDoNothing({
+          target: [
+            utilisateurCollectiviteAccessTable.userId,
+            utilisateurCollectiviteAccessTable.collectiviteId,
+          ],
+        })
+        .returning({ id: utilisateurCollectiviteAccessTable.id });
 
-        // Une identité prouvée vaut au moins une invitation par email, et le
-        // compte non vérifié est traité à part par les gardes de collectivité.
-        // C'est aussi ce que fait le chemin d'invitation, dans sa transaction.
-        await this.updateUserRoleService.setIsVerified(
-          userId,
-          true,
-          transaction
-        );
-      } catch (error) {
-        return failure(
-          AttachUserToOrganisationErrorEnum.ATTACH_ORGANISATION_ERROR,
-          error instanceof Error ? error : undefined
-        );
+      if (!droitPose) {
+        return this.refuser(userId, 'droit-deja-connu');
       }
+
+      // Comme le chemin d'invitation : sans ça, les gardes de collectivité
+      // traitent le compte à part.
+      await this.updateUserRoleService.setIsVerified(userId, true, transaction);
 
       this.logger.log(
         `Compte ${userId} rattaché à la collectivité #${collectivite.collectiviteId} en ${CollectiviteRole.EDITION}`
@@ -185,11 +185,7 @@ export class AttachUserToOrganisationService {
     return resultat;
   }
 
-  /**
-   * Un refus, dit au journal. Toute la recette d'un rattachement qui n'a pas eu
-   * lieu tient là : sans la raison, il ne reste qu'un agent sans accès et rien
-   * pour dire lequel des quatre verrous a joué.
-   */
+  /** La raison au journal : sans elle, un rattachement absent est muet. */
   private refuser(
     userId: string,
     raison: AutoAttachmentRefus
@@ -201,11 +197,9 @@ export class AttachUserToOrganisationService {
   }
 
   /**
-   * Marque le service à annoncer, pour que l'app en explique le parcours une
-   * fois. Hors de la transaction, et sans conséquence si elle échoue : le droit
-   * est acquis, et c'est lui qui compte — un écran d'accueil manquant n'est pas
-   * un accès manquant. Le dépôt des préférences n'accepte pas de transaction,
-   * et lui en donner une pour cela seul ne vaut pas le détour.
+   * Hors transaction, et sans conséquence si elle échoue : un écran d'accueil
+   * manquant n'est pas un accès manquant, et le dépôt des préférences n'accepte
+   * pas de `tx`.
    */
   private async annoncerLeService(
     userId: string,

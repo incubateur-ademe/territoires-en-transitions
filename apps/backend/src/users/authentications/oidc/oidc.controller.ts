@@ -232,11 +232,8 @@ export class OidcController {
           return;
         }
 
-        // La liaison volontaire vaut aussi preuve d'appartenance : l'agent
-        // vient de désigner son organisation chez le fournisseur d'identité,
-        // exactement comme à une connexion. Sans ce rattachement, lier son
-        // compte depuis le profil était le seul chemin OIDC à n'ouvrir aucun
-        // service.
+        // Désigner son organisation depuis le profil vaut preuve
+        // d'appartenance autant qu'une connexion.
         const service = await this.rattacherOrganisationService.attach(
           linkUserId,
           providerConfig.provider,
@@ -248,9 +245,7 @@ export class OidcController {
           );
         }
 
-        // Pas de paramètre d'atterrissage ici : l'agent est déjà dans l'app, et
-        // c'est la modale d'accueil — que le rattachement vient d'armer — qui
-        // lui annonce son service.
+        // Pas d'atterrissage : l'agent est déjà dans l'app, la modale annonce.
         profilUrl.searchParams.set('comptes-associes', '1');
         res.redirect(303, profilUrl.href);
         return;
@@ -371,13 +366,8 @@ export class OidcController {
   }
 
   /**
-   * Signale à l'app que cette connexion vient d'ouvrir un service.
-   *
    * L'identifiant et le type, jamais l'URL : c'est l'app qui sait où atterrit
-   * une collectivité, et le type est ce qui lui permet de trancher — l'espace
-   * d'un service *est* celui de l'instruction, celui d'un conseil régional non.
-   * Le backend n'a pas à connaître la forme de ses routes ; il en construit
-   * déjà une de trop avec `/auth/verify`.
+   * une collectivité, et le type est ce qui lui permet de trancher.
    */
   private setRattachement(
     verifyUrl: URL,

@@ -18,22 +18,13 @@ export type CollectiviteRapprochee = {
 };
 
 /**
- * La collectivité que désigne un SIRET, au plus précis dont on dispose.
+ * La collectivité que désigne un SIRET, au plus précis disponible : sur le SIRET
+ * entier — seul niveau qui départage les directions régionales de l'ADEME, qui
+ * partagent son SIREN — puis sur le SIREN seul s'il est unique, le classeur ne
+ * donnant que le NIC du siège.
  *
- * Le SIRET nomme un **établissement**, `collectivite` porte un SIREN et un NIC :
- * les deux se rapprochent donc à deux niveaux, et l'ordre compte.
- *
- * 1. Sur le SIRET entier. C'est le seul niveau qui tranche entre les directions
- *    régionales de l'ADEME, qui partagent son SIREN et ne se distinguent que par
- *    leur NIC.
- * 2. À défaut, sur le SIREN seul, et seulement s'il ne désigne qu'une
- *    collectivité. Le classeur de l'ADEME donne le NIC du **siège** ; un agent
- *    dont ProConnect renvoie une autre implantation de la même DREAL doit
- *    quand même retrouver son service.
- *
- * Ce service vit dans le module OIDC et non dans le domaine collectivités : ses
- * deux appelants y sont, et `CollectivitesCoreModule` importe `UsersModule` —
- * l'y placer refermerait le cycle.
+ * Dans le module OIDC et non dans le domaine collectivités : ses deux appelants
+ * y sont, et `CollectivitesCoreModule` importe `UsersModule`.
  */
 @Injectable()
 export class GetCollectiviteBySiretService {
@@ -64,7 +55,6 @@ export class GetCollectiviteBySiretService {
       siren: collectiviteTable.siren,
     };
 
-    // Deux lignes suffisent à conclure : ce qu'on cherche, c'est l'unicité.
     const parSiret = await db
       .select(colonnes)
       .from(collectiviteTable)
@@ -78,9 +68,8 @@ export class GetCollectiviteBySiretService {
     }
 
     if (parSiret.length > 1) {
-      // L'import ne pose qu'une ligne par SIRET, et le `verify` de
-      // `collectivite/perimetre_secondaire` le tient. Y arriver quand même
-      // signifie une saisie à la main : on ne devine pas laquelle.
+      // L'import n'en pose qu'une par SIRET : deux signent une saisie à la
+      // main, et on ne devine pas laquelle.
       this.logger.warn(
         `Rapprochement par SIRET ${siret} : plusieurs collectivités portent ce SIRET, aucun rapprochement`
       );

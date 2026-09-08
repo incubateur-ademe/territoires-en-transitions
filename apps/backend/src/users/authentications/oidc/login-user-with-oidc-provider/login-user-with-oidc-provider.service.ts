@@ -59,13 +59,9 @@ export class LoginUserWithOidcProviderService {
   }
 
   /**
-   * Le rattachement automatique à l'organisation du jeton, tenté à **chaque**
-   * connexion : il n'agit que si l'agent n'a encore aucun droit sur ce service,
-   * ce qui sert aussi les comptes antérieurs à cette bascule.
-   *
-   * Son échec ne fait jamais échouer la connexion. Un agent authentifié doit
-   * entrer, quitte à ce que ses accès lui manquent : l'inverse le laisserait
-   * dehors sans recours.
+   * Tenté à **chaque** connexion, ce qui sert aussi les comptes antérieurs.
+   * Son échec ne fait jamais échouer la connexion : un agent authentifié doit
+   * entrer, quitte à ce que ses accès lui manquent.
    */
   private async rattacherOrganisation(
     userId: string,
@@ -140,10 +136,8 @@ export class LoginUserWithOidcProviderService {
       );
     }
 
-    // `siret` et `idpId` suivent la connexion, comme `claims` : un agent peut
-    // choisir une autre organisation d'un jour à l'autre, et c'est la dernière
-    // qui fait foi. Les figer à la première connexion laissait la pré-sélection
-    // désigner un service que l'agent avait quitté.
+    // `siret` et `idpId` suivent la connexion : figés à la première, ils
+    // laissaient la pré-sélection désigner un service quitté.
     await db
       .update(utilisateurIdentiteOidcTable)
       .set({
