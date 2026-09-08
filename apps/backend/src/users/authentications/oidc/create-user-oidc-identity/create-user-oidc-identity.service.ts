@@ -143,10 +143,8 @@ export class CreateUserOidcIdentityService {
       `Compte créé via OIDC ${provider} (sub: ${claims.sub}, cas 3-Non, U5) : ${userId}`
     );
 
-    // Le compte n'existait pas : `authentifier` n'avait aucun droit à poser, et
-    // c'est ici que le service du jeton s'ouvre. Un échec ne perd pas
-    // l'inscription — le compte est créé, la session se ponte, et l'agent
-    // reprendra ses accès par le support.
+    // `authentifier` n'avait aucun compte à rattacher : c'est ici que le
+    // service du jeton s'ouvre. Un échec ne perd pas l'inscription.
     const rattachement = await this.rattacherOrganisationService.attach(
       userId,
       provider,

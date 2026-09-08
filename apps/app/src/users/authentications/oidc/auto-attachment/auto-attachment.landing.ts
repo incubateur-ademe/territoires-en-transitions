@@ -5,18 +5,13 @@ import {
 } from '@tet/domain/collectivites';
 
 /**
- * La page d'accueil du service qu'un rattachement automatique vient d'ouvrir,
- * lue des paramètres que le callback OIDC a posés sur `/auth/verify`.
+ * La page d'accueil du service qu'un rattachement vient d'ouvrir, lue des
+ * paramètres posés sur `/auth/verify`.
  *
- * Ne vaut que pour les structures dont l'espace **est** celui de l'instruction.
- * Un conseil régional se rejoint aussi par identité, mais garde son tableau de
- * bord : le renvoyer sur `demandes-avis` le priverait de son espace, et c'est la
- * résolution habituelle de `/` qui l'y conduit correctement.
- *
- * Les paramètres viennent d'une URL, donc de l'extérieur : un identifiant qui
- * n'est pas un entier positif ou un type inconnu ne donne aucune destination.
- * Le pire qu'un paramètre forgé obtienne est une page d'instruction dont les
- * gardes de route refuseront l'accès.
+ * Rien pour un conseil régional : il se rejoint par identité mais garde son
+ * tableau de bord, où la résolution habituelle de `/` le conduit. Les
+ * paramètres venant d'une URL, un identifiant ou un type invalide ne donne
+ * aucune destination.
  */
 export function readAutoAttachmentLanding(
   searchParams: URLSearchParams

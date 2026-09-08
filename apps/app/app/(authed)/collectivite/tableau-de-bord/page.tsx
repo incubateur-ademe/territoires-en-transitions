@@ -9,9 +9,7 @@ import { useEffect } from 'react';
 
 /**
  * `makeCollectiviteRootUrl` et non `makeUserTdbUrl` : un service de l'État n'a
- * pas de tableau de bord, son espace est celui de l'instruction. L'y envoyer
- * quand même l'accueillait avec une page d'erreur d'accès — le seul écran que
- * voyait un agent rattaché à sa DREAL.
+ * pas de tableau de bord, et l'y envoyer l'accueillait par une erreur d'accès.
  */
 export default function RedirectToTdbPage() {
   const { collectivite } = useCollectiviteContext();

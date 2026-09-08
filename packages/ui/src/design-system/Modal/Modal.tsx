@@ -143,11 +143,9 @@ export const Modal = ({
                 display: 'grid',
                 placeItems: 'center',
                 background: preset.theme.extend.colors.overlay,
-                // Le prop l'emporte quand il est donné : deux modales ouvertes
-                // en même temps se départagent par lui. À défaut, elles
-                // partagent `zIndex.modal` et c'est la dernière **ouverte** qui
-                // passe devant — l'ordre de déclaration n'y change rien, le
-                // portail n'est créé qu'à l'ouverture.
+                // À défaut, deux modales partagent `zIndex.modal` et c'est la
+                // dernière **ouverte** qui passe devant : le portail n'est créé
+                // qu'à l'ouverture, l'ordre de déclaration n'y change rien.
                 zIndex: zIndex ?? preset.theme.extend.zIndex.modal,
                 backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
               }}
