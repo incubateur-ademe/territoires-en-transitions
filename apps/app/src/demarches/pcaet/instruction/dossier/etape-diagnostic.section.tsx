@@ -60,8 +60,11 @@ export const EtapeDiagnosticSection = ({
         <SpinnerLoader className="m-auto" />
       ) : (
         <>
-          <Tabs dataTest="demarches.pcaet.instruction.diagnostic-topics">
-            <TabsList className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
+          <Tabs
+            variant="card"
+            dataTest="demarches.pcaet.instruction.diagnostic-topics"
+          >
+            <TabsList className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2">
               {tabs.map((tab) => {
                 const config = diagnostic.indicateurParentConfigs.find(
                   (topic) => topic.code === tab.code
@@ -85,38 +88,32 @@ export const EtapeDiagnosticSection = ({
             </TabsList>
 
             <TabsPanel className="mt-8">
-              <div
-                role="tabpanel"
-                id={`demarche-topic-panel-${activeTab.code}`}
-                aria-labelledby={`demarche-topic-tab-${activeTab.code}`}
-              >
-                {isVulnerabiliteActive ? (
-                  <div className="flex flex-col gap-4">
-                    <p className="text-sm text-primary-9 m-0">
-                      {appLabels.demarcheVulnerabiliteDescription}
-                    </p>
-                    <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
-                      <VulnerabiliteTable
-                        vulnerabilite={{
-                          thematiques: diagnostic.vulnerabilite.thematiques,
-                          lignes: diagnostic.vulnerabilite.lignes,
-                        }}
-                        demarcheId={demarcheId}
-                        isReadonly
-                      />
-                    </div>
+              {isVulnerabiliteActive ? (
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm text-primary-9 m-0">
+                    {appLabels.demarcheVulnerabiliteDescription}
+                  </p>
+                  <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
+                    <VulnerabiliteTable
+                      vulnerabilite={{
+                        thematiques: diagnostic.vulnerabilite.thematiques,
+                        lignes: diagnostic.vulnerabilite.lignes,
+                      }}
+                      demarcheId={demarcheId}
+                      isReadonly
+                    />
                   </div>
-                ) : activeConfig ? (
-                  <DiagnosticIndicateurTabContent
-                    definitions={diagnostic.indicateurDefinitions}
-                    key={activeConfig.code}
-                    demarcheId={demarcheId}
-                    config={activeConfig}
-                    valeurs={diagnostic.indicateurValeurs}
-                    isReadonly
-                  />
-                ) : null}
-              </div>
+                </div>
+              ) : activeConfig ? (
+                <DiagnosticIndicateurTabContent
+                  definitions={diagnostic.indicateurDefinitions}
+                  key={activeConfig.code}
+                  demarcheId={demarcheId}
+                  config={activeConfig}
+                  valeurs={diagnostic.indicateurValeurs}
+                  isReadonly
+                />
+              ) : null}
             </TabsPanel>
           </Tabs>
         </>

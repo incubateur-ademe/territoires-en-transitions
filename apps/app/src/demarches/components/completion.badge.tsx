@@ -26,6 +26,18 @@ const badgeByStatut: Record<
   },
 };
 
+/**
+ * Props du badge pour un statut donné, pour les rendus qui composent leur
+ * propre badge (les onglets du diagnostic passent par celui du design system).
+ */
+export const getDemarcheCompletionBadgeProps = (
+  statut: DemarcheCompletionStatut,
+  { withIcon = true }: { withIcon?: boolean } = {}
+): Pick<BadgeProps, 'title' | 'variant' | 'icon'> => {
+  const { title, variant, icon } = badgeByStatut[statut];
+  return { title, variant, icon: withIcon ? icon : undefined };
+};
+
 type Props = {
   statut: DemarcheCompletionStatut;
   size?: 'xs' | 'sm';
@@ -48,16 +60,12 @@ export const DemarcheCompletionBadge = ({
   trim,
   className,
 }: Props): JSX.Element => {
-  const { title, variant, icon } = badgeByStatut[statut];
-
   return (
     <Badge
       className={className}
       trim={trim}
-      title={title}
-      variant={variant}
       size={size}
-      icon={withIcon ? icon : undefined}
+      {...getDemarcheCompletionBadgeProps(statut, { withIcon })}
     />
   );
 };
