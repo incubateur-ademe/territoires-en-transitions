@@ -116,6 +116,12 @@ export type FichesReadContext = {
   tx?: Transaction;
 };
 
+export type FicheTextFields = {
+  ficheId: number;
+  titre: string | null;
+  description: string | null;
+};
+
 type ReadableFichesFilters =
   | { kind: 'filters'; filters: ListFichesRequestFilters }
   | { kind: 'no_readable_fiche' };
@@ -1949,6 +1955,43 @@ export default class ListFichesService {
         )
       );
     return result[0]?.count ?? 0;
+  }
+
+  async listFichesNonRestreintesOfPlan({
+    collectiviteId,
+    planId,
+  }: {
+    collectiviteId: number;
+    planId: number;
+  }): Promise<FicheTextFields[]> {
+    const ficheIds = await this.getFicheIdsQuery(collectiviteId, {
+      planActionIds: [planId],
+      restreint: false,
+    });
+
+    if (ficheIds.length === 0) {
+      return [];
+    }
+
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionTable.id,
+        titre: ficheActionTable.titre,
+        description: ficheActionTable.description,
+      })
+      .from(ficheActionTable)
+      .where(
+        and(
+          inArray(
+            ficheActionTable.id,
+            ficheIds.map(({ id }) => id)
+          ),
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          eq(ficheActionTable.restreint, false),
+          eq(ficheActionTable.deleted, false),
+          isNull(ficheActionTable.parentId)
+        )
+      );
   }
 
   private async getReadableFichesFilters(

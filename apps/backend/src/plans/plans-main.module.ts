@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AxeModule } from './axes/axe.module';
+import { PriorisationModule } from './priorisation/priorisation.module';
 import { FichesModule } from './fiches/fiches.module';
 import { PaniersModule } from './paniers/paniers.module';
 import { AiPlanImportModule } from './ai-plan-import/ai-plan-import.module';
@@ -15,6 +16,7 @@ import { PlansUtilsModule } from './utils/plans-utils.module';
     FichesModule,
     PlanModule,
     AiPlanImportModule,
+    PriorisationModule,
     PaniersModule,
     ReportsModule,
   ],
