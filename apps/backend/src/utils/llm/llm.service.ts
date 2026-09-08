@@ -3,11 +3,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Options, default as retry } from 'async-retry';
 import { z, ZodType } from 'zod';
 import { LlmError } from './llm.errors';
-import {
-  LlmRawCompletion,
-  LlmRepository,
-  TokenUsage,
-} from './llm.repository';
+import { LlmRawCompletion, LlmRepository, TokenUsage } from './llm.repository';
 import { parseStructuredResponse } from './parse-json-response';
 
 const DEFAULT_TEMPERATURE = 0.2;
@@ -43,16 +39,18 @@ export class LlmService {
   async generateStructured<Schema extends ZodType>(
     args: GenerateStructuredArgs<Schema>
   ): Promise<Result<StructuredCompletion<Schema>, LlmError>> {
-    const completionResult = await this.callWithRetry(() =>
-      this.llmRepository.complete({
-        prompt: args.prompt,
-        jsonSchema: z.toJSONSchema(args.schema),
-        systemInstruction: args.systemInstruction,
-        temperature: args.temperature ?? DEFAULT_TEMPERATURE,
-        maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
-        thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
-        signal: args.signal,
-      })
+    const completionResult = await this.callWithRetry(
+      () =>
+        this.llmRepository.complete({
+          prompt: args.prompt,
+          jsonSchema: z.toJSONSchema(args.schema),
+          systemInstruction: args.systemInstruction,
+          temperature: args.temperature ?? DEFAULT_TEMPERATURE,
+          maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
+          thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
+          signal: args.signal,
+        }),
+      args.signal
     );
     if (!completionResult.success) {
       return completionResult;
@@ -72,20 +70,27 @@ export class LlmService {
   }
 
   private async callWithRetry(
-    call: () => Promise<Result<LlmRawCompletion, LlmError>>
+    call: () => Promise<Result<LlmRawCompletion, LlmError>>,
+    signal?: AbortSignal
   ): Promise<Result<LlmRawCompletion, LlmError>> {
     let lastRetryableResult: Result<LlmRawCompletion, LlmError> | null = null;
     try {
       return await retry(async () => {
         const result = await call();
-        if (!result.success && isTransientError(result.error)) {
+        if (
+          !result.success &&
+          isTransientError(result.error) &&
+          !signal?.aborted
+        ) {
           lastRetryableResult = result;
           throw new Error(result.error.kind);
         }
         return result;
       }, RETRY_OPTIONS);
     } catch {
-      return lastRetryableResult ?? failure({ kind: 'api_error', httpStatus: null });
+      return (
+        lastRetryableResult ?? failure({ kind: 'api_error', httpStatus: null })
+      );
     }
   }
 }
