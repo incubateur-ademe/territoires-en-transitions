@@ -3,6 +3,10 @@ import {
   PcaetAvisAuTitreDeEnum,
   type PcaetAvisAuTitreDe,
 } from './pcaet-avis-au-titre-de.enum.schema';
+import {
+  PcaetPerimetreSaisineEnum,
+  type PcaetPerimetreSaisine,
+} from './pcaet-perimetre-saisine.enum.schema';
 
 /** `NATIONAL` ne se compare à aucun code : il n'a pas de colonne à confronter. */
 export const PerimetreInstructeurEnum = {
@@ -88,6 +92,33 @@ export const getTitresAvisInstructeur = (
   type: CollectiviteType
 ): readonly PcaetAvisAuTitreDe[] =>
   profilParTypeInstructeur[type as TypeInstructeur]?.titresAvis ?? [];
+
+/**
+ * Les titres attendus d'une **saisine**, et non d'un type.
+ *
+ * Deux choses ferment le dépôt, et il faut les deux : la famille du destinataire
+ * — une DDT ne se prononce jamais — et le territoire qui vaut la saisine. Un
+ * service atteint par un périmètre secondaire de la déposante reçoit le dossier
+ * en lecture : l'avis revient à celui du siège.
+ *
+ * Rendre `[]` suffit à tout fermer, et c'est voulu : `titresDeposables` se vide,
+ * `canDeposerAvis` refuse, et `isDemarchePcaetAvisTousRendus` écarte la demande
+ * du décompte. Sans quoi une DREAL limitrophe attendrait deux avis qu'elle ne
+ * rendra jamais, et le dossier n'aurait plus que l'échéance pour s'achever.
+ */
+export const getTitresAvisSaisine = (
+  type: CollectiviteType,
+  perimetre: PcaetPerimetreSaisine
+): readonly PcaetAvisAuTitreDe[] =>
+  perimetre === PcaetPerimetreSaisineEnum.SECONDAIRE
+    ? []
+    : getTitresAvisInstructeur(type);
+
+/** Cette saisine appelle-t-elle un avis, ou seulement une lecture ? */
+export const peutDeposerAvisSaisine = (
+  type: CollectiviteType,
+  perimetre: PcaetPerimetreSaisine
+): boolean => getTitresAvisSaisine(type, perimetre).length > 0;
 
 /**
  * Cet instructeur est-il saisi pour avis, ou seulement destinataire en lecture ?

@@ -26,6 +26,15 @@ export const demandeAvisLigneSchema = z.object({
     departementCode: z.string().nullable(),
   }),
   contacts: demandeAvisContactSchema.array(),
+  /**
+   * Ce dossier attend-il un avis de ce service, ou se contente-t-il de le lui
+   * donner à lire ?
+   *
+   * Par ligne, et non par service : une DREAL dépose sur le dossier de sa
+   * région et lit celui de l'EPCI voisin qui déborde chez elle. L'écran lit ce
+   * drapeau plutôt que de déduire un droit du type de la collectivité.
+   */
+  deposeAvis: z.boolean(),
   etat: pcaetDemandeAvisEtatSchema,
   nbAvisValides: z.number().int(),
   nbAvisBrouillons: z.number().int(),

@@ -19,10 +19,13 @@ describe('Clôture de l’instruction PCAET', () => {
   let db: DatabaseService;
   let service: CloreInstructionService;
   let instructeurCollectiviteId: number;
+  /** La DREAL d'à côté, pour les dossiers qui débordent chez elle. */
+  let drealVoisineId: number;
 
   // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
   // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
   const REGION = 'C1';
+  const REGION_VOISINE = 'C2';
 
   /** Démontage des collectivités créées par les cas, dans l'ordre inverse. */
   const nettoyages: (() => Promise<void>)[] = [];
@@ -143,13 +146,24 @@ describe('Clôture de l’instruction PCAET', () => {
     });
     instructeurCollectiviteId = dreal.collectivite.id;
 
-    // Les dossiers retiennent leur collectivité : sans ce démontage, la DREAL
-    // survivrait au test et la prochaine exécution buterait sur l'index unique
-    // « une DREAL par région ».
+    const drealVoisine = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'dreal',
+        regionCode: REGION_VOISINE,
+        nom: 'DREAL voisine test clôture',
+      },
+    });
+    drealVoisineId = drealVoisine.collectivite.id;
+
+    // Les dossiers retiennent leur collectivité : sans ce démontage, les DREAL
+    // survivraient au test et la prochaine exécution buterait sur l'index
+    // unique « une DREAL par région ».
     return async () => {
       for (const nettoyer of nettoyages.reverse()) {
         await nettoyer();
       }
+      await drealVoisine.cleanup();
       await dreal.cleanup();
       await app.close();
     };
@@ -219,5 +233,63 @@ describe('Clôture de l’instruction PCAET', () => {
 
     expect(await statutDe(parLeDelai.demarcheId)).toBe('instruit');
     expect(await statutDe(parLesAvis.demarcheId)).toBe('instruit');
+  });
+
+  /**
+   * Le cas des EPCI à cheval. Un dossier qui déborde sur une région voisine y
+   * saisit aussi la DREAL, mais pour lecture : l'avis du préfet de région
+   * revient à celle du siège.
+   *
+   * Sans la qualification de la saisine, la DREAL voisine se verrait attribuer
+   * les deux titres de sa famille, qu'elle ne rendra jamais — le dossier ne
+   * pourrait plus s'achever que par l'échéance des trois mois.
+   */
+  describe('saisine au titre d’un périmètre secondaire', () => {
+    const saisir = async (
+      demarcheId: number,
+      instructeurId: number,
+      perimetre: 'principal' | 'secondaire'
+    ) => {
+      await db.db.insert(pcaetDemandeAvisTable).values({
+        demarcheId,
+        instructeurCollectiviteId: instructeurId,
+        source: 'seed',
+        perimetre,
+      });
+    };
+
+    it('n’empêche pas le dossier de s’achever sur les avis rendus', async () => {
+      const cible = await dossier({
+        status: 'transmis_pour_avis',
+        // L'échéance reste loin : seul le chemin « avis tous rendus » peut
+        // clore, ce qui rend le test aveugle au délai.
+        avisDeadlineAt: dansTroisMois(),
+        titresValides: [...pcaetAvisAuTitreDeValues],
+      });
+      await saisir(cible.demarcheId, drealVoisineId, 'secondaire');
+
+      expect(await service.clore(cible)).toMatchObject({ success: true });
+      expect(await statutDe(cible.demarcheId)).toBe('instruit');
+      expect(await derniereTransition(cible.demarcheId)).toBe(
+        'avis_tous_rendus'
+      );
+    });
+
+    /**
+     * Le contrôle négatif : la même seconde DREAL, saisie cette fois au titre du
+     * périmètre principal, retient bien le dossier. C'est ce qui garantit que le
+     * test précédent prouve la qualification, et non l'absence de tout décompte.
+     */
+    it('à l’inverse, une seconde saisine principale retient le dossier', async () => {
+      const cible = await dossier({
+        status: 'transmis_pour_avis',
+        avisDeadlineAt: dansTroisMois(),
+        titresValides: [...pcaetAvisAuTitreDeValues],
+      });
+      await saisir(cible.demarcheId, drealVoisineId, 'principal');
+
+      expect(await service.clore(cible)).toEqual({ success: true, data: null });
+      expect(await statutDe(cible.demarcheId)).toBe('transmis_pour_avis');
+    });
   });
 });

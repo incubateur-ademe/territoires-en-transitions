@@ -5,7 +5,7 @@ import {
   getDemandeAvisEtat,
   getEtatDossierEnLecture,
   pcaetDemandeAvisEtatValues,
-  peutDeposerAvisInstructeur,
+  peutDeposerAvisSaisine,
   type DemandeAvisAchevement,
 } from '@tet/domain/demarches';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
@@ -64,14 +64,29 @@ export class ListDemandesAvisService {
     // *le dossier* : sa propre demande restera vide par nature, et son délai
     // passé la faisait afficher « Pas d'avis déposé » sur un dossier instruit.
     //
-    // Une seule requête d'achèvement pour la page entière, pas une par ligne.
-    const deposeAvis = peutDeposerAvisInstructeur(instructeurType);
-    const achevementParDemarche = deposeAvis
-      ? new Map<number, DemandeAvisAchevement[]>()
-      : await this.pcaetAvisRepository.listAchevementParDemarche(
-          [...new Set(rows.map((row) => row.demarcheId))],
-          tx
-        );
+    // Le droit se lit par **ligne** et non pour la page : depuis les périmètres
+    // secondaires, une même DREAL dépose sur le dossier de sa région et se
+    // contente de lire celui de l'EPCI voisin qui déborde chez elle. Les deux
+    // apparaissent dans le même tableau.
+    const deposeAvisParLigne = new Map(
+      rows.map((row) => [
+        row.demandeAvisId,
+        peutDeposerAvisSaisine(instructeurType, row.perimetre),
+      ])
+    );
+
+    // Une seule requête d'achèvement pour toute la page, et seulement si au
+    // moins une ligne se lit du point de vue du dossier.
+    const lignesEnLecture = rows.filter(
+      (row) => !deposeAvisParLigne.get(row.demandeAvisId)
+    );
+    const achevementParDemarche =
+      lignesEnLecture.length === 0
+        ? new Map<number, DemandeAvisAchevement[]>()
+        : await this.pcaetAvisRepository.listAchevementParDemarche(
+            [...new Set(lignesEnLecture.map((row) => row.demarcheId))],
+            tx
+          );
 
     const contactsParCollectivite =
       await this.listDemandesAvisRepository.listContactsParCollectivite(
@@ -93,7 +108,8 @@ export class ListDemandesAvisService {
         departementCode: row.collectiviteDepartementCode,
       },
       contacts: contactsParCollectivite.get(row.collectiviteId) ?? [],
-      etat: deposeAvis
+      deposeAvis: deposeAvisParLigne.get(row.demandeAvisId) ?? false,
+      etat: deposeAvisParLigne.get(row.demandeAvisId)
         ? getDemandeAvisEtat(row, now)
         : getEtatDossierEnLecture(
             {

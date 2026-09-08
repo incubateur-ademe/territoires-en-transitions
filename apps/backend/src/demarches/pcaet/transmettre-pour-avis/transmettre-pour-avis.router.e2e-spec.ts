@@ -451,6 +451,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
           instructeurCollectiviteId:
             pcaetDemandeAvisTable.instructeurCollectiviteId,
           source: pcaetDemandeAvisTable.source,
+          perimetre: pcaetDemandeAvisTable.perimetre,
         })
         .from(pcaetDemandeAvisTable)
         .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
@@ -566,11 +567,20 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         demarcheId: created.id,
       });
 
-      const saisis = (await listDestinataires(created.id)).map(
-        (d) => d.instructeurCollectiviteId
-      );
+      const destinataires = await listDestinataires(created.id);
+      const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
       expect(saisis).toContain(drAdemeDeuxRegions.id);
       expect(saisis).not.toContain(drAdemeAilleurs.id);
+
+      // Le cas symétrique du précédent, et il ne se qualifie pas pareil : c'est
+      // ici le périmètre du *service* qui est secondaire, pas celui de la
+      // déposante. Or la déposante n'a qu'un territoire, son siège, et c'est lui
+      // qui vaut la saisine — la DR ADEME est donc saisie au titre du principal.
+      expect(
+        destinataires.find(
+          (d) => d.instructeurCollectiviteId === drAdemeDeuxRegions.id
+        )?.perimetre
+      ).toBe('principal');
     });
 
     /**
@@ -620,9 +630,8 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         demarcheId: created.id,
       });
 
-      const saisis = (await listDestinataires(created.id)).map(
-        (d) => d.instructeurCollectiviteId
-      );
+      const destinataires = await listDestinataires(created.id);
+      const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
       expect(saisis).toEqual(
         expect.arrayContaining([
           ddtDuSiege.id,
@@ -631,6 +640,17 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         ])
       );
       expect(saisis).not.toContain(ddtAilleurs.id);
+
+      // Et chacun sait par quel territoire il a été atteint. C'est ce qui
+      // décidera de son droit d'y déposer un avis, et de son poids dans la
+      // clôture : le siège se prononce, les autres lisent.
+      const perimetreDe = (id: number) =>
+        destinataires.find((d) => d.instructeurCollectiviteId === id)
+          ?.perimetre;
+
+      expect(perimetreDe(ddtDuSiege.id)).toBe('principal');
+      expect(perimetreDe(ddtDebordee.id)).toBe('secondaire');
+      expect(perimetreDe(drealDebordee.id)).toBe('secondaire');
     });
 
     /**
