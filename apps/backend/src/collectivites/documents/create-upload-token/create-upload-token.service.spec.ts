@@ -4,10 +4,8 @@ import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-s
 import { type DocumentStorageError } from '@tet/backend/utils/supabase/document-storage.errors';
 import { describe, expect, it, vi, type Mock } from 'vitest';
 import { CreateUploadTokenService } from './create-upload-token.service';
-import { type DocumentHash } from './create-upload-token.input';
 
-const HASH =
-  'ec07d0538e44a333b23b936c9a4ba37fbd211c6272e632d2173b6abe102a0482' as DocumentHash;
+const HASH = 'ec07d0538e44a333b23b936c9a4ba37fbd211c6272e632d2173b6abe102a0482';
 
 const user: AuthenticatedUser = { id: 'user-id' } as AuthenticatedUser;
 

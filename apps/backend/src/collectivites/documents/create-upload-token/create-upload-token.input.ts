@@ -3,11 +3,9 @@ import * as z from 'zod';
 
 export const createUploadTokenInputSchema = z.object({
   collectiviteId: z.number().int().positive(),
-  hash: documentHashSchema.brand<'DocumentHash'>(),
+  hash: documentHashSchema,
 });
 
 export type CreateUploadTokenInput = z.infer<
   typeof createUploadTokenInputSchema
 >;
-
-export type DocumentHash = CreateUploadTokenInput['hash'];
