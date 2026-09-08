@@ -224,7 +224,9 @@ l’exception backend du test d’architecture dans la même PR.
 Les tests Nx frontend et backend contrôlent le périmètre modifié et la liste backend exacte,
 sans nouvelle exception. L’accès historique du site n’est pas couvert par le test frontend.
 
-<!-- Alias conservé pour les liens existants vers l’ancienne section 10. -->
+<a id="7-deployer-en-deux-phases"></a>
+
+<!-- Alias de compatibilité pour les anciens liens vers la section 10. -->
 
 <a id="10-la-migration-reste-progressive-et-réversible"></a>
 
