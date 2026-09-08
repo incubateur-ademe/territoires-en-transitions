@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { useState } from 'react';
 import { StoryWrapper } from '../../storybook/story.wrapper';
+import { TabSize } from '../Tabs/Tabs';
 import { Tabs } from './Tabs.next';
 
 const meta: Meta<typeof Tabs> = {
@@ -44,7 +46,7 @@ export const All: Story = {
               />
               <Tabs.Tab label="MD 2" href={'/tabs-next/md-2'} />
             </Tabs.List>
-            <Tabs.Panel className="p-4 bg-white">MD</Tabs.Panel>
+            <Tabs.Panel>MD</Tabs.Panel>
           </Tabs>
 
           <Tabs size="sm">
@@ -57,7 +59,7 @@ export const All: Story = {
               />
               <Tabs.Tab label="SM 2" href={'/tabs-next/sm-2'} />
             </Tabs.List>
-            <Tabs.Panel className="p-4 bg-white">SM</Tabs.Panel>
+            <Tabs.Panel>SM</Tabs.Panel>
           </Tabs>
 
           <Tabs size="xs">
@@ -70,7 +72,7 @@ export const All: Story = {
               />
               <Tabs.Tab label="XS 2" href={'/tabs-next/xs-2'} />
             </Tabs.List>
-            <Tabs.Panel className="p-4 bg-white">XS</Tabs.Panel>
+            <Tabs.Panel>XS</Tabs.Panel>
           </Tabs>
         </div>
       </StoryWrapper>
@@ -111,8 +113,31 @@ export const All: Story = {
               }}
             />
           </Tabs.List>
-          <Tabs.Panel className="p-4 bg-white">Contenu (sécurisé)</Tabs.Panel>
+          <Tabs.Panel>Contenu (sécurisé)</Tabs.Panel>
         </Tabs>
+      </StoryWrapper>
+
+      <StoryWrapper
+        title="Variante carte"
+        description="Icône au-dessus du libellé, badge en dessous. La largeur des cartes suit la taille : md / sm / xs."
+      >
+        <div className="flex flex-col gap-8 w-full">
+          {cardSizes.map((size) => (
+            <div key={size} className="flex flex-col gap-2">
+              <p className="mb-0 text-sm font-medium text-grey-8 uppercase">
+                {size}
+              </p>
+              <CardTabsPreview size={size} />
+            </div>
+          ))}
+        </div>
+      </StoryWrapper>
+
+      <StoryWrapper
+        title="Variante carte pilotée par un bouton"
+        description="Sans `href`, l'onglet est un bouton : utile quand le volet actif vient d'un paramètre de requête plutôt que du chemin."
+      >
+        <CardTabsWithState />
       </StoryWrapper>
 
       <StoryWrapper
@@ -143,4 +168,104 @@ export const All: Story = {
       </StoryWrapper>
     </div>
   ),
+};
+
+const cardSizes: TabSize[] = ['md', 'sm', 'xs'];
+
+const CardTabsPreview = ({ size }: { size: TabSize }) => (
+  <Tabs variant="card" size={size}>
+    <Tabs.List>
+      <Tabs.Tab
+        label="Emissions GES"
+        href={'/tabs-next/ges'}
+        icon="fire-line"
+        isActive
+        badge={{
+          title: 'A compléter',
+          variant: 'warning',
+          type: 'solid',
+          uppercase: false,
+        }}
+      />
+      <Tabs.Tab
+        label="Polluants atmosphériques"
+        href={'/tabs-next/polluants'}
+        icon="windy-line"
+        badge={{
+          title: 'A compléter',
+          variant: 'warning',
+          type: 'solid',
+          uppercase: false,
+        }}
+      />
+      <Tabs.Tab
+        label="Séquestration carbone"
+        href={'/tabs-next/sequestration'}
+        icon="seedling-line"
+        badge={{
+          title: 'Optionnel',
+          variant: 'default',
+          type: 'solid',
+          uppercase: false,
+        }}
+      />
+      <Tabs.Tab
+        label="Vulnérabilité du territoire"
+        href={'/tabs-next/vulnerabilite'}
+        icon="map-2-line"
+        badge={{
+          title: 'Complète',
+          variant: 'success',
+          type: 'solid',
+          uppercase: false,
+        }}
+      />
+    </Tabs.List>
+    <Tabs.Panel className="p-4 mt-4 bg-white">
+      Contenu (émissions GES)
+    </Tabs.Panel>
+  </Tabs>
+);
+
+const topics = [
+  { code: 'ges', label: 'Emissions GES', icon: 'fire-line' },
+  { code: 'polluants', label: 'Polluants atmosphériques', icon: 'windy-line' },
+  {
+    code: 'sequestration',
+    label: 'Séquestration carbone',
+    icon: 'seedling-line',
+  },
+  { code: 'enr', label: 'Energies renouvelables', icon: 'sun-line' },
+  {
+    code: 'reseaux',
+    label: 'Réseaux de distribution',
+    icon: 'flashlight-line',
+  },
+  {
+    code: 'vulnerabilite',
+    label: 'Vulnérabilité du territoire',
+    icon: 'map-2-line',
+  },
+];
+
+const CardTabsWithState = () => {
+  const [activeCode, setActiveCode] = useState('ges');
+
+  return (
+    <Tabs variant="card">
+      <Tabs.List>
+        {topics.map((topic) => (
+          <Tabs.Tab
+            key={topic.code}
+            label={topic.label}
+            icon={topic.icon}
+            isActive={activeCode === topic.code}
+            onClick={() => setActiveCode(topic.code)}
+            badge={{ title: 'A compléter', variant: 'warning', type: 'solid' }}
+          />
+        ))}
+      </Tabs.List>
+      <Tabs.Panel className="p-4">Contenu ({activeCode})</Tabs.Panel>
+    </Tabs>
+  );
 };

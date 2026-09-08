@@ -18,7 +18,7 @@ export default function Layout({ children }: PropsWithChildren) {
           {appLabels.identiteEtPersonnalisation}
         </PageHeader.Title>
       </PageHeader>
-      <Tabs tabsListClassName="justify-start">
+      <Tabs>
         <TabsList className="justify-start">
           <TabsTab href="presentation" label="Présentation" />
           <TabsTab href="personnalisation" label="Personnalisation" />
