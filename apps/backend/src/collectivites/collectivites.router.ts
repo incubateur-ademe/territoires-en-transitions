@@ -3,6 +3,7 @@ import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { DiscussionRouter } from '@tet/backend/collectivites/discussions/presentation/discussion.router';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
+import { ImportPerimetresEpciRouter } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.router';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { DocumentsRouter } from './documents/documents.router';
@@ -29,6 +30,7 @@ export class CollectivitesRouter {
     private readonly mutateTagRouter: MutateTagRouter,
     private readonly listTagsRouter: ListTagsRouter,
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
+    private readonly importPerimetresEpciRouter: ImportPerimetresEpciRouter,
     private readonly discussionRouter: DiscussionRouter,
     private readonly personnalisationsRouter: PersonnalisationsRouter,
     private readonly collectivitePreferencesRouter: CollectivitePreferencesRouter
@@ -46,6 +48,7 @@ export class CollectivitesRouter {
     personnalisations: this.personnalisationsRouter.router,
     discussions: this.discussionRouter.router,
     relations: this.importCollectiviteRelationsRouter.router,
+    perimetres: this.importPerimetresEpciRouter.router,
     recherches: this.recherchesRouter.router,
     preferences: this.collectivitePreferencesRouter.router,
     tags: this.trpc.mergeRouters(

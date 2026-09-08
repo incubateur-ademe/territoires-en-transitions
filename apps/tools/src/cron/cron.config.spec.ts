@@ -19,6 +19,7 @@ const JOBS_PROPRES = [
   'send-notifications',
   'clore-instructions-pcaet',
   'posthog-collectivites-group-sync',
+  'import-perimetres-epci',
 ] as const;
 
 describe('cron.config', () => {
