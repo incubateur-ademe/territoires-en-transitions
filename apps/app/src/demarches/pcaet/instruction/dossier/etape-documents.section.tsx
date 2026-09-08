@@ -3,7 +3,7 @@
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
 import { DemarcheSection } from '@/app/demarches/components/section';
 import { appLabels } from '@/app/labels/catalog';
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {

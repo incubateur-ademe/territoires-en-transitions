@@ -1,6 +1,6 @@
 'use client';
 
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useQuery } from '@tanstack/react-query';

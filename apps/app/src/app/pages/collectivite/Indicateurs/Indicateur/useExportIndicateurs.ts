@@ -1,6 +1,6 @@
 import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';

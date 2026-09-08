@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, TRPCUseMutationResult, useTRPC } from '@tet/api';
 import { Event, useEventTracker } from '@tet/ui';
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 
 type GeneratePdfInput = RouterInput['plans']['fiches']['generatePdf'];

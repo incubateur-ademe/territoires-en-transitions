@@ -1,4 +1,4 @@
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
 import {
