@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GetLabellisationService } from '@tet/backend/referentiels/labellisations/get-labellisation.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
-  AuthRole,
+  buildRequesterUser,
   type AuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -55,15 +55,6 @@ function nonRetryableFailure(
   message: string
 ): Result<never, GenerateArchiveFailure> {
   return failure({ message, retryable: false });
-}
-
-function buildRequesterUser(userId: string): AuthenticatedUser {
-  return {
-    id: userId,
-    role: AuthRole.AUTHENTICATED,
-    isAnonymous: false,
-    jwtPayload: { role: AuthRole.AUTHENTICATED },
-  };
 }
 
 function parseReferentielId(

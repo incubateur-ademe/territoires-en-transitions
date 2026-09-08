@@ -5,7 +5,7 @@ import {
 } from '../adapters/extracted-action-to-import-action';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
-import { AuthRole, type AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -231,13 +231,6 @@ export class GenerateImportDraftService {
     return downloaded.success ? downloaded.data : null;
   }
 }
-
-const buildRequesterUser = (userId: string): AuthenticatedUser => ({
-  id: userId,
-  role: AuthRole.AUTHENTICATED,
-  isAnonymous: false,
-  jwtPayload: { role: AuthRole.AUTHENTICATED },
-});
 
 const extractionErrorMessage = (error: ExtractionError): string => {
   switch (error.kind) {

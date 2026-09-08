@@ -21,6 +21,15 @@ export type AuthenticatedOrServiceRoleUser = AuthUser<
   AuthRole.AUTHENTICATED | AuthRole.SERVICE_ROLE
 >;
 
+export function buildRequesterUser(userId: string): AuthenticatedUser {
+  return {
+    id: userId,
+    role: AuthRole.AUTHENTICATED,
+    isAnonymous: false,
+    jwtPayload: { role: AuthRole.AUTHENTICATED },
+  };
+}
+
 export function isAnonymousUser(user: AuthUser | null): user is AnonymousUser {
   return user?.role === AuthRole.ANON && user.isAnonymous === true;
 }

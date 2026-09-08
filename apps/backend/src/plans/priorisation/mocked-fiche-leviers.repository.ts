@@ -11,11 +11,14 @@ import {
 export class MockedFicheLeviersRepository implements FicheLeviersRepository {
   private readonly logger = new Logger(MockedFicheLeviersRepository.name);
 
-  async saveLeviers(
-    collectiviteId: number,
-    fiches: FicheLeviers[],
-    _tx?: Transaction
-  ): Promise<Result<void, FicheLeviersError>> {
+  async saveLeviers({
+    collectiviteId,
+    fiches,
+  }: {
+    collectiviteId: number;
+    fiches: FicheLeviers[];
+    tx?: Transaction;
+  }): Promise<Result<void, FicheLeviersError>> {
     const levierCount = fiches.reduce(
       (total, fiche) => total + fiche.leviers.length,
       0

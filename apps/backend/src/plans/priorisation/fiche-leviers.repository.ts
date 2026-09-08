@@ -15,9 +15,9 @@ export type FicheLeviers = {
 };
 
 export abstract class FicheLeviersRepository {
-  abstract saveLeviers(
-    collectiviteId: number,
-    fiches: FicheLeviers[],
-    tx?: Transaction
-  ): Promise<Result<void, FicheLeviersError>>;
+  abstract saveLeviers(args: {
+    collectiviteId: number;
+    fiches: FicheLeviers[];
+    tx?: Transaction;
+  }): Promise<Result<void, FicheLeviersError>>;
 }
