@@ -14,11 +14,11 @@ import {
 } from '@tet/ui/design-system/TabsNext/index';
 import { DemarcheSection } from '../../components/section';
 import type { PcaetDiagnostic as DiagnosticPayload } from './data/use-get-pcaet-diagnostic';
+import { DiagnosticTabContent } from './diagnostic.tab-content';
 import {
   isVulnerabiliteTab,
   listDiagnosticTabs,
 } from './diagnostic.tabs.utils';
-import { DiagnosticTabContent } from './diagnostic.tab-content';
 import { TopicTab } from './topic-tab';
 import { usePcaetDiagnosticTabQueryState } from './use-pcaet-diagnostic-tab-query-state';
 
@@ -78,8 +78,12 @@ export const DiagnosticTabs = ({
       ) : isLoading || !activeTab || diagnostic === null ? (
         <SpinnerLoader className="m-auto" />
       ) : (
-        <Tabs dataTest="demarches.pcaet.diagnostic.topics">
-          <TabsList className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
+        <Tabs
+          variant="card"
+          size="sm"
+          dataTest="demarches.pcaet.diagnostic.topics"
+        >
+          <TabsList>
             {tabs.map((tab) => {
               const config = diagnostic.indicateurParentConfigs.find(
                 (topic) => topic.code === tab.code
@@ -96,7 +100,6 @@ export const DiagnosticTabs = ({
                   tab={tab}
                   isActive={activeTab.code === tab.code}
                   statut={statut}
-                  isComplete={statut === 'complete'}
                   onSelect={() => setSelectedTab(tab.code)}
                 />
               );
@@ -104,23 +107,17 @@ export const DiagnosticTabs = ({
           </TabsList>
 
           <TabsPanel className="mt-8">
-            <div
-              role="tabpanel"
-              id={`demarche-topic-panel-${activeTab.code}`}
-              aria-labelledby={`demarche-topic-tab-${activeTab.code}`}
-            >
-              <DiagnosticTabContent
-                key={activeTab.code}
-                config={activeConfig}
-                vulnerabilite={
-                  isVulnerabiliteActive ? diagnostic.vulnerabilite : null
-                }
-                definitions={diagnostic.indicateurDefinitions}
-                valeurs={diagnostic.indicateurValeurs}
-                demarcheId={demarcheId}
-                isReadonly={isReadonly}
-              />
-            </div>
+            <DiagnosticTabContent
+              key={activeTab.code}
+              config={activeConfig}
+              vulnerabilite={
+                isVulnerabiliteActive ? diagnostic.vulnerabilite : null
+              }
+              definitions={diagnostic.indicateurDefinitions}
+              valeurs={diagnostic.indicateurValeurs}
+              demarcheId={demarcheId}
+              isReadonly={isReadonly}
+            />
           </TabsPanel>
         </Tabs>
       )}
