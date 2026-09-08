@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { Fichier, Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   MesureDocumentsState,

@@ -2,7 +2,7 @@
 
 import { AVIS_SENS_VARIANTS } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
-import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/utils/save-blob';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
