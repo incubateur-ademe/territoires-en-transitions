@@ -133,8 +133,7 @@ export class BuildArchiveService {
         (entry) => archive.append(entry.content, { name: entry.name })
       );
 
-      await archive.finalize();
-      await writeFinished;
+      await Promise.all([archive.finalize(), writeFinished]);
 
       return success({ totalFiles: preparedEntries.length });
     } catch (error) {
