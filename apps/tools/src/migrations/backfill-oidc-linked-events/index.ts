@@ -102,6 +102,14 @@ const printSummary = (
 };
 
 const send = async (events: BackfillEvent[], key: string, host: string) => {
+  // Échoue avant d'expédier des centaines d'évènements antidatés vers une
+  // adresse fantaisiste : `new URL` attrape un host malformé, le schéma attrape
+  // un `http://` (la clé de projet n'est pas un secret, mais un envoi en clair
+  // n'a aucune raison d'être).
+  if (new URL(host).protocol !== 'https:') {
+    throw new Error(`POSTHOG_HOST doit être en HTTPS (reçu : ${host})`);
+  }
+
   // `historicalMigration` route l'ingestion sur un pipeline séparé : pas de
   // détection de pic sur des dates passées, pas de facturation d'ingestion
   // standard. Obligatoire pour des évènements antidatés — d'où un client
