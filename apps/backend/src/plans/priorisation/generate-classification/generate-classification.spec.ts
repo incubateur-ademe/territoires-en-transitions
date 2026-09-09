@@ -149,6 +149,38 @@ describe('GenerateClassificationService.generate', () => {
     });
   });
 
+  it("laisse le classement a l'etat de proposition, sans toucher aux leviers des fiches", async () => {
+    const { service, ficheLeviersRepository, jobRepository } = toDependencies();
+
+    const result = await service.generate(jobId);
+
+    expect({
+      success: result.success,
+      saveLeviersCalls: ficheLeviersRepository.saveLeviers.mock.calls.length,
+      draftPersisteSurLeJob: jobRepository.markDone.mock.calls[0][0].draft,
+    }).toEqual({
+      success: true,
+      saveLeviersCalls: 0,
+      draftPersisteSurLeJob: {
+        fiches: [
+          {
+            ficheId: 1,
+            justification: 'Le texte decrit un amenagement cyclable.',
+            isDescriptionTruncated: false,
+            volets: [
+              {
+                levier: 'Vélo et transport en commun',
+                secteur: 'Transports',
+                categorie: 'amenagement',
+              },
+            ],
+          },
+        ],
+        unclassified: [],
+      },
+    });
+  });
+
   it('ecrit le classement et clot le job dans une seule et meme transaction', async () => {
     const { service, ficheLeviersRepository, jobRepository } =
       toDependencies();
