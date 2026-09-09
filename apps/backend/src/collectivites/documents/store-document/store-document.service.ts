@@ -89,7 +89,11 @@ export class StoreDocumentService {
 
     const mimeType = mime.lookup(localFilePath) || undefined;
 
-    const fileBuffer = await readFile(localFilePath);
+    const fileBufferResult = await this.readLocalFile(localFilePath);
+    if (!fileBufferResult.success) {
+      return fileBufferResult;
+    }
+    const fileBuffer = fileBufferResult.data;
     const hash = calculateDocumentHash(fileBuffer);
 
     this.logger.log(
@@ -107,6 +111,24 @@ export class StoreDocumentService {
     }
 
     return await this.storeDocument({ ...document, hash }, user);
+  }
+
+  private async readLocalFile(
+    localFilePath: string
+  ): Promise<
+    Result<Buffer, typeof StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR>
+  > {
+    try {
+      return { success: true, data: await readFile(localFilePath) };
+    } catch (error) {
+      this.logger.error(
+        `Cannot read local file ${localFilePath}: ${getErrorMessage(error)}`
+      );
+      return {
+        success: false,
+        error: StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
+      };
+    }
   }
 
   private async findDocumentByHash(
