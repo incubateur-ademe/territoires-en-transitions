@@ -1,3 +1,6 @@
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+import { IndicateurPeriodiciteSelect } from '@/app/indicateurs/valeurs/indicateur-periodicite.select';
+import { useAvailableIndicateurPeriodiciteOptions } from '@/app/indicateurs/valeurs/use-available-indicateur-periodicite-options';
 import {
   canUpdateIndicateurDefinition,
   canUpdateIndicateurValeur,
@@ -30,6 +33,10 @@ const DonneesIndicateur = ({
   updateUnite,
   updateCommentaire,
 }: Props) => {
+  const { mutate: updateIndicateur, isPending } = useUpdateIndicateur(
+    definition.id
+  );
+  const periodiciteOptions = useAvailableIndicateurPeriodiciteOptions();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = definition;
 
@@ -62,6 +69,14 @@ const DonneesIndicateur = ({
 
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
+      <IndicateurPeriodiciteSelect
+        mode={definition.periodiciteMode}
+        periodiciteParDefaut={definition.periodiciteParDefaut}
+        periodicitePersonnalisee={definition.periodicitePersonnalisee}
+        options={periodiciteOptions}
+        disabled={!canMutateDefinition || isPending}
+        onChange={(periodicite) => updateIndicateur({ periodicite })}
+      />
       <div className="flex flex-row gap-4">
         {/* Unité personnalisée */}
         {definition.estPerso && (
