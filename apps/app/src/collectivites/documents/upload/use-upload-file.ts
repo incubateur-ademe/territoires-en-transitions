@@ -1,8 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { uploadToStorage } from './upload-to-storage';
-import { useAddFileToLib } from './use-add-file-to-lib';
 
 type UploadFileArgs = {
   collectiviteId: number;
@@ -16,10 +15,19 @@ export type UploadFile = (args: UploadFileArgs) => Promise<number>;
 
 export const useUploadFile = (): UploadFile => {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
   const { mutateAsync: createUploadToken } = useMutation(
     trpc.collectivites.documents.createUploadToken.mutationOptions()
   );
-  const { addFileToLib } = useAddFileToLib();
+
+  const { mutateAsync: createDocument } = useMutation(
+    trpc.collectivites.documents.create.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['bibliotheque_fichier'] });
+      },
+    })
+  );
 
   return async ({ collectiviteId, file, hash, signal, onProgress }) => {
     const uploadDecision = await createUploadToken({ collectiviteId, hash });
@@ -36,7 +44,7 @@ export const useUploadFile = (): UploadFile => {
       onProgress,
     });
 
-    const fichier = await addFileToLib({
+    const fichier = await createDocument({
       collectiviteId,
       filename: file.name,
       hash,
