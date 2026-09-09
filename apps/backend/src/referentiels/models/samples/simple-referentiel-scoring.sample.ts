@@ -145,6 +145,7 @@ export const simpleReferentielScoring: TreeOfActionsIncludingScore = {
           scoresTag: {},
           // juste pour les tests : il n'y a (à ce jour) pas de score indicatif pour ECi
           scoreIndicatif: {
+            periodicite: 'annuelle',
             fait: {
               score: 0.2,
               valeursUtilisees: [

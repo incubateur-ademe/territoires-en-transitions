@@ -148,10 +148,18 @@ export const makeLegendData = (
         }
   );
 
+export type TimeAxisOptions = {
+  useUTC?: boolean;
+  minInterval?: number;
+  maxInterval?: number;
+  formatter?: (value: number) => string;
+};
+
 type OptionsProps = {
   option: EChartsOption;
   titre?: string;
   unite?: string;
+  timeAxis?: TimeAxisOptions;
   disableToolbox?: boolean;
   hideMinMaxLabel?: boolean;
 };
@@ -190,6 +198,7 @@ export const makeOption = ({
   option = {},
   titre,
   unite,
+  timeAxis,
   disableToolbox = false,
   hideMinMaxLabel = false,
 }: OptionsProps): EChartsOption => {
@@ -206,6 +215,7 @@ export const makeOption = ({
   } = option;
 
   return {
+    ...(timeAxis?.useUTC !== undefined && { useUTC: timeAxis.useUTC }),
     textStyle: {
       fontFamily: '"Marianne", arial, sans-serif',
     },
@@ -238,11 +248,11 @@ export const makeOption = ({
     xAxis: {
       type: 'time',
       splitLine: { show: true, lineStyle: { opacity: 0.5 } },
-      // graduation de 5 en 5 années
-      maxInterval: 12 * 365 * 24 * 50 * 60 * 1000,
-      minInterval: 365 * 24 * 50 * 60 * 1000,
+      // graduation de 5 en 5 années par défaut
+      maxInterval: timeAxis?.maxInterval ?? 12 * 365 * 24 * 50 * 60 * 1000,
+      minInterval: timeAxis?.minInterval ?? 365 * 24 * 50 * 60 * 1000,
       axisLabel: {
-        formatter: '{yyyy}',
+        formatter: timeAxis?.formatter ?? '{yyyy}',
         color: colors.primary['9'],
         showMinLabel: !hideMinMaxLabel,
         showMaxLabel: !hideMinMaxLabel,
@@ -279,7 +289,8 @@ export const makeOption = ({
           backgroundColor: '#6a7985',
           formatter: (params) =>
             params.axisDimension === 'x'
-              ? new Date(params.value).getFullYear().toString()
+              ? timeAxis?.formatter?.(Number(params.value)) ??
+                new Date(params.value).getFullYear().toString()
               : NumFormat.format(params.value as number),
         },
       },

@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import {
-  getYearFromIsoDate,
+  toAnnualIndicateurYear,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
 import { Input, TableCell, VisibleWhen } from '@tet/ui';
@@ -36,14 +36,22 @@ export const IndicateurValeurCell = memo(
     year,
     isReadonly = false,
   }: IndicateurValeurCellProps): ReactNode => {
-    const { indicateurId, indicateurValeurs, optionalYears } =
-      cell.row.original;
+    const {
+      indicateurId,
+      indicateurDefinition,
+      indicateurValeurs,
+      optionalYears,
+    } = cell.row.original;
     const isRequired =
       optionalYears !== 'all' && !optionalYears?.includes(year);
 
     const indicateurValeur = indicateurValeurs.find(
       (indicateurValeur) =>
-        getYearFromIsoDate(indicateurValeur.dateValeur) === year
+        toAnnualIndicateurYear(
+          indicateurDefinition.periodicite,
+          indicateurValeur.dateValeur,
+          'Diagnostic PCAET'
+        ) === year
     );
 
     const currentValue = indicateurValeur?.[indicateurValeurType] ?? null;
