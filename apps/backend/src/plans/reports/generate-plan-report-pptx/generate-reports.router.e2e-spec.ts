@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  getAuthToken,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
@@ -8,9 +7,8 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { sleep } from '@tet/backend/utils/sleep.utils';
+import { ReportGeneration } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
-import { default as request } from 'supertest';
 import { TrpcRouter } from '../../../utils/trpc/trpc.router';
 
 const SEED_DATA_PLAN_ID = 1;
@@ -21,7 +19,6 @@ describe('generate-reports.router.e2e-spec.ts', () => {
   let router: TrpcRouter;
   let adminUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
-  let adminToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -34,10 +31,6 @@ describe('generate-reports.router.e2e-spec.ts', () => {
       role: CollectiviteRole.ADMIN,
     });
     adminUser = getAuthUserFromUserCredentials(adminResult.user);
-    adminToken = await getAuthToken({
-      email: adminResult.user.email ?? '',
-      password: adminResult.user.password,
-    });
 
     // User without access (for permission test)
     const noAccessResult = await addTestUser(db);
@@ -60,50 +53,40 @@ describe('generate-reports.router.e2e-spec.ts', () => {
 
     expect(reportGeneration.name).toMatch(expectedFileName);
 
-    // Poll until the report reaches a terminal status (max 60s).
-    // Exit early on 'failed' so we don't burn the full timeout waiting for a
-    // status that will never transition to 'completed'.
-    let updatedReportGeneration = await caller.plans.reports.get({
-      reportId: reportGeneration.id,
-    });
-    const maxWait = 60000;
-    const pollInterval = 2000;
-    const start = Date.now();
-    while (
-      updatedReportGeneration.status !== 'completed' &&
-      updatedReportGeneration.status !== 'failed' &&
-      Date.now() - start < maxWait
-    ) {
-      await sleep(pollInterval);
-      updatedReportGeneration = await caller.plans.reports.get({
-        reportId: reportGeneration.id,
-      });
-    }
-    const elapsedMs = Date.now() - start;
+    const getReportGeneration = (): Promise<ReportGeneration> =>
+      caller.plans.reports.get({ reportId: reportGeneration.id });
+
+    await expect
+      .poll(async () => (await getReportGeneration()).status, {
+        interval: 2000,
+        timeout: 60000,
+      })
+      .toMatch(/^(completed|failed)$/);
+
+    const updatedReportGeneration = await getReportGeneration();
     expect(
       updatedReportGeneration.status,
-      `Report did not complete within ${maxWait}ms (elapsed ${elapsedMs}ms, final status: ${updatedReportGeneration.status}, errorMessage: ${updatedReportGeneration.errorMessage})`
+      `Report generation failed: ${updatedReportGeneration.errorMessage}`
     ).toBe('completed');
 
-    const response = await request(app.getHttpServer())
-      .get(
-        `/collectivites/${SEED_DATA_COLLECTIVITE_ID}/documents/${updatedReportGeneration.id}/download`
-      )
-      .set('Authorization', `Bearer ${adminToken}`)
-      .expect(200)
-      .responseType('blob');
+    const fichierId = updatedReportGeneration.fileId;
+    if (fichierId === null) {
+      throw new Error('A completed report must carry a fileId');
+    }
 
-    const fileName = decodeURI(
-      response.headers['content-disposition']
-        .split('filename=')[1]
-        .split(';')[0]
-        .split('"')[1]
-    );
+    const { signedUrl, filename } =
+      await caller.collectivites.documents.getDownloadUrl({
+        collectiviteId: SEED_DATA_COLLECTIVITE_ID,
+        fichierId,
+      });
 
-    const body = response.body as Buffer;
+    expect(filename).toMatch(expectedFileName);
 
-    expect(fileName).toMatch(expectedFileName);
-    expect(body.byteLength).toBeGreaterThan(1000);
+    const response = await fetch(signedUrl);
+    expect(response.ok).toBe(true);
+
+    const reportBuffer = Buffer.from(await response.arrayBuffer());
+    expect(reportBuffer.byteLength).toBeGreaterThan(1000);
   }, 90000);
 
   it("Refuse la génération de rapport si l'utilisateur n'a pas les droits", async () => {

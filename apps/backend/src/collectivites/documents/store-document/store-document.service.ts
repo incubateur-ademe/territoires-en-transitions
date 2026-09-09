@@ -8,16 +8,16 @@ import { Result } from '@tet/backend/utils/result.type';
 import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
-  toDocumentHash,
+  DocumentHash,
 } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { createHash } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';
+import { calculateDocumentHash } from './calculate-document-hash.utils';
 import {
   StoreDocumentError,
   StoreDocumentErrorEnum,
@@ -25,6 +25,8 @@ import {
 
 // Type for multer file upload
 type MulterFile = Express.Multer.File;
+
+export type DocumentToUpload = Omit<BibliothequeFichierCreate, 'hash'>;
 
 @Injectable()
 export class StoreDocumentService {
@@ -58,7 +60,7 @@ export class StoreDocumentService {
   }
 
   async uploadLocalFile(
-    document: Omit<BibliothequeFichierCreate, 'hash'>,
+    document: DocumentToUpload,
     localFilePath: string,
     user?: AuthenticatedUser
   ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
@@ -88,9 +90,7 @@ export class StoreDocumentService {
     const mimeType = mime.lookup(localFilePath) || undefined;
 
     const fileBuffer = await readFile(localFilePath);
-    const hash = toDocumentHash(
-      createHash('sha256').update(fileBuffer).digest('hex')
-    );
+    const hash = calculateDocumentHash(fileBuffer);
 
     this.logger.log(
       `Uploading file ${localFilePath} with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
@@ -107,6 +107,30 @@ export class StoreDocumentService {
     }
 
     return await this.storeDocument({ ...document, hash }, user);
+  }
+
+  private async findDocumentByHash(
+    collectiviteId: number,
+    hash: DocumentHash
+  ): Promise<BibliothequeFichier | undefined> {
+    const [document] = await this.databaseService.db
+      .select({
+        id: bibliothequeFichierTable.id,
+        collectiviteId: bibliothequeFichierTable.collectiviteId,
+        hash: bibliothequeFichierTable.hash,
+        filename: bibliothequeFichierTable.filename,
+        confidentiel: bibliothequeFichierTable.confidentiel,
+      })
+      .from(bibliothequeFichierTable)
+      .where(
+        and(
+          eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+          eq(bibliothequeFichierTable.hash, hash)
+        )
+      )
+      .limit(1);
+
+    return document;
   }
 
   async uploadBuffer(
@@ -146,10 +170,7 @@ export class StoreDocumentService {
     }
     const bucketId = bucketResult.data;
 
-    // Compute SHA-256 hash from buffer
-    const hash = toDocumentHash(
-      createHash('sha256').update(file.buffer).digest('hex')
-    );
+    const hash = calculateDocumentHash(file.buffer);
 
     this.logger.log(
       `Uploading buffer with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
@@ -230,12 +251,30 @@ export class StoreDocumentService {
           filename: document.filename,
           confidentiel: document.confidentiel ?? false,
         })
+        .onConflictDoNothing({
+          target: [
+            bibliothequeFichierTable.collectiviteId,
+            bibliothequeFichierTable.hash,
+          ],
+        })
         .returning();
 
-      return {
-        success: true,
-        data: insertedDocument as BibliothequeFichier,
-      };
+      if (insertedDocument) {
+        return {
+          success: true,
+          data: insertedDocument as BibliothequeFichier,
+        };
+      }
+
+      const existingDocument = await this.findDocumentByHash(
+        document.collectiviteId,
+        document.hash
+      );
+      if (!existingDocument) {
+        return { success: false, error: 'STORE_DOCUMENT_ERROR' };
+      }
+
+      return { success: true, data: existingDocument };
     } catch (error) {
       this.logger.error(
         `Erreur lors de la création du document ${
