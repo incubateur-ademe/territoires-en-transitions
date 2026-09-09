@@ -1,10 +1,11 @@
+import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
+import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
 import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
 import {
   EXPECTED_FORMATS,
   MAX_FILE_SIZE_MB,
 } from '@/app/referentiels/preuves/upload/constants';
-import { useUploadFileToCollectiviteLibrary } from '@/app/referentiels/preuves/upload/use-upload-file-to-collectivite-library';
 import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
 import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/useEditPreuve';
 import { useAddPreuveAudit } from '@/app/referentiels/preuves/useAddPreuves';
@@ -44,7 +45,7 @@ export const useUploadAuditReport = (
     useListReportsByAudit(auditId);
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-  const uploadFileToLibrary = useUploadFileToCollectiviteLibrary();
+  const uploadFile = useUploadFile();
   const { mutateAsync: addPreuve } = useAddPreuveAudit();
   const { mutateAsync: removePreuve } = useRemovePreuve();
   const { setToast } = useToastContext();
@@ -88,8 +89,10 @@ export const useUploadAuditReport = (
     uploadAbortRef.current = controller;
     setUploadingReport({ filename: file.name, progress: 0 });
     try {
-      const fichierId = await uploadFileToLibrary({
+      const fichierId = await uploadFile({
+        collectiviteId,
         file,
+        hash: await hashFile(file),
         signal: controller.signal,
         onProgress: (progress) => {
           if (controller.signal.aborted) return;
@@ -165,7 +168,8 @@ export const useUploadAuditReport = (
     isUploading,
     removingReportIds,
     isRemoving,
-    canProceed: !isLoadingReports && reports.length > 0 && !isUploading && !isRemoving,
+    canProceed:
+      !isLoadingReports && reports.length > 0 && !isUploading && !isRemoving,
     uploadReport,
     removeReport,
     abortUpload,

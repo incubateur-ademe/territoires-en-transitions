@@ -1,7 +1,7 @@
 'use client';
 
-import { hashFile } from '@/app/referentiels/preuves/upload/hash-file.utils';
-import { useUploadFile } from '@/app/referentiels/preuves/upload/use-upload-file';
+import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
+import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { useInstructeurCollectiviteId } from '../../data/use-contexte-instruction';
 

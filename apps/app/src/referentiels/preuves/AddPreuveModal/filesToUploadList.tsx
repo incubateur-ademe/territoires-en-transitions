@@ -5,7 +5,7 @@ import {
   FileConstraints,
   keepWithinMaxFiles,
 } from '../upload/constants';
-import { hashFile } from '../upload/hash-file.utils';
+import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { validateFile } from '../upload/validate-file';
 import {
   UploadErrorCode,
