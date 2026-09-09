@@ -1,3 +1,5 @@
+import { UpsertGridValeursRepository } from './valeurs/upsert-grid-valeurs.repository';
+import { UpsertGridValeursService } from './valeurs/upsert-grid-valeurs.service';
 import { TrackingModule } from '../utils/tracking/tracking.module';
 import { MutateDefinitionRepository } from './definitions/mutate-definition/mutate-definition.repository';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
@@ -98,6 +100,8 @@ const DEFINITIONS_PROVIDERS = [
     ReferentielsCoreModule,
   ],
   providers: [
+    UpsertGridValeursRepository,
+    UpsertGridValeursService,
     MutateDefinitionRepository,
     IndicateurChartBuilder,
     ImportIndicateurDefinitionRepository,
