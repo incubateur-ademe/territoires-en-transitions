@@ -108,7 +108,7 @@ jobs:
           mode: restore
 
       - name: Build app and backend
-        run: pnpm nx run-many -t build -p app backend --parallel=50% --outputStyle=static
+        run: pnpm nx run-many -t build -p app backend --parallel=50%
 
       - name: Save Next app build cache
         if: ${{ matrix.shard == 1 && steps.next-app-cache.outputs.cache-hit != 'true' }}
