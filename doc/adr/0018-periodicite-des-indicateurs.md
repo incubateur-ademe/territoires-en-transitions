@@ -194,11 +194,6 @@ des consommateurs et activation du mensuel. Le retour à l’ancien modèle exig
 annuelles recommandées, des valeurs annuelles et aucune préférence locale ; sinon une migration
 métier explicite est nécessaire.
 
-<!-- Anciennes ancres de deploiement : les procedures sont desormais dans la documentation de la base. -->
-
-<a id="7-deployer-en-deux-phases"></a>
-<a id="10-la-migration-reste-progressive-et-réversible"></a>
-
 ## Documents associés
 
 Les étapes de déploiement et de reprise sont maintenues dans la
