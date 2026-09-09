@@ -96,7 +96,7 @@ export const useUploadAuditReport = (
           setUploadingReport({ filename: file.name, progress });
         },
       });
-      if (controller.signal.aborted || fichierId === null) return;
+      if (controller.signal.aborted) return;
 
       await addPreuve({
         auditId,

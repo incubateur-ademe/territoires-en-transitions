@@ -1,45 +1,21 @@
-import { shasum256 } from '@/app/utils/shasum256';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { useUserContext } from '@tet/api/users';
-import { getFilesPerHash } from '../Bibliotheque/useFichiers';
-import { uploadFileToBucket } from './upload-file-to-bucket';
-import { useAddFileToLib } from './useAddFileToLib';
-import { useCollectiviteBucketId } from './useCollectiviteBucketId';
+import { hashFile } from './hash-file.utils';
+import { useUploadFile } from './use-upload-file';
 
-type UploadFileArgs = {
+type UploadFileToLibraryArgs = {
   file: File;
   signal?: AbortSignal;
   onProgress?: (percent: number) => void;
 };
 
 export const useUploadFileToCollectiviteLibrary = (): ((
-  args: UploadFileArgs
-) => Promise<number | null>) => {
+  args: UploadFileToLibraryArgs
+) => Promise<number>) => {
   const collectiviteId = useCollectiviteId();
-  const bucketId = useCollectiviteBucketId(collectiviteId);
-  const { authHeaders } = useUserContext();
-  const { addFileToLib } = useAddFileToLib();
+  const uploadFile = useUploadFile();
 
   return async ({ file, signal, onProgress }) => {
-    if (!collectiviteId || !bucketId || !authHeaders) return null;
-
-    const hash = await shasum256(file);
-
-    const alreadyUploadedFiles = await getFilesPerHash(collectiviteId, [hash]);
-    const alreadyUploadedFichierId = alreadyUploadedFiles?.find(
-      (f) => f.hash === hash
-    )?.id;
-    if (alreadyUploadedFichierId !== undefined) return alreadyUploadedFichierId;
-
-    const { filename } = await uploadFileToBucket({
-      bucketId,
-      file,
-      authHeaders,
-      signal,
-      onProgress,
-      precomputedHash: hash,
-    });
-    const fichier = await addFileToLib({ collectiviteId, filename, hash });
-    return fichier.id;
+    const hash = await hashFile(file);
+    return uploadFile({ collectiviteId, file, hash, signal, onProgress });
   };
 };

@@ -159,6 +159,7 @@
     "ts-case-convert": "2.1.0",
     "ts-pattern": "5.9.0",
     "tslib": "2.8.1",
+    "tus-js-client": "4.3.1",
     "unpdf": "^1.6.2",
     "use-debounce": "10.0.6",
     "uuid": "8.3.2",

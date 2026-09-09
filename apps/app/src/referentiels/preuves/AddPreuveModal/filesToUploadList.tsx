@@ -1,23 +1,32 @@
-import { shasum256 } from '@/app/utils/shasum256';
+import { DocumentHash } from '@tet/domain/collectivites';
 import { FichierParHash, getFilesPerHash } from '../Bibliotheque/useFichiers';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,
   keepWithinMaxFiles,
 } from '../upload/constants';
+import { hashFile } from '../upload/hash-file.utils';
 import { validateFile } from '../upload/validate-file';
-import { FileUploadItem } from './FileItem';
-import { UploadErrorCode, UploadStatusCode } from './types';
+import {
+  UploadErrorCode,
+  UploadStatusCode,
+  UploadStatusDuplicated,
+  UploadStatusFailed,
+} from './types';
 
-/**
- * Transforme la sélection de fichiers en une liste d'items
- * pour l'onglet "Fichier" du dialogue "Ajouter une preuve"
- */
+export type PreparedFile =
+  | { kind: 'toUpload'; file: File; hash: DocumentHash }
+  | {
+      kind: 'settled';
+      file: File;
+      status: UploadStatusFailed | UploadStatusDuplicated;
+    };
+
 export const filesToUploadList = async (
   collectiviteId: number | null,
   files: FileList | null,
   constraints: FileConstraints = DEFAULT_FILE_CONSTRAINTS
-): Promise<FileUploadItem[]> => {
+): Promise<PreparedFile[]> => {
   if (!files || !collectiviteId) {
     return [];
   }
@@ -32,30 +41,30 @@ export const filesToUploadList = async (
 
   // détermine la clé de chaque fichier
   const filesWithHash = await Promise.all(
-    filesToProcess.map(async (file: File) => {
-      const hash = await shasum256(file);
-      return { file, hash };
-    })
+    filesToProcess.map(async (file: File) => ({
+      file,
+      hash: await hashFile(file),
+    }))
   );
 
   // récupère la liste des éventuels doublons (fichiers déjà téléversés ayant la même clé)
   const hashes = filesWithHash.map(({ hash }) => hash);
   const duplicatedFiles = await getFilesPerHash(collectiviteId, hashes);
 
-  return filesWithHash.map(({ file, hash }: { file: File; hash: string }) => {
+  return filesWithHash.map(({ file, hash }) => {
     // La validation précède la détection de doublon : un fichier déjà présent
     // dans la bibliothèque reste refusé s'il ne respecte pas les contraintes du
     // contexte de dépôt (le PDF seul pour un dossier PCAET, par exemple).
     const validationError = validateFile(file, constraints);
     if (validationError) {
-      return createItemFailed(file, UploadErrorCode[validationError]);
+      return toFailed(file, UploadErrorCode[validationError]);
     }
 
     const duplicatedFile = duplicatedFiles?.find((f) => f.hash === hash);
     if (duplicatedFile) {
-      return createItemDuplicated(file, duplicatedFile);
+      return toDuplicated(file, duplicatedFile);
     }
-    return createItemRunning(file);
+    return { kind: 'toUpload', file, hash };
   });
 };
 
@@ -69,11 +78,8 @@ const filesToArray = (files: FileList): File[] => {
   return arr;
 };
 
-// représente un fichier en erreur (pb de taille, de format, etc.)
-const createItemFailed = (
-  file: File,
-  error: UploadErrorCode
-): FileUploadItem => ({
+const toFailed = (file: File, error: UploadErrorCode): PreparedFile => ({
+  kind: 'settled',
   file,
   status: {
     code: UploadStatusCode.failed,
@@ -81,25 +87,13 @@ const createItemFailed = (
   },
 });
 
-// représente un fichier déjà téléversé
-const createItemDuplicated = (
-  file: File,
-  fichier: FichierParHash
-): FileUploadItem => ({
+const toDuplicated = (file: File, fichier: FichierParHash): PreparedFile => ({
+  kind: 'settled',
   file,
   status: {
     code: UploadStatusCode.duplicated,
     fichier_id: fichier.id,
     filename: fichier.filename,
     hash: fichier.hash,
-  },
-});
-
-// représente un fichier dont l'upload va démarrer
-const createItemRunning = (file: File): FileUploadItem => ({
-  file,
-  status: {
-    code: UploadStatusCode.running,
-    progress: 0,
   },
 });
