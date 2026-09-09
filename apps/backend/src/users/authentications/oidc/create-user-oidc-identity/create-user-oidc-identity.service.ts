@@ -136,7 +136,8 @@ export class CreateUserOidcIdentityService {
     await this.rattacherIdentiteService.rattacherIdentite(
       provider,
       userId,
-      claims
+      claims,
+      'creation-compte'
     );
 
     this.logger.log(

@@ -9,6 +9,8 @@ import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { UserPreferencesRepository } from '@tet/backend/users/preferences/user-preferences.repository';
+import { PostHogEventTracker } from '@tet/backend/utils/tracking/posthog-event-tracker';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -75,6 +77,12 @@ async function createTestingContext() {
       GetCollectiviteBySiretService,
       UpdateUserRoleService,
       UserPreferencesRepository,
+      // Le rattachement émet `auth:oidc:linked`. Le tracker plutôt que
+      // `TrackingModule` : ce dernier monte aussi l'intercepteur d'API, qui
+      // tirerait `ContextStoreService` et tout `UtilsModule`. Sans
+      // `POSTHOG_KEY` en test, le tracker est un no-op.
+      { provide: 'EventTracker', useClass: PostHogEventTracker },
+      TrackingService,
     ],
   }).compile();
 

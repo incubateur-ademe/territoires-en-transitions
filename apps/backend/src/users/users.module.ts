@@ -26,6 +26,7 @@ import { InviteUserToLinkOidcIdentityService } from './authentications/oidc/invi
 import { HandleUserOidcIdentitiesRouter } from './authentications/oidc/handle-user-oidc-identities/handle-user-oidc-identities.router';
 import { HandleUserOidcIdentitiesService } from './authentications/oidc/handle-user-oidc-identities/handle-user-oidc-identities.service';
 import { OidcController } from './authentications/oidc/oidc.controller';
+import { TrackingModule } from '../utils/tracking/tracking.module';
 import { LinkOidcIdentityToUserSessionRouter } from './authentications/oidc/link-oidc-identity-to-user-session/link-oidc-identity-to-user-session.router';
 import { LinkOidcIdentityToUserSessionService } from './authentications/oidc/link-oidc-identity-to-user-session/link-oidc-identity-to-user-session.service';
 import { OidcClientService } from './authentications/oidc/oidc-client.service';
@@ -53,6 +54,7 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
   imports: [
     NestjsFormDataModule,
     TransactionModule,
+    TrackingModule,
     JwtModule.register({
       global: true,
       secret: process.env.SUPABASE_JWT_SECRET,

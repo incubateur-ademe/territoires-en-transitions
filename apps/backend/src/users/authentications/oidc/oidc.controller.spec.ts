@@ -671,7 +671,8 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
       expect(rattacherIdentiteMock.rattacherAvecGardeFous).toHaveBeenCalledWith(
         'proconnect',
         'user-courant',
-        claims
+        claims,
+        'profil'
       );
       // jamais de matching cas 1/2/3, jamais de session pontée : le compte
       // est déjà connu, la session déjà active reste la session finale.
