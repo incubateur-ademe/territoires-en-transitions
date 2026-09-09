@@ -1,4 +1,10 @@
+import { TrackingModule } from '../utils/tracking/tracking.module';
+import { MutateDefinitionRepository } from './definitions/mutate-definition/mutate-definition.repository';
+import { IndicateurPeriodiciteAvailabilityService } from './definitions/indicateur-periodicite-availability.service';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
+import { ImportIndicateurDefinitionRepository } from './import-indicateurs/import-indicateur-definition.repository';
+import { ImportIndicateurRelationsService } from './import-indicateurs/import-indicateur-relations.service';
+import { UpsertIndicateurDefinitionsService } from './import-indicateurs/upsert-indicateur-definitions.service';
 import { IndicateurFormulaReconciliationRepository } from './definitions/indicateur-formula-reconciliation.repository';
 import { IndicateurFormulaReconciliationService } from './definitions/indicateur-formula-reconciliation.service';
 import { IndicateurFormulaReconciliationRouter } from './definitions/indicateur-formula-reconciliation.router';
@@ -84,6 +90,7 @@ const DEFINITIONS_PROVIDERS = [
 
 @Module({
   imports: [
+    TrackingModule,
     TransactionModule,
     UsersModule,
     CollectivitesModule,
@@ -92,7 +99,12 @@ const DEFINITIONS_PROVIDERS = [
     ReferentielsCoreModule,
   ],
   providers: [
+    MutateDefinitionRepository,
+    IndicateurPeriodiciteAvailabilityService,
     IndicateurChartBuilder,
+    ImportIndicateurDefinitionRepository,
+    ImportIndicateurRelationsService,
+    UpsertIndicateurDefinitionsService,
     IndicateurFormulaReconciliationRepository,
     IndicateurFormulaReconciliationService,
     IndicateurFormulaReconciliationRouter,
@@ -138,8 +150,6 @@ const DEFINITIONS_PROVIDERS = [
   ],
   exports: [
     ListPlatformDefinitionsService,
-    ListCollectiviteDefinitionsRepository,
-    ListPlatformDefinitionsRepository,
     ListIndicateursService,
 
     IndicateurExpressionService,

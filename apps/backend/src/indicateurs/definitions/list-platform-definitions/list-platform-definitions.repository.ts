@@ -11,7 +11,7 @@ import {
   and,
   eq,
   getTableColumns,
-  like,
+  ilike,
   inArray,
   isNotNull,
   isNull,
@@ -146,11 +146,13 @@ export class ListPlatformDefinitionsRepository {
   ): Promise<IndicateurDefinition[]> {
     const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] =
       identifiantsReferentiel?.map((identifiant) =>
-        like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
+        ilike(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
       ) ?? [];
 
     const sqlConditions: (SQLWrapper | SQL)[] = [
       isNotNull(indicateurDefinitionTable.valeurCalcule),
+      isNotNull(indicateurDefinitionTable.identifiantReferentiel),
+      isNull(indicateurDefinitionTable.collectiviteId),
     ];
     if (sourceIndicateurSqlConditions.length) {
       sqlConditions.push(or(...sourceIndicateurSqlConditions) as SQLWrapper);
@@ -177,48 +179,6 @@ export class ListPlatformDefinitionsRepository {
     );
 
     return computedIndicateurDefinitions;
-  }
-
-  /** Donne les id des indicateurs à partir de leur identifiant référentiel */
-  // TODO Use listPlatformDefinitions instead
-  async listPlatformDefinitionIdsByIdentifiantReferentiels(
-    identifiantsReferentiel: string[]
-  ): Promise<Record<string, number>> {
-    this.logger.log(
-      `Récupération des id des indicateurs ${identifiantsReferentiel?.join(
-        ','
-      )}`
-    );
-
-    if (!identifiantsReferentiel?.length) {
-      return {};
-    }
-
-    const definitions = await this.databaseService.db
-      .select({
-        id: indicateurDefinitionTable.id,
-        identifiant: indicateurDefinitionTable.identifiantReferentiel,
-      })
-      .from(indicateurDefinitionTable)
-      .where(
-        and(
-          isNotNull(indicateurDefinitionTable.identifiantReferentiel),
-          isNull(indicateurDefinitionTable.collectiviteId),
-          inArray(
-            indicateurDefinitionTable.identifiantReferentiel,
-            identifiantsReferentiel
-          )
-        )
-      )
-      .orderBy(indicateurDefinitionTable.identifiantReferentiel);
-
-    this.logger.log(`${definitions.length} définitions trouvées`);
-
-    const indicateurIdParIdentifiant = Object.fromEntries(
-      definitions.map(({ id, identifiant }) => [identifiant, id])
-    );
-
-    return indicateurIdParIdentifiant;
   }
 
   getCategoriesSubQuery() {
