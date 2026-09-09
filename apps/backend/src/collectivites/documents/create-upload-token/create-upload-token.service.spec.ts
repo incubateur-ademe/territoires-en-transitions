@@ -2,10 +2,13 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { type DocumentStorageError } from '@tet/backend/utils/supabase/document-storage.errors';
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { describe, expect, it, vi, type Mock } from 'vitest';
 import { CreateUploadTokenService } from './create-upload-token.service';
 
-const HASH = 'ec07d0538e44a333b23b936c9a4ba37fbd211c6272e632d2173b6abe102a0482';
+const HASH = toDocumentHash(
+  'ec07d0538e44a333b23b936c9a4ba37fbd211c6272e632d2173b6abe102a0482'
+);
 
 const user: AuthenticatedUser = { id: 'user-id' } as AuthenticatedUser;
 

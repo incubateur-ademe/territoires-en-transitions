@@ -326,7 +326,6 @@ export class GenerateReportsApplicationService {
       const uploadResult = await this.storeDocumentService.uploadLocalFile(
         {
           collectiviteId: collectiviteId,
-          hash: generationId,
           filename: reportName,
           confidentiel: false,
         },
