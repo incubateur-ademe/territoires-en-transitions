@@ -25,7 +25,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 
 describe('EditPreuveDocumentRouter', () => {
@@ -64,11 +63,9 @@ describe('EditPreuveDocumentRouter', () => {
       throw new Error('token éditeur manquant');
     }
 
-    const testAgent = request(app.getHttpServer());
     const doc = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorAuthToken,
       fileName: 'preuve-update-lien-test.pdf',
     });
     fichierId = doc.id;

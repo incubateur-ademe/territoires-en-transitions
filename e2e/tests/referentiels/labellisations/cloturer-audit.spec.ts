@@ -254,8 +254,9 @@ test.describe("Modale de clôture d'audit", () => {
     auditLabellisationPom,
   }) => {
     // Retient l'upload Supabase Storage pendant 1.5 s pour laisser le temps
-    // d'observer le placeholder.
-    await page.route('**/storage/v1/object/**', async (route) => {
+    // d'observer le placeholder. Le motif couvre le POST de création de la
+    // session résumable comme les PATCH de tronçons qui la suivent.
+    await page.route('**/storage/v1/upload/resumable/**', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       await route.continue();
     });

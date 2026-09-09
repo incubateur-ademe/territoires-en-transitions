@@ -9,7 +9,6 @@ import {
   getTestApp,
   getTestDatabase,
   ISO_OR_SQL_DATE_TIME_REGEX,
-  signInWith,
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -18,7 +17,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
@@ -36,7 +34,6 @@ describe('Request Labellisation Router', () => {
 
   let collectivite: Collectivite;
   let adminUser: AuthenticatedUser;
-  let adminAuthToken: string;
   let lectureUser: AuthenticatedUser;
   let editionFichesIndicateursUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -72,11 +69,6 @@ describe('Request Labellisation Router', () => {
     collectivite = testCollectiviteAndUsersResult.collectivite;
 
     const admin = testCollectiviteAndUsersResult.users[0];
-    const adminUserSignInResponse = await signInWith({
-      email: admin.email,
-      password: admin.password,
-    });
-    adminAuthToken = adminUserSignInResponse.data.session?.access_token ?? '';
     adminUser = getAuthUserFromUserCredentials(admin);
     lectureUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[2]
@@ -476,11 +468,9 @@ describe('Request Labellisation Router', () => {
         ReferentielIdEnum.CAE
       );
 
-      const testAgent = request(app.getHttpServer());
       await createTestDemandePreuve(
         trpcClient,
-        testAgent,
-        adminAuthToken,
+        app,
         collectivite.id,
         ReferentielIdEnum.CAE
       );

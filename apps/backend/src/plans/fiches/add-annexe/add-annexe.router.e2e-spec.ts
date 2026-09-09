@@ -17,7 +17,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { createFiche } from '../fiches.test-fixture';
 
 describe('AddAnnexeRouter', () => {
@@ -60,11 +59,9 @@ describe('AddAnnexeRouter', () => {
       throw new Error('token éditeur manquant');
     }
 
-    const testAgent = request(app.getHttpServer());
     const doc = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorAuthToken,
       fileName: 'annexe-test.pdf',
     });
     fichierId = doc.id;
@@ -121,22 +118,13 @@ describe('AddAnnexeRouter', () => {
   });
 
   test("un éditeur ne peut pas associer un fichier d'une autre collectivité (IDOR)", async () => {
-    const { collectivite: autreCollectivite, users: autreUsers } =
+    const { collectivite: autreCollectivite } =
       await addTestCollectiviteAndUsers(db, {
         users: [{ role: CollectiviteRole.EDITION }],
       });
-    const autreEditor = autreUsers[0];
-    const signInAutre = await signInWith({
-      email: autreEditor.email,
-      password: autreEditor.password,
-    });
-    const autreAuthToken = signInAutre.data.session?.access_token ?? '';
-
-    const testAgent = request(app.getHttpServer());
     const autreDoc = await uploadCreateTestDocument({
+      app,
       collectiviteId: autreCollectivite.id,
-      testAgent,
-      token: autreAuthToken,
       fileName: 'autre-collectivite.pdf',
       sampleFileName: OTHER_PDF_SAMPLE_FILE,
     });

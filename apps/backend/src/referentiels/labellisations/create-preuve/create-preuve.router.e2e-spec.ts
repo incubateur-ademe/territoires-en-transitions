@@ -13,7 +13,6 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import {
   getTestApp,
@@ -84,11 +83,9 @@ describe('CreatePreuveRouter', () => {
       throw new Error('Failed to sign in editor user: no access token');
     }
 
-    const testAgent = request(app.getHttpServer());
     const createdDocument = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorAuthToken,
       fileName: 'test-preuve.pdf',
     });
     createdDocumentId = createdDocument.id;

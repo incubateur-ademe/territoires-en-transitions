@@ -5,7 +5,6 @@ import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/co
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
-import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
 import { GetDownloadUrlRepository } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.repository';
 import { GetDownloadUrlRouter } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.router';
 import { GetDownloadUrlService } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.service';
@@ -176,6 +175,6 @@ import { PersonnesService } from './services/personnes.service';
     DiscussionApplicationService,
     DiscussionDomainService,
   ],
-  controllers: [CollectiviteController, DocumentController],
+  controllers: [CollectiviteController],
 })
 export class CollectivitesModule {}

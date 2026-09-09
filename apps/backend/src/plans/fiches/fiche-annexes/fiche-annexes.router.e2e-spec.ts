@@ -17,7 +17,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { BibliothequeFichier, Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { createFiche } from '../fiches.test-fixture';
 
 describe('FicheAnnexesRouter', () => {
@@ -53,17 +52,14 @@ describe('FicheAnnexesRouter', () => {
       throw new Error('token éditeur manquant');
     }
 
-    const testAgent = request(app.getHttpServer());
     docPublic = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorAuthToken,
       fileName: 'public.pdf',
     });
     docConfidentiel = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorAuthToken,
       confidentiel: true,
       fileName: 'confidentiel.pdf',
       sampleFileName: OTHER_PDF_SAMPLE_FILE,

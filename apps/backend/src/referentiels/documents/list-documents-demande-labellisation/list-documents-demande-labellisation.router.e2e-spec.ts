@@ -6,7 +6,6 @@ import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  signInWith,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
@@ -16,7 +15,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { createTestDemandePreuve } from '../../labellisations/create-preuve/create-preuve.test-fixture';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { createCollectiviteAvecCycle } from '../documents-labellisation.test-fixture';
@@ -29,7 +27,6 @@ describe('List Documents Demande Labellisation Router', () => {
   let collectivite: Collectivite;
   let editeurUser: AuthenticatedUser;
   let visiteurUser: AuthenticatedUser;
-  let editeurAuthToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -46,12 +43,6 @@ describe('List Documents Demande Labellisation Router', () => {
 
     collectivite = testCollectiviteAndUsersResult.collectivite;
     const editeur = testCollectiviteAndUsersResult.users[0];
-    const editeurUserSignInResponse = await signInWith({
-      email: editeur.email,
-      password: editeur.password,
-    });
-    editeurAuthToken =
-      editeurUserSignInResponse.data.session?.access_token ?? '';
     editeurUser = getAuthUserFromUserCredentials(editeur);
 
     const noAccessUserResult = await addTestUser(db);
@@ -75,8 +66,7 @@ describe('List Documents Demande Labellisation Router', () => {
     const editeurCaller = router.createCaller({ user: editeurUser });
     await createTestDemandePreuve(
       createTRPCClientFromCaller(editeurCaller),
-      request(app.getHttpServer()),
-      editeurAuthToken,
+      app,
       collectivite.id,
       ReferentielIdEnum.CAE
     );

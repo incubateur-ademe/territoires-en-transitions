@@ -12,7 +12,6 @@ import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  signInWith,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -21,7 +20,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { createTestDemandePreuve } from '../../labellisations/create-preuve/create-preuve.test-fixture';
@@ -60,10 +58,6 @@ describe('List Documents Router', () => {
     onTestFinished(cleanup);
 
     const membre = users[0];
-    const membreSignInResponse = await signInWith({
-      email: membre.email,
-      password: membre.password,
-    });
 
     const { audit, demande } = await createAuditWithOnTestFinished({
       databaseService: db,
@@ -79,9 +73,8 @@ describe('List Documents Router', () => {
       confidentiel?: boolean;
     }) =>
       uploadCreateTestDocument({
+        app,
         collectiviteId: collectivite.id,
-        testAgent: request(app.getHttpServer()),
-        token: membreSignInResponse.data.session?.access_token ?? '',
         fileName: document.fileName,
         sampleFileName: document.sampleFileName,
         confidentiel: document.confidentiel,
@@ -103,8 +96,7 @@ describe('List Documents Router', () => {
       }) =>
         createTestDemandePreuve(
           createTRPCClientFromCaller(membreCaller),
-          request(app.getHttpServer()),
-          membreSignInResponse.data.session?.access_token ?? '',
+          app,
           collectivite.id,
           ReferentielIdEnum.CAE,
           document
