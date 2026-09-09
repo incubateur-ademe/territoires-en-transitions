@@ -127,7 +127,7 @@ export const useFileUploadList = ({
       }
       setStatus(item.id, {
         code: UploadStatusCode.completed,
-        fichier_id: fichierId,
+        fichierId,
         hash,
       });
     } catch (error) {

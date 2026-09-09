@@ -23,7 +23,7 @@ vi.mock('./use-file-upload-list', () => ({
         file: new File([''], 'nouveau nom.pdf', { type: 'application/pdf' }),
         status: {
           code: UploadStatusCode.duplicated,
-          fichier_id: 1,
+          fichierId: 1,
           filename: 'nom-original.pdf',
           hash: 'hash-1',
         },

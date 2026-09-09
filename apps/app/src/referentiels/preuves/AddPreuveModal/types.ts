@@ -38,14 +38,14 @@ export type UploadStatusFailed = {
 // fichier ajouté à la bibliothèque après le téléversement
 export type UploadStatusCompleted = {
   code: UploadStatusCode.completed;
-  fichier_id: number;
+  fichierId: number;
   hash: DocumentHash;
 };
 
 // fichier déjà téléversé
 export type UploadStatusDuplicated = {
   code: UploadStatusCode.duplicated;
-  fichier_id: number;
+  fichierId: number;
   filename: string;
   hash: string;
 };

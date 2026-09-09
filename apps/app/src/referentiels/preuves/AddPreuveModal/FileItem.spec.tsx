@@ -17,7 +17,7 @@ describe('FileItem duplicate message', () => {
           file: createMockFile('nouveau nom.pdf', 1024),
           status: {
             code: UploadStatusCode.duplicated,
-            fichier_id: 1,
+            fichierId: 1,
             filename: 'nom-original.pdf',
             hash: 'hash-1',
           },
@@ -40,7 +40,7 @@ describe('FileItem duplicate message', () => {
           file: createMockFile('nom-original.pdf', 1024),
           status: {
             code: UploadStatusCode.duplicated,
-            fichier_id: 1,
+            fichierId: 1,
             filename: 'nom-original.pdf',
             hash: 'hash-1',
           },

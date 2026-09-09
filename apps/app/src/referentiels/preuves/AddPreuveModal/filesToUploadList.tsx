@@ -82,7 +82,7 @@ const toDuplicated = (file: File, fichier: FichierParHash): PreparedFile => ({
   file,
   status: {
     code: UploadStatusCode.duplicated,
-    fichier_id: fichier.id,
+    fichierId: fichier.id,
     filename: fichier.filename,
     hash: fichier.hash,
   },
