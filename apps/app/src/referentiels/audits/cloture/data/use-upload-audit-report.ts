@@ -2,12 +2,15 @@ import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
 import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
+import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/useEditPreuve';
 import {
   EXPECTED_FORMATS,
   MAX_FILE_SIZE_MB,
 } from '@/app/referentiels/preuves/upload/constants';
-import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
-import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/useEditPreuve';
+import {
+  FileValidationError,
+  validateFile,
+} from '@/app/referentiels/preuves/upload/validate-file';
 import { useAddPreuveAudit } from '@/app/referentiels/preuves/useAddPreuves';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -30,11 +33,23 @@ export type AuditReportUploadState = {
   uploadingReport: UploadingReport | null;
   isUploading: boolean;
   removingReportIds: ReadonlySet<number>;
-  isRemoving: boolean;
   canProceed: boolean;
   uploadReport: (files: FileList | null) => Promise<void>;
   removeReport: (report: AuditReport) => Promise<void>;
   abortUpload: () => void;
+};
+
+const toValidationMessage = (error: FileValidationError): string => {
+  const formats = EXPECTED_FORMATS.join(', ');
+  const messageByError: Record<FileValidationError, string> = {
+    sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_FILE_SIZE_MB }),
+    formatError: appLabels.fichierFormatNonSupporte({ formats }),
+    formatAndSizeError: appLabels.fichierFormatEtTailleInvalides({
+      maxMo: MAX_FILE_SIZE_MB,
+      formats,
+    }),
+  };
+  return messageByError[error];
 };
 
 export const useUploadAuditReport = (
@@ -66,22 +81,20 @@ export const useUploadAuditReport = (
 
   const isUploading = uploadingReport !== null;
 
+  const refetchReports = (): Promise<void> =>
+    queryClient.refetchQueries({
+      queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
+        auditId,
+      }),
+    });
+
   const uploadReport = async (files: FileList | null): Promise<void> => {
     const file = files?.[0];
     if (!file) return;
 
     const validationError = validateFile(file);
     if (validationError !== null) {
-      const formats = EXPECTED_FORMATS.join(', ');
-      const messageByError: Record<typeof validationError, string> = {
-        sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_FILE_SIZE_MB }),
-        formatError: appLabels.fichierFormatNonSupporte({ formats }),
-        formatAndSizeError: appLabels.fichierFormatEtTailleInvalides({
-          maxMo: MAX_FILE_SIZE_MB,
-          formats,
-        }),
-      };
-      setToast('error', messageByError[validationError]);
+      setToast('error', toValidationMessage(validationError));
       return;
     }
 
@@ -107,14 +120,11 @@ export const useUploadAuditReport = (
         commentaire: '',
         fichierId,
       });
-      if (controller.signal.aborted) return;
       // Attend que la liste des rapports soit re-fetchée avant de libérer
       // l'état d'upload pour éviter les flickering de refetch
-      await queryClient.refetchQueries({
-        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
-          auditId,
-        }),
-      });
+      if (!controller.signal.aborted) {
+        await refetchReports();
+      }
     } catch (error) {
       if (controller.signal.aborted) return;
       console.error(error);
@@ -130,18 +140,10 @@ export const useUploadAuditReport = (
   };
 
   const removeReport = async (report: AuditReport): Promise<void> => {
-    setRemovingReportIds((prev) => {
-      const next = new Set(prev);
-      next.add(report.id);
-      return next;
-    });
+    setRemovingReportIds((prev) => new Set(prev).add(report.id));
     try {
       await removePreuve(auditReportToPreuve(report));
-      await queryClient.refetchQueries({
-        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
-          auditId,
-        }),
-      });
+      await refetchReports();
     } catch (error) {
       console.error(error);
       setToast('error', appLabels.echecSuppressionRapport);
@@ -160,16 +162,17 @@ export const useUploadAuditReport = (
     setUploadingReport(null);
   };
 
-  const isRemoving = removingReportIds.size > 0;
   return {
     reports,
     isLoadingReports,
     uploadingReport,
     isUploading,
     removingReportIds,
-    isRemoving,
     canProceed:
-      !isLoadingReports && reports.length > 0 && !isUploading && !isRemoving,
+      !isLoadingReports &&
+      reports.length > 0 &&
+      !isUploading &&
+      removingReportIds.size === 0,
     uploadReport,
     removeReport,
     abortUpload,
