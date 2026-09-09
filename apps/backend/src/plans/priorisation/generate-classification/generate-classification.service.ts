@@ -44,7 +44,7 @@ const toFicheLeviers = ({
   volets,
 }: ClassifiedFiche): FicheLeviers => ({
   ficheId,
-  leviers: volets,
+  leviers: volets.map(({ levier, categorie }) => ({ levier, categorie })),
 });
 
 @Injectable()
@@ -128,6 +128,7 @@ export class GenerateClassificationService {
       const saveResult = await this.ficheLeviersRepository.saveLeviers({
         collectiviteId: job.collectiviteId,
         fiches: classification.draft.fiches.map(toFicheLeviers),
+        createdBy: job.createdBy,
         tx,
       });
       if (!saveResult.success) {
