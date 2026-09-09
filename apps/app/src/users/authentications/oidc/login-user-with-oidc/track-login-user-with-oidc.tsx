@@ -37,13 +37,14 @@ export const TrackLoginUserWithOidc = () => {
     }
     hasTracked.current = true;
 
-    // Marqueur consommé : il ne doit pas survivre à un rechargement de la page.
-    document.cookie = `${OIDC_LOGIN_COOKIE}=; path=/; max-age=0`;
-
     trackEvent(Event.auth.login.success, {
       methode: 'oidc' satisfies LoginMethod,
       provider,
     });
+
+    // Marqueur consommé APRÈS la capture, jamais avant : le détruire d'abord
+    // rendrait une capture perdue définitivement incomptable.
+    document.cookie = `${OIDC_LOGIN_COOKIE}=; path=/; max-age=0`;
   }, [trackEvent]);
 
   return null;
