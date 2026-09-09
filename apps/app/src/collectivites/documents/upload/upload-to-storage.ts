@@ -18,8 +18,11 @@ type UploadToStorageArgs = {
 const toAbortError = (): DOMException =>
   new DOMException('Upload aborted', 'AbortError');
 
+const CREATION_METHOD = 'POST';
+
 const isObjectAlreadyStored = (error: Error | DetailedError): boolean =>
   'originalResponse' in error &&
+  error.originalRequest?.getMethod() === CREATION_METHOD &&
   error.originalResponse?.getStatus() === OBJECT_ALREADY_EXISTS_STATUS;
 
 export const uploadToStorage = ({

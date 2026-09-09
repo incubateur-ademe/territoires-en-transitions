@@ -35,6 +35,27 @@ const isToUpload = (listed: ListedFile): listed is FileToUpload =>
 const isAbortError = (error: unknown): boolean =>
   error instanceof DOMException && error.name === 'AbortError';
 
+const abortWhenInFlight = ({ status }: FileUploadItem): void => {
+  const isInFlight =
+    status.code === UploadStatusCode.preparing ||
+    status.code === UploadStatusCode.running;
+  if (isInFlight) {
+    status.abort();
+  }
+};
+
+const toEvictedItems = (
+  current: Array<FileUploadItem>,
+  addedCount: number,
+  maxFiles: number | undefined
+): Array<FileUploadItem> => {
+  if (maxFiles === undefined) {
+    return [];
+  }
+  const overflow = current.length + addedCount - maxFiles;
+  return overflow > 0 ? current.slice(0, overflow) : [];
+};
+
 const toListedFile = (prepared: PreparedFile): ListedFile => {
   const id = crypto.randomUUID();
   if (prepared.kind === 'settled') {
@@ -100,6 +121,10 @@ export const useFileUploadList = ({
             abort,
           }),
       });
+      if (controller.signal.aborted) {
+        removeItem(item.id);
+        return;
+      }
       setStatus(item.id, {
         code: UploadStatusCode.completed,
         fichier_id: fichierId,
@@ -125,6 +150,9 @@ export const useFileUploadList = ({
 
     // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne la
     // liste cumulée, en gardant les derniers déposés (ceux qui remplacent).
+    toEvictedItems(items, listedFiles.length, constraints?.maxFiles).forEach(
+      abortWhenInFlight
+    );
     setItems((prev) =>
       keepWithinMaxFiles(
         [...prev, ...listedFiles.map(({ item }) => item)],
