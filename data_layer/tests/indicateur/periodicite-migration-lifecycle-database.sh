@@ -116,19 +116,22 @@ clone_database_schema() {
       --set=ON_ERROR_STOP=1 \
       --dbname="$source_database_url" \
       --command="
-        SELECT count(*) = 4
+        SELECT count(*) = 7
         FROM sqitch.changes
         WHERE project = 'tet'
           AND change IN (
             'indicateur/periodicite',
             'indicateur/import_emt_valeur',
             'indicateur/reconciliation_formules',
-            'indicateur/dependances_formules'
+            'indicateur/dependances_formules',
+            'indicateur/periodicite_obligatoire',
+            'indicateur/periodicite_formules',
+            'stats/report_indicateur_resultat_periode'
           )
       "
   )"
   [[ "$source_state" == 't' ]] ||
-    fail 'la base préparée ne contient pas le expand complet de périodicité'
+    fail 'la base préparée ne contient pas le contract complet de périodicité'
 
   schema_archive="$(mktemp)"
   schema_toc="$(mktemp)"
@@ -208,7 +211,7 @@ clone_database_schema() {
         SELECT concat_ws('|',
           to_regclass('public.indicateur_periodicite'),
           to_regclass('migration.indicateur_valeur_periodicite_audit'),
-          count(*) = 4
+          count(*) = 7
         )
         FROM sqitch.changes
         WHERE project = 'tet'
@@ -216,7 +219,10 @@ clone_database_schema() {
             'indicateur/periodicite',
             'indicateur/import_emt_valeur',
             'indicateur/reconciliation_formules',
-            'indicateur/dependances_formules'
+            'indicateur/dependances_formules',
+            'indicateur/periodicite_obligatoire',
+            'indicateur/periodicite_formules',
+            'stats/report_indicateur_resultat_periode'
           )
       "
   )"

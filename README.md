@@ -214,7 +214,7 @@ make tui                # tableau de bord interactif : statuts, URLs, logs navig
 make db-shell           # psql dans la base locale
 ```
 
-`make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés. À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
+`make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente sur une base neuve ou déjà à jour. Pendant le rollout de la périodicité, elle refuse cependant une base existante arrêtée entre les phases expand et contract : utiliser alors les commandes bornées et le [runbook de périodicité](./data_layer/periodicite-runbook.md). À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
 
 En mode Docker, les dépendances vivent dans le volume `node-modules`, réinstallées incrémentalement par le service `deps` à chaque `make up` — après un changement de `pnpm-lock.yaml`, un simple `make up` suffit donc.
 

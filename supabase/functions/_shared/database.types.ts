@@ -7413,7 +7413,7 @@ export type Database = {
           modified_at: string;
           modified_by: string | null;
           participation_score: boolean;
-          periodicite: string | null;
+          periodicite: string;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;
@@ -7446,7 +7446,7 @@ export type Database = {
           modified_at?: string;
           modified_by?: string | null;
           participation_score?: boolean;
-          periodicite?: string | null;
+          periodicite: string;
           precision?: number;
           sans_valeur_utilisateur?: boolean;
           titre: string;
@@ -7473,7 +7473,7 @@ export type Database = {
           modified_at?: string;
           modified_by?: string | null;
           participation_score?: boolean;
-          periodicite?: string | null;
+          periodicite?: string;
           precision?: number;
           sans_valeur_utilisateur?: boolean;
           titre?: string;
@@ -19995,7 +19995,7 @@ export type Database = {
           modified_at: string;
           modified_by: string | null;
           participation_score: boolean;
-          periodicite: string | null;
+          periodicite: string;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;
@@ -20026,7 +20026,7 @@ export type Database = {
           modified_at: string;
           modified_by: string | null;
           participation_score: boolean;
-          periodicite: string | null;
+          periodicite: string;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;

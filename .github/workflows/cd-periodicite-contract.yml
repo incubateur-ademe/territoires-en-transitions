@@ -1,0 +1,204 @@
+name: Déploiement contractuel de la périodicité
+run-name: Contract périodicité sur ${{ inputs.target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Quel environnement persistant ?
+        required: true
+        options:
+          - preprod
+          - staging
+          - prod
+
+permissions:
+  actions: read # Read the selected environment and its deployment policies.
+  contents: read # Check out the reviewed Sqitch plan and scripts.
+
+jobs:
+  deploy-periodicite-contract:
+    name: Prévalide et déploie le contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      # Each environment must be configured before the first run with required
+      # DB/platform reviewers, main-only deployment and the protected secret
+      # and variables documented in ADR 0018.
+      name: periodicite-contract-${{ inputs.target }}
+    concurrency:
+      # Shared with every automatic/manual data restore for this database.
+      group: database-maintenance-${{ inputs.target }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Refuse une exécution hors de la branche par défaut
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          if [[ "$GITHUB_REF" != "refs/heads/$DEFAULT_BRANCH" ]]; then
+            echo "::error::Ce workflow doit être exécuté depuis $DEFAULT_BRANCH."
+            exit 2
+          fi
+
+      - name: Vérifie les protections de l'environnement
+        env:
+          CONTRACT_TARGET: ${{ inputs.target }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          contract_environment="periodicite-contract-$CONTRACT_TARGET"
+          api_path="repos/$GITHUB_REPOSITORY/environments/$contract_environment"
+
+          if ! environment_json="$(gh api "$api_path")"; then
+            echo "::error::L'environnement $contract_environment doit être provisionné avant le rollout."
+            exit 2
+          fi
+
+          if ! jq -e --arg name "$contract_environment" '
+            .name == $name
+            and .can_admins_bypass == false
+            and .deployment_branch_policy.custom_branch_policies == true
+            and any(
+              .protection_rules[]?;
+              .type == "required_reviewers"
+              and .prevent_self_review == true
+              and (.reviewers | length > 0)
+            )
+          ' <<< "$environment_json" >/dev/null; then
+            echo "::error::$contract_environment doit interdire le bypass administrateur, imposer un reviewer distinct et restreindre les branches."
+            exit 2
+          fi
+
+          branch_policies="$(gh api "$api_path/deployment-branch-policies?per_page=100")"
+          if ! jq -e --arg branch "$DEFAULT_BRANCH" '
+            .total_count == 1
+            and .branch_policies[0].name == $branch
+            and ((.branch_policies[0].type // "branch") == "branch")
+          ' <<< "$branch_policies" >/dev/null; then
+            echo "::error::$contract_environment doit autoriser uniquement la branche $DEFAULT_BRANCH."
+            exit 2
+          fi
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Vérifie les paramètres protégés
+        env:
+          DATABASE_URL: ${{ secrets.PERIODICITE_CONTRACT_DATABASE_URL }}
+          EXPECTED_SUPABASE_PROJECT_REF: ${{ vars.PERIODICITE_CONTRACT_SUPABASE_PROJECT_REF }}
+          REGISTRY_TOKEN: ${{ secrets.GH_TOKEN }}
+          REGISTRY_USER: ${{ secrets.GH_USER }}
+          SQITCH_IMAGE: ${{ vars.PERIODICITE_CONTRACT_SQITCH_IMAGE }}
+        run: |
+          if [[ -z "$DATABASE_URL" ]]; then
+            echo '::error::Le secret PERIODICITE_CONTRACT_DATABASE_URL manque dans cet environnement.'
+            exit 2
+          fi
+          if [[ -z "$EXPECTED_SUPABASE_PROJECT_REF" ]]; then
+            echo '::error::La variable PERIODICITE_CONTRACT_SUPABASE_PROJECT_REF manque dans cet environnement.'
+            exit 2
+          fi
+          if [[ ! "$SQITCH_IMAGE" =~ ^ghcr\.io/territoiresentransitions/sqitch@sha256:[0-9a-f]{64}$ ]]; then
+            echo '::error::PERIODICITE_CONTRACT_SQITCH_IMAGE doit référencer sqitch par un digest sha256 immuable.'
+            exit 2
+          fi
+          if [[ -z "$REGISTRY_USER" || -z "$REGISTRY_TOKEN" ]]; then
+            echo '::error::GH_USER et GH_TOKEN doivent permettre de lire l image Sqitch privée.'
+            exit 2
+          fi
+          node data_layer/scripts/validate-database-url.mjs supabase-contract
+
+      - uses: ./.github/actions/docker-login
+        with:
+          username: ${{ secrets.GH_USER }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Charge l'image Sqitch
+        env:
+          SQITCH_IMAGE: ${{ vars.PERIODICITE_CONTRACT_SQITCH_IMAGE }}
+        run: docker pull "$SQITCH_IMAGE"
+
+      - name: Vérifie que la phase expand est déployée
+        env:
+          PGSSLMODE: require
+          SQITCH_IMAGE: ${{ vars.PERIODICITE_CONTRACT_SQITCH_IMAGE }}
+          SQITCH_TARGET: db:${{ secrets.PERIODICITE_CONTRACT_DATABASE_URL }}
+        run: |
+          docker run \
+            --rm \
+            --network host \
+            --env PGSSLMODE \
+            --env SQITCH_TARGET \
+            --volume "$GITHUB_WORKSPACE/sqitch.conf:/sqitch.conf:ro" \
+            --volume "$GITHUB_WORKSPACE/data_layer/sqitch:/data_layer/sqitch:ro" \
+            "$SQITCH_IMAGE" \
+            verify \
+            --from indicateur/periodicite \
+            --to @indicateur-periodicite-expand
+
+      - name: Vérifie les données avant le contract
+        env:
+          PERIODICITE_CONTRACT_DATABASE_URL: ${{ secrets.PERIODICITE_CONTRACT_DATABASE_URL }}
+          PGSSLMODE: require
+          SQITCH_IMAGE: ${{ vars.PERIODICITE_CONTRACT_SQITCH_IMAGE }}
+        run: |
+          docker run \
+            --rm \
+            --network host \
+            --env PERIODICITE_CONTRACT_DATABASE_URL \
+            --env PGSSLMODE \
+            --volume "$GITHUB_WORKSPACE/data_layer/scripts/check-periodicite-contract.sql:/check-periodicite-contract.sql:ro" \
+            --entrypoint sh \
+            "$SQITCH_IMAGE" \
+            -c 'psql "$PERIODICITE_CONTRACT_DATABASE_URL" --no-psqlrc --set ON_ERROR_STOP=1 --file /check-periodicite-contract.sql'
+
+      - name: Déploie l'exacte frontière contractuelle
+        env:
+          PGSSLMODE: require
+          SQITCH_IMAGE: ${{ vars.PERIODICITE_CONTRACT_SQITCH_IMAGE }}
+          SQITCH_TARGET: db:${{ secrets.PERIODICITE_CONTRACT_DATABASE_URL }}
+        run: |
+          docker run \
+            --rm \
+            --network host \
+            --env PGSSLMODE \
+            --env SQITCH_TARGET \
+            --env "PGOPTIONS=-c tet.periodicite_contract_confirmed=on" \
+            --volume "$GITHUB_WORKSPACE/sqitch.conf:/sqitch.conf:ro" \
+            --volume "$GITHUB_WORKSPACE/data_layer/sqitch:/data_layer/sqitch:ro" \
+            "$SQITCH_IMAGE" \
+            deploy --mode all --verify --to @indicateur-periodicite-contract
+
+      - name: Vérifie toute la frontière contractuelle
+        env:
+          PGSSLMODE: require
+          SQITCH_IMAGE: ${{ vars.PERIODICITE_CONTRACT_SQITCH_IMAGE }}
+          SQITCH_TARGET: db:${{ secrets.PERIODICITE_CONTRACT_DATABASE_URL }}
+        run: |
+          docker run \
+            --rm \
+            --network host \
+            --env PGSSLMODE \
+            --env SQITCH_TARGET \
+            --volume "$GITHUB_WORKSPACE/sqitch.conf:/sqitch.conf:ro" \
+            --volume "$GITHUB_WORKSPACE/data_layer/sqitch:/data_layer/sqitch:ro" \
+            "$SQITCH_IMAGE" \
+            verify \
+            --from indicateur/periodicite \
+            --to @indicateur-periodicite-contract
+
+      - name: Publie la preuve de déploiement
+        env:
+          CONTRACT_TARGET: ${{ inputs.target }}
+        run: |
+          {
+            echo "### Contract de périodicité déployé et vérifié"
+            echo
+            echo "- Environnement : \`$CONTRACT_TARGET\`"
+            echo "- Commit : \`$GITHUB_SHA\`"
+            echo "- Exécution : $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Cible Sqitch : \`@indicateur-periodicite-contract\`"
+          } >> "$GITHUB_STEP_SUMMARY"

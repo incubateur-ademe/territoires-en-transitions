@@ -267,14 +267,16 @@ SELECT is(
     'La RPC retourne le nombre d''écritures effectives du lot'
 );
 
-SELECT lives_ok(
+SELECT throws_ok(
     format(
         $$ INSERT INTO public.indicateur_definition
-               (collectivite_id, titre, unite, periodicite)
-           VALUES (%s, 'test-periodicite-absente', 'kWh', NULL) $$,
+               (collectivite_id, titre, unite)
+           VALUES (%s, 'test-periodicite-absente', 'kWh') $$,
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
-    'Une ancienne création avec périodicité NULL reste acceptée pendant expand'
+    23502,
+    NULL,
+    'Une définition qui omet la périodicité est refusée après la phase contractuelle'
 );
 
 SELECT is(
@@ -539,7 +541,7 @@ SELECT is_empty(
     'La première réaffectation invalide définitivement son ancien audit de normalisation'
 );
 
-SELECT lives_ok(
+SELECT throws_ok(
     format(
         $$ INSERT INTO public.indicateur_valeur
                (indicateur_id, collectivite_id, date_valeur, resultat)
@@ -547,17 +549,21 @@ SELECT lives_ok(
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel'),
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
-    'Une ancienne date annuelle est normalisée pendant la transition'
+    23514,
+    NULL,
+    'Une date annuelle non canonique est refusée directement en base'
 );
 
-SELECT lives_ok(
+SELECT throws_ok(
     format(
         $$ UPDATE public.indicateur_valeur
            SET date_valeur = DATE '2027-02-01'
-           WHERE indicateur_id = %s AND date_valeur = DATE '2027-01-01' $$,
+           WHERE indicateur_id = %s $$,
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel')
     ),
-    'Une modification annuelle historique reste compatible pendant la transition'
+    23514,
+    NULL,
+    'Une valeur annuelle existante ne peut pas être déplacée vers une date non canonique'
 );
 
 SELECT throws_ok(
@@ -699,7 +705,7 @@ SELECT is(
     'Janvier et février restent deux valeurs indépendantes'
 );
 
-SELECT lives_ok(
+SELECT throws_ok(
     format(
         $$ INSERT INTO public.indicateur_valeur
                (indicateur_id, collectivite_id, date_valeur, resultat, periodicite)
@@ -707,7 +713,9 @@ SELECT lives_ok(
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel'),
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
-    'Une date mensuelle est normalisée pendant la transition'
+    23514,
+    NULL,
+    'Une date mensuelle qui n''est pas le premier jour est refusée directement en base'
 );
 
 SELECT throws_ok(
@@ -767,41 +775,56 @@ SELECT is_empty(
     'La périodicité obligatoire ne laisse aucun conflit historique non remédié'
 );
 
-SELECT is(
-    (SELECT is_nullable FROM information_schema.columns
-     WHERE table_schema = 'public' AND table_name = 'indicateur_definition'
-       AND column_name = 'periodicite'),
-    'YES',
-    'La phase expand conserve la colonne nullable pour les anciens writers'
+SELECT lives_ok(
+    $$ REFRESH MATERIALIZED VIEW stats.collectivite $$,
+    'La collectivité de test est intégrée au socle du reporting'
 );
 
 SELECT lives_ok(
-    $$ INSERT INTO public.indicateur_definition (titre, unite)
-       VALUES ('test-ancien-writer-periodicite', 'kWh') $$,
-    'Une ancienne création de définition sans périodicité reste acceptée'
+    $$ REFRESH MATERIALIZED VIEW stats.report_indicateur_resultat $$,
+    'Le reporting des résultats peut être rafraîchi avec des valeurs mensuelles'
 );
 
 SELECT is(
-    (SELECT periodicite FROM public.indicateur_definition
-     WHERE titre = 'test-ancien-writer-periodicite'),
-    'annuelle',
-    'Le défaut annuel classe explicitement les anciennes créations'
+    (
+        SELECT array_agg(periode_debut ORDER BY periode_debut)
+        FROM stats.report_indicateur_resultat
+        WHERE indicateur_id = (
+            SELECT id
+            FROM test_indicateur_periodicite
+            WHERE code = 'test-a-convertir-en-mensuel'
+        )
+    ),
+    ARRAY[DATE '2027-01-01', DATE '2027-02-01'],
+    'Le reporting conserve les deux dates mensuelles complètes'
 );
 
 SELECT is(
-    (SELECT date_valeur FROM public.indicateur_valeur
-     WHERE indicateur_id = (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel')
-       AND resultat = 2),
-    DATE '2028-01-01',
-    'Une date historique annuelle est persistée au début canonique de sa période'
+    (
+        SELECT array_agg(periodicite ORDER BY periode_debut)
+        FROM stats.report_indicateur_resultat
+        WHERE indicateur_id = (
+            SELECT id
+            FROM test_indicateur_periodicite
+            WHERE code = 'test-a-convertir-en-mensuel'
+        )
+    ),
+    ARRAY['mensuelle', 'mensuelle'],
+    'Le reporting transporte la politique avec chaque début de période'
 );
 
 SELECT is(
-    (SELECT date_valeur FROM public.indicateur_valeur
-     WHERE indicateur_id = (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
-       AND resultat = 30),
-    DATE '2027-03-01',
-    'Une date historique mensuelle est persistée au début canonique de sa période'
+    (
+        SELECT array_agg(annee::integer ORDER BY periode_debut)
+        FROM stats.report_indicateur_resultat
+        WHERE indicateur_id = (
+            SELECT id
+            FROM test_indicateur_periodicite
+            WHERE code = 'test-a-convertir-en-mensuel'
+        )
+    ),
+    ARRAY[2027, 2027],
+    'Le reporting conserve aussi la colonne annuelle historique'
 );
 
 ROLLBACK;

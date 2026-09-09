@@ -23,10 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: Test database deployment guards
-        run: |
-          node --test data_layer/scripts/validate-database-url.spec.mjs
-          bash data_layer/backup/check-restore-compatibility.spec.sh
-          bash data_layer/tests/indicateur/periodicite-migration-lifecycle-database.spec.sh
+        run: make db-test-deployment-guards
 
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
@@ -122,8 +119,25 @@ jobs:
                 --file="$dump_file"
               phase=$(TO_DB_URL="$RESTORE_GUARD_TEST_DATABASE_URL" \
                 bash data_layer/backup/check-restore-compatibility.sh "$dump_file")
-              test "$phase" = expand
+              test "$phase" = contract
             '
+
+      - name: Test periodicity bootstrap policy
+        env:
+          DATABASE_TARGET: ${{ steps.local-supabase.outputs.sqitch-target }}
+          SUPABASE_NETWORK: ${{ vars.SUPABASE_NETWORK }}
+        run: |
+          database_url="${DATABASE_TARGET#db:}"
+          postgres_image="$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)"
+          docker run \
+            --rm \
+            --network "$SUPABASE_NETWORK" \
+            --env "PERIODICITE_BOOTSTRAP_TEST_DATABASE_URL=$database_url" \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --entrypoint bash \
+            "$postgres_image" \
+            data_layer/tests/indicateur/periodicite-bootstrap-guard.spec.sh
 
       - name: Define isolated periodicity lifecycle database
         id: periodicite-lifecycle-database
@@ -186,7 +200,7 @@ jobs:
             supabase_db_tet \
             bash -s -- assert-pre-expand < "$database_script"
 
-      - name: Test expand periodicity migration lifecycle
+      - name: Test full periodicity migration lifecycle
         env:
           LIFECYCLE_DATABASE_URL: ${{ steps.periodicite-lifecycle-database.outputs.database-url }}
           SUPABASE_NETWORK: ${{ vars.SUPABASE_NETWORK }}
@@ -230,8 +244,11 @@ jobs:
       - name: Sqitch deploy/verify
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
+        # Fixed acknowledgement for a disposable revert/redeploy test database.
+        env:
+          PGOPTIONS: '-c tet.periodicite_contract_confirmed=on'
         with:
-          command: 'deploy --mode all --verify --to @indicateur-periodicite-expand'
+          command: 'deploy --mode all --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
@@ -245,6 +262,9 @@ jobs:
       - name: Sqitch deploy/verify (local)
         if: ${{ env.ACT }}
         uses: ./.github/actions/sqitch-local
+        # Fixed acknowledgement for a disposable revert/redeploy test database.
+        env:
+          PGOPTIONS: '-c tet.periodicite_contract_confirmed=on'
         with:
-          command: 'deploy --mode all --verify --to @indicateur-periodicite-expand'
+          command: 'deploy --mode all --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}

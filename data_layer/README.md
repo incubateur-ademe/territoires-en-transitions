@@ -55,6 +55,8 @@ Avec docker compose :
 docker compose run --no-deps sqitch add domaine/fonctionnalite --note 'Une nouvelle fonctionnalité.'
 ```
 
+Pendant le rollout décrit par le [runbook](periodicite-runbook.md), ne pas lancer un `sqitch deploy` non borné sur une base persistante qui n'a pas encore franchi le contract de périodicité. Utiliser la cible expand, puis le workflow protégé `cd-periodicite-contract.yml`. Les déploiements complets automatiques sont réservés aux bases neuves ou jetables.
+
 Le résultat devrait être :
 ```
 Created deploy/domaine/fonctionnalite.sql

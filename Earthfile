@@ -115,16 +115,44 @@ db-deploy:
         --env SQITCH_TARGET=db:$DB_URL \
         $REG_TARGET/db-deploy:$DL_TAG deploy --to $to --mode change
 
+db-deploy-local-bootstrap:
+    ARG --required DB_URL
+    ARG network=host
+    ARG to=@HEAD
+    LOCALLY
+    # Refuse qu'une configuration locale mal chargée transforme ce bootstrap
+    # en contournement du workflow protégé d'un environnement partagé.
+    RUN DATABASE_URL="$DB_URL" node data_layer/scripts/validate-database-url.mjs local-bootstrap
+    DO +BUILD_IF_NO_IMG --IMG_NAME=db-deploy --IMG_TAG=$DL_TAG --BUILD_TARGET=db-deploy-build
+    RUN docker run --rm \
+        --network "$network" \
+        --env "DATABASE_URL=$DB_URL" \
+        --volume "$(pwd)/data_layer/scripts/check-periodicite-bootstrap.sql:/check-periodicite-bootstrap.sql:ro" \
+        --entrypoint sh \
+        "$REG_TARGET/db-deploy:$DL_TAG" \
+        -c 'psql "$DATABASE_URL" --no-psqlrc --set ON_ERROR_STOP=1 --file /check-periodicite-bootstrap.sql'
+    RUN docker run --rm \
+        --network "$network" \
+        --env "SQITCH_TARGET=db:$DB_URL" \
+        --env "PGOPTIONS=-c tet.periodicite_contract_confirmed=on" \
+        "$REG_TARGET/db-deploy:$DL_TAG" deploy --to "$to" --mode all
+
 db-deploy-test:
     ARG --required DB_URL
     ARG network=host
     ARG tag=v4.0.0
     LOCALLY
+    # This target owns a disposable database lifecycle, so the historical
+    # periodicity contract acknowledgement is fixed rather than caller-driven.
+    # Validate both the loopback host and an explicit disposable database name
+    # before the first deploy/revert operation.
+    RUN DATABASE_URL="$DB_URL" node data_layer/scripts/validate-database-url.mjs local-disposable
     RUN earthly --use-inline-cache +db-deploy-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        $REG_TARGET/db-deploy:$DL_TAG deploy --mode change
+        --env "PGOPTIONS=-c tet.periodicite_contract_confirmed=on" \
+        $REG_TARGET/db-deploy:$DL_TAG deploy --mode all
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
@@ -132,7 +160,8 @@ db-deploy-test:
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        $REG_TARGET/db-deploy:$DL_TAG deploy --mode change --verify
+        --env "PGOPTIONS=-c tet.periodicite_contract_confirmed=on" \
+        $REG_TARGET/db-deploy:$DL_TAG deploy --mode all --verify
 
 seed-build:
     FROM +postgres
@@ -560,7 +589,20 @@ dev:
         END
 
         IF [ "$faster" = "no" ]
-            RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
+            # HEAD est le seul bootstrap complet automatiquement acquitté.
+            # Les snapshots historiques de prepare-fast s'arrêtent avant le
+            # contract ; toute autre cible, y compris une future cible qui le
+            # franchirait, reste sur le chemin ordinaire et échoue fermée si le
+            # contract n'est pas déjà enregistré.
+            IF [ "$version" = "HEAD" ]
+                RUN earthly +db-deploy-local-bootstrap \
+                    --to @$version \
+                    --DB_URL=$DB_URL
+            ELSE
+                RUN earthly +db-deploy \
+                    --to @$version \
+                    --DB_URL=$DB_URL
+            END
 
             RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
 

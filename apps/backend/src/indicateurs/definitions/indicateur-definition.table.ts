@@ -40,7 +40,6 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
     enum: indicateurPeriodiciteValues,
   })
     .references(() => indicateurPeriodiciteTable.code)
-    .default('annuelle')
     .notNull(),
   periodiciteMode: text('periodicite_mode', {
     enum: indicateurPeriodiciteModeValues,

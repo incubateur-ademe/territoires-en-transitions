@@ -93,15 +93,21 @@ jobs:
           - name: Sqitch deploy (local)
             if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
             uses: ./.github/actions/sqitch-local
+            # This workflow has just created a disposable database.
+            env:
+              PGOPTIONS: '-c tet.periodicite_contract_confirmed=on'
             with:
-              command: 'deploy --mode change'
+              command: 'deploy --mode all'
               target: ${{ vars.SQITCH_TARGET }}
 
           - name: Sqitch deploy (ci)
             if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
             uses: ./.github/actions/sqitch
+            # This workflow has just created a disposable database.
+            env:
+              PGOPTIONS: '-c tet.periodicite_contract_confirmed=on'
             with:
-              command: 'deploy --mode change'
+              command: 'deploy --mode all'
               target: ${{ vars.SQITCH_TARGET }}
               network: ${{ vars.SUPABASE_NETWORK }}
 
