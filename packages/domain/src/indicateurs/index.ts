@@ -1,4 +1,10 @@
 export * from './definitions/indicateur-definition.schema';
+export {
+  indicateurPeriodiciteSchema,
+  indicateurPeriodiciteValues,
+  type IndicateurPeriodicite,
+} from './definitions/indicateur-periodicite.schema';
+export { getIndicateurPeriodiciteRollout } from './definitions/indicateur-periodicite-rollout';
 export * from './definitions/indicateur-segmentations.enum';
 export * from './definitions/list-definitions.input';
 export * from './shared/indicateur-collectivite.schema';
@@ -20,7 +26,48 @@ export * from './trajectoires/trajectoires-carbon-sequestration-properties';
 export * from './trajectoires/types';
 export * from './trajectoires/verification-trajectoire.rules';
 export * from './valeurs/indicateur-valeur-type.enum';
+export {
+  assertAnnualIndicateurPeriodicite,
+  toAnnualIndicateurYear,
+  toAnnualIndicateurYearFromHistoricalDate,
+} from './valeurs/annual-indicateur-period.adapter';
+export {
+  indicateurPeriodBrand,
+  indicateurPeriodKeyBrand,
+  indicateurPeriodSchema,
+  IndicateurPeriods,
+  localDateBrand,
+  type IndicateurPeriod,
+  type IndicateurPeriodJson,
+  type IndicateurPeriodKey,
+  type IndicateurPeriodParseResult,
+  type LocalCalendarDate,
+  type LocalDate,
+} from './valeurs/indicateur-period';
+export {
+  formatIndicateurPeriod,
+  getIndicateurPeriodPresentation,
+  type IndicateurPeriodChartTimeAxis,
+  type IndicateurPeriodPresentation,
+} from './valeurs/indicateur-period-presentation';
+export {
+  normalizeIndicateurReferenceObjectifs,
+  type IndicateurReferenceObjectif,
+  type IndicateurReferenceObjectifHorizon,
+} from './valeurs/indicateur-reference-objectif.rules';
 export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/iso-date.utils';
-export * from './valeurs/values.constants';
+export {
+  COLLECTIVITE_SOURCE_ID,
+  MAX_GRID_VALEURS_BATCH_SIZE,
+  PCAET_COLLECTIVITE_SOURCE_ID,
+} from './valeurs/values.constants';
 export * from './verification-trajectoire-status';
+
+export * from './definitions/indicateur-periodicite-mode.schema';
+
+export {
+  listIndicateurDisplayPeriodicites,
+  isIndicateurDisplayPeriodiciteAllowed,
+  resolveIndicateurDisplayPeriodicite,
+} from './valeurs/indicateur-display-periodicite.rules';
