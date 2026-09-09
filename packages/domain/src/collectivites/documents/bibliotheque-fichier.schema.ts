@@ -5,7 +5,13 @@ export const documentHashSchema = z
   .regex(
     /^[0-9a-f]{64}$/,
     'Le hash doit être une empreinte SHA-256 en hexadécimal minuscule'
-  );
+  )
+  .brand<'DocumentHash'>();
+
+export type DocumentHash = z.infer<typeof documentHashSchema>;
+
+export const toDocumentHash = (hash: string): DocumentHash =>
+  documentHashSchema.parse(hash);
 
 export const bibliothequeFichierSchema = z.object({
   id: z.number(),

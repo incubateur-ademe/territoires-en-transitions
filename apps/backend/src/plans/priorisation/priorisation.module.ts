@@ -14,7 +14,6 @@ import { FicheLeviersRepository } from './fiche-leviers.repository';
 import { GenerateClassificationService } from './generate-classification/generate-classification.service';
 import { GenerateClassificationWorker } from './generate-classification/generate-classification.worker';
 import { GetClassificationStatusService } from './get-classification-status/get-classification-status.service';
-import { MockedFicheLeviersRepository } from './mocked-fiche-leviers.repository';
 import { PriorisationRouter } from './priorisation.router';
 
 @Module({
@@ -35,10 +34,7 @@ import { PriorisationRouter } from './priorisation.router';
     GenerateClassificationWorker,
     GetClassificationStatusService,
     PriorisationRouter,
-    {
-      provide: FicheLeviersRepository,
-      useClass: MockedFicheLeviersRepository,
-    },
+    FicheLeviersRepository,
   ],
   exports: [PriorisationRouter],
 })

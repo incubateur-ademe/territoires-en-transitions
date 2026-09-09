@@ -12,6 +12,10 @@ inputs:
     description: Optional Supabase API base URL used to wait for REST and Auth readiness
     required: false
     default: ''
+  excluded-containers:
+    description: Supabase services to exclude from startup and image prefetching
+    required: false
+    default: imgproxy,postgres-meta,logflare,vector,supavisor,studio
 
 outputs:
   started:
@@ -48,10 +52,10 @@ runs:
     - name: Start services
       if: ${{ steps.is_started.outputs.started == 'no' }}
       shell: bash
-      run: >
-        supabase start
-        --exclude imgproxy,postgres-meta,logflare,vector,supavisor,studio
-        --network-id ${{ inputs.network }}
+      env:
+        EXCLUDED_CONTAINERS: ${{ inputs.excluded-containers }}
+        SUPABASE_NETWORK: ${{ inputs.network }}
+      run: bash "$GITHUB_ACTION_PATH/start-supabase.sh" "$EXCLUDED_CONTAINERS" "$SUPABASE_NETWORK"
 
     - name: Wait for REST API
       if: ${{ inputs.api-url != '' }}

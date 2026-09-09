@@ -953,6 +953,10 @@ export const appLabels = {
   champDetailAfficheParAction: 'Détail affiché par action',
   optionDerniereNoteAction: "Inclure la dernière note de l'action",
   optionSaisieManuelleRapport: 'Inclure une section vide pour saisie libre',
+  rapportFichierIntrouvable:
+    'Le rapport a été généré mais son fichier est introuvable',
+  rapportGenerationEchouee: (reason: string | null): string =>
+    `La génération du rapport a échoué : ${reason ?? 'erreur inconnue'}`,
   apercuLogoAlt: 'Aperçu du logo',
   fichierSelectionne: 'Fichier sélectionné',
   champThematiqueColon: 'Thématique :',

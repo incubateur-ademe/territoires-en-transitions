@@ -60,6 +60,7 @@ export type FichesRendering = {
  */
 const sanitize = (value: string): string =>
   value
+    .normalize('NFC')
     .replace(DISALLOWED_CHARACTERS, ' ')
     .replace(/[-–—]{2,}/g, ' ')
     .replace(/\s{2,}/g, ' ')

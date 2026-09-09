@@ -1,21 +1,19 @@
 'use client';
 
-import { saveBlob } from '@/app/utils/save-blob';
+import { appLabels } from '@/app/labels/catalog';
+import { useDownloadDocument } from '@/app/referentiels/preuves/data/use-download-document';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
-import { useApiClient } from '@/app/utils/use-api-client';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReportGenerationStatusEnum } from '@tet/domain/plans';
-import { getErrorMessage } from '@tet/domain/utils';
 import { useQueryState } from 'nuqs';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 const POLLING_INTERVAL = 2000;
 
 export const useIsPendingReport = () => {
   const trpc = useTRPC();
-  const apiClient = useApiClient();
   const { setToast, renderToast } = useBaseToast();
   const collectiviteId = useCollectiviteId();
   const lastDownloadedReportIdRef = useRef<string | null>(null);
@@ -39,81 +37,41 @@ export const useIsPendingReport = () => {
     },
   });
 
-  const downloadReport = useCallback(
-    async (
-      collectiviteId: number,
-      reportGenerationId: string,
-      onSuccess: (filename: string) => void,
-      onFailure: (error: unknown) => void
-    ) => {
-      try {
-        const { blob, filename } = await apiClient.getAsBlob({
-          route: `/collectivites/${collectiviteId}/documents/${reportGenerationId}/download`,
-        });
-
-        if (filename && blob) {
-          saveBlob(blob, filename);
-        }
-        onSuccess(filename ?? '');
-      } catch (error) {
-        console.error(error);
-        onFailure(error);
-      }
-    },
-    [apiClient]
-  );
+  const { mutate: downloadDocument } = useDownloadDocument({ collectiviteId });
 
   // Handle report status changes
   useEffect(() => {
     if (!reportStatus || !pendingReportId) return;
 
-    const fileCanBeDownloaded =
-      reportStatus.status === ReportGenerationStatusEnum.COMPLETED &&
-      reportStatus.fileId;
-    if (fileCanBeDownloaded) {
-      if (lastDownloadedReportIdRef.current === reportStatus.id) {
-        // Do not download the same report twice
-        return;
-      }
-      lastDownloadedReportIdRef.current = reportStatus.id;
-      setToast('info', 'Téléchargement du rapport en cours...');
-      downloadReport(
-        collectiviteId,
-        reportStatus.id,
-        (fileName) => {
-          setToast(
-            'success',
-            `Le rapport ${fileName} a été téléchargé avec succès`
-          );
-          setPendingReportId(null);
-        },
-        (error) => {
-          setToast(
-            'error',
-            `Une erreur est survenue lors du téléchargement du rapport: ${getErrorMessage(
-              error
-            )}`
-          );
-          setPendingReportId(null);
-        }
-      );
-    }
-
     if (reportStatus.status === ReportGenerationStatusEnum.FAILED) {
       setToast(
         'error',
-        `La génération du rapport a échoué: ${
-          reportStatus.errorMessage ?? 'Erreur inconnue'
-        }`
+        appLabels.rapportGenerationEchouee(reportStatus.errorMessage)
       );
       setPendingReportId(null);
+      return;
     }
+
+    if (reportStatus.status !== ReportGenerationStatusEnum.COMPLETED) return;
+
+    const { fileId } = reportStatus;
+    if (fileId === null) {
+      setToast('error', appLabels.rapportFichierIntrouvable);
+      setPendingReportId(null);
+      return;
+    }
+
+    if (lastDownloadedReportIdRef.current === reportStatus.id) return;
+
+    lastDownloadedReportIdRef.current = reportStatus.id;
+    downloadDocument(fileId, {
+      onSettled: () => setPendingReportId(null),
+    });
   }, [
     reportStatus,
     pendingReportId,
     setToast,
-    downloadReport,
-    collectiviteId,
+    downloadDocument,
     setPendingReportId,
   ]);
 

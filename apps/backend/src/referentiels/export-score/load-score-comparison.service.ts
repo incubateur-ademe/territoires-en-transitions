@@ -1,26 +1,30 @@
-import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Injectable, Logger } from '@nestjs/common';
+import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { unaccent } from '@tet/backend/utils/unaccent.utils';
 import {
   PersonneTagOrUser,
+  QuestionType,
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
   ActionId,
   flatMapActionsEnfants,
   ReferentielId,
+  rollUpActionIdToActionLevel,
   ScoreSnapshot,
   SnapshotJalonEnum,
   TreeOfActionsIncludingScore,
   type ActionType,
   type ExportScoreComparisonRequestQuery,
 } from '@tet/domain/referentiels';
+import { htmlToText } from '@tet/domain/utils';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
 import * as Utils from '../../utils/excel/export-excel.utils';
@@ -51,6 +55,34 @@ export type ScoreRow = {
   score2: TreeOfActionsIncludingScore | null;
 };
 
+/** Mesure du référentiel exporté affectée par une question de personnalisation */
+export type MesureAffectee = {
+  actionId: ActionId;
+  /** numérotation de la mesure (ex. « 1.2.3 »), vide pour le référentiel CR */
+  identifiant: string;
+  /** libellé de la mesure */
+  nom: string;
+};
+
+export type PersonnalisationExportQuestion = {
+  questionId: string;
+  thematiqueNom: string | null;
+  /** libellé de la question en texte brut */
+  formulation: string;
+  /** ordre d'affichage de la question au sein de sa thématique */
+  ordonnancement: number | null;
+  type: QuestionType;
+  choix: { id: string; formulation: string }[];
+  /**
+   * Mesures du référentiel exporté affectées par la question : chaque lien
+   * question→action est remonté au niveau « mesure » puis dédoublonné, comme
+   * dans la section « Afficher les mesures affectées et règles associées » de la
+   * page Personnalisation. Le résultat est restreint aux mesures du référentiel
+   * exporté (un lien pointant vers un autre référentiel est ignoré).
+   */
+  mesuresAffectees: MesureAffectee[];
+};
+
 export type ScoreComparisonData = {
   collectiviteName: string;
   referentielId: ReferentielId;
@@ -67,6 +99,7 @@ export type ScoreComparisonData = {
   pilotes: Record<ActionId, PersonneTagOrUser[]>;
   services: Record<ActionId, TagWithCollectiviteId[]>;
   fichesActionLiees: Record<ActionId, string>;
+  personnalisationQuestions: PersonnalisationExportQuestion[];
 };
 
 export enum ExportMode {
@@ -94,7 +127,8 @@ export class LoadScoreComparisonService {
     private readonly handlePilotesService: HandleMesurePilotesService,
     private readonly handleServicesService: HandleMesureServicesService,
     private readonly getReferentielService: GetReferentielService,
-    private readonly listFichesService: ListFichesService
+    private readonly listFichesService: ListFichesService,
+    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService
   ) {}
 
   async loadScoreComparison(
@@ -163,7 +197,11 @@ export class LoadScoreComparisonService {
           referentielId
         )
       : null;
-    const descriptions = await this.getActionDescriptions(referentielId);
+    // un seul chargement de l'arbre du référentiel exporté, consommé à la fois
+    // pour les descriptions d'action et pour les mesures affectées des questions
+    // de personnalisation
+    const { hierarchie, actionsById, descriptions } =
+      await this.getReferentielActionsIndex(referentielId);
     const mesureIds = scoreRows.map((r) => r.actionId);
     const pilotes = await this.handlePilotesService.listPilotes(
       collectiviteId,
@@ -177,6 +215,10 @@ export class LoadScoreComparisonService {
       collectiviteId,
       mesureIds,
       { user }
+    );
+    const personnalisationQuestions = await this.getPersonnalisationQuestions(
+      referentielId,
+      { hierarchie, actionsById }
     );
 
     const { snapshot1Label, snapshot2Label } = this.getScoreHeaderLabels(
@@ -209,7 +251,154 @@ export class LoadScoreComparisonService {
       pilotes,
       services,
       fichesActionLiees,
+      personnalisationQuestions,
     });
+  }
+
+  /**
+   * Charge toutes les questions de personnalisation rattachées au référentiel
+   * exporté (indépendamment de leur activation pour la collectivité) et les
+   * prépare pour la feuille "Personnalisation".
+   */
+  private async getPersonnalisationQuestions(
+    referentielId: ReferentielId,
+    actionsIndex: {
+      hierarchie: ActionType[];
+      actionsById: Map<ActionId, { identifiant: string; nom: string }>;
+    }
+  ): Promise<PersonnalisationExportQuestion[]> {
+    try {
+      const questions =
+        await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+          [referentielId]
+        );
+      return questions.map((question) => ({
+        questionId: question.id,
+        thematiqueNom: question.thematiqueNom ?? null,
+        formulation: htmlToText(question.formulation || '').trim(),
+        ordonnancement: question.ordonnancement ?? null,
+        type: question.type,
+        choix: (question.choix ?? []).map((choix) => ({
+          id: choix.id,
+          formulation: choix.formulation,
+        })),
+        mesuresAffectees: this.resolveMesuresAffectees(
+          question.actionIds,
+          actionsIndex
+        ),
+      }));
+    } catch (error) {
+      this.logger.warn(
+        `Erreur lors de la récupération des questions de personnalisation pour le référentiel ${referentielId}:`,
+        error
+      );
+      return [];
+    }
+  }
+
+  /**
+   * Charge l'arbre du référentiel exporté une seule fois et en dérive :
+   * - `hierarchie` : les niveaux ordonnés du référentiel (axe, sous-axe,
+   *   mesure…), nécessaires pour remonter un lien question→action au niveau
+   *   « mesure » ;
+   * - `actionsById` : index par `actionId` (numérotation + libellé), pour
+   *   résoudre les mesures affectées par les questions de personnalisation ;
+   * - `descriptions` : description HTML nettoyée, par `actionId`.
+   */
+  private async getReferentielActionsIndex(
+    referentielId: ReferentielId
+  ): Promise<{
+    hierarchie: ActionType[];
+    actionsById: Map<ActionId, { identifiant: string; nom: string }>;
+    descriptions: Record<ActionId, string>;
+  }> {
+    const referentiel = await this.getReferentielService.getReferentielTree(
+      referentielId
+    );
+
+    type ActionNode = {
+      actionId?: ActionId;
+      identifiant?: string | null;
+      nom?: string | null;
+      description?: string | null;
+      actionsEnfant?: ActionNode[];
+    };
+
+    const actionsById = new Map<
+      ActionId,
+      { identifiant: string; nom: string }
+    >();
+    const descriptions: Record<ActionId, string> = {};
+    const walk = (node: ActionNode) => {
+      if (node.actionId) {
+        actionsById.set(node.actionId, {
+          identifiant: node.identifiant ?? '',
+          nom: (node.nom ?? '').trim(),
+        });
+        if (node.description) {
+          descriptions[node.actionId] = Utils.cleanHtmlDescription(
+            node.description
+          );
+        }
+      }
+      node.actionsEnfant?.forEach(walk);
+    };
+    walk(referentiel.itemsTree as ActionNode);
+
+    return {
+      hierarchie: referentiel.orderedItemTypes,
+      actionsById,
+      descriptions,
+    };
+  }
+
+  /**
+   * Reproduit la logique de la section « Afficher les mesures affectées et
+   * règles associées » de la page personnalisation : remonte chaque lien
+   * question→action au niveau « mesure » (via `rollUpActionIdToActionLevel`),
+   * dédoublonne, puis résout numérotation et libellé depuis l'index du
+   * référentiel exporté.
+   *
+   * - le tri est fait ici (et non en SQL) car `array_agg` trie de façon
+   *   lexicographique et placerait « 4.10 » avant « 4.2 » ;
+   * - le `flatMap` ne conserve que les mesures présentes dans l'index : c'est ce
+   *   qui restreint le résultat au seul référentiel exporté (un lien vers une
+   *   autre version / un autre référentiel est ignoré).
+   */
+  private resolveMesuresAffectees(
+    actionIds: string[] | null | undefined,
+    {
+      hierarchie,
+      actionsById,
+    }: {
+      hierarchie: ActionType[];
+      actionsById: Map<ActionId, { identifiant: string; nom: string }>;
+    }
+  ): MesureAffectee[] {
+    if (!actionIds?.length) {
+      return [];
+    }
+
+    const mesureIds = [
+      ...new Set(
+        actionIds.map((actionId) => {
+          try {
+            return rollUpActionIdToActionLevel(actionId, hierarchie);
+          } catch {
+            return actionId;
+          }
+        })
+      ),
+    ];
+
+    return mesureIds
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .flatMap((actionId) => {
+        const action = actionsById.get(actionId);
+        return action
+          ? [{ actionId, identifiant: action.identifiant, nom: action.nom }]
+          : [];
+      });
   }
 
   private getExportMode(
@@ -462,37 +651,6 @@ export class LoadScoreComparisonService {
         sensitivity: 'base',
       });
     });
-  }
-
-  private async getActionDescriptions(
-    referentielId: ReferentielId
-  ): Promise<Record<ActionId, string>> {
-    const referentiel = await this.getReferentielService.getReferentielTree(
-      referentielId
-    );
-
-    const descriptions: Record<string, string> = {};
-
-    type ActionWithAllFields = typeof referentiel.itemsTree & {
-      description?: string;
-      nom?: string;
-      identifiant?: string;
-      actionsEnfant?: ActionWithAllFields[];
-    };
-
-    const extractDescriptions = (action: ActionWithAllFields) => {
-      if (action.actionId && action.description) {
-        descriptions[action.actionId] = Utils.cleanHtmlDescription(
-          action.description
-        );
-      }
-      if (action.actionsEnfant) {
-        action.actionsEnfant.forEach(extractDescriptions);
-      }
-    };
-
-    extractDescriptions(referentiel.itemsTree as ActionWithAllFields);
-    return descriptions;
   }
 
   private async getFichesActionLiees(
