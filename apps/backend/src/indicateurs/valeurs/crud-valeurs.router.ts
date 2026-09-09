@@ -26,7 +26,7 @@ export class IndicateurValeursRouter {
     list: this.trpc.authedOrServiceRoleProcedure
       .input(listIndicateurValeursInputSchema)
       .query(({ ctx, input }) => {
-        return this.service.listIndicateurValeurs(input, ctx.user);
+        return this.service.listIndicateurValeurs(input, { user: ctx.user });
       }),
     upsert: this.trpc.authedProcedure
       .input(upsertValeurIndicateurSchema)

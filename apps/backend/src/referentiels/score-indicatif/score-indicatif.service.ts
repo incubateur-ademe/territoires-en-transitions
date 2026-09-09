@@ -92,10 +92,11 @@ export class ScoreIndicatifService {
     const valeursGroupees =
       await this.indicateurValeursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: input.collectiviteId,
           indicateurIds,
         },
-        user
+        { user }
       );
 
     const valeursUtiliseesParActionId =

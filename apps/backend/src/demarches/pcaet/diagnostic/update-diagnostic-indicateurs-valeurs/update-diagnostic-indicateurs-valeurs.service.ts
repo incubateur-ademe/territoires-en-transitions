@@ -86,7 +86,10 @@ export class UpdateDiagnosticIndicateursValeursService {
       valeurs,
     });
 
-    await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, user);
+    await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
+      user,
+      tx,
+    });
 
     const payload = await this.diagnosticService.loadPayload(
       { demarcheId, collectiviteId },
@@ -160,6 +163,7 @@ export class UpdateDiagnosticIndicateursValeursService {
       .where(
         and(
           eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          eq(indicateurValeurTable.periodicite, 'annuelle'),
           eq(indicateurValeurTable.metadonneeId, metadonneeId),
           inArray(indicateurValeurTable.indicateurId, [...indicateurIds]),
           inArray(indicateurValeurTable.dateValeur, [...dateValeurs])

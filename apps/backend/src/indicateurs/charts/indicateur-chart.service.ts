@@ -510,10 +510,13 @@ export class IndicateurChartService {
     }
 
     const indicateursEnfantValeurs = (
-      await this.indicateurValeursService.listIndicateurValeurs({
-        collectiviteId,
-        indicateurIds: segmentatedIndicateursEnfantIds,
-      })
+      await this.indicateurValeursService.listIndicateurValeurs(
+        {
+          collectiviteId,
+          indicateurIds: segmentatedIndicateursEnfantIds,
+        },
+        { isUserTrusted: true }
+      )
     ).indicateurs;
 
     const sourceAndValeurType =
@@ -592,11 +595,14 @@ export class IndicateurChartService {
     ] = await Promise.all([
       // Always fetch indicateur valeurs
       this.indicateurValeursService
-        .listIndicateurValeurs({
-          collectiviteId,
-          indicateurIds: [definition.id],
-          sources: sources?.map((s) => s.sourceId),
-        })
+        .listIndicateurValeurs(
+          {
+            collectiviteId,
+            indicateurIds: [definition.id],
+            sources: sources?.map((s) => s.sourceId),
+          },
+          { isUserTrusted: true }
+        )
         .then((result) => result.indicateurs[0]),
       // Conditionally fetch reference valeurs
       includeReferenceValeurs

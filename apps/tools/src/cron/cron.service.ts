@@ -41,8 +41,8 @@ export class CronService {
 
   addCronJob(jobConfig: JobConfig) {
     const { name, cronExpression, data } = jobConfig;
-    // jobOptions est optionnel : seuls les jobs CRM (et tout job qui veut
-    // surcharger DEFAULT_JOB_OPTIONS) en déclarent un.
+    // jobOptions est optionnel : seuls les jobs qui surchargent explicitement
+    // DEFAULT_JOB_OPTIONS en déclarent un.
     const jobOptions =
       'jobOptions' in jobConfig ? jobConfig.jobOptions : undefined;
 

@@ -1,3 +1,14 @@
+import { IndicateurFormulaReconciliationRepository } from './definitions/indicateur-formula-reconciliation.repository';
+import { IndicateurFormulaReconciliationService } from './definitions/indicateur-formula-reconciliation.service';
+import { IndicateurFormulaReconciliationRouter } from './definitions/indicateur-formula-reconciliation.router';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { WriteIndicateurValeursService } from './valeurs/write-indicateur-valeurs.service';
+import { ValidateIndicateurValeursWriteService } from './valeurs/validate-indicateur-valeurs-write.service';
+import { ReconcileIndicateurValeursService } from './valeurs/reconcile-indicateur-valeurs.service';
+import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
+import { IndicateurValeurLockRepository } from './valeurs/indicateur-valeur-lock.repository';
+import { ComputeValeursRepository } from './valeurs/compute-valeurs.repository';
+import { LoadIndicateurCalculGraphService } from './valeurs/load-indicateur-calcul-graph.service';
 import { CrudValeursRepository } from './valeurs/crud-valeurs.repository';
 import { ListIndicateurValeursService } from './valeurs/list-indicateur-valeurs.service';
 import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
@@ -19,7 +30,6 @@ import { PersonnalisationsModule } from '../collectivites/personnalisations/pers
 import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
-import { TransactionModule } from '../utils/transaction/transaction.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
@@ -73,14 +83,24 @@ const DEFINITIONS_PROVIDERS = [
 
 @Module({
   imports: [
+    TransactionModule,
     UsersModule,
     CollectivitesModule,
     SheetModule,
     PersonnalisationsModule,
     ReferentielsCoreModule,
-    TransactionModule,
   ],
   providers: [
+    IndicateurFormulaReconciliationRepository,
+    IndicateurFormulaReconciliationService,
+    IndicateurFormulaReconciliationRouter,
+    WriteIndicateurValeursService,
+    ValidateIndicateurValeursWriteService,
+    ReconcileIndicateurValeursService,
+    IndicateurDefinitionLockRepository,
+    IndicateurValeurLockRepository,
+    ComputeValeursRepository,
+    LoadIndicateurCalculGraphService,
     CrudValeursRepository,
     ListIndicateurValeursService,
     ListPlatformDefinitionsService,
