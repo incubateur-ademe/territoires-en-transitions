@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { uploadToStorage } from './upload-to-storage';
-import { useAddFileToLib } from './useAddFileToLib';
+import { useAddFileToLib } from './use-add-file-to-lib';
 
 type UploadFileArgs = {
   collectiviteId: number;
