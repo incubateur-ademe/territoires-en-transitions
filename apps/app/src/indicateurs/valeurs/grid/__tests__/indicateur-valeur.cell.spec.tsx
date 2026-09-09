@@ -22,6 +22,7 @@ const buildValeur = ({
   id: 1,
   collectiviteId: 1,
   indicateurId,
+  periodicite: 'annuelle',
   dateValeur: `${year}-01-01`,
   metadonneeId: null,
   resultat,

@@ -4,16 +4,17 @@ import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Tag } from '@tet/domain/collectivites';
 import type { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
   and,
   eq,
   getTableColumns,
+  like,
   inArray,
   isNotNull,
   isNull,
-  like,
   or,
   sql,
   SQL,
@@ -29,19 +30,22 @@ export class ListPlatformDefinitionsRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listPlatformDefinitions({
-    identifiantsReferentiel,
-    indicateurIds,
-  }: {
-    identifiantsReferentiel?: string[];
-    indicateurIds?: number[];
-  } = {}): Promise<IndicateurDefinition[]> {
+  async listPlatformDefinitions(
+    {
+      identifiantsReferentiel,
+      indicateurIds,
+    }: {
+      identifiantsReferentiel?: string[];
+      indicateurIds?: number[];
+    } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
     });
 
-    const definitions = await this.databaseService.db
+    const definitions = await (tx ?? this.databaseService.db)
       .select()
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
@@ -51,13 +55,16 @@ export class ListPlatformDefinitionsRepository {
     return definitions;
   }
 
-  async listPlatformDefinitionAggregates({
-    identifiantsReferentiel,
-    indicateurIds,
-  }: {
-    identifiantsReferentiel?: string[];
-    indicateurIds?: number[];
-  } = {}): Promise<IndicateurDefinition[]> {
+  async listPlatformDefinitionAggregates(
+    {
+      identifiantsReferentiel,
+      indicateurIds,
+    }: {
+      identifiantsReferentiel?: string[];
+      indicateurIds?: number[];
+    } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -67,7 +74,7 @@ export class ListPlatformDefinitionsRepository {
     const thematiquesSubQuery = this.getThematiquesSubQuery();
     const mesuresSubQuery = this.getMesuresSubQuery();
 
-    const definitions = await this.databaseService.db
+    const definitions = await (tx ?? this.databaseService.db)
       .select({
         ...getTableColumns(indicateurDefinitionTable),
 
@@ -133,11 +140,10 @@ export class ListPlatformDefinitionsRepository {
     return conditions;
   }
 
-  async listPlatformDefinitionsHavingComputedValue({
-    identifiantsReferentiel,
-  }: { identifiantsReferentiel?: string[] } = {}): Promise<
-    IndicateurDefinition[]
-  > {
+  async listPlatformDefinitionsHavingComputedValue(
+    { identifiantsReferentiel }: { identifiantsReferentiel?: string[] } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] =
       identifiantsReferentiel?.map((identifiant) =>
         like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
@@ -150,7 +156,7 @@ export class ListPlatformDefinitionsRepository {
       sqlConditions.push(or(...sourceIndicateurSqlConditions) as SQLWrapper);
     }
 
-    const computedIndicateurDefinitions = await this.databaseService.db
+    const computedIndicateurDefinitions = await (tx ?? this.databaseService.db)
       .select()
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));

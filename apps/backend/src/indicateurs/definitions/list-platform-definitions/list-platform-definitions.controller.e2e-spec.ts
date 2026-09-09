@@ -63,6 +63,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
       titreCourt: null,
       description: expect.any(String),
       unite: 'GWh',
+      periodicite: 'annuelle',
       precision: 2,
       borneMin: null,
       borneMax: null,
