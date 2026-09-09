@@ -199,6 +199,8 @@ node-alpine:
 
   # Allow CI mode for Nx (and other tools)
   ENV CI=true
+  # Keep Nx task logs visible in CI, including builds launched through pnpm scripts.
+  ENV NX_DEFAULT_OUTPUT_STYLE=stream
 
   # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
   RUN apk add --no-cache libc6-compat
@@ -250,6 +252,8 @@ node-fr:
 
     # Allow CI mode for Nx (and other tools)
     ENV CI=true
+    # Keep Nx task logs visible in CI, including builds launched through pnpm scripts.
+    ENV NX_DEFAULT_OUTPUT_STYLE=stream
 
     # locale FR pour que les tests e2e relatifs au formatage localisés des dates et des valeurs numériques puissent passer
     ENV LANG fr_FR.UTF-8
