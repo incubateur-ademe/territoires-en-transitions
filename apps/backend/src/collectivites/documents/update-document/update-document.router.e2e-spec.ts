@@ -4,14 +4,13 @@ import {
   deleteAllDocuments,
   uploadCreateTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
-import { getAuthUserFromUserCredentials, signInWith } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import {
   getTestApp,
   getTestDatabase,
@@ -25,8 +24,7 @@ describe('UpdateDocumentRouter', () => {
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let readerUser: AuthenticatedUser;
-  let editorToken: string;
-  let visiteurToken: string;
+  let nonMembreUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -51,24 +49,8 @@ describe('UpdateDocumentRouter', () => {
       testCollectiviteAndUsersResult.users[1]
     );
 
-    const editorSignIn = await signInWith({
-      email: testCollectiviteAndUsersResult.users[0].email,
-      password: testCollectiviteAndUsersResult.users[0].password,
-    });
-    editorToken = editorSignIn.data.session?.access_token ?? '';
-    if (!editorToken) {
-      throw new Error('Échec login editor: token manquant');
-    }
-
     const noAccessUserResult = await addTestUser(databaseService);
-    const visiteurSignIn = await signInWith({
-      email: noAccessUserResult.user.email,
-      password: noAccessUserResult.user.password,
-    });
-    visiteurToken = visiteurSignIn.data.session?.access_token ?? '';
-    if (!visiteurToken) {
-      throw new Error('Échec login visiteur: token manquant');
-    }
+    nonMembreUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
   });
 
   afterAll(async () => {
@@ -94,49 +76,64 @@ describe('UpdateDocumentRouter', () => {
     ).rejects.toThrow(/Vous n'avez pas les permissions nécessaires/i);
   });
 
-  test('editor can update document then visiteur cannot download and admin gets correct filename', async () => {
-
-    const createdDocument = await uploadCreateTestDocument({
+  test('passer un document en confidentiel le retire du champ du non membre', async () => {
+    const document = await uploadCreateTestDocument({
       app,
       collectiviteId: collectivite.id,
       fileName: 'original.pdf',
     });
-    const { hash } = createdDocument;
+    const nonMembreCaller = router.createCaller({ user: nonMembreUser });
 
-    // Visiteur can download the document for now
-    await request(app.getHttpServer())
-      .get(`/collectivites/${collectivite.id}/documents/${hash}/download`)
-      .set('Authorization', `Bearer ${visiteurToken}`)
-      .buffer(true)
-      .expect(200);
-
-    const caller = router.createCaller({ user: editorUser });
-    const updated = await caller.collectivites.documents.update({
-      collectiviteId: collectivite.id,
-      hash,
-      filename: 'updated-name.pdf',
-      confidentiel: true,
+    await expect(
+      nonMembreCaller.collectivites.documents.getDownloadUrl({
+        collectiviteId: collectivite.id,
+        fichierId: document.id,
+      })
+    ).resolves.toEqual({
+      signedUrl: expect.stringContaining(document.hash),
+      filename: 'original.pdf',
     });
 
-    expect(updated.filename).toBe('updated-name.pdf');
+    const updated = await router
+      .createCaller({ user: editorUser })
+      .collectivites.documents.update({
+        collectiviteId: collectivite.id,
+        hash: document.hash,
+        confidentiel: true,
+      });
     expect(updated.confidentiel).toBe(true);
 
-    // Visiteur cannot download the document anymore
-    await request(app.getHttpServer())
-      .get(`/collectivites/${collectivite.id}/documents/${hash}/download`)
-      .set('Authorization', `Bearer ${visiteurToken}`)
-      .expect(403);
+    await expect(() =>
+      nonMembreCaller.collectivites.documents.getDownloadUrl({
+        collectiviteId: collectivite.id,
+        fichierId: document.id,
+      })
+    ).rejects.toThrowError(/n'existe pas/i);
+  });
 
-    // Editor can download the document and the filename is updated
-    const downloadResponse = await request(app.getHttpServer())
-      .get(`/collectivites/${collectivite.id}/documents/${hash}/download`)
-      .set('Authorization', `Bearer ${editorToken}`)
-      .buffer(true)
-      .expect(200);
+  test("le nouveau nom du document accompagne l'url signee", async () => {
+    const document = await uploadCreateTestDocument({
+      app,
+      collectiviteId: collectivite.id,
+      fileName: 'original.pdf',
+    });
+    const caller = router.createCaller({ user: editorUser });
 
-    expect(downloadResponse.headers['content-disposition']).toMatch(
-      /attachment.*filename="updated-name\.pdf"/
-    );
-    expect(Buffer.isBuffer(downloadResponse.body)).toBe(true);
+    const updated = await caller.collectivites.documents.update({
+      collectiviteId: collectivite.id,
+      hash: document.hash,
+      filename: 'updated-name.pdf',
+    });
+    expect(updated.filename).toBe('updated-name.pdf');
+
+    await expect(
+      caller.collectivites.documents.getDownloadUrl({
+        collectiviteId: collectivite.id,
+        fichierId: document.id,
+      })
+    ).resolves.toEqual({
+      signedUrl: expect.stringContaining(document.hash),
+      filename: 'updated-name.pdf',
+    });
   });
 });
