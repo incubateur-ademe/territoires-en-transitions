@@ -17,10 +17,15 @@ const JOBS_PROPRES = [
   'connect-synchro',
   'compute-all-outdated-trajectoires',
   'send-notifications',
+  'drain-indicateur-formula-reconciliations',
   'clore-instructions-pcaet',
   'posthog-collectivites-group-sync',
   'import-perimetres-epci',
 ] as const;
+
+const JOBS_PROPRES_SANS_OPTIONS_DEDIEES = JOBS_PROPRES.filter(
+  (name) => name !== 'drain-indicateur-formula-reconciliations'
+);
 
 describe('cron.config', () => {
   test('rassemble ses propres jobs puis ceux du descripteur CRM', () => {
@@ -61,12 +66,20 @@ describe('cron.config', () => {
     }
   });
 
-  test('les jobs hors CRM gardent les options par défaut', () => {
-    for (const name of JOBS_PROPRES) {
+  test('les jobs sans politique dédiée gardent les options par défaut', () => {
+    for (const name of JOBS_PROPRES_SANS_OPTIONS_DEDIEES) {
       const entry = JOBS_CONFIG.find((j: JobConfigEntry) => j.name === name);
       expect(entry).toBeDefined();
       expect(entry).not.toHaveProperty('jobOptions');
     }
+  });
+
+  test('le drain délègue ses retries au backoff PostgreSQL et au prochain tick', () => {
+    const entry = JOBS_CONFIG.find(
+      (j: JobConfigEntry) =>
+        j.name === 'drain-indicateur-formula-reconciliations'
+    );
+    expect(entry).toHaveProperty('jobOptions', { attempts: 1 });
   });
 
   test('JobName inclut tous les noms CRM au niveau type (assertion compile-time)', () => {

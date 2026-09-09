@@ -282,7 +282,7 @@ export default class TrajectoiresSpreadsheetService {
     const upsertedTrajectoireIndicateurValeurs =
       await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
-        undefined // we don't want to check permission, we have already checked it and it's not the same
+        { isUserTrusted: true } // This workflow has already checked its trajectory permissions.
       );
 
     const [
