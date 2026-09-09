@@ -129,23 +129,54 @@ publication GES sélectionnent explicitement la série annuelle, même si le sui
 
 ### 4. Les règles de période sont partagées
 
-Le domaine définit comment valider une période, trouver la suivante et comparer deux périodes.
-Ces fonctions sont indépendantes de l’interface et de la base. Les graphiques du frontend et
-les rendus serveur partagent les mêmes libellés de périodes et règles de graduation.
-Ajouter une périodicité exige de définir ces deux aspects, sans traitement annuel par défaut.
+Une même période doit être comprise de la même façon lors de la saisie, du calcul et de l’affichage.
+Pour cela, le code distingue trois responsabilités :
 
-Les écritures suivent l’architecture existante : routeur → service → repository → base.
-Le service vérifie les droits et les règles métier ; le repository exécute les requêtes dans
-la transaction du service. Les accès historiques qui dérogent à cette règle sont suivis dans
-le plan d’implémentation et doivent être migrés avant toute extension.
+- **Manipuler les périodes (domaine)** : vérifier leur validité, trouver la suivante ou les comparer.
+  Par exemple, le mois suivant décembre 2026 est janvier 2027. Ces fonctions sont partagées entre
+  frontend et backend et ne dépendent ni des graphiques ni de la base de données.
+- **Présenter les périodes** : choisir les libellés, comme « mars 2026 », et les graduations
+  du graphique. Le frontend et le rendu serveur utilisent les mêmes règles.
+- **Enregistrer les valeurs** : le service vérifie les droits et les règles métier ; le repository
+  lit et écrit en base dans la transaction du service. Les contraintes SQL protègent aussi les données.
 
-Les valeurs d’un lot et les résultats calculés avant sa validation sont enregistrés ensemble
-ou tous annulés. Les recalculs globaux s’exécutent après l’enregistrement du catalogue importé :
-les résultats peuvent donc être temporairement décalés par rapport aux définitions importées.
-Définitions, objectifs de référence et demandes de recalcul sont enregistrés ensemble ;
-un échec reste visible et peut être repris. Le recalcul retire les résultats automatiques obsolètes,
-préserve les valeurs manuelles et distingue absence, `null` et zéro. Terminer un recalcul ne supprime
-pas une demande plus récente. Les détails de traitement figurent dans le plan d’implémentation.
+Une nouvelle périodicité doit définir ses règles de période et de présentation ; elle ne reçoit
+pas automatiquement le comportement annuel.
+
+**Exemple de saisie.** Une collectivité saisit `42` pour mars 2026. Le frontend transmet la valeur,
+l’indicateur, la collectivité et la période mensuelle commençant le `2026-03-01`. Le backend vérifie
+les droits, la périodicité autorisée et la date, puis enregistre la valeur. Pour une saisie par lot,
+les valeurs et les résultats calculés pendant cet enregistrement sont validés ensemble : une erreur annule tout le lot.
+
+**Exemple d’affichage.** Le graphique à l’écran et sa version générée par le serveur affichent
+« mars 2026 » dans l’infobulle du même point. Ils réutilisent les règles de présentation :
+passer aux graduations annuelles conserve ce point à sa date mensuelle, dans les deux rendus.
+
+L’import du catalogue enregistre ensemble les définitions, les objectifs de référence et les demandes
+de recalcul. Les recalculs globaux s’exécutent ensuite : les résultats peuvent donc être temporairement
+décalés par rapport aux définitions. Un échec reste visible et peut être repris. Le recalcul retire
+les résultats automatiques obsolètes, préserve les valeurs manuelles et distingue absence, `null` et zéro.
+Terminer un recalcul ne supprime pas une demande plus récente.
+
+Le plan d’implémentation détaille ce traitement et les accès historiques qui dérogent à l’architecture.
+Ces accès doivent être migrés avant toute extension.
+
+Le schéma montre le parcours d’une saisie et les règles réutilisées. Les flèches pleines représentent
+les échanges de données ; les pointillés indiquent l’utilisation de code partagé, sans appel réseau.
+
+```mermaid
+flowchart TB
+    UI["Frontend<br/>Saisir une valeur et afficher le graphique"] <--> API["Routeur tRPC<br/>Recevoir la demande et renvoyer la réponse"]
+    API <--> SERVICE["Service<br/>Vérifier les droits et coordonner l'enregistrement"]
+    SERVICE <--> REPO["Repository<br/>Lire et écrire dans la transaction du service"]
+    REPO <--> DB[("PostgreSQL<br/>Stocker les valeurs et vérifier les contraintes")]
+
+    UI -.-> PERIODES["Règles de période<br/>Valider, trouver la suivante, comparer"]
+    SERVICE -.-> PERIODES
+    UI -.-> PRESENTATION["Règles de présentation<br/>Libellés et graduations"]
+    RENDU["Serveur<br/>Générer le graphique à télécharger"] -.-> PRESENTATION
+    PRESENTATION -.-> PERIODES
+```
 
 ## Conséquences et alternatives
 
