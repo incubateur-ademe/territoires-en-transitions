@@ -7,6 +7,8 @@ export const indicateur1: IndicateurDefinitionTiny = {
   titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
   description: '',
   unite: 'teq CO2',
+  periodicite: 'annuelle',
+  periodiciteMode: 'recommandee',
   borneMin: null,
   borneMax: null,
 };
@@ -18,6 +20,8 @@ export const indicateur2: IndicateurDefinitionTiny = {
   titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
   description: '',
   unite: 'teq CO2',
+  periodicite: 'annuelle',
+  periodiciteMode: 'recommandee',
   borneMin: null,
   borneMax: null,
 };
@@ -30,6 +34,8 @@ export const indicateur3: IndicateurDefinitionTiny = {
     'Emissions de gaz à effet de serre du secteur du transport routier',
   description: '',
   unite: 'teq CO2',
+  periodicite: 'annuelle',
+  periodiciteMode: 'recommandee',
   borneMin: null,
   borneMax: null,
 };

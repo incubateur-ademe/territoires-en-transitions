@@ -3,6 +3,7 @@
     {
       "definition": {
         "id": 177,
+        "periodicite": "annuelle",
         "groupementId": null,
         "collectiviteId": null,
         "identifiantReferentiel": "cae_8",
