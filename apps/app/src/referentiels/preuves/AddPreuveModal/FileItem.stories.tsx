@@ -51,7 +51,7 @@ export const fileItemMocks: Record<string, FileUploadItem> = {
     file: createMockFile('feuille de route des élus responsables CAE.pdf', 100),
     status: {
       code: UploadStatusCode.completed,
-      fichier_id: 1,
+      fichierId: 1,
       hash: MOCK_HASH,
     },
   },
@@ -95,7 +95,7 @@ export const fileItemMocks: Record<string, FileUploadItem> = {
     file: createMockFile('fichier.xls', 15 * 1024 * 1024),
     status: {
       code: UploadStatusCode.duplicated,
-      fichier_id: 1,
+      fichierId: 1,
       filename: 'fichier.xls',
       hash: MOCK_HASH,
     },
@@ -105,7 +105,7 @@ export const fileItemMocks: Record<string, FileUploadItem> = {
     file: createMockFile('nouveau nom.xls', 15 * 1024 * 1024),
     status: {
       code: UploadStatusCode.duplicated,
-      fichier_id: 1,
+      fichierId: 1,
       filename: 'fichier.xls',
       hash: MOCK_HASH,
     },

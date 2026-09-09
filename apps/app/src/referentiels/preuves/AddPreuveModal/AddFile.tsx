@@ -136,7 +136,7 @@ export const AddFile = (props: AddFileProps) => {
   }: ValidFileItem): Promise<SubmittedValidFile> => ({
     file,
     status,
-    addedPreuve: await onAddFileFromLib(status.fichier_id),
+    addedPreuve: await onAddFileFromLib(status.fichierId),
   });
 
   const onSubmit = async (e: FormEvent) => {

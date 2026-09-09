@@ -128,7 +128,7 @@ export const DejaDansLaBibliotheque: Story = {
         file: createMockFile('deliberation.pdf', 87 * 1024),
         status: {
           code: UploadStatusCode.duplicated,
-          fichier_id: 1,
+          fichierId: 1,
           filename: 'deliberation.pdf',
           hash: 'hash-1',
         },
@@ -137,7 +137,7 @@ export const DejaDansLaBibliotheque: Story = {
         file: createMockFile('nouveau nom.xls', 15 * MO),
         status: {
           code: UploadStatusCode.duplicated,
-          fichier_id: 2,
+          fichierId: 2,
           filename: 'budget prévisionnel.xls',
           hash: 'hash-2',
         },
@@ -157,7 +157,7 @@ export const TeleversementAbouti: Story = {
         ),
         status: {
           code: UploadStatusCode.completed,
-          fichier_id: 3,
+          fichierId: 3,
           hash: 'hash-3',
         },
       },
