@@ -108,6 +108,27 @@ describe('Document Controller', () => {
       expect(response.body.hash).toMatch(/^[a-f0-9]{64}$/);
     });
 
+    test("un contenu déjà déposé rend le document existant plutôt qu'une erreur", async () => {
+      const firstUpload = await request(app.getHttpServer())
+        .post(`/collectivites/${collectiviteId}/documents/upload`)
+        .set('Authorization', `Bearer ${adminAuthToken}`)
+        .attach('file', testPdfBuffer, 'premier-nom.pdf')
+        .field('confidentiel', 'false')
+        .expect(201);
+
+      const secondUpload = await request(app.getHttpServer())
+        .post(`/collectivites/${collectiviteId}/documents/upload`)
+        .set('Authorization', `Bearer ${adminAuthToken}`)
+        .attach('file', testPdfBuffer, 'second-nom.pdf')
+        .field('confidentiel', 'false')
+        .expect(201);
+
+      expect(secondUpload.body).toMatchObject({
+        id: firstUpload.body.id,
+        filename: 'premier-nom.pdf',
+      });
+    });
+
     test('upload document with confidentiel true', async () => {
       const fileName = 'confidentiel-doc.pdf';
 
