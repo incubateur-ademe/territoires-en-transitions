@@ -35,7 +35,7 @@ export const filesToUploadList = async (
   // trente fichiers pour un contexte qui n'en accepte qu'un ne doit pas les
   // hacher tous ni les chercher tous dans la bibliothèque.
   const filesToProcess = keepWithinMaxFiles(
-    filesToArray(files),
+    Array.from(files),
     constraints.maxFiles
   );
 
@@ -66,16 +66,6 @@ export const filesToUploadList = async (
     }
     return { kind: 'toUpload', file, hash };
   });
-};
-
-// Transforme un objet FileList (retourné par le sélecteur de fichiers standard)
-// en tableau. On le fait comme ça car TS n'accepte pas Array.from(files) ou [...files]
-const filesToArray = (files: FileList): File[] => {
-  const arr: File[] = [];
-  for (let i = 0; i < files.length; i++) {
-    arr.push(files.item(i) as File);
-  }
-  return arr;
 };
 
 const toFailed = (file: File, error: UploadErrorCode): PreparedFile => ({
