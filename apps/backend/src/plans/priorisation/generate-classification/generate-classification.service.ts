@@ -2,20 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ClassificationLeviersJobRepository } from '../classification-leviers-job.repository';
 import { type ClassificationLeviersError } from '../classification-leviers.errors';
-import { type FicheLeviersError } from '../fiche-leviers.errors';
-import {
-  FicheLeviers,
-  FicheLeviersRepository,
-} from '../fiche-leviers.repository';
 import {
   CLASSIFICATION_DEADLINE_MS,
   ClassificationLeviersJobStatusEnum,
 } from '../models/classification-leviers-job';
-import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
 import {
   FICHES_PER_BATCH,
   runClassification,
@@ -35,18 +28,6 @@ export type GenerateClassificationError =
     }
   | { kind: 'interrupted'; jobId: string; message: string };
 
-type PersistClassificationFailure =
-  | { step: 'save_leviers'; cause: FicheLeviersError }
-  | { step: 'mark_done'; cause: ClassificationLeviersError };
-
-const toFicheLeviers = ({
-  ficheId,
-  volets,
-}: ClassifiedFiche): FicheLeviers => ({
-  ficheId,
-  leviers: volets,
-});
-
 @Injectable()
 export class GenerateClassificationService {
   private readonly logger = new Logger(GenerateClassificationService.name);
@@ -54,9 +35,7 @@ export class GenerateClassificationService {
   constructor(
     private readonly jobRepository: ClassificationLeviersJobRepository,
     private readonly listFichesService: ListFichesService,
-    private readonly llm: LlmService,
-    private readonly ficheLeviersRepository: FicheLeviersRepository,
-    private readonly transactionManager: TransactionManager
+    private readonly llm: LlmService
   ) {}
 
   async generate(
@@ -121,51 +100,20 @@ export class GenerateClassificationService {
       );
     }
 
-    const persistResult = await this.transactionManager.executeSingle<
-      undefined,
-      PersistClassificationFailure
-    >(async (tx) => {
-      const saveResult = await this.ficheLeviersRepository.saveLeviers({
-        collectiviteId: job.collectiviteId,
-        fiches: classification.draft.fiches.map(toFicheLeviers),
-        tx,
-      });
-      if (!saveResult.success) {
-        return failure({
-          step: 'save_leviers' as const,
-          cause: saveResult.error,
-        });
-      }
-
-      const doneResult = await this.jobRepository.markDone({
-        id: jobId,
-        draft: classification.draft,
-        tokenUsage: classification.tokens,
-        tx,
-      });
-      if (!doneResult.success) {
-        return failure({ step: 'mark_done' as const, cause: doneResult.error });
-      }
-
-      return success(undefined);
+    const doneResult = await this.jobRepository.markDone({
+      id: jobId,
+      draft: classification.draft,
+      tokenUsage: classification.tokens,
     });
-
-    if (persistResult.success) {
-      return success(undefined);
-    }
-
-    if (persistResult.error.step === 'save_leviers') {
-      return this.interrupt(
+    if (!doneResult.success) {
+      return failure({
+        kind: 'transition_failed',
         jobId,
-        `L'enregistrement du classement a échoué (${persistResult.error.cause})`
-      );
+        cause: doneResult.error,
+      });
     }
 
-    return failure({
-      kind: 'transition_failed',
-      jobId,
-      cause: persistResult.error.cause,
-    });
+    return success(undefined);
   }
 
   async recordTerminalFailure(jobId: string, message: string): Promise<void> {

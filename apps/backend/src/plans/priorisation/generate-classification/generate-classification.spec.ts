@@ -1,10 +1,8 @@
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { GenerateStructuredArgs } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { ZodType } from 'zod';
 import { ClassificationLeviersErrorEnum } from '../classification-leviers.errors';
-import { FicheLeviersErrorEnum } from '../fiche-leviers.errors';
 import {
   ClassificationLeviersJob,
   ClassificationLeviersJobStatus,
@@ -23,8 +21,6 @@ const tokens = {
   thoughtsTokens: 1,
   totalTokens: 16,
 };
-
-const transaction = { marker: 'transaction' } as unknown as Transaction;
 
 const toJobRow = (
   status: ClassificationLeviersJobStatus = ClassificationLeviersJobStatusEnum.PENDING
@@ -67,11 +63,9 @@ const toClassifyingLlm = () => ({
 const toDependencies = ({
   job = toJobRow(),
   fiches = [{ id: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
-  saveOutcome = success(undefined),
 }: {
   job?: ReturnType<typeof toJobRow>;
   fiches?: { id: number; titre: string | null; description: string | null }[];
-  saveOutcome?: unknown;
 } = {}) => {
   const jobRepository = {
     getById: vi.fn().mockResolvedValue(success(job)),
@@ -86,31 +80,14 @@ const toDependencies = ({
       .mockResolvedValue({ count: fiches.length, data: fiches }),
   };
   const llm = toClassifyingLlm();
-  const ficheLeviersRepository = {
-    saveLeviers: vi.fn().mockResolvedValue(saveOutcome),
-  };
-  const transactionManager = {
-    executeSingle: vi.fn(
-      async (operation: (tx: Transaction) => Promise<unknown>) =>
-        operation(transaction)
-    ),
-  };
 
   const service = new GenerateClassificationService(
     jobRepository as never,
     listFichesService as never,
-    llm as never,
-    ficheLeviersRepository as never,
-    transactionManager as never
+    llm as never
   );
 
-  return {
-    service,
-    jobRepository,
-    listFichesService,
-    llm,
-    ficheLeviersRepository,
-  };
+  return { service, jobRepository, listFichesService, llm };
 };
 
 describe('GenerateClassificationService.generate', () => {
@@ -150,17 +127,15 @@ describe('GenerateClassificationService.generate', () => {
   });
 
   it("laisse le classement a l'etat de proposition, sans toucher aux leviers des fiches", async () => {
-    const { service, ficheLeviersRepository, jobRepository } = toDependencies();
+    const { service, jobRepository } = toDependencies();
 
     const result = await service.generate(jobId);
 
     expect({
       success: result.success,
-      saveLeviersCalls: ficheLeviersRepository.saveLeviers.mock.calls.length,
       draftPersisteSurLeJob: jobRepository.markDone.mock.calls[0][0].draft,
     }).toEqual({
       success: true,
-      saveLeviersCalls: 0,
       draftPersisteSurLeJob: {
         fiches: [
           {
@@ -179,40 +154,6 @@ describe('GenerateClassificationService.generate', () => {
         unclassified: [],
       },
     });
-  });
-
-  it('ecrit le classement et clot le job dans une seule et meme transaction', async () => {
-    const { service, ficheLeviersRepository, jobRepository } =
-      toDependencies();
-
-    const result = await service.generate(jobId);
-
-    const [saveArgs] = ficheLeviersRepository.saveLeviers.mock.calls[0];
-    const [markDoneArgs] = jobRepository.markDone.mock.calls[0];
-
-    expect({
-      success: result.success,
-      saveTransaction: saveArgs.tx,
-      markDoneTransaction: markDoneArgs.tx,
-    }).toEqual({
-      success: true,
-      saveTransaction: transaction,
-      markDoneTransaction: transaction,
-    });
-  });
-
-  it("ne clot pas le job quand l'ecriture du classement echoue", async () => {
-    const { service, jobRepository } = toDependencies({
-      saveOutcome: failure(FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR),
-    });
-
-    const result = await service.generate(jobId);
-
-    expect({
-      errorKind: result.success ? undefined : result.error.kind,
-      markDoneCalls: jobRepository.markDone.mock.calls.length,
-      markFailedCalls: jobRepository.markFailed.mock.calls.length,
-    }).toEqual({ errorKind: 'interrupted', markDoneCalls: 0, markFailedCalls: 1 });
   });
 
   it("remonte l'echec de passage en cours sans appeler le modele", async () => {
