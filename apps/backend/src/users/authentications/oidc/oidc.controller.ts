@@ -218,7 +218,8 @@ export class OidcController {
           await this.rattacherIdentiteService.rattacherAvecGardeFous(
             providerConfig.provider,
             linkUserId,
-            claims
+            claims,
+            'profil'
           );
 
         if (!rattachement.success) {

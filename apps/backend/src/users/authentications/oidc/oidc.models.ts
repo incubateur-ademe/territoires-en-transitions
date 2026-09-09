@@ -53,6 +53,34 @@ export const oidcClaimsSchema = z.object({
 export type OidcClaims = z.infer<typeof oidcClaimsSchema>;
 
 /**
+ * Parcours par lequel une identité OIDC arrive sur un compte. Sert de
+ * propriété de l'évènement `auth:oidc:linked` : c'est la seule chose que le
+ * client savait dire (son `pathname`) et que le serveur, lui, sait nommer.
+ *
+ * `creation-compte` n'est pas une liaison : le compte naît avec son identité,
+ * il n'y a aucun compte préexistant à rattacher — ce cas n'émet donc pas
+ * d'évènement.
+ */
+export const oidcLiaisonOrigines = [
+  'connexion-automatique',
+  'profil',
+  'invitation-mail',
+  'reconnexion-classique',
+  'creation-compte',
+] as const;
+
+export type OidcLiaisonOrigine = (typeof oidcLiaisonOrigines)[number];
+
+/**
+ * Nom de l'évènement PostHog émis à chaque liaison, tenu côté serveur : le
+ * catalogue (`packages/ui/.../posthog-events.ts`) est une lib frontend que le
+ * backend n'importe pas. Tout renommage doit rester synchronisé avec
+ * `Event.auth.oidc.linked`, et avec le script de backfill qui réutilise cette
+ * constante.
+ */
+export const EVENT_OIDC_LINKED = 'auth:oidc:linked';
+
+/**
  * Providers gouvernementaux configurés explicitement (client_secret) dont
  * l'email fait foi, quelle que soit la valeur du claim `email_verified` :
  * - ProConnect : n'émet pas `email_verified` ; email professionnel du

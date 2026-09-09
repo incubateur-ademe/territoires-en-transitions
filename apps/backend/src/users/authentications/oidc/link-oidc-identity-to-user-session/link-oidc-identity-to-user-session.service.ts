@@ -47,7 +47,8 @@ export class LinkOidcIdentityToUserSessionService {
     const result = await this.rattacherIdentiteService.rattacherAvecGardeFous(
       provider,
       user.id,
-      claims
+      claims,
+      'reconnexion-classique'
     );
     if (!result.success) {
       return failure(result.error);

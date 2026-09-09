@@ -1,5 +1,4 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
-import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { FeatureFlagKey } from '@tet/domain/utils';
 import { PostHog } from 'posthog-node';
@@ -12,10 +11,7 @@ export class PostHogEventTracker
   private readonly logger = new Logger(PostHogEventTracker.name);
   private readonly posthog: PostHog | null = null;
 
-  constructor(
-    private readonly configurationService: ConfigurationService,
-    private readonly listUsersService: ListUsersService
-  ) {
+  constructor(private readonly configurationService: ConfigurationService) {
     const postHogKey = this.configurationService.get('POSTHOG_KEY');
     const postHogHost = this.configurationService.get('POSTHOG_HOST');
     if (postHogKey && postHogHost) {

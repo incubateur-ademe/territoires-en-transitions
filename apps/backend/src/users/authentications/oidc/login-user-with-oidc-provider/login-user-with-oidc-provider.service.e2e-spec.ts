@@ -10,6 +10,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -42,12 +43,14 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
   let databaseService: DatabaseService;
   let service: LoginUserWithOidcProviderService;
   let supabaseService: SupabaseService;
+  let trackingService: TrackingService;
 
   beforeAll(async () => {
     app = await getTestApp();
     databaseService = await getTestDatabase(app);
     service = app.get(LoginUserWithOidcProviderService);
     supabaseService = app.get(SupabaseService);
+    trackingService = app.get(TrackingService);
 
     return async () => {
       await app.close();
@@ -447,6 +450,71 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
       .from(utilisateurIdentiteOidcTable)
       .where(eq(utilisateurIdentiteOidcTable.sub, sub));
     expect(identite.siret).toBe('22222222200022');
+  });
+
+  describe('évènement auth:oidc:linked', () => {
+    /**
+     * L'évènement était émis par l'app au retour de la redirection, où il
+     * était perdu (capture avant l'init de posthog-js). Il est désormais émis
+     * ici, au moment de l'écriture — donc testable.
+     */
+    const espionnerCapture = () => {
+      const capture = vi
+        .spyOn(trackingService, 'capture')
+        .mockImplementation(() => undefined);
+      onTestFinished(() => capture.mockRestore());
+      return capture;
+    };
+
+    test('cas 2 — une nouvelle liaison émet l’évènement une fois', async () => {
+      const { user, cleanup } = await addTestCollectiviteAndUser(
+        databaseService
+      );
+      onTestFinished(cleanup);
+      const capture = espionnerCapture();
+
+      const sub = `sub-linked-${crypto.randomUUID()}`;
+      await service.authentifier(
+        'proconnect',
+        buildClaims({ sub, email: user.email })
+      );
+
+      expect(capture).toHaveBeenCalledTimes(1);
+      expect(capture).toHaveBeenCalledWith({
+        distinctId: user.id,
+        event: 'auth:oidc:linked',
+        properties: { provider: 'proconnect', origine: 'connexion-automatique' },
+      });
+    });
+
+    test('cas 2 — rotation du sub (compte déjà lié) n’émet rien', async () => {
+      const { user, cleanup } = await addTestCollectiviteAndUser(
+        databaseService
+      );
+      onTestFinished(cleanup);
+
+      const ancienSub = `sub-rotation-avant-${crypto.randomUUID()}`;
+      await databaseService.db.insert(utilisateurIdentiteOidcTable).values({
+        provider: 'proconnect',
+        sub: ancienSub,
+        userId: user.id,
+        email: user.email,
+        claims: { sub: ancienSub, email: user.email },
+      });
+
+      const capture = espionnerCapture();
+
+      // Nouveau sub pour le même (user, provider) : l'agent a changé de
+      // fournisseur d'identité amont. L'upsert part en UPDATE, ce n'est pas
+      // une nouvelle liaison — c'est ce que détecte le `xmax = 0`.
+      const nouveauSub = `sub-rotation-apres-${crypto.randomUUID()}`;
+      await service.authentifier(
+        'proconnect',
+        buildClaims({ sub: nouveauSub, email: user.email })
+      );
+
+      expect(capture).not.toHaveBeenCalled();
+    });
   });
 
   describe("rattachement automatique à l'organisation du jeton", () => {

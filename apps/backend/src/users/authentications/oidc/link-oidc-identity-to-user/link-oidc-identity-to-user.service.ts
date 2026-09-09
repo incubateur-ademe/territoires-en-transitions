@@ -5,8 +5,14 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { and, eq, sql } from 'drizzle-orm';
-import { OidcClaims, OidcProvider } from '../oidc.models';
+import {
+  EVENT_OIDC_LINKED,
+  OidcClaims,
+  OidcLiaisonOrigine,
+  OidcProvider,
+} from '../oidc.models';
 import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oidc.table';
 
 export const rattacherAvecGardeFousErrors = [
@@ -26,7 +32,8 @@ export class LinkOidcIdentityToUserService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly supabaseService: SupabaseService
+    private readonly supabaseService: SupabaseService,
+    private readonly trackingService: TrackingService
   ) {}
 
   /**
@@ -34,16 +41,23 @@ export class LinkOidcIdentityToUserService {
    * Upsert sur `(user_id, provider)` : si ce compte avait déjà
    * une identité pour ce provider (rotation du `sub` chez le FI), la
    * dernière identité prouvée remplace l'ancienne — loggé.
+   *
+   * Point d'émission unique de `auth:oidc:linked` : c'est la seule écriture de
+   * `utilisateur_identite_oidc` du backend, donc le seul endroit qui voit
+   * passer les quatre parcours. L'évènement était auparavant émis par l'app au
+   * retour de la redirection, où il était perdu (capture avant l'init de
+   * posthog-js).
    */
   async rattacherIdentite(
     provider: OidcProvider,
     userId: string,
     claims: OidcClaims,
+    origine: OidcLiaisonOrigine,
     tx?: Transaction
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;
 
-    await db
+    const [ligne] = await db
       .insert(utilisateurIdentiteOidcTable)
       .values({
         provider,
@@ -68,11 +82,31 @@ export class LinkOidcIdentityToUserService {
           'claims',
           'lastSignInAt',
         ]),
-      });
+      })
+      // `xmax = 0` ⇔ la ligne vient d'être insérée. Sur conflit (rotation du
+      // `sub`), xmax porte l'identifiant de la transaction : le compte était
+      // déjà lié, ce n'est pas une nouvelle liaison à compter.
+      .returning({ inserted: sql<boolean>`xmax = 0` });
 
     this.logger.log(
-      `Identité OIDC ${provider} rattachée au compte ${userId} (cas 2, liaison automatique par email)`
+      `Identité OIDC ${provider} rattachée au compte ${userId} (origine: ${origine}${
+        ligne?.inserted ? '' : ', rotation du sub'
+      })`
     );
+
+    // `creation-compte` n'est pas une liaison : aucun compte préexistant n'a
+    // été rattaché. Émettre l'évènement ici changerait le sens de la métrique.
+    if (ligne?.inserted && origine !== 'creation-compte') {
+      // Émis dans la transaction appelante quand il y en a une : un échec du
+      // COMMIT juste après laisserait un évènement sans liaison. Fenêtre
+      // assumée — la seule alternative serait de disperser l'émission dans les
+      // quatre appelants.
+      this.trackingService.capture({
+        distinctId: userId,
+        event: EVENT_OIDC_LINKED,
+        properties: { provider, origine },
+      });
+    }
   }
 
   /**
@@ -86,6 +120,7 @@ export class LinkOidcIdentityToUserService {
     provider: OidcProvider,
     userId: string,
     claims: OidcClaims,
+    origine: OidcLiaisonOrigine,
     tx?: Transaction
   ): Promise<Result<{ email: string }, LinkOidcIdentityToUserError>> {
     const db = tx ?? this.databaseService.db;
@@ -121,7 +156,7 @@ export class LinkOidcIdentityToUserService {
       return failure('COMPTE_SUPPRIME');
     }
 
-    await this.rattacherIdentite(provider, userId, claims, tx);
+    await this.rattacherIdentite(provider, userId, claims, origine, tx);
 
     return success({ email: claims.email });
   }

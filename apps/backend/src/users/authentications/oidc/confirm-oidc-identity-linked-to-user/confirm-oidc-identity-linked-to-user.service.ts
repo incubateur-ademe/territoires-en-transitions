@@ -112,6 +112,7 @@ export class ConfirmOidcIdentityLinkedToUserService {
           demande.provider,
           demande.userId,
           claims.data,
+          'invitation-mail',
           tx
         );
       if (!rattachement.success) {

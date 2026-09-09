@@ -229,6 +229,7 @@ export class LoginUserWithOidcProviderService {
       provider,
       compte.userId,
       claims,
+      'connexion-automatique',
       tx
     );
 
