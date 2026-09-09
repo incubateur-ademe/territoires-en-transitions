@@ -10,32 +10,43 @@ if [ -z "${TO_DB_URL:-}" ]; then
     fi
 fi
 
-# Allowlist of known non-prod restore targets.
-# Fail-closed: TO_DB_URL must match a localhost shape or one of these project IDs.
-# A misconfigured secret (e.g., accidentally pointing at production) is refused.
-ALLOWED_PROJECT_IDS=(
-    "qwbsrgwlypaqheoedxxq"  # staging
-    "xbrefnclajfcjlpnwyow"  # preprod
-)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DISABLED_TRIGGER_SCHEMA=''
+DISABLED_TRIGGER_TABLE=''
 
-is_allowed_target=false
-if [[ "$TO_DB_URL" =~ (localhost|127\.0\.0\.1|host\.docker\.internal) ]]; then
-    is_allowed_target=true
-else
-    for project_id in "${ALLOWED_PROJECT_IDS[@]}"; do
-        if [[ "$TO_DB_URL" == *"$project_id"* ]]; then
-            is_allowed_target=true
-            break
-        fi
-    done
-fi
+reenable_current_user_triggers() {
+    if [ -z "$DISABLED_TRIGGER_SCHEMA" ] || [ -z "$DISABLED_TRIGGER_TABLE" ]; then
+        return 0
+    fi
 
-if [ "$is_allowed_target" != true ]; then
-    masked_url=$(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|')
-    echo "Refusing to restore: TO_DB_URL ($masked_url) does not match the allowlist."
-    echo "Allowed targets: localhost shape, or one of: ${ALLOWED_PROJECT_IDS[*]}"
-    exit 1
-fi
+    if ! psql -d "$TO_DB_URL" -c \
+        "ALTER TABLE \"$DISABLED_TRIGGER_SCHEMA\".\"$DISABLED_TRIGGER_TABLE\" ENABLE TRIGGER USER;"; then
+        return 1
+    fi
+
+    DISABLED_TRIGGER_SCHEMA=''
+    DISABLED_TRIGGER_TABLE=''
+}
+
+cleanup_disabled_user_triggers() {
+    if ! reenable_current_user_triggers; then
+        echo "WARNING: failed to re-enable USER triggers on $DISABLED_TRIGGER_SCHEMA.$DISABLED_TRIGGER_TABLE" >&2
+    fi
+}
+
+# A cancelled restore must not silently leave the current table's domain
+# triggers disabled. SIGKILL cannot be recovered from, but normal failures,
+# runner cancellation (TERM) and interactive interruption (INT) all retry the
+# compensating ALTER TABLE before exit.
+trap cleanup_disabled_user_triggers EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+# Parse the connection identity before any download or database access. Raw
+# substring matching is unsafe because credentials and query parameters can
+# contain an allowlisted project name without making it the actual host.
+DATABASE_URL="$TO_DB_URL" node \
+    "$SCRIPT_DIR/../scripts/validate-database-url.mjs" restore-target
 
 # Sanity-check RESTORE_ENCRYPTED_PASSWORD shape when set.
 # bcrypt hashes are exactly 60 chars and start with $2a$ / $2b$ / $2y$.
@@ -181,8 +192,14 @@ if [ ! -s "$DUMP_FILE" ]; then
 fi
 
 # --- Parse restore-config.yml for group/table definitions and data_rules ---
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RESTORE_CONFIG="$SCRIPT_DIR/restore-config.yml"
+
+# Validate the archive and its schema-contract compatibility before the first
+# destructive statement. Source and target must share the same complete phase;
+# partial phases, physical target drift and both mismatch directions are denied.
+pg_restore --list "$DUMP_FILE" > /dev/null
+PERIODICITE_RESTORE_PHASE=$(TO_DB_URL="$TO_DB_URL" \
+    bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE")
 
 if [ ! -f "$RESTORE_CONFIG" ]; then
     echo "restore config not found: $RESTORE_CONFIG"
@@ -196,7 +213,8 @@ if ! command -v yq &> /dev/null; then
     exit 1
 fi
 
-# Group order: technical → stats → collectivites → indicateurs → referentiels → pai → plans
+# Group order: technical → stats → collectivites → indicateurs →
+# periodicite → referentiels → pai → plans
 # Restores foundational tables before tables that reference them. Truncation
 # runs in the reverse order (see below) so dependents come down first.
 GROUP_ORDER=(
@@ -204,6 +222,15 @@ GROUP_ORDER=(
   stats_group
   collectivites_group
   indicateurs_group
+)
+
+# Ces tables n'existent pas dans le schéma legacy. L'égalité de phase vérifiée
+# ci-dessus garantit qu'elles existent à la fois dans la cible et le snapshot.
+if [ "$PERIODICITE_RESTORE_PHASE" != "legacy" ]; then
+    GROUP_ORDER+=(periodicite_group)
+fi
+
+GROUP_ORDER+=(
   referentiels_group
   pai_group
   plans_group
@@ -304,11 +331,17 @@ for group in "${GROUP_ORDER[@]}"; do
             psql -d "$TO_DB_URL" -c "TRUNCATE TABLE \"$schema\".\"$table_name\" CASCADE;"
         fi
 
-        # Disable user triggers before restore.
+        # Disable user triggers before restore. Record the table first so the
+        # EXIT trap can compensate even if the process is interrupted between
+        # the ALTER TABLE and the normal re-enable step.
         # ALTER TABLE ... DISABLE TRIGGER USER requires table ownership.
         # On tables we don't own (e.g. auth.users), this fails — log a warning.
+        DISABLED_TRIGGER_SCHEMA="$schema"
+        DISABLED_TRIGGER_TABLE="$table_name"
         if ! psql -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" DISABLE TRIGGER USER;" 2>/dev/null; then
             echo -n " (warning: could not disable triggers — not table owner)"
+            DISABLED_TRIGGER_SCHEMA=''
+            DISABLED_TRIGGER_TABLE=''
         fi
 
         # Don't use --exit-on-error or --single-transaction: pg_restore executes
@@ -329,9 +362,12 @@ for group in "${GROUP_ORDER[@]}"; do
         restore_exit=$?
         set -e
 
-        # Re-enable user triggers after restore
-        if ! psql -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" ENABLE TRIGGER USER;" 2>/dev/null; then
-            true # Already warned above, no need to repeat
+        # Re-enable only when the disable succeeded. A failure here is unsafe:
+        # retain the recorded table for the EXIT retry and abort the restore.
+        if ! reenable_current_user_triggers; then
+            echo ""
+            echo "  FAILED: could not re-enable USER triggers on $schema.$table_name"
+            exit 1
         fi
 
         if [ -n "$restore_stderr" ]; then
@@ -342,7 +378,7 @@ for group in "${GROUP_ORDER[@]}"; do
         if [ $restore_exit -ne 0 ]; then
             # Filter out known harmless errors (transaction_timeout on PG < 17)
             real_errors=$(echo "$restore_stderr" | grep -i "error:" | grep -v "transaction_timeout" || true)
-            if [ -n "$real_errors" ]; then
+            if [ -n "$real_errors" ] || ! grep -qi "transaction_timeout" <<< "$restore_stderr"; then
                 echo "  FAILED"
                 exit 1
             fi
@@ -370,6 +406,13 @@ echo "Tables restored: $TOTAL_RESTORED"
 echo "Tables skipped (duplicates): $TOTAL_SKIPPED"
 echo "Total time: ${TOTAL_MINUTES}m${TOTAL_SECONDS}s"
 echo "Done!"
+
+# --- Post-restore: rebuild formula-derived state skipped with USER triggers ---
+echo ""
+echo "=== Rebuilding indicator formula state ==="
+psql -d "$TO_DB_URL" --no-psqlrc --set ON_ERROR_STOP=1 \
+    -f "$SCRIPT_DIR/rebuild-indicateur-formula-state.sql"
+echo "Indicator formula state rebuilt and validated."
 
 # --- Post-restore: reset sequences to match restored data ---
 echo ""

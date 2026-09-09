@@ -6,6 +6,8 @@ Date : 2026-09-03
 
 Proposé. À valider avant la revue et la fusion des PRs d’implémentation.
 
+Décision de déploiement précisée le 2026-09-14 : une fenêtre de maintenance planifiée est acceptée.
+
 ## Contexte
 
 Les indicateurs sont historiquement suivis à l’année. Le programme Électrification nécessite
@@ -178,6 +180,27 @@ flowchart TB
     PRESENTATION -.-> PERIODES
 ```
 
+### 5. Une seule bascule pendant une maintenance planifiée
+
+La base et les applications compatibles sont livrées pendant la même fenêtre de maintenance.
+Les anciennes instances, imports et tâches planifiées sont arrêtés avant la migration ; les
+écritures reprennent après le déploiement et la vérification de la version complète. Le mensuel
+est alors disponible pour toutes les collectivités, sans feature flag.
+
+Le déploiement atteint directement le schéma final : périodicités des définitions et valeurs
+obligatoires avec défaut annuel, mode recommandé par défaut, unicité incluant la périodicité
+et contrôles des dates et des règles métier. Les anciens contrats annuels restent pris en charge
+par la nouvelle application. Les migrations déjà déployées ne sont pas réécrites.
+
+Un contrôle préalable identifie les dates historiques à normaliser et les collisions à résoudre.
+La migration répète ce contrôle sous verrou et refuse toute collision avant de normaliser les dates.
+L'audit conserve les dates d'origine ; aucune valeur n'est fusionnée automatiquement.
+
+Cette décision remplace le déploiement séparé expand/contract. La livraison n'a pas besoin de
+triggers de transition pour les anciens producteurs, d'un workflow contract dédié, ni d'une
+campagne ultérieure de suppression de ces mécanismes. Les PR peuvent rester séparées pour la revue ;
+la version déployée doit réunir le schéma final et tous ses consommateurs compatibles.
+
 ## Conséquences et alternatives
 
 Ce modèle conserve l’identité des valeurs de la saisie au calcul et à l’export. Il nécessite une
@@ -189,10 +212,11 @@ ou transportée séparément de la période, permettrait des interprétations in
 Des classes sérialisées perdraient leur comportement aux frontières JSON ; les périodes restent
 des données simples. Une agrégation automatique est écartée car son sens dépend de l’indicateur.
 
-La livraison doit préserver les anciens contrats annuels et séparer extension du schéma, migration
-des consommateurs et activation du mensuel. Le retour à l’ancien modèle exige des définitions
-annuelles recommandées, des valeurs annuelles et aucune préférence locale ; sinon une migration
-métier explicite est nécessaire.
+La durée de maintenance est mesurée en répétant la migration et la reprise sur une copie récente.
+Avant la réouverture, un échec peut être traité en restaurant le schéma et les données sauvegardés
+après l'arrêt des écritures, puis les versions applicatives précédentes. Après la réouverture,
+une correction doit préserver les nouvelles données ; le retour à l'ancien modèle nécessite
+une analyse métier et ne constitue pas un downgrade automatique sans perte.
 
 ## Documents associés
 
