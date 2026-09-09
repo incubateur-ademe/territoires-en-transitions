@@ -1,3 +1,5 @@
+/// <reference types="multer" />
+import { INestApplication } from '@nestjs/common';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { BibliothequeFichier } from '@tet/domain/collectivites';
@@ -5,8 +7,8 @@ import { eq, sql } from 'drizzle-orm';
 import fs from 'fs';
 import { randomUUID } from 'node:crypto';
 import path from 'path';
-import TestAgent from 'supertest/lib/agent';
 import { bibliothequeFichierTable } from './models/bibliotheque-fichier.table';
+import { StoreDocumentService } from './store-document/store-document.service';
 
 const PDF_SAMPLES_DIR = path.join(__dirname, './samples');
 const DEFAULT_PDF_SAMPLE_FILE = 'document_test.pdf';
@@ -15,31 +17,34 @@ export const OTHER_PDF_SAMPLE_FILE = 'document_test_2.pdf';
 const TEST_DOCUMENT_SIZE_IN_BYTES = 1024;
 
 export async function uploadCreateTestDocument({
+  app,
   collectiviteId,
-  testAgent,
-  token,
   fileName = 'test.pdf',
   sampleFileName = DEFAULT_PDF_SAMPLE_FILE,
   confidentiel = false,
 }: {
+  app: INestApplication;
   collectiviteId: number;
-  testAgent: TestAgent;
-  token: string;
   fileName: string;
   sampleFileName?: string;
   confidentiel?: boolean;
 }): Promise<BibliothequeFichier> {
-  const testPdfBuffer = fs.readFileSync(
-    path.join(PDF_SAMPLES_DIR, sampleFileName)
+  const buffer = fs.readFileSync(path.join(PDF_SAMPLES_DIR, sampleFileName));
+  const uploadResult = await app.get(StoreDocumentService).uploadBuffer(
+    collectiviteId,
+    {
+      buffer,
+      originalname: fileName,
+      mimetype: 'application/pdf',
+    } as Express.Multer.File,
+    confidentiel
   );
-  const response = await testAgent
-    .post(`/collectivites/${collectiviteId}/documents/upload`)
-    .set('Authorization', `Bearer ${token}`)
-    .attach('file', testPdfBuffer, fileName)
-    .field('confidentiel', JSON.stringify(confidentiel))
-    .expect(201);
-  const createdDocument: BibliothequeFichier = response.body;
-  return createdDocument;
+  if (!uploadResult.success) {
+    throw new Error(
+      `Cannot store test document ${fileName} for collectivite ${collectiviteId}: ${uploadResult.error}`
+    );
+  }
+  return uploadResult.data;
 }
 
 export type TestDocument = typeof bibliothequeFichierTable.$inferSelect;

@@ -1,14 +1,13 @@
+import { INestApplication } from '@nestjs/common';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { PreuveLabellisation } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
-import TestAgent from 'supertest/lib/agent';
 
 export async function createTestDemandePreuve(
   trpcClient: TRPCClient<AppRouter>,
-  testAgent: TestAgent,
-  token: string,
+  app: INestApplication,
   collectiviteId: number,
   referentiel: ReferentielId,
   document?: {
@@ -28,9 +27,8 @@ export async function createTestDemandePreuve(
   }
 
   const createdDocument = await uploadCreateTestDocument({
+    app,
     collectiviteId,
-    testAgent,
-    token,
     fileName: document?.fileName ?? 'test-preuve.pdf',
     sampleFileName: document?.sampleFileName,
     confidentiel: document?.confidentiel,

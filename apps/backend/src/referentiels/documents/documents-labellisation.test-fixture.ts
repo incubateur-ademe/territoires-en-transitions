@@ -5,13 +5,11 @@ import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/pr
 import {
   createTRPCClientFromCaller,
   getAuthUserFromUserCredentials,
-  signInWith,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import { createTestDemandePreuve } from '../labellisations/create-preuve/create-preuve.test-fixture';
 import { createAuditWithOnTestFinished } from '../referentiels.test-fixture';
@@ -43,11 +41,6 @@ export const createCollectiviteAvecCycle = async ({
   onTestFinished(cleanup);
 
   const membre = users[0];
-  const membreSignInResponse = await signInWith({
-    email: membre.email,
-    password: membre.password,
-  });
-  const membreToken = membreSignInResponse.data.session?.access_token ?? '';
 
   const { audit, demande } = await createAuditWithOnTestFinished({
     databaseService: db,
@@ -78,8 +71,7 @@ export const createCollectiviteAvecCycle = async ({
     }) =>
       createTestDemandePreuve(
         createTRPCClientFromCaller(membreCaller),
-        request(app.getHttpServer()),
-        membreToken,
+        app,
         collectivite.id,
         ReferentielIdEnum.CAE,
         document
@@ -93,9 +85,8 @@ export const createCollectiviteAvecCycle = async ({
       confidentiel?: boolean;
     }) => {
       const fichier = await uploadCreateTestDocument({
+        app,
         collectiviteId: collectivite.id,
-        testAgent: request(app.getHttpServer()),
-        token: membreToken,
         fileName: document.fileName,
         sampleFileName: document.sampleFileName,
         confidentiel: document.confidentiel,

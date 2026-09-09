@@ -95,12 +95,10 @@ describe('UpdateDocumentRouter', () => {
   });
 
   test('editor can update document then visiteur cannot download and admin gets correct filename', async () => {
-    const testAgent = request(app.getHttpServer());
 
     const createdDocument = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorToken,
       fileName: 'original.pdf',
     });
     const { hash } = createdDocument;
