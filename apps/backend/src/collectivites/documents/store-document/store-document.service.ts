@@ -8,6 +8,7 @@ import { Result } from '@tet/backend/utils/result.type';
 import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
+  toDocumentHash,
 } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -57,7 +58,7 @@ export class StoreDocumentService {
   }
 
   async uploadLocalFile(
-    document: BibliothequeFichierCreate,
+    document: Omit<BibliothequeFichierCreate, 'hash'>,
     localFilePath: string,
     user?: AuthenticatedUser
   ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
@@ -86,14 +87,18 @@ export class StoreDocumentService {
 
     const mimeType = mime.lookup(localFilePath) || undefined;
 
-    this.logger.log(
-      `Uploading file ${localFilePath} with mime type ${mimeType} to bucket ${bucketId} with hash ${document.hash}`
+    const fileBuffer = await readFile(localFilePath);
+    const hash = toDocumentHash(
+      createHash('sha256').update(fileBuffer).digest('hex')
     );
 
-    const fileBuffer = await readFile(localFilePath);
+    this.logger.log(
+      `Uploading file ${localFilePath} with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
+    );
+
     const saveResult = await this.supabaseService.saveInStorage({
       bucket: bucketId,
-      path: document.hash,
+      path: hash,
       file: fileBuffer,
       mimeType,
     });
@@ -101,7 +106,7 @@ export class StoreDocumentService {
       return saveResult;
     }
 
-    return await this.storeDocument(document, user);
+    return await this.storeDocument({ ...document, hash }, user);
   }
 
   async uploadBuffer(
@@ -142,7 +147,9 @@ export class StoreDocumentService {
     const bucketId = bucketResult.data;
 
     // Compute SHA-256 hash from buffer
-    const hash = createHash('sha256').update(file.buffer).digest('hex');
+    const hash = toDocumentHash(
+      createHash('sha256').update(file.buffer).digest('hex')
+    );
 
     this.logger.log(
       `Uploading buffer with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
