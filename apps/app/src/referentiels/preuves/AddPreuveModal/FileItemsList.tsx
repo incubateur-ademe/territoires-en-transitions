@@ -2,44 +2,38 @@ import { VisibleWhen } from '@tet/ui';
 import { groupBy } from 'es-toolkit';
 import { JSX } from 'react';
 import { FileItem, FileUploadItem } from './FileItem';
-import { UploadStatus, UploadStatusCode } from './types';
+import { UploadStatusCode } from './types';
 
 const ItemGroup = ({
   items,
-  onStatusChange,
   onDismissItem,
 }: {
   items: Array<FileUploadItem>;
-  onStatusChange?: (fileName: string, status: UploadStatus) => void;
-  onDismissItem?: (fileName: string) => void;
+  onDismissItem?: (itemId: string) => void;
 }): JSX.Element => (
   <div className="flex flex-col gap-3">
     {items.map((item) => (
-      <FileItem
-        key={item.file.name}
-        {...item}
-        onStatusChange={onStatusChange}
-        onDismissItem={onDismissItem}
-      />
+      <FileItem key={item.id} item={item} onDismissItem={onDismissItem} />
     ))}
   </div>
 );
 
 export type FileItemsListProps = {
   items: Array<FileUploadItem>;
-  onStatusChange: (fileName: string, status: UploadStatus) => void;
-  onDismissItem?: (fileName: string) => void;
+  onDismissItem?: (itemId: string) => void;
 };
 
 export const FileItemsList = ({
   items,
-  onStatusChange,
   onDismissItem,
 }: FileItemsListProps): JSX.Element => {
   const grouped = groupBy(items, (item) => item.status.code);
   const completed = grouped[UploadStatusCode.completed] ?? [];
   const duplicated = grouped[UploadStatusCode.duplicated] ?? [];
-  const running = grouped[UploadStatusCode.running] ?? [];
+  const inProgress = [
+    ...(grouped[UploadStatusCode.preparing] ?? []),
+    ...(grouped[UploadStatusCode.running] ?? []),
+  ];
   const failed = grouped[UploadStatusCode.failed] ?? [];
 
   return (
@@ -53,8 +47,8 @@ export const FileItemsList = ({
       <VisibleWhen condition={duplicated.length > 0}>
         <ItemGroup items={duplicated} onDismissItem={onDismissItem} />
       </VisibleWhen>
-      <VisibleWhen condition={running.length > 0}>
-        <ItemGroup items={running} onStatusChange={onStatusChange} />
+      <VisibleWhen condition={inProgress.length > 0}>
+        <ItemGroup items={inProgress} />
       </VisibleWhen>
       <VisibleWhen condition={failed.length > 0}>
         <ItemGroup items={failed} onDismissItem={onDismissItem} />

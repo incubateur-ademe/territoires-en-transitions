@@ -1,72 +1,139 @@
+import { DocumentHash } from '@tet/domain/collectivites';
 import { useState } from 'react';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
+import { useUploadFile } from '../upload/use-upload-file';
 import { FileUploadItem } from './FileItem';
-import { filesToUploadList } from './filesToUploadList';
-import { UploadStatus, UploadStatusCode } from './types';
-
-const getFileByName = (
-  fileName: string,
-  selection: Array<FileUploadItem>
-): number => selection.findIndex(({ file }) => file.name === fileName);
+import { filesToUploadList, PreparedFile } from './filesToUploadList';
+import { UploadErrorCode, UploadStatus, UploadStatusCode } from './types';
 
 type UseFileUploadListInput = {
   collectiviteId: number | undefined;
   initialItems?: Array<FileUploadItem>;
-  onUploadSuccess?: (fichierId: number, fileName: string) => void;
-  /** Contraintes de format/taille du contexte de dépôt. */
   constraints?: FileConstraints;
 };
 
 type UseFileUploadListResult = {
   items: Array<FileUploadItem>;
   onDropFiles: (files: FileList | null) => Promise<void>;
-  onStatusChange: (fileName: string, status: UploadStatus) => void;
-  onDismissItem: (fileName: string) => void;
+  onDismissItem: (itemId: string) => void;
+};
+
+type ListedFile =
+  | { kind: 'settled'; item: FileUploadItem }
+  | {
+      kind: 'toUpload';
+      item: FileUploadItem;
+      hash: DocumentHash;
+      controller: AbortController;
+    };
+
+type FileToUpload = Extract<ListedFile, { kind: 'toUpload' }>;
+
+const isToUpload = (listed: ListedFile): listed is FileToUpload =>
+  listed.kind === 'toUpload';
+
+const isAbortError = (error: unknown): boolean =>
+  error instanceof DOMException && error.name === 'AbortError';
+
+const toListedFile = (prepared: PreparedFile): ListedFile => {
+  const id = crypto.randomUUID();
+  if (prepared.kind === 'settled') {
+    return {
+      kind: 'settled',
+      item: { id, file: prepared.file, status: prepared.status },
+    };
+  }
+
+  const { file, hash } = prepared;
+  const controller = new AbortController();
+  return {
+    kind: 'toUpload',
+    hash,
+    controller,
+    item: {
+      id,
+      file,
+      status: {
+        code: UploadStatusCode.preparing,
+        hash,
+        abort: () => controller.abort(),
+      },
+    },
+  };
 };
 
 export const useFileUploadList = ({
   collectiviteId,
   initialItems,
-  onUploadSuccess,
   constraints,
 }: UseFileUploadListInput): UseFileUploadListResult => {
   const [items, setItems] = useState<Array<FileUploadItem>>(initialItems ?? []);
+  const uploadFile = useUploadFile();
 
-  const onDropFiles = async (files: FileList | null): Promise<void> => {
-    if (!files || !collectiviteId) return;
-    const filesToUpload = await filesToUploadList(
-      collectiviteId,
-      files,
-      constraints
-    );
-    // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne la
-    // liste cumulée, en gardant les derniers déposés (ceux qui remplacent).
+  const setStatus = (itemId: string, status: UploadStatus): void =>
     setItems((prev) =>
-      keepWithinMaxFiles([...prev, ...filesToUpload], constraints?.maxFiles)
+      prev.map((item) => (item.id === itemId ? { ...item, status } : item))
     );
-  };
 
-  const onStatusChange = (fileName: string, status: UploadStatus): void => {
-    setItems((prev) => {
-      const index = getFileByName(fileName, prev);
-      if (index === -1) return prev;
-      const next = [...prev];
-      next[index] = { ...next[index], status };
-      return next;
-    });
+  const removeItem = (itemId: string): void =>
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
 
-    if (status.code === UploadStatusCode.completed) {
-      onUploadSuccess?.(status.fichier_id, fileName);
+  const runUpload = async ({
+    item,
+    hash,
+    controller,
+  }: FileToUpload): Promise<void> => {
+    if (!collectiviteId) return;
+    const abort = (): void => controller.abort();
+
+    try {
+      const fichierId = await uploadFile({
+        collectiviteId,
+        file: item.file,
+        hash,
+        signal: controller.signal,
+        onProgress: (progress) =>
+          setStatus(item.id, {
+            code: UploadStatusCode.running,
+            hash,
+            progress,
+            abort,
+          }),
+      });
+      setStatus(item.id, {
+        code: UploadStatusCode.completed,
+        fichier_id: fichierId,
+        hash,
+      });
+    } catch (error) {
+      if (isAbortError(error)) {
+        removeItem(item.id);
+        return;
+      }
+      setStatus(item.id, {
+        code: UploadStatusCode.failed,
+        error: UploadErrorCode.uploadError,
+      });
     }
   };
 
-  const onDismissItem = (fileName: string): void => {
-    setItems((prev) => {
-      const index = getFileByName(fileName, prev);
-      if (index === -1) return prev;
-      return [...prev.slice(0, index), ...prev.slice(index + 1)];
-    });
+  const onDropFiles = async (files: FileList | null): Promise<void> => {
+    if (!files || !collectiviteId) return;
+    const listedFiles = (
+      await filesToUploadList(collectiviteId, files, constraints)
+    ).map(toListedFile);
+
+    // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne la
+    // liste cumulée, en gardant les derniers déposés (ceux qui remplacent).
+    setItems((prev) =>
+      keepWithinMaxFiles(
+        [...prev, ...listedFiles.map(({ item }) => item)],
+        constraints?.maxFiles
+      )
+    );
+
+    await Promise.all(listedFiles.filter(isToUpload).map(runUpload));
   };
 
-  return { items, onDropFiles, onStatusChange, onDismissItem };
+  return { items, onDropFiles, onDismissItem: removeItem };
 };

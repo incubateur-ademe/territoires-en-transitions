@@ -12,12 +12,15 @@ describe('FileItem duplicate message', () => {
   test('explains that the already registered name is kept', () => {
     render(
       <FileItem
-        file={createMockFile('nouveau nom.pdf', 1024)}
-        status={{
-          code: UploadStatusCode.duplicated,
-          fichier_id: 1,
-          filename: 'nom-original.pdf',
-          hash: 'hash-1',
+        item={{
+          id: 'item-1',
+          file: createMockFile('nouveau nom.pdf', 1024),
+          status: {
+            code: UploadStatusCode.duplicated,
+            fichier_id: 1,
+            filename: 'nom-original.pdf',
+            hash: 'hash-1',
+          },
         }}
       />
     );
@@ -32,12 +35,15 @@ describe('FileItem duplicate message', () => {
   test('uses a simpler message when the uploaded name already matches the stored name', () => {
     render(
       <FileItem
-        file={createMockFile('nom-original.pdf', 1024)}
-        status={{
-          code: UploadStatusCode.duplicated,
-          fichier_id: 1,
-          filename: 'nom-original.pdf',
-          hash: 'hash-1',
+        item={{
+          id: 'item-1',
+          file: createMockFile('nom-original.pdf', 1024),
+          status: {
+            code: UploadStatusCode.duplicated,
+            fichier_id: 1,
+            filename: 'nom-original.pdf',
+            hash: 'hash-1',
+          },
         }}
       />
     );

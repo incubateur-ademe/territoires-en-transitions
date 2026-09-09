@@ -120,7 +120,6 @@ export const AddFile = (props: AddFileProps) => {
   const {
     items: currentSelection,
     onDropFiles,
-    onStatusChange,
     onDismissItem,
   } = useFileUploadList({
     collectiviteId,
@@ -227,11 +226,7 @@ export const AddFile = (props: AddFileProps) => {
         confidentiel={confidentiel}
         setConfidentiel={setConfidentiel}
       />
-      <FileItemsList
-        items={currentSelection}
-        onStatusChange={onStatusChange}
-        onDismissItem={onDismissItem}
-      />
+      <FileItemsList items={currentSelection} onDismissItem={onDismissItem} />
 
       <div className="flex gap-4 ml-auto">
         <Button variant="outlined" onClick={onClose}>

@@ -1,13 +1,11 @@
-export type UploaderState = {
-  status: UploadStatus;
-};
+import { DocumentHash } from '@tet/domain/collectivites';
 
 export enum UploadStatusCode {
+  preparing = 'preparing',
   running = 'running',
   completed = 'completed',
   duplicated = 'duplicated',
   failed = 'failed',
-  aborted = 'aborted',
 }
 
 export enum UploadErrorCode {
@@ -17,11 +15,18 @@ export enum UploadErrorCode {
   uploadError = 'uploadError',
 }
 
+export type UploadStatusPreparing = {
+  code: UploadStatusCode.preparing;
+  hash: DocumentHash;
+  abort: () => void;
+};
+
 // téléversement en cours
 export type UploadStatusRunning = {
   code: UploadStatusCode.running;
+  hash: DocumentHash;
   progress: number;
-  abort?: () => void;
+  abort: () => void;
 };
 
 // échec du téléversement
@@ -34,7 +39,7 @@ export type UploadStatusFailed = {
 export type UploadStatusCompleted = {
   code: UploadStatusCode.completed;
   fichier_id: number;
-  hash: string;
+  hash: DocumentHash;
 };
 
 // fichier déjà téléversé
@@ -45,15 +50,12 @@ export type UploadStatusDuplicated = {
   hash: string;
 };
 
-// téléversement interrompu par l'utilisateur
-type UploadStatusAborted = { code: UploadStatusCode.aborted };
-
 export type UploadStatus =
+  | UploadStatusPreparing
   | UploadStatusRunning
   | UploadStatusCompleted
   | UploadStatusDuplicated
-  | UploadStatusFailed
-  | UploadStatusAborted;
+  | UploadStatusFailed;
 
 /** type des documents attendus */
 export type DocType =
