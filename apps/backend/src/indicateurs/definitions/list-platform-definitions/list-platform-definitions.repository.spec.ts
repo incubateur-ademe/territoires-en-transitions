@@ -39,4 +39,21 @@ describe('ListPlatformDefinitionsRepository', () => {
     expect(query.sql).toContain('"collectivite_id" is null');
     expect(query.params).toEqual(['CAE_1.A', 7]);
   });
+
+  it('recherche les formules sans tenir compte de la casse et exclut les définitions locales', async () => {
+    const { repository, tx, where } = makeRepository();
+
+    await repository.listPlatformDefinitionsHavingComputedValue(
+      { identifiantsReferentiel: ['CAE_1.A'] },
+      tx
+    );
+
+    const condition = where.mock.calls[0]?.[0] as SQL;
+    const query = new PgDialect().sqlToQuery(condition);
+    expect(query.sql).toContain('"valeur_calcule" is not null');
+    expect(query.sql).toContain('"identifiant_referentiel" is not null');
+    expect(query.sql).toContain('"collectivite_id" is null');
+    expect(query.sql).toContain(' ilike ');
+    expect(query.params).toEqual(['%CAE_1.A%']);
+  });
 });
