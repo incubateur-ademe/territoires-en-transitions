@@ -1,3 +1,4 @@
+import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurFormulaReconciliationRepository } from './definitions/indicateur-formula-reconciliation.repository';
 import { IndicateurFormulaReconciliationService } from './definitions/indicateur-formula-reconciliation.service';
 import { IndicateurFormulaReconciliationRouter } from './definitions/indicateur-formula-reconciliation.router';
@@ -91,6 +92,7 @@ const DEFINITIONS_PROVIDERS = [
     ReferentielsCoreModule,
   ],
   providers: [
+    IndicateurChartBuilder,
     IndicateurFormulaReconciliationRepository,
     IndicateurFormulaReconciliationService,
     IndicateurFormulaReconciliationRouter,

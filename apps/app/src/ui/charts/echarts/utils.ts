@@ -153,6 +153,7 @@ export type TimeAxisOptions = {
   minInterval?: number;
   maxInterval?: number;
   formatter?: (value: number) => string;
+  axisPointerFormatter?: (value: number) => string;
 };
 
 type OptionsProps = {
@@ -289,8 +290,9 @@ export const makeOption = ({
           backgroundColor: '#6a7985',
           formatter: (params) =>
             params.axisDimension === 'x'
-              ? timeAxis?.formatter?.(Number(params.value)) ??
-                new Date(params.value).getFullYear().toString()
+              ? (timeAxis?.axisPointerFormatter ?? timeAxis?.formatter)?.(
+                  Number(params.value)
+                ) ?? new Date(params.value).getFullYear().toString()
               : NumFormat.format(params.value as number),
         },
       },
