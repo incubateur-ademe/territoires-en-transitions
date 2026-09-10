@@ -12,4 +12,20 @@ describe('permissionsByRole', () => {
 
     expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
   });
+
+  it('accorde la lecture des documents confidentiels à tout rôle qui dépose des documents', () => {
+    const rolesMutatingWithoutConfidentielRead = Object.entries(
+      permissionsByRole
+    )
+      .filter(([, permissions]) =>
+        permissions.includes('collectivites.documents.mutate')
+      )
+      .filter(
+        ([, permissions]) =>
+          !permissions.includes('collectivites.documents.read_confidentiel')
+      )
+      .map(([role]) => role);
+
+    expect(rolesMutatingWithoutConfidentielRead).toEqual([]);
+  });
 });

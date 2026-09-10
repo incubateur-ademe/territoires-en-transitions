@@ -4,6 +4,7 @@ import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-s
 import { type DocumentStorageError } from '@tet/backend/utils/supabase/document-storage.errors';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { describe, expect, it, vi, type Mock } from 'vitest';
+import { type FichierInBibliotheque } from './create-upload-token.repository';
 import { CreateUploadTokenService } from './create-upload-token.service';
 
 const HASH = toDocumentHash(
@@ -25,11 +26,16 @@ type ServiceUnderTest = {
 function buildService({
   isAllowed = true,
   hasBucket = true,
-  fichierId = undefined as number | undefined,
+  fichier,
   signedUploadResult = success({
     token: 'jeton-signe',
     path: HASH,
-  }) as SignedUploadResult,
+  }),
+}: {
+  isAllowed?: boolean;
+  hasBucket?: boolean;
+  fichier?: FichierInBibliotheque;
+  signedUploadResult?: SignedUploadResult;
 } = {}): ServiceUnderTest {
   const permissions = {
     isAllowed: vi
@@ -42,7 +48,7 @@ function buildService({
   };
 
   const repository = {
-    findFichierIdByHash: vi.fn().mockResolvedValue(fichierId),
+    findFichierByHash: vi.fn().mockResolvedValue(fichier),
   };
 
   const collectiviteBucket = {
@@ -94,7 +100,9 @@ describe('CreateUploadTokenService', () => {
   });
 
   it('rend alreadyInBibliotheque sans signer quand le document a deja sa ligne', async () => {
-    const { service, documentStorage } = buildService({ fichierId: 42 });
+    const { service, documentStorage } = buildService({
+      fichier: { id: 42, filename: 'rapport.pdf' },
+    });
 
     const result = await service.createUploadToken(
       { collectiviteId: 1, hash: HASH },
@@ -103,7 +111,11 @@ describe('CreateUploadTokenService', () => {
 
     expect(result).toEqual({
       success: true,
-      data: { kind: 'alreadyInBibliotheque', fichierId: 42 },
+      data: {
+        kind: 'alreadyInBibliotheque',
+        fichierId: 42,
+        filename: 'rapport.pdf',
+      },
     });
     expect(documentStorage.createSignedUpload).not.toHaveBeenCalled();
   });

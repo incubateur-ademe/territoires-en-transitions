@@ -2,10 +2,14 @@
 import { INestApplication } from '@nestjs/common';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
-import { BibliothequeFichier } from '@tet/domain/collectivites';
+import {
+  BibliothequeFichier,
+  DocumentHash,
+  toDocumentHash,
+} from '@tet/domain/collectivites';
 import { eq, sql } from 'drizzle-orm';
 import fs from 'fs';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import path from 'path';
 import { bibliothequeFichierTable } from './models/bibliotheque-fichier.table';
 import { StoreDocumentService } from './store-document/store-document.service';
@@ -49,17 +53,36 @@ export async function uploadCreateTestDocument({
 
 export type TestDocument = typeof bibliothequeFichierTable.$inferSelect;
 
-export async function seedTestDocument({
-  databaseService,
-  collectiviteId,
-  filename,
-  confidentiel = false,
-}: {
+const buildRandomDocumentHash = (): DocumentHash =>
+  toDocumentHash(createHash('sha256').update(randomUUID()).digest('hex'));
+
+type SeedTestDocumentArgs = {
   databaseService: DatabaseServiceInterface;
   collectiviteId: number;
   filename: string;
   confidentiel?: boolean;
-}): Promise<TestDocument> {
+};
+
+export async function seedTestDocument({
+  hash = buildRandomDocumentHash(),
+  ...args
+}: SeedTestDocumentArgs & { hash?: DocumentHash }): Promise<TestDocument> {
+  return insertTestDocument({ ...args, hash });
+}
+
+export async function seedTestDocumentWithLegacyUuidHash(
+  args: SeedTestDocumentArgs
+): Promise<TestDocument> {
+  return insertTestDocument({ ...args, hash: randomUUID() });
+}
+
+async function insertTestDocument({
+  databaseService,
+  collectiviteId,
+  filename,
+  confidentiel = false,
+  hash,
+}: SeedTestDocumentArgs & { hash: string }): Promise<TestDocument> {
   const [bucket] = await databaseService.db
     .select({ bucketId: collectiviteBucketTable.bucketId })
     .from(collectiviteBucketTable)
@@ -75,7 +98,7 @@ export async function seedTestDocument({
     .insert(bibliothequeFichierTable)
     .values({
       collectiviteId,
-      hash: randomUUID(),
+      hash,
       filename,
       confidentiel,
     })

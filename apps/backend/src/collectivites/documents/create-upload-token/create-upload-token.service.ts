@@ -46,12 +46,16 @@ export class CreateUploadTokenService {
       return failure(CreateUploadTokenErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND);
     }
 
-    const fichierId = await this.repository.findFichierIdByHash({
+    const fichier = await this.repository.findFichierByHash({
       collectiviteId,
       hash,
     });
-    if (fichierId !== undefined) {
-      return success({ kind: 'alreadyInBibliotheque', fichierId });
+    if (fichier !== undefined) {
+      return success({
+        kind: 'alreadyInBibliotheque',
+        fichierId: fichier.id,
+        filename: fichier.filename,
+      });
     }
 
     const signedUploadResult =
