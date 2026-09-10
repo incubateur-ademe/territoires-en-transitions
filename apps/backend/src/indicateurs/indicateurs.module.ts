@@ -1,3 +1,11 @@
+import { CrudValeursRepository } from './valeurs/crud-valeurs.repository';
+import { ListIndicateurValeursService } from './valeurs/list-indicateur-valeurs.service';
+import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
+import { IndicateurSourcesRepository } from './sources/indicateur-sources.repository';
+import { HandleDefinitionFichesRepository } from './indicateurs/handle-definition-fiches/handle-definition-fiches.repository';
+import { HandleDefinitionPilotesRepository } from './indicateurs/handle-definition-pilotes/handle-definition-pilotes.repository';
+import { HandleDefinitionServicesRepository } from './indicateurs/handle-definition-services/handle-definition-services.repository';
+import { HandleDefinitionThematiquesRepository } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.repository';
 import { Module } from '@nestjs/common';
 import CreateDefinitionService from '@tet/backend/indicateurs/definitions/mutate-definition/create-definition.service';
 import { MutateDefinitionRouter } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.router';
@@ -11,6 +19,7 @@ import { PersonnalisationsModule } from '../collectivites/personnalisations/pers
 import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { TransactionModule } from '../utils/transaction/transaction.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
@@ -69,8 +78,17 @@ const DEFINITIONS_PROVIDERS = [
     SheetModule,
     PersonnalisationsModule,
     ReferentielsCoreModule,
+    TransactionModule,
   ],
   providers: [
+    CrudValeursRepository,
+    ListIndicateurValeursService,
+    ListPlatformDefinitionsService,
+    IndicateurSourcesRepository,
+    HandleDefinitionFichesRepository,
+    HandleDefinitionPilotesRepository,
+    HandleDefinitionServicesRepository,
+    HandleDefinitionThematiquesRepository,
     ExportIndicateursService,
     IndicateurSourcesService,
     IndicateurSourcesService,
@@ -97,6 +115,7 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
+    ListPlatformDefinitionsService,
     ListCollectiviteDefinitionsRepository,
     ListPlatformDefinitionsRepository,
     ListIndicateursService,

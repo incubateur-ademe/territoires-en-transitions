@@ -1,5 +1,18 @@
+import type { IndicateurAvecValeurs } from '@tet/domain/indicateurs';
 import { CalculTrajectoireResultatMode } from '../calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from '../calcul-trajectoire.response';
+
+// This historical fixture contains annual series, regardless of local preferences.
+const annualIndicateur = (data: {
+  definition: Omit<IndicateurAvecValeurs['definition'], 'periodiciteMode'>;
+  valeurs: Omit<IndicateurAvecValeurs['valeurs'][number], 'periodicite'>[];
+}): IndicateurAvecValeurs => ({
+  definition: { ...data.definition, periodiciteMode: 'recommandee' },
+  valeurs: data.valeurs.map((valeur) => ({
+    ...valeur,
+    periodicite: 'annuelle',
+  })),
+});
 
 export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
   mode: CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT,
@@ -18,7 +31,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
   ],
   trajectoire: {
     emissionsGes: [
-      {
+      annualIndicateur({
         definition: {
           id: 4,
           identifiantReferentiel: 'cae_1.c',
@@ -26,6 +39,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -247,8 +261,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 5,
           identifiantReferentiel: 'cae_1.ca',
@@ -258,6 +272,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Résidentiel - Chauffage / Maisons individuelles',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -479,8 +494,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 6,
           identifiantReferentiel: 'cae_1.cb',
@@ -490,6 +505,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Résidentiel - Chauffage / Logement collectif',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -711,8 +727,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 7,
           identifiantReferentiel: 'cae_1.cc',
@@ -722,6 +738,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Résidentiel - Autres usages',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -943,8 +960,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 9,
           identifiantReferentiel: 'cae_1.d',
@@ -952,6 +969,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -1173,8 +1191,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 10,
           identifiantReferentiel: 'cae_1.da',
@@ -1183,6 +1201,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Tertiaire - Chauffage',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -1404,8 +1423,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 11,
           identifiantReferentiel: 'cae_1.db',
@@ -1415,6 +1434,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Tertiaire - Autres usages',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -1636,8 +1656,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 13,
           identifiantReferentiel: 'cae_1.ea',
@@ -1647,6 +1667,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Transport routier - mobilité locale',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -1868,8 +1889,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 14,
           identifiantReferentiel: 'cae_1.eb',
@@ -1879,6 +1900,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Transport routier - autre',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -2100,8 +2122,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 15,
           identifiantReferentiel: 'cae_1.f',
@@ -2110,6 +2132,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre du secteur des autres transport (hors routier)',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -2331,8 +2354,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 16,
           identifiantReferentiel: 'cae_1.g',
@@ -2341,6 +2364,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             "Emissions de gaz à effet de serre du secteur de l'agriculture",
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -2562,8 +2586,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 17,
           identifiantReferentiel: 'cae_1.ga',
@@ -2572,6 +2596,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Agriculture - Energie',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -2793,8 +2818,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 18,
           identifiantReferentiel: 'cae_1.gb',
@@ -2803,6 +2828,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Agriculture - Elevage',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -3024,8 +3050,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 19,
           identifiantReferentiel: 'cae_1.gc',
@@ -3035,6 +3061,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Agriculture - Pratiques culturales',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -3256,8 +3283,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 20,
           identifiantReferentiel: 'cae_1.h',
@@ -3265,6 +3292,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Emissions de gaz à effet de serre du secteur des déchets',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -3486,8 +3514,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 21,
           identifiantReferentiel: 'cae_1.i',
@@ -3497,6 +3525,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             "Emissions de gaz à effet de serre du secteur de l'industrie hors branche énergie",
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -3718,8 +3747,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 22,
           identifiantReferentiel: 'cae_1.ia',
@@ -3729,6 +3758,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Métaux primaires',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -3950,8 +3980,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 23,
           identifiantReferentiel: 'cae_1.ib',
@@ -3960,6 +3990,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Chimie',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -4181,8 +4212,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 24,
           identifiantReferentiel: 'cae_1.ic',
@@ -4192,6 +4223,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Non-métalliques',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -4413,8 +4445,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 25,
           identifiantReferentiel: 'cae_1.id',
@@ -4424,6 +4456,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Agro-industries',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -4645,8 +4678,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 26,
           identifiantReferentiel: 'cae_1.ie',
@@ -4655,6 +4688,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Equipements',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -4876,8 +4910,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 27,
           identifiantReferentiel: 'cae_1.if',
@@ -4887,6 +4921,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Papier-carton',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -5108,8 +5143,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 28,
           identifiantReferentiel: 'cae_1.ig',
@@ -5119,6 +5154,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Emissions de gaz à effet de serre secteur Industrie - Autres industries',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -5340,8 +5376,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 29,
           identifiantReferentiel: 'cae_1.j',
@@ -5351,6 +5387,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             "Emissions de gaz à effet de serre du secteur de l'industrie branche énergie",
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -5572,8 +5609,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 30,
           identifiantReferentiel: 'cae_1.k',
@@ -5582,6 +5619,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           description:
             '<p>Somme des transports routiers (cae_1.e) et autres transports (cae_1.f)</p>\n',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -5803,10 +5841,10 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
+      }),
     ],
     consommationsFinales: [
-      {
+      annualIndicateur({
         definition: {
           id: 62,
           identifiantReferentiel: 'cae_2.e',
@@ -5814,6 +5852,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Consommation énergétique du résidentiel',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -6035,8 +6074,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 63,
           identifiantReferentiel: 'cae_2.ea',
@@ -6046,6 +6085,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Consommation énergétique secteur résidentiel - Chauffage / Maisons individuelles',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -6267,8 +6307,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 64,
           identifiantReferentiel: 'cae_2.eb',
@@ -6278,6 +6318,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Consommation énergétique secteur résidentiel - Chauffage / Logement collectif',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -6499,8 +6540,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 65,
           identifiantReferentiel: 'cae_2.ec',
@@ -6509,6 +6550,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Consommation énergétique secteur résidentiel - Autres usages',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -6730,8 +6772,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 66,
           identifiantReferentiel: 'cae_2.f',
@@ -6739,6 +6781,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Consommation énergétique du tertiaire',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -6960,8 +7003,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 67,
           identifiantReferentiel: 'cae_2.fa',
@@ -6969,6 +7012,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Consommation énergétique secteur tertiaire - Chauffage',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -7190,8 +7234,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 68,
           identifiantReferentiel: 'cae_2.fb',
@@ -7200,6 +7244,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             'Consommation énergétique secteur tertiaire - Autres usages',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -7421,8 +7466,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 71,
           identifiantReferentiel: 'cae_2.i',
@@ -7430,6 +7475,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: "Consommation énergétique de l'agriculture",
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -7651,8 +7697,8 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
-      {
+      }),
+      annualIndicateur({
         definition: {
           id: 72,
           identifiantReferentiel: 'cae_2.j',
@@ -7660,6 +7706,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
           titreLong: 'Consommation énergétique des déchets',
           description: '',
           unite: 'GWh',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
         },
@@ -7881,7 +7928,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
             collectiviteId: 1,
           },
         ],
-      },
+      }),
     ],
     sequestrations: [],
   },

@@ -36,6 +36,8 @@ const fakeIndicateurDefinition = (
   titreLong: null,
   titreCourt: null,
   description: null,
+  periodicite: 'annuelle',
+  periodiciteMode: 'recommandee',
   unite: 't/an',
   precision: 2,
   borneMin: null,
@@ -80,6 +82,7 @@ const fakeIndicateurValeurs = (indicateurId: number): IndicateurValeur[] =>
       id: indicateurId * 100 + index,
       collectiviteId: 1,
       indicateurId,
+      periodicite: 'annuelle',
       dateValeur: `${year}-01-01`,
       metadonneeId: null,
       resultat: isReference ? value : null,
@@ -109,10 +112,7 @@ export const fakeRow = ({
 }): IndicateurTableRow => ({
   indicateurId,
   indicateurLabel,
-  indicateurDefinition: fakeIndicateurDefinition(
-    indicateurId,
-    indicateurLabel
-  ),
+  indicateurDefinition: fakeIndicateurDefinition(indicateurId, indicateurLabel),
   indicateurValeurs,
   optionalYears,
 });

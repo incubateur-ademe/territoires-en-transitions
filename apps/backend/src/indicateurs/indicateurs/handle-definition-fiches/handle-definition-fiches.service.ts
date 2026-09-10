@@ -1,64 +1,59 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { and, eq, inArray, notInArray } from 'drizzle-orm';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { HandleDefinitionFichesRepository } from './handle-definition-fiches.repository';
 
 @Injectable()
 export class HandleDefinitionFichesService {
   private readonly logger = new Logger(HandleDefinitionFichesService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly repository: HandleDefinitionFichesRepository,
+    private readonly transactionManager: TransactionManager
+  ) {}
 
-  async upsertIndicateurFiches({
-    indicateurId,
-    collectiviteId,
-    ficheIds,
-  }: {
-    indicateurId: number;
-    collectiviteId: number;
-    ficheIds: number[];
-  }) {
+  async upsertIndicateurFiches(
+    {
+      indicateurId,
+      collectiviteId,
+      ficheIds,
+    }: {
+      indicateurId: number;
+      collectiviteId: number;
+      ficheIds: number[];
+    },
+    tx?: Transaction
+  ): Promise<void> {
     this.logger.log(
       `Mise à jour des fiches liées de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    await this.databaseService.db.transaction(async (tx) => {
-      const deleteConditions = [
-        eq(ficheActionIndicateurTable.indicateurId, indicateurId),
-        inArray(
-          ficheActionIndicateurTable.ficheId,
-          // subquery to filter by collectiviteId
-          tx
-            .select({ id: ficheActionTable.id })
-            .from(ficheActionTable)
-            .where(eq(ficheActionTable.collectiviteId, collectiviteId))
-        ),
-      ];
-
-      // Do not delete fiches that may still exist in the new list
-      if (ficheIds.length > 0) {
-        deleteConditions.push(
-          notInArray(ficheActionIndicateurTable.ficheId, ficheIds)
+    const transactionResult = await this.transactionManager.executeSingle<
+      void,
+      unknown
+    >(async (transaction) => {
+      const fichesBelongToCollectivite =
+        await this.repository.areFichesOwnedByCollectivite(
+          ficheIds,
+          collectiviteId,
+          transaction
+        );
+      if (!fichesBelongToCollectivite) {
+        throw new BadRequestException(
+          `Toutes les fiches doivent appartenir à la collectivité ${collectiviteId}`
         );
       }
 
-      await tx
-        .delete(ficheActionIndicateurTable)
-        .where(and(...deleteConditions));
+      await this.repository.upsertIndicateurFiches(
+        { indicateurId, collectiviteId, ficheIds },
+        transaction
+      );
+      return success(undefined);
+    }, tx);
 
-      // Insert new fiches
-      if (ficheIds.length > 0) {
-        await tx
-          .insert(ficheActionIndicateurTable)
-          .values(
-            ficheIds.map((ficheId) => ({
-              ficheId,
-              indicateurId,
-            }))
-          )
-          .onConflictDoNothing();
-      }
-    });
+    if (!transactionResult.success) {
+      throw transactionResult.cause ?? transactionResult.error;
+    }
   }
 }

@@ -1,21 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import {
   IndicateurSourceCreate,
   IndicateurSourceMetadonnee,
   IndicateurSourceMetadonneeCreate,
 } from '@tet/domain/indicateurs';
-import { and, asc, eq, inArray, isNotNull, or } from 'drizzle-orm';
-import { DatabaseService } from '../../utils/database/database.service';
-import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
-import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
+import { ResourceType } from '@tet/domain/users';
 import { GetAvailableSourcesRequestSchemaRequestType } from './get-available-sources.request';
+import { IndicateurSourcesRepository } from './indicateur-sources.repository';
 
 @Injectable()
 export default class IndicateurSourcesService {
   private readonly logger = new Logger(IndicateurSourcesService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly repository: IndicateurSourcesRepository,
+    private readonly permissionService: PermissionService
+  ) {}
 
   async createIndicateurSourceMetadonnee(
     indicateurSourceMetadonneeType: IndicateurSourceMetadonneeCreate
@@ -23,22 +26,16 @@ export default class IndicateurSourcesService {
     this.logger.log(
       `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.sourceId} et la date ${indicateurSourceMetadonneeType.dateVersion}`
     );
-    const request = this.databaseService.db
-      .insert(indicateurSourceMetadonneeTable)
-      .values(indicateurSourceMetadonneeType)
-      .onConflictDoNothing();
-
-    const [model] = await request.returning();
-    return model;
+    return this.repository.createMetadonnee(indicateurSourceMetadonneeType);
   }
 
-  async getAllIndicateurSourceMetadonnees(): Promise<
-    IndicateurSourceMetadonnee[]
-  > {
+  async getAllIndicateurSourceMetadonnees(
+    tx?: Transaction
+  ): Promise<IndicateurSourceMetadonnee[]> {
     this.logger.log(`Get all metadonnees for indicateur sources`);
-    const indicateurSourceMetadonnees = await this.databaseService.db
-      .select()
-      .from(indicateurSourceMetadonneeTable);
+    const indicateurSourceMetadonnees = await this.repository.listMetadonnees(
+      tx
+    );
 
     this.logger.log(
       `Found ${indicateurSourceMetadonnees.length} metadonnees for indicateur sources`
@@ -53,78 +50,34 @@ export default class IndicateurSourcesService {
     this.logger.log(
       `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion}`
     );
-    const indicateurSourceMetadonnees = await this.databaseService.db
-      .select()
-      .from(indicateurSourceMetadonneeTable)
-      .where(
-        and(
-          eq(indicateurSourceMetadonneeTable.sourceId, sourceId),
-          eq(indicateurSourceMetadonneeTable.dateVersion, dateVersion)
-        )
-      )
-      .limit(1);
-    return indicateurSourceMetadonnees.length > 0
-      ? indicateurSourceMetadonnees[0]
-      : null;
+    return this.repository.getMetadonnee(sourceId, dateVersion);
   }
 
   async upsertIndicateurSource(indicateurSource: IndicateurSourceCreate) {
     this.logger.log(`Upsert de la source d'indicateur ${indicateurSource.id}`);
-    return this.databaseService.db
-      .insert(indicateurSourceTable)
-      .values(indicateurSource)
-      .onConflictDoUpdate({
-        target: indicateurSourceTable.id,
-        set: { libelle: indicateurSource.libelle },
-      });
+    return this.repository.upsertSource(indicateurSource);
   }
 
   async getAllSources() {
     this.logger.log('Liste toutes les sources de données');
-    return this.databaseService.db
-      .select()
-      .from(indicateurSourceTable)
-      .orderBy(
-        asc(indicateurSourceTable.ordreAffichage),
-        asc(indicateurSourceTable.libelle)
-      );
+    return this.repository.listSources();
   }
 
   async getAvailableSources(
-    input: GetAvailableSourcesRequestSchemaRequestType
+    input: GetAvailableSourcesRequestSchemaRequestType,
+    { user }: Pick<ServiceSecondArg, 'user'>
   ) {
     const { collectiviteId, indicateurId } = input;
+    await this.permissionService.assertAllowed(
+      user,
+      'indicateurs.valeurs.read',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+
     this.logger.log(
       `Liste les sources de données disponibles pour l'indicateur ${indicateurId} et la collectivité ${collectiviteId}`
     );
-
-    const metadonneeIds = this.databaseService.db
-      .select({ id: indicateurValeurTable.metadonneeId })
-      .from(indicateurValeurTable)
-      .where(
-        and(
-          isNotNull(indicateurValeurTable.metadonneeId),
-          eq(indicateurValeurTable.collectiviteId, collectiviteId),
-          eq(indicateurValeurTable.indicateurId, indicateurId),
-          or(
-            isNotNull(indicateurValeurTable.resultat),
-            isNotNull(indicateurValeurTable.objectif)
-          )
-        )
-      );
-
-    const sourceId = this.databaseService.db
-      .selectDistinct({ sourceId: indicateurSourceMetadonneeTable.sourceId })
-      .from(indicateurSourceMetadonneeTable)
-      .where(inArray(indicateurSourceMetadonneeTable.id, metadonneeIds));
-
-    return this.databaseService.db
-      .select()
-      .from(indicateurSourceTable)
-      .where(inArray(indicateurSourceTable.id, sourceId))
-      .orderBy(
-        asc(indicateurSourceTable.ordreAffichage),
-        asc(indicateurSourceTable.libelle)
-      );
+    return this.repository.listAvailableSources(input);
   }
 }
