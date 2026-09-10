@@ -13,26 +13,24 @@ import { LevierId } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
-import { FicheActionVoletGesErrorEnum } from './fiche-action-volet-ges.errors';
-import {
-  FicheActionVoletGes,
-  FicheActionVoletGesRepository,
-} from './fiche-action-volet-ges.repository';
+import { VoletErrorEnum } from './volet.errors';
+import { FicheVolets } from './volet.repository';
+import { FicheActionVoletGesRepository } from './fiche-action-volet-ges.repository';
 import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
 
 type VoletRow = { ficheId: number; levierId: LevierId };
 
-const toFicheActionVoletGes = (
+const toFicheVolets = (
   ficheId: number,
-  ...volets: FicheActionVoletGes['volets']
-): FicheActionVoletGes => ({ ficheId, volets });
+  ...volets: FicheVolets['volets']
+): FicheVolets => ({ ficheId, volets });
 
-const veloAmenagement: FicheActionVoletGes['volets'][number] = {
+const veloAmenagement: FicheVolets['volets'][number] = {
   levier: 'Vélo et transport en commun',
   categorie: 'amenagement',
 };
 
-const covoiturageSensibilisation: FicheActionVoletGes['volets'][number] = {
+const covoiturageSensibilisation: FicheVolets['volets'][number] = {
   levier: 'Covoiturage',
   categorie: 'sensibilisation',
 };
@@ -130,7 +128,7 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
     const saveResult = await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheActionVoletGes(ficheId, veloAmenagement)],
+      fiches: [toFicheVolets(ficheId, veloAmenagement)],
     });
 
     const [row] = await db.db
@@ -159,8 +157,8 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheActionVoletGes(ficheId, veloAmenagement),
-        toFicheActionVoletGes(autreFicheId, veloAmenagement),
+        toFicheVolets(ficheId, veloAmenagement),
+        toFicheVolets(autreFicheId, veloAmenagement),
       ],
     });
 
@@ -168,8 +166,8 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheActionVoletGes(ficheId, covoiturageSensibilisation),
-        toFicheActionVoletGes(autreFicheId),
+        toFicheVolets(ficheId, covoiturageSensibilisation),
+        toFicheVolets(autreFicheId),
       ],
     });
 
@@ -182,14 +180,14 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
     await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheActionVoletGes(ficheId, veloAmenagement)],
+      fiches: [toFicheVolets(ficheId, veloAmenagement)],
     });
     expect(await readVolets()).toHaveLength(1);
 
     await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheActionVoletGes(ficheId)],
+      fiches: [toFicheVolets(ficheId)],
     });
 
     expect(await readVolets()).toEqual([]);
@@ -201,19 +199,19 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
     await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheActionVoletGes(ficheId, veloAmenagement)],
+      fiches: [toFicheVolets(ficheId, veloAmenagement)],
     });
 
     const saveResult = await repository.saveVolets({
       collectiviteId,
       createdBy: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
-      fiches: [toFicheActionVoletGes(ficheId, covoiturageSensibilisation)],
+      fiches: [toFicheVolets(ficheId, covoiturageSensibilisation)],
     });
 
     expect({ saveResult, rows: await readVolets() }).toEqual({
       saveResult: {
         success: false,
-        error: FicheActionVoletGesErrorEnum.SAVE_VOLETS_ERROR,
+        error: VoletErrorEnum.SAVE_VOLETS_ERROR,
       },
       rows: [{ ficheId, levierId: 'velo_transport_commun' }],
     });
@@ -233,8 +231,8 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheActionVoletGes(ficheId, veloAmenagement),
-        toFicheActionVoletGes(ficheAutreCollectiviteId, covoiturageSensibilisation),
+        toFicheVolets(ficheId, veloAmenagement),
+        toFicheVolets(ficheAutreCollectiviteId, covoiturageSensibilisation),
       ],
     });
 

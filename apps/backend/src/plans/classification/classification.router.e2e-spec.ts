@@ -87,9 +87,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     return async () => {
       await db.db
         .delete(classificationVoletsJobTable)
-        .where(
-          eq(classificationVoletsJobTable.collectiviteId, collectiviteId)
-        );
+        .where(eq(classificationVoletsJobTable.collectiviteId, collectiviteId));
       await ficheCleanup();
       await fixtureCaller.plans.plans.delete({ planId: planWithFichesId });
       await fixtureCaller.plans.plans.delete({ planId: emptyPlanId });
@@ -166,9 +164,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
 
     it('enfile un job et rend son identifiant', async () => {
-      const { jobId } = await callerFor(
-        editionUser
-      ).enqueueClassification({ planId: planWithFichesId, enjeu: 'ges' });
+      const { jobId } = await callerFor(editionUser).enqueueClassification({
+        planId: planWithFichesId,
+        enjeu: 'ges',
+      });
 
       onTestFinished(async () => {
         await db.db
@@ -182,9 +181,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
 
     it('refuse un second job tant que le premier est en vol', async () => {
-      const { jobId } = await callerFor(
-        editionUser
-      ).enqueueClassification({ planId: planWithFichesId, enjeu: 'ges' });
+      const { jobId } = await callerFor(editionUser).enqueueClassification({
+        planId: planWithFichesId,
+        enjeu: 'ges',
+      });
 
       onTestFinished(async () => {
         await db.db
@@ -204,9 +204,9 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
   describe('getClassificationStatus', () => {
     it('rend le classement, sans compteur de lots, sur un job termine', async () => {
       const jobId = await insertJob();
-      const status = await callerFor(
-        editionUser
-      ).getClassificationStatus({ jobId });
+      const status = await callerFor(editionUser).getClassificationStatus({
+        jobId,
+      });
 
       expect(status).toEqual({
         id: jobId,
@@ -224,9 +224,9 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       const jobId = await insertJob({
         status: ClassificationVoletsJobStatusEnum.RUNNING,
       });
-      const status = await callerFor(
-        editionUser
-      ).getClassificationStatus({ jobId });
+      const status = await callerFor(editionUser).getClassificationStatus({
+        jobId,
+      });
 
       expect(status).toEqual({
         id: jobId,
@@ -273,9 +273,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         ).toISOString(),
       });
 
-      const { jobId } = await callerFor(
-        editionUser
-      ).enqueueClassification({ planId: planWithFichesId, enjeu: 'ges' });
+      const { jobId } = await callerFor(editionUser).enqueueClassification({
+        planId: planWithFichesId,
+        enjeu: 'ges',
+      });
 
       const [staleJob] = await db.db
         .select({

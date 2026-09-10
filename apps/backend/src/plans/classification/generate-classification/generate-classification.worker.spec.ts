@@ -87,7 +87,7 @@ describe('GenerateClassificationWorker.onJobFailed', () => {
     );
   });
 
-  it("enregistre l’echec des la premiere UnrecoverableError, meme si des tentatives restent", async () => {
+  it('enregistre l’echec des la premiere UnrecoverableError, meme si des tentatives restent', async () => {
     const service = toServiceStub();
 
     await toWorker(service).onJobFailed(

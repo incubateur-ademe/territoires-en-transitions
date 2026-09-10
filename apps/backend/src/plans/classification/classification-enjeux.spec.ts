@@ -3,7 +3,9 @@ import { DECLARED_ENJEUX } from './classification-enjeux';
 
 const enjeuxMissing = (fragment: string): string[] =>
   Object.entries(DECLARED_ENJEUX)
-    .filter(([, { systemInstruction }]) => !systemInstruction.includes(fragment))
+    .filter(
+      ([, { systemInstruction }]) => !systemInstruction.includes(fragment)
+    )
     .map(([name]) => name);
 
 describe('Les enjeux de classification declares', () => {
