@@ -1,3 +1,4 @@
+import { ArchiveAssemblyErrorEnum } from '@tet/backend/utils/archive/archive-assembly.errors';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { ActionTypeEnum, type ReferentielId } from '@tet/domain/referentiels';
 import { describe, expect, it, vi } from 'vitest';
@@ -75,13 +76,28 @@ function buildService({
       ),
     transitionToProcessing: vi
       .fn()
-      .mockResolvedValue(success({ ...initialArchive, status: AuditPreuvesArchiveStatusEnum.PROCESSING })),
+      .mockResolvedValue(
+        success({
+          ...initialArchive,
+          status: AuditPreuvesArchiveStatusEnum.PROCESSING,
+        })
+      ),
     markCompleted: vi
       .fn()
-      .mockResolvedValue(success({ ...initialArchive, status: AuditPreuvesArchiveStatusEnum.COMPLETED })),
+      .mockResolvedValue(
+        success({
+          ...initialArchive,
+          status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+        })
+      ),
     markFailed: vi
       .fn()
-      .mockResolvedValue(success({ ...initialArchive, status: AuditPreuvesArchiveStatusEnum.FAILED })),
+      .mockResolvedValue(
+        success({
+          ...initialArchive,
+          status: AuditPreuvesArchiveStatusEnum.FAILED,
+        })
+      ),
     updateProgress: vi.fn().mockResolvedValue(success(initialArchive)),
   };
 
@@ -99,24 +115,29 @@ function buildService({
     getReferentielTree: vi.fn().mockResolvedValue(referentielTree),
   } as unknown;
 
-  const buildAndUpload = vi
+  const assembleZipToStorage = vi
     .fn()
     .mockResolvedValue(
       buildSucceeds
         ? success({ totalFiles: 0 })
-        : failure('CREATE_ARCHIVE_ERROR', new Error('upload KO'))
+        : failure(
+            ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
+            new Error('upload KO')
+          )
     );
-  const buildArchiveService = { buildAndUpload } as unknown;
+  const buildArchiveService = { assembleZipToStorage } as unknown;
 
   const getLabellisationService = {
     getAudit: vi.fn().mockResolvedValue(success({ id: auditId, demandeId })),
   } as unknown;
 
-  const isAllowed = vi.fn().mockResolvedValue(
-    canReadReferentiel
-      ? { success: true, data: undefined }
-      : { success: false, error: 'UNAUTHORIZED' }
-  );
+  const isAllowed = vi
+    .fn()
+    .mockResolvedValue(
+      canReadReferentiel
+        ? { success: true, data: undefined }
+        : { success: false, error: 'UNAUTHORIZED' }
+    );
   const permissions = { isAllowed } as unknown;
 
   const service = new GeneratePreuvesArchiveService(
@@ -137,7 +158,9 @@ function buildService({
 describe('GeneratePreuvesArchiveService.generate', () => {
   it("no-op si l'archive est déjà completed (ré-livraison stalled)", async () => {
     const { service, repository } = buildService({
-      initialArchive: makeArchive({ status: AuditPreuvesArchiveStatusEnum.COMPLETED }),
+      initialArchive: makeArchive({
+        status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+      }),
     });
 
     const result = await service.generate(archiveId);
@@ -154,7 +177,10 @@ describe('GeneratePreuvesArchiveService.generate', () => {
 
     expect(result).toEqual({
       success: false,
-      error: { message: expect.stringContaining('introuvable'), retryable: false },
+      error: {
+        message: expect.stringContaining('introuvable'),
+        retryable: false,
+      },
     });
     expect(repository.markFailed).not.toHaveBeenCalled();
   });
@@ -175,7 +201,7 @@ describe('GeneratePreuvesArchiveService.generate', () => {
     expect(repository.markCompleted).not.toHaveBeenCalled();
   });
 
-  it('échec retryable si buildAndUpload échoue, sans écrire failed (BullMQ retentera)', async () => {
+  it('échec retryable si assembleZipToStorage échoue, sans écrire failed (BullMQ retentera)', async () => {
     const { service, repository } = buildService({ buildSucceeds: false });
 
     const result = await service.generate(archiveId);

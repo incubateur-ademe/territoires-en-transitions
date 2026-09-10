@@ -4,7 +4,7 @@ import {
   MAX_FILE_SIZE_BYTES,
   splitTriagedArchiveFiles,
   triageArchiveFile,
-} from './triage-archive-files';
+} from './triage-archive-files.utils';
 
 const toArchiveFile = (filesize: number): ArchiveFile => ({
   folderSegments: [],

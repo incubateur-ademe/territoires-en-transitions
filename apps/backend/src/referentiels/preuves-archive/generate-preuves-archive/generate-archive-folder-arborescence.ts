@@ -13,16 +13,16 @@ import type {
 import {
   checkArchiveLimits,
   type ArchiveLimitsExceeded,
-} from '../build-archive/check-archive-limits';
+} from '@tet/backend/utils/archive/check-archive-limits.utils';
 import {
   splitTriagedArchiveFiles,
   triageArchiveFile,
-} from '../build-archive/triage-archive-files';
+} from '@tet/backend/utils/archive/triage-archive-files.utils';
 import type {
   ArchiveFolderArborescence,
   ArchiveLinkFolder,
   SkippedFile,
-} from '../build-archive/archive-arborescence.types';
+} from '@tet/backend/utils/archive/archive-arborescence.types';
 
 const MESURES_FOLDER = 'mesures';
 const CYCLE_FOLDER = 'cycle-labellisation';
@@ -76,7 +76,7 @@ function groupLinksByFolder(links: LinkWithFolder[]): ArchiveLinkFolder[] {
   );
   return Object.values(grouped).map((items) => ({
     folderSegments: items[0].folderSegments,
-    liens: items.map(({ link }) => ({
+    links: items.map(({ link }) => ({
       titre: link.titre ?? '',
       url: link.url,
       commentaire: link.commentaire ?? '',

@@ -13,14 +13,15 @@ import {
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetReferentielService } from '../../get-referentiel/get-referentiel.service';
-import { BuildArchiveService } from '../build-archive/build-archive.service';
+import { ArchiveAssemblyService } from '@tet/backend/utils/archive/archive-assembly.service';
 import { CollectAuditPreuvesService } from '../collect-audit-preuves/collect-audit-preuves.service';
 import {
   AuditPreuvesArchiveStatusEnum,
   type AuditPreuvesArchive,
 } from '../models/audit-preuves-archive.table';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
-import type { ArchiveFolderArborescence } from '../build-archive/archive-arborescence.types';
+import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
+import type { ArchiveFolderArborescence } from '@tet/backend/utils/archive/archive-arborescence.types';
 import {
   generateArchiveFolderArborescence,
   type ReferentielTreeNode,
@@ -75,7 +76,7 @@ export class GeneratePreuvesArchiveService {
     private readonly repository: PreuvesArchiveRepository,
     private readonly collectAuditPreuvesService: CollectAuditPreuvesService,
     private readonly getReferentielService: GetReferentielService,
-    private readonly buildArchiveService: BuildArchiveService,
+    private readonly archiveAssemblyService: ArchiveAssemblyService,
     private readonly getLabellisationService: GetLabellisationService,
     private readonly permissions: PermissionService
   ) {}
@@ -266,10 +267,10 @@ export class GeneratePreuvesArchiveService {
     }
 
     const storagePath = `${archiveId}.zip`;
-    const buildResult = await this.buildArchiveService.buildAndUpload({
-      archiveId,
+    const buildResult = await this.archiveAssemblyService.assembleZipToStorage({
       arborescence,
-      storagePath,
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      key: storagePath,
       onProgress: (processedFiles) => {
         void this.persistProgress(archiveId, processedFiles, totalFiles);
       },

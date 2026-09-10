@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildArchiveManifests } from './build-archive-manifests';
+import { buildArchiveManifests } from './build-archive-manifests.utils';
 import type { ArchiveFolderArborescence } from './archive-arborescence.types';
 
 function emptyArborescence(
@@ -29,13 +29,13 @@ describe('buildArchiveManifests', () => {
         linkFolders: [
           {
             folderSegments: ['mesures', 'axe-1'],
-            liens: [
+            links: [
               { titre: 'Site officiel', url: 'https://x', commentaire: '' },
             ],
           },
           {
             folderSegments: ['cycle-labellisation', 'audit'],
-            liens: [],
+            links: [],
           },
         ],
       }),
@@ -77,7 +77,7 @@ describe('buildArchiveManifests', () => {
         linkFolders: [
           {
             folderSegments: ['mesures'],
-            liens: [{ titre: 'X', url: 'https://x', commentaire: '' }],
+            links: [{ titre: 'X', url: 'https://x', commentaire: '' }],
           },
         ],
       }),
@@ -93,7 +93,7 @@ describe('buildArchiveManifests', () => {
         linkFolders: [
           {
             folderSegments: ['mesures'],
-            liens: [{ titre: 'X', url: 'https://x', commentaire: '' }],
+            links: [{ titre: 'X', url: 'https://x', commentaire: '' }],
           },
         ],
         skippedFiles: [

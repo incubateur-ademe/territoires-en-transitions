@@ -357,14 +357,14 @@ describe('generateArchiveFolderArborescence', () => {
           '1.1 Sous-axe un',
           '1.1.1 Mesure un',
         ],
-        liens: [
+        links: [
           { titre: 'Lien A', url: 'https://example.org', commentaire: '' },
           { titre: 'Lien B', url: 'https://example.org', commentaire: '' },
         ],
       },
       {
         folderSegments: ['cycle-labellisation', 'audit'],
-        liens: [
+        links: [
           {
             titre: 'Lien audit',
             url: 'https://example.org',
