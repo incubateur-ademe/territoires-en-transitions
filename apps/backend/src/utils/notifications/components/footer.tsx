@@ -4,11 +4,17 @@ import * as React from 'react';
 type FooterProps = {
   toEmail: string;
   unsubscribeUrl?: string;
+  /**
+   * Pourquoi cette personne reçoit ce message. Le défaut suppose un compte
+   * existant : un premier contact doit dire autre chose.
+   */
+  raison?: string;
 };
 
 export const Footer = ({
   toEmail,
   unsubscribeUrl,
+  raison = "Vous l'avez reçu car vous êtes inscrit sur Territoiresentransitions.fr",
 }: FooterProps): React.ReactNode => (
   <>
     <Hr className="border-grey-3 my-4" />
@@ -25,9 +31,7 @@ export const Footer = ({
       </Text>
       <Text className="font-bold">contact@territoiresentransitions.fr</Text>
       <Text>Cet email a été envoyé à {toEmail}</Text>
-      <Text>
-        Vous l'avez reçu car vous êtes inscrit sur Territoiresentransitions.fr
-      </Text>
+      <Text>{raison}</Text>
       {unsubscribeUrl && <Link href={unsubscribeUrl}>Se désinscrire</Link>}
     </Container>
   </>
