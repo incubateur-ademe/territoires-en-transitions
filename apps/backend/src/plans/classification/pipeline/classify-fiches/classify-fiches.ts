@@ -3,14 +3,12 @@ import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { randomUUID } from 'node:crypto';
-import { CLASSIFICATION_SYSTEM_INSTRUCTION } from '../../prompts/classification.prompt';
+import { ClassificationEnjeu } from '../classification-enjeu';
 import {
   applyClassification,
   ClassifiedFiche,
   InconsistentResponse,
 } from './apply-classification';
-import { buildClassificationPrompt } from './classify-fiches.prompt';
-import { classificationResponseSchema } from './classify-fiches.schema';
 import { FicheToClassify, renderFichesText } from './render-fiches-text';
 
 const CLASSIFICATION_THINKING_BUDGET = 512;
@@ -24,6 +22,7 @@ export type ClassifyFichesError =
   | { kind: 'batch_too_large'; count: number };
 
 export type ClassifyFichesInput = {
+  enjeu: ClassificationEnjeu;
   fiches: FicheToClassify[];
   nonce?: string;
   signal?: AbortSignal;
@@ -36,7 +35,7 @@ export type ClassifyFichesResult = {
 
 export const classifyFiches = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { fiches, nonce = randomUUID(), signal }: ClassifyFichesInput
+  { enjeu, fiches, nonce = randomUUID(), signal }: ClassifyFichesInput
 ): Promise<Result<ClassifyFichesResult, ClassifyFichesError>> => {
   if (fiches.length === 0) {
     return failure({ kind: 'empty_batch' });
@@ -49,9 +48,9 @@ export const classifyFiches = async (
   const { text, rendered } = renderFichesText(fiches, nonce);
 
   const completion = await llm.generateStructured({
-    prompt: buildClassificationPrompt({ actions: text }),
-    systemInstruction: CLASSIFICATION_SYSTEM_INSTRUCTION,
-    schema: classificationResponseSchema,
+    prompt: enjeu.buildPrompt({ actions: text }),
+    systemInstruction: enjeu.systemInstruction,
+    schema: enjeu.responseSchema,
     thinkingBudget: CLASSIFICATION_THINKING_BUDGET,
     signal,
   });

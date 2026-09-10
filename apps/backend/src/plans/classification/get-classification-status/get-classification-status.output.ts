@@ -1,5 +1,6 @@
 import {
   categorieActionEnumValues,
+  enjeuEnumValues,
   levierEnumValues,
 } from '@tet/domain/shared';
 import { z } from 'zod';
@@ -34,6 +35,7 @@ const classificationDraftSchema = z.object({
 const jobIdentity = {
   id: z.string().uuid(),
   planId: z.number().int().positive(),
+  enjeu: z.enum(enjeuEnumValues),
 };
 
 const inFlightStatusSchema = z.object({

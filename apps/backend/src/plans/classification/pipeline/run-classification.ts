@@ -7,6 +7,7 @@ import {
   ClassificationDraft,
   UnclassifiedFiche,
 } from '../models/classification-draft';
+import { ClassificationEnjeu } from './classification-enjeu';
 import { ClassifiedFiche } from './classify-fiches/apply-classification';
 import {
   ClassifyFichesError,
@@ -39,12 +40,20 @@ export type ClassificationRun =
       totalBatches: number;
     };
 
-const classifyBatch = async (
-  llm: Pick<LlmService, 'generateStructured'>,
-  fiches: FicheToClassify[],
-  signal?: AbortSignal
-): Promise<BatchOutcome> => {
-  const classifyResult = await classifyFiches(llm, { fiches, signal });
+type ClassifyBatchInput = {
+  llm: Pick<LlmService, 'generateStructured'>;
+  enjeu: ClassificationEnjeu;
+  fiches: FicheToClassify[];
+  signal?: AbortSignal;
+};
+
+const classifyBatch = async ({
+  llm,
+  enjeu,
+  fiches,
+  signal,
+}: ClassifyBatchInput): Promise<BatchOutcome> => {
+  const classifyResult = await classifyFiches(llm, { enjeu, fiches, signal });
 
   if (classifyResult.success) {
     return {
@@ -72,6 +81,7 @@ const toUnclassified = (outcome: BatchOutcome): UnclassifiedFiche[] => {
 };
 
 export type RunClassificationInput = {
+  enjeu: ClassificationEnjeu;
   fiches: FicheToClassify[];
   signal?: AbortSignal;
   onBatchProcessed?: (processedBatches: number) => void;
@@ -79,14 +89,14 @@ export type RunClassificationInput = {
 
 export const runClassification = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { fiches, signal, onBatchProcessed }: RunClassificationInput
+  { enjeu, fiches, signal, onBatchProcessed }: RunClassificationInput
 ): Promise<ClassificationRun> => {
   const batches = chunk(fiches, FICHES_PER_BATCH);
 
   const outcomes = await mapWithConcurrency(
     batches,
     BATCHES_IN_PARALLEL,
-    (batch) => classifyBatch(llm, batch, signal),
+    (batch) => classifyBatch({ llm, enjeu, fiches: batch, signal }),
     onBatchProcessed
   );
 

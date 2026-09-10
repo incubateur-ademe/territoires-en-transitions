@@ -24,4 +24,6 @@ const ficheClassificationSchema = z.object({
 
 export const classificationResponseSchema = z.array(ficheClassificationSchema);
 
+export type ClassificationResponseSchema = typeof classificationResponseSchema;
+
 export type FicheClassification = z.output<typeof ficheClassificationSchema>;

@@ -3,6 +3,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { Enjeu } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, lt } from 'drizzle-orm';
 import {
@@ -29,6 +30,7 @@ const progressProjection = {
   id: classificationVoletsJobTable.id,
   collectiviteId: classificationVoletsJobTable.collectiviteId,
   planId: classificationVoletsJobTable.planId,
+  enjeu: classificationVoletsJobTable.enjeu,
   status: classificationVoletsJobTable.status,
   processedBatches: classificationVoletsJobTable.processedBatches,
   totalBatches: classificationVoletsJobTable.totalBatches,
@@ -43,6 +45,7 @@ export type ClassificationProgress = {
 export type CreateClassificationJobInput = {
   collectiviteId: number;
   planId: number;
+  enjeu: Enjeu;
   createdBy: string;
 };
 
@@ -64,7 +67,10 @@ export class ClassificationVoletsJobRepository {
         return success(job);
       }
 
-      const hasExpiredStaleJob = await this.expireStaleInFlight(input.planId);
+      const hasExpiredStaleJob = await this.expireStaleInFlight(
+        input.planId,
+        input.enjeu
+      );
       if (!hasExpiredStaleJob) {
         return failure(ClassificationVoletsErrorEnum.IN_FLIGHT_JOB_EXISTS);
       }
@@ -91,11 +97,15 @@ export class ClassificationVoletsJobRepository {
       .values({
         collectiviteId: input.collectiviteId,
         planId: input.planId,
+        enjeu: input.enjeu,
         createdBy: input.createdBy,
         status: ClassificationVoletsJobStatusEnum.PENDING,
       })
       .onConflictDoNothing({
-        target: classificationVoletsJobTable.planId,
+        target: [
+          classificationVoletsJobTable.planId,
+          classificationVoletsJobTable.enjeu,
+        ],
         where: inFlightStatusPredicate,
       })
       .returning();
@@ -103,7 +113,10 @@ export class ClassificationVoletsJobRepository {
     return job;
   }
 
-  private async expireStaleInFlight(planId: number): Promise<boolean> {
+  private async expireStaleInFlight(
+    planId: number,
+    enjeu: Enjeu
+  ): Promise<boolean> {
     const expiredJobs = await this.db
       .update(classificationVoletsJobTable)
       .set({
@@ -114,6 +127,7 @@ export class ClassificationVoletsJobRepository {
       .where(
         and(
           eq(classificationVoletsJobTable.planId, planId),
+          eq(classificationVoletsJobTable.enjeu, enjeu),
           inArray(
             classificationVoletsJobTable.status,
             classificationVoletsJobInFlightStatuses

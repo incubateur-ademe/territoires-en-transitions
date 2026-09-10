@@ -35,7 +35,7 @@ export class EnqueueClassificationService {
   ) {}
 
   async enqueue(
-    { planId }: EnqueueClassificationInput,
+    { planId, enjeu }: EnqueueClassificationInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<{ jobId: string }, ClassificationVoletsError>> {
     const axeResult = await this.getAxeRepository.getAxe(planId);
@@ -65,6 +65,7 @@ export class EnqueueClassificationService {
     const jobResult = await this.jobRepository.createUnlessInFlight({
       collectiviteId: axe.collectiviteId,
       planId,
+      enjeu,
       createdBy: user.id,
     });
     if (!jobResult.success) {

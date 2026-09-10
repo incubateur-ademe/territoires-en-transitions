@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import {
+  DECLARED_ENJEUX,
+  isDeclaredEnjeu,
+} from '../classification-enjeux';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -98,8 +102,17 @@ export class GenerateClassificationService {
       });
     }
 
+    if (!isDeclaredEnjeu(job.enjeu)) {
+      return this.interrupt(
+        jobId,
+        `Cette classification porte un enjeu que l'application ne reconnaît pas : ${job.enjeu}. Signalez-le à l'équipe.`
+      );
+    }
+    const declaredEnjeu = DECLARED_ENJEUX[job.enjeu];
+
     const deadline = AbortSignal.timeout(CLASSIFICATION_DEADLINE_MS);
     const classification = await runClassification(this.llm, {
+      enjeu: declaredEnjeu,
       signal: deadline,
       fiches: fiches.map(({ id, titre, description }) => ({
         ficheId: id,
