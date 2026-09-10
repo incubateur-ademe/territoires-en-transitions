@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 import { QueryKey } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { ModuleFicheActionsSelect } from '@tet/domain/metrics';
 import React from 'react';
-import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
 
 type Props = {
@@ -24,6 +24,7 @@ export const FilteredFichesByModule = ({
   isEditionEnabled,
   ModalComponent,
 }: Props) => {
+  const trpc = useTRPC();
   const collectiviteId = module.collectiviteId;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -41,7 +42,9 @@ export const FilteredFichesByModule = ({
       <ModalComponent
         module={module}
         openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
-        keysToInvalidate={[getQueryKey(collectiviteId)]}
+        keysToInvalidate={[
+          trpc.metrics.users.listModules.queryKey({ collectiviteId }),
+        ]}
       />
     </>
   );
