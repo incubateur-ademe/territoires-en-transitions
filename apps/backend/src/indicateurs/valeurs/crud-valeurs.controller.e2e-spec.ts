@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
 import {
@@ -8,12 +9,15 @@ import {
   getIndicateurIdByIdentifiant,
   getTestApp,
   getTestDatabase,
+  signTestAuthToken,
 } from '@tet/backend/test';
+import { AuthRole } from '@tet/backend/users/models/auth.models';
 import {
   addTestUser,
   setUserCollectiviteRole,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
@@ -26,11 +30,16 @@ describe('Indicateurs', () => {
   let authToken: string;
   let testUserId: string;
   let databaseService: DatabaseService;
+  let serviceRoleToken: string;
   let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     databaseService = await getTestDatabase(app);
+    serviceRoleToken = signTestAuthToken(
+      { role: AuthRole.SERVICE_ROLE },
+      app.get(ConfigurationService).get('SUPABASE_JWT_SECRET')
+    );
 
     // Create isolated test user with access to needed collectivites
     const testUserResult = await addTestUser(databaseService);
@@ -64,7 +73,6 @@ describe('Indicateurs', () => {
       .update(collectiviteTable)
       .set({ accesRestreint: false })
       .where(eq(collectiviteTable.id, collectiviteId));
-
   });
 
   afterAll(async () => {
@@ -161,6 +169,52 @@ describe('Indicateurs', () => {
       statusCode: 403,
     });
     expect(response.body.message).toMatch(/Droits insuffisants/);
+  });
+
+  it(`Une intégration service-role peut alimenter une source open-data d'un indicateur sans valeur utilisateur`, async () => {
+    const [protectedDefinition] = await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values({
+        titre: 'Indicateur open-data protégé',
+        unite: 'MWh',
+        periodicite: 'annuelle',
+        sansValeurUtilisateur: true,
+      })
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, protectedDefinition.id));
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, protectedDefinition.id));
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs/valeurs')
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
+      .send({
+        valeurs: [
+          {
+            collectiviteId,
+            indicateurId: protectedDefinition.id,
+            dateValeur: '2026-01-01',
+            metadonneeId: 1,
+            resultat: 42,
+          },
+        ],
+      })
+      .expect(201);
+
+    expect(response.body.valeurs).toEqual([
+      expect.objectContaining({
+        collectiviteId,
+        indicateurId: protectedDefinition.id,
+        dateValeur: '2026-01-01',
+        metadonneeId: 1,
+        resultat: 42,
+      }),
+    ]);
   });
 
   it(`Ecriture avec accès et calcul d'un autre indicateur pour la collectivité > ok si pas de valeur déja saisie manuellement, sinon pas de valeur calculée`, async () => {

@@ -172,7 +172,7 @@ describe('ListIndicateursRouter', () => {
           valeurs: [
             {
               resultat: 10,
-              dateValeur: new Date().toISOString().slice(0, 10),
+              dateValeur: '2026-01-01',
             },
           ],
         },
@@ -1083,7 +1083,7 @@ describe('ListIndicateursRouter', () => {
       await database.db.insert(indicateurValeurTable).values({
         indicateurId,
         collectiviteId: 1,
-        dateValeur: new Date().toISOString().slice(0, 10),
+        dateValeur: '2026-01-01',
         metadonneeId: 1,
       });
 
@@ -1548,7 +1548,7 @@ describe('ListIndicateursRouter', () => {
           valeurs: [
             {
               resultat: 1,
-              dateValeur: new Date().toISOString().slice(0, 10),
+              dateValeur: '2026-01-01',
             },
           ],
         },
@@ -1599,7 +1599,7 @@ describe('ListIndicateursRouter', () => {
       expect(descData.map((i) => i.id)).toEqual([zId, aId]);
     });
 
-    test("pas de doublons entre les pages en triant par un champ non unique (estRempli)", async () => {
+    test('pas de doublons entre les pages en triant par un champ non unique (estRempli)', async () => {
       const caller = router.createCaller({ user: testUser });
 
       // Crée plusieurs indicateurs qui ont tous la même valeur `estRempli`

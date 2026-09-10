@@ -155,8 +155,10 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         await this.crudValeursService.recomputeAllCalculatedIndicateurValeurs(
           undefined,
           null,
-          updatedIndicateurDefinitionFormulas,
-          true
+          {
+            definitions: updatedIndicateurDefinitionFormulas,
+            skipPermissionCheck: true,
+          }
         );
       recomputeResults.forEach((result) => {
         result.identifiants.forEach((identifiant) => {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { MutateDefinitionRouter } from './definitions/mutate-definition/mutate-definition.router';
+import { IndicateurFormulaReconciliationRouter } from './definitions/indicateur-formula-reconciliation.router';
 import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
@@ -15,7 +16,8 @@ export class IndicateursRouter {
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly listIndicateursRouter: ListIndicateursRouter,
-    private readonly mutateDefinitionRouter: MutateDefinitionRouter
+    private readonly mutateDefinitionRouter: MutateDefinitionRouter,
+    private readonly formulaReconciliationRouter: IndicateurFormulaReconciliationRouter
   ) {}
 
   router = this.trpc.router({
@@ -27,6 +29,7 @@ export class IndicateursRouter {
     valeurs: this.indicateurValeursRouter.router,
     sources: this.indicateurSourcesRouter.router,
     trajectoires: this.trajectoiresRouter.router,
+    formulaReconciliations: this.formulaReconciliationRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);
