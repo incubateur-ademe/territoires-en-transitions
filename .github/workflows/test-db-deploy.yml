@@ -85,7 +85,7 @@ jobs:
           fi
 
           echo "database-url=$DATABASE_URL" >> "$GITHUB_OUTPUT"
-          echo "sqitch-target=db:$DATABASE_URL" >> "$GITHUB_OUTPUT"
+          echo "sqitch-target=db:pg://${DATABASE_URL#postgresql://}" >> "$GITHUB_OUTPUT"
 
       - name: Sqitch revert to ${{ env.tag }}
         if: ${{ !env.ACT }}
