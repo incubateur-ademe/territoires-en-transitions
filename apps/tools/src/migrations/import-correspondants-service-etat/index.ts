@@ -13,12 +13,10 @@
  *       apps/tools/src/migrations/import-correspondants-service-etat/index.ts \
  *       [chemin] --initiateur=prenom.nom@beta.gouv.fr [--envoi]
  *
- * Sans chemin, tous les CSV de `data_layer/seed/sources/service-etat/contacts`
- * sont lus. Relancer est sans conséquence : les familles déjà importées
- * ressortent `deja_invite` ou `deja_membre`, et rien ne repart.
- *
- * En staging et en production, préférer le workflow « Import des correspondants
- * de service » : la clé de service reste dans les secrets de l'environnement.
+ * Sans chemin, tous les CSV du dossier `contacts/` sont lus — il est ignoré par
+ * git, les listes ne sont pas versionnées. Relancer est sans conséquence : les
+ * familles déjà importées ressortent `deja_invite` ou `deja_membre`, et rien ne
+ * repart.
  *
  * Sans `--envoi`, rien n'est écrit ni envoyé : le passage à blanc dit ce qui
  * partirait. C'est celui qu'on relit avec la personne métier.
@@ -29,7 +27,12 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const DOSSIER_PAR_DEFAUT = 'data_layer/seed/sources/service-etat/contacts';
+/**
+ * Les listes reçues du métier se déposent ici, à la racine du dépôt : le
+ * dossier est ignoré par git, des adresses nominatives d'agents n'ayant rien à
+ * faire dans un dépôt public.
+ */
+const DOSSIER_PAR_DEFAUT = 'contacts';
 
 const USAGE =
   'node --experimental-strip-types apps/tools/src/migrations/import-correspondants-service-etat/index.ts [chemin] --initiateur=<email> [--envoi]';

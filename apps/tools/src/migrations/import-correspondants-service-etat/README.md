@@ -4,61 +4,64 @@ Rattache les correspondants d'un fichier au service qu'ils représentent et leur
 écrit **une fois**. Sert les six familles : DREAL, conseils régionaux, DDT,
 DR ADEME, ADEME siège, DGEC.
 
-Les fichiers vivent dans `data_layer/seed/sources/service-etat/contacts/`, dont
-le README décrit le format. Ajouter une famille, c'est y déposer un CSV.
+## Où vivent les fichiers
 
-## En staging et en production : le workflow
+**Nulle part dans ce dépôt.** Il est public, et les listes fournies par le métier
+portent des adresses nominatives d'agents. Déposez-les dans `contacts/` à la
+racine — le dossier est dans le `.gitignore`, ce qui protège d'un `git add`
+distrait.
 
-L'import se joue depuis GitHub, onglet **Actions → Import des correspondants de
-service → Run workflow**. Rien à lancer sur le serveur : le script est un client
-de l'API, et le workflow le fait tourner sur un runner avec la clé de service
-prise dans les secrets de l'environnement — elle ne transite jamais par un poste.
+Le format est décrit dans
+[data_layer/seed/sources/service-etat/README.md](../../../../../data_layer/seed/sources/service-etat/README.md) :
+un seul en-tête pour les six familles, le `type` désignant la colonne clé.
 
-Trois champs : l'environnement, votre adresse, et le mode — le chemin a une
-valeur par défaut qui couvre tout le dossier `contacts/`. Le mode `a-blanc` est
-le défaut ; le rapport ligne à ligne s'affiche dans le résumé du run, à relire
-avec la personne métier avant de relancer en `envoi`.
+## Lancer l'import
+
+Depuis un poste, contre l'environnement visé. Le script est un client de l'API :
+il n'a rien à faire tourner sur un serveur.
+
+```bash
+# L'URL du backend et la clé de service de l'environnement visé.
+export TET_API_URL="https://api.territoiresentransitions.fr"
+export TET_API_TOKEN="<SUPABASE_SERVICE_ROLE_KEY de cet environnement>"
+
+S=apps/tools/src/migrations/import-correspondants-service-etat/index.ts
+
+# 1. À blanc : rien n'est écrit, rien n'est envoyé. Lit tous les CSV de contacts/.
+node --experimental-strip-types $S --initiateur=prenom.nom@beta.gouv.fr
+
+# 2. Relire le rapport avec la personne métier : chaque adresse doit tomber sur
+#    le bon service, et le nombre d'envois doit être celui qu'on attend.
+
+# 3. Envoyer.
+node --experimental-strip-types $S --initiateur=prenom.nom@beta.gouv.fr --envoi
+
+# 4. Rejouer à blanc : plus aucun envoi prévu. C'est le contrôle qu'un second
+#    passage n'écrit à personne deux fois.
+```
+
+Un chemin peut être passé en argument pour ne traiter qu'un fichier :
+`node --experimental-strip-types $S contacts/dreal-contacts.csv --initiateur=…`.
 
 **Le script se relance quand on veut.** Il lit tous les CSV du dossier à chaque
 passage : les familles déjà importées ressortent `deja_invite` ou `deja_membre`
 sans qu'un message reparte, et seule une liste nouvellement déposée déclenche
-des envois. Ajouter les conseils régionaux, c'est donc déposer leur CSV et
-relancer — sans rien cibler ni compter.
+des envois. Ajouter les conseils régionaux, c'est déposer leur CSV et relancer.
 
-Deux réglages GitHub à vérifier une fois pour toutes, côté Settings :
-
-- l'environnement `prod` doit avoir des **required reviewers**, sinon n'importe
-  qui déclenche un envoi réel sans approbation ;
-- il porte `BACKEND_URL` (variable) et `SUPABASE_SERVICE_ROLE_KEY` (secret) — les
-  mêmes que les workflows de déploiement.
-
-Le workflow sérialise les exécutions par environnement : deux campagnes lancées
-en même temps écriraient aux mêmes personnes deux fois.
-
-## En local
-
-Utile pour la mise au point, contre le backend de développement et Mailpit.
+En local, contre le backend de développement, les messages atterrissent dans
+Mailpit (http://127.0.0.1:54324) :
 
 ```bash
 export TET_API_URL="http://localhost:8080"
 export TET_API_TOKEN="$(npx dotenvx get SUPABASE_SERVICE_ROLE_KEY)"
-
-CSV=data_layer/seed/sources/service-etat/contacts/dreal-contacts.csv
-S=apps/tools/src/migrations/import-correspondants-service-etat/index.ts
-
-# Tout le dossier contacts/ (défaut), à blanc puis pour de vrai.
-node --experimental-strip-types $S --initiateur=camille@dreal.fr
-node --experimental-strip-types $S --initiateur=camille@dreal.fr --envoi
-
-# Une seule famille, en passant son fichier.
-node --experimental-strip-types $S $CSV --initiateur=camille@dreal.fr
 ```
 
-Les messages atterrissent dans Mailpit (http://127.0.0.1:54324). Node 24 exécute
-le TypeScript sans transpilation : `tsx` n'est pas une dépendance du dépôt.
+Node 24 exécute le TypeScript sans transpilation : `tsx` n'est pas une
+dépendance de ce dépôt.
 
-`--initiateur` est l'adresse d'un membre de l'équipe : elle signe les invitations
-créées (`created_by`) et n'apparaît jamais dans le message reçu.
+`--initiateur` est l'adresse d'un membre de l'équipe **ayant un compte sur
+l'environnement visé** : elle signe les invitations créées (`created_by`) et
+n'apparaît jamais dans le message reçu.
 
 ## Lire le rapport
 
@@ -98,3 +101,8 @@ la branche :
 
 Les lignes en `erreur` et `revoquee`, elles, n'ont rien écrit du tout : corriger
 le fichier ou l'invitation révoquée, puis rejouer, les traitera normalement.
+
+## Prérequis de déploiement
+
+Les migrations ne se jouent pas seules : `utilisateur/dcp_email_lower_index`
+demande un `sqitch deploy` manuel après le déploiement du backend.
