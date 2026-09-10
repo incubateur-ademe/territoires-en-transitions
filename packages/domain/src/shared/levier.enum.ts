@@ -109,7 +109,7 @@ export const LEVIER_NOM_BY_ID = {
 export const LEVIER_ID_BY_NOM: Record<Levier, LevierId> =
   invert(LEVIER_NOM_BY_ID);
 
-export type LevierSecteur = Exclude<TrajectoireSecteursType, 'CSC'>;
+type LevierSecteur = Exclude<TrajectoireSecteursType, 'CSC'>;
 
 export const LEVIER_SECTEURS = {
   'Changement chaudières fioul + rénovation (résidentiel)': 'Résidentiel',

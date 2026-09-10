@@ -1,23 +1,25 @@
-import { trajectoireSecteursEnumValues } from '@tet/domain/indicateurs';
 import {
   categorieActionEnumValues,
   levierEnumValues,
 } from '@tet/domain/shared';
 import { z } from 'zod';
+import {
+  ClassifiedFiche,
+  ClassifiedVolet,
+} from '../pipeline/classify-fiches/apply-classification';
 import { ClassificationLeviersJobStatusEnum } from '../models/classification-leviers-job';
 
 const classifiedVoletSchema = z.object({
   levier: z.enum(levierEnumValues),
-  secteur: z.enum(trajectoireSecteursEnumValues).exclude(['CSC']),
   categorie: z.enum(categorieActionEnumValues),
-});
+}) satisfies z.ZodType<ClassifiedVolet>;
 
 const classifiedFicheSchema = z.object({
   ficheId: z.number().int().positive(),
   justification: z.string(),
   isDescriptionTruncated: z.boolean(),
   volets: z.array(classifiedVoletSchema),
-});
+}) satisfies z.ZodType<ClassifiedFiche>;
 
 const unclassifiedFicheSchema = z.object({
   ficheId: z.number().int().positive(),
