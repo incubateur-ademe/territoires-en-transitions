@@ -3,13 +3,13 @@ import { GenerateStructuredArgs } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { ZodType } from 'zod';
-import { ClassificationLeviersErrorEnum } from '../classification-leviers.errors';
-import { FicheLeviersErrorEnum } from '../fiche-leviers.errors';
+import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
+import { FicheActionVoletGesErrorEnum } from '../fiche-action-volet-ges.errors';
 import {
-  ClassificationLeviersJob,
-  ClassificationLeviersJobStatus,
-  ClassificationLeviersJobStatusEnum,
-} from '../models/classification-leviers-job';
+  ClassificationVoletsJob,
+  ClassificationVoletsJobStatus,
+  ClassificationVoletsJobStatusEnum,
+} from '../models/classification-volets-job';
 import { FicheClassification } from '../pipeline/classify-fiches/classify-fiches.schema';
 import { GenerateClassificationService } from './generate-classification.service';
 
@@ -27,8 +27,8 @@ const tokens = {
 const transaction = { marker: 'transaction' } as unknown as Transaction;
 
 const toJobRow = (
-  status: ClassificationLeviersJobStatus = ClassificationLeviersJobStatusEnum.PENDING
-): ClassificationLeviersJob => ({
+  status: ClassificationVoletsJobStatus = ClassificationVoletsJobStatusEnum.PENDING
+): ClassificationVoletsJob => ({
   id: jobId,
   collectiviteId,
   planId,
@@ -86,8 +86,8 @@ const toDependencies = ({
       .mockResolvedValue({ count: fiches.length, data: fiches }),
   };
   const llm = toClassifyingLlm();
-  const ficheLeviersRepository = {
-    saveLeviers: vi.fn().mockResolvedValue(saveOutcome),
+  const ficheActionVoletGesRepository = {
+    saveVolets: vi.fn().mockResolvedValue(saveOutcome),
   };
   const transactionManager = {
     executeSingle: vi.fn(
@@ -100,7 +100,7 @@ const toDependencies = ({
     jobRepository as never,
     listFichesService as never,
     llm as never,
-    ficheLeviersRepository as never,
+    ficheActionVoletGesRepository as never,
     transactionManager as never
   );
 
@@ -109,14 +109,14 @@ const toDependencies = ({
     jobRepository,
     listFichesService,
     llm,
-    ficheLeviersRepository,
+    ficheActionVoletGesRepository,
   };
 };
 
 describe('GenerateClassificationService.generate', () => {
   it("ignore une re-livraison d'un job deja termine sans rappeler le modele", async () => {
     const { service, llm, jobRepository } = toDependencies({
-      job: toJobRow(ClassificationLeviersJobStatusEnum.DONE),
+      job: toJobRow(ClassificationVoletsJobStatusEnum.DONE),
     });
 
     const result = await service.generate(jobId);
@@ -150,12 +150,12 @@ describe('GenerateClassificationService.generate', () => {
   });
 
   it('ecrit le classement et clot le job dans une seule et meme transaction', async () => {
-    const { service, ficheLeviersRepository, jobRepository } =
+    const { service, ficheActionVoletGesRepository, jobRepository } =
       toDependencies();
 
     const result = await service.generate(jobId);
 
-    const [saveArgs] = ficheLeviersRepository.saveLeviers.mock.calls[0];
+    const [saveArgs] = ficheActionVoletGesRepository.saveVolets.mock.calls[0];
     const [markDoneArgs] = jobRepository.markDone.mock.calls[0];
 
     expect({
@@ -171,7 +171,7 @@ describe('GenerateClassificationService.generate', () => {
 
   it("ne clot pas le job quand l'ecriture du classement echoue", async () => {
     const { service, jobRepository } = toDependencies({
-      saveOutcome: failure(FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR),
+      saveOutcome: failure(FicheActionVoletGesErrorEnum.SAVE_VOLETS_ERROR),
     });
 
     const result = await service.generate(jobId);
@@ -186,7 +186,7 @@ describe('GenerateClassificationService.generate', () => {
   it("remonte l'echec de passage en cours sans appeler le modele", async () => {
     const { service, jobRepository, llm } = toDependencies();
     jobRepository.markRunning.mockResolvedValue(
-      failure(ClassificationLeviersErrorEnum.JOB_TRANSITION_REFUSED)
+      failure(ClassificationVoletsErrorEnum.JOB_TRANSITION_REFUSED)
     );
 
     const result = await service.generate(jobId);
@@ -200,7 +200,7 @@ describe('GenerateClassificationService.generate', () => {
         error: {
           kind: 'transition_failed',
           jobId,
-          cause: ClassificationLeviersErrorEnum.JOB_TRANSITION_REFUSED,
+          cause: ClassificationVoletsErrorEnum.JOB_TRANSITION_REFUSED,
         },
       },
       llmCalls: 0,

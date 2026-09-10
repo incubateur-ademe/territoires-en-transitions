@@ -1,32 +1,32 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { type ClassificationProgress } from '../classification-leviers-job.repository';
+import { type ClassificationProgress } from '../classification-volets-job.repository';
 import {
-  ClassificationLeviersErrorEnum,
-  type ClassificationLeviersError,
-} from '../classification-leviers.errors';
-import { ClassificationLeviersJobStatusEnum } from '../models/classification-leviers-job';
+  ClassificationVoletsErrorEnum,
+  type ClassificationVoletsError,
+} from '../classification-volets.errors';
+import { ClassificationVoletsJobStatusEnum } from '../models/classification-volets-job';
 import { type ClassificationStatus } from './get-classification-status.output';
 
 export const toClassificationStatus = (
   progress: ClassificationProgress
-): Result<ClassificationStatus, ClassificationLeviersError> => {
+): Result<ClassificationStatus, ClassificationVoletsError> => {
   const { id, planId, status } = progress;
 
   switch (status) {
-    case ClassificationLeviersJobStatusEnum.DONE:
+    case ClassificationVoletsJobStatusEnum.DONE:
       if (!progress.draft) {
-        return failure(ClassificationLeviersErrorEnum.GET_JOB_ERROR);
+        return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
       }
       return success({ id, planId, status, draft: progress.draft });
 
-    case ClassificationLeviersJobStatusEnum.FAILED:
+    case ClassificationVoletsJobStatusEnum.FAILED:
       if (!progress.error) {
-        return failure(ClassificationLeviersErrorEnum.GET_JOB_ERROR);
+        return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
       }
       return success({ id, planId, status, error: progress.error });
 
-    case ClassificationLeviersJobStatusEnum.PENDING:
-    case ClassificationLeviersJobStatusEnum.RUNNING:
+    case ClassificationVoletsJobStatusEnum.PENDING:
+    case ClassificationVoletsJobStatusEnum.RUNNING:
       return success({
         id,
         planId,

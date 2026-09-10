@@ -1,7 +1,7 @@
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
-import type { ClassificationLeviersSpecificError } from './classification-leviers.errors';
+import type { ClassificationVoletsSpecificError } from './classification-volets.errors';
 
-export const classificationLeviersErrorConfig: TrpcErrorHandlerConfig<ClassificationLeviersSpecificError> =
+export const classificationVoletsErrorConfig: TrpcErrorHandlerConfig<ClassificationVoletsSpecificError> =
   {
     specificErrors: {
       CREATE_JOB_ERROR: {

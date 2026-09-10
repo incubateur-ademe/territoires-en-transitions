@@ -7,39 +7,39 @@ import { CategorieAction, LEVIER_ID_BY_NOM, Levier } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray } from 'drizzle-orm';
 import {
-  FicheLeviersErrorEnum,
-  type FicheLeviersError,
-} from './fiche-leviers.errors';
-import { ficheActionLevierTable } from './models/fiche-action-levier.table';
+  FicheActionVoletGesErrorEnum,
+  type FicheActionVoletGesError,
+} from './fiche-action-volet-ges.errors';
+import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
 
-export type LevierCategorie = {
+export type VoletGes = {
   levier: Levier;
   categorie: CategorieAction;
 };
 
-export type FicheLeviers = {
+export type FicheActionVoletGes = {
   ficheId: number;
-  leviers: LevierCategorie[];
+  volets: VoletGes[];
 };
 
 @Injectable()
-export class FicheLeviersRepository {
+export class FicheActionVoletGesRepository {
   private readonly db = this.database.db;
-  private readonly logger = new Logger(FicheLeviersRepository.name);
+  private readonly logger = new Logger(FicheActionVoletGesRepository.name);
 
   constructor(private readonly database: DatabaseService) {}
 
-  async saveLeviers({
+  async saveVolets({
     collectiviteId,
     fiches,
     createdBy,
     tx,
   }: {
     collectiviteId: number;
-    fiches: FicheLeviers[];
+    fiches: FicheActionVoletGes[];
     createdBy: string;
     tx?: Transaction;
-  }): Promise<Result<void, FicheLeviersError>> {
+  }): Promise<Result<void, FicheActionVoletGesError>> {
     try {
       await (tx ?? this.db).transaction(async (runner) => {
         const ownedFiches = await runner
@@ -63,13 +63,13 @@ export class FicheLeviersRepository {
         }
 
         await runner
-          .delete(ficheActionLevierTable)
-          .where(inArray(ficheActionLevierTable.ficheId, [...ownedFicheIds]));
+          .delete(ficheActionVoletGesTable)
+          .where(inArray(ficheActionVoletGesTable.ficheId, [...ownedFicheIds]));
 
         const assignments = fiches
           .filter(({ ficheId }) => ownedFicheIds.has(ficheId))
-          .flatMap(({ ficheId, leviers }) =>
-            leviers.map(({ levier, categorie }) => ({
+          .flatMap(({ ficheId, volets }) =>
+            volets.map(({ levier, categorie }) => ({
               ficheId,
               levierId: LEVIER_ID_BY_NOM[levier],
               categorie,
@@ -78,18 +78,18 @@ export class FicheLeviersRepository {
           );
 
         if (assignments.length > 0) {
-          await runner.insert(ficheActionLevierTable).values(assignments);
+          await runner.insert(ficheActionVoletGesTable).values(assignments);
         }
       });
 
       return success(undefined);
     } catch (error) {
       this.logger.error(
-        `Écriture des leviers de ${fiches.length} fiches: ${getErrorMessage(
+        `Écriture des volets de ${fiches.length} fiches: ${getErrorMessage(
           error
         )}`
       );
-      return failure(FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR);
+      return failure(FicheActionVoletGesErrorEnum.SAVE_VOLETS_ERROR);
     }
   }
 }

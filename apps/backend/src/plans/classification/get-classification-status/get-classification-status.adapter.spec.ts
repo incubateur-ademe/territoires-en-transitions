@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { type ClassificationProgress } from '../classification-leviers-job.repository';
-import { ClassificationLeviersErrorEnum } from '../classification-leviers.errors';
+import { type ClassificationProgress } from '../classification-volets-job.repository';
+import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
 import { type ClassificationDraft } from '../models/classification-draft';
 import {
-  ClassificationLeviersJobStatus,
-  ClassificationLeviersJobStatusEnum,
-} from '../models/classification-leviers-job';
+  ClassificationVoletsJobStatus,
+  ClassificationVoletsJobStatusEnum,
+} from '../models/classification-volets-job';
 import { toClassificationStatus } from './get-classification-status.adapter';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
@@ -21,7 +21,7 @@ const toProgress = ({
   draft = null,
   error = null,
 }: {
-  status: ClassificationLeviersJobStatus;
+  status: ClassificationVoletsJobStatus;
   draft?: ClassificationDraft | null;
   error?: string | null;
 }): ClassificationProgress => ({
@@ -38,7 +38,7 @@ const toProgress = ({
 describe('toClassificationStatus', () => {
   it('rend la progression sur un job en attente', () => {
     const result = toClassificationStatus(
-      toProgress({ status: ClassificationLeviersJobStatusEnum.PENDING })
+      toProgress({ status: ClassificationVoletsJobStatusEnum.PENDING })
     );
 
     expect(result).toEqual({
@@ -46,7 +46,7 @@ describe('toClassificationStatus', () => {
       data: {
         id: jobId,
         planId,
-        status: ClassificationLeviersJobStatusEnum.PENDING,
+        status: ClassificationVoletsJobStatusEnum.PENDING,
         processedBatches: 2,
         totalBatches: 3,
       },
@@ -55,7 +55,7 @@ describe('toClassificationStatus', () => {
 
   it('rend le classement sur un job termine, sans compteur de lots', () => {
     const result = toClassificationStatus(
-      toProgress({ status: ClassificationLeviersJobStatusEnum.DONE, draft })
+      toProgress({ status: ClassificationVoletsJobStatusEnum.DONE, draft })
     );
 
     expect(result).toEqual({
@@ -63,7 +63,7 @@ describe('toClassificationStatus', () => {
       data: {
         id: jobId,
         planId,
-        status: ClassificationLeviersJobStatusEnum.DONE,
+        status: ClassificationVoletsJobStatusEnum.DONE,
         draft,
       },
     });
@@ -72,7 +72,7 @@ describe('toClassificationStatus', () => {
   it("rend l'erreur sur un job en echec, sans compteur de lots", () => {
     const result = toClassificationStatus(
       toProgress({
-        status: ClassificationLeviersJobStatusEnum.FAILED,
+        status: ClassificationVoletsJobStatusEnum.FAILED,
         error: 'Aucune fiche à classer dans ce plan',
       })
     );
@@ -82,7 +82,7 @@ describe('toClassificationStatus', () => {
       data: {
         id: jobId,
         planId,
-        status: ClassificationLeviersJobStatusEnum.FAILED,
+        status: ClassificationVoletsJobStatusEnum.FAILED,
         error: 'Aucune fiche à classer dans ce plan',
       },
     });
@@ -90,23 +90,23 @@ describe('toClassificationStatus', () => {
 
   it('refuse un job termine dont le classement est absent', () => {
     const result = toClassificationStatus(
-      toProgress({ status: ClassificationLeviersJobStatusEnum.DONE })
+      toProgress({ status: ClassificationVoletsJobStatusEnum.DONE })
     );
 
     expect(result).toEqual({
       success: false,
-      error: ClassificationLeviersErrorEnum.GET_JOB_ERROR,
+      error: ClassificationVoletsErrorEnum.GET_JOB_ERROR,
     });
   });
 
   it('refuse un job en echec dont le motif est absent', () => {
     const result = toClassificationStatus(
-      toProgress({ status: ClassificationLeviersJobStatusEnum.FAILED })
+      toProgress({ status: ClassificationVoletsJobStatusEnum.FAILED })
     );
 
     expect(result).toEqual({
       success: false,
-      error: ClassificationLeviersErrorEnum.GET_JOB_ERROR,
+      error: ClassificationVoletsErrorEnum.GET_JOB_ERROR,
     });
   });
 });

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { AxesRouter } from './axes/axes.router';
-import { PriorisationRouter } from './priorisation/priorisation.router';
+import { ClassificationRouter } from './classification/classification.router';
 import { FichesRouter } from './fiches/fiches.router';
 import { PaniersRouter } from './paniers/paniers.router';
 import { GetImportStatusRouter } from './ai-plan-import/get-import-status/get-import-status.router';
@@ -18,7 +18,7 @@ export class PlanMainRouter {
     private readonly paniersRouter: PaniersRouter,
     private readonly generateReportsRouter: GenerateReportsRouter,
     private readonly getImportStatusRouter: GetImportStatusRouter,
-    private readonly priorisationRouter: PriorisationRouter
+    private readonly classificationRouter: ClassificationRouter
   ) {}
 
   router = this.trpc.router({
@@ -28,7 +28,7 @@ export class PlanMainRouter {
     paniers: this.paniersRouter.router,
     reports: this.generateReportsRouter.router,
     aiImport: this.getImportStatusRouter.router,
-    classificationLeviers: this.priorisationRouter.router,
+    classificationVolets: this.classificationRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);

@@ -4,17 +4,17 @@ import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AxeModule } from '../axes/axe.module';
 import { FichesModule } from '../fiches/fiches.module';
-import { ClassificationLeviersJobRepository } from './classification-leviers-job.repository';
+import { ClassificationVoletsJobRepository } from './classification-volets-job.repository';
 import {
-  CLASSIFICATION_LEVIERS_JOB_OPTIONS,
-  CLASSIFICATION_LEVIERS_QUEUE_NAME,
-} from './classification-leviers.queue';
+  CLASSIFICATION_VOLETS_JOB_OPTIONS,
+  CLASSIFICATION_VOLETS_QUEUE_NAME,
+} from './classification-volets.queue';
 import { EnqueueClassificationService } from './enqueue-classification/enqueue-classification.service';
-import { FicheLeviersRepository } from './fiche-leviers.repository';
+import { FicheActionVoletGesRepository } from './fiche-action-volet-ges.repository';
 import { GenerateClassificationService } from './generate-classification/generate-classification.service';
 import { GenerateClassificationWorker } from './generate-classification/generate-classification.worker';
 import { GetClassificationStatusService } from './get-classification-status/get-classification-status.service';
-import { PriorisationRouter } from './priorisation.router';
+import { ClassificationRouter } from './classification.router';
 
 @Module({
   imports: [
@@ -23,19 +23,19 @@ import { PriorisationRouter } from './priorisation.router';
     AxeModule,
     FichesModule,
     BullModule.registerQueue({
-      name: CLASSIFICATION_LEVIERS_QUEUE_NAME,
-      defaultJobOptions: CLASSIFICATION_LEVIERS_JOB_OPTIONS,
+      name: CLASSIFICATION_VOLETS_QUEUE_NAME,
+      defaultJobOptions: CLASSIFICATION_VOLETS_JOB_OPTIONS,
     }),
   ],
   providers: [
-    ClassificationLeviersJobRepository,
+    ClassificationVoletsJobRepository,
     EnqueueClassificationService,
     GenerateClassificationService,
     GenerateClassificationWorker,
     GetClassificationStatusService,
-    PriorisationRouter,
-    FicheLeviersRepository,
+    ClassificationRouter,
+    FicheActionVoletGesRepository,
   ],
-  exports: [PriorisationRouter],
+  exports: [ClassificationRouter],
 })
-export class PriorisationModule {}
+export class ClassificationModule {}

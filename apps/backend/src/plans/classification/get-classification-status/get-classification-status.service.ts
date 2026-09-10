@@ -3,11 +3,11 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, type Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { ClassificationLeviersJobRepository } from '../classification-leviers-job.repository';
+import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
 import {
-  ClassificationLeviersErrorEnum,
-  type ClassificationLeviersError,
-} from '../classification-leviers.errors';
+  ClassificationVoletsErrorEnum,
+  type ClassificationVoletsError,
+} from '../classification-volets.errors';
 import { toClassificationStatus } from './get-classification-status.adapter';
 import { type ClassificationStatus } from './get-classification-status.output';
 
@@ -15,13 +15,13 @@ import { type ClassificationStatus } from './get-classification-status.output';
 export class GetClassificationStatusService {
   constructor(
     private readonly permissions: PermissionService,
-    private readonly jobRepository: ClassificationLeviersJobRepository
+    private readonly jobRepository: ClassificationVoletsJobRepository
   ) {}
 
   async getStatus(
     { jobId }: { jobId: string },
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<ClassificationStatus, ClassificationLeviersError>> {
+  ): Promise<Result<ClassificationStatus, ClassificationVoletsError>> {
     const jobResult = await this.jobRepository.getProgressById(jobId);
     if (!jobResult.success) {
       return jobResult;
@@ -35,7 +35,7 @@ export class GetClassificationStatusService {
       { collectiviteId: job.collectiviteId }
     );
     if (!permissionResult.success) {
-      return failure(ClassificationLeviersErrorEnum.JOB_NOT_FOUND);
+      return failure(ClassificationVoletsErrorEnum.JOB_NOT_FOUND);
     }
 
     return toClassificationStatus(job);

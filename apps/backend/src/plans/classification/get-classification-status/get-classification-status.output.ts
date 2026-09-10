@@ -7,7 +7,7 @@ import {
   ClassifiedFiche,
   ClassifiedVolet,
 } from '../pipeline/classify-fiches/apply-classification';
-import { ClassificationLeviersJobStatusEnum } from '../models/classification-leviers-job';
+import { ClassificationVoletsJobStatusEnum } from '../models/classification-volets-job';
 
 const classifiedVoletSchema = z.object({
   levier: z.enum(levierEnumValues),
@@ -39,8 +39,8 @@ const jobIdentity = {
 const inFlightStatusSchema = z.object({
   ...jobIdentity,
   status: z.enum([
-    ClassificationLeviersJobStatusEnum.PENDING,
-    ClassificationLeviersJobStatusEnum.RUNNING,
+    ClassificationVoletsJobStatusEnum.PENDING,
+    ClassificationVoletsJobStatusEnum.RUNNING,
   ]),
   processedBatches: z.number().int().nonnegative(),
   totalBatches: z.number().int().nonnegative(),
@@ -48,13 +48,13 @@ const inFlightStatusSchema = z.object({
 
 const doneStatusSchema = z.object({
   ...jobIdentity,
-  status: z.literal(ClassificationLeviersJobStatusEnum.DONE),
+  status: z.literal(ClassificationVoletsJobStatusEnum.DONE),
   draft: classificationDraftSchema,
 });
 
 const failedStatusSchema = z.object({
   ...jobIdentity,
-  status: z.literal(ClassificationLeviersJobStatusEnum.FAILED),
+  status: z.literal(ClassificationVoletsJobStatusEnum.FAILED),
   error: z.string(),
 });
 
