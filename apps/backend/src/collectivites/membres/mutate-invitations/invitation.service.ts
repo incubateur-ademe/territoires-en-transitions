@@ -37,7 +37,9 @@ export class InvitationService {
     const [invitedUser] = await this.databaseService.db
       .select()
       .from(dcpTable)
-      .where(eq(dcpTable.email, invitation.email))
+      // Comparaison insensible à la casse : l'email d'entrée est normalisé,
+      // pas forcément celui que `dcp` a hérité de `auth.users`.
+      .where(eq(sql`lower(${dcpTable.email})`, invitation.email))
       .limit(1);
 
     if (invitedUser) {

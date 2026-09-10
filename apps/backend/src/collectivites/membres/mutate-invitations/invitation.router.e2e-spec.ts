@@ -10,6 +10,7 @@ import {
 } from '@tet/backend/test';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
@@ -48,6 +49,58 @@ describe('Test les invitations', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test(`Rattache un compte existant quelle que soit la casse de l'adresse`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+    const { user: invite } = await addTestUser(databaseService, {
+      role: CollectiviteRole.LECTURE,
+    });
+
+    // Sans normalisation, l'adresse en majuscules ne retrouvait pas le compte
+    // et créait une invitation pour quelqu'un qui en avait déjà un.
+    const invitation =
+      await caller.collectivites.membres.invitations.create({
+        collectiviteId: collectivite.id,
+        email: invite.email.toUpperCase(),
+        role: CollectiviteRole.EDITION,
+      });
+
+    expect(invitation).toBeNull();
+
+    const droits = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invite.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+    expect(droits).toHaveLength(1);
+  });
+
+  test(`Rattache un compte dont la ligne dcp porte une casse mixte`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+    const { user: invite } = await addTestUser(databaseService, {
+      role: CollectiviteRole.LECTURE,
+    });
+
+    // `dcp` hérite son email de `auth.users` : rien ne garantit la casse que
+    // l'appelant saisit, et la comparaison doit tenir des deux côtés.
+    await databaseService.db
+      .update(dcpTable)
+      .set({ email: invite.email.toUpperCase() })
+      .where(eq(dcpTable.id, invite.id));
+
+    const invitation =
+      await caller.collectivites.membres.invitations.create({
+        collectiviteId: collectivite.id,
+        email: invite.email,
+        role: CollectiviteRole.EDITION,
+      });
+
+    expect(invitation).toBeNull();
   });
 
   test(`N'a pas le droit d'inviter`, async () => {
