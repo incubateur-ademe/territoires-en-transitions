@@ -32,6 +32,17 @@ export function triageArchiveFile({
     };
   }
 
+  if (file.filesize < 0) {
+    return {
+      kind: 'skipped',
+      skippedFile: {
+        filename,
+        emplacement,
+        raison: `Taille du fichier invalide (${file.filesize} octets)`,
+      },
+    };
+  }
+
   if (file.filesize > MAX_FILE_SIZE_BYTES) {
     return {
       kind: 'skipped',

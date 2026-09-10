@@ -59,6 +59,27 @@ describe('triageArchiveFile', () => {
     });
   });
 
+  test('écarte un fichier dont la taille est négative', () => {
+    const triage = triageArchiveFile({
+      file: {
+        bucketId: 'collectivite-1',
+        hash: 'abc',
+        filename: 'taille-negative.pdf',
+        filesize: -1,
+      },
+      folderSegments: [],
+    });
+
+    expect(triage).toEqual({
+      kind: 'skipped',
+      skippedFile: {
+        filename: 'taille-negative.pdf',
+        emplacement: '',
+        raison: 'Taille du fichier invalide (-1 octets)',
+      },
+    });
+  });
+
   test('écarte un fichier au-dela de 100 Mo', () => {
     const triage = triageArchiveFile({
       file: {
