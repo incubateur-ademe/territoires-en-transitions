@@ -1,3 +1,4 @@
+import { invalidateIndicateurValeursQueries } from '../valeurs/invalidate-indicateur-valeurs-queries';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
@@ -25,7 +26,14 @@ export const useUpdateIndicateur = (indicateurId: number) => {
       });
     },
 
-    onSuccess: (_, variables) => {
+    onSuccess: async (_, variables) => {
+      if (variables.periodicite !== undefined) {
+        await invalidateIndicateurValeursQueries({
+          queryClient,
+          trpc,
+          collectiviteId,
+        });
+      }
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.indicateurs.list.queryKey({
           collectiviteId,
