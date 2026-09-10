@@ -41,7 +41,7 @@ export const fixturePourScoreIndicatif = {
   collectiviteId: 1,
   actionId: 'cae_1.2.3.3.4',
   identifiantReferentiel: 'cae_7',
-  dateValeur: '2025-05-29',
+  dateValeur: '2025-01-01',
   exprScore: `si val(cae_7) < limite(cae_7) alors 0
   sinon si val(cae_7) > cible(cae_7) alors 1
   sinon ((val(cae_7) - limite(cae_7)) * 0.05) / (limite(cae_7) - cible(cae_7))`,

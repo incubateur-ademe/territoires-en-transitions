@@ -1066,3 +1066,10 @@ plan_action/fiche_action_levier 2026-09-09T10:30:00Z Gaël Servaud <gaelservaud@
 utilisateur/dcp_email_lower_index [utilisateur/dcp] 2026-09-09T16:30:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Index fonctionnel sur lower(dcp.email) : la table n'en avait aucun sur l'adresse, et chaque invitation la parcourait entierement
 plan_action/classification_volets [plan_action/classification_leviers_job plan_action/fiche_action_levier] 2026-09-10T09:37:55Z Gaël Servaud <gaelservaud@gmail.com> # Renomme les tables et types de classification en vocabulaire volet, et distingue le referentiel GES
 plan_action/classification_volets_enjeu [plan_action/classification_volets] 2026-09-10T14:23:25Z Gaël Servaud <gaelservaud@gmail.com> # Ajoute l'enjeu discriminant sur le job de classification
+
+@indicateur-periodicite-base 2026-09-03T15:59:59Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière stable précédant la migration de périodicité
+indicateur/periodicite [indicateur/referentiel indicateur/indicateurs_gaz_effet_serre demarche/pcaet_diagnostic_drop_referentiel_tables migration_schema] 2026-09-03T16:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute le catalogue des politiques de périodicité et classifie les définitions
+indicateur/import_emt_valeur [indicateur/periodicite] 2026-09-03T16:00:15Z Emilien Escalle <emilien.escalle@escemi.com> # Sérialise l'import EMT annuel avec la périodicité de sa définition
+indicateur/reconciliation_formules [indicateur/periodicite private_schema] 2026-09-03T16:00:20Z Emilien Escalle <emilien.escalle@escemi.com> # Rend durable et bornée la réconciliation déclenchée par un changement de formule
+indicateur/dependances_formules [private_schema] 2026-09-03T16:00:25Z Emilien Escalle <emilien.escalle@escemi.com> # Centralise l'extraction des dépendances de formule dès la phase expand
+@indicateur-periodicite-expand 2026-09-03T16:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière de déploiement expand avant activation de la contrainte stricte

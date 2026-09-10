@@ -77,7 +77,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
+        db-init db-migrate db-migrate-periodicite-expand db-test-deployment-guards db-test-periodicite-migration db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local
 
 help: ## Affiche cette aide
@@ -258,8 +258,18 @@ tui: ensure-deps ## Tableau de bord interactif de la stack : statuts, URLs, logs
 db-init: guard-main preflight-env-keys services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
 	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
-db-migrate: warn-shared-db ## Applique les migrations sqitch
-	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode change
+db-migrate: db-migrate-periodicite-expand ## Déploie la phase compatible de périodicité
+
+db-migrate-periodicite-expand: warn-shared-db ## Déploie les quatre changements expand dans une transaction vérifiée
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode all --verify --to @indicateur-periodicite-expand
+
+db-test-deployment-guards: ## Teste les politiques d'URL, backup/schéma et base de migration jetable
+	node --test data_layer/scripts/validate-database-url.spec.mjs
+	bash data_layer/backup/check-restore-compatibility.spec.sh
+	bash data_layer/tests/indicateur/periodicite-migration-lifecycle-database.spec.sh
+
+db-test-periodicite-migration: ## Teste le cycle expand sur PERIODICITE_MIGRATION_TEST_DATABASE_URL (base jetable)
+	bash data_layer/tests/indicateur/periodicite-migration-lifecycle.sh
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).
