@@ -17,7 +17,6 @@ const echeancePassee = '2026-07-12T00:00:00.000Z';
 const transmise: StatutInstructionEntree = {
   demarcheStatus: DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
   avisDeadlineAt: echeanceAVenir,
-  aUnPcaetAbouti: false,
   deposeAvis: true,
   nbAvisValides: 0,
   nbAvisBrouillons: 0,
@@ -44,18 +43,19 @@ describe('getStatutInstruction — en amont de la transmission', () => {
     ).toBe(PcaetStatutInstructionEnum.EN_ELABORATION);
   });
 
-  it('dépôt en cours après un PCAET abouti : en révision', () => {
+  it('un renouvellement est un dépôt en élaboration comme un autre', () => {
+    // Le workflow est linéaire et sans retour : la révision n'est pas une
+    // étape, c'est un nouveau dépôt qui parcourt le même cycle.
     expect(
       getStatutInstruction(
         {
           ...transmise,
           demarcheStatus: DemarchePcaetStatusEnum.EN_ELABORATION,
           avisDeadlineAt: null,
-          aUnPcaetAbouti: true,
         },
         now
       )
-    ).toBe(PcaetStatutInstructionEnum.EN_REVISION);
+    ).toBe(PcaetStatutInstructionEnum.EN_ELABORATION);
   });
 
   it('un dépôt encore en chantier n’emprunte rien aux règles d’avis', () => {
@@ -77,14 +77,16 @@ describe('getStatutInstruction — en amont de la transmission', () => {
 describe('getStatutInstruction — un service qui se prononce', () => {
   it('rien de déposé, fenêtre ouverte : à instruire', () => {
     expect(getStatutInstruction(transmise, now)).toBe(
-      PcaetStatutInstructionEnum.A_INSTRUIRE
+      PcaetStatutInstructionEnum.EN_INSTRUCTION
     );
   });
 
-  it('un brouillon en attente : brouillon en cours', () => {
+  it('un avis commencé mais pas validé laisse le dossier à instruire', () => {
+    // Le brouillon dit où en est l'agent, pas où en est le dossier — et il ne
+    // sort pas de son espace.
     expect(
       getStatutInstruction({ ...transmise, nbAvisBrouillons: 1 }, now)
-    ).toBe(PcaetStatutInstructionEnum.BROUILLON_EN_COURS);
+    ).toBe(PcaetStatutInstructionEnum.EN_INSTRUCTION);
   });
 
   it('un avis validé : instruit', () => {
@@ -111,7 +113,7 @@ describe('getStatutInstruction — un destinataire en lecture', () => {
 
   it('le dossier avance sans lui : à instruire', () => {
     expect(getStatutInstruction(enLecture, now)).toBe(
-      PcaetStatutInstructionEnum.A_INSTRUIRE
+      PcaetStatutInstructionEnum.EN_INSTRUCTION
     );
   });
 
@@ -139,7 +141,7 @@ describe('getStatutInstruction — un destinataire en lecture', () => {
     // `nbAvisValides` porte sur *sa* demande, qui restera vide par nature.
     expect(
       getStatutInstruction({ ...enLecture, nbAvisValides: 1 }, now)
-    ).toBe(PcaetStatutInstructionEnum.A_INSTRUIRE);
+    ).toBe(PcaetStatutInstructionEnum.EN_INSTRUCTION);
   });
 });
 
@@ -197,7 +199,7 @@ describe('getStatutInstruction — en aval', () => {
 });
 
 describe('STATUTS_INSTRUCTION_PAR_DEFAUT', () => {
-  it('écarte exactement les trois statuts que le filtre vient d’ouvrir', () => {
+  it('écarte exactement les statuts que le filtre vient d’ouvrir', () => {
     const exclus = pcaetStatutInstructionValues.filter(
       (statut) =>
         !(STATUTS_INSTRUCTION_PAR_DEFAUT as readonly string[]).includes(statut)
@@ -205,7 +207,6 @@ describe('STATUTS_INSTRUCTION_PAR_DEFAUT', () => {
     expect(exclus).toEqual([
       PcaetStatutInstructionEnum.AUCUN_DEPOT,
       PcaetStatutInstructionEnum.EN_ELABORATION,
-      PcaetStatutInstructionEnum.EN_REVISION,
       PcaetStatutInstructionEnum.ARCHIVE,
     ]);
   });

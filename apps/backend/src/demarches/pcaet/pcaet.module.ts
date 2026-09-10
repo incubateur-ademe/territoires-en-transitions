@@ -71,9 +71,9 @@ import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossi
 import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
 import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
-import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
-import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
-import { ListDemandesAvisService } from './list-demandes-avis/list-demandes-avis.service';
+import { ListDossiersInstructionRepository } from './list-dossiers-instruction/list-dossiers-instruction.repository';
+import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
+import { ListDossiersInstructionService } from './list-dossiers-instruction/list-dossiers-instruction.service';
 import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarches-pcaet.repository';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListDemarchesPcaetService } from './list-demarches-pcaet/list-demarches-pcaet.service';
@@ -86,6 +86,7 @@ import { RemoveVulnerabiliteThematiqueRouter } from './remove-vulnerabilite-them
 import { RemoveVulnerabiliteThematiqueService } from './remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.service';
 import { SetVulnerabiliteLigneRouter } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.router';
 import { SetVulnerabiliteLigneService } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.service';
+import { CollectiviteContactsRepository } from './shared/collectivite-contacts.repository';
 import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
 import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
@@ -99,6 +100,7 @@ import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vu
 import { DepotPermissionsService } from './shared/depot-permissions.service';
 import { PcaetAvisRepository } from './shared/pcaet-avis.repository';
 import { PcaetInstructeursRepository } from './shared/pcaet-instructeurs.repository';
+import { PerimetreInstructeurRepository } from './shared/perimetre-instructeur.repository';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { TransmettrePourAvisDemarchePcaetService } from './transmettre-pour-avis/transmettre-pour-avis.service';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
@@ -173,9 +175,10 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
     ListDemarchesPcaetRouter,
-    ListDemandesAvisRepository,
-    ListDemandesAvisService,
-    ListDemandesAvisRouter,
+    ListDossiersInstructionRepository,
+    ListDossiersInstructionService,
+    ListDossiersInstructionRouter,
+    CollectiviteContactsRepository,
     GetDossierInstructionService,
     ListAvisRecusService,
     ListAvisRecusRouter,
@@ -193,6 +196,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     GetDossierDocumentUrlRouter,
     PcaetAvisRepository,
     PcaetInstructeursRepository,
+    PerimetreInstructeurRepository,
     UpsertAvisService,
     UpsertAvisRouter,
     ValiderAvisService,

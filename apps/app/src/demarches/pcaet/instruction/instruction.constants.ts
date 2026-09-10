@@ -1,6 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { ColorVariant } from '@tet/design-tokens';
-import type { PcaetDemandeAvisEtat } from '@tet/domain/demarches';
+import {
+  type PcaetDemandeAvisEtat,
+  type PcaetStatutInstruction,
+} from '@tet/domain/demarches';
 
 /**
  * Au-delà de ce seuil, le tableau de bord n'affiche plus la moyenne exacte mais
@@ -13,6 +16,55 @@ import type { PcaetDemandeAvisEtat } from '@tet/domain/demarches';
  */
 export const DELAI_INSTRUCTION_PLAFOND_JOURS = 60;
 
+const STATUT_INSTRUCTION_LABELS: Record<PcaetStatutInstruction, string> = {
+  aucun_depot: appLabels.instructionStatutAucunDepot,
+  en_elaboration: appLabels.instructionStatutEnElaboration,
+  en_instruction: appLabels.instructionStatutEnInstruction,
+  pas_d_avis_depose: appLabels.instructionStatutPasDAvisDepose,
+  instruit: appLabels.instructionStatutInstruit,
+  adopte: appLabels.instructionStatutAdopte,
+  archive: appLabels.instructionStatutArchive,
+};
+
+/**
+ * Le libellé d'un statut.
+ *
+ * Le même pour tous les services : les statuts décrivent où en est le dossier,
+ * pas ce qu'on attend de celui qui les lit. « En instruction » se dit donc
+ * aussi bien à la DREAL qui rédige l'avis qu'à la DDT qui suit le dossier — et
+ * fait paire avec « En élaboration », l'étape d'avant.
+ */
+export const statutInstructionLabel = (
+  statut: PcaetStatutInstruction
+): string => STATUT_INSTRUCTION_LABELS[statut];
+
+/**
+ * Les couleurs suivent le sens et non le cycle : ce qui appelle une action est
+ * en `warning`, ce qui a manqué en `error`, ce qui est acquis en `success`. Les
+ * dépôts encore en chantier sont en `info` — ils informent sans rien réclamer —
+ * et les lignes qui ne demandent rien restent grises.
+ */
+export const STATUT_INSTRUCTION_VARIANTS: Record<
+  PcaetStatutInstruction,
+  ColorVariant
+> = {
+  aucun_depot: 'grey',
+  en_elaboration: 'info',
+  en_instruction: 'warning',
+  pas_d_avis_depose: 'error',
+  instruit: 'success',
+  adopte: 'success',
+  archive: 'grey',
+};
+
+/**
+ * L'état d'une saisine, pour l'écran d'un dossier.
+ *
+ * Coexiste volontairement avec le statut de la liste, et ne s'y substitue pas :
+ * un dossier ouvert a forcément été transmis, si bien que « Aucun dépôt », « En
+ * élaboration » et « En révision » n'y veulent rien dire. La liste parle du
+ * territoire d'un service, cet écran d'une saisine.
+ */
 const DEMANDE_AVIS_ETAT_LABELS: Record<PcaetDemandeAvisEtat, string> = {
   a_traiter: appLabels.instructionEtatATraiter,
   brouillon_en_cours: appLabels.instructionEtatBrouillonEnCours,
@@ -21,14 +73,6 @@ const DEMANDE_AVIS_ETAT_LABELS: Record<PcaetDemandeAvisEtat, string> = {
   clos: appLabels.instructionEtatClos,
 };
 
-/**
- * Le libellé d'un état, selon que le service dépose un avis ou suit le dossier.
- *
- * Seul `a_traiter` diffère : c'est le seul qui réclame quelque chose de celui
- * qui le lit. Les autres décrivent le dossier et se disent pareil des deux
- * côtés — et `brouillon_en_cours` ne se produit jamais en lecture, l'état y
- * étant calculé sur les seuls avis validés.
- */
 export const demandeAvisEtatLabel = (
   etat: PcaetDemandeAvisEtat,
   { deposeAvis }: { deposeAvis: boolean }

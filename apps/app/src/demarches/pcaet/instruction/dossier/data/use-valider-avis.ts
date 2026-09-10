@@ -17,7 +17,7 @@ export const useValiderAvis = (demandeAvisId: number) => {
           }),
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.demarches.pcaet.listDemandesAvis.pathKey(),
+          queryKey: trpc.demarches.pcaet.listDossiersInstruction.pathKey(),
         });
       },
       // Pas de message de succès : la modale enchaîne sur son accusé de

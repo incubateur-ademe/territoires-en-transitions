@@ -1,4 +1,4 @@
-import { DemandesAvisPage } from '@/app/demarches/pcaet/instruction/demandes-avis.page';
+import { DossiersInstructionPage } from '@/app/demarches/pcaet/instruction/dossiers-instruction.page';
 import z from 'zod';
 
 export default async function Page({
@@ -9,5 +9,5 @@ export default async function Page({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  return <DemandesAvisPage serviceId={collectiviteId} />;
+  return <DossiersInstructionPage serviceId={collectiviteId} />;
 }

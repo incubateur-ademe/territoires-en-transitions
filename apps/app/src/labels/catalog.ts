@@ -1870,13 +1870,13 @@ export const appLabels = {
   instructionTitre: 'Suivi des demandes d’avis',
   instructionBonjour: ({ prenom }: { prenom: string }) => `Bonjour ${prenom} !`,
   /**
-   * Seules la DREAL et le conseil régional déposent un avis ; la DDT, la
-   * DR ADEME et les services nationaux reçoivent le dossier en lecture. Le
-   * compteur et le titre de la liste suivent donc la famille, plutôt que de
-   * présenter tout le monde comme responsable d'une instruction.
+   * Sans variante de lecture : les compteurs ne s'affichent qu'aux services qui
+   * déposent un avis — la DREAL et le conseil régional. La DDT, la DR ADEME et
+   * les services nationaux reçoivent le dossier en lecture : ils n'ont pas de
+   * charge à mesurer, et un délai moyen d'instruction qu'ils ne mènent pas ne
+   * dirait rien d'eux. Le titre de la liste, lui, suit toujours la famille.
    */
-  instructionStatATraiter: ({ deposeAvis }: { deposeAvis: boolean }) =>
-    deposeAvis ? 'PCAET à instruire' : 'PCAET en instruction',
+  instructionStatATraiter: 'PCAET à instruire',
   instructionStatInstruits: plural({
     one: 'PCAET instruit',
     other: 'PCAET instruits',
@@ -1919,7 +1919,12 @@ export const appLabels = {
       ? 'Instructions dont je suis en charge'
       : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
-  instructionListeColonneContact: 'Contact',
+  /**
+   * « Pilote » et non « Contact » : la personne affichée est celle qui porte le
+   * PCAET dans la collectivité — son administratrice sur la plateforme —, pas
+   * une adresse de contact générique.
+   */
+  instructionListeColonnePilote: 'Pilote',
   instructionListeColonneStatut: 'Statut',
   instructionListeColonneEcheance: 'Échéance avis',
   instructionListeColonneActions: 'Actions',
@@ -1928,7 +1933,7 @@ export const appLabels = {
   instructionListeTelecharger: 'Télécharger le dossier',
   instructionListeTelechargerIndisponible:
     'Le téléchargement du dossier complet arrive prochainement.',
-  instructionListeSansContact: 'Aucun référent renseigné',
+  instructionListeSansPilote: 'Aucun pilote renseigné',
   instructionEtatATraiter: 'À instruire',
   /**
    * Le même état, dit à un destinataire en lecture : « À instruire » lui
