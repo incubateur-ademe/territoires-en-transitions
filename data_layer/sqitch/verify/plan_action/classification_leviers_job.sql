@@ -35,8 +35,10 @@ BEGIN
         FROM information_schema.columns
         WHERE table_schema = 'public'
           AND table_name = 'classification_leviers_job'
+          AND column_name IN ('id', 'collectivite_id', 'plan_id', 'created_by', 'status',
+                              'processed_batches', 'total_batches', 'created_at', 'modified_at')
           AND is_nullable = 'NO'
-    ), 'Toutes les colonnes sauf draft, token_usage et error doivent être NOT NULL';
+    ), 'Les 9 colonnes posees par ce change hors draft, token_usage et error doivent être NOT NULL';
 
     SELECT cc.check_clause INTO status_check
     FROM information_schema.check_constraints cc
