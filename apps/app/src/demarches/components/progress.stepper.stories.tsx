@@ -164,7 +164,7 @@ export const InstruitPretAPublier: Story = {
   },
 };
 
-/** PCAET adopté et publié : dépublication proposée. */
+/** PCAET adopté et publié : le dossier est figé, un nouveau cycle peut démarrer. */
 export const AdoptePublie: Story = {
   args: {
     statut: 'publie',

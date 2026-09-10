@@ -29,8 +29,6 @@ import { DeleteAvisService } from './delete-avis/delete-avis.service';
 import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-demarche-pcaet.repository';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demarche-pcaet.service';
-import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
-import { DepublierDemarchePcaetService } from './depublier-demarche/depublier-demarche.service';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { SetDiagnosticReferenceYearRepository } from './diagnostic/set-diagnostic-reference-year/set-diagnostic-reference-year.repository';
 import { SetDiagnosticReferenceYearRouter } from './diagnostic/set-diagnostic-reference-year/set-diagnostic-reference-year.router';
@@ -138,8 +136,6 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     CloreInstructionRouter,
     PublierDemarchePcaetService,
     PublierDemarchePcaetRouter,
-    DepublierDemarchePcaetService,
-    DepublierDemarchePcaetRouter,
     ArchiverDemarchePcaetService,
     ArchiverDemarchePcaetRouter,
     DepotPermissionsService,

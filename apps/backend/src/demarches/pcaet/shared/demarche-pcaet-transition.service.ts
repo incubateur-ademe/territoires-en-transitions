@@ -32,7 +32,7 @@ import { DemarchePcaetTransitionRepository } from './demarche-pcaet-transition.r
 export type DemarchePcaetTransitionStamps = {
   transmittedAt?: string;
   avisDeadlineAt?: string;
-  publishedAt?: string | null;
+  publishedAt?: string;
 };
 
 /**
@@ -57,7 +57,7 @@ export type DemarchePcaetTransitionResult = Result<
 >;
 
 /**
- * Socle des six opérations de transition : verrou de ligne, permission,
+ * Socle des cinq opérations de transition : verrou de ligne, permission,
  * évaluation des guards, application du workflow, persistance et journal.
  *
  * Ce qu'il ne fait pas : décider **quelle** transition appliquer, ni ce qu'elle

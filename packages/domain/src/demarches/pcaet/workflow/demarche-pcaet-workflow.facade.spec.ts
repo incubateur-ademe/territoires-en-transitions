@@ -74,11 +74,6 @@ describe('applyTransition', () => {
         guardResults: { estPilote: true, documentsAvalComplets: true },
       })
     ).toEqual({ success: true, data: { toStatus: 'publie' } });
-    expect(
-      applyTransition('publie', 'depublier', {
-        guardResults: { estPilote: true },
-      })
-    ).toEqual({ success: true, data: { toStatus: 'instruit' } });
     // Sans acteur : c'est ce qui rend ces deux-là applicables par le système.
     expect(
       applyTransition('transmis_pour_avis', 'avis_tous_rendus', {
@@ -107,13 +102,6 @@ describe('applyTransition', () => {
     });
     // Ni un dossier non publié archivable.
     expect(applyTransition('instruit', 'archiver')).toEqual({
-      success: false,
-      error: 'TRANSITION_NOT_ALLOWED',
-      blockedBy: [],
-    });
-    // La transmission est sans retour : le dossier est entre les mains des
-    // instances consultatives, et rien ne le ramène à l'élaboration.
-    expect(applyTransition('transmis_pour_avis', 'depublier')).toEqual({
       success: false,
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],

@@ -64,10 +64,6 @@ export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
     icon: 'archive-line',
   },
   publier: { label: appLabels.demarcheTransitionPublier, icon: 'eye-line' },
-  depublier: {
-    label: appLabels.demarcheTransitionDepublier,
-    icon: 'eye-off-line',
-  },
 } as const satisfies Partial<
   Record<DemarchePcaetTransition, { label: string; icon: string }>
 >;

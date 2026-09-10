@@ -25,7 +25,6 @@ export type DemarcheAvanceSidePanelContentProps = {
   onTransmettre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
-  onUnpublish?: () => void;
   isPreview?: boolean;
 };
 
@@ -45,7 +44,6 @@ export const DemarcheAvanceSidePanelContent = ({
   onTransmettre,
   isPublished = false,
   onPublish,
-  onUnpublish,
   isPreview = false,
 }: DemarcheAvanceSidePanelContentProps) => (
   <div className="flex flex-col gap-4 p-4">
@@ -61,7 +59,6 @@ export const DemarcheAvanceSidePanelContent = ({
       onTransmettre={onTransmettre}
       isPublished={isPublished}
       onPublish={onPublish}
-      onUnpublish={onUnpublish}
       isPreview={isPreview}
     />
 

@@ -6,7 +6,6 @@ import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
-import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { EnvoyerAvisRouter } from './envoyer-avis/envoyer-avis.router';
@@ -51,7 +50,6 @@ export class PcaetRouter {
     private readonly transmettrePourAvisRouter: TransmettrePourAvisDemarchePcaetRouter,
     private readonly cloreInstructionRouter: CloreInstructionRouter,
     private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
-    private readonly depublierDemarchePcaetRouter: DepublierDemarchePcaetRouter,
     private readonly archiverDemarchePcaetRouter: ArchiverDemarchePcaetRouter,
     private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter
@@ -79,7 +77,6 @@ export class PcaetRouter {
     this.transmettrePourAvisRouter.router,
     this.cloreInstructionRouter.router,
     this.publierDemarchePcaetRouter.router,
-    this.depublierDemarchePcaetRouter.router,
     this.archiverDemarchePcaetRouter.router,
 
     this.trpc.router({

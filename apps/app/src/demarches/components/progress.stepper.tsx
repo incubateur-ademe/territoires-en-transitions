@@ -303,7 +303,6 @@ type Props = {
   onTransmettre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
-  onUnpublish?: () => void;
   /** Affiche le stepper sans liens ni actions (page de création). */
   isPreview?: boolean;
 };
@@ -320,7 +319,6 @@ export const AvanceDemarcheSection = ({
   onTransmettre,
   isPublished,
   onPublish,
-  onUnpublish,
   isPreview = false,
 }: Props) => {
   const activeIndex = getEtapeIndexDemarchePcaet(statut);
@@ -487,8 +485,6 @@ export const AvanceDemarcheSection = ({
         // Un nouveau cycle ne peut démarrer qu'une fois le dossier publié.
         const showNouvelleAction =
           index === activeIndex && index >= ETAPE.publie;
-        const peutDepublier =
-          index === ETAPE.publie && isPublished && !isPreview;
 
         return (
           <NumberedStep
@@ -542,32 +538,19 @@ export const AvanceDemarcheSection = ({
                   )}
                 </div>
               )}
-            {/* Actions du dossier public, sur une seule ligne. Dépublier part
-                du dossier publié : l'action vit donc sur cette étape et non sur
-                la finalisation, qui est alors passée et s'affiche estompée. */}
-            {(peutDepublier || showNouvelleAction) && (
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                {peutDepublier && (
-                  <Button
-                    variant="grey"
-                    size="xs"
-                    icon="eye-off-line"
-                    onClick={onUnpublish}
-                  >
-                    {appLabels.demarcheTransitionDepublier}
+            {/* Le dossier publié est adopté : rien ne le reprend, un nouveau
+                cycle peut seulement démarrer à côté. */}
+            {showNouvelleAction && (
+              <div className="mt-3">
+                <Link
+                  href={makeCollectiviteDemarchePcaetNouveauUrl({
+                    collectiviteId,
+                  })}
+                >
+                  <Button variant="primary" size="xs" icon="add-line">
+                    {appLabels.demarcheAvanceNouvelleDemarche}
                   </Button>
-                )}
-                {showNouvelleAction && (
-                  <Link
-                    href={makeCollectiviteDemarchePcaetNouveauUrl({
-                      collectiviteId,
-                    })}
-                  >
-                    <Button variant="primary" size="xs" icon="add-line">
-                      {appLabels.demarcheAvanceNouvelleDemarche}
-                    </Button>
-                  </Link>
-                )}
+                </Link>
               </div>
             )}
           </NumberedStep>

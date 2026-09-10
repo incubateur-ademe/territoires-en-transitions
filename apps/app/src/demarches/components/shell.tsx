@@ -21,7 +21,6 @@ type Props = PropsWithChildren<{
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
   onTransmettre: () => void;
   onPublish: () => void;
-  onUnpublish: () => void;
 }>;
 
 /**
@@ -37,7 +36,6 @@ export const DemarcheShell = ({
   onUpdate,
   onTransmettre,
   onPublish,
-  onUnpublish,
   children,
 }: Props) => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
@@ -82,7 +80,6 @@ export const DemarcheShell = ({
       onTransmettre: demanderConfirmation,
       isPublished,
       onPublish,
-      onUnpublish,
     },
     { defaultOpen: true }
   );

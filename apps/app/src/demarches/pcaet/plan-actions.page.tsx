@@ -25,7 +25,6 @@ export const DemarchePcaetPlanActionsPage = () => {
     update,
     transmettrePourAvis,
     publier,
-    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
 
@@ -66,7 +65,6 @@ export const DemarchePcaetPlanActionsPage = () => {
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
       onPublish={publier}
-      onUnpublish={depublier}
     >
       {/* Passée la clôture de l'instruction, l'écran change de rôle : il ne
           sert plus à rattacher un plan mais à relire celui qui a été transmis,

@@ -14,7 +14,6 @@ export const DemarchePcaetTransitionEnum = {
   DELAI_AVIS_ECHU: 'delai_avis_echu',
   ARCHIVER: 'archiver',
   PUBLIER: 'publier',
-  DEPUBLIER: 'depublier',
 } as const;
 
 export type DemarchePcaetTransition =
