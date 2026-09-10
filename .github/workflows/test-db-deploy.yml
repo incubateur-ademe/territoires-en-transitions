@@ -7,13 +7,13 @@ permissions:
 on:
   workflow_call:
 
-
 env:
   # le tag sqitch jusqu'où on test les revert/deploy
   tag: v4.0.0
 
 jobs:
   test-db-deploy:
+    name: Test database deployment lifecycle
     runs-on: ubuntu-latest
     environment: ci
 
@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
+
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
@@ -33,30 +34,85 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
 
+      - name: Bind database tests to the local Supabase container
+        id: local-supabase
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@supabase_db_tet:5432/postgres
+          SUPABASE_NETWORK: ${{ vars.SUPABASE_NETWORK }}
+        run: |
+          set -euo pipefail
+
+          container_id="$(docker inspect --format '{{.Id}}' supabase_db_tet)"
+          if [[ "$(docker inspect --format '{{.State.Running}}' supabase_db_tet)" != 'true' ]]; then
+            echo "::error::Le conteneur Supabase local n'est pas démarré."
+            exit 2
+          fi
+
+          attached_container_ip=''
+          while IFS='|' read -r attached_container_id attached_container_cidr; do
+            if [[ "$attached_container_id" == "$container_id" ]]; then
+              attached_container_ip="${attached_container_cidr%%/*}"
+              break
+            fi
+          done < <(
+            docker network inspect \
+              --format '{{range $id, $container := .Containers}}{{$id}}|{{$container.IPv4Address}}{{"\n"}}{{end}}' \
+              "$SUPABASE_NETWORK"
+          )
+          if [[ -z "$attached_container_ip" ]]; then
+            echo "::error::Le conteneur Supabase local n'est pas rattaché au réseau $SUPABASE_NETWORK."
+            exit 2
+          fi
+
+          postgres_image="$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)"
+          connection_identity="$(
+            docker run \
+              --rm \
+              --network "$SUPABASE_NETWORK" \
+              --env DATABASE_URL \
+              --entrypoint psql \
+              "$postgres_image" \
+              "$DATABASE_URL" \
+              --no-psqlrc \
+              --tuples-only \
+              --no-align \
+              --set ON_ERROR_STOP=1 \
+              --command "select current_database() || '|' || host(inet_server_addr())"
+          )"
+          if [[ "$connection_identity" != "postgres|$attached_container_ip" ]]; then
+            echo '::error::La cible PostgreSQL ne correspond pas au conteneur Supabase local démarré.'
+            exit 2
+          fi
+
+          echo "database-url=$DATABASE_URL" >> "$GITHUB_OUTPUT"
+          echo "sqitch-target=db:$DATABASE_URL" >> "$GITHUB_OUTPUT"
+
       - name: Sqitch revert to ${{ env.tag }}
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
         with:
-          command: "revert --to @${{ env.tag }} --y"
-          target: ${{ vars.SQITCH_TARGET }}
+          command: 'revert --to @${{ env.tag }} --y'
+          target: ${{ steps.local-supabase.outputs.sqitch-target }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
       - name: Sqitch deploy/verify
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
         with:
-          command: "deploy --mode change --verify"
-          target: ${{ vars.SQITCH_TARGET }}
+          command: 'deploy --mode change --verify'
+          target: ${{ steps.local-supabase.outputs.sqitch-target }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
       - name: Sqitch revert to ${{ env.tag }} (local)
         if: ${{ env.ACT }}
         uses: ./.github/actions/sqitch-local
         with:
-          command: "revert --to @${{ env.tag }} --y"
+          command: 'revert --to @${{ env.tag }} --y'
+          target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
       - name: Sqitch deploy/verify (local)
         if: ${{ env.ACT }}
         uses: ./.github/actions/sqitch-local
         with:
-          command: "deploy --mode change --verify"
+          command: 'deploy --mode change --verify'
+          target: ${{ steps.local-supabase.outputs.sqitch-target }}

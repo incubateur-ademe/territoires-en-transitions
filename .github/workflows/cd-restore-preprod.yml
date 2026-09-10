@@ -20,11 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     concurrency:
-      group: restore-preprod
+      group: database-maintenance-preprod
       cancel-in-progress: false
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install PostgreSQL client
         run: |
@@ -33,7 +35,7 @@ jobs:
 
       - name: Install yq
         run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
@@ -75,4 +77,5 @@ jobs:
           BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
           BACKUP_REGION: ${{ vars.BACKUP_REGION }}
           BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
-        run: bash data_layer/backup/restore.sh "${{ steps.restore_arg.outputs.restore_arg }}"
+          RESTORE_ARGUMENT: ${{ steps.restore_arg.outputs.restore_arg }}
+        run: bash data_layer/backup/restore.sh "$RESTORE_ARGUMENT"
