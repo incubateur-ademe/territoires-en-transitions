@@ -1,0 +1,143 @@
+name: docker-build-push
+description: Build une image Docker (BuildKit build-args/secrets/cache registre) et la pousse vers le registre
+
+inputs:
+  dockerfile:
+    description: Chemin du Dockerfile (le contexte de build est toujours la racine du repo)
+    required: true
+  image:
+    description: Chemin complet de l'image à tagger et pousser (registry/org/nom:tag)
+    required: true
+  cache-scope:
+    description: >
+      Scope du cache BuildKit (backend GitHub Actions) ; désactivé si vide.
+      À garder au niveau de l'image (`tet-backend`) et non de l'environnement
+      cible (`tet-backend-prod`) : le cache Actions est limité à 10 Go par
+      dépôt, partagé avec tous les autres workflows, avec éviction LRU. Un
+      scope par (image, cible) multiplierait les caches par 3 — ils
+      s'évinceraient mutuellement et évinceraient ceux de la CI, pour un taux
+      de hit final proche de zéro. Un scope par image laisse au contraire les
+      trois cibles partager le préfixe coûteux (fetch + install pnpm), qui est
+      identique pour toutes puisque les ARG/ENV spécifiques à
+      l'environnement n'interviennent qu'après.
+    required: false
+    default: ""
+  build-args:
+    description: Liste de build-args au format KEY=VALUE, une par ligne
+    required: false
+    default: ""
+  secrets:
+    description: >
+      Liste de secrets BuildKit au format id=NOM_VAR_ENV, une par ligne.
+      NOM_VAR_ENV doit être défini via `env:` sur l'étape qui appelle cette action.
+    required: false
+    default: ""
+  push:
+    description: Pousse l'image construite vers le registre (désactivé lors des exécutions locales via act)
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+
+  steps:
+    - name: Prépare un builder BuildKit avec driver docker-container
+      # nécessaire pour --push et --cache-to type=gha : le builder par défaut
+      # des runners (driver "docker") ne supporte pas ces exports.
+      shell: bash
+      run: docker buildx create --use --name ci-builder --driver docker-container 2>/dev/null || docker buildx use ci-builder
+
+    - name: Expose les identifiants du cache GitHub Actions
+      # docker buildx build est appelé directement (pas via
+      # docker/build-push-action), donc ACTIONS_CACHE_URL/ACTIONS_RUNTIME_TOKEN
+      # ne sont pas exposées automatiquement : cette action les injecte dans
+      # l'environnement du job pour que --cache-to/--cache-from type=gha
+      # puissent s'authentifier.
+      if: ${{ inputs.push == 'true' && inputs.cache-scope != '' }}
+      uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4.0.0
+
+    - name: Build (et push) de l'image
+      shell: bash
+      # Les inputs passent par `env:` (plutôt que d'être interpolés via ${{ }}
+      # directement dans le script) pour éviter qu'une valeur contenant des
+      # guillemets ou un `$(...)` ne casse ou n'injecte dans le script shell.
+      env:
+        DOCKERFILE: ${{ inputs.dockerfile }}
+        IMAGE: ${{ inputs.image }}
+        CACHE_SCOPE: ${{ inputs.cache-scope }}
+        BUILD_ARGS_INPUT: ${{ inputs.build-args }}
+        SECRETS_INPUT: ${{ inputs.secrets }}
+        PUSH: ${{ inputs.push }}
+      run: |
+        set -euo pipefail
+
+        build_args=()
+        while IFS= read -r line; do
+          [ -n "$line" ] && build_args+=(--build-arg "$line")
+        done <<< "$BUILD_ARGS_INPUT"
+
+        # Écrites dans des fichiers (--secret id=...,src=...) plutôt que lues
+        # directement depuis l'env (--secret id=...,env=...) : si un secret
+        # GitHub a été enregistré avec un retour à la ligne final (ex. `gh
+        # secret set` depuis un fichier avec \n de fin), pnpm/undici rejette
+        # ensuite l'en-tête Authorization avec "Invalid character in header
+        # content" — on neutralise ça en supprimant les espaces de début et de
+        # fin avant de matérialiser le secret.
+        #
+        # On ne supprime QUE les bords : cette action est générique, et un
+        # `tr -d '[:space:]'` détruirait silencieusement tout secret
+        # multi-lignes ou contenant des espaces (clé PEM, blob JSON de compte
+        # de service, passphrase), pour finir en échec d'authentification
+        # incompréhensible au milieu du build.
+        #
+        # umask + trap : les fichiers contiennent les secrets en clair sur le
+        # disque du runner. Sans ça ils restent lisibles par tous les steps
+        # suivants du job (y compris les hooks `post:` d'actions tierces)
+        # jusqu'à la fin du job.
+        umask 077
+        secret_tmpdir=$(mktemp -d)
+        trap 'rm -rf "$secret_tmpdir"' EXIT
+        secret_args=()
+        while IFS= read -r line; do
+          if [ -n "$line" ]; then
+            id="${line%%=*}"
+            var_name="${line#*=}"
+            secret_file="$secret_tmpdir/$id"
+            value="${!var_name}"
+            value="${value#"${value%%[![:space:]]*}"}"
+            value="${value%"${value##*[![:space:]]}"}"
+            printf '%s' "$value" > "$secret_file"
+            secret_args+=(--secret "id=$id,src=$secret_file")
+          fi
+        done <<< "$SECRETS_INPUT"
+
+        cache_args=()
+        output_args=()
+        if [ "$PUSH" = "true" ]; then
+          output_args+=(--push)
+          if [ -n "$CACHE_SCOPE" ]; then
+            # ignore-error : une écriture de cache qui échoue (quota atteint,
+            # service Actions indisponible) ne doit pas faire échouer un
+            # déploiement.
+            cache_args+=(--cache-from "type=gha,scope=$CACHE_SCOPE")
+            cache_args+=(--cache-to "type=gha,mode=max,scope=$CACHE_SCOPE,ignore-error=true")
+          fi
+        else
+          # Sans --push ni --load, le driver docker-container jette le
+          # résultat : le build local (act) ne produirait aucune image.
+          output_args+=(--load)
+        fi
+
+        # --platform explicite : sans lui l'architecture suit celle du runner.
+        # Koyeb tourne en amd64 ; un runner arm64 (changement de l'image
+        # `ubuntu-latest`, ajout d'un runner self-hosted) produirait
+        # silencieusement une image impossible à démarrer, sans erreur au build.
+        docker buildx build \
+          --platform linux/amd64 \
+          -f "$DOCKERFILE" \
+          "${build_args[@]}" \
+          "${secret_args[@]}" \
+          "${cache_args[@]}" \
+          -t "$IMAGE" \
+          "${output_args[@]}" \
+          .
