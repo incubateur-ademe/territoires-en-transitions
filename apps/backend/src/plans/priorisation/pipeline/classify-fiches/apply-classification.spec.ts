@@ -44,17 +44,6 @@ describe('applyClassification', () => {
     );
   });
 
-  it('dérive le secteur du levier annoncé', () => {
-    const result = applyClassification(toClassificationPerFiche(), rendered);
-    expect(result.success && result.data[0].volets).toEqual([
-      {
-        levier: 'Covoiturage',
-        secteur: 'Transports',
-        categorie: 'amenagement',
-      },
-    ]);
-  });
-
   it('développe un levier portant plusieurs catégories en autant de volets', () => {
     const result = applyClassification(
       [
@@ -92,16 +81,8 @@ describe('applyClassification', () => {
       rendered
     );
     expect(result.success && result.data[0].volets).toEqual([
-      {
-        levier: 'Covoiturage',
-        secteur: 'Transports',
-        categorie: 'amenagement',
-      },
-      {
-        levier: 'Covoiturage',
-        secteur: 'Transports',
-        categorie: 'financement',
-      },
+      { levier: 'Covoiturage', categorie: 'amenagement' },
+      { levier: 'Covoiturage', categorie: 'financement' },
     ]);
   });
 

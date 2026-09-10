@@ -1,17 +1,11 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  CategorieAction,
-  Levier,
-  LEVIER_SECTEURS,
-  LevierSecteur,
-} from '@tet/domain/shared';
+import { CategorieAction, Levier } from '@tet/domain/shared';
 import { uniqBy } from 'es-toolkit';
 import { FicheClassification } from './classify-fiches.schema';
 import { RenderedFiche } from './render-fiches-text';
 
 export type ClassifiedVolet = {
   levier: Levier;
-  secteur: LevierSecteur;
   categorie: CategorieAction;
 };
 
@@ -35,7 +29,6 @@ const toVolets = (classification: FicheClassification): ClassifiedVolet[] =>
     classification.volets.flatMap((volet) =>
       volet.categories.map((categorie) => ({
         levier: volet.levier,
-        secteur: LEVIER_SECTEURS[volet.levier],
         categorie,
       }))
     ),

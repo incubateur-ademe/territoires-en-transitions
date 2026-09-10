@@ -75,13 +75,7 @@ describe('classifyFiches', () => {
             ficheId: 42,
             justification: 'Le texte décrit une infrastructure de covoiturage.',
             isDescriptionTruncated: false,
-            volets: [
-              {
-                levier: 'Covoiturage',
-                secteur: 'Transports',
-                categorie: 'amenagement',
-              },
-            ],
+            volets: [{ levier: 'Covoiturage', categorie: 'amenagement' }],
           },
         ],
       },
