@@ -224,12 +224,6 @@ export const useUpdateFiche = (args?: Args) => {
           queryKey: trpc.plans.plans.getPlanCompletion.queryKey(),
         });
 
-        if (ficheFields.axes) {
-          ficheFields.axes.forEach(({ id: axeId }) =>
-            queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })
-          );
-        }
-
         if (args?.invalidatePlanId) {
           queryClient.invalidateQueries({
             queryKey: trpc.plans.plans.get.queryKey({
@@ -242,29 +236,6 @@ export const useUpdateFiche = (args?: Args) => {
             }),
           });
         }
-
-        queryClient.invalidateQueries({ queryKey: ['axe_fiches', null] });
-        queryClient.invalidateQueries({
-          queryKey: ['structures', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['partenaires', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['personnes_pilotes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['personnes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['services_pilotes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['personnes_referentes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['financeurs', collectiviteId],
-        });
       },
       onSuccess: () => {
         if (args?.onUpdateCallback) {

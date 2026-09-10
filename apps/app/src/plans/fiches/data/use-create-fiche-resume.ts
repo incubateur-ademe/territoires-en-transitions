@@ -38,8 +38,6 @@ export const useCreateFicheResume = (args: Args) => {
     collectiviteId,
   } = args;
 
-  const axe_fiches_key = ['axe_fiches', axeId];
-
   const openUrl = (url: string, openInNewTab?: boolean) => {
     if (openInNewTab) {
       window.open(url, '_blank');
@@ -67,7 +65,6 @@ export const useCreateFicheResume = (args: Args) => {
       await queryClient.cancelQueries({
         queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
-      await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
       if (axeId) {
         await queryClient.cancelQueries({
@@ -78,15 +75,9 @@ export const useCreateFicheResume = (args: Args) => {
         });
       }
 
-      const previousData = [
-        [
-          trpcClient.plans.plans.get.queryKey({ planId }),
-          queryClient.getQueryData(
-            trpcClient.plans.plans.get.queryKey({ planId })
-          ),
-        ],
-        [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
-      ];
+      const previousPlan = queryClient.getQueryData(
+        trpcClient.plans.plans.get.queryKey({ planId })
+      );
 
       const tempFiche = ficheResumeFactory({
         tempId: TEMPORARY_ID,
@@ -94,13 +85,6 @@ export const useCreateFicheResume = (args: Args) => {
         axeId,
         axeFichesIds,
       });
-
-      queryClient.setQueryData(
-        axe_fiches_key,
-        (old: FicheListItem[] | undefined) => {
-          return old ? [tempFiche, ...old] : [tempFiche];
-        }
-      );
 
       // mise à jour optimiste du cache listFiches avec le filtre axesId
       if (axeId) {
@@ -151,32 +135,20 @@ export const useCreateFicheResume = (args: Args) => {
       );
 
       const context = {
-        previousData,
+        previousPlan,
         tempFiche,
       };
 
       return context;
     },
     onError: (err, args, context) => {
-      context?.previousData.forEach(([key, data]) =>
-        queryClient.setQueryData(key as string[], data)
+      queryClient.setQueryData(
+        trpcClient.plans.plans.get.queryKey({ planId }),
+        context?.previousPlan
       );
     },
     onSuccess: async (data) => {
       const newFiche = data as unknown as FicheListItem;
-
-      // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
-      queryClient.setQueryData(
-        axe_fiches_key,
-        (old: FicheListItem[] | undefined): FicheListItem[] => {
-          const updatedData = old ?? [];
-          return sortFichesResume(
-            updatedData.map((f) => {
-              return f.id === TEMPORARY_ID ? newFiche : f;
-            })
-          );
-        }
-      );
 
       // Mise à jour du cache listFiches avec le filtre axesId pour rafraîchir immédiatement FichesList
       if (axeId) {
@@ -235,7 +207,6 @@ export const useCreateFicheResume = (args: Args) => {
         queryClient.invalidateQueries({
           queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
         }),
-        queryClient.invalidateQueries({ queryKey: axe_fiches_key }),
         queryClient.invalidateQueries({
           queryKey: trpcClient.plans.fiches.countBy.queryKey({
             collectiviteId,
