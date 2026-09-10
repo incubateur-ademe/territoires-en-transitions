@@ -76,8 +76,9 @@ export const useRemovePreuve = () => {
     },
 
     onSuccess: (_data, variables) => {
-      invalidateQueries(queryClient, variables.collectiviteId, {
-        invalidateParcours: false,
+      invalidateQueries({
+        queryClient,
+        collectiviteId: variables.collectiviteId,
         trpc,
       });
       if (variables.preuveType === 'annexe') {
@@ -131,8 +132,9 @@ export const useUpdatePreuveLien = () => {
     },
 
     onSuccess: (_data, variables) => {
-      invalidateQueries(queryClient, variables.collectiviteId, {
-        invalidateParcours: false,
+      invalidateQueries({
+        queryClient,
+        collectiviteId: variables.collectiviteId,
         trpc,
       });
       if (variables.preuveType === 'annexe') {
@@ -165,8 +167,9 @@ const useUpdatePreuveCommentaire = () => {
     },
 
     onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectiviteId, {
-        invalidateParcours: false,
+      invalidateQueries({
+        queryClient,
+        collectiviteId: variables.collectiviteId,
         trpc,
       });
       if (variables.preuveType === 'annexe') {
@@ -185,8 +188,9 @@ export const useUpdateBibliothequeFichier = () => {
   return useMutation(
     trpc.collectivites.documents.update.mutationOptions({
       onSuccess: (_data, variables) => {
-        invalidateQueries(queryClient, variables.collectiviteId, {
-          invalidateParcours: false,
+        invalidateQueries({
+          queryClient,
+          collectiviteId: variables.collectiviteId,
           trpc,
         });
         queryClient.invalidateQueries({
