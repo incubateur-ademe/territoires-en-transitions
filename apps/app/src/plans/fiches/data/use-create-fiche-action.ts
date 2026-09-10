@@ -21,10 +21,6 @@ export const useCreateFicheAction = () => {
 
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ['axe_fiches', null],
-      });
-
-      queryClient.invalidateQueries({
         queryKey: trpcClient.plans.fiches.listFiches.queryKey({
           collectiviteId,
         }),

@@ -33,7 +33,6 @@ export const useDuplicateFiche = ({
       queryClient.invalidateQueries({
         queryKey: trpc.plans.fiches.countBy.queryKey(),
       });
-      queryClient.invalidateQueries({ queryKey: ['axe_fiches'] });
       if (invalidatePlanId) {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.plans.get.queryKey({
