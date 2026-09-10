@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { FileItem } from './FileItem';
 import { UploadStatusCode } from './types';
+
+const HASH = toDocumentHash('a'.repeat(64));
 
 const createMockFile = (name: string, size: number): File => {
   const file = new File([''], name, { type: 'application/pdf' });
@@ -19,7 +22,7 @@ describe('FileItem duplicate message', () => {
             code: UploadStatusCode.duplicated,
             fichierId: 1,
             filename: 'nom-original.pdf',
-            hash: 'hash-1',
+            hash: HASH,
           },
         }}
       />
@@ -42,7 +45,7 @@ describe('FileItem duplicate message', () => {
             code: UploadStatusCode.duplicated,
             fichierId: 1,
             filename: 'nom-original.pdf',
-            hash: 'hash-1',
+            hash: HASH,
           },
         }}
       />

@@ -4,17 +4,23 @@ import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { FileUploadItem } from './FileItem';
 import { filesToUploadList, PreparedFile } from './filesToUploadList';
-import { UploadErrorCode, UploadStatus, UploadStatusCode } from './types';
+import {
+  isUploadInFlight,
+  UploadErrorCode,
+  UploadStatus,
+  UploadStatusCode,
+} from './types';
+import { uploadFileResultToStatus } from './upload-file-result-to-status';
 
 type UseFileUploadListInput = {
-  collectiviteId: number | undefined;
+  collectiviteId: number;
   initialItems?: Array<FileUploadItem>;
   constraints?: FileConstraints;
 };
 
 type UseFileUploadListResult = {
   items: Array<FileUploadItem>;
-  onDropFiles: (files: FileList | null) => Promise<void>;
+  onDropFiles: (files: ArrayLike<File> | null) => Promise<void>;
   onDismissItem: (itemId: string) => void;
 };
 
@@ -36,10 +42,7 @@ const isAbortError = (error: unknown): boolean =>
   error instanceof DOMException && error.name === 'AbortError';
 
 const abortWhenInFlight = ({ status }: FileUploadItem): void => {
-  const isInFlight =
-    status.code === UploadStatusCode.preparing ||
-    status.code === UploadStatusCode.running;
-  if (isInFlight) {
+  if (isUploadInFlight(status)) {
     status.abort();
   }
 };
@@ -58,7 +61,7 @@ const toEvictedItems = (
 
 const toListedFile = (prepared: PreparedFile): ListedFile => {
   const id = crypto.randomUUID();
-  if (prepared.kind === 'settled') {
+  if (prepared.kind === 'rejected') {
     return {
       kind: 'settled',
       item: { id, file: prepared.file, status: prepared.status },
@@ -104,11 +107,10 @@ export const useFileUploadList = ({
     hash,
     controller,
   }: FileToUpload): Promise<void> => {
-    if (!collectiviteId) return;
     const abort = (): void => controller.abort();
 
     try {
-      const fichierId = await uploadFile({
+      const uploadResult = await uploadFile({
         collectiviteId,
         file: item.file,
         hash,
@@ -125,11 +127,7 @@ export const useFileUploadList = ({
         removeItem(item.id);
         return;
       }
-      setStatus(item.id, {
-        code: UploadStatusCode.completed,
-        fichierId,
-        hash,
-      });
+      setStatus(item.id, uploadFileResultToStatus(uploadResult, hash));
     } catch (error) {
       if (isAbortError(error)) {
         removeItem(item.id);
@@ -142,11 +140,11 @@ export const useFileUploadList = ({
     }
   };
 
-  const onDropFiles = async (files: FileList | null): Promise<void> => {
-    if (!files || !collectiviteId) return;
-    const listedFiles = (
-      await filesToUploadList(collectiviteId, files, constraints)
-    ).map(toListedFile);
+  const onDropFiles = async (files: ArrayLike<File> | null): Promise<void> => {
+    if (!files) return;
+    const listedFiles = (await filesToUploadList(files, constraints)).map(
+      toListedFile
+    );
 
     // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne la
     // liste cumulée, en gardant les derniers déposés (ceux qui remplacent).

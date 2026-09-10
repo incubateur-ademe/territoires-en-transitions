@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { action } from 'storybook/actions';
 import type { FileConstraints } from '../upload/constants';
 import { AddFile } from './AddFile';
@@ -130,7 +131,7 @@ export const DejaDansLaBibliotheque: Story = {
           code: UploadStatusCode.duplicated,
           fichierId: 1,
           filename: 'deliberation.pdf',
-          hash: 'hash-1',
+          hash: toDocumentHash('1'.repeat(64)),
         },
       },
       {
@@ -139,7 +140,7 @@ export const DejaDansLaBibliotheque: Story = {
           code: UploadStatusCode.duplicated,
           fichierId: 2,
           filename: 'budget prévisionnel.xls',
-          hash: 'hash-2',
+          hash: toDocumentHash('2'.repeat(64)),
         },
       },
     ],
@@ -158,7 +159,7 @@ export const TeleversementAbouti: Story = {
         status: {
           code: UploadStatusCode.completed,
           fichierId: 3,
-          hash: 'hash-3',
+          hash: toDocumentHash('3'.repeat(64)),
         },
       },
     ],

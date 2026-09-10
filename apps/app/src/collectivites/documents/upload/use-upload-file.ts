@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterOutput, useTRPC } from '@tet/api';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { uploadToStorage } from './upload-to-storage';
 
@@ -11,7 +11,14 @@ type UploadFileArgs = {
   onProgress?: (percent: number) => void;
 };
 
-export type UploadFile = (args: UploadFileArgs) => Promise<number>;
+type UploadDecision =
+  RouterOutput['collectivites']['documents']['createUploadToken'];
+
+export type UploadFileResult =
+  | Extract<UploadDecision, { kind: 'alreadyInBibliotheque' }>
+  | { kind: 'uploaded'; fichierId: number };
+
+export type UploadFile = (args: UploadFileArgs) => Promise<UploadFileResult>;
 
 export const useUploadFile = (): UploadFile => {
   const trpc = useTRPC();
@@ -35,7 +42,7 @@ export const useUploadFile = (): UploadFile => {
   return async ({ collectiviteId, file, hash, signal, onProgress }) => {
     const uploadDecision = await createUploadToken({ collectiviteId, hash });
     if (uploadDecision.kind === 'alreadyInBibliotheque') {
-      return uploadDecision.fichierId;
+      return uploadDecision;
     }
 
     await uploadToStorage({
@@ -52,6 +59,6 @@ export const useUploadFile = (): UploadFile => {
       filename: file.name,
       hash,
     });
-    return fichier.id;
+    return { kind: 'uploaded', fichierId: fichier.id };
   };
 };

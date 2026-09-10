@@ -102,7 +102,7 @@ export const useUploadAuditReport = (
     uploadAbortRef.current = controller;
     setUploadingReport({ filename: file.name, progress: 0 });
     try {
-      const fichierId = await uploadFile({
+      const { fichierId } = await uploadFile({
         collectiviteId,
         file,
         hash: await hashFile(file),
