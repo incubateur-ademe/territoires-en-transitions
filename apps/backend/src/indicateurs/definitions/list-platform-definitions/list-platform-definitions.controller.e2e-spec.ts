@@ -18,7 +18,6 @@ describe("Api pour lister les définitions d'indicateur", () => {
       password: testUserResult.user.password,
     });
     authToken = signInResponse.data.session?.access_token || '';
-
   });
 
   afterAll(async () => {

@@ -74,10 +74,10 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 	lint lint-fix test typecheck \
         install dev graph \
 	hooks hooks-off \
-        infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
+        infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db guard-periodicite-bootstrap \
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-migrate-periodicite-expand db-test-deployment-guards db-test-periodicite-migration db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
+        db-init db-migrate db-migrate-fresh db-migrate-periodicite-expand db-migrate-periodicite-contract db-test-deployment-guards db-test-periodicite-bootstrap-guard db-test-periodicite-migration db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local
 
 help: ## Affiche cette aide
@@ -255,20 +255,44 @@ tui: ensure-deps ## Tableau de bord interactif de la stack : statuts, URLs, logs
 	else DOCKER="$(DOCKER)" node scripts/dev-tui.mts; fi
 
 ## —— 🗄️  Base de données —————————————————————————————————————————————————————
-db-init: guard-main preflight-env-keys services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
+db-init: guard-main preflight-env-keys services-up db-migrate-fresh db-import-referentiels db-seed ## Initialise une base neuve, ou complète une base ayant déjà franchi le contract
 	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
-db-migrate: db-migrate-periodicite-expand ## Déploie la phase compatible de périodicité
+# Un bootstrap complet est sûr uniquement avant la première migration, ou si
+# le contract est déjà enregistré. Une base existante arrêtée à l'expand doit
+# suivre le workflow contrôlé de l'ADR 0018.
+guard-periodicite-bootstrap:
+	@$(COMPOSE) exec -T db psql -U postgres --set ON_ERROR_STOP=1 --file - < data_layer/scripts/check-periodicite-bootstrap.sql || { \
+		echo "✗ db-init refuse de confirmer le contract sur une base existante"; \
+		echo "  phase expand   : make db-migrate-periodicite-expand"; \
+		echo "  phase contract : make db-migrate-periodicite-contract (local uniquement)"; \
+		echo "                   utiliser le workflow cd-periodicite-contract ailleurs"; \
+		exit 2; \
+	}
+
+db-migrate: warn-shared-db ## Applique les migrations ordinaires ; le contract reste fail-closed tant qu'il n'est pas confirmé
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode all --verify
+
+db-migrate-fresh: warn-shared-db guard-periodicite-bootstrap ## Déploie tout le plan sur une base neuve ou déjà contractée
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T --env "PGOPTIONS=-c tet.periodicite_contract_confirmed=on" sqitch deploy --mode all --verify
 
 db-migrate-periodicite-expand: warn-shared-db ## Déploie les quatre changements expand dans une transaction vérifiée
 	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode all --verify --to @indicateur-periodicite-expand
+
+db-migrate-periodicite-contract: warn-shared-db ## Prévalide puis déploie localement l'exacte phase contract ; en environnement partagé, utiliser le workflow protégé
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch verify --from indicateur/periodicite --to @indicateur-periodicite-expand
+	$(COMPOSE) exec -T db psql -U postgres --set ON_ERROR_STOP=1 --file - < data_layer/scripts/check-periodicite-contract.sql
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T --env "PGOPTIONS=-c tet.periodicite_contract_confirmed=on" sqitch deploy --mode all --verify --to @indicateur-periodicite-contract
 
 db-test-deployment-guards: ## Teste les politiques d'URL, backup/schéma et base de migration jetable
 	node --test data_layer/scripts/validate-database-url.spec.mjs
 	bash data_layer/backup/check-restore-compatibility.spec.sh
 	bash data_layer/tests/indicateur/periodicite-migration-lifecycle-database.spec.sh
 
-db-test-periodicite-migration: ## Teste le cycle expand sur PERIODICITE_MIGRATION_TEST_DATABASE_URL (base jetable)
+db-test-periodicite-bootstrap-guard: ## Teste le garde sur PERIODICITE_BOOTSTRAP_TEST_DATABASE_URL (droits CREATEDB requis)
+	bash data_layer/tests/indicateur/periodicite-bootstrap-guard.spec.sh
+
+db-test-periodicite-migration: ## Teste le cycle Sqitch sur PERIODICITE_MIGRATION_TEST_DATABASE_URL (base jetable)
 	bash data_layer/tests/indicateur/periodicite-migration-lifecycle.sh
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables

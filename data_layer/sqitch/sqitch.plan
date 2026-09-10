@@ -1073,3 +1073,7 @@ indicateur/import_emt_valeur [indicateur/periodicite] 2026-09-03T16:00:15Z Emili
 indicateur/reconciliation_formules [indicateur/periodicite private_schema] 2026-09-03T16:00:20Z Emilien Escalle <emilien.escalle@escemi.com> # Rend durable et bornée la réconciliation déclenchée par un changement de formule
 indicateur/dependances_formules [private_schema] 2026-09-03T16:00:25Z Emilien Escalle <emilien.escalle@escemi.com> # Centralise l'extraction des dépendances de formule dès la phase expand
 @indicateur-periodicite-expand 2026-09-03T16:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière de déploiement expand avant activation de la contrainte stricte
+indicateur/periodicite_obligatoire [indicateur/periodicite] 2026-09-03T16:01:00Z Emilien Escalle <emilien.escalle@escemi.com> # Verrouille la périodicité après classification et audit des définitions
+indicateur/periodicite_formules [indicateur/periodicite_obligatoire indicateur/dependances_formules] 2026-09-03T16:30:00Z Emilien Escalle <emilien.escalle@escemi.com> # Matérialise les dépendances de calcul et garantit leur homogénéité de périodicité
+stats/report_indicateur_resultat_periode [indicateur/periodicite_obligatoire collectivite/fusion] 2026-09-03T17:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Expose la politique et le début de période tout en maintenant l'année
+@indicateur-periodicite-contract 2026-09-03T17:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière exacte du contract de périodicité après les contraintes et le reporting

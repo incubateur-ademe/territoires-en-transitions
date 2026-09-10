@@ -34,10 +34,27 @@ apply_change() {
   psql_test --file="$repository_root/$1" >/dev/null
 }
 
+apply_contract_change() {
+  psql_test \
+    --command="SET tet.periodicite_contract_confirmed = 'on'" \
+    --file="$repository_root/$1" >/dev/null
+}
+
 expect_change_failure() {
   local change="$1"
   local message="$2"
   if psql_test --file="$repository_root/$change" >/dev/null 2>&1; then
+    echo "ÉCHEC: $message" >&2
+    exit 1
+  fi
+}
+
+expect_contract_change_failure() {
+  local change="$1"
+  local message="$2"
+  if psql_test \
+    --command="SET tet.periodicite_contract_confirmed = 'on'" \
+    --file="$repository_root/$change" >/dev/null 2>&1; then
     echo "ÉCHEC: $message" >&2
     exit 1
   fi
@@ -109,8 +126,11 @@ scalar "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, da
 expand_migration_log="$(mktemp)"
 expand_delete_log="$(mktemp)"
 transition_log="$(mktemp)"
+contract_writer_log="$(mktemp)"
 graph_definition_log="$(mktemp)"
 graph_value_log="$(mktemp)"
+formula_source_log="$(mktemp)"
+formula_target_log="$(mktemp)"
 emt_definition_log="$(mktemp)"
 emt_writer_log="$(mktemp)"
 emt_lock_first_log="$(mktemp)"
@@ -118,7 +138,7 @@ emt_lock_second_log="$(mktemp)"
 reconciliation_producer_log="$(mktemp)"
 reconciliation_revert_log="$(mktemp)"
 reconciliation_reader_log="$(mktemp)"
-trap 'rm -f "$expand_migration_log" "$expand_delete_log" "$transition_log" "$graph_definition_log" "$graph_value_log" "$emt_definition_log" "$emt_writer_log" "$emt_lock_first_log" "$emt_lock_second_log" "$reconciliation_producer_log" "$reconciliation_revert_log" "$reconciliation_reader_log"' EXIT
+trap 'rm -f "$expand_migration_log" "$expand_delete_log" "$transition_log" "$contract_writer_log" "$graph_definition_log" "$graph_value_log" "$formula_source_log" "$formula_target_log" "$emt_definition_log" "$emt_writer_log" "$emt_lock_first_log" "$emt_lock_second_log" "$reconciliation_producer_log" "$reconciliation_revert_log" "$reconciliation_reader_log"' EXIT
 
 # L'expand prend définition puis valeur. Une ancienne suppression avec cascade
 # arrivée ensuite attend donc sans détenir la table de valeurs : la migration
@@ -148,6 +168,10 @@ assert_equal "2020-01-01|2020-02-01|normalisee" \
 assert_equal "2" "$(scalar "SELECT count(*) FROM migration.indicateur_valeur_periodicite_audit WHERE indicateur_id = $conflict_id AND statut = 'conflit'")" \
   "l'expand doit auditer sans fusionner les collisions historiques"
 
+expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
+  "le preflight doit refuser un audit contenant encore des conflits"
+expect_contract_change_failure data_layer/sqitch/deploy/indicateur/periodicite_obligatoire.sql \
+  "le contract doit refuser un audit contenant encore des conflits"
 scalar "DELETE FROM public.indicateur_valeur WHERE indicateur_id = $conflict_id AND date_valeur = DATE '2019-03-01'; UPDATE public.indicateur_valeur SET date_valeur = DATE '2019-01-01' WHERE indicateur_id = $conflict_id" >/dev/null
 assert_equal "0" "$(scalar "SELECT count(*) FROM migration.indicateur_valeur_periodicite_audit WHERE indicateur_id = $conflict_id")" \
   "la remédiation explicite doit assainir les audits de conflit"
@@ -161,6 +185,17 @@ apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
 assert_equal "2025-01-01|2025-02-01|normalisee" \
   "$(scalar "SELECT valeur.date_valeur || '|' || audit.date_valeur_avant || '|' || audit.statut FROM public.indicateur_valeur valeur JOIN migration.indicateur_valeur_periodicite_audit audit ON audit.valeur_id = valeur.id WHERE valeur.id = $expand_restore_value_id")" \
   "le post-traitement expand doit normaliser et auditer une valeur restaurée sans triggers"
+
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-source-inconnue-$fixture_suffix)' WHERE id = $target_id" >/dev/null
+expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
+  "le preflight doit refuser une formule qui référence une définition inconnue"
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-emt-$fixture_suffix)' WHERE id = $target_id; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $emt_id" >/dev/null
+expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
+  "le preflight doit refuser une formule dont la source a une autre périodicité"
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = NULL WHERE id = $target_id; UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $emt_id" >/dev/null
+apply_change data_layer/scripts/check-periodicite-contract.sql
+expect_change_failure data_layer/sqitch/deploy/indicateur/periodicite_obligatoire.sql \
+  "le contract doit refuser un déploiement sans confirmation explicite"
 
 psql_test --command="SET application_name = 'periodicite-lifecycle-transition-writer'; BEGIN; INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, resultat) VALUES ($concurrency_id, $collectivite_id, DATE '2021-02-01', 1); SELECT pg_sleep(3); COMMIT" >"$transition_log" 2>&1 &
 transition_pid=$!
@@ -319,6 +354,112 @@ assert_equal "1|2" \
   "$(scalar "SELECT (SELECT count(*) FROM public.indicateur_valeur WHERE indicateur_id = $concurrency_id AND date_valeur = DATE '2024-01-01') || '|' || (SELECT valeur_calcule FROM public.indicateur_definition WHERE id = $target_id)")" \
   "une écriture de valeur arrivée en premier doit précéder la mutation du graphe"
 
+# Reproduit un writer canonique ayant pris le verrou partagé du graphe puis sa
+# définition avant que le contract ne demande le verrou exclusif. Le contract
+# attend sans tenir de table ; le writer peut terminer puis le débloquer.
+psql_test --command="SET application_name = 'periodicite-lifecycle-contract-writer'; BEGIN; SELECT pg_advisory_xact_lock_shared(hashtextextended('indicateur-calculation-graph', 0)); SELECT id FROM public.indicateur_definition WHERE id = $concurrency_id FOR SHARE; SELECT pg_sleep(3); INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, resultat) VALUES ($concurrency_id, $collectivite_id, DATE '2022-01-01', 3); COMMIT" >"$contract_writer_log" 2>&1 &
+contract_writer_pid=$!
+wait_for_sleeping_session periodicite-lifecycle-contract-writer
+timeout 20 psql --quiet --no-psqlrc --set=ON_ERROR_STOP=1 \
+  --dbname="$database_url" \
+  --command="SET tet.periodicite_contract_confirmed = 'on'" \
+  --file="$repository_root/data_layer/sqitch/deploy/indicateur/periodicite_obligatoire.sql" >/dev/null
+wait "$contract_writer_pid"
+apply_change data_layer/sqitch/verify/indicateur/periodicite_obligatoire.sql
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_formules.sql
+apply_change data_layer/sqitch/verify/indicateur/periodicite_formules.sql
+
+formula_source_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-formula-source-$fixture_suffix', 'cycle-formula-source-$fixture_suffix', 'kWh', 'annuelle') RETURNING id")"
+formula_target_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-formula-target-$fixture_suffix', 'cycle-formula-target-$fixture_suffix', 'kWh', 'annuelle') RETURNING id")"
+
+# Dans les deux ordres d'arrivée, le verrou exclusif du graphe force le second
+# writer à valider contre le commit du premier. La contrainte différable voit
+# alors soit la nouvelle arête, soit la nouvelle cadence, et échoue fermé.
+psql_test --command="SET application_name = 'periodicite-lifecycle-formula-target'; BEGIN; UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id; SELECT pg_sleep(3); COMMIT" >"$formula_target_log" 2>&1 &
+formula_target_pid=$!
+wait_for_sleeping_session periodicite-lifecycle-formula-target
+psql_test --command="SET application_name = 'periodicite-lifecycle-formula-source'; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $formula_source_id" >"$formula_source_log" 2>&1 &
+formula_source_pid=$!
+wait_for_advisory_lock_session periodicite-lifecycle-formula-source
+wait "$formula_target_pid"
+if wait "$formula_source_pid"; then
+  echo "ÉCHEC: une modification concurrente a désaligné la source d'une formule validée" >&2
+  exit 1
+fi
+assert_equal "annuelle|1" \
+  "$(scalar "SELECT source.periodicite || '|' || count(dependance.*) FROM public.indicateur_definition source LEFT JOIN private.indicateur_definition_dependance_calcul dependance ON dependance.source_identifiant = source.identifiant_referentiel WHERE source.id = $formula_source_id GROUP BY source.periodicite")" \
+  "la formule validée en premier doit empêcher la source de changer de cadence"
+
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = NULL WHERE id = $formula_target_id" >/dev/null
+psql_test --command="SET application_name = 'periodicite-lifecycle-formula-source'; BEGIN; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $formula_source_id; SELECT pg_sleep(3); COMMIT" >"$formula_source_log" 2>&1 &
+formula_source_pid=$!
+wait_for_sleeping_session periodicite-lifecycle-formula-source
+psql_test --command="SET application_name = 'periodicite-lifecycle-formula-target'; UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id" >"$formula_target_log" 2>&1 &
+formula_target_pid=$!
+wait_for_advisory_lock_session periodicite-lifecycle-formula-target
+wait "$formula_source_pid"
+if wait "$formula_target_pid"; then
+  echo "ÉCHEC: une formule concurrente a accepté une source devenue mensuelle" >&2
+  exit 1
+fi
+assert_equal "mensuelle|0" \
+  "$(scalar "SELECT source.periodicite || '|' || count(dependance.*) FROM public.indicateur_definition source LEFT JOIN private.indicateur_definition_dependance_calcul dependance ON dependance.source_identifiant = source.identifiant_referentiel WHERE source.id = $formula_source_id GROUP BY source.periodicite")" \
+  "la cadence validée en premier doit faire échouer la nouvelle formule sans laisser de projection"
+scalar "UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $formula_source_id" >/dev/null
+
+apply_change data_layer/sqitch/deploy/stats/report_indicateur_resultat_periode.sql
+apply_change data_layer/sqitch/verify/stats/report_indicateur_resultat_periode.sql
+
+# Une restauration charge indicateur_definition avec les triggers USER coupés.
+# Simule cet état, puis vérifie que le post-traitement reconstruit la projection,
+# valide le graphe atomiquement et préserve les réconciliations encore dues.
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id" >/dev/null
+scalar "INSERT INTO private.indicateur_reconciliation_formule (generation, indicateur_id, collectivite_id, formule_attendue) VALUES (gen_random_uuid(), $formula_target_id, $collectivite_id, 'val(cycle-formula-source-$fixture_suffix)')" >/dev/null
+scalar "ALTER TABLE public.indicateur_definition DISABLE TRIGGER USER; DELETE FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $formula_source_id; ALTER TABLE public.indicateur_definition ENABLE TRIGGER USER" >/dev/null
+expect_change_failure data_layer/backup/rebuild-indicateur-formula-state.sql \
+  "le rebuild post-restore doit refuser atomiquement un graphe inter-périodicité"
+assert_equal "0|1" \
+  "$(scalar "SELECT (SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id) || '|' || (SELECT count(*) FROM private.indicateur_reconciliation_formule WHERE indicateur_id = $formula_target_id)")" \
+  "un rebuild invalide ne doit ni publier une projection ni vider la file"
+scalar "ALTER TABLE public.indicateur_definition DISABLE TRIGGER USER; UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $formula_source_id; ALTER TABLE public.indicateur_definition ENABLE TRIGGER USER" >/dev/null
+apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
+assert_equal "1|1" \
+  "$(scalar "SELECT (SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id AND source_identifiant = 'cycle-formula-source-$fixture_suffix') || '|' || (SELECT count(*) FROM private.indicateur_reconciliation_formule)")" \
+  "le rebuild valide doit restaurer la projection canonique et préserver la file du snapshot"
+scalar "DELETE FROM private.indicateur_reconciliation_formule WHERE indicateur_id = $formula_target_id AND collectivite_id = $collectivite_id" >/dev/null
+
+scalar "UPDATE public.indicateur_valeur SET indicateur_id = $target_id WHERE id = $origin_value_id; UPDATE public.indicateur_valeur SET indicateur_id = $origin_id WHERE id = $origin_value_id" >/dev/null
+assert_equal "0" "$(scalar "SELECT count(*) FROM migration.indicateur_valeur_periodicite_audit WHERE valeur_id = $origin_value_id")" \
+  "un déplacement aller-retour ne doit pas ressusciter l'audit d'origine"
+
+apply_change data_layer/sqitch/revert/indicateur/periodicite_formules.sql
+apply_change data_layer/sqitch/revert/indicateur/periodicite_obligatoire.sql
+apply_contract_change data_layer/sqitch/deploy/indicateur/periodicite_obligatoire.sql
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_formules.sql
+apply_change data_layer/sqitch/verify/indicateur/periodicite_formules.sql
+assert_equal "2020-01-01|0" \
+  "$(scalar "SELECT valeur.date_valeur || '|' || count(audit.*) FROM public.indicateur_valeur valeur LEFT JOIN migration.indicateur_valeur_periodicite_audit audit ON audit.valeur_id = valeur.id WHERE valeur.id = $origin_value_id GROUP BY valeur.date_valeur")" \
+  "un rejeu du contract ne doit pas recréer un audit obsolète"
+
+apply_change data_layer/sqitch/revert/stats/report_indicateur_resultat_periode.sql
+apply_change data_layer/sqitch/revert/indicateur/periodicite_formules.sql
+if psql_test --command="INSERT INTO public.indicateur_definition (collectivite_id, titre, unite, periodicite) VALUES ($collectivite_id, 'cycle-garde-$fixture_suffix', 'kWh', 'mensuelle')" >/dev/null 2>&1; then
+  echo "ÉCHEC: le garde inter-changements a autorisé une définition mensuelle" >&2
+  exit 1
+fi
+
+# Le garde de retrait protège aussi les nouveaux états sans définition mensuelle.
+for policy_write in \
+  "INSERT INTO public.indicateur_collectivite (indicateur_id, collectivite_id, periodicite) VALUES ($emt_second_id, $collectivite_id, 'mensuelle')" \
+  "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, periodicite, date_valeur, resultat) VALUES ($emt_second_id, $collectivite_id, 'mensuelle', DATE '2040-01-01', 1)" \
+  "UPDATE public.indicateur_definition SET periodicite_mode = 'imposee' WHERE id = $emt_second_id"; do
+  if psql_test --command="$policy_write" >/dev/null 2>&1; then
+    echo "ÉCHEC: le garde inter-changements a autorisé un état incompatible avec le retrait" >&2
+    exit 1
+  fi
+done
+
+apply_change data_layer/sqitch/revert/indicateur/periodicite_obligatoire.sql
 apply_change data_layer/sqitch/revert/indicateur/dependances_formules.sql
 apply_change data_layer/sqitch/revert/indicateur/reconciliation_formules.sql
 apply_change data_layer/sqitch/revert/indicateur/import_emt_valeur.sql
@@ -326,8 +467,8 @@ apply_change data_layer/sqitch/revert/indicateur/periodicite.sql
 assert_equal "0" \
   "$(scalar "SELECT position('iri.periodicite' IN pg_get_functiondef('public.indicateurs_gaz_effet_serre(site_labellisation)'::regprocedure))")" \
   "le revert doit restaurer la projection GES sans dépendance à la colonne supprimée"
-assert_equal "2020-02-01" "$(scalar "SELECT date_valeur FROM public.indicateur_valeur WHERE id = $origin_value_id")" \
-  "le revert restaure la date historique auditée"
+assert_equal "2020-01-01" "$(scalar "SELECT date_valeur FROM public.indicateur_valeur WHERE id = $origin_value_id")" \
+  "le revert ne doit pas restaurer la date d'un audit invalidé"
 assert_equal "1" "$(scalar "SELECT count(*) FROM public.indicateur_valeur WHERE indicateur_id = $concurrency_id AND date_valeur = DATE '2021-02-01'")" \
   "le revert doit restaurer une date dont l'audit est toujours valide"
 assert_equal "" "$(scalar "SELECT to_regclass('public.indicateur_periodicite')")" \

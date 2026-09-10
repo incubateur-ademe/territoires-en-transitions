@@ -37,8 +37,6 @@ const periodPolicyFiles = new Set([
 ]);
 
 const annualCompatibilityBoundary = new Set([
-  // The expand-phase database default is removed by the final contract PR.
-  'apps/backend/src/indicateurs/definitions/indicateur-definition.table.ts',
   // Date-only legacy writers remain annual; stored values always have a cadence.
   'apps/backend/src/indicateurs/valeurs/indicateur-period.adapter.ts',
   'apps/backend/src/indicateurs/valeurs/indicateur-valeur.table.ts',

@@ -283,6 +283,7 @@ export async function insertFixtureScoreAvecExprCible(
     .values({
       titre: 'Indicateur de test exprCible avec referentiel()',
       unite: '%',
+      periodicite: 'annuelle',
       identifiantReferentiel,
       exprCible,
     })
@@ -369,6 +370,7 @@ export async function insertFixtureIndicateurPourValeursReference(
     .values({
       titre: 'Indicateur de test valeurs de référence avec referentiel()',
       unite: '%',
+      periodicite: 'annuelle',
       identifiantReferentiel,
       exprCible,
     })
