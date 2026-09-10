@@ -6,9 +6,14 @@ import { createWriteStream } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { type Writable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import { type ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import { type ArchiveFolderArborescence } from './archive-arborescence.types';
+import {
+  ArchiveAssemblyErrorEnum,
+  type ArchiveAssemblyError,
+} from './archive-assembly.errors';
 import {
   ARCHIVE_ZIP_CONTENT_TYPE,
   PREUVES_ARCHIVES_BUCKET,
@@ -37,9 +42,9 @@ type DownloadOutcome =
   | { kind: 'appended' }
   | { kind: 'failed'; message: string };
 
-interface AssembleZipInput {
+export interface AssembleZipInput {
   arborescence: ArchiveFolderArborescence;
-  tempZipPath: string;
+  destination: Writable;
   onProgress?: (processedFiles: number) => void;
 }
 
@@ -61,11 +66,14 @@ export class BuildArchiveService {
 
       const assembleResult = await this.assembleZip({
         arborescence,
-        tempZipPath,
+        destination: createWriteStream(tempZipPath),
         onProgress,
       });
       if (!assembleResult.success) {
-        return assembleResult;
+        return failure(
+          PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR,
+          assembleResult.cause
+        );
       }
 
       const uploadResult = await this.documentStorage.storeDocument({
@@ -105,35 +113,46 @@ export class BuildArchiveService {
     }
   }
 
-  private async assembleZip({
+  async assembleZip({
     arborescence,
-    tempZipPath,
+    destination,
     onProgress,
-  }: AssembleZipInput): Promise<Result<{ totalFiles: number }, PreuvesArchiveError>> {
+  }: AssembleZipInput): Promise<
+    Result<{ totalFiles: number }, ArchiveAssemblyError>
+  > {
     const archive = archiver('zip', { store: true });
-    const output = createWriteStream(tempZipPath);
-    const writeFinished = pipeline(archive, output);
+    const writeFinished = pipeline(archive, destination);
 
     const preparedEntries = prepareArchiveEntries(arborescence.files);
 
-    const outcomes = await mapWithConcurrency(
-      preparedEntries,
-      DOWNLOAD_CONCURRENCY,
-      (entry) => this.downloadAndAppendEntry({ entry, archive }),
-      (processed) => onProgress?.(processed)
-    );
-    const failedDownloads = outcomes.flatMap((outcome) =>
-      outcome.kind === 'failed' ? [outcome.message] : []
-    );
+    try {
+      const outcomes = await mapWithConcurrency(
+        preparedEntries,
+        DOWNLOAD_CONCURRENCY,
+        (entry) => this.downloadAndAppendEntry({ entry, archive }),
+        (processed) => onProgress?.(processed)
+      );
+      const failedDownloads = outcomes.flatMap((outcome) =>
+        outcome.kind === 'failed' ? [outcome.message] : []
+      );
 
-    buildArchiveManifests({ arborescence, failedDownloads }).forEach((entry) =>
-      archive.append(entry.content, { name: entry.name })
-    );
+      buildArchiveManifests({ arborescence, failedDownloads }).forEach(
+        (entry) => archive.append(entry.content, { name: entry.name })
+      );
 
-    await archive.finalize();
-    await writeFinished;
+      await archive.finalize();
+      await writeFinished;
 
-    return success({ totalFiles: preparedEntries.length });
+      return success({ totalFiles: preparedEntries.length });
+    } catch (error) {
+      this.logger.error(
+        `Assemblage de l'archive interrompu: ${getErrorMessage(error)}`
+      );
+      return failure(
+        ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
   }
 
   private async downloadAndAppendEntry({

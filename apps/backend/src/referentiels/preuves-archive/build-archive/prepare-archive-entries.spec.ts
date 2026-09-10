@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { ArchiveFile } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFile } from './archive-arborescence.types';
 import { prepareArchiveEntries } from './prepare-archive-entries';
 
-function makeFile(
-  overrides: Partial<ArchiveFile> = {}
-): ArchiveFile {
+function makeFile(overrides: Partial<ArchiveFile> = {}): ArchiveFile {
   return {
     folderSegments: ['mesures', 'axe-1'],
     filename: 'document.pdf',
@@ -30,7 +28,7 @@ describe('prepareArchiveEntries', () => {
     ]);
   });
 
-  it("suffixe `(2)`, `(3)`... pour les doublons de chemin", () => {
+  it('suffixe `(2)`, `(3)`... pour les doublons de chemin', () => {
     const files = [
       makeFile({ hash: 'a' }),
       makeFile({ hash: 'b' }),
@@ -57,7 +55,7 @@ describe('prepareArchiveEntries', () => {
     expect(entries[1].entryPath).toBe('mesures/axe-1/rapport.tar (2).gz');
   });
 
-  it("ajoute le suffixe en fin pour un fichier sans extension", () => {
+  it('ajoute le suffixe en fin pour un fichier sans extension', () => {
     const files = [
       makeFile({ filename: 'README', hash: 'a' }),
       makeFile({ filename: 'README', hash: 'b' }),
@@ -68,7 +66,7 @@ describe('prepareArchiveEntries', () => {
     expect(entries[1].entryPath).toBe('mesures/axe-1/README (2)');
   });
 
-  it("ajoute le suffixe en fin pour un fichier commençant par un point", () => {
+  it('ajoute le suffixe en fin pour un fichier commençant par un point', () => {
     const files = [
       makeFile({ filename: '.env', hash: 'a' }),
       makeFile({ filename: '.env', hash: 'b' }),
@@ -79,7 +77,7 @@ describe('prepareArchiveEntries', () => {
     expect(entries[1].entryPath).toBe('mesures/axe-1/.env (2)');
   });
 
-  it("ne déduplique pas entre dossiers distincts", () => {
+  it('ne déduplique pas entre dossiers distincts', () => {
     const files = [
       makeFile({ folderSegments: ['mesures', 'axe-1'], hash: 'a' }),
       makeFile({ folderSegments: ['mesures', 'axe-2'], hash: 'b' }),
