@@ -2,6 +2,7 @@ name: Déploiement à la demande du panier
 
 permissions:
   contents: read
+  packages: write
 
 run-name: Déploiement du panier sur ${{ github.event.inputs.target }}
 
@@ -24,32 +25,55 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v7.0.1
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+          persist-credentials: false
+          fetch-depth: 0
 
-      - name: Build and push panier image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +panier-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --APP_URL=${{ vars.APP_URL }}
-          --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+      - id: meta
+        uses: ./.github/actions/build-metadata
 
-      - name: Deploy panier on Koyeb
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker-image-path
+        with:
+          username: incubateur-ademe
+          image: tet-panier
+          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+
+      - name: Build et push de l'image panier
+        uses: ./.github/actions/docker-build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+        with:
+          dockerfile: apps/panier/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-panier
+          push: ${{ !env.ACT }}
+          secrets: |
+            bryntum_token=BRYNTUM_ACCESS_TOKEN
+          build-args: |
+            ANON_KEY=${{ secrets.ANON_KEY }}
+            API_URL=${{ secrets.API_URL }}
+            APP_URL=${{ vars.APP_URL }}
+            AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
+            BACKEND_URL=${{ vars.BACKEND_URL }}
+            CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+
+      - uses: ./.github/actions/koyeb-cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Déploie le panier sur Koyeb
+        env:
+          ENV_NAME: ${{ github.event.inputs.target }}
+          IMAGE: ${{ steps.image.outputs.path }}
         run: >
-          earthly
-          --use-inline-cache
-          +panier-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          koyeb services update $ENV_NAME-panier/front
+          --docker "$IMAGE"
+          --docker-private-registry-secret ghcr

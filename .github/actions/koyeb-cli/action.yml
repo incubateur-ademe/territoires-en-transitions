@@ -1,0 +1,43 @@
+name: koyeb-cli
+description: Installe une version épinglée et vérifiée du CLI Koyeb, et la configure avec un token d'API
+
+inputs:
+  api-key:
+    description: Token d'API Koyeb
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Installe le CLI Koyeb (version épinglée, checksum vérifié)
+      shell: bash
+      # Pour monter de version : changer ces deux valeurs ensemble. Le sha256
+      # vient du fichier checksums.txt publié avec la release GitHub
+      # (https://github.com/koyeb/koyeb-cli/releases), à vérifier à la main
+      # avant de l'épingler ici — on ne le retélécharge pas à chaque run,
+      # sinon un binaire et son checksums.txt compromis ensemble passeraient
+      # la vérification sans qu'on s'en aperçoive.
+      env:
+        KOYEB_CLI_VERSION: "5.10.2"
+        KOYEB_CLI_SHA256: "a6dc0b3079d1c345571891c0d12592db07a9730578afc915e2ddda88a0556c28"
+      run: |
+        set -euo pipefail
+        archive="koyeb-cli_${KOYEB_CLI_VERSION}_linux_amd64.tar.gz"
+        curl -fsSL -o "$archive" \
+          "https://github.com/koyeb/koyeb-cli/releases/download/v${KOYEB_CLI_VERSION}/$archive"
+        echo "${KOYEB_CLI_SHA256}  ${archive}" | sha256sum -c -
+        mkdir -p "$HOME/.koyeb/bin"
+        tar -xzf "$archive" -C "$HOME/.koyeb/bin" koyeb
+        rm -f "$archive"
+
+    - name: Ajoute le CLI Koyeb au PATH
+      shell: bash
+      run: echo "$HOME/.koyeb/bin" >> "$GITHUB_PATH"
+
+    - name: Configure le token Koyeb
+      shell: bash
+      env:
+        API_KEY: ${{ inputs.api-key }}
+      run: |
+        echo "token: $API_KEY" > ~/.koyeb.yaml

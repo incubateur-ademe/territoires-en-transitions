@@ -22,24 +22,49 @@ jobs:
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.image.outputs.path }}
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v7.0.1
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+          persist-credentials: false
+          fetch-depth: 0
 
-      - name: Build and push tools image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +tools-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+      - id: meta
+        uses: ./.github/actions/build-metadata
+
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker-image-path
+        with:
+          username: incubateur-ademe
+          image: tet-tools
+          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+
+      - name: Build et push de l'image tools
+        uses: ./.github/actions/docker-build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+        with:
+          dockerfile: apps/tools/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-tools
+          push: ${{ !env.ACT }}
+          secrets: |
+            bryntum_token=BRYNTUM_ACCESS_TOKEN
+          build-args: |
+            GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
+            GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
+            APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}
 
   deploy-tools:
     name: Déploie l'api d'automatisation technique
@@ -49,17 +74,43 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v7.0.1
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-      - name: Deploy tools on Koyeb
+          persist-credentials: false
+
+      - id: meta
+        uses: ./.github/actions/build-metadata
+
+      - uses: ./.github/actions/koyeb-cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Déploie l'api d'automatisation technique sur Koyeb
+        env:
+          ENV_NAME: ${{ github.event.inputs.target }}
+          IMAGE: ${{ needs.build-tools.outputs.image }}
+          DEPLOYMENT_TIMESTAMP: ${{ steps.meta.outputs.deployment-timestamp }}
         run: >
-          earthly
-          --use-inline-cache --save-inline-cache
-          +tools-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          koyeb services update $ENV_NAME-tools-autom-api/tools
+          --debug
+          --docker "$IMAGE"
+          --docker-private-registry-secret ghcr
+          --env ENV_NAME=$ENV_NAME
+          --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
+          --env CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_$ENV_NAME
+          --env CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_$ENV_NAME
+          --env NOTION_TOKEN=@NOTION_TOKEN_$ENV_NAME
+          --env NOTION_BUG_SUPPORT_DATABASE_ID=@NOTION_BUG_SUPPORT_DATABASE_ID_$ENV_NAME
+          --env NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME
+          --env NOTION_SUPPORT_TEMPLATE_ID=@NOTION_SUPPORT_TEMPLATE_ID_$ENV_NAME
+          --env TET_API_URL=@TET_API_URL_$ENV_NAME
+          --env TET_API_TOKEN=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
+          --env MATTERMOST_NOTIFICATIONS_WEBHOOK_URL=@MATTERMOST_NOTIFICATIONS_WEBHOOK_URL_$ENV_NAME
+          --env EXTERNAL_SYSTEM_SECRET_MAP=@EXTERNAL_SYSTEM_SECRET_MAP_$ENV_NAME
+          --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME
+          --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
+          --env AIRTABLE_PERSONAL_ACCESS_TOKEN=@AIRTABLE_PERSONAL_ACCESS_TOKEN
+          --env AIRTABLE_IMPORT_DATABASE_ID=@AIRTABLE_IMPORT_DATABASE_ID
+          --env AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID
+          --env AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID
+          --env AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID

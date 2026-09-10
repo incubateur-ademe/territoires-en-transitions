@@ -2,6 +2,7 @@ name: Déploiement du site
 
 permissions:
   contents: read
+  packages: write
 
 run-name: Déploiement du site sur ${{ github.event.inputs.target }}
 
@@ -24,34 +25,59 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v7.0.1
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+          persist-credentials: false
+          fetch-depth: 0
 
-      - name: Build and push site image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +site-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
-          --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
-          --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
-          --APP_URL=${{ vars.APP_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+      - id: meta
+        uses: ./.github/actions/build-metadata
 
-      - name: Deploy site on Koyeb
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker-image-path
+        with:
+          username: incubateur-ademe
+          image: tet-site
+          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+
+      - name: Build et push de l'image site
+        uses: ./.github/actions/docker-build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+        with:
+          dockerfile: apps/site/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-site
+          push: ${{ !env.ACT }}
+          secrets: |
+            bryntum_token=BRYNTUM_ACCESS_TOKEN
+          build-args: |
+            STRAPI_KEY=${{ secrets.STRAPI_KEY }}
+            STRAPI_URL=${{ secrets.STRAPI_URL }}
+            ANON_KEY=${{ secrets.ANON_KEY }}
+            API_URL=${{ secrets.API_URL }}
+            POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
+            POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
+            AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
+            APP_URL=${{ vars.APP_URL }}
+            PANIER_URL=${{ vars.PANIER_URL }}
+            CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+
+      - uses: ./.github/actions/koyeb-cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Déploie le site sur Koyeb
+        env:
+          ENV_NAME: ${{ github.event.inputs.target }}
+          IMAGE: ${{ steps.image.outputs.path }}
         run: >
-          earthly
-          --use-inline-cache
-          +site-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          koyeb services update $ENV_NAME-site/front
+          --docker "$IMAGE"
+          --docker-private-registry-secret ghcr
