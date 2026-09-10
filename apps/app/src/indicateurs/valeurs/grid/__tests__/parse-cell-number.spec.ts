@@ -22,5 +22,7 @@ describe('parseCellNumber', () => {
   it('rend null pour une saisie non numerique', () => {
     expect(parseCellNumber('abc')).toBe(null);
     expect(parseCellNumber('1.2.3')).toBe(null);
+    expect(parseCellNumber('Infinity')).toBe(null);
+    expect(parseCellNumber('1e309')).toBe(null);
   });
 });

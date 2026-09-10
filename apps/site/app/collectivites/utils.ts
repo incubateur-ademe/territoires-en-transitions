@@ -3,12 +3,14 @@ import { EtoilesLabel } from '@/site/app/types';
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Tables } from '@tet/api';
+import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 
 export type Labellisations = Tables<'labellisation'>;
 export type Indicateurs = {
   date_valeur: string;
   resultat: number;
   identifiant: string;
+  periodicite: IndicateurPeriodicite;
   source?: string;
 };
 export type IndicateurArtificialisation =

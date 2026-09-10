@@ -1,7 +1,9 @@
+import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
 import { z } from 'zod';
 
 export const getMoyenneCollectivitesRequestSchema = z
   .object({
+    periodicite: z.enum(indicateurPeriodiciteValues).optional(),
     collectiviteId: z.coerce
       .number()
       .int()
@@ -11,6 +13,10 @@ export const getMoyenneCollectivitesRequestSchema = z
       .int()
       .describe("Identifiant de l'indicateur"),
   })
-  .describe("Donne la moyenne par date d'un indicateur pour les collectivités de même type");
+  .describe(
+    "Donne la moyenne par date d'un indicateur pour les collectivités de même type"
+  );
 
-export type GetMoyenneCollectivitesRequest = z.infer<typeof getMoyenneCollectivitesRequestSchema>;
+export type GetMoyenneCollectivitesRequest = z.infer<
+  typeof getMoyenneCollectivitesRequestSchema
+>;

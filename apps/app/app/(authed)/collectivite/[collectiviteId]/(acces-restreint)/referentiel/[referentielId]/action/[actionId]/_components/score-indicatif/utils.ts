@@ -1,6 +1,9 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import {
+  type IndicateurPeriodicite,
+  toAnnualIndicateurYear,
+} from '@tet/domain/indicateurs';
 import { ScoreIndicatifType } from '@tet/domain/referentiels';
-import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import { typeScoreToLabel } from './score-indicatif.labels';
 import {
   ScoreIndicatifAction,
@@ -17,24 +20,20 @@ export function prepareScoreIndicatifData(
   const donnees = scoreIndicatif[typeScore];
   if (!donnees?.valeursUtilisees[0]) return null;
 
-  const valeurPrincipale = {
-    ...donnees.valeursUtilisees[0],
-    indicateurTitre:
-      scoreIndicatif.indicateurs.find(
-        (indicateur) =>
-          indicateur.indicateurId === donnees.valeursUtilisees[0].indicateurId
-      )?.titre || '',
+  const enrichValeur = (valeur: ScoreIndicatifValeurUtilisee) => {
+    const indicateur = scoreIndicatif.indicateurs.find(
+      ({ indicateurId }) => indicateurId === valeur.indicateurId
+    );
+    return {
+      ...valeur,
+      indicateurTitre: indicateur?.titre ?? '',
+      periodicite: indicateur?.periodicite,
+    };
   };
+
+  const valeurPrincipale = enrichValeur(donnees.valeursUtilisees[0]);
   const valeurSecondaire = donnees.valeursUtilisees[1]
-    ? {
-        ...donnees.valeursUtilisees[1],
-        indicateurTitre:
-          scoreIndicatif.indicateurs.find(
-            (indicateur) =>
-              indicateur.indicateurId ===
-              donnees.valeursUtilisees[1].indicateurId
-          )?.titre || '',
-      }
+    ? enrichValeur(donnees.valeursUtilisees[1])
     : undefined;
 
   return {
@@ -56,19 +55,25 @@ export function texteValeurUtilisee({
   typeScore,
   noSource,
   noYear,
+  periodicite,
 }: {
   valeurUtilisee: ScoreIndicatifValeurUtilisee;
+  periodicite: IndicateurPeriodicite | null | undefined;
   typeScore: ScoreIndicatifType;
   unite: string;
   noSource?: boolean;
   noYear?: boolean;
 }) {
   const { valeur, dateValeur, sourceLibelle } = valeurUtilisee;
-  const annee = getYearFromIsoDate(dateValeur);
+  const annee = toAnnualIndicateurYear(
+    periodicite,
+    dateValeur,
+    `Le score indicatif (${valeurUtilisee.indicateurId})`
+  );
 
   return {
     valeurEtUnite: `${valeur} ${unite}`,
-    annee: noYear || isNaN(annee) ? '' : `en ${annee}`,
+    annee: noYear ? '' : `en ${annee}`,
     source: noSource
       ? ''
       : ` (source : ${sourceLibelle ?? typeScoreToLabel[typeScore]})`,

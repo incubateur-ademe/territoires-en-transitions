@@ -329,6 +329,7 @@ export default class TrajectoiresDataService {
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
     const indicateursSourceCollectivite =
       await this.valeursService.getIndicateursValeurs({
+        periodicite: 'annuelle',
         collectiviteId,
         identifiantsReferentiel,
         sources: [sourceId],
@@ -793,6 +794,7 @@ export default class TrajectoiresDataService {
     }
 
     const valeurs = await this.valeursService.getIndicateursValeurs({
+      periodicite: 'annuelle',
       collectiviteId: request.collectiviteId,
       sources: [this.SNBC_SOURCE.id],
     });
