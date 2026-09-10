@@ -6,24 +6,12 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { CategorieAction, LEVIER_ID_BY_NOM, Levier } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray } from 'drizzle-orm';
-import {
-  FicheActionVoletGesErrorEnum,
-  type FicheActionVoletGesError,
-} from './fiche-action-volet-ges.errors';
+import { VoletErrorEnum, type VoletError } from './volet.errors';
 import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
-
-export type VoletGes = {
-  levier: Levier;
-  categorie: CategorieAction;
-};
-
-export type FicheActionVoletGes = {
-  ficheId: number;
-  volets: VoletGes[];
-};
+import { FicheVolets, VoletRepository } from './volet.repository';
 
 @Injectable()
-export class FicheActionVoletGesRepository {
+export class FicheActionVoletGesRepository implements VoletRepository {
   private readonly db = this.database.db;
   private readonly logger = new Logger(FicheActionVoletGesRepository.name);
 
@@ -36,10 +24,10 @@ export class FicheActionVoletGesRepository {
     tx,
   }: {
     collectiviteId: number;
-    fiches: FicheActionVoletGes[];
+    fiches: FicheVolets[];
     createdBy: string;
     tx?: Transaction;
-  }): Promise<Result<void, FicheActionVoletGesError>> {
+  }): Promise<Result<void, VoletError>> {
     try {
       await (tx ?? this.db).transaction(async (runner) => {
         const ownedFiches = await runner
@@ -89,7 +77,7 @@ export class FicheActionVoletGesRepository {
           error
         )}`
       );
-      return failure(FicheActionVoletGesErrorEnum.SAVE_VOLETS_ERROR);
+      return failure(VoletErrorEnum.SAVE_VOLETS_ERROR);
     }
   }
 }
