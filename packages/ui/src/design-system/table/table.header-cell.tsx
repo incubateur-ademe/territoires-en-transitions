@@ -4,6 +4,16 @@ import { Icon } from '../Icon';
 
 type Props = Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'title'> & {
   sortFn?: () => void;
+  /**
+   * Le sens du tri en cours, quand c'est cette colonne qui l'ordonne.
+   *
+   * Sans lui, les deux chevrons se dessinent à l'identique et rien ne dit
+   * laquelle des colonnes trie, ni dans quel sens : un tri chronologique et son
+   * inverse se ressemblent alors exactement.
+   *
+   * `null` ou absent : la colonne est triable mais ne trie pas.
+   */
+  sortDirection?: 'asc' | 'desc' | null;
   icon?: string;
   /** Accepte un noeud pour accoler au libellé une infobulle ou un indicateur. */
   title?: ReactNode;
@@ -38,6 +48,7 @@ export const pinnedLeftClassName =
 /** Header cell for tables with predefined optional sorting, icon and filter */
 export const TableHeaderCell = ({
   sortFn,
+  sortDirection,
   icon,
   className,
   title,
@@ -52,6 +63,13 @@ export const TableHeaderCell = ({
   return (
     <th
       {...props}
+      aria-sort={
+        sortFn && sortDirection
+          ? sortDirection === 'asc'
+            ? 'ascending'
+            : 'descending'
+          : undefined
+      }
       className={cn(
         'px-4 py-3 text-sm text-grey-9 font-medium leading-none align-top',
         { [pinnedLeftClassName]: pinnedLeft },
@@ -79,11 +97,19 @@ export const TableHeaderCell = ({
             >
               <Icon
                 icon="arrow-up-s-fill"
-                className="-mb-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]"
+                className={cn(
+                  '-mb-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]',
+                  // Le chevron inactif s'efface au lieu de disparaître : la
+                  // colonne reste visiblement triable dans les deux sens.
+                  sortDirection === 'desc' && 'text-grey-5'
+                )}
               />
               <Icon
                 icon="arrow-down-s-fill"
-                className="-mt-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]"
+                className={cn(
+                  '-mt-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]',
+                  sortDirection === 'asc' && 'text-grey-5'
+                )}
               />
             </div>
           )}
