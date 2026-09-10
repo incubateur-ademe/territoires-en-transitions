@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import { ResourceType } from '@tet/domain/users';
 import { CollectiviteBucketRepository } from '../collectivite-bucket.repository';
+import { CollectiviteDocumentsAccessService } from '../collectivite-documents-access.service';
 import {
   GetDownloadUrlError,
   GetDownloadUrlErrorEnum,
@@ -18,7 +17,7 @@ const DOWNLOAD_URL_TTL_SECONDS = 60;
 @Injectable()
 export class GetDownloadUrlService {
   constructor(
-    private readonly permissionService: PermissionService,
+    private readonly collectiviteDocumentsAccess: CollectiviteDocumentsAccessService,
     private readonly repository: GetDownloadUrlRepository,
     private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
     private readonly documentStorageService: DocumentStorageService
@@ -28,38 +27,15 @@ export class GetDownloadUrlService {
     { collectiviteId, fichierId }: GetDownloadUrlInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<GetDownloadUrlOutput, GetDownloadUrlError>> {
-    const [readResult, readConfidentielResult] = await Promise.all([
-      this.permissionService.isAllowed(
-        user,
-        'collectivites.documents.read',
-        ResourceType.COLLECTIVITE,
+    const accessResult =
+      await this.collectiviteDocumentsAccess.checkUserCanReadDocuments(
         { collectiviteId },
-        tx
-      ),
-      this.permissionService.isAllowed(
-        user,
-        'collectivites.documents.read_confidentiel',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId },
-        tx
-      ),
-    ]);
-
-    const canReadConfidentiel = readConfidentielResult.success;
-    if (!readResult.success && !canReadConfidentiel) {
+        { user, tx }
+      );
+    if (!accessResult.success) {
       return failure(GetDownloadUrlErrorEnum.UNAUTHORIZED);
     }
-
-    const isAccesRestreint = await this.repository.isCollectiviteAccesRestreint(
-      collectiviteId
-    );
-
-    const canReachCollectivite = isAccesRestreint
-      ? canReadConfidentiel
-      : readResult.success;
-    if (!canReachCollectivite) {
-      return failure(GetDownloadUrlErrorEnum.UNAUTHORIZED);
-    }
+    const { canReadConfidentiel } = accessResult.data;
 
     const document = await this.repository.findDocument({
       collectiviteId,

@@ -15,6 +15,7 @@ import {
 } from '../../../../test/app-utils';
 
 const UNKNOWN_FICHIER_ID = 999999999;
+const UNKNOWN_COLLECTIVITE_ID = 999999999;
 
 describe('GetDownloadUrlRouter', () => {
   let app: INestApplication;
@@ -105,5 +106,18 @@ describe('GetDownloadUrlRouter', () => {
         fichierId: documentAutreCollectivite.id,
       })
     ).rejects.toThrowError(/n'existe pas/i);
+  });
+
+  test('rend « collectivité introuvable » a un compte verifie non membre pour une collectivite inconnue', async () => {
+    const caller = router.createCaller({ user: nonMembreUser });
+
+    await expect(() =>
+      caller.collectivites.documents.getDownloadUrl({
+        collectiviteId: UNKNOWN_COLLECTIVITE_ID,
+        fichierId: UNKNOWN_FICHIER_ID,
+      })
+    ).rejects.toThrowError(
+      `Collectivité avec l'identifiant ${UNKNOWN_COLLECTIVITE_ID} introuvable`
+    );
   });
 });
