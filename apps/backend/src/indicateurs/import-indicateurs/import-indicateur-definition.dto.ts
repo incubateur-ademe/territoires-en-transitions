@@ -14,7 +14,10 @@ export const importIndicateurDefinitionSchema = z.object({
   }).shape,
 
   identifiantReferentiel: z.string(), // Mandatory in this case
-  periodicite: z._default(z.literal('annuelle'), 'annuelle'),
+  periodicite: z._default(
+    indicateurDefinitionSchema.shape.periodicite,
+    'annuelle'
+  ),
   periodiciteMode: z._default(
     indicateurDefinitionSchema.shape.periodiciteMode,
     'recommandee'

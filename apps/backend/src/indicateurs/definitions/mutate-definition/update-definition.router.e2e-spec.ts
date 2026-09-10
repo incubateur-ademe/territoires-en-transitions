@@ -1,4 +1,9 @@
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { INestApplication } from '@nestjs/common';
+import {
+  createPersonneTag,
+  createServiceTag,
+} from '@tet/backend/collectivites/collectivites.test-fixture';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -6,13 +11,16 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
+import { createThematique } from '@tet/backend/shared/shared.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, onTestFinished, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
@@ -136,6 +144,266 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       expect(dbIndicateur).toHaveLength(1);
       expect(dbIndicateur[0].titre).toBe(updateData.indicateurFields.titre);
       expect(dbIndicateur[0].unite).toBe(updateData.indicateurFields.unite);
+    });
+
+    test('should update periodicite before the first value', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Test Personal Indicator Periodicite',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { periodicite: 'mensuelle' },
+      });
+
+      const [definition] = await databaseService.db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      expect(definition?.periodicite).toBe('annuelle');
+      const [preference] = await databaseService.db
+        .select()
+        .from(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+            eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+          )
+        );
+      expect(preference?.periodicite).toBe('mensuelle');
+    });
+
+    test('should atomically update periodicite, fiches and thematiques', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Test Atomic Personal Indicator Update',
+        },
+      });
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Fiche linked in atomic update',
+        },
+      });
+      const thematique = await createThematique({
+        database: databaseService,
+        thematiqueData: { nom: 'Thématique linked in atomic update' },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: {
+          periodicite: 'mensuelle',
+          ficheIds: [ficheId],
+          thematiques: [{ id: thematique.id }],
+        },
+      });
+
+      const {
+        data: [updatedIndicateur],
+      } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      const linkedFiches = await caller.plans.fiches.listFiches({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+
+      expect(updatedIndicateur?.periodicite).toBe('mensuelle');
+      expect(updatedIndicateur?.thematiques).toContainEqual(
+        expect.objectContaining({ id: thematique.id })
+      );
+      expect(linkedFiches.data).toContainEqual(
+        expect.objectContaining({ id: ficheId })
+      );
+    });
+
+    test('should reject a restricted API key before the pilot fallback while allowing the human pilot', async () => {
+      const adminCaller = router.createCaller({ user: authenticatedUser });
+      const { user, cleanup } = await addTestUser(databaseService, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+      onTestFinished(cleanup);
+      // Register the indicator cleanup after the user cleanup. Vitest runs
+      // onTestFinished callbacks in reverse order, so the foreign keys to the
+      // pilot user and modifiedBy are removed before deleting that user.
+      const indicateurId = await createIndicateurPerso({
+        caller: adminCaller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Test Restricted API Key Definition Update',
+        },
+      });
+
+      const pilotUser = getAuthUserFromUserCredentials(user);
+      await adminCaller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { pilotes: [{ userId: pilotUser.id }] },
+      });
+
+      const restrictedApiKeyCaller = router.createCaller({
+        user: {
+          ...pilotUser,
+          jwtPayload: {
+            ...pilotUser.jwtPayload,
+            client_id: 'test-read-only-api-key',
+            permissions: ['indicateurs.indicateurs.read'],
+          },
+        },
+      });
+
+      await expect(
+        restrictedApiKeyCaller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { periodicite: 'mensuelle' },
+        })
+      ).rejects.toThrow(/clé d'api.*indicateurs\.indicateurs\.update/i);
+
+      const [definitionAfterRejectedUpdate] = await databaseService.db
+        .select({ periodicite: indicateurDefinitionTable.periodicite })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      expect(definitionAfterRejectedUpdate?.periodicite).toBe('annuelle');
+
+      const humanPilotCaller = router.createCaller({ user: pilotUser });
+      await humanPilotCaller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { periodicite: 'mensuelle' },
+      });
+
+      const [definitionAfterHumanUpdate] = await databaseService.db
+        .select({ periodicite: indicateurDefinitionTable.periodicite })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      expect(definitionAfterHumanUpdate?.periodicite).toBe('annuelle');
+      const {
+        data: [localDefinition],
+      } = await humanPilotCaller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(localDefinition.periodicite).toBe('mensuelle');
+    });
+
+    test('preserves annual history when a recommendation is customized monthly', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const [definition] = await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          titre: 'Shared annual recommendation',
+          unite: 'kWh',
+          periodicite: 'annuelle',
+        })
+        .returning();
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurDefinitionTable)
+          .where(eq(indicateurDefinitionTable.id, definition.id));
+      });
+      const second = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      const otherCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(second.user),
+      });
+      const indicateurId = definition.id;
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        dateValeur: '2026-01-01',
+        resultat: 120,
+      });
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { periodicite: 'mensuelle' },
+      });
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        periodicite: 'mensuelle',
+        dateValeur: '2026-01-01',
+        resultat: 10,
+      });
+      const local = await caller.indicateurs.valeurs.list({
+        collectiviteId: collectivite.id,
+        indicateurIds: [indicateurId],
+      });
+      expect(local.indicateurs[0].definition.periodicite).toBe('mensuelle');
+      expect(local.indicateurs[0].sources.collectivite.valeurs).toEqual([
+        expect.objectContaining({ periodicite: 'mensuelle', resultat: 10 }),
+      ]);
+      const {
+        data: [other],
+      } = await otherCaller.indicateurs.indicateurs.list({
+        collectiviteId: second.collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(other.periodicite).toBe('annuelle');
+      expect(other.periodiciteMode).toBe('recommandee');
+      expect(other.periodicitePersonnalisee).toBeNull();
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { periodicite: null },
+      });
+      const annual = await caller.indicateurs.valeurs.list({
+        collectiviteId: collectivite.id,
+        indicateurIds: [indicateurId],
+      });
+      expect(annual.indicateurs[0].sources.collectivite.valeurs).toEqual([
+        expect.objectContaining({ periodicite: 'annuelle', resultat: 120 }),
+      ]);
+    });
+
+    test('rejects customization and incompatible writes for an imposed indicator', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const [definition] = await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          titre: 'Imposed annual cadence',
+          unite: 'kWh',
+          periodicite: 'annuelle',
+          periodiciteMode: 'imposee',
+        })
+        .returning();
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurDefinitionTable)
+          .where(eq(indicateurDefinitionTable.id, definition.id));
+      });
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId: definition.id,
+          collectiviteId: collectivite.id,
+          indicateurFields: { periodicite: 'mensuelle' },
+        })
+      ).rejects.toThrow(/imposée/);
+      await expect(
+        caller.indicateurs.valeurs.upsert({
+          indicateurId: definition.id,
+          collectiviteId: collectivite.id,
+          periodicite: 'mensuelle',
+          dateValeur: '2026-02-01',
+          resultat: 10,
+        })
+      ).rejects.toThrow(/imposée/);
     });
 
     test('should update multiple fields at once for perso indicator', async () => {
@@ -310,6 +578,105 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       await expect(
         caller.indicateurs.indicateurs.update(updateData)
       ).rejects.toThrow();
+    });
+
+    test('should hide and reject an indicator owned by another collectivite', async () => {
+      const other = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      onTestFinished(other.cleanup);
+      const otherCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(other.user),
+      });
+      const foreignIndicateurId = await createIndicateurPerso({
+        caller: otherCaller,
+        indicateurData: {
+          collectiviteId: other.collectivite.id,
+          titre: 'Foreign personal indicator',
+        },
+      });
+
+      const caller = router.createCaller({ user: authenticatedUser });
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId: foreignIndicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { commentaire: 'Cross-tenant update' },
+        })
+      ).rejects.toThrow(/non trouvé pour la collectivité/i);
+
+      const [definition] = await databaseService.db
+        .select({ titre: indicateurDefinitionTable.titre })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, foreignIndicateurId));
+      expect(definition?.titre).toBe('Foreign personal indicator');
+    });
+
+    test('should reject fiche, service and pilote resources owned by another collectivite', async () => {
+      const other = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      onTestFinished(other.cleanup);
+      const otherUser = getAuthUserFromUserCredentials(other.user);
+      const otherCaller = router.createCaller({ user: otherUser });
+      const foreignFicheId = await createFiche({
+        caller: otherCaller,
+        ficheInput: {
+          collectiviteId: other.collectivite.id,
+          titre: 'Foreign fiche for indicator update',
+        },
+      });
+      const foreignService = await createServiceTag({
+        database: databaseService,
+        tagData: {
+          collectiviteId: other.collectivite.id,
+          nom: 'Foreign service for indicator update',
+        },
+      });
+      const foreignPersonne = await createPersonneTag({
+        database: databaseService,
+        tagData: {
+          collectiviteId: other.collectivite.id,
+          nom: 'Foreign personne for indicator update',
+        },
+      });
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Indicator protected from foreign relations',
+        },
+      });
+
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { ficheIds: [foreignFicheId] },
+        })
+      ).rejects.toThrow(/fiches doivent appartenir/i);
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { services: [{ id: foreignService.id }] },
+        })
+      ).rejects.toThrow(/services doivent appartenir/i);
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { pilotes: [{ tagId: foreignPersonne.id }] },
+        })
+      ).rejects.toThrow(/pilotes doivent appartenir/i);
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { pilotes: [{ userId: otherUser.id }] },
+        })
+      ).rejects.toThrow(/pilotes doivent appartenir/i);
     });
   });
 

@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, NotFoundException } from '@nestjs/common';
 import { createPersonneTag } from '@tet/backend/collectivites/collectivites.test-fixture';
 import {
   addTestCollectivite,
@@ -14,8 +14,10 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
+import { indicateurPiloteTable } from '../../shared/models/indicateur-pilote.table';
 
 describe('IndicateurDefinitionPiloteRouter', () => {
   let router: TrpcRouter;
@@ -233,8 +235,17 @@ describe('IndicateurDefinitionPiloteRouter', () => {
       indicateurData: {
         collectiviteId: collectivite.id,
         titre: 'Test indicateur',
+        pilotes: [{ tagId: piloteTag1.id }],
       },
     });
+
+    const readRelations = () =>
+      db.db
+        .select()
+        .from(indicateurPiloteTable)
+        .where(eq(indicateurPiloteTable.indicateurId, indicateurId));
+    const relationsBefore = await readRelations();
+    expect(relationsBefore).toHaveLength(1);
 
     await expect(() =>
       caller.indicateurs.indicateurs.update({
@@ -244,6 +255,11 @@ describe('IndicateurDefinitionPiloteRouter', () => {
           pilotes: [{ tagId: piloteTag1.id }, { tagId: piloteTag2.id }],
         },
       })
-    ).rejects.toThrow(/Droits insuffisants/);
+    ).rejects.toMatchObject({
+      message: `Indicateur ${indicateurId} non trouvé pour la collectivité ${otherCollectivite.id}`,
+      cause: expect.any(NotFoundException),
+    });
+
+    expect(await readRelations()).toEqual(relationsBefore);
   });
 });
