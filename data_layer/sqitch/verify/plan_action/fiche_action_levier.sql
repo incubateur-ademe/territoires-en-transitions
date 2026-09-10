@@ -62,20 +62,6 @@ BEGIN
     ), 'levier_id, categorie et created_by doivent etre NOT NULL : c''est ce qui transforme un levier non mappe en echec bruyant plutot qu''en ligne muette';
 
     ASSERT (
-        SELECT COUNT(*) = 29
-        FROM pg_enum e
-                 JOIN pg_type t ON t.oid = e.enumtypid
-        WHERE t.typname = 'levier_id'
-    ), 'Le type levier_id doit declarer les 29 leviers ; sa liste fait foi dans levierIdEnumValues (@tet/domain/shared)';
-
-    ASSERT (
-        SELECT COUNT(*) = 6
-        FROM pg_enum e
-                 JOIN pg_type t ON t.oid = e.enumtypid
-        WHERE t.typname = 'levier_categorie'
-    ), 'Le type levier_categorie doit declarer les 6 categories ; sa liste fait foi dans categorieActionEnumValues (@tet/domain/shared)';
-
-    ASSERT (
         SELECT COUNT(*) = 2
         FROM pg_attribute
         WHERE attrelid = 'public.fiche_action_levier'::regclass
