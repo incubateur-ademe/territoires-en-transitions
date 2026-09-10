@@ -70,7 +70,7 @@ describe('EnqueueClassificationService.enqueue', () => {
   it('refuse un plan sans aucune fiche a classer', async () => {
     const { service, queue } = toDependencies({ ficheCount: 0 });
 
-    const result = await service.enqueue({ planId }, { user });
+    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
 
     expect({ result, queueCalls: queue.add.mock.calls.length }).toEqual({
       result: {
@@ -84,7 +84,7 @@ describe('EnqueueClassificationService.enqueue', () => {
   it('enfile un job pour un plan qui a des fiches', async () => {
     const { service } = toDependencies({ ficheCount: 900 });
 
-    const result = await service.enqueue({ planId }, { user });
+    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
 
     expect(result).toEqual({ success: true, data: { jobId } });
   });
@@ -92,7 +92,7 @@ describe('EnqueueClassificationService.enqueue', () => {
   it("presente un sous-axe d'une autre collectivite comme un plan introuvable", async () => {
     const { service } = toDependencies({ parent: 12, isAllowed: false });
 
-    const result = await service.enqueue({ planId }, { user });
+    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
 
     expect(result).toEqual({
       success: false,
@@ -104,7 +104,7 @@ describe('EnqueueClassificationService.enqueue', () => {
     const { service, jobRepository, queue } = toDependencies();
     queue.add.mockRejectedValue(new Error('redis down'));
 
-    const result = await service.enqueue({ planId }, { user });
+    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
 
     expect({
       result,
