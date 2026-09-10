@@ -39,7 +39,7 @@ services:
   # schémas auth/storage requis par les migrations sqitch.
   db:
     profiles: [ supabase ]
-    image: supabase/postgres:15.14.1.159
+    image: supabase/postgres:17.6.1.164
     ports:
       - "54322:5432"
     command:
@@ -74,7 +74,7 @@ services:
   # ————————————————————— Passerelle API (port 54321) —————————————————————
   kong:
     profiles: [ supabase ]
-    image: kong:2.8.5-alpine
+    image: kong:3.3.1-alpine
     platform: linux/amd64
     ports:
       - "54321:8000"
@@ -124,7 +124,7 @@ services:
   # templates d'emails FR (servis par mail-templates), rate limits e2e.
   gotrue:
     profiles: [ supabase ]
-    image: supabase/gotrue:v2.193.1
+    image: supabase/gotrue:v2.196.0
     depends_on:
       db:
         condition: service_healthy
@@ -179,14 +179,14 @@ services:
   # Sert les templates d'emails FR à gotrue (comme le fait la CLI)
   mail-templates:
     profiles: [ supabase ]
-    image: nginx:1.29-alpine
+    image: nginx:1.31-alpine
     volumes:
       - ./supabase/templates:/usr/share/nginx/html:ro
 
   # ———————————————————————————— API REST ——————————————————————————————————
   rest:
     profiles: [ supabase ]
-    image: postgrest/postgrest:v13.0.7
+    image: postgrest/postgrest:v16.2
     depends_on:
       db:
         condition: service_healthy
@@ -204,7 +204,7 @@ services:
   # ———————————————————————————— Realtime ——————————————————————————————————
   realtime:
     profiles: [ supabase ]
-    image: supabase/realtime:v2.119.0
+    image: supabase/realtime:v2.129.6
     depends_on:
       db:
         condition: service_healthy
@@ -234,7 +234,7 @@ services:
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:
     profiles: [ supabase ]
-    image: supabase/storage-api:v1.67.13
+    image: supabase/storage-api:v1.70.4
     depends_on:
       db:
         condition: service_healthy
@@ -265,7 +265,7 @@ services:
   # ————————————————— Supabase Studio (interface d'admin) ——————————————————
   meta:
     profiles: [ studio ]
-    image: supabase/postgres-meta:v0.96.6
+    image: supabase/postgres-meta:v0.98.0
     depends_on:
       db:
         condition: service_healthy
@@ -318,7 +318,7 @@ services:
   # —————————————————————— Emails de test (Mailpit) ————————————————————————
   mailpit:
     profiles: [ supabase ]
-    image: axllent/mailpit:v1.30.2
+    image: axllent/mailpit:v1.30.7
     ports:
       - "54324:8025" # interface web
       - "54325:1025" # SMTP
@@ -361,7 +361,7 @@ services:
   # Données de test : exécute data_layer/seed/*.sh (psql fourni par l'image db)
   seeder:
     profiles: [ dbtools ]
-    image: supabase/postgres:15.14.1.151
+    image: supabase/postgres:17.6.1.164
     entrypoint: [ sh ]
     working_dir: /data_layer
     environment:
@@ -375,7 +375,7 @@ services:
   # ———————————————————— Edge functions (profil functions) —————————————————
   functions:
     profiles: [ functions ]
-    image: supabase/edge-runtime:v1.74.2
+    image: supabase/edge-runtime:v1.74.3
     # main est monté À CÔTÉ des functions, pas dedans : un point de montage
     # imbriqué dans un bind mount read-only ne peut pas être créé (le dossier
     # main/ n'existe pas dans supabase/functions, et ne doit pas y exister —

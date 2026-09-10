@@ -5,7 +5,7 @@
 # image telle quelle, seule leur command diffère. Le code est bind-mounté sur
 # /repo et node_modules est un volume nommé peuplé par le service `deps` —
 # l'image ne contient que le runtime.
-FROM node:24.11.1-slim
+FROM node:26.6.0-slim
 
 ARG UID=1000
 ARG GID=1000
