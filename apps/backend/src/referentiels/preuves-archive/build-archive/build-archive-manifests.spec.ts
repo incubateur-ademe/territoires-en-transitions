@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildArchiveManifests } from './build-archive-manifests';
-import type { ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFolderArborescence } from './archive-arborescence.types';
 
 function emptyArborescence(
   overrides: Partial<ArchiveFolderArborescence> = {}
@@ -47,7 +47,7 @@ describe('buildArchiveManifests', () => {
     ]);
   });
 
-  it("agrège skippedFiles et failedDownloads dans `_manifeste/fichiers-manquants.txt`", () => {
+  it('agrège skippedFiles et failedDownloads dans `_manifeste/fichiers-manquants.txt`', () => {
     const entries = buildArchiveManifests({
       arborescence: emptyArborescence({
         skippedFiles: [

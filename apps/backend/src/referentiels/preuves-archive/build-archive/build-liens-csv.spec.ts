@@ -10,11 +10,13 @@ describe('buildLiensCsv', () => {
 
   it('ecrit une ligne par lien', () => {
     const csv = buildLiensCsv([
-      { titre: 'Site officiel', url: 'https://exemple.fr', commentaire: 'a jour' },
+      {
+        titre: 'Site officiel',
+        url: 'https://exemple.fr',
+        commentaire: 'a jour',
+      },
     ]);
-    expect(csv).toBe(
-      `${HEADER}\nSite officiel,https://exemple.fr,a jour\n`
-    );
+    expect(csv).toBe(`${HEADER}\nSite officiel,https://exemple.fr,a jour\n`);
   });
 
   it('entoure de guillemets les champs contenant une virgule', () => {
@@ -52,7 +54,7 @@ describe('buildLiensCsv', () => {
     expect(csv).toBe(`${HEADER}\n'-2+3,https://x.fr,'\tcmd\n`);
   });
 
-  it("remplace les URLs aux schemes non sûrs par un placeholder (javascript:/data:/etc)", () => {
+  it('remplace les URLs aux schemes non sûrs par un placeholder (javascript:/data:/etc)', () => {
     const csv = buildLiensCsv([
       { titre: 'XSS', url: 'javascript:alert(1)', commentaire: '' },
       { titre: 'Data URI', url: 'data:text/html,xxx', commentaire: '' },

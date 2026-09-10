@@ -1,4 +1,4 @@
-import { type ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import { type ArchiveFolderArborescence } from './archive-arborescence.types';
 import { buildArchivePath } from './build-archive-path';
 import { buildLiensCsv } from './build-liens-csv';
 
@@ -25,10 +25,7 @@ export function buildArchiveManifests({
   const liensCsv = arborescence.linkFolders
     .filter((folder) => folder.liens.length > 0)
     .map((folder) => ({
-      name: buildArchivePath([
-        ...folder.folderSegments,
-        LIENS_CSV_FILENAME,
-      ]),
+      name: buildArchivePath([...folder.folderSegments, LIENS_CSV_FILENAME]),
       content: buildLiensCsv(folder.liens),
     }));
 
