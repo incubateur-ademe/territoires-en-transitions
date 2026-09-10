@@ -24,7 +24,10 @@ export const useUploadFile = (): UploadFile => {
   const { mutateAsync: createDocument } = useMutation(
     trpc.collectivites.documents.create.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['bibliotheque_fichier'] });
+        queryClient.invalidateQueries({
+          queryKey:
+            trpc.collectivites.documents.listBibliothequeDocuments.pathKey(),
+        });
       },
     })
   );

@@ -5,16 +5,15 @@ import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import {
-  FichierListe,
-  FichiersFilters,
+  BibliothequeFichierListItem,
   useFichiers,
 } from '../Bibliotheque/useFichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { AddFileFromLibHandler } from './AddFile';
 
 export type AddFromLibProps = {
-  items: FichierListe[];
-  setFilters: (filters: FichiersFilters) => void;
+  items: BibliothequeFichierListItem[];
+  onSearch: (search: string) => void;
   /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
   onAddFileFromLib: AddFileFromLibHandler;
@@ -47,7 +46,7 @@ export const AddFromLib = (props: AddFromLibProps) => {
     fileConstraints,
     onAddFileFromLib,
     onClose,
-    setFilters,
+    onSearch,
   } = props;
 
   const [selectedFiles, setSelectedFiles] = useState<Option[] | undefined>();
@@ -103,7 +102,7 @@ export const AddFromLib = (props: AddFromLibProps) => {
           }}
           enableDisplayLimitValue={false}
           values={values}
-          onSearch={(search) => setFilters({ search, page: 1 })}
+          onSearch={onSearch}
           onChange={({ values }) => {
             setSelectedFiles(
               limitSelection(
@@ -113,7 +112,7 @@ export const AddFromLib = (props: AddFromLibProps) => {
                 fileConstraints
               )
             );
-            setFilters({ search: '', page: 1 });
+            onSearch('');
           }}
           placeholder={appLabels.placeholderRecherchezIntitule}
           isSearcheable
@@ -136,10 +135,10 @@ export const AddFromLib = (props: AddFromLibProps) => {
 };
 
 const AddFromLibConnected = (
-  props: Omit<AddFromLibProps, 'items' | 'setFilters'>
+  props: Omit<AddFromLibProps, 'items' | 'onSearch'>
 ) => {
-  const [filters, setFilters] = useState({ search: '', page: 1 });
-  const { data, isLoading } = useFichiers(filters);
+  const [search, setSearch] = useState('');
+  const { data, isLoading } = useFichiers(search);
 
   if (isLoading) {
     return (
@@ -150,7 +149,7 @@ const AddFromLibConnected = (
   }
 
   return data ? (
-    <AddFromLib {...props} {...data} setFilters={setFilters} />
+    <AddFromLib {...props} items={data.items} onSearch={setSearch} />
   ) : null;
 };
 
