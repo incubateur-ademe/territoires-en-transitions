@@ -153,7 +153,7 @@ export const DossiersInstructionTable = ({
           />
         )}
         <TableHeaderCell
-          title={appLabels.instructionListeColonnePilote}
+          title={appLabels.instructionListeColonnePilotes}
           sortFn={() => trierPar('contact')}
           sortDirection={sort === 'contact' ? direction : null}
         />

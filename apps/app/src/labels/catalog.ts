@@ -1918,11 +1918,12 @@ export const appLabels = {
       : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   /**
-   * « Pilote » et non « Contact » : la personne affichée est celle qui porte le
-   * PCAET dans la collectivité — son administratrice sur la plateforme —, pas
-   * une adresse de contact générique.
+   * « Pilotes » et non « Contact » : les personnes affichées sont celles qui
+   * portent le PCAET dans la collectivité — ses administratrices sur la
+   * plateforme —, pas une adresse de contact générique. Au pluriel, parce
+   * qu'une collectivité peut en compter plusieurs.
    */
-  instructionListeColonnePilote: 'Pilote',
+  instructionListeColonnePilotes: 'Pilotes',
   instructionListeColonneStatut: 'Statut',
   instructionListeColonneEcheance: 'Échéance avis',
   instructionListeColonneActions: 'Actions',
