@@ -906,19 +906,8 @@ export const appLabels = {
   suppressionIndicateurDescription:
     'Êtes-vous sûr de vouloir supprimer cet indicateur personnalisé ? Vous perdrez définitivement les données associées à cet indicateur.',
   modifierIndicateur: "Modifier l'indicateur",
-  suppressionDonneesCollectivite: ({ annee }: { annee: number }): string =>
-    `des données de la collectivité pour l'année ${annee}`,
   suppressionAnneeAttention: ({ annee }: { annee: number }): string =>
     `Attention, les données existantes pour l'année ${annee} seront supprimées.`,
-  commentaireIndicateurTitre: ({
-    sourceTypeLabel,
-    unite,
-    annee,
-  }: {
-    sourceTypeLabel: string;
-    unite: string;
-    annee: number;
-  }): string => `Mes ${sourceTypeLabel} (${unite}) : ${annee}`,
   completerTableau: 'Compléter le tableau',
   ajouterRapportVisite: 'Ajouter un rapport de visite annuelle',
   supprimerNoteConfirmation:
