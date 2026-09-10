@@ -11,6 +11,10 @@ import { pipeline } from 'node:stream/promises';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { type ArchiveFolderArborescence } from './archive-arborescence';
 import {
+  ARCHIVE_ASSEMBLY_FAILED,
+  type ArchiveAssemblyError,
+} from './archive-assembly.errors';
+import {
   ARCHIVE_ZIP_CONTENT_TYPE,
   PREUVES_ARCHIVES_BUCKET,
 } from '../preuves-archive.constants';
@@ -66,7 +70,10 @@ export class BuildArchiveService {
         onProgress,
       });
       if (!assembleResult.success) {
-        return assembleResult;
+        return failure(
+          PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR,
+          assembleResult.cause
+        );
       }
 
       const uploadResult = await this.documentStorage.storeDocument({
@@ -111,7 +118,7 @@ export class BuildArchiveService {
     destination,
     onProgress,
   }: AssembleZipInput): Promise<
-    Result<{ totalFiles: number }, PreuvesArchiveError>
+    Result<{ totalFiles: number }, ArchiveAssemblyError>
   > {
     const archive = archiver('zip', { store: true });
     const writeFinished = pipeline(archive, destination);
@@ -141,7 +148,7 @@ export class BuildArchiveService {
         `Assemblage de l'archive interrompu: ${getErrorMessage(error)}`
       );
       return failure(
-        PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR,
+        ARCHIVE_ASSEMBLY_FAILED,
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }

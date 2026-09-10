@@ -3,7 +3,7 @@ import { success } from '@tet/backend/utils/result.type';
 import { Readable, Writable } from 'node:stream';
 import { describe, expect, test } from 'vitest';
 import { type ArchiveFolderArborescence } from './archive-arborescence';
-import { PreuvesArchiveErrorEnum } from '../preuves-archive.errors';
+import { ARCHIVE_ASSEMBLY_FAILED } from './archive-assembly.errors';
 import { BuildArchiveService } from './build-archive.service';
 
 const toArborescence = (): ArchiveFolderArborescence => ({
@@ -69,7 +69,7 @@ describe('BuildArchiveService.assembleZip', () => {
 
     expect(result.success).toBe(false);
     expect(result.success === false && result.error).toBe(
-      PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR
+      ARCHIVE_ASSEMBLY_FAILED
     );
   });
 });
