@@ -27,6 +27,14 @@
     "build": {
       "command": "nest build",
       "dependsOn": ["^build"],
+      "outputs": [
+        "{projectRoot}/dist/**/*.js",
+        "{projectRoot}/dist/**/*.js.map",
+        "{projectRoot}/dist/**/*.csv",
+        "{projectRoot}/dist/**/*.xlsx",
+        "{projectRoot}/dist/**/*.pptx",
+        "{projectRoot}/dist/**/*.ttf"
+      ],
       "options": {
         "cwd": "apps/backend"
       }
