@@ -195,9 +195,6 @@ export const useDemarchePcaet = (demarcheId: number) => {
   const { mutate: publier } = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
   );
-  const { mutate: depublier } = useMutation(
-    trpc.demarches.pcaet.depublier.mutationOptions(transitionOptions)
-  );
   const ids = useMemo(
     () => ({ collectiviteId, demarcheId }),
     [collectiviteId, demarcheId]
@@ -224,7 +221,6 @@ export const useDemarchePcaet = (demarcheId: number) => {
     update,
     transmettrePourAvis: () => transmettrePourAvis(ids),
     publier: () => publier(ids),
-    depublier: () => depublier(ids),
     collectiviteId,
   };
 };

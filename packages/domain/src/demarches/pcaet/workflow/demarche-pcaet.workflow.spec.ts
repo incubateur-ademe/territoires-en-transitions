@@ -46,7 +46,7 @@ describe('définition du cycle de vie', () => {
     }
   });
 
-  it('le cycle est linéaire, avec deux retours en arrière', () => {
+  it('le cycle est linéaire, sans retour en arrière', () => {
     const chemin = (status: DemarchePcaetStatus) =>
       demarchePcaetWorkflow
         .getReachableTransitions(status)
@@ -69,11 +69,8 @@ describe('définition du cycle de vie', () => {
     ]);
     // L'instruction close ne se défait pas : pas de retour à l'élaboration.
     expect(chemin('instruit')).toEqual(['publier → publie']);
-    // On n'archive qu'un dossier publié ; dépublier revient à la finalisation.
-    expect(chemin('publie')).toEqual([
-      'archiver → archive',
-      'depublier → instruit',
-    ]);
+    // Un dossier publié vaut adopté : il ne se reprend pas, il s'archive.
+    expect(chemin('publie')).toEqual(['archiver → archive']);
     expect(chemin('archive')).toEqual([]);
   });
 });

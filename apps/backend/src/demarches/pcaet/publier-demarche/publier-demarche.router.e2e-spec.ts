@@ -75,7 +75,7 @@ describe('Publication d’une démarche PCAET', () => {
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
   });
 
-  test('Publier puis dépublier une démarche instruite', async () => {
+  test('Publier une démarche instruite, sans retour possible', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -108,15 +108,13 @@ describe('Publication d’une démarche PCAET', () => {
     expect(publiee.status).toBe('publie');
     expect(publiee.publishedAt).toBeTruthy();
     expect(publiee.transitions.publier.reachable).toBe(false);
-    expect(publiee.transitions.depublier.enabled).toBe(true);
+    // Publier vaut adopter : la seule suite d'un dossier publié est l'archivage.
+    expect(
+      Object.entries(publiee.transitions)
+        .filter(([, evaluation]) => evaluation.reachable)
+        .map(([transition]) => transition)
+    ).toEqual(['archiver']);
 
-    const depubliee = await caller.demarches.pcaet.depublier({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    // Dépublier revient à l'étape précédente du cycle : la finalisation.
-    expect(depubliee.status).toBe('instruit');
-    expect(depubliee.publishedAt).toBeNull();
     const history = await db.db
       .select()
       .from(demarcheStatusHistoryTable)
@@ -126,7 +124,6 @@ describe('Publication d’une démarche PCAET', () => {
       'transmettre_pour_avis',
       'delai_avis_echu',
       'publier',
-      'depublier',
     ]);
   });
 });

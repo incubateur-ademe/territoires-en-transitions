@@ -40,9 +40,6 @@ export const DemarchePcaetActionsMenu = ({
   const publier = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
   );
-  const depublier = useMutation(
-    trpc.demarches.pcaet.depublier.mutationOptions(transitionOptions)
-  );
   const archiver = useMutation(
     trpc.demarches.pcaet.archiver.mutationOptions(transitionOptions)
   );
@@ -76,7 +73,6 @@ export const DemarchePcaetActionsMenu = ({
     },
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
     ...transitionAction('publier', () => publier.mutate(ids)),
-    ...transitionAction('depublier', () => depublier.mutate(ids)),
     ...transitionAction('archiver', () => archiver.mutate(ids)),
     ...(canDeleteDemarchePcaet(demarche)
       ? [

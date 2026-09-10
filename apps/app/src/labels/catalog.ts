@@ -504,7 +504,7 @@ export const appLabels = {
     'Les instances consultatives n’ont rendu aucun avis sur cette plateforme. Elles ont pu le faire par un autre canal, ou le délai a pu s’écouler sans réponse.',
   demarcheDetailPublieeTitre: 'Démarche publiée',
   demarcheDetailPublieeDescription:
-    'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
+    'Le dossier est adopté : il passe en lecture seule. Les actions et les indicateurs du plan restent modifiables pendant sa mise en œuvre.',
   demarcheContactsTitre: 'Contacts',
   demarcheContactsDescription:
     'Interlocuteurs désignés pour le suivi de votre démarche.',
@@ -570,7 +570,6 @@ export const appLabels = {
   demarcheAvanceEtapeArchiveDescription:
     'Évaluation finale déposée, cycle clos.',
   demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
-  demarcheAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
   demarcheTransmettreConfirmationTitre:
     'Votre dossier va être transmis pour avis',
@@ -843,7 +842,6 @@ export const appLabels = {
     `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
   demarcheTransitionArchiver: 'Archiver',
   demarcheTransitionPublier: 'Valider le dépôt final',
-  demarcheTransitionDepublier: 'Repasser en brouillon',
 
   navCollectivites: 'Collectivités',
   navSuperAdmin: 'Super Admin',

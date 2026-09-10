@@ -12,13 +12,14 @@ type DemarchePcaetTransitionDef = WorkflowTransitionDef<
 >;
 
 /**
- * Le cycle de vie, en avant — et un seul retour en arrière : dépublier un
- * dossier publié, qui revient à l'étape immédiatement précédente.
+ * Le cycle de vie, en avant, et sans retour en arrière.
  *
- * La transmission, elle, ne se reprend pas. Un dossier transmis est entre les
- * mains des instances consultatives : le rouvrir déferait sous leurs yeux le
- * dossier même sur lequel elles se prononcent, et la clôture de l'instruction
- * recalculerait une échéance sur un dossier déjà instruit.
+ * Aucune étape ne se reprend. Un dossier transmis est entre les mains des
+ * instances consultatives : le rouvrir déferait sous leurs yeux le dossier même
+ * sur lequel elles se prononcent, et la clôture de l'instruction recalculerait
+ * une échéance sur un dossier déjà instruit. Un dossier publié vaut adopté :
+ * il entre en mise en œuvre, et c'est le plan d'actions qui vit ensuite, pas le
+ * dépôt.
  *
  * Deux transitions n'ont **pas d'acteur** : `avis_tous_rendus` et
  * `delai_avis_echu` mènent toutes deux à `instruit`, appliquées par le système
@@ -55,11 +56,6 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
     from: [DemarchePcaetStatusEnum.INSTRUIT],
     to: DemarchePcaetStatusEnum.PUBLIE,
     guards: ['estPilote', 'documentsAvalComplets'],
-  },
-  [DemarchePcaetTransitionEnum.DEPUBLIER]: {
-    from: [DemarchePcaetStatusEnum.PUBLIE],
-    to: DemarchePcaetStatusEnum.INSTRUIT,
-    guards: ['estPilote'],
   },
   [DemarchePcaetTransitionEnum.ARCHIVER]: {
     from: [DemarchePcaetStatusEnum.PUBLIE],

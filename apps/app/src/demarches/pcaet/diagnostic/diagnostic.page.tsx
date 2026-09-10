@@ -18,7 +18,6 @@ export const DemarchePcaetDiagnosticPage = () => {
     update,
     transmettrePourAvis,
     publier,
-    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
   const {
@@ -53,7 +52,6 @@ export const DemarchePcaetDiagnosticPage = () => {
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
       onPublish={publier}
-      onUnpublish={depublier}
     >
       <DiagnosticTabs
         demarcheId={demarcheId}

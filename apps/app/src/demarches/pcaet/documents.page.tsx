@@ -30,7 +30,6 @@ export const DemarchePcaetDocumentsPage = () => {
     update,
     transmettrePourAvis,
     publier,
-    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
   const {
@@ -98,7 +97,6 @@ export const DemarchePcaetDocumentsPage = () => {
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
       onPublish={publier}
-      onUnpublish={depublier}
     >
       <DemarcheSection
         title={
