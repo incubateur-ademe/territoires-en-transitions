@@ -32,7 +32,7 @@ const createDemarchePcaetSchema = z.object({
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
     .min(1, appLabels.demarcheCreerPilotesRequis),
-  dateLancement: z.string().min(1, appLabels.demarcheCreerDateDebutRequise),
+  dateLancement: z.string().min(1, appLabels.demarcheCreerDateLancementRequise),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
@@ -162,7 +162,7 @@ export const CreateDemarchePcaetPage = () => {
               </div>
 
               <Field
-                title={appLabels.demarcheCreerDateDebut}
+                title={appLabels.demarcheCreerDateLancement}
                 htmlFor={DATE_LANCEMENT_FIELD_ID}
                 state={errors.dateLancement ? 'error' : 'default'}
                 message={errors.dateLancement?.message}

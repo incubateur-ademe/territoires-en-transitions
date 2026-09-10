@@ -42,7 +42,7 @@ export const DossierInstructionHeader = ({
           {dossier.launchedAt && (
             <MetadataItem
               icon="calendar-event-line"
-              label={appLabels.demarcheHeaderDateDebut}
+              label={appLabels.demarcheHeaderDateLancement}
               value={getTextFormattedDate({ date: dossier.launchedAt })}
             />
           )}

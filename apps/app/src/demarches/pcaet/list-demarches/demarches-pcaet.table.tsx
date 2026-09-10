@@ -46,7 +46,7 @@ export const DemarchesPcaetTable = ({
           <TableHeaderCell title={appLabels.demarcheListeColonnePilotes} />
           <TableHeaderCell title={appLabels.demarcheListeColonneStatut} />
           <TableHeaderCell title={appLabels.demarcheListeColonneCreation} />
-          <TableHeaderCell title={appLabels.demarcheListeColonneDebut} />
+          <TableHeaderCell title={appLabels.demarcheListeColonneLancement} />
           <TableHeaderCell title={appLabels.demarcheListeColonneModification} />
           <TableHeaderCell title="" />
         </tr>
