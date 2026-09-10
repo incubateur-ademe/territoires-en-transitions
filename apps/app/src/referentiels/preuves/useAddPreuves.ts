@@ -3,7 +3,8 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useSupabase, useTRPC, useTRPCClient } from '@tet/api';
+import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { AppRouter, useSupabase, useTRPC, useTRPCClient } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 // on peut ajouter une preuve sous forme de...
@@ -26,8 +27,9 @@ export const useAddPreuveReglementaire = () => {
   return useMutation(
     trpc.referentiels.actions.addPreuveReglementaire.mutationOptions({
       onSuccess: (_data, variables) => {
-        invalidateQueries(queryClient, variables.collectiviteId, {
-          invalidateParcours: false,
+        invalidateQueries({
+          queryClient,
+          collectiviteId: variables.collectiviteId,
           trpc,
         });
       },
@@ -41,8 +43,9 @@ export const useAddPreuveComplementaire = () => {
   return useMutation(
     trpc.referentiels.actions.addPreuveComplementaire.mutationOptions({
       onSuccess: (_data, variables) => {
-        invalidateQueries(queryClient, variables.collectiviteId, {
-          invalidateParcours: false,
+        invalidateQueries({
+          queryClient,
+          collectiviteId: variables.collectiviteId,
           trpc,
         });
       },
@@ -61,10 +64,7 @@ export const useAddPreuveLabellisation = (
   return useMutation(
     trpc.referentiels.labellisations.createLabellisationPreuve.mutationOptions({
       onSettled: (_data, _error, variables) => {
-        invalidateQueries(queryClient, collectiviteId, {
-          invalidateParcours: true,
-          trpc,
-        });
+        invalidateQueries({ queryClient, collectiviteId, trpc });
         queryClient.invalidateQueries({
           queryKey:
             trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey({
@@ -103,8 +103,9 @@ export const useAddPreuveAudit = () => {
       }),
 
     onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectiviteId, {
-        invalidateParcours: true,
+      invalidateQueries({
+        queryClient,
+        collectiviteId: variables.collectiviteId,
         trpc,
       });
       queryClient.invalidateQueries({
@@ -130,8 +131,9 @@ export const useAddPreuveRapport = () => {
       supabase.from('preuve_rapport').insert(preuve),
 
     onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: false,
+      invalidateQueries({
+        queryClient,
+        collectiviteId: variables.collectivite_id,
         trpc,
       });
     },
@@ -165,8 +167,9 @@ export const useAddPreuveAnnexe = () => {
     },
 
     onSuccess: (_data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: false,
+      invalidateQueries({
+        queryClient,
+        collectiviteId: variables.collectivite_id,
         trpc,
       });
       queryClient.invalidateQueries({
@@ -177,14 +180,15 @@ export const useAddPreuveAnnexe = () => {
 };
 
 // recharge la liste des preuves
-export const invalidateQueries = (
-  queryClient: QueryClient,
-  collectiviteId: number,
-  {
-    invalidateParcours,
-    trpc,
-  }: { invalidateParcours: boolean; trpc: ReturnType<typeof useTRPC> }
-) => {
+export const invalidateQueries = ({
+  queryClient,
+  collectiviteId,
+  trpc,
+}: {
+  queryClient: QueryClient;
+  collectiviteId: number;
+  trpc: TRPCOptionsProxy<AppRouter>;
+}): void => {
   queryClient.invalidateQueries({
     queryKey: trpc.referentiels.documents.listDocumentsReferentiel.pathKey(),
   });
@@ -192,16 +196,8 @@ export const invalidateQueries = (
     queryKey: trpc.referentiels.documents.listDocumentsMesure.pathKey(),
   });
   queryClient.invalidateQueries({
-    queryKey: ['fiche_action'],
-  });
-  queryClient.invalidateQueries({
     queryKey: trpc.referentiels.actions.countPreuves.queryKey({
       collectiviteId,
     }),
   });
-  if (invalidateParcours) {
-    queryClient.invalidateQueries({
-      queryKey: ['labellisation_parcours', collectiviteId],
-    });
-  }
 };

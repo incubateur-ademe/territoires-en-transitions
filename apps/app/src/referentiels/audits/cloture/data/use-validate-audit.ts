@@ -9,21 +9,7 @@ export const useValidateAudit = () => {
 
   return useMutation(
     trpc.referentiels.labellisations.validateAudit.mutationOptions({
-      onSuccess: (audit) => {
-        queryClient.invalidateQueries(
-          {
-            queryKey: ['audit', audit.collectiviteId, audit.referentielId],
-          },
-          { cancelRefetch: true }
-        );
-
-        queryClient.invalidateQueries(
-          {
-            queryKey: ['labellisation_parcours', audit.collectiviteId],
-          },
-          { cancelRefetch: true }
-        );
-
+      onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.labellisations.getParcours.queryKey(),
         });

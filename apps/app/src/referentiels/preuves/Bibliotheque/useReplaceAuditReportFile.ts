@@ -9,10 +9,7 @@ export const useReplaceAuditReportFile = (collectiviteId: number) => {
   return useMutation(
     trpc.referentiels.labellisations.updateAuditReport.mutationOptions({
       onSuccess: () => {
-        invalidateQueries(queryClient, collectiviteId, {
-          invalidateParcours: false,
-          trpc,
-        });
+        invalidateQueries({ queryClient, collectiviteId, trpc });
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.documents.listDocumentsAudit.pathKey(),
         });

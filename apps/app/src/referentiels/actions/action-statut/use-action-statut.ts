@@ -25,9 +25,6 @@ export const useSaveActionStatuts = () => {
       onSuccess: async () => {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: ['action_statut', collectiviteId],
-          }),
-          queryClient.invalidateQueries({
             queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey(
               {
                 collectiviteId,
