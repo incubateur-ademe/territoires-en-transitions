@@ -1,4 +1,5 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { enjeuEnumValues } from '@tet/domain/shared';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
@@ -7,6 +8,7 @@ import { sql } from 'drizzle-orm';
 import {
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   uniqueIndex,
@@ -17,6 +19,8 @@ import {
   classificationVoletsJobInFlightStatuses,
   classificationVoletsJobStatusValues,
 } from './classification-volets-job';
+
+export const enjeuEnum = pgEnum('enjeu', enjeuEnumValues);
 
 export const inFlightStatusPredicate = sql.raw(
   `status in (${classificationVoletsJobInFlightStatuses
@@ -37,6 +41,7 @@ export const classificationVoletsJobTable = pgTable(
     createdBy: uuid('created_by')
       .notNull()
       .references(() => authUsersTable.id, { onDelete: 'cascade' }),
+    enjeu: enjeuEnum('enjeu').notNull(),
     status: text('status', {
       enum: classificationVoletsJobStatusValues,
     }).notNull(),
@@ -50,7 +55,7 @@ export const classificationVoletsJobTable = pgTable(
   },
   (table) => [
     uniqueIndex('classification_volets_job_in_flight_unique')
-      .on(table.planId)
+      .on(table.planId, table.enjeu)
       .where(inFlightStatusPredicate),
   ]
 );

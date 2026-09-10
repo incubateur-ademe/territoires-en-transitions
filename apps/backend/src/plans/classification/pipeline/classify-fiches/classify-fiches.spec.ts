@@ -6,6 +6,7 @@ import {
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it } from 'vitest';
 import { ZodType } from 'zod';
+import { ENJEU_GES } from '../../classification-enjeux';
 import { classifyFiches, MAX_FICHES_PER_BATCH } from './classify-fiches';
 import { FicheClassification } from './classify-fiches.schema';
 import { FicheToClassify } from './render-fiches-text';
@@ -60,7 +61,11 @@ const classifications: FicheClassification[] = [
   },
 ];
 
-const input = { fiches, nonce: 'nonce-de-test' };
+const input = {
+  enjeu: ENJEU_GES,
+  fiches,
+  nonce: 'nonce-de-test',
+};
 
 describe('classifyFiches', () => {
   it('rend les fiches classées accompagnées de la consommation de jetons', async () => {

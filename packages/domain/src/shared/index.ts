@@ -2,6 +2,7 @@ export * from './categorie-action.enum';
 export * from './categorie-fnv.schema';
 export * from './departement.schema';
 export * from './effet-attendu.schema';
+export * from './enjeu.enum';
 export * from './filtre-ressource-liees.schema';
 export * from './id-name.schema';
 export * from './levier.enum';

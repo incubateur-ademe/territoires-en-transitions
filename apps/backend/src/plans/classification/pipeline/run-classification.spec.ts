@@ -7,6 +7,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it } from 'vitest';
 import { ZodType } from 'zod';
 import { FicheClassification } from './classify-fiches/classify-fiches.schema';
+import { ENJEU_GES } from '../classification-enjeux';
 import { FicheToClassify } from './classify-fiches/render-fiches-text';
 import { FICHES_PER_BATCH, runClassification } from './run-classification';
 
@@ -68,6 +69,7 @@ const llmClassifying = (): StubbedLlm => llmFailingOnBatch([]);
 describe('runClassification', () => {
   it("classe toutes les fiches d'un lot unique", async () => {
     const run = await runClassification(llmClassifying(), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(3),
     });
     expect(
@@ -77,6 +79,7 @@ describe('runClassification', () => {
 
   it('découpe au-delà de 25 fiches sans en perdre', async () => {
     const run = await runClassification(llmClassifying(), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(26),
     });
     expect(run.kind === 'completed' && run.draft.fiches).toHaveLength(26);
@@ -84,6 +87,7 @@ describe('runClassification', () => {
 
   it('cumule les jetons de tous les lots', async () => {
     const run = await runClassification(llmClassifying(), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(FICHES_PER_BATCH * 2),
     });
     expect(run.kind === 'completed' && run.tokens.totalTokens).toBe(
@@ -93,6 +97,7 @@ describe('runClassification', () => {
 
   it('conserve les lots réussis quand un lot échoue', async () => {
     const run = await runClassification(llmFailingOnBatch([0]), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(FICHES_PER_BATCH * 3),
     });
     expect(run.kind === 'completed' && run.draft.fiches).toHaveLength(
@@ -102,6 +107,7 @@ describe('runClassification', () => {
 
   it('inscrit les fiches du lot en échec dans unclassified, avec leur raison', async () => {
     const run = await runClassification(llmFailingOnBatch([0]), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(FICHES_PER_BATCH * 3),
     });
     expect(
@@ -114,6 +120,7 @@ describe('runClassification', () => {
 
   it('abandonne au-delà de la moitié des lots en échec', async () => {
     const run = await runClassification(llmFailingOnBatch([0, 1, 2]), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(FICHES_PER_BATCH * 4),
     });
     expect(run).toEqual({
@@ -125,6 +132,7 @@ describe('runClassification', () => {
 
   it('accepte exactement la moitié des lots en échec', async () => {
     const run = await runClassification(llmFailingOnBatch([0, 1]), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(FICHES_PER_BATCH * 4),
     });
     expect(run.kind).toBe('completed');
@@ -133,6 +141,7 @@ describe('runClassification', () => {
   it('signale la progression après chaque lot', async () => {
     const processedBatchCounts: number[] = [];
     await runClassification(llmClassifying(), {
+      enjeu: ENJEU_GES,
       fiches: toConsecutiveFiches(FICHES_PER_BATCH * 3),
       onBatchProcessed: (processedBatches) =>
         processedBatchCounts.push(processedBatches),

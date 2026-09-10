@@ -1065,3 +1065,4 @@ plan_action/classification_leviers_job 2026-09-08T09:30:00Z Gaël Servaud <gaels
 plan_action/fiche_action_levier 2026-09-09T10:30:00Z Gaël Servaud <gaelservaud@gmail.com> # Cree la table fiche_action_levier (rattachement durable levier x categorie sur une fiche)
 utilisateur/dcp_email_lower_index [utilisateur/dcp] 2026-09-09T16:30:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Index fonctionnel sur lower(dcp.email) : la table n'en avait aucun sur l'adresse, et chaque invitation la parcourait entierement
 plan_action/classification_volets [plan_action/classification_leviers_job plan_action/fiche_action_levier] 2026-09-10T09:37:55Z Gaël Servaud <gaelservaud@gmail.com> # Renomme les tables et types de classification en vocabulaire volet, et distingue le referentiel GES
+plan_action/classification_volets_enjeu [plan_action/classification_volets] 2026-09-10T14:23:25Z Gaël Servaud <gaelservaud@gmail.com> # Ajoute l'enjeu discriminant sur le job de classification

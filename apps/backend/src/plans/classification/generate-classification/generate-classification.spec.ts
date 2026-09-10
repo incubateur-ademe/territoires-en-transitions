@@ -26,6 +26,12 @@ const tokens = {
 
 const transaction = { marker: 'transaction' } as unknown as Transaction;
 
+type ClassifiableFiche = {
+  id: number;
+  titre: string | null;
+  description: string | null;
+};
+
 const toJobRow = (
   status: ClassificationVoletsJobStatus = ClassificationVoletsJobStatusEnum.PENDING
 ): ClassificationVoletsJob => ({
@@ -33,6 +39,7 @@ const toJobRow = (
   collectiviteId,
   planId,
   createdBy: 'a-user',
+  enjeu: 'ges',
   status,
   processedBatches: 0,
   totalBatches: 0,
@@ -67,10 +74,12 @@ const toClassifyingLlm = () => ({
 const toDependencies = ({
   job = toJobRow(),
   fiches = [{ id: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
+  restrictedFiches = [],
   saveOutcome = success(undefined),
 }: {
-  job?: ReturnType<typeof toJobRow>;
-  fiches?: { id: number; titre: string | null; description: string | null }[];
+  job?: Omit<ReturnType<typeof toJobRow>, 'enjeu'> & { enjeu: string };
+  fiches?: ClassifiableFiche[];
+  restrictedFiches?: ClassifiableFiche[];
   saveOutcome?: unknown;
 } = {}) => {
   const jobRepository = {
@@ -81,9 +90,15 @@ const toDependencies = ({
     markFailed: vi.fn().mockResolvedValue(success(undefined)),
   };
   const listFichesService = {
-    getFichesActionResumes: vi
-      .fn()
-      .mockResolvedValue({ count: fiches.length, data: fiches }),
+    getFichesActionResumes: vi.fn(
+      async ({ filters }: { filters?: { restreint?: boolean } }) => {
+        const excludesRestricted = filters?.restreint === false;
+        const visibleFiches = excludesRestricted
+          ? fiches
+          : [...fiches, ...restrictedFiches];
+        return { count: visibleFiches.length, data: visibleFiches };
+      }
+    ),
   };
   const llm = toClassifyingLlm();
   const ficheActionVoletGesRepository = {
@@ -114,6 +129,56 @@ const toDependencies = ({
 };
 
 describe('GenerateClassificationService.generate', () => {
+  it('clot en echec un job dont l enjeu est inconnu de cette version', async () => {
+    const { service, llm, jobRepository } = toDependencies({
+      job: { ...toJobRow(), enjeu: 'biodiversite' },
+    });
+
+    const result = await service.generate(jobId);
+
+    expect({
+      success: result.success,
+      llmCalls: llm.generateStructured.mock.calls.length,
+      failureMessage: jobRepository.markFailed.mock.calls[0]?.[1],
+    }).toEqual({
+      success: false,
+      llmCalls: 0,
+      failureMessage:
+        "Cette classification porte un enjeu que l'application ne reconnaît pas : biodiversite. Signalez-le à l'équipe.",
+    });
+  });
+
+  it("n'envoie jamais au modele le texte d'une fiche restreinte", async () => {
+    const { service, llm } = toDependencies({
+      fiches: [{ id: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
+      restrictedFiches: [
+        {
+          id: 2,
+          titre: 'Negociation fonciere',
+          description: 'Prix propose par parcelle',
+        },
+      ],
+    });
+
+    await service.generate(jobId);
+
+    const sentPrompts = llm.generateStructured.mock.calls
+      .map(([{ prompt }]) => prompt)
+      .join('\n');
+
+    expect({
+      hasReadableFiche: sentPrompts.includes('Pistes cyclables'),
+      hasRestrictedTitre: sentPrompts.includes('Negociation fonciere'),
+      hasRestrictedDescription: sentPrompts.includes(
+        'Prix propose par parcelle'
+      ),
+    }).toEqual({
+      hasReadableFiche: true,
+      hasRestrictedTitre: false,
+      hasRestrictedDescription: false,
+    });
+  });
+
   it("ignore une re-livraison d'un job deja termine sans rappeler le modele", async () => {
     const { service, llm, jobRepository } = toDependencies({
       job: toJobRow(ClassificationVoletsJobStatusEnum.DONE),

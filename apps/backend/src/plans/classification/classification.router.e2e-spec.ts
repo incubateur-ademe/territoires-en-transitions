@@ -10,6 +10,7 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Enjeu } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
@@ -99,10 +100,12 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
   const insertJob = async ({
     status = ClassificationVoletsJobStatusEnum.DONE,
     planId,
+    enjeu = 'ges',
     modifiedAt,
   }: {
     status?: ClassificationVoletsJobStatus;
     planId?: number;
+    enjeu?: Enjeu;
     modifiedAt?: string;
   } = {}): Promise<string> => {
     const [job] = await db.db
@@ -110,6 +113,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       .values({
         collectiviteId,
         planId: planId ?? emptyPlanId,
+        enjeu,
         createdBy: editionUser.id,
         status,
         processedBatches: 2,
@@ -129,6 +133,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       await expect(
         callerFor(editionUser).enqueueClassification({
           planId: 999_999_999,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/n'existe pas/);
     });
@@ -137,6 +142,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       await expect(
         callerFor(editionUser).enqueueClassification({
           planId: sousAxeId,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/axe et non un plan/);
     });
@@ -145,6 +151,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       await expect(
         callerFor(editionUser).enqueueClassification({
           planId: emptyPlanId,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/aucune fiche/);
     });
@@ -153,6 +160,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       await expect(
         callerFor(outsiderUser).enqueueClassification({
           planId: planWithFichesId,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/n'existe pas/);
     });
@@ -160,7 +168,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     it('enfile un job et rend son identifiant', async () => {
       const { jobId } = await callerFor(
         editionUser
-      ).enqueueClassification({ planId: planWithFichesId });
+      ).enqueueClassification({ planId: planWithFichesId, enjeu: 'ges' });
 
       onTestFinished(async () => {
         await db.db
@@ -176,7 +184,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     it('refuse un second job tant que le premier est en vol', async () => {
       const { jobId } = await callerFor(
         editionUser
-      ).enqueueClassification({ planId: planWithFichesId });
+      ).enqueueClassification({ planId: planWithFichesId, enjeu: 'ges' });
 
       onTestFinished(async () => {
         await db.db
@@ -187,6 +195,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       await expect(
         callerFor(editionUser).enqueueClassification({
           planId: planWithFichesId,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/déjà en cours/);
     });
@@ -202,6 +211,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       expect(status).toEqual({
         id: jobId,
         planId: emptyPlanId,
+        enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft: {
           fiches: [],
@@ -221,6 +231,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       expect(status).toEqual({
         id: jobId,
         planId: emptyPlanId,
+        enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.RUNNING,
         processedBatches: 2,
         totalBatches: 3,
@@ -264,7 +275,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
 
       const { jobId } = await callerFor(
         editionUser
-      ).enqueueClassification({ planId: planWithFichesId });
+      ).enqueueClassification({ planId: planWithFichesId, enjeu: 'ges' });
 
       const [staleJob] = await db.db
         .select({
@@ -299,6 +310,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       await expect(
         callerFor(editionUser).enqueueClassification({
           planId: planWithFichesId,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/déjà en cours/);
     });
