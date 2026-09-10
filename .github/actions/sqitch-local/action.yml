@@ -1,17 +1,19 @@
 name: sqitch-local
-description: Run sqitch (for local dev)
+description: |
+  Run sqitch for local development.
+  Docker actions preserve the standard libpq PGOPTIONS variable supplied by the calling step.
 
 inputs:
   command:
-    description: "Command to run"
+    description: 'Command to run'
     required: true
   target:
-    description: "Target"
+    description: 'Target'
     required: true
 
 runs:
-  using: "docker"
-  image: "Dockerfile"
+  using: 'docker'
+  image: 'Dockerfile'
   args:
     - ${{ inputs.command }}
     - ${{ inputs.target }}

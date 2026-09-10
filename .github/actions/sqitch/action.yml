@@ -1,21 +1,21 @@
 name: sqitch
 description: |
   Run sqitch into a container with a prebuilt image to allow passing the --network option.
-
+  The standard libpq PGOPTIONS environment variable is forwarded unchanged when callers set it.
 
 inputs:
   command:
-    description: "Command to run"
+    description: 'Command to run'
     required: true
   target:
-    description: "Target"
+    description: 'Target'
     required: true
   network:
     description: Docker network
     required: true
 
 runs:
-  using: "composite"
+  using: 'composite'
 
   steps:
     - name: Get image path
@@ -43,12 +43,24 @@ runs:
     # docker-compose évite un déploiement vert en local et rouge ici.
     - name: Execute command within image
       shell: bash
-      run: >
-        docker run
-        --rm
-        --network ${{ inputs.network }}
-        -v ./sqitch.conf:/sqitch.conf
-        -v ./data_layer:/data_layer
-        ${{ steps.get_image_path.outputs.path }}
-        ${{ inputs.command }}
-        --target ${{ inputs.target }}
+      env:
+        SQITCH_COMMAND: ${{ inputs.command }}
+        SQITCH_IMAGE: ${{ steps.get_image_path.outputs.path }}
+        SQITCH_NETWORK: ${{ inputs.network }}
+        SQITCH_TARGET: ${{ inputs.target }}
+      run: |
+        IFS=' ' read -r -a sqitch_command <<< "$SQITCH_COMMAND"
+        if (( ${#sqitch_command[@]} == 0 )); then
+          echo '::error::La commande Sqitch ne peut pas être vide.'
+          exit 2
+        fi
+
+        docker run \
+          --rm \
+          --network "$SQITCH_NETWORK" \
+          --env PGOPTIONS \
+          -v ./sqitch.conf:/sqitch.conf \
+          -v ./data_layer:/data_layer \
+          "$SQITCH_IMAGE" \
+          "${sqitch_command[@]}" \
+          --target "$SQITCH_TARGET"
