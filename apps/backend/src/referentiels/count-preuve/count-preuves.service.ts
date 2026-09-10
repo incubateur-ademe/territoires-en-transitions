@@ -6,6 +6,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { and, Column, count, eq, like, or, SQL } from 'drizzle-orm';
@@ -143,7 +144,7 @@ export class CountPreuvesService {
     actionId: string,
     column: Column
   ): SQL | undefined {
-    const escapedActionId = actionId.replace(/[\\%_]/g, '\\$&');
+    const escapedActionId = escapeLikePattern(actionId);
     return or(eq(column, actionId), like(column, `${escapedActionId}.%`));
   }
 }

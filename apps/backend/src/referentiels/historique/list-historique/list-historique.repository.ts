@@ -11,6 +11,7 @@ import { questionActionTable } from '@tet/backend/referentiels/models/question-a
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { SYSTEM_MODIFIED_BY_SQL_LITERAL } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   ActionTypeEnum,
@@ -124,17 +125,13 @@ export class ListHistoriqueRepository {
       eq(historiqueUnion.collectiviteId, collectiviteId),
     ];
     if (actionId) {
-      // On échappe les méta-caractères de LIKE dans actionId avant de
-      // construire le pattern. Le caractère d'échappement par défaut de
-      // Postgres est `\` ; on l'utilise donc pour échapper `\`, `%` et `_`.
-      //
       // Le LIKE est ancré sur le séparateur `.` (`<actionId>.%`) pour ne
       // remonter que les descendants stricts dans la hiérarchie pointée :
       // un préfixe nu (`<actionId>%`) ferait remonter `cae_1.10` en filtrant
       // sur `cae_1.1`. La correspondance exacte est gérée par un `eq`
       // dédié pour couvrir les lignes dont l'actionId est précisément la
       // valeur filtrée.
-      const escapedActionId = actionId.replace(/[\\%_]/g, '\\$&');
+      const escapedActionId = escapeLikePattern(actionId);
       const actionIdFilter = or(
         sql`${historiqueUnion.actionIds} @> array[${actionId}]::varchar(30)[]`,
         eq(historiqueUnion.actionId, actionId),
