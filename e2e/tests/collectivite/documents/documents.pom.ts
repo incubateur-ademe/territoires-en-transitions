@@ -15,6 +15,8 @@ export class DocumentsPom {
   readonly editModalNameInput: Locator;
   readonly editModalSaveButton: Locator;
   readonly editModalCancelButton: Locator;
+  readonly addButton: Locator;
+  readonly duplicateNotice: Locator;
   readonly documentCard: Locator;
   readonly documentCardConfidentielIcon: Locator;
   readonly deleteButton: Locator;
@@ -34,6 +36,10 @@ export class DocumentsPom {
     this.editModalNameInput = page.getByRole('textbox');
     this.editModalSaveButton = page.getByRole('button', { name: 'Valider' });
     this.editModalCancelButton = page.getByRole('button', { name: 'Annuler' });
+    this.addButton = page.getByRole('button', { name: 'Ajouter' });
+    this.duplicateNotice = page.getByText(
+      'Ce document existe déjà dans votre bibliothèque'
+    );
     this.documentCard = page.locator('[data-test="carte-doc"]');
     this.documentCardConfidentielIcon = page.locator(
       '[data-test="carte-doc-confidentiel"]'
@@ -51,7 +57,11 @@ export class DocumentsPom {
     await this.setDocument(TEST_PDF_PATH, 'document_test.pdf');
   }
 
-  public async setDocument(filePath: string, filename: string) {
+  public async chooseTestDocument() {
+    await this.chooseDocument(TEST_PDF_PATH);
+  }
+
+  public async chooseDocument(filePath: string) {
     await this.fileTab.click();
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent('filechooser'),
@@ -59,10 +69,12 @@ export class DocumentsPom {
     ]);
 
     await fileChooser.setFiles(filePath);
-    await expect(
-      this.page.getByRole('button', { name: 'Ajouter' })
-    ).toBeEnabled();
-    await this.page.getByRole('button', { name: 'Ajouter' }).click();
+  }
+
+  public async setDocument(filePath: string, filename: string) {
+    await this.chooseDocument(filePath);
+    await expect(this.addButton).toBeEnabled();
+    await this.addButton.click();
     await expect(this.page.getByText(filename).first()).toBeVisible();
   }
 

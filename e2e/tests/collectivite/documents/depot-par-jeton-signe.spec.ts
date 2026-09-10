@@ -90,4 +90,58 @@ test.describe("Dépôt d'un document par jeton signé", () => {
       "un fichier déposé ne doit demander qu'un seul jeton"
     ).toHaveLength(1);
   });
+
+  test('un fichier déjà dans la bibliothèque est signalé sans repartir sur le réseau', async ({
+    page,
+    referentielScoresPom,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels,
+  }) => {
+    await gotoActionWithDocuments(referentielScoresPom);
+    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
+
+    const transfers: ObservedRequest[] = [];
+    const uploadTokenRequests: ObservedRequest[] = [];
+
+    page.on('request', (request) => {
+      const observed: ObservedRequest = {
+        url: request.url(),
+        method: request.method(),
+        headers: request.headers(),
+      };
+      if (observed.url.includes(RESUMABLE_SIGNED_PATH)) {
+        transfers.push(observed);
+      }
+      if (
+        observed.url.includes(DIRECT_OBJECT_PATH) &&
+        WRITING_METHODS.includes(observed.method)
+      ) {
+        transfers.push(observed);
+      }
+      if (observed.url.includes(UPLOAD_TOKEN_PROCEDURE)) {
+        uploadTokenRequests.push(observed);
+      }
+    });
+
+    await referentielScoresPom
+      .getPreuveReglementaireButtonLocator(preuveReglementaireId)
+      .click();
+    await referentielScoresPom.documentsPom.chooseTestDocument();
+
+    await expect(
+      referentielScoresPom.documentsPom.duplicateNotice
+    ).toBeVisible();
+
+    expect(
+      uploadTokenRequests,
+      'le doublon est reconnu par la demande de jeton, qui doit donc partir'
+    ).toHaveLength(1);
+    expect(
+      transfers,
+      `aucun octet ne doit repartir pour un doublon ; observées : ${transfers
+        .map(({ method, url }) => `${method} ${url}`)
+        .join(', ')}`
+    ).toHaveLength(0);
+  });
 });
