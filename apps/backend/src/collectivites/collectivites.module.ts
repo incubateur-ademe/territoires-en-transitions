@@ -9,6 +9,9 @@ import { CollectiviteDocumentsAccessService } from '@tet/backend/collectivites/d
 import { GetDownloadUrlRepository } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.repository';
 import { GetDownloadUrlRouter } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.router';
 import { GetDownloadUrlService } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.service';
+import { ListBibliothequeDocumentsRepository } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.repository';
+import { ListBibliothequeDocumentsRouter } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.router';
+import { ListBibliothequeDocumentsService } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.service';
 import { CreateUploadTokenRepository } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.repository';
 import { CreateUploadTokenRouter } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.router';
 import { CreateUploadTokenService } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.service';
@@ -104,6 +107,9 @@ import { PersonnesService } from './services/personnes.service';
     GetDownloadUrlRepository,
     GetDownloadUrlService,
     GetDownloadUrlRouter,
+    ListBibliothequeDocumentsRepository,
+    ListBibliothequeDocumentsService,
+    ListBibliothequeDocumentsRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
     EditPreuveDocumentRepository,

@@ -3,6 +3,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { CreateUploadTokenRouter } from './create-upload-token/create-upload-token.router';
 import { EditPreuveDocumentRouter } from './edit-preuve-document/edit-preuve-document.router';
 import { GetDownloadUrlRouter } from './get-download-url/get-download-url.router';
+import { ListBibliothequeDocumentsRouter } from './list-bibliotheque-documents/list-bibliotheque-documents.router';
 import { StoreDocumentRouter } from './store-document/store-document.router';
 import { UpdateDocumentRouter } from './update-document/update-document.router';
 
@@ -14,7 +15,8 @@ export class DocumentsRouter {
     private readonly updateDocumentRouter: UpdateDocumentRouter,
     private readonly editPreuveDocumentRouter: EditPreuveDocumentRouter,
     private readonly createUploadTokenRouter: CreateUploadTokenRouter,
-    private readonly getDownloadUrlRouter: GetDownloadUrlRouter
+    private readonly getDownloadUrlRouter: GetDownloadUrlRouter,
+    private readonly listBibliothequeDocumentsRouter: ListBibliothequeDocumentsRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -22,7 +24,8 @@ export class DocumentsRouter {
     this.updateDocumentRouter.router,
     this.editPreuveDocumentRouter.router,
     this.createUploadTokenRouter.router,
-    this.getDownloadUrlRouter.router
+    this.getDownloadUrlRouter.router,
+    this.listBibliothequeDocumentsRouter.router
   );
 
   createCaller = this.trpc.createCallerFactory(this.router);

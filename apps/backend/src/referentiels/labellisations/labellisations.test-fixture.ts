@@ -21,23 +21,27 @@ import {
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { labellisationTable } from './labellisation.table';
 
+export type CreateAuditArgs = {
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  dateDebut?: string | null;
+  clos?: boolean;
+  dateFin?: string;
+  valide?: boolean;
+  withDemande?: boolean;
+};
+
 export async function createAudit({
   databaseService,
   collectiviteId,
   referentielId,
   dateDebut = new Date('2025-01-01').toISOString(),
   clos = false,
+  dateFin,
   valide = false,
   withDemande = false,
-}: {
-  databaseService: DatabaseServiceInterface;
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  dateDebut?: string | null;
-  clos?: boolean;
-  valide?: boolean;
-  withDemande?: boolean;
-}) {
+}: CreateAuditArgs) {
   const demande = withDemande
     ? await databaseService.db
         .insert(labellisationDemandeTable)
@@ -61,7 +65,7 @@ export async function createAudit({
       dateDebut: dateDebut,
       clos,
       valide,
-      dateFin: clos ? new Date().toISOString() : null,
+      dateFin: clos ? dateFin ?? new Date().toISOString() : null,
     })
     .returning();
 
