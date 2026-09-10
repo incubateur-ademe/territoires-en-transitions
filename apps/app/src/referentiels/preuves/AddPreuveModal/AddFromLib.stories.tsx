@@ -1,35 +1,28 @@
-import { Meta} from '@storybook/nextjs-vite';
-import {action} from 'storybook/actions';
-import {AddFromLib} from './AddFromLib';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { action } from 'storybook/actions';
+import type { BibliothequeFichierListItem } from '../Bibliotheque/useFichiers';
+import { AddFromLib } from './AddFromLib';
 
-export default {
+const meta: Meta<typeof AddFromLib> = {
   component: AddFromLib,
   args: {
-    filters: {page: 1, search: ''},
-    setFilters: action('setFilters'),
-  },
-} as Meta;
-
-export const Vide = {
-  args: {
-    items: [],
-    total: 0,
+    onSearch: action('onSearch'),
+    onAddFileFromLib: action('onAddFileFromLib'),
+    onClose: action('onClose'),
   },
 };
 
-const genMockFile = (count: number) =>
-  Array(count)
-    .fill(null)
-    .map((_, i) => ({
-      id: i + 1,
-      filename: `exemple ${i + 1}`,
-      filesize: 100,
-      hash: 'fake',
-    }));
+type Story = StoryObj<typeof AddFromLib>;
 
-export const Fichiers = {
-  args: {
-    items: genMockFile(4),
-    total: 12,
-  },
-};
+const toMockFichiers = (count: number): BibliothequeFichierListItem[] =>
+  Array.from({ length: count }, (_, index) => ({
+    id: index + 1,
+    filename: `exemple ${index + 1}`,
+    confidentiel: index === 0,
+  }));
+
+export const Vide: Story = { args: { items: [] } };
+
+export const Fichiers: Story = { args: { items: toMockFichiers(4) } };
+
+export default meta;
