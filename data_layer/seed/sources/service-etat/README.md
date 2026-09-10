@@ -42,10 +42,35 @@ neuve, où le change antérieur les jouerait avant que la table existe.
 | `dr-ademe.csv` | 18 | **17** lignes type `dr_ademe` + 1 périmètre secondaire | `region_code` |
 | `service-national.csv` | 2 | type `service_national` | `nom` |
 | `conseil-regional.csv` | 18 | **update** des `type='region'` existants | `region_code` |
-| `dreal-contacts.csv` | 22 | — | réservé à la slice 4 (TETH-11) |
 
-`dreal-contacts.csv` n'est lu par personne aujourd'hui : les correspondants DREAL
-relèvent de l'import des membres et de son mail d'invitation, pas de cette slice.
+## Les correspondants, eux, ne sont pas ici
+
+Les listes de correspondants — les personnes à rattacher à chaque service —
+**ne sont pas versionnées**. Ce dépôt est public, et ce sont des adresses
+nominatives d'agents.
+
+Le fichier reçu du métier se dépose dans `contacts/` à la racine du dépôt, que
+le `.gitignore` couvre, et l'import se lance depuis un poste : voir
+[le README du script](../../../../apps/tools/src/migrations/import-correspondants-service-etat/README.md).
+
+Le format, en revanche, se documente ici puisqu'il prolonge celui des services.
+Un seul en-tête sert les six familles :
+
+```csv
+type;region_code;departement_code;siret;nom;email;role
+dreal;53;;;DREAL Bretagne;prenom.nom@developpement-durable.gouv.fr;
+ddt;;035;;DDT Ille-et-Vilaine;prenom.nom@ille-et-vilaine.gouv.fr;
+service_national;;;12008701000068;DGEC;prenom.nom@developpement-durable.gouv.fr;lecture
+```
+
+Le `type` dit quelle colonne fait la clé : `region_code` pour une DREAL, une DR
+ADEME ou un conseil régional, `departement_code` pour une DDT, `siret` pour un
+service national. Les autres colonnes clés restent vides ; une ligne qui en
+remplit deux est refusée plutôt que devinée. `nom` sert au contrôle de
+relecture, `role` vide vaut `admin`.
+
+Importer une famille de plus ne coûte donc rien d'autre que déposer son CSV et
+relancer le script.
 
 ### Une direction sur deux régions
 

@@ -116,3 +116,8 @@ tsconfig.tsbuildinfo
 # Générateurs de seeds (data_layer/scripts/generate_*.py)
 __pycache__/
 *.pyc
+
+# Listes de correspondants des services de l'État, lues par l'import des
+# membres. Des adresses nominatives d'agents n'ont rien à faire dans un dépôt
+# public : le fichier reçu du métier se dépose ici et n'est jamais versionné.
+/contacts/
