@@ -144,7 +144,7 @@ values (100, 1, 'eci', '5');
 -- Yolo ajoute la preuve à la demande
 insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
 select collectivite_id, id, 100
-from bibliotheque_fichier;
+from labellisation.bibliotheque_fichier;
 
 select ok((select preuve_nombre = 1
                       and atteint
@@ -322,7 +322,7 @@ values (100, 1, 'eci', '1');
 -- Puis ajoute la preuve à la demande
 insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
 select collectivite_id, id, 100
-from bibliotheque_fichier;
+from labellisation.bibliotheque_fichier;
 
 select ok((select preuve_nombre = 1
                       and atteint

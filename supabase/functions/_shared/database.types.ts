@@ -269,13 +269,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'bibliotheque_fichier';
             referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'preuve_base_fichier_id_fkey';
-            columns: ['fichier_id'];
-            isOneToOne: false;
-            referencedRelation: 'bibliotheque_fichier_snippet';
-            referencedColumns: ['id'];
           }
         ];
       };
@@ -285,13 +278,6 @@ export type Database = {
         Row: {
           action_id: string | null;
           collectivite_id: number | null;
-          snippet: Json | null;
-        };
-        Relationships: [];
-      };
-      bibliotheque_fichier_snippet: {
-        Row: {
-          id: number | null;
           snippet: Json | null;
         };
         Relationships: [];
@@ -15561,246 +15547,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      bibliotheque_annexe: {
-        Row: {
-          collectivite_id: number | null;
-          commentaire: string | null;
-          created_at: string | null;
-          created_by: string | null;
-          created_by_nom: string | null;
-          fiche_id: number | null;
-          fichier: Json | null;
-          id: number | null;
-          lien: Json | null;
-          plan_ids: number[] | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'annexe_fiche_id_fkey';
-            columns: ['fiche_id'];
-            isOneToOne: false;
-            referencedRelation: 'fiche_action';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'annexe_fiche_id_fkey';
-            columns: ['fiche_id'];
-            isOneToOne: false;
-            referencedRelation: 'fiche_resume';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'annexe_fiche_id_fkey';
-            columns: ['fiche_id'];
-            isOneToOne: false;
-            referencedRelation: 'fiches_action';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
-      bibliotheque_fichier: {
-        Row: {
-          bucket_id: string | null;
-          collectivite_id: number | null;
-          confidentiel: boolean | null;
-          file_id: string | null;
-          filename: string | null;
-          filesize: number | null;
-          hash: string | null;
-          id: number | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'action_statuts';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'active_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'auditeurs';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'audits';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_card';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_carte_identite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_identite';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_niveau_acces';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'comparaison_scores_audit';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'crm_collectivites';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'crm_usages';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'named_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'question_display';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'question_thematique_completude';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_active_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_completude';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_completude_compute';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_plan_action_hebdo';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_plan_action_premier_usage';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_plan_action_usage';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_score';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'site_labellisation';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'stats_active_real_collectivites';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'stats_carte_collectivite_active';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'stats_locales_engagement_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'bibliotheque_fichier_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'suivi_audit';
-            referencedColumns: ['collectivite_id'];
-          }
-        ];
-      };
       client_action_statut: {
         Row: {
           action_id: string | null;
@@ -17339,25 +17085,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      preuve: {
-        Row: {
-          action: Json | null;
-          audit: Json | null;
-          collectivite_id: number | null;
-          commentaire: string | null;
-          created_at: string | null;
-          created_by: string | null;
-          created_by_nom: string | null;
-          demande: Json | null;
-          fichier: Json | null;
-          id: number | null;
-          lien: Json | null;
-          preuve_reglementaire: Json | null;
-          preuve_type: Database['public']['Enums']['preuve_type'] | null;
-          rapport: Json | null;
-        };
-        Relationships: [];
-      };
       question_display: {
         Row: {
           action_ids: unknown[] | null;
@@ -18134,19 +17861,6 @@ export type Database = {
           nb_plans: number | null;
           nb_utilisateurs: string | null;
           nom: string | null;
-        };
-        Relationships: [];
-      };
-      retool_preuves: {
-        Row: {
-          action: string | null;
-          collectivite_id: number | null;
-          created_at: string | null;
-          fichier: string | null;
-          lien: string | null;
-          nom: string | null;
-          preuve_type: Database['public']['Enums']['preuve_type'] | null;
-          referentiel: string | null;
         };
         Relationships: [];
       };
