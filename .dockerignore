@@ -1,0 +1,83 @@
+# Le contexte de build est la racine du repo (monorepo pnpm) : chaque
+# apps/*/Dockerfile est buildé avec `docker build -f apps/<app>/Dockerfile .`
+# Ce fichier garde ce contexte petit et évite de faire fuiter des artefacts
+# locaux (node_modules, builds précédents, secrets .env) dans les images.
+
+.git
+.github
+
+# dependencies (réinstallées dans l'image, jamais copiées depuis l'hôte)
+# Motifs en double (racine + **/) : un motif sans "**/" ne matche qu'à la
+# racine du contexte, pas dans apps/*/ ou packages/*/ (vérifié : sans le
+# doublon, apps/app/.next à lui seul faisait gonfler le contexte à 7 Go).
+node_modules
+**/node_modules
+.pnpm-store
+**/.pnpm-store
+
+# builds précédents / caches (régénérés dans l'image)
+dist
+**/dist
+out-tsc
+**/out-tsc
+.next
+**/.next
+.nx
+**/.nx
+tmp
+**/tmp
+storybook-static
+**/storybook-static
+coverage
+**/coverage
+*.tsbuildinfo
+**/*.tsbuildinfo
+.tsc-trace
+**/.tsc-trace
+.swc
+**/.swc
+
+# tests / e2e
+**/test-results/
+**/playwright-report/
+**/playwright/.auth/
+**/blob-report/
+**/playwright/.cache/
+**/__tests__/__output__/
+
+# secrets / config locale — les images reçoivent leur config via build args,
+# jamais via un .env committé
+.env
+.env.*
+.env.keys*
+!.env.example
+keyfile.json
+
+# répertoires jamais nécessaires à un build d'app : les exclure garde le
+# contexte petit ET évite qu'une modification qui n'a rien à voir (migration
+# SQL, spec e2e, note de doc) invalide les couches de build.
+data_layer
+supabase
+api_tests
+strapi
+infra
+doc
+.agents
+.claude
+
+# `e2e` est un package du workspace (cf. pnpm-workspace.yaml) : son
+# package.json doit rester dans le contexte, sinon `pnpm install
+# --frozen-lockfile` échoue sur un manifest manquant. Le reste ne sert à
+# aucune image.
+e2e/**
+!e2e/package.json
+
+# divers
+.DS_Store
+.idea
+.vscode
+docker-data
+.docker/node-base-build.log
+earthly-build
+worktrees
+.context
