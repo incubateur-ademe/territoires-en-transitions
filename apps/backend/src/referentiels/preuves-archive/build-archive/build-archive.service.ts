@@ -31,6 +31,15 @@ import {
 
 const DOWNLOAD_CONCURRENCY = 8;
 
+const toSettledError = (
+  promise: Promise<unknown>
+): Promise<Error | undefined> =>
+  promise.then(
+    () => undefined,
+    (error: unknown) =>
+      error instanceof Error ? error : new Error(getErrorMessage(error))
+  );
+
 export interface BuildAndUploadInput {
   archiveId: string;
   arborescence: ArchiveFolderArborescence;
@@ -121,7 +130,7 @@ export class BuildArchiveService {
     Result<{ totalFiles: number }, ArchiveAssemblyError>
   > {
     const archive = archiver('zip', { store: true });
-    const writeFinished = pipeline(archive, destination);
+    const writeOutcome = toSettledError(pipeline(archive, destination));
 
     const preparedEntries = prepareArchiveEntries(arborescence.files);
 
@@ -140,19 +149,34 @@ export class BuildArchiveService {
         (entry) => archive.append(entry.content, { name: entry.name })
       );
 
-      await archive.finalize();
-      await writeFinished;
+      const finalizeOutcome = toSettledError(archive.finalize());
+
+      const writeError = await writeOutcome;
+      if (writeError) {
+        return this.toAssemblyFailure(writeError, archive);
+      }
+
+      const finalizeError = await finalizeOutcome;
+      if (finalizeError) {
+        return this.toAssemblyFailure(finalizeError, archive);
+      }
 
       return success({ totalFiles: preparedEntries.length });
     } catch (error) {
-      this.logger.error(
-        `Assemblage de l'archive interrompu: ${getErrorMessage(error)}`
-      );
-      return failure(
-        ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
+      return this.toAssemblyFailure(
+        error instanceof Error ? error : new Error(getErrorMessage(error)),
+        archive
       );
     }
+  }
+
+  private toAssemblyFailure(
+    error: Error,
+    archive: Archiver
+  ): Result<{ totalFiles: number }, ArchiveAssemblyError> {
+    archive.abort();
+    this.logger.error(`Assemblage de l'archive interrompu: ${error.message}`);
+    return failure(ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED, error);
   }
 
   private async downloadAndAppendEntry({
