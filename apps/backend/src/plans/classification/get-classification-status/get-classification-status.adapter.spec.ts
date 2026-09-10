@@ -28,6 +28,7 @@ const toProgress = ({
   id: jobId,
   collectiviteId: 3,
   planId,
+  enjeu: 'ges',
   status,
   processedBatches: 2,
   totalBatches: 3,
@@ -46,6 +47,7 @@ describe('toClassificationStatus', () => {
       data: {
         id: jobId,
         planId,
+        enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.PENDING,
         processedBatches: 2,
         totalBatches: 3,
@@ -63,6 +65,7 @@ describe('toClassificationStatus', () => {
       data: {
         id: jobId,
         planId,
+        enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft,
       },
@@ -82,6 +85,7 @@ describe('toClassificationStatus', () => {
       data: {
         id: jobId,
         planId,
+        enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.FAILED,
         error: 'Aucune fiche à classer dans ce plan',
       },

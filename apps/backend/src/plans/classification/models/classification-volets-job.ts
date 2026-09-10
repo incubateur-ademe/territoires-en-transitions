@@ -1,3 +1,4 @@
+import { Enjeu } from '@tet/domain/shared';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { createEnumObject } from '@tet/domain/utils';
 import { ClassificationDraft } from './classification-draft';
@@ -33,6 +34,7 @@ export type ClassificationVoletsJob = {
   id: string;
   collectiviteId: number;
   planId: number;
+  enjeu: Enjeu;
   createdBy: string;
   status: ClassificationVoletsJobStatus;
   processedBatches: number;
