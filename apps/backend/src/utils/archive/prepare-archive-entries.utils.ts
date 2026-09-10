@@ -1,5 +1,5 @@
 import type { ArchiveFile } from './archive-arborescence.types';
-import { buildArchivePath } from './build-archive-path';
+import { buildArchivePath } from './build-archive-path.utils';
 
 export interface PreparedFileEntry {
   entryPath: string;

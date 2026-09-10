@@ -1,4 +1,4 @@
-import type { LienPreuve } from './build-liens-csv';
+import type { ArchiveLink } from './build-links-csv.utils';
 
 export interface ArchiveFile {
   folderSegments: string[];
@@ -10,7 +10,7 @@ export interface ArchiveFile {
 
 export interface ArchiveLinkFolder {
   folderSegments: string[];
-  liens: LienPreuve[];
+  links: ArchiveLink[];
 }
 
 export interface SkippedFile {

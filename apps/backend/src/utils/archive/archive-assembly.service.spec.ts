@@ -1,10 +1,11 @@
+import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { Readable, Writable } from 'node:stream';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { type ArchiveFolderArborescence } from './archive-arborescence.types';
 import { ArchiveAssemblyErrorEnum } from './archive-assembly.errors';
-import { BuildArchiveService } from './build-archive.service';
+import { ArchiveAssemblyService } from './archive-assembly.service';
 
 const toArborescence = (
   filenames: string[] = ['deliberation.pdf']
@@ -51,9 +52,55 @@ const toFailingDestination = (): Writable =>
     },
   });
 
-describe('BuildArchiveService.assembleZip', () => {
+describe('ArchiveAssemblyService.assembleZipToStorage', () => {
+  test('dépose l archive assemblée sous le bucket et la clé demandés', async () => {
+    const storeDocument = vi.fn().mockResolvedValue(success(undefined));
+    const service = new ArchiveAssemblyService({
+      getDocumentStream: async () => success(Readable.from(['abcd'])),
+      storeDocument,
+    } as unknown as DocumentStorageService);
+
+    const result = await service.assembleZipToStorage({
+      arborescence: toArborescence(),
+      bucketId: 'preuves-archives',
+      key: 'archive-1.zip',
+    });
+
+    expect(result).toEqual(success({ totalFiles: 1 }));
+    expect(storeDocument).toHaveBeenCalledWith(
+      expect.objectContaining({
+        bucketId: 'preuves-archives',
+        key: 'archive-1.zip',
+        })
+    );
+  });
+
+  test('rend un échec quand le dépôt échoue', async () => {
+    const service = new ArchiveAssemblyService({
+      getDocumentStream: async () => success(Readable.from(['abcd'])),
+      storeDocument: async () =>
+        failure(
+          DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR,
+          new Error('stockage indisponible')
+        ),
+    } as unknown as DocumentStorageService);
+
+    const result = await service.assembleZipToStorage({
+      arborescence: toArborescence(),
+      bucketId: 'preuves-archives',
+      key: 'archive-1.zip',
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
+    });
+  });
+});
+
+describe('ArchiveAssemblyService.assembleZip', () => {
   test('écrit une archive dans la destination fournie', async () => {
-    const service = new BuildArchiveService(toDocumentStorage());
+    const service = new ArchiveAssemblyService(toDocumentStorage());
     const destination = toCollectingDestination();
 
     const result = await service.assembleZip({
@@ -68,7 +115,7 @@ describe('BuildArchiveService.assembleZip', () => {
   });
 
   test("rend un échec quand la destination refuse d'écrire pendant les téléchargements", async () => {
-    const service = new BuildArchiveService(toDocumentStorage([0, 200]));
+    const service = new ArchiveAssemblyService(toDocumentStorage([0, 200]));
 
     const result = await service.assembleZip({
       arborescence: toArborescence(['rapide.pdf', 'lent.pdf']),

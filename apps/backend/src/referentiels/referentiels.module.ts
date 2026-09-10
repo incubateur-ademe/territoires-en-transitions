@@ -75,7 +75,6 @@ import { ValidateAuditRouter } from './labellisations/validate-audit/validate-au
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
-import { BuildArchiveService } from './preuves-archive/build-archive/build-archive.service';
 import { DeletePreuvesArchiveService } from './preuves-archive/delete-preuves-archive/delete-preuves-archive.service';
 import { GeneratePreuvesArchiveService } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.service';
 import { GeneratePreuvesArchiveWorker } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.worker';
@@ -152,7 +151,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     PreuvesArchiveRepository,
     CollectPreuvesRepository,
     CollectAuditPreuvesService,
-    BuildArchiveService,
     DeletePreuvesArchiveService,
     RequestPreuvesArchiveService,
     RequestPreuvesArchiveRouter,

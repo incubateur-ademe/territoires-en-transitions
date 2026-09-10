@@ -4,7 +4,7 @@ import {
   checkArchiveLimits,
   MAX_FILE_COUNT,
   MAX_TOTAL_SIZE_BYTES,
-} from './check-archive-limits';
+} from './check-archive-limits.utils';
 
 const toArchiveFile = (filesize: number): ArchiveFile => ({
   folderSegments: [],

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildArchivePath, sanitizeSegment } from './build-archive-path';
+import { buildArchivePath, sanitizeSegment } from './build-archive-path.utils';
 
 describe('sanitizeSegment', () => {
   it('laisse passer un nom de fichier normal', () => {

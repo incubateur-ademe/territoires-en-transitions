@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ArchiveFile } from './archive-arborescence.types';
-import { prepareArchiveEntries } from './prepare-archive-entries';
+import { prepareArchiveEntries } from './prepare-archive-entries.utils';
 
 function makeFile(overrides: Partial<ArchiveFile> = {}): ArchiveFile {
   return {

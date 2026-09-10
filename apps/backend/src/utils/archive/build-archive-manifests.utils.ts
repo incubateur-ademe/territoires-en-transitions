@@ -1,12 +1,12 @@
 import { type ArchiveFolderArborescence } from './archive-arborescence.types';
-import { buildArchivePath } from './build-archive-path';
-import { buildLiensCsv } from './build-liens-csv';
+import { buildArchivePath } from './build-archive-path.utils';
+import { buildLinksCsv } from './build-links-csv.utils';
 
 // Le dossier `_manifeste/` à la racine écarte tout risque de collision avec un
 // fichier user homonyme (qui serait écrasé sans dédoublonnage côté manifestes).
 const MANIFESTE_FOLDER = '_manifeste';
 const FICHIERS_MANQUANTS_FILENAME = 'fichiers-manquants.txt';
-const LIENS_CSV_FILENAME = 'liens.csv';
+const LINKS_CSV_FILENAME = 'liens.csv';
 
 export interface ArchiveManifestEntry {
   name: string;
@@ -22,11 +22,11 @@ export function buildArchiveManifests({
   arborescence,
   failedDownloads,
 }: BuildArchiveManifestsInput): ArchiveManifestEntry[] {
-  const liensCsv = arborescence.linkFolders
-    .filter((folder) => folder.liens.length > 0)
+  const linksCsv = arborescence.linkFolders
+    .filter((folder) => folder.links.length > 0)
     .map((folder) => ({
-      name: buildArchivePath([...folder.folderSegments, LIENS_CSV_FILENAME]),
-      content: buildLiensCsv(folder.liens),
+      name: buildArchivePath([...folder.folderSegments, LINKS_CSV_FILENAME]),
+      content: buildLinksCsv(folder.links),
     }));
 
   const fichiersManquantsLignes = [
@@ -49,5 +49,5 @@ export function buildArchiveManifests({
         ]
       : [];
 
-  return [...liensCsv, ...fichiersManquants];
+  return [...linksCsv, ...fichiersManquants];
 }

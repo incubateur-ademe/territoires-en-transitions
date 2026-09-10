@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { buildLiensCsv } from './build-liens-csv';
+import { buildLinksCsv } from './build-links-csv.utils';
 
 const HEADER = 'Titre,URL,Commentaire';
 
-describe('buildLiensCsv', () => {
+describe('buildLinksCsv', () => {
   it('produit un en-tete seul pour une liste vide', () => {
-    expect(buildLiensCsv([])).toBe(`${HEADER}\n`);
+    expect(buildLinksCsv([])).toBe(`${HEADER}\n`);
   });
 
   it('ecrit une ligne par lien', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       {
         titre: 'Site officiel',
         url: 'https://exemple.fr',
@@ -20,42 +20,42 @@ describe('buildLiensCsv', () => {
   });
 
   it('entoure de guillemets les champs contenant une virgule', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: 'Rapport, version 2', url: 'https://x.fr', commentaire: '' },
     ]);
     expect(csv).toBe(`${HEADER}\n"Rapport, version 2",https://x.fr,\n`);
   });
 
   it('double les guillemets internes', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: 'Le "grand" rapport', url: 'https://x.fr', commentaire: '' },
     ]);
     expect(csv).toBe(`${HEADER}\n"Le ""grand"" rapport",https://x.fr,\n`);
   });
 
   it('entoure de guillemets les champs contenant un saut de ligne', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: 'ligne1\nligne2', url: 'https://x.fr', commentaire: '' },
     ]);
     expect(csv).toBe(`${HEADER}\n"ligne1\nligne2",https://x.fr,\n`);
   });
 
   it('neutralise les injections de formule (= + - @) sur titre et commentaire', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: '=SUM(A1)', url: 'https://x.fr', commentaire: '@cmd' },
     ]);
     expect(csv).toBe(`${HEADER}\n'=SUM(A1),https://x.fr,'@cmd\n`);
   });
 
   it('neutralise une injection de formule commencant par - ou tabulation', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: '-2+3', url: 'https://x.fr', commentaire: '\tcmd' },
     ]);
     expect(csv).toBe(`${HEADER}\n'-2+3,https://x.fr,'\tcmd\n`);
   });
 
   it('remplace les URLs aux schemes non sûrs par un placeholder (javascript:/data:/etc)', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: 'XSS', url: 'javascript:alert(1)', commentaire: '' },
       { titre: 'Data URI', url: 'data:text/html,xxx', commentaire: '' },
       { titre: 'OK', url: 'https://example.com', commentaire: '' },
@@ -66,7 +66,7 @@ describe('buildLiensCsv', () => {
   });
 
   it('neutralise la formule puis applique l’echappement CSV', () => {
-    const csv = buildLiensCsv([
+    const csv = buildLinksCsv([
       { titre: '=SUM(A1,A2)', url: 'https://x.fr', commentaire: '' },
     ]);
     expect(csv).toBe(`${HEADER}\n"'=SUM(A1,A2)",https://x.fr,\n`);

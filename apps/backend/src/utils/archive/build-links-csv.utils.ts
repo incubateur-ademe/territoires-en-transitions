@@ -1,4 +1,4 @@
-export interface LienPreuve {
+export interface ArchiveLink {
   titre: string;
   url: string;
   commentaire: string;
@@ -38,11 +38,11 @@ function escapeCsvField(value: string): string {
   return neutralized;
 }
 
-export function buildLiensCsv(liens: LienPreuve[]): string {
+export function buildLinksCsv(links: ArchiveLink[]): string {
   const lines = [
     CSV_HEADER.join(','),
-    ...liens.map((lien) =>
-      [lien.titre, sanitizeUrl(lien.url), lien.commentaire]
+    ...links.map((link) =>
+      [link.titre, sanitizeUrl(link.url), link.commentaire]
         .map(escapeCsvField)
         .join(',')
     ),
