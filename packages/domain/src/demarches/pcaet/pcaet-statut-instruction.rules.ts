@@ -20,18 +20,24 @@ import type { DemandeAvisAchevement } from './workflow/guards/demarche-pcaet-gua
  * premier ignore où en est l'avis, le second n'existe pas avant la
  * transmission et ne dit rien d'une collectivité qui n'a rien déposé.
  *
+ * Un statut par étape du cycle de vie, et rien d'autre. Deux valeurs ont été
+ * écartées parce qu'elles n'en étaient pas :
+ *
+ * - **le brouillon d'avis** décrit l'avancement de l'agent, pas celui du
+ *   dossier — qui reste à instruire tant que rien n'est validé ;
+ * - **la révision** est un attribut du dossier, non une étape : le workflow est
+ *   linéaire et sans retour, et un renouvellement est un nouveau dépôt qui
+ *   parcourt le même cycle depuis `en_elaboration`.
+ *
  * L'ordre des valeurs suit le cycle de vie, de l'amont à l'aval : c'est lui qui
  * ordonne le tri par statut.
  */
 export const PcaetStatutInstructionEnum = {
   /** Aucune démarche PCAET : la collectivité n'a rien déposé. */
   AUCUN_DEPOT: 'aucun_depot',
-  /** Premier PCAET en cours de constitution. */
+  /** Un dépôt en cours de constitution — premier PCAET comme renouvellement. */
   EN_ELABORATION: 'en_elaboration',
-  /** Nouveau dépôt d'une collectivité qui a déjà mené un PCAET à son terme. */
-  EN_REVISION: 'en_revision',
-  A_INSTRUIRE: 'a_instruire',
-  BROUILLON_EN_COURS: 'brouillon_en_cours',
+  EN_INSTRUCTION: 'en_instruction',
   PAS_D_AVIS_DEPOSE: 'pas_d_avis_depose',
   INSTRUIT: 'instruit',
   /** `publie` : l'adoption et la mise à disposition du public sont un seul acte. */
@@ -42,9 +48,7 @@ export const PcaetStatutInstructionEnum = {
 export const pcaetStatutInstructionValues = [
   PcaetStatutInstructionEnum.AUCUN_DEPOT,
   PcaetStatutInstructionEnum.EN_ELABORATION,
-  PcaetStatutInstructionEnum.EN_REVISION,
-  PcaetStatutInstructionEnum.A_INSTRUIRE,
-  PcaetStatutInstructionEnum.BROUILLON_EN_COURS,
+  PcaetStatutInstructionEnum.EN_INSTRUCTION,
   PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
   PcaetStatutInstructionEnum.INSTRUIT,
   PcaetStatutInstructionEnum.ADOPTE,
@@ -63,14 +67,13 @@ export type PcaetStatutInstruction = z.infer<
  * Ce que le service voit sans rien demander.
  *
  * Reproduit ce que l'écran montrait avant les filtres : les dossiers dont il a
- * la charge, sans les dépôts encore en chantier ni les cycles clos. Les trois
- * exclus sont précisément les nouveautés — une DREAL, et plus encore la DGEC
- * avec son périmètre national, ne veut pas ouvrir sa liste sur un millier de
+ * la charge, sans les dépôts en chantier ni les cycles clos. Les trois exclus
+ * sont précisément les nouveautés — une DREAL, et plus encore la DGEC avec son
+ * périmètre national, ne veut pas ouvrir sa liste sur un millier de
  * collectivités qui n'ont rien déposé.
  */
 export const STATUTS_INSTRUCTION_PAR_DEFAUT = [
-  PcaetStatutInstructionEnum.A_INSTRUIRE,
-  PcaetStatutInstructionEnum.BROUILLON_EN_COURS,
+  PcaetStatutInstructionEnum.EN_INSTRUCTION,
   PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
   PcaetStatutInstructionEnum.INSTRUIT,
   PcaetStatutInstructionEnum.ADOPTE,
@@ -79,13 +82,16 @@ export const STATUTS_INSTRUCTION_PAR_DEFAUT = [
 /**
  * Traduction de l'état d'une saisine dans le vocabulaire du suivi.
  *
- * `clos` n'y figure pas : il ne vaut que pour un dépôt publié ou archivé, et
- * `getStatutInstruction` traite ces deux statuts avant d'en arriver là.
+ * Un avis commencé mais pas validé laisse le dossier « à instruire » : le
+ * brouillon dit où en est l'agent, pas où en est le dossier, et il ne sort pas
+ * de son espace. `clos` ne figure pas ici : il ne vaut que pour un dépôt publié
+ * ou archivé, et `getStatutInstruction` traite ces deux statuts avant d'en
+ * arriver là.
  */
 const STATUT_PAR_ETAT = {
-  [PcaetDemandeAvisEtatEnum.A_TRAITER]: PcaetStatutInstructionEnum.A_INSTRUIRE,
+  [PcaetDemandeAvisEtatEnum.A_TRAITER]: PcaetStatutInstructionEnum.EN_INSTRUCTION,
   [PcaetDemandeAvisEtatEnum.BROUILLON_EN_COURS]:
-    PcaetStatutInstructionEnum.BROUILLON_EN_COURS,
+    PcaetStatutInstructionEnum.EN_INSTRUCTION,
   [PcaetDemandeAvisEtatEnum.AVIS_RENDU]: PcaetStatutInstructionEnum.INSTRUIT,
   [PcaetDemandeAvisEtatEnum.DELAI_ECOULE]:
     PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
@@ -96,12 +102,6 @@ export type StatutInstructionEntree = {
   /** `null` quand la collectivité n'a aucune démarche PCAET. */
   demarcheStatus: DemarchePcaetStatus | null;
   avisDeadlineAt: string | null;
-  /**
-   * Un PCAET de cette collectivité a déjà été mené à son terme — publié ou
-   * archivé. C'est ce qui sépare un premier dépôt d'un renouvellement, que
-   * rien ne distingue dans le statut du dépôt lui-même.
-   */
-  aUnPcaetAbouti: boolean;
   /**
    * Cette saisine appelle-t-elle un avis, ou une simple lecture ? Se lit par
    * ligne et non par service : depuis un périmètre secondaire, une DREAL lit
@@ -117,7 +117,7 @@ export type StatutInstructionEntree = {
 /**
  * Le statut d'une ligne du suivi d'instruction.
  *
- * Ne réimplémente aucune règle d'avis : les cinq cas que l'état de saisine ne
+ * Ne réimplémente aucune règle d'avis : les quatre cas que l'état de saisine ne
  * sait pas dire sont traités ici, et tout ce qui relève de l'avis est délégué
  * aux règles existantes — `getDemandeAvisEtat` quand le service se prononce,
  * `getEtatDossierEnLecture` quand il ne fait que lire.
@@ -126,7 +126,6 @@ export const getStatutInstruction = (
   {
     demarcheStatus,
     avisDeadlineAt,
-    aUnPcaetAbouti,
     deposeAvis,
     nbAvisValides,
     nbAvisBrouillons,
@@ -144,9 +143,7 @@ export const getStatutInstruction = (
     return PcaetStatutInstructionEnum.ADOPTE;
   }
   if (demarcheStatus === DemarchePcaetStatusEnum.EN_ELABORATION) {
-    return aUnPcaetAbouti
-      ? PcaetStatutInstructionEnum.EN_REVISION
-      : PcaetStatutInstructionEnum.EN_ELABORATION;
+    return PcaetStatutInstructionEnum.EN_ELABORATION;
   }
 
   // Ne restent que `transmis_pour_avis` et `instruit` : le dossier est dans la

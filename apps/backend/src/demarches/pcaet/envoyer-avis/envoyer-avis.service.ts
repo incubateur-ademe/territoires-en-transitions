@@ -3,7 +3,7 @@ import { EmailService } from '@tet/backend/utils/email/email.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { render } from '@react-email/components';
-import { ListDemandesAvisRepository } from '../list-demandes-avis/list-demandes-avis.repository';
+import { CollectiviteContactsRepository } from '../shared/collectivite-contacts.repository';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
@@ -21,7 +21,7 @@ export class EnvoyerAvisService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository,
-    private readonly listDemandesAvisRepository: ListDemandesAvisRepository,
+    private readonly collectiviteContactsRepository: CollectiviteContactsRepository,
     private readonly emailService: EmailService
   ) {}
 
@@ -60,7 +60,7 @@ export class EnvoyerAvisService {
 
     const contacts =
       (
-        await this.listDemandesAvisRepository.listContactsParCollectivite(
+        await this.collectiviteContactsRepository.listContactsParCollectivite(
           [deposanteCollectiviteId],
           tx
         )

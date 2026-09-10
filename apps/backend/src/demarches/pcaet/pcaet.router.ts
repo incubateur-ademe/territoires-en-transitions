@@ -17,7 +17,7 @@ import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
-import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
+import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
@@ -31,7 +31,7 @@ export class PcaetRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
-    private readonly listDemandesAvisRouter: ListDemandesAvisRouter,
+    private readonly listDossiersInstructionRouter: ListDossiersInstructionRouter,
     private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
     private readonly getContexteInstructionRouter: GetContexteInstructionRouter,
     private readonly getAvisFileUrlRouter: GetAvisFileUrlRouter,
@@ -59,7 +59,7 @@ export class PcaetRouter {
 
   router = this.trpc.mergeRouters(
     this.listDemarchesPcaetRouter.router,
-    this.listDemandesAvisRouter.router,
+    this.listDossiersInstructionRouter.router,
     this.getDossierInstructionRouter.router,
     this.getContexteInstructionRouter.router,
     this.getAvisFileUrlRouter.router,

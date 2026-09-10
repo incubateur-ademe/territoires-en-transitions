@@ -26,10 +26,63 @@ export class InstructionPom {
     await this.page.goto(`/collectivite/${serviceId}/demandes-avis`);
   }
 
+  /**
+   * Une ligne de la liste, désignée par la saisine qu'elle porte.
+   *
+   * La clé va du plus précis au plus général : une collectivité sans dépôt n'a
+   * pas de saisine à nommer, d'où `rowSansDepot` et `rowDemarche`.
+   */
   row(demandeAvisId: number): Locator {
     return this.page.getByTestId(
-      `demarches.pcaet.instruction.demande-${demandeAvisId}`
+      `demarches.pcaet.instruction.ligne-demande-${demandeAvisId}`
     );
+  }
+
+  /** Une ligne dont le dépôt existe mais n'a saisi personne — en élaboration. */
+  rowDemarche(demarcheId: number): Locator {
+    return this.page.getByTestId(
+      `demarches.pcaet.instruction.ligne-demarche-${demarcheId}`
+    );
+  }
+
+  /** Une collectivité du territoire qui n'a rien déposé. */
+  rowSansDepot(collectiviteId: number): Locator {
+    return this.page.getByTestId(
+      `demarches.pcaet.instruction.ligne-collectivite-${collectiviteId}`
+    );
+  }
+
+  /** Le filtre de statut, dans l'en-tête de la colonne. */
+  get filtreStatut(): Locator {
+    return this.page.getByTestId('demarches.pcaet.instruction.filtre-statut');
+  }
+
+  /**
+   * Vide la sélection de statuts par « Désélectionner les options ».
+   *
+   * Ce qui ne veut pas dire « ne montre rien » : aucun statut retenu, c'est
+   * l'absence de filtre.
+   */
+  async deselectionnerTousLesStatuts() {
+    await this.filtreStatut.click();
+    await this.page
+      .getByRole('button', { name: 'Désélectionner les options' })
+      .click();
+    await this.page.keyboard.press('Escape');
+  }
+
+  /**
+   * Coche les statuts que le défaut écarte — les dépôts en chantier et les
+   * collectivités sans dossier — puis referme le menu.
+   *
+   * Les entrées du dropdown DS sont des boutons portant le libellé de l'option.
+   */
+  async ouvrirTousLesStatuts() {
+    await this.filtreStatut.click();
+    for (const libelle of ['Aucun dépôt', 'En élaboration', 'Archivé']) {
+      await this.page.getByRole('button', { name: libelle, exact: true }).click();
+    }
+    await this.page.keyboard.press('Escape');
   }
 
   /**

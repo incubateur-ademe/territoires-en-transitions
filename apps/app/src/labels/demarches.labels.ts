@@ -25,6 +25,53 @@ export const demarchesLabels = {
   contexteInstructionRetour: 'Revenir à mes dossiers PCAET',
 
   /**
+   * Les statuts du suivi d'instruction.
+   *
+   * Un seul vocabulaire pour ce que le modèle porte en deux enums : le statut
+   * du dépôt et l'état de la saisine. « Adopté » plutôt que « Publié » — côté
+   * service de l'État, ce qui compte est l'acte de la collectivité, pas la mise
+   * en ligne.
+   *
+   * Un statut par étape du cycle, et rien d'autre : le brouillon d'avis dit où
+   * en est l'agent et non le dossier, et la révision est un attribut du dépôt,
+   * pas une étape — le workflow est linéaire et sans retour.
+   */
+  instructionStatutAucunDepot: 'Aucun dépôt',
+  instructionStatutEnElaboration: 'En élaboration',
+  instructionStatutEnInstruction: 'En instruction',
+  instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
+  instructionStatutInstruit: 'Instruit',
+  instructionStatutAdopte: 'Adopté',
+  instructionStatutArchive: 'Archivé',
+
+  /**
+   * Le vide d'un filtre trop étroit, à distinguer de celui d'un territoire sans
+   * dossier : le premier se corrige, le second s'explique.
+   */
+  instructionListeAucunResultat:
+    'Aucun dossier ne correspond à ces filtres',
+  instructionListeReinitialiser: 'Réinitialiser les filtres',
+
+  instructionListeColonneRegion: 'Région',
+  instructionListeColonneDateDebut: 'Date de début',
+
+  /**
+   * Un dépôt qui n'a pas été transmis n'a pas d'échéance : elle se calcule à la
+   * transmission. Le dire vaut mieux qu'un tiret, qui se lirait comme une
+   * donnée manquante.
+   */
+  instructionListeSansEcheance: 'Pas encore d’échéance',
+
+  /**
+   * Une ligne sans dossier consultable, pour deux raisons qu'il ne faut pas
+   * confondre : le dépôt est encore en chantier, ou il a bien été transmis mais
+   * sans saisir ce service — le cas d'un dossier parti avant que le service
+   * n'existe dans la plateforme. Dire « non transmis » du second serait faux.
+   */
+  instructionListeNonTransmis: 'Dossier non transmis',
+  instructionListeNonSaisi: 'Service non saisi',
+
+  /**
    * L'accueil d'un agent que son fournisseur d'identité vient de rattacher à
    * son service : personne ne l'a invité, il n'a rien choisi, et rien ne lui
    * dirait où il est ni ce qu'il peut faire.
