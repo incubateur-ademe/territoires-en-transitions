@@ -20,9 +20,9 @@ import {
   type AuditPreuvesArchive,
 } from '../models/audit-preuves-archive.table';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
+import type { ArchiveFolderArborescence } from '../build-archive/archive-arborescence';
 import {
   generateArchiveFolderArborescence,
-  type ArchiveFolderArborescence,
   type ReferentielTreeNode,
 } from './generate-archive-folder-arborescence';
 

@@ -2,7 +2,7 @@ import { DocumentStorageService } from '@tet/backend/utils/supabase/document-sto
 import { success } from '@tet/backend/utils/result.type';
 import { Readable, Writable } from 'node:stream';
 import { describe, expect, test } from 'vitest';
-import { type ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import { type ArchiveFolderArborescence } from './archive-arborescence';
 import { PreuvesArchiveErrorEnum } from '../preuves-archive.errors';
 import { BuildArchiveService } from './build-archive.service';
 

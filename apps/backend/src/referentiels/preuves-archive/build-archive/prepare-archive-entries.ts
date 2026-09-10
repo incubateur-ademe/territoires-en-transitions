@@ -1,4 +1,4 @@
-import type { ArchiveFile } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFile } from './archive-arborescence';
 import { buildArchivePath } from './build-archive-path';
 
 export interface PreparedFileEntry {

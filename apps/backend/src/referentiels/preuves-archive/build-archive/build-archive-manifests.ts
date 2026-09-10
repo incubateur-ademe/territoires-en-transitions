@@ -1,4 +1,4 @@
-import { type ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import { type ArchiveFolderArborescence } from './archive-arborescence';
 import { buildArchivePath } from './build-archive-path';
 import { buildLiensCsv } from './build-liens-csv';
 

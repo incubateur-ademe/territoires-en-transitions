@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { type Writable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import { type ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import { type ArchiveFolderArborescence } from './archive-arborescence';
 import {
   ARCHIVE_ZIP_CONTENT_TYPE,
   PREUVES_ARCHIVES_BUCKET,

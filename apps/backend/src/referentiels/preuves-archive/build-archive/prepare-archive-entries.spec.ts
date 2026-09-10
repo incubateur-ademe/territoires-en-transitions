@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ArchiveFile } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFile } from './archive-arborescence';
 import { prepareArchiveEntries } from './prepare-archive-entries';
 
 function makeFile(

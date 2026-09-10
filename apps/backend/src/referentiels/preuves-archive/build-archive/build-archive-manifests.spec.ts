@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildArchiveManifests } from './build-archive-manifests';
-import type { ArchiveFolderArborescence } from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFolderArborescence } from './archive-arborescence';
 
 function emptyArborescence(
   overrides: Partial<ArchiveFolderArborescence> = {}

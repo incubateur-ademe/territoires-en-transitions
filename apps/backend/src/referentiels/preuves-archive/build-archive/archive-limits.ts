@@ -1,7 +1,4 @@
-import type {
-  ArchiveFile,
-  SkippedFile,
-} from '../generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFile, SkippedFile } from './archive-arborescence';
 
 export const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 export const MAX_FILE_COUNT = 500;
@@ -62,13 +59,13 @@ export function triageArchiveFile({
 
 export type ArchiveLimitsCheck =
   | { withinLimits: true }
-  | { withinLimits: false; raison: string };
+  | { withinLimits: false; reason: string };
 
 export function checkArchiveLimits(files: ArchiveFile[]): ArchiveLimitsCheck {
   if (files.length > MAX_FILE_COUNT) {
     return {
       withinLimits: false,
-      raison: `Trop de fichiers à archiver (${files.length}, limite ${MAX_FILE_COUNT})`,
+      reason: `Trop de fichiers à archiver (${files.length}, limite ${MAX_FILE_COUNT})`,
     };
   }
 
@@ -76,9 +73,27 @@ export function checkArchiveLimits(files: ArchiveFile[]): ArchiveLimitsCheck {
   if (totalSize > MAX_TOTAL_SIZE_BYTES) {
     return {
       withinLimits: false,
-      raison: `Archive trop volumineuse (${totalSize} octets, limite ${MAX_TOTAL_SIZE_BYTES})`,
+      reason: `Archive trop volumineuse (${totalSize} octets, limite ${MAX_TOTAL_SIZE_BYTES})`,
     };
   }
 
   return { withinLimits: true };
+}
+
+export interface TriagedArchiveFiles {
+  files: ArchiveFile[];
+  skippedFiles: SkippedFile[];
+}
+
+export function splitTriagedArchiveFiles(
+  triaged: ArchiveFileTriage[]
+): TriagedArchiveFiles {
+  return {
+    files: triaged.flatMap((entry) =>
+      entry.kind === 'collected' ? [entry.file] : []
+    ),
+    skippedFiles: triaged.flatMap((entry) =>
+      entry.kind === 'skipped' ? [entry.entry] : []
+    ),
+  };
 }

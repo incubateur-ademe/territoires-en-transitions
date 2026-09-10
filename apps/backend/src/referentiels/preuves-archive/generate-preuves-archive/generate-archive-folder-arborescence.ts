@@ -10,41 +10,21 @@ import type {
   CollectedLinkPreuve,
   MissingFilePreuve,
 } from '../collect-audit-preuves/collect-preuves.repository';
-import type { LienPreuve } from '../build-archive/build-liens-csv';
 import {
   checkArchiveLimits,
+  splitTriagedArchiveFiles,
   triageArchiveFile,
 } from '../build-archive/archive-limits';
+import type {
+  ArchiveFolderArborescence,
+  ArchiveLinkFolder,
+  SkippedFile,
+} from '../build-archive/archive-arborescence';
 
 const MESURES_FOLDER = 'mesures';
 const CYCLE_FOLDER = 'cycle-labellisation';
 const DEMANDE_FOLDER = 'demande';
 const AUDIT_FOLDER = 'audit';
-
-export interface ArchiveFile {
-  folderSegments: string[];
-  filename: string;
-  bucketId: string;
-  hash: string;
-  filesize: number;
-}
-
-export interface ArchiveLinkFolder {
-  folderSegments: string[];
-  liens: LienPreuve[];
-}
-
-export interface SkippedFile {
-  filename: string;
-  emplacement: string;
-  raison: string;
-}
-
-export interface ArchiveFolderArborescence {
-  files: ArchiveFile[];
-  linkFolders: ArchiveLinkFolder[];
-  skippedFiles: SkippedFile[];
-}
 
 export interface ReferentielTreeNode {
   actionId: string;
@@ -189,16 +169,12 @@ export function generateArchiveFolderArborescence(
     folderSegments: [CYCLE_FOLDER, AUDIT_FOLDER],
   }));
 
-  const triaged = [...mesureFiles, ...demandeFiles, ...auditFiles].map(
-    triageArchiveFile
+  const triaged = splitTriagedArchiveFiles(
+    [...mesureFiles, ...demandeFiles, ...auditFiles].map(triageArchiveFile)
   );
-  const collectedFiles = triaged.flatMap((entry) =>
-    entry.kind === 'collected' ? [entry.file] : []
-  );
+  const collectedFiles = triaged.files;
   const skippedFiles = [
-    ...triaged.flatMap((entry) =>
-      entry.kind === 'skipped' ? [entry.entry] : []
-    ),
+    ...triaged.skippedFiles,
     ...[
       ...mesureMissingFiles,
       ...demandeMissingFiles,
@@ -206,11 +182,11 @@ export function generateArchiveFolderArborescence(
     ].map(toSkippedMissingFile),
   ];
 
-  const limits = checkArchiveLimits(collectedFiles);
-  if (!limits.withinLimits) {
+  const limitsCheck = checkArchiveLimits(collectedFiles);
+  if (!limitsCheck.withinLimits) {
     return failure(
       PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-      new Error(limits.raison)
+      new Error(limitsCheck.reason)
     );
   }
 
