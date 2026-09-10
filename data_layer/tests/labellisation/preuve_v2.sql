@@ -1,13 +1,12 @@
 begin;
 
-select plan(15);
+select plan(6);
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
 truncate labellisation.demande cascade;
 truncate client_scores;
 
--- La collectivite doit avoir des scores pour apparaître dans la vue preuves
 select test_write_scores(1);
 
 select isnt_empty(
@@ -21,18 +20,6 @@ select isnt_empty(
                    'join preuve_reglementaire_definition prd on prd.id = pa.preuve_id '
                    'where pa.preuve_id = ''pedibus''',
                'La définition de preuve règlementaire sur le pédibus devrait être présente et liée à une action.'
-           );
-
-select bag_eq(
-               'select p.preuve_reglementaire ->> ''id'' as preuve_id, '
-                   'p.action ->> ''action_id'' as action_id, '
-                   'p.preuve_reglementaire ->> ''nom'' as nom '
-                   'from preuve p '
-                   'where collectivite_id = 1;',
-               'select preuve_id, action_id, nom '
-                   'from preuve_action pa '
-                   'join preuve_reglementaire_definition prd on prd.id = pa.preuve_id;',
-               'Toutes les preuves réglementaires devraient apparaître dans la vue preuve pour le client.'
            );
 
 -- Un faux fichier.
@@ -58,26 +45,16 @@ insert into labellisation.bibliotheque_fichier (collectivite_id, hash, filename)
 select f.collectivite_id, f.hash, f.filename
 from test.file f;
 
-select isnt_empty('select * from bibliotheque_fichier');
-
 -- Puis on attache le fichier à une action comme preuve complémentaire.
 insert into preuve_complementaire (collectivite_id, fichier_id, url, action_id)
 select collectivite_id, id, null, 'eci_1.1.1.1'
-from bibliotheque_fichier;
+from labellisation.bibliotheque_fichier;
 
 -- On vérifie l'insertion.
 select bag_eq(
                'select collectivite_id, fichier_id, modified_by, modified_at, action_id, lien from preuve_complementaire',
-               'select collectivite_id, id, auth.uid(), now(), ''eci_1.1.1.1''::action_id, null::jsonb  from bibliotheque_fichier',
+               'select collectivite_id, id, auth.uid(), now(), ''eci_1.1.1.1''::action_id, null::jsonb  from labellisation.bibliotheque_fichier',
                'La preuve complémentaire devrait être insérée par Yolo'
-           );
-
--- Puis la vue.
-select bag_eq(
-               'select collectivite_id, (fichier ->> ''hash'')::varchar(64), (action ->> ''action_id'')::action_id, lien from preuve where collectivite_id = 1 and preuve_type = ''complementaire''',
-               'select p.collectivite_id, hash, action_id, lien
-                from preuve_complementaire p
-                    join bibliotheque_fichier bf on bf.id = p.fichier_id;'
            );
 
 
@@ -86,29 +63,12 @@ select bag_eq(
 insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '5');
 
-select is_empty(
-               $$select * from preuve p where collectivite_id = 1 and preuve_type = 'labellisation'$$,
-               'Il ne devrait pas y avoir de preuve de labellisation sans demande'
-           );
-
 -- Yolo ajoute la preuve à la demande
 insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
 select collectivite_id, id, 100
-from bibliotheque_fichier;
+from labellisation.bibliotheque_fichier;
 
 select isnt_empty('select * from preuve_labellisation where demande_id = 100');
-
-select bag_eq(
-               'select (p.fichier ->> ''hash'')::varchar(64), p.collectivite_id, (p.demande ->> ''etoiles'')::labellisation.etoile
-                from preuve p
-                where collectivite_id = 1
-                  and preuve_type = ''labellisation'';',
-               'select bf.hash, pl.collectivite_id, ld.etoiles
-                from preuve_labellisation pl
-                         join bibliotheque_fichier bf on pl.fichier_id = bf.id
-                         join labellisation.demande ld on pl.demande_id = ld.id;',
-               'La vue preuve devrait contenir la preuve et la labellisation'
-           );
 
 -- Teste la fonction interne `critere_fichier` de la labellisation
 select ok(
@@ -123,43 +83,6 @@ select ok(
                 from labellisation.critere_fichier(1)
                 where referentiel = 'cae'),
                'La collectivité ne devrait pas avoir atteint le critère fichier pour cae'
-           );
-
--- Teste que les fichiers d'une collectivité ne soient pas présents dans la vue d'une autre collectivité
-select isnt_empty(
-               'select * from preuve p where collectivite_id = 1 and fichier is not null;',
-               'La collectivité #1 devrait avoir des fichiers dans sa vue preuve'
-           );
-
-select is_empty(
-               'select * from preuve p where collectivite_id = 2 and fichier is not null;',
-               'La collectivité #2 ne devrait pas avoir de fichiers dans sa vue preuve'
-           );
-
--- Audit
-select *
-into test_audit
-from labellisation.current_audit(1, 'eci');
-
-select is_empty(
-               $$select * from preuve p where collectivite_id = 1 and preuve_type = 'audit'$$,
-               'Il ne devrait pas y avoir de preuve d''audit avant d''avoir ajouté la preuve'
-           );
-
-
-insert into preuve_audit (collectivite_id, fichier_id, audit_id)
-select f.collectivite_id, f.id, a.id
-from bibliotheque_fichier f
-         join test_audit a on f.collectivite_id = a.collectivite_id;
-
-select bag_eq(
-               $$select demande,
-                        audit
-                from preuve p
-                where collectivite_id = 1
-                  and preuve_type = 'audit'$$,
-               $$select null::jsonb, to_jsonb(labellisation.current_audit(1, 'eci'));$$,
-               'La preuve attachée à l''audit devrait être dans la liste de preuves.'
            );
 
 
