@@ -4,6 +4,7 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { exportConnectCreateSchema } from '@tet/domain/collectivites';
 import z from 'zod';
+import { ImportCorrespondantsRouter } from './import-correspondants/import-correspondants.router';
 import { listMembresInputSchema } from './list-membres/list-membres.input';
 import { ListMembresService } from './list-membres/list-membres.service';
 import { InvitationsRouter } from './mutate-invitations/invitations.router';
@@ -22,7 +23,8 @@ export class CollectiviteMembresRouter {
     private readonly listMembresService: ListMembresService,
     private readonly mutateMembresService: MutateMembresService,
     private readonly exportConnectService: ExportConnectService,
-    private readonly invitationRouter: InvitationsRouter
+    private readonly invitationRouter: InvitationsRouter,
+    private readonly importCorrespondantsRouter: ImportCorrespondantsRouter
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
@@ -31,6 +33,7 @@ export class CollectiviteMembresRouter {
 
   router = this.trpc.router({
     invitations: this.invitationRouter.router,
+    imports: this.importCorrespondantsRouter.router,
 
     list: this.trpc.authedProcedure
       .input(listMembresInputSchema)

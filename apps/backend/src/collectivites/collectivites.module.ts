@@ -51,6 +51,10 @@ import ListCategoriesService from './handle-categories/list-categories.service';
 
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
+import { ImportCorrespondantsRouter } from './membres/import-correspondants/import-correspondants.router';
+import { ImportCorrespondantsService } from './membres/import-correspondants/import-correspondants.service';
+import { ResolveServiceRepository } from './membres/import-correspondants/resolve-service.repository';
+import { SendInvitationCorrespondantService } from './membres/import-correspondants/send-invitation-correspondant.service';
 import { SendInvitationService } from './membres/invite-membre/send-invitation.service';
 import { ListMembresService } from './membres/list-membres/list-membres.service';
 import { ListPendingInvitationsService } from './membres/list-pending-invitations/list-pending-invitations.service';
@@ -77,6 +81,10 @@ import { PersonnesService } from './services/personnes.service';
     InvitationService,
     SendInvitationService,
     InvitationsRouter,
+    ResolveServiceRepository,
+    SendInvitationCorrespondantService,
+    ImportCorrespondantsService,
+    ImportCorrespondantsRouter,
 
     MutateMembresService,
     CollectiviteMembresRouter,
