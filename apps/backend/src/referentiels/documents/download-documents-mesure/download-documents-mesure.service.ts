@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import type { Writable } from 'node:stream';
+import { checkArchiveLimits } from '../../preuves-archive/build-archive/archive-limits';
 import { BuildArchiveService } from '../../preuves-archive/build-archive/build-archive.service';
-import type { ArchiveFile } from '../../preuves-archive/generate-preuves-archive/generate-archive-folder-arborescence';
+import type { ArchiveFolderArborescence } from '../../preuves-archive/build-archive/archive-arborescence';
 import {
   ListDocumentsMesureError,
   ListDocumentsMesureErrorEnum,
@@ -15,7 +16,7 @@ import {
   DownloadDocumentsMesureErrorEnum,
 } from './download-documents-mesure.errors';
 import { DownloadDocumentsMesureInput } from './download-documents-mesure.input';
-import { toArchiveFilename, toArchiveFiles } from './to-archive-files';
+import { toArchiveArborescence, toArchiveFilename } from './to-archive-arborescence';
 
 export type PreparedMesureArchive = {
   filename: string;
@@ -44,6 +45,8 @@ const DOWNLOAD_ERROR_BY_LIST_ERROR: Record<
 
 @Injectable()
 export class DownloadDocumentsMesureService {
+  private readonly logger = new Logger(DownloadDocumentsMesureService.name);
+
   constructor(
     private readonly listDocumentsMesureService: ListDocumentsMesureService,
     private readonly collectivitesService: CollectivitesService,
@@ -63,9 +66,17 @@ export class DownloadDocumentsMesureService {
       return failure(DOWNLOAD_ERROR_BY_LIST_ERROR[documentsResult.error]);
     }
 
-    const files = toArchiveFiles(documentsResult.data);
-    if (files.length === 0) {
+    const arborescence = toArchiveArborescence(documentsResult.data);
+    if (arborescence.files.length === 0) {
       return failure(DownloadDocumentsMesureErrorEnum.NO_DOCUMENT);
+    }
+
+    const limitsCheck = checkArchiveLimits(arborescence.files);
+    if (!limitsCheck.withinLimits) {
+      this.logger.warn(
+        `Archive de la mesure ${actionId} refusée: ${limitsCheck.reason}`
+      );
+      return failure(DownloadDocumentsMesureErrorEnum.ARCHIVE_TOO_LARGE);
     }
 
     const { collectivite } = await this.collectivitesService.getCollectivite(
@@ -78,16 +89,17 @@ export class DownloadDocumentsMesureService {
         actionId,
         collectiviteNom: collectivite.nom,
       }),
-      writeTo: (destination: Writable) => this.writeArchive(files, destination),
+      writeTo: (destination: Writable) =>
+        this.writeArchive(arborescence, destination),
     });
   }
 
   private async writeArchive(
-    files: ArchiveFile[],
+    arborescence: ArchiveFolderArborescence,
     destination: Writable
   ): Promise<Result<{ totalFiles: number }, DownloadDocumentsMesureError>> {
     const assembleResult = await this.buildArchiveService.assembleZip({
-      arborescence: { files, linkFolders: [], skippedFiles: [] },
+      arborescence,
       destination,
     });
     if (!assembleResult.success) {

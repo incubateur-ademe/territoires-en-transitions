@@ -1,9 +1,23 @@
 import { describe, expect, test } from 'vitest';
+import z from 'zod';
+import { MAX_FILE_SIZE_BYTES } from '../../preuves-archive/build-archive/archive-limits';
 import {
   listDocumentsMesureOutputSchema,
   type ListDocumentsMesureOutput,
 } from '../list-documents-mesure/list-documents-mesure.output';
-import { toArchiveFilename, toArchiveFiles } from './to-archive-files';
+import {
+  toArchiveArborescence,
+  toArchiveFilename,
+} from './to-archive-arborescence';
+
+type DocumentsFixture = z.input<typeof listDocumentsMesureOutputSchema>;
+type ComplementaireFixture = DocumentsFixture['complementaires'][number];
+type FichierFixture = NonNullable<ComplementaireFixture['fichier']>;
+type SupportFixture = Pick<ComplementaireFixture, 'fichier' | 'lien'>;
+type DocumentBaseFixture = Omit<
+  ComplementaireFixture,
+  'fichier' | 'lien' | 'preuveType'
+>;
 
 type Fichier = {
   hash: string;
@@ -12,15 +26,8 @@ type Fichier = {
   filesize?: number;
 };
 
-type FichierFixture = {
-  id: number;
-  collectiviteId: number;
-  hash: string;
-  filename: string;
-  confidentiel: boolean;
-  bucketId: string;
-  filesize: number | null;
-};
+const mesure = { actionId: 'cae_1.1.2', identifiant: '1.1.2' };
+const attenduDefinition = { id: 'attendu', nom: 'Attendu', description: '' };
 
 const toFichier = ({
   hash,
@@ -37,13 +44,6 @@ const toFichier = ({
   filesize: filesize ?? null,
 });
 
-const mesure = { actionId: 'cae_1.1.2', identifiant: '1.1.2' };
-const attenduDefinition = { id: 'attendu', nom: 'Attendu', description: '' };
-
-type SupportFixture =
-  | { fichier: FichierFixture; lien: null }
-  | { fichier: null; lien: { url: string; titre: string } };
-
 const toSupport = (fichier: Fichier | null): SupportFixture => {
   if (fichier === null) {
     return {
@@ -52,16 +52,6 @@ const toSupport = (fichier: Fichier | null): SupportFixture => {
     };
   }
   return { fichier: toFichier(fichier), lien: null };
-};
-
-type DocumentBaseFixture = {
-  id: number;
-  collectiviteId: number;
-  commentaire: null;
-  modifiedAt: string;
-  modifiedBy: null;
-  modifiedByNom: null;
-  action: { actionId: string; identifiant: string };
 };
 
 const toDocumentBase = (id: number): DocumentBaseFixture => ({
@@ -101,12 +91,12 @@ const toDocuments = ({
     })),
   });
 
-describe('toArchiveFiles', () => {
+describe('toArchiveArborescence', () => {
   test('réunit les documents attendus et complémentaires', () => {
-    const files = toArchiveFiles(
+    const { files } = toArchiveArborescence(
       toDocuments({
-        attendus: [{ hash: 'a', filename: 'deliberation.pdf' }],
-        complementaires: [{ hash: 'b', filename: 'annexe.pdf' }],
+        attendus: [{ hash: 'a', filename: 'deliberation.pdf', filesize: 10 }],
+        complementaires: [{ hash: 'b', filename: 'annexe.pdf', filesize: 10 }],
       })
     );
 
@@ -117,10 +107,12 @@ describe('toArchiveFiles', () => {
   });
 
   test("ne retient qu'un exemplaire d'un contenu porté par deux documents", () => {
-    const files = toArchiveFiles(
+    const { files } = toArchiveArborescence(
       toDocuments({
-        attendus: [{ hash: 'a', filename: 'deliberation.pdf' }],
-        complementaires: [{ hash: 'a', filename: 'deliberation.pdf' }],
+        attendus: [{ hash: 'a', filename: 'deliberation.pdf', filesize: 10 }],
+        complementaires: [
+          { hash: 'a', filename: 'deliberation.pdf', filesize: 10 },
+        ],
       })
     );
 
@@ -128,10 +120,10 @@ describe('toArchiveFiles', () => {
   });
 
   test('garde les deux fichiers quand seuls les noms coïncident', () => {
-    const files = toArchiveFiles(
+    const { files } = toArchiveArborescence(
       toDocuments({
-        attendus: [{ hash: 'a', filename: 'rapport.pdf' }],
-        complementaires: [{ hash: 'b', filename: 'rapport.pdf' }],
+        attendus: [{ hash: 'a', filename: 'rapport.pdf', filesize: 10 }],
+        complementaires: [{ hash: 'b', filename: 'rapport.pdf', filesize: 10 }],
       })
     );
 
@@ -139,10 +131,10 @@ describe('toArchiveFiles', () => {
   });
 
   test("écarte les preuves qui ne portent qu'un lien", () => {
-    const files = toArchiveFiles(
+    const { files } = toArchiveArborescence(
       toDocuments({
         attendus: [null],
-        complementaires: [{ hash: 'b', filename: 'annexe.pdf' }],
+        complementaires: [{ hash: 'b', filename: 'annexe.pdf', filesize: 10 }],
       })
     );
 
@@ -150,15 +142,46 @@ describe('toArchiveFiles', () => {
   });
 
   test('rend une liste vide quand la mesure ne porte aucun fichier', () => {
-    expect(toArchiveFiles(toDocuments({}))).toEqual([]);
+    expect(toArchiveArborescence(toDocuments({}))).toEqual({
+      files: [],
+      linkFolders: [],
+      skippedFiles: [],
+    });
   });
 
-  test('reporte la taille absente à zéro plutôt que de la laisser indéfinie', () => {
-    const [file] = toArchiveFiles(
+  test('écarte un document dont la taille est inconnue et le consigne', () => {
+    const { files, skippedFiles } = toArchiveArborescence(
       toDocuments({ attendus: [{ hash: 'a', filename: 'sans-taille.pdf' }] })
     );
 
-    expect(file.filesize).toBe(0);
+    expect(files).toEqual([]);
+    expect(skippedFiles).toEqual([
+      {
+        filename: 'sans-taille.pdf',
+        emplacement: '',
+        raison: 'Taille du fichier inconnue',
+      },
+    ]);
+  });
+
+  test('écarte un document de plus de 100 Mo et le consigne', () => {
+    const { files, skippedFiles } = toArchiveArborescence(
+      toDocuments({
+        attendus: [
+          { hash: 'a', filename: 'petit.pdf', filesize: 10 },
+          {
+            hash: 'b',
+            filename: 'enorme.pdf',
+            filesize: MAX_FILE_SIZE_BYTES + 1,
+          },
+        ],
+      })
+    );
+
+    expect(files.map(({ filename }) => filename)).toEqual(['petit.pdf']);
+    expect(skippedFiles.map(({ filename }) => filename)).toEqual([
+      'enorme.pdf',
+    ]);
   });
 });
 

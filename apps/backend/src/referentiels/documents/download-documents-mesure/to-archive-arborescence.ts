@@ -4,28 +4,29 @@ import {
   type ActionId,
 } from '@tet/domain/referentiels';
 import { uniqBy } from 'es-toolkit';
-import type { ArchiveFile } from '../../preuves-archive/generate-preuves-archive/generate-archive-folder-arborescence';
+import {
+  splitTriagedArchiveFiles,
+  triageArchiveFile,
+} from '../../preuves-archive/build-archive/archive-limits';
+import type { ArchiveFolderArborescence } from '../../preuves-archive/build-archive/archive-arborescence';
 import type { ListDocumentsMesureOutput } from '../list-documents-mesure/list-documents-mesure.output';
 
-const UNKNOWN_FILESIZE = 0;
-
-export const toArchiveFiles = (
+export const toArchiveArborescence = (
   documents: ListDocumentsMesureOutput
-): ArchiveFile[] => {
+): ArchiveFolderArborescence => {
   const fichiers = [
     ...documents.attendus.flatMap((attendu) => attendu.documents),
     ...documents.complementaires,
   ].flatMap((document) => (document.fichier ? [document.fichier] : []));
 
-  return uniqBy(fichiers, ({ hash }) => hash).map(
-    ({ hash, filename, bucketId, filesize }) => ({
+  const triaged = uniqBy(fichiers, ({ hash }) => hash).map((fichier) =>
+    triageArchiveFile({
+      file: { ...fichier, filesize: fichier.filesize ?? null },
       folderSegments: [],
-      filename,
-      bucketId,
-      hash,
-      filesize: filesize ?? UNKNOWN_FILESIZE,
     })
   );
+
+  return { ...splitTriagedArchiveFiles(triaged), linkFolders: [] };
 };
 
 export const toArchiveFilename = ({
