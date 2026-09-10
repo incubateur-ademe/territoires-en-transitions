@@ -52,9 +52,7 @@ export type CreateClassificationJobInput = {
 @Injectable()
 export class ClassificationVoletsJobRepository {
   private readonly db = this.database.db;
-  private readonly logger = new Logger(
-    ClassificationVoletsJobRepository.name
-  );
+  private readonly logger = new Logger(ClassificationVoletsJobRepository.name);
 
   constructor(private readonly database: DatabaseService) {}
 
