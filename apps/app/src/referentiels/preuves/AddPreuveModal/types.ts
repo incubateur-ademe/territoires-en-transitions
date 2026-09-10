@@ -47,7 +47,7 @@ export type UploadStatusDuplicated = {
   code: UploadStatusCode.duplicated;
   fichierId: number;
   filename: string;
-  hash: string;
+  hash: DocumentHash;
 };
 
 export type UploadStatus =
@@ -56,6 +56,14 @@ export type UploadStatus =
   | UploadStatusCompleted
   | UploadStatusDuplicated
   | UploadStatusFailed;
+
+export type ValidUploadStatus = UploadStatusCompleted | UploadStatusDuplicated;
+
+export const isUploadInFlight = (
+  status: UploadStatus
+): status is UploadStatusPreparing | UploadStatusRunning =>
+  status.code === UploadStatusCode.preparing ||
+  status.code === UploadStatusCode.running;
 
 /** type des documents attendus */
 export type DocType =

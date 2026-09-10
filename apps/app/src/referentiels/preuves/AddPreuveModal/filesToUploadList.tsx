@@ -1,5 +1,4 @@
 import { DocumentHash } from '@tet/domain/collectivites';
-import { FichierParHash, getFilesPerHash } from '../Bibliotheque/useFichiers';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,
@@ -7,33 +6,19 @@ import {
 } from '../upload/constants';
 import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { validateFile } from '../upload/validate-file';
-import {
-  UploadErrorCode,
-  UploadStatusCode,
-  UploadStatusDuplicated,
-  UploadStatusFailed,
-} from './types';
+import { UploadErrorCode, UploadStatusCode, UploadStatusFailed } from './types';
 
 export type PreparedFile =
   | { kind: 'toUpload'; file: File; hash: DocumentHash }
-  | {
-      kind: 'settled';
-      file: File;
-      status: UploadStatusFailed | UploadStatusDuplicated;
-    };
+  | { kind: 'rejected'; file: File; status: UploadStatusFailed };
 
 export const filesToUploadList = async (
-  collectiviteId: number | null,
-  files: FileList | null,
+  files: ArrayLike<File>,
   constraints: FileConstraints = DEFAULT_FILE_CONSTRAINTS
 ): Promise<PreparedFile[]> => {
-  if (!files || !collectiviteId) {
-    return [];
-  }
-
   // La limite du contexte s'applique avant le hachage : un glisser-déposer de
   // trente fichiers pour un contexte qui n'en accepte qu'un ne doit pas les
-  // hacher tous ni les chercher tous dans la bibliothèque.
+  // hacher tous.
   const filesToProcess = keepWithinMaxFiles(
     Array.from(files),
     constraints.maxFiles
@@ -47,43 +32,20 @@ export const filesToUploadList = async (
     }))
   );
 
-  // récupère la liste des éventuels doublons (fichiers déjà téléversés ayant la même clé)
-  const hashes = filesWithHash.map(({ hash }) => hash);
-  const duplicatedFiles = await getFilesPerHash(collectiviteId, hashes);
-
   return filesWithHash.map(({ file, hash }) => {
-    // La validation précède la détection de doublon : un fichier déjà présent
-    // dans la bibliothèque reste refusé s'il ne respecte pas les contraintes du
-    // contexte de dépôt (le PDF seul pour un dossier PCAET, par exemple).
     const validationError = validateFile(file, constraints);
     if (validationError) {
-      return toFailed(file, UploadErrorCode[validationError]);
-    }
-
-    const duplicatedFile = duplicatedFiles?.find((f) => f.hash === hash);
-    if (duplicatedFile) {
-      return toDuplicated(file, duplicatedFile);
+      return toRejected(file, UploadErrorCode[validationError]);
     }
     return { kind: 'toUpload', file, hash };
   });
 };
 
-const toFailed = (file: File, error: UploadErrorCode): PreparedFile => ({
-  kind: 'settled',
+const toRejected = (file: File, error: UploadErrorCode): PreparedFile => ({
+  kind: 'rejected',
   file,
   status: {
     code: UploadStatusCode.failed,
     error,
-  },
-});
-
-const toDuplicated = (file: File, fichier: FichierParHash): PreparedFile => ({
-  kind: 'settled',
-  file,
-  status: {
-    code: UploadStatusCode.duplicated,
-    fichierId: fichier.id,
-    filename: fichier.filename,
-    hash: fichier.hash,
   },
 });

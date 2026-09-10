@@ -21,10 +21,11 @@ import {
   AddedDuplicatedDocument,
   DocType,
   DuplicatedDocumentPreuveType,
+  isUploadInFlight,
   OnDuplicatedDocumentsAdded,
   UploadStatusCode,
   UploadStatusCompleted,
-  UploadStatusDuplicated,
+  ValidUploadStatus,
 } from './types';
 import { useFileUploadList } from './use-file-upload-list';
 
@@ -35,8 +36,6 @@ export type AddedPreuveResult = {
 export type AddFileFromLibHandler = (
   fichierId: number
 ) => Promise<AddedPreuveResult | void> | AddedPreuveResult | void;
-
-type ValidUploadStatus = UploadStatusCompleted | UploadStatusDuplicated;
 
 type ValidFileItem = FileUploadItem & {
   status: ValidUploadStatus;
@@ -128,7 +127,10 @@ export const AddFile = (props: AddFileProps) => {
   });
 
   const validFiles = currentSelection.filter(isValidFileItem);
-  const isDisabled = !validFiles?.length;
+  const hasUploadInFlight = currentSelection.some(({ status }) =>
+    isUploadInFlight(status)
+  );
+  const isDisabled = validFiles.length === 0 || hasUploadInFlight;
 
   const submitValidFile = async ({
     file,
