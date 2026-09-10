@@ -487,8 +487,8 @@ export const appLabels = {
     'Les champs marqués d’un astérisque (*) sont obligatoires.',
   demarcheCreerPilotes: 'Pilotes *',
   demarcheCreerRechercherPilote: 'Rechercher un pilote…',
-  demarcheCreerDateDebut: 'Date de début *',
-  demarcheCreerDateDebutRequise: 'La date de début est requise',
+  demarcheCreerDateLancement: 'Date de lancement *',
+  demarcheCreerDateLancementRequise: 'La date de lancement est requise',
   demarcheCreerSoumettre: 'Commencer le dépôt',
   demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
@@ -547,7 +547,7 @@ export const appLabels = {
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `Renseignez l'intitulé, les pilotes et la date de début pour lancer le dépôt de ${type.possessif}.`,
+    `Renseignez l'intitulé, les pilotes et la date de lancement pour lancer le dépôt de ${type.possessif}.`,
   demarcheAvanceEtapeElaborationLabel: 'Élaboration',
   demarcheAvanceEtapeElaborationDescription:
     "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
@@ -805,7 +805,7 @@ export const appLabels = {
   demarcheStatutControlLabel: 'Statut',
   demarcheStatutPublieeLe: ({ date }: { date: string }): string =>
     `Publiée le ${date}`,
-  demarcheHeaderDateDebut: 'Date de début',
+  demarcheHeaderDateLancement: 'Date de lancement',
   demarcheHeaderDemarcheCreatedAt: 'Créé le',
   demarcheHeaderModifieLe: 'Modifié le',
   demarcheObligationObligatoire: 'Obligatoire',
@@ -831,7 +831,7 @@ export const appLabels = {
   demarcheListeColonnePilotes: 'Pilotes',
   demarcheListeColonneStatut: 'Statut',
   demarcheListeColonneCreation: 'Créée le',
-  demarcheListeColonneDebut: 'Début',
+  demarcheListeColonneLancement: 'Date de lancement',
   demarcheListeColonneModification: 'Modifiée le',
   demarcheListeActionsMenu: 'Actions sur la démarche',
   demarcheActionContinuerSaisie: 'Continuer la saisie',

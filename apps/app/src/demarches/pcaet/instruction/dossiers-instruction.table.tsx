@@ -170,7 +170,7 @@ export const DossiersInstructionTable = ({
           }
         />
         <TableHeaderCell
-          title={appLabels.instructionListeColonneDateDebut}
+          title={appLabels.instructionListeColonneDateLancement}
           sortFn={() => trierPar('dateDebut')}
           sortDirection={sort === 'dateDebut' ? direction : null}
         />

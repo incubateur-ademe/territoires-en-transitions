@@ -53,7 +53,7 @@ export const demarchesLabels = {
   instructionListeReinitialiser: 'Réinitialiser les filtres',
 
   instructionListeColonneRegion: 'Région',
-  instructionListeColonneDateDebut: 'Date de début',
+  instructionListeColonneDateLancement: 'Date de lancement',
 
   /**
    * Un dépôt qui n'a pas été transmis n'a pas d'échéance : elle se calcule à la
