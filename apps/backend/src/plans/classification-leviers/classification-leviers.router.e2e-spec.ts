@@ -22,7 +22,7 @@ import {
 } from './models/classification-leviers-job';
 import { classificationLeviersJobTable } from './models/classification-leviers-job.table';
 
-describe('PriorisationRouter', { timeout: 30_000 }, () => {
+describe('ClassificationLeviersRouter', { timeout: 30_000 }, () => {
   let app: INestApplication;
   let db: DatabaseService;
   let router: TrpcRouter;

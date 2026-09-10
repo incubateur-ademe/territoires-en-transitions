@@ -7,9 +7,9 @@ import { CategorieAction, LEVIER_ID_BY_NOM, Levier } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray } from 'drizzle-orm';
 import {
-  FicheLeviersErrorEnum,
-  type FicheLeviersError,
-} from './fiche-leviers.errors';
+  FicheActionLevierErrorEnum,
+  type FicheActionLevierError,
+} from './fiche-action-levier.errors';
 import { ficheActionLevierTable } from './models/fiche-action-levier.table';
 
 export type LevierCategorie = {
@@ -17,15 +17,15 @@ export type LevierCategorie = {
   categorie: CategorieAction;
 };
 
-export type FicheLeviers = {
+export type FicheActionLeviers = {
   ficheId: number;
   leviers: LevierCategorie[];
 };
 
 @Injectable()
-export class FicheLeviersRepository {
+export class FicheActionLevierRepository {
   private readonly db = this.database.db;
-  private readonly logger = new Logger(FicheLeviersRepository.name);
+  private readonly logger = new Logger(FicheActionLevierRepository.name);
 
   constructor(private readonly database: DatabaseService) {}
 
@@ -36,10 +36,10 @@ export class FicheLeviersRepository {
     tx,
   }: {
     collectiviteId: number;
-    fiches: FicheLeviers[];
+    fiches: FicheActionLeviers[];
     createdBy: string;
     tx?: Transaction;
-  }): Promise<Result<void, FicheLeviersError>> {
+  }): Promise<Result<void, FicheActionLevierError>> {
     try {
       await (tx ?? this.db).transaction(async (runner) => {
         const ownedFiches = await runner
@@ -89,7 +89,7 @@ export class FicheLeviersRepository {
           error
         )}`
       );
-      return failure(FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR);
+      return failure(FicheActionLevierErrorEnum.SAVE_LEVIERS_ERROR);
     }
   }
 }

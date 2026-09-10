@@ -6,11 +6,11 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ClassificationLeviersJobRepository } from '../classification-leviers-job.repository';
 import { type ClassificationLeviersError } from '../classification-leviers.errors';
-import { type FicheLeviersError } from '../fiche-leviers.errors';
+import { type FicheActionLevierError } from '../fiche-action-levier.errors';
 import {
-  FicheLeviers,
-  FicheLeviersRepository,
-} from '../fiche-leviers.repository';
+  FicheActionLeviers,
+  FicheActionLevierRepository,
+} from '../fiche-action-levier.repository';
 import {
   CLASSIFICATION_DEADLINE_MS,
   ClassificationLeviersJobStatusEnum,
@@ -36,13 +36,13 @@ export type GenerateClassificationError =
   | { kind: 'interrupted'; jobId: string; message: string };
 
 type PersistClassificationFailure =
-  | { step: 'save_leviers'; cause: FicheLeviersError }
+  | { step: 'save_leviers'; cause: FicheActionLevierError }
   | { step: 'mark_done'; cause: ClassificationLeviersError };
 
-const toFicheLeviers = ({
+const toFicheActionLeviers = ({
   ficheId,
   volets,
-}: ClassifiedFiche): FicheLeviers => ({
+}: ClassifiedFiche): FicheActionLeviers => ({
   ficheId,
   leviers: volets.map(({ levier, categorie }) => ({ levier, categorie })),
 });
@@ -55,7 +55,7 @@ export class GenerateClassificationService {
     private readonly jobRepository: ClassificationLeviersJobRepository,
     private readonly listFichesService: ListFichesService,
     private readonly llm: LlmService,
-    private readonly ficheLeviersRepository: FicheLeviersRepository,
+    private readonly ficheActionLevierRepository: FicheActionLevierRepository,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -125,9 +125,9 @@ export class GenerateClassificationService {
       undefined,
       PersistClassificationFailure
     >(async (tx) => {
-      const saveResult = await this.ficheLeviersRepository.saveLeviers({
+      const saveResult = await this.ficheActionLevierRepository.saveLeviers({
         collectiviteId: job.collectiviteId,
-        fiches: classification.draft.fiches.map(toFicheLeviers),
+        fiches: classification.draft.fiches.map(toFicheActionLeviers),
         createdBy: job.createdBy,
         tx,
       });

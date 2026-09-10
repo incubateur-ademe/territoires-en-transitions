@@ -10,7 +10,7 @@ import { getClassificationStatusOutputSchema } from './get-classification-status
 import { GetClassificationStatusService } from './get-classification-status/get-classification-status.service';
 
 @Injectable()
-export class PriorisationRouter {
+export class ClassificationLeviersRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly enqueueService: EnqueueClassificationService,

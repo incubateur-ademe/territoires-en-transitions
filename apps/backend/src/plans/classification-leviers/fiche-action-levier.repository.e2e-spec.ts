@@ -13,34 +13,34 @@ import { LevierId } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
-import { FicheLeviersErrorEnum } from './fiche-leviers.errors';
+import { FicheActionLevierErrorEnum } from './fiche-action-levier.errors';
 import {
-  FicheLeviers,
-  FicheLeviersRepository,
-} from './fiche-leviers.repository';
+  FicheActionLeviers,
+  FicheActionLevierRepository,
+} from './fiche-action-levier.repository';
 import { ficheActionLevierTable } from './models/fiche-action-levier.table';
 
 type LevierRow = { ficheId: number; levierId: LevierId };
 
-const toFicheLeviers = (
+const toFicheActionLeviers = (
   ficheId: number,
-  ...leviers: FicheLeviers['leviers']
-): FicheLeviers => ({ ficheId, leviers });
+  ...leviers: FicheActionLeviers['leviers']
+): FicheActionLeviers => ({ ficheId, leviers });
 
-const veloAmenagement: FicheLeviers['leviers'][number] = {
+const veloAmenagement: FicheActionLeviers['leviers'][number] = {
   levier: 'Vélo et transport en commun',
   categorie: 'amenagement',
 };
 
-const covoiturageSensibilisation: FicheLeviers['leviers'][number] = {
+const covoiturageSensibilisation: FicheActionLeviers['leviers'][number] = {
   levier: 'Covoiturage',
   categorie: 'sensibilisation',
 };
 
-describe('FicheLeviersRepository.saveLeviers', () => {
+describe('FicheActionLevierRepository.saveLeviers', () => {
   let app: INestApplication;
   let db: DatabaseService;
-  let repository: FicheLeviersRepository;
+  let repository: FicheActionLevierRepository;
   let collectiviteId: number;
   let requesterId: string;
   let ficheId: number;
@@ -51,7 +51,7 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
     const router: TrpcRouter = await getTestRouter(app);
-    repository = app.get(FicheLeviersRepository);
+    repository = app.get(FicheActionLevierRepository);
 
     const { collectivite, user } = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
@@ -130,7 +130,7 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     const saveResult = await repository.saveLeviers({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId, veloAmenagement)],
+      fiches: [toFicheActionLeviers(ficheId, veloAmenagement)],
     });
 
     const [row] = await db.db
@@ -159,8 +159,8 @@ describe('FicheLeviersRepository.saveLeviers', () => {
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheLeviers(ficheId, veloAmenagement),
-        toFicheLeviers(autreFicheId, veloAmenagement),
+        toFicheActionLeviers(ficheId, veloAmenagement),
+        toFicheActionLeviers(autreFicheId, veloAmenagement),
       ],
     });
 
@@ -168,8 +168,8 @@ describe('FicheLeviersRepository.saveLeviers', () => {
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheLeviers(ficheId, covoiturageSensibilisation),
-        toFicheLeviers(autreFicheId),
+        toFicheActionLeviers(ficheId, covoiturageSensibilisation),
+        toFicheActionLeviers(autreFicheId),
       ],
     });
 
@@ -182,14 +182,14 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     await repository.saveLeviers({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId, veloAmenagement)],
+      fiches: [toFicheActionLeviers(ficheId, veloAmenagement)],
     });
     expect(await readLeviers()).toHaveLength(1);
 
     await repository.saveLeviers({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId)],
+      fiches: [toFicheActionLeviers(ficheId)],
     });
 
     expect(await readLeviers()).toEqual([]);
@@ -201,19 +201,19 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     await repository.saveLeviers({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId, veloAmenagement)],
+      fiches: [toFicheActionLeviers(ficheId, veloAmenagement)],
     });
 
     const saveResult = await repository.saveLeviers({
       collectiviteId,
       createdBy: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
-      fiches: [toFicheLeviers(ficheId, covoiturageSensibilisation)],
+      fiches: [toFicheActionLeviers(ficheId, covoiturageSensibilisation)],
     });
 
     expect({ saveResult, rows: await readLeviers() }).toEqual({
       saveResult: {
         success: false,
-        error: FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR,
+        error: FicheActionLevierErrorEnum.SAVE_LEVIERS_ERROR,
       },
       rows: [{ ficheId, levierId: 'velo_transport_commun' }],
     });
@@ -233,8 +233,8 @@ describe('FicheLeviersRepository.saveLeviers', () => {
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheLeviers(ficheId, veloAmenagement),
-        toFicheLeviers(ficheAutreCollectiviteId, covoiturageSensibilisation),
+        toFicheActionLeviers(ficheId, veloAmenagement),
+        toFicheActionLeviers(ficheAutreCollectiviteId, covoiturageSensibilisation),
       ],
     });
 

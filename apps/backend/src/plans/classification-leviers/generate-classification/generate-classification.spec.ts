@@ -4,7 +4,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { ZodType } from 'zod';
 import { ClassificationLeviersErrorEnum } from '../classification-leviers.errors';
-import { FicheLeviersErrorEnum } from '../fiche-leviers.errors';
+import { FicheActionLevierErrorEnum } from '../fiche-action-levier.errors';
 import {
   ClassificationLeviersJob,
   ClassificationLeviersJobStatus,
@@ -86,7 +86,7 @@ const toDependencies = ({
       .mockResolvedValue({ count: fiches.length, data: fiches }),
   };
   const llm = toClassifyingLlm();
-  const ficheLeviersRepository = {
+  const ficheActionLevierRepository = {
     saveLeviers: vi.fn().mockResolvedValue(saveOutcome),
   };
   const transactionManager = {
@@ -100,7 +100,7 @@ const toDependencies = ({
     jobRepository as never,
     listFichesService as never,
     llm as never,
-    ficheLeviersRepository as never,
+    ficheActionLevierRepository as never,
     transactionManager as never
   );
 
@@ -109,7 +109,7 @@ const toDependencies = ({
     jobRepository,
     listFichesService,
     llm,
-    ficheLeviersRepository,
+    ficheActionLevierRepository,
   };
 };
 
@@ -150,12 +150,12 @@ describe('GenerateClassificationService.generate', () => {
   });
 
   it('ecrit le classement et clot le job dans une seule et meme transaction', async () => {
-    const { service, ficheLeviersRepository, jobRepository } =
+    const { service, ficheActionLevierRepository, jobRepository } =
       toDependencies();
 
     const result = await service.generate(jobId);
 
-    const [saveArgs] = ficheLeviersRepository.saveLeviers.mock.calls[0];
+    const [saveArgs] = ficheActionLevierRepository.saveLeviers.mock.calls[0];
     const [markDoneArgs] = jobRepository.markDone.mock.calls[0];
 
     expect({
@@ -171,7 +171,7 @@ describe('GenerateClassificationService.generate', () => {
 
   it("ne clot pas le job quand l'ecriture du classement echoue", async () => {
     const { service, jobRepository } = toDependencies({
-      saveOutcome: failure(FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR),
+      saveOutcome: failure(FicheActionLevierErrorEnum.SAVE_LEVIERS_ERROR),
     });
 
     const result = await service.generate(jobId);

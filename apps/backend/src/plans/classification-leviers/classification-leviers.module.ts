@@ -10,11 +10,11 @@ import {
   CLASSIFICATION_LEVIERS_QUEUE_NAME,
 } from './classification-leviers.queue';
 import { EnqueueClassificationService } from './enqueue-classification/enqueue-classification.service';
-import { FicheLeviersRepository } from './fiche-leviers.repository';
+import { FicheActionLevierRepository } from './fiche-action-levier.repository';
 import { GenerateClassificationService } from './generate-classification/generate-classification.service';
 import { GenerateClassificationWorker } from './generate-classification/generate-classification.worker';
 import { GetClassificationStatusService } from './get-classification-status/get-classification-status.service';
-import { PriorisationRouter } from './priorisation.router';
+import { ClassificationLeviersRouter } from './classification-leviers.router';
 
 @Module({
   imports: [
@@ -33,9 +33,9 @@ import { PriorisationRouter } from './priorisation.router';
     GenerateClassificationService,
     GenerateClassificationWorker,
     GetClassificationStatusService,
-    PriorisationRouter,
-    FicheLeviersRepository,
+    ClassificationLeviersRouter,
+    FicheActionLevierRepository,
   ],
-  exports: [PriorisationRouter],
+  exports: [ClassificationLeviersRouter],
 })
-export class PriorisationModule {}
+export class ClassificationLeviersModule {}
