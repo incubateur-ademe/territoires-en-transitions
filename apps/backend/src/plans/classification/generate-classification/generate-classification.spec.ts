@@ -4,7 +4,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { ZodType } from 'zod';
 import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
-import { FicheActionVoletGesErrorEnum } from '../fiche-action-volet-ges.errors';
+import { VoletErrorEnum } from '../volet.errors';
 import {
   ClassificationVoletsJob,
   ClassificationVoletsJobStatus,
@@ -236,7 +236,7 @@ describe('GenerateClassificationService.generate', () => {
 
   it("ne clot pas le job quand l'ecriture du classement echoue", async () => {
     const { service, jobRepository } = toDependencies({
-      saveOutcome: failure(FicheActionVoletGesErrorEnum.SAVE_VOLETS_ERROR),
+      saveOutcome: failure(VoletErrorEnum.SAVE_VOLETS_ERROR),
     });
 
     const result = await service.generate(jobId);
@@ -245,7 +245,11 @@ describe('GenerateClassificationService.generate', () => {
       errorKind: result.success ? undefined : result.error.kind,
       markDoneCalls: jobRepository.markDone.mock.calls.length,
       markFailedCalls: jobRepository.markFailed.mock.calls.length,
-    }).toEqual({ errorKind: 'interrupted', markDoneCalls: 0, markFailedCalls: 1 });
+    }).toEqual({
+      errorKind: 'interrupted',
+      markDoneCalls: 0,
+      markFailedCalls: 1,
+    });
   });
 
   it("remonte l'echec de passage en cours sans appeler le modele", async () => {

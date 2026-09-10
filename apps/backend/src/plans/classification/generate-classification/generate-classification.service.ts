@@ -1,20 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Enjeu } from '@tet/domain/shared';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
-import {
-  DECLARED_ENJEUX,
-  isDeclaredEnjeu,
-} from '../classification-enjeux';
+import { DECLARED_ENJEUX, isDeclaredEnjeu } from '../classification-enjeux';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
 import { type ClassificationVoletsError } from '../classification-volets.errors';
-import { type FicheActionVoletGesError } from '../fiche-action-volet-ges.errors';
-import {
-  FicheActionVoletGes,
-  FicheActionVoletGesRepository,
-} from '../fiche-action-volet-ges.repository';
+import { type VoletError } from '../volet.errors';
+import { FicheVolets, VoletRepository } from '../volet.repository';
+import { FicheActionVoletGesRepository } from '../fiche-action-volet-ges.repository';
 import {
   CLASSIFICATION_DEADLINE_MS,
   ClassificationVoletsJobStatusEnum,
@@ -40,13 +36,13 @@ export type GenerateClassificationError =
   | { kind: 'interrupted'; jobId: string; message: string };
 
 type PersistClassificationFailure =
-  | { step: 'save_volets'; cause: FicheActionVoletGesError }
+  | { step: 'save_volets'; cause: VoletError }
   | { step: 'mark_done'; cause: ClassificationVoletsError };
 
-const toFicheActionVoletGes = ({
+const toFicheVolets = ({ ficheId, volets }: ClassifiedFiche): FicheVolets => ({
   ficheId,
   volets,
-}: ClassifiedFiche): FicheActionVoletGes => ({ ficheId, volets });
+});
 
 @Injectable()
 export class GenerateClassificationService {
@@ -60,6 +56,10 @@ export class GenerateClassificationService {
     private readonly transactionManager: TransactionManager
   ) {}
 
+  private readonly repositoriesByEnjeu: Record<Enjeu, VoletRepository> = {
+    ges: this.ficheActionVoletGesRepository,
+  };
+
   async generate(
     jobId: string
   ): Promise<Result<undefined, GenerateClassificationError>> {
@@ -69,8 +69,7 @@ export class GenerateClassificationService {
     }
     const job = jobResult.data;
 
-    const isAlreadyDone =
-      job.status === ClassificationVoletsJobStatusEnum.DONE;
+    const isAlreadyDone = job.status === ClassificationVoletsJobStatusEnum.DONE;
     if (isAlreadyDone) {
       this.logger.log(`Job ${jobId} déjà terminé, ré-livraison ignorée`);
       return success(undefined);
@@ -108,11 +107,12 @@ export class GenerateClassificationService {
         `Cette classification porte un enjeu que l'application ne reconnaît pas : ${job.enjeu}. Signalez-le à l'équipe.`
       );
     }
-    const declaredEnjeu = DECLARED_ENJEUX[job.enjeu];
+    const enjeu = DECLARED_ENJEUX[job.enjeu];
+    const repository = this.repositoriesByEnjeu[job.enjeu];
 
     const deadline = AbortSignal.timeout(CLASSIFICATION_DEADLINE_MS);
     const classification = await runClassification(this.llm, {
-      enjeu: declaredEnjeu,
+      enjeu,
       signal: deadline,
       fiches: fiches.map(({ id, titre, description }) => ({
         ficheId: id,
@@ -135,9 +135,9 @@ export class GenerateClassificationService {
       undefined,
       PersistClassificationFailure
     >(async (tx) => {
-      const saveResult = await this.ficheActionVoletGesRepository.saveVolets({
+      const saveResult = await repository.saveVolets({
         collectiviteId: job.collectiviteId,
-        fiches: classification.draft.fiches.map(toFicheActionVoletGes),
+        fiches: classification.draft.fiches.map(toFicheVolets),
         createdBy: job.createdBy,
         tx,
       });
