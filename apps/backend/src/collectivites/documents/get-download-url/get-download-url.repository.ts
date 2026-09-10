@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq } from 'drizzle-orm';
-import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 
 export type DocumentToDownload = Pick<
@@ -12,19 +11,6 @@ export type DocumentToDownload = Pick<
 @Injectable()
 export class GetDownloadUrlRepository {
   constructor(private readonly databaseService: DatabaseService) {}
-
-  async isCollectiviteAccesRestreint(collectiviteId: number): Promise<boolean> {
-    const [collectivite] = await this.databaseService.db
-      .select({ accesRestreint: collectiviteTable.accesRestreint })
-      .from(collectiviteTable)
-      .where(eq(collectiviteTable.id, collectiviteId))
-      .limit(1);
-
-    if (collectivite === undefined) {
-      return true;
-    }
-    return collectivite.accesRestreint ?? false;
-  }
 
   async findDocument({
     collectiviteId,

@@ -14,19 +14,17 @@ const FICHIER_ID = 42;
 
 const user: AuthenticatedUser = { id: 'user-id' } as AuthenticatedUser;
 
-const allowed = { success: true, data: undefined };
-const denied = { success: false, error: 'UNAUTHORIZED' };
+type DocumentsAccess = 'unauthorized' | 'public' | 'confidential';
 
 type ServiceUnderTest = {
   service: GetDownloadUrlService;
+  collectiviteDocumentsAccess: { checkUserCanReadDocuments: Mock };
   repository: { findDocument: Mock };
   documentStorage: { createSignedDownloadUrl: Mock };
 };
 
 function buildService({
-  isCollectivitePrivate = false,
-  canRead = true,
-  canReadConfidentiel = false,
+  access = 'public',
   document = {
     hash: HASH,
     filename: 'rapport.pdf',
@@ -36,34 +34,22 @@ function buildService({
   hasBucket = true,
   signatureFails = false,
 }: {
-  isCollectivitePrivate?: boolean;
-  canRead?: boolean;
-  canReadConfidentiel?: boolean;
+  access?: DocumentsAccess;
   document?: DocumentToDownload;
   documentExists?: boolean;
   hasBucket?: boolean;
   signatureFails?: boolean;
 } = {}): ServiceUnderTest {
-  const permissionService = {
-    isAllowed: vi
-      .fn()
-      .mockImplementation((_user, operation) =>
-        Promise.resolve(
-          operation === 'collectivites.documents.read_confidentiel'
-            ? canReadConfidentiel
-              ? allowed
-              : denied
-            : canRead
-            ? allowed
-            : denied
-        )
-      ),
+  const accessResult =
+    access === 'unauthorized'
+      ? failure('UNAUTHORIZED')
+      : success({ canReadConfidentiel: access === 'confidential' });
+
+  const collectiviteDocumentsAccess = {
+    checkUserCanReadDocuments: vi.fn().mockResolvedValue(accessResult),
   };
 
   const repository = {
-    isCollectiviteAccesRestreint: vi
-      .fn()
-      .mockResolvedValue(isCollectivitePrivate),
     findDocument: vi
       .fn()
       .mockResolvedValue(documentExists ? document : undefined),
@@ -86,22 +72,33 @@ function buildService({
   };
 
   const service = new GetDownloadUrlService(
-    permissionService as never,
+    collectiviteDocumentsAccess as never,
     repository as never,
     collectiviteBucket as never,
     documentStorage as never
   );
 
-  return { service, repository, documentStorage };
+  return { service, collectiviteDocumentsAccess, repository, documentStorage };
 }
 
 describe('GetDownloadUrlService', () => {
-  it("refuse un document non confidentiel d'une collectivite en acces restreint a un compte sans droit confidentiel", async () => {
-    const { service, documentStorage } = buildService({
-      isCollectivitePrivate: true,
-      canRead: true,
-      canReadConfidentiel: false,
-      document: { hash: HASH, filename: 'rapport.pdf', confidentiel: false },
+  it('controle les droits sur la collectivite du document demande, dans la transaction recue', async () => {
+    const { service, collectiviteDocumentsAccess } = buildService();
+    const tx = {} as never;
+
+    await service.getDownloadUrl(
+      { collectiviteId: 1, fichierId: FICHIER_ID },
+      { user, tx }
+    );
+
+    expect(
+      collectiviteDocumentsAccess.checkUserCanReadDocuments
+    ).toHaveBeenCalledWith({ collectiviteId: 1 }, { user, tx });
+  });
+
+  it('refuse un compte sans acces aux documents de la collectivite sans consulter le document', async () => {
+    const { service, repository, documentStorage } = buildService({
+      access: 'unauthorized',
     });
 
     const result = await service.getDownloadUrl(
@@ -110,24 +107,8 @@ describe('GetDownloadUrlService', () => {
     );
 
     expect(result).toEqual({ success: false, error: 'UNAUTHORIZED' });
+    expect(repository.findDocument).not.toHaveBeenCalled();
     expect(documentStorage.createSignedDownloadUrl).not.toHaveBeenCalled();
-  });
-
-  it("signe un document non confidentiel d'une collectivite en acces restreint pour un compte qui a le droit confidentiel", async () => {
-    const { service } = buildService({
-      isCollectivitePrivate: true,
-      canReadConfidentiel: true,
-    });
-
-    const result = await service.getDownloadUrl(
-      { collectiviteId: 1, fichierId: FICHIER_ID },
-      { user }
-    );
-
-    expect(result).toEqual({
-      success: true,
-      data: { signedUrl: 'https://signe.example/doc', filename: 'rapport.pdf' },
-    });
   });
 
   it("refuse un document confidentiel sans reveler qu'il existe", async () => {
@@ -146,20 +127,9 @@ describe('GetDownloadUrlService', () => {
 
   it('signe un document confidentiel pour un compte qui a le droit confidentiel', async () => {
     const { service } = buildService({
-      canReadConfidentiel: true,
+      access: 'confidential',
       document: { hash: HASH, filename: 'rapport.pdf', confidentiel: true },
     });
-
-    const result = await service.getDownloadUrl(
-      { collectiviteId: 1, fichierId: FICHIER_ID },
-      { user }
-    );
-
-    expect(result.success).toBe(true);
-  });
-
-  it('signe un document non confidentiel dune collectivite publique', async () => {
-    const { service } = buildService();
 
     const result = await service.getDownloadUrl(
       { collectiviteId: 1, fichierId: FICHIER_ID },
@@ -172,19 +142,18 @@ describe('GetDownloadUrlService', () => {
     });
   });
 
-  it('refuse un compte sans aucun droit de lecture sans consulter le document', async () => {
-    const { service, repository, documentStorage } = buildService({
-      canRead: false,
-    });
+  it('signe un document non confidentiel pour un compte qui a acces aux documents', async () => {
+    const { service } = buildService();
 
     const result = await service.getDownloadUrl(
       { collectiviteId: 1, fichierId: FICHIER_ID },
       { user }
     );
 
-    expect(result).toEqual({ success: false, error: 'UNAUTHORIZED' });
-    expect(repository.findDocument).not.toHaveBeenCalled();
-    expect(documentStorage.createSignedDownloadUrl).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      success: true,
+      data: { signedUrl: 'https://signe.example/doc', filename: 'rapport.pdf' },
+    });
   });
 
   it("rend DOCUMENT_NOT_FOUND quand l'identifiant ne designe aucun document de la collectivite", async () => {
@@ -225,20 +194,5 @@ describe('GetDownloadUrlService', () => {
       success: false,
       error: 'SIGN_DOWNLOAD_ERROR',
     });
-  });
-
-  it('traite une collectivite inconnue comme un acces restreint', async () => {
-    const { service, documentStorage } = buildService({
-      isCollectivitePrivate: true,
-      canReadConfidentiel: false,
-    });
-
-    const result = await service.getDownloadUrl(
-      { collectiviteId: 404, fichierId: FICHIER_ID },
-      { user }
-    );
-
-    expect(result).toEqual({ success: false, error: 'UNAUTHORIZED' });
-    expect(documentStorage.createSignedDownloadUrl).not.toHaveBeenCalled();
   });
 });
