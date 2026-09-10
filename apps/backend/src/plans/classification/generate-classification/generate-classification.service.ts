@@ -4,17 +4,17 @@ import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { ClassificationLeviersJobRepository } from '../classification-leviers-job.repository';
-import { type ClassificationLeviersError } from '../classification-leviers.errors';
-import { type FicheLeviersError } from '../fiche-leviers.errors';
+import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
+import { type ClassificationVoletsError } from '../classification-volets.errors';
+import { type FicheActionVoletGesError } from '../fiche-action-volet-ges.errors';
 import {
-  FicheLeviers,
-  FicheLeviersRepository,
-} from '../fiche-leviers.repository';
+  FicheActionVoletGes,
+  FicheActionVoletGesRepository,
+} from '../fiche-action-volet-ges.repository';
 import {
   CLASSIFICATION_DEADLINE_MS,
-  ClassificationLeviersJobStatusEnum,
-} from '../models/classification-leviers-job';
+  ClassificationVoletsJobStatusEnum,
+} from '../models/classification-volets-job';
 import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
 import {
   FICHES_PER_BATCH,
@@ -22,40 +22,37 @@ import {
 } from '../pipeline/run-classification';
 
 export type GenerateClassificationError =
-  | { kind: 'job_unreadable'; jobId: string; cause: ClassificationLeviersError }
+  | { kind: 'job_unreadable'; jobId: string; cause: ClassificationVoletsError }
   | {
       kind: 'transition_failed';
       jobId: string;
-      cause: ClassificationLeviersError;
+      cause: ClassificationVoletsError;
     }
   | {
       kind: 'failure_record_failed';
       jobId: string;
-      cause: ClassificationLeviersError;
+      cause: ClassificationVoletsError;
     }
   | { kind: 'interrupted'; jobId: string; message: string };
 
 type PersistClassificationFailure =
-  | { step: 'save_leviers'; cause: FicheLeviersError }
-  | { step: 'mark_done'; cause: ClassificationLeviersError };
+  | { step: 'save_volets'; cause: FicheActionVoletGesError }
+  | { step: 'mark_done'; cause: ClassificationVoletsError };
 
-const toFicheLeviers = ({
+const toFicheActionVoletGes = ({
   ficheId,
   volets,
-}: ClassifiedFiche): FicheLeviers => ({
-  ficheId,
-  leviers: volets.map(({ levier, categorie }) => ({ levier, categorie })),
-});
+}: ClassifiedFiche): FicheActionVoletGes => ({ ficheId, volets });
 
 @Injectable()
 export class GenerateClassificationService {
   private readonly logger = new Logger(GenerateClassificationService.name);
 
   constructor(
-    private readonly jobRepository: ClassificationLeviersJobRepository,
+    private readonly jobRepository: ClassificationVoletsJobRepository,
     private readonly listFichesService: ListFichesService,
     private readonly llm: LlmService,
-    private readonly ficheLeviersRepository: FicheLeviersRepository,
+    private readonly ficheActionVoletGesRepository: FicheActionVoletGesRepository,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -69,7 +66,7 @@ export class GenerateClassificationService {
     const job = jobResult.data;
 
     const isAlreadyDone =
-      job.status === ClassificationLeviersJobStatusEnum.DONE;
+      job.status === ClassificationVoletsJobStatusEnum.DONE;
     if (isAlreadyDone) {
       this.logger.log(`Job ${jobId} déjà terminé, ré-livraison ignorée`);
       return success(undefined);
@@ -125,15 +122,15 @@ export class GenerateClassificationService {
       undefined,
       PersistClassificationFailure
     >(async (tx) => {
-      const saveResult = await this.ficheLeviersRepository.saveLeviers({
+      const saveResult = await this.ficheActionVoletGesRepository.saveVolets({
         collectiviteId: job.collectiviteId,
-        fiches: classification.draft.fiches.map(toFicheLeviers),
+        fiches: classification.draft.fiches.map(toFicheActionVoletGes),
         createdBy: job.createdBy,
         tx,
       });
       if (!saveResult.success) {
         return failure({
-          step: 'save_leviers' as const,
+          step: 'save_volets' as const,
           cause: saveResult.error,
         });
       }
@@ -155,7 +152,7 @@ export class GenerateClassificationService {
       return success(undefined);
     }
 
-    if (persistResult.error.step === 'save_leviers') {
+    if (persistResult.error.step === 'save_volets') {
       return this.interrupt(
         jobId,
         `L'enregistrement du classement a échoué (${persistResult.error.cause})`

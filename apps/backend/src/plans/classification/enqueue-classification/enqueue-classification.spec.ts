@@ -4,7 +4,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
-import { ClassificationLeviersErrorEnum } from '../classification-leviers.errors';
+import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
 import { EnqueueClassificationService } from './enqueue-classification.service';
 
 const planId = 42;
@@ -75,7 +75,7 @@ describe('EnqueueClassificationService.enqueue', () => {
     expect({ result, queueCalls: queue.add.mock.calls.length }).toEqual({
       result: {
         success: false,
-        error: ClassificationLeviersErrorEnum.NO_FICHE_TO_CLASSIFY,
+        error: ClassificationVoletsErrorEnum.NO_FICHE_TO_CLASSIFY,
       },
       queueCalls: 0,
     });
@@ -96,7 +96,7 @@ describe('EnqueueClassificationService.enqueue', () => {
 
     expect(result).toEqual({
       success: false,
-      error: ClassificationLeviersErrorEnum.PLAN_NOT_FOUND,
+      error: ClassificationVoletsErrorEnum.PLAN_NOT_FOUND,
     });
   });
 
@@ -112,7 +112,7 @@ describe('EnqueueClassificationService.enqueue', () => {
     }).toEqual({
       result: {
         success: false,
-        error: ClassificationLeviersErrorEnum.CREATE_JOB_ERROR,
+        error: ClassificationVoletsErrorEnum.CREATE_JOB_ERROR,
       },
       markFailedArgs: [jobId, "L'enfilement du job a échoué"],
     });

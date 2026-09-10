@@ -3,17 +3,17 @@ import { Logger } from '@nestjs/common';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Job, UnrecoverableError } from 'bullmq';
 import {
-  CLASSIFICATION_LEVIERS_LOCK_DURATION_MS,
-  CLASSIFICATION_LEVIERS_QUEUE_NAME,
-  type ClassificationLeviersJobData,
-} from '../classification-leviers.queue';
+  CLASSIFICATION_VOLETS_LOCK_DURATION_MS,
+  CLASSIFICATION_VOLETS_QUEUE_NAME,
+  type ClassificationVoletsJobData,
+} from '../classification-volets.queue';
 import {
   GenerateClassificationError,
   GenerateClassificationService,
 } from './generate-classification.service';
 
-@Processor(CLASSIFICATION_LEVIERS_QUEUE_NAME, {
-  lockDuration: CLASSIFICATION_LEVIERS_LOCK_DURATION_MS,
+@Processor(CLASSIFICATION_VOLETS_QUEUE_NAME, {
+  lockDuration: CLASSIFICATION_VOLETS_LOCK_DURATION_MS,
   concurrency: 1,
   maxStalledCount: 0,
 })
@@ -24,7 +24,7 @@ export class GenerateClassificationWorker extends WorkerHost {
     super();
   }
 
-  async process(job: Job<ClassificationLeviersJobData>): Promise<void> {
+  async process(job: Job<ClassificationVoletsJobData>): Promise<void> {
     const generateResult = await this.service.generate(job.data.jobId);
     if (!generateResult.success) {
       throw new UnrecoverableError(toErrorMessage(generateResult.error));
@@ -33,7 +33,7 @@ export class GenerateClassificationWorker extends WorkerHost {
 
   @OnWorkerEvent('failed')
   async onJobFailed(
-    job: Job<ClassificationLeviersJobData> | undefined,
+    job: Job<ClassificationVoletsJobData> | undefined,
     error: Error
   ): Promise<void> {
     const shouldRecordFailure =
@@ -60,7 +60,7 @@ export class GenerateClassificationWorker extends WorkerHost {
   }
 
   private isTerminalFailure(
-    job: Job<ClassificationLeviersJobData>,
+    job: Job<ClassificationVoletsJobData>,
     error: Error
   ): boolean {
     if (error instanceof UnrecoverableError) {

@@ -7,15 +7,15 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
-import { ClassificationLeviersJobRepository } from '../classification-leviers-job.repository';
+import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
 import {
-  ClassificationLeviersErrorEnum,
-  type ClassificationLeviersError,
-} from '../classification-leviers.errors';
+  ClassificationVoletsErrorEnum,
+  type ClassificationVoletsError,
+} from '../classification-volets.errors';
 import {
-  CLASSIFICATION_LEVIERS_QUEUE_NAME,
-  type ClassificationLeviersJobData,
-} from '../classification-leviers.queue';
+  CLASSIFICATION_VOLETS_QUEUE_NAME,
+  type ClassificationVoletsJobData,
+} from '../classification-volets.queue';
 import { GetAxeRepository } from '@tet/backend/plans/axes/get-axe/get-axe.repository';
 import { EnqueueClassificationInput } from './enqueue-classification.input';
 
@@ -28,30 +28,30 @@ export class EnqueueClassificationService {
   constructor(
     private readonly permissions: PermissionService,
     private readonly getAxeRepository: GetAxeRepository,
-    private readonly jobRepository: ClassificationLeviersJobRepository,
+    private readonly jobRepository: ClassificationVoletsJobRepository,
     private readonly listFichesService: ListFichesService,
-    @InjectQueue(CLASSIFICATION_LEVIERS_QUEUE_NAME)
-    private readonly queue: Queue<ClassificationLeviersJobData>
+    @InjectQueue(CLASSIFICATION_VOLETS_QUEUE_NAME)
+    private readonly queue: Queue<ClassificationVoletsJobData>
   ) {}
 
   async enqueue(
     { planId }: EnqueueClassificationInput,
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<{ jobId: string }, ClassificationLeviersError>> {
+  ): Promise<Result<{ jobId: string }, ClassificationVoletsError>> {
     const axeResult = await this.getAxeRepository.getAxe(planId);
     if (!axeResult.success) {
-      return failure(ClassificationLeviersErrorEnum.PLAN_NOT_FOUND);
+      return failure(ClassificationVoletsErrorEnum.PLAN_NOT_FOUND);
     }
     const axe = axeResult.data;
 
     const isAllowed = await this.isAllowedToClassify(user, axe.collectiviteId);
     if (!isAllowed) {
-      return failure(ClassificationLeviersErrorEnum.PLAN_NOT_FOUND);
+      return failure(ClassificationVoletsErrorEnum.PLAN_NOT_FOUND);
     }
 
     const isSousAxe = axe.parent !== null;
     if (isSousAxe) {
-      return failure(ClassificationLeviersErrorEnum.NOT_A_PLAN);
+      return failure(ClassificationVoletsErrorEnum.NOT_A_PLAN);
     }
 
     const hasFicheResult = await this.checkPlanHasFicheToClassify(
@@ -90,7 +90,7 @@ export class EnqueueClassificationService {
   private async checkPlanHasFicheToClassify(
     { collectiviteId, planId }: { collectiviteId: number; planId: number },
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<undefined, ClassificationLeviersError>> {
+  ): Promise<Result<undefined, ClassificationVoletsError>> {
     const { count } = await this.listFichesService.getFichesActionResumes(
       {
         collectiviteId,
@@ -101,7 +101,7 @@ export class EnqueueClassificationService {
     );
 
     if (count === 0) {
-      return failure(ClassificationLeviersErrorEnum.NO_FICHE_TO_CLASSIFY);
+      return failure(ClassificationVoletsErrorEnum.NO_FICHE_TO_CLASSIFY);
     }
 
     return success(undefined);
@@ -109,7 +109,7 @@ export class EnqueueClassificationService {
 
   private async addToQueue(
     jobId: string
-  ): Promise<Result<{ jobId: string }, ClassificationLeviersError>> {
+  ): Promise<Result<{ jobId: string }, ClassificationVoletsError>> {
     try {
       await this.queue.add(
         GENERATE_CLASSIFICATION_JOB_NAME,
@@ -132,7 +132,7 @@ export class EnqueueClassificationService {
           `Job ${jobId} laissé en vol : la compensation a échoué (${compensated.error})`
         );
       }
-      return failure(ClassificationLeviersErrorEnum.CREATE_JOB_ERROR);
+      return failure(ClassificationVoletsErrorEnum.CREATE_JOB_ERROR);
     }
   }
 }

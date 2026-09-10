@@ -13,34 +13,34 @@ import { LevierId } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
-import { FicheLeviersErrorEnum } from './fiche-leviers.errors';
+import { FicheActionVoletGesErrorEnum } from './fiche-action-volet-ges.errors';
 import {
-  FicheLeviers,
-  FicheLeviersRepository,
-} from './fiche-leviers.repository';
-import { ficheActionLevierTable } from './models/fiche-action-levier.table';
+  FicheActionVoletGes,
+  FicheActionVoletGesRepository,
+} from './fiche-action-volet-ges.repository';
+import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
 
-type LevierRow = { ficheId: number; levierId: LevierId };
+type VoletRow = { ficheId: number; levierId: LevierId };
 
-const toFicheLeviers = (
+const toFicheActionVoletGes = (
   ficheId: number,
-  ...leviers: FicheLeviers['leviers']
-): FicheLeviers => ({ ficheId, leviers });
+  ...volets: FicheActionVoletGes['volets']
+): FicheActionVoletGes => ({ ficheId, volets });
 
-const veloAmenagement: FicheLeviers['leviers'][number] = {
+const veloAmenagement: FicheActionVoletGes['volets'][number] = {
   levier: 'Vélo et transport en commun',
   categorie: 'amenagement',
 };
 
-const covoiturageSensibilisation: FicheLeviers['leviers'][number] = {
+const covoiturageSensibilisation: FicheActionVoletGes['volets'][number] = {
   levier: 'Covoiturage',
   categorie: 'sensibilisation',
 };
 
-describe('FicheLeviersRepository.saveLeviers', () => {
+describe('FicheActionVoletGesRepository.saveVolets', () => {
   let app: INestApplication;
   let db: DatabaseService;
-  let repository: FicheLeviersRepository;
+  let repository: FicheActionVoletGesRepository;
   let collectiviteId: number;
   let requesterId: string;
   let ficheId: number;
@@ -51,7 +51,7 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
     const router: TrpcRouter = await getTestRouter(app);
-    repository = app.get(FicheLeviersRepository);
+    repository = app.get(FicheActionVoletGesRepository);
 
     const { collectivite, user } = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
@@ -95,27 +95,27 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     };
   });
 
-  const readLeviers = async (): Promise<LevierRow[]> =>
+  const readVolets = async (): Promise<VoletRow[]> =>
     db.db
       .select({
-        ficheId: ficheActionLevierTable.ficheId,
-        levierId: ficheActionLevierTable.levierId,
+        ficheId: ficheActionVoletGesTable.ficheId,
+        levierId: ficheActionVoletGesTable.levierId,
       })
-      .from(ficheActionLevierTable)
+      .from(ficheActionVoletGesTable)
       .where(
-        inArray(ficheActionLevierTable.ficheId, [
+        inArray(ficheActionVoletGesTable.ficheId, [
           ficheId,
           autreFicheId,
           ficheAutreCollectiviteId,
         ])
       );
 
-  const registerLeviersCleanup = (): void => {
+  const registerVoletsCleanup = (): void => {
     onTestFinished(async () => {
       await db.db
-        .delete(ficheActionLevierTable)
+        .delete(ficheActionVoletGesTable)
         .where(
-          inArray(ficheActionLevierTable.ficheId, [
+          inArray(ficheActionVoletGesTable.ficheId, [
             ficheId,
             autreFicheId,
             ficheAutreCollectiviteId,
@@ -125,22 +125,22 @@ describe('FicheLeviersRepository.saveLeviers', () => {
   };
 
   it("convertit le libellé en identifiant technique et signe l'auteur", async () => {
-    registerLeviersCleanup();
+    registerVoletsCleanup();
 
-    const saveResult = await repository.saveLeviers({
+    const saveResult = await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId, veloAmenagement)],
+      fiches: [toFicheActionVoletGes(ficheId, veloAmenagement)],
     });
 
     const [row] = await db.db
       .select({
-        levierId: ficheActionLevierTable.levierId,
-        categorie: ficheActionLevierTable.categorie,
-        createdBy: ficheActionLevierTable.createdBy,
+        levierId: ficheActionVoletGesTable.levierId,
+        categorie: ficheActionVoletGesTable.categorie,
+        createdBy: ficheActionVoletGesTable.createdBy,
       })
-      .from(ficheActionLevierTable)
-      .where(eq(ficheActionLevierTable.ficheId, ficheId));
+      .from(ficheActionVoletGesTable)
+      .where(eq(ficheActionVoletGesTable.ficheId, ficheId));
 
     expect({ saveResult, row }).toEqual({
       saveResult: { success: true, data: undefined },
@@ -152,93 +152,93 @@ describe('FicheLeviersRepository.saveLeviers', () => {
     });
   });
 
-  it('remplace les leviers de chaque fiche du lot, sans les cumuler', async () => {
-    registerLeviersCleanup();
+  it('remplace les volets de chaque fiche du lot, sans les cumuler', async () => {
+    registerVoletsCleanup();
 
-    await repository.saveLeviers({
+    await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheLeviers(ficheId, veloAmenagement),
-        toFicheLeviers(autreFicheId, veloAmenagement),
+        toFicheActionVoletGes(ficheId, veloAmenagement),
+        toFicheActionVoletGes(autreFicheId, veloAmenagement),
       ],
     });
 
-    await repository.saveLeviers({
+    await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheLeviers(ficheId, covoiturageSensibilisation),
-        toFicheLeviers(autreFicheId),
+        toFicheActionVoletGes(ficheId, covoiturageSensibilisation),
+        toFicheActionVoletGes(autreFicheId),
       ],
     });
 
-    expect(await readLeviers()).toEqual([{ ficheId, levierId: 'covoiturage' }]);
+    expect(await readVolets()).toEqual([{ ficheId, levierId: 'covoiturage' }]);
   });
 
-  it("efface les leviers d'une fiche que le modèle ne rattache à rien", async () => {
-    registerLeviersCleanup();
+  it("efface les volets d'une fiche que le modèle ne rattache à rien", async () => {
+    registerVoletsCleanup();
 
-    await repository.saveLeviers({
+    await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId, veloAmenagement)],
+      fiches: [toFicheActionVoletGes(ficheId, veloAmenagement)],
     });
-    expect(await readLeviers()).toHaveLength(1);
+    expect(await readVolets()).toHaveLength(1);
 
-    await repository.saveLeviers({
+    await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId)],
+      fiches: [toFicheActionVoletGes(ficheId)],
     });
 
-    expect(await readLeviers()).toEqual([]);
+    expect(await readVolets()).toEqual([]);
   });
 
-  it("laisse les leviers precedents intacts quand l'ecriture echoue", async () => {
-    registerLeviersCleanup();
+  it("laisse les volets precedents intacts quand l'ecriture echoue", async () => {
+    registerVoletsCleanup();
 
-    await repository.saveLeviers({
+    await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
-      fiches: [toFicheLeviers(ficheId, veloAmenagement)],
+      fiches: [toFicheActionVoletGes(ficheId, veloAmenagement)],
     });
 
-    const saveResult = await repository.saveLeviers({
+    const saveResult = await repository.saveVolets({
       collectiviteId,
       createdBy: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
-      fiches: [toFicheLeviers(ficheId, covoiturageSensibilisation)],
+      fiches: [toFicheActionVoletGes(ficheId, covoiturageSensibilisation)],
     });
 
-    expect({ saveResult, rows: await readLeviers() }).toEqual({
+    expect({ saveResult, rows: await readVolets() }).toEqual({
       saveResult: {
         success: false,
-        error: FicheLeviersErrorEnum.SAVE_LEVIERS_ERROR,
+        error: FicheActionVoletGesErrorEnum.SAVE_VOLETS_ERROR,
       },
       rows: [{ ficheId, levierId: 'velo_transport_commun' }],
     });
   });
 
-  it("ne touche pas aux leviers d'une fiche qui appartient à une autre collectivité", async () => {
-    registerLeviersCleanup();
+  it("ne touche pas aux volets d'une fiche qui appartient à une autre collectivité", async () => {
+    registerVoletsCleanup();
 
-    await db.db.insert(ficheActionLevierTable).values({
+    await db.db.insert(ficheActionVoletGesTable).values({
       ficheId: ficheAutreCollectiviteId,
       levierId: 'biogaz',
       categorie: 'financement',
       createdBy: requesterId,
     });
 
-    await repository.saveLeviers({
+    await repository.saveVolets({
       collectiviteId,
       createdBy: requesterId,
       fiches: [
-        toFicheLeviers(ficheId, veloAmenagement),
-        toFicheLeviers(ficheAutreCollectiviteId, covoiturageSensibilisation),
+        toFicheActionVoletGes(ficheId, veloAmenagement),
+        toFicheActionVoletGes(ficheAutreCollectiviteId, covoiturageSensibilisation),
       ],
     });
 
-    expect(await readLeviers()).toEqual([
+    expect(await readVolets()).toEqual([
       { ficheId: ficheAutreCollectiviteId, levierId: 'biogaz' },
       { ficheId, levierId: 'velo_transport_commun' },
     ]);

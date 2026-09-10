@@ -8,7 +8,7 @@ import {
 import { sql } from 'drizzle-orm';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-describe('Les types postgres du rattachement levier x categorie', () => {
+describe('Les types postgres du volet GES', () => {
   let app: INestApplication;
   let db: DatabaseService;
 
@@ -34,11 +34,11 @@ describe('Les types postgres du rattachement levier x categorie', () => {
 
   it("declarent les memes valeurs qu'en TypeScript, dans le meme ordre", async () => {
     expect({
-      levierId: await readEnumLabels('levier_id'),
-      levierCategorie: await readEnumLabels('levier_categorie'),
+      levierId: await readEnumLabels('levier_ges_id'),
+      voletCategorie: await readEnumLabels('volet_categorie'),
     }).toEqual({
       levierId: [...levierIdEnumValues],
-      levierCategorie: [...categorieActionEnumValues],
+      voletCategorie: [...categorieActionEnumValues],
     });
   });
 });

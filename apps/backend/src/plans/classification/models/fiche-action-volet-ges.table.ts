@@ -13,21 +13,21 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-export const levierIdEnum = pgEnum('levier_id', levierIdEnumValues);
+export const levierGesIdEnum = pgEnum('levier_ges_id', levierIdEnumValues);
 
-export const levierCategorieEnum = pgEnum(
-  'levier_categorie',
+export const voletCategorieEnum = pgEnum(
+  'volet_categorie',
   categorieActionEnumValues
 );
 
-export const ficheActionLevierTable = pgTable(
-  'fiche_action_levier',
+export const ficheActionVoletGesTable = pgTable(
+  'fiche_action_volet_ges',
   {
     ficheId: integer('fiche_id')
       .notNull()
       .references(() => ficheActionTable.id, { onDelete: 'cascade' }),
-    levierId: levierIdEnum('levier_id').notNull(),
-    categorie: levierCategorieEnum('categorie').notNull(),
+    levierId: levierGesIdEnum('levier_id').notNull(),
+    categorie: voletCategorieEnum('categorie').notNull(),
     createdAt,
     createdBy: uuid('created_by')
       .notNull()

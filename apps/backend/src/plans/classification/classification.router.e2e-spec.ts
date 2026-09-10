@@ -13,16 +13,16 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
-import { ClassificationLeviersJobRepository } from './classification-leviers-job.repository';
-import { ClassificationLeviersErrorEnum } from './classification-leviers.errors';
+import { ClassificationVoletsJobRepository } from './classification-volets-job.repository';
+import { ClassificationVoletsErrorEnum } from './classification-volets.errors';
 import {
-  ClassificationLeviersJobStatus,
-  ClassificationLeviersJobStatusEnum,
+  ClassificationVoletsJobStatus,
+  ClassificationVoletsJobStatusEnum,
   IN_FLIGHT_LEASE_MS,
-} from './models/classification-leviers-job';
-import { classificationLeviersJobTable } from './models/classification-leviers-job.table';
+} from './models/classification-volets-job';
+import { classificationVoletsJobTable } from './models/classification-volets-job.table';
 
-describe('PriorisationRouter', { timeout: 30_000 }, () => {
+describe('ClassificationRouter', { timeout: 30_000 }, () => {
   let app: INestApplication;
   let db: DatabaseService;
   let router: TrpcRouter;
@@ -34,7 +34,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
   let sousAxeId: number;
 
   const callerFor = (user: AuthenticatedUser) =>
-    router.createCaller({ user }).plans.classificationLeviers;
+    router.createCaller({ user }).plans.classificationVolets;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -85,9 +85,9 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
     return async () => {
       await db.db
-        .delete(classificationLeviersJobTable)
+        .delete(classificationVoletsJobTable)
         .where(
-          eq(classificationLeviersJobTable.collectiviteId, collectiviteId)
+          eq(classificationVoletsJobTable.collectiviteId, collectiviteId)
         );
       await ficheCleanup();
       await fixtureCaller.plans.plans.delete({ planId: planWithFichesId });
@@ -97,16 +97,16 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
   });
 
   const insertJob = async ({
-    status = ClassificationLeviersJobStatusEnum.DONE,
+    status = ClassificationVoletsJobStatusEnum.DONE,
     planId,
     modifiedAt,
   }: {
-    status?: ClassificationLeviersJobStatus;
+    status?: ClassificationVoletsJobStatus;
     planId?: number;
     modifiedAt?: string;
   } = {}): Promise<string> => {
     const [job] = await db.db
-      .insert(classificationLeviersJobTable)
+      .insert(classificationVoletsJobTable)
       .values({
         collectiviteId,
         planId: planId ?? emptyPlanId,
@@ -124,10 +124,10 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
     return job.id;
   };
 
-  describe('enqueueClassificationLeviers', () => {
+  describe('enqueueClassification', () => {
     it("refuse un plan qui n'existe pas", async () => {
       await expect(
-        callerFor(editionUser).enqueueClassificationLeviers({
+        callerFor(editionUser).enqueueClassification({
           planId: 999_999_999,
         })
       ).rejects.toThrowError(/n'existe pas/);
@@ -135,7 +135,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
     it('refuse un sous-axe, qui ne désigne pas un plan', async () => {
       await expect(
-        callerFor(editionUser).enqueueClassificationLeviers({
+        callerFor(editionUser).enqueueClassification({
           planId: sousAxeId,
         })
       ).rejects.toThrowError(/axe et non un plan/);
@@ -143,7 +143,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
     it('refuse un plan sans aucune fiche à classer', async () => {
       await expect(
-        callerFor(editionUser).enqueueClassificationLeviers({
+        callerFor(editionUser).enqueueClassification({
           planId: emptyPlanId,
         })
       ).rejects.toThrowError(/aucune fiche/);
@@ -151,7 +151,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
     it("cache le plan à un membre d'une autre collectivité", async () => {
       await expect(
-        callerFor(outsiderUser).enqueueClassificationLeviers({
+        callerFor(outsiderUser).enqueueClassification({
           planId: planWithFichesId,
         })
       ).rejects.toThrowError(/n'existe pas/);
@@ -160,12 +160,12 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
     it('enfile un job et rend son identifiant', async () => {
       const { jobId } = await callerFor(
         editionUser
-      ).enqueueClassificationLeviers({ planId: planWithFichesId });
+      ).enqueueClassification({ planId: planWithFichesId });
 
       onTestFinished(async () => {
         await db.db
-          .delete(classificationLeviersJobTable)
-          .where(eq(classificationLeviersJobTable.id, jobId));
+          .delete(classificationVoletsJobTable)
+          .where(eq(classificationVoletsJobTable.id, jobId));
       });
 
       expect(jobId).toMatch(
@@ -176,33 +176,33 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
     it('refuse un second job tant que le premier est en vol', async () => {
       const { jobId } = await callerFor(
         editionUser
-      ).enqueueClassificationLeviers({ planId: planWithFichesId });
+      ).enqueueClassification({ planId: planWithFichesId });
 
       onTestFinished(async () => {
         await db.db
-          .delete(classificationLeviersJobTable)
-          .where(eq(classificationLeviersJobTable.id, jobId));
+          .delete(classificationVoletsJobTable)
+          .where(eq(classificationVoletsJobTable.id, jobId));
       });
 
       await expect(
-        callerFor(editionUser).enqueueClassificationLeviers({
+        callerFor(editionUser).enqueueClassification({
           planId: planWithFichesId,
         })
       ).rejects.toThrowError(/déjà en cours/);
     });
   });
 
-  describe('getClassificationLeviersStatus', () => {
+  describe('getClassificationStatus', () => {
     it('rend le classement, sans compteur de lots, sur un job termine', async () => {
       const jobId = await insertJob();
       const status = await callerFor(
         editionUser
-      ).getClassificationLeviersStatus({ jobId });
+      ).getClassificationStatus({ jobId });
 
       expect(status).toEqual({
         id: jobId,
         planId: emptyPlanId,
-        status: ClassificationLeviersJobStatusEnum.DONE,
+        status: ClassificationVoletsJobStatusEnum.DONE,
         draft: {
           fiches: [],
           unclassified: [{ ficheId: 42, reason: 'truncated' }],
@@ -212,16 +212,16 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
     it('rend la progression, sans classement, tant que le job tourne', async () => {
       const jobId = await insertJob({
-        status: ClassificationLeviersJobStatusEnum.RUNNING,
+        status: ClassificationVoletsJobStatusEnum.RUNNING,
       });
       const status = await callerFor(
         editionUser
-      ).getClassificationLeviersStatus({ jobId });
+      ).getClassificationStatus({ jobId });
 
       expect(status).toEqual({
         id: jobId,
         planId: emptyPlanId,
-        status: ClassificationLeviersJobStatusEnum.RUNNING,
+        status: ClassificationVoletsJobStatusEnum.RUNNING,
         processedBatches: 2,
         totalBatches: 3,
       });
@@ -230,13 +230,13 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
     it("cache l'existence du job à un membre d'une autre collectivité", async () => {
       const jobId = await insertJob();
       await expect(
-        callerFor(outsiderUser).getClassificationLeviersStatus({ jobId })
+        callerFor(outsiderUser).getClassificationStatus({ jobId })
       ).rejects.toThrowError(/n'existe pas/);
     });
 
     it("échoue sur un job qui n'existe pas", async () => {
       await expect(
-        callerFor(editionUser).getClassificationLeviersStatus({
+        callerFor(editionUser).getClassificationStatus({
           jobId: '00000000-0000-0000-0000-000000000000',
         })
       ).rejects.toThrowError(/n'existe pas/);
@@ -247,15 +247,15 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
     const cleanupJobsOfPlan = (planId: number): void => {
       onTestFinished(async () => {
         await db.db
-          .delete(classificationLeviersJobTable)
-          .where(eq(classificationLeviersJobTable.planId, planId));
+          .delete(classificationVoletsJobTable)
+          .where(eq(classificationVoletsJobTable.planId, planId));
       });
     };
 
     it("reprend un plan dont le job en vol n'a plus progressé depuis le bail", async () => {
       cleanupJobsOfPlan(planWithFichesId);
       const staleJobId = await insertJob({
-        status: ClassificationLeviersJobStatusEnum.RUNNING,
+        status: ClassificationVoletsJobStatusEnum.RUNNING,
         planId: planWithFichesId,
         modifiedAt: new Date(
           Date.now() - IN_FLIGHT_LEASE_MS - 60_000
@@ -264,15 +264,15 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
       const { jobId } = await callerFor(
         editionUser
-      ).enqueueClassificationLeviers({ planId: planWithFichesId });
+      ).enqueueClassification({ planId: planWithFichesId });
 
       const [staleJob] = await db.db
         .select({
-          status: classificationLeviersJobTable.status,
-          error: classificationLeviersJobTable.error,
+          status: classificationVoletsJobTable.status,
+          error: classificationVoletsJobTable.error,
         })
-        .from(classificationLeviersJobTable)
-        .where(eq(classificationLeviersJobTable.id, staleJobId));
+        .from(classificationVoletsJobTable)
+        .where(eq(classificationVoletsJobTable.id, staleJobId));
 
       expect({
         isNewJob: jobId !== staleJobId,
@@ -280,7 +280,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
         staleError: staleJob.error,
       }).toEqual({
         isNewJob: true,
-        staleStatus: ClassificationLeviersJobStatusEnum.FAILED,
+        staleStatus: ClassificationVoletsJobStatusEnum.FAILED,
         staleError:
           'Job abandonné : aucune progression depuis plus de trente minutes',
       });
@@ -289,7 +289,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
     it('refuse un plan dont le job en vol a progressé dans le bail', async () => {
       cleanupJobsOfPlan(planWithFichesId);
       await insertJob({
-        status: ClassificationLeviersJobStatusEnum.RUNNING,
+        status: ClassificationVoletsJobStatusEnum.RUNNING,
         planId: planWithFichesId,
         modifiedAt: new Date(
           Date.now() - IN_FLIGHT_LEASE_MS + 60_000
@@ -297,7 +297,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
       });
 
       await expect(
-        callerFor(editionUser).enqueueClassificationLeviers({
+        callerFor(editionUser).enqueueClassification({
           planId: planWithFichesId,
         })
       ).rejects.toThrowError(/déjà en cours/);
@@ -307,10 +307,10 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
   describe('transitions du job', () => {
     it("refuse de clore un job qui n'est plus en cours", async () => {
       const jobId = await insertJob({
-        status: ClassificationLeviersJobStatusEnum.DONE,
+        status: ClassificationVoletsJobStatusEnum.DONE,
       });
 
-      const result = await app.get(ClassificationLeviersJobRepository).markDone({
+      const result = await app.get(ClassificationVoletsJobRepository).markDone({
         id: jobId,
         draft: { fiches: [], unclassified: [] },
         tokenUsage: {
@@ -323,7 +323,7 @@ describe('PriorisationRouter', { timeout: 30_000 }, () => {
 
       expect(result).toEqual({
         success: false,
-        error: ClassificationLeviersErrorEnum.JOB_TRANSITION_REFUSED,
+        error: ClassificationVoletsErrorEnum.JOB_TRANSITION_REFUSED,
       });
     });
   });

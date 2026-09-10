@@ -14,18 +14,18 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ClassificationDraft } from './classification-draft';
 import {
-  classificationLeviersJobInFlightStatuses,
-  classificationLeviersJobStatusValues,
-} from './classification-leviers-job';
+  classificationVoletsJobInFlightStatuses,
+  classificationVoletsJobStatusValues,
+} from './classification-volets-job';
 
 export const inFlightStatusPredicate = sql.raw(
-  `status in (${classificationLeviersJobInFlightStatuses
+  `status in (${classificationVoletsJobInFlightStatuses
     .map((status) => `'${status}'`)
     .join(', ')})`
 );
 
-export const classificationLeviersJobTable = pgTable(
-  'classification_leviers_job',
+export const classificationVoletsJobTable = pgTable(
+  'classification_volets_job',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     collectiviteId: integer('collectivite_id')
@@ -38,7 +38,7 @@ export const classificationLeviersJobTable = pgTable(
       .notNull()
       .references(() => authUsersTable.id, { onDelete: 'cascade' }),
     status: text('status', {
-      enum: classificationLeviersJobStatusValues,
+      enum: classificationVoletsJobStatusValues,
     }).notNull(),
     processedBatches: integer('processed_batches').notNull().default(0),
     totalBatches: integer('total_batches').notNull().default(0),
@@ -49,7 +49,7 @@ export const classificationLeviersJobTable = pgTable(
     modifiedAt,
   },
   (table) => [
-    uniqueIndex('classification_leviers_job_in_flight_unique')
+    uniqueIndex('classification_volets_job_in_flight_unique')
       .on(table.planId)
       .where(inFlightStatusPredicate),
   ]

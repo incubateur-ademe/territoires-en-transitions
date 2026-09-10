@@ -1,7 +1,7 @@
 import { failure, success } from '@tet/backend/utils/result.type';
 import { Job, UnrecoverableError } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
-import type { ClassificationLeviersJobData } from '../classification-leviers.queue';
+import type { ClassificationVoletsJobData } from '../classification-volets.queue';
 import { GenerateClassificationError } from './generate-classification.service';
 import { GenerateClassificationWorker } from './generate-classification.worker';
 
@@ -13,12 +13,12 @@ const toJob = ({
 }: {
   attemptsMade?: number;
   attempts?: number;
-} = {}): Job<ClassificationLeviersJobData> =>
+} = {}): Job<ClassificationVoletsJobData> =>
   ({
     data: { jobId },
     attemptsMade,
     opts: { attempts },
-  } as unknown as Job<ClassificationLeviersJobData>);
+  } as unknown as Job<ClassificationVoletsJobData>);
 
 type ServiceStub = {
   generate: ReturnType<typeof vi.fn>;
