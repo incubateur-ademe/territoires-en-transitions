@@ -1,3 +1,9 @@
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '@tet/backend/utils/column.utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { axeTable } from './axe.table';
 import { ficheActionTable } from './fiche-action.table';
@@ -11,6 +17,10 @@ export const ficheActionAxeTable = pgTable(
     axeId: integer('axe_id')
       .notNull()
       .references(() => axeTable.id),
+    createdAt,
+    createdBy,
+    modifiedAt,
+    modifiedBy,
   },
   (table) => [primaryKey({ columns: [table.ficheId, table.axeId] })]
 );
