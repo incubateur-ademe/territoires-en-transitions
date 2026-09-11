@@ -19,20 +19,19 @@ export const FinaliserInstructionButton = ({
   dossier: Dossier;
 }) => {
   /**
-   * Titres retenus à l'ouverture, `null` modale fermée. Les figer plutôt que
-   * de suivre le dossier : valider le dernier avis le rend « instruit » et vide
-   * les titres restants, ce qui ferait disparaître la modale au moment même où
-   * elle doit accuser réception.
+   * Titre retenu à l'ouverture, `null` modale fermée. Le figer plutôt que de
+   * suivre le dossier : valider l'avis rend le dossier « instruit » et vide les
+   * titres restants, ce qui ferait disparaître la modale au moment même où elle
+   * doit accuser réception.
    */
-  const [titresAFinaliser, setTitresAFinaliser] = useState<
-    PcaetAvisAuTitreDe[] | null
-  >(null);
+  const [titreAFinaliser, setTitreAFinaliser] =
+    useState<PcaetAvisAuTitreDe | null>(null);
 
-  // Parmi les titres dont cette collectivité répond — la DREAL en porte deux,
-  // le conseil régional un seul — ceux qui restent à rendre : un titre ne se
-  // rend qu'une fois, et c'est ce qui reste qui dit s'il y a encore quelque
-  // chose à finaliser.
-  const titresDisponibles = dossier.titresDeposables.filter(
+  // Parmi les titres dont cette collectivité répond — un seul aujourd'hui, le
+  // préfet de région pour la DREAL, le président de région pour le conseil
+  // régional — celui qui reste à rendre : un titre ne se rend qu'une fois, et
+  // c'est ce qui reste qui dit s'il y a encore quelque chose à finaliser.
+  const titreDisponible = dossier.titresDeposables.find(
     (titre) => !dossier.avis.some((avis) => avis.auTitreDe === titre)
   );
   const isFenetreOuverte = fenetreAvisOuverte(
@@ -62,11 +61,11 @@ export const FinaliserInstructionButton = ({
         date: getTextFormattedDate({ date: dossier.instruitLe }),
       })}
     </p>
-  ) : titresDisponibles.length === 0 || !isFenetreOuverte ? (
+  ) : !titreDisponible || !isFenetreOuverte ? (
     <Tooltip
       label={
         isFenetreOuverte
-          ? appLabels.instructionFinaliserTousTitresDeposes
+          ? appLabels.instructionFinaliserAvisDejaDepose
           : appLabels.instructionFinaliserVerrouille
       }
     >
@@ -86,7 +85,7 @@ export const FinaliserInstructionButton = ({
       size="sm"
       className="w-fit"
       data-test="demarches.pcaet.instruction.finaliser"
-      onClick={() => setTitresAFinaliser(titresDisponibles)}
+      onClick={() => setTitreAFinaliser(titreDisponible)}
     >
       {appLabels.instructionFinaliserBouton}
     </Button>
@@ -97,11 +96,11 @@ export const FinaliserInstructionButton = ({
   return (
     <>
       {declencheur}
-      {titresAFinaliser && (
+      {titreAFinaliser && (
         <FinaliserInstructionModal
           dossier={dossier}
-          titresDisponibles={titresAFinaliser}
-          onClose={() => setTitresAFinaliser(null)}
+          auTitreDe={titreAFinaliser}
+          onClose={() => setTitreAFinaliser(null)}
         />
       )}
     </>

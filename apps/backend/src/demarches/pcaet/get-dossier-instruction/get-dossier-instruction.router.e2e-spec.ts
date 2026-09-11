@@ -191,9 +191,8 @@ describe('getDossierInstruction', () => {
       .values({
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
-        auTitreDe: 'autorite_environnementale',
-        sens: 'avec_reserves',
-        fichierRef: 'avis-ae.pdf',
+        auTitreDe: 'prefet_region',
+        fichierRef: 'avis-prefet.pdf',
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -208,8 +207,7 @@ describe('getDossierInstruction', () => {
     expect(dossier.avis).toHaveLength(1);
     expect(dossier.avis[0]).toMatchObject({
       id: avis.id,
-      auTitreDe: 'autorite_environnementale',
-      sens: 'avec_reserves',
+      auTitreDe: 'prefet_region',
     });
     expect(dossier.avis[0].valideLe).not.toBeNull();
   });
@@ -218,7 +216,7 @@ describe('getDossierInstruction', () => {
    * Un destinataire en lecture — la DDT ici — ne dépose aucun avis mais suit
    * l'instruction : il voit ce que les autres ont rendu, comme la collectivité
    * déposante le voit dans son étape aval. Un brouillon, lui, ne sort jamais de
-   * l'espace de son auteur.
+   * l'espace de son auteur — ici celui du conseil régional, sur sa demande.
    */
   it('montre à un destinataire en lecture les avis validés des autres', async () => {
     const ddt = await addTestCollectiviteAndUser(db, {
@@ -239,13 +237,29 @@ describe('getDossierInstruction', () => {
       })
       .returning({ id: pcaetDemandeAvisTable.id });
 
+    const region = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'region',
+        regionCode: REGION,
+        nom: 'Région test consultation',
+      },
+    });
+    const [demandeRegion] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId,
+        instructeurCollectiviteId: region.collectivite.id,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+
     const [valide] = await db.db
       .insert(pcaetAvisTable)
       .values({
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
         fichierRef: 'avis-prefet.pdf',
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
@@ -254,11 +268,9 @@ describe('getDossierInstruction', () => {
     const [brouillon] = await db.db
       .insert(pcaetAvisTable)
       .values({
-        demandeAvisId,
-        emetteurCollectiviteId: instructeurCollectiviteId,
-        auTitreDe: 'autorite_environnementale',
-        sens: 'defavorable',
-        deposePar: camille.id,
+        demandeAvisId: demandeRegion.id,
+        emetteurCollectiviteId: region.collectivite.id,
+        auTitreDe: 'president_region',
       })
       .returning({ id: pcaetAvisTable.id });
 
@@ -268,7 +280,10 @@ describe('getDossierInstruction', () => {
         .where(inArray(pcaetAvisTable.id, [valide.id, brouillon.id]));
       await db.db
         .delete(pcaetDemandeAvisTable)
-        .where(eq(pcaetDemandeAvisTable.id, demandeDdt.id));
+        .where(
+          inArray(pcaetDemandeAvisTable.id, [demandeDdt.id, demandeRegion.id])
+        );
+      await region.cleanup();
       await ddt.cleanup();
     });
 
@@ -283,17 +298,17 @@ describe('getDossierInstruction', () => {
     expect(dossier.avis).toEqual([]);
     expect(dossier.titresDeposables).toEqual([]);
 
-    // L'avis validé de la DREAL, et lui seul.
+    // L'avis validé de la DREAL, et lui seul : le brouillon du conseil régional
+    // n'est pas encore un avis.
     expect(dossier.avisAutresDestinataires).toHaveLength(1);
     expect(dossier.avisAutresDestinataires[0]).toMatchObject({
       id: valide.id,
       demandeAvisId,
       auTitreDe: 'prefet_region',
-      sens: 'favorable',
     });
     expect(
       dossier.avisAutresDestinataires.map(({ auTitreDe }) => auTitreDe)
-    ).not.toContain('autorite_environnementale');
+    ).not.toContain('president_region');
   });
 
   /**
@@ -331,22 +346,17 @@ describe('getDossierInstruction', () => {
     expect(avant.etat).toBe(PcaetDemandeAvisEtatEnum.A_TRAITER);
     expect(avant.instruitLe).toBeNull();
 
-    // Les deux titres de la DREAL, seule saisie pour avis sur ce dossier.
+    // Le titre de la DREAL, seule saisie pour avis sur ce dossier.
     const rendus = await db.db
       .insert(pcaetAvisTable)
-      .values(
-        (['prefet_region', 'autorite_environnementale'] as const).map(
-          (auTitreDe) => ({
-            demandeAvisId,
-            emetteurCollectiviteId: instructeurCollectiviteId,
-            auTitreDe,
-            sens: 'favorable' as const,
-            fichierRef: `avis-${auTitreDe}.pdf`,
-            deposePar: camille.id,
-            valideLe: new Date().toISOString(),
-          })
-        )
-      )
+      .values({
+        demandeAvisId,
+        emetteurCollectiviteId: instructeurCollectiviteId,
+        auTitreDe: 'prefet_region',
+        fichierRef: 'avis-prefet_region.pdf',
+        deposePar: camille.id,
+        valideLe: new Date().toISOString(),
+      })
       .returning({ id: pcaetAvisTable.id });
 
     onTestFinished(async () => {
@@ -369,40 +379,31 @@ describe('getDossierInstruction', () => {
     expect(apres.instruitLe).not.toBeNull();
   });
 
-  it("ne dit le dossier instruit qu'une fois les deux titres rendus", async () => {
+  it("ne dit le dossier instruit qu'une fois son titre rendu", async () => {
     const caller = router.createCaller({ user: camille });
 
-    const deposerAvis = async (
-      auTitreDe: 'prefet_region' | 'autorite_environnementale'
-    ) => {
-      const [avis] = await db.db
-        .insert(pcaetAvisTable)
-        .values({
-          demandeAvisId,
-          emetteurCollectiviteId: instructeurCollectiviteId,
-          auTitreDe,
-          sens: 'favorable',
-          fichierRef: `avis-${auTitreDe}.pdf`,
-          deposePar: camille.id,
-          valideLe: new Date().toISOString(),
-        })
-        .returning({ id: pcaetAvisTable.id });
-      onTestFinished(async () => {
-        await db.db
-          .delete(pcaetAvisTable)
-          .where(eq(pcaetAvisTable.id, avis.id));
-      });
-    };
-
-    // Un titre sur deux : l'instructeur a encore un avis à produire, et son
+    // Rien de rendu : l'instructeur a encore son avis à produire, et son
     // échéance reste l'information utile.
-    await deposerAvis('prefet_region');
-    const partiel = await caller.demarches.pcaet.getDossierInstruction({
+    const avant = await caller.demarches.pcaet.getDossierInstruction({
       demandeAvisId,
     });
-    expect(partiel.instruitLe).toBeNull();
+    expect(avant.instruitLe).toBeNull();
 
-    await deposerAvis('autorite_environnementale');
+    const [avis] = await db.db
+      .insert(pcaetAvisTable)
+      .values({
+        demandeAvisId,
+        emetteurCollectiviteId: instructeurCollectiviteId,
+        auTitreDe: 'prefet_region',
+        fichierRef: 'avis-prefet_region.pdf',
+        deposePar: camille.id,
+        valideLe: new Date().toISOString(),
+      })
+      .returning({ id: pcaetAvisTable.id });
+    onTestFinished(async () => {
+      await db.db.delete(pcaetAvisTable).where(eq(pcaetAvisTable.id, avis.id));
+    });
+
     const complet = await caller.demarches.pcaet.getDossierInstruction({
       demandeAvisId,
     });

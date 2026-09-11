@@ -3,7 +3,6 @@ import type { ColorVariant } from '@tet/design-tokens';
 import type {
   DemarchePcaetTransition,
   DemarchePcaetVulnerabiliteNiveau,
-  PcaetAvisSens,
 } from '@tet/domain/demarches';
 import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import type { PlanType } from '@tet/domain/plans';
@@ -21,13 +20,6 @@ export const findPcaetPlanType = (types: PlanType[]): PlanType | undefined =>
       t.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
       t.type === PCAET_PLAN_TYPE_KEY.type
   );
-
-/** Le sens d'un avis, lu des deux côtés du circuit. */
-export const AVIS_SENS_VARIANTS: Record<PcaetAvisSens, ColorVariant> = {
-  favorable: 'success',
-  avec_reserves: 'warning',
-  defavorable: 'error',
-};
 
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {

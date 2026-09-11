@@ -16,7 +16,7 @@ export class UpsertAvisService {
   ) {}
 
   async upsertAvis(
-    { demandeAvisId, auTitreDe, sens, fichierRef }: UpsertAvisInput,
+    { demandeAvisId, auTitreDe, fichierRef }: UpsertAvisInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetAvis[], UpsertAvisError>> {
     const permissionResult = await this.depotPermissionsService.canDeposerAvis(
@@ -27,10 +27,9 @@ export class UpsertAvisService {
       return failure(permissionResult.error);
     }
 
-    // Un instructeur ne se prononce qu'aux titres dont il répond : le conseil
-    // régional pour son président, la DREAL pour le préfet de région et
-    // l'autorité environnementale. Sans ce contrôle, l'un signerait pour
-    // l'autre.
+    // Un instructeur ne se prononce qu'au titre dont il répond : le conseil
+    // régional pour son président, la DREAL pour le préfet de région. Sans ce
+    // contrôle, l'un signerait pour l'autre.
     const titresPermis = getTitresAvisInstructeur(
       permissionResult.data.instructeurType
     );
@@ -52,9 +51,9 @@ export class UpsertAvisService {
       auTitreDe,
       tx
     );
-    // Un avis validé est un acte rendu : le réécrire changerait son sens ou sa
-    // pièce en lui laissant sa date de validation, et la collectivité — qui l'a
-    // reçu — n'en saurait rien. Le corriger doit être un acte explicite, pas un
+    // Un avis validé est un acte rendu : le réécrire changerait sa pièce en lui
+    // laissant sa date de validation, et la collectivité — qui l'a reçu — n'en
+    // saurait rien. Le corriger doit être un acte explicite, pas un
     // effet de bord de l'upsert.
     if (avisExistant?.valideLe) {
       return failure(UpsertAvisErrorEnum.AVIS_DEJA_VALIDE);
@@ -65,7 +64,6 @@ export class UpsertAvisService {
         demandeAvisId,
         emetteurCollectiviteId,
         auTitreDe,
-        sens,
         fichierRef,
         deposePar: user.id,
       },

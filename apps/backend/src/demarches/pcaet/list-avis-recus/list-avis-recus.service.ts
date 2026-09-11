@@ -23,7 +23,7 @@ import { AvisRecu } from './list-avis-recus.output';
  * Le pendant de l'espace d'instruction, de l'autre côté : les routes `avis`
  * existantes exigent d'être membre de la collectivité **instructrice**, ce qui
  * laissait la déposante sans aucun moyen de lire les avis qu'elle avait reçus —
- * seul le mail d'envoi les lui signalait, sans même en porter le sens.
+ * seul le mail d'envoi les lui signalait.
  */
 @Injectable()
 export class ListAvisRecusService {
@@ -72,7 +72,6 @@ export class ListAvisRecusService {
         id: pcaetAvisTable.id,
         demandeAvisId: pcaetAvisTable.demandeAvisId,
         auTitreDe: pcaetAvisTable.auTitreDe,
-        sens: pcaetAvisTable.sens,
         fichierRef: pcaetAvisTable.fichierRef,
         valideLe: pcaetAvisTable.valideLe,
         envoyeLe: pcaetAvisTable.envoyeLe,
@@ -102,7 +101,6 @@ export class ListAvisRecusService {
         id: row.id,
         demandeAvisId: row.demandeAvisId,
         auTitreDe: row.auTitreDe,
-        sens: row.sens,
         aUnRapport: row.fichierRef !== null,
         // Non nul par le filtre ci-dessus.
         valideLe: (row.valideLe as unknown as string) ?? '',

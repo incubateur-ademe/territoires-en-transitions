@@ -133,7 +133,6 @@ export const DemarchePcaetDocumentsPage = () => {
                     id: unAvis.id,
                     demandeAvisId: unAvis.demandeAvisId,
                     auTitreDe: unAvis.auTitreDe,
-                    sens: unAvis.sens,
                     aUnRapport: unAvis.aUnRapport,
                     valideLe: unAvis.valideLe,
                     deposeLe: unAvis.valideLe,

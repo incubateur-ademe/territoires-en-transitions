@@ -1,8 +1,5 @@
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
-import {
-  pcaetAvisAuTitreDeSchema,
-  pcaetAvisSensSchema,
-} from '@tet/domain/demarches';
+import { pcaetAvisAuTitreDeSchema } from '@tet/domain/demarches';
 import { z } from 'zod';
 import { sqlToNullableDateTimeISO } from './demarche-pcaet.dto';
 import { pcaetAvisTable } from './pcaet-avis.table';
@@ -11,7 +8,6 @@ export const pcaetAvisSchema = z.object({
   id: z.string(),
   demandeAvisId: z.number(),
   auTitreDe: pcaetAvisAuTitreDeSchema,
-  sens: pcaetAvisSensSchema,
   fichierRef: z.string().nullable(),
   valideLe: z.string().nullable(),
   deposePar: z.string().nullable(),
@@ -26,7 +22,6 @@ export const pcaetAvisSelectColumns = {
   id: pcaetAvisTable.id,
   demandeAvisId: pcaetAvisTable.demandeAvisId,
   auTitreDe: pcaetAvisTable.auTitreDe,
-  sens: pcaetAvisTable.sens,
   fichierRef: pcaetAvisTable.fichierRef,
   valideLe: sqlToNullableDateTimeISO(pcaetAvisTable.valideLe),
   deposePar: pcaetAvisTable.deposePar,

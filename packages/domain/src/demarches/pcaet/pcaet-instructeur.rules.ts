@@ -22,8 +22,10 @@ export type PerimetreInstructeur =
  * Ce qu'un type d'instructeur peut faire sur un dossier PCAET.
  *
  * - `perimetre` — l'étendue sur laquelle il voit les dossiers.
- * - `titresAvis` — les titres au nom desquels il se prononce, vide pour un
- *   destinataire en lecture.
+ * - `titresAvis` — les titres au nom desquels il se prononce : un seul pour
+ *   chaque émetteur aujourd'hui, aucun pour un destinataire en lecture. La
+ *   liste reste une liste : le modèle sait porter plusieurs titres par
+ *   émetteur si un autre avis venait à se rendre ici.
  *
  * Ces listes gouvernent aussi la clôture de l'instruction : `avisTousRendus`
  * attend de chaque demande les titres attendus *de son destinataire*, et non
@@ -39,10 +41,7 @@ type ProfilInstructeur = {
 const profilParTypeInstructeur = {
   [collectiviteTypeEnum.DREAL]: {
     perimetre: PerimetreInstructeurEnum.REGION,
-    titresAvis: [
-      PcaetAvisAuTitreDeEnum.PREFET_REGION,
-      PcaetAvisAuTitreDeEnum.AUTORITE_ENVIRONNEMENTALE,
-    ],
+    titresAvis: [PcaetAvisAuTitreDeEnum.PREFET_REGION],
   },
   [collectiviteTypeEnum.REGION]: {
     perimetre: PerimetreInstructeurEnum.REGION,
@@ -103,7 +102,7 @@ export const getTitresAvisInstructeur = (
  *
  * Rendre `[]` suffit à tout fermer, et c'est voulu : `titresDeposables` se vide,
  * `canDeposerAvis` refuse, et `isDemarchePcaetAvisTousRendus` écarte la demande
- * du décompte. Sans quoi une DREAL limitrophe attendrait deux avis qu'elle ne
+ * du décompte. Sans quoi une DREAL limitrophe attendrait un avis qu'elle ne
  * rendra jamais, et le dossier n'aurait plus que l'échéance pour s'achever.
  */
 export const getTitresAvisSaisine = (

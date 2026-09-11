@@ -143,7 +143,7 @@ describe('getDemandeAvisEtat', () => {
 
 describe('getEtatDossierEnLecture', () => {
   const attenduDreal = {
-    titresAttendus: ['prefet_region', 'autorite_environnementale'],
+    titresAttendus: ['prefet_region'],
     titresValides: [] as string[],
   };
   const attenduRegion = {
@@ -162,7 +162,7 @@ describe('getEtatDossierEnLecture', () => {
           achevement: [
             {
               ...attenduDreal,
-              titresValides: ['prefet_region', 'autorite_environnementale'],
+              titresValides: ['prefet_region'],
             },
             { ...attenduRegion, titresValides: ['president_region'] },
           ],

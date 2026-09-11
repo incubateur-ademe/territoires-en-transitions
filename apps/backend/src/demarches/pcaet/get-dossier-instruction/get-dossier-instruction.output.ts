@@ -24,7 +24,7 @@ export const dossierInstructionSchema = z.object({
   instruitLe: z.string().nullable(),
   /**
    * Les titres au nom desquels cette collectivité peut se prononcer sur ce
-   * dossier : deux pour la DREAL, un pour le conseil régional, aucun pour un
+   * dossier : un pour la DREAL comme pour le conseil régional, aucun pour un
    * destinataire en lecture comme la DDT. L'écran lit cette liste plutôt que de
    * déduire un droit d'un type — et n'a jamais à proposer un titre que le
    * serveur refuserait.
