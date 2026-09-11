@@ -1,4 +1,10 @@
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '@tet/backend/utils/column.utils';
 import { integer, pgEnum, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { ficheActionTable } from './fiche-action.table';
@@ -12,6 +18,10 @@ export const ficheActionIndicateurTable = pgTable(
     indicateurId: integer('indicateur_id')
       .notNull()
       .references(() => indicateurDefinitionTable.id),
+    createdAt,
+    createdBy,
+    modifiedAt,
+    modifiedBy,
   },
   (table) => [primaryKey({ columns: [table.ficheId, table.indicateurId] })]
 );

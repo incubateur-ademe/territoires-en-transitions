@@ -772,6 +772,143 @@ describe('UpdateFicheService', () => {
     });
   });
 
+  describe('Relation audit columns (created_by / created_at)', () => {
+    async function createTestFiche(titre: string) {
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({ titre, collectiviteId })
+        .returning();
+      const cleanupFiche = async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, fiche.id));
+      };
+      return { ficheId: fiche.id, cleanupFiche };
+    }
+
+    test('should set createdBy/modifiedBy to the acting user on newly created relations', async () => {
+      const { ficheId: testFicheId, cleanupFiche } = await createTestFiche(
+        'Fiche pour test audit relations'
+      );
+      onTestFinished(cleanupFiche);
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      await caller.update({
+        ficheId: testFicheId,
+        ficheFields: {
+          axes: [{ id: axeId1 }],
+          thematiques: [{ id: 1 }],
+          sousThematiques: [{ id: 3 }],
+          pilotes: [{ tagId: personneTagId1 }],
+          referents: [{ tagId: personneTagId2 }],
+          indicateurs: [{ id: 1 }],
+        },
+      });
+
+      const tablesToCheck = [
+        ficheActionAxeTable,
+        ficheActionThematiqueTable,
+        ficheActionSousThematiqueTable,
+        ficheActionPiloteTable,
+        ficheActionReferentTable,
+        ficheActionIndicateurTable,
+      ] as const;
+
+      for (const table of tablesToCheck) {
+        const [row] = await db.db
+          .select()
+          .from(table)
+          .where(eq(table.ficheId, testFicheId));
+        expect(row.createdBy).toBe(testUser.id);
+        expect(row.modifiedBy).toBe(testUser.id);
+        expect(row.createdAt).not.toBeNull();
+      }
+    });
+
+    test('should preserve created_at/created_by of an unchanged relation while attributing newly added ones to the new author', async () => {
+      const { ficheId: testFicheId, cleanupFiche } = await createTestFiche(
+        'Fiche pour test préservation des relations'
+      );
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      await caller.update({
+        ficheId: testFicheId,
+        ficheFields: { axes: [{ id: axeId1 }] },
+      });
+
+      const [initialRow] = await db.db
+        .select()
+        .from(ficheActionAxeTable)
+        .where(
+          and(
+            eq(ficheActionAxeTable.ficheId, testFicheId),
+            eq(ficheActionAxeTable.axeId, axeId1)
+          )
+        );
+
+      const { user: otherUser, cleanup } = await addTestUser(db, {
+        collectiviteId,
+        role: CollectiviteRole.ADMIN,
+      });
+      onTestFinished(cleanup);
+
+      // Supprime la fiche (et en cascade sa relation fiche_action_axe, dont
+      // le created_by pointe vers otherUser) avant que le cleanup de
+      // otherUser ne s'exécute (onTestFinished est LIFO).
+      onTestFinished(cleanupFiche);
+
+      const otherCaller = fichesRouter.createCaller({
+        user: getAuthUserFromUserCredentials(otherUser),
+      });
+
+      // Un autre utilisateur ajoute un deuxième axe sans retirer le premier.
+      await otherCaller.update({
+        ficheId: testFicheId,
+        ficheFields: { axes: [{ id: axeId1 }, { id: axeId2 }] },
+      });
+
+      const rows = await db.db
+        .select()
+        .from(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.ficheId, testFicheId));
+
+      const keptRow = rows.find((r) => r.axeId === axeId1);
+      const newRow = rows.find((r) => r.axeId === axeId2);
+
+      expect(keptRow?.createdBy).toBe(testUser.id);
+      expect(keptRow?.createdAt).toBe(initialRow.createdAt);
+
+      expect(newRow?.createdBy).toBe(otherUser.id);
+      expect(newRow?.modifiedBy).toBe(otherUser.id);
+    });
+
+    test('should delete relations no longer present while leaving surviving relations untouched', async () => {
+      const { ficheId: testFicheId, cleanupFiche } = await createTestFiche(
+        'Fiche pour test suppression des relations'
+      );
+      onTestFinished(cleanupFiche);
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      await caller.update({
+        ficheId: testFicheId,
+        ficheFields: { axes: [{ id: axeId1 }, { id: axeId2 }] },
+      });
+
+      await caller.update({
+        ficheId: testFicheId,
+        ficheFields: { axes: [{ id: axeId2 }] },
+      });
+
+      const rows = await db.db
+        .select()
+        .from(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.ficheId, testFicheId));
+
+      expect(rows).toHaveLength(1);
+      expect(rows[0].axeId).toBe(axeId2);
+    });
+  });
+
   describe('Access Rights', () => {
     test('should return 401 if an invalid token is provided', async () => {
       const data: UpdateFicheInput = {

@@ -1,3 +1,9 @@
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import {
   check,
@@ -15,6 +21,10 @@ export const ficheActionPiloteTable = pgTable(
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     tagId: integer('tag_id').references(() => personneTagTable.id),
     userId: uuid('user_id'), // references dcp
+    createdAt,
+    createdBy,
+    modifiedAt,
+    modifiedBy,
   },
   (table) => {
     return {
