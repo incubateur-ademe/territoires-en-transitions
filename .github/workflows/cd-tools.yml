@@ -12,7 +12,6 @@ on:
         type: choice
         description: Quel environnement ?
         options:
-          - preprod
           - staging
           - prod
 
