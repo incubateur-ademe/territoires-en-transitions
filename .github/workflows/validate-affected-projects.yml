@@ -24,7 +24,6 @@ on:
 
 jobs:
   validate-affected-projects:
-    environment: ci
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest

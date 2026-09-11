@@ -23,7 +23,6 @@ env:
 jobs:
   test-end-to-end:
     timeout-minutes: 30
-    environment: ci
     runs-on: ubuntu-latest
 
     # Une variable d'environnement de niveau job est héritée par les steps ET

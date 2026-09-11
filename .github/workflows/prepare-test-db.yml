@@ -25,7 +25,6 @@ jobs:
   prepare-test-db:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment: ci
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
 

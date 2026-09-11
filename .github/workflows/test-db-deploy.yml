@@ -15,7 +15,6 @@ jobs:
   test-db-deploy:
     name: Test database deployment lifecycle
     runs-on: ubuntu-latest
-    environment: ci
 
     steps:
       - uses: actions/checkout@v7.0.1
