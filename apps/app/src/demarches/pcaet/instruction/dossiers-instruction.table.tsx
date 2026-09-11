@@ -38,7 +38,7 @@ import {
 } from './instruction.constants';
 
 /** Les colonnes rendues, dans l'ordre : c'est ce qui donne son `colSpan` à l'état vide. */
-const colonnes = (afficherRegion: boolean): string[] =>
+const getColumnIds = (afficherRegion: boolean): string[] =>
   [
     'collectivite',
     afficherRegion ? 'region' : null,
@@ -57,7 +57,7 @@ const colonnes = (afficherRegion: boolean): string[] =>
  * pas de démarche à nommer. La saisine passe en premier : c'est par elle que
  * les tests et les liens désignent un dossier.
  */
-const cleLigne = (dossier: Dossier): string => {
+const getRowKey = (dossier: Dossier): string => {
   if (dossier.demandeAvisId !== null) {
     return `demande-${dossier.demandeAvisId}`;
   }
@@ -188,15 +188,15 @@ export const DossiersInstructionTable = ({
     <tbody>
       {dossiers.length === 0 && (
         <TableEmpty
-          columnIds={colonnes(afficherRegion)}
+          columnIds={getColumnIds(afficherRegion)}
           className="min-h-[12rem]"
           {...etatVide}
         />
       )}
       {dossiers.map((dossier) => (
         <TableRow
-          key={cleLigne(dossier)}
-          data-test={`demarches.pcaet.instruction.ligne-${cleLigne(dossier)}`}
+          key={getRowKey(dossier)}
+          data-test={`demarches.pcaet.instruction.ligne-${getRowKey(dossier)}`}
         >
           <TableCell>
             <CollectiviteCell dossier={dossier} />

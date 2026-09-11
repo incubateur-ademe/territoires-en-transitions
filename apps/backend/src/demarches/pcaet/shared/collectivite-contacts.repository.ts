@@ -4,7 +4,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 
 export type CollectiviteContact = {
   prenom: string;
@@ -55,7 +55,10 @@ export class CollectiviteContactsRepository {
           eq(utilisateurCollectiviteAccessTable.role, CollectiviteRole.ADMIN),
           eq(dcpTable.deleted, false)
         )
-      );
+      )
+      // Le premier contact tient lieu de pilote : sans ordre, il changerait
+      // d'un appel à l'autre.
+      .orderBy(asc(dcpTable.nom), asc(dcpTable.prenom), asc(dcpTable.email));
 
     const parCollectivite = new Map<number, CollectiviteContact[]>();
     for (const { collectiviteId, ...contact } of rows) {

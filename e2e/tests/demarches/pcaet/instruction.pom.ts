@@ -63,7 +63,7 @@ export class InstructionPom {
    * Ce qui ne veut pas dire « ne montre rien » : aucun statut retenu, c'est
    * l'absence de filtre.
    */
-  async deselectionnerTousLesStatuts() {
+  async deselectAllStatuts() {
     await this.filtreStatut.click();
     await this.page
       .getByRole('button', { name: 'Désélectionner les options' })
@@ -77,7 +77,7 @@ export class InstructionPom {
    *
    * Les entrées du dropdown DS sont des boutons portant le libellé de l'option.
    */
-  async ouvrirTousLesStatuts() {
+  async selectAllStatuts() {
     await this.filtreStatut.click();
     for (const libelle of ['Aucun dépôt', 'En élaboration', 'Archivé']) {
       await this.page.getByRole('button', { name: libelle, exact: true }).click();

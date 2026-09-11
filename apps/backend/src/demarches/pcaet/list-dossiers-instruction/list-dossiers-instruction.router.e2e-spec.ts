@@ -777,7 +777,9 @@ describe('listDossiersInstruction', () => {
   });
 
   it('refuse l’agente d’une collectivité déposante', async () => {
-    await expect(appeler(marie, {})).rejects.toThrow();
+    await expect(appeler(marie, {})).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
   });
 
   it('ne dit rien d’une collectivité sans dépôt à qui ne la couvre pas', async () => {

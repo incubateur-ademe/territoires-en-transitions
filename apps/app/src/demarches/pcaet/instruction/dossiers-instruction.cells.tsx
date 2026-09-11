@@ -27,7 +27,7 @@ const estUrgente = (avisDeadlineAt: string | null): boolean => {
  * le service, et sans saisine il n'a rien à consulter. La ligne informe alors
  * sans conduire nulle part — de quoi relancer, pas de quoi lire un brouillon.
  */
-const lienDossier = (dossier: Dossier): string | null =>
+const getDossierHref = (dossier: Dossier): string | null =>
   dossier.demandeAvisId === null
     ? null
     : makeDossierInstructionUrl({
@@ -121,7 +121,7 @@ const ObligationBadge = ({ dossier }: { dossier: Dossier }) => {
 };
 
 export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
-  const href = lienDossier(dossier);
+  const href = getDossierHref(dossier);
 
   if (href === null) {
     // Un dépôt encore en chantier n'a saisi personne ; un dépôt transmis sans
@@ -151,17 +151,16 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
 
   return (
     <div className="flex items-center gap-2 justify-end">
-      <Link href={href}>
-        <Button
-          variant="outlined"
-          size="xs"
-          icon={instructionOuverte ? 'draft-line' : 'eye-line'}
-        >
-          {instructionOuverte
-            ? appLabels.instructionListeConsulter
-            : appLabels.instructionListeVoirInstruction}
-        </Button>
-      </Link>
+      <Button
+        href={href}
+        variant="outlined"
+        size="xs"
+        icon={instructionOuverte ? 'draft-line' : 'eye-line'}
+      >
+        {instructionOuverte
+          ? appLabels.instructionListeConsulter
+          : appLabels.instructionListeVoirInstruction}
+      </Button>
       <Tooltip label={appLabels.instructionListeTelechargerIndisponible}>
         <span tabIndex={0} className="inline-flex rounded outline-primary">
           <Button
@@ -178,7 +177,7 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
 };
 
 export const CollectiviteCell = ({ dossier }: { dossier: Dossier }) => {
-  const href = lienDossier(dossier);
+  const href = getDossierHref(dossier);
   const nom = (
     <span className="font-bold text-primary-9">{dossier.collectivite.nom}</span>
   );
