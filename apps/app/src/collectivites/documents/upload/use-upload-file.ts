@@ -9,6 +9,8 @@ type UploadFileArgs = {
   hash: DocumentHash;
   signal?: AbortSignal;
   onProgress?: (percent: number) => void;
+  /** Pose la marque de confidentialité sur le fichier créé. */
+  confidentiel?: boolean;
 };
 
 export type UploadFile = (args: UploadFileArgs) => Promise<number>;
@@ -32,7 +34,14 @@ export const useUploadFile = (): UploadFile => {
     })
   );
 
-  return async ({ collectiviteId, file, hash, signal, onProgress }) => {
+  return async ({
+    collectiviteId,
+    file,
+    hash,
+    signal,
+    onProgress,
+    confidentiel,
+  }) => {
     const uploadDecision = await createUploadToken({ collectiviteId, hash });
     if (uploadDecision.kind === 'alreadyInBibliotheque') {
       return uploadDecision.fichierId;
@@ -51,6 +60,7 @@ export const useUploadFile = (): UploadFile => {
       collectiviteId,
       filename: file.name,
       hash,
+      confidentiel,
     });
     return fichier.id;
   };
