@@ -30,7 +30,6 @@ on:
 jobs:
   ui-storybook:
     if: ${{ inputs.run-ui }}
-    environment: ci
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest
@@ -61,7 +60,6 @@ jobs:
   publish-storybook:
     if: ${{ inputs.run-ui }}
     needs: [ui-storybook]
-    environment: ci
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest
@@ -88,7 +86,6 @@ jobs:
 
   app-storybook:
     if: ${{ inputs.run-app }}
-    environment: ci
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
     runs-on: ubuntu-latest
