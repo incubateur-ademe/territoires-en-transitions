@@ -73,14 +73,13 @@ describe('getPerimetreInstructeur', () => {
 
 describe('getTitresAvisInstructeur', () => {
   /**
-   * Les trois avis du code de l'environnement se répartissent entre deux
-   * émetteurs : la DREAL porte les deux titres de l'État, le conseil régional
-   * celui de son président.
+   * Un titre par émetteur : la DREAL porte celui du préfet de région, le
+   * conseil régional celui de son président. L'autorité environnementale rend
+   * son avis ailleurs : elle n'a pas de titre ici.
    */
-  it('a dreal carries both state titles', () => {
+  it('a dreal carries the préfet de région title only', () => {
     expect(getTitresAvisInstructeur(collectiviteTypeEnum.DREAL)).toEqual([
       'prefet_region',
-      'autorite_environnementale',
     ]);
   });
 
@@ -142,9 +141,9 @@ describe('getTitresAvisSaisine', () => {
   const { PRINCIPAL, SECONDAIRE } = PcaetPerimetreSaisineEnum;
 
   it('leaves a saisine on the déposante seat untouched', () => {
-    expect(
-      getTitresAvisSaisine(collectiviteTypeEnum.DREAL, PRINCIPAL)
-    ).toEqual(getTitresAvisInstructeur(collectiviteTypeEnum.DREAL));
+    expect(getTitresAvisSaisine(collectiviteTypeEnum.DREAL, PRINCIPAL)).toEqual(
+      getTitresAvisInstructeur(collectiviteTypeEnum.DREAL)
+    );
     expect(
       getTitresAvisSaisine(collectiviteTypeEnum.REGION, PRINCIPAL)
     ).toEqual([PcaetAvisAuTitreDeEnum.PRESIDENT_REGION]);
@@ -157,9 +156,9 @@ describe('getTitresAvisSaisine', () => {
    * d'achèvement — sans quoi le dossier ne s'achèverait jamais.
    */
   it('expects nothing from a saisine reached through a secondary territory', () => {
-    expect(getTitresAvisSaisine(collectiviteTypeEnum.DREAL, SECONDAIRE)).toEqual(
-      []
-    );
+    expect(
+      getTitresAvisSaisine(collectiviteTypeEnum.DREAL, SECONDAIRE)
+    ).toEqual([]);
     expect(
       getTitresAvisSaisine(collectiviteTypeEnum.REGION, SECONDAIRE)
     ).toEqual([]);
@@ -180,12 +179,12 @@ describe('getTitresAvisSaisine', () => {
   });
 
   it('mirrors the titles in peutDeposerAvisSaisine', () => {
-    expect(
-      peutDeposerAvisSaisine(collectiviteTypeEnum.DREAL, PRINCIPAL)
-    ).toBe(true);
-    expect(
-      peutDeposerAvisSaisine(collectiviteTypeEnum.DREAL, SECONDAIRE)
-    ).toBe(false);
+    expect(peutDeposerAvisSaisine(collectiviteTypeEnum.DREAL, PRINCIPAL)).toBe(
+      true
+    );
+    expect(peutDeposerAvisSaisine(collectiviteTypeEnum.DREAL, SECONDAIRE)).toBe(
+      false
+    );
     expect(peutDeposerAvisSaisine(collectiviteTypeEnum.DDT, PRINCIPAL)).toBe(
       false
     );

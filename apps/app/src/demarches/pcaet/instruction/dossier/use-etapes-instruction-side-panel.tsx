@@ -58,11 +58,7 @@ export function useEtapesInstructionSidePanel(
   // panneau quand le dossier arrive.
   const contentSignature = JSON.stringify({
     activeEtape: contentProps.activeEtape,
-    avis: contentProps.avis.map(({ id, sens, valideLe }) => [
-      id,
-      sens,
-      valideLe,
-    ]),
+    avis: contentProps.avis.map(({ id, valideLe }) => [id, valideLe]),
     hasFooter: Boolean(contentProps.footer),
   });
 

@@ -729,8 +729,8 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       );
 
       // …mais seules les deux saisies pour avis pèsent dans l'achèvement, avec
-      // les titres attendus de chacune : les deux de l'État pour la DREAL, celui
-      // du président pour la région.
+      // le titre attendu de chacune : le préfet de région pour la DREAL, le
+      // président pour la région.
       const achevement = await app
         .get(PcaetAvisRepository)
         .listAchevementDemandes(created.id);
@@ -738,10 +738,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       expect(
         achevement.map(({ titresAttendus }) => [...titresAttendus].sort())
       ).toEqual(
-        expect.arrayContaining([
-          ['autorite_environnementale', 'prefet_region'],
-          ['president_region'],
-        ])
+        expect.arrayContaining([['prefet_region'], ['president_region']])
       );
     });
   });

@@ -6,7 +6,6 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type {
   DemandeAvisAchevement,
   PcaetAvisAuTitreDe,
-  PcaetAvisSens,
 } from '@tet/domain/demarches';
 import {
   getTitresAvisSaisine,
@@ -296,14 +295,12 @@ export class PcaetAvisRepository {
       demandeAvisId,
       emetteurCollectiviteId,
       auTitreDe,
-      sens,
       fichierRef,
       deposePar,
     }: {
       demandeAvisId: number;
       emetteurCollectiviteId: number;
       auTitreDe: PcaetAvisAuTitreDe;
-      sens: PcaetAvisSens;
       fichierRef: string | null;
       deposePar: string;
     },
@@ -315,13 +312,12 @@ export class PcaetAvisRepository {
         demandeAvisId,
         emetteurCollectiviteId,
         auTitreDe,
-        sens,
         fichierRef,
         deposePar,
       })
       .onConflictDoUpdate({
         target: [pcaetAvisTable.demandeAvisId, pcaetAvisTable.auTitreDe],
-        set: { sens, fichierRef, modifieLe: new Date().toISOString() },
+        set: { fichierRef, modifieLe: new Date().toISOString() },
       });
   }
 

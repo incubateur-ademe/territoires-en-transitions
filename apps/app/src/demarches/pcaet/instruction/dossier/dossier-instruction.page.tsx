@@ -68,8 +68,7 @@ export const DossierInstructionPage = ({
       // Les avis des autres destinataires suivent les siens, comme dans l'étape
       // aval de la collectivité : une DDT ou une DR ADEME n'en dépose aucun mais
       // suit l'instruction. Le titre de l'avis dit déjà qui l'a rendu — préfet
-      // de région et autorité environnementale pour la DREAL, président de
-      // région pour le conseil régional.
+      // de région pour la DREAL, président de région pour le conseil régional.
       //
       // La finalisation, elle, continue de ne lire que `dossier.avis` : les
       // titres qui restent à rendre ne dépendent que de cette demande.
@@ -80,7 +79,6 @@ export const DossierInstructionPage = ({
         id: unAvis.id,
         demandeAvisId: unAvis.demandeAvisId,
         auTitreDe: unAvis.auTitreDe,
-        sens: unAvis.sens,
         aUnRapport: unAvis.fichierRef !== null,
         valideLe: unAvis.valideLe,
         deposeLe: unAvis.deposeLe,

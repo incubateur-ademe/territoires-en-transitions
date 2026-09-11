@@ -1,7 +1,4 @@
-import {
-  pcaetAvisAuTitreDeSchema,
-  pcaetAvisSensSchema,
-} from '@tet/domain/demarches';
+import { pcaetAvisAuTitreDeSchema } from '@tet/domain/demarches';
 import { z } from 'zod';
 
 /**
@@ -9,13 +6,12 @@ import { z } from 'zod';
  *
  * Volontairement plus étroit que le DTO de l'instructeur : ni brouillon, ni
  * auteur du dépôt, ni date de modification. Ce que la collectivité a à savoir,
- * c'est qui a rendu quoi, dans quel sens, et quand.
+ * c'est qui a rendu quoi, et quand.
  */
 export const avisRecuSchema = z.object({
   id: z.string(),
   demandeAvisId: z.number().int(),
   auTitreDe: pcaetAvisAuTitreDeSchema,
-  sens: pcaetAvisSensSchema,
   /** Le rapport joint est-il disponible au téléchargement ? */
   aUnRapport: z.boolean(),
   valideLe: z.string(),

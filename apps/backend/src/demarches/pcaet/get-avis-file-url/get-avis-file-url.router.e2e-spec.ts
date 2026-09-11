@@ -10,7 +10,7 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { onTestFinished } from 'vitest';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
@@ -97,7 +97,6 @@ describe('getAvisFileUrl', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
         fichierRef: null,
       })
       .returning({ id: pcaetAvisTable.id });
@@ -165,14 +164,32 @@ describe('getAvisFileUrl', () => {
       })
       .returning({ id: pcaetDemandeAvisTable.id });
 
+    // La DREAL n'a qu'un titre, déjà pris par son brouillon : l'avis validé
+    // qu'un autre a rendu est celui du conseil régional, sur sa propre demande.
+    const region = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'region',
+        regionCode: REGION,
+        nom: 'Région test avis file',
+      },
+    });
+    const [demandeRegion] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId,
+        instructeurCollectiviteId: region.collectivite.id,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+
     // Validé, donc avec un rapport : la table refuse une validation sans pièce.
     const [valide] = await db.db
       .insert(pcaetAvisTable)
       .values({
-        demandeAvisId,
-        emetteurCollectiviteId: instructeurCollectiviteId,
-        auTitreDe: 'autorite_environnementale',
-        sens: 'favorable',
+        demandeAvisId: demandeRegion.id,
+        emetteurCollectiviteId: region.collectivite.id,
+        auTitreDe: 'president_region',
         fichierRef: 'rapport-inexistant.pdf',
         valideLe: new Date().toISOString(),
       })
@@ -184,7 +201,10 @@ describe('getAvisFileUrl', () => {
         .where(eq(pcaetAvisTable.id, valide.id));
       await db.db
         .delete(pcaetDemandeAvisTable)
-        .where(eq(pcaetDemandeAvisTable.id, demandeDdt.id));
+        .where(
+          inArray(pcaetDemandeAvisTable.id, [demandeDdt.id, demandeRegion.id])
+        );
+      await region.cleanup();
       await ddt.cleanup();
     });
 
@@ -194,7 +214,7 @@ describe('getAvisFileUrl', () => {
 
     await expect(
       caller.demarches.pcaet.getAvisFileUrl({
-        demandeAvisId,
+        demandeAvisId: demandeRegion.id,
         avisId: valide.id,
       })
     ).rejects.toThrow("Cet avis n'a pas de rapport joint");

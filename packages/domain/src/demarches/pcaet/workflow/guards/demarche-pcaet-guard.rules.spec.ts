@@ -5,11 +5,8 @@ import {
   isDemarchePcaetPilote,
 } from './demarche-pcaet-guard.rules';
 
-/** Ce qu'on attend d'une DREAL : les deux titres de l'État. */
-const TITRES_DREAL = [
-  'prefet_region' as const,
-  'autorite_environnementale' as const,
-];
+/** Ce qu'on attend d'une DREAL : le titre du préfet de région. */
+const TITRES_DREAL = ['prefet_region' as const];
 
 /** Ce qu'on attend d'un conseil régional : celui de son président. */
 const TITRES_REGION = ['president_region' as const];
@@ -29,9 +26,10 @@ describe('règles pures des guards', () => {
     });
 
     it('faux tant qu’un titre attendu manque', () => {
+      // Un titre rendu qui n'est pas celui attendu ne compte pas.
       expect(
         isDemarchePcaetAvisTousRendus([
-          { titresAttendus: TITRES_DREAL, titresValides: ['prefet_region'] },
+          { titresAttendus: TITRES_REGION, titresValides: ['prefet_region'] },
         ])
       ).toBe(false);
       expect(

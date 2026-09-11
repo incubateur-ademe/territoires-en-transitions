@@ -82,7 +82,6 @@ describe('Clôture de l’instruction PCAET', () => {
         demandeAvisId: demande.id,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe,
-        sens: 'favorable',
         fichierRef: 'avis.pdf',
         valideLe: new Date().toISOString(),
       });
@@ -184,7 +183,7 @@ describe('Clôture de l’instruction PCAET', () => {
     const cible = await dossier({
       status: 'transmis_pour_avis',
       avisDeadlineAt: dansTroisMois(),
-      titresValides: [...pcaetAvisAuTitreDeValues],
+      titresValides: ['prefet_region'],
     });
 
     const result = await service.clore(cible);
@@ -193,11 +192,11 @@ describe('Clôture de l’instruction PCAET', () => {
     expect(await derniereTransition(cible.demarcheId)).toBe('avis_tous_rendus');
   });
 
-  it('ne fait rien quand il manque un titre et que le délai court', async () => {
+  it("ne fait rien quand l'avis manque et que le délai court", async () => {
     const cible = await dossier({
       status: 'transmis_pour_avis',
       avisDeadlineAt: dansTroisMois(),
-      titresValides: ['prefet_region'],
+      titresValides: [],
     });
 
     expect(await service.clore(cible)).toEqual({ success: true, data: null });
@@ -225,7 +224,7 @@ describe('Clôture de l’instruction PCAET', () => {
     const parLesAvis = await dossier({
       status: 'transmis_pour_avis',
       avisDeadlineAt: dansTroisMois(),
-      titresValides: [...pcaetAvisAuTitreDeValues],
+      titresValides: ['prefet_region'],
     });
 
     const result = await service.cloreInstructions();
@@ -264,7 +263,7 @@ describe('Clôture de l’instruction PCAET', () => {
         // L'échéance reste loin : seul le chemin « avis tous rendus » peut
         // clore, ce qui rend le test aveugle au délai.
         avisDeadlineAt: dansTroisMois(),
-        titresValides: [...pcaetAvisAuTitreDeValues],
+        titresValides: ['prefet_region'],
       });
       await saisir(cible.demarcheId, drealVoisineId, 'secondaire');
 
@@ -284,7 +283,7 @@ describe('Clôture de l’instruction PCAET', () => {
       const cible = await dossier({
         status: 'transmis_pour_avis',
         avisDeadlineAt: dansTroisMois(),
-        titresValides: [...pcaetAvisAuTitreDeValues],
+        titresValides: ['prefet_region'],
       });
       await saisir(cible.demarcheId, drealVoisineId, 'principal');
 

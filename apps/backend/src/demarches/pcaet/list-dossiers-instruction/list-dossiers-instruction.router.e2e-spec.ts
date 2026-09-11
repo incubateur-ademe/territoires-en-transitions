@@ -114,7 +114,6 @@ describe('listDossiersInstruction', () => {
         demandeAvisId: demande.id,
         emetteurCollectiviteId: drealId,
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
         fichierRef: avis.valide ? 'avis/test.pdf' : null,
         valideLe: avis.valide ? new Date().toISOString() : null,
       });

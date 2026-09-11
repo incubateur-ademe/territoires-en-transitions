@@ -24,6 +24,7 @@ describe('envoyerAvis', () => {
   let demarcheIds: number[];
   let demandeAvisId: number;
   let demandeSansReferentId: number;
+  let demandeBrouillonId: number;
   let avisValideId: string;
   let avisBrouillonId: string;
   let avisSansReferentId: string;
@@ -51,6 +52,16 @@ describe('envoyerAvis', () => {
       },
     });
 
+    // Un seul avis par demande pour la DREAL : le brouillon a besoin de son
+    // propre dossier.
+    const deposanteBrouillon = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        regionCode: REGION,
+        nom: 'Agglo brouillon test envoyer avis',
+      },
+    });
+
     const dreal = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
       collectivite: {
@@ -64,18 +75,20 @@ describe('envoyerAvis', () => {
     const demarches = await db.db
       .insert(demarcheTable)
       .values(
-        [deposante.collectivite.id, deposanteSansReferent.collectivite.id].map(
-          (collectiviteId) => ({
-            collectiviteId,
-            type: 'pcaet' as const,
-            titre: 'PCAET test envoyer avis',
-            status: 'transmis_pour_avis' as const,
-            transmittedAt: new Date().toISOString(),
-            avisDeadlineAt: new Date(
-              Date.now() + 30 * 24 * 3600 * 1000
-            ).toISOString(),
-          })
-        )
+        [
+          deposante.collectivite.id,
+          deposanteSansReferent.collectivite.id,
+          deposanteBrouillon.collectivite.id,
+        ].map((collectiviteId) => ({
+          collectiviteId,
+          type: 'pcaet' as const,
+          titre: 'PCAET test envoyer avis',
+          status: 'transmis_pour_avis' as const,
+          transmittedAt: new Date().toISOString(),
+          avisDeadlineAt: new Date(
+            Date.now() + 30 * 24 * 3600 * 1000
+          ).toISOString(),
+        }))
       )
       .returning({ id: demarcheTable.id });
     demarcheIds = demarches.map((d) => d.id);
@@ -92,6 +105,7 @@ describe('envoyerAvis', () => {
       .returning({ id: pcaetDemandeAvisTable.id });
     demandeAvisId = demandes[0].id;
     demandeSansReferentId = demandes[1].id;
+    demandeBrouillonId = demandes[2].id;
 
     const avis = await db.db
       .insert(pcaetAvisTable)
@@ -100,24 +114,21 @@ describe('envoyerAvis', () => {
           demandeAvisId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          sens: 'favorable' as const,
           fichierRef: 'avis-prefet.pdf',
           valideLe: new Date().toISOString(),
           deposePar: camille.id,
         },
         {
-          demandeAvisId,
+          demandeAvisId: demandeBrouillonId,
           emetteurCollectiviteId: dreal.collectivite.id,
-          auTitreDe: 'autorite_environnementale' as const,
-          sens: 'favorable' as const,
-          fichierRef: 'avis-ae.pdf',
+          auTitreDe: 'prefet_region' as const,
+          fichierRef: 'avis-prefet-brouillon.pdf',
           deposePar: camille.id,
         },
         {
           demandeAvisId: demandeSansReferentId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          sens: 'favorable' as const,
           fichierRef: 'avis-prefet.pdf',
           valideLe: new Date().toISOString(),
           deposePar: camille.id,
@@ -126,13 +137,10 @@ describe('envoyerAvis', () => {
       .returning({
         id: pcaetAvisTable.id,
         demandeAvisId: pcaetAvisTable.demandeAvisId,
-        auTitreDe: pcaetAvisTable.auTitreDe,
       });
-    const avisValide = avis.find(
-      (a) => a.demandeAvisId === demandeAvisId && a.auTitreDe === 'prefet_region'
-    );
+    const avisValide = avis.find((a) => a.demandeAvisId === demandeAvisId);
     const avisBrouillon = avis.find(
-      (a) => a.auTitreDe === 'autorite_environnementale'
+      (a) => a.demandeAvisId === demandeBrouillonId
     );
     const avisSansReferent = avis.find(
       (a) => a.demandeAvisId === demandeSansReferentId
@@ -151,12 +159,14 @@ describe('envoyerAvis', () => {
           inArray(pcaetDemandeAvisTable.id, [
             demandeAvisId,
             demandeSansReferentId,
+            demandeBrouillonId,
           ])
         );
       await db.db
         .delete(demarcheTable)
         .where(inArray(demarcheTable.id, demarcheIds));
       await dreal.cleanup();
+      await deposanteBrouillon.cleanup();
       await deposanteSansReferent.cleanup();
       await deposante.cleanup();
       await app.close();
@@ -183,9 +193,9 @@ describe('envoyerAvis', () => {
   });
 
   it('refuse un brouillon', async () => {
-    await expect(envoyer(camille, avisBrouillonId)).rejects.toThrow(
-      'Seul un avis validé peut être envoyé au référent'
-    );
+    await expect(
+      envoyer(camille, avisBrouillonId, demandeBrouillonId)
+    ).rejects.toThrow('Seul un avis validé peut être envoyé au référent');
   });
 
   it("refuse quand la collectivité n'a pas de référent", async () => {

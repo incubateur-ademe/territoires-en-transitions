@@ -112,31 +112,35 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
-       select demande_id, epci_id, 'prefet_region', 'favorable' from ctx $$,
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de)
+       select demande_id, epci_id, 'prefet_region' from ctx $$,
     'P0001',
     null,
     'un avis émis par un epci est refusé'
 );
 
 select lives_ok(
-    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
-       select demande_id, dreal_id, 'prefet_region', 'favorable' from ctx $$,
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de)
+       select demande_id, dreal_id, 'prefet_region' from ctx $$,
     'un avis brouillon (sans PJ) émis par une dreal est accepté'
 );
 
 select throws_ok(
-    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
-       select demande_id, dreal_id, 'prefet_region', 'defavorable' from ctx $$,
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de)
+       select demande_id, dreal_id, 'prefet_region' from ctx $$,
     '23505',
     null,
     'un second avis au même titre sur la même demande est refusé'
 );
 
-select lives_ok(
-    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
-       select demande_id, dreal_id, 'autorite_environnementale', 'favorable' from ctx $$,
-    'un avis à l''autre titre sur la même demande est accepté'
+-- L'autorité environnementale rend son avis sur une autre plateforme : le
+-- titre n'existe pas ici.
+select throws_ok(
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de)
+       select demande_id, dreal_id, 'autorite_environnementale' from ctx $$,
+    '23514',
+    null,
+    'un avis au titre de l''autorité environnementale est refusé'
 );
 
 select throws_ok(
@@ -161,8 +165,8 @@ select lives_ok(
 );
 
 select throws_ok(
-    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
-       select d.id, ctx.dr_ademe_id, 'prefet_region', 'favorable'
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de)
+       select d.id, ctx.dr_ademe_id, 'prefet_region'
        from ctx join demarche_pcaet_demande_avis d
          on d.demarche_id = ctx.demarche_id
         and d.instructeur_collectivite_id = ctx.dr_ademe_id $$,
@@ -172,8 +176,8 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
-       select d.id, ctx.national_id, 'prefet_region', 'favorable'
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de)
+       select d.id, ctx.national_id, 'prefet_region'
        from ctx join demarche_pcaet_demande_avis d
          on d.demarche_id = ctx.demarche_id
         and d.instructeur_collectivite_id = ctx.national_id $$,

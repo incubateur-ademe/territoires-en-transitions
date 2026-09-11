@@ -72,16 +72,16 @@ demande_creee AS (
     FROM demarche_creee
     RETURNING id
 )
-INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le)
+INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, fichier_ref, valide_le, depose_par, depose_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
-       'prefet_region', 'avec_reserves', NULL, NULL,
+       'prefet_region', NULL, NULL,
        '11111111-dea1-4bfc-a000-000000000002', now() - interval '3 days'
 FROM demande_creee;
 
 WITH demarche_creee AS (
     INSERT INTO demarche (collectivite_id, type, titre, description, status, obligation, launched_at, transmitted_at, avis_deadline_at, created_by)
-    -- Les deux titres attendus sont rendus : le dossier est donc `instruit`,
-    -- l'échéance à venir n'y change rien (cf. le guard `avisTousRendus`).
+    -- Le titre attendu est rendu : le dossier est donc `instruit`, l'échéance
+    -- à venir n'y change rien (cf. le guard `avisTousRendus`).
     SELECT c.id, 'pcaet', 'PCAET de l''agglomération de Nevers', 'Plan climat air énergie territorial 2026-2032.', 'instruit', 'obligatoire',
            now() - interval '30 months', now() - interval '75 days', now() + interval '15 days',
            '22222222-0cae-4bfc-a000-000000000002'
@@ -104,13 +104,11 @@ demande_creee AS (
     FROM demarche_creee
     RETURNING id
 )
-INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le, envoye_le)
+INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, fichier_ref, valide_le, depose_par, depose_le, envoye_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
-       avis_titre.au_titre_de, 'favorable', 'avis/avis-dreal-bfc-nevers.pdf', now() - interval '10 days',
-       '11111111-dea1-4bfc-a000-000000000001', now() - interval '12 days', avis_titre.envoye_le
-FROM demande_creee,
-     (VALUES ('prefet_region', now() - interval '10 days'),
-             ('autorite_environnementale', NULL::timestamptz)) AS avis_titre(au_titre_de, envoye_le);
+       'prefet_region', 'avis/avis-dreal-bfc-nevers.pdf', now() - interval '10 days',
+       '11111111-dea1-4bfc-a000-000000000001', now() - interval '12 days', now() - interval '10 days'
+FROM demande_creee;
 
 WITH demarche_creee AS (
     INSERT INTO demarche (collectivite_id, type, titre, description, status, obligation, launched_at, transmitted_at, avis_deadline_at)
@@ -134,9 +132,9 @@ demande_creee AS (
     FROM demarche_creee
     RETURNING id
 )
-INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le, modifie_le)
+INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, fichier_ref, valide_le, depose_par, depose_le, modifie_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
-       'prefet_region', 'defavorable', NULL, NULL,
+       'prefet_region', NULL, NULL,
        '11111111-dea1-4bfc-a000-000000000001', now() - interval '95 days', now() - interval '80 days'
 FROM demande_creee;
 

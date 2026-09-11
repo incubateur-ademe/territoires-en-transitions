@@ -1,13 +1,12 @@
 'use client';
 
-import { AVIS_SENS_VARIANTS } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/utils/save-blob';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import type { PcaetAvisAuTitreDe, PcaetAvisSens } from '@tet/domain/demarches';
-import { Badge, Button, cn } from '@tet/ui';
+import type { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
+import { Button, cn } from '@tet/ui';
 
 /**
  * Un avis, tel que cette liste a besoin de le connaître.
@@ -21,7 +20,6 @@ export type AvisAffiche = {
   id: string;
   demandeAvisId: number;
   auTitreDe: PcaetAvisAuTitreDe;
-  sens: PcaetAvisSens;
   /** Un rapport est-il joint, donc téléchargeable ? */
   aUnRapport: boolean;
   /** Date de validation ; nulle tant que l'avis est un brouillon. */
@@ -102,14 +100,7 @@ export const AvisDeposesList = ({
             className="flex items-start gap-3 rounded-lg border border-grey-3 bg-grey-1 p-3 text-sm"
           >
             <div className="flex min-w-0 flex-1 flex-col gap-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-primary-9">{titre}</span>
-                <Badge
-                  title={appLabels.demarchePcaetAvisSensLabels[unAvis.sens]}
-                  variant={AVIS_SENS_VARIANTS[unAvis.sens]}
-                  size="xs"
-                />
-              </div>
+              <span className="font-medium text-primary-9">{titre}</span>
               <span className="text-grey-7">
                 {unAvis.valideLe
                   ? appLabels.instructionDossierAvisRenduLe({

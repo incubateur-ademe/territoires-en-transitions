@@ -38,9 +38,9 @@ export type DemandeAvisAchevement = {
  * Règle du guard `avisTousRendus` : chaque instance consultative saisie a rendu
  * l'ensemble des avis attendus d'elle.
  *
- * Attendus *d'elle*, et non les trois titres du PCAET : la DREAL se prononce
- * pour le préfet de région et l'autorité environnementale, le conseil régional
- * pour son président. Exiger les trois de chacun ne serait jamais satisfait.
+ * Attendus *d'elle*, et non tous les titres du PCAET : la DREAL se prononce
+ * pour le préfet de région, le conseil régional pour son président. Exiger les
+ * deux de chacun ne serait jamais satisfait.
  *
  * Les destinataires en lecture seule sont écartés, et un dossier sans aucune
  * instance saisie n'est pas achevé : la condition « toutes les demandes sont

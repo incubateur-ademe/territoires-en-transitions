@@ -143,8 +143,7 @@ export class GetDossierInstructionService {
     // Celui qui dépose un avis — DREAL, conseil régional — lit où *il* en est :
     // « instruit » ne se dit qu'une fois rendus tous les titres attendus de lui,
     // et par la règle du guard `avisTousRendus` elle-même, si bien que le badge
-    // de l'écran et la bascule de statut ne peuvent pas diverger. Un seul avis
-    // validé sur les deux de la DREAL laisse l'échéance affichée.
+    // de l'écran et la bascule de statut ne peuvent pas diverger.
     //
     // Celui qui n'en dépose aucun — DDT, DR ADEME, service national, et depuis
     // les périmètres secondaires toute famille saisie au titre d'un territoire

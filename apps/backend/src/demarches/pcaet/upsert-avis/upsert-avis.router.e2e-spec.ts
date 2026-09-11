@@ -9,7 +9,7 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { PcaetAvisAuTitreDe, PcaetAvisSens } from '@tet/domain/demarches';
+import { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
@@ -91,7 +91,6 @@ describe('upsertAvis', () => {
     user: AuthenticatedUser,
     input: {
       auTitreDe: PcaetAvisAuTitreDe;
-      sens: PcaetAvisSens;
       fichierRef: string | null;
     }
   ) =>
@@ -103,7 +102,6 @@ describe('upsertAvis', () => {
   it('dépose un brouillon sans pièce jointe', async () => {
     const avis = await upsert(camille, {
       auTitreDe: 'prefet_region',
-      sens: 'favorable',
       fichierRef: null,
     });
 
@@ -111,7 +109,6 @@ describe('upsertAvis', () => {
     expect(avis[0]).toMatchObject({
       demandeAvisId,
       auTitreDe: 'prefet_region',
-      sens: 'favorable',
       fichierRef: null,
       valideLe: null,
       deposePar: camille.id,
@@ -128,38 +125,18 @@ describe('upsertAvis', () => {
   it("modifie l'avis du même titre sans créer de doublon", async () => {
     const avis = await upsert(camille, {
       auTitreDe: 'prefet_region',
-      sens: 'avec_reserves',
       fichierRef: 'avis-prefet.pdf',
     });
 
     expect(avis).toHaveLength(1);
-    expect(avis[0].sens).toBe('avec_reserves');
     expect(avis[0].fichierRef).toBe('avis-prefet.pdf');
     expect(avis[0].deposePar).toBe(camille.id);
     expect(avis[0].modifieLe).not.toBeNull();
   });
 
-  it('accepte un avis par titre, la même pièce jointe pouvant être partagée', async () => {
-    const avis = await upsert(camille, {
-      auTitreDe: 'autorite_environnementale',
-      sens: 'favorable',
-      fichierRef: 'avis-prefet.pdf',
-    });
-
-    expect(avis).toHaveLength(2);
-    expect(avis.map((a) => a.auTitreDe)).toEqual([
-      'prefet_region',
-      'autorite_environnementale',
-    ]);
-    expect(avis.map((a) => a.fichierRef)).toEqual([
-      'avis-prefet.pdf',
-      'avis-prefet.pdf',
-    ]);
-  });
-
-  // Un avis validé est un acte rendu : le réécrire changerait son sens ou sa
-  // pièce en lui laissant sa date de validation, sans que la collectivité — qui
-  // l'a reçu — en sache rien.
+  // Un avis validé est un acte rendu : le réécrire changerait sa pièce en lui
+  // laissant sa date de validation, sans que la collectivité — qui l'a reçu —
+  // en sache rien.
   it('refuse de modifier un avis validé', async () => {
     await db.db
       .update(pcaetAvisTable)
@@ -174,7 +151,6 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        sens: 'defavorable',
         fichierRef: 'avis-prefet-v2.pdf',
       })
     ).rejects.toThrow('Un avis validé ne peut plus être modifié');
@@ -183,38 +159,20 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
         fichierRef: null,
       })
     ).rejects.toThrow('Un avis validé ne peut plus être modifié');
   });
 
-  // Le verrou porte sur l'avis, pas sur la demande : l'autre titre attendu reste
-  // déposable après validation du premier.
-  it('laisse déposer l’autre titre après un premier avis validé', async () => {
-    const avis = await upsert(camille, {
-      auTitreDe: 'autorite_environnementale',
-      sens: 'avec_reserves',
-      fichierRef: 'avis-ae.pdf',
-    });
-
-    const avisAe = avis.find(
-      (a) => a.auTitreDe === 'autorite_environnementale'
-    );
-    expect(avisAe?.sens).toBe('avec_reserves');
-    expect(avisAe?.valideLe).toBeNull();
-  });
-
   /**
-   * Les trois titres ne sont pas ouverts à tous : la DREAL répond du préfet de
-   * région et de l'autorité environnementale, le conseil régional de son
-   * président. Sans ce contrôle, l'une signerait pour l'autre.
+   * Les titres ne sont pas ouverts à tous : la DREAL répond du préfet de
+   * région, le conseil régional de son président. Sans ce contrôle, l'une
+   * signerait pour l'autre.
    */
   it("refuse un titre dont l'instructeur ne répond pas", async () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'president_region',
-        sens: 'favorable',
         fichierRef: null,
       })
     ).rejects.toThrow("Cet instructeur ne rend pas d'avis à ce titre");
@@ -224,7 +182,6 @@ describe('upsertAvis', () => {
     await expect(
       upsert(marie, {
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
         fichierRef: null,
       })
     ).rejects.toThrow();
@@ -241,7 +198,6 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
         fichierRef: 'avis-prefet-v3.pdf',
       })
     ).rejects.toThrow();

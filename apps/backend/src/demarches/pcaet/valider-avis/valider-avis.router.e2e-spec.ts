@@ -12,6 +12,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
+import { pcaetAvisSelectColumns } from '../shared/models/pcaet-avis.dto';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
@@ -23,8 +24,7 @@ describe('validerAvis', () => {
   let marie: AuthenticatedUser;
   let demarcheId: number;
   let demandeAvisId: number;
-  let avisAvecPjId: string;
-  let avisSansPjId: string;
+  let avisId: string;
   let premiereValidation: string | null;
 
   // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
@@ -77,31 +77,19 @@ describe('validerAvis', () => {
       .returning({ id: pcaetDemandeAvisTable.id });
     demandeAvisId = demande.id;
 
-    const [avisAvecPj] = await db.db
+    // Un seul avis par demande, celui du préfet de région : d'abord brouillon
+    // sans pièce, il reçoit son rapport en cours de suite.
+    const [avis] = await db.db
       .insert(pcaetAvisTable)
       .values({
         demandeAvisId,
         emetteurCollectiviteId: dreal.collectivite.id,
         auTitreDe: 'prefet_region',
-        sens: 'favorable',
-        fichierRef: 'avis-prefet.pdf',
-        deposePar: camille.id,
-      })
-      .returning({ id: pcaetAvisTable.id });
-    avisAvecPjId = avisAvecPj.id;
-
-    const [avisSansPj] = await db.db
-      .insert(pcaetAvisTable)
-      .values({
-        demandeAvisId,
-        emetteurCollectiviteId: dreal.collectivite.id,
-        auTitreDe: 'autorite_environnementale',
-        sens: 'favorable',
         fichierRef: null,
         deposePar: camille.id,
       })
       .returning({ id: pcaetAvisTable.id });
-    avisSansPjId = avisSansPj.id;
+    avisId = avis.id;
 
     return async () => {
       await db.db
@@ -120,23 +108,8 @@ describe('validerAvis', () => {
       avisId,
     });
 
-  it('valide un brouillon portant sa pièce jointe', async () => {
-    const avis = await valider(camille, avisAvecPjId);
-
-    const avisValide = avis.find((a) => a.id === avisAvecPjId);
-    expect(avisValide?.valideLe).not.toBeNull();
-    premiereValidation = avisValide?.valideLe ?? null;
-  });
-
-  it('revalider est sans effet et conserve la première validation', async () => {
-    const avis = await valider(camille, avisAvecPjId);
-
-    const avisValide = avis.find((a) => a.id === avisAvecPjId);
-    expect(avisValide?.valideLe).toBe(premiereValidation);
-  });
-
   it('refuse de valider un brouillon sans pièce jointe', async () => {
-    await expect(valider(camille, avisSansPjId)).rejects.toThrow(
+    await expect(valider(camille, avisId)).rejects.toThrow(
       'Un avis ne peut pas être validé sans pièce jointe'
     );
   });
@@ -147,8 +120,34 @@ describe('validerAvis', () => {
     );
   });
 
+  it('valide un brouillon portant sa pièce jointe', async () => {
+    await db.db
+      .update(pcaetAvisTable)
+      .set({ fichierRef: 'avis-prefet.pdf' })
+      .where(eq(pcaetAvisTable.id, avisId));
+
+    const avis = await valider(camille, avisId);
+
+    const avisValide = avis.find((a) => a.id === avisId);
+    expect(avisValide?.valideLe).not.toBeNull();
+    premiereValidation = avisValide?.valideLe ?? null;
+  });
+
+  // Le seul titre attendu de la DREAL est rendu : le dossier est instruit et la
+  // fenêtre d'avis se ferme avec lui. Revalider n'est plus possible, et la
+  // première validation reste la seule.
+  it('revalider après la clôture est refusé et conserve la première validation', async () => {
+    await expect(valider(camille, avisId)).rejects.toThrow();
+
+    const [row] = await db.db
+      .select({ valideLe: pcaetAvisSelectColumns.valideLe })
+      .from(pcaetAvisTable)
+      .where(eq(pcaetAvisTable.id, avisId));
+    expect(row.valideLe).toBe(premiereValidation);
+  });
+
   it("refuse l'agente de la collectivité déposante", async () => {
-    await expect(valider(marie, avisAvecPjId)).rejects.toThrow();
+    await expect(valider(marie, avisId)).rejects.toThrow();
   });
 
   it("refuse quand la fenêtre d'avis est fermée", async () => {
@@ -159,6 +158,6 @@ describe('validerAvis', () => {
       })
       .where(eq(demarcheTable.id, demarcheId));
 
-    await expect(valider(camille, avisAvecPjId)).rejects.toThrow();
+    await expect(valider(camille, avisId)).rejects.toThrow();
   });
 });

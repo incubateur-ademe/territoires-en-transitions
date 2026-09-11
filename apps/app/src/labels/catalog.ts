@@ -2004,20 +2004,17 @@ export const appLabels = {
   instructionDossierAvisBrouillonDepuis: ({ date }: { date: string }) =>
     `Brouillon déposé le ${date}`,
   instructionFinaliserBouton: 'Finaliser l’instruction du PCAET',
-  instructionFinaliserTousTitresDeposes:
-    'Un avis a déjà été déposé pour chaque titre : il n’y a plus rien à finaliser.',
+  instructionFinaliserAvisDejaDepose:
+    'L’avis a déjà été déposé : il n’y a plus rien à finaliser.',
   instructionFinaliserVerrouille:
     'La fenêtre d’avis est fermée : l’instruction ne peut plus être finalisée.',
   instructionFinaliserTitre: 'Finaliser l’instruction',
   instructionFinaliserAjouterRapport: 'Ajouter le rapport d’instruction',
-  instructionFinaliserAuTitreDe: 'Au titre de',
-  instructionFinaliserSens: 'Avis',
-  instructionFinaliserSensPlaceholder: 'Choisir un avis',
   /**
    * Ce que l'instructeur doit savoir de la portée de son acte : la
    * réglementation n'oblige pas la collectivité à suivre l'avis rendu.
    */
-  instructionFinaliserSensHint:
+  instructionFinaliserAvisConsultatif:
     'Cet avis est consultatif : la collectivité n’est pas tenue de le prendre en compte et peut adopter son PCAET sans le suivre.',
   instructionFinaliserAvertissement:
     'Attention, une fois finalisée, l’instruction ne pourra plus être modifiée ou annulée !',
@@ -2032,14 +2029,8 @@ export const appLabels = {
   instructionFinaliseeNotification:
     'Le pilote du PCAET va être notifié automatiquement par la plateforme.',
   instructionFinaliseeFermer: 'Fermer',
-  demarchePcaetAvisSensLabels: {
-    favorable: 'Favorable',
-    avec_reserves: 'Avec réserves',
-    defavorable: 'Défavorable',
-  },
   demarchePcaetAvisAuTitreDeLabels: {
     prefet_region: 'Préfet de région',
-    autorite_environnementale: 'Autorité environnementale',
     president_region: 'Président de région',
   },
   uneErreurEstSurvenue: 'Une erreur est survenue',

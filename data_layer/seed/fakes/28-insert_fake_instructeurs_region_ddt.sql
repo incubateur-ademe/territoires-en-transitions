@@ -8,8 +8,8 @@ set search_path to public;
 -- Région Auvergne-Rhône-Alpes aussi, et la DDT de l'Ain par son département.
 -- Transmettre son dossier doit donc le faire apparaître dans les trois
 -- tableaux. La DREAL et la Région sont saisies pour avis — la première rend
--- ceux du préfet de région et de l'autorité environnementale, la seconde celui
--- de son président ; la DDT reçoit le dossier en lecture.
+-- celui du préfet de région, la seconde celui de son président ; la DDT reçoit
+-- le dossier en lecture.
 --
 -- Aucun des trois n'est créé ici : la DDT et la DREAL viennent de l'import des
 -- services réels (collectivite/service_etat_import), le conseil régional existe

@@ -1,24 +1,23 @@
 import * as z from 'zod/mini';
 
 /**
- * Les trois avis que le code de l'environnement attend sur un PCAET :
- * l'autorité environnementale (art. R.122-21), le président de région et le
- * préfet de région (art. R.229-54).
+ * Les titres au nom desquels un avis est rendu sur un PCAET, sur cette
+ * plateforme : le préfet de région (art. R.229-54 du code de l'environnement)
+ * et le président de région.
  *
- * Ce sont trois titres, pas trois émetteurs : la DREAL porte ceux du préfet de
- * région et de l'autorité environnementale, le conseil régional celui de son
- * président — cf. `pcaet-instructeur.rules`. En pratique un même document peut
- * les porter tous, d'où trois entrées pouvant référencer la même pièce.
+ * Un titre par émetteur : la DREAL porte celui du préfet de région, le conseil
+ * régional celui de son président — cf. `pcaet-instructeur.rules`. L'avis de
+ * l'autorité environnementale (art. R.122-21) existe bien, mais il se rend sur
+ * une autre plateforme : il n'a pas de titre ici. Le modèle « un avis par titre
+ * et par demande » reste en place pour pouvoir l'accueillir un jour.
  */
 export const PcaetAvisAuTitreDeEnum = {
   PREFET_REGION: 'prefet_region',
-  AUTORITE_ENVIRONNEMENTALE: 'autorite_environnementale',
   PRESIDENT_REGION: 'president_region',
 } as const;
 
 export const pcaetAvisAuTitreDeValues = [
   PcaetAvisAuTitreDeEnum.PREFET_REGION,
-  PcaetAvisAuTitreDeEnum.AUTORITE_ENVIRONNEMENTALE,
   PcaetAvisAuTitreDeEnum.PRESIDENT_REGION,
 ] as const;
 

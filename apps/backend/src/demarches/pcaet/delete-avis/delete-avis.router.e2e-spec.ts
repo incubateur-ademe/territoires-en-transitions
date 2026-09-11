@@ -25,7 +25,6 @@ describe('deleteAvis', () => {
   let autreDemandeAvisId: number;
   let brouillonId: string;
   let avisValideId: string;
-  let avisAutreDemandeId: string;
 
   // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
   // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
@@ -89,6 +88,8 @@ describe('deleteAvis', () => {
     demandeAvisId = demandes[0].id;
     autreDemandeAvisId = demandes[1].id;
 
+    // Un seul titre par demande pour la DREAL : le brouillon vit sur la
+    // première demande, l'avis validé sur la seconde.
     const avis = await db.db
       .insert(pcaetAvisTable)
       .values([
@@ -96,57 +97,35 @@ describe('deleteAvis', () => {
           demandeAvisId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          sens: 'favorable' as const,
           fichierRef: null,
-          deposePar: camille.id,
-        },
-        {
-          demandeAvisId,
-          emetteurCollectiviteId: dreal.collectivite.id,
-          auTitreDe: 'autorite_environnementale' as const,
-          sens: 'favorable' as const,
-          fichierRef: 'avis-ae.pdf',
-          valideLe: new Date().toISOString(),
           deposePar: camille.id,
         },
         {
           demandeAvisId: autreDemandeAvisId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          sens: 'favorable' as const,
-          fichierRef: null,
+          fichierRef: 'avis-prefet.pdf',
+          valideLe: new Date().toISOString(),
           deposePar: camille.id,
         },
       ])
       .returning({
         id: pcaetAvisTable.id,
         demandeAvisId: pcaetAvisTable.demandeAvisId,
-        auTitreDe: pcaetAvisTable.auTitreDe,
       });
-    const brouillon = avis.find(
-      (a) => a.demandeAvisId === demandeAvisId && a.auTitreDe === 'prefet_region'
-    );
-    const avisValide = avis.find(
-      (a) => a.auTitreDe === 'autorite_environnementale'
-    );
-    const avisAutreDemande = avis.find(
-      (a) => a.demandeAvisId === autreDemandeAvisId
-    );
-    if (!brouillon || !avisValide || !avisAutreDemande) {
+    const brouillon = avis.find((a) => a.demandeAvisId === demandeAvisId);
+    const avisValide = avis.find((a) => a.demandeAvisId === autreDemandeAvisId);
+    if (!brouillon || !avisValide) {
       throw new Error('Failed to seed avis for deleteAvis tests');
     }
     brouillonId = brouillon.id;
     avisValideId = avisValide.id;
-    avisAutreDemandeId = avisAutreDemande.id;
 
     return async () => {
       await db.db
         .delete(pcaetDemandeAvisTable)
         .where(
-          inArray(pcaetDemandeAvisTable.id, [
-            demandeAvisId,
-            autreDemandeAvisId,
-          ])
+          inArray(pcaetDemandeAvisTable.id, [demandeAvisId, autreDemandeAvisId])
         );
       await db.db
         .delete(demarcheTable)
@@ -158,39 +137,44 @@ describe('deleteAvis', () => {
     };
   });
 
-  const supprimer = (user: AuthenticatedUser, avisId: string) =>
+  const supprimer = (
+    user: AuthenticatedUser,
+    avisId: string,
+    cibleDemandeAvisId: number = demandeAvisId
+  ) =>
     router.createCaller({ user }).demarches.pcaet.deleteAvis({
-      demandeAvisId,
+      demandeAvisId: cibleDemandeAvisId,
       avisId,
     });
 
   it('supprime un brouillon', async () => {
     const avis = await supprimer(camille, brouillonId);
 
-    expect(avis.map((a) => a.id)).not.toContain(brouillonId);
-    expect(avis.map((a) => a.id)).toContain(avisValideId);
+    expect(avis).toEqual([]);
   });
 
   it('refuse de supprimer un avis validé', async () => {
-    await expect(supprimer(camille, avisValideId)).rejects.toThrow(
-      'Un avis validé ne peut pas être supprimé'
-    );
+    await expect(
+      supprimer(camille, avisValideId, autreDemandeAvisId)
+    ).rejects.toThrow('Un avis validé ne peut pas être supprimé');
   });
 
   it("refuse un avis d'une autre demande", async () => {
-    await expect(supprimer(camille, avisAutreDemandeId)).rejects.toThrow(
+    await expect(supprimer(camille, avisValideId)).rejects.toThrow(
       "L'avis n'a pas été trouvé"
     );
 
     const [avisIntact] = await db.db
       .select({ id: pcaetAvisTable.id })
       .from(pcaetAvisTable)
-      .where(eq(pcaetAvisTable.id, avisAutreDemandeId));
+      .where(eq(pcaetAvisTable.id, avisValideId));
     expect(avisIntact).toBeDefined();
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {
-    await expect(supprimer(marie, avisValideId)).rejects.toThrow();
+    await expect(
+      supprimer(marie, avisValideId, autreDemandeAvisId)
+    ).rejects.toThrow();
   });
 
   it("refuse quand la fenêtre d'avis est fermée", async () => {
@@ -199,8 +183,10 @@ describe('deleteAvis', () => {
       .set({
         avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
       })
-      .where(eq(demarcheTable.id, demarcheIds[0]));
+      .where(eq(demarcheTable.id, demarcheIds[1]));
 
-    await expect(supprimer(camille, avisValideId)).rejects.toThrow();
+    await expect(
+      supprimer(camille, avisValideId, autreDemandeAvisId)
+    ).rejects.toThrow();
   });
 });

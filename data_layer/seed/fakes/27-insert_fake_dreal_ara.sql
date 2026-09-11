@@ -43,7 +43,7 @@ ON CONFLICT (user_id, collectivite_id) DO NOTHING;
 WITH demarche_creee AS (
     INSERT INTO demarche (collectivite_id, type, titre, description, status, obligation, launched_at, transmitted_at, avis_deadline_at, created_by)
     SELECT id, 'pcaet', 'PCAET de la Métropole de Grenoble',
-           'Dossier transmis en attente des avis du préfet de région et de l''autorité environnementale.',
+           'Dossier transmis en attente de l''avis du préfet de région.',
            'transmis_pour_avis', 'obligatoire',
            now() - interval '20 months', now() - interval '5 days', now() + interval '85 days',
            '22222222-0cae-4bfc-a000-000000000004'
