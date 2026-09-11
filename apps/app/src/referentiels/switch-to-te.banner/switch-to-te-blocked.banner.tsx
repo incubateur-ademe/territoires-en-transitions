@@ -19,6 +19,7 @@ const blockerTypeToDescription: Record<SwitchToTeBlocker['type'], string> = {
     appLabels.referentielTeModeBlockedAuditDemandeDescription,
   COLLECTIVITE_IS_SYNDICAT:
     appLabels.referentielTeModeBlockedSyndicatDescription,
+  COLLECTIVITE_IS_DROM: appLabels.referentielTeModeBlockedDromDescription,
 };
 
 export const SwitchToTeBlockedBanner = ({
