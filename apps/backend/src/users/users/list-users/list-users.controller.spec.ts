@@ -158,7 +158,9 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteNom:
             'Direction départementale des territoires (DDT) - Ain',
           collectiviteType: collectiviteTypeEnum.DDT,
-          collectiviteAccesRestreint: false,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
           permissions: permissionsByRole[CollectiviteRole.ADMIN],
@@ -170,7 +172,9 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteNom:
             "Direction Générale de l'Énergie et du Climat (DGEC)",
           collectiviteType: collectiviteTypeEnum.SERVICE_NATIONAL,
-          collectiviteAccesRestreint: false,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
           permissions: permissionsByRole[CollectiviteRole.ADMIN],
@@ -182,7 +186,9 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteNom:
             'Direction Régionale (DR) Ademe Auvergne-Rhône-Alpes',
           collectiviteType: collectiviteTypeEnum.DR_ADEME,
-          collectiviteAccesRestreint: false,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
           permissions: permissionsByRole[CollectiviteRole.ADMIN],
@@ -196,7 +202,9 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteNom:
             "Direction Régionale de l'Environnement, de l'Aménagement et du Logement Auvergne-Rhône-Alpes (DREAL)",
           collectiviteType: collectiviteTypeEnum.DREAL,
-          collectiviteAccesRestreint: false,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
           permissions: permissionsByRole[CollectiviteRole.ADMIN],

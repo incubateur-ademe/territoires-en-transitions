@@ -14,6 +14,8 @@ import { inferProcedureInput } from '@trpc/server';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { onTestFinished } from 'vitest';
 
 type ListInput = inferProcedureInput<
   AppRouter['collectivites']['membres']['list']
@@ -36,7 +38,6 @@ describe('CollectiviteMembresRouter list', () => {
     });
     collectiviteId = result.collectivite.id;
     adminUser = getAuthUserFromUserCredentials(result.user);
-
   });
 
   afterAll(async () => {
@@ -133,5 +134,84 @@ describe('CollectiviteMembresRouter list', () => {
 
     const prenoms = result.membres.map((m) => m.prenom);
     expect(prenoms).toEqual(['Carine', 'Cécile', 'Celine', 'Christelle']);
+  });
+
+  /**
+   * TETH-28. Un service déconcentré porte l'annuaire nominatif des
+   * correspondants de l'État : adresses et téléphones lus dans `dcp`. Ces
+   * coordonnées ne relèvent pas du mode visite, et la base le garantit en
+   * forçant l'accès restreint sur ces collectivités — ici, il faut donc un rôle
+   * sur le service, pas la seule vérification du compte.
+   */
+  describe('services déconcentrés (accès restreint forcé)', () => {
+    const creerDreal = async () => {
+      const dreal = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          type: 'dreal',
+          regionCode: 'S1',
+          nom: 'DREAL test contacts correspondants',
+        },
+      });
+      const visiteur = await addTestUser(databaseService);
+      onTestFinished(async () => {
+        await visiteur.cleanup();
+        await dreal.cleanup();
+      });
+      return {
+        collectiviteId: dreal.collectivite.id,
+        membre: getAuthUserFromUserCredentials(dreal.user),
+        visiteur: getAuthUserFromUserCredentials(visiteur.user),
+      };
+    };
+
+    test("refuse la liste des membres d'une DREAL à un compte vérifié sans droit", async () => {
+      const { collectiviteId: drealId, visiteur } = await creerDreal();
+
+      await expect(() =>
+        router
+          .createCaller({ user: visiteur })
+          .collectivites.membres.list({ collectiviteId: drealId })
+      ).rejects.toThrowError(/collectivites\.read_confidentiel/);
+    });
+
+    test("refuse les invitations en attente d'une DREAL à un compte vérifié sans droit", async () => {
+      const { collectiviteId: drealId, visiteur } = await creerDreal();
+
+      await expect(() =>
+        router
+          .createCaller({ user: visiteur })
+          .collectivites.membres.invitations.listPendings({
+            collectiviteId: drealId,
+          })
+      ).rejects.toThrowError(/collectivites\.read_confidentiel/);
+    });
+
+    test('laisse un membre du service lire ses propres correspondants', async () => {
+      const { collectiviteId: drealId, membre } = await creerDreal();
+
+      const { membres } = await router
+        .createCaller({ user: membre })
+        .collectivites.membres.list({ collectiviteId: drealId });
+
+      expect(membres).toHaveLength(1);
+      expect(membres[0].email).toBeTruthy();
+    });
+  });
+
+  /**
+   * TETH-28, l'autre versant : le mode visite reste ouvert sur les
+   * collectivités ordinaires, qui ne sont pas en accès restreint. Sans cette
+   * garantie, la fermeture ci-dessus aurait emporté l'annuaire inter-collectivités.
+   */
+  test('laisse un compte vérifié sans droit lister les membres d’une collectivité ordinaire', async () => {
+    const visiteur = await addTestUser(databaseService);
+    onTestFinished(() => visiteur.cleanup());
+
+    const { membres } = await router
+      .createCaller({ user: getAuthUserFromUserCredentials(visiteur.user) })
+      .collectivites.membres.list({ collectiviteId });
+
+    expect(membres.length).toBeGreaterThanOrEqual(1);
   });
 });
