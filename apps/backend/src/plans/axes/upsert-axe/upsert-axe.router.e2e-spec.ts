@@ -11,7 +11,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.table';
 
@@ -476,6 +476,132 @@ describe('Créer ou modifier un axe', () => {
       expect(axeIndicateurs.map((ai) => ai.indicateurId)).not.toContain(
         indicateur2Id
       );
+    });
+
+    test('Les colonnes createdBy/modifiedBy sont renseignées avec l’utilisateur à l’origine du lien', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur pour test audit',
+        unite: 'kg',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      const createdAxe = await caller.plans.axes.create({
+        nom: 'Axe avec indicateur audité',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: indicateurId }],
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId });
+      });
+
+      const [axeIndicateur] = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      expect(axeIndicateur.createdBy).toBe(editorUser.id);
+      expect(axeIndicateur.modifiedBy).toBe(editorUser.id);
+      expect(axeIndicateur.createdAt).not.toBeNull();
+    });
+
+    test('created_at/created_by d’un lien indicateur inchangé ne sont pas réinitialisés lors d’une mise à jour', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const keptIndicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur conservé',
+        unite: 'kg',
+      });
+      const newIndicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur ajouté ensuite',
+        unite: 'm²',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId: keptIndicateurId,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId: newIndicateurId,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      const createdAxe = await caller.plans.axes.create({
+        nom: 'Axe pour test de préservation',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: keptIndicateurId }],
+      });
+      const axeId = createdAxe.id;
+
+      const [initialRow] = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(
+          and(
+            eq(axeIndicateurTable.axeId, axeId),
+            eq(axeIndicateurTable.indicateurId, keptIndicateurId)
+          )
+        );
+
+      // Un deuxième utilisateur ajoute un indicateur sans retirer le premier :
+      // le lien préexistant ne doit pas changer de propriétaire ni de date.
+      const { user: otherUser, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.ADMIN,
+      });
+      onTestFinished(cleanup);
+      const otherCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(otherUser),
+      });
+
+      // Supprime l'axe (et en cascade ses axe_indicateur, dont le
+      // created_by pointe vers otherUser) avant que le cleanup de
+      // otherUser ne s'exécute (onTestFinished est LIFO).
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId });
+      });
+
+      await otherCaller.plans.axes.update({
+        id: axeId,
+        collectiviteId: collectivite.id,
+        indicateurs: [{ id: keptIndicateurId }, { id: newIndicateurId }],
+      });
+
+      const rows = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      const keptRow = rows.find((r) => r.indicateurId === keptIndicateurId);
+      const newRow = rows.find((r) => r.indicateurId === newIndicateurId);
+
+      expect(keptRow?.createdBy).toBe(initialRow.createdBy);
+      expect(keptRow?.createdAt).toBe(initialRow.createdAt);
+
+      expect(newRow?.createdBy).toBe(otherUser.id);
+      expect(newRow?.modifiedBy).toBe(otherUser.id);
     });
   });
 });
