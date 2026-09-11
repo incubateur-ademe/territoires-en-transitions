@@ -1,0 +1,66 @@
+#cloud-config
+
+users:
+  - default
+  - name: tet-ops
+    groups:
+      - sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+%{ for key in ssh_authorized_keys ~}
+      - ${key}
+%{ endfor ~}
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - fail2ban
+  # openssh-server est requis par Coolify : il pilote chaque serveur (y compris
+  # localhost) en SSH root. Déclaré explicitement pour ne pas dépendre de l'image.
+  - openssh-server
+
+write_files:
+  # Config sshd dédiée Coolify (drop-in, survit aux upgrades du paquet openssh).
+  # Le sshd_config Ubuntu inclut /etc/ssh/sshd_config.d/*.conf par défaut.
+  # Voir https://coolify.io/docs/knowledge-base/server/openssh
+  - path: /etc/ssh/sshd_config.d/50-coolify.conf
+    permissions: "0644"
+    content: |
+      PubkeyAuthentication yes
+      PermitRootLogin prohibit-password
+      PasswordAuthentication no
+
+  # Clé publique « host » maîtrisée par Terraform, autorisée sur root : c'est
+  # elle que Coolify utilisera pour piloter localhost (root@host.docker.internal).
+  # Contrairement à la clé auto-générée par install.sh dans /data/coolify/ssh/keys/
+  # (régénérée à chaque update/réinstall → connexion cassée), celle-ci est stable
+  # et versionnée dans Scaleway Secret Manager. Enregistrer la clé privée
+  # correspondante dans Coolify > Keys & Tokens et l'assigner au serveur localhost
+  # (procédure : infra/README.md).
+  - path: /root/.ssh/authorized_keys
+    owner: root:root
+    permissions: "0600"
+    content: |
+      ${coolify_host_authorized_key}
+
+runcmd:
+  # Verrouiller les permissions de /root/.ssh (sinon sshd ignore authorized_keys)
+  - chmod 700 /root/.ssh
+  - chown root:root /root/.ssh
+  # Valider puis recharger sshd avec la config Coolify
+  - sshd -t
+  - systemctl restart ssh
+  # Installer Docker (prérequis Coolify)
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker tet-ops
+  # Installer Coolify
+  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+  # Désactiver l'auto-update Coolify : on maîtrise quand on monte de version
+  # (un update régénère les clés SSH et casse la connexion au serveur).
+  # Prend effet au prochain cycle du scheduler qui relit le .env.
+  - bash -c 'f=/data/coolify/source/.env; [ -f "$f" ] && { grep -q "^AUTOUPDATE=" "$f" && sed -i "s/^AUTOUPDATE=.*/AUTOUPDATE=false/" "$f" || echo "AUTOUPDATE=false" >> "$f"; }'
+
+final_message: "TET Coolify bootstrap terminé en $UPTIME secondes. Accès dashboard : ssh -L 8000:localhost:8000 tet-ops@<ip-vm>"

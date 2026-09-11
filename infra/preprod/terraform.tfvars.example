@@ -1,0 +1,58 @@
+# Copier ce fichier en `terraform.tfvars` (gitignored) ou utiliser TF_VAR_*
+# pour fournir ces valeurs via l'environnement.
+
+# UUID du projet Scaleway dédié à preprod (Console Scaleway > Project Settings)
+scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+
+# Région et zone (défauts cohérents avec PAR / Paris)
+scaleway_region = "fr-par"
+scaleway_zone   = "fr-par-1"
+
+# --- VPC ---
+
+# Subnet du Private Network preprod.
+# Convention : 10.0.1.0/24 preprod | 10.0.2.0/24 staging | 10.0.3.0/24 prod
+vpc_ipv4_subnet = "10.0.1.0/24"
+
+# --- Postgres ---
+
+# Type d'instance — DB-DEV-S est le minimum, fait largement le job pour preprod
+pg_node_type         = "DB-DEV-S"
+pg_volume_size_in_gb = 10
+
+# IP autorisées à se connecter au Postgres preprod (endpoint public).
+# Inclure : (1) IP publique de la VM Coolify (disponible via output coolify_public_ip
+# après un premier apply sans pg_allowed_ips), (2) IP du runner CI pour la migration.
+# Les conteneurs Coolify utilisent l'endpoint privé et n'ont pas besoin d'être ici.
+pg_allowed_ips = {
+  # "203.0.113.42/32"  = "Dev laptop fred"
+  # "198.51.100.5/32"  = "Coolify VM preprod (à remplir après premier apply)"
+}
+
+# --- Redis ---
+
+# Type de nœud — RED1-MICRO est le minimum viable, suffit pour les besoins de queue en preprod
+redis_node_type = "RED1-MICRO"
+
+# IP autorisées à accéder au Redis via l'endpoint public.
+# Laisser vide pour un accès privé uniquement (recommandé — les apps passent par le VPC).
+redis_allowed_ips = {
+  # "203.0.113.42/32" = "Dev laptop fred (accès redis-cli opérateur)"
+}
+
+# --- Coolify ---
+
+# Type d'instance VM. DEV1-L = 4 vCPU / 8 GB RAM — suffisant pour 9 conteneurs preprod.
+coolify_instance_type = "DEV1-L"
+
+# IPs autorisées en SSH. Restreindre aux IPs des opérateurs qui pilotent la migration.
+coolify_ssh_allowed_ips = [
+  # "203.0.113.42/32",  # Dev laptop fred
+]
+
+# Clés SSH publiques injectées via cloud-init dans l'utilisateur tet-ops.
+# Format : ["ssh-ed25519 AAAA...", "ssh-rsa AAAA..."]
+# Si vide, seules les clés du projet Scaleway (Console > SSH Keys) seront disponibles.
+coolify_ssh_authorized_keys = [
+  # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... fred@example.com",
+]
