@@ -8,7 +8,6 @@
       "!{projectRoot}/coverage/**",
       "!{projectRoot}/storybook-static/**",
       "!{projectRoot}/.next/**",
-      "!{projectRoot}/earthly-build/**",
       "sharedGlobals"
     ],
     "production": [
