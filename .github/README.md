@@ -51,13 +51,13 @@ act -W .github/workflows/dev.yml -l
 - Lancer un job :
 
 ```sh
-act -W .github/workflows/dev.yml -j db-init
+act -W .github/workflows/dev.yml -j prepare-dev-db
 ```
 
 Lorsque le nom du job est unique, il n'est pas nécessaire de spécifier le workflow.
 
 ```sh
-act -j db-init
+act -j prepare-dev-db
 ```
 
 - Voir un graphe d'un workflow :

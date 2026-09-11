@@ -15,10 +15,17 @@ For side-specific conventions, see:
 nx test backend 'filename.spec.ts'
 nx test backend 'referentiels'
 
-# Database (uses act / GitHub Actions locally)
-act -j db-init        # Init DB with migrations + seed data
-act -j db-restore     # Restore to seed state
+# Database (local stack = docker-compose, driven by the Makefile)
+make db-init          # Services + migrations + référentiels + seed data
+make db-migrate       # Apply sqitch migrations only
+make db-seed          # Load test data if the DB is empty
+make db-reset         # ⚠ Destroy local data, then re-init
+make db-shell         # psql into the local DB
 ```
+
+`act` is only for the workflow-level dev jobs (`.github/workflows/dev.yml`, e.g.
+`act -j db-restore`). Those run against the Supabase-CLI stack used by the CI
+(`supabase_db_tet`), which is separate from the docker-compose stack above.
 
 ## Architecture
 
