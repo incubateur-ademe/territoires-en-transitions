@@ -1,4 +1,10 @@
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '@tet/backend/utils/column.utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 
@@ -9,6 +15,10 @@ export const ficheActionSousThematiqueTable = pgTable(
     thematiqueId: integer('thematique_id').references(
       () => sousThematiqueTable.id
     ),
+    createdAt,
+    createdBy,
+    modifiedAt,
+    modifiedBy,
   },
   (table) => {
     return {
