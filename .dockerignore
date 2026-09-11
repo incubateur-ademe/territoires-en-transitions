@@ -63,7 +63,12 @@ strapi
 infra
 doc
 .agents
+# `.claude` seul ne matche que le répertoire : un motif sans joker est comparé
+# au nom complet, donc `.claude.local.md` (override perso, cf. CLAUDE.md)
+# resterait dans le contexte et invaliderait le `COPY . .` de l'étape builder à
+# chaque fois qu'il change.
 .claude
+.claude.local.md
 
 # `e2e` est un package du workspace (cf. pnpm-workspace.yaml) : son
 # package.json doit rester dans le contexte, sinon `pnpm install

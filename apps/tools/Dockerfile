@@ -59,6 +59,13 @@ RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 FROM ${NODE_IMAGE} AS runner
 WORKDIR /app
 
+# Seul apt-get de cette image (contrairement à apps/backend/Dockerfile, pas de
+# libs natives ni de locale ici) : `tools` tourne des workers BullMQ, et sans
+# init en PID 1 les processus enfants éventuels ne sont jamais récoltés. Même
+# ENTRYPOINT que le backend pour que les deux apps Nest s'arrêtent pareil.
+RUN apt-get update && apt-get install -y --no-install-recommends dumb-init \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV NODE_ENV=production \
     PORT=3000 \
     APPLICATION_NAME=automation
@@ -93,4 +100,5 @@ USER node
 
 EXPOSE ${PORT}
 
+ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "dist/main.js"]
