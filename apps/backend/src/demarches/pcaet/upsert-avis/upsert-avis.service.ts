@@ -70,6 +70,13 @@ export class UpsertAvisService {
       tx
     );
 
+    if (fichierRef !== null) {
+      await this.pcaetAvisRepository.marquerPieceConfidentielle(
+        { emetteurCollectiviteId, fichierRef },
+        tx
+      );
+    }
+
     return success(
       await this.pcaetAvisRepository.listByDemande(demandeAvisId, tx)
     );

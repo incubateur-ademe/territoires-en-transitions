@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -319,6 +320,31 @@ export class PcaetAvisRepository {
         target: [pcaetAvisTable.demandeAvisId, pcaetAvisTable.auTitreDe],
         set: { fichierRef, modifieLe: new Date().toISOString() },
       });
+  }
+
+  /**
+   * Le rapport d'un avis n'est pas un document de bibliothèque comme un autre :
+   * il est joint à un acte d'instruction et ne se lit que par le circuit de
+   * l'avis. La marque est posée ici, au moment où la pièce devient un rapport,
+   * et non à l'envoi du fichier : la bibliothèque déduplique par empreinte, et
+   * un rapport dont le fichier y figurait déjà ressortirait sans marque.
+   */
+  async marquerPieceConfidentielle(
+    {
+      emetteurCollectiviteId,
+      fichierRef,
+    }: { emetteurCollectiviteId: number; fichierRef: string },
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .update(bibliothequeFichierTable)
+      .set({ confidentiel: true })
+      .where(
+        and(
+          eq(bibliothequeFichierTable.collectiviteId, emetteurCollectiviteId),
+          eq(bibliothequeFichierTable.hash, fichierRef)
+        )
+      );
   }
 
   async valider(
