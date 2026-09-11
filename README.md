@@ -271,7 +271,7 @@ make db-reset
 
 Celle-ci supprime le volume docker de la base puis relance `make db-init`.
 
-> ℹ️ L'ancien workflow basé sur [act](https://nektosact.com/) (`act -j db-init`…) reste documenté dans le [README de la CI](./.github/README.md) — la CI continue de fonctionner ainsi.
+> ℹ️ L'ancien workflow basé sur [act](https://nektosact.com/) (`act -j prepare-dev-db`…) reste documenté dans le [README de la CI](./.github/README.md) — la CI continue de fonctionner ainsi.
 
 ### Lint et hook de pre-commit
 
