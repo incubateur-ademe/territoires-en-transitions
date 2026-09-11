@@ -307,14 +307,13 @@ Les tests de bout en bout (Playwright) sont à part : ils se jouent contre la st
 pnpm exec playwright test --config ./e2e/playwright.config.mjs
 ```
 
-Les tests pgTAP de [`data_layer/tests`](./data_layer/tests) n'ont pas d'équivalent Nx et restent lancés par `earthly`, contre la base de la stack locale :
+Les tests pgTAP de [`data_layer/tests`](./data_layer/tests) n'ont pas d'équivalent Nx. En local, après avoir démarré la stack et installé `pg_prove` (voir [`data_layer/README.md`](./data_layer/README.md)) :
 
 ```shell
-earthly +db-test --DB_URL=postgresql://postgres:postgres@localhost:54322/postgres
-
-# aller-retour deploy/revert/verify des migrations sqitch
-earthly +db-deploy-test --DB_URL=postgresql://postgres:postgres@localhost:54322/postgres
+cd data_layer/scripts && sh run_tests.sh
 ```
+
+L'aller-retour deploy/revert/verify des migrations sqitch est couvert en CI par le workflow [`test-db-deploy.yml`](./.github/workflows/test-db-deploy.yml).
 
 ## Déploiement
 

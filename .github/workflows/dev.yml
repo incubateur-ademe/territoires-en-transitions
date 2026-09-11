@@ -26,7 +26,6 @@ jobs:
   # Démarre supabase et seed la base de dev
   # Nécessaire lors de la 1ère utilisation ou après avoir utilisé le job
   # `db-delete`.
-  # Les jobs db-delete/db-init sont l'équivalent de l'ancien `earthly +dev`
   prepare-dev-db:
     uses: ./.github/workflows/prepare-test-db.yml
     secrets: inherit
