@@ -55,11 +55,14 @@ export class PostHogEventTracker
     userId: string,
     collectiviteId?: number
   ): Promise<boolean> {
+    // Le flag de bypass diagnostic PCAET est un contournement d'exception (démonstration) :
+    // il ne doit jamais être activé par défaut en dev/test/ci, mais piloté explicitement via PostHog.
     if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test' ||
-      process.env.ENV_NAME === 'dev' ||
-      process.env.ENV_NAME === 'ci'
+      featureFlagKey !== 'is-demarche-pcaet-bypass-diagnostic-enabled' &&
+      (process.env.NODE_ENV === 'development' ||
+        process.env.NODE_ENV === 'test' ||
+        process.env.ENV_NAME === 'dev' ||
+        process.env.ENV_NAME === 'ci')
     ) {
       return true;
     }

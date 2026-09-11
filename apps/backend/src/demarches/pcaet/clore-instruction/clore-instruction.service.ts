@@ -109,7 +109,7 @@ export class CloreInstructionService {
     demarche: Parameters<DemarchePcaetGuardsService['loadContext']>[0],
     tx?: Transaction
   ): Promise<DemarchePcaetTransition | null> {
-    const context = await this.guardsService.loadContext(demarche, tx);
+    const context = await this.guardsService.loadContext(demarche, null, tx);
     const transitions = evaluateTransitions(
       demarche.status,
       this.guardsService.computeGuardResults(context, null)

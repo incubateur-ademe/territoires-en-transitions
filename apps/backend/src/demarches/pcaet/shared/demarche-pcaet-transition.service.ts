@@ -144,6 +144,7 @@ export class DemarchePcaetTransitionService {
 
       const guardContext = await this.guardsService.loadContext(
         demarche,
+        user,
         transaction
       );
       const transitionResult = applyTransition(demarche.status, transition, {

@@ -9,7 +9,7 @@ import {
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
-import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
@@ -366,14 +366,16 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       })
     ).rejects.toThrow('DOSSIER_INCOMPLET');
 
-    // Seule cette clé est détournée : le reste de la configuration doit
-    // continuer de répondre, l'application entière la lit.
-    const configurationService = app.get(ConfigurationService);
-    const get = configurationService.get.bind(configurationService);
+    // Le bypass est piloté par le feature flag PostHog :
+    const trackingService = app.get(TrackingService);
+    const isFeatureEnabled =
+      trackingService.isFeatureEnabled.bind(trackingService);
     const spy = vi
-      .spyOn(configurationService, 'get')
-      .mockImplementation((key) =>
-        key === 'DEMARCHE_PCAET_BYPASS_DIAGNOSTIC' ? true : get(key)
+      .spyOn(trackingService, 'isFeatureEnabled')
+      .mockImplementation(async (feature, ...args) =>
+        feature === 'is-demarche-pcaet-bypass-diagnostic-enabled'
+          ? true
+          : isFeatureEnabled(feature, ...args)
       );
     onTestFinished(() => {
       spy.mockRestore();

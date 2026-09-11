@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
   DemarcheTypeEnum,
   evaluateTransitions,
@@ -48,7 +48,8 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   planActionIds?: readonly number[];
   /**
    * Environnements de démonstration : le dossier se passe d'un diagnostic
-   * complet (cf. DEMARCHE_PCAET_BYPASS_DIAGNOSTIC). Faux partout ailleurs.
+   * complet (cf. feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`).
+   * Faux partout ailleurs.
    */
   isDiagnosticBypassed?: boolean;
   /** Pièces amont requises couvertes, au sens de la règle documentaire. */
@@ -127,21 +128,32 @@ export class DemarchePcaetGuardsService {
     private readonly documentsRepository: DemarcheDocumentsRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly avisRepository: PcaetAvisRepository,
-    private readonly configurationService: ConfigurationService
+    private readonly trackingService: TrackingService
   ) {}
 
   /**
    * Le contournement s'annonce à chaque évaluation plutôt qu'une fois au
    * démarrage : un dossier transmis sans diagnostic complet doit être
    * explicable en lisant les logs de la transmission.
+   *
+   * Piloté par le feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`,
+   * activable par utilisateur ou collectivité depuis l'interface PostHog.
    */
-  private isDiagnosticBypassed(): boolean {
-    const isBypassed =
-      this.configurationService.get('DEMARCHE_PCAET_BYPASS_DIAGNOSTIC') ===
-      true;
+  private async isDiagnosticBypassed(
+    user: AuthenticatedUser | null,
+    collectiviteId: number
+  ): Promise<boolean> {
+    if (!user) {
+      return false;
+    }
+    const isBypassed = await this.trackingService.isFeatureEnabled(
+      'is-demarche-pcaet-bypass-diagnostic-enabled',
+      user.id,
+      collectiviteId
+    );
     if (isBypassed) {
       this.logger.warn(
-        'DEMARCHE_PCAET_BYPASS_DIAGNOSTIC actif : le diagnostic n’est pas exigé pour compléter le dossier PCAET (environnement de démonstration)'
+        `Feature flag is-demarche-pcaet-bypass-diagnostic-enabled actif pour user ${user.id} / collectivité ${collectiviteId} : le diagnostic n'est pas exigé pour compléter le dossier PCAET (démonstration)`
       );
     }
     return isBypassed;
@@ -154,6 +166,7 @@ export class DemarchePcaetGuardsService {
    */
   async loadContext(
     demarche: DemarchePcaetGuardTarget,
+    user: AuthenticatedUser | null,
     tx?: Transaction
   ): Promise<DemarchePcaetGuardContext> {
     const requiredGuards = getRequiredGuards(demarche.status);
@@ -204,7 +217,9 @@ export class DemarchePcaetGuardsService {
       pilotes,
       planActionIds,
       demandesAvis,
-      isDiagnosticBypassed: needsDossier ? this.isDiagnosticBypassed() : false,
+      isDiagnosticBypassed: needsDossier
+        ? await this.isDiagnosticBypassed(user, demarche.collectiviteId)
+        : false,
       diagnostic,
       documentsComplets:
         needsDossier && documentsSnapshot
@@ -252,7 +267,7 @@ export class DemarchePcaetGuardsService {
     user: AuthenticatedUser | null,
     tx?: Transaction
   ): Promise<DemarchePcaet> {
-    const context = await this.loadContext(demarche, tx);
+    const context = await this.loadContext(demarche, user, tx);
     return {
       ...demarche,
       ...this.computeAvailableActions(context, user),

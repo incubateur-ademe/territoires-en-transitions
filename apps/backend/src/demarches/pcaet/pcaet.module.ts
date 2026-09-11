@@ -12,6 +12,7 @@ import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { AddVulnerabiliteThematiqueRouter } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.router';
 import { AddVulnerabiliteThematiqueService } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.service';
 import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
@@ -123,6 +124,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     PlanModule,
     AxeModule,
     NotificationsModule,
+    TrackingModule,
   ],
   providers: [
     DemarchePcaetPilotesRepository,
