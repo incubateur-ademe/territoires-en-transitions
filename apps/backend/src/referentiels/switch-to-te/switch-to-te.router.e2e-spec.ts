@@ -536,6 +536,27 @@ describe('SwitchToTeRouter', () => {
       });
     });
 
+    test('BLOCKED (COLLECTIVITE_IS_DROM) pour une collectivité en DROM', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        {
+          cae: { display: true, mode: 'write' },
+          eci: { display: false, mode: 'archived' },
+          te: { display: true, mode: 'readonly' },
+        },
+        // Guadeloupe : drom = true (data_layer/seed/imports/01-region.sql)
+        { regionCode: '01' }
+      );
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId,
+      });
+
+      expect(status).toEqual({
+        value: 'BLOCKED',
+        blockers: [{ type: 'COLLECTIVITE_IS_DROM' }],
+      });
+    });
+
     test('BLOCKED (AUDIT_IN_PROGRESS) quand un audit est en cours', async () => {
       const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
         cae: { display: true, mode: 'write' },

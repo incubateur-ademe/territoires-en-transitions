@@ -14,6 +14,7 @@ const specificErrors = [
   'NOT_ELIGIBLE',
   'COT_ACTIVE',
   'COLLECTIVITE_IS_SYNDICAT',
+  'COLLECTIVITE_IS_DROM',
   'AUDIT_REQUEST_IN_PROGRESS',
   'AUDIT_IN_PROGRESS',
   'PRE_SWITCH_SNAPSHOT_FAILED',
@@ -51,6 +52,11 @@ export const switchToTeTrpcErrorEntries = {
     code: 'FORBIDDEN',
     message:
       "La bascule n'est pas possible : les collectivités de type syndicat ne sont pas éligibles au référentiel TE",
+  },
+  COLLECTIVITE_IS_DROM: {
+    code: 'FORBIDDEN',
+    message:
+      "La bascule n'est pas possible : les collectivités des DROM ne sont pas encore éligibles au référentiel TE",
   },
   AUDIT_REQUEST_IN_PROGRESS: {
     code: 'CONFLICT',
