@@ -147,8 +147,6 @@ make env-set k=SMTP_KEY v=<valeur> app=backend     # idem, forme longue k=/v=
 make env-get k=SMTP_KEY app=backend                # lire la valeur déchiffrée d'une clé
 ```
 
-Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis les `.env.sample`) n'est plus nécessaire en local — il reste utilisé par la CI.
-
 ### Connexion SSO (ProConnect / MonCompteAdeme)
 
 Le backend joue le rôle de _relying party_ OIDC : il porte tout le protocole (login, callback, logout) sous `/api/v1/:provider/*`, puis ponte vers une session Supabase standard (le `client_secret` ne quitte jamais le serveur). Deux providers sont supportés, **activables indépendamment** :
@@ -309,17 +307,13 @@ Les tests de bout en bout (Playwright) sont à part : ils se jouent contre la st
 pnpm exec playwright test --config ./e2e/playwright.config.mjs
 ```
 
-Pour exécuter les tests en conteneurs, on peut aussi utiliser `earthly` :
+Les tests pgTAP de [`data_layer/tests`](./data_layer/tests) n'ont pas d'équivalent Nx et restent lancés par `earthly`, contre la base de la stack locale :
 
 ```shell
-# Lance le projet suivi de tout les tests.
-earthly +dev
+earthly +db-test --DB_URL=postgresql://postgres:postgres@localhost:54322/postgres
 
-# Lance les tests indépendamment
-earthly --push +db-test
-earthly --push +app-test
-earthly --push +api-test
-earthly --push +deploy-test
+# aller-retour deploy/revert/verify des migrations sqitch
+earthly +db-deploy-test --DB_URL=postgresql://postgres:postgres@localhost:54322/postgres
 ```
 
 ## Déploiement
