@@ -17,7 +17,7 @@ import { InstructionPom } from './instruction.pom';
  * celles qui n'ont rien déposé, qui sont précisément celles à relancer.
  */
 test.describe('Démarche PCAET - liste d’instruction', () => {
-  const creerDepot = async ({
+  const createDepot = async ({
     collectiviteId,
     serviceId,
     status = 'transmis_pour_avis',
@@ -92,11 +92,11 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
       population: SEUIL_POPULATION_PCAET + 5_000,
     });
 
-    const { demandeAvisId } = await creerDepot({
+    const { demandeAvisId } = await createDepot({
       collectiviteId: transmise.data.id,
       serviceId: dreal.data.id,
     });
-    const { demarcheId: demarcheEnChantier } = await creerDepot({
+    const { demarcheId: demarcheEnChantier } = await createDepot({
       collectiviteId: enChantier.data.id,
       serviceId: dreal.data.id,
       status: 'en_elaboration',
@@ -113,7 +113,7 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
 
     // Le filtre ouvre ce que le défaut masque, sans quoi ces deux populations
     // resteraient invisibles.
-    await pom.ouvrirTousLesStatuts();
+    await pom.selectAllStatuts();
 
     await expect(pom.rowDemarche(demarcheEnChantier)).toBeVisible();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
@@ -161,7 +161,7 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
 
     // Le service couvre plusieurs régions, donc la colonne apparaît — elle
     // reste masquée pour une DREAL, qui n'en a qu'une.
-    await pom.ouvrirTousLesStatuts();
+    await pom.selectAllStatuts();
     await expect(
       page.getByRole('columnheader', { name: /Région/ })
     ).toBeVisible();
@@ -198,7 +198,7 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
       nom: 'Deposante e2e liste vide',
     });
 
-    await creerDepot({
+    await createDepot({
       collectiviteId: deposante.data.id,
       serviceId: dreal.data.id,
     });
@@ -255,7 +255,7 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
 
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeHidden();
 
-    await pom.deselectionnerTousLesStatuts();
+    await pom.deselectAllStatuts();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
 
     // Le rechargement doit retrouver « aucun filtre », et non retomber sur le

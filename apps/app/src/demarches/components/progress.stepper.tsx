@@ -542,15 +542,16 @@ export const AvanceDemarcheSection = ({
                 cycle peut seulement démarrer à côté. */}
             {showNouvelleAction && (
               <div className="mt-3">
-                <Link
+                <Button
                   href={makeCollectiviteDemarchePcaetNouveauUrl({
                     collectiviteId,
                   })}
+                  variant="primary"
+                  size="xs"
+                  icon="add-line"
                 >
-                  <Button variant="primary" size="xs" icon="add-line">
-                    {appLabels.demarcheAvanceNouvelleDemarche}
-                  </Button>
-                </Link>
+                  {appLabels.demarcheAvanceNouvelleDemarche}
+                </Button>
               </div>
             )}
           </NumberedStep>

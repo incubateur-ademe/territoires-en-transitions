@@ -57,7 +57,7 @@ const main = async () => {
     );
   }
 
-  const confirme = process.argv.includes('--confirm');
+  const isConfirmed = process.argv.includes('--confirm');
 
   const pool = new Pool({
     connectionString: databaseUrl,
@@ -105,7 +105,7 @@ const main = async () => {
      * dossier et par service pour une information qui ne change pas.
      */
     const typesParService = new Map<number, string>();
-    const typeDuService = async (collectiviteId: number): Promise<string> => {
+    const getServiceType = async (collectiviteId: number): Promise<string> => {
       const connu = typesParService.get(collectiviteId);
       if (connu !== undefined) {
         return connu;
@@ -145,19 +145,19 @@ const main = async () => {
           collectiviteNom: demarche.collectiviteNom,
           instructeurId: couvrant.collectiviteId,
           instructeurNom: couvrant.nom,
-          instructeurType: await typeDuService(couvrant.collectiviteId),
+          instructeurType: await getServiceType(couvrant.collectiviteId),
         });
       }
     }
 
-    resumer(manquantes);
+    printSummary(manquantes);
 
     if (manquantes.length === 0) {
       console.log('\nRien à rattraper.');
       return;
     }
 
-    if (!confirme) {
+    if (!isConfirmed) {
       console.log(
         '\nMode à blanc : rien n’a été écrit. Relancer avec --confirm pour saisir.'
       );
@@ -186,7 +186,7 @@ const main = async () => {
 };
 
 /** Ce que l'opérateur doit pouvoir vérifier avant d'écrire quoi que ce soit. */
-const resumer = (manquantes: Manquante[]) => {
+const printSummary = (manquantes: Manquante[]) => {
   console.log(`\n${manquantes.length} saisine(s) manquante(s).`);
 
   const parType = manquantes.reduce<Record<string, number>>((acc, m) => {
