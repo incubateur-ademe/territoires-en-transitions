@@ -80,8 +80,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   generateBuildId: async () => {
-    // Git hash
-    return process.env.EARTHLY_GIT_SHORT_HASH || uuid4();
+    return process.env.GIT_SHORT_HASH || process.env.NEXT_PUBLIC_GIT_SHORT_HASH || uuid4();
   },
 
   async redirects() {

@@ -10,10 +10,10 @@ FROM node:24.11.1-slim
 ARG UID=1000
 ARG GID=1000
 
-# Locales FR (parité avec les images de prod Earthfile) + toolchain de
-# compilation de node-canvas (pas de binaire précompilé pour Node 24),
-# nécessaire au backend ; les couches étant partagées entre toutes les images
-# d'apps, le surcoût n'est payé qu'une fois.
+# Locales FR (parité avec les images de prod) + toolchain de compilation de
+# node-canvas (pas de binaire précompilé pour Node 24), nécessaire au backend ;
+# les couches étant partagées entre toutes les images d'apps, le surcoût n'est
+# payé qu'une fois.
 RUN apt-get update && apt-get install -y --no-install-recommends \
       locales procps git \
       python3 build-essential pkg-config \

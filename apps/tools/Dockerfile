@@ -90,9 +90,9 @@ COPY --from=builder --chown=node:node /workspace/packages/domain/dist ./packages
 # jour où un import runtime remonte jusqu'à `fiche-action-pdf-export` ou
 # `utils/echarts/`, ça planterait au bootstrap Nest sur un MODULE_NOT_FOUND.
 # `nx build tools` ne construit pas leur dist (elles ne sont pas dans son
-# graphe de dépendances) : on rétablit ici le contenu qu'avait l'image
-# Earthly. La résolution complète (dist inclus) viendra avec le passage à des
-# `dependencies` par app + `pnpm deploy --filter`.
+# graphe de dépendances) : on rétablit ici leurs package.json. La résolution
+# complète (dist inclus) viendra avec le passage à des `dependencies` par app
+# + `pnpm deploy --filter`.
 COPY --from=builder --chown=node:node /workspace/packages/design-tokens/package.json ./packages/design-tokens/package.json
 COPY --from=builder --chown=node:node /workspace/packages/pdf-components/package.json ./packages/pdf-components/package.json
 
