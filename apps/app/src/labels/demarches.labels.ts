@@ -3,14 +3,33 @@
  * vivent encore dans `catalog.ts` (dette connue) : les nouveaux arrivent ici, et
  * les anciens y seront repris au fil des passages.
  */
+import {
+  collectiviteTypeEnum,
+  type CollectiviteType,
+} from '@tet/domain/collectivites';
+
 export const demarchesLabels = {
   /**
    * Sans le nom de la collectivité : il est déjà affiché juste au-dessus, dans
    * le sélecteur de contexte du header. Ce que la bannière ajoute, c'est la
    * casquette — à quel titre on est là.
    */
-  contexteInstructionTitre: ({ instructeurNom }: { instructeurNom: string }) =>
-    `Vous naviguez ici au titre de ${instructeurNom}`,
+  contexteInstructionTitre: ({ instructeur }: { instructeur: string }) =>
+    `Vous naviguez sur l’espace de cette collectivité au titre de ${instructeur}`,
+
+  /**
+   * La casquette dite comme l'agent la nomme, article compris : « au titre de la
+   * DREAL » se lit, « au titre de DREAL » non.
+   *
+   * Le nom propre du service reste le repli — il porte déjà son type (« DREAL
+   * Bretagne ») — pour les types qui instruisent sans figurer ici.
+   */
+  contexteInstructionCasquette: {
+    [collectiviteTypeEnum.DREAL]: 'la DREAL',
+    [collectiviteTypeEnum.DDT]: 'la DDT',
+    [collectiviteTypeEnum.DR_ADEME]: 'la Direction régionale de l’ADEME',
+    [collectiviteTypeEnum.REGION]: 'la Région',
+  } as Partial<Record<CollectiviteType, string>>,
 
   /**
    * Le même repère, quand le dossier ne vient au service que par un territoire
@@ -48,8 +67,7 @@ export const demarchesLabels = {
    * Le vide d'un filtre trop étroit, à distinguer de celui d'un territoire sans
    * dossier : le premier se corrige, le second s'explique.
    */
-  instructionListeAucunResultat:
-    'Aucun dossier ne correspond à ces filtres',
+  instructionListeAucunResultat: 'Aucun dossier ne correspond à ces filtres',
   instructionListeReinitialiser: 'Réinitialiser les filtres',
 
   instructionListeColonneRegion: 'Région',
