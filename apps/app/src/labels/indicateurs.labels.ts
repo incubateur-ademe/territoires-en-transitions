@@ -28,5 +28,11 @@ export const indicateursLabels = {
     'Ajouter cet indicateur aux favoris de ma collectivité',
 
   /** Autres */
-  aucunIndicateur: 'Aucun indicateur associé',
+  /**
+   * Le texte qui s'affiche réellement depuis toujours : `catalog.ts` portait la
+   * même clé et gagnait sur celle-ci. Reprise ici à l'identique — « Aucun
+   * indicateur associé » n'a jamais atteint l'écran, et le décider est un choix
+   * de copie, pas de rangement.
+   */
+  aucunIndicateur: 'Aucun indicateur',
 };
