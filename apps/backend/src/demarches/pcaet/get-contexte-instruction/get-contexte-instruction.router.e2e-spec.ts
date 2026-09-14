@@ -9,6 +9,7 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inArray } from 'drizzle-orm';
 import { pickFreeRegionCode } from '../demarches-pcaet.test-fixture';
@@ -133,8 +134,9 @@ describe('getContexteInstruction', () => {
     nicolas = getAuthUserFromUserCredentials(autreDreal.user);
 
     demandeAvisId = await createDossierTransmis(deposanteId);
-    demandeAvisAutreCollectiviteId =
-      await createDossierTransmis(autreDeposanteId);
+    demandeAvisAutreCollectiviteId = await createDossierTransmis(
+      autreDeposanteId
+    );
 
     return async () => {
       // Les collectivités instructrices sont uniques par région : les laisser
@@ -161,6 +163,7 @@ describe('getContexteInstruction', () => {
       instructeur: {
         collectiviteId: drealId,
         nom: 'DREAL test contexte',
+        type: collectiviteTypeEnum.DREAL,
       },
       // La fixture n'insère aucun périmètre secondaire : la DREAL est saisie
       // au titre du siège de la déposante, et se prononce donc sur ce dossier.
