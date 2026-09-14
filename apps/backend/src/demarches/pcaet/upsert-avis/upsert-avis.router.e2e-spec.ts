@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { seedTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  buildRandomDocumentHash,
+  seedTestDocument,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
@@ -91,6 +94,10 @@ describe('upsertAvis', () => {
     };
   });
 
+  const AVIS_PREFET = buildRandomDocumentHash();
+  const AVIS_PREFET_V2 = buildRandomDocumentHash();
+  const AVIS_PREFET_V3 = buildRandomDocumentHash();
+
   const upsert = (
     user: AuthenticatedUser,
     input: {
@@ -129,11 +136,11 @@ describe('upsertAvis', () => {
   it("modifie l'avis du même titre sans créer de doublon", async () => {
     const avis = await upsert(camille, {
       auTitreDe: 'prefet_region',
-      fichierRef: 'avis-prefet.pdf',
+      fichierRef: AVIS_PREFET,
     });
 
     expect(avis).toHaveLength(1);
-    expect(avis[0].fichierRef).toBe('avis-prefet.pdf');
+    expect(avis[0].fichierRef).toBe(AVIS_PREFET);
     expect(avis[0].deposePar).toBe(camille.id);
     expect(avis[0].modifieLe).not.toBeNull();
   });
@@ -155,7 +162,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        fichierRef: 'avis-prefet-v2.pdf',
+        fichierRef: AVIS_PREFET_V2,
       })
     ).rejects.toThrow('Un avis validé ne peut plus être modifié');
 
@@ -202,7 +209,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        fichierRef: 'avis-prefet-v3.pdf',
+        fichierRef: AVIS_PREFET_V3,
       })
     ).rejects.toThrow();
   });

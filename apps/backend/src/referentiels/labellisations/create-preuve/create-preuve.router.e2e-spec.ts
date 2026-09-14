@@ -3,7 +3,10 @@ import {
   addTestCollectivite,
   addTestCollectiviteAndUsers,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  toLegacyDocumentHash,
+  uploadCreateTestDocument,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { getAuthUserFromUserCredentials, signInWith } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -268,7 +271,7 @@ describe('CreatePreuveRouter', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId,
-        hash: randomUUID(),
+        hash: toLegacyDocumentHash(randomUUID()),
         filename: 'test-preuve.pdf',
         confidentiel: false,
       })

@@ -3,6 +3,7 @@ import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collecti
 import {
   seedTestDocument,
   TestDocument,
+  toLegacyDocumentHash,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import {
@@ -512,7 +513,7 @@ describe('ListBibliothequeDocumentsRouter', () => {
     await seedDocuments(collectivite, ['present.pdf']);
     await databaseService.db.insert(bibliothequeFichierTable).values({
       collectiviteId: collectivite.id,
-      hash: randomUUID(),
+      hash: toLegacyDocumentHash(randomUUID()),
       filename: 'sans-objet.pdf',
       confidentiel: false,
     });

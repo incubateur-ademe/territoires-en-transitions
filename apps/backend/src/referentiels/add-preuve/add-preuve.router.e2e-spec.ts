@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
@@ -47,7 +48,7 @@ describe('AddPreuveRouter', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId,
-        hash: randomUUID().replaceAll('-', ''),
+        hash: toLegacyDocumentHash(randomUUID().replaceAll('-', '')),
         filename: 'preuve-test.pdf',
         confidentiel: false,
       })

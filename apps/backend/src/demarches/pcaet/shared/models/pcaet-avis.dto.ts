@@ -1,4 +1,5 @@
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { storedDocumentHashSchema } from '@tet/domain/collectivites';
 import { pcaetAvisAuTitreDeSchema } from '@tet/domain/demarches';
 import { z } from 'zod';
 import { sqlToNullableDateTimeISO } from './demarche-pcaet.dto';
@@ -8,7 +9,7 @@ export const pcaetAvisSchema = z.object({
   id: z.string(),
   demandeAvisId: z.number(),
   auTitreDe: pcaetAvisAuTitreDeSchema,
-  fichierRef: z.string().nullable(),
+  fichierRef: storedDocumentHashSchema.nullable(),
   valideLe: z.string().nullable(),
   deposePar: z.string().nullable(),
   deposeLe: z.string(),

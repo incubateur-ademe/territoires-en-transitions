@@ -1,9 +1,10 @@
+import { storedDocumentHashSchema } from '@tet/domain/collectivites';
 import { z } from 'zod';
 
 export const updateDocumentInputSchema = z
   .object({
     collectiviteId: z.number().int().positive(),
-    hash: z.string().min(1),
+    hash: storedDocumentHashSchema,
     filename: z.string().min(1).optional(),
     confidentiel: z.boolean().optional(),
   })

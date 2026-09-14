@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
@@ -72,25 +73,25 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: publicHash,
+          hash: toLegacyDocumentHash(publicHash),
           filename: 'public.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: confidentielHash,
+          hash: toLegacyDocumentHash(confidentielHash),
           filename: 'secret.pdf',
           confidentiel: true,
         },
         {
           collectiviteId: collectivite.id,
-          hash: purgeHash,
+          hash: toLegacyDocumentHash(purgeHash),
           filename: 'avis-technique-purge.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: purgeConfidentielHash,
+          hash: toLegacyDocumentHash(purgeConfidentielHash),
           filename: 'secret-purge.pdf',
           confidentiel: true,
         },
@@ -145,7 +146,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId: otherCollectivite.id,
-        hash: otherCollectiviteHash,
+        hash: toLegacyDocumentHash(otherCollectiviteHash),
         filename: 'document-d-une-autre-collectivite.pdf',
         confidentiel: false,
       })
@@ -455,13 +456,13 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: caeHash,
+          hash: toLegacyDocumentHash(caeHash),
           filename: 'preuve-cae.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: eciHash,
+          hash: toLegacyDocumentHash(eciHash),
           filename: 'preuve-eci.pdf',
           confidentiel: false,
         },

@@ -12,13 +12,7 @@ import {
   UpdateDocumentError,
   UpdateDocumentErrorEnum,
 } from './update-document.errors';
-
-export type UpdateDocumentInput = {
-  collectiviteId: number;
-  hash: string;
-  filename?: string;
-  confidentiel?: boolean;
-};
+import { UpdateDocumentInputSchema } from './update-document.schema';
 
 @Injectable()
 export class UpdateDocumentService {
@@ -31,7 +25,7 @@ export class UpdateDocumentService {
   ) {}
 
   async updateDocument(
-    input: UpdateDocumentInput,
+    input: UpdateDocumentInputSchema,
     user: AuthenticatedUser
   ): Promise<
     Result<BibliothequeFichier, UpdateDocumentError | 'UNAUTHORIZED'>
