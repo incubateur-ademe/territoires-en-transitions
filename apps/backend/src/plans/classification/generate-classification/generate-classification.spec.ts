@@ -15,7 +15,6 @@ import { GenerateClassificationService } from './generate-classification.service
 
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 7;
-const planId = 42;
 
 const tokens = {
   promptTokens: 10,
@@ -38,7 +37,6 @@ const toJobRow = (
 ): ClassificationVoletsJob => ({
   id: jobId,
   collectiviteId,
-  planId,
   createdBy: 'a-user',
   enjeu: 'ges',
   status,
@@ -242,7 +240,7 @@ describe('GenerateClassificationService.generate', () => {
     }).toEqual({ success: true, llmCalls: 0, markRunningCalls: 0 });
   });
 
-  it('interrompt un plan sans aucune fiche a classer', async () => {
+  it('interrompt une collectivite sans aucune fiche a classer', async () => {
     const { service, jobRepository } = toDependencies({ fiches: [] });
 
     const result = await service.generate(jobId);
@@ -256,10 +254,10 @@ describe('GenerateClassificationService.generate', () => {
         error: {
           kind: 'interrupted',
           jobId,
-          message: 'Aucune fiche à classer dans ce plan',
+          message: 'Aucune fiche à classer dans cette collectivité',
         },
       },
-      markFailedArgs: [jobId, 'Aucune fiche à classer dans ce plan'],
+      markFailedArgs: [jobId, 'Aucune fiche à classer dans cette collectivité'],
     });
   });
 

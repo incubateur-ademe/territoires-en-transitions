@@ -7,8 +7,7 @@ export const ClassificationVoletsSpecificErrors = [
   'JOB_NOT_FOUND',
   'JOB_TRANSITION_REFUSED',
   'IN_FLIGHT_JOB_EXISTS',
-  'PLAN_NOT_FOUND',
-  'NOT_A_PLAN',
+  'COLLECTIVITE_NOT_FOUND',
   'NO_FICHE_TO_CLASSIFY',
 ] as const;
 

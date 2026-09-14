@@ -28,11 +28,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
   let db: DatabaseService;
   let router: TrpcRouter;
   let collectiviteId: number;
+  let collectiviteWithoutFicheId: number;
   let editionUser: AuthenticatedUser;
   let outsiderUser: AuthenticatedUser;
-  let planWithFichesId: number;
-  let emptyPlanId: number;
-  let sousAxeId: number;
+  let planId: number;
 
   const callerFor = (user: AuthenticatedUser) =>
     router.createCaller({ user }).plans.classificationVolets;
@@ -51,36 +50,23 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     const outsider = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
     });
+    collectiviteWithoutFicheId = outsider.collectivite.id;
     outsiderUser = getAuthUserFromUserCredentials(outsider.user);
 
     const fixtureCaller = router.createCaller({ user: editionUser });
 
-    const planWithFiches = await fixtureCaller.plans.plans.create({
+    const plan = await fixtureCaller.plans.plans.create({
       collectiviteId,
       nom: 'Plan classable',
     });
-    planWithFichesId = planWithFiches.id;
-
-    const emptyPlan = await fixtureCaller.plans.plans.create({
-      collectiviteId,
-      nom: 'Plan sans fiche',
-    });
-    emptyPlanId = emptyPlan.id;
-
-    const sousAxe = await fixtureCaller.plans.axes.create({
-      collectiviteId,
-      nom: 'Sous-axe',
-      planId: planWithFichesId,
-      parent: planWithFichesId,
-    });
-    sousAxeId = sousAxe.id;
+    planId = plan.id;
 
     const { ficheCleanup } = await createFicheAndCleanupFunction({
       caller: fixtureCaller,
       ficheInput: {
         collectiviteId,
         titre: 'Amenager des pistes cyclables',
-        axeId: planWithFichesId,
+        axeId: planId,
       },
     });
 
@@ -89,20 +75,17 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         .delete(classificationVoletsJobTable)
         .where(eq(classificationVoletsJobTable.collectiviteId, collectiviteId));
       await ficheCleanup();
-      await fixtureCaller.plans.plans.delete({ planId: planWithFichesId });
-      await fixtureCaller.plans.plans.delete({ planId: emptyPlanId });
+      await fixtureCaller.plans.plans.delete({ planId });
       await app.close();
     };
   });
 
   const insertJob = async ({
     status = ClassificationVoletsJobStatusEnum.DONE,
-    planId,
     enjeu = 'ges',
     modifiedAt,
   }: {
     status?: ClassificationVoletsJobStatus;
-    planId?: number;
     enjeu?: Enjeu;
     modifiedAt?: string;
   } = {}): Promise<string> => {
@@ -110,7 +93,6 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       .insert(classificationVoletsJobTable)
       .values({
         collectiviteId,
-        planId: planId ?? emptyPlanId,
         enjeu,
         createdBy: editionUser.id,
         status,
@@ -123,56 +105,55 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         },
       })
       .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(classificationVoletsJobTable)
+        .where(eq(classificationVoletsJobTable.id, job.id));
+    });
+
     return job.id;
   };
 
+  const beyondLease = (): string =>
+    new Date(Date.now() - IN_FLIGHT_LEASE_MS - 60_000).toISOString();
+
+  const withinLease = (): string =>
+    new Date(Date.now() - IN_FLIGHT_LEASE_MS + 60_000).toISOString();
+
+  const cleanupEnqueuedJobs = (): void => {
+    onTestFinished(async () => {
+      await db.db
+        .delete(classificationVoletsJobTable)
+        .where(eq(classificationVoletsJobTable.collectiviteId, collectiviteId));
+    });
+  };
+
   describe('enqueueClassification', () => {
-    it("refuse un plan qui n'existe pas", async () => {
+    it('refuse une collectivité sans aucune fiche à classer', async () => {
       await expect(
-        callerFor(editionUser).enqueueClassification({
-          planId: 999_999_999,
-          enjeu: 'ges',
-        })
-      ).rejects.toThrowError(/n'existe pas/);
-    });
-
-    it('refuse un sous-axe, qui ne désigne pas un plan', async () => {
-      await expect(
-        callerFor(editionUser).enqueueClassification({
-          planId: sousAxeId,
-          enjeu: 'ges',
-        })
-      ).rejects.toThrowError(/axe et non un plan/);
-    });
-
-    it('refuse un plan sans aucune fiche à classer', async () => {
-      await expect(
-        callerFor(editionUser).enqueueClassification({
-          planId: emptyPlanId,
+        callerFor(outsiderUser).enqueueClassification({
+          collectiviteId: collectiviteWithoutFicheId,
           enjeu: 'ges',
         })
       ).rejects.toThrowError(/aucune fiche/);
     });
 
-    it("cache le plan à un membre d'une autre collectivité", async () => {
+    it("cache la collectivité à un membre d'une autre collectivité", async () => {
       await expect(
         callerFor(outsiderUser).enqueueClassification({
-          planId: planWithFichesId,
+          collectiviteId,
           enjeu: 'ges',
         })
       ).rejects.toThrowError(/n'existe pas/);
     });
 
     it('enfile un job et rend son identifiant', async () => {
-      const { jobId } = await callerFor(editionUser).enqueueClassification({
-        planId: planWithFichesId,
-        enjeu: 'ges',
-      });
+      cleanupEnqueuedJobs();
 
-      onTestFinished(async () => {
-        await db.db
-          .delete(classificationVoletsJobTable)
-          .where(eq(classificationVoletsJobTable.id, jobId));
+      const { jobId } = await callerFor(editionUser).enqueueClassification({
+        collectiviteId,
+        enjeu: 'ges',
       });
 
       expect(jobId).toMatch(
@@ -180,21 +161,17 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       );
     });
 
-    it('refuse un second job tant que le premier est en vol', async () => {
-      const { jobId } = await callerFor(editionUser).enqueueClassification({
-        planId: planWithFichesId,
-        enjeu: 'ges',
-      });
+    it('refuse un second job tant que le premier est in-flight', async () => {
+      cleanupEnqueuedJobs();
 
-      onTestFinished(async () => {
-        await db.db
-          .delete(classificationVoletsJobTable)
-          .where(eq(classificationVoletsJobTable.id, jobId));
+      await callerFor(editionUser).enqueueClassification({
+        collectiviteId,
+        enjeu: 'ges',
       });
 
       await expect(
         callerFor(editionUser).enqueueClassification({
-          planId: planWithFichesId,
+          collectiviteId,
           enjeu: 'ges',
         })
       ).rejects.toThrowError(/déjà en cours/);
@@ -210,7 +187,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
 
       expect(status).toEqual({
         id: jobId,
-        planId: emptyPlanId,
+        collectiviteId,
         enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft: {
@@ -221,6 +198,8 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
 
     it('rend la progression, sans classement, tant que le job tourne', async () => {
+      cleanupEnqueuedJobs();
+
       const jobId = await insertJob({
         status: ClassificationVoletsJobStatusEnum.RUNNING,
       });
@@ -230,7 +209,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
 
       expect(status).toEqual({
         id: jobId,
-        planId: emptyPlanId,
+        collectiviteId,
         enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.RUNNING,
         processedBatches: 2,
@@ -254,27 +233,17 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
   });
 
-  describe('bail des jobs en vol', () => {
-    const cleanupJobsOfPlan = (planId: number): void => {
-      onTestFinished(async () => {
-        await db.db
-          .delete(classificationVoletsJobTable)
-          .where(eq(classificationVoletsJobTable.planId, planId));
-      });
-    };
+  describe('expiration des jobs in-flight', () => {
+    it("remplace un job in-flight qui n'a plus progressé depuis plus longtemps que IN_FLIGHT_LEASE_MS", async () => {
+      cleanupEnqueuedJobs();
 
-    it("reprend un plan dont le job en vol n'a plus progressé depuis le bail", async () => {
-      cleanupJobsOfPlan(planWithFichesId);
       const staleJobId = await insertJob({
         status: ClassificationVoletsJobStatusEnum.RUNNING,
-        planId: planWithFichesId,
-        modifiedAt: new Date(
-          Date.now() - IN_FLIGHT_LEASE_MS - 60_000
-        ).toISOString(),
+        modifiedAt: beyondLease(),
       });
 
       const { jobId } = await callerFor(editionUser).enqueueClassification({
-        planId: planWithFichesId,
+        collectiviteId,
         enjeu: 'ges',
       });
 
@@ -298,19 +267,17 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       });
     });
 
-    it('refuse un plan dont le job en vol a progressé dans le bail', async () => {
-      cleanupJobsOfPlan(planWithFichesId);
+    it('refuse un nouveau job tant que le précédent a progressé récemment', async () => {
+      cleanupEnqueuedJobs();
+
       await insertJob({
         status: ClassificationVoletsJobStatusEnum.RUNNING,
-        planId: planWithFichesId,
-        modifiedAt: new Date(
-          Date.now() - IN_FLIGHT_LEASE_MS + 60_000
-        ).toISOString(),
+        modifiedAt: withinLease(),
       });
 
       await expect(
         callerFor(editionUser).enqueueClassification({
-          planId: planWithFichesId,
+          collectiviteId,
           enjeu: 'ges',
         })
       ).rejects.toThrowError(/déjà en cours/);

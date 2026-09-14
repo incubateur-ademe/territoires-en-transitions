@@ -34,7 +34,7 @@ const classificationDraftSchema = z.object({
 
 const jobIdentity = {
   id: z.string().uuid(),
-  planId: z.number().int().positive(),
+  collectiviteId: z.number().int().positive(),
   enjeu: z.enum(enjeuEnumValues),
 };
 

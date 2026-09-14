@@ -30,10 +30,14 @@ export const IN_FLIGHT_LEASE_MARGIN_MS = 5 * 60 * 1000;
 export const IN_FLIGHT_LEASE_MS =
   CLASSIFICATION_DEADLINE_MS + IN_FLIGHT_LEASE_MARGIN_MS;
 
+export const FICHES_TO_CLASSIFY_FILTERS = {
+  noPlan: false,
+  restreint: false,
+} as const;
+
 export type ClassificationVoletsJob = {
   id: string;
   collectiviteId: number;
-  planId: number;
   enjeu: Enjeu;
   createdBy: string;
   status: ClassificationVoletsJobStatus;

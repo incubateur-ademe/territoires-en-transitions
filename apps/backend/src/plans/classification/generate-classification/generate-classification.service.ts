@@ -14,6 +14,7 @@ import { FicheActionVoletGesRepository } from '../fiche-action-volet-ges.reposit
 import {
   CLASSIFICATION_DEADLINE_MS,
   ClassificationVoletsJobStatusEnum,
+  FICHES_TO_CLASSIFY_FILTERS,
 } from '../models/classification-volets-job';
 import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
 import {
@@ -79,7 +80,8 @@ export class GenerateClassificationService {
       await this.listFichesService.getFichesActionResumes(
         {
           collectiviteId: job.collectiviteId,
-          filters: { planActionIds: [job.planId], restreint: false },
+          filters: FICHES_TO_CLASSIFY_FILTERS,
+          queryOptions: { limit: 'all' },
         },
         { user: buildRequesterUser(job.createdBy) }
       );
@@ -89,7 +91,10 @@ export class GenerateClassificationService {
     );
 
     if (ownedFiches.length === 0) {
-      return this.interrupt(jobId, 'Aucune fiche à classer dans ce plan');
+      return this.interrupt(
+        jobId,
+        'Aucune fiche à classer dans cette collectivité'
+      );
     }
 
     const totalBatches = Math.ceil(ownedFiches.length / FICHES_PER_BATCH);

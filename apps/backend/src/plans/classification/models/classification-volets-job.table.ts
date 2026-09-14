@@ -1,6 +1,5 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { enjeuEnumValues } from '@tet/domain/shared';
-import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
@@ -35,9 +34,6 @@ export const classificationVoletsJobTable = pgTable(
     collectiviteId: integer('collectivite_id')
       .notNull()
       .references(() => collectiviteTable.id, { onDelete: 'cascade' }),
-    planId: integer('plan_id')
-      .notNull()
-      .references(() => axeTable.id, { onDelete: 'cascade' }),
     createdBy: uuid('created_by')
       .notNull()
       .references(() => authUsersTable.id, { onDelete: 'cascade' }),
@@ -55,7 +51,7 @@ export const classificationVoletsJobTable = pgTable(
   },
   (table) => [
     uniqueIndex('classification_volets_job_in_flight_unique')
-      .on(table.planId, table.enjeu)
+      .on(table.collectiviteId, table.enjeu)
       .where(inFlightStatusPredicate),
   ]
 );

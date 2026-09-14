@@ -9,7 +9,7 @@ import {
 import { toClassificationStatus } from './get-classification-status.adapter';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
-const planId = 42;
+const collectiviteId = 3;
 
 const draft: ClassificationDraft = {
   fiches: [],
@@ -26,8 +26,7 @@ const toProgress = ({
   error?: string | null;
 }): ClassificationProgress => ({
   id: jobId,
-  collectiviteId: 3,
-  planId,
+  collectiviteId,
   enjeu: 'ges',
   status,
   processedBatches: 2,
@@ -46,7 +45,7 @@ describe('toClassificationStatus', () => {
       success: true,
       data: {
         id: jobId,
-        planId,
+        collectiviteId,
         enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.PENDING,
         processedBatches: 2,
@@ -64,7 +63,7 @@ describe('toClassificationStatus', () => {
       success: true,
       data: {
         id: jobId,
-        planId,
+        collectiviteId,
         enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft,
@@ -76,7 +75,7 @@ describe('toClassificationStatus', () => {
     const result = toClassificationStatus(
       toProgress({
         status: ClassificationVoletsJobStatusEnum.FAILED,
-        error: 'Aucune fiche à classer dans ce plan',
+        error: 'Aucune fiche à classer dans cette collectivité',
       })
     );
 
@@ -84,10 +83,10 @@ describe('toClassificationStatus', () => {
       success: true,
       data: {
         id: jobId,
-        planId,
+        collectiviteId,
         enjeu: 'ges',
         status: ClassificationVoletsJobStatusEnum.FAILED,
-        error: 'Aucune fiche à classer dans ce plan',
+        error: 'Aucune fiche à classer dans cette collectivité',
       },
     });
   });

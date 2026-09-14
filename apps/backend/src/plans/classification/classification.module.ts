@@ -2,7 +2,6 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
-import { AxeModule } from '../axes/axe.module';
 import { FichesModule } from '../fiches/fiches.module';
 import { ClassificationVoletsJobRepository } from './classification-volets-job.repository';
 import {
@@ -20,7 +19,6 @@ import { ClassificationRouter } from './classification.router';
   imports: [
     LlmModule,
     TransactionModule,
-    AxeModule,
     FichesModule,
     BullModule.registerQueue({
       name: CLASSIFICATION_VOLETS_QUEUE_NAME,
