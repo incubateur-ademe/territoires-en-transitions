@@ -106,7 +106,7 @@ demande_creee AS (
 )
 INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, fichier_ref, valide_le, depose_par, depose_le, envoye_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
-       'prefet_region', 'avis-dreal-bfc-nevers.pdf', now() - interval '10 days',
+       'prefet_region', encode(sha256('avis-dreal-bfc-nevers.pdf'::bytea), 'hex'), now() - interval '10 days',
        '11111111-dea1-4bfc-a000-000000000001', now() - interval '12 days', now() - interval '10 days'
 FROM demande_creee;
 

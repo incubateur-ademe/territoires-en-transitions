@@ -56,7 +56,7 @@ export async function uploadCreateTestDocument({
 
 export type TestDocument = typeof bibliothequeFichierTable.$inferSelect;
 
-export const toLegacyDocumentHash = (hash: string): LegacyDocumentHash =>
+const toLegacyDocumentHash = (hash: string): LegacyDocumentHash =>
   legacyDocumentHashSchema.parse(hash);
 
 export const buildRandomDocumentHash = (): DocumentHash =>

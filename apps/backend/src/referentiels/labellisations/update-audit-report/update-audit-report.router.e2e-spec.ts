@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
@@ -86,13 +86,13 @@ describe('UpdateAuditReportRouter', () => {
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(`old-${audit.id}`),
+          hash: buildRandomDocumentHash(),
           filename: 'rapport.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(`new-${audit.id}`),
+          hash: buildRandomDocumentHash(),
           filename: 'rapport-v2.pdf',
           confidentiel: false,
         },
@@ -362,7 +362,7 @@ describe('UpdateAuditReportRouter', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId: otherCollectivite.id,
-        hash: toLegacyDocumentHash(`other-${preuve.id}`),
+        hash: buildRandomDocumentHash(),
         filename: 'autre.pdf',
         confidentiel: false,
       })

@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
@@ -26,7 +26,6 @@ import {
   type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
 import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
@@ -147,7 +146,7 @@ export async function addTestBibliothequeFichier(
       collectiviteId,
       // La bibliothèque est dédupliquée par (collectivite, hash) : un hash
       // aléatoire garantit une nouvelle entrée à chaque appel.
-      hash: toLegacyDocumentHash(randomUUID().replaceAll('-', '')),
+      hash: buildRandomDocumentHash(),
       filename,
       confidentiel: false,
     })

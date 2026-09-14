@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
@@ -15,7 +15,6 @@ import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { randomUUID } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 
@@ -48,7 +47,7 @@ describe('AddPreuveRouter', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId,
-        hash: toLegacyDocumentHash(randomUUID().replaceAll('-', '')),
+        hash: buildRandomDocumentHash(),
         filename: 'preuve-test.pdf',
         confidentiel: false,
       })
