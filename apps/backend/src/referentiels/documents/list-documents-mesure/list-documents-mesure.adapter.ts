@@ -1,18 +1,53 @@
+import { DocumentSupport, Lien, StoredFile } from '@tet/domain/collectivites';
 import { groupBy } from 'es-toolkit';
 
-type SupportRow = {
+type DocumentRow = {
   id: number | null;
-  fichier: unknown;
-  lien: unknown;
+  fichierId: number | null;
+  fichier: StoredFile | null;
+  lien: Lien | null;
+  bibliothequeFilename: string | null;
 };
 
-type AttenduRow = SupportRow & {
+type AttenduRow = DocumentRow & {
   action: { actionId: string };
   preuveReglementaire: { id: string };
 };
 
-function hasSupport({ id, fichier, lien }: SupportRow): boolean {
-  return id !== null && (fichier !== null || lien !== null);
+type AssembledDocument<Row extends DocumentRow> = Omit<
+  Row,
+  'id' | 'fichierId' | 'fichier' | 'lien' | 'bibliothequeFilename'
+> & { id: number } & Exclude<DocumentSupport, { type: 'nonRenseigne' }>;
+
+export function toDocuments<Row extends DocumentRow>(
+  rows: Row[]
+): AssembledDocument<Row>[] {
+  return rows.flatMap((row): AssembledDocument<Row>[] => {
+    const { id, fichierId, fichier, lien, bibliothequeFilename, ...rest } = row;
+    if (id === null) {
+      return [];
+    }
+    if (fichierId === null) {
+      if (!lien) {
+        return [];
+      }
+      return [{ ...rest, id, type: 'lien' as const, lien }];
+    }
+    if (fichier) {
+      return [{ ...rest, id, type: 'fichier' as const, fichier }];
+    }
+    if (bibliothequeFilename) {
+      return [
+        {
+          ...rest,
+          id,
+          type: 'fichierManquant' as const,
+          filename: bibliothequeFilename,
+        },
+      ];
+    }
+    return [];
+  });
 }
 
 export function toAttendus<Row extends AttenduRow>(rows: Row[]) {
@@ -25,6 +60,6 @@ export function toAttendus<Row extends AttenduRow>(rows: Row[]) {
   ).map((depots) => ({
     preuveReglementaire: depots[0].preuveReglementaire,
     action: depots[0].action,
-    documents: depots.filter(hasSupport),
+    documents: toDocuments(depots),
   }));
 }

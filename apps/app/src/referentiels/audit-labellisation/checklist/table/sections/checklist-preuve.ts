@@ -1,9 +1,12 @@
 import { EditFichierModalProps } from '@/app/referentiels/preuves/Bibliotheque/edit-fichier.modal';
-import { Fichier } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { StoredFile } from '@tet/domain/collectivites';
 import { ObjetPreuve } from '@tet/domain/referentiels';
 
-export type ChecklistPreuve = Omit<EditFichierModalProps['preuve'], 'fichier'> & {
+export type ChecklistPreuve = Omit<
+  EditFichierModalProps['preuve'],
+  'fichier'
+> & {
   id: number;
   objet: ObjetPreuve | null;
-  fichier: Pick<Fichier, 'id' | 'hash' | 'filename' | 'confidentiel'> | null;
+  fichier: Pick<StoredFile, 'id' | 'hash' | 'filename' | 'confidentiel'> | null;
 };

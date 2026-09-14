@@ -1,4 +1,4 @@
-import { storedDocumentHashSchema } from '@tet/domain/collectivites';
+import { storedFileSchema } from '@tet/domain/collectivites';
 import {
   etoileAsStringEnumSchema,
   referentielIdEnumSchema,
@@ -6,21 +6,8 @@ import {
 } from '@tet/domain/referentiels';
 import z from 'zod';
 
-const fichierSchema = z.object({
-  id: z.number(),
-  collectiviteId: z.number(),
-  hash: storedDocumentHashSchema,
-  filename: z.string(),
-  confidentiel: z.boolean().nullable(),
-  bucketId: z.string(),
-  filesize: z
-    .number()
-    .nullable()
-    .transform((filesize) => filesize ?? undefined),
-});
-
 const supportSchema = z.union([
-  z.object({ fichier: fichierSchema, lien: z.null() }),
+  z.object({ fichier: storedFileSchema, lien: z.null() }),
   z.object({ fichier: z.null(), lien: z.null() }),
 ]);
 
@@ -95,4 +82,6 @@ export const listDocumentsReferentielOutputSchema = z.object({
   rapport: z.array(documentRapportSchema),
 });
 
-export type ListDocumentsReferentielOutput = z.infer<typeof listDocumentsReferentielOutputSchema>;
+export type ListDocumentsReferentielOutput = z.infer<
+  typeof listDocumentsReferentielOutputSchema
+>;

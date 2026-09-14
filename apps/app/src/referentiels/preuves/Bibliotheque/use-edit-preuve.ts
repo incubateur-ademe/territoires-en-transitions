@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { getDocumentFichier } from './to-document-collectivite.utils';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
+import { Lien } from '@tet/domain/collectivites';
 import { EditHandlers, Preuve } from './types';
 import { useEditFilenameState, useEditState } from './use-edit-state';
 
@@ -24,7 +26,8 @@ export const useEditPreuve: EditPreuve = (preuve) => {
     isPending: isUpdateFilenameLoading,
     isError: isUpdateFilenameError,
   } = useUpdateBibliothequeFichier();
-  const { commentaire, fichier } = preuve;
+  const { commentaire } = preuve;
+  const fichier = getDocumentFichier(preuve);
   const editComment = useEditState({
     initialValue: commentaire,
     onUpdate: (updatedComment) =>
@@ -33,12 +36,12 @@ export const useEditPreuve: EditPreuve = (preuve) => {
   const editFilename = useEditFilenameState({
     initialValue: fichier?.filename,
     onUpdate: (updatedFilename) => {
-      if (!preuve.fichier) {
+      if (!fichier) {
         return;
       }
       updateBibliothequeFichier({
         collectiviteId: preuve.collectiviteId,
-        hash: preuve.fichier.hash,
+        hash: fichier.hash,
         filename: updatedFilename,
       });
     },
@@ -88,18 +91,18 @@ export const useRemovePreuve = () => {
       }
 
       queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey(
-          {}
-        ),
+        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({}),
       });
 
       const demande = 'demande' in variables ? variables.demande : null;
       if (demande) {
         queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey({
-              demandeId: demande.id,
-            }),
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey(
+              {
+                demandeId: demande.id,
+              }
+            ),
         });
 
         queryClient.invalidateQueries({
@@ -120,16 +123,15 @@ export const useUpdatePreuveLien = () => {
   const trpc = useTRPC();
   return useMutation({
     mutationFn: async (
-      preuve: Pick<Preuve, 'id' | 'lien' | 'collectiviteId' | 'preuveType'>
-    ) => {
-      const { id, lien } = preuve;
-      if (!lien) return;
-      return trpcClient.collectivites.documents.updatePreuve.mutate({
-        preuveId: id,
+      preuve: Pick<Preuve, 'id' | 'collectiviteId' | 'preuveType'> & {
+        lien: Lien;
+      }
+    ) =>
+      trpcClient.collectivites.documents.updatePreuve.mutate({
+        preuveId: preuve.id,
         preuveType: preuve.preuveType,
-        lien,
-      });
-    },
+        lien: preuve.lien,
+      }),
 
     onSuccess: (_data, variables) => {
       invalidateQueries({

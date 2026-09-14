@@ -1,4 +1,6 @@
+import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
 import { PreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { Lien, StoredFile } from '@tet/domain/collectivites';
 
 export type AuditReportInput = Pick<
   PreuveAudit,
@@ -11,28 +13,25 @@ export type AuditReportInput = Pick<
   | 'audit'
   | 'demande'
 > & {
-  fichier: PreuveAudit['fichier'];
-  lien: PreuveAudit['lien'];
+  fichier: (Omit<StoredFile, 'filesize'> & { filesize?: number }) | null;
+  lien: Lien | null;
 };
 
-export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
-  const base = {
+export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => ({
+  ...toDocumentCollectivite({
     id: report.id,
     collectiviteId: report.collectiviteId,
     commentaire: report.commentaire,
     modifiedAt: report.modifiedAt,
     modifiedBy: report.modifiedBy,
     modifiedByNom: report.modifiedByNom,
-    preuveType: 'audit' as const,
-    audit: report.audit,
-    demande: report.demande,
-  };
-
-  if (report.fichier) {
-    return { ...base, fichier: report.fichier, lien: null };
-  }
-  if (report.lien) {
-    return { ...base, fichier: null, lien: report.lien };
-  }
-  return { ...base, fichier: null, lien: null };
-};
+    fichier: report.fichier && {
+      ...report.fichier,
+      filesize: report.fichier.filesize ?? null,
+    },
+    lien: report.lien,
+  }),
+  preuveType: 'audit',
+  audit: report.audit,
+  demande: report.demande,
+});

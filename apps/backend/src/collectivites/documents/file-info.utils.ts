@@ -1,6 +1,6 @@
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { BibliothequeFichier } from '@tet/domain/collectivites';
+import { StoredFile } from '@tet/domain/collectivites';
 import { and, eq, sql } from 'drizzle-orm';
 import { collectiviteBucketTable } from '../shared/models/collectivite-bucket.table';
 import { bibliothequeFichierTable } from './models/bibliotheque-fichier.table';
@@ -40,13 +40,7 @@ export function buildFichierSubquery(db: DatabaseService['db'] | Transaction) {
 }
 
 export function buildFileInfoSql(fichier: FichierSubquery) {
-  return sql<
-    | (BibliothequeFichier & {
-        bucketId: string;
-        filesize: number | null;
-      })
-    | null
-  >`
+  return sql<StoredFile | null>`
       CASE WHEN ${fichier.id} IS NULL THEN NULL
       ELSE json_build_object(
         'id', ${fichier.id},
