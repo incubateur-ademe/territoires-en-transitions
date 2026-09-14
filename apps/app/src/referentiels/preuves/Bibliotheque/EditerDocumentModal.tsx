@@ -1,7 +1,7 @@
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
-import { BibliothequeFichier, PreuveType } from './types';
+import { Fichier, PreuveType } from './types';
 import { useUpdateBibliothequeFichier } from './useEditPreuve';
 import { useEditFilenameState } from './useEditState';
 
@@ -10,7 +10,7 @@ export type EditerDocumentProps = {
     collectiviteId: number;
     preuveType: PreuveType;
     fichier:
-      | (Pick<BibliothequeFichier, 'filename' | 'hash'> & {
+      | (Pick<Fichier, 'filename' | 'hash'> & {
           confidentiel: boolean | null;
         })
       | null;

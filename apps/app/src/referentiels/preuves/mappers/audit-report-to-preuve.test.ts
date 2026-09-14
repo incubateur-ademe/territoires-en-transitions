@@ -63,9 +63,10 @@ describe('auditReportToPreuve', () => {
     expect(preuve.demande).toEqual(demande);
   });
 
-  it('cas fichier : conserve le fichier, force lien=null', () => {
+  it('cas fichier : rend un document de type fichier, sans clé lien', () => {
     const fichier = {
       id: 71,
+      collectiviteId: 1,
       bucketId: 'b1',
       filename: 'rapport.pdf',
       filesize: 1024,
@@ -73,26 +74,28 @@ describe('auditReportToPreuve', () => {
       confidentiel: false,
     };
     const preuve = auditReportToPreuve({ ...baseInput, fichier });
-    expect(preuve.fichier).toEqual(fichier);
-    expect(preuve.lien).toBeNull();
+    expect(preuve).toMatchObject({ type: 'fichier', fichier });
+    expect('lien' in preuve).toBe(false);
   });
 
-  it('cas lien : conserve le lien, force fichier=null', () => {
+  it('cas lien : rend un document de type lien', () => {
     const lien = { url: 'https://example.com', titre: 'Doc externe' };
     const preuve = auditReportToPreuve({ ...baseInput, lien });
-    expect(preuve.fichier).toBeNull();
-    expect(preuve.lien).toEqual(lien);
+    expect(preuve).toMatchObject({ type: 'lien', lien });
+    expect('fichier' in preuve).toBe(false);
   });
 
-  it('cas non renseigné : fichier=null et lien=null', () => {
+  it('cas non renseigné : rend un document sans fichier ni lien', () => {
     const preuve = auditReportToPreuve(baseInput);
-    expect(preuve.fichier).toBeNull();
-    expect(preuve.lien).toBeNull();
+    expect(preuve).toMatchObject({ type: 'nonRenseigne' });
+    expect('fichier' in preuve).toBe(false);
+    expect('lien' in preuve).toBe(false);
   });
 
   it('priorise fichier sur lien si les deux sont fournis (input pathologique)', () => {
     const fichier = {
       id: 71,
+      collectiviteId: 1,
       bucketId: 'b1',
       filename: 'a.pdf',
       filesize: 1,
@@ -101,7 +104,7 @@ describe('auditReportToPreuve', () => {
     };
     const lien = { url: 'https://example.com', titre: 'X' };
     const preuve = auditReportToPreuve({ ...baseInput, fichier, lien });
-    expect(preuve.fichier).toEqual(fichier);
-    expect(preuve.lien).toBeNull();
+    expect(preuve).toMatchObject({ type: 'fichier', fichier });
+    expect('lien' in preuve).toBe(false);
   });
 });

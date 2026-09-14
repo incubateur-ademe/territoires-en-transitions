@@ -11,15 +11,14 @@ export const useOpenPreuve = ({
   });
 
   return (preuve: Preuve): void => {
-    const { fichier, lien } = preuve;
-    if (fichier) {
+    if (preuve.type === 'fichier') {
       if (!isPending) {
-        downloadDocument(fichier.id);
+        downloadDocument(preuve.fichier.id);
       }
       return;
     }
-    if (lien) {
-      window.open(lien.url, '_blank', 'noopener,noreferrer');
+    if (preuve.type === 'lien') {
+      window.open(preuve.lien.url, '_blank', 'noopener,noreferrer');
     }
   };
 };

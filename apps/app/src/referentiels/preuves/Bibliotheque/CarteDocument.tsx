@@ -1,3 +1,4 @@
+import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import {
@@ -30,7 +31,37 @@ import { useOpenPreuve } from './use-open-preuve';
 import { Preuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
+import { getPreuveFichier } from './to-document-collectivite.utils';
 import { getAuthorAndDate, getFormattedTitle } from './utils';
+
+const getOuvertureTitle = (preuve: DocumentCollectivite): string =>
+  preuve.type === 'lien' ? appLabels.ouvrirLien : appLabels.telechargerFichier;
+
+const TitreDocument = ({
+  document,
+  onOuvrir,
+}: {
+  document: Preuve;
+  onOuvrir: () => void;
+}) => {
+  if (document.type === 'fichierManquant') {
+    return (
+      <span className="text-grey-7 text-base font-bold" data-test="name">
+        {getFormattedTitle(document)}
+      </span>
+    );
+  }
+  return (
+    <span
+      className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
+      data-test="name"
+      title={getOuvertureTitle(document)}
+      onClick={onOuvrir}
+    >
+      {getFormattedTitle(document)}
+    </span>
+  );
+};
 
 const EditPreuveModal = ({
   isOpen,
@@ -40,16 +71,21 @@ const EditPreuveModal = ({
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   preuve: Preuve;
-}) =>
-  preuve.fichier ? (
+}) => {
+  const fichier = getPreuveFichier(preuve);
+  if (!fichier) {
+    return (
+      <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
+    );
+  }
+  return (
     <EditerDocumentModal
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      preuve={preuve}
+      preuve={{ ...preuve, fichier }}
     />
-  ) : (
-    <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
   );
+};
 
 const ReplaceAuditReportModal = ({
   isOpen,
@@ -93,9 +129,8 @@ const CarteDocument = ({
     commentaire,
     modifiedAt: dateCreation,
     modifiedByNom: auteur,
-    fichier,
-    lien,
   } = document;
+  const fichier = getPreuveFichier(document);
   const isDocumentDeMesure =
     document.preuveType === 'reglementaire' ||
     document.preuveType === 'complementaire';
@@ -123,7 +158,7 @@ const CarteDocument = ({
   const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
 
-  if (!fichier && !lien) return null;
+  if (document.type === 'nonRenseigne') return null;
 
   return (
     <>
@@ -131,6 +166,17 @@ const CarteDocument = ({
         className={classNames('relative group max-w-screen-md')}
         data-test="carte-doc"
       >
+        {document.type === 'fichierManquant' && (
+          <Tooltip label={appLabels.fichierIndisponibleInfo}>
+            <div className="absolute -top-3 left-5">
+              <Notification
+                icon="error-warning-fill"
+                size="xs"
+                classname="w-6 h-6"
+              />
+            </div>
+          </Tooltip>
+        )}
         {fichier?.confidentiel && (
           <Tooltip label={appLabels.fichierModePrive}>
             <div
@@ -161,16 +207,10 @@ const CarteDocument = ({
         )}
 
         <Card className="p-4 h-full gap-1">
-          <span
-            className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-            data-test="name"
-            title={
-              fichier ? appLabels.telechargerFichier : appLabels.ouvrirLien
-            }
-            onClick={() => openPreuve(document)}
-          >
-            {getFormattedTitle(document)}
-          </span>
+          <TitreDocument
+            document={document}
+            onOuvrir={() => openPreuve(document)}
+          />
 
           {displayIdentifier && action && (
             <span className="text-grey-6 leading-6 flex gap-2">

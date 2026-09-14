@@ -13,6 +13,7 @@ import {
 } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
+import { uniqBy } from 'es-toolkit';
 import { ActionListItem } from './use-list-actions';
 
 export type TDownloadDocsProps = {
@@ -87,12 +88,11 @@ const useDownloadDocs = (action: ActionListItem) => {
 
   const preuves = flattenMesureDocuments(documents);
 
-  const fichiers: Fichier[] = Object.values(
-    preuves.reduce((filenameByHash, { fichier }) => {
-      return fichier
-        ? { ...filenameByHash, [fichier.hash]: fichier }
-        : filenameByHash;
-    }, {} as Record<string, Fichier>)
+  const fichiers: Fichier[] = uniqBy(
+    preuves.flatMap((preuve) =>
+      preuve.type === 'fichier' ? [preuve.fichier] : []
+    ),
+    ({ hash }) => hash
   );
 
   const filename = `${referentiel}_${identifiant}_${nom}.zip`;

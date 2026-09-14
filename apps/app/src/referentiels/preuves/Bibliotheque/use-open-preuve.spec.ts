@@ -32,9 +32,7 @@ describe('useOpenPreuve', () => {
 
     openPreuve.current(preuveReglementaireFichier);
 
-    expect(downloadDocument).toHaveBeenCalledWith(
-      preuveReglementaireFichier.fichier?.id
-    );
+    expect(downloadDocument).toHaveBeenCalledWith(21);
   });
 
   it('ignore un clic tant que le téléchargement précédent est en cours', () => {
@@ -53,7 +51,7 @@ describe('useOpenPreuve', () => {
     openPreuve.current(preuveReglementaireLien);
 
     expect(open).toHaveBeenCalledWith(
-      preuveReglementaireLien.lien?.url,
+      'http://yolo.dodo',
       '_blank',
       'noopener,noreferrer'
     );
