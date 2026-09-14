@@ -18,18 +18,31 @@ export const Title = ({
 }: {
   document: Preuve;
   onOpen: () => void;
-}): JSX.Element => (
-  <span
-    className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-    data-test="name"
-    title={
-      document.fichier ? appLabels.telechargerFichier : appLabels.ouvrirLien
-    }
-    onClick={onOpen}
-  >
-    {getFormattedTitle(document)}
-  </span>
-);
+}): JSX.Element => {
+  if (document.type === 'fichierManquant') {
+    return (
+      <span className="text-grey-7 text-base font-bold" data-test="name">
+        {getFormattedTitle(document)}
+      </span>
+    );
+  }
+
+  const openLabel =
+    document.type === 'lien'
+      ? appLabels.ouvrirLien
+      : appLabels.telechargerFichier;
+
+  return (
+    <span
+      className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
+      data-test="name"
+      title={openLabel}
+      onClick={onOpen}
+    >
+      {getFormattedTitle(document)}
+    </span>
+  );
+};
 
 export const Identifier = ({ value }: { value: string }): JSX.Element => (
   <span className="text-grey-6 leading-6 flex gap-2">{value}</span>

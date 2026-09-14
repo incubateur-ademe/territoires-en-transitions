@@ -24,6 +24,9 @@ export const legacyDocumentHashSchema = z
 
 export type LegacyDocumentHash = z.infer<typeof legacyDocumentHashSchema>;
 
+export const toLegacyDocumentHash = (hash: string): LegacyDocumentHash =>
+  legacyDocumentHashSchema.parse(hash);
+
 export const storedDocumentHashSchema = z.union([
   documentHashSchema,
   legacyDocumentHashSchema,

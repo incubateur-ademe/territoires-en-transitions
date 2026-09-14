@@ -1,3 +1,8 @@
+import { appLabels } from '@/app/labels/catalog';
+import {
+  toDocumentHash,
+  toLegacyDocumentHash,
+} from '@tet/domain/collectivites';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DocumentCard } from '.';
@@ -54,14 +59,35 @@ const mutationActions = (
   </DocumentCard.Actions>
 );
 
+const documentFichierManquant: DocumentReglementaire = {
+  preuveType: 'reglementaire',
+  id: 7,
+  collectiviteId: 1,
+  type: 'fichierManquant',
+  filename: 'rapport-perdu.pdf',
+  commentaire: '',
+  modifiedAt: '2022-09-06T16:43:41.423515+00:00',
+  modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+  modifiedByNom: 'Yolo Dodo',
+  action: { actionId: 'eci_1.1.3', identifiant: '1.1.3' },
+  preuveReglementaire: {
+    id: 'etude_vulnerabilite',
+    nom: 'Etude de vulnerabilite',
+    description: '',
+  },
+};
+
 const fichierConfidentiel: DocumentReglementaire = {
   preuveType: 'reglementaire',
   id: 2,
   collectiviteId: 1,
-  lien: null,
+  type: 'fichier',
   fichier: {
     id: 21,
-    hash: 'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9',
+    collectiviteId: 1,
+    hash: toDocumentHash(
+      'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'
+    ),
     filename: 'preuve_input.txt',
     filesize: 34,
     bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
@@ -86,15 +112,16 @@ const documentAudit: PreuveAudit = {
   preuveType: 'audit',
   id: 5,
   collectiviteId: 1,
+  type: 'fichier',
   fichier: {
     id: 22,
-    hash: 'a1b2c3',
+    collectiviteId: 1,
+    hash: toLegacyDocumentHash('a1b2c3'),
     filename: 'rapport-audit.pdf',
     filesize: 1024,
     bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
     confidentiel: false,
   },
-  lien: null,
   commentaire: '',
   modifiedAt: '2022-09-06T16:43:41.423515+00:00',
   modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
@@ -116,15 +143,16 @@ const documentRapport: PreuveRapport = {
   preuveType: 'rapport',
   id: 6,
   collectiviteId: 1,
+  type: 'fichier',
   fichier: {
     id: 23,
-    hash: 'd4e5f6',
+    collectiviteId: 1,
+    hash: toLegacyDocumentHash('d4e5f6'),
     filename: 'visite-annuelle.pdf',
     filesize: 2048,
     bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
     confidentiel: false,
   },
-  lien: null,
   commentaire: '',
   modifiedAt: '2022-09-06T16:43:41.423515+00:00',
   modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
@@ -412,6 +440,39 @@ describe('DocumentCard', () => {
     expect(onReplace).toHaveBeenCalledWith(FICHIER_CHOISI_ID);
   });
 
+  test('un fichier introuvable affiche son nom sans lien de téléchargement', () => {
+    const { container } = render(
+      <DocumentCard document={documentFichierManquant} />
+    );
+
+    const titre = container.querySelector('[data-test="name"]');
+    expect(titre?.textContent).toContain('rapport-perdu.pdf');
+    expect(titre?.getAttribute('title')).toBeNull();
+  });
+
+  test('un fichier introuvable est signalé par un badge', () => {
+    const { container } = render(
+      <DocumentCard document={documentFichierManquant} />
+    );
+
+    expect(container.querySelector('.ri-error-warning-fill')).toBeTruthy();
+  });
+
+  test("un fichier introuvable n'offre pas l'édition", () => {
+    render(
+      <DocumentCard document={documentFichierManquant}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    expect(
+      screen.queryByRole('button', { name: appLabels.editerDocument })
+    ).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: appLabels.supprimer })
+    ).toBeTruthy();
+  });
+
   test('refuse un enfant qui n est pas les actions de la carte', () => {
     expect(() =>
       render(
@@ -559,7 +620,7 @@ describe('DocumentCard', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le document' }));
 
-    expect(screen.getByText('Editer le document')).toBeTruthy();
+    expect(screen.getByText(appLabels.editerDocument)).toBeTruthy();
   });
 
   test('un clic sur editer ouvre la modale de lien pour un lien', () => {
@@ -571,7 +632,7 @@ describe('DocumentCard', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le lien' }));
 
-    expect(screen.getByText('Editer le lien')).toBeTruthy();
+    expect(screen.getByText(appLabels.editerLien)).toBeTruthy();
   });
 
   test("un clic sur remplacer ouvre la modale de remplacement d'un rapport d'audit", () => {

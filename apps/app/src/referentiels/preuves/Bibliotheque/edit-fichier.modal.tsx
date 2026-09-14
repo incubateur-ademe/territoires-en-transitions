@@ -1,7 +1,9 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
-import { BibliothequeFichier, PreuveType } from './types';
+import { StoredFile } from '@tet/domain/collectivites';
+import { PreuveType } from './types';
 import { useUpdateBibliothequeFichier } from './use-edit-preuve';
 import { useEditFilenameState } from './use-edit-state';
 
@@ -10,7 +12,7 @@ export type EditFichierModalProps = {
     collectiviteId: number;
     preuveType: PreuveType;
     fichier:
-      | (Pick<BibliothequeFichier, 'filename' | 'hash'> & {
+      | (Pick<StoredFile, 'filename' | 'hash'> & {
           confidentiel: boolean | null;
         })
       | null;
@@ -19,9 +21,6 @@ export type EditFichierModalProps = {
   setIsOpen: (opened: boolean) => void;
 };
 
-/**
- * Affiche la modale d'édition d'un fichier
- */
 export const EditFichierModal = (props: EditFichierModalProps) => {
   const { preuve, isOpen, setIsOpen } = props;
   const { fichier } = preuve;
@@ -60,7 +59,7 @@ export const EditFichierModal = (props: EditFichierModalProps) => {
       <Modal
         dataTest="edit-doc"
         openState={{ isOpen, setIsOpen }}
-        title="Editer le document"
+        title={appLabels.editerDocument}
         render={() => (
           <>
             <Field title="Nom du document">

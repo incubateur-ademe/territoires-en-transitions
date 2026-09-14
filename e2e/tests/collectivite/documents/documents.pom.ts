@@ -28,7 +28,7 @@ export class DocumentsPom {
     this.deleteButton = page.getByTitle('Supprimer');
     this.editButton = page.getByTitle('Éditer le document');
     this.editModalTitle = page.getByRole('heading', {
-      name: 'Editer le document',
+      name: 'Éditer le document',
     });
     this.editModalPrivateCheckbox = page.getByRole('checkbox', {
       name: 'Fichier en mode privé',

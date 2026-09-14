@@ -11,9 +11,13 @@ import { DocumentCardMenu } from './menu';
 
 export type ActionVisibility = { visibleWhen?: boolean };
 
-export const Edit = (_props: ActionVisibility): JSX.Element => {
+export const Edit = (_props: ActionVisibility): JSX.Element | null => {
   const { document, openedModal, setOpenedModal } = useDocumentCard();
   const isOpen = openedModal === 'edit';
+
+  if (document.type === 'fichierManquant' || document.type === 'nonRenseigne') {
+    return null;
+  }
 
   return (
     <VisibleWhen condition={isOpen}>
@@ -86,11 +90,14 @@ export const Actions = ({
   children: ReactNode;
 }): JSX.Element | null => {
   const { document, editComment, setOpenedModal } = useDocumentCard();
+  const isFichierManquant = document.type === 'fichierManquant';
   const visibleActions = toDeclaredChildren(children, {
     owner: 'DocumentCard.Actions',
     accepted: ACTIONS,
     label: 'its own actions',
-  }).filter((action) => action.props.visibleWhen !== false);
+  })
+    .filter((action) => action.props.visibleWhen !== false)
+    .filter((action) => !(isFichierManquant && action.type === Edit));
   const declaredActions = visibleActions.map((action) => action.type);
   const isDeclared = (action: ElementType): boolean =>
     declaredActions.includes(action);

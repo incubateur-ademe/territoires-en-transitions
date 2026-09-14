@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Card, Notification, Tooltip } from '@tet/ui';
 import { ElementType, JSX, ReactNode, useState } from 'react';
+import { getDocumentFichier } from '../to-document-collectivite.utils';
 import { Preuve } from '../types';
 import { useEditState } from '../use-edit-state';
 import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
@@ -22,6 +23,24 @@ const CHILDREN = [Actions, Duplicate, Identifier];
 
 const getVisitDate = (document: Preuve): string | null =>
   document.preuveType === 'rapport' ? document.rapport.date : null;
+
+type DocumentBadgeProps = {
+  icon: 'error-warning-fill' | 'lock-fill';
+  label: string;
+  dataTest?: string;
+};
+
+const DocumentBadge = ({
+  icon,
+  label,
+  dataTest,
+}: DocumentBadgeProps): JSX.Element => (
+  <Tooltip label={label}>
+    <div data-test={dataTest} className="absolute -top-3 left-5">
+      <Notification icon={icon} size="xs" classname="w-6 h-6" />
+    </div>
+  </Tooltip>
+);
 
 type DocumentCardProps = {
   document: Preuve;
@@ -50,25 +69,28 @@ export const DocumentCard = ({
   const childOfType = (type: ElementType): ReactNode =>
     declaredChildren.find((child) => child.type === type);
 
-  const { fichier, lien } = document;
+  const fichier = getDocumentFichier(document);
   const visitDate = getVisitDate(document);
 
-  if (!fichier && !lien) return null;
+  if (document.type === 'nonRenseigne') return null;
 
   return (
     <DocumentCardProvider
       value={{ document, editComment, openedModal, setOpenedModal }}
     >
       <div className="relative group max-w-screen-md" data-test="carte-doc">
+        {document.type === 'fichierManquant' && (
+          <DocumentBadge
+            icon="error-warning-fill"
+            label={appLabels.fichierIndisponibleInfo}
+          />
+        )}
         {fichier?.confidentiel && (
-          <Tooltip label={appLabels.fichierModePrive}>
-            <div
-              data-test="carte-doc-confidentiel"
-              className="absolute -top-3 left-5"
-            >
-              <Notification icon="lock-fill" size="xs" classname="w-6 h-6" />
-            </div>
-          </Tooltip>
+          <DocumentBadge
+            icon="lock-fill"
+            label={appLabels.fichierModePrive}
+            dataTest="carte-doc-confidentiel"
+          />
         )}
         {childOfType(Actions)}
 
