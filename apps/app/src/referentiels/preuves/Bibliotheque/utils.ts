@@ -1,19 +1,26 @@
 import { appLabels } from '@/app/labels/catalog';
 import { formatFileSize, getExtension } from '@/app/utils/file';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { Preuve } from './types';
+import { Fichier, Preuve } from './types';
 
-export const getFormattedTitle = (preuve: Preuve) => {
-  const { fichier, lien } = preuve;
-  if (fichier) {
-    const { filename, filesize } = fichier;
-    const extension = getExtension(filename)?.toUpperCase();
-    const size = filesize !== undefined ? formatFileSize(filesize) : null;
-    const details = [extension, size].filter(Boolean).join(', ');
-    return details ? `${filename} (${details})` : filename;
+const getFichierTitle = ({ filename, filesize }: Fichier): string => {
+  const extension = getExtension(filename)?.toUpperCase();
+  const size = filesize !== undefined ? formatFileSize(filesize) : null;
+  const details = [extension, size].filter(Boolean).join(', ');
+  return details ? `${filename} (${details})` : filename;
+};
+
+export const getFormattedTitle = ({ support }: Preuve): string | null => {
+  switch (support.type) {
+    case 'fichier':
+      return getFichierTitle(support.fichier);
+    case 'lien':
+      return support.lien.titre;
+    case 'fichierManquant':
+      return support.filename;
+    case 'nonRenseigne':
+      return null;
   }
-  if (lien) return lien.titre;
-  return null;
 };
 
 export const getAuthorAndDate = (

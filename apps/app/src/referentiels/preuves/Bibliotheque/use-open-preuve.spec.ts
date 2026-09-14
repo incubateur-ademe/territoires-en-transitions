@@ -1,3 +1,4 @@
+import { getPreuveFichier, getPreuveLien } from './to-preuve-support.utils';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { preuveReglementaireFichier, preuveReglementaireLien } from './fixture';
@@ -33,7 +34,7 @@ describe('useOpenPreuve', () => {
     openPreuve.current(preuveReglementaireFichier);
 
     expect(downloadDocument).toHaveBeenCalledWith(
-      preuveReglementaireFichier.fichier?.id
+      getPreuveFichier(preuveReglementaireFichier.support)?.id
     );
   });
 
@@ -53,7 +54,7 @@ describe('useOpenPreuve', () => {
     openPreuve.current(preuveReglementaireLien);
 
     expect(open).toHaveBeenCalledWith(
-      preuveReglementaireLien.lien?.url,
+      getPreuveLien(preuveReglementaireLien.support)?.url,
       '_blank',
       'noopener,noreferrer'
     );

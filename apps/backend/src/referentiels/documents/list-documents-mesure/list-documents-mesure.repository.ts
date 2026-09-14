@@ -4,6 +4,7 @@ import {
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
 import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
@@ -31,6 +32,10 @@ const mesureColumns = {
     identifiant: actionDefinitionTable.identifiant,
   },
   modifiedByNom: createdByNom,
+};
+
+const bibliothequeColumns = {
+  bibliothequeFilename: bibliothequeFichierTable.filename,
 };
 
 function buildMesureFilter({
@@ -71,6 +76,7 @@ export class ListDocumentsMesureRepository {
             ...getTableColumns(preuveReglementaireDefinitionTable),
           },
           ...mesureColumns,
+          ...bibliothequeColumns,
           preuveType: sql<'reglementaire'>`'reglementaire'`,
         })
         .from(preuveActionTable)
@@ -96,6 +102,13 @@ export class ListDocumentsMesureRepository {
           )
         )
         .leftJoin(
+          bibliothequeFichierTable,
+          and(
+            eq(preuveReglementaireTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
+          )
+        )
+        .leftJoin(
           fichier,
           and(
             eq(preuveReglementaireTable.fichierId, fichier.id),
@@ -109,7 +122,7 @@ export class ListDocumentsMesureRepository {
         .where(
           hideConfidentielFilter({
             fichierIdColumn: preuveReglementaireTable.fichierId,
-            confidentielColumn: fichier.confidentiel,
+            confidentielColumn: bibliothequeFichierTable.confidentiel,
             canReadConfidentiel,
           })
         )
@@ -147,6 +160,7 @@ export class ListDocumentsMesureRepository {
           ...getTableColumns(preuveComplementaireTable),
           fichier: buildFileInfoSql(fichier),
           ...mesureColumns,
+          ...bibliothequeColumns,
           preuveType: sql<'complementaire'>`'complementaire'`,
         })
         .from(preuveComplementaireTable)
@@ -158,6 +172,16 @@ export class ListDocumentsMesureRepository {
               preuveComplementaireTable.actionId
             ),
             buildMesureFilter({ actionId, withSubActions })
+          )
+        )
+        .leftJoin(
+          bibliothequeFichierTable,
+          and(
+            eq(
+              preuveComplementaireTable.fichierId,
+              bibliothequeFichierTable.id
+            ),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
         .leftJoin(
@@ -176,7 +200,7 @@ export class ListDocumentsMesureRepository {
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
             hideConfidentielFilter({
               fichierIdColumn: preuveComplementaireTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )

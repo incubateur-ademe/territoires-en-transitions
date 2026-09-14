@@ -1,10 +1,11 @@
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
+import { getPreuveLien } from './to-preuve-support.utils';
 import { Preuve } from './types';
 import { useUpdatePreuveLien } from './useEditPreuve';
 
 export type EditerLienProps = {
-  preuve: Pick<Preuve, 'id' | 'lien' | 'collectiviteId' | 'preuveType'>;
+  preuve: Pick<Preuve, 'id' | 'support' | 'collectiviteId' | 'preuveType'>;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };
@@ -14,7 +15,7 @@ export type EditerLienProps = {
  */
 export const EditerLienModal = (props: EditerLienProps) => {
   const { preuve, isOpen, setIsOpen } = props;
-  const { lien } = preuve;
+  const lien = getPreuveLien(preuve.support);
   const [titre, setTitre] = useState(lien?.titre || '');
   const [url, setUrl] = useState(lien?.url || '');
 
