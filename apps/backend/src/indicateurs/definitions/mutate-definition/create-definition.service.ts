@@ -7,7 +7,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ResourceType } from '@tet/domain/users';
-import { AuthUser } from '../../../users/models/auth.models';
+import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { CreateIndicateurDefinitionInput } from './mutate-definition.input';
 
 @Injectable()
@@ -30,7 +30,7 @@ export default class CreateDefinitionService {
       estFavori,
       ficheId,
     }: CreateIndicateurDefinitionInput,
-    user: AuthUser
+    user: AuthenticatedUser
   ) {
     await this.permissionService.assertAllowed(
       user,
@@ -106,7 +106,7 @@ export default class CreateDefinitionService {
         if (ficheId) {
           await trx
             .insert(ficheActionIndicateurTable)
-            .values([{ indicateurId, ficheId }])
+            .values([{ indicateurId, ficheId, createdBy: user.id }])
             .onConflictDoNothing();
         }
 

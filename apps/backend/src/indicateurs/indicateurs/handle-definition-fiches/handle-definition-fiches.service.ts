@@ -14,10 +14,12 @@ export class HandleDefinitionFichesService {
     indicateurId,
     collectiviteId,
     ficheIds,
+    userId,
   }: {
     indicateurId: number;
     collectiviteId: number;
     ficheIds: number[];
+    userId: string;
   }) {
     this.logger.log(
       `Mise à jour des fiches liées de l'indicateur dont l'id est ${indicateurId}`
@@ -55,6 +57,7 @@ export class HandleDefinitionFichesService {
             ficheIds.map((ficheId) => ({
               ficheId,
               indicateurId,
+              createdBy: userId,
             }))
           )
           .onConflictDoNothing();

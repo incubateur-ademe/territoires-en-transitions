@@ -3,7 +3,6 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { AxeCreate } from '@tet/domain/plans';
 import { DatabaseService } from '../../utils/database/database.service';
 import { axeTable } from './shared/models/axe.table';
-import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 
 @Injectable()
 export default class AxeService {
@@ -26,22 +25,5 @@ export default class AxeService {
       .values(axe)
       .returning();
     return axeCree[0]?.id;
-  }
-
-  /**
-   * Ajoute une fiche dans un axe
-   * @param ficheId identifiant de la fiche
-   * @param axeId identifiant de l'axe
-   * @param tx transaction
-   */
-  async addFicheAction(
-    ficheId: number,
-    axeId: number,
-    tx?: Transaction
-  ): Promise<void> {
-    await (tx ?? this.databaseService.db).insert(ficheActionAxeTable).values({
-      axeId: axeId,
-      ficheId: ficheId,
-    });
   }
 }

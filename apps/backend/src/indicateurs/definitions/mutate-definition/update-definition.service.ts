@@ -198,6 +198,7 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           ficheIds,
+          userId: user.id,
         });
       }
 

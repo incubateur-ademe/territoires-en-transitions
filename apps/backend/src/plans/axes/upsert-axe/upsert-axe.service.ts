@@ -85,6 +85,7 @@ export class UpsertAxeService {
           await this.upsertAxeRepository.setAxeIndicateurs(
             result.data.id,
             indicateurs,
+            user.id,
             transaction
           );
         if (!setIndicateursResult.success) {

@@ -673,6 +673,7 @@ describe('ListIndicateursRouter', () => {
       await database.db.insert(axeIndicateurTable).values({
         indicateurId: indicateurIdLinkedToAxe,
         axeId: axe.id,
+        createdBy: testUser.id,
       });
 
       onTestFinished(async () => {
@@ -755,10 +756,12 @@ describe('ListIndicateursRouter', () => {
         {
           indicateurId: indicateurId1,
           axeId: axe1.id,
+          createdBy: testUser.id,
         },
         {
           indicateurId: indicateurId2,
           axeId: axe2.id,
+          createdBy: testUser.id,
         },
       ]);
 
