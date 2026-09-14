@@ -78,14 +78,18 @@ export const moduleCommonSchemaInsert = z.object({
   id: z.uuid(),
   collectiviteId: z.number(),
   userId: z.uuid().nullish(),
-  titre: z.string(),
+  // Non personnalisable : ignoré à la persistance, toujours rempli à la lecture.
+  titre: z.string().nullish(),
   defaultKey: personalDefaultModuleKeysSchema,
   type: personnelModuleTypeSchema,
 });
 
 export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
+  .omit({ titre: true })
   .required()
   .extend({
+    // Toujours issu de la config par défaut applicative.
+    titre: z.string(),
     createdAt: z.iso.datetime(),
     modifiedAt: z.iso.datetime(),
   });

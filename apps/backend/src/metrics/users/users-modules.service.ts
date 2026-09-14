@@ -16,6 +16,21 @@ import { and, eq, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import { objectToCamel } from 'ts-case-convert';
 
+/**
+ * Titres des modules personnels : source de vérité unique.
+ * Non personnalisables côté UI — ignorés à la persistance, toujours
+ * réappliqués à la lecture.
+ */
+const PERSONAL_DEFAULT_MODULE_TITRES: Record<
+  PersonalDefaultModuleKeys,
+  string
+> = {
+  'actions-dont-je-suis-pilote': 'Mes actions',
+  'sous-actions-dont-je-suis-pilote': 'Mes sous-actions',
+  'indicateurs-dont-je-suis-pilote': 'Mes indicateurs',
+  'mesures-dont-je-suis-pilote': 'Mes mesures',
+};
+
 @Injectable()
 export class UsersModulesService {
   private readonly logger = new Logger(UsersModulesService.name);
@@ -150,16 +165,21 @@ export class UsersModulesService {
       );
     }
 
+    // Le titre n'est pas personnalisable pour les modules personnels :
+    // on ne le persiste pas (null) et on ne le met plus à jour au conflit.
+    const { titre: _titre, ...moduleWithoutTitre } = preparedModule;
+
     const [upsertedModule] = await this.databaseService.db
       .insert(tableauDeBordModuleTable)
       .values({
-        ...preparedModule,
+        ...moduleWithoutTitre,
+        titre: null,
         userId: authUser.id,
       })
       .onConflictDoUpdate({
         target: [tableauDeBordModuleTable.id],
         set: {
-          titre: sql.raw(`excluded.${tableauDeBordModuleTable.titre.name}`),
+          titre: null,
           options: sql.raw(`excluded.${tableauDeBordModuleTable.options.name}`),
         },
       })
@@ -228,7 +248,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Mes actions',
+        titre: PERSONAL_DEFAULT_MODULE_TITRES[defaultKey],
         type: 'fiche_action.list',
         defaultKey,
         options: {
@@ -249,7 +269,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Mes sous-actions',
+        titre: PERSONAL_DEFAULT_MODULE_TITRES[defaultKey],
         type: 'fiche_action.list',
         defaultKey,
         options: {
@@ -271,7 +291,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Mes indicateurs',
+        titre: PERSONAL_DEFAULT_MODULE_TITRES[defaultKey],
         type: 'indicateur.list',
         defaultKey,
         options: {
@@ -292,7 +312,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Mes mesures',
+        titre: PERSONAL_DEFAULT_MODULE_TITRES[defaultKey],
         type: 'mesure.list',
         defaultKey,
         options: {
@@ -323,10 +343,17 @@ export class UsersModulesService {
     options: unknown;
     createdAt: string;
     modifiedAt: string;
+    defaultKey: string | null;
   }): ModuleSelect {
     const normalized = this.normalizeDates(rawModule);
+    const defaultKey = personalDefaultModuleKeysSchema.parse(
+      normalized.defaultKey
+    );
+
     return parseModuleFromDb({
       ...normalized,
+      // Titre toujours issu de la config par défaut (ignore la BDD).
+      titre: PERSONAL_DEFAULT_MODULE_TITRES[defaultKey],
       options: objectToCamel(
         (normalized.options ?? {}) as Record<string, unknown>
       ),
