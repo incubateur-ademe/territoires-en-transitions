@@ -16,3 +16,16 @@ export function hideConfidentielFilter({
   }
   return or(isNull(fichierIdColumn), eq(confidentielColumn, false));
 }
+
+export function hideConfidentielFichierJoin({
+  confidentielColumn,
+  canReadConfidentiel,
+}: {
+  confidentielColumn: Column;
+  canReadConfidentiel: boolean;
+}): SQL | undefined {
+  if (canReadConfidentiel) {
+    return undefined;
+  }
+  return eq(confidentielColumn, false);
+}
