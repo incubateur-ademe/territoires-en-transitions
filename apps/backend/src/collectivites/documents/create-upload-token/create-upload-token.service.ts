@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -11,7 +12,6 @@ import {
 } from './create-upload-token.errors';
 import { CreateUploadTokenInput } from './create-upload-token.input';
 import { CreateUploadTokenOutput } from './create-upload-token.output';
-import { CreateUploadTokenRepository } from './create-upload-token.repository';
 
 @Injectable()
 export class CreateUploadTokenService {
@@ -19,7 +19,7 @@ export class CreateUploadTokenService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly repository: CreateUploadTokenRepository,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
     private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
     private readonly documentStorageService: DocumentStorageService
   ) {}
@@ -46,7 +46,7 @@ export class CreateUploadTokenService {
       return failure(CreateUploadTokenErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND);
     }
 
-    const fichier = await this.repository.findFichierByHash({
+    const fichier = await this.bibliothequeFichierRepository.findByHash({
       collectiviteId,
       hash,
     });

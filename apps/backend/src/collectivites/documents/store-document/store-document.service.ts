@@ -8,13 +8,13 @@ import { Result } from '@tet/backend/utils/result.type';
 import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
-  DocumentHash,
 } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
+import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';
 import { calculateDocumentHash } from './calculate-document-hash.utils';
@@ -35,7 +35,8 @@ export class StoreDocumentService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly supabaseService: SupabaseService
+    private readonly supabaseService: SupabaseService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async getCollectiviteBucketId(
@@ -129,30 +130,6 @@ export class StoreDocumentService {
         error: StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
       };
     }
-  }
-
-  private async findDocumentByHash(
-    collectiviteId: number,
-    hash: DocumentHash
-  ): Promise<BibliothequeFichier | undefined> {
-    const [document] = await this.databaseService.db
-      .select({
-        id: bibliothequeFichierTable.id,
-        collectiviteId: bibliothequeFichierTable.collectiviteId,
-        hash: bibliothequeFichierTable.hash,
-        filename: bibliothequeFichierTable.filename,
-        confidentiel: bibliothequeFichierTable.confidentiel,
-      })
-      .from(bibliothequeFichierTable)
-      .where(
-        and(
-          eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
-          eq(bibliothequeFichierTable.hash, hash)
-        )
-      )
-      .limit(1);
-
-    return document;
   }
 
   async uploadBuffer(
@@ -288,10 +265,11 @@ export class StoreDocumentService {
         };
       }
 
-      const existingDocument = await this.findDocumentByHash(
-        document.collectiviteId,
-        document.hash
-      );
+      const existingDocument =
+        await this.bibliothequeFichierRepository.findByHash({
+          collectiviteId: document.collectiviteId,
+          hash: document.hash,
+        });
       if (!existingDocument) {
         return { success: false, error: 'STORE_DOCUMENT_ERROR' };
       }

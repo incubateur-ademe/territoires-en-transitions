@@ -2,9 +2,8 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { type DocumentStorageError } from '@tet/backend/utils/supabase/document-storage.errors';
-import { toDocumentHash } from '@tet/domain/collectivites';
+import { BibliothequeFichier, toDocumentHash } from '@tet/domain/collectivites';
 import { describe, expect, it, vi, type Mock } from 'vitest';
-import { type FichierInBibliotheque } from './create-upload-token.repository';
 import { CreateUploadTokenService } from './create-upload-token.service';
 
 const HASH = toDocumentHash(
@@ -34,7 +33,7 @@ function buildService({
 }: {
   isAllowed?: boolean;
   hasBucket?: boolean;
-  fichier?: FichierInBibliotheque;
+  fichier?: Pick<BibliothequeFichier, 'id' | 'filename'>;
   signedUploadResult?: SignedUploadResult;
 } = {}): ServiceUnderTest {
   const permissions = {
@@ -47,8 +46,8 @@ function buildService({
       ),
   };
 
-  const repository = {
-    findFichierByHash: vi.fn().mockResolvedValue(fichier),
+  const bibliothequeFichierRepository = {
+    findByHash: vi.fn().mockResolvedValue(fichier),
   };
 
   const collectiviteBucket = {
@@ -63,7 +62,7 @@ function buildService({
 
   const service = new CreateUploadTokenService(
     permissions as never,
-    repository as never,
+    bibliothequeFichierRepository as never,
     collectiviteBucket as never,
     documentStorage as never
   );

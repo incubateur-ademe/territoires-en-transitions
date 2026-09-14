@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
-import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
+import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import {
@@ -29,7 +27,8 @@ const DOWNLOAD_URL_TTL_SECONDS = 60;
 @Injectable()
 export class GetAvisFileUrlService {
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository,
     private readonly documentStorageService: DocumentStorageService,
@@ -77,18 +76,25 @@ export class GetAvisFileUrlService {
       return failure(GetAvisFileUrlErrorEnum.AVIS_NOT_FOUND);
     }
 
-    const fichier = await this.findFichier(
-      emetteurCollectiviteId,
-      avis.fichierRef,
+    const fichier = await this.bibliothequeFichierRepository.findByHash(
+      { collectiviteId: emetteurCollectiviteId, hash: avis.fichierRef },
       tx
     );
     if (!fichier) {
       return failure(GetAvisFileUrlErrorEnum.AVIS_SANS_PIECE_JOINTE);
     }
 
+    const bucketId = await this.collectiviteBucketRepository.findBucketId(
+      emetteurCollectiviteId,
+      tx
+    );
+    if (bucketId === undefined) {
+      return failure(GetAvisFileUrlErrorEnum.AVIS_SANS_PIECE_JOINTE);
+    }
+
     const signedUrlResult =
       await this.documentStorageService.createSignedDownloadUrl({
-        bucketId: fichier.bucketId,
+        bucketId,
         key: avis.fichierRef,
         expiresInSeconds: DOWNLOAD_URL_TTL_SECONDS,
       });
@@ -146,39 +152,5 @@ export class GetAvisFileUrlService {
       tx
     );
     return cotéDeposante.success;
-  }
-
-  /** Bucket et nom du fichier, dans la bibliothèque de l'émetteur. */
-  private async findFichier(
-    emetteurCollectiviteId: number,
-    hash: string,
-    tx?: ServiceSecondArg['tx']
-  ): Promise<{ bucketId: string; filename: string } | null> {
-    const rows = await (tx ?? this.databaseService.db)
-      .select({
-        bucketId: collectiviteBucketTable.bucketId,
-        filename: bibliothequeFichierTable.filename,
-      })
-      .from(bibliothequeFichierTable)
-      .innerJoin(
-        collectiviteBucketTable,
-        eq(
-          collectiviteBucketTable.collectiviteId,
-          bibliothequeFichierTable.collectiviteId
-        )
-      )
-      .where(
-        and(
-          eq(bibliothequeFichierTable.collectiviteId, emetteurCollectiviteId),
-          eq(bibliothequeFichierTable.hash, hash)
-        )
-      )
-      .limit(1);
-
-    const fichier = rows[0];
-    if (!fichier) {
-      return null;
-    }
-    return { bucketId: fichier.bucketId, filename: fichier.filename };
   }
 }
