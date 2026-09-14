@@ -294,10 +294,13 @@ db-reset: guard-main down db-rm-volume db-init ## ⚠ Détruit les données loca
 db-shell: warn-shared-db ## Ouvre psql dans la base locale
 	$(COMPOSE) exec db psql -U postgres
 
-# Restaure un backup en local
-db-restore-local-from-prod-backup: guard-main preflight-env-keys ## Restaure un backup en local : make db-restore-local-from-prod-backup [d=YYYY-MM-DD|latest] (défaut : backup du jour, depuis S3)
+# Restaure les données dans une base locale déjà migrée (make db-init).
+# Export plutôt qu'interpolation shell : d peut aussi être un chemin avec espaces.
+db-restore-local-from-prod-backup: export RESTORE_BACKUP = $(d)
+db-restore-local-from-prod-backup: guard-main preflight-env-keys ## ⚠ Remplace les données locales : make db-restore-local-from-prod-backup [d=YYYY-MM-DD|latest|chemin.dump] (défaut : backup du jour, depuis S3)
+	@$(COMPOSE) --profile supabase up -d --wait gotrue storage
 	@TO_DB_URL=postgresql://postgres:postgres@localhost:54322/postgres \
-		$(call decrypt_env,$(ENV_ROOT)) -- ./data_layer/backup/restore.sh $(d)
+		$(call decrypt_env,$(ENV_ROOT)) -- ./data_layer/backup/restore.sh "$$RESTORE_BACKUP"
 
 # Certains seeds de data_layer/seed/imports/ sont dérivés de sources publiques
 # (data.gouv.fr, BANATIC…) plutôt qu'écrits à la main : un générateur
