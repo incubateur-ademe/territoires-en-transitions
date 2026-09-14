@@ -15,6 +15,7 @@ import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
 import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
+import { CollectiviteBucketRepository } from '../collectivite-bucket.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';
 import { calculateDocumentHash } from './calculate-document-hash.utils';
@@ -36,19 +37,19 @@ export class StoreDocumentService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly supabaseService: SupabaseService,
-    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly collectiviteBucketRepository: CollectiviteBucketRepository
   ) {}
 
-  async getCollectiviteBucketId(
+  private async getCollectiviteBucketId(
     collectiviteId: number
   ): Promise<
     Result<string, typeof StoreDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
   > {
-    const buckets = await this.databaseService.db
-      .select({ bucketId: collectiviteBucketTable.bucketId })
-      .from(collectiviteBucketTable)
-      .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId));
-    if (!buckets?.length) {
+    const bucketId = await this.collectiviteBucketRepository.findBucketId(
+      collectiviteId
+    );
+    if (bucketId === undefined) {
       return {
         success: false,
         error: StoreDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND,
@@ -56,7 +57,7 @@ export class StoreDocumentService {
     }
     return {
       success: true,
-      data: buckets[0].bucketId,
+      data: bucketId,
     };
   }
 
