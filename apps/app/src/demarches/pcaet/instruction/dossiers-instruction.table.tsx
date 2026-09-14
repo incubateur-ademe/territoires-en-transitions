@@ -10,7 +10,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import type {
   ColonneTriable,
   DirectionTri,
@@ -35,6 +35,43 @@ import {
   STATUT_INSTRUCTION_VARIANTS,
 } from './instruction.constants';
 
+type Filtres = {
+  statuts: PcaetStatutInstruction[];
+  obligations: DemarchePcaetObligation[];
+  regions: string[];
+};
+
+type Pilotage = {
+  regionsOptions: { code: string; libelle: string }[];
+  filtres: Filtres;
+  nbFiltresActifs: NbFiltresActifs;
+  setFiltres: (filtres: Partial<Filtres>) => void;
+  sort: ColonneTriable;
+  direction: DirectionTri;
+  trierPar: (colonne: ColonneTriable) => void;
+};
+
+/**
+ * Le tri et les filtres atteignent les en-têtes par le contexte, et non par une
+ * fermeture.
+ *
+ * Les colonnes sont définies **une fois pour toutes**, hors du composant : un
+ * en-tête reconstruit à chaque rendu change d'identité aux yeux de React, qui le
+ * démonte et le remonte. Le menu du filtre qu'il porte se referme alors entre
+ * deux clics, et il devient impossible d'en cocher deux d'affilée.
+ */
+const PilotageContext = createContext<Pilotage | null>(null);
+
+const usePilotage = (): Pilotage => {
+  const pilotage = useContext(PilotageContext);
+  if (pilotage === null) {
+    throw new Error(
+      'Les en-têtes de la liste d’instruction attendent un PilotageContext.'
+    );
+  }
+  return pilotage;
+};
+
 /**
  * La clé d'une ligne, du plus précis au plus général.
  *
@@ -52,7 +89,196 @@ const getRowKey = (dossier: Dossier): string => {
     : `collectivite-${dossier.collectivite.id}`;
 };
 
+const CollectiviteHeader = () => {
+  const { filtres, nbFiltresActifs, setFiltres, sort, direction, trierPar } =
+    usePilotage();
+
+  return (
+    <TableHeaderCell
+      title={appLabels.instructionListeColonneCollectivite}
+      sortFn={() => trierPar('collectivite')}
+      sortDirection={sort === 'collectivite' ? direction : null}
+      filter={
+        <ObligationHeaderFilter
+          obligations={filtres.obligations}
+          filterCount={nbFiltresActifs.obligations}
+          onChange={(obligations) => setFiltres({ obligations })}
+        />
+      }
+    />
+  );
+};
+
+const RegionHeader = () => {
+  const { filtres, nbFiltresActifs, setFiltres, regionsOptions } =
+    usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-40"
+      title={appLabels.instructionListeColonneRegion}
+      filter={
+        <RegionHeaderFilter
+          regions={filtres.regions}
+          options={regionsOptions}
+          filterCount={nbFiltresActifs.regions}
+          onChange={(regions) => setFiltres({ regions })}
+        />
+      }
+    />
+  );
+};
+
+const PiloteHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      title={appLabels.instructionListeColonnePilotes}
+      sortFn={() => trierPar('contact')}
+      sortDirection={sort === 'contact' ? direction : null}
+    />
+  );
+};
+
+const StatutHeader = () => {
+  const { filtres, nbFiltresActifs, setFiltres, sort, direction, trierPar } =
+    usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-40"
+      title={appLabels.instructionListeColonneStatut}
+      sortFn={() => trierPar('statut')}
+      sortDirection={sort === 'statut' ? direction : null}
+      filter={
+        <StatutHeaderFilter
+          statuts={filtres.statuts}
+          filterCount={nbFiltresActifs.statuts}
+          onChange={(statuts) => setFiltres({ statuts })}
+        />
+      }
+    />
+  );
+};
+
+const DateDebutHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-36"
+      title={appLabels.instructionListeColonneDateLancement}
+      sortFn={() => trierPar('dateDebut')}
+      sortDirection={sort === 'dateDebut' ? direction : null}
+    />
+  );
+};
+
+const EcheanceHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-40"
+      title={appLabels.instructionListeColonneEcheance}
+      sortFn={() => trierPar('echeance')}
+      sortDirection={sort === 'echeance' ? direction : null}
+    />
+  );
+};
+
 const columnHelper = createColumnHelper<Dossier>();
+
+/**
+ * Les largeurs sont posées colonne par colonne, et volontairement absentes des
+ * deux qui portent du texte libre.
+ *
+ * Le tableau est en `table-fixed` : sans elles, une date et un nom de
+ * collectivité occupent la même part de la largeur, et les sept colonnes
+ * s'étalent bien au-delà de ce qu'elles ont à montrer.
+ */
+const columns = [
+  columnHelper.display({
+    id: 'collectivite',
+    header: CollectiviteHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <CollectiviteCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'region',
+    header: RegionHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <RegionCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'pilote',
+    header: PiloteHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <PiloteCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'statut',
+    header: StatutHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <Badge
+          title={statutInstructionLabel(row.original.statut)}
+          variant={STATUT_INSTRUCTION_VARIANTS[row.original.statut]}
+          size="sm"
+        />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'dateDebut',
+    header: DateDebutHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <DateCell date={row.original.launchedAt} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'echeance',
+    header: EcheanceHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <EcheanceCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'actions',
+    header: () => (
+      <TableHeaderCell
+        className="w-52"
+        title={appLabels.instructionListeColonneActions}
+        align="right"
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <ActionsCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+];
 
 export const DossiersInstructionTable = ({
   dossiers,
@@ -84,22 +310,14 @@ export const DossiersInstructionTable = ({
    */
   afficherRegion: boolean;
   regionsOptions: { code: string; libelle: string }[];
-  filtres: {
-    statuts: PcaetStatutInstruction[];
-    obligations: DemarchePcaetObligation[];
-    regions: string[];
-  };
+  filtres: Filtres;
   /**
    * Ce que chaque filtre retient **une fois le défaut mis à part** : c'est le
    * nombre que porte son badge, et non la taille de la sélection. Voir
    * `nbFiltresActifs`.
    */
   nbFiltresActifs: NbFiltresActifs;
-  setFiltres: (filtres: {
-    statuts?: PcaetStatutInstruction[];
-    obligations?: DemarchePcaetObligation[];
-    regions?: string[];
-  }) => void;
+  setFiltres: (filtres: Partial<Filtres>) => void;
   sort: ColonneTriable;
   direction: DirectionTri;
   trierPar: (colonne: ColonneTriable) => void;
@@ -112,168 +330,23 @@ export const DossiersInstructionTable = ({
    */
   etatVide: EmptyCardProps;
 }) => {
-  /**
-   * Les largeurs sont posées colonne par colonne, et volontairement absentes
-   * des deux qui portent du texte libre.
-   *
-   * Le tableau est en `table-fixed` : sans elles, une date et un nom de
-   * collectivité occupent la même part de la largeur, et les sept colonnes
-   * s'étalent bien au-delà de ce qu'elles ont à montrer.
-   */
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: 'collectivite',
-        header: () => (
-          <TableHeaderCell
-            title={appLabels.instructionListeColonneCollectivite}
-            sortFn={() => trierPar('collectivite')}
-            sortDirection={sort === 'collectivite' ? direction : null}
-            filter={
-              <ObligationHeaderFilter
-                obligations={filtres.obligations}
-                filterCount={nbFiltresActifs.obligations}
-                onChange={(obligations) => setFiltres({ obligations })}
-              />
-            }
-          />
-        ),
-        cell: ({ row }) => (
-          <TableCell>
-            <CollectiviteCell dossier={row.original} />
-          </TableCell>
-        ),
-      }),
-
-      ...(afficherRegion
-        ? [
-            columnHelper.display({
-              id: 'region',
-              header: () => (
-                <TableHeaderCell
-                  className="w-40"
-                  title={appLabels.instructionListeColonneRegion}
-                  filter={
-                    <RegionHeaderFilter
-                      regions={filtres.regions}
-                      options={regionsOptions}
-                      filterCount={nbFiltresActifs.regions}
-                      onChange={(regions) => setFiltres({ regions })}
-                    />
-                  }
-                />
-              ),
-              cell: ({ row }) => (
-                <TableCell>
-                  <RegionCell dossier={row.original} />
-                </TableCell>
-              ),
-            }),
-          ]
-        : []),
-
-      columnHelper.display({
-        id: 'pilote',
-        header: () => (
-          <TableHeaderCell
-            title={appLabels.instructionListeColonnePilotes}
-            sortFn={() => trierPar('contact')}
-            sortDirection={sort === 'contact' ? direction : null}
-          />
-        ),
-        cell: ({ row }) => (
-          <TableCell>
-            <PiloteCell dossier={row.original} />
-          </TableCell>
-        ),
-      }),
-
-      columnHelper.display({
-        id: 'statut',
-        header: () => (
-          <TableHeaderCell
-            className="w-40"
-            title={appLabels.instructionListeColonneStatut}
-            sortFn={() => trierPar('statut')}
-            sortDirection={sort === 'statut' ? direction : null}
-            filter={
-              <StatutHeaderFilter
-                statuts={filtres.statuts}
-                filterCount={nbFiltresActifs.statuts}
-                onChange={(statuts) => setFiltres({ statuts })}
-              />
-            }
-          />
-        ),
-        cell: ({ row }) => (
-          <TableCell>
-            <Badge
-              title={statutInstructionLabel(row.original.statut)}
-              variant={STATUT_INSTRUCTION_VARIANTS[row.original.statut]}
-              size="sm"
-            />
-          </TableCell>
-        ),
-      }),
-
-      columnHelper.display({
-        id: 'dateDebut',
-        header: () => (
-          <TableHeaderCell
-            className="w-36"
-            title={appLabels.instructionListeColonneDateLancement}
-            sortFn={() => trierPar('dateDebut')}
-            sortDirection={sort === 'dateDebut' ? direction : null}
-          />
-        ),
-        cell: ({ row }) => (
-          <TableCell>
-            <DateCell date={row.original.launchedAt} />
-          </TableCell>
-        ),
-      }),
-
-      columnHelper.display({
-        id: 'echeance',
-        header: () => (
-          <TableHeaderCell
-            className="w-40"
-            title={appLabels.instructionListeColonneEcheance}
-            sortFn={() => trierPar('echeance')}
-            sortDirection={sort === 'echeance' ? direction : null}
-          />
-        ),
-        cell: ({ row }) => (
-          <TableCell>
-            <EcheanceCell dossier={row.original} />
-          </TableCell>
-        ),
-      }),
-
-      columnHelper.display({
-        id: 'actions',
-        header: () => (
-          <TableHeaderCell
-            className="w-52"
-            title={appLabels.instructionListeColonneActions}
-            align="right"
-          />
-        ),
-        cell: ({ row }) => (
-          <TableCell>
-            <ActionsCell dossier={row.original} />
-          </TableCell>
-        ),
-      }),
-    ],
-    [
-      afficherRegion,
-      direction,
+  const pilotage = useMemo(
+    () => ({
+      regionsOptions,
       filtres,
       nbFiltresActifs,
-      regionsOptions,
       setFiltres,
       sort,
+      direction,
+      trierPar,
+    }),
+    [
+      regionsOptions,
+      filtres,
+      nbFiltresActifs,
+      setFiltres,
+      sort,
+      direction,
       trierPar,
     ]
   );
@@ -281,6 +354,9 @@ export const DossiersInstructionTable = ({
   const table = useReactTable({
     columns,
     data: dossiers,
+    // La colonne se masque plutôt qu'elle ne disparaît de la définition : la
+    // retirer changerait la liste des colonnes, donc l'identité des en-têtes.
+    state: { columnVisibility: { region: afficherRegion } },
     // Le tri et le filtrage se font côté serveur, page par page : la clé d'une
     // ligne doit donc venir du dossier, et non de son rang dans la page.
     getRowId: getRowKey,
@@ -288,14 +364,16 @@ export const DossiersInstructionTable = ({
   });
 
   return (
-    <ReactTable
-      table={table}
-      ariaLabel={appLabels.instructionListeIntitule({ deposeAvis })}
-      isEmpty={dossiers.length === 0}
-      emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
-      getRowProps={(row) => ({
-        'data-test': `demarches.pcaet.instruction.ligne-${row.id}`,
-      })}
-    />
+    <PilotageContext.Provider value={pilotage}>
+      <ReactTable
+        table={table}
+        ariaLabel={appLabels.instructionListeIntitule({ deposeAvis })}
+        isEmpty={dossiers.length === 0}
+        emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
+        getRowProps={(row) => ({
+          'data-test': `demarches.pcaet.instruction.ligne-${row.id}`,
+        })}
+      />
+    </PilotageContext.Provider>
   );
 };
