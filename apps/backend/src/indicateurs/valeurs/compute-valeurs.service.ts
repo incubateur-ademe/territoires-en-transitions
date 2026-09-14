@@ -26,6 +26,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil, round } from 'es-toolkit';
+import { indicateurValeurPeriodiciteSelection } from '../definitions/indicateur-periodicite.column';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
@@ -574,6 +575,7 @@ export default class ComputeValeursService {
     const result = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurValeurTable),
+        ...indicateurValeurPeriodiciteSelection,
         indicateurIdentifiant: indicateurDefinitionTable.identifiantReferentiel,
         sourceId: indicateurSourceMetadonneeTable.sourceId,
       })
@@ -778,6 +780,7 @@ export default class ComputeValeursService {
       await this.databaseService.db
         .select({
           ...getTableColumns(indicateurValeurTable),
+          ...indicateurValeurPeriodiciteSelection,
           indicateurIdentifiant:
             indicateurDefinitionTable.identifiantReferentiel,
           sourceId: indicateurSourceMetadonneeTable.sourceId,

@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { getTestApp, getTestDatabase, signInWith } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import {
+  IndicateurDefinition,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 import request from 'supertest';
 
 describe("Api pour lister les définitions d'indicateur", () => {
@@ -18,7 +21,6 @@ describe("Api pour lister les définitions d'indicateur", () => {
       password: testUserResult.user.password,
     });
     authToken = signInResponse.data.session?.access_token || '';
-
   });
 
   afterAll(async () => {
@@ -63,6 +65,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
       titreCourt: null,
       description: expect.any(String),
       unite: 'GWh',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       precision: 2,
       borneMin: null,
       borneMax: null,
