@@ -13,7 +13,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, getTableColumns, like, or, SQL, sql } from 'drizzle-orm';
+import { and, eq, getTableColumns, SQL, sql } from 'drizzle-orm';
+import { matchesActionOrDescendant } from '../../action-or-descendant.utils';
 import { actionDefinitionTable } from '../../models/action-definition.table';
 import { ListDocumentsMesureErrorEnum } from './list-documents-mesure.errors';
 
@@ -35,14 +36,12 @@ const mesureColumns = {
 function buildMesureFilter({
   actionId,
   withSubActions,
-}: Pick<MesureScope, 'actionId' | 'withSubActions'>): SQL | undefined {
-  const mesure = eq(actionDefinitionTable.actionId, actionId);
-
+}: Pick<MesureScope, 'actionId' | 'withSubActions'>): SQL {
   if (!withSubActions) {
-    return mesure;
+    return eq(actionDefinitionTable.actionId, actionId);
   }
 
-  return or(mesure, like(actionDefinitionTable.actionId, `${actionId}.%`));
+  return matchesActionOrDescendant(actionDefinitionTable.actionId, actionId);
 }
 
 @Injectable()
