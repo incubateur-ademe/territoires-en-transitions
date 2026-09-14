@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { AdemeLogo } from '../../../assets/ademe.logo';
+import { ElectrifionsLaFranceLogo } from '../../../assets/electrifions-la-france.logo';
 import { ProgrammeTeTeLogo } from '../../../assets/programme-tete.logo';
 import { RepubliqueFrancaiseLogo } from '../../../assets/republique-francaise.logo';
 import { TerritoiresEnTransitionsLogo } from '../../../assets/territoires-en-transitions.logo';
@@ -25,7 +26,9 @@ const HeaderDesktop = ({
   return (
     <>
       {/** Partie supérieure du header */}
-      <HeaderContainer className={cn('justify-between py-2', className)}>
+      <HeaderContainer
+        className={cn('flex-wrap justify-between gap-4 py-2', className)}
+      >
         {/** Lien vers la page d'accueil */}
         {/* Le bloc-marque porte sa zone de protection dans son propre SVG : 20
             unités de vide à gauche d'un `viewBox` de 151 de haut, soit ~10px à
@@ -38,6 +41,7 @@ const HeaderDesktop = ({
           <div className="flex gap-4">
             <RepubliqueFrancaiseLogo className="h-20" />
             <AdemeLogo className="h-20" />
+            <ElectrifionsLaFranceLogo className="h-20 w-20 shrink-0 my-auto" />
             <ProgrammeTeTeLogo className="h-20" />
             <TerritoiresEnTransitionsLogo className="h-14 my-auto" />
           </div>
@@ -46,7 +50,7 @@ const HeaderDesktop = ({
         {!!secondaryNav && (
           /* Comme la navigation principale : le `px-4` du dernier item est
              repris, pour que le sur-menu s'aligne sur le bord droit. */
-          <nav className="flex gap-2 -mr-4">
+          <nav className="flex gap-2 ml-auto -mr-4">
             {secondaryNav.map((item, i) => (
               <HeaderDesktopSecondaryNavItem
                 key={i}
