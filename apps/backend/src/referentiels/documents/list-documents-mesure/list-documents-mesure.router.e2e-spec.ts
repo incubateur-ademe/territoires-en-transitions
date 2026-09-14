@@ -574,6 +574,33 @@ describe('List Mesure Documents Router', () => {
     expect(getAttendusSupports(visiteurView)).toEqual([]);
   });
 
+  test("garde l'attendu visible quand son unique dépôt est confidentiel", async () => {
+    const { collectiviteId, addAttenduDepot, addFichier } =
+      await createCollectivite();
+
+    const fichierConfidentiel = await addFichier({
+      filename: 'secret.pdf',
+      confidentiel: true,
+    });
+    await addAttenduDepot({
+      preuveId: MESURE.attendus[0],
+      titre: 'secret',
+      fichierId: fichierConfidentiel.id,
+    });
+
+    const visiteurCaller = router.createCaller({ user: visiteurUser });
+    const visiteurView =
+      await visiteurCaller.referentiels.documents.listDocumentsMesure({
+        collectiviteId,
+        actionId: MESURE.actionId,
+      });
+
+    expect(getAttendusIds(visiteurView)).toEqual([
+      MESURE.attendus[0],
+      MESURE.attendus[1],
+    ]);
+  });
+
   test("refuse la lecture d'une collectivité en accès restreint à un utilisateur non membre", async () => {
     const { collectiviteId } = await createCollectivite({
       accesRestreint: true,
