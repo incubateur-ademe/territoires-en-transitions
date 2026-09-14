@@ -10,6 +10,7 @@ import { LoadScoreComparisonService } from '@tet/backend/referentiels/export-sco
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import { ListLabellisationsController } from '@tet/backend/referentiels/labellisations/list-labellisations.controller';
 import { ListLabellisationsService } from '@tet/backend/referentiels/labellisations/list-labellisations.service';
+import { ScoreIndicatifRepository } from '@tet/backend/referentiels/score-indicatif/score-indicatif.repository';
 import { ScoreIndicatifRouter } from '@tet/backend/referentiels/score-indicatif/score-indicatif.router';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { ListSnapshotsController } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.controller';
@@ -220,6 +221,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     HandleMesureServicesService,
     HandleMesuresServicesRouter,
 
+    ScoreIndicatifRepository,
     ScoreIndicatifService,
     ScoreIndicatifRouter,
 
