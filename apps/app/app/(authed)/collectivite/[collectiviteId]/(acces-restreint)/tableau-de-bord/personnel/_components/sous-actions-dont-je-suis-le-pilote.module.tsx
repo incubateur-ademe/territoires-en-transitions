@@ -1,3 +1,4 @@
+import { PERSONAL_MODULE_TITRES } from '@/app/tableaux-de-bord/modules/personal-module-titres';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action.table';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
@@ -33,7 +34,7 @@ export const SousActionsDontJeSuisLePiloteModule = ({ module }: Props) => {
 
   return (
     <Module
-      title={module.titre}
+      title={PERSONAL_MODULE_TITRES[module.defaultKey]}
       isEmpty={isEmpty && !isLoading}
       isLoading={false}
       symbole={<PictoAction className="w-16 h-16" />}
