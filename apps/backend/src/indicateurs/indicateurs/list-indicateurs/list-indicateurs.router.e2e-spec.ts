@@ -1248,6 +1248,30 @@ describe('ListIndicateursRouter', () => {
           expect(indicateur.identifiantReferentiel).toMatch(/^crte_1/i);
         });
       });
+
+      test('un _ saisi dans la recherche ne remplace pas un caractère quelconque', async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const exactTitleIndicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: { collectiviteId: 1, titre: 'Indicateur joker_like' },
+        });
+        const lookalikeTitleIndicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: { collectiviteId: 1, titre: 'Indicateur jokerxlike' },
+        });
+
+        const { data: indicateurs } = await caller.indicateurs.indicateurs.list(
+          {
+            collectiviteId: 1,
+            filters: { text: 'joker_like' },
+          }
+        );
+
+        const indicateurIds = indicateurs.map((indicateur) => indicateur.id);
+        expect(indicateurIds).toContain(exactTitleIndicateurId);
+        expect(indicateurIds).not.toContain(lookalikeTitleIndicateurId);
+      });
     });
 
     test('filtre combiné - identifiantsReferentiel et estFavori', async () => {
