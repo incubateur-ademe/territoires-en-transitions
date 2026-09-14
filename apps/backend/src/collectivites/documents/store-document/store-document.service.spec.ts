@@ -24,7 +24,8 @@ function buildServiceWithBucket(bucketId: string): ServiceUnderTest {
   const service = new StoreDocumentService(
     databaseService as never,
     permissionService as never,
-    { saveInStorage } as never
+    { saveInStorage } as never,
+    {} as never
   );
 
   return { service, saveInStorage };

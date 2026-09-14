@@ -6,6 +6,7 @@ import { Result } from '@tet/backend/utils/result.type';
 import { BibliothequeFichier } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
+import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import {
   UpdateDocumentError,
@@ -25,7 +26,8 @@ export class UpdateDocumentService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async updateDocument(
@@ -47,18 +49,13 @@ export class UpdateDocumentService {
       };
     }
 
-    const existing = await this.databaseService.db
-      .select()
-      .from(bibliothequeFichierTable)
-      .where(
-        and(
-          eq(bibliothequeFichierTable.collectiviteId, input.collectiviteId),
-          eq(bibliothequeFichierTable.hash, input.hash)
-        )
-      )
-      .limit(1);
+    const existingDocument =
+      await this.bibliothequeFichierRepository.findByHash({
+        collectiviteId: input.collectiviteId,
+        hash: input.hash,
+      });
 
-    if (!existing.length) {
+    if (!existingDocument) {
       return {
         success: false,
         error: UpdateDocumentErrorEnum.DOCUMENT_NOT_FOUND,

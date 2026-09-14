@@ -4,7 +4,6 @@ import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-cru
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
-import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
 import { CollectiviteDocumentsAccessService } from '@tet/backend/collectivites/documents/collectivite-documents-access.service';
 import { GetDownloadUrlRepository } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.repository';
 import { GetDownloadUrlRouter } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.router';
@@ -12,7 +11,6 @@ import { GetDownloadUrlService } from '@tet/backend/collectivites/documents/get-
 import { ListBibliothequeDocumentsRepository } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.repository';
 import { ListBibliothequeDocumentsRouter } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.router';
 import { ListBibliothequeDocumentsService } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.service';
-import { CreateUploadTokenRepository } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.repository';
 import { CreateUploadTokenRouter } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.router';
 import { CreateUploadTokenService } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.service';
 import { EditPreuveDocumentRepository } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.repository';
@@ -99,9 +97,7 @@ import { PersonnesService } from './services/personnes.service';
     ListCategoriesRouter,
     StoreDocumentService,
     StoreDocumentRouter,
-    CollectiviteBucketRepository,
     CollectiviteDocumentsAccessService,
-    CreateUploadTokenRepository,
     CreateUploadTokenService,
     CreateUploadTokenRouter,
     GetDownloadUrlRepository,
