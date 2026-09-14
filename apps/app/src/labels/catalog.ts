@@ -1930,9 +1930,6 @@ export const appLabels = {
   instructionListeColonneActions: 'Actions',
   instructionListeConsulter: 'Consulter le PCAET',
   instructionListeVoirInstruction: 'Voir l’instruction',
-  instructionListeTelecharger: 'Télécharger le dossier',
-  instructionListeTelechargerIndisponible:
-    'Le téléchargement du dossier complet arrive prochainement.',
   instructionListeSansPilote: 'Aucun pilote renseigné',
   instructionEtatATraiter: 'À instruire',
   /**
