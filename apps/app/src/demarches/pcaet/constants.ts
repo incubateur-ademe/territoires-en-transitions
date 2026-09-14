@@ -63,40 +63,6 @@ export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
 export type DemarchePcaetMenuTransition =
   keyof typeof DEMARCHE_PCAET_TRANSITION_ACTIONS;
 
-export type DemarchePcaetContact = {
-  nom: string;
-  email: string;
-  situation: string;
-};
-
-export type DemarchePcaetOrganismeContacts = {
-  organisme: string;
-  contacts: DemarchePcaetContact[];
-};
-
-export const demarcheMockContacts: DemarchePcaetOrganismeContacts[] = [
-  {
-    organisme: appLabels.demarcheContactDreal,
-    contacts: [
-      {
-        nom: 'DREAL Auvergne-Rhône-Alpes',
-        email: 'pcaet.dreal-ara@developpement-durable.gouv.fr',
-        situation: appLabels.demarcheContactDrealSituation,
-      },
-    ],
-  },
-  {
-    organisme: appLabels.demarcheContactCr,
-    contacts: [
-      {
-        nom: 'Conseil régional - Nathalie Garcia',
-        email: 'nathalie.garcia@auvergnerhonealpes.fr',
-        situation: appLabels.demarcheContactCrSituation,
-      },
-    ],
-  },
-];
-
 // ---------------------------------------------------------------------------
 // Vulnérabilité du territoire
 // ---------------------------------------------------------------------------

@@ -188,13 +188,10 @@ export const demarchesLabels = {
   demarcheContactsTitre: 'Contacts',
   demarcheContactsDescription:
     'Interlocuteurs désignés pour le suivi de votre démarche.',
+  demarcheContactsAucunTitre: 'Aucun contact à afficher',
+  demarcheContactsAucunDescription:
+    'Les interlocuteurs de votre territoire ne sont pas encore rattachés à votre démarche.',
   demarcheMenuTitre: 'Actions',
-  demarcheContactDreal: 'Contacts DREAL',
-  demarcheContactCr: 'Contacts Conseil régional',
-  demarcheContactDrealSituation:
-    'Dépôt réglementaire, vérification de conformité et suivi administratif de votre PCAET.',
-  demarcheContactCrSituation:
-    'Avis du conseil régional et questions liées à la politique climat-air-énergie régionale.',
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
   demarcheAvanceSectionDocumentsDescription:
