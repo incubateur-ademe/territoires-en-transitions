@@ -4,7 +4,7 @@ import { collectiviteTable } from '@tet/backend/collectivites/shared/models/coll
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import type { StoredDocumentHash } from '@tet/domain/collectivites';
+import type { DocumentHash } from '@tet/domain/collectivites';
 import type {
   DemandeAvisAchevement,
   PcaetAvisAuTitreDe,
@@ -303,7 +303,7 @@ export class PcaetAvisRepository {
       demandeAvisId: number;
       emetteurCollectiviteId: number;
       auTitreDe: PcaetAvisAuTitreDe;
-      fichierRef: StoredDocumentHash | null;
+      fichierRef: DocumentHash | null;
       deposePar: string;
     },
     tx?: Transaction
@@ -334,7 +334,7 @@ export class PcaetAvisRepository {
     {
       emetteurCollectiviteId,
       fichierRef,
-    }: { emetteurCollectiviteId: number; fichierRef: StoredDocumentHash },
+    }: { emetteurCollectiviteId: number; fichierRef: DocumentHash },
     tx?: Transaction
   ): Promise<void> {
     await (tx ?? this.databaseService.db)

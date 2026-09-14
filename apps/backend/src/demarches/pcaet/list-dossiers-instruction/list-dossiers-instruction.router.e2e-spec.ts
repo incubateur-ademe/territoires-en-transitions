@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { collectivitePerimetreSecondaireTable } from '@tet/backend/collectivites/shared/models/collectivite-perimetre-secondaire.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
@@ -115,7 +115,7 @@ describe('listDossiersInstruction', () => {
         demandeAvisId: demande.id,
         emetteurCollectiviteId: drealId,
         auTitreDe: 'prefet_region',
-        fichierRef: avis.valide ? toLegacyDocumentHash('avis-test.pdf') : null,
+        fichierRef: avis.valide ? buildRandomDocumentHash() : null,
         valideLe: avis.valide ? new Date().toISOString() : null,
       });
     }

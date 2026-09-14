@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
@@ -105,7 +105,7 @@ describe('deleteAvis', () => {
           demandeAvisId: autreDemandeAvisId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
+          fichierRef: buildRandomDocumentHash(),
           valideLe: new Date().toISOString(),
           deposePar: camille.id,
         },

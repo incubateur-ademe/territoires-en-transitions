@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
+  buildRandomDocumentHash,
   seedTestDocument,
   TestDocument,
-  toLegacyDocumentHash,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import {
@@ -24,7 +24,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { randomUUID } from 'crypto';
 import {
   getTestApp,
   getTestDatabase,
@@ -513,7 +512,7 @@ describe('ListBibliothequeDocumentsRouter', () => {
     await seedDocuments(collectivite, ['present.pdf']);
     await databaseService.db.insert(bibliothequeFichierTable).values({
       collectiviteId: collectivite.id,
-      hash: toLegacyDocumentHash(randomUUID()),
+      hash: buildRandomDocumentHash(),
       filename: 'sans-objet.pdf',
       confidentiel: false,
     });

@@ -4,7 +4,7 @@ import {
   addTestCollectiviteAndUsers,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  toLegacyDocumentHash,
+  buildRandomDocumentHash,
   uploadCreateTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
@@ -14,7 +14,6 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { ObjetPreuveEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import {
@@ -271,7 +270,7 @@ describe('CreatePreuveRouter', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId,
-        hash: toLegacyDocumentHash(randomUUID()),
+        hash: buildRandomDocumentHash(),
         filename: 'test-preuve.pdf',
         confidentiel: false,
       })

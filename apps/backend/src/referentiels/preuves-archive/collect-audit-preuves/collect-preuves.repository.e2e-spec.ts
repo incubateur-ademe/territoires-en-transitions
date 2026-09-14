@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
@@ -16,7 +16,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Collectivite } from '@tet/domain/collectivites';
+import { Collectivite, DocumentHash } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, like } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
@@ -35,14 +35,14 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   let adminUserId: string;
   let cleanupCollectivite: () => Promise<void>;
 
-  let publicHash: string;
-  let confidentielHash: string;
-  let purgeHash: string;
-  let purgeConfidentielHash: string;
+  let publicHash: DocumentHash;
+  let confidentielHash: DocumentHash;
+  let purgeHash: DocumentHash;
+  let purgeConfidentielHash: DocumentHash;
 
   let otherCollectivite: Collectivite;
   let cleanupOtherCollectivite: () => Promise<void>;
-  let otherCollectiviteHash: string;
+  let otherCollectiviteHash: DocumentHash;
   let auditId: number;
   let demandeId: number;
   let cleanupAudit: () => Promise<void>;
@@ -59,10 +59,10 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     adminUserId = getAuthUserFromUserCredentials(collectiviteFixture.user).id;
     cleanupCollectivite = collectiviteFixture.cleanup;
 
-    publicHash = `hash-public-${collectivite.id}`;
-    confidentielHash = `hash-confidentiel-${collectivite.id}`;
-    purgeHash = `hash-purge-${collectivite.id}`;
-    purgeConfidentielHash = `hash-purge-confidentiel-${collectivite.id}`;
+    publicHash = buildRandomDocumentHash();
+    confidentielHash = buildRandomDocumentHash();
+    purgeHash = buildRandomDocumentHash();
+    purgeConfidentielHash = buildRandomDocumentHash();
 
     await db.db
       .insert(collectiviteBucketTable)
@@ -73,25 +73,25 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(publicHash),
+          hash: publicHash,
           filename: 'public.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(confidentielHash),
+          hash: confidentielHash,
           filename: 'secret.pdf',
           confidentiel: true,
         },
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(purgeHash),
+          hash: purgeHash,
           filename: 'avis-technique-purge.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(purgeConfidentielHash),
+          hash: purgeConfidentielHash,
           filename: 'secret-purge.pdf',
           confidentiel: true,
         },
@@ -135,7 +135,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     });
     otherCollectivite = otherCollectiviteFixture.collectivite;
     cleanupOtherCollectivite = otherCollectiviteFixture.cleanup;
-    otherCollectiviteHash = `hash-autre-collectivite-${otherCollectivite.id}`;
+    otherCollectiviteHash = buildRandomDocumentHash();
 
     await db.db.insert(collectiviteBucketTable).values({
       bucketId: PREUVES_ARCHIVES_BUCKET,
@@ -146,7 +146,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId: otherCollectivite.id,
-        hash: toLegacyDocumentHash(otherCollectiviteHash),
+        hash: otherCollectiviteHash,
         filename: 'document-d-une-autre-collectivite.pdf',
         confidentiel: false,
       })
@@ -429,8 +429,8 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
   let adminUserId: string;
   let cleanupCollectivite: () => Promise<void>;
 
-  let caeHash: string;
-  let eciHash: string;
+  let caeHash: DocumentHash;
+  let eciHash: DocumentHash;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -444,8 +444,8 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
     adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
     cleanupCollectivite = fixture.cleanup;
 
-    caeHash = `hash-cae-${collectivite.id}`;
-    eciHash = `hash-eci-${collectivite.id}`;
+    caeHash = buildRandomDocumentHash();
+    eciHash = buildRandomDocumentHash();
 
     await db.db
       .insert(collectiviteBucketTable)
@@ -456,13 +456,13 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(caeHash),
+          hash: caeHash,
           filename: 'preuve-cae.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: toLegacyDocumentHash(eciHash),
+          hash: eciHash,
           filename: 'preuve-eci.pdf',
           confidentiel: false,
         },

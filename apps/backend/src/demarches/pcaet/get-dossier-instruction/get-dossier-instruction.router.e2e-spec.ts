@@ -1,6 +1,6 @@
-import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
@@ -193,7 +193,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
+        fichierRef: buildRandomDocumentHash(),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -261,7 +261,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
+        fichierRef: buildRandomDocumentHash(),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -354,7 +354,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: toLegacyDocumentHash('avis-prefet_region.pdf'),
+        fichierRef: buildRandomDocumentHash(),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -396,7 +396,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: toLegacyDocumentHash('avis-prefet_region.pdf'),
+        fichierRef: buildRandomDocumentHash(),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
