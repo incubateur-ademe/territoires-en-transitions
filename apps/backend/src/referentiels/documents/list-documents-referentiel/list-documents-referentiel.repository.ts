@@ -3,7 +3,7 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
@@ -74,7 +74,7 @@ export class ListDocumentsReferentielRepository {
         .where(
           and(
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveLabellisationTable.fichierId,
               confidentielColumn: fichier.confidentiel,
               canReadConfidentiel,
@@ -139,7 +139,7 @@ export class ListDocumentsReferentielRepository {
         .where(
           and(
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveAuditTable.fichierId,
               confidentielColumn: fichier.confidentiel,
               canReadConfidentiel,
@@ -192,7 +192,7 @@ export class ListDocumentsReferentielRepository {
         .where(
           and(
             eq(preuveRapportTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveRapportTable.fichierId,
               confidentielColumn: fichier.confidentiel,
               canReadConfidentiel,

@@ -3,7 +3,7 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
@@ -71,7 +71,7 @@ export class ListDocumentsDemandeLabellisationRepository {
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveLabellisationTable.fichierId,
               confidentielColumn: fichier.confidentiel,
               canReadConfidentiel,

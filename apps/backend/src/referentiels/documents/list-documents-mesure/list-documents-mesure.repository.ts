@@ -3,7 +3,7 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { hideConfidentielFichier } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
@@ -105,26 +105,17 @@ export class ListDocumentsMesureRepository {
           bibliothequeFichierTable,
           and(
             eq(preuveReglementaireTable.fichierId, bibliothequeFichierTable.id),
-            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+            hideConfidentielFichier({
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         )
-        .leftJoin(
-          fichier,
-          and(
-            eq(preuveReglementaireTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
-          )
-        )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .leftJoin(
           dcpTable,
           eq(preuveReglementaireTable.modifiedBy, dcpTable.id)
-        )
-        .where(
-          hideConfidentielFilter({
-            fichierIdColumn: preuveReglementaireTable.fichierId,
-            confidentielColumn: bibliothequeFichierTable.confidentiel,
-            canReadConfidentiel,
-          })
         )
         .orderBy(
           actionDefinitionTable.actionId,
@@ -181,30 +172,19 @@ export class ListDocumentsMesureRepository {
               preuveComplementaireTable.fichierId,
               bibliothequeFichierTable.id
             ),
-            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          fichier,
-          and(
-            eq(preuveComplementaireTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          dcpTable,
-          eq(preuveComplementaireTable.modifiedBy, dcpTable.id)
-        )
-        .where(
-          and(
-            eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
-              fichierIdColumn: preuveComplementaireTable.fichierId,
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+            hideConfidentielFichier({
               confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
+        .leftJoin(
+          dcpTable,
+          eq(preuveComplementaireTable.modifiedBy, dcpTable.id)
+        )
+        .where(eq(preuveComplementaireTable.collectiviteId, collectiviteId))
         .orderBy(actionDefinitionTable.actionId, preuveComplementaireTable.id);
       return success(rows);
     } catch (error) {

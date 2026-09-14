@@ -61,6 +61,13 @@ const getProjectedComplementaires = ({
   complementaires: DocumentCollectivite[];
 }): ProjectedDocument[] => complementaires.map(toProjectedDocument);
 
+const getAttendusIds = ({
+  attendus,
+}: {
+  attendus: { preuveReglementaire: { id: string } }[];
+}): string[] =>
+  attendus.map(({ preuveReglementaire }) => preuveReglementaire.id);
+
 const MESURE = {
   actionId: 'eci_1.1.4',
   attendus: ['delib_strategie_eci', 'plan_action_eci'],
@@ -595,6 +602,36 @@ describe('List Mesure Documents Router', () => {
 
     expect(getProjectedAttendus(membreView)).toEqual([]);
     expect(getProjectedAttendus(visiteurView)).toEqual([]);
+  });
+
+  test("rend le document attendu dont l'unique dépôt est un fichier confidentiel", async () => {
+    const { collectiviteId, addAttenduDepot, addFichier } =
+      await createCollectivite();
+
+    const fichierConfidentiel = await addFichier({
+      filename: 'secret.pdf',
+      confidentiel: true,
+    });
+    await addAttenduDepot({
+      preuveId: MESURE.attendus[0],
+      titre: 'secret',
+      fichierId: fichierConfidentiel.id,
+    });
+
+    const visiteurCaller = router.createCaller({ user: visiteurUser });
+    const visiteurView =
+      await visiteurCaller.referentiels.documents.listDocumentsMesure({
+        collectiviteId,
+        actionId: MESURE.actionId,
+      });
+
+    expect(getAttendusIds(visiteurView)).toEqual([
+      MESURE.attendus[0],
+      MESURE.attendus[1],
+    ]);
+    expect(
+      visiteurView.attendus.map(({ documents }) => documents.length)
+    ).toEqual([0, 0]);
   });
 
   test("n'émet jamais de document sans fichier ni lien, contrairement au contrat partagé qui l'autorise", async () => {
