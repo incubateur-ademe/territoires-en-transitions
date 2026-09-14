@@ -82,9 +82,9 @@ const ActionsLiees = ({
         return (
           <div key={actionId} className="flex flex-row gap-2 items-center">
             <Link href={url} className="underline">
-              {`${isNewReferentiel(referentiel) ? 'CR' : referentiel} ${
-                referentiel === 'te' ? '' : identifiant
-              } - ${nom}`}
+              {`${
+                isNewReferentiel(referentiel) ? 'CR' : referentiel
+              } ${identifiant} - ${nom}`}
             </Link>
             {!!reglesActions.length && (
               <InfoTooltip
