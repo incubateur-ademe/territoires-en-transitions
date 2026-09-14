@@ -1,3 +1,4 @@
+import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { appLabels } from '@/app/labels/catalog';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@tet/ui';
@@ -8,15 +9,13 @@ const EditDocumentButton = ({
   document,
   onEdit,
 }: {
-  document: Pick<Preuve, 'support'>;
+  document: Pick<Preuve, 'preuveType'> & DocumentCollectivite;
   onEdit: () => void;
 }) => (
   <Button
     icon="edit-line"
     title={
-      document.support.type === 'lien'
-        ? appLabels.editerLien
-        : appLabels.editerDocument
+      document.type === 'lien' ? appLabels.editerLien : appLabels.editerDocument
     }
     variant="grey"
     size="xs"
@@ -56,7 +55,7 @@ export type CarteDocumentActions = {
 };
 
 type MenuCarteDocumentProps = {
-  document: Pick<Preuve, 'support'>;
+  document: Pick<Preuve, 'preuveType'> & DocumentCollectivite;
   className?: string;
   actions: CarteDocumentActions;
 };

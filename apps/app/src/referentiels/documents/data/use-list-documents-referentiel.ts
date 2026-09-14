@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { toPreuveSupport } from '../../preuves/Bibliotheque/to-preuve-support.utils';
+import {
+  DocumentCollectivite,
+  DocumentCollectiviteBase,
+} from '@tet/domain/collectivites';
+import { toDocumentCollectivite } from '../../preuves/Bibliotheque/to-document-collectivite.utils';
 import {
   Fichier,
   PreuveAudit,
@@ -10,13 +14,17 @@ import {
   PreuveRapport,
 } from '../../preuves/Bibliotheque/types';
 
-type DocumentLegacy = { fichier: Fichier | null; lien: PreuveLien | null };
+type DocumentLegacy = DocumentCollectiviteBase & {
+  fichier: Fichier | null;
+  lien: PreuveLien | null;
+};
 
-const toPreuve = <Document extends DocumentLegacy>({
-  fichier,
-  lien,
-  ...document
-}: Document) => ({ ...document, support: toPreuveSupport({ fichier, lien }) });
+const toPreuve = <Depot extends DocumentLegacy>(
+  depot: Depot
+): Omit<Depot, 'fichier' | 'lien'> & DocumentCollectivite => ({
+  ...depot,
+  ...toDocumentCollectivite(depot),
+});
 
 type ReferentielDocuments = {
   labellisation: PreuveLabellisation[];

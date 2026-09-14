@@ -1,44 +1,14 @@
 import { AuditEnCours } from '@/app/referentiels/audits/types';
+import {
+  DocumentCollectivite,
+  FichierStocke,
+  Lien,
+} from '@tet/domain/collectivites';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { EditState } from './useEditState';
 
-// un fichier de la bibliothèque
-export type BibliothequeFichier = {
-  id: number;
-  collectiviteId: number;
-  hash: string;
-  filename: string;
-  bucketId: string;
-  filesize?: number;
-  confidentiel: boolean | null;
-};
-
-export type Fichier = Pick<
-  BibliothequeFichier,
-  'id' | 'bucketId' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
->;
-
-export type PreuveLien = {
-  url: string;
-  titre: string;
-};
-
-export type PreuveSupport =
-  | { type: 'fichier'; fichier: Fichier }
-  | { type: 'lien'; lien: PreuveLien }
-  | { type: 'fichierManquant'; filename: string }
-  | { type: 'nonRenseigne' };
-
-// champs communs à tous les types de preuves
-type PreuveBase = {
-  support: PreuveSupport;
-  id: number;
-  collectiviteId: number;
-  commentaire: string | null;
-  modifiedAt: string | null;
-  modifiedBy: string | null;
-  modifiedByNom: string | null;
-};
+export type Fichier = FichierStocke;
+export type PreuveLien = Lien;
 
 export type PreuveReglementaireDefinition = {
   id: string;
@@ -92,12 +62,15 @@ type PreuveRapportFields = {
 };
 
 // types de preuves
-export type DocumentReglementaire = PreuveBase & PreuveReglementaireFields;
-export type PreuveComplementaire = PreuveBase & PreuveComplementaireFields;
-export type PreuveAnnexe = PreuveBase & PreuveAnnexeFields;
-export type PreuveLabellisation = PreuveBase & PreuveLabellisationFields;
-export type PreuveAudit = PreuveBase & PreuveAuditFields;
-export type PreuveRapport = PreuveBase & PreuveRapportFields;
+export type DocumentReglementaire = DocumentCollectivite &
+  PreuveReglementaireFields;
+export type PreuveComplementaire = DocumentCollectivite &
+  PreuveComplementaireFields;
+export type PreuveAnnexe = DocumentCollectivite & PreuveAnnexeFields;
+export type PreuveLabellisation = DocumentCollectivite &
+  PreuveLabellisationFields;
+export type PreuveAudit = DocumentCollectivite & PreuveAuditFields;
+export type PreuveRapport = DocumentCollectivite & PreuveRapportFields;
 export type PreuveAuditEtLabellisation = PreuveLabellisation | PreuveAudit;
 
 // une preuve

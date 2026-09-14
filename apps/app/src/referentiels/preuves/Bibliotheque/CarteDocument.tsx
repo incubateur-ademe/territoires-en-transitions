@@ -1,3 +1,4 @@
+import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import {
@@ -30,12 +31,11 @@ import { useOpenPreuve } from './use-open-preuve';
 import { Preuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
-import { getPreuveFichier } from './to-preuve-support.utils';
-import { PreuveSupport } from './types';
+import { getPreuveFichier } from './to-document-collectivite.utils';
 import { getAuthorAndDate, getFormattedTitle } from './utils';
 
-const getOuvertureTitle = (support: PreuveSupport): string =>
-  support.type === 'lien' ? appLabels.ouvrirLien : appLabels.telechargerFichier;
+const getOuvertureTitle = (preuve: DocumentCollectivite): string =>
+  preuve.type === 'lien' ? appLabels.ouvrirLien : appLabels.telechargerFichier;
 
 const TitreDocument = ({
   document,
@@ -44,7 +44,7 @@ const TitreDocument = ({
   document: Preuve;
   onOuvrir: () => void;
 }) => {
-  if (document.support.type === 'fichierManquant') {
+  if (document.type === 'fichierManquant') {
     return (
       <span className="text-grey-7 text-base font-bold" data-test="name">
         {getFormattedTitle(document)}
@@ -55,7 +55,7 @@ const TitreDocument = ({
     <span
       className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
       data-test="name"
-      title={getOuvertureTitle(document.support)}
+      title={getOuvertureTitle(document)}
       onClick={onOuvrir}
     >
       {getFormattedTitle(document)}
@@ -72,7 +72,7 @@ const EditPreuveModal = ({
   setIsOpen: (open: boolean) => void;
   preuve: Preuve;
 }) => {
-  const fichier = getPreuveFichier(preuve.support);
+  const fichier = getPreuveFichier(preuve);
   if (!fichier) {
     return (
       <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
@@ -129,9 +129,8 @@ const CarteDocument = ({
     commentaire,
     modifiedAt: dateCreation,
     modifiedByNom: auteur,
-    support,
   } = document;
-  const fichier = getPreuveFichier(support);
+  const fichier = getPreuveFichier(document);
   const isDocumentDeMesure =
     document.preuveType === 'reglementaire' ||
     document.preuveType === 'complementaire';
@@ -159,7 +158,7 @@ const CarteDocument = ({
   const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
 
-  if (support.type === 'nonRenseigne') return null;
+  if (document.type === 'nonRenseigne') return null;
 
   return (
     <>
@@ -167,7 +166,7 @@ const CarteDocument = ({
         className={classNames('relative group max-w-screen-md')}
         data-test="carte-doc"
       >
-        {support.type === 'fichierManquant' && (
+        {document.type === 'fichierManquant' && (
           <Tooltip label={appLabels.fichierIndisponibleInfo}>
             <div className="absolute -top-3 left-5">
               <Notification

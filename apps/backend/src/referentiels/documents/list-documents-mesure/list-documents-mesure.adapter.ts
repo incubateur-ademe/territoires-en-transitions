@@ -1,9 +1,8 @@
 import { FileInfo } from '@tet/backend/collectivites/documents/file-info.utils';
 import { Lien } from '@tet/domain/collectivites';
 import { groupBy } from 'es-toolkit';
-import { DocumentSupportInput } from './list-documents-mesure.output';
 
-type SupportRow = {
+type DocumentRow = {
   id: number | null;
   fichierId: number | null;
   fichier: FileInfo | null;
@@ -11,39 +10,46 @@ type SupportRow = {
   bibliothequeFilename: string | null;
 };
 
-type AttenduRow = SupportRow & {
+type AttenduRow = DocumentRow & {
   action: { actionId: string };
   preuveReglementaire: { id: string };
 };
 
-function toSupport({
-  fichierId,
-  fichier,
-  lien,
-  bibliothequeFilename,
-}: SupportRow): DocumentSupportInput | undefined {
-  if (fichierId === null) {
-    return lien ? { type: 'lien', lien } : undefined;
-  }
-  if (fichier) {
-    return { type: 'fichier', fichier };
-  }
-  if (bibliothequeFilename) {
-    return { type: 'fichierManquant', filename: bibliothequeFilename };
-  }
-  return undefined;
-}
+type DocumentAssemble<Row extends DocumentRow> = Omit<
+  Row,
+  'id' | 'fichierId' | 'fichier' | 'lien' | 'bibliothequeFilename'
+> & { id: number } & (
+    | { type: 'fichier'; fichier: FileInfo }
+    | { type: 'lien'; lien: Lien }
+    | { type: 'fichierManquant'; filename: string }
+  );
 
-export function toDocuments<Row extends SupportRow>(
+export function toDocuments<Row extends DocumentRow>(
   rows: Row[]
-): (Omit<Row, 'id'> & { id: number; support: DocumentSupportInput })[] {
-  return rows.flatMap((row) => {
-    const { id } = row;
+): DocumentAssemble<Row>[] {
+  return rows.flatMap((row): DocumentAssemble<Row>[] => {
+    const { id, fichierId, fichier, lien, bibliothequeFilename, ...reste } =
+      row;
     if (id === null) {
       return [];
     }
-    const support = toSupport(row);
-    return support ? [{ ...row, id, support }] : [];
+    if (fichierId === null) {
+      return lien ? [{ ...reste, id, type: 'lien' as const, lien }] : [];
+    }
+    if (fichier) {
+      return [{ ...reste, id, type: 'fichier' as const, fichier }];
+    }
+    if (bibliothequeFilename) {
+      return [
+        {
+          ...reste,
+          id,
+          type: 'fichierManquant' as const,
+          filename: bibliothequeFilename,
+        },
+      ];
+    }
+    return [];
   });
 }
 

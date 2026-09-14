@@ -1,4 +1,4 @@
-import { toPreuveSupport } from '@/app/referentiels/preuves/Bibliotheque/to-preuve-support.utils';
+import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
 import {
   Fichier,
   PreuveAnnexe,
@@ -14,27 +14,28 @@ const toAnnexeFichier = (annexe: AnnexeDocument): Fichier | null => {
   }
   return {
     id: fichier.id,
+    collectiviteId: annexe.collectiviteId,
     bucketId: fichier.bucketId,
     hash: fichier.hash,
     filename: fichier.filename,
-    filesize: fichier.filesize ?? 0,
+    filesize: fichier.filesize ?? null,
     confidentiel: fichier.confidentiel ?? false,
   };
 };
 
 export function annexeDocumentToPreuve(annexe: AnnexeDocument): PreuveAnnexe {
   return {
-    id: annexe.id,
-    collectiviteId: annexe.collectiviteId,
-    commentaire: annexe.commentaire,
-    modifiedAt: annexe.modifiedAt,
-    modifiedBy: null,
-    modifiedByNom: annexe.modifiedByNom,
-    preuveType: 'annexe',
-    support: toPreuveSupport({
+    ...toDocumentCollectivite({
+      id: annexe.id,
+      collectiviteId: annexe.collectiviteId,
+      commentaire: annexe.commentaire,
+      modifiedAt: annexe.modifiedAt,
+      modifiedBy: null,
+      modifiedByNom: annexe.modifiedByNom,
       fichier: toAnnexeFichier(annexe),
       lien: annexe.lien ?? null,
     }),
+    preuveType: 'annexe',
   };
 }
 

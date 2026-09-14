@@ -14,30 +14,44 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
-import { DocumentSupport } from './list-documents-mesure.output';
 
-type DocumentAvecSupport = { support: DocumentSupport };
+const getLienTitre = (document: DocumentCollectivite): string | undefined =>
+  document.type === 'lien' ? document.lien.titre : undefined;
 
-const getLienTitre = ({ support }: DocumentAvecSupport): string | undefined =>
-  support.type === 'lien' ? support.lien.titre : undefined;
+const getFichierFilename = (
+  document: DocumentCollectivite
+): string | undefined =>
+  document.type === 'fichier' ? document.fichier.filename : undefined;
 
-const getFichierFilename = ({
-  support,
-}: DocumentAvecSupport): string | undefined =>
-  support.type === 'fichier' ? support.fichier.filename : undefined;
+type DocumentProjete =
+  | { type: 'fichier'; filename: string }
+  | { type: 'lien'; titre: string }
+  | { type: 'fichierManquant'; filename: string }
+  | { type: 'nonRenseigne' };
 
-const getSupport = ({ support }: DocumentAvecSupport): DocumentSupport =>
-  support;
+const toDocumentProjete = (document: DocumentCollectivite): DocumentProjete => {
+  switch (document.type) {
+    case 'fichier':
+      return { type: 'fichier', filename: document.fichier.filename };
+    case 'lien':
+      return { type: 'lien', titre: document.lien.titre };
+    case 'fichierManquant':
+      return { type: 'fichierManquant', filename: document.filename };
+    case 'nonRenseigne':
+      return { type: 'nonRenseigne' };
+  }
+};
 
-const getAttendusSupports = ({
+const getAttendusProjetes = ({
   attendus,
 }: {
-  attendus: { documents: DocumentAvecSupport[] }[];
-}): DocumentSupport[] =>
-  attendus.flatMap(({ documents }) => documents.map(getSupport));
+  attendus: { documents: DocumentCollectivite[] }[];
+}): DocumentProjete[] =>
+  attendus.flatMap(({ documents }) => documents.map(toDocumentProjete));
 
 const getAttendusIds = ({
   attendus,
@@ -387,10 +401,10 @@ describe('List Mesure Documents Router', () => {
         actionId: MESURE.actionId,
       });
 
-    expect(getAttendusSupports(visiteurView)).toEqual(
-      getAttendusSupports(membreView)
+    expect(getAttendusProjetes(visiteurView)).toEqual(
+      getAttendusProjetes(membreView)
     );
-    expect(getAttendusSupports(visiteurView)).toEqual([
+    expect(getAttendusProjetes(visiteurView)).toEqual([
       { type: 'fichierManquant', filename: 'sans-octets.pdf' },
     ]);
   });
@@ -421,15 +435,15 @@ describe('List Mesure Documents Router', () => {
         actionId: MESURE.actionId,
       });
 
-    const getComplementairesSupports = ({
+    const getComplementairesProjetes = ({
       complementaires,
-    }: typeof visiteurView): DocumentSupport[] =>
-      complementaires.map(getSupport);
+    }: typeof visiteurView): DocumentProjete[] =>
+      complementaires.map(toDocumentProjete);
 
-    expect(getComplementairesSupports(visiteurView)).toEqual(
-      getComplementairesSupports(membreView)
+    expect(getComplementairesProjetes(visiteurView)).toEqual(
+      getComplementairesProjetes(membreView)
     );
-    expect(getComplementairesSupports(visiteurView)).toEqual([
+    expect(getComplementairesProjetes(visiteurView)).toEqual([
       {
         type: 'fichierManquant',
         filename: 'complementaire-sans-octets.pdf',
@@ -464,8 +478,8 @@ describe('List Mesure Documents Router', () => {
         actionId: MESURE.actionId,
       });
 
-    expect(getAttendusSupports(visiteurView)).toEqual([]);
-    expect(getAttendusSupports(membreView)).toEqual([
+    expect(getAttendusProjetes(visiteurView)).toEqual([]);
+    expect(getAttendusProjetes(membreView)).toEqual([
       { type: 'fichierManquant', filename: 'secret-sans-octets.pdf' },
     ]);
   });
@@ -497,8 +511,8 @@ describe('List Mesure Documents Router', () => {
         actionId: MESURE.actionId,
       });
 
-    expect(visiteurView.complementaires.map(getSupport)).toEqual([]);
-    expect(membreView.complementaires.map(getSupport)).toEqual([
+    expect(visiteurView.complementaires.map(toDocumentProjete)).toEqual([]);
+    expect(membreView.complementaires.map(toDocumentProjete)).toEqual([
       {
         type: 'fichierManquant',
         filename: 'complementaire-secret-sans-octets.pdf',
@@ -528,8 +542,21 @@ describe('List Mesure Documents Router', () => {
         actionId: MESURE.actionId,
       });
 
-    expect(getAttendusSupports(membreView)).toEqual([
+    expect(membreView.attendus[0].documents).toEqual([
       {
+        id: expect.any(Number),
+        collectiviteId,
+        commentaire: '',
+        modifiedAt: expect.any(String),
+        modifiedBy: expect.any(String),
+        modifiedByNom: expect.any(String),
+        action: { actionId: MESURE.actionId, identifiant: '1.1.4' },
+        preuveType: 'reglementaire',
+        preuveReglementaire: {
+          id: MESURE.attendus[0],
+          nom: expect.any(String),
+          description: expect.any(String),
+        },
         type: 'fichier',
         fichier: {
           id: fichier.id,
@@ -570,8 +597,8 @@ describe('List Mesure Documents Router', () => {
         actionId: MESURE.actionId,
       });
 
-    expect(getAttendusSupports(membreView)).toEqual([]);
-    expect(getAttendusSupports(visiteurView)).toEqual([]);
+    expect(getAttendusProjetes(membreView)).toEqual([]);
+    expect(getAttendusProjetes(visiteurView)).toEqual([]);
   });
 
   test("garde l'attendu visible quand son unique dépôt est confidentiel", async () => {
@@ -599,6 +626,34 @@ describe('List Mesure Documents Router', () => {
       MESURE.attendus[0],
       MESURE.attendus[1],
     ]);
+  });
+
+  test("n'émet jamais de document sans fichier ni lien, contrairement au contrat partagé qui l'autorise", async () => {
+    const { collectiviteId, membreCaller, addAttenduDepot, addFichier } =
+      await createCollectivite();
+
+    await addAttenduDepot({ preuveId: MESURE.attendus[0], titre: 'un-lien' });
+    const fichier = await addFichier({ filename: 'un-fichier.pdf' });
+    await addAttenduDepot({
+      preuveId: MESURE.attendus[1],
+      titre: 'un-fichier',
+      fichierId: fichier.id,
+    });
+
+    const membreView =
+      await membreCaller.referentiels.documents.listDocumentsMesure({
+        collectiviteId,
+        actionId: MESURE.actionId,
+      });
+
+    const types = [
+      ...membreView.attendus.flatMap(({ documents }) =>
+        documents.map(({ type }) => type)
+      ),
+      ...membreView.complementaires.map(({ type }) => type),
+    ];
+    expect(types).not.toContain('nonRenseigne');
+    expect(types.sort()).toEqual(['fichier', 'lien']);
   });
 
   test("refuse la lecture d'une collectivité en accès restreint à un utilisateur non membre", async () => {

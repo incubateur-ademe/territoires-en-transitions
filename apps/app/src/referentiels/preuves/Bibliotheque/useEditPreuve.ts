@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPreuveFichier } from './to-preuve-support.utils';
+import { getPreuveFichier } from './to-document-collectivite.utils';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
 import { EditHandlers, Preuve, PreuveLien } from './types';
@@ -26,7 +26,7 @@ export const useEditPreuve: EditPreuve = (preuve) => {
     isError: isUpdateFilenameError,
   } = useUpdateBibliothequeFichier();
   const { commentaire } = preuve;
-  const fichier = getPreuveFichier(preuve.support);
+  const fichier = getPreuveFichier(preuve);
   const editComment = useEditState({
     initialValue: commentaire,
     onUpdate: (updatedComment) =>

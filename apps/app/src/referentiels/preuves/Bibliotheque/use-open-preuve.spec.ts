@@ -1,4 +1,3 @@
-import { getPreuveFichier, getPreuveLien } from './to-preuve-support.utils';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { preuveReglementaireFichier, preuveReglementaireLien } from './fixture';
@@ -33,9 +32,7 @@ describe('useOpenPreuve', () => {
 
     openPreuve.current(preuveReglementaireFichier);
 
-    expect(downloadDocument).toHaveBeenCalledWith(
-      getPreuveFichier(preuveReglementaireFichier.support)?.id
-    );
+    expect(downloadDocument).toHaveBeenCalledWith(21);
   });
 
   it('ignore un clic tant que le téléchargement précédent est en cours', () => {
@@ -54,7 +51,7 @@ describe('useOpenPreuve', () => {
     openPreuve.current(preuveReglementaireLien);
 
     expect(open).toHaveBeenCalledWith(
-      getPreuveLien(preuveReglementaireLien.support)?.url,
+      'http://yolo.dodo',
       '_blank',
       'noopener,noreferrer'
     );

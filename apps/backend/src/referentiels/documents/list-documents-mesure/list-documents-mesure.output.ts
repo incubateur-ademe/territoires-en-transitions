@@ -1,28 +1,5 @@
+import { documentCollectiviteSchema } from '@tet/domain/collectivites';
 import z from 'zod';
-
-const fichierSchema = z.object({
-  id: z.number(),
-  collectiviteId: z.number(),
-  hash: z.string(),
-  filename: z.string(),
-  confidentiel: z.boolean().nullable(),
-  bucketId: z.string(),
-  filesize: z
-    .number()
-    .nullable()
-    .transform((filesize) => filesize ?? undefined),
-});
-
-const lienSchema = z.object({
-  url: z.string(),
-  titre: z.string(),
-});
-
-const supportSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('fichier'), fichier: fichierSchema }),
-  z.object({ type: z.literal('lien'), lien: lienSchema }),
-  z.object({ type: z.literal('fichierManquant'), filename: z.string() }),
-]);
 
 const mesureSchema = z.object({
   actionId: z.string(),
@@ -35,26 +12,20 @@ const attenduDefinitionSchema = z.object({
   description: z.string(),
 });
 
-const documentBaseSchema = z.object({
-  id: z.number(),
-  collectiviteId: z.number(),
-  commentaire: z.string().nullable(),
-  modifiedAt: z.string(),
-  modifiedBy: z.string().nullable(),
-  modifiedByNom: z.string().nullable(),
-  action: mesureSchema,
-});
+const documentMesureSchema = documentCollectiviteSchema.and(
+  z.object({ action: mesureSchema })
+);
 
-const documentReglementaireSchema = documentBaseSchema.extend({
-  preuveType: z.literal('reglementaire'),
-  preuveReglementaire: attenduDefinitionSchema,
-  support: supportSchema,
-});
+const documentReglementaireSchema = documentMesureSchema.and(
+  z.object({
+    preuveType: z.literal('reglementaire'),
+    preuveReglementaire: attenduDefinitionSchema,
+  })
+);
 
-const documentComplementaireSchema = documentBaseSchema.extend({
-  preuveType: z.literal('complementaire'),
-  support: supportSchema,
-});
+const documentComplementaireSchema = documentMesureSchema.and(
+  z.object({ preuveType: z.literal('complementaire') })
+);
 
 const attenduSchema = z.object({
   preuveReglementaire: attenduDefinitionSchema,
@@ -75,5 +46,3 @@ export type DocumentReglementaire = z.infer<typeof documentReglementaireSchema>;
 export type DocumentComplementaire = z.infer<
   typeof documentComplementaireSchema
 >;
-export type DocumentSupport = z.infer<typeof supportSchema>;
-export type DocumentSupportInput = z.input<typeof supportSchema>;

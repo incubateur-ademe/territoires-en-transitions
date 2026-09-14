@@ -5,19 +5,19 @@ import { Fichier, Preuve } from './types';
 
 const getFichierTitle = ({ filename, filesize }: Fichier): string => {
   const extension = getExtension(filename)?.toUpperCase();
-  const size = filesize !== undefined ? formatFileSize(filesize) : null;
+  const size = filesize === null ? null : formatFileSize(filesize);
   const details = [extension, size].filter(Boolean).join(', ');
   return details ? `${filename} (${details})` : filename;
 };
 
-export const getFormattedTitle = ({ support }: Preuve): string | null => {
-  switch (support.type) {
+export const getFormattedTitle = (preuve: Preuve): string | null => {
+  switch (preuve.type) {
     case 'fichier':
-      return getFichierTitle(support.fichier);
+      return getFichierTitle(preuve.fichier);
     case 'lien':
-      return support.lien.titre;
+      return preuve.lien.titre;
     case 'fichierManquant':
-      return support.filename;
+      return preuve.filename;
     case 'nonRenseigne':
       return null;
   }
