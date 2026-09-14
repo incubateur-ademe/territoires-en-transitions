@@ -1,10 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  addTestCollectivite,
-  addTestCollectiviteAndUser,
-} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { servicesDeconcentresTypes } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import {
   getAuthUserFromUserCredentials,
@@ -98,14 +96,20 @@ describe('Test recherches collectivite', () => {
   test.each(servicesDeconcentresTypes)(
     'écarte les collectivités de type %s de la recherche',
     async (type) => {
-      const service = await addTestCollectivite(db, {
-        type,
-        nom: `Service test recherche ${type}`,
-        // Un service national ne porte aucun code géographique, les autres en
-        // portent un : le tirage évite l'index unique par région.
-        ...(type === 'service_national'
-          ? {}
-          : { regionCode: await pickFreeRegionCode(db, type) }),
+      // Avec un membre actif : la recherche ne montre que les collectivités qui
+      // en ont un, et sans lui le service serait écarté par ce filtre-là — le
+      // test passerait sans rien prouver.
+      const service = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          type,
+          nom: `Service test recherche ${type}`,
+          // Un service national ne porte aucun code géographique, les autres en
+          // portent un : le tirage évite l'index unique par région.
+          ...(type === 'service_national'
+            ? {}
+            : { regionCode: await pickFreeRegionCode(db, type) }),
+        },
       });
       onTestFinished(() => service.cleanup());
 
