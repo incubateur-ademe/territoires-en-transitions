@@ -169,11 +169,14 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       expect(
         definitionsRepository.listCollectiviteDefinitions
-      ).toHaveBeenCalledWith({
-        collectiviteId: 3,
-        indicateurIds: [10],
-        identifiantsReferentiel: undefined,
-      });
+      ).toHaveBeenCalledWith(
+        {
+          collectiviteId: 3,
+          indicateurIds: [10],
+          identifiantsReferentiel: undefined,
+        },
+        undefined
+      );
     });
   });
 
