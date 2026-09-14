@@ -23,6 +23,7 @@ describe('CronConsumerService', () => {
       {} as never,
       {} as never,
       {} as never,
+      {} as never,
       {} as never
     );
 

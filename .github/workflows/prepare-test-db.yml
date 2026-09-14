@@ -88,19 +88,21 @@ jobs:
               bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
               install-canvas-deps: 'true'
 
+      # Les vérifications historiques de storage.objects exigent des droits
+      # absents du rôle CI. Garder leur bootstrap existant jusqu'au tag de base.
       - parallel:
-          - name: Sqitch deploy (local)
+          - name: Sqitch deploy historical schema (local)
             if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
             uses: ./.github/actions/sqitch-local
             with:
-              command: 'deploy --mode all --verify'
+              command: 'deploy --to @indicateur-periodicite-base --mode change'
               target: ${{ vars.SQITCH_TARGET }}
 
-          - name: Sqitch deploy (ci)
+          - name: Sqitch deploy historical schema (ci)
             if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
             uses: ./.github/actions/sqitch
             with:
-              command: 'deploy --mode all --verify'
+              command: 'deploy --to @indicateur-periodicite-base --mode change'
               target: ${{ vars.SQITCH_TARGET }}
               network: ${{ vars.SUPABASE_NETWORK }}
 
@@ -109,6 +111,21 @@ jobs:
             uses: ./.github/actions/redis-start
             with:
               network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Sqitch deploy and verify periodicity (local)
+        if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/sqitch-local
+        with:
+          command: 'deploy --mode all --verify'
+          target: ${{ vars.SQITCH_TARGET }}
+
+      - name: Sqitch deploy and verify periodicity (ci)
+        if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/sqitch
+        with:
+          command: 'deploy --mode all --verify'
+          target: ${{ vars.SQITCH_TARGET }}
+          network: ${{ vars.SUPABASE_NETWORK }}
 
       # Ces imports se dépendent ; leur ordre est porté par le projet lui-même
       # (cf. `specsAlreadyRunByInitDbSeed` dans `apps/backend/vitest.config.mts`),

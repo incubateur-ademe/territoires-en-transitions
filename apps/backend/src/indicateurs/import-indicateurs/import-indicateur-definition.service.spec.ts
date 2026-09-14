@@ -12,7 +12,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { failure, success } from '@tet/backend/utils/result.type';
+import { failure } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
