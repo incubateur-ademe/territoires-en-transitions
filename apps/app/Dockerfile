@@ -110,6 +110,6 @@ EXPOSE 3000
 # Coolify prefers Dockerfile HEALTHCHECK over the UI check when both exist.
 # Uses Node's built-in fetch so we don't need curl/wget in the alpine image.
 HEALTHCHECK --interval=5s --timeout=5s --start-period=10s --retries=5 \
-  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api/version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 CMD ["node", "apps/app/server.js"]
