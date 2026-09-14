@@ -59,6 +59,8 @@ import { ListDocumentsReferentielRepository } from './documents/list-documents-r
 import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
 import { ListDocumentsReferentielService } from './documents/list-documents-referentiel/list-documents-referentiel.service';
 import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
+import { DownloadDocumentsMesureController } from './documents/download-documents-mesure/download-documents-mesure.controller';
+import { DownloadDocumentsMesureService } from './documents/download-documents-mesure/download-documents-mesure.service';
 import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
 import { ListDocumentsAuditRepository } from './documents/list-documents-audit/list-documents-audit.repository';
@@ -85,8 +87,8 @@ import { CollectAuditPreuvesService } from './preuves-archive/collect-audit-preu
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import {
-    PREUVES_ARCHIVE_JOB_OPTIONS,
-    PREUVES_ARCHIVE_QUEUE_NAME,
+  PREUVES_ARCHIVE_JOB_OPTIONS,
+  PREUVES_ARCHIVE_QUEUE_NAME,
 } from './preuves-archive/preuves-archive.queue';
 import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
@@ -207,6 +209,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListDocumentsMesureRepository,
     ListDocumentsMesureService,
     ListDocumentsMesureRouter,
+    DownloadDocumentsMesureService,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
     ValidateAuditService,
@@ -253,6 +256,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ImportReferentielController,
     ExportScoreComparisonController,
     ReferentielsScoringController,
+    DownloadDocumentsMesureController,
   ],
 })
 export class ReferentielsModule {}
