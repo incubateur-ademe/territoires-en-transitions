@@ -1,4 +1,6 @@
 export * from './definitions/indicateur-definition.schema';
+export * from './definitions/indicateur-periodicite.schema';
+export * from './definitions/indicateur-periodicite-mode.schema';
 export * from './definitions/indicateur-segmentations.enum';
 export * from './definitions/list-definitions.input';
 export * from './shared/indicateur-collectivite.schema';

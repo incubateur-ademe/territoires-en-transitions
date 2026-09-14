@@ -9,6 +9,8 @@ export const importIndicateurDefinitionSchema = z.object({
     createdAt: true,
     createdBy: true,
     id: true,
+    periodicite: true,
+    periodiciteMode: true,
     groupementId: true,
     collectiviteId: true,
   }).shape,
