@@ -3,7 +3,7 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
@@ -74,7 +74,7 @@ export class ListDocumentsAuditRepository {
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveAuditTable.fichierId,
               confidentielColumn: fichier.confidentiel,
               canReadConfidentiel,

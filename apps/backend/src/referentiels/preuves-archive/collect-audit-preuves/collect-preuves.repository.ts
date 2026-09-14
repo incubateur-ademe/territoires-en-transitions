@@ -3,7 +3,7 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
@@ -180,7 +180,7 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveComplementaireTable.fichierId,
               confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
@@ -237,7 +237,7 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveReglementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveReglementaireTable.fichierId,
               confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
@@ -284,7 +284,7 @@ export class CollectPreuvesRepository {
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveLabellisationTable.fichierId,
               confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
@@ -331,7 +331,7 @@ export class CollectPreuvesRepository {
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveAuditTable.fichierId,
               confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,

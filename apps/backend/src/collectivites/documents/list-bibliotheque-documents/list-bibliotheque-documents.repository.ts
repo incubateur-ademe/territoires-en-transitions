@@ -7,7 +7,7 @@ import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, asc, eq, ilike } from 'drizzle-orm';
 import { buildFichierSubquery } from '../file-info.utils';
-import { hideConfidentielFilter } from '../hide-confidentiel.utils';
+import { excludeConfidentielRow } from '../confidentiel.utils';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { ListBibliothequeDocumentsInput } from './list-bibliotheque-documents.input';
 
@@ -51,7 +51,7 @@ export class ListBibliothequeDocumentsRepository {
         .where(
           and(
             eq(fichier.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: fichier.id,
               confidentielColumn: fichier.confidentiel,
               canReadConfidentiel,
