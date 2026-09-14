@@ -88,9 +88,9 @@ const useDownloadDocs = (action: ActionListItem) => {
   const preuves = flattenMesureDocuments(documents);
 
   const fichiers: Fichier[] = Object.values(
-    preuves.reduce((filenameByHash, { fichier }) => {
-      return fichier
-        ? { ...filenameByHash, [fichier.hash]: fichier }
+    preuves.reduce((filenameByHash, { support }) => {
+      return support.type === 'fichier'
+        ? { ...filenameByHash, [support.fichier.hash]: support.fichier }
         : filenameByHash;
     }, {} as Record<string, Fichier>)
   );

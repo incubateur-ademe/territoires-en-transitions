@@ -6,6 +6,7 @@ import {
 } from '@/app/referentiels/preuves/Bibliotheque/utils';
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
+import { getPreuveFichier } from '@/app/referentiels/preuves/Bibliotheque/to-preuve-support.utils';
 import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
 import { AuditReport } from '../data/use-list-reports-by-audit';
 
@@ -86,8 +87,8 @@ export const PersistedReportCard = ({
 }): JSX.Element => {
   const preuve = auditReportToPreuve(report);
   const openPreuve = useOpenPreuve({ collectiviteId: preuve.collectiviteId });
-  const filename = preuve.fichier?.filename ?? '';
-  const hasSupport = Boolean(preuve.fichier || preuve.lien);
+  const filename = getPreuveFichier(preuve.support)?.filename ?? '';
+  const hasSupport = preuve.support.type !== 'nonRenseigne';
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
       <div className="flex items-start gap-1">

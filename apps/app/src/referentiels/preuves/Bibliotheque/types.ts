@@ -18,30 +18,20 @@ export type Fichier = Pick<
   'id' | 'bucketId' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
 >;
 
-// champs propres aux fichiers
-export type PreuveFichierFields = {
-  lien: null;
-  fichier: Fichier;
+export type PreuveLien = {
+  url: string;
+  titre: string;
 };
 
-// champs propres aux liens
-export type PreuveLienFields = {
-  fichier: null;
-  lien: {
-    url: string;
-    titre: string;
-  };
-};
-
-// ni fichier ni lien (cas des preuves réglementaires non renseignées)
-type PreuveNonRenseignee = { fichier: null; lien: null };
+export type PreuveSupport =
+  | { type: 'fichier'; fichier: Fichier }
+  | { type: 'lien'; lien: PreuveLien }
+  | { type: 'fichierManquant'; filename: string }
+  | { type: 'nonRenseigne' };
 
 // champs communs à tous les types de preuves
-type PreuveBase = (
-  | PreuveFichierFields
-  | PreuveLienFields
-  | PreuveNonRenseignee
-) & {
+type PreuveBase = {
+  support: PreuveSupport;
   id: number;
   collectiviteId: number;
   commentaire: string | null;
