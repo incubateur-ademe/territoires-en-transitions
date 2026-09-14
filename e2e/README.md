@@ -2,7 +2,7 @@
 
 ## Prérequis
 
-- La stack tourne à côté : `make up` (apps en conteneurs) ou `make dev apps=app,backend` (apps sur l'hôte). Dans les deux cas les apps écoutent sur les ports de l'hôte (`network_mode: host`), les tests s'y connectent directement.
+- La stack tourne à côté : `make up` (apps en conteneurs) ou `make dev apps=app,backend,panier` (apps sur l'hôte). Dans les deux cas les apps écoutent sur les ports de l'hôte (`network_mode: host`), les tests s'y connectent directement.
 - `.env.keys` est présent à la racine (`make env-keys` sinon) : les secrets lus par les tests vivent chiffrés dans les `.env` du dépôt.
 - Les navigateurs sont installés : `pnpm exec playwright install chromium`. Sur une distribution plus récente que celles publiées par Playwright, préfixer par `PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64`.
 
@@ -16,6 +16,7 @@ Les variables déjà définies dans l'environnement gagnent toujours, ce qui per
 | ----------------------------------------- | ------------------------------------------ |
 | `BASE_URL`                                | `http://localhost:$APP_PORT` (3000)        |
 | `BASE_API_URL`                            | `http://localhost:$BACKEND_PORT` (8080)    |
+| `PANIER_URL`                              | `http://localhost:$PANIER_PORT` (3002)     |
 | `SUPABASE_API_URL`                        | `SUPABASE_URL` du backend (kong, `:54321`) |
 | `SUPABASE_MAILPIT_URL`                    | `http://127.0.0.1:54324`                   |
 | `SUPABASE_DATABASE_URL`, `SUPABASE_*_KEY` | `apps/backend/.env` et `.env` (chiffrés)   |
@@ -36,7 +37,7 @@ Pour accélérer l'exécution des tests il est également possible de démarrer 
 
 ```sh
 # build les apps
-pnpm nx run-many -t build -p app auth backend
+pnpm nx run-many -t build -p app auth backend panier
 # démarre les versions de build
 sh ./e2e/run-apps.sh
 # jouer les tests...

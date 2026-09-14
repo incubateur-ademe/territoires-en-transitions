@@ -78,4 +78,7 @@ export const loadLocalEnv = () => {
   process.env.BASE_API_URL ||= `http://localhost:${
     fromFiles.BACKEND_PORT || 8080
   }`;
+  process.env.PANIER_URL ||= `http://localhost:${
+    fromFiles.PANIER_PORT || 3002
+  }`;
 };
