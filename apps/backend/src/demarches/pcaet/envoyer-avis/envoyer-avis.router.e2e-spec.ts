@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { randomUUID } from 'node:crypto';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -114,7 +115,7 @@ describe('envoyerAvis', () => {
           demandeAvisId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          fichierRef: 'avis-prefet.pdf',
+          fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
           valideLe: new Date().toISOString(),
           deposePar: camille.id,
         },
@@ -122,14 +123,14 @@ describe('envoyerAvis', () => {
           demandeAvisId: demandeBrouillonId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          fichierRef: 'avis-prefet-brouillon.pdf',
+          fichierRef: toLegacyDocumentHash('avis-prefet-brouillon.pdf'),
           deposePar: camille.id,
         },
         {
           demandeAvisId: demandeSansReferentId,
           emetteurCollectiviteId: dreal.collectivite.id,
           auTitreDe: 'prefet_region' as const,
-          fichierRef: 'avis-prefet.pdf',
+          fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
           valideLe: new Date().toISOString(),
           deposePar: camille.id,
         },

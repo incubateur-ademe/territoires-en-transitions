@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
@@ -190,7 +191,7 @@ describe('getAvisFileUrl', () => {
         demandeAvisId: demandeRegion.id,
         emetteurCollectiviteId: region.collectivite.id,
         auTitreDe: 'president_region',
-        fichierRef: 'rapport-inexistant.pdf',
+        fichierRef: toLegacyDocumentHash('rapport-inexistant.pdf'),
         valideLe: new Date().toISOString(),
       })
       .returning({ id: pcaetAvisTable.id });

@@ -5,6 +5,9 @@ import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-s
 import {
   BibliothequeFichier,
   DocumentHash,
+  LegacyDocumentHash,
+  legacyDocumentHashSchema,
+  StoredDocumentHash,
   toDocumentHash,
 } from '@tet/domain/collectivites';
 import { eq, sql } from 'drizzle-orm';
@@ -53,7 +56,10 @@ export async function uploadCreateTestDocument({
 
 export type TestDocument = typeof bibliothequeFichierTable.$inferSelect;
 
-const buildRandomDocumentHash = (): DocumentHash =>
+export const toLegacyDocumentHash = (hash: string): LegacyDocumentHash =>
+  legacyDocumentHashSchema.parse(hash);
+
+export const buildRandomDocumentHash = (): DocumentHash =>
   toDocumentHash(createHash('sha256').update(randomUUID()).digest('hex'));
 
 type SeedTestDocumentArgs = {
@@ -70,10 +76,13 @@ export async function seedTestDocument({
   return insertTestDocument({ ...args, hash });
 }
 
-export async function seedTestDocumentWithLegacyUuidHash(
+export async function seedTestDocumentWithLegacyHash(
   args: SeedTestDocumentArgs
 ): Promise<TestDocument> {
-  return insertTestDocument({ ...args, hash: randomUUID() });
+  return insertTestDocument({
+    ...args,
+    hash: toLegacyDocumentHash(`${randomUUID()}-${args.filename}`),
+  });
 }
 
 async function insertTestDocument({
@@ -82,7 +91,7 @@ async function insertTestDocument({
   filename,
   confidentiel = false,
   hash,
-}: SeedTestDocumentArgs & { hash: string }): Promise<TestDocument> {
+}: SeedTestDocumentArgs & { hash: StoredDocumentHash }): Promise<TestDocument> {
   const [bucket] = await databaseService.db
     .select({ bucketId: collectiviteBucketTable.bucketId })
     .from(collectiviteBucketTable)

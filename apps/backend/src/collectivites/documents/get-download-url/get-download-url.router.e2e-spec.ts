@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   seedTestDocument,
-  seedTestDocumentWithLegacyUuidHash,
+  seedTestDocumentWithLegacyHash,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -71,8 +71,8 @@ describe('GetDownloadUrlRouter', () => {
     ).rejects.toThrowError(/n'existe pas/i);
   });
 
-  test('signe un document dont le hash est un uuid herite, hors format sha-256', async () => {
-    const document = await seedTestDocumentWithLegacyUuidHash({
+  test("signe un document au hash hérité, qui n'est pas une empreinte sha-256", async () => {
+    const document = await seedTestDocumentWithLegacyHash({
       databaseService,
       collectiviteId: collectivite.id,
       filename: 'deliberation-heritee.pdf',

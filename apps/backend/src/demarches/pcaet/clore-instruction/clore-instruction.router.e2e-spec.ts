@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
@@ -82,7 +83,7 @@ describe('Clôture de l’instruction PCAET', () => {
         demandeAvisId: demande.id,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe,
-        fichierRef: 'avis.pdf',
+        fichierRef: toLegacyDocumentHash('avis.pdf'),
         valideLe: new Date().toISOString(),
       });
     }

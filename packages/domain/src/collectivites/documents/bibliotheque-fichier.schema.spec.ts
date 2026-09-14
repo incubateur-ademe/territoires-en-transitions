@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   bibliothequeFichierSchemaCreate,
   documentHashSchema,
+  storedDocumentHashSchema,
 } from './bibliotheque-fichier.schema';
 
 const VALID_SHA256 =
@@ -19,6 +20,36 @@ describe('documentHashSchema', () => {
     ['une casse qui designerait un autre objet', VALID_SHA256.toUpperCase()],
   ])('refuse %s', (_case, hash) => {
     expect(documentHashSchema.safeParse(hash).success).toBe(false);
+  });
+});
+
+describe('storedDocumentHashSchema', () => {
+  it.each([
+    ['une empreinte SHA-256', VALID_SHA256],
+    ['un nom de fichier hérité', 'Délibération conseil 2019.pdf'],
+    ['un nom de fichier hérité contenant deux points', 'rapport..final.pdf'],
+    ["un nom d'un seul caractère", 'a'],
+    ['un nom de 160 caractères', 'a'.repeat(160)],
+  ])('accepte %s', (_case, hash) => {
+    expect(storedDocumentHashSchema.safeParse(hash).success).toBe(true);
+  });
+
+  it.each([
+    ['une remontée de répertoire', '../autreBucket/document'],
+    ['un séparateur de chemin', 'autreBucket/document.pdf'],
+    ['un antislash', 'autreBucket\\document.pdf'],
+    ['une remontée encodée', '%2e%2e%2fdocument.pdf'],
+    ['un espace en début', ' document.pdf'],
+    ['un espace en fin', 'document.pdf '],
+    ['une tabulation en fin', 'document.pdf\t'],
+    ['un retour à la ligne en fin', 'document.pdf\n'],
+    ['une espace insécable en fin', 'document.pdf\u00a0'],
+    ['un point seul', '.'],
+    ['deux points seuls', '..'],
+    ['une chaîne vide', ''],
+    ['un nom de plus de 160 caractères', 'a'.repeat(161)],
+  ])('refuse %s', (_case, hash) => {
+    expect(storedDocumentHashSchema.safeParse(hash).success).toBe(false);
   });
 });
 

@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
@@ -192,19 +193,19 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: `hash-mesure-${collectivite.id}`,
+          hash: toLegacyDocumentHash(`hash-mesure-${collectivite.id}`),
           filename: 'preuve-mesure.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: `hash-demande-${collectivite.id}`,
+          hash: toLegacyDocumentHash(`hash-demande-${collectivite.id}`),
           filename: 'rapport-demande.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: `hash-audit-${collectivite.id}`,
+          hash: toLegacyDocumentHash(`hash-audit-${collectivite.id}`),
           filename: 'rapport-audit.pdf',
           confidentiel: false,
         },

@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { randomUUID } from 'node:crypto';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -123,7 +124,7 @@ describe('validerAvis', () => {
   it('valide un brouillon portant sa pièce jointe', async () => {
     await db.db
       .update(pcaetAvisTable)
-      .set({ fichierRef: 'avis-prefet.pdf' })
+      .set({ fichierRef: toLegacyDocumentHash('avis-prefet.pdf') })
       .where(eq(pcaetAvisTable.id, avisId));
 
     const avis = await valider(camille, avisId);

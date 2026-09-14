@@ -1,3 +1,4 @@
+import { toLegacyDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
@@ -192,7 +193,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: 'avis-prefet.pdf',
+        fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -260,7 +261,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: 'avis-prefet.pdf',
+        fichierRef: toLegacyDocumentHash('avis-prefet.pdf'),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -353,7 +354,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: 'avis-prefet_region.pdf',
+        fichierRef: toLegacyDocumentHash('avis-prefet_region.pdf'),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -395,7 +396,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: 'avis-prefet_region.pdf',
+        fichierRef: toLegacyDocumentHash('avis-prefet_region.pdf'),
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })

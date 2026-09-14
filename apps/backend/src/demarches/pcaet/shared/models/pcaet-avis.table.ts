@@ -1,6 +1,7 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { TIMESTAMP_OPTIONS } from '@tet/backend/utils/column.utils';
+import type { StoredDocumentHash } from '@tet/domain/collectivites';
 import type { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
 import {
   integer,
@@ -23,7 +24,7 @@ export const pcaetAvisTable = pgTable(
       .notNull()
       .references(() => collectiviteTable.id, { onDelete: 'cascade' }),
     auTitreDe: text('au_titre_de').notNull().$type<PcaetAvisAuTitreDe>(),
-    fichierRef: text('fichier_ref'),
+    fichierRef: text('fichier_ref').$type<StoredDocumentHash>(),
     valideLe: timestamp('valide_le', TIMESTAMP_OPTIONS),
     deposePar: uuid('depose_par').references(() => authUsersTable.id, {
       onDelete: 'set null',
