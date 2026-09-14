@@ -8,7 +8,7 @@ import {
   DemarchePcaetObligationEnum,
   PcaetStatutInstructionEnum,
 } from '@tet/domain/demarches';
-import { Badge, Button, cn, Icon, Tooltip } from '@tet/ui';
+import { Badge, Button, cn, Icon } from '@tet/ui';
 import Link from 'next/link';
 
 export type Dossier =
@@ -161,17 +161,6 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
           ? appLabels.instructionListeConsulter
           : appLabels.instructionListeVoirInstruction}
       </Button>
-      <Tooltip label={appLabels.instructionListeTelechargerIndisponible}>
-        <span tabIndex={0} className="inline-flex rounded outline-primary">
-          <Button
-            variant="outlined"
-            size="xs"
-            icon="download-line"
-            disabled
-            aria-label={appLabels.instructionListeTelecharger}
-          />
-        </span>
-      </Tooltip>
     </div>
   );
 };
