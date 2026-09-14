@@ -12,6 +12,7 @@ import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { normalizeIdentifiantReferentiel } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
@@ -730,13 +731,10 @@ export class ListIndicateursService {
     }
 
     if (filters.text) {
+      const textPattern = `%${escapeLikePattern(filters.text)}%`;
       const searchConditions = [
-        sql`unaccent(${indicateurDefinitionTable.titre}) ilike unaccent(${
-          '%' + filters.text + '%'
-        })`,
-        sql`unaccent(${indicateurDefinitionTable.description}) ilike unaccent(${
-          '%' + filters.text + '%'
-        })`,
+        sql`unaccent(${indicateurDefinitionTable.titre}) ilike unaccent(${textPattern})`,
+        sql`unaccent(${indicateurDefinitionTable.description}) ilike unaccent(${textPattern})`,
       ];
 
       // Check if text looks like a referentiel identifier (cae, eci, or crte prefix)
