@@ -32,19 +32,25 @@ export class ScoreIndicatifRouter {
           ResourceType.COLLECTIVITE,
           { collectiviteId: input.collectiviteId }
         );
-        return this.service.getValeursUtiliseesParActionId(input);
+        const result = await this.service.getValeursUtiliseesParActionId(input);
+        return this.getResultDataOrThrowError(result);
       }),
 
     getValeursUtilisables: this.trpc.authedProcedure
       .input(getValeursUtilisablesRequestSchema)
       .query(async ({ ctx, input }) => {
-        return this.service.getValeursUtilisables(input, ctx.user);
+        const result = await this.service.getValeursUtilisables(input, {
+          user: ctx.user,
+        });
+        return this.getResultDataOrThrowError(result);
       }),
 
     setValeursUtilisees: this.trpc.authedProcedure
       .input(setValeursUtiliseesRequestSchema)
       .mutation(async ({ ctx, input }) => {
-        const result = await this.service.setValeursUtilisees(input, ctx.user);
+        const result = await this.service.setValeursUtilisees(input, {
+          user: ctx.user,
+        });
         return this.getResultDataOrThrowError(result);
       }),
 

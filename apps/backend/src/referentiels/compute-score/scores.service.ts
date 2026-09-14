@@ -1196,11 +1196,20 @@ export default class ScoresService {
       // }
 
       // Calcule et ajoute les scores indicatifs dans l'arbre des scores
-      const scoresIndicatifs =
+      const scoresIndicatifsResult =
         await this.scoreIndicatifService.getScoresIndicatifsForPayload(
           collectiviteId,
           referentielId
         );
+      const scoresIndicatifs = scoresIndicatifsResult.success
+        ? scoresIndicatifsResult.data
+        : [];
+      if (!scoresIndicatifsResult.success) {
+        this.logger.warn(
+          +`Scores indicatifs indisponibles pour la collectivité ${collectiviteId} et le referentiel ${referentielId} : ${scoresIndicatifsResult.error}`,
+          scoresIndicatifsResult.cause
+        );
+      }
       this.ajouteScoresIndicatifs(scoresIndicatifs, scoresPayload.scores);
 
       return {
