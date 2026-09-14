@@ -75,7 +75,7 @@ export class GenerateClassificationService {
       return success(undefined);
     }
 
-    const { data: fiches } =
+    const { data: readableFiches } =
       await this.listFichesService.getFichesActionResumes(
         {
           collectiviteId: job.collectiviteId,
@@ -84,11 +84,15 @@ export class GenerateClassificationService {
         { user: buildRequesterUser(job.createdBy) }
       );
 
-    if (fiches.length === 0) {
+    const ownedFiches = readableFiches.filter(
+      ({ collectiviteId }) => collectiviteId === job.collectiviteId
+    );
+
+    if (ownedFiches.length === 0) {
       return this.interrupt(jobId, 'Aucune fiche à classer dans ce plan');
     }
 
-    const totalBatches = Math.ceil(fiches.length / FICHES_PER_BATCH);
+    const totalBatches = Math.ceil(ownedFiches.length / FICHES_PER_BATCH);
     const runningResult = await this.jobRepository.markRunning(
       jobId,
       totalBatches
@@ -114,7 +118,7 @@ export class GenerateClassificationService {
     const classification = await runClassification(this.llm, {
       enjeu,
       signal: deadline,
-      fiches: fiches.map(({ id, titre, description }) => ({
+      fiches: ownedFiches.map(({ id, titre, description }) => ({
         ficheId: id,
         titre: titre ?? '',
         description,
