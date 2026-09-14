@@ -8,6 +8,11 @@ import { storageObjectTable } from './models/storage-object.table';
 
 export type FichierSubquery = ReturnType<typeof buildFichierSubquery>;
 
+export type FileInfo = BibliothequeFichier & {
+  bucketId: string;
+  filesize: number | null;
+};
+
 export function buildFichierSubquery(db: DatabaseService['db'] | Transaction) {
   return db
     .select({
@@ -40,13 +45,7 @@ export function buildFichierSubquery(db: DatabaseService['db'] | Transaction) {
 }
 
 export function buildFileInfoSql(fichier: FichierSubquery) {
-  return sql<
-    | (BibliothequeFichier & {
-        bucketId: string;
-        filesize: number | null;
-      })
-    | null
-  >`
+  return sql<FileInfo | null>`
       CASE WHEN ${fichier.id} IS NULL THEN NULL
       ELSE json_build_object(
         'id', ${fichier.id},

@@ -10,16 +10,15 @@ export const useOpenPreuve = ({
     collectiviteId,
   });
 
-  return (preuve: Preuve): void => {
-    const { fichier, lien } = preuve;
-    if (fichier) {
+  return ({ support }: Preuve): void => {
+    if (support.type === 'fichier') {
       if (!isPending) {
-        downloadDocument(fichier.id);
+        downloadDocument(support.fichier.id);
       }
       return;
     }
-    if (lien) {
-      window.open(lien.url, '_blank', 'noopener,noreferrer');
+    if (support.type === 'lien') {
+      window.open(support.lien.url, '_blank', 'noopener,noreferrer');
     }
   };
 };

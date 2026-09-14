@@ -1,3 +1,4 @@
+import { toDocumentHash } from '@tet/domain/collectivites';
 import {
   EtoileEnum,
   ObjetPreuve,
@@ -89,7 +90,7 @@ const toPreuve = ({
   fichier: {
     id,
     filename,
-    hash: `hash-${id}`,
+    hash: toDocumentHash(String(id).padStart(64, '0')),
     confidentiel: false,
   },
 });

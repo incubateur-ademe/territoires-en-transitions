@@ -1,9 +1,10 @@
+import { storedDocumentHashSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 const fichierSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
-  hash: z.string(),
+  hash: storedDocumentHashSchema,
   filename: z.string(),
   confidentiel: z.boolean().nullable(),
   bucketId: z.string(),
@@ -18,9 +19,10 @@ const lienSchema = z.object({
   titre: z.string(),
 });
 
-const supportSchema = z.union([
-  z.object({ fichier: fichierSchema, lien: z.null() }),
-  z.object({ fichier: z.null(), lien: lienSchema }),
+const supportSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('fichier'), fichier: fichierSchema }),
+  z.object({ type: z.literal('lien'), lien: lienSchema }),
+  z.object({ type: z.literal('fichierManquant'), filename: z.string() }),
 ]);
 
 const mesureSchema = z.object({
@@ -44,16 +46,16 @@ const documentBaseSchema = z.object({
   action: mesureSchema,
 });
 
-const documentReglementaireSchema = documentBaseSchema
-  .extend({
-    preuveType: z.literal('reglementaire'),
-    preuveReglementaire: attenduDefinitionSchema,
-  })
-  .and(supportSchema);
+const documentReglementaireSchema = documentBaseSchema.extend({
+  preuveType: z.literal('reglementaire'),
+  preuveReglementaire: attenduDefinitionSchema,
+  support: supportSchema,
+});
 
-const documentComplementaireSchema = documentBaseSchema
-  .extend({ preuveType: z.literal('complementaire') })
-  .and(supportSchema);
+const documentComplementaireSchema = documentBaseSchema.extend({
+  preuveType: z.literal('complementaire'),
+  support: supportSchema,
+});
 
 const attenduSchema = z.object({
   preuveReglementaire: attenduDefinitionSchema,
@@ -74,3 +76,5 @@ export type DocumentReglementaire = z.infer<typeof documentReglementaireSchema>;
 export type DocumentComplementaire = z.infer<
   typeof documentComplementaireSchema
 >;
+export type DocumentSupport = z.infer<typeof supportSchema>;
+export type DocumentSupportInput = z.input<typeof supportSchema>;

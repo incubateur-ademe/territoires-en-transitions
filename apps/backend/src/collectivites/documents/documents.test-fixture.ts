@@ -67,12 +67,15 @@ type SeedTestDocumentArgs = {
   collectiviteId: number;
   filename: string;
   confidentiel?: boolean;
+  withStorageObject?: boolean;
 };
 
 export async function seedTestDocument({
   hash = buildRandomDocumentHash(),
   ...args
-}: SeedTestDocumentArgs & { hash?: DocumentHash }): Promise<TestDocument> {
+}: SeedTestDocumentArgs & {
+  hash?: DocumentHash;
+}): Promise<TestDocument> {
   return insertTestDocument({ ...args, hash });
 }
 
@@ -91,6 +94,7 @@ async function insertTestDocument({
   filename,
   confidentiel = false,
   hash,
+  withStorageObject = true,
 }: SeedTestDocumentArgs & { hash: StoredDocumentHash }): Promise<TestDocument> {
   const [bucket] = await databaseService.db
     .select({ bucketId: collectiviteBucketTable.bucketId })
@@ -113,12 +117,14 @@ async function insertTestDocument({
     })
     .returning();
 
-  await databaseService.db.execute(
-    sql`insert into storage.objects (bucket_id, name, metadata)
+  if (withStorageObject) {
+    await databaseService.db.execute(
+      sql`insert into storage.objects (bucket_id, name, metadata)
         values (${bucket.bucketId}, ${document.hash}, ${JSON.stringify({
-      size: TEST_DOCUMENT_SIZE_IN_BYTES,
-    })}::jsonb)`
-  );
+        size: TEST_DOCUMENT_SIZE_IN_BYTES,
+      })}::jsonb)`
+    );
+  }
 
   return document;
 }

@@ -1,4 +1,5 @@
 import { AuditEnCours } from '@/app/referentiels/audits/types';
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 
@@ -69,25 +70,22 @@ describe('auditReportToPreuve', () => {
       bucketId: 'b1',
       filename: 'rapport.pdf',
       filesize: 1024,
-      hash: 'sha-1',
+      hash: toDocumentHash('1'.repeat(64)),
       confidentiel: false,
     };
     const preuve = auditReportToPreuve({ ...baseInput, fichier });
-    expect(preuve.fichier).toEqual(fichier);
-    expect(preuve.lien).toBeNull();
+    expect(preuve.support).toEqual({ type: 'fichier', fichier });
   });
 
-  it('cas lien : conserve le lien, force fichier=null', () => {
+  it('cas lien : rend un support de type lien', () => {
     const lien = { url: 'https://example.com', titre: 'Doc externe' };
     const preuve = auditReportToPreuve({ ...baseInput, lien });
-    expect(preuve.fichier).toBeNull();
-    expect(preuve.lien).toEqual(lien);
+    expect(preuve.support).toEqual({ type: 'lien', lien });
   });
 
-  it('cas non renseigné : fichier=null et lien=null', () => {
+  it('cas non renseigné : rend un support non renseigné', () => {
     const preuve = auditReportToPreuve(baseInput);
-    expect(preuve.fichier).toBeNull();
-    expect(preuve.lien).toBeNull();
+    expect(preuve.support).toEqual({ type: 'nonRenseigne' });
   });
 
   it('priorise fichier sur lien si les deux sont fournis (input pathologique)', () => {
@@ -96,12 +94,11 @@ describe('auditReportToPreuve', () => {
       bucketId: 'b1',
       filename: 'a.pdf',
       filesize: 1,
-      hash: 'h',
+      hash: toDocumentHash('2'.repeat(64)),
       confidentiel: false,
     };
     const lien = { url: 'https://example.com', titre: 'X' };
     const preuve = auditReportToPreuve({ ...baseInput, fichier, lien });
-    expect(preuve.fichier).toEqual(fichier);
-    expect(preuve.lien).toBeNull();
+    expect(preuve.support).toEqual({ type: 'fichier', fichier });
   });
 });

@@ -8,12 +8,16 @@ const EditDocumentButton = ({
   document,
   onEdit,
 }: {
-  document: Pick<Preuve, 'fichier'>;
+  document: Pick<Preuve, 'support'>;
   onEdit: () => void;
 }) => (
   <Button
     icon="edit-line"
-    title={document.fichier ? appLabels.editerDocument : appLabels.editerLien}
+    title={
+      document.support.type === 'lien'
+        ? appLabels.editerLien
+        : appLabels.editerDocument
+    }
     variant="grey"
     size="xs"
     onClick={onEdit}
@@ -52,7 +56,7 @@ export type CarteDocumentActions = {
 };
 
 type MenuCarteDocumentProps = {
-  document: Pick<Preuve, 'fichier'>;
+  document: Pick<Preuve, 'support'>;
   className?: string;
   actions: CarteDocumentActions;
 };

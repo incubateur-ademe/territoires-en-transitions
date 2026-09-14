@@ -1,50 +1,40 @@
-import { PreuveAnnexe } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { toPreuveSupport } from '@/app/referentiels/preuves/Bibliotheque/to-preuve-support.utils';
+import {
+  Fichier,
+  PreuveAnnexe,
+} from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { AnnexeDocument } from '@tet/domain/plans';
 
+const toAnnexeFichier = (annexe: AnnexeDocument): Fichier | null => {
+  const { fichier } = annexe;
+  if (!fichier?.bucketId || !fichier.hash || !fichier.filename) {
+    return null;
+  }
+  return {
+    id: fichier.id,
+    bucketId: fichier.bucketId,
+    hash: fichier.hash,
+    filename: fichier.filename,
+    filesize: fichier.filesize ?? 0,
+    confidentiel: fichier.confidentiel ?? false,
+  };
+};
+
 export function annexeDocumentToPreuve(annexe: AnnexeDocument): PreuveAnnexe {
-  const base = {
+  return {
     id: annexe.id,
     collectiviteId: annexe.collectiviteId,
     commentaire: annexe.commentaire,
     modifiedAt: annexe.modifiedAt,
     modifiedBy: null,
     modifiedByNom: annexe.modifiedByNom,
-    preuveType: 'annexe' as const,
-  };
-
-  if (
-    annexe.fichier?.bucketId &&
-    annexe.fichier.hash &&
-    annexe.fichier.filename
-  ) {
-    return {
-      ...base,
-      fichier: {
-        id: annexe.fichier.id,
-        bucketId: annexe.fichier.bucketId,
-        hash: annexe.fichier.hash,
-        filename: annexe.fichier.filename,
-        filesize: annexe.fichier.filesize ?? 0,
-        confidentiel: annexe.fichier.confidentiel ?? false,
-      },
-      lien: null,
-    };
-  }
-
-  if (annexe.lien) {
-    return {
-      ...base,
-      fichier: null,
-      lien: annexe.lien,
-    };
-  }
-
-  return {
-    ...base,
-    fichier: null,
-    lien: null,
+    preuveType: 'annexe',
+    support: toPreuveSupport({
+      fichier: toAnnexeFichier(annexe),
+      lien: annexe.lien ?? null,
+    }),
   };
 }
 

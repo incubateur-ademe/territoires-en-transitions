@@ -1,3 +1,4 @@
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { EtoileEnum, ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -44,7 +45,7 @@ const toActeDepose = (filename: string, id = 99): ChecklistPreuve => ({
   fichier: {
     id,
     filename,
-    hash: `hash-${id}`,
+    hash: toDocumentHash(String(id).padStart(64, '0')),
     confidentiel: false,
   },
 });

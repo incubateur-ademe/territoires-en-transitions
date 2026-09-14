@@ -1,4 +1,9 @@
-import { PreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { toPreuveSupport } from '@/app/referentiels/preuves/Bibliotheque/to-preuve-support.utils';
+import {
+  Fichier,
+  PreuveAudit,
+  PreuveLien,
+} from '@/app/referentiels/preuves/Bibliotheque/types';
 
 export type AuditReportInput = Pick<
   PreuveAudit,
@@ -11,28 +16,19 @@ export type AuditReportInput = Pick<
   | 'audit'
   | 'demande'
 > & {
-  fichier: PreuveAudit['fichier'];
-  lien: PreuveAudit['lien'];
+  fichier: Fichier | null;
+  lien: PreuveLien | null;
 };
 
-export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
-  const base = {
-    id: report.id,
-    collectiviteId: report.collectiviteId,
-    commentaire: report.commentaire,
-    modifiedAt: report.modifiedAt,
-    modifiedBy: report.modifiedBy,
-    modifiedByNom: report.modifiedByNom,
-    preuveType: 'audit' as const,
-    audit: report.audit,
-    demande: report.demande,
-  };
-
-  if (report.fichier) {
-    return { ...base, fichier: report.fichier, lien: null };
-  }
-  if (report.lien) {
-    return { ...base, fichier: null, lien: report.lien };
-  }
-  return { ...base, fichier: null, lien: null };
-};
+export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => ({
+  id: report.id,
+  collectiviteId: report.collectiviteId,
+  commentaire: report.commentaire,
+  modifiedAt: report.modifiedAt,
+  modifiedBy: report.modifiedBy,
+  modifiedByNom: report.modifiedByNom,
+  preuveType: 'audit',
+  audit: report.audit,
+  demande: report.demande,
+  support: toPreuveSupport({ fichier: report.fichier, lien: report.lien }),
+});
