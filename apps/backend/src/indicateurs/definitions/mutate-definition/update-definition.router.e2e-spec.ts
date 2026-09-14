@@ -9,7 +9,11 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import {
+  IndicateurDefinition,
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriodiciteModeEnum,
+} from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
@@ -330,7 +334,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
 
       expect(indicateurPredefini).toBeDefined();
 
-      indicateurPredefiniCae1a = indicateurPredefini;
+      indicateurPredefiniCae1a = {
+        ...indicateurPredefini,
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
+      };
     });
 
     test('should update fields', async () => {

@@ -12,9 +12,46 @@
   },
   "nx": {
     "name": "domain",
-    "tags": ["frontend"],
+    "tags": [
+      "frontend"
+    ],
     "sourceRoot": "packages/domain/src",
     "targets": {
+      "test": {
+        "inputs": [
+          "default",
+          "^production",
+          {
+            "fileset": "{projectRoot}/tsconfig.spec.json",
+            "dependencies": true
+          },
+          {
+            "fileset": "{projectRoot}/tsconfig.storybook.json",
+            "dependencies": true
+          },
+          {
+            "json": "{workspaceRoot}/tsconfig.json",
+            "fields": [
+              "compilerOptions"
+            ]
+          },
+          {
+            "externalDependencies": [
+              "vitest"
+            ]
+          },
+          {
+            "env": "CI"
+          },
+          {
+            "dependentTasksOutputFiles": "**/*.js",
+            "transitive": true
+          },
+          "{workspaceRoot}/apps/**/*.{ts,tsx}",
+          "{workspaceRoot}/packages/**/*.{ts,tsx}",
+          "{workspaceRoot}/supabase/functions/**/*.{ts,tsx}"
+        ]
+      },
       "build": {
         "executor": "@nx/js:swc",
         "outputs": [

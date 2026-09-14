@@ -1,4 +1,6 @@
 import * as z from 'zod/mini';
+import { indicateurPeriodiciteModeSchema } from './indicateur-periodicite-mode.schema';
+import { indicateurPeriodiciteSchema } from './indicateur-periodicite.schema';
 
 export const indicateurDefinitionSchema = z.object({
   id: z.number(),
@@ -11,6 +13,8 @@ export const indicateurDefinitionSchema = z.object({
   titreCourt: z.nullable(z.string()),
   description: z.nullable(z.string()),
   unite: z.string(),
+  periodicite: indicateurPeriodiciteSchema,
+  periodiciteMode: indicateurPeriodiciteModeSchema,
   precision: z.number(),
   borneMin: z.nullable(z.number()),
   borneMax: z.nullable(z.number()),
@@ -63,6 +67,8 @@ export const indicateurDefinitionSchemaTiny = z.pick(
     titreLong: true,
     description: true,
     unite: true,
+    periodicite: true,
+    periodiciteMode: true,
     borneMin: true,
     borneMax: true,
   }

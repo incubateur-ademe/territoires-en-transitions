@@ -1,19 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Tag } from '@tet/domain/collectivites';
 import type { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
   and,
   eq,
   getTableColumns,
+  ilike,
   inArray,
   isNotNull,
   isNull,
-  like,
   or,
   sql,
   SQL,
@@ -29,20 +31,26 @@ export class ListPlatformDefinitionsRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listPlatformDefinitions({
-    identifiantsReferentiel,
-    indicateurIds,
-  }: {
-    identifiantsReferentiel?: string[];
-    indicateurIds?: number[];
-  } = {}): Promise<IndicateurDefinition[]> {
+  async listPlatformDefinitions(
+    {
+      identifiantsReferentiel,
+      indicateurIds,
+    }: {
+      identifiantsReferentiel?: string[];
+      indicateurIds?: number[];
+    } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
     });
 
-    const definitions = await this.databaseService.db
-      .select()
+    const definitions = await (tx ?? this.databaseService.db)
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+      })
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 
@@ -51,13 +59,16 @@ export class ListPlatformDefinitionsRepository {
     return definitions;
   }
 
-  async listPlatformDefinitionAggregates({
-    identifiantsReferentiel,
-    indicateurIds,
-  }: {
-    identifiantsReferentiel?: string[];
-    indicateurIds?: number[];
-  } = {}): Promise<IndicateurDefinition[]> {
+  async listPlatformDefinitionAggregates(
+    {
+      identifiantsReferentiel,
+      indicateurIds,
+    }: {
+      identifiantsReferentiel?: string[];
+      indicateurIds?: number[];
+    } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -67,9 +78,10 @@ export class ListPlatformDefinitionsRepository {
     const thematiquesSubQuery = this.getThematiquesSubQuery();
     const mesuresSubQuery = this.getMesuresSubQuery();
 
-    const definitions = await this.databaseService.db
+    const definitions = await (tx ?? this.databaseService.db)
       .select({
         ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
 
         categories: sql<
           Tag[]
@@ -133,25 +145,29 @@ export class ListPlatformDefinitionsRepository {
     return conditions;
   }
 
-  async listPlatformDefinitionsHavingComputedValue({
-    identifiantsReferentiel,
-  }: { identifiantsReferentiel?: string[] } = {}): Promise<
-    IndicateurDefinition[]
-  > {
+  async listPlatformDefinitionsHavingComputedValue(
+    { identifiantsReferentiel }: { identifiantsReferentiel?: string[] } = {},
+    tx?: Transaction
+  ): Promise<IndicateurDefinition[]> {
     const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] =
       identifiantsReferentiel?.map((identifiant) =>
-        like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
+        ilike(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
       ) ?? [];
 
     const sqlConditions: (SQLWrapper | SQL)[] = [
       isNotNull(indicateurDefinitionTable.valeurCalcule),
+      isNotNull(indicateurDefinitionTable.identifiantReferentiel),
+      isNull(indicateurDefinitionTable.collectiviteId),
     ];
     if (sourceIndicateurSqlConditions.length) {
       sqlConditions.push(or(...sourceIndicateurSqlConditions) as SQLWrapper);
     }
 
-    const computedIndicateurDefinitions = await this.databaseService.db
-      .select()
+    const computedIndicateurDefinitions = await (tx ?? this.databaseService.db)
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+      })
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
 
@@ -171,48 +187,6 @@ export class ListPlatformDefinitionsRepository {
     );
 
     return computedIndicateurDefinitions;
-  }
-
-  /** Donne les id des indicateurs à partir de leur identifiant référentiel */
-  // TODO Use listPlatformDefinitions instead
-  async listPlatformDefinitionIdsByIdentifiantReferentiels(
-    identifiantsReferentiel: string[]
-  ): Promise<Record<string, number>> {
-    this.logger.log(
-      `Récupération des id des indicateurs ${identifiantsReferentiel?.join(
-        ','
-      )}`
-    );
-
-    if (!identifiantsReferentiel?.length) {
-      return {};
-    }
-
-    const definitions = await this.databaseService.db
-      .select({
-        id: indicateurDefinitionTable.id,
-        identifiant: indicateurDefinitionTable.identifiantReferentiel,
-      })
-      .from(indicateurDefinitionTable)
-      .where(
-        and(
-          isNotNull(indicateurDefinitionTable.identifiantReferentiel),
-          isNull(indicateurDefinitionTable.collectiviteId),
-          inArray(
-            indicateurDefinitionTable.identifiantReferentiel,
-            identifiantsReferentiel
-          )
-        )
-      )
-      .orderBy(indicateurDefinitionTable.identifiantReferentiel);
-
-    this.logger.log(`${definitions.length} définitions trouvées`);
-
-    const indicateurIdParIdentifiant = Object.fromEntries(
-      definitions.map(({ id, identifiant }) => [identifiant, id])
-    );
-
-    return indicateurIdParIdentifiant;
   }
 
   getCategoriesSubQuery() {

@@ -15,12 +15,23 @@ type Props = {
   openState: OpenState;
 };
 
+type IndicateurCardEditState = {
+  pilotes: PersonneTagOrUser[];
+  services: Tag[];
+  thematiques: Thematique[];
+};
+
+export const buildIndicateurCardUpdate = (
+  indicateur: Pick<IndicateurDefinitionListItem, 'estPerso'>,
+  state: IndicateurCardEditState
+) => ({
+  pilotes: state.pilotes,
+  services: state.services,
+  ...(indicateur.estPerso ? { thematiques: state.thematiques } : {}),
+});
+
 const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
-  const [state, setState] = useState<{
-    pilotes: PersonneTagOrUser[];
-    services: Tag[];
-    thematiques: Thematique[];
-  }>({
+  const [state, setState] = useState<IndicateurCardEditState>({
     pilotes: indicateur.pilotes ?? [],
     services: indicateur.services ?? [],
     thematiques: indicateur.thematiques ?? [],
@@ -95,11 +106,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
                 thematiques: indicateur.thematiques ?? [],
               }) === JSON.stringify(state),
             onClick: () => {
-              updateIndicateur({
-                pilotes: state.pilotes,
-                services: state.services,
-                thematiques: state.thematiques,
-              });
+              updateIndicateur(buildIndicateurCardUpdate(indicateur, state));
               close();
             },
           }}
