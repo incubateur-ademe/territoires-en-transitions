@@ -3,7 +3,7 @@ import {
   ScoreComparisonData,
   ScoreRow,
 } from '@tet/backend/referentiels/export-score/load-score-comparison.service';
-import { getLibelleScoreIndicatif } from '@tet/backend/referentiels/score-indicatif/format-score-indicatif.utils';
+import { getLibelleScoreIndicatif } from '@tet/backend/referentiels/score-indicatif/score-indicatif.rules';
 import { PreuveEssential } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
