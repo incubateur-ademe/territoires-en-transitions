@@ -8,10 +8,12 @@ import {
   authVerifyPath,
   invitationPath,
   authProconnectPath,
+  makeSignInUrl,
   resetPwdPath,
   signInPath,
   signUpPath,
 } from './src/app/paths';
+import { sanitizeNextPath } from './src/users/authentications/sanitize-next-path';
 
 export const config = {
   matcher: [
@@ -43,10 +45,13 @@ export async function proxy(request: NextRequest) {
 
   const headers = new Headers();
   // Expose le chemin courant aux RSC. Valeur *dérivée du serveur*
-  // (request.nextUrl.pathname) : getNextResponseWithUpdatedSupabaseSession la
-  // fusionne via Headers.set(), écrasant tout `x-current-path` envoyé par le
-  // client. Les RSC (ex. (authed)/layout) peuvent donc s'y fier.
-  headers.set('x-current-path', request.nextUrl.pathname);
+  // (pathname + search) : getNextResponseWithUpdatedSupabaseSession la fusionne
+  // via Headers.set(), écrasant tout `x-current-path` envoyé par le client. Les
+  // RSC (ex. (authed)/layout, requireOnboardedUser) peuvent donc s'y fier.
+  headers.set(
+    'x-current-path',
+    `${request.nextUrl.pathname}${request.nextUrl.search}`
+  );
   headers.set('x-nonce', nonce);
   // Next.js lit la CSP et le nonce depuis les en-têtes de *requête* pour poser le
   // nonce sur ses propres scripts inline ; ces en-têtes sont fusionnés côté
@@ -62,7 +67,12 @@ export async function proxy(request: NextRequest) {
 
   const response =
     !supabaseUser && !isPublicPathname(url.pathname)
-      ? NextResponse.redirect(new URL('/', url))
+      ? NextResponse.redirect(
+          new URL(
+            makeSignInUrl(sanitizeNextPath(`${url.pathname}${url.search}`)),
+            url
+          )
+        )
       : supabaseResponse;
 
   response.headers.set('Content-Security-Policy', contentSecurityPolicy);

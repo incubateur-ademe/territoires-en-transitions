@@ -1,5 +1,5 @@
 import { ActionTypeEnum, type ActionType } from '@tet/domain/referentiels';
-import { makeReferentielTacheUrl } from './paths';
+import { makeReferentielTacheUrl, makeSignInUrl, signInPath } from './paths';
 
 const hierarchieAvecSousAxe: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,
@@ -17,6 +17,26 @@ const hierarchieSansSousAxe: ActionType[] = [
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
 ];
+
+describe('makeSignInUrl', () => {
+  it('sans destination (ou racine) → /login', () => {
+    expect(makeSignInUrl()).toBe(signInPath);
+    expect(makeSignInUrl(null)).toBe(signInPath);
+    expect(makeSignInUrl('/')).toBe(signInPath);
+  });
+
+  it('encode la destination dans redirect_to', () => {
+    expect(makeSignInUrl('/collectivite/5556/plans/43766')).toBe(
+      '/login?redirect_to=%2Fcollectivite%2F5556%2Fplans%2F43766'
+    );
+  });
+
+  it('préserve la query string de la destination', () => {
+    expect(makeSignInUrl('/collectivite/5556/plans/43766?openAxes=1')).toBe(
+      '/login?redirect_to=%2Fcollectivite%2F5556%2Fplans%2F43766%3FopenAxes%3D1'
+    );
+  });
+});
 
 describe('makeReferentielTacheUrl', () => {
   test('remonte à la mesure et ancre la sous-mesure sur un référentiel avec sous-axe', () => {

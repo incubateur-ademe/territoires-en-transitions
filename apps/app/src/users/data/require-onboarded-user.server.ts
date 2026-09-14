@@ -5,11 +5,12 @@ import { getAuthUser } from '@tet/api/utils/supabase/auth-user.server';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { cache } from 'react';
-import { signInPath, signUpPath } from '@/app/app/paths';
+import { makeSignInUrl, signUpPath } from '@/app/app/paths';
+import { sanitizeNextPath } from '@/app/users/authentications/sanitize-next-path';
 
 /**
  * Portail d'onboarding pour toutes les surfaces authentifiées. Redirige :
- *  - aucune session       → /login
+ *  - aucune session       → /login (avec `redirect_to` vers la page demandée)
  *  - session, sans DCP    → /signup?view=etape3 (profil à compléter)
  *
  * Renvoie sinon l'utilisateur complet (DCP + collectivités + rôles).
@@ -22,7 +23,8 @@ export const requireOnboardedUser = cache(async () => {
   const authUser = await getAuthUser();
 
   if (!authUser) {
-    redirect(signInPath);
+    const currentPath = (await headers()).get('x-current-path');
+    redirect(makeSignInUrl(sanitizeNextPath(currentPath)));
   }
 
   const user = await getUserOrNull();
@@ -31,8 +33,9 @@ export const requireOnboardedUser = cache(async () => {
   if (!user) {
     const currentPath = (await headers()).get('x-current-path');
     const params = new URLSearchParams({ view: 'etape3' });
-    if (currentPath) {
-      params.set('redirect_to', currentPath);
+    const next = sanitizeNextPath(currentPath);
+    if (next) {
+      params.set('redirect_to', next);
     }
     redirect(`${signUpPath}?${params}`);
   }

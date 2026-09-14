@@ -5,10 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('server-only', () => ({}));
 
 // Le proxy ne fait plus que : rafraîchir la session Supabase, poser la CSP/CORS
-// et une garde *optimiste* (session absente sur route protégée → /). Toutes les
-// décisions dépendantes des données (DCP, collectivités) sont testées au niveau
-// de la DAL / des layouts (voir require-onboarded-user, (authed)/layout,
-// (public)/page, is-allowed-without-collectivite).
+// et une garde *optimiste* (session absente sur route protégée → /login avec
+// redirect_to). Toutes les décisions dépendantes des données (DCP,
+// collectivités) sont testées au niveau de la DAL / des layouts (voir
+// require-onboarded-user, (authed)/layout, (public)/page,
+// is-allowed-without-collectivite).
 vi.mock('@tet/api/utils/supabase/proxy-client', () => ({
   getNextResponseWithUpdatedSupabaseSession: vi.fn(),
 }));
@@ -66,9 +67,24 @@ beforeEach(() => {
 });
 
 describe('proxy — garde optimiste (cookie de session uniquement)', () => {
-  it('non authentifié sur une route protégée → redirige /', async () => {
+  it('non authentifié sur une route protégée → redirige /login avec redirect_to', async () => {
     mockSession(undefined);
-    expectRedirectTo(await proxy(makeRequest('/mon-espace')), `${APP_URL}/`);
+    expectRedirectTo(
+      await proxy(makeRequest('/collectivite/5556/plans/43766')),
+      `${APP_URL}/login?redirect_to=${encodeURIComponent(
+        '/collectivite/5556/plans/43766'
+      )}`
+    );
+  });
+
+  it('non authentifié : préserve la query string dans redirect_to', async () => {
+    mockSession(undefined);
+    expectRedirectTo(
+      await proxy(makeRequest('/collectivite/5556/plans/43766?openAxes=1')),
+      `${APP_URL}/login?redirect_to=${encodeURIComponent(
+        '/collectivite/5556/plans/43766?openAxes=1'
+      )}`
+    );
   });
 
   it('non authentifié sur / → sert la page', async () => {
