@@ -1,3 +1,4 @@
+import { toDocumentHash } from '@tet/domain/collectivites';
 import type {
   AnnexeDocument,
   AxeLight,
@@ -766,7 +767,7 @@ const annexes: AnnexeDocument[] = [
       id: 91,
       filename: 'Collectivité Démo (PA) - Indicateurs - 2026-02-19.xlsx',
       confidentiel: false,
-      hash: 'fixture-hash-annexe-1',
+      hash: toDocumentHash('a'.repeat(64)),
       bucketId: 'fixture-bucket-1',
       filesize: 120000,
     },

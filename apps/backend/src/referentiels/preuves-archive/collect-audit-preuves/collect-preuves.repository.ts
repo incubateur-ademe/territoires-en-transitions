@@ -13,6 +13,7 @@ import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/m
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import type { StoredDocumentHash } from '@tet/domain/collectivites';
 import { ActionId, ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, sql } from 'drizzle-orm';
@@ -23,7 +24,7 @@ import {
 
 export interface CollectedFilePreuve {
   bucketId: string;
-  hash: string;
+  hash: StoredDocumentHash;
   filename: string | null;
   filesize: number | null;
   actionId: ActionId | null;
@@ -49,7 +50,7 @@ export type CollectedPreuves = {
 
 type CollectedRow = Pick<CollectedFilePreuve, 'actionId' | 'filename'> & {
   fichierId: number | null;
-  hash: string | null;
+  hash: StoredDocumentHash | null;
   url: string | null;
   titre: string | null;
   commentaire: string | null;

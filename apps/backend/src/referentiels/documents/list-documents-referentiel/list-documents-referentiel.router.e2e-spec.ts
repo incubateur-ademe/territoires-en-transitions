@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   OTHER_PDF_SAMPLE_FILE,
+  seedTestDocumentWithLegacyHash,
   uploadCreateTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
@@ -231,6 +232,46 @@ describe('List Documents Router', () => {
     ).not.toContainEqual(
       expect.objectContaining({
         filename: 'document-de-la-collectivite-voisine.pdf',
+      })
+    );
+  });
+
+  test("rend un document dont le hash hérité n'est pas une empreinte sha-256", async () => {
+    const cycle = await createCollectiviteWithCycle({ accesRestreint: false });
+    const documentHerite = await seedTestDocumentWithLegacyHash({
+      databaseService: db,
+      collectiviteId: cycle.collectiviteId,
+      filename: 'deliberation-2019.pdf',
+    });
+
+    const [preuve] = await db.db
+      .insert(preuveLabellisationTable)
+      .values({
+        collectiviteId: cycle.collectiviteId,
+        demandeId: cycle.demandeId as number,
+        fichierId: documentHerite.id,
+        commentaire: '',
+        modifiedBy: visiteurUser.id,
+      })
+      .returning({ id: preuveLabellisationTable.id });
+    onTestFinished(async () => {
+      await db.db
+        .delete(preuveLabellisationTable)
+        .where(eq(preuveLabellisationTable.id, preuve.id));
+    });
+
+    const documents =
+      await cycle.membreCaller.referentiels.documents.listDocumentsReferentiel({
+        collectiviteId: cycle.collectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      });
+
+    expect(
+      documents.labellisation.map((document) => document.fichier)
+    ).toContainEqual(
+      expect.objectContaining({
+        filename: 'deliberation-2019.pdf',
+        hash: documentHerite.hash,
       })
     );
   });

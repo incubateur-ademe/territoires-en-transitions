@@ -1,4 +1,5 @@
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { describe, expect, it, vi } from 'vitest';
@@ -8,6 +9,8 @@ import type {
   MissingFilePreuve,
 } from './collect-preuves.repository';
 import { CollectAuditPreuvesService } from './collect-audit-preuves.service';
+
+const HASH_1 = toDocumentHash('1'.repeat(64));
 
 const user = { id: 'user-id' } as AuthenticatedUser;
 
@@ -87,7 +90,7 @@ function makeFile(
 ): CollectedFilePreuve {
   return {
     bucketId: 'bucket-1',
-    hash: 'hash-1',
+    hash: HASH_1,
     filename: 'doc.pdf',
     filesize: 1024,
     actionId: null,
