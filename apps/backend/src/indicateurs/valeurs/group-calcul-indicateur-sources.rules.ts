@@ -1,8 +1,8 @@
 import {
   COLLECTIVITE_SOURCE_ID,
+  PCAET_COLLECTIVITE_SOURCE_ID,
   IndicateurPeriod,
   IndicateurPeriods,
-  PCAET_COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
 import type {
   CalculSourceGroup,

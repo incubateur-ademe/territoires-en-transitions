@@ -93,14 +93,14 @@ jobs:
             if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
             uses: ./.github/actions/sqitch-local
             with:
-              command: 'deploy --mode change'
+              command: 'deploy --mode all --verify'
               target: ${{ vars.SQITCH_TARGET }}
 
           - name: Sqitch deploy (ci)
             if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
             uses: ./.github/actions/sqitch
             with:
-              command: 'deploy --mode change'
+              command: 'deploy --mode all --verify'
               target: ${{ vars.SQITCH_TARGET }}
               network: ${{ vars.SUPABASE_NETWORK }}
 

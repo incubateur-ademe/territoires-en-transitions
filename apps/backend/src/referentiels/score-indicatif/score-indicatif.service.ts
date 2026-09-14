@@ -28,6 +28,8 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { groupBy, keyBy } from 'es-toolkit';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import { assertAnnualScoreIndicateurs } from './score-indicatif-periodicite.rules';
 import { BuildEvaluationContextService } from './build-evaluation-context.service';
 import {
   buildValeursPourExpression,
@@ -92,8 +94,9 @@ export class ScoreIndicatifService {
         {
           collectiviteId: input.collectiviteId,
           indicateurIds,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         },
-        user
+        { user }
       );
 
     const valeursUtiliseesResult =
@@ -141,11 +144,49 @@ export class ScoreIndicatifService {
       return failure(permissionResult.error);
     }
 
-    return this.transactionManager.executeSingle(
-      (transaction) =>
-        this.repository.replaceValeursUtiliseesForAction(input, transaction),
-      tx
-    );
+    return this.transactionManager.executeSingle(async (transaction) => {
+      try {
+        await this.repository.lockSelectionScope(input, transaction);
+        const valeurIds = [
+          ...new Set(
+            input.valeurs.flatMap(({ indicateurValeurId }) =>
+              indicateurValeurId === null ? [] : [indicateurValeurId]
+            )
+          ),
+        ];
+        if (valeurIds.length) {
+          const definition = await this.repository.getDefinitionForShare(
+            input.indicateurId,
+            transaction
+          );
+          assertAnnualScoreIndicateurs([
+            {
+              indicateurId: input.indicateurId,
+              identifiantReferentiel: definition?.identifiantReferentiel,
+              periodicite: definition?.periodicite,
+            },
+          ]);
+          const valeursCompatibles =
+            await this.repository.listCompatibleValeurIds(
+              input,
+              valeurIds,
+              transaction
+            );
+          if (valeursCompatibles.length !== valeurIds.length) {
+            return failure(ScoreIndicatifErrorEnum.INVALID_VALEUR_SELECTION);
+          }
+        }
+        return await this.repository.replaceValeursUtiliseesForAction(
+          input,
+          transaction
+        );
+      } catch (error) {
+        return failure(
+          ScoreIndicatifErrorEnum.DATABASE_ERROR,
+          error instanceof Error ? error : new Error(String(error))
+        );
+      }
+    }, tx);
   }
 
   /**

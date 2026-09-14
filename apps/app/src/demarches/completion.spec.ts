@@ -147,7 +147,10 @@ const valeur = ({
       resultat,
       objectif,
     },
-    indicateurDefinition: { identifiantReferentiel: identifiant },
+    indicateurDefinition: {
+      identifiantReferentiel: identifiant,
+      periodicite: 'annuelle',
+    },
   }) as PcaetDiagnostic['indicateurValeurs'][number];
 
 const valeursCompletes = (): PcaetDiagnostic['indicateurValeurs'] => [

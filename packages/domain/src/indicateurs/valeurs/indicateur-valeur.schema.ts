@@ -1,9 +1,9 @@
+import { indicateurPeriodiciteSchema } from '../definitions/indicateur-periodicite.schema';
 import * as z from 'zod/mini';
 import {
   indicateurDefinitionSchema,
   indicateurDefinitionSchemaTiny,
 } from '../definitions/indicateur-definition.schema';
-import { indicateurPeriodiciteSchema } from '../definitions/indicateur-periodicite.schema';
 import { indicateurSourceMetadonneeSchema } from '../shared/indicateur-source-metadonnee.schema';
 import { indicateurSourceSchema } from '../shared/indicateur-source.schema';
 

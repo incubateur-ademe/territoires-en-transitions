@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { IndicateurDefinition } from '@tet/domain/indicateurs';
-import { getTableColumns, inArray } from 'drizzle-orm';
-import { indicateurDefinitionPeriodiciteSelection } from '../definitions/indicateur-periodicite.sql';
+import { inArray } from 'drizzle-orm';
 
 @Injectable()
 export class IndicateurDefinitionsRepository {
@@ -18,10 +17,7 @@ export class IndicateurDefinitionsRepository {
 
     try {
       return await this.databaseService.db
-        .select({
-          ...getTableColumns(indicateurDefinitionTable),
-          ...indicateurDefinitionPeriodiciteSelection,
-        })
+        .select()
         .from(indicateurDefinitionTable)
         .where(inArray(indicateurDefinitionTable.id, ids));
     } catch (error) {

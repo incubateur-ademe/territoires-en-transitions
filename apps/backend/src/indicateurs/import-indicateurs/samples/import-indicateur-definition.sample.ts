@@ -5,6 +5,8 @@ export const sampleImportIndicateurDefinition: ImportIndicateurDefinitionType =
     identifiantReferentiel: 'cae_1.a',
     titre: '\u00c9missions de gaz \u00e0 effet de serre',
     unite: 'kteq CO2',
+    periodicite: 'annuelle',
+    periodiciteMode: 'recommandee',
     titreCourt: null,
     titreLong:
       'Quantit\u00e9 de gaz \u00e0 effet de serre \u00e9mis par les activit\u00e9s et les habitants',
@@ -40,6 +42,8 @@ export const sampleImportIndicateurDefinition2: ImportIndicateurDefinitionType =
     titreLong:
       'Emissions de gaz \u00e0 effet de serre du territoire par habitant',
     unite: 'teq CO2/hab',
+    periodicite: 'annuelle',
+    periodiciteMode: 'recommandee',
     valeurCalcule: null,
     borneMin: null,
     borneMax: null,

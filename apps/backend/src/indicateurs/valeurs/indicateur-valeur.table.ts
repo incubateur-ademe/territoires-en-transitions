@@ -1,3 +1,5 @@
+import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
+import { indicateurPeriodiciteTable } from '../definitions/indicateur-periodicite.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
@@ -30,6 +32,10 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
       onDelete: 'cascade',
     }),
   dateValeur: date('date_valeur').notNull(),
+  periodicite: text('periodicite', { enum: indicateurPeriodiciteValues })
+    .references(() => indicateurPeriodiciteTable.code)
+    .default('annuelle')
+    .notNull(),
   metadonneeId: integer('metadonnee_id').references(
     () => indicateurSourceMetadonneeTable.id,
     {

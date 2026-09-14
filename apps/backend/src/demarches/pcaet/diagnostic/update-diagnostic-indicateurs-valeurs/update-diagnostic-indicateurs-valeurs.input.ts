@@ -18,4 +18,3 @@ export const updateDiagnosticIndicateursValeursInputSchema = z.object({
 export type UpdateDiagnosticIndicateursValeursInput = z.infer<
   typeof updateDiagnosticIndicateursValeursInputSchema
 >;
-

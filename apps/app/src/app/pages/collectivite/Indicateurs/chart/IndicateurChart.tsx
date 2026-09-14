@@ -1,18 +1,19 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
 import {
-  ReactECharts,
+  type Dataset,
   makeLegendData,
   makeLineSeries,
   makeOption,
   makeReferenceSeries,
   makeStackedSeries,
-} from '@/app/ui/charts/echarts';
+} from '@/app/ui/charts/echarts/utils';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
-import { getAnnee, getYear } from '@/app/ui/charts/echarts/utils';
+import { getAnnee } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { makeIndicateurPeriodTimeAxis } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
+import { IndicateurPeriods } from '@tet/domain/indicateurs';
 import type { GridComponentOption } from 'echarts/components';
-import { uniq } from 'es-toolkit';
-import { useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -23,6 +24,7 @@ import {
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
 import { LAYERS } from './layer-parameters';
+import { prepareReferenceObjectifsDataset } from './prepare-reference-objectifs-dataset';
 import { useResizeGraphOnContainerSizeUpdate } from './use-resize-graph-on-container-size-update';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
@@ -39,33 +41,28 @@ const variantToGrid: Record<ChartVariant, GridComponentOption> = {
   detail: { left: 32, right: 32, bottom: 80 },
 };
 
+const variantToStyle: Record<ChartVariant, { height: number }> = {
+  thumbnail: { height: variantToHeight.thumbnail },
+  modal: { height: variantToHeight.modal },
+  detail: { height: variantToHeight.detail },
+};
+
 const TooltipContainerClassname =
   'max-w-80 break-words whitespace-normal text-xs [&_*]:text-xs [&_*]:mb-0';
 
-/** Data issues de l'api pour générer les données formatées pour echarts */
-type IndicateurChartData = {
-  /** Unité affichée pour l'axe des abscisses et le tooltip */
-  unite?: string;
-  /** Valeurs de l'indicateur  */
-  valeurs: {
-    objectifs: PreparedData;
-    resultats: PreparedData;
-    segments?:
-      | {
-          definition: IndicateurDefinition;
-          source: PreparedData['sources'][number];
-        }[]
-      | null;
-  };
+type IndicateurDataset = Dataset & {
+  calculAuto: boolean;
+  metadonnee?: PreparedData['sources'][number]['metadonnees'][number] | null;
+  nomSource?: string | null;
 };
 
 // prépare les données pour l'affichage des lignes objectifs/résultats pour
 // chaque source disponible
 const prepareDataset = (
-  data: IndicateurChartData,
+  data: IndicateurChartInfo['data'],
   type: SourceType,
   getColorBySourceId: GetColorBySourceId
-) =>
+): IndicateurDataset[] =>
   data.valeurs[`${type}s`].sources
     // filtre les valeurs null/undefined
     ?.map(({ valeurs, ...other }) => ({
@@ -82,8 +79,11 @@ const prepareDataset = (
         id: `${type}-${source}`,
         calculAuto: Boolean(valeurs.some((v) => v.calculAuto)),
         name: getSourceLabel(source, metadonnee?.producteur || libelle, type),
-        source: valeurs,
-        dimensions: ['anneeISO', 'valeur'],
+        source: valeurs.map(({ dateValeurISO, valeur }) => ({
+          dateValeurISO,
+          valeur: valeur as number,
+        })) as Dataset['source'],
+        dimensions: ['dateValeurISO', 'valeur'],
         metadonnee,
         nomSource: libelle,
       };
@@ -91,16 +91,25 @@ const prepareDataset = (
 
 // prépare les données pour l'affichage des surfaces superposées pour
 // les segments (sous-indicateurs d'un indicateur composé avec agrégation)
-const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
+const prepareSegmentsDataset = (
+  chartInfo: IndicateurChartInfo
+): IndicateurDataset[] => {
   const { data, segmentItemParId } = chartInfo;
   const { segments } = data.valeurs;
 
   if (!segments?.length) return [];
 
-  // extrait les années uniques pour les segments
-  const annees = uniq(
-    segments.flatMap(({ source }) => source.valeurs.map(({ annee }) => annee))
-  ).sort();
+  // extrait les périodes uniques pour les segments
+  const periodes = [
+    ...new Map(
+      segments.flatMap(({ source }) =>
+        source.valeurs.map(({ periode }) => [
+          IndicateurPeriods.key(periode),
+          periode,
+        ])
+      )
+    ).values(),
+  ].sort(IndicateurPeriods.compareTotal);
 
   return segments.map(({ definition, source }) => {
     const metadonnee = source.metadonnees?.find(
@@ -113,12 +122,22 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
       name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}`,
       color,
       calculAuto: Boolean(source.valeurs.some((v) => v.calculAuto)),
-      source: annees.map((annee) => {
-        const valeur = source.valeurs.find((v) => v.annee === annee);
-        // remplace les années manquantes par 0 pour améliorer l'affichage des surfaces empilées
-        return valeur ?? 0;
-      }),
-      dimensions: ['anneeISO', 'valeur'],
+      source: periodes.map((periode) => {
+        const periodKey = IndicateurPeriods.key(periode);
+        const valeur = source.valeurs.find(
+          (v) => IndicateurPeriods.key(v.periode) === periodKey
+        );
+        // Une période absente reste un trou : 0 est une donnée métier valide.
+        return (
+          valeur ?? {
+            dateValeurISO: `${IndicateurPeriods.toDateValeur(
+              periode
+            )}T00:00:00.000Z`,
+            valeur: null,
+          }
+        );
+      }) as Dataset['source'],
+      dimensions: ['dateValeurISO', 'valeur'],
       metadonnee,
       nomSource: source.libelle,
       typeSource: source.type,
@@ -133,46 +152,15 @@ const makeReferenceDataset = (
   id: 'cible' | 'seuil',
   valeur: number,
   unite: string,
-  anneeISO: string,
+  dateValeurISO: string,
   libelle: string | null
 ) => ({
   color: LAYERS[id].color,
   id,
   calculAuto: false,
   name: `Valeur ${id === 'seuil' ? 'limite' : id} : ${valeur} ${unite}`,
-  source: [{ anneeISO, valeur }],
-  dimensions: ['anneeISO', 'valeur'],
-  metadonnee: null,
-  nomSource: libelle,
-});
-
-const getObjectifReferenceName = (
-  valeurs: { valeur: number; dateValeur: string }[],
-  unite: string,
-  libelle: string | null
-) => {
-  if (valeurs.length === 1) {
-    const { dateValeur, valeur } = valeurs[0];
-    const annee = getYear(dateValeur);
-    return `Objectif ${annee} : ${valeur} ${unite}`;
-  }
-
-  return libelle ?? 'Objectifs';
-};
-
-const makeReferenceObjectifsDataset = (
-  valeurs: { valeur: number; dateValeur: string }[],
-  unite: string,
-  libelle: string | null
-) => ({
-  color: LAYERS.cible.color,
-  id: 'cible-objectifs',
-  name: getObjectifReferenceName(valeurs, unite, libelle),
-  source: valeurs.map(({ valeur, dateValeur }) => ({
-    ...getAnnee(dateValeur),
-    valeur,
-  })),
-  dimensions: ['anneeISO', 'valeur'],
+  source: [{ dateValeurISO, valeur }],
+  dimensions: ['dateValeurISO', 'valeur'],
   metadonnee: null,
   nomSource: libelle,
 });
@@ -186,31 +174,47 @@ const prepareReferenceDataset = (chartInfo: IndicateurChartInfo) => {
   if (!valeursReference) return [];
 
   const { cible, seuil, objectifs, libelle } = valeursReference;
-  const { anneeISO } = getAnnee();
+  const { anneeISO: dateValeurISO } = getAnnee();
   const dataset = [];
 
   // les valeurs cible/seuil n'ont pas d'année
   // alors on ajoute un point uniquement pour l'année courante
   if (cible !== null) {
     dataset.push(
-      makeReferenceDataset('cible', cible, data.unite ?? '', anneeISO, libelle)
+      makeReferenceDataset(
+        'cible',
+        cible,
+        data.unite ?? '',
+        dateValeurISO,
+        libelle
+      )
     );
   }
   if (seuil !== null) {
     dataset.push(
-      makeReferenceDataset('seuil', seuil, data.unite ?? '', anneeISO, libelle)
+      makeReferenceDataset(
+        'seuil',
+        seuil,
+        data.unite ?? '',
+        dateValeurISO,
+        libelle
+      )
     );
   }
   if (objectifs?.length) {
     dataset.push(
-      makeReferenceObjectifsDataset(objectifs, data.unite ?? '', libelle)
+      prepareReferenceObjectifsDataset({
+        valeurs: objectifs,
+        unite: data.unite ?? '',
+        libelle,
+      })
     );
   }
   return dataset;
 };
 
 /** Props du graphique générique Indicateur */
-export type IndicateurChartProps = {
+type IndicateurChartProps = {
   /** Données pour le graphe */
   chartInfo: IndicateurChartInfo;
   /** Titre du graphe */
@@ -223,6 +227,115 @@ export type IndicateurChartProps = {
   className?: string;
 };
 
+type PreparedChartProps = Pick<IndicateurChartProps, 'title' | 'variant'> & {
+  data: IndicateurChartInfo['data'];
+  periodicite: NonNullable<IndicateurChartInfo['data']['periodicite']>;
+  periodiciteAffichage?: IndicateurChartInfo['periodiciteAffichage'];
+  donneesResultatObjectif: IndicateurDataset[];
+  donneesSegments: IndicateurDataset[];
+  references: IndicateurDataset[];
+};
+
+const PreparedChart = memo(
+  ({
+    data,
+    periodicite,
+    periodiciteAffichage,
+    donneesResultatObjectif,
+    donneesSegments,
+    references,
+    title,
+    variant = 'detail',
+  }: PreparedChartProps) => {
+    const option = useMemo(() => {
+      const dataset = [
+        ...donneesResultatObjectif,
+        ...donneesSegments,
+        ...references,
+      ];
+      const datasetByName = new Map<
+        IndicateurDataset['name'],
+        IndicateurDataset
+      >();
+      for (const item of dataset) {
+        // Conserve le premier élément, comme le `find` historique, si deux
+        // sources partagent exceptionnellement le même libellé de légende.
+        if (!datasetByName.has(item.name)) datasetByName.set(item.name, item);
+      }
+      const series = [
+        ...makeLineSeries(donneesResultatObjectif),
+        ...makeStackedSeries(donneesSegments),
+        ...makeReferenceSeries(references, variant !== 'thumbnail'),
+      ];
+
+      return makeOption({
+        option: {
+          dataset,
+          series,
+          grid: variantToGrid[variant],
+          title: variant === 'detail' ? { left: 28 } : {},
+          legend: {
+            show: variant !== 'thumbnail',
+            textStyle: variant === 'thumbnail' ? { fontSize: '0.7rem' } : {},
+            data:
+              variant === 'thumbnail'
+                ? makeLegendData(makeLineSeries(donneesResultatObjectif))
+                : makeLegendData(series),
+            tooltip: {
+              show: true,
+              formatter: (params) => {
+                const item = datasetByName.get(params.name);
+                if (
+                  item?.nomSource &&
+                  DATASET_REFERENCE.includes(item.id as string)
+                ) {
+                  return `<div class="${TooltipContainerClassname}">${item.nomSource}</div>`;
+                }
+
+                return item?.metadonnee
+                  ? renderToString(
+                      <DataSourceTooltipContent
+                        calculAuto={item.calculAuto}
+                        metadonnee={item.metadonnee}
+                        nomSource={item.nomSource ?? ''}
+                        className={TooltipContainerClassname}
+                      />
+                    )
+                  : '';
+              },
+            },
+          },
+        },
+        titre: title,
+        unite: data.unite,
+        timeAxis: makeIndicateurPeriodTimeAxis(
+          periodicite,
+          periodiciteAffichage
+        ),
+        disableToolbox: variant !== 'modal',
+        hideMinMaxLabel:
+          (Array.isArray(dataset[0]?.source) ? dataset[0].source.length : 0) <=
+            1 &&
+          (Array.isArray(dataset[1]?.source) ? dataset[1].source.length : 0) <=
+            1,
+      });
+    }, [
+      data.unite,
+      donneesResultatObjectif,
+      donneesSegments,
+      references,
+      periodicite,
+      periodiciteAffichage,
+      title,
+      variant,
+    ]);
+
+    return <ReactECharts option={option} style={variantToStyle[variant]} />;
+  }
+);
+
+PreparedChart.displayName = 'PreparedChart';
+
 const IndicateurChart = ({
   chartInfo,
   title,
@@ -234,85 +347,33 @@ const IndicateurChart = ({
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const getColorBySourceId = useGetColorBySourceId();
-
-  const donneesResultatObjectif = [
-    ...prepareDataset(data, 'resultat', getColorBySourceId),
-    ...prepareDataset(data, 'objectif', getColorBySourceId),
-  ];
-
-  const donneesSegments = prepareSegmentsDataset(chartInfo);
-  const references = prepareReferenceDataset(chartInfo);
-
-  const dataset = [
-    ...donneesResultatObjectif,
-    ...donneesSegments,
-    ...references,
-  ];
+  const preparedDatasets = useMemo(() => {
+    const donneesResultatObjectif = [
+      ...prepareDataset(data, 'resultat', getColorBySourceId),
+      ...prepareDataset(data, 'objectif', getColorBySourceId),
+    ];
+    const donneesSegments = prepareSegmentsDataset(chartInfo);
+    const references = prepareReferenceDataset(chartInfo);
+    return {
+      donneesResultatObjectif,
+      donneesSegments,
+      references,
+      count:
+        donneesResultatObjectif.length +
+        donneesSegments.length +
+        references.length,
+    };
+  }, [chartInfo, data, getColorBySourceId]);
 
   useResizeGraphOnContainerSizeUpdate({
     containerRef: chartContainerRef,
-    disabled: isLoading || dataset.length === 0,
+    disabled: isLoading || preparedDatasets.count === 0,
   });
 
-  if (!dataset.length) return null;
+  if (preparedDatasets.count === 0 || data.periodicite === undefined)
+    return null;
 
-  const style = { height: variantToHeight[variant] };
-
-  const grid = variantToGrid[variant];
-
-  const series = [
-    ...makeLineSeries(donneesResultatObjectif),
-    ...makeStackedSeries(donneesSegments),
-    ...makeReferenceSeries(references, variant !== 'thumbnail'),
-  ];
-
-  const option = makeOption({
-    option: {
-      dataset,
-      series,
-      grid,
-      title: variant === 'detail' ? { left: 28 } : {},
-      legend: {
-        show: variant !== 'thumbnail',
-        textStyle: variant === 'thumbnail' ? { fontSize: '0.7rem' } : {},
-        // pour la variante vignette on affiche la légende seulement pour résultats/objectifs
-        data:
-          variant === 'thumbnail'
-            ? makeLegendData(donneesResultatObjectif)
-            : makeLegendData(series),
-        // infobulle avec les métadonnées associées à la source open data
-        tooltip: {
-          show: true,
-          formatter: (params) => {
-            const item = dataset?.find((s) => s.name === params.name);
-            if (
-              item &&
-              item.nomSource &&
-              DATASET_REFERENCE.includes(item.id as string)
-            ) {
-              return `<div class="${TooltipContainerClassname}">${item.nomSource}</div>`;
-            }
-
-            return item?.metadonnee
-              ? renderToString(
-                  <DataSourceTooltipContent
-                    calculAuto={item.calculAuto}
-                    metadonnee={item.metadonnee}
-                    nomSource={item.nomSource}
-                    className={TooltipContainerClassname}
-                  />
-                )
-              : '';
-          },
-        },
-      },
-    },
-    titre: title,
-    unite: data.unite,
-    disableToolbox: variant !== 'modal',
-    hideMinMaxLabel:
-      dataset[0]?.source.length <= 1 && dataset[1]?.source.length <= 1,
-  });
+  const style = variantToStyle[variant];
 
   return (
     <div ref={chartContainerRef} className={className} style={style}>
@@ -321,7 +382,16 @@ const IndicateurChart = ({
           <SpinnerLoader className="w-8 h-8 fill-primary-5" />
         </div>
       ) : (
-        <ReactECharts option={option} style={style} />
+        <PreparedChart
+          data={data}
+          periodicite={data.periodicite}
+          periodiciteAffichage={chartInfo.periodiciteAffichage}
+          donneesResultatObjectif={preparedDatasets.donneesResultatObjectif}
+          donneesSegments={preparedDatasets.donneesSegments}
+          references={preparedDatasets.references}
+          title={title}
+          variant={variant}
+        />
       )}
     </div>
   );

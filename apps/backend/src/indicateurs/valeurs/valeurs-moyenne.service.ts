@@ -1,3 +1,4 @@
+import { getLegacyIndicateurPeriodicite } from './indicateur-period.adapter';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -80,8 +81,8 @@ export default class ValeursMoyenneService {
       .select({
         typeCollectivite: typeCollectiviteExpr,
       })
-      .from(collectiviteTable)
-      .where(eq(collectiviteTable.id, collectiviteId))
+      .from(c)
+      .where(eq(c.id, collectiviteId))
       .limit(1)
       .then((result) => result[0]);
 
@@ -120,6 +121,10 @@ export default class ValeursMoyenneService {
             // collectivité (valeurs de démarche, pas une source ouverte partagée).
             ne(ism.sourceId, 'snbc'),
             ne(ism.sourceId, PCAET_COLLECTIVITE_SOURCE_ID),
+            eq(
+              iv.periodicite,
+              getLegacyIndicateurPeriodicite(options.periodicite)
+            ),
             eq(iv.indicateurId, indicateurId)
           )
         )

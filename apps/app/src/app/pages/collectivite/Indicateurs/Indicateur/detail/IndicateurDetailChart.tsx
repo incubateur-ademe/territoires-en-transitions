@@ -1,4 +1,5 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { IndicateurDisplayPeriodiciteSelect } from '@/app/indicateurs/valeurs/indicateur-display-periodicite.select';
 import { appLabels } from '@/app/labels/catalog';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard } from '@tet/ui';
@@ -44,6 +45,13 @@ const IndicateurDetailChart = ({
         data-test={`chart-${definition.id}`}
         className={classNames('w-full', className)}
       >
+        <div className="mx-8 mb-4">
+          <IndicateurDisplayPeriodiciteSelect
+            periodicite={definition.periodicite}
+            periodiciteAffichage={chartInfo.periodiciteAffichage}
+            onChange={chartInfo.setPeriodiciteAffichage}
+          />
+        </div>
         {isDownloadable && (
           <div className="flex justify-between mx-8">
             <Button

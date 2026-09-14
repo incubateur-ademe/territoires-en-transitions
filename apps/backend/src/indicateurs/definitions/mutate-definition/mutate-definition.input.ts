@@ -1,7 +1,6 @@
 import { serviceTagSchema } from '@tet/domain/collectivites';
 import {
   indicateurDefinitionSchemaCreate,
-  IndicateurPeriodiciteEnum,
   indicateurPeriodiciteValues,
 } from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
@@ -17,9 +16,8 @@ export const createIndicateurDefinitionInputSchema = z.object({
   // toujours une périodicité explicite.
   periodicite: z
     .enum(indicateurPeriodiciteValues)
-    .refine((periodicite) => periodicite === IndicateurPeriodiciteEnum.ANNUELLE)
     .optional()
-    .default(IndicateurPeriodiciteEnum.ANNUELLE),
+    .default('annuelle'),
   collectiviteId: z.number(),
   thematiques: z
     .array(z.object({ id: thematiqueSchema.shape.id }))
@@ -69,13 +67,7 @@ export const updateIndicateurDefinitionInputSchema = z.object({
 
       // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
       // "absent du payload" d'une mise à jour explicite.
-      periodicite: z
-        .enum(indicateurPeriodiciteValues)
-        .refine(
-          (periodicite) => periodicite === IndicateurPeriodiciteEnum.ANNUELLE
-        )
-        .nullable()
-        .optional(),
+      periodicite: z.enum(indicateurPeriodiciteValues).nullable().optional(),
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),

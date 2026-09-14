@@ -1,8 +1,10 @@
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
+import { indicateurCollectivitePeriodiciteSelection } from '../indicateur-periodicite.sql';
 import { Injectable, Logger } from '@nestjs/common';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '@tet/backend/collectivites/shared/models/groupement.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
 import { indicateurGroupeTable } from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -23,8 +25,6 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { indicateurCollectivitePeriodiciteSelection } from '../indicateur-periodicite.sql';
 
 @Injectable()
 export class ListCollectiviteDefinitionsRepository {

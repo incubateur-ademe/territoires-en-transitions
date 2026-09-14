@@ -1,3 +1,4 @@
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import {
   ForbiddenException,
   HttpException,
@@ -25,7 +26,6 @@ import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-sp
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
   PersonnalisationRegleCreate,
