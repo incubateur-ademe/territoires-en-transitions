@@ -6,6 +6,7 @@ import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/model
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { StoredDocumentHash } from '@tet/domain/collectivites';
 import { and, asc, eq, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
 
 export type AnnexeListRow = {
@@ -19,7 +20,7 @@ export type AnnexeListRow = {
   lien: { titre: string; url: string } | null;
   filename: string | null;
   confidentiel: boolean | null;
-  hash: string | null;
+  hash: StoredDocumentHash | null;
   bucketId: string | null;
   filesize: number | null;
 };

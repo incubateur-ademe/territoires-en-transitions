@@ -1,3 +1,4 @@
+import { storedDocumentHashSchema } from '@tet/domain/collectivites';
 import {
   etoileAsStringEnumSchema,
   referentielIdEnumSchema,
@@ -8,7 +9,7 @@ import z from 'zod';
 const fichierSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
-  hash: z.string(),
+  hash: storedDocumentHashSchema,
   filename: z.string(),
   confidentiel: z.boolean().nullable(),
   bucketId: z.string(),

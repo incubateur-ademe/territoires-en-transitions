@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   OTHER_PDF_SAMPLE_FILE,
+  seedTestDocumentWithLegacyHash,
   uploadCreateTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import {
@@ -166,6 +167,42 @@ describe('FicheAnnexesRouter', () => {
       },
       lien: null,
     });
+  });
+
+  test("retourne une annexe fichier au hash hérité, qui n'est pas une empreinte sha-256", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const ficheId = await createFiche({
+      caller,
+      ficheInput: {
+        titre: 'Fiche avec annexe héritée',
+        collectiviteId: collectivite.id,
+      },
+    });
+    const documentHerite = await seedTestDocumentWithLegacyHash({
+      databaseService: db,
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-2019.pdf',
+    });
+
+    await caller.plans.fiches.addAnnexe({
+      ficheId,
+      commentaire: 'Annexe héritée',
+      fichierId: documentHerite.id,
+    });
+
+    const result = await caller.plans.fiches.ficheAnnexes({
+      collectiviteId: collectivite.id,
+      ficheIds: [ficheId],
+    });
+
+    expect(result).toMatchObject([
+      {
+        fichier: {
+          filename: 'deliberation-2019.pdf',
+          hash: documentHerite.hash,
+        },
+      },
+    ]);
   });
 
   test('filtre par ficheIds : ne retourne que les annexes des fiches demandées', async () => {

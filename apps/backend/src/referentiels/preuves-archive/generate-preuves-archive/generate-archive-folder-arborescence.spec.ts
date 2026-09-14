@@ -1,3 +1,4 @@
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
@@ -11,6 +12,10 @@ import {
   type GenerateArchiveFolderArborescenceInput,
   type ReferentielTreeNode,
 } from './generate-archive-folder-arborescence';
+
+const HASH_1 = toDocumentHash('1'.repeat(64));
+const HASH_PURGE = toDocumentHash('2'.repeat(64));
+const HASH_WITHOUT_FILENAME = toDocumentHash('3'.repeat(64));
 
 const referentielTree: ReferentielTreeNode = {
   actionId: 'cae',
@@ -64,7 +69,7 @@ function makeFile(
 ): CollectedFilePreuve {
   return {
     bucketId: 'bucket-1',
-    hash: 'hash-1',
+    hash: HASH_1,
     filename: 'doc.pdf',
     filesize: 1024,
     actionId: null,
@@ -122,7 +127,7 @@ describe('generateArchiveFolderArborescence', () => {
         ],
         filename: 'a.pdf',
         bucketId: 'bucket-1',
-        hash: 'hash-1',
+        hash: HASH_1,
         filesize: 1024,
       },
     ]);
@@ -208,7 +213,7 @@ describe('generateArchiveFolderArborescence', () => {
         mesure: {
           missingFiles: [
             {
-              hash: 'hash-purge',
+              hash: HASH_PURGE,
               filename: 'avis-technique.pdf',
               actionId: 'cae_1.1.1',
             },
@@ -234,7 +239,7 @@ describe('generateArchiveFolderArborescence', () => {
       buildInput({
         audit: {
           missingFiles: [
-            { hash: 'hash-sans-nom', filename: null, actionId: null },
+            { hash: HASH_WITHOUT_FILENAME, filename: null, actionId: null },
           ],
         },
       })
@@ -244,7 +249,7 @@ describe('generateArchiveFolderArborescence', () => {
     if (!result.success) return;
     expect(result.data.skippedFiles).toEqual([
       {
-        filename: 'hash-sans-nom',
+        filename: HASH_WITHOUT_FILENAME,
         emplacement: 'cycle-labellisation/audit',
         raison: 'Fichier introuvable dans le stockage',
       },
@@ -259,7 +264,7 @@ describe('generateArchiveFolderArborescence', () => {
             makeFile({
               actionId: 'cae_1.1.1',
               filename: null,
-              hash: 'hash-sans-nom',
+              hash: HASH_WITHOUT_FILENAME,
             }),
           ],
           links: [],
@@ -269,7 +274,7 @@ describe('generateArchiveFolderArborescence', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.files[0].filename).toBe('hash-sans-nom');
+    expect(result.data.files[0].filename).toBe(HASH_WITHOUT_FILENAME);
   });
 
   it('ignore un fichier dont la taille est inconnue', () => {
