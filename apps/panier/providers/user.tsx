@@ -1,50 +1,61 @@
 'use client';
 
-import { User } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { useSupabase } from '@tet/api';
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { match } from 'ts-pattern';
 
-type UserContextType = {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
+type AuthState =
+  | { status: 'pending' }
+  | { status: 'anonymous' }
+  | { status: 'authenticated'; user: User };
+
+const PENDING_AUTH_STATE: AuthState = { status: 'pending' };
+const ANONYMOUS_AUTH_STATE: AuthState = { status: 'anonymous' };
+
+const AuthStateContext = createContext<AuthState | null>(null);
+
+const useAuthState = (): AuthState => {
+  const authState = useContext(AuthStateContext);
+  if (!authState) {
+    throw new Error('useAuthState must be used within UserProvider');
+  }
+  return authState;
 };
 
-const contextDefaultValue: UserContextType = {
-  user: null,
-  setUser: (_user: SetStateAction<User | null>) => undefined,
-};
+const hasAuthenticatedUser = (authState: AuthState): boolean =>
+  match(authState)
+    .with({ status: 'authenticated' }, () => true)
+    .with({ status: 'pending' }, { status: 'anonymous' }, () => false)
+    .exhaustive();
 
-/**
- * Contexte permettant de récupérer le user
- *
- * Si l'utilisateur est `null` on considère qu'il n'est pas connecté.
- */
-export const UserContext = createContext(contextDefaultValue);
+export const useIsAuthenticated = (): boolean =>
+  hasAuthenticatedUser(useAuthState());
 
-export const useUserContext = () => {
-  return useContext(UserContext);
+const toAuthState = (supabaseSession: Session | null): AuthState => {
+  if (!supabaseSession) {
+    return ANONYMOUS_AUTH_STATE;
+  }
+  return { status: 'authenticated', user: supabaseSession.user };
 };
 
 /**
  * Provider pour le contexte du user
  */
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(contextDefaultValue.user);
+export const UserProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactNode => {
+  const [authState, setAuthState] = useState<AuthState>(PENDING_AUTH_STATE);
   const supabase = useSupabase();
 
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, updatedSession) => {
-      setUser(updatedSession?.user ?? null);
+    } = supabase.auth.onAuthStateChange((_event, supabaseSession) => {
+      setAuthState(toAuthState(supabaseSession));
     });
 
     return () => {
@@ -52,5 +63,5 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [supabase.auth]);
 
-  return <UserContext value={{ user, setUser }}>{children}</UserContext>;
+  return <AuthStateContext value={authState}>{children}</AuthStateContext>;
 };

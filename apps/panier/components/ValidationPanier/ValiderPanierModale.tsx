@@ -1,8 +1,8 @@
 import StepperValidation from '@/panier/components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,
+  useIsAuthenticated,
   usePanierContext,
-  useUserContext,
 } from '@/panier/providers';
 import {
   PanierAPI,
@@ -29,7 +29,7 @@ import useSWR from 'swr';
 
 const ValiderPanierModale = () => {
   const { panier } = usePanierContext();
-  const { user } = useUserContext();
+  const isAuthenticated = useIsAuthenticated();
   const contenu = panier?.inpanier ?? [];
 
   const steps = [
@@ -37,7 +37,7 @@ const ValiderPanierModale = () => {
     'Je modifie les actions à ma guise et invite mes collaborateurs à contribuer en ligne.',
   ];
 
-  if (!user) {
+  if (!isAuthenticated) {
     steps.unshift(
       'Je créé mon compte en quelques clics et me rattache à ma collectivité'
     );
@@ -67,7 +67,7 @@ const ValiderPanierModale = () => {
         <Divider className="mt-8 mb-6 !w-1/2" />
         <StepperValidation className="w-5/6 mt-2" steps={steps} />
       </div>
-      {user ? <ModeConnecte /> : <ModeDeconnecte />}
+      {isAuthenticated ? <ModeConnecte /> : <ModeDeconnecte />}
     </div>
   );
 };

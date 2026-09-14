@@ -4,7 +4,7 @@ import { getAuthPaths, PanierAPI, useSupabase } from '@tet/api';
 import { Button, Event, Icon, useEventTracker } from '@tet/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useUserContext } from '../../providers';
+import { useIsAuthenticated } from '../../providers';
 import SelectCollectivite from './SelectCollectivite';
 import { useCollectiviteInfo } from './useCollectiviteInfo';
 
@@ -19,7 +19,7 @@ const CestParti = () => {
     collectiviteIdFromUrl ? parseInt(id as string) : null
   );
   const { data: collectiviteInfo } = useCollectiviteInfo(collectiviteId);
-  const { user } = useUserContext();
+  const isAuthenticated = useIsAuthenticated();
 
   const tracker = useEventTracker();
   const supabase = useSupabase();
@@ -45,7 +45,6 @@ const CestParti = () => {
 
   const nonRattache =
     collectiviteInfo?.active && !collectiviteInfo.isOwnCollectivite;
-  const nonConnecte = !user;
 
   return (
     <>
@@ -78,12 +77,12 @@ const CestParti = () => {
           <div className="flex flex-row mt-4 gap-2">
             <Icon icon="alert-fill text-warning-1" />
             <p className="text-sm text-warning-1">
-              {nonConnecte
-                ? 'Connectez-vous ou créez un compte pour contribuer sur le panier de cette collectivité.'
-                : "Vous n'êtes pas rattaché à cette collectivité."}
+              {isAuthenticated
+                ? "Vous n'êtes pas rattaché à cette collectivité."
+                : 'Connectez-vous ou créez un compte pour contribuer sur le panier de cette collectivité.'}
             </p>
           </div>
-          {nonConnecte && authPaths && (
+          {!isAuthenticated && authPaths && (
             <div className="flex gap-4 justify-center">
               <Button href={authPaths.login} variant="outlined">
                 Se connecter
