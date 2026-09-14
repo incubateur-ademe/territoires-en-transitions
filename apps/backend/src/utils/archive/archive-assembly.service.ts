@@ -25,7 +25,7 @@ import {
 } from './prepare-archive-entries.utils';
 
 const DOWNLOAD_CONCURRENCY = 8;
-const ARCHIVE_ZIP_CONTENT_TYPE = 'application/zip';
+export const ARCHIVE_ZIP_CONTENT_TYPE = 'application/zip';
 
 const toError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(getErrorMessage(error));
