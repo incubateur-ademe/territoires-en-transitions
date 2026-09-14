@@ -23,8 +23,8 @@ export default async function Layout({ children }: { children: ReactNode }) {
   // groupe (acces-restreint), hasCollectivitePermission).
   //
   // `x-current-path` est réécrit par le proxy à partir de l'URL réelle
-  // (request.nextUrl.pathname) et n'est donc pas falsifiable côté client ; en
-  // l'absence de valeur on échoue en sécurité (chaîne vide → non autorisé).
+  // et n'est donc pas falsifiable côté client ; en l'absence de valeur on
+  // échoue en sécurité (chaîne vide → non autorisé).
   if (user.collectivites.length === 0) {
     const currentPath = (await headers()).get('x-current-path') ?? '';
     if (!isAllowedWithoutCollectivite(currentPath)) {

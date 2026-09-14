@@ -27,6 +27,19 @@ export const signUpPath = `/signup`;
 export const resetPwdPath = `/recover`;
 export const rejoindreCollectivitePath = '/rejoindre-une-collectivite';
 
+/**
+ * Lien relatif vers la page de connexion. `redirectTo` est repris après
+ * authentification via le search param `redirect_to` (déjà géré par /login).
+ * La racine est omise : c'est déjà la destination par défaut.
+ */
+export const makeSignInUrl = (redirectTo?: string | null) => {
+  if (!redirectTo || redirectTo === homePath) {
+    return signInPath;
+  }
+  const params = new URLSearchParams({ redirect_to: redirectTo });
+  return `${signInPath}?${params}`;
+};
+
 /** Lien relatif vers « rejoindre une collectivité » (navigation intra-app). */
 export const makeRejoindreCollectiviteUrl = (redirectTo = homePath) => {
   const params = new URLSearchParams({ redirect_to: redirectTo });

@@ -1,3 +1,4 @@
+import { sanitizeNextPath } from '@/app/users/authentications/sanitize-next-path';
 import { LoginPageClient } from './page.client';
 
 /**
@@ -26,7 +27,7 @@ export default async function LoginPage({
       view={view}
       email={email}
       otp={otp}
-      redirect_to={redirect_to}
+      redirect_to={sanitizeNextPath(redirect_to) ?? '/'}
       erreur={erreur}
     />
   );
