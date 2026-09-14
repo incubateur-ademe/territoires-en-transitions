@@ -6,10 +6,10 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import { and, Column, count, eq, like, or, SQL } from 'drizzle-orm';
+import { and, count, eq, SQL } from 'drizzle-orm';
+import { matchesActionOrDescendant } from '../action-or-descendant.utils';
 import { CountPreuvesInput } from './count-preuves.input';
 import { CountPreuvesOutput } from './count-preuves.output';
 
@@ -43,14 +43,14 @@ export class CountPreuvesService {
       { collectiviteId, referentielId }
     );
 
-    const actionScope = this.matchesActionOrDescendant(
-      actionId,
-      preuveActionTable.actionId
+    const actionScope = matchesActionOrDescendant(
+      preuveActionTable.actionId,
+      actionId
     );
 
-    const complementaireScope = this.matchesActionOrDescendant(
-      actionId,
-      preuveComplementaireTable.actionId
+    const complementaireScope = matchesActionOrDescendant(
+      preuveComplementaireTable.actionId,
+      actionId
     );
 
     const [reglementaireRows, complementaireRows] = await Promise.all([
@@ -100,7 +100,7 @@ export class CountPreuvesService {
 
   private queryPreuvesReglementairesCount(
     collectiviteId: number,
-    actionScope: SQL | undefined
+    actionScope: SQL
   ) {
     return this.db
       .select({
@@ -123,7 +123,7 @@ export class CountPreuvesService {
 
   private queryPreuvesComplementairesCount(
     collectiviteId: number,
-    complementaireScope: SQL | undefined
+    complementaireScope: SQL
   ) {
     return this.db
       .select({
@@ -138,13 +138,5 @@ export class CountPreuvesService {
         )
       )
       .groupBy(preuveComplementaireTable.actionId);
-  }
-
-  private matchesActionOrDescendant(
-    actionId: string,
-    column: Column
-  ): SQL | undefined {
-    const escapedActionId = escapeLikePattern(actionId);
-    return or(eq(column, actionId), like(column, `${escapedActionId}.%`));
   }
 }
