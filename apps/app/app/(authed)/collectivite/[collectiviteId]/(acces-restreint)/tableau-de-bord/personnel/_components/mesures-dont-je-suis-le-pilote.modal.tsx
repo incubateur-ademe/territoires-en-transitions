@@ -1,3 +1,4 @@
+import { PERSONAL_MODULE_TITRES } from '@/app/tableaux-de-bord/modules/personal-module-titres';
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -43,7 +44,7 @@ const MesuresDontJeSuisLePiloteModal = ({
   return (
     <Modal
       openState={openState}
-      title={module.titre}
+      title={PERSONAL_MODULE_TITRES[module.defaultKey]}
       render={() => (
         <FormSection
           title={`${capitalize(appLabels.filtrerSur)} :`}

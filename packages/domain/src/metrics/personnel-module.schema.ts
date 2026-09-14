@@ -78,7 +78,7 @@ export const moduleCommonSchemaInsert = z.object({
   id: z.uuid(),
   collectiviteId: z.number(),
   userId: z.uuid().nullish(),
-  titre: z.string(),
+  // Pas de `titre` : non personnalisable, il est dérivé de `defaultKey` côté front.
   defaultKey: personalDefaultModuleKeysSchema,
   type: personnelModuleTypeSchema,
 });

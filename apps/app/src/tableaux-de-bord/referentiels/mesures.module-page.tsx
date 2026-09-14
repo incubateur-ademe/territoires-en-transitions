@@ -1,3 +1,4 @@
+import { PERSONAL_MODULE_TITRES } from '@/app/tableaux-de-bord/modules/personal-module-titres';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useActionFilterCategories } from '@/app/referentiels/actions/use-action-filter-categories';
@@ -26,7 +27,7 @@ export const MesuresModulePage = ({
   parentPage,
   filtersModal,
 }: Props) => {
-  const { titre, options } = module;
+  const { options } = module;
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -43,7 +44,10 @@ export const MesuresModulePage = ({
   });
 
   return (
-    <ModulePage title={titre} parentPage={parentPage}>
+    <ModulePage
+      title={PERSONAL_MODULE_TITRES[module.defaultKey]}
+      parentPage={parentPage}
+    >
       {/** Chargement */}
       {isPending ? (
         <div className="m-auto">

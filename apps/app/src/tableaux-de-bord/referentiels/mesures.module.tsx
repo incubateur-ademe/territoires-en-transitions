@@ -1,3 +1,4 @@
+import { PERSONAL_MODULE_TITRES } from '@/app/tableaux-de-bord/modules/personal-module-titres';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
@@ -22,7 +23,7 @@ export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
 
   return (
     <Module
-      title={module.titre}
+      title={PERSONAL_MODULE_TITRES[module.defaultKey]}
       filters={module.options.filtre}
       menuActions={menuActions}
       symbole={<PictoEtatDesLieuxMonochrome className="w-16 h-16" />}

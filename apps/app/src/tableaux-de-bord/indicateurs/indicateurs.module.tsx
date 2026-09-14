@@ -1,3 +1,4 @@
+import { PERSONAL_MODULE_TITRES } from '@/app/tableaux-de-bord/modules/personal-module-titres';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
@@ -26,7 +27,7 @@ export const IndicateursModule = ({
   menuActions,
   emptyButtons,
 }: Props) => {
-  const { titre, options } = module;
+  const { options } = module;
 
   const { collectiviteId } = useCurrentCollectivite();
 
@@ -67,7 +68,7 @@ export const IndicateursModule = ({
 
   return (
     <Module
-      title={titre}
+      title={PERSONAL_MODULE_TITRES[module.defaultKey]}
       filters={options.filtre}
       menuActions={menuActions}
       symbole={<PictoDocument className="w-16 h-16" />}
