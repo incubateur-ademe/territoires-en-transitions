@@ -4,15 +4,13 @@ import { appLabels } from '@/app/labels/catalog';
 import type { DemarchePcaetObligation } from '@tet/domain/demarches';
 import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
+import { Badge, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import {
-  Badge,
-  Table,
-  TableCell,
-  TableEmpty,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-} from '@tet/ui';
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { useMemo } from 'react';
 import type {
   ColonneTriable,
   DirectionTri,
@@ -37,18 +35,6 @@ import {
   STATUT_INSTRUCTION_VARIANTS,
 } from './instruction.constants';
 
-/** Les colonnes rendues, dans l'ordre : c'est ce qui donne son `colSpan` à l'état vide. */
-const getColumnIds = (afficherRegion: boolean): string[] =>
-  [
-    'collectivite',
-    afficherRegion ? 'region' : null,
-    'pilote',
-    'statut',
-    'dateDebut',
-    'echeance',
-    'actions',
-  ].filter((colonne): colonne is string => colonne !== null);
-
 /**
  * La clé d'une ligne, du plus précis au plus général.
  *
@@ -65,6 +51,8 @@ const getRowKey = (dossier: Dossier): string => {
     ? `demarche-${dossier.demarcheId}`
     : `collectivite-${dossier.collectivite.id}`;
 };
+
+const columnHelper = createColumnHelper<Dossier>();
 
 export const DossiersInstructionTable = ({
   dossiers,
@@ -123,110 +111,191 @@ export const DossiersInstructionTable = ({
    * laisserait devant un écran vide sans prise.
    */
   etatVide: EmptyCardProps;
-}) => (
-  <Table aria-label={appLabels.instructionListeIntitule({ deposeAvis })}>
-    <TableHead>
-      <TableRow>
-        <TableHeaderCell
-          title={appLabels.instructionListeColonneCollectivite}
-          sortFn={() => trierPar('collectivite')}
-          sortDirection={sort === 'collectivite' ? direction : null}
-          filter={
-            <ObligationHeaderFilter
-              obligations={filtres.obligations}
-              filterCount={nbFiltresActifs.obligations}
-              onChange={(obligations) => setFiltres({ obligations })}
-            />
-          }
-        />
-        {afficherRegion && (
+}) => {
+  /**
+   * Les largeurs sont posées colonne par colonne, et volontairement absentes
+   * des deux qui portent du texte libre.
+   *
+   * Le tableau est en `table-fixed` : sans elles, une date et un nom de
+   * collectivité occupent la même part de la largeur, et les sept colonnes
+   * s'étalent bien au-delà de ce qu'elles ont à montrer.
+   */
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'collectivite',
+        header: () => (
           <TableHeaderCell
-            title={appLabels.instructionListeColonneRegion}
+            title={appLabels.instructionListeColonneCollectivite}
+            sortFn={() => trierPar('collectivite')}
+            sortDirection={sort === 'collectivite' ? direction : null}
             filter={
-              <RegionHeaderFilter
-                regions={filtres.regions}
-                options={regionsOptions}
-                filterCount={nbFiltresActifs.regions}
-                onChange={(regions) => setFiltres({ regions })}
+              <ObligationHeaderFilter
+                obligations={filtres.obligations}
+                filterCount={nbFiltresActifs.obligations}
+                onChange={(obligations) => setFiltres({ obligations })}
               />
             }
           />
-        )}
-        <TableHeaderCell
-          title={appLabels.instructionListeColonnePilotes}
-          sortFn={() => trierPar('contact')}
-          sortDirection={sort === 'contact' ? direction : null}
-        />
-        <TableHeaderCell
-          title={appLabels.instructionListeColonneStatut}
-          sortFn={() => trierPar('statut')}
-          sortDirection={sort === 'statut' ? direction : null}
-          filter={
-            <StatutHeaderFilter
-              statuts={filtres.statuts}
-              filterCount={nbFiltresActifs.statuts}
-              onChange={(statuts) => setFiltres({ statuts })}
-            />
-          }
-        />
-        <TableHeaderCell
-          title={appLabels.instructionListeColonneDateLancement}
-          sortFn={() => trierPar('dateDebut')}
-          sortDirection={sort === 'dateDebut' ? direction : null}
-        />
-        <TableHeaderCell
-          title={appLabels.instructionListeColonneEcheance}
-          sortFn={() => trierPar('echeance')}
-          sortDirection={sort === 'echeance' ? direction : null}
-        />
-        <TableHeaderCell
-          title={appLabels.instructionListeColonneActions}
-          className="text-right"
-        />
-      </TableRow>
-    </TableHead>
-    <tbody>
-      {dossiers.length === 0 && (
-        <TableEmpty
-          columnIds={getColumnIds(afficherRegion)}
-          className="min-h-[12rem]"
-          {...etatVide}
-        />
-      )}
-      {dossiers.map((dossier) => (
-        <TableRow
-          key={getRowKey(dossier)}
-          data-test={`demarches.pcaet.instruction.ligne-${getRowKey(dossier)}`}
-        >
+        ),
+        cell: ({ row }) => (
           <TableCell>
-            <CollectiviteCell dossier={dossier} />
+            <CollectiviteCell dossier={row.original} />
           </TableCell>
-          {afficherRegion && (
-            <TableCell>
-              <RegionCell dossier={dossier} />
-            </TableCell>
-          )}
+        ),
+      }),
+
+      ...(afficherRegion
+        ? [
+            columnHelper.display({
+              id: 'region',
+              header: () => (
+                <TableHeaderCell
+                  className="w-40"
+                  title={appLabels.instructionListeColonneRegion}
+                  filter={
+                    <RegionHeaderFilter
+                      regions={filtres.regions}
+                      options={regionsOptions}
+                      filterCount={nbFiltresActifs.regions}
+                      onChange={(regions) => setFiltres({ regions })}
+                    />
+                  }
+                />
+              ),
+              cell: ({ row }) => (
+                <TableCell>
+                  <RegionCell dossier={row.original} />
+                </TableCell>
+              ),
+            }),
+          ]
+        : []),
+
+      columnHelper.display({
+        id: 'pilote',
+        header: () => (
+          <TableHeaderCell
+            title={appLabels.instructionListeColonnePilotes}
+            sortFn={() => trierPar('contact')}
+            sortDirection={sort === 'contact' ? direction : null}
+          />
+        ),
+        cell: ({ row }) => (
           <TableCell>
-            <PiloteCell dossier={dossier} />
+            <PiloteCell dossier={row.original} />
           </TableCell>
+        ),
+      }),
+
+      columnHelper.display({
+        id: 'statut',
+        header: () => (
+          <TableHeaderCell
+            className="w-40"
+            title={appLabels.instructionListeColonneStatut}
+            sortFn={() => trierPar('statut')}
+            sortDirection={sort === 'statut' ? direction : null}
+            filter={
+              <StatutHeaderFilter
+                statuts={filtres.statuts}
+                filterCount={nbFiltresActifs.statuts}
+                onChange={(statuts) => setFiltres({ statuts })}
+              />
+            }
+          />
+        ),
+        cell: ({ row }) => (
           <TableCell>
             <Badge
-              title={statutInstructionLabel(dossier.statut)}
-              variant={STATUT_INSTRUCTION_VARIANTS[dossier.statut]}
+              title={statutInstructionLabel(row.original.statut)}
+              variant={STATUT_INSTRUCTION_VARIANTS[row.original.statut]}
               size="sm"
             />
           </TableCell>
+        ),
+      }),
+
+      columnHelper.display({
+        id: 'dateDebut',
+        header: () => (
+          <TableHeaderCell
+            className="w-36"
+            title={appLabels.instructionListeColonneDateLancement}
+            sortFn={() => trierPar('dateDebut')}
+            sortDirection={sort === 'dateDebut' ? direction : null}
+          />
+        ),
+        cell: ({ row }) => (
           <TableCell>
-            <DateCell date={dossier.launchedAt} />
+            <DateCell date={row.original.launchedAt} />
           </TableCell>
+        ),
+      }),
+
+      columnHelper.display({
+        id: 'echeance',
+        header: () => (
+          <TableHeaderCell
+            className="w-40"
+            title={appLabels.instructionListeColonneEcheance}
+            sortFn={() => trierPar('echeance')}
+            sortDirection={sort === 'echeance' ? direction : null}
+          />
+        ),
+        cell: ({ row }) => (
           <TableCell>
-            <EcheanceCell dossier={dossier} />
+            <EcheanceCell dossier={row.original} />
           </TableCell>
+        ),
+      }),
+
+      columnHelper.display({
+        id: 'actions',
+        header: () => (
+          <TableHeaderCell
+            className="w-52"
+            title={appLabels.instructionListeColonneActions}
+            align="right"
+          />
+        ),
+        cell: ({ row }) => (
           <TableCell>
-            <ActionsCell dossier={dossier} />
+            <ActionsCell dossier={row.original} />
           </TableCell>
-        </TableRow>
-      ))}
-    </tbody>
-  </Table>
-);
+        ),
+      }),
+    ],
+    [
+      afficherRegion,
+      direction,
+      filtres,
+      nbFiltresActifs,
+      regionsOptions,
+      setFiltres,
+      sort,
+      trierPar,
+    ]
+  );
+
+  const table = useReactTable({
+    columns,
+    data: dossiers,
+    // Le tri et le filtrage se font côté serveur, page par page : la clé d'une
+    // ligne doit donc venir du dossier, et non de son rang dans la page.
+    getRowId: getRowKey,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <ReactTable
+      table={table}
+      ariaLabel={appLabels.instructionListeIntitule({ deposeAvis })}
+      isEmpty={dossiers.length === 0}
+      emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
+      getRowProps={(row) => ({
+        'data-test': `demarches.pcaet.instruction.ligne-${row.id}`,
+      })}
+    />
+  );
+};
