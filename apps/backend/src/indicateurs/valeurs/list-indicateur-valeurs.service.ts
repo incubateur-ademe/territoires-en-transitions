@@ -59,26 +59,29 @@ export class ListIndicateurValeursService {
     options: ListIndicateurValeursInput,
     context: IndicateurValeursContext
   ) {
-    const { user, isUserTrusted = false } = context;
+    const { user, isUserTrusted = false, tx } = context;
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
     // Vérifie les droits
     let hasPermissionLecture;
     if (!isUserTrusted && user) {
       const collectivitePrivate = await this.collectiviteService.isPrivate(
-        collectiviteId
+        collectiviteId,
+        tx
       );
       const permissionLectureResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read_confidentiel',
         ResourceType.COLLECTIVITE,
-        { collectiviteId }
+        { collectiviteId },
+        tx
       );
       const permissionVisiteResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read',
         ResourceType.COLLECTIVITE,
-        { collectiviteId }
+        { collectiviteId },
+        tx
       );
       const accesRestreintRequis =
         collectivitePrivate && !permissionLectureResult.success;
@@ -109,7 +112,7 @@ export class ListIndicateurValeursService {
     }
 
     const indicateurValeurs = getIndicateurValeursDataOrThrow(
-      await this.get(options, { isUserTrusted: true, tx: context.tx })
+      await this.get(options, { isUserTrusted: true, tx })
     );
 
     const indicateurValeursSeules = indicateurValeurs.map((v) => ({
@@ -123,7 +126,8 @@ export class ListIndicateurValeursService {
           indicateurIds: options.indicateurIds,
           identifiantsReferentiel: options.identifiantsReferentiel,
           collectiviteId,
-        }
+        },
+        tx
       );
 
     options.identifiantsReferentiel?.forEach((identifiant) => {
@@ -178,7 +182,7 @@ export class ListIndicateurValeursService {
       ),
     ];
 
-    const sources = await this.repository.listSources(sourceIds);
+    const sources = await this.repository.listSources(sourceIds, tx);
 
     const indicateurValeurGroupeesParSource = groupIndicateurValeursBySource(
       indicateurValeursSeules,

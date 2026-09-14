@@ -36,6 +36,24 @@ type UpsertIndicateurPilotes = IndicateurPilotesScope &
 export class HandleDefinitionPilotesRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  async listIndicateurPiloteUserIds(
+    { indicateurId, collectiviteId }: IndicateurPilotesScope,
+    tx?: Transaction
+  ): Promise<string[]> {
+    const pilotes = await (tx ?? this.databaseService.db)
+      .select({ userId: indicateurPiloteTable.userId })
+      .from(indicateurPiloteTable)
+      .where(
+        and(
+          eq(indicateurPiloteTable.indicateurId, indicateurId),
+          eq(indicateurPiloteTable.collectiviteId, collectiviteId),
+          isNotNull(indicateurPiloteTable.userId)
+        )
+      );
+
+    return pilotes.flatMap(({ userId }) => (userId === null ? [] : [userId]));
+  }
+
   async arePilotesInCollectivite(
     pilotes: UpsertIndicateurPilotes['pilotes'],
     collectiviteId: number,

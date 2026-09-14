@@ -18,6 +18,7 @@ describe('HandleDefinitionFichesRepository', () => {
       indicateurId: 1,
       collectiviteId: 2,
       ficheIds: [],
+      ficheIdsToUnlink: [3],
     });
 
     expect(database.delete).toHaveBeenCalledOnce();

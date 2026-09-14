@@ -1,8 +1,35 @@
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import { HandleDefinitionPilotesRepository } from './handle-definition-pilotes.repository';
 
 describe('HandleDefinitionPilotesRepository', () => {
+  it('reads retained user assignments in the same indicator, collectivité and transaction', async () => {
+    const userId = crypto.randomUUID();
+    const where = vi.fn().mockResolvedValue([{ userId }]);
+    const tx = {
+      select: vi.fn(() => ({ from: vi.fn(() => ({ where })) })),
+    };
+    const database = { select: vi.fn() };
+    const repository = new HandleDefinitionPilotesRepository({
+      db: database,
+    } as unknown as DatabaseService);
+
+    await expect(
+      repository.listIndicateurPiloteUserIds(
+        { indicateurId: 1, collectiviteId: 2 },
+        tx as unknown as Transaction
+      )
+    ).resolves.toEqual([userId]);
+
+    const query = new PgDialect().sqlToQuery(where.mock.calls[0][0]);
+    expect(query.sql).toContain('"indicateur_id" = $1');
+    expect(query.sql).toContain('"collectivite_id" = $2');
+    expect(query.sql).toContain('"user_id" is not null');
+    expect(query.params).toEqual([1, 2]);
+    expect(database.select).not.toHaveBeenCalled();
+  });
+
   it('writes through the selected database without opening a transaction', async () => {
     const database = {
       transaction: vi.fn(),

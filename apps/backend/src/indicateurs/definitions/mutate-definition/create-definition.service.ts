@@ -77,7 +77,7 @@ export default class CreateDefinitionService {
             collectiviteId,
             ficheIds: [ficheId],
           },
-          tx
+          { user, tx }
         );
       }
 

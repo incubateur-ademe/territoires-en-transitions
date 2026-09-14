@@ -276,7 +276,7 @@ export class UpdateDefinitionService {
             collectiviteId,
             ficheIds,
           },
-          tx
+          { user, tx }
         );
       }
 

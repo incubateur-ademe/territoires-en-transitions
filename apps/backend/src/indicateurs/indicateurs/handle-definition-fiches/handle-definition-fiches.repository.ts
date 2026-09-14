@@ -1,21 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { and, eq, inArray, notInArray } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
 
 type UpsertIndicateurFiches = Readonly<{
   indicateurId: number;
   collectiviteId: number;
   ficheIds: number[];
+  ficheIdsToUnlink: number[];
 }>;
 
 @Injectable()
 export class HandleDefinitionFichesRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async areFichesOwnedByCollectivite(
+  private getCollectiviteScope(collectiviteId: number, tx?: Transaction) {
+    return or(
+      eq(ficheActionTable.collectiviteId, collectiviteId),
+      inArray(
+        ficheActionTable.id,
+        (tx ?? this.databaseService.db)
+          .select({ ficheId: ficheActionSharingTable.ficheId })
+          .from(ficheActionSharingTable)
+          .where(eq(ficheActionSharingTable.collectiviteId, collectiviteId))
+      )
+    );
+  }
+
+  async areFichesInCollectiviteScope(
     ficheIds: number[],
     collectiviteId: number,
     tx?: Transaction
@@ -31,38 +46,67 @@ export class HandleDefinitionFichesRepository {
       .where(
         and(
           inArray(ficheActionTable.id, uniqueFicheIds),
-          eq(ficheActionTable.collectiviteId, collectiviteId)
+          this.getCollectiviteScope(collectiviteId, tx)
         )
       );
 
     return fiches.length === uniqueFicheIds.length;
   }
 
+  async listIndicateurFicheIds(
+    {
+      indicateurId,
+      collectiviteId,
+    }: {
+      indicateurId: number;
+      collectiviteId: number;
+    },
+    tx?: Transaction
+  ): Promise<number[]> {
+    const fiches = await (tx ?? this.databaseService.db)
+      .select({ id: ficheActionTable.id })
+      .from(ficheActionIndicateurTable)
+      .innerJoin(
+        ficheActionTable,
+        eq(ficheActionTable.id, ficheActionIndicateurTable.ficheId)
+      )
+      .where(
+        and(
+          eq(ficheActionIndicateurTable.indicateurId, indicateurId),
+          this.getCollectiviteScope(collectiviteId, tx)
+        )
+      );
+
+    return fiches.map(({ id }) => id);
+  }
+
   async upsertIndicateurFiches(
-    { indicateurId, collectiviteId, ficheIds }: UpsertIndicateurFiches,
+    {
+      indicateurId,
+      collectiviteId,
+      ficheIds,
+      ficheIdsToUnlink,
+    }: UpsertIndicateurFiches,
     tx?: Transaction
   ): Promise<void> {
     const writeDb = tx ?? this.databaseService.db;
-    const deleteConditions = [
-      eq(ficheActionIndicateurTable.indicateurId, indicateurId),
-      inArray(
-        ficheActionIndicateurTable.ficheId,
-        writeDb
-          .select({ id: ficheActionTable.id })
-          .from(ficheActionTable)
-          .where(eq(ficheActionTable.collectiviteId, collectiviteId))
-      ),
-    ];
-
-    if (ficheIds.length > 0) {
-      deleteConditions.push(
-        notInArray(ficheActionIndicateurTable.ficheId, ficheIds)
-      );
+    if (ficheIdsToUnlink.length > 0) {
+      await writeDb
+        .delete(ficheActionIndicateurTable)
+        .where(
+          and(
+            eq(ficheActionIndicateurTable.indicateurId, indicateurId),
+            inArray(ficheActionIndicateurTable.ficheId, ficheIdsToUnlink),
+            inArray(
+              ficheActionIndicateurTable.ficheId,
+              writeDb
+                .select({ id: ficheActionTable.id })
+                .from(ficheActionTable)
+                .where(this.getCollectiviteScope(collectiviteId, tx))
+            )
+          )
+        );
     }
-
-    await writeDb
-      .delete(ficheActionIndicateurTable)
-      .where(and(...deleteConditions));
 
     if (ficheIds.length > 0) {
       await writeDb

@@ -78,7 +78,13 @@ describe('CreateDefinitionService', () => {
       handleDefinitionFichesService.upsertIndicateurFiches
     ).toHaveBeenCalledWith(
       { indicateurId: 42, collectiviteId: 1, ficheIds: [9] },
-      tx
+      {
+        user: {
+          id: '00000000-0000-0000-0000-000000000001',
+          role: AuthRole.AUTHENTICATED,
+        },
+        tx,
+      }
     );
   });
 });

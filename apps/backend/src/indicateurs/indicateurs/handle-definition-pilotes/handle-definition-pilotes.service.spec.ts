@@ -5,6 +5,78 @@ import { HandleDefinitionPilotesRepository } from './handle-definition-pilotes.r
 import { HandleDefinitionPilotesService } from './handle-definition-pilotes.service';
 
 describe('HandleDefinitionPilotesService', () => {
+  it('retains an assigned user without requiring active membership again', async () => {
+    const userId = crypto.randomUUID();
+    const repository = {
+      listIndicateurPiloteUserIds: vi.fn().mockResolvedValue([userId]),
+      arePilotesInCollectivite: vi.fn().mockResolvedValue(true),
+      upsertIndicateurPilotes: vi.fn().mockResolvedValue(undefined),
+    } as unknown as HandleDefinitionPilotesRepository;
+    const tx = {} as Transaction;
+    const transactionManager = {
+      executeSingle: vi.fn(
+        async (operation: (currentTx: Transaction) => Promise<unknown>) =>
+          operation(tx)
+      ),
+    } as unknown as TransactionManager;
+    const service = new HandleDefinitionPilotesService(
+      repository,
+      {} as PermissionService,
+      transactionManager
+    );
+    const input = {
+      indicateurId: 1,
+      collectiviteId: 2,
+      pilotes: [{ userId }],
+    };
+
+    await service.upsertIndicateurPilotes(input, tx);
+
+    expect(repository.listIndicateurPiloteUserIds).toHaveBeenCalledWith(
+      { indicateurId: 1, collectiviteId: 2 },
+      tx
+    );
+    expect(repository.arePilotesInCollectivite).toHaveBeenCalledWith([], 2, tx);
+    expect(repository.upsertIndicateurPilotes).toHaveBeenCalledWith(input, tx);
+  });
+
+  it('still validates additions when retaining a departed pilote', async () => {
+    const previousUserId = crypto.randomUUID();
+    const newUserId = crypto.randomUUID();
+    const repository = {
+      listIndicateurPiloteUserIds: vi.fn().mockResolvedValue([previousUserId]),
+      arePilotesInCollectivite: vi.fn().mockResolvedValue(false),
+      upsertIndicateurPilotes: vi.fn(),
+    } as unknown as HandleDefinitionPilotesRepository;
+    const tx = {} as Transaction;
+    const transactionManager = {
+      executeSingle: vi.fn(
+        async (operation: (currentTx: Transaction) => Promise<unknown>) =>
+          operation(tx)
+      ),
+    } as unknown as TransactionManager;
+    const service = new HandleDefinitionPilotesService(
+      repository,
+      {} as PermissionService,
+      transactionManager
+    );
+
+    await expect(
+      service.upsertIndicateurPilotes({
+        indicateurId: 1,
+        collectiviteId: 2,
+        pilotes: [{ userId: previousUserId }, { userId: newUserId }],
+      })
+    ).rejects.toThrow(/pilotes doivent appartenir/i);
+
+    expect(repository.arePilotesInCollectivite).toHaveBeenCalledWith(
+      [{ userId: newUserId }],
+      2,
+      tx
+    );
+    expect(repository.upsertIndicateurPilotes).not.toHaveBeenCalled();
+  });
+
   it('delegates transaction ownership and reuses the caller transaction', async () => {
     const repository = {
       arePilotesInCollectivite: vi.fn().mockResolvedValue(true),

@@ -9,6 +9,7 @@ import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indica
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
+import { FichesModule } from '../plans/fiches/fiches.module';
 import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
@@ -87,6 +88,7 @@ const DEFINITIONS_PROVIDERS = [
     CollectivitesModule,
     SheetModule,
     PersonnalisationsModule,
+    FichesModule,
     ReferentielsCoreModule,
   ],
   providers: [

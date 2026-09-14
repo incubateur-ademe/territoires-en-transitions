@@ -175,7 +175,7 @@ describe('UpdateDefinitionService', () => {
       handleDefinitionFichesService.upsertIndicateurFiches
     ).toHaveBeenCalledWith(
       { indicateurId: 42, collectiviteId: 1, ficheIds: [11] },
-      tx
+      { user, tx }
     );
     expect(
       handleDefinitionPilotesService.upsertIndicateurPilotes

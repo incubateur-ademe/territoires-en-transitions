@@ -68,10 +68,22 @@ export class HandleDefinitionPilotesService {
         ({ tagId, userId }) =>
           Number(tagId != null) + Number(userId != null) === 1
       );
+      const existingUserIds = new Set(
+        hasExactlyOneIdentity && pilotes.some(({ userId }) => userId != null)
+          ? await this.repository.listIndicateurPiloteUserIds(
+              { indicateurId, collectiviteId },
+              transaction
+            )
+          : []
+      );
+      // A departed member may remain assigned, but cannot be newly assigned.
+      const pilotesToValidate = pilotes.filter(
+        ({ userId }) => userId == null || !existingUserIds.has(userId)
+      );
       const pilotesBelongToCollectivite =
         hasExactlyOneIdentity &&
         (await this.repository.arePilotesInCollectivite(
-          pilotes,
+          pilotesToValidate,
           collectiviteId,
           transaction
         ));

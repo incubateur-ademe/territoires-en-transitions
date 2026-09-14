@@ -1,5 +1,11 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { HandleDefinitionFichesRepository } from './handle-definition-fiches.repository';
@@ -10,7 +16,8 @@ export class HandleDefinitionFichesService {
 
   constructor(
     private readonly repository: HandleDefinitionFichesRepository,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly ficheActionPermissionsService: FicheActionPermissionsService
   ) {}
 
   async upsertIndicateurFiches(
@@ -23,7 +30,7 @@ export class HandleDefinitionFichesService {
       collectiviteId: number;
       ficheIds: number[];
     },
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<void> {
     this.logger.log(
       `Mise à jour des fiches liées de l'indicateur dont l'id est ${indicateurId}`
@@ -33,20 +40,52 @@ export class HandleDefinitionFichesService {
       void,
       unknown
     >(async (transaction) => {
-      const fichesBelongToCollectivite =
-        await this.repository.areFichesOwnedByCollectivite(
+      const fichesAreInScope =
+        await this.repository.areFichesInCollectiviteScope(
           ficheIds,
           collectiviteId,
           transaction
         );
-      if (!fichesBelongToCollectivite) {
+      if (!fichesAreInScope) {
         throw new BadRequestException(
-          `Toutes les fiches doivent appartenir à la collectivité ${collectiviteId}`
+          `Toutes les fiches doivent appartenir à la collectivité ${collectiviteId} ou être partagées avec elle`
         );
       }
 
+      const existingFicheIds = new Set(
+        await this.repository.listIndicateurFicheIds(
+          { indicateurId, collectiviteId },
+          transaction
+        )
+      );
+      const requestedFicheIds = new Set(ficheIds);
+      const ficheIdsToLink = [...requestedFicheIds].filter(
+        (ficheId) => !existingFicheIds.has(ficheId)
+      );
+      const ficheIdsToUnlink = [...existingFicheIds].filter(
+        (ficheId) => !requestedFicheIds.has(ficheId)
+      );
+
+      for (const ficheId of [...ficheIdsToLink, ...ficheIdsToUnlink]) {
+        const access = await this.ficheActionPermissionsService.canWriteFiche(
+          ficheId,
+          user,
+          transaction
+        );
+        if (!access) {
+          throw new ForbiddenException(
+            `Droits insuffisants pour modifier les indicateurs de l'action ${ficheId}`
+          );
+        }
+      }
+
       await this.repository.upsertIndicateurFiches(
-        { indicateurId, collectiviteId, ficheIds },
+        {
+          indicateurId,
+          collectiviteId,
+          ficheIds: ficheIdsToLink,
+          ficheIdsToUnlink,
+        },
         transaction
       );
       return success(undefined);
