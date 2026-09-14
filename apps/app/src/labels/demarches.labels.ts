@@ -185,13 +185,6 @@ export const demarchesLabels = {
   demarcheDetailPublieeTitre: 'Démarche publiée',
   demarcheDetailPublieeDescription:
     'Le dossier est adopté : il passe en lecture seule. Les actions et les indicateurs du plan restent modifiables pendant sa mise en œuvre.',
-  demarcheContactsTitre: 'Contacts',
-  demarcheContactsDescription:
-    'Interlocuteurs désignés pour le suivi de votre démarche.',
-  demarcheContactsAucunTitre: 'Aucun contact à afficher',
-  demarcheContactsAucunDescription:
-    'Les interlocuteurs de votre territoire ne sont pas encore rattachés à votre démarche.',
-  demarcheMenuTitre: 'Actions',
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
   demarcheAvanceSectionDocumentsDescription:

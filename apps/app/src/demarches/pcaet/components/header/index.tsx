@@ -8,7 +8,6 @@ import { MetadataLine } from '@/app/ui/metadata-line';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PageHeader } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
-import { DemarcheMenuButton } from '../demarche-menu.button';
 import { DateLancementField } from './date-lancement-field';
 import { DateModificationItem } from './date-modification-item';
 import { DepotDateItem } from './depot-date-item';
@@ -45,7 +44,6 @@ export const DemarchePcaetHeader = ({
         <PageHeader.Title>{demarche.titre}</PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-row items-center gap-2">
-            <DemarcheMenuButton />
             {sidePanelAction}
           </div>
         </PageHeader.Actions>
