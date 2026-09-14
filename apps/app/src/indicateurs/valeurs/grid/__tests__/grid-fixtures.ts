@@ -1,5 +1,6 @@
 import {
   IndicateurDefinition,
+  IndicateurPeriodiciteEnum,
   IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import { IndicateurTableRow } from '../types';
@@ -31,6 +32,7 @@ const fakeIndicateurDefinition = (
   version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   identifiantReferentiel: `fake_${id}`,
   titre,
   titreLong: null,
@@ -80,6 +82,7 @@ const fakeIndicateurValeurs = (indicateurId: number): IndicateurValeur[] =>
       id: indicateurId * 100 + index,
       collectiviteId: 1,
       indicateurId,
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       dateValeur: `${year}-01-01`,
       metadonneeId: null,
       resultat: isReference ? value : null,

@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -22,6 +23,7 @@ const buildValeur = ({
   id: 1,
   collectiviteId: 1,
   indicateurId,
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   dateValeur: `${year}-01-01`,
   metadonneeId: null,
   resultat,

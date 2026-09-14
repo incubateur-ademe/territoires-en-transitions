@@ -77,6 +77,7 @@ Reference: `apps/backend/src/plans/axes/upsert-axe/upsert-axe-base.repository.ts
 
 ## Drizzle / DB boundary
 
+- Use `*.column.ts` for reusable Drizzle column definitions/types, SQL column expressions and selection objects (for example, `collectivite-id.column.ts`, `collectivite-role.column.ts`, `indicateur-periodicite.column.ts`). Do not use `*.sql.ts` for these modules. Complete table definitions use `*.table.ts`; SQL migrations keep their `.sql` extension. See [ADR 0003](../../doc/adr/0003-conventions-de-code.md#suffix-des-fichiers-avec-son-type).
 - Services may call `databaseService.db` directly for simple one-shot queries. The repository pattern is reserved for shared base classes (`UpsertAxeBaseRepository`), `tx`-aware writes, or larger query surfaces.
 - Raw `sql\`\`` is allowed. Use `sql.identifier()` for table/column names. Use `sql.raw()` ONLY for already-validated trusted values.
 - `buildConflictUpdateColumns(table, columns)` from `apps/backend/src/utils/database/conflict.utils.ts` for `.onConflictDoUpdate({...})`.

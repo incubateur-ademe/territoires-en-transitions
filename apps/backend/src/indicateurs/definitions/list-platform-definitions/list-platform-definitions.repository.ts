@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -44,7 +45,10 @@ export class ListPlatformDefinitionsRepository {
     });
 
     const definitions = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+      })
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 
@@ -76,6 +80,7 @@ export class ListPlatformDefinitionsRepository {
     const definitions = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
 
         // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
         // un indicateur dont la collectivité n'a rien dit est applicable.
@@ -120,6 +125,7 @@ export class ListPlatformDefinitionsRepository {
     const definitions = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
 
         categories: sql<
           Tag[]
@@ -201,7 +207,10 @@ export class ListPlatformDefinitionsRepository {
     }
 
     const computedIndicateurDefinitions = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+      })
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
 

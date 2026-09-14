@@ -66,6 +66,10 @@ import {
   AuthUser,
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
+import {
+  indicateurDefinitionPeriodiciteSelection,
+  indicateurValeurPeriodiciteSelection,
+} from '../definitions/indicateur-periodicite.column';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 import { ListCollectiviteDefinitionsRepository } from '../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
@@ -287,6 +291,7 @@ export default class CrudValeursService {
     )
       .select({
         indicateurValeur: {
+          ...indicateurValeurPeriodiciteSelection,
           ...omit(getTableColumns(indicateurValeurTable), [
             'createdAt',
             'modifiedAt',
@@ -295,6 +300,7 @@ export default class CrudValeursService {
           modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
         },
         indicateurDefinition: {
+          ...indicateurDefinitionPeriodiciteSelection,
           ...omit(getTableColumns(indicateurDefinitionTable), [
             'createdAt',
             'modifiedAt',
@@ -647,7 +653,10 @@ export default class CrudValeursService {
               isNull(indicateurValeurTable.metadonneeId)
             )
           )
-          .returning();
+          .returning({
+            ...getTableColumns(indicateurValeurTable),
+            ...indicateurValeurPeriodiciteSelection,
+          });
         upsertedIndicateurValeur = updated[0];
       } else if (!isNil(data.dateValeur)) {
         this.logger.log(
@@ -687,7 +696,10 @@ export default class CrudValeursService {
                 modifiedAt: now,
               },
             })
-            .returning();
+            .returning({
+              ...getTableColumns(indicateurValeurTable),
+              ...indicateurValeurPeriodiciteSelection,
+            });
 
           upsertedIndicateurValeur = inserted[0];
         } catch (error) {
@@ -908,7 +920,10 @@ export default class CrudValeursService {
                 ),
               },
             })
-            .returning();
+            .returning({
+              ...getTableColumns(indicateurValeurTable),
+              ...indicateurValeurPeriodiciteSelection,
+            });
         indicateurValeursResultat.push(
           ...indicateurValeursAvecMetadonneesResultat
         );
@@ -1036,7 +1051,10 @@ export default class CrudValeursService {
                   ),
                 },
               })
-              .returning();
+              .returning({
+                ...getTableColumns(indicateurValeurTable),
+                ...indicateurValeurPeriodiciteSelection,
+              });
           indicateurValeursResultat.push(
             ...indicateurValeursSansMetadonneesResultat
           );
@@ -1314,6 +1332,7 @@ export default class CrudValeursService {
               id: v.id,
               collectiviteId: v.collectiviteId,
               dateValeur: v.dateValeur,
+              periodicite: v.periodicite,
               resultat: v.resultat,
               objectif: v.objectif,
               metadonneeId: null,
@@ -1375,6 +1394,7 @@ export default class CrudValeursService {
               id: v.id,
               collectiviteId: v.collectiviteId,
               dateValeur: v.dateValeur,
+              periodicite: v.periodicite,
               resultat: v.resultat,
               resultatCommentaire: v.resultatCommentaire,
               objectif: v.objectif,
