@@ -1,8 +1,17 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { CollectiviteRole } from '@tet/domain/users';
-import { testWithPaniers, toPanierUrl } from './paniers.fixture';
+import {
+  failUserCollectivitesRequest,
+  testWithPaniers,
+  toPanierUrl,
+} from './paniers.fixture';
 
 const test = testWithPaniers;
+
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+const toDaysAgo = (days: number): Date =>
+  new Date(Date.now() - days * DAY_IN_MS);
 
 const gotoLanding = async (
   page: Page,
@@ -133,7 +142,7 @@ test.describe(
       );
     });
 
-    test("ne considère plus l'auditeur comme rattaché une fois l'audit clos", async ({
+    test("considère encore l'auditeur comme rattaché 14 jours après la clôture de l'audit", async ({
       page,
       collectivites,
       referentiels,
@@ -153,7 +162,49 @@ test.describe(
         collectiviteId: collectiviteAuditee.data.id,
         referentielId: 'cae',
       });
-      await referentiels.closeAudit(collectiviteAuditee.data.id, 'cae');
+      await referentiels.closeAudit({
+        collectiviteId: collectiviteAuditee.data.id,
+        referentielId: 'cae',
+        dateFin: toDaysAgo(14),
+      });
+      await paniers.refreshSiteLabellisation();
+
+      await auditeur.login();
+      await startPanierFromLanding(page, collectiviteAuditee.data.id);
+
+      await expect(
+        getCollectiviteHomeLink(page, collectiviteAuditee.data.nom)
+      ).toHaveAttribute(
+        'href',
+        toCollectiviteHomeHref(collectiviteAuditee.data.id)
+      );
+    });
+
+    test("ne considère plus l'auditeur comme rattaché 16 jours après la clôture de l'audit", async ({
+      page,
+      collectivites,
+      referentiels,
+      paniers,
+    }): Promise<void> => {
+      const { collectivite: collectiviteAuditee, user: adminAuditee } =
+        await collectivites.addCollectiviteAndUser({
+          userArgs: { role: CollectiviteRole.ADMIN },
+        });
+      const { user: auditeur } = await collectivites.addCollectiviteAndUser({
+        userArgs: { role: CollectiviteRole.EDITION },
+      });
+      await adminAuditee.login();
+      await referentiels.addAuditeur({
+        user: adminAuditee,
+        auditeurUserId: auditeur.data.id,
+        collectiviteId: collectiviteAuditee.data.id,
+        referentielId: 'cae',
+      });
+      await referentiels.closeAudit({
+        collectiviteId: collectiviteAuditee.data.id,
+        referentielId: 'cae',
+        dateFin: toDaysAgo(16),
+      });
       await paniers.refreshSiteLabellisation();
 
       await auditeur.login();
@@ -161,6 +212,28 @@ test.describe(
 
       await expect(
         page.getByText("Vous n'êtes pas rattaché à cette collectivité.")
+      ).toBeVisible();
+      await expect(getStartPanierButton(page)).toBeDisabled();
+    });
+
+    test("indique au membre d'une collectivité active que ses collectivités n'ont pas pu être chargées", async ({
+      page,
+      collectivites,
+      paniers,
+    }): Promise<void> => {
+      const { collectivite, user } = await collectivites.addCollectiviteAndUser(
+        { userArgs: { role: CollectiviteRole.ADMIN } }
+      );
+      await paniers.refreshSiteLabellisation();
+
+      await user.login();
+      await failUserCollectivitesRequest(page);
+      await gotoLanding(page, collectivite.data.id);
+
+      await expect(
+        page
+          .getByRole('alert')
+          .filter({ hasText: "Vos collectivités n'ont pas pu être chargées" })
       ).toBeVisible();
       await expect(getStartPanierButton(page)).toBeDisabled();
     });

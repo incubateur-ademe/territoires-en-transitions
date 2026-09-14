@@ -1,12 +1,31 @@
 'use client';
 
+import { UserCollectivitesError } from '@/panier/components/user-collectivites-error';
+import { useRattachement } from '@/panier/hooks/use-rattachement';
 import { getAuthPaths, PanierAPI, useSupabase } from '@tet/api';
 import { Button, Event, Icon, useEventTracker } from '@tet/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useIsAuthenticated } from '../../providers';
+import { match } from 'ts-pattern';
 import SelectCollectivite from './SelectCollectivite';
 import { useCollectiviteInfo } from './useCollectiviteInfo';
+
+const toLandingRedirectUrl = (collectiviteId: number | null): string => {
+  const redirectTo = new URL(document.location.href);
+  redirectTo.pathname = `/landing/collectivite/${collectiviteId}`;
+  return redirectTo.toString();
+};
+
+const RattachementWarning = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactNode => (
+  <div className="flex flex-row mt-4 gap-2">
+    <Icon icon="alert-fill text-warning-1" />
+    <p className="text-sm text-warning-1">{children}</p>
+  </div>
+);
 
 const CestParti = () => {
   const params = useParams();
@@ -19,7 +38,7 @@ const CestParti = () => {
     collectiviteIdFromUrl ? parseInt(id as string) : null
   );
   const { data: collectiviteInfo } = useCollectiviteInfo(collectiviteId);
-  const isAuthenticated = useIsAuthenticated();
+  const rattachement = useRattachement(collectiviteId);
 
   const tracker = useEventTracker();
   const supabase = useSupabase();
@@ -35,16 +54,15 @@ const CestParti = () => {
     router.push(`/panier/${base.id}`);
   };
 
-  // récupère les urls du module auth.
-  let authPaths;
-  if (typeof window !== 'undefined') {
-    const redirectTo = new URL(document.location.href);
-    redirectTo.pathname = `/landing/collectivite/${collectiviteId}`;
-    authPaths = getAuthPaths(redirectTo.toString());
-  }
+  const authPaths =
+    typeof window === 'undefined'
+      ? undefined
+      : getAuthPaths(toLandingRedirectUrl(collectiviteId));
 
-  const nonRattache =
-    collectiviteInfo?.active && !collectiviteInfo.isOwnCollectivite;
+  const isRattachementRequired = !!collectiviteInfo?.active;
+  const canStartPanier =
+    !!collectiviteId &&
+    (!isRattachementRequired || rattachement.status === 'own');
 
   return (
     <>
@@ -72,29 +90,38 @@ const CestParti = () => {
           )}
         </div>
       </div>
-      {nonRattache && (
-        <>
-          <div className="flex flex-row mt-4 gap-2">
-            <Icon icon="alert-fill text-warning-1" />
-            <p className="text-sm text-warning-1">
-              {isAuthenticated
-                ? "Vous n'êtes pas rattaché à cette collectivité."
-                : 'Connectez-vous ou créez un compte pour contribuer sur le panier de cette collectivité.'}
-            </p>
-          </div>
-          {!isAuthenticated && authPaths && (
-            <div className="flex gap-4 justify-center">
-              <Button href={authPaths.login} variant="outlined">
-                Se connecter
-              </Button>
-              <Button href={authPaths.signUp}>Créer un compte</Button>
-            </div>
-          )}
-        </>
-      )}
+      {isRattachementRequired &&
+        match(rattachement)
+          .with({ status: 'pending' }, { status: 'own' }, () => null)
+          .with({ status: 'anonymous' }, () => (
+            <>
+              <RattachementWarning>
+                {
+                  'Connectez-vous ou créez un compte pour contribuer sur le panier de cette collectivité.'
+                }
+              </RattachementWarning>
+              {authPaths && (
+                <div className="flex gap-4 justify-center">
+                  <Button href={authPaths.login} variant="outlined">
+                    Se connecter
+                  </Button>
+                  <Button href={authPaths.signUp}>Créer un compte</Button>
+                </div>
+              )}
+            </>
+          ))
+          .with({ status: 'notOwn' }, () => (
+            <RattachementWarning>
+              {"Vous n'êtes pas rattaché à cette collectivité."}
+            </RattachementWarning>
+          ))
+          .with({ status: 'error' }, ({ retry }) => (
+            <UserCollectivitesError retry={retry} />
+          ))
+          .exhaustive()}
       <Button
         className="min-w-max h-12"
-        disabled={!collectiviteId || !!nonRattache}
+        disabled={!canStartPanier}
         onClick={onClick}
       >
         C&apos;est parti !

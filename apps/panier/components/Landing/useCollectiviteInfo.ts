@@ -29,19 +29,6 @@ export const useCollectiviteInfo = (collectiviteId: number | null) => {
       return null;
     }
 
-    const { error: errorUserCollectivites, data: userCollectivites } =
-      await supabase
-        .from('mes_collectivites')
-        .select('collectivite_id')
-        .eq('collectivite_id', collectiviteId);
-    if (errorUserCollectivites) {
-      throw new Error(errorUserCollectivites.message);
-    }
-
-    const isOwnCollectivite = !!userCollectivites?.find(
-      (c) => c.collectivite_id === collectiviteId
-    );
-
-    return { ...data[0], isOwnCollectivite };
+    return data[0];
   });
 };

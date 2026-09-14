@@ -1,6 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { CollectiviteRole } from '@tet/domain/users';
-import { testWithPaniers, toPanierUrl, toUniqueNom } from './paniers.fixture';
+import {
+  failUserCollectivitesRequest,
+  testWithPaniers,
+  toPanierUrl,
+  toUniqueNom,
+} from './paniers.fixture';
 
 const test = testWithPaniers;
 
@@ -109,5 +114,45 @@ test.describe('Création de plan depuis un panier', { tag: '@panier' }, () => {
         ])
       )
       .toEqual([collectiviteEdition.data.nom]);
+  });
+
+  test("propose de rejoindre une collectivité à l'utilisateur qui n'est qu'en lecture", async ({
+    page,
+    collectivites,
+    paniers,
+  }): Promise<void> => {
+    const { collectivite, user: lecteur } =
+      await collectivites.addCollectiviteAndUser({
+        userArgs: { role: CollectiviteRole.LECTURE },
+      });
+    const panierId = await paniers.createWithAction(collectivite.data.id);
+
+    await lecteur.login();
+    await page.goto(toPanierUrl(`/panier/${panierId}?modale=creation`));
+
+    await expect(
+      page
+        .getByRole('dialog')
+        .getByRole('link', { name: 'Rejoindre une collectivité' })
+    ).toBeVisible();
+  });
+
+  test("indique à l'utilisateur que ses collectivités n'ont pas pu être chargées", async ({
+    page,
+    collectivites,
+    paniers,
+  }): Promise<void> => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { role: CollectiviteRole.EDITION },
+    });
+    const panierId = await paniers.createWithAction(collectivite.data.id);
+
+    await user.login();
+    await failUserCollectivitesRequest(page);
+    await page.goto(toPanierUrl(`/panier/${panierId}?modale=creation`));
+
+    await expect(page.getByRole('dialog').getByRole('alert')).toContainText(
+      "Vos collectivités n'ont pas pu être chargées"
+    );
   });
 });
