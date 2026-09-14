@@ -1,4 +1,5 @@
 import { AuditEnCours } from '@/app/referentiels/audits/types';
+import type { StoredDocumentHash } from '@tet/domain/collectivites';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { EditState } from './useEditState';
 
@@ -6,7 +7,7 @@ import { EditState } from './useEditState';
 export type BibliothequeFichier = {
   id: number;
   collectiviteId: number;
-  hash: string;
+  hash: StoredDocumentHash;
   filename: string;
   bucketId: string;
   filesize?: number;

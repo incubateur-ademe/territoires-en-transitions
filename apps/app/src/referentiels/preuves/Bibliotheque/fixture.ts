@@ -1,3 +1,4 @@
+import { toDocumentHash } from '@tet/domain/collectivites';
 import {
   DocumentAttendu,
   DocumentReglementaire,
@@ -86,7 +87,9 @@ export const preuveReglementaireFichier: DocumentReglementaire = {
     type: 'fichier',
     fichier: {
       id: 21,
-      hash: 'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9',
+      hash: toDocumentHash(
+        'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'
+      ),
       filename: 'preuve_input.txt',
       filesize: 34,
       bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
@@ -159,7 +162,9 @@ export const preuveComplementaireFichier: PreuveComplementaire = {
     type: 'fichier',
     fichier: {
       id: 21,
-      hash: 'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9',
+      hash: toDocumentHash(
+        'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'
+      ),
       filename: 'preuve_input.txt',
       filesize: 34,
       bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',

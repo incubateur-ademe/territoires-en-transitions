@@ -1,4 +1,5 @@
 import { AuditEnCours } from '@/app/referentiels/audits/types';
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 
@@ -69,7 +70,7 @@ describe('auditReportToPreuve', () => {
       bucketId: 'b1',
       filename: 'rapport.pdf',
       filesize: 1024,
-      hash: 'sha-1',
+      hash: toDocumentHash('1'.repeat(64)),
       confidentiel: false,
     };
     const preuve = auditReportToPreuve({ ...baseInput, fichier });
@@ -93,7 +94,7 @@ describe('auditReportToPreuve', () => {
       bucketId: 'b1',
       filename: 'a.pdf',
       filesize: 1,
-      hash: 'h',
+      hash: toDocumentHash('2'.repeat(64)),
       confidentiel: false,
     };
     const lien = { url: 'https://example.com', titre: 'X' };
