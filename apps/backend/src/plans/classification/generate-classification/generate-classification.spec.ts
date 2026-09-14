@@ -28,6 +28,7 @@ const transaction = { marker: 'transaction' } as unknown as Transaction;
 
 type ClassifiableFiche = {
   id: number;
+  collectiviteId: number;
   titre: string | null;
   description: string | null;
 };
@@ -73,13 +74,17 @@ const toClassifyingLlm = () => ({
 
 const toDependencies = ({
   job = toJobRow(),
-  fiches = [{ id: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
+  fiches = [
+    { id: 1, collectiviteId, titre: 'Pistes cyclables', description: 'Dix km' },
+  ],
   restrictedFiches = [],
+  sharedFiches = [],
   saveOutcome = success(undefined),
 }: {
   job?: Omit<ReturnType<typeof toJobRow>, 'enjeu'> & { enjeu: string };
   fiches?: ClassifiableFiche[];
   restrictedFiches?: ClassifiableFiche[];
+  sharedFiches?: ClassifiableFiche[];
   saveOutcome?: unknown;
 } = {}) => {
   const jobRepository = {
@@ -94,8 +99,8 @@ const toDependencies = ({
       async ({ filters }: { filters?: { restreint?: boolean } }) => {
         const excludesRestricted = filters?.restreint === false;
         const visibleFiches = excludesRestricted
-          ? fiches
-          : [...fiches, ...restrictedFiches];
+          ? [...fiches, ...sharedFiches]
+          : [...fiches, ...restrictedFiches, ...sharedFiches];
         return { count: visibleFiches.length, data: visibleFiches };
       }
     ),
@@ -128,6 +133,9 @@ const toDependencies = ({
   };
 };
 
+const toSentPrompts = (llm: ReturnType<typeof toClassifyingLlm>): string =>
+  llm.generateStructured.mock.calls.map(([{ prompt }]) => prompt).join('\n');
+
 describe('GenerateClassificationService.generate', () => {
   it('clot en echec un job dont l enjeu est inconnu de cette version', async () => {
     const { service, llm, jobRepository } = toDependencies({
@@ -148,12 +156,55 @@ describe('GenerateClassificationService.generate', () => {
     });
   });
 
+  it("n'envoie jamais au modele le texte d'une fiche partagee par une autre collectivite", async () => {
+    const { service, llm } = toDependencies({
+      fiches: [
+        {
+          id: 1,
+          collectiviteId,
+          titre: 'Pistes cyclables',
+          description: 'Dix km',
+        },
+      ],
+      sharedFiches: [
+        {
+          id: 2,
+          collectiviteId: collectiviteId + 1,
+          titre: 'Plan velo de la voisine',
+          description: 'Quinze km chez elle',
+        },
+      ],
+    });
+
+    await service.generate(jobId);
+
+    const sentPrompts = toSentPrompts(llm);
+
+    expect({
+      hasOwnedFiche: sentPrompts.includes('Pistes cyclables'),
+      hasSharedTitre: sentPrompts.includes('Plan velo de la voisine'),
+      hasSharedDescription: sentPrompts.includes('Quinze km chez elle'),
+    }).toEqual({
+      hasOwnedFiche: true,
+      hasSharedTitre: false,
+      hasSharedDescription: false,
+    });
+  });
+
   it("n'envoie jamais au modele le texte d'une fiche restreinte", async () => {
     const { service, llm } = toDependencies({
-      fiches: [{ id: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
+      fiches: [
+        {
+          id: 1,
+          collectiviteId,
+          titre: 'Pistes cyclables',
+          description: 'Dix km',
+        },
+      ],
       restrictedFiches: [
         {
           id: 2,
+          collectiviteId,
           titre: 'Negociation fonciere',
           description: 'Prix propose par parcelle',
         },
@@ -162,9 +213,7 @@ describe('GenerateClassificationService.generate', () => {
 
     await service.generate(jobId);
 
-    const sentPrompts = llm.generateStructured.mock.calls
-      .map(([{ prompt }]) => prompt)
-      .join('\n');
+    const sentPrompts = toSentPrompts(llm);
 
     expect({
       hasReadableFiche: sentPrompts.includes('Pistes cyclables'),
