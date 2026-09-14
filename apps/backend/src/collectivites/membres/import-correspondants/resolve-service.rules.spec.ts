@@ -124,9 +124,9 @@ describe('correspondantCsvSchema', () => {
     const ligne = correspondantCsvSchema.parse({
       type: 'dreal',
       region_code: '53',
-      email: '  Fabrice.Douglas@Developpement-Durable.Gouv.Fr ',
+      email: '  Prenom.Nom@Developpement-Durable.Gouv.Fr ',
     });
-    expect(ligne.email).toBe('fabrice.douglas@developpement-durable.gouv.fr');
+    expect(ligne.email).toBe('prenom.nom@developpement-durable.gouv.fr');
   });
 
   it('laisse le rôle indéfini quand la colonne est vide', () => {
