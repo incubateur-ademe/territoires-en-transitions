@@ -8,6 +8,7 @@ import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
+import { FICHES_TO_CLASSIFY_FILTERS } from '../models/classification-volets-job';
 import {
   ClassificationVoletsErrorEnum,
   type ClassificationVoletsError,
@@ -16,7 +17,6 @@ import {
   CLASSIFICATION_VOLETS_QUEUE_NAME,
   type ClassificationVoletsJobData,
 } from '../classification-volets.queue';
-import { GetAxeRepository } from '@tet/backend/plans/axes/get-axe/get-axe.repository';
 import { EnqueueClassificationInput } from './enqueue-classification.input';
 
 const GENERATE_CLASSIFICATION_JOB_NAME = 'generate-classification';
@@ -27,7 +27,6 @@ export class EnqueueClassificationService {
 
   constructor(
     private readonly permissions: PermissionService,
-    private readonly getAxeRepository: GetAxeRepository,
     private readonly jobRepository: ClassificationVoletsJobRepository,
     private readonly listFichesService: ListFichesService,
     @InjectQueue(CLASSIFICATION_VOLETS_QUEUE_NAME)
@@ -35,27 +34,16 @@ export class EnqueueClassificationService {
   ) {}
 
   async enqueue(
-    { planId, enjeu }: EnqueueClassificationInput,
+    { collectiviteId, enjeu }: EnqueueClassificationInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<{ jobId: string }, ClassificationVoletsError>> {
-    const axeResult = await this.getAxeRepository.getAxe(planId);
-    if (!axeResult.success) {
-      return failure(ClassificationVoletsErrorEnum.PLAN_NOT_FOUND);
-    }
-    const axe = axeResult.data;
-
-    const isAllowed = await this.isAllowedToClassify(user, axe.collectiviteId);
+    const isAllowed = await this.isAllowedToClassify(user, collectiviteId);
     if (!isAllowed) {
-      return failure(ClassificationVoletsErrorEnum.PLAN_NOT_FOUND);
+      return failure(ClassificationVoletsErrorEnum.COLLECTIVITE_NOT_FOUND);
     }
 
-    const isSousAxe = axe.parent !== null;
-    if (isSousAxe) {
-      return failure(ClassificationVoletsErrorEnum.NOT_A_PLAN);
-    }
-
-    const hasFicheResult = await this.checkPlanHasFicheToClassify(
-      { collectiviteId: axe.collectiviteId, planId },
+    const hasFicheResult = await this.checkCollectiviteHasFicheToClassify(
+      { collectiviteId },
       { user }
     );
     if (!hasFicheResult.success) {
@@ -63,8 +51,7 @@ export class EnqueueClassificationService {
     }
 
     const jobResult = await this.jobRepository.createUnlessInFlight({
-      collectiviteId: axe.collectiviteId,
-      planId,
+      collectiviteId,
       enjeu,
       createdBy: user.id,
     });
@@ -88,14 +75,14 @@ export class EnqueueClassificationService {
     return permissionResult.success;
   }
 
-  private async checkPlanHasFicheToClassify(
-    { collectiviteId, planId }: { collectiviteId: number; planId: number },
+  private async checkCollectiviteHasFicheToClassify(
+    { collectiviteId }: { collectiviteId: number },
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<undefined, ClassificationVoletsError>> {
     const { count } = await this.listFichesService.getFichesActionResumes(
       {
         collectiviteId,
-        filters: { planActionIds: [planId], restreint: false },
+        filters: FICHES_TO_CLASSIFY_FILTERS,
         queryOptions: { limit: 1, page: 1 },
       },
       { user }

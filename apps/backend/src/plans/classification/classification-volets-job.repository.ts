@@ -29,7 +29,6 @@ const STALE_JOB_ERROR_MESSAGE =
 const progressProjection = {
   id: classificationVoletsJobTable.id,
   collectiviteId: classificationVoletsJobTable.collectiviteId,
-  planId: classificationVoletsJobTable.planId,
   enjeu: classificationVoletsJobTable.enjeu,
   status: classificationVoletsJobTable.status,
   processedBatches: classificationVoletsJobTable.processedBatches,
@@ -44,7 +43,6 @@ export type ClassificationProgress = {
 
 export type CreateClassificationJobInput = {
   collectiviteId: number;
-  planId: number;
   enjeu: Enjeu;
   createdBy: string;
 };
@@ -65,10 +63,7 @@ export class ClassificationVoletsJobRepository {
         return success(job);
       }
 
-      const hasExpiredStaleJob = await this.expireStaleInFlight(
-        input.planId,
-        input.enjeu
-      );
+      const hasExpiredStaleJob = await this.expireStaleInFlight(input);
       if (!hasExpiredStaleJob) {
         return failure(ClassificationVoletsErrorEnum.IN_FLIGHT_JOB_EXISTS);
       }
@@ -94,14 +89,13 @@ export class ClassificationVoletsJobRepository {
       .insert(classificationVoletsJobTable)
       .values({
         collectiviteId: input.collectiviteId,
-        planId: input.planId,
         enjeu: input.enjeu,
         createdBy: input.createdBy,
         status: ClassificationVoletsJobStatusEnum.PENDING,
       })
       .onConflictDoNothing({
         target: [
-          classificationVoletsJobTable.planId,
+          classificationVoletsJobTable.collectiviteId,
           classificationVoletsJobTable.enjeu,
         ],
         where: inFlightStatusPredicate,
@@ -111,10 +105,10 @@ export class ClassificationVoletsJobRepository {
     return job;
   }
 
-  private async expireStaleInFlight(
-    planId: number,
-    enjeu: Enjeu
-  ): Promise<boolean> {
+  private async expireStaleInFlight({
+    collectiviteId,
+    enjeu,
+  }: CreateClassificationJobInput): Promise<boolean> {
     const expiredJobs = await this.db
       .update(classificationVoletsJobTable)
       .set({
@@ -124,7 +118,7 @@ export class ClassificationVoletsJobRepository {
       })
       .where(
         and(
-          eq(classificationVoletsJobTable.planId, planId),
+          eq(classificationVoletsJobTable.collectiviteId, collectiviteId),
           eq(classificationVoletsJobTable.enjeu, enjeu),
           inArray(
             classificationVoletsJobTable.status,

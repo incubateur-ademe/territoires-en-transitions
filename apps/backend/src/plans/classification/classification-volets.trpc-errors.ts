@@ -27,19 +27,15 @@ export const classificationVoletsErrorConfig: TrpcErrorHandlerConfig<Classificat
       },
       IN_FLIGHT_JOB_EXISTS: {
         code: 'CONFLICT',
-        message: 'Une classification est déjà en cours pour ce plan',
+        message: 'Une analyse est déjà en cours pour cette collectivité',
       },
-      PLAN_NOT_FOUND: {
+      COLLECTIVITE_NOT_FOUND: {
         code: 'NOT_FOUND',
-        message: "Le plan demandé n'existe pas",
-      },
-      NOT_A_PLAN: {
-        code: 'BAD_REQUEST',
-        message: "L'identifiant fourni désigne un axe et non un plan",
+        message: "La collectivité demandée n'existe pas",
       },
       NO_FICHE_TO_CLASSIFY: {
         code: 'BAD_REQUEST',
-        message: 'Ce plan ne contient aucune fiche à classer',
+        message: 'Cette collectivité ne contient aucune fiche à classer',
       },
     },
   };

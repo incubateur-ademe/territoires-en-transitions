@@ -7,7 +7,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
 import { EnqueueClassificationService } from './enqueue-classification.service';
 
-const planId = 42;
 const collectiviteId = 7;
 const jobId = '00000000-0000-0000-0000-000000000001';
 
@@ -27,16 +26,11 @@ const toFiches = (count: number) =>
 
 const toDependencies = ({
   ficheCount = 1,
-  parent = null,
   isAllowed = true,
 }: {
   ficheCount?: number;
-  parent?: number | null;
   isAllowed?: boolean;
 } = {}) => {
-  const getAxeRepository = {
-    getAxe: vi.fn().mockResolvedValue(success({ collectiviteId, parent })),
-  };
   const permissions = {
     isAllowed: vi
       .fn()
@@ -57,20 +51,22 @@ const toDependencies = ({
 
   const service = new EnqueueClassificationService(
     permissions as never,
-    getAxeRepository as never,
     jobRepository as never,
     listFichesService as never,
     queue as never
   );
 
-  return { service, jobRepository, queue };
+  return { service, jobRepository, listFichesService, queue };
 };
 
 describe('EnqueueClassificationService.enqueue', () => {
-  it('refuse un plan sans aucune fiche a classer', async () => {
+  it('refuse une collectivite sans aucune fiche a classer', async () => {
     const { service, queue } = toDependencies({ ficheCount: 0 });
 
-    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
+    const result = await service.enqueue(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
 
     expect({ result, queueCalls: queue.add.mock.calls.length }).toEqual({
       result: {
@@ -81,22 +77,55 @@ describe('EnqueueClassificationService.enqueue', () => {
     });
   });
 
-  it('enfile un job pour un plan qui a des fiches', async () => {
-    const { service } = toDependencies({ ficheCount: 900 });
+  it('enfile un job de classification pour une collectivite qui a des fiches', async () => {
+    const { service, jobRepository } = toDependencies({ ficheCount: 900 });
 
-    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
+    const result = await service.enqueue(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
 
-    expect(result).toEqual({ success: true, data: { jobId } });
+    expect({
+      result,
+      createArgs: jobRepository.createUnlessInFlight.mock.calls[0]?.[0],
+    }).toEqual({
+      result: { success: true, data: { jobId } },
+      createArgs: {
+        collectiviteId,
+        enjeu: 'ges',
+        createdBy: user.id,
+      },
+    });
   });
 
-  it("presente un sous-axe d'une autre collectivite comme un plan introuvable", async () => {
-    const { service } = toDependencies({ parent: 12, isAllowed: false });
+  it('ne compte que les fiches rattachees a un plan et non restreintes', async () => {
+    const { service, listFichesService } = toDependencies();
 
-    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
+    await service.enqueue({ collectiviteId, enjeu: 'ges' }, { user });
 
-    expect(result).toEqual({
-      success: false,
-      error: ClassificationVoletsErrorEnum.PLAN_NOT_FOUND,
+    expect(listFichesService.getFichesActionResumes.mock.calls[0]?.[0]).toEqual(
+      {
+        collectiviteId,
+        filters: { noPlan: false, restreint: false },
+        queryOptions: { limit: 1, page: 1 },
+      }
+    );
+  });
+
+  it('presente une collectivite hors perimetre comme introuvable', async () => {
+    const { service, queue } = toDependencies({ isAllowed: false });
+
+    const result = await service.enqueue(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
+
+    expect({ result, queueCalls: queue.add.mock.calls.length }).toEqual({
+      result: {
+        success: false,
+        error: ClassificationVoletsErrorEnum.COLLECTIVITE_NOT_FOUND,
+      },
+      queueCalls: 0,
     });
   });
 
@@ -104,7 +133,10 @@ describe('EnqueueClassificationService.enqueue', () => {
     const { service, jobRepository, queue } = toDependencies();
     queue.add.mockRejectedValue(new Error('redis down'));
 
-    const result = await service.enqueue({ planId, enjeu: 'ges' }, { user });
+    const result = await service.enqueue(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
 
     expect({
       result,
