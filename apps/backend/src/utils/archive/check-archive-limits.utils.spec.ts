@@ -34,6 +34,28 @@ describe('checkArchiveLimits', () => {
     });
   });
 
+  test('applique le plafond de fichiers fourni par l appelant', () => {
+    const files = Array.from({ length: 101 }, () => toArchiveFile(1));
+
+    expect(checkArchiveLimits(files, { maxFileCount: 100 })).toEqual({
+      withinLimits: false,
+      exceeded: 'fileCount',
+      fileCount: 101,
+      limit: 100,
+    });
+  });
+
+  test('applique le plafond de volume fourni par l appelant', () => {
+    expect(
+      checkArchiveLimits([toArchiveFile(2048)], { maxTotalSizeBytes: 1024 })
+    ).toEqual({
+      withinLimits: false,
+      exceeded: 'totalSize',
+      totalSize: 2048,
+      limit: 1024,
+    });
+  });
+
   test('refuse au-dela de 2 Go au total', () => {
     const files = [toArchiveFile(MAX_TOTAL_SIZE_BYTES), toArchiveFile(1)];
 
