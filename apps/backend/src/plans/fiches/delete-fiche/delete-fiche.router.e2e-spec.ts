@@ -278,6 +278,7 @@ describe('Delete Fiche Action', () => {
       await db.db.insert(ficheActionPiloteTable).values({
         ficheId: parentFicheId,
         userId: user.id,
+        createdBy: editorUser.id,
       });
 
       // Nettoyage idempotent en base pour absorber les tests qui suppriment
@@ -374,6 +375,7 @@ describe('Delete Fiche Action', () => {
       await db.db.insert(ficheActionPiloteTable).values({
         ficheId: topLevelFicheId,
         userId: user.id,
+        createdBy: editorUser.id,
       });
 
       onTestFinished(async () => {

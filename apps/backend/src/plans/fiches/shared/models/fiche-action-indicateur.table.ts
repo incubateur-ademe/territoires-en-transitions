@@ -1,5 +1,6 @@
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { integer, pgEnum, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { createdAt } from '@tet/backend/utils/column.utils';
+import { integer, pgEnum, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { ficheActionTable } from './fiche-action.table';
 
@@ -12,6 +13,10 @@ export const ficheActionIndicateurTable = pgTable(
     indicateurId: integer('indicateur_id')
       .notNull()
       .references(() => indicateurDefinitionTable.id),
+    createdAt,
+    // Pas de defaut auth.uid() : renseigné obligatoirement par l'application
+    // (le backend n'utilise pas la connexion Supabase authentifiée).
+    createdBy: uuid('created_by').notNull(),
   },
   (table) => [primaryKey({ columns: [table.ficheId, table.indicateurId] })]
 );

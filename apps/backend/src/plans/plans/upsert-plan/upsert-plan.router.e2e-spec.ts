@@ -759,6 +759,7 @@ describe('Créer ou modifier un plan', () => {
         await db.db.insert(ficheActionAxeTable).values({
           ficheId: row.id,
           axeId: plan.id,
+          createdBy: editorUser.id,
         });
       }
 

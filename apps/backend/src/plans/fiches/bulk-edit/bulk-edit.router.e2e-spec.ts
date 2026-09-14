@@ -210,11 +210,11 @@ describe('BulkEditRouter', () => {
       await db.db
         .insert(ficheActionPiloteTable)
         .values([
-          { ficheId: 1, userId: null, tagId: 1 },
-          { ficheId: 1, userId: testUser.id, tagId: null },
-          { ficheId: 2, userId: null, tagId: 1 },
-          { ficheId: 3, userId: null, tagId: 3 },
-          { ficheId: 4, userId: null, tagId: 3 },
+          { ficheId: 1, userId: null, tagId: 1, createdBy: testUser.id },
+          { ficheId: 1, userId: testUser.id, tagId: null, createdBy: testUser.id },
+          { ficheId: 2, userId: null, tagId: 1, createdBy: testUser.id },
+          { ficheId: 3, userId: null, tagId: 3, createdBy: testUser.id },
+          { ficheId: 4, userId: null, tagId: 3, createdBy: testUser.id },
         ])
         .onConflictDoNothing();
     });

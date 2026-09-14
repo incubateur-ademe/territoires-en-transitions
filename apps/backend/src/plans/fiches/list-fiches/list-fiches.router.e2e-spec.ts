@@ -865,6 +865,7 @@ describe('ListFichesRouter', () => {
         await db.db.insert(ficheActionIndicateurTable).values({
           ficheId: testFicheId,
           indicateurId: 1,
+          createdBy: testUser.id,
         });
 
         onTestFinished(async () => {
@@ -1518,6 +1519,7 @@ describe('ListFichesRouter', () => {
       await db.db.insert(ficheActionThematiqueTable).values({
         ficheId: testFicheId,
         thematiqueId: testThematiqueId,
+        createdBy: testUser.id,
       });
 
       const { data: fichesWithThematique } =
@@ -1599,6 +1601,7 @@ describe('ListFichesRouter', () => {
       await db.db.insert(ficheActionSousThematiqueTable).values({
         ficheId: testFicheId,
         thematiqueId: testSousThematiqueId,
+        createdBy: testUser.id,
       });
 
       const { data: fichesWithSousThematique } =
@@ -1740,6 +1743,7 @@ describe('ListFichesRouter', () => {
       await db.db.insert(ficheActionReferentTable).values({
         ficheId: testFicheId,
         tagId: personneTag.id,
+        createdBy: testUser.id,
       });
 
       const { data: fichesWithReferentAfterAddingTag } =
@@ -1790,6 +1794,7 @@ describe('ListFichesRouter', () => {
       await db.db.insert(ficheActionReferentTable).values({
         ficheId: testFicheId,
         tagId: personneTag.id,
+        createdBy: testUser.id,
       });
 
       onTestFinished(async () => {
@@ -1853,6 +1858,7 @@ describe('ListFichesRouter', () => {
       await db.db.insert(ficheActionReferentTable).values({
         ficheId: testFicheId,
         userId: testUser.id,
+        createdBy: testUser.id,
       });
 
       onTestFinished(async () => {
@@ -1922,6 +1928,7 @@ describe('ListFichesRouter', () => {
     await db.db.insert(ficheActionIndicateurTable).values({
       ficheId: testFicheId,
       indicateurId: 56,
+      createdBy: testUser.id,
     });
 
     onTestFinished(async () => {
@@ -2116,8 +2123,8 @@ describe('ListFichesRouter', () => {
       .returning();
 
     await db.db.insert(ficheActionAxeTable).values([
-      { ficheId: ficheA.id, axeId: planA.id },
-      { ficheId: ficheB.id, axeId: planB.id },
+      { ficheId: ficheA.id, axeId: planA.id, createdBy: testUser.id },
+      { ficheId: ficheB.id, axeId: planB.id, createdBy: testUser.id },
     ]);
 
     onTestFinished(async () => {
@@ -2574,10 +2581,12 @@ describe('ListFichesRouter', () => {
       {
         ficheId: testFicheId,
         axeId: plans[0].id,
+        createdBy: testUser.id,
       },
       {
         ficheId: testFicheId,
         axeId: plans[1].id,
+        createdBy: testUser.id,
       },
     ]);
 
@@ -3325,6 +3334,7 @@ describe('ListFichesRouter', () => {
       {
         ficheId: fiche1.id,
         axeId: axe.id,
+        createdBy: testUser.id,
       },
     ]);
 

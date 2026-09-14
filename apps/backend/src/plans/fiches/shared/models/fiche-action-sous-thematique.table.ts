@@ -1,5 +1,6 @@
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
-import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { createdAt } from '@tet/backend/utils/column.utils';
+import { integer, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionSousThematiqueTable = pgTable(
@@ -9,6 +10,10 @@ export const ficheActionSousThematiqueTable = pgTable(
     thematiqueId: integer('thematique_id').references(
       () => sousThematiqueTable.id
     ),
+    createdAt,
+    // Pas de defaut auth.uid() : renseigné obligatoirement par l'application
+    // (le backend n'utilise pas la connexion Supabase authentifiée).
+    createdBy: uuid('created_by').notNull(),
   },
   (table) => {
     return {

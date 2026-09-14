@@ -221,6 +221,7 @@ describe('Create Fiche Action', () => {
       await db.db.insert(ficheActionPiloteTable).values({
         ficheId: parentFicheId,
         userId: user.id,
+        createdBy: editorUser.id,
       });
 
       const contributeurUser = getAuthUserFromUserCredentials(user);
@@ -334,6 +335,7 @@ describe('Create Fiche Action', () => {
       await db.db.insert(ficheActionPiloteTable).values({
         ficheId: parentFicheId,
         userId: user.id,
+        createdBy: editorUser.id,
       });
 
       onTestFinished(async () => {
