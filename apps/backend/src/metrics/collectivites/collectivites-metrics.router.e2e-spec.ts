@@ -347,19 +347,23 @@ describe('CollectivitesMetricsRouter', () => {
     expect(moduleList[0]).toMatchObject({
       type: 'indicateur.list',
       defaultKey: 'indicateurs-dont-je-suis-pilote',
+      titre: 'Mes indicateurs',
       userId: authenticatedUser.id,
     });
     expect(moduleList[1]).toMatchObject({
       type: 'fiche_action.list',
       defaultKey: 'actions-dont-je-suis-pilote',
+      titre: 'Mes actions',
     });
     expect(moduleList[2]).toMatchObject({
       type: 'fiche_action.list',
       defaultKey: 'sous-actions-dont-je-suis-pilote',
+      titre: 'Mes sous-actions',
     });
     expect(moduleList[3]).toMatchObject({
       type: 'mesure.list',
       defaultKey: 'mesures-dont-je-suis-pilote',
+      titre: 'Mes mesures',
     });
   });
 
@@ -414,7 +418,8 @@ describe('CollectivitesMetricsRouter', () => {
       expect(saved).toMatchObject({
         id: moduleId,
         userId: authenticatedUser.id,
-        titre: 'Mes actions filtrées',
+        // Le titre client est ignoré : toujours la valeur par défaut
+        titre: 'Mes actions',
         type: 'fiche_action.list',
         defaultKey: 'actions-dont-je-suis-pilote',
       });
@@ -429,15 +434,16 @@ describe('CollectivitesMetricsRouter', () => {
         defaultKey: 'actions-dont-je-suis-pilote',
       });
       expect(fetched.id).toEqual(moduleId);
-      expect(fetched.titre).toEqual('Mes actions filtrées');
+      expect(fetched.titre).toEqual('Mes actions');
 
-      // Mise à jour du même module (même id) → pas de doublon
+      // Mise à jour du même module (même id) → pas de doublon ;
+      // le titre du payload reste ignoré
       const updated = await caller.metrics.users.upsertModule({
         ...moduleToSave,
         titre: 'Titre mis à jour',
       });
       expect(updated.id).toEqual(moduleId);
-      expect(updated.titre).toEqual('Titre mis à jour');
+      expect(updated.titre).toEqual('Mes actions');
 
       // listPersonnel contient toujours les 4 modules, avec le module personnalisé
       const moduleList = await caller.metrics.users.listModules({
@@ -451,7 +457,7 @@ describe('CollectivitesMetricsRouter', () => {
       );
       expect(actionsModule).toMatchObject({
         id: moduleId,
-        titre: 'Titre mis à jour',
+        titre: 'Mes actions',
       });
     });
 
