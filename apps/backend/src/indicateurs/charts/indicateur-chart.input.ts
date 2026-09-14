@@ -1,5 +1,6 @@
 import {
   indicateurAvecValeursParSourceSchema,
+  indicateurPeriodiciteValues,
   IndicateurValeurTypeEnum,
   IndicateurValeurWithoutReferenceTypes,
   ORDERED_SEGMENTATIONS,
@@ -45,6 +46,12 @@ export type IndicateurChartSourceFilter = z.infer<
 export const indicateurChartInputSchema = z.object({
   collectiviteId: z.number(),
   indicateurId: z.number().optional(),
+  periodiciteAffichage: z
+    .enum(indicateurPeriodiciteValues)
+    .optional()
+    .describe(
+      'Graduation du graphique ; les valeurs conservent leur périodicité de saisie'
+    ),
   sources: indicateurChartSourceFilterSchema.optional(),
   identifiantReferentiel: z.string().optional(),
   includeReferenceValeurs: z.boolean().optional(),

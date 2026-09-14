@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteModeEnum } from '@tet/domain/indicateurs';
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
 import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -7,6 +8,7 @@ import {
   IndicateurAvecValeursParSource,
   IndicateurDefinition,
   IndicateurDefinitionTiny,
+  IndicateurPeriodiciteEnum,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
@@ -21,6 +23,7 @@ import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-ind
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
+import { ListIndicateurValeursService } from './list-indicateur-valeurs.service';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -32,6 +35,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
     })
       .useMocker((token) => {
         if (
+          token === ListIndicateurValeursService ||
           token === DatabaseService ||
           token === PermissionService ||
           token === CollectivitesService ||
@@ -66,6 +70,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2016-01-01',
           metadonneeId: 1,
           resultat: null,
@@ -84,6 +89,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10263,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2015-01-01',
           metadonneeId: 1,
           resultat: null,
@@ -102,6 +108,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10300,
           collectiviteId: 4936,
           indicateurId: 457,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2016-01-01',
           metadonneeId: 1,
           resultat: null,
@@ -126,6 +133,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
         {
           definition: {
             id: 456,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             identifiantReferentiel: 'cae_1.c',
             titre: 'Emissions de gaz à effet de serre - résidentiel',
             titreLong:
@@ -137,12 +146,14 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
           valeurs: [
             {
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
               dateValeur: '2015-01-01',
               collectiviteId: 4936,
               id: 10263,
               objectif: 513.79,
             },
             {
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
               dateValeur: '2016-01-01',
               collectiviteId: 4936,
               id: 10264,
@@ -153,6 +164,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
         {
           definition: {
             id: 457,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             identifiantReferentiel: 'cae_1.d',
             titre: 'Emissions de gaz à effet de serre - tertiaire',
             titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
@@ -164,6 +177,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           valeurs: [
             {
               collectiviteId: 4936,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
               dateValeur: '2016-01-01',
               id: 10300,
               objectif: 423.08,
@@ -215,6 +229,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2016-01-01',
           metadonneeId: 2,
           resultat: null,
@@ -233,6 +248,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10263,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2015-01-01',
           metadonneeId: 2,
           resultat: null,
@@ -251,6 +267,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2015-01-01',
           metadonneeId: null,
           resultat: 625,
@@ -269,6 +286,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10300,
           collectiviteId: 4936,
           indicateurId: 457,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2016-01-01',
           metadonneeId: 3,
           resultat: null,
@@ -287,6 +305,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2010-01-01',
           metadonneeId: null,
           resultat: null,
@@ -317,6 +336,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           {
             definition: {
               id: 456,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+              periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
               identifiantReferentiel: 'cae_1.c',
               titre: 'Emissions de gaz à effet de serre - résidentiel',
               titreLong:
@@ -348,6 +369,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10263,
+                    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
                     dateValeur: '2015-01-01',
                     objectif: 513.79,
                     collectiviteId: 4936,
@@ -355,6 +377,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                   },
                   {
                     id: 10264,
+                    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
                     dateValeur: '2016-01-01',
                     objectif: 527.25,
                     collectiviteId: 4936,
@@ -370,11 +393,13 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10264,
+                    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
                     dateValeur: '2010-01-01',
                     collectiviteId: 4936,
                   },
                   {
                     id: 10264,
+                    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
                     dateValeur: '2015-01-01',
                     resultat: 625,
                     collectiviteId: 4936,
@@ -386,6 +411,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           {
             definition: {
               id: 457,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+              periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
               identifiantReferentiel: 'cae_1.d',
               titre: 'Emissions de gaz à effet de serre - tertiaire',
               titreLong:
@@ -417,6 +444,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10300,
+                    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
                     dateValeur: '2016-01-01',
                     objectif: 423.08,
                     collectiviteId: 4936,
@@ -442,6 +470,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -457,6 +486,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -498,6 +529,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 2,
             resultat: null,
@@ -513,6 +545,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -571,6 +605,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -586,6 +621,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -627,6 +664,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 18,
             collectiviteId: 4936,
             indicateurId: 9,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 471107,
@@ -642,6 +680,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 9,
             groupementId: null,
             collectiviteId: null,
@@ -699,6 +739,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -714,6 +755,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -755,6 +798,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: null,
             resultat: null,
@@ -770,6 +814,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -819,6 +865,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -834,6 +881,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -875,6 +924,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 875,
             collectiviteId: 2012,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: null,
@@ -890,6 +940,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -948,6 +1000,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -963,6 +1016,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -1004,6 +1059,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2014-01-01',
             metadonneeId: 1,
             resultat: null,
@@ -1019,6 +1075,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAutoIdentifiantsManquants: null,
           },
           indicateurDefinition: {
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -1076,6 +1134,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 17,
           collectiviteId: 4936,
           indicateurId: 4,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2015-01-01',
           metadonneeId: 1,
           resultat: 447868,
@@ -1091,6 +1150,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAutoIdentifiantsManquants: null,
         },
         indicateurDefinition: {
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+          periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1131,6 +1192,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 875,
           collectiviteId: 4936,
           indicateurId: 4,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2015-01-01',
           metadonneeId: 2,
           resultat: null,
@@ -1146,6 +1208,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAutoIdentifiantsManquants: null,
         },
         indicateurDefinition: {
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+          periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1213,6 +1277,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 17,
           collectiviteId: 4936,
           indicateurId: 4,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2015-01-01',
           metadonneeId: 1,
           resultat: 447868,
@@ -1228,6 +1293,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAutoIdentifiantsManquants: null,
         },
         indicateurDefinition: {
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+          periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
           id: 4,
           groupementId: null,
           collectiviteId: null,
