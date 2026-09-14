@@ -19,7 +19,11 @@ const DEPOSANTE_ID = 20;
 
 const contexteInstruction: ContexteInstruction = {
   demandeAvisId: 77,
-  instructeur: { collectiviteId: DREAL_ID, nom: 'DREAL Pays de la Loire' },
+  instructeur: {
+    collectiviteId: DREAL_ID,
+    nom: 'DREAL Pays de la Loire',
+    type: collectiviteTypeEnum.DREAL,
+  },
   perimetre: 'principal',
 };
 
