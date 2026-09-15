@@ -9,13 +9,19 @@ export const importIndicateurDefinitionSchema = z.object({
     createdAt: true,
     createdBy: true,
     id: true,
-    periodicite: true,
-    periodiciteMode: true,
     groupementId: true,
     collectiviteId: true,
   }).shape,
 
   identifiantReferentiel: z.string(), // Mandatory in this case
+  periodicite: z._default(
+    indicateurDefinitionSchema.shape.periodicite,
+    'annuelle'
+  ),
+  periodiciteMode: z._default(
+    indicateurDefinitionSchema.shape.periodiciteMode,
+    'recommandee'
+  ),
   parents: getZodStringArrayFromQueryString().nullable().optional(),
   categories: getZodStringArrayFromQueryString().nullable().optional(),
   thematiques: getZodStringArrayFromQueryString().nullable().optional(),

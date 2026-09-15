@@ -4,24 +4,41 @@ import { describe, expect, it } from 'vitest';
 import { buildConsolidatedSheet } from './export-indicateurs.builder';
 
 /**
- * Construit une valeur minimale pour le builder : seuls `dateValeur`,
+ * Construit une valeur minimale pour le builder : seuls `periodicite`, `dateValeur`,
  * `resultat`, `objectif`, l'id de définition et la source sont lus.
  */
 function makeValeur(params: {
   indicateurId: number;
   annee: number;
+  month?: number;
+  periodicite?: 'annuelle' | 'mensuelle';
+  periodiciteParDefaut?: 'annuelle' | 'mensuelle';
   resultat?: number | null;
   objectif?: number | null;
   sourceId?: string;
 }): IndicateurValeurAvecMetadonnesDefinition {
-  const { indicateurId, annee, resultat, objectif, sourceId } = params;
+  const {
+    indicateurId,
+    annee,
+    month = 1,
+    periodicite = 'annuelle',
+    periodiciteParDefaut = periodicite,
+    resultat,
+    objectif,
+    sourceId,
+  } = params;
   return {
     indicateurValeur: {
-      dateValeur: `${annee}-01-01`,
+      periodicite,
+      dateValeur: `${annee}-${String(month).padStart(2, '0')}-01`,
       resultat: resultat ?? null,
       objectif: objectif ?? null,
     },
-    indicateurDefinition: { id: indicateurId },
+    indicateurDefinition: {
+      id: indicateurId,
+      periodicite: periodiciteParDefaut,
+      periodiciteMode: 'recommandee',
+    },
     indicateurSourceMetadonnee: sourceId
       ? { id: 1, sourceId, dateVersion: `${annee}-01-01` }
       : null,
@@ -58,7 +75,12 @@ describe('buildConsolidatedSheet — sources open-data', () => {
   it('ajoute une ligne par source open-data en plus de la ligne collectivité', () => {
     const ws = getSheet([
       // saisie collectivité
-      makeValeur({ indicateurId: 1, annee: 2022, resultat: 100, objectif: 120 }),
+      makeValeur({
+        indicateurId: 1,
+        annee: 2022,
+        resultat: 100,
+        objectif: 120,
+      }),
       // open-data (source "rare")
       makeValeur({
         indicateurId: 1,
@@ -101,7 +123,7 @@ describe('buildConsolidatedSheet — sources open-data', () => {
     expect(headerValues).toContain('2030 Objectif');
   });
 
-  it("ne crée pas de colonne pour un type/année sans aucune valeur", () => {
+  it('ne crée pas de colonne pour un type/année sans aucune valeur', () => {
     const ws = getSheet([
       // Uniquement des résultats (aucun objectif nulle part) → aucune colonne Objectif.
       makeValeur({ indicateurId: 1, annee: 2020, resultat: 10 }),
@@ -124,5 +146,95 @@ describe('buildConsolidatedSheet — sources open-data', () => {
     // 1 en-tête + 1 ligne collectivité uniquement
     expect(ws.rowCount).toBe(2);
     expect((ws.getRow(2).values as unknown[])[SOURCE_COL]).toBe('Collectivité');
+  });
+
+  it('conserve deux mois de la même année dans deux colonnes distinctes', () => {
+    const ws = getSheet([
+      makeValeur({
+        indicateurId: 1,
+        annee: 2026,
+        month: 1,
+        periodicite: 'mensuelle',
+        resultat: 10,
+      }),
+      makeValeur({
+        indicateurId: 1,
+        annee: 2026,
+        month: 2,
+        periodicite: 'mensuelle',
+        resultat: 20,
+      }),
+    ]);
+
+    const headers = ws.getRow(1).values as unknown[];
+    expect(headers).toContain('janvier 2026 Résultat');
+    expect(headers).toContain('février 2026 Résultat');
+    const row = ws.getRow(2).values as unknown[];
+    expect(row).toContain(10);
+    expect(row).toContain(20);
+  });
+
+  it('exporte les mois saisis localement pour un indicateur annuel recommandé', () => {
+    const ws = getSheet([
+      makeValeur({
+        indicateurId: 1,
+        annee: 2026,
+        month: 1,
+        periodicite: 'mensuelle',
+        periodiciteParDefaut: 'annuelle',
+        resultat: 10,
+        objectif: 15,
+      }),
+      makeValeur({
+        indicateurId: 1,
+        annee: 2026,
+        month: 2,
+        periodicite: 'mensuelle',
+        periodiciteParDefaut: 'annuelle',
+        resultat: 20,
+        objectif: 25,
+      }),
+    ]);
+
+    const headers = ws.getRow(1).values as unknown[];
+    const row = ws.getRow(2).values as unknown[];
+    expect(headers.slice(SOURCE_COL + 1)).toEqual([
+      'janvier 2026 Résultat',
+      'février 2026 Résultat',
+      'janvier 2026 Objectif',
+      'février 2026 Objectif',
+    ]);
+    expect(row.slice(SOURCE_COL + 1)).toEqual([10, 20, 15, 25]);
+  });
+
+  it('ne confond pas une année et le mois de janvier qui partagent la même date de début', () => {
+    const ws = getSheet([
+      makeValeur({ indicateurId: 1, annee: 2026, resultat: 10 }),
+      makeValeur({
+        indicateurId: 1,
+        annee: 2026,
+        month: 1,
+        periodicite: 'mensuelle',
+        resultat: 20,
+      }),
+    ]);
+
+    const headers = ws.getRow(1).values as unknown[];
+    expect(headers).toContain('2026 Résultat');
+    expect(headers).toContain('janvier 2026 Résultat');
+    expect((ws.getRow(2).values as unknown[]).filter(Boolean)).toEqual(
+      expect.arrayContaining([10, 20])
+    );
+  });
+
+  it("refuse une valeur orpheline au lieu d'inventer une périodicité annuelle", () => {
+    const valeur = makeValeur({
+      indicateurId: 1,
+      annee: 2026,
+      resultat: 10,
+    });
+    valeur.indicateurDefinition = null;
+
+    expect(() => getSheet([valeur])).toThrow(/pas de définition/);
   });
 });

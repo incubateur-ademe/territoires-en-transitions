@@ -1,3 +1,7 @@
+import {
+  IndicateurPeriodErrorEnum,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 import { ActionScoreIndicatif } from '@tet/domain/referentiels';
 import {
   actionBelongsToReferentiel,
@@ -26,6 +30,28 @@ describe('score-indicatif-payload.rules', () => {
   });
 
   describe('formatScoreIndicatifForPayload', () => {
+    it('refuse un snapshot mensuel sans politique de calcul annuel', () => {
+      expect(() =>
+        formatScoreIndicatifForPayload({
+          actionId: 'cae_1.1.1',
+          indicateurs: [
+            {
+              actionId: 'cae_1.1.1',
+              indicateurId: 42,
+              identifiantReferentiel: 'ind_test',
+              titre: 'Indicateur de test',
+              unite: '%',
+              periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+            },
+          ],
+          fait: null,
+          programme: null,
+        })
+      ).toThrow(
+        IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
+      );
+    });
+
     it('formate le score fait et laisse le score programme à null', () => {
       const scoreIndicatif: ActionScoreIndicatif = {
         actionId: 'cae_1.1.1',
@@ -35,6 +61,7 @@ describe('score-indicatif-payload.rules', () => {
             indicateurId: 42,
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             unite: '%',
           },
         ],
@@ -64,6 +91,7 @@ describe('score-indicatif-payload.rules', () => {
 
       const payload = formatScoreIndicatifForPayload(scoreIndicatif);
 
+      expect(payload.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
       expect(payload.unite).toBe('%');
       expect(payload.programme).toBeNull();
       expect(payload.fait).toEqual({

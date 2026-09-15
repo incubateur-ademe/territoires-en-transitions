@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   and,
   eq,
   getTableColumns,
-  inArray,
   isNotNull,
   isNull,
+  inArray,
   notInArray,
   or,
   sql,

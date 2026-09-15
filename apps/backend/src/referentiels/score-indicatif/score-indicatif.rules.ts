@@ -1,10 +1,10 @@
-import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifPayload,
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
+import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
 
 const typeScoreToLabel: Record<ScoreIndicatifType, string> = {
   fait: 'Résultats de la collectivité',
@@ -49,11 +49,16 @@ function getTextScoreIndicatif(
       ? `Pourcentage indicatif Fait de ${toPercentString(
           score
         )} calculé sur la base de : `
-      : getLibelleScoreProgramme({ score, dateValeur })) +
+      : getLibelleScoreProgramme({
+          score,
+          dateValeur,
+          periodicite: scoreIndicatif.periodicite,
+        })) +
     getLibelleValeurUtilisee({
       typeScore,
       unite,
       valeurUtilisee: valeurPrincipale,
+      periodicite: scoreIndicatif.periodicite,
       noSource,
     }) +
     (valeurSecondaire
@@ -61,6 +66,7 @@ function getTextScoreIndicatif(
           typeScore,
           unite,
           valeurUtilisee: valeurSecondaire,
+          periodicite: scoreIndicatif.periodicite,
           noSource,
         })}`
       : '') +
@@ -102,6 +108,7 @@ type LibelleValeurUtiliseeArgs = {
   >;
   noSource?: boolean;
   noYear?: boolean;
+  periodicite: ScoreIndicatifPayload['periodicite'];
 };
 
 /**
@@ -122,13 +129,18 @@ function getSegmentsValeurUtilisee({
   typeScore,
   noSource,
   noYear,
+  periodicite,
 }: LibelleValeurUtiliseeArgs) {
   const { valeur, dateValeur, sourceLibelle } = valeurUtilisee;
-  const annee = getYearFromIsoDate(dateValeur);
+  const annee = toAnnualIndicateurYearFromHistoricalDate(
+    periodicite,
+    dateValeur,
+    'Le libellé du score indicatif'
+  );
 
   return {
     valeurEtUnite: `${valeur} ${unite}`,
-    annee: noYear || isNaN(annee) ? '' : `en ${annee}`,
+    annee: noYear ? '' : `en ${annee}`,
     source: noSource
       ? ''
       : `(source : ${sourceLibelle ?? typeScoreToLabel[typeScore]})`,
@@ -141,14 +153,20 @@ function getSegmentsValeurUtilisee({
 function getLibelleScoreProgramme({
   score,
   dateValeur,
+  periodicite,
 }: {
   score: number;
   dateValeur: string;
+  periodicite: ScoreIndicatifPayload['periodicite'];
 }) {
-  const annee = getYearFromIsoDate(dateValeur);
-  return `Pourcentage indicatif Fait en ${
-    isNaN(Number(annee)) ? '' : annee
-  } de ${toPercentString(score)} calculé si `;
+  const annee = toAnnualIndicateurYearFromHistoricalDate(
+    periodicite,
+    dateValeur,
+    'Le libellé du score indicatif'
+  );
+  return `Pourcentage indicatif Fait en ${annee} de ${toPercentString(
+    score
+  )} calculé si `;
 }
 
 function toPercentString(value: number) {

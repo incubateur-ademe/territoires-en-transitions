@@ -12,6 +12,7 @@ import {
   IndicateurValeursGroupeeParSource,
 } from '@tet/domain/indicateurs';
 import { groupBy, isNil, keyBy, omitBy } from 'es-toolkit';
+import { isMoreRecentIndicateurSourceValeur } from './indicateur-source-valeur-recency.rules';
 
 export function deduplicateIndicateurValeursBySource(
   indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
@@ -23,18 +24,24 @@ export function deduplicateIndicateurValeursBySource(
     indicateurValeurs.reduce((acc, v) => {
       const cleUnicite = `${v.indicateurValeur.indicateurId}_${
         v.indicateurValeur.collectiviteId
-      }_${v.indicateurValeur.dateValeur}_${
+      }_${v.indicateurValeur.periodicite}_${v.indicateurValeur.dateValeur}_${
         v.indicateurSourceMetadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
       }`;
       if (!acc[cleUnicite]) {
         acc[cleUnicite] = v;
       } else {
-        // On garde la valeur la plus récente en priorité
+        const current = acc[cleUnicite];
         if (
-          v.indicateurSourceMetadonnee &&
-          acc[cleUnicite].indicateurSourceMetadonnee &&
-          v.indicateurSourceMetadonnee.dateVersion >
-            acc[cleUnicite].indicateurSourceMetadonnee.dateVersion
+          isMoreRecentIndicateurSourceValeur(
+            {
+              dateVersion: v.indicateurSourceMetadonnee?.dateVersion,
+              metadonneeId: v.indicateurValeur.metadonneeId,
+            },
+            {
+              dateVersion: current.indicateurSourceMetadonnee?.dateVersion,
+              metadonneeId: current.indicateurValeur.metadonneeId,
+            }
+          )
         ) {
           acc[cleUnicite] = v;
         }

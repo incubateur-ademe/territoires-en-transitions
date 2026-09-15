@@ -14,16 +14,16 @@ import { ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
 import { ListCollectiviteDefinitionsRepository } from '../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { CrudValeursRepository } from './crud-valeurs.repository';
+import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from './indicateur-valeurs-context';
-import {
-  deduplicateIndicateurValeursBySource,
-  groupIndicateurValeursBySource,
-} from './indicateur-valeurs-read.adapter';
 import {
   captureIndicateurValeursResult,
   getIndicateurValeursDataOrThrow,
 } from './indicateur-valeurs.errors';
-import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
+import {
+  deduplicateIndicateurValeursBySource,
+  groupIndicateurValeursBySource,
+} from './indicateur-valeurs-read.adapter';
 
 @Injectable()
 export class ListIndicateurValeursService {

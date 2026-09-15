@@ -32,11 +32,11 @@ import {
   DEFAULT_CHART_SURFACE_STYLES_BY_VALEUR_TYPE,
   INDICATEUR_CHART_LINE_STYLES_BY_SOURCE_ID,
 } from './indicateur-chart-colors.constants';
-import { getIndicateurChartPeriodAdapter } from './indicateur-chart-period.adapter';
 import {
   IndicateurChartSegmentationWithValeurs,
   IndicateurChartSourceFilter,
 } from './indicateur-chart.input';
+import { getIndicateurChartPeriodAdapter } from './indicateur-chart-period.adapter';
 
 const { colors } = preset.theme.extend;
 const numberFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });

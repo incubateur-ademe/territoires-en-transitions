@@ -18,4 +18,3 @@ export const demarchePcaetSourceMetadonneeTable = pgTable(
   },
   (table) => [primaryKey({ columns: [table.demarcheId, table.collectiviteId] })]
 );
-

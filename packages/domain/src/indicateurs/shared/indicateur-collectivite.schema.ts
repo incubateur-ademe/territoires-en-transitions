@@ -1,5 +1,5 @@
-import * as z from 'zod/mini';
 import { indicateurPeriodiciteSchema } from '../definitions/indicateur-periodicite.schema';
+import * as z from 'zod/mini';
 
 export const indicateurCollectiviteSchema = z.object({
   collectiviteId: z.number(),

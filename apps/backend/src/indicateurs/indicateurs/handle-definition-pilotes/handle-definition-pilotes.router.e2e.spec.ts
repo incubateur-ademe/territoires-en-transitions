@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, NotFoundException } from '@nestjs/common';
 import { createPersonneTag } from '@tet/backend/collectivites/collectivites.test-fixture';
 import {
   addTestCollectivite,
@@ -19,6 +19,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
+import { indicateurPiloteTable } from '../../shared/models/indicateur-pilote.table';
 
 describe('IndicateurDefinitionPiloteRouter', () => {
   let router: TrpcRouter;
@@ -236,8 +237,17 @@ describe('IndicateurDefinitionPiloteRouter', () => {
       indicateurData: {
         collectiviteId: collectivite.id,
         titre: 'Test indicateur',
+        pilotes: [{ tagId: piloteTag1.id }],
       },
     });
+
+    const readRelations = () =>
+      db.db
+        .select()
+        .from(indicateurPiloteTable)
+        .where(eq(indicateurPiloteTable.indicateurId, indicateurId));
+    const relationsBefore = await readRelations();
+    expect(relationsBefore).toHaveLength(1);
 
     await expect(() =>
       caller.indicateurs.indicateurs.update({
@@ -247,15 +257,12 @@ describe('IndicateurDefinitionPiloteRouter', () => {
           pilotes: [{ tagId: piloteTag1.id }, { tagId: piloteTag2.id }],
         },
       })
-    ).rejects.toThrow(/non trouvé pour la collectivité/);
-
-    const {
-      data: [unchangedIndicateur],
-    } = await caller.indicateurs.indicateurs.list({
-      collectiviteId: collectivite.id,
-      filters: { indicateurIds: [indicateurId] },
+    ).rejects.toMatchObject({
+      message: `Indicateur ${indicateurId} non trouvé pour la collectivité ${otherCollectivite.id}`,
+      cause: expect.any(NotFoundException),
     });
-    expect(unchangedIndicateur.pilotes).toEqual([]);
+
+    expect(await readRelations()).toEqual(relationsBefore);
   });
 
   test('retains and removes a departed pilote without allowing a new assignment', async () => {

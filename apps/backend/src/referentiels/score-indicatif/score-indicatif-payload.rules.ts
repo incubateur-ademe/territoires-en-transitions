@@ -8,6 +8,7 @@ import {
   scoreIndicatifTypeEnum,
 } from '@tet/domain/referentiels';
 import { pick } from 'es-toolkit';
+import { getAnnualScoreIndicatifPeriodicite } from './score-indicatif-periodicite.rules';
 
 /** Indique si une action appartient au référentiel donné (gère l'alias des nouveaux référentiels) */
 export function actionBelongsToReferentiel(
@@ -30,6 +31,7 @@ export function formatScoreIndicatifForPayload(
   scoreIndicatif: ActionScoreIndicatif
 ): ScoreIndicatifPayload {
   return {
+    periodicite: getAnnualScoreIndicatifPeriodicite(scoreIndicatif.indicateurs),
     unite: scoreIndicatif.indicateurs?.[0].unite,
     fait: formatValeursForPayload(scoreIndicatif, scoreIndicatifTypeEnum.FAIT),
     programme: formatValeursForPayload(

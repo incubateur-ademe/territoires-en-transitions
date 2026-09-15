@@ -1,24 +1,30 @@
 import {
-  IndicateurPeriodicite,
-  IndicateurPeriodiciteEnum,
-  IndicateurPeriodiciteMode,
   IndicateurPeriodiciteModeEnum,
+  type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { sql } from 'drizzle-orm';
+import { indicateurCollectiviteTable } from './indicateur-collectivite.table';
+import { indicateurDefinitionTable } from './indicateur-definition.table';
+import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 
-/** Annual storage compatibility. PR #4981 replaces these constants with database columns. */
 export const indicateurDefinitionPeriodiciteSelection = {
-  periodicite: sql<IndicateurPeriodicite>`${IndicateurPeriodiciteEnum.ANNUELLE}`,
-  periodiciteMode: sql<IndicateurPeriodiciteMode>`${IndicateurPeriodiciteModeEnum.IMPOSEE}`,
+  periodicite: indicateurDefinitionTable.periodicite,
+  periodiciteMode: indicateurDefinitionTable.periodiciteMode,
 };
 export const indicateurValeurPeriodiciteSelection = {
-  periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
+  periodicite: indicateurValeurTable.periodicite,
 };
-export const indicateurEffectivePeriodicite =
-  indicateurDefinitionPeriodiciteSelection.periodicite;
+
+/** Requires a collectivité-scoped left join to indicateur_collectivite. */
+export const indicateurEffectivePeriodicite = sql<IndicateurPeriodicite>`
+  case when ${indicateurDefinitionTable.periodiciteMode} = ${IndicateurPeriodiciteModeEnum.IMPOSEE}
+    then ${indicateurDefinitionTable.periodicite}
+    else coalesce(${indicateurCollectiviteTable.periodicite}, ${indicateurDefinitionTable.periodicite})
+  end`;
+
 export const indicateurCollectivitePeriodiciteSelection = {
   periodicite: indicateurEffectivePeriodicite,
-  periodiciteMode: indicateurDefinitionPeriodiciteSelection.periodiciteMode,
-  periodiciteParDefaut: indicateurEffectivePeriodicite,
-  periodicitePersonnalisee: sql<IndicateurPeriodicite | null>`null`,
+  periodiciteMode: indicateurDefinitionTable.periodiciteMode,
+  periodiciteParDefaut: indicateurDefinitionTable.periodicite,
+  periodicitePersonnalisee: indicateurCollectiviteTable.periodicite,
 };

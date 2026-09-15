@@ -1,16 +1,17 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { appLabels } from '@/app/labels/catalog';
 import { Button, ButtonGroup } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { SourceType } from '../types';
 import { EditValeursModal } from './edit-valeurs-modal';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
 
-export type IndicateurTableProps = {
+type IndicateurTableProps = {
   chartInfo: IndicateurChartInfo;
   collectiviteId: number;
   definition: IndicateurDefinition;
@@ -25,15 +26,8 @@ export type IndicateurTableProps = {
 export const IndicateurTable = (props: IndicateurTableProps) => {
   const { chartInfo, collectiviteId, definition, readonly, openModalState } =
     props;
-  const [type, setType] = useState<SourceType>('resultat');
+  const [selectedType, setSelectedType] = useState<SourceType>('resultat');
   const { resultats, objectifs } = chartInfo.data.valeurs;
-  const data = type === 'resultat' ? resultats : objectifs;
-
-  const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
-
-  useEffect(() => {
-    setIsOpen(openModalState?.isOpen ?? false);
-  }, [openModalState?.isOpen]);
 
   // compte les données disponibles pour chaque type
   const sourcesCount = {
@@ -41,17 +35,24 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
     resultat: resultats.sources.length,
   };
 
-  // détermine si il y a des données pour l'onglet sélectionné
+  // Si l'onglet préféré n'a aucune donnée, affiche l'autre sans synchroniser
+  // un état dérivé dans un effet. Le choix explicite reste ainsi conservé.
+  const fallbackType = selectedType === 'resultat' ? 'objectif' : 'resultat';
+  const type =
+    !chartInfo.isLoading &&
+    !sourcesCount[selectedType] &&
+    sourcesCount[fallbackType]
+      ? fallbackType
+      : selectedType;
   const typeInverse = type === 'resultat' ? 'objectif' : 'resultat';
-  const shouldChange = !sourcesCount[type] && sourcesCount[typeInverse];
+  const data = type === 'resultat' ? resultats : objectifs;
 
-  // change d'onglet si il n'y a pas de données à afficher
-  // mais qu'il y a des données pour l'autre onglet
-  useEffect(() => {
-    if (shouldChange && !chartInfo.isLoading) {
-      setType(typeInverse);
-    }
-  }, [shouldChange, typeInverse, chartInfo.isLoading]);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = openModalState?.isOpen ?? internalIsOpen;
+  const setIsOpen = openModalState?.setIsOpen ?? setInternalIsOpen;
+  const periodPresentation = getIndicateurPeriodPresentation(
+    definition.periodicite
+  );
 
   // n'affiche rien si il n'y a pas de données
   if (!sourcesCount[type] && !sourcesCount[typeInverse]) return;
@@ -70,7 +71,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
                 appLabels.indicateurResultat({ plural: true })
               ),
               disabled: !sourcesCount.resultat,
-              onClick: () => setType('resultat'),
+              onClick: () => setSelectedType('resultat'),
             },
             {
               id: 'objectif',
@@ -78,14 +79,14 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
                 appLabels.indicateurObjectif({ plural: true })
               ),
               disabled: !sourcesCount.objectif,
-              onClick: () => setType('objectif'),
+              onClick: () => setSelectedType('objectif'),
             },
           ]}
         />
         {/** pour ouvrir le dialogue d'édition des valeurs */}
         {chartInfo.sourceFilter.avecDonneesCollectivite && !readonly && (
           <Button size="sm" onClick={() => setIsOpen(true)}>
-            {appLabels.ajouterAnnee}
+            {periodPresentation.editor.addLabel}
           </Button>
         )}
       </div>
@@ -105,13 +106,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
         <EditValeursModal
           collectiviteId={collectiviteId}
           definition={definition}
-          openState={{
-            isOpen,
-            setIsOpen: (value) => {
-              setIsOpen(value);
-              openModalState?.setIsOpen(value);
-            },
-          }}
+          openState={{ isOpen, setIsOpen }}
           data={data}
         />
       )}

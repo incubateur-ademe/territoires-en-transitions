@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
+import { assertAnnualScoreIndicateurs } from './score-indicatif-periodicite.rules';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
@@ -103,6 +104,14 @@ export class GetIndicateursAssociesService {
       );
     });
 
+    try {
+      assertAnnualScoreIndicateurs(indicateursAssocies);
+    } catch (error) {
+      return failure(
+        ScoreIndicatifErrorEnum.INDICATEUR_PERIODICITE_NOT_SUPPORTED,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
     return success({ indicateursAssocies, identiteCollectivite });
   }
 }

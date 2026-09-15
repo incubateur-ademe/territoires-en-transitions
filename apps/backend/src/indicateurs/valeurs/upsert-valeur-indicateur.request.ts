@@ -6,6 +6,7 @@ export const upsertValeurIndicateurSchema = z.object({
   ...z.pick(indicateurValeurSchemaCreate, {
     collectiviteId: true,
     indicateurId: true,
+    periodicite: true,
     id: true,
     resultat: true,
     resultatCommentaire: true,

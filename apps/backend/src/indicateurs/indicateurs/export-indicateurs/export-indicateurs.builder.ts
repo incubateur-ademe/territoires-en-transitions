@@ -1,6 +1,9 @@
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import {
-  getYearFromIsoDate,
+  formatIndicateurPeriod,
+  IndicateurPeriod,
+  IndicateurPeriodKey,
+  IndicateurPeriods,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
 import { Workbook, Worksheet } from 'exceljs';
@@ -8,6 +11,7 @@ import {
   adjustColumnWidth,
   BOLD,
 } from '../../../utils/excel/export-excel.utils';
+import { hydrateIndicateurPeriod } from '../../valeurs/indicateur-period.adapter';
 
 type EnfantRow = {
   id: number;
@@ -47,11 +51,11 @@ const FIXED_HEADERS = [
   'Source',
 ] as const;
 
-/** Années effectivement présentes, séparées par type de valeur. Une année
+/** Périodes effectivement présentes, séparées par type de valeur. Une période
  * n'apparaît que si au moins une valeur (toutes lignes confondues) l'alimente. */
-type YearsByType = {
-  resultat: number[];
-  objectif: number[];
+type PeriodsByType = {
+  resultat: IndicateurPeriod[];
+  objectif: IndicateurPeriod[];
 };
 
 /**
@@ -59,8 +63,8 @@ type YearsByType = {
  * - Une ligne par indicateur pour la saisie de la collectivité (parent puis
  *   chaque enfant sur sa propre ligne)
  * - Une ligne supplémentaire par source open-data disposant de valeurs
- * - Colonnes dynamiques `<année> Résultat` / `<année> Objectif`, créées
- *   uniquement pour les années comportant au moins une valeur du type concerné
+ * - Colonnes dynamiques `<période> Résultat` / `<période> Objectif`, créées
+ *   uniquement pour les périodes comportant au moins une valeur du type concerné
  * - En-tête figé (freeze panes)
  */
 export function buildConsolidatedSheet(
@@ -71,11 +75,11 @@ export function buildConsolidatedSheet(
 ): void {
   const worksheet = workbook.addWorksheet('Indicateurs');
 
-  // Années réellement renseignées (saisie collectivité + open-data), séparées
+  // Périodes renseignées (saisie collectivité + open-data), séparées
   // par type : une colonne n'est créée que si elle contient au moins une valeur.
-  const years = collectYears(indicateursValeurs);
+  const periods = collectPeriods(indicateursValeurs);
 
-  addHeaderRow(worksheet, years);
+  addHeaderRow(worksheet, periods);
 
   // Index des valeurs par identifiant d'indicateur, séparant saisie
   // collectivité et sources open-data.
@@ -86,7 +90,7 @@ export function buildConsolidatedSheet(
       worksheet,
       parent,
       null,
-      years,
+      periods,
       valeursByIndicateurId,
       sourceLabels
     );
@@ -102,7 +106,7 @@ export function buildConsolidatedSheet(
           commentaire: null,
         },
         parent.titre,
-        years,
+        periods,
         valeursByIndicateurId,
         sourceLabels
       );
@@ -117,19 +121,38 @@ export function buildConsolidatedSheet(
 
 // --- helpers privés ---
 
-function collectYears(
+const valeurPeriod = (
+  valeur: IndicateurValeurAvecMetadonnesDefinition
+): IndicateurPeriod => {
+  if (!valeur.indicateurDefinition) {
+    throw new Error(
+      `La valeur ${valeur.indicateurValeur.id} n'a pas de définition d'indicateur`
+    );
+  }
+  return hydrateIndicateurPeriod({
+    periodicite: valeur.indicateurValeur.periodicite,
+    dateValeur: valeur.indicateurValeur.dateValeur,
+  });
+};
+
+function collectPeriods(
   indicateursValeurs: IndicateurValeurAvecMetadonnesDefinition[]
-): YearsByType {
-  const resultat = new Set<number>();
-  const objectif = new Set<number>();
+): PeriodsByType {
+  const resultat = new Map<IndicateurPeriodKey, IndicateurPeriod>();
+  const objectif = new Map<IndicateurPeriodKey, IndicateurPeriod>();
   for (const v of indicateursValeurs) {
-    const annee = getYearFromIsoDate(v.indicateurValeur.dateValeur);
-    if (v.indicateurValeur.resultat !== null) resultat.add(annee);
-    if (v.indicateurValeur.objectif !== null) objectif.add(annee);
+    const period = valeurPeriod(v);
+    const periodKey = IndicateurPeriods.key(period);
+    if (v.indicateurValeur.resultat !== null) {
+      resultat.set(periodKey, period);
+    }
+    if (v.indicateurValeur.objectif !== null) {
+      objectif.set(periodKey, period);
+    }
   }
   return {
-    resultat: [...resultat].sort((a, b) => a - b),
-    objectif: [...objectif].sort((a, b) => a - b),
+    resultat: [...resultat.values()].sort(IndicateurPeriods.compareTotal),
+    objectif: [...objectif.values()].sort(IndicateurPeriods.compareTotal),
   };
 }
 
@@ -157,11 +180,15 @@ function indexValeurs(
   return map;
 }
 
-function addHeaderRow(worksheet: Worksheet, years: YearsByType): void {
+function addHeaderRow(worksheet: Worksheet, periods: PeriodsByType): void {
   worksheet.addRow([
     ...FIXED_HEADERS,
-    ...years.resultat.map((y) => `${y} Résultat`),
-    ...years.objectif.map((y) => `${y} Objectif`),
+    ...periods.resultat.map(
+      (period) => `${formatIndicateurPeriod(period)} Résultat`
+    ),
+    ...periods.objectif.map(
+      (period) => `${formatIndicateurPeriod(period)} Objectif`
+    ),
   ]);
 }
 
@@ -173,7 +200,7 @@ function addIndicateurRows(
   worksheet: Worksheet,
   indicator: RowData,
   parentTitre: string | null,
-  years: YearsByType,
+  periods: PeriodsByType,
   valeursByIndicateurId: Map<number, IndicateurValeurs>,
   sourceLabels: Map<string, string>
 ): void {
@@ -187,7 +214,7 @@ function addIndicateurRows(
     parentTitre,
     SOURCE_COLLECTIVITE,
     valeurs?.collectivite ?? [],
-    years,
+    periods,
     { withMeta: true }
   );
 
@@ -202,7 +229,7 @@ function addIndicateurRows(
       parentTitre,
       sourceLabels.get(sourceId) ?? sourceId,
       sourceValeurs,
-      years,
+      periods,
       { withMeta: false }
     );
   }
@@ -214,19 +241,20 @@ function addValeursRow(
   parentTitre: string | null,
   source: string,
   valeurs: IndicateurValeurAvecMetadonnesDefinition[],
-  years: YearsByType,
+  periods: PeriodsByType,
   { withMeta }: { withMeta: boolean }
 ): void {
-  const resultatByYear = new Map<number, number | null>();
-  const objectifByYear = new Map<number, number | null>();
+  const resultatByPeriod = new Map<IndicateurPeriodKey, number | null>();
+  const objectifByPeriod = new Map<IndicateurPeriodKey, number | null>();
 
   for (const v of valeurs) {
-    const annee = getYearFromIsoDate(v.indicateurValeur.dateValeur);
+    const period = valeurPeriod(v);
+    const periodKey = IndicateurPeriods.key(period);
     if (v.indicateurValeur.resultat !== null) {
-      resultatByYear.set(annee, v.indicateurValeur.resultat);
+      resultatByPeriod.set(periodKey, v.indicateurValeur.resultat);
     }
     if (v.indicateurValeur.objectif !== null) {
-      objectifByYear.set(annee, v.indicateurValeur.objectif);
+      objectifByPeriod.set(periodKey, v.indicateurValeur.objectif);
     }
   }
 
@@ -242,7 +270,11 @@ function addValeursRow(
     withMeta ? indicator.services.map((s) => s.nom).join(', ') : '',
     withMeta ? indicator.commentaire ?? '' : '',
     source,
-    ...years.resultat.map((y) => resultatByYear.get(y) ?? null),
-    ...years.objectif.map((y) => objectifByYear.get(y) ?? null),
+    ...periods.resultat.map(
+      (period) => resultatByPeriod.get(IndicateurPeriods.key(period)) ?? null
+    ),
+    ...periods.objectif.map(
+      (period) => objectifByPeriod.get(IndicateurPeriods.key(period)) ?? null
+    ),
   ]);
 }

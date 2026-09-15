@@ -6,10 +6,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
-import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
-import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
 import { listPlatformDefinitionsApiRequestSchema } from './list-platform-definitions.api-request';

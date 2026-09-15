@@ -67,7 +67,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
       description: expect.any(String),
       unite: 'GWh',
       periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-      periodiciteMode: IndicateurPeriodiciteModeEnum.IMPOSEE,
+      periodiciteMode: IndicateurPeriodiciteModeEnum.RECOMMANDEE,
       precision: 2,
       borneMin: null,
       borneMax: null,

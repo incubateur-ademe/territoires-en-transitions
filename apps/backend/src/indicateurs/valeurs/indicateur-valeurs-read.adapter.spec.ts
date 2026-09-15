@@ -86,11 +86,12 @@ describe('Historical annual values', () => {
     ]);
   });
 
-  it('keeps the first value when source versions are identical', () => {
+  it('uses metadata identity to break ties when source versions are identical', () => {
     const first = row(1, '2025-06-15');
-    expect(
-      deduplicateIndicateurValeursBySource([first, row(2, '2025-06-15')])
-    ).toEqual([first]);
+    const latest = row(2, '2025-06-15');
+    expect(deduplicateIndicateurValeursBySource([first, latest])).toEqual([
+      latest,
+    ]);
   });
 
   it('replaces a duplicate only when its source version is more recent', () => {

@@ -41,8 +41,19 @@ export const indicateursLabels = {
   /** Autres */
   aucunIndicateur: 'Aucun indicateur associé',
 
+  suppressionDonneesCollectivite: ({ periode }: { periode: string }): string =>
+    `des données de la collectivité pour la période ${periode}`,
   suppressionPeriodeAttention: ({ periode }: { periode: string }): string =>
     `Attention, les données existantes pour la période ${periode} seront supprimées.`,
+  commentaireIndicateurTitre: ({
+    sourceTypeLabel,
+    unite,
+    periode,
+  }: {
+    sourceTypeLabel: string;
+    unite: string;
+    periode: string;
+  }): string => `Mes ${sourceTypeLabel} (${unite}) : ${periode}`,
   champPeriodiciteIndicateur: 'Périodicité de déclaration *',
   periodiciteAnnuelle: 'Annuelle',
   periodiciteMensuelle: 'Mensuelle',

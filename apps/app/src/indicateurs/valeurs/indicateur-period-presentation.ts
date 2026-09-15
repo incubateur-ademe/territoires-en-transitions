@@ -1,12 +1,12 @@
-import { appLabels } from '@/app/labels/catalog';
 import type { TimeAxisOptions } from '@/app/ui/charts/echarts/utils';
+import { appLabels } from '@/app/labels/catalog';
 import {
   formatIndicateurPeriod,
   getIndicateurPeriodPresentation as getSharedIndicateurPeriodPresentation,
   IndicateurPeriodicite,
   IndicateurPeriodiciteEnum,
-  indicateurPeriodiciteValues,
   IndicateurPeriods,
+  indicateurPeriodiciteValues,
   resolveIndicateurDisplayPeriodicite,
   type LocalCalendarDate,
 } from '@tet/domain/indicateurs';

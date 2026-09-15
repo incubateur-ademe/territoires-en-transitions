@@ -155,6 +155,11 @@ export class UpdateDefinitionService {
     }: UpdateIndicateurDefinitionInput,
     user: AuthenticatedUser
   ): Promise<void> {
+    this.permissionService.assertApiKeyPermission(
+      user,
+      'indicateurs.indicateurs.update'
+    );
+
     const definition = await this.repository.getDefinitionOwnership(
       indicateurId
     );

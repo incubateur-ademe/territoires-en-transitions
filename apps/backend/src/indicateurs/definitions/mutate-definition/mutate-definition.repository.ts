@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { Injectable } from '@nestjs/common';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -63,6 +63,7 @@ export class MutateDefinitionRepository {
         collectiviteId: input.collectiviteId,
         titre: input.titre,
         unite: input.unite,
+        periodicite: input.periodicite,
       })
       .returning({ id: indicateurDefinitionTable.id });
 
@@ -169,6 +170,7 @@ export class MutateDefinitionRepository {
       indicateurId,
       collectiviteId,
       commentaire,
+      periodicite,
       confidentiel,
       favoris,
       modifiedBy,
@@ -180,6 +182,7 @@ export class MutateDefinitionRepository {
       .values({
         indicateurId,
         collectiviteId,
+        ...(periodicite !== undefined && { periodicite }),
         ...(commentaire !== undefined && { commentaire }),
         ...(confidentiel !== undefined && { confidentiel }),
         ...(favoris !== undefined && { favoris }),
@@ -192,6 +195,7 @@ export class MutateDefinitionRepository {
           indicateurCollectiviteTable.collectiviteId,
         ],
         set: {
+          ...(periodicite !== undefined && { periodicite }),
           ...(commentaire !== undefined && { commentaire }),
           ...(confidentiel !== undefined && { confidentiel }),
           ...(favoris !== undefined && { favoris }),
