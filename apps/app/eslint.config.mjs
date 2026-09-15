@@ -25,6 +25,24 @@ const eslintConfig = defineConfig([
   {
     files: ['**/*.ts', '**/*.tsx'],
     ignores: [
+      'src/collectivites/panier/data/useGetCollectivitePanierInfo.ts',
+      'src/referentiels/actions/action-documents.download-button.tsx',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "Property[key.name='queryKey'] > ArrayExpression > :matches(Literal, TemplateLiteral):first-child",
+          message:
+            'Clé de requête écrite à la main : tirer la clé du client tRPC (trpc.<domaine>.<procédure>.queryKey() ou queryOptions()).',
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    ignores: [
       'src/labels/**',
       '**/*.stories.tsx',
       '**/fixtures.tsx',
