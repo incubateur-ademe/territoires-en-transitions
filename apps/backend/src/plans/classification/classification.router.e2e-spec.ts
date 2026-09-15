@@ -210,6 +210,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
+        etape: 'classification',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft: {
           fiches: [],
@@ -232,6 +233,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
+        etape: 'classification',
         status: ClassificationVoletsJobStatusEnum.RUNNING,
         processedBatches: 2,
         totalBatches: 3,
