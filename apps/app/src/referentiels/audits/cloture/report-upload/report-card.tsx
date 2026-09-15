@@ -7,7 +7,7 @@ import {
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
 import { getDocumentFichier } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
-import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
+import { toDocumentAudit } from '@/app/referentiels/preuves/mappers/to-document-audit';
 import { AuditReport } from '../data/use-list-reports-by-audit';
 
 const ReportMetadata = ({ text }: { text: string | null }): JSX.Element => (
@@ -85,7 +85,7 @@ export const PersistedReportCard = ({
   isRemoving: boolean;
   onRemove: () => void;
 }): JSX.Element => {
-  const preuve = auditReportToPreuve(report);
+  const preuve = toDocumentAudit(report);
   const openPreuve = useOpenPreuve({ collectiviteId: preuve.collectiviteId });
   const filename = getDocumentFichier(preuve)?.filename ?? '';
   const hasDocument = preuve.type !== 'nonRenseigne';

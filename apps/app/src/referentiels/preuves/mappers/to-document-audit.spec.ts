@@ -3,10 +3,7 @@ import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 
-import {
-  AuditReportInput,
-  auditReportToPreuve,
-} from './audit-report-to-preuve';
+import { AuditReportInput, toDocumentAudit } from './to-document-audit';
 
 const demande: LabellisationDemande = {
   id: 7,
@@ -45,9 +42,9 @@ const baseInput: AuditReportInput = {
   demande: null,
 };
 
-describe('auditReportToPreuve', () => {
+describe('toDocumentAudit', () => {
   it('propage les champs communs et tag preuveType="audit"', () => {
-    const preuve = auditReportToPreuve(baseInput);
+    const preuve = toDocumentAudit(baseInput);
     expect(preuve).toMatchObject({
       id: 42,
       collectiviteId: 7,
@@ -60,7 +57,7 @@ describe('auditReportToPreuve', () => {
   });
 
   it('propage la demande de labellisation associee au rapport', () => {
-    const preuve = auditReportToPreuve({ ...baseInput, demande });
+    const preuve = toDocumentAudit({ ...baseInput, demande });
     expect(preuve.demande).toEqual(demande);
   });
 
@@ -74,20 +71,20 @@ describe('auditReportToPreuve', () => {
       hash: toLegacyDocumentHash('sha-1'),
       confidentiel: false,
     };
-    const preuve = auditReportToPreuve({ ...baseInput, fichier });
+    const preuve = toDocumentAudit({ ...baseInput, fichier });
     expect(preuve).toMatchObject({ type: 'fichier', fichier });
     expect('lien' in preuve).toBe(false);
   });
 
   it('cas lien : rend un document de type lien', () => {
     const lien = { url: 'https://example.com', titre: 'Doc externe' };
-    const preuve = auditReportToPreuve({ ...baseInput, lien });
+    const preuve = toDocumentAudit({ ...baseInput, lien });
     expect(preuve).toMatchObject({ type: 'lien', lien });
     expect('fichier' in preuve).toBe(false);
   });
 
   it('cas non renseigné : rend un document sans fichier ni lien', () => {
-    const preuve = auditReportToPreuve(baseInput);
+    const preuve = toDocumentAudit(baseInput);
     expect(preuve).toMatchObject({ type: 'nonRenseigne' });
     expect('fichier' in preuve).toBe(false);
     expect('lien' in preuve).toBe(false);
@@ -104,7 +101,7 @@ describe('auditReportToPreuve', () => {
       confidentiel: false,
     };
     const lien = { url: 'https://example.com', titre: 'X' };
-    const preuve = auditReportToPreuve({ ...baseInput, fichier, lien });
+    const preuve = toDocumentAudit({ ...baseInput, fichier, lien });
     expect(preuve).toMatchObject({ type: 'fichier', fichier });
     expect('lien' in preuve).toBe(false);
   });

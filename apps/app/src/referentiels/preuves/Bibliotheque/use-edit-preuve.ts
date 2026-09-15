@@ -3,10 +3,10 @@ import { getDocumentFichier } from './to-document-collectivite.utils';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
 import { Lien } from '@tet/domain/collectivites';
-import { EditHandlers, Preuve } from './types';
+import { EditHandlers, DocumentRattache } from './types';
 import { useEditFilenameState, useEditState } from './use-edit-state';
 
-type EditPreuve = (preuve: Preuve) => EditHandlers;
+type EditPreuve = (preuve: DocumentRattache) => EditHandlers;
 
 /** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
  * (édition commentaire & suppression) */
@@ -70,7 +70,7 @@ export const useRemovePreuve = () => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   return useMutation({
-    mutationFn: async (preuve: Preuve) => {
+    mutationFn: async (preuve: DocumentRattache) => {
       const { id } = preuve;
       return trpcClient.collectivites.documents.removePreuve.mutate({
         preuveId: id,
@@ -123,7 +123,7 @@ export const useUpdatePreuveLien = () => {
   const trpc = useTRPC();
   return useMutation({
     mutationFn: async (
-      preuve: Pick<Preuve, 'id' | 'collectiviteId' | 'preuveType'> & {
+      preuve: Pick<DocumentRattache, 'id' | 'collectiviteId' | 'preuveType'> & {
         lien: Lien;
       }
     ) =>
@@ -156,7 +156,7 @@ export const useUpdatePreuveCommentaire = () => {
   return useMutation({
     mutationFn: async (
       preuve: Pick<
-        Preuve,
+        DocumentRattache,
         'id' | 'commentaire' | 'collectiviteId' | 'preuveType'
       >
     ) => {

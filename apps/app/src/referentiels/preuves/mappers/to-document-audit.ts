@@ -1,9 +1,9 @@
 import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
-import { PreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { Lien, StoredFile } from '@tet/domain/collectivites';
 
 export type AuditReportInput = Pick<
-  PreuveAudit,
+  DocumentAudit,
   | 'id'
   | 'collectiviteId'
   | 'commentaire'
@@ -17,7 +17,7 @@ export type AuditReportInput = Pick<
   lien: Lien | null;
 };
 
-export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => ({
+export const toDocumentAudit = (report: AuditReportInput): DocumentAudit => ({
   ...toDocumentCollectivite({
     id: report.id,
     collectiviteId: report.collectiviteId,

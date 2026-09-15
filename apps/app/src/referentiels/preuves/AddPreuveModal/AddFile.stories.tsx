@@ -167,7 +167,7 @@ export const TeleversementAbouti: Story = {
 };
 
 /**
- * Preuve réglementaire : le dépôt offre le choix de la confidentialité, qui ne
+ * DocumentRattache réglementaire : le dépôt offre le choix de la confidentialité, qui ne
  * s'appliquera qu'aux fichiers téléversés depuis la modale.
  */
 export const DocReglementaire: Story = {

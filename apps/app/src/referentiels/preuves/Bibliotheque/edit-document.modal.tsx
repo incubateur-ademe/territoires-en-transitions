@@ -1,10 +1,10 @@
 import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { EditFichierModal } from './edit-fichier.modal';
 import { EditLienModal } from './edit-lien.modal';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 
 export type DocumentModifiable = Pick<
-  Preuve,
+  DocumentRattache,
   'id' | 'collectiviteId' | 'preuveType'
 > &
   Extract<DocumentCollectivite, { type: 'fichier' | 'lien' }>;

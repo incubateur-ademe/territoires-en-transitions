@@ -8,9 +8,9 @@ import {
   toDocumentCollectivite,
 } from '../../preuves/Bibliotheque/to-document-collectivite.utils';
 import {
-  PreuveAudit,
-  PreuveLabellisation,
-  PreuveRapport,
+  DocumentAudit,
+  DocumentLabellisation,
+  DocumentRapport,
 } from '../../preuves/Bibliotheque/types';
 
 const toDocumentRattache = <Depot extends DocumentLegacy>(
@@ -21,9 +21,9 @@ const toDocumentRattache = <Depot extends DocumentLegacy>(
 });
 
 type ReferentielDocuments = {
-  labellisation: PreuveLabellisation[];
-  audit: PreuveAudit[];
-  rapport: PreuveRapport[];
+  labellisation: DocumentLabellisation[];
+  audit: DocumentAudit[];
+  rapport: DocumentRapport[];
 };
 
 type ReferentielDocumentsQuery =
