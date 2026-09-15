@@ -2,6 +2,7 @@ import { Row } from '@tanstack/react-table';
 import {
   ActionTypeEnum,
   getParentId,
+  ReferentielLabel,
   StatutAvancement,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
@@ -151,6 +152,18 @@ export function getScoreRangeFilterFn(
     if (!boundary) return false;
     return ratio >= boundary.lower && ratio < boundary.upper;
   });
+}
+
+export function getLabelsFilterFn(
+  row: Row<ActionListItem>,
+  columnId: string,
+  filterValue: string[]
+) {
+  // Aucun filtre actif, ou les deux volets sélectionnés : on affiche tout.
+  if (!filterValue?.length || filterValue.length >= 2) return true;
+
+  const labels = row.getValue<ReferentielLabel[]>(columnId) ?? [];
+  return labels.includes(filterValue[0] as ReferentielLabel);
 }
 
 export function getServicesFilterFn(actions: Record<string, ActionListItem>) {

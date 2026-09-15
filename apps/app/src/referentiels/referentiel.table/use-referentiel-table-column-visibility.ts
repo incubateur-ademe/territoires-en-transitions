@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { VisibilityState } from '@tanstack/react-table';
 import { useUser } from '@tet/api/users';
+import { isNewReferentiel, ReferentielId } from '@tet/domain/referentiels';
 import { capitalize } from '@tet/ui/labels/plural';
 import { useCallback, useMemo } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
@@ -41,6 +42,12 @@ export const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'fiches', label: 'Actions liées', default: false },
 ] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
+const LABELS_COLUMN_OPTION = {
+  id: 'labels',
+  label: appLabels.referentielTableColonneLabels,
+  default: true,
+} as const satisfies { id: string; label: string; default: boolean };
+
 const AUDIT_STATUT_COLUMN_OPTION = {
   id: 'auditStatut',
   label: appLabels.auditColonneStatut,
@@ -73,6 +80,7 @@ function getAuditColumnOptions(
 
 export type ReferentielTableColumnId =
   | (typeof REFERENTIEL_TABLE_COLUMN_OPTIONS)[number]['id']
+  | (typeof LABELS_COLUMN_OPTION)['id']
   | (typeof AUDIT_STATUT_COLUMN_OPTION)['id']
   | (typeof AUDIT_CONDUCT_COLUMN_OPTIONS)[number]['id'];
 
@@ -119,16 +127,30 @@ function useStoredColumnVisibility(): StoredColumnVisibility {
 
 export function useReferentielTableColumnVisibility({
   auditColumnsScope,
+  referentielId,
 }: {
   auditColumnsScope: AuditColumnsScope;
+  referentielId: ReferentielId;
 }): ReferentielTableColumnVisibility {
-  const columnOptions = useMemo<ReferentielTableColumnOption[]>(
-    () => [
-      ...REFERENTIEL_TABLE_COLUMN_OPTIONS,
+  const columnOptions = useMemo<ReferentielTableColumnOption[]>(() => {
+    if (!isNewReferentiel(referentielId)) {
+      return [
+        ...REFERENTIEL_TABLE_COLUMN_OPTIONS,
+        ...getAuditColumnOptions(auditColumnsScope),
+      ];
+    }
+
+    // "Volets" doit apparaître juste après "Phase" dans le sélecteur.
+    const categorieIndex = REFERENTIEL_TABLE_COLUMN_OPTIONS.findIndex(
+      ({ id }) => id === 'categorie'
+    );
+    return [
+      ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(0, categorieIndex + 1),
+      LABELS_COLUMN_OPTION,
+      ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(categorieIndex + 1),
       ...getAuditColumnOptions(auditColumnsScope),
-    ],
-    [auditColumnsScope]
-  );
+    ];
+  }, [auditColumnsScope, referentielId]);
 
   const [stored, setStored] = useStoredColumnVisibility();
 

@@ -37,6 +37,7 @@ export const referentielsLabels = {
   /** Vue tabulaire */
   referentielTableThematiquesViewsSgpe: 'Planification Écologique',
   referentielTableThematiquesViewsAxes: 'Axes',
+  referentielTableColonneLabels: 'Volets',
 
   /** Onglets de la vue référentiel */
   referentielOngletMesures: 'Mesures',
