@@ -45,7 +45,9 @@ export const renderVoletActions = ({
       .filter((fiche): fiche is FicheToScore => fiche !== undefined);
 
     return [
-      `Catégorie ${toCategorieRank(categorie)} — ${CATEGORIE_LABELS[categorie]} :`,
+      `Catégorie ${toCategorieRank(categorie)} — ${
+        CATEGORIE_LABELS[categorie]
+      } :`,
       fiches.length > 0
         ? fiches.map(renderFiche).join('\n\n')
         : EMPTY_CATEGORIE_TEXT,

@@ -18,7 +18,7 @@ const tokens = {
 };
 
 const toScoringLlm = (notes: Record<string, number>) => ({
-  generateStructured: vi.fn(async (unused: GenerateStructuredArgs<ZodType>) =>
+  generateStructured: vi.fn(async (_args: GenerateStructuredArgs<ZodType>) =>
     success({ data: notes, tokens })
   ),
 });

@@ -8,10 +8,16 @@ import {
   MOBILISATION_SYSTEM_INSTRUCTION,
   mobilisationPrompt,
 } from '../../prompts/mobilisation.prompt';
-import { mobilisationResponseSchema, Note } from './calculate-mobilisation.schema';
+import {
+  mobilisationResponseSchema,
+  Note,
+} from './calculate-mobilisation.schema';
 import { LevierVolets } from './group-volets-by-levier';
 import { FicheToScore, renderVoletActions } from './render-volet-actions';
-import { CATEGORIES_IN_PROMPT_ORDER, toCategorieRank } from './volet-categories';
+import {
+  CATEGORIES_IN_PROMPT_ORDER,
+  toCategorieRank,
+} from './volet-categories';
 
 export const MOBILISATION_THINKING_BUDGET = 512;
 

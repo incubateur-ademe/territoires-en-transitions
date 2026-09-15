@@ -9,6 +9,7 @@ export const ClassificationVoletsSpecificErrors = [
   'IN_FLIGHT_JOB_EXISTS',
   'COLLECTIVITE_NOT_FOUND',
   'NO_FICHE_TO_CLASSIFY',
+  'NO_VOLET_TO_SCORE',
 ] as const;
 
 export type ClassificationVoletsSpecificError =

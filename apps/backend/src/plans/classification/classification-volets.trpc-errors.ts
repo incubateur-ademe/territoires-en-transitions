@@ -33,6 +33,11 @@ export const classificationVoletsErrorConfig: TrpcErrorHandlerConfig<Classificat
         code: 'NOT_FOUND',
         message: "La collectivité demandée n'existe pas",
       },
+      NO_VOLET_TO_SCORE: {
+        code: 'BAD_REQUEST',
+        message:
+          "Cette collectivité n'a aucun volet classé : lancez d'abord la classification",
+      },
       NO_FICHE_TO_CLASSIFY: {
         code: 'BAD_REQUEST',
         message: 'Cette collectivité ne contient aucune fiche à classer',

@@ -8,13 +8,20 @@ import { EnqueueClassificationService } from './enqueue-classification/enqueue-c
 import { getClassificationStatusInputSchema } from './get-classification-status/get-classification-status.input';
 import { getClassificationStatusOutputSchema } from './get-classification-status/get-classification-status.output';
 import { GetClassificationStatusService } from './get-classification-status/get-classification-status.service';
+import { enqueueMobilisationInputSchema } from './enqueue-mobilisation/enqueue-mobilisation.input';
+import { EnqueueMobilisationService } from './enqueue-mobilisation/enqueue-mobilisation.service';
+import { getMobilisationInputSchema } from './get-mobilisation/get-mobilisation.input';
+import { mobilisationSchema } from './get-mobilisation/get-mobilisation.output';
+import { GetMobilisationService } from './get-mobilisation/get-mobilisation.service';
 
 @Injectable()
 export class ClassificationRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly enqueueService: EnqueueClassificationService,
-    private readonly statusService: GetClassificationStatusService
+    private readonly statusService: GetClassificationStatusService,
+    private readonly enqueueMobilisationService: EnqueueMobilisationService,
+    private readonly mobilisationService: GetMobilisationService
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
@@ -35,6 +42,26 @@ export class ClassificationRouter {
       .output(getClassificationStatusOutputSchema)
       .query(async ({ input, ctx: { user } }) => {
         const result = await this.statusService.getStatus(input, { user });
+        return this.getResultDataOrThrowError(result);
+      }),
+
+    enqueueMobilisation: this.trpc.authedProcedure
+      .input(enqueueMobilisationInputSchema)
+      .output(enqueueClassificationOutputSchema)
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.enqueueMobilisationService.enqueue(input, {
+          user,
+        });
+        return this.getResultDataOrThrowError(result);
+      }),
+
+    getMobilisation: this.trpc.authedProcedure
+      .input(getMobilisationInputSchema)
+      .output(mobilisationSchema)
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.mobilisationService.getMobilisation(input, {
+          user,
+        });
         return this.getResultDataOrThrowError(result);
       }),
   });

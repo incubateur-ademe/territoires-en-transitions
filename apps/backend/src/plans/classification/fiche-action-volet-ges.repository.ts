@@ -9,6 +9,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { VoletErrorEnum, type VoletError } from './volet.errors';
 import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
 import { FicheVolets, VoletRepository } from './volet.repository';
+import { FicheVolet } from './pipeline/calculate-mobilisation/group-volets-by-levier';
 
 @Injectable()
 export class FicheActionVoletGesRepository implements VoletRepository {
@@ -16,6 +17,59 @@ export class FicheActionVoletGesRepository implements VoletRepository {
   private readonly logger = new Logger(FicheActionVoletGesRepository.name);
 
   constructor(private readonly database: DatabaseService) {}
+
+  async hasVoletsOfCollectivite(
+    collectiviteId: number
+  ): Promise<Result<boolean, VoletError>> {
+    try {
+      const [volet] = await this.db
+        .select({ ficheId: ficheActionVoletGesTable.ficheId })
+        .from(ficheActionVoletGesTable)
+        .innerJoin(
+          ficheActionTable,
+          eq(ficheActionTable.id, ficheActionVoletGesTable.ficheId)
+        )
+        .where(eq(ficheActionTable.collectiviteId, collectiviteId))
+        .limit(1);
+
+      return success(volet !== undefined);
+    } catch (error) {
+      this.logger.error(
+        `Lecture des volets de la collectivite ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(VoletErrorEnum.GET_VOLETS_ERROR);
+    }
+  }
+
+  async listVoletsOfFiches(
+    ficheIds: number[]
+  ): Promise<Result<FicheVolet[], VoletError>> {
+    if (ficheIds.length === 0) {
+      return success([]);
+    }
+
+    try {
+      const volets = await this.db
+        .select({
+          ficheId: ficheActionVoletGesTable.ficheId,
+          levierId: ficheActionVoletGesTable.levierId,
+          categorie: ficheActionVoletGesTable.categorie,
+        })
+        .from(ficheActionVoletGesTable)
+        .where(inArray(ficheActionVoletGesTable.ficheId, ficheIds));
+
+      return success(volets);
+    } catch (error) {
+      this.logger.error(
+        `Lecture des volets de ${ficheIds.length} fiches: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(VoletErrorEnum.GET_VOLETS_ERROR);
+    }
+  }
 
   async saveVolets({
     collectiviteId,
