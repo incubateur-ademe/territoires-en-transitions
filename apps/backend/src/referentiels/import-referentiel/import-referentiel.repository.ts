@@ -20,6 +20,7 @@ import {
   ReferentielDefinition,
   ReferentielId,
   ReferentielIdEnum,
+  ReferentielLabelEnum,
   ReferentielTag,
 } from '@tet/domain/referentiels';
 import { eq, ilike, like } from 'drizzle-orm';
@@ -31,7 +32,6 @@ import {
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
-import { ReferentielLabelEnum } from '../models/referentiel-label.enum';
 import { referentielTagTable } from '../models/referentiel-tag.table';
 import { ImportActionDefinitionCoremeasureType } from './import-action-definition.dto';
 
