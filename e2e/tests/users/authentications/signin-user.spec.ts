@@ -121,6 +121,31 @@ test.describe('Login avec mot de passe', () => {
   );
 });
 
+test.describe('Redirection après connexion', () => {
+  test('renvoie vers la page protégée demandée (deep-link) après connexion', async ({
+    page,
+    collectivites,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser();
+    const deepLink = `/collectivite/${collectivite.data.id}/users`;
+
+    // Accès direct, non authentifié, à une page profonde de l'app : le
+    // middleware doit renvoyer vers /login en conservant cette destination.
+    await page.goto(deepLink, { waitUntil: 'domcontentloaded' });
+
+    await expect(page).toHaveURL(
+      `/login?redirect_to=${encodeURIComponent(deepLink)}`
+    );
+
+    const pom = new SigninUserPom(page);
+    await pom.fillAndSubmitLoginForm(user.data.email, user.data.password);
+
+    // Une fois connecté, l'utilisateur atterrit sur la page initialement
+    // demandée plutôt que sur l'accueil.
+    await expect(page).toHaveURL(deepLink);
+  });
+});
+
 test.describe('Login sans mot de passe', () => {
   let pom: SigninUserPom;
 
