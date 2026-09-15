@@ -54,7 +54,10 @@ describe('useShowReferentielTableColumn', () => {
     act(() => show.current('statut'));
 
     const { result: visibility } = renderHook(() =>
-      useReferentielTableColumnVisibility({ auditColumnsScope: 'none' })
+      useReferentielTableColumnVisibility({
+        auditColumnsScope: 'none',
+        referentielId: 'cae',
+      })
     );
 
     expect(visibility.current.columnVisibility.statut).toBe(true);

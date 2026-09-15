@@ -7,6 +7,7 @@ import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-s
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
   ActionCategorieEnum,
+  ReferentielLabelEnum,
   StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
@@ -31,6 +32,11 @@ const statutOptions = (
   value,
   label: avancementToLabel[value],
 }));
+
+const labelsOptions = [
+  { value: ReferentielLabelEnum.TE_CAE, label: 'CAE' },
+  { value: ReferentielLabelEnum.TE_ECI, label: 'ECi' },
+];
 
 const categorieOptions = [
   ActionCategorieEnum.BASES,
@@ -93,7 +99,7 @@ export const CategorieHeaderFilter = ({
     onChange={({ values }) =>
       setFilters({ categories: (values ?? []) as string[] })
     }
-    placeholder="Filtrer"
+    placeholder={appLabels.filtrer}
     custom={{
       triggerButton: {
         button: <FilterButton filterCount={filters.categories.length} />,
@@ -111,7 +117,7 @@ export const StatutHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     onChange={({ values }) =>
       setFilters({ statuts: (values ?? []) as StatutAvancement[] })
     }
-    placeholder="Filtrer"
+    placeholder={appLabels.filtrer}
     small
     custom={{
       triggerButton: {
@@ -120,6 +126,24 @@ export const StatutHeaderFilter = ({ filters, setFilters }: FiltersState) => (
       renderOptionItem: (item) => (
         <ActionStatutBadge statut={item.value as StatutAvancementCreate} />
       ),
+    }}
+  />
+);
+
+export const LabelsHeaderFilter = ({ filters, setFilters }: FiltersState) => (
+  <SelectFilter
+    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+    options={labelsOptions}
+    values={filters.labels}
+    onChange={({ values }) =>
+      setFilters({ labels: (values ?? []) as string[] })
+    }
+    placeholder={appLabels.filtrer}
+    small
+    custom={{
+      triggerButton: {
+        button: <FilterButton filterCount={filters.labels.length} />,
+      },
     }}
   />
 );
@@ -138,7 +162,7 @@ export const ScoreRangeHeaderFilter = ({
     onChange={({ values }) =>
       setFilters({ [filterKey]: (values ?? []) as string[] })
     }
-    placeholder="Filtrer"
+    placeholder={appLabels.filtrer}
     small
     custom={{
       triggerButton: {
@@ -157,7 +181,7 @@ export const PilotesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
         pilotes: personnes.map((p) => getPersonneStringId(p)),
       })
     }
-    placeholder="Filtrer"
+    placeholder={appLabels.filtrer}
     disableEdition={true}
     isSearcheable={false}
     custom={{
@@ -174,7 +198,7 @@ export const ServicesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
     values={filters.services}
     onChange={({ values }) => setFilters({ services: values.map((s) => s.id) })}
-    placeholder="Filtrer"
+    placeholder={appLabels.filtrer}
     disableEdition={true}
     custom={{
       triggerButton: {
