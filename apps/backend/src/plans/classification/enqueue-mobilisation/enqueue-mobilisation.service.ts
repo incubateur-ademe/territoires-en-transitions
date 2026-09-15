@@ -1,6 +1,5 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
-import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -8,52 +7,53 @@ import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
-import { FICHES_TO_CLASSIFY_FILTERS } from '../models/classification-volets-job';
 import {
   ClassificationVoletsErrorEnum,
   type ClassificationVoletsError,
 } from '../classification-volets.errors';
+import { FicheActionVoletGesRepository } from '../fiche-action-volet-ges.repository';
 import {
-  CLASSIFICATION_VOLETS_QUEUE_NAME,
-  type ClassificationVoletsJobData,
-} from '../classification-volets.queue';
-import { EnqueueClassificationInput } from './enqueue-classification.input';
+  MOBILISATION_VOLETS_QUEUE_NAME,
+  type MobilisationVoletsJobData,
+} from '../mobilisation-volets.queue';
+import { EnqueueMobilisationInput } from './enqueue-mobilisation.input';
 
-const GENERATE_CLASSIFICATION_JOB_NAME = 'generate-classification';
+const GENERATE_MOBILISATION_JOB_NAME = 'generate-mobilisation';
 
 @Injectable()
-export class EnqueueClassificationService {
-  private readonly logger = new Logger(EnqueueClassificationService.name);
+export class EnqueueMobilisationService {
+  private readonly logger = new Logger(EnqueueMobilisationService.name);
 
   constructor(
     private readonly permissions: PermissionService,
     private readonly jobRepository: ClassificationVoletsJobRepository,
-    private readonly listFichesService: ListFichesService,
-    @InjectQueue(CLASSIFICATION_VOLETS_QUEUE_NAME)
-    private readonly queue: Queue<ClassificationVoletsJobData>
+    private readonly ficheVoletRepository: FicheActionVoletGesRepository,
+    @InjectQueue(MOBILISATION_VOLETS_QUEUE_NAME)
+    private readonly queue: Queue<MobilisationVoletsJobData>
   ) {}
 
   async enqueue(
-    { collectiviteId, enjeu }: EnqueueClassificationInput,
+    { collectiviteId, enjeu }: EnqueueMobilisationInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<{ jobId: string }, ClassificationVoletsError>> {
-    const isAllowed = await this.isAllowedToClassify(user, collectiviteId);
+    const isAllowed = await this.isAllowedToAnalyse(user, collectiviteId);
     if (!isAllowed) {
       return failure(ClassificationVoletsErrorEnum.COLLECTIVITE_NOT_FOUND);
     }
 
-    const hasFicheResult = await this.checkCollectiviteHasFicheToClassify(
-      { collectiviteId },
-      { user }
-    );
-    if (!hasFicheResult.success) {
-      return hasFicheResult;
+    const hasVoletsResult =
+      await this.ficheVoletRepository.hasVoletsOfCollectivite(collectiviteId);
+    if (!hasVoletsResult.success) {
+      return failure(ClassificationVoletsErrorEnum.GET_MOBILISATION_ERROR);
+    }
+    if (!hasVoletsResult.data) {
+      return failure(ClassificationVoletsErrorEnum.NO_VOLET_TO_SCORE);
     }
 
     const jobResult = await this.jobRepository.createUnlessInFlight({
       collectiviteId,
       enjeu,
-      etape: 'classification',
+      etape: 'mobilisation',
       createdBy: user.id,
     });
     if (!jobResult.success) {
@@ -63,7 +63,7 @@ export class EnqueueClassificationService {
     return this.addToQueue(jobResult.data.id);
   }
 
-  private async isAllowedToClassify(
+  private async isAllowedToAnalyse(
     user: AuthenticatedUser,
     collectiviteId: number
   ): Promise<boolean> {
@@ -76,49 +76,27 @@ export class EnqueueClassificationService {
     return permissionResult.success;
   }
 
-  private async checkCollectiviteHasFicheToClassify(
-    { collectiviteId }: { collectiviteId: number },
-    { user }: { user: AuthenticatedUser }
-  ): Promise<Result<undefined, ClassificationVoletsError>> {
-    const { count } = await this.listFichesService.getFichesActionResumes(
-      {
-        collectiviteId,
-        filters: FICHES_TO_CLASSIFY_FILTERS,
-        queryOptions: { limit: 1, page: 1 },
-      },
-      { user }
-    );
-
-    if (count === 0) {
-      return failure(ClassificationVoletsErrorEnum.NO_FICHE_TO_CLASSIFY);
-    }
-
-    return success(undefined);
-  }
-
   private async addToQueue(
     jobId: string
   ): Promise<Result<{ jobId: string }, ClassificationVoletsError>> {
     try {
       await this.queue.add(
-        GENERATE_CLASSIFICATION_JOB_NAME,
+        GENERATE_MOBILISATION_JOB_NAME,
         { jobId },
         { jobId }
       );
       return success({ jobId });
     } catch (error) {
       this.logger.error(
-        `Enfilement du job de classification ${jobId}: ${getErrorMessage(
-          error
-        )}`
+        `Enfilement du job de mobilisation ${jobId}: ${getErrorMessage(error)}`
       );
-      const compensated = await this.jobRepository.markFailed(
+      const compensationResult = await this.jobRepository.markFailed(
         jobId,
         "L'enfilement du job a échoué"
       );
-      if (!compensated.success) {
+      if (!compensationResult.success) {
         this.logger.error(
-          `Job ${jobId} laissé en vol : la compensation a échoué (${compensated.error})`
+          `Job ${jobId} laissé en vol : la compensation a échoué (${compensationResult.error})`
         );
       }
       return failure(ClassificationVoletsErrorEnum.CREATE_JOB_ERROR);

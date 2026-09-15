@@ -22,6 +22,8 @@ import {
   IN_FLIGHT_LEASE_MS,
 } from './models/classification-volets-job';
 import { classificationVoletsJobTable } from './models/classification-volets-job.table';
+import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
+import { collectiviteVoletGesTable } from './models/collectivite-volet-ges.table';
 
 describe('ClassificationRouter', { timeout: 30_000 }, () => {
   let app: INestApplication;
@@ -32,6 +34,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
   let editionUser: AuthenticatedUser;
   let outsiderUser: AuthenticatedUser;
   let planId: number;
+  let ficheId: number;
 
   const callerFor = (user: AuthenticatedUser) =>
     router.createCaller({ user }).plans.classificationVolets;
@@ -61,14 +64,16 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
     planId = plan.id;
 
-    const { ficheCleanup } = await createFicheAndCleanupFunction({
-      caller: fixtureCaller,
-      ficheInput: {
-        collectiviteId,
-        titre: 'Amenager des pistes cyclables',
-        axeId: planId,
-      },
-    });
+    const { ficheId: createdFicheId, ficheCleanup } =
+      await createFicheAndCleanupFunction({
+        caller: fixtureCaller,
+        ficheInput: {
+          collectiviteId,
+          titre: 'Amenager des pistes cyclables',
+          axeId: planId,
+        },
+      });
+    ficheId = createdFicheId;
 
     return async () => {
       await db.db
@@ -94,6 +99,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       .values({
         collectiviteId,
         enjeu,
+        etape: 'classification',
         createdBy: editionUser.id,
         status,
         processedBatches: 2,
@@ -113,6 +119,21 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
 
     return job.id;
+  };
+
+  const insertVolet = async (): Promise<void> => {
+    await db.db.insert(ficheActionVoletGesTable).values({
+      ficheId,
+      levierId: 'velo_transport_commun',
+      categorie: 'amenagement',
+      createdBy: editionUser.id,
+    });
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionVoletGesTable)
+        .where(eq(ficheActionVoletGesTable.ficheId, ficheId));
+    });
   };
 
   const beyondLease = (): string =>
@@ -189,6 +210,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
+        etape: 'classification',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft: {
           fiches: [],
@@ -211,6 +233,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
+        etape: 'classification',
         status: ClassificationVoletsJobStatusEnum.RUNNING,
         processedBatches: 2,
         totalBatches: 3,
@@ -281,6 +304,112 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
           enjeu: 'ges',
         })
       ).rejects.toThrowError(/déjà en cours/);
+    });
+  });
+
+  describe('enqueueMobilisation', () => {
+    it("refuse une collectivité qui n'a aucun volet classé", async () => {
+      await expect(
+        callerFor(editionUser).enqueueMobilisation({
+          collectiviteId,
+          enjeu: 'ges',
+        })
+      ).rejects.toThrowError(/aucun volet classé/);
+    });
+
+    it("cache la collectivité à un membre d'une autre collectivité", async () => {
+      await insertVolet();
+
+      await expect(
+        callerFor(outsiderUser).enqueueMobilisation({
+          collectiviteId,
+          enjeu: 'ges',
+        })
+      ).rejects.toThrowError(/n'existe pas/);
+    });
+
+    it('enfile un job de mobilisation sur une collectivité classée', async () => {
+      cleanupEnqueuedJobs();
+      await insertVolet();
+
+      const { jobId } = await callerFor(editionUser).enqueueMobilisation({
+        collectiviteId,
+        enjeu: 'ges',
+      });
+
+      const [job] = await db.db
+        .select({ etape: classificationVoletsJobTable.etape })
+        .from(classificationVoletsJobTable)
+        .where(eq(classificationVoletsJobTable.id, jobId));
+
+      expect(job.etape).toBe('mobilisation');
+    });
+
+    it("refuse une mobilisation tant qu'une classification est in-flight", async () => {
+      cleanupEnqueuedJobs();
+      await insertVolet();
+      await insertJob({ status: ClassificationVoletsJobStatusEnum.RUNNING });
+
+      await expect(
+        callerFor(editionUser).enqueueMobilisation({
+          collectiviteId,
+          enjeu: 'ges',
+        })
+      ).rejects.toThrowError(/déjà en cours/);
+    });
+  });
+
+  describe('getMobilisation', () => {
+    const insertGridRow = async (note: number): Promise<void> => {
+      await db.db.insert(collectiviteVoletGesTable).values({
+        collectiviteId,
+        levierId: 'velo_transport_commun',
+        categorie: 'amenagement',
+        note,
+        ficheIds: [ficheId],
+      });
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(collectiviteVoletGesTable)
+          .where(eq(collectiviteVoletGesTable.collectiviteId, collectiviteId));
+      });
+    };
+
+    it('rend une grille vide sur une collectivité jamais évaluée', async () => {
+      const mobilisation = await callerFor(editionUser).getMobilisation({
+        collectiviteId,
+      });
+
+      expect(mobilisation).toEqual({ collectiviteId, leviers: [] });
+    });
+
+    it('rend la note et les fiches qui l ont nourrie', async () => {
+      await insertGridRow(2);
+
+      const mobilisation = await callerFor(editionUser).getMobilisation({
+        collectiviteId,
+      });
+
+      expect(mobilisation).toEqual({
+        collectiviteId,
+        leviers: [
+          {
+            levierId: 'velo_transport_commun',
+            volets: [
+              { categorie: 'amenagement', note: 2, ficheIds: [ficheId] },
+            ],
+          },
+        ],
+      });
+    });
+
+    it("cache la grille à un membre d'une autre collectivité", async () => {
+      await insertGridRow(2);
+
+      await expect(
+        callerFor(outsiderUser).getMobilisation({ collectiviteId })
+      ).rejects.toThrowError(/n'existe pas/);
     });
   });
 

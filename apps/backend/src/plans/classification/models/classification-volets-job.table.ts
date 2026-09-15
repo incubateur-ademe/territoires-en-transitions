@@ -1,5 +1,5 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { enjeuEnumValues } from '@tet/domain/shared';
+import { enjeuEnumValues, etapeAnalyseEnumValues } from '@tet/domain/shared';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
@@ -38,6 +38,7 @@ export const classificationVoletsJobTable = pgTable(
       .notNull()
       .references(() => authUsersTable.id, { onDelete: 'cascade' }),
     enjeu: enjeuEnum('enjeu').notNull(),
+    etape: text('etape', { enum: etapeAnalyseEnumValues }).notNull(),
     status: text('status', {
       enum: classificationVoletsJobStatusValues,
     }).notNull(),

@@ -1,6 +1,7 @@
 import {
   categorieActionEnumValues,
   enjeuEnumValues,
+  etapeAnalyseEnumValues,
   levierEnumValues,
 } from '@tet/domain/shared';
 import { z } from 'zod';
@@ -36,6 +37,7 @@ const jobIdentity = {
   id: z.string().uuid(),
   collectiviteId: z.number().int().positive(),
   enjeu: z.enum(enjeuEnumValues),
+  etape: z.enum(etapeAnalyseEnumValues),
 };
 
 const inFlightStatusSchema = z.object({
@@ -51,7 +53,7 @@ const inFlightStatusSchema = z.object({
 const doneStatusSchema = z.object({
   ...jobIdentity,
   status: z.literal(ClassificationVoletsJobStatusEnum.DONE),
-  draft: classificationDraftSchema,
+  draft: classificationDraftSchema.nullable(),
 });
 
 const failedStatusSchema = z.object({

@@ -10,20 +10,24 @@ import { type ClassificationStatus } from './get-classification-status.output';
 export const toClassificationStatus = (
   progress: ClassificationProgress
 ): Result<ClassificationStatus, ClassificationVoletsError> => {
-  const { id, collectiviteId, enjeu, status } = progress;
+  const { id, collectiviteId, enjeu, etape, status } = progress;
 
   switch (status) {
-    case ClassificationVoletsJobStatusEnum.DONE:
-      if (!progress.draft) {
+    case ClassificationVoletsJobStatusEnum.DONE: {
+      const isDraftMissingOnClassification =
+        etape === 'classification' && !progress.draft;
+      if (isDraftMissingOnClassification) {
         return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
       }
       return success({
         id,
         collectiviteId,
         enjeu,
+        etape,
         status,
         draft: progress.draft,
       });
+    }
 
     case ClassificationVoletsJobStatusEnum.FAILED:
       if (!progress.error) {
@@ -33,6 +37,7 @@ export const toClassificationStatus = (
         id,
         collectiviteId,
         enjeu,
+        etape,
         status,
         error: progress.error,
       });
@@ -43,6 +48,7 @@ export const toClassificationStatus = (
         id,
         collectiviteId,
         enjeu,
+        etape,
         status,
         processedBatches: progress.processedBatches,
         totalBatches: progress.totalBatches,

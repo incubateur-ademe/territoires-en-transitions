@@ -14,15 +14,30 @@ import { GenerateClassificationService } from './generate-classification/generat
 import { GenerateClassificationWorker } from './generate-classification/generate-classification.worker';
 import { GetClassificationStatusService } from './get-classification-status/get-classification-status.service';
 import { ClassificationRouter } from './classification.router';
+import { CollectivitesCoreModule } from '@tet/backend/collectivites/collectivites-core.module';
+import { CollectiviteVoletGesRepository } from './collectivite-volet-ges.repository';
+import { EnqueueMobilisationService } from './enqueue-mobilisation/enqueue-mobilisation.service';
+import { GenerateMobilisationService } from './generate-mobilisation/generate-mobilisation.service';
+import { GenerateMobilisationWorker } from './generate-mobilisation/generate-mobilisation.worker';
+import { GetMobilisationService } from './get-mobilisation/get-mobilisation.service';
+import {
+  MOBILISATION_VOLETS_JOB_OPTIONS,
+  MOBILISATION_VOLETS_QUEUE_NAME,
+} from './mobilisation-volets.queue';
 
 @Module({
   imports: [
     LlmModule,
     TransactionModule,
     FichesModule,
+    CollectivitesCoreModule,
     BullModule.registerQueue({
       name: CLASSIFICATION_VOLETS_QUEUE_NAME,
       defaultJobOptions: CLASSIFICATION_VOLETS_JOB_OPTIONS,
+    }),
+    BullModule.registerQueue({
+      name: MOBILISATION_VOLETS_QUEUE_NAME,
+      defaultJobOptions: MOBILISATION_VOLETS_JOB_OPTIONS,
     }),
   ],
   providers: [
@@ -33,6 +48,11 @@ import { ClassificationRouter } from './classification.router';
     GetClassificationStatusService,
     ClassificationRouter,
     FicheActionVoletGesRepository,
+    CollectiviteVoletGesRepository,
+    EnqueueMobilisationService,
+    GenerateMobilisationService,
+    GenerateMobilisationWorker,
+    GetMobilisationService,
   ],
   exports: [ClassificationRouter],
 })
