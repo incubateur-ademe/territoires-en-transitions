@@ -28,6 +28,7 @@ const toProgress = ({
   id: jobId,
   collectiviteId,
   enjeu: 'ges',
+  etape: 'classification',
   status,
   processedBatches: 2,
   totalBatches: 3,

@@ -94,6 +94,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       .values({
         collectiviteId,
         enjeu,
+        etape: 'classification',
         createdBy: editionUser.id,
         status,
         processedBatches: 2,

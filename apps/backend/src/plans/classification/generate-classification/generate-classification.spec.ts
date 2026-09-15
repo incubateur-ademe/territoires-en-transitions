@@ -39,6 +39,7 @@ const toJobRow = (
   collectiviteId,
   createdBy: 'a-user',
   enjeu: 'ges',
+  etape: 'classification',
   status,
   processedBatches: 0,
   totalBatches: 0,

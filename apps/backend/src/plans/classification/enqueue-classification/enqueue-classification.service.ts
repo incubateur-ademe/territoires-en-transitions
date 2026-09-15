@@ -53,6 +53,7 @@ export class EnqueueClassificationService {
     const jobResult = await this.jobRepository.createUnlessInFlight({
       collectiviteId,
       enjeu,
+      etape: 'classification',
       createdBy: user.id,
     });
     if (!jobResult.success) {

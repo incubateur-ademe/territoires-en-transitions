@@ -93,6 +93,7 @@ describe('EnqueueClassificationService.enqueue', () => {
       createArgs: {
         collectiviteId,
         enjeu: 'ges',
+        etape: 'classification',
         createdBy: user.id,
       },
     });
