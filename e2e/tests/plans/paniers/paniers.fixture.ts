@@ -1,3 +1,4 @@
+import { Page } from '@playwright/test';
 import { panierTable } from '@tet/backend/plans/paniers/models/panier.table';
 import assert from 'assert';
 import { eq, or, sql } from 'drizzle-orm';
@@ -11,6 +12,16 @@ export const toPanierUrl = (path: string): string => {
 };
 
 const AXEPTIO_SDK_URL_PATTERN = 'https://static.axept.io/**';
+
+const USERS_GET_URL_PATTERN = '**/trpc/users.users.get**';
+
+export const failUserCollectivitesRequest = async (
+  page: Page
+): Promise<void> => {
+  await page.route(USERS_GET_URL_PATTERN, (route) =>
+    route.fulfill({ status: 500 })
+  );
+};
 
 export const toUniqueNom = (label: string): string =>
   `${label} ${crypto.randomUUID().slice(0, 8)}`;

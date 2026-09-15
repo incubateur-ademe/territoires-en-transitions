@@ -135,13 +135,18 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     await validateAudit({ databaseService, auditId: audit.id });
   }
 
-  async closeAudit(
-    collectiviteId: number,
-    referentielId: ReferentielId
-  ): Promise<void> {
+  async closeAudit({
+    collectiviteId,
+    referentielId,
+    dateFin,
+  }: {
+    collectiviteId: number;
+    referentielId: ReferentielId;
+    dateFin: Date;
+  }): Promise<void> {
     await databaseService.db
       .update(auditTable)
-      .set({ clos: true, dateFin: new Date().toISOString() })
+      .set({ clos: true, dateFin: dateFin.toISOString() })
       .where(
         and(
           eq(auditTable.collectiviteId, collectiviteId),
