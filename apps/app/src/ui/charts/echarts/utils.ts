@@ -8,6 +8,14 @@ import { EChartsOption } from './ReactECharts';
 
 const { colors } = preset.theme.extend;
 
+const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+const DAY_IN_MILLISECONDS = 24 * HOUR_IN_MILLISECONDS;
+
+// Bounds for ECharts' automatic tick selection, preserved for existing charts.
+const DEFAULT_TIME_AXIS_MIN_INTERVAL =
+  304 * DAY_IN_MILLISECONDS + 4 * HOUR_IN_MILLISECONDS;
+const DEFAULT_TIME_AXIS_MAX_INTERVAL = 3650 * DAY_IN_MILLISECONDS;
+
 // pour formater les chiffres
 const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
@@ -249,9 +257,8 @@ export const makeOption = ({
     xAxis: {
       type: 'time',
       splitLine: { show: true, lineStyle: { opacity: 0.5 } },
-      // graduation de 5 en 5 années par défaut
-      maxInterval: timeAxis?.maxInterval ?? 12 * 365 * 24 * 50 * 60 * 1000,
-      minInterval: timeAxis?.minInterval ?? 365 * 24 * 50 * 60 * 1000,
+      maxInterval: timeAxis?.maxInterval ?? DEFAULT_TIME_AXIS_MAX_INTERVAL,
+      minInterval: timeAxis?.minInterval ?? DEFAULT_TIME_AXIS_MIN_INTERVAL,
       axisLabel: {
         formatter: timeAxis?.formatter ?? '{yyyy}',
         color: colors.primary['9'],

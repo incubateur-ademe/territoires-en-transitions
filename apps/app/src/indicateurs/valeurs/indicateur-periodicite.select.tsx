@@ -4,7 +4,7 @@ import {
   type IndicateurPeriodicite,
   type IndicateurPeriodiciteMode,
 } from '@tet/domain/indicateurs';
-import { Field, Select } from '@tet/ui';
+import { Field, type Option, Select } from '@tet/ui';
 import { getIndicateurPeriodPresentation } from './indicateur-period-presentation';
 
 type Props = {
@@ -27,7 +27,7 @@ export const IndicateurPeriodiciteSelect = ({
   const customizable = canCustomizeIndicateurPeriodicite(mode);
   const defaultLabel =
     getIndicateurPeriodPresentation(periodiciteParDefaut).label;
-  const choices = [
+  const choices: Option[] = [
     {
       value: 'default',
       label: customizable
@@ -40,9 +40,11 @@ export const IndicateurPeriodiciteSelect = ({
     periodicitePersonnalisee &&
     !options.some(({ value }) => value === periodicitePersonnalisee)
   ) {
+    // Keep the saved value visible without making it a permitted choice.
     choices.push({
       value: periodicitePersonnalisee,
       label: getIndicateurPeriodPresentation(periodicitePersonnalisee).label,
+      disabled: true,
     });
   }
 

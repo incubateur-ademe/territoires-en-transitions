@@ -44,4 +44,36 @@ describe('collectivité periodicity selection', () => {
     expect(onChange).toHaveBeenCalledWith('mensuelle');
     expect(screen.getByText(/sans conversion automatique/)).toBeTruthy();
   });
+
+  it.each([
+    { label: 'Annuelle', expected: 'annuelle' },
+    { label: 'Annuelle (recommandée)', expected: null },
+  ])(
+    'displays an unavailable saved cadence as disabled and allows choosing $label',
+    ({ label, expected }) => {
+      const onChange = vi.fn();
+      render(
+        <IndicateurPeriodiciteSelect
+          mode="recommandee"
+          periodiciteParDefaut="annuelle"
+          periodicitePersonnalisee="mensuelle"
+          options={[options[0]]}
+          onChange={onChange}
+        />
+      );
+
+      expect(screen.getByText('Mensuelle')).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: 'ouvrir le menu' }));
+
+      const unavailableOption = screen.getByRole('button', {
+        name: 'Mensuelle',
+      });
+      expect(unavailableOption.hasAttribute('disabled')).toBe(true);
+      fireEvent.click(unavailableOption);
+      expect(onChange).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByRole('button', { name: label }));
+      expect(onChange).toHaveBeenCalledExactlyOnceWith(expected);
+    }
+  );
 });

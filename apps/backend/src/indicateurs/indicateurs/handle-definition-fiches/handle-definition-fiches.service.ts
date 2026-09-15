@@ -74,7 +74,7 @@ export class HandleDefinitionFichesService {
         );
         if (!access) {
           throw new ForbiddenException(
-            `Droits insuffisants pour modifier les indicateurs de l'action ${ficheId}`
+            `Droits insuffisants pour modifier les indicateurs de la fiche ${ficheId}`
           );
         }
       }
