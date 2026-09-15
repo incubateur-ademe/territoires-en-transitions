@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
-import { DocumentAttendu, PreuveComplementaire } from './Bibliotheque/types';
+import { DocumentAttendu, DocumentComplementaire } from './Bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
 import { ActionIdentity } from '../actions/use-list-actions';
 
@@ -17,7 +17,7 @@ export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
   showWarning?: boolean;
   hideIdentifier?: boolean;
   attendus?: DocumentAttendu[];
-  complementaires?: PreuveComplementaire[];
+  complementaires?: DocumentComplementaire[];
   displayInPanel?: boolean;
 }
 

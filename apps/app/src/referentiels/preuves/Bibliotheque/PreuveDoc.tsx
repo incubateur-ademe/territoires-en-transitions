@@ -3,11 +3,11 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import CarteDocument from './CarteDocument';
 import { MUTATION_ACTIONS } from './carte-document-action';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 
 export type PreuveDocProps = {
   classComment?: string;
-  preuve: Preuve;
+  preuve: DocumentRattache;
   readonly?: boolean;
   displayIdentifier?: boolean;
   duplicatedDocumentInformation?: DuplicatedDocumentInformation;

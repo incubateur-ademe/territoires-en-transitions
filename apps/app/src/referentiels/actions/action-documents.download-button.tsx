@@ -1,6 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/utils/save-blob';
-import { Fichier, Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
+import {
+  Fichier,
+  DocumentRattache,
+} from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   MesureDocumentsState,
   useListDocumentsMesure,
@@ -63,7 +66,9 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
   );
 };
 
-const flattenMesureDocuments = (documents: MesureDocumentsState): Preuve[] => {
+const flattenMesureDocuments = (
+  documents: MesureDocumentsState
+): DocumentRattache[] => {
   if (documents.status !== 'loaded') {
     return [];
   }

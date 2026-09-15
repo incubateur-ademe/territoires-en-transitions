@@ -6,8 +6,8 @@ import {
   MUTATION_ACTIONS,
 } from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
 import {
-  PreuveAudit,
-  PreuveAuditEtLabellisation,
+  DocumentAudit,
+  DocumentAuditOuLabellisation,
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -33,7 +33,7 @@ export const PreuvesLabellisation = ({
 }: {
   demandes: {
     id: string;
-    docs: PreuveAuditEtLabellisation[];
+    docs: DocumentAuditOuLabellisation[];
     info: TCycleInfo;
   }[];
 }) => {
@@ -57,7 +57,7 @@ export const PreuvesLabellisation = ({
  */
 const DocsAuditOuLabellisation = (props: {
   className?: string;
-  preuves: PreuveAuditEtLabellisation[];
+  preuves: DocumentAuditOuLabellisation[];
   info: TCycleInfo;
 }) => {
   const { className, preuves, info } = props;
@@ -78,7 +78,7 @@ const DocAuditOuLabellisation = ({
   preuve,
   info,
 }: {
-  preuve: PreuveAuditEtLabellisation;
+  preuve: DocumentAuditOuLabellisation;
   info: TCycleInfo;
 }) => {
   const { hasCollectivitePermission, hasReferentielPermission } =
@@ -122,7 +122,7 @@ const canUpdateAuditOrLabellisationPreuve = ({
   canMutateReferentiels,
   canMutateLabellisationDocuments,
 }: {
-  preuve: PreuveAuditEtLabellisation;
+  preuve: DocumentAuditOuLabellisation;
   user: UserRolesAndPermissions;
   audit: AuditEnCours | null;
   canMutateReferentiels: boolean;
@@ -177,13 +177,13 @@ const Title = (props: { info: TCycleInfo }) => {
 };
 
 // donne les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
-const isPreuveAudit = (
-  preuve: PreuveAuditEtLabellisation
-): preuve is PreuveAudit => preuve.preuveType === 'audit';
+const isDocumentAudit = (
+  preuve: DocumentAuditOuLabellisation
+): preuve is DocumentAudit => preuve.preuveType === 'audit';
 
-const getCycleInfo = (preuves: PreuveAuditEtLabellisation[]) => {
+const getCycleInfo = (preuves: DocumentAuditOuLabellisation[]) => {
   const demande = preuves.find((preuve) => preuve.demande)?.demande ?? null;
-  const audit = preuves.find(isPreuveAudit)?.audit ?? null;
+  const audit = preuves.find(isDocumentAudit)?.audit ?? null;
   const dateCycle = audit?.dateFin || audit?.dateDebut || demande?.date;
   const date = dateCycle ? new Date(dateCycle) : new Date();
   const annee = date.getFullYear();
@@ -197,7 +197,7 @@ type TCycleInfo = ReturnType<typeof getCycleInfo>;
 
 // ajoute les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
 export const addInfoToEntry = (
-  entry: [id: string, docs: PreuveAuditEtLabellisation[]]
+  entry: [id: string, docs: DocumentAuditOuLabellisation[]]
 ) => {
   const [id, docs] = entry;
   return {

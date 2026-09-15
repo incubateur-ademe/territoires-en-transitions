@@ -1,7 +1,7 @@
 import {
   DocumentAttendu,
   DocumentReglementaire,
-  PreuveComplementaire,
+  DocumentComplementaire,
 } from './types';
 
 export const preuveReglementaireNonRenseignee: DocumentReglementaire = {
@@ -125,7 +125,7 @@ export const attenduPlusieursDocuments = toAttendu([
   { ...preuveReglementaireLien, id: 13 },
 ]);
 
-export const preuveComplementaireLien: PreuveComplementaire = {
+export const preuveComplementaireLien: DocumentComplementaire = {
   preuveType: 'complementaire',
   id: 3,
   collectiviteId: 1,
@@ -144,7 +144,7 @@ export const preuveComplementaireLien: PreuveComplementaire = {
   },
 };
 
-export const preuveComplementaireFichier: PreuveComplementaire = {
+export const preuveComplementaireFichier: DocumentComplementaire = {
   preuveType: 'complementaire',
   id: 4,
   collectiviteId: 1,

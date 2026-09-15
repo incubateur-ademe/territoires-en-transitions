@@ -1,4 +1,4 @@
-import { PreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentAuditOuLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { describe, expect, test } from 'vitest';
 import { addInfoToEntry } from './PreuveLabellisation';
 import { groupeParDemande } from './groupeParDemande';
@@ -36,7 +36,7 @@ describe('groupeParDemande', () => {
   });
 });
 
-const preuves_demande1: PreuveAuditEtLabellisation[] = [
+const preuves_demande1: DocumentAuditOuLabellisation[] = [
   {
     preuveType: 'labellisation',
     id: 8,
@@ -145,7 +145,7 @@ const preuves_demande1: PreuveAuditEtLabellisation[] = [
   },
 ];
 
-const preuves_demande2: PreuveAuditEtLabellisation[] = [
+const preuves_demande2: DocumentAuditOuLabellisation[] = [
   {
     preuveType: 'labellisation',
     id: 9,
@@ -180,7 +180,7 @@ const preuves_demande2: PreuveAuditEtLabellisation[] = [
   },
 ];
 
-const preuves_audit_sans_demande: PreuveAuditEtLabellisation[] = [
+const preuves_audit_sans_demande: DocumentAuditOuLabellisation[] = [
   {
     preuveType: 'audit',
     id: 10,
@@ -213,7 +213,7 @@ const preuves_audit_sans_demande: PreuveAuditEtLabellisation[] = [
   },
 ];
 
-const closedCyclePreuves: PreuveAuditEtLabellisation[] = [
+const closedCyclePreuves: DocumentAuditOuLabellisation[] = [
   {
     preuveType: 'audit',
     id: 12,

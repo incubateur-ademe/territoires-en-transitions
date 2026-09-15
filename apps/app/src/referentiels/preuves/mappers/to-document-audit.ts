@@ -1,12 +1,12 @@
+import { Lien } from '@tet/domain/collectivites';
 import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
 import {
   Fichier,
-  PreuveAudit,
-  PreuveLien,
+  DocumentAudit,
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 
 export type AuditReportInput = Pick<
-  PreuveAudit,
+  DocumentAudit,
   | 'id'
   | 'collectiviteId'
   | 'commentaire'
@@ -17,10 +17,10 @@ export type AuditReportInput = Pick<
   | 'demande'
 > & {
   fichier: (Omit<Fichier, 'filesize'> & { filesize?: number | null }) | null;
-  lien: PreuveLien | null;
+  lien: Lien | null;
 };
 
-export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => ({
+export const toDocumentAudit = (report: AuditReportInput): DocumentAudit => ({
   ...toDocumentCollectivite({
     id: report.id,
     collectiviteId: report.collectiviteId,

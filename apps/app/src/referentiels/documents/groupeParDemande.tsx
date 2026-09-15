@@ -1,11 +1,11 @@
-import { PreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentAuditOuLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 /** Groupe les preuves du référentiel courant par id de demande ou d'audit. */
 export const groupeParDemande = (
-  preuves: PreuveAuditEtLabellisation[],
+  preuves: DocumentAuditOuLabellisation[],
   referentielId: ReferentielId
-): Record<string, PreuveAuditEtLabellisation[]> =>
+): Record<string, DocumentAuditOuLabellisation[]> =>
   preuves.reduce((dict, preuve) => {
     const audit = preuve.preuveType === 'audit' ? preuve.audit : null;
     const referentiel = preuve.demande?.referentiel || audit?.referentielId;
@@ -22,4 +22,4 @@ export const groupeParDemande = (
       ...dict,
       [id]: [...(dict[id] || []), preuve],
     };
-  }, {} as Record<string, PreuveAuditEtLabellisation[]>);
+  }, {} as Record<string, DocumentAuditOuLabellisation[]>);

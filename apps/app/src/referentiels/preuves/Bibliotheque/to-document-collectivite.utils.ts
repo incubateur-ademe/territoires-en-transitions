@@ -1,8 +1,9 @@
 import {
   DocumentCollectivite,
   DocumentCollectiviteBase,
+  Lien,
 } from '@tet/domain/collectivites';
-import { Fichier, PreuveLien } from './types';
+import { Fichier } from './types';
 
 export const toDocumentCollectivite = ({
   fichier,
@@ -10,7 +11,7 @@ export const toDocumentCollectivite = ({
   ...base
 }: DocumentCollectiviteBase & {
   fichier: Fichier | null;
-  lien: PreuveLien | null;
+  lien: Lien | null;
 }): DocumentCollectivite => {
   if (fichier) {
     return { ...base, type: 'fichier', fichier };
@@ -25,6 +26,5 @@ export const getPreuveFichier = (
   preuve: DocumentCollectivite
 ): Fichier | null => (preuve.type === 'fichier' ? preuve.fichier : null);
 
-export const getPreuveLien = (
-  preuve: DocumentCollectivite
-): PreuveLien | null => (preuve.type === 'lien' ? preuve.lien : null);
+export const getPreuveLien = (preuve: DocumentCollectivite): Lien | null =>
+  preuve.type === 'lien' ? preuve.lien : null;

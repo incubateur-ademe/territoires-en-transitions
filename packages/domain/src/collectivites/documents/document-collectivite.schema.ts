@@ -33,6 +33,3 @@ export const documentCollectiviteSchema = documentCollectiviteBaseSchema.and(
 );
 
 export type DocumentCollectivite = z.infer<typeof documentCollectiviteSchema>;
-export type DocumentCollectiviteInput = z.input<
-  typeof documentCollectiviteSchema
->;

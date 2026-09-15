@@ -1,5 +1,5 @@
 import { match } from 'ts-pattern';
-import { PreuveType } from './types';
+import { DocumentRattache } from './types';
 
 export type CarteDocumentAction = 'edit' | 'comment' | 'replace' | 'delete';
 
@@ -11,10 +11,11 @@ export const MUTATION_ACTIONS: readonly CarteDocumentAction[] = [
 
 export const isActionCarriedBy = (
   action: CarteDocumentAction,
-  preuveType: PreuveType
+  { preuveType, type }: Pick<DocumentRattache, 'preuveType' | 'type'>
 ): boolean =>
   match(action)
     .with('replace', () => preuveType === 'audit')
     .with('delete', () => preuveType !== 'audit')
-    .with('edit', 'comment', () => true)
+    .with('edit', () => type !== 'fichierManquant')
+    .with('comment', () => true)
     .exhaustive();

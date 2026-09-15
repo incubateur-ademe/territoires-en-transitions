@@ -2,12 +2,11 @@ import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { getPreuveLien } from './to-document-collectivite.utils';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 import { useUpdatePreuveLien } from './useEditPreuve';
 
 export type EditerLienProps = {
-  preuve: Pick<Preuve, 'id' | 'collectiviteId' | 'preuveType'> &
-    DocumentCollectivite;
+  preuve: DocumentCollectivite & Pick<DocumentRattache, 'preuveType'>;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };

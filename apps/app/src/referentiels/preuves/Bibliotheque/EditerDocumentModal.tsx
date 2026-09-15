@@ -1,7 +1,8 @@
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
-import { Fichier, PreuveType } from './types';
+import { PreuveType } from '@tet/domain/collectivites';
+import { Fichier } from './types';
 import { useUpdateBibliothequeFichier } from './useEditPreuve';
 import { useEditFilenameState } from './useEditState';
 

@@ -1,15 +1,12 @@
-import { documentCollectiviteSchema } from '@tet/domain/collectivites';
+import {
+  documentCollectiviteSchema,
+  preuveReglementaireDefinitionSchema,
+} from '@tet/domain/collectivites';
 import z from 'zod';
 
 const mesureSchema = z.object({
   actionId: z.string(),
   identifiant: z.string(),
-});
-
-const attenduDefinitionSchema = z.object({
-  id: z.string(),
-  nom: z.string(),
-  description: z.string(),
 });
 
 const documentMesureSchema = documentCollectiviteSchema.and(
@@ -19,7 +16,7 @@ const documentMesureSchema = documentCollectiviteSchema.and(
 const documentReglementaireSchema = documentMesureSchema.and(
   z.object({
     preuveType: z.literal('reglementaire'),
-    preuveReglementaire: attenduDefinitionSchema,
+    preuveReglementaire: preuveReglementaireDefinitionSchema,
   })
 );
 
@@ -28,7 +25,7 @@ const documentComplementaireSchema = documentMesureSchema.and(
 );
 
 const attenduSchema = z.object({
-  preuveReglementaire: attenduDefinitionSchema,
+  preuveReglementaire: preuveReglementaireDefinitionSchema,
   action: mesureSchema,
   documents: z.array(documentReglementaireSchema),
 });

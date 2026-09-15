@@ -28,7 +28,7 @@ import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
 import MenuCarteDocument from './MenuCarteDocument';
 import { useOpenPreuve } from './use-open-preuve';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
 import { getPreuveFichier } from './to-document-collectivite.utils';
@@ -41,7 +41,7 @@ const TitreDocument = ({
   document,
   onOuvrir,
 }: {
-  document: Preuve;
+  document: DocumentRattache;
   onOuvrir: () => void;
 }) => {
   if (document.type === 'fichierManquant') {
@@ -70,7 +70,7 @@ const EditPreuveModal = ({
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  preuve: Preuve;
+  preuve: DocumentRattache;
 }) => {
   const fichier = getPreuveFichier(preuve);
   if (!fichier) {
@@ -110,7 +110,7 @@ const ReplaceAuditReportModal = ({
 );
 
 type CarteDocumentProps = {
-  document: Preuve;
+  document: DocumentRattache;
   allowedActions: readonly CarteDocumentAction[];
   displayIdentifier?: boolean;
   classComment?: string;
@@ -140,7 +140,7 @@ const CarteDocument = ({
   const replaceAuditReport = useReplaceAuditReportFile(document.collectiviteId);
 
   const shownActions = allowedActions.filter((allowedAction) =>
-    isActionCarriedBy(allowedAction, document.preuveType)
+    isActionCarriedBy(allowedAction, document)
   );
   const isShown = (action: CarteDocumentAction) =>
     shownActions.includes(action);

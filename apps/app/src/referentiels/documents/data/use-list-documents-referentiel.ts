@@ -4,32 +4,32 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import {
   DocumentCollectivite,
   DocumentCollectiviteBase,
+  Lien,
 } from '@tet/domain/collectivites';
 import { toDocumentCollectivite } from '../../preuves/Bibliotheque/to-document-collectivite.utils';
 import {
   Fichier,
-  PreuveAudit,
-  PreuveLabellisation,
-  PreuveLien,
-  PreuveRapport,
+  DocumentAudit,
+  DocumentLabellisation,
+  DocumentRapport,
 } from '../../preuves/Bibliotheque/types';
 
 type DocumentLegacy = DocumentCollectiviteBase & {
   fichier: Fichier | null;
-  lien: PreuveLien | null;
+  lien: Lien | null;
 };
 
-const toPreuve = <Depot extends DocumentLegacy>(
+const toDocumentRattache = <Depot extends DocumentLegacy>(
   depot: Depot
-): Omit<Depot, 'fichier' | 'lien'> & DocumentCollectivite => ({
-  ...depot,
-  ...toDocumentCollectivite(depot),
-});
+): Omit<Depot, 'fichier' | 'lien'> & DocumentCollectivite => {
+  const { fichier: _fichier, lien: _lien, ...reste } = depot;
+  return { ...reste, ...toDocumentCollectivite(depot) };
+};
 
 type ReferentielDocuments = {
-  labellisation: PreuveLabellisation[];
-  audit: PreuveAudit[];
-  rapport: PreuveRapport[];
+  labellisation: DocumentLabellisation[];
+  audit: DocumentAudit[];
+  rapport: DocumentRapport[];
 };
 
 type ReferentielDocumentsQuery =
@@ -57,9 +57,9 @@ export const useListDocumentsReferentiel = ({
     return {
       status: 'loaded',
       documents: {
-        labellisation: data.labellisation.map(toPreuve),
-        audit: data.audit.map(toPreuve),
-        rapport: data.rapport.map(toPreuve),
+        labellisation: data.labellisation.map(toDocumentRattache),
+        audit: data.audit.map(toDocumentRattache),
+        rapport: data.rapport.map(toDocumentRattache),
       },
     };
   }
