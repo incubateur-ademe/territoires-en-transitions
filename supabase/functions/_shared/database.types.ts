@@ -16822,16 +16822,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      mes_collectivites: {
-        Row: {
-          access_restreint: boolean | null;
-          collectivite_id: number | null;
-          est_auditeur: boolean | null;
-          niveau_acces: Database['public']['Enums']['niveau_acces'] | null;
-          nom: string | null;
-        };
-        Relationships: [];
-      };
       named_collectivite: {
         Row: {
           collectivite_id: number | null;
