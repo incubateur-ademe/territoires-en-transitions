@@ -34,7 +34,7 @@ export class GetMobilisationService {
 
     const gridResult = await this.gridRepository.getGrid(collectiviteId);
     if (!gridResult.success) {
-      return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
+      return failure(ClassificationVoletsErrorEnum.GET_MOBILISATION_ERROR);
     }
 
     return success({ collectiviteId, leviers: gridResult.data });

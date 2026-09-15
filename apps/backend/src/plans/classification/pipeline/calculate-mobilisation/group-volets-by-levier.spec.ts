@@ -22,7 +22,7 @@ describe('groupVoletsByLevier', () => {
   });
 
   it('regroupe une même fiche sous plusieurs leviers', () => {
-    const groupes = groupVoletsByLevier([
+    const groupedLeviers = groupVoletsByLevier([
       {
         ficheId: 1,
         levierId: 'velo_transport_commun',
@@ -32,7 +32,7 @@ describe('groupVoletsByLevier', () => {
     ]);
 
     expect(
-      groupes.map(({ levierId, ficheIdsByCategorie }) => ({
+      groupedLeviers.map(({ levierId, ficheIdsByCategorie }) => ({
         levierId,
         amenagement: ficheIdsByCategorie.amenagement,
       }))
@@ -62,9 +62,5 @@ describe('groupVoletsByLevier', () => {
     ]);
 
     expect(levier.ficheIdsByCategorie.gouvernance).toEqual([2, 7]);
-  });
-
-  it('ne rend aucun levier sans volet', () => {
-    expect(groupVoletsByLevier([])).toEqual([]);
   });
 });

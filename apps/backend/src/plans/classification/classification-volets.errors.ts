@@ -10,6 +10,7 @@ export const ClassificationVoletsSpecificErrors = [
   'COLLECTIVITE_NOT_FOUND',
   'NO_FICHE_TO_CLASSIFY',
   'NO_VOLET_TO_SCORE',
+  'GET_MOBILISATION_ERROR',
 ] as const;
 
 export type ClassificationVoletsSpecificError =

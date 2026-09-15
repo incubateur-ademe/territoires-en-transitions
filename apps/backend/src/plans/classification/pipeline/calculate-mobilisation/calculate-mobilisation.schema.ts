@@ -16,6 +16,4 @@ export const mobilisationResponseSchema = z.object({
   '6': noteSchema,
 });
 
-export type MobilisationResponse = z.infer<typeof mobilisationResponseSchema>;
-
 export type Note = z.infer<typeof noteSchema>;

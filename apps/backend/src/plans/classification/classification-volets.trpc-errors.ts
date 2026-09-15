@@ -33,6 +33,10 @@ export const classificationVoletsErrorConfig: TrpcErrorHandlerConfig<Classificat
         code: 'NOT_FOUND',
         message: "La collectivité demandée n'existe pas",
       },
+      GET_MOBILISATION_ERROR: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'La lecture de la mobilisation a échoué',
+      },
       NO_VOLET_TO_SCORE: {
         code: 'BAD_REQUEST',
         message:

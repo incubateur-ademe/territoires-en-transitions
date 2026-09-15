@@ -14,9 +14,9 @@ export const toClassificationStatus = (
 
   switch (status) {
     case ClassificationVoletsJobStatusEnum.DONE: {
-      const classificationSansDraft =
+      const isDraftMissingOnClassification =
         etape === 'classification' && !progress.draft;
-      if (classificationSansDraft) {
+      if (isDraftMissingOnClassification) {
         return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
       }
       return success({

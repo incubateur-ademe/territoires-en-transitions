@@ -225,12 +225,12 @@ export class ClassificationVoletsJobRepository {
 
   async markDone({
     id,
-    draft = null,
+    draft,
     tokenUsage,
     tx,
   }: {
     id: string;
-    draft?: ClassificationDraft | null;
+    draft: ClassificationDraft | null;
     tokenUsage: TokenUsage;
     tx?: Transaction;
   }): Promise<Result<void, ClassificationVoletsError>> {

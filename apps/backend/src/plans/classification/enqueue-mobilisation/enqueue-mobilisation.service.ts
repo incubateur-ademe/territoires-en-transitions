@@ -44,7 +44,7 @@ export class EnqueueMobilisationService {
     const hasVoletsResult =
       await this.ficheVoletRepository.hasVoletsOfCollectivite(collectiviteId);
     if (!hasVoletsResult.success) {
-      return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
+      return failure(ClassificationVoletsErrorEnum.GET_MOBILISATION_ERROR);
     }
     if (!hasVoletsResult.data) {
       return failure(ClassificationVoletsErrorEnum.NO_VOLET_TO_SCORE);
@@ -90,13 +90,13 @@ export class EnqueueMobilisationService {
       this.logger.error(
         `Enfilement du job de mobilisation ${jobId}: ${getErrorMessage(error)}`
       );
-      const compensated = await this.jobRepository.markFailed(
+      const compensationResult = await this.jobRepository.markFailed(
         jobId,
         "L'enfilement du job a échoué"
       );
-      if (!compensated.success) {
+      if (!compensationResult.success) {
         this.logger.error(
-          `Job ${jobId} laissé en vol : la compensation a échoué (${compensated.error})`
+          `Job ${jobId} laissé en vol : la compensation a échoué (${compensationResult.error})`
         );
       }
       return failure(ClassificationVoletsErrorEnum.CREATE_JOB_ERROR);

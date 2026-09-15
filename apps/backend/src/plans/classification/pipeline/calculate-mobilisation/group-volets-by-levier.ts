@@ -1,4 +1,5 @@
 import { CategorieAction, LevierId } from '@tet/domain/shared';
+import { uniq } from 'es-toolkit';
 
 export type FicheVolet = {
   ficheId: number;
@@ -21,7 +22,7 @@ const toEmptyCategories = (): Record<CategorieAction, number[]> => ({
 });
 
 const sortedUnique = (ficheIds: number[]): number[] =>
-  [...new Set(ficheIds)].sort((a, b) => a - b);
+  uniq(ficheIds).sort((a, b) => a - b);
 
 const toSortedCategories = (
   categories: Record<CategorieAction, number[]>

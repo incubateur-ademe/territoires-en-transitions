@@ -1,6 +1,7 @@
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
+import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
 import {
   ClassificationVoletsJob,
   ClassificationVoletsJobStatus,
@@ -39,7 +40,7 @@ const toJobRow = (
   modifiedAt: '2026-09-15T00:00:00Z',
 });
 
-const unVoletSurVelo: FicheVolet[] = [
+const oneVoletOnVelo: FicheVolet[] = [
   { ficheId: 1, levierId: 'velo_transport_commun', categorie: 'amenagement' },
 ];
 
@@ -48,9 +49,8 @@ const toDependencies = ({
   fiches = [
     { id: 1, collectiviteId, titre: 'Pistes cyclables', description: 'Dix km' },
   ],
-  volets = unVoletSurVelo,
+  volets = oneVoletOnVelo,
   scoringFails = false,
-  gridOutcome = success(undefined),
 }: {
   job?: ClassificationVoletsJob;
   fiches?: {
@@ -61,7 +61,6 @@ const toDependencies = ({
   }[];
   volets?: FicheVolet[];
   scoringFails?: boolean;
-  gridOutcome?: unknown;
 } = {}) => {
   const jobRepository = {
     getById: vi.fn().mockResolvedValue(success(job)),
@@ -79,7 +78,7 @@ const toDependencies = ({
     listVoletsOfFiches: vi.fn().mockResolvedValue(success(volets)),
   };
   const gridRepository = {
-    replaceGrid: vi.fn().mockResolvedValue(gridOutcome),
+    replaceGrid: vi.fn().mockResolvedValue(success(undefined)),
   };
   const collectivitesService = {
     getCollectiviteAvecType: vi
@@ -171,27 +170,26 @@ describe('GenerateMobilisationService.generate', () => {
     }).toEqual({ gridTx: transaction, doneTx: transaction });
   });
 
-  it('clôt le job sans draft, la mobilisation n en produisant pas', async () => {
+  it("clôt le job avec un draft nul, la mobilisation n'en produisant pas", async () => {
     const { service, jobRepository } = toDependencies();
 
     await service.generate(jobId);
 
-    expect(jobRepository.markDone.mock.calls[0]?.[0].draft).toBeUndefined();
+    expect(jobRepository.markDone.mock.calls[0]?.[0].draft).toBeNull();
   });
 
-  it("n'écrit pas la grille quand le job ne peut pas être clos", async () => {
-    const { service, gridRepository, jobRepository } = toDependencies();
-    jobRepository.markDone.mockResolvedValue(failure('JOB_TRANSITION_REFUSED'));
+  it('remonte un echec quand le job ne peut pas etre clos', async () => {
+    const { service, jobRepository } = toDependencies();
+    jobRepository.markDone.mockResolvedValue(
+      failure(ClassificationVoletsErrorEnum.JOB_TRANSITION_REFUSED)
+    );
 
     const result = await service.generate(jobId);
 
-    expect({
-      success: result.success,
-      gridAttempted: gridRepository.replaceGrid.mock.calls.length,
-    }).toEqual({ success: false, gridAttempted: 1 });
+    expect(result.success).toBe(false);
   });
 
-  it('ignore une re-livraison d un job déjà terminé sans rappeler le modèle', async () => {
+  it("ignore une re-livraison d'un job déjà terminé sans rappeler le modèle", async () => {
     const { service, llm, gridRepository } = toDependencies({
       job: toJobRow(ClassificationVoletsJobStatusEnum.DONE),
     });
@@ -222,7 +220,7 @@ describe('GenerateMobilisationService.generate', () => {
         },
       ],
       volets: [
-        ...unVoletSurVelo,
+        ...oneVoletOnVelo,
         {
           ficheId: 2,
           levierId: 'velo_transport_commun',

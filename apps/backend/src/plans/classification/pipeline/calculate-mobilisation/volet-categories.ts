@@ -11,8 +11,15 @@ export const CATEGORIE_LABELS: Record<CategorieAction, string> = {
 
 export const CATEGORIES_IN_PROMPT_ORDER = categorieActionEnumValues;
 
-export const toCategorieRank = (categorie: CategorieAction): number =>
-  CATEGORIES_IN_PROMPT_ORDER.indexOf(categorie) + 1;
+export const CATEGORIE_RANKS = {
+  amenagement: '1',
+  planification: '2',
+  financement: '3',
+  gouvernance: '4',
+  exemplarite: '5',
+  sensibilisation: '6',
+} as const satisfies Record<CategorieAction, string>;
 
-export const fromCategorieRank = (rank: number): CategorieAction | undefined =>
-  CATEGORIES_IN_PROMPT_ORDER[rank - 1];
+export const toCategorieRank = (
+  categorie: CategorieAction
+): (typeof CATEGORIE_RANKS)[CategorieAction] => CATEGORIE_RANKS[categorie];

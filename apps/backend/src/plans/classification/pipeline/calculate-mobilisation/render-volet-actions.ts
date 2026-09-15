@@ -20,6 +20,28 @@ export type FicheToScore = {
   description: string | null;
 };
 
+export const resolveFichesByCategorie = ({
+  ficheIdsByCategorie,
+  fichesById,
+}: {
+  ficheIdsByCategorie: Record<CategorieAction, number[]>;
+  fichesById: Map<number, FicheToScore>;
+}): Record<CategorieAction, FicheToScore[]> => {
+  const resolve = (categorie: CategorieAction): FicheToScore[] =>
+    ficheIdsByCategorie[categorie]
+      .map((ficheId) => fichesById.get(ficheId))
+      .filter((fiche): fiche is FicheToScore => fiche !== undefined);
+
+  return {
+    amenagement: resolve('amenagement'),
+    planification: resolve('planification'),
+    financement: resolve('financement'),
+    gouvernance: resolve('gouvernance'),
+    exemplarite: resolve('exemplarite'),
+    sensibilisation: resolve('sensibilisation'),
+  };
+};
+
 const renderFiche = ({ ficheId, titre, description }: FicheToScore): string => {
   const renderedTitre = truncate(sanitize(titre), MAX_TITRE_LENGTH);
   const renderedDescription = truncate(
@@ -32,17 +54,11 @@ const renderFiche = ({ ficheId, titre, description }: FicheToScore): string => {
     : `${ficheId} | ${renderedTitre}`;
 };
 
-export const renderVoletActions = ({
-  ficheIdsByCategorie,
-  fichesById,
-}: {
-  ficheIdsByCategorie: Record<CategorieAction, number[]>;
-  fichesById: Map<number, FicheToScore>;
-}): string =>
+export const renderVoletActions = (
+  fichesByCategorie: Record<CategorieAction, FicheToScore[]>
+): string =>
   CATEGORIES_IN_PROMPT_ORDER.flatMap((categorie) => {
-    const fiches = ficheIdsByCategorie[categorie]
-      .map((ficheId) => fichesById.get(ficheId))
-      .filter((fiche): fiche is FicheToScore => fiche !== undefined);
+    const fiches = fichesByCategorie[categorie];
 
     return [
       `Catégorie ${toCategorieRank(categorie)} — ${

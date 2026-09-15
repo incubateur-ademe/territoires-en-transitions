@@ -4,7 +4,7 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { sumTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -32,22 +32,6 @@ export type GenerateMobilisationError =
   | { kind: 'interrupted'; jobId: string; message: string };
 
 type PersistFailure = { step: 'replace_grid' | 'mark_done'; cause: string };
-
-const sumTokens = (usages: TokenUsage[]): TokenUsage =>
-  usages.reduce(
-    (total, tokens) => ({
-      promptTokens: total.promptTokens + tokens.promptTokens,
-      candidatesTokens: total.candidatesTokens + tokens.candidatesTokens,
-      thoughtsTokens: total.thoughtsTokens + tokens.thoughtsTokens,
-      totalTokens: total.totalTokens + tokens.totalTokens,
-    }),
-    {
-      promptTokens: 0,
-      candidatesTokens: 0,
-      thoughtsTokens: 0,
-      totalTokens: 0,
-    }
-  );
 
 @Injectable()
 export class GenerateMobilisationService {
@@ -167,7 +151,7 @@ export class GenerateMobilisationService {
         ? [{ levierId: outcome.data.levierId, volets: outcome.data.volets }]
         : []
     );
-    const tokens = sumTokens(
+    const tokens = sumTokenUsage(
       outcomes.flatMap((outcome) =>
         outcome.success ? [outcome.data.tokens] : []
       )
@@ -191,6 +175,7 @@ export class GenerateMobilisationService {
 
       const doneResult = await this.jobRepository.markDone({
         id: jobId,
+        draft: null,
         tokenUsage: tokens,
         tx,
       });

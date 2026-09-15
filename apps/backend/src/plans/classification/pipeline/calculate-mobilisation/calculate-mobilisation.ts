@@ -13,7 +13,11 @@ import {
   Note,
 } from './calculate-mobilisation.schema';
 import { LevierVolets } from './group-volets-by-levier';
-import { FicheToScore, renderVoletActions } from './render-volet-actions';
+import {
+  FicheToScore,
+  renderVoletActions,
+  resolveFichesByCategorie,
+} from './render-volet-actions';
 import {
   CATEGORIES_IN_PROMPT_ORDER,
   toCategorieRank,
@@ -41,7 +45,7 @@ export type CalculateMobilisationInput = {
   signal?: AbortSignal;
 };
 
-export const POPULATION_INCONNUE = 'inconnue';
+export const UNKNOWN_POPULATION_LABEL = 'inconnue';
 
 export const calculateMobilisation = async (
   llm: Pick<LlmService, 'generateStructured'>,
@@ -55,15 +59,20 @@ export const calculateMobilisation = async (
 ): Promise<Result<LevierMobilisation, LlmError>> => {
   const { levierId, ficheIdsByCategorie } = levierVolets;
 
+  const fichesByCategorie = resolveFichesByCategorie({
+    ficheIdsByCategorie,
+    fichesById,
+  });
+
+  const populationLabel =
+    population === null ? UNKNOWN_POPULATION_LABEL : `${population}`;
+
   const completion = await llm.generateStructured({
     prompt: generatePrompt(mobilisationPrompt, {
       collectiviteNom,
-      population: population === null ? POPULATION_INCONNUE : `${population}`,
+      population: populationLabel,
       levier: LEVIER_NOM_BY_ID[levierId],
-      actionsParCategorie: renderVoletActions({
-        ficheIdsByCategorie,
-        fichesById,
-      }),
+      actionsParCategorie: renderVoletActions(fichesByCategorie),
     }),
     systemInstruction: MOBILISATION_SYSTEM_INSTRUCTION,
     schema: mobilisationResponseSchema,
@@ -79,13 +88,13 @@ export const calculateMobilisation = async (
   return success({
     levierId,
     volets: CATEGORIES_IN_PROMPT_ORDER.map((categorie) => {
-      const ficheIds = ficheIdsByCategorie[categorie];
-      const rank = `${toCategorieRank(categorie)}` as keyof typeof notes;
+      const fiches = fichesByCategorie[categorie];
+      const isCategorieEmpty = fiches.length === 0;
 
       return {
         categorie,
-        note: ficheIds.length === 0 ? 0 : notes[rank],
-        ficheIds,
+        note: isCategorieEmpty ? 0 : notes[toCategorieRank(categorie)],
+        ficheIds: fiches.map(({ ficheId }) => ficheId),
       };
     }),
     tokens: completion.data.tokens,
