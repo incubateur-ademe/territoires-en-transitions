@@ -234,7 +234,7 @@ services:
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:
     profiles: [ supabase ]
-    image: supabase/storage-api:v1.67.13
+    image: supabase/storage-api:v1.77.0
     depends_on:
       db:
         condition: service_healthy

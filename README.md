@@ -214,6 +214,17 @@ make db-shell           # psql dans la base locale
 
 `make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés. À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
 
+Pour remplacer les données locales par un backup de production, depuis le checkout principal et sur une base déjà initialisée avec `make db-init` :
+
+```shell
+make db-restore-local-from-prod-backup                 # backup du jour (UTC), depuis S3
+make db-restore-local-from-prod-backup d=latest        # dernier backup disponible
+make db-restore-local-from-prod-backup d=2026-01-01    # date précise
+make db-restore-local-from-prod-backup d='/tmp/mon backup.dump'
+```
+
+Cette commande utilise sur l'hôte `psql`, `pg_restore` (version compatible avec le dump), `yq` et, pour S3, [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions) (`aws`). Les identifiants `BACKUP_*` du `.env` racine sont déchiffrés grâce à `.env.keys`. Elle démarre Auth et Storage pour appliquer leurs migrations, puis vérifie les outils requis, la présence des tables et la lecture de l'archive avant de vider les tables configurées. Elle restaure ensuite les données, recale les séquences et nettoie les colonnes sensibles. Les migrations métier ont déjà été appliquées lors du `make db-init` préalable : inutile de le relancer si la base est à jour.
+
 En mode Docker, les dépendances vivent dans le volume `node-modules`, réinstallées incrémentalement par le service `deps` à chaque `make up` — après un changement de `pnpm-lock.yaml`, un simple `make up` suffit donc.
 
 `make up` est optimisé pour être rejoué en boucle : il ne redemande pas les composants (la sélection est mémorisée dans `.env.local`) et ne reconstruit rien qui n'ait changé. Ses options couvrent les cas restants :
