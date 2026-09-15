@@ -1,5 +1,5 @@
 import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
-import { PreuveAnnexe } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentAnnexe } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { StoredFile } from '@tet/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -31,7 +31,7 @@ const toAnnexeFichier = (annexe: AnnexeDocument): StoredFile | null => {
   };
 };
 
-export function annexeDocumentToPreuve(annexe: AnnexeDocument): PreuveAnnexe {
+export function toDocumentAnnexe(annexe: AnnexeDocument): DocumentAnnexe {
   return {
     ...toDocumentCollectivite({
       id: annexe.id,
@@ -62,7 +62,7 @@ export const useAnnexesFicheAction = (
       },
       {
         enabled: !!ficheId,
-        select: (annexes) => annexes.map(annexeDocumentToPreuve),
+        select: (annexes) => annexes.map(toDocumentAnnexe),
       }
     )
   );

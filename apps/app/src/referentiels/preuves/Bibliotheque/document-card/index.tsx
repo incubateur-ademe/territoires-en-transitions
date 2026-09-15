@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Card, Notification, Tooltip } from '@tet/ui';
 import { ElementType, JSX, ReactNode, useState } from 'react';
 import { getDocumentFichier } from '../to-document-collectivite.utils';
-import { Preuve } from '../types';
+import { DocumentRattache } from '../types';
 import { useEditState } from '../use-edit-state';
 import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
 import { useOpenPreuve } from '../use-open-preuve';
@@ -21,7 +21,7 @@ import { OpenedDocumentModal } from './opened-modal';
 
 const CHILDREN = [Actions, Duplicate, Identifier];
 
-const getVisitDate = (document: Preuve): string | null =>
+const getVisitDate = (document: DocumentRattache): string | null =>
   document.preuveType === 'rapport' ? document.rapport.date : null;
 
 type DocumentBadgeProps = {
@@ -43,7 +43,7 @@ const DocumentBadge = ({
 );
 
 type DocumentCardProps = {
-  document: Preuve;
+  document: DocumentRattache;
   children?: ReactNode;
 };
 

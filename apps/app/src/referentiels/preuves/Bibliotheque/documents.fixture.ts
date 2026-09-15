@@ -2,7 +2,7 @@ import { toDocumentHash } from '@tet/domain/collectivites';
 import {
   DocumentAttendu,
   DocumentReglementaire,
-  PreuveComplementaire,
+  DocumentComplementaire,
 } from './types';
 
 export const preuveReglementaireNonRenseignee: DocumentReglementaire = {
@@ -22,7 +22,7 @@ export const preuveReglementaireNonRenseignee: DocumentReglementaire = {
     id: 'pcaet_deliberation',
     nom: "Délibération d'engagement dans la Convention des Maires",
     description:
-      'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire Preuve identique à la 1.1.1.3',
+      'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire DocumentRattache identique à la 1.1.1.3',
   },
 };
 
@@ -47,7 +47,7 @@ export const preuveReglementaireLien: DocumentReglementaire = {
     id: 'agenda',
     nom: 'Agenda 21 / Agenda 2030',
     description:
-      'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire Preuve identique à la 1.1.1.3',
+      'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire DocumentRattache identique à la 1.1.1.3',
   },
 };
 
@@ -103,7 +103,7 @@ export const preuveReglementaireFichier: DocumentReglementaire = {
     id: 'etude_vulnerabilite',
     nom: 'Etude de vulnérabilité au changement climatique',
     description:
-      'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire Preuve identique à la 1.1.1.3',
+      'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire DocumentRattache identique à la 1.1.1.3',
   },
 };
 
@@ -128,7 +128,7 @@ export const attenduPlusieursDocuments = toAttendu([
   { ...preuveReglementaireLien, id: 13 },
 ]);
 
-export const preuveComplementaireLien: PreuveComplementaire = {
+export const preuveComplementaireLien: DocumentComplementaire = {
   preuveType: 'complementaire',
   id: 3,
   collectiviteId: 1,
@@ -147,7 +147,7 @@ export const preuveComplementaireLien: PreuveComplementaire = {
   },
 };
 
-export const preuveComplementaireFichier: PreuveComplementaire = {
+export const preuveComplementaireFichier: DocumentComplementaire = {
   preuveType: 'complementaire',
   id: 4,
   collectiviteId: 1,

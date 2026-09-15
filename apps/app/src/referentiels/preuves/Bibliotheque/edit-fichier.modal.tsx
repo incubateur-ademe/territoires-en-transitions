@@ -2,8 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
-import { StoredFile } from '@tet/domain/collectivites';
-import { PreuveType } from './types';
+import { PreuveType, StoredFile } from '@tet/domain/collectivites';
 import { useUpdateBibliothequeFichier } from './use-edit-preuve';
 import { useEditFilenameState } from './use-edit-state';
 

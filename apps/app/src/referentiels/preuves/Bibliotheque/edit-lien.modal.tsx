@@ -2,11 +2,13 @@ import { appLabels } from '@/app/labels/catalog';
 import { Lien } from '@tet/domain/collectivites';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 import { useUpdatePreuveLien } from './use-edit-preuve';
 
 export type EditLienModalProps = {
-  preuve: Pick<Preuve, 'id' | 'collectiviteId' | 'preuveType'> & { lien: Lien };
+  preuve: Pick<DocumentRattache, 'id' | 'collectiviteId' | 'preuveType'> & {
+    lien: Lien;
+  };
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };

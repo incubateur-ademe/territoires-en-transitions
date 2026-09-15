@@ -13,7 +13,11 @@ import {
   preuveReglementaireLien,
   preuveReglementaireNonRenseignee,
 } from '../documents.fixture';
-import { DocumentReglementaire, PreuveAudit, PreuveRapport } from '../types';
+import {
+  DocumentAudit,
+  DocumentRapport,
+  DocumentReglementaire,
+} from '../types';
 
 const { openPreuve, removePreuve, updateCommentaire } = vi.hoisted(() => ({
   openPreuve: vi.fn(),
@@ -108,7 +112,7 @@ const fichierConfidentiel: DocumentReglementaire = {
 const COMMENTAIRE_LONG =
   'Ce commentaire depasse cent soixante caracteres. '.repeat(5);
 
-const documentAudit: PreuveAudit = {
+const documentAudit: DocumentAudit = {
   preuveType: 'audit',
   id: 5,
   collectiviteId: 1,
@@ -139,7 +143,7 @@ const documentAudit: PreuveAudit = {
   },
 };
 
-const documentRapport: PreuveRapport = {
+const documentRapport: DocumentRapport = {
   preuveType: 'rapport',
   id: 6,
   collectiviteId: 1,

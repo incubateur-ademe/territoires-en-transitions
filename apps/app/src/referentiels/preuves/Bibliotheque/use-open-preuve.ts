@@ -1,16 +1,16 @@
 import { useDownloadDocument } from '../data/use-download-document';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 
 export const useOpenPreuve = ({
   collectiviteId,
 }: {
   collectiviteId: number;
-}): ((preuve: Preuve) => void) => {
+}): ((preuve: DocumentRattache) => void) => {
   const { mutate: downloadDocument, isPending } = useDownloadDocument({
     collectiviteId,
   });
 
-  return (preuve: Preuve): void => {
+  return (preuve: DocumentRattache): void => {
     if (preuve.type === 'fichier' && !isPending) {
       downloadDocument(preuve.fichier.id);
       return;

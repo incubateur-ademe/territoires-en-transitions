@@ -3,13 +3,13 @@ import { appLabels } from '@/app/labels/catalog';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import { Preuve } from '../types';
+import { DocumentRattache } from '../types';
 
 const EditDocumentButton = ({
   document,
   onEdit,
 }: {
-  document: Pick<Preuve, 'preuveType'> & DocumentCollectivite;
+  document: DocumentCollectivite & Pick<DocumentRattache, 'preuveType'>;
   onEdit: () => void;
 }) => {
   const title =
@@ -57,7 +57,7 @@ type DocumentCardActions = {
 };
 
 type DocumentCardMenuProps = {
-  document: Pick<Preuve, 'preuveType'> & DocumentCollectivite;
+  document: DocumentCollectivite & Pick<DocumentRattache, 'preuveType'>;
   className?: string;
   actions: DocumentCardActions;
 };

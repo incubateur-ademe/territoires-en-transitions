@@ -3,13 +3,13 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import { DocumentCard } from './document-card';
 import {
+  DocumentComplementaire,
+  DocumentRapport,
   DocumentReglementaire,
-  PreuveComplementaire,
-  PreuveRapport,
 } from './types';
 
 export type ReferentielDocumentCardProps = {
-  preuve: DocumentReglementaire | PreuveComplementaire | PreuveRapport;
+  preuve: DocumentReglementaire | DocumentComplementaire | DocumentRapport;
   readonly?: boolean;
   displayIdentifier?: boolean;
   duplicatedDocumentInformation?: DuplicatedDocumentInformation;

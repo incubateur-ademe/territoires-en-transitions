@@ -9,14 +9,14 @@ import type { DuplicatedDocumentInformation } from '../../duplicated-document-st
 import { getAuthorAndDate, getFormattedTitle } from '../document-label.utils';
 import { DuplicatedDocumentAlert } from '../duplicated-document.alert';
 import { EditStateInput } from '../edit-state.input';
-import { Preuve } from '../types';
+import { DocumentRattache } from '../types';
 import { EditState } from '../use-edit-state';
 
 export const Title = ({
   document,
   onOpen,
 }: {
-  document: Preuve;
+  document: DocumentRattache;
   onOpen: () => void;
 }): JSX.Element => {
   if (document.type === 'fichierManquant') {
@@ -60,7 +60,11 @@ export const Duplicate = ({
 );
 Duplicate.displayName = 'DocumentCard.Duplicate';
 
-export const Author = ({ document }: { document: Preuve }): JSX.Element => (
+export const Author = ({
+  document,
+}: {
+  document: DocumentRattache;
+}): JSX.Element => (
   <span className="text-grey-8 text-sm font-medium">
     {getAuthorAndDate(document.modifiedAt, document.modifiedByNom)}
   </span>

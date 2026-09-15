@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { formatFileSize, getExtension } from '@/app/utils/file';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { StoredFile } from '@tet/domain/collectivites';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 
 const getFichierTitle = ({ filename, filesize }: StoredFile): string => {
   const extension = getExtension(filename)?.toUpperCase();
@@ -11,7 +11,7 @@ const getFichierTitle = ({ filename, filesize }: StoredFile): string => {
   return details ? `${filename} (${details})` : filename;
 };
 
-export const getFormattedTitle = (preuve: Preuve): string | null => {
+export const getFormattedTitle = (preuve: DocumentRattache): string | null => {
   switch (preuve.type) {
     case 'fichier':
       return getFichierTitle(preuve.fichier);

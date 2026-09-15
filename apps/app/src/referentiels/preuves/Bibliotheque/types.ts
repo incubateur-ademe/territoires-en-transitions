@@ -1,100 +1,72 @@
+import { ActionIdentity } from '@/app/referentiels/actions/use-list-actions';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
-import { DocumentCollectivite } from '@tet/domain/collectivites';
+import {
+  DocumentCollectivite,
+  PreuveReglementaireDefinition,
+} from '@tet/domain/collectivites';
 import { LabellisationDemande } from '@tet/domain/referentiels';
 import { EditState } from './use-edit-state';
 
-export type PreuveReglementaireDefinition = {
-  id: string;
-  nom: string;
-  description: string;
-};
-
-// champs propres aux preuves réglèmentaires
-type PreuveReglementaireFields = {
+type DocumentReglementaireFields = {
   preuveType: 'reglementaire';
-  action: PreuveAction;
+  action: Pick<ActionIdentity, 'actionId' | 'identifiant'>;
   preuveReglementaire: PreuveReglementaireDefinition;
 };
 
-// champs propres aux preuves complèmentaires
-type PreuveComplementaireFields = {
+type DocumentComplementaireFields = {
   preuveType: 'complementaire';
-  action: PreuveAction;
+  action: Pick<ActionIdentity, 'actionId' | 'identifiant'>;
 };
 
-// champs propres aux annexes de fiche
-type PreuveAnnexeFields = {
+type DocumentAnnexeFields = {
   preuveType: 'annexe';
 };
 
-// action liée à une preuve réglementaire ou complémentaire
-export type PreuveAction = {
-  actionId: string;
-  identifiant: string;
-};
-
-// champs propres aux preuves pour la labellisation
-type PreuveLabellisationFields = {
+type DocumentLabellisationFields = {
   preuveType: 'labellisation';
   demande: LabellisationDemande;
 };
 
-// champs propres aux rapports d'audit
-type PreuveAuditFields = {
+type DocumentAuditFields = {
   preuveType: 'audit';
   demande: LabellisationDemande | null;
   audit: AuditEnCours;
 };
 
-// champs propres aux rapports de visite annuelle
-type PreuveRapportFields = {
+type DocumentRapportFields = {
   preuveType: 'rapport';
   rapport: {
     date: string;
   };
 };
 
-// types de preuves
 export type DocumentReglementaire = DocumentCollectivite &
-  PreuveReglementaireFields;
-export type PreuveComplementaire = DocumentCollectivite &
-  PreuveComplementaireFields;
-export type PreuveAnnexe = DocumentCollectivite & PreuveAnnexeFields;
-export type PreuveLabellisation = DocumentCollectivite &
-  PreuveLabellisationFields;
-export type PreuveAudit = DocumentCollectivite & PreuveAuditFields;
-export type PreuveRapport = DocumentCollectivite & PreuveRapportFields;
-export type PreuveAuditEtLabellisation = PreuveLabellisation | PreuveAudit;
+  DocumentReglementaireFields;
+export type DocumentComplementaire = DocumentCollectivite &
+  DocumentComplementaireFields;
+export type DocumentAnnexe = DocumentCollectivite & DocumentAnnexeFields;
+export type DocumentLabellisation = DocumentCollectivite &
+  DocumentLabellisationFields;
+export type DocumentAudit = DocumentCollectivite & DocumentAuditFields;
+export type DocumentRapport = DocumentCollectivite & DocumentRapportFields;
+export type DocumentAuditOuLabellisation =
+  | DocumentLabellisation
+  | DocumentAudit;
 
-// une preuve
-export type Preuve =
+export type DocumentRattache =
   | DocumentReglementaire
-  | PreuveComplementaire
-  | PreuveAnnexe
-  | PreuveLabellisation
-  | PreuveAudit
-  | PreuveRapport;
+  | DocumentComplementaire
+  | DocumentAnnexe
+  | DocumentLabellisation
+  | DocumentAudit
+  | DocumentRapport;
 
 export type DocumentAttendu = {
-  action: PreuveAction;
+  action: Pick<ActionIdentity, 'actionId' | 'identifiant'>;
   preuveReglementaire: PreuveReglementaireDefinition;
   documents: DocumentReglementaire[];
 };
 
-// identifiants des types de preuves
-export type PreuveType = Preuve['preuveType'];
-
-// indexation par type
-export type PreuvesParType = {
-  reglementaire: DocumentReglementaire[] | undefined;
-  complementaire: PreuveComplementaire[] | undefined;
-  annexe: PreuveAnnexe[] | undefined;
-  labellisation: PreuveLabellisation[] | undefined;
-  audit: PreuveAudit[] | undefined;
-  rapport: PreuveRapport[] | undefined;
-};
-
-// gestionnaires pour l'édition d'une preuve
 export type EditHandlers = {
   remove: () => void;
   editComment: EditState;

@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react';
-import { Preuve } from '../types';
+import { DocumentRattache } from '../types';
 import { EditState } from '../use-edit-state';
 import { OpenedDocumentModal } from './opened-modal';
 
 export type DocumentCardContextValue = {
-  document: Preuve;
+  document: DocumentRattache;
   editComment: EditState;
   openedModal: OpenedDocumentModal | null;
   setOpenedModal: (modal: OpenedDocumentModal | null) => void;
