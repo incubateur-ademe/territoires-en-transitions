@@ -130,10 +130,12 @@ const documentRapport: PreuveRapport = {
 describe('CarteDocument', () => {
   test('rend un document de type fichier', () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveReglementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveReglementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -141,10 +143,12 @@ describe('CarteDocument', () => {
 
   test('rend un document de type lien', () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveReglementaireLien}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveReglementaireLien}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -152,10 +156,12 @@ describe('CarteDocument', () => {
 
   test('signale un fichier confidentiel par un cadenas', () => {
     const { container } = render(
-      <CarteDocument
-        document={fichierConfidentiel}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={fichierConfidentiel}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -163,10 +169,12 @@ describe('CarteDocument', () => {
 
   test('ne rend rien pour un attendu sans depot', () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveReglementaireNonRenseignee}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveReglementaireNonRenseignee}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toBe('');
@@ -174,10 +182,12 @@ describe('CarteDocument', () => {
 
   test("rend un document sans aucun bouton quand aucune action n'est autorisee", () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveReglementaireFichier}
-        allowedActions={[]}
-      />
+      <CarteDocument document={preuveReglementaireFichier}>
+        <CarteDocument.Actions allowedActions={[]} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(screen.queryByRole('button')).toBeNull();
@@ -186,11 +196,15 @@ describe('CarteDocument', () => {
 
   test("affiche l'identifiant de la mesure quand il est demande", () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveComplementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-        displayIdentifier
-      />
+      <CarteDocument document={preuveComplementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Identifier
+          identifiant={preuveComplementaireFichier.action.identifiant}
+        />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -198,11 +212,12 @@ describe('CarteDocument', () => {
 
   test('rend le commentaire du document avec la classe fournie', () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveComplementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-        classComment="text-red-500"
-      />
+      <CarteDocument document={preuveComplementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment className="text-red-500" />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -210,21 +225,25 @@ describe('CarteDocument', () => {
 
   test('signale un document deja present dans la bibliotheque', () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveReglementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-        duplicatedDocumentInformation={{ storedFilenameKept: true }}
-      />
+      <CarteDocument document={preuveReglementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Duplicate information={{ storedFilenameKept: true }} />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
   });
   test('ne rend aucun bloc commentaire quand le document n en porte pas', () => {
     const { container } = render(
-      <CarteDocument
-        document={preuveComplementaireLien}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveComplementaireLien}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(container.querySelector('[data-test="comment"]')).toBeNull();
@@ -238,8 +257,12 @@ describe('CarteDocument', () => {
           ...preuveComplementaireFichier,
           commentaire: COMMENTAIRE_LONG,
         }}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      >
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(screen.getByRole('button', { name: 'Voir plus' })).toBeTruthy();
@@ -249,10 +272,12 @@ describe('CarteDocument', () => {
   test('remplace le commentaire par sa saisie et masque le menu pendant l edition', () => {
     editComment.enEdition = true;
     const { container } = render(
-      <CarteDocument
-        document={preuveComplementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveComplementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
     editComment.enEdition = false;
 
@@ -264,10 +289,14 @@ describe('CarteDocument', () => {
 
   test("un rapport d'audit porte le remplacement de fichier et pas la suppression", () => {
     const { container } = render(
-      <CarteDocument
-        document={documentAudit}
-        allowedActions={[...MUTATION_ACTIONS, 'replace']}
-      />
+      <CarteDocument document={documentAudit}>
+        <CarteDocument.Actions
+          allowedActions={[...MUTATION_ACTIONS, 'replace']}
+        />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     expect(
@@ -279,20 +308,102 @@ describe('CarteDocument', () => {
 
   test('un rapport de visite affiche la date de visite', () => {
     const { container } = render(
-      <CarteDocument
-        document={documentRapport}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={documentRapport}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+        <CarteDocument.VisitDate date={documentRapport.rapport.date} />
+      </CarteDocument>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
   });
+  test('refuse un enfant qui n est pas un slot de la carte', () => {
+    expect(() =>
+      render(
+        <CarteDocument document={preuveReglementaireFichier}>
+          <span>{'intrus'}</span>
+        </CarteDocument>
+      )
+    ).toThrow('CarteDocument only accepts its own slots as direct children');
+  });
+
+  test('refuse deux fois le meme slot', () => {
+    expect(() =>
+      render(
+        <CarteDocument document={preuveReglementaireFichier}>
+          <CarteDocument.Title />
+          <CarteDocument.Title />
+        </CarteDocument>
+      )
+    ).toThrow('CarteDocument renders each of its slots at most once');
+  });
+
+  test('garde le commentaire deplie quand un slot conditionnel apparait', () => {
+    const document = {
+      ...preuveComplementaireFichier,
+      commentaire: COMMENTAIRE_LONG,
+    };
+    const { container, rerender } = render(
+      <CarteDocument document={document}>
+        <CarteDocument.Title />
+        <CarteDocument.Comment />
+      </CarteDocument>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Voir plus' }));
+
+    rerender(
+      <CarteDocument document={document}>
+        <CarteDocument.Title />
+        <CarteDocument.Identifier identifiant="1.1.3" />
+        <CarteDocument.Comment />
+      </CarteDocument>
+    );
+
+    expect(container.querySelector('[data-test="comment"]')?.textContent).toBe(
+      COMMENTAIRE_LONG
+    );
+  });
+
+  test('refuse un slot rendu hors de la carte', () => {
+    expect(() => render(<CarteDocument.Title />)).toThrow(
+      'CarteDocument slots must be rendered inside a CarteDocument'
+    );
+  });
+
+  test('refuse un texte brut en enfant direct', () => {
+    expect(() =>
+      render(
+        <CarteDocument document={preuveReglementaireFichier}>
+          {'intrus'}
+        </CarteDocument>
+      )
+    ).toThrow('CarteDocument only accepts its own slots as direct children');
+  });
+
+  test('refuse un slot enveloppe dans un composant intermediaire', () => {
+    const WrappedActions = () => (
+      <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+    );
+
+    expect(() =>
+      render(
+        <CarteDocument document={preuveReglementaireFichier}>
+          <WrappedActions />
+        </CarteDocument>
+      )
+    ).toThrow('CarteDocument only accepts its own slots as direct children');
+  });
+
   test('un clic sur supprimer ouvre la confirmation de suppression', () => {
     render(
-      <CarteDocument
-        document={preuveReglementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveReglementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
@@ -303,10 +414,12 @@ describe('CarteDocument', () => {
 
   test('un clic sur editer ouvre la modale de renommage pour un fichier', () => {
     render(
-      <CarteDocument
-        document={preuveReglementaireFichier}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveReglementaireFichier}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le document' }));
@@ -316,10 +429,12 @@ describe('CarteDocument', () => {
 
   test('un clic sur editer ouvre la modale de lien pour un lien', () => {
     render(
-      <CarteDocument
-        document={preuveReglementaireLien}
-        allowedActions={MUTATION_ACTIONS}
-      />
+      <CarteDocument document={preuveReglementaireLien}>
+        <CarteDocument.Actions allowedActions={MUTATION_ACTIONS} />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le lien' }));
@@ -330,10 +445,14 @@ describe('CarteDocument', () => {
 
   test("un clic sur remplacer ouvre la modale de remplacement d'un rapport d'audit", () => {
     render(
-      <CarteDocument
-        document={documentAudit}
-        allowedActions={[...MUTATION_ACTIONS, 'replace']}
-      />
+      <CarteDocument document={documentAudit}>
+        <CarteDocument.Actions
+          allowedActions={[...MUTATION_ACTIONS, 'replace']}
+        />
+        <CarteDocument.Title />
+        <CarteDocument.Author />
+        <CarteDocument.Comment />
+      </CarteDocument>
     );
 
     fireEvent.click(

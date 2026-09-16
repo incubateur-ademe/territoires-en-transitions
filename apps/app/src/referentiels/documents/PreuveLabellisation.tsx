@@ -107,11 +107,12 @@ const DocAuditOuLabellisation = ({
     : [];
 
   return (
-    <CarteDocument
-      document={preuve}
-      allowedActions={allowedActions}
-      classComment="pb-0 mb-2"
-    />
+    <CarteDocument document={preuve}>
+      <CarteDocument.Actions allowedActions={allowedActions} />
+      <CarteDocument.Title />
+      <CarteDocument.Author />
+      <CarteDocument.Comment className="pb-0 mb-2" />
+    </CarteDocument>
   );
 };
 

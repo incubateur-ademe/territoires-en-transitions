@@ -1,36 +1,33 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { Card, Modal, Notification, Tooltip, VisibleWhen } from '@tet/ui';
 import {
-  getTextFormattedDate,
-  getTruncatedText,
-} from '@/app/utils/formatUtils';
-import {
-  Button,
-  Card,
-  Icon,
-  Modal,
-  Notification,
-  Tooltip,
-  VisibleWhen,
-} from '@tet/ui';
-import classNames from 'classnames';
-import { useState } from 'react';
-import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
+  Children,
+  ElementType,
+  isValidElement,
+  JSX,
+  ReactElement,
+  ReactNode,
+  useState,
+} from 'react';
 import AlerteSuppression from './AlerteSuppression';
+import { CarteDocumentAction } from './carte-document-action';
+import { CarteDocumentProvider } from './carte-document.context';
 import {
-  CarteDocumentAction,
-  isActionCarriedBy,
-} from './carte-document-action';
-import DocumentInput from './DocumentInput';
-import { DuplicatedDocumentAlert } from './duplicated-document.alert';
+  Actions,
+  Author,
+  Comment,
+  Duplicate,
+  Identifier,
+  Title,
+  VisitDate,
+} from './carte-document.slots';
 import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
-import MenuCarteDocument from './MenuCarteDocument';
-import { useOpenPreuve } from './use-open-preuve';
 import { Preuve } from './types';
+import { useOpenPreuve } from './use-open-preuve';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
-import { getAuthorAndDate, getFormattedTitle } from './utils';
 
 const EditPreuveModal = ({
   isOpen,
@@ -73,64 +70,107 @@ const ReplaceAuditReportModal = ({
   />
 );
 
+const describeChild = (child: ReactNode): string => {
+  if (!isValidElement(child)) {
+    return String(child);
+  }
+  const { type } = child;
+  if (typeof type === 'string') {
+    return `<${type}>`;
+  }
+  if (typeof type === 'function') {
+    return 'displayName' in type && typeof type.displayName === 'string'
+      ? type.displayName
+      : type.name;
+  }
+  return 'an anonymous component';
+};
+
+const SLOTS: readonly unknown[] = [
+  Actions,
+  Author,
+  Comment,
+  Duplicate,
+  Identifier,
+  Title,
+  VisitDate,
+];
+
+const isRenderedAsNothing = (child: ReactNode): boolean =>
+  child === null ||
+  child === undefined ||
+  typeof child === 'boolean' ||
+  child === '';
+
+const isSlot = (child: ReactNode): child is ReactElement =>
+  isValidElement(child) && SLOTS.includes(child.type);
+
+const toSlots = (children: ReactNode): ReactElement[] => {
+  const childList: ReactNode[] = [];
+  Children.forEach(children, (child) => childList.push(child));
+
+  const renderedChildren = childList.filter(
+    (child) => !isRenderedAsNothing(child)
+  );
+  const unknownChild = renderedChildren.find((child) => !isSlot(child));
+  if (unknownChild !== undefined) {
+    throw new Error(
+      `CarteDocument only accepts its own slots as direct children, got ${describeChild(
+        unknownChild
+      )}`
+    );
+  }
+
+  const slots = renderedChildren.filter(isSlot);
+  const duplicatedSlot = slots.find(
+    (slot, index) =>
+      slots.findIndex((other) => other.type === slot.type) !== index
+  );
+  if (duplicatedSlot !== undefined) {
+    throw new Error(
+      `CarteDocument renders each of its slots at most once, got ${describeChild(
+        duplicatedSlot
+      )} twice`
+    );
+  }
+
+  return slots;
+};
+
 type CarteDocumentProps = {
   document: Preuve;
-  allowedActions: readonly CarteDocumentAction[];
-  displayIdentifier?: boolean;
-  classComment?: string;
-  duplicatedDocumentInformation?: DuplicatedDocumentInformation;
+  children: ReactNode;
 };
 
 const CarteDocument = ({
   document,
-  allowedActions,
-  displayIdentifier,
-  classComment,
-  duplicatedDocumentInformation,
-}: CarteDocumentProps) => {
+  children,
+}: CarteDocumentProps): JSX.Element | null => {
   const openPreuve = useOpenPreuve({ collectiviteId: document.collectiviteId });
-  const {
-    commentaire,
-    modifiedAt: dateCreation,
-    modifiedByNom: auteur,
-    fichier,
-    lien,
-  } = document;
-  const isDocumentDeMesure =
-    document.preuveType === 'reglementaire' ||
-    document.preuveType === 'complementaire';
-  const action = isDocumentDeMesure ? document.action : null;
-  const dateVisite =
-    document.preuveType === 'rapport' ? document.rapport.date : undefined;
+  const { remove, editComment } = useEditPreuve(document);
   const replaceAuditReport = useReplaceAuditReportFile(document.collectiviteId);
-
-  const shownActions = allowedActions.filter((allowedAction) =>
-    isActionCarriedBy(allowedAction, document.preuveType)
-  );
-  const isShown = (action: CarteDocumentAction) =>
-    shownActions.includes(action);
-
-  const handlers = useEditPreuve(document);
-  const { remove, editComment } = handlers;
-
   const [openAction, setOpenAction] = useState<CarteDocumentAction | null>(
     null
   );
   const closeAction = () => setOpenAction(null);
-  const [isFullCommentaire, setIsFullCommentaire] = useState(false);
-  const isEditingComment = editComment.isEditing;
 
-  const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
-    getTruncatedText(commentaire, 160);
+  const { fichier, lien } = document;
+  const slots = toSlots(children);
+  const slotOfType = (type: ElementType): ReactNode =>
+    slots.find((slot) => slot.type === type);
 
   if (!fichier && !lien) return null;
 
   return (
-    <>
-      <div
-        className={classNames('relative group max-w-screen-md')}
-        data-test="carte-doc"
-      >
+    <CarteDocumentProvider
+      value={{
+        document,
+        open: () => openPreuve(document),
+        editComment,
+        setOpenAction,
+      }}
+    >
+      <div className="relative group max-w-screen-md" data-test="carte-doc">
         {fichier?.confidentiel && (
           <Tooltip label={appLabels.fichierModePrive}>
             <div
@@ -141,108 +181,15 @@ const CarteDocument = ({
             </div>
           </Tooltip>
         )}
-        {shownActions.length > 0 && !isEditingComment && (
-          <MenuCarteDocument
-            document={document}
-            className="absolute top-4 right-4 invisible group-hover:visible"
-            actions={{
-              edit: isShown('edit') ? () => setOpenAction('edit') : undefined,
-              comment: isShown('comment')
-                ? () => editComment.enter()
-                : undefined,
-              replace: isShown('replace')
-                ? () => setOpenAction('replace')
-                : undefined,
-              delete: isShown('delete')
-                ? () => setOpenAction('delete')
-                : undefined,
-            }}
-          />
-        )}
+        {slotOfType(Actions)}
 
         <Card className="p-4 h-full gap-1">
-          <span
-            className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-            data-test="name"
-            title={
-              fichier ? appLabels.telechargerFichier : appLabels.ouvrirLien
-            }
-            onClick={() => openPreuve(document)}
-          >
-            {getFormattedTitle(document)}
-          </span>
-
-          {displayIdentifier && action && (
-            <span className="text-grey-6 leading-6 flex gap-2">
-              {action.identifiant}
-            </span>
-          )}
-
-          <span className="text-grey-8 text-sm font-medium">
-            {getAuthorAndDate(dateCreation, auteur)}
-          </span>
-
-          {duplicatedDocumentInformation && (
-            <DuplicatedDocumentAlert
-              storedFilenameKept={
-                duplicatedDocumentInformation.storedFilenameKept
-              }
-            />
-          )}
-
-          {!isEditingComment ? (
-            !!commentaire &&
-            commentaire.length > 0 && (
-              <div className="flex flex-col gap-2 leading-5">
-                <div className="h-px bg-primary-3" />
-                <div className="flex gap-1 items-start">
-                  <Icon
-                    icon="discuss-line"
-                    size="xs"
-                    className="text-grey-7 mt-0.5"
-                  />
-                  <span
-                    className={classNames(
-                      'text-grey-8 text-xs font-medium italic whitespace-pre-wrap',
-                      classComment
-                    )}
-                    data-test="comment"
-                  >
-                    {isFullCommentaire || !isComTruncated
-                      ? commentaire
-                      : truncatedCom}
-                  </span>
-                </div>
-                {isComTruncated && (
-                  <Button
-                    variant="underlined"
-                    size="xs"
-                    className="ml-auto"
-                    onClick={() =>
-                      setIsFullCommentaire((prevState) => !prevState)
-                    }
-                  >
-                    {isFullCommentaire
-                      ? appLabels.voirMoins
-                      : appLabels.voirPlus}
-                  </Button>
-                )}
-              </div>
-            )
-          ) : (
-            <div className="flex flex-col gap-2 leading-5">
-              <div className="h-px bg-primary-3" />
-              <DocumentInput editElement={editComment} type="textarea" />
-            </div>
-          )}
-
-          {!!dateVisite && (
-            <p className="text-xs text-grey-8 font-normal mb-1 pl-2">
-              {appLabels.visiteEffectuee({
-                dateVisite: getTextFormattedDate({ date: dateVisite }),
-              })}
-            </p>
-          )}
+          {slotOfType(Title)}
+          {slotOfType(Identifier)}
+          {slotOfType(Author)}
+          {slotOfType(Duplicate)}
+          {slotOfType(Comment)}
+          {slotOfType(VisitDate)}
         </Card>
       </div>
       {openAction === 'delete' && (
@@ -277,8 +224,16 @@ const CarteDocument = ({
           }}
         />
       </VisibleWhen>
-    </>
+    </CarteDocumentProvider>
   );
 };
+
+CarteDocument.Title = Title;
+CarteDocument.Identifier = Identifier;
+CarteDocument.Author = Author;
+CarteDocument.Duplicate = Duplicate;
+CarteDocument.Comment = Comment;
+CarteDocument.VisitDate = VisitDate;
+CarteDocument.Actions = Actions;
 
 export default CarteDocument;

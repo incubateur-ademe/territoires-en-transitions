@@ -6,7 +6,6 @@ import { MUTATION_ACTIONS } from './carte-document-action';
 import { Preuve } from './types';
 
 export type PreuveDocProps = {
-  classComment?: string;
   preuve: Preuve;
   readonly?: boolean;
   displayIdentifier?: boolean;
@@ -22,14 +21,25 @@ const PreuveDoc = (props: PreuveDocProps) => {
     : hasCollectivitePermission('referentiels.mutate');
   const canEdit = canMutate && !props.readonly;
 
+  const identifiant =
+    props.displayIdentifier && 'action' in props.preuve
+      ? props.preuve.action.identifiant
+      : null;
+  const visitDate =
+    props.preuve.preuveType === 'rapport' ? props.preuve.rapport.date : null;
+
   return (
-    <CarteDocument
-      classComment={props.classComment}
-      displayIdentifier={props.displayIdentifier}
-      duplicatedDocumentInformation={props.duplicatedDocumentInformation}
-      document={props.preuve}
-      allowedActions={canEdit ? MUTATION_ACTIONS : []}
-    />
+    <CarteDocument document={props.preuve}>
+      <CarteDocument.Actions allowedActions={canEdit ? MUTATION_ACTIONS : []} />
+      <CarteDocument.Title />
+      {identifiant && <CarteDocument.Identifier identifiant={identifiant} />}
+      <CarteDocument.Author />
+      <CarteDocument.Duplicate
+        information={props.duplicatedDocumentInformation}
+      />
+      <CarteDocument.Comment />
+      {visitDate && <CarteDocument.VisitDate date={visitDate} />}
+    </CarteDocument>
   );
 };
 
