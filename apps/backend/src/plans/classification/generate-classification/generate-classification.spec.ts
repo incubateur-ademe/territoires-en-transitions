@@ -1,112 +1,78 @@
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { GenerateStructuredArgs } from '@tet/backend/utils/llm/llm.service';
-import { failure, success } from '@tet/backend/utils/result.type';
-import { RANK_BY_LEVIER } from '../prompts/levier-ranks';
-import { categorieActionEnumValues } from '@tet/domain/shared';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
-import { ZodType } from 'zod';
-import { ClassificationVoletsErrorEnum } from '../classification-volets.errors';
-import { VoletErrorEnum } from '../volet.errors';
+import { ClassifyBatchOutcome } from '../classify-batch/classify-batch.service';
 import {
   ClassificationVoletsJob,
-  ClassificationVoletsJobStatus,
   ClassificationVoletsJobStatusEnum,
 } from '../models/classification-volets-job';
-import { FicheClassification } from '../pipeline/classify-fiches/classify-fiches.schema';
+import { VoletErrorEnum, type VoletError } from '../volet.errors';
 import { GenerateClassificationService } from './generate-classification.service';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 7;
-
-const tokens = {
-  promptTokens: 10,
-  cachedTokens: 0,
-  candidatesTokens: 5,
-  thoughtsTokens: 1,
-  totalTokens: 16,
-};
-
 const transaction = { marker: 'transaction' } as unknown as Transaction;
 
-type ClassifiableFiche = {
-  id: number;
-  collectiviteId: number;
-  titre: string | null;
-  description: string | null;
-};
-
-const toJobRow = (
-  status: ClassificationVoletsJobStatus = ClassificationVoletsJobStatusEnum.PENDING
-): ClassificationVoletsJob => ({
+const job: ClassificationVoletsJob = {
   id: jobId,
   collectiviteId,
-  createdBy: 'a-user',
   enjeu: 'ges',
-  status,
+  etape: 'classification',
+  createdBy: 'a-user',
+  status: ClassificationVoletsJobStatusEnum.RUNNING,
   processedBatches: 0,
-  totalBatches: 0,
+  totalBatches: 2,
   draft: null,
   tokenUsage: null,
   error: null,
-  createdAt: '2026-09-08T00:00:00Z',
-  modifiedAt: '2026-09-08T00:00:00Z',
+  createdAt: '2026-09-15T00:00:00Z',
+  modifiedAt: '2026-09-15T00:00:00Z',
+};
+
+const toTokens = (promptTokens: number) => ({
+  promptTokens,
+  cachedTokens: 0,
+  candidatesTokens: 1,
+  thoughtsTokens: 0,
+  totalTokens: promptTokens + 1,
 });
 
-const toClassification = (index: number): FicheClassification => ({
-  index,
-  justification: 'Le texte decrit un amenagement cyclable.',
-  hasNoRelevantLevier: false,
-  volets: [
-    { levier: RANK_BY_LEVIER['Vélo et transport en commun'], categories: [categorieActionEnumValues.indexOf('amenagement') + 1] },
-  ],
-});
-
-const toClassifyingLlm = () => ({
-  generateStructured: vi.fn(async (args: GenerateStructuredArgs<ZodType>) => {
-    const actionCount = (args.prompt.match(/<action index=/g) ?? []).length;
-    return success({
-      data: Array.from({ length: actionCount }, (unused, index) =>
-        toClassification(index)
-      ),
-      tokens,
-    });
-  }),
-});
+const classifications: ClassifyBatchOutcome[] = [
+  {
+    classified: [
+      {
+        ficheId: 1,
+        justification: 'Piste cyclable protégée',
+        isDescriptionTruncated: false,
+        volets: [{ levier: 'Covoiturage', categorie: 'amenagement' }],
+      },
+      {
+        ficheId: 2,
+        justification: 'Aucun levier pertinent',
+        isDescriptionTruncated: false,
+        volets: [],
+      },
+    ],
+    sources: [
+      { ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' },
+      { ficheId: 2, titre: 'Bulletin municipal', description: null },
+    ],
+    tokens: toTokens(10),
+  },
+  {
+    classified: [],
+    sources: [],
+    tokens: toTokens(20),
+  },
+];
 
 const toDependencies = ({
-  job = toJobRow(),
-  fiches = [
-    { id: 1, collectiviteId, titre: 'Pistes cyclables', description: 'Dix km' },
-  ],
-  restrictedFiches = [],
-  sharedFiches = [],
-  saveOutcome = success(undefined),
-}: {
-  job?: Omit<ReturnType<typeof toJobRow>, 'enjeu'> & { enjeu: string };
-  fiches?: ClassifiableFiche[];
-  restrictedFiches?: ClassifiableFiche[];
-  sharedFiches?: ClassifiableFiche[];
-  saveOutcome?: unknown;
+  saveOutcome = success(undefined) as Result<undefined, VoletError>,
 } = {}) => {
   const jobRepository = {
-    getById: vi.fn().mockResolvedValue(success(job)),
-    markRunning: vi.fn().mockResolvedValue(success(undefined)),
-    recordProcessedBatches: vi.fn().mockResolvedValue(undefined),
-    markDone: vi.fn().mockResolvedValue(success(undefined)),
+    recordClassificationDraft: vi.fn().mockResolvedValue(success(undefined)),
     markFailed: vi.fn().mockResolvedValue(success(undefined)),
   };
-  const listFichesService = {
-    getFichesActionResumes: vi.fn(
-      async ({ filters }: { filters?: { restreint?: boolean } }) => {
-        const excludesRestricted = filters?.restreint === false;
-        const visibleFiches = excludesRestricted
-          ? [...fiches, ...sharedFiches]
-          : [...fiches, ...restrictedFiches, ...sharedFiches];
-        return { count: visibleFiches.length, data: visibleFiches };
-      }
-    ),
-  };
-  const llm = toClassifyingLlm();
   const ficheActionVoletGesRepository = {
     saveVolets: vi.fn().mockResolvedValue(saveOutcome),
   };
@@ -119,210 +85,80 @@ const toDependencies = ({
 
   const service = new GenerateClassificationService(
     jobRepository as never,
-    listFichesService as never,
-    llm as never,
     ficheActionVoletGesRepository as never,
     transactionManager as never
   );
 
-  return {
-    service,
-    jobRepository,
-    listFichesService,
-    llm,
-    ficheActionVoletGesRepository,
-  };
+  return { service, jobRepository, ficheActionVoletGesRepository };
 };
 
-const toSentPrompts = (llm: ReturnType<typeof toClassifyingLlm>): string =>
-  llm.generateStructured.mock.calls.map(([{ prompt }]) => prompt).join('\n');
-
-describe('GenerateClassificationService.generate', () => {
-  it('clot en echec un job dont l enjeu est inconnu de cette version', async () => {
-    const { service, llm, jobRepository } = toDependencies({
-      job: { ...toJobRow(), enjeu: 'biodiversite' },
-    });
-
-    const result = await service.generate(jobId);
-
-    expect({
-      success: result.success,
-      llmCalls: llm.generateStructured.mock.calls.length,
-      failureMessage: jobRepository.markFailed.mock.calls[0]?.[1],
-    }).toEqual({
-      success: false,
-      llmCalls: 0,
-      failureMessage:
-        "Cette classification porte un enjeu que l'application ne reconnaît pas : biodiversite. Signalez-le à l'équipe.",
-    });
-  });
-
-  it("n'envoie jamais au modele le texte d'une fiche partagee par une autre collectivite", async () => {
-    const { service, llm } = toDependencies({
-      fiches: [
-        {
-          id: 1,
-          collectiviteId,
-          titre: 'Pistes cyclables',
-          description: 'Dix km',
-        },
-      ],
-      sharedFiches: [
-        {
-          id: 2,
-          collectiviteId: collectiviteId + 1,
-          titre: 'Plan velo de la voisine',
-          description: 'Quinze km chez elle',
-        },
-      ],
-    });
-
-    await service.generate(jobId);
-
-    const sentPrompts = toSentPrompts(llm);
-
-    expect({
-      hasOwnedFiche: sentPrompts.includes('Pistes cyclables'),
-      hasSharedTitre: sentPrompts.includes('Plan velo de la voisine'),
-      hasSharedDescription: sentPrompts.includes('Quinze km chez elle'),
-    }).toEqual({
-      hasOwnedFiche: true,
-      hasSharedTitre: false,
-      hasSharedDescription: false,
-    });
-  });
-
-  it("n'envoie jamais au modele le texte d'une fiche restreinte", async () => {
-    const { service, llm } = toDependencies({
-      fiches: [
-        {
-          id: 1,
-          collectiviteId,
-          titre: 'Pistes cyclables',
-          description: 'Dix km',
-        },
-      ],
-      restrictedFiches: [
-        {
-          id: 2,
-          collectiviteId,
-          titre: 'Negociation fonciere',
-          description: 'Prix propose par parcelle',
-        },
-      ],
-    });
-
-    await service.generate(jobId);
-
-    const sentPrompts = toSentPrompts(llm);
-
-    expect({
-      hasReadableFiche: sentPrompts.includes('Pistes cyclables'),
-      hasRestrictedTitre: sentPrompts.includes('Negociation fonciere'),
-      hasRestrictedDescription: sentPrompts.includes(
-        'Prix propose par parcelle'
-      ),
-    }).toEqual({
-      hasReadableFiche: true,
-      hasRestrictedTitre: false,
-      hasRestrictedDescription: false,
-    });
-  });
-
-  it("ignore une re-livraison d'un job deja termine sans rappeler le modele", async () => {
-    const { service, llm, jobRepository } = toDependencies({
-      job: toJobRow(ClassificationVoletsJobStatusEnum.DONE),
-    });
-
-    const result = await service.generate(jobId);
-
-    expect({
-      success: result.success,
-      llmCalls: llm.generateStructured.mock.calls.length,
-      markRunningCalls: jobRepository.markRunning.mock.calls.length,
-    }).toEqual({ success: true, llmCalls: 0, markRunningCalls: 0 });
-  });
-
-  it('interrompt une collectivite sans aucune fiche a classer', async () => {
-    const { service, jobRepository } = toDependencies({ fiches: [] });
-
-    const result = await service.generate(jobId);
-
-    expect({
-      result,
-      markFailedArgs: jobRepository.markFailed.mock.calls[0],
-    }).toEqual({
-      result: {
-        success: false,
-        error: {
-          kind: 'interrupted',
-          jobId,
-          message: 'Aucune fiche à classer dans cette collectivité',
-        },
-      },
-      markFailedArgs: [jobId, 'Aucune fiche à classer dans cette collectivité'],
-    });
-  });
-
-  it('ecrit le classement et clot le job dans une seule et meme transaction', async () => {
-    const { service, ficheActionVoletGesRepository, jobRepository } =
+describe('GenerateClassificationService.persist', () => {
+  it('ecrit les volets et le brouillon dans une seule et meme transaction', async () => {
+    const { service, jobRepository, ficheActionVoletGesRepository } =
       toDependencies();
 
-    const result = await service.generate(jobId);
+    const result = await service.persist(job, classifications);
 
     const [saveArgs] = ficheActionVoletGesRepository.saveVolets.mock.calls[0];
-    const [markDoneArgs] = jobRepository.markDone.mock.calls[0];
+    const [draftArgs] = jobRepository.recordClassificationDraft.mock.calls[0];
 
     expect({
       success: result.success,
       saveTransaction: saveArgs.tx,
-      markDoneTransaction: markDoneArgs.tx,
+      draftTransaction: draftArgs.tx,
     }).toEqual({
       success: true,
       saveTransaction: transaction,
-      markDoneTransaction: transaction,
+      draftTransaction: transaction,
     });
   });
 
-  it("ne clot pas le job quand l'ecriture du classement echoue", async () => {
+  it('traduit les leviers nommes en identifiants pour la mobilisation', async () => {
+    const { service } = toDependencies();
+
+    const result = await service.persist(job, classifications);
+
+    expect(result.success ? result.data.volets : undefined).toEqual([
+      { ficheId: 1, levierId: 'covoiturage', categorie: 'amenagement' },
+    ]);
+  });
+
+  it('additionne les jetons de toutes les fiches classees', async () => {
+    const { service } = toDependencies();
+
+    const result = await service.persist(job, classifications);
+
+    expect(result.success ? result.data.tokens.promptTokens : undefined).toBe(
+      30
+    );
+  });
+
+  it('rend les fiches sources pour que la mobilisation nourrisse son prompt', async () => {
+    const { service } = toDependencies();
+
+    const result = await service.persist(job, classifications);
+
+    expect(result.success ? result.data.fiches : undefined).toEqual([
+      { ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' },
+      { ficheId: 2, titre: 'Bulletin municipal', description: null },
+    ]);
+  });
+
+  it("n'enregistre pas le brouillon quand l'ecriture des volets echoue", async () => {
     const { service, jobRepository } = toDependencies({
       saveOutcome: failure(VoletErrorEnum.SAVE_VOLETS_ERROR),
     });
 
-    const result = await service.generate(jobId);
+    const result = await service.persist(job, classifications);
 
     expect({
       errorKind: result.success ? undefined : result.error.kind,
-      markDoneCalls: jobRepository.markDone.mock.calls.length,
+      draftCalls: jobRepository.recordClassificationDraft.mock.calls.length,
       markFailedCalls: jobRepository.markFailed.mock.calls.length,
     }).toEqual({
       errorKind: 'interrupted',
-      markDoneCalls: 0,
+      draftCalls: 0,
       markFailedCalls: 1,
-    });
-  });
-
-  it("remonte l'echec de passage en cours sans appeler le modele", async () => {
-    const { service, jobRepository, llm } = toDependencies();
-    jobRepository.markRunning.mockResolvedValue(
-      failure(ClassificationVoletsErrorEnum.JOB_TRANSITION_REFUSED)
-    );
-
-    const result = await service.generate(jobId);
-
-    expect({
-      result,
-      llmCalls: llm.generateStructured.mock.calls.length,
-    }).toEqual({
-      result: {
-        success: false,
-        error: {
-          kind: 'transition_failed',
-          jobId,
-          cause: ClassificationVoletsErrorEnum.JOB_TRANSITION_REFUSED,
-        },
-      },
-      llmCalls: 0,
     });
   });
 });

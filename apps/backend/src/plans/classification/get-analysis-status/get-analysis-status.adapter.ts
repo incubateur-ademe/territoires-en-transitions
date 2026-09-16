@@ -5,25 +5,21 @@ import {
   type ClassificationVoletsError,
 } from '../classification-volets.errors';
 import { ClassificationVoletsJobStatusEnum } from '../models/classification-volets-job';
-import { type ClassificationStatus } from './get-classification-status.output';
+import { type AnalysisStatus } from './get-analysis-status.output';
 
-export const toClassificationStatus = (
+export const toAnalysisStatus = (
   progress: ClassificationProgress
-): Result<ClassificationStatus, ClassificationVoletsError> => {
-  const { id, collectiviteId, enjeu, status } = progress;
+): Result<AnalysisStatus, ClassificationVoletsError> => {
+  const { id, collectiviteId, enjeu, etape, status } = progress;
 
   switch (status) {
-    case ClassificationVoletsJobStatusEnum.DONE:
-      if (!progress.draft) {
+    case ClassificationVoletsJobStatusEnum.DONE: {
+      const { draft } = progress;
+      if (etape !== 'mobilisation' || draft === null) {
         return failure(ClassificationVoletsErrorEnum.GET_JOB_ERROR);
       }
-      return success({
-        id,
-        collectiviteId,
-        enjeu,
-        status,
-        draft: progress.draft,
-      });
+      return success({ id, collectiviteId, enjeu, etape, status, draft });
+    }
 
     case ClassificationVoletsJobStatusEnum.FAILED:
       if (!progress.error) {
@@ -33,6 +29,7 @@ export const toClassificationStatus = (
         id,
         collectiviteId,
         enjeu,
+        etape,
         status,
         error: progress.error,
       });
@@ -43,6 +40,7 @@ export const toClassificationStatus = (
         id,
         collectiviteId,
         enjeu,
+        etape,
         status,
         processedBatches: progress.processedBatches,
         totalBatches: progress.totalBatches,

@@ -7,4 +7,3 @@ export const effetAttenduSchema = z.object({
 });
 
 export type EffetAttendu = z.infer<typeof effetAttenduSchema>;
-

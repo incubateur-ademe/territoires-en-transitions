@@ -6,4 +6,3 @@ export const categorieFNVSchema = z.object({
 });
 
 export type CategorieFNVType = z.infer<typeof categorieFNVSchema>;
-

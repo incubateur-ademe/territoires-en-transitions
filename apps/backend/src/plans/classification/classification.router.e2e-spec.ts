@@ -10,7 +10,7 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { Enjeu } from '@tet/domain/shared';
+import { Enjeu, type AnalysisStep } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
@@ -22,6 +22,7 @@ import {
   IN_FLIGHT_LEASE_MS,
 } from './models/classification-volets-job';
 import { classificationVoletsJobTable } from './models/classification-volets-job.table';
+import { collectiviteVoletGesTable } from './models/collectivite-volet-ges.table';
 
 describe('ClassificationRouter', { timeout: 30_000 }, () => {
   let app: INestApplication;
@@ -32,6 +33,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
   let editionUser: AuthenticatedUser;
   let outsiderUser: AuthenticatedUser;
   let planId: number;
+  let ficheId: number;
 
   const callerFor = (user: AuthenticatedUser) =>
     router.createCaller({ user }).plans.classificationVolets;
@@ -61,14 +63,16 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
     planId = plan.id;
 
-    const { ficheCleanup } = await createFicheAndCleanupFunction({
-      caller: fixtureCaller,
-      ficheInput: {
-        collectiviteId,
-        titre: 'Amenager des pistes cyclables',
-        axeId: planId,
-      },
-    });
+    const { ficheId: createdFicheId, ficheCleanup } =
+      await createFicheAndCleanupFunction({
+        caller: fixtureCaller,
+        ficheInput: {
+          collectiviteId,
+          titre: 'Amenager des pistes cyclables',
+          axeId: planId,
+        },
+      });
+    ficheId = createdFicheId;
 
     return async () => {
       await db.db
@@ -83,10 +87,12 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
   const insertJob = async ({
     status = ClassificationVoletsJobStatusEnum.DONE,
     enjeu = 'ges',
+    etape = 'mobilisation',
     modifiedAt,
   }: {
     status?: ClassificationVoletsJobStatus;
     enjeu?: Enjeu;
+    etape?: AnalysisStep;
     modifiedAt?: string;
   } = {}): Promise<string> => {
     const [job] = await db.db
@@ -94,6 +100,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       .values({
         collectiviteId,
         enjeu,
+        etape,
         createdBy: editionUser.id,
         status,
         processedBatches: 2,
@@ -101,7 +108,6 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         modifiedAt,
         draft: {
           fiches: [],
-          unclassified: [{ ficheId: 42, reason: 'truncated' }],
         },
       })
       .returning();
@@ -129,10 +135,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
   };
 
-  describe('enqueueClassification', () => {
+  describe('enqueueAnalysis', () => {
     it('refuse une collectivité sans aucune fiche à classer', async () => {
       await expect(
-        callerFor(outsiderUser).enqueueClassification({
+        callerFor(outsiderUser).enqueueAnalysis({
           collectiviteId: collectiviteWithoutFicheId,
           enjeu: 'ges',
         })
@@ -141,7 +147,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
 
     it("cache la collectivité à un membre d'une autre collectivité", async () => {
       await expect(
-        callerFor(outsiderUser).enqueueClassification({
+        callerFor(outsiderUser).enqueueAnalysis({
           collectiviteId,
           enjeu: 'ges',
         })
@@ -151,7 +157,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     it('enfile un job et rend son identifiant', async () => {
       cleanupEnqueuedJobs();
 
-      const { jobId } = await callerFor(editionUser).enqueueClassification({
+      const { jobId } = await callerFor(editionUser).enqueueAnalysis({
         collectiviteId,
         enjeu: 'ges',
       });
@@ -164,13 +170,13 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     it('refuse un second job tant que le premier est in-flight', async () => {
       cleanupEnqueuedJobs();
 
-      await callerFor(editionUser).enqueueClassification({
+      await callerFor(editionUser).enqueueAnalysis({
         collectiviteId,
         enjeu: 'ges',
       });
 
       await expect(
-        callerFor(editionUser).enqueueClassification({
+        callerFor(editionUser).enqueueAnalysis({
           collectiviteId,
           enjeu: 'ges',
         })
@@ -178,10 +184,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     });
   });
 
-  describe('getClassificationStatus', () => {
+  describe('getAnalysisStatus', () => {
     it('rend le classement, sans compteur de lots, sur un job termine', async () => {
       const jobId = await insertJob();
-      const status = await callerFor(editionUser).getClassificationStatus({
+      const status = await callerFor(editionUser).getAnalysisStatus({
         jobId,
       });
 
@@ -189,10 +195,10 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
+        etape: 'mobilisation',
         status: ClassificationVoletsJobStatusEnum.DONE,
         draft: {
           fiches: [],
-          unclassified: [{ ficheId: 42, reason: 'truncated' }],
         },
       });
     });
@@ -202,8 +208,9 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
 
       const jobId = await insertJob({
         status: ClassificationVoletsJobStatusEnum.RUNNING,
+        etape: 'classification',
       });
-      const status = await callerFor(editionUser).getClassificationStatus({
+      const status = await callerFor(editionUser).getAnalysisStatus({
         jobId,
       });
 
@@ -211,6 +218,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
+        etape: 'classification',
         status: ClassificationVoletsJobStatusEnum.RUNNING,
         processedBatches: 2,
         totalBatches: 3,
@@ -220,13 +228,13 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
     it("cache l'existence du job à un membre d'une autre collectivité", async () => {
       const jobId = await insertJob();
       await expect(
-        callerFor(outsiderUser).getClassificationStatus({ jobId })
+        callerFor(outsiderUser).getAnalysisStatus({ jobId })
       ).rejects.toThrowError(/n'existe pas/);
     });
 
     it("échoue sur un job qui n'existe pas", async () => {
       await expect(
-        callerFor(editionUser).getClassificationStatus({
+        callerFor(editionUser).getAnalysisStatus({
           jobId: '00000000-0000-0000-0000-000000000000',
         })
       ).rejects.toThrowError(/n'existe pas/);
@@ -242,7 +250,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         modifiedAt: beyondLease(),
       });
 
-      const { jobId } = await callerFor(editionUser).enqueueClassification({
+      const { jobId } = await callerFor(editionUser).enqueueAnalysis({
         collectiviteId,
         enjeu: 'ges',
       });
@@ -276,11 +284,70 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
       });
 
       await expect(
-        callerFor(editionUser).enqueueClassification({
+        callerFor(editionUser).enqueueAnalysis({
           collectiviteId,
           enjeu: 'ges',
         })
       ).rejects.toThrowError(/déjà en cours/);
+    });
+  });
+
+  describe('getMobilisation', () => {
+    const insertGridRow = async (note: number): Promise<void> => {
+      await db.db.insert(collectiviteVoletGesTable).values({
+        collectiviteId,
+        levierId: 'velo_transport_commun',
+        categorie: 'amenagement',
+        note,
+        ficheIds: [ficheId],
+      });
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(collectiviteVoletGesTable)
+          .where(eq(collectiviteVoletGesTable.collectiviteId, collectiviteId));
+      });
+    };
+
+    it('rend une grille vide sur une collectivité jamais évaluée', async () => {
+      const mobilisation = await callerFor(editionUser).getMobilisation({
+        collectiviteId,
+        enjeu: 'ges',
+      });
+
+      expect(mobilisation).toEqual({ collectiviteId, leviers: [] });
+    });
+
+    it('rend la note et les fiches qui l ont nourrie', async () => {
+      await insertGridRow(2);
+
+      const mobilisation = await callerFor(editionUser).getMobilisation({
+        collectiviteId,
+        enjeu: 'ges',
+      });
+
+      expect(mobilisation).toEqual({
+        collectiviteId,
+        leviers: [
+          {
+            levierId: 'velo_transport_commun',
+            volets: [
+              { categorie: 'amenagement', note: 2, ficheIds: [ficheId] },
+            ],
+          },
+        ],
+      });
+    });
+
+    it("cache la grille à un membre d'une autre collectivité", async () => {
+      await insertGridRow(2);
+
+      await expect(
+        callerFor(outsiderUser).getMobilisation({
+          collectiviteId,
+          enjeu: 'ges',
+        })
+      ).rejects.toThrowError(/n'existe pas/);
     });
   });
 
@@ -292,7 +359,6 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
 
       const result = await app.get(ClassificationVoletsJobRepository).markDone({
         id: jobId,
-        draft: { fiches: [], unclassified: [] },
         tokenUsage: {
           promptTokens: 1,
           cachedTokens: 0,

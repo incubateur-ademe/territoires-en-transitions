@@ -7,10 +7,9 @@ import {
   CLASSIFICATION_VOLETS_QUEUE_NAME,
   type ClassificationVoletsJobData,
 } from '../classification-volets.queue';
-import {
-  GenerateClassificationError,
-  GenerateClassificationService,
-} from './generate-classification.service';
+import { ClassifyBatchOutcome } from '../classify-batch/classify-batch.service';
+import { GenerateAnalysisService } from '../generate-analysis/generate-analysis.service';
+import { toAnalysisErrorMessage } from '../models/analysis-error';
 
 @Processor(CLASSIFICATION_VOLETS_QUEUE_NAME, {
   lockDuration: CLASSIFICATION_VOLETS_LOCK_DURATION_MS,
@@ -20,14 +19,20 @@ import {
 export class GenerateClassificationWorker extends WorkerHost {
   private readonly logger = new Logger(GenerateClassificationWorker.name);
 
-  constructor(private readonly service: GenerateClassificationService) {
+  constructor(private readonly service: GenerateAnalysisService) {
     super();
   }
 
   async process(job: Job<ClassificationVoletsJobData>): Promise<void> {
-    const generateResult = await this.service.generate(job.data.jobId);
+    const childrenValues = await job.getChildrenValues<ClassifyBatchOutcome>();
+    const generateResult = await this.service.generate(
+      job.data.jobId,
+      Object.values(childrenValues)
+    );
     if (!generateResult.success) {
-      throw new UnrecoverableError(toErrorMessage(generateResult.error));
+      throw new UnrecoverableError(
+        toAnalysisErrorMessage(generateResult.error)
+      );
     }
   }
 
@@ -43,7 +48,7 @@ export class GenerateClassificationWorker extends WorkerHost {
     }
     await this.service.recordTerminalFailure(
       job.data.jobId,
-      `Classification interrompue: ${getErrorMessage(error)}`
+      `Analyse interrompue: ${getErrorMessage(error)}`
     );
   }
 
@@ -70,16 +75,3 @@ export class GenerateClassificationWorker extends WorkerHost {
     return job.attemptsMade >= maxAttempts;
   }
 }
-
-const toErrorMessage = (error: GenerateClassificationError): string => {
-  switch (error.kind) {
-    case 'job_unreadable':
-      return `Job ${error.jobId} illisible (${error.cause})`;
-    case 'transition_failed':
-      return `Transition du job ${error.jobId} impossible (${error.cause})`;
-    case 'failure_record_failed':
-      return `Enregistrement de l'échec du job ${error.jobId} impossible (${error.cause})`;
-    case 'interrupted':
-      return error.message;
-  }
-};

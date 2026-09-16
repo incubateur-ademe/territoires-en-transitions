@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-export const enqueueClassificationOutputSchema = z.object({
+export const enqueueAnalysisOutputSchema = z.object({
   jobId: z.string().uuid(),
 });
 
 export type EnqueueClassificationOutput = z.output<
-  typeof enqueueClassificationOutputSchema
+  typeof enqueueAnalysisOutputSchema
 >;
