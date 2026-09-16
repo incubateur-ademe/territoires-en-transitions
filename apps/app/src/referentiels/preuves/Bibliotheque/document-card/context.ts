@@ -1,12 +1,13 @@
 import { createContext, useContext } from 'react';
-import { DocumentCardAction } from './action';
-import { EditHandlers, Preuve } from '../types';
+import { Preuve } from '../types';
+import { EditState } from '../use-edit-state';
+import { OpenedDocumentModal } from './opened-modal';
 
 export type DocumentCardContextValue = {
   document: Preuve;
-  open: () => void;
-  editComment: EditHandlers['editComment'];
-  setOpenAction: (action: DocumentCardAction | null) => void;
+  editComment: EditState;
+  openedModal: OpenedDocumentModal | null;
+  setOpenedModal: (modal: OpenedDocumentModal | null) => void;
 };
 
 const DocumentCardContext = createContext<DocumentCardContextValue | null>(
@@ -16,11 +17,11 @@ const DocumentCardContext = createContext<DocumentCardContextValue | null>(
 export const DocumentCardProvider = DocumentCardContext.Provider;
 
 export const useDocumentCard = (): DocumentCardContextValue => {
-  const carteDocument = useContext(DocumentCardContext);
-  if (!carteDocument) {
+  const documentCard = useContext(DocumentCardContext);
+  if (!documentCard) {
     throw new Error(
-      'DocumentCard slots must be rendered inside a DocumentCard'
+      'DocumentCard actions must be rendered inside a DocumentCard'
     );
   }
-  return carteDocument;
+  return documentCard;
 };

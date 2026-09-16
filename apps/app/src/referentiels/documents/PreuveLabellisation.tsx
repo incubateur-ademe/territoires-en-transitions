@@ -1,10 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { DocumentCard } from '@/app/referentiels/preuves/Bibliotheque/document-card';
-import {
-  DocumentCardAction,
-  MUTATION_ACTIONS,
-} from '@/app/referentiels/preuves/Bibliotheque/document-card/action';
+import { useReplaceAuditReportFile } from '@/app/referentiels/preuves/Bibliotheque/use-replace-audit-report-file';
 import {
   PreuveAudit,
   PreuveAuditEtLabellisation,
@@ -102,16 +99,29 @@ const DocAuditOuLabellisation = ({
       'referentiels.labellisations.mutate_documents'
     ),
   });
-  const allowedActions: DocumentCardAction[] = canUpdate
-    ? [...MUTATION_ACTIONS, 'replace']
-    : [];
+  const replaceAuditReport = useReplaceAuditReportFile(preuve.collectiviteId);
+  const canReplaceAuditReport = canUpdate && audit !== null;
+  const canDeleteDocument = canUpdate && audit === null;
 
   return (
     <DocumentCard document={preuve}>
-      <DocumentCard.Actions allowedActions={allowedActions} />
-      <DocumentCard.Title />
-      <DocumentCard.Author />
-      <DocumentCard.Comment className="pb-0 mb-2" />
+      {canUpdate && (
+        <DocumentCard.Actions>
+          <DocumentCard.Edit />
+          <DocumentCard.Comment />
+          {canReplaceAuditReport && (
+            <DocumentCard.Replace
+              onReplace={async (fichierId) => {
+                await replaceAuditReport.mutateAsync({
+                  preuveId: preuve.id,
+                  fichierId,
+                });
+              }}
+            />
+          )}
+          {canDeleteDocument && <DocumentCard.Delete />}
+        </DocumentCard.Actions>
+      )}
     </DocumentCard>
   );
 };

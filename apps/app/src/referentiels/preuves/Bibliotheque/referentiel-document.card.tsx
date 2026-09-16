@@ -2,11 +2,14 @@ import { useOptionalReferentielId } from '@/app/referentiels/referentiel-context
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import { DocumentCard } from './document-card';
-import { MUTATION_ACTIONS } from './document-card/action';
-import { Preuve } from './types';
+import {
+  DocumentReglementaire,
+  PreuveComplementaire,
+  PreuveRapport,
+} from './types';
 
 export type ReferentielDocumentCardProps = {
-  preuve: Preuve;
+  preuve: DocumentReglementaire | PreuveComplementaire | PreuveRapport;
   readonly?: boolean;
   displayIdentifier?: boolean;
   duplicatedDocumentInformation?: DuplicatedDocumentInformation;
@@ -23,24 +26,25 @@ export const ReferentielDocumentCard = (
     : hasCollectivitePermission('referentiels.mutate');
   const canEdit = canMutate && !props.readonly;
 
-  const identifiant =
+  const identifier =
     props.displayIdentifier && 'action' in props.preuve
       ? props.preuve.action.identifiant
       : null;
-  const visitDate =
-    props.preuve.preuveType === 'rapport' ? props.preuve.rapport.date : null;
+  const duplicateInformation = props.duplicatedDocumentInformation;
 
   return (
     <DocumentCard document={props.preuve}>
-      <DocumentCard.Actions allowedActions={canEdit ? MUTATION_ACTIONS : []} />
-      <DocumentCard.Title />
-      {identifiant && <DocumentCard.Identifier identifiant={identifiant} />}
-      <DocumentCard.Author />
-      <DocumentCard.Duplicate
-        information={props.duplicatedDocumentInformation}
-      />
-      <DocumentCard.Comment />
-      {visitDate && <DocumentCard.VisitDate date={visitDate} />}
+      {identifier && <DocumentCard.Identifier value={identifier} />}
+      {duplicateInformation && (
+        <DocumentCard.Duplicate information={duplicateInformation} />
+      )}
+      {canEdit && (
+        <DocumentCard.Actions>
+          <DocumentCard.Edit />
+          <DocumentCard.Comment />
+          <DocumentCard.Delete />
+        </DocumentCard.Actions>
+      )}
     </DocumentCard>
   );
 };
