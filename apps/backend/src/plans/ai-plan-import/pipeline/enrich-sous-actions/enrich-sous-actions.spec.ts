@@ -13,6 +13,7 @@ import {
 
 const tokens: TokenUsage = {
   promptTokens: 10,
+  cachedTokens: 0,
   candidatesTokens: 4,
   thoughtsTokens: 1,
   totalTokens: 15,

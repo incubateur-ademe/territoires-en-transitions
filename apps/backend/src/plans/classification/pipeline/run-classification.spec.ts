@@ -13,6 +13,7 @@ import { FICHES_PER_BATCH, runClassification } from './run-classification';
 
 const tokens = {
   promptTokens: 10,
+  cachedTokens: 0,
   candidatesTokens: 5,
   thoughtsTokens: 1,
   totalTokens: 16,
