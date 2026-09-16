@@ -9,7 +9,9 @@ import { useDocumentCard } from './context';
 import { toDeclaredChildren } from './declared-children';
 import { DocumentCardMenu } from './menu';
 
-export const Edit = (): JSX.Element => {
+export type ActionVisibility = { visibleWhen?: boolean };
+
+export const Edit = (_props: ActionVisibility): JSX.Element => {
   const { document, openedModal, setOpenedModal } = useDocumentCard();
   const isOpen = openedModal === 'edit';
 
@@ -24,12 +26,12 @@ export const Edit = (): JSX.Element => {
   );
 };
 
-export const CommentAction = (): null => {
+export const CommentAction = (_props: ActionVisibility): null => {
   useDocumentCard();
   return null;
 };
 
-export const Delete = (): JSX.Element => {
+export const Delete = (_props: ActionVisibility): JSX.Element => {
   const { document, openedModal, setOpenedModal } = useDocumentCard();
   const { mutate: removePreuve } = useRemovePreuve();
   const isOpen = openedModal === 'delete';
@@ -49,7 +51,7 @@ export const Delete = (): JSX.Element => {
 
 export const Replace = ({
   onReplace,
-}: {
+}: ActionVisibility & {
   onReplace: (fichierId: number) => Promise<void>;
 }): JSX.Element => {
   const { openedModal, setOpenedModal } = useDocumentCard();
@@ -79,15 +81,17 @@ const ACTIONS = [Edit, CommentAction, Delete, Replace];
 
 export const Actions = ({
   children,
-}: {
+  visibleWhen = true,
+}: ActionVisibility & {
   children: ReactNode;
 }): JSX.Element | null => {
   const { document, editComment, setOpenedModal } = useDocumentCard();
-  const declaredActions = toDeclaredChildren(children, {
+  const visibleActions = toDeclaredChildren(children, {
     owner: 'DocumentCard.Actions',
     accepted: ACTIONS,
     label: 'its own actions',
-  }).map((action) => action.type);
+  }).filter((action) => action.props.visibleWhen !== false);
+  const declaredActions = visibleActions.map((action) => action.type);
   const isDeclared = (action: ElementType): boolean =>
     declaredActions.includes(action);
 
@@ -97,8 +101,12 @@ export const Actions = ({
     replace: isDeclared(Replace) ? () => setOpenedModal('replace') : undefined,
     delete: isDeclared(Delete) ? () => setOpenedModal('delete') : undefined,
   };
-  const hasDeclaredAction = declaredActions.length > 0;
-  const isMenuShown = hasDeclaredAction && !editComment.isEditing;
+  const hasVisibleAction = declaredActions.length > 0;
+  const isMenuShown = hasVisibleAction && !editComment.isEditing;
+
+  if (!visibleWhen) {
+    return null;
+  }
 
   return (
     <>
@@ -109,7 +117,7 @@ export const Actions = ({
           actions={menuActions}
         />
       )}
-      {children}
+      {visibleActions}
     </>
   );
 };
