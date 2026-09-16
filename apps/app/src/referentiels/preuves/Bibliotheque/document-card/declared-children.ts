@@ -30,7 +30,7 @@ export const toDeclaredChildren = (
     accepted,
     label,
   }: { owner: string; accepted: readonly unknown[]; label: string }
-): ReactElement[] => {
+): ReactElement<{ visibleWhen?: boolean }>[] => {
   const childList: ReactNode[] = [];
   Children.forEach(children, (child) => childList.push(child));
 
@@ -46,7 +46,10 @@ export const toDeclaredChildren = (
     );
   }
 
-  const declaredElements = declared.filter(isValidElement);
+  const declaredElements = declared.filter(
+    (child): child is ReactElement<{ visibleWhen?: boolean }> =>
+      isValidElement(child)
+  );
   const duplicated = declaredElements.find(
     (child, index) =>
       declaredElements.findIndex((other) => other.type === child.type) !== index

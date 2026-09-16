@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DocumentCard } from '.';
 import {
   preuveComplementaireFichier,
@@ -10,21 +10,40 @@ import {
 } from '../documents.fixture';
 import { DocumentReglementaire, PreuveAudit, PreuveRapport } from '../types';
 
+const { openPreuve, removePreuve, updateCommentaire } = vi.hoisted(() => ({
+  openPreuve: vi.fn(),
+  removePreuve: vi.fn(),
+  updateCommentaire: vi.fn(),
+}));
+
 vi.mock('../use-open-preuve', () => ({
-  useOpenPreuve: () => vi.fn(),
+  useOpenPreuve: () => openPreuve,
 }));
 
 const toMutation = () => ({ mutate: vi.fn(), isPending: false });
 
 vi.mock('../use-edit-preuve', () => ({
-  useRemovePreuve: () => toMutation(),
-  useUpdatePreuveCommentaire: () => toMutation(),
+  useRemovePreuve: () => ({ mutate: removePreuve, isPending: false }),
+  useUpdatePreuveCommentaire: () => ({
+    mutate: updateCommentaire,
+    isPending: false,
+  }),
   useUpdatePreuveLien: () => toMutation(),
   useUpdateBibliothequeFichier: () => toMutation(),
 }));
 
+const FICHIER_CHOISI_ID = 42;
+
 vi.mock('@/app/referentiels/preuves/AddPreuveModal', () => ({
-  AddPreuveModal: () => null,
+  AddPreuveModal: ({
+    handlers,
+  }: {
+    handlers: { addFileFromLib: (fichierId: number) => void };
+  }) => (
+    <button onClick={() => handlers.addFileFromLib(42)}>
+      {'Choisir dans la bibliotheque'}
+    </button>
+  ),
 }));
 
 const mutationActions = (
@@ -114,6 +133,10 @@ const documentRapport: PreuveRapport = {
 };
 
 describe('DocumentCard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('rend un document de type fichier', () => {
     const { container } = render(
       <DocumentCard document={preuveReglementaireFichier}>
@@ -281,6 +304,110 @@ describe('DocumentCard', () => {
     expect(container.innerHTML).toMatchSnapshot();
   });
 
+  test('un clic sur le titre ouvre le document', () => {
+    render(<DocumentCard document={preuveReglementaireFichier} />);
+
+    fireEvent.click(screen.getByTitle('Télécharger le fichier'));
+
+    expect(openPreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+  });
+
+  test('deplier puis replier le commentaire tronque', () => {
+    const document = {
+      ...preuveComplementaireFichier,
+      commentaire: COMMENTAIRE_LONG,
+    };
+    const { container } = render(<DocumentCard document={document} />);
+    const comment = () =>
+      container.querySelector('[data-test="comment"]')?.textContent;
+
+    expect(comment()).not.toBe(COMMENTAIRE_LONG);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Voir plus' }));
+    expect(comment()).toBe(COMMENTAIRE_LONG);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Voir moins' }));
+    expect(comment()).not.toBe(COMMENTAIRE_LONG);
+  });
+
+  test('la saisie du commentaire est enregistree a la sortie du champ', () => {
+    render(
+      <DocumentCard document={preuveComplementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
+    const textarea = screen.getByRole('textbox');
+    fireEvent.change(textarea, { target: { value: 'nouveau commentaire' } });
+    fireEvent.blur(textarea);
+
+    expect(updateCommentaire).toHaveBeenCalledWith({
+      ...preuveComplementaireFichier,
+      commentaire: 'nouveau commentaire',
+    });
+  });
+
+  test('un commentaire inchange n est pas renvoye au serveur', () => {
+    render(
+      <DocumentCard document={preuveComplementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
+    fireEvent.blur(screen.getByRole('textbox'));
+
+    expect(updateCommentaire).not.toHaveBeenCalled();
+  });
+
+  test('confirmer la suppression supprime le document', () => {
+    render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Valider' }));
+
+    expect(removePreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+  });
+
+  test('annuler la suppression ne supprime pas le document', () => {
+    render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }));
+
+    expect(removePreuve).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  test('choisir un fichier dans la modale declenche le remplacement', () => {
+    const onReplace = vi.fn().mockResolvedValue(undefined);
+    render(
+      <DocumentCard document={documentAudit}>
+        <DocumentCard.Actions>
+          <DocumentCard.Replace onReplace={onReplace} />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Remplacer le fichier' })
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Choisir dans la bibliotheque' })
+    );
+
+    expect(onReplace).toHaveBeenCalledWith(FICHIER_CHOISI_ID);
+  });
+
   test('refuse un enfant qui n est pas les actions de la carte', () => {
     expect(() =>
       render(
@@ -307,6 +434,37 @@ describe('DocumentCard', () => {
     ).toThrow(
       'DocumentCard.Actions only accepts its own actions as direct children'
     );
+  });
+
+  test('une action masquee par visibleWhen ne donne pas son entree de menu', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions>
+          <DocumentCard.Edit />
+          <DocumentCard.Delete visibleWhen={false} />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Éditer le document' })
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Supprimer' })).toBeNull();
+    expect(container.querySelectorAll('button')).toHaveLength(1);
+  });
+
+  test('un menu dont toutes les actions sont masquees ne rend rien', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions visibleWhen={false}>
+          <DocumentCard.Edit />
+          <DocumentCard.Comment />
+          <DocumentCard.Delete />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    expect(container.querySelector('button')).toBeNull();
   });
 
   test('le menu garde l ordre du design system quel que soit l ordre de declaration', () => {

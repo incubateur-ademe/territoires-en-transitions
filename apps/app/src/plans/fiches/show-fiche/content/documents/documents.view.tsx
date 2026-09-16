@@ -65,13 +65,11 @@ export const DocumentsView = () => {
                 {duplicateInformation && (
                   <DocumentCard.Duplicate information={duplicateInformation} />
                 )}
-                {!isReadonly && (
-                  <DocumentCard.Actions>
-                    <DocumentCard.Edit />
-                    <DocumentCard.Comment />
-                    <DocumentCard.Delete />
-                  </DocumentCard.Actions>
-                )}
+                <DocumentCard.Actions visibleWhen={!isReadonly}>
+                  <DocumentCard.Edit />
+                  <DocumentCard.Comment />
+                  <DocumentCard.Delete />
+                </DocumentCard.Actions>
               </DocumentCard>
             );
           }}

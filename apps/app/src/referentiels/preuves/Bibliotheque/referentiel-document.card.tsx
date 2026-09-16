@@ -38,13 +38,11 @@ export const ReferentielDocumentCard = (
       {duplicateInformation && (
         <DocumentCard.Duplicate information={duplicateInformation} />
       )}
-      {canEdit && (
-        <DocumentCard.Actions>
-          <DocumentCard.Edit />
-          <DocumentCard.Comment />
-          <DocumentCard.Delete />
-        </DocumentCard.Actions>
-      )}
+      <DocumentCard.Actions visibleWhen={canEdit}>
+        <DocumentCard.Edit />
+        <DocumentCard.Comment />
+        <DocumentCard.Delete />
+      </DocumentCard.Actions>
     </DocumentCard>
   );
 };
