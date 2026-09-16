@@ -1,6 +1,6 @@
 import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { LabellisationDemande } from '@tet/domain/referentiels';
-import { EditState } from './useEditState';
+import { EditState } from './use-edit-state';
 
 // un fichier de la bibliothèque
 export type BibliothequeFichier = {

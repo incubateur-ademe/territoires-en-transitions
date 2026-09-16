@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import type { OnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
-import { IdentifiantAction } from './IdentifiantAction';
-import PreuveDoc from './PreuveDoc';
+import { IdentifiantAction } from './identifiant-action';
+import { ReferentielDocumentCard } from './referentiel-document.card';
 import { DocumentAttendu, DocumentReglementaire } from './types';
 
 export type PreuveReglementaireProps = {
@@ -78,7 +78,7 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
             })}
           >
             {documents.map((preuve) => (
-              <PreuveDoc
+              <ReferentielDocumentCard
                 key={preuve.id}
                 preuve={preuve}
                 duplicatedDocumentInformation={getDuplicatedDocumentInformation?.(

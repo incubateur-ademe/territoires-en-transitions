@@ -7,7 +7,7 @@ import {
   attenduSansDescription,
   preuveComplementaireFichier,
   preuveComplementaireLien,
-} from './Bibliotheque/fixture';
+} from './Bibliotheque/documents.fixture';
 import { PreuvesAction } from './PreuvesAction';
 
 export default {

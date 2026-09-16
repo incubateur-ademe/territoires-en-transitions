@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import { Preuve } from './types';
+import { Preuve } from '../types';
 
 const EditDocumentButton = ({
   document,
@@ -44,24 +44,24 @@ const DeleteDocumentButton = ({ onDelete }: { onDelete: () => void }) => (
   <DeleteButton title={appLabels.supprimer} size="xs" onClick={onDelete} />
 );
 
-export type CarteDocumentActions = {
+type DocumentCardActions = {
   edit?: () => void;
   replace?: () => void;
   comment?: () => void;
   delete?: () => void;
 };
 
-type MenuCarteDocumentProps = {
+type DocumentCardMenuProps = {
   document: Pick<Preuve, 'fichier'>;
   className?: string;
-  actions: CarteDocumentActions;
+  actions: DocumentCardActions;
 };
 
-const MenuCarteDocument = ({
+export const DocumentCardMenu = ({
   document,
   className,
   actions,
-}: MenuCarteDocumentProps) => (
+}: DocumentCardMenuProps) => (
   <div className={classNames('flex gap-2', className)}>
     {actions.edit && (
       <EditDocumentButton document={document} onEdit={actions.edit} />
@@ -71,5 +71,3 @@ const MenuCarteDocument = ({
     {actions.delete && <DeleteDocumentButton onDelete={actions.delete} />}
   </div>
 );
-
-export default MenuCarteDocument;

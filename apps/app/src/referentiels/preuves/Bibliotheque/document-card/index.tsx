@@ -10,9 +10,9 @@ import {
   ReactNode,
   useState,
 } from 'react';
-import AlerteSuppression from './AlerteSuppression';
-import { CarteDocumentAction } from './carte-document-action';
-import { CarteDocumentProvider } from './carte-document.context';
+import { DeleteConfirmationAlert } from '../delete-confirmation.alert';
+import { DocumentCardAction } from './action';
+import { DocumentCardProvider } from './context';
 import {
   Actions,
   Author,
@@ -21,32 +21,12 @@ import {
   Identifier,
   Title,
   VisitDate,
-} from './carte-document.slots';
-import { EditerDocumentModal } from './EditerDocumentModal';
-import { EditerLienModal } from './EditerLienModal';
-import { Preuve } from './types';
-import { useOpenPreuve } from './use-open-preuve';
-import { useEditPreuve } from './useEditPreuve';
-import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
-
-const EditPreuveModal = ({
-  isOpen,
-  setIsOpen,
-  preuve,
-}: {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  preuve: Preuve;
-}) =>
-  preuve.fichier ? (
-    <EditerDocumentModal
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      preuve={preuve}
-    />
-  ) : (
-    <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
-  );
+} from './slots';
+import { EditDocumentModal } from '../edit-document.modal';
+import { Preuve } from '../types';
+import { useOpenPreuve } from '../use-open-preuve';
+import { useEditPreuve } from '../use-edit-preuve';
+import { useReplaceAuditReportFile } from '../use-replace-audit-report-file';
 
 const ReplaceAuditReportModal = ({
   isOpen,
@@ -115,7 +95,7 @@ const toSlots = (children: ReactNode): ReactElement[] => {
   const unknownChild = renderedChildren.find((child) => !isSlot(child));
   if (unknownChild !== undefined) {
     throw new Error(
-      `CarteDocument only accepts its own slots as direct children, got ${describeChild(
+      `DocumentCard only accepts its own slots as direct children, got ${describeChild(
         unknownChild
       )}`
     );
@@ -128,7 +108,7 @@ const toSlots = (children: ReactNode): ReactElement[] => {
   );
   if (duplicatedSlot !== undefined) {
     throw new Error(
-      `CarteDocument renders each of its slots at most once, got ${describeChild(
+      `DocumentCard renders each of its slots at most once, got ${describeChild(
         duplicatedSlot
       )} twice`
     );
@@ -137,21 +117,19 @@ const toSlots = (children: ReactNode): ReactElement[] => {
   return slots;
 };
 
-type CarteDocumentProps = {
+type DocumentCardProps = {
   document: Preuve;
   children: ReactNode;
 };
 
-const CarteDocument = ({
+export const DocumentCard = ({
   document,
   children,
-}: CarteDocumentProps): JSX.Element | null => {
+}: DocumentCardProps): JSX.Element | null => {
   const openPreuve = useOpenPreuve({ collectiviteId: document.collectiviteId });
   const { remove, editComment } = useEditPreuve(document);
   const replaceAuditReport = useReplaceAuditReportFile(document.collectiviteId);
-  const [openAction, setOpenAction] = useState<CarteDocumentAction | null>(
-    null
-  );
+  const [openAction, setOpenAction] = useState<DocumentCardAction | null>(null);
   const closeAction = () => setOpenAction(null);
 
   const { fichier, lien } = document;
@@ -162,7 +140,7 @@ const CarteDocument = ({
   if (!fichier && !lien) return null;
 
   return (
-    <CarteDocumentProvider
+    <DocumentCardProvider
       value={{
         document,
         open: () => openPreuve(document),
@@ -193,7 +171,7 @@ const CarteDocument = ({
         </Card>
       </div>
       {openAction === 'delete' && (
-        <AlerteSuppression
+        <DeleteConfirmationAlert
           isOpen={true}
           setIsOpen={closeAction}
           title={appLabels.supprimerDocument}
@@ -205,10 +183,10 @@ const CarteDocument = ({
       )}
 
       <VisibleWhen condition={openAction === 'edit'}>
-        <EditPreuveModal
+        <EditDocumentModal
           isOpen={openAction === 'edit'}
           setIsOpen={closeAction}
-          preuve={document}
+          document={document}
         />
       </VisibleWhen>
 
@@ -224,16 +202,14 @@ const CarteDocument = ({
           }}
         />
       </VisibleWhen>
-    </CarteDocumentProvider>
+    </DocumentCardProvider>
   );
 };
 
-CarteDocument.Title = Title;
-CarteDocument.Identifier = Identifier;
-CarteDocument.Author = Author;
-CarteDocument.Duplicate = Duplicate;
-CarteDocument.Comment = Comment;
-CarteDocument.VisitDate = VisitDate;
-CarteDocument.Actions = Actions;
-
-export default CarteDocument;
+DocumentCard.Title = Title;
+DocumentCard.Identifier = Identifier;
+DocumentCard.Author = Author;
+DocumentCard.Duplicate = Duplicate;
+DocumentCard.Comment = Comment;
+DocumentCard.VisitDate = VisitDate;
+DocumentCard.Actions = Actions;

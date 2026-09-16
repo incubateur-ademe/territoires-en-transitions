@@ -1,18 +1,18 @@
 import { Input, Textarea } from '@tet/ui';
 import classNames from 'classnames';
-import { EditState } from './useEditState';
+import { EditState } from './use-edit-state';
 
-type DocumentInputProps = {
+type EditStateInputProps = {
   editElement: EditState;
   type?: 'text' | 'textarea';
   className?: string;
 };
 
-const DocumentInput = ({
+export const EditStateInput = ({
   editElement,
   type = 'text',
   className,
-}: DocumentInputProps) => {
+}: EditStateInputProps) => {
   return type === 'text' ? (
     <Input
       type="text"
@@ -40,5 +40,3 @@ const DocumentInput = ({
     />
   );
 };
-
-export default DocumentInput;

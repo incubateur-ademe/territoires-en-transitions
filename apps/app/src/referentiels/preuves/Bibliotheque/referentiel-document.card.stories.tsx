@@ -1,13 +1,13 @@
 import { Meta } from '@storybook/nextjs-vite';
-import PreuveDoc from './PreuveDoc';
+import { ReferentielDocumentCard } from './referentiel-document.card';
 
 import {
   preuveComplementaireFichier,
   preuveComplementaireLien,
-} from './fixture';
+} from './documents.fixture';
 
 export default {
-  component: PreuveDoc,
+  component: ReferentielDocumentCard,
 } as Meta;
 
 export const PreuveFichier = {

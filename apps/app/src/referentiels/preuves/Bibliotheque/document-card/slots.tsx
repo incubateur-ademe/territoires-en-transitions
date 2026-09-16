@@ -6,19 +6,16 @@ import {
 import { Button, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { JSX, useState } from 'react';
-import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
-import {
-  CarteDocumentAction,
-  isActionCarriedBy,
-} from './carte-document-action';
-import { useCarteDocument } from './carte-document.context';
-import DocumentInput from './DocumentInput';
-import { DuplicatedDocumentAlert } from './duplicated-document.alert';
-import MenuCarteDocument from './MenuCarteDocument';
-import { getAuthorAndDate, getFormattedTitle } from './utils';
+import type { DuplicatedDocumentInformation } from '../../duplicated-document-state.utils';
+import { DocumentCardAction, isActionCarriedBy } from './action';
+import { useDocumentCard } from './context';
+import { EditStateInput } from '../edit-state.input';
+import { DuplicatedDocumentAlert } from '../duplicated-document.alert';
+import { DocumentCardMenu } from './menu';
+import { getAuthorAndDate, getFormattedTitle } from '../document-label.utils';
 
 export const Title = (): JSX.Element => {
-  const { document, open } = useCarteDocument();
+  const { document, open } = useDocumentCard();
   const { fichier } = document;
 
   return (
@@ -32,7 +29,7 @@ export const Title = (): JSX.Element => {
     </span>
   );
 };
-Title.displayName = 'CarteDocument.Title';
+Title.displayName = 'DocumentCard.Title';
 
 export const Identifier = ({
   identifiant,
@@ -41,10 +38,10 @@ export const Identifier = ({
 }): JSX.Element => (
   <span className="text-grey-6 leading-6 flex gap-2">{identifiant}</span>
 );
-Identifier.displayName = 'CarteDocument.Identifier';
+Identifier.displayName = 'DocumentCard.Identifier';
 
 export const Author = (): JSX.Element => {
-  const { document } = useCarteDocument();
+  const { document } = useDocumentCard();
 
   return (
     <span className="text-grey-8 text-sm font-medium">
@@ -52,7 +49,7 @@ export const Author = (): JSX.Element => {
     </span>
   );
 };
-Author.displayName = 'CarteDocument.Author';
+Author.displayName = 'DocumentCard.Author';
 
 export const Duplicate = ({
   information,
@@ -64,14 +61,14 @@ export const Duplicate = ({
       storedFilenameKept={information.storedFilenameKept}
     />
   ) : null;
-Duplicate.displayName = 'CarteDocument.Duplicate';
+Duplicate.displayName = 'DocumentCard.Duplicate';
 
 export const Comment = ({
   className,
 }: {
   className?: string;
 }): JSX.Element | null => {
-  const { document, editComment } = useCarteDocument();
+  const { document, editComment } = useDocumentCard();
   const [isExpanded, setIsExpanded] = useState(false);
   const { commentaire } = document;
   const { truncatedText, isTextTruncated } = getTruncatedText(commentaire, 160);
@@ -80,7 +77,7 @@ export const Comment = ({
     return (
       <div className="flex flex-col gap-2 leading-5">
         <div className="h-px bg-primary-3" />
-        <DocumentInput editElement={editComment} type="textarea" />
+        <EditStateInput editElement={editComment} type="textarea" />
       </div>
     );
   }
@@ -119,34 +116,33 @@ export const Comment = ({
     </div>
   );
 };
-Comment.displayName = 'CarteDocument.Comment';
+Comment.displayName = 'DocumentCard.Comment';
 
 export const VisitDate = ({ date }: { date: string }): JSX.Element => (
   <p className="text-xs text-grey-8 font-normal mb-1 pl-2">
     {appLabels.visiteEffectuee({ dateVisite: getTextFormattedDate({ date }) })}
   </p>
 );
-VisitDate.displayName = 'CarteDocument.VisitDate';
+VisitDate.displayName = 'DocumentCard.VisitDate';
 
 export const Actions = ({
   allowedActions,
 }: {
-  allowedActions: readonly CarteDocumentAction[];
+  allowedActions: readonly DocumentCardAction[];
 }): JSX.Element | null => {
-  const { document, editComment, setOpenAction } = useCarteDocument();
+  const { document, editComment, setOpenAction } = useDocumentCard();
 
   const shownActions = allowedActions.filter((action) =>
     isActionCarriedBy(action, document.preuveType)
   );
-  const isShown = (action: CarteDocumentAction) =>
-    shownActions.includes(action);
+  const isShown = (action: DocumentCardAction) => shownActions.includes(action);
 
   if (shownActions.length === 0 || editComment.isEditing) {
     return null;
   }
 
   return (
-    <MenuCarteDocument
+    <DocumentCardMenu
       document={document}
       className="absolute top-4 right-4 invisible group-hover:visible"
       actions={{
@@ -160,4 +156,4 @@ export const Actions = ({
     />
   );
 };
-Actions.displayName = 'CarteDocument.Actions';
+Actions.displayName = 'DocumentCard.Actions';

@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
-import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { DocumentCard } from '@/app/referentiels/preuves/Bibliotheque/document-card';
 import {
-  CarteDocumentAction,
+  DocumentCardAction,
   MUTATION_ACTIONS,
-} from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
+} from '@/app/referentiels/preuves/Bibliotheque/document-card/action';
 import {
   PreuveAudit,
   PreuveAuditEtLabellisation,
@@ -102,17 +102,17 @@ const DocAuditOuLabellisation = ({
       'referentiels.labellisations.mutate_documents'
     ),
   });
-  const allowedActions: CarteDocumentAction[] = canUpdate
+  const allowedActions: DocumentCardAction[] = canUpdate
     ? [...MUTATION_ACTIONS, 'replace']
     : [];
 
   return (
-    <CarteDocument document={preuve}>
-      <CarteDocument.Actions allowedActions={allowedActions} />
-      <CarteDocument.Title />
-      <CarteDocument.Author />
-      <CarteDocument.Comment className="pb-0 mb-2" />
-    </CarteDocument>
+    <DocumentCard document={preuve}>
+      <DocumentCard.Actions allowedActions={allowedActions} />
+      <DocumentCard.Title />
+      <DocumentCard.Author />
+      <DocumentCard.Comment className="pb-0 mb-2" />
+    </DocumentCard>
   );
 };
 
