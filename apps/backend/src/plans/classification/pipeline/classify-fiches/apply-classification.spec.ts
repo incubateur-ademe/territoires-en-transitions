@@ -1,6 +1,11 @@
+import { categorieActionEnumValues } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
+import { RANK_BY_LEVIER } from '../../prompts/levier-ranks';
 import { applyClassification } from './apply-classification';
-import { FicheClassification } from './classify-fiches.schema';
+import {
+  FicheClassification,
+  MAX_JUSTIFICATION_LENGTH,
+} from './classify-fiches.schema';
 import { RenderedFiche } from './render-fiches-text';
 
 const rendered: RenderedFiche[] = [
@@ -14,7 +19,12 @@ const toFicheClassification = (
   index: 0,
   justification: 'Le texte décrit une infrastructure de covoiturage.',
   hasNoRelevantLevier: false,
-  volets: [{ levier: 'Covoiturage', categories: ['amenagement'] }],
+  volets: [
+    {
+      levier: RANK_BY_LEVIER['Covoiturage'],
+      categories: [categorieActionEnumValues.indexOf('amenagement') + 1],
+    },
+  ],
   ...overrides,
 });
 
@@ -50,8 +60,11 @@ describe('applyClassification', () => {
         toFicheClassification({
           volets: [
             {
-              levier: 'Vélo et transport en commun',
-              categories: ['amenagement', 'financement'],
+              levier: RANK_BY_LEVIER['Vélo et transport en commun'],
+              categories: [
+                categorieActionEnumValues.indexOf('amenagement') + 1,
+                categorieActionEnumValues.indexOf('financement') + 1,
+              ],
             },
           ],
         }),
@@ -69,10 +82,18 @@ describe('applyClassification', () => {
       [
         toFicheClassification({
           volets: [
-            { levier: 'Covoiturage', categories: ['amenagement'] },
             {
-              levier: 'Covoiturage',
-              categories: ['amenagement', 'financement'],
+              levier: RANK_BY_LEVIER['Covoiturage'],
+              categories: [
+                categorieActionEnumValues.indexOf('amenagement') + 1,
+              ],
+            },
+            {
+              levier: RANK_BY_LEVIER['Covoiturage'],
+              categories: [
+                categorieActionEnumValues.indexOf('amenagement') + 1,
+                categorieActionEnumValues.indexOf('financement') + 1,
+              ],
             },
           ],
         }),
@@ -188,5 +209,49 @@ describe('applyClassification', () => {
       success: false,
       error: { kind: 'missing_indexes', indexes: [1] },
     });
+  });
+
+  it('retire les espaces de bord de la justification', () => {
+    const result = applyClassification(
+      [
+        toFicheClassification({
+          justification: '  Le texte décrit du covoiturage.  ',
+        }),
+        toFicheClassification({ index: 1 }),
+      ],
+      rendered
+    );
+
+    expect(result.success && result.data[0].justification).toBe(
+      'Le texte décrit du covoiturage.'
+    );
+  });
+
+  it('retaille une justification plus longue que la limite annoncée au modèle', () => {
+    const result = applyClassification(
+      [
+        toFicheClassification({
+          justification: 'a'.repeat(MAX_JUSTIFICATION_LENGTH + 120),
+        }),
+        toFicheClassification({ index: 1 }),
+      ],
+      rendered
+    );
+
+    expect(result.success && result.data[0].justification.length).toBe(
+      MAX_JUSTIFICATION_LENGTH
+    );
+  });
+
+  it('tolère une justification vide plutôt que de perdre tout le lot', () => {
+    const result = applyClassification(
+      [
+        toFicheClassification({ justification: '   ' }),
+        toFicheClassification({ index: 1 }),
+      ],
+      rendered
+    );
+
+    expect(result.success && result.data[0].justification).toBe('');
   });
 });

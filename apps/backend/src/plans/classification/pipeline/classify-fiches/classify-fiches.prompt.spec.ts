@@ -49,12 +49,14 @@ describe('buildClassificationPrompt', () => {
     expect(injected).toContain('Consigne piégée {{leviers}}');
   });
 
-  it("déclare les six catégories dans l'instruction système", () => {
-    const missingCategories = categorieActionEnumValues.filter(
-      (categorie) =>
-        !CLASSIFICATION_SYSTEM_INSTRUCTION.includes(`- ${categorie} — `)
+  it("numérote les six catégories dans l'instruction système", () => {
+    const misnumbered = categorieActionEnumValues.filter(
+      (categorie, position) =>
+        !CLASSIFICATION_SYSTEM_INSTRUCTION.includes(
+          `${position + 1}. ${categorie} — `
+        )
     );
-    expect(missingCategories).toEqual([]);
+    expect(misnumbered).toEqual([]);
   });
 
   it("légitime explicitement l'abstention dans l'instruction système", () => {
