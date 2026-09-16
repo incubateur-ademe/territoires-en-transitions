@@ -21,7 +21,7 @@ vi.mock('@tet/api/collectivites', () => ({
   useCollectiviteId: () => 1,
 }));
 
-vi.mock('../Bibliotheque/useEditPreuve', () => ({
+vi.mock('../Bibliotheque/use-edit-preuve', () => ({
   useUpdateBibliothequeFichier: () => ({ mutate: vi.fn() }),
 }));
 

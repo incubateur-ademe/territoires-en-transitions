@@ -4,8 +4,8 @@ import {
   attenduLien,
   attenduNonRenseigne,
   attenduPlusieursDocuments,
-} from './fixture';
-import { PreuveReglementaire } from './PreuveReglementaire';
+} from './documents.fixture';
+import { PreuveReglementaire } from './preuve-reglementaire';
 
 export default {
   component: PreuveReglementaire,

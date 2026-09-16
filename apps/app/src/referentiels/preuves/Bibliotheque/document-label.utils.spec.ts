@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { getAuthorAndDate } from './utils';
+import { getAuthorAndDate } from './document-label.utils';
 
 // La date rendue par les contrats de documents est celle de derniere
 // modification : preuve_labellisation, preuve_audit et preuve_rapport

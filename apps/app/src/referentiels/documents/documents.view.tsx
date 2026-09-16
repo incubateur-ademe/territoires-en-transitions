@@ -2,7 +2,7 @@
 
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { appLabels } from '@/app/labels/catalog';
-import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
+import { ReferentielDocumentCard } from '@/app/referentiels/preuves/Bibliotheque/referentiel-document.card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
@@ -77,7 +77,7 @@ export const DocumentsView = () => {
           )}
           {rapport.map((preuve) => (
             <div className="py-4" key={preuve.id}>
-              <PreuveDoc preuve={preuve} />
+              <ReferentielDocumentCard preuve={preuve} />
             </div>
           ))}
         </section>

@@ -1,16 +1,16 @@
 import { match } from 'ts-pattern';
-import { PreuveType } from './types';
+import { PreuveType } from '../types';
 
-export type CarteDocumentAction = 'edit' | 'comment' | 'replace' | 'delete';
+export type DocumentCardAction = 'edit' | 'comment' | 'replace' | 'delete';
 
-export const MUTATION_ACTIONS: readonly CarteDocumentAction[] = [
+export const MUTATION_ACTIONS: readonly DocumentCardAction[] = [
   'edit',
   'comment',
   'delete',
 ];
 
 export const isActionCarriedBy = (
-  action: CarteDocumentAction,
+  action: DocumentCardAction,
   preuveType: PreuveType
 ): boolean =>
   match(action)

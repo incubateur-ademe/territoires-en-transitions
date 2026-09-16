@@ -3,7 +3,7 @@ import { useOpenPreuve } from '@/app/referentiels/preuves/Bibliotheque/use-open-
 import {
   getAuthorAndDate,
   getFormattedTitle,
-} from '@/app/referentiels/preuves/Bibliotheque/utils';
+} from '@/app/referentiels/preuves/Bibliotheque/document-label.utils';
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
 import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';

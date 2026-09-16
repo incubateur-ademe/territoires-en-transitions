@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import type { BibliothequeFichierListItem } from '../Bibliotheque/useFichiers';
+import type { BibliothequeFichierListItem } from '../Bibliotheque/use-fichiers';
 import { AddFromLib } from './AddFromLib';
 
 const meta: Meta<typeof AddFromLib> = {

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
 import { EditHandlers, Preuve } from './types';
-import { useEditFilenameState, useEditState } from './useEditState';
+import { useEditFilenameState, useEditState } from './use-edit-state';
 
 type EditPreuve = (preuve: Preuve) => EditHandlers;
 

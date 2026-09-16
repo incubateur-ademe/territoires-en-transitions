@@ -1,6 +1,6 @@
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 
-type AlerteSuppressionProps = {
+type DeleteConfirmationAlertProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   title?: string;
@@ -8,13 +8,13 @@ type AlerteSuppressionProps = {
   onDelete: () => void;
 };
 
-const AlerteSuppression = ({
+export const DeleteConfirmationAlert = ({
   isOpen,
   setIsOpen,
   title,
   message,
   onDelete,
-}: AlerteSuppressionProps) => {
+}: DeleteConfirmationAlertProps) => {
   return (
     isOpen && (
       <Modal
@@ -37,5 +37,3 @@ const AlerteSuppression = ({
     )
   );
 };
-
-export default AlerteSuppression;

@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CarteDocumentAction,
-  isActionCarriedBy,
-} from './carte-document-action';
-import { PreuveType } from './types';
+import { DocumentCardAction, isActionCarriedBy } from './action';
+import { PreuveType } from '../types';
 
 const PREUVE_TYPES: readonly PreuveType[] = [
   'reglementaire',
@@ -14,7 +11,7 @@ const PREUVE_TYPES: readonly PreuveType[] = [
   'rapport',
 ];
 
-const preuveTypesCarrying = (action: CarteDocumentAction): PreuveType[] =>
+const preuveTypesCarrying = (action: DocumentCardAction): PreuveType[] =>
   PREUVE_TYPES.filter((preuveType) => isActionCarriedBy(action, preuveType));
 
 describe('isActionCarriedBy', () => {

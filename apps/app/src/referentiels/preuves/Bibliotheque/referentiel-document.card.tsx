@@ -1,18 +1,20 @@
 import { useOptionalReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
-import CarteDocument from './CarteDocument';
-import { MUTATION_ACTIONS } from './carte-document-action';
+import { DocumentCard } from './document-card';
+import { MUTATION_ACTIONS } from './document-card/action';
 import { Preuve } from './types';
 
-export type PreuveDocProps = {
+export type ReferentielDocumentCardProps = {
   preuve: Preuve;
   readonly?: boolean;
   displayIdentifier?: boolean;
   duplicatedDocumentInformation?: DuplicatedDocumentInformation;
 };
 
-const PreuveDoc = (props: PreuveDocProps) => {
+export const ReferentielDocumentCard = (
+  props: ReferentielDocumentCardProps
+) => {
   const { hasCollectivitePermission, hasReferentielPermission } =
     useCurrentCollectivite();
   const referentielId = useOptionalReferentielId();
@@ -29,18 +31,16 @@ const PreuveDoc = (props: PreuveDocProps) => {
     props.preuve.preuveType === 'rapport' ? props.preuve.rapport.date : null;
 
   return (
-    <CarteDocument document={props.preuve}>
-      <CarteDocument.Actions allowedActions={canEdit ? MUTATION_ACTIONS : []} />
-      <CarteDocument.Title />
-      {identifiant && <CarteDocument.Identifier identifiant={identifiant} />}
-      <CarteDocument.Author />
-      <CarteDocument.Duplicate
+    <DocumentCard document={props.preuve}>
+      <DocumentCard.Actions allowedActions={canEdit ? MUTATION_ACTIONS : []} />
+      <DocumentCard.Title />
+      {identifiant && <DocumentCard.Identifier identifiant={identifiant} />}
+      <DocumentCard.Author />
+      <DocumentCard.Duplicate
         information={props.duplicatedDocumentInformation}
       />
-      <CarteDocument.Comment />
-      {visitDate && <CarteDocument.VisitDate date={visitDate} />}
-    </CarteDocument>
+      <DocumentCard.Comment />
+      {visitDate && <DocumentCard.VisitDate date={visitDate} />}
+    </DocumentCard>
   );
 };
-
-export default PreuveDoc;

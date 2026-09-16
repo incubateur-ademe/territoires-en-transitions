@@ -2,7 +2,7 @@ import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
 import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
-import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/useEditPreuve';
+import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
   MAX_FILE_SIZE_MB,

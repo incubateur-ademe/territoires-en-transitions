@@ -5,7 +5,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { useUpdateBibliothequeFichier } from '../Bibliotheque/useEditPreuve';
+import { useUpdateBibliothequeFichier } from '../Bibliotheque/use-edit-preuve';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,

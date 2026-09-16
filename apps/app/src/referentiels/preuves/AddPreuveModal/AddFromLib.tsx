@@ -7,7 +7,7 @@ import { useState } from 'react';
 import {
   BibliothequeFichierListItem,
   useFichiers,
-} from '../Bibliotheque/useFichiers';
+} from '../Bibliotheque/use-fichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { AddFileFromLibHandler } from './AddFile';
 

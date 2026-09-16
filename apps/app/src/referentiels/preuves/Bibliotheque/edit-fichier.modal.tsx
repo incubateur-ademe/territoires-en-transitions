@@ -2,10 +2,10 @@ import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
 import { BibliothequeFichier, PreuveType } from './types';
-import { useUpdateBibliothequeFichier } from './useEditPreuve';
-import { useEditFilenameState } from './useEditState';
+import { useUpdateBibliothequeFichier } from './use-edit-preuve';
+import { useEditFilenameState } from './use-edit-state';
 
-export type EditerDocumentProps = {
+export type EditFichierModalProps = {
   preuve: {
     collectiviteId: number;
     preuveType: PreuveType;
@@ -22,7 +22,7 @@ export type EditerDocumentProps = {
 /**
  * Affiche la modale d'édition d'un fichier
  */
-export const EditerDocumentModal = (props: EditerDocumentProps) => {
+export const EditFichierModal = (props: EditFichierModalProps) => {
   const { preuve, isOpen, setIsOpen } = props;
   const { fichier } = preuve;
   const [filename, setFilename] = useState(fichier?.filename);

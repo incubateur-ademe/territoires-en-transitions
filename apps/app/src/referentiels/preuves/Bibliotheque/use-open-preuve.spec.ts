@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { preuveReglementaireFichier, preuveReglementaireLien } from './fixture';
+import { preuveReglementaireFichier, preuveReglementaireLien } from './documents.fixture';
 import { useOpenPreuve } from './use-open-preuve';
 
 const { downloadDocument, telechargementEnCours } = vi.hoisted(() => ({
