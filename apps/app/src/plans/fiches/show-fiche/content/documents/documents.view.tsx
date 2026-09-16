@@ -60,14 +60,17 @@ export const DocumentsView = () => {
           }
         >
           {(doc) => (
-            <CarteDocument
-              key={doc.id}
-              document={doc}
-              duplicatedDocumentInformation={getDuplicatedDocumentInformation(
-                doc
-              )}
-              allowedActions={isReadonly ? [] : MUTATION_ACTIONS}
-            />
+            <CarteDocument key={doc.id} document={doc}>
+              <CarteDocument.Actions
+                allowedActions={isReadonly ? [] : MUTATION_ACTIONS}
+              />
+              <CarteDocument.Title />
+              <CarteDocument.Author />
+              <CarteDocument.Duplicate
+                information={getDuplicatedDocumentInformation(doc)}
+              />
+              <CarteDocument.Comment />
+            </CarteDocument>
           )}
         </ContentLayout.Content>
       </ContentLayout.Root>
