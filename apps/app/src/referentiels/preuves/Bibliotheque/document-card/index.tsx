@@ -1,125 +1,31 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Card, Modal, Notification, Tooltip, VisibleWhen } from '@tet/ui';
-import {
-  Children,
-  ElementType,
-  isValidElement,
-  JSX,
-  ReactElement,
-  ReactNode,
-  useState,
-} from 'react';
-import { DeleteConfirmationAlert } from '../delete-confirmation.alert';
-import { DocumentCardAction } from './action';
-import { DocumentCardProvider } from './context';
-import {
-  Actions,
-  Author,
-  Comment,
-  Duplicate,
-  Identifier,
-  Title,
-  VisitDate,
-} from './slots';
-import { EditDocumentModal } from '../edit-document.modal';
+import { Card, Notification, Tooltip } from '@tet/ui';
+import { ElementType, JSX, ReactNode, useState } from 'react';
 import { Preuve } from '../types';
+import { useEditState } from '../use-edit-state';
+import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
 import { useOpenPreuve } from '../use-open-preuve';
-import { useEditPreuve } from '../use-edit-preuve';
-import { useReplaceAuditReportFile } from '../use-replace-audit-report-file';
-
-const ReplaceAuditReportModal = ({
-  isOpen,
-  setIsOpen,
-  onReplace,
-}: {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  onReplace: (fichierId: number) => Promise<void>;
-}) => (
-  <Modal
-    size="lg"
-    openState={{ isOpen, setIsOpen }}
-    title={appLabels.remplacerLeFichier}
-    render={({ close }) => (
-      <AddPreuveModal
-        onClose={close}
-        handlers={{ addFileFromLib: onReplace }}
-      />
-    )}
-  />
-);
-
-const describeChild = (child: ReactNode): string => {
-  if (!isValidElement(child)) {
-    return String(child);
-  }
-  const { type } = child;
-  if (typeof type === 'string') {
-    return `<${type}>`;
-  }
-  if (typeof type === 'function') {
-    return 'displayName' in type && typeof type.displayName === 'string'
-      ? type.displayName
-      : type.name;
-  }
-  return 'an anonymous component';
-};
-
-const SLOTS: readonly unknown[] = [
-  Actions,
+import { Actions, CommentAction, Delete, Edit, Replace } from './actions';
+import {
   Author,
-  Comment,
+  CommentBlock,
   Duplicate,
   Identifier,
   Title,
   VisitDate,
-];
+} from './content';
+import { DocumentCardProvider } from './context';
+import { toDeclaredChildren } from './declared-children';
+import { OpenedDocumentModal } from './opened-modal';
 
-const isRenderedAsNothing = (child: ReactNode): boolean =>
-  child === null ||
-  child === undefined ||
-  typeof child === 'boolean' ||
-  child === '';
+const CHILDREN = [Actions, Duplicate, Identifier];
 
-const isSlot = (child: ReactNode): child is ReactElement =>
-  isValidElement(child) && SLOTS.includes(child.type);
-
-const toSlots = (children: ReactNode): ReactElement[] => {
-  const childList: ReactNode[] = [];
-  Children.forEach(children, (child) => childList.push(child));
-
-  const renderedChildren = childList.filter(
-    (child) => !isRenderedAsNothing(child)
-  );
-  const unknownChild = renderedChildren.find((child) => !isSlot(child));
-  if (unknownChild !== undefined) {
-    throw new Error(
-      `DocumentCard only accepts its own slots as direct children, got ${describeChild(
-        unknownChild
-      )}`
-    );
-  }
-
-  const slots = renderedChildren.filter(isSlot);
-  const duplicatedSlot = slots.find(
-    (slot, index) =>
-      slots.findIndex((other) => other.type === slot.type) !== index
-  );
-  if (duplicatedSlot !== undefined) {
-    throw new Error(
-      `DocumentCard renders each of its slots at most once, got ${describeChild(
-        duplicatedSlot
-      )} twice`
-    );
-  }
-
-  return slots;
-};
+const getVisitDate = (document: Preuve): string | null =>
+  document.preuveType === 'rapport' ? document.rapport.date : null;
 
 type DocumentCardProps = {
   document: Preuve;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export const DocumentCard = ({
@@ -127,26 +33,31 @@ export const DocumentCard = ({
   children,
 }: DocumentCardProps): JSX.Element | null => {
   const openPreuve = useOpenPreuve({ collectiviteId: document.collectiviteId });
-  const { remove, editComment } = useEditPreuve(document);
-  const replaceAuditReport = useReplaceAuditReportFile(document.collectiviteId);
-  const [openAction, setOpenAction] = useState<DocumentCardAction | null>(null);
-  const closeAction = () => setOpenAction(null);
+  const { mutate: updateCommentaire } = useUpdatePreuveCommentaire();
+  const editComment = useEditState({
+    initialValue: document.commentaire,
+    onUpdate: (commentaire) => updateCommentaire({ ...document, commentaire }),
+  });
+  const [openedModal, setOpenedModal] = useState<OpenedDocumentModal | null>(
+    null
+  );
+
+  const declaredChildren = toDeclaredChildren(children, {
+    owner: 'DocumentCard',
+    accepted: CHILDREN,
+    label: 'its own actions and content',
+  });
+  const childOfType = (type: ElementType): ReactNode =>
+    declaredChildren.find((child) => child.type === type);
 
   const { fichier, lien } = document;
-  const slots = toSlots(children);
-  const slotOfType = (type: ElementType): ReactNode =>
-    slots.find((slot) => slot.type === type);
+  const visitDate = getVisitDate(document);
 
   if (!fichier && !lien) return null;
 
   return (
     <DocumentCardProvider
-      value={{
-        document,
-        open: () => openPreuve(document),
-        editComment,
-        setOpenAction,
-      }}
+      value={{ document, editComment, openedModal, setOpenedModal }}
     >
       <div className="relative group max-w-screen-md" data-test="carte-doc">
         {fichier?.confidentiel && (
@@ -159,57 +70,28 @@ export const DocumentCard = ({
             </div>
           </Tooltip>
         )}
-        {slotOfType(Actions)}
+        {childOfType(Actions)}
 
         <Card className="p-4 h-full gap-1">
-          {slotOfType(Title)}
-          {slotOfType(Identifier)}
-          {slotOfType(Author)}
-          {slotOfType(Duplicate)}
-          {slotOfType(Comment)}
-          {slotOfType(VisitDate)}
+          <Title document={document} onOpen={() => openPreuve(document)} />
+          {childOfType(Identifier)}
+          <Author document={document} />
+          {childOfType(Duplicate)}
+          <CommentBlock
+            commentaire={document.commentaire}
+            editComment={editComment}
+          />
+          {visitDate && <VisitDate date={visitDate} />}
         </Card>
       </div>
-      {openAction === 'delete' && (
-        <DeleteConfirmationAlert
-          isOpen={true}
-          setIsOpen={closeAction}
-          title={appLabels.supprimerDocument}
-          message={appLabels.supprimerDocumentMessage}
-          onDelete={() => {
-            remove();
-          }}
-        />
-      )}
-
-      <VisibleWhen condition={openAction === 'edit'}>
-        <EditDocumentModal
-          isOpen={openAction === 'edit'}
-          setIsOpen={closeAction}
-          document={document}
-        />
-      </VisibleWhen>
-
-      <VisibleWhen condition={openAction === 'replace'}>
-        <ReplaceAuditReportModal
-          isOpen={openAction === 'replace'}
-          setIsOpen={closeAction}
-          onReplace={async (fichierId) => {
-            await replaceAuditReport.mutateAsync({
-              preuveId: document.id,
-              fichierId,
-            });
-          }}
-        />
-      </VisibleWhen>
     </DocumentCardProvider>
   );
 };
 
-DocumentCard.Title = Title;
-DocumentCard.Identifier = Identifier;
-DocumentCard.Author = Author;
-DocumentCard.Duplicate = Duplicate;
-DocumentCard.Comment = Comment;
-DocumentCard.VisitDate = VisitDate;
 DocumentCard.Actions = Actions;
+DocumentCard.Comment = CommentAction;
+DocumentCard.Delete = Delete;
+DocumentCard.Duplicate = Duplicate;
+DocumentCard.Edit = Edit;
+DocumentCard.Identifier = Identifier;
+DocumentCard.Replace = Replace;
