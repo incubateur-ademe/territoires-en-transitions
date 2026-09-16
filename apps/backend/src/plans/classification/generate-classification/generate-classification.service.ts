@@ -1,49 +1,33 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Enjeu } from '@tet/domain/shared';
-import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
-import { DECLARED_ENJEUX, isDeclaredEnjeu } from '../classification-enjeux';
-import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
-import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { sumTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { Enjeu, LEVIER_ID_BY_NOM } from '@tet/domain/shared';
 import { ClassificationVoletsJobRepository } from '../classification-volets-job.repository';
-import { type ClassificationVoletsError } from '../classification-volets.errors';
-import { type VoletError } from '../volet.errors';
-import { FicheVolets, VoletRepository } from '../volet.repository';
+import { ClassifyBatchOutcome } from '../classify-batch/classify-batch.service';
 import { FicheActionVoletGesRepository } from '../fiche-action-volet-ges.repository';
-import {
-  CLASSIFICATION_DEADLINE_MS,
-  ClassificationVoletsJobStatusEnum,
-  FICHES_TO_CLASSIFY_FILTERS,
-} from '../models/classification-volets-job';
+import { type AnalysisError } from '../models/analysis-error';
+import { ClassificationOutcome } from '../models/classification-outcome';
+import { ClassificationVoletsJob } from '../models/classification-volets-job';
 import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
-import {
-  FICHES_PER_BATCH,
-  runClassification,
-} from '../pipeline/run-classification';
+import { FicheVolet } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
+import { FicheVolets, VoletRepository } from '../volet.repository';
 
-export type GenerateClassificationError =
-  | { kind: 'job_unreadable'; jobId: string; cause: ClassificationVoletsError }
-  | {
-      kind: 'transition_failed';
-      jobId: string;
-      cause: ClassificationVoletsError;
-    }
-  | {
-      kind: 'failure_record_failed';
-      jobId: string;
-      cause: ClassificationVoletsError;
-    }
-  | { kind: 'interrupted'; jobId: string; message: string };
-
-type PersistClassificationFailure =
-  | { step: 'save_volets'; cause: VoletError }
-  | { step: 'mark_done'; cause: ClassificationVoletsError };
+type PersistFailure = { step: 'save_volets' | 'record_draft'; cause: string };
 
 const toFicheVolets = ({ ficheId, volets }: ClassifiedFiche): FicheVolets => ({
   ficheId,
   volets,
 });
+
+const toScoredVolets = (fiches: ClassifiedFiche[]): FicheVolet[] =>
+  fiches.flatMap(({ ficheId, volets }) =>
+    volets.map(({ levier, categorie }) => ({
+      ficheId,
+      levierId: LEVIER_ID_BY_NOM[levier],
+      categorie,
+    }))
+  );
 
 @Injectable()
 export class GenerateClassificationService {
@@ -51,8 +35,6 @@ export class GenerateClassificationService {
 
   constructor(
     private readonly jobRepository: ClassificationVoletsJobRepository,
-    private readonly listFichesService: ListFichesService,
-    private readonly llm: LlmService,
     private readonly ficheActionVoletGesRepository: FicheActionVoletGesRepository,
     private readonly transactionManager: TransactionManager
   ) {}
@@ -61,92 +43,24 @@ export class GenerateClassificationService {
     ges: this.ficheActionVoletGesRepository,
   };
 
-  async generate(
-    jobId: string
-  ): Promise<Result<undefined, GenerateClassificationError>> {
-    const jobResult = await this.jobRepository.getById(jobId);
-    if (!jobResult.success) {
-      return failure({ kind: 'job_unreadable', jobId, cause: jobResult.error });
-    }
-    const job = jobResult.data;
-
-    const isAlreadyDone = job.status === ClassificationVoletsJobStatusEnum.DONE;
-    if (isAlreadyDone) {
-      this.logger.log(`Job ${jobId} déjà terminé, ré-livraison ignorée`);
-      return success(undefined);
-    }
-
-    const { data: readableFiches } =
-      await this.listFichesService.getFichesActionResumes(
-        {
-          collectiviteId: job.collectiviteId,
-          filters: FICHES_TO_CLASSIFY_FILTERS,
-          queryOptions: { limit: 'all' },
-        },
-        { user: buildRequesterUser(job.createdBy) }
-      );
-
-    const ownedFiches = readableFiches.filter(
-      ({ collectiviteId }) => collectiviteId === job.collectiviteId
+  async persist(
+    job: ClassificationVoletsJob,
+    classifications: ClassifyBatchOutcome[]
+  ): Promise<Result<ClassificationOutcome, AnalysisError>> {
+    const jobId = job.id;
+    const classifiedFiches = classifications.flatMap(
+      ({ classified }) => classified
     );
-
-    if (ownedFiches.length === 0) {
-      return this.interrupt(
-        jobId,
-        'Aucune fiche à classer dans cette collectivité'
-      );
-    }
-
-    const totalBatches = Math.ceil(ownedFiches.length / FICHES_PER_BATCH);
-    const runningResult = await this.jobRepository.markRunning(
-      jobId,
-      totalBatches
-    );
-    if (!runningResult.success) {
-      return failure({
-        kind: 'transition_failed',
-        jobId,
-        cause: runningResult.error,
-      });
-    }
-
-    if (!isDeclaredEnjeu(job.enjeu)) {
-      return this.interrupt(
-        jobId,
-        `Cette classification porte un enjeu que l'application ne reconnaît pas : ${job.enjeu}. Signalez-le à l'équipe.`
-      );
-    }
-    const enjeu = DECLARED_ENJEUX[job.enjeu];
+    const draft = { fiches: classifiedFiches };
     const repository = this.repositoriesByEnjeu[job.enjeu];
-
-    const deadline = AbortSignal.timeout(CLASSIFICATION_DEADLINE_MS);
-    const classification = await runClassification(this.llm, {
-      enjeu,
-      signal: deadline,
-      fiches: ownedFiches.map(({ id, titre, description }) => ({
-        ficheId: id,
-        titre: titre ?? '',
-        description,
-      })),
-      onBatchProcessed: (processedBatches) => {
-        void this.jobRepository.recordProcessedBatches(jobId, processedBatches);
-      },
-    });
-
-    if (classification.kind === 'too_many_failed_batches') {
-      return this.interrupt(
-        jobId,
-        `Classification abandonnée: ${classification.failedBatches} batches en échec sur ${classification.totalBatches}`
-      );
-    }
 
     const persistResult = await this.transactionManager.executeSingle<
       undefined,
-      PersistClassificationFailure
+      PersistFailure
     >(async (tx) => {
       const saveResult = await repository.saveVolets({
         collectiviteId: job.collectiviteId,
-        fiches: classification.draft.fiches.map(toFicheVolets),
+        fiches: classifiedFiches.map(toFicheVolets),
         createdBy: job.createdBy,
         tx,
       });
@@ -157,57 +71,45 @@ export class GenerateClassificationService {
         });
       }
 
-      const doneResult = await this.jobRepository.markDone({
+      const draftResult = await this.jobRepository.recordClassificationDraft({
         id: jobId,
-        draft: classification.draft,
-        tokenUsage: classification.tokens,
+        draft,
         tx,
       });
-      if (!doneResult.success) {
-        return failure({ step: 'mark_done' as const, cause: doneResult.error });
+      if (!draftResult.success) {
+        return failure({
+          step: 'record_draft' as const,
+          cause: draftResult.error,
+        });
       }
 
       return success(undefined);
     });
 
-    if (persistResult.success) {
-      return success(undefined);
-    }
-
-    if (persistResult.error.step === 'save_volets') {
+    if (!persistResult.success) {
       return this.interrupt(
         jobId,
-        `L'enregistrement du classement a échoué (${persistResult.error.cause})`
+        `L'enregistrement du classement a échoué (${persistResult.error.step})`
       );
     }
 
-    return failure({
-      kind: 'transition_failed',
-      jobId,
-      cause: persistResult.error.cause,
+    return success({
+      draft,
+      fiches: classifications.flatMap(({ sources }) => sources),
+      volets: toScoredVolets(classifiedFiches),
+      tokens: sumTokenUsage(classifications.map(({ tokens }) => tokens)),
     });
-  }
-
-  async recordTerminalFailure(jobId: string, message: string): Promise<void> {
-    const failedResult = await this.jobRepository.markFailed(jobId, message);
-    if (!failedResult.success) {
-      this.logger.error(
-        `Enregistrement de l'échec du job ${jobId} impossible (${failedResult.error})`
-      );
-    }
   }
 
   private async interrupt(
     jobId: string,
     message: string
-  ): Promise<Result<undefined, GenerateClassificationError>> {
+  ): Promise<Result<never, AnalysisError>> {
     const failedResult = await this.jobRepository.markFailed(jobId, message);
     if (!failedResult.success) {
-      return failure({
-        kind: 'failure_record_failed',
-        jobId,
-        cause: failedResult.error,
-      });
+      this.logger.error(
+        `Enregistrement de l'échec du job ${jobId} impossible (${failedResult.error})`
+      );
     }
     return failure({ kind: 'interrupted', jobId, message });
   }

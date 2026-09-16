@@ -2,6 +2,8 @@ import type { JobsOptions } from 'bullmq';
 
 export const CLASSIFICATION_VOLETS_QUEUE_NAME = 'classification_volets';
 
+export const ANALYSIS_FLOW_PRODUCER_NAME = 'analysis_leviers';
+
 export const CLASSIFICATION_VOLETS_LOCK_DURATION_MS = 10 * 60 * 1000;
 
 export const CLASSIFICATION_VOLETS_JOB_OPTIONS: JobsOptions = {

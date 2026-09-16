@@ -4,6 +4,8 @@ import {
   LlmService,
 } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
+import { RANK_BY_LEVIER } from '../../prompts/levier-ranks';
+import { categorieActionEnumValues } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
 import { ZodType } from 'zod';
 import { ENJEU_GES } from '../../classification-enjeux';
@@ -13,6 +15,7 @@ import { FicheToClassify } from './render-fiches-text';
 
 const tokens = {
   promptTokens: 10,
+  cachedTokens: 0,
   candidatesTokens: 5,
   thoughtsTokens: 0,
   totalTokens: 15,
@@ -57,7 +60,12 @@ const classifications: FicheClassification[] = [
     index: 0,
     justification: 'Le texte décrit une infrastructure de covoiturage.',
     hasNoRelevantLevier: false,
-    volets: [{ levier: 'Covoiturage', categories: ['amenagement'] }],
+    volets: [
+      {
+        levier: RANK_BY_LEVIER['Covoiturage'],
+        categories: [categorieActionEnumValues.indexOf('amenagement') + 1],
+      },
+    ],
   },
 ];
 

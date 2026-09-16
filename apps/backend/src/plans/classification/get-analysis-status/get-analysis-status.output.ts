@@ -1,6 +1,7 @@
 import {
   categorieActionEnumValues,
   enjeuEnumValues,
+  analysisStepEnumValues,
   levierEnumValues,
 } from '@tet/domain/shared';
 import { z } from 'zod';
@@ -22,20 +23,15 @@ const classifiedFicheSchema = z.object({
   volets: z.array(classifiedVoletSchema),
 }) satisfies z.ZodType<ClassifiedFiche>;
 
-const unclassifiedFicheSchema = z.object({
-  ficheId: z.number().int().positive(),
-  reason: z.string(),
-});
-
 const classificationDraftSchema = z.object({
   fiches: z.array(classifiedFicheSchema),
-  unclassified: z.array(unclassifiedFicheSchema),
 });
 
 const jobIdentity = {
   id: z.string().uuid(),
   collectiviteId: z.number().int().positive(),
   enjeu: z.enum(enjeuEnumValues),
+  etape: z.enum(analysisStepEnumValues),
 };
 
 const inFlightStatusSchema = z.object({
@@ -50,6 +46,7 @@ const inFlightStatusSchema = z.object({
 
 const doneStatusSchema = z.object({
   ...jobIdentity,
+  etape: z.literal('mobilisation'),
   status: z.literal(ClassificationVoletsJobStatusEnum.DONE),
   draft: classificationDraftSchema,
 });
@@ -60,11 +57,10 @@ const failedStatusSchema = z.object({
   error: z.string(),
 });
 
-export const getClassificationStatusOutputSchema = z.discriminatedUnion(
-  'status',
-  [inFlightStatusSchema, doneStatusSchema, failedStatusSchema]
-);
+export const getAnalysisStatusOutputSchema = z.discriminatedUnion('status', [
+  inFlightStatusSchema,
+  doneStatusSchema,
+  failedStatusSchema,
+]);
 
-export type ClassificationStatus = z.output<
-  typeof getClassificationStatusOutputSchema
->;
+export type AnalysisStatus = z.output<typeof getAnalysisStatusOutputSchema>;

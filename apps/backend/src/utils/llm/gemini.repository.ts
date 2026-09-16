@@ -128,6 +128,7 @@ const toTokenUsage = (
   usage: GenerateContentResponseUsageMetadata | undefined
 ): TokenUsage => ({
   promptTokens: usage?.promptTokenCount ?? 0,
+  cachedTokens: usage?.cachedContentTokenCount ?? 0,
   candidatesTokens: usage?.candidatesTokenCount ?? 0,
   thoughtsTokens: usage?.thoughtsTokenCount ?? 0,
   totalTokens: usage?.totalTokenCount ?? 0,

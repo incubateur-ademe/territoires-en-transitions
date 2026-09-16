@@ -3,7 +3,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { Enjeu } from '@tet/domain/shared';
+import { Enjeu, AnalysisStep } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, lt } from 'drizzle-orm';
 import {
@@ -30,6 +30,7 @@ const progressProjection = {
   id: classificationVoletsJobTable.id,
   collectiviteId: classificationVoletsJobTable.collectiviteId,
   enjeu: classificationVoletsJobTable.enjeu,
+  etape: classificationVoletsJobTable.etape,
   status: classificationVoletsJobTable.status,
   processedBatches: classificationVoletsJobTable.processedBatches,
   totalBatches: classificationVoletsJobTable.totalBatches,
@@ -44,6 +45,7 @@ export type ClassificationProgress = {
 export type CreateClassificationJobInput = {
   collectiviteId: number;
   enjeu: Enjeu;
+  etape: AnalysisStep;
   createdBy: string;
 };
 
@@ -90,6 +92,7 @@ export class ClassificationVoletsJobRepository {
       .values({
         collectiviteId: input.collectiviteId,
         enjeu: input.enjeu,
+        etape: input.etape,
         createdBy: input.createdBy,
         status: ClassificationVoletsJobStatusEnum.PENDING,
       })
@@ -195,6 +198,17 @@ export class ClassificationVoletsJobRepository {
     });
   }
 
+  async startMobilisationPhase(
+    id: string,
+    totalBatches: number
+  ): Promise<Result<void, ClassificationVoletsError>> {
+    return this.transition({
+      id,
+      allowedFromStatuses: [ClassificationVoletsJobStatusEnum.RUNNING],
+      values: { etape: 'mobilisation', processedBatches: 0, totalBatches },
+    });
+  }
+
   async recordProcessedBatches(
     id: string,
     processedBatches: number
@@ -220,25 +234,36 @@ export class ClassificationVoletsJobRepository {
     }
   }
 
-  async markDone({
+  async recordClassificationDraft({
     id,
     draft,
-    tokenUsage,
     tx,
   }: {
     id: string;
     draft: ClassificationDraft;
+    tx?: Transaction;
+  }): Promise<Result<void, ClassificationVoletsError>> {
+    return this.transition({
+      id,
+      allowedFromStatuses: [ClassificationVoletsJobStatusEnum.RUNNING],
+      values: { draft },
+      tx,
+    });
+  }
+
+  async markDone({
+    id,
+    tokenUsage,
+    tx,
+  }: {
+    id: string;
     tokenUsage: TokenUsage;
     tx?: Transaction;
   }): Promise<Result<void, ClassificationVoletsError>> {
     return this.transition({
       id,
       allowedFromStatuses: [ClassificationVoletsJobStatusEnum.RUNNING],
-      values: {
-        status: ClassificationVoletsJobStatusEnum.DONE,
-        draft,
-        tokenUsage,
-      },
+      values: { status: ClassificationVoletsJobStatusEnum.DONE, tokenUsage },
       tx,
     });
   }

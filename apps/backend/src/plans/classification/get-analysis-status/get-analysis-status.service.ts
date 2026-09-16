@@ -8,11 +8,11 @@ import {
   ClassificationVoletsErrorEnum,
   type ClassificationVoletsError,
 } from '../classification-volets.errors';
-import { toClassificationStatus } from './get-classification-status.adapter';
-import { type ClassificationStatus } from './get-classification-status.output';
+import { toAnalysisStatus } from './get-analysis-status.adapter';
+import { type AnalysisStatus } from './get-analysis-status.output';
 
 @Injectable()
-export class GetClassificationStatusService {
+export class GetAnalysisStatusService {
   constructor(
     private readonly permissions: PermissionService,
     private readonly jobRepository: ClassificationVoletsJobRepository
@@ -21,7 +21,7 @@ export class GetClassificationStatusService {
   async getStatus(
     { jobId }: { jobId: string },
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<ClassificationStatus, ClassificationVoletsError>> {
+  ): Promise<Result<AnalysisStatus, ClassificationVoletsError>> {
     const jobResult = await this.jobRepository.getProgressById(jobId);
     if (!jobResult.success) {
       return jobResult;
@@ -38,6 +38,6 @@ export class GetClassificationStatusService {
       return failure(ClassificationVoletsErrorEnum.JOB_NOT_FOUND);
     }
 
-    return toClassificationStatus(job);
+    return toAnalysisStatus(job);
   }
 }

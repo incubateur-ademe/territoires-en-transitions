@@ -1,6 +1,9 @@
 import { createErrorsEnum } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-export const VoletSpecificErrors = ['SAVE_VOLETS_ERROR'] as const;
+export const VoletSpecificErrors = [
+  'SAVE_VOLETS_ERROR',
+  'GET_VOLETS_ERROR',
+] as const;
 
 export type VoletSpecificError = (typeof VoletSpecificErrors)[number];
 

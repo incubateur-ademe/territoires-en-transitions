@@ -5,7 +5,4 @@ export const tempsDeMiseEnOeuvreSchema = z.object({
   nom: z.string(),
 });
 
-export type TempsDeMiseEnOeuvre = z.infer<
-  typeof tempsDeMiseEnOeuvreSchema
->;
-
+export type TempsDeMiseEnOeuvre = z.infer<typeof tempsDeMiseEnOeuvreSchema>;

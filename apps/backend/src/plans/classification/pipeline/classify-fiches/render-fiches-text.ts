@@ -58,7 +58,7 @@ export type FichesRendering = {
  * saut de ligne, ce qui garantit qu'une fiche ne peut pas se donner l'allure de
  * plusieurs blocs dans le prompt.
  */
-const sanitize = (value: string): string =>
+export const sanitize = (value: string): string =>
   value
     .normalize('NFC')
     .replace(DISALLOWED_CHARACTERS, ' ')
@@ -66,7 +66,7 @@ const sanitize = (value: string): string =>
     .replace(/\s{2,}/g, ' ')
     .trim();
 
-const truncate = (value: string, max: number): string => {
+export const truncate = (value: string, max: number): string => {
   const characters = Array.from(value);
   return characters.length > max
     ? `${characters.slice(0, max - 1).join('')}…`

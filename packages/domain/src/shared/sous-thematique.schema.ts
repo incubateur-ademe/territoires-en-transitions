@@ -7,4 +7,3 @@ export const sousThematiqueSchema = z.object({
 });
 
 export type SousThematique = z.infer<typeof sousThematiqueSchema>;
-

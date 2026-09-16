@@ -39,6 +39,7 @@ const QUALITATIVE_REVIEW_TEXT = 'Plan cohérent et bien structuré.';
 
 const noTokens: TokenUsage = {
   promptTokens: 0,
+  cachedTokens: 0,
   candidatesTokens: 0,
   thoughtsTokens: 0,
   totalTokens: 0,

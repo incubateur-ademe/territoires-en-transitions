@@ -2,7 +2,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { Job, UnrecoverableError } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
 import type { ClassificationVoletsJobData } from '../classification-volets.queue';
-import { GenerateClassificationError } from './generate-classification.service';
+import { type AnalysisError } from '../models/analysis-error';
 import { GenerateClassificationWorker } from './generate-classification.worker';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
@@ -18,6 +18,7 @@ const toJob = ({
     data: { jobId },
     attemptsMade,
     opts: { attempts },
+    getChildrenValues: async () => ({}),
   } as unknown as Job<ClassificationVoletsJobData>);
 
 type ServiceStub = {
@@ -43,7 +44,7 @@ describe('GenerateClassificationWorker.process', () => {
   });
 
   it("throw une UnrecoverableError sur echec, pour qu'aucun second appel au modele ne soit paye", async () => {
-    const interrupted: GenerateClassificationError = {
+    const interrupted: AnalysisError = {
       kind: 'interrupted',
       jobId,
       message: 'Aucune fiche a classer dans ce plan',
@@ -59,7 +60,7 @@ describe('GenerateClassificationWorker.process', () => {
   });
 
   it('reporte la cause de la transition refusee dans le message', async () => {
-    const transitionFailed: GenerateClassificationError = {
+    const transitionFailed: AnalysisError = {
       kind: 'transition_failed',
       jobId,
       cause: 'JOB_TRANSITION_REFUSED',
@@ -83,7 +84,7 @@ describe('GenerateClassificationWorker.onJobFailed', () => {
 
     expect(service.recordTerminalFailure).toHaveBeenCalledWith(
       jobId,
-      'Classification interrompue: boom'
+      'Analyse interrompue: boom'
     );
   });
 
@@ -97,7 +98,7 @@ describe('GenerateClassificationWorker.onJobFailed', () => {
 
     expect(service.recordTerminalFailure).toHaveBeenCalledWith(
       jobId,
-      'Classification interrompue: definitif'
+      'Analyse interrompue: definitif'
     );
   });
 
