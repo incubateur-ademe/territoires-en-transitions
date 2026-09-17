@@ -92,6 +92,8 @@ import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repo
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { RequestPreuvesArchiveService } from './preuves-archive/request-preuves-archive/request-preuves-archive.service';
 import { ReferentielsCoreModule } from './referentiels-core.module';
+import { SetScoreFromIndicateurRouter } from './set-score-from-indicateur/set-score-from-indicateur.router';
+import { SetScoreFromIndicateurService } from './set-score-from-indicateur/set-score-from-indicateur.service';
 import { ReferentielsRouter } from './referentiels.router';
 import { ComputeReferentielEngagementService } from './reset-display-preferences/compute-referentiel-engagement.service';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
@@ -169,6 +171,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutRepository,
     UpdateActionStatutService,
     UpdateActionStatutRouter,
+
+    SetScoreFromIndicateurService,
+    SetScoreFromIndicateurRouter,
     UpdateActionCommentaireHistoriqueRepository,
     UpdateActionCommentaireService,
     UpdateActionCommentaireRouter,

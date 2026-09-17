@@ -153,18 +153,24 @@ export class ScoreIndicatifService {
    * des valeurs/source/année sélectionnées
    */
   async getScoreIndicatif(
-    input: GetScoreIndicatifRequest
+    input: GetScoreIndicatifRequest,
+    // `tx` permet de calculer le score à partir de valeurs écrites dans la
+    // même transaction, avant son commit
+    { tx }: Pick<ServiceSecondArg, 'tx'> = {}
   ): Promise<
     Result<Record<string, ActionScoreIndicatif>, ScoreIndicatifError>
   > {
-    const formulesResult = await this.repository.getFormules(input.actionIds);
+    const formulesResult = await this.repository.getFormules(
+      input.actionIds,
+      tx
+    );
     if (!formulesResult.success) {
       return failure(formulesResult.error);
     }
     const formules = formulesResult.data;
 
     const valeursUtiliseesResult =
-      await this.repository.listValeursUtiliseesParActionId(input);
+      await this.repository.listValeursUtiliseesParActionId(input, tx);
     if (!valeursUtiliseesResult.success) {
       return failure(valeursUtiliseesResult.error);
     }
