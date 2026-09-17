@@ -110,6 +110,7 @@ import { UpdateActionCommentaireRouter } from './update-action-commentaire/updat
 import { UpdateActionCommentaireService } from './update-action-commentaire/update-action-commentaire.service';
 import { UpdateActionFichesRouter } from './update-action-fiches/update-action-fiches.router';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut/update-action-statut-historique.repository';
+import { UpdateActionStatutRepository } from './update-action-statut/update-action-statut.repository';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
@@ -165,6 +166,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ActionPersonnalisationsService,
     ActionPersonnalisationsRouter,
 
+    UpdateActionStatutRepository,
     UpdateActionStatutService,
     UpdateActionStatutRouter,
     UpdateActionCommentaireHistoriqueRepository,

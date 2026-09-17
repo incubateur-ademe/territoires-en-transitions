@@ -3,10 +3,8 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { actionStatutSchemaCreate } from '@tet/domain/referentiels';
 import { updateActionStatutErrorConfig } from './update-action-statut.errors';
-import {
-  UpdateActionStatutService,
-  upsertActionStatutsRequestSchema,
-} from './update-action-statut.service';
+import { upsertActionStatutsInputSchema } from './update-action-statut.input';
+import { UpdateActionStatutService } from './update-action-statut.service';
 
 @Injectable()
 export class UpdateActionStatutRouter {
@@ -31,7 +29,7 @@ export class UpdateActionStatutRouter {
       }),
 
     updateStatuts: this.trpc.authedProcedure
-      .input(upsertActionStatutsRequestSchema)
+      .input(upsertActionStatutsInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.service.upsertActionStatuts(
           input.actionStatuts,
