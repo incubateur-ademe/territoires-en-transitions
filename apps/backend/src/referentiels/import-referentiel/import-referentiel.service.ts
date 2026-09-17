@@ -200,6 +200,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           referentielId: referentielDefinition.id,
           referentielVersion: referentielDefinition.version,
           exprScore: action.exprScore,
+          typeCalculScore: action.typeCalculScore,
           adaptationNiveau: action.adaptationNiveau,
           thematiqueSgpe: this.parseActionThematiqueSgpeFromImport(
             action.thematiqueSgpe

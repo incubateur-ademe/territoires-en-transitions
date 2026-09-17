@@ -93,6 +93,7 @@ export class ImportReferentielRepository {
         'preuve',
         'referentielVersion',
         'exprScore',
+        'typeCalculScore',
         'points',
         'pourcentage',
         'adaptationNiveau',

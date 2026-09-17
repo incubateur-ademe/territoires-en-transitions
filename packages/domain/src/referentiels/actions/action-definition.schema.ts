@@ -3,6 +3,7 @@ import { preuveSchemaEssential } from '../../collectivites/documents/preuve.sche
 import { referentielIdEnumSchema } from '../referentiel-id.enum';
 import { actionAdaptationNiveauValues } from './action-adaptation-niveau.enum';
 import { actionThematiqueSgpeValues } from './action-thematique-sgpe.enum';
+import { actionTypeCalculScoreValues } from './action-type-calcul-score.enum';
 import { actionTypeSchema } from './action-type.enum';
 
 const actionCategorieEnumValues = ['bases', 'mise en œuvre', 'effets'] as const;
@@ -30,6 +31,7 @@ export const actionDefinitionSchema = z.object({
   pourcentage: z.nullable(z.number()),
   categorie: z.nullable(actionCategorieEnumSchema),
   exprScore: z.nullable(z.string()),
+  typeCalculScore: z.nullable(z.enum(actionTypeCalculScoreValues)),
   modifiedAt: z.iso.datetime(),
 
   depth: z.number(),

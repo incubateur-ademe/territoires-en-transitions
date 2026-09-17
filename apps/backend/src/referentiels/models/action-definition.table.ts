@@ -3,6 +3,7 @@ import {
   ActionAdaptationNiveau,
   ActionCategorieEnum,
   ActionThematiqueSgpe,
+  ActionTypeCalculScore,
 } from '@tet/domain/referentiels';
 import {
   doublePrecision,
@@ -43,6 +44,7 @@ export const actionDefinitionTable = pgTable('action_definition', {
   pourcentage: doublePrecision('pourcentage'),
   categorie: actionCategoriePgEnum('categorie'),
   exprScore: text('expr_score'),
+  typeCalculScore: text('type_calcul_score').$type<ActionTypeCalculScore>(),
   adaptationNiveau: text('adaptation_niveau').$type<ActionAdaptationNiveau>(),
   thematiqueSgpe: text('thematique_sgpe').$type<ActionThematiqueSgpe>(),
 });

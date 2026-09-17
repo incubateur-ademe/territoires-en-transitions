@@ -12,6 +12,7 @@ export * from './actions/action-relation.schema';
 export * from './actions/action-statut-avancement.enum.schema';
 export * from './actions/action-statut.schema';
 export * from './actions/action-statut/is-action-statut-detaille.rules';
+export * from './actions/action-type-calcul-score.enum';
 export * from './actions/action-type.enum';
 export * from './actions/list-actions.input';
 export * from './historique/historique-item.schema';

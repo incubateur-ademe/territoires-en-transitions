@@ -30,6 +30,7 @@ export const importActionDefinitionSchema = z.object({
       reductionPotentiel: true,
       perimetreEvaluation: true,
       exprScore: true,
+      typeCalculScore: true,
       preuve: true,
       points: true,
       pourcentage: true,

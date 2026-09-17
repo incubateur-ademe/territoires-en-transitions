@@ -272,6 +272,7 @@ export class ListActionsService {
         referentielVersion: subQuery.referentielVersion,
         depth: subQuery.depth,
         exprScore: subQuery.exprScore,
+        typeCalculScore: subQuery.typeCalculScore,
         adaptationNiveau: subQuery.adaptationNiveau,
         thematiqueSgpe: subQuery.thematiqueSgpe,
 
@@ -391,6 +392,7 @@ export class ListActionsService {
         subQuery.referentielVersion,
         subQuery.depth,
         subQuery.exprScore,
+        subQuery.typeCalculScore,
         subQuery.adaptationNiveau,
         subQuery.thematiqueSgpe,
         referentielDefinitionTable.hierarchie
