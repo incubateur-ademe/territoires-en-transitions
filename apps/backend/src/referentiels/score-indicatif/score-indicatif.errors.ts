@@ -2,6 +2,7 @@ import {
   referentielModeGuardSpecificErrors,
   referentielNotWritableTrpcErrorEntry,
 } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import { ErrorConfig } from '@tet/backend/utils/trpc/trpc-error-config';
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
@@ -19,40 +20,46 @@ const specificErrors = [
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const scoreIndicatifErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
-  specificErrors: {
-    MIXED_REFERENTIELS: {
-      code: 'BAD_REQUEST',
-      message:
-        "Les actions fournies appartiennent à plusieurs référentiels différents. Veuillez fournir des actions d'un seul référentiel.",
-    },
-    INVALID_ACTION_ID: {
-      code: 'BAD_REQUEST',
-      message: "L'identifiant d'action référentiel est invalide",
-    },
-    INDICATEUR_EXPRESSION_ERROR: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: "Impossible d'extraire les indicateurs sources de la formule.",
-    },
-    COLLECTIVITE_LOAD_ERROR: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: "Impossible de charger l'identité de la collectivité.",
-    },
-    REFERENTIEL_DEFINITION_ERROR: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Impossible de charger la définition du référentiel.',
-    },
-    PERSONNALISATION_REPONSES_ERROR: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Impossible de charger les réponses de personnalisation.',
-    },
-    VALEURS_REFERENCE_ERROR: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Impossible de charger les valeurs de référence.',
-    },
-    ...referentielNotWritableTrpcErrorEntry,
+export const scoreIndicatifTrpcErrorEntries: Record<
+  SpecificError,
+  ErrorConfig
+> = {
+  MIXED_REFERENTIELS: {
+    code: 'BAD_REQUEST',
+    message:
+      "Les actions fournies appartiennent à plusieurs référentiels différents. Veuillez fournir des actions d'un seul référentiel.",
   },
+  INVALID_ACTION_ID: {
+    code: 'BAD_REQUEST',
+    message: "L'identifiant d'action référentiel est invalide",
+  },
+  INDICATEUR_EXPRESSION_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: "Impossible d'extraire les indicateurs sources de la formule.",
+  },
+  COLLECTIVITE_LOAD_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: "Impossible de charger l'identité de la collectivité.",
+  },
+  REFERENTIEL_DEFINITION_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Impossible de charger la définition du référentiel.',
+  },
+  PERSONNALISATION_REPONSES_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Impossible de charger les réponses de personnalisation.',
+  },
+  VALEURS_REFERENCE_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Impossible de charger les valeurs de référence.',
+  },
+  ...referentielNotWritableTrpcErrorEntry,
 };
+
+export const scoreIndicatifErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+  {
+    specificErrors: scoreIndicatifTrpcErrorEntries,
+  };
 
 export const ScoreIndicatifErrorEnum = createErrorsEnum(specificErrors);
 export type ScoreIndicatifError = keyof typeof ScoreIndicatifErrorEnum;
