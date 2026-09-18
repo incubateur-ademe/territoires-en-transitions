@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   DemarchePcaetTransitionEnum,
+  getDateCivileFrance,
+  isDateAdoptionPcaetRecevable,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
-import { PublierDemarchePcaetError } from './publier-demarche.errors';
+import {
+  PublierDemarchePcaetError,
+  PublierDemarchePcaetErrorEnum,
+} from './publier-demarche.errors';
 import { PublierDemarchePcaetInput } from './publier-demarche.input';
 
 @Injectable()
@@ -27,6 +32,19 @@ export class PublierDemarchePcaetService {
     input: PublierDemarchePcaetInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaet, PublierDemarchePcaetError>> {
+    // Une délibération est un acte déjà pris : la dater du futur avancerait le
+    // départ des six ans de validité, donc l'échéance de renouvellement que la
+    // plateforme surveille. Le `max` de la modale ne défend pas cette
+    // invariante — un appel direct à la mutation la contournerait.
+    if (
+      !isDateAdoptionPcaetRecevable(
+        input.dateAdoption,
+        getDateCivileFrance(new Date())
+      )
+    ) {
+      return failure(PublierDemarchePcaetErrorEnum.DATE_ADOPTION_FUTURE);
+    }
+
     return this.transitionService.apply(
       input,
       DemarchePcaetTransitionEnum.PUBLIER,

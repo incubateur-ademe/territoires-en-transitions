@@ -2,7 +2,6 @@ import {
   DemarchePcaetStatusEnum,
   type DemarchePcaetStatus,
 } from '../demarche-pcaet-status.enum.schema';
-import { isDemarchePcaetAmontModifiable } from '../demarche-pcaet-modifiable.rules';
 
 /**
  * Cycle de vie d'un dépôt PCAET :
@@ -15,6 +14,9 @@ import { isDemarchePcaetAmontModifiable } from '../demarche-pcaet-modifiable.rul
  * 3. `instruit` — les avis attendus sont rendus, ou le délai légal est échu.
  *    Le dépôt se finalise : la collectivité lit les avis et verse les pièces
  *    aval. Seul statut que la collectivité n'atteint pas elle-même.
+ *    `instruit_hors_plateforme` est l'autre entrée de cette même étape, pour un
+ *    PCAET déjà transmis et instruit ailleurs : la démarche y **démarre**, et y
+ *    verse aussi bien ses pièces amont que ses pièces aval.
  * 4. `publie` — la délibération d'adoption est déposée : PCAET en vigueur et
  *    mis à disposition du public, piloté pendant 6 ans (bilan à mi-parcours
  *    puis évaluation finale).
@@ -25,9 +27,26 @@ export const DEMARCHE_PCAET_INITIAL_STATUS =
   DemarchePcaetStatusEnum.EN_ELABORATION;
 
 /**
- * Étapes du parcours affiché. Une étape par statut : l'adoption et la mise à
- * disposition du public ayant fusionné, il n'y a plus deux statuts à replier
- * sur la même étape.
+ * Statut de départ d'une nouvelle démarche.
+ *
+ * Une collectivité dont le PCAET a déjà été transmis pour avis hors plateforme
+ * n'a ni élaboration ni transmission à rejouer : son dossier démarre à l'étape
+ * de finalisation. Le choix est fait à la création et ne se défait pas — d'où
+ * une fonction du seul contexte de création, et non une transition.
+ */
+export const getDemarchePcaetInitialStatus = ({
+  transmittedOffPlatform,
+}: {
+  transmittedOffPlatform?: boolean;
+}): DemarchePcaetStatus =>
+  transmittedOffPlatform
+    ? DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME
+    : DEMARCHE_PCAET_INITIAL_STATUS;
+
+/**
+ * Étapes du parcours affiché. Une étape par statut, à une exception près : la
+ * finalisation a deux entrées, selon que l'instruction a eu lieu sur la
+ * plateforme ou en dehors.
  */
 export const DEMARCHE_PCAET_ETAPES = [
   'elaboration',
@@ -43,6 +62,7 @@ const DEMARCHE_PCAET_STATUS_ETAPES = {
   [DemarchePcaetStatusEnum.EN_ELABORATION]: 'elaboration',
   [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS]: 'transmis',
   [DemarchePcaetStatusEnum.INSTRUIT]: 'finalisation',
+  [DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME]: 'finalisation',
   [DemarchePcaetStatusEnum.PUBLIE]: 'publie',
   [DemarchePcaetStatusEnum.ARCHIVE]: 'archive',
 } as const satisfies Record<DemarchePcaetStatus, DemarchePcaetEtape>;
@@ -94,6 +114,7 @@ export const DEMARCHE_PCAET_EN_COURS_STATUSES = [
   DemarchePcaetStatusEnum.EN_ELABORATION,
   DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
   DemarchePcaetStatusEnum.INSTRUIT,
+  DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME,
 ] as const satisfies readonly DemarchePcaetStatus[];
 
 export const isDemarchePcaetEnCours = (status: DemarchePcaetStatus): boolean =>
@@ -120,14 +141,25 @@ export const isDepotAvisOuvrable = (status: DemarchePcaetStatus): boolean =>
   ).includes(status);
 
 /**
- * Suppression : uniquement une démarche en élaboration.
+ * Suppression : une démarche qui n'a encore rien engagé au dehors.
  *
- * Le statut y suffit désormais : la transmission est la seule sortie de
- * l'élaboration et rien n'y ramène, donc un dossier en élaboration n'a jamais
- * été transmis — il n'est engagé dans aucun circuit d'avis. Le prédicat reste
- * nommé à part parce que « supprimable » et « modifiable en amont » sont deux
- * questions distinctes, qui se répondent aujourd'hui de la même façon.
+ * Les deux statuts énumérés sont ceux d'un dossier dont aucune instance
+ * consultative n'a été saisie **sur la plateforme** : l'élaboration, où la
+ * transmission n'a pas encore eu lieu, et le dépôt hors plateforme, où elle
+ * n'aura jamais lieu. Supprimer n'y défait donc rien aux yeux de personne.
+ *
+ * La liste est écrite ici plutôt que déléguée à `isDemarchePcaetAmontModifiable` :
+ * « supprimable » et « modifiable en amont » sont deux questions distinctes, et
+ * les faire coïncider par délégation ferait basculer l'une en changeant l'autre.
  */
+export const DEMARCHE_PCAET_SUPPRIMABLES_STATUSES = [
+  DemarchePcaetStatusEnum.EN_ELABORATION,
+  DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME,
+] as const satisfies readonly DemarchePcaetStatus[];
+
 export const canDeleteDemarchePcaet = (demarche: {
   status: DemarchePcaetStatus;
-}): boolean => isDemarchePcaetAmontModifiable(demarche.status);
+}): boolean =>
+  (
+    DEMARCHE_PCAET_SUPPRIMABLES_STATUSES as readonly DemarchePcaetStatus[]
+  ).includes(demarche.status);

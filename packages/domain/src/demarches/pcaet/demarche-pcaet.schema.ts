@@ -33,6 +33,15 @@ export type DemarchePcaet = DemarcheBase & {
   adoptedAt: string | null;
   /** Dernière transmission pour avis (conservée si l'élaboration est reprise). */
   transmittedAt: string | null;
+  /**
+   * Le PCAET a été transmis pour avis hors de la plateforme : la démarche a
+   * démarré à l'étape de finalisation, sans circuit d'avis.
+   *
+   * Figé à la création. Se double du statut plutôt que de s'y substituer : le
+   * statut oublie d'où vient le dossier une fois publié, ce drapeau non — et
+   * c'est lui qui tient les écrans d'instruction à l'écart ensuite.
+   */
+  transmittedOffPlatform: boolean;
   /** Échéance de remise des avis, figée à la transmission. */
   avisDeadlineAt: string | null;
   /**

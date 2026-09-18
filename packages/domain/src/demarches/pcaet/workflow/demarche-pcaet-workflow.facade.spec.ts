@@ -20,11 +20,29 @@ describe('evaluateTransitions', () => {
   });
 
   it('n’ouvre la publication qu’une fois l’instruction close', () => {
-    const evaluation = evaluateTransitions('instruit', { estPilote: true });
+    const evaluation = evaluateTransitions('instruit', {
+      estPilote: true,
+      // Attesté à la transmission : c'est l'évaluateur serveur qui le sait.
+      dossierComplet: true,
+    });
     expect(evaluation.publier.reachable).toBe(true);
     expect(evaluation.publier.blockedBy).toEqual(['documentsAvalComplets']);
     // L'archivage attend la publication.
     expect(evaluation.archiver.reachable).toBe(false);
+  });
+
+  // L'autre entrée de la finalisation : le dossier y démarre, donc rien n'a
+  // encore attesté son amont — la publication l'exige en plus des pièces aval.
+  it('exige le dossier amont d’un dépôt hors plateforme', () => {
+    const evaluation = evaluateTransitions('instruit_hors_plateforme', {
+      estPilote: true,
+      documentsAvalComplets: true,
+    });
+    expect(evaluation.publier.reachable).toBe(true);
+    expect(evaluation.publier.blockedBy).toEqual(['dossierComplet']);
+    // Le circuit d'avis ne s'ouvre jamais pour lui.
+    expect(evaluation.transmettre_pour_avis.reachable).toBe(false);
+    expect(evaluation.avis_tous_rendus.reachable).toBe(false);
   });
 
   it('ouvre les deux chemins vers l’instruction, indépendamment', () => {
@@ -56,6 +74,12 @@ describe('getRequiredGuards', () => {
     ]);
     expect(getRequiredGuards('instruit')).toEqual([
       'estPilote',
+      'dossierComplet',
+      'documentsAvalComplets',
+    ]);
+    expect(getRequiredGuards('instruit_hors_plateforme')).toEqual([
+      'estPilote',
+      'dossierComplet',
       'documentsAvalComplets',
     ]);
     expect(getRequiredGuards('archive')).toEqual([]);
@@ -71,7 +95,20 @@ describe('applyTransition', () => {
     ).toEqual({ success: true, data: { toStatus: 'transmis_pour_avis' } });
     expect(
       applyTransition('instruit', 'publier', {
-        guardResults: { estPilote: true, documentsAvalComplets: true },
+        guardResults: {
+          estPilote: true,
+          dossierComplet: true,
+          documentsAvalComplets: true,
+        },
+      })
+    ).toEqual({ success: true, data: { toStatus: 'publie' } });
+    expect(
+      applyTransition('instruit_hors_plateforme', 'publier', {
+        guardResults: {
+          estPilote: true,
+          dossierComplet: true,
+          documentsAvalComplets: true,
+        },
       })
     ).toEqual({ success: true, data: { toStatus: 'publie' } });
     // Sans acteur : c'est ce qui rend ces deux-là applicables par le système.

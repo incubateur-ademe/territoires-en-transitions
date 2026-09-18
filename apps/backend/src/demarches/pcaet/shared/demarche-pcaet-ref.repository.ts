@@ -15,6 +15,7 @@ export type DemarchePcaetRef = {
   status: DemarchePcaetStatus;
   publishedAt: string | null;
   transmittedAt: string | null;
+  transmittedOffPlatform: boolean;
   avisDeadlineAt: string | null;
 };
 
@@ -42,6 +43,7 @@ export class DemarchePcaetRefRepository {
         status: demarcheTable.status,
         publishedAt: demarcheTable.publishedAt,
         transmittedAt: sqlToNullableDateTimeISO(demarcheTable.transmittedAt),
+        transmittedOffPlatform: demarcheTable.transmittedOffPlatform,
         avisDeadlineAt: sqlToNullableDateTimeISO(demarcheTable.avisDeadlineAt),
       })
       .from(demarcheTable)

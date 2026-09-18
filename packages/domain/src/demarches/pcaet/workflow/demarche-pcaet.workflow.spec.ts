@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   DemarchePcaetStatusEnum,
+  demarchePcaetStatusValues,
   type DemarchePcaetStatus,
 } from '../demarche-pcaet-status.enum.schema';
-import { DEMARCHE_PCAET_INITIAL_STATUS } from './demarche-pcaet-state';
+import {
+  DEMARCHE_PCAET_ETAPES,
+  DEMARCHE_PCAET_INITIAL_STATUS,
+  getEtapeDemarchePcaet,
+} from './demarche-pcaet-state';
 import { demarchePcaetWorkflow } from './demarche-pcaet.workflow';
 import { demarchePcaetTransitionValues } from './transitions/demarche-pcaet-transition.enum';
 import { DEMARCHE_PCAET_TRANSITIONS } from './transitions/demarche-pcaet.transitions';
@@ -69,8 +74,19 @@ describe('définition du cycle de vie', () => {
     ]);
     // L'instruction close ne se défait pas : pas de retour à l'élaboration.
     expect(chemin('instruit')).toEqual(['publier → publie']);
+    // L'autre entrée de la finalisation rejoint la même suite, et une seule :
+    // rien ne ramène un dépôt hors plateforme dans le circuit d'avis.
+    expect(chemin('instruit_hors_plateforme')).toEqual(['publier → publie']);
     // Un dossier publié vaut adopté : il ne se reprend pas, il s'archive.
     expect(chemin('publie')).toEqual(['archiver → archive']);
     expect(chemin('archive')).toEqual([]);
+  });
+
+  // Le parcours affiché n'a que cinq étapes pour six statuts : la finalisation
+  // en porte deux. Sans ce test, ajouter un statut sans l'y rattacher passerait.
+  it('chaque statut mène à une étape du parcours', () => {
+    for (const status of demarchePcaetStatusValues) {
+      expect(DEMARCHE_PCAET_ETAPES).toContain(getEtapeDemarchePcaet(status));
+    }
   });
 });

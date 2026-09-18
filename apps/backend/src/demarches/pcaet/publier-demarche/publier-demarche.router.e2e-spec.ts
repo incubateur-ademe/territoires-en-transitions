@@ -76,6 +76,67 @@ describe('Publication d’une démarche PCAET', () => {
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
   });
 
+  /**
+   * Le `max` du champ de la modale ne protège rien : la mutation s'appelle
+   * directement. Une adoption datée du futur avancerait le départ des six ans
+   * de validité, donc l'échéance de renouvellement que la plateforme surveille.
+   */
+  test('Refuser une date d’adoption dans le futur, mutation appelée directement', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await instruireDemarche(caller, collectivite.id, created.id);
+
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+
+    // Le dossier est par ailleurs publiable : seule la date le retient.
+    await expect(
+      caller.demarches.pcaet.publier({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        dateAdoption: '2099-01-01',
+      })
+    ).rejects.toThrow('DATE_ADOPTION_FUTURE');
+
+    // Demain suffit à être refusé : la borne est la date du jour, pas l'année.
+    const demain = new Date(Date.now() + 24 * 3600 * 1000)
+      .toISOString()
+      .slice(0, 10);
+    await expect(
+      caller.demarches.pcaet.publier({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        dateAdoption: demain,
+      })
+    ).rejects.toThrow('DATE_ADOPTION_FUTURE');
+
+    // Rien n'a été écrit : le refus précède la transition.
+    const intacte = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(intacte.status).toBe('instruit');
+    expect(intacte.adoptedAt).toBeNull();
+
+    // Antidater reste la norme : le dépôt suit le conseil de plusieurs semaines.
+    const publiee = await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      dateAdoption: '2025-03-04',
+    });
+    expect(publiee.adoptedAt).toBe('2025-03-04');
+  });
+
   test('Publier une démarche instruite, sans retour possible', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({

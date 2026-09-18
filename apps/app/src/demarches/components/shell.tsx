@@ -5,7 +5,7 @@ import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PropsWithChildren, useState } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
-import type { DemarcheSectionKey } from '../steps';
+import { getDemarcheParcours, type DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../types';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
@@ -40,7 +40,7 @@ export const DemarcheShell = ({
   children,
 }: Props) => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
-  const estAval = demarche.avalModifiable;
+  const parcours = getDemarcheParcours(demarche);
 
   // La transmission ferme le dossier d'élaboration sans retour possible : elle
   // passe par une confirmation, d'où que vienne le clic — la barre d'étapes ou
@@ -56,7 +56,7 @@ export const DemarcheShell = ({
 
   // L'acte qui clôt le temps parcouru. Un dossier publié n'en a plus : sa
   // dernière sous-étape reste consultable, mais tout est validé.
-  const finalAction = estAval
+  const finalAction = parcours.avalOuvert
     ? isPublished
       ? null
       : {
@@ -87,6 +87,7 @@ export const DemarcheShell = ({
       onTransmettre: demanderConfirmation,
       isPublished,
       onPublish: demanderPublication,
+      horsPlateforme: parcours.horsPlateforme,
     },
     { defaultOpen: true }
   );
@@ -105,15 +106,16 @@ export const DemarcheShell = ({
 
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>{children}</DemarcheDetailLayout.Main>
-        {/* La barre d'étapes déroule le temps courant du dossier — l'un ou
-            l'autre, jamais les deux : les pièces, le diagnostic, le plan, puis
-            l'acte qui le clôt. */}
+        {/* La barre d'étapes déroule le temps courant du dossier : les pièces,
+            le diagnostic, le plan, puis l'acte qui le clôt. Un dépôt hors
+            plateforme déroule l'amont — tout y reste à remplir — mais son acte
+            final est la publication. */}
         <DemarcheStepsNav
           demarche={demarche}
           collectiviteId={collectiviteId}
           completion={completion}
           activeSection={activeSection}
-          etape={estAval ? 'aval' : 'amont'}
+          etape={parcours.etape}
           finalAction={finalAction}
           onOpenProgressPanel={open}
         />

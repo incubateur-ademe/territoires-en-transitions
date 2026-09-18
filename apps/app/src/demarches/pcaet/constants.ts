@@ -26,6 +26,10 @@ export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
     en_elaboration: 'En élaboration',
     transmis_pour_avis: 'Transmis pour avis',
     instruit: 'Instruit',
+    // Même étape que `instruit`, atteinte autrement : le dossier n'a pas été
+    // instruit ici, et le dire évite de laisser croire à une instruction menée
+    // sur la plateforme.
+    instruit_hors_plateforme: 'Instruit hors plateforme',
     publie: 'Publié',
     archive: 'Archivé',
   };
@@ -40,6 +44,7 @@ export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
   en_elaboration: 'info',
   transmis_pour_avis: 'warning',
   instruit: 'success',
+  instruit_hors_plateforme: 'success',
   publie: 'success',
   archive: 'grey',
 };
