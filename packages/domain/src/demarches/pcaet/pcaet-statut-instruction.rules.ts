@@ -77,13 +77,18 @@ export type PcaetStatutInstruction = z.infer<
  * la charge, sans les dépôts en chantier ni les cycles clos. Les exclus sont
  * précisément les nouveautés — une DREAL, et plus encore la DGEC avec son
  * périmètre national, ne veut pas ouvrir sa liste sur un millier de
- * collectivités qui n'ont rien déposé. Le dépôt hors plateforme en fait partie :
- * il n'appelle aucune action du service, qui a déjà été saisi ailleurs.
+ * collectivités qui n'ont rien déposé.
+ *
+ * Le dépôt hors plateforme, lui, y figure : le service y est saisi, et c'est le
+ * seul endroit où il apprendra l'existence du dossier — aucune notification ne
+ * lui est envoyée, l'instruction ayant eu lieu en dehors. Il le voit sans que
+ * rien ne lui soit demandé, et il ne compte pas dans sa charge.
  */
 export const STATUTS_INSTRUCTION_PAR_DEFAUT = [
   PcaetStatutInstructionEnum.EN_INSTRUCTION,
   PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
   PcaetStatutInstructionEnum.INSTRUIT,
+  PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME,
   PcaetStatutInstructionEnum.ADOPTE,
 ] as const;
 

@@ -4,7 +4,13 @@ import { createdAt } from '@tet/backend/utils/column.utils';
 import { pcaetPerimetreSaisineValues } from '@tet/domain/demarches';
 import { index, integer, pgTable, text, unique } from 'drizzle-orm/pg-core';
 
-export const demandeAvisSourceValues = ['seed', 'transmission'] as const;
+export const demandeAvisSourceValues = [
+  'seed',
+  'transmission',
+  // Saisine d'un dossier instruit en dehors de la plateforme : elle rend le
+  // dossier visible au service, sans avis attendu ni notification envoyée.
+  'depot_hors_plateforme',
+] as const;
 export type DemandeAvisSource = (typeof demandeAvisSourceValues)[number];
 
 export const pcaetDemandeAvisTable = pgTable(

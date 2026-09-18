@@ -207,7 +207,6 @@ describe('STATUTS_INSTRUCTION_PAR_DEFAUT', () => {
     expect(exclus).toEqual([
       PcaetStatutInstructionEnum.AUCUN_DEPOT,
       PcaetStatutInstructionEnum.EN_ELABORATION,
-      PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME,
       PcaetStatutInstructionEnum.ARCHIVE,
     ]);
   });

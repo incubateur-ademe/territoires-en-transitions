@@ -395,11 +395,12 @@ describe('listDossiersInstruction', () => {
       ]);
     });
 
-    // Le piège : la liste part des collectivités du périmètre, pas des
-    // saisines. Sans traitement propre, un dépôt hors plateforme y entre sans
-    // demande d'avis, ressort « pas d'avis déposé » — donc dans les filtres par
-    // défaut — et se compte dans la charge d'un service saisi ailleurs.
-    it('tient un dépôt hors plateforme à l’écart de la charge du service', async () => {
+    // Le service est saisi — c'est ainsi qu'il apprend l'existence du dossier,
+    // aucune notification ne lui étant envoyée — mais rien ne lui est demandé.
+    // Le piège : la liste part des collectivités du périmètre, pas des saisines.
+    // Sans statut propre, le dossier ressortirait « pas d'avis déposé » et se
+    // compterait dans la charge d'un service instruit en dehors.
+    it('montre un dépôt hors plateforme sans le compter dans la charge', async () => {
       const collectivite = await addTestCollectiviteAndUser(db, {
         user: { role: CollectiviteRole.ADMIN },
         collectivite: { regionCode: REGION, nom: 'Kiwi Agglo hors plateforme' },
@@ -413,28 +414,26 @@ describe('listDossiersInstruction', () => {
         status: 'instruit_hors_plateforme',
         transmittedOffPlatform: true,
         launchedAt: dansNJours(-100),
-        saisi: false,
       });
 
+      // Dans la liste par défaut : c'est le seul endroit où le service
+      // l'apprendra.
       const parDefaut = await appeler(camille, {});
-      expect(
-        parDefaut.items.find(
-          (item) => item.collectivite.nom === 'Kiwi Agglo hors plateforme'
-        )
-      ).toBeUndefined();
-
-      const tous = await appeler(camille, { statuts: TOUS_STATUTS });
-      const ligne = tous.items.find(
+      const ligne = parDefaut.items.find(
         (item) => item.collectivite.nom === 'Kiwi Agglo hors plateforme'
       );
-      // Visible si on le demande, et nommé pour ce qu'il est : le service a été
-      // saisi, mais ailleurs — ni « aucun dépôt », ni « pas d'avis déposé ».
+      // Nommé pour ce qu'il est : le service a été saisi, mais ailleurs — ni
+      // « aucun dépôt », ni « pas d'avis déposé ».
       expect(ligne?.statut).toBe(
         PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME
       );
-      expect(ligne?.demandeAvisId).toBeNull();
+      expect(ligne?.demandeAvisId).not.toBeNull();
+
+      // Vu, mais pas à faire : rien n'est attendu d'un service instruit ailleurs.
       expect(
-        tous.countByStatut[PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME]
+        parDefaut.countByStatut[
+          PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME
+        ]
       ).toBe(0);
     });
 
