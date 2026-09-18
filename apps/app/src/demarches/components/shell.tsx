@@ -9,6 +9,7 @@ import type { DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../types';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
+import { PublierDepotFinalModal } from './publier-depot-final.modal';
 import { DemarcheStepsNav } from './steps-nav';
 import { TransmettrePourAvisModal } from './transmettre-pour-avis.modal';
 import { useDemarcheAvanceSidePanel } from './use-avance-side-panel';
@@ -20,7 +21,7 @@ type Props = PropsWithChildren<{
   activeSection: DemarcheSectionKey;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
   onTransmettre: () => void;
-  onPublish: () => void;
+  onPublish: (dateAdoption: string) => void;
 }>;
 
 /**
@@ -47,6 +48,12 @@ export const DemarcheShell = ({
   const [isConfirmationOuverte, setIsConfirmationOuverte] = useState(false);
   const demanderConfirmation = () => setIsConfirmationOuverte(true);
 
+  // La validation du dépôt final publie le dossier sans retour possible, et
+  // recueille au passage la date de la délibération d'adoption : même chemin de
+  // confirmation, d'où que vienne le clic.
+  const [isPublicationOuverte, setIsPublicationOuverte] = useState(false);
+  const demanderPublication = () => setIsPublicationOuverte(true);
+
   // L'acte qui clôt le temps parcouru. Un dossier publié n'en a plus : sa
   // dernière sous-étape reste consultable, mais tout est validé.
   const finalAction = estAval
@@ -56,7 +63,7 @@ export const DemarcheShell = ({
           transition: demarche.transitions.publier,
           label: appLabels.demarcheTransitionPublier,
           dataTest: 'demarches.steps-nav.publier',
-          onClick: onPublish,
+          onClick: demanderPublication,
         }
     : {
         transition: demarche.transitions.transmettre_pour_avis,
@@ -79,7 +86,7 @@ export const DemarcheShell = ({
       transitions: demarche.transitions,
       onTransmettre: demanderConfirmation,
       isPublished,
-      onPublish,
+      onPublish: demanderPublication,
     },
     { defaultOpen: true }
   );
@@ -116,6 +123,14 @@ export const DemarcheShell = ({
         <TransmettrePourAvisModal
           onConfirm={onTransmettre}
           onClose={() => setIsConfirmationOuverte(false)}
+        />
+      )}
+
+      {isPublicationOuverte && (
+        <PublierDepotFinalModal
+          demarcheType={demarche.type}
+          onConfirm={onPublish}
+          onClose={() => setIsPublicationOuverte(false)}
         />
       )}
     </DemarcheDetailLayout.Root>

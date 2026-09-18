@@ -257,6 +257,29 @@ export const demarchesLabels = {
     `Votre dossier sera transmis aux instances consultatives, qui disposent de ${mois} mois pour rendre leurs avis. Il sera figé pendant toute la durée de l'instruction : vous ne pourrez plus modifier le diagnostic ni les pièces déposées, jusqu'à la fin de celle-ci.`,
   demarcheTransmettreConfirmationSuite:
     "Vous reprendrez la main à l'étape suivante, pour déposer les pièces attendues après les avis et adopter votre PCAET.",
+  demarchePublierConfirmationTitre: 'Valider le dépôt final',
+  demarchePublierConfirmationProcessus: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) =>
+    `Une fois validé, ${type.complement.replace(
+      'du ',
+      'le '
+    )} sera automatiquement publié et consultable par le grand public sur la plateforme. Cette action ne peut pas être annulée après coup.`,
+  demarchePublierDateAdoption: 'Date d’adoption *',
+  demarchePublierDateAdoptionAide: ({
+    type,
+    ans,
+  }: {
+    type: DemarcheTypeLabels;
+    ans: number;
+  }) =>
+    `Cette date sert de référence pour le suivi de la validité de ${type.possessif}, qui doit être renouvelé tous les ${ans} ans.`,
+  demarchePublierDateAdoptionRequise: 'Renseignez la date d’adoption.',
+  demarchePublierDateAdoptionFuture:
+    'La date d’adoption ne peut pas être dans le futur.',
+  demarchePublierConfirmer: 'Valider et publier',
   /**
    * Ce qui retient une transition, un message par guard du workflow : le
    * serveur dit lequel bloque, le front le traduit.

@@ -36,6 +36,8 @@ export type DemarchePcaet = {
   dateModification: string;
   dateLancement: string | null;
   datePublication: string | null;
+  /** Date de la délibération d'adoption (AAAA-MM-JJ), saisie au dépôt final. */
+  dateAdoption: string | null;
   /** Dernière transmission pour avis (null = jamais transmise). */
   dateTransmission: string | null;
   /** Échéance de remise des avis, figée à la transmission. */

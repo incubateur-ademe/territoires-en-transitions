@@ -193,6 +193,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     await caller.demarches.pcaet.publier({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
+      dateAdoption: '2026-01-15',
     });
 
     // Le dossier est publié : la transition est atteignable, c'est son guard
@@ -273,6 +274,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       autreEditeurCaller.demarches.pcaet.publier({
         collectiviteId: fixture.collectivite.id,
         demarcheId: created.id,
+        dateAdoption: '2026-01-15',
       })
     ).rejects.toThrow('NON_PILOTE');
   });
@@ -405,6 +407,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       caller.demarches.pcaet.publier({
         collectiviteId: collectivite.id,
         demarcheId: created.id,
+        dateAdoption: '2026-01-15',
       })
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
   });

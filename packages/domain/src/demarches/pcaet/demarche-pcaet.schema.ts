@@ -8,6 +8,12 @@ import type { DemarchePcaetTransitionEvaluations } from './workflow/demarche-pca
 export const DEMARCHE_PCAET_DEFAULT_TITRE = 'PCAET réglementaire';
 
 /**
+ * Durée de validité d'un PCAET adopté : elle court à partir de la date
+ * d'adoption, d'où la saisie de cette date à la validation du dépôt final.
+ */
+export const DEMARCHE_PCAET_VALIDITE_ANS = 6;
+
+/**
  * Démarche de type PCAET (dossier réglementaire de dépôt) : étend le socle
  * commun `DemarcheBase` avec son discriminant, son cycle de vie et ses champs
  * propres.
@@ -20,6 +26,11 @@ export type DemarchePcaet = DemarcheBase & {
   launchedAt: string | null;
   /** Mise à disposition du public (nulle si la démarche n'a jamais été publiée). */
   publishedAt: string | null;
+  /**
+   * Date de la délibération d'adoption (AAAA-MM-JJ), saisie à la validation du
+   * dépôt final : c'est elle qui fait courir la validité du PCAET.
+   */
+  adoptedAt: string | null;
   /** Dernière transmission pour avis (conservée si l'élaboration est reprise). */
   transmittedAt: string | null;
   /** Échéance de remise des avis, figée à la transmission. */

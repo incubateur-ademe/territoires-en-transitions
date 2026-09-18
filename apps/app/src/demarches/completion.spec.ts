@@ -199,6 +199,7 @@ const completeDemarche: DemarchePcaet = {
   dateModification: '2026-01-01T00:00:00.000Z',
   dateLancement: null,
   datePublication: null,
+  dateAdoption: null,
   dateTransmission: null,
   dateEcheanceAvis: null,
   transitions: evaluateTransitions('en_elaboration'),

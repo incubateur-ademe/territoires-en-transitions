@@ -15,6 +15,7 @@ import {
 } from '@tet/domain/demarches';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
+  date,
   index,
   integer,
   pgTable,
@@ -49,6 +50,9 @@ export const demarcheTable = pgTable(
       .$type<DemarchePcaetObligation>(),
     launchedAt: timestamp('launched_at', TIMESTAMP_OPTIONS),
     publishedAt: timestamp('published_at', TIMESTAMP_OPTIONS),
+    // Date civile de la délibération, pas un instant : la validité du PCAET se
+    // compte en années à partir d'elle.
+    adoptedAt: date('adopted_at', { mode: 'string' }),
     transmittedAt: timestamp('transmitted_at', TIMESTAMP_OPTIONS),
     avisDeadlineAt: timestamp('avis_deadline_at', TIMESTAMP_OPTIONS),
     createdAt,

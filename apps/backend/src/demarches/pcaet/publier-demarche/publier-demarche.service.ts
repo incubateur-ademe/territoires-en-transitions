@@ -5,9 +5,9 @@ import {
   DemarchePcaetTransitionEnum,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
-import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import { PublierDemarchePcaetError } from './publier-demarche.errors';
+import { PublierDemarchePcaetInput } from './publier-demarche.input';
 
 @Injectable()
 export class PublierDemarchePcaetService {
@@ -18,17 +18,23 @@ export class PublierDemarchePcaetService {
   /**
    * Met le dossier à disposition du public.
    *
-   * Effet propre : la date de mise en ligne, que l'interface affiche.
+   * Effets propres : la date de mise en ligne, que l'interface affiche, et la
+   * date de la délibération d'adoption saisie par la collectivité — les deux ne
+   * tombent pas le même jour, et c'est l'adoption qui fait foi pour la validité
+   * du PCAET.
    */
   async publier(
-    input: DemarchePcaetTransitionInput,
+    input: PublierDemarchePcaetInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaet, PublierDemarchePcaetError>> {
     return this.transitionService.apply(
       input,
       DemarchePcaetTransitionEnum.PUBLIER,
       { user, tx },
-      () => ({ publishedAt: new Date().toISOString() })
+      () => ({
+        publishedAt: new Date().toISOString(),
+        adoptedAt: input.dateAdoption,
+      })
     );
   }
 }
