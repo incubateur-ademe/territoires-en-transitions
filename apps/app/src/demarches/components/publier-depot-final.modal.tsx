@@ -2,7 +2,10 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import type { DemarcheType } from '@tet/domain/demarches';
-import { DEMARCHE_PCAET_VALIDITE_ANS } from '@tet/domain/demarches';
+import {
+  DEMARCHE_PCAET_VALIDITE_ANS,
+  getDateCivileFrance,
+} from '@tet/domain/demarches';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 
@@ -14,13 +17,14 @@ type Props = {
 
 const DATE_ADOPTION_FIELD_ID = 'demarche-publier-date-adoption';
 
-/** Jour courant au format du champ date (AAAA-MM-JJ), fuseau local. */
-const aujourdhui = (): string => {
-  const maintenant = new Date();
-  const mois = `${maintenant.getMonth() + 1}`.padStart(2, '0');
-  const jour = `${maintenant.getDate()}`.padStart(2, '0');
-  return `${maintenant.getFullYear()}-${mois}-${jour}`;
-};
+/**
+ * Jour courant au format du champ date (AAAA-MM-JJ), **calendrier de Paris**.
+ *
+ * Le même que celui dont le serveur se sert pour refuser une adoption future :
+ * lire le fuseau du navigateur ferait diverger la borne affichée de la borne
+ * appliquée, et un agent en outre-mer verrait un `max` que la mutation refuse.
+ */
+const aujourdhui = (): string => getDateCivileFrance(new Date());
 
 /**
  * Confirmation de la validation du dépôt final.

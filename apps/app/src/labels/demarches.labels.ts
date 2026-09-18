@@ -177,7 +177,6 @@ export const demarchesLabels = {
   demarcheCreerDateLancement: 'Date de lancement *',
   demarcheCreerDateLancementRequise: 'La date de lancement est requise',
   demarcheCreerSoumettre: 'Commencer le dépôt',
-  demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
   /** Même écran à l'aval, mais il y montre d'abord les avis reçus. */

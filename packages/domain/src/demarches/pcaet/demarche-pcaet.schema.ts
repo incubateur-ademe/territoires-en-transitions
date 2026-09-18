@@ -8,6 +8,22 @@ import type { DemarchePcaetTransitionEvaluations } from './workflow/demarche-pca
 export const DEMARCHE_PCAET_DEFAULT_TITRE = 'PCAET réglementaire';
 
 /**
+ * Titre proposé à la création : le terme métier suivi de l'année du dépôt.
+ *
+ * L'année est celle du **lancement saisi**, et non celle du jour : une
+ * collectivité qui régularise un dépôt de 2018 nomme son dossier « 2018 ». Elle
+ * se lit sur la date civile (AAAA-MM-JJ) plutôt que par `new Date(…)` —
+ * `new Date('2018-01-01')` vaut minuit UTC, donc le 31/12/2017 à l'ouest de
+ * Greenwich, et le titre y perdrait une année.
+ */
+export const buildDemarchePcaetTitre = (dateLancement?: string | null) => {
+  const annee = dateLancement?.slice(0, 4);
+  return annee && /^\d{4}$/.test(annee)
+    ? `${DEMARCHE_PCAET_DEFAULT_TITRE} ${annee}`
+    : DEMARCHE_PCAET_DEFAULT_TITRE;
+};
+
+/**
  * Durée de validité d'un PCAET adopté : elle court à partir de la date
  * d'adoption, d'où la saisie de cette date à la validation du dépôt final.
  */

@@ -15,7 +15,10 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
+import {
+  buildDemarchePcaetTitre,
+  DemarcheTypeEnum,
+} from '@tet/domain/demarches';
 import { Button, Checkbox, Field, Input } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -27,7 +30,6 @@ const PCAET_TYPE = {
 };
 
 const createDemarchePcaetSchema = z.object({
-  titre: z.string().min(1, appLabels.demarcheCreerIntituleRequis),
 
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
@@ -64,7 +66,7 @@ export const CreateDemarchePcaetPage = () => {
     resolver: zodResolver(createDemarchePcaetSchema),
     mode: 'onChange',
     defaultValues: {
-      titre: `PCAET réglementaire ${new Date().getFullYear()}`,
+
       pilotes: [
         {
           nom: `${user.prenom} ${user.nom}`.trim(),
@@ -100,7 +102,9 @@ export const CreateDemarchePcaetPage = () => {
   const onSubmit = async (data: CreateDemarchePcaetForm) => {
     const demarche = await createDemarche({
       collectiviteId,
-      titre: data.titre,
+      // L'intitulé n'est pas saisi ici : il se déduit de l'année du lancement,
+      // et reste modifiable depuis l'en-tête du dossier.
+      titre: buildDemarchePcaetTitre(data.dateLancement),
       pilotes: data.pilotes.map((pilote) => ({
         tagId: pilote.tagId ?? null,
         userId: pilote.userId ?? null,
