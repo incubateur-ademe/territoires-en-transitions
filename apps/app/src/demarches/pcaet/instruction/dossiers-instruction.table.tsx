@@ -162,15 +162,15 @@ const StatutHeader = () => {
   );
 };
 
-const DateDebutHeader = () => {
+const DateLancementHeader = () => {
   const { sort, direction, trierPar } = usePilotage();
 
   return (
     <TableHeaderCell
       className="w-36"
       title={appLabels.instructionListeColonneDateLancement}
-      sortFn={() => trierPar('dateDebut')}
-      sortDirection={sort === 'dateDebut' ? direction : null}
+      sortFn={() => trierPar('dateLancement')}
+      sortDirection={sort === 'dateLancement' ? direction : null}
     />
   );
 };
@@ -244,8 +244,8 @@ const columns = [
   }),
 
   columnHelper.display({
-    id: 'dateDebut',
-    header: DateDebutHeader,
+    id: 'dateLancement',
+    header: DateLancementHeader,
     cell: ({ row }) => (
       <TableCell>
         <DateCell date={row.original.launchedAt} />

@@ -129,7 +129,7 @@ export const trierDossiers = (
       }
       return sens * nomA.localeCompare(nomB, 'fr');
     }
-    if (sort === 'dateDebut') {
+    if (sort === 'dateLancement') {
       return parDate(a, b, (ligne) => ligne.launchedAt);
     }
     return parDate(a, b, (ligne) => ligne.avisDeadlineAt);

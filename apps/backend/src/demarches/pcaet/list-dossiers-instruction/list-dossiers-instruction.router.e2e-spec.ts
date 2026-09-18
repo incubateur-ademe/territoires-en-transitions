@@ -463,11 +463,11 @@ describe('listDossiersInstruction', () => {
 
     it('trie par date de début dans les deux sens', async () => {
       const asc = await appeler(camille, {
-        sort: 'dateDebut',
+        sort: 'dateLancement',
         direction: 'asc',
       });
       const desc = await appeler(camille, {
-        sort: 'dateDebut',
+        sort: 'dateLancement',
         direction: 'desc',
       });
 
@@ -488,7 +488,7 @@ describe('listDossiersInstruction', () => {
             PcaetStatutInstructionEnum.AUCUN_DEPOT,
             PcaetStatutInstructionEnum.EN_INSTRUCTION,
           ],
-          sort: 'dateDebut',
+          sort: 'dateLancement',
           direction,
           limit: 200,
         });
