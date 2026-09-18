@@ -60,7 +60,13 @@ export default defineConfig(({ mode }) => ({
     globals: true,
     testTimeout: 20000, // milliseconds (default is 5000)
     hookTimeout: 60000, // milliseconds (default is 10000)
-    env: loadEnv(mode, __dirname, ''),
+    env: {
+      ...loadEnv(mode, __dirname, ''),
+      // Contournement réservé au poste de développement : les guards sont
+      // testés en conditions réelles, quel que soit le .env de la machine.
+      // Les specs qui veulent le contournement le simulent elles-mêmes.
+      DEMARCHE_PCAET_BYPASS_DIAGNOSTIC: 'false',
+    },
 
     // Limit CI parallelism: `backend:test` now runs alongside `api:test` in the
     // same job, so letting backend consume all 4 workers saturates the shared

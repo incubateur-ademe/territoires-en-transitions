@@ -9,6 +9,7 @@ import {
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -378,6 +379,54 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         feature === 'is-demarche-pcaet-bypass-diagnostic-enabled'
           ? true
           : isFeatureEnabled(feature, ...args)
+      );
+    onTestFinished(() => {
+      spy.mockRestore();
+    });
+
+    const avecBypass = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(listEnabledTransitions(avecBypass.transitions)).toContain(
+      'transmettre_pour_avis'
+    );
+    const transmise = await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
+
+  test('Le contournement par variable d’environnement dispense aussi le dossier de son diagnostic', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    await coverTestDocumentsPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await expect(
+      caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).rejects.toThrow('DOSSIER_INCOMPLET');
+
+    // DEMARCHE_PCAET_BYPASS_DIAGNOSTIC contourne sans PostHog : en local, le
+    // feature flag n'est pas évaluable (ni clé, ni utilisateur connu du projet).
+    const configurationService = app.get(ConfigurationService);
+    const get = configurationService.get.bind(configurationService);
+    const spy = vi
+      .spyOn(configurationService, 'get')
+      .mockImplementation((key) =>
+        key === 'DEMARCHE_PCAET_BYPASS_DIAGNOSTIC' ? true : get(key)
       );
     onTestFinished(() => {
       spy.mockRestore();
