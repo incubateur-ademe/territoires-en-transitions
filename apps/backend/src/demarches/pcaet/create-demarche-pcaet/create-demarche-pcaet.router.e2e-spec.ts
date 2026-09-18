@@ -17,10 +17,13 @@ import {
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import {
   addTestBibliothequeFichier,
   completeTestDossierPcaet,
+  pickFreeRegionCode,
 } from '../demarches-pcaet.test-fixture';
+import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
 describe('Créer une démarche PCAET', () => {
   let app: INestApplication;
@@ -177,6 +180,57 @@ describe('Créer une démarche PCAET', () => {
         documentId: 'pcaet_diagnostic',
         fichierId: fichier.id,
       });
+    });
+
+    // Le service doit voir le dossier dans sa liste — c'est le seul endroit où
+    // il l'apprendra — mais il a déjà été saisi en dehors de la plateforme : le
+    // notifier lui annoncerait une instruction qu'il a menée lui-même.
+    test('les services couvrants sont saisis, et aucun n’est notifié', async () => {
+      const regionCode = await pickFreeRegionCode(db, 'dreal');
+      const fixture = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.EDITION },
+        collectivite: { regionCode },
+      });
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(fixture.user),
+      });
+
+      const dreal = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          type: 'dreal',
+          regionCode,
+          nom: 'DREAL test saisine hors plateforme',
+        },
+      });
+
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: fixture.collectivite.id,
+        transmittedOffPlatform: true,
+      });
+
+      const saisines = await db.db
+        .select({
+          instructeurId: pcaetDemandeAvisTable.instructeurCollectiviteId,
+          source: pcaetDemandeAvisTable.source,
+        })
+        .from(pcaetDemandeAvisTable)
+        .where(eq(pcaetDemandeAvisTable.demarcheId, demarche.id));
+
+      expect(
+        saisines.map(({ instructeurId }) => instructeurId)
+      ).toContain(dreal.collectivite.id);
+      // La provenance distingue ces saisines d'une transmission : c'est elle
+      // qui dit qu'aucun avis n'est attendu et qu'aucun mail n'est parti.
+      expect(
+        saisines.every(({ source }) => source === 'depot_hors_plateforme')
+      ).toBe(true);
+
+      const notifications = await db.db
+        .select({ id: notificationTable.id })
+        .from(notificationTable)
+        .where(eq(notificationTable.entityId, `${demarche.id}`));
+      expect(notifications).toEqual([]);
     });
 
     test('il reste supprimable : seule issue d’une case cochée par erreur', async () => {
