@@ -3,7 +3,6 @@
 import { Session, User } from '@supabase/supabase-js';
 import { useSupabase } from '@tet/api';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { match } from 'ts-pattern';
 
 type AuthState =
   | { status: 'pending' }
@@ -15,22 +14,13 @@ const ANONYMOUS_AUTH_STATE: AuthState = { status: 'anonymous' };
 
 const AuthStateContext = createContext<AuthState | null>(null);
 
-const useAuthState = (): AuthState => {
+export const useAuthState = (): AuthState => {
   const authState = useContext(AuthStateContext);
   if (!authState) {
     throw new Error('useAuthState must be used within UserProvider');
   }
   return authState;
 };
-
-const hasAuthenticatedUser = (authState: AuthState): boolean =>
-  match(authState)
-    .with({ status: 'authenticated' }, () => true)
-    .with({ status: 'pending' }, { status: 'anonymous' }, () => false)
-    .exhaustive();
-
-export const useIsAuthenticated = (): boolean =>
-  hasAuthenticatedUser(useAuthState());
 
 const toAuthState = (supabaseSession: Session | null): AuthState => {
   if (!supabaseSession) {

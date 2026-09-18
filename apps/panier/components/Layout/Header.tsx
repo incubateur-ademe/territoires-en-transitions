@@ -2,6 +2,7 @@
 
 import { ENV } from '@tet/api/environmentVariables';
 import { useCollectiviteInfo } from '@/panier/components/Landing/useCollectiviteInfo';
+import { useRattachement } from '@/panier/hooks/use-rattachement';
 import useLandingPathname from '@/panier/hooks/useLandingPathname';
 import { usePanierContext } from '@/panier/providers';
 import { Header as HeaderTet, SITE_BASE_URL } from '@tet/ui';
@@ -10,9 +11,12 @@ import { NavItem } from '@tet/ui/design-system/Header/types';
 const Header = () => {
   const landingPathname = useLandingPathname();
   const { panier } = usePanierContext();
-  const { data: collectiviteInfo } = useCollectiviteInfo(
-    panier?.collectivite_id ?? panier?.collectivite_preset ?? null
-  );
+  const collectiviteId =
+    panier?.collectivite_id ?? panier?.collectivite_preset ?? null;
+  const { data: collectiviteInfo } = useCollectiviteInfo(collectiviteId);
+  const rattachement = useRattachement(collectiviteId);
+  const isRattachementPending = rattachement.status === 'pending';
+  const isOwnCollectivite = rattachement.status === 'own';
 
   const getSecondaryNav = () => {
     const whoAreWe: NavItem = {
@@ -21,16 +25,16 @@ const Header = () => {
       external: true,
     };
 
-    if (!collectiviteInfo) {
+    if (!collectiviteInfo || isRattachementPending) {
       return [whoAreWe];
     }
 
     const collectiviteWelcomePage: NavItem = {
       children: collectiviteInfo.nom,
-      href: collectiviteInfo.isOwnCollectivite
+      href: isOwnCollectivite
         ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
         : '',
-      disabled: !collectiviteInfo.isOwnCollectivite,
+      disabled: !isOwnCollectivite,
     };
 
     return [whoAreWe, collectiviteWelcomePage];

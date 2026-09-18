@@ -1,5 +1,9 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { objectToCamel } from 'ts-case-convert';
+import {
+  CollectiviteRolesAndPermissions,
+  hasPermission,
+  UserRolesAndPermissions,
+} from '@tet/domain/users';
 import { Database } from '../typeUtils';
 import { getTrpcClient } from '../utils/trpc/trpc-with-react-query.provider';
 import {
@@ -284,27 +288,6 @@ export class PanierAPI {
       row.action_impact_fiche_action.map((action) => action.action_impact_id)
     );
   }
-
-  /**
-   * La liste des collectivités dans lesquelles on peut
-   * créer un plan à partir d'un panier.
-   */
-  async mesCollectivites() {
-    const { data, error } = await this.supabase
-      .from('mes_collectivites')
-      .select(
-        'collectivite_id, nom, niveau_acces, est_auditeur, access_restreint'
-      )
-      .in('niveau_acces', ['admin', 'edition']);
-
-    if (error) throw error;
-
-    return objectToCamel(data).map((collectivite) => ({
-      ...collectivite,
-      collectiviteId: collectivite.collectiviteId as number,
-      nom: collectivite.nom as string,
-    }));
-  }
 }
 
 export async function createPlanFromPanier(
@@ -317,4 +300,25 @@ export async function createPlanFromPanier(
     panierId,
   });
   return planId;
+}
+
+export type UserCollectivite = Pick<
+  CollectiviteRolesAndPermissions,
+  'collectiviteId' | 'collectiviteNom'
+> & { canCreatePlan: boolean };
+
+export const toUserCollectivites = (
+  user: UserRolesAndPermissions
+): UserCollectivite[] =>
+  user.collectivites.map((collectivite) => ({
+    collectiviteId: collectivite.collectiviteId,
+    collectiviteNom: collectivite.collectiviteNom,
+    canCreatePlan: hasPermission(user, 'plans.mutate', {
+      collectiviteId: collectivite.collectiviteId,
+    }),
+  }));
+
+export async function listUserCollectivites(): Promise<UserCollectivite[]> {
+  const user = await getTrpcClient().users.users.get.query();
+  return toUserCollectivites(user);
 }
