@@ -2,6 +2,7 @@
 
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DemarcheShell } from '@/app/demarches/components/shell';
+import { getDemarcheParcours } from '@/app/demarches/steps';
 import {
   findPcaetPlanType,
   PCAET_PLAN_TYPE_LABEL,
@@ -68,8 +69,10 @@ export const DemarchePcaetPlanActionsPage = () => {
     >
       {/* Passée la clôture de l'instruction, l'écran change de rôle : il ne
           sert plus à rattacher un plan mais à relire celui qui a été transmis,
-          dans la vue même que lisent les instructeurs. */}
-      {demarche.avalModifiable ? (
+          dans la vue même que lisent les instructeurs. Le rattachement suit donc
+          l'amont, et non l'aval : un dépôt hors plateforme a les deux ouverts,
+          et c'est encore à lui de rattacher son plan. */}
+      {!getDemarcheParcours(demarche).amontOuvert ? (
         <RappelPlanSection
           collectiviteId={collectiviteId}
           demarcheId={demarcheId}

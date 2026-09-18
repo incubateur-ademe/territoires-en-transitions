@@ -71,6 +71,13 @@ export const demarchesLabels = {
    */
   instructionStatutAucunDepot: 'Aucun dépôt',
   instructionStatutEnElaboration: 'En élaboration',
+  instructionStatutDepotHorsPlateforme: 'Dépôt hors plateforme',
+  demarcheAvanceEtapeHorsPlateforme:
+    'Réalisée hors plateforme : rien à y faire ici',
+  demarcheCreerHorsPlateforme:
+    'PCAET déjà transmis pour avis hors plateforme',
+  demarcheCreerHorsPlateformeDescription:
+    'En activant ceci, vous arriverez directement à l’étape de finalisation de votre dépôt PCAET adopté. Les documents, les volets du diagnostic et le plan d’actions y restent à renseigner. Ce choix est définitif.',
   instructionStatutEnInstruction: 'En instruction',
   instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
   instructionStatutInstruit: 'Instruit',
@@ -170,7 +177,6 @@ export const demarchesLabels = {
   demarcheCreerDateLancement: 'Date de lancement *',
   demarcheCreerDateLancementRequise: 'La date de lancement est requise',
   demarcheCreerSoumettre: 'Commencer le dépôt',
-  demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
   /** Même écran à l'aval, mais il y montre d'abord les avis reçus. */
@@ -239,6 +245,8 @@ export const demarchesLabels = {
   demarcheAvanceEtapeFinalisationLabel: 'Finalisation de la démarche de dépôt',
   demarcheAvanceEtapeFinalisationDescription:
     'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche.',
+  demarcheAvanceEtapeFinalisationHorsPlateformeDescription:
+    'Renseignez les documents, les volets du diagnostic et le plan d’actions, déposez la délibération d’adoption, puis publiez votre démarche.',
   demarcheAvanceEtapePublieLabel: 'Adopté, publié et en cours de mise en œuvre',
   demarcheAvanceEtapePublieDescription: ({
     type,

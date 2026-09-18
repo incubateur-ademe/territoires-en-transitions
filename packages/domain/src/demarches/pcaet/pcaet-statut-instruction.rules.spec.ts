@@ -211,3 +211,24 @@ describe('STATUTS_INSTRUCTION_PAR_DEFAUT', () => {
     ]);
   });
 });
+
+describe('dépôt hors plateforme', () => {
+  // Le service a été saisi ailleurs : la ligne ne lui demande rien, et ne doit
+  // surtout pas passer par l'état de saisine — il n'y en a aucune, et le dossier
+  // ressortirait « pas d'avis déposé », donc dans ses filtres par défaut.
+  it('ne se lit pas comme une saisine sans avis', () => {
+    expect(
+      getStatutInstruction(
+        {
+          demarcheStatus: 'instruit_hors_plateforme',
+          avisDeadlineAt: null,
+          deposeAvis: false,
+          nbAvisValides: 0,
+          nbAvisBrouillons: 0,
+          achevement: [],
+        },
+        now
+      )
+    ).toBe(PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME);
+  });
+});

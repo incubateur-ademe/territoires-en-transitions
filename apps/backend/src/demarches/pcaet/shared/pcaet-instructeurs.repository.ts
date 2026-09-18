@@ -14,7 +14,10 @@ import {
   couvreLesCodesSql,
   perimetreCodesSql,
 } from './perimetre-instructeur.columns';
-import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
+import {
+  pcaetDemandeAvisTable,
+  type DemandeAvisSource,
+} from './models/pcaet-demande-avis.table';
 
 /** Le type d'instructeur, ventilé par le périmètre qu'il couvre. */
 const typesParRegion = typesInstructeurDuPerimetre(
@@ -177,7 +180,13 @@ export class PcaetInstructeursRepository {
     {
       demarcheId,
       collectiviteId,
-    }: { demarcheId: number; collectiviteId: number },
+      source = 'transmission',
+    }: {
+      demarcheId: number;
+      collectiviteId: number;
+      /** D'où vient la saisine : une transmission, ou un dépôt instruit ailleurs. */
+      source?: DemandeAvisSource;
+    },
     tx?: Transaction
   ): Promise<DemandeAvisDestinataire[]> {
     const db = tx ?? this.databaseService.db;
@@ -202,7 +211,7 @@ export class PcaetInstructeursRepository {
         instructeurs.map((instructeur) => ({
           demarcheId,
           instructeurCollectiviteId: instructeur.collectiviteId,
-          source: 'transmission' as const,
+          source,
           perimetre: instructeur.perimetre,
         }))
       )

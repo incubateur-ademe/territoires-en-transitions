@@ -5,6 +5,7 @@ import {
   DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
   type DemarchePcaetObligation,
+  type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
 import { and, eq, inArray } from 'drizzle-orm';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
@@ -15,6 +16,9 @@ export type InsertDemarchePcaetValues = {
   description: string;
   obligation?: DemarchePcaetObligation;
   launchedAt: string | null;
+  /** Calculé par le domaine : l'élaboration, ou d'emblée la finalisation. */
+  status: DemarchePcaetStatus;
+  transmittedOffPlatform: boolean;
 };
 
 @Injectable()
@@ -60,6 +64,8 @@ export class CreateDemarchePcaetRepository {
           description: values.description,
           obligation: values.obligation,
           launchedAt: values.launchedAt,
+          status: values.status,
+          transmittedOffPlatform: values.transmittedOffPlatform,
           createdBy: userId,
           modifiedBy: userId,
         })

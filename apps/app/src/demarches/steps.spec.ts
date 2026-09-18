@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   flattenSteps,
+  getDemarcheParcours,
   getStepsNavModel,
   makeDemarcheSectionUrl,
 } from './steps';
@@ -262,5 +263,69 @@ describe('makeDemarcheSectionUrl', () => {
     expect(makeDemarcheSectionUrl('plan', ids)).toBe(
       '/collectivite/1/demarche-pcaet/42/plan'
     );
+  });
+});
+
+
+describe('getDemarcheParcours', () => {
+  it('l’élaboration déroule l’amont, seul ouvert', () => {
+    const parcours = getDemarcheParcours({
+      amontModifiable: true,
+      avalModifiable: false,
+      transmisHorsPlateforme: false,
+    });
+
+    expect(parcours).toEqual({
+      amontOuvert: true,
+      avalOuvert: false,
+      horsPlateforme: false,
+      etape: 'amont',
+    });
+  });
+
+  it('l’instruction close déroule l’aval, l’amont étant gelé', () => {
+    const parcours = getDemarcheParcours({
+      amontModifiable: false,
+      avalModifiable: true,
+      transmisHorsPlateforme: false,
+    });
+
+    expect(parcours).toEqual({
+      amontOuvert: false,
+      avalOuvert: true,
+      horsPlateforme: false,
+      etape: 'aval',
+    });
+  });
+
+  // Le cas que le binaire `avalModifiable` ne savait pas dire : les deux temps
+  // ouverts ensemble. Le parcours reste celui de l'amont — tout y est à
+  // remplir — alors que l'acte final est la publication.
+  it('un dépôt hors plateforme ouvre les deux temps', () => {
+    const parcours = getDemarcheParcours({
+      amontModifiable: true,
+      avalModifiable: true,
+      transmisHorsPlateforme: true,
+    });
+
+    expect(parcours).toEqual({
+      amontOuvert: true,
+      avalOuvert: true,
+      horsPlateforme: true,
+      etape: 'amont',
+    });
+  });
+
+  // La provenance ne suffit pas : une fois le dossier publié, les deux temps se
+  // referment et le parcours n'a plus rien d'exceptionnel.
+  it('un dépôt hors plateforme publié n’ouvre plus rien', () => {
+    const parcours = getDemarcheParcours({
+      amontModifiable: false,
+      avalModifiable: true,
+      transmisHorsPlateforme: true,
+    });
+
+    expect(parcours.horsPlateforme).toBe(false);
+    expect(parcours.etape).toBe('aval');
   });
 });

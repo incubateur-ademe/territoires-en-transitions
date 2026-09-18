@@ -28,6 +28,32 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await demarchePcaetPom.expectLinkedPlanHeader(planNom);
   });
 
+  // L'intitulé n'est pas saisi : il se déduit de l'année du lancement. Une
+  // collectivité qui régularise un dépôt ancien doit retrouver son année, pas
+  // celle du jour.
+  test('l’intitulé reprend l’année de lancement, et non l’année courante', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const demarchePcaetPom = new DemarchePcaetPom(page);
+
+    await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
+    // Le 1er janvier : le jour où lire la date par `new Date()` ferait perdre
+    // une année à l'ouest de Greenwich.
+    await demarchePcaetPom.dateLancementInput.fill('2018-01-01');
+    await demarchePcaetPom.createDemarcheButton.click();
+    await demarchePcaetPom.expectOnDetailPage(collectivite.data.id);
+
+    await expect(
+      page.getByRole('heading', { name: 'PCAET réglementaire 2018' })
+    ).toBeVisible();
+  });
+
   test('création de démarche puis rattachement manuel à un plan PCAET existant', async ({
     collectivites,
     createPlanPom,

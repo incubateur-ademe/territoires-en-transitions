@@ -61,15 +61,22 @@ describe('listDossiersInstruction', () => {
     avisDeadlineAt = null,
     launchedAt = null,
     obligation,
+    transmittedOffPlatform = false,
     avis,
     perimetre = 'principal',
     saisi = true,
   }: {
     collectiviteId: number;
-    status: 'en_elaboration' | 'transmis_pour_avis' | 'publie' | 'archive';
+    status:
+      | 'en_elaboration'
+      | 'transmis_pour_avis'
+      | 'instruit_hors_plateforme'
+      | 'publie'
+      | 'archive';
     avisDeadlineAt?: string | null;
     launchedAt?: string | null;
     obligation?: 'obligatoire' | 'volontaire';
+    transmittedOffPlatform?: boolean;
     avis?: { valide: boolean };
     perimetre?: 'principal' | 'secondaire';
     /**
@@ -90,7 +97,11 @@ describe('listDossiersInstruction', () => {
         launchedAt,
         // La transmission ne dépend pas de la saisine : c'est justement le cas
         // que `rattraper-saisines-pcaet` répare.
-        transmittedAt: status === 'en_elaboration' ? null : dansNJours(-30),
+        transmittedAt:
+          status === 'en_elaboration' || transmittedOffPlatform
+            ? null
+            : dansNJours(-30),
+        transmittedOffPlatform,
         avisDeadlineAt,
       })
       .returning({ id: demarcheTable.id });
@@ -382,6 +393,48 @@ describe('listDossiersInstruction', () => {
         PcaetStatutInstructionEnum.ADOPTE,
         PcaetStatutInstructionEnum.EN_ELABORATION,
       ]);
+    });
+
+    // Le service est saisi — c'est ainsi qu'il apprend l'existence du dossier,
+    // aucune notification ne lui étant envoyée — mais rien ne lui est demandé.
+    // Le piège : la liste part des collectivités du périmètre, pas des saisines.
+    // Sans statut propre, le dossier ressortirait « pas d'avis déposé » et se
+    // compterait dans la charge d'un service instruit en dehors.
+    it('montre un dépôt hors plateforme sans le compter dans la charge', async () => {
+      const collectivite = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: { regionCode: REGION, nom: 'Kiwi Agglo hors plateforme' },
+      });
+      onTestFinished(async () => {
+        await collectivite.cleanup();
+      });
+
+      await creerDossier({
+        collectiviteId: collectivite.collectivite.id,
+        status: 'instruit_hors_plateforme',
+        transmittedOffPlatform: true,
+        launchedAt: dansNJours(-100),
+      });
+
+      // Dans la liste par défaut : c'est le seul endroit où le service
+      // l'apprendra.
+      const parDefaut = await appeler(camille, {});
+      const ligne = parDefaut.items.find(
+        (item) => item.collectivite.nom === 'Kiwi Agglo hors plateforme'
+      );
+      // Nommé pour ce qu'il est : le service a été saisi, mais ailleurs — ni
+      // « aucun dépôt », ni « pas d'avis déposé ».
+      expect(ligne?.statut).toBe(
+        PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME
+      );
+      expect(ligne?.demandeAvisId).not.toBeNull();
+
+      // Vu, mais pas à faire : rien n'est attendu d'un service instruit ailleurs.
+      expect(
+        parDefaut.countByStatut[
+          PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME
+        ]
+      ).toBe(0);
     });
 
     it('dit « adopté » d’un PCAET publié', async () => {

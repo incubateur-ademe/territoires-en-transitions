@@ -2,6 +2,7 @@
 
 import { DemarcheSection } from '@/app/demarches/components/section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
+import { getDemarcheParcours } from '@/app/demarches/steps';
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { AvisDeposesList } from '@/app/demarches/pcaet/components/avis-deposes.list';
@@ -53,7 +54,11 @@ export const DemarchePcaetDocumentsPage = () => {
   const { avisRecus } = useDemarchePcaetAvisRecus({
     collectiviteId,
     demarcheId,
-    enabled: demarche?.avalModifiable === true,
+    // Un dépôt hors plateforme n'a aucun avis sur la plateforme : les siens ont
+    // été rendus ailleurs, et les demander afficherait « aucun avis déposé ».
+    enabled:
+      demarche?.avalModifiable === true &&
+      demarche?.transmisHorsPlateforme !== true,
   });
 
   const { mutate: downloadDocument } = useDownloadDocument({ collectiviteId });
@@ -76,9 +81,17 @@ export const DemarchePcaetDocumentsPage = () => {
     etape === 'amont' ? !demarche.amontModifiable : !demarche.avalModifiable;
 
   // Le temps où le dossier en est : l'aval dès que l'instruction est close,
-  // l'amont avant. C'est lui qui décide du tableau affiché.
-  const estAval = demarche.avalModifiable;
-  const etapeCourante: DemarcheDocumentEtape = estAval ? 'aval' : 'amont';
+  // l'amont avant. C'est lui qui décide du ou des tableaux affichés — un dépôt
+  // hors plateforme a les deux ouverts, et doit donc les voir tous les deux.
+  const parcours = getDemarcheParcours(demarche);
+  const etapeCourante: DemarcheDocumentEtape = parcours.etape;
+
+  // Les avis se lisent sur la **provenance**, non sur l'état du parcours : une
+  // fois publié, un dépôt hors plateforme referme ses deux temps et cesserait
+  // d'être « hors plateforme » au sens du parcours — l'écran se remettrait alors
+  // à annoncer « aucun avis déposé » sur un dossier dont les avis ont été rendus
+  // ailleurs. C'est justement ce que le drapeau de provenance sait encore dire.
+  const montreLesAvis = parcours.avalOuvert && !demarche.transmisHorsPlateforme;
 
   const downloadDemarcheDocument = ({
     fichier,
@@ -100,12 +113,12 @@ export const DemarchePcaetDocumentsPage = () => {
     >
       <DemarcheSection
         title={
-          estAval
+          montreLesAvis
             ? appLabels.demarcheDetailAvisEtDocumentsTitre
             : appLabels.demarcheDetailDocumentsTitre
         }
         description={
-          estAval
+          montreLesAvis
             ? appLabels.demarcheDetailDocumentsAvalDescription
             : appLabels.demarcheDetailDocumentsDescription
         }
@@ -126,7 +139,7 @@ export const DemarchePcaetDocumentsPage = () => {
           <div className="flex flex-col gap-8">
             {/* Les avis d'abord : c'est ce qui commande la reprise du dossier,
                 et la raison d'être de cette étape. */}
-            {estAval &&
+            {montreLesAvis &&
               (avisRecus.length > 0 ? (
                 <AvisDeposesList
                   avis={avisRecus.map((unAvis) => ({
@@ -148,10 +161,15 @@ export const DemarchePcaetDocumentsPage = () => {
                 />
               ))}
 
-            {/* Un seul tableau, celui du temps courant. En aval il porte tout
-                le dossier, dans l'ordre du modèle : les pièces reprises avec
-                leur version transmise, et celles du seul amont en lecture
-                seule — le dossier transmis reste consultable. */}
+            {/* Un seul tableau, toujours. D'ordinaire celui du temps courant :
+                en aval il porte tout le dossier, dans l'ordre du modèle — les
+                pièces reprises avec leur version transmise, et celles du seul
+                amont en lecture seule, le dossier transmis restant consultable.
+
+                Un dépôt hors plateforme a ses deux temps ouverts : la liste les
+                fusionne, pièces d'élaboration puis pièces d'après-avis. Deux
+                tableaux y donneraient à lire une coupure d'instruction qui n'a
+                pas eu lieu. */}
             <DemarcheDocumentsTable
               demarcheType={demarche.type}
               etape={etapeCourante}
@@ -162,11 +180,12 @@ export const DemarchePcaetDocumentsPage = () => {
               documentAdditionalCreeId={documentAdditionalCreeId}
               coverage={coverage}
               isEtapeReadonly={isEtapeReadonly(etapeCourante)}
-              onAddFichier={(documentId, fichierId) =>
-                addDocument(documentId, fichierId, etapeCourante)
+              mergeEtapes={parcours.horsPlateforme}
+              onAddFichier={(documentId, fichierId, etapeDocument) =>
+                addDocument(documentId, fichierId, etapeDocument)
               }
-              onRemoveDocument={(documentId) =>
-                removeDocument(documentId, etapeCourante)
+              onRemoveDocument={(documentId, etapeDocument) =>
+                removeDocument(documentId, etapeDocument)
               }
               onToggleCouverture={setCouverture}
               onCreateAdditional={createDocumentAdditional}
