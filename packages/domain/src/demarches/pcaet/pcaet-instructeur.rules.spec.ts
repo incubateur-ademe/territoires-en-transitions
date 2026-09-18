@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { collectiviteTypeEnum } from '../../collectivites';
 import { PcaetAvisAuTitreDeEnum } from './pcaet-avis-au-titre-de.enum.schema';
 import {
+  estInstructeurNational,
   getPerimetreInstructeur,
   getTitresAvisInstructeur,
   getTitresAvisSaisine,
@@ -188,5 +189,28 @@ describe('getTitresAvisSaisine', () => {
     expect(peutDeposerAvisSaisine(collectiviteTypeEnum.DDT, PRINCIPAL)).toBe(
       false
     );
+  });
+});
+
+describe('estInstructeurNational', () => {
+  it('singles out the national bodies, which see every dossier in the country', () => {
+    expect(estInstructeurNational(collectiviteTypeEnum.SERVICE_NATIONAL)).toBe(
+      true
+    );
+  });
+
+  it('leaves every territorial instructeur out', () => {
+    for (const type of [
+      collectiviteTypeEnum.DREAL,
+      collectiviteTypeEnum.REGION,
+      collectiviteTypeEnum.DDT,
+      collectiviteTypeEnum.DR_ADEME,
+    ]) {
+      expect(estInstructeurNational(type)).toBe(false);
+    }
+  });
+
+  it('answers false for a type that is no instructeur at all', () => {
+    expect(estInstructeurNational(collectiviteTypeEnum.COMMUNE)).toBe(false);
   });
 });

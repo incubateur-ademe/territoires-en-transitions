@@ -7,17 +7,20 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 
 export type CollectiviteContact = {
+  /** Requis pour notifier : `notification.send_to` référence `auth.users`. */
+  userId: string;
   prenom: string;
   nom: string;
   email: string;
 };
 
 /**
- * À qui s'adresser dans une collectivité déposante : ses administrateurs
- * actifs.
+ * À qui s'adresser dans une collectivité : ses membres actifs, par défaut ses
+ * seuls administrateurs.
  *
- * Partagé entre le suivi d'instruction, qui les affiche pour permettre une
- * relance, et l'envoi d'un avis, qui leur écrit.
+ * Partagé entre le suivi d'instruction, qui affiche les administrateurs de la
+ * déposante pour permettre une relance, et les notifications, qui écrivent
+ * selon les cas aux administrateurs ou à tous les membres d'un service saisi.
  */
 @Injectable()
 export class CollectiviteContactsRepository {
@@ -25,9 +28,10 @@ export class CollectiviteContactsRepository {
 
   async listContactsParCollectivite(
     collectiviteIds: number[],
+    { roles = [CollectiviteRole.ADMIN] }: { roles?: CollectiviteRole[] } = {},
     tx?: Transaction
   ): Promise<Map<number, CollectiviteContact[]>> {
-    if (collectiviteIds.length === 0) {
+    if (collectiviteIds.length === 0 || roles.length === 0) {
       return new Map();
     }
 
@@ -36,6 +40,7 @@ export class CollectiviteContactsRepository {
     const rows = await db
       .select({
         collectiviteId: utilisateurCollectiviteAccessTable.collectiviteId,
+        userId: dcpTable.id,
         prenom: dcpTable.prenom,
         nom: dcpTable.nom,
         email: dcpTable.email,
@@ -52,7 +57,7 @@ export class CollectiviteContactsRepository {
             collectiviteIds
           ),
           eq(utilisateurCollectiviteAccessTable.isActive, true),
-          eq(utilisateurCollectiviteAccessTable.role, CollectiviteRole.ADMIN),
+          inArray(utilisateurCollectiviteAccessTable.role, roles),
           eq(dcpTable.deleted, false)
         )
       )

@@ -17,6 +17,11 @@ import { AddVulnerabiliteThematiqueRouter } from './add-vulnerabilite-thematique
 import { AddVulnerabiliteThematiqueService } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.service';
 import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
 import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demarche.service';
+import GetDemarcheUrlService from '@tet/backend/demarches/shared/get-demarche-url.service';
+import { ListDestinatairesDemarcheService } from './notifications/list-destinataires-demarche.service';
+import { NotifyAvisRecuService } from './notifications/notify-avis-recu/notify-avis-recu.service';
+import { NotifyDossierTransmisService } from './notifications/notify-dossier-transmis/notify-dossier-transmis.service';
+import { NotifyInstructionCloseService } from './notifications/notify-instruction-close/notify-instruction-close.service';
 import { CloreInstructionRepository } from './clore-instruction/clore-instruction.repository';
 import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
@@ -51,8 +56,6 @@ import { SetDemarchePcaetDocumentCouvertureRouter } from './documents/set-docume
 import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-document-couverture/set-document-couverture.service';
 import { UpdateDemarchePcaetDocumentAdditionalRouter } from './documents/update-document-additional/update-document-additional.router';
 import { UpdateDemarchePcaetDocumentAdditionalService } from './documents/update-document-additional/update-document-additional.service';
-import { EnvoyerAvisRouter } from './envoyer-avis/envoyer-avis.router';
-import { EnvoyerAvisService } from './envoyer-avis/envoyer-avis.service';
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
 import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
@@ -197,12 +200,15 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     PerimetreInstructeurRepository,
     UpsertAvisService,
     UpsertAvisRouter,
+    GetDemarcheUrlService,
+    ListDestinatairesDemarcheService,
+    NotifyAvisRecuService,
+    NotifyDossierTransmisService,
+    NotifyInstructionCloseService,
     ValiderAvisService,
     ValiderAvisRouter,
     DeleteAvisService,
     DeleteAvisRouter,
-    EnvoyerAvisService,
-    EnvoyerAvisRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,

@@ -178,11 +178,16 @@ export class ListDossiersInstructionService {
     const contacts =
       await this.collectiviteContactsRepository.listContactsParCollectivite(
         [...new Set(lignes.map((ligne) => ligne.collectivite.id))],
+        {},
         tx
       );
     return lignes.map((ligne) => ({
       ...ligne,
-      contacts: contacts.get(ligne.collectivite.id) ?? [],
+      // Le `userId` que le repository rend sert à notifier, pas à afficher : il
+      // n'a rien à faire dans la réponse envoyée aux services instructeurs.
+      contacts: (contacts.get(ligne.collectivite.id) ?? []).map(
+        ({ prenom, nom, email }) => ({ prenom, nom, email })
+      ),
     }));
   }
 }

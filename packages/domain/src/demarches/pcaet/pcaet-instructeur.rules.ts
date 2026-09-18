@@ -129,3 +129,12 @@ export const peutDeposerAvisInstructeur = (type: CollectiviteType): boolean =>
 /** Les seuls types dont un avis peut émaner — contrainte reprise en base. */
 export const typesInstructeurDeposantAvis: readonly CollectiviteType[] =
   typesInstructeur.filter(peutDeposerAvisInstructeur);
+
+/**
+ * Un service à compétence nationale — la DGEC, le siège de l'ADEME.
+ *
+ * Saisi comme les autres, mais jamais notifié : son périmètre ne se compare à
+ * aucun code, donc tous les dossiers du pays atterrissent chez lui.
+ */
+export const estInstructeurNational = (type: CollectiviteType): boolean =>
+  getPerimetreInstructeur(type) === PerimetreInstructeurEnum.NATIONAL;
