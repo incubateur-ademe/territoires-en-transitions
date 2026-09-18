@@ -132,6 +132,10 @@ const documentRapport: PreuveRapport = {
   rapport: { date: '2022-06-15' },
 };
 
+const cardChildren = (container: HTMLElement): Element[] => [
+  ...(container.querySelector('[data-test="carte-doc"]')?.children ?? []),
+];
+
 describe('DocumentCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -453,7 +457,7 @@ describe('DocumentCard', () => {
     expect(container.querySelectorAll('button')).toHaveLength(1);
   });
 
-  test('un menu dont toutes les actions sont masquees ne rend rien', () => {
+  test('un conteneur d actions masque ne rend pas le menu', () => {
     const { container } = render(
       <DocumentCard document={preuveReglementaireFichier}>
         <DocumentCard.Actions visibleWhen={false}>
@@ -464,7 +468,21 @@ describe('DocumentCard', () => {
       </DocumentCard>
     );
 
-    expect(container.querySelector('button')).toBeNull();
+    expect(cardChildren(container)).toHaveLength(1);
+  });
+
+  test('un menu dont chaque action est masquee ne rend rien', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions>
+          <DocumentCard.Edit visibleWhen={false} />
+          <DocumentCard.Comment visibleWhen={false} />
+          <DocumentCard.Delete visibleWhen={false} />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    expect(cardChildren(container)).toHaveLength(1);
   });
 
   test('le menu garde l ordre du design system quel que soit l ordre de declaration', () => {
