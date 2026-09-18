@@ -30,12 +30,19 @@ const typesNationaux = typesInstructeurDuPerimetre(
 export type InstructeurSaisi = {
   collectiviteId: number;
   nom: string;
+  /** Ce qui départage un service saisi pour avis d'un lecteur, et le national. */
+  type: CollectiviteType;
   /**
    * Le territoire de la déposante par lequel ce service est atteint. Un service
    * qui ne la touche que par un périmètre secondaire reçoit le dossier en
    * lecture : l'avis revient à celui du siège.
    */
   perimetre: PcaetPerimetreSaisine;
+};
+
+/** Une saisine inscrite, telle qu'on l'adresse. */
+export type DemandeAvisDestinataire = InstructeurSaisi & {
+  demandeAvisId: number;
 };
 
 @Injectable()
@@ -145,16 +152,15 @@ export class PcaetInstructeursRepository {
     const perimetre =
       couvreLeSiege.length === 0
         ? sql<PcaetPerimetreSaisine>`${PcaetPerimetreSaisineEnum.SECONDAIRE}`
-        : sql<PcaetPerimetreSaisine>`case when ${or(
-            ...couvreLeSiege
-          )} then ${PcaetPerimetreSaisineEnum.PRINCIPAL} else ${
-            PcaetPerimetreSaisineEnum.SECONDAIRE
-          } end`;
+        : sql<PcaetPerimetreSaisine>`case when ${or(...couvreLeSiege)} then ${
+            PcaetPerimetreSaisineEnum.PRINCIPAL
+          } else ${PcaetPerimetreSaisineEnum.SECONDAIRE} end`;
 
     return db
       .select({
         collectiviteId: collectiviteTable.id,
         nom: collectiviteTable.nom,
+        type: collectiviteTable.type,
         perimetre,
       })
       .from(collectiviteTable)
@@ -173,7 +179,7 @@ export class PcaetInstructeursRepository {
       collectiviteId,
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
-  ): Promise<InstructeurSaisi[]> {
+  ): Promise<DemandeAvisDestinataire[]> {
     const db = tx ?? this.databaseService.db;
 
     const instructeurs = await this.listInstructeursCouvrants(
@@ -184,7 +190,10 @@ export class PcaetInstructeursRepository {
       this.logger.warn(
         `Aucun instructeur ne couvre la collectivité ${collectiviteId} : la démarche ${demarcheId} est transmise sans destinataire`
       );
-      return [];
+      // Sans rien à inscrire, on rend quand même les saisines du dossier : une
+      // ligne posée par le seed en est une, et ses destinataires attendent leur
+      // notification comme les autres.
+      return this.listDemandesAvisDuDossier(demarcheId, tx);
     }
 
     await db
@@ -204,6 +213,36 @@ export class PcaetInstructeursRepository {
         ],
       });
 
-    return instructeurs;
+    return this.listDemandesAvisDuDossier(demarcheId, tx);
+  }
+
+  /**
+   * Les saisines inscrites sur un dossier, avec de quoi écrire à chacune.
+   *
+   * Relire plutôt que se fier au `returning()` de l'insert : avec
+   * `onConflictDoNothing`, une transmission rejouée ne rend que les lignes
+   * nouvelles et laisserait ses destinataires de côté.
+   */
+  async listDemandesAvisDuDossier(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<DemandeAvisDestinataire[]> {
+    return (tx ?? this.databaseService.db)
+      .select({
+        demandeAvisId: pcaetDemandeAvisTable.id,
+        collectiviteId: collectiviteTable.id,
+        nom: collectiviteTable.nom,
+        type: collectiviteTable.type,
+        perimetre: pcaetDemandeAvisTable.perimetre,
+      })
+      .from(pcaetDemandeAvisTable)
+      .innerJoin(
+        collectiviteTable,
+        eq(
+          collectiviteTable.id,
+          pcaetDemandeAvisTable.instructeurCollectiviteId
+        )
+      )
+      .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
   }
 }

@@ -6,6 +6,8 @@ import {
   DemarchePcaetTransitionEnum,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
+import { NotifyDossierTransmisService } from '../notifications/notify-dossier-transmis/notify-dossier-transmis.service';
+import type { ServiceSansCompte } from '../notifications/notify-dossier-transmis/notify-support-services-sans-compte.props';
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
@@ -15,7 +17,8 @@ import { TransmettrePourAvisDemarchePcaetError } from './transmettre-pour-avis.e
 export class TransmettrePourAvisDemarchePcaetService {
   constructor(
     private readonly transitionService: DemarchePcaetTransitionService,
-    private readonly instructeursRepository: PcaetInstructeursRepository
+    private readonly instructeursRepository: PcaetInstructeursRepository,
+    private readonly notifyDossierTransmisService: NotifyDossierTransmisService
   ) {}
 
   /**
@@ -29,7 +32,11 @@ export class TransmettrePourAvisDemarchePcaetService {
     input: DemarchePcaetTransitionInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaet, TransmettrePourAvisDemarchePcaetError>> {
-    return this.transitionService.apply(
+    // Recueilli dans la transaction, exploité après : le mail au support ne se
+    // rejoue pas à l'envers, il attend que la transmission soit acquise.
+    let servicesSansCompte: ServiceSansCompte[] = [];
+
+    const result = await this.transitionService.apply(
       input,
       DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS,
       { user, tx },
@@ -38,13 +45,19 @@ export class TransmettrePourAvisDemarchePcaetService {
         // aucun tableau d'instructeur. Dans la transaction de la transition,
         // donc un dossier ne peut pas passer `transmis_pour_avis` en laissant
         // ses destinataires derrière lui.
-        await this.instructeursRepository.saisirInstructeurs(
+        const demandes = await this.instructeursRepository.saisirInstructeurs(
           {
             demarcheId: demarche.id,
             collectiviteId: demarche.collectiviteId,
           },
           transaction
         );
+
+        servicesSansCompte =
+          await this.notifyDossierTransmisService.creerNotifications(
+            { demandes, createdBy: user.id },
+            transaction
+          );
 
         // L'échéance est figée maintenant : si le délai légal change, les
         // dossiers déjà transmis gardent celle qui s'appliquait à eux.
@@ -55,5 +68,14 @@ export class TransmettrePourAvisDemarchePcaetService {
         };
       }
     );
+
+    if (result.success) {
+      await this.notifyDossierTransmisService.alerterSupport({
+        demarche: result.data,
+        services: servicesSansCompte,
+      });
+    }
+
+    return result;
   }
 }
