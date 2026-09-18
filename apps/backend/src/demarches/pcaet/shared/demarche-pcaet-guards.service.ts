@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
@@ -128,7 +129,8 @@ export class DemarchePcaetGuardsService {
     private readonly documentsRepository: DemarcheDocumentsRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly avisRepository: PcaetAvisRepository,
-    private readonly trackingService: TrackingService
+    private readonly trackingService: TrackingService,
+    private readonly configurationService: ConfigurationService
   ) {}
 
   /**
@@ -137,12 +139,22 @@ export class DemarchePcaetGuardsService {
    * explicable en lisant les logs de la transmission.
    *
    * Piloté par le feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`,
-   * activable par utilisateur ou collectivité depuis l'interface PostHog.
+   * activable par utilisateur ou collectivité depuis l'interface PostHog, ou
+   * par `DEMARCHE_PCAET_BYPASS_DIAGNOSTIC` pour les instances où le flag n'est
+   * pas évaluable — en local, PostHog n'a ni clé ni utilisateur connu.
    */
   private async isDiagnosticBypassed(
     user: AuthenticatedUser | null,
     collectiviteId: number
   ): Promise<boolean> {
+    // L'instance entière contourne : pas d'utilisateur à identifier, donc
+    // vérifié avant tout le reste.
+    if (this.configurationService.get('DEMARCHE_PCAET_BYPASS_DIAGNOSTIC')) {
+      this.logger.warn(
+        `DEMARCHE_PCAET_BYPASS_DIAGNOSTIC actif : le diagnostic n'est pas exigé pour compléter le dossier PCAET de la collectivité ${collectiviteId} (démonstration)`
+      );
+      return true;
+    }
     if (!user) {
       return false;
     }
