@@ -33,6 +33,7 @@ export type DemarchePcaetTransitionStamps = {
   transmittedAt?: string;
   avisDeadlineAt?: string;
   publishedAt?: string;
+  adoptedAt?: string;
 };
 
 /**

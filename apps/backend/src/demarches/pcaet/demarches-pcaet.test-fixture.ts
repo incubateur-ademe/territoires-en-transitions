@@ -467,6 +467,7 @@ export async function publierTestDemarchePcaet(
         publier: (input: {
           collectiviteId: number;
           demarcheId: number;
+          dateAdoption: string;
         }) => Promise<unknown>;
       };
     };
@@ -486,5 +487,9 @@ export async function publierTestDemarchePcaet(
     fichierId: deliberation.id,
   });
 
-  await caller.demarches.pcaet.publier({ collectiviteId, demarcheId });
+  await caller.demarches.pcaet.publier({
+    collectiviteId,
+    demarcheId,
+    dateAdoption: '2026-01-15',
+  });
 }

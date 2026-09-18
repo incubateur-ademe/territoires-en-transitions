@@ -71,6 +71,7 @@ describe('Publication d’une démarche PCAET', () => {
       caller.demarches.pcaet.publier({
         collectiviteId: collectivite.id,
         demarcheId: created.id,
+        dateAdoption: '2026-01-15',
       })
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
   });
@@ -87,6 +88,7 @@ describe('Publication d’une démarche PCAET', () => {
       caller.demarches.pcaet.publier({
         collectiviteId: collectivite.id,
         demarcheId: created.id,
+        dateAdoption: '2026-01-15',
       })
     ).rejects.toThrow('DOCUMENTS_AVAL_INCOMPLETS');
 
@@ -104,9 +106,13 @@ describe('Publication d’une démarche PCAET', () => {
     const publiee = await caller.demarches.pcaet.publier({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
+      dateAdoption: '2026-01-15',
     });
     expect(publiee.status).toBe('publie');
     expect(publiee.publishedAt).toBeTruthy();
+    // La date saisie est celle de la délibération, pas celle de la mise en
+    // ligne : elle est conservée telle quelle.
+    expect(publiee.adoptedAt).toBe('2026-01-15');
     expect(publiee.transitions.publier.reachable).toBe(false);
     // Publier vaut adopter : la seule suite d'un dossier publié est l'archivage.
     expect(
