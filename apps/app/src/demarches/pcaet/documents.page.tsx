@@ -84,8 +84,14 @@ export const DemarchePcaetDocumentsPage = () => {
   // l'amont avant. C'est lui qui décide du ou des tableaux affichés — un dépôt
   // hors plateforme a les deux ouverts, et doit donc les voir tous les deux.
   const parcours = getDemarcheParcours(demarche);
-  const estAval = parcours.avalOuvert;
   const etapeCourante: DemarcheDocumentEtape = parcours.etape;
+
+  // Les avis se lisent sur la **provenance**, non sur l'état du parcours : une
+  // fois publié, un dépôt hors plateforme referme ses deux temps et cesserait
+  // d'être « hors plateforme » au sens du parcours — l'écran se remettrait alors
+  // à annoncer « aucun avis déposé » sur un dossier dont les avis ont été rendus
+  // ailleurs. C'est justement ce que le drapeau de provenance sait encore dire.
+  const montreLesAvis = parcours.avalOuvert && !demarche.transmisHorsPlateforme;
 
   const downloadDemarcheDocument = ({
     fichier,
@@ -107,12 +113,12 @@ export const DemarchePcaetDocumentsPage = () => {
     >
       <DemarcheSection
         title={
-          estAval && !parcours.horsPlateforme
+          montreLesAvis
             ? appLabels.demarcheDetailAvisEtDocumentsTitre
             : appLabels.demarcheDetailDocumentsTitre
         }
         description={
-          estAval && !parcours.horsPlateforme
+          montreLesAvis
             ? appLabels.demarcheDetailDocumentsAvalDescription
             : appLabels.demarcheDetailDocumentsDescription
         }
@@ -133,8 +139,7 @@ export const DemarchePcaetDocumentsPage = () => {
           <div className="flex flex-col gap-8">
             {/* Les avis d'abord : c'est ce qui commande la reprise du dossier,
                 et la raison d'être de cette étape. */}
-            {estAval &&
-              !parcours.horsPlateforme &&
+            {montreLesAvis &&
               (avisRecus.length > 0 ? (
                 <AvisDeposesList
                   avis={avisRecus.map((unAvis) => ({

@@ -7,6 +7,7 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { getDateCivileFrance } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
@@ -109,9 +110,16 @@ describe('Publication d’une démarche PCAET', () => {
     ).rejects.toThrow('DATE_ADOPTION_FUTURE');
 
     // Demain suffit à être refusé : la borne est la date du jour, pas l'année.
-    const demain = new Date(Date.now() + 24 * 3600 * 1000)
-      .toISOString()
-      .slice(0, 10);
+    // Dérivé de la date civile de Paris — celle que le serveur compare. Ajouter
+    // 24 h à `Date.now()` puis lire l'ISO en UTC rendrait le test instable : la
+    // nuit, « demain » en UTC est encore aujourd'hui à Paris, et le refus
+    // attendu n'aurait pas lieu.
+    const [annee, mois, jour] = getDateCivileFrance(new Date())
+      .split('-')
+      .map(Number);
+    const demain = getDateCivileFrance(
+      new Date(Date.UTC(annee, mois - 1, jour + 1, 12))
+    );
     await expect(
       caller.demarches.pcaet.publier({
         collectiviteId: collectivite.id,
@@ -185,7 +193,10 @@ describe('Publication d’une démarche PCAET', () => {
     const history = await db.db
       .select()
       .from(demarcheStatusHistoryTable)
-      .where(eq(demarcheStatusHistoryTable.demarcheId, created.id));
+      .where(eq(demarcheStatusHistoryTable.demarcheId, created.id))
+      // L'assertion porte sur l'enchaînement : sans tri, Postgres est libre de
+      // rendre les lignes dans n'importe quel ordre, et le test devient flaky.
+      .orderBy(demarcheStatusHistoryTable.id);
     // Le journal nomme la cause de la bascule en instruit : ici le délai échu.
     expect(history.map((entry) => entry.transition)).toEqual([
       'transmettre_pour_avis',
