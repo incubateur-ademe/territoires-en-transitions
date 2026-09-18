@@ -8,7 +8,7 @@ export type InputDateProps = Omit<InputBaseProps, 'icon' | 'type'>;
  * Affiche un champ de saisie date
  */
 export const InputDate = forwardRef<HTMLInputElement, InputDateProps>(
-  ({ className, ...props }: InputDateProps, maybeRef?) => {
+  ({ className, containerClassname, ...props }: InputDateProps, maybeRef?) => {
     const innerRef = useRef<HTMLInputElement | null>(null);
     return (
       <InputBase
@@ -25,10 +25,13 @@ export const InputDate = forwardRef<HTMLInputElement, InputDateProps>(
           }
         }}
         className={classNames(
-          /** cache l'icône du sélecteur de date (fonctionne uniquement pour chrome et probablement edge mais pas pour firefox ni safari) */
+          /** cache l'indicateur natif, remplacé par le bouton ci-dessous ; les
+           * navigateurs qui ne connaissent pas ce pseudo-élément gardent le
+           * leur et masquent le bouton (cf. `.input-date` dans global.css) */
           '[&::-webkit-calendar-picker-indicator]:hidden',
           className
         )}
+        containerClassname={classNames('input-date', containerClassname)}
         icon={{
           buttonProps: {
             type: 'button',
@@ -44,4 +47,3 @@ export const InputDate = forwardRef<HTMLInputElement, InputDateProps>(
   }
 );
 InputDate.displayName = 'InputDate';
-
