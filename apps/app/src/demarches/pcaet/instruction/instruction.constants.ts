@@ -19,6 +19,7 @@ export const DELAI_INSTRUCTION_PLAFOND_JOURS = 60;
 const STATUT_INSTRUCTION_LABELS: Record<PcaetStatutInstruction, string> = {
   aucun_depot: appLabels.instructionStatutAucunDepot,
   en_elaboration: appLabels.instructionStatutEnElaboration,
+  depot_hors_plateforme: appLabels.instructionStatutDepotHorsPlateforme,
   en_instruction: appLabels.instructionStatutEnInstruction,
   pas_d_avis_depose: appLabels.instructionStatutPasDAvisDepose,
   instruit: appLabels.instructionStatutInstruit,
@@ -50,6 +51,9 @@ export const STATUT_INSTRUCTION_VARIANTS: Record<
 > = {
   aucun_depot: 'grey',
   en_elaboration: 'info',
+  // Gris comme « aucun dépôt » : la ligne informe, elle ne réclame rien au
+  // service — il a été saisi ailleurs.
+  depot_hors_plateforme: 'grey',
   en_instruction: 'warning',
   pas_d_avis_depose: 'error',
   instruit: 'success',

@@ -25,6 +25,8 @@ export type DemarcheAvanceSidePanelContentProps = {
   onTransmettre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
+  /** Le dossier a été transmis pour avis hors de la plateforme. */
+  horsPlateforme?: boolean;
   isPreview?: boolean;
 };
 
@@ -44,6 +46,7 @@ export const DemarcheAvanceSidePanelContent = ({
   onTransmettre,
   isPublished = false,
   onPublish,
+  horsPlateforme = false,
   isPreview = false,
 }: DemarcheAvanceSidePanelContentProps) => (
   <div className="flex flex-col gap-4 p-4">
@@ -59,6 +62,7 @@ export const DemarcheAvanceSidePanelContent = ({
       onTransmettre={onTransmettre}
       isPublished={isPublished}
       onPublish={onPublish}
+      horsPlateforme={horsPlateforme}
       isPreview={isPreview}
     />
 

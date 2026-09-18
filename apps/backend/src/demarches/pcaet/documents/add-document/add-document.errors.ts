@@ -9,6 +9,7 @@ const specificErrors = [
   'DOCUMENT_DEFINITION_NOT_FOUND',
   'FICHIER_NOT_FOUND',
   'FICHIER_FORMAT_NON_SUPPORTE',
+  'REPRISE_SANS_AVIS',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -36,6 +37,11 @@ export const addDemarchePcaetDocumentErrorConfig: TrpcErrorHandlerConfig<Specifi
       FICHIER_FORMAT_NON_SUPPORTE: {
         code: 'BAD_REQUEST',
         message: "Le format de ce fichier n'est pas accepté dans ce dossier",
+      },
+      REPRISE_SANS_AVIS: {
+        code: 'CONFLICT',
+        message:
+          'Cette pièce ne peut être reprise qu’après les avis rendus sur le dossier transmis',
       },
     },
   };

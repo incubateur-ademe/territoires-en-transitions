@@ -7,6 +7,7 @@ import {
 } from '@/app/referentiels/preuves/upload/constants';
 import {
   findDemarcheDocumentSubstitutDepose,
+  getEtapeExigeanteDemarcheDocument,
   isDemarcheDocumentDeEtape,
   isDemarcheDocumentsAdditionalAutorise,
 } from '@tet/domain/demarches';
@@ -26,7 +27,7 @@ import {
   Icon,
   type MenuAction,
 } from '@tet/ui';
-import { ReactElement, useMemo } from 'react';
+import { ReactElement, useCallback, useMemo } from 'react';
 import {
   DemarcheDocumentAdditionalAddRow,
   DemarcheDocumentAdditionalRow,
@@ -308,8 +309,29 @@ type Props = {
    * l'étape, elle, est ouverte.
    */
   isEtapeReadonly?: boolean;
-  onAddFichier: (documentId: string, fichierId: number) => void;
-  onRemoveDocument: (documentId: string) => void;
+  /**
+   * Fusionne les deux temps en **une seule liste** : les pièces d'élaboration
+   * d'abord, celles attendues après les avis ensuite. Chaque ligne est alors
+   * ancrée sur le temps où sa pièce est *exigée*, et non sur un temps unique
+   * pour tout le tableau — c'est ce qui fait que son dépôt compte dans la
+   * couverture, qui s'indexe sur ce couple.
+   *
+   * Sert au dépôt hors plateforme, dont le dossier n'a jamais été figé : deux
+   * tableaux y donneraient à lire une coupure d'instruction qui n'a pas eu
+   * lieu. Les deux temps y étant ouverts ensemble, `isEtapeReadonly` vaut pour
+   * les deux.
+   */
+  mergeEtapes?: boolean;
+  /**
+   * Le temps de la ligne accompagne le dépôt : en liste fusionnée il varie
+   * d'une pièce à l'autre, et c'est lui qui décide si la pièce est couverte.
+   */
+  onAddFichier: (
+    documentId: string,
+    fichierId: number,
+    etape: DemarcheDocumentEtape
+  ) => void;
+  onRemoveDocument: (documentId: string, etape: DemarcheDocumentEtape) => void;
   onToggleCouverture: (documentId: string, couvert: boolean) => void;
   onCreateAdditional: (etape: DemarcheDocumentEtape) => void;
   /** Pièce additionnelle tout juste ouverte : sa ligne s'ouvre en saisie du nom. */
@@ -346,6 +368,7 @@ export const DemarcheDocumentsTable = ({
   documentAdditionalCreeId,
   coverage,
   isEtapeReadonly = false,
+  mergeEtapes = false,
   onAddFichier,
   onRemoveDocument,
   onToggleCouverture,
@@ -359,29 +382,46 @@ export const DemarcheDocumentsTable = ({
   const fileConstraints = useMemo(() => toFileConstraints(config), [config]);
   // Indexé par temps : une pièce de portée `both` a une version par temps, et
   // l'écran n'affiche que celle qui lui revient.
-  const documentByDefinitionId = useMemo(
+  /**
+   * Le temps auquel une ligne se rattache : celui du tableau, ou — en liste
+   * fusionnée — celui où la pièce est exigée. Une pièce de portée `both` y est
+   * donc une seule ligne, tenue à son amont : sa reprise d'aval n'a de sens
+   * qu'après des avis, et un dépôt hors plateforme n'en a pas.
+   */
+  const etapeDe = useCallback(
+    (definition: DemarcheDocumentDefinition): DemarcheDocumentEtape =>
+      mergeEtapes
+        ? getEtapeExigeanteDemarcheDocument(definition.etape)
+        : etape,
+    [mergeEtapes, etape]
+  );
+
+  const documentByEtapeEtId = useMemo(
     () =>
       new Map(
-        documents
-          .filter((document) => document.etape === etape)
-          .map((document) => [document.documentId, document])
+        documents.map((document) => [
+          `${document.etape}|${document.documentId}`,
+          document,
+        ])
       ),
-    [documents, etape]
+    [documents]
   );
+  const documentDe = (definition: DemarcheDocumentDefinition) =>
+    documentByEtapeEtId.get(`${etapeDe(definition)}|${definition.id}`);
   /**
    * Versions transmises, pour l'écran aval seulement : c'est ce qu'on montre
    * d'une pièce reprise tant que sa nouvelle version n'est pas déposée.
    */
   const documentOriginalByDefinitionId = useMemo(
     () =>
-      etape === 'aval'
+      etape === 'aval' && !mergeEtapes
         ? new Map(
             documents
               .filter((document) => document.etape === 'amont')
               .map((document) => [document.documentId, document])
           )
         : new Map<string, DemarcheDocumentDepose>(),
-    [documents, etape]
+    [documents, etape, mergeEtapes]
   );
   const coverageByDefinitionId = useMemo(
     () => new Map(coverage.map((entry) => [entry.documentId, entry])),
@@ -401,21 +441,43 @@ export const DemarcheDocumentsTable = ({
   // consultable jusqu'à l'archivage, et une pièce réglementaire comme la
   // délibération d'arrêt ne doit pas disparaître de la vue une fois
   // l'instruction close.
-  const definitionsForEtape =
-    etape === 'aval'
-      ? definitions
-      : definitions.filter((definition) =>
-          isDemarcheDocumentDeEtape(definition.etape, etape)
-        );
+  const definitionsForEtape = mergeEtapes
+    ? // L'ordre du dossier : ce qui le constitue, puis ce qui vient après les
+      // avis. `sort` est stable, donc l'ordre du modèle tient dans chaque groupe.
+      [...definitions].sort(
+        (a, b) =>
+          Number(getEtapeExigeanteDemarcheDocument(a.etape) === 'aval') -
+          Number(getEtapeExigeanteDemarcheDocument(b.etape) === 'aval')
+      )
+    : etape === 'aval'
+    ? definitions
+    : definitions.filter((definition) =>
+        isDemarcheDocumentDeEtape(definition.etape, etape)
+      );
 
   /** Une pièce hors de son temps se consulte et se télécharge, ne se dépose plus. */
   const isDefinitionReadonly = (definition: DemarcheDocumentDefinition) =>
-    isEtapeReadonly || !isDemarcheDocumentDeEtape(definition.etape, etape);
+    isEtapeReadonly ||
+    (!mergeEtapes && !isDemarcheDocumentDeEtape(definition.etape, etape));
+
+  /**
+   * Le temps auquel rattacher une pièce hors catalogue. En liste fusionnée elle
+   * rejoint le dossier lui-même — l'amont — mais seulement si le modèle l'y
+   * autorise : le rabattre en dur y interdirait l'ajout sur un modèle qui ne
+   * l'ouvre qu'à l'aval.
+   */
+  const etapeAdditional: DemarcheDocumentEtape = mergeEtapes
+    ? isDemarcheDocumentsAdditionalAutorise(config, 'amont')
+      ? 'amont'
+      : 'aval'
+    : etape;
 
   return (
     <div
       className="flex flex-col gap-4"
-      data-test={`demarches.pcaet.documents.table.${etape}`}
+      data-test={`demarches.pcaet.documents.table.${
+        mergeEtapes ? 'fusionnee' : etape
+      }`}
     >
       {/* Sans colonne de statut : la réponse de chaque ligne porte déjà le
           fichier déposé ou la couverture déclarée, avec sa coche. */}
@@ -442,7 +504,7 @@ export const DemarcheDocumentsTable = ({
                 demarcheType={demarcheType}
                 fileConstraints={fileConstraints}
                 definition={definition}
-                document={documentByDefinitionId.get(definition.id)}
+                document={documentDe(definition)}
                 documentOriginal={documentOriginalByDefinitionId.get(
                   definition.id
                 )}
@@ -460,9 +522,11 @@ export const DemarcheDocumentsTable = ({
                 }
                 isReadonly={isDefinitionReadonly(definition)}
                 onAddFichier={(fichierId) =>
-                  onAddFichier(definition.id, fichierId)
+                  onAddFichier(definition.id, fichierId, etapeDe(definition))
                 }
-                onRemove={() => onRemoveDocument(definition.id)}
+                onRemove={() =>
+                  onRemoveDocument(definition.id, etapeDe(definition))
+                }
                 onToggleCouverture={(couvert) =>
                   onToggleCouverture(definition.id, couvert)
                 }
@@ -475,7 +539,13 @@ export const DemarcheDocumentsTable = ({
         {/* Pièces hors catalogue : elles ferment la liste, après ce que le
             modèle attend. */}
         {documentsAdditional
-          .filter((documentAdditional) => documentAdditional.etape === etape)
+          .filter(
+            (documentAdditional) =>
+              mergeEtapes || documentAdditional.etape === etape
+          )
+          .sort(
+            (a, b) => Number(a.etape === 'aval') - Number(b.etape === 'aval')
+          )
           .map((documentAdditional) => (
             <DemarcheDocumentAdditionalRow
               key={documentAdditional.id}
@@ -495,11 +565,14 @@ export const DemarcheDocumentsTable = ({
             />
           ))}
 
+        {/* En liste fusionnée, une pièce hors catalogue rejoint le dossier
+            lui-même : c'est l'amont, seul temps qu'une pièce libre puisse
+            documenter tant qu'aucun avis n'a été rendu. */}
         {!isEtapeReadonly &&
-          isDemarcheDocumentsAdditionalAutorise(config, etape) && (
+          isDemarcheDocumentsAdditionalAutorise(config, etapeAdditional) && (
             <DemarcheDocumentAdditionalAddRow
-              etape={etape}
-              onCreate={() => onCreateAdditional(etape)}
+              etape={etapeAdditional}
+              onCreate={() => onCreateAdditional(etapeAdditional)}
             />
           )}
       </ChecklistTable>

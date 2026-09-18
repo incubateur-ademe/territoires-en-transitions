@@ -74,11 +74,19 @@ const renderTable = ({
   documents = [],
   coverage = [],
   etape = 'amont',
+  mergeEtapes = false,
+  onAddFichier = vi.fn(),
 }: {
   definitions?: DemarcheDocumentDefinition[];
   documents?: DemarcheDocumentDepose[];
   coverage?: DemarcheDocumentCoverage[];
   etape?: DemarcheDocumentEtape;
+  mergeEtapes?: boolean;
+  onAddFichier?: (
+    documentId: string,
+    fichierId: number,
+    etape: DemarcheDocumentEtape
+  ) => void;
   onToggleCouverture?: (documentId: string, couvert: boolean) => void;
 } = {}) =>
   render(
@@ -90,7 +98,8 @@ const renderTable = ({
       documents={documents}
       documentsAdditional={[]}
       coverage={coverage}
-      onAddFichier={vi.fn()}
+      mergeEtapes={mergeEtapes}
+      onAddFichier={onAddFichier}
       onRemoveDocument={vi.fn()}
       onToggleCouverture={vi.fn()}
       onCreateAdditional={vi.fn()}
@@ -261,5 +270,69 @@ describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce'
         name: appLabels.demarcheDocumentsTeleverser,
       })
     ).toBeNull();
+  });
+});
+
+
+describe('DemarcheDocumentsTable — liste fusionnée (dépôt hors plateforme)', () => {
+  const DELIBERATION = definition({
+    id: 'pcaet_deliberation_adoption',
+    nom: 'Délibération d’adoption',
+    ordre: 0,
+    etape: 'aval',
+  });
+  /** Attendue à l'amont, révisable à l'aval : exigée à l'amont. */
+  const STRATEGIE = definition({
+    id: 'pcaet_strategie',
+    nom: 'Stratégie',
+    ordre: 3,
+    etape: 'both',
+  });
+
+  it('range les pièces d’élaboration avant celles attendues après les avis', () => {
+    renderTable({
+      definitions: [DELIBERATION, DIAGNOSTIC, STRATEGIE],
+      mergeEtapes: true,
+    });
+
+    const noms = screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => row.textContent ?? '');
+
+    // L'aval ferme la marche, quel que soit son ordre au catalogue.
+    expect(noms[0]).toContain('Diagnostic');
+    expect(noms[1]).toContain('Stratégie');
+    expect(noms[2]).toContain('Délibération d’adoption');
+  });
+
+  it('n’affiche qu’une ligne par pièce, même de portée « both »', () => {
+    renderTable({
+      definitions: [DELIBERATION, DIAGNOSTIC, STRATEGIE],
+      mergeEtapes: true,
+    });
+
+    // Une pièce `both` appartient aux deux temps : dans une liste qui les
+    // fusionne, elle ne doit pas se dédoubler.
+    const lignesStrategie = screen
+      .getAllByRole('row')
+      .filter((row) => row.textContent?.includes('Stratégie'));
+    expect(lignesStrategie).toHaveLength(1);
+  });
+
+  // Le piège : la couverture s'indexe sur (pièce, temps exigeant). Une pièce
+  // `both` dont le dépôt serait lu au temps du tableau — l'aval — passerait pour
+  // manquante alors qu'elle est déposée.
+  it('lit le dépôt d’une pièce au temps où elle est exigée', () => {
+    renderTable({
+      definitions: [STRATEGIE, DELIBERATION],
+      documents: [depose(STRATEGIE.id, 'amont')],
+      mergeEtapes: true,
+    });
+
+    const [strategie] = screen
+      .getAllByRole('row')
+      .filter((row) => row.textContent?.includes('Stratégie'));
+    expect(within(strategie).getByText('diagnostic.pdf')).toBeInTheDocument();
   });
 });

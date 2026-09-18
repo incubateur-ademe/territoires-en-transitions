@@ -13,6 +13,8 @@ export class DemarchePcaetPom {
   readonly stepsNavPrevious: Locator;
   readonly stepsNavNext: Locator;
   readonly stepsNavTransmettre: Locator;
+  readonly stepsNavPublier: Locator;
+  readonly horsPlateformeSwitch: Locator;
 
   constructor(readonly page: Page) {
     this.startDepotButton = page.getByRole('button', {
@@ -43,6 +45,10 @@ export class DemarchePcaetPom {
     this.stepsNavTransmettre = page.getByTestId(
       'demarches.steps-nav.transmettre'
     );
+    this.stepsNavPublier = page.getByTestId('demarches.steps-nav.publier');
+    this.horsPlateformeSwitch = page.getByTestId(
+      'demarches.creer.hors-plateforme'
+    );
   }
 
   topicTab(code: string): Locator {
@@ -65,8 +71,14 @@ export class DemarchePcaetPom {
     );
   }
 
-  async createDemarche(collectiviteId: number) {
+  async createDemarche(
+    collectiviteId: number,
+    { horsPlateforme = false }: { horsPlateforme?: boolean } = {}
+  ) {
     await this.dateLancementInput.fill('2026-01-15');
+    if (horsPlateforme) {
+      await this.horsPlateformeSwitch.click();
+    }
     await this.createDemarcheButton.click();
     await this.expectOnDetailPage(collectiviteId);
   }
@@ -135,7 +147,7 @@ export class DemarchePcaetPom {
 
   // --- Pièces additionnelles (hors catalogue) ------------------------------------
 
-  documentsTable(etape: 'amont' | 'aval'): Locator {
+  documentsTable(etape: 'amont' | 'aval' | 'fusionnee'): Locator {
     return this.page.getByTestId(`demarches.pcaet.documents.table.${etape}`);
   }
 

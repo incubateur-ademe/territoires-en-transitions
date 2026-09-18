@@ -87,6 +87,10 @@ export class ListDossiersInstructionService {
      */
     const relveDeSaCharge = (row: DossierInstructionRow): boolean =>
       peutDeposerAvisSaisine(instructeurType, row.perimetre) &&
+      // Instruit hors plateforme : le service a été saisi ailleurs, par
+      // courrier ou par mail. Il n'a rien à y faire ici, et rien à relancer —
+      // le compter lui prêterait une charge déjà soldée en dehors.
+      !row.transmittedOffPlatform &&
       // Transmis sans l'avoir saisi : il suit le dossier sans avoir la main
       // pour le solder, et le compter lui réclamerait un travail qu'il ne peut
       // pas faire.

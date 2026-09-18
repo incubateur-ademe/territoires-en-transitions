@@ -86,10 +86,23 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
 
   // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
   // diagnostic renseigné ET un programme d'actions rattaché.
+  //
+  // Une transmission l'a déjà fait attester : le guard rend alors vrai sans rien
+  // relire. Ce n'est pas un raccourci de performance, c'est la seule lecture
+  // correcte — l'amont est fermé depuis, donc la collectivité ne peut plus rien
+  // y corriger, tandis que ce dont dépend le calcul continue de bouger sous elle
+  // (un plan d'actions supprimé depuis le module plans, une pièce devenue
+  // requise au catalogue, un feature flag de démonstration retiré). Recalculer
+  // ici rendrait le dossier impubliable et sans issue.
+  //
+  // Reste donc à calculer ce qui n'a jamais été transmis : le dépôt hors
+  // plateforme, dont la publication est le premier et seul contrôle.
   dossierComplet: (context) =>
-    context.documentsComplets === undefined ||
-    context.diagnostic === undefined ||
-    context.planActionIds === undefined
+    context.transmittedAt !== null
+      ? true
+      : context.documentsComplets === undefined ||
+        context.diagnostic === undefined ||
+        context.planActionIds === undefined
       ? undefined
       : context.documentsComplets &&
         (context.isDiagnosticBypassed === true ||
@@ -183,7 +196,12 @@ export class DemarchePcaetGuardsService {
   ): Promise<DemarchePcaetGuardContext> {
     const requiredGuards = getRequiredGuards(demarche.status);
     const needsPilotes = requiredGuards.includes('estPilote');
-    const needsDossier = requiredGuards.includes('dossierComplet');
+    // Miroir du court-circuit de `dossierComplet` : sur un dossier transmis, le
+    // guard répond sans rien lire, donc ni snapshot documentaire, ni diagnostic,
+    // ni plans, ni appel PostHog — que `enrichAll` ferait sinon en boucle.
+    const needsDossier =
+      requiredGuards.includes('dossierComplet') &&
+      demarche.transmittedAt === null;
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
     const needsAvisRendus = requiredGuards.includes('avisTousRendus');
 

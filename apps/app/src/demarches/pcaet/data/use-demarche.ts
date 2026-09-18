@@ -32,6 +32,7 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   datePublication: server.publishedAt,
   dateAdoption: server.adoptedAt,
   dateTransmission: server.transmittedAt,
+  transmisHorsPlateforme: server.transmittedOffPlatform,
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
   planActionIds: server.planActionIds,

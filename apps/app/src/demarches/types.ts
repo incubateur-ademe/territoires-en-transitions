@@ -40,6 +40,11 @@ export type DemarchePcaet = {
   dateAdoption: string | null;
   /** Dernière transmission pour avis (null = jamais transmise). */
   dateTransmission: string | null;
+  /**
+   * Le PCAET a été transmis pour avis hors de la plateforme : la démarche a
+   * démarré à l'étape de finalisation, sans circuit d'avis. Figé à la création.
+   */
+  transmisHorsPlateforme: boolean;
   /** Échéance de remise des avis, figée à la transmission. */
   dateEcheanceAvis: string | null;
   pilotes: PersonneTagOrUser[];

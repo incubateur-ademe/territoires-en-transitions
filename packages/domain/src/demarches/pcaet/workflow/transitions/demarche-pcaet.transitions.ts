@@ -14,6 +14,10 @@ type DemarchePcaetTransitionDef = WorkflowTransitionDef<
 /**
  * Le cycle de vie, en avant, et sans retour en arrière.
  *
+ * Deux entrées dans la finalisation : `instruit`, atteint par le circuit d'avis
+ * de la plateforme, et `instruit_hors_plateforme`, où la démarche démarre quand
+ * l'instruction a eu lieu ailleurs. Une seule suite, `publier`, qui les rejoint.
+ *
  * Aucune étape ne se reprend. Un dossier transmis est entre les mains des
  * instances consultatives : le rouvrir déferait sous leurs yeux le dossier même
  * sur lequel elles se prononcent, et la clôture de l'instruction recalculerait
@@ -52,10 +56,18 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
   // Publier vaut adopter : la délibération d'adoption est donc exigée ici, et
   // un dossier encore en instruction n'est pas publiable — c'est la structure du
   // cycle qui le dit, pas un guard.
+  //
+  // `dossierComplet` figure ici pour le dépôt hors plateforme, dont l'amont est
+  // resté ouvert jusqu'à ce point : c'est la publication qui l'atteste, faute de
+  // transmission pour l'avoir fait. Un dossier transmis, lui, l'a déjà fait
+  // attester — l'évaluateur du guard le sait et ne redemande rien.
   [DemarchePcaetTransitionEnum.PUBLIER]: {
-    from: [DemarchePcaetStatusEnum.INSTRUIT],
+    from: [
+      DemarchePcaetStatusEnum.INSTRUIT,
+      DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME,
+    ],
     to: DemarchePcaetStatusEnum.PUBLIE,
-    guards: ['estPilote', 'documentsAvalComplets'],
+    guards: ['estPilote', 'dossierComplet', 'documentsAvalComplets'],
   },
   [DemarchePcaetTransitionEnum.ARCHIVER]: {
     from: [DemarchePcaetStatusEnum.PUBLIE],

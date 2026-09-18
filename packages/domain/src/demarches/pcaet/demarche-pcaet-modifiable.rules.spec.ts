@@ -13,6 +13,24 @@ describe('ce qui reste modifiable', () => {
     expect(isDemarchePcaetAmontModifiable('publie')).toBe(false);
   });
 
+  // Faute de transmission pour le fermer, l'amont d'un dépôt hors plateforme
+  // reste ouvert en même temps que son aval : c'est la publication qui les
+  // ferme tous deux.
+  it('un dépôt hors plateforme garde les deux temps ouverts', () => {
+    expect(isDemarchePcaetAmontModifiable('instruit_hors_plateforme')).toBe(
+      true
+    );
+    expect(isDemarchePcaetAvalModifiable('instruit_hors_plateforme')).toBe(
+      true
+    );
+    expect(
+      isDemarchePcaetEtapeModifiable('instruit_hors_plateforme', 'amont')
+    ).toBe(true);
+    expect(
+      isDemarchePcaetEtapeModifiable('instruit_hors_plateforme', 'aval')
+    ).toBe(true);
+  });
+
   it('l’aval s’ouvre à la clôture de l’instruction et ne se referme plus', () => {
     expect(isDemarchePcaetAvalModifiable('en_elaboration')).toBe(false);
     expect(isDemarchePcaetAvalModifiable('transmis_pour_avis')).toBe(false);

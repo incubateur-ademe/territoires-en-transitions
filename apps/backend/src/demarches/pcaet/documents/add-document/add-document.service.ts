@@ -84,6 +84,19 @@ export class AddDemarchePcaetDocumentService {
       }
       const demarche = access.data;
 
+      // Déposer à l'aval une pièce exigée à l'amont, c'est la **reprendre** :
+      // répondre par une nouvelle version aux avis rendus sur celle transmise.
+      // Un dossier jamais transmis n'a reçu aucun avis — il n'y a rien à
+      // reprendre. La version créée resterait d'ailleurs orpheline : la liste
+      // n'affiche d'une pièce que la version du temps où elle est exigée.
+      if (
+        etape === 'aval' &&
+        getEtapeExigeanteDemarcheDocument(definition.etape) === 'amont' &&
+        demarche.transmittedAt === null
+      ) {
+        return failure(AddDemarchePcaetDocumentErrorEnum.REPRISE_SANS_AVIS);
+      }
+
       // Le fichier est cherché dans la bibliothèque de la collectivité de la
       // démarche : un fichier d'une autre collectivité est simplement
       // introuvable, sans révéler son existence.

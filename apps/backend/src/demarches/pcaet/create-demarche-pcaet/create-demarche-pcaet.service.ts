@@ -6,6 +6,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_DEFAULT_TITRE,
+  getDemarchePcaetInitialStatus,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -73,6 +74,10 @@ export class CreateDemarchePcaetService {
             description: input.description ?? '',
             obligation: input.obligation,
             launchedAt: input.launchedAt ?? null,
+            // Un PCAET déjà transmis hors plateforme n'a ni élaboration ni
+            // transmission à rejouer : son dossier démarre à la finalisation.
+            status: getDemarchePcaetInitialStatus(input),
+            transmittedOffPlatform: input.transmittedOffPlatform ?? false,
           },
           user.id,
           transaction

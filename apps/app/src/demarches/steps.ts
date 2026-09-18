@@ -29,6 +29,42 @@ export type DemarcheStepItem = {
 export type DemarcheParcoursEtape = 'amont' | 'aval';
 
 /**
+ * Ce que le dossier laisse faire, pour les écrans du parcours.
+ *
+ * Jusqu'ici les deux temps étaient exclusifs, et les écrans se contentaient de
+ * lire `avalModifiable` : « en aval » valait « plus en amont ». Un dépôt hors
+ * plateforme les ouvre tous deux en même temps, et ce raccourci devient faux —
+ * d'où un modèle qui nomme les deux, plutôt qu'un booléen qu'on interprète.
+ */
+export type DemarcheParcours = {
+  amontOuvert: boolean;
+  avalOuvert: boolean;
+  /** Les deux temps ouverts ensemble : l'instruction a eu lieu ailleurs. */
+  horsPlateforme: boolean;
+  /**
+   * Le temps que le parcours déroule. Un dépôt hors plateforme déroule celui de
+   * l'amont — c'est là qu'il a tout à remplir — même si son acte final est la
+   * publication.
+   */
+  etape: DemarcheParcoursEtape;
+};
+
+export const getDemarcheParcours = ({
+  amontModifiable,
+  avalModifiable,
+  transmisHorsPlateforme,
+}: {
+  amontModifiable: boolean;
+  avalModifiable: boolean;
+  transmisHorsPlateforme: boolean;
+}): DemarcheParcours => ({
+  amontOuvert: amontModifiable,
+  avalOuvert: avalModifiable,
+  horsPlateforme: transmisHorsPlateforme && amontModifiable && avalModifiable,
+  etape: amontModifiable ? 'amont' : 'aval',
+});
+
+/**
  * Déroule le parcours d'un temps du dossier : les documents (si le modèle en
  * attend à ce temps-là), le diagnostic, puis le plan.
  *

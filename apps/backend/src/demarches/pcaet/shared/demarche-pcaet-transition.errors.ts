@@ -28,8 +28,15 @@ export type DemarchePcaetTransitionError =
 /**
  * Le code HTTP de chaque cause, et rien de plus : le libellé affiché est celui
  * du catalogue de l'app, qui reçoit ce code dans `data.errorKey`.
+ *
+ * `NonNullable` parce que les opérations le **composent** avec leurs propres
+ * causes : sans lui, le champ étant optionnel dans la config, chaque clé
+ * reprise par diffusion redeviendrait facultative et le `Record` complet ne
+ * serait plus satisfait.
  */
-export const demarchePcaetTransitionErrorConfig: TrpcErrorHandlerConfig<DemarchePcaetTransitionError>['specificErrors'] =
+export const demarchePcaetTransitionErrorConfig: NonNullable<
+  TrpcErrorHandlerConfig<DemarchePcaetTransitionError>['specificErrors']
+> =
   {
     DEMARCHE_PCAET_NOT_FOUND: { code: 'NOT_FOUND' },
     // La transition ne part pas du statut courant : un conflit d'état, pas une

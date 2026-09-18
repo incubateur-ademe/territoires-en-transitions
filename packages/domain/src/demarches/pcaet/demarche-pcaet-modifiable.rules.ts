@@ -13,7 +13,9 @@ import {
  *   diagnostic, les pièces du dossier d'élaboration. La transmission ferme cet
  *   ensemble d'un coup, parce que les instances consultatives doivent lire un
  *   dossier stable — c'est aussi à ce moment que la photo du diagnostic est
- *   figée.
+ *   figée. Un dépôt hors plateforme n'a pas de transmission pour le fermer :
+ *   son amont reste ouvert, en même temps que son aval, et c'est la publication
+ *   qui les ferme tous deux.
  * - **aval** — ce qui est attendu après les avis (délibération d'adoption,
  *   évaluations) : s'ouvre à la clôture de l'instruction, et reste ouvert
  *   ensuite. Elle s'ouvre donc **avant** la publication, puisque c'est le dépôt
@@ -34,12 +36,15 @@ export type DemarchePcaetEtapeDossier = 'amont' | 'aval';
 
 export const isDemarchePcaetAmontModifiable = (
   status: DemarchePcaetStatus
-): boolean => status === DemarchePcaetStatusEnum.EN_ELABORATION;
+): boolean =>
+  status === DemarchePcaetStatusEnum.EN_ELABORATION ||
+  status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME;
 
 export const isDemarchePcaetAvalModifiable = (
   status: DemarchePcaetStatus
 ): boolean =>
   status === DemarchePcaetStatusEnum.INSTRUIT ||
+  status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME ||
   status === DemarchePcaetStatusEnum.PUBLIE ||
   status === DemarchePcaetStatusEnum.ARCHIVE;
 
