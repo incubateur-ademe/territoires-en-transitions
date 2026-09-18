@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DocumentCard } from '.';
-import { MUTATION_ACTIONS } from './action';
 import {
   preuveComplementaireFichier,
   preuveComplementaireLien,
@@ -11,43 +10,49 @@ import {
 } from '../documents.fixture';
 import { DocumentReglementaire, PreuveAudit, PreuveRapport } from '../types';
 
-const editComment = { enEdition: false };
-
-const toEditState = (isEditing = false) => ({
-  isEditing,
-  enter: vi.fn(),
-  exit: vi.fn(),
-  value: '',
-  setValue: vi.fn(),
-  save: vi.fn(),
-});
+const { openPreuve, removePreuve, updateCommentaire } = vi.hoisted(() => ({
+  openPreuve: vi.fn(),
+  removePreuve: vi.fn(),
+  updateCommentaire: vi.fn(),
+}));
 
 vi.mock('../use-open-preuve', () => ({
-  useOpenPreuve: () => vi.fn(),
+  useOpenPreuve: () => openPreuve,
 }));
 
 const toMutation = () => ({ mutate: vi.fn(), isPending: false });
 
 vi.mock('../use-edit-preuve', () => ({
-  useEditPreuve: () => ({
-    remove: vi.fn(),
-    editComment: toEditState(editComment.enEdition),
-    editFilename: toEditState(),
-    isLoading: false,
-    isError: false,
+  useRemovePreuve: () => ({ mutate: removePreuve, isPending: false }),
+  useUpdatePreuveCommentaire: () => ({
+    mutate: updateCommentaire,
+    isPending: false,
   }),
-  useRemovePreuve: () => toMutation(),
   useUpdatePreuveLien: () => toMutation(),
   useUpdateBibliothequeFichier: () => toMutation(),
 }));
 
+const FICHIER_CHOISI_ID = 42;
+
 vi.mock('@/app/referentiels/preuves/AddPreuveModal', () => ({
-  AddPreuveModal: () => null,
+  AddPreuveModal: ({
+    handlers,
+  }: {
+    handlers: { addFileFromLib: (fichierId: number) => void };
+  }) => (
+    <button onClick={() => handlers.addFileFromLib(42)}>
+      {'Choisir dans la bibliotheque'}
+    </button>
+  ),
 }));
 
-vi.mock('../use-replace-audit-report-file', () => ({
-  useReplaceAuditReportFile: () => ({ mutateAsync: vi.fn() }),
-}));
+const mutationActions = (
+  <DocumentCard.Actions>
+    <DocumentCard.Edit />
+    <DocumentCard.Comment />
+    <DocumentCard.Delete />
+  </DocumentCard.Actions>
+);
 
 const fichierConfidentiel: DocumentReglementaire = {
   preuveType: 'reglementaire',
@@ -127,14 +132,19 @@ const documentRapport: PreuveRapport = {
   rapport: { date: '2022-06-15' },
 };
 
+const cardChildren = (container: HTMLElement): Element[] => [
+  ...(container.querySelector('[data-test="carte-doc"]')?.children ?? []),
+];
+
 describe('DocumentCard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('rend un document de type fichier', () => {
     const { container } = render(
       <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
@@ -144,10 +154,7 @@ describe('DocumentCard', () => {
   test('rend un document de type lien', () => {
     const { container } = render(
       <DocumentCard document={preuveReglementaireLien}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
@@ -157,66 +164,42 @@ describe('DocumentCard', () => {
   test('signale un fichier confidentiel par un cadenas', () => {
     const { container } = render(
       <DocumentCard document={fichierConfidentiel}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
+    expect(
+      container.querySelector('[data-test="carte-doc-confidentiel"]')
+    ).toBeTruthy();
     expect(container.innerHTML).toMatchSnapshot();
   });
 
   test('ne rend rien pour un attendu sans depot', () => {
     const { container } = render(
       <DocumentCard document={preuveReglementaireNonRenseignee}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
     expect(container.innerHTML).toBe('');
   });
 
-  test("rend un document sans aucun bouton quand aucune action n'est autorisee", () => {
+  test('rend un document sans menu quand aucune action n est declaree', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions allowedActions={[]} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
-      </DocumentCard>
+      <DocumentCard document={preuveReglementaireFichier} />
     );
 
-    expect(screen.queryByRole('button')).toBeNull();
+    expect(container.querySelector('button')).toBeNull();
     expect(container.innerHTML).toMatchSnapshot();
   });
 
   test("affiche l'identifiant de la mesure quand il est demande", () => {
     const { container } = render(
       <DocumentCard document={preuveComplementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
         <DocumentCard.Identifier
-          identifiant={preuveComplementaireFichier.action.identifiant}
+          value={preuveComplementaireFichier.action.identifiant}
         />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
-      </DocumentCard>
-    );
-
-    expect(container.innerHTML).toMatchSnapshot();
-  });
-
-  test('rend le commentaire du document avec la classe fournie', () => {
-    const { container } = render(
-      <DocumentCard document={preuveComplementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment className="text-red-500" />
+        {mutationActions}
       </DocumentCard>
     );
 
@@ -226,23 +209,18 @@ describe('DocumentCard', () => {
   test('signale un document deja present dans la bibliotheque', () => {
     const { container } = render(
       <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
         <DocumentCard.Duplicate information={{ storedFilenameKept: true }} />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
   });
+
   test('ne rend aucun bloc commentaire quand le document n en porte pas', () => {
     const { container } = render(
       <DocumentCard document={preuveComplementaireLien}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
@@ -258,10 +236,7 @@ describe('DocumentCard', () => {
           commentaire: COMMENTAIRE_LONG,
         }}
       >
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
@@ -269,33 +244,52 @@ describe('DocumentCard', () => {
     expect(container.innerHTML).toMatchSnapshot();
   });
 
-  test('remplace le commentaire par sa saisie et masque le menu pendant l edition', () => {
-    editComment.enEdition = true;
-    const { container } = render(
-      <DocumentCard document={preuveComplementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+  test('garde le commentaire deplie quand un enfant apparait', () => {
+    const document = {
+      ...preuveComplementaireFichier,
+      commentaire: COMMENTAIRE_LONG,
+    };
+    const { container, rerender } = render(
+      <DocumentCard document={document}>{mutationActions}</DocumentCard>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Voir plus' }));
+
+    rerender(
+      <DocumentCard document={document}>
+        <DocumentCard.Identifier value="1.1.3" />
+        {mutationActions}
       </DocumentCard>
     );
-    editComment.enEdition = false;
+
+    expect(container.querySelector('[data-test="comment"]')?.textContent).toBe(
+      COMMENTAIRE_LONG
+    );
+  });
+
+  test('remplace le commentaire par sa saisie et masque le menu pendant l edition', () => {
+    const { container } = render(
+      <DocumentCard document={preuveComplementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
 
     expect(
       screen.queryByRole('button', { name: 'Éditer le document' })
     ).toBeNull();
+    expect(container.querySelector('textarea')).toBeTruthy();
     expect(container.innerHTML).toMatchSnapshot();
   });
 
   test("un rapport d'audit porte le remplacement de fichier et pas la suppression", () => {
     const { container } = render(
       <DocumentCard document={documentAudit}>
-        <DocumentCard.Actions
-          allowedActions={[...MUTATION_ACTIONS, 'replace']}
-        />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        <DocumentCard.Actions>
+          <DocumentCard.Edit />
+          <DocumentCard.Comment />
+          <DocumentCard.Replace onReplace={vi.fn()} />
+        </DocumentCard.Actions>
       </DocumentCard>
     );
 
@@ -308,101 +302,245 @@ describe('DocumentCard', () => {
 
   test('un rapport de visite affiche la date de visite', () => {
     const { container } = render(
-      <DocumentCard document={documentRapport}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
-        <DocumentCard.VisitDate date={documentRapport.rapport.date} />
-      </DocumentCard>
+      <DocumentCard document={documentRapport}>{mutationActions}</DocumentCard>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
   });
-  test('refuse un enfant qui n est pas un slot de la carte', () => {
+
+  test('un clic sur le titre ouvre le document', () => {
+    render(<DocumentCard document={preuveReglementaireFichier} />);
+
+    fireEvent.click(screen.getByTitle('Télécharger le fichier'));
+
+    expect(openPreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+  });
+
+  test('deplier puis replier le commentaire tronque', () => {
+    const document = {
+      ...preuveComplementaireFichier,
+      commentaire: COMMENTAIRE_LONG,
+    };
+    const { container } = render(<DocumentCard document={document} />);
+    const comment = () =>
+      container.querySelector('[data-test="comment"]')?.textContent;
+
+    expect(comment()).not.toBe(COMMENTAIRE_LONG);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Voir plus' }));
+    expect(comment()).toBe(COMMENTAIRE_LONG);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Voir moins' }));
+    expect(comment()).not.toBe(COMMENTAIRE_LONG);
+  });
+
+  test('la saisie du commentaire est enregistree a la sortie du champ', () => {
+    render(
+      <DocumentCard document={preuveComplementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
+    const textarea = screen.getByRole('textbox');
+    fireEvent.change(textarea, { target: { value: 'nouveau commentaire' } });
+    fireEvent.blur(textarea);
+
+    expect(updateCommentaire).toHaveBeenCalledWith({
+      ...preuveComplementaireFichier,
+      commentaire: 'nouveau commentaire',
+    });
+  });
+
+  test('un commentaire inchange n est pas renvoye au serveur', () => {
+    render(
+      <DocumentCard document={preuveComplementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
+    fireEvent.blur(screen.getByRole('textbox'));
+
+    expect(updateCommentaire).not.toHaveBeenCalled();
+  });
+
+  test('confirmer la suppression supprime le document', () => {
+    render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Valider' }));
+
+    expect(removePreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+  });
+
+  test('annuler la suppression ne supprime pas le document', () => {
+    render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        {mutationActions}
+      </DocumentCard>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }));
+
+    expect(removePreuve).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  test('choisir un fichier dans la modale declenche le remplacement', () => {
+    const onReplace = vi.fn().mockResolvedValue(undefined);
+    render(
+      <DocumentCard document={documentAudit}>
+        <DocumentCard.Actions>
+          <DocumentCard.Replace onReplace={onReplace} />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Remplacer le fichier' })
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Choisir dans la bibliotheque' })
+    );
+
+    expect(onReplace).toHaveBeenCalledWith(FICHIER_CHOISI_ID);
+  });
+
+  test('refuse un enfant qui n est pas les actions de la carte', () => {
     expect(() =>
       render(
         <DocumentCard document={preuveReglementaireFichier}>
           <span>{'intrus'}</span>
         </DocumentCard>
       )
-    ).toThrow('DocumentCard only accepts its own slots as direct children');
+    ).toThrow(
+      'DocumentCard only accepts its own actions and content as direct children'
+    );
   });
 
-  test('refuse deux fois le meme slot', () => {
+  test('refuse une action enveloppee dans un composant intermediaire', () => {
+    const WrappedDelete = () => <DocumentCard.Delete />;
+
     expect(() =>
       render(
         <DocumentCard document={preuveReglementaireFichier}>
-          <DocumentCard.Title />
-          <DocumentCard.Title />
+          <DocumentCard.Actions>
+            <WrappedDelete />
+          </DocumentCard.Actions>
         </DocumentCard>
       )
-    ).toThrow('DocumentCard renders each of its slots at most once');
+    ).toThrow(
+      'DocumentCard.Actions only accepts its own actions as direct children'
+    );
   });
 
-  test('garde le commentaire deplie quand un slot conditionnel apparait', () => {
-    const document = {
-      ...preuveComplementaireFichier,
-      commentaire: COMMENTAIRE_LONG,
-    };
-    const { container, rerender } = render(
-      <DocumentCard document={document}>
-        <DocumentCard.Title />
-        <DocumentCard.Comment />
-      </DocumentCard>
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Voir plus' }));
-
-    rerender(
-      <DocumentCard document={document}>
-        <DocumentCard.Title />
-        <DocumentCard.Identifier identifiant="1.1.3" />
-        <DocumentCard.Comment />
+  test('une action masquee par visibleWhen ne donne pas son entree de menu', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions>
+          <DocumentCard.Edit />
+          <DocumentCard.Delete visibleWhen={false} />
+        </DocumentCard.Actions>
       </DocumentCard>
     );
 
-    expect(container.querySelector('[data-test="comment"]')?.textContent).toBe(
-      COMMENTAIRE_LONG
-    );
+    expect(
+      screen.getByRole('button', { name: 'Éditer le document' })
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Supprimer' })).toBeNull();
+    expect(container.querySelectorAll('button')).toHaveLength(1);
   });
 
-  test('refuse un slot rendu hors de la carte', () => {
-    expect(() => render(<DocumentCard.Title />)).toThrow(
-      'DocumentCard slots must be rendered inside a DocumentCard'
+  test('un conteneur d actions masque ne rend pas le menu', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions visibleWhen={false}>
+          <DocumentCard.Edit />
+          <DocumentCard.Comment />
+          <DocumentCard.Delete />
+        </DocumentCard.Actions>
+      </DocumentCard>
     );
+
+    expect(cardChildren(container)).toHaveLength(1);
   });
 
-  test('refuse un texte brut en enfant direct', () => {
+  test('un menu dont chaque action est masquee ne rend rien', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions>
+          <DocumentCard.Edit visibleWhen={false} />
+          <DocumentCard.Comment visibleWhen={false} />
+          <DocumentCard.Delete visibleWhen={false} />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    expect(cardChildren(container)).toHaveLength(1);
+  });
+
+  test('le menu garde l ordre du design system quel que soit l ordre de declaration', () => {
+    const { container } = render(
+      <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCard.Actions>
+          <DocumentCard.Delete />
+          <DocumentCard.Comment />
+          <DocumentCard.Edit />
+        </DocumentCard.Actions>
+      </DocumentCard>
+    );
+
+    expect(
+      [...container.querySelectorAll('button')].map((button) =>
+        button.getAttribute('title')
+      )
+    ).toEqual(['Éditer le document', 'Commenter', 'Supprimer']);
+  });
+
+  test('refuse deux fois la meme action', () => {
     expect(() =>
       render(
         <DocumentCard document={preuveReglementaireFichier}>
-          {'intrus'}
+          <DocumentCard.Actions>
+            <DocumentCard.Delete />
+            <DocumentCard.Delete />
+          </DocumentCard.Actions>
         </DocumentCard>
       )
-    ).toThrow('DocumentCard only accepts its own slots as direct children');
+    ).toThrow(
+      'DocumentCard.Actions renders each of its own actions at most once'
+    );
   });
 
-  test('refuse un slot enveloppe dans un composant intermediaire', () => {
-    const WrappedActions = () => (
-      <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-    );
-
+  test('refuse deux fois le meme contenu', () => {
     expect(() =>
       render(
         <DocumentCard document={preuveReglementaireFichier}>
-          <WrappedActions />
+          <DocumentCard.Identifier value="1.1.1" />
+          <DocumentCard.Identifier value="1.1.2" />
         </DocumentCard>
       )
-    ).toThrow('DocumentCard only accepts its own slots as direct children');
+    ).toThrow(
+      'DocumentCard renders each of its own actions and content at most once'
+    );
+  });
+
+  test('refuse une action rendue hors de la carte', () => {
+    expect(() => render(<DocumentCard.Delete />)).toThrow(
+      'DocumentCard actions must be rendered inside a DocumentCard'
+    );
   });
 
   test('un clic sur supprimer ouvre la confirmation de suppression', () => {
     render(
       <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
@@ -415,43 +553,35 @@ describe('DocumentCard', () => {
   test('un clic sur editer ouvre la modale de renommage pour un fichier', () => {
     render(
       <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le document' }));
 
-    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.getByText('Editer le document')).toBeTruthy();
   });
 
   test('un clic sur editer ouvre la modale de lien pour un lien', () => {
     render(
       <DocumentCard document={preuveReglementaireLien}>
-        <DocumentCard.Actions allowedActions={MUTATION_ACTIONS} />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        {mutationActions}
       </DocumentCard>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le lien' }));
 
-    expect(screen.getByRole('dialog')).toBeTruthy();
     expect(screen.getByText('Editer le lien')).toBeTruthy();
   });
 
   test("un clic sur remplacer ouvre la modale de remplacement d'un rapport d'audit", () => {
     render(
       <DocumentCard document={documentAudit}>
-        <DocumentCard.Actions
-          allowedActions={[...MUTATION_ACTIONS, 'replace']}
-        />
-        <DocumentCard.Title />
-        <DocumentCard.Author />
-        <DocumentCard.Comment />
+        <DocumentCard.Actions>
+          <DocumentCard.Edit />
+          <DocumentCard.Comment />
+          <DocumentCard.Replace onReplace={vi.fn()} />
+        </DocumentCard.Actions>
       </DocumentCard>
     );
 

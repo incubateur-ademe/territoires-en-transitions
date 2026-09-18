@@ -147,7 +147,7 @@ export const useUpdatePreuveLien = () => {
 };
 
 // renvoie une fonction de modification du commentaire d'une preuve
-const useUpdatePreuveCommentaire = () => {
+export const useUpdatePreuveCommentaire = () => {
   const trpcClient = useTRPCClient();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
