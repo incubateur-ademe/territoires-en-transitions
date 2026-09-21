@@ -349,6 +349,7 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
                 id: 1,
                 code: 'eau',
                 label: 'Eau',
+                parentId: null,
                 requis: true,
                 isSocle: true,
               },
