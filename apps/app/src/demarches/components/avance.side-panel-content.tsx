@@ -1,11 +1,9 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import type {
   DemarchePcaetTransitionEvaluations,
   DemarcheType,
 } from '@tet/domain/demarches';
-import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
 import type { DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet } from '../types';
@@ -65,13 +63,5 @@ export const DemarcheAvanceSidePanelContent = ({
       horsPlateforme={horsPlateforme}
       isPreview={isPreview}
     />
-
-    <VisibleWhen condition={isPublished}>
-      <Alert
-        state="success"
-        title={appLabels.demarcheDetailPublieeTitre}
-        description={appLabels.demarcheDetailPublieeDescription}
-      />
-    </VisibleWhen>
   </div>
 );
