@@ -160,11 +160,25 @@ export class SetScoreFromIndicateurService {
   /**
    * Recalcule le score indicatif d'une action à partir des valeurs
    * actuellement retenues, puis en dérive et écrit le statut d'avancement.
+   *
+   * `hasValeurSelectionnee` distingue deux cas où le score n'est pas calculable :
+   * - une valeur reste sélectionnée mais l'action n'a pas de formule de score
+   *   (statut laissé inchangé, il a pu être saisi manuellement) ;
+   * - plus aucune valeur n'est sélectionnée (désélection explicite) : l'action
+   *   redevient alors "non renseignée".
    */
   private async refreshAvancementForAction(
     collectiviteId: number,
     actionId: string,
-    { user, tx }: { user: AuthenticatedUser; tx?: Transaction }
+    {
+      user,
+      tx,
+      hasValeurSelectionnee = true,
+    }: {
+      user: AuthenticatedUser;
+      tx?: Transaction;
+      hasValeurSelectionnee?: boolean;
+    }
   ): Promise<Result<void, SetScoreFromIndicateurError>> {
     const scoreResult = await this.scoreIndicatifService.getScoreIndicatif(
       { collectiviteId, actionIds: [actionId] },
@@ -178,6 +192,25 @@ export class SetScoreFromIndicateurService {
       scoreResult.data[actionId]?.fait?.score
     );
     if (!avancement) {
+      if (!hasValeurSelectionnee) {
+        const resetResult =
+          await this.updateActionStatutService.upsertActionStatutsWithoutSnapshot(
+            [
+              {
+                collectiviteId,
+                actionId,
+                statut: StatutAvancementEnum.NON_RENSEIGNE,
+                statutDetailleAuPourcentage: null,
+              },
+            ],
+            { user, tx }
+          );
+        if (!resetResult.success) {
+          return failure(resetResult.error, resetResult.cause);
+        }
+        return success(undefined);
+      }
+
       this.logger.log(
         `Score indicatif non calculable pour l'action ${actionId} : statut inchangé`
       );
@@ -230,6 +263,10 @@ export class SetScoreFromIndicateurService {
       return failure(ScoreIndicatifErrorEnum.INVALID_ACTION_ID);
     }
 
+    const hasValeurSelectionnee = input.valeurs.some(
+      (valeur) => valeur.indicateurValeurId !== null
+    );
+
     const writeResult = await this.transactionManager.executeSingle<
       void,
       SetScoreFromIndicateurError
@@ -248,6 +285,7 @@ export class SetScoreFromIndicateurService {
       return this.refreshAvancementForAction(collectiviteId, actionId, {
         user,
         tx,
+        hasValeurSelectionnee,
       });
     });
 
