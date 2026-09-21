@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/nextjs';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import './global.css';
+import { PublicEnvScript } from './public-env.script';
 import RootProviders from './root-providers';
 
 export const dynamic = 'force-dynamic';
@@ -76,9 +78,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Posé par `proxy.ts` sur la requête ; requis par la CSP `strict-dynamic`.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+
   return (
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
+        <PublicEnvScript nonce={nonce} />
         <div id="root">
           <RootProviders>
             {/* L'utilisation de overflow-hidden ou overflow-auto sur le container

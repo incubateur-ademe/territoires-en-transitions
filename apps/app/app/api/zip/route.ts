@@ -1,3 +1,4 @@
+import { ENV } from '@tet/api/environmentVariables';
 import JSZip from 'jszip';
 import { NextResponse } from 'next/server';
 import { Readable } from 'stream';
@@ -27,10 +28,8 @@ import {
 // (pas de protection explicite contre le DNS rebinding). À traiter si l'infra
 // sortante ne filtre pas déjà les destinations privées.
 
-const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(
-  /\/+$/,
-  ''
-);
+// Lu à l'appel : la valeur vient de l'environnement du conteneur, pas du build.
+const getSupabaseUrl = () => (ENV.supabase_url ?? '').replace(/\/+$/, '');
 
 async function fetchFileAsArrayBuffer(url: string) {
   const response = await fetch(url);
@@ -54,7 +53,7 @@ export async function POST(request: Request) {
     // Valide chaque URL contre la whitelist + sanitize les noms de fichiers.
     const sanitized: { filename: string; url: string }[] = [];
     for (const entry of parsed.data.signedUrls) {
-      if (!isAllowedStorageUrl(entry.url, SUPABASE_URL)) {
+      if (!isAllowedStorageUrl(entry.url, getSupabaseUrl())) {
         return NextResponse.json(
           { error: 'URL non autorisée' },
           { status: 400 }

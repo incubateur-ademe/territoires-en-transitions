@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ENV } from '@tet/api/environmentVariables';
 import { RouterOutput, useTRPC, useUser } from '@tet/api';
 import {
   Alert,
@@ -152,7 +153,7 @@ export const LinkOidcIdentityMethods = () => {
             providers={unlinkedProviders}
             lierUrl={(provider) =>
               buildLinkIdentityUrl({
-                backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL as string,
+                backendUrl: ENV.backend_url as string,
                 provider,
                 next: pathname,
               })

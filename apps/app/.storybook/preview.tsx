@@ -1,3 +1,7 @@
+// Doit précéder tout import de `@tet/api` : pose la config runtime que
+// Storybook n'a aucun serveur Next pour injecter.
+import './public-env.mock';
+
 import { Preview } from '@storybook/nextjs-vite';
 
 // charge les styles globaux
