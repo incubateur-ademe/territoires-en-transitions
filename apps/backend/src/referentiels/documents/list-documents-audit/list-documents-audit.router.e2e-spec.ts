@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { OTHER_PDF_SAMPLE_FILE } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  OTHER_PDF_SAMPLE_FILE,
+  seedTestDocument,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -159,5 +162,77 @@ describe('List Documents Audit Router', () => {
     expect(
       documentsMembre.map((document) => document.fichier?.filename)
     ).toEqual(['audit-public.pdf', 'audit-confidentiel.pdf']);
+  });
+
+  test('garde visible pour un visiteur un document public dont le fichier a perdu ses octets', async () => {
+    const { collectiviteId, auditId, membreId } =
+      await createCollectiviteAvecCycle({
+        db,
+        router,
+        app,
+        accesRestreint: false,
+      });
+
+    const purgedFile = await seedTestDocument({
+      databaseService: db,
+      collectiviteId,
+      filename: 'audit-sans-octets.pdf',
+      withStorageObject: false,
+    });
+    await db.db.insert(preuveAuditTable).values({
+      collectiviteId,
+      auditId,
+      fichierId: purgedFile.id,
+      commentaire: '',
+      modifiedBy: membreId,
+    });
+
+    const visiteurCaller = router.createCaller({ user: visiteurUser });
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsAudit({
+        auditId,
+      });
+
+    expect(documents).toHaveLength(1);
+    expect(documents[0].fichierId).toBe(purgedFile.id);
+    expect(documents[0].fichier).toBeNull();
+  });
+
+  test("masque a un visiteur un document confidentiel dont le fichier a perdu ses octets", async () => {
+    const { collectiviteId, auditId, membreId, membreCaller } =
+      await createCollectiviteAvecCycle({
+        db,
+        router,
+        app,
+        accesRestreint: false,
+      });
+
+    const purgedConfidentialFile = await seedTestDocument({
+      databaseService: db,
+      collectiviteId,
+      filename: 'audit-confidentiel-sans-octets.pdf',
+      confidentiel: true,
+      withStorageObject: false,
+    });
+    await db.db.insert(preuveAuditTable).values({
+      collectiviteId,
+      auditId,
+      fichierId: purgedConfidentialFile.id,
+      commentaire: '',
+      modifiedBy: membreId,
+    });
+
+    const visiteurCaller = router.createCaller({ user: visiteurUser });
+    const documentsVisiteur =
+      await visiteurCaller.referentiels.documents.listDocumentsAudit({
+        auditId,
+      });
+    expect(documentsVisiteur).toHaveLength(0);
+
+    const documentsMembre =
+      await membreCaller.referentiels.documents.listDocumentsAudit({ auditId });
+    expect(documentsMembre.map((document) => document.fichierId)).toEqual([
+      purgedConfidentialFile.id,
+    ]);
   });
 });
