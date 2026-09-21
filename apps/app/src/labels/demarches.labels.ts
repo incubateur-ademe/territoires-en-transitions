@@ -92,8 +92,6 @@ export const demarchesLabels = {
    * la question se pose : sans cela, le badge affirmerait le contraire de la
    * déclaration. */
   demarcheScotAecBadgeAbsent: 'PCAET seul',
-  demarcheScotAecBadgeInfo:
-    'Document unique valant SCoT et PCAET, déclaré par la collectivité.',
   instructionStatutEnInstruction: 'En instruction',
   instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
   instructionStatutInstruit: 'Instruit',

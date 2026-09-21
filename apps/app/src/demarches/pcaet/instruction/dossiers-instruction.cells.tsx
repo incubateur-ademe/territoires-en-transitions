@@ -132,7 +132,7 @@ const ScotAecBadge = ({ dossier }: { dossier: Dossier }) => {
   return (
     <Badge
       title={appLabels.demarcheScotAecBadge}
-      variant="new"
+      variant="info"
       size="sm"
       uppercase={false}
     />
