@@ -4,6 +4,7 @@ import {
   LEVIER_DEFINITIONS,
   LEVIER_DISAMBIGUATIONS,
 } from './levier-definitions';
+import { RANK_BY_LEVIER } from './levier-ranks';
 
 const leviersBySecteur = groupBy(
   [...levierEnumValues],
@@ -14,7 +15,10 @@ const secteurSections = Object.entries(leviersBySecteur).map(
   ([secteur, leviers]) =>
     [
       `## ${secteur}`,
-      ...leviers.map((levier) => `- ${levier} — ${LEVIER_DEFINITIONS[levier]}`),
+      ...leviers.map(
+        (levier) =>
+          `${RANK_BY_LEVIER[levier]}. ${levier} — ${LEVIER_DEFINITIONS[levier]}`
+      ),
     ].join('\n')
 );
 

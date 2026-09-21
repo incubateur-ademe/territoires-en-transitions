@@ -1,7 +1,15 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { CategorieAction, Levier } from '@tet/domain/shared';
+import {
+  CategorieAction,
+  categorieActionEnumValues,
+  Levier,
+} from '@tet/domain/shared';
 import { uniqBy } from 'es-toolkit';
-import { FicheClassification } from './classify-fiches.schema';
+import { LEVIER_BY_RANK } from '../../prompts/levier-ranks';
+import {
+  FicheClassification,
+  MAX_JUSTIFICATION_LENGTH,
+} from './classify-fiches.schema';
 import { RenderedFiche } from './render-fiches-text';
 
 export type ClassifiedVolet = {
@@ -27,9 +35,9 @@ export type InconsistentResponse =
 const toVolets = (classification: FicheClassification): ClassifiedVolet[] =>
   uniqBy(
     classification.volets.flatMap((volet) =>
-      volet.categories.map((categorie) => ({
-        levier: volet.levier,
-        categorie,
+      volet.categories.map((rang) => ({
+        levier: LEVIER_BY_RANK[volet.levier],
+        categorie: categorieActionEnumValues[rang - 1],
       }))
     ),
     ({ levier, categorie }) => `${levier}|${categorie}`
@@ -133,7 +141,9 @@ export const applyClassification = (
       return [
         {
           ficheId: fiche.ficheId,
-          justification: classification.justification,
+          justification: classification.justification
+            .trim()
+            .slice(0, MAX_JUSTIFICATION_LENGTH),
           isDescriptionTruncated: fiche.isDescriptionTruncated,
           volets: toVolets(classification),
         },
