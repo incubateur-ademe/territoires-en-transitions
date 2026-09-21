@@ -1,3 +1,4 @@
+import { toDocuments } from '@tet/backend/collectivites/documents/to-documents.adapter';
 import { Injectable, Logger } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -25,7 +26,9 @@ export class ListDocumentsReferentielService {
   async listDocumentsReferentiel(
     { collectiviteId, referentielId }: ListDocumentsReferentielInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<ListDocumentsReferentielOutput, ListDocumentsReferentielError>> {
+  ): Promise<
+    Result<ListDocumentsReferentielOutput, ListDocumentsReferentielError>
+  > {
     const accessResult =
       await this.referentielDocumentsAccess.checkUserCanReadDocuments(
         { collectiviteId, referentielId },
@@ -38,7 +41,10 @@ export class ListDocumentsReferentielService {
     const scope = { collectiviteId, referentielId, canReadConfidentiel };
 
     const [labellisation, audit, rapport] = await Promise.all([
-      this.listDocumentsReferentielRepository.listLabellisationDocuments(scope, tx),
+      this.listDocumentsReferentielRepository.listLabellisationDocuments(
+        scope,
+        tx
+      ),
       this.listDocumentsReferentielRepository.listAuditDocuments(scope, tx),
       this.listDocumentsReferentielRepository.listRapportDocuments(scope, tx),
     ]);
@@ -54,16 +60,18 @@ export class ListDocumentsReferentielService {
     }
 
     const documents = listDocumentsReferentielOutputSchema.safeParse({
-      labellisation: labellisation.data,
-      audit: audit.data,
-      rapport: rapport.data,
+      labellisation: toDocuments(labellisation.data),
+      audit: toDocuments(audit.data),
+      rapport: toDocuments(rapport.data),
     });
 
     if (!documents.success) {
       this.logger.error(
         `Documents hors contrat pour le référentiel ${referentielId} de la collectivité ${collectiviteId}: ${documents.error.message}`
       );
-      return failure(ListDocumentsReferentielErrorEnum.DOCUMENT_SCHEMA_MISMATCH);
+      return failure(
+        ListDocumentsReferentielErrorEnum.DOCUMENT_SCHEMA_MISMATCH
+      );
     }
 
     return success(documents.data);

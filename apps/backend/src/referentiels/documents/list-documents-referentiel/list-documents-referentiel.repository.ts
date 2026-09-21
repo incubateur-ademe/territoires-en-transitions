@@ -1,9 +1,10 @@
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
+import { hideConfidentielFichier } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
@@ -42,6 +43,7 @@ export class ListDocumentsReferentielRepository {
         .select({
           ...getTableColumns(preuveLabellisationTable),
           fichier: buildFileInfoSql(fichier),
+          bibliothequeFilename: bibliothequeFichierTable.filename,
           demande: {
             ...getTableColumns(labellisationDemandeTable),
           },
@@ -61,26 +63,22 @@ export class ListDocumentsReferentielRepository {
           )
         )
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveLabellisationTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(
-          dcpTable,
-          eq(preuveLabellisationTable.modifiedBy, dcpTable.id)
-        )
-        .where(
-          and(
-            eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            excludeConfidentielRow({
-              fichierIdColumn: preuveLabellisationTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
+            eq(preuveLabellisationTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+            hideConfidentielFichier({
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
+        .leftJoin(
+          dcpTable,
+          eq(preuveLabellisationTable.modifiedBy, dcpTable.id)
+        )
+        .where(eq(preuveLabellisationTable.collectiviteId, collectiviteId))
         .orderBy(preuveLabellisationTable.id);
 
       return success(documents);
@@ -106,6 +104,7 @@ export class ListDocumentsReferentielRepository {
         .select({
           ...getTableColumns(preuveAuditTable),
           fichier: buildFileInfoSql(fichier),
+          bibliothequeFilename: bibliothequeFichierTable.filename,
           demande: {
             ...getTableColumns(labellisationDemandeTable),
           },
@@ -129,23 +128,19 @@ export class ListDocumentsReferentielRepository {
           eq(auditTable.demandeId, labellisationDemandeTable.id)
         )
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveAuditTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(dcpTable, eq(preuveAuditTable.modifiedBy, dcpTable.id))
-        .where(
-          and(
-            eq(preuveAuditTable.collectiviteId, collectiviteId),
-            excludeConfidentielRow({
-              fichierIdColumn: preuveAuditTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
+            eq(preuveAuditTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+            hideConfidentielFichier({
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
+        .leftJoin(dcpTable, eq(preuveAuditTable.modifiedBy, dcpTable.id))
+        .where(eq(preuveAuditTable.collectiviteId, collectiviteId))
         .orderBy(preuveAuditTable.id);
 
       return success(documents);
@@ -174,6 +169,7 @@ export class ListDocumentsReferentielRepository {
         .select({
           ...getTableColumns(preuveRapportTable),
           fichier: buildFileInfoSql(fichier),
+          bibliothequeFilename: bibliothequeFichierTable.filename,
           modifiedByNom: createdByNom,
           preuveType: sql<'rapport'>`'rapport'`,
           rapport: sql<{
@@ -182,23 +178,19 @@ export class ListDocumentsReferentielRepository {
         })
         .from(preuveRapportTable)
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveRapportTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
-          )
-        )
-        .leftJoin(dcpTable, eq(preuveRapportTable.modifiedBy, dcpTable.id))
-        .where(
-          and(
-            eq(preuveRapportTable.collectiviteId, collectiviteId),
-            excludeConfidentielRow({
-              fichierIdColumn: preuveRapportTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
+            eq(preuveRapportTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+            hideConfidentielFichier({
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
+        .leftJoin(dcpTable, eq(preuveRapportTable.modifiedBy, dcpTable.id))
+        .where(eq(preuveRapportTable.collectiviteId, collectiviteId))
         .orderBy(desc(preuveRapportTable.date), desc(preuveRapportTable.id));
 
       return success(documents);
