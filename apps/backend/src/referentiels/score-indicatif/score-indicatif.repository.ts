@@ -243,6 +243,38 @@ export class ScoreIndicatifRepository {
     }
   }
 
+  /**
+   * Parmi les identifiants de valeurs d'indicateur fournis, renvoie ceux qui
+   * appartiennent bien à la collectivité et à l'indicateur donnés
+   */
+  async filterIndicateurValeurIdsBelongingTo(
+    indicateurValeurIds: number[],
+    collectiviteId: number,
+    indicateurId: number,
+    tx?: Transaction
+  ): Promise<Result<number[], ScoreIndicatifError>> {
+    try {
+      const rows = await (tx ?? this.databaseService.db)
+        .select({ id: indicateurValeurTable.id })
+        .from(indicateurValeurTable)
+        .where(
+          and(
+            inArray(indicateurValeurTable.id, indicateurValeurIds),
+            eq(indicateurValeurTable.collectiviteId, collectiviteId),
+            eq(indicateurValeurTable.indicateurId, indicateurId)
+          )
+        );
+
+      return success(rows.map((r) => r.id));
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
+  }
+
   /** Remplace les valeurs utilisées pour le calcul du score indicatif d'une action/indicateur */
   async replaceValeursUtiliseesForAction(
     input: SetValeursUtiliseesRequest,

@@ -10,6 +10,7 @@ import {
 } from '@tet/backend/referentiels/score-indicatif/score-indicatif.errors';
 import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -139,11 +140,100 @@ export class ScoreIndicatifService {
       return failure(permissionResult.error);
     }
 
-    return this.transactionManager.executeSingle(
-      (transaction) =>
-        this.repository.replaceValeursUtiliseesForAction(input, transaction),
+    return this.transactionManager.executeSingle(async (transaction) => {
+      const validationResult = await this.validateValeursUtiliseesInput(
+        input,
+        { user, tx: transaction }
+      );
+      if (!validationResult.success) {
+        return failure(validationResult.error, validationResult.cause);
+      }
+
+      return this.repository.replaceValeursUtiliseesForAction(
+        input,
+        transaction
+      );
+    }, tx);
+  }
+
+  /**
+   * Vérifie, avant toute écriture, que l'action appartient bien au
+   * référentiel attendu, que l'indicateur est associé à cette action (via sa
+   * formule de score) et que les valeurs d'indicateur fournies appartiennent
+   * bien à la collectivité et à l'indicateur donnés — évite qu'un appelant
+   * ne rattache à son score des valeurs d'une autre collectivité ou d'un
+   * autre indicateur.
+   */
+  private async validateValeursUtiliseesInput(
+    input: SetValeursUtiliseesRequest,
+    { user, tx }: { user: ServiceSecondArg['user']; tx: Transaction }
+  ): Promise<Result<void, ScoreIndicatifError>> {
+    const formulesResult = await this.repository.getFormules(
+      [input.actionId],
       tx
     );
+    if (!formulesResult.success) {
+      return failure(formulesResult.error, formulesResult.cause);
+    }
+    const formule = formulesResult.data.find(
+      (f) => f.actionId === input.actionId
+    );
+    if (!formule) {
+      return failure(ScoreIndicatifErrorEnum.NOT_FOUND);
+    }
+
+    // Certaines actions du référentiel TE n'ont pas de formule de
+    // score (`exprScore` vide) : la sélection d'une valeur y est tout de
+    // même autorisée (le score reste alors non calculable), donc il n'y a
+    // rien à vérifier contre une formule inexistante.
+    if (formule.exprScore) {
+      const indicateursAssociesResult =
+        await this.getIndicateursAssociesService.getIndicateursAssocies(
+          { collectiviteId: input.collectiviteId, formules: [formule] },
+          { user, tx }
+        );
+      if (!indicateursAssociesResult.success) {
+        return failure(
+          indicateursAssociesResult.error,
+          indicateursAssociesResult.cause
+        );
+      }
+      const indicateurAssocie =
+        indicateursAssociesResult.data.indicateursAssocies.find(
+          (indicateur) => indicateur.indicateurId === input.indicateurId
+        );
+      if (!indicateurAssocie) {
+        return failure(ScoreIndicatifErrorEnum.NOT_FOUND);
+      }
+    }
+
+    const indicateurValeurIds = input.valeurs
+      .map((v) => v.indicateurValeurId)
+      .filter((id): id is number => id !== null);
+    if (indicateurValeurIds.length) {
+      const valeursTrouveesResult =
+        await this.repository.filterIndicateurValeurIdsBelongingTo(
+          indicateurValeurIds,
+          input.collectiviteId,
+          input.indicateurId,
+          tx
+        );
+      if (!valeursTrouveesResult.success) {
+        return failure(
+          valeursTrouveesResult.error,
+          valeursTrouveesResult.cause
+        );
+      }
+      const valeursTrouvees = new Set(valeursTrouveesResult.data);
+      const contientValeurInconnue = indicateurValeurIds.some(
+        (id) => !valeursTrouvees.has(id)
+      );
+      if (contientValeurInconnue) {
+        return failure(ScoreIndicatifErrorEnum.NOT_FOUND);
+      }
+    }
+
+    return success(undefined);
   }
 
   /**
