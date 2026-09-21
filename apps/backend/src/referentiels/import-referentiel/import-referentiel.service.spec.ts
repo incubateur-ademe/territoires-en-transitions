@@ -10,7 +10,7 @@ import {
   buildOrigineTags,
   parseActionsOrigine,
   parseActionsOrigineTexte,
-} from './action-origine.adapter';
+} from './import-referentiel.service';
 
 const refentielDefinitions: ReferentielDefinition[] = [
   {
@@ -46,7 +46,7 @@ const refentielDefinitions: ReferentielDefinition[] = [
   },
 ];
 
-describe('Action origine adapter', () => {
+describe('ReferentielImportService', () => {
   describe('parseActionsOrigine', () => {
     it('Standard test without ponderation', async () => {
       const expectedCreateActionOrigines: ActionOrigine[] = [

@@ -1,21 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
   and,
   eq,
   getTableColumns,
   inArray,
-  isNotNull,
   isNull,
   or,
   SQLWrapper,
 } from 'drizzle-orm';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { indicateurCollectivitePeriodiciteSelection } from '../indicateur-periodicite.sql';
 
 @Injectable()
 export class ListCollectiviteDefinitionsRepository {
@@ -25,18 +21,15 @@ export class ListCollectiviteDefinitionsRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listCollectiviteDefinitions(
-    {
-      identifiantsReferentiel,
-      indicateurIds,
-      collectiviteId,
-    }: {
-      identifiantsReferentiel?: string[];
-      indicateurIds?: number[];
-      collectiviteId?: number;
-    } = {},
-    tx?: Transaction
-  ): Promise<IndicateurDefinition[]> {
+  async listCollectiviteDefinitions({
+    identifiantsReferentiel,
+    indicateurIds,
+    collectiviteId,
+  }: {
+    identifiantsReferentiel?: string[];
+    indicateurIds?: number[];
+    collectiviteId?: number;
+  } = {}): Promise<IndicateurDefinition[]> {
     this.logger.log(
       `Récupération des définitions des indicateurs ${identifiantsReferentiel?.join(
         ','
@@ -59,12 +52,7 @@ export class ListCollectiviteDefinitionsRepository {
     const byCollectiviteId = collectiviteId
       ? or(
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          isNull(indicateurDefinitionTable.collectiviteId),
-          // Un indicateur de groupement est une restriction d'applicabilité,
-          // pas une définition personnalisée confidentielle. Le groupement
-          // reste donc prioritaire si des données historiques portent les
-          // deux colonnes de périmètre.
-          isNotNull(indicateurDefinitionTable.groupementId)
+          isNull(indicateurDefinitionTable.collectiviteId)
         )
       : undefined;
 
@@ -74,23 +62,12 @@ export class ListCollectiviteDefinitionsRepository {
       byCollectiviteId,
     ];
 
-    const definitions = await (tx ?? this.databaseService.db)
+    const definitions = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurDefinitionTable),
         ...indicateurDefinitionPeriodiciteSelection,
-        ...indicateurCollectivitePeriodiciteSelection,
       })
       .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurCollectiviteTable,
-        and(
-          eq(
-            indicateurCollectiviteTable.indicateurId,
-            indicateurDefinitionTable.id
-          ),
-          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId ?? 0)
-        )
-      )
       .where(and(...conditions));
 
     this.logger.log(`${definitions.length} définitions trouvées`);

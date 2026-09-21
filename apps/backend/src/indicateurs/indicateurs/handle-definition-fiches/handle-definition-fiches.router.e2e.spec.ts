@@ -4,7 +4,6 @@ import {
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
-import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -16,7 +15,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
 
@@ -25,8 +23,6 @@ describe('IndicateurDefinitionFichesRouter', () => {
   let testUser: AuthenticatedUser;
   let collectivite: Collectivite;
   let otherCollectivite: Collectivite;
-  let ownerCollectivite: Collectivite;
-  let ownerCaller: ReturnType<TrpcRouter['createCaller']>;
   let db: DatabaseService;
   let app: INestApplication;
 
@@ -50,14 +46,6 @@ describe('IndicateurDefinitionFichesRouter', () => {
       userId: testUser.id,
       collectiviteId: otherCollectivite.id,
       role: CollectiviteRole.ADMIN,
-    });
-
-    const owner = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
-    });
-    ownerCollectivite = owner.collectivite;
-    ownerCaller = router.createCaller({
-      user: getAuthUserFromUserCredentials(owner.user),
     });
   });
 
@@ -133,116 +121,6 @@ describe('IndicateurDefinitionFichesRouter', () => {
 
     expect(fiches.count).toEqual(1);
     expect(fiches.data[0].id).toEqual(ficheId2);
-  });
-
-  async function createSharedFiche() {
-    const ficheId = await createFiche({
-      caller: ownerCaller,
-      ficheInput: { collectiviteId: ownerCollectivite.id },
-    });
-    await ownerCaller.plans.fiches.update({
-      ficheId,
-      ficheFields: { sharedWithCollectivites: [{ id: collectivite.id }] },
-      isNotificationEnabled: false,
-    });
-    return ficheId;
-  }
-
-  async function listLinkedFicheIds(indicateurId: number) {
-    const links = await db.db
-      .select({ ficheId: ficheActionIndicateurTable.ficheId })
-      .from(ficheActionIndicateurTable)
-      .where(eq(ficheActionIndicateurTable.indicateurId, indicateurId));
-    return links.map(({ ficheId }) => ficheId);
-  }
-
-  test('should link and unlink a fiche shared by another collectivité', async () => {
-    const caller = router.createCaller({ user: testUser });
-    const ficheId = await createSharedFiche();
-    const indicateurId = await createIndicateurPerso({
-      caller,
-      indicateurData: { collectiviteId: collectivite.id, ficheId },
-    });
-
-    expect(await listLinkedFicheIds(indicateurId)).toEqual([ficheId]);
-
-    await caller.indicateurs.indicateurs.update({
-      indicateurId,
-      collectiviteId: collectivite.id,
-      indicateurFields: { ficheIds: [] },
-    });
-    expect(await listLinkedFicheIds(indicateurId)).toEqual([]);
-
-    await caller.indicateurs.indicateurs.update({
-      indicateurId,
-      collectiviteId: collectivite.id,
-      indicateurFields: { ficheIds: [ficheId] },
-    });
-    expect(await listLinkedFicheIds(indicateurId)).toEqual([ficheId]);
-  });
-
-  test('should reject an unshared fiche even when the user can edit its collectivité', async () => {
-    const caller = router.createCaller({ user: testUser });
-    const indicateurId = await createIndicateurPerso({
-      caller,
-      indicateurData: { collectiviteId: collectivite.id },
-    });
-    const ficheId = await createFiche({
-      caller,
-      ficheInput: { collectiviteId: otherCollectivite.id },
-    });
-
-    await expect(
-      caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: collectivite.id,
-        indicateurFields: { ficheIds: [ficheId] },
-      })
-    ).rejects.toMatchObject({ cause: { status: 400 } });
-
-    expect(await listLinkedFicheIds(indicateurId)).toEqual([]);
-  });
-
-  test('should retain a read-only shared fiche while preventing its removal', async () => {
-    const caller = router.createCaller({ user: testUser });
-    const ficheId = await createSharedFiche();
-    const indicateurId = await createIndicateurPerso({
-      caller,
-      indicateurData: {
-        collectiviteId: collectivite.id,
-        ficheId,
-        pilotes: [{ userId: testUser.id }],
-      },
-    });
-
-    await setUserCollectiviteRole(db, {
-      userId: testUser.id,
-      collectiviteId: collectivite.id,
-      role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
-    });
-    try {
-      await caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: collectivite.id,
-        indicateurFields: { titre: 'Titre modifié', ficheIds: [ficheId] },
-      });
-      expect(await listLinkedFicheIds(indicateurId)).toEqual([ficheId]);
-
-      await expect(
-        caller.indicateurs.indicateurs.update({
-          indicateurId,
-          collectiviteId: collectivite.id,
-          indicateurFields: { ficheIds: [] },
-        })
-      ).rejects.toMatchObject({ cause: { status: 403 } });
-      expect(await listLinkedFicheIds(indicateurId)).toEqual([ficheId]);
-    } finally {
-      await setUserCollectiviteRole(db, {
-        userId: testUser.id,
-        collectiviteId: collectivite.id,
-        role: CollectiviteRole.ADMIN,
-      });
-    }
   });
 
   test('should not delete fiches from other collectivites when updating', async () => {

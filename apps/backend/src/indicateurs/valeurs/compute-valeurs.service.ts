@@ -26,7 +26,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil, round } from 'es-toolkit';
-import { indicateurValeurPeriodiciteSelection } from '../definitions/indicateur-periodicite.sql';
+import { indicateurValeurPeriodiciteSelection } from '../definitions/indicateur-periodicite.column';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;

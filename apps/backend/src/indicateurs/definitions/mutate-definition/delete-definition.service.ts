@@ -1,22 +1,19 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DeleteIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ResourceType } from '@tet/domain/users';
-import { IndicateurDefinitionLockRepository } from '../indicateur-definition-lock.repository';
-import { MutateDefinitionRepository } from './mutate-definition.repository';
+import { and, eq, isNotNull } from 'drizzle-orm';
 
 @Injectable()
 export class DeleteDefinitionService {
   private readonly logger = new Logger(DeleteDefinitionService.name);
 
   constructor(
-    private readonly transactionManager: TransactionManager,
-    private readonly repository: MutateDefinitionRepository,
-    private readonly permissionService: PermissionService,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
   ) {}
 
   /**
@@ -38,24 +35,22 @@ export class DeleteDefinitionService {
       `Suppression de l'indicateur dont l'id est ${indicateurId} pour la collectivité ${collectiviteId}`
     );
 
-    const transactionResult = await this.transactionManager.executeSingle<
-      boolean,
-      unknown
-    >(async (tx) => {
-      await this.definitionLockRepository.lockForDefinitionMutation(tx);
-      return success(
-        await this.repository.deletePersonalizedDefinition(
-          { indicateurId, collectiviteId },
-          tx
+    // Suppression de l'indicateur avec vérification que c'est bien un indicateur perso
+    // (collectiviteId doit correspondre et ne pas être null)
+    const [deleted] = await this.databaseService.db
+      .delete(indicateurDefinitionTable)
+      .where(
+        and(
+          eq(indicateurDefinitionTable.id, indicateurId),
+          eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
+
+          // Petite sécurité supplémentaire pour éviter de supprimer un indicateur non perso
+          isNotNull(indicateurDefinitionTable.collectiviteId)
         )
-      );
-    });
+      )
+      .returning();
 
-    if (!transactionResult.success) {
-      throw transactionResult.cause ?? transactionResult.error;
-    }
-
-    if (!transactionResult.data) {
+    if (!deleted) {
       throw new NotFoundException(
         `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
       );

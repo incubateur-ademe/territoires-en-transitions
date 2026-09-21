@@ -45,7 +45,7 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { arrayOverlapsPatched } from '../../../utils/drizzle.utils';
 import { indicateurCategorieTagTable } from '../../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
-import { indicateurCollectivitePeriodiciteSelection } from '../../definitions/indicateur-periodicite.sql';
+import { indicateurCollectivitePeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
 import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurServiceTagTable } from '../handle-definition-services/indicateur-service-tag.table';

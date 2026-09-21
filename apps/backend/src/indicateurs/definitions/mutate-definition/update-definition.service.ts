@@ -1,46 +1,40 @@
 import {
-  BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   AuthenticatedUser,
   AuthUser,
 } from '@tet/backend/users/models/auth.models';
-import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { hasPermission, ResourceType } from '@tet/domain/users';
+import { and, eq, isNotNull } from 'drizzle-orm';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
 import { HandleDefinitionPilotesService } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
 import { HandleDefinitionServicesService } from '../../indicateurs/handle-definition-services/handle-definition-services.service';
 import { HandleDefinitionThematiquesService } from '../../indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
-import { IndicateurDefinitionLockRepository } from '../indicateur-definition-lock.repository';
-import {
-  type DefinitionOwnership,
-  MutateDefinitionRepository,
-} from './mutate-definition.repository';
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 
 @Injectable()
 export class UpdateDefinitionService {
   private readonly logger = new Logger(UpdateDefinitionService.name);
 
   constructor(
-    private readonly transactionManager: TransactionManager,
-    private readonly repository: MutateDefinitionRepository,
+    private readonly databaseService: DatabaseService,
     private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly permissionService: PermissionService,
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
     private readonly handleDefinitionPilotesService: HandleDefinitionPilotesService,
     private readonly handleDefinitionServicesService: HandleDefinitionServicesService,
-    private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository
+    private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService
   ) {}
 
   private async canUpdateDefinition(
@@ -104,49 +98,6 @@ export class UpdateDefinitionService {
     return false;
   }
 
-  private assertDefinitionInCollectiviteScope(
-    definition: DefinitionOwnership | null,
-    requestedCollectiviteId: number,
-    indicateurId: number
-  ): asserts definition is DefinitionOwnership {
-    if (
-      !definition ||
-      (definition.collectiviteId !== null &&
-        definition.collectiviteId !== requestedCollectiviteId)
-    ) {
-      throw new NotFoundException(
-        `Indicateur ${indicateurId} non trouvé pour la collectivité ${requestedCollectiviteId}`
-      );
-    }
-  }
-
-  private assertRequestedFieldsAreMutable(
-    definition: DefinitionOwnership,
-    indicateurId: number,
-    indicateurFields: UpdateIndicateurDefinitionInput['indicateurFields']
-  ): void {
-    if (
-      indicateurFields.periodicite !== undefined &&
-      definition.periodiciteMode === 'imposee'
-    ) {
-      throw new BadRequestException(
-        'La périodicité de cet indicateur est imposée et ne peut pas être personnalisée'
-      );
-    }
-    if (definition.collectiviteId !== null) {
-      return;
-    }
-
-    const { titre, unite, thematiques } = indicateurFields;
-    const updatesGlobalDefinitionFields =
-      titre !== undefined || unite !== undefined || thematiques !== undefined;
-    if (updatesGlobalDefinitionFields) {
-      throw new BadRequestException(
-        `Les champs globaux de l'indicateur prédéfini ${indicateurId} ne peuvent pas être modifiés depuis une collectivité`
-      );
-    }
-  }
-
   async updateDefinition(
     {
       indicateurId,
@@ -155,22 +106,7 @@ export class UpdateDefinitionService {
     }: UpdateIndicateurDefinitionInput,
     user: AuthenticatedUser
   ): Promise<void> {
-    const definition = await this.repository.getDefinitionOwnership(
-      indicateurId
-    );
-    this.assertDefinitionInCollectiviteScope(
-      definition,
-      collectiviteId,
-      indicateurId
-    );
-
-    const authorizationCollectiviteId =
-      definition.collectiviteId ?? collectiviteId;
-    await this.canUpdateDefinition(
-      user,
-      authorizationCollectiviteId,
-      indicateurId
-    );
+    await this.canUpdateDefinition(user, collectiviteId, indicateurId);
 
     this.logger.log(
       `Mise à jour de l'indicateur dont l'id est ${indicateurId}`
@@ -182,87 +118,75 @@ export class UpdateDefinitionService {
       estFavori,
       titre,
       unite,
-      periodicite,
       ficheIds,
       pilotes,
       services,
       thematiques,
     } = indicateurFields;
 
-    this.assertRequestedFieldsAreMutable(
-      definition,
-      indicateurId,
-      indicateurFields
-    );
-
-    const expectedPeriodicite = definition.periodicite;
-
-    const transactionResult = await this.transactionManager.executeSingle<
-      void,
-      unknown
-    >(async (tx) => {
-      if (periodicite !== undefined) {
-        // Keep the global graph lock before the row lock to preserve the lock
-        // order shared with value writes and formula reconciliation.
-        await this.definitionLockRepository.lockForDefinitionMutation(tx);
-      }
-      const lockedDefinition = await this.repository.lockDefinitionOwnership(
-        indicateurId,
-        tx
-      );
-      this.assertDefinitionInCollectiviteScope(
-        lockedDefinition,
-        collectiviteId,
-        indicateurId
-      );
-      this.assertRequestedFieldsAreMutable(
-        lockedDefinition,
-        indicateurId,
-        indicateurFields
-      );
-
-      if (periodicite !== undefined) {
-        const lockedPeriodicite = lockedDefinition.periodicite;
-
-        if (lockedPeriodicite !== expectedPeriodicite) {
-          throw new ConflictException(
-            `La périodicité de l'indicateur ${indicateurId} a été modifiée simultanément, veuillez réessayer`
-          );
-        }
-      }
-
+    await this.databaseService.db.transaction(async (tx) => {
       if (
         commentaire !== undefined ||
         estConfidentiel !== undefined ||
-        estFavori !== undefined ||
-        periodicite !== undefined
+        estFavori !== undefined
       ) {
-        await this.repository.upsertCollectiviteFields(
-          {
+        await tx
+          .insert(indicateurCollectiviteTable)
+          .values({
             indicateurId,
             collectiviteId,
-            commentaire,
-            periodicite,
-            confidentiel: estConfidentiel,
-            favoris: estFavori,
+            ...(commentaire !== undefined && {
+              commentaire,
+            }),
+            ...(estConfidentiel !== undefined && {
+              confidentiel: estConfidentiel,
+            }),
+            ...(estFavori !== undefined && {
+              favoris: estFavori,
+            }),
             modifiedBy: user.id,
-          },
-          tx
-        );
+            modifiedAt: SQL_CURRENT_TIMESTAMP,
+          })
+          .onConflictDoUpdate({
+            target: [
+              indicateurCollectiviteTable.indicateurId,
+              indicateurCollectiviteTable.collectiviteId,
+            ],
+            set: {
+              ...(commentaire !== undefined && {
+                commentaire,
+              }),
+              ...(estConfidentiel !== undefined && {
+                confidentiel: estConfidentiel,
+              }),
+              ...(estFavori !== undefined && {
+                favoris: estFavori,
+              }),
+              modifiedBy: user.id,
+              modifiedAt: SQL_CURRENT_TIMESTAMP,
+            },
+          });
       }
 
       if (titre !== undefined || unite !== undefined) {
-        const updated = await this.repository.updatePersonalizedDefinition(
-          {
-            indicateurId,
-            collectiviteId,
-            titre,
-            unite,
-          },
-          tx
-        );
+        const updateResult = await tx
+          .update(indicateurDefinitionTable)
+          .set({
+            ...(titre !== undefined && { titre }),
+            ...(unite !== undefined && { unite }),
+          })
+          .where(
+            and(
+              eq(indicateurDefinitionTable.id, indicateurId),
+              eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
 
-        if (!updated) {
+              // Petite sécurité supplémentaire pour éviter de modifier un indicateur non perso
+              isNotNull(indicateurDefinitionTable.collectiviteId)
+            )
+          )
+          .returning();
+
+        if (updateResult.length === 0) {
           throw new NotFoundException(
             `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
           );
@@ -270,36 +194,27 @@ export class UpdateDefinitionService {
       }
 
       if (ficheIds !== undefined) {
-        await this.handleDefinitionFichesService.upsertIndicateurFiches(
-          {
-            indicateurId,
-            collectiviteId,
-            ficheIds,
-          },
-          { user, tx }
-        );
+        await this.handleDefinitionFichesService.upsertIndicateurFiches({
+          indicateurId,
+          collectiviteId,
+          ficheIds,
+        });
       }
 
       if (pilotes !== undefined) {
-        await this.handleDefinitionPilotesService.upsertIndicateurPilotes(
-          {
-            indicateurId,
-            collectiviteId,
-            pilotes,
-          },
-          tx
-        );
+        await this.handleDefinitionPilotesService.upsertIndicateurPilotes({
+          indicateurId,
+          collectiviteId,
+          pilotes,
+        });
       }
 
       if (services !== undefined) {
-        await this.handleDefinitionServicesService.upsertIndicateurServices(
-          {
-            indicateurId,
-            collectiviteId,
-            serviceIds: services.map((s) => s.id),
-          },
-          tx
-        );
+        await this.handleDefinitionServicesService.upsertIndicateurServices({
+          indicateurId,
+          collectiviteId,
+          serviceIds: services.map((s) => s.id),
+        });
       }
 
       if (thematiques !== undefined) {
@@ -307,8 +222,7 @@ export class UpdateDefinitionService {
           {
             indicateurId,
             thematiqueIds: thematiques.map((t) => t.id),
-          },
-          tx
+          }
         );
       }
 
@@ -332,13 +246,7 @@ export class UpdateDefinitionService {
           tx
         );
       }
-
-      return success(undefined);
     });
-
-    if (!transactionResult.success) {
-      throw transactionResult.cause ?? transactionResult.error;
-    }
   }
 
   async updateDefinitionModifiedFields(
@@ -353,38 +261,14 @@ export class UpdateDefinitionService {
     },
     tx?: Transaction
   ) {
-    await this.updateDefinitionsModifiedFields(
-      { indicateurIds: [indicateurId], collectiviteId, user },
-      tx
-    );
-  }
-
-  async updateDefinitionsModifiedFields(
-    {
-      indicateurIds,
-      collectiviteId,
-      user,
-    }: {
-      indicateurIds: number[];
-      collectiviteId: number;
-      user: AuthUser;
-    },
-    tx?: Transaction
-  ) {
-    const sortedIndicateurIds = [...new Set(indicateurIds)].sort(
-      (left, right) => left - right
-    );
-    if (sortedIndicateurIds.length === 0) {
-      return;
-    }
-
-    await this.repository.touchDefinitions(
-      {
-        indicateurIds: sortedIndicateurIds,
-        collectiviteId,
-        modifiedBy: user.id,
-      },
-      tx
-    );
+    await (tx ?? this.databaseService.db)
+      .update(indicateurCollectiviteTable)
+      .set({ modifiedBy: user.id, modifiedAt: SQL_CURRENT_TIMESTAMP })
+      .where(
+        and(
+          eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      );
   }
 }

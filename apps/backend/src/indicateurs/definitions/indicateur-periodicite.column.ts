@@ -14,11 +14,8 @@ export const indicateurDefinitionPeriodiciteSelection = {
 export const indicateurValeurPeriodiciteSelection = {
   periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
 };
-export const indicateurEffectivePeriodicite =
-  indicateurDefinitionPeriodiciteSelection.periodicite;
 export const indicateurCollectivitePeriodiciteSelection = {
-  periodicite: indicateurEffectivePeriodicite,
-  periodiciteMode: indicateurDefinitionPeriodiciteSelection.periodiciteMode,
-  periodiciteParDefaut: indicateurEffectivePeriodicite,
+  ...indicateurDefinitionPeriodiciteSelection,
+  periodiciteParDefaut: indicateurDefinitionPeriodiciteSelection.periodicite,
   periodicitePersonnalisee: sql<IndicateurPeriodicite | null>`null`,
 };

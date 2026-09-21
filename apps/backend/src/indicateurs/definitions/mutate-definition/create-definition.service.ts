@@ -1,24 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ResourceType } from '@tet/domain/users';
-import { AuthenticatedUser } from '../../../users/models/auth.models';
-import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
-import { IndicateurDefinitionLockRepository } from '../indicateur-definition-lock.repository';
+import { AuthUser } from '../../../users/models/auth.models';
 import { CreateIndicateurDefinitionInput } from './mutate-definition.input';
-import { MutateDefinitionRepository } from './mutate-definition.repository';
 
 @Injectable()
 export default class CreateDefinitionService {
   private readonly logger = new Logger(CreateDefinitionService.name);
 
   constructor(
-    private readonly transactionManager: TransactionManager,
-    private readonly repository: MutateDefinitionRepository,
-    private readonly permissionService: PermissionService,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository,
-    private readonly handleDefinitionFichesService: HandleDefinitionFichesService
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
   ) {}
 
   // ajoute un indicateur personnalisé
@@ -27,14 +25,12 @@ export default class CreateDefinitionService {
       collectiviteId,
       titre,
       unite,
-      periodicite,
       thematiques,
       commentaire,
       estFavori,
-      estConfidentiel,
       ficheId,
     }: CreateIndicateurDefinitionInput,
-    user: AuthenticatedUser
+    user: AuthUser
   ) {
     await this.permissionService.assertAllowed(
       user,
@@ -42,55 +38,84 @@ export default class CreateDefinitionService {
       ResourceType.COLLECTIVITE,
       { collectiviteId }
     );
-    this.logger.log(
-      `Insère un indicateur personnalisé pour la collectivité "${collectiviteId}"`
-    );
 
-    const transactionResult = await this.transactionManager.executeSingle<
-      number,
-      unknown
-    >(async (tx) => {
-      // PostgreSQL verrouille la table avant d'exécuter un trigger
-      // statement-level. L'application doit donc prendre le verrou de
-      // graphe explicitement pour conserver l'ordre graphe -> tables.
-      await this.definitionLockRepository.lockForDefinitionMutation(tx);
-
-      const indicateurId = await this.repository.createPersonalizedDefinition(
-        {
-          collectiviteId,
-          titre,
-          unite: unite ?? '',
-          periodicite,
-          thematiqueIds: thematiques.map(({ id }) => id),
-          commentaire,
-          estFavori,
-          estConfidentiel,
-          modifiedBy: user.id,
-        },
-        tx
-      );
-
-      if (ficheId !== undefined) {
-        await this.handleDefinitionFichesService.upsertIndicateurFiches(
-          {
-            indicateurId,
-            collectiviteId,
-            ficheIds: [ficheId],
-          },
-          { user, tx }
+    const indicateurId = await this.databaseService.db.transaction(
+      async (trx) => {
+        this.logger.log(
+          `Insère un indicateur personnalisé pour la collectivité "${collectiviteId}"`
         );
+
+        // insère la définition et récupère son id
+        const [indicateur] = await trx
+          .insert(indicateurDefinitionTable)
+          .values([
+            {
+              collectiviteId,
+              titre,
+              unite: unite ?? '',
+            },
+          ])
+          .returning();
+
+        if (!indicateur) {
+          throw new Error(
+            `Erreur d'insertion de l'indicateur personnalisé pour la collectivité "${collectiviteId}"`
+          );
+        }
+
+        const indicateurId = indicateur.id;
+
+        // insère les liens vers les thématiques
+        if (thematiques.length) {
+          await trx
+            .insert(indicateurThematiqueTable)
+            .values(
+              thematiques.map(({ id }) => ({
+                indicateurId,
+                thematiqueId: id,
+              }))
+            )
+            .onConflictDoNothing();
+        }
+
+        // insère le commentaire et le flag `favoris`
+        await trx
+          .insert(indicateurCollectiviteTable)
+          .values([
+            {
+              collectiviteId,
+              indicateurId,
+              commentaire,
+              favoris: estFavori,
+              modifiedBy: user.id,
+            },
+          ])
+          .onConflictDoUpdate({
+            target: [
+              indicateurCollectiviteTable.indicateurId,
+              indicateurCollectiviteTable.collectiviteId,
+            ],
+            set: buildConflictUpdateColumns(indicateurCollectiviteTable, [
+              'commentaire',
+              'favoris',
+              'modifiedBy',
+            ]),
+          });
+
+        // rattache le nouvel indicateur à une fiche action si un `ficheId` est spécifié
+        if (ficheId) {
+          await trx
+            .insert(ficheActionIndicateurTable)
+            .values([{ indicateurId, ficheId }])
+            .onConflictDoNothing();
+        }
+
+        this.logger.log(
+          `Indicateur personnalisé "${indicateurId}" pour la collectivité "${collectiviteId}" inséré`
+        );
+
+        return indicateur.id;
       }
-
-      return success(indicateurId);
-    });
-
-    if (!transactionResult.success) {
-      throw transactionResult.cause ?? transactionResult.error;
-    }
-    const indicateurId = transactionResult.data;
-
-    this.logger.log(
-      `Indicateur personnalisé "${indicateurId}" pour la collectivité "${collectiviteId}" inséré`
     );
 
     return indicateurId;

@@ -1,21 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Thematique } from '@tet/domain/shared';
 import { ResourceType } from '@tet/domain/users';
-import { HandleDefinitionThematiquesRepository } from './handle-definition-thematiques.repository';
+import { and, asc, eq, notInArray } from 'drizzle-orm';
 
 @Injectable()
 export class HandleDefinitionThematiquesService {
   private readonly logger = new Logger(HandleDefinitionThematiquesService.name);
 
   constructor(
-    private readonly repository: HandleDefinitionThematiquesRepository,
-    private readonly permissionService: PermissionService,
-    private readonly transactionManager: TransactionManager
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
   ) {}
 
   async listIndicateurThematiques({
@@ -38,36 +37,59 @@ export class HandleDefinitionThematiquesService {
       `Récupération des thematiques de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    return this.repository.listIndicateurThematiques(indicateurId);
+    const indicateurThematiques = await this.databaseService.db
+      .select({ id: thematiqueTable.id, nom: thematiqueTable.nom })
+      .from(thematiqueTable)
+      .leftJoin(
+        indicateurThematiqueTable,
+        eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
+      )
+      .where(eq(indicateurThematiqueTable.indicateurId, indicateurId))
+      .orderBy(asc(thematiqueTable.nom));
+
+    return indicateurThematiques;
   }
 
-  async upsertIndicateurThematiques(
-    {
-      indicateurId,
-      thematiqueIds,
-    }: {
-      indicateurId: number;
-      thematiqueIds: number[];
-    },
-    tx?: Transaction
-  ): Promise<void> {
+  async upsertIndicateurThematiques({
+    indicateurId,
+    thematiqueIds,
+  }: {
+    indicateurId: number;
+    thematiqueIds: number[];
+  }) {
     this.logger.log(
       `Mise à jour des thematiques de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    const transactionResult = await this.transactionManager.executeSingle<
-      void,
-      unknown
-    >(async (transaction) => {
-      await this.repository.upsertIndicateurThematiques(
-        { indicateurId, thematiqueIds },
-        transaction
+    await this.databaseService.db.transaction(async (tx) => {
+      // Delete all thematiques not in the new list
+      const indicateurIdCondition = eq(
+        indicateurThematiqueTable.indicateurId,
+        indicateurId
       );
-      return success(undefined);
-    }, tx);
 
-    if (!transactionResult.success) {
-      throw transactionResult.cause ?? transactionResult.error;
-    }
+      const deleteConditions =
+        thematiqueIds.length > 0
+          ? and(
+              indicateurIdCondition,
+              notInArray(indicateurThematiqueTable.thematiqueId, thematiqueIds)
+            )
+          : indicateurIdCondition;
+
+      await tx.delete(indicateurThematiqueTable).where(deleteConditions);
+
+      // Insert all thematiques (PostgreSQL will ignore duplicates)
+      if (thematiqueIds.length > 0) {
+        await tx
+          .insert(indicateurThematiqueTable)
+          .values(
+            thematiqueIds.map((thematiqueId) => ({
+              thematiqueId,
+              indicateurId,
+            }))
+          )
+          .onConflictDoNothing();
+      }
+    });
   }
 }

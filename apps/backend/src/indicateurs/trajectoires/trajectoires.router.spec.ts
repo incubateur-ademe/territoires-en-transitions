@@ -1,16 +1,16 @@
 import {
-  ForbiddenException,
-  INestApplication,
-  UnprocessableEntityException,
+    ForbiddenException,
+    INestApplication,
+    UnprocessableEntityException,
 } from '@nestjs/common';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import { EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.rules';
 import {
-  getAuthUser,
-  getTestApp,
-  getTestRouter,
-  YOLO_DODO,
+    getAuthUser,
+    getTestApp,
+    getTestRouter,
+    YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
@@ -33,26 +33,20 @@ describe('Calcul de trajectoire SNBC', () => {
     const trajectoireRows = Array.from(
       {
         length:
-          trajectoiresDataService
-            .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.length,
+          trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL
+            .length,
       },
       () => ['1']
     );
 
-    const sheetServiceSpies = [
-      vi.spyOn(sheetService, 'getFileIdByName').mockResolvedValue(null),
-      vi
-        .spyOn(sheetService, 'copyFile')
-        .mockResolvedValue('mock-trajectoire-sheet-id'),
-      vi.spyOn(sheetService, 'overwriteRawDataToSheet').mockResolvedValue(),
-      vi.spyOn(sheetService, 'getRawDataFromSheet').mockResolvedValue({
-        data: trajectoireRows,
-      }),
-    ];
-
-    return () => {
-      sheetServiceSpies.forEach((spy) => spy.mockRestore());
-    };
+    vi.spyOn(sheetService, 'getFileIdByName').mockResolvedValue(null);
+    vi.spyOn(sheetService, 'copyFile').mockResolvedValue(
+      'mock-trajectoire-sheet-id'
+    );
+    vi.spyOn(sheetService, 'overwriteRawDataToSheet').mockResolvedValue();
+    vi.spyOn(sheetService, 'getRawDataFromSheet').mockResolvedValue({
+      data: trajectoireRows,
+    });
   });
 
   test(`Suppression sans acces`, async () => {

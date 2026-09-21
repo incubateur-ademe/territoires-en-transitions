@@ -1,21 +1,21 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ResourceType } from '@tet/domain/users';
+import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { UpsertIndicateurDefinitionPilotesInput } from './handle-definition-pilotes.input';
-import { HandleDefinitionPilotesRepository } from './handle-definition-pilotes.repository';
 
 @Injectable()
 export class HandleDefinitionPilotesService {
   private readonly logger = new Logger(HandleDefinitionPilotesService.name);
 
   constructor(
-    private readonly repository: HandleDefinitionPilotesRepository,
-    private readonly permissionService: PermissionService,
-    private readonly transactionManager: TransactionManager
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
   ) {}
 
   async listIndicateurPilotes({
@@ -38,70 +38,103 @@ export class HandleDefinitionPilotesService {
       `Récupération des pilotes de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    return this.repository.listIndicateurPilotes({
-      indicateurId,
-      collectiviteId,
-    });
+    const indicateurPilotes = await this.databaseService.db
+      .select({
+        ...getTableColumns(indicateurPiloteTable),
+        nom: sql<string>`
+
+                      CASE
+                        WHEN ${indicateurPiloteTable.userId} IS NOT NULL THEN
+                          CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
+                        WHEN ${indicateurPiloteTable.tagId} IS NOT NULL THEN
+                          ${personneTagTable.nom}
+                      END
+
+                `.as('nom'),
+      })
+      .from(indicateurPiloteTable)
+      .leftJoin(dcpTable, eq(dcpTable.id, indicateurPiloteTable.userId))
+      .leftJoin(
+        personneTagTable,
+        eq(personneTagTable.id, indicateurPiloteTable.tagId)
+      )
+      .where(
+        and(
+          eq(indicateurPiloteTable.indicateurId, indicateurId),
+          eq(indicateurPiloteTable.collectiviteId, collectiviteId)
+        )
+      )
+      .groupBy(
+        indicateurPiloteTable.id,
+        dcpTable.prenom,
+        dcpTable.nom,
+        personneTagTable.nom
+      );
+    return indicateurPilotes;
   }
 
-  async upsertIndicateurPilotes(
-    {
-      indicateurId,
-      collectiviteId,
-      pilotes,
-    }: {
-      indicateurId: number;
-      collectiviteId: number;
-      pilotes: UpsertIndicateurDefinitionPilotesInput[];
-    },
-    tx?: Transaction
-  ): Promise<void> {
+  async upsertIndicateurPilotes({
+    indicateurId,
+    collectiviteId,
+    pilotes,
+  }: {
+    indicateurId: number;
+    collectiviteId: number;
+    pilotes: UpsertIndicateurDefinitionPilotesInput[];
+  }) {
     this.logger.log(
       `Mise à jour des pilotes de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    const transactionResult = await this.transactionManager.executeSingle<
-      void,
-      unknown
-    >(async (transaction) => {
-      const hasExactlyOneIdentity = pilotes.every(
-        ({ tagId, userId }) =>
-          Number(tagId != null) + Number(userId != null) === 1
+    await this.databaseService.db.transaction(async (tx) => {
+      const { userIds, tagIds } = pilotes.reduce(
+        (acc, pilote) => {
+          if (pilote.userId) {
+            return { ...acc, userIds: [...acc.userIds, pilote.userId] };
+          }
+          if (pilote.tagId) {
+            return { ...acc, tagIds: [...acc.tagIds, pilote.tagId] };
+          }
+          return acc;
+        },
+        {
+          userIds: new Array<string>(),
+          tagIds: new Array<number>(),
+        }
       );
-      const existingUserIds = new Set(
-        hasExactlyOneIdentity && pilotes.some(({ userId }) => userId != null)
-          ? await this.repository.listIndicateurPiloteUserIds(
-              { indicateurId, collectiviteId },
-              transaction
-            )
-          : []
-      );
-      // A departed member may remain assigned, but cannot be newly assigned.
-      const pilotesToValidate = pilotes.filter(
-        ({ userId }) => userId == null || !existingUserIds.has(userId)
-      );
-      const pilotesBelongToCollectivite =
-        hasExactlyOneIdentity &&
-        (await this.repository.arePilotesInCollectivite(
-          pilotesToValidate,
-          collectiviteId,
-          transaction
-        ));
-      if (!pilotesBelongToCollectivite) {
-        throw new BadRequestException(
-          `Tous les pilotes doivent appartenir à la collectivité ${collectiviteId}`
-        );
+
+      const keepExistingPiloteTagsCondition =
+        tagIds.length > 0
+          ? not(inArray(indicateurPiloteTable.tagId, tagIds))
+          : undefined;
+
+      const keepExistingPiloteUserIdsCondition =
+        userIds.length > 0
+          ? not(inArray(indicateurPiloteTable.userId, userIds))
+          : undefined;
+
+      const deleteConditions = [
+        eq(indicateurPiloteTable.indicateurId, indicateurId),
+        eq(indicateurPiloteTable.collectiviteId, collectiviteId),
+        keepExistingPiloteTagsCondition,
+        keepExistingPiloteUserIdsCondition,
+      ];
+
+      await tx.delete(indicateurPiloteTable).where(and(...deleteConditions));
+
+      // Insert new pilotes (PostgreSQL will ignore duplicates due to unique constraints)
+      if (pilotes.length > 0) {
+        await tx
+          .insert(indicateurPiloteTable)
+          .values(
+            pilotes.map((indicateurPilote) => ({
+              ...indicateurPilote,
+              indicateurId,
+              collectiviteId,
+            }))
+          )
+          .onConflictDoNothing();
       }
-
-      await this.repository.upsertIndicateurPilotes(
-        { indicateurId, collectiviteId, pilotes },
-        transaction
-      );
-      return success(undefined);
-    }, tx);
-
-    if (!transactionResult.success) {
-      throw transactionResult.cause ?? transactionResult.error;
-    }
+    });
   }
 }

@@ -3,7 +3,6 @@ import { createPersonneTag } from '@tet/backend/collectivites/collectivites.test
 import {
   addTestCollectivite,
   addTestCollectiviteAndUser,
-  addTestCollectiviteAndUsers,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -11,12 +10,10 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
 
@@ -247,122 +244,6 @@ describe('IndicateurDefinitionPiloteRouter', () => {
           pilotes: [{ tagId: piloteTag1.id }, { tagId: piloteTag2.id }],
         },
       })
-    ).rejects.toThrow(/non trouvé pour la collectivité/);
-
-    const {
-      data: [unchangedIndicateur],
-    } = await caller.indicateurs.indicateurs.list({
-      collectiviteId: collectivite.id,
-      filters: { indicateurIds: [indicateurId] },
-    });
-    expect(unchangedIndicateur.pilotes).toEqual([]);
-  });
-
-  test('retains and removes a departed pilote without allowing a new assignment', async () => {
-    const {
-      collectivite: currentCollectivite,
-      users: [admin, pilote],
-    } = await addTestCollectiviteAndUsers(db, {
-      users: [
-        { role: CollectiviteRole.ADMIN },
-        { role: CollectiviteRole.EDITION },
-      ],
-    });
-    const caller = router.createCaller({
-      user: getAuthUserFromUserCredentials(admin),
-    });
-    const indicateurId = await createIndicateurPerso({
-      caller,
-      indicateurData: {
-        collectiviteId: currentCollectivite.id,
-        pilotes: [{ userId: pilote.id }],
-      },
-    });
-    const otherIndicateurId = await createIndicateurPerso({
-      caller,
-      indicateurData: { collectiviteId: currentCollectivite.id },
-    });
-
-    await db.db
-      .update(utilisateurCollectiviteAccessTable)
-      .set({ isActive: false })
-      .where(
-        and(
-          eq(utilisateurCollectiviteAccessTable.userId, pilote.id),
-          eq(
-            utilisateurCollectiviteAccessTable.collectiviteId,
-            currentCollectivite.id
-          )
-        )
-      );
-
-    await caller.indicateurs.indicateurs.update({
-      indicateurId,
-      collectiviteId: currentCollectivite.id,
-      indicateurFields: {
-        commentaire: 'Un commentaire modifié après le départ du pilote',
-        pilotes: [{ userId: pilote.id }],
-      },
-    });
-    const {
-      data: [updatedIndicateur],
-    } = await caller.indicateurs.indicateurs.list({
-      collectiviteId: currentCollectivite.id,
-      filters: { indicateurIds: [indicateurId] },
-    });
-    expect(updatedIndicateur.commentaire).toBe(
-      'Un commentaire modifié après le départ du pilote'
-    );
-    expect(updatedIndicateur.pilotes).toEqual([
-      expect.objectContaining({ userId: pilote.id }),
-    ]);
-
-    await expect(
-      caller.indicateurs.indicateurs.update({
-        indicateurId: otherIndicateurId,
-        collectiviteId: currentCollectivite.id,
-        indicateurFields: { pilotes: [{ userId: pilote.id }] },
-      })
-    ).rejects.toThrow(/pilotes doivent appartenir/i);
-
-    await caller.indicateurs.indicateurs.update({
-      indicateurId,
-      collectiviteId: currentCollectivite.id,
-      indicateurFields: { pilotes: [] },
-    });
-    const {
-      data: [indicateurWithoutPilote],
-    } = await caller.indicateurs.indicateurs.list({
-      collectiviteId: currentCollectivite.id,
-      filters: { indicateurIds: [indicateurId] },
-    });
-    expect(indicateurWithoutPilote.pilotes).toEqual([]);
-
-    await expect(
-      caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: currentCollectivite.id,
-        indicateurFields: { pilotes: [{ userId: pilote.id }] },
-      })
-    ).rejects.toThrow(/pilotes doivent appartenir/i);
-  });
-
-  test('rejects assigning an active member from another collectivité', async () => {
-    const { user: otherUser } = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
-    });
-    const caller = router.createCaller({ user: testUser });
-    const indicateurId = await createIndicateurPerso({
-      caller,
-      indicateurData: { collectiviteId: collectivite.id },
-    });
-
-    await expect(
-      caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: collectivite.id,
-        indicateurFields: { pilotes: [{ userId: otherUser.id }] },
-      })
-    ).rejects.toThrow(/pilotes doivent appartenir/i);
+    ).rejects.toThrow(/Droits insuffisants/);
   });
 });

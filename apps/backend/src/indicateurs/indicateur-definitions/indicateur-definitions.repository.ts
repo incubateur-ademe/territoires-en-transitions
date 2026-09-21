@@ -3,7 +3,7 @@ import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { getTableColumns, inArray } from 'drizzle-orm';
-import { indicateurDefinitionPeriodiciteSelection } from '../definitions/indicateur-periodicite.sql';
+import { indicateurDefinitionPeriodiciteSelection } from '../definitions/indicateur-periodicite.column';
 
 @Injectable()
 export class IndicateurDefinitionsRepository {

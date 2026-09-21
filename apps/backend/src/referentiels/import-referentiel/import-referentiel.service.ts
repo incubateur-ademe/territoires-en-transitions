@@ -9,7 +9,8 @@ import {
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
-import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.service';
+import { CreateIndicateurActionType } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
+import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
@@ -21,7 +22,6 @@ import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-sp
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
   PersonnalisationRegleCreate,
@@ -38,6 +38,7 @@ import {
   ActionTypeEnum,
   getActionTypeFromActionId,
   getParentId,
+  ReferentielDefinition,
   ReferentielId,
   ReferentielLabelEnum,
   referentielLabelEnumSchema,
@@ -49,15 +50,8 @@ import {
   GetReferentielService,
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
-import {
-  buildOrigineTags,
-  parseActionsOrigine,
-  parseActionsOrigineTexte,
-} from './action-origine.adapter';
-import {
-  ImportReferentielRepository,
-  type SaveReferentielInput,
-} from './import-referentiel.repository';
+import { ActionDefinitionCreate } from '../models/action-definition.table';
+import { ImportReferentielRepository } from './import-referentiel.repository';
 import {
   buildActionId,
   buildIndicateurReferences,
@@ -68,9 +62,8 @@ import {
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
-
-type ActionDefinitionToSave = SaveReferentielInput['actionDefinitions'][number];
-type IndicateurActionToSave = SaveReferentielInput['indicateurActions'][number];
+const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
+const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
 const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
   ReferentielId,
@@ -100,14 +93,12 @@ const actionThematiqueSgpeLabelToKey = Object.fromEntries(
 export class ImportReferentielService extends BaseSpreadsheetImporterService {
   readonly logger = new Logger(ImportReferentielService.name);
 
-  private readonly getDefinitionReadOrThrow = createControllerErrorHandler();
-
   constructor(
     private readonly config: ConfigurationService,
     private readonly repository: ImportReferentielRepository,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
-    private readonly listPlatformDefinitionsService: ListPlatformDefinitionsService,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly importPreuveReglementaireDefinitionService: ImportPreuveReglementaireDefinitionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly referentielService: GetReferentielService,
@@ -172,7 +163,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       importActionDefinitions.data
     );
 
-    const actionDefinitions: ActionDefinitionToSave[] = [];
+    const actionDefinitions: ActionDefinitionCreate[] = [];
     const createActionOrigines: ActionOrigine[] = [];
     const createActionOrigineTextes: ActionOrigineTexte[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleCreate[] = [];
@@ -189,7 +180,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           actionId,
           referentielDefinition.hierarchie
         );
-        const createActionDefinition: ActionDefinitionToSave = {
+        const createActionDefinition: ActionDefinitionCreate = {
           identifiant: action.identifiant,
           actionId,
           nom: action.nom || '',
@@ -420,17 +411,15 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
 
     // liste les indicateurs utilisés dans les formules de calcul du score
-    let createIndicateurActions: IndicateurActionToSave[] = [];
+    let createIndicateurActions: CreateIndicateurActionType[] = [];
     if (indicateurIdentifiants.length) {
       const identifiants = indicateurIdentifiants.map(
         ({ identifiant }) => identifiant
       );
-      const indicateurIdParIdentifiant = this.getDefinitionReadOrThrow(
-        await this.listPlatformDefinitionsService.listPlatformDefinitionIdsByIdentifiantReferentiels(
-          identifiants,
-          { user: null }
-        )
-      );
+      const indicateurIdParIdentifiant =
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitionIdsByIdentifiantReferentiels(
+          identifiants
+        );
       createIndicateurActions = indicateurIdentifiants
         .map(({ identifiant, actionId }) => ({
           indicateurId: indicateurIdParIdentifiant[identifiant],
@@ -570,12 +559,10 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         )
       ),
     ];
-    const indicateurIdByIdentifiant = this.getDefinitionReadOrThrow(
-      await this.listPlatformDefinitionsService.listPlatformDefinitionIdsByIdentifiantReferentiels(
-        identifiants,
-        { user: null }
-      )
-    );
+    const indicateurIdByIdentifiant =
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitionIdsByIdentifiantReferentiels(
+        identifiants
+      );
 
     const indicateurIds = [
       ...new Set(
@@ -584,14 +571,10 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           .filter(Boolean)
       ),
     ];
-    const indicateurDefinitions = this.getDefinitionReadOrThrow(
-      await this.listPlatformDefinitionsService.listPlatformDefinitions(
-        {
-          indicateurIds,
-        },
-        { user: null }
-      )
-    );
+    const indicateurDefinitions =
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+        indicateurIds,
+      });
 
     return { indicateurIdByIdentifiant, indicateurDefinitions };
   }
@@ -642,4 +625,138 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
     return null;
   }
+}
+
+type ParsedOrigineEntry = {
+  origineReferentielId: string;
+  origineActionId: string;
+  ponderation: number;
+};
+
+function parseOrigineEntries(
+  actionId: string,
+  origineText: string,
+  referentielDefinitions: ReferentielDefinition[],
+  existingActionIds?: string[]
+): ParsedOrigineEntry[] {
+  const entries: {
+    [origineActionId: string]: ParsedOrigineEntry;
+  } = {};
+  const lowerCaseOrigine = origineText.toLowerCase();
+  if (!lowerCaseOrigine.startsWith(ORIGIN_NEW_ACTION_PREFIX)) {
+    const origineParts = lowerCaseOrigine
+      .split('\n')
+      .map((originePart) => originePart.trim());
+    origineParts.forEach((originePart) => {
+      const originePartPonderationSplit = originePart.split('(');
+      let ponderation = 1;
+
+      if (originePartPonderationSplit.length > 1) {
+        ponderation = parseFloat(
+          originePartPonderationSplit[1].replace(')', '').replace(',', '.')
+        );
+        if (isNaN(ponderation)) {
+          throw new UnprocessableEntityException(
+            `Invalid ponderation value ${originePartPonderationSplit[1]} for origine ${originePart} of action ${actionId}`
+          );
+        }
+      }
+
+      const origineActionId = originePartPonderationSplit[0].trim();
+      const originePartReferentielSplit = origineActionId.split('_');
+
+      if (
+        originePartReferentielSplit.length !== 2 ||
+        !ACTION_ID_REGEXP.test(origineActionId)
+      ) {
+        throw new UnprocessableEntityException(
+          `Invalid origine value ${originePart} for action ${actionId}`
+        );
+      }
+      const origineReferentielId = originePartReferentielSplit[0];
+      const foundReferentiel = referentielDefinitions.find(
+        (definition) => definition.id === origineReferentielId
+      );
+
+      if (!foundReferentiel) {
+        throw new UnprocessableEntityException(
+          `Invalid origine value referentiel ${originePart} (referentiel ${origineReferentielId}) for action ${actionId}`
+        );
+      }
+
+      if (existingActionIds && !existingActionIds.includes(origineActionId)) {
+        throw new UnprocessableEntityException(
+          `Invalid origine value action ${originePart} (extracted actionId ${origineActionId} not found) for action ${actionId}`
+        );
+      }
+
+      const entry: ParsedOrigineEntry = {
+        origineReferentielId,
+        origineActionId,
+        ponderation,
+      };
+
+      if (!entries[entry.origineActionId]) {
+        entries[entry.origineActionId] = entry;
+      } else {
+        throw new UnprocessableEntityException(
+          `Duplicate origine ${entry.origineActionId} for action ${actionId}`
+        );
+      }
+    });
+  }
+  return Object.values(entries);
+}
+
+export function parseActionsOrigine(
+  referentielId: ReferentielId,
+  actionId: string,
+  origine: string,
+  referentielDefinitions: ReferentielDefinition[],
+  existingActionIds?: string[]
+): ActionOrigine[] {
+  return parseOrigineEntries(
+    actionId,
+    origine,
+    referentielDefinitions,
+    existingActionIds
+  ).map((entry) => ({
+    referentielId,
+    actionId,
+    origineReferentielId: entry.origineReferentielId,
+    origineActionId: entry.origineActionId,
+    ponderation: entry.ponderation,
+  }));
+}
+
+export function parseActionsOrigineTexte(
+  referentielId: ReferentielId,
+  actionId: string,
+  origineTexte: string,
+  referentielDefinitions: ReferentielDefinition[],
+  existingActionIds?: string[]
+): ActionOrigineTexte[] {
+  return parseOrigineEntries(
+    actionId,
+    origineTexte,
+    referentielDefinitions,
+    existingActionIds
+  ).map((entry) => ({
+    referentielId,
+    actionId,
+    origineReferentielId: entry.origineReferentielId,
+    origineActionId: entry.origineActionId,
+  }));
+}
+
+export function buildOrigineTags(
+  referentielId: ReferentielId,
+  actionId: string,
+  origineReferentielIds: Iterable<string>
+): ActionDefinitionTag[] {
+  return [...new Set(origineReferentielIds)].map((origineReferentielId) => ({
+    referentielId,
+    actionId,
+    tagRef: origineReferentielId,
+  }));
 }

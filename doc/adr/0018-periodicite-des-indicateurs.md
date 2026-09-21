@@ -6,9 +6,6 @@ Date : 2026-09-03
 
 Proposé. À valider avant la revue et la fusion des PRs d’implémentation.
 
-Décision de déploiement précisée le 2026-09-14 : chaque PR doit être déployable indépendamment.
-Une fenêtre de maintenance planifiée est acceptée pour la PR fonctionnelle complète.
-
 ## Contexte
 
 Les indicateurs sont historiquement suivis à l’année. Le programme Électrification nécessite
@@ -192,11 +189,10 @@ ou transportée séparément de la période, permettrait des interprétations in
 Des classes sérialisées perdraient leur comportement aux frontières JSON ; les périodes restent
 des données simples. Une agrégation automatique est écartée car son sens dépend de l’indicateur.
 
-La durée de maintenance est mesurée en répétant la migration et la reprise sur une copie récente.
-Avant la réouverture, un échec peut être traité en restaurant le schéma et les données sauvegardés
-après l'arrêt des écritures, puis les versions applicatives précédentes. Après la réouverture,
-une correction doit préserver les nouvelles données ; le retour à l'ancien modèle nécessite
-une analyse métier et ne constitue pas un downgrade automatique sans perte.
+La livraison doit préserver les anciens contrats annuels et séparer extension du schéma, migration
+des consommateurs et activation du mensuel. Le retour à l’ancien modèle exige des définitions
+annuelles recommandées, des valeurs annuelles et aucune préférence locale ; sinon une migration
+métier explicite est nécessaire.
 
 ## Documents associés
 

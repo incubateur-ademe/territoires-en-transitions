@@ -12,14 +12,11 @@ import {
   YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { sleep } from '@tet/backend/utils/sleep.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import request from 'supertest';
-import { expect, onTestFinished, vi } from 'vitest';
-import { trajectoireSnbcCalculRetour } from './fixtures/trajectoire-snbc-calcul-retour';
-import TrajectoiresDataService from './trajectoires-data.service';
+import { expect } from 'vitest';
 
 describe('Téléchargement de la trajectoire SNBC', () => {
   let app: INestApplication;
@@ -59,56 +56,6 @@ describe('Téléchargement de la trajectoire SNBC', () => {
   test(`Verification, calcul avec donnees completes et gestion de la mise à jour`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const collectiviteId = 4936;
-    const sheetService = app.get(SheetService);
-    const trajectoiresDataService = app.get(TrajectoiresDataService);
-    const spreadsheetId = 'test-trajectoire-snbc-spreadsheet';
-    const recordedIndicateurs = Object.values(
-      trajectoireSnbcCalculRetour.trajectoire
-    ).flat();
-    const recordedRows =
-      trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.map(
-        (identifiant) =>
-          recordedIndicateurs
-            .find(
-              ({ definition }) =>
-                definition.identifiantReferentiel === identifiant
-            )
-            ?.valeurs.map(({ objectif }) => objectif) ?? []
-      );
-
-    // Garder le parcours HTTP et la base réels, sans dépendre de Google Sheets.
-    const getFileIdByName = vi
-      .spyOn(sheetService, 'getFileIdByName')
-      .mockReset()
-      .mockResolvedValueOnce(null)
-      .mockResolvedValue(spreadsheetId);
-    const copyFile = vi
-      .spyOn(sheetService, 'copyFile')
-      .mockReset()
-      .mockResolvedValue(spreadsheetId);
-    const deleteFile = vi
-      .spyOn(sheetService, 'deleteFile')
-      .mockReset()
-      .mockResolvedValue();
-    const overwriteRawDataToSheet = vi
-      .spyOn(sheetService, 'overwriteRawDataToSheet')
-      .mockReset()
-      .mockResolvedValue();
-    const getRawDataFromSheet = vi
-      .spyOn(sheetService, 'getRawDataFromSheet')
-      .mockReset()
-      .mockResolvedValue({ data: recordedRows });
-    onTestFinished(() => {
-      for (const spy of [
-        getFileIdByName,
-        copyFile,
-        deleteFile,
-        overwriteRawDataToSheet,
-        getRawDataFromSheet,
-      ]) {
-        spy.mockRestore();
-      }
-    });
 
     // Restauration de la valeur d'indicateur
     const response = await request(app.getHttpServer())
@@ -331,12 +278,6 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     expect((responseCalcul.body as CalculTrajectoireResponse).mode).toEqual(
       CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET
     );
-    expect(copyFile).toHaveBeenCalledTimes(1);
-    expect(overwriteRawDataToSheet).toHaveBeenCalledTimes(4);
-    expect(getRawDataFromSheet).toHaveBeenCalledExactlyOnceWith(
-      spreadsheetId,
-      trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_CELLULES
-    );
 
     // La vérification doit maintenant retourner "calculé"
     const verificationReponseAttendueApresCalcul: VerificationTrajectoireResponseType =
@@ -377,9 +318,6 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     expect((responseRecalcul.body as CalculTrajectoireResponse).mode).toEqual(
       CalculTrajectoireResultatMode.DONNEES_EN_BDD
     );
-    expect(copyFile).toHaveBeenCalledTimes(1);
-    expect(overwriteRawDataToSheet).toHaveBeenCalledTimes(4);
-    expect(getRawDataFromSheet).toHaveBeenCalledTimes(1);
 
     // Maintenant on met à jour une valeur d'indicateur
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
@@ -423,16 +361,6 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     expect(calculTrajectoireResponse.mode).toEqual(
       CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
     );
-    expect(copyFile).toHaveBeenCalledTimes(1);
-    expect(deleteFile).not.toHaveBeenCalled();
-    expect(overwriteRawDataToSheet).toHaveBeenCalledTimes(8);
-    expect(overwriteRawDataToSheet).toHaveBeenNthCalledWith(
-      6,
-      spreadsheetId,
-      trajectoiresDataService.SNBC_EMISSIONS_GES_CELLULES,
-      expect.arrayContaining([[663]])
-    );
-    expect(getRawDataFromSheet).toHaveBeenCalledTimes(2);
 
     // La vérification doit maintenant envoyer 'deja_calcule'
     const verificationApresMajEtRecalculResponse =
