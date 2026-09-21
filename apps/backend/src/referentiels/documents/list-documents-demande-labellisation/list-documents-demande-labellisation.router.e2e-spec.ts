@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { OTHER_PDF_SAMPLE_FILE } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  OTHER_PDF_SAMPLE_FILE,
+  seedTestDocument,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import {
   createTRPCClientFromCaller,
   getAuthUserFromUserCredentials,
@@ -187,5 +190,79 @@ describe('List Documents Demande Labellisation Router', () => {
     expect(
       documentsMembre.map((document) => document.fichier?.filename)
     ).toEqual(['preuve-publique.pdf', 'preuve-confidentielle.pdf']);
+  });
+
+  test('garde visible pour un visiteur un document public dont le fichier a perdu ses octets', async () => {
+    const { collectiviteId, demandeId, membreId } =
+      await createCollectiviteAvecCycle({
+        db,
+        router,
+        app,
+        accesRestreint: false,
+      });
+
+    const purgedFile = await seedTestDocument({
+      databaseService: db,
+      collectiviteId,
+      filename: 'sans-octets.pdf',
+      withStorageObject: false,
+    });
+    await db.db.insert(preuveLabellisationTable).values({
+      collectiviteId,
+      demandeId,
+      fichierId: purgedFile.id,
+      commentaire: '',
+      modifiedBy: membreId,
+    });
+
+    const visiteurCaller = router.createCaller({ user: visiteurUser });
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsDemandeLabellisation(
+        { demandeId }
+      );
+
+    expect(documents).toHaveLength(1);
+    expect(documents[0].fichierId).toBe(purgedFile.id);
+    expect(documents[0].fichier).toBeNull();
+  });
+
+  test("masque a un visiteur un document confidentiel dont le fichier a perdu ses octets", async () => {
+    const { collectiviteId, demandeId, membreId, membreCaller } =
+      await createCollectiviteAvecCycle({
+        db,
+        router,
+        app,
+        accesRestreint: false,
+      });
+
+    const purgedConfidentialFile = await seedTestDocument({
+      databaseService: db,
+      collectiviteId,
+      filename: 'demande-confidentiel-sans-octets.pdf',
+      confidentiel: true,
+      withStorageObject: false,
+    });
+    await db.db.insert(preuveLabellisationTable).values({
+      collectiviteId,
+      demandeId,
+      fichierId: purgedConfidentialFile.id,
+      commentaire: '',
+      modifiedBy: membreId,
+    });
+
+    const visiteurCaller = router.createCaller({ user: visiteurUser });
+    const documentsVisiteur =
+      await visiteurCaller.referentiels.documents.listDocumentsDemandeLabellisation(
+        { demandeId }
+      );
+    expect(documentsVisiteur).toHaveLength(0);
+
+    const documentsMembre =
+      await membreCaller.referentiels.documents.listDocumentsDemandeLabellisation(
+        { demandeId }
+      );
+    expect(documentsMembre.map((document) => document.fichierId)).toEqual([
+      purgedConfidentialFile.id,
+    ]);
   });
 });
