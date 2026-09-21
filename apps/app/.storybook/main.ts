@@ -32,10 +32,15 @@ const config: StorybookConfig = {
     check: true,
   },
 
+  // Storybook n'a pas de serveur Next pour injecter la config runtime : on
+  // repasse par l'inlining NEXT_PUBLIC_*, qui reste le repli de `getPublicEnv`.
   env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    NEXT_PUBLIC_SUPABASE_URL:
+      process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     NEXT_PUBLIC_SUPABASE_ANON_KEY:
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      process.env.SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      '',
   },
 
   async viteFinal(viteConfig) {

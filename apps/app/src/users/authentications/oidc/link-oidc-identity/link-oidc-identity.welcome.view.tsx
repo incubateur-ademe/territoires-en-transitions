@@ -4,6 +4,7 @@ import { signInPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { ENV } from '@tet/api/environmentVariables';
 import { useSupabase, useTRPC } from '@tet/api';
 import {
   Alert,
@@ -59,7 +60,7 @@ const Dialog = ({ children }: { children: React.ReactNode }) => (
  */
 export const LinkOidcIdentityWelcomeView = (props: BienvenueViewProps) => {
   const [view, setView] = useState<LocalView>('question');
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL as string;
+  const backendUrl = ENV.backend_url as string;
   const trackEvent = useEventTracker();
 
   const { erreur } = props;

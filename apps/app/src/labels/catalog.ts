@@ -1,3 +1,4 @@
+import { ENV } from '@tet/api/environmentVariables';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { plural } from '@tet/ui/labels/plural';
 import { collectivitesLabels } from './collectivites.labels';
@@ -10,8 +11,10 @@ import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
 
 export type { DemarcheTypeLabels } from './demarches.labels';
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
+// Lu à l'appel et non au chargement du module : `appLabels` est importé par des
+// centaines de composants clients, un const figerait la valeur de build.
+const getSiteUrl = () =>
+  ENV.site_url ?? 'https://www.territoiresentransitions.fr';
 
 /** Un seul format autorisé se lit « Format supporté », pas « Formats supportés ». */
 const formatsSupportes = plural({
@@ -1661,7 +1664,7 @@ export const appLabels = {
       te: 'CAE_Reglement_label.pdf',
       'te-test': 'CAE_Reglement_label.pdf',
     };
-    return `${SITE_URL}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
+    return `${getSiteUrl()}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
   },
 
   // Parcours de bienvenue ProConnect (aucune correspondance automatique).

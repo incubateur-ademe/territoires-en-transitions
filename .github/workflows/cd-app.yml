@@ -22,7 +22,8 @@ on:
 jobs:
   build-app:
     name: Build l'app
-    if: ${{ github.event.inputs.is-test-app != 'true' }}
+    # Pas de `if:` sur is-test-app : l'image ne dépend plus de l'environnement,
+    # la même sert l'app déployée et les apps de test.
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     permissions:
@@ -51,7 +52,9 @@ jobs:
         with:
           username: incubateur-ademe
           image: tet-app
-          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+          # Une image par commit, pas par (commit, environnement) : c'est ce qui
+          # rend la promotion preprod -> prod possible sans rebuild.
+          tag: ${{ steps.meta.outputs.git-short-hash }}
 
       - name: Build et push de l'image app
         uses: ./.github/actions/docker-build-push
@@ -66,75 +69,12 @@ jobs:
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
             sentry_auth_token=SENTRY_AUTH_TOKEN
+          # Métadonnées du commit uniquement : tout ce qui est spécifique à un
+          # environnement est injecté au déploiement (cf. deploy-app).
           build-args: |
-            ANON_KEY=${{ secrets.ANON_KEY }}
-            API_URL=${{ secrets.API_URL }}
-            APP_URL=${{ vars.APP_URL }}
-            BACKEND_URL=${{ vars.BACKEND_URL }}
-            PANIER_URL=${{ vars.PANIER_URL }}
-            CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-            SENTRY_DSN=${{ vars.SENTRY_DSN }}
             GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
             GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
             APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}
-            ENV_NAME=${{ github.event.inputs.target }}
-
-  build-test-app:
-    name: Build l'app de test # TODO: only on variable change, improve to avoid duplicate
-    if: ${{ github.event.inputs.is-test-app == 'true' }}
-    environment: ${{ github.event.inputs.target }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    outputs:
-      image: ${{ steps.image.outputs.path }}
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - id: meta
-        uses: ./.github/actions/build-metadata
-
-      - uses: ./.github/actions/docker-login
-        if: ${{ !env.ACT }}
-        with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - id: image
-        uses: ./.github/actions/docker-image-path
-        with:
-          username: incubateur-ademe
-          image: tet-app-test
-          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
-
-      - name: Build et push de l'image app de test
-        uses: ./.github/actions/docker-build-push
-        env:
-          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
-        with:
-          dockerfile: apps/app/Dockerfile
-          image: ${{ steps.image.outputs.path }}
-          cache-scope: tet-app-test
-          push: ${{ !env.ACT }}
-          secrets: |
-            bryntum_token=BRYNTUM_ACCESS_TOKEN
-          build-args: |
-            ANON_KEY=${{ secrets.ANON_KEY }}
-            API_URL=${{ secrets.API_URL }}
-            APP_URL=${{ vars.APP_URL }}
-            BACKEND_URL=${{ vars.BACKEND_TEST_URL }}
-            PANIER_URL=${{ vars.PANIER_URL }}
-            CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-            SENTRY_DSN=${{ vars.SENTRY_DSN }}
-            GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
-            GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
-            APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}
-            ENV_NAME=${{ github.event.inputs.target }}
 
   deploy-app:
     name: Déploie l'app
@@ -155,11 +95,22 @@ jobs:
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
+      # Toute la configuration de l'app arrive ici : l'image est la même pour
+      # preprod, staging et prod. Ces variables sont servies au navigateur par
+      # le layout racine (cf. packages/api/src/public-env.ts) ; aucune n'est
+      # secrète — la clé anon Supabase est publique par conception.
       - name: Déploie l'app sur Koyeb
         env:
           ENV_NAME: ${{ github.event.inputs.target }}
           IMAGE: ${{ needs.build-app.outputs.image }}
           DEPLOYMENT_TIMESTAMP: ${{ steps.meta.outputs.deployment-timestamp }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
+          APP_URL: ${{ vars.APP_URL }}
+          PANIER_URL: ${{ vars.PANIER_URL }}
+          CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
         run: >
           koyeb services update $ENV_NAME-app/front
           --docker "$IMAGE"
@@ -167,12 +118,23 @@ jobs:
           --env POSTHOG_HOST=@POSTHOG_HOST
           --env POSTHOG_KEY=@POSTHOG_KEY
           --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
+          --env ENV_NAME=$ENV_NAME
+          --env SUPABASE_URL=$SUPABASE_URL
+          --env SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --env BACKEND_URL=$BACKEND_URL
+          --env APP_URL=$APP_URL
+          --env PANIER_URL=$PANIER_URL
+          --env CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+          --env SENTRY_DSN=$SENTRY_DSN
 
   deploy-test-app:
     name: Déploie l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
-    needs: build-test-app
-    environment: preprod-koyeb
+    needs: build-app
+    # `preprod` et non `preprod-koyeb` : les apps de test sont des artefacts
+    # preprod (c'est déjà l'environnement utilisé par cd-test-app-destroy.yml
+    # pour les supprimer), et c'est là que vivent BACKEND_TEST_URL & co.
+    environment: preprod
     runs-on: ubuntu-latest
 
     steps:
@@ -191,17 +153,41 @@ jobs:
 
       - name: Déploie (ou crée) l'app de test sur Koyeb
         env:
-          IMAGE: ${{ needs.build-test-app.outputs.image }}
+          IMAGE: ${{ needs.build-app.outputs.image }}
           NAME: ${{ steps.test-app-name.outputs.name }}
+          ENV_NAME: ${{ github.event.inputs.target }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
+          BACKEND_URL: ${{ vars.BACKEND_TEST_URL }}
+          APP_URL: ${{ vars.APP_URL }}
+          PANIER_URL: ${{ vars.PANIER_URL }}
+          CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
         run: |
+          # Seule différence avec l'app déployée : BACKEND_URL pointe sur le
+          # backend de test. C'était un build arg, c'est désormais une variable
+          # de déploiement — d'où la disparition de l'image tet-app-test.
+          env_flags=(
+            --env "ENV_NAME=$ENV_NAME"
+            --env "SUPABASE_URL=$SUPABASE_URL"
+            --env "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY"
+            --env "BACKEND_URL=$BACKEND_URL"
+            --env "APP_URL=$APP_URL"
+            --env "PANIER_URL=$PANIER_URL"
+            --env "CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID"
+            --env "SENTRY_DSN=$SENTRY_DSN"
+          )
+
           if koyeb apps get "test-app-$NAME" >/dev/null 2>&1; then
             echo "App de test déjà déployée sur Koyeb à test-app-$NAME, mise à jour..."
             koyeb services update "test-app-$NAME/test-app-$NAME" \
-              --docker "$IMAGE" --docker-private-registry-secret ghcr
+              --docker "$IMAGE" --docker-private-registry-secret ghcr \
+              "${env_flags[@]}"
           else
             echo "App de test introuvable sur Koyeb à test-app-$NAME, création avec $IMAGE..."
             koyeb apps init "test-app-$NAME" \
               --docker "$IMAGE" --docker-private-registry-secret ghcr \
               --type web --port 3000:http --route /:3000 --env PORT=3000 \
+              "${env_flags[@]}" \
               --regions par
           fi
