@@ -31,6 +31,13 @@ export const createIndicateurDefinitionInputSchema = z.object({
     .describe(
       "Si true, la valeur associée à l'indicateur la plus récente n'est pas consultable en mode visite."
     ),
+  isApplicable: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe(
+      "Si false, l'indicateur est déclaré non applicable à la collectivité : il ne lui est plus réclamé."
+    ),
   ficheId: z
     .number()
     .int()
@@ -53,12 +60,14 @@ export const updateIndicateurDefinitionInputSchema = z.object({
         thematiques: true,
         estFavori: true,
         estConfidentiel: true,
+        isApplicable: true,
       }).shape,
 
-      // Redéfinis sans `.default(false)` pour que le service puisse distinguer
+      // Redéfinis sans `.default(...)` pour que le service puisse distinguer
       // "absent du payload" de "explicitement mis à false".
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
+      isApplicable: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),
       services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),

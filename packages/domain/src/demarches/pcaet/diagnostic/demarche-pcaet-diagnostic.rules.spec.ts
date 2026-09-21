@@ -49,7 +49,7 @@ const valeur = ({
       objectif,
     },
     indicateurDefinition: { identifiantReferentiel },
-  }) as PcaetDiagnostic['indicateurValeurs'][number];
+  } as PcaetDiagnostic['indicateurValeurs'][number]);
 
 /** Constat + objectifs requis (2050 exclu via optionalYears). */
 const valeursCompletes = (
@@ -60,6 +60,20 @@ const valeursCompletes = (
     (year) => year !== 2050
   ).map((year) => valeur({ year, identifiantReferentiel, objectif: 8 })),
 ];
+
+/**
+ * Définitions servies avec le diagnostic. Une définition absente vaut
+ * applicable : c'est l'état d'une collectivité qui n'a rien déclaré.
+ */
+const definition = (
+  identifiantReferentiel: string,
+  isApplicable: boolean
+): PcaetDiagnostic['indicateurDefinitions'][number] =>
+  ({
+    id: 1,
+    identifiantReferentiel,
+    isApplicable,
+  } as PcaetDiagnostic['indicateurDefinitions'][number]);
 
 const vulnerabiliteTopic = (): PcaetDiagnostic['vulnerabilite'] => ({
   code: 'vulnerabilite_territoire',
@@ -93,13 +107,7 @@ describe('deriveReferenceYearFromIndicateurValeurYears', () => {
   it('exclut les horizons d’objectif et les années hors bornes', () => {
     expect(
       deriveReferenceYearFromIndicateurValeurYears({
-        resultYears: [
-          REFERENCE_YEAR_MIN - 1,
-          2030,
-          2036,
-          2050,
-          2027,
-        ],
+        resultYears: [REFERENCE_YEAR_MIN - 1, 2030, 2036, 2050, 2027],
         currentYear: 2026,
       })
     ).toBeNull();
@@ -136,6 +144,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('exige un constat et un objectif sur chaque horizon requis de chaque ligne', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig(),
         indicateurs: valeursCompletes(),
       })
@@ -145,10 +154,12 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('échoue sans constat sur une année de référence', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig(),
-        indicateurs: PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
-          (year) => year !== 2050
-        ).map((year) => valeur({ year, objectif: 8 })),
+        indicateurs:
+          PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+            (year) => year !== 2050
+          ).map((year) => valeur({ year, objectif: 8 })),
       })
     ).toBe(false);
   });
@@ -156,6 +167,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('échoue dès qu’un horizon d’objectif requis manque', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig(),
         indicateurs: [
           valeur({ year: 2021, resultat: 12 }),
@@ -168,6 +180,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('n’exige pas un horizon listé dans optionalYears', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig(),
         indicateurs: [
           valeur({ year: 2021, resultat: 12 }),
@@ -181,6 +194,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('ignore les valeurs saisies sur les indicateurs d’un autre topic', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig(),
         indicateurs: valeursCompletes('cae_2.e'),
       })
@@ -190,6 +204,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('n’est pas complet sur la seule saisie de l’agrégat parent', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig(),
         indicateurs: valeursCompletes('cae_1.a'),
       })
@@ -214,6 +229,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
 
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config,
         indicateurs: valeursCompletes('cae_1.c'),
       })
@@ -221,6 +237,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
 
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config,
         indicateurs: [
           ...valeursCompletes('cae_1.c'),
@@ -256,6 +273,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
 
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config,
         indicateurs: completeLeaf('cae_4.aa'),
       })
@@ -263,11 +281,9 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
 
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config,
-        indicateurs: [
-          ...completeLeaf('cae_4.aa'),
-          ...completeLeaf('cae_4.ab'),
-        ],
+        indicateurs: [...completeLeaf('cae_4.aa'), ...completeLeaf('cae_4.ab')],
       })
     ).toBe(true);
   });
@@ -275,6 +291,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
   it('ignore une ligne entièrement optionnelle (optionalYears all)', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig({
           children: [
             {
@@ -289,9 +306,53 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     ).toBe(true);
   });
 
+  it('ne réclame plus une ligne déclarée non applicable', () => {
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        definitions: [definition('cae_1.c', false)],
+        config: parentConfig(),
+        indicateurs: [],
+      })
+    ).toBe(true);
+  });
+
+  it('réclame toujours les lignes restées applicables', () => {
+    const config = parentConfig({
+      children: [
+        {
+          label: 'Résidentiel',
+          indicateurDefinitionId: 'cae_1.c',
+          optionalYears: [2050],
+        },
+        {
+          label: 'Tertiaire',
+          indicateurDefinitionId: 'cae_1.d',
+          optionalYears: [2050],
+        },
+      ],
+    });
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        definitions: [definition('cae_1.d', false)],
+        config,
+        indicateurs: [],
+      })
+    ).toBe(false);
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        definitions: [definition('cae_1.d', false)],
+        config,
+        indicateurs: valeursCompletes('cae_1.c'),
+      })
+    ).toBe(true);
+  });
+
   it('considère complet un topic marqué optional, même sans saisie', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
         config: parentConfig({ optional: true }),
         indicateurs: [],
       })
@@ -300,6 +361,21 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
 });
 
 describe('isDemarchePcaetDiagnosticComplet', () => {
+  it('débloque le diagnostic quand la ligne manquante est non applicable', () => {
+    expect(
+      isDemarchePcaetDiagnosticComplet(diagnostic({ indicateurValeurs: [] }))
+    ).toBe(false);
+
+    expect(
+      isDemarchePcaetDiagnosticComplet(
+        diagnostic({
+          indicateurValeurs: [],
+          indicateurDefinitions: [definition('cae_1.c', false)],
+        })
+      )
+    ).toBe(true);
+  });
+
   it('exige que tous les topics indicateurs soient complets', () => {
     expect(isDemarchePcaetDiagnosticComplet(diagnostic())).toBe(true);
 

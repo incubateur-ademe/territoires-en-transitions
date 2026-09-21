@@ -121,7 +121,9 @@ describe('Récupérer le diagnostic PCAET', () => {
       indicateurDefinitionId: 'cae_1.a',
       referenceYearApplyLevel: 'parent',
     });
-    expect(emissions?.children.map((child) => child.indicateurDefinitionId)).toEqual([
+    expect(
+      emissions?.children.map((child) => child.indicateurDefinitionId)
+    ).toEqual([
       'cae_1.c',
       'cae_1.d',
       'cae_1.e',
@@ -131,9 +133,9 @@ describe('Récupérer le diagnostic PCAET', () => {
       'cae_1.i',
       'cae_1.j',
     ]);
-    expect(emissions?.children.every((child) => child.children === undefined)).toBe(
-      true
-    );
+    expect(
+      emissions?.children.every((child) => child.children === undefined)
+    ).toBe(true);
   });
 
   test('La consommation énergétique finale est un topic à part entière', async () => {
@@ -173,7 +175,9 @@ describe('Récupérer le diagnostic PCAET', () => {
       (config) => config.code === 'polluants_atmospheriques'
     );
 
-    expect(polluants?.children.map((child) => child.indicateurDefinitionId)).toEqual([
+    expect(
+      polluants?.children.map((child) => child.indicateurDefinitionId)
+    ).toEqual([
       'cae_4.a',
       'cae_4.b',
       'cae_4.c',
@@ -309,6 +313,56 @@ describe('Récupérer le diagnostic PCAET', () => {
     });
 
     expect(diagnostic.indicateurValeurs).toEqual([]);
+  });
+
+  test('Les définitions portent l’applicabilité décidée par la collectivité', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
+
+    const findDefinition = (
+      diagnostic: PcaetDiagnostic,
+      referentielId: string
+    ) =>
+      diagnostic.indicateurDefinitions.find(
+        (definition) => definition.identifiantReferentiel === referentielId
+      );
+
+    // Sans rien déclarer, il n'y a pas de ligne `indicateur_collectivite` :
+    // c'est le `coalesce` de la lecture qui doit rendre `true`.
+    const avant = await getDiagnostic(caller, { collectivite, demarche });
+    expect(findDefinition(avant, 'cae_1.c')?.isApplicable).toBe(true);
+
+    await caller.indicateurs.indicateurs.update({
+      indicateurId: await getIndicateurId('cae_1.c'),
+      collectiviteId: collectivite.id,
+      indicateurFields: { isApplicable: false },
+    });
+
+    const apres = await getDiagnostic(caller, { collectivite, demarche });
+    expect(findDefinition(apres, 'cae_1.c')?.isApplicable).toBe(false);
+    // Les autres lignes ne bougent pas.
+    expect(findDefinition(apres, 'cae_1.d')?.isApplicable).toBe(true);
+  });
+
+  test('L’applicabilité est propre à chaque collectivité', async () => {
+    const first = await createDemarche(db, router);
+    const second = await createDemarche(db, router);
+
+    await first.caller.indicateurs.indicateurs.update({
+      indicateurId: await getIndicateurId('cae_1.c'),
+      collectiviteId: first.collectivite.id,
+      indicateurFields: { isApplicable: false },
+    });
+
+    const diagnostic = await getDiagnostic(second.caller, {
+      collectivite: second.collectivite,
+      demarche: second.demarche,
+    });
+
+    expect(
+      diagnostic.indicateurDefinitions.find(
+        (definition) => definition.identifiantReferentiel === 'cae_1.c'
+      )?.isApplicable
+    ).toBe(true);
   });
 
   test("IDOR : le diagnostic n'est pas lisible via une autre collectivité", async () => {

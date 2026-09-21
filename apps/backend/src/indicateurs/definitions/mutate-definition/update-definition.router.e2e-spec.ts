@@ -14,6 +14,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 
@@ -310,6 +311,176 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       await expect(
         caller.indicateurs.indicateurs.update(updateData)
       ).rejects.toThrow();
+    });
+  });
+
+  describe('applicabilité', () => {
+    const listIndicateur = async (
+      caller: ReturnType<typeof router.createCaller>,
+      indicateurId: number
+    ) => {
+      const {
+        data: [indicateur],
+      } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      return indicateur;
+    };
+
+    test('un indicateur sans ligne indicateur_collectivite est applicable', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      // Un prédéfini que la collectivité n'a jamais touché : c'est le seul cas
+      // où le LEFT JOIN rend `null`, celui que rattrape le `coalesce`.
+      // `createIndicateurPerso` poserait une ligne et masquerait ce chemin.
+      const [indicateurJamaisTouche] = await databaseService.db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(
+          and(
+            eq(indicateurDefinitionTable.identifiantReferentiel, 'cae_1.c'),
+            isNull(indicateurDefinitionTable.collectiviteId)
+          )
+        )
+        .limit(1);
+      expect(indicateurJamaisTouche).toBeDefined();
+
+      const lignes = await databaseService.db
+        .select()
+        .from(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(
+              indicateurCollectiviteTable.indicateurId,
+              indicateurJamaisTouche.id
+            ),
+            eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+          )
+        );
+      expect(lignes).toHaveLength(0);
+
+      expect(
+        (await listIndicateur(caller, indicateurJamaisTouche.id)).isApplicable
+      ).toBe(true);
+    });
+
+    test('se déclare non applicable, puis redevient applicable', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Bascule applicabilité',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: false },
+      });
+
+      expect((await listIndicateur(caller, indicateurId)).isApplicable).toBe(
+        false
+      );
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: true },
+      });
+
+      expect((await listIndicateur(caller, indicateurId)).isApplicable).toBe(
+        true
+      );
+    });
+
+    test('une mise à jour qui ne parle pas d’applicabilité ne la touche pas', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Applicabilité préservée',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: false },
+      });
+
+      // `estFavori` seul : le champ absent du payload ne doit pas être remis à
+      // sa valeur par défaut par l'upsert.
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { estFavori: true },
+      });
+
+      const indicateur = await listIndicateur(caller, indicateurId);
+      expect(indicateur.isApplicable).toBe(false);
+      expect(indicateur.estFavori).toBe(true);
+    });
+
+    test('le filtre isApplicable sépare les deux populations', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const nonApplicableId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Filtre — non applicable',
+        },
+      });
+      const applicableId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Filtre — applicable',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId: nonApplicableId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: false },
+      });
+
+      // La création insère toujours une ligne `indicateur_collectivite` : on la
+      // supprime pour retrouver le cas — majoritaire en base — d'un indicateur
+      // sans ligne du tout, que le filtre doit compter comme applicable.
+      await databaseService.db
+        .delete(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, applicableId),
+            eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+          )
+        );
+
+      // Restreint aux deux indicateurs du test : la liste est paginée, et la
+      // collectivité en porte bien plus que ça.
+      const indicateurIds = [nonApplicableId, applicableId];
+
+      const { data: nonApplicables } =
+        await caller.indicateurs.indicateurs.list({
+          collectiviteId: collectivite.id,
+          filters: { indicateurIds, isApplicable: false },
+        });
+      expect(nonApplicables.map(({ id }) => id)).toEqual([nonApplicableId]);
+
+      // `applicableId` n'a plus de ligne `indicateur_collectivite` : `NULL =
+      // true` l'exclurait à tort, le filtre doit quand même le remonter.
+      const { data: applicables } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds, isApplicable: true },
+      });
+      expect(applicables.map(({ id }) => id)).toEqual([applicableId]);
     });
   });
 

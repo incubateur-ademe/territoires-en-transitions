@@ -44,9 +44,29 @@ const listColumns = ({
   const titleColumn = columnHelper.display({
     id: 'title',
     header: () => <IndicateurHeaderTitleCell title={title} unit={unit} />,
-    cell: ({ row }) => (
-      <IndicateurTitleCell title={row.original.indicateurLabel} />
-    ),
+    cell: ({ row, table }) => {
+      const { setIndicateurApplicable, isSettingIndicateurApplicable } =
+        getTableMeta(table);
+      const { indicateurId, indicateurLabel, isApplicable } = row.original;
+
+      return (
+        <IndicateurTitleCell
+          title={indicateurLabel}
+          isApplicable={isApplicable}
+          isApplicableChangePending={isSettingIndicateurApplicable}
+          onApplicableChange={
+            isReadonly
+              ? undefined
+              : (next) => {
+                  void setIndicateurApplicable({
+                    indicateurId,
+                    isApplicable: next,
+                  });
+                }
+          }
+        />
+      );
+    },
   });
 
   const yearColumns = years.map((year) => {

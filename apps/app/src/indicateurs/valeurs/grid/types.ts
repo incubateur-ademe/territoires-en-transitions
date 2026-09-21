@@ -25,6 +25,11 @@ export type IndicateurTableRow = {
   indicateurValeurs: IndicateurValeur[];
   /** Années dont la valeur peut rester vide pour cette ligne. */
   optionalYears?: readonly number[] | 'all';
+  /**
+   * `false` quand la collectivité a déclaré l'indicateur non applicable : la
+   * ligne n'est plus saisissable et cesse d'être réclamée.
+   */
+  isApplicable: boolean;
 };
 
 /**

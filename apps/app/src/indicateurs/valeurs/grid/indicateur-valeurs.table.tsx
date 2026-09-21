@@ -1,5 +1,6 @@
 'use client';
 
+import { useSetIndicateurApplicable } from '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable';
 import { useUpdateDiagnosticIndicateursValeurs } from '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs';
 import { appLabels } from '@/app/labels/catalog';
 import { getCoreRowModel, RowData, useReactTable } from '@tanstack/react-table';
@@ -23,6 +24,8 @@ declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     onReferenceYearChange?: IndicateurValeursTableMeta['onReferenceYearChange'];
     updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
+    setIndicateurApplicable?: IndicateurValeursTableMeta['setIndicateurApplicable'];
+    isSettingIndicateurApplicable?: IndicateurValeursTableMeta['isSettingIndicateurApplicable'];
   }
 }
 
@@ -98,6 +101,21 @@ export const IndicateurValeursTable = ({
       }
     };
 
+  const {
+    setIndicateurApplicable: mutateIndicateurApplicable,
+    isPending: isSettingIndicateurApplicable,
+  } = useSetIndicateurApplicable(demarcheId);
+
+  const setIndicateurApplicable: IndicateurValeursTableMeta['setIndicateurApplicable'] =
+    async ({ indicateurId, isApplicable }) => {
+      try {
+        await mutateIndicateurApplicable({ indicateurId, isApplicable });
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
   const { columns } = useListIndicateurValeursTableColumns({
     years: displayYears,
     title,
@@ -113,6 +131,8 @@ export const IndicateurValeursTable = ({
     meta: {
       onReferenceYearChange,
       updateIndicateurValeurs,
+      setIndicateurApplicable,
+      isSettingIndicateurApplicable,
     },
   });
 
