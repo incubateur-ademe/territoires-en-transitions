@@ -45,6 +45,12 @@ export type DemarchePcaet = {
    * démarré à l'étape de finalisation, sans circuit d'avis. Figé à la création.
    */
   transmisHorsPlateforme: boolean;
+  /**
+   * Le PCAET est porté par un SCoT-AEC : un document unique valant SCoT et
+   * PCAET. Déclaré par la collectivité, corrigeable tant que l'amont est
+   * modifiable.
+   */
+  isScotAec: boolean;
   /** Échéance de remise des avis, figée à la transmission. */
   dateEcheanceAvis: string | null;
   pilotes: PersonneTagOrUser[];
@@ -73,5 +79,6 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'dateLancement'
     | 'planActionIds'
     | 'pilotes'
+    | 'isScotAec'
   >
 >;

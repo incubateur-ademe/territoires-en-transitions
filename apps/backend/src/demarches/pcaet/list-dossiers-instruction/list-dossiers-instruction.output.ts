@@ -67,6 +67,14 @@ export const dossierInstructionLigneSchema = z.object({
   statut: pcaetStatutInstructionSchema,
   obligation: z.enum(demarchePcaetObligationValues).nullable(),
   obligationSource: obligationSourceSchema.nullable(),
+  /**
+   * Le dépôt est un SCoT-AEC : un document unique valant SCoT et PCAET, déclaré
+   * comme tel par la collectivité. Ce qui signale à l'instructeur un dossier qui
+   * ne se lit pas comme un PCAET classique.
+   *
+   * `false` quand la collectivité n'a pas déposé : rien à qualifier.
+   */
+  isScotAec: z.boolean(),
   nbAvisValides: z.number().int(),
   nbAvisBrouillons: z.number().int(),
 });

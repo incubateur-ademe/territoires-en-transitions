@@ -60,6 +60,10 @@ export const demarcheTable = pgTable(
     transmittedOffPlatform: boolean('transmitted_off_platform')
       .notNull()
       .default(false),
+    // Déclaratif : le PCAET est porté par un SCoT-AEC, un document unique
+    // valant SCoT et PCAET. La compétence Banatic 5500 décide si la question
+    // est posée à la collectivité, jamais de sa réponse.
+    isScotAec: boolean('is_scot_aec').notNull().default(false),
     avisDeadlineAt: timestamp('avis_deadline_at', TIMESTAMP_OPTIONS),
     createdAt,
     createdBy,

@@ -15,6 +15,14 @@ export const updateDemarchePcaetInputSchema = z.object({
    */
   planActionIds: z.array(z.number().int().positive()).optional(),
   pilotes: z.array(personneIdSchema).optional(),
+  /**
+   * Le PCAET est porté par un SCoT-AEC. Corrigeable, à la différence de
+   * `transmittedOffPlatform` qui est figé à la création : la question est posée
+   * à l'étape 0 avec une coche pré-remplie, et c'est un marqueur que les
+   * services de l'État lisent sur le dossier. Le service n'ouvre l'écriture que
+   * tant que l'amont est modifiable.
+   */
+  isScotAec: z.boolean().optional(),
 });
 
 export type UpdateDemarchePcaetInput = z.infer<

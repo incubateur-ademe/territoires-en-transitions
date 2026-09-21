@@ -262,6 +262,48 @@ describe('Mettre à jour une démarche PCAET', () => {
     expect(updated.planActionIds).toEqual([plan.id]);
   });
 
+  test('Corriger la déclaration SCoT-AEC tant que l’amont est modifiable', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    // La coche est pré-remplie sur oui à l'étape 0 : une collectivité qui a
+    // validé sans la lire doit pouvoir se reprendre.
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+      isScotAec: true,
+    });
+
+    const updated = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      isScotAec: false,
+    });
+
+    expect(updated.isScotAec).toBe(false);
+  });
+
+  test('Refuser la correction du SCoT-AEC sur une démarche transmise', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+      isScotAec: true,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+    });
+
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId: localCollectivite.id,
+        demarcheId: created.id,
+        isScotAec: false,
+      })
+    ).rejects.toThrow('Une démarche transmise pour avis n’est plus modifiable');
+  });
+
   test('Refuser la modification d’une démarche transmise pour avis', async () => {
     const { caller, collectivite: localCollectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({

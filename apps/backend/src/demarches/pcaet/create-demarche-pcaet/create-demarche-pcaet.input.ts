@@ -15,6 +15,14 @@ export const createDemarchePcaetInputSchema = z.object({
    * aucune route ne le modifie ensuite.
    */
   transmittedOffPlatform: z.boolean().optional(),
+  /**
+   * Le PCAET est porté par un SCoT-AEC (document unique valant SCoT et PCAET).
+   * Déclaratif : n'ouvre aucun droit, et n'est pas vérifié contre la compétence
+   * Banatic 5500 — celle-ci décide seulement si la question est posée à
+   * l'écran. Refuser la valeur au motif que la ligne Banatic manque
+   * fabriquerait une impasse pour une collectivité légitime.
+   */
+  isScotAec: z.boolean().optional(),
 });
 
 export type CreateDemarchePcaetInput = z.infer<

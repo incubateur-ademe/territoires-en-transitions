@@ -68,6 +68,9 @@ export const toDossierInstructionLigne = (
         : row.demarcheId !== null
         ? 'demarche'
         : 'assujettissement',
+    // Faux, et non nul, quand la collectivité n'a rien déposé : la ligne existe
+    // alors par assujettissement, et il n'y a pas de document à qualifier.
+    isScotAec: row.isScotAec ?? false,
     nbAvisValides: row.nbAvisValides,
     nbAvisBrouillons: row.nbAvisBrouillons,
   };
