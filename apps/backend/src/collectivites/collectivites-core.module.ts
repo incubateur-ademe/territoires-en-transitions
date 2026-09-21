@@ -7,6 +7,7 @@ import { CollectiviteReferentielModeService } from './collectivite-referentiel-m
 import { CollectiviteCompetencesRepository } from './shared/collectivite-competences.repository';
 import { BibliothequeFichierRepository } from './documents/bibliotheque-fichier.repository';
 import { CollectiviteBucketRepository } from './documents/collectivite-bucket.repository';
+import { ListDocumentsByScopeRepository } from './documents/list-documents-by-scope/list-documents-by-scope.repository';
 import CollectivitesService from './services/collectivites.service';
 
 /**
@@ -24,6 +25,7 @@ import CollectivitesService from './services/collectivites.service';
     BibliothequeFichierRepository,
     CollectiviteBucketRepository,
     CollectiviteCompetencesRepository,
+    ListDocumentsByScopeRepository,
   ],
   exports: [
     CollectivitesService,
@@ -32,6 +34,7 @@ import CollectivitesService from './services/collectivites.service';
     BibliothequeFichierRepository,
     CollectiviteBucketRepository,
     CollectiviteCompetencesRepository,
+    ListDocumentsByScopeRepository,
   ],
 })
 export class CollectivitesCoreModule {}

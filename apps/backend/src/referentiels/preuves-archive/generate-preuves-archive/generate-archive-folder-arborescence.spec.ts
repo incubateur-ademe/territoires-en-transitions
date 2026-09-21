@@ -3,10 +3,10 @@ import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
 import type {
-  CollectedFilePreuve,
-  CollectedLinkPreuve,
-  CollectedPreuves,
-} from '../collect-audit-preuves/collect-preuves.repository';
+  CollectedFile,
+  CollectedLink,
+  CollectedDocuments,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
 import {
   generateArchiveFolderArborescence,
   type GenerateArchiveFolderArborescenceInput,
@@ -65,8 +65,8 @@ const referentielTree: ReferentielTreeNode = {
 };
 
 function makeFile(
-  overrides: Partial<CollectedFilePreuve> = {}
-): CollectedFilePreuve {
+  overrides: Partial<CollectedFile> = {}
+): CollectedFile {
   return {
     bucketId: 'bucket-1',
     hash: HASH_1,
@@ -78,8 +78,8 @@ function makeFile(
 }
 
 function makeLink(
-  overrides: Partial<CollectedLinkPreuve> = {}
-): CollectedLinkPreuve {
+  overrides: Partial<CollectedLink> = {}
+): CollectedLink {
   return {
     url: 'https://example.org',
     titre: 'Un lien',
@@ -89,10 +89,12 @@ function makeLink(
   };
 }
 
-const empty: CollectedPreuves = { files: [], missingFiles: [], links: [] };
+const empty: CollectedDocuments = { files: [], missingFiles: [], links: [] };
 
 function buildInput(
-  preuves: Partial<Record<keyof PreuvesByOrigin, Partial<CollectedPreuves>>> = {}
+  preuves: Partial<
+    Record<keyof PreuvesByOrigin, Partial<CollectedDocuments>>
+  > = {}
 ): GenerateArchiveFolderArborescenceInput {
   return {
     preuves: {
