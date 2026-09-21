@@ -98,6 +98,12 @@ export type CollectiviteReference = {
      * Code of the collectivite, codeInsee for communes and codeEpci/siren for EPCI
      */
     code: string;
+    /**
+     * Not part of the upstream OpenAPI schema (openapi-ts.ts); added manually so
+     * consumers can correlate by our internal collectivite id. Regenerating this
+     * file from the spec will drop it until the API exposes it.
+     */
+    collectiviteId?: number;
 };
 
 export type CreateProjetRequest = {
