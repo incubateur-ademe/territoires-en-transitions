@@ -7,6 +7,7 @@ import { ExtractionAction, ExtractionResponse } from './extract-actions.schema';
 
 const tokens: TokenUsage = {
   promptTokens: 100,
+  cachedTokens: 0,
   candidatesTokens: 50,
   thoughtsTokens: 10,
   totalTokens: 160,

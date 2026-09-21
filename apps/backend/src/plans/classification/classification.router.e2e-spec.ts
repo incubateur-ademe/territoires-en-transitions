@@ -295,6 +295,7 @@ describe('ClassificationRouter', { timeout: 30_000 }, () => {
         draft: { fiches: [], unclassified: [] },
         tokenUsage: {
           promptTokens: 1,
+          cachedTokens: 0,
           candidatesTokens: 1,
           thoughtsTokens: 0,
           totalTokens: 2,
