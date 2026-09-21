@@ -75,7 +75,7 @@ export class ScoreIndicatifRepository {
         titre,
       } = getTableColumns(indicateurDefinitionTable);
 
-      const indicateurs = await(tx ?? this.databaseService.db)
+      const indicateurs = await (tx ?? this.databaseService.db)
         .select({
           indicateurId,
           identifiantReferentiel,
@@ -198,6 +198,42 @@ export class ScoreIndicatifRepository {
         .where(not(eq(actionDefinitionTable.exprScore, '')));
 
       return success(rows.map((r) => r.actionId));
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
+  }
+
+  /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
+  async listActionsUsingIndicateurValeur(
+    indicateurValeurId: number | number[],
+    tx?: Transaction
+  ): Promise<
+    Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
+  > {
+    try {
+      const rows = await(tx ?? this.databaseService.db)
+        .selectDistinct({
+          collectiviteId: actionScoreIndicateurValeurTable.collectiviteId,
+          actionId: actionScoreIndicateurValeurTable.actionId,
+        })
+        .from(actionScoreIndicateurValeurTable)
+        .where(
+          Array.isArray(indicateurValeurId)
+            ? inArray(
+                actionScoreIndicateurValeurTable.indicateurValeurId,
+                indicateurValeurId
+              )
+            : eq(
+                actionScoreIndicateurValeurTable.indicateurValeurId,
+                indicateurValeurId
+              )
+        );
+
+      return success(rows);
     } catch (error) {
       this.logger.error(error);
       return failure(

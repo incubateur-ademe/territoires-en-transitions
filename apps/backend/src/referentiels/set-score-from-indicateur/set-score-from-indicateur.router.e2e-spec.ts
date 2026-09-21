@@ -17,6 +17,7 @@ import { and, eq } from 'drizzle-orm';
 import { actionScoreIndicateurValeurTable } from '../models/action-score-indicateur-valeur.table';
 import { actionStatutTable } from '../models/action-statut.table';
 import { createAuditWithOnTestFinished } from '../referentiels.test-fixture';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
 import { insertFixtureScoreFromIndicateur } from './set-score-from-indicateur.test-fixture';
 
@@ -218,5 +219,105 @@ describe('SetScoreFromIndicateurRouter', () => {
         valeurs: [{ indicateurValeurId: valeurIds[0], typeScore: 'fait' }],
       })
     ).rejects.toThrow(/not authenticated/i);
+  });
+
+  describe('Correction de la valeur retenue', () => {
+    test("Corriger la valeur d'indicateur retenue réactualise le score et l'avancement dérivé", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_AVEC_FORMULE,
+        indicateurId,
+        valeurs: [{ indicateurValeurId: valeurIds[0], typeScore: 'fait' }],
+      });
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancementDetaille: [0.5, 0, 0.5],
+      });
+
+      // la sélection ne change pas, seule la donnée saisie est corrigée
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId,
+        id: valeurIds[0],
+        resultat: 80,
+      });
+
+      expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toMatchObject([
+        { indicateurValeurId: valeurIds[0], typeScore: 'fait' },
+      ]);
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'detaille',
+        avancementDetaille: [0.8, 0, 0.2],
+      });
+    });
+
+    test("Corriger une valeur d'indicateur qui n'est retenue par aucune action ne provoque pas d'erreur", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.indicateurs.valeurs.upsert({
+          collectiviteId,
+          indicateurId,
+          id: valeurIds[1],
+          resultat: 42,
+        })
+      ).resolves.toBeDefined();
+    });
+  });
+
+  describe('Suppression de la valeur sélectionnée (deleteValeurIndicateur)', () => {
+    test("Supprimer une valeur d'indicateur sélectionnée réactualise le score et le snapshot, sans erreur", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_AVEC_FORMULE,
+        indicateurId,
+        valeurs: [{ indicateurValeurId: valeurIds[0], typeScore: 'fait' }],
+      });
+      expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toMatchObject([
+        { indicateurValeurId: valeurIds[0], typeScore: 'fait' },
+      ]);
+
+      const snapshotsService = app.get(SnapshotsService);
+      const computeAndUpsertSpy = vi.spyOn(
+        snapshotsService,
+        'computeAndUpsert'
+      );
+
+      await expect(
+        caller.indicateurs.valeurs.delete({
+          collectiviteId,
+          indicateurId,
+          id: valeurIds[0],
+        })
+      ).resolves.toBeUndefined();
+
+      // la sélection a été supprimée en cascade avec la valeur d'indicateur
+      expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toEqual([]);
+
+      // le score/snapshot de l'action a bien été réactualisé suite à la
+      // suppression (le score n'est alors plus calculable, faute de valeur
+      // retenue, mais le recalcul a bien été tenté)
+      expect(computeAndUpsertSpy).toHaveBeenCalledWith(
+        { collectiviteId, referentielId: ReferentielIdEnum.TE },
+        { user: editorUser }
+      );
+
+      computeAndUpsertSpy.mockRestore();
+    });
+
+    test("Supprimer une valeur d'indicateur qui n'est sélectionnée par aucune action ne provoque pas d'erreur", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.indicateurs.valeurs.delete({
+          collectiviteId,
+          indicateurId,
+          id: valeurIds[1],
+        })
+      ).resolves.toBeUndefined();
+    });
   });
 });
