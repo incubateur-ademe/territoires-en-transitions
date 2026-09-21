@@ -80,7 +80,9 @@ export const ActeEngagementSection = ({
 }: ActeEngagementSectionProps): ReactElement | null =>
   match(getActeEngagementState({ actes, isLoading, canEdit }))
     .with({ kind: 'loading' }, () => (
-      <DocumentLine filename={appLabels.chargement}>{null}</DocumentLine>
+      <DocumentLine filename={appLabels.chargement} isMissing={false}>
+        {null}
+      </DocumentLine>
     ))
     .with({ kind: 'deposited' }, (state) => (
       <PreuvesList preuves={state.actes} canEdit={state.canEdit} />

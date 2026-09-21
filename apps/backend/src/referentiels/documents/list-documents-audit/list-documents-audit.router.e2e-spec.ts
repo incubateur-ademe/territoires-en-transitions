@@ -19,6 +19,7 @@ import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { createCollectiviteAvecCycle } from '../documents-labellisation.test-fixture';
+import { getDocumentFilename } from '@tet/domain/collectivites';
 
 describe('List Documents Audit Router', () => {
   let router: TrpcRouter;
@@ -48,7 +49,7 @@ describe('List Documents Audit Router', () => {
     await app.close();
   });
 
-  test('un visiteur peut lister les documents d\'un audit', async () => {
+  test("un visiteur peut lister les documents d'un audit", async () => {
     const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
       collectiviteId: collectivite.id,
@@ -98,10 +99,11 @@ describe('List Documents Audit Router', () => {
     });
 
     await cycle.deposeUnDocumentDAudit({ fileName: 'audit-legitime.pdf' });
-    const fichierFromOtherCollectivite = await otherCycle.deposeUnDocumentDAudit({
-      fileName: 'audit-autre-collectivite.pdf',
-      sampleFileName: OTHER_PDF_SAMPLE_FILE,
-    });
+    const fichierFromOtherCollectivite =
+      await otherCycle.deposeUnDocumentDAudit({
+        fileName: 'audit-autre-collectivite.pdf',
+        sampleFileName: OTHER_PDF_SAMPLE_FILE,
+      });
 
     await db.db.insert(preuveAuditTable).values([
       {
@@ -125,7 +127,9 @@ describe('List Documents Audit Router', () => {
         auditId: cycle.auditId,
       });
 
-    const filenames = documents.map((document) => document.fichier?.filename);
+    const filenames = documents.map((document) =>
+      getDocumentFilename(document)
+    );
     expect(filenames).toContain('audit-legitime.pdf');
     expect(filenames).not.toContain('audit-autre-collectivite.pdf');
   });
@@ -153,14 +157,14 @@ describe('List Documents Audit Router', () => {
       });
 
     expect(
-      documentsVisiteur.map((document) => document.fichier?.filename)
+      documentsVisiteur.map((document) => getDocumentFilename(document))
     ).toEqual(['audit-public.pdf']);
 
     const documentsMembre =
       await membreCaller.referentiels.documents.listDocumentsAudit({ auditId });
 
     expect(
-      documentsMembre.map((document) => document.fichier?.filename)
+      documentsMembre.map((document) => getDocumentFilename(document))
     ).toEqual(['audit-public.pdf', 'audit-confidentiel.pdf']);
   });
 
@@ -194,11 +198,13 @@ describe('List Documents Audit Router', () => {
       });
 
     expect(documents).toHaveLength(1);
-    expect(documents[0].fichierId).toBe(purgedFile.id);
-    expect(documents[0].fichier).toBeNull();
+    expect(documents[0]).toMatchObject({
+      type: 'fichierManquant',
+      filename: purgedFile.filename,
+    });
   });
 
-  test("masque a un visiteur un document confidentiel dont le fichier a perdu ses octets", async () => {
+  test('masque a un visiteur un document confidentiel dont le fichier a perdu ses octets', async () => {
     const { collectiviteId, auditId, membreId, membreCaller } =
       await createCollectiviteAvecCycle({
         db,
@@ -231,8 +237,10 @@ describe('List Documents Audit Router', () => {
 
     const documentsMembre =
       await membreCaller.referentiels.documents.listDocumentsAudit({ auditId });
-    expect(documentsMembre.map((document) => document.fichierId)).toEqual([
-      purgedConfidentialFile.id,
-    ]);
+    expect(documentsMembre).toHaveLength(1);
+    expect(documentsMembre[0]).toMatchObject({
+      type: 'fichierManquant',
+      filename: purgedConfidentialFile.filename,
+    });
   });
 });

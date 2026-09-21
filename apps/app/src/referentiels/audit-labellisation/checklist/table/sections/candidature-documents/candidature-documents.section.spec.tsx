@@ -87,11 +87,15 @@ const toPreuve = ({
   objet,
   collectiviteId: 1,
   preuveType: 'labellisation',
+  type: 'fichier',
   fichier: {
     id,
+    collectiviteId: 1,
     filename,
     hash: toLegacyDocumentHash(`hash-${id}`),
     confidentiel: false,
+    bucketId: 'bucket',
+    filesize: 1024,
   },
 });
 
@@ -124,9 +128,7 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
   });
 
   it("affiche le critère sans bouton d'ajout quand aucune demande n'existe", () => {
-    setChecklist(
-      toParcours({ demandeId: null })
-    );
+    setChecklist(toParcours({ demandeId: null }));
 
     renderRow();
 
@@ -141,9 +143,7 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
   });
 
   it("affiche le bouton d'ajout pour un éditeur quand les documents sont modifiables", () => {
-    setChecklist(
-      toParcours({ demandeId: 42 })
-    );
+    setChecklist(toParcours({ demandeId: 42 }));
 
     renderRow();
 
@@ -153,10 +153,7 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
   });
 
   it("masque le bouton d'ajout une fois l'audit validé", () => {
-    setChecklist(
-      toParcours({ demandeId: 42 }),
-      false
-    );
+    setChecklist(toParcours({ demandeId: 42 }), false);
 
     renderRow();
 
@@ -164,14 +161,11 @@ describe("CandidatureDocumentsRow — bouton d'ajout", () => {
       screen.queryByRole('button', { name: appLabels.ajouterDocument })
     ).toBeNull();
   });
-
 });
 
 describe('CandidatureDocumentsRow — filtrage par objet', () => {
   it("n'affiche pas les actes d'engagement", () => {
-    setChecklist(
-      toParcours({ demandeId: 42 })
-    );
+    setChecklist(toParcours({ demandeId: 42 }));
     setPreuves([
       toPreuve({
         id: 1,
@@ -192,9 +186,7 @@ describe('CandidatureDocumentsRow — filtrage par objet', () => {
   });
 
   it("n'affiche pas une preuve sans objet", () => {
-    setChecklist(
-      toParcours({ demandeId: 42 })
-    );
+    setChecklist(toParcours({ demandeId: 42 }));
     setPreuves([toPreuve({ id: 1, filename: 'legacy.pdf', objet: null })]);
 
     renderRow();
@@ -205,9 +197,7 @@ describe('CandidatureDocumentsRow — filtrage par objet', () => {
 
 describe('CandidatureDocumentsRow — actions par document', () => {
   it('affiche « Renommer » et « Supprimer » par document pour un éditeur quand les documents sont modifiables', () => {
-    setChecklist(
-      toParcours({ demandeId: 42 })
-    );
+    setChecklist(toParcours({ demandeId: 42 }));
     setPreuves([
       toPreuve({
         id: 1,
@@ -232,10 +222,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
   });
 
   it("masque « Renommer » et « Supprimer » une fois l'audit validé", () => {
-    setChecklist(
-      toParcours({ demandeId: 42 }),
-      false
-    );
+    setChecklist(toParcours({ demandeId: 42 }), false);
     setPreuves([
       toPreuve({
         id: 1,
@@ -255,9 +242,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
   });
 
   it('affiche « Télécharger » quel que soit le profil', () => {
-    setChecklist(
-      toParcours({ demandeId: 42 })
-    );
+    setChecklist(toParcours({ demandeId: 42 }));
     setPreuves([
       toPreuve({
         id: 1,

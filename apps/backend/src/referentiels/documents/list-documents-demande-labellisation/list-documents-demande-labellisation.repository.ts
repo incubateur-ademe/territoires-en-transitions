@@ -43,6 +43,7 @@ export class ListDocumentsDemandeLabellisationRepository {
           ...getTableColumns(preuveLabellisationTable),
           modifiedAt: sqlToDateTimeISO(preuveLabellisationTable.modifiedAt),
           fichier: buildFileInfoSql(fichier),
+          bibliothequeFilename: bibliothequeFichierTable.filename,
           demande: {
             ...getTableColumns(labellisationDemandeTable),
             date: sqlToDate(labellisationDemandeTable.date),
