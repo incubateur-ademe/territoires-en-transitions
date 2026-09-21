@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import type { PcaetDiagnostic } from '@tet/domain/demarches';
+import {
+  peutRecevoirSousThematique,
+  type PcaetDiagnostic,
+} from '@tet/domain/demarches';
 import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { isThematiqueDejaExistant } from '../shared/demarche-pcaet-vulnerabilite-conflict.utils';
@@ -23,7 +26,12 @@ export class AddVulnerabiliteThematiqueService {
   ) {}
 
   async addThematique(
-    { collectiviteId, demarcheId, label }: AddVulnerabiliteThematiqueInput,
+    {
+      collectiviteId,
+      demarcheId,
+      label,
+      parentId,
+    }: AddVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetDiagnostic, AddVulnerabiliteThematiqueError>> {
     return this.transactionManager.executeSingle(async (transaction) => {
@@ -36,11 +44,33 @@ export class AddVulnerabiliteThematiqueService {
         return failure(AddVulnerabiliteThematiqueErrorEnum[access.error]);
       }
 
+      if (parentId !== null) {
+        const parente = await this.vulnerabiliteRepository.findThematique(
+          { thematiqueId: parentId, collectiviteId },
+          transaction
+        );
+        if (!parente) {
+          return failure(
+            AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_NON_ACCESSIBLE
+          );
+        }
+        if (!peutRecevoirSousThematique(parente)) {
+          // Le socle n'est pas modifiable — on n'y greffe pas davantage qu'on
+          // ne le renomme — et une sous-thématique n'en porte pas à son tour.
+          return failure(
+            parente.isSocle
+              ? AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_SOCLE
+              : AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_NON_RACINE
+          );
+        }
+      }
+
       // Le libellé peut déjà exister au catalogue de la collectivité sans être
       // rattaché à cette démarche : on le rattache alors, plutôt que de forcer
-      // l'utilisateur à en inventer un autre.
+      // l'utilisateur à en inventer un autre. L'homonymie ne se juge que dans
+      // la fratrie visée.
       const existant = await this.vulnerabiliteRepository.findThematiqueByLabel(
-        { collectiviteId, label },
+        { collectiviteId, label, parentId },
         transaction
       );
 
@@ -63,7 +93,12 @@ export class AddVulnerabiliteThematiqueService {
       } else {
         try {
           const cree = await this.vulnerabiliteRepository.insertThematique(
-            { collectiviteId, label, userId: user.id },
+            {
+              collectiviteId,
+              label,
+              parentId,
+              userId: user.id,
+            },
             transaction
           );
           await this.vulnerabiliteRepository.attachThematique(

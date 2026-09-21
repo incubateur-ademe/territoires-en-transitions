@@ -22,9 +22,11 @@ export class RemoveVulnerabiliteThematiqueService {
   ) {}
 
   /**
-   * Retire la thématique de cette démarche. Le catalogue de la collectivité n'est
-   * purgé que si plus aucune autre démarche ne le rattache : supprimer depuis
-   * un dépôt ne doit jamais amputer la saisie d'un autre.
+   * Retire la thématique de cette démarche, ses sous-thématiques avec elle : une
+   * sous-thématique sans parente n'a plus de place dans le tableau. Le catalogue
+   * de la collectivité n'est purgé que si plus aucune autre démarche ne la
+   * rattache — supprimer depuis un dépôt ne doit jamais amputer la saisie d'un
+   * autre.
    */
   async removeThematique(
     {
@@ -59,11 +61,13 @@ export class RemoveVulnerabiliteThematiqueService {
         );
       }
 
-      await this.vulnerabiliteRepository.detachThematique(
+      await this.vulnerabiliteRepository.detachThematiqueEtEnfants(
         { demarcheId, thematiqueId },
         transaction
       );
 
+      // Le rattachement se compte sur la parente : ses sous-thématiques la
+      // suivent, et le CASCADE de `parent_id` les emporte du catalogue.
       const autresDemarches =
         await this.vulnerabiliteRepository.countAutresDemarchesRattachees(
           { demarcheId, thematiqueId },

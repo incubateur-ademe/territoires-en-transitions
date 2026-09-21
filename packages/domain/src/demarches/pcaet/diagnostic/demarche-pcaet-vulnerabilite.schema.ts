@@ -15,12 +15,17 @@ export const OBJECTIFS_MAX_LENGTH = 2000;
  * Une thématique ou milieu de vulnérabilité. Le socle vient du cadre de dépôt et
  * s'impose à toutes les collectivités ; une collectivité peut en ajouter, et
  * ceux-là seuls sont renommables et supprimables.
+ *
+ * Une thématique se décline en sous-thématiques sur un seul niveau : une
+ * sous-thématique n'en porte jamais à son tour.
  */
 export const demarchePcaetVulnerabiliteThematiqueSchema = z.object({
   id: z.number(),
   /** Identifiant métier stable du socle, `null` pour une thématique ajoutée. */
   code: z.nullable(z.string()),
   label: z.string(),
+  /** Thématique parente, `null` pour une racine. Jamais une sous-thématique. */
+  parentId: z.nullable(z.number()),
   /** Une thématique requise doit être renseignée pour que le volet soit complet. */
   requis: z.boolean(),
   /** Une thématique du socle ne peut être ni renommée ni supprimée. */
@@ -30,6 +35,19 @@ export const demarchePcaetVulnerabiliteThematiqueSchema = z.object({
 export type DemarchePcaetVulnerabiliteThematique = z.infer<
   typeof demarchePcaetVulnerabiliteThematiqueSchema
 >;
+
+/**
+ * Seule une thématique racine ajoutée par la collectivité accueille des
+ * sous-thématiques : le socle n'est pas modifiable, et la hiérarchie s'arrête
+ * au premier sous-niveau.
+ *
+ * Énoncé unique de la règle, pour que le bouton offert par le tableau et le
+ * refus opposé par l'API ne puissent pas diverger. La base la tient aussi,
+ * par son trigger, mais en dernier rempart.
+ */
+export const peutRecevoirSousThematique = (
+  thematique: Pick<DemarchePcaetVulnerabiliteThematique, 'isSocle' | 'parentId'>
+): boolean => !thematique.isSocle && thematique.parentId === null;
 
 /**
  * La saisie d'une démarche pour une thématique. Un `null` est une absence de

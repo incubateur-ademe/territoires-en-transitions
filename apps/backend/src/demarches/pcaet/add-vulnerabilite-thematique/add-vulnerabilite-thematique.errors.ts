@@ -7,6 +7,9 @@ import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.servi
 const specificErrors = [
   ...demarchePcaetAccessErrors,
   'THEMATIQUE_DEJA_EXISTANT',
+  'THEMATIQUE_PARENT_NON_ACCESSIBLE',
+  'THEMATIQUE_PARENT_SOCLE',
+  'THEMATIQUE_PARENT_NON_RACINE',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -25,6 +28,21 @@ export const addVulnerabiliteThematiqueErrorConfig: TrpcErrorHandlerConfig<Speci
       THEMATIQUE_DEJA_EXISTANT: {
         code: 'CONFLICT',
         message: 'Cette thématique de vulnérabilité existe déjà',
+      },
+      THEMATIQUE_PARENT_NON_ACCESSIBLE: {
+        code: 'NOT_FOUND',
+        message:
+          "La thématique parente n'existe pas pour la collectivité",
+      },
+      THEMATIQUE_PARENT_SOCLE: {
+        code: 'FORBIDDEN',
+        message:
+          "Les thématiques de la liste réglementaire n'accueillent pas de sous-thématique",
+      },
+      THEMATIQUE_PARENT_NON_RACINE: {
+        code: 'CONFLICT',
+        message:
+          'Une sous-thématique de vulnérabilité ne peut pas en porter à son tour',
       },
     },
   };
