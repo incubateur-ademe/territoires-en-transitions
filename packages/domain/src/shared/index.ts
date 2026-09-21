@@ -1,3 +1,4 @@
+export * from './analysis-step.enum';
 export * from './categorie-action.enum';
 export * from './categorie-fnv.schema';
 export * from './departement.schema';
