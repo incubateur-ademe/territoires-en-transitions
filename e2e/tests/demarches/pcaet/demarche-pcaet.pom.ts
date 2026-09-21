@@ -360,4 +360,27 @@ export class DemarchePcaetPom {
     await this.page.getByPlaceholder('Nom de la thématique').fill(label);
     await this.page.getByRole('button', { name: 'Valider' }).click();
   }
+
+  /**
+   * Bouton d'ajout d'une sous-thématique, dans la case de sa parente. Seules
+   * les racines ajoutées par la collectivité en portent un.
+   */
+  vulnerabiliteAjouterSousThematiqueButton(parentLabel: string): Locator {
+    return this.page.getByRole('button', {
+      name: `Ajouter une sous-thématique à ${parentLabel}`,
+    });
+  }
+
+  /** Chevron de repli d'une grappe, sur la ligne de sa thématique parente. */
+  vulnerabiliteReplierButton(code: string): Locator {
+    return this.page.locator(
+      `[data-test="demarches.pcaet.vulnerabilite.replier-button-${code}"]`
+    );
+  }
+
+  async addVulnerabiliteSousThematique(parentLabel: string, label: string) {
+    await this.vulnerabiliteAjouterSousThematiqueButton(parentLabel).click();
+    await this.page.getByPlaceholder('Nom de la sous-thématique').fill(label);
+    await this.page.getByRole('button', { name: 'Valider' }).click();
+  }
 }

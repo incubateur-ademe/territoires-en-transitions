@@ -163,7 +163,14 @@ const topicVulnerabilite = (): PcaetDiagnostic['vulnerabilite'] => ({
   icon: 'map-2-line',
   horizons: [2050, 2100],
   thematiques: [
-    { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
+    {
+      id: 1,
+      code: 'eau',
+      label: 'Eau',
+      parentId: null,
+      requis: true,
+      isSocle: true,
+    },
   ],
   lignes: [
     {

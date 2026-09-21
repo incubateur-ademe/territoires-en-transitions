@@ -1,5 +1,5 @@
 begin;
-select plan(10);
+select plan(12);
 
 select id as collectivite_id
 into temporary table test_collectivite
@@ -11,22 +11,49 @@ select tc.collectivite_id, 'pcaet', 'PCAET de test' from test_collectivite tc;
 -- Le socle fait partie du contrat de la migration : sans lui le tableau de
 -- vulnérabilité est vide et rien n'est exigible au dépôt.
 
--- Recadré à 9 thématiques par demarche/pcaet_vulnerabilite_thematique_socle_recadre :
--- la liste indicative du cadre de dépôt (16 thématiques) était trop large à l'usage.
+-- Recadré à 9 thématiques par demarche/pcaet_vulnerabilite_thematique_socle_recadre
+-- (la liste indicative du cadre de dépôt en comptait 16, trop large à l'usage),
+-- puis augmenté des risques naturels par
+-- demarche/pcaet_vulnerabilite_sous_thematiques.
 select is(
        (select count(*)::int from demarche_pcaet_vulnerabilite_thematique
          where collectivite_id is null),
-       9,
-       'Les 9 thématiques du socle doivent être seedées'
+       18,
+       'Les 10 thématiques du socle et les 8 risques naturels doivent être seedés'
    );
 
 select is(
        (select array_agg(code order by display_order)
           from demarche_pcaet_vulnerabilite_thematique
-         where collectivite_id is null),
+         where collectivite_id is null and parent_id is null),
        array['agriculture', 'amenagement', 'batiments', 'biodiversite', 'eau',
-             'foret', 'energie', 'economie', 'sante'],
-       'Les thématiques du socle suivent la liste et l''ordre du proto'
+             'foret', 'energie', 'economie', 'sante', 'risques_naturels'],
+       'Les thématiques racines du socle suivent la liste et l''ordre du proto'
+   );
+
+select is(
+       (select array_agg(enfant.code order by enfant.display_order)
+          from demarche_pcaet_vulnerabilite_thematique enfant
+          join demarche_pcaet_vulnerabilite_thematique parent
+            on parent.id = enfant.parent_id
+         where parent.code = 'risques_naturels'),
+       array['risque_secheresse', 'risque_inondation', 'risque_incendie_foret',
+             'risque_submersion_marine', 'risque_vagues_chaleur',
+             'risque_recul_trait_cote', 'risque_retrait_gonflement_argiles',
+             'risque_cyclones'],
+       'Les huit risques naturels se rangent sous leur parente, dans l''ordre'
+   );
+
+-- La hiérarchie tient sur un seul niveau : le trigger l'impose, le modèle ne
+-- saurait pas rendre un troisième étage.
+select throws_ok(
+       format($$ insert into demarche_pcaet_vulnerabilite_thematique
+                     (code, label, collectivite_id, requis, display_order, parent_id)
+                 values ('risque_test', 'Test', null, true, 999, %s) $$,
+              (select id from demarche_pcaet_vulnerabilite_thematique
+                where code = 'risque_secheresse')),
+       'Les sous-thématiques de vulnérabilité tiennent sur un seul niveau',
+       'Une sous-thématique n''accueille pas de sous-thématique'
    );
 
 -- L'échappatoire offerte à la collectivité est « non concerné », pas la dispense.

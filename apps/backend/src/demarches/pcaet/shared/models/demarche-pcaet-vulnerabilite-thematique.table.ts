@@ -5,6 +5,7 @@ import {
   modifiedAt,
   modifiedBy,
 } from '@tet/backend/utils/column.utils';
+import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 
 /**
@@ -12,6 +13,9 @@ import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
  * socle du cadre de dépôt (`collectiviteId` nul, ni renommable ni supprimable)
  * et les thématiques ajoutées par une collectivité, partagées par toutes ses
  * démarches : les valeurs n'ont ainsi qu'une clé étrangère à suivre.
+ *
+ * Une thématique se décline en sous-thématiques sur un seul niveau, garanti
+ * par un trigger : `parent_id` ne peut désigner qu'une racine.
  */
 export const demarchePcaetVulnerabiliteThematiqueTable = pgTable(
   'demarche_pcaet_vulnerabilite_thematique',
@@ -23,6 +27,11 @@ export const demarchePcaetVulnerabiliteThematiqueTable = pgTable(
     /** Collectivité propriétaire de la thématique ajoutée, nul pour le socle. */
     collectiviteId: integer('collectivite_id').references(
       () => collectiviteTable.id,
+      { onDelete: 'cascade' }
+    ),
+    /** Thématique parente, nulle pour une racine. Jamais une sous-thématique. */
+    parentId: integer('parent_id').references(
+      (): AnyPgColumn => demarchePcaetVulnerabiliteThematiqueTable.id,
       { onDelete: 'cascade' }
     ),
     /** Une thématique requise doit être renseignée pour que le volet soit complet. */

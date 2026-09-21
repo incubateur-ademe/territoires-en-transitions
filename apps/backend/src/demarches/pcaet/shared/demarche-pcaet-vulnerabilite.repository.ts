@@ -9,6 +9,7 @@ import {
   type DemarchePcaetVulnerabiliteNiveau,
 } from '@tet/domain/demarches';
 import { and, asc, eq, isNull, ne, or, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { demarchePcaetVulnerabiliteThematiqueTable } from './models/demarche-pcaet-vulnerabilite-thematique.table';
 import { demarchePcaetVulnerabiliteValeurTable } from './models/demarche-pcaet-vulnerabilite-valeur.table';
 
@@ -18,6 +19,7 @@ type ThematiqueRow = {
   code: string | null;
   label: string;
   collectiviteId: number | null;
+  parentId: number | null;
   requis: boolean;
 };
 
@@ -55,8 +57,18 @@ const thematiqueColumns = {
   code: demarchePcaetVulnerabiliteThematiqueTable.code,
   label: demarchePcaetVulnerabiliteThematiqueTable.label,
   collectiviteId: demarchePcaetVulnerabiliteThematiqueTable.collectiviteId,
+  parentId: demarchePcaetVulnerabiliteThematiqueTable.parentId,
   requis: demarchePcaetVulnerabiliteThematiqueTable.requis,
 };
+
+/**
+ * Alias de la parente, pour ranger chaque sous-thématique derrière elle sans
+ * ramener l'arbre côté application.
+ */
+const parenteTable = alias(
+  demarchePcaetVulnerabiliteThematiqueTable,
+  'parente'
+);
 
 /**
  * La ligne de `demarche_pcaet_vulnerabilite_valeur` fait office de rattachement
@@ -84,6 +96,13 @@ export class DemarchePcaetVulnerabiliteRepository {
     const rows = await db
       .select(thematiqueColumns)
       .from(demarchePcaetVulnerabiliteThematiqueTable)
+      .leftJoin(
+        parenteTable,
+        eq(
+          parenteTable.id,
+          demarchePcaetVulnerabiliteThematiqueTable.parentId
+        )
+      )
       .where(
         and(
           this.appartientA(collectiviteId),
@@ -97,7 +116,15 @@ export class DemarchePcaetVulnerabiliteRepository {
           )
         )
       )
+      // Chaque sous-thématique suit immédiatement sa parente : le rang de la
+      // racine prime, puis la parente passe avant sa descendance.
       .orderBy(
+        asc(
+          sql`coalesce(${parenteTable.displayOrder}, ${demarchePcaetVulnerabiliteThematiqueTable.displayOrder})`
+        ),
+        asc(
+          sql`(${demarchePcaetVulnerabiliteThematiqueTable.parentId} is not null)`
+        ),
         asc(demarchePcaetVulnerabiliteThematiqueTable.displayOrder),
         asc(demarchePcaetVulnerabiliteThematiqueTable.id)
       );
@@ -142,12 +169,17 @@ export class DemarchePcaetVulnerabiliteRepository {
   }
 
   /**
-   * Thématique accessible portant ce libellé, à la casse près. La comparaison est
-   * faite par Postgres (`lower`), la même que celle de l'index d'unicité : une
-   * comparaison JS dépendrait de la locale du process et divergerait.
+   * Thématique accessible portant ce libellé dans la fratrie visée, à la casse
+   * près. La comparaison est faite par Postgres (`lower`), la même que celle de
+   * l'index d'unicité : une comparaison JS dépendrait de la locale du process
+   * et divergerait.
    */
   async findThematiqueByLabel(
-    { collectiviteId, label }: { collectiviteId: number; label: string },
+    {
+      collectiviteId,
+      label,
+      parentId,
+    }: { collectiviteId: number; label: string; parentId: number | null },
     tx?: Transaction
   ): Promise<DemarchePcaetVulnerabiliteThematique | undefined> {
     const db = tx ?? this.databaseService.db;
@@ -157,6 +189,12 @@ export class DemarchePcaetVulnerabiliteRepository {
       .where(
         and(
           this.appartientA(collectiviteId),
+          parentId === null
+            ? isNull(demarchePcaetVulnerabiliteThematiqueTable.parentId)
+            : eq(
+                demarchePcaetVulnerabiliteThematiqueTable.parentId,
+                parentId
+              ),
           sql`lower(${demarchePcaetVulnerabiliteThematiqueTable.label}) = lower(${label})`
         )
       )
@@ -165,6 +203,8 @@ export class DemarchePcaetVulnerabiliteRepository {
     const row = rows[0];
     return row === undefined ? undefined : toThematique(row);
   }
+
+
 
   async isThematiqueRattache(
     { demarcheId, thematiqueId }: { demarcheId: number; thematiqueId: number },
@@ -231,20 +271,27 @@ export class DemarchePcaetVulnerabiliteRepository {
       .onConflictDoNothing();
   }
 
-  /** Retire la thématique de cette démarche, et d'elle seule. */
-  async detachThematique(
+  /**
+   * Retire de cette démarche la thématique et ses sous-thématiques, en une
+   * instruction : une sous-thématique dont la parente est partie n'a plus de
+   * place dans le tableau. Lire les enfants d'abord laisserait une fenêtre où
+   * un enfant ajouté en concurrence resterait rattaché, parente disparue.
+   */
+  async detachThematiqueEtEnfants(
     { demarcheId, thematiqueId }: { demarcheId: number; thematiqueId: number },
     tx?: Transaction
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;
-    await db
-      .delete(demarchePcaetVulnerabiliteValeurTable)
-      .where(
-        and(
-          eq(demarchePcaetVulnerabiliteValeurTable.demarcheId, demarcheId),
-          eq(demarchePcaetVulnerabiliteValeurTable.thematiqueId, thematiqueId)
-        )
-      );
+    await db.delete(demarchePcaetVulnerabiliteValeurTable).where(
+      and(
+        eq(demarchePcaetVulnerabiliteValeurTable.demarcheId, demarcheId),
+        sql`${demarchePcaetVulnerabiliteValeurTable.thematiqueId} in (
+              select t.id
+                from ${demarchePcaetVulnerabiliteThematiqueTable} t
+               where t.id = ${thematiqueId} or t.parent_id = ${thematiqueId}
+            )`
+      )
+    );
   }
 
   /** Nombre de démarches, autres que celle-ci, où la thématique est rattachée. */
@@ -336,8 +383,14 @@ export class DemarchePcaetVulnerabiliteRepository {
     {
       collectiviteId,
       label,
+      parentId,
       userId,
-    }: { collectiviteId: number; label: string; userId: string },
+    }: {
+      collectiviteId: number;
+      label: string;
+      parentId: number | null;
+      userId: string;
+    },
     tx?: Transaction
   ): Promise<DemarchePcaetVulnerabiliteThematique> {
     const db = tx ?? this.databaseService.db;
@@ -347,6 +400,7 @@ export class DemarchePcaetVulnerabiliteRepository {
         code: null,
         label,
         collectiviteId,
+        parentId,
         // Une thématique ajoutée ne conditionne jamais la transmission : le socle
         // est ce que le cadre de dépôt exige, pas ce que la collectivité ajoute.
         requis: false,
@@ -441,6 +495,7 @@ const toThematique = (
   id: row.id,
   code: row.code,
   label: row.label,
+  parentId: row.parentId,
   requis: row.requis,
   isSocle: row.collectiviteId === null,
 });

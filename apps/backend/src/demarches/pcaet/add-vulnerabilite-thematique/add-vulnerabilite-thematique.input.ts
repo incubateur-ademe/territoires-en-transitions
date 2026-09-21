@@ -10,6 +10,18 @@ export const addVulnerabiliteThematiqueInputSchema = z.object({
   collectiviteId: z.number().int().positive(),
   demarcheId: z.number().int().positive(),
   label: z.string().trim().min(1).max(VULNERABILITE_THEMATIQUE_LABEL_MAX),
+  /**
+   * Thématique parente. Absente, la thématique est une racine. Seule une
+   * racine ajoutée par la collectivité accueille des sous-thématiques : le
+   * socle n'est pas modifiable, et la hiérarchie s'arrête au premier
+   * sous-niveau.
+   */
+  parentId: z
+    .number()
+    .int()
+    .positive()
+    .nullish()
+    .transform((v) => v ?? null),
 });
 
 export type AddVulnerabiliteThematiqueInput = z.infer<

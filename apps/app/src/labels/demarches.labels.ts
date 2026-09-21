@@ -354,6 +354,28 @@ export const demarchesLabels = {
     `Renommer la thématique ${label}`,
   demarcheVulnerabiliteAjouterThematique: 'Ajouter une thématique',
   demarcheVulnerabiliteNomThematique: 'Nom de la thématique',
+  demarcheVulnerabiliteAjouterSousThematique: 'Ajouter une sous-thématique',
+  demarcheVulnerabiliteAjouterSousThematiqueNomme: ({
+    parent,
+  }: {
+    parent: string;
+  }) => `Ajouter une sous-thématique à ${parent}`,
+  demarcheVulnerabiliteNomSousThematique: 'Nom de la sous-thématique',
+  /**
+   * Situe une sous-thématique pour le lecteur d'écran : les traits
+   * d'arborescence sont décoratifs, il ne les voit pas.
+   */
+  demarcheVulnerabiliteSousThematiqueDe: ({ parent }: { parent: string }) =>
+    `sous-thématique de ${parent}`,
+  demarcheVulnerabiliteReplierThematique: ({ label }: { label: string }) =>
+    `Replier les sous-thématiques de ${label}`,
+  demarcheVulnerabiliteDeplierThematique: ({
+    label,
+    enfants,
+  }: {
+    label: string;
+    enfants: number;
+  }) => `Déplier les ${enfants} sous-thématiques de ${label}`,
   demarcheVulnerabiliteThematiqueSupprime: 'Thématique supprimée',
   demarcheVulnerabiliteSupprimerThematique: 'Supprimer cette thématique',
   demarcheVulnerabiliteSupprimerThematiqueNomme: ({
@@ -364,10 +386,15 @@ export const demarchesLabels = {
   demarcheVulnerabiliteSupprimerThematiqueTitre: 'Retirer cette thématique ?',
   demarcheVulnerabiliteSupprimerThematiqueDescription: ({
     label,
+    enfants,
   }: {
     label: string;
+    /** Sous-thématiques emportées avec elle, à annoncer avant le retrait. */
+    enfants: number;
   }) =>
-    `« ${label} » sera retirée de cette démarche, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité la conservent.`,
+    `« ${label} » sera retirée de cette démarche${
+      enfants > 0 ? ` avec ses ${enfants} sous-thématiques` : ''
+    }, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité la conservent.`,
   demarcheVulnerabiliteSupprimerThematiqueConfirmer: 'Retirer',
   demarcheVulnerabiliteThematiqueDejaExistant:
     'Une thématique porte déjà ce nom dans cette démarche',

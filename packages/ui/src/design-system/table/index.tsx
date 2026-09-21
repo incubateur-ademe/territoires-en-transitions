@@ -8,3 +8,4 @@ export * from './table.head';
 export * from './table.header-cell';
 export * from './table.loading';
 export * from './table.row';
+export * from './table.tree';
