@@ -1,11 +1,9 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import type {
   DemarchePcaetTransitionEvaluations,
   DemarcheType,
 } from '@tet/domain/demarches';
-import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
 import type { DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet } from '../types';
@@ -25,6 +23,8 @@ export type DemarcheAvanceSidePanelContentProps = {
   onTransmettre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
+  /** Le dossier a été transmis pour avis hors de la plateforme. */
+  horsPlateforme?: boolean;
   isPreview?: boolean;
 };
 
@@ -44,6 +44,7 @@ export const DemarcheAvanceSidePanelContent = ({
   onTransmettre,
   isPublished = false,
   onPublish,
+  horsPlateforme = false,
   isPreview = false,
 }: DemarcheAvanceSidePanelContentProps) => (
   <div className="flex flex-col gap-4 p-4">
@@ -59,15 +60,8 @@ export const DemarcheAvanceSidePanelContent = ({
       onTransmettre={onTransmettre}
       isPublished={isPublished}
       onPublish={onPublish}
+      horsPlateforme={horsPlateforme}
       isPreview={isPreview}
     />
-
-    <VisibleWhen condition={isPublished}>
-      <Alert
-        state="success"
-        title={appLabels.demarcheDetailPublieeTitre}
-        description={appLabels.demarcheDetailPublieeDescription}
-      />
-    </VisibleWhen>
   </div>
 );

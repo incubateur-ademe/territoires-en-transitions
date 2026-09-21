@@ -1,8 +1,8 @@
 import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
-import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
-import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/useEditPreuve';
+import { toDocumentAudit } from '@/app/referentiels/preuves/mappers/to-document-audit';
+import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
   MAX_FILE_SIZE_MB,
@@ -142,7 +142,7 @@ export const useUploadAuditReport = (
   const removeReport = async (report: AuditReport): Promise<void> => {
     setRemovingReportIds((prev) => new Set(prev).add(report.id));
     try {
-      await removePreuve(auditReportToPreuve(report));
+      await removePreuve(toDocumentAudit(report));
       await refetchReports();
     } catch (error) {
       console.error(error);

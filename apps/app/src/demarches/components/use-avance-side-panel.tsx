@@ -96,6 +96,9 @@ export function useDemarcheAvanceSidePanel(
     contentProps.isPublished,
     contentProps.transitions,
     contentProps.isPreview,
+    // La case « hors plateforme » du formulaire de création redessine le
+    // parcours : le panneau doit suivre la coche, pas seulement l'ouverture.
+    contentProps.horsPlateforme,
     contentProps.completion.documents,
     contentProps.completion.documentsAval,
     contentProps.completion.diagnostic,

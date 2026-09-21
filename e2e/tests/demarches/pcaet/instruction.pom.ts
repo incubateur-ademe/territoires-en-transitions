@@ -120,14 +120,19 @@ export class InstructionPom {
     await expect(this.page.getByTestId('nav-pa')).toBeVisible();
   }
 
+  /**
+   * `casquette` et non le nom du service : la bannière dit à quel titre l'agent
+   * est là (« la DREAL »), le nom propre étant déjà lisible dans le sélecteur de
+   * contexte du header.
+   */
   async expectContexte({
     collectiviteInstruiteId,
     demandeAvisId,
-    serviceNom,
+    casquette,
   }: {
     collectiviteInstruiteId: number;
     demandeAvisId: number;
-    serviceNom: string;
+    casquette: string;
   }) {
     // L'URL porte la collectivité instruite, pas le service : c'est la bascule
     // de contexte elle-même.
@@ -135,7 +140,7 @@ export class InstructionPom {
       `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}`
     );
     await expect(this.dossier).toBeVisible();
-    await expect(this.banner).toContainText(serviceNom);
+    await expect(this.banner).toContainText(casquette);
     // Sur le dossier lui-même, le raccourci vers le dossier n'a rien à proposer.
     await expect(this.bannerBackToDossier).toBeHidden();
   }

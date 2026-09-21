@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { createColumnHelper } from '@tanstack/react-table';
+import { isNewReferentiel, ReferentielId } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import { cn, TableHeaderCell } from '@tet/ui';
 import { useMemo } from 'react';
@@ -18,6 +19,7 @@ import { ReferentielTableFichesCell } from './referentiel-table.fiches.cell';
 import {
   getCategorieFilterFn,
   getExplicationFilterFn,
+  getLabelsFilterFn,
   getPilotesFilterFn,
   getScoreRangeFilterFn,
   getServicesFilterFn,
@@ -27,11 +29,13 @@ import {
   CategorieHeaderFilter,
   ExplicationHeaderFilter,
   IntituleHeaderFilter,
+  LabelsHeaderFilter,
   PilotesHeaderFilter,
   ScoreRangeHeaderFilter,
   ServicesHeaderFilter,
   StatutHeaderFilter,
 } from './referentiel-table.header-filters';
+import { ReferentielTableLabelsCell } from './referentiel-table.labels.cell';
 import { ReferentielTablePersonnesPilotesCell } from './referentiel-table.personnes-pilotes.cell';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
 import { ReferentielTableProgressionCell } from './referentiel-table.progression.cell';
@@ -90,10 +94,12 @@ const getColumns = ({
   actions,
   filtersState,
   auditColumnsScope,
+  referentielId,
 }: {
   actions: Record<string, ActionListItem>;
   filtersState: ReferentielTableFiltersState;
   auditColumnsScope: AuditColumnsScope;
+  referentielId: ReferentielId;
 }) => [
   columnHelper.accessor('nom', {
     size: 512,
@@ -139,6 +145,27 @@ const getColumns = ({
     cell: (info) => <ReferentielTableCategorieCell info={info} />,
     filterFn: getCategorieFilterFn(actions),
   }),
+
+  ...(isNewReferentiel(referentielId)
+    ? [
+        columnHelper.accessor('labels', {
+          header: () => (
+            <TableHeaderCell
+              title={appLabels.referentielTableColonneLabels}
+              className={cn('w-20')}
+              filter={
+                <LabelsHeaderFilter
+                  filters={filtersState.filters}
+                  setFilters={filtersState.setFilters}
+                />
+              }
+            />
+          ),
+          cell: (info) => <ReferentielTableLabelsCell info={info} />,
+          filterFn: getLabelsFilterFn,
+        }),
+      ]
+    : []),
 
   columnHelper.accessor((row) => row.score.pointPotentiel, {
     id: 'pointPotentiel',
@@ -455,10 +482,12 @@ export function useListReferentielTableColumns({
   actions,
   filtersState,
   auditColumnsScope,
+  referentielId,
 }: {
   actions: Record<string, ActionListItem>;
   filtersState: ReferentielTableFiltersState;
   auditColumnsScope: AuditColumnsScope;
+  referentielId: ReferentielId;
 }) {
   const columns = useMemo(
     () =>
@@ -466,8 +495,9 @@ export function useListReferentielTableColumns({
         actions,
         filtersState,
         auditColumnsScope,
+        referentielId,
       }),
-    [actions, filtersState, auditColumnsScope]
+    [actions, filtersState, auditColumnsScope, referentielId]
   );
 
   return { columns };

@@ -11,7 +11,7 @@ import type {
   DemarchePcaetTransitionEvaluations,
 } from '@tet/domain/demarches';
 import { getTransitionBlocageLabel } from '../transitions';
-import { Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Alert, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
@@ -305,6 +305,12 @@ type Props = {
   onPublish?: () => void;
   /** Affiche le stepper sans liens ni actions (page de création). */
   isPreview?: boolean;
+  /**
+   * Le PCAET a été transmis pour avis hors de la plateforme : l'élaboration et
+   * la transmission ont eu lieu ailleurs, et tout le dossier se remplit à
+   * l'étape de finalisation.
+   */
+  horsPlateforme?: boolean;
 };
 
 export const AvanceDemarcheSection = ({
@@ -320,6 +326,7 @@ export const AvanceDemarcheSection = ({
   isPublished,
   onPublish,
   isPreview = false,
+  horsPlateforme = false,
 }: Props) => {
   const activeIndex = getEtapeIndexDemarchePcaet(statut);
   const transmettre = transitions?.transmettre_pour_avis;
@@ -365,6 +372,32 @@ export const AvanceDemarcheSection = ({
     },
   ];
 
+  /**
+   * Sous-étape « documents » d'un dépôt hors plateforme : une seule, pour les
+   * deux temps — ils se remplissent dans le même écran, sous la même liste.
+   *
+   * Construite à part plutôt que dérivée de `sectionSteps` : le modèle peut
+   * n'attendre aucune pièce amont tout en en exigeant à l'aval, et reprendre la
+   * sous-étape de l'amont ferait alors disparaître de la liste les pièces mêmes
+   * qui conditionnent la publication.
+   */
+  const documentsHorsPlateformeSteps: SectionStep[] =
+    completion.documents === null && completion.documentsAval === null
+      ? []
+      : [
+          {
+            key: 'documents' as const,
+            label: appLabels.demarcheDetailDocumentsTitre,
+            description: appLabels.demarcheAvanceSectionDocumentsDescription,
+            status:
+              completion.documents !== 'incomplete' &&
+              completion.documentsAval !== 'incomplete'
+                ? 'complete'
+                : 'incomplete',
+            href: documentsUrl,
+          },
+        ];
+
   // Sous-étapes de la finalisation : les pièces produites après les avis
   // (délibération d'adoption…), dont la couverture conditionne la publication,
   // puis les deux rappels du dossier transmis. Ceux-ci mènent aux écrans de
@@ -406,6 +439,19 @@ export const AvanceDemarcheSection = ({
   // la transition n'arme que le bouton.
   const isFinalisationReached = activeIndex >= ETAPE.finalisation;
 
+  /**
+   * Un dépôt hors plateforme n'a pas d'avis à relire : sa finalisation n'est pas
+   * une reprise du dossier mais sa constitution entière. Les sous-étapes sont
+   * donc celles de l'élaboration, avec leur complétude — ce sont elles qui
+   * arment la publication — et non deux rappels en lecture seule.
+   */
+  const etapeFinaleSteps: SectionStep[] = horsPlateforme
+    ? [
+        ...documentsHorsPlateformeSteps,
+        ...sectionSteps.filter((step) => step.key !== 'documents'),
+      ]
+    : finalisationSteps;
+
   const [elaborationStep, ...remainingSteps] = buildSteps(typeLabels);
   const isElaborationActive = !isPreview && activeIndex === 0;
 
@@ -426,14 +472,23 @@ export const AvanceDemarcheSection = ({
         connectorActive={!isPreview}
       />
 
-      {/* Étape 1 : en cours de dépôt */}
+      {/* Étape 1 : en cours de dépôt. Un dépôt hors plateforme ne l'a pas
+          franchie sur la plateforme : la marquer « faite » laisserait croire
+          qu'elle y a eu lieu, alors qu'elle n'y a simplement pas eu lieu. */}
       <NumberedStep
-        step={elaborationStep}
+        step={
+          horsPlateforme
+            ? {
+                ...elaborationStep,
+                description: appLabels.demarcheAvanceEtapeHorsPlateforme,
+              }
+            : elaborationStep
+        }
         number={1}
-        isDone={!isPreview && activeIndex >= 0}
-        isPast={!isPreview && activeIndex > 0}
+        isDone={!isPreview && !horsPlateforme && activeIndex >= 0}
+        isPast={!isPreview && (horsPlateforme || activeIndex > 0)}
         showConnector
-        connectorActive={activeIndex > 0}
+        connectorActive={!horsPlateforme && activeIndex > 0}
       />
 
       {/* Sous-actions de l'étape 1 : documents, diagnostic, plan */}
@@ -479,8 +534,10 @@ export const AvanceDemarcheSection = ({
       {/* Étapes suivantes : transmis pour avis, finalisation, publié... */}
       {remainingSteps.map((step, i) => {
         const index = i + 1;
-        const isDone = index <= activeIndex;
-        const isPast = index < activeIndex;
+        // Idem pour la transmission : elle a eu lieu ailleurs.
+        const estHorsPlateforme = horsPlateforme && index === ETAPE.transmis;
+        const isDone = !estHorsPlateforme && index <= activeIndex;
+        const isPast = estHorsPlateforme || index < activeIndex;
         const isLast = index === remainingSteps.length;
         // Un nouveau cycle ne peut démarrer qu'une fois le dossier publié.
         const showNouvelleAction =
@@ -489,23 +546,38 @@ export const AvanceDemarcheSection = ({
         return (
           <NumberedStep
             key={step.label}
-            step={step}
+            step={
+              estHorsPlateforme
+                ? {
+                    ...step,
+                    description: appLabels.demarcheAvanceEtapeHorsPlateforme,
+                  }
+                : horsPlateforme && index === ETAPE.finalisation
+                ? {
+                    ...step,
+                    description:
+                      appLabels.demarcheAvanceEtapeFinalisationHorsPlateformeDescription,
+                  }
+                : step
+            }
             number={index + 1}
             isDone={isDone}
             isPast={isPast}
             showConnector={!isLast}
-            connectorActive={index < activeIndex}
+            connectorActive={!estHorsPlateforme && index < activeIndex}
           >
             {index === ETAPE.transmis &&
               statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
               avisDeadlineAt && (
                 <TransmisDeadline avisDeadlineAt={avisDeadlineAt} />
               )}
+            {/* Un dépôt hors plateforme n'a pas d'avis à consulter ici : sa
+                finalisation est la constitution de tout le dossier. */}
             {index === ETAPE.finalisation &&
               isFinalisationReached &&
               !isPreview && (
                 <div className="mt-3">
-                  {finalisationSteps.map((step) => (
+                  {etapeFinaleSteps.map((step) => (
                     <SectionStepRow
                       key={step.key}
                       step={step}
@@ -538,6 +610,16 @@ export const AvanceDemarcheSection = ({
                   )}
                 </div>
               )}
+            {/* Tant que le dossier est à l'étape publiée : une fois archivé, le
+                cycle est clos et la mise en œuvre annoncée ici est derrière. */}
+            {index === activeIndex && index === ETAPE.publie && (
+              <Alert
+                className="mt-3"
+                state="success"
+                title={appLabels.demarcheDetailPublieeTitre}
+                description={appLabels.demarcheDetailPublieeDescription}
+              />
+            )}
             {/* Le dossier publié est adopté : rien ne le reprend, un nouveau
                 cycle peut seulement démarrer à côté. */}
             {showNouvelleAction && (

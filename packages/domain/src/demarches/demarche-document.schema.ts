@@ -68,7 +68,7 @@ export const demarcheDocumentDefinitionSchema = z.object({
    * Identifiants des pièces dans lesquelles celle-ci *peut* être comprise, sans
    * l'être d'office : la collectivité déclare l'inclusion, pièce par pièce.
    * Toutes les pièces attendues ne se retrouvent pas dans un document global —
-   * une étude d'impact ou une délibération vivent souvent à part.
+   * une EES ou une délibération vivent souvent à part.
    */
   substitutsDeclarables: z.array(z.string()),
 });

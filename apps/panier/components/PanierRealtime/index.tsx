@@ -2,11 +2,7 @@
 
 import ListeActions from '@/panier/components/ListeActions';
 import PanierActions from '@/panier/components/PanierActions';
-import {
-  useCollectiviteContext,
-  usePanierContext,
-  useUserContext,
-} from '@/panier/providers';
+import { useCollectiviteContext, usePanierContext } from '@/panier/providers';
 import { Panier, PanierAPI, useSupabase } from '@tet/api';
 import { ActionImpactStatutCategorie } from '@tet/domain/plans';
 import { Event, useEventTracker } from '@tet/ui';
@@ -43,7 +39,6 @@ const PanierRealtime = ({
   const router = useRouter();
   const { setCollectiviteId } = useCollectiviteContext();
   const { setPanier } = usePanierContext();
-  const { setUser } = useUserContext();
 
   const tracker = useEventTracker();
 
@@ -64,7 +59,7 @@ const PanierRealtime = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [router, panier.id, setUser, panierAPI, supabase]);
+  }, [router, panier.id, panierAPI, supabase]);
 
   const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {

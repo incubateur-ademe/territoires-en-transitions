@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { asc, getTableColumns, inArray, sql } from 'drizzle-orm';

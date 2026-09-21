@@ -77,7 +77,3 @@ export const indicateurDefinitionSchemaTiny = z.pick(
 export type IndicateurDefinitionTiny = z.infer<
   typeof indicateurDefinitionSchemaTiny
 >;
-
-export type IndicateurDefinitionAvecEnfants = IndicateurDefinition & {
-  enfants: IndicateurDefinition[] | null;
-};

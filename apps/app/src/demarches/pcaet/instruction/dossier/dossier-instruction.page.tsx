@@ -149,7 +149,10 @@ export const DossierInstructionPage = ({
         />
       )}
       {etape === PcaetInstructionPartieEnum.PLAN && (
-        <EtapePlanSection plans={dossier.plans} />
+        <EtapePlanSection
+          plans={dossier.plans}
+          collectiviteId={dossier.collectivite.id}
+        />
       )}
     </div>
   );

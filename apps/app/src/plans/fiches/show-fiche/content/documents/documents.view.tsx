@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { MUTATION_ACTIONS } from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
-import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { DocumentCard } from '@/app/referentiels/preuves/Bibliotheque/document-card';
 import { useDuplicatedDocumentState } from '@/app/referentiels/preuves/duplicated-document-state.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -59,16 +58,21 @@ export const DocumentsView = () => {
             </VisibleWhen>
           }
         >
-          {(doc) => (
-            <CarteDocument
-              key={doc.id}
-              document={doc}
-              duplicatedDocumentInformation={getDuplicatedDocumentInformation(
-                doc
-              )}
-              allowedActions={isReadonly ? [] : MUTATION_ACTIONS}
-            />
-          )}
+          {(doc) => {
+            const duplicateInformation = getDuplicatedDocumentInformation(doc);
+            return (
+              <DocumentCard key={doc.id} document={doc}>
+                {duplicateInformation && (
+                  <DocumentCard.Duplicate information={duplicateInformation} />
+                )}
+                <DocumentCard.Actions visibleWhen={!isReadonly}>
+                  <DocumentCard.Edit />
+                  <DocumentCard.Comment />
+                  <DocumentCard.Delete />
+                </DocumentCard.Actions>
+              </DocumentCard>
+            );
+          }}
         </ContentLayout.Content>
       </ContentLayout.Root>
 

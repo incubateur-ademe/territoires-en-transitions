@@ -84,6 +84,7 @@ export function ReferentielTableWithData() {
   });
   const columnVisibility = useReferentielTableColumnVisibility({
     auditColumnsScope,
+    referentielId,
   });
 
   const { data, isPending } = useListActionsGroupedById({
@@ -144,7 +145,7 @@ function ReferentielTable({
     enabled: hasAuditColumns,
   });
 
-  const { filters, hasActiveFilters } = filtersState;
+  const { filters } = filtersState;
 
   const { commentsByActionId } =
     useListCommentsGroupedByActionId(referentielId);
@@ -190,8 +191,12 @@ function ReferentielTable({
     if (filters.scorePasFait.length > 0) {
       result.push({ id: 'scorePasFait', value: filters.scorePasFait });
     }
+    if (isNewReferentielUtils(referentielId) && filters.labels.length > 0) {
+      result.push({ id: 'labels', value: filters.labels });
+    }
     return result;
   }, [
+    referentielId,
     filters.statuts,
     filters.pilotes,
     filters.services,
@@ -200,7 +205,14 @@ function ReferentielTable({
     filters.scoreRealise,
     filters.scoreProgramme,
     filters.scorePasFait,
+    filters.labels,
   ]);
+
+  // La colonne `labels` n'existe que pour les nouveaux référentiels : on
+  // dérive `hasActiveFilters` de `columnFilters` (déjà filtré ci-dessus) au
+  // lieu de la valeur globale du hook, qui ignore ce cas.
+  const hasActiveFilters =
+    columnFilters.length > 0 || filters.identifiantAndTitre !== '';
 
   const [expanded, setExpanded] = useReferentielTableRowExpanded({
     actions,
@@ -317,6 +329,7 @@ function ReferentielTable({
     actions,
     filtersState,
     auditColumnsScope,
+    referentielId,
   });
 
   const table = useReactTable({

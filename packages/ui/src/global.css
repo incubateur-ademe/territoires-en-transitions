@@ -253,3 +253,24 @@
     font-weight: 500;
   }
 }
+
+/**
+ * Champ date : `InputDate` masque l'indicateur natif du navigateur et le
+ * remplace par un bouton calendrier, pour un rendu conforme au design system.
+ * Seuls les navigateurs qui connaissent `::-webkit-calendar-picker-indicator`
+ * savent le masquer — ailleurs (Firefox), l'indicateur reste affiché et le
+ * champ montrait deux calendriers. On y masque donc le bouton, et la bordure
+ * qui séparait sa zone du champ.
+ *
+ * La condition teste ce dont dépend le masquage — le pseudo-élément lui-même —
+ * plutôt que de deviner le navigateur.
+ */
+@supports not selector(::-webkit-calendar-picker-indicator) {
+  .input-date > button {
+    display: none;
+  }
+
+  .input-date > input {
+    border-right: none;
+  }
+}

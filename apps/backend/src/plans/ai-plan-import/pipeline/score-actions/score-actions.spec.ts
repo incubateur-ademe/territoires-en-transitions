@@ -8,6 +8,7 @@ import { ScoringEntry } from './score-actions.schema';
 
 const tokens: TokenUsage = {
   promptTokens: 80,
+  cachedTokens: 0,
   candidatesTokens: 20,
   thoughtsTokens: 5,
   totalTokens: 105,

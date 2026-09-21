@@ -5,7 +5,6 @@ import {
   DemarchePcaetTransitionEnum,
   evaluateTransitions,
   type DemarchePcaet,
-  type DemarchePcaetTransition,
 } from '@tet/domain/demarches';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
@@ -13,6 +12,8 @@ import { DemarchePcaetTransitionErrorEnum } from '../shared/demarche-pcaet-trans
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import { CloreInstructionError } from './clore-instruction.errors';
+import { NotifyInstructionCloseService } from '../notifications/notify-instruction-close/notify-instruction-close.service';
+import { MotifCloture } from '../notifications/notify-instruction-close/notify-instruction-close.props';
 import { CloreInstructionRepository } from './clore-instruction.repository';
 
 /** Ce qu'une passe de clôture a produit sur un lot de dossiers. */
@@ -30,7 +31,8 @@ export class CloreInstructionService {
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly refRepository: DemarchePcaetRefRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
-    private readonly repository: CloreInstructionRepository
+    private readonly repository: CloreInstructionRepository,
+    private readonly notifyInstructionCloseService: NotifyInstructionCloseService
   ) {}
 
   /**
@@ -59,7 +61,27 @@ export class CloreInstructionService {
 
     // Le choix ci-dessus est indicatif : `applyAsSystem` relit et réévalue sous
     // verrou de ligne, donc c'est lui qui tranche pour de bon.
-    return this.transitionService.applyAsSystem(input, transition, { tx });
+    const result = await this.transitionService.applyAsSystem(
+      input,
+      transition,
+      { tx }
+    );
+
+    // Seulement ici : cette méthode est appelée à chaque avis validé et ne
+    // bascule presque jamais. Notifier plus haut écrirait à la collectivité pour
+    // un dossier toujours en instruction.
+    if (result.success) {
+      await this.notifyInstructionCloseService.creerNotifications(
+        {
+          demarcheId: result.data.id,
+          collectiviteId: result.data.collectiviteId,
+          motif: transition,
+        },
+        tx
+      );
+    }
+
+    return result;
   }
 
   /**
@@ -108,7 +130,7 @@ export class CloreInstructionService {
   private async resoudreTransition(
     demarche: Parameters<DemarchePcaetGuardsService['loadContext']>[0],
     tx?: Transaction
-  ): Promise<DemarchePcaetTransition | null> {
+  ): Promise<MotifCloture | null> {
     const context = await this.guardsService.loadContext(demarche, null, tx);
     const transitions = evaluateTransitions(
       demarche.status,

@@ -3,7 +3,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import type { PersonneId } from '@tet/domain/collectivites';
-import { eq } from 'drizzle-orm';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { and, eq } from 'drizzle-orm';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 
 @Injectable()
@@ -21,6 +22,40 @@ export class DemarchePcaetPilotesRepository {
       .select({ userId: demarchePiloteTable.userId })
       .from(demarchePiloteTable)
       .where(eq(demarchePiloteTable.demarcheId, demarcheId));
+  }
+
+  /**
+   * Les pilotes à qui l'on peut écrire.
+   *
+   * La jointure sur `dcp` écarte d'elle-même les pilotes en tag seul, qui n'ont
+   * pas de compte : sans `user_id`, rien à mettre dans `notification.send_to`.
+   */
+  async listPilotesNotifiables(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<
+    {
+      userId: string;
+      prenom: string | null;
+      nom: string | null;
+      email: string;
+    }[]
+  > {
+    return (tx ?? this.databaseService.db)
+      .select({
+        userId: dcpTable.id,
+        prenom: dcpTable.prenom,
+        nom: dcpTable.nom,
+        email: dcpTable.email,
+      })
+      .from(demarchePiloteTable)
+      .innerJoin(dcpTable, eq(dcpTable.id, demarchePiloteTable.userId))
+      .where(
+        and(
+          eq(demarchePiloteTable.demarcheId, demarcheId),
+          eq(dcpTable.deleted, false)
+        )
+      );
   }
 
   /** Remplace les pilotes d'une démarche (delete-all + insert, comme plan_pilote). */

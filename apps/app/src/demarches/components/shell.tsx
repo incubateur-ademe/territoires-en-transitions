@@ -5,10 +5,11 @@ import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PropsWithChildren, useState } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
-import type { DemarcheSectionKey } from '../steps';
+import { getDemarcheParcours, type DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../types';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
+import { PublierDepotFinalModal } from './publier-depot-final.modal';
 import { DemarcheStepsNav } from './steps-nav';
 import { TransmettrePourAvisModal } from './transmettre-pour-avis.modal';
 import { useDemarcheAvanceSidePanel } from './use-avance-side-panel';
@@ -20,7 +21,7 @@ type Props = PropsWithChildren<{
   activeSection: DemarcheSectionKey;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
   onTransmettre: () => void;
-  onPublish: () => void;
+  onPublish: (dateAdoption: string) => void;
 }>;
 
 /**
@@ -39,7 +40,7 @@ export const DemarcheShell = ({
   children,
 }: Props) => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
-  const estAval = demarche.avalModifiable;
+  const parcours = getDemarcheParcours(demarche);
 
   // La transmission ferme le dossier d'élaboration sans retour possible : elle
   // passe par une confirmation, d'où que vienne le clic — la barre d'étapes ou
@@ -47,16 +48,22 @@ export const DemarcheShell = ({
   const [isConfirmationOuverte, setIsConfirmationOuverte] = useState(false);
   const demanderConfirmation = () => setIsConfirmationOuverte(true);
 
+  // La validation du dépôt final publie le dossier sans retour possible, et
+  // recueille au passage la date de la délibération d'adoption : même chemin de
+  // confirmation, d'où que vienne le clic.
+  const [isPublicationOuverte, setIsPublicationOuverte] = useState(false);
+  const demanderPublication = () => setIsPublicationOuverte(true);
+
   // L'acte qui clôt le temps parcouru. Un dossier publié n'en a plus : sa
   // dernière sous-étape reste consultable, mais tout est validé.
-  const finalAction = estAval
+  const finalAction = parcours.avalOuvert
     ? isPublished
       ? null
       : {
           transition: demarche.transitions.publier,
           label: appLabels.demarcheTransitionPublier,
           dataTest: 'demarches.steps-nav.publier',
-          onClick: onPublish,
+          onClick: demanderPublication,
         }
     : {
         transition: demarche.transitions.transmettre_pour_avis,
@@ -79,7 +86,8 @@ export const DemarcheShell = ({
       transitions: demarche.transitions,
       onTransmettre: demanderConfirmation,
       isPublished,
-      onPublish,
+      onPublish: demanderPublication,
+      horsPlateforme: parcours.horsPlateforme,
     },
     { defaultOpen: true }
   );
@@ -98,15 +106,16 @@ export const DemarcheShell = ({
 
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>{children}</DemarcheDetailLayout.Main>
-        {/* La barre d'étapes déroule le temps courant du dossier — l'un ou
-            l'autre, jamais les deux : les pièces, le diagnostic, le plan, puis
-            l'acte qui le clôt. */}
+        {/* La barre d'étapes déroule le temps courant du dossier : les pièces,
+            le diagnostic, le plan, puis l'acte qui le clôt. Un dépôt hors
+            plateforme déroule l'amont — tout y reste à remplir — mais son acte
+            final est la publication. */}
         <DemarcheStepsNav
           demarche={demarche}
           collectiviteId={collectiviteId}
           completion={completion}
           activeSection={activeSection}
-          etape={estAval ? 'aval' : 'amont'}
+          etape={parcours.etape}
           finalAction={finalAction}
           onOpenProgressPanel={open}
         />
@@ -116,6 +125,14 @@ export const DemarcheShell = ({
         <TransmettrePourAvisModal
           onConfirm={onTransmettre}
           onClose={() => setIsConfirmationOuverte(false)}
+        />
+      )}
+
+      {isPublicationOuverte && (
+        <PublierDepotFinalModal
+          demarcheType={demarche.type}
+          onConfirm={onPublish}
+          onClose={() => setIsPublicationOuverte(false)}
         />
       )}
     </DemarcheDetailLayout.Root>

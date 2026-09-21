@@ -5,9 +5,9 @@ import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Alert, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
-import PreuveDoc from './Bibliotheque/PreuveDoc';
-import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
-import { DocumentAttendu, PreuveComplementaire } from './Bibliotheque/types';
+import { ReferentielDocumentCard } from './Bibliotheque/referentiel-document.card';
+import { PreuveReglementaire } from './Bibliotheque/preuve-reglementaire';
+import { DocumentAttendu, DocumentComplementaire } from './Bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
 import { ActionIdentity } from '../actions/use-list-actions';
 
@@ -17,7 +17,7 @@ export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
   showWarning?: boolean;
   hideIdentifier?: boolean;
   attendus?: DocumentAttendu[];
-  complementaires?: PreuveComplementaire[];
+  complementaires?: DocumentComplementaire[];
   displayInPanel?: boolean;
 }
 
@@ -111,7 +111,7 @@ export const PreuvesAction = (props: PreuvesActionProps) => {
                 })}
               >
                 {complementaires?.map((preuve) => (
-                  <PreuveDoc
+                  <ReferentielDocumentCard
                     key={preuve.id}
                     preuve={preuve}
                     displayIdentifier={!(hideIdentifier ?? false)}

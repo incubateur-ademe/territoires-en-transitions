@@ -1,50 +1,49 @@
-import { PreuveAnnexe } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
+import { DocumentAnnexe } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { StoredFile } from '@tet/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { AnnexeDocument } from '@tet/domain/plans';
 
-export function annexeDocumentToPreuve(annexe: AnnexeDocument): PreuveAnnexe {
-  const base = {
-    id: annexe.id,
-    collectiviteId: annexe.collectiviteId,
-    commentaire: annexe.commentaire,
-    modifiedAt: annexe.modifiedAt,
-    modifiedBy: null,
-    modifiedByNom: annexe.modifiedByNom,
-    preuveType: 'annexe' as const,
-  };
+type AnnexeFichier = NonNullable<AnnexeDocument['fichier']>;
 
-  if (
-    annexe.fichier?.bucketId &&
-    annexe.fichier.hash &&
-    annexe.fichier.filename
-  ) {
-    return {
-      ...base,
-      fichier: {
-        id: annexe.fichier.id,
-        bucketId: annexe.fichier.bucketId,
-        hash: annexe.fichier.hash,
-        filename: annexe.fichier.filename,
-        filesize: annexe.fichier.filesize ?? 0,
-        confidentiel: annexe.fichier.confidentiel ?? false,
-      },
-      lien: null,
-    };
+const isStoredFile = (
+  fichier: AnnexeFichier
+): fichier is AnnexeFichier & {
+  bucketId: string;
+  hash: string;
+  filename: string;
+} => Boolean(fichier.bucketId && fichier.hash && fichier.filename);
+
+const toAnnexeFichier = (annexe: AnnexeDocument): StoredFile | null => {
+  const { fichier } = annexe;
+  if (!fichier || !isStoredFile(fichier)) {
+    return null;
   }
-
-  if (annexe.lien) {
-    return {
-      ...base,
-      fichier: null,
-      lien: annexe.lien,
-    };
-  }
-
   return {
-    ...base,
-    fichier: null,
-    lien: null,
+    id: fichier.id,
+    collectiviteId: annexe.collectiviteId,
+    bucketId: fichier.bucketId,
+    hash: fichier.hash,
+    filename: fichier.filename,
+    filesize: fichier.filesize ?? null,
+    confidentiel: fichier.confidentiel ?? false,
+  };
+};
+
+export function toDocumentAnnexe(annexe: AnnexeDocument): DocumentAnnexe {
+  return {
+    ...toDocumentCollectivite({
+      id: annexe.id,
+      collectiviteId: annexe.collectiviteId,
+      commentaire: annexe.commentaire,
+      modifiedAt: annexe.modifiedAt,
+      modifiedBy: null,
+      modifiedByNom: annexe.modifiedByNom,
+      fichier: toAnnexeFichier(annexe),
+      lien: annexe.lien ?? null,
+    }),
+    preuveType: 'annexe',
   };
 }
 
@@ -63,7 +62,7 @@ export const useAnnexesFicheAction = (
       },
       {
         enabled: !!ficheId,
-        select: (annexes) => annexes.map(annexeDocumentToPreuve),
+        select: (annexes) => annexes.map(toDocumentAnnexe),
       }
     )
   );

@@ -88,4 +88,159 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
       page.getByRole('button', { name: 'Supprimer la thématique Zones humides' })
     ).toBeVisible();
   });
+
+  test('la thématique risques naturels porte ses huit sous-thématiques', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new DemarchePcaetPom(page);
+
+    await pom.gotoCreatePage(collectivite.data.id);
+    await pom.createDemarche(collectivite.data.id);
+    await pom.gotoDiagnostic();
+    await pom.openVulnerabiliteTopic();
+
+    await expect(pom.vulnerabiliteRow('risques_naturels')).toBeVisible();
+    await expect(pom.vulnerabiliteRow('risque_secheresse')).toBeVisible();
+    await expect(pom.vulnerabiliteRow('risque_cyclones')).toBeVisible();
+
+    // La parente est saisissable comme les autres : sa ligne n'est pas un
+    // simple en-tête de groupe.
+    await pom.setVulnerabiliteNiveau('risques_naturels', 0, 'fort');
+    await pom.expectVulnerabiliteNiveau('risques_naturels', 0, 'fort');
+
+    // Rien ne contraint l'enfant à s'accorder avec sa parente.
+    await pom.setVulnerabiliteNiveau('risque_secheresse', 0, 'faible');
+    await pom.expectVulnerabiliteNiveau('risque_secheresse', 0, 'faible');
+    await pom.expectVulnerabiliteNiveau('risques_naturels', 0, 'fort');
+
+    // Une thématique réglementaire n'accueille pas de sous-thématique.
+    await expect(
+      pom.vulnerabiliteAjouterSousThematiqueButton('Risques naturels')
+    ).toHaveCount(0);
+  });
+
+  test('la grappe se replie et se déplie, sans perdre la saisie', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new DemarchePcaetPom(page);
+
+    await pom.gotoCreatePage(collectivite.data.id);
+    await pom.createDemarche(collectivite.data.id);
+    await pom.gotoDiagnostic();
+    await pom.openVulnerabiliteTopic();
+
+    await pom.setVulnerabiliteNiveau('risque_secheresse', 0, 'faible');
+
+    // Une thématique sans sous-thématique n'a rien à replier.
+    await expect(pom.vulnerabiliteReplierButton('eau')).toHaveCount(0);
+
+    const chevron = pom.vulnerabiliteReplierButton('risques_naturels');
+    await expect(chevron).toHaveAttribute('aria-expanded', 'true');
+
+    await chevron.click();
+    await expect(chevron).toHaveAttribute('aria-expanded', 'false');
+    await expect(pom.vulnerabiliteRow('risque_secheresse')).toHaveCount(0);
+    await expect(pom.vulnerabiliteRow('risque_cyclones')).toHaveCount(0);
+    // La parente reste, et reste saisissable.
+    await expect(pom.vulnerabiliteRow('risques_naturels')).toBeVisible();
+
+    await chevron.click();
+    await expect(chevron).toHaveAttribute('aria-expanded', 'true');
+    // Replier n'est qu'un confort d'affichage : la saisie est intacte.
+    await pom.expectVulnerabiliteNiveau('risque_secheresse', 0, 'faible');
+  });
+
+  test('le champ de la modale garde le focus, la cellule ne passe pas en édition', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new DemarchePcaetPom(page);
+
+    await pom.gotoCreatePage(collectivite.data.id);
+    await pom.createDemarche(collectivite.data.id);
+    await pom.gotoDiagnostic();
+    await pom.openVulnerabiliteTopic();
+    await pom.addVulnerabiliteThematique('Zones humides');
+
+    await pom
+      .vulnerabiliteAjouterSousThematiqueButton('Zones humides')
+      .click();
+
+    // Le clic sur « + » ne doit pas ouvrir en plus l'édition du libellé de la
+    // cellule : son champ volait le focus dès la première frappe.
+    const champ = page.getByPlaceholder('Nom de la sous-thématique');
+    await champ.pressSequentially('Tourbières');
+    await expect(champ).toBeFocused();
+    await expect(champ).toHaveValue('Tourbières');
+    await expect(
+      page.getByPlaceholder('Nom de la thématique')
+    ).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Valider' }).click();
+    await expect(page.getByText('Tourbières', { exact: true })).toBeVisible();
+  });
+
+  test('une thématique ajoutée accueille des sous-thématiques, sur un seul niveau', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new DemarchePcaetPom(page);
+
+    await pom.gotoCreatePage(collectivite.data.id);
+    await pom.createDemarche(collectivite.data.id);
+    await pom.gotoDiagnostic();
+    await pom.openVulnerabiliteTopic();
+
+    await pom.addVulnerabiliteThematique('Zones humides');
+    await pom.addVulnerabiliteSousThematique('Zones humides', 'Tourbières');
+
+    await expect(page.getByText('Tourbières', { exact: true })).toBeVisible();
+
+    // La hiérarchie s'arrête là : une sous-thématique n'en porte pas à son tour.
+    await expect(
+      pom.vulnerabiliteAjouterSousThematiqueButton('Tourbières')
+    ).toHaveCount(0);
+
+    // La saisie de la sous-thématique tient, et survit au rechargement.
+    const tourbieresRow = page
+      .locator('[data-test^="demarches.pcaet.vulnerabilite.row-"]')
+      .filter({ hasText: 'Tourbières' });
+    await tourbieresRow.locator('td').nth(1).click();
+    await page.locator('[data-test="moyen"]').click();
+    await expect(tourbieresRow.locator('td').nth(1)).toContainText('moyen', {
+      ignoreCase: true,
+    });
+
+    await page.reload();
+    await pom.openVulnerabiliteTopic();
+    await expect(
+      page
+        .locator('[data-test^="demarches.pcaet.vulnerabilite.row-"]')
+        .filter({ hasText: 'Tourbières' })
+        .locator('td')
+        .nth(1)
+    ).toContainText('moyen', { ignoreCase: true });
+  });
 });

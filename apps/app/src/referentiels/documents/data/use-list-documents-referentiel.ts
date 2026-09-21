@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
-  PreuveAudit,
-  PreuveLabellisation,
-  PreuveRapport,
+  DocumentAudit,
+  DocumentLabellisation,
+  DocumentRapport,
 } from '../../preuves/Bibliotheque/types';
 
 type ReferentielDocuments = {
-  labellisation: PreuveLabellisation[];
-  audit: PreuveAudit[];
-  rapport: PreuveRapport[];
+  labellisation: DocumentLabellisation[];
+  audit: DocumentAudit[];
+  rapport: DocumentRapport[];
 };
 
 type ReferentielDocumentsQuery =
@@ -35,7 +35,14 @@ export const useListDocumentsReferentiel = ({
   );
 
   if (data) {
-    return { status: 'loaded', documents: data };
+    return {
+      status: 'loaded',
+      documents: {
+        labellisation: data.labellisation,
+        audit: data.audit,
+        rapport: data.rapport,
+      },
+    };
   }
   return isError ? { status: 'error' } : { status: 'loading' };
 };

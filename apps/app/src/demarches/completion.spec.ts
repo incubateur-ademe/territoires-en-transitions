@@ -166,7 +166,14 @@ const topicVulnerabilite = (): PcaetDiagnostic['vulnerabilite'] => ({
   icon: 'map-2-line',
   horizons: [2050, 2100],
   thematiques: [
-    { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
+    {
+      id: 1,
+      code: 'eau',
+      label: 'Eau',
+      parentId: null,
+      requis: true,
+      isSocle: true,
+    },
   ],
   lignes: [
     {
@@ -197,11 +204,13 @@ const completeDemarche: DemarchePcaet = {
   titre: 'PCAET',
   description: 'Présentation du PCAET',
   statut: 'en_elaboration',
+  transmisHorsPlateforme: false,
   obligation: 'obligatoire',
   dateCreation: '2026-01-01T00:00:00.000Z',
   dateModification: '2026-01-01T00:00:00.000Z',
   dateLancement: null,
   datePublication: null,
+  dateAdoption: null,
   dateTransmission: null,
   dateEcheanceAvis: null,
   transitions: evaluateTransitions('en_elaboration'),

@@ -82,6 +82,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
               (data.collectivite.type === 'commune'
                 ? data.collectivite.communeCode
                 : data.collectivite.siren) || '',
+            collectiviteId: data.collectivite.id,
           },
         ],
         budgetPrevisionnel: bugetPrevisionnel ?? undefined,

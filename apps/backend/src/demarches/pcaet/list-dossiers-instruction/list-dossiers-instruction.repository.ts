@@ -51,6 +51,8 @@ export type DossierInstructionRow = {
   launchedAt: string | null;
   avisDeadlineAt: string | null;
   transmittedAt: string | null;
+  /** `null` comme le reste de la démarche quand la collectivité n'a rien déposé. */
+  transmittedOffPlatform: boolean | null;
   publishedAt: string | null;
   collectiviteId: number;
   collectiviteNom: string;
@@ -215,6 +217,7 @@ export class ListDossiersInstructionRepository {
           launchedAt: demarcheTable.launchedAt,
           avisDeadlineAt: demarcheTable.avisDeadlineAt,
           transmittedAt: demarcheTable.transmittedAt,
+          transmittedOffPlatform: demarcheTable.transmittedOffPlatform,
           publishedAt: demarcheTable.publishedAt,
           collectiviteId: collectiviteTable.id,
           collectiviteNom: collectiviteTable.nom,

@@ -19,7 +19,7 @@ reenable_current_user_triggers() {
         return 0
     fi
 
-    if ! psql -d "$TO_DB_URL" -c \
+    if ! "${PSQL[@]}" -d "$TO_DB_URL" -c \
         "ALTER TABLE \"$DISABLED_TRIGGER_SCHEMA\".\"$DISABLED_TRIGGER_TABLE\" ENABLE TRIGGER USER;"; then
         return 1
     fi
@@ -98,6 +98,28 @@ else
     RESOLVE_LATEST=false
 fi
 
+# Check host tools before downloading a potentially large backup or changing data.
+required_commands=(psql pg_restore yq)
+if [ "$DOWNLOAD_FROM_S3" = true ]; then
+    required_commands+=(aws)
+fi
+for required_command in "${required_commands[@]}"; do
+    if ! command -v "$required_command" > /dev/null 2>&1; then
+        echo "Missing required command: $required_command."
+        echo "Install the PostgreSQL client tools, yq and (for S3) AWS CLI; see README.md."
+        exit 1
+    fi
+done
+
+# Ignore local psql customizations, never prompt for a password, and propagate SQL errors.
+PSQL=(psql -X --no-password -v ON_ERROR_STOP=1)
+RESTORE_CONFIG="$SCRIPT_DIR/restore-config.yml"
+
+if [ ! -f "$RESTORE_CONFIG" ]; then
+    echo "restore config not found: $RESTORE_CONFIG"
+    exit 1
+fi
+
 if [ "$DOWNLOAD_FROM_S3" = true ]; then
     # Vérification des variables d'environnement S3
     missing_vars=()
@@ -115,11 +137,15 @@ if [ "$DOWNLOAD_FROM_S3" = true ]; then
     # Mode "latest" : lister le bucket et choisir le backup avec la date la plus récente.
     # Le pattern ancré (^...$) rejette les noms non-standards tels que backup-2026-04-18-partial.dump.
     if [ "$RESOLVE_LATEST" = true ]; then
-        LATEST_BACKUP=$(AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
+        if ! backup_listing=$(AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
           AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
           aws s3 ls "s3://$BACKUP_BUCKET/" \
             --endpoint-url "$BACKUP_ENDPOINT_URL" \
-            --region "$BACKUP_REGION" \
+            --region "$BACKUP_REGION"); then
+            echo "Could not list backups in S3. Check the credentials and endpoint."
+            exit 1
+        fi
+        LATEST_BACKUP=$(printf '%s\n' "$backup_listing" \
           | awk '{print $NF}' \
           | grep -E '^backup-[0-9]{4}-[0-9]{2}-[0-9]{2}\.dump$' \
           | sort \
@@ -191,27 +217,15 @@ if [ ! -s "$DUMP_FILE" ]; then
     exit 1
 fi
 
-# --- Parse restore-config.yml for group/table definitions and data_rules ---
-RESTORE_CONFIG="$SCRIPT_DIR/restore-config.yml"
-
 # Validate the archive and its schema-contract compatibility before the first
 # destructive statement. Source and target must share the same complete phase;
 # partial phases, physical target drift and both mismatch directions are denied.
-pg_restore --list "$DUMP_FILE" > /dev/null
+if ! pg_restore --list "$DUMP_FILE" > /dev/null; then
+    echo "Cannot read the backup archive. Check the file and pg_restore version; no tables were truncated."
+    exit 1
+fi
 PERIODICITE_RESTORE_PHASE=$(TO_DB_URL="$TO_DB_URL" \
     bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE")
-
-if [ ! -f "$RESTORE_CONFIG" ]; then
-    echo "restore config not found: $RESTORE_CONFIG"
-    exit 1
-fi
-
-if ! command -v yq &> /dev/null; then
-    echo "yq is required but not installed."
-    echo "  macOS: brew install yq"
-    echo "  Linux: sudo snap install yq"
-    exit 1
-fi
 
 # Group order: technical → stats → collectivites → indicateurs →
 # periodicite → referentiels → pai → plans
@@ -236,6 +250,37 @@ GROUP_ORDER+=(
   plans_group
 )
 
+# Parse every group and check every target table before the first TRUNCATE.
+# Otherwise a missing table in a later group leaves the database partly emptied.
+GROUP_TABLES=()
+table_values=""
+for group in "${GROUP_ORDER[@]}"; do
+    if ! tables=$(yq -er ".groups.${group}[]" "$RESTORE_CONFIG"); then
+        echo "Could not read $group from $RESTORE_CONFIG. Check the configuration and yq installation."
+        exit 1
+    fi
+    GROUP_TABLES+=("$tables")
+    while IFS= read -r table; do
+        if ! [[ "$table" =~ ^[a-z_][a-z0-9_]*(\.[a-z_][a-z0-9_]*)?$ ]]; then
+            echo "Invalid table name in $group: $table"
+            exit 1
+        fi
+        [[ "$table" == *.* ]] || table="public.$table"
+        table_values+="${table_values:+,}('$table')"
+    done <<< "$tables"
+done
+
+if ! missing_tables=$(PGCONNECT_TIMEOUT="${PGCONNECT_TIMEOUT:-10}" "${PSQL[@]}" -d "$TO_DB_URL" -Atc \
+    "SELECT name FROM (VALUES $table_values) AS requested(name) WHERE to_regclass(name) IS NULL;"); then
+    echo "Cannot query the target database. For local restores, start and migrate it with make db-init."
+    exit 1
+fi
+if [ -n "$missing_tables" ]; then
+    echo "Target database is missing required tables. Apply migrations before restoring (locally: make db-init):"
+    printf '%s\n' "$missing_tables"
+    exit 1
+fi
+
 echo "Restoring to $(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|') from $DUMP_FILE"
 if [ -z "${CI:-}" ]; then
     echo "Waiting for 10 seconds before starting the restore, please double check urls"
@@ -245,14 +290,9 @@ fi
 # --- Truncation phase: reverse group order (dependents first) ---
 echo "Truncating tables..."
 
-REVERSE_GROUP_ORDER=()
 for ((i=${#GROUP_ORDER[@]}-1; i>=0; i--)); do
-    REVERSE_GROUP_ORDER+=("${GROUP_ORDER[$i]}")
-done
-
-for group in "${REVERSE_GROUP_ORDER[@]}"; do
-    tables=$(yq -r ".groups.$group[]" "$RESTORE_CONFIG" 2>/dev/null)
-    [ -z "$tables" ] && continue
+    group="${GROUP_ORDER[$i]}"
+    tables="${GROUP_TABLES[$i]}"
 
     echo "Truncating $group..."
     while IFS= read -r table; do
@@ -267,7 +307,7 @@ for group in "${REVERSE_GROUP_ORDER[@]}"; do
         fi
 
         echo "  Truncating $schema.$table_name..."
-        psql -d "$TO_DB_URL" -c "TRUNCATE TABLE \"$schema\".\"$table_name\" CASCADE;"
+        "${PSQL[@]}" -d "$TO_DB_URL" -c "TRUNCATE TABLE \"$schema\".\"$table_name\" CASCADE;"
     done <<< "$tables"
 done
 
@@ -287,7 +327,7 @@ for group in "${GROUP_ORDER[@]}"; do
     group_index=$((group_index + 1))
 
     # Extract tables for this group from restore-config.yml
-    tables=$(yq -r ".groups.$group[]" "$RESTORE_CONFIG" 2>/dev/null)
+    tables="${GROUP_TABLES[$((group_index - 1))]}"
     if [ -z "$tables" ]; then
         echo "=== Group $group_index/$total_groups: $group (0 tables — skipping) ==="
         continue
@@ -316,7 +356,7 @@ for group in "${GROUP_ORDER[@]}"; do
         table_key="$schema.$table_name"
 
         # Deduplication: skip tables already restored in a previous group
-        if echo "$RESTORED_TABLES" | grep -q "^${table_key}$"; then
+        if echo "$RESTORED_TABLES" | grep -Fxq "$table_key"; then
             echo "  [$table_index/$table_count] Skipping $table_key (already restored)"
             TOTAL_SKIPPED=$((TOTAL_SKIPPED + 1))
             continue
@@ -328,7 +368,7 @@ for group in "${GROUP_ORDER[@]}"; do
         # dcp is re-populated by auth.users triggers (which we can't disable — not table owner).
         # Re-truncate it before its restore.
         if [ "$table_key" = "public.dcp" ]; then
-            psql -d "$TO_DB_URL" -c "TRUNCATE TABLE \"$schema\".\"$table_name\" CASCADE;"
+            "${PSQL[@]}" -d "$TO_DB_URL" -c "TRUNCATE TABLE \"$schema\".\"$table_name\" CASCADE;"
         fi
 
         # Disable user triggers before restore. Record the table first so the
@@ -338,7 +378,7 @@ for group in "${GROUP_ORDER[@]}"; do
         # On tables we don't own (e.g. auth.users), this fails — log a warning.
         DISABLED_TRIGGER_SCHEMA="$schema"
         DISABLED_TRIGGER_TABLE="$table_name"
-        if ! psql -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" DISABLE TRIGGER USER;" 2>/dev/null; then
+        if ! "${PSQL[@]}" -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" DISABLE TRIGGER USER;" 2>/dev/null; then
             echo -n " (warning: could not disable triggers — not table owner)"
             DISABLED_TRIGGER_SCHEMA=''
             DISABLED_TRIGGER_TABLE=''
@@ -376,9 +416,14 @@ for group in "${GROUP_ORDER[@]}"; do
         fi
 
         if [ $restore_exit -ne 0 ]; then
-            # Filter out known harmless errors (transaction_timeout on PG < 17)
-            real_errors=$(echo "$restore_stderr" | grep -i "error:" | grep -v "transaction_timeout" || true)
-            if [ -n "$real_errors" ] || ! grep -qi "transaction_timeout" <<< "$restore_stderr"; then
+            # Only tolerate the single, known PG < 17 preamble error. A failed
+            # process without an "error:" line (killed, missing client, etc.)
+            # must not be counted as a successful restore.
+            harmless_error='pg_restore: error: could not execute query: ERROR:  unrecognized configuration parameter "transaction_timeout"'
+            real_errors=$(echo "$restore_stderr" | grep -Ei '(error:|fatal:)' | grep -Fxv "$harmless_error" || true)
+            if [ "$restore_exit" -ne 1 ] || [ -n "$real_errors" ] || \
+               ! echo "$restore_stderr" | grep -Fxq "$harmless_error" || \
+               ! echo "$restore_stderr" | grep -Fxq 'pg_restore: warning: errors ignored on restore: 1'; then
                 echo "  FAILED"
                 exit 1
             fi
@@ -388,8 +433,7 @@ for group in "${GROUP_ORDER[@]}"; do
         table_duration=$((table_end - table_start))
         echo " OK (${table_duration}s)"
 
-        RESTORED_TABLES="$RESTORED_TABLES
-$table_key"
+        RESTORED_TABLES+="$table_key"$'\n'
         TOTAL_RESTORED=$((TOTAL_RESTORED + 1))
     done <<< "$tables"
 done
@@ -405,7 +449,6 @@ echo "Groups: $total_groups/$total_groups"
 echo "Tables restored: $TOTAL_RESTORED"
 echo "Tables skipped (duplicates): $TOTAL_SKIPPED"
 echo "Total time: ${TOTAL_MINUTES}m${TOTAL_SECONDS}s"
-echo "Done!"
 
 # --- Post-restore: rebuild formula-derived state skipped with USER triggers ---
 echo ""
@@ -417,7 +460,7 @@ echo "Indicator formula state rebuilt and validated."
 # --- Post-restore: reset sequences to match restored data ---
 echo ""
 echo "=== Resetting sequences ==="
-psql -d "$TO_DB_URL" -f "$SCRIPT_DIR/reset_sequences.sql"
+"${PSQL[@]}" -d "$TO_DB_URL" -f "$SCRIPT_DIR/reset_sequences.sql"
 echo "Sequences reset complete."
 
 # --- Post-restore: anonymize sensitive columns (clean_data.sql) ---
@@ -426,7 +469,7 @@ echo "Sequences reset complete."
 # means "leave encrypted_password as restored" (used by local dev).
 echo ""
 echo "=== Cleaning sensitive data ==="
-psql -d "$TO_DB_URL" -v ON_ERROR_STOP=1 -v pwd="${RESTORE_ENCRYPTED_PASSWORD:-}" \
+"${PSQL[@]}" -d "$TO_DB_URL" -v pwd="${RESTORE_ENCRYPTED_PASSWORD:-}" \
     -f "$SCRIPT_DIR/clean_data.sql"
 echo "Sensitive data cleaning complete."
 
@@ -438,7 +481,7 @@ SANITY_ERRORS=0
 SANITY_TABLES="collectivite dcp indicateur_valeur action_statut score_snapshot"
 
 for table in $SANITY_TABLES; do
-    count=$(psql -d "$TO_DB_URL" -t -c "SELECT count(*) FROM public.\"$table\";" 2>/dev/null | tr -d ' ')
+    count=$("${PSQL[@]}" -d "$TO_DB_URL" -Atc "SELECT count(*) FROM public.\"$table\";")
     if [ -z "$count" ] || [ "$count" -eq 0 ]; then
         echo "  FAIL: $table has 0 rows"
         SANITY_ERRORS=$((SANITY_ERRORS + 1))

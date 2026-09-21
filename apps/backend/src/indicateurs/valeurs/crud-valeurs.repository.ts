@@ -1,8 +1,8 @@
 import {
   indicateurDefinitionPeriodiciteSelection,
   indicateurValeurPeriodiciteSelection,
-} from '../definitions/indicateur-periodicite.sql';
-import { indicateurEffectivePeriodicite } from '../definitions/indicateur-periodicite.sql';
+} from '../definitions/indicateur-periodicite.column';
+import { indicateurEffectivePeriodicite } from '../definitions/indicateur-periodicite.column';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { Injectable } from '@nestjs/common';
 import {

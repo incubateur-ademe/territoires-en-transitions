@@ -15,6 +15,8 @@ import {
 } from '@tet/domain/demarches';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
+  boolean,
+  date,
   index,
   integer,
   pgTable,
@@ -49,7 +51,15 @@ export const demarcheTable = pgTable(
       .$type<DemarchePcaetObligation>(),
     launchedAt: timestamp('launched_at', TIMESTAMP_OPTIONS),
     publishedAt: timestamp('published_at', TIMESTAMP_OPTIONS),
+    // Date civile de la délibération, pas un instant : la validité du PCAET se
+    // compte en années à partir d'elle.
+    adoptedAt: date('adopted_at', { mode: 'string' }),
     transmittedAt: timestamp('transmitted_at', TIMESTAMP_OPTIONS),
+    // Provenance, non pas état : le statut dit où en est le dossier et oublie
+    // tout une fois publié, ce drapeau dit d'où il vient et ne bouge jamais.
+    transmittedOffPlatform: boolean('transmitted_off_platform')
+      .notNull()
+      .default(false),
     avisDeadlineAt: timestamp('avis_deadline_at', TIMESTAMP_OPTIONS),
     createdAt,
     createdBy,
@@ -61,7 +71,9 @@ export const demarcheTable = pgTable(
     // Une seule démarche « en cours » par collectivité et par type.
     uniqueIndex('demarche_active_unique')
       .on(table.collectiviteId, table.type)
-      .where(sql`status IN ('en_elaboration', 'transmis_pour_avis')`),
+      .where(
+        sql`status IN ('en_elaboration', 'transmis_pour_avis', 'instruit_hors_plateforme')`
+      ),
   ]
 );
 

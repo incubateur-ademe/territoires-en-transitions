@@ -1,19 +1,12 @@
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { indicateurCollectivitePeriodiciteSelection } from '../indicateur-periodicite.sql';
+import { indicateurCollectivitePeriodiciteSelection } from '../indicateur-periodicite.column';
 import { Injectable, Logger } from '@nestjs/common';
-import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
-import { groupementTable } from '@tet/backend/collectivites/shared/models/groupement.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurGroupeTable } from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
-  IndicateurDefinition,
-  IndicateurDefinitionAvecEnfants,
-} from '@tet/domain/indicateurs';
-import {
-  aliasedTable,
   and,
   eq,
   getTableColumns,
@@ -24,7 +17,6 @@ import {
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
-import { objectToCamel } from 'ts-case-convert';
 
 @Injectable()
 export class ListCollectiviteDefinitionsRepository {
@@ -97,7 +89,9 @@ export class ListCollectiviteDefinitionsRepository {
             indicateurCollectiviteTable.indicateurId,
             indicateurDefinitionTable.id
           ),
-          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId ?? 0)
+          collectiviteId === undefined
+            ? sql`false`
+            : eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
         )
       )
       .where(and(...conditions));
@@ -105,98 +99,5 @@ export class ListCollectiviteDefinitionsRepository {
     this.logger.log(`${definitions.length} définitions trouvées`);
 
     return definitions;
-  }
-
-  /**
-   * Charge la définition des indicateurs à partir de leur id
-   * ainsi que les définitions des indicateurs "enfant" associés.
-   * (utilisé pour l'export)
-   */
-  async listCollectiviteDefinitionsAvecEnfants({
-    collectiviteId,
-    indicateurIds,
-  }: {
-    collectiviteId: number;
-    indicateurIds: number[];
-  }): Promise<IndicateurDefinitionAvecEnfants[]> {
-    this.logger.log(
-      `Charge la définition des indicateurs ${indicateurIds.join(',')}`
-    );
-
-    const definitionEnfantsTable = aliasedTable(
-      indicateurDefinitionTable,
-      'enfants'
-    );
-
-    const definitions = await this.databaseService.db
-      .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        ...indicateurDefinitionPeriodiciteSelection,
-        enfants: sql`json_agg(${definitionEnfantsTable})`,
-      })
-      .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurGroupeTable,
-        eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        definitionEnfantsTable,
-        eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
-      )
-      .leftJoin(
-        groupementTable,
-        eq(groupementTable.id, definitionEnfantsTable.groupementId)
-      )
-      .leftJoin(
-        groupementCollectiviteTable,
-        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
-      )
-      .where(
-        and(
-          inArray(indicateurDefinitionTable.id, indicateurIds),
-          or(
-            isNull(definitionEnfantsTable.groupementId),
-            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-          )
-        )
-      )
-      .groupBy(indicateurDefinitionTable.id);
-
-    this.logger.log(`${definitions.length} définitions trouvées`);
-
-    const hydratedChildren = definitions.map(
-      (definition: IndicateurDefinition & { enfants: unknown[] }) => ({
-        ...definition,
-        enfants:
-          (definition.enfants as unknown[])
-            ?.filter(Boolean)
-            .map(
-              (child) =>
-                objectToCamel(
-                  child as Record<string, unknown>
-                ) as IndicateurDefinition
-            ) ?? [],
-      })
-    );
-    const scopedDefinitions = new Map(
-      (
-        await this.listCollectiviteDefinitions({
-          collectiviteId,
-          indicateurIds: hydratedChildren.flatMap((definition) => [
-            definition.id,
-            ...definition.enfants.map(({ id }) => id),
-          ]),
-        })
-      ).map((definition) => [definition.id, definition])
-    );
-    return hydratedChildren.map((definition) => ({
-      ...definition,
-      ...scopedDefinitions.get(definition.id),
-      enfants: definition.enfants.length
-        ? definition.enfants.map(
-            (child) => scopedDefinitions.get(child.id) ?? child
-          )
-        : null,
-    }));
   }
 }

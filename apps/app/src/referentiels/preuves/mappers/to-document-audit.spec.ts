@@ -1,0 +1,108 @@
+import { toLegacyDocumentHash } from '@tet/domain/collectivites';
+import { AuditEnCours } from '@/app/referentiels/audits/types';
+import { LabellisationDemande } from '@tet/domain/referentiels';
+import { describe, expect, it } from 'vitest';
+
+import { AuditReportInput, toDocumentAudit } from './to-document-audit';
+
+const demande: LabellisationDemande = {
+  id: 7,
+  collectiviteId: 7,
+  referentiel: 'cae',
+  enCours: false,
+  etoiles: '2',
+  sujet: 'labellisation',
+  modifiedAt: null,
+  envoyeeLe: '2026-01-10T10:00:00Z',
+  demandeur: null,
+  associatedCollectiviteId: null,
+};
+
+const audit: AuditEnCours = {
+  id: 12,
+  collectiviteId: 7,
+  referentielId: 'cae',
+  demandeId: null,
+  dateDebut: '2026-01-05T09:00:00Z',
+  dateFin: null,
+  clos: false,
+  valide: false,
+};
+
+const baseInput: AuditReportInput = {
+  id: 42,
+  collectiviteId: 7,
+  commentaire: null,
+  modifiedAt: '2026-01-15T10:00:00Z',
+  modifiedBy: 'user-uuid',
+  modifiedByNom: 'Alice Dupont',
+  fichier: null,
+  lien: null,
+  audit,
+  demande: null,
+};
+
+describe('toDocumentAudit', () => {
+  it('propage les champs communs et tag preuveType="audit"', () => {
+    const preuve = toDocumentAudit(baseInput);
+    expect(preuve).toMatchObject({
+      id: 42,
+      collectiviteId: 7,
+      commentaire: null,
+      modifiedAt: '2026-01-15T10:00:00Z',
+      modifiedBy: 'user-uuid',
+      modifiedByNom: 'Alice Dupont',
+      preuveType: 'audit',
+    });
+  });
+
+  it('propage la demande de labellisation associee au rapport', () => {
+    const preuve = toDocumentAudit({ ...baseInput, demande });
+    expect(preuve.demande).toEqual(demande);
+  });
+
+  it('cas fichier : rend un document de type fichier, sans clé lien', () => {
+    const fichier = {
+      id: 71,
+      collectiviteId: 1,
+      bucketId: 'b1',
+      filename: 'rapport.pdf',
+      filesize: 1024,
+      hash: toLegacyDocumentHash('sha-1'),
+      confidentiel: false,
+    };
+    const preuve = toDocumentAudit({ ...baseInput, fichier });
+    expect(preuve).toMatchObject({ type: 'fichier', fichier });
+    expect('lien' in preuve).toBe(false);
+  });
+
+  it('cas lien : rend un document de type lien', () => {
+    const lien = { url: 'https://example.com', titre: 'Doc externe' };
+    const preuve = toDocumentAudit({ ...baseInput, lien });
+    expect(preuve).toMatchObject({ type: 'lien', lien });
+    expect('fichier' in preuve).toBe(false);
+  });
+
+  it('cas non renseigné : rend un document sans fichier ni lien', () => {
+    const preuve = toDocumentAudit(baseInput);
+    expect(preuve).toMatchObject({ type: 'nonRenseigne' });
+    expect('fichier' in preuve).toBe(false);
+    expect('lien' in preuve).toBe(false);
+  });
+
+  it('priorise fichier sur lien si les deux sont fournis (input pathologique)', () => {
+    const fichier = {
+      id: 71,
+      collectiviteId: 1,
+      bucketId: 'b1',
+      filename: 'a.pdf',
+      filesize: 1,
+      hash: toLegacyDocumentHash('h'),
+      confidentiel: false,
+    };
+    const lien = { url: 'https://example.com', titre: 'X' };
+    const preuve = toDocumentAudit({ ...baseInput, fichier, lien });
+    expect(preuve).toMatchObject({ type: 'fichier', fichier });
+    expect('lien' in preuve).toBe(false);
+  });
+});

@@ -1,25 +1,22 @@
 import { useDownloadDocument } from '../data/use-download-document';
-import { Preuve } from './types';
+import { DocumentRattache } from './types';
 
 export const useOpenPreuve = ({
   collectiviteId,
 }: {
   collectiviteId: number;
-}): ((preuve: Preuve) => void) => {
+}): ((preuve: DocumentRattache) => void) => {
   const { mutate: downloadDocument, isPending } = useDownloadDocument({
     collectiviteId,
   });
 
-  return (preuve: Preuve): void => {
-    const { fichier, lien } = preuve;
-    if (fichier) {
-      if (!isPending) {
-        downloadDocument(fichier.id);
-      }
+  return (preuve: DocumentRattache): void => {
+    if (preuve.type === 'fichier' && !isPending) {
+      downloadDocument(preuve.fichier.id);
       return;
     }
-    if (lien) {
-      window.open(lien.url, '_blank', 'noopener,noreferrer');
+    if (preuve.type === 'lien') {
+      window.open(preuve.lien.url, '_blank', 'noopener,noreferrer');
     }
   };
 };

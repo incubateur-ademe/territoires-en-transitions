@@ -1,6 +1,7 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
+import { PublierDepotFinalModal } from '@/app/demarches/components/publier-depot-final.modal';
 import { useDemarchePcaetTransitionOptions } from '@/app/demarches/pcaet/data/use-transition-options';
 import { useDeleteDemarchePcaet } from '@/app/demarches/pcaet/data/use-delete-demarche-pcaet';
 import {
@@ -33,6 +34,9 @@ export const DemarchePcaetActionsMenu = ({
 }) => {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // Publier depuis la liste engage autant que depuis le dossier : même
+  // confirmation, et même saisie de la date d'adoption.
+  const [isPublicationOuverte, setIsPublicationOuverte] = useState(false);
   const { mutate: deleteDemarche } = useDeleteDemarchePcaet();
 
   const trpc = useTRPC();
@@ -72,7 +76,7 @@ export const DemarchePcaetActionsMenu = ({
       onClick: () => router.push(detailUrl),
     },
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
-    ...transitionAction('publier', () => publier.mutate(ids)),
+    ...transitionAction('publier', () => setIsPublicationOuverte(true)),
     ...transitionAction('archiver', () => archiver.mutate(ids)),
     ...(canDeleteDemarchePcaet(demarche)
       ? [
@@ -94,6 +98,13 @@ export const DemarchePcaetActionsMenu = ({
         size="xs"
         menu={{ actions: menuActions }}
       />
+      {isPublicationOuverte && (
+        <PublierDepotFinalModal
+          demarcheType={demarche.type}
+          onConfirm={(dateAdoption) => publier.mutate({ ...ids, dateAdoption })}
+          onClose={() => setIsPublicationOuverte(false)}
+        />
+      )}
       {isDeleteModalOpen && (
         <Modal
           size="sm"

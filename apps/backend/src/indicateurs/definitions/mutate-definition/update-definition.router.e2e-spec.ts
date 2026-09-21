@@ -17,7 +17,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { createThematique } from '@tet/backend/shared/shared.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, onTestFinished, test } from 'vitest';
@@ -681,7 +680,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
   });
 
   describe('indicateur prédéfini', () => {
-    let indicateurPredefiniCae1a: IndicateurDefinition;
+    let indicateurPredefiniCae1a: typeof indicateurDefinitionTable.$inferSelect;
 
     beforeAll(async () => {
       const [indicateurPredefini] = await databaseService.db

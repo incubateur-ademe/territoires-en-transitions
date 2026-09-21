@@ -15,10 +15,13 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
-import { Button, Field, Input } from '@tet/ui';
+import {
+  buildDemarchePcaetTitre,
+  DemarcheTypeEnum,
+} from '@tet/domain/demarches';
+import { Button, Checkbox, Field, Input } from '@tet/ui';
 import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
 /** Ces écrans sont propres au PCAET : le type est connu. */
@@ -27,12 +30,16 @@ const PCAET_TYPE = {
 };
 
 const createDemarchePcaetSchema = z.object({
-  titre: z.string().min(1, appLabels.demarcheCreerIntituleRequis),
 
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
     .min(1, appLabels.demarcheCreerPilotesRequis),
   dateLancement: z.string().min(1, appLabels.demarcheCreerDateLancementRequise),
+  /**
+   * Le PCAET a déjà été transmis pour avis hors de la plateforme : la démarche
+   * démarrera à l'étape de finalisation. Figé ici — aucun écran ne le reprend.
+   */
+  transmisHorsPlateforme: z.boolean(),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
@@ -50,17 +57,6 @@ export const CreateDemarchePcaetPage = () => {
     trpc.demarches.pcaet.create.mutationOptions()
   );
 
-  const { isOpen, toggle } = useDemarcheAvanceSidePanel(
-    {
-      demarcheType: DemarcheTypeEnum.PCAET,
-      collectiviteId,
-      statut: 'en_elaboration',
-      completion: emptyDemarchePcaetCompletion(),
-      isPreview: true,
-    },
-    { defaultOpen: true }
-  );
-
   const {
     register,
     control,
@@ -70,7 +66,7 @@ export const CreateDemarchePcaetPage = () => {
     resolver: zodResolver(createDemarchePcaetSchema),
     mode: 'onChange',
     defaultValues: {
-      titre: `PCAET réglementaire ${new Date().getFullYear()}`,
+
       pilotes: [
         {
           nom: `${user.prenom} ${user.nom}`.trim(),
@@ -80,13 +76,35 @@ export const CreateDemarchePcaetPage = () => {
         },
       ],
       dateLancement: '',
+      transmisHorsPlateforme: false,
     },
   });
+
+  // Le panneau d'avancement montre le parcours qui attend la collectivité :
+  // cocher la case doit s'y voir tout de suite, avant même de créer.
+  const transmisHorsPlateforme = useWatch({
+    control,
+    name: 'transmisHorsPlateforme',
+  });
+
+  const { isOpen, toggle } = useDemarcheAvanceSidePanel(
+    {
+      demarcheType: DemarcheTypeEnum.PCAET,
+      collectiviteId,
+      statut: 'en_elaboration',
+      completion: emptyDemarchePcaetCompletion(),
+      isPreview: true,
+      horsPlateforme: transmisHorsPlateforme,
+    },
+    { defaultOpen: true }
+  );
 
   const onSubmit = async (data: CreateDemarchePcaetForm) => {
     const demarche = await createDemarche({
       collectiviteId,
-      titre: data.titre,
+      // L'intitulé n'est pas saisi ici : il se déduit de l'année du lancement,
+      // et reste modifiable depuis l'en-tête du dossier.
+      titre: buildDemarchePcaetTitre(data.dateLancement),
       pilotes: data.pilotes.map((pilote) => ({
         tagId: pilote.tagId ?? null,
         userId: pilote.userId ?? null,
@@ -94,6 +112,7 @@ export const CreateDemarchePcaetPage = () => {
       launchedAt: data.dateLancement
         ? new Date(data.dateLancement).toISOString()
         : null,
+      transmittedOffPlatform: data.transmisHorsPlateforme,
     });
     router.push(
       makeCollectiviteDemarchePcaetRootUrl({
@@ -176,6 +195,22 @@ export const CreateDemarchePcaetPage = () => {
                   {...register('dateLancement')}
                 />
               </Field>
+
+              <Controller
+                control={control}
+                name="transmisHorsPlateforme"
+                render={({ field }) => (
+                  <Checkbox
+                    variant="switch"
+                    label={appLabels.demarcheCreerHorsPlateforme}
+                    message={appLabels.demarcheCreerHorsPlateformeDescription}
+                    containerClassname="flex-row-reverse justify-end gap-3"
+                    data-test="demarches.creer.hors-plateforme"
+                    checked={field.value}
+                    onChange={() => field.onChange(!field.value)}
+                  />
+                )}
+              />
 
               <div className="flex justify-end gap-3">
                 <Button

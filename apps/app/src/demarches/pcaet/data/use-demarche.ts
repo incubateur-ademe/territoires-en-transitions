@@ -30,7 +30,9 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   dateModification: server.modifiedAt,
   dateLancement: server.launchedAt,
   datePublication: server.publishedAt,
+  dateAdoption: server.adoptedAt,
   dateTransmission: server.transmittedAt,
+  transmisHorsPlateforme: server.transmittedOffPlatform,
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
   planActionIds: server.planActionIds,
@@ -220,7 +222,9 @@ export const useDemarchePcaet = (demarcheId: number) => {
     isLoading,
     update,
     transmettrePourAvis: () => transmettrePourAvis(ids),
-    publier: () => publier(ids),
+    // La date d'adoption est saisie dans la modale de validation du dépôt
+    // final : elle n'a pas d'autre source.
+    publier: (dateAdoption: string) => publier({ ...ids, dateAdoption }),
     collectiviteId,
   };
 };

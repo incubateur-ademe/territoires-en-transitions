@@ -58,10 +58,10 @@ export const AppLayout = ({
   return (
     <>
       <OfflineAlert />
-      <Header />
-      {/* Hors du conteneur de `ContentWrapper`, qui est centré et borné : le
-          bandeau doit tenir toute la largeur de l'écran. */}
+      {/* Au-dessus du header, et collé en haut : l'agent d'un service navigue
+          au nom d'un autre, et ce rappel-là ne doit pas défiler avec la page. */}
       <ContexteInstructionBanner />
+      <Header />
       <ContentWrapper belowFooterSlot={belowFooterSlot}>
         {children}
       </ContentWrapper>

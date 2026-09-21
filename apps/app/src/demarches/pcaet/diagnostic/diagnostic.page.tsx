@@ -4,6 +4,7 @@ import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useGetPcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
+import { getDemarcheParcours } from '@/app/demarches/steps';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -40,8 +41,9 @@ export const DemarchePcaetDiagnosticPage = () => {
   }
 
   // Passée la clôture de l'instruction, l'écran ne sert plus à compléter le
-  // diagnostic mais à le relire pour répondre aux avis.
-  const estRappel = demarche.avalModifiable;
+  // diagnostic mais à le relire pour répondre aux avis. Se lit sur l'amont : un
+  // dépôt hors plateforme a l'aval ouvert alors qu'il reste à le remplir.
+  const estRappel = !getDemarcheParcours(demarche).amontOuvert;
 
   return (
     <DemarcheShell

@@ -25,10 +25,22 @@ import {
   HiddenActionSummary,
   isNewReferentiel,
   ListActionsGroupedByIdResult,
+  ReferentielLabel,
+  ReferentielLabelEnum,
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import { and, asc, count, eq, getTableColumns, SQL, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  count,
+  eq,
+  getTableColumns,
+  inArray,
+  SQL,
+  sql,
+} from 'drizzle-orm';
+import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
@@ -339,6 +351,13 @@ export class ListActionsService {
             null
           )
         `.as('services'),
+
+        labels: sql<Array<ReferentielLabel>>`
+          array_remove(
+            array_agg(DISTINCT ${actionDefinitionTagTable.tagRef}),
+            null
+          )
+        `.as('labels'),
       })
       .from(subQuery)
       .innerJoin(
@@ -370,6 +389,17 @@ export class ListActionsService {
       .leftJoin(
         serviceTagTable,
         eq(serviceTagTable.id, actionServiceTable.serviceTagId)
+      )
+      .leftJoin(
+        actionDefinitionTagTable,
+        and(
+          eq(actionDefinitionTagTable.actionId, subQuery.actionId),
+          eq(actionDefinitionTagTable.referentielId, subQuery.referentielId),
+          inArray(actionDefinitionTagTable.tagRef, [
+            ReferentielLabelEnum.TE_CAE,
+            ReferentielLabelEnum.TE_ECI,
+          ])
+        )
       )
       .groupBy(
         subQuery.modifiedAt,

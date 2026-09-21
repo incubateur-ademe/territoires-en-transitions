@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { preuveReglementaireFichier, preuveReglementaireLien } from './fixture';
+import { preuveReglementaireFichier, preuveReglementaireLien } from './documents.fixture';
 import { useOpenPreuve } from './use-open-preuve';
 
 const { downloadDocument, telechargementEnCours } = vi.hoisted(() => ({
@@ -32,9 +32,7 @@ describe('useOpenPreuve', () => {
 
     openPreuve.current(preuveReglementaireFichier);
 
-    expect(downloadDocument).toHaveBeenCalledWith(
-      preuveReglementaireFichier.fichier?.id
-    );
+    expect(downloadDocument).toHaveBeenCalledWith(21);
   });
 
   it('ignore un clic tant que le téléchargement précédent est en cours', () => {
@@ -53,7 +51,7 @@ describe('useOpenPreuve', () => {
     openPreuve.current(preuveReglementaireLien);
 
     expect(open).toHaveBeenCalledWith(
-      preuveReglementaireLien.lien?.url,
+      'http://yolo.dodo',
       '_blank',
       'noopener,noreferrer'
     );

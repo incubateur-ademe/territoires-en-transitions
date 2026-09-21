@@ -14,10 +14,12 @@ import { usePathname } from 'next/navigation';
  * Rappelle à l'agent d'un service qu'il n'est pas chez lui, et lui rend deux
  * chemins : le dossier qu'il instruit, et sa liste de dossiers.
  *
- * Montée dans `app-layout`, au-dessus du conteneur de contenu : c'est ce qui lui
- * donne un fond d'un bord à l'autre de l'écran, là où le conteneur est centré et
- * borné. Son conteneur intérieur reprend la gouttière des pages — la même que
- * celle du header — pour que le texte tombe sous le logo et la navigation.
+ * Montée dans `app-layout` au-dessus du header et collée en haut de l'écran,
+ * comme le bandeau du mode super-admin : ce qui prévient qu'on agit au nom d'un
+ * autre doit rester sous les yeux, pas défiler avec la page. Elle tient toute la
+ * largeur de l'écran ; son conteneur intérieur reprend la gouttière des pages —
+ * la même que celle du header — pour que le texte tombe sous le logo et la
+ * navigation.
  *
  * Elle lit le contexte dans le store de collectivité, alimenté par le layout de
  * collectivité — même chemin que le header, qui vit au même niveau. Le contexte
@@ -43,13 +45,16 @@ export const ContexteInstructionBanner = () => {
     <div
       role="status"
       data-test="demarches.pcaet.instruction.contexte-banniere"
-      className="border-b border-primary-3 bg-primary-1 text-sm text-primary-9"
+      className="sticky top-0 z-tooltip border-b border-primary-3 bg-primary-1 text-sm text-primary-9"
     >
       <div className="w-full max-w-8xl mx-auto px-2 md:px-4 lg:px-6 py-2 flex flex-wrap items-center gap-x-3 gap-y-2">
         <Icon icon="information-line" size="sm" className="shrink-0" />
         <span className="min-w-0">
           {appLabels.contexteInstructionTitre({
-            instructeurNom: contexte.instructeur.nom,
+            instructeur:
+              appLabels.contexteInstructionCasquette[
+                contexte.instructeur.type
+              ] ?? contexte.instructeur.nom,
           })}
           {/* Un dossier qui n'arrive que par un territoire limitrophe se lit
               sans se conclure : le dire ici, où l'agent lit déjà à quel titre

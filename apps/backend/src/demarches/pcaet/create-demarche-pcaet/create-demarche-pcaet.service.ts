@@ -6,6 +6,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_DEFAULT_TITRE,
+  getDemarchePcaetInitialStatus,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -13,6 +14,7 @@ import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-p
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
+import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import {
   CreateDemarchePcaetError,
   CreateDemarchePcaetErrorEnum,
@@ -31,7 +33,8 @@ export class CreateDemarchePcaetService {
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
-    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository
+    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
+    private readonly instructeursRepository: PcaetInstructeursRepository
   ) {}
 
   async createDemarchePcaet(
@@ -73,6 +76,10 @@ export class CreateDemarchePcaetService {
             description: input.description ?? '',
             obligation: input.obligation,
             launchedAt: input.launchedAt ?? null,
+            // Un PCAET déjà transmis hors plateforme n'a ni élaboration ni
+            // transmission à rejouer : son dossier démarre à la finalisation.
+            status: getDemarchePcaetInitialStatus(input),
+            transmittedOffPlatform: input.transmittedOffPlatform ?? false,
           },
           user.id,
           transaction
@@ -89,6 +96,26 @@ export class CreateDemarchePcaetService {
         { demarcheId, collectiviteId: input.collectiviteId, userId: user.id },
         transaction
       );
+
+      // Un dépôt hors plateforme saisit les services qui couvrent la
+      // collectivité, comme le ferait une transmission : sans cela le dossier
+      // n'atteindrait aucun tableau d'instructeur.
+      //
+      // Deux différences, portées par la provenance de la saisine : aucun avis
+      // n'est attendu — le statut ferme le dépôt d'avis — et **aucune
+      // notification n'est émise**, les services ayant déjà été saisis en dehors
+      // de la plateforme. Les prévenir maintenant leur annoncerait une
+      // instruction qu'ils ont déjà menée.
+      if (input.transmittedOffPlatform) {
+        await this.instructeursRepository.saisirInstructeurs(
+          {
+            demarcheId,
+            collectiviteId: input.collectiviteId,
+            source: 'depot_hors_plateforme',
+          },
+          transaction
+        );
+      }
 
       if (input.pilotes && input.pilotes.length > 0) {
         const pilotesResult = await this.pilotesRepository.setPilotes(

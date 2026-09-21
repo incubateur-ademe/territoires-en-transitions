@@ -15,10 +15,9 @@ import {
  * (voir `(authed)/layout.tsx`). Fonction pure, testable isolément.
  *
  * Le chemin comparé provient de l'en-tête `x-current-path`, que le proxy réécrit
- * systématiquement à partir de `request.nextUrl.pathname` (cf. `proxy.ts`) : il
- * n'est donc pas falsifiable côté client. Par défense en profondeur on retire
- * malgré tout une éventuelle query string / ancre avant comparaison, pour qu'un
- * `?x=/profil` ne puisse pas élargir la liste blanche.
+ * systématiquement à partir de l'URL réelle (cf. `proxy.ts`) : il n'est donc
+ * pas falsifiable côté client. On retire query string / ancre avant
+ * comparaison, pour qu'un `?x=/profil` ne puisse pas élargir la liste blanche.
  */
 export function isAllowedWithoutCollectivite(pathname: string): boolean {
   const path = pathname.split(/[?#]/)[0];

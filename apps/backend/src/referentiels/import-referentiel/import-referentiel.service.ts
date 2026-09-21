@@ -18,10 +18,6 @@ import {
   ImportActionDefinitionCoremeasureType,
   importActionDefinitionSchema,
 } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
-import {
-  ReferentielLabelEnum,
-  referentielLabelEnumSchema,
-} from '@tet/backend/referentiels/models/referentiel-label.enum';
 import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
@@ -43,6 +39,8 @@ import {
   getActionTypeFromActionId,
   getParentId,
   ReferentielId,
+  ReferentielLabelEnum,
+  referentielLabelEnumSchema,
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { isNil } from 'es-toolkit';

@@ -1,4 +1,4 @@
-import { indicateurCollectivitePeriodiciteSelection } from '../../definitions/indicateur-periodicite.sql';
+import { indicateurCollectivitePeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';

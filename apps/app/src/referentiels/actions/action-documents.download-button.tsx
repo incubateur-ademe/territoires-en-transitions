@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/utils/save-blob';
-import { Fichier, Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentRattache } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { StoredFile } from '@tet/domain/collectivites';
 import {
   MesureDocumentsState,
   useListDocumentsMesure,
@@ -13,6 +14,7 @@ import {
 } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
+import { uniqBy } from 'es-toolkit';
 import { ActionListItem } from './use-list-actions';
 
 export type TDownloadDocsProps = {
@@ -62,7 +64,9 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
   );
 };
 
-const flattenMesureDocuments = (documents: MesureDocumentsState): Preuve[] => {
+const flattenMesureDocuments = (
+  documents: MesureDocumentsState
+): DocumentRattache[] => {
   if (documents.status !== 'loaded') {
     return [];
   }
@@ -87,12 +91,11 @@ const useDownloadDocs = (action: ActionListItem) => {
 
   const preuves = flattenMesureDocuments(documents);
 
-  const fichiers: Fichier[] = Object.values(
-    preuves.reduce((filenameByHash, { fichier }) => {
-      return fichier
-        ? { ...filenameByHash, [fichier.hash]: fichier }
-        : filenameByHash;
-    }, {} as Record<string, Fichier>)
+  const fichiers: StoredFile[] = uniqBy(
+    preuves.flatMap((preuve) =>
+      preuve.type === 'fichier' ? [preuve.fichier] : []
+    ),
+    ({ hash }) => hash
   );
 
   const filename = `${referentiel}_${identifiant}_${nom}.zip`;
@@ -127,7 +130,7 @@ const useDownloadDocs = (action: ActionListItem) => {
   return canFetch ? query : null;
 };
 
-const getSignedUrls = async (supabase: DBClient, fichiers: Fichier[]) => {
+const getSignedUrls = async (supabase: DBClient, fichiers: StoredFile[]) => {
   const signedUrls = await Promise.all(
     fichiers.map(({ bucketId, hash }) =>
       supabase.storage

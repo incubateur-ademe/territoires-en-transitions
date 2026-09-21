@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
@@ -85,10 +86,23 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
 
   // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
   // diagnostic renseigné ET un programme d'actions rattaché.
+  //
+  // Une transmission l'a déjà fait attester : le guard rend alors vrai sans rien
+  // relire. Ce n'est pas un raccourci de performance, c'est la seule lecture
+  // correcte — l'amont est fermé depuis, donc la collectivité ne peut plus rien
+  // y corriger, tandis que ce dont dépend le calcul continue de bouger sous elle
+  // (un plan d'actions supprimé depuis le module plans, une pièce devenue
+  // requise au catalogue, un feature flag de démonstration retiré). Recalculer
+  // ici rendrait le dossier impubliable et sans issue.
+  //
+  // Reste donc à calculer ce qui n'a jamais été transmis : le dépôt hors
+  // plateforme, dont la publication est le premier et seul contrôle.
   dossierComplet: (context) =>
-    context.documentsComplets === undefined ||
-    context.diagnostic === undefined ||
-    context.planActionIds === undefined
+    context.transmittedAt !== null
+      ? true
+      : context.documentsComplets === undefined ||
+        context.diagnostic === undefined ||
+        context.planActionIds === undefined
       ? undefined
       : context.documentsComplets &&
         (context.isDiagnosticBypassed === true ||
@@ -128,7 +142,8 @@ export class DemarchePcaetGuardsService {
     private readonly documentsRepository: DemarcheDocumentsRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly avisRepository: PcaetAvisRepository,
-    private readonly trackingService: TrackingService
+    private readonly trackingService: TrackingService,
+    private readonly configurationService: ConfigurationService
   ) {}
 
   /**
@@ -137,12 +152,22 @@ export class DemarchePcaetGuardsService {
    * explicable en lisant les logs de la transmission.
    *
    * Piloté par le feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`,
-   * activable par utilisateur ou collectivité depuis l'interface PostHog.
+   * activable par utilisateur ou collectivité depuis l'interface PostHog, ou
+   * par `DEMARCHE_PCAET_BYPASS_DIAGNOSTIC` pour les instances où le flag n'est
+   * pas évaluable — en local, PostHog n'a ni clé ni utilisateur connu.
    */
   private async isDiagnosticBypassed(
     user: AuthenticatedUser | null,
     collectiviteId: number
   ): Promise<boolean> {
+    // L'instance entière contourne : pas d'utilisateur à identifier, donc
+    // vérifié avant tout le reste.
+    if (this.configurationService.get('DEMARCHE_PCAET_BYPASS_DIAGNOSTIC')) {
+      this.logger.warn(
+        `DEMARCHE_PCAET_BYPASS_DIAGNOSTIC actif : le diagnostic n'est pas exigé pour compléter le dossier PCAET de la collectivité ${collectiviteId} (démonstration)`
+      );
+      return true;
+    }
     if (!user) {
       return false;
     }
@@ -171,7 +196,12 @@ export class DemarchePcaetGuardsService {
   ): Promise<DemarchePcaetGuardContext> {
     const requiredGuards = getRequiredGuards(demarche.status);
     const needsPilotes = requiredGuards.includes('estPilote');
-    const needsDossier = requiredGuards.includes('dossierComplet');
+    // Miroir du court-circuit de `dossierComplet` : sur un dossier transmis, le
+    // guard répond sans rien lire, donc ni snapshot documentaire, ni diagnostic,
+    // ni plans, ni appel PostHog — que `enrichAll` ferait sinon en boucle.
+    const needsDossier =
+      requiredGuards.includes('dossierComplet') &&
+      demarche.transmittedAt === null;
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
     const needsAvisRendus = requiredGuards.includes('avisTousRendus');
 

@@ -3,7 +3,8 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
@@ -53,12 +54,13 @@ export class ListDocumentsDemandeLabellisationRepository {
         })
         .from(preuveLabellisationTable)
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveLabellisationTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
+            eq(preuveLabellisationTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .leftJoin(
           labellisationDemandeTable,
           eq(preuveLabellisationTable.demandeId, labellisationDemandeTable.id)
@@ -71,9 +73,9 @@ export class ListDocumentsDemandeLabellisationRepository {
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveLabellisationTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )

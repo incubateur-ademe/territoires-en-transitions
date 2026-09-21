@@ -116,9 +116,17 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
       [setLigneMutate, collectiviteId, demarcheId]
     ),
     addThematique: useCallback(
-      async (label: string): Promise<AddThematiqueFailure | null> => {
+      async (
+        label: string,
+        parentId?: number
+      ): Promise<AddThematiqueFailure | null> => {
         try {
-          await addThematiqueMutate({ collectiviteId, demarcheId, label });
+          await addThematiqueMutate({
+            collectiviteId,
+            demarcheId,
+            label,
+            parentId,
+          });
           return null;
         } catch (error) {
           // Sans distinguer le motif, une coupure réseau s'annonçait comme un

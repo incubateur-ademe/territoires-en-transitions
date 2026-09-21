@@ -37,6 +37,12 @@ export const PcaetStatutInstructionEnum = {
   AUCUN_DEPOT: 'aucun_depot',
   /** Un dépôt en cours de constitution — premier PCAET comme renouvellement. */
   EN_ELABORATION: 'en_elaboration',
+  /**
+   * Le PCAET a été transmis pour avis **hors de la plateforme** : il n'y a rien
+   * à y instruire, et rien n'y sera demandé au service. La ligne le dit plutôt
+   * que de laisser croire à une absence de dépôt.
+   */
+  DEPOT_HORS_PLATEFORME: 'depot_hors_plateforme',
   EN_INSTRUCTION: 'en_instruction',
   PAS_D_AVIS_DEPOSE: 'pas_d_avis_depose',
   INSTRUIT: 'instruit',
@@ -48,6 +54,7 @@ export const PcaetStatutInstructionEnum = {
 export const pcaetStatutInstructionValues = [
   PcaetStatutInstructionEnum.AUCUN_DEPOT,
   PcaetStatutInstructionEnum.EN_ELABORATION,
+  PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME,
   PcaetStatutInstructionEnum.EN_INSTRUCTION,
   PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
   PcaetStatutInstructionEnum.INSTRUIT,
@@ -67,15 +74,21 @@ export type PcaetStatutInstruction = z.infer<
  * Ce que le service voit sans rien demander.
  *
  * Reproduit ce que l'écran montrait avant les filtres : les dossiers dont il a
- * la charge, sans les dépôts en chantier ni les cycles clos. Les trois exclus
- * sont précisément les nouveautés — une DREAL, et plus encore la DGEC avec son
+ * la charge, sans les dépôts en chantier ni les cycles clos. Les exclus sont
+ * précisément les nouveautés — une DREAL, et plus encore la DGEC avec son
  * périmètre national, ne veut pas ouvrir sa liste sur un millier de
  * collectivités qui n'ont rien déposé.
+ *
+ * Le dépôt hors plateforme, lui, y figure : le service y est saisi, et c'est le
+ * seul endroit où il apprendra l'existence du dossier — aucune notification ne
+ * lui est envoyée, l'instruction ayant eu lieu en dehors. Il le voit sans que
+ * rien ne lui soit demandé, et il ne compte pas dans sa charge.
  */
 export const STATUTS_INSTRUCTION_PAR_DEFAUT = [
   PcaetStatutInstructionEnum.EN_INSTRUCTION,
   PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
   PcaetStatutInstructionEnum.INSTRUIT,
+  PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME,
   PcaetStatutInstructionEnum.ADOPTE,
 ] as const;
 
@@ -144,6 +157,11 @@ export const getStatutInstruction = (
   }
   if (demarcheStatus === DemarchePcaetStatusEnum.EN_ELABORATION) {
     return PcaetStatutInstructionEnum.EN_ELABORATION;
+  }
+  // Traité avant l'état de la saisine, parce qu'il n'y en a aucune : le service
+  // a été saisi hors plateforme, et le dossier n'a pas d'échéance à surveiller.
+  if (demarcheStatus === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME) {
+    return PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME;
   }
 
   // Ne restent que `transmis_pour_avis` et `instruit` : le dossier est dans la

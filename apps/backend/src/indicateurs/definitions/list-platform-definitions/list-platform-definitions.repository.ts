@@ -1,4 +1,4 @@
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';

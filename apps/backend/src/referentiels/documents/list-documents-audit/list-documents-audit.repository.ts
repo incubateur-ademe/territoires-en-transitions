@@ -3,7 +3,8 @@ import {
   buildFichierSubquery,
   buildFileInfoSql,
 } from '@tet/backend/collectivites/documents/file-info.utils';
-import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { excludeConfidentielRow } from '@tet/backend/collectivites/documents/confidentiel.utils';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
@@ -58,12 +59,13 @@ export class ListDocumentsAuditRepository {
         })
         .from(preuveAuditTable)
         .leftJoin(
-          fichier,
+          bibliothequeFichierTable,
           and(
-            eq(preuveAuditTable.fichierId, fichier.id),
-            eq(fichier.collectiviteId, collectiviteId)
+            eq(preuveAuditTable.fichierId, bibliothequeFichierTable.id),
+            eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
+        .leftJoin(fichier, eq(fichier.id, bibliothequeFichierTable.id))
         .innerJoin(auditTable, eq(preuveAuditTable.auditId, auditTable.id))
         .leftJoin(
           labellisationDemandeTable,
@@ -74,9 +76,9 @@ export class ListDocumentsAuditRepository {
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter({
+            excludeConfidentielRow({
               fichierIdColumn: preuveAuditTable.fichierId,
-              confidentielColumn: fichier.confidentiel,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
               canReadConfidentiel,
             })
           )

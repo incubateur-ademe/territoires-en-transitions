@@ -57,9 +57,10 @@ export class UpdateVulnerabiliteThematiqueService {
       }
 
       // Se renommer soi-même (ou changer la casse de son propre libellé) reste
-      // permis ; heurter une autre thématique ne l'est pas.
+      // permis ; heurter une sœur ne l'est pas. Une thématique d'une autre
+      // fratrie peut porter le même nom : c'est sa parente qui la distingue.
       const homonyme = await this.vulnerabiliteRepository.findThematiqueByLabel(
-        { collectiviteId, label },
+        { collectiviteId, label, parentId: thematique.parentId },
         transaction
       );
       if (homonyme && homonyme.id !== thematiqueId) {

@@ -64,6 +64,7 @@ export class SwitchToTeService {
   > = {
     COT_ACTIVE: SwitchToTeErrorEnum.COT_ACTIVE,
     COLLECTIVITE_IS_SYNDICAT: SwitchToTeErrorEnum.COLLECTIVITE_IS_SYNDICAT,
+    COLLECTIVITE_IS_DROM: SwitchToTeErrorEnum.COLLECTIVITE_IS_DROM,
     AUDIT_REQUEST_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_REQUEST_IN_PROGRESS,
     AUDIT_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_IN_PROGRESS,
   };
@@ -81,35 +82,47 @@ export class SwitchToTeService {
       (referentiel) => prefs[referentiel].mode === 'write'
     );
 
-    const [cotActif, isSyndicat, referentielsEnWrite] = await Promise.all([
-      this.getLabellisationService.isCotActif(collectiviteId),
-      this.isSyndicat(collectiviteId),
-      Promise.all(
-        referentielsToCheck.map(async (referentiel) => {
-          const demandeEtAudit =
-            await this.getLabellisationService.getCurrentDemandeAndAudit(
-              collectiviteId,
-              referentiel
-            );
-          return {
-            referentiel,
-            status: getParcoursLabellisationStatus(demandeEtAudit),
-          };
-        })
-      ),
-    ]);
+    const [cotActif, { isSyndicat, isDrom }, referentielsEnWrite] =
+      await Promise.all([
+        this.getLabellisationService.isCotActif(collectiviteId),
+        this.getEligibiliteType(collectiviteId),
+        Promise.all(
+          referentielsToCheck.map(async (referentiel) => {
+            const demandeEtAudit =
+              await this.getLabellisationService.getCurrentDemandeAndAudit(
+                collectiviteId,
+                referentiel
+              );
+            return {
+              referentiel,
+              status: getParcoursLabellisationStatus(demandeEtAudit),
+            };
+          })
+        ),
+      ]);
 
-    return getSwitchToTeBlockers({ cotActif, isSyndicat, referentielsEnWrite });
+    return getSwitchToTeBlockers({
+      cotActif,
+      isSyndicat,
+      isDrom,
+      referentielsEnWrite,
+    });
   }
 
   /**
-   * Les collectivités de type syndicat (SMF, SMO, SIVU, SIVOM) ne sont pas
-   * éligibles au référentiel TE.
+   * Critères d'inéligibilité liés au type de collectivité, lus en un seul appel :
+   * - syndicat (SMF, SMO, SIVU, SIVOM) : pas éligible au référentiel TE ;
+   * - DROM : pas encore éligible au référentiel TE.
    */
-  private async isSyndicat(collectiviteId: number): Promise<boolean> {
-    const { soustype } =
+  private async getEligibiliteType(
+    collectiviteId: number
+  ): Promise<{ isSyndicat: boolean; isDrom: boolean }> {
+    const { soustype, drom } =
       await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    return soustype === CollectiviteSousTypeEnum.SYNDICAT;
+    return {
+      isSyndicat: soustype === CollectiviteSousTypeEnum.SYNDICAT,
+      isDrom: drom === true,
+    };
   }
 
   /**

@@ -1,9 +1,10 @@
 'use client';
 
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import type { RouterOutput } from '@tet/api';
-import { Accordion, cn, EmptyCard, Icon } from '@tet/ui';
+import { Accordion, Button, cn, EmptyCard, Icon } from '@tet/ui';
 
 /**
  * Un plan et son contenu aplati. Les deux routes qui l'exposent — le dossier
@@ -103,25 +104,57 @@ const titreDuPlan = (plan: PlanContenuAffiche) =>
     }),
   });
 
+/**
+ * Lien vers le plan lui-même, quand la collectivité qui le porte est connue.
+ *
+ * Nouvel onglet : sur l'écran d'instruction le plan appartient à la déposante,
+ * et y naviguer sortirait l'instructeur du dossier qu'il est en train de lire.
+ */
+const LienPlan = ({
+  collectiviteId,
+  plan,
+  dataTest,
+}: {
+  collectiviteId: number;
+  plan: PlanContenuAffiche;
+  dataTest: string;
+}) => (
+  <Button
+    variant="outlined"
+    size="xs"
+    external
+    href={makeCollectivitePlanActionUrl({
+      collectiviteId,
+      planActionUid: plan.id.toString(),
+    })}
+    dataTest={dataTest}
+  >
+    {appLabels.demarchePlanContenuPlanLien}
+  </Button>
+);
+
 /** Encadrement d'un plan dans l'accordéon, quand il y en a plusieurs. */
 const CARTE_PLAN = 'rounded-lg border border-grey-3 bg-white';
 
 /**
  * Le programme d'actions d'une démarche, en lecture seule.
  *
- * Rien n'est cliquable — ni le plan, ni ses actions. Côté instructeur parce
- * qu'il n'a aucun droit sur les plans de la déposante et que tout lien mènerait
- * à un écran qui le refuserait ; côté déposante parce que l'écran est un rappel
- * du dossier transmis, et que le plan se modifie ailleurs.
+ * Les actions ne sont pas cliquables : elles appartiennent à la déposante, et
+ * côté instructeur le lien mènerait à un écran qui le refuserait. Le plan, lui,
+ * s'ouvre par un lien dès que `collectiviteId` est donnée — celle qui le porte,
+ * pas celle qui lit.
  */
 export const PlansContenu = ({
   plans,
   emptyTitle,
   dataTestPrefix,
+  collectiviteId,
 }: {
   plans: PlanContenuAffiche[];
   emptyTitle: string;
   dataTestPrefix: string;
+  /** Collectivité porteuse des plans. Sans elle, aucun lien n'est affiché. */
+  collectiviteId?: number;
 }) => {
   if (plans.length === 0) {
     return (
@@ -142,12 +175,21 @@ export const PlansContenu = ({
         className="flex flex-col gap-2"
         data-test={`${dataTestPrefix}.plans`}
       >
-        <p
-          className="m-0 text-base font-bold text-primary-9"
-          data-test={`${dataTestPrefix}.plan-${premierPlan.id}`}
-        >
-          {titreDuPlan(premierPlan)}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p
+            className="m-0 text-base font-bold text-primary-9"
+            data-test={`${dataTestPrefix}.plan-${premierPlan.id}`}
+          >
+            {titreDuPlan(premierPlan)}
+          </p>
+          {collectiviteId !== undefined && (
+            <LienPlan
+              collectiviteId={collectiviteId}
+              plan={premierPlan}
+              dataTest={`${dataTestPrefix}.plan-${premierPlan.id}.lien`}
+            />
+          )}
+        </div>
         <PlanContenu plan={premierPlan} />
       </div>
     );
@@ -165,6 +207,18 @@ export const PlansContenu = ({
           title={titreDuPlan(plan)}
           content={<PlanContenu plan={plan} className="px-8 pb-6" />}
           containerClassname={CARTE_PLAN}
+          // La flèche collait au bord de la carte : l'en-tête n'avait que des
+          // marges verticales.
+          headerClassname="px-6"
+          additionalRightHeaderContent={
+            collectiviteId !== undefined && (
+              <LienPlan
+                collectiviteId={collectiviteId}
+                plan={plan}
+                dataTest={`${dataTestPrefix}.plan-${plan.id}.lien`}
+              />
+            )
+          }
         />
       ))}
     </div>

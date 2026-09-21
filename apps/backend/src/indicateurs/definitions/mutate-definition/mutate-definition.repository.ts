@@ -1,4 +1,4 @@
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.sql';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable } from '@nestjs/common';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';

@@ -363,21 +363,6 @@ export class PcaetAvisRepository {
       );
   }
 
-  async marquerEnvoye(
-    { demandeAvisId, avisId }: { demandeAvisId: number; avisId: string },
-    tx?: Transaction
-  ): Promise<void> {
-    await (tx ?? this.databaseService.db)
-      .update(pcaetAvisTable)
-      .set({ envoyeLe: new Date().toISOString() })
-      .where(
-        and(
-          eq(pcaetAvisTable.id, avisId),
-          eq(pcaetAvisTable.demandeAvisId, demandeAvisId)
-        )
-      );
-  }
-
   async delete(
     { demandeAvisId, avisId }: { demandeAvisId: number; avisId: string },
     tx?: Transaction

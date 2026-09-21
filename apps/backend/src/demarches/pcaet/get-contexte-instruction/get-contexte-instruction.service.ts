@@ -112,6 +112,7 @@ export class GetContexteInstructionService {
       instructeur: {
         collectiviteId: saisine.instructeurCollectiviteId,
         nom: saisine.instructeurNom,
+        type: saisine.instructeurType,
       },
       // Le périmètre de *cette* saisine, pas une propriété du service : le même
       // agent, sur un autre dossier, obtiendrait l'autre réponse.

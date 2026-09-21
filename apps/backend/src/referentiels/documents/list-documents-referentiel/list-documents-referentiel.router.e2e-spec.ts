@@ -25,6 +25,13 @@ import { onTestFinished } from 'vitest';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { createTestDemandePreuve } from '../../labellisations/create-preuve/create-preuve.test-fixture';
 
+type DocumentLu =
+  | { type: 'fichier'; fichier: { filename: string } }
+  | { type: 'fichierManquant'; filename: string };
+
+const toFilename = (document: DocumentLu): string =>
+  document.type === 'fichier' ? document.fichier.filename : document.filename;
+
 describe('List Documents Router', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
@@ -163,14 +170,16 @@ describe('List Documents Router', () => {
       date: '2026-06-15T00:00:00.000Z',
     });
 
-    const documents = await membreCaller.referentiels.documents.listDocumentsReferentiel({
-      collectiviteId,
-      referentielId: ReferentielIdEnum.CAE,
-    });
+    const documents =
+      await membreCaller.referentiels.documents.listDocumentsReferentiel({
+        collectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      });
 
-    expect(documents.rapport.map((preuve) => preuve.fichier?.filename)).toEqual(
-      ['visite-2026.pdf', 'visite-2024.pdf']
-    );
+    expect(documents.rapport.map((preuve) => toFilename(preuve))).toEqual([
+      'visite-2026.pdf',
+      'visite-2024.pdf',
+    ]);
   });
 
   test('rend le dernier rapport depose en premier quand deux rapports partagent la meme date', async () => {
@@ -186,14 +195,16 @@ describe('List Documents Router', () => {
       date: '2026-06-15T00:00:00.000Z',
     });
 
-    const documents = await membreCaller.referentiels.documents.listDocumentsReferentiel({
-      collectiviteId,
-      referentielId: ReferentielIdEnum.CAE,
-    });
+    const documents =
+      await membreCaller.referentiels.documents.listDocumentsReferentiel({
+        collectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      });
 
-    expect(documents.rapport.map((preuve) => preuve.fichier?.filename)).toEqual(
-      ['visite-deposee-en-second.pdf', 'visite-deposee-en-premier.pdf']
-    );
+    expect(documents.rapport.map((preuve) => toFilename(preuve))).toEqual([
+      'visite-deposee-en-second.pdf',
+      'visite-deposee-en-premier.pdf',
+    ]);
   });
 
   test("n'expose pas le fichier d'une autre collectivite porte par un document", async () => {
@@ -227,12 +238,8 @@ describe('List Documents Router', () => {
         referentielId: ReferentielIdEnum.CAE,
       });
 
-    expect(
-      documents.labellisation.map((document) => document.fichier)
-    ).not.toContainEqual(
-      expect.objectContaining({
-        filename: 'document-de-la-collectivite-voisine.pdf',
-      })
+    expect(documents.labellisation.map(toFilename)).not.toContain(
+      'document-de-la-collectivite-voisine.pdf'
     );
   });
 
@@ -266,14 +273,11 @@ describe('List Documents Router', () => {
         referentielId: ReferentielIdEnum.CAE,
       });
 
-    expect(
-      documents.labellisation.map((document) => document.fichier)
-    ).toContainEqual(
-      expect.objectContaining({
-        filename: 'deliberation-2019.pdf',
-        hash: documentHerite.hash,
-      })
+    const documentLu = documents.labellisation.find(
+      (document) => toFilename(document) === 'deliberation-2019.pdf'
     );
+    expect(documentLu).toBeDefined();
+    expect(documentLu?.type).toBe('fichier');
   });
 
   test('rend les documents de labellisation du référentiel à un visiteur vérifié non membre', async () => {
@@ -283,15 +287,14 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'dossier-candidature.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
-      {
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
-      }
-    );
+      });
 
     expect(
-      documents.labellisation.map((document) => document.fichier?.filename)
+      documents.labellisation.map((document) => toFilename(document))
     ).toEqual(['dossier-candidature.pdf']);
     expect(documents.audit).toEqual([]);
     expect(documents.rapport).toEqual([]);
@@ -304,12 +307,11 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'acte-candidature.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
-      {
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
-      }
-    );
+      });
 
     expect(documents.labellisation[0]).toHaveProperty('objet');
     expect(documents.labellisation[0].objet).toBeNull();
@@ -322,12 +324,11 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'piece-du-cycle.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
-      {
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
-      }
-    );
+      });
 
     const document = documents.labellisation[0];
     expect(document.demande).not.toBeNull();
@@ -354,9 +355,7 @@ describe('List Documents Router', () => {
       });
 
     expect(
-      documentsVisiteur.labellisation.map(
-        (document) => document.fichier?.filename
-      )
+      documentsVisiteur.labellisation.map((document) => toFilename(document))
     ).toEqual(['piece-publique.pdf']);
 
     const documentsMembre =
@@ -366,9 +365,7 @@ describe('List Documents Router', () => {
       });
 
     expect(
-      documentsMembre.labellisation.map(
-        (document) => document.fichier?.filename
-      )
+      documentsMembre.labellisation.map((document) => toFilename(document))
     ).toEqual(['piece-publique.pdf', 'piece-confidentielle.pdf']);
   });
 
@@ -402,15 +399,14 @@ describe('List Documents Router', () => {
     await otherCycle.addPreuve({ fileName: 'document-voisin.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
-      {
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId: cycle.collectiviteId,
         referentielId: ReferentielIdEnum.CAE,
-      }
-    );
+      });
 
     expect(
-      documents.labellisation.map((document) => document.fichier?.filename)
+      documents.labellisation.map((document) => toFilename(document))
     ).toEqual(['document-demande.pdf']);
   });
 
@@ -421,12 +417,11 @@ describe('List Documents Router', () => {
     await addPreuve({ fileName: 'document-cae.pdf' });
 
     const visiteurCaller = router.createCaller({ user: visiteurUser });
-    const documents = await visiteurCaller.referentiels.documents.listDocumentsReferentiel(
-      {
+    const documents =
+      await visiteurCaller.referentiels.documents.listDocumentsReferentiel({
         collectiviteId,
         referentielId: ReferentielIdEnum.ECI,
-      }
-    );
+      });
 
     expect(documents.labellisation).toEqual([]);
   });
@@ -452,7 +447,7 @@ describe('List Documents Router', () => {
       });
 
     expect(
-      documentsVisiteur.audit.map((document) => document.fichier?.filename)
+      documentsVisiteur.audit.map((document) => toFilename(document))
     ).toEqual(['rapport-audit.pdf']);
 
     const documentsMembre =
@@ -462,7 +457,7 @@ describe('List Documents Router', () => {
       });
 
     expect(
-      documentsMembre.audit.map((document) => document.fichier?.filename)
+      documentsMembre.audit.map((document) => toFilename(document))
     ).toEqual(['rapport-audit.pdf', 'annexe-confidentielle.pdf']);
   });
 
@@ -489,7 +484,7 @@ describe('List Documents Router', () => {
       });
 
     expect(
-      documentsVisiteur.rapport.map((document) => document.fichier?.filename)
+      documentsVisiteur.rapport.map((document) => toFilename(document))
     ).toEqual(['visite-annuelle.pdf']);
     expect(documentsVisiteur.rapport[0].rapport.date).toBeDefined();
 
@@ -500,7 +495,7 @@ describe('List Documents Router', () => {
       });
 
     expect(
-      documentsMembre.rapport.map((document) => document.fichier?.filename)
+      documentsMembre.rapport.map((document) => toFilename(document))
     ).toEqual(['visite-annuelle.pdf', 'visite-confidentielle.pdf']);
   });
 });

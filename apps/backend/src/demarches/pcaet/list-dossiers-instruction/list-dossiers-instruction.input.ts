@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 export const listDossiersInstructionSortValues = [
   'echeance',
-  'dateDebut',
+  'dateLancement',
   'collectivite',
   'contact',
   'statut',

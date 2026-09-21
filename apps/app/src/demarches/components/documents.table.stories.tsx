@@ -48,8 +48,8 @@ const definitions: DemarcheDocumentDefinition[] = [
     substitutsDeclarables: [],
   },
   {
-    id: 'pcaet_etude_impact',
-    nom: 'Étude d’impact (dont résumé non technique)',
+    id: 'pcaet_ees',
+    nom: 'EES (évaluation environnementale stratégique - dont résumé non technique)',
     description: '',
     requis: true,
     ordre: 3,

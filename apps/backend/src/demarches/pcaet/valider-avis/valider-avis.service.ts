@@ -4,6 +4,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
+import { NotifyAvisRecuService } from '../notifications/notify-avis-recu/notify-avis-recu.service';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
@@ -18,7 +19,8 @@ export class ValiderAvisService {
     private readonly transactionManager: TransactionManager,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository,
-    private readonly cloreInstructionService: CloreInstructionService
+    private readonly cloreInstructionService: CloreInstructionService,
+    private readonly notifyAvisRecuService: NotifyAvisRecuService
   ) {}
 
   /**
@@ -64,6 +66,11 @@ export class ValiderAvisService {
 
     if (avis.valideLe === null) {
       await this.pcaetAvisRepository.valider({ demandeAvisId, avisId }, tx);
+      // Sous la garde : une seconde validation ne doit pas renotifier.
+      await this.notifyAvisRecuService.creerNotifications(
+        { demandeAvisId, avisId, createdBy: user.id },
+        tx
+      );
       await this.cloreInstructionSiAchevee(demandeAvisId, tx);
     }
 

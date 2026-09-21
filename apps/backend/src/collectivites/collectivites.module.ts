@@ -1,3 +1,4 @@
+import { AnalysisModule } from './analysis/analysis.module';
 import { Logger, Module } from '@nestjs/common';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
@@ -71,6 +72,7 @@ import { PersonnesService } from './services/personnes.service';
 
 @Module({
   imports: [
+    AnalysisModule,
     CollectivitesCoreModule,
     PersonnalisationsModule,
     TransactionModule,

@@ -1,19 +1,13 @@
+import {
+  DocumentRow,
+  toDocuments,
+} from '@tet/backend/collectivites/documents/to-documents.adapter';
 import { groupBy } from 'es-toolkit';
 
-type SupportRow = {
-  id: number | null;
-  fichier: unknown;
-  lien: unknown;
-};
-
-type AttenduRow = SupportRow & {
+type AttenduRow = DocumentRow & {
   action: { actionId: string };
   preuveReglementaire: { id: string };
 };
-
-function hasSupport({ id, fichier, lien }: SupportRow): boolean {
-  return id !== null && (fichier !== null || lien !== null);
-}
 
 export function toAttendus<Row extends AttenduRow>(rows: Row[]) {
   return Object.values(
@@ -25,6 +19,6 @@ export function toAttendus<Row extends AttenduRow>(rows: Row[]) {
   ).map((depots) => ({
     preuveReglementaire: depots[0].preuveReglementaire,
     action: depots[0].action,
-    documents: depots.filter(hasSupport),
+    documents: toDocuments(depots),
   }));
 }

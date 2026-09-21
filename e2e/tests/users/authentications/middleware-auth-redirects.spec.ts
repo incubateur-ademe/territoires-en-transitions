@@ -8,7 +8,8 @@ import { hasActiveOidcProvider } from './login-user-with-oidc.helpers';
  * - Les routes d'auth (/login, /signup, /recover) sont servies sans redirection
  *   pour les utilisateurs non authentifiés.
  * - Les routes protégées (non-auth, non-publiques) redirigent les utilisateurs
- *   non authentifiés loin de la page demandée.
+ *   non authentifiés vers /login, en conservant la destination demandée dans
+ *   `redirect_to` (deep-link).
  *
  * Couvre R2, R8 (plan 2026-06-24-001).
  */
@@ -64,31 +65,52 @@ test.describe("Middleware — redirections d'authentification", () => {
   });
 
   /**
-   * Ces deux tests portent sur la décision du middleware, pas sur la page
-   * d'atterrissage : on n'attend donc pas son `load`. L'accueil publique affiche
-   * une grande illustration servie par `next/image`, optimisée à la première
-   * demande : en CI, ce chargement dépasse parfois le délai de navigation, et le
-   * `goto` échouait avant même que l'URL soit vérifiée.
+   * Ces tests portent sur la décision du middleware, pas sur la page
+   * d'atterrissage : on n'attend donc pas son `load` (`domcontentloaded`
+   * suffit), certaines pages chargeant des images `next/image` dont
+   * l'optimisation à la première demande dépasse parfois le délai de
+   * navigation en CI.
    */
   test.describe('Routes protégées inaccessibles sans authentification', () => {
-    test('redirige /profil → accueil pour un utilisateur non authentifié', async ({
+    test('redirige /profil → /login avec redirect_to pour un utilisateur non authentifié', async ({
       page,
     }) => {
       await page.goto('/profil', { waitUntil: 'domcontentloaded' });
 
-      await expect(page).toHaveURL('/', { timeout: 10000 });
+      await expect(page).toHaveURL(
+        `/login?redirect_to=${encodeURIComponent('/profil')}`,
+        { timeout: 10000 }
+      );
     });
 
-    test('redirige /collectivite/tableau-de-bord → accueil pour un utilisateur non authentifié', async ({
+    test('redirige /collectivite/tableau-de-bord → /login avec redirect_to pour un utilisateur non authentifié', async ({
       page,
     }) => {
       await page.goto('/collectivite/tableau-de-bord', {
         waitUntil: 'domcontentloaded',
       });
 
-      await expect(page).toHaveURL('/', {
-        timeout: 10000,
+      await expect(page).toHaveURL(
+        `/login?redirect_to=${encodeURIComponent(
+          '/collectivite/tableau-de-bord'
+        )}`,
+        { timeout: 10000 }
+      );
+    });
+
+    test('préserve la query string de la destination dans redirect_to (deep-link)', async ({
+      page,
+    }) => {
+      await page.goto('/collectivite/tableau-de-bord?openAxes=1', {
+        waitUntil: 'domcontentloaded',
       });
+
+      await expect(page).toHaveURL(
+        `/login?redirect_to=${encodeURIComponent(
+          '/collectivite/tableau-de-bord?openAxes=1'
+        )}`,
+        { timeout: 10000 }
+      );
     });
   });
 });

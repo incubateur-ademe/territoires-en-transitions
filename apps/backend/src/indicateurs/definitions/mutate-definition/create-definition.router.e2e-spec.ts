@@ -48,6 +48,50 @@ describe('createIndicateurPerso', () => {
     await app.close();
   });
 
+  test.each([undefined, 'annuelle', 'mensuelle'] as const)(
+    'creates, writes and reads an indicator with periodicite=%s',
+    async (periodicite) => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Périodicité de bout en bout',
+        periodicite,
+      });
+      onTestFinished(async () => {
+        await caller.indicateurs.indicateurs.delete({
+          collectiviteId: collectivite.id,
+          indicateurId,
+        });
+      });
+      const dateValeur =
+        periodicite === 'mensuelle' ? '2024-12-01' : '2024-12-31';
+
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        periodicite,
+        dateValeur,
+        resultat: 0,
+      });
+
+      const { indicateurs } = await caller.indicateurs.valeurs.list({
+        collectiviteId: collectivite.id,
+        indicateurIds: [indicateurId],
+      });
+      expect(indicateurs[0].definition).toMatchObject({
+        periodicite: periodicite ?? 'annuelle',
+        periodiciteMode: 'recommandee',
+      });
+      expect(indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+        {
+          periodicite: periodicite ?? 'annuelle',
+          dateValeur: periodicite === 'mensuelle' ? '2024-12-01' : '2024-01-01',
+          resultat: 0,
+        },
+      ]);
+    }
+  );
+
   test('should create a personal indicator with all fields', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 

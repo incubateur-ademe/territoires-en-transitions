@@ -87,6 +87,10 @@ export class ListDossiersInstructionService {
      */
     const relveDeSaCharge = (row: DossierInstructionRow): boolean =>
       peutDeposerAvisSaisine(instructeurType, row.perimetre) &&
+      // Instruit hors plateforme : le service a été saisi ailleurs, par
+      // courrier ou par mail. Il n'a rien à y faire ici, et rien à relancer —
+      // le compter lui prêterait une charge déjà soldée en dehors.
+      !row.transmittedOffPlatform &&
       // Transmis sans l'avoir saisi : il suit le dossier sans avoir la main
       // pour le solder, et le compter lui réclamerait un travail qu'il ne peut
       // pas faire.
@@ -178,11 +182,16 @@ export class ListDossiersInstructionService {
     const contacts =
       await this.collectiviteContactsRepository.listContactsParCollectivite(
         [...new Set(lignes.map((ligne) => ligne.collectivite.id))],
+        {},
         tx
       );
     return lignes.map((ligne) => ({
       ...ligne,
-      contacts: contacts.get(ligne.collectivite.id) ?? [],
+      // Le `userId` que le repository rend sert à notifier, pas à afficher : il
+      // n'a rien à faire dans la réponse envoyée aux services instructeurs.
+      contacts: (contacts.get(ligne.collectivite.id) ?? []).map(
+        ({ prenom, nom, email }) => ({ prenom, nom, email })
+      ),
     }));
   }
 }

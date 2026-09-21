@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { collectiviteTypeEnumSchema } from '../../collectivites/collectivite-type.enum';
 import { pcaetPerimetreSaisineSchema } from './pcaet-perimetre-saisine.enum.schema';
 
 /**
@@ -17,6 +18,12 @@ export const contexteInstructionSchema = z.object({
   instructeur: z.object({
     collectiviteId: z.number(),
     nom: z.string(),
+    /**
+     * La casquette, que la bannière dit à l'agent : c'est le type du service qui
+     * la nomme (« la DREAL »), pas son nom propre, déjà lisible dans le
+     * sélecteur de contexte du header.
+     */
+    type: collectiviteTypeEnumSchema,
   }),
   /**
    * Le territoire de la déposante qui vaut cette saisine.

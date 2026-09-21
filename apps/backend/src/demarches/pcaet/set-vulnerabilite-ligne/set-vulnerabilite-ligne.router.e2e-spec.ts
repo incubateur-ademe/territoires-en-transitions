@@ -50,11 +50,16 @@ describe('Vulnérabilité du territoire', () => {
     });
 
     const vulnerabilite = vulnerabiliteOf(diagnostic);
-    expect(vulnerabilite.thematiques).toHaveLength(9);
+    // Le compte du socle bouge à chaque migration : ce qui doit tenir, c'est
+    // qu'il soit entièrement réglementaire et requis, et que chaque
+    // thématique — sous-thématiques comprises — ait sa ligne.
+    expect(vulnerabilite.thematiques.length).toBeGreaterThan(0);
     expect(vulnerabilite.thematiques.every((d) => d.isSocle && d.requis)).toBe(
       true
     );
-    expect(vulnerabilite.lignes).toHaveLength(9);
+    expect(vulnerabilite.lignes).toHaveLength(
+      vulnerabilite.thematiques.length
+    );
     expect(ligneOf(diagnostic, thematiqueId(diagnostic, 'eau'))).toMatchObject({
       niveauMaintenant: null,
       niveau2050: null,
@@ -146,7 +151,11 @@ describe('Vulnérabilité du territoire', () => {
     const zonesHumides = vulnerabiliteOf(ajout).thematiques.at(-1);
     expect(zonesHumides).toBeDefined();
     expect(zonesHumides?.label).toBe('Zones humides');
-    expect(vulnerabiliteOf(diagnostic).thematiques).toHaveLength(9);
+    // La première collectivité ne voit que le socle : l'ajout de la seconde
+    // lui reste étranger.
+    expect(
+      vulnerabiliteOf(diagnostic).thematiques.every((d) => d.isSocle)
+    ).toBe(true);
 
     await expect(
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
