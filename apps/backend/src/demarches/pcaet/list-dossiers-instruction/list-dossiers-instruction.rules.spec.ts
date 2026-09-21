@@ -31,6 +31,7 @@ const ligne = (
     statut: PcaetStatutInstructionEnum.EN_INSTRUCTION,
     obligation: DemarchePcaetObligationEnum.OBLIGATOIRE,
     obligationSource: 'demarche',
+    isScotAec: false,
     nbAvisValides: 0,
     nbAvisBrouillons: 0,
     ...reste,
