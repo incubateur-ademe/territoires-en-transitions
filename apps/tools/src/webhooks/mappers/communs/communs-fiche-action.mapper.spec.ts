@@ -141,7 +141,6 @@ describe('CommunsFicheActionMapper', () => {
         {
           code: '245400601',
           type: 'EPCI',
-          collectiviteId: 4708,
         },
       ],
       dateDebutPrevisionnelle: expect.toBeOneOf([
