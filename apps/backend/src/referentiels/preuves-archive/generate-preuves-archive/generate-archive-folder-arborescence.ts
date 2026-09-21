@@ -7,9 +7,9 @@ import {
   type PreuvesArchiveError,
 } from '../preuves-archive.errors';
 import type {
-  CollectedLinkPreuve,
-  MissingFilePreuve,
-} from '../collect-audit-preuves/collect-preuves.repository';
+  CollectedLink,
+  MissingFile,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
 import {
   checkArchiveLimits,
   type ArchiveLimitsExceeded,
@@ -48,12 +48,12 @@ interface MesureFolder {
 }
 
 type LinkWithFolder = {
-  link: CollectedLinkPreuve;
+  link: CollectedLink;
   folderSegments: string[];
 };
 
 type MissingFileWithFolder = {
-  missingFile: MissingFilePreuve;
+  missingFile: MissingFile;
   folderSegments: string[];
 };
 

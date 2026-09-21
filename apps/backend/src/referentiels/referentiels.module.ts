@@ -79,13 +79,12 @@ import { GeneratePreuvesArchiveService } from './preuves-archive/generate-preuve
 import { GeneratePreuvesArchiveWorker } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.worker';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
 import { GetPreuvesArchiveService } from './preuves-archive/get-preuves-archive/get-preuves-archive.service';
-import { CollectPreuvesRepository } from './preuves-archive/collect-audit-preuves/collect-preuves.repository';
 import { CollectAuditPreuvesService } from './preuves-archive/collect-audit-preuves/collect-audit-preuves.service';
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import {
-    PREUVES_ARCHIVE_JOB_OPTIONS,
-    PREUVES_ARCHIVE_QUEUE_NAME,
+  PREUVES_ARCHIVE_JOB_OPTIONS,
+  PREUVES_ARCHIVE_QUEUE_NAME,
 } from './preuves-archive/preuves-archive.queue';
 import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
@@ -149,7 +148,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     // Archive ZIP des preuves d'audit
     PreuvesArchiveRepository,
-    CollectPreuvesRepository,
     CollectAuditPreuvesService,
     DeletePreuvesArchiveService,
     RequestPreuvesArchiveService,

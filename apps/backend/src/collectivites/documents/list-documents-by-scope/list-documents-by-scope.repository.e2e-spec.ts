@@ -20,17 +20,17 @@ import { Collectivite, DocumentHash } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, like } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { createAudit } from '../../labellisations/labellisations.test-fixture';
-import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
-import { CollectPreuvesRepository } from './collect-preuves.repository';
+import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { PREUVES_ARCHIVES_BUCKET } from '@tet/backend/referentiels/preuves-archive/preuves-archive.constants';
+import { ListDocumentsByScopeRepository } from './list-documents-by-scope.repository';
 
 const ACTION_ID = 'cae_1.1.3';
 const PREUVE_REGLEMENTAIRE_ID = 'preuve-reglementaire-cloisonnement';
 
-describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
+describe('ListDocumentsByScopeRepository - filtre confidentiel (SQL réel)', () => {
   let app: INestApplication;
   let db: DatabaseService;
-  let repository: CollectPreuvesRepository;
+  let repository: ListDocumentsByScopeRepository;
   let collectivite: Collectivite;
   let adminUserId: string;
   let cleanupCollectivite: () => Promise<void>;
@@ -50,7 +50,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   beforeAll(async () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
-    repository = app.get(CollectPreuvesRepository);
+    repository = app.get(ListDocumentsByScopeRepository);
 
     const collectiviteFixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
@@ -64,9 +64,10 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     purgeHash = buildRandomDocumentHash();
     purgeConfidentielHash = buildRandomDocumentHash();
 
-    await db.db
-      .insert(collectiviteBucketTable)
-      .values({ bucketId: PREUVES_ARCHIVES_BUCKET, collectiviteId: collectivite.id });
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectivite.id,
+    });
 
     const fichiers = await db.db
       .insert(bibliothequeFichierTable)
@@ -104,8 +105,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       fichiers
         .filter(
           (fichier) =>
-            fichier.hash !== purgeHash &&
-            fichier.hash !== purgeConfidentielHash
+            fichier.hash !== purgeHash && fichier.hash !== purgeConfidentielHash
         )
         .map((fichier) => ({
           bucketId: PREUVES_ARCHIVES_BUCKET,
@@ -243,7 +243,9 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       .where(eq(preuveActionTable.preuveId, PREUVE_REGLEMENTAIRE_ID));
     await db.db
       .delete(preuveReglementaireDefinitionTable)
-      .where(eq(preuveReglementaireDefinitionTable.id, PREUVE_REGLEMENTAIRE_ID));
+      .where(
+        eq(preuveReglementaireDefinitionTable.id, PREUVE_REGLEMENTAIRE_ID)
+      );
     await db.db
       .delete(storageObjectTable)
       .where(
@@ -254,9 +256,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
       );
     await db.db
       .delete(bibliothequeFichierTable)
-      .where(
-        eq(bibliothequeFichierTable.collectiviteId, otherCollectivite.id)
-      );
+      .where(eq(bibliothequeFichierTable.collectiviteId, otherCollectivite.id));
     await cleanupOtherCollectivite();
     await db.db
       .delete(storageObjectTable)
@@ -274,7 +274,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("une preuve complémentaire pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: true,
@@ -288,7 +289,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("une preuve d'audit pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
-    const result = await repository.getAuditPreuves({
+    const result = await repository.listDocuments({
+      kind: 'audit',
       collectiviteId: collectivite.id,
       auditId,
       canReadConfidentiel: true,
@@ -302,7 +304,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("une preuve réglementaire pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
-    const result = await repository.getReglementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'reglementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: true,
@@ -316,7 +319,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("une preuve de labellisation pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
-    const result = await repository.getLabellisationPreuves({
+    const result = await repository.listDocuments({
+      kind: 'labellisation',
       collectiviteId: collectivite.id,
       demandeId,
       canReadConfidentiel: true,
@@ -330,7 +334,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("une preuve dont l'objet de stockage a disparu ressort en fichier manquant", async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: true,
@@ -350,7 +355,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("un fichier public dont l'objet a disparu reste signalé sans droit confidentiel", async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: false,
@@ -364,7 +370,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test("un fichier confidentiel dont l'objet a disparu ne fuite pas son nom sans droit confidentiel", async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: false,
@@ -381,7 +388,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test('canReadConfidentiel=true : expose le fichier public ET le confidentiel', async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: true,
@@ -395,7 +403,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test('canReadConfidentiel=false : masque le confidentiel, garde le public', async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: false,
@@ -407,7 +416,8 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 
   test('un lien (sans fichier) reste visible même sans droit confidentiel', async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: false,
@@ -421,10 +431,10 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   });
 });
 
-describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () => {
+describe('ListDocumentsByScopeRepository - scope par référentiel (SQL réel)', () => {
   let app: INestApplication;
   let db: DatabaseService;
-  let repository: CollectPreuvesRepository;
+  let repository: ListDocumentsByScopeRepository;
   let collectivite: Collectivite;
   let adminUserId: string;
   let cleanupCollectivite: () => Promise<void>;
@@ -435,7 +445,7 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
   beforeAll(async () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
-    repository = app.get(CollectPreuvesRepository);
+    repository = app.get(ListDocumentsByScopeRepository);
 
     const fixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
@@ -447,9 +457,10 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
     caeHash = buildRandomDocumentHash();
     eciHash = buildRandomDocumentHash();
 
-    await db.db
-      .insert(collectiviteBucketTable)
-      .values({ bucketId: PREUVES_ARCHIVES_BUCKET, collectiviteId: collectivite.id });
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectivite.id,
+    });
 
     const fichiers = await db.db
       .insert(bibliothequeFichierTable)
@@ -514,7 +525,8 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
   });
 
   test('referentielId=cae : ne renvoie que la preuve rattachée à une action CAE', async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'cae',
       canReadConfidentiel: true,
@@ -526,7 +538,8 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
   });
 
   test('referentielId=eci : ne renvoie que la preuve rattachée à une action ECI', async () => {
-    const result = await repository.getComplementairePreuves({
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
       collectiviteId: collectivite.id,
       referentielId: 'eci',
       canReadConfidentiel: true,
