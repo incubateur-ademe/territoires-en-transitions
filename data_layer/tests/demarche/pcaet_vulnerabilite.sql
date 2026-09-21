@@ -14,12 +14,13 @@ select tc.collectivite_id, 'pcaet', 'PCAET de test' from test_collectivite tc;
 -- Recadré à 9 thématiques par demarche/pcaet_vulnerabilite_thematique_socle_recadre
 -- (la liste indicative du cadre de dépôt en comptait 16, trop large à l'usage),
 -- puis augmenté des risques naturels par
--- demarche/pcaet_vulnerabilite_sous_thematiques.
+-- demarche/pcaet_vulnerabilite_sous_thematiques et du transport par
+-- demarche/pcaet_vulnerabilite_transport.
 select is(
        (select count(*)::int from demarche_pcaet_vulnerabilite_thematique
          where collectivite_id is null),
-       18,
-       'Les 10 thématiques du socle et les 8 risques naturels doivent être seedés'
+       19,
+       'Les 11 thématiques du socle et les 8 risques naturels doivent être seedés'
    );
 
 select is(
@@ -27,7 +28,8 @@ select is(
           from demarche_pcaet_vulnerabilite_thematique
          where collectivite_id is null and parent_id is null),
        array['agriculture', 'amenagement', 'batiments', 'biodiversite', 'eau',
-             'foret', 'energie', 'economie', 'sante', 'risques_naturels'],
+             'foret', 'energie', 'economie', 'sante', 'risques_naturels',
+             'transport'],
        'Les thématiques racines du socle suivent la liste et l''ordre du proto'
    );
 
