@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
@@ -10,21 +9,20 @@ import {
   ScoreIndicatifErrorEnum,
 } from '@tet/backend/referentiels/score-indicatif/score-indicatif.errors';
 import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   ActionScoreIndicatif,
+  getReferentielIdFromActionId,
   IndicateurAssocie,
+  ReferentielId,
   ScoreIndicatifActionValeurUtilisable,
   ScoreIndicatifPayload,
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
-} from '@tet/domain/referentiels';
-import {
-  getReferentielIdFromActionId,
-  ReferentielId,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { groupBy, keyBy } from 'es-toolkit';
@@ -35,11 +33,11 @@ import {
 } from './compute-score-indicatif.rules';
 import { GetIndicateursAssociesService } from './get-indicateurs-associes.service';
 import { GetScoreIndicatifRequest } from './get-score-indicatif.request';
-import { ScoreIndicatifRepository } from './score-indicatif.repository';
 import {
   actionBelongsToReferentiel,
   formatScoreIndicatifForPayload,
 } from './score-indicatif-payload.rules';
+import { ScoreIndicatifRepository } from './score-indicatif.repository';
 import { mapActionIdToValeurUtilisable } from './valeurs-utilisables.rules';
 
 @Injectable()
@@ -269,6 +267,15 @@ export class ScoreIndicatifService {
     input: GetScoreIndicatifRequest
   ): Promise<Result<Record<string, ValeurUtilisee[]>, ScoreIndicatifError>> {
     return this.repository.listValeursUtiliseesParActionId(input);
+  }
+
+  /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
+  async getActionsUsingIndicateurValeur(
+    indicateurValeurId: number | number[]
+  ): Promise<
+    Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
+  > {
+    return this.repository.listActionsUsingIndicateurValeur(indicateurValeurId);
   }
 
   /** Calcule le score programmé ou fait */

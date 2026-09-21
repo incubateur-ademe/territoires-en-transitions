@@ -57,6 +57,7 @@ import {
   omitBy,
   partition,
   round,
+  uniqBy,
 } from 'es-toolkit';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
@@ -81,6 +82,37 @@ import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
 
+/** Émis après qu'une valeur d'indicateur a été enregistrée via `upsertValeur` */
+export type IndicateurValeurUpsertedEvent = {
+  collectiviteId: number;
+  indicateurId: number;
+  indicateurValeurId: number;
+  user: AuthenticatedUser;
+};
+
+/**
+ * Écouteur invoqué autour de la suppression d'une valeur d'indicateur via
+ * `deleteValeurIndicateur`. La valeur est supprimée avec `ON DELETE CASCADE`
+ * sur ses dépendances (ex : sélection pour le score indicatif) :
+ * `onWillDelete` est donc appelé AVANT la suppression, pendant que ces
+ * dépendances existent encore, et son résultat est retransmis à `onDeleted`
+ * une fois la suppression effectuée.
+ */
+export type IndicateurValeurDeletionListener<TContext = unknown> = {
+  onWillDelete: (event: {
+    collectiviteId: number;
+    indicateurValeurId: number;
+  }) => Promise<TContext>;
+  onDeleted: (
+    context: TContext,
+    event: {
+      collectiviteId: number;
+      indicateurValeurId: number;
+      user: AuthenticatedUser;
+    }
+  ) => Promise<void>;
+};
+
 @Injectable()
 export default class CrudValeursService {
   private readonly logger = new Logger(CrudValeursService.name);
@@ -94,6 +126,13 @@ export default class CrudValeursService {
    */
   static DEFAULT_ROUNDING_PRECISION = DEFAULT_ROUNDING_PRECISION;
 
+  private readonly valeurUpsertedListeners: Array<
+    (event: IndicateurValeurUpsertedEvent) => Promise<void>
+  > = [];
+
+  private readonly valeurDeletionListeners: IndicateurValeurDeletionListener[] =
+    [];
+
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
@@ -105,6 +144,57 @@ export default class CrudValeursService {
     private readonly updateIndicateurService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService
   ) {}
+
+  /**
+   * Permet à un autre domaine (ex : le score indicatif des référentiels) de
+   * réagir à la mise à jour d'une valeur d'indicateur, sans que ce service
+   * n'ait à connaître ce qui en dépend.
+   */
+  registerValeurUpsertedListener(
+    listener: (event: IndicateurValeurUpsertedEvent) => Promise<void>
+  ) {
+    // Keep it simple: listeners are stored for the lifetime of the service instance
+    // (Nest providers are singletons by default).
+    this.valeurUpsertedListeners.push(listener);
+  }
+
+  /**
+   * Permet à un autre domaine de réagir à la suppression d'une valeur
+   * d'indicateur via `deleteValeurIndicateur`, sans que ce service n'ait à
+   * connaître ce qui en dépend.
+   */
+  registerValeurDeletionListener<TContext>(
+    listener: IndicateurValeurDeletionListener<TContext>
+  ) {
+    this.valeurDeletionListeners.push(
+      listener as IndicateurValeurDeletionListener<unknown>
+    );
+  }
+
+  /**
+   * Émet un `IndicateurValeurUpsertedEvent` pour chaque valeur
+   * ajoutée/modifiée, dédupliquée par id.
+   */
+  private async publishValeurUpsertedEvents(
+    valeurs: Pick<IndicateurValeur, 'id' | 'collectiviteId' | 'indicateurId'>[],
+    user: AuthenticatedUser
+  ): Promise<void> {
+    if (!this.valeurUpsertedListeners.length || !valeurs.length) {
+      return;
+    }
+    const uniqueValeurs = uniqBy(valeurs, (v) => v.id);
+    await Promise.all(
+      uniqueValeurs.flatMap((v) => {
+        const event: IndicateurValeurUpsertedEvent = {
+          collectiviteId: v.collectiviteId,
+          indicateurId: v.indicateurId,
+          indicateurValeurId: v.id,
+          user,
+        };
+        return this.valeurUpsertedListeners.map((listener) => listener(event));
+      })
+    );
+  }
 
   private getIndicateurValeursSqlConditions(
     options: ListIndicateurValeursInput
@@ -620,9 +710,24 @@ export default class CrudValeursService {
           `${calculatedIndicateurValeurToUpsert.length} valeurs d'indicateurs calculées`
         );
         // WARNING : can recursively call updateCalculatedIndicateurValeurs if the computed indicateur valeur allows to calcule oher ones
-        await this.upsertIndicateurValeurs(
+        const calculatedIndicateurValeurs = await this.upsertIndicateurValeurs(
           calculatedIndicateurValeurToUpsert,
           undefined
+        );
+
+        // Publié après l'opération complète (valeur saisie + cascade de valeurs
+        // calculées) : une action peut référencer l'id d'une valeur calculée,
+        // pas seulement celui de la valeur saisie.
+        await this.publishValeurUpsertedEvents(
+          [
+            {
+              id: upsertedIndicateurValeur.id,
+              collectiviteId,
+              indicateurId,
+            },
+            ...calculatedIndicateurValeurs,
+          ],
+          user
         );
       }
 
@@ -651,6 +756,16 @@ export default class CrudValeursService {
     await this.canMutateValeur(user, collectiviteId, indicateur);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
+      // La valeur est supprimée avec ON DELETE CASCADE sur ses dépendances
+      // (ex : sélection pour le score indicatif) : il faut donc identifier
+      // ce qui en dépend AVANT de la supprimer, sans quoi les écouteurs ne
+      // retrouveraient plus rien après coup.
+      const contexts = await Promise.all(
+        this.valeurDeletionListeners.map((listener) =>
+          listener.onWillDelete({ collectiviteId, indicateurValeurId: id })
+        )
+      );
+
       await this.databaseService.db
         .delete(indicateurValeurTable)
         .where(
@@ -660,6 +775,16 @@ export default class CrudValeursService {
             eq(indicateurValeurTable.id, id)
           )
         );
+
+      await Promise.all(
+        this.valeurDeletionListeners.map((listener, i) =>
+          listener.onDeleted(contexts[i], {
+            collectiviteId,
+            indicateurValeurId: id,
+            user,
+          })
+        )
+      );
     }
 
     // update indicateur definition modifiedBy field
@@ -958,6 +1083,15 @@ export default class CrudValeursService {
           : [];
 
       indicateurValeursResultat.push(...calculatedIndicateurValeur);
+    }
+
+    // Publié uniquement quand `user` est fourni : les appels récursifs
+    // internes (cascade de valeurs calculées) et certains appelants ayant
+    // déjà vérifié les droits par ailleurs passent `undefined` et ne
+    // doivent pas publier une seconde fois ce que l'appel englobant a déjà
+    // accumulé dans `indicateurValeursResultat`.
+    if (user) {
+      await this.publishValeurUpsertedEvents(indicateurValeursResultat, user);
     }
 
     return indicateurValeursResultat;
