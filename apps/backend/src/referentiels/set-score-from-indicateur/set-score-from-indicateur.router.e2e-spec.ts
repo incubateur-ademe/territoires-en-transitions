@@ -221,6 +221,46 @@ describe('SetScoreFromIndicateurRouter', () => {
     ).rejects.toThrow(/not authenticated/i);
   });
 
+  describe('Désélection explicite de la valeur retenue', () => {
+    test("Envoyer un tableau `valeurs` vide efface la sélection et remet l'action à non renseignée", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const snapshotAvecSelection =
+        await caller.referentiels.actions.setScoreFromIndicateur({
+          collectiviteId,
+          actionId: ACTION_AVEC_FORMULE,
+          indicateurId,
+          valeurs: [{ indicateurValeurId: valeurIds[0], typeScore: 'fait' }],
+        });
+      expect(snapshotAvecSelection).toMatchObject({
+        collectiviteId,
+        referentielId: ReferentielIdEnum.TE,
+      });
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'detaille',
+        avancementDetaille: [0.5, 0, 0.5],
+      });
+
+      const snapshotApresDeselection =
+        await caller.referentiels.actions.setScoreFromIndicateur({
+          collectiviteId,
+          actionId: ACTION_AVEC_FORMULE,
+          indicateurId,
+          valeurs: [],
+        });
+
+      expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toEqual([]);
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
+      expect(snapshotApresDeselection).toMatchObject({
+        collectiviteId,
+        referentielId: ReferentielIdEnum.TE,
+      });
+    });
+  });
+
   describe('Correction de la valeur retenue', () => {
     test("Corriger la valeur d'indicateur retenue réactualise le score et l'avancement dérivé", async () => {
       const caller = router.createCaller({ user: editorUser });
