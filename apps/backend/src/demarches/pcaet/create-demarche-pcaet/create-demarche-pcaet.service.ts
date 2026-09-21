@@ -80,6 +80,7 @@ export class CreateDemarchePcaetService {
             // transmission à rejouer : son dossier démarre à la finalisation.
             status: getDemarchePcaetInitialStatus(input),
             transmittedOffPlatform: input.transmittedOffPlatform ?? false,
+            isScotAec: input.isScotAec ?? false,
           },
           user.id,
           transaction

@@ -33,6 +33,7 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   dateAdoption: server.adoptedAt,
   dateTransmission: server.transmittedAt,
   transmisHorsPlateforme: server.transmittedOffPlatform,
+  isScotAec: server.isScotAec,
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
   planActionIds: server.planActionIds,
@@ -54,6 +55,7 @@ const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {
     ...(patch.planActionIds !== undefined
       ? { planActionIds: patch.planActionIds }
       : {}),
+    ...(patch.isScotAec !== undefined ? { isScotAec: patch.isScotAec } : {}),
     ...(patch.pilotes !== undefined
       ? {
           pilotes: patch.pilotes.map((pilote) => ({

@@ -82,6 +82,41 @@ describe('Créer une démarche PCAET', () => {
     expect(demarche.pilotes).toEqual([]);
     expect(demarche.planActionIds).toEqual([]);
     expect(demarche.transmittedOffPlatform).toBe(false);
+    expect(demarche.isScotAec).toBe(false);
+  });
+
+  describe('SCoT-AEC', () => {
+    test('la déclaration est portée par la démarche', async () => {
+      const { caller, collectivite } = await freshEditor();
+
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+        isScotAec: true,
+      });
+
+      expect(demarche.isScotAec).toBe(true);
+
+      const relu = await caller.demarches.pcaet.get({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+      expect(relu.isScotAec).toBe(true);
+    });
+
+    test("la compétence Banatic n'est pas exigée pour déclarer", async () => {
+      // La collectivité de test n'a aucune compétence Banatic. Le serveur
+      // enregistre quand même sa déclaration : le filtre 5500 décide de
+      // l'affichage de la question, et refuser ici fabriquerait une impasse
+      // pour une collectivité légitime dont la ligne Banatic manque.
+      const { caller, collectivite } = await freshEditor();
+
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+        isScotAec: true,
+      });
+
+      expect(demarche.isScotAec).toBe(true);
+    });
   });
 
   describe('PCAET déjà transmis pour avis hors plateforme', () => {

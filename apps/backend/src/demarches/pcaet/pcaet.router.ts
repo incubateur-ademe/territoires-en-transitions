@@ -10,6 +10,7 @@ import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
+import { GetDepotContextRouter } from './get-depot-context/get-depot-context.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get-diagnostic-instruction.router';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
@@ -42,6 +43,7 @@ export class PcaetRouter {
     private readonly deleteAvisRouter: DeleteAvisRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
+    private readonly getDepotContextRouter: GetDepotContextRouter,
     private readonly createAndLinkPlanRouter: CreateAndLinkPlanRouter,
     private readonly deleteDemarchePcaetRouter: DeleteDemarchePcaetRouter,
     private readonly updateDemarchePcaetRouter: UpdateDemarchePcaetRouter,
@@ -68,6 +70,7 @@ export class PcaetRouter {
     this.deleteAvisRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,
+    this.getDepotContextRouter.router,
     this.createAndLinkPlanRouter.router,
     this.deleteDemarchePcaetRouter.router,
     this.updateDemarchePcaetRouter.router,

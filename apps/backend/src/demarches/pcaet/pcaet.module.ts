@@ -27,6 +27,8 @@ import { CloreInstructionRouter } from './clore-instruction/clore-instruction.ro
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
 import { CreateAndLinkPlanService } from './create-and-link-plan/create-and-link-plan.service';
+import { GetDepotContextRouter } from './get-depot-context/get-depot-context.router';
+import { GetDepotContextService } from './get-depot-context/get-depot-context.service';
 import { CreateDemarchePcaetRepository } from './create-demarche-pcaet/create-demarche-pcaet.repository';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { CreateDemarchePcaetService } from './create-demarche-pcaet/create-demarche-pcaet.service';
@@ -212,6 +214,8 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,
+    GetDepotContextService,
+    GetDepotContextRouter,
     DeleteDemarchePcaetRepository,
     DeleteDemarchePcaetService,
     DeleteDemarchePcaetRouter,

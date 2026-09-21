@@ -7,6 +7,8 @@ import type {
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PageHeader } from '@tet/ui';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { JSX, ReactNode } from 'react';
 import { DemarcheMenuButton } from '../demarche-menu.button';
 import { DateLancementField } from './date-lancement-field';
@@ -14,6 +16,7 @@ import { DateModificationItem } from './date-modification-item';
 import { DepotDateItem } from './depot-date-item';
 import { ObligationField } from './obligation-field';
 import { PilotesField } from './pilotes-field';
+import { ScotAecField } from './scot-aec-field';
 import { Separator } from './separator';
 import { StatutBadges } from './statut-badges';
 
@@ -33,6 +36,18 @@ export const DemarchePcaetHeader = ({
   onUpdate,
 }: Props): JSX.Element => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
+  const trpc = useTRPC();
+
+  // La collectivité porte-t-elle un SCoT ? Sans cela, une déclaration décochée
+  // par erreur à l'étape 0 ne serait plus rattrapable : le badge ne s'affiche
+  // que lorsqu'elle est à vrai.
+  const { data: depotContext } = useQuery(
+    trpc.demarches.pcaet.getDepotContext.queryOptions({
+      collectiviteId: demarche.collectiviteId,
+    })
+  );
+  const montreScotAec =
+    demarche.isScotAec || (depotContext?.peutDeclarerScotAec ?? false);
 
   return (
     <div
@@ -71,6 +86,16 @@ export const DemarchePcaetHeader = ({
               readOnly={isPublished}
               onChange={(obligation) => onUpdate({ obligation })}
             />
+            {montreScotAec ? (
+              <>
+                <Separator />
+                <ScotAecField
+                  isScotAec={demarche.isScotAec}
+                  readOnly={!demarche.amontModifiable}
+                  onChange={(isScotAec) => onUpdate({ isScotAec })}
+                />
+              </>
+            ) : null}
             <Separator />
             <StatutBadges isPublished={isPublished} />
           </MetadataLine>

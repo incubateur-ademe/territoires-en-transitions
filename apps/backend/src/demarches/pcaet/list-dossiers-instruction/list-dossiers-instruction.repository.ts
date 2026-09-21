@@ -53,6 +53,8 @@ export type DossierInstructionRow = {
   transmittedAt: string | null;
   /** `null` comme le reste de la démarche quand la collectivité n'a rien déposé. */
   transmittedOffPlatform: boolean | null;
+  /** `null` quand la collectivité n'a rien déposé. */
+  isScotAec: boolean | null;
   publishedAt: string | null;
   collectiviteId: number;
   collectiviteNom: string;
@@ -218,6 +220,7 @@ export class ListDossiersInstructionRepository {
           avisDeadlineAt: demarcheTable.avisDeadlineAt,
           transmittedAt: demarcheTable.transmittedAt,
           transmittedOffPlatform: demarcheTable.transmittedOffPlatform,
+          isScotAec: demarcheTable.isScotAec,
           publishedAt: demarcheTable.publishedAt,
           collectiviteId: collectiviteTable.id,
           collectiviteNom: collectiviteTable.nom,

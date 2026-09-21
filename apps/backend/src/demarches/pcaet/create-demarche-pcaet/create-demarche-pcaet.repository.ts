@@ -19,6 +19,7 @@ export type InsertDemarchePcaetValues = {
   /** Calculé par le domaine : l'élaboration, ou d'emblée la finalisation. */
   status: DemarchePcaetStatus;
   transmittedOffPlatform: boolean;
+  isScotAec: boolean;
 };
 
 @Injectable()
@@ -66,6 +67,7 @@ export class CreateDemarchePcaetRepository {
           launchedAt: values.launchedAt,
           status: values.status,
           transmittedOffPlatform: values.transmittedOffPlatform,
+          isScotAec: values.isScotAec,
           createdBy: userId,
           modifiedBy: userId,
         })

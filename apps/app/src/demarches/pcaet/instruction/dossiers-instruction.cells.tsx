@@ -120,6 +120,25 @@ const ObligationBadge = ({ dossier }: { dossier: Dossier }) => {
   );
 };
 
+/**
+ * Un dossier qui ne se lit pas comme un PCAET classique : le document déposé
+ * vaut à la fois SCoT et PCAET. Déclaré par la collectivité, jamais déduit.
+ */
+const ScotAecBadge = ({ dossier }: { dossier: Dossier }) => {
+  if (!dossier.isScotAec) {
+    return null;
+  }
+
+  return (
+    <Badge
+      title={appLabels.demarcheScotAecBadge}
+      variant="new"
+      size="sm"
+      uppercase={false}
+    />
+  );
+};
+
 export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
   const href = getDossierHref(dossier);
 
@@ -180,7 +199,10 @@ export const CollectiviteCell = ({ dossier }: { dossier: Dossier }) => {
           {nom}
         </Link>
       )}
-      <ObligationBadge dossier={dossier} />
+      <div className="flex flex-wrap items-center gap-1">
+        <ObligationBadge dossier={dossier} />
+        <ScotAecBadge dossier={dossier} />
+      </div>
     </div>
   );
 };

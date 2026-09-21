@@ -62,6 +62,7 @@ describe('listDossiersInstruction', () => {
     launchedAt = null,
     obligation,
     transmittedOffPlatform = false,
+    isScotAec = false,
     avis,
     perimetre = 'principal',
     saisi = true,
@@ -77,6 +78,7 @@ describe('listDossiersInstruction', () => {
     launchedAt?: string | null;
     obligation?: 'obligatoire' | 'volontaire';
     transmittedOffPlatform?: boolean;
+    isScotAec?: boolean;
     avis?: { valide: boolean };
     perimetre?: 'principal' | 'secondaire';
     /**
@@ -102,6 +104,7 @@ describe('listDossiersInstruction', () => {
             ? null
             : dansNJours(-30),
         transmittedOffPlatform,
+        isScotAec,
         avisDeadlineAt,
       })
       .returning({ id: demarcheTable.id });
@@ -211,6 +214,7 @@ describe('listDossiersInstruction', () => {
       avisDeadlineAt: dansNJours(60),
       launchedAt: dansNJours(-200),
       obligation: DemarchePcaetObligationEnum.OBLIGATOIRE,
+      isScotAec: true,
     });
     await creerDossier({
       collectiviteId: instruit.collectivite.id,
@@ -445,6 +449,29 @@ describe('listDossiersInstruction', () => {
 
       for (const ligne of publies) {
         expect(ligne.statut).toBe(PcaetStatutInstructionEnum.ADOPTE);
+      }
+    });
+  });
+
+  describe('SCoT-AEC', () => {
+    it('signale le dépôt que la collectivité a déclaré SCoT-AEC', async () => {
+      const result = await appeler(camille, {});
+      const parNom = new Map(
+        result.items.map((item) => [item.collectivite.nom, item.isScotAec])
+      );
+
+      expect(parNom.get('Zitrone Agglo')).toBe(true);
+      expect(parNom.get('Abricot Communaute')).toBe(false);
+    });
+
+    it('vaut faux, et non nul, pour une collectivité sans dépôt', async () => {
+      const result = await appeler(camille, {
+        statuts: [PcaetStatutInstructionEnum.AUCUN_DEPOT],
+      });
+
+      expect(result.items.length).toBeGreaterThan(0);
+      for (const item of result.items) {
+        expect(item.isScotAec).toBe(false);
       }
     });
   });
