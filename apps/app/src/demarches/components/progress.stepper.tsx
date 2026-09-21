@@ -11,7 +11,7 @@ import type {
   DemarchePcaetTransitionEvaluations,
 } from '@tet/domain/demarches';
 import { getTransitionBlocageLabel } from '../transitions';
-import { Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Alert, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
@@ -610,6 +610,16 @@ export const AvanceDemarcheSection = ({
                   )}
                 </div>
               )}
+            {/* Tant que le dossier est à l'étape publiée : une fois archivé, le
+                cycle est clos et la mise en œuvre annoncée ici est derrière. */}
+            {index === activeIndex && index === ETAPE.publie && (
+              <Alert
+                className="mt-3"
+                state="success"
+                title={appLabels.demarcheDetailPublieeTitre}
+                description={appLabels.demarcheDetailPublieeDescription}
+              />
+            )}
             {/* Le dossier publié est adopté : rien ne le reprend, un nouveau
                 cycle peut seulement démarrer à côté. */}
             {showNouvelleAction && (
