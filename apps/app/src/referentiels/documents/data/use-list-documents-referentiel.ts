@@ -1,24 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { DocumentCollectivite } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { omit } from 'es-toolkit';
-import {
-  DocumentLegacy,
-  toDocumentCollectivite,
-} from '../../preuves/Bibliotheque/to-document-collectivite.utils';
 import {
   DocumentAudit,
   DocumentLabellisation,
   DocumentRapport,
 } from '../../preuves/Bibliotheque/types';
-
-const toDocumentRattache = <Depot extends DocumentLegacy>(
-  depot: Depot
-): Omit<Depot, 'fichier' | 'lien'> & DocumentCollectivite => ({
-  ...omit(depot, ['fichier', 'lien']),
-  ...toDocumentCollectivite(depot),
-});
 
 type ReferentielDocuments = {
   labellisation: DocumentLabellisation[];
@@ -51,9 +38,9 @@ export const useListDocumentsReferentiel = ({
     return {
       status: 'loaded',
       documents: {
-        labellisation: data.labellisation.map(toDocumentRattache),
-        audit: data.audit.map(toDocumentRattache),
-        rapport: data.rapport.map(toDocumentRattache),
+        labellisation: data.labellisation,
+        audit: data.audit,
+        rapport: data.rapport,
       },
     };
   }

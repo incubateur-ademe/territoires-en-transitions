@@ -3,7 +3,8 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { tryGetReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { ReferentielDocumentsAccessService } from '../referentiel-documents-access.service';
-import { toAttendus, toDocuments } from './list-documents-mesure.adapter';
+import { toDocuments } from '@tet/backend/collectivites/documents/to-documents.adapter';
+import { toAttendus } from './list-documents-mesure.adapter';
 import {
   ListDocumentsMesureError,
   ListDocumentsMesureErrorEnum,

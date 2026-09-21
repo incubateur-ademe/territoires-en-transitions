@@ -6,16 +6,14 @@ import {
 } from '@tet/domain/referentiels';
 import z from 'zod';
 
-const supportSchema = z.union([
-  z.object({ fichier: storedFileSchema, lien: z.null() }),
-  z.object({ fichier: z.null(), lien: z.null() }),
+const supportSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('fichier'), fichier: storedFileSchema }),
+  z.object({ type: z.literal('fichierManquant'), filename: z.string() }),
 ]);
 
 const documentBaseSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
-  fichierId: z.number().nullable(),
-  url: z.string().nullable(),
   titre: z.string().nullable(),
   commentaire: z.string().nullable(),
   modifiedAt: z.string(),
