@@ -13,6 +13,7 @@ import { FicheToClassify } from './render-fiches-text';
 
 const tokens = {
   promptTokens: 10,
+  cachedTokens: 0,
   candidatesTokens: 5,
   thoughtsTokens: 0,
   totalTokens: 15,

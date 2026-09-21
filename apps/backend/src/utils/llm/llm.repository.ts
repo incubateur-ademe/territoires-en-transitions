@@ -3,6 +3,7 @@ import { LlmError } from './llm.errors';
 
 export type TokenUsage = {
   promptTokens: number;
+  cachedTokens: number;
   candidatesTokens: number;
   thoughtsTokens: number;
   totalTokens: number;
