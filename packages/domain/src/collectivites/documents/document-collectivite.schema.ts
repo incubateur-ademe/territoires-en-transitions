@@ -25,34 +25,47 @@ export type DocumentCollectiviteBase = z.infer<
 
 const notApplicable = z.optional(z.never());
 
+export const fichierSupportSchema = z.object({
+  type: z.literal('fichier'),
+  fichier: storedFileSchema,
+  lien: notApplicable,
+  filename: notApplicable,
+});
+
+export const lienSupportSchema = z.object({
+  type: z.literal('lien'),
+  lien: lienSchema,
+  fichier: notApplicable,
+  filename: notApplicable,
+});
+
+export const fichierManquantSupportSchema = z.object({
+  type: z.literal('fichierManquant'),
+  filename: z.string(),
+  fichier: notApplicable,
+  lien: notApplicable,
+});
+
+const nonRenseigneSupportSchema = z.object({
+  type: z.literal('nonRenseigne'),
+  fichier: notApplicable,
+  lien: notApplicable,
+  filename: notApplicable,
+});
+
 export const documentSupportSchema = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal('fichier'),
-    fichier: storedFileSchema,
-    lien: notApplicable,
-    filename: notApplicable,
-  }),
-  z.object({
-    type: z.literal('lien'),
-    lien: lienSchema,
-    fichier: notApplicable,
-    filename: notApplicable,
-  }),
-  z.object({
-    type: z.literal('fichierManquant'),
-    filename: z.string(),
-    fichier: notApplicable,
-    lien: notApplicable,
-  }),
-  z.object({
-    type: z.literal('nonRenseigne'),
-    fichier: notApplicable,
-    lien: notApplicable,
-    filename: notApplicable,
-  }),
+  fichierSupportSchema,
+  lienSupportSchema,
+  fichierManquantSupportSchema,
+  nonRenseigneSupportSchema,
 ]);
 
 export type DocumentSupport = z.infer<typeof documentSupportSchema>;
+
+export type DocumentSupportRenseigne = Exclude<
+  DocumentSupport,
+  { type: 'nonRenseigne' }
+>;
 
 export const documentCollectiviteSchema = documentCollectiviteBaseSchema.and(
   documentSupportSchema

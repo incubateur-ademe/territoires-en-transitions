@@ -21,6 +21,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { createTestDemandePreuve } from '../../labellisations/create-preuve/create-preuve.test-fixture';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { createCollectiviteAvecCycle } from '../documents-labellisation.test-fixture';
+import { getDocumentFilename } from '@tet/domain/collectivites';
 
 describe('List Documents Demande Labellisation Router', () => {
   let router: TrpcRouter;
@@ -122,12 +123,11 @@ describe('List Documents Demande Labellisation Router', () => {
     });
 
     await cycle.deposeUnDocumentDeDemande({ fileName: 'demande-legitime.pdf' });
-    const preuveFromOtherCollectivite = await otherCycle.deposeUnDocumentDeDemande(
-      {
+    const preuveFromOtherCollectivite =
+      await otherCycle.deposeUnDocumentDeDemande({
         fileName: 'demande-autre-collectivite.pdf',
         sampleFileName: OTHER_PDF_SAMPLE_FILE,
-      }
-    );
+      });
 
     await db.db.insert(preuveLabellisationTable).values([
       {
@@ -151,7 +151,9 @@ describe('List Documents Demande Labellisation Router', () => {
         { demandeId: cycle.demandeId }
       );
 
-    const filenames = documents.map((document) => document.fichier?.filename);
+    const filenames = documents.map((document) =>
+      getDocumentFilename(document)
+    );
     expect(filenames).toContain('demande-legitime.pdf');
     expect(filenames).not.toContain('demande-autre-collectivite.pdf');
   });
@@ -179,7 +181,7 @@ describe('List Documents Demande Labellisation Router', () => {
       );
 
     expect(
-      documentsVisiteur.map((document) => document.fichier?.filename)
+      documentsVisiteur.map((document) => getDocumentFilename(document))
     ).toEqual(['preuve-publique.pdf']);
 
     const documentsMembre =
@@ -188,7 +190,7 @@ describe('List Documents Demande Labellisation Router', () => {
       );
 
     expect(
-      documentsMembre.map((document) => document.fichier?.filename)
+      documentsMembre.map((document) => getDocumentFilename(document))
     ).toEqual(['preuve-publique.pdf', 'preuve-confidentielle.pdf']);
   });
 
@@ -222,11 +224,13 @@ describe('List Documents Demande Labellisation Router', () => {
       );
 
     expect(documents).toHaveLength(1);
-    expect(documents[0].fichierId).toBe(purgedFile.id);
-    expect(documents[0].fichier).toBeNull();
+    expect(documents[0]).toMatchObject({
+      type: 'fichierManquant',
+      filename: purgedFile.filename,
+    });
   });
 
-  test("masque a un visiteur un document confidentiel dont le fichier a perdu ses octets", async () => {
+  test('masque a un visiteur un document confidentiel dont le fichier a perdu ses octets', async () => {
     const { collectiviteId, demandeId, membreId, membreCaller } =
       await createCollectiviteAvecCycle({
         db,
@@ -261,8 +265,10 @@ describe('List Documents Demande Labellisation Router', () => {
       await membreCaller.referentiels.documents.listDocumentsDemandeLabellisation(
         { demandeId }
       );
-    expect(documentsMembre.map((document) => document.fichierId)).toEqual([
-      purgedConfidentialFile.id,
-    ]);
+    expect(documentsMembre).toHaveLength(1);
+    expect(documentsMembre[0]).toMatchObject({
+      type: 'fichierManquant',
+      filename: purgedConfidentialFile.filename,
+    });
   });
 });
