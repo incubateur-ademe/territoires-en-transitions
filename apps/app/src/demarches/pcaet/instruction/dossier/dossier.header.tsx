@@ -102,7 +102,7 @@ export const DossierInstructionHeader = ({
               <Separator />
               <Badge
                 title={appLabels.demarcheScotAecBadge}
-                variant="new"
+                variant="info"
                 size="sm"
                 uppercase={false}
               />

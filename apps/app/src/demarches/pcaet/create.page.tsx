@@ -30,7 +30,6 @@ const PCAET_TYPE = {
 };
 
 const createDemarchePcaetSchema = z.object({
-
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
     .min(1, appLabels.demarcheCreerPilotesRequis),
@@ -64,7 +63,7 @@ export const CreateDemarchePcaetPage = () => {
 
   // Ce que la collectivité a le droit de déclarer : la question SCoT-AEC n'a de
   // sens que pour celles qui portent un SCoT.
-  const { data: depotContext } = useQuery(
+  const { data: depotContext, isPending: contexteEnAttente } = useQuery(
     trpc.demarches.pcaet.getDepotContext.queryOptions({ collectiviteId })
   );
   const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
@@ -78,7 +77,6 @@ export const CreateDemarchePcaetPage = () => {
     resolver: zodResolver(createDemarchePcaetSchema),
     mode: 'onChange',
     defaultValues: {
-
       pilotes: [
         {
           nom: `${user.prenom} ${user.nom}`.trim(),
@@ -252,7 +250,10 @@ export const CreateDemarchePcaetPage = () => {
                   variant="primary"
                   icon="arrow-right-line"
                   iconPosition="right"
-                  disabled={isSubmitting}
+                  // Tant que le contexte n'a pas répondu, la question SCoT-AEC
+                  // n'est pas affichée et sa réponse partirait à « non » — le
+                  // contraire de ce qu'annonce la coche pré-remplie.
+                  disabled={isSubmitting || contexteEnAttente}
                 >
                   {appLabels.demarcheCreerSoumettre}
                 </Button>
