@@ -151,7 +151,16 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
       dossier.demarcheStatus !== 'en_elaboration';
 
     return (
-      <div className="flex items-center gap-2 justify-end">
+      <div
+        className={cn('flex items-center gap-2', {
+          // « Dossier non transmis » se lit dans le prolongement du dépôt en
+          // chantier, pas à la place d'un bouton : il n'y a rien à cliquer.
+          // « Service non saisi » reste à droite, sur la colonne d'actions des
+          // dossiers bel et bien partis.
+          'justify-start': !transmis,
+          'justify-end': transmis,
+        })}
+      >
         <span className="text-grey-6">
           {dossier.demarcheStatus === null
             ? null
