@@ -24,9 +24,9 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   // navigateur, ce qui bloquerait les styles inline de Crisp.
   const styleSrc = `'self' 'unsafe-inline'`;
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+  const supabaseUrl = process.env.SUPABASE_URL ?? '';
   const supabaseWsUrl = supabaseUrl.replace('http', 'ws');
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+  const backendUrl = process.env.BACKEND_URL ?? '';
   const posthogHost = process.env.POSTHOG_HOST ?? '';
   const crispUrl = 'https://*.crisp.chat';
   const crispHelpdeskUrl = 'https://*.crisp.help';
@@ -74,7 +74,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
  * DSN. Renvoie une chaîne vide si le DSN est absent ou invalide.
  */
 function getSentryOrigin(): string {
-  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  const dsn = process.env.SENTRY_DSN;
   if (!dsn) {
     return '';
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { ENV } from '@tet/api/environmentVariables';
 import { useTRPC } from '@tet/api';
 import { useUserPreferences } from '@/app/users/use-user-preferences';
 import { buildLinkIdentityUrl } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.profile-urls';
@@ -25,7 +26,7 @@ export function useLinkOidcIdentity() {
   );
   const { data: preferences } = useUserPreferences();
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL as string;
+  const backendUrl = ENV.backend_url as string;
   const prefs = preferences?.oidc;
 
   const isActive = !!backendUrl && !!statut?.enabled;

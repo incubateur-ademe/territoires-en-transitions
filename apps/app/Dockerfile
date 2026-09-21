@@ -2,10 +2,14 @@
 #
 # Build with the repo root as context:
 #   docker build -f apps/app/Dockerfile \
-#     --build-arg ANON_KEY=... --build-arg API_URL=... --build-arg APP_URL=... \
+#     --build-arg GIT_SHORT_HASH=$(git rev-parse --short HEAD) \
 #     --secret id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 #     --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
 #     -t app .
+#
+# L'image ne contient aucune valeur spécifique à un environnement : une seule
+# image par commit est promue de preprod à prod, la configuration arrive au
+# démarrage du conteneur (`--env` côté Koyeb, cf. .github/workflows/cd-app.yml).
 #
 # Adapted from the official Next.js Docker example
 # (https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile)
@@ -45,33 +49,17 @@ RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 
 COPY . .
 
-ARG ANON_KEY
-ARG API_URL
-ARG APP_URL
-ARG PANIER_URL
-ARG BACKEND_URL
-ARG CRISP_WEBSITE_ID
-ARG SENTRY_DSN
+# Aucune variable NEXT_PUBLIC_* ici : Next les inline dans le bundle client au
+# moment du `next build`, ce qui lierait l'image à un environnement. Les valeurs
+# sont lues au runtime et publiées dans le HTML par le layout racine
+# (cf. packages/api/src/public-env.ts).
+# https://nextjs.org/docs/app/guides/environment-variables#runtime-environment-variables
+#
+# Seul GIT_SHORT_HASH reste un build arg : il identifie le commit, pas
+# l'environnement, et `next.config.ts` s'en sert pour `generateBuildId`.
 ARG GIT_SHORT_HASH
-ARG GIT_COMMIT_TIMESTAMP
-ARG APPLICATION_VERSION
-ARG ENV_NAME
 
-# NEXT_PUBLIC_* vars are inlined into the client bundle at build time, so
-# each (env, deployment target) combination needs its own image — same
-# constraint as before, just made explicit here.
-ENV NEXT_TELEMETRY_DISABLED=1 \
-    NEXT_PUBLIC_GIT_SHORT_HASH=$GIT_SHORT_HASH \
-    NEXT_PUBLIC_GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP \
-    NEXT_PUBLIC_APPLICATION_VERSION=$APPLICATION_VERSION \
-    NEXT_PUBLIC_ENV_NAME=$ENV_NAME \
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY \
-    NEXT_PUBLIC_SUPABASE_URL=$API_URL \
-    NEXT_PUBLIC_APP_URL=$APP_URL \
-    NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
-    NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
-    NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID \
-    NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # SENTRY_AUTH_TOKEN is only used by the Sentry build plugin to upload source
 # maps; kept out of ENV so it never gets baked into the image. The bryntum
@@ -88,6 +76,16 @@ ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
     HOSTNAME=0.0.0.0
+
+# Métadonnées de build, posées dans le runner comme pour apps/backend : elles
+# décrivent l'artefact (commit), jamais l'environnement, et doivent rester
+# lisibles au runtime (/api/version, configuration publique injectée au HTML).
+ARG GIT_SHORT_HASH
+ARG GIT_COMMIT_TIMESTAMP
+ARG APPLICATION_VERSION
+ENV GIT_SHORT_HASH=$GIT_SHORT_HASH \
+    GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP \
+    APPLICATION_VERSION=$APPLICATION_VERSION
 
 RUN addgroup --system --gid 1001 nodejs \
  && adduser --system --uid 1001 nextjs

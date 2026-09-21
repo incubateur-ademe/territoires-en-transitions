@@ -1,8 +1,7 @@
+import { ENV } from '@tet/api/environmentVariables';
 import { useUserContext } from '@tet/api/users';
 import { isNil } from 'es-toolkit';
 import { getFileNameFromResponse } from './get-filename-from-response';
-
-const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
 
 type JSONValue =
   | string
@@ -40,7 +39,7 @@ export const useApiClient = () => {
 
   // construit l'url pour la route et les paramètres donnés
   const makeUrl = ({ route, params }: API_ARGS) => {
-    const url = new URL(`${BASE_URL}${route}`);
+    const url = new URL(`${ENV.backend_url}/api/v1${route}`);
     if (params) {
       Object.entries(params).forEach(([name, value]) => {
         if (!isNil(value))

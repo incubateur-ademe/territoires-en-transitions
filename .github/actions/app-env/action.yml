@@ -62,8 +62,27 @@ runs:
         echo "ENV_NAME=${{ inputs.environment }}" >> $file
         echo "COOKIE_DOMAIN=${{ inputs.environment == 'ci' && 'localhost' || ''}}"
 
-    # required env. at build time for Next apps
-    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.app_name) }}
+    # `app` lit sa configuration au runtime (cf. packages/api/src/public-env.ts) :
+    # ses variables n'ont pas le préfixe NEXT_PUBLIC_, et surtout ne doivent PAS
+    # l'avoir — sinon `next build` les réinlinerait dans le bundle client.
+    - if: ${{ inputs.app_name == 'app' }}
+      shell: bash
+      env:
+        file: ${{ steps.setup.outputs.file }}
+      run: |
+        echo "GIT_SHORT_HASH=${{ steps.setup.outputs.git_short_hash }}" >> $file
+        echo "GIT_COMMIT_TIMESTAMP=${{ steps.setup.outputs.git_commit_timestamp }}" >> $file
+        echo "APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
+        echo "APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
+        echo "PANIER_URL=${{ fromJSON(inputs.json_vars).PANIER_URL }}" >> $file
+        echo "CRISP_WEBSITE_ID=${{ fromJSON(inputs.json_vars).CRISP_WEBSITE_ID }}" >> $file
+        echo "SENTRY_DSN=${{ fromJSON(inputs.json_vars).SENTRY_DSN }}" >> $file
+        echo "BACKEND_URL=${{ fromJSON(inputs.json_vars).BACKEND_URL }}" >> $file
+        echo "SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file
+        echo "SUPABASE_ANON_KEY=${{ inputs.supabase-anon-key }}" >> $file
+
+    # required env. at build time for the other Next apps
+    - if: ${{ contains(fromJSON('["auth", "panier", "site"]'), inputs.app_name) }}
       shell: bash
       env:
         file: ${{ steps.setup.outputs.file }}

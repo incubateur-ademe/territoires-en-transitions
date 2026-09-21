@@ -22,7 +22,7 @@ const isSignupEntryPoint = (view: string | null) =>
  * injoignable (mieux vaut un formulaire que la page en erreur).
  */
 async function getSignupOidcUrl(redirectTo: string): Promise<string | null> {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendUrl = process.env.BACKEND_URL;
 
   try {
     const { targetProvider } =

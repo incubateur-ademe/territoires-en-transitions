@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { ENV } from '../../environmentVariables';
 import { createSupabaseServerClient } from './server-client';
 
 /**
@@ -21,7 +22,7 @@ const OIDC_PROVIDER_COOKIE = 'oidc-provider';
 export async function signOutUser(): Promise<{ oidcLogoutUrl: string | null }> {
   const cookieStore = await cookies();
   const provider = cookieStore.get(OIDC_PROVIDER_COOKIE)?.value;
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendUrl = ENV.backend_url;
 
   const supabaseClient = await createSupabaseServerClient();
   await supabaseClient.auth.signOut();

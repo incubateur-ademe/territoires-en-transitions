@@ -45,12 +45,20 @@ coverage
 **/playwright/.cache/
 **/__tests__/__output__/
 
-# secrets / config locale — les images reçoivent leur config via build args,
-# jamais via un .env committé
+# secrets / config locale — les images reçoivent leur config au runtime
+# (`--env` au déploiement), jamais via un .env committé.
+# Motifs en double (racine + **/) pour la même raison que node_modules plus
+# haut : sans le doublon, apps/*/.env (valeurs de dev en clair, cf.
+# apps/app/.env) atterrissait dans le contexte, et `next build` les inlinait
+# dans le bundle client.
 .env
 .env.*
 .env.keys*
+**/.env
+**/.env.*
+**/.env.keys*
 !.env.example
+!**/.env.example
 keyfile.json
 
 # répertoires jamais nécessaires à un build d'app : les exclure garde le

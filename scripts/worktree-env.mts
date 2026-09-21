@@ -177,10 +177,12 @@ releaseSlotLock();
 // AVANT les .env committés par dotenvx (premier arrivé gagne). Supabase,
 // redis et strapi ne sont PAS réécrits : infra partagée, ports standard.
 const APP_URLS = {
+  // `app` lit sa config au runtime (cf. packages/api/src/public-env.ts) : ses
+  // variables n'ont plus le préfixe NEXT_PUBLIC_, contrairement à site/panier.
   app: {
-    NEXT_PUBLIC_BACKEND_URL: url('backend'),
-    NEXT_PUBLIC_PANIER_URL: url('panier'),
-    NEXT_PUBLIC_SITE_URL: url('site'),
+    BACKEND_URL: url('backend'),
+    PANIER_URL: url('panier'),
+    SITE_URL: url('site'),
   },
   site: { NEXT_PUBLIC_APP_URL: url('app') },
   panier: { NEXT_PUBLIC_APP_URL: url('app') },
