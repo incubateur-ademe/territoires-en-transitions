@@ -82,7 +82,7 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     // Ni assujettie aux plans annexes, ni en renouvellement : le socle commun.
-    expect(snapshot.definitions).toHaveLength(12);
+    expect(snapshot.definitions).toHaveLength(11);
     expect(snapshot.documents).toEqual([]);
     expect(snapshot.documentsAdditional).toEqual([]);
     // Le dossier PCAET est réglementaire : PDF uniquement, et la collectivité
@@ -97,7 +97,7 @@ describe('Documents d’une démarche PCAET', () => {
     // Une seule liste : le PCAET global y est une pièce comme les autres, à son
     // rang, et rien ne le distingue plus dans le modèle que son ordre.
     const sections = snapshot.definitions;
-    expect(sections).toHaveLength(12);
+    expect(sections).toHaveLength(11);
     expect(sections[0].id).toBe(PCAET_DOCUMENT_GLOBAL_ID);
     // Les sections sont triées par ordre d'affichage : la chronologie de la
     // démarche, de la délibération d'engagement à celle d'adoption.
@@ -109,7 +109,6 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
       'pcaet_ees',
-      'pcaet_etude_impact',
       'pcaet_deliberation_arret',
       'pcaet_memoire_reponse_avis',
       'pcaet_synthese_consultation_publique',
@@ -140,16 +139,16 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
     ]);
-    // L'étude d'impact et la délibération d'arrêt, elles, ne s'y retrouvent pas
-    // systématiquement : leur inclusion se déclare, comme celle du dispositif de
-    // suivi dans le programme d'actions.
+    // L'EES et la délibération d'arrêt, elles, ne s'y retrouvent pas
+    // systématiquement : leur inclusion se déclare, comme celle du dispositif
+    // de suivi dans le programme d'actions.
     expect(
       sections
         .filter((section) =>
           section.substitutsDeclarables.includes(PCAET_DOCUMENT_GLOBAL_ID)
         )
         .map((section) => section.id)
-    ).toEqual(['pcaet_etude_impact', 'pcaet_deliberation_arret']);
+    ).toEqual(['pcaet_ees', 'pcaet_deliberation_arret']);
     expect(
       sections
         .filter((section) => !section.requis || section.etape === 'aval')
@@ -169,7 +168,7 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
-      'pcaet_etude_impact',
+      'pcaet_ees',
       'pcaet_deliberation_arret',
       'pcaet_deliberation_adoption',
     ]);
@@ -377,12 +376,13 @@ describe('Documents d’une démarche PCAET', () => {
   test('La déclaration d’inclusion n’accepte que les pièces éligibles', async () => {
     const { caller, collectivite, demarche } = await createDemarche(db, router);
 
-    // Seul le modèle décide : l'EES n'est rangée dans aucune autre pièce.
+    // Seul le modèle décide : la délibération d'engagement n'est rangée dans
+    // aucune autre pièce.
     await expect(
       caller.demarches.pcaet.documents.setCouverture({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
-        documentId: 'pcaet_ees',
+        documentId: 'pcaet_deliberation_engagement',
         couvert: true,
       })
     ).rejects.toThrow(
@@ -473,7 +473,7 @@ describe('Documents d’une démarche PCAET', () => {
     expect(apresRetrait.documents).toEqual([]);
   });
 
-  test('L’étude d’impact et la délibération d’arrêt se déclarent comprises dans le PCAET global', async () => {
+  test('L’EES et la délibération d’arrêt se déclarent comprises dans le PCAET global', async () => {
     const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
@@ -497,7 +497,7 @@ describe('Documents d’une démarche PCAET', () => {
         (entry) => entry.documentId === documentId
       );
 
-    expect(couvertureDe(avecGlobal, 'pcaet_etude_impact')?.couvert).toBe(false);
+    expect(couvertureDe(avecGlobal, 'pcaet_ees')?.couvert).toBe(false);
     expect(couvertureDe(avecGlobal, 'pcaet_deliberation_arret')?.couvert).toBe(
       false
     );
@@ -509,11 +509,11 @@ describe('Documents d’une démarche PCAET', () => {
     // La collectivité déclare l'inclusion, pièce par pièce.
     await caller.demarches.pcaet.documents.setCouverture({
       ...ids,
-      documentId: 'pcaet_etude_impact',
+      documentId: 'pcaet_ees',
       couvert: true,
     });
     const apresDeclaration = await caller.demarches.pcaet.documents.list(ids);
-    expect(couvertureDe(apresDeclaration, 'pcaet_etude_impact')).toMatchObject({
+    expect(couvertureDe(apresDeclaration, 'pcaet_ees')).toMatchObject({
       couvert: true,
       origine: 'substitut',
       substitutId: PCAET_DOCUMENT_GLOBAL_ID,
@@ -525,7 +525,7 @@ describe('Documents d’une démarche PCAET', () => {
       documentId: PCAET_DOCUMENT_GLOBAL_ID,
     });
     const sansGlobal = await caller.demarches.pcaet.documents.list(ids);
-    expect(couvertureDe(sansGlobal, 'pcaet_etude_impact')?.couvert).toBe(false);
+    expect(couvertureDe(sansGlobal, 'pcaet_ees')?.couvert).toBe(false);
   });
 
   test('La couverture refuse de s’appliquer sur une pièce déjà pourvue d’un dépôt', async () => {
@@ -589,12 +589,9 @@ describe('Documents d’une démarche PCAET', () => {
       documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
-    // Le global ne regroupe pas d'office l'étude d'impact ni la délibération
-    // d'arrêt : sans leur déclaration d'inclusion, le dossier reste incomplet.
-    for (const documentId of [
-      'pcaet_etude_impact',
-      'pcaet_deliberation_arret',
-    ]) {
+    // Le global ne regroupe pas d'office l'EES ni la délibération d'arrêt :
+    // sans leur déclaration d'inclusion, le dossier reste incomplet.
+    for (const documentId of ['pcaet_ees', 'pcaet_deliberation_arret']) {
       await caller.demarches.pcaet.documents.setCouverture({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
@@ -1163,7 +1160,10 @@ describe('Documents d’une démarche PCAET', () => {
     };
 
     it('une première élaboration ne se voit pas demander le bilan', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router);
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router
+      );
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
@@ -1204,7 +1204,10 @@ describe('Documents d’une démarche PCAET', () => {
     it('un dépôt antérieur resté en instruction ne fait pas un renouvellement', async () => {
       // Dans cet ordre : une démarche en instruction est « en cours », elle
       // interdirait la création d'une seconde par l'API.
-      const { caller, collectivite, demarche } = await createDemarche(db, router);
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router
+      );
       await addDemarcheAnterieure(collectivite.id, 'instruit');
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
@@ -1256,19 +1259,23 @@ describe('Documents d’une démarche PCAET', () => {
     // Sans population ni nature INSEE, la collectivité des autres tests n'est
     // assujettie à rien : les deux plans annexes lui sont invisibles.
     it('un EPCI à fiscalité propre de plus de 100 000 habitants voit les deux plans', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router, {
-        collectivite: {
-          population: 684371,
-          natureInsee: 'CA',
-        },
-      });
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 684371,
+            natureInsee: 'CA',
+          },
+        }
+      );
 
       const snapshot = await caller.demarches.pcaet.documents.list({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
       });
 
-      expect(snapshot.definitions).toHaveLength(14);
+      expect(snapshot.definitions).toHaveLength(13);
       expect(snapshot.definitions.map(({ id }) => id)).toEqual([
         PCAET_DOCUMENT_GLOBAL_ID,
         'pcaet_deliberation_engagement',
@@ -1279,7 +1286,6 @@ describe('Documents d’une démarche PCAET', () => {
         'pcaet_plan_chaleur_froid',
         'pcaet_dispositif_suivi_evaluation',
         'pcaet_ees',
-        'pcaet_etude_impact',
         'pcaet_deliberation_arret',
         'pcaet_memoire_reponse_avis',
         'pcaet_synthese_consultation_publique',
@@ -1299,12 +1305,16 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('les deux conditions sont indépendantes : à 60 000 habitants, seul le plan chaleur et froid est attendu', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router, {
-        collectivite: {
-          population: 60000,
-          natureInsee: 'CA',
-        },
-      });
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 60000,
+            natureInsee: 'CA',
+          },
+        }
+      );
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
@@ -1313,12 +1323,16 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('le seuil est strict : à exactement 100 000 habitants la qualité de l’air n’est pas attendue', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router, {
-        collectivite: {
-          population: 100000,
-          natureInsee: 'CA',
-        },
-      });
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 100000,
+            natureInsee: 'CA',
+          },
+        }
+      );
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
@@ -1328,12 +1342,16 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('un syndicat n’est pas assujetti à la qualité de l’air, quelle que soit sa taille', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router, {
-        collectivite: {
-          population: 200000,
-          natureInsee: 'SMF',
-        },
-      });
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 200000,
+            natureInsee: 'SMF',
+          },
+        }
+      );
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
@@ -1342,7 +1360,10 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('une pièce qui ne concerne pas la collectivité ne peut ni être déposée ni être déclarée incluse', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router);
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router
+      );
       const fichier = await addTestBibliothequeFichier(db, {
         collectiviteId: collectivite.id,
       });
@@ -1367,12 +1388,16 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('déclarer le plan compris dans le programme d’actions suffit à couvrir la pièce', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router, {
-        collectivite: {
-          population: 60000,
-          natureInsee: 'CA',
-        },
-      });
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 60000,
+            natureInsee: 'CA',
+          },
+        }
+      );
       const fichier = await addTestBibliothequeFichier(db, {
         collectiviteId: collectivite.id,
       });
@@ -1404,12 +1429,16 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     it('une pièce conditionnelle non couverte retient la complétude du dossier', async () => {
-      const { caller, collectivite, demarche } = await createDemarche(db, router, {
-        collectivite: {
-          population: 60000,
-          natureInsee: 'CA',
-        },
-      });
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 60000,
+            natureInsee: 'CA',
+          },
+        }
+      );
       // Dépose le document global, qui couvre d'office les sections requises
       // inconditionnelles — mais pas les deux plans annexes.
       await completeTestDossierPcaet(db, {

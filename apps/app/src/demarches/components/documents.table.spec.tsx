@@ -43,9 +43,9 @@ const GLOBAL = definition({
 });
 const DIAGNOSTIC = definition({});
 /** Pièce que le global ne couvre pas d'office : son inclusion se déclare. */
-const ETUDE_IMPACT = definition({
-  id: 'pcaet_etude_impact',
-  nom: 'Étude d’impact',
+const EES = definition({
+  id: 'pcaet_ees',
+  nom: 'EES',
   ordre: 2,
   substitutsDeclarables: [GLOBAL.id],
 });
@@ -223,7 +223,7 @@ describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l�
 
 describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce', () => {
   it('ne propose rien à cocher tant que le document qui accueillerait l’inclusion n’est pas déposé', () => {
-    renderTable({ definitions: [GLOBAL, ETUDE_IMPACT] });
+    renderTable({ definitions: [GLOBAL, EES] });
 
     expect(
       screen.queryByRole('checkbox', {
@@ -234,7 +234,7 @@ describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce'
 
   it('propose la case dès que le PCAET global est déposé', () => {
     renderTable({
-      definitions: [GLOBAL, ETUDE_IMPACT],
+      definitions: [GLOBAL, EES],
       documents: [depose(GLOBAL.id)],
     });
 
@@ -247,11 +247,11 @@ describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce'
 
   it('coche la case et retire le dépôt une fois l’inclusion déclarée', () => {
     renderTable({
-      definitions: [GLOBAL, ETUDE_IMPACT],
+      definitions: [GLOBAL, EES],
       documents: [depose(GLOBAL.id)],
       coverage: [
         {
-          documentId: ETUDE_IMPACT.id,
+          documentId: EES.id,
           couvert: true,
           origine: 'substitut',
           substitutId: GLOBAL.id,
@@ -272,7 +272,6 @@ describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce'
     ).toBeNull();
   });
 });
-
 
 describe('DemarcheDocumentsTable — liste fusionnée (dépôt hors plateforme)', () => {
   const DELIBERATION = definition({

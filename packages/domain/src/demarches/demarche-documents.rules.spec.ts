@@ -96,7 +96,7 @@ const snapshot = (
 
 /**
  * Modèle où une pièce requise n'est pas couverte d'office par le global : son
- * inclusion se déclare, à la façon de l'étude d'impact du PCAET.
+ * inclusion se déclare, à la façon de l'EES du PCAET.
  */
 const snapshotInclusionDeclarable = (
   documents: DemarcheDocumentDepose[] = []
