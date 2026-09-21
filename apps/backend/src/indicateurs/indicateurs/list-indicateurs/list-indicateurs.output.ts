@@ -25,6 +25,7 @@ export const indicateurListItemSchema = z.object({
   commentaire: z.string().nullable(),
   estConfidentiel: z.boolean().nullable(),
   estFavori: z.boolean().nullable(),
+  isApplicable: z.boolean(),
   categories: z.array(tagSchema),
   thematiques: z.array(tagSchema),
   pilotes: z.array(personneTagOrUserSchema),

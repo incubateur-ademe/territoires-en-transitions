@@ -101,20 +101,20 @@ export const fakeRow = ({
   indicateurLabel,
   indicateurValeurs = fakeIndicateurValeurs(indicateurId),
   optionalYears,
+  isApplicable = true,
 }: {
   indicateurId: number;
   indicateurLabel: string;
   indicateurValeurs?: IndicateurValeur[];
   optionalYears?: readonly number[];
+  isApplicable?: boolean;
 }): IndicateurTableRow => ({
   indicateurId,
   indicateurLabel,
-  indicateurDefinition: fakeIndicateurDefinition(
-    indicateurId,
-    indicateurLabel
-  ),
+  indicateurDefinition: fakeIndicateurDefinition(indicateurId, indicateurLabel),
   indicateurValeurs,
   optionalYears,
+  isApplicable,
 });
 
 export const fakeRows: IndicateurTableRow[] = sectors.flatMap(

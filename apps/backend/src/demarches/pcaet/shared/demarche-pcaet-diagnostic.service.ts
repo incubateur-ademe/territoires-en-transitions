@@ -44,9 +44,12 @@ export class DemarchePcaetDiagnosticService {
   ): Promise<PcaetDiagnostic> {
     const [indicateurDefinitions, indicateurValeurs, vulnerabilite] =
       await Promise.all([
-        this.listPlatformDefinitionsRepository.listPlatformDefinitions({
-          identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
-        }),
+        this.listPlatformDefinitionsRepository.listPlatformDefinitionsForCollectivite(
+          {
+            identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
+            collectiviteId,
+          }
+        ),
         this.loadIndicateurValeursForDemarche(
           { demarcheId, collectiviteId },
           tx

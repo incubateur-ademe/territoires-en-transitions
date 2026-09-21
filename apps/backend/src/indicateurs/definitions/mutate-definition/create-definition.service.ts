@@ -28,6 +28,7 @@ export default class CreateDefinitionService {
       thematiques,
       commentaire,
       estFavori,
+      isApplicable,
       ficheId,
     }: CreateIndicateurDefinitionInput,
     user: AuthUser
@@ -78,7 +79,7 @@ export default class CreateDefinitionService {
             .onConflictDoNothing();
         }
 
-        // insère le commentaire et le flag `favoris`
+        // insère le commentaire, le flag `favoris` et l'applicabilité
         await trx
           .insert(indicateurCollectiviteTable)
           .values([
@@ -87,6 +88,7 @@ export default class CreateDefinitionService {
               indicateurId,
               commentaire,
               favoris: estFavori,
+              isApplicable,
               modifiedBy: user.id,
             },
           ])
@@ -98,6 +100,7 @@ export default class CreateDefinitionService {
             set: buildConflictUpdateColumns(indicateurCollectiviteTable, [
               'commentaire',
               'favoris',
+              'isApplicable',
               'modifiedBy',
             ]),
           });

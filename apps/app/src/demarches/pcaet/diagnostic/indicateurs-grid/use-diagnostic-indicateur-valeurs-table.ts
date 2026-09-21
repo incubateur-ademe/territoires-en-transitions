@@ -3,12 +3,9 @@
 import {
   deriveReferenceYearFromIndicateurValeurYears,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+  type PcaetDiagnosticIndicateurDefinition,
 } from '@tet/domain/demarches';
-import {
-  getYearFromIsoDate,
-  IndicateurDefinition,
-  IndicateurValeur,
-} from '@tet/domain/indicateurs';
+import { getYearFromIsoDate, IndicateurValeur } from '@tet/domain/indicateurs';
 import { useCallback, useMemo, useState } from 'react';
 import {
   isUnsetReferenceYear,
@@ -20,7 +17,10 @@ import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
 const OBJECTIF_YEARS = PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS;
 
 const toGridRows = (table: DiagnosticIndicateurTable): IndicateurTableRow[] => {
-  const definitionByIdentifiant = new Map<string, IndicateurDefinition>();
+  const definitionByIdentifiant = new Map<
+    string,
+    PcaetDiagnosticIndicateurDefinition
+  >();
   for (const definition of table.indicateurDefinitions) {
     const identifiant = definition.identifiantReferentiel;
     if (identifiant === null || identifiant === undefined) {
@@ -52,6 +52,7 @@ const toGridRows = (table: DiagnosticIndicateurTable): IndicateurTableRow[] => {
           valeursByIndicateurId.get(indicateurDefinition.id) ?? [],
         indicateurLabel: row.label,
         optionalYears: row.optionalYears,
+        isApplicable: indicateurDefinition.isApplicable,
       },
     ];
   });

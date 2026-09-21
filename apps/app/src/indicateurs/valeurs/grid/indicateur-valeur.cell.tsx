@@ -6,7 +6,7 @@ import {
   getYearFromIsoDate,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
-import { Input, TableCell, VisibleWhen } from '@tet/ui';
+import { cn, Input, TableCell, VisibleWhen } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { memo, ReactNode, useCallback } from 'react';
 import { IndicateurValeurRequiseMarker } from './indicateur-valeur-requise.marker';
@@ -36,10 +36,12 @@ export const IndicateurValeurCell = memo(
     year,
     isReadonly = false,
   }: IndicateurValeurCellProps): ReactNode => {
-    const { indicateurId, indicateurValeurs, optionalYears } =
+    const { indicateurId, indicateurValeurs, optionalYears, isApplicable } =
       cell.row.original;
+    // Un indicateur non applicable ne réclame plus rien : le marqueur de
+    // valeur requise disparaît avec la saisie.
     const isRequired =
-      optionalYears !== 'all' && !optionalYears?.includes(year);
+      isApplicable && optionalYears !== 'all' && !optionalYears?.includes(year);
 
     const indicateurValeur = indicateurValeurs.find(
       (indicateurValeur) =>
@@ -73,6 +75,24 @@ export const IndicateurValeurCell = memo(
     const cellClassName =
       'relative border-b border-r border-grey-3 whitespace-nowrap';
     const displayedValue = parseCellNumber(edit.text);
+
+    if (!isApplicable) {
+      return (
+        <TableCell
+          data-field={indicateurValeurType}
+          tabIndex={-1}
+          className={cn(cellClassName, 'bg-grey-1 text-grey-6')}
+          canEdit={false}
+        >
+          <div className="flex items-center gap-2 text-sm">
+            <IndicateurValeurTypeBadge
+              indicateurValeurType={indicateurValeurType}
+            />
+            {appLabels.pcaetDiagnosticValeurNonApplicable}
+          </div>
+        </TableCell>
+      );
+    }
 
     return (
       <TableCell

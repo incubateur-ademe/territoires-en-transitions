@@ -74,8 +74,7 @@ export const demarchesLabels = {
   instructionStatutDepotHorsPlateforme: 'Dépôt hors plateforme',
   demarcheAvanceEtapeHorsPlateforme:
     'Réalisée hors plateforme : rien à y faire ici',
-  demarcheCreerHorsPlateforme:
-    'PCAET déjà transmis pour avis hors plateforme',
+  demarcheCreerHorsPlateforme: 'PCAET déjà transmis pour avis hors plateforme',
   demarcheCreerHorsPlateformeDescription:
     'En activant ceci, vous arriverez directement à l’étape de finalisation de votre dépôt PCAET adopté. Les documents, les volets du diagnostic et le plan d’actions y restent à renseigner. Ce choix est définitif.',
   /**
@@ -712,4 +711,8 @@ export const demarchesLabels = {
     'Année de référence mise à jour, les valeurs saisies ont suivi.',
   pcaetDiagnosticAnneeReferenceEchec:
     "L'année de référence n'a pas pu être modifiée.",
-};
+  pcaetDiagnosticApplicabiliteEchec:
+    "L'applicabilité de l'indicateur n'a pas pu être modifiée.",
+  pcaetDiagnosticIndicateurNonApplicable: 'Non applicable',
+  pcaetDiagnosticValeurNonApplicable: 'N/A',
+} as const;

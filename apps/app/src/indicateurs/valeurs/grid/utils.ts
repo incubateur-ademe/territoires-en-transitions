@@ -14,6 +14,18 @@ export type IndicateurValeursTableMeta = {
     field: 'resultat' | 'objectif';
     value: number | null;
   }) => Promise<boolean>;
+  setIndicateurApplicable: ({
+    indicateurId,
+    isApplicable,
+  }: {
+    indicateurId: number;
+    isApplicable: boolean;
+  }) => Promise<boolean>;
+  /**
+   * Vrai le temps de l'aller-retour serveur (invalidation comprise), pendant
+   * lequel les lignes portent encore l'ancienne applicabilité.
+   */
+  isSettingIndicateurApplicable: boolean;
 };
 
 const isTableMetaValid = (
@@ -35,6 +47,22 @@ const isTableMetaValid = (
     'updateIndicateurValeurs' in meta &&
     meta.updateIndicateurValeurs !== undefined &&
     typeof meta.updateIndicateurValeurs !== 'function'
+  ) {
+    return false;
+  }
+
+  if (
+    'setIndicateurApplicable' in meta &&
+    meta.setIndicateurApplicable !== undefined &&
+    typeof meta.setIndicateurApplicable !== 'function'
+  ) {
+    return false;
+  }
+
+  if (
+    'isSettingIndicateurApplicable' in meta &&
+    meta.isSettingIndicateurApplicable !== undefined &&
+    typeof meta.isSettingIndicateurApplicable !== 'boolean'
   ) {
     return false;
   }

@@ -172,6 +172,26 @@ describe('createIndicateurPerso', () => {
     expect(ficheData).toHaveLength(0);
   });
 
+  test('crée un indicateur déjà déclaré non applicable', async () => {
+    const data: CreateIndicateurDefinitionInput = {
+      collectiviteId: collectivite.id,
+      titre: 'Indicateur non applicable dès la création',
+      unite: 'kg',
+      isApplicable: false,
+    };
+
+    const caller = router.createCaller({ user: authenticatedUser });
+    const indicateurId = await caller.indicateurs.indicateurs.create(data);
+
+    const [collectiviteData] = await databaseService.db
+      .select()
+      .from(indicateurCollectiviteTable)
+      .where(eq(indicateurCollectiviteTable.indicateurId, indicateurId))
+      .limit(1);
+
+    expect(collectiviteData.isApplicable).toBe(false);
+  });
+
   test('should set modified_by field when creating an indicator', async () => {
     const data: CreateIndicateurDefinitionInput = {
       collectiviteId: collectivite.id,

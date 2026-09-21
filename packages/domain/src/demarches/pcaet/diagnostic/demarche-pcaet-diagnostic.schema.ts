@@ -1,5 +1,6 @@
 import * as z from 'zod/mini';
 import { indicateurDefinitionSchema } from '../../../indicateurs/definitions/indicateur-definition.schema';
+import { indicateurCollectiviteSchema } from '../../../indicateurs/shared/indicateur-collectivite.schema';
 import { indicateurValeurAvecMetadonnesDefinitionSchema } from '../../../indicateurs/valeurs/indicateur-valeur.schema';
 import {
   demarchePcaetVulnerabiliteLigneSchema,
@@ -73,12 +74,28 @@ export type PcaetDiagnosticVulnerabilite = z.infer<
   typeof pcaetDiagnosticVulnerabiliteSchema
 >;
 
+/**
+ * Définition du référentiel augmentée de ce que la collectivité en a décidé.
+ * Seul `isApplicable` est repris : `collectiviteId`, `modifiedAt` et
+ * `modifiedBy` existent dans les deux schémas avec des sens différents (sur la
+ * définition, `collectiviteId` désigne la collectivité propriétaire d'un
+ * indicateur perso), un merge à plat les écraserait.
+ */
+export const pcaetDiagnosticIndicateurDefinitionSchema = z.object({
+  ...indicateurDefinitionSchema.shape,
+  ...z.pick(indicateurCollectiviteSchema, { isApplicable: true }).shape,
+});
+
+export type PcaetDiagnosticIndicateurDefinition = z.infer<
+  typeof pcaetDiagnosticIndicateurDefinitionSchema
+>;
+
 export const pcaetDiagnosticSchema = z.object({
   indicateurParentConfigs: z.readonly(
     z.array(pcaetDiagnosticIndicateurParentConfigSchema)
   ),
   /** Définitions du référentiel, même sans saisie — pour peupler la grille vide. */
-  indicateurDefinitions: z.array(indicateurDefinitionSchema),
+  indicateurDefinitions: z.array(pcaetDiagnosticIndicateurDefinitionSchema),
   indicateurValeurs: z.array(indicateurValeurAvecMetadonnesDefinitionSchema),
   vulnerabilite: pcaetDiagnosticVulnerabiliteSchema,
 });

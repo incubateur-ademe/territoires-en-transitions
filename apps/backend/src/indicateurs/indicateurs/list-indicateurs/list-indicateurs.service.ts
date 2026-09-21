@@ -563,6 +563,7 @@ export class ListIndicateursService {
       (filters.indicateurIds && filters.indicateurIds.length > 0) === true ||
       filters.mesureId !== undefined ||
       filters.estFavori ||
+      filters.isApplicable !== undefined ||
       filters.ficheIds?.length ||
       filters.axeIds?.length ||
       filters.utilisateurPiloteIds?.length;
@@ -710,6 +711,20 @@ export class ListIndicateursService {
       );
     }
 
+    if (filters.isApplicable !== undefined) {
+      // Même piège que pour `estConfidentiel` : `NULL = true` vaut NULL, les
+      // indicateurs sans entrée dans `indicateur_collectivite` seraient exclus
+      // à tort du cas applicable.
+      whereConditions.push(
+        filters.isApplicable
+          ? or(
+              eq(indicateurCollectiviteTable.isApplicable, true),
+              isNull(indicateurCollectiviteTable.isApplicable)
+            )
+          : eq(indicateurCollectiviteTable.isApplicable, false)
+      );
+    }
+
     if (filters.estFavori !== undefined) {
       whereConditions.push(
         eq(indicateurCollectiviteTable.favoris, filters.estFavori)
@@ -773,6 +788,9 @@ export class ListIndicateursService {
         commentaire: indicateurCollectiviteTable.commentaire,
         estConfidentiel: sql<boolean>`${indicateurCollectiviteTable.confidentiel} is true`,
         estFavori: indicateurCollectiviteTable.favoris,
+        // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
+        // un indicateur dont la collectivité n'a rien dit est applicable.
+        isApplicable: sql<boolean>`coalesce(${indicateurCollectiviteTable.isApplicable}, true)`,
         modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`
         ),
