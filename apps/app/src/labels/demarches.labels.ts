@@ -626,6 +626,11 @@ export const demarchesLabels = {
     'Consultez le programme d’actions rattaché à ce PCAET.',
   instructionDossierPlanAucun:
     'Aucun programme d’actions n’est rattaché à ce dossier.',
+  /**
+   * Le plan s'ouvre dans un nouvel onglet : il appartient à la collectivité
+   * déposante, y naviguer ferait sortir l'instructeur de son dossier.
+   */
+  demarchePlanContenuPlanLien: 'Consulter le plan',
   demarchePlanContenuPlanSansNom: 'Plan sans nom',
   /**
    * Nom du plan et son décompte sur une seule ligne : le `subtitle` de
