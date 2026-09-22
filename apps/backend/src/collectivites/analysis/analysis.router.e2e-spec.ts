@@ -99,11 +99,13 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
     enjeu = 'ges',
     etape = 'mobilisation',
     modifiedAt,
+    createdAt,
   }: {
     status?: AnalysisJobStatus;
     enjeu?: Enjeu;
     etape?: AnalysisStep;
     modifiedAt?: string;
+    createdAt?: string;
   } = {}): Promise<string> => {
     const [job] = await db.db
       .insert(analysisJobTable)
@@ -116,6 +118,7 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         processedBatches: 2,
         totalBatches: 3,
         modifiedAt,
+        createdAt,
         report: {
           fiches: [],
         },
@@ -194,14 +197,24 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
     });
   });
 
-  describe('getAnalysisStatus', () => {
+  describe('getLastAnalysis', () => {
+    const isIsoDateTime = (value: unknown): boolean =>
+      typeof value === 'string' &&
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value);
+
     it('rend le classement, sans compteur de lots, sur un job termine', async () => {
       const jobId = await insertJob();
-      const status = await callerFor(editionUser).getAnalysisStatus({
-        jobId,
+
+      const analysis = await callerFor(editionUser).getLastAnalysis({
+        collectiviteId,
+        enjeu: 'ges',
       });
 
-      expect(status).toEqual({
+      expect({
+        ...analysis,
+        createdAt: isIsoDateTime(analysis?.createdAt),
+        modifiedAt: isIsoDateTime(analysis?.modifiedAt),
+      }).toEqual({
         id: jobId,
         collectiviteId,
         enjeu: 'ges',
@@ -210,42 +223,48 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         report: {
           fiches: [],
         },
+        createdAt: true,
+        modifiedAt: true,
       });
     });
 
-    it('rend la progression, sans classement, tant que le job tourne', async () => {
+    it('rend le job le plus recent quand la collectivite en compte plusieurs', async () => {
       cleanupEnqueuedJobs();
 
-      const jobId = await insertJob({
+      await insertJob({ createdAt: '2026-01-01T00:00:00.000Z' });
+      const lastJobId = await insertJob({
         status: AnalysisJobStatusEnum.RUNNING,
         etape: 'classification',
-      });
-      const status = await callerFor(editionUser).getAnalysisStatus({
-        jobId,
+        createdAt: '2026-02-01T00:00:00.000Z',
       });
 
-      expect(status).toEqual({
-        id: jobId,
+      const analysis = await callerFor(editionUser).getLastAnalysis({
         collectiviteId,
         enjeu: 'ges',
-        etape: 'classification',
+      });
+
+      expect({ id: analysis?.id, status: analysis?.status }).toEqual({
+        id: lastJobId,
         status: AnalysisJobStatusEnum.RUNNING,
-        processedBatches: 2,
-        totalBatches: 3,
       });
     });
 
-    it("cache l'existence du job à un membre d'une autre collectivité", async () => {
-      const jobId = await insertJob();
-      await expect(
-        callerFor(outsiderUser).getAnalysisStatus({ jobId })
-      ).rejects.toThrowError(/n'existe pas/);
+    it("rend null quand la collectivite n'a jamais ete analysee", async () => {
+      const analysis = await callerFor(outsiderUser).getLastAnalysis({
+        collectiviteId: collectiviteWithoutFicheId,
+        enjeu: 'ges',
+      });
+
+      expect(analysis).toBeNull();
     });
 
-    it("échoue sur un job qui n'existe pas", async () => {
+    it("cache la collectivité à un membre d'une autre collectivité", async () => {
+      await insertJob();
+
       await expect(
-        callerFor(editionUser).getAnalysisStatus({
-          jobId: '00000000-0000-0000-0000-000000000000',
+        callerFor(outsiderUser).getLastAnalysis({
+          collectiviteId,
+          enjeu: 'ges',
         })
       ).rejects.toThrowError(/n'existe pas/);
     });

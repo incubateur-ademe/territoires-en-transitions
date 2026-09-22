@@ -21,7 +21,7 @@ import { FicheActionVoletGesRepository } from './fiche-action-volet-ges.reposito
 import { GenerateAnalysisService } from './generate-analysis/generate-analysis.service';
 import { PersistClassificationService } from './persist-classification/persist-classification.service';
 import { GenerateAnalysisWorker } from './generate-analysis/generate-analysis.worker';
-import { GetAnalysisStatusService } from './get-analysis-status/get-analysis-status.service';
+import { GetLastAnalysisService } from './get-last-analysis/get-last-analysis.service';
 import { AnalysisRouter } from './analysis.router';
 import { CollectivitesCoreModule } from '@tet/backend/collectivites/collectivites-core.module';
 import { CollectiviteVoletGesRepository } from './collectivite-volet-ges.repository';
@@ -53,7 +53,7 @@ import { GetMobilisationService } from './get-mobilisation/get-mobilisation.serv
     GenerateAnalysisService,
     PersistClassificationService,
     GenerateAnalysisWorker,
-    GetAnalysisStatusService,
+    GetLastAnalysisService,
     AnalysisRouter,
     FicheActionVoletGesRepository,
     CollectiviteVoletGesRepository,

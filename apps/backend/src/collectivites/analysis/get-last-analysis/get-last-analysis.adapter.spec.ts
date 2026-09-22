@@ -7,10 +7,12 @@ import {
   AnalysisJobStatus,
   AnalysisJobStatusEnum,
 } from '../models/analysis-job';
-import { toAnalysisStatus } from './get-analysis-status.adapter';
+import { toAnalysisStatus } from './get-last-analysis.adapter';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 3;
+const createdAt = '2026-09-22T08:00:00.000Z';
+const modifiedAt = '2026-09-22T08:05:00.000Z';
 
 const report: ClassificationReport = {
   fiches: [],
@@ -36,6 +38,8 @@ const toProgress = ({
   totalBatches: 3,
   report,
   error,
+  createdAt,
+  modifiedAt,
 });
 
 describe('toAnalysisStatus', () => {
@@ -54,6 +58,8 @@ describe('toAnalysisStatus', () => {
         status: AnalysisJobStatusEnum.PENDING,
         processedBatches: 2,
         totalBatches: 3,
+        createdAt,
+        modifiedAt,
       },
     });
   });
@@ -76,6 +82,8 @@ describe('toAnalysisStatus', () => {
         etape: 'mobilisation',
         status: AnalysisJobStatusEnum.DONE,
         report,
+        createdAt,
+        modifiedAt,
       },
     });
   });
@@ -97,6 +105,8 @@ describe('toAnalysisStatus', () => {
         etape: 'classification',
         status: AnalysisJobStatusEnum.FAILED,
         error: 'Aucune fiche à classer dans cette collectivité',
+        createdAt,
+        modifiedAt,
       },
     });
   });
