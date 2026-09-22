@@ -5,7 +5,8 @@ import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu, AnalysisStep } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray, lt, sql } from 'drizzle-orm';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { and, desc, eq, inArray, lt, sql } from 'drizzle-orm';
 import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
@@ -37,6 +38,8 @@ const progressProjection = {
   totalBatches: analysisJobTable.totalBatches,
   report: analysisJobTable.report,
   error: analysisJobTable.error,
+  createdAt: sqlToDateTimeISO(analysisJobTable.createdAt),
+  modifiedAt: sqlToDateTimeISO(analysisJobTable.modifiedAt),
 };
 
 export type AnalysisProgress = {
@@ -152,24 +155,32 @@ export class AnalysisJobRepository {
     }
   }
 
-  async getProgressById(
-    id: string
-  ): Promise<Result<AnalysisProgress, AnalysisJobError>> {
+  async getLastProgressOf({
+    collectiviteId,
+    enjeu,
+  }: {
+    collectiviteId: number;
+    enjeu: Enjeu;
+  }): Promise<Result<AnalysisProgress | undefined, AnalysisJobError>> {
     try {
       const [progress] = await this.db
         .select(progressProjection)
         .from(analysisJobTable)
-        .where(eq(analysisJobTable.id, id))
+        .where(
+          and(
+            eq(analysisJobTable.collectiviteId, collectiviteId),
+            eq(analysisJobTable.enjeu, enjeu)
+          )
+        )
+        .orderBy(desc(analysisJobTable.createdAt))
         .limit(1);
-
-      if (!progress) {
-        return failure(AnalysisJobErrorEnum.JOB_NOT_FOUND);
-      }
 
       return success(progress);
     } catch (error) {
       this.logger.error(
-        `Lecture de la progression du job ${id}: ${getErrorMessage(error)}`
+        `Lecture de la dernière analyse de la collectivité ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
       );
       return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
     }

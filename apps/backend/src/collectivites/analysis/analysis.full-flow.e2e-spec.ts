@@ -278,8 +278,9 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     const jobId = await runAnalysis();
 
     const job = await readJob(jobId);
-    const status = await callerFor(editionUser).getAnalysisStatus({
-      jobId,
+    const lastAnalysis = await callerFor(editionUser).getLastAnalysis({
+      collectiviteId,
+      enjeu: 'ges',
     });
     const mobilisation = await callerFor(editionUser).getMobilisation({
       collectiviteId,
@@ -293,7 +294,8 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
       scoredLevierCount: job.totalBatches,
       writtenVoletCount: (await readVolets()).length,
       mobilisationRowCount: (await readMobilisation()).length,
-      readableStatus: status.status,
+      readableJobId: lastAnalysis?.id,
+      readableStatus: lastAnalysis?.status,
       renderedLevierCount: mobilisation.leviers.length,
     }).toEqual({
       status: 'done',
@@ -302,6 +304,7 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
       scoredLevierCount: 1,
       writtenVoletCount: 1,
       mobilisationRowCount: 6,
+      readableJobId: jobId,
       readableStatus: 'done',
       renderedLevierCount: 1,
     });

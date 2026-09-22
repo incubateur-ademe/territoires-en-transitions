@@ -5,12 +5,21 @@ import {
   type AnalysisJobError,
 } from '../analysis-job.errors';
 import { AnalysisJobStatusEnum } from '../models/analysis-job';
-import { type AnalysisStatus } from './get-analysis-status.output';
+import { type AnalysisStatus } from './get-last-analysis.output';
 
 export const toAnalysisStatus = (
   progress: AnalysisProgress
 ): Result<AnalysisStatus, AnalysisJobError> => {
-  const { id, collectiviteId, enjeu, etape, status } = progress;
+  const { id, collectiviteId, enjeu, etape, status, createdAt, modifiedAt } =
+    progress;
+  const identity = {
+    id,
+    collectiviteId,
+    enjeu,
+    etape,
+    createdAt,
+    modifiedAt,
+  };
 
   switch (status) {
     case AnalysisJobStatusEnum.DONE: {
@@ -20,29 +29,19 @@ export const toAnalysisStatus = (
       if (isMobilisationReportMissing) {
         return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
       }
-      return success({ id, collectiviteId, enjeu, etape, status, report });
+      return success({ ...identity, etape, status, report });
     }
 
     case AnalysisJobStatusEnum.FAILED:
       if (!progress.error) {
         return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
       }
-      return success({
-        id,
-        collectiviteId,
-        enjeu,
-        etape,
-        status,
-        error: progress.error,
-      });
+      return success({ ...identity, status, error: progress.error });
 
     case AnalysisJobStatusEnum.PENDING:
     case AnalysisJobStatusEnum.RUNNING:
       return success({
-        id,
-        collectiviteId,
-        enjeu,
-        etape,
+        ...identity,
         status,
         processedBatches: progress.processedBatches,
         totalBatches: progress.totalBatches,

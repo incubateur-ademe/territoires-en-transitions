@@ -32,6 +32,8 @@ const jobIdentity = {
   collectiviteId: z.number().int().positive(),
   enjeu: z.enum(enjeuEnumValues),
   etape: z.enum(analysisStepEnumValues),
+  createdAt: z.iso.datetime(),
+  modifiedAt: z.iso.datetime(),
 };
 
 const inFlightStatusSchema = z.object({
@@ -57,10 +59,12 @@ const failedStatusSchema = z.object({
   error: z.string(),
 });
 
-export const getAnalysisStatusOutputSchema = z.discriminatedUnion('status', [
+export const analysisStatusSchema = z.discriminatedUnion('status', [
   inFlightStatusSchema,
   doneStatusSchema,
   failedStatusSchema,
 ]);
 
-export type AnalysisStatus = z.output<typeof getAnalysisStatusOutputSchema>;
+export const getLastAnalysisOutputSchema = analysisStatusSchema.nullable();
+
+export type AnalysisStatus = z.output<typeof analysisStatusSchema>;
