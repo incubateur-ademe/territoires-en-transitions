@@ -192,7 +192,9 @@ services:
         condition: service_healthy
     environment:
       PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      PGRST_DB_SCHEMAS: public,storage # supabase/config.toml [api].schemas
+      # storage retire : plus aucun appel PostgREST ne le vise, et l exposer
+      # laissait lire storage.objects au JWT de l utilisateur.
+      PGRST_DB_SCHEMAS: public # supabase/config.toml [api].schemas
       PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
       PGRST_DB_MAX_ROWS: "5000"
       PGRST_DB_ANON_ROLE: anon
