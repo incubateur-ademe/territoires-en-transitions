@@ -1,6 +1,6 @@
 import { type AnalysisStep } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
-import { type ClassificationProgress } from '../analysis-job.repository';
+import { type AnalysisProgress } from '../analysis-job.repository';
 import { AnalysisJobErrorEnum } from '../analysis-job.errors';
 import { type ClassificationDraft } from '../models/classification-draft';
 import {
@@ -26,7 +26,7 @@ const toProgress = ({
   draft?: ClassificationDraft | null;
   error?: string | null;
   etape?: AnalysisStep;
-}): ClassificationProgress => ({
+}): AnalysisProgress => ({
   id: jobId,
   collectiviteId,
   enjeu: 'ges',

@@ -4,6 +4,6 @@ export const enqueueAnalysisOutputSchema = z.object({
   jobId: z.string().uuid(),
 });
 
-export type EnqueueClassificationOutput = z.output<
+export type EnqueueAnalysisOutput = z.output<
   typeof enqueueAnalysisOutputSchema
 >;

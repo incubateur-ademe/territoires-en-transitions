@@ -43,9 +43,13 @@ const toService = ({
     getMobilisation: vi.fn().mockResolvedValue(mobilisationOutcome),
   };
 
+  const enjeuRepositories = {
+    mobilisationOf: () => mobilisationRepository,
+  };
+
   return new GetMobilisationService(
     permissions as never,
-    mobilisationRepository as never
+    enjeuRepositories as never
   );
 };
 

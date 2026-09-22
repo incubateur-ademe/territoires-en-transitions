@@ -1,5 +1,5 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { type ClassificationProgress } from '../analysis-job.repository';
+import { type AnalysisProgress } from '../analysis-job.repository';
 import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
@@ -8,7 +8,7 @@ import { AnalysisJobStatusEnum } from '../models/analysis-job';
 import { type AnalysisStatus } from './get-analysis-status.output';
 
 export const toAnalysisStatus = (
-  progress: ClassificationProgress
+  progress: AnalysisProgress
 ): Result<AnalysisStatus, AnalysisJobError> => {
   const { id, collectiviteId, enjeu, etape, status } = progress;
 

@@ -75,9 +75,13 @@ const toDependencies = ({
   const ficheActionVoletGesRepository = {
     saveVolets: vi.fn().mockResolvedValue(saveOutcome),
   };
+  const enjeuRepositories = {
+    voletsOf: () => ficheActionVoletGesRepository,
+  };
+
   const service = new PersistClassificationService(
     jobRepository as never,
-    ficheActionVoletGesRepository as never
+    enjeuRepositories as never
   );
 
   return { service, jobRepository, ficheActionVoletGesRepository };

@@ -4,14 +4,10 @@ import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { Enjeu, LEVIER_NOM_BY_ID, LevierId } from '@tet/domain/shared';
+import { LEVIER_NOM_BY_ID, LevierId } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { AnalysisJobRepository } from '../analysis-job.repository';
-import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
-import {
-  MobilisationRepository,
-  LevierMobilisation,
-} from '../mobilisation.repository';
+import { LevierMobilisation } from '../mobilisation.repository';
 import { type AnalysisError } from '../models/analysis.errors';
 import { ClassificationOutcome } from '../models/classification-outcome';
 import {
@@ -44,15 +40,9 @@ export class ScoreMobilisationService {
 
   constructor(
     private readonly jobRepository: AnalysisJobRepository,
-    private readonly collectiviteVoletGesRepository: CollectiviteVoletGesRepository,
     private readonly collectivitesService: CollectivitesService,
     private readonly llm: LlmService
   ) {}
-
-  private readonly mobilisationsByEnjeu: Record<Enjeu, MobilisationRepository> =
-    {
-      ges: this.collectiviteVoletGesRepository,
-    };
 
   async score(
     job: AnalysisJob,

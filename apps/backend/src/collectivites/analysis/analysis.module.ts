@@ -15,6 +15,7 @@ import {
 } from './classify-batch/classify-batch.queue';
 import { ClassifyBatchService } from './classify-batch/classify-batch.service';
 import { ClassifyBatchWorker } from './classify-batch/classify-batch.worker';
+import { EnjeuRepositories } from './enjeu.repositories';
 import { EnqueueAnalysisService } from './enqueue-analysis/enqueue-analysis.service';
 import { FicheActionVoletGesRepository } from './fiche-action-volet-ges.repository';
 import { GenerateAnalysisService } from './generate-analysis/generate-analysis.service';
@@ -56,6 +57,7 @@ import { GetMobilisationService } from './get-mobilisation/get-mobilisation.serv
     AnalysisRouter,
     FicheActionVoletGesRepository,
     CollectiviteVoletGesRepository,
+    EnjeuRepositories,
     ScoreMobilisationService,
     PersistMobilisationService,
     GetMobilisationService,

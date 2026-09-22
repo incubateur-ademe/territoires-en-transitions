@@ -30,6 +30,7 @@ import {
 } from '../models/analysis-job';
 import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
 import { EnqueueAnalysisInput } from './enqueue-analysis.input';
+import { EnqueueAnalysisOutput } from './enqueue-analysis.output';
 
 const GENERATE_ANALYSIS_JOB_NAME = 'generate-analysis';
 const CLASSIFY_BATCH_JOB_NAME = 'classify-batch';
@@ -49,7 +50,7 @@ export class EnqueueAnalysisService {
   async enqueue(
     { collectiviteId, enjeu }: EnqueueAnalysisInput,
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<{ jobId: string }, AnalysisJobError>> {
+  ): Promise<Result<EnqueueAnalysisOutput, AnalysisJobError>> {
     const isCollectiviteVisible = await this.isAllowedToClassify(
       user,
       collectiviteId
@@ -148,7 +149,7 @@ export class EnqueueAnalysisService {
     enjeu: Enjeu;
     batches: FicheToClassify[][];
     createdAt: string;
-  }): Promise<Result<{ jobId: string }, AnalysisJobError>> {
+  }): Promise<Result<EnqueueAnalysisOutput, AnalysisJobError>> {
     const deadlineAt = toClassificationDeadlineFrom(createdAt);
 
     try {

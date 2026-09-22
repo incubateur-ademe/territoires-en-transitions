@@ -4,7 +4,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
-import { type ClassificationProgress } from '../analysis-job.repository';
+import { type AnalysisProgress } from '../analysis-job.repository';
 import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
@@ -35,7 +35,7 @@ const progress = {
 
 const toService = ({
   progressOutcome = success(progress) as Result<
-    ClassificationProgress,
+    AnalysisProgress,
     AnalysisJobError
   >,
   isAllowed = true,

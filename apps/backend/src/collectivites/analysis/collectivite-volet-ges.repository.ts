@@ -20,7 +20,7 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  async replaceMobilisation({
+  async updateMobilisation({
     collectiviteId,
     leviers,
     tx,

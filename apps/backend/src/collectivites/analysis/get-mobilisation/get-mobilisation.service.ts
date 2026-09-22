@@ -2,14 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { Enjeu } from '@tet/domain/shared';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
 } from '../analysis-job.errors';
-import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
-import { MobilisationRepository } from '../mobilisation.repository';
+import { EnjeuRepositories } from '../enjeu.repositories';
 import { GetMobilisationInput } from './get-mobilisation.input';
 import { Mobilisation } from './get-mobilisation.output';
 
@@ -17,13 +15,8 @@ import { Mobilisation } from './get-mobilisation.output';
 export class GetMobilisationService {
   constructor(
     private readonly permissions: PermissionService,
-    private readonly collectiviteVoletGesRepository: CollectiviteVoletGesRepository
+    private readonly enjeuRepositories: EnjeuRepositories
   ) {}
-
-  private readonly mobilisationsByEnjeu: Record<Enjeu, MobilisationRepository> =
-    {
-      ges: this.collectiviteVoletGesRepository,
-    };
 
   async getMobilisation(
     { collectiviteId, enjeu }: GetMobilisationInput,
@@ -39,9 +32,9 @@ export class GetMobilisationService {
       return failure(AnalysisJobErrorEnum.COLLECTIVITE_NOT_FOUND);
     }
 
-    const mobilisationResult = await this.mobilisationsByEnjeu[
-      enjeu
-    ].getMobilisation(collectiviteId);
+    const mobilisationResult = await this.enjeuRepositories
+      .mobilisationOf(enjeu)
+      .getMobilisation(collectiviteId);
     if (!mobilisationResult.success) {
       return failure(AnalysisJobErrorEnum.GET_MOBILISATION_ERROR);
     }

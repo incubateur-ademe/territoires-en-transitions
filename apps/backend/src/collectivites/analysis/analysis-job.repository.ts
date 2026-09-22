@@ -39,11 +39,11 @@ const progressProjection = {
   error: analysisJobTable.error,
 };
 
-export type ClassificationProgress = {
+export type AnalysisProgress = {
   [K in keyof typeof progressProjection]: AnalysisJob[K];
 };
 
-export type CreateClassificationJobInput = {
+type CreateAnalysisJobInput = {
   collectiviteId: number;
   enjeu: Enjeu;
   etape: AnalysisStep;
@@ -58,7 +58,7 @@ export class AnalysisJobRepository {
   constructor(private readonly database: DatabaseService) {}
 
   async createUnlessInFlight(
-    input: CreateClassificationJobInput
+    input: CreateAnalysisJobInput
   ): Promise<Result<AnalysisJob, AnalysisJobError>> {
     try {
       const job = await this.insertUnlessInFlight(input);
@@ -78,15 +78,13 @@ export class AnalysisJobRepository {
 
       return success(jobAfterExpiry);
     } catch (error) {
-      this.logger.error(
-        `Création du job de classification: ${getErrorMessage(error)}`
-      );
+      this.logger.error(`Création du job d'analyse: ${getErrorMessage(error)}`);
       return failure(AnalysisJobErrorEnum.CREATE_JOB_ERROR);
     }
   }
 
   private async insertUnlessInFlight(
-    input: CreateClassificationJobInput
+    input: CreateAnalysisJobInput
   ): Promise<AnalysisJob | undefined> {
     const [job] = await this.db
       .insert(analysisJobTable)
@@ -109,7 +107,7 @@ export class AnalysisJobRepository {
   private async expireStaleInFlight({
     collectiviteId,
     enjeu,
-  }: CreateClassificationJobInput): Promise<boolean> {
+  }: CreateAnalysisJobInput): Promise<boolean> {
     const expiredJobs = await this.db
       .update(analysisJobTable)
       .set({
@@ -148,7 +146,7 @@ export class AnalysisJobRepository {
       return success(job);
     } catch (error) {
       this.logger.error(
-        `Lecture du job de classification ${id}: ${getErrorMessage(error)}`
+        `Lecture du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
       return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
     }
@@ -156,7 +154,7 @@ export class AnalysisJobRepository {
 
   async getProgressById(
     id: string
-  ): Promise<Result<ClassificationProgress, AnalysisJobError>> {
+  ): Promise<Result<AnalysisProgress, AnalysisJobError>> {
     try {
       const [progress] = await this.db
         .select(progressProjection)
@@ -218,7 +216,7 @@ export class AnalysisJobRepository {
         );
     } catch (error) {
       this.logger.error(
-        `Progression du job de classification ${id}: ${getErrorMessage(error)}`
+        `Progression du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
     }
   }
@@ -240,7 +238,7 @@ export class AnalysisJobRepository {
         );
     } catch (error) {
       this.logger.error(
-        `Progression du job de classification ${id}: ${getErrorMessage(error)}`
+        `Progression du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
     }
   }
@@ -343,7 +341,7 @@ export class AnalysisJobRepository {
       return success(undefined);
     } catch (error) {
       this.logger.error(
-        `Mise à jour du job de classification ${id}: ${getErrorMessage(error)}`
+        `Mise à jour du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
       return failure(AnalysisJobErrorEnum.UPDATE_JOB_ERROR);
     }
