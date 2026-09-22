@@ -119,7 +119,11 @@ export const AccordionControlled = forwardRef<
           aria-controls={id}
           aria-expanded={expanded}
           onKeyDown={(e) => {
-            if (e.code === 'Space') {
+            const isSpace = e.key === ' ';
+            const isEnterOnHeader =
+              e.key === 'Enter' && e.target === e.currentTarget;
+            const isHeaderActivation = isSpace || isEnterOnHeader;
+            if (isHeaderActivation) {
               e.preventDefault();
               toggleExpand();
             }
