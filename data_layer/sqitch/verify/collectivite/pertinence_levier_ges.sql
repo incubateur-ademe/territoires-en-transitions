@@ -73,6 +73,13 @@ $$
             'La contrainte collectivite_levier_ges_pertinence_unique doit porter, en NULLS NOT DISTINCT, sur (collectivite_id, levier_id, categorie) dans cet ordre, or : '
                 || coalesce(contrainte_unique, 'contrainte absente, NULLS DISTINCT ou DEFERRABLE');
 
+        ASSERT NOT EXISTS (
+            SELECT 1
+            FROM pg_index
+            WHERE indrelid = 'public.collectivite_levier_ges_pertinence'::regclass
+              AND indisprimary
+        ), 'La table ne doit porter aucune cle primaire : categorie, nullable, fait partie de la cle metier';
+
         ASSERT EXISTS (
             SELECT 1
             FROM pg_constraint c

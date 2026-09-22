@@ -13,6 +13,7 @@ import { ListCollectivitesRouter } from './list-collectivites/list-collectivites
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { PersonnesRouter } from './personnes.router';
+import { PertinenceLeviersRouter } from './pertinence-leviers/pertinence-leviers.router';
 import { ListTagsRouter } from './tags/list-tags/list-tags.router';
 import { MutateTagRouter } from './tags/mutate-tag/mutate-tag.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
@@ -35,7 +36,8 @@ export class CollectivitesRouter {
     private readonly discussionRouter: DiscussionRouter,
     private readonly personnalisationsRouter: PersonnalisationsRouter,
     private readonly collectivitePreferencesRouter: CollectivitePreferencesRouter,
-    private readonly analysisRouter: AnalysisRouter
+    private readonly analysisRouter: AnalysisRouter,
+    private readonly pertinenceLeviersRouter: PertinenceLeviersRouter
   ) {}
 
   router = this.trpc.router({
@@ -54,6 +56,7 @@ export class CollectivitesRouter {
     recherches: this.recherchesRouter.router,
     preferences: this.collectivitePreferencesRouter.router,
     analysis: this.analysisRouter.router,
+    pertinenceLeviers: this.pertinenceLeviersRouter.router,
     tags: this.trpc.mergeRouters(
       this.mutateTagRouter.router,
       this.listTagsRouter.router,

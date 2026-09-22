@@ -67,6 +67,7 @@ import { InvitationsRouter } from './membres/mutate-invitations/invitations.rout
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { PersonnesRouter } from './personnes.router';
+import { PertinenceLeviersModule } from './pertinence-leviers/pertinence-leviers.module';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 
@@ -75,6 +76,7 @@ import { PersonnesService } from './services/personnes.service';
     AnalysisModule,
     CollectivitesCoreModule,
     PersonnalisationsModule,
+    PertinenceLeviersModule,
     TransactionModule,
     NotificationsModule,
   ],
