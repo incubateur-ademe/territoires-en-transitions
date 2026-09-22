@@ -453,17 +453,19 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     expect(lectureView).toEqual(editionView);
   });
 
-  it("cache la mobilisation d'une collectivité à qui n'en est pas membre", async () => {
+  it("rend la mobilisation à un utilisateur vérifié qui n'en est pas membre", async () => {
+    await runAnalysis();
     const outsider = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
     });
     onTestFinished(outsider.cleanup);
 
-    await expect(
-      callerFor(getAuthUserFromUserCredentials(outsider.user)).getMobilisation({
-        collectiviteId,
-        enjeu: 'ges',
-      })
-    ).rejects.toThrowError(/n'existe pas/);
+    const [memberView, outsiderView] = await Promise.all(
+      [editionUser, getAuthUserFromUserCredentials(outsider.user)].map((user) =>
+        callerFor(user).getMobilisation({ collectiviteId, enjeu: 'ges' })
+      )
+    );
+
+    expect(outsiderView).toEqual(memberView);
   });
 });
