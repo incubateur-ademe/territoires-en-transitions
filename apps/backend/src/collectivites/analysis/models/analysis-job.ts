@@ -1,7 +1,7 @@
 import { Enjeu, AnalysisStep } from '@tet/domain/shared';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { createEnumObject } from '@tet/domain/utils';
-import { ClassificationDraft } from './classification-draft';
+import { ClassificationReport } from './classification-report';
 
 export const analysisJobStatusValues = [
   'pending',
@@ -65,7 +65,7 @@ export type AnalysisJob = {
   status: AnalysisJobStatus;
   processedBatches: number;
   totalBatches: number;
-  draft: ClassificationDraft | null;
+  report: ClassificationReport | null;
   tokenUsage: TokenUsage | null;
   error: string | null;
   createdAt: string;

@@ -21,7 +21,7 @@ export const toClassificationOutcome = (
   );
 
   return {
-    draft: { fiches: classifiedFiches },
+    report: { fiches: classifiedFiches },
     fiches: classifications.flatMap(({ sources }) => sources),
     volets: toVoletMobilisations(classifiedFiches),
   };

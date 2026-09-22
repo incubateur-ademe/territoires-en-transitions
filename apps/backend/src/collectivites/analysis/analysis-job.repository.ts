@@ -10,7 +10,7 @@ import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
 } from './analysis-job.errors';
-import { ClassificationDraft } from './models/classification-draft';
+import { ClassificationReport } from './models/classification-report';
 import {
   AnalysisJob,
   analysisJobInFlightStatuses,
@@ -35,7 +35,7 @@ const progressProjection = {
   status: analysisJobTable.status,
   processedBatches: analysisJobTable.processedBatches,
   totalBatches: analysisJobTable.totalBatches,
-  draft: analysisJobTable.draft,
+  report: analysisJobTable.report,
   error: analysisJobTable.error,
 };
 
@@ -268,19 +268,19 @@ export class AnalysisJobRepository {
     }
   }
 
-  async recordClassificationDraft({
+  async recordClassificationReport({
     id,
-    draft,
+    report,
     tx,
   }: {
     id: string;
-    draft: ClassificationDraft;
+    report: ClassificationReport;
     tx?: Transaction;
   }): Promise<Result<void, AnalysisJobError>> {
     return this.transition({
       id,
       allowedFromStatuses: [AnalysisJobStatusEnum.RUNNING],
-      values: { draft },
+      values: { report },
       tx,
     });
   }

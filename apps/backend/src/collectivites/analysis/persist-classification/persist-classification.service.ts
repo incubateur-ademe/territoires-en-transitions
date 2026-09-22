@@ -34,7 +34,7 @@ export class PersistClassificationService {
       .voletsOf(job.enjeu)
       .saveVolets({
         collectiviteId: job.collectiviteId,
-        fiches: outcome.draft.fiches.map(toFicheVolets),
+        fiches: outcome.report.fiches.map(toFicheVolets),
         createdBy: job.createdBy,
         tx,
       });
@@ -42,13 +42,13 @@ export class PersistClassificationService {
       return failure({ step: 'save_volets', cause: saveResult.error });
     }
 
-    const draftResult = await this.jobRepository.recordClassificationDraft({
+    const reportResult = await this.jobRepository.recordClassificationReport({
       id: job.id,
-      draft: outcome.draft,
+      report: outcome.report,
       tx,
     });
-    if (!draftResult.success) {
-      return failure({ step: 'record_draft', cause: draftResult.error });
+    if (!reportResult.success) {
+      return failure({ step: 'record_report', cause: reportResult.error });
     }
 
     return success(undefined);

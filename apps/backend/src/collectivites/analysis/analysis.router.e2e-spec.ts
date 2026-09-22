@@ -116,7 +116,7 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         processedBatches: 2,
         totalBatches: 3,
         modifiedAt,
-        draft: {
+        report: {
           fiches: [],
         },
       })
@@ -207,7 +207,7 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         enjeu: 'ges',
         etape: 'mobilisation',
         status: AnalysisJobStatusEnum.DONE,
-        draft: {
+        report: {
           fiches: [],
         },
       });

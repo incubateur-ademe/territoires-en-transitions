@@ -29,7 +29,7 @@ const progress = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 1,
   totalBatches: 3,
-  draft: null,
+  report: null,
   error: null,
 };
 

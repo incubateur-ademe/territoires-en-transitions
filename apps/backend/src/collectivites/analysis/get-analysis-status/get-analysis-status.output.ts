@@ -23,7 +23,7 @@ const classifiedFicheSchema = z.object({
   volets: z.array(classifiedVoletSchema),
 }) satisfies z.ZodType<ClassifiedFiche>;
 
-const classificationDraftSchema = z.object({
+const classificationReportSchema = z.object({
   fiches: z.array(classifiedFicheSchema),
 });
 
@@ -48,7 +48,7 @@ const doneStatusSchema = z.object({
   ...jobIdentity,
   etape: z.literal('mobilisation'),
   status: z.literal(AnalysisJobStatusEnum.DONE),
-  draft: classificationDraftSchema,
+  report: classificationReportSchema,
 });
 
 const failedStatusSchema = z.object({

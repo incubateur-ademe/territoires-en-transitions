@@ -14,11 +14,13 @@ export const toAnalysisStatus = (
 
   switch (status) {
     case AnalysisJobStatusEnum.DONE: {
-      const { draft } = progress;
-      if (etape !== 'mobilisation' || draft === null) {
+      const { report } = progress;
+      const isMobilisationReportMissing =
+        etape !== 'mobilisation' || report === null;
+      if (isMobilisationReportMissing) {
         return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
       }
-      return success({ id, collectiviteId, enjeu, etape, status, draft });
+      return success({ id, collectiviteId, enjeu, etape, status, report });
     }
 
     case AnalysisJobStatusEnum.FAILED:

@@ -148,7 +148,7 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
         etape: analysisJobTable.etape,
         totalBatches: analysisJobTable.totalBatches,
         error: analysisJobTable.error,
-        draft: analysisJobTable.draft,
+        report: analysisJobTable.report,
       })
       .from(analysisJobTable)
       .where(eq(analysisJobTable.id, jobId));
@@ -289,7 +289,7 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     expect({
       status: job.status,
       etape: job.etape,
-      classifiedFicheCount: job.draft?.fiches.length,
+      classifiedFicheCount: job.report?.fiches.length,
       scoredLevierCount: job.totalBatches,
       writtenVoletCount: (await readVolets()).length,
       mobilisationRowCount: (await readMobilisation()).length,

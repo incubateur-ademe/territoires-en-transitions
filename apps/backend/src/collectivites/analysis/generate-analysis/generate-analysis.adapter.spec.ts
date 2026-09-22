@@ -53,9 +53,9 @@ describe('toClassificationOutcome', () => {
     ]);
   });
 
-  it('rassemble le brouillon de tous les lots, fiches non classees comprises', () => {
+  it('rassemble le compte rendu de tous les lots, fiches non classees comprises', () => {
     expect(
-      toClassificationOutcome(classifications).draft.fiches.map(
+      toClassificationOutcome(classifications).report.fiches.map(
         ({ ficheId, volets }) => ({ ficheId, voletCount: volets.length })
       )
     ).toEqual([
