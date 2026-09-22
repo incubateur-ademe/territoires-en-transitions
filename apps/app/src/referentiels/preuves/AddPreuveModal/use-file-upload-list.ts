@@ -11,6 +11,7 @@ import {
   UploadStatusCode,
 } from './types';
 import { uploadFileResultToStatus } from './upload-file-result-to-status';
+import { isAbortError } from '@/app/utils/is-abort-error';
 
 type UseFileUploadListInput = {
   collectiviteId: number;
@@ -37,9 +38,6 @@ type FileToUpload = Extract<ListedFile, { kind: 'toUpload' }>;
 
 const isToUpload = (listed: ListedFile): listed is FileToUpload =>
   listed.kind === 'toUpload';
-
-const isAbortError = (error: unknown): boolean =>
-  error instanceof DOMException && error.name === 'AbortError';
 
 const abortWhenInFlight = ({ status }: FileUploadItem): void => {
   if (isUploadInFlight(status)) {
