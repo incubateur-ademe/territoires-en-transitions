@@ -25,6 +25,7 @@ export const indicateurCollectiviteTable = pgTable(
     commentaire: text('commentaire'),
     confidentiel: boolean('confidentiel').default(false).notNull(),
     favoris: boolean('favoris').default(false).notNull(),
+    nonSuivi: boolean('non_suivi').default(false).notNull(),
     modifiedBy,
     modifiedAt,
   },
