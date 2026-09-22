@@ -44,4 +44,11 @@ export const collectivitesLabels = {
   priorisationLeviersTitre: 'Priorisation des leviers',
   pertinenceDuLevier: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
+  actionsRattachees: plural({
+    zero: 'Aucune action rattachée',
+    one: 'action déjà rattachée',
+    other: 'actions déjà rattachées',
+  }),
+  mobilisationAbsente:
+    "Aucune action de la collectivité n'est encore rattachée à un levier",
 };

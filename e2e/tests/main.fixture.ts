@@ -2,6 +2,7 @@ import { mergeTests } from '@playwright/test';
 import { testWithCollectivites } from './collectivite/collectivites.fixture';
 import { testWithDiscussions } from './collectivite/discussions/discussions.fixture';
 import { testWithPersonnalisations } from './collectivite/personnalisations/personnalisations.fixture';
+import { testWithMobilisations } from './collectivite/priorisation-leviers/priorisation-leviers.fixture';
 import { testWithPersonneTags } from './collectivite/tags/personne-tags.fixture';
 import { testWithIndicateurs } from './indicateurs/indicateurs.fixture';
 import { testWithFiches } from './plans/fiches/fiches.fixture';
@@ -16,6 +17,7 @@ export const test = mergeTests(
   testWithFiches,
   testWithIndicateurs,
   testWithPersonnalisations,
+  testWithMobilisations,
   testWithReferentiels
 ).extend<{ oidcModal: 'hidden' | 'shown' }>({
   // La modale d'incitation MonCompteAdeme s'ouvre en overlay sur n'importe
