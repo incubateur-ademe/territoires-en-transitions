@@ -4,7 +4,7 @@
 #   docker build -f apps/site/Dockerfile \
 #     --build-arg STRAPI_KEY=... --build-arg STRAPI_URL=... \
 #     --build-arg ANON_KEY=... --build-arg API_URL=... \
-#     --build-arg AXEPTIO_ID=... --build-arg APP_URL=... --build-arg PANIER_URL=... \
+#     --build-arg AXEPTIO_ID=... --build-arg APP_URL=... \
 #     --secret id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 #     -t site .
 #
@@ -41,7 +41,6 @@ ARG ANON_KEY
 ARG API_URL
 ARG AXEPTIO_ID
 ARG APP_URL
-ARG PANIER_URL
 ARG POSTHOG_HOST
 ARG POSTHOG_KEY
 ARG CRISP_WEBSITE_ID
@@ -55,8 +54,7 @@ ENV NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY \
     NEXT_PUBLIC_AXEPTIO_ID=$AXEPTIO_ID \
     NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID \
-    NEXT_PUBLIC_APP_URL=$APP_URL \
-    NEXT_PUBLIC_PANIER_URL=$PANIER_URL
+    NEXT_PUBLIC_APP_URL=$APP_URL
 
 # The secret mount here just silences pnpm's harmless "can't resolve
 # ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).

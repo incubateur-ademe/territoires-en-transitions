@@ -17,11 +17,7 @@ import {
   sortURLParametersNames,
   sortURLParametersParser,
 } from './plan-card-with-filters.list/sorting-parameters';
-type Props = {
-  panierId: string | undefined;
-};
-
-export const AllPlansView = ({ panierId }: Props) => {
+export const AllPlansView = () => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId, hasCollectivitePermission } = collectivite;
 
@@ -46,10 +42,7 @@ export const AllPlansView = ({ panierId }: Props) => {
         <PageHeader.Title>{appLabels.plans}</PageHeader.Title>
         {plansAvailable && hasCollectivitePermission('plans.mutate') && (
           <PageHeader.Actions>
-            <CreatePlanButton
-              collectiviteId={collectiviteId}
-              panierId={panierId}
-            />
+            <CreatePlanButton collectiviteId={collectiviteId} />
           </PageHeader.Actions>
         )}
         {plansAvailable && (
@@ -80,7 +73,7 @@ export const AllPlansView = ({ panierId }: Props) => {
       </VisibleWhen>
       <VisibleWhen condition={noPlanAvailable}>
         <Spacer height={3} />
-        <ListPlansEmptyCard collectivite={collectivite} panierId={panierId} />
+        <ListPlansEmptyCard collectivite={collectivite} />
       </VisibleWhen>
       <VisibleWhen condition={plansAvailable}>
         <PlanCardList

@@ -1278,8 +1278,6 @@ export const appLabels = {
   preuveDocConfidentiel:
     "Nous vous encourageons à partager vos documents : ils permettent à d'autres collectivités de s'inspirer de vos actions, vos pratiques, etc.\n\nSi vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité, votre conseiller, votre auditeur et le service support de la plateforme pourront y accéder",
 
-  planOptionActionsAImpact: 'grâce aux "Actions à Impact"',
-
   sousSecteur: plural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
   panneauInformations: 'Informations',

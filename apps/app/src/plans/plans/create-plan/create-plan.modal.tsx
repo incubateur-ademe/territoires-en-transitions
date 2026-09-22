@@ -6,12 +6,10 @@ import { CreatePlanOptionLinksList } from './components/create-plan-option-link.
 
 export function CreatePlanModal({
   collectiviteId,
-  panierId,
   children,
   openState,
 }: {
   collectiviteId: number;
-  panierId: string | undefined;
   children?: JSX.Element;
   openState?: OpenState;
 }) {
@@ -21,10 +19,7 @@ export function CreatePlanModal({
       title={appLabels.creerPlan}
       openState={openState}
       render={() => (
-        <CreatePlanOptionLinksList
-          collectiviteId={collectiviteId}
-          panierId={panierId}
-        />
+        <CreatePlanOptionLinksList collectiviteId={collectiviteId} />
       )}
       renderFooter={({ close }) => (
         <div className="flex justify-center">

@@ -33,9 +33,6 @@ export const ENV = {
   get app_url() {
     return getPublicEnv().APP_URL;
   },
-  get panier_url() {
-    return getPublicEnv().PANIER_URL;
-  },
   get site_url() {
     return getPublicEnv().SITE_URL;
   },

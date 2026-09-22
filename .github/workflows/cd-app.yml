@@ -110,7 +110,6 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
           BACKEND_URL: ${{ vars.BACKEND_URL }}
           APP_URL: ${{ vars.APP_URL }}
-          PANIER_URL: ${{ vars.PANIER_URL }}
           CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
           SENTRY_DSN: ${{ vars.SENTRY_DSN }}
         run: >
@@ -125,7 +124,6 @@ jobs:
           --env SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
           --env BACKEND_URL=$BACKEND_URL
           --env APP_URL=$APP_URL
-          --env PANIER_URL=$PANIER_URL
           --env CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
           --env SENTRY_DSN=$SENTRY_DSN
 
@@ -173,7 +171,6 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
           BACKEND_URL: ${{ vars.BACKEND_TEST_URL }}
           APP_URL: ${{ vars.APP_URL }}
-          PANIER_URL: ${{ vars.PANIER_URL }}
           CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
           SENTRY_DSN: ${{ vars.SENTRY_DSN }}
         run: |
@@ -186,7 +183,6 @@ jobs:
             --env "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY"
             --env "BACKEND_URL=$BACKEND_URL"
             --env "APP_URL=$APP_URL"
-            --env "PANIER_URL=$PANIER_URL"
             --env "CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID"
             --env "SENTRY_DSN=$SENTRY_DSN"
           )
