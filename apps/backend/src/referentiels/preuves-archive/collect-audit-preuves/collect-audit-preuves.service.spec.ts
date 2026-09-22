@@ -1,3 +1,5 @@
+import { ListDocumentsByScopeRepository } from '@tet/backend/collectivites/documents/list-documents-by-scope/list-documents-by-scope.repository';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -74,10 +76,8 @@ function buildService({
   const permissionsIsAllowed = vi.fn().mockResolvedValue(permissionResult);
 
   const service = new CollectAuditPreuvesService(
-    repository as never,
-    {
-      isAllowed: permissionsIsAllowed,
-    } as never
+    repository as unknown as ListDocumentsByScopeRepository,
+    { isAllowed: permissionsIsAllowed } as unknown as PermissionService
   );
 
   return { service, permissionsIsAllowed, listDocuments };
@@ -183,12 +183,12 @@ describe('CollectAuditPreuvesService', () => {
         return { success: true, data: emptyDocuments };
       });
     const service = new CollectAuditPreuvesService(
-      { listDocuments } as never,
+      { listDocuments } as unknown as ListDocumentsByScopeRepository,
       {
         isAllowed: vi
           .fn()
           .mockResolvedValue({ success: true, data: undefined }),
-      } as never
+      } as unknown as PermissionService
     );
 
     const result = await service.collect(baseInput);
