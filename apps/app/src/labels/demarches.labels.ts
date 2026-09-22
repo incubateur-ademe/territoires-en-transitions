@@ -628,6 +628,14 @@ export const demarchesLabels = {
   instructionDossierMetaInstruitLe: 'Instruit le',
   instructionDossierMetaEcheanceDepassee: ({ date }: { date: string }) =>
     `${date} (délai écoulé)`,
+  /**
+   * En tête du panneau d'un dépôt lu avant sa transmission. Le service voit un
+   * dossier incomplet, sans avis ni échéance : il doit lire d'emblée que c'est
+   * normal, et qu'on ne lui demande rien.
+   */
+  instructionDossierEnElaborationTitre: 'PCAET en cours d’élaboration',
+  instructionDossierEnElaborationDescription:
+    'La collectivité n’a pas encore transmis ce PCAET pour avis. Vous le consultez tel qu’il est aujourd’hui : son contenu peut encore évoluer, et aucun avis n’est attendu de votre service à ce stade.',
   instructionDossierEtapesTitre: 'Les étapes de l’instruction',
   instructionDossierPanneauBouton: 'Étapes',
   instructionDossierEtapeDocuments: 'Documents déposés',

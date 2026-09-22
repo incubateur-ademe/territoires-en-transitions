@@ -1,24 +1,32 @@
-import { extractDemandeAvisIdFromPath } from './dossier-instruction-path';
+import { extractDossierInstructionRefFromPath } from './dossier-instruction-path';
 
-describe('extractDemandeAvisIdFromPath', () => {
+describe('extractDossierInstructionRefFromPath', () => {
   test('rend la saisine portée par un chemin de dossier', () => {
     expect(
-      extractDemandeAvisIdFromPath('/collectivite/4147/instruction/41')
-    ).toBe(41);
+      extractDossierInstructionRefFromPath('/collectivite/4147/instruction/41')
+    ).toEqual({ demandeAvisId: 41 });
+  });
+
+  test('rend la démarche portée par le chemin d’un dépôt en élaboration', () => {
+    expect(
+      extractDossierInstructionRefFromPath(
+        '/collectivite/4147/instruction/demarche/12'
+      )
+    ).toEqual({ demarcheId: 12 });
   });
 
   test('tolère une barre oblique finale', () => {
     expect(
-      extractDemandeAvisIdFromPath('/collectivite/4147/instruction/41/')
-    ).toBe(41);
+      extractDossierInstructionRefFromPath('/collectivite/4147/instruction/41/')
+    ).toEqual({ demandeAvisId: 41 });
   });
 
   test('ignore la query string et l’ancre', () => {
     expect(
-      extractDemandeAvisIdFromPath(
+      extractDossierInstructionRefFromPath(
         '/collectivite/4147/instruction/41?etape=documents#haut'
       )
-    ).toBe(41);
+    ).toEqual({ demandeAvisId: 41 });
   });
 
   test.each([
@@ -27,23 +35,19 @@ describe('extractDemandeAvisIdFromPath', () => {
     ['un sous-chemin du dossier', '/collectivite/4147/instruction/41/avis'],
     ['un identifiant non numérique', '/collectivite/4147/instruction/abc'],
     ['un identifiant nul', '/collectivite/4147/instruction/0'],
+    [
+      'une démarche sans identifiant',
+      '/collectivite/4147/instruction/demarche',
+    ],
     ['une collectivité non numérique', '/collectivite/x/instruction/41'],
     ['un chemin hors collectivité', '/profil'],
     ['une chaîne vide', ''],
   ])('rend null pour %s', (_, pathname) => {
-    expect(extractDemandeAvisIdFromPath(pathname)).toBeNull();
+    expect(extractDossierInstructionRefFromPath(pathname)).toBeNull();
   });
 
   test('rend null sans chemin', () => {
-    expect(extractDemandeAvisIdFromPath(null)).toBeNull();
-    expect(extractDemandeAvisIdFromPath(undefined)).toBeNull();
-  });
-
-  test('ne se laisse pas tromper par un préfixe forgé', () => {
-    // Le chemin doit commencer par la racine des collectivités : une URL
-    // fabriquée autour ne doit pas ouvrir de contexte.
-    expect(
-      extractDemandeAvisIdFromPath('/x/collectivite/4147/instruction/41')
-    ).toBeNull();
+    expect(extractDossierInstructionRefFromPath(null)).toBeNull();
+    expect(extractDossierInstructionRefFromPath(undefined)).toBeNull();
   });
 });

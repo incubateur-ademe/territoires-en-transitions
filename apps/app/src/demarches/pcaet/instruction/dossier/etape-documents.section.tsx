@@ -13,14 +13,15 @@ import {
   type DemarcheDocumentsSnapshot,
 } from '@tet/domain/demarches';
 import { useMemo } from 'react';
+import type { DossierInstructionRef } from '../dossier-instruction-ref';
 
 const noop = () => undefined;
 
 export const EtapeDocumentsSection = ({
-  demandeAvisId,
+  dossierRef,
   documents,
 }: {
-  demandeAvisId: number;
+  dossierRef: DossierInstructionRef;
   documents: DemarcheDocumentsSnapshot;
 }) => {
   const trpc = useTRPC();
@@ -34,7 +35,7 @@ export const EtapeDocumentsSection = ({
   const downloadDocument = async ({ documentId }: DemarcheDocumentDepose) => {
     const { url, filename } = await queryClient.fetchQuery(
       trpc.demarches.pcaet.getDossierDocumentUrl.queryOptions(
-        { demandeAvisId, documentId },
+        { ...dossierRef, documentId },
         { staleTime: 0 }
       )
     );

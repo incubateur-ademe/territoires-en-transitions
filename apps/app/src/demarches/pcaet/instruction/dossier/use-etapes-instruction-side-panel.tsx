@@ -1,6 +1,5 @@
 'use client';
 
-import { makeDossierInstructionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useCallback, useEffect, useRef } from 'react';
@@ -12,14 +11,13 @@ import {
 const PANEL_TITLE = appLabels.instructionDossierEtapesTitre;
 
 type Options = {
-  /** La collectivité instruite : celle dont le contexte porte le dossier. */
-  collectiviteId: number;
-  demandeAvisId: number;
+  /** L'URL du dossier ouvert : le panneau ne survit qu'à elle. */
+  dossierPath: string;
 };
 
 export function useEtapesInstructionSidePanel(
   contentProps: EtapesInstructionSidePanelContentProps,
-  { collectiviteId, demandeAvisId }: Options
+  { dossierPath }: Options
 ): { isOpen: boolean; toggle: () => void } {
   const { setPanel, panel } = useSidePanel();
   const contentPropsRef = useRef(contentProps);
@@ -29,11 +27,6 @@ export function useEtapesInstructionSidePanel(
   });
 
   const isOpen = panel.isOpen && panel.title === PANEL_TITLE;
-
-  const dossierPath = makeDossierInstructionUrl({
-    collectiviteInstruiteId: collectiviteId,
-    demandeAvisId,
-  });
 
   const openPanel = useCallback(() => {
     setPanel({
@@ -58,6 +51,7 @@ export function useEtapesInstructionSidePanel(
   // panneau quand le dossier arrive.
   const contentSignature = JSON.stringify({
     activeEtape: contentProps.activeEtape,
+    enElaboration: contentProps.enElaboration,
     avis: contentProps.avis.map(({ id, valideLe }) => [id, valideLe]),
     hasFooter: Boolean(contentProps.footer),
   });

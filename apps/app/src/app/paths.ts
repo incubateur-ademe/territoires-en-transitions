@@ -182,6 +182,25 @@ export const makeDossierInstructionUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
     .replace(`:${demandeAvisParam}`, demandeAvisId.toString());
 
+/**
+ * Le même dossier, désigné par sa démarche : un dépôt en élaboration n'a saisi
+ * personne, il n'a pas de saisine à mettre dans l'URL. Le segment `demarche`
+ * le distingue de la route par saisine, qui garde son URL — les emails y
+ * mènent.
+ */
+const demarcheInstructionPath = `${collectivitePath}/instruction/demarche/:${demarcheIdParam}`;
+
+export const makeDemarcheInstructionUrl = ({
+  collectiviteInstruiteId,
+  demarcheId,
+}: {
+  collectiviteInstruiteId: number;
+  demarcheId: number;
+}) =>
+  demarcheInstructionPath
+    .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
+
 export type TDBViewId = 'synthetique' | 'personnel';
 
 export const makeCollectiviteRootUrl = ({

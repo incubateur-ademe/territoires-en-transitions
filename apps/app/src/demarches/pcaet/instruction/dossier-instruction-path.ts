@@ -1,22 +1,27 @@
 import { collectiviteBasePath } from '@/app/app/paths';
+import type { DossierInstructionRef } from './dossier-instruction-ref';
 
-/** La route d'un dossier, seule à porter une saisine dans son URL. */
+/**
+ * Les routes d'un dossier, seules à porter dans leur URL ce qui l'ouvre : la
+ * saisine (`/instruction/41`), ou la démarche d'un dépôt en élaboration
+ * (`/instruction/demarche/12`).
+ */
 const DOSSIER_INSTRUCTION_PATH = new RegExp(
-  `^${collectiviteBasePath}/\\d+/instruction/(\\d+)/?$`
+  `^${collectiviteBasePath}/\\d+/instruction/(demarche/)?(\\d+)/?$`
 );
 
 /**
- * La saisine visée par un chemin de dossier, `null` pour tout autre chemin. Le
- * layout de collectivité s'en sert pour résoudre le contexte de la saisine
- * ouverte, et non la plus récente.
+ * Le dossier visé par un chemin, `null` pour tout autre chemin. Le layout de
+ * collectivité s'en sert pour résoudre le contexte du dossier ouvert, et non le
+ * plus récent.
  *
  * Le chemin vient de `x-current-path`, réécrit par le proxy, donc non
  * falsifiable ; la query string est malgré tout retirée, comme dans
  * `isAllowedWithoutCollectivite`.
  */
-export function extractDemandeAvisIdFromPath(
+export function extractDossierInstructionRefFromPath(
   pathname: string | null | undefined
-): number | null {
+): DossierInstructionRef | null {
   if (!pathname) {
     return null;
   }
@@ -26,8 +31,10 @@ export function extractDemandeAvisIdFromPath(
     return null;
   }
 
-  const demandeAvisId = Number(match[1]);
-  return Number.isSafeInteger(demandeAvisId) && demandeAvisId > 0
-    ? demandeAvisId
-    : null;
+  const id = Number(match[2]);
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    return null;
+  }
+
+  return match[1] ? { demarcheId: id } : { demandeAvisId: id };
 }

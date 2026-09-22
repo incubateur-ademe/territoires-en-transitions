@@ -5,6 +5,8 @@ export class InstructionPom {
   readonly bannerBackToDemandesAvis: Locator;
   readonly bannerBackToDossier: Locator;
   readonly dossier: Locator;
+  readonly enElaboration: Locator;
+  readonly finaliser: Locator;
   readonly accessError: Locator;
 
   constructor(readonly page: Page) {
@@ -18,6 +20,10 @@ export class InstructionPom {
       'demarches.pcaet.instruction.contexte-banniere.dossier'
     );
     this.dossier = page.getByTestId('demarches.pcaet.instruction.dossier');
+    this.enElaboration = page.getByTestId(
+      'demarches.pcaet.instruction.en-elaboration'
+    );
+    this.finaliser = page.getByTestId('demarches.pcaet.instruction.finaliser');
     this.accessError = page.getByTestId('demarches.pcaet.erreur-acces');
   }
 
@@ -109,6 +115,50 @@ export class InstructionPom {
     // s'activer ainsi.
     await lien.focus();
     await lien.press('Enter');
+  }
+
+  /**
+   * Ouvre un dépôt en élaboration depuis la liste. Il n'a pas de saisine : le
+   * lien porte sa démarche, sous la collectivité instruite.
+   */
+  async openDemarche({
+    collectiviteInstruiteId,
+    demarcheId,
+  }: {
+    collectiviteInstruiteId: number;
+    demarcheId: number;
+  }) {
+    const lien = this.rowDemarche(demarcheId)
+      .locator(
+        `a[href="/collectivite/${collectiviteInstruiteId}/instruction/demarche/${demarcheId}"]`
+      )
+      .first();
+
+    await lien.focus();
+    await lien.press('Enter');
+  }
+
+  /**
+   * Le dossier d'un dépôt en élaboration : l'URL porte la démarche, le panneau
+   * dit d'emblée que rien n'a été transmis, et rien ne se finalise.
+   */
+  async expectDossierEnElaboration({
+    collectiviteInstruiteId,
+    demarcheId,
+    casquette,
+  }: {
+    collectiviteInstruiteId: number;
+    demarcheId: number;
+    casquette: string;
+  }) {
+    await expect(this.page).toHaveURL(
+      `/collectivite/${collectiviteInstruiteId}/instruction/demarche/${demarcheId}`
+    );
+    await expect(this.dossier).toBeVisible();
+    await expect(this.banner).toContainText(casquette);
+    await expect(this.bannerBackToDossier).toBeHidden();
+    await expect(this.enElaboration).toBeVisible();
+    await expect(this.finaliser).toBeHidden();
   }
 
   /**
