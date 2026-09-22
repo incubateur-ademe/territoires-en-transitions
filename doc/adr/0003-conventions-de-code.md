@@ -78,6 +78,16 @@ Exemple type UI :
 - `fiche-action.list.tsx`
 - `fiche-action.list-item.tsx`
 
+Pour les modules backend qui exportent des définitions ou types de colonnes Drizzle réutilisables, des expressions SQL de colonne ou des objets de sélection, utiliser le suffixe **`.column.ts`**. Ne pas utiliser `.sql.ts` pour ces modules.
+
+Exemples :
+
+- `collectivite-id.column.ts` : définition de colonne réutilisable.
+- `collectivite-role.column.ts` : type enum PostgreSQL utilisé par les colonnes Drizzle.
+- `indicateur-periodicite.column.ts` : expressions SQL et objets de sélection de colonnes.
+
+Les définitions de tables complètes utilisent `.table.ts` ; les migrations SQL conservent l'extension `.sql`.
+
 ### Nommage des actions avec le verbe au début
 
 Exemple de service backend :
