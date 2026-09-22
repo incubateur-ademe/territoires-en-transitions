@@ -58,6 +58,8 @@ import { ListDocumentsReferentielRepository } from './documents/list-documents-r
 import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
 import { ListDocumentsReferentielService } from './documents/list-documents-referentiel/list-documents-referentiel.service';
 import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
+import { DownloadDocumentsMesureController } from './documents/download-documents-mesure/download-documents-mesure.controller';
+import { DownloadDocumentsMesureService } from './documents/download-documents-mesure/download-documents-mesure.service';
 import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
 import { ListDocumentsAuditRepository } from './documents/list-documents-audit/list-documents-audit.repository';
@@ -205,6 +207,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListDocumentsMesureRepository,
     ListDocumentsMesureService,
     ListDocumentsMesureRouter,
+    DownloadDocumentsMesureService,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
     ValidateAuditService,
@@ -248,6 +251,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ImportReferentielController,
     ExportScoreComparisonController,
     ReferentielsScoringController,
+    DownloadDocumentsMesureController,
   ],
 })
 export class ReferentielsModule {}
