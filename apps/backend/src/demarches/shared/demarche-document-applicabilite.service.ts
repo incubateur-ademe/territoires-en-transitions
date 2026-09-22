@@ -5,9 +5,12 @@ import { DemarcheHistoriqueRepository } from '@tet/backend/demarches/shared/dema
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import type {
-  IdentiteCollectivite,
-  PersonnalisationReponsesPayload,
+import {
+  type CollectiviteAvecType,
+  CollectivitePopulationTypeEnum,
+  CollectiviteSousTypeEnum,
+  type IdentiteCollectivite,
+  type PersonnalisationReponsesPayload,
 } from '@tet/domain/collectivites';
 import type { DemarcheType } from '@tet/domain/demarches';
 
@@ -72,24 +75,17 @@ export class DemarcheDocumentApplicabiliteService {
     // que le parcours d'expressions qui déciderait de l'éviter. Le chargement
     // paresseux reste justifié pour les réponses, qui coûtent une union de trois
     // tables jointe aux compétences BANATIC.
-    const [identite, populationMaxCommuneMembre, renouvellement] =
-      await Promise.all([
-        this.collectivitesService.getCollectiviteAvecType(collectiviteId),
-        this.communesMembresRepository.getPopulationMaxCommuneMembre(
-          collectiviteId,
-          tx
-        ),
-        this.historiqueRepository.aDejaAbouti(
-          { collectiviteId, demarcheType, demarcheId },
-          tx
-        ),
-      ]);
+    const [identite, renouvellement] = await Promise.all([
+      this.collectivitesService.getCollectiviteAvecType(collectiviteId),
+      this.historiqueRepository.aDejaAbouti(
+        { collectiviteId, demarcheType, demarcheId },
+        tx
+      ),
+    ]);
     const identiteCollectivite: IdentiteCollectivite = {
       ...identite,
       communesMembresPopulationTags:
-        this.collectivitesService.getPopulationTags(
-          populationMaxCommuneMembre ?? undefined
-        ),
+        await this.loadCommunesMembresPopulationTags(identite, tx),
     };
 
     const reponses = this.needsReponses(expressions)
@@ -102,6 +98,34 @@ export class DemarcheDocumentApplicabiliteService {
       : null;
 
     return { identiteCollectivite, reponses, demarche: { renouvellement } };
+  }
+
+  /**
+   * Les tranches de population de la plus peuplée des communes membres, pour
+   * `identite(commune_membre, …)`.
+   *
+   * Seul un EPCI à fiscalité propre a des communes membres : pour les autres la
+   * réponse est vide, sans requête. Pour un EPCI dont aucune composition n'est
+   * connue — les établissements publics territoriaux du Grand Paris, ou un
+   * import de relations qui aurait manqué —, la réponse reste absente :
+   * l'évaluateur lève, la pièce est conservée et l'erreur journalisée, plutôt
+   * que d'en dispenser en silence une collectivité qui y est sans doute tenue.
+   */
+  private async loadCommunesMembresPopulationTags(
+    identite: CollectiviteAvecType,
+    tx?: Transaction
+  ): Promise<CollectivitePopulationTypeEnum[] | undefined> {
+    if (identite.soustype !== CollectiviteSousTypeEnum.EPCI_FP) {
+      return [];
+    }
+    const populationMax =
+      await this.communesMembresRepository.getPopulationMaxCommuneMembre(
+        identite.id,
+        tx
+      );
+    return populationMax === null
+      ? undefined
+      : this.collectivitesService.getPopulationTags(populationMax);
   }
 
   /**

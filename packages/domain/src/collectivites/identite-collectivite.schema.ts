@@ -67,10 +67,11 @@ export const identiteCollectiviteSchema = z.object({
    * Tranches de population de la plus peuplée des communes membres, pour les
    * règles que la loi assoit sur « au moins une commune de plus de N
    * habitants » et non sur la population du groupement. Absent tant que le
-   * contexte qui sert l'identité ne l'a pas chargé : seul le catalogue des
+   * contexte qui sert l'identité ne l'a pas chargé — seul le catalogue des
    * pièces d'une démarche le fait, le calcul de score et les indicateurs n'en
-   * ont pas besoin. Vide pour une commune ou un groupement sans composition
-   * connue.
+   * ont pas besoin — et absent aussi pour un EPCI à fiscalité propre dont la
+   * composition n'est pas connue, que l'on ne dispense de rien en silence.
+   * Vide pour les collectivités qui n'ont pas de communes membres.
    */
   communesMembresPopulationTags: z
     .array(z.enum(CollectivitePopulationTypeEnum))
