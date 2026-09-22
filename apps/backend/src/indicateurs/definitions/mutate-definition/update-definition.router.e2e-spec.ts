@@ -14,6 +14,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 
@@ -270,6 +271,128 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       expect(updatedIndicateur).toBeDefined();
       expect(updatedIndicateur.estFavori).toBe(false);
       expect(updatedIndicateur.estConfidentiel).toBe(false);
+    });
+
+    describe('indicateurNonSuivi', () => {
+      const getIndicateurCollectivite = (indicateurId: number) =>
+        databaseService.db
+          .select()
+          .from(indicateurCollectiviteTable)
+          .where(
+            and(
+              eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+              eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+            )
+          )
+          .limit(1);
+
+      test('defaults to false for a newly created perso indicator', async () => {
+        const caller = router.createCaller({ user: authenticatedUser });
+
+        const indicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: {
+            collectiviteId: collectivite.id,
+            titre: 'Test NonSuivi Default',
+          },
+        });
+
+        const [dbIndicateurCollectivite] =
+          await getIndicateurCollectivite(indicateurId);
+
+        expect(dbIndicateurCollectivite?.nonSuivi).toBe(false);
+      });
+
+      test('can be set to true', async () => {
+        const caller = router.createCaller({ user: authenticatedUser });
+
+        const indicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: {
+            collectiviteId: collectivite.id,
+            titre: 'Test NonSuivi Set True',
+          },
+        });
+
+        await caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: {
+            indicateurNonSuivi: true,
+          },
+        });
+
+        const [dbIndicateurCollectivite] =
+          await getIndicateurCollectivite(indicateurId);
+
+        expect(dbIndicateurCollectivite?.nonSuivi).toBe(true);
+      });
+
+      test('is preserved when updating unrelated fields', async () => {
+        const caller = router.createCaller({ user: authenticatedUser });
+
+        const indicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: {
+            collectiviteId: collectivite.id,
+            titre: 'Test NonSuivi Preserve On Partial Update',
+          },
+        });
+
+        await caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: {
+            indicateurNonSuivi: true,
+          },
+        });
+
+        await caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: {
+            titre: 'Updated title, should not affect nonSuivi',
+          },
+        });
+
+        const [dbIndicateurCollectivite] =
+          await getIndicateurCollectivite(indicateurId);
+
+        expect(dbIndicateurCollectivite?.nonSuivi).toBe(true);
+      });
+
+      test('can be reset to false when explicitly set', async () => {
+        const caller = router.createCaller({ user: authenticatedUser });
+
+        const indicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: {
+            collectiviteId: collectivite.id,
+            titre: 'Test NonSuivi Reset On Explicit False',
+          },
+        });
+
+        await caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: {
+            indicateurNonSuivi: true,
+          },
+        });
+
+        await caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: {
+            indicateurNonSuivi: false,
+          },
+        });
+
+        const [dbIndicateurCollectivite] =
+          await getIndicateurCollectivite(indicateurId);
+
+        expect(dbIndicateurCollectivite?.nonSuivi).toBe(false);
+      });
     });
 
     test('should throw error when updating non-existent indicator', async () => {

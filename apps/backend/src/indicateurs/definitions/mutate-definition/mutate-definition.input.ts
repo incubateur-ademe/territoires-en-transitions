@@ -59,6 +59,12 @@ export const updateIndicateurDefinitionInputSchema = z.object({
       // "absent du payload" de "explicitement mis à false".
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
+      indicateurNonSuivi: z
+        .boolean()
+        .optional()
+        .describe(
+          "Si true, la collectivité ne suit pas cet indicateur (utilisé ultérieurement par le calcul du score indicatif)."
+        ),
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),
       services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),

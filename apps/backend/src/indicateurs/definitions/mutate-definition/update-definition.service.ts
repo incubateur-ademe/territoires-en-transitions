@@ -12,6 +12,7 @@ import {
   AuthUser,
 } from '@tet/backend/users/models/auth.models';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { hasPermission, ResourceType } from '@tet/domain/users';
@@ -116,6 +117,7 @@ export class UpdateDefinitionService {
       commentaire,
       estConfidentiel,
       estFavori,
+      indicateurNonSuivi,
       titre,
       unite,
       ficheIds,
@@ -125,25 +127,22 @@ export class UpdateDefinitionService {
     } = indicateurFields;
 
     await this.databaseService.db.transaction(async (tx) => {
-      if (
-        commentaire !== undefined ||
-        estConfidentiel !== undefined ||
-        estFavori !== undefined
-      ) {
+      const collectiviteFieldsToUpdate: Partial<
+        typeof indicateurCollectiviteTable.$inferInsert
+      > = {
+        ...(commentaire !== undefined && { commentaire }),
+        ...(estConfidentiel !== undefined && { confidentiel: estConfidentiel }),
+        ...(estFavori !== undefined && { favoris: estFavori }),
+        ...(indicateurNonSuivi !== undefined && { nonSuivi: indicateurNonSuivi }),
+      };
+
+      if (Object.keys(collectiviteFieldsToUpdate).length > 0) {
         await tx
           .insert(indicateurCollectiviteTable)
           .values({
             indicateurId,
             collectiviteId,
-            ...(commentaire !== undefined && {
-              commentaire,
-            }),
-            ...(estConfidentiel !== undefined && {
-              confidentiel: estConfidentiel,
-            }),
-            ...(estFavori !== undefined && {
-              favoris: estFavori,
-            }),
+            ...collectiviteFieldsToUpdate,
             modifiedBy: user.id,
             modifiedAt: SQL_CURRENT_TIMESTAMP,
           })
@@ -152,19 +151,13 @@ export class UpdateDefinitionService {
               indicateurCollectiviteTable.indicateurId,
               indicateurCollectiviteTable.collectiviteId,
             ],
-            set: {
-              ...(commentaire !== undefined && {
-                commentaire,
-              }),
-              ...(estConfidentiel !== undefined && {
-                confidentiel: estConfidentiel,
-              }),
-              ...(estFavori !== undefined && {
-                favoris: estFavori,
-              }),
-              modifiedBy: user.id,
-              modifiedAt: SQL_CURRENT_TIMESTAMP,
-            },
+            set: buildConflictUpdateColumns(indicateurCollectiviteTable, [
+              'modifiedBy',
+              'modifiedAt',
+              ...(Object.keys(
+                collectiviteFieldsToUpdate
+              ) as (keyof typeof indicateurCollectiviteTable.$inferInsert)[]),
+            ]),
           });
       }
 
