@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { hasMobilisation, LevierCard, toLevierCards } from '../to-levier-cards';
+import { toPertinencesListInput } from './to-pertinences-list-input';
 
 export type LevierCardsQuery =
   | { status: 'loading' }
@@ -13,10 +14,9 @@ export const useLevierCards = (collectiviteId: number): LevierCardsQuery => {
   const trpc = useTRPC();
 
   const pertinencesQuery = useQuery(
-    trpc.collectivites.pertinenceLeviers.list.queryOptions({
-      collectiviteId,
-      enjeu: 'ges',
-    })
+    trpc.collectivites.pertinenceLeviers.list.queryOptions(
+      toPertinencesListInput(collectiviteId)
+    )
   );
   const mobilisationQuery = useQuery(
     trpc.collectivites.analysis.getMobilisation.queryOptions({
