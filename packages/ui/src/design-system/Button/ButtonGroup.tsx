@@ -7,7 +7,7 @@ import { ButtonSize, DefaultButtonProps } from './types';
 
 type Props = {
   /** Listes de boutons à afficher avec leurs propriétés */
-  buttons: Omit<DefaultButtonProps, 'variant'>[];
+  buttons: Omit<DefaultButtonProps, 'variant' | 'aria-pressed'>[];
   /** Permet d'ajuster les styles du container */
   className?: string;
   /** Rempli la place disponible, `false` par défaut */
@@ -18,6 +18,7 @@ type Props = {
   variant?: 'primary' | 'neutral';
   /** Id du bouton affiché dans une variante primary */
   activeButtonId?: string | null;
+  label?: string;
 };
 
 /**
@@ -30,7 +31,10 @@ export const ButtonGroup = ({
   variant = 'primary',
   activeButtonId,
   fillContainer = false,
+  label,
 }: Props) => {
+  const hasGroupLabel = Boolean(label);
+
   /** Applique les bons styles pour les borders et border-radius
    * en fonction de la position du bouton dans le tableau */
   const getButtonBorder = (index: number): CSSProperties => {
@@ -63,9 +67,14 @@ export const ButtonGroup = ({
   };
 
   return (
-    <div className={cn('grow flex items-center', className)}>
+    <div
+      role={hasGroupLabel ? 'group' : undefined}
+      aria-label={label}
+      className={cn('grow flex items-center', className)}
+    >
       {buttons.map((props, index) => {
-        const state = props.id === activeButtonId ? 'active' : 'default';
+        const isActive = props.id === activeButtonId;
+        const state = isActive ? 'active' : 'default';
 
         const { text, background, border, icon } =
           buttonGroupTheme[variant][state][
@@ -76,6 +85,7 @@ export const ButtonGroup = ({
           <Button
             key={index}
             {...props}
+            aria-pressed={isActive}
             size={size}
             variant="outlined"
             className={cn(text, background, border, icon, {
