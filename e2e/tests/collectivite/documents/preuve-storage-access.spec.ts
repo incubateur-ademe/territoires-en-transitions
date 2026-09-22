@@ -48,7 +48,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     expect(fileInfo.hash).toMatch(/^[a-f0-9]{64}$/);
   });
 
-  test("Un utilisateur d'une autre collectivité peut télécharger via bucket_id/hash", async ({
+  test("Un utilisateur d'une autre collectivité ne peut pas télécharger via bucket_id/hash", async ({
     referentielScoresPom,
     collectivites,
     page,
@@ -84,11 +84,10 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
       hash
     );
 
-    expect(result.ok).toBe(true);
-    expect(result.errorMessage).toBeUndefined();
+    expect(result.ok).toBe(false);
   });
 
-  test('Un utilisateur ADEME (email @ademe.fr) peut télécharger via bucket_id/hash', async ({
+  test('Un utilisateur ADEME (email @ademe.fr) ne peut pas télécharger via bucket_id/hash', async ({
     referentielScoresPom,
     collectivites,
     users,
@@ -106,7 +105,8 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     // Un utilisateur ADEME (non membre, email @ademe.fr) tente de
     // télécharger le fichier directement via l'API Supabase Storage
     // — exactement ce que fait `supabase.storage.from(...).download(...)`
-    // côté client. La RLS sur storage.objects doit l'autoriser.
+    // côté client. La RLS sur storage.objects doit le refuser : le produit
+    // passe par une URL signée émise en service role, jamais par ce chemin.
     const ademeUser = await users.addUser({ nom: 'ademe' });
     expect(ademeUser.data.email).toMatch(/@ademe\.fr$/);
 
@@ -121,8 +121,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
       hash
     );
 
-    expect(result.ok).toBe(true);
-    expect(result.errorMessage).toBeUndefined();
+    expect(result.ok).toBe(false);
   });
 
   test("Un auditeur conserve l'accès aux preuves de la collectivité auditée", async ({
