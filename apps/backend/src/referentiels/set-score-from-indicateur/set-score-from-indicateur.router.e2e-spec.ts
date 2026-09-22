@@ -319,6 +319,9 @@ describe('SetScoreFromIndicateurRouter', () => {
       expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toMatchObject([
         { indicateurValeurId: valeurIds[0], typeScore: 'fait' },
       ]);
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'detaille',
+      });
 
       const snapshotsService = app.get(SnapshotsService);
       const computeAndUpsertSpy = vi.spyOn(
@@ -336,6 +339,13 @@ describe('SetScoreFromIndicateurRouter', () => {
 
       // la sélection a été supprimée en cascade avec la valeur d'indicateur
       expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toEqual([]);
+
+      // plus aucune valeur n'étant sélectionnée, l'action redevient non
+      // renseignée (et non pas laissée à son ancien statut détaillé)
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
 
       // le score/snapshot de l'action a bien été réactualisé suite à la
       // suppression (le score n'est alors plus calculable, faute de valeur
