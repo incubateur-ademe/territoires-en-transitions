@@ -9,7 +9,12 @@ import { demarchePlanContenuSchema } from '@tet/backend/demarches/shared/models/
 import { pcaetAvisSchema } from '../shared/models/pcaet-avis.dto';
 
 export const dossierInstructionSchema = z.object({
-  demandeAvisId: z.number().int(),
+  /**
+   * La saisine par laquelle ce service lit le dossier. Nulle pour un dépôt en
+   * élaboration, lu au titre du périmètre avant toute transmission : rien n'y
+   * est attendu du service, et rien ne s'y dépose.
+   */
+  demandeAvisId: z.number().int().nullable(),
   demarcheId: z.number().int(),
   titre: z.string(),
   status: demarchePcaetStatusSchema,
@@ -19,7 +24,8 @@ export const dossierInstructionSchema = z.object({
    * PCAET classique.
    */
   isScotAec: z.boolean(),
-  etat: pcaetDemandeAvisEtatSchema,
+  /** L'état de la saisine — nul sans saisine, le dépôt étant en élaboration. */
+  etat: z.nullable(pcaetDemandeAvisEtatSchema),
   transmittedAt: z.string().nullable(),
   avisDeadlineAt: z.string().nullable(),
   /**

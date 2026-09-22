@@ -7,22 +7,29 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import type { CollectiviteType } from '@tet/domain/collectivites';
 import {
+  DemarchePcaetStatusEnum,
+  DemarcheTypeEnum,
   fenetreAvisOuverte,
+  getPerimetreSaisine,
   instructeurCouvreCollectivite,
   isTypeInstructeur,
+  PcaetPerimetreSaisineEnum,
   peutDeposerAvisSaisine,
+  typesInstructeur,
   type FenetreAvisEntree,
   type PcaetPerimetreSaisine,
   type PerimetreInstructeurEntree,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import {
   DepotPermissionsError,
   DepotPermissionsErrorEnum,
 } from './depot-permissions.errors';
+import type { DossierInstructionRef } from './dossier-instruction-ref.input';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
 import { perimetreInstructeurColumns } from './perimetre-instructeur.columns';
 
@@ -35,6 +42,9 @@ import { perimetreInstructeurColumns } from './perimetre-instructeur.columns';
  */
 export type ContexteDemandeAvis = PerimetreInstructeurEntree &
   FenetreAvisEntree & {
+    demarcheId: number;
+    /** La déposante : celle dont le dossier porte les pièces et le diagnostic. */
+    collectiviteId: number;
     instructeurCollectiviteId: number;
     /**
      * Le territoire de la déposante qui vaut cette saisine. Un service atteint
@@ -42,6 +52,31 @@ export type ContexteDemandeAvis = PerimetreInstructeurEntree &
      */
     perimetre: PcaetPerimetreSaisine;
   };
+
+/**
+ * Un dossier que l'utilisateur peut lire, et à quel titre.
+ *
+ * La forme commune aux deux clés de `DossierInstructionRef` : les lectures du
+ * dossier — en-tête, pièces, diagnostic — n'ont pas à savoir si elles y
+ * accèdent par une saisine ou par le périmètre.
+ */
+export type DossierConsultable = {
+  demarcheId: number;
+  collectiviteId: number;
+  /** `null` quand le dossier se lit sans saisine : un dépôt en élaboration. */
+  demandeAvisId: number | null;
+  instructeurCollectiviteId: number;
+  instructeurType: CollectiviteType;
+  perimetre: PcaetPerimetreSaisine;
+};
+
+/** Un service de l'utilisateur qui couvre une collectivité, saisi ou non. */
+export type ServiceCouvrant = {
+  collectiviteId: number;
+  nom: string;
+  type: CollectiviteType;
+  perimetre: PcaetPerimetreSaisine;
+};
 
 @Injectable()
 export class DepotPermissionsService {
@@ -88,6 +123,163 @@ export class DepotPermissionsService {
     }
 
     return success(undefined);
+  }
+
+  /**
+   * Peut-on lire ce dossier, par la clé qu'on en a ?
+   *
+   * Par la saisine : les barrières de `canConsulterDepot`. Par la démarche :
+   * celles de `canConsulterDemarche`. Rend dans les deux cas de quoi charger le
+   * dossier — démarche, déposante, et le service au titre duquel on lit.
+   */
+  async canConsulterDossier(
+    ref: DossierInstructionRef,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<DossierConsultable, DepotPermissionsError>> {
+    if ('demarcheId' in ref) {
+      return this.canConsulterDemarche(ref.demarcheId, { user, tx });
+    }
+
+    const contexteResult = await this.resolveContexteInstruction(
+      ref.demandeAvisId,
+      { user, tx }
+    );
+    if (!contexteResult.success) {
+      return failure(contexteResult.error);
+    }
+    const contexte = contexteResult.data;
+
+    return success({
+      demarcheId: contexte.demarcheId,
+      collectiviteId: contexte.collectiviteId,
+      demandeAvisId: ref.demandeAvisId,
+      instructeurCollectiviteId: contexte.instructeurCollectiviteId,
+      instructeurType: contexte.instructeurType,
+      perimetre: contexte.perimetre,
+    });
+  }
+
+  /**
+   * Peut-on lire un dépôt **en élaboration**, qui n'a encore saisi personne ?
+   *
+   * Le droit vient du périmètre : l'utilisateur est membre actif d'un service
+   * instructeur qui couvre la déposante — celui-là même que la transmission
+   * saisira. Il lit le dossier tel qu'il est, sans rien y déposer.
+   *
+   * Passé la transmission, cette porte se ferme : c'est la saisine qui ouvre le
+   * dossier, et un service transmis sans saisine n'a rien à y lire. Sans quoi la
+   * saisine ne garderait plus rien, puisque le périmètre l'englobe.
+   */
+  async canConsulterDemarche(
+    demarcheId: number,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<DossierConsultable, DepotPermissionsError>> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({
+        collectiviteId: demarcheTable.collectiviteId,
+        status: demarcheTable.status,
+      })
+      .from(demarcheTable)
+      .where(
+        and(
+          eq(demarcheTable.id, demarcheId),
+          eq(demarcheTable.type, DemarcheTypeEnum.PCAET)
+        )
+      )
+      .limit(1);
+
+    // L'erreur commune, et non une erreur propre : les mutations d'avis
+    // reprennent ce contrat dans le leur, une erreur de plus les obligerait
+    // toutes à la nommer. Les lectures qui l'attendent la traduisent.
+    const demarche = rows[0];
+    if (!demarche) {
+      return failure(DepotPermissionsErrorEnum.NOT_FOUND);
+    }
+    if (demarche.status !== DemarchePcaetStatusEnum.EN_ELABORATION) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    const [service] = await this.listServicesCouvrants(
+      user.id,
+      demarche.collectiviteId,
+      tx
+    );
+    if (!service) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    return success({
+      demarcheId,
+      collectiviteId: demarche.collectiviteId,
+      demandeAvisId: null,
+      instructeurCollectiviteId: service.collectiviteId,
+      instructeurType: service.type,
+      perimetre: service.perimetre,
+    });
+  }
+
+  /**
+   * Les services instructeurs dont l'utilisateur est membre actif et qui
+   * couvrent cette collectivité, saisine ou non.
+   *
+   * Principal d'abord — le plus favorable, un droit ne se perd pas sur une
+   * ambiguïté — puis par identifiant, pour que la réponse ne dépende pas de
+   * l'ordre de lecture. La couverture se juge dans le domaine, comme pour les
+   * saisines : la règle est la même, elle se lit au même endroit.
+   */
+  async listServicesCouvrants(
+    userId: string,
+    collectiviteId: number,
+    tx?: Transaction
+  ): Promise<ServiceCouvrant[]> {
+    const deposante = alias(collectiviteTable, 'deposante');
+    const instructrice = alias(collectiviteTable, 'instructrice');
+
+    const rows = await (tx ?? this.databaseService.db)
+      .select({
+        collectiviteId: instructrice.id,
+        nom: instructrice.nom,
+        // Le siège de la déposante, à part de ses territoires secondaires : ce
+        // qui départage une saisine principale d'une secondaire.
+        collectiviteRegionCode: deposante.regionCode,
+        collectiviteDepartementCode: deposante.departementCode,
+        ...perimetreInstructeurColumns(deposante, instructrice),
+      })
+      .from(utilisateurCollectiviteAccessTable)
+      .innerJoin(
+        instructrice,
+        eq(instructrice.id, utilisateurCollectiviteAccessTable.collectiviteId)
+      )
+      .innerJoin(deposante, eq(deposante.id, collectiviteId))
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, userId),
+          eq(utilisateurCollectiviteAccessTable.isActive, true),
+          inArray(instructrice.type, [...typesInstructeur])
+        )
+      );
+
+    return rows
+      .flatMap((row) => {
+        const perimetre = getPerimetreSaisine(row);
+        return perimetre === null
+          ? []
+          : [
+              {
+                collectiviteId: row.collectiviteId,
+                nom: row.nom,
+                type: row.instructeurType,
+                perimetre,
+              },
+            ];
+      })
+      .sort((a, b) =>
+        a.perimetre === b.perimetre
+          ? a.collectiviteId - b.collectiviteId
+          : a.perimetre === PcaetPerimetreSaisineEnum.PRINCIPAL
+          ? -1
+          : 1
+      );
   }
 
   /**
@@ -270,6 +462,8 @@ export class DepotPermissionsService {
 
     const rows = await (tx ?? this.databaseService.db)
       .select({
+        demarcheId: demarcheTable.id,
+        collectiviteId: demarcheTable.collectiviteId,
         instructeurCollectiviteId:
           pcaetDemandeAvisTable.instructeurCollectiviteId,
         perimetre: pcaetDemandeAvisTable.perimetre,

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { collectiviteTypeEnum } from '../../collectivites';
 import {
   fenetreAvisOuverte,
+  getPerimetreSaisine,
   instructeurCouvreCollectivite,
 } from './pcaet-depot-permissions.rules';
 
@@ -251,5 +252,67 @@ describe('fenetreAvisOuverte', () => {
         now
       )
     ).toBe(false);
+  });
+});
+
+describe('getPerimetreSaisine', () => {
+  const siege = {
+    ...perimetre,
+    collectiviteRegionCode: '27',
+    collectiviteDepartementCode: '25',
+  };
+
+  it('is principal when the service covers the déposante seat', () => {
+    expect(getPerimetreSaisine(siege)).toBe('principal');
+  });
+
+  /**
+   * Redon Agglomération, vue de la DREAL du Morbihan : l'EPCI déborde chez elle
+   * par un territoire secondaire, l'avis revient à la DREAL du siège.
+   */
+  it('is secondary when the service only reaches a secondary territory', () => {
+    expect(
+      getPerimetreSaisine({
+        ...siege,
+        collectiviteRegionCodes: ['27', '53'],
+        collectiviteRegionCode: '53',
+      })
+    ).toBe('secondaire');
+  });
+
+  it('a ddt is judged on the department seat', () => {
+    const ddt = {
+      ...siege,
+      instructeurType: collectiviteTypeEnum.DDT,
+      instructeurDepartementCodes: ['25'],
+      collectiviteDepartementCodes: ['25', '39'],
+    };
+    expect(getPerimetreSaisine(ddt)).toBe('principal');
+    expect(
+      getPerimetreSaisine({ ...ddt, collectiviteDepartementCode: '39' })
+    ).toBe('secondaire');
+  });
+
+  it('a national service is principal whatever the codes', () => {
+    expect(
+      getPerimetreSaisine({
+        ...siege,
+        instructeurType: collectiviteTypeEnum.SERVICE_NATIONAL,
+        instructeurRegionCodes: [],
+        collectiviteRegionCode: null,
+      })
+    ).toBe('principal');
+  });
+
+  it('is null when the service does not cover the déposante at all', () => {
+    expect(
+      getPerimetreSaisine({ ...siege, collectiviteRegionCodes: ['84'] })
+    ).toBeNull();
+    expect(
+      getPerimetreSaisine({
+        ...siege,
+        instructeurType: collectiviteTypeEnum.EPCI,
+      })
+    ).toBeNull();
   });
 });

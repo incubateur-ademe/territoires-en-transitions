@@ -411,6 +411,97 @@ describe('getDossierInstruction', () => {
     expect(complet.instruitLe).not.toBeNull();
   });
 
+  /**
+   * Un dépôt en élaboration se lit par sa démarche, au titre du périmètre : il
+   * n'a encore saisi personne. Le service y lit un dossier sans saisine — donc
+   * sans état, sans titre à rendre et sans avis.
+   */
+  describe('par démarche, pour un dépôt en élaboration', () => {
+    let enElaborationId: number;
+    let demarcheEnElaborationId: number;
+    let cleanupEnElaboration: () => Promise<void>;
+
+    beforeAll(async () => {
+      // Une seconde collectivité : `demarche_active_unique` n'autorise qu'un
+      // dossier actif par collectivité, et la première a le sien transmis.
+      const enElaboration = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          regionCode: REGION,
+          departementCode: DEPARTEMENT,
+          nom: 'Agglo test elaboration',
+        },
+      });
+      cleanupEnElaboration = enElaboration.cleanup;
+      enElaborationId = enElaboration.collectivite.id;
+
+      const [demarche] = await db.db
+        .insert(demarcheTable)
+        .values({
+          collectiviteId: enElaborationId,
+          type: 'pcaet',
+          titre: 'PCAET test elaboration',
+          status: 'en_elaboration',
+        })
+        .returning({ id: demarcheTable.id });
+      demarcheEnElaborationId = demarche.id;
+
+      return async () => {
+        await db.db
+          .delete(demarcheTable)
+          .where(eq(demarcheTable.id, demarcheEnElaborationId));
+        await cleanupEnElaboration();
+      };
+    });
+
+    it("l'instructrice lit le dépôt tel qu'il est, sans saisine", async () => {
+      const dossier = await router
+        .createCaller({ user: camille })
+        .demarches.pcaet.getDossierInstruction({
+          demarcheId: demarcheEnElaborationId,
+        });
+
+      expect(dossier.demarcheId).toBe(demarcheEnElaborationId);
+      expect(dossier.demandeAvisId).toBeNull();
+      expect(dossier.status).toBe('en_elaboration');
+      expect(dossier.etat).toBeNull();
+      expect(dossier.instruitLe).toBeNull();
+      expect(dossier.titresDeposables).toEqual([]);
+      expect(dossier.avis).toEqual([]);
+      expect(dossier.avisAutresDestinataires).toEqual([]);
+      expect(dossier.collectivite.nom).toBe('Agglo test elaboration');
+      expect(dossier.documents.definitions.length).toBeGreaterThan(0);
+    });
+
+    it("refuse l'agente de la collectivité déposante", async () => {
+      await expect(
+        router
+          .createCaller({ user: marie })
+          .demarches.pcaet.getDossierInstruction({
+            demarcheId: demarcheEnElaborationId,
+          })
+      ).rejects.toThrow();
+    });
+
+    // Passé la transmission, c'est la saisine qui ouvre le dossier : la clé par
+    // démarche ne doit pas rouvrir ce qu'elle garde.
+    it('refuse la clé par démarche sur un dossier transmis', async () => {
+      await expect(
+        router
+          .createCaller({ user: camille })
+          .demarches.pcaet.getDossierInstruction({ demarcheId })
+      ).rejects.toThrow();
+    });
+
+    it('refuse une démarche inconnue', async () => {
+      await expect(
+        router
+          .createCaller({ user: camille })
+          .demarches.pcaet.getDossierInstruction({ demarcheId: 999999999 })
+      ).rejects.toThrow();
+    });
+  });
+
   it("refuse l'agente de la collectivité déposante", async () => {
     await expect(
       router
