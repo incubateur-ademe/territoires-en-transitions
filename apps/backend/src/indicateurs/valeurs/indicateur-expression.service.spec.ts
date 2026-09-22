@@ -611,7 +611,7 @@ describe('IndicateurExpressionService', () => {
         )
       ).toThrow(
         'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
-          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre.'
       );
     });
   });
