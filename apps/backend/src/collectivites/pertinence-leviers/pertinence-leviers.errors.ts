@@ -11,3 +11,17 @@ export const PertinenceLeviersRepositoryErrorEnum = createErrorsEnum(
 
 export type PertinenceLeviersRepositoryError =
   keyof typeof PertinenceLeviersRepositoryErrorEnum;
+
+const PertinenceLeviersSpecificErrors = [
+  ...PertinenceLeviersRepositoryErrors,
+  'COLLECTIVITE_NOT_FOUND',
+] as const;
+
+export type PertinenceLeviersSpecificError =
+  (typeof PertinenceLeviersSpecificErrors)[number];
+
+export const PertinenceLeviersErrorEnum = createErrorsEnum(
+  PertinenceLeviersSpecificErrors
+);
+
+export type PertinenceLeviersError = keyof typeof PertinenceLeviersErrorEnum;

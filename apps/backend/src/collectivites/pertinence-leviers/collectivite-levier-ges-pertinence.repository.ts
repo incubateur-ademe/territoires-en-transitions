@@ -79,11 +79,14 @@ export class CollectiviteLevierGesPertinenceRepository
     categorie,
     pertinence,
     modifiedBy,
+    tx,
   }: UpsertPertinenceInput): Promise<
     Result<void, PertinenceLeviersRepositoryError>
   > {
+    const runner = tx ?? this.db;
+
     try {
-      await this.db
+      await runner
         .insert(collectiviteLevierGesPertinenceTable)
         .values({
           collectiviteId,

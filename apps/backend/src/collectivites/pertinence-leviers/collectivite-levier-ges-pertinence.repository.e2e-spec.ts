@@ -238,6 +238,13 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
   });
 
   it("renvoie une erreur quand la collectivité n'existe pas", async () => {
+    onTestFinished(async (): Promise<void> => {
+      await db.db.execute(
+        sql`delete from collectivite_levier_ges_pertinence
+            where collectivite_id = -1`
+      );
+    });
+
     expect(
       await repository.upsert({
         collectiviteId: -1,
