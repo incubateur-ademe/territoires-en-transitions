@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { Enjeu, LEVIER_ID_BY_NOM } from '@tet/domain/shared';
+import { LEVIER_ID_BY_NOM } from '@tet/domain/shared';
 import { AnalysisJobRepository } from '../analysis-job.repository';
 import { ClassifyBatchOutcome } from '../classify-batch/classify-batch.service';
-import { FicheActionVoletGesRepository } from '../fiche-action-volet-ges.repository';
+import { EnjeuRepositories } from '../enjeu.repositories';
 import { type AnalysisPersistFailure } from '../models/analysis.errors';
 import { ClassificationOutcome } from '../models/classification-outcome';
 import { AnalysisJob } from '../models/analysis-job';
 import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
 import { FicheVolet } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
-import { FicheVolets, VoletRepository } from '../volet.repository';
+import { FicheVolets } from '../volet.repository';
 
 const toFicheVolets = ({ ficheId, volets }: ClassifiedFiche): FicheVolets => ({
   ficheId,
@@ -44,12 +44,8 @@ export const toClassificationOutcome = (
 export class PersistClassificationService {
   constructor(
     private readonly jobRepository: AnalysisJobRepository,
-    private readonly ficheActionVoletGesRepository: FicheActionVoletGesRepository
+    private readonly enjeuRepositories: EnjeuRepositories
   ) {}
-
-  private readonly repositoriesByEnjeu: Record<Enjeu, VoletRepository> = {
-    ges: this.ficheActionVoletGesRepository,
-  };
 
   async persist({
     job,
@@ -60,12 +56,14 @@ export class PersistClassificationService {
     outcome: ClassificationOutcome;
     tx: Transaction;
   }): Promise<Result<undefined, AnalysisPersistFailure>> {
-    const saveResult = await this.repositoriesByEnjeu[job.enjeu].saveVolets({
-      collectiviteId: job.collectiviteId,
-      fiches: outcome.draft.fiches.map(toFicheVolets),
-      createdBy: job.createdBy,
-      tx,
-    });
+    const saveResult = await this.enjeuRepositories
+      .voletsOf(job.enjeu)
+      .saveVolets({
+        collectiviteId: job.collectiviteId,
+        fiches: outcome.draft.fiches.map(toFicheVolets),
+        createdBy: job.createdBy,
+        tx,
+      });
     if (!saveResult.success) {
       return failure({ step: 'save_volets', cause: saveResult.error });
     }

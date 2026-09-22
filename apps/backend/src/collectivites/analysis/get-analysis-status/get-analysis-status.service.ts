@@ -9,6 +9,7 @@ import {
   type AnalysisJobError,
 } from '../analysis-job.errors';
 import { toAnalysisStatus } from './get-analysis-status.adapter';
+import { type GetAnalysisStatusInput } from './get-analysis-status.input';
 import { type AnalysisStatus } from './get-analysis-status.output';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class GetAnalysisStatusService {
   ) {}
 
   async getStatus(
-    { jobId }: { jobId: string },
+    { jobId }: GetAnalysisStatusInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<AnalysisStatus, AnalysisJobError>> {
     const jobResult = await this.jobRepository.getProgressById(jobId);

@@ -1,7 +1,6 @@
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { AnalysisJobErrorEnum } from '../analysis-job.errors';
-import { VoletErrorEnum } from '../volet.errors';
 import { ClassificationOutcome } from '../models/classification-outcome';
 import { AnalysisJob, AnalysisJobStatusEnum } from '../models/analysis-job';
 import { FicheVolet } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
@@ -55,7 +54,6 @@ const toDependencies = ({
   scoringFails = false,
   collectiviteIsUnreadable = false,
   phaseIsRefused = false,
-  mobilisationWriteFails = false,
   scoringFailsAfterFirstLevier = false,
 } = {}) => {
   const jobRepository = {
@@ -68,17 +66,7 @@ const toDependencies = ({
       ),
     recordProcessedBatches: vi.fn().mockResolvedValue(undefined),
     addTokenUsage: vi.fn().mockResolvedValue(undefined),
-    markDone: vi.fn().mockResolvedValue(success(undefined)),
     markFailed: vi.fn().mockResolvedValue(success(undefined)),
-  };
-  const mobilisationRepository = {
-    replaceMobilisation: vi
-      .fn()
-      .mockResolvedValue(
-        mobilisationWriteFails
-          ? failure(VoletErrorEnum.SAVE_VOLETS_ERROR)
-          : success(undefined)
-      ),
   };
   const collectivitesService = {
     getCollectiviteAvecType: vi.fn().mockImplementation(async () => {
@@ -107,12 +95,11 @@ const toDependencies = ({
 
   const service = new ScoreMobilisationService(
     jobRepository as never,
-    mobilisationRepository as never,
     collectivitesService as never,
     llm as never
   );
 
-  return { service, jobRepository, mobilisationRepository, llm };
+  return { service, jobRepository, llm };
 };
 
 describe('ScoreMobilisationService.score', () => {
@@ -142,18 +129,6 @@ describe('ScoreMobilisationService.score', () => {
       jobId,
       1,
     ]);
-  });
-
-  it("n'ecrit aucune mobilisation par lui-meme", async () => {
-    const { service, mobilisationRepository, jobRepository } = toDependencies();
-
-    await service.score(job, toOutcome());
-
-    expect({
-      mobilisationWrites:
-        mobilisationRepository.replaceMobilisation.mock.calls.length,
-      doneCalls: jobRepository.markDone.mock.calls.length,
-    }).toEqual({ mobilisationWrites: 0, doneCalls: 0 });
   });
 
   it("avorte quand un levier échoue, sans qu'aucune écriture ait eu lieu", async () => {
