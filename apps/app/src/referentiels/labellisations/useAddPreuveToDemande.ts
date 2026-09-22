@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
+import { AddFileFromLibHandler } from '@/app/collectivites/documents/add-document/add-file';
+import { useAddPreuveLabellisation } from '@/app/collectivites/documents/use-add-preuves';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ObjetPreuve } from '@tet/domain/referentiels';

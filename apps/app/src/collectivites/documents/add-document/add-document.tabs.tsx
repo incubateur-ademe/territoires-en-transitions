@@ -3,19 +3,19 @@
  */
 import { Tab, Tabs } from '@tet/ui';
 import { FileConstraints } from '../upload/constants';
-import { AddFile, AddFileFromLibHandler } from './AddFile';
-import AddFromLib from './AddFromLib';
-import { AddLink, AddLinkHandler } from './AddLink';
+import { AddFile, AddFileFromLibHandler } from './add-file';
+import AddFromBibliotheque from './add-from-bibliotheque';
+import { AddLink, AddLinkHandler } from './add-link';
 import { DocType, OnDuplicatedDocumentsAdded } from './types';
 
-export type AddPreuveModalHandlers = {
+export type AddDocumentTabsHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
   addFileFromLib: AddFileFromLibHandler;
   /** ajoute un lien (l'onglet 'Lien' ne s'affiche pas si non renseigné) */
   addLink?: AddLinkHandler;
 };
 
-export type AddPreuveModalProps = {
+export type AddDocumentTabsProps = {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
   /** Type des documents attendus */
@@ -23,12 +23,12 @@ export type AddPreuveModalProps = {
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque) */
   fileConstraints?: FileConstraints;
   /** Gestionnaires d'événements */
-  handlers: AddPreuveModalHandlers;
+  handlers: AddDocumentTabsHandlers;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
   onClose: () => void;
 };
 
-export const AddPreuveModal = (props: AddPreuveModalProps) => {
+export const AddDocumentTabs = (props: AddDocumentTabsProps) => {
   const { defaultActiveTab, handlers, onDuplicatedDocumentsAdded } = props;
   const { addFileFromLib, addLink } = handlers;
 
@@ -47,7 +47,7 @@ export const AddPreuveModal = (props: AddPreuveModalProps) => {
         />
       </Tab>
       <Tab label="Bibliothèque">
-        <AddFromLib {...props} onAddFileFromLib={addFileFromLib} />
+        <AddFromBibliotheque {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
     </Tabs>
   );

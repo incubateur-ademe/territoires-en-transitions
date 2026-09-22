@@ -4,8 +4,8 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   toAcceptAttribute,
   toFileConstraints,
-} from '@/app/referentiels/preuves/upload/constants';
-import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
+} from '@/app/collectivites/documents/upload/constants';
+import { validateFile } from '@/app/collectivites/documents/upload/validate-file';
 import type { RouterOutput } from '@tet/api';
 import {
   DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,

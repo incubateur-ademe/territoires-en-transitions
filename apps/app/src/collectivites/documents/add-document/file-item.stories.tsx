@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from '@storybook/nextjs-vite';
 import { toDocumentHash } from '@tet/domain/collectivites';
-import { FileItem, FileItemProps, FileUploadItem } from './FileItem';
+import { FileItem, FileItemProps, FileUploadItem } from './file-item';
 import { UploadErrorCode, UploadStatusCode } from './types';
 
 // utilitaire pour générer un objet File

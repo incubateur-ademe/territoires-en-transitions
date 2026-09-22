@@ -1,6 +1,6 @@
-import {Meta} from '@storybook/nextjs-vite';
-import {action} from 'storybook/actions';
-import {AddPreuveModal} from './index';
+import { Meta } from '@storybook/nextjs-vite';
+import { action } from 'storybook/actions';
+import { AddDocumentTabs } from './add-document.tabs';
 
 const DEFAULT_ARGS = {
   onClose: action('onClose'),
@@ -10,7 +10,7 @@ const DEFAULT_ARGS = {
   },
 };
 export default {
-  component: AddPreuveModal,
+  component: AddDocumentTabs,
   args: DEFAULT_ARGS,
 } as Meta;
 

@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   EditFichierModal,
   EditFichierModalProps,
-} from '@/app/referentiels/preuves/Bibliotheque/edit-fichier.modal';
+} from '@/app/collectivites/documents/bibliotheque/edit-fichier.modal';
 import { Button } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 

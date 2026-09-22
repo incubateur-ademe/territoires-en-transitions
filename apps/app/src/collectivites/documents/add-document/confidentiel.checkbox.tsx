@@ -14,7 +14,7 @@ export const canChooseConfidentiel = (docType?: DocType): boolean =>
   !!docType && ALLOW_PRIVATE.includes(docType);
 
 /** Affiche le bouton permettant de passer en document en "confidentiel" */
-export const CheckboxConfidentiel = ({
+export const ConfidentielCheckbox = ({
   docType,
   confidentiel,
   setConfidentiel,

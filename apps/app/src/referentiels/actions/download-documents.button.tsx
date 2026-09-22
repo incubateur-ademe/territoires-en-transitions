@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
-import { hasDownloadableFile } from '@/app/referentiels/preuves/data/has-downloadable-file';
-import { useDownloadDocumentsMesure } from '@/app/referentiels/preuves/data/use-download-documents-mesure';
-import { useListDocumentsMesure } from '@/app/referentiels/preuves/data/use-list-documents-mesure';
+import { hasDownloadableFile } from '@/app/collectivites/documents/data/has-downloadable-file';
+import { useDownloadDocumentsMesure } from '@/app/collectivites/documents/data/use-download-documents-mesure';
+import { useListDocumentsMesure } from '@/app/collectivites/documents/data/use-list-documents-mesure';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';

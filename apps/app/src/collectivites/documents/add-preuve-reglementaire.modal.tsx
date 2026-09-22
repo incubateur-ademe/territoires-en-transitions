@@ -1,19 +1,21 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
-import type { OnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
-import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
+import type { OnDuplicatedDocumentsAdded } from './add-document/types';
+import { useAddPreuveReglementaireToAction } from './use-add-preuve-to-action';
 
-export type AddPreuveReglementaireProps = {
+export type AddPreuveReglementaireModalProps = {
   preuve_id: string;
   actionId: string;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
-export const AddPreuveReglementaire = (props: AddPreuveReglementaireProps) => {
+export const AddPreuveReglementaireModal = (
+  props: AddPreuveReglementaireModalProps
+) => {
   const [opened, setOpened] = useState(false);
   const { preuve_id, actionId, onDuplicatedDocumentsAdded } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
@@ -31,7 +33,7 @@ export const AddPreuveReglementaire = (props: AddPreuveReglementaireProps) => {
       title={appLabels.ajouterDocumentAttendu}
       render={({ close }) => {
         return (
-          <AddPreuveModal
+          <AddDocumentTabs
             docType="reglementaire"
             onClose={close}
             handlers={handlers}

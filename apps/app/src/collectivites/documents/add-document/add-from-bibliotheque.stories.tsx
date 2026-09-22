@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import type { BibliothequeFichierListItem } from '../Bibliotheque/use-fichiers';
-import { AddFromLib } from './AddFromLib';
+import type { BibliothequeFichierListItem } from '../bibliotheque/use-fichiers';
+import { AddFromBibliotheque } from './add-from-bibliotheque';
 
-const meta: Meta<typeof AddFromLib> = {
-  component: AddFromLib,
+const meta: Meta<typeof AddFromBibliotheque> = {
+  component: AddFromBibliotheque,
   args: {
     onSearch: action('onSearch'),
     onAddFileFromLib: action('onAddFileFromLib'),
@@ -12,7 +12,7 @@ const meta: Meta<typeof AddFromLib> = {
   },
 };
 
-type Story = StoryObj<typeof AddFromLib>;
+type Story = StoryObj<typeof AddFromBibliotheque>;
 
 const toMockFichiers = (count: number): BibliothequeFichierListItem[] =>
   Array.from({ length: count }, (_, index) => ({

@@ -1,16 +1,16 @@
 import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
-import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/use-edit-preuve';
+import { useRemovePreuve } from '@/app/collectivites/documents/bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
   MAX_FILE_SIZE_MB,
-} from '@/app/referentiels/preuves/upload/constants';
+} from '@/app/collectivites/documents/upload/constants';
 import {
   FileValidationError,
   validateFile,
-} from '@/app/referentiels/preuves/upload/validate-file';
-import { useAddPreuveAudit } from '@/app/referentiels/preuves/useAddPreuves';
+} from '@/app/collectivites/documents/upload/validate-file';
+import { useAddPreuveAudit } from '@/app/collectivites/documents/use-add-preuves';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';

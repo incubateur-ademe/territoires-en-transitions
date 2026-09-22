@@ -1,8 +1,8 @@
-import { AddPreuveReglementaire } from '@/app/referentiels/preuves/AddPreuveReglementaire';
+import { AddPreuveReglementaireModal } from '@/app/collectivites/documents/add-preuve-reglementaire.modal';
 import { InfoTooltip, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import type { OnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
+import type { OnDuplicatedDocumentsAdded } from '../add-document/types';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import { IdentifiantAction } from './identifiant-action';
 import { ReferentielDocumentCard } from './referentiel-document.card';
@@ -63,7 +63,7 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
         </span>
 
         {/* Modale d'ajout de documents */}
-        <AddPreuveReglementaire
+        <AddPreuveReglementaireModal
           preuve_id={preuveId}
           actionId={action.actionId}
           onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}

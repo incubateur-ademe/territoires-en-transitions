@@ -1,6 +1,6 @@
-import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { AddLinkHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
-import { useAddPreuveRapport } from '@/app/referentiels/preuves/useAddPreuves';
+import { AddFileFromLibHandler } from '@/app/collectivites/documents/add-document/add-file';
+import { AddLinkHandler } from '@/app/collectivites/documents/add-document/add-link';
+import { useAddPreuveRapport } from '@/app/collectivites/documents/use-add-preuves';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
 type TAddDocs = (date: string) => {

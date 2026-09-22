@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   toFileConstraints,
   type FileConstraints,
-} from '@/app/referentiels/preuves/upload/constants';
+} from '@/app/collectivites/documents/upload/constants';
 import {
   findDemarcheDocumentSubstitutDepose,
   getEtapeExigeanteDemarcheDocument,

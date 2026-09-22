@@ -2,8 +2,8 @@ import { DocumentHash } from '@tet/domain/collectivites';
 import { useState } from 'react';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
-import { FileUploadItem } from './FileItem';
-import { filesToUploadList, PreparedFile } from './filesToUploadList';
+import { FileUploadItem } from './file-item';
+import { filesToUploadList, PreparedFile } from './files-to-upload-list.utils';
 import {
   isUploadInFlight,
   UploadErrorCode,

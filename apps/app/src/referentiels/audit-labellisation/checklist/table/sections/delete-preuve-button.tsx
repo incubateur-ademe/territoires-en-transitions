@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { useRemovePreuveFromDemande } from '@/app/referentiels/labellisations/useRemovePreuveFromDemande';
-import { DeleteConfirmationAlert } from '@/app/referentiels/preuves/Bibliotheque/delete-confirmation.alert';
+import { DeleteConfirmationAlert } from '@/app/collectivites/documents/bibliotheque/delete-confirmation.alert';
 import { Button } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 

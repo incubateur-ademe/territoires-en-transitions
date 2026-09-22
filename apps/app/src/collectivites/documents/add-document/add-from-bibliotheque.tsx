@@ -7,11 +7,11 @@ import { useState } from 'react';
 import {
   BibliothequeFichierListItem,
   useFichiers,
-} from '../Bibliotheque/use-fichiers';
+} from '../bibliotheque/use-fichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
-import { AddFileFromLibHandler } from './AddFile';
+import { AddFileFromLibHandler } from './add-file';
 
-export type AddFromLibProps = {
+export type AddFromBibliothequeProps = {
   items: BibliothequeFichierListItem[];
   onSearch: (search: string) => void;
   /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
@@ -40,7 +40,7 @@ const limitSelection = (
   constraints?: FileConstraints
 ): Option[] => keepWithinMaxFiles(selection, constraints?.maxFiles);
 
-export const AddFromLib = (props: AddFromLibProps) => {
+export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
   const {
     items: fichiers,
     fileConstraints,
@@ -134,8 +134,8 @@ export const AddFromLib = (props: AddFromLibProps) => {
   );
 };
 
-const AddFromLibConnected = (
-  props: Omit<AddFromLibProps, 'items' | 'onSearch'>
+const AddFromBibliothequeConnected = (
+  props: Omit<AddFromBibliothequeProps, 'items' | 'onSearch'>
 ) => {
   const [search, setSearch] = useState('');
   const { data, isLoading } = useFichiers(search);
@@ -149,8 +149,8 @@ const AddFromLibConnected = (
   }
 
   return data ? (
-    <AddFromLib {...props} items={data.items} onSearch={setSearch} />
+    <AddFromBibliotheque {...props} items={data.items} onSearch={setSearch} />
   ) : null;
 };
 
-export default AddFromLibConnected;
+export default AddFromBibliothequeConnected;

@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useListDocumentsMesure } from '@/app/referentiels/preuves/data/use-list-documents-mesure';
-import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
+import { useListDocumentsMesure } from '@/app/collectivites/documents/data/use-list-documents-mesure';
+import { ActionDocuments } from '@/app/collectivites/documents/action-documents.view';
 import { ActionIdentity } from './use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -50,7 +50,7 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
   }
 
   return (
-    <PreuvesAction
+    <ActionDocuments
       action={action}
       withSubActions={withSubActions}
       attendus={documents.attendus}

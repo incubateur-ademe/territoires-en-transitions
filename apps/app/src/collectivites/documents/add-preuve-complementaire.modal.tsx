@@ -4,19 +4,19 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
-import { useGetActionChildren } from '../actions/use-get-action-children';
-import { AddPreuveModal } from './AddPreuveModal';
-import type { OnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
-import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
+import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-children';
+import { AddDocumentTabs } from './add-document/add-document.tabs';
+import type { OnDuplicatedDocumentsAdded } from './add-document/types';
+import { useAddPreuveComplementaireToAction } from './use-add-preuve-to-action';
 
-export type AddPreuveComplementaireProps = {
+export type AddPreuveComplementaireModalProps = {
   action: ActionIdentity;
   addToSubAction?: boolean;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
-export const AddPreuveComplementaire = (
-  props: AddPreuveComplementaireProps
+export const AddPreuveComplementaireModal = (
+  props: AddPreuveComplementaireModalProps
 ) => {
   const [opened, setOpened] = useState(false);
 
@@ -54,7 +54,7 @@ export const AddPreuveComplementaire = (
         return selectSubActionIsRequired ? (
           <SelectSubAction action={action} setSubaction={setSubaction} />
         ) : (
-          <AddPreuveModal
+          <AddDocumentTabs
             docType="complementaire"
             onClose={onClose}
             handlers={handlers}
