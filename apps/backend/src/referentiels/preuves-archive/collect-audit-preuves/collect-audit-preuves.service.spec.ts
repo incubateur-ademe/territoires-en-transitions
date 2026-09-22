@@ -27,6 +27,11 @@ const baseInput = {
   user,
 };
 
+type CollectedScopeKind = Extract<
+  DocumentScopeKind,
+  'complementaire' | 'reglementaire' | 'labellisation' | 'audit'
+>;
+
 const emptyDocuments: CollectedDocuments = {
   files: [],
   missingFiles: [],
@@ -50,7 +55,7 @@ function buildService({
   permissionsIsAllowed: Mock;
   listDocuments: Mock;
 } {
-  const byScope: Record<DocumentScopeKind, CollectedDocuments> = {
+  const byScope: Record<CollectedScopeKind, CollectedDocuments> = {
     complementaire,
     reglementaire,
     labellisation,
@@ -58,7 +63,7 @@ function buildService({
   };
   const listDocuments = vi
     .fn()
-    .mockImplementation((scope: { kind: DocumentScopeKind }) =>
+    .mockImplementation((scope: { kind: CollectedScopeKind }) =>
       Promise.resolve({ success: true, data: byScope[scope.kind] })
     );
   const repository = { listDocuments };
@@ -167,7 +172,7 @@ describe('CollectAuditPreuvesService', () => {
     const cause = new Error('connexion perdue');
     const listDocuments = vi
       .fn()
-      .mockImplementation(async (scope: { kind: DocumentScopeKind }) => {
+      .mockImplementation(async (scope: { kind: CollectedScopeKind }) => {
         if (scope.kind === 'complementaire') {
           return {
             success: false,

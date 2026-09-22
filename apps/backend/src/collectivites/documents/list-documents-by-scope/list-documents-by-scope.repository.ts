@@ -11,6 +11,7 @@ import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/pr
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
+import { matchesActionOrDescendant } from '@tet/backend/referentiels/action-or-descendant.utils';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -71,6 +72,23 @@ const buildBibliothequeJoin = <Table extends PreuveTable>(
     eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
   );
 
+type MesureBearingScope = ScopeOf<
+  'complementaire' | 'reglementaire' | 'mesure'
+>;
+
+const buildActionRestriction = (scope: MesureBearingScope): SQL => {
+  if (scope.kind !== 'mesure') {
+    return eq(actionDefinitionTable.referentielId, scope.referentielId);
+  }
+  if (!scope.withSubActions) {
+    return eq(actionDefinitionTable.actionId, scope.actionId);
+  }
+  return matchesActionOrDescendant(
+    actionDefinitionTable.actionId,
+    scope.actionId
+  );
+};
+
 const buildConfidentielFilter = <Table extends PreuveTable>(
   table: Table,
   canReadConfidentiel: boolean
@@ -111,14 +129,28 @@ export class ListDocumentsByScopeRepository {
         return this.selectLabellisationRows(scope, fichier);
       case 'audit':
         return this.selectAuditRows(scope, fichier);
+      case 'mesure':
+        return this.selectMesureRows(scope, fichier);
     }
   }
 
-  private selectComplementaireRows(
-    scope: ScopeOf<'complementaire'>,
+  private async selectMesureRows(
+    scope: ScopeOf<'mesure'>,
     fichier: FichierSubquery
   ): Promise<CollectedRow[]> {
-    const { collectiviteId, referentielId, canReadConfidentiel } = scope;
+    const [complementaires, reglementaires] = await Promise.all([
+      this.selectComplementaireRows(scope, fichier),
+      this.selectReglementaireRows(scope, fichier),
+    ]);
+
+    return [...complementaires, ...reglementaires];
+  }
+
+  private selectComplementaireRows(
+    scope: ScopeOf<'complementaire'> | ScopeOf<'mesure'>,
+    fichier: FichierSubquery
+  ): Promise<CollectedRow[]> {
+    const { collectiviteId, canReadConfidentiel } = scope;
 
     return this.db
       .select(
@@ -136,7 +168,7 @@ export class ListDocumentsByScopeRepository {
             actionDefinitionTable.actionId,
             preuveComplementaireTable.actionId
           ),
-          eq(actionDefinitionTable.referentielId, referentielId)
+          buildActionRestriction(scope)
         )
       )
       .leftJoin(
@@ -156,10 +188,10 @@ export class ListDocumentsByScopeRepository {
   }
 
   private selectReglementaireRows(
-    scope: ScopeOf<'reglementaire'>,
+    scope: ScopeOf<'reglementaire'> | ScopeOf<'mesure'>,
     fichier: FichierSubquery
   ): Promise<CollectedRow[]> {
-    const { collectiviteId, referentielId, canReadConfidentiel } = scope;
+    const { collectiviteId, canReadConfidentiel } = scope;
 
     return this.db
       .select(
@@ -178,7 +210,7 @@ export class ListDocumentsByScopeRepository {
         actionDefinitionTable,
         and(
           eq(actionDefinitionTable.actionId, preuveActionTable.actionId),
-          eq(actionDefinitionTable.referentielId, referentielId)
+          buildActionRestriction(scope)
         )
       )
       .leftJoin(
