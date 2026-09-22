@@ -17,6 +17,14 @@ describe('getFileNameFromString', () => {
     ).toBe('Trajectoire GES de re?fe?rence-V1.0-20240711.xlsx');
   });
 
+  test('renvoi le nom encodé seul, ponctuation comprise', () => {
+    expect(
+      getFileNameFromString(
+        "attachment; filename*=UTF-8''cae_1.1.4_Foo%3B%20Bar%2C%20Doubs.zip"
+      )
+    ).toBe('cae_1.1.4_Foo; Bar, Doubs.zip');
+  });
+
   test('renvoi le nom décodé', () => {
     expect(
       getFileNameFromString(

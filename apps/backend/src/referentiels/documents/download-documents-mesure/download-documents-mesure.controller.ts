@@ -17,6 +17,12 @@ class DownloadDocumentsMesureParamsClass extends createZodDto(
   downloadDocumentsMesureInputSchema
 ) {}
 
+const toExtValue = (filename: string): string =>
+  encodeURIComponent(filename).replace(
+    /['()*!]/g,
+    (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+
 @ApiExcludeController()
 @Controller('collectivites/:collectiviteId/mesures/:actionId/documents')
 export class DownloadDocumentsMesureController {
@@ -46,7 +52,7 @@ export class DownloadDocumentsMesureController {
     response.set('Content-Type', ARCHIVE_ZIP_CONTENT_TYPE);
     response.set(
       'Content-Disposition',
-      `attachment; filename="${encodeURI(filename)}"`
+      `attachment; filename*=UTF-8''${toExtValue(filename)}`
     );
     response.set('Access-Control-Expose-Headers', 'Content-Disposition');
 

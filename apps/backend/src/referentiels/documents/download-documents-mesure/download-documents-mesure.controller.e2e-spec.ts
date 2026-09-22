@@ -167,10 +167,8 @@ describe('DownloadDocumentsMesureController', () => {
       .responseType('blob')
       .expect(200);
 
-    const filename = decodeURI(
-      response.headers['content-disposition']
-        .split('filename="')[1]
-        .slice(0, -1)
+    const filename = decodeURIComponent(
+      response.headers['content-disposition'].split("filename*=UTF-8''")[1]
     );
     expect(filename).toBe(`eci_1.1.4_${COLLECTIVITE_NOM}.zip`);
 
