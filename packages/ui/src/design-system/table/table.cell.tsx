@@ -47,18 +47,22 @@ export const TableCell = ({
 
   if (edit && canEdit) {
     return (
-      <InlineEditWrapper tabNavigation {...edit}>
-        <Cell
-          {...props}
-          pinnedLeft={pinnedLeft}
-          data-inline-edit={canEdit ? 'true' : undefined}
-          className={cn('-outline-offset-2', className, {
-            'hover:bg-primary-0 focus:bg-primary-0': canEdit,
-          })}
-        >
-          {renderedChildren}
-        </Cell>
-      </InlineEditWrapper>
+      <Cell
+        {...props}
+        pinnedLeft={pinnedLeft}
+        data-inline-edit={canEdit ? 'true' : undefined}
+        className={cn('p-0', className)}
+      >
+        <InlineEditWrapper tabNavigation {...edit}>
+          <div
+            className={cn('px-4 py-3 h-full -outline-offset-2', {
+              'hover:bg-primary-0 focus:bg-primary-0': canEdit,
+            })}
+          >
+            {renderedChildren}
+          </div>
+        </InlineEditWrapper>
+      </Cell>
     );
   }
 

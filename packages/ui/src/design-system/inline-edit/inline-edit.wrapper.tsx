@@ -17,6 +17,7 @@ import {
   cloneElement,
   HTMLAttributes,
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
 } from 'react';
@@ -26,13 +27,21 @@ import { preset } from '../../tailwind-preset';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 
+export type InlineEditCloseReason = 'commit' | 'cancel' | 'dismiss';
+
+export type InlineEditRenderProps = {
+  openState: OpenState;
+  /** Ferme l'éditeur. Par défaut `commit` (déclenche `onClose`). */
+  close: (reason?: InlineEditCloseReason) => void;
+};
+
 export type InlineEditWrapperProps = {
   children:
     | React.ReactElement<HTMLAttributes<HTMLElement>>
     | ((props: React.ComponentProps<'button'>) => React.ReactNode);
-  renderOnEdit: ({ openState }: { openState: OpenState }) => React.ReactNode;
+  renderOnEdit: (props: InlineEditRenderProps) => React.ReactNode;
   openState?: OpenState;
-  onClose?: () => void;
+  onClose?: (reason: InlineEditCloseReason) => void;
   disabled?: boolean;
   floatingMatchReferenceHeight?: boolean;
   /**
@@ -40,6 +49,35 @@ export type InlineEditWrapperProps = {
    * suivant (Maj+Tab pour le précédent), comme dans un tableur.
    */
   tabNavigation?: boolean;
+};
+
+/**
+ * Enter valide, sauf s'il sert à aller à la ligne (textarea + Maj, ou
+ * contenteditable sans Ctrl/Cmd). Un `preventDefault` côté input bloque
+ * la fermeture — c'est le seul câblage éventuellement nécessaire.
+ */
+const shouldCommitOnEnter = (event: React.KeyboardEvent): boolean => {
+  if (event.key !== 'Enter' || event.nativeEvent.isComposing) {
+    return false;
+  }
+  if (event.defaultPrevented) {
+    return false;
+  }
+
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return true;
+  }
+
+  if (target.isContentEditable) {
+    return event.ctrlKey || event.metaKey;
+  }
+
+  if (target.tagName === 'TEXTAREA' && event.shiftKey) {
+    return false;
+  }
+
+  return true;
 };
 
 const TAB_NAVIGATION_SELECTOR = '[data-inline-edit-tab="true"]';
@@ -64,7 +102,177 @@ const findEditableSibling = (
   );
   const index = editables.indexOf(reference);
 
-  return index === -1 ? null : (editables[index + direction] ?? null);
+  return index === -1 ? null : editables[index + direction] ?? null;
+};
+
+type InlineEditViewProps = {
+  children: InlineEditWrapperProps['children'];
+  renderOnEdit: InlineEditWrapperProps['renderOnEdit'];
+  disabled?: boolean;
+  tabNavigation: boolean;
+  isOpen: boolean;
+  handleOpenChange: (open: boolean, reason?: unknown) => void;
+  close: (reason?: InlineEditCloseReason) => void;
+  getReferenceElement: () => HTMLElement | null;
+  setFloating: (node: HTMLElement | null) => void;
+  nodeId: string;
+  context: ReturnType<typeof useFloating>['context'];
+  getReferenceProps: ReturnType<typeof useInteractions>['getReferenceProps'];
+  getFloatingProps: ReturnType<typeof useInteractions>['getFloatingProps'];
+  setReference: (node: HTMLElement | null) => void;
+  floatingStyle: React.CSSProperties;
+};
+
+/**
+ * Isolé du `useFloating` : ce composant possède les `useRef` de tabulation /
+ * focus, et le parent peut poser les callback refs de floating-ui au rendu
+ * sans que le compilateur React ne les confonde avec ces refs.
+ */
+const InlineEditView = ({
+  children,
+  renderOnEdit,
+  disabled,
+  tabNavigation,
+  isOpen,
+  handleOpenChange,
+  close,
+  getReferenceElement,
+  setFloating,
+  nodeId,
+  context,
+  getReferenceProps,
+  getFloatingProps,
+  setReference,
+  floatingStyle,
+}: InlineEditViewProps) => {
+  const pendingTabTargetRef = useRef<HTMLElement | null>(null);
+  const wasOpenRef = useRef(false);
+  const getReference = useEffectEvent(getReferenceElement);
+
+  useEffect(() => {
+    if (isOpen) {
+      wasOpenRef.current = true;
+      return;
+    }
+    if (!wasOpenRef.current) return;
+    wasOpenRef.current = false;
+
+    const tabTarget = pendingTabTargetRef.current;
+    pendingTabTargetRef.current = null;
+    const reference = getReference();
+
+    // Après le démontage du portail : floating-ui ne peut plus rendre le
+    // focus à l'input (`returnFocus={false}`), il le perd sur body. On
+    // reprend la cellule (ou la suivante si Tab a demandé à poursuivre).
+    const timeout = window.setTimeout(() => {
+      if (tabTarget) {
+        tabTarget.focus();
+        tabTarget.click();
+        return;
+      }
+      reference?.focus();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [isOpen]);
+
+  const handleFloatingKeyDownCapture = (
+    event: React.KeyboardEvent<HTMLElement>
+  ) => {
+    if (!tabNavigation || event.key !== 'Tab') return;
+
+    const reference = getReferenceElement();
+    const tabTarget =
+      reference && findEditableSibling(reference, event.shiftKey ? -1 : 1);
+    if (!tabTarget) return;
+
+    // Capture : le piège à focus de FloatingFocusManager avale Tab avant bubble.
+    event.preventDefault();
+    event.stopPropagation();
+    pendingTabTargetRef.current = tabTarget;
+    close('commit');
+  };
+
+  const handleFloatingKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.defaultPrevented) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      close('cancel');
+      return;
+    }
+
+    if (shouldCommitOnEnter(event)) {
+      event.preventDefault();
+      close('commit');
+    }
+  };
+
+  const isChildrenFunction = typeof children === 'function';
+  const childProps = (
+    isChildrenFunction ? {} : children.props
+  ) as HTMLAttributes<HTMLElement>;
+  const referenceTabIndex = disabled
+    ? childProps.tabIndex
+    : childProps.tabIndex === -1 || childProps.tabIndex === undefined
+    ? 0
+    : childProps.tabIndex;
+
+  const inlineProps: HTMLAttributes<HTMLElement> & Record<string, unknown> = {
+    ...getReferenceProps({
+      ref: setReference,
+      ...childProps,
+      tabIndex: referenceTabIndex,
+      className: cn(
+        'cursor-pointer',
+        { 'cursor-default': disabled },
+        isChildrenFunction ? undefined : children.props.className
+      ),
+    }),
+    // Repère les voisins atteignables à la tabulation depuis l'éditeur ouvert.
+    'data-inline-edit-tab': tabNavigation && !disabled ? 'true' : undefined,
+  };
+
+  return (
+    <>
+      {isChildrenFunction
+        ? children({ disabled, ...inlineProps })
+        : cloneElement(children, inlineProps)}
+      {renderOnEdit && isOpen && (
+        <FloatingNode id={nodeId}>
+          {/*
+            Sans ça, `modal={false}` pose des FocusGuard <span> à côté de la
+            cellule — enfants directs de <tr>, HTML invalide. La tabulation
+            entre cellules est gérée ici, pas par le portail.
+          */}
+          <FloatingPortal preserveTabOrder={false}>
+            <FloatingOverlay lockScroll />
+            <FloatingFocusManager
+              context={context}
+              returnFocus={false}
+              modal={false}
+            >
+              <div
+                className="flex flex-col border border-grey-3 rounded-md bg-white shadow-md z-10"
+                {...getFloatingProps({
+                  style: floatingStyle,
+                })}
+                ref={setFloating}
+                onKeyDownCapture={handleFloatingKeyDownCapture}
+                onKeyDown={handleFloatingKeyDown}
+              >
+                {renderOnEdit?.({
+                  openState: { isOpen, setIsOpen: handleOpenChange },
+                  close,
+                })}
+              </div>
+            </FloatingFocusManager>
+          </FloatingPortal>
+        </FloatingNode>
+      )}
+    </>
+  );
 };
 
 /**
@@ -82,16 +290,25 @@ export const InlineEditWrapper = ({
 }: InlineEditWrapperProps) => {
   const { isOpen, setIsOpen } = useOpenState(openState);
 
-  const handleOpenChange = (open: boolean) => {
+  const handleOpenChange = (open: boolean, reason?: unknown) => {
     if (disabled) return;
+    const closeReason: InlineEditCloseReason =
+      reason === 'commit' || reason === 'cancel' || reason === 'dismiss'
+        ? reason
+        : 'dismiss';
     if (!open && onClose) {
-      onClose();
+      onClose(closeReason);
     }
 
     setIsOpen(open);
   };
 
+  const close = (reason: InlineEditCloseReason = 'commit') => {
+    handleOpenChange(false, reason);
+  };
+
   const [internalMaxHeight, setInternalMaxHeight] = useState(0);
+  const [referenceSize, setReferenceSize] = useState({ width: 0, height: 0 });
 
   const nodeId = useFloatingNodeId();
 
@@ -107,8 +324,12 @@ export const InlineEditWrapper = ({
         crossAxis: true,
       }),
       size({
-        apply({ availableHeight }) {
+        apply({ availableHeight, rects }) {
           setInternalMaxHeight(availableHeight);
+          setReferenceSize({
+            width: rects.reference.width,
+            height: rects.reference.height,
+          });
         },
       }),
     ],
@@ -116,124 +337,39 @@ export const InlineEditWrapper = ({
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
     useClick(context),
-    useDismiss(context),
+    useDismiss(context, { escapeKey: false }),
   ]);
 
-  const pendingTabTargetRef = useRef<HTMLElement | null>(null);
-  const wasOpenRef = useRef(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      wasOpenRef.current = true;
-      return;
-    }
-    if (!wasOpenRef.current) return;
-    wasOpenRef.current = false;
-
-    const tabTarget = pendingTabTargetRef.current;
-    pendingTabTargetRef.current = null;
-    const reference = refs.domReference.current as HTMLElement | null;
-
-    // L'éditeur flottant est démonté dans ce commit : on reprend la main à la
-    // frame suivante, une fois que floating-ui a fini de restituer le focus.
-    const frame = requestAnimationFrame(() => {
-      if (tabTarget) {
-        tabTarget.focus();
-        // Rouvre l'édition sur la cellule suivante, comme un tableur.
-        tabTarget.click();
-        return;
-      }
-
-      const activeElement = reference?.ownerDocument.activeElement;
-      const isFocusLost =
-        !activeElement || activeElement === reference?.ownerDocument.body;
-      if (isFocusLost) {
-        reference?.focus();
-      }
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [isOpen, refs.domReference]);
-
-  const handleFloatingKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (!tabNavigation || event.key !== 'Tab') return;
-
-    const reference = refs.domReference.current as HTMLElement | null;
-    const tabTarget =
-      reference && findEditableSibling(reference, event.shiftKey ? -1 : 1);
-    if (!tabTarget) return;
-
-    // Sans ça, le piège à focus de l'éditeur flottant garde la tabulation.
-    event.preventDefault();
-    pendingTabTargetRef.current = tabTarget;
-    handleOpenChange(false);
-  };
-
-  const isChildrenFunction = typeof children === 'function';
-  const childProps = (
-    isChildrenFunction ? {} : children.props
-  ) as HTMLAttributes<HTMLElement>;
-  const referenceTabIndex = disabled
-    ? childProps.tabIndex
-    : childProps.tabIndex === -1 || childProps.tabIndex === undefined
-      ? 0
-      : childProps.tabIndex;
-
-  const inlineProps: HTMLAttributes<HTMLElement> & Record<string, unknown> = {
-    ...getReferenceProps({
-      ref: refs.setReference,
-      ...childProps,
-      tabIndex: referenceTabIndex,
-      className: cn(
-        'cursor-pointer',
-        { 'cursor-default': disabled },
-        isChildrenFunction ? undefined : children.props.className
-      ),
-    }),
-    // Repère les voisins atteignables à la tabulation depuis l'éditeur ouvert.
-    'data-inline-edit-tab': tabNavigation && !disabled ? 'true' : undefined,
-  };
   return (
-    <>
-      {isChildrenFunction
-        ? children({ disabled, ...inlineProps })
-        : cloneElement(children, inlineProps)}
-      {renderOnEdit && isOpen && (
-        <FloatingNode id={nodeId}>
-          <FloatingPortal>
-            <FloatingOverlay lockScroll />
-            <FloatingFocusManager context={context}>
-              <div
-                className="flex flex-col border border-grey-3 rounded-md bg-white shadow-md z-10"
-                {...getFloatingProps({
-                  ref: refs.setFloating,
-                  onKeyDown: handleFloatingKeyDown,
-                  style: {
-                    position: strategy,
-                    top: y,
-                    left: x,
-                    minWidth: `${
-                      refs.reference?.current?.getBoundingClientRect().width
-                    }px`,
-                    minHeight: floatingMatchReferenceHeight
-                      ? `${
-                          refs.reference?.current?.getBoundingClientRect()
-                            .height
-                        }px`
-                      : undefined,
-                    maxHeight: internalMaxHeight, // set by floating-ui size middleware to calculate available space within the viewport
-                    zIndex: preset.theme.extend.zIndex.modal,
-                  },
-                })}
-              >
-                {renderOnEdit?.({
-                  openState: { isOpen, setIsOpen: handleOpenChange },
-                })}
-              </div>
-            </FloatingFocusManager>
-          </FloatingPortal>
-        </FloatingNode>
-      )}
-    </>
+    <InlineEditView
+      renderOnEdit={renderOnEdit}
+      disabled={disabled}
+      tabNavigation={tabNavigation}
+      isOpen={isOpen}
+      handleOpenChange={handleOpenChange}
+      close={close}
+      getReferenceElement={() =>
+        refs.domReference.current as HTMLElement | null
+      }
+      setFloating={refs.setFloating}
+      nodeId={nodeId}
+      context={context}
+      getReferenceProps={getReferenceProps}
+      getFloatingProps={getFloatingProps}
+      setReference={refs.setReference}
+      floatingStyle={{
+        position: strategy,
+        top: y ?? undefined,
+        left: x ?? undefined,
+        minWidth: `${referenceSize.width}px`,
+        minHeight: floatingMatchReferenceHeight
+          ? `${referenceSize.height}px`
+          : undefined,
+        maxHeight: internalMaxHeight, // set by floating-ui size middleware to calculate available space within the viewport
+        zIndex: preset.theme.extend.zIndex.modal,
+      }}
+    >
+      {children}
+    </InlineEditView>
   );
 };

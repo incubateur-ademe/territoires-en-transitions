@@ -7,18 +7,7 @@ const EditableCell = ({ label }: { label: string }) => (
   <TableCell
     canEdit
     edit={{
-      renderOnEdit: ({ openState }) => (
-        <input
-          aria-label={label}
-          autoFocus
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              openState.setIsOpen(false);
-            }
-          }}
-        />
-      ),
+      renderOnEdit: () => <input aria-label={label} autoFocus />,
     }}
   >
     {label}
@@ -88,5 +77,59 @@ describe('TableCell — édition en ligne au clavier', () => {
     fireEvent.keyDown(editor('A'), { key: 'Enter' });
 
     await waitFor(() => expect(cell('A')).toHaveFocus());
+  });
+
+  it('ferme l’édition avec Échap', async () => {
+    renderCells();
+
+    fireEvent.click(cell('A'));
+    fireEvent.keyDown(editor('A'), { key: 'Escape' });
+
+    await waitFor(() =>
+      expect(screen.queryByLabelText('A')).not.toBeInTheDocument()
+    );
+    await waitFor(() => expect(cell('A')).toHaveFocus());
+  });
+
+  it('n’insère pas de span comme enfant direct d’une ligne de tableau', () => {
+    const { container } = renderCells();
+    fireEvent.click(cell('A'));
+
+    expect(editor('A')).toBeInTheDocument();
+    expect(container.querySelector('tr > span')).toBeNull();
+  });
+
+  it('laisse l’édition ouverte si l’input empêche le comportement par défaut de Entrée', async () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <TableCell
+              canEdit
+              edit={{
+                renderOnEdit: () => (
+                  <input
+                    aria-label="A"
+                    autoFocus
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                      }
+                    }}
+                  />
+                ),
+              }}
+            >
+              A
+            </TableCell>
+          </tr>
+        </tbody>
+      </table>
+    );
+
+    fireEvent.click(cell('A'));
+    fireEvent.keyDown(editor('A'), { key: 'Enter' });
+
+    expect(editor('A')).toBeInTheDocument();
   });
 });

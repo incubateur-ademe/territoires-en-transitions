@@ -33,7 +33,9 @@ const CellValue = ({
 }) => {
   if (!value)
     return (
-      <span className="font-normal italic text-grey-6">{appLabels.ajouterValeur}</span>
+      <span className="font-normal italic text-grey-6">
+        {appLabels.ajouterValeur}
+      </span>
     );
   if (item.unit === 'ETP') return <ETPValue value={value} />;
   return (
@@ -124,7 +126,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                 className="bg-grey-2"
                 canEdit={!isReadonly}
                 edit={{
-                  onClose: handleSubmitCallback,
+                  onClose: () => handleSubmitCallback(),
                   renderOnEdit: ({ openState }) => (
                     <Controller
                       control={control}

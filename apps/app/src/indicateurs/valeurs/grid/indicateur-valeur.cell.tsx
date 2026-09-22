@@ -82,10 +82,14 @@ export const IndicateurValeurCell = memo(
         aria-invalid={edit.status === 'error'}
         canEdit={!isReadonly}
         edit={{
-          onClose: () => {
+          onClose: (reason) => {
+            if (reason === 'cancel') {
+              edit.cancel();
+              return;
+            }
             void edit.save();
           },
-          renderOnEdit: ({ openState }) => (
+          renderOnEdit: () => (
             <Input
               type="number"
               numType="float"
@@ -98,17 +102,6 @@ export const IndicateurValeurCell = memo(
               value={edit.text}
               onFocus={(event) => event.currentTarget.select()}
               onChange={(event) => edit.onChange(event.currentTarget.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  openState.setIsOpen(false);
-                } else if (event.key === 'Escape') {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  edit.cancel();
-                  openState.setIsOpen(false);
-                }
-              }}
             />
           ),
         }}
