@@ -66,7 +66,6 @@ docker-data
 !/.env
 !/apps/app/.env
 !/apps/backend/.env
-!/apps/panier/.env
 !/apps/site/.env
 !/apps/tools/.env
 !/e2e/.env

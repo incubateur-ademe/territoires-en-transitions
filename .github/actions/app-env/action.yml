@@ -81,7 +81,7 @@ runs:
         echo "SUPABASE_ANON_KEY=${{ inputs.supabase-anon-key }}" >> $file
 
     # required env. at build time for the other Next apps
-    - if: ${{ contains(fromJSON('["auth", "panier", "site"]'), inputs.app_name) }}
+    - if: ${{ contains(fromJSON('["auth", "site"]'), inputs.app_name) }}
       shell: bash
       env:
         file: ${{ steps.setup.outputs.file }}

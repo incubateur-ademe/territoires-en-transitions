@@ -76,9 +76,9 @@ export const PostHogProvider = ({
 
   const { host, key, shouldIdentifyUser = true } = config;
 
-  // Dans un effet et non dans le rendu : les consommateurs y posent un état
-  // (`apps/panier`), ce qui serait un setState de parent pendant le rendu d'un
-  // enfant. L'init a déjà eu lieu, la notification peut attendre.
+  // Dans un effet et non dans le rendu : un consommateur peut y poser un état,
+  // ce qui serait un setState de parent pendant le rendu d'un enfant. L'init a
+  // déjà eu lieu, la notification peut attendre.
   useEffect(() => {
     if (!key) {
       return;

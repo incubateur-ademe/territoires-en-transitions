@@ -4,8 +4,7 @@
     "name": "e2e",
     "implicitDependencies": [
       "app",
-      "backend",
-      "panier"
+      "backend"
     ],
     "targets": {
       "e2e-isolated": {
