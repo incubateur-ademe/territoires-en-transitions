@@ -80,7 +80,9 @@ jobs:
     name: Déploie l'app
     if: ${{ github.event.inputs.is-test-app != 'true' }}
     needs: build-app
-    environment: ${{ github.event.inputs.target }}
+    environment:
+      name: ${{ github.event.inputs.target }}
+      url: ${{ steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
 
     steps:
@@ -127,6 +129,12 @@ jobs:
           --env CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
           --env SENTRY_DSN=$SENTRY_DSN
 
+      - id: deployment-url
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: ${{ github.event.inputs.target }}-app
+          public-url: ${{ vars.APP_URL }}
+
   deploy-test-app:
     name: Déploie l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
@@ -134,7 +142,9 @@ jobs:
     # `preprod` et non `preprod-koyeb` : les apps de test sont des artefacts
     # preprod (c'est déjà l'environnement utilisé par cd-test-app-destroy.yml
     # pour les supprimer), et c'est là que vivent BACKEND_TEST_URL & co.
-    environment: preprod
+    environment:
+      name: preprod
+      url: ${{ steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
 
     steps:
@@ -194,3 +204,8 @@ jobs:
               "${env_flags[@]}" \
               --regions par
           fi
+
+      - id: deployment-url
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: test-app-${{ steps.test-app-name.outputs.name }}

@@ -20,7 +20,9 @@ on:
 jobs:
   deploy-site:
     name: Déploie le site
-    environment: ${{ github.event.inputs.target }}
+    environment:
+      name: ${{ github.event.inputs.target }}
+      url: ${{ steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -81,3 +83,9 @@ jobs:
           koyeb services update $ENV_NAME-site/front
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
+
+      - id: deployment-url
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: ${{ github.event.inputs.target }}-site
+          public-url: ${{ vars.SITE_URL }}
