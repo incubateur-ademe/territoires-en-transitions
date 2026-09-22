@@ -99,7 +99,6 @@ export const Event = {
     sideNavAjouterPlanClick: 'plansAction:side-nav-ajouter-plan-click',
     createPlan: 'cta_creer',
     importPlan: 'cta_importer',
-    startPanier: 'cta_commencer_pai',
     exportPlan: 'export_plan',
     import: {
       lancer: 'plans:import:lancer',

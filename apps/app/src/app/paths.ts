@@ -16,7 +16,6 @@ import {
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
-import { ENV } from '@tet/api/environmentVariables';
 import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
@@ -620,18 +619,3 @@ export const makeCollectiviteAffichageReferentielsUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeCollectivitePanierUrl = ({
-  collectiviteId,
-  panierId,
-}: {
-  collectiviteId?: number | null;
-  panierId?: string;
-}) => {
-  const PANIER_URL = ENV.panier_url;
-  return panierId
-    ? `${PANIER_URL}/panier/${panierId}`
-    : collectiviteId
-    ? `${PANIER_URL}/landing/collectivite/${collectiviteId}`
-    : `${PANIER_URL}/landing`;
-};

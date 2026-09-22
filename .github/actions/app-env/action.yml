@@ -74,7 +74,6 @@ runs:
         echo "GIT_COMMIT_TIMESTAMP=${{ steps.setup.outputs.git_commit_timestamp }}" >> $file
         echo "APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
         echo "APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
-        echo "PANIER_URL=${{ fromJSON(inputs.json_vars).PANIER_URL }}" >> $file
         echo "CRISP_WEBSITE_ID=${{ fromJSON(inputs.json_vars).CRISP_WEBSITE_ID }}" >> $file
         echo "SENTRY_DSN=${{ fromJSON(inputs.json_vars).SENTRY_DSN }}" >> $file
         echo "BACKEND_URL=${{ fromJSON(inputs.json_vars).BACKEND_URL }}" >> $file
@@ -92,7 +91,6 @@ runs:
         echo "NEXT_PUBLIC_APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
         echo "NEXT_PUBLIC_ENV_NAME=${{ inputs.environment }}" >> $file
         echo "NEXT_PUBLIC_APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
-        echo "NEXT_PUBLIC_PANIER_URL=${{ fromJSON(inputs.json_vars).PANIER_URL }}" >> $file
         echo "NEXT_PUBLIC_AXEPTIO_ID=${{ fromJSON(inputs.json_vars).AXEPTIO_ID }}" >> $file
         echo "NEXT_PUBLIC_CRISP_WEBSITE_ID=${{ fromJSON(inputs.json_vars).CRISP_WEBSITE_ID }}" >> $file
         echo "NEXT_PUBLIC_SENTRY_DSN=${{ fromJSON(inputs.json_vars).SENTRY_DSN }}" >> $file

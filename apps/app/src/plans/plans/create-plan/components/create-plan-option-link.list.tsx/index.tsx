@@ -1,24 +1,20 @@
 'use client';
 import { appLabels } from '@/app/labels/catalog';
 import {
-  makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsImporterIaUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { Event, useEventTracker, VisibleWhen } from '@tet/ui';
-import CreateWithActions from './create-with-actions.svg';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
 
 export const CreatePlanOptionLinksList = ({
   collectiviteId,
-  panierId,
 }: {
   collectiviteId: number;
-  panierId: string | undefined;
 }) => {
   const tracker = useEventTracker();
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
@@ -60,18 +56,6 @@ export const CreatePlanOptionLinksList = ({
           }}
         />
       </VisibleWhen>
-      <Link
-        title="Initier votre plan"
-        subTitle={appLabels.planOptionActionsAImpact}
-        icon={<CreateWithActions />}
-        url={makeCollectivitePanierUrl({
-          collectiviteId,
-          panierId,
-        })}
-        onClickCallback={() => {
-          tracker(Event.plans.startPanier);
-        }}
-      />
     </div>
   );
 };

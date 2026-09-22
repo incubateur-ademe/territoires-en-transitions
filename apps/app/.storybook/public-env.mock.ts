@@ -18,7 +18,6 @@ window[PUBLIC_ENV_GLOBAL] = {
   SUPABASE_ANON_KEY: 'storybook',
   BACKEND_URL: 'http://127.0.0.1:8080',
   APP_URL: 'http://127.0.0.1:3000',
-  PANIER_URL: 'http://127.0.0.1:3002',
   SITE_URL: 'https://www.territoiresentransitions.fr',
   ENV_NAME: 'storybook',
 };
