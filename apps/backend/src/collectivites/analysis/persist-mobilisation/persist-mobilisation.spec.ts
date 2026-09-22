@@ -19,7 +19,7 @@ const job: AnalysisJob = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 0,
   totalBatches: 1,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',

@@ -19,7 +19,7 @@ const job: AnalysisJob = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 0,
   totalBatches: 2,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',
@@ -27,7 +27,7 @@ const job: AnalysisJob = {
 };
 
 const outcome: ClassificationOutcome = {
-  draft: {
+  report: {
     fiches: [
       {
         ficheId: 1,
@@ -54,7 +54,7 @@ const toDependencies = ({
   saveOutcome = success(undefined) as Result<undefined, VoletError>,
 } = {}) => {
   const jobRepository = {
-    recordClassificationDraft: vi.fn().mockResolvedValue(success(undefined)),
+    recordClassificationReport: vi.fn().mockResolvedValue(success(undefined)),
   };
   const ficheActionVoletGesRepository = {
     saveVolets: vi.fn().mockResolvedValue(saveOutcome),
@@ -72,7 +72,7 @@ const toDependencies = ({
 };
 
 describe('PersistClassificationService.persist', () => {
-  it('ecrit les volets et le brouillon dans la transaction recue', async () => {
+  it('ecrit les volets et le compte rendu dans la transaction recue', async () => {
     const { service, jobRepository, ficheActionVoletGesRepository } =
       toDependencies();
 
@@ -83,20 +83,20 @@ describe('PersistClassificationService.persist', () => {
     });
 
     const [saveArgs] = ficheActionVoletGesRepository.saveVolets.mock.calls[0];
-    const [draftArgs] = jobRepository.recordClassificationDraft.mock.calls[0];
+    const [reportArgs] = jobRepository.recordClassificationReport.mock.calls[0];
 
     expect({
       success: result.success,
       saveTransaction: saveArgs.tx,
-      draftTransaction: draftArgs.tx,
+      reportTransaction: reportArgs.tx,
     }).toEqual({
       success: true,
       saveTransaction: transaction,
-      draftTransaction: transaction,
+      reportTransaction: transaction,
     });
   });
 
-  it("n'enregistre pas le brouillon quand l'ecriture des volets echoue", async () => {
+  it("n'enregistre pas le compte rendu quand l'ecriture des volets echoue", async () => {
     const { service, jobRepository } = toDependencies({
       saveOutcome: failure(VoletErrorEnum.SAVE_VOLETS_ERROR),
     });
@@ -109,13 +109,13 @@ describe('PersistClassificationService.persist', () => {
 
     expect({
       failure: result.success ? undefined : result.error,
-      draftCalls: jobRepository.recordClassificationDraft.mock.calls.length,
+      reportCalls: jobRepository.recordClassificationReport.mock.calls.length,
     }).toEqual({
       failure: {
         step: 'save_volets',
         cause: VoletErrorEnum.SAVE_VOLETS_ERROR,
       },
-      draftCalls: 0,
+      reportCalls: 0,
     });
   });
 });

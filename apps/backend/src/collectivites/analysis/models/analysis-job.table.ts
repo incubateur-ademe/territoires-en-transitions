@@ -13,7 +13,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { ClassificationDraft } from './classification-draft';
+import { ClassificationReport } from './classification-report';
 import {
   analysisJobInFlightStatuses,
   analysisJobStatusValues,
@@ -44,7 +44,7 @@ export const analysisJobTable = pgTable(
     }).notNull(),
     processedBatches: integer('processed_batches').notNull().default(0),
     totalBatches: integer('total_batches').notNull().default(0),
-    draft: jsonb('draft').$type<ClassificationDraft>(),
+    report: jsonb('report').$type<ClassificationReport>(),
     tokenUsage: jsonb('token_usage').$type<TokenUsage>(),
     error: text('error'),
     createdAt,

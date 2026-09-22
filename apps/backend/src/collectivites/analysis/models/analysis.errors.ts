@@ -5,7 +5,7 @@ export type AnalysisError =
 
 export type AnalysisPersistStep =
   | 'save_volets'
-  | 'record_draft'
+  | 'record_report'
   | 'update_mobilisation'
   | 'mark_done';
 

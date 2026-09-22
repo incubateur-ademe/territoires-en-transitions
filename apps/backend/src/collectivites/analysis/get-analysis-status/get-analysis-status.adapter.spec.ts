@@ -2,7 +2,7 @@ import { type AnalysisStep } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
 import { type AnalysisProgress } from '../analysis-job.repository';
 import { AnalysisJobErrorEnum } from '../analysis-job.errors';
-import { type ClassificationDraft } from '../models/classification-draft';
+import { type ClassificationReport } from '../models/classification-report';
 import {
   AnalysisJobStatus,
   AnalysisJobStatusEnum,
@@ -12,18 +12,18 @@ import { toAnalysisStatus } from './get-analysis-status.adapter';
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 3;
 
-const draft: ClassificationDraft = {
+const report: ClassificationReport = {
   fiches: [],
 };
 
 const toProgress = ({
   status,
-  draft = null,
+  report = null,
   error = null,
   etape = 'classification',
 }: {
   status: AnalysisJobStatus;
-  draft?: ClassificationDraft | null;
+  report?: ClassificationReport | null;
   error?: string | null;
   etape?: AnalysisStep;
 }): AnalysisProgress => ({
@@ -34,7 +34,7 @@ const toProgress = ({
   status,
   processedBatches: 2,
   totalBatches: 3,
-  draft,
+  report,
   error,
 });
 
@@ -62,7 +62,7 @@ describe('toAnalysisStatus', () => {
     const result = toAnalysisStatus(
       toProgress({
         status: AnalysisJobStatusEnum.DONE,
-        draft,
+        report,
         etape: 'mobilisation',
       })
     );
@@ -75,7 +75,7 @@ describe('toAnalysisStatus', () => {
         enjeu: 'ges',
         etape: 'mobilisation',
         status: AnalysisJobStatusEnum.DONE,
-        draft,
+        report,
       },
     });
   });

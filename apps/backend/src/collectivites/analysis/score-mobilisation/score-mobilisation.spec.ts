@@ -26,7 +26,7 @@ const job: AnalysisJob = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 0,
   totalBatches: 0,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',
@@ -45,7 +45,7 @@ const oneVoletOnVelo: FicheVolet[] = [
 const toOutcome = (
   volets: FicheVolet[] = oneVoletOnVelo
 ): ClassificationOutcome => ({
-  draft: { fiches: [] },
+  report: { fiches: [] },
   fiches: [{ ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
   volets,
 });
