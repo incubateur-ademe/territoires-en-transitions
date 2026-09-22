@@ -109,6 +109,7 @@ export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
 export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
+export const collectivitePriorisationPath = `${collectivitePath}/priorisation`;
 export const collectiviteModifierPath = `${collectivitePath}/modifier`;
 export const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
 
@@ -273,6 +274,16 @@ export const makeCollectiviteTrajectoirelUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteTrajectoirePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectivitePriorisationUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}): string =>
+  collectivitePriorisationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
