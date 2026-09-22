@@ -8,17 +8,27 @@ import { Alert, PageHeader, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardsQuery, useLevierCards } from './data/use-levier-cards';
+import {
+  UpsertPertinence,
+  useUpsertPertinence,
+} from './data/use-upsert-pertinence';
 import { LevierSummaryCard } from './levier-summary.card';
 import { LevierCard } from './to-levier-cards';
 
-const LevierCardList = ({ cards }: { cards: LevierCard[] }): JSX.Element => (
+const LevierCardList = ({
+  cards,
+  upsertPertinence,
+}: {
+  cards: LevierCard[];
+  upsertPertinence?: UpsertPertinence;
+}): JSX.Element => (
   <ul
     role="list"
     className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 2xl:grid-cols-3"
   >
     {cards.map((card) => (
       <li key={card.levierId} className="p-0">
-        <LevierSummaryCard levier={card} />
+        <LevierSummaryCard levier={card} upsertPertinence={upsertPertinence} />
       </li>
     ))}
   </ul>
@@ -33,8 +43,10 @@ const LevierCardsLoading = (): JSX.Element => (
 
 const LevierCardsContent = ({
   levierCards,
+  upsertPertinence,
 }: {
   levierCards: LevierCardsQuery;
+  upsertPertinence?: UpsertPertinence;
 }): JSX.Element =>
   match(levierCards)
     .with({ status: 'loading' }, () => <LevierCardsLoading />)
@@ -46,7 +58,7 @@ const LevierCardsContent = ({
         <VisibleWhen condition={!hasMobilisation}>
           <Alert title={appLabels.mobilisationAbsente} />
         </VisibleWhen>
-        <LevierCardList cards={cards} />
+        <LevierCardList cards={cards} upsertPertinence={upsertPertinence} />
       </div>
     ))
     .exhaustive();
@@ -54,6 +66,7 @@ const LevierCardsContent = ({
 export const PriorisationLeviersView = (): JSX.Element => {
   const { collectiviteId } = useCurrentCollectivite();
   const levierCards = useLevierCards(collectiviteId);
+  const upsertPertinence = useUpsertPertinence();
 
   return (
     <>
@@ -62,7 +75,10 @@ export const PriorisationLeviersView = (): JSX.Element => {
           {appLabels.priorisationLeviersTitre}
         </PageHeader.Title>
       </PageHeader>
-      <LevierCardsContent levierCards={levierCards} />
+      <LevierCardsContent
+        levierCards={levierCards}
+        upsertPertinence={upsertPertinence}
+      />
     </>
   );
 };

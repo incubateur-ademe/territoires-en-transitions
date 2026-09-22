@@ -1,5 +1,6 @@
 import { Pertinence } from '@tet/domain/collectivites';
-import { plural } from '@tet/ui/labels/plural';
+import { Levier } from '@tet/domain/shared';
+import { capitalize, plural } from '@tet/ui/labels/plural';
 
 const pertinenceLabels = {
   non_pertinent: 'non pertinent',
@@ -44,6 +45,10 @@ export const collectivitesLabels = {
   priorisationLeviersTitre: 'Priorisation des leviers',
   pertinenceDuLevier: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
+  pertinenceLabel: (pertinence: Pertinence): string =>
+    capitalize(pertinenceLabels[pertinence]),
+  pertinenceLevierLabel: (levierNom: Levier): string =>
+    `Pertinence du levier ${levierNom}`,
   actionsRattachees: plural({
     zero: 'Aucune action rattachée',
     one: 'action déjà rattachée',
