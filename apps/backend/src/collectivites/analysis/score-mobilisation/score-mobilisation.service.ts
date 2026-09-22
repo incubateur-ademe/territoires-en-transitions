@@ -59,13 +59,6 @@ export class ScoreMobilisationService {
     }
 
     const leviersVolets = groupVoletsByLevier(volets);
-    if (leviersVolets.length === 0) {
-      return this.interrupt(
-        jobId,
-        "La classification n'a rattaché aucune action à un levier : il n'y a rien à évaluer."
-      );
-    }
-
     const phaseResult = await this.jobRepository.startMobilisationPhase(
       jobId,
       leviersVolets.length

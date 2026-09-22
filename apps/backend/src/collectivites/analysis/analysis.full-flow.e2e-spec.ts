@@ -387,26 +387,33 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     });
   });
 
-  it('garde les volets du run précédent quand le modèle ne retient plus aucun levier', async () => {
+  it('efface les volets et la mobilisation du run précédent quand le modèle ne retient plus aucun levier', async () => {
     await runAnalysis();
-    const mobilisationBefore = await readMobilisation();
-    const voletsBefore = await readVolets();
+    const mobilisationRowCountBefore = (await readMobilisation()).length;
+    const voletCountBefore = (await readVolets()).length;
 
     llmBehaviour = 'no_levier';
     const jobId = await runAnalysis();
     const job = await readJob(jobId);
 
     expect({
+      mobilisationRowCountBefore,
+      voletCountBefore,
       status: job.status,
-      message: job.error,
+      etape: job.etape,
+      totalBatches: job.totalBatches,
+      reportedFicheCount: job.report?.fiches.length,
       mobilisation: await readMobilisation(),
       volets: await readVolets(),
     }).toEqual({
-      status: 'failed',
-      message:
-        "La classification n'a rattaché aucune action à un levier : il n'y a rien à évaluer.",
-      mobilisation: mobilisationBefore,
-      volets: voletsBefore,
+      mobilisationRowCountBefore: 6,
+      voletCountBefore: 1,
+      status: 'done',
+      etape: 'mobilisation',
+      totalBatches: 0,
+      reportedFicheCount: ficheIds.length,
+      mobilisation: [],
+      volets: [],
     });
   });
 

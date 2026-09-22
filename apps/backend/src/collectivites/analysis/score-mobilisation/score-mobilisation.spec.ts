@@ -103,20 +103,21 @@ const toDependencies = ({
 };
 
 describe('ScoreMobilisationService.score', () => {
-  it('interrompt une classification qui ne rattache aucun levier, sans appeler le modèle', async () => {
+  it('rend une mobilisation vide, sans appeler le modèle, quand la classification ne rattache aucun levier', async () => {
     const { service, llm, jobRepository } = toDependencies();
 
     const result = await service.score(job, toOutcome([]));
 
     expect({
-      success: result.success,
+      leviers: result.success ? result.data.leviers : undefined,
       llmCalls: llm.generateStructured.mock.calls.length,
-      failureMessage: jobRepository.markFailed.mock.calls[0]?.[1],
+      mobilisationPhase: jobRepository.startMobilisationPhase.mock.calls[0],
+      markFailedCalls: jobRepository.markFailed.mock.calls.length,
     }).toEqual({
-      success: false,
+      leviers: [],
       llmCalls: 0,
-      failureMessage:
-        "La classification n'a rattaché aucune action à un levier : il n'y a rien à évaluer.",
+      mobilisationPhase: [jobId, 0],
+      markFailedCalls: 0,
     });
   });
 
