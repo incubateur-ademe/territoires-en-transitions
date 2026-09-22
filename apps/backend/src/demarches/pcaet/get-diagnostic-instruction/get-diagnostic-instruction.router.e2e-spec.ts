@@ -117,10 +117,26 @@ describe('getDiagnosticInstruction', () => {
 
     expect(listDiagnosticTabCodes(diagnostic)).toHaveLength(6);
 
+    // En élaboration, le même diagnostic se lit par la démarche, au titre du
+    // périmètre : un dépôt qui n'a saisi personne n'a pas de saisine à nommer.
+    const parDemarche = await router
+      .createCaller({ user: camille })
+      .demarches.pcaet.getDiagnosticInstruction({ demarcheId });
+
+    expect(listDiagnosticTabCodes(parDemarche)).toHaveLength(6);
+
     await db.db
       .update(demarcheTable)
       .set({ status: 'transmis_pour_avis' })
       .where(eq(demarcheTable.id, demarcheId));
+  });
+
+  it('refuse la clé par démarche une fois le dossier transmis', async () => {
+    await expect(
+      router
+        .createCaller({ user: camille })
+        .demarches.pcaet.getDiagnosticInstruction({ demarcheId })
+    ).rejects.toThrow();
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {

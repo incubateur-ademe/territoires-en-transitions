@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
-import { eq } from 'drizzle-orm';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+import type { DossierInstructionRef } from '../shared/dossier-instruction-ref.input';
 import {
   GetDossierDocumentUrlError,
   GetDossierDocumentUrlErrorEnum,
@@ -21,56 +18,51 @@ const DOWNLOAD_URL_TTL_SECONDS = 60;
 @Injectable()
 export class GetDossierDocumentUrlService {
   constructor(
-    private readonly databaseService: DatabaseService,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
     private readonly documentStorageService: DocumentStorageService
   ) {}
 
   async getDossierDocumentUrl(
-    { demandeAvisId, documentId }: GetDossierDocumentUrlInput,
+    input: GetDossierDocumentUrlInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DossierDocumentUrl, GetDossierDocumentUrlError>> {
-    const permissionResult =
-      await this.depotPermissionsService.canConsulterDepot(demandeAvisId, {
+    // L'intersection ne se laisse pas destructurer en gardant son discriminant :
+    // la clé du dossier est reconstruite pour le préambule.
+    const ref: DossierInstructionRef =
+      'demandeAvisId' in input
+        ? { demandeAvisId: input.demandeAvisId }
+        : { demarcheId: input.demarcheId };
+
+    const consultableResult =
+      await this.depotPermissionsService.canConsulterDossier(ref, {
         user,
         tx,
       });
-    if (!permissionResult.success) {
-      return failure(GetDossierDocumentUrlErrorEnum.UNAUTHORIZED);
+    if (!consultableResult.success) {
+      return failure(
+        consultableResult.error === 'DEMANDE_AVIS_NOT_FOUND'
+          ? consultableResult.error
+          : consultableResult.error === 'NOT_FOUND'
+          ? GetDossierDocumentUrlErrorEnum.DEMARCHE_PCAET_NOT_FOUND
+          : GetDossierDocumentUrlErrorEnum.UNAUTHORIZED
+      );
     }
+    const { demarcheId, collectiviteId } = consultableResult.data;
 
     // La collectivité déposante conditionne le catalogue servi : l'instructeur
     // doit voir le dossier tel qu'il est attendu d'elle, pas un modèle générique.
-    const rows = await (tx ?? this.databaseService.db)
-      .select({
-        demarcheId: pcaetDemandeAvisTable.demarcheId,
-        collectiviteId: demarcheTable.collectiviteId,
-      })
-      .from(pcaetDemandeAvisTable)
-      .innerJoin(
-        demarcheTable,
-        eq(demarcheTable.id, pcaetDemandeAvisTable.demarcheId)
-      )
-      .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
-      .limit(1);
-
-    const demande = rows[0];
-    if (!demande) {
-      return failure(GetDossierDocumentUrlErrorEnum.DEMANDE_AVIS_NOT_FOUND);
-    }
-
     const snapshot = await this.demarcheDocumentsRepository.loadSnapshot(
       {
-        demarcheId: demande.demarcheId,
+        demarcheId,
         demarcheType: DemarcheTypeEnum.PCAET,
-        collectiviteId: demande.collectiviteId,
+        collectiviteId,
       },
       tx
     );
 
     const document = snapshot.documents.find(
-      (depose) => depose.documentId === documentId
+      (depose) => depose.documentId === input.documentId
     );
     const fichier = document?.fichier;
     if (!fichier?.bucketId) {

@@ -41,7 +41,7 @@ describe('getContexteInstruction', () => {
 
   const appeler = (
     user: AuthenticatedUser,
-    input: { collectiviteId: number; demandeAvisId?: number }
+    input: { collectiviteId: number; demandeAvisId?: number; demarcheId?: number }
   ) =>
     router.createCaller({ user }).demarches.pcaet.getContexteInstruction(input);
 
@@ -160,6 +160,7 @@ describe('getContexteInstruction', () => {
 
     expect(contexte).toEqual({
       demandeAvisId,
+      demarcheId: demarcheIds[0],
       instructeur: {
         collectiviteId: drealId,
         nom: 'DREAL test contexte',
@@ -208,6 +209,95 @@ describe('getContexteInstruction', () => {
     await expect(
       appeler(camille, { collectiviteId: drealId })
     ).resolves.toBeNull();
+  });
+
+  /**
+   * Un dépôt en élaboration n'a saisi personne : c'est le périmètre du service
+   * qui ouvre le contexte, et la saisine y est nulle. Le dossier s'adresse alors
+   * par sa démarche.
+   */
+  describe('quand une collectivité a un dépôt en élaboration', () => {
+    let enElaborationId: number;
+    let demarcheEnElaborationId: number;
+    let cleanupEnElaboration: () => Promise<void>;
+
+    beforeAll(async () => {
+      const enElaboration = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          regionCode: REGION,
+          departementCode: '54',
+          nom: 'Deposante test contexte elaboration',
+        },
+      });
+      cleanupEnElaboration = enElaboration.cleanup;
+      enElaborationId = enElaboration.collectivite.id;
+
+      const [demarche] = await db.db
+        .insert(demarcheTable)
+        .values({
+          collectiviteId: enElaborationId,
+          type: 'pcaet',
+          titre: 'PCAET en elaboration',
+          status: 'en_elaboration',
+        })
+        .returning({ id: demarcheTable.id });
+      demarcheEnElaborationId = demarche.id;
+
+      return async () => {
+        await db.db
+          .delete(demarcheTable)
+          .where(inArray(demarcheTable.id, [demarcheEnElaborationId]));
+        await cleanupEnElaboration();
+      };
+    });
+
+    test("rend la démarche, sans saisine, au service qui couvre la collectivité", async () => {
+      const contexte = await appeler(camille, {
+        collectiviteId: enElaborationId,
+      });
+
+      expect(contexte).toEqual({
+        demandeAvisId: null,
+        demarcheId: demarcheEnElaborationId,
+        instructeur: {
+          collectiviteId: drealId,
+          nom: 'DREAL test contexte',
+          type: collectiviteTypeEnum.DREAL,
+        },
+        perimetre: 'principal',
+      });
+    });
+
+    test('confirme une démarche explicitement visée', async () => {
+      const contexte = await appeler(camille, {
+        collectiviteId: enElaborationId,
+        demarcheId: demarcheEnElaborationId,
+      });
+
+      expect(contexte?.demarcheId).toBe(demarcheEnElaborationId);
+    });
+
+    test('refuse une démarche qui porte sur une autre collectivité', async () => {
+      await expect(
+        appeler(camille, {
+          collectiviteId: deposanteId,
+          demarcheId: demarcheEnElaborationId,
+        })
+      ).resolves.toBeNull();
+    });
+
+    test("ne rend rien à l'agent d'un service qui ne couvre pas la collectivité", async () => {
+      await expect(
+        appeler(nicolas, { collectiviteId: enElaborationId })
+      ).resolves.toBeNull();
+    });
+
+    test("ne rend rien à un membre de la collectivité elle-même", async () => {
+      await expect(
+        appeler(marie, { collectiviteId: enElaborationId })
+      ).resolves.toBeNull();
+    });
   });
 
   describe('quand une collectivité a plusieurs dossiers transmis', () => {

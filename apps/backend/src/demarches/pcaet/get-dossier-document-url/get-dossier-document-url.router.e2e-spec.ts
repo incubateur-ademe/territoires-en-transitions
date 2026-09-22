@@ -12,6 +12,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import {
   addTestBibliothequeFichier,
   PCAET_DOCUMENT_GLOBAL_ID,
@@ -133,6 +134,44 @@ describe('getDossierDocumentUrl', () => {
 
     const response = await fetch(result.url);
     expect(response.status).toBe(200);
+  });
+
+  /**
+   * Avant la transmission, la même pièce se lit par la démarche, au titre du
+   * périmètre : le service suit un dépôt qu'il instruira. La clé par démarche
+   * se referme dès que le dossier est transmis — la saisine prend le relais.
+   */
+  it('sert la pièce par la démarche tant que le dépôt est en élaboration', async () => {
+    await db.db
+      .update(demarcheTable)
+      .set({ status: 'en_elaboration' })
+      .where(eq(demarcheTable.id, demarcheId));
+    onTestFinished(async () => {
+      await db.db
+        .update(demarcheTable)
+        .set({ status: 'transmis_pour_avis' })
+        .where(eq(demarcheTable.id, demarcheId));
+    });
+
+    const result = await router
+      .createCaller({ user: camille })
+      .demarches.pcaet.getDossierDocumentUrl({
+        demarcheId,
+        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+      });
+
+    expect(result.filename).toBe(filename);
+  });
+
+  it('refuse la clé par démarche une fois le dossier transmis', async () => {
+    await expect(
+      router
+        .createCaller({ user: camille })
+        .demarches.pcaet.getDossierDocumentUrl({
+          demarcheId,
+          documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        })
+    ).rejects.toThrow();
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {

@@ -4,17 +4,25 @@ import { pcaetPerimetreSaisineSchema } from './pcaet-perimetre-saisine.enum.sche
 
 /**
  * Ce qui suffit à dire « tu consultes cette collectivité au titre de ce
- * service » : la saisine qui ouvre le dossier, et le service au nom duquel on
- * la consulte — celui vers lequel la bannière ramène.
+ * service » : le dossier qui ouvre la porte, et le service au nom duquel on le
+ * consulte — celui vers lequel la bannière ramène.
  *
  * Un agent de service n'est pas membre de la collectivité qu'il instruit : son
- * droit d'y entrer découle de cette saisine, et de rien d'autre. Le contexte est
- * donc déduit à chaque fois du côté serveur, jamais retenu dans une session — il
- * survit ainsi à un rechargement comme à un lien partagé, et disparaît de
- * lui-même quand la saisine n'existe plus.
+ * droit d'y entrer découle de la saisine — ou, tant que le dépôt est en
+ * élaboration et n'a saisi personne, du périmètre de son service — et de rien
+ * d'autre. Le contexte est donc déduit à chaque fois du côté serveur, jamais
+ * retenu dans une session : il survit ainsi à un rechargement comme à un lien
+ * partagé, et disparaît de lui-même quand le dossier n'existe plus.
  */
 export const contexteInstructionSchema = z.object({
-  demandeAvisId: z.number(),
+  /**
+   * La saisine par laquelle le dossier se lit. Nulle tant que le dépôt est en
+   * élaboration : rien n'a encore été transmis, le service le lit au titre de
+   * son périmètre, et le dossier s'adresse alors par sa démarche.
+   */
+  demandeAvisId: z.nullable(z.number()),
+  /** La démarche consultée — toujours connue, saisine ou non. */
+  demarcheId: z.number(),
   instructeur: z.object({
     collectiviteId: z.number(),
     nom: z.string(),

@@ -11,6 +11,12 @@ export const getContexteInstructionInputSchema = z.object({
    * autre.
    */
   demandeAvisId: z.number().int().positive().optional(),
+  /**
+   * Démarche visée, quand l'URL désigne un dossier par sa démarche — un dépôt en
+   * élaboration, qui n'a pas de saisine à nommer. Même contrôle : la démarche
+   * doit être celle de `collectiviteId`.
+   */
+  demarcheId: z.number().int().positive().optional(),
 });
 
 export type GetContexteInstructionInput = z.infer<

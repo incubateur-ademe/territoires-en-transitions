@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -9,23 +10,30 @@ import {
   DemarcheTypeEnum,
   getDemandeAvisEtat,
   getEtatDossierEnLecture,
-  isDemarchePcaetAvisTousRendus,
   getTitresAvisSaisine,
+  isDemarchePcaetAvisTousRendus,
 } from '@tet/domain/demarches';
-import { eq, sql } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/pg-core';
+import { eq } from 'drizzle-orm';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
+import type { DepotPermissionsError } from '../shared/depot-permissions.errors';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
-import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
-import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import {
   GetDossierInstructionError,
   GetDossierInstructionErrorEnum,
 } from './get-dossier-instruction.errors';
 import { GetDossierInstructionInput } from './get-dossier-instruction.input';
-import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import { DossierInstruction } from './get-dossier-instruction.output';
+
+/** Les refus du préambule, dans le vocabulaire de cette route. */
+const toGetDossierError = (
+  error: DepotPermissionsError
+): GetDossierInstructionError =>
+  error === 'DEMANDE_AVIS_NOT_FOUND'
+    ? error
+    : error === 'NOT_FOUND'
+    ? GetDossierInstructionErrorEnum.DEMARCHE_PCAET_NOT_FOUND
+    : GetDossierInstructionErrorEnum.UNAUTHORIZED;
 
 @Injectable()
 export class GetDossierInstructionService {
@@ -39,25 +47,22 @@ export class GetDossierInstructionService {
   ) {}
 
   async getDossierInstruction(
-    { demandeAvisId }: GetDossierInstructionInput,
+    ref: GetDossierInstructionInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DossierInstruction, GetDossierInstructionError>> {
-    const permissionResult =
-      await this.depotPermissionsService.canConsulterDepot(demandeAvisId, {
+    const consultableResult =
+      await this.depotPermissionsService.canConsulterDossier(ref, {
         user,
         tx,
       });
-    if (!permissionResult.success) {
-      return failure(GetDossierInstructionErrorEnum.UNAUTHORIZED);
+    if (!consultableResult.success) {
+      return failure(toGetDossierError(consultableResult.error));
     }
-
-    // La déposante et l'instructrice sont toutes deux des collectivités : sans
-    // alias, la seconde jointure écraserait la première.
-    const instructrice = alias(collectiviteTable, 'instructrice');
+    const { demarcheId, collectiviteId, demandeAvisId, instructeurType, perimetre } =
+      consultableResult.data;
 
     const rows = await (tx ?? this.databaseService.db)
       .select({
-        demarcheId: demarcheTable.id,
         titre: demarcheTable.titre,
         status: demarcheTable.status,
         isScotAec: demarcheTable.isScotAec,
@@ -66,76 +71,52 @@ export class GetDossierInstructionService {
         launchedAt: demarcheTable.launchedAt,
         createdAt: demarcheTable.createdAt,
         modifiedAt: demarcheTable.modifiedAt,
-        collectiviteId: collectiviteTable.id,
         collectiviteNom: collectiviteTable.nom,
-        instructeurType: instructrice.type,
-        perimetre: pcaetDemandeAvisTable.perimetre,
-        nbAvisValides: sql<number>`(
-          select count(*)::int from ${pcaetAvisTable}
-          where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
-            and ${pcaetAvisTable.valideLe} is not null
-        )`,
-        nbAvisBrouillons: sql<number>`(
-          select count(*)::int from ${pcaetAvisTable}
-          where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
-            and ${pcaetAvisTable.valideLe} is null
-        )`,
       })
-      .from(pcaetDemandeAvisTable)
-      .innerJoin(
-        demarcheTable,
-        eq(demarcheTable.id, pcaetDemandeAvisTable.demarcheId)
-      )
+      .from(demarcheTable)
       .innerJoin(
         collectiviteTable,
         eq(collectiviteTable.id, demarcheTable.collectiviteId)
       )
-      .innerJoin(
-        instructrice,
-        eq(instructrice.id, pcaetDemandeAvisTable.instructeurCollectiviteId)
-      )
-      .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
+      .where(eq(demarcheTable.id, demarcheId))
       .limit(1);
 
     const dossier = rows[0];
     if (!dossier) {
-      return failure(GetDossierInstructionErrorEnum.DEMANDE_AVIS_NOT_FOUND);
+      return failure(GetDossierInstructionErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
     }
 
     const documents = await this.demarcheDocumentsRepository.loadSnapshot(
       {
-        demarcheId: dossier.demarcheId,
+        demarcheId,
         demarcheType: DemarcheTypeEnum.PCAET,
-        collectiviteId: dossier.collectiviteId,
+        collectiviteId,
       },
       tx
     );
 
     const plans = await this.plansContenuRepository.listPlansAvecContenu(
-      {
-        demarcheId: dossier.demarcheId,
-        collectiviteId: dossier.collectiviteId,
-      },
+      { demarcheId, collectiviteId },
       tx
     );
 
+    // Sans saisine, rien n'a été rendu ni ne peut l'être : un dépôt en
+    // élaboration n'a pas encore été transmis.
+    const avis =
+      demandeAvisId === null
+        ? []
+        : await this.pcaetAvisRepository.listByDemande(demandeAvisId, tx);
     const avisAutresDestinataires =
-      await this.pcaetAvisRepository.listValidesAutresDemandes(
-        demandeAvisId,
-        tx
-      );
-
-    const avis = await this.pcaetAvisRepository.listByDemande(
-      demandeAvisId,
-      tx
-    );
+      demandeAvisId === null
+        ? []
+        : await this.pcaetAvisRepository.listValidesAutresDemandes(
+            demandeAvisId,
+            tx
+          );
 
     const pilotesByDemarcheId =
-      await this.getDemarchePcaetRepository.listPilotes(
-        [dossier.demarcheId],
-        tx
-      );
-    const pilotes = (pilotesByDemarcheId.get(dossier.demarcheId) ?? []).map(
+      await this.getDemarchePcaetRepository.listPilotes([demarcheId], tx);
+    const pilotes = (pilotesByDemarcheId.get(demarcheId) ?? []).map(
       ({ nom }) => nom
     );
 
@@ -151,10 +132,13 @@ export class GetDossierInstructionService {
     // qui n'est pas le siège — lit où en est *le dossier* : l'état de sa propre
     // demande ne lui dit rien, elle restera vide par nature, et son délai passé
     // la faisait afficher « Pas d'avis déposé » sur un dossier pourtant instruit.
-    const titresAttendus = getTitresAvisSaisine(
-      dossier.instructeurType,
-      dossier.perimetre
-    );
+    //
+    // Sans saisine, aucun titre : le service lit un dépôt qui ne lui a pas été
+    // transmis, il n'a rien à y rendre.
+    const titresAttendus =
+      demandeAvisId === null
+        ? []
+        : getTitresAvisSaisine(instructeurType, perimetre);
     const deposeAvis = titresAttendus.length > 0;
 
     const avisValides = avis.filter(({ valideLe }) => valideLe !== null);
@@ -165,10 +149,7 @@ export class GetDossierInstructionService {
             titresValides: avisValides.map(({ auTitreDe }) => auTitreDe),
           },
         ]
-      : await this.pcaetAvisRepository.listAchevementDemandes(
-          dossier.demarcheId,
-          tx
-        );
+      : await this.pcaetAvisRepository.listAchevementDemandes(demarcheId, tx);
 
     // La date qui datera l'instruction : la plus récente des validations que ce
     // destinataire a sous les yeux — les siennes, ou celles du dossier.
@@ -184,19 +165,19 @@ export class GetDossierInstructionService {
         )
       : null;
 
-    return success({
-      demandeAvisId,
-      demarcheId: dossier.demarcheId,
-      titre: dossier.titre,
-      status: dossier.status,
-      isScotAec: dossier.isScotAec,
-      etat: deposeAvis
+    // L'état d'une saisine ne se lit que sur une saisine : un dépôt en
+    // élaboration n'en a pas, et son statut de démarche dit tout ce qu'il y a à
+    // dire.
+    const etat =
+      demandeAvisId === null
+        ? null
+        : deposeAvis
         ? getDemandeAvisEtat(
             {
               demarcheStatus: dossier.status,
               avisDeadlineAt: dossier.avisDeadlineAt,
-              nbAvisValides: dossier.nbAvisValides,
-              nbAvisBrouillons: dossier.nbAvisBrouillons,
+              nbAvisValides: avisValides.length,
+              nbAvisBrouillons: avis.length - avisValides.length,
             },
             new Date()
           )
@@ -207,7 +188,15 @@ export class GetDossierInstructionService {
               achevement,
             },
             new Date()
-          ),
+          );
+
+    return success({
+      demandeAvisId,
+      demarcheId,
+      titre: dossier.titre,
+      status: dossier.status,
+      isScotAec: dossier.isScotAec,
+      etat,
       transmittedAt: dossier.transmittedAt,
       avisDeadlineAt: dossier.avisDeadlineAt,
       instruitLe,
@@ -217,7 +206,7 @@ export class GetDossierInstructionService {
       modifiedAt: dossier.modifiedAt,
       pilotes,
       collectivite: {
-        id: dossier.collectiviteId,
+        id: collectiviteId,
         nom: dossier.collectiviteNom,
       },
       documents,

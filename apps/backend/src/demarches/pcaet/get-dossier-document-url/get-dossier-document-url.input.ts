@@ -1,10 +1,9 @@
 import { z } from 'zod';
+import { dossierInstructionRefSchema } from '../shared/dossier-instruction-ref.input';
 
-export const getDossierDocumentUrlInputSchema = z.object({
-  demandeAvisId: z.number().int().positive(),
-  documentId: z.string().min(1),
-});
+export const getDossierDocumentUrlInputSchema = dossierInstructionRefSchema.and(
+  z.object({ documentId: z.string().min(1) })
+);
 
-export type GetDossierDocumentUrlInput = z.infer<
-  typeof getDossierDocumentUrlInputSchema
->;
+export type GetDossierDocumentUrlInput =
+  typeof getDossierDocumentUrlInputSchema._output;
