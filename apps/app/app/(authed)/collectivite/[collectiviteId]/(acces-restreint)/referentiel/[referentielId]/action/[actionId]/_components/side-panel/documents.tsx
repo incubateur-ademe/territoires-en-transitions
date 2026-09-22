@@ -1,6 +1,6 @@
 'use client';
 
-import { DownloadDocs } from '@/app/referentiels/actions/action-documents.download-button';
+import { DownloadDocumentsButton } from '@/app/referentiels/actions/download-documents.button';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ReactNode } from 'react';
@@ -14,7 +14,7 @@ export function DocumentsPanelContent({
 }): ReactNode {
   return (
     <section className="flex flex-col gap-5">
-      <DownloadDocs action={action} />
+      <DownloadDocumentsButton key={action.actionId} action={action} />
       <ActionPreuvePanel
         withSubActions={!subActionId}
         showWarning

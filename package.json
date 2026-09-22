@@ -109,7 +109,6 @@
     "image-size": "^2.0.2",
     "jsdom": "26.1.0",
     "jsonwebtoken": "9.0.2",
-    "jszip": "3.10.1",
     "leaflet": "1.9.4",
     "leaflet-defaulticon-compatibility": "0.1.2",
     "luxon": "3.7.1",
