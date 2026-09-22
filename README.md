@@ -200,7 +200,7 @@ La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) e
 | Mailpit (emails de test) | <http://localhost:54324> |
 | Redis | `localhost:6379` |
 | Strapi (CMS du site) | <http://localhost:1337> |
-| app / site / panier | <http://localhost:3000> / 3001 / 3002 |
+| app / site | <http://localhost:3000> / 3001 |
 | backend (API) | <http://localhost:8080> |
 
 ```shell
@@ -336,7 +336,6 @@ Pour nos apps :
 
 - `app` dans `./apps/app`
 - `backend` dans `./apps/backend`
-- `panier` dans `./apps/panier`
 - `site` dans `./apps/site`
 
 Pour nos libs :

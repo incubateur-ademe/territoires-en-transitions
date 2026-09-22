@@ -141,12 +141,12 @@ describe('proxy — CORS', () => {
   it('origine autorisée → Access-Control-Allow-Origin présent + en-têtes CORS toujours présents', async () => {
     mockSession(undefined);
     const response = await proxy(
-      makeRequest('/', { origin: 'https://panier.territoiresentransitions.fr' })
+      makeRequest('/', { origin: 'https://site.territoiresentransitions.fr' })
     );
 
     // En environnement de test, isAllowedOrigin renvoie true → l'origine est renvoyée.
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
-      'https://panier.territoiresentransitions.fr'
+      'https://site.territoiresentransitions.fr'
     );
     expect(response.headers.get('Access-Control-Allow-Credentials')).toBe(
       'true'

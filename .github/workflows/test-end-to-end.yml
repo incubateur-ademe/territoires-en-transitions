@@ -97,14 +97,6 @@ jobs:
               supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
               environment: ci
 
-          - name: Setup panier env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: panier
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-              environment: ci
-
           - name: Install Playwright deps
             uses: ./.github/actions/cache/playwright-browsers
 
@@ -115,8 +107,8 @@ jobs:
         with:
           mode: restore
 
-      - name: Build app, backend and panier on shard 2
-        run: pnpm nx run-many -t build -p app backend ${{ matrix.shard == 2 && 'panier' || '' }} --parallel=50%
+      - name: Build app and backend
+        run: pnpm nx run-many -t build -p app backend --parallel=50%
 
       - name: Save Next app build cache
         if: ${{ matrix.shard == 1 && steps.next-app-cache.outputs.cache-hit != 'true' }}
@@ -152,15 +144,6 @@ jobs:
               wait-url: http://127.0.0.1:3000
               logs-dir: ${{ env.LOGS }}
 
-      - name: Start panier
-        if: ${{ matrix.shard == 2 }}
-        uses: ./.github/actions/app-start
-        with:
-          name: panier
-          port: 3002
-          wait-url: http://127.0.0.1:3002/landing
-          logs-dir: ${{ env.LOGS }}
-
       - name: Run isolated tests (parallel)
         env:
           PW_ARTIFACTS_SUFFIX: isolated
@@ -170,7 +153,7 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         # 50% of logical cores = 2 on the public 4-vCPU runner; scales if the runner grows.
-        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep-invert "@serial|@panier" --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=50%
+        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep-invert "@serial" --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=50%
 
       - name: Run serial tests (non isoles)
         # Serial suite is tiny and must run once; pin it to the first shard.
@@ -184,32 +167,11 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests
 
-      - name: Run panier tests
-        if: ${{ matrix.shard == 2 && !cancelled() }}
-        env:
-          PW_ARTIFACTS_SUFFIX: panier
-          PLAYWRIGHT_BLOB_OUTPUT_DIR: ${{ github.workspace }}/e2e/blob-report-panier
-          PLAYWRIGHT_BLOB_OUTPUT_NAME: report-panier.zip
-          PANIER_URL: http://localhost:3002
-          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
-          SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
-          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @panier --workers=50%
-
       - uses: actions/upload-artifact@v7.0.1
         if: ${{ !cancelled() }}
         with:
           name: blob-report-${{ matrix.shard }}
           path: ./e2e/blob-report
-          retention-days: 1
-
-      - uses: actions/upload-artifact@v7.0.1
-        if: ${{ matrix.shard == 2 && !cancelled() }}
-        with:
-          name: blob-report-panier
-          path: ./e2e/blob-report-panier
           retention-days: 1
 
       - uses: actions/upload-artifact@v7.0.1
@@ -220,7 +182,6 @@ jobs:
             ./e2e/test-results
             ./e2e/test-results-isolated
             ./e2e/test-results-serial
-            ./e2e/test-results-panier
             ${{ env.LOGS }}
           retention-days: 7
 

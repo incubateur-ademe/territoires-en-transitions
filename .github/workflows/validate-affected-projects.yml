@@ -67,13 +67,6 @@ jobs:
               json_vars: ${{ toJSON(vars) }}
               supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
 
-          - name: Setup panier env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: panier
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-
       - name: Print affected projects
         run: pnpm nx show projects --affected --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}"
 

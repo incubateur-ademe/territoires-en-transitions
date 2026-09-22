@@ -8,10 +8,9 @@ export const getStrapiData = async () => {
     ['populate[1]', 'seo.metaImage'],
     ['populate[2]', 'couverture'],
     ['populate[3]', 'avantages_liste.image'],
-    ['populate[4]', 'panier_image'],
-    ['populate[5]', 'trajectoire_image'],
-    ['populate[6]', 'temoignages_liste.temoignage'],
-    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[4]', 'trajectoire_image'],
+    ['populate[5]', 'temoignages_liste.temoignage'],
+    ['populate[6]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
   if (data) {
@@ -52,13 +51,6 @@ export const getStrapiData = async () => {
         ...av,
         image: av.image?.data,
       })),
-      panier: {
-        titre: outilData.panier_titre as unknown as string,
-        description: outilData.panier_description as unknown as string,
-        image:
-          (outilData.panier_image?.data as unknown as StrapiItem) ?? undefined,
-        cta: outilData.panier_cta as unknown as string,
-      },
       trajectoire: {
         titre: outilData.trajectoire_titre as unknown as string,
         description: outilData.trajectoire_description as unknown as string,

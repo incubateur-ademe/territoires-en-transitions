@@ -29,7 +29,7 @@ runs:
         set -euo pipefail
 
         case "$APP_NAME" in
-          app|auth|panier|site)
+          app|auth|site)
             app_kind='next'
             ;;
           backend|tools)
