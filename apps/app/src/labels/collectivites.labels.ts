@@ -1,4 +1,20 @@
+import { Pertinence } from '@tet/domain/collectivites';
 import { plural } from '@tet/ui/labels/plural';
+
+const pertinenceLabels = {
+  non_pertinent: 'non pertinent',
+  a_discuter: "à discuter avec l'élu",
+  pertinent: 'pertinent',
+} satisfies Record<Pertinence, string>;
+
+const unsetPertinenceLabel = 'non renseignée';
+
+const toPertinenceLabel = (pertinence?: Pertinence): string => {
+  if (pertinence === undefined) {
+    return unsetPertinenceLabel;
+  }
+  return pertinenceLabels[pertinence];
+};
 
 export const collectivitesLabels = {
   collectivite: plural({ one: 'collectivité', other: 'collectivités' }),
@@ -24,4 +40,8 @@ export const collectivitesLabels = {
     'Renseigner le nom de la collectivité et sélectionner votre collectivité',
   rejoindreUneCollectiviteJeSuisReferent:
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
+
+  priorisationLeviersTitre: 'Priorisation des leviers',
+  pertinenceDuLevier: (pertinence?: Pertinence): string =>
+    `Pertinence : ${toPertinenceLabel(pertinence)}`,
 };
