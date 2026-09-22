@@ -7,10 +7,13 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   demandeAvisEtatLabel,
   DEMANDE_AVIS_ETAT_VARIANTS,
+  statutInstructionLabel,
+  STATUT_INSTRUCTION_VARIANTS,
 } from '../instruction.constants';
 import { MetadataItem, MetadataLine } from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
+import { PcaetStatutInstructionEnum } from '@tet/domain/demarches';
 import { Badge, PageHeader } from '@tet/ui';
 import { ReactNode, useState } from 'react';
 
@@ -109,14 +112,27 @@ export const DossierInstructionHeader = ({
             </>
           ) : null}
           <Separator />
-          <Badge
-            title={demandeAvisEtatLabel(dossier.etat, {
-              // Aucun titre à déposer : le dossier se suit, il ne s'instruit pas.
-              deposeAvis: dossier.titresDeposables.length > 0,
-            })}
-            variant={DEMANDE_AVIS_ETAT_VARIANTS[dossier.etat]}
-            size="sm"
-          />
+          {dossier.etat === null ? (
+            // Sans saisine, pas d'état à lire : le dossier est en élaboration,
+            // et c'est le statut de la liste qui le dit — le même badge qu'y
+            // porte la ligne.
+            <Badge
+              title={statutInstructionLabel(
+                PcaetStatutInstructionEnum.EN_ELABORATION
+              )}
+              variant={STATUT_INSTRUCTION_VARIANTS.en_elaboration}
+              size="sm"
+            />
+          ) : (
+            <Badge
+              title={demandeAvisEtatLabel(dossier.etat, {
+                // Aucun titre à déposer : le dossier se suit, il ne s'instruit pas.
+                deposeAvis: dossier.titresDeposables.length > 0,
+              })}
+              variant={DEMANDE_AVIS_ETAT_VARIANTS[dossier.etat]}
+              size="sm"
+            />
+          )}
         </MetadataLine>
       </PageHeader.Metadata>
     </PageHeader>

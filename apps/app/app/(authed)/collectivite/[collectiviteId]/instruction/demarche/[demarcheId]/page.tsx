@@ -4,17 +4,17 @@ import z from 'zod';
 export default async function Page({
   params,
 }: {
-  params: Promise<{ collectiviteId: string; demandeAvisId: string }>;
+  params: Promise<{ collectiviteId: string; demarcheId: string }>;
 }) {
-  const { collectiviteId: unsafeCollectiviteId, demandeAvisId: unsafeDemande } =
+  const { collectiviteId: unsafeCollectiviteId, demarcheId: unsafeDemarche } =
     await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
-  const demandeAvisId = z.coerce.number().parse(unsafeDemande);
+  const demarcheId = z.coerce.number().parse(unsafeDemarche);
 
   return (
     <DossierInstructionPage
       collectiviteInstruiteId={collectiviteId}
-      dossierRef={{ demandeAvisId }}
+      dossierRef={{ demarcheId }}
     />
   );
 }

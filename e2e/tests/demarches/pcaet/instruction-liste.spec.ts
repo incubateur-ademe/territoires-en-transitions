@@ -118,11 +118,16 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
     await expect(pom.rowDemarche(demarcheEnChantier)).toBeVisible();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
 
-    // Ni l'une ni l'autre n'ouvre de dossier : rien n'a été transmis au
-    // service, qui n'a là qu'un motif de relance.
-    await expect(pom.rowDemarche(demarcheEnChantier).locator('a')).toHaveCount(
-      0
-    );
+    // Le dépôt en chantier s'ouvre déjà, par sa démarche : le service qui
+    // couvre la collectivité suit un dossier qu'il instruira. La collectivité
+    // sans dépôt, elle, n'a rien à ouvrir — seulement un motif de relance.
+    await expect(
+      pom
+        .rowDemarche(demarcheEnChantier)
+        .locator(
+          `a[href="/collectivite/${enChantier.data.id}/instruction/demarche/${demarcheEnChantier}"]`
+        )
+    ).not.toHaveCount(0);
     await expect(
       pom.rowSansDepot(sansDepot.data.id).locator('a')
     ).toHaveCount(0);

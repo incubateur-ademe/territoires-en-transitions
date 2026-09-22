@@ -21,6 +21,8 @@ type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
 
 type Props = {
   dossier: Dossier;
+  /** La saisine sur laquelle l'avis se dépose : on ne finalise qu'un dossier transmis. */
+  demandeAvisId: number;
   /**
    * Le titre au nom duquel l'avis est rendu. Il n'est pas demandé à
    * l'instructeur : chaque émetteur n'en porte qu'un — le préfet de région pour
@@ -39,6 +41,7 @@ const AVIS_FILE_CONSTRAINTS = toFileConstraints({
 
 export const FinaliserInstructionModal = ({
   dossier,
+  demandeAvisId,
   auTitreDe,
   onClose,
 }: Props) => {
@@ -50,7 +53,7 @@ export const FinaliserInstructionModal = ({
 
   const uploadAvisFile = useUploadAvisFile();
   const upsertAvis = useUpsertAvis();
-  const validerAvis = useValiderAvis(dossier.demandeAvisId);
+  const validerAvis = useValiderAvis(demandeAvisId);
 
   const selectFiles = (files: FileList | null) => {
     const file = files?.[0];
@@ -74,7 +77,7 @@ export const FinaliserInstructionModal = ({
         return;
       }
       const avis = await upsertAvis.mutateAsync({
-        demandeAvisId: dossier.demandeAvisId,
+        demandeAvisId,
         auTitreDe,
         fichierRef: hash,
       });
@@ -84,7 +87,7 @@ export const FinaliserInstructionModal = ({
         return;
       }
       await validerAvis.mutateAsync({
-        demandeAvisId: dossier.demandeAvisId,
+        demandeAvisId,
         avisId: avisDepose.id,
       });
       setEtape('confirmation');

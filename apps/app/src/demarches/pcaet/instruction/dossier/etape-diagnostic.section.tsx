@@ -2,6 +2,7 @@
 
 import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
 import { appLabels } from '@/app/labels/catalog';
+import type { DossierInstructionRef } from '../dossier-instruction-ref';
 import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
 
 /**
@@ -14,14 +15,14 @@ import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
  * voisine.
  */
 export const EtapeDiagnosticSection = ({
-  demandeAvisId,
+  dossierRef,
   demarcheId,
 }: {
-  demandeAvisId: number;
+  dossierRef: DossierInstructionRef;
   demarcheId: number;
 }) => {
   const { diagnostic, isLoading, isError, refetch } =
-    useDiagnosticInstruction(demandeAvisId);
+    useDiagnosticInstruction(dossierRef);
 
   return (
     <DiagnosticTabs

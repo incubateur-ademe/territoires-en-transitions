@@ -41,10 +41,12 @@ export const FinaliserInstructionButton = ({
 
   // Destinataire en lecture — la DDT : le dossier se consulte, rien ne s'y
   // dépose. Le serveur refuse de toute façon, l'écran n'a pas à proposer
-  // l'action.
-  if (dossier.titresDeposables.length === 0) {
+  // l'action. Sans saisine non plus : un dépôt en élaboration n'a rien à
+  // finaliser.
+  if (dossier.titresDeposables.length === 0 || dossier.demandeAvisId === null) {
     return null;
   }
+  const demandeAvisId = dossier.demandeAvisId;
 
   /**
    * L'état du dossier ne décide que de ce qui s'affiche à la place du bouton :
@@ -99,6 +101,7 @@ export const FinaliserInstructionButton = ({
       {titreAFinaliser && (
         <FinaliserInstructionModal
           dossier={dossier}
+          demandeAvisId={demandeAvisId}
           auTitreDe={titreAFinaliser}
           onClose={() => setTitreAFinaliser(null)}
         />
