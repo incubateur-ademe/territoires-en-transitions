@@ -6,7 +6,6 @@ import {
   toFileConstraints,
 } from '@/app/collectivites/documents/upload/constants';
 import { validateFile } from '@/app/collectivites/documents/upload/validate-file';
-import type { RouterOutput } from '@tet/api';
 import {
   DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   type PcaetAvisAuTitreDe,
@@ -17,10 +16,7 @@ import { useUploadAvisFile } from './data/use-upload-avis-file';
 import { useUpsertAvis } from './data/use-upsert-avis';
 import { useValiderAvis } from './data/use-valider-avis';
 
-type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
-
 type Props = {
-  dossier: Dossier;
   /** La saisine sur laquelle l'avis se dépose : on ne finalise qu'un dossier transmis. */
   demandeAvisId: number;
   /**
@@ -40,7 +36,6 @@ const AVIS_FILE_CONSTRAINTS = toFileConstraints({
 });
 
 export const FinaliserInstructionModal = ({
-  dossier,
   demandeAvisId,
   auTitreDe,
   onClose,

@@ -100,7 +100,6 @@ export const FinaliserInstructionButton = ({
       {declencheur}
       {titreAFinaliser && (
         <FinaliserInstructionModal
-          dossier={dossier}
           demandeAvisId={demandeAvisId}
           auTitreDe={titreAFinaliser}
           onClose={() => setTitreAFinaliser(null)}
