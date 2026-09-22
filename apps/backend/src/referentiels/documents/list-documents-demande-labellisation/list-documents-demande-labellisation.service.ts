@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Result } from '@tet/backend/utils/result.type';
-import {
-  LegacyPreuveLabellisationWithFichier,
-  preuveLabellisationWithFichierSchema,
-} from '@tet/domain/collectivites';
-import * as z from 'zod/mini';
+import { toDocuments } from '@tet/backend/collectivites/documents/to-documents.adapter';
 import { GetLabellisationService } from '../../labellisations/get-labellisation.service';
 import { ReferentielDocumentsAccessService } from '../referentiel-documents-access.service';
 import {
@@ -13,6 +9,10 @@ import {
   ListDocumentsDemandeLabellisationErrorEnum,
 } from './list-documents-demande-labellisation.errors';
 import { ListDocumentsDemandeLabellisationInput } from './list-documents-demande-labellisation.input';
+import {
+  DocumentDemandeLabellisation,
+  listDocumentsDemandeLabellisationOutputSchema,
+} from './list-documents-demande-labellisation.output';
 import { ListDocumentsDemandeLabellisationRepository } from './list-documents-demande-labellisation.repository';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class ListDocumentsDemandeLabellisationService {
     user: AuthenticatedUser
   ): Promise<
     Result<
-      LegacyPreuveLabellisationWithFichier[],
+      DocumentDemandeLabellisation[],
       ListDocumentsDemandeLabellisationError
     >
   > {
@@ -82,12 +82,21 @@ export class ListDocumentsDemandeLabellisationService {
       return documents;
     }
 
-    const parsed = z
-      .array(preuveLabellisationWithFichierSchema)
-      .safeParse(documents.data);
+    const assembled = toDocuments(documents.data);
+    const droppedCount = documents.data.length - assembled.length;
+    if (droppedCount > 0) {
+      this.logger.warn(
+        `Dropped ${droppedCount} document(s) of demande ${demandeId}: no usable file nor link`
+      );
+    }
+
+    const parsed =
+      listDocumentsDemandeLabellisationOutputSchema.safeParse(assembled);
     if (!parsed.success) {
       this.logger.error(
-        `Documents hors contrat pour la demande ${demandeId}: ${parsed.error.message}`
+        `Documents out of contract for demande ${demandeId}: ${parsed.error.issues
+          .map((issue) => issue.path.join('.'))
+          .join(', ')}`
       );
       return {
         success: false,

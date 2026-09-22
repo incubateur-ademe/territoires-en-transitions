@@ -4,10 +4,10 @@ import {
   getAuthorAndDate,
   getFormattedTitle,
 } from '@/app/referentiels/preuves/Bibliotheque/document-label.utils';
+import { getDocumentFilename } from '@tet/domain/collectivites';
+import { MissingFileBadge } from '@/app/referentiels/preuves/Bibliotheque/missing-file.badge';
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
-import { getDocumentFichier } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
-import { toDocumentAudit } from '@/app/referentiels/preuves/mappers/to-document-audit';
 import { AuditReport } from '../data/use-list-reports-by-audit';
 
 const ReportMetadata = ({ text }: { text: string | null }): JSX.Element => (
@@ -85,18 +85,19 @@ export const PersistedReportCard = ({
   isRemoving: boolean;
   onRemove: () => void;
 }): JSX.Element => {
-  const preuve = toDocumentAudit(report);
-  const openPreuve = useOpenPreuve({ collectiviteId: preuve.collectiviteId });
-  const filename = getDocumentFichier(preuve)?.filename ?? '';
-  const hasDocument = preuve.type !== 'nonRenseigne';
+  const openPreuve = useOpenPreuve({ collectiviteId: report.collectiviteId });
+  const filename = getDocumentFilename(report) ?? '';
+  const isOpenable = report.type === 'fichier' || report.type === 'lien';
+  const isMissing = report.type === 'fichierManquant';
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
       <div className="flex items-start gap-1">
         <DownloadableTitle
-          title={getFormattedTitle(preuve) ?? ''}
-          onClick={() => openPreuve(preuve)}
-          disabled={isRemoving || !hasDocument}
+          title={getFormattedTitle(report) ?? ''}
+          onClick={() => openPreuve(report)}
+          disabled={isRemoving || !isOpenable}
         />
+        {isMissing && <MissingFileBadge />}
         <RemoveReportButton
           filename={filename}
           isRemoving={isRemoving}

@@ -23,6 +23,7 @@ export * from './pcaet/pcaet-depot-permissions.rules';
 export * from './pcaet/pcaet-instructeur.rules';
 export * from './pcaet/pcaet-instruction-partie.enum.schema';
 export * from './pcaet/pcaet-perimetre-saisine.enum.schema';
+export * from './pcaet/pcaet-scot-aec.rules';
 export * from './pcaet/pcaet-statut-instruction.rules';
 export * from './pcaet/workflow/demarche-pcaet-state';
 export * from './pcaet/workflow/demarche-pcaet-workflow.facade';

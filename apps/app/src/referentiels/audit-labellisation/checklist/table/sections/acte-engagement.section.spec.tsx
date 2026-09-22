@@ -37,16 +37,29 @@ vi.mock('./delete-preuve-button', () => ({
   DeletePreuveButton: () => <button>{'Supprimer'}</button>,
 }));
 
+const toActeIntrouvable = (filename: string, id = 98): ChecklistPreuve => ({
+  id,
+  objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
+  collectiviteId: 1,
+  preuveType: 'labellisation',
+  type: 'fichierManquant',
+  filename,
+});
+
 const toActeDepose = (filename: string, id = 99): ChecklistPreuve => ({
   id,
   objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
   collectiviteId: 1,
   preuveType: 'labellisation',
+  type: 'fichier',
   fichier: {
     id,
+    collectiviteId: 1,
     filename,
     hash: toLegacyDocumentHash(`hash-${id}`),
     confidentiel: false,
+    bucketId: 'bucket',
+    filesize: 1024,
   },
 });
 
@@ -245,5 +258,29 @@ describe("ActeEngagementRow — qui peut éditer l'acte", () => {
     expect(
       screen.queryByRole('button', { name: appLabels.supprimer })
     ).toBeNull();
+  });
+});
+
+describe('ActeEngagementSection — acte dont le fichier est introuvable', () => {
+  it('affiche son nom, le signale indisponible, et n offre ni téléchargement ni renommage', () => {
+    render(
+      <ActeEngagementSection
+        actes={[toActeIntrouvable('acte-perdu.pdf')]}
+        isLoading={false}
+        canEdit={true}
+      />
+    );
+
+    expect(screen.getByText('acte-perdu.pdf')).toBeDefined();
+    expect(screen.getByText(appLabels.fichierIndisponible)).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: 'Télécharger le fichier' })
+    ).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Renommer le fichier' })
+    ).toBeNull();
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
+    ).toBeDefined();
   });
 });

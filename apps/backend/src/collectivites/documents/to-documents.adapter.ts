@@ -1,5 +1,5 @@
 import {
-  DocumentSupport,
+  DocumentSupportRenseigne,
   Lien,
   StoredFile,
   toFichier,
@@ -18,7 +18,7 @@ export type DocumentRow = {
 type AssembledDocument<Row extends DocumentRow> = Omit<
   Row,
   'id' | 'fichierId' | 'fichier' | 'lien' | 'bibliothequeFilename'
-> & { id: number } & Exclude<DocumentSupport, { type: 'nonRenseigne' }>;
+> & { id: number } & DocumentSupportRenseigne;
 
 const toDocument = <Row extends DocumentRow>(
   row: Row

@@ -10,7 +10,7 @@ import { UpdateDemarchePcaetInput } from './update-demarche-pcaet.input';
 
 export type UpdateDemarchePcaetHeaderPatch = Pick<
   UpdateDemarchePcaetInput,
-  'titre' | 'description' | 'obligation' | 'launchedAt'
+  'titre' | 'description' | 'obligation' | 'launchedAt' | 'isScotAec'
 >;
 
 @Injectable()
@@ -71,6 +71,9 @@ export class UpdateDemarchePcaetRepository {
             : {}),
           ...(patch.launchedAt !== undefined
             ? { launchedAt: patch.launchedAt }
+            : {}),
+          ...(patch.isScotAec !== undefined
+            ? { isScotAec: patch.isScotAec }
             : {}),
           modifiedAt: new Date().toISOString(),
           modifiedBy: userId,

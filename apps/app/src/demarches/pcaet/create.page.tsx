@@ -10,7 +10,7 @@ import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-i
 import { useDemarcheAvanceSidePanel } from '@/app/demarches/components/use-avance-side-panel';
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -30,7 +30,6 @@ const PCAET_TYPE = {
 };
 
 const createDemarchePcaetSchema = z.object({
-
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
     .min(1, appLabels.demarcheCreerPilotesRequis),
@@ -40,6 +39,11 @@ const createDemarchePcaetSchema = z.object({
    * démarrera à l'étape de finalisation. Figé ici — aucun écran ne le reprend.
    */
   transmisHorsPlateforme: z.boolean(),
+  /**
+   * Le PCAET est porté par un SCoT-AEC. Posé aux seules collectivités ayant la
+   * compétence Banatic SCOT, et pré-rempli sur oui.
+   */
+  isScotAec: z.boolean(),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
@@ -57,6 +61,13 @@ export const CreateDemarchePcaetPage = () => {
     trpc.demarches.pcaet.create.mutationOptions()
   );
 
+  // Ce que la collectivité a le droit de déclarer : la question SCoT-AEC n'a de
+  // sens que pour celles qui portent un SCoT.
+  const { data: depotContext, isPending: contexteEnAttente } = useQuery(
+    trpc.demarches.pcaet.getDepotContext.queryOptions({ collectiviteId })
+  );
+  const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
+
   const {
     register,
     control,
@@ -66,7 +77,6 @@ export const CreateDemarchePcaetPage = () => {
     resolver: zodResolver(createDemarchePcaetSchema),
     mode: 'onChange',
     defaultValues: {
-
       pilotes: [
         {
           nom: `${user.prenom} ${user.nom}`.trim(),
@@ -77,6 +87,7 @@ export const CreateDemarchePcaetPage = () => {
       ],
       dateLancement: '',
       transmisHorsPlateforme: false,
+      isScotAec: true,
     },
   });
 
@@ -113,6 +124,9 @@ export const CreateDemarchePcaetPage = () => {
         ? new Date(data.dateLancement).toISOString()
         : null,
       transmittedOffPlatform: data.transmisHorsPlateforme,
+      // Une collectivité à qui la question n'est pas posée ne déclare rien, quoi
+      // que porte le formulaire.
+      isScotAec: peutDeclarerScotAec ? data.isScotAec : false,
     });
     router.push(
       makeCollectiviteDemarchePcaetRootUrl({
@@ -212,13 +226,34 @@ export const CreateDemarchePcaetPage = () => {
                 )}
               />
 
+              {peutDeclarerScotAec && (
+                <Controller
+                  control={control}
+                  name="isScotAec"
+                  render={({ field }) => (
+                    <Checkbox
+                      variant="switch"
+                      label={appLabels.demarcheCreerScotAec}
+                      message={appLabels.demarcheCreerScotAecDescription}
+                      containerClassname="flex-row-reverse justify-end gap-3"
+                      data-test="demarches.creer.scot-aec"
+                      checked={field.value}
+                      onChange={() => field.onChange(!field.value)}
+                    />
+                  )}
+                />
+              )}
+
               <div className="flex justify-end gap-3">
                 <Button
                   type="submit"
                   variant="primary"
                   icon="arrow-right-line"
                   iconPosition="right"
-                  disabled={isSubmitting}
+                  // Tant que le contexte n'a pas répondu, la question SCoT-AEC
+                  // n'est pas affichée et sa réponse partirait à « non » — le
+                  // contraire de ce qu'annonce la coche pré-remplie.
+                  disabled={isSubmitting || contexteEnAttente}
                 >
                   {appLabels.demarcheCreerSoumettre}
                 </Button>

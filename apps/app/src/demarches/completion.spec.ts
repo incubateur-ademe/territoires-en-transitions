@@ -205,6 +205,7 @@ const completeDemarche: DemarchePcaet = {
   description: 'Présentation du PCAET',
   statut: 'en_elaboration',
   transmisHorsPlateforme: false,
+  isScotAec: false,
   obligation: 'obligatoire',
   dateCreation: '2026-01-01T00:00:00.000Z',
   dateModification: '2026-01-01T00:00:00.000Z',

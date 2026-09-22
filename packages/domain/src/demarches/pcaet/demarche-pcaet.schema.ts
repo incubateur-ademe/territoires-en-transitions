@@ -58,6 +58,18 @@ export type DemarchePcaet = DemarcheBase & {
    * c'est lui qui tient les écrans d'instruction à l'écart ensuite.
    */
   transmittedOffPlatform: boolean;
+  /**
+   * Le PCAET est porté par un **SCoT-AEC** : un Schéma de Cohérence
+   * Territoriale qui tient lieu de PCAET, soit un document unique au lieu de
+   * deux.
+   *
+   * Purement déclaratif, et n'ouvre aucun droit : la collectivité seule sait si
+   * son document est fusionné. La compétence Banatic 5500 (SCOT) décide si la
+   * question lui est posée à l'étape 0, jamais de la réponse — porter un SCoT
+   * n'implique pas d'y avoir fondu son PCAET. Corrigeable tant que l'amont du
+   * dépôt est modifiable, à la différence de `transmittedOffPlatform`.
+   */
+  isScotAec: boolean;
   /** Échéance de remise des avis, figée à la transmission. */
   avisDeadlineAt: string | null;
   /**

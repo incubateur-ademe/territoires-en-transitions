@@ -13,6 +13,12 @@ export const dossierInstructionSchema = z.object({
   demarcheId: z.number().int(),
   titre: z.string(),
   status: demarchePcaetStatusSchema,
+  /**
+   * Le dépôt est un SCoT-AEC : un document unique valant SCoT et PCAET, déclaré
+   * par la collectivité. L'instructeur sait ainsi qu'il n'a pas devant lui un
+   * PCAET classique.
+   */
+  isScotAec: z.boolean(),
   etat: pcaetDemandeAvisEtatSchema,
   transmittedAt: z.string().nullable(),
   avisDeadlineAt: z.string().nullable(),

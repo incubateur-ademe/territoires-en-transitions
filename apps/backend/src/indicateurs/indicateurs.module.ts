@@ -43,6 +43,7 @@ import { HandleDefinitionServicesService } from './indicateurs/handle-definition
 import { HandleDefinitionThematiquesRepository } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.repository';
 import { HandleDefinitionThematiquesService } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
 import { ListIndicateursController } from './indicateurs/list-indicateurs/list-indicateurs.controller';
+import { ListIndicateursRepository } from './indicateurs/list-indicateurs/list-indicateurs.repository';
 import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
 import { ListIndicateursService } from './indicateurs/list-indicateurs/list-indicateurs.service';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
@@ -73,6 +74,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
 
 // Sub-domain indicateurs.definitions
 const DEFINITIONS_PROVIDERS = [
+  ListIndicateursRepository,
   ListIndicateursService,
   ListIndicateursRouter,
 

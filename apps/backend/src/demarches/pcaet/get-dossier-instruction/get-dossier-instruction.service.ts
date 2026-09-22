@@ -60,6 +60,7 @@ export class GetDossierInstructionService {
         demarcheId: demarcheTable.id,
         titre: demarcheTable.titre,
         status: demarcheTable.status,
+        isScotAec: demarcheTable.isScotAec,
         transmittedAt: demarcheTable.transmittedAt,
         avisDeadlineAt: demarcheTable.avisDeadlineAt,
         launchedAt: demarcheTable.launchedAt,
@@ -188,6 +189,7 @@ export class GetDossierInstructionService {
       demarcheId: dossier.demarcheId,
       titre: dossier.titre,
       status: dossier.status,
+      isScotAec: dossier.isScotAec,
       etat: deposeAvis
         ? getDemandeAvisEtat(
             {

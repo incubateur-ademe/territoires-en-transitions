@@ -97,6 +97,17 @@ export const DossierInstructionHeader = ({
               />
             )
           )}
+          {dossier.isScotAec ? (
+            <>
+              <Separator />
+              <Badge
+                title={appLabels.demarcheScotAecBadge}
+                variant="info"
+                size="sm"
+                uppercase={false}
+              />
+            </>
+          ) : null}
           <Separator />
           <Badge
             title={demandeAvisEtatLabel(dossier.etat, {

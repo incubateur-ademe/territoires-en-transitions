@@ -42,6 +42,7 @@ export class ListDocumentsAuditRepository {
           ...getTableColumns(preuveAuditTable),
           modifiedAt: sqlToDateTimeISO(preuveAuditTable.modifiedAt),
           fichier: buildFileInfoSql(fichier),
+          bibliothequeFilename: bibliothequeFichierTable.filename,
           demande: {
             ...getTableColumns(labellisationDemandeTable),
             date: sqlToDate(labellisationDemandeTable.date),

@@ -1,8 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { formatFileSize, getExtension } from '@/app/utils/file';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { StoredFile } from '@tet/domain/collectivites';
-import { DocumentRattache } from './types';
+import { DocumentSupport, StoredFile } from '@tet/domain/collectivites';
 
 const getFichierTitle = ({ filename, filesize }: StoredFile): string => {
   const extension = getExtension(filename)?.toUpperCase();
@@ -11,14 +10,14 @@ const getFichierTitle = ({ filename, filesize }: StoredFile): string => {
   return details ? `${filename} (${details})` : filename;
 };
 
-export const getFormattedTitle = (preuve: DocumentRattache): string | null => {
-  switch (preuve.type) {
+export const getFormattedTitle = (document: DocumentSupport): string | null => {
+  switch (document.type) {
     case 'fichier':
-      return getFichierTitle(preuve.fichier);
+      return getFichierTitle(document.fichier);
     case 'lien':
-      return preuve.lien.titre;
+      return document.lien.titre;
     case 'fichierManquant':
-      return preuve.filename;
+      return document.filename;
     case 'nonRenseigne':
       return null;
   }

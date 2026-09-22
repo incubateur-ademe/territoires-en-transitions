@@ -78,6 +78,20 @@ export const demarchesLabels = {
     'PCAET déjà transmis pour avis hors plateforme',
   demarcheCreerHorsPlateformeDescription:
     'En activant ceci, vous arriverez directement à l’étape de finalisation de votre dépôt PCAET adopté. Les documents, les volets du diagnostic et le plan d’actions y restent à renseigner. Ce choix est définitif.',
+  /**
+   * La question n'est posée qu'aux collectivités ayant la compétence SCOT, et
+   * la réponse est pré-remplie sur oui. La description doit donc dire ce qui
+   * est déclaré : porter un SCoT ne veut pas dire y avoir fondu son PCAET, et
+   * ce marqueur est lu par les services de l'État.
+   */
+  demarcheCreerScotAec: 'Votre PCAET est un SCoT-AEC',
+  demarcheCreerScotAecDescription:
+    'Votre SCoT tient lieu de PCAET : vous déposez un document unique valant Schéma de Cohérence Territoriale et Plan Climat-Air-Énergie Territorial. Décochez si votre PCAET est un document distinct de votre SCoT. Modifiable tant que votre dépôt n’est pas transmis pour avis.',
+  demarcheScotAecBadge: 'SCoT-AEC',
+  /** L'état « ce n'est pas un SCoT-AEC », affiché aux seules collectivités à qui
+   * la question se pose : sans cela, le badge affirmerait le contraire de la
+   * déclaration. */
+  demarcheScotAecBadgeAbsent: 'PCAET seul',
   instructionStatutEnInstruction: 'En instruction',
   instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
   instructionStatutInstruit: 'Instruit',

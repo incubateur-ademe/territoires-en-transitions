@@ -21,3 +21,15 @@ export const toFichierManquant = <Base extends object>(
   ...document,
   type: 'fichierManquant',
 });
+
+export const getDocumentFilename = (
+  support: DocumentSupport
+): string | null => {
+  if (support.type === 'fichier') {
+    return support.fichier.filename;
+  }
+  if (support.type === 'fichierManquant') {
+    return support.filename;
+  }
+  return null;
+};

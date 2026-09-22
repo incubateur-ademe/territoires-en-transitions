@@ -1,7 +1,6 @@
 import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
-import { toDocumentAudit } from '@/app/referentiels/preuves/mappers/to-document-audit';
 import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
@@ -142,7 +141,7 @@ export const useUploadAuditReport = (
   const removeReport = async (report: AuditReport): Promise<void> => {
     setRemovingReportIds((prev) => new Set(prev).add(report.id));
     try {
-      await removePreuve(toDocumentAudit(report));
+      await removePreuve(report);
       await refetchReports();
     } catch (error) {
       console.error(error);
