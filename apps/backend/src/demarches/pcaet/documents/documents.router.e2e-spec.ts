@@ -1112,10 +1112,14 @@ describe('Documents d’une démarche PCAET', () => {
       })
       .from(demarcheDocumentDefinitionTable);
 
+    // L'identité telle que le service d'applicabilité la sert : avec les
+    // tranches de population des communes membres, que l'identité partagée ne
+    // porte pas et sans lesquelles `identite(commune_membre, …)` lève.
     const identiteCollectivite = {
       type: CollectiviteTypeEnum.EPCI,
       soustype: CollectiviteSousTypeEnum.EPCI_FP,
       populationTags: [],
+      communesMembresPopulationTags: [],
       drom: false,
     };
 
@@ -1258,7 +1262,12 @@ describe('Documents d’une démarche PCAET', () => {
   describe('Pièces attendues des seules collectivités assujetties', () => {
     // Sans population ni nature INSEE, la collectivité des autres tests n'est
     // assujettie à rien : les deux plans annexes lui sont invisibles.
-    it('un EPCI à fiscalité propre de plus de 100 000 habitants voit les deux plans', async () => {
+    //
+    // Le plan local de chaleur et de froid se lit sur les communes membres
+    // (« au moins une commune de plus de 45 000 habitants », art. L229-26 du
+    // code de l'environnement), le plan qualité de l'air sur la population du
+    // groupement.
+    it('un EPCI à fiscalité propre de plus de 100 000 habitants avec une commune de plus de 45 000 voit les deux plans', async () => {
       const { caller, collectivite, demarche } = await createDemarche(
         db,
         router,
@@ -1267,6 +1276,7 @@ describe('Documents d’une démarche PCAET', () => {
             population: 684371,
             natureInsee: 'CA',
           },
+          communesMembres: [500000, 30000],
         }
       );
 
@@ -1304,7 +1314,7 @@ describe('Documents d’une démarche PCAET', () => {
       }
     });
 
-    it('les deux conditions sont indépendantes : à 60 000 habitants, seul le plan chaleur et froid est attendu', async () => {
+    it('les deux conditions sont indépendantes : à 60 000 habitants avec une commune de 46 000, seul le plan chaleur et froid est attendu', async () => {
       const { caller, collectivite, demarche } = await createDemarche(
         db,
         router,
@@ -1313,6 +1323,7 @@ describe('Documents d’une démarche PCAET', () => {
             population: 60000,
             natureInsee: 'CA',
           },
+          communesMembres: [46000, 14000],
         }
       );
 
@@ -1320,6 +1331,42 @@ describe('Documents d’une démarche PCAET', () => {
 
       expect(ids).toContain('pcaet_plan_chaleur_froid');
       expect(ids).not.toContain('pcaet_plan_qualite_air');
+    });
+
+    it('la population du groupement ne compte pas : à 60 000 habitants sans commune de plus de 45 000, le plan chaleur et froid n’est pas attendu', async () => {
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 60000,
+            natureInsee: 'CA',
+          },
+          communesMembres: [30000, 30000],
+        }
+      );
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain('pcaet_plan_chaleur_froid');
+    });
+
+    it('le seuil est strict : une commune d’exactement 45 000 habitants ne déclenche pas le plan chaleur et froid', async () => {
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 60000,
+            natureInsee: 'CA',
+          },
+          communesMembres: [45000],
+        }
+      );
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain('pcaet_plan_chaleur_froid');
     });
 
     it('le seuil est strict : à exactement 100 000 habitants la qualité de l’air n’est pas attendue', async () => {
@@ -1337,11 +1384,9 @@ describe('Documents d’une démarche PCAET', () => {
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
       expect(ids).not.toContain('pcaet_plan_qualite_air');
-      // 100 000 reste au-dessus de 45 000.
-      expect(ids).toContain('pcaet_plan_chaleur_froid');
     });
 
-    it('un syndicat n’est pas assujetti à la qualité de l’air, quelle que soit sa taille', async () => {
+    it('un syndicat n’est assujetti à aucun des deux plans, quelle que soit la taille de ses membres', async () => {
       const { caller, collectivite, demarche } = await createDemarche(
         db,
         router,
@@ -1350,13 +1395,14 @@ describe('Documents d’une démarche PCAET', () => {
             population: 200000,
             natureInsee: 'SMF',
           },
+          communesMembres: [120000],
         }
       );
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
       expect(ids).not.toContain('pcaet_plan_qualite_air');
-      expect(ids).toContain('pcaet_plan_chaleur_froid');
+      expect(ids).not.toContain('pcaet_plan_chaleur_froid');
     });
 
     it('une pièce qui ne concerne pas la collectivité ne peut ni être déposée ni être déclarée incluse', async () => {
@@ -1396,6 +1442,7 @@ describe('Documents d’une démarche PCAET', () => {
             population: 60000,
             natureInsee: 'CA',
           },
+          communesMembres: [46000],
         }
       );
       const fichier = await addTestBibliothequeFichier(db, {
@@ -1437,10 +1484,11 @@ describe('Documents d’une démarche PCAET', () => {
             population: 60000,
             natureInsee: 'CA',
           },
+          communesMembres: [46000],
         }
       );
       // Dépose le document global, qui couvre d'office les sections requises
-      // inconditionnelles — mais pas les deux plans annexes.
+      // inconditionnelles — mais pas le plan chaleur et froid.
       await completeTestDossierPcaet(db, {
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,

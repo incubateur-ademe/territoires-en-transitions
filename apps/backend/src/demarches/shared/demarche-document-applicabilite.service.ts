@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { CollectiviteCommunesMembresRepository } from '@tet/backend/collectivites/shared/collectivite-communes-membres.repository';
 import { DemarcheHistoriqueRepository } from '@tet/backend/demarches/shared/demarche-historique.repository';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
@@ -31,10 +32,10 @@ export type DemarcheDocumentApplicabiliteCible = {
  * Décide si une pièce du catalogue concerne une collectivité donnée.
  *
  * La condition est une expression stockée en base, dans le même langage que les
- * règles de personnalisation : `identite(population, plus_de_45000)`,
- * `reponse(PPA, OUI)`, `et` / `ou`, `si … alors … sinon`. Une pièce non
- * applicable n'est pas servie du tout — ni affichée, ni comptée dans la
- * complétude du dossier.
+ * règles de personnalisation : `identite(population, plus_de_100000)`,
+ * `identite(commune_membre, plus_de_45000)`, `reponse(PPA, OUI)`, `et` / `ou`,
+ * `si … alors … sinon`. Une pièce non applicable n'est pas servie du tout — ni
+ * affichée, ni comptée dans la complétude du dossier.
  */
 @Injectable()
 export class DemarcheDocumentApplicabiliteService {
@@ -44,6 +45,7 @@ export class DemarcheDocumentApplicabiliteService {
 
   constructor(
     private readonly collectivitesService: CollectivitesService,
+    private readonly communesMembresRepository: CollectiviteCommunesMembresRepository,
     private readonly expressionService: PersonnalisationsExpressionService,
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly historiqueRepository: DemarcheHistoriqueRepository
@@ -51,8 +53,10 @@ export class DemarcheDocumentApplicabiliteService {
 
   /**
    * Charge le strict nécessaire à l'évaluation : l'identité de la collectivité,
-   * et ses réponses de personnalisation seulement si une expression en
-   * référence — les réponses effectives coûtent une union de trois tables
+   * complétée des tranches de population de ses communes membres — que
+   * l'identité partagée ne porte pas, seul le catalogue des pièces en a
+   * besoin —, et ses réponses de personnalisation seulement si une expression
+   * en référence — les réponses effectives coûtent une union de trois tables
    * jointe aux compétences BANATIC, à ne pas payer à chaque lecture de dossier.
    */
   async loadContext(
@@ -68,13 +72,25 @@ export class DemarcheDocumentApplicabiliteService {
     // que le parcours d'expressions qui déciderait de l'éviter. Le chargement
     // paresseux reste justifié pour les réponses, qui coûtent une union de trois
     // tables jointe aux compétences BANATIC.
-    const [identiteCollectivite, renouvellement] = await Promise.all([
-      this.collectivitesService.getCollectiviteAvecType(collectiviteId),
-      this.historiqueRepository.aDejaAbouti(
-        { collectiviteId, demarcheType, demarcheId },
-        tx
-      ),
-    ]);
+    const [identite, populationMaxCommuneMembre, renouvellement] =
+      await Promise.all([
+        this.collectivitesService.getCollectiviteAvecType(collectiviteId),
+        this.communesMembresRepository.getPopulationMaxCommuneMembre(
+          collectiviteId,
+          tx
+        ),
+        this.historiqueRepository.aDejaAbouti(
+          { collectiviteId, demarcheType, demarcheId },
+          tx
+        ),
+      ]);
+    const identiteCollectivite: IdentiteCollectivite = {
+      ...identite,
+      communesMembresPopulationTags:
+        this.collectivitesService.getPopulationTags(
+          populationMaxCommuneMembre ?? undefined
+        ),
+    };
 
     const reponses = this.needsReponses(expressions)
       ? await this.personnalisationsService.getPersonnalisationReponses(

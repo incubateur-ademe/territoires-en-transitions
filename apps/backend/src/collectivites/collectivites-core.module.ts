@@ -5,6 +5,7 @@ import { CollectivitePreferencesRepository } from './collectivite-preferences/co
 import { CollectivitePreferencesService } from './collectivite-preferences/collectivite-preferences.service';
 import { CollectiviteReferentielModeService } from './collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { CollectiviteCompetencesRepository } from './shared/collectivite-competences.repository';
+import { CollectiviteCommunesMembresRepository } from './shared/collectivite-communes-membres.repository';
 import { BibliothequeFichierRepository } from './documents/bibliotheque-fichier.repository';
 import { CollectiviteBucketRepository } from './documents/collectivite-bucket.repository';
 import { ListDocumentsByScopeRepository } from './documents/list-documents-by-scope/list-documents-by-scope.repository';
@@ -25,6 +26,7 @@ import CollectivitesService from './services/collectivites.service';
     BibliothequeFichierRepository,
     CollectiviteBucketRepository,
     CollectiviteCompetencesRepository,
+    CollectiviteCommunesMembresRepository,
     ListDocumentsByScopeRepository,
   ],
   exports: [
@@ -34,6 +36,7 @@ import CollectivitesService from './services/collectivites.service';
     BibliothequeFichierRepository,
     CollectiviteBucketRepository,
     CollectiviteCompetencesRepository,
+    CollectiviteCommunesMembresRepository,
     ListDocumentsByScopeRepository,
   ],
 })

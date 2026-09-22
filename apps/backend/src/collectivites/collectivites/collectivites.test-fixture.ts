@@ -32,6 +32,7 @@ import { justificationTable } from '../personnalisations/models/justification.ta
 import { reponseBinaireTable } from '../personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '../personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '../personnalisations/models/reponse-proportion.table';
+import { collectiviteRelationsTable } from '../shared/models/collectivite-relations.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 
 /**
@@ -225,6 +226,41 @@ export async function addTestCollectivite(
       }: ${getErrorMessage(err)}`
     );
   }
+}
+
+/**
+ * Rattache à un groupement des communes membres neuves, une par population
+ * donnée. La composition d'un EPCI se lit dans `collectivite_relations`, comme
+ * le fait la fiche collectivité ; les relations cascadent avec les communes.
+ */
+export async function addTestCommunesMembres(
+  { db }: DatabaseServiceInterface,
+  { parentId, populations }: { parentId: number; populations: number[] }
+): Promise<{ communes: Collectivite[]; cleanup: () => Promise<void> }> {
+  const communes: Awaited<ReturnType<typeof addTestCollectivite>>[] = [];
+  for (const population of populations) {
+    communes.push(
+      await addTestCollectivite(
+        { db },
+        { type: collectiviteTypeEnum.COMMUNE, population }
+      )
+    );
+  }
+
+  await db
+    .insert(collectiviteRelationsTable)
+    .values(
+      communes.map(({ collectivite }) => ({ id: collectivite.id, parentId }))
+    );
+
+  return {
+    communes: communes.map(({ collectivite }) => collectivite),
+    cleanup: async () => {
+      for (const { cleanup } of communes) {
+        await cleanup();
+      }
+    },
+  };
 }
 
 // ajoute une collectivité et un utilisateur rattaché à celle-ci
