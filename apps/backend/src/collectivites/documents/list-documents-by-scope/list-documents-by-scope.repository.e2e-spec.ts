@@ -550,3 +550,178 @@ describe('ListDocumentsByScopeRepository - scope par référentiel (SQL réel)',
     expect(result.data.files.map((file) => file.hash)).toEqual([eciHash]);
   });
 });
+
+const MESURE_PARENT = 'cae_1.1';
+const MESURE_ENFANT = 'cae_1.1.3';
+const MESURE_VOISINE = 'cae_1.2.1';
+const PREUVE_REGLEMENTAIRE_MESURE_ID = 'preuve-reglementaire-mesure';
+
+describe('ListDocumentsByScopeRepository - scope par mesure (SQL réel)', () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let repository: ListDocumentsByScopeRepository;
+  let collectivite: Collectivite;
+  let cleanupCollectivite: () => Promise<void>;
+
+  let parentHash: DocumentHash;
+  let enfantHash: DocumentHash;
+  let voisineHash: DocumentHash;
+  let reglementaireHash: DocumentHash;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    repository = app.get(ListDocumentsByScopeRepository);
+
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = fixture.collectivite;
+    const adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
+    cleanupCollectivite = fixture.cleanup;
+
+    parentHash = buildRandomDocumentHash();
+    enfantHash = buildRandomDocumentHash();
+    voisineHash = buildRandomDocumentHash();
+    reglementaireHash = buildRandomDocumentHash();
+
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectivite.id,
+    });
+
+    const fichiers = await db.db
+      .insert(bibliothequeFichierTable)
+      .values(
+        [
+          { hash: parentHash, filename: 'parent.pdf' },
+          { hash: enfantHash, filename: 'enfant.pdf' },
+          { hash: voisineHash, filename: 'voisine.pdf' },
+          { hash: reglementaireHash, filename: 'reglementaire.pdf' },
+        ].map(({ hash, filename }) => ({
+          collectiviteId: collectivite.id,
+          hash,
+          filename,
+          confidentiel: false,
+        }))
+      )
+      .returning();
+    const [fichierParent, fichierEnfant, fichierVoisine, fichierReglementaire] =
+      fichiers;
+
+    await db.db.insert(storageObjectTable).values(
+      fichiers.map((fichier) => ({
+        bucketId: PREUVES_ARCHIVES_BUCKET,
+        name: fichier.hash,
+        metadata: { size: 1024 },
+      }))
+    );
+
+    await db.db.insert(preuveComplementaireTable).values([
+      {
+        collectiviteId: collectivite.id,
+        actionId: MESURE_PARENT,
+        fichierId: fichierParent.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        actionId: MESURE_ENFANT,
+        fichierId: fichierEnfant.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        actionId: MESURE_VOISINE,
+        fichierId: fichierVoisine.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+
+    await db.db.insert(preuveReglementaireDefinitionTable).values({
+      id: PREUVE_REGLEMENTAIRE_MESURE_ID,
+      nom: 'Preuve réglementaire de la mesure',
+      description: '',
+    });
+
+    await db.db.insert(preuveActionTable).values({
+      preuveId: PREUVE_REGLEMENTAIRE_MESURE_ID,
+      actionId: MESURE_ENFANT,
+    });
+
+    await db.db.insert(preuveReglementaireTable).values({
+      collectiviteId: collectivite.id,
+      preuveId: PREUVE_REGLEMENTAIRE_MESURE_ID,
+      fichierId: fichierReglementaire.id,
+      modifiedBy: adminUserId,
+    });
+  });
+
+  afterAll(async () => {
+    await db.db
+      .delete(preuveReglementaireTable)
+      .where(eq(preuveReglementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(preuveActionTable)
+      .where(eq(preuveActionTable.preuveId, PREUVE_REGLEMENTAIRE_MESURE_ID));
+    await db.db
+      .delete(preuveReglementaireDefinitionTable)
+      .where(
+        eq(
+          preuveReglementaireDefinitionTable.id,
+          PREUVE_REGLEMENTAIRE_MESURE_ID
+        )
+      );
+    await db.db
+      .delete(preuveComplementaireTable)
+      .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          inArray(storageObjectTable.name, [
+            parentHash,
+            enfantHash,
+            voisineHash,
+            reglementaireHash,
+          ])
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
+    await cleanupCollectivite();
+    await app.close();
+  });
+
+  test('withSubActions=true : rassemble les deux familles de la mesure et de ses sous-mesures', async () => {
+    const result = await repository.listDocuments({
+      kind: 'mesure',
+      collectiviteId: collectivite.id,
+      actionId: MESURE_PARENT,
+      withSubActions: true,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash).sort()).toEqual(
+      [parentHash, enfantHash, reglementaireHash].sort()
+    );
+  });
+
+  test('withSubActions=false : ne rend que les documents portés par la mesure elle-même', async () => {
+    const result = await repository.listDocuments({
+      kind: 'mesure',
+      collectiviteId: collectivite.id,
+      actionId: MESURE_PARENT,
+      withSubActions: false,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([parentHash]);
+  });
+});

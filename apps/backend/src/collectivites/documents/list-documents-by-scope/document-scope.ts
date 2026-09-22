@@ -1,4 +1,4 @@
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ActionId, ReferentielId } from '@tet/domain/referentiels';
 
 type CollectiviteReader = {
   collectiviteId: number;
@@ -11,6 +11,7 @@ export type DocumentScope = CollectiviteReader &
     | { kind: 'reglementaire'; referentielId: ReferentielId }
     | { kind: 'labellisation'; demandeId: number }
     | { kind: 'audit'; auditId: number }
+    | { kind: 'mesure'; actionId: ActionId; withSubActions: boolean }
   );
 
 export type DocumentScopeKind = DocumentScope['kind'];
