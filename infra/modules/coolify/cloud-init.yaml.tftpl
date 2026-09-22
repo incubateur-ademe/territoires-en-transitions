@@ -56,8 +56,11 @@ runcmd:
   # Installer Docker (prérequis Coolify)
   - curl -fsSL https://get.docker.com | sh
   - usermod -aG docker tet-ops
-  # Installer Coolify
-  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+  # Installer Coolify à une version stable figée (auto-update désactivé ensuite).
+  # Monter de version sur une VM existante :
+  #   curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s ${coolify_version}
+  # puis réappliquer AUTOUPDATE=false (install.sh peut le réécrire).
+  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s ${coolify_version}
   # Désactiver l'auto-update Coolify : on maîtrise quand on monte de version
   # (un update régénère les clés SSH et casse la connexion au serveur).
   # Prend effet au prochain cycle du scheduler qui relit le .env.

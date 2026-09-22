@@ -39,6 +39,12 @@ variable "coolify_instance_type" {
   default     = "DEV1-L"
 }
 
+variable "coolify_version" {
+  description = "Version stable de Coolify à installer sur la VM preprod (sans préfixe v). Défaut = dernière stable connue ; surcharger dans terraform.tfvars si besoin."
+  type        = string
+  default     = "4.3.19"
+}
+
 variable "coolify_ssh_allowed_ips" {
   description = "Liste de CIDR autorisés à se connecter en SSH à la VM Coolify preprod. En pratique : IPs des devs qui pilotent la migration + runners CI si besoin."
   type        = list(string)
@@ -67,4 +73,10 @@ variable "pg_allowed_ips" {
   description = "Plages IP autorisées (CIDR) à se connecter au Postgres preprod. Pendant la phase initiale d'exploration, peut inclure l'IP du dev qui pilote. À durcir avant tout démarrage de migration réelle."
   type        = map(string)
   default     = {}
+}
+
+variable "coolify_backups_bucket_name" {
+  description = "Nom du bucket Scaleway Object Storage pour les backups Coolify (S3 storage). Doit être globalement unique."
+  type        = string
+  default     = "tet-preprod-coolify-backups"
 }

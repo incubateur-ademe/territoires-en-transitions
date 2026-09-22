@@ -9,7 +9,8 @@ Terraform qui décrit l'infrastructure cible TET sur Scaleway, dans le cadre de 
 infra/
 ├── modules/            Modules réutilisables (postgres, redis, vpc, coolify)
 ├── scripts/            Helpers d'env à sourcer (tf-env.sh, coolify-env.sh) + scripts d'API
-├── preprod/            Couche 1 — infra Scaleway (VM, RDB, Redis, secrets)  [state A]
+│                       (assign-host-key, ghcr-docker-login, configure-s3-storage)
+├── preprod/            Couche 1 — infra Scaleway (VM, RDB, Redis, bucket backups, secrets)  [state A]
 │   ├── backend.tf      State distant sur Scaleway Object Storage (S3)
 │   ├── providers.tf    Provider Scaleway
 │   ├── variables.tf    Variables d'entrée
@@ -20,7 +21,7 @@ infra/
     │                   Dépend de la couche 1 (Coolify up). State séparé.
     ├── backend.tf      Même bucket, clé coolify-preprod/
     ├── providers.tf    Providers coolify (API) + scaleway (lecture secret)
-    ├── main.tf         Clé host + assignation au serveur localhost
+    ├── main.tf         Clé host, assignation localhost, docker login GHCR, S3 storage
     └── terraform.tfvars.example
 ```
 
@@ -154,6 +155,18 @@ dans `authorized_keys` mais n'est plus utilisée — sans conflit.
 > **Auto-update Coolify** : désactivé par cloud-init (`AUTOUPDATE=false` dans
 > `/data/coolify/source/.env`) pour éviter qu'un update régénère les clés dans
 > notre dos. Les montées de version se font manuellement, quand on le décide.
+>
+> **Version figée** : `coolify_version` (défaut `4.3.19`, dernière stable CDN
+> `coolify.v4.version`). cloud-init ne rejoue pas (`lifecycle.ignore_changes` sur
+> `user_data`) — pour upgrader une VM déjà provisionnée :
+>
+> ```bash
+> ssh tet-ops@<coolify_public_ip>
+> sudo curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash -s 4.3.19
+> # Réaffirmer AUTOUPDATE=false si l'install l'a réécrit
+> sudo sed -i 's/^AUTOUPDATE=.*/AUTOUPDATE=false/' /data/coolify/source/.env \
+>   || echo 'AUTOUPDATE=false' | sudo tee -a /data/coolify/source/.env
+> ```
 
 ## Couche Coolify-as-code (`infra/coolify-preprod/`)
 
@@ -179,10 +192,60 @@ Les tokens API Coolify se créent **uniquement dans l'UI** :
    (nécessaire pour gérer serveurs + clés + projects + env vars).
 2. Le stocker dans Secret Manager :
    ```sh
-   scw secret create name=tet-preprod-coolify-api-token
-   scw secret version create secret-name=tet-preprod-coolify-api-token \
+   scw secret create name=tet-preprod-coolify-api-token-permissions-root
+   scw secret version create secret-name=tet-preprod-coolify-api-token-permissions-root \
      secret-path=/ data='<id>|<token>'
    ```
+
+### Bootstrap des credentials GHCR (une fois par environnement)
+
+Coolify tire les images privées `ghcr.io/incubateur-ademe/*` via Docker sur
+la VM (`root`). Il n'existe pas d'API Coolify pour ça : on automatise l'écriture
+de `/root/.docker/config.json` (auth inline) depuis Terraform
+(`scripts/coolify-ghcr-docker-login.sh`). Coolify monte ce fichier dans
+`coolify-helper` uniquement s'il existe pour `$HOME` du user SSH — un
+`docker pull` réussi sur l'hôte ne suffit pas.
+
+1. Créer un PAT GitHub (classic `read:packages`, ou fine-grained avec lecture
+   des packages de l'org) — idéalement un **machine user** dédié.
+2. Le stocker dans Secret Manager au format `username|token` :
+   ```sh
+   scw secret create name=tet-preprod-ghcr-pull
+   scw secret version create secret-name=tet-preprod-ghcr-pull \
+     secret-path=/ data='<github-username>|<pat>'
+   ```
+3. Renseigner `coolify_public_ip` dans `terraform.tfvars` (output
+   `coolify_public_ip` de `infra/preprod`).
+
+Après rotation du PAT : créer une nouvelle version du secret, puis incrémenter
+`ghcr_pull_credentials_revision` dans `terraform.tfvars` (ou
+`terraform apply -replace=terraform_data.ghcr_docker_login`).
+
+### Bootstrap des credentials Object Storage (S3 Coolify)
+
+Coolify enregistre un **S3 storage** (cible des backups DB / volumes) via
+l'API `POST/PATCH /s3-storages` + `POST …/validate`. Le provider
+`sierrajc/coolify` n'a pas de ressource native : on automatise avec
+`scripts/coolify-configure-s3-storage.sh` (même pattern que l'assignation
+de la clé host).
+
+1. Appliquer `infra/preprod` pour créer le bucket
+   (`coolify_backups_bucket_name`, défaut `tet-preprod-coolify-backups`).
+2. Créer une paire de clés IAM Scaleway avec droits Object Storage sur ce
+   bucket (idéalement une API key dédiée, pas les clés Terraform).
+3. Les stocker dans Secret Manager au format `access_key|secret_key` :
+   ```sh
+   scw secret create name=tet-preprod-coolify-s3-credentials
+   scw secret version create secret-name=tet-preprod-coolify-s3-credentials \
+     secret-path=/ data='SCWXXXX|<secret_key>'
+   ```
+4. Dans `infra/coolify-preprod/terraform.tfvars`, aligner si besoin
+   `s3_bucket` / `s3_endpoint` sur les outputs preprod
+   (`coolify_backups_bucket_name`, `coolify_backups_s3_endpoint`).
+
+Après rotation des clés : nouvelle version du secret, puis incrémenter
+`s3_credentials_revision` (ou
+`terraform apply -replace=terraform_data.s3_storage`).
 
 ### Workflow
 
@@ -197,10 +260,12 @@ terraform plan -out=tfplan
 terraform apply tfplan
 ```
 
-L'`apply` : (1) enregistre la clé host dans Coolify (`coolify_private_key`), puis
-(2) l'assigne au serveur localhost et déclenche la validation via l'API. La clé
-publique correspondante est déjà sur `root` (injectée par cloud-init côté
-`infra/preprod`), donc la validation passe.
+L'`apply` : (1) enregistre la clé host dans Coolify (`coolify_private_key`),
+(2) l'assigne au serveur localhost et déclenche la validation via l'API,
+(3) authentifie Docker sur `ghcr.io` en `root` sur la VM (pull des images
+privées), (4) crée/met à jour le S3 storage Scaleway et le valide. La clé
+publique host est déjà sur `root` (cloud-init côté `infra/preprod`), donc
+SSH + validation passent.
 
 ## State backend : locking natif
 

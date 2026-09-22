@@ -5,3 +5,17 @@ scaleway_project_id = "00000000-0000-0000-0000-000000000000"
 
 # URL de l'API Coolify preprod (le suffixe /api/v1 est requis).
 coolify_endpoint = "https://coolify.preprod.territoiresentransitions.fr/api/v1"
+
+# IP publique de la VM Coolify (infra/preprod : terraform output -raw coolify_public_ip).
+coolify_public_ip = "0.0.0.0"
+
+# Incrémenter après rotation du PAT GHCR pour rejouer docker login.
+# ghcr_pull_credentials_revision = "2"
+
+# --- S3 storage Scaleway (backups Coolify) ---
+# Bucket créé par infra/preprod (outputs coolify_backups_bucket_*).
+# s3_bucket   = "tet-preprod-coolify-backups"
+# s3_endpoint = "https://s3.fr-par.scw.cloud"
+# s3_region   = "fr-par"
+# Incrémenter après rotation des clés Object Storage.
+# s3_credentials_revision = "2"

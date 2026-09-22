@@ -117,3 +117,13 @@ output "coolify_host_ssh_key_secret_name" {
   description = "Nom du secret Scaleway Secret Manager contenant la clé privée SSH host de Coolify. Récupérer avec : scw secret version access-by-path secret-path=/ secret-name=<nom> revision=latest, puis coller dans Coolify > Keys & Tokens."
   value       = module.coolify.host_ssh_key_secret_name
 }
+
+output "coolify_backups_bucket_name" {
+  description = "Nom du bucket Object Storage pour les backups Coolify. À passer en s3_bucket dans infra/coolify-preprod."
+  value       = scaleway_object_bucket.coolify_backups.name
+}
+
+output "coolify_backups_s3_endpoint" {
+  description = "Endpoint S3 régional (path-style) pour Coolify — sans le nom du bucket. Ex. https://s3.fr-par.scw.cloud."
+  value       = "https://s3.${var.scaleway_region}.scw.cloud"
+}

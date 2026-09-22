@@ -81,7 +81,27 @@ module "coolify" {
   environment         = "preprod"
   zone                = var.scaleway_zone
   instance_type       = var.coolify_instance_type
+  coolify_version     = var.coolify_version
   private_network_id  = module.vpc.private_network_id
   ssh_allowed_ips     = var.coolify_ssh_allowed_ips
   ssh_authorized_keys = var.coolify_ssh_authorized_keys
+}
+
+# Bucket Object Storage cible des backups Coolify (S3-compatible).
+# Enregistré dans Coolify via infra/coolify-preprod (API /s3-storages).
+# Pas d'Object Lock ici : Coolify écrit/supprime librement selon la rétention
+# configurée sur chaque backup (contrairement au bucket de state Terraform).
+resource "scaleway_object_bucket" "coolify_backups" {
+  name   = var.coolify_backups_bucket_name
+  region = var.scaleway_region
+
+  versioning {
+    enabled = true
+  }
+
+  tags = {
+    environment = "preprod"
+    purpose     = "coolify-backups"
+    managed_by  = "terraform"
+  }
 }
