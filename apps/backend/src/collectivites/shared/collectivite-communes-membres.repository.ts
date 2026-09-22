@@ -3,7 +3,8 @@ import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/mo
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { eq, max } from 'drizzle-orm';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import { and, eq, max } from 'drizzle-orm';
 
 /**
  * Lecture de la composition communale d'un groupement, telle que la fiche
@@ -12,10 +13,15 @@ import { eq, max } from 'drizzle-orm';
  * commune.
  *
  * Cette table ne retient que les communes présentes dans `collectivite`, donc
- * celles de 3 000 habitants et plus. Les seuils légaux qui s'appuient sur « au
- * moins une commune de plus de N habitants » sont tous bien au-dessus : la
- * source suffit, et elle épargne un rapprochement par SIREN avec les tables
- * d'import BANATIC.
+ * celles de 3 000 habitants et plus — Paris et Lyon exceptées, stockées par
+ * arrondissement, si bien que la plus grande commune connue de leur métropole
+ * n'est pas la ville-centre. Les seuils légaux qui s'appuient sur « au moins
+ * une commune de plus de N habitants » sont bien au-dessus de 3 000 et franchis
+ * par d'autres communes de ces deux métropoles : la source suffit, et elle
+ * épargne un rapprochement par SIREN avec les tables d'import BANATIC.
+ *
+ * Elle porte aussi les EPCI membres d'un syndicat : seuls les membres de type
+ * commune sont lus.
  */
 @Injectable()
 export class CollectiviteCommunesMembresRepository {
@@ -37,7 +43,12 @@ export class CollectiviteCommunesMembresRepository {
         collectiviteTable,
         eq(collectiviteTable.id, collectiviteRelationsTable.id)
       )
-      .where(eq(collectiviteRelationsTable.parentId, collectiviteId));
+      .where(
+        and(
+          eq(collectiviteRelationsTable.parentId, collectiviteId),
+          eq(collectiviteTable.type, collectiviteTypeEnum.COMMUNE)
+        )
+      );
 
     return row?.population ?? null;
   }

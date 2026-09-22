@@ -1378,12 +1378,33 @@ describe('Documents d’une démarche PCAET', () => {
             population: 100000,
             natureInsee: 'CA',
           },
+          communesMembres: [30000],
         }
       );
 
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
       expect(ids).not.toContain('pcaet_plan_qualite_air');
+    });
+
+    // Les établissements publics territoriaux du Grand Paris n'ont pas de
+    // composition importée : sans commune membre connue, un EPCI à fiscalité
+    // propre garde la pièce plutôt que d'en être dispensé en silence.
+    it('un EPCI à fiscalité propre dont la composition est inconnue garde le plan chaleur et froid', async () => {
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 300000,
+            natureInsee: 'EPT',
+          },
+        }
+      );
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).toContain('pcaet_plan_chaleur_froid');
     });
 
     it('un syndicat n’est assujetti à aucun des deux plans, quelle que soit la taille de ses membres', async () => {

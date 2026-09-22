@@ -58,6 +58,15 @@ test.describe('Démarche PCAET - pièces attendues des seules collectivités ass
       collectiviteArgs: { population: 10000, natureInsee: 'CA' },
       userArgs: { autoLogin: true },
     });
+    // Une composition connue, sans grande commune : un EPCI sans aucune
+    // commune membre garderait le plan chaleur et froid par prudence.
+    const communes = await addTestCommunesMembres(databaseService, {
+      parentId: collectivite.data.id,
+      populations: [6000],
+    });
+    collectivites.registerCleanupFunc({
+      cleanupByCollectiviteId: async () => communes.cleanup(),
+    });
     const demarchePcaetPom = new DemarchePcaetPom(page);
 
     await demarchePcaetPom.gotoCreatePage(collectivite.data.id);

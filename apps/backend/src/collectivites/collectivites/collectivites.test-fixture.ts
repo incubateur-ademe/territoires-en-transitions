@@ -229,34 +229,37 @@ export async function addTestCollectivite(
 }
 
 /**
- * Rattache à un groupement des communes membres neuves, une par population
- * donnée. La composition d'un EPCI se lit dans `collectivite_relations`, comme
- * le fait la fiche collectivité ; les relations cascadent avec les communes.
+ * Rattache à un groupement des membres neufs, un par population donnée — des
+ * communes par défaut, ou des EPCI pour composer un syndicat. La composition
+ * d'un groupement se lit dans `collectivite_relations`, comme le fait la fiche
+ * collectivité ; les relations cascadent avec les membres.
  */
 export async function addTestCommunesMembres(
   { db }: DatabaseServiceInterface,
-  { parentId, populations }: { parentId: number; populations: number[] }
+  {
+    parentId,
+    populations,
+    type = collectiviteTypeEnum.COMMUNE,
+  }: { parentId: number; populations: number[]; type?: CollectiviteType }
 ): Promise<{ communes: Collectivite[]; cleanup: () => Promise<void> }> {
-  const communes: Awaited<ReturnType<typeof addTestCollectivite>>[] = [];
-  for (const population of populations) {
-    communes.push(
-      await addTestCollectivite(
-        { db },
-        { type: collectiviteTypeEnum.COMMUNE, population }
-      )
-    );
+  const membres = await Promise.all(
+    populations.map((population) =>
+      addTestCollectivite({ db }, { type, population })
+    )
+  );
+
+  if (membres.length > 0) {
+    await db
+      .insert(collectiviteRelationsTable)
+      .values(
+        membres.map(({ collectivite }) => ({ id: collectivite.id, parentId }))
+      );
   }
 
-  await db
-    .insert(collectiviteRelationsTable)
-    .values(
-      communes.map(({ collectivite }) => ({ id: collectivite.id, parentId }))
-    );
-
   return {
-    communes: communes.map(({ collectivite }) => collectivite),
+    communes: membres.map(({ collectivite }) => collectivite),
     cleanup: async () => {
-      for (const { cleanup } of communes) {
+      for (const { cleanup } of membres) {
         await cleanup();
       }
     },

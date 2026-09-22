@@ -73,9 +73,18 @@ const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
   dans_aire_urbaine: (identite, primary) =>
     identite.dansAireUrbaine === (String(primary).toLowerCase() === 'true'),
   commune_membre: (identite, primary) => {
+    // Les tranches sont celles de la commune la plus peuplée : le champ répond
+    // à « au moins une commune de plus de N », et « moins de N » y lirait à
+    // tort « aucune commune de plus de N ».
+    if (!String(primary).startsWith('plus_de_')) {
+      throw new Error(
+        `identite(commune_membre, ${primary}) : seuls les seuils plus_de_* ont un sens sur la commune la plus peuplée`
+      );
+    }
     // Lever plutôt que répondre « non » : une identité servie sans ses communes
-    // membres (score, indicateurs) masquerait en silence une pièce requise,
-    // alors que l'applicabilité d'une pièce garde celle dont la condition lève.
+    // membres (score, indicateurs, EPCI à composition inconnue) masquerait en
+    // silence une pièce requise, alors que l'applicabilité d'une pièce garde
+    // celle dont la condition lève.
     if (identite.communesMembresPopulationTags === undefined) {
       throw new Error(
         `identite(commune_membre, ${primary}) : les communes membres de la collectivité n'ont pas été chargées`

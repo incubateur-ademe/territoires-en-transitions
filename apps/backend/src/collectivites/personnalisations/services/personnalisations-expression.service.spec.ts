@@ -930,6 +930,22 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       ).toBe(false);
     });
 
+    // Les tranches sont celles de la commune la plus peuplée : « moins de N »
+    // y voudrait dire « aucune commune de plus de N », ce que le champ ne
+    // promet pas.
+    it('ne répond qu’aux seuils « plus de », et lève sur « moins de »', () => {
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, moins_de_100000)',
+          {
+            identiteCollectivite: identiteAvecCommunes([
+              CollectivitePopulationTypeEnum.MOINS_DE_100000,
+            ]),
+          }
+        )
+      ).toThrow('plus_de_');
+    });
+
     // Une identité servie sans ses communes membres (personnalisation d'un
     // référentiel, calcul de score) ne doit pas répondre « non » en silence.
     it('lève quand les communes membres n’ont pas été chargées', () => {
