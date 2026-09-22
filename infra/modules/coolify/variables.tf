@@ -46,3 +46,9 @@ variable "tags" {
   type        = list(string)
   default     = []
 }
+
+variable "coolify_version" {
+  description = "Version stable de Coolify à installer (sans préfixe v). Source de vérité : https://cdn.coollabs.io/coolify/versions.json (clé coolify.v4.version). Les montées de version sur une VM existante se font manuellement via install.sh (cloud-init ne rejoue pas)."
+  type        = string
+  default     = "4.3.19"
+}

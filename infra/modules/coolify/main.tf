@@ -111,6 +111,7 @@ resource "scaleway_instance_server" "coolify" {
     cloud-init = templatefile("${path.module}/cloud-init.yaml.tftpl", {
       ssh_authorized_keys         = var.ssh_authorized_keys
       coolify_host_authorized_key = trimspace(tls_private_key.coolify_host.public_key_openssh)
+      coolify_version             = var.coolify_version
     })
   }
 

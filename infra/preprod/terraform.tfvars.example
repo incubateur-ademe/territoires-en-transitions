@@ -45,6 +45,9 @@ redis_allowed_ips = {
 # Type d'instance VM. DEV1-L = 4 vCPU / 8 GB RAM — suffisant pour 9 conteneurs preprod.
 coolify_instance_type = "DEV1-L"
 
+# Version stable Coolify (sans préfixe v). Dernière stable CDN : coolify.v4.version.
+# coolify_version = "4.3.19"
+
 # IPs autorisées en SSH. Restreindre aux IPs des opérateurs qui pilotent la migration.
 coolify_ssh_allowed_ips = [
   # "203.0.113.42/32",  # Dev laptop fred
@@ -56,3 +59,7 @@ coolify_ssh_allowed_ips = [
 coolify_ssh_authorized_keys = [
   # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... fred@example.com",
 ]
+
+# Bucket Object Storage pour les backups Coolify (enregistré ensuite via
+# infra/coolify-preprod). Nom globalement unique sur Scaleway.
+# coolify_backups_bucket_name = "tet-preprod-coolify-backups"
