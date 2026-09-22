@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import { Button, Field, Input, Modal } from '@tet/ui';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
@@ -41,7 +41,7 @@ export const AddRapportVisite = () => {
         return !date ? (
           <SelectDate setDate={setDate} />
         ) : (
-          <AddPreuveModal onClose={close} handlers={handlers} />
+          <AddDocumentTabs onClose={close} handlers={handlers} />
         );
       }}
     >

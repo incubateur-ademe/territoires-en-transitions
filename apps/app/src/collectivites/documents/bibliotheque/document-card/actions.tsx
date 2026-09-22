@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import { Modal, VisibleWhen } from '@tet/ui';
 import { ElementType, JSX, ReactNode } from 'react';
 import { DeleteConfirmationAlert } from '../delete-confirmation.alert';
@@ -71,7 +71,7 @@ export const Replace = ({
         }}
         title={appLabels.remplacerLeFichier}
         render={({ close }) => (
-          <AddPreuveModal
+          <AddDocumentTabs
             onClose={close}
             handlers={{ addFileFromLib: onReplace }}
           />

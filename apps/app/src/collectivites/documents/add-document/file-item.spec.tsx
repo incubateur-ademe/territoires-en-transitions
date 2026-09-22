@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { toDocumentHash } from '@tet/domain/collectivites';
-import { FileItem } from './FileItem';
+import { FileItem } from './file-item';
 import { UploadStatusCode } from './types';
 
 const HASH = toDocumentHash('a'.repeat(64));

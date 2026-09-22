@@ -3,7 +3,7 @@
 import { DownloadDocumentsButton } from '@/app/referentiels/actions/download-documents.button';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { useActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
+import { useActionPreuvesCount } from '@/app/collectivites/documents/use-action-preuves-count';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CellContext } from '@tanstack/react-table';

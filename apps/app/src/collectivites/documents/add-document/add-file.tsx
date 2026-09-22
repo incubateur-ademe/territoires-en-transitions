@@ -5,7 +5,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { useUpdateBibliothequeFichier } from '../Bibliotheque/use-edit-preuve';
+import { useUpdateBibliothequeFichier } from '../bibliotheque/use-edit-preuve';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,
@@ -13,10 +13,10 @@ import {
 } from '../upload/constants';
 import {
   canChooseConfidentiel,
-  CheckboxConfidentiel,
-} from './CheckboxConfidentiel';
-import { FileUploadItem } from './FileItem';
-import { FileItemsList } from './FileItemsList';
+  ConfidentielCheckbox,
+} from './confidentiel.checkbox';
+import { FileUploadItem } from './file-item';
+import { FileItemsList } from './file-items-list';
 import {
   AddedDuplicatedDocument,
   DocType,
@@ -223,7 +223,7 @@ export const AddFile = (props: AddFileProps) => {
           onDropFiles={(files) => onDropFiles(files)}
         />
       </Field>
-      <CheckboxConfidentiel
+      <ConfidentielCheckbox
         docType={docType}
         confidentiel={confidentiel}
         setConfidentiel={setConfidentiel}

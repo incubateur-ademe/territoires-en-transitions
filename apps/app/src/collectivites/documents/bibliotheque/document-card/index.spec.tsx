@@ -43,8 +43,8 @@ vi.mock('../use-edit-preuve', () => ({
 
 const FICHIER_CHOISI_ID = 42;
 
-vi.mock('@/app/referentiels/preuves/AddPreuveModal', () => ({
-  AddPreuveModal: ({
+vi.mock('@/app/collectivites/documents/add-document/add-document.tabs', () => ({
+  AddDocumentTabs: ({
     handlers,
   }: {
     handlers: { addFileFromLib: (fichierId: number) => void };

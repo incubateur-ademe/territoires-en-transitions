@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { action } from 'storybook/actions';
 import type { FileConstraints } from '../upload/constants';
-import { AddFile } from './AddFile';
-import type { FileUploadItem } from './FileItem';
-import { createMockFile } from './FileItem.stories';
+import { AddFile } from './add-file';
+import type { FileUploadItem } from './file-item';
+import { createMockFile } from './file-item.stories';
 import { UploadErrorCode, UploadStatusCode } from './types';
 
 const MO = 1024 * 1024;

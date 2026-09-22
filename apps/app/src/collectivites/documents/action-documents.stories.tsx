@@ -7,11 +7,11 @@ import {
   attenduSansDescription,
   preuveComplementaireFichier,
   preuveComplementaireLien,
-} from './Bibliotheque/documents.fixture';
-import { PreuvesAction } from './PreuvesAction';
+} from './bibliotheque/documents.fixture';
+import { ActionDocuments } from './action-documents.view';
 
 export default {
-  component: PreuvesAction,
+  component: ActionDocuments,
 } as Meta;
 
 export const SansPreuvesComplementaires = {

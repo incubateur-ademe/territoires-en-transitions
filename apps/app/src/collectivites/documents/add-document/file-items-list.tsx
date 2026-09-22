@@ -1,7 +1,7 @@
 import { VisibleWhen } from '@tet/ui';
 import { groupBy } from 'es-toolkit';
 import { JSX } from 'react';
-import { FileItem, FileUploadItem } from './FileItem';
+import { FileItem, FileUploadItem } from './file-item';
 import { UploadStatusCode } from './types';
 
 const ItemGroup = ({

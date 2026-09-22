@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { AddedDuplicatedDocument } from './AddPreuveModal/types';
+import type { AddedDuplicatedDocument } from './add-document/types';
 import type { PreuveType } from '@tet/domain/collectivites';
 
 export type DuplicatedDocumentInformation = {

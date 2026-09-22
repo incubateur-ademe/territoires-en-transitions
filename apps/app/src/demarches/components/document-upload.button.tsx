@@ -1,11 +1,11 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import {
   MAX_FILE_SIZE_MB,
   type FileConstraints,
-} from '@/app/referentiels/preuves/upload/constants';
+} from '@/app/collectivites/documents/upload/constants';
 import type { DemarcheType } from '@tet/domain/demarches';
 import { Button, MenuAction, Modal, PillButton, SplitButton } from '@tet/ui';
 import { JSX, ReactElement, useState } from 'react';
@@ -54,7 +54,7 @@ const DemarcheDocumentUploadModal = ({
     })}
     openState={openState}
     render={({ close }) => (
-      <AddPreuveModal
+      <AddDocumentTabs
         docType="demarche_pcaet"
         fileConstraints={fileConstraints}
         onClose={close}

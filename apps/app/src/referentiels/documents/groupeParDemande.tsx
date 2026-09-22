@@ -1,4 +1,4 @@
-import { DocumentAuditOuLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentAuditOuLabellisation } from '@/app/collectivites/documents/bibliotheque/types';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 /** Groupe les preuves du référentiel courant par id de demande ou d'audit. */

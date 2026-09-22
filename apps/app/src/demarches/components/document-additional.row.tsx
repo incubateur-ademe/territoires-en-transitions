@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { FileConstraints } from '@/app/referentiels/preuves/upload/constants';
+import { FileConstraints } from '@/app/collectivites/documents/upload/constants';
 import {
   DEMARCHE_DOCUMENT_ADDITIONAL_TITRE_MAX,
   type DemarcheDocumentEtape,

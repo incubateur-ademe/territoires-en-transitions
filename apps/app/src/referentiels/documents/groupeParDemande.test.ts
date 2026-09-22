@@ -1,5 +1,5 @@
 import { toDocumentHash } from '@tet/domain/collectivites';
-import { DocumentAuditOuLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { DocumentAuditOuLabellisation } from '@/app/collectivites/documents/bibliotheque/types';
 import { describe, expect, test } from 'vitest';
 import { addInfoToEntry } from './PreuveLabellisation';
 import { groupeParDemande } from './groupeParDemande';

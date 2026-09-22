@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getDocumentFichier } from './to-document-collectivite.utils';
 import { useTRPC, useTRPCClient } from '@tet/api';
-import { invalidateQueries } from '../useAddPreuves';
+import { invalidateQueries } from '../use-add-preuves';
 import { Lien } from '@tet/domain/collectivites';
 import { EditHandlers, DocumentRattache } from './types';
 import { useEditFilenameState, useEditState } from './use-edit-state';

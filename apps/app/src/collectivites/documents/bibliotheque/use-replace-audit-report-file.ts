@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { invalidateQueries } from '../useAddPreuves';
+import { invalidateQueries } from '../use-add-preuves';
 
 export const useReplaceAuditReportFile = (collectiviteId: number) => {
   const queryClient = useQueryClient();

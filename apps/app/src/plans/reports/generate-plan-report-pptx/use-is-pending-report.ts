@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { useDownloadDocument } from '@/app/referentiels/preuves/data/use-download-document';
+import { useDownloadDocument } from '@/app/collectivites/documents/data/use-download-document';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';

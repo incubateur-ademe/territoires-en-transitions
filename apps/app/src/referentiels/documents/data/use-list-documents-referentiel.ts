@@ -5,7 +5,7 @@ import {
   DocumentAudit,
   DocumentLabellisation,
   DocumentRapport,
-} from '../../preuves/Bibliotheque/types';
+} from '@/app/collectivites/documents/bibliotheque/types';
 
 type ReferentielDocuments = {
   labellisation: DocumentLabellisation[];

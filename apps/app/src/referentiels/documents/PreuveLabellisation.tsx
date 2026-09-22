@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
-import { DocumentCard } from '@/app/referentiels/preuves/Bibliotheque/document-card';
-import { useReplaceAuditReportFile } from '@/app/referentiels/preuves/Bibliotheque/use-replace-audit-report-file';
+import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
+import { useReplaceAuditReportFile } from '@/app/collectivites/documents/bibliotheque/use-replace-audit-report-file';
 import {
   DocumentAudit,
   DocumentAuditOuLabellisation,
-} from '@/app/referentiels/preuves/Bibliotheque/types';
+} from '@/app/collectivites/documents/bibliotheque/types';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {

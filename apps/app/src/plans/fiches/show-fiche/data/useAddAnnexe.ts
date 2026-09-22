@@ -1,6 +1,6 @@
-import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { AddLinkHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
-import { useAddPreuveAnnexe } from '@/app/referentiels/preuves/useAddPreuves';
+import { AddFileFromLibHandler } from '@/app/collectivites/documents/add-document/add-file';
+import { AddLinkHandler } from '@/app/collectivites/documents/add-document/add-link';
+import { useAddPreuveAnnexe } from '@/app/collectivites/documents/use-add-preuves';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
 /** Renvoie les gestionnaires d'événements du dialogue d'ajout de

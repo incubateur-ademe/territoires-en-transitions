@@ -1,4 +1,4 @@
-import { MissingFileBadge } from '@/app/referentiels/preuves/Bibliotheque/missing-file.badge';
+import { MissingFileBadge } from '@/app/collectivites/documents/bibliotheque/missing-file.badge';
 import { Icon } from '@tet/ui';
 import { ReactElement, ReactNode } from 'react';
 

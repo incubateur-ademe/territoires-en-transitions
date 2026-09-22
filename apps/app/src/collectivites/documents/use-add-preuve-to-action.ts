@@ -1,10 +1,10 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { AddFileFromLibHandler } from './AddPreuveModal/AddFile';
-import { AddLinkHandler } from './AddPreuveModal/AddLink';
+import { AddFileFromLibHandler } from './add-document/add-file';
+import { AddLinkHandler } from './add-document/add-link';
 import {
   useAddPreuveComplementaire,
   useAddPreuveReglementaire,
-} from './useAddPreuves';
+} from './use-add-preuves';
 
 type AddPreuveHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */

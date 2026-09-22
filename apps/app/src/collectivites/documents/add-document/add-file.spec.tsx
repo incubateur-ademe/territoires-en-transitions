@@ -2,8 +2,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { AddFile } from './AddFile';
-import { FileUploadItem } from './FileItem';
+import { AddFile } from './add-file';
+import { FileUploadItem } from './file-item';
 import { UploadStatusCode } from './types';
 
 const HASH = toDocumentHash('a'.repeat(64));
@@ -21,7 +21,7 @@ vi.mock('@tet/api/collectivites', () => ({
   useCollectiviteId: () => 1,
 }));
 
-vi.mock('../Bibliotheque/use-edit-preuve', () => ({
+vi.mock('../bibliotheque/use-edit-preuve', () => ({
   useUpdateBibliothequeFichier: () => ({ mutate: vi.fn() }),
 }));
 

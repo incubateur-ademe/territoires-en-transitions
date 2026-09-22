@@ -1,17 +1,17 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveComplementaire } from '@/app/referentiels/preuves/AddPreuveComplementaire';
+import { AddPreuveComplementaireModal } from '@/app/collectivites/documents/add-preuve-complementaire.modal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Alert, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
-import { ReferentielDocumentCard } from './Bibliotheque/referentiel-document.card';
-import { PreuveReglementaire } from './Bibliotheque/preuve-reglementaire';
-import { DocumentAttendu, DocumentComplementaire } from './Bibliotheque/types';
+import { ReferentielDocumentCard } from './bibliotheque/referentiel-document.card';
+import { PreuveReglementaire } from './bibliotheque/preuve-reglementaire';
+import { DocumentAttendu, DocumentComplementaire } from './bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
-import { ActionIdentity } from '../actions/use-list-actions';
+import { ActionIdentity } from '@/app/referentiels/actions/use-list-actions';
 
-export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
+export interface ActionDocumentsProps extends ComponentPropsWithoutRef<'div'> {
   action: ActionIdentity;
   withSubActions?: boolean;
   showWarning?: boolean;
@@ -21,7 +21,7 @@ export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
   displayInPanel?: boolean;
 }
 
-export const PreuvesAction = (props: PreuvesActionProps) => {
+export const ActionDocuments = (props: ActionDocumentsProps) => {
   const {
     action,
     withSubActions,
@@ -95,7 +95,7 @@ export const PreuvesAction = (props: PreuvesActionProps) => {
               {appLabels.documentsComplementaires}
             </span>
 
-            <AddPreuveComplementaire
+            <AddPreuveComplementaireModal
               action={action}
               addToSubAction={withSubActions}
               onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
