@@ -53,7 +53,9 @@ export class SetScoreFromIndicateurService {
       onWillDelete: (event) =>
         this.getActionsUsingIndicateurValeurs([event.indicateurValeurId]),
       onDeleted: (actions, event) =>
-        this.refreshActionsAvancementAndSnapshots(actions, event.user),
+        this.refreshActionsAvancementAndSnapshots(actions, event.user, {
+          computeHasValeurSelectionnee: true,
+        }),
     };
     this.indicateurValeursService.registerValeurDeletionListener(
       deletionListener
@@ -79,6 +81,51 @@ export class SetScoreFromIndicateurService {
     return actionsResult.data;
   }
 
+  /**
+   * Indique, pour chaque action, si au moins une valeur d'indicateur y est
+   * encore sélectionnée (au sens du calcul de score, valeurs nulles
+   * exclues) — utilisé après une suppression en cascade, où la sélection
+   * n'est plus connue à l'avance et doit être relue en base.
+   *
+   * Ces actions proviennent toujours d'un seul `indicateurValeurId` (voir
+   * `deleteValeurIndicateur`), donc d'une seule collectivité : une valeur
+   * d'indicateur n'est jamais utilisée par une autre collectivité que la
+   * sienne (voir `validateValeursUtiliseesInput`).
+   */
+  private async getHasValeurSelectionneeParActionId(
+    actions: { collectiviteId: number; actionId: string }[]
+  ): Promise<Map<string, boolean>> {
+    const hasValeurSelectionneeParActionId = new Map<string, boolean>();
+    if (!actions.length) {
+      return hasValeurSelectionneeParActionId;
+    }
+
+    const { collectiviteId } = actions[0];
+    const actionIds = actions.map((a) => a.actionId);
+
+    const valeursResult =
+      await this.scoreIndicatifService.getValeursUtiliseesParActionId({
+        collectiviteId,
+        actionIds,
+      });
+    if (!valeursResult.success) {
+      this.logger.error(
+        `Impossible de retrouver les valeurs sélectionnées pour la collectivité ${collectiviteId}`,
+        valeursResult.cause?.stack
+      );
+      return hasValeurSelectionneeParActionId;
+    }
+
+    for (const actionId of actionIds) {
+      hasValeurSelectionneeParActionId.set(
+        actionId,
+        (valeursResult.data[actionId]?.length ?? 0) > 0
+      );
+    }
+
+    return hasValeurSelectionneeParActionId;
+  }
+
   private async onIndicateurValeurUpserted(
     event: IndicateurValeurUpsertedEvent
   ): Promise<void> {
@@ -94,11 +141,23 @@ export class SetScoreFromIndicateurService {
   /**
    * Recalcule et écrit le statut d'avancement dérivé de chaque action
    * fournie, puis recalcule le snapshot de chaque référentiel impacté.
+   *
+   * `computeHasValeurSelectionnee` doit être activé après une suppression en
+   * cascade (onDeleted) : contrairement à un upsert, qui laisse la sélection
+   * intacte, la suppression peut avoir vidé la sélection d'une action et il
+   * faut alors le vérifier en base pour réinitialiser correctement son statut.
    */
   private async refreshActionsAvancementAndSnapshots(
     actions: { collectiviteId: number; actionId: string }[],
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    {
+      computeHasValeurSelectionnee = false,
+    }: { computeHasValeurSelectionnee?: boolean } = {}
   ): Promise<void> {
+    const hasValeurSelectionneeParActionId = computeHasValeurSelectionnee
+      ? await this.getHasValeurSelectionneeParActionId(actions)
+      : null;
+
     // collectiviteId + referentielId impactés, dédupliqués : une même valeur
     // d'indicateur peut être utilisée par plusieurs actions d'un référentiel.
     const impactedReferentiels = new Map<
@@ -121,7 +180,11 @@ export class SetScoreFromIndicateurService {
       const refreshResult = await this.refreshAvancementForAction(
         collectiviteId,
         actionId,
-        { user }
+        {
+          user,
+          hasValeurSelectionnee:
+            hasValeurSelectionneeParActionId?.get(actionId) ?? true,
+        }
       );
       if (!refreshResult.success) {
         this.logger.error(
