@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectiviteAndUser,
+  addTestCommunesMembres,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -98,9 +101,12 @@ export async function createDemarche(
   {
     role = CollectiviteRole.EDITION,
     collectivite: collectiviteArgs,
+    communesMembres,
   }: {
     role?: CollectiviteRole;
     collectivite?: Partial<Collectivite>;
+    /** Population de chaque commune membre à rattacher au groupement. */
+    communesMembres?: number[];
   } = {}
 ): Promise<{
   collectivite: Collectivite;
@@ -113,6 +119,12 @@ export async function createDemarche(
     user: { role },
     collectivite: collectiviteArgs,
   });
+  if (communesMembres?.length) {
+    await addTestCommunesMembres(db, {
+      parentId: fixture.collectivite.id,
+      populations: communesMembres,
+    });
+  }
   const user = getAuthUserFromUserCredentials(fixture.user);
   const caller = router.createCaller({ user });
   const demarche = await caller.demarches.pcaet.create({
