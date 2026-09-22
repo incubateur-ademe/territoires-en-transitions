@@ -253,7 +253,7 @@ export const demarchesLabels = {
     "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
   demarcheAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarcheAvanceEtapeTransmisDescription:
-    'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
+    'Consultations auprès du conseil régional et du préfet de région.',
   demarcheAvanceEtapeTransmisInfo:
     'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
   demarcheAvanceEtapeFinalisationLabel: 'Finalisation de la démarche de dépôt',
