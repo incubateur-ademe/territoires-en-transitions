@@ -11,6 +11,7 @@ describe('LevierSummaryCard', () => {
           nom: 'Biogaz',
           secteur: 'Branche énergie',
           ficheCount: 0,
+          categories: [],
         }}
       />
     );
@@ -29,6 +30,7 @@ describe('LevierSummaryCard', () => {
           nom: 'Covoiturage',
           secteur: 'Transports',
           ficheCount: 0,
+          categories: [],
           pertinence: 'a_discuter',
         }}
       />
@@ -47,6 +49,7 @@ describe('LevierSummaryCard', () => {
           nom: 'Covoiturage',
           secteur: 'Transports',
           ficheCount: 1,
+          categories: [],
         }}
       />
     );
@@ -62,6 +65,7 @@ describe('LevierSummaryCard', () => {
           nom: 'Covoiturage',
           secteur: 'Transports',
           ficheCount: 2,
+          categories: [],
         }}
       />
     );
