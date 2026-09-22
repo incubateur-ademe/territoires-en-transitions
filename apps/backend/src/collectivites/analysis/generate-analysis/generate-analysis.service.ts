@@ -58,7 +58,7 @@ export class GenerateAnalysisService {
     if (!scoreResult.success) {
       return scoreResult;
     }
-    const { leviers, tokens } = scoreResult.data;
+    const { leviers } = scoreResult.data;
 
     const persistResult = await this.transactionManager.executeSingle<
       undefined,
@@ -76,7 +76,6 @@ export class GenerateAnalysisService {
       return this.persistMobilisationService.persist({
         job,
         leviers,
-        tokens,
         tx,
       });
     });

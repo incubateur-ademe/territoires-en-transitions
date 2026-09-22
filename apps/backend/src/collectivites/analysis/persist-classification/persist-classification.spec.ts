@@ -75,7 +75,6 @@ const toDependencies = ({
   const ficheActionVoletGesRepository = {
     saveVolets: vi.fn().mockResolvedValue(saveOutcome),
   };
-
   const service = new PersistClassificationService(
     jobRepository as never,
     ficheActionVoletGesRepository as never
@@ -89,12 +88,6 @@ describe('toClassificationOutcome', () => {
     expect(toClassificationOutcome(classifications).volets).toEqual([
       { ficheId: 1, levierId: 'covoiturage', categorie: 'amenagement' },
     ]);
-  });
-
-  it('additionne les jetons de toutes les fiches classees', () => {
-    expect(toClassificationOutcome(classifications).tokens.promptTokens).toBe(
-      30
-    );
   });
 
   it('rend les fiches sources pour que la mobilisation nourrisse son prompt', () => {

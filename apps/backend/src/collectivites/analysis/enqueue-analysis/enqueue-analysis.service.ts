@@ -26,7 +26,7 @@ import {
 } from '../classify-batch/classify-batch.queue';
 import {
   FICHES_TO_CLASSIFY_FILTERS,
-  toAnalysisDeadline,
+  toClassificationDeadlineFrom,
 } from '../models/analysis-job';
 import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
 import { EnqueueAnalysisInput } from './enqueue-analysis.input';
@@ -85,7 +85,12 @@ export class EnqueueAnalysisService {
       return failure(AnalysisJobErrorEnum.UPDATE_JOB_ERROR);
     }
 
-    return this.spawnFlow({ jobId, enjeu, batches });
+    return this.spawnFlow({
+      jobId,
+      enjeu,
+      batches,
+      createdAt: jobResult.data.createdAt,
+    });
   }
 
   private async listFichesToClassify(
@@ -137,12 +142,14 @@ export class EnqueueAnalysisService {
     jobId,
     enjeu,
     batches,
+    createdAt,
   }: {
     jobId: string;
     enjeu: Enjeu;
     batches: FicheToClassify[][];
+    createdAt: string;
   }): Promise<Result<{ jobId: string }, AnalysisJobError>> {
-    const deadlineAt = toAnalysisDeadline();
+    const deadlineAt = toClassificationDeadlineFrom(createdAt);
 
     try {
       await this.flow.add({

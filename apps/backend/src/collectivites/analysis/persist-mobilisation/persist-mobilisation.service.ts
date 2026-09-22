@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { AnalysisJobRepository } from '../analysis-job.repository';
@@ -27,12 +26,10 @@ export class PersistMobilisationService {
   async persist({
     job,
     leviers,
-    tokens,
     tx,
   }: {
     job: AnalysisJob;
     leviers: LevierMobilisation[];
-    tokens: TokenUsage;
     tx: Transaction;
   }): Promise<Result<undefined, AnalysisPersistFailure>> {
     const mobilisationResult = await this.mobilisationsByEnjeu[
@@ -51,7 +48,6 @@ export class PersistMobilisationService {
 
     const doneResult = await this.jobRepository.markDone({
       id: job.id,
-      tokenUsage: tokens,
       tx,
     });
     if (!doneResult.success) {

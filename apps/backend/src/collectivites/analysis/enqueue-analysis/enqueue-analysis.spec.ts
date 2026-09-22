@@ -12,6 +12,8 @@ import {
 import { EnqueueAnalysisService } from './enqueue-analysis.service';
 
 const collectiviteId = 7;
+const jobCreatedAt = '2026-09-21T10:00:00.000Z';
+
 const jobId = '00000000-0000-0000-0000-000000000001';
 
 const user: AuthenticatedUser = {
@@ -51,7 +53,9 @@ const toDependencies = ({
       ),
   };
   const jobRepository = {
-    createUnlessInFlight: vi.fn().mockResolvedValue(success({ id: jobId })),
+    createUnlessInFlight: vi
+      .fn()
+      .mockResolvedValue(success({ id: jobId, createdAt: jobCreatedAt })),
     markRunning: vi
       .fn()
       .mockResolvedValue(

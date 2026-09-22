@@ -271,7 +271,7 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         isNewJob: true,
         staleStatus: AnalysisJobStatusEnum.FAILED,
         staleError:
-          'Job abandonné : aucune progression depuis plus de trente minutes',
+          'Job abandonné : aucune progression depuis plus de 65 minutes',
       });
     });
 
@@ -359,13 +359,6 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
 
       const result = await app.get(AnalysisJobRepository).markDone({
         id: jobId,
-        tokenUsage: {
-          promptTokens: 1,
-          cachedTokens: 0,
-          candidatesTokens: 1,
-          thoughtsTokens: 0,
-          totalTokens: 2,
-        },
       });
 
       expect(result).toEqual({

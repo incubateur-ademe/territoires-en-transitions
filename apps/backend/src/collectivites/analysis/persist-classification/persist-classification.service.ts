@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { sumTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Enjeu, LEVIER_ID_BY_NOM } from '@tet/domain/shared';
@@ -38,7 +37,6 @@ export const toClassificationOutcome = (
     draft: { fiches: classifiedFiches },
     fiches: classifications.flatMap(({ sources }) => sources),
     volets: toVoletMobilisations(classifiedFiches),
-    tokens: sumTokenUsage(classifications.map(({ tokens }) => tokens)),
   };
 };
 

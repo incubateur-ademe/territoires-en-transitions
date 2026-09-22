@@ -42,6 +42,7 @@ export class ClassifyBatchWorker extends WorkerHost {
       signal: toDeadlineSignal(deadlineAt),
     });
     if (classification.success) {
+      await this.jobRepository.addTokenUsage(jobId, classification.data.tokens);
       await this.jobRepository.countProcessedBatch(jobId);
       return classification.data;
     }

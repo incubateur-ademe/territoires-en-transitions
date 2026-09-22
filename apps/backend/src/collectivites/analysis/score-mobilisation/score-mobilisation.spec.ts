@@ -10,14 +10,6 @@ import { ScoreMobilisationService } from './score-mobilisation.service';
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 7;
 
-const classificationTokens = {
-  promptTokens: 100,
-  cachedTokens: 0,
-  candidatesTokens: 50,
-  thoughtsTokens: 10,
-  totalTokens: 160,
-};
-
 const mobilisationTokens = {
   promptTokens: 10,
   cachedTokens: 0,
@@ -42,6 +34,11 @@ const job: AnalysisJob = {
   modifiedAt: '2026-09-15T00:00:00Z',
 };
 
+const voletsOnTwoLeviers: FicheVolet[] = [
+  { ficheId: 1, levierId: 'velo_transport_commun', categorie: 'amenagement' },
+  { ficheId: 2, levierId: 'covoiturage', categorie: 'amenagement' },
+];
+
 const oneVoletOnVelo: FicheVolet[] = [
   { ficheId: 1, levierId: 'velo_transport_commun', categorie: 'amenagement' },
 ];
@@ -52,7 +49,6 @@ const toOutcome = (
   draft: { fiches: [] },
   fiches: [{ ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
   volets,
-  tokens: classificationTokens,
 });
 
 const toDependencies = ({
@@ -60,6 +56,7 @@ const toDependencies = ({
   collectiviteIsUnreadable = false,
   phaseIsRefused = false,
   mobilisationWriteFails = false,
+  scoringFailsAfterFirstLevier = false,
 } = {}) => {
   const jobRepository = {
     startMobilisationPhase: vi
@@ -70,6 +67,7 @@ const toDependencies = ({
           : success(undefined)
       ),
     recordProcessedBatches: vi.fn().mockResolvedValue(undefined),
+    addTokenUsage: vi.fn().mockResolvedValue(undefined),
     markDone: vi.fn().mockResolvedValue(success(undefined)),
     markFailed: vi.fn().mockResolvedValue(success(undefined)),
   };
@@ -90,16 +88,22 @@ const toDependencies = ({
       return { nom: 'Ville de test', population: 3000 };
     }),
   };
-  const llm = {
-    generateStructured: vi.fn(async (_args: { prompt: string }) =>
-      scoringFails
-        ? failure({ kind: 'llm_error' })
-        : success({
-            data: { '1': 3, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 },
-            tokens: mobilisationTokens,
-          })
-    ),
-  };
+  const scoredLevier = success({
+    data: { '1': 3, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 },
+    tokens: mobilisationTokens,
+  });
+  const unscoredLevier = failure({ kind: 'rate_limited' });
+
+  const generateStructured = vi.fn().mockResolvedValue(scoredLevier);
+  if (scoringFails) {
+    generateStructured.mockResolvedValue(unscoredLevier);
+  }
+  if (scoringFailsAfterFirstLevier) {
+    generateStructured
+      .mockResolvedValueOnce(scoredLevier)
+      .mockResolvedValue(unscoredLevier);
+  }
+  const llm = { generateStructured };
 
   const service = new ScoreMobilisationService(
     jobRepository as never,
@@ -163,11 +167,23 @@ describe('ScoreMobilisationService.score', () => {
     }).toEqual({
       success: false,
       failureMessage:
-        "Mobilisation abandonnée : 1 levier(s) en échec sur 1. Aucune écriture n'a eu lieu.",
+        "Mobilisation abandonnée : 1 levier(s) en échec sur 1 — Vélo et transport en commun (rate_limited). Aucune écriture n'a eu lieu.",
     });
   });
 
-  it('rend les leviers notes et les jetons des deux phases', async () => {
+  it('enregistre les jetons deja depenses meme quand un levier echoue', async () => {
+    const { service, jobRepository } = toDependencies({
+      scoringFailsAfterFirstLevier: true,
+    });
+
+    await service.score(job, toOutcome(voletsOnTwoLeviers));
+
+    expect(jobRepository.addTokenUsage.mock.calls).toEqual([
+      [jobId, mobilisationTokens],
+    ]);
+  });
+
+  it('rend les leviers notes, sans les jetons qui vont en base', async () => {
     const { service } = toDependencies();
 
     const result = await service.score(job, toOutcome());
@@ -186,13 +202,6 @@ describe('ScoreMobilisationService.score', () => {
           ],
         },
       ],
-      tokens: {
-        promptTokens: 110,
-        cachedTokens: 0,
-        candidatesTokens: 55,
-        thoughtsTokens: 11,
-        totalTokens: 176,
-      },
     });
   });
 

@@ -23,8 +23,9 @@ import {
   inFlightStatusPredicate,
 } from './models/analysis-job.table';
 
-const STALE_JOB_ERROR_MESSAGE =
-  'Job abandonné : aucune progression depuis plus de trente minutes';
+const STALE_JOB_ERROR_MESSAGE = `Job abandonné : aucune progression depuis plus de ${
+  IN_FLIGHT_LEASE_MS / 60_000
+} minutes`;
 
 const progressProjection = {
   id: analysisJobTable.id,
@@ -244,6 +245,31 @@ export class AnalysisJobRepository {
     }
   }
 
+  async addTokenUsage(id: string, spentTokens: TokenUsage): Promise<void> {
+    const toAccumulated = (field: keyof TokenUsage) =>
+      sql`coalesce((${analysisJobTable.tokenUsage} ->> ${field})::bigint, 0) + ${spentTokens[field]}`;
+
+    try {
+      await this.db
+        .update(analysisJobTable)
+        .set({
+          tokenUsage: sql`jsonb_build_object(
+            'promptTokens', ${toAccumulated('promptTokens')},
+            'cachedTokens', ${toAccumulated('cachedTokens')},
+            'candidatesTokens', ${toAccumulated('candidatesTokens')},
+            'thoughtsTokens', ${toAccumulated('thoughtsTokens')},
+            'totalTokens', ${toAccumulated('totalTokens')}
+          )`,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(analysisJobTable.id, id));
+    } catch (error) {
+      this.logger.error(
+        `Jetons consommés par le job ${id}: ${getErrorMessage(error)}`
+      );
+    }
+  }
+
   async recordClassificationDraft({
     id,
     draft,
@@ -263,17 +289,15 @@ export class AnalysisJobRepository {
 
   async markDone({
     id,
-    tokenUsage,
     tx,
   }: {
     id: string;
-    tokenUsage: TokenUsage;
     tx?: Transaction;
   }): Promise<Result<void, AnalysisJobError>> {
     return this.transition({
       id,
       allowedFromStatuses: [AnalysisJobStatusEnum.RUNNING],
-      values: { status: AnalysisJobStatusEnum.DONE, tokenUsage },
+      values: { status: AnalysisJobStatusEnum.DONE },
       tx,
     });
   }
