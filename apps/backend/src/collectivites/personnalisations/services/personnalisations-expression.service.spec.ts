@@ -876,8 +876,71 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
         )
       ).toThrow(
         'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
-          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre.'
       );
+    });
+  });
+
+  describe('identite(commune_membre, …)', () => {
+    const identiteAvecCommunes = (
+      communesMembresPopulationTags: CollectivitePopulationTypeEnum[]
+    ) => ({
+      type: CollectiviteTypeEnum.EPCI,
+      soustype: CollectiviteSousTypeEnum.EPCI_FP,
+      // La population propre de l'EPCI ne compte pas : seule celle de ses
+      // communes membres est interrogée.
+      populationTags: [CollectivitePopulationTypeEnum.PLUS_DE_100000],
+      drom: false,
+      communesMembresPopulationTags,
+    });
+
+    it('est vrai quand une commune membre dépasse le seuil', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          {
+            identiteCollectivite: identiteAvecCommunes([
+              CollectivitePopulationTypeEnum.PLUS_DE_20000,
+              CollectivitePopulationTypeEnum.PLUS_DE_45000,
+            ]),
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('est faux quand aucune commune membre ne dépasse le seuil, même si l’EPCI le dépasse', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          {
+            identiteCollectivite: identiteAvecCommunes([
+              CollectivitePopulationTypeEnum.PLUS_DE_20000,
+            ]),
+          }
+        )
+      ).toBe(false);
+    });
+
+    it('est faux sans aucune commune membre connue', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          { identiteCollectivite: identiteAvecCommunes([]) }
+        )
+      ).toBe(false);
+    });
+
+    // Une identité servie sans ses communes membres (personnalisation d'un
+    // référentiel, calcul de score) ne doit pas répondre « non » en silence.
+    it('lève quand les communes membres n’ont pas été chargées', () => {
+      const { communesMembresPopulationTags: _, ...sansCommunes } =
+        identiteAvecCommunes([]);
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          { identiteCollectivite: sansCommunes }
+        )
+      ).toThrow('communes membres');
     });
   });
 

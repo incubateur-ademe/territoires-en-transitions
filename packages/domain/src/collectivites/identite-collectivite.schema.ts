@@ -22,7 +22,11 @@ export enum CollectivitePopulationTypeEnum {
   MOINS_DE_100000 = 'moins_de_100000',
   PLUS_DE_3000 = 'plus_de_3000',
   PLUS_DE_20000 = 'plus_de_20000',
-  /** Seuil du plan local de chaleur et de froid, intégré au PCAET. */
+  /**
+   * Seuil du plan local de chaleur et de froid, intégré au PCAET. Il se lit sur
+   * les communes membres d'un EPCI (`communesMembresPopulationTags`), pas sur
+   * la population propre de la collectivité.
+   */
   PLUS_DE_45000 = 'plus_de_45000',
   PLUS_DE_50000 = 'plus_de_50000',
   PLUS_DE_100000 = 'plus_de_100000',
@@ -59,6 +63,18 @@ export const identiteCollectiviteSchema = z.object({
   drom: z.boolean().nullable(),
   test: z.boolean().optional(),
   dansAireUrbaine: z.boolean().nullable().optional(),
+  /**
+   * Tranches de population de la plus peuplée des communes membres, pour les
+   * règles que la loi assoit sur « au moins une commune de plus de N
+   * habitants » et non sur la population du groupement. Absent tant que le
+   * contexte qui sert l'identité ne l'a pas chargé : seul le catalogue des
+   * pièces d'une démarche le fait, le calcul de score et les indicateurs n'en
+   * ont pas besoin. Vide pour une commune ou un groupement sans composition
+   * connue.
+   */
+  communesMembresPopulationTags: z
+    .array(z.enum(CollectivitePopulationTypeEnum))
+    .optional(),
 });
 
 export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;
