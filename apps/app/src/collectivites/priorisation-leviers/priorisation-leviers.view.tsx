@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { PageHeader } from '@tet/ui';
+import { Alert, PageHeader, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardsQuery, useLevierCards } from './data/use-levier-cards';
@@ -41,7 +41,14 @@ const LevierCardsContent = ({
     .with({ status: 'error' }, ({ retry }) => (
       <ErrorCard title={appLabels.uneErreurEstSurvenue} retry={retry} />
     ))
-    .with({ status: 'ready' }, ({ cards }) => <LevierCardList cards={cards} />)
+    .with({ status: 'ready' }, ({ cards, hasMobilisation }) => (
+      <div className="flex flex-col gap-6">
+        <VisibleWhen condition={!hasMobilisation}>
+          <Alert title={appLabels.mobilisationAbsente} />
+        </VisibleWhen>
+        <LevierCardList cards={cards} />
+      </div>
+    ))
     .exhaustive();
 
 export const PriorisationLeviersView = (): JSX.Element => {

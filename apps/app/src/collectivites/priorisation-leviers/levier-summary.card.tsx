@@ -14,5 +14,8 @@ export const LevierSummaryCard = ({
     <p className="mb-0 text-sm font-normal text-grey-8">
       {appLabels.pertinenceDuLevier(levier.pertinence)}
     </p>
+    <p className="mb-0 text-sm font-normal text-grey-8">
+      {appLabels.actionsRattachees({ count: levier.ficheCount })}
+    </p>
   </Card>
 );
