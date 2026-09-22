@@ -773,6 +773,7 @@ export class ListIndicateursService {
         commentaire: indicateurCollectiviteTable.commentaire,
         estConfidentiel: sql<boolean>`${indicateurCollectiviteTable.confidentiel} is true`,
         estFavori: indicateurCollectiviteTable.favoris,
+        estNonSuivi: indicateurCollectiviteTable.nonSuivi,
         modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`
         ),
