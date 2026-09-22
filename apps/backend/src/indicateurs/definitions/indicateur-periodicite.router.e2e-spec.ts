@@ -8,8 +8,11 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import request from 'supertest';
+import { onTestFinished } from 'vitest';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 describe('Périodicité des indicateurs avec le stockage annuel', () => {
   let app: INestApplication;
@@ -19,10 +22,21 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
 
   beforeAll(async () => {
     app = await getTestApp();
+  });
+
+  beforeEach(async () => {
     const database = await getTestDatabase(app);
     const router = await getTestRouter(app);
-    const { collectivite, user } = await addTestCollectiviteAndUser(database, {
-      user: { role: CollectiviteRole.ADMIN },
+    const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
+      database,
+      { user: { role: CollectiviteRole.ADMIN } }
+    );
+    onTestFinished(async () => {
+      // Les indicateurs référencent leur auteur : les supprimer avant l'utilisateur.
+      await database.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.collectiviteId, collectivite.id));
+      await cleanup();
     });
     collectiviteId = collectivite.id;
     caller = router.createCaller({
