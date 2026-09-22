@@ -111,7 +111,10 @@ const buildFakeLlm = (): LlmService =>
       const isMobilisation = prompt.includes('Levier évalué');
       if (isMobilisation) {
         if (llmBehaviour === 'mobilisation_down') {
-          return { success: false, error: { kind: 'llm_unavailable' } };
+          return {
+            success: false,
+            error: { kind: 'api_error', httpStatus: 503 },
+          };
         }
         return MOBILISATION_RESPONSE;
       }
@@ -141,6 +144,7 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     const [job] = await db.db
       .select({
         status: analysisJobTable.status,
+        tokenUsage: analysisJobTable.tokenUsage,
         etape: analysisJobTable.etape,
         totalBatches: analysisJobTable.totalBatches,
         error: analysisJobTable.error,
@@ -339,6 +343,27 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     });
   });
 
+  it('enregistre les jetons de la classification meme quand la mobilisation echoue', async () => {
+    llmBehaviour = 'mobilisation_down';
+
+    const jobId = await runAnalysis();
+    const job = await readJob(jobId);
+
+    expect({
+      status: job.status,
+      tokenUsage: job.tokenUsage,
+    }).toEqual({
+      status: 'failed',
+      tokenUsage: {
+        promptTokens: TOKENS.promptTokens,
+        cachedTokens: TOKENS.cachedTokens,
+        candidatesTokens: TOKENS.candidatesTokens,
+        thoughtsTokens: TOKENS.thoughtsTokens,
+        totalTokens: TOKENS.totalTokens,
+      },
+    });
+  });
+
   it("n'écrit ni volet ni mobilisation quand un levier n'aboutit pas", async () => {
     await runAnalysis();
     const mobilisationBefore = await readMobilisation();
@@ -356,7 +381,7 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     }).toEqual({
       status: 'failed',
       message:
-        "Mobilisation abandonnée : 1 levier(s) en échec sur 1. Aucune écriture n'a eu lieu.",
+        "Mobilisation abandonnée : 1 levier(s) en échec sur 1 — Vélo et transport en commun (api_error). Aucune écriture n'a eu lieu.",
       mobilisation: mobilisationBefore,
       volets: voletsBefore,
     });

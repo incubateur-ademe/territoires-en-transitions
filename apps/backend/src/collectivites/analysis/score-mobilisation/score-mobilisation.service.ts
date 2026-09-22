@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { sumTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { Enjeu } from '@tet/domain/shared';
+import { Enjeu, LEVIER_NOM_BY_ID, LevierId } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { AnalysisJobRepository } from '../analysis-job.repository';
 import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
@@ -16,8 +15,9 @@ import {
 import { type AnalysisError } from '../models/analysis.errors';
 import { ClassificationOutcome } from '../models/classification-outcome';
 import {
-  CLASSIFICATION_DEADLINE_MS,
   AnalysisJob,
+  toAnalysisDeadlineFrom,
+  toDeadlineSignal,
 } from '../models/analysis-job';
 import { calculateMobilisation } from '../pipeline/calculate-mobilisation/calculate-mobilisation';
 import { groupVoletsByLevier } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
@@ -26,8 +26,17 @@ export const LEVIERS_IN_PARALLEL = 5;
 
 export type MobilisationScore = {
   leviers: LevierMobilisation[];
-  tokens: TokenUsage;
 };
+
+type UnscoredLevier = {
+  levierId: LevierId;
+  kind: LlmError['kind'];
+};
+
+const toUnscoredLeviersWithCause = (unscored: UnscoredLevier[]): string =>
+  unscored
+    .map(({ levierId, kind }) => `${LEVIER_NOM_BY_ID[levierId]} (${kind})`)
+    .join(', ');
 
 @Injectable()
 export class ScoreMobilisationService {
@@ -47,7 +56,7 @@ export class ScoreMobilisationService {
 
   async score(
     job: AnalysisJob,
-    { fiches, volets, tokens: classificationTokens }: ClassificationOutcome
+    { fiches, volets }: ClassificationOutcome
   ): Promise<Result<MobilisationScore, AnalysisError>> {
     const jobId = job.id;
 
@@ -81,31 +90,48 @@ export class ScoreMobilisationService {
 
     const fichesById = new Map(fiches.map((fiche) => [fiche.ficheId, fiche]));
 
-    const deadline = AbortSignal.timeout(CLASSIFICATION_DEADLINE_MS);
+    const deadlineSignal = toDeadlineSignal(
+      toAnalysisDeadlineFrom(job.createdAt)
+    );
     const outcomes = await mapWithConcurrency(
       leviersVolets,
       LEVIERS_IN_PARALLEL,
-      (levierVolets) =>
-        calculateMobilisation(this.llm, {
+      async (levierVolets) => {
+        const scoring = await calculateMobilisation(this.llm, {
           levierVolets,
           fichesById,
           collectiviteNom: collectivite.nom,
           population: collectivite.population,
-          signal: deadline,
-        }),
+          signal: deadlineSignal,
+        });
+        if (scoring.success) {
+          await this.jobRepository.addTokenUsage(jobId, scoring.data.tokens);
+        }
+        return { levierId: levierVolets.levierId, scoring };
+      },
       (processedLeviers) => {
         void this.jobRepository.recordProcessedBatches(jobId, processedLeviers);
       }
     );
 
-    const scored = outcomes.flatMap((outcome) =>
-      outcome.success ? [outcome.data] : []
+    const scored = outcomes.flatMap(({ scoring }) =>
+      scoring.success ? [scoring.data] : []
     );
-    const failedLeviers = outcomes.length - scored.length;
-    if (failedLeviers > 0) {
+
+    const unscored = outcomes.flatMap(({ levierId, scoring }) => {
+      if (scoring.success) {
+        return [];
+      }
+      return [{ levierId, kind: scoring.error.kind }];
+    });
+    if (unscored.length > 0) {
       return this.interrupt(
         jobId,
-        `Mobilisation abandonnée : ${failedLeviers} levier(s) en échec sur ${outcomes.length}. Aucune écriture n'a eu lieu.`
+        `Mobilisation abandonnée : ${unscored.length} levier(s) en échec sur ${
+          outcomes.length
+        } — ${toUnscoredLeviersWithCause(
+          unscored
+        )}. Aucune écriture n'a eu lieu.`
       );
     }
 
@@ -114,10 +140,6 @@ export class ScoreMobilisationService {
         levierId,
         volets: scoredVolets,
       })),
-      tokens: sumTokenUsage([
-        classificationTokens,
-        ...scored.map(({ tokens }) => tokens),
-      ]),
     });
   }
 

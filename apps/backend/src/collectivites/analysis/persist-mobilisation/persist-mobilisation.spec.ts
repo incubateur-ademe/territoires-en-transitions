@@ -10,14 +10,6 @@ const jobId = '00000000-0000-0000-0000-000000000001';
 
 const transaction = { marker: 'transaction' } as unknown as Transaction;
 
-const tokens = {
-  promptTokens: 110,
-  cachedTokens: 0,
-  candidatesTokens: 55,
-  thoughtsTokens: 11,
-  totalTokens: 176,
-};
-
 const job: AnalysisJob = {
   id: jobId,
   collectiviteId: 7,
@@ -63,7 +55,6 @@ describe('PersistMobilisationService.persist', () => {
     const result = await service.persist({
       job,
       leviers: [],
-      tokens,
       tx: transaction,
     });
 
@@ -87,7 +78,6 @@ describe('PersistMobilisationService.persist', () => {
     const result = await service.persist({
       job,
       leviers: [],
-      tokens,
       tx: transaction,
     });
 
@@ -112,7 +102,6 @@ describe('PersistMobilisationService.persist', () => {
     const result = await service.persist({
       job,
       leviers: [],
-      tokens,
       tx: transaction,
     });
 
