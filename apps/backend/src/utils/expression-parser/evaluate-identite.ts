@@ -4,12 +4,20 @@ import {
   IdentiteCollectivite,
 } from '@tet/domain/collectivites';
 
+/**
+ * Champs interrogeables par `identite(champ, valeur)`.
+ *
+ * Attention en ajoutant un champ : les mots-clés du DSL sont déclarés avant
+ * `CNAME` dans le lexer, sans `longer_alt`. Un nom qui commence par `si`, `min`,
+ * `max`, `ou`, `et`, `non`, `vrai`, `faux` ou `oui` serait coupé en deux.
+ */
 type IdentiteField =
   | 'type'
   | 'soustype'
   | 'population'
   | 'localisation'
-  | 'dans_aire_urbaine';
+  | 'dans_aire_urbaine'
+  | 'commune_membre';
 
 /**
  * Le second argument d'`identite(...)` passe par la règle `primary`, qui rend un
@@ -64,6 +72,19 @@ const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
   localisation: (identite, primary) => identite.drom === (primary === 'DOM'),
   dans_aire_urbaine: (identite, primary) =>
     identite.dansAireUrbaine === (String(primary).toLowerCase() === 'true'),
+  commune_membre: (identite, primary) => {
+    // Lever plutôt que répondre « non » : une identité servie sans ses communes
+    // membres (score, indicateurs) masquerait en silence une pièce requise,
+    // alors que l'applicabilité d'une pièce garde celle dont la condition lève.
+    if (identite.communesMembresPopulationTags === undefined) {
+      throw new Error(
+        `identite(commune_membre, ${primary}) : les communes membres de la collectivité n'ont pas été chargées`
+      );
+    }
+    return identite.communesMembresPopulationTags.includes(
+      primary as CollectivitePopulationTypeEnum
+    );
+  },
 };
 
 function buildUnknownFieldErrorMessage(
