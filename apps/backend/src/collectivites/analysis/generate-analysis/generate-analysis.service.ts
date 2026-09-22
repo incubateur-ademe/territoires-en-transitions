@@ -4,10 +4,8 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { AnalysisJobRepository } from '../analysis-job.repository';
 import { AnalysisJobErrorEnum } from '../analysis-job.errors';
 import { ClassifyBatchOutcome } from '../classify-batch/classify-batch.service';
-import {
-  PersistClassificationService,
-  toClassificationOutcome,
-} from '../persist-classification/persist-classification.service';
+import { PersistClassificationService } from '../persist-classification/persist-classification.service';
+import { toClassificationOutcome } from './generate-analysis.adapter';
 import { PersistMobilisationService } from '../persist-mobilisation/persist-mobilisation.service';
 import { ScoreMobilisationService } from '../score-mobilisation/score-mobilisation.service';
 import {
