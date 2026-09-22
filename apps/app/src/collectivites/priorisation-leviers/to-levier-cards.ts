@@ -1,11 +1,15 @@
 import { RouterOutput } from '@tet/api';
 import {
-  indexPertinences,
+  toPertinencesByLevier,
   LevierPertinences,
   Pertinence,
   PertinenceLevier,
+  PertinenceVoletEffective,
+  resolvePertinenceVolet,
 } from '@tet/domain/collectivites';
 import {
+  CategorieAction,
+  categorieActionEnumValues,
   Levier,
   LEVIER_NOM_BY_ID,
   LEVIER_SECTEURS,
@@ -17,42 +21,86 @@ import {
 export type Mobilisation =
   RouterOutput['collectivites']['analysis']['getMobilisation'];
 
+type LevierMobilisation = Mobilisation['leviers'][number];
+
+type VoletMobilisation = LevierMobilisation['volets'][number];
+
+export type LevierCategorie = {
+  categorie: CategorieAction;
+  ficheCount: number;
+  pertinenceEffective: PertinenceVoletEffective;
+};
+
 export type LevierCard = {
   levierId: LevierId;
   nom: Levier;
   secteur: LevierSecteur;
   ficheCount: number;
+  categories: LevierCategorie[];
   pertinence?: Pertinence;
 };
 
 export const hasMobilisation = (mobilisation: Mobilisation): boolean =>
   mobilisation.leviers.some(({ ficheCount }) => ficheCount > 0);
 
-const indexFicheCounts = (mobilisation: Mobilisation): Map<LevierId, number> =>
+const toMobilisationByLevier = (
+  mobilisation: Mobilisation
+): Map<LevierId, LevierMobilisation> =>
   new Map(
-    mobilisation.leviers.map(({ levierId, ficheCount }) => [
-      levierId,
-      ficheCount,
+    mobilisation.leviers.map((levierMobilisation) => [
+      levierMobilisation.levierId,
+      levierMobilisation,
     ])
   );
+
+const toLevierCategorie = ({
+  categorie,
+  volets,
+  levierPertinences,
+}: {
+  categorie: CategorieAction;
+  volets: VoletMobilisation[];
+  levierPertinences?: LevierPertinences;
+}): LevierCategorie => {
+  const ficheCount =
+    volets.find((volet) => volet.categorie === categorie)?.ficheCount ?? 0;
+  return {
+    categorie,
+    ficheCount,
+    pertinenceEffective: resolvePertinenceVolet({
+      isMobilise: ficheCount > 0,
+      levierPertinence: levierPertinences?.levier,
+      voletPertinence: levierPertinences?.categories.get(categorie),
+    }),
+  };
+};
 
 const toLevierCard = ({
   levierId,
   pertinencesByLevier,
-  ficheCountsByLevier,
+  mobilisationByLevier,
 }: {
   levierId: LevierId;
   pertinencesByLevier: Map<LevierId, LevierPertinences>;
-  ficheCountsByLevier: Map<LevierId, number>;
+  mobilisationByLevier: Map<LevierId, LevierMobilisation>;
 }): LevierCard => {
   const nom = LEVIER_NOM_BY_ID[levierId];
+  const levierMobilisation = mobilisationByLevier.get(levierId);
+  const levierPertinences = pertinencesByLevier.get(levierId);
   const card = {
     levierId,
     nom,
     secteur: LEVIER_SECTEURS[nom],
-    ficheCount: ficheCountsByLevier.get(levierId) ?? 0,
+    ficheCount: levierMobilisation?.ficheCount ?? 0,
+    categories: categorieActionEnumValues.map((categorie) =>
+      toLevierCategorie({
+        categorie,
+        volets: levierMobilisation?.volets ?? [],
+        levierPertinences,
+      })
+    ),
   };
-  const pertinence = pertinencesByLevier.get(levierId)?.levier;
+  const pertinence = levierPertinences?.levier;
 
   if (pertinence === undefined) {
     return card;
@@ -67,9 +115,9 @@ export const toLevierCards = ({
   pertinences: PertinenceLevier[];
   mobilisation: Mobilisation;
 }): LevierCard[] => {
-  const pertinencesByLevier = indexPertinences(pertinences);
-  const ficheCountsByLevier = indexFicheCounts(mobilisation);
+  const pertinencesByLevier = toPertinencesByLevier(pertinences);
+  const mobilisationByLevier = toMobilisationByLevier(mobilisation);
   return levierIdEnumValues.map((levierId) =>
-    toLevierCard({ levierId, pertinencesByLevier, ficheCountsByLevier })
+    toLevierCard({ levierId, pertinencesByLevier, mobilisationByLevier })
   );
 };

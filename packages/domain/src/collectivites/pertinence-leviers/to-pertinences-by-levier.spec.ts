@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { indexPertinences } from './index-pertinences';
+import { toPertinencesByLevier } from './to-pertinences-by-levier';
 
-describe('indexPertinences', () => {
+describe('toPertinencesByLevier', () => {
   it('range la pertinence du levier à côté de celles de ses catégories', () => {
-    const index = indexPertinences([
+    const pertinencesByLevier = toPertinencesByLevier([
       {
         levierId: 'covoiturage',
         categorie: 'financement',
@@ -17,7 +17,7 @@ describe('indexPertinences', () => {
       },
     ]);
 
-    expect([...index]).toStrictEqual([
+    expect([...pertinencesByLevier]).toStrictEqual([
       [
         'covoiturage',
         {
@@ -32,12 +32,12 @@ describe('indexPertinences', () => {
   });
 
   it("indexe une catégorie dont le levier n'a pas de pertinence", () => {
-    const index = indexPertinences([
+    const pertinencesByLevier = toPertinencesByLevier([
       { levierId: 'biogaz', categorie: 'amenagement', pertinence: 'pertinent' },
       { levierId: 'covoiturage', pertinence: 'non_pertinent' },
     ]);
 
-    expect([...index]).toStrictEqual([
+    expect([...pertinencesByLevier]).toStrictEqual([
       ['biogaz', { categories: new Map([['amenagement', 'pertinent']]) }],
       ['covoiturage', { levier: 'non_pertinent', categories: new Map() }],
     ]);

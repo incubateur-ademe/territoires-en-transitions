@@ -23,7 +23,7 @@ const withPertinence = (
   };
 };
 
-export const indexPertinences = (
+export const toPertinencesByLevier = (
   pertinences: PertinenceLevier[]
 ): Map<LevierId, LevierPertinences> =>
   pertinences.reduce(
