@@ -12,6 +12,7 @@ const PENDING_GLYPHS: Record<StackAction, StatusGlyph> = {
   start: { symbol: '▶', color: 'yellow', label: 'start…' },
   stop: { symbol: '⏹', color: 'yellow', label: 'stop…' },
   restart: { symbol: '↻', color: 'yellow', label: 'restart…' },
+  create: { symbol: '▶', color: 'yellow', label: 'création…' },
 };
 
 interface ServiceRowProps {
