@@ -61,6 +61,22 @@ describe('BuildCrispUserDataService', () => {
     });
   });
 
+  test('retrouve la fiche CRM malgré une casse différente', async () => {
+    selectRows = [{ id: 'u1', provider: 'proconnect' }];
+    getUsersByEmail.mockResolvedValue([
+      {
+        id: 'rec1',
+        url: 'https://airtable.com/app/tbl/rec1',
+        fields: { email: 'agent@example.com' },
+      },
+    ]);
+
+    const userData = await service.buildUserData(' Agent@Example.COM ');
+
+    expect(getUsersByEmail).toHaveBeenCalledWith(['agent@example.com']);
+    expect(userData?.fiche_crm).toBe('https://airtable.com/app/tbl/rec1');
+  });
+
   test('Email sans lien CRM si la personne est absente d’Airtable', async () => {
     selectRows = [{ id: 'u1', provider: null }];
 

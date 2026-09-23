@@ -28,6 +28,7 @@ export class BuildCrispUserDataService {
 
   /** `null` si l'email ne correspond à aucun compte TeT. */
   async buildUserData(email: string): Promise<CrispUserData | null> {
+    const normalizedEmail = email.trim().toLowerCase();
     const users = await this.databaseService.db
       .select({
         id: authUsersTable.id,
@@ -38,7 +39,7 @@ export class BuildCrispUserDataService {
         utilisateurIdentiteOidcTable,
         eq(utilisateurIdentiteOidcTable.userId, authUsersTable.id)
       )
-      .where(eq(sql`lower(${authUsersTable.email})`, email.toLowerCase()));
+      .where(eq(sql`lower(${authUsersTable.email})`, normalizedEmail));
 
     if (users.length === 0) {
       return null;
@@ -48,7 +49,9 @@ export class BuildCrispUserDataService {
       .map((user) => user.provider)
       .filter((provider): provider is OidcProvider => provider !== null);
 
-    const [crmUser] = await this.airtableService.getUsersByEmail([email]);
+    const [crmUser] = await this.airtableService.getUsersByEmail([
+      normalizedEmail,
+    ]);
 
     return {
       connexion: resolveConnexionMode(providers),
