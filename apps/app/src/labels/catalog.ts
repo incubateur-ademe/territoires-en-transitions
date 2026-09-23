@@ -425,7 +425,10 @@ export const appLabels = {
   referentielClimatAirEnergie: 'Référentiel Climat Air Énergie',
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
   referentielTransitionEcologique: 'Référentiel Climat Ressources',
-  indicateursLiesAuScore: 'Indicateurs liés au score',
+  indicateursLiesAuScore: plural({
+    one: 'Indicateur lié au score',
+    other: 'Indicateurs liés au score',
+  }),
   scoreCalculAutomatiqueIndicateurs:
     'Le score est calculé automatiquement à partir des indicateurs',
   methodeCalcul: 'Méthode de calcul',

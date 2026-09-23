@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import { broadcastQueryInvalidation } from '@tet/api/utils/react-query/cross-tab-invalidation';
 
 export const useDeleteIndicateurValeur = () => {
   const trpc = useTRPC();
@@ -22,11 +23,26 @@ export const useDeleteIndicateurValeur = () => {
               indicateurIds: [indicateurId],
             }),
           });
-          queryClient.invalidateQueries({
-            queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
-              collectiviteId,
-            }),
+
+          // supprimer une valeur retenue pour le score d'une action
+          // redéclenche son calcul côté backend (cf CrudValeursService /
+          // SetScoreFromIndicateurService) : on ne sait pas ici quel(s)
+          // référentiel(s)/action(s) sont concernés, donc on invalide
+          // largement plutôt que de laisser un score obsolète affiché
+          // jusqu'au rechargement de la page. `listActionsGroupedById` est
+          // inclus : le score affiché sur l'action (barre de progression,
+          // points) vient de son champ `score`, pas de `getScoreIndicatif`
+          // (cf `SubactionIndicateurScore`).
+          const scoreQueryKeys = [
+            trpc.referentiels.snapshots.getCurrent.queryKey(),
+            trpc.referentiels.actions.listActionsGroupedById.queryKey(),
+            trpc.referentiels.actions.getScoreIndicatif.queryKey(),
+            trpc.referentiels.actions.getValeursUtilisables.queryKey(),
+          ];
+          scoreQueryKeys.forEach((queryKey) => {
+            queryClient.invalidateQueries({ queryKey });
           });
+          broadcastQueryInvalidation(scoreQueryKeys);
         }
       },
       meta: {

@@ -5,6 +5,8 @@ export const indicateursLabels = {
 
   indicateurResultat: plural({ one: 'résultat', other: 'résultats' }),
   indicateurObjectif: plural({ one: 'objectif', other: 'objectifs' }),
+  indicateurAjouterResultat: 'Ajouter un résultat',
+  indicateurAjouterOuModifierResultat: 'Ajouter ou modifier un résultat',
 
   /** Filtres */
   indicateurTous: 'Tous les indicateurs',
@@ -17,6 +19,8 @@ export const indicateursLabels = {
   indicateurMonTooltip: 'Indicateurs dont je suis la personne pilote',
 
   indicateurCompleteParCollectivite: 'Indicateur complété par la collectivité',
+  indicateurNonSuiviCheckboxLabel:
+    'Je valide que ma collectivité ne suit pas cet indicateur',
 
   /** Actions */
   indicateurCreer: 'Créer un indicateur',

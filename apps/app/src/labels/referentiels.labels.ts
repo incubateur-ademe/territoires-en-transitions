@@ -129,5 +129,23 @@ export const referentielsLabels = {
   fichierIndisponible: 'Fichier indisponible',
   fichierIndisponibleInfo:
     "Ce document est référencé mais son contenu est introuvable dans l'espace de stockage. Il ne peut pas être téléchargé.",
-  selectionValeurIndicateurNotAvailable: `La sélection des résultats des indicateurs n'est pas encore disponible. En attendant, vous pouvez déjà renseigner vos données directement depuis la fiche de l'indicateur, en cliquant sur "Voir la fiche de l'indicateur". Nous vous informerons dès que la fonctionnalité sera disponible.`,
+  selectionnerResultatPourCalculerScore:
+    'Sélectionnez un résultat ci-dessous pour activer le calcul du score lié à cet indicateur.',
+  sourceResultatSelectionne: (source: string, annee: number): string =>
+    `Source : ${source} (${annee})`,
+  aucunResultatIndicateurDisponible:
+    "Aucun résultat n'a encore été renseigné pour cet indicateur.",
+  source: 'Source',
+  sources: plural({ one: 'source', other: 'sources' }),
+  scoreIndicatifPasDeDonnee: 'Pas de donnée renseignée',
+  scoreIndicatifDonneeRenseignee: 'Donnée renseignée',
+  scoreIndicatifDonneeRenseigneePositive: 'Donnée renseignée et > 0',
+  scoreIndicatifReference: (valeur: string, annee: string): string =>
+    `Réf - ${valeur} (${annee})`,
+  scoreIndicatifCible: (valeur: string, annee: string): string =>
+    `Cible - ${valeur} (${annee})`,
+  scoreIndicatifCibleSelonResultat: 'Cible - selon le résultat sélectionné',
+  scoreIndicatifAnneeSnbc: (annee: number): string => `SNBC ${annee}`,
+  scoreIndicatifReductionCible: (reduction: string, annee: number): string =>
+    `Objectif de réduction : -${reduction} % en ${annee}`,
 };

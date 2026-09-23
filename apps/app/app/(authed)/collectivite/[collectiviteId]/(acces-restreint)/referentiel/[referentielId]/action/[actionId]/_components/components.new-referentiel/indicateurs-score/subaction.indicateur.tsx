@@ -1,15 +1,10 @@
 import { useState } from 'react';
 
-import { useIndicateurReference } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-reference';
-import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge } from '@tet/ui';
 import { ScoreIndicatifResponse } from '../../score-indicatif/use-get-score-indicatif';
 import { prepareScoreIndicatifData } from '../../score-indicatif/utils';
 import { SubactionIndicateurModal } from './subaction.indicateur-modal';
+import { SubactionIndicateurScore } from './subaction.indicateur-score';
 
 type Props = {
   action: ActionListItem;
@@ -17,41 +12,15 @@ type Props = {
 };
 
 export const SubactionIndicateur = ({ action, scoreIndicatif }: Props) => {
-  const { collectiviteId, hasReferentielPermission } =
-    useCurrentCollectivite();
-  const referentielId = useReferentielId();
-
-  const canEditReferentiel = hasReferentielPermission(
-    'referentiels.mutate',
-    referentielId
-  );
-
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
-  const indicateurId = scoreIndicatif?.indicateurs[0]?.indicateurId;
-  const indicateurTitre = scoreIndicatif?.indicateurs[0]?.titre;
-  const unite = scoreIndicatif?.indicateurs[0]?.unite;
-
-  const { data: reference } = useIndicateurReference({
-    collectiviteId,
-    indicateurId: indicateurId ?? 0,
-    enabled: indicateurId !== undefined,
-  });
-
-  if (!scoreIndicatif || !reference) {
+  const indicateur = scoreIndicatif?.indicateurs[0];
+  if (!scoreIndicatif || !indicateur) {
     return null;
   }
 
+  const { indicateurId, identifiantReferentiel, titre, unite } = indicateur;
   const valeurFait = prepareScoreIndicatifData('fait', scoreIndicatif);
-
-  const hasValeurFait =
-    valeurFait?.valeurPrincipale?.valeur !== undefined &&
-    valeurFait?.valeurPrincipale?.valeur !== null;
-
-  const pointsPotentiels =
-    action.score.pointPotentielPerso ??
-    action.score.pointPotentiel ??
-    action.score.pointReferentiel;
 
   return (
     <>
@@ -61,52 +30,23 @@ export const SubactionIndicateur = ({ action, scoreIndicatif }: Props) => {
           setIsScoreModalOpen(true);
         }}
       >
-        <p className="mb-auto font-bold text-sm text-primary-9">
-          {indicateurTitre}
-        </p>
-        <div className="flex justify-between items-baseline text-xs text-grey-9">
-          {hasValeurFait ? (
-            <div className="flex gap-1.5">
-              <div className="text-4xl leading-none font-medium">
-                {valeurFait?.valeurPrincipale?.valeur}
-              </div>
-              <div className="flex flex-col">
-                <span>{unite}</span>
-                <span>
-                  {appLabels.sourceCibleMin}
-                  {' : '}
-                  <span className="font-bold">
-                    {reference?.cible ?? '-'}
-                  </span>{' '}
-                  {' | '}
-                  {appLabels.sourceSeuilMin}
-                  {' : '}
-                  <span className="font-bold">{reference?.seuil ?? '-'}</span>
-                </span>
-              </div>
-            </div>
-          ) : canEditReferentiel ? (
-            <Badge
-              title={appLabels.placeholderARenseigner}
-              variant="grey"
-              size="sm"
-            />
-          ) : null}
-          <span>
-            {toLocaleFixed(scoreIndicatif.fait?.score ?? 0, 2)}
-            {'/'}
-            {appLabels.scorePotentielPointCount({
-              count: toLocaleFixed(pointsPotentiels, 2),
-            })}
-          </span>
-        </div>
+        <p className="mb-auto font-bold text-sm text-primary-9">{titre}</p>
+        <SubactionIndicateurScore
+          action={action}
+          unite={unite}
+          calcul={scoreIndicatif.calcul}
+          valeurSelectionnee={valeurFait?.valeurPrincipale}
+          size="sm"
+        />
       </button>
       {isScoreModalOpen && (
         <SubactionIndicateurModal
           action={action}
-          titre={indicateurTitre ?? ''}
-          unite={unite ?? ''}
-          reference={reference}
+          titre={titre}
+          unite={unite}
+          indicateurId={indicateurId}
+          identifiantReferentiel={identifiantReferentiel}
+          calcul={scoreIndicatif.calcul}
           openState={{
             isOpen: isScoreModalOpen,
             setIsOpen: setIsScoreModalOpen,

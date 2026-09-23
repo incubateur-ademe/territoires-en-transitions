@@ -128,6 +128,7 @@ export function useReferentielTableData({
           services: [],
           tags: [],
           thematiqueSgpe: thematique,
+          typeCalculScore: null,
         };
       });
     }
