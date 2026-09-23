@@ -32,6 +32,7 @@ export type RichTextEditorProps = {
   initialValue?: string;
   placeholder?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
   isLoading?: boolean;
   onChange?: (html: string) => void;
   contentStyle?: {
@@ -70,6 +71,7 @@ export default function RichTextEditor({
   ariaLabel,
   placeholder,
   disabled = false,
+  autoFocus,
   isLoading = false,
   onChange,
   contentStyle,
@@ -195,6 +197,7 @@ export default function RichTextEditor({
     <BlockNoteView
       id={id}
       editor={editor}
+      autoFocus={autoFocus}
       theme="light"
       formattingToolbar={false}
       slashMenu={false}
