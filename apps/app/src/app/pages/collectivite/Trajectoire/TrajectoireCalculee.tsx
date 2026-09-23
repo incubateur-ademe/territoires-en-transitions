@@ -8,6 +8,7 @@ import {
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { SgpeMondrian } from '@/app/indicateurs/trajectoire-leviers/sgpe-mondrian';
+import { TrajectoireReferenceAlert } from '@/app/indicateurs/trajectoires/trajectoire-reference.alert';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -272,6 +273,10 @@ export const TrajectoireCalculee = () => {
             readonly={!canMutateValeurs}
           />
         </VisibleWhen>
+
+        {Boolean(allSecteursDataAvailable || selectedSecteurDataAvailable) && (
+          <TrajectoireReferenceAlert secteur={selectedSecteur?.nom} />
+        )}
 
         {allSecteursDataAvailable && (
           <Card className="h-fit">

@@ -6,6 +6,7 @@ import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
 import { sharedLabels } from './shared.labels';
+import { trajectoiresSnbcLabels } from './trajectoires-snbc.labels';
 import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
 
 /**
@@ -25,6 +26,7 @@ describe('appLabels n’écrase aucun libellé de domaine', () => {
     'plans.labels': plansLabels,
     'referentiels.labels': referentielsLabels,
     'shared.labels': sharedLabels,
+    'trajectoires-snbc.labels': trajectoiresSnbcLabels,
     'utilisateurs-and-entity.labels': utilisateursAndEntityLabels,
   };
 

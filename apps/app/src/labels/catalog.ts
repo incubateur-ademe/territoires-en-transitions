@@ -7,6 +7,7 @@ import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
 import { sharedLabels } from './shared.labels';
+import { trajectoiresSnbcLabels } from './trajectoires-snbc.labels';
 import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
 
 export type { DemarcheTypeLabels } from './demarches.labels';
@@ -30,6 +31,7 @@ export const appLabels = {
   ...utilisateursAndEntityLabels,
   ...plansLabels,
   ...indicateursLabels,
+  ...trajectoiresSnbcLabels,
 
   historiqueActionStatut: 'Mesure : statut',
   historiqueActionPrecision: 'Mesure : texte',
