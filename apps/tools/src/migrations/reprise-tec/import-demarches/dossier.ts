@@ -18,11 +18,31 @@ const { OBLIGATOIRE, VOLONTAIRE } = DemarchePcaetObligationEnum;
 
 type Statut = typeof EN_ELABORATION | typeof INSTRUIT | typeof PUBLIE;
 
+/**
+ * Qui a décidé l'obligation, dans l'ordre de la règle :
+ * - `declaration` : le dossier T&C le dit lui-même ;
+ * - `suivi` : le suivi ADEME le dit ;
+ * - `seuil` : absent du suivi, le seuil de population du domaine tranche ;
+ * - `defaut` : rien de tout ça, volontaire.
+ */
+type SourceObligation = 'declaration' | 'suivi' | 'seuil' | 'defaut';
+
+/**
+ * D'où vient la date d'adoption d'un dossier publié :
+ * - `suivi` : la date d'approbation du suivi ADEME ;
+ * - `repli` : faute de mieux, la date de publication.
+ */
+type SourceAdoption = 'suivi' | 'repli';
+
 export type Dossier = {
   tecId: number;
   misAJourLe: string | null;
   /** Les dates saisies avant l'an 2000, lues 20AA ou ignorées, pour le rapport. */
   datesRevues: string[];
+  sources: {
+    obligation: SourceObligation;
+    adoption: SourceAdoption | null;
+  };
   colonnes: {
     collectiviteId: number | null;
     titre: string;
@@ -49,17 +69,27 @@ export const buildDossier = (
   const approbation = ligneSuivi?.approbation ?? null;
   const statut = calculateStatut(ligne, approbation);
   const dates = calculateDates(ligne, statut, approbation);
+  const obligation = calculateObligation(ligne.oblige, ligneSuivi, porteur);
 
   return {
     tecId: ligne.id,
     misAJourLe: ligne.misAJourLe,
     datesRevues,
+    sources: {
+      obligation: obligation.source,
+      adoption:
+        dates.adoptedAt === null
+          ? null
+          : dates.adoptedAt === approbation
+          ? 'suivi'
+          : 'repli',
+    },
     colonnes: {
       collectiviteId: porteur?.collectiviteId ?? null,
       titre: ligne.nom,
       description: ligne.description,
       status: statut,
-      obligation: calculateObligation(ligne.oblige, ligneSuivi, porteur),
+      obligation: obligation.valeur,
       launchedAt: ligne.lanceLe,
       publishedAt: dates.publishedAt,
       transmittedAt: dates.transmittedAt,
@@ -253,19 +283,19 @@ const calculateObligation = (
   oblige: boolean | null,
   suivi: LigneSuivi | undefined,
   porteur: Pick<Porteur, 'siren' | 'natureInsee' | 'population'> | undefined
-): DemarchePcaetObligation => {
+): { valeur: DemarchePcaetObligation; source: SourceObligation } => {
   if (oblige !== null) {
-    return oblige ? OBLIGATOIRE : VOLONTAIRE;
+    return { valeur: oblige ? OBLIGATOIRE : VOLONTAIRE, source: 'declaration' };
   }
 
   const valeur = suivi?.obligation.trim() ?? '';
   if (/^\d{4}-\d{2}-\d{2}$/.test(valeur) || valeur.toLowerCase() === 'obligé') {
-    return OBLIGATOIRE;
+    return { valeur: OBLIGATOIRE, source: 'suivi' };
   }
   if (
     ['volontaire', 'non-obligé', 'désengagement'].includes(valeur.toLowerCase())
   ) {
-    return VOLONTAIRE;
+    return { valeur: VOLONTAIRE, source: 'suivi' };
   }
   if (valeur !== '') {
     throw new Error(
@@ -278,7 +308,9 @@ const calculateObligation = (
       null) as CollectiviteNatureType | null,
     population: porteur?.population ?? null,
   });
-  return assujettissement ?? VOLONTAIRE;
+  return assujettissement === null
+    ? { valeur: VOLONTAIRE, source: 'defaut' }
+    : { valeur: assujettissement, source: 'seuil' };
 };
 
 /** « 2021-03-15 09:12:00+00 » vers « 2021-03-15 ». */
