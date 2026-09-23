@@ -1,11 +1,13 @@
+/** Les élaborations remplacées : une collectivité n'arrive qu'avec une seule élaboration. */
+
 import { Dossier } from './dossier';
 
 /** Règle : un seul dossier en élaboration par collectivité, le plus récent. Rend les autres. */
 export const listElaborationsRemplacees = (dossiers: readonly Dossier[]) => {
-  const enElaborationParCollectivite = new Map<number | null, Dossier[]>();
+  const enElaborationParCollectivite = new Map<number, Dossier[]>();
   for (const d of dossiers) {
-    if (d.colonnes.status === 'en_elaboration') {
-      const collectivite = d.colonnes.collectiviteId;
+    const collectivite = d.colonnes.collectiviteId;
+    if (d.colonnes.status === 'en_elaboration' && collectivite !== null) {
       enElaborationParCollectivite.set(collectivite, [
         ...(enElaborationParCollectivite.get(collectivite) ?? []),
         d,
