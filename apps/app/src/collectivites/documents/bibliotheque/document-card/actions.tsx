@@ -4,7 +4,6 @@ import { Modal, VisibleWhen } from '@tet/ui';
 import { ElementType, JSX, ReactNode } from 'react';
 import { DeleteConfirmationAlert } from '../delete-confirmation.alert';
 import { EditDocumentModal } from '../edit-document.modal';
-import { useRemovePreuve } from '../use-edit-preuve';
 import { useDocumentCard } from './context';
 import { toDeclaredChildren } from './declared-children';
 import { DocumentCardMenu } from './menu';
@@ -36,8 +35,7 @@ export const CommentAction = (_props: ActionVisibility): null => {
 };
 
 export const Delete = (_props: ActionVisibility): JSX.Element => {
-  const { document, openedModal, setOpenedModal } = useDocumentCard();
-  const { mutate: removePreuve } = useRemovePreuve();
+  const { onDelete, openedModal, setOpenedModal } = useDocumentCard();
   const isOpen = openedModal === 'delete';
 
   return (
@@ -47,7 +45,7 @@ export const Delete = (_props: ActionVisibility): JSX.Element => {
         setIsOpen={() => setOpenedModal(null)}
         title={appLabels.supprimerDocument}
         message={appLabels.supprimerDocumentMessage}
-        onDelete={() => removePreuve(document)}
+        onDelete={onDelete}
       />
     </VisibleWhen>
   );

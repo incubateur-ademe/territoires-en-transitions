@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
-import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
+import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document.card';
 import { useReplaceAuditReportFile } from '@/app/collectivites/documents/bibliotheque/use-replace-audit-report-file';
 import {
   DocumentAudit,

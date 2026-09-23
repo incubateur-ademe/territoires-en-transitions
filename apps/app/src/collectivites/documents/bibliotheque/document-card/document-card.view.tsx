@@ -4,8 +4,6 @@ import { ElementType, JSX, ReactNode, useState } from 'react';
 import { getDocumentFichier } from '../to-document-collectivite.utils';
 import { DocumentRattache } from '../types';
 import { useEditState } from '../use-edit-state';
-import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
-import { useOpenPreuve } from '../use-open-preuve';
 import { Actions, CommentAction, Delete, Edit, Replace } from './actions';
 import {
   Author,
@@ -42,20 +40,24 @@ const DocumentBadge = ({
   </Tooltip>
 );
 
-type DocumentCardProps = {
+type DocumentCardViewProps = {
   document: DocumentRattache;
+  onOpen: () => void;
+  onSaveCommentaire: (commentaire: string) => void;
+  onDelete: () => void;
   children?: ReactNode;
 };
 
-export const DocumentCard = ({
+const DocumentCardViewRoot = ({
   document,
+  onOpen,
+  onSaveCommentaire,
+  onDelete,
   children,
-}: DocumentCardProps): JSX.Element | null => {
-  const openPreuve = useOpenPreuve({ collectiviteId: document.collectiviteId });
-  const { mutate: updateCommentaire } = useUpdatePreuveCommentaire();
+}: DocumentCardViewProps): JSX.Element | null => {
   const editComment = useEditState({
     initialValue: document.commentaire,
-    onUpdate: (commentaire) => updateCommentaire({ ...document, commentaire }),
+    onUpdate: onSaveCommentaire,
   });
   const [openedModal, setOpenedModal] = useState<OpenedDocumentModal | null>(
     null
@@ -76,7 +78,7 @@ export const DocumentCard = ({
 
   return (
     <DocumentCardProvider
-      value={{ document, editComment, openedModal, setOpenedModal }}
+      value={{ document, editComment, onDelete, openedModal, setOpenedModal }}
     >
       <div className="relative group max-w-screen-md" data-test="carte-doc">
         {document.type === 'fichierManquant' && (
@@ -95,7 +97,7 @@ export const DocumentCard = ({
         {childOfType(Actions)}
 
         <Card className="p-4 h-full gap-1">
-          <Title document={document} onOpen={() => openPreuve(document)} />
+          <Title document={document} onOpen={onOpen} />
           {childOfType(Identifier)}
           <Author document={document} />
           {childOfType(Duplicate)}
@@ -110,10 +112,17 @@ export const DocumentCard = ({
   );
 };
 
-DocumentCard.Actions = Actions;
-DocumentCard.Comment = CommentAction;
-DocumentCard.Delete = Delete;
-DocumentCard.Duplicate = Duplicate;
-DocumentCard.Edit = Edit;
-DocumentCard.Identifier = Identifier;
-DocumentCard.Replace = Replace;
+export const documentCardSlots = {
+  Actions,
+  Comment: CommentAction,
+  Delete,
+  Duplicate,
+  Edit,
+  Identifier,
+  Replace,
+};
+
+export const DocumentCardView = Object.assign(
+  DocumentCardViewRoot,
+  documentCardSlots
+);

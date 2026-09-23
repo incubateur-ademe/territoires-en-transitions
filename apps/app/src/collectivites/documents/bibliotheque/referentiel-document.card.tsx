@@ -1,7 +1,7 @@
 import { useOptionalReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
-import { DocumentCard } from './document-card';
+import { DocumentCard } from './document.card';
 import {
   DocumentComplementaire,
   DocumentRapport,

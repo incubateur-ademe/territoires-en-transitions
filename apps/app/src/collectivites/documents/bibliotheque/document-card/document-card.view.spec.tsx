@@ -4,8 +4,9 @@ import {
   toLegacyDocumentHash,
 } from '@tet/domain/collectivites';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { JSX } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { DocumentCard } from '.';
+import { DocumentCardView } from './document-card.view';
 import {
   preuveComplementaireFichier,
   preuveComplementaireLien,
@@ -13,32 +14,17 @@ import {
   preuveReglementaireLien,
   preuveReglementaireNonRenseignee,
 } from '../documents.fixture';
+import type { EditDocumentModalProps } from '../edit-document.modal';
 import {
   DocumentAudit,
   DocumentRapport,
   DocumentReglementaire,
 } from '../types';
 
-const { openPreuve, removePreuve, updateCommentaire } = vi.hoisted(() => ({
-  openPreuve: vi.fn(),
-  removePreuve: vi.fn(),
-  updateCommentaire: vi.fn(),
-}));
-
-vi.mock('../use-open-preuve', () => ({
-  useOpenPreuve: () => openPreuve,
-}));
-
-const toMutation = () => ({ mutate: vi.fn(), isPending: false });
-
-vi.mock('../use-edit-preuve', () => ({
-  useRemovePreuve: () => ({ mutate: removePreuve, isPending: false }),
-  useUpdatePreuveCommentaire: () => ({
-    mutate: updateCommentaire,
-    isPending: false,
-  }),
-  useUpdatePreuveLien: () => toMutation(),
-  useUpdateBibliothequeFichier: () => toMutation(),
+vi.mock('../edit-document.modal', () => ({
+  EditDocumentModal: ({ document }: EditDocumentModalProps): JSX.Element => (
+    <div role="dialog">{document.type}</div>
+  ),
 }));
 
 const FICHIER_CHOISI_ID = 42;
@@ -55,12 +41,17 @@ vi.mock('@/app/collectivites/documents/add-document/add-document.tabs', () => ({
   ),
 }));
 
+const onOpen = vi.fn();
+const onSaveCommentaire = vi.fn();
+const onDelete = vi.fn();
+const cardHandlers = { onOpen, onSaveCommentaire, onDelete };
+
 const mutationActions = (
-  <DocumentCard.Actions>
-    <DocumentCard.Edit />
-    <DocumentCard.Comment />
-    <DocumentCard.Delete />
-  </DocumentCard.Actions>
+  <DocumentCardView.Actions>
+    <DocumentCardView.Edit />
+    <DocumentCardView.Comment />
+    <DocumentCardView.Delete />
+  </DocumentCardView.Actions>
 );
 
 const documentFichierManquant: DocumentReglementaire = {
@@ -175,9 +166,9 @@ describe('DocumentCard', () => {
 
   test('rend un document de type fichier', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -185,9 +176,9 @@ describe('DocumentCard', () => {
 
   test('rend un document de type lien', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireLien}>
+      <DocumentCardView document={preuveReglementaireLien} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -195,9 +186,9 @@ describe('DocumentCard', () => {
 
   test('signale un fichier confidentiel par un cadenas', () => {
     const { container } = render(
-      <DocumentCard document={fichierConfidentiel}>
+      <DocumentCardView document={fichierConfidentiel} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(
@@ -208,9 +199,12 @@ describe('DocumentCard', () => {
 
   test('ne rend rien pour un attendu sans depot', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireNonRenseignee}>
+      <DocumentCardView
+        document={preuveReglementaireNonRenseignee}
+        {...cardHandlers}
+      >
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.innerHTML).toBe('');
@@ -218,7 +212,10 @@ describe('DocumentCard', () => {
 
   test('rend un document sans menu quand aucune action n est declaree', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier} />
+      <DocumentCardView
+        document={preuveReglementaireFichier}
+        {...cardHandlers}
+      />
     );
 
     expect(container.querySelector('button')).toBeNull();
@@ -227,12 +224,15 @@ describe('DocumentCard', () => {
 
   test("affiche l'identifiant de la mesure quand il est demande", () => {
     const { container } = render(
-      <DocumentCard document={preuveComplementaireFichier}>
-        <DocumentCard.Identifier
+      <DocumentCardView
+        document={preuveComplementaireFichier}
+        {...cardHandlers}
+      >
+        <DocumentCardView.Identifier
           value={preuveComplementaireFichier.action.identifiant}
         />
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -240,10 +240,12 @@ describe('DocumentCard', () => {
 
   test('signale un document deja present dans la bibliotheque', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Duplicate information={{ storedFilenameKept: true }} />
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
+        <DocumentCardView.Duplicate
+          information={{ storedFilenameKept: true }}
+        />
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
@@ -251,9 +253,9 @@ describe('DocumentCard', () => {
 
   test('ne rend aucun bloc commentaire quand le document n en porte pas', () => {
     const { container } = render(
-      <DocumentCard document={preuveComplementaireLien}>
+      <DocumentCardView document={preuveComplementaireLien} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.querySelector('[data-test="comment"]')).toBeNull();
@@ -262,14 +264,15 @@ describe('DocumentCard', () => {
 
   test('tronque un commentaire de plus de 160 caracteres et offre de le deplier', () => {
     const { container } = render(
-      <DocumentCard
+      <DocumentCardView
         document={{
           ...preuveComplementaireFichier,
           commentaire: COMMENTAIRE_LONG,
         }}
+        {...cardHandlers}
       >
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(screen.getByRole('button', { name: 'Voir plus' })).toBeTruthy();
@@ -282,15 +285,17 @@ describe('DocumentCard', () => {
       commentaire: COMMENTAIRE_LONG,
     };
     const { container, rerender } = render(
-      <DocumentCard document={document}>{mutationActions}</DocumentCard>
+      <DocumentCardView document={document} {...cardHandlers}>
+        {mutationActions}
+      </DocumentCardView>
     );
     fireEvent.click(screen.getByRole('button', { name: 'Voir plus' }));
 
     rerender(
-      <DocumentCard document={document}>
-        <DocumentCard.Identifier value="1.1.3" />
+      <DocumentCardView document={document} {...cardHandlers}>
+        <DocumentCardView.Identifier value="1.1.3" />
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(container.querySelector('[data-test="comment"]')?.textContent).toBe(
@@ -300,9 +305,12 @@ describe('DocumentCard', () => {
 
   test('remplace le commentaire par sa saisie et masque le menu pendant l edition', () => {
     const { container } = render(
-      <DocumentCard document={preuveComplementaireFichier}>
+      <DocumentCardView
+        document={preuveComplementaireFichier}
+        {...cardHandlers}
+      >
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
@@ -316,13 +324,13 @@ describe('DocumentCard', () => {
 
   test("un rapport d'audit porte le remplacement de fichier et pas la suppression", () => {
     const { container } = render(
-      <DocumentCard document={documentAudit}>
-        <DocumentCard.Actions>
-          <DocumentCard.Edit />
-          <DocumentCard.Comment />
-          <DocumentCard.Replace onReplace={vi.fn()} />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={documentAudit} {...cardHandlers}>
+        <DocumentCardView.Actions>
+          <DocumentCardView.Edit />
+          <DocumentCardView.Comment />
+          <DocumentCardView.Replace onReplace={vi.fn()} />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     expect(
@@ -334,18 +342,25 @@ describe('DocumentCard', () => {
 
   test('un rapport de visite affiche la date de visite', () => {
     const { container } = render(
-      <DocumentCard document={documentRapport}>{mutationActions}</DocumentCard>
+      <DocumentCardView document={documentRapport} {...cardHandlers}>
+        {mutationActions}
+      </DocumentCardView>
     );
 
     expect(container.innerHTML).toMatchSnapshot();
   });
 
   test('un clic sur le titre ouvre le document', () => {
-    render(<DocumentCard document={preuveReglementaireFichier} />);
+    render(
+      <DocumentCardView
+        document={preuveReglementaireFichier}
+        {...cardHandlers}
+      />
+    );
 
     fireEvent.click(screen.getByTitle('Télécharger le fichier'));
 
-    expect(openPreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+    expect(onOpen).toHaveBeenCalledOnce();
   });
 
   test('deplier puis replier le commentaire tronque', () => {
@@ -353,7 +368,9 @@ describe('DocumentCard', () => {
       ...preuveComplementaireFichier,
       commentaire: COMMENTAIRE_LONG,
     };
-    const { container } = render(<DocumentCard document={document} />);
+    const { container } = render(
+      <DocumentCardView document={document} {...cardHandlers} />
+    );
     const comment = () =>
       container.querySelector('[data-test="comment"]')?.textContent;
 
@@ -368,9 +385,12 @@ describe('DocumentCard', () => {
 
   test('la saisie du commentaire est enregistree a la sortie du champ', () => {
     render(
-      <DocumentCard document={preuveComplementaireFichier}>
+      <DocumentCardView
+        document={preuveComplementaireFichier}
+        {...cardHandlers}
+      >
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
@@ -378,60 +398,60 @@ describe('DocumentCard', () => {
     fireEvent.change(textarea, { target: { value: 'nouveau commentaire' } });
     fireEvent.blur(textarea);
 
-    expect(updateCommentaire).toHaveBeenCalledWith({
-      ...preuveComplementaireFichier,
-      commentaire: 'nouveau commentaire',
-    });
+    expect(onSaveCommentaire).toHaveBeenCalledWith('nouveau commentaire');
   });
 
   test('un commentaire inchange n est pas renvoye au serveur', () => {
     render(
-      <DocumentCard document={preuveComplementaireFichier}>
+      <DocumentCardView
+        document={preuveComplementaireFichier}
+        {...cardHandlers}
+      >
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Commenter' }));
     fireEvent.blur(screen.getByRole('textbox'));
 
-    expect(updateCommentaire).not.toHaveBeenCalled();
+    expect(onSaveCommentaire).not.toHaveBeenCalled();
   });
 
   test('confirmer la suppression supprime le document', () => {
     render(
-      <DocumentCard document={preuveReglementaireFichier}>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
     fireEvent.click(screen.getByRole('button', { name: 'Valider' }));
 
-    expect(removePreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+    expect(onDelete).toHaveBeenCalledOnce();
   });
 
   test('annuler la suppression ne supprime pas le document', () => {
     render(
-      <DocumentCard document={preuveReglementaireFichier}>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
     fireEvent.click(screen.getByRole('button', { name: 'Annuler' }));
 
-    expect(removePreuve).not.toHaveBeenCalled();
+    expect(onDelete).not.toHaveBeenCalled();
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   test('choisir un fichier dans la modale declenche le remplacement', () => {
     const onReplace = vi.fn().mockResolvedValue(undefined);
     render(
-      <DocumentCard document={documentAudit}>
-        <DocumentCard.Actions>
-          <DocumentCard.Replace onReplace={onReplace} />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={documentAudit} {...cardHandlers}>
+        <DocumentCardView.Actions>
+          <DocumentCardView.Replace onReplace={onReplace} />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     fireEvent.click(
@@ -446,7 +466,7 @@ describe('DocumentCard', () => {
 
   test('un fichier introuvable affiche son nom sans lien de téléchargement', () => {
     const { container } = render(
-      <DocumentCard document={documentFichierManquant} />
+      <DocumentCardView document={documentFichierManquant} {...cardHandlers} />
     );
 
     const titre = container.querySelector('[data-test="name"]');
@@ -456,7 +476,7 @@ describe('DocumentCard', () => {
 
   test('un fichier introuvable est signalé par un badge', () => {
     const { container } = render(
-      <DocumentCard document={documentFichierManquant} />
+      <DocumentCardView document={documentFichierManquant} {...cardHandlers} />
     );
 
     expect(container.querySelector('.ri-error-warning-fill')).toBeTruthy();
@@ -464,9 +484,9 @@ describe('DocumentCard', () => {
 
   test("un fichier introuvable n'offre pas l'édition", () => {
     render(
-      <DocumentCard document={documentFichierManquant}>
+      <DocumentCardView document={documentFichierManquant} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     expect(
@@ -480,9 +500,12 @@ describe('DocumentCard', () => {
   test('refuse un enfant qui n est pas les actions de la carte', () => {
     expect(() =>
       render(
-        <DocumentCard document={preuveReglementaireFichier}>
+        <DocumentCardView
+          document={preuveReglementaireFichier}
+          {...cardHandlers}
+        >
           <span>{'intrus'}</span>
-        </DocumentCard>
+        </DocumentCardView>
       )
     ).toThrow(
       'DocumentCard only accepts its own actions and content as direct children'
@@ -490,15 +513,18 @@ describe('DocumentCard', () => {
   });
 
   test('refuse une action enveloppee dans un composant intermediaire', () => {
-    const WrappedDelete = () => <DocumentCard.Delete />;
+    const WrappedDelete = () => <DocumentCardView.Delete />;
 
     expect(() =>
       render(
-        <DocumentCard document={preuveReglementaireFichier}>
-          <DocumentCard.Actions>
+        <DocumentCardView
+          document={preuveReglementaireFichier}
+          {...cardHandlers}
+        >
+          <DocumentCardView.Actions>
             <WrappedDelete />
-          </DocumentCard.Actions>
-        </DocumentCard>
+          </DocumentCardView.Actions>
+        </DocumentCardView>
       )
     ).toThrow(
       'DocumentCard.Actions only accepts its own actions as direct children'
@@ -507,12 +533,12 @@ describe('DocumentCard', () => {
 
   test('une action masquee par visibleWhen ne donne pas son entree de menu', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions>
-          <DocumentCard.Edit />
-          <DocumentCard.Delete visibleWhen={false} />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
+        <DocumentCardView.Actions>
+          <DocumentCardView.Edit />
+          <DocumentCardView.Delete visibleWhen={false} />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     expect(
@@ -524,13 +550,13 @@ describe('DocumentCard', () => {
 
   test('un conteneur d actions masque ne rend pas le menu', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions visibleWhen={false}>
-          <DocumentCard.Edit />
-          <DocumentCard.Comment />
-          <DocumentCard.Delete />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
+        <DocumentCardView.Actions visibleWhen={false}>
+          <DocumentCardView.Edit />
+          <DocumentCardView.Comment />
+          <DocumentCardView.Delete />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     expect(cardChildren(container)).toHaveLength(1);
@@ -538,13 +564,13 @@ describe('DocumentCard', () => {
 
   test('un menu dont chaque action est masquee ne rend rien', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions>
-          <DocumentCard.Edit visibleWhen={false} />
-          <DocumentCard.Comment visibleWhen={false} />
-          <DocumentCard.Delete visibleWhen={false} />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
+        <DocumentCardView.Actions>
+          <DocumentCardView.Edit visibleWhen={false} />
+          <DocumentCardView.Comment visibleWhen={false} />
+          <DocumentCardView.Delete visibleWhen={false} />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     expect(cardChildren(container)).toHaveLength(1);
@@ -552,13 +578,13 @@ describe('DocumentCard', () => {
 
   test('le menu garde l ordre du design system quel que soit l ordre de declaration', () => {
     const { container } = render(
-      <DocumentCard document={preuveReglementaireFichier}>
-        <DocumentCard.Actions>
-          <DocumentCard.Delete />
-          <DocumentCard.Comment />
-          <DocumentCard.Edit />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
+        <DocumentCardView.Actions>
+          <DocumentCardView.Delete />
+          <DocumentCardView.Comment />
+          <DocumentCardView.Edit />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     expect(
@@ -571,12 +597,15 @@ describe('DocumentCard', () => {
   test('refuse deux fois la meme action', () => {
     expect(() =>
       render(
-        <DocumentCard document={preuveReglementaireFichier}>
-          <DocumentCard.Actions>
-            <DocumentCard.Delete />
-            <DocumentCard.Delete />
-          </DocumentCard.Actions>
-        </DocumentCard>
+        <DocumentCardView
+          document={preuveReglementaireFichier}
+          {...cardHandlers}
+        >
+          <DocumentCardView.Actions>
+            <DocumentCardView.Delete />
+            <DocumentCardView.Delete />
+          </DocumentCardView.Actions>
+        </DocumentCardView>
       )
     ).toThrow(
       'DocumentCard.Actions renders each of its own actions at most once'
@@ -586,10 +615,13 @@ describe('DocumentCard', () => {
   test('refuse deux fois le meme contenu', () => {
     expect(() =>
       render(
-        <DocumentCard document={preuveReglementaireFichier}>
-          <DocumentCard.Identifier value="1.1.1" />
-          <DocumentCard.Identifier value="1.1.2" />
-        </DocumentCard>
+        <DocumentCardView
+          document={preuveReglementaireFichier}
+          {...cardHandlers}
+        >
+          <DocumentCardView.Identifier value="1.1.1" />
+          <DocumentCardView.Identifier value="1.1.2" />
+        </DocumentCardView>
       )
     ).toThrow(
       'DocumentCard renders each of its own actions and content at most once'
@@ -597,16 +629,16 @@ describe('DocumentCard', () => {
   });
 
   test('refuse une action rendue hors de la carte', () => {
-    expect(() => render(<DocumentCard.Delete />)).toThrow(
+    expect(() => render(<DocumentCardView.Delete />)).toThrow(
       'DocumentCard actions must be rendered inside a DocumentCard'
     );
   });
 
   test('un clic sur supprimer ouvre la confirmation de suppression', () => {
     render(
-      <DocumentCard document={preuveReglementaireFichier}>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Supprimer' }));
@@ -617,37 +649,37 @@ describe('DocumentCard', () => {
 
   test('un clic sur editer ouvre la modale de renommage pour un fichier', () => {
     render(
-      <DocumentCard document={preuveReglementaireFichier}>
+      <DocumentCardView document={preuveReglementaireFichier} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le document' }));
 
-    expect(screen.getByText(appLabels.editerDocument)).toBeTruthy();
+    expect(screen.getByRole('dialog').textContent).toBe('fichier');
   });
 
   test('un clic sur editer ouvre la modale de lien pour un lien', () => {
     render(
-      <DocumentCard document={preuveReglementaireLien}>
+      <DocumentCardView document={preuveReglementaireLien} {...cardHandlers}>
         {mutationActions}
-      </DocumentCard>
+      </DocumentCardView>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Éditer le lien' }));
 
-    expect(screen.getByText(appLabels.editerLien)).toBeTruthy();
+    expect(screen.getByRole('dialog').textContent).toBe('lien');
   });
 
   test("un clic sur remplacer ouvre la modale de remplacement d'un rapport d'audit", () => {
     render(
-      <DocumentCard document={documentAudit}>
-        <DocumentCard.Actions>
-          <DocumentCard.Edit />
-          <DocumentCard.Comment />
-          <DocumentCard.Replace onReplace={vi.fn()} />
-        </DocumentCard.Actions>
-      </DocumentCard>
+      <DocumentCardView document={documentAudit} {...cardHandlers}>
+        <DocumentCardView.Actions>
+          <DocumentCardView.Edit />
+          <DocumentCardView.Comment />
+          <DocumentCardView.Replace onReplace={vi.fn()} />
+        </DocumentCardView.Actions>
+      </DocumentCardView>
     );
 
     fireEvent.click(

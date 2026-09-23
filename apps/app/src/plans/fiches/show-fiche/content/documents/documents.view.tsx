@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
+import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document.card';
 import { useDuplicatedDocumentState } from '@/app/collectivites/documents/duplicated-document-state.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';

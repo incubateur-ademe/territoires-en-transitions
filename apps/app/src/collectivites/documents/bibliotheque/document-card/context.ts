@@ -6,6 +6,7 @@ import { OpenedDocumentModal } from './opened-modal';
 export type DocumentCardContextValue = {
   document: DocumentRattache;
   editComment: EditState;
+  onDelete: () => void;
   openedModal: OpenedDocumentModal | null;
   setOpenedModal: (modal: OpenedDocumentModal | null) => void;
 };
