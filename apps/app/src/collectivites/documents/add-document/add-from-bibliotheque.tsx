@@ -9,14 +9,14 @@ import {
   useFichiers,
 } from '../bibliotheque/use-fichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
-import { AddFileFromLibHandler } from './add-file';
+import { AddFileHandler } from './add-file';
 
 export type AddFromBibliothequeProps = {
   items: BibliothequeFichierListItem[];
   onSearch: (search: string) => void;
   /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
-  onAddFileFromLib: AddFileFromLibHandler;
+  onAddFile: AddFileHandler;
   onClose: () => void;
 };
 
@@ -44,7 +44,7 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
   const {
     items: fichiers,
     fileConstraints,
-    onAddFileFromLib,
+    onAddFile,
     onClose,
     onSearch,
   } = props;
@@ -69,7 +69,7 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
     setIsSubmitting(true);
     const results = await Promise.allSettled(
       (selectedFiles ?? []).map((file) =>
-        Promise.resolve(onAddFileFromLib(file.value as number))
+        Promise.resolve(onAddFile(file.value as number))
       )
     );
     setIsSubmitting(false);

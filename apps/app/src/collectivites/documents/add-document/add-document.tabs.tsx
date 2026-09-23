@@ -3,14 +3,13 @@
  */
 import { Tab, Tabs } from '@tet/ui';
 import { FileConstraints } from '../upload/constants';
-import { AddFile, AddFileFromLibHandler } from './add-file';
+import { AddFile, AddFileHandler } from './add-file';
 import AddFromBibliotheque from './add-from-bibliotheque';
 import { AddLink, AddLinkHandler } from './add-link';
 import { DocType, OnDuplicatedDocumentsAdded } from './types';
 
 export type AddDocumentTabsHandlers = {
-  /** ajoute un fichier sélectionné depuis la bibliothèque */
-  addFileFromLib: AddFileFromLibHandler;
+  addFile: AddFileHandler;
   /** ajoute un lien (l'onglet 'Lien' ne s'affiche pas si non renseigné) */
   addLink?: AddLinkHandler;
 };
@@ -30,7 +29,7 @@ export type AddDocumentTabsProps = {
 
 export const AddDocumentTabs = (props: AddDocumentTabsProps) => {
   const { defaultActiveTab, handlers, onDuplicatedDocumentsAdded } = props;
-  const { addFileFromLib, addLink } = handlers;
+  const { addFile, addLink } = handlers;
 
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
@@ -42,12 +41,12 @@ export const AddDocumentTabs = (props: AddDocumentTabsProps) => {
       <Tab label="Fichier">
         <AddFile
           {...props}
-          onAddFileFromLib={addFileFromLib}
+          onAddFile={addFile}
           onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
         />
       </Tab>
       <Tab label="Bibliothèque">
-        <AddFromBibliotheque {...props} onAddFileFromLib={addFileFromLib} />
+        <AddFromBibliotheque {...props} onAddFile={addFile} />
       </Tab>
     </Tabs>
   );

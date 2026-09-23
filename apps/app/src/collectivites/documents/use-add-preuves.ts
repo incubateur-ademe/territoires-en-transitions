@@ -4,14 +4,14 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
-import { AppRouter, useSupabase, useTRPC, useTRPCClient } from '@tet/api';
+import { AppRouter, useSupabase, useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 // on peut ajouter une preuve sous forme de...
 type FileOrLink =
   // ...référence à un fichier de la bibliothèque
   | {
-      fichier_id: number;
+      fichierId: number;
       commentaire: string;
     }
   // ..ou de lien
@@ -67,9 +67,11 @@ export const useAddPreuveLabellisation = (
         invalidateQueries({ queryClient, collectiviteId, trpc });
         queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey({
-              demandeId: variables.demandeId,
-            }),
+            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey(
+              {
+                demandeId: variables.demandeId,
+              }
+            ),
         });
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
@@ -119,61 +121,37 @@ export const useAddPreuveAudit = () => {
 
 /** Ajoute un rapport de visite annuelle */
 type AddPreuveRapportArgs = {
-  collectivite_id: number;
+  collectiviteId: number;
   date: string;
 } & FileOrLink;
+
+const toPreuveRapportRow = (preuve: AddPreuveRapportArgs) => {
+  const rapport = {
+    collectivite_id: preuve.collectiviteId,
+    date: preuve.date,
+    commentaire: preuve.commentaire,
+  };
+
+  if ('fichierId' in preuve) {
+    return { ...rapport, fichier_id: preuve.fichierId };
+  }
+
+  return { ...rapport, url: preuve.url, titre: preuve.titre };
+};
+
 export const useAddPreuveRapport = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: AddPreuveRapportArgs) =>
-      supabase.from('preuve_rapport').insert(preuve),
+      supabase.from('preuve_rapport').insert(toPreuveRapportRow(preuve)),
 
     onSuccess: (data, variables) => {
       invalidateQueries({
         queryClient,
-        collectiviteId: variables.collectivite_id,
+        collectiviteId: variables.collectiviteId,
         trpc,
-      });
-    },
-  });
-};
-
-/** Ajoute une annexe à une fiche action */
-type AddPreuveAnnexeArgs = {
-  collectivite_id: number;
-  fiche_id: number;
-} & FileOrLink;
-export const useAddPreuveAnnexe = () => {
-  const queryClient = useQueryClient();
-  const trpcClient = useTRPCClient();
-  const trpc = useTRPC();
-  return useMutation({
-    mutationKey: ['upsert_preuve_annexe'],
-    mutationFn: async (preuve: AddPreuveAnnexeArgs) => {
-      if ('fichier_id' in preuve) {
-        return trpcClient.plans.fiches.addAnnexe.mutate({
-          ficheId: preuve.fiche_id,
-          commentaire: preuve.commentaire,
-          fichierId: preuve.fichier_id,
-        });
-      }
-      return trpcClient.plans.fiches.addAnnexe.mutate({
-        ficheId: preuve.fiche_id,
-        commentaire: preuve.commentaire,
-        lien: { url: preuve.url, titre: preuve.titre },
-      });
-    },
-
-    onSuccess: (_data, variables) => {
-      invalidateQueries({
-        queryClient,
-        collectiviteId: variables.collectivite_id,
-        trpc,
-      });
-      queryClient.invalidateQueries({
-        queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
       });
     },
   });

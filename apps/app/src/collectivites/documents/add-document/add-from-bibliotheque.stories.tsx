@@ -7,7 +7,7 @@ const meta: Meta<typeof AddFromBibliotheque> = {
   component: AddFromBibliotheque,
   args: {
     onSearch: action('onSearch'),
-    onAddFileFromLib: action('onAddFileFromLib'),
+    onAddFile: action('onAddFile'),
     onClose: action('onClose'),
   },
 };

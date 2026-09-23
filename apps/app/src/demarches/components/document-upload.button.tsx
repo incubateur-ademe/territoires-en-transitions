@@ -58,7 +58,7 @@ const DemarcheDocumentUploadModal = ({
         docType="demarche_pcaet"
         fileConstraints={fileConstraints}
         onClose={close}
-        handlers={{ addFileFromLib: (fichierId) => onAddFichier(fichierId) }}
+        handlers={{ addFile: (fichierId) => onAddFichier(fichierId) }}
       />
     )}
   >

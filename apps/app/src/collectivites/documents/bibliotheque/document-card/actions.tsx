@@ -71,10 +71,7 @@ export const Replace = ({
         }}
         title={appLabels.remplacerLeFichier}
         render={({ close }) => (
-          <AddDocumentTabs
-            onClose={close}
-            handlers={{ addFileFromLib: onReplace }}
-          />
+          <AddDocumentTabs onClose={close} handlers={{ addFile: onReplace }} />
         )}
       />
     </VisibleWhen>
