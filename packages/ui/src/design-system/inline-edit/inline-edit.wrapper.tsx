@@ -89,8 +89,8 @@ export const InlineEditWrapper = ({
   const referenceTabIndex = disabled
     ? childProps.tabIndex
     : childProps.tabIndex === -1 || childProps.tabIndex === undefined
-      ? 0
-      : childProps.tabIndex;
+    ? 0
+    : childProps.tabIndex;
 
   const inlineProps = getReferenceProps({
     ref: refs.setReference,
@@ -120,9 +120,10 @@ export const InlineEditWrapper = ({
                     position: strategy,
                     top: y,
                     left: x,
-                    minWidth: `${
+                    minWidth: `min(${
                       refs.reference?.current?.getBoundingClientRect().width
-                    }px`,
+                    }px, 100vw)`,
+                    maxWidth: '100vw',
                     minHeight: floatingMatchReferenceHeight
                       ? `${
                           refs.reference?.current?.getBoundingClientRect()
