@@ -36,6 +36,7 @@ describe('score-indicatif-payload.rules', () => {
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
             unite: '%',
+            isApplicable: true,
           },
         ],
         fait: {

@@ -71,6 +71,7 @@ export class GetIndicateursAssociesService {
     const indicateursResult =
       await this.repository.getIndicateurDefinitionsByIdentifiants(
         identifiantReferentielList,
+        input.collectiviteId,
         ctx?.tx
       );
     if (!indicateursResult.success) {
