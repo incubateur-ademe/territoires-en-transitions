@@ -25,6 +25,8 @@ import { insertFixtureScoreFromIndicateur } from './set-score-from-indicateur.te
 const ACTION_AVEC_FORMULE = 'te_2.2.3.1';
 /** Tâche TE sans formule : le score n'y est pas calculable */
 const ACTION_SANS_FORMULE = 'te_2.2.3.2';
+/** Tâche TE dédiée aux tests d'une formule basée sur est_suivi(...) */
+const ACTION_EST_SUIVI = 'te_2.2.3.3';
 
 describe('SetScoreFromIndicateurRouter', () => {
   let app: INestApplication;
@@ -368,6 +370,238 @@ describe('SetScoreFromIndicateurRouter', () => {
           id: valeurIds[1],
         })
       ).resolves.toBeUndefined();
+    });
+  });
+
+  describe('Indicateur référencé uniquement via est_suivi(...)', () => {
+    /** Identifiant dédié, distinct de celui du fixture partagé par les autres tests de ce fichier */
+    const IDENTIFIANT_EST_SUIVI = 'test_score_from_indicateur_est_suivi';
+
+    const insertFixtureEstSuivi = () =>
+      insertFixtureScoreFromIndicateur(databaseService, {
+        collectiviteId,
+        actionId: ACTION_EST_SUIVI,
+        identifiantReferentiel: IDENTIFIANT_EST_SUIVI,
+        exprScore: `si est_suivi(${IDENTIFIANT_EST_SUIVI}) alors 1 sinon 0`,
+        valeurs: [{ dateValeur: '2024-12-31', resultat: 100 }],
+      });
+
+    const getStatutEstSuivi = () =>
+      databaseService.db
+        .select()
+        .from(actionStatutTable)
+        .where(
+          and(
+            eq(actionStatutTable.collectiviteId, collectiviteId),
+            eq(actionStatutTable.actionId, ACTION_EST_SUIVI)
+          )
+        )
+        .then((rows) => rows[0]);
+
+    test('Ajouter une valeur sans la sélectionner ne déclenche aucun recalcul', async () => {
+      const { cleanup } = await insertFixtureEstSuivi();
+      onTestFinished(() => cleanup());
+
+      expect(await getStatutEstSuivi()).toBeUndefined();
+    });
+
+    test('Sélectionner la valeur active est_suivi(...) et calcule le statut à fait', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const {
+        indicateurId: estSuiviIndicateurId,
+        valeurIds: estSuiviValeurIds,
+        cleanup,
+      } = await insertFixtureEstSuivi();
+      onTestFinished(() => cleanup());
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_EST_SUIVI,
+        indicateurId: estSuiviIndicateurId,
+        valeurs: [
+          { indicateurValeurId: estSuiviValeurIds[0], typeScore: 'fait' },
+        ],
+      });
+
+      expect(await getStatutEstSuivi()).toMatchObject({
+        avancement: 'fait',
+        avancementDetaille: null,
+      });
+    });
+
+    test('Désélectionner la valeur retenue recalcule le statut, sans rester figé', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const {
+        indicateurId: estSuiviIndicateurId,
+        valeurIds: estSuiviValeurIds,
+        cleanup,
+      } = await insertFixtureEstSuivi();
+      onTestFinished(() => cleanup());
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_EST_SUIVI,
+        indicateurId: estSuiviIndicateurId,
+        valeurs: [
+          { indicateurValeurId: estSuiviValeurIds[0], typeScore: 'fait' },
+        ],
+      });
+      expect(await getStatutEstSuivi()).toMatchObject({ avancement: 'fait' });
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_EST_SUIVI,
+        indicateurId: estSuiviIndicateurId,
+        valeurs: [],
+      });
+
+      // plus aucune valeur sélectionnée pour l'action : le statut redevient
+      // non renseigné (et non l'ancien 100 %, ni un score "pas fait" auquel
+      // est_suivi(...) résoudrait pourtant si on le laissait se calculer)
+      expect(await getStatutEstSuivi()).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
+    });
+
+    test('Supprimer la valeur sélectionnée recalcule le statut, sans rester figé à son ancienne valeur', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const {
+        indicateurId: estSuiviIndicateurId,
+        valeurIds: estSuiviValeurIds,
+        cleanup,
+      } = await insertFixtureEstSuivi();
+      onTestFinished(() => cleanup());
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_EST_SUIVI,
+        indicateurId: estSuiviIndicateurId,
+        valeurs: [
+          { indicateurValeurId: estSuiviValeurIds[0], typeScore: 'fait' },
+        ],
+      });
+      expect(await getStatutEstSuivi()).toMatchObject({ avancement: 'fait' });
+
+      await caller.indicateurs.valeurs.delete({
+        collectiviteId,
+        indicateurId: estSuiviIndicateurId,
+        id: estSuiviValeurIds[0],
+      });
+
+      // la sélection a été supprimée en cascade avec la valeur d'indicateur,
+      // et le statut a bien été réactualisé à "non renseigné"
+      expect(await getStatutEstSuivi()).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
+    });
+
+    test('Ajouter une nouvelle valeur sans la (re)sélectionner ne recalcule pas le statut, qui reste non renseigné', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const {
+        indicateurId: estSuiviIndicateurId,
+        valeurIds: estSuiviValeurIds,
+        cleanup,
+      } = await insertFixtureEstSuivi();
+      onTestFinished(() => cleanup());
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_EST_SUIVI,
+        indicateurId: estSuiviIndicateurId,
+        valeurs: [
+          { indicateurValeurId: estSuiviValeurIds[0], typeScore: 'fait' },
+        ],
+      });
+      await caller.indicateurs.valeurs.delete({
+        collectiviteId,
+        indicateurId: estSuiviIndicateurId,
+        id: estSuiviValeurIds[0],
+      });
+      expect(await getStatutEstSuivi()).toMatchObject({
+        avancement: 'non_renseigne',
+      });
+
+      // une nouvelle valeur est ajoutée pour cet indicateur, mais jamais
+      // sélectionnée pour le score de cette action
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId: estSuiviIndicateurId,
+        dateValeur: '2021-12-31',
+        resultat: 100,
+      });
+
+      expect(await getStatutEstSuivi()).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
+    });
+  });
+
+  describe('Indicateur marqué non applicable', () => {
+    test('Redevenir applicable sans resélectionner de valeur redonne un statut non renseigné, et non figé au score forcé', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // les valeurs partagées `valeurIds` ont pu être supprimées par des
+      // tests précédents : on insère une valeur dédiée à ce test
+      const valeur = await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2020-12-31',
+        resultat: 50,
+      });
+      assert(valeur, "échec d'insertion de la valeur de test");
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_AVEC_FORMULE,
+        indicateurId,
+        valeurs: [{ indicateurValeurId: valeur.id, typeScore: 'fait' }],
+      });
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'detaille',
+        avancementDetaille: [0.5, 0, 0.5],
+      });
+
+      // marquer l'indicateur non applicable désélectionne automatiquement la
+      // valeur retenue (reproduit l'orchestration du front) : le score est
+      // forcé à 0, une décision explicite de la collectivité
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { isApplicable: false },
+      });
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_AVEC_FORMULE,
+        indicateurId,
+        valeurs: [],
+      });
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'pas_fait',
+        avancementDetaille: null,
+      });
+
+      // redevenir applicable, sans jamais resélectionner de valeur : plus
+      // aucun score forcé, et plus aucune valeur sélectionnée — le statut
+      // doit redevenir non renseigné (pas rester figé à "pas fait")
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { isApplicable: true },
+      });
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_AVEC_FORMULE,
+        indicateurId,
+        valeurs: [],
+      });
+
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
     });
   });
 });

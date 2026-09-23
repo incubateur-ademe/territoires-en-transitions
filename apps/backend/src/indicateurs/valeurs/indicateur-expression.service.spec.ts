@@ -116,6 +116,17 @@ describe('IndicateurExpressionService', () => {
       ]);
     });
 
+    test('Simple formula with est_suivi', async () => {
+      const formula = 'si est_suivi(te_11) alors 1 sinon 0';
+      const neededSourceIndicateurs =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        { identifiant: 'te_11', optional: true, tokens: ['est_suivi'] },
+      ]);
+    });
+
     test('Simple formula with dash into identifier', async () => {
       const formula = 'opt_val(cae_49.b-hab) + val(cae_49.c-hab)';
       const neededSourceIndicateurs =
@@ -591,6 +602,58 @@ describe('IndicateurExpressionService', () => {
           }
         )
       ).toBe(1);
+    });
+  });
+
+  describe('est_suivi(...)', () => {
+    const formule = 'si est_suivi(te_11) alors 1 sinon 0';
+
+    it("retourne 1 quand l'indicateur est suivi", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          {},
+          { indicateursSuivis: { te_11: true } }
+        )
+      ).toBe(1);
+    });
+
+    it("retourne 0 quand l'indicateur n'est pas suivi", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          {},
+          { indicateursSuivis: { te_11: false } }
+        )
+      ).toBe(0);
+    });
+
+    it("retourne 0 quand l'indicateur est absent du contexte (indicateur inconnu/non applicable)", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          {},
+          { indicateursSuivis: {} }
+        )
+      ).toBe(0);
+    });
+
+    it('peut être combiné avec val() dans la même formule', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'si est_suivi(te_11) alors val(te_11) sinon 0',
+          { te_11: 42 },
+          { indicateursSuivis: { te_11: true } }
+        )
+      ).toBe(42);
+    });
+
+    it("retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(formule, {
+          dummy: 1,
+        })
+      ).toBe(0);
     });
   });
 

@@ -25,10 +25,16 @@ export async function insertFixtureScoreFromIndicateur(
     collectiviteId,
     actionId,
     valeurs,
+    exprScore = TEST_EXPR_SCORE,
+    identifiantReferentiel = TEST_INDICATEUR_SCORE_IDENTIFIANT,
   }: {
     collectiviteId: number;
     actionId: string;
     valeurs: { dateValeur: string; resultat: number }[];
+    /** Formule custom (défaut : basée sur `val(...)`) — ex. pour tester `est_suivi(...)` */
+    exprScore?: string;
+    /** Identifiant custom (défaut : `TEST_INDICATEUR_SCORE_IDENTIFIANT`) — utile pour isoler un indicateur dédié d'un autre appel de cette fixture dans le même fichier de test */
+    identifiantReferentiel?: string;
   }
 ): Promise<{
   indicateurId: number;
@@ -40,7 +46,7 @@ export async function insertFixtureScoreFromIndicateur(
     .values({
       titre: 'Indicateur de test pour la dérivation du statut',
       unite: '%',
-      identifiantReferentiel: TEST_INDICATEUR_SCORE_IDENTIFIANT,
+      identifiantReferentiel,
     })
     .onConflictDoUpdate({
       target: indicateurDefinitionTable.identifiantReferentiel,
@@ -56,7 +62,7 @@ export async function insertFixtureScoreFromIndicateur(
 
   await databaseService.db
     .update(actionDefinitionTable)
-    .set({ exprScore: TEST_EXPR_SCORE })
+    .set({ exprScore })
     .where(eq(actionDefinitionTable.actionId, actionId));
 
   await databaseService.db
