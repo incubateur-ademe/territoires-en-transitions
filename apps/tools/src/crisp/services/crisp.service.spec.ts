@@ -118,7 +118,7 @@ describe('CrispService — commande crm', () => {
     buildCrmNote.mockReset().mockResolvedValue('récap CRM');
   });
 
-  test.each(['crm', 'CRM', '@crm', '/@crm', '/crm'])(
+  test.each(['/crm', '/CRM', '/@crm', ' /crm '])(
     'répond par une note au message « %s »',
     async (content) => {
       const service = await buildService();
@@ -134,10 +134,17 @@ describe('CrispService — commande crm', () => {
     }
   );
 
-  test('ne se déclenche pas sur un mot commençant par crm', async () => {
+  test.each([
+    'crm',
+    '@crm',
+    'crm à mettre à jour',
+    '/crm à mettre à jour',
+    'voir le /crm',
+    '/crmx',
+  ])('ne se déclenche pas sur « %s »', async (content) => {
     const service = await buildService();
 
-    await service.handleMessageReceived(noteFromOperator('crmx') as never);
+    await service.handleMessageReceived(noteFromOperator(content) as never);
 
     expect(buildCrmNote).not.toHaveBeenCalled();
   });
@@ -146,7 +153,7 @@ describe('CrispService — commande crm', () => {
     getConversation.mockResolvedValue({ meta: {} });
     const service = await buildService();
 
-    await service.handleMessageReceived(noteFromOperator('crm') as never);
+    await service.handleMessageReceived(noteFromOperator('/crm') as never);
 
     expect(buildCrmNote).not.toHaveBeenCalled();
     expect(sendMessageInConversation).toHaveBeenCalledWith(

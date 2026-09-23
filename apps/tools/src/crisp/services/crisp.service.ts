@@ -25,7 +25,8 @@ export class CrispService {
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
   private readonly DEFAULT_FEEDBACK_DAYS = 2;
 
-  private readonly CRM_REGEXP = /^\/?@?crm\b/i;
+  // Note réduite à la commande seule : « /crm » ou « /@crm ».
+  private readonly CRM_REGEXP = /^\/@?crm$/i;
 
   // cache des messageKeys en cours de traitement pour éviter les doublons en cas
   // d'appels en parallèle (présuppose que tools est déployé sur seule instance)
