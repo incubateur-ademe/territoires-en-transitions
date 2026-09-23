@@ -51,7 +51,9 @@ Rejouable : chaque table de copie est recréée à neuf. `correspondance` et
 Écrit une ligne de `demarche` par dossier repris. Lit la copie et le suivi de
 l'obligation PCAET tenu par l'ADEME, un export CSV qui n'est pas dans le dépôt.
 Chaque dossier écrit laisse une ligne dans `correspondance` et dans
-`lignes_ecrites`.
+`lignes_ecrites` ; chaque dossier écarté, une ligne dans `ecarts` avec son motif.
+Avant toute écriture, le script vérifie que chaque ligne lue finit écrite ou
+écartée, une seule fois (lu = écrit + écarté), et s'arrête sinon.
 
 ```bash
 SCRIPT=apps/tools/src/migrations/reprise-tec/import-demarches/index.ts
@@ -122,6 +124,7 @@ select c.nom, c.siren, d.id, d.status, d.titre
 | `staging_<table>` | la copie de T&C, lue par les étapes d'import                                               |
 | `correspondance`  | traduire un identifiant T&C en identifiant TeT                                             |
 | `lignes_ecrites`  | savoir exactement quelles lignes du produit la reprise a écrites, pour pouvoir les retirer |
+| `ecarts`          | savoir pourquoi une ligne de T&C n'a pas été reprise (`doublon`, `coquille_vide`…)         |
 
 Pour tout retirer d'un coup :
 
