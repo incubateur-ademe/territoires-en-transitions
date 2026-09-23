@@ -53,9 +53,7 @@ export class SetScoreFromIndicateurService {
       onWillDelete: (event) =>
         this.getActionsUsingIndicateurValeurs([event.indicateurValeurId]),
       onDeleted: (actions, event) =>
-        this.refreshActionsAvancementAndSnapshots(actions, event.user, {
-          computeHasValeurSelectionnee: true,
-        }),
+        this.refreshActionsAvancementAndSnapshots(actions, event.user),
     };
     this.indicateurValeursService.registerValeurDeletionListener(
       deletionListener
@@ -81,51 +79,6 @@ export class SetScoreFromIndicateurService {
     return actionsResult.data;
   }
 
-  /**
-   * Indique, pour chaque action, si au moins une valeur d'indicateur y est
-   * encore sélectionnée (au sens du calcul de score, valeurs nulles
-   * exclues) — utilisé après une suppression en cascade, où la sélection
-   * n'est plus connue à l'avance et doit être relue en base.
-   *
-   * Ces actions proviennent toujours d'un seul `indicateurValeurId` (voir
-   * `deleteValeurIndicateur`), donc d'une seule collectivité : une valeur
-   * d'indicateur n'est jamais utilisée par une autre collectivité que la
-   * sienne (voir `validateValeursUtiliseesInput`).
-   */
-  private async getHasValeurSelectionneeParActionId(
-    actions: { collectiviteId: number; actionId: string }[]
-  ): Promise<Map<string, boolean>> {
-    const hasValeurSelectionneeParActionId = new Map<string, boolean>();
-    if (!actions.length) {
-      return hasValeurSelectionneeParActionId;
-    }
-
-    const { collectiviteId } = actions[0];
-    const actionIds = actions.map((a) => a.actionId);
-
-    const valeursResult =
-      await this.scoreIndicatifService.getValeursUtiliseesParActionId({
-        collectiviteId,
-        actionIds,
-      });
-    if (!valeursResult.success) {
-      this.logger.error(
-        `Impossible de retrouver les valeurs sélectionnées pour la collectivité ${collectiviteId}`,
-        valeursResult.cause?.stack
-      );
-      return hasValeurSelectionneeParActionId;
-    }
-
-    for (const actionId of actionIds) {
-      hasValeurSelectionneeParActionId.set(
-        actionId,
-        (valeursResult.data[actionId]?.length ?? 0) > 0
-      );
-    }
-
-    return hasValeurSelectionneeParActionId;
-  }
-
   private async onIndicateurValeurUpserted(
     event: IndicateurValeurUpsertedEvent
   ): Promise<void> {
@@ -141,23 +94,11 @@ export class SetScoreFromIndicateurService {
   /**
    * Recalcule et écrit le statut d'avancement dérivé de chaque action
    * fournie, puis recalcule le snapshot de chaque référentiel impacté.
-   *
-   * `computeHasValeurSelectionnee` doit être activé après une suppression en
-   * cascade (onDeleted) : contrairement à un upsert, qui laisse la sélection
-   * intacte, la suppression peut avoir vidé la sélection d'une action et il
-   * faut alors le vérifier en base pour réinitialiser correctement son statut.
    */
   private async refreshActionsAvancementAndSnapshots(
     actions: { collectiviteId: number; actionId: string }[],
-    user: AuthenticatedUser,
-    {
-      computeHasValeurSelectionnee = false,
-    }: { computeHasValeurSelectionnee?: boolean } = {}
+    user: AuthenticatedUser
   ): Promise<void> {
-    const hasValeurSelectionneeParActionId = computeHasValeurSelectionnee
-      ? await this.getHasValeurSelectionneeParActionId(actions)
-      : null;
-
     // collectiviteId + referentielId impactés, dédupliqués : une même valeur
     // d'indicateur peut être utilisée par plusieurs actions d'un référentiel.
     const impactedReferentiels = new Map<
@@ -180,11 +121,7 @@ export class SetScoreFromIndicateurService {
       const refreshResult = await this.refreshAvancementForAction(
         collectiviteId,
         actionId,
-        {
-          user,
-          hasValeurSelectionnee:
-            hasValeurSelectionneeParActionId?.get(actionId) ?? true,
-        }
+        { user }
       );
       if (!refreshResult.success) {
         this.logger.error(
@@ -224,11 +161,17 @@ export class SetScoreFromIndicateurService {
    * Recalcule le score indicatif d'une action à partir des valeurs
    * actuellement retenues, puis en dérive et écrit le statut d'avancement.
    *
-   * `hasValeurSelectionnee` distingue deux cas où le score n'est pas calculable :
-   * - une valeur reste sélectionnée mais l'action n'a pas de formule de score
-   *   (statut laissé inchangé, il a pu être saisi manuellement) ;
-   * - plus aucune valeur n'est sélectionnée (désélection explicite) : l'action
-   *   redevient alors "non renseignée".
+   * `hasValeurSelectionnee` (tous indicateurs de l'action confondus, dérivé
+   * du score qui vient d'être recalculé — pas de requête supplémentaire)
+   * prime sur le résultat du calcul, SAUF quand un indicateur associé est
+   * marqué "non applicable" : certains tokens optionnels (`est_suivi(...)`,
+   * `opt_val(...)`) ne bloquent jamais le calcul et produisent un score
+   * défini (souvent 0) même sans aucune sélection — sans cette priorité, une
+   * action jamais renseignée par la collectivité afficherait "pas fait" au
+   * lieu de "non renseignée". Le marquage "non applicable" est en revanche
+   * une décision explicite de la collectivité : le score à 0 qui en résulte
+   * doit rester écrit même sans aucune sélection (contrairement à une
+   * absence de sélection "par défaut", qui redevient "non renseignée").
    */
   private async refreshAvancementForAction(
     collectiviteId: number,
@@ -236,11 +179,9 @@ export class SetScoreFromIndicateurService {
     {
       user,
       tx,
-      hasValeurSelectionnee = true,
     }: {
       user: AuthenticatedUser;
       tx?: Transaction;
-      hasValeurSelectionnee?: boolean;
     }
   ): Promise<Result<void, SetScoreFromIndicateurError>> {
     const scoreResult = await this.scoreIndicatifService.getScoreIndicatif(
@@ -250,30 +191,41 @@ export class SetScoreFromIndicateurService {
     if (!scoreResult.success) {
       return failure(scoreResult.error, scoreResult.cause);
     }
+    const actionScore = scoreResult.data[actionId];
+    const indicateurNonApplicable =
+      actionScore?.indicateurs?.some((indicateur) => !indicateur.isApplicable) ??
+      false;
+    // `actionScore` est `undefined` quand le score n'est pas calculable du
+    // tout pour cette action (formule ou indicateurs manquants) : dans ce cas
+    // on ne peut rien déduire de la sélection, donc on ne force pas de reset
+    // (le calcul d'`avancement` ci-dessous laissera de toute façon le statut
+    // inchangé).
+    const hasValeurSelectionnee = actionScore
+      ? (actionScore.fait?.valeursUtilisees.length ?? 0) > 0 ||
+        (actionScore.programme?.valeursUtilisees.length ?? 0) > 0
+      : true;
 
-    const avancement = calculateAvancementFromScore(
-      scoreResult.data[actionId]?.fait?.score
-    );
-    if (!avancement) {
-      if (!hasValeurSelectionnee) {
-        const resetResult =
-          await this.updateActionStatutService.upsertActionStatutsWithoutSnapshot(
-            [
-              {
-                collectiviteId,
-                actionId,
-                statut: StatutAvancementEnum.NON_RENSEIGNE,
-                statutDetailleAuPourcentage: null,
-              },
-            ],
-            { user, tx }
-          );
-        if (!resetResult.success) {
-          return failure(resetResult.error, resetResult.cause);
-        }
-        return success(undefined);
+    if (!hasValeurSelectionnee && !indicateurNonApplicable) {
+      const resetResult =
+        await this.updateActionStatutService.upsertActionStatutsWithoutSnapshot(
+          [
+            {
+              collectiviteId,
+              actionId,
+              statut: StatutAvancementEnum.NON_RENSEIGNE,
+              statutDetailleAuPourcentage: null,
+            },
+          ],
+          { user, tx }
+        );
+      if (!resetResult.success) {
+        return failure(resetResult.error, resetResult.cause);
       }
+      return success(undefined);
+    }
 
+    const avancement = calculateAvancementFromScore(actionScore?.fait?.score);
+    if (!avancement) {
       this.logger.log(
         `Score indicatif non calculable pour l'action ${actionId} : statut inchangé`
       );
@@ -326,10 +278,6 @@ export class SetScoreFromIndicateurService {
       return failure(ScoreIndicatifErrorEnum.INVALID_ACTION_ID);
     }
 
-    const hasValeurSelectionnee = input.valeurs.some(
-      (valeur) => valeur.indicateurValeurId !== null
-    );
-
     const writeResult = await this.transactionManager.executeSingle<
       void,
       SetScoreFromIndicateurError
@@ -343,12 +291,12 @@ export class SetScoreFromIndicateurService {
         return failure(valeursResult.error, valeursResult.cause);
       }
 
-      // relit le score dans la transaction, donc sur la valeur qui vient
-      // d'être écrite
+      // recalcule le score dans la transaction, donc à partir de la sélection
+      // de l'action entière (tous indicateurs confondus) après la valeur qui
+      // vient d'être écrite
       return this.refreshAvancementForAction(collectiviteId, actionId, {
         user,
         tx,
-        hasValeurSelectionnee,
       });
     });
 

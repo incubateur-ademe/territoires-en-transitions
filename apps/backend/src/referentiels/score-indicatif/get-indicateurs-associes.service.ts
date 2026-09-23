@@ -40,6 +40,11 @@ export class GetIndicateursAssociesService {
     Result<
       {
         indicateursAssocies: IndicateurAssocie[];
+        // indicateurs référencés par formule, avant résolution en base :
+        // conserve les `tokens` (val/opt_val/cible/limite/est_suivi) déjà
+        // extraits par le parseur, pour éviter de reparser `exprScore`
+        // dans les services en aval
+        indicateursParActionId: Record<string, ReferencedIndicateur[]>;
         identiteCollectivite: CollectiviteAvecType;
       },
       ScoreIndicatifError
@@ -104,6 +109,10 @@ export class GetIndicateursAssociesService {
       );
     });
 
-    return success({ indicateursAssocies, identiteCollectivite });
+    return success({
+      indicateursAssocies,
+      indicateursParActionId,
+      identiteCollectivite,
+    });
   }
 }

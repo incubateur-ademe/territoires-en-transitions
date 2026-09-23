@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
+  VALUE_SOURCE_TOKENS,
 } from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { GetValeursUtilisablesRequest } from '@tet/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import {
@@ -141,10 +142,10 @@ export class ScoreIndicatifService {
     }
 
     return this.transactionManager.executeSingle(async (transaction) => {
-      const validationResult = await this.validateValeursUtiliseesInput(
-        input,
-        { user, tx: transaction }
-      );
+      const validationResult = await this.validateValeursUtiliseesInput(input, {
+        user,
+        tx: transaction,
+      });
       if (!validationResult.success) {
         return failure(validationResult.error, validationResult.cause);
       }
@@ -272,8 +273,11 @@ export class ScoreIndicatifService {
     if (!indicateursAssociesResult.success) {
       return failure(indicateursAssociesResult.error);
     }
-    const { indicateursAssocies, identiteCollectivite } =
-      indicateursAssociesResult.data;
+    const {
+      indicateursAssocies,
+      indicateursParActionId,
+      identiteCollectivite,
+    } = indicateursAssociesResult.data;
     const indicateursAssociesParActionId = groupBy(
       indicateursAssocies,
       ({ actionId }) => actionId
@@ -282,7 +286,7 @@ export class ScoreIndicatifService {
     const evaluationContextResult =
       await this.buildEvaluationContextService.buildEvaluationContext(
         input,
-        formules.map((f) => f.actionId),
+        formules.map(({ actionId }) => actionId),
         indicateursAssocies,
         identiteCollectivite
       );
@@ -300,6 +304,12 @@ export class ScoreIndicatifService {
           return null;
         }
 
+        // choix de conception assumé : même une formule reposant uniquement
+        // sur `est_suivi(...)` (qui ne bloque jamais faute de *valeur*) reste
+        // non calculable si la *définition* de l'indicateur qu'elle référence
+        // est introuvable ou filtrée pour cette collectivité (ex. indicateur
+        // hors-DROM). `est_suivi` ne s'affranchit que de l'absence de valeur
+        // sélectionnée, pas de l'absence de définition.
         const indicateurs = indicateursAssociesParActionId[actionId];
         if (!indicateurs?.length) {
           this.logger.log(
@@ -322,6 +332,58 @@ export class ScoreIndicatifService {
           (v) => v.typeScore
         );
 
+        // une formule qui ne référence aucun indicateur via `val`/`opt_val`
+        // (ex. une formule reposant uniquement sur `est_suivi(...)`) n'a
+        // besoin d'aucune valeur sélectionnée par la collectivité. La liste
+        // des tokens concernés vit dans `VALUE_SOURCE_TOKENS`, aux côtés du
+        // reste de la sémantique des tokens (`IndicateurExpressionService`),
+        // pour éviter qu'un futur token soit ajouté ici sans y être ajouté.
+        const formuleNecessiteUneValeur = (
+          indicateursParActionId[actionId] ?? []
+        ).some((ref) =>
+          ref.tokens.some((token) =>
+            (VALUE_SOURCE_TOKENS as readonly string[]).includes(token)
+          )
+        );
+
+        // pour chaque indicateur référencé par `est_suivi(...)` dans cette
+        // formule : est-il "suivi" pour ce type de score, c'est-à-dire
+        // sélectionné (et non nul) parmi les valeurs retenues pour cette
+        // action ? `est_suivi` ne dépend donc jamais de la simple existence
+        // d'une valeur ailleurs pour la collectivité, seulement de ce qui a
+        // été explicitement retenu pour cette action.
+        const referencesEstSuivi = (
+          indicateursParActionId[actionId] ?? []
+        ).filter((ref) => ref.tokens.includes('est_suivi'));
+
+        // mapping identifiant référentiel -> indicateur associé
+        const indicateurParIdentifiant = referencesEstSuivi.length
+          ? keyBy(indicateurs, (ind) => ind.identifiantReferentiel)
+          : {};
+
+        // `undefined` (et non `{}`) quand la formule n'utilise pas
+        // `est_suivi(...)` : préserve le court-circuit "aucune valeur
+        // disponible" de `parseAndEvaluateExpression` pour les formules qui
+        // n'en ont pas besoin.
+        const buildIndicateursSuivis = (
+          typeScore: ScoreIndicatifType
+        ): Record<string, boolean> | undefined => {
+          if (!referencesEstSuivi.length) {
+            return undefined;
+          }
+          const indicateurIdsSelectionnes = new Set(
+            (valeursParTypeScore[typeScore] || []).map((v) => v.indicateurId)
+          );
+          const suivis: Record<string, boolean> = {};
+          referencesEstSuivi.forEach((ref) => {
+            const indicateurAssocie = indicateurParIdentifiant[ref.identifiant];
+            suivis[ref.identifiant] = indicateurAssocie
+              ? indicateurIdsSelectionnes.has(indicateurAssocie.indicateurId)
+              : false;
+          });
+          return suivis;
+        };
+
         // calcul les scores
         const fait = this.computeScore(
           actionId,
@@ -329,7 +391,9 @@ export class ScoreIndicatifService {
           valeursParTypeScore,
           indicateurs,
           scoreIndicatifTypeEnum.FAIT,
-          evaluationContext
+          evaluationContext,
+          formuleNecessiteUneValeur,
+          buildIndicateursSuivis(scoreIndicatifTypeEnum.FAIT)
         );
         const programme = this.computeScore(
           actionId,
@@ -337,7 +401,9 @@ export class ScoreIndicatifService {
           valeursParTypeScore,
           indicateurs,
           scoreIndicatifTypeEnum.PROGRAMME,
-          evaluationContext
+          evaluationContext,
+          formuleNecessiteUneValeur,
+          buildIndicateursSuivis(scoreIndicatifTypeEnum.PROGRAMME)
         );
 
         return {
@@ -354,9 +420,10 @@ export class ScoreIndicatifService {
 
   /** Liste les valeurs d'indicateurs utilisées pour le calcul du score indicatif */
   async getValeursUtiliseesParActionId(
-    input: GetScoreIndicatifRequest
+    input: GetScoreIndicatifRequest,
+    { tx }: Pick<ServiceSecondArg, 'tx'> = {}
   ): Promise<Result<Record<string, ValeurUtilisee[]>, ScoreIndicatifError>> {
-    return this.repository.listValeursUtiliseesParActionId(input);
+    return this.repository.listValeursUtiliseesParActionId(input, tx);
   }
 
   /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
@@ -375,7 +442,9 @@ export class ScoreIndicatifService {
     valeursParTypeScore: Record<ScoreIndicatifType, ValeurUtilisee[]>,
     indicateursAssocies: IndicateurAssocie[],
     typeScore: ScoreIndicatifType,
-    evaluationContext: EvaluationContext
+    evaluationContext: EvaluationContext,
+    formuleNecessiteUneValeur: boolean,
+    indicateursSuivis: Record<string, boolean> | undefined
   ) {
     // Si un des indicateurs associés est marqué "non applicable" par la
     // collectivité, le résultat est forcé à 0 sans évaluer la formule.
@@ -390,8 +459,8 @@ export class ScoreIndicatifService {
 
     const valeursUtilisees = valeursParTypeScore[typeScore] || [];
 
-    // Si aucune valeur présente, log et retourne null
-    if (valeursUtilisees.length === 0) {
+    // Si aucune valeur présente alors qu'elle est requise, log et retourne null
+    if (formuleNecessiteUneValeur && valeursUtilisees.length === 0) {
       this.logger.log(
         `Valeur(s) manquante(s) pour le calcul du score indicatif ${typeScore} de l'action ${actionId}`
       );
@@ -406,7 +475,7 @@ export class ScoreIndicatifService {
     const score = this.indicateurExpressionService.parseAndEvaluateExpression(
       exprScore,
       valeurs,
-      evaluationContext
+      { ...evaluationContext, indicateursSuivis }
     );
     if (score === null) {
       this.logger.log(
