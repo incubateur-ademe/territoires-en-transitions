@@ -5,38 +5,47 @@
  *
  *   SUPABASE_DATABASE_URL="postgresql://..." pnpx tsx \
  *     apps/tools/src/migrations/reprise-tec/import-demarches/index.ts \
- *     --suivi chemin/vers/suivi-ademe.csv [--confirm]
+ *     --suivi chemin/vers/suivi-ademe.csv --date-reference AAAA-MM-JJ [--confirm]
  */
 
 import { getCible } from '../db';
-import { buildDossier, Dossier } from './dossier';
+import { loadCollectivites } from './collectivites';
+import { loadDemarchesTet } from './demarches-tet';
+import { buildDossier } from './dossier';
 import { createDossiers } from './ecriture';
 import { listElaborationsRemplacees } from './elaborations-remplacees';
-import { validateCollectivites } from './gardes';
-import { getSuiviAdeme, listLignesDemarche, listPorteurs } from './lecture';
-import { calculatePerimetre, Motif } from './perimetre';
+import { validateGardes } from './gardes';
+import { loadPerimetre } from './perimetre';
+import { printRapport } from './rapport';
+import { readSuiviAdeme } from './suivi-ademe';
+import { getArgument, getDateReference } from './utils';
 
 const main = async () => {
   const isConfirmed = process.argv.includes('--confirm');
-  const suivi = getSuiviAdeme(getArgument('--suivi'));
+  const suivi = readSuiviAdeme(getArgument('--suivi'));
+  const dateReference = getDateReference();
   const pool = getCible('reprise-tec-import-demarches');
   const client = await pool.connect();
 
   try {
-    const lignes = await listLignesDemarche(client);
-    const porteurs = await listPorteurs(client);
+    const perimetre = await loadPerimetre(client);
+    const collectivites = await loadCollectivites(client);
+    const demarchesTet = await loadDemarchesTet(client);
 
-    const { retenues, ecartees } = calculatePerimetre(lignes);
-    const dossiers = retenues.map((ligne) =>
-      buildDossier(ligne, porteurs.get(ligne.id), suivi)
+    const dossiers = perimetre.retenues.map((ligne) =>
+      buildDossier(ligne, collectivites.getPorteur(ligne.id), suivi)
     );
-
-    validateCollectivites(dossiers, porteurs);
 
     const elaborationsRemplacees = listElaborationsRemplacees(dossiers);
     const dossiersAImporter = dossiers.filter(
       (d) => !elaborationsRemplacees.includes(d.tecId)
     );
+
+    validateGardes(dossiersAImporter, {
+      collectivites,
+      demarchesTet,
+      dateReference,
+    });
 
     await client.query('begin');
     try {
@@ -47,57 +56,21 @@ const main = async () => {
       throw e;
     }
 
-    printComptes(
-      lignes.length,
-      ecartees,
+    printRapport({
+      lues: perimetre.lues,
+      ecartees: perimetre.ecartees,
       elaborationsRemplacees,
-      dossiersAImporter,
-      isConfirmed
-    );
+      ecrits: dossiersAImporter,
+      deuxDossiersEnCours: demarchesTet.listDeuxDossiersEnCours(
+        dossiersAImporter,
+        collectivites
+      ),
+      isConfirmed,
+    });
   } finally {
     client.release();
     await pool.end();
   }
-};
-
-/** La valeur qui suit une option de la ligne de commande ; erreur si elle manque. */
-const getArgument = (nom: string) => {
-  const valeur = process.argv[process.argv.indexOf(nom) + 1];
-  if (!process.argv.includes(nom) || !valeur) {
-    throw new Error(`${nom} est requis.`);
-  }
-  return valeur;
-};
-
-/** Affiche ce qui a été lu, écarté par motif, et écrit par statut. */
-const printComptes = (
-  lues: number,
-  ecartees: { motif: Motif }[],
-  elaborationsRemplacees: number[],
-  ecrits: Dossier[],
-  isConfirmed: boolean
-) => {
-  const compter = (valeurs: string[]) =>
-    [...new Set(valeurs)]
-      .sort()
-      .map((v) => `${v} : ${valeurs.filter((x) => x === v).length}`);
-
-  console.log(`${lues} lignes de dossier lues dans T&C`);
-  for (const ligne of compter(ecartees.map((e) => e.motif))) {
-    console.log(`  écartées, ${ligne}`);
-  }
-  console.log(
-    `  écartées, élaboration remplacée par une plus récente : ${elaborationsRemplacees.length}`
-  );
-  console.log(`${ecrits.length} dossiers écrits`);
-  for (const ligne of compter(ecrits.map((d) => d.colonnes.status))) {
-    console.log(`  ${ligne}`);
-  }
-  console.log(
-    isConfirmed
-      ? '\nImport terminé.'
-      : '\nSimulation : tout a été annulé. Relancer avec --confirm pour importer.'
-  );
 };
 
 main().catch((err) => {

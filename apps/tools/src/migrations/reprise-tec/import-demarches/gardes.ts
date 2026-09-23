@@ -1,26 +1,31 @@
-import { Dossier } from './dossier';
-import { Porteur } from './lecture';
+/** Les gardes : tout ce qui peut arrêter l'import, rassemblé en un seul endroit. */
 
-/** Arrête tout avant d'écrire si une collectivité est introuvable. */
-export const validateCollectivites = (
+import type { Collectivites } from './collectivites';
+import type { DemarchesTet } from './demarches-tet';
+import { listCasBloquantsDossiers, type Dossier } from './dossier';
+
+/** Arrête avant toute écriture si une garde trouve un cas ; liste tous les cas d'un coup. */
+export const validateGardes = (
   dossiers: readonly Dossier[],
-  porteurs: Map<number, Porteur>
-) => {
-  const introuvables = dossiers.filter(
-    (d) => d.colonnes.collectiviteId === null
-  );
-  if (introuvables.length === 0) {
-    return;
+  {
+    collectivites,
+    demarchesTet,
+    dateReference,
+  }: {
+    collectivites: Collectivites;
+    demarchesTet: DemarchesTet;
+    dateReference: string;
   }
-
-  const lignes = introuvables.map((d) => {
-    const porteur = porteurs.get(d.tecId);
-    return `  ${d.tecId} ${porteur?.nom ?? 'aucune collectivité'} (SIREN ${
-      porteur?.siren
-    })`;
-  });
-  throw new Error(
-    `${introuvables.length} dossier(s) dont la collectivité est introuvable dans TeT. Rien n'est écrit.\n` +
-      lignes.join('\n')
-  );
+) => {
+  const cas = [
+    ...collectivites.listCasBloquants(dossiers),
+    ...listCasBloquantsDossiers(dossiers, dateReference),
+    ...demarchesTet.listCasBloquants(dossiers, collectivites),
+  ];
+  if (cas.length > 0) {
+    throw new Error(
+      `L'import est arrêté avant toute écriture, ${cas.length} cas :\n` +
+        cas.join('\n')
+    );
+  }
 };
