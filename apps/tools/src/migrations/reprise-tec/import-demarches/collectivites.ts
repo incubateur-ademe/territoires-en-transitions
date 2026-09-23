@@ -50,7 +50,8 @@ export const loadCollectivites = async (client: PoolClient) => {
 };
 
 /**
- * Par code INSEE pour une commune, par SIREN sinon, toujours du même type.
+ * Par code INSEE pour une commune, par code (tiré du siège) pour un département,
+ * par SIREN sinon, toujours du même type : les départements de TeT n'ont pas de SIREN.
  * `collectivitesTrouvees` compte les réponses : la base ne garantit pas l'unicité.
  */
 const listPorteurs = async (
@@ -63,6 +64,10 @@ const listPorteurs = async (
              c.nom,
              lpad(c.siren, 9, '0') as siren,
              c.insee_commune_siege,
+             case when c.insee_commune_siege like '97%'
+                  then left(c.insee_commune_siege, 3)
+                  else left(c.insee_commune_siege, 2)
+             end as departement_code,
              case c.type_collectivite_id
                when 1 then 'region'
                when 2 then 'departement'
@@ -84,9 +89,10 @@ const listPorteurs = async (
       from porteur p
       left join public.collectivite tet
         on tet.type = p.type_tet
-       and case when p.type_tet = 'commune'
-                then tet.commune_code = p.insee_commune_siege
-                else tet.siren = p.siren
+       and case p.type_tet
+             when 'commune' then tet.commune_code = p.insee_commune_siege
+             when 'departement' then tet.departement_code = p.departement_code
+             else tet.siren = p.siren
            end`);
   return new Map(rows.map((p) => [p.demarcheId, p]));
 };
