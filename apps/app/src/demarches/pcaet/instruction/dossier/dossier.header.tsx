@@ -118,7 +118,8 @@ export const DossierInstructionHeader = ({
             // porte la ligne.
             <Badge
               title={statutInstructionLabel(
-                PcaetStatutInstructionEnum.EN_ELABORATION
+                PcaetStatutInstructionEnum.EN_ELABORATION,
+                { deposeAvis: dossier.titresDeposables.length > 0 }
               )}
               variant={STATUT_INSTRUCTION_VARIANTS.en_elaboration}
               size="sm"
