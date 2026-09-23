@@ -159,10 +159,12 @@ export class AirtableService {
     if (!emails.length) {
       return [];
     }
+    // La comparaison de texte Airtable est sensible à la casse.
+    const conditions = emails.map(
+      (email) => `LOWER(email)='${email.trim().toLowerCase()}'`
+    );
     const formula =
-      emails.length > 1
-        ? `OR(${emails.map((email) => `email='${email}'`).join(',')})`
-        : `email='${emails[0]}'`;
+      conditions.length > 1 ? `OR(${conditions.join(',')})` : conditions[0];
 
     this.logger.log(`Searching for user(s) ${emails.join(',')} in Airtable`);
 
