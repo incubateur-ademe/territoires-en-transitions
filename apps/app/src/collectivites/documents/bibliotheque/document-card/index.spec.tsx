@@ -47,9 +47,9 @@ vi.mock('@/app/collectivites/documents/add-document/add-document.tabs', () => ({
   AddDocumentTabs: ({
     handlers,
   }: {
-    handlers: { addFileFromLib: (fichierId: number) => void };
+    handlers: { addFile: (fichierId: number) => void };
   }) => (
-    <button onClick={() => handlers.addFileFromLib(42)}>
+    <button onClick={() => handlers.addFile(42)}>
       {'Choisir dans la bibliotheque'}
     </button>
   ),

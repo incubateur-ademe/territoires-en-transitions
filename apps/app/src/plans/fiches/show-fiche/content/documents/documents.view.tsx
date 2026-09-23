@@ -15,7 +15,7 @@ export const DocumentsView = () => {
   const { fiche, isReadonly, documents } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
+  const { isLoading, addFile, addLink } = useAddAnnexe(fiche.id);
   const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
     useDuplicatedDocumentState();
 
@@ -79,7 +79,7 @@ export const DocumentsView = () => {
       {!isReadonly && (
         <ModaleAjoutDocument
           fiche={fiche}
-          handlers={{ addFileFromLib, addLink }}
+          handlers={{ addFile, addLink }}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
           onDuplicatedDocumentsAdded={registerDuplicatedDocuments}

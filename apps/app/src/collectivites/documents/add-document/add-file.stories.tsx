@@ -53,7 +53,7 @@ const meta: Meta<typeof AddFile> = {
     ),
   ],
   args: {
-    onAddFileFromLib: action('onAddFileFromLib'),
+    onAddFile: action('onAddFile'),
     onClose: action('onClose'),
   },
 };

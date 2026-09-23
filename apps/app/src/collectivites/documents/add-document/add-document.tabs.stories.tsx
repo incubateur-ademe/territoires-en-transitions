@@ -5,7 +5,7 @@ import { AddDocumentTabs } from './add-document.tabs';
 const DEFAULT_ARGS = {
   onClose: action('onClose'),
   handlers: {
-    addFileFromLib: action('addFileFromLib'),
+    addFile: action('addFile'),
     addLink: action('addLink'),
   },
 };

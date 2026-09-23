@@ -1,4 +1,4 @@
-import { DocumentHash } from '@tet/domain/collectivites';
+import { DocumentHash, PreuveType } from '@tet/domain/collectivites';
 
 export enum UploadStatusCode {
   preparing = 'preparing',
@@ -77,15 +77,15 @@ export type DocType =
   // aux instances consultatives.
   | 'demarche_pcaet';
 
-export type DuplicatedDocumentPreuveType = Extract<
-  DocType,
+export type DuplicatedPreuveType = Extract<
+  PreuveType,
   'reglementaire' | 'complementaire' | 'annexe'
 >;
 
 export type AddedDuplicatedDocument = {
   hash: string;
-  preuveId: number;
-  preuveType: DuplicatedDocumentPreuveType;
+  documentId: number;
+  preuveType: DuplicatedPreuveType;
   storedFilenameKept: boolean;
 };
 

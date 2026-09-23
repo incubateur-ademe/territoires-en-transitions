@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { AddFileFromLibHandler } from './add-document/add-file';
+import { AddFileHandler } from './add-document/add-file';
 import { AddLinkHandler } from './add-document/add-link';
 import {
   useAddPreuveComplementaire,
@@ -7,14 +7,10 @@ import {
 } from './use-add-preuves';
 
 type AddPreuveHandlers = {
-  /** ajoute un fichier sélectionné depuis la bibliothèque */
-  addFileFromLib: AddFileFromLibHandler;
-  /** ajoute un lien */
+  addFile: AddFileHandler;
   addLink: AddLinkHandler;
 };
 
-/** Renvoie les gestionnaires d'événement du dialogue d'ajout de liens et
- * fichiers à une action en tant que preuve complémentaire */
 export const useAddPreuveComplementaireToAction = (
   actionId: string
 ): AddPreuveHandlers => {
@@ -24,21 +20,19 @@ export const useAddPreuveComplementaireToAction = (
     mutateAsync: addPreuveComplementaire,
   } = useAddPreuveComplementaire();
 
-  // associe un fichier sélectionné depuis la bibliothèque à une action
-  const addFileFromLib: AddFileFromLibHandler = async (fichier_id) => {
+  const addFile: AddFileHandler = async (fichierId) => {
     if (collectiviteId) {
       const preuve = await addPreuveComplementaire({
         actionId,
         collectiviteId,
         commentaire: '',
-        fichierId: fichier_id,
+        fichierId,
       });
 
-      return { preuveId: preuve.id };
+      return { documentId: preuve.id };
     }
   };
 
-  // associe un lien+titre à une action
   const addLink: AddLinkHandler = (titre, url) => {
     if (collectiviteId) {
       addPreuveComplementaireSync({
@@ -51,13 +45,11 @@ export const useAddPreuveComplementaireToAction = (
   };
 
   return {
-    addFileFromLib,
+    addFile,
     addLink,
   };
 };
 
-/** Renvoie les gestionnaires d'événement du dialogue d'ajout de liens et
- * fichiers à une action en tant que preuve réglementaire */
 export const useAddPreuveReglementaireToAction = (
   preuveId: string
 ): AddPreuveHandlers => {
@@ -67,21 +59,19 @@ export const useAddPreuveReglementaireToAction = (
     mutateAsync: addPreuveReglementaire,
   } = useAddPreuveReglementaire();
 
-  // associe un fichier sélectionné depuis la bibliothèque à une action
-  const addFileFromLib: AddFileFromLibHandler = async (fichier_id) => {
+  const addFile: AddFileHandler = async (fichierId) => {
     if (collectiviteId) {
       const preuve = await addPreuveReglementaire({
         preuveId,
         collectiviteId,
         commentaire: '',
-        fichierId: fichier_id,
+        fichierId,
       });
 
-      return { preuveId: preuve.id };
+      return { documentId: preuve.id };
     }
   };
 
-  // associe un lien+titre à une action
   const addLink: AddLinkHandler = (titre, url) => {
     if (collectiviteId) {
       addPreuveReglementaireSync({
@@ -94,7 +84,7 @@ export const useAddPreuveReglementaireToAction = (
   };
 
   return {
-    addFileFromLib,
+    addFile,
     addLink,
   };
 };

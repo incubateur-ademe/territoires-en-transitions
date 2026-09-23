@@ -6,12 +6,12 @@ import {
 } from './duplicated-document-state.utils';
 
 describe('duplicated document state utils', () => {
-  test('maps duplicate information to the created preuve identity', () => {
+  test('maps duplicate information to the created document identity', () => {
     const duplicatedDocumentInformationByKey =
       buildDuplicatedDocumentInformationByKey([
         {
           hash: 'same-hash',
-          preuveId: 2,
+          documentId: 2,
           preuveType: 'complementaire',
           storedFilenameKept: false,
         },
@@ -29,13 +29,13 @@ describe('duplicated document state utils', () => {
       buildDuplicatedDocumentInformationByKey([
         {
           hash: 'hash-annexe',
-          preuveId: 7,
+          documentId: 7,
           preuveType: 'annexe',
           storedFilenameKept: false,
         },
         {
           hash: 'hash-complementaire',
-          preuveId: 7,
+          documentId: 7,
           preuveType: 'complementaire',
           storedFilenameKept: true,
         },
@@ -57,7 +57,7 @@ describe('duplicated document state utils', () => {
         mergeDuplicatedDocumentInformationByKey({}, [
           {
             hash: 'hash-1',
-            preuveId: 2,
+            documentId: 2,
             preuveType: 'annexe',
             storedFilenameKept: false,
           },
@@ -65,7 +65,7 @@ describe('duplicated document state utils', () => {
         [
           {
             hash: 'hash-2',
-            preuveId: 4,
+            documentId: 4,
             preuveType: 'annexe',
             storedFilenameKept: true,
           },

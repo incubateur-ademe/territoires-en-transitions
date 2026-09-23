@@ -1,15 +1,15 @@
 import { FileUploadItem } from './file-item';
 import {
   AddedDuplicatedDocument,
-  DuplicatedDocumentPreuveType,
+  DuplicatedPreuveType,
   isUploadInFlight,
   UploadStatusCode,
   UploadStatusDuplicated,
   ValidUploadStatus,
 } from './types';
 
-export type AddedPreuveResult = {
-  preuveId: number;
+export type AddedDocumentResult = {
+  documentId: number;
 };
 
 export type ValidFileItem = FileUploadItem & {
@@ -19,12 +19,12 @@ export type ValidFileItem = FileUploadItem & {
 export type SubmittedValidFile = {
   file: File;
   status: ValidUploadStatus;
-  addedPreuve: AddedPreuveResult | void;
+  addedDocument: AddedDocumentResult | void;
 };
 
 type AddedDuplicate = SubmittedValidFile & {
   status: UploadStatusDuplicated;
-  addedPreuve: AddedPreuveResult;
+  addedDocument: AddedDocumentResult;
 };
 
 export type FilesSubmission =
@@ -55,21 +55,21 @@ const isAddedDuplicate = (
   submittedFile: SubmittedValidFile
 ): submittedFile is AddedDuplicate =>
   submittedFile.status.code === UploadStatusCode.duplicated &&
-  Boolean(submittedFile.addedPreuve);
+  Boolean(submittedFile.addedDocument);
 
 const toDuplicatedDocument = (
-  { addedPreuve, file, status }: AddedDuplicate,
-  preuveType: DuplicatedDocumentPreuveType
+  { addedDocument, file, status }: AddedDuplicate,
+  preuveType: DuplicatedPreuveType
 ): AddedDuplicatedDocument => ({
   hash: status.hash,
-  preuveId: addedPreuve.preuveId,
+  documentId: addedDocument.documentId,
   preuveType,
   storedFilenameKept: file.name !== status.filename,
 });
 
 export const buildDuplicatedDocuments = (
   submittedFiles: SubmittedValidFile[],
-  preuveType: DuplicatedDocumentPreuveType
+  preuveType: DuplicatedPreuveType
 ): AddedDuplicatedDocument[] =>
   submittedFiles
     .filter(isAddedDuplicate)

@@ -12,7 +12,7 @@ import {
   toAcceptAttribute,
 } from '../upload/constants';
 import {
-  AddedPreuveResult,
+  AddedDocumentResult,
   buildDuplicatedDocuments,
   getFilesSubmission,
   SubmittedValidFile,
@@ -26,20 +26,20 @@ import { FileUploadItem } from './file-item';
 import { FileItemsList } from './file-items-list';
 import {
   DocType,
-  DuplicatedDocumentPreuveType,
+  DuplicatedPreuveType,
   OnDuplicatedDocumentsAdded,
   UploadStatusCode,
   UploadStatusCompleted,
 } from './types';
 import { useFileUploadList } from './use-file-upload-list';
 
-export type AddFileFromLibHandler = (
+export type AddFileHandler = (
   fichierId: number
-) => Promise<AddedPreuveResult | void> | AddedPreuveResult | void;
+) => Promise<AddedDocumentResult | void> | AddedDocumentResult | void;
 
-const isTrackedDuplicatedDocumentPreuveType = (
+const isDuplicatedPreuveType = (
   docType?: DocType
-): docType is DuplicatedDocumentPreuveType =>
+): docType is DuplicatedPreuveType =>
   docType === 'annexe' ||
   docType === 'complementaire' ||
   docType === 'reglementaire';
@@ -54,7 +54,7 @@ export type AddFileProps = {
   initialSelection?: Array<FileUploadItem>;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
-  onAddFileFromLib: AddFileFromLibHandler;
+  onAddFile: AddFileHandler;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
   onClose: () => void;
 };
@@ -64,7 +64,7 @@ export const AddFile = (props: AddFileProps) => {
     docType,
     initialSelection,
     fileConstraints = DEFAULT_FILE_CONSTRAINTS,
-    onAddFileFromLib,
+    onAddFile,
     onDuplicatedDocumentsAdded,
     onClose,
   } = props;
@@ -94,7 +94,7 @@ export const AddFile = (props: AddFileProps) => {
   }: ValidFileItem): Promise<SubmittedValidFile> => ({
     file,
     status,
-    addedPreuve: await onAddFileFromLib(status.fichierId),
+    addedDocument: await onAddFile(status.fichierId),
   });
 
   const onSubmit = async (e: FormEvent) => {
@@ -116,10 +116,7 @@ export const AddFile = (props: AddFileProps) => {
       .filter(isFulfilledSubmittedFile)
       .map((result) => result.value);
 
-    if (
-      onDuplicatedDocumentsAdded &&
-      isTrackedDuplicatedDocumentPreuveType(docType)
-    ) {
+    if (onDuplicatedDocumentsAdded && isDuplicatedPreuveType(docType)) {
       const duplicatedDocuments = buildDuplicatedDocuments(
         submittedFiles,
         docType

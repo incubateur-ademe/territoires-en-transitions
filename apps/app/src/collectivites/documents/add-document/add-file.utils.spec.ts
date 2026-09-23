@@ -1,7 +1,7 @@
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { describe, expect, it } from 'vitest';
 import {
-  AddedPreuveResult,
+  AddedDocumentResult,
   buildDuplicatedDocuments,
   getFilesSubmission,
   SubmittedValidFile,
@@ -108,11 +108,11 @@ describe('getFilesSubmission', () => {
 const toDuplicatedSubmission = ({
   depositedFilename,
   storedFilename,
-  addedPreuve,
+  addedDocument,
 }: {
   depositedFilename: string;
   storedFilename: string;
-  addedPreuve: AddedPreuveResult | void;
+  addedDocument: AddedDocumentResult | void;
 }): SubmittedValidFile => ({
   file: toFile(depositedFilename),
   status: {
@@ -121,13 +121,13 @@ const toDuplicatedSubmission = ({
     filename: storedFilename,
     hash: HASH,
   },
-  addedPreuve,
+  addedDocument,
 });
 
 const toCompletedSubmission = (filename: string): SubmittedValidFile => ({
   file: toFile(filename),
   status: { code: UploadStatusCode.completed, fichierId: 1, hash: HASH },
-  addedPreuve: { preuveId: 43 },
+  addedDocument: { documentId: 43 },
 });
 
 describe('buildDuplicatedDocuments', () => {
@@ -138,7 +138,7 @@ describe('buildDuplicatedDocuments', () => {
           toDuplicatedSubmission({
             depositedFilename: 'nouveau nom.pdf',
             storedFilename: 'nom-original.pdf',
-            addedPreuve: { preuveId: 42 },
+            addedDocument: { documentId: 42 },
           }),
         ],
         'annexe'
@@ -146,7 +146,7 @@ describe('buildDuplicatedDocuments', () => {
     ).toEqual([
       {
         hash: HASH,
-        preuveId: 42,
+        documentId: 42,
         preuveType: 'annexe',
         storedFilenameKept: true,
       },
@@ -160,7 +160,7 @@ describe('buildDuplicatedDocuments', () => {
           toDuplicatedSubmission({
             depositedFilename: 'nom-original.pdf',
             storedFilename: 'nom-original.pdf',
-            addedPreuve: { preuveId: 42 },
+            addedDocument: { documentId: 42 },
           }),
         ],
         'reglementaire'
@@ -168,7 +168,7 @@ describe('buildDuplicatedDocuments', () => {
     ).toEqual([
       {
         hash: HASH,
-        preuveId: 42,
+        documentId: 42,
         preuveType: 'reglementaire',
         storedFilenameKept: false,
       },
@@ -181,14 +181,14 @@ describe('buildDuplicatedDocuments', () => {
     ).toEqual([]);
   });
 
-  it("écarte les doublons dont l'ajout de preuve n'a rien rendu", () => {
+  it("écarte les doublons dont l'ajout de document n'a rien rendu", () => {
     expect(
       buildDuplicatedDocuments(
         [
           toDuplicatedSubmission({
             depositedFilename: 'nouveau nom.pdf',
             storedFilename: 'nom-original.pdf',
-            addedPreuve: undefined,
+            addedDocument: undefined,
           }),
         ],
         'complementaire'
