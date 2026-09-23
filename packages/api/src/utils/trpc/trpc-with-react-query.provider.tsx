@@ -17,7 +17,8 @@ import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { getQueryClient } from './react-query-client';
 
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { listenForCrossTabQueryInvalidation } from '../react-query/cross-tab-invalidation';
 import {
   getTrpcLoggerLink,
   getTrpcUrl,
@@ -75,6 +76,11 @@ export function TrpcWithReactQueryProvider({
   const [trpcClient] = useState(() => getTrpcClient());
 
   const queryClient = getQueryClient();
+
+  useEffect(
+    () => listenForCrossTabQueryInvalidation(queryClient),
+    [queryClient]
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
