@@ -82,9 +82,9 @@ const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
       );
     }
     // Lever plutôt que répondre « non » : une identité servie sans ses communes
-    // membres (score, indicateurs, EPCI à composition inconnue) masquerait en
-    // silence une pièce requise, alors que l'applicabilité d'une pièce garde
-    // celle dont la condition lève.
+    // membres (score, indicateurs, établissement public territorial du Grand
+    // Paris) masquerait en silence une pièce requise, alors que l'applicabilité
+    // d'une pièce garde celle dont la condition lève.
     if (identite.communesMembresPopulationTags === undefined) {
       throw new Error(
         `identite(commune_membre, ${primary}) : les communes membres de la collectivité n'ont pas été chargées`
