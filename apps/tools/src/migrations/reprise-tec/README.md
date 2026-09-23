@@ -46,6 +46,22 @@ pnpx tsx apps/tools/src/migrations/reprise-tec/extraire-source/index.ts --confir
 Rejouable : chaque table de copie est recréée à neuf. `correspondance` et
 `lignes_ecrites` ne sont jamais vidées.
 
+### 2. Importer les dossiers
+
+Écrit une ligne de `demarche` par dossier repris. Lit la copie et le suivi de
+l'obligation PCAET tenu par l'ADEME, un export CSV qui n'est pas dans le dépôt.
+Chaque dossier écrit laisse une ligne dans `correspondance` et dans
+`lignes_ecrites`.
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-demarches/index.ts --suivi <csv>            # simulation
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-demarches/index.ts --suivi <csv> --confirm  # import
+```
+
+S'arrête sans rien écrire si la collectivité d'un dossier est introuvable dans
+TeT. Un second `--confirm` échoue sur `correspondance` : les dossiers sont déjà
+là.
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                       |
