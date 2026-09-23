@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
+import { BuildCrispUserDataService } from './build-crisp-user-data.service';
 import { CrispEventRequest } from '../models/crisp-event.request';
 import { CrispMessageReceivedEventDataDto } from '../models/crisp-message-received-event-data.dto';
 import { CrispOperatorIndo } from '../models/get-crisp-operator.response';
@@ -30,7 +31,8 @@ export class CrispService {
   constructor(
     private readonly notionBugCreatorService: NotionBugCreatorService,
     private readonly configurationService: ConfigurationService,
-    private readonly airtableService: AirtableService
+    private readonly airtableService: AirtableService,
+    private readonly buildCrispUserDataService: BuildCrispUserDataService
   ) {
     this.crispClient = new Crisp();
     this.crispClient.authenticateTier(
@@ -87,6 +89,10 @@ export class CrispService {
       `Handling message ${body.data.type} (identifiant ${messageId}) received from ${body.data.from} for session ${sessionId} on website ${websiteId}: `
     );
 
+    if (body.data.from === 'user') {
+      return this.enrichConversationWithUserData(websiteId, sessionId);
+    }
+
     if (body.data.from !== 'operator' || body.data.type !== 'note') {
       this.logger.log(
         `Ignoring message received for session ${sessionId} on website ${websiteId} because it's not from an operator`
@@ -137,6 +143,47 @@ export class CrispService {
     } finally {
       // continue à éviter les doublons tout en limitant la taille du cache
       setTimeout(() => this.processingMessages.delete(messageKey), 30_000);
+    }
+  }
+
+  /**
+   * Ajoute le mode de connexion et le lien vers la fiche CRM Airtable aux
+   * données de la conversation, visibles des opérateurs. Une seule fois par
+   * conversation pour ménager le quota Airtable.
+   */
+  async enrichConversationWithUserData(websiteId: string, sessionId: string) {
+    try {
+      const session: CrispSession =
+        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const email = session.meta?.email;
+      if (!email || session.meta?.data?.connexion) {
+        return;
+      }
+
+      const userData = await this.buildCrispUserDataService.buildUserData(
+        email
+      );
+      if (!userData) {
+        return;
+      }
+
+      // Le PATCH remplace l'objet `data` : on repart de l'existant.
+      await this.crispClient.website.updateConversationMetas(
+        websiteId,
+        sessionId,
+        { data: { ...session.meta.data, ...userData } }
+      );
+      this.logger.log(
+        `Conversation ${sessionId} on website ${websiteId} enriched: ${JSON.stringify(
+          userData
+        )}`
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error enriching session ${sessionId} on website ${websiteId}: ${getErrorMessage(
+          error
+        )}`
+      );
     }
   }
 
