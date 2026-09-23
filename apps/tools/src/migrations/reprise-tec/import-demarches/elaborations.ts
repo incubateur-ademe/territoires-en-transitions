@@ -26,7 +26,7 @@ export const calculateElaborations = (dossiers: readonly Dossier[]) => {
     remplacees.push(...plusAnciens.map((d) => d.tecId));
   }
   return {
-    retenus: dossiers.filter((d) => !remplacees.includes(d.tecId)),
+    retenues: dossiers.filter((d) => !remplacees.includes(d.tecId)),
     ecartees: remplacees.map(
       (id): Ecart => ({ id, motif: 'elaboration_remplacee' })
     ),

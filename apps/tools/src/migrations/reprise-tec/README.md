@@ -95,6 +95,7 @@ s'il en trouve un :
 | A3   | fenêtre d'avis de trois mois encore ouverte à la date de référence, jour de l'échéance compris | vérifier la date ; si elle est juste, attendre la fin de la consultation |
 | D3   | dossier qui arriverait instruit sans date de transmission                                      | corriger la source : il serait enfermé dans TeT                          |
 | D4   | collectivité qui a déjà une démarche active dans TeT                                           | décider au cas par cas, on ne touche pas à son dossier                   |
+| D7   | dossier qui arriverait publié sans date de publication                                         | corriger la source                                                       |
 
 Le script s'arrête aussi, sans rien écrire, sur un état de dossier T&C ou une
 valeur d'obligation du suivi qu'il ne connaît pas : il ne devine pas.
@@ -131,12 +132,12 @@ select c.nom, c.siren, d.id, d.status, d.titre
 
 ## Le schéma de travail `reprise_tec`
 
-| Table             | Rôle                                                                                       |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| `staging_<table>` | la copie de T&C, lue par les étapes d'import                                               |
-| `correspondance`  | traduire un identifiant T&C en identifiant TeT                                             |
-| `lignes_ecrites`  | savoir exactement quelles lignes du produit la reprise a écrites, pour pouvoir les retirer |
-| `ecarts`          | savoir pourquoi une ligne de T&C n'a pas été reprise (`doublon`, `coquille_vide`…)         |
+| Table             | Rôle                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `staging_<table>` | la copie de T&C, lue par les étapes d'import                                                                                    |
+| `correspondance`  | traduire un identifiant T&C en identifiant TeT ; pour un dossier publié, d'où vient sa date d'adoption (`adoption_decidee_par`) |
+| `lignes_ecrites`  | savoir exactement quelles lignes du produit la reprise a écrites, pour pouvoir les retirer                                      |
+| `ecarts`          | savoir pourquoi une ligne de T&C n'a pas été reprise (`doublon`, `coquille_vide`…)                                              |
 
 Pour tout retirer d'un coup :
 

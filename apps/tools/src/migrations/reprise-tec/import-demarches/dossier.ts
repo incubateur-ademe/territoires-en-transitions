@@ -77,12 +77,7 @@ export const buildDossier = (
     datesRevues,
     sources: {
       obligation: obligation.source,
-      adoption:
-        dates.adoptedAt === null
-          ? null
-          : dates.adoptedAt === approbation
-          ? 'suivi'
-          : 'repli',
+      adoption: dates.sourceAdoption,
     },
     colonnes: {
       collectiviteId: porteur?.collectiviteId ?? null,
@@ -137,6 +132,7 @@ const correctDatesSaisies = (ligne: LigneDemarche) => {
 /**
  * Garde, appelée par `gardes.ts` : liste les cas bloquants, un par ligne.
  * - A3 : fenêtre d'avis encore ouverte à la date de référence, échéance comprise ;
+ * - D7 : publié sans date de publication ;
  * - D3 : instruit sans date de transmission, le dossier serait enfermé.
  */
 export const listCasBloquantsDossiers = (
@@ -154,6 +150,13 @@ export const listCasBloquantsDossiers = (
         `  fenêtre d'avis encore ouverte (A3) : ${decrireDossier(
           d
         )}, échéance ${d.colonnes.avisDeadlineAt}`
+    ),
+  ...dossiers
+    .filter(
+      (d) => d.colonnes.status === PUBLIE && d.colonnes.publishedAt === null
+    )
+    .map(
+      (d) => `  publié sans date de publication (D7) : ${decrireDossier(d)}`
     ),
   ...dossiers
     .filter(
@@ -220,12 +223,19 @@ const calculateDates = (
       avisDeadlineAt,
       publishedAt: null,
       adoptedAt: null,
+      sourceAdoption: null,
     };
   }
 
-  const publishedAt = calculatePublishedAt(ligne, approbation);
-  const adoptedAt = calculateAdoptedAt(ligne, approbation, publishedAt);
-  return { transmittedAt, avisDeadlineAt, publishedAt, adoptedAt };
+  const publication = calculatePublishedAt(ligne, approbation);
+  const adoption = calculateAdoptedAt(ligne, approbation, publication);
+  return {
+    transmittedAt,
+    avisDeadlineAt,
+    publishedAt: publication.date,
+    adoptedAt: adoption.date,
+    sourceAdoption: adoption.source,
+  };
 };
 
 /** La plus tardive des deux saisines, sinon la réception du projet. */
@@ -239,30 +249,30 @@ const calculateTransmission = (ligne: LigneDemarche) => {
   return jour(ligne.receptionProjet);
 };
 
-/** Le dépôt définitif, l'approbation du suivi, ou la dernière mise à jour. */
+/** Le dépôt définitif, l'approbation du suivi, ou la dernière mise à jour ; avec sa source. */
 const calculatePublishedAt = (
   ligne: LigneDemarche,
   approbation: string | null
-) => {
+): { date: string | null; source: SourceAdoption } => {
   if (ligne.etat === 'mise_en_oeuvre') {
-    return ligne.deposeLe;
+    return { date: ligne.deposeLe, source: 'repli' };
   }
   if (ligne.etat === 'depot_pour_avis') {
-    return approbation;
+    return { date: approbation, source: 'suivi' };
   }
   const creation = jour(ligne.creeLe);
   if (approbation !== null && creation !== null && approbation > creation) {
-    return approbation;
+    return { date: approbation, source: 'suivi' };
   }
-  return ligne.misAJourLe ?? ligne.creeLe;
+  return { date: ligne.misAJourLe ?? ligne.creeLe, source: 'repli' };
 };
 
-/** L'approbation du suivi si elle ne suit pas le dépôt définitif, sinon la publication. */
+/** L'approbation du suivi si elle ne suit pas le dépôt définitif, sinon la publication ; avec sa source. */
 const calculateAdoptedAt = (
   ligne: LigneDemarche,
   approbation: string | null,
-  publishedAt: string | null
-) => {
+  publication: { date: string | null; source: SourceAdoption }
+): { date: string | null; source: SourceAdoption } => {
   const depot = jour(ligne.deposeLe);
   if (
     ligne.etat === 'mise_en_oeuvre' &&
@@ -270,9 +280,9 @@ const calculateAdoptedAt = (
     depot !== null &&
     approbation <= depot
   ) {
-    return approbation;
+    return { date: approbation, source: 'suivi' };
   }
-  return jour(publishedAt);
+  return { date: jour(publication.date), source: publication.source };
 };
 
 /**
