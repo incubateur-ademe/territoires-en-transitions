@@ -1,4 +1,4 @@
-import { getRequestUrl } from '@tet/api';
+import { getRequestUrl } from '@tet/api/utils/get-request-url';
 import { getNextResponseWithUpdatedSupabaseSession } from '@tet/api/utils/supabase/proxy-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
