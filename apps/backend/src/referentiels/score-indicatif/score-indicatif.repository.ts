@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurCategorieTagTable } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
@@ -29,6 +30,7 @@ export type IndicateurDefinitionAvecCategories = {
   unite: string;
   titre: string;
   categories: string[];
+  isApplicable: boolean;
 };
 
 @Injectable()
@@ -63,6 +65,7 @@ export class ScoreIndicatifRepository {
   /** Charge les définitions des indicateurs identifiés par leur identifiant référentiel, avec leurs catégories */
   async getIndicateurDefinitionsByIdentifiants(
     identifiants: string[],
+    collectiviteId: number,
     tx?: Transaction
   ): Promise<
     Result<IndicateurDefinitionAvecCategories[], ScoreIndicatifError>
@@ -89,6 +92,7 @@ export class ScoreIndicatifRepository {
               '[]'::json
             )
           `,
+          isApplicable: sql<boolean>`coalesce(bool_and(${indicateurCollectiviteTable.isApplicable}), true)`,
         })
         .from(indicateurDefinitionTable)
         .leftJoin(
@@ -98,6 +102,13 @@ export class ScoreIndicatifRepository {
         .leftJoin(
           categorieTagTable,
           eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+        )
+        .leftJoin(
+          indicateurCollectiviteTable,
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+            eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+          )
         )
         .where(and(inArray(identifiantReferentiel, identifiants)))
         .groupBy(indicateurId);

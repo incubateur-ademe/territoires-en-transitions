@@ -41,7 +41,7 @@ export function buildIndicateursAssocies(
             identifiantsManquants.push({ actionId, identifiant });
             return null;
           }
-          const { indicateurId, unite, titre } = indicateur;
+          const { indicateurId, unite, titre, isApplicable } = indicateur;
           return {
             actionId,
             indicateurId,
@@ -49,6 +49,7 @@ export function buildIndicateursAssocies(
             titre,
             identifiantReferentiel: identifiant,
             optional,
+            isApplicable,
           };
         })
         .filter((ind) => ind !== null)

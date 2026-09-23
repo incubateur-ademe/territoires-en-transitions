@@ -11,6 +11,7 @@ const indicateurAssocie: IndicateurAssocie = {
   identifiantReferentiel: 'ind_test',
   titre: 'Indicateur de test',
   unite: '%',
+  isApplicable: true,
 };
 
 function buildValeursGroupees(

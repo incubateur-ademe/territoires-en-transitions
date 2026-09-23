@@ -32,6 +32,9 @@ export type IndicateurAssocie = {
   titre: string;
   unite: string;
   optional?: boolean;
+  // false si la collectivité a déclaré cet indicateur non applicable : sa
+  // valeur doit alors être ignorée (traitée comme 0) dans le calcul du score
+  isApplicable: boolean;
 };
 
 // score indicatif programmé ou fait
