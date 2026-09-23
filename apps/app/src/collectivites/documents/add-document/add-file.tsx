@@ -12,40 +12,30 @@ import {
   toAcceptAttribute,
 } from '../upload/constants';
 import {
+  AddedPreuveResult,
+  buildDuplicatedDocuments,
+  getFilesSubmission,
+  SubmittedValidFile,
+  ValidFileItem,
+} from './add-file.utils';
+import {
   canChooseConfidentiel,
   ConfidentielCheckbox,
 } from './confidentiel.checkbox';
 import { FileUploadItem } from './file-item';
 import { FileItemsList } from './file-items-list';
 import {
-  AddedDuplicatedDocument,
   DocType,
   DuplicatedDocumentPreuveType,
-  isUploadInFlight,
   OnDuplicatedDocumentsAdded,
   UploadStatusCode,
   UploadStatusCompleted,
-  ValidUploadStatus,
 } from './types';
 import { useFileUploadList } from './use-file-upload-list';
-
-export type AddedPreuveResult = {
-  preuveId: number;
-};
 
 export type AddFileFromLibHandler = (
   fichierId: number
 ) => Promise<AddedPreuveResult | void> | AddedPreuveResult | void;
-
-type ValidFileItem = FileUploadItem & {
-  status: ValidUploadStatus;
-};
-
-type SubmittedValidFile = {
-  file: File;
-  status: ValidUploadStatus;
-  addedPreuve: AddedPreuveResult | void;
-};
 
 const isTrackedDuplicatedDocumentPreuveType = (
   docType?: DocType
@@ -53,37 +43,6 @@ const isTrackedDuplicatedDocumentPreuveType = (
   docType === 'annexe' ||
   docType === 'complementaire' ||
   docType === 'reglementaire';
-
-const isValidFileItem = (item: FileUploadItem): item is ValidFileItem =>
-  item.status.code === UploadStatusCode.completed ||
-  item.status.code === UploadStatusCode.duplicated;
-
-const toDuplicatedDocument = (
-  submittedFile: SubmittedValidFile,
-  preuveType: DuplicatedDocumentPreuveType
-): AddedDuplicatedDocument | null => {
-  const { addedPreuve, file, status } = submittedFile;
-
-  if (status.code !== UploadStatusCode.duplicated || !addedPreuve) {
-    return null;
-  }
-
-  return {
-    hash: status.hash,
-    preuveId: addedPreuve.preuveId,
-    preuveType,
-    storedFilenameKept: file.name !== status.filename,
-  };
-};
-
-const buildDuplicatedDocuments = (
-  submittedFiles: SubmittedValidFile[],
-  preuveType: DuplicatedDocumentPreuveType
-): AddedDuplicatedDocument[] =>
-  submittedFiles.flatMap((submittedFile) => {
-    const duplicatedDocument = toDuplicatedDocument(submittedFile, preuveType);
-    return duplicatedDocument ? [duplicatedDocument] : [];
-  });
 
 const isFulfilledSubmittedFile = (
   result: PromiseSettledResult<SubmittedValidFile>
@@ -126,11 +85,8 @@ export const AddFile = (props: AddFileProps) => {
     constraints: fileConstraints,
   });
 
-  const validFiles = currentSelection.filter(isValidFileItem);
-  const hasUploadInFlight = currentSelection.some(({ status }) =>
-    isUploadInFlight(status)
-  );
-  const isDisabled = validFiles.length === 0 || hasUploadInFlight;
+  const submission = getFilesSubmission(currentSelection);
+  const isSubmitDisabled = !submission.canSubmit || isSubmitting;
 
   const submitValidFile = async ({
     file,
@@ -143,8 +99,14 @@ export const AddFile = (props: AddFileProps) => {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!submission.canSubmit) {
+      return;
+    }
+
     setIsSubmitting(true);
-    const results = await Promise.allSettled(validFiles.map(submitValidFile));
+    const results = await Promise.allSettled(
+      submission.validFiles.map(submitValidFile)
+    );
     setIsSubmitting(false);
     if (results.some((result) => result.status === 'rejected')) {
       return;
@@ -234,11 +196,7 @@ export const AddFile = (props: AddFileProps) => {
         <Button variant="outlined" onClick={onClose}>
           {appLabels.annuler}
         </Button>
-        <Button
-          onClick={onSubmit}
-          disabled={isDisabled || isSubmitting}
-          data-test="ok"
-        >
+        <Button onClick={onSubmit} disabled={isSubmitDisabled} data-test="ok">
           {appLabels.ajouter}
         </Button>
       </div>
