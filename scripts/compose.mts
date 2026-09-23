@@ -72,13 +72,24 @@ interface ComposeOptions {
   profiles?: string[];
 }
 
+/**
+ * Commande compose complète (binaire, argv, cwd, env), pour qui doit la lancer
+ * lui-même — le TUI, qui ne peut pas bloquer sur un spawnSync.
+ */
+export const composeCommand = (
+  args: string[],
+  opts: ComposeOptions = {}
+): { file: string; argv: string[]; cwd: string; env: NodeJS.ProcessEnv } => ({
+  file: DOTENVX[0],
+  argv: composeArgv(args),
+  cwd: repoRoot,
+  env: withProfiles(opts),
+});
+
 /** Lance une commande compose en laissant sa sortie à l'écran ; rend son code. */
 export const compose = (args: string[], opts: ComposeOptions = {}): number => {
-  const { status } = spawnSync(DOTENVX[0], composeArgv(args), {
-    cwd: repoRoot,
-    stdio: 'inherit',
-    env: withProfiles(opts),
-  });
+  const { file, argv, ...rest } = composeCommand(args, opts);
+  const { status } = spawnSync(file, argv, { ...rest, stdio: 'inherit' });
   return status ?? 1;
 };
 
@@ -87,10 +98,10 @@ export const composeOut = (
   args: string[],
   opts: ComposeOptions = {}
 ): string => {
-  const { status, stdout } = spawnSync(DOTENVX[0], composeArgv(args), {
-    cwd: repoRoot,
+  const { file, argv, ...rest } = composeCommand(args, opts);
+  const { status, stdout } = spawnSync(file, argv, {
+    ...rest,
     encoding: 'utf8',
-    env: withProfiles(opts),
   });
   return status === 0 ? stdout.trim() : '';
 };

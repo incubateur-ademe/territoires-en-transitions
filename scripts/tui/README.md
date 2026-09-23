@@ -16,7 +16,7 @@ node scripts/dev-tui.mts --once # snapshot texte sans TUI (CI, agents, pas de TT
 | `⏎`            | logs du service                            |
 | `t`            | shell dans le conteneur (bash, sinon sh)   |
 | `o`            | ouvrir l'URL dans le navigateur            |
-| `s` / `␣`      | toggle démarré ⇄ stoppé                    |
+| `s` / `␣`      | toggle démarré ⇄ stoppé (crée si absent)   |
 | `r`            | relancer                                   |
 | `p`            | charger un profile de stack                |
 | `x`            | sauvegarder la stack up comme profile      |
@@ -29,11 +29,12 @@ Dans les logs : `↑↓` `PgUp/PgDn` scrollent et **figent** le flux, `f` ou `En
 
 Exécution directe des `.mts` par le type-stripping de Node ≥ 23.6 — pas de build, pas de JSX (non transformé par node) : le rendu passe par `htm/react` (syntaxe quasi-JSX en template literals) sur [ink 7](https://github.com/vadimdemedes/ink) (React pour le terminal).
 
-- Liste : poll `docker compose ps -a --format json` toutes les 2 s. Sections : Apps → Infra → Apps secondaires (studio, strapi, mailpit) → One-shots (atténués).
+- Liste : poll `docker compose ps -a --format json` toutes les 2 s. Sections : Apps → Infra → Apps secondaires (studio, strapi, mailpit) → One-shots (atténués). Les apps du registre `dev-apps` sans conteneur (typiquement `tools`, exclue par défaut) y figurent atténuées, en « non créé ».
 - Mémoire : `compose stats --no-stream` sur un poll séparé de 4 s (le sampling coûte ~2 s, il ne doit jamais bloquer celui des statuts), best-effort, jointure par nom de conteneur.
 - Logs : `compose logs -f` spawné par service, chunks découpés en lignes dans un ring buffer (2000 lignes), re-rendu throttlé à 100 ms.
 - URLs : apps en `network_mode: host` → port résolu comme `dev-apps` (checkPorts) (env `<APP>_PORT` > `.env.local` > défaut), donc corrects depuis un worktree (ports décalés par slot). Infra → ports publiés du compose, en dur dans `stack-service/url-resolver.mts`.
 - Actions : `compose start|stop|restart` agissent **en place** (aucune recréation de conteneur, donc pas de remontage de bind mounts) → pas de `guard-main`, utilisable depuis un worktree comme `make logs`/`make ps`. Bloquées sur les one-shots (`sqitch`, `seeder`, `deps`, `libs`) : les relancer ré-exécuterait migrations/seeds.
+- Création : le toggle sur une app « non créé » lance `compose up -d <app>` (enveloppe dotenvx, dépendances comprises), puis ajoute l'app à `COMPOSE_PROFILES` pour que le prochain `make up` ne l'arrête pas. Seule action qui crée un conteneur, donc refusée depuis un worktree (`make up ask=1`).
 - Shell (`t`) : le TUI se démonte (écran et raw mode restaurés par ink), `compose exec` prend le terminal ; à la sortie du shell, le TUI remonte en conservant la sélection. Même mécanique d'« interlude » pour les flux de profiles (`x`, `p`).
 - Profiles de stack : des combinaisons nommées de composants, stockées dans `.env.local` (`TET_STACK_PROFILES`, JSON single-line single-quoté — per-checkout, donc distincts entre tronc et worktrees). `x` (ou `Ctrl+S`, quand le terminal le laisse passer) sauvegarde la sélection courante avec un instantané des services running (hors one-shots) ; quand la stack up égale un instantané, son nom s'affiche dans l'en-tête. `p` bascule vers un profile par `compose start/stop` ciblés sur le différentiel (les équivalents du toggle `s`/`␣` : en place, ni down, ni build) — un conteneur jamais créé ne peut pas être démarré ainsi, `make up p="<nom>"` reste la voie de réconciliation complète.
 

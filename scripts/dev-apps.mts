@@ -81,6 +81,15 @@ const savedProfiles = (): string[] =>
     .map((s) => s.trim())
     .filter(Boolean) ?? [];
 
+// Ajoute une app (et l'infra qu'elle exige) à la sélection mémorisée — pour
+// une app créée hors du picker, depuis le TUI.
+export const addAppToSelection = (app: string): void =>
+  writeEnvValue(
+    ENV_LOCAL,
+    'COMPOSE_PROFILES',
+    [...new Set([...savedProfiles(), ...APPS[app].infra, app])].join(',')
+  );
+
 // Composants d'infra cochés EXPLICITEMENT (picker de pick-stack.mts) — par
 // opposition à ceux simplement dérivés des apps sélectionnées (APPS[a].infra).
 // Persisté à part : un COMPOSE_PROFILES flat ne permettrait pas de faire la
