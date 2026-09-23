@@ -2,7 +2,7 @@ export default {
   config: {
     locales: ["fr"],
   },
-  bootstrap(app) {
+  bootstrap(app: unknown) {
     console.log(app);
   },
 };

@@ -5,6 +5,14 @@
     "name": "panier",
     "tags": ["frontend"],
     "targets": {
+      "typecheck": {
+        "dependsOn": ["^typecheck"],
+        "command": "tsc --noEmit -p tsconfig.json",
+        "options": {
+          "cwd": "apps/panier"
+        },
+        "cache": true
+      },
       "dev": {
         "continuous": true,
         "dependsOn": ["^build"],

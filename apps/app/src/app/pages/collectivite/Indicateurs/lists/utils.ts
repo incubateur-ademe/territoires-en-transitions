@@ -15,6 +15,7 @@ export const indicateursNameToParams: Record<
   participationScore: 'ps',
   estRempli: 'r',
   estConfidentiel: 'c',
+  isApplicable: 'ap',
   text: 'text',
   estPerso: 'p',
   hasOpenData: 'od',
