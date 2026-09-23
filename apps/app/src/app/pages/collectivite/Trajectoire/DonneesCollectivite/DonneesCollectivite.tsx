@@ -1,4 +1,5 @@
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { TrajectoireReferenceAlert } from '@/app/indicateurs/trajectoires/trajectoire-reference.alert';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -125,6 +126,11 @@ export const DonneesCollectivite = ({
                 state="info"
                 description={tab.description}
               />
+              {tab.id !== 'sequestration_carbone' && (
+                <div className="mt-4">
+                  <TrajectoireReferenceAlert />
+                </div>
+              )}
               {indicateurs && (
                 <TableauDonnees
                   valeursSecteurs={toTableFormat({ secteurs, indicateurs })}
