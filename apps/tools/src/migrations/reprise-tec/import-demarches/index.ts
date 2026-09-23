@@ -38,7 +38,7 @@ const main = async () => {
     );
 
     const elaborations = calculateElaborations(dossiers);
-    const dossiersAImporter = elaborations.retenus;
+    const dossiersAImporter = elaborations.retenues;
     const ecarts = [...perimetre.ecartees, ...elaborations.ecartees];
 
     validateGardes(dossiersAImporter, {
