@@ -1387,10 +1387,31 @@ describe('Documents d’une démarche PCAET', () => {
       expect(ids).not.toContain('pcaet_plan_qualite_air');
     });
 
+    // La base ne retient que les communes de 3 000 habitants et plus : un EPCI
+    // sans commune membre connue est un EPCI de petites communes, dont aucune
+    // ne peut dépasser 45 000 habitants.
+    it('un EPCI à fiscalité propre sans commune membre connue n’est pas tenu au plan chaleur et froid', async () => {
+      const { caller, collectivite, demarche } = await createDemarche(
+        db,
+        router,
+        {
+          collectivite: {
+            population: 60000,
+            natureInsee: 'CC',
+          },
+        }
+      );
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain('pcaet_plan_chaleur_froid');
+    });
+
     // Les établissements publics territoriaux du Grand Paris n'ont pas de
-    // composition importée : sans commune membre connue, un EPCI à fiscalité
-    // propre garde la pièce plutôt que d'en être dispensé en silence.
-    it('un EPCI à fiscalité propre dont la composition est inconnue garde le plan chaleur et froid', async () => {
+    // composition importée alors que leurs communes sont grandes : sans commune
+    // membre connue, ils gardent la pièce plutôt que d'en être dispensés en
+    // silence.
+    it('un établissement public territorial dont la composition est inconnue garde le plan chaleur et froid', async () => {
       const { caller, collectivite, demarche } = await createDemarche(
         db,
         router,

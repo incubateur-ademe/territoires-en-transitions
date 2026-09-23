@@ -105,11 +105,16 @@ export class DemarcheDocumentApplicabiliteService {
    * `identite(commune_membre, …)`.
    *
    * Seul un EPCI à fiscalité propre a des communes membres : pour les autres la
-   * réponse est vide, sans requête. Pour un EPCI dont aucune composition n'est
-   * connue — les établissements publics territoriaux du Grand Paris, ou un
-   * import de relations qui aurait manqué —, la réponse reste absente :
-   * l'évaluateur lève, la pièce est conservée et l'erreur journalisée, plutôt
-   * que d'en dispenser en silence une collectivité qui y est sans doute tenue.
+   * réponse est vide, sans requête. Un EPCI sans commune membre connue est
+   * traité comme un EPCI de petites communes : `collectivite` ne retient que
+   * les communes de 3 000 habitants et plus, donc une communauté de communes
+   * rurale n'a légitimement aucun membre en base, et aucun ne peut dépasser un
+   * seuil légal. Une collectivité de test composée à la main est dans le même
+   * cas. Seule exception, les établissements publics territoriaux du Grand
+   * Paris : leur composition n'est pas importée alors que leurs communes sont
+   * grandes, la réponse reste absente — l'évaluateur lève, la pièce est
+   * conservée et l'erreur journalisée, plutôt que d'en dispenser en silence une
+   * collectivité qui y est sans doute tenue.
    */
   private async loadCommunesMembresPopulationTags(
     identite: CollectiviteAvecType,
@@ -123,9 +128,10 @@ export class DemarcheDocumentApplicabiliteService {
         identite.id,
         tx
       );
-    return populationMax === null
-      ? undefined
-      : this.collectivitesService.getPopulationTags(populationMax);
+    if (populationMax !== null) {
+      return this.collectivitesService.getPopulationTags(populationMax);
+    }
+    return identite.natureInsee === 'EPT' ? undefined : [];
   }
 
   /**

@@ -69,9 +69,11 @@ export const identiteCollectiviteSchema = z.object({
    * habitants » et non sur la population du groupement. Absent tant que le
    * contexte qui sert l'identité ne l'a pas chargé — seul le catalogue des
    * pièces d'une démarche le fait, le calcul de score et les indicateurs n'en
-   * ont pas besoin — et absent aussi pour un EPCI à fiscalité propre dont la
-   * composition n'est pas connue, que l'on ne dispense de rien en silence.
-   * Vide pour les collectivités qui n'ont pas de communes membres.
+   * ont pas besoin — et absent aussi pour un établissement public territorial
+   * du Grand Paris, dont la composition n'est pas importée et que l'on ne
+   * dispense de rien en silence. Vide pour les collectivités qui n'ont pas de
+   * commune membre connue : celles qui n'en ont pas, et les EPCI à fiscalité
+   * propre dont aucune commune n'atteint les 3 000 habitants de la base.
    */
   communesMembresPopulationTags: z
     .array(z.enum(CollectivitePopulationTypeEnum))
