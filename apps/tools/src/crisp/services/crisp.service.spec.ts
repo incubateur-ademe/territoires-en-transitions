@@ -124,7 +124,7 @@ describe('CrispService — commande crm', () => {
     buildCrmNote.mockReset().mockResolvedValue('récap CRM');
   });
 
-  test.each(['crm', 'CRM', '@crm'])(
+  test.each(['crm', 'CRM', '@crm', '/@crm', '/crm'])(
     'répond par une note au message « %s »',
     async (content) => {
       const service = await buildService();
@@ -163,4 +163,41 @@ describe('CrispService — commande crm', () => {
       })
     );
   });
+});
+
+describe('CrispService — déclenchement de l’enrichissement', () => {
+  beforeEach(() => {
+    getConversation.mockReset().mockResolvedValue({
+      meta: { email: 'agent@example.com', data: {} },
+    });
+    updateConversationMetas.mockReset().mockResolvedValue({});
+    buildUserData.mockReset().mockResolvedValue({ connexion: 'Email' });
+  });
+
+  test.each(['user', 'operator'])(
+    'enrichit la conversation sur un message %s',
+    async (from) => {
+      const service = await buildService();
+
+      await service.handleMessageReceived({
+        website_id: 'website',
+        event: 'message:received',
+        timestamp: 0,
+        data: {
+          website_id: 'website',
+          session_id: 'session',
+          fingerprint: Math.random(),
+          from,
+          type: 'text',
+          content: 'bonjour',
+        },
+      } as never);
+
+      expect(updateConversationMetas).toHaveBeenCalledWith(
+        'website',
+        'session',
+        { data: { connexion: 'Email' } }
+      );
+    }
+  );
 });
