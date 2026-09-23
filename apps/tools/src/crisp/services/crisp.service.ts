@@ -25,7 +25,7 @@ export class CrispService {
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
   private readonly DEFAULT_FEEDBACK_DAYS = 2;
 
-  private readonly CRM_REGEXP = /^@?crm\b/i;
+  private readonly CRM_REGEXP = /^\/?@?crm\b/i;
 
   // cache des messageKeys en cours de traitement pour éviter les doublons en cas
   // d'appels en parallèle (présuppose que tools est déployé sur seule instance)
@@ -93,9 +93,9 @@ export class CrispService {
       `Handling message ${body.data.type} (identifiant ${messageId}) received from ${body.data.from} for session ${sessionId} on website ${websiteId}: `
     );
 
-    if (body.data.from === 'user') {
-      return this.enrichConversationWithUserData(websiteId, sessionId);
-    }
+    // Le webhook ne reçoit pas forcément les messages visiteur (`message:send`) :
+    // on enrichit sur n'importe quel message, une seule fois par conversation.
+    await this.enrichConversationWithUserData(websiteId, sessionId);
 
     if (body.data.from !== 'operator' || body.data.type !== 'note') {
       this.logger.log(
@@ -139,7 +139,7 @@ export class CrispService {
         );
       } else {
         this.logger.log(
-          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket or feedback`
+          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket, feedback or crm`
         );
 
         return {
