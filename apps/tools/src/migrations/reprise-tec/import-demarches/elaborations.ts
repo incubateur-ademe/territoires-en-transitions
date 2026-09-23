@@ -1,13 +1,18 @@
-/** Les élaborations remplacées : une collectivité n'arrive qu'avec une seule élaboration. */
+/** Les élaborations : une collectivité n'arrive qu'avec une seule élaboration, la plus récente. */
 
+import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
 import { Dossier } from './dossier';
+import type { Ecart } from './ecarts';
 
-/** Règle : un seul dossier en élaboration par collectivité, le plus récent. Rend les autres. */
-export const listElaborationsRemplacees = (dossiers: readonly Dossier[]) => {
+/** Règle : un seul dossier en élaboration par collectivité, le plus récent ; les autres sont écartés. */
+export const calculateElaborations = (dossiers: readonly Dossier[]) => {
   const enElaborationParCollectivite = new Map<number, Dossier[]>();
   for (const d of dossiers) {
     const collectivite = d.colonnes.collectiviteId;
-    if (d.colonnes.status === 'en_elaboration' && collectivite !== null) {
+    if (
+      d.colonnes.status === DemarchePcaetStatusEnum.EN_ELABORATION &&
+      collectivite !== null
+    ) {
       enElaborationParCollectivite.set(collectivite, [
         ...(enElaborationParCollectivite.get(collectivite) ?? []),
         d,
@@ -20,7 +25,12 @@ export const listElaborationsRemplacees = (dossiers: readonly Dossier[]) => {
     const [, ...plusAnciens] = [...memeCollectivite].sort(plusRecentDAbord);
     remplacees.push(...plusAnciens.map((d) => d.tecId));
   }
-  return remplacees;
+  return {
+    retenus: dossiers.filter((d) => !remplacees.includes(d.tecId)),
+    ecartees: remplacees.map(
+      (id): Ecart => ({ id, motif: 'elaboration_remplacee' })
+    ),
+  };
 };
 
 /** Du plus récent au plus ancien ; à égalité, par identifiant. */

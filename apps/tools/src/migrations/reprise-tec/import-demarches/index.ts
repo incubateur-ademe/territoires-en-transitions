@@ -12,8 +12,9 @@ import { getCible } from '../db';
 import { loadCollectivites } from './collectivites';
 import { loadDemarchesTet } from './demarches-tet';
 import { buildDossier } from './dossier';
+import { createEcarts, validateBilan } from './ecarts';
 import { createDossiers } from './ecriture';
-import { listElaborationsRemplacees } from './elaborations-remplacees';
+import { calculateElaborations } from './elaborations';
 import { validateGardes } from './gardes';
 import { loadPerimetre } from './perimetre';
 import { printRapport } from './rapport';
@@ -36,20 +37,21 @@ const main = async () => {
       buildDossier(ligne, collectivites.getPorteur(ligne.id), suivi)
     );
 
-    const elaborationsRemplacees = listElaborationsRemplacees(dossiers);
-    const dossiersAImporter = dossiers.filter(
-      (d) => !elaborationsRemplacees.includes(d.tecId)
-    );
+    const elaborations = calculateElaborations(dossiers);
+    const dossiersAImporter = elaborations.retenus;
+    const ecarts = [...perimetre.ecartees, ...elaborations.ecartees];
 
     validateGardes(dossiersAImporter, {
       collectivites,
       demarchesTet,
       dateReference,
     });
+    validateBilan(perimetre.lues, dossiersAImporter, ecarts);
 
     await client.query('begin');
     try {
       await createDossiers(client, dossiersAImporter);
+      await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
       await client.query('rollback');
@@ -58,8 +60,7 @@ const main = async () => {
 
     printRapport({
       lues: perimetre.lues,
-      ecartees: perimetre.ecartees,
-      elaborationsRemplacees,
+      ecarts,
       ecrits: dossiersAImporter,
       deuxDossiersEnCours: demarchesTet.listDeuxDossiersEnCours(
         dossiersAImporter,

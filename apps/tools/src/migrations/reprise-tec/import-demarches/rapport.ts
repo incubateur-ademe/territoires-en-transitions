@@ -1,20 +1,18 @@
 /** Le rapport : ce que l'import a lu, écarté et écrit. Uniquement pour le debug.*/
 
 import { Dossier } from './dossier';
-import { Motif } from './perimetre';
+import type { Ecart } from './ecarts';
 
-/** Affiche les comptes, les dates revues et les collectivités à deux dossiers en cours. */
+/** Affiche les comptes (écarts, statuts, sources de l'obligation et de l'adoption), les dates revues et les collectivités à deux dossiers en cours. */
 export const printRapport = ({
   lues,
-  ecartees,
-  elaborationsRemplacees,
+  ecarts,
   ecrits,
   deuxDossiersEnCours,
   isConfirmed,
 }: {
   lues: number;
-  ecartees: { motif: Motif }[];
-  elaborationsRemplacees: number[];
+  ecarts: Ecart[];
   ecrits: Dossier[];
   deuxDossiersEnCours: string[];
   isConfirmed: boolean;
@@ -25,14 +23,21 @@ export const printRapport = ({
       .map((v) => `${v} : ${valeurs.filter((x) => x === v).length}`);
 
   console.log(`${lues} lignes de dossier lues dans T&C`);
-  for (const ligne of compter(ecartees.map((e) => e.motif))) {
+  for (const ligne of compter(ecarts.map((e) => e.motif))) {
     console.log(`  écartées, ${ligne}`);
   }
-  console.log(
-    `  écartées, élaboration remplacée par une plus récente : ${elaborationsRemplacees.length}`
-  );
   console.log(`${ecrits.length} dossiers écrits`);
   for (const ligne of compter(ecrits.map((d) => d.colonnes.status))) {
+    console.log(`  ${ligne}`);
+  }
+  console.log('Obligation décidée par (A31 / Q23)');
+  for (const ligne of compter(ecrits.map((d) => d.sources.obligation))) {
+    console.log(`  ${ligne}`);
+  }
+  console.log("Date d'adoption des publiés prise dans (D7)");
+  for (const ligne of compter(
+    ecrits.flatMap((d) => (d.sources.adoption ? [d.sources.adoption] : []))
+  )) {
     console.log(`  ${ligne}`);
   }
   const avecDatesRevues = ecrits.filter((d) => d.datesRevues.length > 0);
