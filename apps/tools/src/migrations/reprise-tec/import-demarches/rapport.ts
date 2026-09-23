@@ -1,4 +1,4 @@
-/** Le rapport : ce que l'import a lu, écarté et écrit. Uniquement pour le debug.*/
+/** Le rapport : ce que l'import a lu, écarté et écrit. Uniquement pour le debug. */
 
 import { Dossier } from './dossier';
 import type { Ecart } from './ecarts';

@@ -1,10 +1,10 @@
-/** L'écriture : la seule étape qui modifie la base. */
+/** L'écriture des dossiers : `demarche`, et leur trace dans `correspondance` et `lignes_ecrites`. */
 
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { PoolClient } from 'pg';
 import { Dossier } from './dossier';
 
-/** Écrit chaque dossier, sa `correspondance` (identifiant T&C dans TeT, source de la date d'adoption) et sa ligne de `lignes_ecrites` (pour revert). */
+/** Écrit chaque dossier, sa `correspondance` (identifiant T&C dans TeT, source de la date d'adoption) et sa ligne de `lignes_ecrites` (pour l'annulation). */
 export const createDossiers = async (
   client: PoolClient,
   dossiers: readonly Dossier[]
