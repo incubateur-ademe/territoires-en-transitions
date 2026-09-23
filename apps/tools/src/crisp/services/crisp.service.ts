@@ -31,6 +31,11 @@ export class CrispService {
   // d'appels en parallèle (présuppose que tools est déployé sur seule instance)
   private readonly processingMessages = new Set<string>();
 
+  // conversations déjà enrichies, pour ne solliciter DB et Airtable qu'une fois
+  // par conversation (même hypothèse d'instance unique)
+  private readonly enrichedSessions = new Set<string>();
+  private readonly ENRICHED_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+
   constructor(
     private readonly notionBugCreatorService: NotionBugCreatorService,
     private readonly configurationService: ConfigurationService,
@@ -154,15 +159,25 @@ export class CrispService {
 
   /**
    * Ajoute le mode de connexion et le lien vers la fiche CRM Airtable aux
-   * données de la conversation, visibles des opérateurs. Une seule fois par
+   * données du contact (« Données pour … » dans Crisp), une seule fois par
    * conversation pour ménager le quota Airtable.
    */
   async enrichConversationWithUserData(websiteId: string, sessionId: string) {
+    const sessionKey = `${websiteId}-${sessionId}`;
+    if (this.enrichedSessions.has(sessionKey)) {
+      return;
+    }
+    this.enrichedSessions.add(sessionKey);
+    setTimeout(
+      () => this.enrichedSessions.delete(sessionKey),
+      this.ENRICHED_SESSION_TTL_MS
+    ).unref();
+
     try {
       const session: CrispSession =
         await this.crispClient.website.getConversation(websiteId, sessionId);
       const email = session.meta?.email;
-      if (!email || session.meta?.data?.connexion) {
+      if (!email || !session.people_id) {
         return;
       }
 
@@ -173,18 +188,22 @@ export class CrispService {
         return;
       }
 
-      // Le PATCH remplace l'objet `data` : on repart de l'existant.
-      await this.crispClient.website.updateConversationMetas(
+      // PATCH : fusionne avec les données déjà présentes sur le contact.
+      await this.crispClient.website.updatePeopleData(
         websiteId,
-        sessionId,
-        { data: { ...session.meta.data, ...userData } }
+        session.people_id,
+        { data: userData }
       );
       this.logger.log(
-        `Conversation ${sessionId} on website ${websiteId} enriched: ${JSON.stringify(
+        `Contact ${
+          session.people_id
+        } (session ${sessionId}) on website ${websiteId} enriched: ${JSON.stringify(
           userData
         )}`
       );
     } catch (error) {
+      // on retentera au prochain message
+      this.enrichedSessions.delete(sessionKey);
       this.logger.error(
         `Error enriching session ${sessionId} on website ${websiteId}: ${getErrorMessage(
           error

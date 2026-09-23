@@ -8,7 +8,7 @@ import { BuildCrispUserDataService } from './build-crisp-user-data.service';
 import { CrispService } from './crisp.service';
 
 const getConversation = vi.fn();
-const updateConversationMetas = vi.fn();
+const updatePeopleData = vi.fn();
 const sendMessageInConversation = vi.fn();
 
 vi.mock('crisp-api', () => ({
@@ -16,7 +16,7 @@ vi.mock('crisp-api', () => ({
     authenticateTier = vi.fn();
     website = {
       getConversation,
-      updateConversationMetas,
+      updatePeopleData,
       sendMessageInConversation,
     };
   },
@@ -43,26 +43,23 @@ describe('CrispService.enrichConversationWithUserData', () => {
   let service: CrispService;
 
   beforeEach(async () => {
-    getConversation.mockReset();
-    updateConversationMetas.mockReset().mockResolvedValue({});
-    buildUserData.mockReset();
-    service = await buildService();
-  });
-
-  test('fusionne les données calculées avec celles de la conversation', async () => {
-    getConversation.mockResolvedValue({
-      meta: { email: 'agent@example.com', data: { existante: 'x' } },
+    getConversation.mockReset().mockResolvedValue({
+      people_id: 'people-1',
+      meta: { email: 'agent@example.com' },
     });
-    buildUserData.mockResolvedValue({
+    updatePeopleData.mockReset().mockResolvedValue({});
+    buildUserData.mockReset().mockResolvedValue({
       connexion: 'ProConnect',
       fiche_crm: 'https://airtable.com/app/tbl/rec1',
     });
+    service = await buildService();
+  });
 
+  test('écrit les données sur le contact de la conversation', async () => {
     await service.enrichConversationWithUserData('website', 'session');
 
-    expect(updateConversationMetas).toHaveBeenCalledWith('website', 'session', {
+    expect(updatePeopleData).toHaveBeenCalledWith('website', 'people-1', {
       data: {
-        existante: 'x',
         connexion: 'ProConnect',
         fiche_crm: 'https://airtable.com/app/tbl/rec1',
       },
@@ -70,34 +67,31 @@ describe('CrispService.enrichConversationWithUserData', () => {
   });
 
   test('ne refait rien sur une conversation déjà enrichie', async () => {
-    getConversation.mockResolvedValue({
-      meta: { email: 'agent@example.com', data: { connexion: 'Email' } },
-    });
-
+    await service.enrichConversationWithUserData('website', 'session');
     await service.enrichConversationWithUserData('website', 'session');
 
-    expect(buildUserData).not.toHaveBeenCalled();
-    expect(updateConversationMetas).not.toHaveBeenCalled();
+    expect(getConversation).toHaveBeenCalledTimes(1);
+    expect(updatePeopleData).toHaveBeenCalledTimes(1);
   });
 
   test('ignore un visiteur sans email', async () => {
-    getConversation.mockResolvedValue({ meta: { data: {} } });
+    getConversation.mockResolvedValue({ people_id: 'people-1', meta: {} });
 
     await service.enrichConversationWithUserData('website', 'session');
 
     expect(buildUserData).not.toHaveBeenCalled();
   });
 
-  test('avale les erreurs sans rien écrire dans la conversation', async () => {
-    getConversation.mockResolvedValue({
-      meta: { email: 'agent@example.com', data: {} },
-    });
-    buildUserData.mockRejectedValue(new Error('Airtable down'));
+  test('avale les erreurs et retente au message suivant', async () => {
+    buildUserData.mockRejectedValueOnce(new Error('Airtable down'));
 
     await expect(
       service.enrichConversationWithUserData('website', 'session')
     ).resolves.toBeUndefined();
-    expect(updateConversationMetas).not.toHaveBeenCalled();
+    expect(updatePeopleData).not.toHaveBeenCalled();
+
+    await service.enrichConversationWithUserData('website', 'session');
+    expect(updatePeopleData).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -168,9 +162,10 @@ describe('CrispService — commande crm', () => {
 describe('CrispService — déclenchement de l’enrichissement', () => {
   beforeEach(() => {
     getConversation.mockReset().mockResolvedValue({
-      meta: { email: 'agent@example.com', data: {} },
+      people_id: 'people-1',
+      meta: { email: 'agent@example.com' },
     });
-    updateConversationMetas.mockReset().mockResolvedValue({});
+    updatePeopleData.mockReset().mockResolvedValue({});
     buildUserData.mockReset().mockResolvedValue({ connexion: 'Email' });
   });
 
@@ -193,11 +188,9 @@ describe('CrispService — déclenchement de l’enrichissement', () => {
         },
       } as never);
 
-      expect(updateConversationMetas).toHaveBeenCalledWith(
-        'website',
-        'session',
-        { data: { connexion: 'Email' } }
-      );
+      expect(updatePeopleData).toHaveBeenCalledWith('website', 'people-1', {
+        data: { connexion: 'Email' },
+      });
     }
   );
 });
