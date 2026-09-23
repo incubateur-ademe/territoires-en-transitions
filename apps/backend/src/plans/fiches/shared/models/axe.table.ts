@@ -10,10 +10,8 @@ import {
   pgTable,
   serial,
   text,
-  uuid,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../../../collectivites/shared/models/collectivite.table';
-import { panierTable } from '../../../paniers/models/panier.table';
 import { planActionTypeTable } from './plan-action-type.table';
 
 export const axeTable = pgTable('axe', {
@@ -31,5 +29,4 @@ export const axeTable = pgTable('axe', {
   createdAt,
   modifiedAt,
   modifiedBy,
-  panierId: uuid('panier_id').references(() => panierTable.id),
 });

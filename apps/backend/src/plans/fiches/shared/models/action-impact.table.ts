@@ -6,7 +6,7 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { tempsDeMiseEnOeuvreTable } from '../../../shared/models/temps-de-mise-en-oeuvre.table';
+import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 

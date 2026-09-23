@@ -45,7 +45,6 @@ export class GetPlanRepository {
           createdAt: axeTable.createdAt,
           modifiedAt: axeTable.modifiedAt,
           modifiedBy: axeTable.modifiedBy,
-          panierId: axeTable.panierId,
           type: planActionTypeTable,
         })
         .from(axeTable)

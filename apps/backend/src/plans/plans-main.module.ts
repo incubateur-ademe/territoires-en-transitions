@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AxeModule } from './axes/axe.module';
 import { FichesModule } from './fiches/fiches.module';
-import { PaniersModule } from './paniers/paniers.module';
 import { AiPlanImportModule } from './ai-plan-import/ai-plan-import.module';
 import { PlanMainRouter } from './plans-main.router';
 import { PlanModule } from './plans/plans.module';
@@ -15,7 +14,6 @@ import { PlansUtilsModule } from './utils/plans-utils.module';
     FichesModule,
     PlanModule,
     AiPlanImportModule,
-    PaniersModule,
     ReportsModule,
   ],
   providers: [PlanMainRouter],

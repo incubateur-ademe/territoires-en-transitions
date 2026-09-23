@@ -72,7 +72,7 @@ Reference: `apps/backend/src/plans/axes/upsert-axe/upsert-axe-base.repository.ts
 
 - `TransactionManager` at `apps/backend/src/utils/transaction/transaction-manager.service.ts`. Use `transactionManager.executeSingle(async (tx) => { ... })` for a fresh transaction.
 - **Every repository write accepts an optional `tx?: Transaction` as the LAST parameter** and uses `(tx ?? this.databaseService.db)`.
-- Thread the same `tx` across services for atomic multi-step writes. Exemplar: `apps/backend/src/plans/paniers/checkout/checkout.service.ts:54-90`.
+- Thread the same `tx` across services for atomic multi-step writes. Exemplar: `apps/backend/src/demarches/pcaet/create-and-link-plan/create-and-link-plan.service.ts:67-201`.
 - `Transaction` type is derived from `DatabaseService['transaction']` (see `apps/backend/src/utils/database/transaction.utils.ts`), not `PgTransaction` directly.
 
 ## Drizzle / DB boundary

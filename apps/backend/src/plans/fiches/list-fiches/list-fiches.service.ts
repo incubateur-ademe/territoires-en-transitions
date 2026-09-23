@@ -33,7 +33,7 @@ import { ficheActionStructureTagTable } from '@tet/backend/plans/fiches/shared/m
 import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
-import { actionImpactActionTable } from '@tet/backend/plans/paniers/models/action-impact-action.table';
+import { actionImpactActionTable } from '@tet/backend/plans/fiches/shared/models/action-impact-action.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
 import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mise-en-oeuvre.table';

@@ -60,7 +60,7 @@ export const getCollectivitePlanPath = (
   `${ENV.app_url}/collectivite/${collectivite_id}/plans/${plan_id}`;
 
 /**
- * URL absolue vers « rejoindre une collectivité » (liens cross-origin, ex. panier).
+ * URL absolue vers « rejoindre une collectivité » (liens cross-origin).
  * Pour la navigation dans l'app, préférer un chemin relatif (`makeRejoindreCollectiviteUrl` dans `paths.ts`).
  */
 export const getRejoindreCollectivitePath = (redirectTo: string) => {

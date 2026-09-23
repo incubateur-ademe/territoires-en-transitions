@@ -75,17 +75,6 @@ export const Event = {
   updateFiltres: 'filtres',
   saveScore: 'referentiel_score_save',
   paginationClick: 'pagination_click',
-  panier: {
-    createPlanClick: 'cta_creer_le_plan_click',
-    ctaPanierClick: 'cta_panier_click',
-    filtre: 'panier:filtre',
-    copierPanierUrl: 'copier_panier_URL',
-    clickAjout: 'ajout',
-    clickRetrait: 'retrait',
-    changeStatut: 'statut',
-    validerCreationPanierClick: 'cta_valider_creation_panier_click',
-    selectTab: 'onglet_panier',
-  },
   indicateurs: {
     createIndicateurPerso: 'cta_indicateur_perso_fa',
     downloadXlsx: 'export_xlsx_telechargement',

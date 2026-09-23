@@ -12,7 +12,6 @@ export * from './hooks/useOnlineStatus';
 // dossier composants
 export * from './components/DSFRCompliancyComponent';
 export * from './components/EmptyCard/EmptyCard';
-export * from './components/InfoActionImpact';
 export * from './components/layout';
 export * from './components/tracking';
 
