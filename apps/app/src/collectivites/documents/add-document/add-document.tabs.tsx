@@ -33,7 +33,7 @@ export const AddDocumentTabs = (props: AddDocumentTabsProps) => {
   const { addFileFromLib, addLink } = handlers;
 
   return (
-    <Tabs data-test="AddPreuveModal" defaultActiveTab={defaultActiveTab}>
+    <Tabs defaultActiveTab={defaultActiveTab}>
       {addLink && (
         <Tab label="Lien">
           <AddLink {...props} onAddLink={addLink} />

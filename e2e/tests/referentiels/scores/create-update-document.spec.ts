@@ -3,6 +3,8 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from '../../collectivite/collectivites.fixture';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
+const preuveReglementaireNom = 'Agenda 21 / Agenda 2030';
+
 test.describe('Create and update document', () => {
   test.beforeEach(async ({ page, collectivites }) => {
     await collectivites.addCollectiviteAndUser({
@@ -24,7 +26,9 @@ test.describe('Create and update document', () => {
     await referentielScoresPom.documentsExpandButton.click();
 
     await expect(
-      referentielScoresPom.getPreuveReglementaireButtonLocator('agenda21')
+      referentielScoresPom.getPreuveReglementaireButtonLocator(
+        preuveReglementaireNom
+      )
     ).toBeVisible();
 
     await expect(
@@ -32,7 +36,7 @@ test.describe('Create and update document', () => {
     ).toBeVisible();
 
     await referentielScoresPom
-      .getPreuveReglementaireButtonLocator('agenda21')
+      .getPreuveReglementaireButtonLocator(preuveReglementaireNom)
       .click();
 
     await referentielScoresPom.documentsPom.setTestDocument();
@@ -84,7 +88,7 @@ test.describe('Create and update document', () => {
     await referentielScoresPom.documentsExpandButton.click();
 
     await referentielScoresPom
-      .getPreuveReglementaireButtonLocator('agenda21')
+      .getPreuveReglementaireButtonLocator(preuveReglementaireNom)
       .click();
 
     await referentielScoresPom.documentsPom.setTestDocument();
@@ -103,7 +107,9 @@ test.describe('Create and update document', () => {
     await referentielScoresPom.expandSousAction('1.1.1.3');
 
     await expect(
-      referentielScoresPom.getPreuveReglementaireButtonLocator('agenda21')
+      referentielScoresPom.getPreuveReglementaireButtonLocator(
+        preuveReglementaireNom
+      )
     ).toHaveCount(0);
 
     await expect(

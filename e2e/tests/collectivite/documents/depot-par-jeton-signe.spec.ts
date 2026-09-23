@@ -4,7 +4,7 @@ import { testWithReferentiels as test } from 'tests/referentiels/referentiels.fi
 import { ReferentielScoresPom } from 'tests/referentiels/scores/referentiel-scores.pom';
 
 const referentiel: ReferentielId = 'cae';
-const preuveReglementaireId = 'agenda21';
+const preuveReglementaireNom = 'Agenda 21 / Agenda 2030';
 
 const RESUMABLE_SIGNED_PATH = '/storage/v1/upload/resumable/sign';
 const DIRECT_OBJECT_PATH = '/storage/v1/object/';
@@ -59,7 +59,9 @@ test.describe("Dépôt d'un document par jeton signé", () => {
     });
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
@@ -98,7 +100,9 @@ test.describe("Dépôt d'un document par jeton signé", () => {
     referentiels,
   }) => {
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
     const transfers: ObservedRequest[] = [];
@@ -125,7 +129,7 @@ test.describe("Dépôt d'un document par jeton signé", () => {
     });
 
     await referentielScoresPom
-      .getPreuveReglementaireButtonLocator(preuveReglementaireId)
+      .getPreuveReglementaireButtonLocator(preuveReglementaireNom)
       .click();
     await referentielScoresPom.documentsPom.chooseTestDocument();
 

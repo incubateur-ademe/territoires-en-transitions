@@ -8,7 +8,8 @@ import type { OnDuplicatedDocumentsAdded } from './add-document/types';
 import { useAddPreuveReglementaireToAction } from './use-add-preuve-to-action';
 
 export type AddPreuveReglementaireModalProps = {
-  preuve_id: string;
+  preuveId: string;
+  preuveNom: string;
   actionId: string;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
@@ -17,8 +18,8 @@ export const AddPreuveReglementaireModal = (
   props: AddPreuveReglementaireModalProps
 ) => {
   const [opened, setOpened] = useState(false);
-  const { preuve_id, actionId, onDuplicatedDocumentsAdded } = props;
-  const handlers = useAddPreuveReglementaireToAction(preuve_id);
+  const { preuveId, preuveNom, actionId, onDuplicatedDocumentsAdded } = props;
+  const handlers = useAddPreuveReglementaireToAction(preuveId);
   const referentielId = getReferentielIdFromActionId(actionId);
   const { hasReferentielPermission } = useCurrentCollectivite();
 
@@ -43,10 +44,10 @@ export const AddPreuveReglementaireModal = (
       }}
     >
       <Button
-        dataTest={`AddPreuveReglementaire-${preuve_id}`}
         size="xs"
         icon="file-add-fill"
         title={appLabels.ajouterPreuve}
+        aria-label={appLabels.ajouterPreuvePour(preuveNom)}
         onClick={() => setOpened(true)}
         className="w-12 flex items-center justify-center"
       />

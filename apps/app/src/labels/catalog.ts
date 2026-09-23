@@ -145,6 +145,8 @@ export const appLabels = {
     'Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?',
   ajouterDocumentAttendu: 'Ajouter un document attendu',
   ajouterPreuve: 'Ajouter une preuve',
+  ajouterPreuvePour: (preuveNom: string): string =>
+    `Ajouter une preuve pour ${preuveNom}`,
   ajouterDocumentComplementaire: 'Ajouter un document complémentaire',
   sousActionAssociee: 'Sous-mesure associée (obligatoire)',
   ajouterDocument: 'Ajouter un document',
@@ -1662,7 +1664,9 @@ export const appLabels = {
       te: 'CAE_Reglement_label.pdf',
       'te-test': 'CAE_Reglement_label.pdf',
     };
-    return `${getSiteUrl()}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
+    return `${getSiteUrl()}/fichiers/reglement/${
+      filenameByReferentiel[referentielId]
+    }`;
   },
 
   // Parcours de bienvenue ProConnect (aucune correspondance automatique).

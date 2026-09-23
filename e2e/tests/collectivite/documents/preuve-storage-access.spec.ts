@@ -8,7 +8,7 @@ import { getCollectivitePreuveFileInfo } from 'tests/shared/preuve-file.utils';
 import { attemptSupabaseStorageDownload } from 'tests/shared/storage-download.utils';
 
 const referentiel: ReferentielId = 'cae';
-const preuveReglementaireId = 'agenda21';
+const preuveReglementaireNom = 'Agenda 21 / Agenda 2030';
 
 async function gotoActionWithDocuments(
   referentielScoresPom: ReferentielScoresPom
@@ -37,7 +37,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     const collectivite = collectivites.getCollectivite();
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
@@ -56,7 +58,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     const collectiviteA: CollectiviteFixture = collectivites.getCollectivite();
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     const { bucketId, hash } = await getCollectivitePreuveFileInfo(
       collectiviteA.data.id
@@ -96,7 +100,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     // L'éditeur membre de la collectivité ajoute une preuve via l'UI.
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     const { bucketId, hash } = await getCollectivitePreuveFileInfo(
       collectivite.data.id
@@ -134,7 +140,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     const editeurUser = collectivite.getUser();
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     await referentiels.seedRolePilotes(
       editeurUser,
