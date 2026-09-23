@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
 import {
   fixturePourScoreIndicatif,
   getAuthUserFromUserCredentials,
@@ -15,6 +16,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
+import { and, eq } from 'drizzle-orm';
 
 /** Action TE présente en seed, utilisée pour les tests referentiel(te_…). */
 const TE_ACTION_ID = 'te_2.2.5';
@@ -256,6 +258,83 @@ describe('ScoreIndicatifRouter', () => {
             },
           ],
         },
+      },
+    });
+  });
+
+  test("Demander un score pour un indicateur marqué non applicable force le résultat à 0, même si des valeurs sont sélectionnées", async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    await caller.indicateurs.indicateurs.update({
+      indicateurId: indicateurIdCae7,
+      collectiviteId: testCollectiviteId,
+      indicateurFields: { isApplicable: false },
+    });
+    onTestFinished(async () => {
+      // Supprime la ligne (plutôt que de remettre le flag à false) pour ne
+      // pas laisser de référence à l'utilisateur de test via `modified_by`,
+      // qui empêcherait sa suppression dans le `afterAll` de la suite.
+      await databaseService.db
+        .delete(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, indicateurIdCae7),
+            eq(indicateurCollectiviteTable.collectiviteId, testCollectiviteId)
+          )
+        );
+    });
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: ['cae_1.2.3.3.4'],
+    });
+
+    expect(result).toMatchObject({
+      'cae_1.2.3.3.4': {
+        fait: { score: 0, valeursUtilisees: [] },
+        programme: { score: 0, valeursUtilisees: [] },
+      },
+    });
+  });
+
+  test('Un indicateur non applicable force le score à 0 même pour une formule à seuil où une valeur basse serait "bonne"', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // Cas réel (proche de te_2.3.1.5.a) : une valeur basse est "bonne" pour
+    // cet indicateur. Si on neutralisait l'indicateur non applicable en
+    // forçant `val()` à 0 dans la formule, on obtiendrait 1 (100% fait) au
+    // lieu du 0% attendu, car 0 < cible. Le résultat doit être forcé à 0
+    // sans même évaluer la formule.
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(cae) alors 160 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) < cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 200,
+      objectif: 200,
+    });
+    onTestFinished(() => cleanup());
+
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT
+    );
+    await caller.indicateurs.indicateurs.update({
+      indicateurId,
+      collectiviteId: testCollectiviteId,
+      indicateurFields: { isApplicable: false },
+    });
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: { score: 0, valeursUtilisees: [] },
+        programme: { score: 0, valeursUtilisees: [] },
       },
     });
   });

@@ -377,6 +377,17 @@ export class ScoreIndicatifService {
     typeScore: ScoreIndicatifType,
     evaluationContext: EvaluationContext
   ) {
+    // Si un des indicateurs associés est marqué "non applicable" par la
+    // collectivité, le résultat est forcé à 0 sans évaluer la formule.
+    // Injecter une valeur (même 0) dans la formule ne serait pas fiable :
+    // beaucoup de formules comparent la valeur à un seuil/une cible
+    // (`si val < cible alors 1 sinon 0`) où une valeur basse est souvent
+    // "bonne" (ex. émissions, déchets) — forcer `val()` à 0 produirait
+    // alors un score de 100% au lieu du 0% attendu.
+    if (indicateursAssocies.some((indicateur) => !indicateur.isApplicable)) {
+      return { score: 0, valeursUtilisees: [] };
+    }
+
     const valeursUtilisees = valeursParTypeScore[typeScore] || [];
 
     // Si aucune valeur présente, log et retourne null
