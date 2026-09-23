@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
@@ -10,6 +10,7 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { CollectiviteRole } from '@tet/domain/users';
+import { getErrorMessage } from '@tet/domain/utils';
 import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
@@ -150,6 +151,8 @@ export const formatCrmNote = (
 
 @Injectable()
 export class BuildCrispCrmNoteService {
+  private readonly logger = new Logger(BuildCrispCrmNoteService.name);
+
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly airtableService: AirtableService,
@@ -252,7 +255,18 @@ export class BuildCrispCrmNoteService {
             .from(labellisationTable)
             .where(inArray(labellisationTable.collectiviteId, collectiviteIds))
             .orderBy(desc(labellisationTable.obtenueLe)),
-          this.airtableService.getCollectiviteUrlsByIds(collectiviteIds),
+          // Les fiches CRM sont un plus : une panne Airtable ne doit pas priver
+          // l'opérateur du reste de la note.
+          this.airtableService
+            .getCollectiviteUrlsByIds(collectiviteIds)
+            .catch((error) => {
+              this.logger.warn(
+                `Fiches CRM des collectivités indisponibles : ${getErrorMessage(
+                  error
+                )}`
+              );
+              return new Map<number, string>();
+            }),
         ])
       : [[], [], [], new Map<number, string>()];
 
