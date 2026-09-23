@@ -14,7 +14,7 @@
  *   `window.__TET_PUBLIC_ENV__` avant l'exécution des bundles applicatifs
  *   (cf. `apps/app/app/public-env.script.tsx`).
  *
- * `apps/site` et `apps/panier` n'injectent rien : ils retombent sur
+ * `apps/site` n'injecte rien : il retombe sur
  * `BUILD_TIME_FALLBACK`, c'est-à-dire sur l'inlining `NEXT_PUBLIC_*` habituel.
  *
  * https://nextjs.org/docs/app/guides/environment-variables#runtime-environment-variables
@@ -80,10 +80,10 @@ export function readPublicEnvFromProcess(): PublicEnv {
 /**
  * Valeurs inlinées au build. Les `process.env.NEXT_PUBLIC_*` sont écrits
  * littéralement : c'est ce qui permet au bundler de les remplacer, et donc à
- * `site` / `panier` de continuer à fonctionner sans injection au runtime.
+ * `site` de continuer à fonctionner sans injection au runtime.
  *
  * Indispensable côté *serveur* aussi : l'étage runner de apps/site/Dockerfile
- * (comme celui de panier) ne reçoit aucune de ces variables, son code serveur
+ * ne reçoit aucune de ces variables, son code serveur
  * ne dispose donc que des valeurs inlinées. Pour apps/app, où plus aucune
  * NEXT_PUBLIC_* n'existe au build, cet objet est entièrement vide.
  */

@@ -42,7 +42,7 @@ Nx monorepo with pnpm. Data flow: Frontend (`useQuery`/`useMutation`) → tRPC R
 
 ### Domain structure (fixed — don't add new domains without team validation)
 
-`users` / `collectivites` (membres, personnalisations, documents) / `referentiels` (définitions, scores, labellisations) / `indicateurs` (trajectoires) / `plans` (plans, fiches, paniers, modeles) / `shared`.
+`users` / `collectivites` (membres, personnalisations, documents) / `referentiels` (définitions, scores, labellisations) / `indicateurs` (trajectoires) / `plans` (plans, fiches, modeles) / `shared`.
 
 ## Testing (cross-cutting)
 

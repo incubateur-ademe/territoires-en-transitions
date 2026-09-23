@@ -191,7 +191,6 @@ Voici les domaines et sous-scopes définis actuellement :
 5. `plans`
    - `plans`
    - `fiches`
-   - `paniers`
    - `modeles`
 6. `shared`
 

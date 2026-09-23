@@ -157,12 +157,4 @@ export class UpsertPlanService {
 
     return { success: true, data: undefined };
   }
-
-  async linkToPanier(
-    planId: number,
-    panierId: string,
-    tx?: Transaction
-  ): Promise<Result<undefined, UpsertPlanError>> {
-    return this.upsertPlanRepository.linkToPanier(planId, panierId, tx);
-  }
 }

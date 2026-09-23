@@ -45,8 +45,7 @@ function recoverThrownFailure<E extends string>(
 /**
  * Crée un plan d'action du programme et, si la démarche n'en tient encore aucun,
  * le rattache dans la même transaction : pas d'état intermédiaire « plan créé
- * mais non rattaché » si le rattachement échoue. Miroir du checkout des paniers
- * (create-or-link).
+ * mais non rattaché » si le rattachement échoue.
  *
  * Le rattachement d'office ne vaut que pour le premier plan : une démarche en
  * tient plusieurs, mais tous les plans créés depuis cet écran n'ont pas vocation
