@@ -64,8 +64,8 @@ export const AddPreuveComplementaireModal = (
       }}
     >
       <Button
-        dataTest="AddPreuveComplementaire"
         title={appLabels.ajouterDocumentComplementaire}
+        aria-label={appLabels.ajouterDocumentComplementaire}
         size="xs"
         icon="file-add-fill"
         onClick={() => setOpened(true)}

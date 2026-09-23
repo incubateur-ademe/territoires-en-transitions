@@ -3,7 +3,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from 'tests/referentiels/referentiels.fixture';
 
 const referentiel: ReferentielId = 'cae';
-const preuveReglementaireId = 'agenda21';
+const preuveReglementaireNom = 'Agenda 21 / Agenda 2030';
 
 const ARCHIVE_ROUTE = '/documents/archive';
 const ROUTE_NEXT_SUPPRIMEE = '/api/zip';
@@ -42,7 +42,9 @@ test.describe("Téléchargement groupé des documents d'une mesure", () => {
     await referentielScoresPom.goto(referentiel);
     await referentielScoresPom.goToActionPage('1.1.1');
     await referentielScoresPom.expandSousAction('1.1.1.3');
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
     const downloadButton = page.getByRole('button', {

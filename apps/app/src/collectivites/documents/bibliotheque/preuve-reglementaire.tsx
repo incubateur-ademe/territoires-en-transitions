@@ -64,7 +64,8 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
 
         {/* Modale d'ajout de documents */}
         <AddPreuveReglementaireModal
-          preuve_id={preuveId}
+          preuveId={preuveId}
+          preuveNom={nom}
           actionId={action.actionId}
           onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
         />

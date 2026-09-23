@@ -177,7 +177,6 @@ export const AddFile = (props: AddFileProps) => {
       >
         <Input
           type="file"
-          data-test="referentiels.preuves.add-file.file-input"
           accept={toAcceptAttribute(fileConstraints)}
           displaySize="md"
           multiple={fileConstraints.maxFiles !== 1}
