@@ -1,10 +1,10 @@
+/** L'écriture : la seule étape qui modifie la base. */
+
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { PoolClient } from 'pg';
 import { Dossier } from './dossier';
 
-/**
- * Écrit chaque dossier et le note dans `reprise_tec` : `correspondance` (son
- * identifiant T&C) et `lignes_ecrites` (ce qui a été écrit, pour pouvoir annuler).
- */
+/** Écrit chaque dossier, sa `correspondance` (identifiant T&C dans TeT) et sa ligne de `lignes_ecrites` (pour revert). */
 export const createDossiers = async (
   client: PoolClient,
   dossiers: readonly Dossier[]
@@ -17,7 +17,7 @@ export const createDossiers = async (
            launched_at, published_at, transmitted_at, avis_deadline_at,
            adopted_at, created_at
          )
-         values ($1, 'pcaet', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         values ($1, $13, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
          returning id
        ), correspondance as (
          insert into reprise_tec.correspondance (table_cible, tec_id, tet_id)
@@ -38,6 +38,7 @@ export const createDossiers = async (
         c.adoptedAt,
         c.createdAt,
         tecId,
+        DemarcheTypeEnum.PCAET,
       ]
     );
   }

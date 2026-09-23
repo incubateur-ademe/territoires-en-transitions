@@ -54,13 +54,66 @@ Chaque dossier écrit laisse une ligne dans `correspondance` et dans
 `lignes_ecrites`.
 
 ```bash
-pnpx tsx apps/tools/src/migrations/reprise-tec/import-demarches/index.ts --suivi <csv>            # simulation
-pnpx tsx apps/tools/src/migrations/reprise-tec/import-demarches/index.ts --suivi <csv> --confirm  # import
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-demarches/index.ts
+pnpx tsx $SCRIPT --suivi <csv> --date-reference <AAAA-MM-JJ>            # simulation
+pnpx tsx $SCRIPT --suivi <csv> --date-reference <AAAA-MM-JJ> --confirm  # import
 ```
 
-S'arrête sans rien écrire si la collectivité d'un dossier est introuvable dans
-TeT. Un second `--confirm` échoue sur `correspondance` : les dossiers sont déjà
-là.
+`--date-reference` est **la date du jour de l'import**, pas la date de gel de
+T&C : elle décide si une fenêtre d'avis est encore ouverte.
+
+Une date saisie à la main avant l'an 2000 (lancement, envoi pour avis,
+réception du projet) est une faute de frappe dans T&C. Une année sur deux
+chiffres, de 10 à 99, est lue 20AA (`0023-01-25` devient 2023-01-25) ; les
+autres (`0002-12-01`, `0217-03-02`) sont traitées comme absentes. Le rapport
+nomme chaque dossier concerné.
+
+Un second `--confirm` échoue sur `correspondance` : les dossiers sont déjà là.
+
+#### Ce qui arrête l'import
+
+Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
+s'il en trouve un :
+
+| Code | Garde                                                                                          | Quoi faire                                                               |
+| ---- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| A27  | collectivité introuvable dans TeT, ou trouvée plusieurs fois                                   | la créer, ou corriger le doublon, avant l'import                         |
+| A3   | fenêtre d'avis de trois mois encore ouverte à la date de référence, jour de l'échéance compris | vérifier la date ; si elle est juste, attendre la fin de la consultation |
+| D3   | dossier qui arriverait instruit sans date de transmission                                      | corriger la source : il serait enfermé dans TeT                          |
+| D4   | collectivité qui a déjà une démarche active dans TeT                                           | décider au cas par cas, on ne touche pas à son dossier                   |
+
+Le script s'arrête aussi, sans rien écrire, sur un état de dossier T&C ou une
+valeur d'obligation du suivi qu'il ne connaît pas : il ne devine pas.
+
+#### Deux dossiers en cours
+
+Une collectivité qui aura deux dossiers en cours, dont un instruit, passe : la
+base l'accepte. Qu'il s'agisse de deux dossiers repris, ou d'un dossier repris
+et d'une démarche déjà dans TeT. Mais l'application compte deux dossiers en
+cours et grise le bouton « Nouvelle démarche ». Le script liste chaque
+collectivité (D4, sans blocage).
+
+Quoi faire : si l'ancien PCAET a été adopté, la collectivité le publie avec sa
+délibération ; s'il a été abandonné, l'équipe le supprime à la main (un dossier
+instruit n'est pas supprimable par la collectivité).
+
+La requête qui recalcule la liste à tout moment :
+
+```sql
+select c.nom, c.siren, d.id, d.status, d.titre
+  from public.demarche d
+  join public.collectivite c on c.id = d.collectivite_id
+ where d.type = 'pcaet'
+   and d.status in ('en_elaboration', 'transmis_pour_avis',
+                    'instruit_hors_plateforme', 'instruit')
+   and d.collectivite_id in (
+     select collectivite_id from public.demarche
+      where type = 'pcaet'
+        and status in ('en_elaboration', 'transmis_pour_avis',
+                       'instruit_hors_plateforme', 'instruit')
+      group by collectivite_id having count(*) > 1)
+ order by c.nom, d.id;
+```
 
 ## Le schéma de travail `reprise_tec`
 
