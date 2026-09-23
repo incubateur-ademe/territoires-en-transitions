@@ -4,6 +4,14 @@ import { Levier, LevierId } from '@tet/domain/shared';
 
 type PertinenceLabel = 'Non pertinent' | "À discuter avec l'élu" | 'Pertinent';
 
+type CategorieLabel =
+  | 'Aménagement & infrastructures'
+  | 'Réglementation & planification'
+  | 'Financement & fiscalité'
+  | 'Gouvernance & partenariats'
+  | 'Exemplarité interne'
+  | 'Sensibilisation & accompagnement';
+
 type PertinenceTrafficEvent = 'upsert-response' | 'list-request';
 
 const UPSERT_URL_PATTERN = /collectivites\.pertinenceLeviers\.upsert/;
@@ -50,6 +58,24 @@ export class PriorisationLeviersPom {
       name: pertinence,
       exact: true,
     });
+  }
+
+  categoriesAccordion(nom: Levier): Locator {
+    return this.levierCard(nom).getByRole('button', { name: 'Catégories' });
+  }
+
+  categorieRows(nom: Levier): Locator {
+    return this.levierCard(nom).getByRole('list').getByRole('listitem');
+  }
+
+  categorieRow(nom: Levier, categorie: CategorieLabel): Locator {
+    return this.categorieRows(nom).filter({ hasText: categorie });
+  }
+
+  async openCategoriesWithEnter(nom: Levier): Promise<void> {
+    const accordion = this.categoriesAccordion(nom);
+    await accordion.press('Enter');
+    await expect(accordion).toHaveAttribute('aria-expanded', 'true');
   }
 
   async waitForPertinenceSaved({

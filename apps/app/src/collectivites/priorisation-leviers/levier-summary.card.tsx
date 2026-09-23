@@ -1,7 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, Card } from '@tet/ui';
-import { JSX, ReactNode } from 'react';
+import { JSX } from 'react';
+import { CategoriesAccordion } from './categories.accordion';
 import { UpsertPertinence } from './data/use-upsert-pertinence';
+import { LevierCardInfo } from './levier-card-info';
 import { PertinenceSelector } from './pertinence-selector';
 import { LevierCard } from './to-levier-cards';
 
@@ -9,10 +11,6 @@ type LevierSummaryCardProps = {
   levier: LevierCard;
   upsertPertinence?: UpsertPertinence;
 };
-
-const LevierCardInfo = ({ children }: { children: ReactNode }): JSX.Element => (
-  <p className="mb-0 text-sm font-normal text-grey-8">{children}</p>
-);
 
 const LevierPertinence = ({
   levier,
@@ -24,7 +22,7 @@ const LevierPertinence = ({
   if (upsertPertinence === undefined) {
     return (
       <LevierCardInfo>
-        {appLabels.pertinenceDuLevier(levier.pertinence)}
+        {appLabels.pertinenceInfo(levier.pertinence)}
       </LevierCardInfo>
     );
   }
@@ -50,5 +48,6 @@ export const LevierSummaryCard = ({
     <LevierCardInfo>
       {appLabels.actionsRattachees({ count: levier.ficheCount })}
     </LevierCardInfo>
+    <CategoriesAccordion categories={levier.categories} />
   </Card>
 );

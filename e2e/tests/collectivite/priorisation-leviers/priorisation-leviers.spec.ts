@@ -6,6 +6,7 @@ import { test } from 'tests/main.fixture';
 import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_COUNT = 29;
+const CATEGORIE_COUNT = 6;
 const MOBILISED_LEVIER_NOM: Levier = 'Vélo et transport en commun';
 
 const mobilisationWithTwoFiches: LevierMobilisation[] = [
@@ -339,6 +340,114 @@ test.describe('Priorisation des leviers', () => {
     await expect(pertinentButton).toHaveAttribute('aria-pressed', 'false');
     await expect(nonPertinentButton).toHaveAttribute('aria-pressed', 'true');
     await expect(priorisationLeviersPom.saveErrorToast).toBeVisible();
+  });
+
+  test("un membre déplie au clavier les six catégories d'un levier encore non qualifié", async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+    await priorisationLeviersPom.goto(collectivite.data.id);
+    await expect(priorisationLeviersPom.levierNames).toHaveCount(LEVIER_COUNT);
+
+    await priorisationLeviersPom.openCategoriesWithEnter(
+      LEVIER_NOM_BY_ID.biogaz
+    );
+
+    await expect(
+      priorisationLeviersPom.categorieRows(LEVIER_NOM_BY_ID.biogaz)
+    ).toHaveCount(CATEGORIE_COUNT);
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        LEVIER_NOM_BY_ID.biogaz,
+        'Aménagement & infrastructures'
+      )
+    ).toContainText('Pertinence : non renseignée');
+  });
+
+  test('un membre voit les actions rattachées à chaque catégorie mobilisée', async ({
+    collectivites,
+    mobilisations,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await mobilisations.add({
+      collectiviteId: collectivite.data.id,
+      leviers: mobilisationWithTwoFiches,
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+    await priorisationLeviersPom.goto(collectivite.data.id);
+    await expect(priorisationLeviersPom.levierNames).toHaveCount(LEVIER_COUNT);
+
+    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
+
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        MOBILISED_LEVIER_NOM,
+        'Financement & fiscalité'
+      )
+    ).toContainText('2 actions déjà rattachées');
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        MOBILISED_LEVIER_NOM,
+        'Aménagement & infrastructures'
+      )
+    ).toContainText('1 action déjà rattachée');
+  });
+
+  test("les catégories non mobilisées héritent de la non-pertinence du levier, l'accordéon reste ouvert", async ({
+    collectivites,
+    mobilisations,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
+    });
+    await mobilisations.add({
+      collectiviteId: collectivite.data.id,
+      leviers: mobilisationWithTwoFiches,
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+    await priorisationLeviersPom.goto(collectivite.data.id);
+    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+      LEVIER_COUNT
+    );
+    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
+    const gouvernanceRow = priorisationLeviersPom.categorieRow(
+      MOBILISED_LEVIER_NOM,
+      'Gouvernance & partenariats'
+    );
+    await expect(gouvernanceRow).toContainText('Pertinence : non renseignée');
+
+    const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
+      levierId: 'velo_transport_commun',
+      pertinence: 'non_pertinent',
+    });
+    const pertinencesReloaded =
+      priorisationLeviersPom.waitForPertinencesReloaded();
+    await priorisationLeviersPom
+      .pertinenceButton(MOBILISED_LEVIER_NOM, 'Non pertinent')
+      .click();
+    await pertinenceSaved;
+    await pertinencesReloaded;
+
+    await expect(gouvernanceRow).toContainText(
+      'Non pertinent, comme le levier'
+    );
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        MOBILISED_LEVIER_NOM,
+        'Financement & fiscalité'
+      )
+    ).toContainText('2 actions déjà rattachées');
+    await expect(
+      priorisationLeviersPom.categoriesAccordion(MOBILISED_LEVIER_NOM)
+    ).toHaveAttribute('aria-expanded', 'true');
   });
 
   test('un membre en édition lit la pertinence en texte, sans sélecteur', async ({
