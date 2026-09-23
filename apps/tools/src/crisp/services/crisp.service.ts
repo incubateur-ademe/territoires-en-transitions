@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
+import { BuildCrispCrmNoteService } from './build-crisp-crm-note.service';
 import { BuildCrispUserDataService } from './build-crisp-user-data.service';
 import { CrispEventRequest } from '../models/crisp-event.request';
 import { CrispMessageReceivedEventDataDto } from '../models/crisp-message-received-event-data.dto';
@@ -24,6 +25,8 @@ export class CrispService {
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
   private readonly DEFAULT_FEEDBACK_DAYS = 2;
 
+  private readonly CRM_REGEXP = /^@?crm\b/i;
+
   // cache des messageKeys en cours de traitement pour éviter les doublons en cas
   // d'appels en parallèle (présuppose que tools est déployé sur seule instance)
   private readonly processingMessages = new Set<string>();
@@ -32,7 +35,8 @@ export class CrispService {
     private readonly notionBugCreatorService: NotionBugCreatorService,
     private readonly configurationService: ConfigurationService,
     private readonly airtableService: AirtableService,
-    private readonly buildCrispUserDataService: BuildCrispUserDataService
+    private readonly buildCrispUserDataService: BuildCrispUserDataService,
+    private readonly buildCrispCrmNoteService: BuildCrispCrmNoteService
   ) {
     this.crispClient = new Crisp();
     this.crispClient.authenticateTier(
@@ -117,7 +121,9 @@ export class CrispService {
       const content = body.data.content?.trim() || '';
       const ticketMatch = content.match(this.TICKET_REGEXP);
       const feedbackMatch = content.match(this.FEEDBACK_REGEXP);
-      if (ticketMatch) {
+      if (this.CRM_REGEXP.test(content)) {
+        return await this.handleCrmRequest(websiteId, sessionId);
+      } else if (ticketMatch) {
         return await this.handleTicketCreationRequest(
           websiteId,
           sessionId,
@@ -185,6 +191,40 @@ export class CrispService {
         )}`
       );
     }
+  }
+
+  /** Répond par une note récapitulant le compte, ses collectivités et leurs plans. */
+  async handleCrmRequest(websiteId: string, sessionId: string) {
+    try {
+      const session: CrispSession =
+        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const email = session.meta?.email;
+      const content = email
+        ? await this.buildCrispCrmNoteService.buildCrmNote(email)
+        : 'Aucun email connu pour cette conversation.';
+
+      await this.sendNote(websiteId, sessionId, content);
+      return { type: 'crm' };
+    } catch (error) {
+      this.logger.error(
+        `Error building CRM note for session ${sessionId} on website ${websiteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      await this.sendNote(
+        websiteId,
+        sessionId,
+        `Error building CRM note: ${getErrorMessage(error)}`
+      );
+    }
+  }
+
+  private sendNote(websiteId: string, sessionId: string, content: string) {
+    return this.crispClient.website.sendMessageInConversation(
+      websiteId,
+      sessionId,
+      { type: 'note', from: 'operator', origin: 'chat', content }
+    );
   }
 
   async handleTicketCreationRequest(

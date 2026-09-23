@@ -33,3 +33,46 @@ describe('AirtableService.getUsersByEmail', () => {
     });
   });
 });
+
+describe('AirtableService.getCollectiviteUrlsByIds', () => {
+  const buildService = (tableId: string | undefined) => {
+    const service = new AirtableService({
+      get: (key: string) =>
+        key === 'AIRTABLE_CRM_DATABASE_COLLECTIVITES_TABLE_ID'
+          ? tableId
+          : 'appCRM',
+    } as unknown as ConfigurationService);
+    const getRecords = vi.spyOn(service, 'getRecords').mockResolvedValue({
+      records: [
+        {
+          id: 'rec1',
+          url: 'https://airtable.com/appCRM/tblColl/rec1',
+          fields: { collectivite_id: 12 },
+          createdTime: '',
+        },
+      ],
+    });
+    return { service, getRecords };
+  };
+
+  test('associe chaque collectivite_id à l’URL de sa fiche', async () => {
+    const { service, getRecords } = buildService('tblColl');
+
+    const urls = await service.getCollectiviteUrlsByIds([12, 34]);
+
+    expect(getRecords).toHaveBeenCalledWith('appCRM', 'tblColl', {
+      filterByFormula:
+        "OR({collectivite_id}&''='12',{collectivite_id}&''='34')",
+      fields: ['collectivite_id'],
+    });
+    expect(urls.get(12)).toBe('https://airtable.com/appCRM/tblColl/rec1');
+    expect(urls.has(34)).toBe(false);
+  });
+
+  test('n’appelle pas Airtable sans table configurée', async () => {
+    const { service, getRecords } = buildService(undefined);
+
+    expect((await service.getCollectiviteUrlsByIds([12])).size).toBe(0);
+    expect(getRecords).not.toHaveBeenCalled();
+  });
+});
