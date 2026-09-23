@@ -4,6 +4,14 @@
   "nx": {
     "name": "site",
     "targets": {
+      "typecheck": {
+        "dependsOn": ["^typecheck"],
+        "command": "tsc --noEmit -p tsconfig.json",
+        "options": {
+          "cwd": "apps/site"
+        },
+        "cache": true
+      },
       "dev": {
         "continuous": true,
         "dependsOn": ["^build"],

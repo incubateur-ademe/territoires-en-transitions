@@ -15,9 +15,9 @@ import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProvider, useUserContext } from '@tet/api/users';
 import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import {
-    CollectiviteRole,
-    permissionsByRole,
-    UserWithRolesAndPermissions,
+  CollectiviteRole,
+  permissionsByRole,
+  UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { ReactNode, useEffect } from 'react';
 
@@ -34,6 +34,7 @@ const user: UserWithRolesAndPermissions = {
     {
       collectiviteId: 1,
       collectiviteNom: 'Amberieu-en-Bugey',
+      collectiviteType: 'commune',
       collectiviteAccesRestreint: false,
       collectivitePreferences: defaultCollectivitePreferences,
       role: CollectiviteRole.EDITION,
@@ -62,7 +63,7 @@ const WithMockedUser = ({ children }: { children: ReactNode }) => {
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <SupabaseProvider cookieOptions={null}>
+      <SupabaseProvider cookieOptions={{}}>
         <UserProvider>
           <WithMockedUser>
             <TrpcWithReactQueryProvider>

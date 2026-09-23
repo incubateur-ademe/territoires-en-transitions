@@ -58,6 +58,8 @@ const buildCellContext = ({
   const meta: IndicateurValeursTableMeta = {
     onReferenceYearChange: vi.fn(),
     updateIndicateurValeurs,
+    setIndicateurApplicable: vi.fn().mockResolvedValue(true),
+    isSettingIndicateurApplicable: false,
   };
 
   const cell = {

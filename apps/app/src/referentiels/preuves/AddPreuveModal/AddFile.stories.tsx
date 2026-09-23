@@ -32,6 +32,7 @@ const refuse = (
   sizeBytes: number,
   error: UploadErrorCode
 ): FileUploadItem => ({
+  id: name,
   file: createMockFile(name, sizeBytes),
   status: { code: UploadStatusCode.failed, error },
 });
@@ -126,6 +127,7 @@ export const DejaDansLaBibliotheque: Story = {
   args: {
     initialSelection: [
       {
+        id: 'duplicated-1',
         file: createMockFile('deliberation.pdf', 87 * 1024),
         status: {
           code: UploadStatusCode.duplicated,
@@ -135,6 +137,7 @@ export const DejaDansLaBibliotheque: Story = {
         },
       },
       {
+        id: 'duplicated-2',
         file: createMockFile('nouveau nom.xls', 15 * MO),
         status: {
           code: UploadStatusCode.duplicated,
@@ -152,6 +155,7 @@ export const TeleversementAbouti: Story = {
   args: {
     initialSelection: [
       {
+        id: 'completed',
         file: createMockFile(
           'feuille de route des élus responsables CAE.pdf',
           340 * 1024
