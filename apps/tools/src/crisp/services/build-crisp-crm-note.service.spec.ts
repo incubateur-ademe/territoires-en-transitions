@@ -1,5 +1,12 @@
-import { describe, expect, test } from 'vitest';
-import { CrmNoteData, formatCrmNote } from './build-crisp-crm-note.service';
+import { describe, expect, test, vi } from 'vitest';
+import { AirtableService } from '../../airtable/airtable.service';
+import ConfigurationService from '../../config/configuration.service';
+import { DatabaseService } from '../../utils/database/database.service';
+import {
+  BuildCrispCrmNoteService,
+  CrmNoteData,
+  formatCrmNote,
+} from './build-crisp-crm-note.service';
 
 const APP_URL = 'https://app.tet.fr';
 
@@ -107,5 +114,53 @@ describe('formatCrmNote', () => {
 
     expect(note).toContain('   Plans (1)\n     • Plan climat');
     expect(note).not.toContain('http');
+  });
+});
+
+describe('BuildCrispCrmNoteService', () => {
+  // Chaque `select()` renvoie le résultat suivant de la file, dans l'ordre des
+  // requêtes du service : compte, identités, droits, plans, scores, labellisations.
+  const buildDatabase = (results: unknown[][]) => {
+    const queue = [...results];
+    const buildChain = (rows: unknown[]) => {
+      const chain: Record<string, unknown> = new Proxy(
+        {},
+        {
+          get: (_target, prop) =>
+            prop === 'then'
+              ? (resolve: (value: unknown[]) => unknown) => resolve(rows)
+              : () => chain,
+        }
+      );
+      return chain;
+    };
+    return {
+      db: { select: () => buildChain(queue.shift() ?? []) },
+    } as unknown as DatabaseService;
+  };
+
+  test('construit la note sans fiche CRM si Airtable est indisponible', async () => {
+    const service = new BuildCrispCrmNoteService(
+      buildDatabase([
+        [{ id: 'u1', createdAt: null, prenom: 'Jean', nom: 'Dupont' }],
+        [],
+        [{ id: 12, nom: 'Ville de X', role: 'admin' }],
+        [{ id: 456, nom: 'Plan climat', collectiviteId: 12 }],
+        [],
+        [],
+      ]),
+      {
+        getCollectiviteUrlsByIds: vi
+          .fn()
+          .mockRejectedValue(new Error('Airtable 503')),
+      } as unknown as AirtableService,
+      { get: () => undefined } as unknown as ConfigurationService
+    );
+
+    const note = await service.buildCrmNote('agent@example.com');
+
+    expect(note).toContain('🏛 Ville de X — Admin');
+    expect(note).toContain('• Plan climat');
+    expect(note).not.toContain('Fiche CRM');
   });
 });
