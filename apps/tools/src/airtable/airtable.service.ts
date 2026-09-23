@@ -223,6 +223,40 @@ export class AirtableService {
     return users.records;
   }
 
+  /** URL de la fiche CRM de chaque collectivité trouvée, par collectivite_id. */
+  async getCollectiviteUrlsByIds(
+    collectiviteIds: number[]
+  ): Promise<Map<number, string>> {
+    const tableId = this.configService.get(
+      'AIRTABLE_CRM_DATABASE_COLLECTIVITES_TABLE_ID'
+    );
+    if (!tableId || !collectiviteIds.length) {
+      return new Map();
+    }
+
+    // `&''` rend la comparaison indépendante du type du champ (texte ou nombre).
+    const conditions = collectiviteIds.map(
+      (id) => `{collectivite_id}&''='${id}'`
+    );
+    const formula =
+      conditions.length > 1 ? `OR(${conditions.join(',')})` : conditions[0];
+
+    const collectivites = await this.getRecords<{ collectivite_id: unknown }>(
+      this.configService.get('AIRTABLE_CRM_DATABASE_ID'),
+      tableId,
+      { filterByFormula: formula, fields: ['collectivite_id'] }
+    );
+
+    return new Map(
+      collectivites.records
+        .filter((record) => record.url)
+        .map((record) => [
+          Number(record.fields.collectivite_id),
+          record.url as string,
+        ])
+    );
+  }
+
   async getRecords<TFields>(
     databaseId: string,
     tableIdOrName: string,

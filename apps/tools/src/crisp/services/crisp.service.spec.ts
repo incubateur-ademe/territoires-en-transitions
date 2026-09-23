@@ -3,39 +3,50 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
+import { BuildCrispCrmNoteService } from './build-crisp-crm-note.service';
 import { BuildCrispUserDataService } from './build-crisp-user-data.service';
 import { CrispService } from './crisp.service';
 
 const getConversation = vi.fn();
 const updateConversationMetas = vi.fn();
+const sendMessageInConversation = vi.fn();
 
 vi.mock('crisp-api', () => ({
   default: class {
     authenticateTier = vi.fn();
-    website = { getConversation, updateConversationMetas };
+    website = {
+      getConversation,
+      updateConversationMetas,
+      sendMessageInConversation,
+    };
   },
 }));
 
+const buildUserData = vi.fn();
+const buildCrmNote = vi.fn();
+
+const buildService = async () => {
+  const module = await Test.createTestingModule({
+    providers: [
+      CrispService,
+      { provide: NotionBugCreatorService, useValue: {} },
+      { provide: AirtableService, useValue: {} },
+      { provide: ConfigurationService, useValue: { get: vi.fn() } },
+      { provide: BuildCrispUserDataService, useValue: { buildUserData } },
+      { provide: BuildCrispCrmNoteService, useValue: { buildCrmNote } },
+    ],
+  }).compile();
+  return module.get(CrispService);
+};
+
 describe('CrispService.enrichConversationWithUserData', () => {
   let service: CrispService;
-  const buildUserData = vi.fn();
 
   beforeEach(async () => {
     getConversation.mockReset();
     updateConversationMetas.mockReset().mockResolvedValue({});
     buildUserData.mockReset();
-
-    const module = await Test.createTestingModule({
-      providers: [
-        CrispService,
-        { provide: NotionBugCreatorService, useValue: {} },
-        { provide: AirtableService, useValue: {} },
-        { provide: ConfigurationService, useValue: { get: vi.fn() } },
-        { provide: BuildCrispUserDataService, useValue: { buildUserData } },
-      ],
-    }).compile();
-
-    service = module.get(CrispService);
+    service = await buildService();
   });
 
   test('fusionne les données calculées avec celles de la conversation', async () => {
@@ -87,5 +98,69 @@ describe('CrispService.enrichConversationWithUserData', () => {
       service.enrichConversationWithUserData('website', 'session')
     ).resolves.toBeUndefined();
     expect(updateConversationMetas).not.toHaveBeenCalled();
+  });
+});
+
+describe('CrispService — commande crm', () => {
+  const noteFromOperator = (content: string) => ({
+    website_id: 'website',
+    event: 'message:send',
+    timestamp: 0,
+    data: {
+      website_id: 'website',
+      session_id: 'session',
+      fingerprint: Math.random(),
+      from: 'operator',
+      type: 'note',
+      content,
+    },
+  });
+
+  beforeEach(() => {
+    getConversation
+      .mockReset()
+      .mockResolvedValue({ meta: { email: 'agent@example.com' } });
+    sendMessageInConversation.mockReset().mockResolvedValue({});
+    buildCrmNote.mockReset().mockResolvedValue('récap CRM');
+  });
+
+  test.each(['crm', 'CRM', '@crm'])(
+    'répond par une note au message « %s »',
+    async (content) => {
+      const service = await buildService();
+
+      await service.handleMessageReceived(noteFromOperator(content) as never);
+
+      expect(buildCrmNote).toHaveBeenCalledWith('agent@example.com');
+      expect(sendMessageInConversation).toHaveBeenCalledWith(
+        'website',
+        'session',
+        expect.objectContaining({ type: 'note', content: 'récap CRM' })
+      );
+    }
+  );
+
+  test('ne se déclenche pas sur un mot commençant par crm', async () => {
+    const service = await buildService();
+
+    await service.handleMessageReceived(noteFromOperator('crmx') as never);
+
+    expect(buildCrmNote).not.toHaveBeenCalled();
+  });
+
+  test('signale une conversation sans email', async () => {
+    getConversation.mockResolvedValue({ meta: {} });
+    const service = await buildService();
+
+    await service.handleMessageReceived(noteFromOperator('crm') as never);
+
+    expect(buildCrmNote).not.toHaveBeenCalled();
+    expect(sendMessageInConversation).toHaveBeenCalledWith(
+      'website',
+      'session',
+      expect.objectContaining({
+        content: 'Aucun email connu pour cette conversation.',
+      })
+    );
   });
 });

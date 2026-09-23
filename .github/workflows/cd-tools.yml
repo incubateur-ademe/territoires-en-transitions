@@ -90,6 +90,7 @@ jobs:
         env:
           ENV_NAME: ${{ github.event.inputs.target }}
           IMAGE: ${{ needs.build-tools.outputs.image }}
+          APP_URL: ${{ vars.APP_URL }}
           DEPLOYMENT_TIMESTAMP: ${{ steps.meta.outputs.deployment-timestamp }}
         run: >
           koyeb services update $ENV_NAME-tools-autom-api/tools
@@ -115,6 +116,8 @@ jobs:
           --env AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID
           --env AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID
           --env AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID
+          --env AIRTABLE_CRM_DATABASE_COLLECTIVITES_TABLE_ID=tblGnZF1U12YCheyo
+          --env APP_URL=$APP_URL
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url

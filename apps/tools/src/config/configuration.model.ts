@@ -33,6 +33,9 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe("Token pour l'authentification à l'API TeT"),
+  APP_URL: z
+    .preprocess((value) => value || undefined, z.url().optional())
+    .describe("URL de l'app, pour les liens envoyés dans Crisp"),
   TET_API_URL: z.string().min(1).describe("Url de l'API TeT"),
   MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z
     .string()
@@ -81,6 +84,12 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Airtable CRM Prospects table id'),
+  AIRTABLE_CRM_DATABASE_COLLECTIVITES_TABLE_ID: z
+    .string()
+    .optional()
+    .describe(
+      'Airtable table id des collectivités de la base CRM (lien depuis Crisp)'
+    ),
   AIRTABLE_CRM_COLLECTIVITES_TABLE_ID: z
     .string()
     .min(1)
