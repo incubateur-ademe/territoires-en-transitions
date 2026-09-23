@@ -92,6 +92,8 @@ export const demarchesLabels = {
    * déclaration. */
   demarcheScotAecBadgeAbsent: 'PCAET seul',
   instructionStatutEnInstruction: 'En instruction',
+  /** « En instruction » pour le service qui rend l'avis : c'est à lui d'agir. */
+  instructionStatutAInstruire: 'À instruire',
   instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
   instructionStatutInstruit: 'Instruit',
   instructionStatutAdopte: 'Adopté',

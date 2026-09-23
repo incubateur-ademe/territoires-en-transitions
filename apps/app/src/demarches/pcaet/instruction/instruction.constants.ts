@@ -30,14 +30,18 @@ const STATUT_INSTRUCTION_LABELS: Record<PcaetStatutInstruction, string> = {
 /**
  * Le libellé d'un statut.
  *
- * Le même pour tous les services : les statuts décrivent où en est le dossier,
- * pas ce qu'on attend de celui qui les lit. « En instruction » se dit donc
- * aussi bien à la DREAL qui rédige l'avis qu'à la DDT qui suit le dossier — et
- * fait paire avec « En élaboration », l'étape d'avant.
+ * Le même pour tous les services, à une exception près : un dossier en
+ * instruction se dit « À instruire » au service qui rend l'avis, et reste « En
+ * instruction » pour celui qui ne fait que le suivre — comme l'état de saisine
+ * sur l'écran du dossier.
  */
 export const statutInstructionLabel = (
-  statut: PcaetStatutInstruction
-): string => STATUT_INSTRUCTION_LABELS[statut];
+  statut: PcaetStatutInstruction,
+  { deposeAvis }: { deposeAvis: boolean }
+): string =>
+  statut === 'en_instruction' && deposeAvis
+    ? appLabels.instructionStatutAInstruire
+    : STATUT_INSTRUCTION_LABELS[statut];
 
 /**
  * Les couleurs suivent le sens et non le cycle : ce qui appelle une action est
@@ -51,9 +55,8 @@ export const STATUT_INSTRUCTION_VARIANTS: Record<
 > = {
   aucun_depot: 'grey',
   en_elaboration: 'info',
-  // Gris comme « aucun dépôt » : la ligne informe, elle ne réclame rien au
-  // service — il a été saisi ailleurs.
-  depot_hors_plateforme: 'grey',
+  // Vert comme « instruit » : l'avis a été rendu, hors plateforme.
+  depot_hors_plateforme: 'success',
   en_instruction: 'warning',
   pas_d_avis_depose: 'error',
   instruit: 'success',

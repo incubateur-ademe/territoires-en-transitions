@@ -39,10 +39,13 @@ const FilterButton = ({ filterCount, ...props }: { filterCount: number }) => (
 
 /** Les statuts, dans l'ordre du cycle de vie — celui de l'enum du domaine. */
 export const StatutHeaderFilter = ({
+  deposeAvis,
   statuts,
   filterCount,
   onChange,
 }: {
+  /** Le libellé d'un statut dépend du service : voir `statutInstructionLabel`. */
+  deposeAvis: boolean;
   statuts: PcaetStatutInstruction[];
   filterCount: number;
   onChange: (statuts: PcaetStatutInstruction[]) => void;
@@ -52,7 +55,7 @@ export const StatutHeaderFilter = ({
     dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
     options={pcaetStatutInstructionValues.map((value) => ({
       value,
-      label: statutInstructionLabel(value),
+      label: statutInstructionLabel(value, { deposeAvis }),
     }))}
     values={statuts}
     onChange={({ values }) =>
@@ -66,7 +69,9 @@ export const StatutHeaderFilter = ({
       },
       renderOptionItem: (item) => (
         <Badge
-          title={statutInstructionLabel(item.value as PcaetStatutInstruction)}
+          title={statutInstructionLabel(item.value as PcaetStatutInstruction, {
+            deposeAvis,
+          })}
           variant={
             STATUT_INSTRUCTION_VARIANTS[item.value as PcaetStatutInstruction]
           }
