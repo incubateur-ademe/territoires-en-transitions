@@ -1,5 +1,5 @@
 import { Pertinence } from '@tet/domain/collectivites';
-import { Levier } from '@tet/domain/shared';
+import { CategorieAction, Levier } from '@tet/domain/shared';
 import { capitalize, plural } from '@tet/ui/labels/plural';
 
 const pertinenceLabels = {
@@ -9,6 +9,15 @@ const pertinenceLabels = {
 } satisfies Record<Pertinence, string>;
 
 const unsetPertinenceLabel = 'non renseignée';
+
+const categorieActionLabels = {
+  amenagement: 'Aménagement & infrastructures',
+  planification: 'Réglementation & planification',
+  financement: 'Financement & fiscalité',
+  gouvernance: 'Gouvernance & partenariats',
+  exemplarite: 'Exemplarité interne',
+  sensibilisation: 'Sensibilisation & accompagnement',
+} satisfies Record<CategorieAction, string>;
 
 const toPertinenceLabel = (pertinence?: Pertinence): string => {
   if (pertinence === undefined) {
@@ -43,12 +52,16 @@ export const collectivitesLabels = {
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
   priorisationLeviersTitre: 'Priorisation des leviers',
-  pertinenceDuLevier: (pertinence?: Pertinence): string =>
+  pertinenceInfo: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
+  pertinenceHeriteeDuLevier: 'Non pertinent, comme le levier',
   pertinenceLabel: (pertinence: Pertinence): string =>
     capitalize(pertinenceLabels[pertinence]),
   pertinenceLevierLabel: (levierNom: Levier): string =>
     `Pertinence du levier ${levierNom}`,
+  categorieActionLabel: (categorie: CategorieAction): string =>
+    categorieActionLabels[categorie],
+  categories: 'Catégories',
   actionsRattachees: plural({
     zero: 'Aucune action rattachée',
     one: 'action déjà rattachée',

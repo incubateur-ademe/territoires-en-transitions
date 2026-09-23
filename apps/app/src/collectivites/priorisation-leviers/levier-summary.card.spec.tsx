@@ -173,4 +173,28 @@ describe('LevierSummaryCard', () => {
 
     expect(upsertPertinence).not.toHaveBeenCalled();
   });
+
+  it('déplie les catégories du levier depuis la carte', () => {
+    render(
+      <LevierSummaryCard
+        levier={{
+          levierId: 'biogaz',
+          nom: 'Biogaz',
+          secteur: 'Branche énergie',
+          ficheCount: 0,
+          categories: [
+            {
+              categorie: 'amenagement',
+              ficheCount: 0,
+              pertinenceEffective: { kind: 'propre' },
+            },
+          ],
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Catégories/ }));
+
+    expect(screen.getByText('Aménagement & infrastructures')).toBeDefined();
+  });
 });
