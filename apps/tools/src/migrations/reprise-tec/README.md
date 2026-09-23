@@ -72,6 +72,18 @@ nomme chaque dossier concerné.
 
 Un second `--confirm` échoue sur `correspondance` : les dossiers sont déjà là.
 
+Pour retirer l'import (simulation par défaut) :
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-demarches/annuler.ts [--confirm]
+```
+
+Seuls les dossiers écrits par la reprise partent (d'après `lignes_ecrites`). Les
+saisines de ces dossiers, même ajoutées après coup, sont retirées d'abord : ce
+sont les seules à bloquer la suppression ; le reste part en cascade. L'annulation
+refuse de tourner si une tranche suivante a écrit : les annuler d'abord, dans
+l'ordre inverse.
+
 #### Ce qui arrête l'import
 
 Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
