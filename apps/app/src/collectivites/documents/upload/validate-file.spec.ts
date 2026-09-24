@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   keepWithinMaxFiles,
-  MAX_FILE_SIZE_BYTES,
+  MAX_UPLOAD_SIZE_BYTES,
   toFileConstraints,
   toAcceptAttribute,
 } from './constants';
@@ -35,10 +35,10 @@ describe('validateFile', () => {
     expect(validateFile(fakeFile('archive.zip'))).toBe('formatError');
     expect(validateFile(fakeFile('sans-extension'))).toBe('formatError');
     expect(
-      validateFile(fakeFile('rapport.pdf', { size: MAX_FILE_SIZE_BYTES + 1 }))
+      validateFile(fakeFile('rapport.pdf', { size: MAX_UPLOAD_SIZE_BYTES + 1 }))
     ).toBe('sizeError');
     expect(
-      validateFile(fakeFile('archive.zip', { size: MAX_FILE_SIZE_BYTES + 1 }))
+      validateFile(fakeFile('archive.zip', { size: MAX_UPLOAD_SIZE_BYTES + 1 }))
     ).toBe('formatAndSizeError');
   });
 

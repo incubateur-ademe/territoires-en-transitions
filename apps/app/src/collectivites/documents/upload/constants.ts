@@ -1,8 +1,8 @@
 import type { DemarcheDocumentsConfig } from '@tet/domain/demarches';
 
 // poids max en Mo et en octets pour un fichier
-export const MAX_FILE_SIZE_MB = 20;
-export const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
+export const MAX_UPLOAD_SIZE_MB = 20;
+export const MAX_UPLOAD_SIZE_BYTES = 20 * 1024 * 1024;
 
 // formats attendus
 export const EXPECTED_FORMATS = [
@@ -42,7 +42,7 @@ export type FileConstraints = {
 
 export const DEFAULT_FILE_CONSTRAINTS: FileConstraints = {
   formats: EXPECTED_FORMATS,
-  maxSizeBytes: MAX_FILE_SIZE_BYTES,
+  maxSizeBytes: MAX_UPLOAD_SIZE_BYTES,
 };
 
 /**
@@ -55,7 +55,7 @@ export const toFileConstraints = ({
   mimeTypesAutorises,
 }: DemarcheDocumentsConfig): FileConstraints => ({
   formats: formatsAutorises?.length ? formatsAutorises : EXPECTED_FORMATS,
-  maxSizeBytes: MAX_FILE_SIZE_BYTES,
+  maxSizeBytes: MAX_UPLOAD_SIZE_BYTES,
   mimeTypes: mimeTypesAutorises?.length ? mimeTypesAutorises : undefined,
   maxFiles: 1,
 });

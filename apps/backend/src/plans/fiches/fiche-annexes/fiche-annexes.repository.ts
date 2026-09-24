@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { buildFilesizeSql } from '@tet/backend/collectivites/documents/file-info.utils';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
@@ -65,9 +66,7 @@ export class FicheAnnexesRepository {
         confidentiel: bibliothequeFichierTable.confidentiel,
         hash: bibliothequeFichierTable.hash,
         bucketId: collectiviteBucketTable.bucketId,
-        filesize: sql<
-          number | null
-        >`(${storageObjectTable.metadata}->>'size')::integer`,
+        filesize: buildFilesizeSql(),
       })
       .from(annexeTable)
       .leftJoin(
