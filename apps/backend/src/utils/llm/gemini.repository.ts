@@ -33,7 +33,9 @@ export class GeminiRepository extends LlmRepository {
   ): Promise<Result<LlmRawCompletion, LlmError>> {
     const client = this.getClient();
     if (!client) {
-      this.logger.error('GOOGLE_API_KEY manquant : appel Gemini impossible');
+      this.logger.error(
+        'Ni GOOGLE_API_KEY ni GOOGLE_CLOUD_PROJECT + GOOGLE_CLOUD_LOCATION : appel Gemini impossible'
+      );
       return failure({ kind: 'api_error', httpStatus: null });
     }
     if (!this.model) {
@@ -116,10 +118,15 @@ export class GeminiRepository extends LlmRepository {
       return this.client;
     }
     const apiKey = this.configService.get('GOOGLE_API_KEY');
-    if (!apiKey) {
+    const project = this.configService.get('GOOGLE_CLOUD_PROJECT');
+    const location = this.configService.get('GOOGLE_CLOUD_LOCATION');
+    if (apiKey) {
+      this.client = new GoogleGenAI({ apiKey });
+    } else if (project && location) {
+      this.client = new GoogleGenAI({ vertexai: true, project, location });
+    } else {
       return null;
     }
-    this.client = new GoogleGenAI({ apiKey });
     return this.client;
   }
 }

@@ -37,17 +37,30 @@ export const backendConfigurationSchema = z
       .string()
       .min(1)
       .describe(
-        "Clé du compte de service Google Cloud pour l'accès aux api drive et sheets"
+        "Clé du compte de service Google Cloud pour l'accès aux api drive, sheets et Vertex AI"
       ),
     // TODO(import-ia) : passer GOOGLE_API_KEY et GEMINI_MODEL en .min(1) (requis au boot)
-    // quand l'import IA est câblé en prod (worker + endpoints). Optionnelles pour l'instant
-    // car le LlmModule n'est encore consommé nulle part — les rendre requises casserait
-    // le démarrage du backend pour tous les environnements sans clé Gemini.
+    // une fois les clés présentes sur tous les environnements : les rendre requises
+    // casserait le démarrage du backend partout où la clé Gemini manque.
     GOOGLE_API_KEY: z
       .string()
       .optional()
       .describe(
-        "Clé API Google Generative Language (Gemini) pour l'import IA de plan d'action"
+        "Clé API Google Generative Language (Gemini) pour l'import IA de plan d'action ; à défaut, Gemini passe par Vertex AI"
+      ),
+    // Vertex AI s'authentifie avec le compte de service de GCLOUD_SERVICE_ACCOUNT_KEY
+    // (cf. initGoogleCloudCredentials) : aucun secret de plus, juste le projet et la région.
+    GOOGLE_CLOUD_PROJECT: z
+      .string()
+      .optional()
+      .describe(
+        'Projet Google Cloud qui porte Vertex AI (Gemini), utilisé quand GOOGLE_API_KEY est absente'
+      ),
+    GOOGLE_CLOUD_LOCATION: z
+      .string()
+      .optional()
+      .describe(
+        'Région Vertex AI (ex : europe-west1, ou global) ; requise avec GOOGLE_CLOUD_PROJECT'
       ),
     GEMINI_MODEL: z
       .string()
