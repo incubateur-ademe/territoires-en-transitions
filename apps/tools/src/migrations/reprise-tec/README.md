@@ -144,6 +144,25 @@ select c.nom, c.siren, d.id, d.status, d.titre
  order by c.nom, d.id;
 ```
 
+### 3. Importer le diagnostic
+
+Écrit le diagnostic de chaque dossier repris (émissions, consommation,
+polluants, énergies renouvelables, séquestration), **rangé dans son dossier** :
+une métadonnée de la source `pcaet-collectivite` par dossier, un lien
+`demarche_pcaet_source_metadonnee` qui la rattache à la démarche, et les
+valeurs de `indicateur_valeur` sous cette métadonnée. C'est ce que l'écran du
+diagnostic d'une démarche affiche. Le diagnostic se lit sur la ligne « mise en
+œuvre » du dossier, jamais sur son doublon « définitif ».
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-diagnostic/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+Les objectifs 2021 et 2026 ne sont pas écrits : la grille de TeT n'a pas ces
+colonnes.
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
