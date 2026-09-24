@@ -41,9 +41,9 @@ export const LevierSummaryCard = ({
   levier,
   upsertPertinence,
 }: LevierSummaryCardProps): JSX.Element => (
-  <Card className="h-full">
+  <Card>
     <h2 className="mb-0 text-lg">{levier.nom}</h2>
-    <Badge title={levier.secteur} size="sm" type="outlined" uppercase={false} />
+    <Badge title={levier.secteur} size="sm" type="outlined" />
     <LevierPertinence levier={levier} upsertPertinence={upsertPertinence} />
     <LevierCardInfo>
       {appLabels.actionsRattachees({ count: levier.ficheCount })}

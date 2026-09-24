@@ -29,8 +29,8 @@ export const PertinenceSelector = ({
   return (
     <ButtonGroup
       label={label}
-      className="grow-0 flex-wrap"
-      size="xs"
+      size="sm"
+      fillContainer
       activeButtonId={activeButtonId}
       buttons={pertinenceEnumValues.map((pertinence) => ({
         id: toButtonId(pertinence),
