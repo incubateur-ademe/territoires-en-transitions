@@ -84,41 +84,6 @@ export const useAddPreuveLabellisation = (
   );
 };
 
-type AddPreuveAuditInput = {
-  collectiviteId: number;
-  auditId: number;
-  fichierId: number;
-  commentaire: string;
-};
-
-export const useAddPreuveAudit = () => {
-  const supabase = useSupabase();
-  const queryClient = useQueryClient();
-  const trpc = useTRPC();
-  return useMutation({
-    mutationFn: async (input: AddPreuveAuditInput) =>
-      supabase.from('preuve_audit').insert({
-        collectivite_id: input.collectiviteId,
-        audit_id: input.auditId,
-        fichier_id: input.fichierId,
-        commentaire: input.commentaire,
-      }),
-
-    onSuccess: (data, variables) => {
-      invalidateQueries({
-        queryClient,
-        collectiviteId: variables.collectiviteId,
-        trpc,
-      });
-      queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
-          auditId: variables.auditId,
-        }),
-      });
-    },
-  });
-};
-
 /** Ajoute un rapport de visite annuelle */
 type AddPreuveRapportArgs = {
   collectiviteId: number;

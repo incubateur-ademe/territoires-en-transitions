@@ -10,6 +10,7 @@ import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/lis
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { HistoriqueRouter } from './historique/historique.router';
+import { AddAuditDocumentRouter } from './labellisations/add-audit-document/add-audit-document.router';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
@@ -52,6 +53,7 @@ export class ReferentielsRouter {
     private readonly listDocumentsReferentielRouter: ListDocumentsReferentielRouter,
     private readonly listDocumentsMesureRouter: ListDocumentsMesureRouter,
     private readonly updateAuditReport: UpdateAuditReportRouter,
+    private readonly addAuditDocument: AddAuditDocumentRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
     private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
@@ -98,7 +100,8 @@ export class ReferentielsRouter {
       this.validateAudit.router,
       this.getLabellisation.router,
       this.handleMesureAuditStatutRouter.router,
-      this.updateAuditReport.router
+      this.updateAuditReport.router,
+      this.addAuditDocument.router
     ),
 
     documents: this.trpc.mergeRouters(
