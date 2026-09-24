@@ -1,6 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { Pertinence } from '@tet/domain/collectivites';
-import { Levier, LevierId } from '@tet/domain/shared';
+import { CategorieAction, Levier, LevierId } from '@tet/domain/shared';
 
 type PertinenceLabel = 'Non pertinent' | "À discuter avec l'élu" | 'Pertinent';
 
@@ -72,6 +72,33 @@ export class PriorisationLeviersPom {
     return this.categorieRows(nom).filter({ hasText: categorie });
   }
 
+  categoriePertinenceSelectors(nom: Levier): Locator {
+    return this.levierCard(nom).getByRole('group', {
+      name: /^Pertinence de la catégorie .+ pour le levier /,
+    });
+  }
+
+  categoriePertinenceSelector(nom: Levier, categorie: CategorieLabel): Locator {
+    return this.levierCard(nom).getByRole('group', {
+      name: `Pertinence de la catégorie ${categorie} pour le levier ${nom}`,
+      exact: true,
+    });
+  }
+
+  categoriePertinenceButton(
+    nom: Levier,
+    categorie: CategorieLabel,
+    pertinence: PertinenceLabel
+  ): Locator {
+    return this.categoriePertinenceSelector(nom, categorie).getByRole(
+      'button',
+      {
+        name: pertinence,
+        exact: true,
+      }
+    );
+  }
+
   async openCategoriesWithEnter(nom: Levier): Promise<void> {
     const accordion = this.categoriesAccordion(nom);
     await accordion.press('Enter');
@@ -80,17 +107,26 @@ export class PriorisationLeviersPom {
 
   async waitForPertinenceSaved({
     levierId,
+    categorie,
     pertinence,
   }: {
     levierId: LevierId;
+    categorie?: CategorieAction;
     pertinence: Pertinence;
   }): Promise<void> {
+    const matchesCategorie = (payload: string): boolean => {
+      if (categorie === undefined) {
+        return !payload.includes('"categorie"');
+      }
+      return payload.includes(`"categorie":"${categorie}"`);
+    };
     const upsertResponse = await this.page.waitForResponse((response) => {
       const payload = response.request().postData() ?? '';
       return (
         response.url().includes('collectivites.pertinenceLeviers.upsert') &&
         payload.includes(`"${levierId}"`) &&
-        payload.includes(`"${pertinence}"`)
+        payload.includes(`"${pertinence}"`) &&
+        matchesCategorie(payload)
       );
     });
     expect(upsertResponse.ok()).toBe(true);

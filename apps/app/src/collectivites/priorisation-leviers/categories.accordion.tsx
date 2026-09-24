@@ -2,8 +2,20 @@ import { appLabels } from '@/app/labels/catalog';
 import { Accordion, Badge, Icon } from '@tet/ui';
 import { JSX } from 'react';
 import { match } from 'ts-pattern';
+import { UpsertPertinence } from './data/use-upsert-pertinence';
 import { LevierCardInfo } from './levier-card-info';
-import { LevierCategorie } from './to-levier-cards';
+import { PertinenceField } from './pertinence-field';
+import { LevierCard, LevierCategorie } from './to-levier-cards';
+
+type LevierCategoriesProps = {
+  levier: Pick<LevierCard, 'levierId' | 'nom' | 'categories'>;
+  upsertPertinence?: UpsertPertinence;
+};
+
+type CategoriePertinenceProps = LevierCategorie & {
+  levier: Pick<LevierCard, 'levierId' | 'nom'>;
+  upsertPertinence?: UpsertPertinence;
+};
 
 const ActionsRattacheesBadge = ({
   ficheCount,
@@ -23,9 +35,12 @@ const ActionsRattacheesBadge = ({
 );
 
 const CategoriePertinence = ({
+  levier,
+  categorie,
   ficheCount,
   pertinenceEffective,
-}: Pick<LevierCategorie, 'ficheCount' | 'pertinenceEffective'>): JSX.Element =>
+  upsertPertinence,
+}: CategoriePertinenceProps): JSX.Element =>
   match(pertinenceEffective)
     .with({ kind: 'mobilise' }, () => (
       <ActionsRattacheesBadge ficheCount={ficheCount} />
@@ -34,30 +49,34 @@ const CategoriePertinence = ({
       <LevierCardInfo>{appLabels.pertinenceHeriteeDuLevier}</LevierCardInfo>
     ))
     .with({ kind: 'propre' }, ({ pertinence }) => (
-      <LevierCardInfo>{appLabels.pertinenceInfo(pertinence)}</LevierCardInfo>
+      <PertinenceField
+        levier={levier}
+        categorie={categorie}
+        pertinence={pertinence}
+        upsertPertinence={upsertPertinence}
+      />
     ))
     .exhaustive();
 
 const CategorieList = ({
-  categories,
-}: {
-  categories: LevierCategorie[];
-}): JSX.Element => (
+  levier,
+  upsertPertinence,
+}: LevierCategoriesProps): JSX.Element => (
   <ul
     role="list"
     className="m-0 flex list-none flex-col gap-3 px-2 pb-4 pt-0 font-normal"
   >
-    {categories.map((categorie) => (
-      <li
-        key={categorie.categorie}
-        className="flex flex-col items-start gap-1 p-0"
-      >
+    {levier.categories.map(({ categorie, ficheCount, pertinenceEffective }) => (
+      <li key={categorie} className="flex flex-col items-start gap-1 p-0">
         <span className="text-sm text-primary-9">
-          {appLabels.categorieActionLabel(categorie.categorie)}
+          {appLabels.categorieActionLabel(categorie)}
         </span>
         <CategoriePertinence
-          ficheCount={categorie.ficheCount}
-          pertinenceEffective={categorie.pertinenceEffective}
+          levier={levier}
+          categorie={categorie}
+          ficheCount={ficheCount}
+          pertinenceEffective={pertinenceEffective}
+          upsertPertinence={upsertPertinence}
         />
       </li>
     ))}
@@ -65,16 +84,17 @@ const CategorieList = ({
 );
 
 export const CategoriesAccordion = ({
-  categories,
-}: {
-  categories: LevierCategorie[];
-}): JSX.Element => (
+  levier,
+  upsertPertinence,
+}: LevierCategoriesProps): JSX.Element => (
   <Accordion
     title={appLabels.categories}
     additionalRightHeaderContent={
-      <span className="font-normal">{categories.length}</span>
+      <span className="font-normal">{levier.categories.length}</span>
     }
-    content={<CategorieList categories={categories} />}
+    content={
+      <CategorieList levier={levier} upsertPertinence={upsertPertinence} />
+    }
     containerClassname="border-y-0"
     headerClassname="py-2 text-sm"
   />
