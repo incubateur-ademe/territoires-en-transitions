@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
-import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import {
   createTRPCClientFromCaller,
   getAuthUserFromUserCredentials,
@@ -77,8 +76,6 @@ export const createCollectiviteAvecCycle = async ({
         document
       ),
 
-    // Le depot d'un document d'audit n'a pas de service backend : le front
-    // insere directement dans preuve_audit via Supabase (useAddPreuveAudit).
     deposeUnDocumentDAudit: async (document: {
       fileName: string;
       sampleFileName?: string;
@@ -91,12 +88,9 @@ export const createCollectiviteAvecCycle = async ({
         sampleFileName: document.sampleFileName,
         confidentiel: document.confidentiel,
       });
-      await db.db.insert(preuveAuditTable).values({
-        collectiviteId: collectivite.id,
+      await membreCaller.referentiels.labellisations.addAuditDocument({
         auditId: audit.id,
         fichierId: fichier.id,
-        commentaire: '',
-        modifiedBy: membre.id,
       });
 
       return fichier;
