@@ -21,8 +21,15 @@ const XLSX_ZIP_CONTAINER_MAGIC_BYTES = [0x50, 0x4b, 0x03, 0x04];
 const PLAIN_TEXT_SNIFF_BYTES = 8192;
 
 // Le MIME déclaré vient du client et dépend de l'OS/navigateur :
-// un CSV arrive souvent en text/plain, voire application/csv.
-const CSV_DECLARED_MIME_TYPES = ['text/csv', 'application/csv', 'text/plain'];
+// un CSV arrive souvent en text/plain, voire application/csv, et sous
+// Windows avec Excel installé en application/vnd.ms-excel. Un vrai .xls
+// (binaire OLE2) échoue ensuite au sniff des octets nuls.
+const CSV_DECLARED_MIME_TYPES = [
+  'text/csv',
+  'application/csv',
+  'text/plain',
+  'application/vnd.ms-excel',
+];
 
 export const detectSourceMimeType = (
   buffer: Buffer,

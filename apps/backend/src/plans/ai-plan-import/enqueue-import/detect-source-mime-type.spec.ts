@@ -24,6 +24,18 @@ describe('detectSourceMimeType', () => {
     expect(detectSourceMimeType(csv, 'text/csv')).toBe('text/csv');
   });
 
+  it('reconnait un CSV que Windows déclare comme Excel', () => {
+    const csv = Buffer.from('axe,titre\n1,Action', 'utf-8');
+    expect(detectSourceMimeType(csv, 'application/vnd.ms-excel')).toBe(
+      'text/csv'
+    );
+  });
+
+  it('rejette un .xls binaire déclaré comme Excel', () => {
+    const xls = Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0x00, 0x00]);
+    expect(detectSourceMimeType(xls, 'application/vnd.ms-excel')).toBeNull();
+  });
+
   it('rejette un binaire déclaré csv mais contenant des octets nuls', () => {
     const binary = Buffer.from([0x00, 0x01, 0x02, 0x03]);
     expect(detectSourceMimeType(binary, 'text/csv')).toBeNull();
