@@ -1,7 +1,7 @@
 import { Input } from '@tet/ui';
 import classNames from 'classnames';
 
-export type InputValueProps = {
+type InputValueProps = {
   className?: string;
   value: number | '';
   displaySize?: 'sm' | 'md';
@@ -29,7 +29,7 @@ export const InputValue = (props: InputValueProps) => {
         const parsedValue = parseFloat(
           e.currentTarget.value.trim().replaceAll(',', '.').replaceAll(' ', '')
         );
-        const newValue = isNaN(parsedValue) ? null : parsedValue;
+        const newValue = Number.isFinite(parsedValue) ? parsedValue : null;
         if (newValue !== (value ?? null)) {
           onChange?.(newValue);
         }

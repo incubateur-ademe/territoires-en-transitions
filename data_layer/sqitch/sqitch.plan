@@ -1090,3 +1090,14 @@ automatisation/drop_newsletters_pai [automatisation/newsletters_pai] 2026-09-24T
 plan_action/axe_source_verification 2026-09-25T10:30:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Un plan cree par l import IA porte sa source et attend une verification humaine : colonnes source, verified_at et verified_by sur axe
 collectivite/tableau_de_bord_module_titre_nullable [collectivite/tableau_de_bord] 2026-09-14T15:14:20Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Rend titre nullable : les modules personnels n'en ont plus, seuls les modules collectivite le conservent
 drop_pg_jsonschema [json_schema panier_action_impact/action_impact] 2026-09-27T09:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Retire les contraintes CHECK jsonschema de action_impact (validation côté backend) et l extension pg_jsonschema, absente de PostgreSQL standard
+
+
+@indicateur-periodicite-base 2026-09-03T15:59:59Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière stable précédant la migration de périodicité
+indicateur/periodicite [indicateur/referentiel indicateur/indicateurs_gaz_effet_serre demarche/pcaet_diagnostic_drop_referentiel_tables migration_schema] 2026-09-03T16:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute le catalogue des politiques de périodicité et classifie les définitions
+indicateur/reconciliation_formules [indicateur/periodicite private_schema] 2026-09-03T16:00:20Z Emilien Escalle <emilien.escalle@escemi.com> # Rend durable et bornée la réconciliation déclenchée par un changement de formule
+indicateur/dependances_formules [private_schema] 2026-09-03T16:00:25Z Emilien Escalle <emilien.escalle@escemi.com> # Centralise l'extraction des dépendances de formule
+@indicateur-periodicite-expand 2026-09-03T16:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Repère interne des tests avant les contraintes finales
+indicateur/periodicite_obligatoire [indicateur/periodicite] 2026-09-03T16:01:00Z Emilien Escalle <emilien.escalle@escemi.com> # Verrouille la périodicité après classification et audit des définitions
+indicateur/periodicite_formules [indicateur/periodicite_obligatoire indicateur/dependances_formules] 2026-09-03T16:30:00Z Emilien Escalle <emilien.escalle@escemi.com> # Matérialise les dépendances de calcul et garantit leur homogénéité de périodicité
+stats/report_indicateur_resultat_periode [indicateur/periodicite_obligatoire collectivite/fusion] 2026-09-03T17:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Expose la politique et le début de période tout en maintenant l'année
+@indicateur-periodicite-contract 2026-09-03T17:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Schéma complet de la PR fonctionnelle, contraintes et reporting vérifiés

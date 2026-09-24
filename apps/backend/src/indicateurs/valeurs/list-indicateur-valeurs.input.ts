@@ -1,9 +1,14 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
 import { z } from 'zod';
 
 export const listIndicateurValeursInputSchema = z
   .object({
-    periodicite: z.literal(IndicateurPeriodiciteEnum.ANNUELLE).optional(),
+    periodicite: z
+      .enum(indicateurPeriodiciteValues)
+      .optional()
+      .describe(
+        'Série demandée ; sans filtre, conserve toutes les périodicités enregistrées'
+      ),
     collectiviteId: z.int().describe('Identifiant de la collectivité'),
     indicateurIds: z
       .int()

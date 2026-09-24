@@ -3,19 +3,26 @@ import {
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
-import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
+import { PALETTE_LIGHT } from '@/app/ui/charts/echarts/constants';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import {
+  aggregateIndicateurValeurs,
+  formatIndicateurPeriod,
+  getIndicateurSourcePeriodicite,
+  type IndicateurAggregationOptions,
+  type IndicateurPeriodicite,
+} from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
-import { useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import {
-  getAnneesDistinctes,
   ListIndicateurValeursOutput,
   prepareData,
   PreparedData,
 } from './prepare-data';
 import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
-import { useSourceFilter } from './use-source-filter';
+import { type SourceFilter, useSourceFilter } from './use-source-filter';
+import { useIndicateurDisplayPeriodicite } from './use-indicateur-display-periodicite';
 
 export const SEGMENTATIONS = [
   'vecteur_filiere',
@@ -26,7 +33,40 @@ export const SEGMENTATIONS = [
 ] as const;
 const SEGMENTATION_PAR_DEFAUT = 'autre';
 
-export type IndicateurChartInfo = ReturnType<typeof useIndicateurChartInfo>;
+type PreparedSegment = {
+  definition: IndicateurDefinitionListItem;
+  source: PreparedData['sources'][number];
+};
+
+type PreparedSegmentation = {
+  segmentation: string;
+  indicateurs: PreparedSegment[];
+};
+
+type IndicateurChartData = {
+  unite: string | undefined;
+  periodicite: IndicateurPeriodicite | undefined;
+  valeurs: {
+    objectifs: PreparedData;
+    resultats: PreparedData;
+    segments: PreparedSegment[];
+  };
+};
+
+export type IndicateurChartInfo = {
+  definition: IndicateurDefinitionListItem | undefined;
+  typesSegmentation: string[];
+  segmentation: string | undefined;
+  setSegmentation: Dispatch<SetStateAction<string | undefined>>;
+  segmentItemParId: Map<number, { id: number; name: string; color: string }>;
+  sourceFilter: SourceFilter;
+  data: IndicateurChartData;
+  periodiciteAffichage: IndicateurPeriodicite | undefined;
+  setPeriodiciteAffichage: (periodicite: IndicateurPeriodicite) => void;
+  hasValeurCollectivite: boolean;
+  hasValeur: boolean;
+  isLoading: boolean;
+};
 
 /** Charge et prépare les données pour le graphe */
 export const useIndicateurChartInfo = ({
@@ -35,11 +75,12 @@ export const useIndicateurChartInfo = ({
 }: {
   definition?: IndicateurDefinitionListItem;
   externalCollectiviteId?: number;
-}) => {
+}): IndicateurChartInfo => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
+    periodicite: definition?.periodicite,
     collectiviteId: dataCollectiviteId,
     indicateurId: indicateurId ?? 0,
   });
@@ -57,22 +98,29 @@ export const useIndicateurChartInfo = ({
       }
     );
 
-  // sépare objectifs et résultats
+  // Données brutes du parent, utilisées par le modèle de présentation.
   const rawData = valeurs?.indicateurs?.[0];
-  const objectifs = prepareData(
-    rawData,
-    'objectif',
-    sourceFilter.avecDonneesCollectivite
-  );
-  const resultats = prepareData(
-    rawData,
-    'resultat',
-    sourceFilter.avecDonneesCollectivite
-  );
+  const sourcePeriodicite = definition?.periodicite
+    ? getIndicateurSourcePeriodicite(
+        definition.periodicite,
+        Object.values(rawData?.sources ?? {}).flatMap((source) =>
+          source.valeurs.map((value) => value.periodicite)
+        )
+      )
+    : undefined;
+  const { periodiciteAffichage, setPeriodiciteAffichage } =
+    useIndicateurDisplayPeriodicite({
+      indicateurId,
+      collectiviteId: dataCollectiviteId,
+      periodicite: sourcePeriodicite,
+      defaultPeriodicite: definition?.periodicite,
+    });
 
   // pour les agrégations il faut aussi charger les valeurs des sous-indicateurs
-  const indicateurIds =
-    estAgregation && enfants?.length ? enfants.map((e) => e.id) : [];
+  const indicateurIds = useMemo(
+    () => (estAgregation && enfants?.length ? enfants.map(({ id }) => id) : []),
+    [enfants, estAgregation]
+  );
   const { data: valeursSegments, isLoading: isLoadingSegments } =
     useListIndicateurValeurs(
       {
@@ -100,126 +148,172 @@ export const useIndicateurChartInfo = ({
     { enabled: !!indicateurIds?.length }
   );
 
-  // groupe les indicateurs enfant par type de segmentation (secteur,
-  // vecteur...) et type de valeurs
-  const enfantsParSegmentation = prepareEnfantsParSegmentation(
-    definitionEnfants,
-    valeursSegments,
-    'resultat',
-    sourceFilter.avecSecteursSNBC
-  );
-  const objectifsParSegment = prepareEnfantsParSegmentation(
-    definitionEnfants,
-    valeursSegments,
-    'objectif',
-    sourceFilter.avecSecteursSNBC
-  );
-  const segmentsResultats = enfantsParSegmentation.map(
-    ({ segmentation: segment }) => segment
-  );
-  objectifsParSegment.forEach((objectifs) => {
-    if (!segmentsResultats.includes(objectifs.segmentation)) {
-      enfantsParSegmentation.push(objectifs);
-    }
-  });
-
-  // la segmentation par défaut est la 1ère segmentation disponible dans l'ordre d'affichage voulu
-  const segmentationParDefaut =
-    SEGMENTATIONS.find((s) =>
-      enfantsParSegmentation?.find((e) => e.segmentation === s)
-    ) ?? undefined;
-
   // conserve le type de segmentation sélectionné
-  const [segmentation, setSegmentation] = useState<string | undefined>(
-    segmentationParDefaut
-  );
-  useEffect(() => {
-    if (segmentationParDefaut) {
-      setSegmentation(segmentationParDefaut);
-    }
-  }, [segmentationParDefaut]);
-
-  // extrait les sous-indicateurs et leurs valeurs pour la segmentation courante
-  const segments =
-    enfantsParSegmentation?.find(
-      ({ segmentation: segment }) => segment === segmentation
-    )?.indicateurs || [];
-
-  // extrait les types de segmentation disponibles
-  const typesSegmentation = enfantsParSegmentation.map(
-    ({ segmentation }) => segmentation
-  );
-
-  // génère la liste triée des sous-indicateurs pour que l'attribution des couleurs
-  // reste constante, que les données par segment soient disponibles ou non
-  const segmentItemParId = new Map<
-    number,
-    { id: number; name: string; color: string }
+  const [selectedSegmentation, setSegmentation] = useState<
+    string | undefined
   >();
-  definitionEnfants
-    ?.sort((a, b) =>
-      a.identifiantReferentiel && b.identifiantReferentiel
-        ? a.identifiantReferentiel.localeCompare(b.identifiantReferentiel)
-        : 0
-    )
-    .forEach(({ id, titreCourt, titre }, i) =>
-      segmentItemParId.set(id, {
-        id,
-        name: titreCourt ?? titre,
-        color: PALETTE_LIGHT[i % PALETTE_LIGHT.length],
-      })
+
+  const preparedChart = useMemo(() => {
+    const displayOptions = periodiciteAffichage
+      ? {
+          periodiciteAffichage,
+          aggregationResultat: definition?.aggregationResultat,
+          aggregationObjectif: definition?.aggregationObjectif,
+        }
+      : undefined;
+    const objectifs = prepareData(
+      rawData,
+      'objectif',
+      sourceFilter.avecDonneesCollectivite,
+      [],
+      displayOptions
     );
+    // Groupe les indicateurs enfant par type de segmentation et conserve les
+    // objectifs dont la segmentation n'existe pas dans les résultats.
+    const segmentationsResultat = prepareEnfantsParSegmentation(
+      definitionEnfants,
+      valeursSegments,
+      'resultat',
+      sourceFilter.avecSecteursSNBC,
+      displayOptions
+    );
+    const knownSegmentations = new Set(
+      segmentationsResultat.map(({ segmentation }) => segmentation)
+    );
+    const enfantsParSegmentation = [
+      ...segmentationsResultat,
+      ...prepareEnfantsParSegmentation(
+        definitionEnfants,
+        valeursSegments,
+        'objectif',
+        sourceFilter.avecSecteursSNBC,
+        displayOptions
+      ).filter(({ segmentation }) => !knownSegmentations.has(segmentation)),
+    ];
 
-  // détermine si l'indicateur a au moins une valeur résultat ou objectif saisie
-  // par la collectivité
-  const hasValeurCollectivite =
-    (objectifs.donneesCollectivite?.valeurs.length ?? 0) +
-      (resultats.donneesCollectivite?.valeurs.length ?? 0) >
-    0;
+    const segmentationParDefaut = SEGMENTATIONS.find((candidate) =>
+      enfantsParSegmentation.some(
+        ({ segmentation }) => segmentation === candidate
+      )
+    );
+    const segmentation = enfantsParSegmentation.some(
+      ({ segmentation }) => segmentation === selectedSegmentation
+    )
+      ? selectedSegmentation
+      : segmentationParDefaut;
+    const segments =
+      enfantsParSegmentation.find(
+        ({ segmentation: candidate }) => candidate === segmentation
+      )?.indicateurs ?? [];
 
-  // ajoute une entrée dans le tableau des sources "résultats" pour la moyenne
-  const moyenne = prepareMoyenne(sourceFilter.moyenne);
-  if (moyenne) {
-    resultats.sources.push(moyenne);
-  }
+    const segmentItemParId = new Map<
+      number,
+      { id: number; name: string; color: string }
+    >();
+    definitionEnfants
+      ?.toSorted((left, right) =>
+        left.identifiantReferentiel && right.identifiantReferentiel
+          ? left.identifiantReferentiel.localeCompare(
+              right.identifiantReferentiel
+            )
+          : 0
+      )
+      .forEach(({ id, titreCourt, titre }, index) =>
+        segmentItemParId.set(id, {
+          id,
+          name: titreCourt ?? titre,
+          color: PALETTE_LIGHT[index % PALETTE_LIGHT.length],
+        })
+      );
 
-  const data = {
+    const periodicite = sourcePeriodicite;
+    const moyenne = periodicite
+      ? prepareMoyenne(
+          sourceFilter.moyenne,
+          definition?.periodicite ?? periodicite,
+          displayOptions
+        )
+      : null;
+    const resultats = prepareData(
+      rawData,
+      'resultat',
+      sourceFilter.avecDonneesCollectivite,
+      moyenne ? [moyenne] : [],
+      displayOptions
+    );
+    const hasValeurCollectivite =
+      (objectifs.donneesCollectivite?.valeurs.length ?? 0) +
+        (resultats.donneesCollectivite?.valeurs.length ?? 0) >
+      0;
+    const valeursReference = sourceFilter.valeursReference;
+
+    return {
+      typesSegmentation: enfantsParSegmentation.map(
+        ({ segmentation }) => segmentation
+      ),
+      segmentation,
+      segmentItemParId,
+      data: {
+        unite,
+        periodicite,
+        valeurs: { objectifs, resultats, segments },
+      },
+      hasValeurCollectivite,
+      hasValeur: Boolean(
+        (rawData?.totalFilledValeursCount ?? 0) > 0 ||
+          segments.length > 0 ||
+          Boolean(moyenne?.valeurs?.length) ||
+          (valeursReference &&
+            (valeursReference.cible !== null ||
+              valeursReference.seuil !== null ||
+              valeursReference.objectifs?.length))
+      ),
+    };
+  }, [
+    definition?.periodicite,
+    definition?.aggregationResultat,
+    definition?.aggregationObjectif,
+    periodiciteAffichage,
+    sourcePeriodicite,
+    definitionEnfants,
+    rawData,
+    selectedSegmentation,
+    sourceFilter.avecDonneesCollectivite,
+    sourceFilter.avecSecteursSNBC,
+    sourceFilter.moyenne,
+    sourceFilter.valeursReference,
     unite,
-    valeurs: {
-      objectifs: { ...objectifs, annees: getAnneesDistinctes(objectifs) },
-      resultats: { ...resultats, annees: getAnneesDistinctes(resultats) },
-      segments,
-    },
-  };
-
-  // détermine si l'indicateur a au moins une valeur
-  const valeursReference = sourceFilter.valeursReference;
-  const hasValeur =
-    (rawData?.totalFilledValeursCount ?? 0) > 0 ||
-    !!segments?.length ||
-    !!moyenne?.valeurs?.length ||
-    (valeursReference &&
-      (valeursReference.cible !== null ||
-        valeursReference.seuil !== null ||
-        valeursReference.objectifs?.length));
+    valeursSegments,
+  ]);
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
 
-  return {
-    definition,
-    typesSegmentation,
-    segmentation,
-    setSegmentation,
-    segmentItemParId,
-    sourceFilter,
-    data,
-    hasValeurCollectivite,
-    hasValeur,
-    isLoading,
-  };
+  return useMemo(
+    () => ({
+      definition,
+      ...preparedChart,
+      setSegmentation,
+      sourceFilter,
+      isLoading,
+      periodiciteAffichage,
+      setPeriodiciteAffichage,
+    }),
+    [
+      definition,
+      isLoading,
+      preparedChart,
+      sourceFilter,
+      periodiciteAffichage,
+      setPeriodiciteAffichage,
+    ]
+  );
 };
 
-function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
+function prepareMoyenne(
+  moyenne: IndicateurMoyenneOutput | undefined,
+  periodicite: IndicateurPeriodicite,
+  displayOptions?: IndicateurAggregationOptions
+): PreparedData['sources'][number] | null {
   if (!moyenne?.valeurs?.length) return null;
 
   const libelleType =
@@ -248,17 +342,23 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
     ],
     ordreAffichage: null,
     source: 'moyenne',
-    valeurs: moyenne.valeurs.map((v) => {
-      const { annee, anneeISO } = getAnnee(v.dateValeur);
-      return {
-        id: -1,
-        commentaire: null,
-        calculAuto: true,
-        annee,
-        anneeISO,
-        valeur: v.valeur,
-      };
-    }),
+    valeurs: aggregateIndicateurValeurs(
+      moyenne.valeurs.map((value) => ({
+        ...value,
+        periodicite,
+        resultat: value.valeur,
+      })),
+      { periodiciteAffichage: periodicite, ...displayOptions }
+    ).map((value) => ({
+      id: undefined,
+      commentaire: null,
+      calculAuto: true,
+      periode: value.period,
+      periodeLabel: formatIndicateurPeriod(value.period),
+      dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
+      valeur: value.resultat,
+      isAggregated: value.isAggregated,
+    })),
   };
 }
 
@@ -267,15 +367,12 @@ function prepareEnfantsParSegmentation(
   enfants: IndicateurDefinitionListItem[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
-  avecSecteursSNBC: boolean
-) {
-  const enfantsParSegmentation: Record<
-    string,
-    {
-      definition: IndicateurDefinitionListItem;
-      source: PreparedData['sources'][number];
-    }[]
-  > = { [SEGMENTATION_PAR_DEFAUT]: [] };
+  avecSecteursSNBC: boolean,
+  displayOptions?: IndicateurAggregationOptions
+): PreparedSegmentation[] {
+  const enfantsParSegmentation: Record<string, PreparedSegment[]> = {
+    [SEGMENTATION_PAR_DEFAUT]: [],
+  };
 
   const dataParId: Record<number, PreparedData> = {};
   const sources: Array<{ source: string; ordreAffichage: number | null }> = [];
@@ -292,7 +389,19 @@ function prepareEnfantsParSegmentation(
     }
 
     // et transformées pour l'affichage
-    const data = prepareData(valeursEnfant, type, false);
+    const data = prepareData(
+      valeursEnfant,
+      type,
+      false,
+      [],
+      displayOptions
+        ? {
+            ...displayOptions,
+            aggregationResultat: enfant.aggregationResultat,
+            aggregationObjectif: enfant.aggregationObjectif,
+          }
+        : undefined
+    );
     dataParId[enfant.id] = data;
 
     // sélectionne la source la plus appropriée
@@ -302,9 +411,8 @@ function prepareEnfantsParSegmentation(
         a === null ? 1 : b === null ? -1 : a - b
       )
       .find(
-        // il faut au moins 2 valeurs pour afficher une surface dans le graphe StackedArea
         (s) =>
-          s.valeurs?.length > 1 &&
+          s.valeurs.some((value) => value.valeur != null) &&
           // et on n'affiche pas les objectifs de la SNBC à part si le filtre
           // SNBC est le seul sélectionné
           (s.source !== 'snbc' || avecSecteursSNBC)
@@ -325,11 +433,14 @@ function prepareEnfantsParSegmentation(
     const data = dataParId[enfant.id];
 
     // sélectionne les données pour la source voulue
-    const sourceValeursEnfant = data?.sources.find(
-      (s) => s.source === bestSource
-    );
+    const sourcesValeursEnfant =
+      data?.sources.filter(
+        (source) =>
+          source.source === bestSource &&
+          source.valeurs.some((value) => value.valeur != null)
+      ) ?? [];
 
-    if (sourceValeursEnfant?.valeurs?.length) {
+    for (const sourceValeursEnfant of sourcesValeursEnfant) {
       // segmentations auxquelles est rattaché l'indicateur
       const categorieNames = enfant.categories?.map((c) => c.nom) ?? [];
       const segmentations = intersection(categorieNames, SEGMENTATIONS);
@@ -358,4 +469,4 @@ type ItemSource = { ordreAffichage: number | null };
 const parOrdreAffichage = (
   { ordreAffichage: a }: ItemSource,
   { ordreAffichage: b }: ItemSource
-) => (a === null ? 1 : b === null ? -1 : a - b);
+) => (a === b ? 0 : a === null ? 1 : b === null ? -1 : a - b);

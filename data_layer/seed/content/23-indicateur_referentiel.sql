@@ -1372,9 +1372,9 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
 
         insert into public.indicateur_definition
         (identifiant_referentiel, titre, titre_long, unite, participation_score,
-         sans_valeur_utilisateur, modified_at, created_at, description)
+         sans_valeur_utilisateur, periodicite, modified_at, created_at, description)
         select id as identifiant_referentiel, nom as titre, titre_long, unite, participation_score,
-               sans_valeur as sans_valeur_utilisateur, modified_at, modified_at as created_at, description
+               sans_valeur as sans_valeur_utilisateur, 'annuelle', modified_at, modified_at as created_at, description
         from indicateur_def on conflict do nothing;
 
         insert into public.indicateur_thematique (indicateur_id, thematique_id)

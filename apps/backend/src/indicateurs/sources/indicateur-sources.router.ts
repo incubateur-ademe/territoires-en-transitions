@@ -16,8 +16,8 @@ export class IndicateurSourcesRouter {
     }),
     available: this.trpc.authedProcedure
       .input(getAvailableSourcesRequestSchema)
-      .query(({ input }) => {
-        return this.service.getAvailableSources(input);
+      .query(({ ctx, input }) => {
+        return this.service.getAvailableSources(input, { user: ctx.user });
       }),
   });
 }

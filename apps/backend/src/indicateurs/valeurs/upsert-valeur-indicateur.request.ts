@@ -1,5 +1,5 @@
 import {
-  IndicateurPeriodiciteEnum,
+  indicateurPeriodiciteSchema,
   indicateurValeurSchemaCreate,
 } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
@@ -9,6 +9,7 @@ export const upsertValeurIndicateurSchema = z.object({
   ...z.pick(indicateurValeurSchemaCreate, {
     collectiviteId: true,
     indicateurId: true,
+    periodicite: true,
     id: true,
     resultat: true,
     resultatCommentaire: true,
@@ -16,7 +17,7 @@ export const upsertValeurIndicateurSchema = z.object({
     objectifCommentaire: true,
   }).shape,
 
-  periodicite: z.optional(z.literal(IndicateurPeriodiciteEnum.ANNUELLE)),
+  periodicite: z.optional(indicateurPeriodiciteSchema),
   dateValeur: z.optional(indicateurValeurSchemaCreate.shape.dateValeur),
 });
 

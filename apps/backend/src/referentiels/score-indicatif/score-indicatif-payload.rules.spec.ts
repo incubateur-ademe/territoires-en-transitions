@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import {
   ActionScoreIndicatif,
   scoreIndicatifPayloadSchema,
@@ -29,6 +30,34 @@ describe('score-indicatif-payload.rules', () => {
   });
 
   describe('formatScoreIndicatifForPayload', () => {
+    it('conserve le contrat annuel du score même si la déclaration est mensuelle', () => {
+      expect(
+        formatScoreIndicatifForPayload({
+          actionId: 'cae_1.1.1',
+          indicateurs: [
+            {
+              actionId: 'cae_1.1.1',
+              indicateurId: 42,
+              identifiantReferentiel: 'ind_test',
+              titre: 'Indicateur de test',
+              unite: '%',
+              isApplicable: true,
+              periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+            },
+          ],
+          calcul: null,
+          fait: null,
+          programme: null,
+        })
+      ).toEqual({
+        periodicite: 'annuelle',
+        unite: '%',
+        calcul: null,
+        fait: null,
+        programme: null,
+      });
+    });
+
     it('formate le score fait et laisse le score programme à null', () => {
       const scoreIndicatif: ActionScoreIndicatif = {
         actionId: 'cae_1.1.1',
@@ -38,6 +67,7 @@ describe('score-indicatif-payload.rules', () => {
             indicateurId: 42,
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             unite: '%',
             isApplicable: true,
           },
@@ -74,6 +104,7 @@ describe('score-indicatif-payload.rules', () => {
 
       const payload = formatScoreIndicatifForPayload(scoreIndicatif);
 
+      expect(payload.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
       expect(payload.unite).toBe('%');
       expect(payload.calcul).toEqual({
         type: 'valeur_cible_seuil',
@@ -107,6 +138,7 @@ describe('score-indicatif-payload.rules', () => {
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
             unite: '%',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             isApplicable: true,
           },
         ],

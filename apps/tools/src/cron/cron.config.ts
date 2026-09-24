@@ -21,6 +21,14 @@ const CRM_SYNC_JOB_OPTIONS: JobsOptions = {
   attempts: 3,
 };
 
+// Le backoff des intentions vit en PostgreSQL et le prochain tick constitue
+// le retry. Une seule tentative BullMQ permet à la tentative qui observe
+// réellement une intention empoisonnée d'être capturée par Sentry, au lieu
+// qu'un retry immédiat ne l'ignore puis masque l'échec.
+const FORMULA_RECONCILIATION_JOB_OPTIONS: JobsOptions = {
+  attempts: 1,
+};
+
 const CRM_SYNC_JOBS_CONFIG = Object.entries(CRM_SYNC_JOBS).map(
   ([name, descriptor]) =>
     ({
@@ -51,6 +59,12 @@ export const JOBS_CONFIG = [
     name: 'send-notifications',
     cronExpression: CronExpression.EVERY_MINUTE,
     data: {},
+  },
+  {
+    name: 'drain-indicateur-formula-reconciliations',
+    cronExpression: CronExpression.EVERY_MINUTE,
+    data: {},
+    jobOptions: FORMULA_RECONCILIATION_JOB_OPTIONS,
   },
   {
     // Une fois par nuit : la validation du dernier avis clôt le dossier sur le

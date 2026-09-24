@@ -8,6 +8,9 @@ export const importObjectifSchema = z.object({
   }).shape,
 
   identifiantReferentiel: z.string(),
+  // Les objectifs de référence sont des horizons annuels, indépendamment de
+  // la périodicité des observations de l'indicateur. Toute date ISO valide
+  // reste acceptée ; les graphiques la positionnent sur son année-horizon.
   dateValeur: z.iso.date(),
 });
 

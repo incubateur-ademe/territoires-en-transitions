@@ -1,3 +1,4 @@
+import { invalidateIndicateurValeursQueries } from '@/app/indicateurs/valeurs/invalidate-indicateur-valeurs-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
@@ -7,27 +8,12 @@ export const useDeleteIndicateurValeur = () => {
 
   return useMutation(
     trpc.indicateurs.valeurs.delete.mutationOptions({
-      onSuccess: (_, variables) => {
-        const { collectiviteId, indicateurId } = variables;
-        if (collectiviteId && indicateurId) {
-          // recharge les infos complémentaires associées à l'indicateur
-          queryClient.invalidateQueries({
-            queryKey: trpc.indicateurs.indicateurs.list.queryKey({
-              collectiviteId,
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: trpc.indicateurs.valeurs.list.queryKey({
-              collectiviteId,
-              indicateurIds: [indicateurId],
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
-              collectiviteId,
-            }),
-          });
-        }
+      onSuccess: async (_, { collectiviteId }) => {
+        await invalidateIndicateurValeursQueries({
+          queryClient,
+          trpc,
+          collectiviteId,
+        });
       },
       meta: {
         success: 'La valeur a été supprimée',

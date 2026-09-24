@@ -148,6 +148,15 @@ export const TypeDateAvecValeur: Story = {
   },
 };
 
+/** Mois avec une valeur renseignée. */
+export const TypeMonthAvecValeur: Story = {
+  args: {
+    type: 'month',
+    value: '2024-01',
+    onChange: action('onChange'),
+  },
+};
+
 /** Mot de passe sans aucune props renseignée. */
 export const TypePassword: Story = {
   args: { type: 'password' },

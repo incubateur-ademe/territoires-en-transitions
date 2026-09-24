@@ -1,64 +1,98 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { and, eq, inArray, notInArray } from 'drizzle-orm';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { HandleDefinitionFichesRepository } from './handle-definition-fiches.repository';
 
 @Injectable()
 export class HandleDefinitionFichesService {
   private readonly logger = new Logger(HandleDefinitionFichesService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly repository: HandleDefinitionFichesRepository,
+    private readonly transactionManager: TransactionManager,
+    private readonly ficheActionPermissionsService: FicheActionPermissionsService
+  ) {}
 
-  async upsertIndicateurFiches({
-    indicateurId,
-    collectiviteId,
-    ficheIds,
-  }: {
-    indicateurId: number;
-    collectiviteId: number;
-    ficheIds: number[];
-  }) {
+  async upsertIndicateurFiches(
+    {
+      indicateurId,
+      collectiviteId,
+      ficheIds,
+    }: {
+      indicateurId: number;
+      collectiviteId: number;
+      ficheIds: number[];
+    },
+    { user, tx }: ServiceSecondArg
+  ): Promise<void> {
     this.logger.log(
       `Mise à jour des fiches liées de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    await this.databaseService.db.transaction(async (tx) => {
-      const deleteConditions = [
-        eq(ficheActionIndicateurTable.indicateurId, indicateurId),
-        inArray(
-          ficheActionIndicateurTable.ficheId,
-          // subquery to filter by collectiviteId
-          tx
-            .select({ id: ficheActionTable.id })
-            .from(ficheActionTable)
-            .where(eq(ficheActionTable.collectiviteId, collectiviteId))
-        ),
-      ];
-
-      // Do not delete fiches that may still exist in the new list
-      if (ficheIds.length > 0) {
-        deleteConditions.push(
-          notInArray(ficheActionIndicateurTable.ficheId, ficheIds)
+    const transactionResult = await this.transactionManager.executeSingle<
+      void,
+      unknown
+    >(async (transaction) => {
+      const fichesAreInScope =
+        await this.repository.areFichesInCollectiviteScope(
+          ficheIds,
+          collectiviteId,
+          transaction
+        );
+      if (!fichesAreInScope) {
+        throw new BadRequestException(
+          `Toutes les fiches doivent appartenir à la collectivité ${collectiviteId} ou être partagées avec elle`
         );
       }
 
-      await tx
-        .delete(ficheActionIndicateurTable)
-        .where(and(...deleteConditions));
+      const existingFicheIds = new Set(
+        await this.repository.listIndicateurFicheIds(
+          { indicateurId, collectiviteId },
+          transaction
+        )
+      );
+      const requestedFicheIds = new Set(ficheIds);
+      const ficheIdsToLink = [...requestedFicheIds].filter(
+        (ficheId) => !existingFicheIds.has(ficheId)
+      );
+      const ficheIdsToUnlink = [...existingFicheIds].filter(
+        (ficheId) => !requestedFicheIds.has(ficheId)
+      );
 
-      // Insert new fiches
-      if (ficheIds.length > 0) {
-        await tx
-          .insert(ficheActionIndicateurTable)
-          .values(
-            ficheIds.map((ficheId) => ({
-              ficheId,
-              indicateurId,
-            }))
-          )
-          .onConflictDoNothing();
+      for (const ficheId of [...ficheIdsToLink, ...ficheIdsToUnlink]) {
+        const access = await this.ficheActionPermissionsService.canWriteFiche(
+          ficheId,
+          user,
+          transaction
+        );
+        if (!access) {
+          throw new ForbiddenException(
+            `Droits insuffisants pour modifier les indicateurs de la fiche ${ficheId}`
+          );
+        }
       }
-    });
+
+      await this.repository.upsertIndicateurFiches(
+        {
+          indicateurId,
+          collectiviteId,
+          ficheIds: ficheIdsToLink,
+          ficheIdsToUnlink,
+        },
+        transaction
+      );
+      return success(undefined);
+    }, tx);
+
+    if (!transactionResult.success) {
+      throw transactionResult.cause ?? transactionResult.error;
+    }
   }
 }

@@ -6,6 +6,7 @@ import { ApikeysController } from '@tet/backend/users/apikeys/apikeys.controller
 import { ApikeysRouter } from '@tet/backend/users/apikeys/apikeys.router';
 import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { PermissionRepository } from '@tet/backend/users/authorizations/permission.repository';
 import { ListUsersController } from '@tet/backend/users/users/list-users/list-users.controller';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { NestjsFormDataModule } from 'nestjs-form-data';
@@ -75,6 +76,7 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
       useClass: AuthGuard,
     },
     CollectivitePreferencesRepository,
+    PermissionRepository,
     PermissionService,
     GetUserRolesAndPermissionsService,
     GetUserRolesAndPermissionsRepository,

@@ -1,10 +1,16 @@
 import { Indicateurs } from '@/site/app/collectivites/utils';
+import { toAnnualIndicateurYear } from '@tet/domain/indicateurs';
 import { getFormattedNumber } from '@tet/domain/utils';
 import { secteurIdToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
 
-const getYear = (dateIso: string) => new Date(dateIso).getFullYear();
+const getYear = (indicateur: Indicateurs): number =>
+  toAnnualIndicateurYear(
+    indicateur.periodicite,
+    indicateur.date_valeur,
+    `La publication GES (${indicateur.identifiant})`
+  );
 
 type IndicateurGazEffetSerreProps = {
   defaultData?: IndicateurDefaultData;
@@ -18,11 +24,11 @@ const IndicateurGazEffetSerre = ({
   if (!defaultData || !data || data.length === 0) return null;
 
   // Récupère les données de l'année la plus récente associées à la source CITEPA
-  const lastYear = Math.max(...data.map((d) => getYear(d.date_valeur)));
+  const lastYear = Math.max(...data.map(getYear));
 
   const lastYearData = data.filter(
     (d) =>
-      getYear(d.date_valeur) === lastYear &&
+      getYear(d) === lastYear &&
       secteurIdToLabel[d.identifiant] !== 'Total' &&
       d.source === 'CITEPA'
   );
@@ -30,7 +36,7 @@ const IndicateurGazEffetSerre = ({
   // Récupère le total associé à cette année et à la source CITEPA
   const lastYearTotal = data.find(
     (d) =>
-      getYear(d.date_valeur) === lastYear &&
+      getYear(d) === lastYear &&
       secteurIdToLabel[d.identifiant] === 'Total' &&
       d.source === 'CITEPA'
   );

@@ -705,7 +705,6 @@ export class ListIndicateursRepository {
         ]),
 
         createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
-        ...indicateurDefinitionPeriodiciteSelection,
 
         count: sql<number>`(count(*) over())::int`,
 
@@ -714,11 +713,10 @@ export class ListIndicateursRepository {
         estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
 
         // Columns from indicateurCollectiviteTable
+        ...indicateurDefinitionPeriodiciteSelection,
         commentaire: indicateurCollectiviteTable.commentaire,
         estConfidentiel: sql<boolean>`${indicateurCollectiviteTable.confidentiel} is true`,
         estFavori: indicateurCollectiviteTable.favoris,
-        // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
-        // un indicateur dont la collectivité n'a rien dit est applicable.
         isApplicable: sql<boolean>`coalesce(${indicateurCollectiviteTable.isApplicable}, true)`,
         modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`

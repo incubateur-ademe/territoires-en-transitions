@@ -9,33 +9,43 @@ import classNames from 'classnames';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';
 import { appLabels } from '@/app/labels/catalog';
+import {
+  formatIndicateurPeriod,
+  IndicateurPeriods,
+} from '@tet/domain/indicateurs';
 
-type CellAnneeListProps = {
+type CellPeriodeListProps = {
   confidentiel?: boolean;
-  data: PreparedData & { annees: number[] };
+  data: PreparedData;
   readonly?: boolean;
   type: SourceType;
   onDelete: (valeur: PreparedValue) => void;
 };
 
-/** Affiche les cellules des années dans l'en-tête du tableau */
-export const CellAnneeList = ({
+/** Affiche les cellules des périodes dans l'en-tête du tableau. */
+export const CellPeriodeList = ({
   confidentiel,
   data,
   readonly,
   type,
   onDelete,
-}: CellAnneeListProps) => {
-  const { annees, anneeModePrive, valeursExistantes } = data;
+}: CellPeriodeListProps) => {
+  const { periodes, dernierePeriodeModePrive, valeursExistantes } = data;
 
-  return annees?.map((annee) => {
-    const valeur = valeursExistantes.find((v) => v.annee === annee);
+  return periodes?.map((periode) => {
+    const periodKey = IndicateurPeriods.key(periode);
+    const valeur = valeursExistantes.find(
+      (v) => IndicateurPeriods.key(v.periode) === periodKey
+    );
     const modePrive =
-      confidentiel && type === 'resultat' && annee === anneeModePrive;
+      confidentiel &&
+      type === 'resultat' &&
+      dernierePeriodeModePrive !== undefined &&
+      periodKey === IndicateurPeriods.key(dernierePeriodeModePrive);
 
     return (
       <DEPRECATED_TCell
-        key={annee}
+        key={periodKey}
         className={classNames(
           DEPRECATED_HEAD_CELL_STYLE,
           'font-bold text-center relative w-[8.5rem]',
@@ -52,7 +62,9 @@ export const CellAnneeList = ({
               </div>
             </Tooltip>
           )}
-          <span className="w-full text-sm">{annee}</span>
+          <span className="w-full text-sm">
+            {formatIndicateurPeriod(periode)}
+          </span>
           {valeur && !readonly && (
             <Button
               className="!bg-transparent !border-none"

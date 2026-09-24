@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
@@ -11,6 +12,7 @@ const indicateurDom: IndicateurDefinitionAvecCategories = {
   identifiantReferentiel: 'ind_dom',
   unite: '%',
   titre: 'Indicateur DOM',
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   categories: ['dom'],
   isApplicable: true,
 };
@@ -20,6 +22,7 @@ const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
   identifiantReferentiel: 'ind_hors_dom',
   unite: '%',
   titre: 'Indicateur hors DOM',
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   categories: ['hors_dom'],
   isApplicable: true,
 };
@@ -29,6 +32,7 @@ const indicateurNeutre: IndicateurDefinitionAvecCategories = {
   identifiantReferentiel: 'ind_neutre',
   unite: '%',
   titre: 'Indicateur neutre',
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   categories: [],
   isApplicable: true,
 };
@@ -86,6 +90,7 @@ describe('indicateurs-associes.rules', () => {
           indicateurId: 3,
           unite: '%',
           titre: 'Indicateur neutre',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           identifiantReferentiel: 'ind_neutre',
           optional: false,
           isApplicable: true,

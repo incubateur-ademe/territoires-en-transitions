@@ -77,8 +77,9 @@ export default class ValeursReferenceService {
       )}`
     );
 
-    const referentielContext =
-      await this.resolveReferentielContext(providedReferentielContext);
+    const referentielContext = await this.resolveReferentielContext(
+      providedReferentielContext
+    );
 
     // charge les objectifs associés aux indicateurs
     const valeurObjectifsIndicateurs = await this.getValeurObjectifsIndicateurs(

@@ -31,6 +31,8 @@ const fakeIndicateurDefinition = (
   id,
   version: '1.0.0',
   groupementId: null,
+  aggregationResultat: null,
+  aggregationObjectif: null,
   collectiviteId: null,
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   identifiantReferentiel: `fake_${id}`,

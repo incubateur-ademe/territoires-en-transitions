@@ -172,7 +172,7 @@ describe('ListIndicateursRouter', () => {
           valeurs: [
             {
               resultat: 10,
-              dateValeur: new Date().toISOString().slice(0, 10),
+              dateValeur: '2026-01-01',
             },
           ],
         },
@@ -264,7 +264,8 @@ describe('ListIndicateursRouter', () => {
     });
 
     async function createIndicateur(
-      values: Partial<IndicateurDefinition> & { parentId?: number }
+      values: Partial<IndicateurDefinition> &
+        Pick<IndicateurDefinition, 'periodicite'> & { parentId?: number }
     ) {
       const [indicateur] = await database.db
         .insert(indicateurDefinitionTable)
@@ -291,11 +292,13 @@ describe('ListIndicateursRouter', () => {
       const parent = await createIndicateur({
         titre: 'Indicateur Parent',
         identifiantReferentiel: `test_parent_fiche_${Date.now()}`,
+        periodicite: 'annuelle',
       });
 
       const enfant = await createIndicateur({
         titre: 'Indicateur Enfant',
         identifiantReferentiel: `test_enfant_fiche_${Date.now()}`,
+        periodicite: 'annuelle',
         parentId: parent.id,
       });
 
@@ -351,11 +354,13 @@ describe('ListIndicateursRouter', () => {
       const parent = await createIndicateur({
         titre: 'Indicateur Parent',
         identifiantReferentiel: `test_parent_fiche_${Date.now()}`,
+        periodicite: 'annuelle',
       });
 
       const enfant1 = await createIndicateur({
         titre: 'Indicateur Enfant 1',
         identifiantReferentiel: `test_enfant_fiche_${Date.now()}`,
+        periodicite: 'annuelle',
         parentId: parent.id,
         groupementId: groupement1.id,
       });
@@ -1083,7 +1088,7 @@ describe('ListIndicateursRouter', () => {
       await database.db.insert(indicateurValeurTable).values({
         indicateurId,
         collectiviteId: 1,
-        dateValeur: new Date().toISOString().slice(0, 10),
+        dateValeur: '2026-01-01',
         metadonneeId: 1,
       });
 
@@ -1445,6 +1450,7 @@ describe('ListIndicateursRouter', () => {
           identifiantReferentiel: identifiantParent,
           titre: 'Indicateur Parent Test',
           unite: 'unité',
+          periodicite: 'annuelle',
         })
         .returning();
 
@@ -1456,6 +1462,7 @@ describe('ListIndicateursRouter', () => {
           identifiantReferentiel: identifiantEnfant1,
           titre: 'Enfant 1 - Sans groupement',
           unite: 'unité',
+          periodicite: 'annuelle',
           groupementId: null, // Accessible à tous
         })
         .returning();
@@ -1467,6 +1474,7 @@ describe('ListIndicateursRouter', () => {
           identifiantReferentiel: identifiantEnfant2,
           titre: 'Enfant 2 - Groupement A',
           unite: 'unité',
+          periodicite: 'annuelle',
           groupementId: groupementA.id, // Accessible seulement à collectivité 1
         })
         .returning();
@@ -1478,6 +1486,7 @@ describe('ListIndicateursRouter', () => {
           identifiantReferentiel: identifiantEnfant3,
           titre: 'Enfant 3 - Groupement B',
           unite: 'unité',
+          periodicite: 'annuelle',
           groupementId: groupementB.id, // Accessible seulement à collectivité 2
         })
         .returning();
@@ -1572,7 +1581,7 @@ describe('ListIndicateursRouter', () => {
           valeurs: [
             {
               resultat: 1,
-              dateValeur: new Date().toISOString().slice(0, 10),
+              dateValeur: '2026-01-01',
             },
           ],
         },
@@ -1623,7 +1632,7 @@ describe('ListIndicateursRouter', () => {
       expect(descData.map((i) => i.id)).toEqual([zId, aId]);
     });
 
-    test("pas de doublons entre les pages en triant par un champ non unique (estRempli)", async () => {
+    test('pas de doublons entre les pages en triant par un champ non unique (estRempli)', async () => {
       const caller = router.createCaller({ user: testUser });
 
       // Crée plusieurs indicateurs qui ont tous la même valeur `estRempli`

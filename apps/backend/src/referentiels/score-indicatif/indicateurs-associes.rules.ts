@@ -41,12 +41,14 @@ export function buildIndicateursAssocies(
             identifiantsManquants.push({ actionId, identifiant });
             return null;
           }
-          const { indicateurId, unite, titre, isApplicable } = indicateur;
+          const { indicateurId, unite, titre, periodicite, isApplicable } =
+            indicateur;
           return {
             actionId,
             indicateurId,
             unite,
             titre,
+            periodicite,
             identifiantReferentiel: identifiant,
             optional,
             isApplicable,
