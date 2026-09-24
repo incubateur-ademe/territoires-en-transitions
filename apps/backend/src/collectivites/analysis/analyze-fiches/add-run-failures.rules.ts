@@ -1,5 +1,4 @@
-import { notImplemented } from '@tet/backend/utils/not-implemented';
-import { type Result } from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
 
 export const runFailureSchema = z.discriminatedUnion('kind', [
@@ -27,4 +26,15 @@ type AddRunFailures = (
   newFailures: readonly RunFailure[]
 ) => Result<RunFailure[], RunAborted>;
 
-export const addRunFailures: AddRunFailures = notImplemented('addRunFailures');
+const RUN_FAILURE_THRESHOLD = 10;
+
+export const addRunFailures: AddRunFailures = (failures, newFailures) => {
+  const allFailures = [...failures, ...newFailures];
+  if (allFailures.length >= RUN_FAILURE_THRESHOLD) {
+    return failure({
+      kind: 'failure_threshold_reached',
+      failures: allFailures,
+    });
+  }
+  return success(allFailures);
+};

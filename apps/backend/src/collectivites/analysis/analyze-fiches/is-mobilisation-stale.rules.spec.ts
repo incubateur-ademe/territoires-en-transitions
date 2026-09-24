@@ -14,7 +14,7 @@ const toFingerprint = (): FicheFingerprint =>
   });
 
 describe('daily-ct-check', () => {
-  it.skip('est périmé quand une fiche a été traitée après le dernier calcul', () => {
+  it('est périmé quand une fiche a été traitée après le dernier calcul', () => {
     const isStale = isMobilisationStale({
       mobilisation: {
         kind: 'calculated',
@@ -42,7 +42,7 @@ describe('daily-ct-check', () => {
     expect(isStale).toBe(true);
   });
 
-  it.skip('est à jour quand toutes les fiches ont été analysées avant le dernier calcul', () => {
+  it('est à jour quand toutes les fiches ont été analysées avant le dernier calcul', () => {
     const isStale = isMobilisationStale({
       mobilisation: {
         kind: 'calculated',
@@ -63,7 +63,7 @@ describe('daily-ct-check', () => {
     expect(isStale).toBe(false);
   });
 
-  it.skip("est périmé quand il n'a jamais été calculé et qu'une fiche est traitée", () => {
+  it("est périmé quand il n'a jamais été calculé et qu'une fiche est traitée", () => {
     const isStale = isMobilisationStale({
       mobilisation: { kind: 'never_calculated' },
       analyses: [
@@ -80,7 +80,7 @@ describe('daily-ct-check', () => {
     expect(isStale).toBe(true);
   });
 
-  it.skip('reste à jour quand seule une fiche en erreur a été analysée après le dernier calcul', () => {
+  it('reste à jour quand seule une fiche en erreur a été analysée après le dernier calcul', () => {
     const isStale = isMobilisationStale({
       mobilisation: {
         kind: 'calculated',
@@ -108,7 +108,7 @@ describe('daily-ct-check', () => {
     expect(isStale).toBe(false);
   });
 
-  it.skip("n'est pas périmé quand il n'a jamais été calculé et que toutes les fiches sont en erreur", () => {
+  it("n'est pas périmé quand il n'a jamais été calculé et que toutes les fiches sont en erreur", () => {
     const isStale = isMobilisationStale({
       mobilisation: { kind: 'never_calculated' },
       analyses: [
@@ -127,7 +127,7 @@ describe('daily-ct-check', () => {
 });
 
 describe('reclassification-on-deletion', () => {
-  it.skip("est périmé quand il cite une fiche qui n'a plus de statut", () => {
+  it("est périmé quand il cite une fiche qui n'a plus de statut", () => {
     const isStale = isMobilisationStale({
       mobilisation: {
         kind: 'calculated',
@@ -148,7 +148,7 @@ describe('reclassification-on-deletion', () => {
     expect(isStale).toBe(true);
   });
 
-  it.skip('est périmé quand la dernière fiche citée a perdu son statut', () => {
+  it('est périmé quand la dernière fiche citée a perdu son statut', () => {
     const isStale = isMobilisationStale({
       mobilisation: {
         kind: 'calculated',
