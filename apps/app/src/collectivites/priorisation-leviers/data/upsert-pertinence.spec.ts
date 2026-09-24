@@ -14,7 +14,7 @@ describe('upsertPertinence', () => {
     ]);
   });
 
-  it("remplace la pertinence du levier sans toucher celle d'une de ses catégories", () => {
+  it('efface la pertinence des catégories du levier qui devient non pertinent', () => {
     expect(
       upsertPertinence({
         pertinences: [
@@ -24,8 +24,41 @@ describe('upsertPertinence', () => {
             categorie: 'financement',
             pertinence: 'a_discuter',
           },
+          {
+            levierId: 'biogaz',
+            categorie: 'sensibilisation',
+            pertinence: 'pertinent',
+          },
+          {
+            levierId: 'covoiturage',
+            categorie: 'financement',
+            pertinence: 'pertinent',
+          },
         ],
         pertinence: { levierId: 'biogaz', pertinence: 'non_pertinent' },
+      })
+    ).toEqual([
+      {
+        levierId: 'covoiturage',
+        categorie: 'financement',
+        pertinence: 'pertinent',
+      },
+      { levierId: 'biogaz', pertinence: 'non_pertinent' },
+    ]);
+  });
+
+  it("garde la pertinence des catégories d'un levier qui devient pertinent", () => {
+    expect(
+      upsertPertinence({
+        pertinences: [
+          { levierId: 'biogaz', pertinence: 'non_pertinent' },
+          {
+            levierId: 'biogaz',
+            categorie: 'financement',
+            pertinence: 'a_discuter',
+          },
+        ],
+        pertinence: { levierId: 'biogaz', pertinence: 'pertinent' },
       })
     ).toEqual([
       {
@@ -33,7 +66,7 @@ describe('upsertPertinence', () => {
         categorie: 'financement',
         pertinence: 'a_discuter',
       },
-      { levierId: 'biogaz', pertinence: 'non_pertinent' },
+      { levierId: 'biogaz', pertinence: 'pertinent' },
     ]);
   });
 

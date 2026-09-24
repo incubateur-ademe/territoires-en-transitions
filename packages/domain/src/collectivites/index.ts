@@ -47,6 +47,7 @@ export * from './personnalisations/question.schema';
 export * from './personnalisations/reponse.schema';
 export * from './personne-tag-or-user.schema';
 export * from './personne-tag.schema';
+export * from './pertinence-leviers/can-categories-have-own-pertinence';
 export * from './pertinence-leviers/pertinence-leviers.schema';
 export * from './pertinence-leviers/pertinence.enum';
 export * from './pertinence-leviers/resolve-pertinence-volet';

@@ -1,3 +1,4 @@
+import { canCategoriesHaveOwnPertinence } from './can-categories-have-own-pertinence';
 import { Pertinence } from './pertinence.enum';
 
 export type PertinenceVoletEffective =
@@ -17,7 +18,7 @@ export const resolvePertinenceVolet = ({
   if (isMobilise) {
     return { kind: 'mobilise' };
   }
-  if (levierPertinence === 'non_pertinent') {
+  if (!canCategoriesHaveOwnPertinence(levierPertinence)) {
     return { kind: 'heritee_du_levier' };
   }
   if (voletPertinence === undefined) {
