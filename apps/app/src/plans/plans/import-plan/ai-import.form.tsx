@@ -4,25 +4,28 @@ import { appLabels } from '@/app/labels/catalog';
 import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Checkbox, Field, Input, Select } from '@tet/ui';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
 
-const ACCEPTED_FILE_MIME_TYPES = [
-  'application/pdf',
-  'text/csv',
-  'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-];
+// Filtre sur l'extension : le MIME d'un CSV varie selon l'OS (text/plain,
+// application/vnd.ms-excel sous Windows avec Excel…). Le serveur tranche
+// ensuite sur le contenu.
+const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.csv', '.xlsx'];
 
 const aiImportFormSchema = z.object({
   file: z
     .file({ message: appLabels.importPlanIaFichierRequis })
-    .refine((file) => ACCEPTED_FILE_MIME_TYPES.includes(file.type), {
-      message: appLabels.importPlanIaFormatNonSupporte,
-    }),
+    .refine(
+      (file) =>
+        ACCEPTED_FILE_EXTENSIONS.some((extension) =>
+          file.name.toLowerCase().endsWith(extension)
+        ),
+      { message: appLabels.importPlanIaFormatNonSupporte }
+    ),
   planName: z.string().min(1, appLabels.importPlanIaNomRequis),
   planType: z.number().nullable(),
   instructions: z.string(),
@@ -41,11 +44,15 @@ const INSTRUCTIONS_INPUT_ID = 'ai-import-instructions';
 export const AiImportForm = ({
   onSubmit,
   cancelButton,
+  lockedPlanTypeId,
 }: {
   onSubmit: (values: AiImportFormValues) => Promise<void>;
   cancelButton: ReactElement;
+  /** Type imposé, affiché mais non modifiable (programme d'actions PCAET). */
+  lockedPlanTypeId?: number;
 }) => {
   const { options: planTypesOptions } = useListPlanTypes();
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   const {
     register,
     handleSubmit,
@@ -57,17 +64,35 @@ export const AiImportForm = ({
     mode: 'onChange',
     defaultValues: {
       planName: '',
-      planType: null,
+      planType: lockedPlanTypeId ?? null,
       instructions: '',
       withVerifications: true,
       withSousActions: true,
     },
   });
 
+  const selectFile = (selectedFile: File | undefined) => {
+    if (!selectedFile) {
+      return;
+    }
+    setValue('file', selectedFile, { shouldValidate: true });
+    setValue('withVerifications', selectedFile.type === PDF_MIME_TYPE);
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <Alert
+        state="info"
+        description={
+          <>
+            <p className="mb-2">{appLabels.importPlanIaDescription}</p>
+            <p className="mb-0">{appLabels.importPlanIaContact}</p>
+          </>
+        }
+      />
       <Field
         title={appLabels.importPlanIaChampFichier}
+        hint={appLabels.importPlanIaFormatsAcceptes}
         htmlFor={FILE_INPUT_ID}
         message={errors.file?.message}
         state={errors.file?.message ? 'error' : 'default'}
@@ -79,18 +104,10 @@ export const AiImportForm = ({
             <>
               <Input
                 type="file"
-                accept=".pdf,.csv,.xls,.xlsx"
+                accept={ACCEPTED_FILE_EXTENSIONS.join(',')}
                 displaySize="md"
-                onChange={(event) => {
-                  const selectedFile = event.target.files?.[0];
-                  field.onChange(selectedFile ?? undefined);
-                  if (selectedFile) {
-                    setValue(
-                      'withVerifications',
-                      selectedFile.type === PDF_MIME_TYPE
-                    );
-                  }
-                }}
+                onChange={(event) => selectFile(event.target.files?.[0])}
+                onDropFiles={(files) => selectFile(files[0])}
               />
               {field.value && (
                 <p className="mt-2 text-sm text-grey-7 break-all">
@@ -111,12 +128,20 @@ export const AiImportForm = ({
       >
         <Input id={PLAN_NAME_INPUT_ID} type="text" {...register('planName')} />
       </Field>
-      <Field title={appLabels.typePlan}>
+      <Field
+        title={appLabels.typePlan}
+        hint={
+          lockedPlanTypeId !== undefined
+            ? appLabels.importPlanIaTypeVerrouille
+            : undefined
+        }
+      >
         <Controller
           control={control}
           name="planType"
           render={({ field }) => (
             <Select
+              disabled={lockedPlanTypeId !== undefined}
               options={planTypesOptions ?? []}
               values={field.value ?? undefined}
               onChange={(value) =>
@@ -126,29 +151,33 @@ export const AiImportForm = ({
           )}
         />
       </Field>
-      <Field
-        title={appLabels.importPlanIaChampInstructions}
-        htmlFor={INSTRUCTIONS_INPUT_ID}
-      >
-        <Input
-          id={INSTRUCTIONS_INPUT_ID}
-          type="text"
-          {...register('instructions')}
-        />
-      </Field>
+      {isSuperAdminRoleEnabled && (
+        <Field
+          title={appLabels.importPlanIaChampInstructions}
+          htmlFor={INSTRUCTIONS_INPUT_ID}
+        >
+          <Input
+            id={INSTRUCTIONS_INPUT_ID}
+            type="text"
+            {...register('instructions')}
+          />
+        </Field>
+      )}
       <div className="flex flex-col gap-3">
-        <Controller
-          control={control}
-          name="withVerifications"
-          render={({ field }) => (
-            <Checkbox
-              variant="switch"
-              label={appLabels.importPlanIaOptionVerifications}
-              checked={field.value}
-              onChange={(event) => field.onChange(event.target.checked)}
-            />
-          )}
-        />
+        {isSuperAdminRoleEnabled && (
+          <Controller
+            control={control}
+            name="withVerifications"
+            render={({ field }) => (
+              <Checkbox
+                variant="switch"
+                label={appLabels.importPlanIaOptionVerifications}
+                checked={field.value}
+                onChange={(event) => field.onChange(event.target.checked)}
+              />
+            )}
+          />
+        )}
         <Controller
           control={control}
           name="withSousActions"

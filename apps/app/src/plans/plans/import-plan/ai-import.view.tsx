@@ -1,38 +1,14 @@
 'use client';
 
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
-import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { getErrorMessage } from '@tet/domain/utils';
 import { Button, Icon } from '@tet/ui';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useRouter } from 'next/navigation';
-import { ComponentProps, ReactNode, useEffect, useState } from 'react';
-import { AiImportProgress } from './ai-import-progress';
-import { toImportStepViews } from './ai-import-steps.model';
-import { AiImportForm, AiImportFormValues } from './ai-import.form';
-import { useEnqueueAiImport } from './data/use-enqueue-ai-import';
-import { useGetAiImportStatus } from './data/use-get-ai-import-status';
-import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
-import { useRedirectToCreatedPlan } from './data/use-redirect-to-created-plan';
-
-const Title = ({
-  icon,
-  children,
-}: {
-  icon: ComponentProps<typeof Icon>['icon'];
-  children: ReactNode;
-}) => (
-  <h3 className="mb-8">
-    <Icon icon={icon} size="lg" className="mr-2" />
-    {children}
-  </h3>
-);
-
-const Subtitle = ({ children }: { children: ReactNode }) => (
-  <p className="mb-8">{children}</p>
-);
+import { useCallback } from 'react';
+import { AiImportBetaLabel } from './ai-import-beta-label';
+import { AiImportFlow } from './ai-import.flow';
+import { useIsAiPlanImportEnabled } from './use-is-ai-plan-import-enabled';
 
 const BackButton = () => {
   const router = useRouter();
@@ -48,83 +24,40 @@ const BackButton = () => {
   );
 };
 
-const CheckingOngoingImport = () => (
-  <div className="flex justify-center py-10">
-    <SpinnerLoader className="w-8 h-8" />
-  </div>
-);
-
 const AiImportContent = () => {
+  const router = useRouter();
   const collectiviteId = useCollectiviteId();
-  const { setToast } = useToastContext();
-  const { data: currentImport, isLoading: isCheckingOngoingImport } =
-    useGetCurrentAiImport(collectiviteId);
-  const [jobId, setJobId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (currentImport?.jobId) {
-      setJobId(currentImport.jobId);
-    }
-  }, [currentImport?.jobId]);
-
-  const isImportOngoing = jobId !== null;
-
-  const enqueue = useEnqueueAiImport();
-  const { data: status } = useGetAiImportStatus(jobId);
-
-  const createdPlanId =
-    status?.status === 'done' ? status.createdPlanId : null;
-  useRedirectToCreatedPlan(createdPlanId);
-
-  const handleSubmit = async (values: AiImportFormValues) => {
-    try {
-      const { jobId: newJobId } = await enqueue.mutateAsync({
-        collectiviteId,
-        file: values.file,
-        planName: values.planName,
-        planType: values.planType ?? undefined,
-        instructions: values.instructions.trim() || undefined,
-        withVerifications: values.withVerifications,
-        withSousActions: values.withSousActions,
-      });
-      setJobId(newJobId);
-    } catch (error) {
-      setToast('error', getErrorMessage(error));
-    }
-  };
-
-  const renderBody = (): ReactNode => {
-    if (isCheckingOngoingImport) {
-      return <CheckingOngoingImport />;
-    }
-    if (isImportOngoing) {
-      return (
-        <AiImportProgress
-          failed={status?.status === 'failed'}
-          errorMessage={status?.error ?? null}
-          onRetry={() => setJobId(null)}
-          steps={toImportStepViews(status?.stepStates)}
-        />
-      );
-    }
-    return <AiImportForm onSubmit={handleSubmit} cancelButton={<BackButton />} />;
-  };
+  const redirectToPlan = useCallback(
+    (planId: number) =>
+      router.push(
+        makeCollectivitePlanActionUrl({
+          collectiviteId,
+          planActionUid: planId.toString(),
+        })
+      ),
+    [router, collectiviteId]
+  );
 
   return (
     <div className="flex flex-col">
-      <Title icon="import-fill">{appLabels.importPlanIaTitre}</Title>
+      <h3 className="mb-8 flex items-center gap-2">
+        <Icon icon="import-fill" size="lg" />
+        <AiImportBetaLabel>{appLabels.importPlanIaTitre}</AiImportBetaLabel>
+      </h3>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
-        <Subtitle>{appLabels.importPlanIaDescription}</Subtitle>
-        {renderBody()}
+        <AiImportFlow
+          onPlanCreated={redirectToPlan}
+          cancelButton={<BackButton />}
+        />
       </div>
     </div>
   );
 };
 
 export const AiImportView = () => {
-  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+  const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
 
-  if (!isSuperAdminRoleEnabled) {
+  if (!isAiPlanImportEnabled) {
     return null;
   }
 

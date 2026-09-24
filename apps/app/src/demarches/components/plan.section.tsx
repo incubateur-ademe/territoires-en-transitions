@@ -8,10 +8,14 @@ import {
   DemarcheCreatePlanModal,
   type DemarcheCreatePlanPayload,
 } from '@/app/demarches/components/create-plan.modal';
+import { DemarcheImportPlanModal } from '@/app/demarches/components/import-plan.modal';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
+import { AiImportBetaLabel } from '@/app/plans/plans/import-plan/ai-import-beta-label';
+import { useIsAiPlanImportEnabled } from '@/app/plans/plans/import-plan/use-is-ai-plan-import-enabled';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import {
   PlanListItem,
   useListPlans,
@@ -197,14 +201,18 @@ const CreatePlanAction = ({
   planTypeId,
   isReadonly,
   onCreatePlan,
+  onPlanImported,
 }: {
   collectiviteId: number;
   /** Type pré-sélectionné dans la modale de création. */
   planTypeId: number | undefined;
   isReadonly: boolean;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
+  onPlanImported: (planId: number, options: { startedHere: boolean }) => void;
 }) => {
   const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
+  const [isImportPlanModalOpen, setIsImportPlanModalOpen] = useState(false);
+  const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
 
   return (
     <>
@@ -217,14 +225,25 @@ const CreatePlanAction = ({
         menuDataTest="demarches.plan.creer-plan-menu"
         className="shrink-0"
         menuActions={[
-          {
-            icon: 'import-line',
-            label: appLabels.demarcheProgrammeImporterPlan,
-            href: makeCollectivitePlansActionsImporterUrl({
-              collectiviteId,
-            }),
-            disabled: isReadonly,
-          },
+          isAiPlanImportEnabled
+            ? {
+                icon: 'import-line',
+                label: (
+                  <AiImportBetaLabel>
+                    {appLabels.demarcheProgrammeImporterPlan}
+                  </AiImportBetaLabel>
+                ),
+                onClick: () => setIsImportPlanModalOpen(true),
+                disabled: isReadonly,
+              }
+            : {
+                icon: 'import-line',
+                label: appLabels.demarcheProgrammeImporterPlan,
+                href: makeCollectivitePlansActionsImporterUrl({
+                  collectiviteId,
+                }),
+                disabled: isReadonly,
+              },
         ]}
       >
         {appLabels.demarcheProgrammeCreerPlan}
@@ -236,6 +255,14 @@ const CreatePlanAction = ({
           setIsOpen: setIsCreatePlanModalOpen,
         }}
         onCreatePlan={onCreatePlan}
+      />
+      <DemarcheImportPlanModal
+        planTypeId={planTypeId}
+        openState={{
+          isOpen: isImportPlanModalOpen,
+          setIsOpen: setIsImportPlanModalOpen,
+        }}
+        onPlanImported={onPlanImported}
       />
     </>
   );
@@ -382,6 +409,22 @@ export const ProgrammeActionsSection = ({
     }));
   };
 
+  // Même règle que la création : seul le premier plan est rattaché d'office.
+  // Un import repris a pu être lancé ailleurs avec un autre type : jamais
+  // rattaché d'office, il reste à lier depuis le tableau.
+  const { setToast } = useToastContext();
+  const handlePlanImported = (
+    planId: number,
+    { startedHere }: { startedHere: boolean }
+  ) => {
+    if (startedHere && linkedPlanIds.length === 0) {
+      linkPlan(planId);
+      setToast('success', appLabels.importPlanIaPlanImporteEtLie);
+    } else {
+      setToast('success', appLabels.importPlanIaPlanImporte);
+    }
+  };
+
   const unlinkPlan = (planId: number) => {
     onUpdateAction((current) => ({
       planActionIds: current.planActionIds.filter((id) => id !== planId),
@@ -426,6 +469,7 @@ export const ProgrammeActionsSection = ({
           planTypeId={planTypeId}
           isReadonly={isReadonly}
           onCreatePlan={onCreatePlan}
+          onPlanImported={handlePlanImported}
         />
       }
     >

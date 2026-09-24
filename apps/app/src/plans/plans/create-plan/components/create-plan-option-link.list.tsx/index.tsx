@@ -5,8 +5,9 @@ import {
   makeCollectivitePlansActionsImporterIaUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
-import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
-import { Event, useEventTracker, VisibleWhen } from '@tet/ui';
+import { Event, useEventTracker } from '@tet/ui';
+import { AiImportBetaLabel } from '../../../import-plan/ai-import-beta-label';
+import { useIsAiPlanImportEnabled } from '../../../import-plan/use-is-ai-plan-import-enabled';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
@@ -17,13 +18,13 @@ export const CreatePlanOptionLinksList = ({
   collectiviteId: number;
 }) => {
   const tracker = useEventTracker();
-  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+  const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
   return (
     <div data-test="choix-creation-plan" className="flex gap-4">
       <Link
         variant="primary"
-        title="Créer un plan"
-        subTitle="directement sur la plateforme"
+        title={appLabels.creerPlan}
+        subTitle={appLabels.creerPlanSousTitre}
         icon={<CreatePlanPicto />}
         url={makeCollectivitePlansActionsCreerUrl({
           collectiviteId,
@@ -32,20 +33,12 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.createPlan);
         }}
       />
-      <Link
-        title="Importer un plan"
-        subTitle="à partir d’un modèle"
-        icon={<ImportPlanPicto />}
-        url={makeCollectivitePlansActionsImporterUrl({
-          collectiviteId,
-        })}
-        onClickCallback={() => {
-          tracker(Event.plans.importPlan);
-        }}
-      />
-      <VisibleWhen condition={isSuperAdminRoleEnabled}>
+      {isAiPlanImportEnabled ? (
         <Link
-          title={appLabels.importPlanIaTitre}
+          dataTest="choix-creation-plan.importer-ia"
+          title={
+            <AiImportBetaLabel>{appLabels.importPlanIaTitre}</AiImportBetaLabel>
+          }
           subTitle={appLabels.importPlanIaSousTitre}
           icon={<ImportPlanPicto />}
           url={makeCollectivitePlansActionsImporterIaUrl({
@@ -55,7 +48,19 @@ export const CreatePlanOptionLinksList = ({
             tracker(Event.plans.importPlan);
           }}
         />
-      </VisibleWhen>
+      ) : (
+        <Link
+          title={appLabels.importerUnPlan}
+          subTitle={appLabels.importPlanModeleSousTitre}
+          icon={<ImportPlanPicto />}
+          url={makeCollectivitePlansActionsImporterUrl({
+            collectiviteId,
+          })}
+          onClickCallback={() => {
+            tracker(Event.plans.importPlan);
+          }}
+        />
+      )}
     </div>
   );
 };
