@@ -146,9 +146,6 @@ importers:
       '@sentry/profiling-node':
         specifier: 10.53.1
         version: 10.53.1
-      '@supabase/realtime-js':
-        specifier: 2.95.3
-        version: 2.95.3
       '@supabase/ssr':
         specifier: 0.8.0
         version: 0.8.0(@supabase/supabase-js@2.95.3)
@@ -1529,7 +1526,6 @@ packages:
 
   '@bryntum/scheduler-lib@1.0.0':
     resolution: {integrity: sha512-3Bd95kUaPsEJL+M7X2G5iV+7eNeSEPiFDX/U6Aucy5VeZDIuFFW+YTq4NVCVrzfs2wxeh5IRwW7fJC2mKv/hFw==}
-    engines: {node: '>=0.10.0'}
 
   '@bryntum/scheduler-react@6.3.1':
     resolution: {integrity: sha512-tqdu0Zz2wk7ou7vmM4g1m6xSNYrrtiMaBxd8v/DInVRsVGM2ZO9F6X6jisjF29CzUGAak+nI6H+GH02AkXBPYw==}
