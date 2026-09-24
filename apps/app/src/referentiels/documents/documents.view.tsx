@@ -11,7 +11,7 @@ import {
   useReferentielId,
 } from '../referentiel-context';
 import { useListDocumentsReferentiel } from './data/use-list-documents-referentiel';
-import { AddRapportVisite } from './AddRapportVisite';
+import { AddRapportVisiteModal } from '@/app/collectivites/documents/add-rapport-visite.modal';
 import { groupeParDemande } from './groupeParDemande';
 import { addInfoToEntry, PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTable } from './PreuvesTable';
@@ -71,7 +71,7 @@ export const DocumentsView = () => {
           <h2 className="mb-6 text-2xl">
             {appLabels.rapportsDeVisiteAnnuelle}
           </h2>
-          {!isReadOnly && <AddRapportVisite />}
+          {!isReadOnly && <AddRapportVisiteModal />}
           {showEmptyRapportsMessage && (
             <p>{appLabels.aucunRapportVisiteAnnuelle}</p>
           )}
