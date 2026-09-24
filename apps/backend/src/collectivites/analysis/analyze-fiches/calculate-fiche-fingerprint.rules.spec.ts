@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { calculateFicheFingerprint } from './calculate-fiche-fingerprint.rules';
 
 describe('cron-action-management', () => {
-  it.skip('change quand le titre change', () => {
+  it('change quand le titre change', () => {
     const before = calculateFicheFingerprint({
       titre: 'Pistes cyclables',
       description: 'Dix km',
@@ -15,7 +15,7 @@ describe('cron-action-management', () => {
     expect(after).not.toEqual(before);
   });
 
-  it.skip('change quand la description change', () => {
+  it('change quand la description change', () => {
     const before = calculateFicheFingerprint({
       titre: 'Pistes cyclables',
       description: 'Dix km',
@@ -28,7 +28,7 @@ describe('cron-action-management', () => {
     expect(after).not.toEqual(before);
   });
 
-  it.skip('change quand seul un espace est ajouté, car elle porte sur le texte brut', () => {
+  it('change quand seul un espace est ajouté, car elle porte sur le texte brut', () => {
     const before = calculateFicheFingerprint({
       titre: 'Pistes cyclables',
       description: 'Dix km',
@@ -43,7 +43,7 @@ describe('cron-action-management', () => {
 });
 
 describe('invariants', () => {
-  it.skip('est identique pour un même titre et une même description', () => {
+  it('est identique pour un même titre et une même description', () => {
     const first = calculateFicheFingerprint({
       titre: 'Pistes cyclables',
       description: 'Dix km',
@@ -56,7 +56,7 @@ describe('invariants', () => {
     expect(second).toEqual(first);
   });
 
-  it.skip('est identique pour une description absente et une description vide', () => {
+  it('est identique pour une description absente et une description vide', () => {
     const withNullDescription = calculateFicheFingerprint({
       titre: 'Bulletin municipal',
       description: null,
@@ -69,7 +69,7 @@ describe('invariants', () => {
     expect(withEmptyDescription).toEqual(withNullDescription);
   });
 
-  it.skip('change quand du texte passe du titre à la description', () => {
+  it('change quand du texte passe du titre à la description', () => {
     const before = calculateFicheFingerprint({
       titre: 'ab',
       description: 'c',
@@ -82,7 +82,7 @@ describe('invariants', () => {
     expect(after).not.toEqual(before);
   });
 
-  it.skip('est un sha256 en hexadécimal minuscule', () => {
+  it('est un sha256 en hexadécimal minuscule', () => {
     const fingerprint = calculateFicheFingerprint({
       titre: 'Pistes cyclables',
       description: 'Dix km',
