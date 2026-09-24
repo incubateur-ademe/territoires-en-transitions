@@ -77,7 +77,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
+        db-init db-migrate db-test-deployment-guards db-test-periodicite-migration db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local
 
 help: ## Affiche cette aide
@@ -255,11 +255,21 @@ tui: ensure-deps ## Tableau de bord interactif de la stack : statuts, URLs, logs
 	else DOCKER="$(DOCKER)" node scripts/dev-tui.mts; fi
 
 ## —— 🗄️  Base de données —————————————————————————————————————————————————————
-db-init: guard-main preflight-env-keys services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
+db-init: guard-main preflight-env-keys services-up db-migrate db-import-referentiels db-seed ## Initialise la base avec toutes les migrations, les référentiels et les données de test
 	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
-db-migrate: warn-shared-db ## Applique les migrations sqitch
-	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode change
+# Sur une base partagée, les applications et producteurs sont arrêtés pendant
+# les migrations et le déploiement des versions compatibles (voir le runbook).
+db-migrate: warn-shared-db ## Applique toutes les migrations de la version préparée
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode all --verify
+
+db-test-deployment-guards: ## Teste les politiques d'URL, backup/schéma et base de migration jetable
+	node --test data_layer/scripts/validate-database-url.spec.mjs
+	bash data_layer/backup/check-restore-compatibility.spec.sh
+	bash data_layer/tests/indicateur/periodicite-migration-lifecycle-database.spec.sh
+
+db-test-periodicite-migration: ## Teste le cycle Sqitch sur PERIODICITE_MIGRATION_TEST_DATABASE_URL (base jetable)
+	bash data_layer/tests/indicateur/periodicite-migration-lifecycle.sh
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).

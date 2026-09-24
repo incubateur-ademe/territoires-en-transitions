@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { IndicateurAssocie, ValeurUtilisee } from '@tet/domain/referentiels';
 import {
   buildValeursPourExpression,
@@ -9,6 +10,7 @@ const indicateurAssocie: IndicateurAssocie = {
   indicateurId: 42,
   identifiantReferentiel: 'ind_test',
   titre: 'Indicateur de test',
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   unite: '%',
   isApplicable: true,
 };

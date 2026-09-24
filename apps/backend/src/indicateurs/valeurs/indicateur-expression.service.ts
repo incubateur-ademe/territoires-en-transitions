@@ -167,8 +167,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
       throw new Error(`Missing cible indicateur valeurs`);
     }
     return (
-      this.indicateurValeursComplementaires.cible[indicateurIdentifier] ??
-      null
+      this.indicateurValeursComplementaires.cible[indicateurIdentifier] ?? null
     );
   }
 
@@ -181,8 +180,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
     }
 
     return (
-      this.indicateurValeursComplementaires.limite[indicateurIdentifier] ??
-      null
+      this.indicateurValeursComplementaires.limite[indicateurIdentifier] ?? null
     );
   }
 

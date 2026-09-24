@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { indicateurAggregationSchema } from './indicateur-aggregation.schema';
 import { indicateurPeriodiciteSchema } from './indicateur-periodicite.schema';
 
 export const indicateurDefinitionSchema = z.object({
@@ -13,6 +14,8 @@ export const indicateurDefinitionSchema = z.object({
   description: z.nullable(z.string()),
   unite: z.string(),
   periodicite: indicateurPeriodiciteSchema,
+  aggregationResultat: z.nullable(indicateurAggregationSchema),
+  aggregationObjectif: z.nullable(indicateurAggregationSchema),
   precision: z.number(),
   borneMin: z.nullable(z.number()),
   borneMax: z.nullable(z.number()),
@@ -33,6 +36,8 @@ export type IndicateurDefinition = z.infer<typeof indicateurDefinitionSchema>;
 export const indicateurDefinitionSchemaCreate = z.partial(
   indicateurDefinitionSchema,
   {
+    aggregationResultat: true,
+    aggregationObjectif: true,
     groupementId: true,
     collectiviteId: true,
     identifiantReferentiel: true,
@@ -66,6 +71,8 @@ export const indicateurDefinitionSchemaTiny = z.pick(
     description: true,
     unite: true,
     periodicite: true,
+    aggregationResultat: true,
+    aggregationObjectif: true,
     borneMin: true,
     borneMax: true,
   }

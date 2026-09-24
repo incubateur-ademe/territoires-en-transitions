@@ -212,7 +212,7 @@ make tui                # tableau de bord interactif : statuts, URLs, logs navig
 make db-shell           # psql dans la base locale
 ```
 
-`make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés. À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
+`make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente sur une base neuve ou déjà à jour. Sur une base partagée, la livraison de la périodicité suit une [maintenance planifiée](./data_layer/periodicite-runbook.md) : migrations puis applications compatibles avant la reprise des écritures. À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
 
 Pour remplacer les données locales par un backup de production, depuis le checkout principal et sur une base déjà initialisée avec `make db-init` :
 

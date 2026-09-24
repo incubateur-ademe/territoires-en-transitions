@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, NotFoundException } from '@nestjs/common';
 import {
   addTestCollectivite,
   addTestCollectiviteAndUser,
@@ -14,8 +14,10 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
+import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 
 describe('IndicateurDefinitionThematiqueRouter', () => {
   let router: TrpcRouter;
@@ -226,8 +228,17 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
       indicateurData: {
         collectiviteId: collectivite.id,
         titre: 'Test indicateur',
+        thematiques: [{ id: thematique1.id }],
       },
     });
+
+    const readRelations = () =>
+      db.db
+        .select()
+        .from(indicateurThematiqueTable)
+        .where(eq(indicateurThematiqueTable.indicateurId, indicateurId));
+    const relationsBefore = await readRelations();
+    expect(relationsBefore).toHaveLength(1);
 
     await expect(() =>
       caller.indicateurs.indicateurs.update({
@@ -237,6 +248,11 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
           thematiques: [{ id: thematique1.id }, { id: thematique2.id }],
         },
       })
-    ).rejects.toThrow(/Droits insuffisants/);
+    ).rejects.toMatchObject({
+      message: `Indicateur ${indicateurId} non trouvé pour la collectivité ${otherCollectivite.id}`,
+      cause: expect.any(NotFoundException),
+    });
+
+    expect(await readRelations()).toEqual(relationsBefore);
   });
 });

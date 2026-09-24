@@ -8,12 +8,16 @@ import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/in
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
-import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { IndicateurSourceMetadonnee } from '@tet/domain/indicateurs';
 import {
+  IndicateurPeriodicite,
+  IndicateurPeriodiciteEnum,
+  IndicateurSourceMetadonnee,
+} from '@tet/domain/indicateurs';
+import {
+  ScoreIndicatifType,
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
@@ -29,9 +33,29 @@ export type IndicateurDefinitionAvecCategories = {
   identifiantReferentiel: string | null;
   unite: string;
   titre: string;
+  periodicite: IndicateurPeriodicite;
   categories: string[];
   isApplicable: boolean;
 };
+
+export type ScoreIndicatifSelectionScope = Readonly<{
+  actionId: string;
+  collectiviteId: number;
+  indicateurId: number;
+}>;
+
+type ScoreIndicatifSelection = ScoreIndicatifSelectionScope &
+  Readonly<{
+    valeurs: readonly {
+      indicateurValeurId: number | null;
+      typeScore: ScoreIndicatifType;
+    }[];
+  }>;
+
+const getScoreIndicatifSelectionLockKey = (
+  input: ScoreIndicatifSelectionScope
+): string =>
+  `score-indicatif-selection:${input.actionId}:${input.collectiviteId}:${input.indicateurId}`;
 
 @Injectable()
 export class ScoreIndicatifRepository {
@@ -84,6 +108,7 @@ export class ScoreIndicatifRepository {
           identifiantReferentiel,
           unite,
           titre,
+          periodicite: indicateurDefinitionTable.periodicite,
           categories: sql<string[]>`
             COALESCE(
               json_agg(${categorieTagTable.nom}) FILTER (
@@ -166,6 +191,10 @@ export class ScoreIndicatifRepository {
         )
         .where(
           and(
+            eq(
+              indicateurValeurTable.periodicite,
+              IndicateurPeriodiciteEnum.ANNUELLE
+            ),
             inArray(actionScoreIndicateurValeurTable.actionId, input.actionIds),
             eq(
               actionScoreIndicateurValeurTable.collectiviteId,
@@ -218,6 +247,21 @@ export class ScoreIndicatifRepository {
     }
   }
 
+  /**
+   * Serializes replacement of one score selection independently from the
+   * presence of existing rows. Row locks cannot provide that guarantee when a
+   * selection is still empty, hence the transaction-scoped advisory lock.
+   */
+  async lockSelectionScope(
+    input: ScoreIndicatifSelectionScope,
+    tx: Transaction
+  ): Promise<void> {
+    const lockKey = getScoreIndicatifSelectionLockKey(input);
+    await tx.execute(sql`
+      SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))
+    `);
+  }
+
   /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
   async listActionsUsingIndicateurValeur(
     indicateurValeurId: number | number[],
@@ -226,7 +270,7 @@ export class ScoreIndicatifRepository {
     Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
   > {
     try {
-      const rows = await(tx ?? this.databaseService.db)
+      const rows = await (tx ?? this.databaseService.db)
         .selectDistinct({
           collectiviteId: actionScoreIndicateurValeurTable.collectiviteId,
           actionId: actionScoreIndicateurValeurTable.actionId,
@@ -271,6 +315,10 @@ export class ScoreIndicatifRepository {
         .where(
           and(
             inArray(indicateurValeurTable.id, indicateurValeurIds),
+            eq(
+              indicateurValeurTable.periodicite,
+              IndicateurPeriodiciteEnum.ANNUELLE
+            ),
             eq(indicateurValeurTable.collectiviteId, collectiviteId),
             eq(indicateurValeurTable.indicateurId, indicateurId)
           )
@@ -288,7 +336,7 @@ export class ScoreIndicatifRepository {
 
   /** Remplace les valeurs utilisées pour le calcul du score indicatif d'une action/indicateur */
   async replaceValeursUtiliseesForAction(
-    input: SetValeursUtiliseesRequest,
+    input: ScoreIndicatifSelection,
     tx: Transaction
   ): Promise<Result<void, ScoreIndicatifError>> {
     try {

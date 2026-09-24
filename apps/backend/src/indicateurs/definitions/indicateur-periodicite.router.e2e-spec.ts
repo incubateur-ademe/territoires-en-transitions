@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthToken,
+  signTestAuthToken,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
@@ -13,8 +13,11 @@ import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
+import CrudValeursService from '../valeurs/crud-valeurs.service';
 
-describe('Périodicité des indicateurs avec le stockage annuel', () => {
+describe('Périodicité de déclaration des indicateurs', () => {
   let app: INestApplication;
   let caller: ReturnType<TrpcRouter['createCaller']>;
   let collectiviteId: number;
@@ -42,15 +45,22 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     caller = router.createCaller({
       user: getAuthUserFromUserCredentials(user),
     });
-    authToken = await getAuthToken(user);
+    const authUser = getAuthUserFromUserCredentials(user);
+    authToken = signTestAuthToken({ ...authUser.jwtPayload, sub: authUser.id });
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  test.each([undefined, 'annuelle'] as const)(
-    'expose les métadonnées annuelles après création avec periodicite=%s',
+  test.each([
+    undefined,
+    'annuelle',
+    'semestrielle',
+    'trimestrielle',
+    'mensuelle',
+  ] as const)(
+    'expose la périodicité après création avec periodicite=%s',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
         collectiviteId,
@@ -65,23 +75,27 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       expect(data).toMatchObject([
         {
           id: indicateurId,
-          periodicite: 'annuelle',
+          periodicite: periodicite ?? 'annuelle',
         },
       ]);
-    }
-  );
-
-  test.each(['mensuelle', 'trimestrielle', 'semestrielle'])(
-    'refuse une création %s tant que le stockage reste annuel',
-    async (periodicite) => {
-      await expect(
-        caller.indicateurs.indicateurs.create({
-          collectiviteId,
-          titre: 'Indicateur non annuel refusé',
-          // @ts-expect-error Vérifie la validation des entrées externes.
-          periodicite,
-        })
-      ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId,
+        periodicite,
+        dateValeur: '2026-01-01',
+        resultat: 42,
+      });
+      const values = await caller.indicateurs.valeurs.list({
+        collectiviteId,
+        indicateurIds: [indicateurId],
+      });
+      expect(values.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+        {
+          periodicite: periodicite ?? 'annuelle',
+          dateValeur: '2026-01-01',
+          resultat: 42,
+        },
+      ]);
     }
   );
 
@@ -113,14 +127,14 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   );
 
-  test('conserve les dates historiques distinctes et les valeurs nulles ou zéro', async () => {
+  test('conserve les années distinctes et les valeurs nulles ou zéro', async () => {
     const indicateurId = await caller.indicateurs.indicateurs.create({
       collectiviteId,
       titre: 'Dates historiques',
     });
     const valeurs = [
-      { dateValeur: '2024-06-30', resultat: 0, objectif: null },
-      { dateValeur: '2024-12-31', resultat: null, objectif: 42 },
+      { dateValeur: '2024-01-01', resultat: 0, objectif: null },
+      { dateValeur: '2025-01-01', resultat: null, objectif: 42 },
     ];
 
     for (const valeur of valeurs) {
@@ -139,8 +153,8 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       periodicite: 'annuelle',
     });
     expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
-      { dateValeur: '2024-06-30', periodicite: 'annuelle', resultat: 0 },
-      { dateValeur: '2024-12-31', periodicite: 'annuelle', objectif: 42 },
+      { dateValeur: '2024-01-01', periodicite: 'annuelle', resultat: 0 },
+      { dateValeur: '2025-01-01', periodicite: 'annuelle', objectif: 42 },
     ]);
     expect(
       result.indicateurs[0].sources.collectivite.valeurs[0]
@@ -154,19 +168,9 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
         periodicite: 'annuelle',
       })
     ).toEqual(result);
-
-    for (const periodicite of ['mensuelle', 'trimestrielle', 'semestrielle']) {
-      await expect(
-        caller.indicateurs.valeurs.list({
-          ...input,
-          // @ts-expect-error Vérifie la validation des entrées externes.
-          periodicite,
-        })
-      ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
-    }
   });
 
-  test.each(['mensuelle', 'trimestrielle', 'semestrielle'])(
+  test.each(['mensuelle', 'trimestrielle', 'semestrielle'] as const)(
     'refuse une déclaration locale %s pour un indicateur annuel',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
@@ -180,7 +184,6 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
           indicateurId,
           dateValeur: '2026-01-01',
           resultat: 42,
-          // @ts-expect-error Vérifie la validation des entrées externes.
           periodicite,
         })
       ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
@@ -193,7 +196,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   );
 
-  test.each(['mensuelle', 'trimestrielle', 'semestrielle'])(
+  test.each(['mensuelle', 'trimestrielle', 'semestrielle'] as const)(
     'refuse tout le lot HTTP contenant une valeur %s',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
@@ -209,7 +212,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
             {
               collectiviteId,
               indicateurId,
-              dateValeur: '2024-12-31',
+              dateValeur: '2025-01-01',
               resultat: 1,
             },
             {
@@ -228,6 +231,93 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
         indicateurIds: [indicateurId],
       });
       expect(result.indicateurs[0].sources).toEqual({});
+    }
+  );
+
+  test('preserves annual external observations beside monthly local declarations', async () => {
+    const indicateurId = await caller.indicateurs.indicateurs.create({
+      collectiviteId,
+      titre: 'Monthly local declaration',
+      periodicite: 'mensuelle',
+    });
+    const database = await getTestDatabase(app);
+    const sourceId = `test-periodicite-${indicateurId}`;
+    await database.db
+      .insert(indicateurSourceTable)
+      .values({ id: sourceId, libelle: 'External annual observations' });
+    const [metadata] = await database.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values({
+        sourceId,
+        dateVersion: '2026-01-01',
+      })
+      .returning();
+    onTestFinished(async () => {
+      await database.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      await database.db
+        .delete(indicateurSourceMetadonneeTable)
+        .where(eq(indicateurSourceMetadonneeTable.id, metadata.id));
+      await database.db
+        .delete(indicateurSourceTable)
+        .where(eq(indicateurSourceTable.id, sourceId));
+    });
+    await app.get(CrudValeursService).upsertIndicateurValeurs(
+      [
+        {
+          collectiviteId,
+          indicateurId,
+          periodicite: 'annuelle',
+          dateValeur: '2026-01-01',
+          metadonneeId: metadata.id,
+          resultat: 120,
+        },
+      ],
+      { isUserTrusted: true }
+    );
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      periodicite: 'mensuelle',
+      dateValeur: '2026-01-01',
+      resultat: 10,
+    });
+    const result = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    expect(result.indicateurs[0].definition.periodicite).toBe('mensuelle');
+    expect(result.indicateurs[0].sources[sourceId].valeurs).toMatchObject([
+      { periodicite: 'annuelle', resultat: 120 },
+    ]);
+    expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+      { periodicite: 'mensuelle', resultat: 10 },
+    ]);
+  });
+
+  test.each([
+    'annuelle',
+    'semestrielle',
+    'trimestrielle',
+    'mensuelle',
+  ] as const)(
+    'rejects a noncanonical date for an explicit %s observation',
+    async (periodicite) => {
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId,
+        titre: 'Canonical dates',
+        periodicite,
+      });
+      await expect(
+        caller.indicateurs.valeurs.upsert({
+          collectiviteId,
+          indicateurId,
+          periodicite,
+          dateValeur: '2026-01-02',
+          resultat: 1,
+        })
+      ).rejects.toThrow(/non canonique/);
     }
   );
 });

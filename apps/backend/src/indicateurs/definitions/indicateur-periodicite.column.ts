@@ -1,13 +1,9 @@
-import {
-  IndicateurPeriodicite,
-  IndicateurPeriodiciteEnum,
-} from '@tet/domain/indicateurs';
-import { sql } from 'drizzle-orm';
+import { indicateurDefinitionTable } from './indicateur-definition.table';
+import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 
-/** Annual storage compatibility. PR #4981 replaces these constants with database columns. */
 export const indicateurDefinitionPeriodiciteSelection = {
-  periodicite: sql<IndicateurPeriodicite>`${IndicateurPeriodiciteEnum.ANNUELLE}`,
+  periodicite: indicateurDefinitionTable.periodicite,
 };
 export const indicateurValeurPeriodiciteSelection = {
-  periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
+  periodicite: indicateurValeurTable.periodicite,
 };

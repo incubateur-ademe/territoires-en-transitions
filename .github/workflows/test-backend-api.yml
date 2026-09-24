@@ -91,6 +91,8 @@ jobs:
 
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
+      # pnpm-prepare enables streaming. Keep "Display live terminal outputs in
+      # CI pipeline log" enabled in the Nx Cloud workspace settings as well.
       - parallel:
           - name: Run backend shared app tests
             if: ${{ inputs.run-backend }}
@@ -98,8 +100,6 @@ jobs:
               NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
               NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            # Sortie streamée via pnpm-prepare pour conserver le résumé Vitest
-            # et les tests en échec dans les logs GitHub.
             run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app
 
           - name: Run api tests

@@ -1,7 +1,7 @@
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { getYearFromIsoDate } from '@tet/domain/indicateurs';
+import { toAnnualIndicateurYear } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -18,7 +18,7 @@ import {
 } from './score-indicatif.types';
 import { useGetValeursUtilisees } from './use-get-valeurs-utilisees';
 
-export type ScoreIndicatifModalProps = {
+type ScoreIndicatifModalProps = {
   scoreIndicatif: ScoreIndicatifAction;
   openState: OpenState;
 };
@@ -77,9 +77,13 @@ const anneesDifferentesSelectionnees = (
   scoreIndicatif: ScoreIndicatifAction,
   typeScore: ScoreIndicatifType
 ) =>
-  uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (v) =>
-    getYearFromIsoDate(v.dateValeur)
-  ).length > 1;
+  uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (valeur) => {
+    return toAnnualIndicateurYear(
+      'annuelle',
+      valeur.dateValeur,
+      `Le score indicatif (${valeur.indicateurId})`
+    );
+  }).length > 1;
 
 /**
  * Affiche le sélecteur d'indicateurs quand le calcul utilise plusieurs indicateurs

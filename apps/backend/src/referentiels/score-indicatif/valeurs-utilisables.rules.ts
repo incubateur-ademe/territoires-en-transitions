@@ -1,6 +1,6 @@
 import {
   COLLECTIVITE_SOURCE_ID,
-  getYearFromIsoDate,
+  toAnnualIndicateurYear,
   IndicateurAvecValeursParSource,
   IndicateurValeurGroupee,
 } from '@tet/domain/indicateurs';
@@ -80,7 +80,11 @@ export function mapIndicateurToValeurUtilisable(
     const valeur = (
       typeScore === scoreIndicatifTypeEnum.FAIT ? v.resultat : v.objectif
     ) as number;
-    const annee = getYearFromIsoDate(v.dateValeur);
+    const annee = toAnnualIndicateurYear(
+      v.periodicite,
+      v.dateValeur,
+      `Le score indicatif (${identifiantReferentiel})`
+    );
     if (utilisee) {
       selection[typeScore] = { id: v.id, annee, source, valeur };
     }
@@ -118,6 +122,7 @@ export function mapIndicateurToValeurUtilisable(
     identifiantReferentiel,
     unite,
     titre,
+    periodicite: 'annuelle',
     selection,
     sources: Object.values(sourcesObj)
       .map((s) => ({

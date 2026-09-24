@@ -4,10 +4,17 @@ import { CalculTrajectoireResponse } from '../calcul-trajectoire.response';
 
 // This historical fixture contains annual series.
 const annualIndicateur = (data: {
-  definition: IndicateurAvecValeurs['definition'];
+  definition: Omit<
+    IndicateurAvecValeurs['definition'],
+    'aggregationResultat' | 'aggregationObjectif'
+  >;
   valeurs: Omit<IndicateurAvecValeurs['valeurs'][number], 'periodicite'>[];
 }): IndicateurAvecValeurs => ({
-  definition: data.definition,
+  definition: {
+    ...data.definition,
+    aggregationResultat: null,
+    aggregationObjectif: null,
+  },
   valeurs: data.valeurs.map((valeur) => ({
     ...valeur,
     periodicite: 'annuelle',

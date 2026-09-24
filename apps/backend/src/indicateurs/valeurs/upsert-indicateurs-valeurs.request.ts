@@ -1,5 +1,5 @@
 import {
-  IndicateurPeriodiciteEnum,
+  indicateurPeriodiciteSchema,
   indicateurValeurSchemaCreate,
 } from '@tet/domain/indicateurs';
 import { createZodDto } from 'nestjs-zod';
@@ -11,7 +11,7 @@ export const upsertIndicateursValeursRequestSchema = z
       .array(
         z.object({
           ...indicateurValeurSchemaCreate.shape,
-          periodicite: z.literal(IndicateurPeriodiciteEnum.ANNUELLE).optional(),
+          periodicite: z.optional(indicateurPeriodiciteSchema),
         })
       )
       .min(1)

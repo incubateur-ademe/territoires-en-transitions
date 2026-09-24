@@ -1,3 +1,7 @@
+import {
+  IndicateurPeriodErrorEnum,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 import { IndicateurAvecValeursParSource } from '@tet/domain/indicateurs';
 import { IndicateurAssocie, ValeurUtilisee } from '@tet/domain/referentiels';
 import {
@@ -10,6 +14,7 @@ const indicateurAssocie: IndicateurAssocie = {
   indicateurId: 42,
   identifiantReferentiel: 'ind_test',
   titre: 'Indicateur de test',
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   unite: '%',
   isApplicable: true,
 };
@@ -34,6 +39,7 @@ function buildValeursGroupees(
                 id: 1,
                 collectiviteId: 1,
                 dateValeur: '2023-01-01',
+                periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
                 resultat: 10,
                 resultatCommentaire: null,
                 objectif: 20,
@@ -60,6 +66,29 @@ describe('valeurs-utilisables.rules', () => {
         []
       );
       expect(result).toBeNull();
+    });
+
+    it('refuse de convertir une valeur de janvier en valeur annuelle', () => {
+      const valeurs = buildValeursGroupees();
+      valeurs.indicateurs[0].sources.collectivite.valeurs[0].periodicite =
+        IndicateurPeriodiciteEnum.MENSUELLE;
+      expect(() =>
+        mapIndicateurToValeurUtilisable(indicateurAssocie, valeurs, [])
+      ).toThrow(
+        IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
+      );
+    });
+
+    it('consulte la série annuelle d’un indicateur déclaré mensuellement', () => {
+      const result = mapIndicateurToValeurUtilisable(
+        { ...indicateurAssocie, periodicite: 'mensuelle' },
+        buildValeursGroupees(),
+        []
+      );
+      expect(result?.periodicite).toBe('annuelle');
+      expect(result?.sources[0].fait).toMatchObject([
+        { annee: 2023, valeur: 10 },
+      ]);
     });
 
     it('marque la valeur utilisée dans la sélection "fait"', () => {

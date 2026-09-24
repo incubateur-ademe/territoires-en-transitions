@@ -46,6 +46,7 @@ export class SetDiagnosticReferenceYearRepository {
       with basculees as (
         delete from ${indicateurValeurTable}
         where ${indicateurValeurTable.collectiviteId} = ${collectiviteId}
+          and ${indicateurValeurTable.periodicite} = 'annuelle'
           and ${indicateurValeurTable.metadonneeId} = ${metadonneeId}
           and ${indicateurValeurTable.dateValeur} = ${dateValeurForYear(
       fromYear
@@ -92,7 +93,7 @@ export class SetDiagnosticReferenceYearRepository {
         coalesce(basculees.created_by, ${userId}),
         ${userId}
       from basculees
-      on conflict (indicateur_id, collectivite_id, date_valeur, metadonnee_id)
+      on conflict (indicateur_id, collectivite_id, periodicite, date_valeur, metadonnee_id)
         where metadonnee_id is not null
       do update set
         resultat = excluded.resultat,

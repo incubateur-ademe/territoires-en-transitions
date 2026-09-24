@@ -10,6 +10,8 @@ describe('indicateur definition projections', () => {
       description: null,
       unite: 'kWh',
       periodicite: 'mensuelle',
+      aggregationResultat: 'somme',
+      aggregationObjectif: null,
       borneMin: null,
       borneMax: null,
     };

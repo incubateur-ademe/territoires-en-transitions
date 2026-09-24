@@ -648,7 +648,7 @@ describe('IndicateurExpressionService', () => {
       ).toBe(42);
     });
 
-    it("retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)", () => {
+    it('retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)', () => {
       expect(
         indicateurExpressionService.parseAndEvaluateExpression(formule, {
           dummy: 1,

@@ -1085,3 +1085,15 @@ plan_action/analyse_volets_job_derniere_analyse [plan_action/analyse_volets_job_
 demarche/pcaet_plan_chaleur_froid_commune_membre [demarche/pcaet_scot_aec] 2026-09-22T10:00:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Le plan local de chaleur et de froid s attend des EPCI a fiscalite propre dont une commune membre depasse 45 000 habitants, et non plus de la population propre de la collectivite
 indicateur/indicateur_collectivite_is_applicable [indicateur/add-modified-fields-to-indicateur-collectivite] 2026-09-21T16:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Un indicateur peut etre declare non applicable par une collectivite : is_applicable a false le retire de ce qui lui est reclame
 collectivite/bucket_rls_membre_read [collectivite/bucket_rls_visiteur_read] 2026-09-22T14:20:00Z Gaël Servaud <gaelservaud@gmail.com> # La lecture des objets de stockage se referme sur les membres du bucket : is_authenticated la laissait a tout compte connecte
+
+
+@indicateur-periodicite-base 2026-09-03T15:59:59Z Emilien Escalle <emilien.escalle@escemi.com> # Frontière stable précédant la migration de périodicité
+indicateur/periodicite [indicateur/referentiel indicateur/indicateurs_gaz_effet_serre demarche/pcaet_diagnostic_drop_referentiel_tables migration_schema] 2026-09-03T16:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute le catalogue des politiques de périodicité et classifie les définitions
+indicateur/import_emt_valeur [indicateur/periodicite] 2026-09-03T16:00:15Z Emilien Escalle <emilien.escalle@escemi.com> # Sérialise l'import EMT annuel avec la périodicité de sa définition
+indicateur/reconciliation_formules [indicateur/periodicite private_schema] 2026-09-03T16:00:20Z Emilien Escalle <emilien.escalle@escemi.com> # Rend durable et bornée la réconciliation déclenchée par un changement de formule
+indicateur/dependances_formules [private_schema] 2026-09-03T16:00:25Z Emilien Escalle <emilien.escalle@escemi.com> # Centralise l'extraction des dépendances de formule
+@indicateur-periodicite-expand 2026-09-03T16:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Repère interne des tests avant les contraintes finales
+indicateur/periodicite_obligatoire [indicateur/periodicite] 2026-09-03T16:01:00Z Emilien Escalle <emilien.escalle@escemi.com> # Verrouille la périodicité après classification et audit des définitions
+indicateur/periodicite_formules [indicateur/periodicite_obligatoire indicateur/dependances_formules] 2026-09-03T16:30:00Z Emilien Escalle <emilien.escalle@escemi.com> # Matérialise les dépendances de calcul et garantit leur homogénéité de périodicité
+stats/report_indicateur_resultat_periode [indicateur/periodicite_obligatoire collectivite/fusion] 2026-09-03T17:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Expose la politique et le début de période tout en maintenant l'année
+@indicateur-periodicite-contract 2026-09-03T17:00:30Z Emilien Escalle <emilien.escalle@escemi.com> # Schéma complet de la PR fonctionnelle, contraintes et reporting vérifiés

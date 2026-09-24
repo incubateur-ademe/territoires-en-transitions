@@ -1,90 +1,44 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { uniqBy } from 'es-toolkit';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
-import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
-import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
-  COLLECTIVITE_SOURCE_ID,
-  IndicateurAvecValeurs,
-  IndicateurAvecValeursParSource,
   IndicateurDefinition,
-  IndicateurDefinitionTiny,
-  IndicateurSource,
-  IndicateurSourceMetadonnee,
   IndicateurValeur,
-  IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurCreate,
-  IndicateurValeurGroupee,
-  IndicateurValeursGroupeeParSource,
-  IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
-import {
-  hasPermission,
-  PermissionOperationEnum,
-  ResourceType,
-} from '@tet/domain/users';
-import { getErrorMessage } from '@tet/domain/utils';
-import {
-  and,
-  eq,
-  getTableColumns,
-  gte,
-  inArray,
-  isNotNull,
-  isNull,
-  lte,
-  or,
-  sql,
-  SQL,
-  SQLWrapper,
-} from 'drizzle-orm';
-import {
-  chunk,
-  groupBy,
-  isNil,
-  isNotNil,
-  keyBy,
-  omit,
-  omitBy,
-  partition,
-  round,
-  uniqBy,
-} from 'es-toolkit';
+import { hasPermission, ResourceType } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
+  AuthenticatedOrServiceRoleUser,
   AuthenticatedUser,
-  AuthRole,
   AuthUser,
+  isAuthenticatedUser,
 } from '../../users/models/auth.models';
-import { DatabaseService } from '../../utils/database/database.service';
-import {
-  indicateurDefinitionPeriodiciteSelection,
-  indicateurValeurPeriodiciteSelection,
-} from '../definitions/indicateur-periodicite.column';
-import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
-import { ListCollectiviteDefinitionsRepository } from '../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
-import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
+import { CrudValeursRepository } from './crud-valeurs.repository';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
-import { GetIndicateursValeursResponse } from './get-indicateur-valeurs.response';
-import { indicateurValeurTable } from './indicateur-valeur.table';
+import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
+import { IndicateurValeursContext } from './indicateur-valeurs-context';
+import { getIndicateurValeursDataOrThrow } from './indicateur-valeurs.errors';
+import {
+  deduplicateIndicateurValeursBySource,
+  groupIndicateurValeurs,
+  groupIndicateurValeursBySource,
+} from './indicateur-valeurs-read.adapter';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
+import { ListIndicateurValeursService } from './list-indicateur-valeurs.service';
+import { ReconcileIndicateurValeursService } from './reconcile-indicateur-valeurs.service';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
-
-type IndicateurValeurInsert = IndicateurValeurCreate;
+import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
+import { DEFAULT_ROUNDING_PRECISION } from './valeurs.constants';
+import { WriteIndicateurValeursService } from './write-indicateur-valeurs.service';
 
 /** Émis après qu'une valeur d'indicateur a été enregistrée via `upsertValeur` */
 export type IndicateurValeurUpsertedEvent = {
@@ -117,19 +71,11 @@ export type IndicateurValeurDeletionListener<TContext = unknown> = {
   ) => Promise<void>;
 };
 
+/** Compatibility facade: preserves the historical API while delegating cohesive workflows. */
 @Injectable()
 export default class CrudValeursService {
   private readonly logger = new Logger(CrudValeursService.name);
-
-  public readonly UNKOWN_SOURCE_ID = 'unknown';
-
-  private readonly PARALLEL_COLLECTIVITE_COMPUTE_VALEURS = 1;
-
-  /**
-   * Number of decimal in order to round the value
-   */
   static DEFAULT_ROUNDING_PRECISION = DEFAULT_ROUNDING_PRECISION;
-
   private readonly valeurUpsertedListeners: Array<
     (event: IndicateurValeurUpsertedEvent) => Promise<void>
   > = [];
@@ -138,15 +84,17 @@ export default class CrudValeursService {
     [];
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly repository: CrudValeursRepository,
     private readonly permissionService: PermissionService,
     private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
-    private readonly collectiviteService: CollectivitesService,
-    private readonly listCollectiviteDefinitionsRepository: ListCollectiviteDefinitionsRepository,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly listIndicateursService: ListIndicateursService,
     private readonly updateIndicateurService: UpdateDefinitionService,
-    private readonly computeValeursService: ComputeValeursService
+    private readonly lockRepository: IndicateurValeurLockRepository,
+    private readonly definitionLockRepository: IndicateurDefinitionLockRepository,
+    private readonly transactionManager: TransactionManager,
+    private readonly reader: ListIndicateurValeursService,
+    private readonly writer: WriteIndicateurValeursService,
+    private readonly reconciliation: ReconcileIndicateurValeursService
   ) {}
 
   /**
@@ -179,7 +127,7 @@ export default class CrudValeursService {
    * Émet un `IndicateurValeurUpsertedEvent` pour chaque valeur
    * ajoutée/modifiée, dédupliquée par id.
    */
-  private async publishValeurUpsertedEvents(
+  async publishValeurUpsertedEvents(
     valeurs: Pick<IndicateurValeur, 'id' | 'collectiviteId' | 'indicateurId'>[],
     user: AuthenticatedUser
   ): Promise<void> {
@@ -200,367 +148,112 @@ export default class CrudValeursService {
     );
   }
 
-  private getIndicateurValeursSqlConditions(
-    options: ListIndicateurValeursInput
-  ): (SQLWrapper | SQL)[] {
-    const conditions: (SQLWrapper | SQL)[] = [];
-    if (options.collectiviteId) {
-      conditions.push(
-        eq(indicateurValeurTable.collectiviteId, options.collectiviteId)
-      );
-    }
-    if (
-      options.identifiantsReferentiel &&
-      options.identifiantsReferentiel.length > 0
-    ) {
-      conditions.push(
-        inArray(
-          indicateurDefinitionTable.identifiantReferentiel,
-          options.identifiantsReferentiel
-        )
-      );
-    }
-    if (options.dateDebut) {
-      conditions.push(gte(indicateurValeurTable.dateValeur, options.dateDebut));
-    }
-    if (options.dateFin) {
-      conditions.push(lte(indicateurValeurTable.dateValeur, options.dateFin));
-    }
-    if (options.indicateurIds) {
-      conditions.push(
-        inArray(indicateurValeurTable.indicateurId, options.indicateurIds)
-      );
-    }
-    if (options.sources?.length) {
-      const collectiviteSourceId = options.sources.includes(
-        COLLECTIVITE_SOURCE_ID
-      );
-      if (collectiviteSourceId) {
-        const autreSourceIds = options.sources.filter(
-          (s) => s !== COLLECTIVITE_SOURCE_ID
-        );
-        if (autreSourceIds.length) {
-          const orCondition = or(
-            isNull(indicateurSourceMetadonneeTable.sourceId),
-            inArray(indicateurSourceMetadonneeTable.sourceId, autreSourceIds)
-          );
-          if (orCondition) {
-            conditions.push(orCondition);
-          }
-        } else {
-          conditions.push(isNull(indicateurSourceMetadonneeTable.sourceId));
-        }
-      } else {
-        conditions.push(
-          inArray(indicateurSourceMetadonneeTable.sourceId, options.sources)
-        );
-      }
-    }
-    if (options.metadonneeId !== undefined) {
-      conditions.push(
-        eq(indicateurValeurTable.metadonneeId, options.metadonneeId)
-      );
-    }
-    return conditions;
-  }
+  dedoublonnageIndicateurValeursParSource =
+    deduplicateIndicateurValeursBySource;
+  groupeIndicateursValeursParIndicateur = groupIndicateurValeurs;
+  groupeIndicateursValeursParIndicateurEtSource =
+    groupIndicateurValeursBySource;
 
-  /**
-   * Récupère les valeurs d'indicateurs selon les options données
-   * @param options
-   * @param ignoreDedoublonnage
-   * @param tx transaction de l'appelant. Sans elle, la lecture prend une
-   * seconde connexion du pool alors que l'appelant en tient déjà une : sous
-   * charge, toutes les connexions se retrouvent détenues par des transactions
-   * qui en attendent une de plus.
-   */
   async getIndicateursValeurs(
     options: ListIndicateurValeursInput,
     ignoreDedoublonnage?: boolean,
     tx?: Transaction
-  ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
-    this.logger.log(
-      `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
-        options
-      )}`
-    );
-
-    const conditions = this.getIndicateurValeursSqlConditions(options);
-
-    let result: IndicateurValeurAvecMetadonnesDefinition[] = await (
-      tx ?? this.databaseService.db
-    )
-      .select({
-        indicateurValeur: {
-          ...indicateurValeurPeriodiciteSelection,
-          ...omit(getTableColumns(indicateurValeurTable), [
-            'createdAt',
-            'modifiedAt',
-          ]),
-          createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
-          modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
-        },
-        indicateurDefinition: {
-          ...indicateurDefinitionPeriodiciteSelection,
-          ...omit(getTableColumns(indicateurDefinitionTable), [
-            'createdAt',
-            'modifiedAt',
-          ]),
-          createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
-          modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
-        },
-        indicateurSourceMetadonnee: getTableColumns(
-          indicateurSourceMetadonneeTable
-        ),
-        confidentiel: indicateurCollectiviteTable.confidentiel,
-      })
-      .from(indicateurValeurTable)
-      .leftJoin(
-        indicateurDefinitionTable,
-        eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
+  ) {
+    return getIndicateurValeursDataOrThrow(
+      await this.reader.get(
+        { ...options, ignoreDedoublonnage },
+        { isUserTrusted: true, tx }
       )
-      .leftJoin(
-        indicateurSourceMetadonneeTable,
-        eq(
-          indicateurValeurTable.metadonneeId,
-          indicateurSourceMetadonneeTable.id
-        )
-      )
-      .leftJoin(
-        indicateurCollectiviteTable,
-        // `confidentiel` est porté par le couple (collectivité, indicateur) :
-        // sans le prédicat sur la collectivité, la jointure ramène une ligne
-        // par collectivité suivant l'indicateur et retient un drapeau au
-        // hasard, celui d'une autre collectivité le plus souvent.
-        and(
-          eq(
-            indicateurCollectiviteTable.indicateurId,
-            indicateurDefinitionTable.id
-          ),
-          eq(
-            indicateurCollectiviteTable.collectiviteId,
-            indicateurValeurTable.collectiviteId
-          )
-        )
-      )
-      .where(and(...conditions));
-
-    this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
-    if (!ignoreDedoublonnage) {
-      // Gère le cas où plusieurs fois la même source avec des métadonnées différentes > on garde les données de la métadonnée la plus récente
-      result = this.dedoublonnageIndicateurValeursParSource(result);
-
-      this.logger.log(
-        `${result.length} valeurs d'indicateurs après dédoublonnage`
-      );
-    }
-
-    return result;
-  }
-
-  async deleteIndicateurValeurs(options: DeleteIndicateursValeursRequestType) {
-    this.logger.log(
-      `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(
-        options
-      )}`
     );
-
-    const conditions: (SQLWrapper | SQL)[] = [
-      eq(indicateurValeurTable.collectiviteId, options.collectiviteId),
-    ];
-    if (options.indicateurId) {
-      conditions.push(
-        eq(indicateurValeurTable.indicateurId, options.indicateurId)
-      );
-    }
-    if (options.metadonneeId) {
-      conditions.push(
-        eq(indicateurValeurTable.metadonneeId, options.metadonneeId)
-      );
-    }
-
-    const deleteQuery = this.databaseService.db
-      .delete(indicateurValeurTable)
-      .where(and(...conditions));
-
-    const deletedIds = await deleteQuery.returning({
-      id: indicateurValeurTable.id,
-    });
-    this.logger.log(
-      `${deletedIds.length} valeurs d'indicateurs ont été supprimées`
-    );
-    return { indicateurValeurIdsSupprimes: deletedIds };
   }
 
   async listIndicateurValeurs(
     options: ListIndicateurValeursInput,
-    user?: AuthUser
-  ): Promise<GetIndicateursValeursResponse> {
-    const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
-
-    // Vérifie les droits
-    let hasPermissionLecture;
-    if (user) {
-      const collectivitePrivate = await this.collectiviteService.isPrivate(
-        collectiviteId
-      );
-      const permissionLectureResult = await this.permissionService.isAllowed(
-        user,
-        'indicateurs.valeurs.read_confidentiel',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId }
-      );
-      const permissionVisiteResult = await this.permissionService.isAllowed(
-        user,
-        'indicateurs.valeurs.read',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId }
-      );
-      const accesRestreintRequis =
-        collectivitePrivate && !permissionLectureResult.success;
-      if (accesRestreintRequis || !permissionVisiteResult.success) {
-        throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${
-            user.id
-          } n'a pas l'autorisation ${
-            accesRestreintRequis
-              ? 'indicateurs.valeurs.read_confidentiel'
-              : 'indicateurs.valeurs.read'
-          } sur la ressource Collectivité ${collectiviteId}`
-        );
-      }
-      hasPermissionLecture = permissionLectureResult.success;
-    } else {
-      // Appelé par un service account, on suppose que les droits sont déjà vérifiés
-      hasPermissionLecture = true;
-    }
-
-    if (!indicateurIds?.length && !identifiantsReferentiel?.length) {
-      throw new BadRequestException(
-        `indicateurIds or identifiantsReferentiel required`
-      );
-    }
-
-    const indicateurValeurs = await this.getIndicateursValeurs(options);
-
-    const indicateurValeursSeules = indicateurValeurs.map((v) => ({
-      ...v.indicateurValeur,
-      confidentiel: v.confidentiel,
-    }));
-
-    const uniqueIndicateurDefinitions =
-      await this.listCollectiviteDefinitionsRepository.listCollectiviteDefinitions(
-        {
-          indicateurIds: options.indicateurIds,
-          identifiantsReferentiel: options.identifiantsReferentiel,
-        }
-      );
-
-    options.identifiantsReferentiel?.forEach((identifiant) => {
-      if (
-        !uniqueIndicateurDefinitions.find(
-          (d) => d.identifiantReferentiel === identifiant
-        )
-      ) {
-        this.logger.warn(
-          `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`
-        );
-      }
-    });
-
-    options.indicateurIds?.forEach((indicateurId) => {
-      if (!uniqueIndicateurDefinitions.find((d) => d.id === indicateurId)) {
-        this.logger.warn(
-          `Définition de l'indicateur avec l'identifiant ${indicateurId} introuvable`
-        );
-      }
-    });
-
-    uniqueIndicateurDefinitions.sort((a, b) => {
-      if (!a.identifiantReferentiel && !b.identifiantReferentiel) {
-        return 0;
-      }
-      if (!a.identifiantReferentiel) {
-        return 1;
-      }
-      if (!b.identifiantReferentiel) {
-        return -1;
-      }
-      return a.identifiantReferentiel.localeCompare(b.identifiantReferentiel);
-    });
-
-    const initialMetadonneesAcc: {
-      [key: string]: IndicateurSourceMetadonnee;
-    } = {};
-    const uniqueIndicateurMetadonnees = Object.values(
-      indicateurValeurs.reduce((acc, v) => {
-        if (v.indicateurSourceMetadonnee?.id) {
-          acc[v.indicateurSourceMetadonnee.id.toString()] =
-            v.indicateurSourceMetadonnee;
-        }
-        return acc;
-      }, initialMetadonneesAcc)
-    ) as IndicateurSourceMetadonnee[];
-
-    const sourceIds = [
-      ...new Set(
-        uniqueIndicateurMetadonnees.map((metadonnee) => metadonnee.sourceId)
-      ),
-    ];
-
-    const sources = sourceIds.length
-      ? await this.databaseService.db
-          .select()
-          .from(indicateurSourceTable)
-          .where(inArray(indicateurSourceTable.id, sourceIds))
-      : [];
-
-    const indicateurValeurGroupeesParSource =
-      this.groupeIndicateursValeursParIndicateurEtSource(
-        indicateurValeursSeules,
-        uniqueIndicateurDefinitions,
-        uniqueIndicateurMetadonnees,
-        sources,
-        false
-      );
-
-    // Filtre la dernière valeur résultat d'un indicateur confidentiel quand
-    // l'utilisateur n'a pas le droit requis
-    if (!hasPermissionLecture) {
-      indicateurValeurGroupeesParSource.forEach((indicateur) => {
-        const sourceCollectivite = indicateur.sources[COLLECTIVITE_SOURCE_ID];
-        if (sourceCollectivite?.valeurs?.[0]?.confidentiel) {
-          // recherche la date la plus récente avec un résultat
-          const timeDerniereValeur = Math.max(
-            ...sourceCollectivite.valeurs
-              .filter((v) => !isNil(v.resultat))
-              .map((v) =>
-                v.dateValeur ? new Date(v.dateValeur as string).getTime() : 0
-              )
-          );
-          sourceCollectivite.valeurs = sourceCollectivite.valeurs.map((v) => ({
-            ...v,
-            // masque le résultat si nécessaire
-            resultat:
-              !isNil(v.resultat) &&
-              v.dateValeur &&
-              new Date(v.dateValeur as string).getTime() === timeDerniereValeur
-                ? null
-                : v.resultat,
-          }));
-        }
-      });
-    }
-    return {
-      count: indicateurValeurGroupeesParSource.length,
-      indicateurs: indicateurValeurGroupeesParSource,
-    };
+    context: IndicateurValeursContext
+  ) {
+    return getIndicateurValeursDataOrThrow(
+      await this.reader.list(options, context)
+    );
   }
 
+  async upsertIndicateurValeurs(
+    valeurs: IndicateurValeurCreate[],
+    context: IndicateurValeursContext<AuthenticatedOrServiceRoleUser>
+  ) {
+    const saved = getIndicateurValeursDataOrThrow(
+      await this.reconciliation.upsert(valeurs, context)
+    );
+    if (!context.tx && context.user && isAuthenticatedUser(context.user)) {
+      await this.publishValeurUpsertedEvents(saved, context.user);
+    }
+    return saved;
+  }
+
+  async reconcileCollectiviteCalculatedIndicateurValeurs(
+    collectiviteId: number,
+    definitions: IndicateurDefinition[],
+    tx: Transaction
+  ) {
+    return getIndicateurValeursDataOrThrow(
+      await this.reconciliation.reconcileCollectivite(
+        { collectiviteId, definitions },
+        { isUserTrusted: true, tx }
+      )
+    );
+  }
+
+  async recomputeAllCalculatedIndicateurValeurs(
+    onlyForCollectiviteId: number | undefined,
+    user: AuthUser | null,
+    options: {
+      definitions?: IndicateurDefinition[];
+      skipPermissionCheck?: boolean;
+    } = {}
+  ) {
+    if (!options.skipPermissionCheck)
+      this.permissionService.hasServiceRole(user);
+    return getIndicateurValeursDataOrThrow(
+      await this.reconciliation.recomputeAll(
+        {
+          collectiviteId: onlyForCollectiviteId,
+          definitions: options.definitions,
+        },
+        { isUserTrusted: true }
+      )
+    );
+  }
+  private async executeTransaction<T>(
+    operation: (tx: Transaction) => Promise<T>
+  ): Promise<T> {
+    const result = await this.transactionManager.executeSingle<T, unknown>(
+      async (tx) => success(await operation(tx))
+    );
+    if (!result.success) {
+      throw result.cause ?? result.error;
+    }
+    return result.data;
+  }
   async canMutateValeur(
     user: AuthenticatedUser,
     collectiviteId: number,
     indicateur: IndicateurListItem
   ): Promise<boolean> {
+    await this.canMutateValeurs(user, collectiviteId, [indicateur]);
+    return true;
+  }
+  async canMutateValeurs(
+    user: AuthenticatedUser,
+    collectiviteId: number,
+    indicateurs: IndicateurListItem[]
+  ): Promise<void> {
+    // `authedProcedure` also accepts API-key JWTs whose permissions claim can
+    // deliberately be narrower than the owner's collectivity role.
+    this.permissionService.assertApiKeyPermission(
+      user,
+      'indicateurs.valeurs.mutate'
+    );
+    assertUserIndicateurValeursAllowed(indicateurs);
+
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({
         userId: user.id,
@@ -568,7 +261,7 @@ export default class CrudValeursService {
 
     if (!userPermissionsResult.success) {
       throw new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter la valeur de l'indicateur ${indicateur.id} de la collectivité ${collectiviteId}`
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter les valeurs d'indicateur de la collectivité ${collectiviteId}`
       );
     }
 
@@ -579,7 +272,7 @@ export default class CrudValeursService {
         collectiviteId,
       })
     ) {
-      return true;
+      return;
     }
 
     if (
@@ -588,9 +281,11 @@ export default class CrudValeursService {
         'indicateurs.valeurs.mutate_piloted_by_me',
         { collectiviteId }
       ) &&
-      indicateur.pilotes?.some((p) => p.userId === user.id)
+      indicateurs.every((indicateur) =>
+        indicateur.pilotes?.some((p) => p.userId === user.id)
+      )
     ) {
-      return true;
+      return;
     }
 
     this.permissionService.throwForbiddenException(
@@ -599,159 +294,36 @@ export default class CrudValeursService {
       ResourceType.COLLECTIVITE,
       { collectiviteId }
     );
-
-    return false;
   }
 
-  /**
-   * Variante de `upsertIndicateurValeurs` qui permet de ne pas être obligé de
-   * redonner l'objet complet sans pour autant écraser la valeur existante. Et
-   * donc de mettre à jour la colonne resultat indépendamment de la valeur
-   * objectif (et pareil pour les commentaires).
-   */
   async upsertValeur(data: UpsertValeurIndicateur, user: AuthenticatedUser) {
     const { collectiviteId, indicateurId } = data;
-
-    const indicateur = await this.listIndicateursService.getIndicateur({
+    const definition = await this.listIndicateursService.getIndicateur({
       collectiviteId,
       indicateurId,
     });
-
-    await this.canMutateValeur(user, collectiviteId, indicateur);
-
-    this.logger.log(`Upsert valeur with data ${JSON.stringify(data)}`);
-
-    if (user.role === AuthRole.AUTHENTICATED && user.id) {
-      if (!isNil(data.resultat)) {
-        data.resultat = round(data.resultat, indicateur.precision);
-      }
-      if (!isNil(data.objectif)) {
-        data.objectif = round(data.objectif, indicateur.precision);
-      }
-
-      const now = new Date().toISOString();
-      let upsertedIndicateurValeur: IndicateurValeur | undefined = undefined;
-      if (!isNil(data.id)) {
-        this.logger.log(
-          `Mise à jour de la valeur id ${data.id} pour la collectivité ${data.collectiviteId}`
-        );
-        const updated = await this.databaseService.db
-          .update(indicateurValeurTable)
-          .set({
-            resultat: data.resultat,
-            resultatCommentaire: data.resultatCommentaire,
-            objectif: data.objectif,
-            objectifCommentaire: data.objectifCommentaire,
-            modifiedBy: user.id,
-            modifiedAt: now,
-          })
-          .where(
-            and(
-              eq(indicateurValeurTable.collectiviteId, collectiviteId),
-              eq(indicateurValeurTable.indicateurId, indicateurId),
-              eq(indicateurValeurTable.id, data.id),
-              isNull(indicateurValeurTable.metadonneeId)
-            )
-          )
-          .returning({
-            ...getTableColumns(indicateurValeurTable),
-            ...indicateurValeurPeriodiciteSelection,
-          });
-        upsertedIndicateurValeur = updated[0];
-      } else if (!isNil(data.dateValeur)) {
-        this.logger.log(
-          `Insertion de la valeur de l'indicateur ${data.indicateurId} pour la collectivité ${data.collectiviteId}`
-        );
-
-        try {
-          const inserted = await this.databaseService.db
-            .insert(indicateurValeurTable)
-            .values({
-              collectiviteId,
-              indicateurId: data.indicateurId,
-              dateValeur: data.dateValeur,
-              resultat: data.resultat,
-              resultatCommentaire: data.resultatCommentaire,
-              objectif: data.objectif,
-              objectifCommentaire: data.objectifCommentaire,
-              createdBy: user.id,
-              createdAt: now,
-              modifiedBy: user.id,
-              modifiedAt: now,
-              metadonneeId: null,
-            })
-            .onConflictDoUpdate({
-              target: [
-                indicateurValeurTable.indicateurId,
-                indicateurValeurTable.collectiviteId,
-                indicateurValeurTable.dateValeur,
-              ],
-              targetWhere: isNull(indicateurValeurTable.metadonneeId),
-              set: {
-                resultat: data.resultat,
-                resultatCommentaire: data.resultatCommentaire,
-                objectif: data.objectif,
-                objectifCommentaire: data.objectifCommentaire,
-                modifiedBy: user.id,
-                modifiedAt: now,
-              },
-            })
-            .returning({
-              ...getTableColumns(indicateurValeurTable),
-              ...indicateurValeurPeriodiciteSelection,
-            });
-
-          upsertedIndicateurValeur = inserted[0];
-        } catch (error) {
-          this.logger.error(
-            `Error d'insert de la valeur pour la collectivité ${collectiviteId} et l'indicateur ${
-              data.indicateurId
-            } et la date ${data.dateValeur} : ${getErrorMessage(error)}`
-          );
-          throw error;
-        }
-      }
-
-      if (upsertedIndicateurValeur) {
-        const calculatedIndicateurValeurToUpsert =
-          await this.computeValeursService.updateCalculatedIndicateurValeurs(
-            [upsertedIndicateurValeur],
-            [indicateur]
-          );
-        this.logger.log(
-          `${calculatedIndicateurValeurToUpsert.length} valeurs d'indicateurs calculées`
-        );
-        // WARNING : can recursively call updateCalculatedIndicateurValeurs if the computed indicateur valeur allows to calcule oher ones
-        const calculatedIndicateurValeurs = await this.upsertIndicateurValeurs(
-          calculatedIndicateurValeurToUpsert,
-          undefined
-        );
-
-        // Publié après l'opération complète (valeur saisie + cascade de valeurs
-        // calculées) : une action peut référencer l'id d'une valeur calculée,
-        // pas seulement celui de la valeur saisie.
-        await this.publishValeurUpsertedEvents(
-          [
-            {
-              id: upsertedIndicateurValeur.id,
-              collectiviteId,
-              indicateurId,
-            },
-            ...calculatedIndicateurValeurs,
-          ],
-          user
-        );
-      }
-
-      // update indicateur definition modifiedBy field
-      await this.updateIndicateurService.updateDefinitionModifiedFields({
-        indicateurId: indicateur.id,
-        collectiviteId,
-        user,
-      });
-
-      return upsertedIndicateurValeur;
-    }
+    await this.canMutateValeur(user, collectiviteId, definition);
+    const changed: IndicateurValeur[] = [];
+    const saved = await this.executeTransaction(async (tx) => {
+      const saved = getIndicateurValeursDataOrThrow(
+        await this.writer.saveSingle({ data, definition }, { user, tx })
+      );
+      if (!saved) return undefined;
+      const calculated = getIndicateurValeursDataOrThrow(
+        await this.reconciliation.propagateUpdated([saved], {
+          isUserTrusted: true,
+          tx,
+        })
+      );
+      await this.updateIndicateurService.updateDefinitionModifiedFields(
+        { indicateurId, collectiviteId, user },
+        tx
+      );
+      changed.push(saved, ...calculated);
+      return saved;
+    });
+    await this.publishValeurUpsertedEvents(changed, user);
+    return saved;
   }
 
   async deleteValeurIndicateur(
@@ -766,713 +338,86 @@ export default class CrudValeursService {
     });
 
     await this.canMutateValeur(user, collectiviteId, indicateur);
+    const contexts = await Promise.all(
+      this.valeurDeletionListeners.map((listener) =>
+        listener.onWillDelete({ collectiviteId, indicateurValeurId: id })
+      )
+    );
 
-    if (user.role === AuthRole.AUTHENTICATED && user.id) {
-      // La valeur est supprimée avec ON DELETE CASCADE sur ses dépendances
-      // (ex : sélection pour le score indicatif) : il faut donc identifier
-      // ce qui en dépend AVANT de la supprimer, sans quoi les écouteurs ne
-      // retrouveraient plus rien après coup.
-      const contexts = await Promise.all(
-        this.valeurDeletionListeners.map((listener) =>
-          listener.onWillDelete({ collectiviteId, indicateurValeurId: id })
-        )
+    await this.executeTransaction(async (tx) => {
+      await this.definitionLockRepository.lockForValueWrite(tx);
+
+      const existing = await this.repository.findUserValeur(
+        { collectiviteId, indicateurId, id },
+        tx
+      );
+      if (!existing) return;
+
+      await this.lockRepository.lock([existing], tx);
+      const deleted = await this.repository.deleteUserValeur(
+        { collectiviteId, indicateurId, id },
+        tx
+      );
+      if (!deleted) return;
+
+      getIndicateurValeursDataOrThrow(
+        await this.reconciliation.propagateDeleted([deleted], {
+          isUserTrusted: true,
+          tx,
+        })
       );
 
-      await this.databaseService.db
-        .delete(indicateurValeurTable)
-        .where(
-          and(
-            eq(indicateurValeurTable.collectiviteId, collectiviteId),
-            eq(indicateurValeurTable.indicateurId, indicateurId),
-            eq(indicateurValeurTable.id, id)
-          )
-        );
-
-      await Promise.all(
-        this.valeurDeletionListeners.map((listener, i) =>
-          listener.onDeleted(contexts[i], {
-            collectiviteId,
-            indicateurValeurId: id,
-            user,
-          })
-        )
+      await this.updateIndicateurService.updateDefinitionModifiedFields(
+        { indicateurId, collectiviteId, user },
+        tx
       );
-    }
-
-    // update indicateur definition modifiedBy field
-    await this.updateIndicateurService.updateDefinitionModifiedFields({
-      indicateurId,
-      collectiviteId,
-      user,
     });
-  }
-
-  async upsertIndicateurValeurs(
-    indicateurValeurs: IndicateurValeurInsert[],
-    user: AuthenticatedUser | undefined
-  ): Promise<IndicateurValeurWithIdentifiant[]> {
-    const collectiviteIds = [
-      ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
-    ];
-    if (user) {
-      for (const collectiviteId of collectiviteIds) {
-        await this.permissionService.assertAllowed(
+    await Promise.all(
+      this.valeurDeletionListeners.map((listener, index) =>
+        listener.onDeleted(contexts[index], {
+          collectiviteId,
+          indicateurValeurId: id,
           user,
-          PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
-          ResourceType.COLLECTIVITE,
-          { collectiviteId }
-        );
-      }
-
-      if (user.role === AuthRole.AUTHENTICATED && user.id) {
-        indicateurValeurs.forEach((v) => {
-          v.createdBy = user.id;
-          v.modifiedBy = user.id;
-        });
-      }
-    }
-
-    this.logger.log(
-      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${user?.id} (role ${user?.role})`
+        })
+      )
     );
-
-    // Retrieve indicateur definition to be able to round values
-    const indicateurIds = [
-      ...new Set(indicateurValeurs.map((v) => v.indicateurId)),
-    ];
-    const indicateurDefinitions =
-      await this.listCollectiviteDefinitionsRepository.listCollectiviteDefinitions(
-        { indicateurIds }
-      );
-    const indicateurDefinitionsById = keyBy(
-      indicateurDefinitions,
-      (item) => item.id
-    );
-    // Round values for each record
-    indicateurValeurs.forEach((v) => {
-      const definition = indicateurDefinitionsById[v.indicateurId];
-      if (definition) {
-        v.resultat = isNotNil(v.resultat)
-          ? round(v.resultat, definition.precision)
-          : null;
-        v.objectif = isNotNil(v.objectif)
-          ? round(v.objectif, definition.precision)
-          : null;
-      } else {
-        throw new BadRequestException(
-          `Indicateur definition not found for id ${v.indicateurId}`
-        );
-      }
-    });
-
-    // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
-    const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
-      partition(indicateurValeurs, (v) => Boolean(v.metadonneeId));
-    const indicateurValeursResultat: IndicateurValeurWithIdentifiant[] = [];
-    if (indicateurValeursAvecMetadonnees.length) {
-      this.logger.log(
-        `Upsert des ${
-          indicateurValeursAvecMetadonnees.length
-        } valeurs avec métadonnées des indicateurs ${[
-          ...new Set(
-            indicateurValeursAvecMetadonnees.map((v) => v.indicateurId)
-          ),
-        ].join(',')} pour les collectivités ${[
-          ...new Set(
-            indicateurValeursAvecMetadonnees.map((v) => v.collectiviteId)
-          ),
-        ].join(',')}`
-      );
-      try {
-        const indicateurValeursAvecMetadonneesResultat =
-          await this.databaseService.db
-            .insert(indicateurValeurTable)
-            .values(indicateurValeursAvecMetadonnees)
-            .onConflictDoUpdate({
-              target: [
-                indicateurValeurTable.indicateurId,
-                indicateurValeurTable.collectiviteId,
-                indicateurValeurTable.dateValeur,
-                indicateurValeurTable.metadonneeId,
-              ],
-              targetWhere: isNotNull(indicateurValeurTable.metadonneeId),
-              set: {
-                resultat: sql.raw(
-                  `excluded.${indicateurValeurTable.resultat.name}`
-                ),
-                resultatCommentaire: sql.raw(
-                  `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-                ),
-                objectif: sql.raw(
-                  `excluded.${indicateurValeurTable.objectif.name}`
-                ),
-                objectifCommentaire: sql.raw(
-                  `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-                ),
-                calculAuto: sql.raw(
-                  `excluded.${indicateurValeurTable.calculAuto.name}`
-                ),
-                calculAutoIdentifiantsManquants: sql.raw(
-                  `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
-                ),
-                modifiedBy: sql.raw(
-                  `excluded.${indicateurValeurTable.modifiedBy.name}`
-                ),
-              },
-            })
-            .returning({
-              ...getTableColumns(indicateurValeurTable),
-              ...indicateurValeurPeriodiciteSelection,
-            });
-        indicateurValeursResultat.push(
-          ...indicateurValeursAvecMetadonneesResultat
-        );
-      } catch (e) {
-        this.logger.error(
-          `Erreur lors de l'upsert des valeurs avec métadonnées pour les collectivités ${collectiviteIds} : ${getErrorMessage(
-            e
-          )}`
-        );
-        this.logger.log(
-          `Données en erreur : ${JSON.stringify(
-            indicateurValeursAvecMetadonnees
-          )}`
-        );
-        throw e;
-      }
-    }
-
-    if (indicateurValeursSansMetadonnees.length) {
-      let indicateurValeursSansMetadonneesToInsert: IndicateurValeurInsert[] =
-        indicateurValeursSansMetadonnees;
-
-      // Vérifie si les données à insérer sont autocalculées, si c'est le cas, on ne doit pas écraser les données des collectivités saisies manuellement
-      const indicateurValeursAutocalculees =
-        indicateurValeursSansMetadonneesToInsert.filter((v) => v.calculAuto);
-      if (indicateurValeursAutocalculees.length) {
-        const indicateurValeursAutocalculeesConditions: (
-          | SQLWrapper
-          | undefined
-        )[] = [];
-        indicateurValeursAutocalculees.forEach((v) => {
-          indicateurValeursAutocalculeesConditions.push(
-            and(
-              eq(indicateurValeurTable.indicateurId, v.indicateurId),
-              eq(indicateurValeurTable.collectiviteId, v.collectiviteId),
-              eq(indicateurValeurTable.dateValeur, v.dateValeur),
-              isNull(indicateurValeurTable.metadonneeId),
-              or(
-                isNull(indicateurValeurTable.calculAuto),
-                eq(indicateurValeurTable.calculAuto, false)
-              )
-            )
-          );
-        });
-
-        const valeursSaisiesManuellementExistantes =
-          await this.databaseService.db
-            .select()
-            .from(indicateurValeurTable)
-            .where(or(...indicateurValeursAutocalculeesConditions));
-
-        this.logger.log(
-          `${valeursSaisiesManuellementExistantes.length} valeurs saisies manuellement existantes pour les indicateurs`
-        );
-
-        if (valeursSaisiesManuellementExistantes.length) {
-          indicateurValeursSansMetadonneesToInsert =
-            indicateurValeursSansMetadonneesToInsert.filter((v) => {
-              const valeurSaisiesManuellementExistante =
-                valeursSaisiesManuellementExistantes.find(
-                  (v2) =>
-                    v2.indicateurId === v.indicateurId &&
-                    v2.collectiviteId === v.collectiviteId &&
-                    v2.dateValeur === v.dateValeur
-                );
-              return !valeurSaisiesManuellementExistante;
-            });
-          this.logger.log(
-            `${indicateurValeursSansMetadonneesToInsert.length} valeurs à insérer après filtrage des données saisies manuellement`
-          );
-        }
-      }
-      if (indicateurValeursSansMetadonneesToInsert.length) {
-        try {
-          this.logger.log(
-            `Upsert des ${
-              indicateurValeursSansMetadonneesToInsert.length
-            } valeurs sans métadonnées des indicateurs ${[
-              ...new Set(
-                indicateurValeursSansMetadonneesToInsert.map(
-                  (v) => v.indicateurId
-                )
-              ),
-            ].join(',')} pour les collectivités ${[
-              ...new Set(
-                indicateurValeursSansMetadonneesToInsert.map(
-                  (v) => v.collectiviteId
-                )
-              ),
-            ].join(',')}`
-          );
-
-          const indicateurValeursSansMetadonneesResultat =
-            await this.databaseService.db
-              .insert(indicateurValeurTable)
-              .values(indicateurValeursSansMetadonneesToInsert)
-              .onConflictDoUpdate({
-                target: [
-                  indicateurValeurTable.indicateurId,
-                  indicateurValeurTable.collectiviteId,
-                  indicateurValeurTable.dateValeur,
-                ],
-                targetWhere: isNull(indicateurValeurTable.metadonneeId),
-                set: {
-                  resultat: sql.raw(
-                    `excluded.${indicateurValeurTable.resultat.name}`
-                  ),
-                  resultatCommentaire: sql.raw(
-                    `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-                  ),
-                  objectif: sql.raw(
-                    `excluded.${indicateurValeurTable.objectif.name}`
-                  ),
-                  objectifCommentaire: sql.raw(
-                    `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-                  ),
-                  calculAuto: sql.raw(
-                    `excluded.${indicateurValeurTable.calculAuto.name}`
-                  ),
-                  calculAutoIdentifiantsManquants: sql.raw(
-                    `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
-                  ),
-                  modifiedBy: sql.raw(
-                    `excluded.${indicateurValeurTable.modifiedBy.name}`
-                  ),
-                },
-              })
-              .returning({
-                ...getTableColumns(indicateurValeurTable),
-                ...indicateurValeurPeriodiciteSelection,
-              });
-          indicateurValeursResultat.push(
-            ...indicateurValeursSansMetadonneesResultat
-          );
-        } catch (e) {
-          this.logger.error(
-            `Erreur lors de l'upsert des valeurs sans métadonnées pour les collectivités ${collectiviteIds} : ${getErrorMessage(
-              e
-            )}`
-          );
-          this.logger.log(
-            `Données en erreur : ${JSON.stringify(
-              indicateurValeursSansMetadonneesToInsert
-            )}`
-          );
-          throw e;
-        }
-      }
-    }
-    indicateurValeursResultat.forEach((v) => {
-      if (
-        !v.indicateurIdentifiant &&
-        indicateurDefinitionsById[`${v.indicateurId}`]
-      ) {
-        v.indicateurIdentifiant =
-          indicateurDefinitionsById[`${v.indicateurId}`].identifiantReferentiel;
-      }
-    });
-
-    if (indicateurValeursResultat.length) {
-      const calculatedIndicateursResultatToUpsert =
-        await this.computeValeursService.updateCalculatedIndicateurValeurs(
-          indicateurValeursResultat
-        );
-      this.logger.log(
-        `${calculatedIndicateursResultatToUpsert.length} valeurs d'indicateurs calculées`
-      );
-
-      const calculatedIndicateurValeur: IndicateurValeurWithIdentifiant[] =
-        calculatedIndicateursResultatToUpsert.length
-          ? await this.upsertIndicateurValeurs(
-              calculatedIndicateursResultatToUpsert,
-              undefined
-            )
-          : [];
-
-      indicateurValeursResultat.push(...calculatedIndicateurValeur);
-    }
-
-    // Publié uniquement quand `user` est fourni : les appels récursifs
-    // internes (cascade de valeurs calculées) et certains appelants ayant
-    // déjà vérifié les droits par ailleurs passent `undefined` et ne
-    // doivent pas publier une seconde fois ce que l'appel englobant a déjà
-    // accumulé dans `indicateurValeursResultat`.
-    if (user) {
-      await this.publishValeurUpsertedEvents(indicateurValeursResultat, user);
-    }
-
-    return indicateurValeursResultat;
   }
-
-  async recomputeAllCalculatedIndicateurValeurs(
-    onlyForCollectiviteId: number | undefined,
-    user: AuthUser | null,
-    forComputedIndicateurDefinitions?: IndicateurDefinition[],
-    doNotCheckRights?: boolean
-  ) {
-    // Check if the user has the permission to recompute all calculated indicateur valeurs
-    if (!doNotCheckRights) {
-      this.permissionService.hasServiceRole(user);
-    }
-
-    if (!forComputedIndicateurDefinitions) {
-      forComputedIndicateurDefinitions =
-        await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue();
-    }
+  async deleteIndicateurValeurs(options: DeleteIndicateursValeursRequestType) {
     this.logger.log(
-      `Recompute all calculated indicateur valeurs for collectivite ${
-        onlyForCollectiviteId || 'all'
-      } and identifiants ${forComputedIndicateurDefinitions
-        .map((d) => d.identifiantReferentiel)
-        .join(',')}`
-    );
-
-    const allSourceIdentifiants =
-      await this.computeValeursService.getAllSourceIdentifiants(
-        forComputedIndicateurDefinitions
-      );
-
-    const allowedExtraSourcesForCalculatedValeurs =
-      await this.computeValeursService.getSourcesCalcul();
-
-    // Identify all collectivites which have some values for these source identifiants
-
-    const collectiviteIds = onlyForCollectiviteId
-      ? [onlyForCollectiviteId]
-      : (
-          await this.databaseService.db
-            .selectDistinct({ id: indicateurValeurTable.collectiviteId })
-            .from(indicateurValeurTable)
-            .leftJoin(
-              indicateurDefinitionTable,
-              eq(
-                indicateurValeurTable.indicateurId,
-                indicateurDefinitionTable.id
-              )
-            )
-            .where(
-              inArray(
-                indicateurDefinitionTable.identifiantReferentiel,
-                allSourceIdentifiants
-              )
-            )
-        ).map((c) => c.id);
-
-    const allComputedIndicateurValeurs: {
-      collectiviteId: number;
-      valeursCount: number;
-      identifiants: string[];
-    }[] = [];
-    const collectiviteIdsChunks = chunk(
-      collectiviteIds,
-      this.PARALLEL_COLLECTIVITE_COMPUTE_VALEURS
-    );
-    this.logger.log(
-      `Found ${collectiviteIds.length} collectivites with values for these source indicateur identifiants (${collectiviteIdsChunks.length} chunks of ${this.PARALLEL_COLLECTIVITE_COMPUTE_VALEURS} collectivites)`
-    );
-
-    const recomputeResult: Promise<{
-      collectiviteId: number;
-      valeursCount: number;
-      identifiants: string[];
-    }>[] = [];
-    let totalComputedIndicateurValeursCount = 0;
-    let iChunk = 0;
-    for (const collectiviteIdsChunk of collectiviteIdsChunks) {
-      collectiviteIdsChunk.forEach((collectiviteId) => {
-        recomputeResult.push(
-          this.recomputeCollectiviteCalculatedIndicateurValeurs(
-            collectiviteId,
-            forComputedIndicateurDefinitions,
-            allSourceIdentifiants,
-            allowedExtraSourcesForCalculatedValeurs
-          )
-        );
-      });
-      const computedIndicateurValeurs = await Promise.all(recomputeResult);
-      allComputedIndicateurValeurs.push(...computedIndicateurValeurs);
-      computedIndicateurValeurs.forEach((result) => {
-        totalComputedIndicateurValeursCount += result.valeursCount;
-      });
-      iChunk++;
-      this.logger.log(
-        `Computed ${totalComputedIndicateurValeursCount} indicateur valeurs for ${iChunk}/${collectiviteIdsChunks.length} collectivite chunks`
-      );
-      recomputeResult.length = 0;
-    }
-
-    this.logger.log(
-      `${totalComputedIndicateurValeursCount} recomputed indicateur valeurs`
-    );
-
-    return allComputedIndicateurValeurs;
-  }
-
-  private async recomputeCollectiviteCalculatedIndicateurValeurs(
-    collectiviteId: number,
-    computedIndicateurDefinitions: IndicateurDefinition[] | undefined,
-    sourceIdentifiants: string[],
-    allowedExtraSourcesForCalculatedValues: {
-      sourceId: string;
-      sourceCalculIds: string[];
-    }[]
-  ) {
-    this.logger.log(
-      `Recompute calculated indicateur valeurs for collectivite ${collectiviteId}`
-    );
-
-    if (!computedIndicateurDefinitions) {
-      computedIndicateurDefinitions =
-        await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue();
-    }
-
-    const computedIndicateurValeurs =
-      await this.computeValeursService.recomputeCollectiviteCalculatedIndicateurValeurs(
-        collectiviteId,
-        computedIndicateurDefinitions,
-        sourceIdentifiants,
-        allowedExtraSourcesForCalculatedValues
-      );
-
-    // WARNING : can recursively call updateCalculatedIndicateurValeurs if the computed indicateur valeur allows to calcule oher ones
-    const insertedIndicateurValeurs: IndicateurValeurWithIdentifiant[] =
-      computedIndicateurValeurs.length
-        ? await this.upsertIndicateurValeurs(
-            computedIndicateurValeurs,
-            undefined
-          )
-        : [];
-    const insertedIndicateurValeurIdentifiants = [
-      ...new Set(
-        insertedIndicateurValeurs
-          .map((v) => v.indicateurIdentifiant)
-          .filter((v) => v)
-      ).values(),
-    ] as string[];
-    this.logger.log(
-      `Inserted ${
-        insertedIndicateurValeurs.length
-      } computed indicateur valeurs for collectivite ${collectiviteId} and identifiants ${insertedIndicateurValeurIdentifiants.join(
-        ','
+      `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(
+        options
       )}`
     );
-    return {
-      valeursCount: insertedIndicateurValeurs.length,
-      identifiants: insertedIndicateurValeurIdentifiants,
-      collectiviteId,
-    };
-  }
 
-  dedoublonnageIndicateurValeursParSource(
-    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
-  ): IndicateurValeurAvecMetadonnesDefinition[] {
-    const initialAcc: {
-      [key: string]: IndicateurValeurAvecMetadonnesDefinition;
-    } = {};
-    const uniqueIndicateurValeurs = Object.values(
-      indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateurValeur.indicateurId}_${
-          v.indicateurValeur.collectiviteId
-        }_${v.indicateurValeur.dateValeur}_${
-          v.indicateurSourceMetadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
-        }`;
-        if (!acc[cleUnicite]) {
-          acc[cleUnicite] = v;
-        } else {
-          // On garde la valeur la plus récente en priorité
-          if (
-            v.indicateurSourceMetadonnee &&
-            acc[cleUnicite].indicateurSourceMetadonnee &&
-            v.indicateurSourceMetadonnee.dateVersion >
-              acc[cleUnicite].indicateurSourceMetadonnee.dateVersion
-          ) {
-            acc[cleUnicite] = v;
-          }
-        }
-        return acc;
-      }, initialAcc)
-    ) as IndicateurValeurAvecMetadonnesDefinition[];
-    return uniqueIndicateurValeurs;
-  }
+    const deletedIds = await this.executeTransaction(async (tx) => {
+      // Le trigger statement-level arrive trop tard pour imposer l'ordre
+      // graphe -> table : PostgreSQL a déjà pris le verrou de table du DELETE.
+      await this.definitionLockRepository.lockForValueWrite(tx);
 
-  groupeIndicateursValeursParIndicateur(
-    indicateurValeurs: IndicateurValeur[],
-    indicateurDefinitions: IndicateurDefinitionTiny[],
-    commentairesNonInclus = false
-  ): IndicateurAvecValeurs[] {
-    const initialDefinitionsAcc: {
-      [key: string]: IndicateurDefinitionTiny;
-    } = {};
-    const uniqueIndicateurDefinitions = Object.values(
-      indicateurDefinitions.reduce((acc, def) => {
-        if (def?.id) {
-          acc[def.id.toString()] = def;
-        }
-        return acc;
-      }, initialDefinitionsAcc)
-    );
+      const candidates = await this.repository.listValeursToDelete(options, tx);
+      if (candidates.length === 0) return [];
 
-    const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
-      (indicateurDefinition) => {
-        const valeurs = indicateurValeurs
-          .filter((v) => v.indicateurId === indicateurDefinition.id)
-          .map((v) => {
-            const indicateurValeurGroupee: IndicateurValeurGroupee = {
-              id: v.id,
-              collectiviteId: v.collectiviteId,
-              dateValeur: v.dateValeur,
-              periodicite: v.periodicite,
-              resultat: v.resultat,
-              objectif: v.objectif,
-              metadonneeId: null,
-            };
-            if (!commentairesNonInclus) {
-              indicateurValeurGroupee.resultatCommentaire =
-                v.resultatCommentaire;
-              indicateurValeurGroupee.objectifCommentaire =
-                v.objectifCommentaire;
-            }
-            return omitBy(
-              indicateurValeurGroupee,
-              isNil
-            ) as IndicateurValeurGroupee;
-          });
-        // Trie les valeurs par date
-        valeurs.sort((a, b) => {
-          return a.dateValeur.localeCompare(b.dateValeur);
-        });
-        const indicateurAvecValeurs: IndicateurAvecValeurs = {
-          definition: indicateurDefinition,
-          valeurs,
-        };
-        return indicateurAvecValeurs;
-      }
-    );
-    return indicateurAvecValeurs.filter((i) => i.valeurs.length > 0);
-  }
-
-  groupeIndicateursValeursParIndicateurEtSource(
-    indicateurValeurs: (IndicateurValeur & { confidentiel?: boolean | null })[],
-    indicateurDefinitions: Pick<IndicateurDefinition, 'id'>[],
-    indicateurMetadonnees: IndicateurSourceMetadonnee[],
-    sources: IndicateurSource[],
-    supprimeIndicateursSansValeurs = true
-  ): IndicateurAvecValeursParSource[] {
-    const initialDefinitionsAcc: {
-      [key: string]: Pick<IndicateurDefinition, 'id'>;
-    } = {};
-    const uniqueIndicateurDefinitions = Object.values(
-      indicateurDefinitions.reduce((acc, def) => {
-        if (def?.id) {
-          acc[def.id.toString()] = def;
-        }
-        return acc;
-      }, initialDefinitionsAcc)
-    );
-
-    const sourcesParId = sources?.length
-      ? keyBy(sources, (item) => item.id)
-      : {};
-
-    const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
-      (indicateurDefinition) => {
-        const valeurs = indicateurValeurs
-          .filter((v) => v.indicateurId === indicateurDefinition.id)
-          .map((v) => {
-            const indicateurValeurGroupee: IndicateurValeurGroupee = {
-              id: v.id,
-              collectiviteId: v.collectiviteId,
-              dateValeur: v.dateValeur,
-              periodicite: v.periodicite,
-              resultat: v.resultat,
-              resultatCommentaire: v.resultatCommentaire,
-              objectif: v.objectif,
-              objectifCommentaire: v.objectifCommentaire,
-              metadonneeId: v.metadonneeId,
-              confidentiel: v.confidentiel,
-              calculAuto: v.calculAuto ? v.calculAuto : undefined,
-              calculAutoIdentifiantsManquants:
-                v.calculAutoIdentifiantsManquants,
-            };
-
-            return omitBy(
-              indicateurValeurGroupee,
-              isNil
-            ) as IndicateurValeurGroupee;
-          });
-
-        const metadonneesUtilisees: Record<
-          string,
-          Record<string, IndicateurSourceMetadonnee>
-        > = {};
-        const valeursParSource = groupBy(valeurs, (valeur) => {
-          if (!valeur.metadonneeId) {
-            return COLLECTIVITE_SOURCE_ID;
-          }
-          const metadonnee = indicateurMetadonnees.find(
-            (m) => m.id === valeur.metadonneeId
-          );
-          if (!metadonnee) {
-            this.logger.warn(
-              `Metadonnée introuvable pour l'identifiant ${valeur.metadonneeId}`
-            );
-            return this.UNKOWN_SOURCE_ID;
-          } else {
-            if (!metadonneesUtilisees[metadonnee.sourceId]) {
-              metadonneesUtilisees[metadonnee.sourceId] = {};
-            }
-            if (!metadonneesUtilisees[metadonnee.sourceId][metadonnee.id]) {
-              metadonneesUtilisees[metadonnee.sourceId][metadonnee.id] =
-                metadonnee;
-            }
-            return metadonnee.sourceId;
-          }
-        });
-        const sourceMap: Record<string, IndicateurValeursGroupeeParSource> = {};
-        for (const sourceId of Object.keys(valeursParSource)) {
-          // Trie les valeurs par date
-          valeursParSource[sourceId] = valeursParSource[sourceId].sort(
-            (a, b) => {
-              return a.dateValeur.localeCompare(b.dateValeur);
-            }
-          );
-          sourceMap[sourceId] = {
-            source: sourceId,
-            metadonnees: Object.values(metadonneesUtilisees[sourceId] || {}),
-            valeurs: valeursParSource[sourceId],
-            libelle: sourcesParId[sourceId]?.libelle ?? '',
-            ordreAffichage: sourcesParId[sourceId]?.ordreAffichage ?? null,
-          };
-        }
-        const IndicateurAvecValeursParSource: IndicateurAvecValeursParSource = {
-          definition: indicateurDefinition as IndicateurDefinition,
-          totalValeursCount: valeurs.length,
-          totalFilledValeursCount: valeurs.filter(
-            (v) => !isNil(v.resultat) || !isNil(v.objectif)
-          ).length,
-          sources: sourceMap,
-        };
-        return IndicateurAvecValeursParSource;
-      }
-    );
-
-    if (supprimeIndicateursSansValeurs) {
-      return indicateurAvecValeurs.filter(
-        (i) => Object.keys(i.sources).length > 0
+      // Une suppression en masse participe au même protocole par période que
+      // les upserts. Supprimer les ids découverts donne une sémantique de
+      // snapshot claire : une insertion concurrente postérieure est conservée.
+      await this.lockRepository.lock(candidates, tx);
+      const deleted = await this.repository.deleteByIds(
+        candidates.map(({ id }) => id),
+        tx
       );
-    } else {
-      return indicateurAvecValeurs;
-    }
+
+      getIndicateurValeursDataOrThrow(
+        await this.reconciliation.propagateDeleted(deleted, {
+          isUserTrusted: true,
+          tx,
+        })
+      );
+
+      return deleted.map(({ id }) => ({ id }));
+    });
+    this.logger.log(
+      `${deletedIds.length} valeurs d'indicateurs ont été supprimées`
+    );
+    return { indicateurValeurIdsSupprimes: deletedIds };
   }
 }

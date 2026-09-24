@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import {
   createClient,
   SignInWithPasswordCredentials,
@@ -5,6 +6,7 @@ import {
 } from '@supabase/supabase-js';
 import { ConvertJwtToAuthUserService } from '@tet/backend/users/convert-jwt-to-auth-user.service';
 import {
+  AuthJwtPayload,
   AuthenticatedUser,
   AuthRole,
   AuthUser,
@@ -16,6 +18,17 @@ import { YOLO_DODO } from './test-users.samples';
 export { getAuthUserFromUserCredentials } from './get-auth-user-from-credentials';
 
 let supabase: SupabaseClient;
+
+/** Signs a token against the backend verifier, independently of Supabase CLI key formats. */
+export function signTestAuthToken(
+  jwtPayload: AuthJwtPayload,
+  jwtSecret = process.env.SUPABASE_JWT_SECRET
+): string {
+  if (!jwtSecret) {
+    throw new Error('SUPABASE_JWT_SECRET is required to sign a test token');
+  }
+  return new JwtService().sign(jwtPayload, { secret: jwtSecret });
+}
 
 export const getSupabaseClient = (): SupabaseClient => {
   if (!supabase) {
