@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { ArchiveFile } from './archive-arborescence.types';
 import {
-  MAX_FILE_SIZE_BYTES,
+  MAX_ARCHIVED_FILE_SIZE_BYTES,
   splitTriagedArchiveFiles,
   triageArchiveFile,
 } from './triage-archive-files.utils';
@@ -86,7 +86,7 @@ describe('triageArchiveFile', () => {
         bucketId: 'collectivite-1',
         hash: 'abc',
         filename: 'enorme.pdf',
-        filesize: MAX_FILE_SIZE_BYTES + 1,
+        filesize: MAX_ARCHIVED_FILE_SIZE_BYTES + 1,
       },
       folderSegments: [],
     });

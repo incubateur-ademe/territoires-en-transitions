@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useRemovePreuve } from '@/app/collectivites/documents/bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
-  MAX_FILE_SIZE_MB,
+  MAX_UPLOAD_SIZE_MB,
 } from '@/app/collectivites/documents/upload/constants';
 import {
   FileValidationError,
@@ -41,10 +41,10 @@ export type AuditReportUploadState = {
 const toValidationMessage = (error: FileValidationError): string => {
   const formats = EXPECTED_FORMATS.join(', ');
   const messageByError: Record<FileValidationError, string> = {
-    sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_FILE_SIZE_MB }),
+    sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_UPLOAD_SIZE_MB }),
     formatError: appLabels.fichierFormatNonSupporte({ formats }),
     formatAndSizeError: appLabels.fichierFormatEtTailleInvalides({
-      maxMo: MAX_FILE_SIZE_MB,
+      maxMo: MAX_UPLOAD_SIZE_MB,
       formats,
     }),
   };

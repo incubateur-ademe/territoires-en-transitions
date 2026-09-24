@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import {
-  MAX_FILE_SIZE_MB,
+  MAX_UPLOAD_SIZE_MB,
   type FileConstraints,
 } from '@/app/collectivites/documents/upload/constants';
 import type { DemarcheType } from '@tet/domain/demarches';
@@ -49,7 +49,7 @@ const DemarcheDocumentUploadModal = ({
       type: appLabels.demarcheTypeLabels[demarcheType],
     })}
     subTitle={appLabels.aideUploadFichier({
-      tailleMaxMo: MAX_FILE_SIZE_MB,
+      tailleMaxMo: MAX_UPLOAD_SIZE_MB,
       formats: fileConstraints.formats,
     })}
     openState={openState}

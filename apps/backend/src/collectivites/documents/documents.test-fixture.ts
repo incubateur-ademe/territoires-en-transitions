@@ -64,6 +64,7 @@ type SeedTestDocumentArgs = {
   filename: string;
   confidentiel?: boolean;
   withStorageObject?: boolean;
+  sizeInBytes?: number;
 };
 
 export async function seedTestDocument({
@@ -91,6 +92,7 @@ async function insertTestDocument({
   confidentiel = false,
   hash,
   withStorageObject = true,
+  sizeInBytes = TEST_DOCUMENT_SIZE_IN_BYTES,
 }: SeedTestDocumentArgs & { hash: StoredDocumentHash }): Promise<TestDocument> {
   const [bucket] = await databaseService.db
     .select({ bucketId: collectiviteBucketTable.bucketId })
@@ -117,7 +119,7 @@ async function insertTestDocument({
     await databaseService.db.execute(
       sql`insert into storage.objects (bucket_id, name, metadata)
         values (${bucket.bucketId}, ${document.hash}, ${JSON.stringify({
-        size: TEST_DOCUMENT_SIZE_IN_BYTES,
+        size: sizeInBytes,
       })}::jsonb)`
     );
   }

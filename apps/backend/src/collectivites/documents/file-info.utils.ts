@@ -1,12 +1,22 @@
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { StoredFile } from '@tet/domain/collectivites';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, sql, type DriverValueDecoder, type SQL } from 'drizzle-orm';
 import { collectiviteBucketTable } from '../shared/models/collectivite-bucket.table';
 import { bibliothequeFichierTable } from './models/bibliotheque-fichier.table';
 import { storageObjectTable } from './models/storage-object.table';
 
 export type FichierSubquery = ReturnType<typeof buildFichierSubquery>;
+
+const filesizeDecoder: DriverValueDecoder<number | null, string> = {
+  mapFromDriverValue: Number,
+};
+
+export function buildFilesizeSql(): SQL<number | null> {
+  return sql`(${storageObjectTable.metadata}->>'size')::bigint`.mapWith(
+    filesizeDecoder
+  );
+}
 
 export function buildFichierSubquery(db: DatabaseService['db'] | Transaction) {
   return db
@@ -17,9 +27,7 @@ export function buildFichierSubquery(db: DatabaseService['db'] | Transaction) {
       filename: bibliothequeFichierTable.filename,
       confidentiel: bibliothequeFichierTable.confidentiel,
       bucketId: collectiviteBucketTable.bucketId,
-      filesize: sql<
-        number | null
-      >`(${storageObjectTable.metadata}->>'size')::integer`.as('filesize'),
+      filesize: buildFilesizeSql().as('filesize'),
     })
     .from(bibliothequeFichierTable)
     .innerJoin(

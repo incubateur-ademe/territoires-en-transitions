@@ -3,7 +3,7 @@ import type {
   CollectedFile,
   CollectedLink,
 } from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
-import { MAX_FILE_SIZE_BYTES } from '@tet/backend/utils/archive/triage-archive-files.utils';
+import { MAX_ARCHIVED_FILE_SIZE_BYTES } from '@tet/backend/utils/archive/triage-archive-files.utils';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { describe, expect, test } from 'vitest';
 import {
@@ -135,7 +135,7 @@ describe('toArchiveArborescence', () => {
           {
             hash: 'b',
             filename: 'enorme.pdf',
-            filesize: MAX_FILE_SIZE_BYTES + 1,
+            filesize: MAX_ARCHIVED_FILE_SIZE_BYTES + 1,
           },
         ],
       })
