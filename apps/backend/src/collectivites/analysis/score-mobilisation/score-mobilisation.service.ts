@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
+import { notImplemented } from '@tet/backend/utils/not-implemented';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { LEVIER_NOM_BY_ID, LevierId } from '@tet/domain/shared';
+import { LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { AnalysisJobRepository } from '../analysis-job.repository';
 import { LevierMobilisation } from '../mobilisation.repository';
@@ -17,6 +17,11 @@ import {
 } from '../models/analysis-job';
 import { calculateMobilisation } from '../pipeline/calculate-mobilisation/calculate-mobilisation';
 import { groupVoletsByLevier } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
+import {
+  CalculateCollectiviteMobilisationError,
+  UnscoredLevier,
+} from './score-mobilisation.errors';
+import { CalculateCollectiviteMobilisationInput } from './score-mobilisation.input';
 
 export const LEVIERS_IN_PARALLEL = 5;
 
@@ -24,10 +29,9 @@ export type MobilisationScore = {
   leviers: LevierMobilisation[];
 };
 
-type UnscoredLevier = {
-  levierId: LevierId;
-  kind: LlmError['kind'];
-};
+type CalculateCollectiviteMobilisation = (
+  input: CalculateCollectiviteMobilisationInput
+) => Promise<Result<MobilisationScore, CalculateCollectiviteMobilisationError>>;
 
 const toUnscoredLeviersWithCause = (unscored: UnscoredLevier[]): string =>
   unscored
@@ -43,6 +47,9 @@ export class ScoreMobilisationService {
     private readonly collectivitesService: CollectivitesService,
     private readonly llm: LlmService
   ) {}
+
+  calculateCollectiviteMobilisation: CalculateCollectiviteMobilisation =
+    notImplemented('calculateCollectiviteMobilisation');
 
   async score(
     job: AnalysisJob,

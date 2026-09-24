@@ -5,21 +5,15 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { DECLARED_ENJEUX, isDeclaredEnjeu } from '../analysis-enjeux';
 import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
-import {
-  ClassifyFichesError,
-  classifyFiches,
-} from '../pipeline/classify-fiches/classify-fiches';
+import { classifyFiches } from '../pipeline/classify-fiches/classify-fiches';
 import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
+import { ClassifyBatchFailure } from './classify-batch.errors';
 
 export type ClassifyBatchOutcome = {
   classified: ClassifiedFiche[];
   sources: FicheToClassify[];
   tokens: TokenUsage;
 };
-
-export type ClassifyBatchFailure =
-  | ClassifyFichesError
-  | { kind: 'unknown_enjeu'; enjeu: string };
 
 @Injectable()
 export class ClassifyBatchService {

@@ -8,8 +8,8 @@ import {
   CLASSIFY_BATCH_QUEUE_NAME,
   type ClassifyBatchJobData,
 } from './classify-batch.queue';
+import { ClassifyBatchFailure } from './classify-batch.errors';
 import {
-  ClassifyBatchFailure,
   ClassifyBatchOutcome,
   ClassifyBatchService,
 } from './classify-batch.service';

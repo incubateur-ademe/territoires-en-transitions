@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { notImplemented } from '@tet/backend/utils/not-implemented';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { LevierId } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -20,6 +21,9 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
   private readonly logger = new Logger(CollectiviteVoletGesRepository.name);
 
   constructor(private readonly database: DatabaseService) {}
+
+  listCalculatedMobilisations: MobilisationRepository['listCalculatedMobilisations'] =
+    notImplemented('listCalculatedMobilisations');
 
   async updateMobilisation({
     collectiviteId,
