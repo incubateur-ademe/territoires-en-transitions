@@ -8,6 +8,6 @@ export const lienSchema = z.object({
 export type Lien = z.infer<typeof lienSchema>;
 
 export const lienInputSchema = z.object({
-  url: z.url(),
-  titre: z.string().check(z.minLength(1)),
+  url: z.url({ protocol: /^https?$/ }),
+  titre: z.string().check(z.trim(), z.minLength(1)),
 });
