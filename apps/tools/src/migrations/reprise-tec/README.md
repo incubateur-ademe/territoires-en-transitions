@@ -163,6 +163,23 @@ pnpx tsx $SCRIPT --confirm  # import
 Les objectifs 2021 et 2026 ne sont pas écrits : la grille de TeT n'a pas ces
 colonnes.
 
+#### Ce qui arrête l'import du diagnostic
+
+Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
+s'il en trouve un :
+
+| Garde                                                                     | Quoi faire                                                                                              |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris                                                      | lancer d'abord l'import des dossiers (étape 2)                                                          |
+| un dossier a déjà un diagnostic rangé                                     | l'import a déjà tourné (l'annuler d'abord), ou la collectivité a saisi le sien : décider au cas par cas |
+| un numéro de secteur, de polluant, de filière ou de sol inconnu du script | l'ajouter à sa table dans `grille.ts`, avec sa ligne de la grille ou `null`                             |
+| le compteur des métadonnées est en retard sur la table                    | le recaler, après avoir compris pourquoi il l'est (commande ci-dessous)                                 |
+
+```sql
+select setval('public.indicateur_source_metadonnee_id_seq',
+              (select max(id) from public.indicateur_source_metadonnee));
+```
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
