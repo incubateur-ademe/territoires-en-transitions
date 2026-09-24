@@ -90,26 +90,6 @@ services:
             - admin
             - anon
 
-  # Realtime (websockets) — le nom d'hôte sert au parsing du tenant
-  - name: realtime-v1
-    url: http://realtime-dev.supabase-realtime:4000/socket/
-    routes:
-      - name: realtime-v1-all
-        strip_path: true
-        paths:
-          - /realtime/v1/
-    plugins:
-      - name: cors
-      - name: key-auth
-        config:
-          hide_credentials: false
-      - name: acl
-        config:
-          hide_groups_header: true
-          allow:
-            - admin
-            - anon
-
   # Storage (valide lui-même les JWT, pas de key-auth)
   - name: storage-v1
     url: http://storage:5000/

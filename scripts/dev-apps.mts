@@ -39,7 +39,7 @@ export const DEFAULT_APPS: string[] = ['app', 'site', 'backend'];
 export const INFRA_COMPONENTS: InfraComponent[] = [
   {
     value: 'supabase',
-    title: 'Supabase (db, kong, gotrue, rest, realtime, storage, mailpit)',
+    title: 'Supabase (db, kong, gotrue, rest, storage, mailpit)',
   },
   { value: 'studio', title: 'Supabase Studio (localhost:54323)' },
   { value: 'redis', title: 'Redis (localhost:6379)' },
