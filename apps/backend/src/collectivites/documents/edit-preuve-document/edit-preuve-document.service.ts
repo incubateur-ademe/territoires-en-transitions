@@ -1,3 +1,4 @@
+import { LabellisationDocumentsPermissionService } from '@tet/backend/collectivites/documents/labellisation-documents-permission.service';
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -24,7 +25,8 @@ import { EditPreuveDocumentRepository } from './edit-preuve-document.repository'
 export class EditPreuveDocumentService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly editPreuveDocumentRepository: EditPreuveDocumentRepository
+    private readonly editPreuveDocumentRepository: EditPreuveDocumentRepository,
+    private readonly labellisationDocumentsPermissionService: LabellisationDocumentsPermissionService
   ) {}
 
   private async assertComplementairePreuveWritable(
@@ -164,21 +166,6 @@ export class EditPreuveDocumentService {
     return this.editPreuveDocumentRepository.deleteById(preuveType, preuveId);
   }
 
-  private async canMutateLabellisationDocuments(
-    user: AuthenticatedUser,
-    collectiviteId: number
-  ): Promise<boolean> {
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum[
-        'REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'
-      ],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
-    );
-    return permissionResult.success;
-  }
-
   private async canUpdatePreuve({
     preuveType,
     preuveId,
@@ -194,7 +181,10 @@ export class EditPreuveDocumentService {
       return { canUpdate: true };
     }
     const canMutateLabellisationDocuments =
-      await this.canMutateLabellisationDocuments(user, collectiviteId);
+      await this.labellisationDocumentsPermissionService.canMutate(
+        { collectiviteId },
+        { user }
+      );
     if (canMutateLabellisationDocuments) {
       return { canUpdate: true };
     }

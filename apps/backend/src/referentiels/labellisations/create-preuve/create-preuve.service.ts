@@ -1,4 +1,5 @@
 import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
+import { LabellisationDocumentsPermissionService } from '@tet/backend/collectivites/documents/labellisation-documents-permission.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -24,21 +25,9 @@ export class CreatePreuveService {
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly labellisationDocumentsPermissionService: LabellisationDocumentsPermissionService
   ) {}
-
-  private async canMutateLabellisationDocuments(
-    user: AuthenticatedUser,
-    collectiviteId: number
-  ): Promise<boolean> {
-    const permissionResult = await this.permissions.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
-    );
-    return permissionResult.success;
-  }
 
   async createLabellisationPreuve(
     input: CreateLabellisationPreuveInput,
@@ -87,7 +76,10 @@ export class CreatePreuveService {
       };
     }
     const canMutateLabellisationDocuments =
-      await this.canMutateLabellisationDocuments(user, demande.collectiviteId);
+      await this.labellisationDocumentsPermissionService.canMutate(
+        { collectiviteId: demande.collectiviteId },
+        { user }
+      );
     const isAuditeur = auditResult.success
       ? await this.getLabellisationService.isAuditeurForAudit(
           auditResult.data.id,
