@@ -343,6 +343,40 @@ services:
       db:
         condition: service_healthy
 
+  # ———————————————————— gcloud CLI (profil gcloud) ————————————————————————
+  # Lancé ponctuellement par `make gcloud`, qui lui transmet la clé du compte de
+  # service du backend (JSON ou base64, comme initGoogleCloudCredentials). Elle
+  # n'est écrite que dans le /tmp du conteneur éphémère. La CLI ignore
+  # GOOGLE_APPLICATION_CREDENTIALS (réservé à l'ADC des librairies) : c'est
+  # CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE qui l'authentifie, sans `auth activate`.
+  gcloud:
+    profiles: [ gcloud ]
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:586.0.0-alpine
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /workspace
+    environment:
+      GCLOUD_SERVICE_ACCOUNT_KEY:
+      CLOUDSDK_CORE_PROJECT:
+      CLOUDSDK_CONFIG: /tmp/gcloud
+    volumes:
+      - .:/workspace
+    entrypoint:
+      - sh
+      - -ec
+      - |
+        umask 077
+        key=/tmp/keyfile.json
+        case "$$GCLOUD_SERVICE_ACCOUNT_KEY" in
+          *{*) printf %s "$$GCLOUD_SERVICE_ACCOUNT_KEY" ;;
+          *) printf %s "$$GCLOUD_SERVICE_ACCOUNT_KEY" | base64 -d ;;
+        esac > "$$key"
+        unset GCLOUD_SERVICE_ACCOUNT_KEY
+        export GOOGLE_APPLICATION_CREDENTIALS="$$key" CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE="$$key"
+        export CLOUDSDK_CORE_PROJECT="$${CLOUDSDK_CORE_PROJECT:-$$(sed -n 's/.*"project_id": *"\([^"]*\)".*/\1/p' "$$key")}"
+        if [ $$# -eq 0 ]; then exec bash; fi
+        exec gcloud "$$@"
+      - gcloud
+
   # ———————————————————— Edge functions (profil functions) —————————————————
   functions:
     profiles: [ functions ]

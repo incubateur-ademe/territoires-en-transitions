@@ -78,7 +78,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
-        cms-pull cms-pull-local
+        cms-pull cms-pull-local gcloud
 
 help: ## Affiche cette aide
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -331,6 +331,22 @@ cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'inst
 			npm run strapi -- transfer --from "$${STRAPI_REMOTE_URL%/}/admin" --from-token "$$STRAPI_TRANSFER_TOKEN" --force --exclude files; \
 		status=$$?; $(COMPOSE) up -d strapi && exit $$status'
 	@node scripts/strapi-localize-uploads.mts
+
+## —— ☁️  Google Cloud ————————————————————————————————————————————————————————
+# Même règle que initGoogleCloudCredentials (apps/backend) : un
+# GOOGLE_APPLICATION_CREDENTIALS de l'hôte prime sur GCLOUD_SERVICE_ACCOUNT_KEY.
+# Le dépôt est monté en /workspace, répertoire de travail de la commande.
+gcloud: ## Lance gcloud (conteneur) sous le compte de service du backend : make gcloud [c="storage ls"] [project=<id>] (sans c : shell)
+	@$(colored); \
+	if [ -n "$$GOOGLE_APPLICATION_CREDENTIALS" ]; then \
+		GCLOUD_SERVICE_ACCOUNT_KEY=$$(cat "$$GOOGLE_APPLICATION_CREDENTIALS") || exit 1; \
+	else \
+		GCLOUD_SERVICE_ACCOUNT_KEY=$$($(DOTENVX) get GCLOUD_SERVICE_ACCOUNT_KEY $(call env_flags,apps/backend/.env) $(ENV_KEYS) 2>/dev/null); \
+	fi; \
+	case "$$GCLOUD_SERVICE_ACCOUNT_KEY" in ""|encrypted:*) \
+		red "✗ GCLOUD_SERVICE_ACCOUNT_KEY vide ou indéchiffrable dans apps/backend/.env"; $(env_keys_help); exit 1;; esac; \
+	export GCLOUD_SERVICE_ACCOUNT_KEY; \
+	$(COMPOSE) --profile gcloud run --rm $(if $(project),-e CLOUDSDK_CORE_PROJECT=$(project)) gcloud $(c)
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
