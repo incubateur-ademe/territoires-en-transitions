@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthToken,
   getAuthUserFromUserCredentials,
@@ -19,7 +20,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
 
 const TEST_COLLECTIVITE_ID = 1;
-const ENQUEUE_URL = `/collectivites/${TEST_COLLECTIVITE_ID}/plans/import-ia`;
+const makeEnqueueUrl = (collectiviteId: number) =>
+  `/collectivites/${collectiviteId}/plans/import-ia`;
+const ENQUEUE_URL = makeEnqueueUrl(TEST_COLLECTIVITE_ID);
 const csvFile = () => Buffer.from('axe,titre\n1,Action', 'utf-8');
 
 describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
@@ -28,6 +31,10 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let router: TrpcRouter;
   let supportToken: string;
   let outsiderToken: string;
+  let editorToken: string;
+  let readerToken: string;
+  let freshEnqueueUrl: string;
+  let cleanupFreshCollectivite: () => Promise<void>;
   let disableSupport: () => Promise<void>;
 
   const deleteJobs = () =>
@@ -63,11 +70,33 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       password: outsider.user.password,
     });
 
+    const {
+      collectivite: freshCollectivite,
+      users: [editor, reader],
+      cleanup: cleanupFresh,
+    } = await addTestCollectiviteAndUsers(db, {
+      users: [
+        { role: CollectiviteRole.EDITION },
+        { role: CollectiviteRole.LECTURE },
+      ],
+    });
+    freshEnqueueUrl = makeEnqueueUrl(freshCollectivite.id);
+    cleanupFreshCollectivite = cleanupFresh;
+    editorToken = await getAuthToken({
+      email: editor.email ?? '',
+      password: editor.password,
+    });
+    readerToken = await getAuthToken({
+      email: reader.email ?? '',
+      password: reader.password,
+    });
+
     await deleteJobs();
   });
 
   afterAll(async () => {
     await deleteJobs();
+    await cleanupFreshCollectivite();
     await disableSupport();
     await app.close();
   });
@@ -97,6 +126,38 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       .post(ENQUEUE_URL)
       .set('Authorization', `Bearer ${outsiderToken}`)
       .field('planName', 'Plan import IA e2e')
+      .attach('file', csvFile(), {
+        filename: 'plan.csv',
+        contentType: 'text/csv',
+      });
+
+    expect(response.status).toBe(403);
+  });
+
+  // Le type inconnu est rejeté après le contrôle de permission : un 400 prouve
+  // que l'éditeur passe ce contrôle, sans mettre de job en file.
+  it('autorise un éditeur de la collectivité sans mode super-admin', async () => {
+    const response = await request(app.getHttpServer())
+      .post(freshEnqueueUrl)
+      .set('Authorization', `Bearer ${editorToken}`)
+      .field('planName', 'Plan import IA e2e')
+      .field('planType', '999999')
+      .attach('file', csvFile(), {
+        filename: 'plan.csv',
+        contentType: 'text/csv',
+      });
+
+    expect(response.status).toBe(400);
+  });
+
+  // Même type inconnu : si le contrôle laissait passer, on aurait un 400 et
+  // aucun job en file.
+  it('rejette un utilisateur en lecture sur la collectivité (403)', async () => {
+    const response = await request(app.getHttpServer())
+      .post(freshEnqueueUrl)
+      .set('Authorization', `Bearer ${readerToken}`)
+      .field('planName', 'Plan import IA e2e')
+      .field('planType', '999999')
       .attach('file', csvFile(), {
         filename: 'plan.csv',
         contentType: 'text/csv',
