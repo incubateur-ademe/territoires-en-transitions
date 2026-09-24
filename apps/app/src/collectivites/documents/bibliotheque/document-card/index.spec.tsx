@@ -25,21 +25,27 @@ const { openPreuve, removePreuve, updateCommentaire } = vi.hoisted(() => ({
   updateCommentaire: vi.fn(),
 }));
 
-vi.mock('../use-open-preuve', () => ({
-  useOpenPreuve: () => openPreuve,
-}));
+vi.mock(
+  '../use-open-preuve',
+  (): Partial<Record<keyof typeof import('../use-open-preuve'), unknown>> => ({
+    useOpenPreuve: () => openPreuve,
+  })
+);
 
 const toMutation = () => ({ mutate: vi.fn(), isPending: false });
 
-vi.mock('../use-edit-preuve', () => ({
-  useRemovePreuve: () => ({ mutate: removePreuve, isPending: false }),
-  useUpdatePreuveCommentaire: () => ({
-    mutate: updateCommentaire,
-    isPending: false,
-  }),
-  useUpdatePreuveLien: () => toMutation(),
-  useUpdateBibliothequeFichier: () => toMutation(),
-}));
+vi.mock(
+  '../use-edit-preuve',
+  (): Partial<Record<keyof typeof import('../use-edit-preuve'), unknown>> => ({
+    useRemovePreuve: () => ({ mutate: removePreuve, isPending: false }),
+    useUpdatePreuveCommentaire: () => ({
+      mutate: updateCommentaire,
+      isPending: false,
+    }),
+    useUpdatePreuveLien: () => toMutation(),
+    useUpdateBibliothequeFichier: () => toMutation(),
+  })
+);
 
 const FICHIER_CHOISI_ID = 42;
 

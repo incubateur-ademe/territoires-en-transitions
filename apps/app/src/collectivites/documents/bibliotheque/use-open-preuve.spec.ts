@@ -1,6 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { preuveReglementaireFichier, preuveReglementaireLien } from './documents.fixture';
+import {
+  preuveReglementaireFichier,
+  preuveReglementaireLien,
+} from './documents.fixture';
 import { useOpenPreuve } from './use-open-preuve';
 
 const { downloadDocument, telechargementEnCours } = vi.hoisted(() => ({
@@ -8,12 +11,17 @@ const { downloadDocument, telechargementEnCours } = vi.hoisted(() => ({
   telechargementEnCours: { value: false },
 }));
 
-vi.mock('../data/use-download-document', () => ({
-  useDownloadDocument: () => ({
-    mutate: downloadDocument,
-    isPending: telechargementEnCours.value,
-  }),
-}));
+vi.mock(
+  '../data/use-download-document',
+  (): Partial<
+    Record<keyof typeof import('../data/use-download-document'), unknown>
+  > => ({
+    useDownloadDocument: () => ({
+      mutate: downloadDocument,
+      isPending: telechargementEnCours.value,
+    }),
+  })
+);
 
 const COLLECTIVITE_ID = 1;
 

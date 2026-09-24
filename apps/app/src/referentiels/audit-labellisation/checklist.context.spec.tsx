@@ -11,10 +11,18 @@ import {
 } from './checklist.test-fixture';
 import { ChecklistProvider, useChecklist } from './checklist.context';
 
-vi.mock('../labellisations/useCycleLabellisation', () => ({
-  useCycleLabellisation: vi.fn(),
-  usePreuvesLabellisation: vi.fn(() => ({ data: [] })),
-}));
+vi.mock(
+  '../labellisations/useCycleLabellisation',
+  (): Partial<
+    Record<
+      keyof typeof import('../labellisations/useCycleLabellisation'),
+      unknown
+    >
+  > => ({
+    useCycleLabellisation: vi.fn(),
+    usePreuvesLabellisation: vi.fn(() => ({ data: [] })),
+  })
+);
 
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),

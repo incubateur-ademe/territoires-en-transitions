@@ -15,27 +15,55 @@ import {
 } from './acte-engagement.section';
 import { ChecklistPreuve } from './checklist-preuve';
 
-vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
-  usePreuvesLabellisation: vi.fn(),
-}));
+vi.mock(
+  '../../../../labellisations/useCycleLabellisation',
+  (): Partial<
+    Record<
+      keyof typeof import('../../../../labellisations/useCycleLabellisation'),
+      unknown
+    >
+  > => ({
+    usePreuvesLabellisation: vi.fn(),
+  })
+);
 
-vi.mock('./upload-preuve-button', () => ({
-  UploadPreuveButton: ({ label }: { label: string }) => (
-    <button>{label}</button>
-  ),
-}));
+vi.mock(
+  './upload-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./upload-preuve-button'), unknown>
+  > => ({
+    UploadPreuveButton: ({ label }: { label: string }) => (
+      <button>{label}</button>
+    ),
+  })
+);
 
-vi.mock('./download-preuve-button', () => ({
-  DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
-}));
+vi.mock(
+  './download-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./download-preuve-button'), unknown>
+  > => ({
+    DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
+  })
+);
 
-vi.mock('./rename-preuve-button', () => ({
-  RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
-}));
+vi.mock(
+  './rename-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./rename-preuve-button'), unknown>
+  > => ({
+    RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
+  })
+);
 
-vi.mock('./delete-preuve-button', () => ({
-  DeletePreuveButton: () => <button>{'Supprimer'}</button>,
-}));
+vi.mock(
+  './delete-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./delete-preuve-button'), unknown>
+  > => ({
+    DeletePreuveButton: () => <button>{'Supprimer'}</button>,
+  })
+);
 
 const toActeIntrouvable = (filename: string, id = 98): ChecklistPreuve => ({
   id,
