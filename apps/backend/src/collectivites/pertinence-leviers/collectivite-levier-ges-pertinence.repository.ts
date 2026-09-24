@@ -2,15 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { PertinenceLevier } from '@tet/domain/collectivites';
+import { Pertinence, PertinenceLevier } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { collectiviteLevierGesPertinenceTable } from './models/collectivite-levier-ges-pertinence.table';
 import {
   PertinenceLeviersRepositoryErrorEnum,
   type PertinenceLeviersRepositoryError,
 } from './pertinence-leviers.errors';
 import {
+  LevierPertinenceTarget,
   PertinenceLeviersRepository,
   UpsertPertinenceInput,
 } from './pertinence-leviers.repository';
@@ -69,6 +70,80 @@ export class CollectiviteLevierGesPertinenceRepository
       );
       return failure(
         PertinenceLeviersRepositoryErrorEnum.LIST_PERTINENCES_ERROR
+      );
+    }
+  }
+
+  async getLevierPertinence({
+    collectiviteId,
+    levierId,
+    tx,
+  }: LevierPertinenceTarget): Promise<
+    Result<Pertinence | undefined, PertinenceLeviersRepositoryError>
+  > {
+    const runner = tx ?? this.db;
+
+    try {
+      const [storedLevierPertinence] = await runner
+        .select({ pertinence: collectiviteLevierGesPertinenceTable.pertinence })
+        .from(collectiviteLevierGesPertinenceTable)
+        .where(
+          and(
+            eq(
+              collectiviteLevierGesPertinenceTable.collectiviteId,
+              collectiviteId
+            ),
+            eq(collectiviteLevierGesPertinenceTable.levierId, levierId),
+            isNull(collectiviteLevierGesPertinenceTable.categorie)
+          )
+        )
+        .limit(1);
+
+      return success(storedLevierPertinence?.pertinence);
+    } catch (error) {
+      this.logger.error(
+        `Could not read pertinence of levier ${levierId} for collectivite ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        PertinenceLeviersRepositoryErrorEnum.GET_LEVIER_PERTINENCE_ERROR
+      );
+    }
+  }
+
+  async deleteCategoriePertinences({
+    collectiviteId,
+    levierId,
+    tx,
+  }: LevierPertinenceTarget): Promise<
+    Result<void, PertinenceLeviersRepositoryError>
+  > {
+    const runner = tx ?? this.db;
+
+    try {
+      await runner
+        .delete(collectiviteLevierGesPertinenceTable)
+        .where(
+          and(
+            eq(
+              collectiviteLevierGesPertinenceTable.collectiviteId,
+              collectiviteId
+            ),
+            eq(collectiviteLevierGesPertinenceTable.levierId, levierId),
+            isNotNull(collectiviteLevierGesPertinenceTable.categorie)
+          )
+        );
+
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(
+        `Could not delete categorie pertinences of levier ${levierId} for collectivite ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        PertinenceLeviersRepositoryErrorEnum.DELETE_CATEGORIE_PERTINENCES_ERROR
       );
     }
   }

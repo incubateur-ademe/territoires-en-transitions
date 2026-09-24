@@ -1,11 +1,30 @@
-import { PertinenceLevier } from '@tet/domain/collectivites';
+import {
+  canCategoriesHaveOwnPertinence,
+  PertinenceLevier,
+} from '@tet/domain/collectivites';
 
 const isSameVolet = (
   existing: PertinenceLevier,
-  pertinence: PertinenceLevier
+  upserted: PertinenceLevier
 ): boolean =>
-  existing.levierId === pertinence.levierId &&
-  existing.categorie === pertinence.categorie;
+  existing.levierId === upserted.levierId &&
+  existing.categorie === upserted.categorie;
+
+const isCategorieClearedByLevier = (
+  existing: PertinenceLevier,
+  { levierId, categorie, pertinence }: PertinenceLevier
+): boolean =>
+  categorie === undefined &&
+  !canCategoriesHaveOwnPertinence(pertinence) &&
+  existing.levierId === levierId &&
+  existing.categorie !== undefined;
+
+const isKeptAfterUpsert = (
+  existing: PertinenceLevier,
+  upserted: PertinenceLevier
+): boolean =>
+  !isSameVolet(existing, upserted) &&
+  !isCategorieClearedByLevier(existing, upserted);
 
 export const upsertPertinence = ({
   pertinences,
@@ -14,6 +33,6 @@ export const upsertPertinence = ({
   pertinences: PertinenceLevier[];
   pertinence: PertinenceLevier;
 }): PertinenceLevier[] => [
-  ...pertinences.filter((existing) => !isSameVolet(existing, pertinence)),
+  ...pertinences.filter((existing) => isKeptAfterUpsert(existing, pertinence)),
   pertinence,
 ];

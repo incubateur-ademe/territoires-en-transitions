@@ -146,7 +146,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
     await repository.upsert({
       collectiviteId,
       levierId: 'biogaz',
-      pertinence: 'non_pertinent',
+      pertinence: 'a_discuter',
       modifiedBy: adminId,
     });
     await repository.upsert({
@@ -164,7 +164,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
       listResult: {
         success: true,
         data: expect.arrayContaining([
-          { levierId: 'biogaz', pertinence: 'non_pertinent' },
+          { levierId: 'biogaz', pertinence: 'a_discuter' },
           {
             levierId: 'biogaz',
             categorie: 'financement',
@@ -173,6 +173,40 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
         ]),
       },
       storedCount: 2,
+    });
+  });
+
+  it("efface les catégories d'un levier sans toucher à sa propre pertinence", async () => {
+    registerPertinencesCleanup();
+
+    await repository.upsert({
+      collectiviteId,
+      levierId: 'biogaz',
+      pertinence: 'pertinent',
+      modifiedBy: adminId,
+    });
+    await repository.upsert({
+      collectiviteId,
+      levierId: 'biogaz',
+      categorie: 'financement',
+      pertinence: 'a_discuter',
+      modifiedBy: adminId,
+    });
+
+    const deleteResult = await repository.deleteCategoriePertinences({
+      collectiviteId,
+      levierId: 'biogaz',
+    });
+
+    expect({
+      deleteResult,
+      listResult: await repository.list(collectiviteId),
+    }).toStrictEqual({
+      deleteResult: { success: true, data: undefined },
+      listResult: {
+        success: true,
+        data: [{ levierId: 'biogaz', pertinence: 'pertinent' }],
+      },
     });
   });
 
