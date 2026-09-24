@@ -1,14 +1,13 @@
 import { and, eq } from 'drizzle-orm';
 import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
+import { LabellisationDocumentsPermissionService } from '@tet/backend/collectivites/documents/labellisation-documents-permission.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import { canUpdateAuditReport } from '@tet/domain/referentiels';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { auditTable } from '../audit.table';
 import {
@@ -23,22 +22,9 @@ export class UpdateAuditReportService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissions: PermissionService,
-    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly labellisationDocumentsPermissionService: LabellisationDocumentsPermissionService
   ) {}
-
-  private async canMutateLabellisationDocuments(
-    user: AuthenticatedUser,
-    collectiviteId: number
-  ): Promise<boolean> {
-    const permissionResult = await this.permissions.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
-    );
-    return permissionResult.success;
-  }
 
   async updateAuditReport(
     { preuveId, fichierId }: UpdateAuditReportInput,
@@ -71,13 +57,14 @@ export class UpdateAuditReportService {
         };
       }
 
+      const canMutateLabellisationDocuments =
+        await this.labellisationDocumentsPermissionService.canMutate(
+          { collectiviteId: context.collectiviteId },
+          { user }
+        );
       const allowed = canUpdateAuditReport({
         isAuditeur: context.auditeur !== null,
-        canMutateLabellisationDocuments:
-          await this.canMutateLabellisationDocuments(
-            user,
-            context.collectiviteId
-          ),
+        canMutateLabellisationDocuments,
         audit: {
           clos: context.clos,
           valide: context.valide,

@@ -7,6 +7,7 @@ import { CollectiviteReferentielModeService } from './collectivite-referentiel-m
 import { CollectiviteCompetencesRepository } from './shared/collectivite-competences.repository';
 import { CollectiviteCommunesMembresRepository } from './shared/collectivite-communes-membres.repository';
 import { BibliothequeFichierRepository } from './documents/bibliotheque-fichier.repository';
+import { LabellisationDocumentsPermissionService } from './documents/labellisation-documents-permission.service';
 import { CollectiviteBucketRepository } from './documents/collectivite-bucket.repository';
 import { ListDocumentsByScopeRepository } from './documents/list-documents-by-scope/list-documents-by-scope.repository';
 import CollectivitesService from './services/collectivites.service';
@@ -24,6 +25,7 @@ import CollectivitesService from './services/collectivites.service';
     CollectivitePreferencesRepository,
     CollectiviteReferentielModeService,
     BibliothequeFichierRepository,
+    LabellisationDocumentsPermissionService,
     CollectiviteBucketRepository,
     CollectiviteCompetencesRepository,
     CollectiviteCommunesMembresRepository,
@@ -34,6 +36,7 @@ import CollectivitesService from './services/collectivites.service';
     CollectivitePreferencesService,
     CollectiviteReferentielModeService,
     BibliothequeFichierRepository,
+    LabellisationDocumentsPermissionService,
     CollectiviteBucketRepository,
     CollectiviteCompetencesRepository,
     CollectiviteCommunesMembresRepository,
