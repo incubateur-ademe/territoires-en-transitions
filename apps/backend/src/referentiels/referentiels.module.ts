@@ -43,6 +43,9 @@ import { ListHistoriqueService } from './historique/list-historique/list-histori
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import { ImportReferentielRepository } from './import-referentiel/import-referentiel.repository';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
+import { AddAuditDocumentRepository } from './labellisations/add-audit-document/add-audit-document.repository';
+import { AddAuditDocumentRouter } from './labellisations/add-audit-document/add-audit-document.router';
+import { AddAuditDocumentService } from './labellisations/add-audit-document/add-audit-document.service';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { CreatePreuveService } from './labellisations/create-preuve/create-preuve.service';
 import { GetAuditEnCoursRepository } from './labellisations/get-audit-en-cours/get-audit-en-cours.repository';
@@ -217,6 +220,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     DownloadDocumentsMesureService,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
+    AddAuditDocumentRepository,
+    AddAuditDocumentService,
+    AddAuditDocumentRouter,
     ValidateAuditService,
     ValidateAuditRouter,
     HandleMesureAuditStatutService,

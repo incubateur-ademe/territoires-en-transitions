@@ -10,9 +10,9 @@ import {
   FileValidationError,
   validateFile,
 } from '@/app/collectivites/documents/upload/validate-file';
-import { useAddPreuveAudit } from '@/app/collectivites/documents/use-add-preuves';
+import { invalidateQueries } from '@/app/collectivites/documents/use-add-preuves';
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEffect, useRef, useState } from 'react';
@@ -60,7 +60,14 @@ export const useUploadAuditReport = (
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   const uploadFile = useUploadFile();
-  const { mutateAsync: addPreuve } = useAddPreuveAudit();
+  const { mutateAsync: addAuditDocument } = useMutation(
+    trpc.referentiels.labellisations.addAuditDocument.mutationOptions({
+      meta: { disableToast: true },
+      onSuccess: () => {
+        invalidateQueries({ queryClient, collectiviteId, trpc });
+      },
+    })
+  );
   const { mutateAsync: removePreuve } = useRemovePreuve();
   const { setToast } = useToastContext();
 
@@ -113,12 +120,7 @@ export const useUploadAuditReport = (
       });
       if (controller.signal.aborted) return;
 
-      await addPreuve({
-        auditId,
-        collectiviteId,
-        commentaire: '',
-        fichierId,
-      });
+      await addAuditDocument({ auditId, fichierId });
       // Attend que la liste des rapports soit re-fetchée avant de libérer
       // l'état d'upload pour éviter les flickering de refetch
       if (!controller.signal.aborted) {
