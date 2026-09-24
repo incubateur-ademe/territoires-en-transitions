@@ -1,7 +1,7 @@
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LevierId } from '@tet/domain/shared';
 
-export type UnscoredLevier = {
+type UnscoredLevier = {
   levierId: LevierId;
   kind: LlmError['kind'];
 };
