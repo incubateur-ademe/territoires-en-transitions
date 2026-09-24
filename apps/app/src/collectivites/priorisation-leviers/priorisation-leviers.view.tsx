@@ -22,10 +22,7 @@ const LevierCardList = ({
   cards: LevierCard[];
   upsertPertinence?: UpsertPertinence;
 }): JSX.Element => (
-  <ul
-    role="list"
-    className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 2xl:grid-cols-3"
-  >
+  <ul role="list" className="m-0 flex max-w-2xl list-none flex-col gap-4 p-0">
     {cards.map((card) => (
       <li key={card.levierId} className="p-0">
         <LevierSummaryCard levier={card} upsertPertinence={upsertPertinence} />
