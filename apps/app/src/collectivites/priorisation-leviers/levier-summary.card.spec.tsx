@@ -117,14 +117,22 @@ describe('LevierSummaryCard', () => {
           nom: 'Covoiturage',
           secteur: 'Transports',
           ficheCount: 0,
-          categories: [],
+          categories: [
+            {
+              categorie: 'amenagement',
+              ficheCount: 0,
+              pertinenceEffective: { kind: 'propre' },
+            },
+          ],
           pertinence: 'pertinent',
         }}
       />
     );
+    fireEvent.click(screen.getByRole('button', { name: /Catégories/ }));
 
     expect(screen.queryByRole('group')).toBeNull();
     expect(screen.getByText('Pertinence : pertinent')).toBeDefined();
+    expect(screen.getByText('Pertinence : non renseignée')).toBeDefined();
   });
 
   it("n'enfonce aucune pertinence sur un levier encore non qualifié", () => {
@@ -172,6 +180,42 @@ describe('LevierSummaryCard', () => {
     );
 
     expect(upsertPertinence).not.toHaveBeenCalled();
+  });
+
+  it('propose la pertinence en sélecteur sur les catégories à qui peut la modifier', () => {
+    const upsertPertinence = vi.fn();
+    render(
+      <LevierSummaryCard
+        levier={{
+          levierId: 'covoiturage',
+          nom: 'Covoiturage',
+          secteur: 'Transports',
+          ficheCount: 0,
+          categories: [
+            {
+              categorie: 'amenagement',
+              ficheCount: 0,
+              pertinenceEffective: { kind: 'propre' },
+            },
+          ],
+        }}
+        upsertPertinence={upsertPertinence}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Catégories/ }));
+    const selector = screen.getByRole('group', {
+      name: 'Pertinence de la catégorie Aménagement & infrastructures pour le levier Covoiturage',
+    });
+
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Non pertinent' })
+    );
+
+    expect(upsertPertinence).toHaveBeenCalledWith({
+      levierId: 'covoiturage',
+      categorie: 'amenagement',
+      pertinence: 'non_pertinent',
+    });
   });
 
   it('déplie les catégories du levier depuis la carte', () => {

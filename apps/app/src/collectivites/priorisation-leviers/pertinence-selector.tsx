@@ -29,6 +29,7 @@ export const PertinenceSelector = ({
   return (
     <ButtonGroup
       label={label}
+      className="w-full"
       size="sm"
       fillContainer
       activeButtonId={activeButtonId}

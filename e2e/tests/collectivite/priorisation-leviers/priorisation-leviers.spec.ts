@@ -7,6 +7,7 @@ import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_COUNT = 29;
 const CATEGORIE_COUNT = 6;
+const MOBILISED_CATEGORIE_COUNT = 2;
 const MOBILISED_LEVIER_NOM: Levier = 'Vélo et transport en commun';
 
 const mobilisationWithTwoFiches: LevierMobilisation[] = [
@@ -422,7 +423,12 @@ test.describe('Priorisation des leviers', () => {
       MOBILISED_LEVIER_NOM,
       'Gouvernance & partenariats'
     );
-    await expect(gouvernanceRow).toContainText('Pertinence : non renseignée');
+    await expect(
+      priorisationLeviersPom.categoriePertinenceSelector(
+        MOBILISED_LEVIER_NOM,
+        'Gouvernance & partenariats'
+      )
+    ).toBeVisible();
 
     const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'velo_transport_commun',
@@ -450,6 +456,167 @@ test.describe('Priorisation des leviers', () => {
     ).toHaveAttribute('aria-expanded', 'true');
   });
 
+  test('un admin qualifie une catégorie, et la valeur survit au rechargement', async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+    await priorisationLeviersPom.goto(collectivite.data.id);
+    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+      LEVIER_COUNT
+    );
+    await priorisationLeviersPom.openCategoriesWithEnter(
+      LEVIER_NOM_BY_ID.biogaz
+    );
+    const amenagementADiscuter =
+      priorisationLeviersPom.categoriePertinenceButton(
+        LEVIER_NOM_BY_ID.biogaz,
+        'Aménagement & infrastructures',
+        "À discuter avec l'élu"
+      );
+
+    const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
+      levierId: 'biogaz',
+      categorie: 'amenagement',
+      pertinence: 'a_discuter',
+    });
+    await amenagementADiscuter.click();
+    await pertinenceSaved;
+    await page.reload();
+    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+      LEVIER_COUNT
+    );
+    await priorisationLeviersPom.openCategoriesWithEnter(
+      LEVIER_NOM_BY_ID.biogaz
+    );
+
+    await expect(amenagementADiscuter).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test("un volet mobilisé n'offre aucun sélecteur, ses voisins non mobilisés en offrent un", async ({
+    collectivites,
+    mobilisations,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
+    });
+    await mobilisations.add({
+      collectiviteId: collectivite.data.id,
+      leviers: mobilisationWithTwoFiches,
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+    await priorisationLeviersPom.goto(collectivite.data.id);
+    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+      LEVIER_COUNT
+    );
+
+    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
+
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        MOBILISED_LEVIER_NOM,
+        'Financement & fiscalité'
+      )
+    ).toContainText('2 actions déjà rattachées');
+    await expect(
+      priorisationLeviersPom.categoriePertinenceSelector(
+        MOBILISED_LEVIER_NOM,
+        'Gouvernance & partenariats'
+      )
+    ).toBeVisible();
+    await expect(
+      priorisationLeviersPom.categoriePertinenceSelector(
+        MOBILISED_LEVIER_NOM,
+        'Financement & fiscalité'
+      )
+    ).toHaveCount(0);
+    await expect(
+      priorisationLeviersPom.categoriePertinenceSelectors(MOBILISED_LEVIER_NOM)
+    ).toHaveCount(CATEGORIE_COUNT - MOBILISED_CATEGORIE_COUNT);
+  });
+
+  test('un levier repassé pertinent rend ses catégories vides, la qualification posée avant ne revient pas', async ({
+    collectivites,
+    mobilisations,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
+    });
+    await mobilisations.add({
+      collectiviteId: collectivite.data.id,
+      leviers: mobilisationWithTwoFiches,
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+    await priorisationLeviersPom.goto(collectivite.data.id);
+    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+      LEVIER_COUNT
+    );
+    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
+    const gouvernanceADiscuter =
+      priorisationLeviersPom.categoriePertinenceButton(
+        MOBILISED_LEVIER_NOM,
+        'Gouvernance & partenariats',
+        "À discuter avec l'élu"
+      );
+
+    const categorieSaved = priorisationLeviersPom.waitForPertinenceSaved({
+      levierId: 'velo_transport_commun',
+      categorie: 'gouvernance',
+      pertinence: 'a_discuter',
+    });
+    const categorieReloaded =
+      priorisationLeviersPom.waitForPertinencesReloaded();
+    await gouvernanceADiscuter.click();
+    await categorieSaved;
+    await categorieReloaded;
+    await expect(gouvernanceADiscuter).toHaveAttribute('aria-pressed', 'true');
+
+    const levierNonPertinentSaved =
+      priorisationLeviersPom.waitForPertinenceSaved({
+        levierId: 'velo_transport_commun',
+        pertinence: 'non_pertinent',
+      });
+    const levierNonPertinentReloaded =
+      priorisationLeviersPom.waitForPertinencesReloaded();
+    await priorisationLeviersPom
+      .pertinenceButton(MOBILISED_LEVIER_NOM, 'Non pertinent')
+      .click();
+    await levierNonPertinentSaved;
+    await levierNonPertinentReloaded;
+
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        MOBILISED_LEVIER_NOM,
+        'Gouvernance & partenariats'
+      )
+    ).toContainText('Non pertinent, comme le levier');
+    await expect(
+      priorisationLeviersPom.categoriePertinenceSelectors(MOBILISED_LEVIER_NOM)
+    ).toHaveCount(0);
+
+    const levierPertinentSaved = priorisationLeviersPom.waitForPertinenceSaved({
+      levierId: 'velo_transport_commun',
+      pertinence: 'pertinent',
+    });
+    await priorisationLeviersPom
+      .pertinenceButton(MOBILISED_LEVIER_NOM, 'Pertinent')
+      .click();
+    await levierPertinentSaved;
+    await page.reload();
+    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+      LEVIER_COUNT
+    );
+    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
+
+    await expect(gouvernanceADiscuter).toBeVisible();
+    await expect(gouvernanceADiscuter).toHaveAttribute('aria-pressed', 'false');
+  });
+
   test('un membre en édition lit la pertinence en texte, sans sélecteur', async ({
     collectivites,
     page,
@@ -464,5 +631,21 @@ test.describe('Priorisation des leviers', () => {
       priorisationLeviersPom.levierCard(LEVIER_NOM_BY_ID.biogaz)
     ).toContainText('Pertinence : non renseignée');
     await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(0);
+
+    await priorisationLeviersPom.openCategoriesWithEnter(
+      LEVIER_NOM_BY_ID.biogaz
+    );
+
+    await expect(
+      priorisationLeviersPom.categorieRow(
+        LEVIER_NOM_BY_ID.biogaz,
+        'Aménagement & infrastructures'
+      )
+    ).toContainText('Pertinence : non renseignée');
+    await expect(
+      priorisationLeviersPom.categoriePertinenceSelectors(
+        LEVIER_NOM_BY_ID.biogaz
+      )
+    ).toHaveCount(0);
   });
 });

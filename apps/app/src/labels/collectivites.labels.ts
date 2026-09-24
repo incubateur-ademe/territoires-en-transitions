@@ -59,6 +59,14 @@ export const collectivitesLabels = {
     capitalize(pertinenceLabels[pertinence]),
   pertinenceLevierLabel: (levierNom: Levier): string =>
     `Pertinence du levier ${levierNom}`,
+  pertinenceCategorieLabel: ({
+    categorie,
+    levierNom,
+  }: {
+    categorie: CategorieAction;
+    levierNom: Levier;
+  }): string =>
+    `Pertinence de la catégorie ${categorieActionLabels[categorie]} pour le levier ${levierNom}`,
   categorieActionLabel: (categorie: CategorieAction): string =>
     categorieActionLabels[categorie],
   categories: 'Catégories',
