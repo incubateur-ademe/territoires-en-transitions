@@ -35,71 +35,81 @@ const covoiturageSensibilisation: FicheVolets['volets'][number] = {
   categorie: 'sensibilisation',
 };
 
-describe('FicheActionVoletGesRepository.saveVolets', () => {
-  let app: INestApplication;
-  let db: DatabaseService;
-  let repository: FicheActionVoletGesRepository;
-  let collectiviteId: number;
-  let requesterId: string;
-  let ficheId: number;
-  let autreFicheId: number;
-  let ficheAutreCollectiviteId: number;
+let app: INestApplication;
+let db: DatabaseService;
+let repository: FicheActionVoletGesRepository;
+let collectiviteId: number;
+let ficheId: number;
+let autreFicheId: number;
+let ficheAutreCollectiviteId: number;
 
-  beforeAll(async () => {
-    app = await getTestApp();
-    db = await getTestDatabase(app);
-    const router: TrpcRouter = await getTestRouter(app);
-    repository = app.get(FicheActionVoletGesRepository);
+beforeAll(async () => {
+  app = await getTestApp();
+  db = await getTestDatabase(app);
+  const router: TrpcRouter = await getTestRouter(app);
+  repository = app.get(FicheActionVoletGesRepository);
 
-    const { collectivite, user } = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    collectiviteId = collectivite.id;
-    const requester = getAuthUserFromUserCredentials(user);
-    requesterId = requester.id;
-    const caller = router.createCaller({ user: requester });
-
-    const fiche = await createFicheAndCleanupFunction({
-      caller,
-      ficheInput: { collectiviteId, titre: 'Aménager des pistes cyclables' },
-    });
-    ficheId = fiche.ficheId;
-
-    const autreFiche = await createFicheAndCleanupFunction({
-      caller,
-      ficheInput: { collectiviteId, titre: 'Développer le covoiturage' },
-    });
-    autreFicheId = autreFiche.ficheId;
-
-    const voisine = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const ficheVoisine = await createFicheAndCleanupFunction({
-      caller: router.createCaller({
-        user: getAuthUserFromUserCredentials(voisine.user),
-      }),
-      ficheInput: {
-        collectiviteId: voisine.collectivite.id,
-        titre: 'Fiche de la collectivité voisine',
-      },
-    });
-    ficheAutreCollectiviteId = ficheVoisine.ficheId;
-
-    return async () => {
-      await fiche.ficheCleanup();
-      await autreFiche.ficheCleanup();
-      await ficheVoisine.ficheCleanup();
-      await app.close();
-    };
+  const { collectivite, user } = await addTestCollectiviteAndUser(db, {
+    user: { role: CollectiviteRole.EDITION },
+  });
+  collectiviteId = collectivite.id;
+  const caller = router.createCaller({
+    user: getAuthUserFromUserCredentials(user),
   });
 
-  const readVolets = async (): Promise<VoletRow[]> =>
-    db.db
-      .select({
-        ficheId: ficheActionVoletGesTable.ficheId,
-        levierId: ficheActionVoletGesTable.levierId,
-      })
-      .from(ficheActionVoletGesTable)
+  const fiche = await createFicheAndCleanupFunction({
+    caller,
+    ficheInput: { collectiviteId, titre: 'Aménager des pistes cyclables' },
+  });
+  ficheId = fiche.ficheId;
+
+  const autreFiche = await createFicheAndCleanupFunction({
+    caller,
+    ficheInput: { collectiviteId, titre: 'Développer le covoiturage' },
+  });
+  autreFicheId = autreFiche.ficheId;
+
+  const voisine = await addTestCollectiviteAndUser(db, {
+    user: { role: CollectiviteRole.EDITION },
+  });
+  const ficheVoisine = await createFicheAndCleanupFunction({
+    caller: router.createCaller({
+      user: getAuthUserFromUserCredentials(voisine.user),
+    }),
+    ficheInput: {
+      collectiviteId: voisine.collectivite.id,
+      titre: 'Fiche de la collectivité voisine',
+    },
+  });
+  ficheAutreCollectiviteId = ficheVoisine.ficheId;
+
+  return async () => {
+    await fiche.ficheCleanup();
+    await autreFiche.ficheCleanup();
+    await ficheVoisine.ficheCleanup();
+    await app.close();
+  };
+});
+
+const readVolets = async (): Promise<VoletRow[]> =>
+  db.db
+    .select({
+      ficheId: ficheActionVoletGesTable.ficheId,
+      levierId: ficheActionVoletGesTable.levierId,
+    })
+    .from(ficheActionVoletGesTable)
+    .where(
+      inArray(ficheActionVoletGesTable.ficheId, [
+        ficheId,
+        autreFicheId,
+        ficheAutreCollectiviteId,
+      ])
+    );
+
+const registerVoletsCleanup = (): void => {
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionVoletGesTable)
       .where(
         inArray(ficheActionVoletGesTable.ficheId, [
           ficheId,
@@ -107,27 +117,15 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
           ficheAutreCollectiviteId,
         ])
       );
+  });
+};
 
-  const registerVoletsCleanup = (): void => {
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionVoletGesTable)
-        .where(
-          inArray(ficheActionVoletGesTable.ficheId, [
-            ficheId,
-            autreFicheId,
-            ficheAutreCollectiviteId,
-          ])
-        );
-    });
-  };
-
-  it("convertit le libellé en identifiant technique et signe l'auteur", async () => {
+describe('FicheActionVoletGesRepository.saveVolets', () => {
+  it('convertit le libellé en identifiant technique', async () => {
     registerVoletsCleanup();
 
     const saveResult = await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [toFicheVolets(ficheId, veloAmenagement)],
     });
 
@@ -135,7 +133,6 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       .select({
         levierId: ficheActionVoletGesTable.levierId,
         categorie: ficheActionVoletGesTable.categorie,
-        createdBy: ficheActionVoletGesTable.createdBy,
       })
       .from(ficheActionVoletGesTable)
       .where(eq(ficheActionVoletGesTable.ficheId, ficheId));
@@ -145,7 +142,6 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       row: {
         levierId: 'velo_transport_commun',
         categorie: 'amenagement',
-        createdBy: requesterId,
       },
     });
   });
@@ -155,7 +151,6 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
 
     await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [
         toFicheVolets(ficheId, veloAmenagement),
         toFicheVolets(autreFicheId, veloAmenagement),
@@ -164,7 +159,6 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
 
     await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [
         toFicheVolets(ficheId, covoiturageSensibilisation),
         toFicheVolets(autreFicheId),
@@ -179,14 +173,12 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
 
     await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [toFicheVolets(ficheId, veloAmenagement)],
     });
     expect(await readVolets()).toHaveLength(1);
 
     await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [toFicheVolets(ficheId)],
     });
 
@@ -198,14 +190,18 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
 
     await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [toFicheVolets(ficheId, veloAmenagement)],
     });
 
     const saveResult = await repository.saveVolets({
       collectiviteId,
-      createdBy: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
-      fiches: [toFicheVolets(ficheId, covoiturageSensibilisation)],
+      fiches: [
+        toFicheVolets(
+          ficheId,
+          covoiturageSensibilisation,
+          covoiturageSensibilisation
+        ),
+      ],
     });
 
     expect({ saveResult, rows: await readVolets() }).toEqual({
@@ -224,12 +220,10 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       ficheId: ficheAutreCollectiviteId,
       levierId: 'biogaz',
       categorie: 'financement',
-      createdBy: requesterId,
     });
 
     await repository.saveVolets({
       collectiviteId,
-      createdBy: requesterId,
       fiches: [
         toFicheVolets(ficheId, veloAmenagement),
         toFicheVolets(ficheAutreCollectiviteId, covoiturageSensibilisation),
@@ -244,7 +238,41 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
 });
 
 describe('VoletRepository contract', () => {
-  it.todo('saveVolets remplace les volets des fiches données, sans auteur');
+  it('saveVolets remplace les volets des fiches données, sans auteur', async () => {
+    registerVoletsCleanup();
+
+    await repository.saveVolets({
+      collectiviteId,
+      fiches: [toFicheVolets(ficheId, veloAmenagement)],
+    });
+
+    const saveResult = await repository.saveVolets({
+      collectiviteId,
+      fiches: [toFicheVolets(ficheId, covoiturageSensibilisation)],
+    });
+
+    const rows = await db.db
+      .select({
+        ficheId: ficheActionVoletGesTable.ficheId,
+        levierId: ficheActionVoletGesTable.levierId,
+        categorie: ficheActionVoletGesTable.categorie,
+        createdBy: ficheActionVoletGesTable.createdBy,
+      })
+      .from(ficheActionVoletGesTable)
+      .where(eq(ficheActionVoletGesTable.ficheId, ficheId));
+
+    expect({ saveResult, rows }).toEqual({
+      saveResult: { success: true, data: undefined },
+      rows: [
+        {
+          ficheId,
+          levierId: 'covoiturage',
+          categorie: 'sensibilisation',
+          createdBy: null,
+        },
+      ],
+    });
+  });
   it.todo('listVolets renvoie les volets des fiches de la CT');
   it.todo('deleteVolets supprime les volets des fiches données');
   it.todo('deleteVolets ne touche pas aux volets des autres fiches de la CT');
