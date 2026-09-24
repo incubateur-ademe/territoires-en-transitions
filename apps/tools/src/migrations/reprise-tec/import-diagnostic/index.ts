@@ -10,6 +10,7 @@ import { getCible } from '../db';
 import { loadDiagnostic } from './diagnostic';
 import { loadDossiers } from './dossiers';
 import { createDiagnostics } from './ecriture';
+import { validateGardes } from './gardes';
 import { printRapport } from './rapport';
 
 const main = async () => {
@@ -20,6 +21,7 @@ const main = async () => {
   try {
     const dossiers = await loadDossiers(client);
     const { lignes, valeurs } = await loadDiagnostic(client);
+    await validateGardes(client, dossiers, lignes);
 
     await client.query('begin');
     let dossiersEcrits: number;
