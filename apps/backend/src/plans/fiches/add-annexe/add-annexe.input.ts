@@ -1,4 +1,4 @@
-import { lienSchema } from '@tet/domain/collectivites';
+import { lienInputSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 const addAnnexeBaseSchema = z.object({
@@ -14,7 +14,7 @@ export type AddAnnexeWithFileInput = z.infer<
 >;
 
 export const addAnnexeWithLinkInputSchema = addAnnexeBaseSchema.extend({
-  lien: lienSchema,
+  lien: lienInputSchema,
 });
 export type AddAnnexeWithLinkInput = z.infer<
   typeof addAnnexeWithLinkInputSchema
