@@ -62,7 +62,6 @@ services:
       - ./.docker/postgres/init/98-webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:ro
       - ./.docker/postgres/init/99-roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
       - ./.docker/postgres/init/99-jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
-      - ./.docker/postgres/init/99-realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:ro
       - db-data:/var/lib/postgresql/data
       - db-config:/etc/postgresql-custom
     healthcheck:
@@ -202,36 +201,6 @@ services:
       PGRST_JWT_SECRET: *jwt-secret
       PGRST_APP_SETTINGS_JWT_SECRET: *jwt-secret
       PGRST_APP_SETTINGS_JWT_EXP: "3600"
-
-  # ———————————————————————————— Realtime ——————————————————————————————————
-  realtime:
-    profiles: [ supabase ]
-    image: supabase/realtime:v2.119.0
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      default:
-        aliases:
-          - realtime-dev.supabase-realtime # le tenant est déduit du sous-domaine
-    environment:
-      PORT: "4000"
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_USER: supabase_admin
-      DB_PASSWORD: *pg-password
-      DB_NAME: postgres
-      DB_AFTER_CONNECT_QUERY: SET search_path TO _realtime
-      DB_ENC_KEY: supabaserealtime
-      API_JWT_SECRET: *jwt-secret
-      METRICS_JWT_SECRET: *jwt-secret
-      SECRET_KEY_BASE: ${REALTIME_SECRET_KEY_BASE:?déchiffré du .env racine par make via dotenvx}
-      ERL_AFLAGS: -proto_dist inet_tcp
-      DNS_NODES: "''"
-      RLIMIT_NOFILE: "10000"
-      APP_NAME: realtime
-      SEED_SELF_HOST: "true"
-      RUN_JANITOR: "true"
 
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:

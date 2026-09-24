@@ -198,7 +198,7 @@ compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
 # son état réseau *runtime* : un `db` resté « running » mais détaché du réseau
 # (IP et alias `db` perdus — p.ex. `tet_default` recréé/pruné sous lui) n'est
 # donc pas réparé par un simple `up`. Les services qui migrent au boot
-# (gotrue/storage/realtime) plantent alors sur « db introuvable » (SERVFAIL).
+# (gotrue/storage) plantent alors sur « db introuvable » (SERVFAIL).
 # On détecte le cas (conteneur présent, 0 réseau attaché) et on le force-recreate
 heal-db:
 	@cid=$$($(COMPOSE) --profile '*' ps -q db 2>/dev/null); \
@@ -289,7 +289,7 @@ db-import-referentiels: ## Importe référentiels & indicateurs via les tests ba
 db-rm-volume:
 	$(DOCKER) volume rm -f tet_db-data tet_db-config
 # Stoppe toute la stack avant de supprimer le volume : les services connectés
-# (realtime, auth…) doivent redémarrer sur la base neuve.
+# (auth, storage…) doivent redémarrer sur la base neuve.
 db-reset: guard-main down db-rm-volume db-init ## ⚠ Détruit les données locales puis réinitialise la base
 db-shell: warn-shared-db ## Ouvre psql dans la base locale
 	$(COMPOSE) exec db psql -U postgres
