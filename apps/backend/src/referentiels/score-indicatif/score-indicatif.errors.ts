@@ -16,6 +16,7 @@ const specificErrors = [
   'REFERENTIEL_DEFINITION_ERROR',
   'PERSONNALISATION_REPONSES_ERROR',
   'VALEURS_REFERENCE_ERROR',
+  'VALEURS_PROGRESSION_ERROR',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -52,6 +53,10 @@ export const scoreIndicatifTrpcErrorEntries: Record<
   VALEURS_REFERENCE_ERROR: {
     code: 'INTERNAL_SERVER_ERROR',
     message: 'Impossible de charger les valeurs de référence.',
+  },
+  VALEURS_PROGRESSION_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Impossible de charger les valeurs de progression.',
   },
   ...referentielNotWritableTrpcErrorEntry,
 };

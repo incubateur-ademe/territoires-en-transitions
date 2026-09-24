@@ -14,7 +14,7 @@ export type LigneValeurProgression = {
 
 const SOURCE_SNBC = 'snbc';
 
-const getAnnee = (dateValeur: string) => Number(dateValeur.slice(0, 4));
+export const getAnnee = (dateValeur: string) => Number(dateValeur.slice(0, 4));
 
 const isFiniteNumber = (value: number | null | undefined): value is number =>
   !isNil(value) && Number.isFinite(value);

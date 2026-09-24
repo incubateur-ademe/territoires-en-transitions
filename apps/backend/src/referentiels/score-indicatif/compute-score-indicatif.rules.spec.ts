@@ -1,5 +1,6 @@
 import { IndicateurAssocie, ValeurUtilisee } from '@tet/domain/referentiels';
 import {
+  buildAnneesPourExpression,
   buildValeursPourExpression,
   pickValeursUtiliseesPourResultat,
 } from './compute-score-indicatif.rules';
@@ -25,6 +26,26 @@ const valeurUtilisee: ValeurUtilisee = {
 };
 
 describe('compute-score-indicatif.rules', () => {
+  describe('buildAnneesPourExpression', () => {
+    it("associe l'année de la dateValeur à l'identifiant référentiel", () => {
+      expect(
+        buildAnneesPourExpression(
+          [{ ...valeurUtilisee, dateValeur: '2025-05-29' }],
+          [indicateurAssocie]
+        )
+      ).toEqual({ ind_test: 2025 });
+    });
+
+    it('ignore les indicateurs non associés', () => {
+      expect(
+        buildAnneesPourExpression(
+          [{ ...valeurUtilisee, indicateurId: 99 }],
+          [indicateurAssocie]
+        )
+      ).toEqual({});
+    });
+  });
+
   describe('buildValeursPourExpression', () => {
     it("construit la table identifiant référentiel -> valeur à partir de l'indicateur associé", () => {
       const result = buildValeursPourExpression(

@@ -30,6 +30,7 @@ import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { groupBy, keyBy } from 'es-toolkit';
 import { BuildEvaluationContextService } from './build-evaluation-context.service';
 import {
+  buildAnneesPourExpression,
   buildValeursPourExpression,
   pickValeursUtiliseesPourResultat,
 } from './compute-score-indicatif.rules';
@@ -287,8 +288,11 @@ export class ScoreIndicatifService {
       await this.buildEvaluationContextService.buildEvaluationContext(
         input,
         formules.map(({ actionId }) => actionId),
+        indicateursParActionId,
         indicateursAssocies,
-        identiteCollectivite
+        identiteCollectivite,
+        valeursUtiliseesParActionId,
+        { tx }
       );
     if (!evaluationContextResult.success) {
       return failure(evaluationContextResult.error);
@@ -332,12 +336,13 @@ export class ScoreIndicatifService {
           (v) => v.typeScore
         );
 
-        // une formule qui ne référence aucun indicateur via `val`/`opt_val`
-        // (ex. une formule reposant uniquement sur `est_suivi(...)`) n'a
-        // besoin d'aucune valeur sélectionnée par la collectivité. La liste
-        // des tokens concernés vit dans `VALUE_SOURCE_TOKENS`, aux côtés du
-        // reste de la sémantique des tokens (`IndicateurExpressionService`),
-        // pour éviter qu'un futur token soit ajouté ici sans y être ajouté.
+        // une formule qui ne référence aucun indicateur via `val`/`opt_val`/
+        // `progression_snbc`/`reduction` (ex. une formule reposant uniquement
+        // sur `est_suivi(...)`) n'a besoin d'aucune valeur sélectionnée par
+        // la collectivité. La liste des tokens concernés vit dans
+        // `VALUE_SOURCE_TOKENS`, aux côtés du reste de la sémantique des tokens
+        // (`IndicateurExpressionService`), pour éviter qu'un futur token soit
+        // ajouté ici sans y être ajouté.
         const formuleNecessiteUneValeur = (
           indicateursParActionId[actionId] ?? []
         ).some((ref) =>
@@ -472,10 +477,22 @@ export class ScoreIndicatifService {
       indicateursAssocies
     );
 
+    // `evaluationContext` est partagé par toutes les actions : l'année utilisée
+    // dépend de l'action et n'est ajoutée qu'à une copie, et seulement au
+    // calcul `fait` (les objectifs `programme` n'ont pas d'année utilisée)
     const score = this.indicateurExpressionService.parseAndEvaluateExpression(
       exprScore,
       valeurs,
-      { ...evaluationContext, indicateursSuivis }
+      typeScore === scoreIndicatifTypeEnum.FAIT
+        ? {
+            ...evaluationContext,
+            indicateursSuivis,
+            anneesUtilisees: buildAnneesPourExpression(
+              valeursUtilisees,
+              indicateursAssocies
+            ),
+          }
+        : { ...evaluationContext, indicateursSuivis }
     );
     if (score === null) {
       this.logger.log(
