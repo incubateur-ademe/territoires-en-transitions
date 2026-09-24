@@ -8,17 +8,38 @@ vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: () => ({ collectiviteId: 1 }),
 }));
 
-vi.mock('../checklist.context', () => ({
-  useChecklist: vi.fn(),
-}));
+vi.mock(
+  '../checklist.context',
+  (): Partial<
+    Record<keyof typeof import('../checklist.context'), unknown>
+  > => ({
+    useChecklist: vi.fn(),
+  })
+);
 
-vi.mock('../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal', () => ({
-  AskPremiereEtoileModal: () => null,
-}));
+vi.mock(
+  '../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal',
+  (): Partial<
+    Record<
+      keyof typeof import('../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal'),
+      unknown
+    >
+  > => ({
+    AskPremiereEtoileModal: () => null,
+  })
+);
 
-vi.mock('../../labellisations/request-audit/request-audit.button', () => ({
-  RequestAuditButton: () => null,
-}));
+vi.mock(
+  '../../labellisations/request-audit/request-audit.button',
+  (): Partial<
+    Record<
+      keyof typeof import('../../labellisations/request-audit/request-audit.button'),
+      unknown
+    >
+  > => ({
+    RequestAuditButton: () => null,
+  })
+);
 
 const mockedUseChecklist = vi.mocked(useChecklist);
 

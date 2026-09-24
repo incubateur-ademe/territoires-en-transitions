@@ -8,10 +8,15 @@ import { Parcours } from '../../checklist-view-model';
 import { useChecklist, useRoleDropdown } from '../../checklist.context';
 import { LabellisationChecklistTable } from './labellisation-checklist.table';
 
-vi.mock('../../checklist.context', () => ({
-  useChecklist: vi.fn(),
-  useRoleDropdown: vi.fn(),
-}));
+vi.mock(
+  '../../checklist.context',
+  (): Partial<
+    Record<keyof typeof import('../../checklist.context'), unknown>
+  > => ({
+    useChecklist: vi.fn(),
+    useRoleDropdown: vi.fn(),
+  })
+);
 
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),

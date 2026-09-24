@@ -8,16 +8,26 @@ const { askPremiereEtoile, setToast } = vi.hoisted(() => ({
   setToast: vi.fn(),
 }));
 
-vi.mock('../data/use-request-labellisation', () => ({
-  useRequestLabellisation: () => ({
-    isPending: false,
-    mutate: askPremiereEtoile,
-  }),
-}));
+vi.mock(
+  '../data/use-request-labellisation',
+  (): Partial<
+    Record<keyof typeof import('../data/use-request-labellisation'), unknown>
+  > => ({
+    useRequestLabellisation: () => ({
+      isPending: false,
+      mutate: askPremiereEtoile,
+    }),
+  })
+);
 
-vi.mock('../../../utils/toast/toast-context', () => ({
-  useToastContext: () => ({ setToast }),
-}));
+vi.mock(
+  '../../../utils/toast/toast-context',
+  (): Partial<
+    Record<keyof typeof import('../../../utils/toast/toast-context'), unknown>
+  > => ({
+    useToastContext: () => ({ setToast }),
+  })
+);
 
 const DEMANDER_LA_PREMIERE_ETOILE = 'Demander la première étoile';
 const BRAVO_PREMIERE_ETOILE =
