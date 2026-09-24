@@ -14,9 +14,7 @@ export const ficheActionVoletGesTable = pgTable(
     levierId: levierGesIdPgEnum('levier_id').notNull(),
     categorie: voletCategoriePgEnum('categorie').notNull(),
     createdAt,
-    createdBy: uuid('created_by')
-      .notNull()
-      .references(() => authUsersTable.id),
+    createdBy: uuid('created_by').references(() => authUsersTable.id),
   },
   (table) => [
     primaryKey({ columns: [table.ficheId, table.levierId, table.categorie] }),

@@ -26,12 +26,10 @@ export class FicheActionVoletGesRepository implements VoletRepository {
   async saveVolets({
     collectiviteId,
     fiches,
-    createdBy,
     tx,
   }: {
     collectiviteId: number;
     fiches: FicheVolets[];
-    createdBy: string;
     tx?: Transaction;
   }): Promise<Result<void, VoletError>> {
     try {
@@ -67,7 +65,6 @@ export class FicheActionVoletGesRepository implements VoletRepository {
               ficheId,
               levierId: LEVIER_ID_BY_NOM[levier],
               categorie,
-              createdBy,
             }))
           );
 
