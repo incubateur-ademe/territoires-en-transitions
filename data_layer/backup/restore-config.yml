@@ -47,6 +47,7 @@ groups:
     - collectivite_banatic_competence
     - collectivite_banatic_2025_competence
     - collectivite_banatic_2025_transfert
+    - collectivite_banatic_2025_perimetre
     - commune
     - epci
     - collectivite_test
