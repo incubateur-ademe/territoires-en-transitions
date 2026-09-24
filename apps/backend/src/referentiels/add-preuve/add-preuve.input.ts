@@ -1,4 +1,4 @@
-import { lienSchema } from '@tet/domain/collectivites';
+import { lienInputSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 const addPreuveBaseSchema = z.object({
@@ -18,7 +18,7 @@ export type AddPreuveReglementaireWithFileInput = z.infer<
 export const addPreuveReglementaireWithLinkInputSchema =
   addPreuveBaseSchema.extend({
     preuveId: z.string().min(1),
-    lien: lienSchema,
+    lien: lienInputSchema,
   });
 export type AddPreuveReglementaireWithLinkInput = z.infer<
   typeof addPreuveReglementaireWithLinkInputSchema
@@ -44,7 +44,7 @@ export type AddPreuveComplementaireWithFileInput = z.infer<
 export const addPreuveComplementaireWithLinkInputSchema =
   addPreuveBaseSchema.extend({
     actionId: z.string().min(1),
-    lien: lienSchema,
+    lien: lienInputSchema,
   });
 export type AddPreuveComplementaireWithLinkInput = z.infer<
   typeof addPreuveComplementaireWithLinkInputSchema

@@ -5,6 +5,9 @@ import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-cru
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
+import { AddRapportVisiteRepository } from '@tet/backend/collectivites/documents/add-rapport-visite/add-rapport-visite.repository';
+import { AddRapportVisiteRouter } from '@tet/backend/collectivites/documents/add-rapport-visite/add-rapport-visite.router';
+import { AddRapportVisiteService } from '@tet/backend/collectivites/documents/add-rapport-visite/add-rapport-visite.service';
 import { CollectiviteDocumentsAccessService } from '@tet/backend/collectivites/documents/collectivite-documents-access.service';
 import { GetDownloadUrlRepository } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.repository';
 import { GetDownloadUrlRouter } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.router';
@@ -115,6 +118,9 @@ import { PersonnesService } from './services/personnes.service';
     EditPreuveDocumentRepository,
     EditPreuveDocumentService,
     EditPreuveDocumentRouter,
+    AddRapportVisiteRepository,
+    AddRapportVisiteService,
+    AddRapportVisiteRouter,
     DocumentsRouter,
     DocumentService,
     PersonneTagService,
