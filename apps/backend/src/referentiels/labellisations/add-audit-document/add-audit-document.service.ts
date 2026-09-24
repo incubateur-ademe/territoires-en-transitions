@@ -1,8 +1,7 @@
 import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
+import { LabellisationDocumentsPermissionService } from '@tet/backend/collectivites/documents/labellisation-documents-permission.service';
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
@@ -23,23 +22,9 @@ export class AddAuditDocumentService {
     private readonly permissionService: PermissionService,
     private readonly getLabellisationService: GetLabellisationService,
     private readonly addAuditDocumentRepository: AddAuditDocumentRepository,
-    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly labellisationDocumentsPermissionService: LabellisationDocumentsPermissionService
   ) {}
-
-  private async canMutateLabellisationDocuments(
-    user: AuthenticatedUser,
-    collectiviteId: number,
-    tx?: Transaction
-  ): Promise<boolean> {
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId },
-      tx
-    );
-    return permissionResult.success;
-  }
 
   async addAuditDocument(
     input: AddAuditDocumentInput,
@@ -73,7 +58,10 @@ export class AddAuditDocumentService {
     }
 
     const canMutateLabellisationDocuments =
-      await this.canMutateLabellisationDocuments(user, collectiviteId, tx);
+      await this.labellisationDocumentsPermissionService.canMutate(
+        { collectiviteId },
+        { user, tx }
+      );
     const canAddDocument = canAddAuditDocument({
       canMutateLabellisationDocuments,
       audit: { clos, valide },
