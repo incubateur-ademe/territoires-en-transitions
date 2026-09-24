@@ -100,5 +100,5 @@ it('préserve le filtre de métadonnée isolant le diagnostic PCAET', async () =
     builder.where.mock.calls[0][0] as SQL
   );
   expect(query.sql).toContain('"metadonnee_id" =');
-  expect(query.params).toEqual(['imposee', 42, 15]);
+  expect(query.params).toEqual([42, 15]);
 });

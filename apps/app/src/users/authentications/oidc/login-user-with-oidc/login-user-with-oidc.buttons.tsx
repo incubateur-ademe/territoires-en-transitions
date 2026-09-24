@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { ENV } from '@tet/api/environmentVariables';
 import { useTRPC } from '@tet/api';
 import { Event, LoginMethod, ProConnectButton, useEventTracker } from '@tet/ui';
 import { buildLoginWithOidcUrl } from './login-user-with-oidc.urls';
@@ -31,7 +32,7 @@ export const LoginUserWithOidcButtons = ({
   next,
 }: OidcProviderButtonsProps) => {
   const trpc = useTRPC();
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendUrl = ENV.backend_url;
   const trackEvent = useEventTracker();
 
   const { data: providersActifs } = useQuery(

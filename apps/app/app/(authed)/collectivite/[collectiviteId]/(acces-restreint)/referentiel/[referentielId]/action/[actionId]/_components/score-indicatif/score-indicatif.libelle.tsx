@@ -212,10 +212,9 @@ export const LibelleValeurSelectionnee = (props: {
   indicateurId: number;
   unite: string;
   valeurUtilisees?: ScoreIndicatifValeursUtilisees;
-  periodicite: IndicateurPeriodicite;
   typeScore: ScoreIndicatifType;
 }) => {
-  const { unite, valeurUtilisees, periodicite, typeScore } = props;
+  const { unite, valeurUtilisees, typeScore } = props;
   const valeurUtilisee = valeurUtilisees?.find(
     (v) => v.typeScore === typeScore
   );
@@ -232,7 +231,7 @@ export const LibelleValeurSelectionnee = (props: {
           typeScore={typeScore}
           unite={unite}
           valeurUtilisee={valeurUtilisee}
-          periodicite={periodicite}
+          periodicite="annuelle"
         />
       ) : (
         <i>{appLabels.aCompleter}</i>

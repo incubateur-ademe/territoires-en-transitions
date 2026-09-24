@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   ActionStatutCreate,
-  actionStatutSchemaCreate,
   canUpdateActionStatutWithoutPermissionCheck,
   findActionById,
   getReferentielIdFromActionId,
@@ -14,14 +14,9 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray, sql } from 'drizzle-orm';
-import z from 'zod';
-import { isErrorWithCause } from '../../utils/nest/errors.utils';
-import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import { GetLabellisationService } from '../labellisations/get-labellisation.service';
-import { actionStatutTable } from '../models/action-statut.table';
-import { SnapshotsService } from '../snapshots/snapshots.service';
 import { mapSnapshotsError } from '../snapshots/snapshots.errors';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { actionStatutCreateToActionStatutInDatabase } from './action-statut-create-to-action-statut-in-database.adapter';
 import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rules';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut-historique.repository';
@@ -29,31 +24,79 @@ import {
   UpdateActionStatutError,
   UpdateActionStatutErrorEnum,
 } from './update-action-statut.errors';
-
-export const upsertActionStatutsRequestSchema = z.object({
-  actionStatuts: z.array(actionStatutSchemaCreate).min(1),
-});
-
-export type UpsertActionStatutsRequest = z.infer<
-  typeof upsertActionStatutsRequestSchema
->;
+import { UpdateActionStatutRepository } from './update-action-statut.repository';
 
 @Injectable()
 export class UpdateActionStatutService {
   private readonly logger = new Logger(UpdateActionStatutService.name);
 
   constructor(
-    private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly snapshotsService: SnapshotsService,
     private readonly getLabellisationService: GetLabellisationService,
+    private readonly transactionManager: TransactionManager,
+    private readonly updateActionStatutRepository: UpdateActionStatutRepository,
     private readonly updateActionStatutHistoriqueRepository: UpdateActionStatutHistoriqueRepository
   ) {}
 
+  /**
+   * Écrit les statuts puis recalcule le snapshot courant, qui est renvoyé.
+   *
+   * Le snapshot est recalculé après le commit : son calcul lit la base hors
+   * transaction et ne verrait pas les statuts non encore committés.
+   */
   async upsertActionStatuts(
     actionStatuts: ActionStatutCreate[],
-    user: AuthUser
+    user: AuthenticatedUser
   ): Promise<Result<ScoreSnapshot, UpdateActionStatutError>> {
+    if (actionStatuts.length === 0) {
+      return failure(UpdateActionStatutErrorEnum.NO_ACTION_STATUTS);
+    }
+    const collectiviteId = actionStatuts[0].collectiviteId;
+    const referentielId = getReferentielIdFromActionId(
+      actionStatuts[0].actionId
+    );
+
+    const writeResult = await this.upsertActionStatutsWithoutSnapshot(
+      actionStatuts,
+      { user }
+    );
+    if (!writeResult.success) {
+      return failure(writeResult.error, writeResult.cause);
+    }
+
+    const snapshotResult = await this.snapshotsService.computeAndUpsert(
+      {
+        collectiviteId,
+        referentielId,
+      },
+      { user }
+    );
+
+    if (!snapshotResult.success) {
+      return mapSnapshotsError(snapshotResult, {
+        snapshotConflict: UpdateActionStatutErrorEnum.SNAPSHOT_UPDATE_FAILED,
+        snapshotSaveFailed: UpdateActionStatutErrorEnum.SNAPSHOT_UPDATE_FAILED,
+        defaultError: 'DATABASE_ERROR',
+      });
+    }
+
+    return success(snapshotResult.data);
+  }
+
+  /**
+   * Valide puis écrit les statuts, sans toucher au snapshot : à l'appelant de
+   * le recalculer une fois la transaction committée.
+   *
+   * Accepte une transaction externe, pour composer cette écriture avec
+   * d'autres. Dans ce cas, conformément au `TransactionManager`, un échec est
+   * relancé plutôt que renvoyé, afin que la transaction de l'appelant soit
+   * annulée.
+   */
+  async upsertActionStatutsWithoutSnapshot(
+    actionStatuts: ActionStatutCreate[],
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<void, UpdateActionStatutError>> {
     if (actionStatuts.length === 0) {
       return failure(UpdateActionStatutErrorEnum.NO_ACTION_STATUTS);
     }
@@ -158,99 +201,47 @@ export class UpdateActionStatutService {
       ...actionStatutCreateToActionStatutInDatabase(actionStatut),
     }));
 
-    try {
-      await this.databaseService.db.transaction(async (tx) => {
-        // trie les action IDs pour éviter les deadlocks lors du verrouillage de plusieurs lignes
-        const sortedActionStatuts = [...allActionStatuts].sort((a, b) =>
-          a.actionId.localeCompare(b.actionId)
-        );
-        const sortedActionIds = sortedActionStatuts.map((a) => a.actionId);
+    return this.transactionManager.executeSingle<void, UpdateActionStatutError>(
+      async (transaction) => {
+        const upsertResult =
+          await this.updateActionStatutRepository.upsertStatuts(
+            collectiviteId,
+            allActionStatuts,
+            transaction
+          );
+        if (!upsertResult.success) {
+          if (
+            upsertResult.error === UpdateActionStatutErrorEnum.ACTION_NOT_FOUND
+          ) {
+            this.logger.warn(
+              actionStatuts.length > 1
+                ? `Une ou plusieurs actions n'existent pas pour le referentiel ${referentielId}`
+                : `L'action ${actionStatuts[0].actionId} n'existe pas pour le referentiel ${referentielId}`
+            );
+          }
+          return failure(upsertResult.error, upsertResult.cause);
+        }
 
-        const oldValues = await tx
-          .select()
-          .from(actionStatutTable)
-          .where(
-            and(
-              eq(actionStatutTable.collectiviteId, collectiviteId),
-              inArray(actionStatutTable.actionId, sortedActionIds)
-            )
-          )
-          .orderBy(actionStatutTable.actionId)
-          .for('update');
-
-        const oldValuesMap = new Map(oldValues.map((ov) => [ov.actionId, ov]));
-
-        const upsertedRows = await tx
-          .insert(actionStatutTable)
-          .values(sortedActionStatuts)
-          .onConflictDoUpdate({
-            target: [
-              actionStatutTable.collectiviteId,
-              actionStatutTable.actionId,
-            ],
-            set: {
-              avancement: sql.raw(
-                `excluded.${actionStatutTable.avancement.name}`
-              ),
-              avancementDetaille: sql.raw(
-                `excluded.${actionStatutTable.avancementDetaille.name}`
-              ),
-              concerne: sql.raw(`excluded.${actionStatutTable.concerne.name}`),
-              modifiedBy: sql.raw(
-                `excluded.${actionStatutTable.modifiedBy.name}`
-              ),
-            },
-          })
-          .returning();
-
-        for (const upserted of upsertedRows) {
-          const oldRow = oldValuesMap.get(upserted.actionId) ?? null;
-          await this.updateActionStatutHistoriqueRepository.save(
-            tx,
-            upserted,
-            oldRow,
-            user.id
+        try {
+          for (const { current, previous } of upsertResult.data) {
+            await this.updateActionStatutHistoriqueRepository.save(
+              transaction,
+              current,
+              previous,
+              user.id
+            );
+          }
+        } catch (error) {
+          this.logger.error(error);
+          return failure(
+            'DATABASE_ERROR',
+            error instanceof Error ? error : new Error(getErrorMessage(error))
           );
         }
-      });
-    } catch (error) {
-      if (
-        isErrorWithCause(error) &&
-        error.cause.code ===
-          PgIntegrityConstraintViolation.ForeignKeyViolation &&
-        error.cause.constraint === 'action_statut_action_id_fkey'
-      ) {
-        const errorMessage =
-          actionStatuts.length > 1
-            ? `Une ou plusieurs actions n'existent pas pour le referentiel ${referentielId}`
-            : `L'action ${actionStatuts[0].actionId} n'existe pas pour le referentiel ${referentielId}`;
-        this.logger.warn(errorMessage);
-        return failure(UpdateActionStatutErrorEnum.ACTION_NOT_FOUND);
-      }
 
-      this.logger.error(error);
-      return failure(
-        'DATABASE_ERROR',
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
-    }
-
-    const snapshotResult = await this.snapshotsService.computeAndUpsert(
-      {
-        collectiviteId,
-        referentielId,
+        return success(undefined);
       },
-      { user }
+      tx
     );
-
-    if (!snapshotResult.success) {
-      return mapSnapshotsError(snapshotResult, {
-        snapshotConflict: UpdateActionStatutErrorEnum.SNAPSHOT_UPDATE_FAILED,
-        snapshotSaveFailed: UpdateActionStatutErrorEnum.SNAPSHOT_UPDATE_FAILED,
-        defaultError: 'DATABASE_ERROR',
-      });
-    }
-
-    return success(snapshotResult.data);
   }
 }

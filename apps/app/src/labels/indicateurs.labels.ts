@@ -3,14 +3,24 @@ import { plural } from '@tet/ui/labels/plural';
 export const indicateursLabels = {
   periodiciteDeclarationCollectivite:
     'Périodicité de déclaration de ma collectivité',
-  periodiciteAffichageGraphique: 'Périodicité d’affichage du graphique',
+  periodiciteAffichageGraphique: 'Périodicité d’affichage',
   periodiciteAffichageGraphiqueHint:
-    'Ce choix modifie les repères de l’axe. Chaque valeur conserve sa date et sa périodicité de déclaration, sans agrégation.',
-  periodiciteRecommandee: (label: string) => `${label} (recommandée)`,
-  periodiciteImposee:
-    'Cette périodicité est imposée par le catalogue et ne peut pas être modifiée.',
-  periodiciteHistoriqueConserve:
-    'Ce choix concerne uniquement votre collectivité. Les valeurs de chaque périodicité sont conservées séparément, sans conversion automatique.',
+    'Les valeurs sont regroupées selon les règles de l’indicateur. Un regroupement incomplet ou sans règle définie reste vide. Les données sources restent inchangées.',
+  periodiciteImmuable:
+    'Cette périodicité est fixée à la création de l’indicateur.',
+  indicateurAggregationResultat: 'Regroupement des résultats',
+  indicateurAggregationObjectif: 'Regroupement des objectifs',
+  indicateurAggregationAucune: 'Pas de regroupement',
+  indicateurAggregationSomme: 'Somme',
+  indicateurAggregationMoyenne: 'Moyenne',
+  indicateurAggregationDerniereValeur: 'Dernière valeur',
+  indicateurAggregationHint:
+    'Choisissez une règle adaptée à votre indicateur pour consulter des périodes plus larges. Toutes les périodes doivent être renseignées.',
+  indicateurAggregationConsultation:
+    'Les valeurs regroupées sont en lecture seule. Pour modifier une valeur, revenez à sa périodicité de déclaration.',
+  indicateurSourceVersion: (id: number) => `Source ${id}`,
+  indicateurSourcePeriodicite: (label: string, cadence: string) =>
+    `${label} · ${cadence}`,
 
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
 
@@ -63,6 +73,14 @@ export const indicateursLabels = {
   champPeriodiciteIndicateur: 'Périodicité de déclaration *',
   periodiciteAnnuelle: 'Annuelle',
   periodiciteMensuelle: 'Mensuelle',
+  periodiciteTrimestrielle: 'Trimestrielle',
+  periodiciteSemestrielle: 'Semestrielle',
+  champTrimestre: 'Trimestre (ex. 2026-T1) *',
+  champSemestre: 'Semestre (ex. 2026-S1) *',
+  ajouterTrimestre: 'Ajouter un trimestre',
+  ajouterSemestre: 'Ajouter un semestre',
+  validerAjouterTrimestre: 'Valider et ajouter un trimestre',
+  validerAjouterSemestre: 'Valider et ajouter un semestre',
   placeholderPeriodiciteIndicateur: 'Sélectionner une périodicité',
   champMois: 'Mois *',
   validerAjouterMois: 'Valider et ajouter un mois',

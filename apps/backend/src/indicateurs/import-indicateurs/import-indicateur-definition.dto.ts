@@ -10,7 +10,9 @@ export const importIndicateurDefinitionSchema = z.object({
     createdBy: true,
     id: true,
     periodicite: true,
-    periodiciteMode: true,
+    aggregationResultat: true,
+    aggregationObjectif: true,
+
     groupementId: true,
     collectiviteId: true,
   }).shape,
@@ -20,9 +22,11 @@ export const importIndicateurDefinitionSchema = z.object({
     indicateurDefinitionSchema.shape.periodicite,
     'annuelle'
   ),
-  periodiciteMode: z._default(
-    indicateurDefinitionSchema.shape.periodiciteMode,
-    'recommandee'
+  aggregationResultat: z.optional(
+    indicateurDefinitionSchema.shape.aggregationResultat
+  ),
+  aggregationObjectif: z.optional(
+    indicateurDefinitionSchema.shape.aggregationObjectif
   ),
   parents: getZodStringArrayFromQueryString().nullable().optional(),
   categories: getZodStringArrayFromQueryString().nullable().optional(),

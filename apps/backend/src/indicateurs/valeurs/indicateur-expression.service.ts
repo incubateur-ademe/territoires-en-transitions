@@ -17,9 +17,16 @@ const CIBLE = createToken({ name: 'CIBLE', pattern: /cible/ });
 const LIMITE = createToken({ name: 'LIMITE', pattern: /limite/ });
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
+const EST_SUIVI = createToken({ name: 'EST_SUIVI', pattern: /est_suivi/i });
 
 // tokens ajoutés au parser de base
-const tokens = [VAL, OPT_VAL, CIBLE, LIMITE, IDENTITE, REPONSE];
+const tokens = [VAL, OPT_VAL, CIBLE, LIMITE, IDENTITE, REPONSE, EST_SUIVI];
+
+// tokens dont l'évaluation lit une valeur d'indicateur sélectionnée par la
+// collectivité (`sourceIndicateursValeurs`) — seule source dont l'absence
+// rend un score non calculable ; `cible`/`limite`/`identite`/`reponse`
+// puisent dans des maps de contexte distinctes et n'en dépendent pas.
+export const VALUE_SOURCE_TOKENS = ['val', 'opt_val'] as const;
 
 class IndicateurExpressionParser extends ExpressionParser {
   constructor() {
@@ -39,6 +46,7 @@ class IndicateurExpressionParser extends ExpressionParser {
       { ALT: () => this.SUBRULE(this.limite) },
       { ALT: () => this.SUBRULE(this.identite) },
       { ALT: () => this.SUBRULE(this.reponse) },
+      { ALT: () => this.SUBRULE(this.est_suivi) },
       ...this.getCallHandlers.apply(this),
     ]);
   });
@@ -66,6 +74,10 @@ class IndicateurExpressionParser extends ExpressionParser {
   private reponse = this.RULE('reponse', () => {
     this.consumeFuncTwoParamsLastOptional(REPONSE);
   });
+
+  private est_suivi = this.RULE('est_suivi', () => {
+    this.consumeFuncOneParam(EST_SUIVI);
+  });
 }
 
 export const parser = new IndicateurExpressionParser();
@@ -85,6 +97,10 @@ export type EvaluationContext = {
   valeursComplementaires?: IndicateurValeursParType;
   identiteCollectivite?: IdentiteCollectivite;
   reponses?: PersonnalisationReponses;
+  // pour chaque indicateur référencé par `est_suivi(...)` : une valeur
+  // est-elle actuellement sélectionnée (et non nulle) pour le calcul du
+  // score de cette action, pour ce type de score (fait/programme) ?
+  indicateursSuivis?: Record<string, boolean>;
 };
 
 class IndicateurExpressionVisitor extends getExpressionVisitor(
@@ -95,6 +111,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   indicateurValeursComplementaires: IndicateurValeursParType | undefined;
   identiteCollectivite: IdentiteCollectivite | null = null;
   reponses: PersonnalisationReponses | null = null;
+  indicateursSuivis: Record<string, boolean> | null = null;
 
   constructor() {
     super();
@@ -117,18 +134,23 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
         return this.visit(ctx.identite);
       } else if (ctx.reponse) {
         return this.visit(ctx.reponse);
+      } else if (ctx.est_suivi) {
+        return this.visit(ctx.est_suivi);
       }
     }
   }
 
   val(ctx: any) {
-    const indicateurIdentifier = this.visit(ctx.identifier);
+    // les identifiants sont extraits en minuscules par
+    // `IndicateurReferenceExtractionVisitor` (voir `addReference`) : ils
+    // doivent l'être aussi ici pour indexer les mêmes maps.
+    const indicateurIdentifier = (
+      this.visit(ctx.identifier) as string
+    ).toLowerCase();
     if (!this.sourceIndicateursValeurs) {
       throw new Error(`Missing source indicateur valeurs`);
     }
-    return (
-      this.sourceIndicateursValeurs[indicateurIdentifier as string] ?? null
-    );
+    return this.sourceIndicateursValeurs[indicateurIdentifier] ?? null;
   }
 
   // comme `val` mais renvoi `0` si la valeur n'est pas disponible
@@ -138,27 +160,27 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   }
 
   cible(ctx: any) {
-    const indicateurIdentifier = this.visit(ctx.identifier);
+    const indicateurIdentifier = (
+      this.visit(ctx.identifier) as string
+    ).toLowerCase();
     if (!this.indicateurValeursComplementaires?.cible) {
       throw new Error(`Missing cible indicateur valeurs`);
     }
     return (
-      this.indicateurValeursComplementaires.cible[
-        indicateurIdentifier as string
-      ] ?? null
+      this.indicateurValeursComplementaires.cible[indicateurIdentifier] ?? null
     );
   }
 
   limite(ctx: any) {
-    const indicateurIdentifier = this.visit(ctx.identifier);
+    const indicateurIdentifier = (
+      this.visit(ctx.identifier) as string
+    ).toLowerCase();
     if (!this.indicateurValeursComplementaires?.limite) {
       throw new Error(`Missing limite indicateur valeurs`);
     }
 
     return (
-      this.indicateurValeursComplementaires.limite[
-        indicateurIdentifier as string
-      ] ?? null
+      this.indicateurValeursComplementaires.limite[indicateurIdentifier] ?? null
     );
   }
 
@@ -183,6 +205,13 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
       return this.reponses ? this.reponses[reponseId] : null;
     }
   }
+
+  est_suivi(ctx: any): boolean {
+    const indicateurIdentifier = (
+      this.visit(ctx.identifier) as string
+    ).toLowerCase();
+    return this.indicateursSuivis?.[indicateurIdentifier] ?? false;
+  }
 }
 
 // Visitor pour extraire les références d'indicateurs
@@ -192,7 +221,10 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
   public references: ReferencedIndicateur[] = [];
 
   private isOptional(token: string) {
-    return token.startsWith('opt_');
+    // `est_suivi` ne bloque jamais un calcul faute de sélection : il renvoie
+    // `faux` en l'absence de valeur sélectionnée, tout comme `opt_val`
+    // renvoie `0`.
+    return token.startsWith('opt_') || token === 'est_suivi';
   }
 
   constructor() {
@@ -250,6 +282,8 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
         return this.visit(ctx.identite);
       } else if (ctx.reponse) {
         return this.visit(ctx.reponse);
+      } else if (ctx.est_suivi) {
+        return this.visit(ctx.est_suivi);
       }
     }
   }
@@ -285,6 +319,12 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
   limite(ctx: any) {
     const identifiant = this.visit(ctx.identifier) as string;
     this.addReference({ identifiant, token: 'limite' });
+    return null;
+  }
+
+  est_suivi(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    this.addReference({ identifiant, token: 'est_suivi' });
     return null;
   }
 }
@@ -335,9 +375,15 @@ export default class IndicateurExpressionService {
     sourceIndicateursValeurs: IndicateurValeurParIdentifiant,
     context?: EvaluationContext
   ): number | null {
-    const { valeursComplementaires, identiteCollectivite, reponses } =
-      context || {};
-    if (!valeursComplementaires) {
+    const {
+      valeursComplementaires,
+      identiteCollectivite,
+      reponses,
+      indicateursSuivis,
+    } = context || {};
+    // une formule peut ne dépendre que d'`est_suivi(...)`, sans aucune
+    // valeur source : ne pas court-circuiter dans ce cas.
+    if (!valeursComplementaires && !indicateursSuivis) {
       const atLeastOneValue = Object.values(
         sourceIndicateursValeurs || []
       ).some((v) => !isNil(v));
@@ -351,6 +397,7 @@ export default class IndicateurExpressionService {
     visitor.indicateurValeursComplementaires = valeursComplementaires;
     visitor.identiteCollectivite = identiteCollectivite || null;
     visitor.reponses = reponses || null;
+    visitor.indicateursSuivis = indicateursSuivis || null;
     const result = visitor.visit(cst);
     if (!isFinite(result as number)) {
       this.logger.log(

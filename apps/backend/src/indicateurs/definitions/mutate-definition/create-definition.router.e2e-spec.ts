@@ -48,7 +48,13 @@ describe('createIndicateurPerso', () => {
     await app.close();
   });
 
-  test.each([undefined, 'annuelle', 'mensuelle'] as const)(
+  test.each([
+    undefined,
+    'annuelle',
+    'semestrielle',
+    'trimestrielle',
+    'mensuelle',
+  ] as const)(
     'creates, writes and reads an indicator with periodicite=%s',
     async (periodicite) => {
       const caller = router.createCaller({ user: authenticatedUser });
@@ -64,7 +70,7 @@ describe('createIndicateurPerso', () => {
         });
       });
       const dateValeur =
-        periodicite === 'mensuelle' ? '2024-12-01' : '2024-12-31';
+        periodicite === undefined ? '2024-12-31' : '2024-01-01';
 
       await caller.indicateurs.valeurs.upsert({
         collectiviteId: collectivite.id,
@@ -80,12 +86,11 @@ describe('createIndicateurPerso', () => {
       });
       expect(indicateurs[0].definition).toMatchObject({
         periodicite: periodicite ?? 'annuelle',
-        periodiciteMode: 'recommandee',
       });
       expect(indicateurs[0].sources.collectivite.valeurs).toMatchObject([
         {
           periodicite: periodicite ?? 'annuelle',
-          dateValeur: periodicite === 'mensuelle' ? '2024-12-01' : '2024-01-01',
+          dateValeur: '2024-01-01',
           resultat: 0,
         },
       ]);
@@ -221,6 +226,26 @@ describe('createIndicateurPerso', () => {
       .where(eq(ficheActionIndicateurTable.indicateurId, indicateurId));
 
     expect(ficheData).toHaveLength(0);
+  });
+
+  test('crée un indicateur déjà déclaré non applicable', async () => {
+    const data: CreateIndicateurDefinitionInput = {
+      collectiviteId: collectivite.id,
+      titre: 'Indicateur non applicable dès la création',
+      unite: 'kg',
+      isApplicable: false,
+    };
+
+    const caller = router.createCaller({ user: authenticatedUser });
+    const indicateurId = await caller.indicateurs.indicateurs.create(data);
+
+    const [collectiviteData] = await databaseService.db
+      .select()
+      .from(indicateurCollectiviteTable)
+      .where(eq(indicateurCollectiviteTable.indicateurId, indicateurId))
+      .limit(1);
+
+    expect(collectiviteData.isApplicable).toBe(false);
   });
 
   test('should set modified_by field when creating an indicator', async () => {

@@ -218,7 +218,7 @@ export const CreateDemarchePcaetPage = () => {
                     variant="switch"
                     label={appLabels.demarcheCreerHorsPlateforme}
                     message={appLabels.demarcheCreerHorsPlateformeDescription}
-                    containerClassname="flex-row-reverse justify-end gap-3"
+                    containerClassname="gap-3"
                     data-test="demarches.creer.hors-plateforme"
                     checked={field.value}
                     onChange={() => field.onChange(!field.value)}
@@ -235,7 +235,7 @@ export const CreateDemarchePcaetPage = () => {
                       variant="switch"
                       label={appLabels.demarcheCreerScotAec}
                       message={appLabels.demarcheCreerScotAecDescription}
-                      containerClassname="flex-row-reverse justify-end gap-3"
+                      containerClassname="gap-3"
                       data-test="demarches.creer.scot-aec"
                       checked={field.value}
                       onChange={() => field.onChange(!field.value)}

@@ -4,14 +4,18 @@ import { IndicateurChartBuilder } from './indicateur-chart.builder';
 import { IndicateurChartService } from './indicateur-chart.service';
 
 describe('IndicateurChartService', () => {
-  const periodicites = ['annuelle', 'mensuelle'] as const;
+  const periodicites = [
+    'annuelle',
+    'semestrielle',
+    'trimestrielle',
+    'mensuelle',
+  ] as const;
   it.each(periodicites)('lit la série %s', async (periodicite) => {
     const periodiciteAffichage =
       periodicite === 'mensuelle' ? 'annuelle' : undefined;
     const definition = {
       id: 7,
       periodicite,
-      periodiciteMode: 'imposee',
       estAgregation: true,
       enfants: [{ id: 8 }, { id: 9 }],
     };
@@ -89,13 +93,12 @@ describe('IndicateurChartService', () => {
       {
         collectiviteId: 42,
         indicateurIds: [7],
-        periodicite,
         sources: ['collectivite'],
       },
       { isUserTrusted: true }
     );
     expect(indicateurValeursService.listIndicateurValeurs).toHaveBeenCalledWith(
-      { collectiviteId: 42, indicateurIds: [8, 9], periodicite },
+      { collectiviteId: 42, indicateurIds: [8, 9] },
       { isUserTrusted: true }
     );
     expect(valeursMoyenneService.getMoyenneCollectivites).toHaveBeenCalledWith(
@@ -132,15 +135,75 @@ describe('IndicateurChartService', () => {
     });
   });
 
-  it('refuse un affichage mensuel de valeurs annuelles avant de lire les valeurs', async () => {
+  it('accepte la cadence mensuelle des imports sous une définition annuelle', async () => {
+    const indicateurValeurs = {
+      definition: { id: 7, periodicite: 'annuelle' },
+      sources: {
+        externe: {
+          valeurs: [
+            {
+              periodicite: 'mensuelle',
+              dateValeur: '2026-02-01',
+              resultat: 42,
+            },
+          ],
+        },
+      },
+    };
+    const chartBuilder = { build: vi.fn().mockReturnValue({ series: [] }) };
+    const service = new IndicateurChartService(
+      {
+        getIndicateur: vi.fn().mockResolvedValue(indicateurValeurs.definition),
+      } as never,
+      {
+        listIndicateurValeurs: vi
+          .fn()
+          .mockResolvedValue({ indicateurs: [indicateurValeurs] }),
+      } as never,
+      {} as never,
+      {} as never,
+      chartBuilder as never
+    );
+    await service.getIndicateurValeursAndChartData({
+      collectiviteId: 42,
+      indicateurId: 7,
+      periodiciteAffichage: 'mensuelle',
+    });
+    expect(chartBuilder.build).toHaveBeenCalledWith(
+      expect.objectContaining({
+        indicateurValeurs,
+        periodiciteAffichage: 'mensuelle',
+      })
+    );
+  });
+
+  it('refuse un affichage mensuel quand les sources disponibles sont annuelles', async () => {
     const listIndicateursService = {
       getIndicateur: vi.fn().mockResolvedValue({
         id: 7,
         periodicite: 'annuelle',
-        periodiciteMode: 'recommandee',
       }),
     };
-    const indicateurValeursService = { listIndicateurValeurs: vi.fn() };
+    const indicateurValeursService = {
+      listIndicateurValeurs: vi.fn().mockResolvedValue({
+        indicateurs: [
+          {
+            definition: { periodicite: 'annuelle' },
+            sources: {
+              collectivite: {
+                valeurs: [
+                  {
+                    periodicite: 'annuelle',
+                    dateValeur: '2026-01-01',
+                    resultat: 42,
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      }),
+    };
     const chartBuilder = { build: vi.fn() };
     const service = new IndicateurChartService(
       listIndicateursService as never,
@@ -159,7 +222,7 @@ describe('IndicateurChartService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(
       indicateurValeursService.listIndicateurValeurs
-    ).not.toHaveBeenCalled();
+    ).toHaveBeenCalledOnce();
     expect(chartBuilder.build).not.toHaveBeenCalled();
   });
 

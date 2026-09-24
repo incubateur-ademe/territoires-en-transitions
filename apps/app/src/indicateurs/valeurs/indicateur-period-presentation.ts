@@ -40,6 +40,24 @@ const PERIOD_PRESENTATIONS = {
       validateAndAddLabel: appLabels.validerAjouterAnnee,
     },
   },
+  [IndicateurPeriodiciteEnum.SEMESTRIELLE]: {
+    label: appLabels.periodiciteSemestrielle,
+    editor: {
+      fieldLabel: appLabels.champSemestre,
+      inputType: 'text',
+      addLabel: appLabels.ajouterSemestre,
+      validateAndAddLabel: appLabels.validerAjouterSemestre,
+    },
+  },
+  [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: {
+    label: appLabels.periodiciteTrimestrielle,
+    editor: {
+      fieldLabel: appLabels.champTrimestre,
+      inputType: 'text',
+      addLabel: appLabels.ajouterTrimestre,
+      validateAndAddLabel: appLabels.validerAjouterTrimestre,
+    },
+  },
   [IndicateurPeriodiciteEnum.MENSUELLE]: {
     label: appLabels.periodiciteMensuelle,
     editor: {
@@ -88,7 +106,7 @@ export const makeIndicateurPeriodTimeAxis = (
       ),
     axisPointerFormatter: (value) =>
       formatIndicateurPeriod(
-        IndicateurPeriods.current(periodicite, utcCalendarDate(value))
+        IndicateurPeriods.current(display, utcCalendarDate(value))
       ),
   };
 };

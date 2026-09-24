@@ -61,14 +61,14 @@ $$;
 
 select test.identify_as('ada.lovelace@ademe.fr');
 
-select isnt_empty(
+select is_empty(
        $$ select name from storage.objects where name = 'private-collectivite-1.pdf' $$,
-       'Un utilisateur ADEME doit pouvoir lire un fichier de n''importe quelle collectivité (1)'
+       'Un utilisateur ADEME ne doit PAS lire un fichier d''une collectivité dont il n''est pas membre (1)'
    );
 
-select isnt_empty(
+select is_empty(
        $$ select name from storage.objects where name = 'private-collectivite-3.pdf' $$,
-       'Un utilisateur ADEME doit pouvoir lire un fichier de n''importe quelle collectivité (3)'
+       'Un utilisateur ADEME ne doit PAS lire un fichier d''une collectivité dont il n''est pas membre (3)'
    );
 
 

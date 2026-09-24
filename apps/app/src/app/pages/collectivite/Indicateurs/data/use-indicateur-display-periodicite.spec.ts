@@ -51,4 +51,24 @@ describe('local indicator display preference', () => {
     expect(() => result.current.setPeriodiciteAffichage('mensuelle')).toThrow();
     expect(result.current.periodiciteAffichage).toBe('annuelle');
   });
+  it('suit la déclaration annuelle par défaut pour une source mensuelle', () => {
+    const { result } = renderHook(() =>
+      useIndicateurDisplayPeriodicite({
+        ...monthlyIndicator,
+        defaultPeriodicite: 'annuelle',
+      })
+    );
+    expect(result.current.periodiciteAffichage).toBe('annuelle');
+  });
+
+  it('conserve une source annuelle à sa cadence lorsque la déclaration est mensuelle', () => {
+    const { result } = renderHook(() =>
+      useIndicateurDisplayPeriodicite({
+        ...monthlyIndicator,
+        periodicite: 'annuelle',
+        defaultPeriodicite: 'mensuelle',
+      })
+    );
+    expect(result.current.periodiciteAffichage).toBe('annuelle');
+  });
 });

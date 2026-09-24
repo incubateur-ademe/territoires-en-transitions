@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { ENV } from '@tet/api/environmentVariables';
 import { useTRPC } from '@tet/api';
 
 /**
@@ -14,7 +15,7 @@ export function useLoginUserWithOidc() {
     trpc.users.authentications.oidc.getStatus.queryOptions()
   );
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL as string;
+  const backendUrl = ENV.backend_url as string;
   const targetProvider = statut?.targetProvider ?? null;
 
   return {

@@ -172,10 +172,11 @@ assert_equal "2025-01-01|2025-02-01|normalisee" \
 scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-source-inconnue-$fixture_suffix)' WHERE id = $target_id" >/dev/null
 expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
   "le preflight doit refuser une formule qui référence une définition inconnue"
-scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-emt-$fixture_suffix)' WHERE id = $target_id; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $emt_id" >/dev/null
+monthly_source_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-monthly-$fixture_suffix', 'Source mensuelle', 'kWh', 'mensuelle') RETURNING id")"
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-monthly-$fixture_suffix)' WHERE id = $target_id" >/dev/null
 expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
   "le preflight doit refuser une formule dont la source a une autre périodicité"
-scalar "UPDATE public.indicateur_definition SET valeur_calcule = NULL WHERE id = $target_id; UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $emt_id" >/dev/null
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = NULL WHERE id = $target_id; DELETE FROM public.indicateur_definition WHERE id = $monthly_source_id" >/dev/null
 apply_change data_layer/scripts/check-periodicite-contract.sql
 
 psql_test --command="SET application_name = 'periodicite-lifecycle-transition-writer'; BEGIN; INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, resultat) VALUES ($concurrency_id, $collectivite_id, DATE '2021-02-01', 1); SELECT pg_sleep(3); COMMIT" >"$transition_log" 2>&1 &
@@ -190,27 +191,17 @@ assert_equal "1|2021-01-01" \
   "$(scalar "SELECT count(*) || '|' || min(date_valeur) FROM public.indicateur_valeur WHERE indicateur_id = $concurrency_id AND resultat IN (1, 2)")" \
   "les écritures de transition doivent se sérialiser sur la période canonique"
 
-# L'import EMT est déployable dès l'expand et participe au même ordre de
-# verrous que l'application. Si le changement de cadence gagne, l'import
-# attend puis refuse la définition devenue mensuelle sans écrire de valeur.
-psql_test --command="SET application_name = 'periodicite-lifecycle-emt-definition'; BEGIN; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $emt_id; SELECT pg_sleep(3); COMMIT" >"$emt_definition_log" 2>&1 &
-emt_definition_pid=$!
-wait_for_sleeping_session periodicite-lifecycle-emt-definition
-psql_test --command="SET application_name = 'periodicite-lifecycle-emt-writer'; SELECT public.import_indicateur_emt_valeurs($collectivite_id, jsonb_build_array(jsonb_build_object('indicateur_id', $emt_id, 'periodicite', 'annuelle', 'date_debut', '2030-01-01', 'resultat', 0, 'commentaire', 'cycle EMT')))" >"$emt_writer_log" 2>&1 &
-emt_writer_pid=$!
-wait_for_advisory_lock_session periodicite-lifecycle-emt-writer
-wait "$emt_definition_pid"
-if wait "$emt_writer_pid"; then
-  echo "ÉCHEC: l'import EMT a écrit après un changement concurrent vers mensuelle" >&2
+# La cadence est fixée dès création, avant même la première déclaration EMT.
+if psql_test --command="UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $emt_id" >/dev/null 2>&1; then
+  echo "ÉCHEC: une définition sans valeur a changé de périodicité" >&2
   exit 1
 fi
-assert_equal "mensuelle|0" \
+assert_equal "annuelle|0" \
   "$(scalar "SELECT definition.periodicite || '|' || count(valeur.*) FROM public.indicateur_definition definition LEFT JOIN public.indicateur_valeur valeur ON valeur.indicateur_id = definition.id WHERE definition.id = $emt_id GROUP BY definition.periodicite")" \
-  "le changement de cadence validé en premier doit faire échouer l'import EMT"
-scalar "UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $emt_id" >/dev/null
+  "la définition reste annuelle avant sa première valeur"
 
 # Si le writer annuel gagne, il conserve son verrou partagé jusqu'au commit.
-# La mutation attend, puis le garde d'immuabilité voit la valeur et échoue.
+# La mutation attend, puis le garde d'immuabilité protège toujours la cadence.
 psql_test --command="SET application_name = 'periodicite-lifecycle-emt-writer'; BEGIN; SELECT pg_advisory_xact_lock_shared(hashtextextended('indicateur-calculation-graph', 0)); SELECT id FROM public.indicateur_definition WHERE id = $emt_id FOR SHARE; SELECT pg_sleep(3); SELECT public.import_indicateur_emt_valeurs($collectivite_id, jsonb_build_array(jsonb_build_object('indicateur_id', $emt_id, 'periodicite', 'annuelle', 'date_debut', '2030-01-01', 'resultat', 0, 'commentaire', 'cycle EMT'))); COMMIT" >"$emt_writer_log" 2>&1 &
 emt_writer_pid=$!
 wait_for_sleeping_session periodicite-lifecycle-emt-writer
@@ -352,9 +343,8 @@ apply_change data_layer/sqitch/verify/indicateur/periodicite_formules.sql
 formula_source_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-formula-source-$fixture_suffix', 'cycle-formula-source-$fixture_suffix', 'kWh', 'annuelle') RETURNING id")"
 formula_target_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-formula-target-$fixture_suffix', 'cycle-formula-target-$fixture_suffix', 'kWh', 'annuelle') RETURNING id")"
 
-# Dans les deux ordres d'arrivée, le verrou exclusif du graphe force le second
-# writer à valider contre le commit du premier. La contrainte différable voit
-# alors soit la nouvelle arête, soit la nouvelle cadence, et échoue fermé.
+# Le verrou exclusif du graphe sérialise la création de formule avec les
+# mutations de sa source. Une cadence fixée à la création ne peut pas changer.
 psql_test --command="SET application_name = 'periodicite-lifecycle-formula-target'; BEGIN; UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id; SELECT pg_sleep(3); COMMIT" >"$formula_target_log" 2>&1 &
 formula_target_pid=$!
 wait_for_sleeping_session periodicite-lifecycle-formula-target
@@ -370,8 +360,10 @@ assert_equal "annuelle|1" \
   "$(scalar "SELECT source.periodicite || '|' || count(dependance.*) FROM public.indicateur_definition source LEFT JOIN private.indicateur_definition_dependance_calcul dependance ON dependance.source_identifiant = source.identifiant_referentiel WHERE source.id = $formula_source_id GROUP BY source.periodicite")" \
   "la formule validée en premier doit empêcher la source de changer de cadence"
 
+# Une suppression concurrente de source ne laisse pas une nouvelle formule
+# référencer une définition disparue, même si aucune valeur n'est enregistrée.
 scalar "UPDATE public.indicateur_definition SET valeur_calcule = NULL WHERE id = $formula_target_id" >/dev/null
-psql_test --command="SET application_name = 'periodicite-lifecycle-formula-source'; BEGIN; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $formula_source_id; SELECT pg_sleep(3); COMMIT" >"$formula_source_log" 2>&1 &
+psql_test --command="SET application_name = 'periodicite-lifecycle-formula-source'; BEGIN; DELETE FROM public.indicateur_definition WHERE id = $formula_source_id; SELECT pg_sleep(3); COMMIT" >"$formula_source_log" 2>&1 &
 formula_source_pid=$!
 wait_for_sleeping_session periodicite-lifecycle-formula-source
 psql_test --command="SET application_name = 'periodicite-lifecycle-formula-target'; UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id" >"$formula_target_log" 2>&1 &
@@ -379,13 +371,13 @@ formula_target_pid=$!
 wait_for_advisory_lock_session periodicite-lifecycle-formula-target
 wait "$formula_source_pid"
 if wait "$formula_target_pid"; then
-  echo "ÉCHEC: une formule concurrente a accepté une source devenue mensuelle" >&2
+  echo "ÉCHEC: une formule concurrente a accepté une source supprimée" >&2
   exit 1
 fi
-assert_equal "mensuelle|0" \
-  "$(scalar "SELECT source.periodicite || '|' || count(dependance.*) FROM public.indicateur_definition source LEFT JOIN private.indicateur_definition_dependance_calcul dependance ON dependance.source_identifiant = source.identifiant_referentiel WHERE source.id = $formula_source_id GROUP BY source.periodicite")" \
-  "la cadence validée en premier doit faire échouer la nouvelle formule sans laisser de projection"
-scalar "UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $formula_source_id" >/dev/null
+assert_equal "0" \
+  "$(scalar "SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id")" \
+  "la suppression validée en premier fait échouer la nouvelle formule sans laisser de projection"
+formula_source_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-formula-source-$fixture_suffix', 'Source annuelle', 'kWh', 'annuelle') RETURNING id")"
 
 apply_change data_layer/sqitch/deploy/stats/report_indicateur_resultat_periode.sql
 apply_change data_layer/sqitch/verify/stats/report_indicateur_resultat_periode.sql
@@ -430,9 +422,8 @@ fi
 
 # Le garde de retrait protège aussi les nouveaux états sans définition mensuelle.
 for policy_write in \
-  "INSERT INTO public.indicateur_collectivite (indicateur_id, collectivite_id, periodicite) VALUES ($emt_second_id, $collectivite_id, 'mensuelle')" \
   "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, periodicite, date_valeur, resultat) VALUES ($emt_second_id, $collectivite_id, 'mensuelle', DATE '2040-01-01', 1)" \
-  "UPDATE public.indicateur_definition SET periodicite_mode = 'imposee' WHERE id = $emt_second_id"; do
+  "UPDATE public.indicateur_definition SET aggregation_resultat = 'somme' WHERE id = $emt_second_id"; do
   if psql_test --command="$policy_write" >/dev/null 2>&1; then
     echo "ÉCHEC: le garde inter-changements a autorisé un état incompatible avec le retrait" >&2
     exit 1

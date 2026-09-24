@@ -1,7 +1,5 @@
 import type { ArchiveFile, SkippedFile } from './archive-arborescence.types';
 
-export const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
-
 const FILE_SIZE_UNKNOWN = 'Taille du fichier inconnue';
 
 export interface ArchiveCandidateFile {
@@ -39,17 +37,6 @@ export function triageArchiveFile({
         filename,
         emplacement,
         raison: `Taille du fichier invalide (${file.filesize} octets)`,
-      },
-    };
-  }
-
-  if (file.filesize > MAX_FILE_SIZE_BYTES) {
-    return {
-      kind: 'skipped',
-      skippedFile: {
-        filename,
-        emplacement,
-        raison: `Fichier trop volumineux (${file.filesize} octets, limite ${MAX_FILE_SIZE_BYTES})`,
       },
     };
   }

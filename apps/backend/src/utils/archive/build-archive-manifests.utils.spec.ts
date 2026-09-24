@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { buildArchiveManifests } from './build-archive-manifests.utils';
+import {
+  buildArchiveManifests,
+  listLinksCsvPaths,
+} from './build-archive-manifests.utils';
 import type { ArchiveFolderArborescence } from './archive-arborescence.types';
 
 function emptyArborescence(
@@ -58,7 +61,13 @@ describe('buildArchiveManifests', () => {
           },
         ],
       }),
-      failedDownloads: ['mesures/axe-1/perdu.pdf (téléchargement échoué)'],
+      failedDownloads: [
+        {
+          filename: 'perdu.pdf',
+          emplacement: 'mesures/axe-1',
+          raison: 'Téléchargement échoué',
+        },
+      ],
     });
 
     expect(entries).toEqual([
@@ -66,7 +75,31 @@ describe('buildArchiveManifests', () => {
         name: '_manifeste/fichiers-manquants.txt',
         content:
           'mesures/axe-1/gros.pdf — Fichier trop volumineux\n' +
-          'mesures/axe-1/perdu.pdf (téléchargement échoué)\n',
+          'mesures/axe-1/perdu.pdf — Téléchargement échoué\n',
+      },
+    ]);
+  });
+
+  it('aplatit un saut de ligne du nom de fichier au lieu de forger une ligne de manquant', () => {
+    const entries = buildArchiveManifests({
+      arborescence: emptyArborescence({
+        skippedFiles: [
+          {
+            filename:
+              'innocent.pdf\nmesures/axe-1/fantome.pdf — Fichier trop volumineux',
+            emplacement: 'mesures/axe-1',
+            raison: 'Fichier trop volumineux',
+          },
+        ],
+      }),
+      failedDownloads: [],
+    });
+
+    expect(entries).toEqual([
+      {
+        name: '_manifeste/fichiers-manquants.txt',
+        content:
+          'mesures/axe-1/innocent.pdf mesures/axe-1/fantome.pdf — Fichier trop volumineux — Fichier trop volumineux\n',
       },
     ]);
   });
@@ -107,5 +140,23 @@ describe('buildArchiveManifests', () => {
       'mesures/liens.csv',
       '_manifeste/fichiers-manquants.txt',
     ]);
+  });
+});
+
+describe('listLinksCsvPaths', () => {
+  it('ne réserve un chemin que pour les dossiers qui portent des liens', () => {
+    const paths = listLinksCsvPaths(
+      emptyArborescence({
+        linkFolders: [
+          { folderSegments: ['mesures', 'axe-1'], links: [] },
+          {
+            folderSegments: ['mesures', 'axe-2'],
+            links: [{ titre: 'X', url: 'https://x', commentaire: '' }],
+          },
+        ],
+      })
+    );
+
+    expect(paths).toEqual(['mesures/axe-2/liens.csv']);
   });
 });

@@ -13,7 +13,11 @@ import {
 } from './local-calendar';
 import { createPeriod, type PeriodStrategy } from './period-strategy';
 
-type CalendarMonthSerialization = 'year' | 'year-month';
+type CalendarMonthSerialization =
+  | 'year'
+  | 'year-month'
+  | 'year-quarter'
+  | 'year-semester';
 
 type CalendarMonthStrategyConfiguration<K extends IndicateurPeriodicite> =
   Readonly<{
@@ -27,12 +31,14 @@ const serializationPatterns: Readonly<
   Record<CalendarMonthSerialization, RegExp>
 > = {
   year: /^(\d{4})$/,
+  'year-quarter': /^(\d{4})-T([1-4])$/,
+  'year-semester': /^(\d{4})-S([1-2])$/,
   'year-month': /^(\d{4})-(0[1-9]|1[0-2])$/,
 };
 
 /**
  * Creates a stateless strategy for a cadence aligned on calendar months.
- * Annual and monthly periods differ only through this configuration.
+ * Calendar cadences differ only through this configuration.
  */
 export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
   periodicite,
@@ -59,8 +65,12 @@ export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
     });
   }
   if (
-    serialization === 'year' &&
-    (monthsPerPeriod !== monthsPerYear || anchor.month !== 1)
+    (serialization === 'year' &&
+      (monthsPerPeriod !== monthsPerYear || anchor.month !== 1)) ||
+    (serialization === 'year-quarter' &&
+      (monthsPerPeriod !== 3 || anchor.month !== 1)) ||
+    (serialization === 'year-semester' &&
+      (monthsPerPeriod !== 6 || anchor.month !== 1))
   ) {
     throw createIndicateurPeriodError({
       code: IndicateurPeriodErrorEnum.INDICATEUR_PERIOD_SERIALIZATION_INCOMPATIBLE,
@@ -105,7 +115,12 @@ export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
       });
     }
     const year = Number(match[1]);
-    const month = match[2] === undefined ? 1 : Number(match[2]);
+    const month =
+      match[2] === undefined
+        ? 1
+        : serialization === 'year-quarter' || serialization === 'year-semester'
+        ? (Number(match[2]) - 1) * monthsPerPeriod + 1
+        : Number(match[2]);
     const dateDebut = toLocalDate({ year, month, day: 1 });
     return fromDateValeur(dateDebut);
   };
@@ -117,6 +132,10 @@ export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
       Record<CalendarMonthSerialization, () => string>
     > = {
       year: () => String(year).padStart(4, '0'),
+      'year-quarter': () =>
+        `${String(year).padStart(4, '0')}-T${Math.floor((month - 1) / 3) + 1}`,
+      'year-semester': () =>
+        `${String(year).padStart(4, '0')}-S${Math.floor((month - 1) / 6) + 1}`,
       'year-month': () =>
         `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}`,
     };

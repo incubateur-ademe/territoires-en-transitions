@@ -6,6 +6,7 @@ export const PermissionOperations = [
   'collectivites.read',
   'collectivites.read_confidentiel',
   'collectivites.mutate',
+  'collectivites.pertinence-leviers.mutate',
   // Tableau de bord
   'collectivites.tableau-de-bord.mutate',
   // Tableau de bord personnel (modules propres à l'utilisateur courant)

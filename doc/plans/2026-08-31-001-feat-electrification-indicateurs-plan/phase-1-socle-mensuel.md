@@ -1,19 +1,20 @@
 ---
-title: 'Phase 1 — Socle mensuel'
+title: 'Phase 1 — Socle périodique'
 parent: ./README.md
 kind: phase
 phase: 1
 ---
 
-# Phase 1 — Socle générique mensuel
+# Phase 1 — Socle générique périodique
 
 [← Index](README.md)
 
-Généraliser le domaine `indicateurs` de l'année vers une période explicite, sans casser l'annuel
-ni le PCAET. C'est la livraison de la dépendance « composant indicateur revu ».
+Généraliser le domaine `indicateurs` de l'année vers une période explicite annuelle, semestrielle,
+trimestrielle ou mensuelle, en préservant l'annuel et le PCAET. C'est la livraison de la dépendance
+« composant indicateur revu ».
 
-**Prérequis** : validation de l’ADR0018, première PR de la pile. Le catalogue recommande ou
-impose une périodicité. Seules les recommandations sont personnalisables par collectivité.
+**Cadrage validé** : la périodicité de déclaration est fixée dès la création de la définition,
+même sans valeur enregistrée. Elle est commune aux collectivités, sans mode ni préférence locale.
 Les décisions durables sont dans l’[ADR 0018](../../adr/0018-periodicite-des-indicateurs.md) ;
 les opérations de livraison dans le [runbook](../../../data_layer/periodicite-runbook.md).
 
@@ -24,13 +25,16 @@ maintenance. Les anciens découpages techniques sont remplacés par ces deux uni
 
 ## Task 1.1 — Contrat domaine + migration en deux temps
 
-- ajouter `IndicateurPeriodicite` au domaine + utilitaires période ↔ date canonique ;
+- ajouter les quatre valeurs de `IndicateurPeriodicite` au domaine et les utilitaires de période
+  et date canonique ;
 - transporter la périodicité dans `indicateurDefinitionSchemaTiny` et les contrats externes ;
-- migration en 2 temps : ajouter/classifier la colonne, auditer, **puis** la rendre obligatoire ;
-- classer tous les indicateurs existants, prédéfinis et personnalisés, comme annuels recommandés ;
-- stocker séparément la préférence locale et la périodicité de chaque valeur ;
-- autoriser un changement de suivi recommandé après saisie sans convertir ni supprimer les séries ;
-- interdire toute personnalisation d’une périodicité imposée dans l’API et la base.
+- migration en 2 temps : ajouter/classifier les colonnes, auditer, **puis** les rendre obligatoires ;
+- classer tous les indicateurs existants, prédéfinis et personnalisés, comme annuels ;
+- stocker la périodicité de chaque valeur et l'inclure dans l'identité avec collectivité, indicateur,
+  date de début et source ;
+- rendre la périodicité de la définition immuable dès sa création dans l'API, les imports et la base ;
+- configurer séparément les règles d'agrégation des résultats et des objectifs : `somme`, `moyenne`
+  ou `derniere_valeur` ; une règle absente reste `null`, sans somme implicite.
 
 Fichiers : `packages/domain/src/indicateurs/definitions/indicateur-definition.schema.ts`,
 `packages/domain/src/indicateurs/valeurs/`,
@@ -40,22 +44,25 @@ Fichiers : `packages/domain/src/indicateurs/definitions/indicateur-definition.sc
 ### Indicateurs personnalisés
 
 - conserver une définition rattachée à sa collectivité par `indicateur_definition.collectivite_id` ;
-  la préférence de suivi reste dans `indicateur_collectivite`, comme pour un indicateur prédéfini ;
-- permettre la création annuelle ou mensuelle selon les périodicités disponibles pour la collectivité,
-  en mode recommandé ; préserver le défaut annuel des anciens contrats de création ;
+- permettre le choix des quatre périodicités à la création, y compris depuis une action,
+  avec un défaut annuel pour les anciens contrats de création ;
 - contrôler les droits de la collectivité propriétaire à la création et à la modification ;
-  ne pas exposer le changement de mode dans ces commandes ;
-- modifier ensuite le suivi via la préférence locale, sans changer la périodicité de la définition
-  ni convertir les valeurs ; `null` rétablit la périodicité de la définition ;
+- interdire ensuite toute modification de périodicité, même sans valeur ;
+- configurer explicitement les règles d'agrégation des résultats et des objectifs ;
 - réutiliser les règles communes de saisie, lecture, calcul, affichage et export.
 
 ## Task 1.2 — Écriture/lecture par période
 
-- valider la date selon la périodicité ;
+- valider une périodicité connue et sa date de début canonique ;
+- imposer la périodicité de la définition aux déclarations locales, y compris celles du PCAET ;
+  conserver la périodicité d’origine des sources externes importées ;
+- lire toutes les séries originales lorsque la requête ne filtre pas explicitement une périodicité ;
 - refactorer le bulk REST en cœur transactionnel réutilisable + exposer une **commande tRPC
   atomique** mono-collectivité limitée aux résultats et objectifs ; une cellule en erreur rejette tout ;
 - permissions « piloté par moi » ; le détail conserve ses mutations unitaires et leurs invalidations ;
-- traiter explicitement les calculs de périodicités incompatibles.
+- produire les résultats calculés à la seule périodicité de la définition cible, avec des
+  définitions de même périodicité entre formule et dépendances, comme entre parent et enfants
+  d’un groupe ; ne pas réutiliser les agrégats de visualisation comme observations.
 
 Fichiers : `apps/backend/src/indicateurs/valeurs/` (`crud-valeurs.{controller,service,router}.ts`,
 `upsert-*.request.ts`), hooks `apps/app/src/indicateurs/valeurs/`.
@@ -63,9 +70,14 @@ Fichiers : `apps/backend/src/indicateurs/valeurs/` (`crud-valeurs.{controller,se
 ## Task 1.3 — Préserver le tableau annuel du diagnostic PCAET
 
 - conserver le tableau introduit sur `main`, ses colonnes annuelles et ses mutations ;
-- demander la série annuelle du diagnostic, indépendamment du suivi mensuel choisi localement ;
+- demander explicitement les observations annuelles du diagnostic, indépendamment de la
+  périodicité de la définition ; traiter leur absence sans annualiser les observations infra-annuelles ;
+- réserver la déclaration annuelle locale aux définitions annuelles ; accepter les observations
+  annuelles d’une source externe même lorsque la définition a une autre périodicité ;
 - préserver la source métadonnée propre à chaque démarche lors des lectures, écritures et calculs ;
-- transporter la périodicité dans la publication GES et les définitions du score ; seul l’adaptateur des anciens snapshots du score complète explicitement `annuelle` ;
+- sélectionner également les observations annuelles dans la publication GES et le score indicatif ;
+  transporter la périodicité de chaque observation ; seul l’adaptateur des anciens snapshots du
+  score complète explicitement `annuelle` ;
 - utiliser le catalogue PCAET du package domaine ; ne pas réintroduire les anciennes tables SQL
   de topics et de lignes ni l'ancienne grille générique.
 
@@ -77,21 +89,36 @@ Fichiers : `apps/app/src/indicateurs/valeurs/grid/`,
 
 - couvrir sources/segmentations, commentaires, suppression, confidentialité, dernière période ;
 - brancher le nouveau détail **seulement** quand les tests de parité passent ;
-- cibles 2030 distinctes ; ne pas inventer d'objectifs mensuels.
+- cibles 2030 distinctes ; ne pas inventer d'objectifs mensuels ;
+- conserver l'édition des valeurs sources dans la grille de déclaration ; les agrégats de
+  consultation ne sont pas directement éditables.
 
 Fichiers : `apps/app/src/app/pages/collectivite/Indicateurs/table/`,
 `apps/app/src/indicateurs/valeurs/grid/`.
 
 ## Task 1.5 — Graphiques et exports
 
-- utiliser la périodicité de déclaration effective pour la saisie et les lectures de séries ;
-- séparer le réglage graphique : conserver les points mensuels à leurs dates sur un axe temporel continu ; le choix mensuel ou annuel change uniquement les graduations et leurs libellés, sans agrégation ni interpolation ;
-- conserver la période déclarée dans les infobulles, les formulaires et les exports de valeurs ;
-- refuser un affichage mensuel pour une déclaration annuelle, y compris via l’API de rendu ;
-- réinitialiser le choix d’affichage au changement d’indicateur, de collectivité ou de déclaration ;
-- garder une seule périodicité de déclaration par grille et réutiliser périodes, ordre et libellés du domaine ;
-- conserver séparément les séries annuelles et mensuelles, y compris janvier et l’année correspondante ;
-- période absente = trou/`null`, jamais `0` ; régressions annuelles.
+- utiliser la périodicité fixe de la définition pour la saisie, tout en conservant les séries
+  externes à leur périodicité d'origine dans les lectures ;
+- séparer le réglage de visualisation : à périodicité identique, afficher les valeurs sources ;
+  à une périodicité plus large, appliquer une règle métier explicite à chaque résultat et objectif ;
+- prendre en charge mensuel → trimestriel, semestriel ou annuel ; trimestriel → semestriel ou
+  annuel ; semestriel → annuel ; aucune visualisation à une périodicité plus fine ;
+- pour un indicateur additionnable, douze mois de `10` donnent quatre trimestres de `30`, deux
+  semestres de `60` ou une année de `120` ; revenir au mensuel restitue les douze valeurs de `10` ;
+- sans règle connue ou sans toutes les observations requises, ne pas produire d'agrégat pour
+  le champ concerné ; une observation absente ou `null` n'est jamais remplacée par `0` ;
+- appliquer les mêmes calculs au tableau de consultation, aux graphiques, aux cartes et au rendu
+  serveur ; les téléchargements de graphiques reprennent la restitution affichée ;
+- conserver les dates, périodicités et contenus enregistrés dans les exports de valeurs ;
+  les valeurs sources, objectifs, commentaires et références restent inchangés ;
+- présenter les commentaires regroupés avec les libellés des périodes d'origine, tout en
+  conservant séparément les sources, versions de métadonnées et périodicités différentes ;
+- garder le choix de visualisation local à la vue, avec la déclaration comme défaut, et le
+  réinitialiser au changement d'indicateur ou de collectivité ; les choix disponibles dépendent
+  de la périodicité des valeurs sources ;
+- garder une seule périodicité de déclaration par grille et réutiliser périodes, ordre et libellés
+  du domaine ; distinguer janvier, le premier trimestre, le premier semestre et l'année correspondante.
 
 Fichiers : `ui/charts/echarts/utils.ts`, `Indicateurs/chart/`, `Indicateurs/data/prepare-data.ts`,
 `apps/backend/src/indicateurs/charts/indicateur-chart.service.ts`,
@@ -99,22 +126,24 @@ Fichiers : `ui/charts/echarts/utils.ts`, `Indicateurs/chart/`, `Indicateurs/data
 
 ## Sortie de phase
 
-Périodicité de premier ordre + saisie et lecture du détail, graphiques et exports préservant
-plusieurs mois par an, tableau PCAET annuel non régressé. La commande API par lot est disponible
-indépendamment ; aucune grille mensuelle générique n'est ajoutée dans cette phase.
+Quatre périodicités de déclaration fixes dès la création, saisie et lecture du détail, agrégation
+de consultation partagée et exports conservant les observations originales. Le tableau PCAET
+reste annuel. La commande API par lot est disponible indépendamment ; aucune grille mensuelle
+générique n'est ajoutée dans cette phase.
 
 ## Contrat calendaire et projection SQL
 
 Les règles calendaires utilisent des stratégies sans état et un registre exhaustif typé.
-Annuel et mensuel partagent un algorithme fondé sur le mois, paramétré par un pas de 12 ou 1 mois
-et un ancrage explicite. Ajouter une périodicité de cette famille ajoute une configuration.
+Annuel, semestriel, trimestriel et mensuel partagent un algorithme fondé sur le mois, paramétré
+par un pas de 12, 6, 3 ou 1 mois et un ancrage explicite en janvier. Ajouter une périodicité de cette famille ajoute une configuration.
 L’ancrage est un premier de mois et le pas divise 12. Le codec doit être injectif : une identité
 limitée à l’année convient seulement à une périodicité annuelle alignée sur janvier.
 
 Les fonctions restent pures, la façade et les registres immuables, les exports publics explicites.
 Le calendrier sépare codec et arithmétique ; il ne dépend ni de React, ni d’ECharts, ni de SQL,
 ni d’une règle d’agrégation. Un registre de présentation distinct partage libellés et contraintes
-d’axe entre frontend et serveur ; l’adaptateur frontend ajoute les contrôles de saisie.
+d’axe entre frontend et serveur ; un calcul d’agrégation partagé reste distinct de ces libellés
+et du calendrier. L’adaptateur frontend ajoute les contrôles de saisie.
 Une périodicité sans stratégie de domaine ou de présentation fait échouer la compilation, sans
 fallback annuel ou mensuel. Aucun hook ou classe n’est nécessaire pour un simple calcul pur.
 
@@ -133,11 +162,12 @@ Un lot cible une collectivité et des cellules `resultat` ou `objectif`, avec in
 Droits et périodes sont validés pour tout le lot avant écriture ; ses valeurs et leurs recalculs
 synchrones sont validés ou annulés dans la même transaction. Le détail conserve ses mutations unitaires.
 Les nouveaux contrats portent
-une période explicite ; les contrats REST historiques sans périodicité restent des adaptateurs annuels,
-même après personnalisation locale.
+une période explicite ; les contrats REST historiques sans périodicité restent des adaptateurs annuels.
+Ils sont soumis aux mêmes contraintes de déclaration locale et ne modifient pas la définition.
 
-Toute écriture de valeurs prend un verrou partagé du graphe ; les mutations de périodicité ou de
-formule prennent un verrou exclusif, avant les verrous de lignes. Définitions et dépendances sont
+Toute écriture de valeurs prend un verrou partagé du graphe ; la création des définitions et les
+mutations de formule ou de relations prennent un verrou exclusif, avant les verrous de lignes.
+La périodicité d’une définition existante reste immuable. Définitions et dépendances sont
 relues sous verrou, par identifiant croissant. Calcul et écriture récursive utilisent ce même état.
 Les imports suivent cet ordre et revalident leur état initial sous verrou ; une modification
 concurrente du catalogue provoque un conflit. Le travail de réconciliation découle des états
@@ -182,18 +212,18 @@ sans créer de pseudo-valeur `null`. Un zéro saisi reste distinct d’une absen
 Les triggers d’écriture SQL directe protègent le graphe, sans garantir les verrous de période ni
 le recalcul applicatif. SQL direct n’est donc pas une API d’écriture courante.
 L’exception historique EMT reste annuelle : validation de toutes les définitions avant écriture,
-refus du mensuel, RPC de service verrouillant graphe, définition puis période, date au 1er janvier.
+refus des définitions non annuelles, RPC de service verrouillant graphe, définition puis période,
+date au 1er janvier.
 Elle exige ensuite `indicateurs.valeurs.recompute` pour la collectivité et doit disparaître avec
 le format historique, sans servir de modèle aux nouveaux imports.
 
 ## Exceptions architecturales à retirer
 
 Les exceptions suivantes restent temporaires, limitées aux lectures existantes et aux adaptations
-annuelle/mensuelle couvertes par l’ADR 0018. Elles ne constituent pas l’architecture cible :
+des quatre périodicités couvertes par l’ADR 0018. Elles ne constituent pas l’architecture cible :
 
 | Exception                                                                   | Responsable de la migration | Cible                                                               |
 | --------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------- |
-| `ListIndicateursService`                                                    | Mainteneurs backend         | Requêtes dans un repository                                         |
 | `ValeursMoyenneService`                                                     | Mainteneurs backend         | Requêtes dans un repository                                         |
 | `ValeursReferenceService`                                                   | Mainteneurs backend         | Droits dans le service, requêtes dans un repository                 |
 | `fetchCollectivite` du site public (`apps/site/app/collectivites/utils.ts`) | Mainteneurs du site         | API publique conservant le périmètre publié de `site_labellisation` |
@@ -210,23 +240,26 @@ sans nouvelle exception. L’accès historique du site n’est pas couvert par l
 canoniques refusées ; `0` renseigné vs absence ; bulk atomique et cloisonné ; déc→jan ordonné ;
 export conserve toutes les périodes ; PCAET non régressé.
 
-Un indicateur annuel recommandé peut être suivi mensuellement par une seule collectivité. Le
-catalogue et les autres collectivités restent inchangés ; revenir au suivi annuel restitue son
-historique. Les imports et calculs conservent la périodicité de leurs valeurs.
+Une définition conserve sa périodicité dès la création, même sans valeur. Une déclaration locale
+la respecte, tandis qu'une source externe annuelle peut coexister avec les observations locales
+mensuelles d'une définition mensuelle. Le changement de visualisation retrouve toujours les
+observations originales. Les calculs enregistrés produisent seulement la périodicité cible.
 
-- **Calendrier** : allers-retours codec et stockage, addition inversible et ordonnée, absence de
-  chevauchement, changements d’année, dates canoniques, registres exhaustifs. Comparaison entre
-  périodicités refusée sauf tri total explicitement demandé.
-- **Métier et compatibilité** : existant annuel recommandé, indépendance des collectivités et des
-  historiques, année distincte de janvier, personnalisation imposée refusée par API et SQL,
-  imports et parcours annuels préservés.
-- **Indicateurs personnalisés** : création annuelle par défaut et mensuelle explicite, mensuel
-  indisponible refusé, modification hors collectivité propriétaire refusée, préférence locale
-  modifiable après saisie puis remise à `null` sans perte des séries. Déclaration mensuelle et
-  affichage annuel conservent chaque point ; déclaration annuelle et affichage mensuel refusés.
-- **Présentation** : matrice déclaration/affichage, points et infobulles mensuels conservés,
-  absence d’agrégation, mêmes règles pour cartes et exports graphiques, aucun effet sur saisie
-  et exports bruts.
+- **Calendrier** : allers-retours codec et stockage des quatre périodicités, addition inversible et
+  ordonnée, absence de chevauchement, passages décembre→janvier, T4→T1 et S2→S1, dates canoniques,
+  registres exhaustifs. Comparaison entre périodicités refusée sauf tri total explicitement demandé.
+- **Métier et compatibilité** : existant annuel, immuabilité dès création par API, imports et SQL,
+  déclaration locale conforme à la définition, sources externes conservées à leur périodicité,
+  année distincte de janvier, du premier trimestre et du premier semestre. PCAET, score et GES
+  sélectionnent les observations annuelles sans convertir les observations infra-annuelles.
+- **Indicateurs personnalisés** : création annuelle par défaut et choix explicite de chacune des
+  quatre périodicités, y compris depuis une action ; modification hors collectivité propriétaire
+  refusée ; périodicité immuable même sans valeur ; choix de visualisation sans effet sur la définition.
+- **Présentation** : matrice source/visualisation, règles indépendantes pour résultats et objectifs,
+  douze mois de `10` donnant `4 × 30`, `2 × 60` ou `120` pour la somme ; règles inconnues et groupes
+  incomplets sans agrégat ; absence distincte de zéro ; aucune désagrégation ou fusion implicite de
+  séries. Commentaires et références d'origine préservés, agrégats non éditables, mêmes règles pour
+  tableau, graphiques, cartes et rendus serveur ; exports bruts conservant les observations.
 - **Transactions et calculs** : lot invalide sans écriture, zéro/null/absence distincts,
   catalogue/objectifs/intentions atomiques, réconciliation des suppressions et versions,
   crash, reprise, générations et traitements concurrents.

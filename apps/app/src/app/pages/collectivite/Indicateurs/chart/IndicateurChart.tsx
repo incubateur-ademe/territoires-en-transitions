@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
 import {
   type Dataset,
@@ -10,7 +11,10 @@ import {
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { getAnnee } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { makeIndicateurPeriodTimeAxis } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
+import {
+  getIndicateurPeriodPresentation,
+  makeIndicateurPeriodTimeAxis,
+} from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { IndicateurPeriods } from '@tet/domain/indicateurs';
 import type { GridComponentOption } from 'echarts/components';
 import { memo, useMemo, useRef } from 'react';
@@ -52,6 +56,7 @@ const TooltipContainerClassname =
 
 type IndicateurDataset = Dataset & {
   calculAuto: boolean;
+  stackKey?: string;
   metadonnee?: PreparedData['sources'][number]['metadonnees'][number] | null;
   nomSource?: string | null;
 };
@@ -64,30 +69,52 @@ const prepareDataset = (
   getColorBySourceId: GetColorBySourceId
 ): IndicateurDataset[] =>
   data.valeurs[`${type}s`].sources
-    // filtre les valeurs null/undefined
-    ?.map(({ valeurs, ...other }) => ({
-      ...other,
-      valeurs: valeurs.filter(({ valeur }) => valeur != null),
-    }))
-    // et les jeux de valeurs vides pour éviter d'avoir dans la légende des
-    // items sans données associées
-    ?.filter(({ valeurs }) => valeurs?.length > 0)
-    .map(({ source, libelle, valeurs, metadonnees }) => {
-      const metadonnee = metadonnees?.find((m) => m.sourceId === source);
-      return {
-        color: getColorBySourceId(source, type),
-        id: `${type}-${source}`,
-        calculAuto: Boolean(valeurs.some((v) => v.calculAuto)),
-        name: getSourceLabel(source, metadonnee?.producteur || libelle, type),
-        source: valeurs.map(({ dateValeurISO, valeur }) => ({
-          dateValeurISO,
-          valeur: valeur as number,
-        })) as Dataset['source'],
-        dimensions: ['dateValeurISO', 'valeur'],
-        metadonnee,
-        nomSource: libelle,
-      };
-    }) ?? [];
+    // Une période incomplète reste un trou dans la courbe.
+    ?.filter(({ valeurs }) => valeurs.some(({ valeur }) => valeur != null))
+    .map(
+      ({
+        source,
+        libelle,
+        valeurs,
+        metadonnees,
+        seriesKey,
+        periodiciteSource,
+      }) => {
+        const metadonnee = metadonnees?.find((m) => m.sourceId === source);
+        const label = getSourceLabel(
+          source,
+          metadonnee?.producteur || libelle,
+          type
+        );
+        return {
+          color: getColorBySourceId(source, type),
+          id: `${type}-${seriesKey ?? source}`,
+          calculAuto: Boolean(valeurs.some((v) => v.calculAuto)),
+          name: periodiciteSource
+            ? appLabels.indicateurSourcePeriodicite(
+                label,
+                [
+                  getIndicateurPeriodPresentation(periodiciteSource).label,
+                  metadonnee?.nomDonnees,
+                  metadonnee?.dateVersion,
+                  metadonnee
+                    ? appLabels.indicateurSourceVersion(metadonnee.id)
+                    : undefined,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')
+              )
+            : label,
+          source: valeurs.map(({ dateValeurISO, valeur }) => ({
+            dateValeurISO,
+            valeur: valeur ?? null,
+          })) as Dataset['source'],
+          dimensions: ['dateValeurISO', 'valeur'],
+          metadonnee,
+          nomSource: libelle,
+        };
+      }
+    ) ?? [];
 
 // prépare les données pour l'affichage des surfaces superposées pour
 // les segments (sous-indicateurs d'un indicateur composé avec agrégation)
@@ -118,8 +145,25 @@ const prepareSegmentsDataset = (
     const { id, name, color } = segmentItemParId.get(definition.id) || {};
 
     return {
-      id,
-      name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}`,
+      id: `${id}:${source.seriesKey ?? source.source}`,
+      stackKey: `total:${source.source}:${
+        source.periodiciteSource ??
+        source.valeurs[0]?.valeursSources?.[0]?.periodicite ??
+        source.valeurs[0]?.periode.periodicite
+      }:${metadonnee?.id ?? 'local'}`,
+      name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}${
+        source.periodiciteSource
+          ? ` · ${
+              getIndicateurPeriodPresentation(source.periodiciteSource).label
+            }${
+              metadonnee
+                ? ` · ${
+                    metadonnee.dateVersion
+                  } · ${appLabels.indicateurSourceVersion(metadonnee.id)}`
+                : ''
+            }`
+          : ''
+      }`,
       color,
       calculAuto: Boolean(source.valeurs.some((v) => v.calculAuto)),
       source: periodes.map((periode) => {
@@ -264,7 +308,10 @@ const PreparedChart = memo(
       }
       const series = [
         ...makeLineSeries(donneesResultatObjectif),
-        ...makeStackedSeries(donneesSegments),
+        ...makeStackedSeries(donneesSegments).map((series, index) => ({
+          ...series,
+          stack: donneesSegments[index].stackKey,
+        })),
         ...makeReferenceSeries(references, variant !== 'thumbnail'),
       ];
 

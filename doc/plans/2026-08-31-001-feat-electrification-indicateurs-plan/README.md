@@ -3,7 +3,7 @@ title: 'feat: Suivi mensuel des indicateurs Électrification'
 type: feat
 status: draft
 date: 2026-08-31
-updated: 2026-09-02
+updated: 2026-09-24
 kind: index
 notion: https://app.notion.com/p/accelerateur-transition-ecologique-ademe/BUILD-lectrification-indicateurs-3c76523d57d78013aa2ae3785cf09f1f
 ---
@@ -20,32 +20,36 @@ niveaux territorial → national.
 
 Trois lots dépendants :
 
-| Lot                                                     | État                       | Débloqué par                                   |
-| ------------------------------------------------------- | -------------------------- | ---------------------------------------------- |
-| [Phase 1 — Socle mensuel](phase-1-socle-mensuel.md)     | Prêt après arbitrage court | Décision périodicité                           |
-| [Phase 2 — Électrification](phase-2-electrification.md) | Bloqué                     | Catalogue Écolab + mandat TeT sur candidatures |
-| [Phase 3 — Reporting ADEME](phase-3-reporting.md)       | Bloqué                     | Règles complétude/progression + permissions    |
+| Lot                                                     | État       | Débloqué par                                   |
+| ------------------------------------------------------- | ---------- | ---------------------------------------------- |
+| [Phase 1 — Socle périodique](phase-1-socle-mensuel.md)  | ADR validé | Fusion de la PR préparatoire #4961             |
+| [Phase 2 — Électrification](phase-2-electrification.md) | Bloqué     | Catalogue Écolab + mandat TeT sur candidatures |
+| [Phase 3 — Reporting ADEME](phase-3-reporting.md)       | Bloqué     | Règles complétude/progression + permissions    |
 
 **Reco** : généraliser d'abord le domaine `indicateurs` de l'année vers une période explicite
-(`annuelle` | `mensuelle`), puis importer un mapping engagement–indicateur, puis ajouter config
+(`annuelle` | `semestrielle` | `trimestrielle` | `mensuelle`), puis importer un mapping
+engagement–indicateur, puis ajouter config
 lauréats et reporting **seulement selon le mandat réel de TeT**.
 
-Le stockage accepte déjà plusieurs dates par an. L'écart n'est pas la table `indicateur_valeur`,
-mais les couches qui réduisent une date à une année (grille, graphique, export).
+Le socle ajoute la périodicité aux définitions et aux valeurs dans la table `indicateur_valeur`,
+avec une identité et des contraintes de date explicites. Il adapte aussi les couches qui
+réduisent une date à une année (grille, graphique, export).
 
 ## Décisions de cadrage
 
-Phase 1 (proposée dans l’ADR 0018) :
+Phase 1 (validée dans l’ADR 0018) :
 
-1. La définition porte une périodicité de déclaration recommandée ou imposée. Une recommandation peut être
-   personnalisée par collectivité ; une périodicité imposée ne peut pas être modifiée. Les
-   indicateurs existants sont annuels recommandés. Les valeurs gardent leur propre périodicité.
-2. Les indicateurs personnalisés sont inclus : création annuelle ou mensuelle en mode recommandé,
-   sous les droits de la collectivité propriétaire. Leur suivi utilise la même préférence locale
-   et les mêmes règles de valeurs et d’affichage que les indicateurs prédéfinis.
-3. Une recommandation peut être personnalisée après saisie, en conservant les séries historiques.
-   L'affichage du graphique est séparé : des points mensuels peuvent être regroupés visuellement
-   par année, sans agrégation. Une déclaration annuelle n'autorise pas un affichage mensuel.
+1. La définition porte une périodicité de déclaration annuelle, semestrielle, trimestrielle ou
+   mensuelle, fixe dès la création, même sans valeur enregistrée. Elle s'applique aux déclarations
+   locales de toutes les collectivités. Les indicateurs existants sont classés annuels.
+2. Les indicateurs personnalisés suivent les mêmes règles : la collectivité propriétaire choisit
+   l'une des quatre périodicités à la création, avec un défaut annuel. La définition est l'unique
+   source de cette périodicité, sans mode ni préférence locale.
+3. La visualisation reste indépendante : une périodicité plus large agrège les valeurs selon une
+   règle explicite pour les résultats et les objectifs. Une règle inconnue ou une période incomplète
+   ne produit pas d'agrégat ; aucune observation plus fine n'est inventée. Les sources externes et
+   les historiques conservent leur périodicité et leurs valeurs d'origine. Les séries restent
+   distinctes, y compris lorsqu'elles partagent une date de début.
 
 Phase 2 (à trancher avant de démarrer) :
 
@@ -64,7 +68,7 @@ Phase 3 :
 ## Risques et no-gos
 
 Risques : catalogue Écolab instable ; doublons avec indicateurs TeT existants ; collision
-`2026-01-01` entre annuel et mensuel d'une même définition ; confusion cible 2030 / mesure
+`2026-01-01` entre année, semestre, trimestre et mois d'une même définition ; confusion cible 2030 / mesure
 mensuelle ; agrégation incorrecte de %/stocks/flux ; perte de mois dans un consommateur annuel
 oublié ; sync de plan écrasant du contenu local ; reporting exposant des données confidentielles.
 
@@ -73,12 +77,12 @@ No-gos premier incrément :
 - ne pas coder `100`/`108`/4 axes/top 3-5 comme règle métier (viennent de données versionnées) ;
 - ne pas importer le DOCX comme catalogue d'indicateurs ;
 - ne pas dupliquer une définition sans comparer sens, unité, périodicité, formule, agrégation ;
-- ne pas basculer en mensuel une définition annuelle déjà utilisée ;
+- ne pas modifier la périodicité d’une définition après sa création, même sans valeur ;
 - ne pas déduire la périodicité des dates saisies ;
 - ne pas détourner `groupement` ni `indicateur_action` pour les engagements ;
-- ne pas agréger des % sans dénominateur ;
+- ne pas appliquer une somme aux stocks, pourcentages ou objectifs sans règle métier explicite ;
 - ne pas réutiliser le contrôleur d'import anonyme pour des candidatures confidentielles ;
-- ne pas étendre au trimestriel/semestriel maintenant (abstraction extensible, livrer le confirmé).
+- ne pas inventer de valeurs plus fines ni mélanger observations enregistrées et agrégats affichés.
 
 ## Contexte utile
 
@@ -130,38 +134,41 @@ pas de cible structurée ; ne pas créer de fiches actions automatiquement depui
 
 ## État du code et périmètre du socle
 
-| Besoin                 | Existant                                  | Écart                                             |
-| ---------------------- | ----------------------------------------- | ------------------------------------------------- |
-| Plusieurs valeurs / an | Date réelle + contraintes sur date        | Aucun changement de table                         |
-| Maille mensuelle       | Aucun champ de périodicité                | Ajouter `annuelle` / `mensuelle`                  |
-| Saisie                 | Détail indicateur et tableau PCAET annuel | Périodiser le détail ; préserver le tableau PCAET |
-| Graphique / export     | Réduction par année                       | Écrase 2 mois d'une même année                    |
-| Liens fiche / axe      | Tables existantes                         | Réutilisables                                     |
-| Plan                   | Types et création existent                | Pas de template idempotent                        |
-| Import définitions     | Import versionné Google Sheets            | Ajouter périodicité + mappings                    |
-| Reporting ADEME        | API/UI mono-collectivité                  | Lecture agrégée + permission dédiée               |
+| Besoin                 | Existant avant le socle                   | Écart couvert par le socle                                       |
+| ---------------------- | ----------------------------------------- | ---------------------------------------------------------------- |
+| Plusieurs valeurs / an | Date réelle + contraintes sur date        | Identité incluant périodicité, date et source                    |
+| Maille de déclaration  | Aucun champ de périodicité                | Quatre périodicités, fixes dès la création                       |
+| Saisie                 | Détail indicateur et tableau PCAET annuel | Périodiser le détail ; préserver le tableau PCAET                |
+| Graphique / export     | Réduction par année                       | Agrégation de consultation ; export des originaux                |
+| Liens fiche / axe      | Tables existantes                         | Réutilisables                                                    |
+| Plan                   | Types et création existent                | Pas de template idempotent                                       |
+| Import définitions     | Import versionné Google Sheets            | Ajouter périodicité et règles d’agrégation ; mappings en phase 2 |
+| Reporting ADEME        | API/UI mono-collectivité                  | Lecture agrégée + permission dédiée                              |
 
 Hypothèses annuelles à supprimer dans les consommateurs génériques :
 `Indicateurs/data/prepare-data.ts`, `ui/charts/echarts/utils.ts`,
 `export-indicateurs/export-indicateurs.builder.ts`. Le tableau PCAET reste annuel et vérifie
-explicitement cette capacité. Les anciens adaptateurs de grille supprimés sur `main` ne sont
+explicitement la périodicité des observations annuelles, indépendamment de celle de la définition. Les anciens adaptateurs de grille supprimés sur `main` ne sont
 pas réintroduits. Le catalogue PCAET est désormais porté par le package domaine, sans tables
 SQL de topics ou de lignes.
 
 ## Modèle temporel
 
 ```ts
-type IndicateurPeriodicite = 'annuelle' | 'mensuelle';
-// annuelle = YYYY-01-01 ; mensuelle = YYYY-MM-01
+type IndicateurPeriodicite = 'annuelle' | 'semestrielle' | 'trimestrielle' | 'mensuelle';
+// annuelle : 1er janvier ; semestrielle : 1er janvier ou juillet
+// trimestrielle : 1er janvier, avril, juillet ou octobre ; mensuelle : premier du mois
 ```
 
 Le domaine manipule `IndicateurPeriod`, qui associe périodicité et date de début validée.
 Une interface à colonnes temporelles utilise une seule périodicité de déclaration ; une éventuelle
 grille mensuelle dédiée à l’Électrification relève de la phase 2.
 
-L’unicité des valeurs inclut leur périodicité, pour distinguer janvier 2026 de l’année 2026.
-La périodicité du catalogue devient immuable après la première valeur ; une collectivité peut
-changer sa préférence sur un indicateur recommandé, en conservant les séries historiques.
+L’unicité des valeurs inclut collectivité, indicateur, périodicité, date de début et source :
+janvier, le premier trimestre, le premier semestre et l’année 2026 restent distincts.
+La périodicité de la définition est immuable dès sa création, dans l’API, les imports et la base.
+Les déclarations locales la respectent ; les sources externes et les historiques conservent leur
+périodicité d’origine. Le choix de visualisation reste local à la vue et ne modifie aucune valeur.
 Voir l’[ADR 0018](../../adr/0018-periodicite-des-indicateurs.md), le
 [plan de phase 1](phase-1-socle-mensuel.md) et le [runbook](../../../data_layer/periodicite-runbook.md).
 
@@ -189,6 +196,6 @@ d'une collectivité TeT, d'une liste de collectivités, ou d'un participant exte
 
 ## Navigation
 
-- [Phase 1 — Socle mensuel](phase-1-socle-mensuel.md)
+- [Phase 1 — Socle périodique](phase-1-socle-mensuel.md)
 - [Phase 2 — Catalogue et config Électrification](phase-2-electrification.md)
 - [Phase 3 — Reporting ADEME](phase-3-reporting.md)

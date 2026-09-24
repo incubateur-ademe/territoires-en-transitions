@@ -17,7 +17,9 @@ const createTable = (): DiagnosticIndicateurTable => {
         optionalYears: [],
       },
     ],
-    indicateurDefinitions: [row.indicateurDefinition],
+    indicateurDefinitions: [
+      { ...row.indicateurDefinition, isApplicable: row.isApplicable },
+    ],
     indicateurValeurs: row.indicateurValeurs.map((indicateurValeur) => ({
       indicateurValeur,
       indicateurDefinition: row.indicateurDefinition,

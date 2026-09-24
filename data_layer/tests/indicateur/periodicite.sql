@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(61);
+SELECT plan(60);
 
 CREATE TEMPORARY TABLE test_collectivite_periodicite AS
 WITH collectivite AS (
@@ -24,7 +24,8 @@ WITH indicateurs AS (
     CROSS JOIN (VALUES
         ('test-annuel', NULL, 'annuelle'),
         ('test-audit-reaffectation', NULL, 'annuelle'),
-        ('test-a-convertir-en-mensuel', NULL, 'annuelle')
+        ('test-sans-valeur', NULL, 'annuelle'),
+        ('test-mensuel', NULL, 'mensuelle')
     ) AS donnees(code, referentiel_id, periodicite)
     RETURNING id, titre, periodicite
 )
@@ -37,7 +38,8 @@ WITH indicateurs AS (
         (identifiant_referentiel, titre, unite, periodicite)
     VALUES
         ('test_emt_annuel_pg_tap', 'test-emt-annuel', 'kWh', 'annuelle'),
-        ('test_emt_mensuel_pg_tap', 'test-emt-mensuel', 'kWh', 'annuelle')
+        ('test_emt_mensuel_pg_tap', 'test-emt-mensuel', 'kWh', 'mensuelle'),
+        ('test_emt_second_annuel_pg_tap', 'test-emt-second-annuel', 'kWh', 'annuelle')
     RETURNING id, titre
 )
 SELECT id, titre AS code
@@ -150,14 +152,6 @@ SELECT is(
     'Un import EMT préserve l''historique des commentaires'
 );
 
-UPDATE public.indicateur_definition
-SET periodicite = 'mensuelle'
-WHERE id = (
-    SELECT id
-    FROM test_indicateur_emt_periodicite
-    WHERE code = 'test-emt-mensuel'
-);
-
 SELECT throws_ok(
     format(
         $$ SELECT public.import_indicateur_emt_valeurs(
@@ -175,7 +169,7 @@ SELECT throws_ok(
     ),
     23514,
     NULL,
-    'La RPC EMT refuse une définition devenue mensuelle'
+    'La RPC EMT refuse une déclaration annuelle pour une définition mensuelle'
 );
 
 SELECT is_empty(
@@ -229,14 +223,6 @@ SELECT is_empty(
     'Une erreur tardive ne laisse pas la première valeur du lot'
 );
 
-UPDATE public.indicateur_definition
-SET periodicite = 'annuelle'
-WHERE id = (
-    SELECT id
-    FROM test_indicateur_emt_periodicite
-    WHERE code = 'test-emt-mensuel'
-);
-
 SELECT is(
     public.import_indicateur_emt_valeurs(
         (SELECT collectivite_id FROM test_collectivite_periodicite),
@@ -255,7 +241,7 @@ SELECT is(
                 'indicateur_id', (
                     SELECT id
                     FROM test_indicateur_emt_periodicite
-                    WHERE code = 'test-emt-mensuel'
+                    WHERE code = 'test-emt-second-annuel'
                 ),
                 'periodicite', 'annuelle',
                 'date_debut', '2033-01-01',
@@ -279,8 +265,8 @@ SELECT lives_ok(
 
 SELECT is(
     (SELECT count(*)::integer FROM public.indicateur_periodicite),
-    2,
-    'Le catalogue ne livre que les politiques annuelle et mensuelle'
+    4,
+    'Le catalogue livre les quatre cadences calendaires'
 );
 
 SELECT ok(
@@ -362,7 +348,6 @@ SELECT is(
                       'id',
                       'identifiant_referentiel',
                       'periodicite',
-                      'periodicite_mode',
                       'valeur_calcule'
                   ]::name[]
               )
@@ -486,9 +471,11 @@ SELECT lives_ok(
     'Une valeur annuelle au 1er janvier est acceptée directement en base'
 );
 
-SELECT lives_ok(
+SELECT throws_ok(
     $$ SELECT migration.verifier_retrait_periodicite_indicateur() $$,
-    'Le downgrade reste possible tant que toutes les définitions sont annuelles'
+    23514,
+    NULL,
+    'Le downgrade préserve aussi les définitions mensuelles sans valeur'
 );
 
 INSERT INTO migration.indicateur_valeur_periodicite_audit
@@ -573,7 +560,7 @@ SELECT throws_ok(
     ),
     23514,
     NULL,
-    'La périodicité ne change plus après la première valeur'
+    'La périodicité de déclaration reste immuable avec des valeurs'
 );
 
 SELECT lives_ok(
@@ -591,61 +578,32 @@ SELECT lives_ok(
         $$ INSERT INTO public.indicateur_groupe (parent, enfant)
            VALUES (%s, %s) $$,
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'),
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-sans-valeur')
     ),
     'Un groupe de définitions annuelles homogènes est accepté'
 );
 
 SELECT throws_ok(
     format(
-        $$ UPDATE public.indicateur_definition
-           SET periodicite = 'mensuelle'
-           WHERE id = %s $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
+        $$ UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = %s $$,
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-sans-valeur')
     ),
     23514,
     NULL,
     'Une définition liée ne peut pas rendre son groupe hétérogène'
 );
 
-SELECT lives_ok(
-    format(
-        $$ DELETE FROM public.indicateur_groupe
-           WHERE parent = %1$s AND enfant = %2$s;
-           UPDATE public.indicateur_definition
-           SET periodicite = 'mensuelle'
-           WHERE id IN (%1$s, %2$s);
-           INSERT INTO public.indicateur_groupe (parent, enfant)
-           VALUES (%1$s, %2$s);
-           DELETE FROM public.indicateur_groupe
-           WHERE parent = %1$s AND enfant = %2$s;
-           UPDATE public.indicateur_definition
-           SET periodicite = 'annuelle'
-           WHERE id IN (%1$s, %2$s);
-           INSERT INTO public.indicateur_groupe (parent, enfant)
-           VALUES (%1$s, %2$s) $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'),
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
-    ),
-    'Un import peut remplacer atomiquement un graphe homogène sans état intermédiaire invalide'
-);
-
 DELETE FROM public.indicateur_groupe
-WHERE parent = (
-    SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'
-)
-  AND enfant = (
-    SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel'
-  );
+WHERE enfant = (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-sans-valeur');
 
-SELECT lives_ok(
+SELECT throws_ok(
     format(
-        $$ UPDATE public.indicateur_definition
-           SET periodicite = 'mensuelle'
-           WHERE id = %s $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
+        $$ UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = %s $$,
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-sans-valeur')
     ),
-    'Une définition sans valeur peut encore changer de périodicité'
+    23514,
+    NULL,
+    'La périodicité reste immuable même sans groupe ni valeur'
 );
 
 SELECT throws_ok(
@@ -653,7 +611,7 @@ SELECT throws_ok(
         $$ INSERT INTO public.indicateur_groupe (parent, enfant)
            VALUES (%s, %s) $$,
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'),
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel')
     ),
     23514,
     NULL,
@@ -665,7 +623,7 @@ SELECT lives_ok(
         $$ INSERT INTO public.indicateur_valeur
                (indicateur_id, collectivite_id, date_valeur, resultat, periodicite)
            VALUES (%s, %s, DATE '2027-01-01', 10, 'mensuelle') $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel'),
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel'),
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
     'Le premier jour de janvier est accepté pour un indicateur mensuel'
@@ -676,7 +634,7 @@ SELECT lives_ok(
         $$ INSERT INTO public.indicateur_valeur
                (indicateur_id, collectivite_id, date_valeur, resultat, periodicite)
            VALUES (%s, %s, DATE '2027-02-01', 20, 'mensuelle') $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel'),
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel'),
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
     'Le premier jour de février est accepté pour un indicateur mensuel'
@@ -696,7 +654,7 @@ SELECT is(
         WHERE indicateur_id = (
             SELECT id
             FROM test_indicateur_periodicite
-            WHERE code = 'test-a-convertir-en-mensuel'
+            WHERE code = 'test-mensuel'
         )
     ),
     2,
@@ -708,7 +666,7 @@ SELECT throws_ok(
         $$ INSERT INTO public.indicateur_valeur
                (indicateur_id, collectivite_id, date_valeur, resultat, periodicite)
            VALUES (%s, %s, DATE '2027-03-02', 30, 'mensuelle') $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel'),
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel'),
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
     23514,
@@ -721,16 +679,12 @@ SELECT throws_ok(
         $$ UPDATE public.indicateur_definition
            SET periodicite = 'annuelle'
            WHERE id = %s $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel')
     ),
     23514,
     NULL,
     'Une définition mensuelle alimentée ne peut pas devenir annuelle'
 );
-
-UPDATE public.indicateur_definition
-SET periodicite_mode = 'imposee'
-WHERE id = (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel');
 
 SELECT throws_ok(
     format(
@@ -739,11 +693,11 @@ SELECT throws_ok(
            WHERE indicateur_id = %s
              AND date_valeur = DATE '2027-02-01' $$,
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel'),
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-a-convertir-en-mensuel')
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel')
     ),
     23514,
     NULL,
-    'Déplacer une valeur vers une définition de maille imposée incompatible est refusé'
+    'Déplacer une valeur vers une définition de périodicité incompatible est refusé'
 );
 
 SELECT is_empty(
@@ -790,7 +744,7 @@ SELECT is(
         WHERE indicateur_id = (
             SELECT id
             FROM test_indicateur_periodicite
-            WHERE code = 'test-a-convertir-en-mensuel'
+            WHERE code = 'test-mensuel'
         )
     ),
     ARRAY[DATE '2027-01-01', DATE '2027-02-01'],
@@ -804,7 +758,7 @@ SELECT is(
         WHERE indicateur_id = (
             SELECT id
             FROM test_indicateur_periodicite
-            WHERE code = 'test-a-convertir-en-mensuel'
+            WHERE code = 'test-mensuel'
         )
     ),
     ARRAY['mensuelle', 'mensuelle'],
@@ -818,11 +772,12 @@ SELECT is(
         WHERE indicateur_id = (
             SELECT id
             FROM test_indicateur_periodicite
-            WHERE code = 'test-a-convertir-en-mensuel'
+            WHERE code = 'test-mensuel'
         )
     ),
     ARRAY[2027, 2027],
     'Le reporting conserve aussi la colonne annuelle historique'
 );
 
+SELECT * FROM finish();
 ROLLBACK;

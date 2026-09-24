@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurCategorieTagTable } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
@@ -34,12 +35,8 @@ export type IndicateurDefinitionAvecCategories = {
   titre: string;
   periodicite: IndicateurPeriodicite;
   categories: string[];
+  isApplicable: boolean;
 };
-
-type LockedScoreIndicatifDefinition = Pick<
-  IndicateurDefinitionAvecCategories,
-  'identifiantReferentiel' | 'periodicite'
->;
 
 export type ScoreIndicatifSelectionScope = Readonly<{
   actionId: string;
@@ -92,6 +89,7 @@ export class ScoreIndicatifRepository {
   /** Charge les définitions des indicateurs identifiés par leur identifiant référentiel, avec leurs catégories */
   async getIndicateurDefinitionsByIdentifiants(
     identifiants: string[],
+    collectiviteId: number,
     tx?: Transaction
   ): Promise<
     Result<IndicateurDefinitionAvecCategories[], ScoreIndicatifError>
@@ -119,6 +117,7 @@ export class ScoreIndicatifRepository {
               '[]'::json
             )
           `,
+          isApplicable: sql<boolean>`coalesce(bool_and(${indicateurCollectiviteTable.isApplicable}), true)`,
         })
         .from(indicateurDefinitionTable)
         .leftJoin(
@@ -128,6 +127,13 @@ export class ScoreIndicatifRepository {
         .leftJoin(
           categorieTagTable,
           eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+        )
+        .leftJoin(
+          indicateurCollectiviteTable,
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+            eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+          )
         )
         .where(and(inArray(identifiantReferentiel, identifiants)))
         .groupBy(indicateurId);
@@ -241,23 +247,6 @@ export class ScoreIndicatifRepository {
     }
   }
 
-  async getDefinitionForShare(
-    indicateurId: number,
-    tx: Transaction
-  ): Promise<LockedScoreIndicatifDefinition | null> {
-    const [definition] = await tx
-      .select({
-        periodicite: indicateurDefinitionTable.periodicite,
-        identifiantReferentiel:
-          indicateurDefinitionTable.identifiantReferentiel,
-      })
-      .from(indicateurDefinitionTable)
-      .where(eq(indicateurDefinitionTable.id, indicateurId))
-      .limit(1)
-      .for('share');
-    return definition ?? null;
-  }
-
   /**
    * Serializes replacement of one score selection independently from the
    * presence of existing rows. Row locks cannot provide that guarantee when a
@@ -273,29 +262,76 @@ export class ScoreIndicatifRepository {
     `);
   }
 
-  async listCompatibleValeurIds(
-    input: Pick<
-      ScoreIndicatifSelectionScope,
-      'collectiviteId' | 'indicateurId'
-    >,
-    valeurIds: number[],
-    tx: Transaction
-  ): Promise<number[]> {
-    const valeurs = await tx
-      .select({ id: indicateurValeurTable.id })
-      .from(indicateurValeurTable)
-      .where(
-        and(
-          inArray(indicateurValeurTable.id, valeurIds),
-          eq(
-            indicateurValeurTable.periodicite,
-            IndicateurPeriodiciteEnum.ANNUELLE
-          ),
-          eq(indicateurValeurTable.indicateurId, input.indicateurId),
-          eq(indicateurValeurTable.collectiviteId, input.collectiviteId)
-        )
+  /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
+  async listActionsUsingIndicateurValeur(
+    indicateurValeurId: number | number[],
+    tx?: Transaction
+  ): Promise<
+    Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
+  > {
+    try {
+      const rows = await (tx ?? this.databaseService.db)
+        .selectDistinct({
+          collectiviteId: actionScoreIndicateurValeurTable.collectiviteId,
+          actionId: actionScoreIndicateurValeurTable.actionId,
+        })
+        .from(actionScoreIndicateurValeurTable)
+        .where(
+          Array.isArray(indicateurValeurId)
+            ? inArray(
+                actionScoreIndicateurValeurTable.indicateurValeurId,
+                indicateurValeurId
+              )
+            : eq(
+                actionScoreIndicateurValeurTable.indicateurValeurId,
+                indicateurValeurId
+              )
+        );
+
+      return success(rows);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
       );
-    return valeurs.map(({ id }) => id);
+    }
+  }
+
+  /**
+   * Parmi les identifiants de valeurs d'indicateur fournis, renvoie ceux qui
+   * appartiennent bien à la collectivité et à l'indicateur donnés
+   */
+  async filterIndicateurValeurIdsBelongingTo(
+    indicateurValeurIds: number[],
+    collectiviteId: number,
+    indicateurId: number,
+    tx?: Transaction
+  ): Promise<Result<number[], ScoreIndicatifError>> {
+    try {
+      const rows = await (tx ?? this.databaseService.db)
+        .select({ id: indicateurValeurTable.id })
+        .from(indicateurValeurTable)
+        .where(
+          and(
+            inArray(indicateurValeurTable.id, indicateurValeurIds),
+            eq(
+              indicateurValeurTable.periodicite,
+              IndicateurPeriodiciteEnum.ANNUELLE
+            ),
+            eq(indicateurValeurTable.collectiviteId, collectiviteId),
+            eq(indicateurValeurTable.indicateurId, indicateurId)
+          )
+        );
+
+      return success(rows.map((r) => r.id));
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 
   /** Remplace les valeurs utilisées pour le calcul du score indicatif d'une action/indicateur */

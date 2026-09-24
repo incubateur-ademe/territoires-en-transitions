@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -21,7 +20,6 @@ import { HandleDefinitionFichesService } from '../../indicateurs/handle-definiti
 import { HandleDefinitionPilotesService } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
 import { HandleDefinitionServicesService } from '../../indicateurs/handle-definition-services/handle-definition-services.service';
 import { HandleDefinitionThematiquesService } from '../../indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
-import { IndicateurDefinitionLockRepository } from '../indicateur-definition-lock.repository';
 import {
   type DefinitionOwnership,
   MutateDefinitionRepository,
@@ -39,8 +37,7 @@ export class UpdateDefinitionService {
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
     private readonly handleDefinitionPilotesService: HandleDefinitionPilotesService,
     private readonly handleDefinitionServicesService: HandleDefinitionServicesService,
-    private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository
+    private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService
   ) {}
 
   private async canUpdateDefinition(
@@ -125,12 +122,9 @@ export class UpdateDefinitionService {
     indicateurId: number,
     indicateurFields: UpdateIndicateurDefinitionInput['indicateurFields']
   ): void {
-    if (
-      indicateurFields.periodicite !== undefined &&
-      definition.periodiciteMode === 'imposee'
-    ) {
+    if (indicateurFields.periodicite !== undefined) {
       throw new BadRequestException(
-        'La périodicité de cet indicateur est imposée et ne peut pas être personnalisée'
+        'La périodicité est fixée à la création de l’indicateur'
       );
     }
     if (definition.collectiviteId !== null) {
@@ -187,7 +181,7 @@ export class UpdateDefinitionService {
       estFavori,
       titre,
       unite,
-      periodicite,
+      isApplicable,
       ficheIds,
       pilotes,
       services,
@@ -200,17 +194,10 @@ export class UpdateDefinitionService {
       indicateurFields
     );
 
-    const expectedPeriodicite = definition.periodicite;
-
     const transactionResult = await this.transactionManager.executeSingle<
       void,
       unknown
     >(async (tx) => {
-      if (periodicite !== undefined) {
-        // Keep the global graph lock before the row lock to preserve the lock
-        // order shared with value writes and formula reconciliation.
-        await this.definitionLockRepository.lockForDefinitionMutation(tx);
-      }
       const lockedDefinition = await this.repository.lockDefinitionOwnership(
         indicateurId,
         tx
@@ -226,28 +213,18 @@ export class UpdateDefinitionService {
         indicateurFields
       );
 
-      if (periodicite !== undefined) {
-        const lockedPeriodicite = lockedDefinition.periodicite;
-
-        if (lockedPeriodicite !== expectedPeriodicite) {
-          throw new ConflictException(
-            `La périodicité de l'indicateur ${indicateurId} a été modifiée simultanément, veuillez réessayer`
-          );
-        }
-      }
-
       if (
         commentaire !== undefined ||
         estConfidentiel !== undefined ||
         estFavori !== undefined ||
-        periodicite !== undefined
+        isApplicable !== undefined
       ) {
         await this.repository.upsertCollectiviteFields(
           {
             indicateurId,
             collectiviteId,
             commentaire,
-            periodicite,
+            isApplicable,
             confidentiel: estConfidentiel,
             favoris: estFavori,
             modifiedBy: user.id,

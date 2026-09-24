@@ -1,6 +1,5 @@
-import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import { IndicateurPeriodiciteSelect } from '@/app/indicateurs/valeurs/indicateur-periodicite.select';
-import { INDICATEUR_PERIODICITE_OPTIONS } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
+import { appLabels } from '@/app/labels/catalog';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import {
   canUpdateIndicateurDefinition,
   canUpdateIndicateurValeur,
@@ -8,7 +7,7 @@ import {
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Divider } from '@tet/ui';
+import { Divider, Field } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { PersonnalisationQuestionsList } from '../../../../../collectivites/personnalisations/personnalisation-questions.list';
@@ -33,10 +32,6 @@ const DonneesIndicateur = ({
   updateUnite,
   updateCommentaire,
 }: Props) => {
-  const { mutate: updateIndicateur, isPending } = useUpdateIndicateur(
-    definition.id
-  );
-  const periodiciteOptions = INDICATEUR_PERIODICITE_OPTIONS;
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = definition;
 
@@ -69,14 +64,15 @@ const DonneesIndicateur = ({
 
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
-      <IndicateurPeriodiciteSelect
-        mode={definition.periodiciteMode}
-        periodiciteParDefaut={definition.periodiciteParDefaut}
-        periodicitePersonnalisee={definition.periodicitePersonnalisee}
-        options={periodiciteOptions}
-        disabled={!canMutateDefinition || isPending}
-        onChange={(periodicite) => updateIndicateur({ periodicite })}
-      />
+      <Field
+        title={appLabels.periodiciteDeclarationCollectivite}
+        hint={appLabels.periodiciteImmuable}
+        small
+      >
+        <span>
+          {getIndicateurPeriodPresentation(definition.periodicite).label}
+        </span>
+      </Field>
       <div className="flex flex-row gap-4">
         {/* Unité personnalisée */}
         {definition.estPerso && (

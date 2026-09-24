@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 
 import { appLabels } from '@/app/labels/catalog';
-import { toFileConstraints } from '@/app/referentiels/preuves/upload/constants';
+import { toFileConstraints } from '@/app/collectivites/documents/upload/constants';
 import type { DemarcheDocumentAdditional } from '@tet/domain/demarches';
 import { ChecklistTable } from '@tet/ui';
 import { uiLabels } from '@tet/ui/labels/catalog';

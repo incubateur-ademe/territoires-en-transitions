@@ -22,16 +22,19 @@ const user = { id: 'user-id' } as AuthenticatedUser;
 const createService = () => {
   const tx = {} as Transaction;
   const repository = {
-    getFormules: vi.fn().mockResolvedValue({ success: true, data: [] }),
+    getFormules: vi
+      .fn()
+      .mockResolvedValue({
+        success: true,
+        data: [{ actionId: selectionInput.actionId, exprScore: null }],
+      }),
     listValeursUtiliseesParActionId: vi
       .fn()
       .mockResolvedValue({ success: true, data: {} }),
     lockSelectionScope: vi.fn().mockResolvedValue(undefined),
-    getDefinitionForShare: vi.fn().mockResolvedValue({
-      identifiantReferentiel: 'cae_7',
-      periodicite: 'annuelle',
-    }),
-    listCompatibleValeurIds: vi.fn().mockResolvedValue([101, 102]),
+    filterIndicateurValeurIdsBelongingTo: vi
+      .fn()
+      .mockResolvedValue({ success: true, data: [101, 102] }),
     replaceValeursUtiliseesForAction: vi
       .fn()
       .mockResolvedValue({ success: true, data: undefined }),
@@ -82,6 +85,7 @@ const createService = () => {
     transactionManager,
     tx,
     indicateurValeursService,
+    getIndicateursAssociesService,
   };
 };
 
@@ -141,7 +145,10 @@ describe('ScoreIndicatifService', () => {
 
     it('validates every selected value before replacing the current selection', async () => {
       const { repository, service } = createService();
-      repository.listCompatibleValeurIds.mockResolvedValue([101]);
+      repository.filterIndicateurValeurIdsBelongingTo.mockResolvedValue({
+        success: true,
+        data: [101],
+      });
 
       const result = await service.setValeursUtilisees(selectionInput, {
         user,
@@ -149,26 +156,30 @@ describe('ScoreIndicatifService', () => {
 
       expect(result).toMatchObject({
         success: false,
-        error: 'INVALID_VALEUR_SELECTION',
+        error: 'NOT_FOUND',
       });
       expect(
         repository.replaceValeursUtiliseesForAction
       ).not.toHaveBeenCalled();
     });
 
-    it('rejects a non-annual definition without replacing its selection', async () => {
-      const { repository, service } = createService();
-      repository.getDefinitionForShare.mockResolvedValue({
-        identifiantReferentiel: 'mensuel',
-        periodicite: 'mensuelle',
+    it('rejects an indicator unrelated to the action formula', async () => {
+      const { repository, service, getIndicateursAssociesService } =
+        createService();
+      repository.getFormules.mockResolvedValue({
+        success: true,
+        data: [
+          { actionId: selectionInput.actionId, exprScore: 'val(ind_test)' },
+        ],
       });
-
+      getIndicateursAssociesService.getIndicateursAssocies.mockResolvedValue({
+        success: true,
+        data: { indicateursAssocies: [] },
+      });
       const result = await service.setValeursUtilisees(selectionInput, {
         user,
       });
-
-      expect(result).toMatchObject({ success: false, error: 'DATABASE_ERROR' });
-      expect(repository.listCompatibleValeurIds).not.toHaveBeenCalled();
+      expect(result).toMatchObject({ success: false, error: 'NOT_FOUND' });
       expect(
         repository.replaceValeursUtiliseesForAction
       ).not.toHaveBeenCalled();
@@ -189,8 +200,9 @@ describe('ScoreIndicatifService', () => {
         clearInput,
         tx
       );
-      expect(repository.getDefinitionForShare).not.toHaveBeenCalled();
-      expect(repository.listCompatibleValeurIds).not.toHaveBeenCalled();
+      expect(
+        repository.filterIndicateurValeurIdsBelongingTo
+      ).not.toHaveBeenCalled();
       expect(repository.replaceValeursUtiliseesForAction).toHaveBeenCalledWith(
         clearInput,
         tx

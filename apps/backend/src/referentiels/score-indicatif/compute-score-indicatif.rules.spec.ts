@@ -12,6 +12,7 @@ const indicateurAssocie: IndicateurAssocie = {
   titre: 'Indicateur de test',
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   unite: '%',
+  isApplicable: true,
 };
 
 const valeurUtilisee: ValeurUtilisee = {

@@ -114,7 +114,7 @@ export const IndicateurValeursTable = ({
           </DEPRECATED_TRow>
           {/* lignes pour chaque source */}
           {sources?.map((s) => (
-            <DEPRECATED_TRow key={s.source}>
+            <DEPRECATED_TRow key={s.seriesKey ?? s.source}>
               {/* nom de la source et rappel de l'unité */}
               <CellSourceName
                 source={s}
@@ -137,7 +137,12 @@ export const IndicateurValeursTable = ({
                 return (
                   <CellValue
                     key={IndicateurPeriods.key(periode)}
-                    readonly={readonly || s.source !== 'collectivite'}
+                    readonly={
+                      readonly ||
+                      entry?.isAggregated ||
+                      s.source !== 'collectivite' ||
+                      periode.periodicite !== definition.periodicite
+                    }
                     value={entry?.valeur ?? ''}
                     onChange={(newValue) => {
                       upsertValeur({
@@ -213,7 +218,10 @@ export const IndicateurValeursTable = ({
               [`${type}Commentaire`]: newComment,
             });
           }}
-          isReadonly={readonly}
+          isReadonly={
+            readonly ||
+            commentaireValeur.periode.periodicite !== definition.periodicite
+          }
         />
       )}
       {toBeDeleted && (

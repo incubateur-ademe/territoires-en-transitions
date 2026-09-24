@@ -9,6 +9,7 @@ import type { Transaction } from '@tet/backend/utils/database/transaction.utils'
 import {
   IndicateurDefinition,
   IndicateurValeurCreate,
+  PCAET_COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { isNil, isNotNil, keyBy } from 'es-toolkit';
@@ -123,15 +124,31 @@ export class ValidateIndicateurValeursWriteService {
           );
         }
       }
+      const metadataIds = [
+        ...new Set(
+          input.valeurs.flatMap(({ metadonneeId }) =>
+            metadonneeId == null ? [] : [metadonneeId]
+          )
+        ),
+      ];
+      const metadataSources = metadataIds.length
+        ? await this.repository.listMetadataSources(metadataIds, tx)
+        : [];
+      const localMetadataIds = new Set(
+        metadataSources
+          .filter(({ sourceId }) => sourceId === PCAET_COLLECTIVITE_SOURCE_ID)
+          .map(({ id }) => id)
+      );
       for (const valeur of input.valeurs) {
         const definition = definitionsById[valeur.indicateurId];
         if (
-          definition?.periodiciteMode === 'imposee' &&
+          (valeur.metadonneeId == null ||
+            localMetadataIds.has(valeur.metadonneeId)) &&
           definition.periodicite !==
             getLegacyIndicateurPeriodicite(valeur.periodicite)
         ) {
           throw new BadRequestException(
-            'La valeur doit respecter la périodicité imposée'
+            'La valeur doit respecter la périodicité de déclaration'
           );
         }
       }

@@ -186,10 +186,7 @@ export class ListIndicateurValeursService {
 
     const indicateurValeurGroupeesParSource = groupIndicateurValeursBySource(
       indicateurValeursSeules,
-      uniqueIndicateurDefinitions.map((definition) => ({
-        ...definition,
-        periodicite: options.periodicite ?? definition.periodicite,
-      })),
+      uniqueIndicateurDefinitions,
       uniqueIndicateurMetadonnees,
       sources,
       false

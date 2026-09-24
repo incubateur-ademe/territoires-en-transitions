@@ -1,3 +1,4 @@
+import { ENV } from '@tet/api/environmentVariables';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { plural } from '@tet/ui/labels/plural';
 import { collectivitesLabels } from './collectivites.labels';
@@ -6,12 +7,15 @@ import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
 import { sharedLabels } from './shared.labels';
+import { trajectoiresSnbcLabels } from './trajectoires-snbc.labels';
 import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
 
 export type { DemarcheTypeLabels } from './demarches.labels';
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
+// Lu à l'appel et non au chargement du module : `appLabels` est importé par des
+// centaines de composants clients, un const figerait la valeur de build.
+const getSiteUrl = () =>
+  ENV.site_url ?? 'https://www.territoiresentransitions.fr';
 
 /** Un seul format autorisé se lit « Format supporté », pas « Formats supportés ». */
 const formatsSupportes = plural({
@@ -27,6 +31,7 @@ export const appLabels = {
   ...utilisateursAndEntityLabels,
   ...plansLabels,
   ...indicateursLabels,
+  ...trajectoiresSnbcLabels,
 
   historiqueActionStatut: 'Mesure : statut',
   historiqueActionPrecision: 'Mesure : texte',
@@ -142,6 +147,8 @@ export const appLabels = {
     'Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?',
   ajouterDocumentAttendu: 'Ajouter un document attendu',
   ajouterPreuve: 'Ajouter une preuve',
+  ajouterPreuvePour: (preuveNom: string): string =>
+    `Ajouter une preuve pour ${preuveNom}`,
   ajouterDocumentComplementaire: 'Ajouter un document complémentaire',
   sousActionAssociee: 'Sous-mesure associée (obligatoire)',
   ajouterDocument: 'Ajouter un document',
@@ -1264,8 +1271,6 @@ export const appLabels = {
   preuveDocConfidentiel:
     "Nous vous encourageons à partager vos documents : ils permettent à d'autres collectivités de s'inspirer de vos actions, vos pratiques, etc.\n\nSi vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité, votre conseiller, votre auditeur et le service support de la plateforme pourront y accéder",
 
-  planOptionActionsAImpact: 'grâce aux "Actions à Impact"',
-
   sousSecteur: plural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
   panneauInformations: 'Informations',
@@ -1650,7 +1655,9 @@ export const appLabels = {
       te: 'CAE_Reglement_label.pdf',
       'te-test': 'CAE_Reglement_label.pdf',
     };
-    return `${SITE_URL}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
+    return `${getSiteUrl()}/fichiers/reglement/${
+      filenameByReferentiel[referentielId]
+    }`;
   },
 
   // Parcours de bienvenue ProConnect (aucune correspondance automatique).

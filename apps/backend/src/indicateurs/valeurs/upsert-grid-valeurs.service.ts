@@ -104,8 +104,7 @@ export class UpsertGridValeursService {
         const definition = indicateursById[valeur.indicateurId];
         if (
           !definition ||
-          (definition.periodiciteMode === 'imposee' &&
-            valeur.period.periodicite !== definition.periodicite)
+          valeur.period.periodicite !== definition.periodicite
         ) {
           return failure('INVALID_GRID_VALEUR');
         }
@@ -113,6 +112,7 @@ export class UpsertGridValeursService {
 
       const mergedValeurs = mergeValeursByPeriod(valeurs);
 
+      const changed: IndicateurValeur[] = [];
       const transactionResult = await this.transactionManager.executeSingle<
         IndicateurValeur[],
         UpsertGridValeursError
@@ -139,10 +139,7 @@ export class UpsertGridValeursService {
             if (!definition) {
               return failure('NOT_FOUND');
             }
-            if (
-              definition.periodiciteMode === 'imposee' &&
-              valeur.period.periodicite !== definition.periodicite
-            ) {
+            if (valeur.period.periodicite !== definition.periodicite) {
               return failure('INVALID_GRID_VALEUR');
             }
             const resultat = isNotNil(valeur.resultat)
@@ -179,12 +176,18 @@ export class UpsertGridValeursService {
               saved.map((valeur) => ({ ...valeur })),
               tx
             );
+          changed.push(...saved);
           if (calculated.length > 0) {
-            await this.crudValeursService.upsertIndicateurValeurs(calculated, {
-              user,
-              isUserTrusted: true,
-              tx,
-            });
+            changed.push(
+              ...(await this.crudValeursService.upsertIndicateurValeurs(
+                calculated,
+                {
+                  user,
+                  isUserTrusted: true,
+                  tx,
+                }
+              ))
+            );
           }
           return success(saved);
         } catch (error) {
@@ -200,6 +203,7 @@ export class UpsertGridValeursService {
       if (!transactionResult.success) {
         return transactionResult;
       }
+      await this.crudValeursService.publishValeurUpsertedEvents(changed, user);
       return success(transactionResult.data);
     } catch (error) {
       if (error instanceof UserIndicateurValeurNotAllowedException) {

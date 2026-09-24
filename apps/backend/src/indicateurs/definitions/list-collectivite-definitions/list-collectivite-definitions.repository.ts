@@ -1,6 +1,4 @@
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { indicateurCollectivitePeriodiciteSelection } from '../indicateur-periodicite.column';
 import { Injectable, Logger } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -14,7 +12,6 @@ import {
   isNotNull,
   isNull,
   or,
-  sql,
   SQLWrapper,
 } from 'drizzle-orm';
 
@@ -79,21 +76,8 @@ export class ListCollectiviteDefinitionsRepository {
       .select({
         ...getTableColumns(indicateurDefinitionTable),
         ...indicateurDefinitionPeriodiciteSelection,
-        ...indicateurCollectivitePeriodiciteSelection,
       })
       .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurCollectiviteTable,
-        and(
-          eq(
-            indicateurCollectiviteTable.indicateurId,
-            indicateurDefinitionTable.id
-          ),
-          collectiviteId === undefined
-            ? sql`false`
-            : eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
-        )
-      )
       .where(and(...conditions));
 
     this.logger.log(`${definitions.length} définitions trouvées`);

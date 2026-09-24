@@ -31,6 +31,7 @@ export * from './valeurs/iso-date.utils';
 export * from './valeurs/values.constants';
 export * from './verification-trajectoire-status';
 
-export * from './definitions/indicateur-periodicite-mode.schema';
+export * from './definitions/indicateur-aggregation.schema';
+export * from './valeurs/aggregate-indicateur-valeurs';
 
 export * from './valeurs/indicateur-display-periodicite.rules';

@@ -7,7 +7,7 @@ export const listIndicateurValeursInputSchema = z
       .enum(indicateurPeriodiciteValues)
       .optional()
       .describe(
-        'Série demandée ; par défaut, périodicité de suivi de la collectivité'
+        'Série demandée ; sans filtre, conserve toutes les périodicités enregistrées'
       ),
     collectiviteId: z.int().describe('Identifiant de la collectivité'),
     indicateurIds: z

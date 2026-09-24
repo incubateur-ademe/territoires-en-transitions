@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { buildFilesizeSql } from '@tet/backend/collectivites/documents/file-info.utils';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
@@ -44,9 +45,7 @@ const fichierSelection = {
   filename: bibliothequeFichierTable.filename,
   hash: bibliothequeFichierTable.hash,
   bucketId: collectiviteBucketTable.bucketId,
-  filesize: sql<
-    number | null
-  >`(${storageObjectTable.metadata} ->> 'size')::int`,
+  filesize: buildFilesizeSql(),
   mimeType: sql<string | null>`${storageObjectTable.metadata} ->> 'mimetype'`,
 };
 

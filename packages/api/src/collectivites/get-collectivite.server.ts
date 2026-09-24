@@ -15,11 +15,16 @@ import { CollectiviteWithContexteInstruction } from './collectivite-context/type
  * contexte rendu est la plus récente. **Tous les appelants d'une requête doivent
  * passer la même valeur** — `cache()` mémoïse par arguments, deux valeurs
  * donneraient deux contextes.
+ * @param demarcheId Démarche désignée par l'URL d'un dépôt en élaboration, qui
+ * n'a pas de saisine à nommer. Deux scalaires plutôt qu'un objet : `cache()`
+ * compare ses arguments par identité, un objet neuf à chaque appel ne serait
+ * jamais retrouvé.
  */
 export const getCollectivite = cache(
   async (
     collectiviteId: number,
-    demandeAvisId?: number
+    demandeAvisId?: number,
+    demarcheId?: number
   ): Promise<CollectiviteWithContexteInstruction> => {
     const user = await getUser();
     const collectiviteUserIsMemberOf = user.collectivites.find(
@@ -36,13 +41,15 @@ export const getCollectivite = cache(
     // service saisi ; court-circuiter ici l'enfermait dehors, et le compte de
     // développement du seed, membre de tout, ne pouvait ouvrir aucun dossier.
     const contexteAResoudre =
-      demandeAvisId !== undefined || !collectiviteUserIsMemberOf;
+      demandeAvisId !== undefined ||
+      demarcheId !== undefined ||
+      !collectiviteUserIsMemberOf;
 
     const [collectivite, contexteInstruction] = await Promise.all([
       collectiviteUserIsMemberOf ??
         fetchCollectiviteWhenVisiteMode(collectiviteId),
       contexteAResoudre
-        ? fetchContexteInstruction(collectiviteId, demandeAvisId)
+        ? fetchContexteInstruction(collectiviteId, demandeAvisId, demarcheId)
         : null,
     ]);
 
@@ -61,7 +68,8 @@ export const getCollectivite = cache(
 const fetchContexteInstruction = cache(
   async (
     collectiviteId: number,
-    demandeAvisId?: number
+    demandeAvisId?: number,
+    demarcheId?: number
   ): Promise<ContexteInstruction | null> => {
     const user = await getUser();
 
@@ -75,7 +83,7 @@ const fetchContexteInstruction = cache(
     try {
       return await getQueryClient().fetchQuery(
         trpcInServerComponent.demarches.pcaet.getContexteInstruction.queryOptions(
-          { collectiviteId, demandeAvisId }
+          { collectiviteId, demandeAvisId, demarcheId }
         )
       );
     } catch {

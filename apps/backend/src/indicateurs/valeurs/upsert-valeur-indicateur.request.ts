@@ -1,4 +1,7 @@
-import { indicateurValeurSchemaCreate } from '@tet/domain/indicateurs';
+import {
+  indicateurPeriodiciteSchema,
+  indicateurValeurSchemaCreate,
+} from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 /** Upsert d'une valeur d'indicateur pour une collectivité */
@@ -14,6 +17,7 @@ export const upsertValeurIndicateurSchema = z.object({
     objectifCommentaire: true,
   }).shape,
 
+  periodicite: z.optional(indicateurPeriodiciteSchema),
   dateValeur: z.optional(indicateurValeurSchemaCreate.shape.dateValeur),
 });
 

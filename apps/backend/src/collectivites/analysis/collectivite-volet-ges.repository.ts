@@ -11,6 +11,7 @@ import {
   VoletMobilisation,
 } from './mobilisation.repository';
 import { collectiviteVoletGesTable } from './models/collectivite-volet-ges.table';
+import { toCollectiviteVoletGesRows } from './to-collectivite-volet-ges-rows';
 import { VoletErrorEnum, type VoletError } from './volet.errors';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  async replaceMobilisation({
+  async updateMobilisation({
     collectiviteId,
     leviers,
     tx,
@@ -31,15 +32,7 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
   }): Promise<Result<void, VoletError>> {
     const runner = tx ?? this.db;
 
-    const rows = leviers.flatMap(({ levierId, volets }) =>
-      volets.map(({ categorie, note, ficheIds }) => ({
-        collectiviteId,
-        levierId,
-        categorie,
-        note,
-        ficheIds,
-      }))
-    );
+    const rows = toCollectiviteVoletGesRows({ collectiviteId, leviers });
 
     try {
       await runner

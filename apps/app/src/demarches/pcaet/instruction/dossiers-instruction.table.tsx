@@ -42,6 +42,7 @@ type Filtres = {
 };
 
 type Pilotage = {
+  deposeAvis: boolean;
   regionsOptions: { code: string; libelle: string }[];
   filtres: Filtres;
   nbFiltresActifs: NbFiltresActifs;
@@ -142,17 +143,25 @@ const PiloteHeader = () => {
 };
 
 const StatutHeader = () => {
-  const { filtres, nbFiltresActifs, setFiltres, sort, direction, trierPar } =
-    usePilotage();
+  const {
+    deposeAvis,
+    filtres,
+    nbFiltresActifs,
+    setFiltres,
+    sort,
+    direction,
+    trierPar,
+  } = usePilotage();
 
   return (
     <TableHeaderCell
-      className="w-40"
+      className="w-56"
       title={appLabels.instructionListeColonneStatut}
       sortFn={() => trierPar('statut')}
       sortDirection={sort === 'statut' ? direction : null}
       filter={
         <StatutHeaderFilter
+          deposeAvis={deposeAvis}
           statuts={filtres.statuts}
           filterCount={nbFiltresActifs.statuts}
           onChange={(statuts) => setFiltres({ statuts })}
@@ -235,7 +244,9 @@ const columns = [
     cell: ({ row }) => (
       <TableCell>
         <Badge
-          title={statutInstructionLabel(row.original.statut)}
+          title={statutInstructionLabel(row.original.statut, {
+            deposeAvis: row.original.deposeAvis,
+          })}
           variant={STATUT_INSTRUCTION_VARIANTS[row.original.statut]}
           size="sm"
         />
@@ -332,6 +343,7 @@ export const DossiersInstructionTable = ({
 }) => {
   const pilotage = useMemo(
     () => ({
+      deposeAvis,
       regionsOptions,
       filtres,
       nbFiltresActifs,
@@ -341,6 +353,7 @@ export const DossiersInstructionTable = ({
       trierPar,
     }),
     [
+      deposeAvis,
       regionsOptions,
       filtres,
       nbFiltresActifs,

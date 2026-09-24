@@ -119,6 +119,69 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
   });
 
   /**
+   * Un dépôt en élaboration n'a saisi personne : le service qui couvre la
+   * collectivité le lit tout de même, au titre de son périmètre, pour suivre un
+   * dossier qu'il instruira. L'écran est celui d'un dossier transmis, en
+   * lecture, mais le panneau doit dire d'emblée qu'on est encore en élaboration.
+   */
+  test('un agent DREAL ouvre un dépôt en élaboration et le lit comme tel', async ({
+    collectivites,
+    page,
+  }) => {
+    const REGION = await pickFreeRegionCode(databaseService, 'dreal');
+
+    const { collectivite: dreal } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: {
+        type: 'dreal',
+        regionCode: REGION,
+        nom: 'DREAL e2e elaboration',
+      },
+      userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
+    });
+
+    const deposante = await collectivites.addCollectivite({
+      regionCode: REGION,
+      departementCode: '54',
+      nom: 'Deposante e2e elaboration',
+    });
+
+    const [demarche] = await databaseService.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: deposante.data.id,
+        type: 'pcaet',
+        titre: 'PCAET en elaboration',
+        status: 'en_elaboration',
+      })
+      .returning({ id: demarcheTable.id });
+
+    const pom = new InstructionPom(page);
+
+    // Le défaut masque les dépôts en chantier : il faut les demander.
+    await pom.goToDemandesAvis(dreal.data.id);
+    await pom.selectAllStatuts();
+    await expect(pom.rowDemarche(demarche.id)).toBeVisible();
+
+    await pom.openDemarche({
+      collectiviteInstruiteId: deposante.data.id,
+      demarcheId: demarche.id,
+    });
+    await pom.expectDossierEnElaboration({
+      collectiviteInstruiteId: deposante.data.id,
+      demarcheId: demarche.id,
+      casquette: DREAL_CASQUETTE,
+    });
+
+    // Parti dans les plans du territoire, l'agent garde le chemin du dossier.
+    await page.goto(`/collectivite/${deposante.data.id}/plans`);
+    await expect(pom.banner).toBeVisible();
+    await pom.bannerBackToDossier.click();
+    await expect(page).toHaveURL(
+      `/collectivite/${deposante.data.id}/instruction/demarche/${demarche.id}`
+    );
+  });
+
+  /**
    * Le droit d'ouvrir un dossier vient de la saisine, pas de la non-appartenance
    * à la collectivité déposante. Un agent peut porter deux casquettes — membre
    * d'un EPCI et correspondant d'un service instructeur — et la seconde ne doit

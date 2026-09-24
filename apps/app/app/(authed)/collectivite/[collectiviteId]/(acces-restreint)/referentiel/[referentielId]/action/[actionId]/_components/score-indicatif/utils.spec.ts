@@ -15,13 +15,13 @@ const valeurUtilisee = {
 } as ScoreIndicatifValeurUtilisee;
 
 describe('score indicatif annuel', () => {
-  it('conserve la périodicité de la définition avec la valeur préparée', () => {
+  it('présente la série annuelle du score même pour une définition mensuelle', () => {
     const scoreIndicatif = {
       indicateurs: [
         {
           indicateurId: 7,
           titre: 'Émissions',
-          periodicite: 'annuelle',
+          periodicite: 'mensuelle',
         },
       ],
       fait: { score: 0.5, valeursUtilisees: [valeurUtilisee] },

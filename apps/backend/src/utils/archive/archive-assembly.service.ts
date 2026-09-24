@@ -12,20 +12,27 @@ import {
   DocumentStorageService,
   type DocumentLocation,
 } from '@tet/backend/utils/supabase/document-storage.service';
-import { type ArchiveFolderArborescence } from './archive-arborescence.types';
+import {
+  type ArchiveFolderArborescence,
+  type SkippedFile,
+} from './archive-arborescence.types';
 import {
   ArchiveAssemblyErrorEnum,
   type ArchiveAssemblyError,
 } from './archive-assembly.errors';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
-import { buildArchiveManifests } from './build-archive-manifests.utils';
+import {
+  buildArchiveManifests,
+  listLinksCsvPaths,
+} from './build-archive-manifests.utils';
 import {
   prepareArchiveEntries,
   type PreparedFileEntry,
 } from './prepare-archive-entries.utils';
 
 const DOWNLOAD_CONCURRENCY = 8;
-const ARCHIVE_ZIP_CONTENT_TYPE = 'application/zip';
+const FILE_DOWNLOAD_FAILED = 'Téléchargement échoué';
+export const ARCHIVE_ZIP_CONTENT_TYPE = 'application/zip';
 
 const toError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(getErrorMessage(error));
@@ -41,7 +48,7 @@ export type AssembleZipToStorageInput = DocumentLocation & {
 
 type DownloadOutcome =
   | { kind: 'appended' }
-  | { kind: 'failed'; message: string };
+  | { kind: 'failed'; missing: SkippedFile };
 
 export interface AssembleZipInput {
   arborescence: ArchiveFolderArborescence;
@@ -118,7 +125,10 @@ export class ArchiveAssemblyService {
     const archive = archiver('zip', { store: true });
     const writeOutcome = toSettledError(pipeline(archive, destination));
 
-    const preparedEntries = prepareArchiveEntries(arborescence.files);
+    const preparedEntries = prepareArchiveEntries(
+      arborescence.files,
+      listLinksCsvPaths(arborescence)
+    );
 
     try {
       const outcomes = await mapWithConcurrency(
@@ -128,8 +138,11 @@ export class ArchiveAssemblyService {
         (processed) => onProgress?.(processed)
       );
       const failedDownloads = outcomes.flatMap((outcome) =>
-        outcome.kind === 'failed' ? [outcome.message] : []
+        outcome.kind === 'failed' ? [outcome.missing] : []
       );
+      const appendedFileCount = outcomes.filter(
+        (outcome) => outcome.kind === 'appended'
+      ).length;
 
       buildArchiveManifests({ arborescence, failedDownloads }).forEach(
         (entry) => archive.append(entry.content, { name: entry.name })
@@ -147,7 +160,7 @@ export class ArchiveAssemblyService {
         return this.toAssemblyFailure(finalizeError, archive);
       }
 
-      return success({ totalFiles: preparedEntries.length });
+      return success({ totalFiles: appendedFileCount });
     } catch (error) {
       return this.toAssemblyFailure(toError(error), archive);
     }
@@ -176,7 +189,11 @@ export class ArchiveAssemblyService {
     if (!streamResult.success) {
       return {
         kind: 'failed',
-        message: `${entry.emplacement}/${entry.filename} (téléchargement échoué)`,
+        missing: {
+          filename: entry.filename,
+          emplacement: entry.emplacement,
+          raison: FILE_DOWNLOAD_FAILED,
+        },
       };
     }
     archive.append(streamResult.data, { name: entry.entryPath });

@@ -54,14 +54,12 @@ export class GenerateAnalysisWorker extends WorkerHost {
 
   @OnWorkerEvent('stalled')
   onJobStalled(jobId: string): void {
-    this.logger.warn(`Job de classification ${jobId} stallé`);
+    this.logger.warn(`Job d'analyse ${jobId} stallé`);
   }
 
   @OnWorkerEvent('error')
   onWorkerError(error: Error): void {
-    this.logger.error(
-      `Worker de classification en erreur: ${getErrorMessage(error)}`
-    );
+    this.logger.error(`Worker d'analyse en erreur: ${getErrorMessage(error)}`);
   }
 
   private isTerminalFailure(job: Job<AnalysisJobData>, error: Error): boolean {

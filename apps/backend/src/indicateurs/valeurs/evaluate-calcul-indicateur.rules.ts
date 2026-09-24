@@ -50,6 +50,7 @@ export const evaluateCalculIndicateur = (
 ): IndicateurValeurCreate[] => {
   if (!formula.definition.valeurCalcule) return [];
   return Object.values(groups).flatMap((group) => {
+    if (group.period.periodicite !== formula.definition.periodicite) return [];
     if (group.metadonneeId !== null && group.metadonneeId < 0) return [];
     const present = new Set(
       group.valeurs.map(({ indicateurIdentifiant }) => indicateurIdentifiant)

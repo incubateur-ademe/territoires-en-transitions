@@ -1,3 +1,5 @@
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
+import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
@@ -55,6 +57,58 @@ export class ListPlatformDefinitionsRepository {
       .where(and(...conditions));
 
     this.logger.log(`${definitions.length} définitions trouvées`);
+
+    return definitions;
+  }
+
+  /**
+   * Définitions du référentiel augmentées de l'applicabilité décidée par la
+   * collectivité. Méthode distincte de `listPlatformDefinitions` : celle-ci a
+   * dix appelants (imports, trajectoires, calcul auto) que cette jointure ne
+   * concerne pas, on ne change pas leur type de retour pour autant.
+   */
+  async listPlatformDefinitionsForCollectivite(
+    {
+      identifiantsReferentiel,
+      indicateurIds,
+      collectiviteId,
+    }: {
+      identifiantsReferentiel?: string[];
+      indicateurIds?: number[];
+      collectiviteId: number;
+    },
+    tx?: Transaction
+  ): Promise<PcaetDiagnosticIndicateurDefinition[]> {
+    const conditions = this.getQueryConditions({
+      identifiantsReferentiel,
+      indicateurIds,
+    });
+
+    const definitions = await (tx ?? this.databaseService.db)
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+
+        // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
+        // un indicateur dont la collectivité n'a rien dit est applicable.
+        isApplicable: sql<boolean>`coalesce(${indicateurCollectiviteTable.isApplicable}, true)`,
+      })
+      .from(indicateurDefinitionTable)
+      .leftJoin(
+        indicateurCollectiviteTable,
+        and(
+          eq(
+            indicateurCollectiviteTable.indicateurId,
+            indicateurDefinitionTable.id
+          ),
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      )
+      .where(and(...conditions));
+
+    this.logger.log(
+      `${definitions.length} définitions trouvées pour la collectivité ${collectiviteId}`
+    );
 
     return definitions;
   }

@@ -16,7 +16,8 @@ const user = {
 const indicateur = {
   id: 10,
   periodicite: 'mensuelle',
-  periodiciteMode: 'imposee',
+  aggregationResultat: null,
+  aggregationObjectif: null,
   precision: 0,
   sansValeurUtilisateur: false,
   pilotes: [],
@@ -40,7 +41,8 @@ describe('UpsertGridValeursService', () => {
   const definitionLockRepository = { lockDefinitions: vi.fn() };
   const crudValeursService = {
     canMutateValeurs: vi.fn(),
-    upsertIndicateurValeurs: vi.fn(),
+    upsertIndicateurValeurs: vi.fn().mockResolvedValue([]),
+    publishValeurUpsertedEvents: vi.fn().mockResolvedValue(undefined),
   };
   const listIndicateursService = { listIndicateurs: vi.fn() };
   const updateDefinitionService = {

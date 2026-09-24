@@ -22,13 +22,10 @@ export const indicateurDefinitionParentDtoSchema = z.object({
 export const indicateurListItemSchema = z.object({
   ...indicateurDefinitionSchema.shape,
 
-  periodiciteParDefaut: indicateurDefinitionSchema.shape.periodicite,
-  periodicitePersonnalisee: z.nullable(
-    indicateurDefinitionSchema.shape.periodicite
-  ),
   commentaire: z.string().nullable(),
   estConfidentiel: z.boolean().nullable(),
   estFavori: z.boolean().nullable(),
+  isApplicable: z.boolean(),
   categories: z.array(tagSchema),
   thematiques: z.array(tagSchema),
   pilotes: z.array(personneTagOrUserSchema),

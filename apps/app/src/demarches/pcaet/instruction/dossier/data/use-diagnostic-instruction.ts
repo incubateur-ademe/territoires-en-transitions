@@ -2,8 +2,9 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import type { DossierInstructionRef } from '../../dossier-instruction-ref';
 
-export const useDiagnosticInstruction = (demandeAvisId: number) => {
+export const useDiagnosticInstruction = (dossierRef: DossierInstructionRef) => {
   const trpc = useTRPC();
 
   const {
@@ -12,9 +13,7 @@ export const useDiagnosticInstruction = (demandeAvisId: number) => {
     isError,
     refetch,
   } = useQuery(
-    trpc.demarches.pcaet.getDiagnosticInstruction.queryOptions({
-      demandeAvisId,
-    })
+    trpc.demarches.pcaet.getDiagnosticInstruction.queryOptions(dossierRef)
   );
 
   return { diagnostic, isLoading, isError, refetch };

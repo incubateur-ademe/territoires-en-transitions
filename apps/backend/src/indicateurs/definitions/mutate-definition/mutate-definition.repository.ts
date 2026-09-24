@@ -7,7 +7,7 @@ import type { Transaction } from '@tet/backend/utils/database/transaction.utils'
 import type {
   IndicateurDefinition,
   IndicateurPeriodicite,
-  IndicateurPeriodiciteMode,
+  IndicateurAggregation,
 } from '@tet/domain/indicateurs';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
@@ -28,18 +28,20 @@ type CreatePersonalizedDefinition = Readonly<{
   commentaire?: string;
   estFavori: boolean;
   estConfidentiel: boolean;
+  isApplicable: boolean;
+  aggregationResultat?: IndicateurAggregation | null;
+  aggregationObjectif?: IndicateurAggregation | null;
   modifiedBy: string;
 }>;
 
 export type DefinitionOwnership = Readonly<{
-  periodiciteMode: IndicateurPeriodiciteMode;
   collectiviteId: number | null;
   periodicite: IndicateurPeriodicite;
 }>;
 
 type UpdateCollectiviteFields = PersonalizedDefinitionKey &
   Readonly<{
-    periodicite?: IndicateurPeriodicite | null;
+    isApplicable?: boolean;
     commentaire?: string;
     confidentiel?: boolean;
     favoris?: boolean;
@@ -64,6 +66,8 @@ export class MutateDefinitionRepository {
         titre: input.titre,
         unite: input.unite,
         periodicite: input.periodicite,
+        aggregationResultat: input.aggregationResultat,
+        aggregationObjectif: input.aggregationObjectif,
       })
       .returning({ id: indicateurDefinitionTable.id });
 
@@ -93,6 +97,7 @@ export class MutateDefinitionRepository {
         commentaire: input.commentaire,
         favoris: input.estFavori,
         confidentiel: input.estConfidentiel,
+        isApplicable: input.isApplicable,
         modifiedBy: input.modifiedBy,
       })
       .onConflictDoUpdate({
@@ -104,6 +109,7 @@ export class MutateDefinitionRepository {
           'commentaire',
           'favoris',
           'confidentiel',
+          'isApplicable',
           'modifiedBy',
         ]),
       });
@@ -118,8 +124,6 @@ export class MutateDefinitionRepository {
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
-        periodiciteMode:
-          indicateurDefinitionPeriodiciteSelection.periodiciteMode,
       })
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.id, indicateurId))
@@ -136,8 +140,6 @@ export class MutateDefinitionRepository {
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
-        periodiciteMode:
-          indicateurDefinitionPeriodiciteSelection.periodiciteMode,
       })
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.id, indicateurId))
@@ -170,7 +172,7 @@ export class MutateDefinitionRepository {
       indicateurId,
       collectiviteId,
       commentaire,
-      periodicite,
+      isApplicable,
       confidentiel,
       favoris,
       modifiedBy,
@@ -182,7 +184,7 @@ export class MutateDefinitionRepository {
       .values({
         indicateurId,
         collectiviteId,
-        ...(periodicite !== undefined && { periodicite }),
+        ...(isApplicable !== undefined && { isApplicable }),
         ...(commentaire !== undefined && { commentaire }),
         ...(confidentiel !== undefined && { confidentiel }),
         ...(favoris !== undefined && { favoris }),
@@ -195,7 +197,7 @@ export class MutateDefinitionRepository {
           indicateurCollectiviteTable.collectiviteId,
         ],
         set: {
-          ...(periodicite !== undefined && { periodicite }),
+          ...(isApplicable !== undefined && { isApplicable }),
           ...(commentaire !== undefined && { commentaire }),
           ...(confidentiel !== undefined && { confidentiel }),
           ...(favoris !== undefined && { favoris }),

@@ -111,7 +111,10 @@ const buildFakeLlm = (): LlmService =>
       const isMobilisation = prompt.includes('Levier évalué');
       if (isMobilisation) {
         if (llmBehaviour === 'mobilisation_down') {
-          return { success: false, error: { kind: 'llm_unavailable' } };
+          return {
+            success: false,
+            error: { kind: 'api_error', httpStatus: 503 },
+          };
         }
         return MOBILISATION_RESPONSE;
       }
@@ -141,10 +144,11 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     const [job] = await db.db
       .select({
         status: analysisJobTable.status,
+        tokenUsage: analysisJobTable.tokenUsage,
         etape: analysisJobTable.etape,
         totalBatches: analysisJobTable.totalBatches,
         error: analysisJobTable.error,
-        draft: analysisJobTable.draft,
+        report: analysisJobTable.report,
       })
       .from(analysisJobTable)
       .where(eq(analysisJobTable.id, jobId));
@@ -274,8 +278,9 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     const jobId = await runAnalysis();
 
     const job = await readJob(jobId);
-    const status = await callerFor(editionUser).getAnalysisStatus({
-      jobId,
+    const lastAnalysis = await callerFor(editionUser).getLastAnalysis({
+      collectiviteId,
+      enjeu: 'ges',
     });
     const mobilisation = await callerFor(editionUser).getMobilisation({
       collectiviteId,
@@ -285,11 +290,12 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     expect({
       status: job.status,
       etape: job.etape,
-      classifiedFicheCount: job.draft?.fiches.length,
+      classifiedFicheCount: job.report?.fiches.length,
       scoredLevierCount: job.totalBatches,
       writtenVoletCount: (await readVolets()).length,
       mobilisationRowCount: (await readMobilisation()).length,
-      readableStatus: status.status,
+      readableJobId: lastAnalysis?.id,
+      readableStatus: lastAnalysis?.status,
       renderedLevierCount: mobilisation.leviers.length,
     }).toEqual({
       status: 'done',
@@ -298,6 +304,7 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
       scoredLevierCount: 1,
       writtenVoletCount: 1,
       mobilisationRowCount: 6,
+      readableJobId: jobId,
       readableStatus: 'done',
       renderedLevierCount: 1,
     });
@@ -339,6 +346,27 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     });
   });
 
+  it('enregistre les jetons de la classification meme quand la mobilisation echoue', async () => {
+    llmBehaviour = 'mobilisation_down';
+
+    const jobId = await runAnalysis();
+    const job = await readJob(jobId);
+
+    expect({
+      status: job.status,
+      tokenUsage: job.tokenUsage,
+    }).toEqual({
+      status: 'failed',
+      tokenUsage: {
+        promptTokens: TOKENS.promptTokens,
+        cachedTokens: TOKENS.cachedTokens,
+        candidatesTokens: TOKENS.candidatesTokens,
+        thoughtsTokens: TOKENS.thoughtsTokens,
+        totalTokens: TOKENS.totalTokens,
+      },
+    });
+  });
+
   it("n'écrit ni volet ni mobilisation quand un levier n'aboutit pas", async () => {
     await runAnalysis();
     const mobilisationBefore = await readMobilisation();
@@ -356,32 +384,39 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     }).toEqual({
       status: 'failed',
       message:
-        "Mobilisation abandonnée : 1 levier(s) en échec sur 1. Aucune écriture n'a eu lieu.",
+        "Mobilisation abandonnée : 1 levier(s) en échec sur 1 — Vélo et transport en commun (api_error). Aucune écriture n'a eu lieu.",
       mobilisation: mobilisationBefore,
       volets: voletsBefore,
     });
   });
 
-  it('garde les volets du run précédent quand le modèle ne retient plus aucun levier', async () => {
+  it('efface les volets et la mobilisation du run précédent quand le modèle ne retient plus aucun levier', async () => {
     await runAnalysis();
-    const mobilisationBefore = await readMobilisation();
-    const voletsBefore = await readVolets();
+    const mobilisationRowCountBefore = (await readMobilisation()).length;
+    const voletCountBefore = (await readVolets()).length;
 
     llmBehaviour = 'no_levier';
     const jobId = await runAnalysis();
     const job = await readJob(jobId);
 
     expect({
+      mobilisationRowCountBefore,
+      voletCountBefore,
       status: job.status,
-      message: job.error,
+      etape: job.etape,
+      totalBatches: job.totalBatches,
+      reportedFicheCount: job.report?.fiches.length,
       mobilisation: await readMobilisation(),
       volets: await readVolets(),
     }).toEqual({
-      status: 'failed',
-      message:
-        "La classification n'a rattaché aucune action à un levier : il n'y a rien à évaluer.",
-      mobilisation: mobilisationBefore,
-      volets: voletsBefore,
+      mobilisationRowCountBefore: 6,
+      voletCountBefore: 1,
+      status: 'done',
+      etape: 'mobilisation',
+      totalBatches: 0,
+      reportedFicheCount: ficheIds.length,
+      mobilisation: [],
+      volets: [],
     });
   });
 
@@ -428,17 +463,19 @@ describe('Analyse des leviers, de bout en bout', { timeout: 180_000 }, () => {
     expect(lectureView).toEqual(editionView);
   });
 
-  it("cache la mobilisation d'une collectivité à qui n'en est pas membre", async () => {
+  it("rend la mobilisation à un utilisateur vérifié qui n'en est pas membre", async () => {
+    await runAnalysis();
     const outsider = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
     });
     onTestFinished(outsider.cleanup);
 
-    await expect(
-      callerFor(getAuthUserFromUserCredentials(outsider.user)).getMobilisation({
-        collectiviteId,
-        enjeu: 'ges',
-      })
-    ).rejects.toThrowError(/n'existe pas/);
+    const [memberView, outsiderView] = await Promise.all(
+      [editionUser, getAuthUserFromUserCredentials(outsider.user)].map((user) =>
+        callerFor(user).getMobilisation({ collectiviteId, enjeu: 'ges' })
+      )
+    );
+
+    expect(outsiderView).toEqual(memberView);
   });
 });

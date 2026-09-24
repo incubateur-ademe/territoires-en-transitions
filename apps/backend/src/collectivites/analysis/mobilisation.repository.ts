@@ -15,7 +15,7 @@ export type LevierMobilisation = {
 };
 
 export type MobilisationRepository = {
-  replaceMobilisation(input: {
+  updateMobilisation(input: {
     collectiviteId: number;
     leviers: LevierMobilisation[];
     tx?: Transaction;

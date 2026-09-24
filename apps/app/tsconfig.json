@@ -6,7 +6,8 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["next.config.ts"],
+  "files": [],
+  "include": [],
   "references": [
     {
       "path": "../../packages/design-tokens"

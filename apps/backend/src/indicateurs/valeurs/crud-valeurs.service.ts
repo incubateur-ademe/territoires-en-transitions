@@ -1,3 +1,4 @@
+import { uniqBy } from 'es-toolkit';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -6,6 +7,7 @@ import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   IndicateurDefinition,
+  IndicateurValeur,
   IndicateurValeurCreate,
 } from '@tet/domain/indicateurs';
 import { hasPermission, ResourceType } from '@tet/domain/users';
@@ -14,6 +16,7 @@ import {
   AuthenticatedOrServiceRoleUser,
   AuthenticatedUser,
   AuthUser,
+  isAuthenticatedUser,
 } from '../../users/models/auth.models';
 import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
@@ -37,11 +40,49 @@ import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rul
 import { DEFAULT_ROUNDING_PRECISION } from './valeurs.constants';
 import { WriteIndicateurValeursService } from './write-indicateur-valeurs.service';
 
+/** Émis après qu'une valeur d'indicateur a été enregistrée via `upsertValeur` */
+export type IndicateurValeurUpsertedEvent = {
+  collectiviteId: number;
+  indicateurId: number;
+  indicateurValeurId: number;
+  user: AuthenticatedUser;
+};
+
+/**
+ * Écouteur invoqué autour de la suppression d'une valeur d'indicateur via
+ * `deleteValeurIndicateur`. La valeur est supprimée avec `ON DELETE CASCADE`
+ * sur ses dépendances (ex : sélection pour le score indicatif) :
+ * `onWillDelete` est donc appelé AVANT la suppression, pendant que ces
+ * dépendances existent encore, et son résultat est retransmis à `onDeleted`
+ * une fois la suppression effectuée.
+ */
+export type IndicateurValeurDeletionListener<TContext = unknown> = {
+  onWillDelete: (event: {
+    collectiviteId: number;
+    indicateurValeurId: number;
+  }) => Promise<TContext>;
+  onDeleted: (
+    context: TContext,
+    event: {
+      collectiviteId: number;
+      indicateurValeurId: number;
+      user: AuthenticatedUser;
+    }
+  ) => Promise<void>;
+};
+
 /** Compatibility facade: preserves the historical API while delegating cohesive workflows. */
 @Injectable()
 export default class CrudValeursService {
   private readonly logger = new Logger(CrudValeursService.name);
   static DEFAULT_ROUNDING_PRECISION = DEFAULT_ROUNDING_PRECISION;
+  private readonly valeurUpsertedListeners: Array<
+    (event: IndicateurValeurUpsertedEvent) => Promise<void>
+  > = [];
+
+  private readonly valeurDeletionListeners: IndicateurValeurDeletionListener[] =
+    [];
+
   constructor(
     private readonly repository: CrudValeursRepository,
     private readonly permissionService: PermissionService,
@@ -55,6 +96,57 @@ export default class CrudValeursService {
     private readonly writer: WriteIndicateurValeursService,
     private readonly reconciliation: ReconcileIndicateurValeursService
   ) {}
+
+  /**
+   * Permet à un autre domaine (ex : le score indicatif des référentiels) de
+   * réagir à la mise à jour d'une valeur d'indicateur, sans que ce service
+   * n'ait à connaître ce qui en dépend.
+   */
+  registerValeurUpsertedListener(
+    listener: (event: IndicateurValeurUpsertedEvent) => Promise<void>
+  ) {
+    // Keep it simple: listeners are stored for the lifetime of the service instance
+    // (Nest providers are singletons by default).
+    this.valeurUpsertedListeners.push(listener);
+  }
+
+  /**
+   * Permet à un autre domaine de réagir à la suppression d'une valeur
+   * d'indicateur via `deleteValeurIndicateur`, sans que ce service n'ait à
+   * connaître ce qui en dépend.
+   */
+  registerValeurDeletionListener<TContext>(
+    listener: IndicateurValeurDeletionListener<TContext>
+  ) {
+    this.valeurDeletionListeners.push(
+      listener as IndicateurValeurDeletionListener<unknown>
+    );
+  }
+
+  /**
+   * Émet un `IndicateurValeurUpsertedEvent` pour chaque valeur
+   * ajoutée/modifiée, dédupliquée par id.
+   */
+  async publishValeurUpsertedEvents(
+    valeurs: Pick<IndicateurValeur, 'id' | 'collectiviteId' | 'indicateurId'>[],
+    user: AuthenticatedUser
+  ): Promise<void> {
+    if (!this.valeurUpsertedListeners.length || !valeurs.length) {
+      return;
+    }
+    const uniqueValeurs = uniqBy(valeurs, (v) => v.id);
+    await Promise.all(
+      uniqueValeurs.flatMap((v) => {
+        const event: IndicateurValeurUpsertedEvent = {
+          collectiviteId: v.collectiviteId,
+          indicateurId: v.indicateurId,
+          indicateurValeurId: v.id,
+          user,
+        };
+        return this.valeurUpsertedListeners.map((listener) => listener(event));
+      })
+    );
+  }
 
   dedoublonnageIndicateurValeursParSource =
     deduplicateIndicateurValeursBySource;
@@ -88,9 +180,13 @@ export default class CrudValeursService {
     valeurs: IndicateurValeurCreate[],
     context: IndicateurValeursContext<AuthenticatedOrServiceRoleUser>
   ) {
-    return getIndicateurValeursDataOrThrow(
+    const saved = getIndicateurValeursDataOrThrow(
       await this.reconciliation.upsert(valeurs, context)
     );
+    if (!context.tx && context.user && isAuthenticatedUser(context.user)) {
+      await this.publishValeurUpsertedEvents(saved, context.user);
+    }
+    return saved;
   }
 
   async reconcileCollectiviteCalculatedIndicateurValeurs(
@@ -207,12 +303,13 @@ export default class CrudValeursService {
       indicateurId,
     });
     await this.canMutateValeur(user, collectiviteId, definition);
-    return this.executeTransaction(async (tx) => {
+    const changed: IndicateurValeur[] = [];
+    const saved = await this.executeTransaction(async (tx) => {
       const saved = getIndicateurValeursDataOrThrow(
         await this.writer.saveSingle({ data, definition }, { user, tx })
       );
       if (!saved) return undefined;
-      getIndicateurValeursDataOrThrow(
+      const calculated = getIndicateurValeursDataOrThrow(
         await this.reconciliation.propagateUpdated([saved], {
           isUserTrusted: true,
           tx,
@@ -222,8 +319,11 @@ export default class CrudValeursService {
         { indicateurId, collectiviteId, user },
         tx
       );
+      changed.push(saved, ...calculated);
       return saved;
     });
+    await this.publishValeurUpsertedEvents(changed, user);
+    return saved;
   }
 
   async deleteValeurIndicateur(
@@ -238,6 +338,11 @@ export default class CrudValeursService {
     });
 
     await this.canMutateValeur(user, collectiviteId, indicateur);
+    const contexts = await Promise.all(
+      this.valeurDeletionListeners.map((listener) =>
+        listener.onWillDelete({ collectiviteId, indicateurValeurId: id })
+      )
+    );
 
     await this.executeTransaction(async (tx) => {
       await this.definitionLockRepository.lockForValueWrite(tx);
@@ -267,6 +372,15 @@ export default class CrudValeursService {
         tx
       );
     });
+    await Promise.all(
+      this.valeurDeletionListeners.map((listener, index) =>
+        listener.onDeleted(contexts[index], {
+          collectiviteId,
+          indicateurValeurId: id,
+          user,
+        })
+      )
+    );
   }
   async deleteIndicateurValeurs(options: DeleteIndicateursValeursRequestType) {
     this.logger.log(

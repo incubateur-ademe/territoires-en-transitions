@@ -6,18 +6,16 @@ import { CreatePlanModal } from '../create-plan.modal';
 
 export const CreatePlanButton = ({
   collectiviteId,
-  panierId,
   size = 'xs',
 }: {
   collectiviteId: number;
-  panierId: string | undefined;
   size?: ButtonSize;
 }) => {
   const isVisitor = useIsVisitor();
   if (isVisitor) return null;
 
   return (
-    <CreatePlanModal collectiviteId={collectiviteId} panierId={panierId}>
+    <CreatePlanModal collectiviteId={collectiviteId}>
       <Button size={size}>{'Créer un plan'}</Button>
     </CreatePlanModal>
   );

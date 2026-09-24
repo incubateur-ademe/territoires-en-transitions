@@ -14,13 +14,23 @@ vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),
 }));
 
-vi.mock('../useCycleLabellisation', () => ({
-  useCycleLabellisation: vi.fn(),
-}));
+vi.mock(
+  '../useCycleLabellisation',
+  (): Partial<
+    Record<keyof typeof import('../useCycleLabellisation'), unknown>
+  > => ({
+    useCycleLabellisation: vi.fn(),
+  })
+);
 
-vi.mock('./request-audit.modal', () => ({
-  RequestAuditModal: () => null,
-}));
+vi.mock(
+  './request-audit.modal',
+  (): Partial<
+    Record<keyof typeof import('./request-audit.modal'), unknown>
+  > => ({
+    RequestAuditModal: () => null,
+  })
+);
 
 vi.mock('@tet/ui', async (importActual) => {
   const actual = await importActual<typeof import('@tet/ui')>();

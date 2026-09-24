@@ -37,6 +37,21 @@ export const deleteIndicateurValeursForCollectivite = async (
     );
 };
 
+export const deleteActionScoreIndicateurValeursForCollectivite = async (
+  databaseService: DatabaseService,
+  collectiviteId: number,
+  indicateurIds: number[]
+): Promise<void> => {
+  await databaseService.db
+    .delete(actionScoreIndicateurValeurTable)
+    .where(
+      and(
+        eq(actionScoreIndicateurValeurTable.collectiviteId, collectiviteId),
+        inArray(actionScoreIndicateurValeurTable.indicateurId, indicateurIds)
+      )
+    );
+};
+
 export const fixturePourScoreIndicatif = {
   collectiviteId: 1,
   actionId: 'cae_1.2.3.3.4',

@@ -1,4 +1,7 @@
-import { COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
+import {
+  COLLECTIVITE_SOURCE_ID,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 import { ScoreIndicatifType } from '@tet/domain/referentiels';
 import { Field, FormSection, Input, Select } from '@tet/ui';
 import { useEffect, useState } from 'react';
@@ -140,8 +143,11 @@ const useSelectionValeurIndicateur = (
       value: s.source,
     }));
 
-  // la source "collectivité" est toujours affichée
-  if (!optionsSources.find((s) => s.value === COLLECTIVITE_SOURCE_ID)) {
+  // La déclaration annuelle est disponible lorsque la définition l’autorise.
+  if (
+    valeursIndicateur?.periodicite === IndicateurPeriodiciteEnum.ANNUELLE &&
+    !optionsSources.find((s) => s.value === COLLECTIVITE_SOURCE_ID)
+  ) {
     optionsSources.push({
       label: typeScoreToLabel[typeScore],
       value: COLLECTIVITE_SOURCE_ID,
@@ -154,7 +160,10 @@ const useSelectionValeurIndicateur = (
     label: v.annee.toString(),
     value: v.id,
   }));
-  if (selection?.source === COLLECTIVITE_SOURCE_ID) {
+  if (
+    selection?.source === COLLECTIVITE_SOURCE_ID &&
+    valeursIndicateur?.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
+  ) {
     optionsAnnees.unshift({ label: 'Ajouter une année', value: ADD_DATA });
   }
   const valeurCourante = selection

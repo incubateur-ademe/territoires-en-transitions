@@ -31,7 +31,6 @@ describe('indicateur period persistence adapter', () => {
 
   it('préserve les dates du contrat annuel historique en les rattachant à leur année', () => {
     const period = hydrateLegacyIndicateurPeriod({
-      periodicite: 'annuelle',
       dateValeur: '2026-12-31',
     });
     expect(dehydrateIndicateurPeriod(period)).toBe('2026-01-01');

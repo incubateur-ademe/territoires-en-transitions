@@ -2,12 +2,19 @@ import type { IndicateurAvecValeurs } from '@tet/domain/indicateurs';
 import { CalculTrajectoireResultatMode } from '../calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from '../calcul-trajectoire.response';
 
-// This historical fixture contains annual series, regardless of local preferences.
+// This historical fixture contains annual series.
 const annualIndicateur = (data: {
-  definition: Omit<IndicateurAvecValeurs['definition'], 'periodiciteMode'>;
+  definition: Omit<
+    IndicateurAvecValeurs['definition'],
+    'aggregationResultat' | 'aggregationObjectif'
+  >;
   valeurs: Omit<IndicateurAvecValeurs['valeurs'][number], 'periodicite'>[];
 }): IndicateurAvecValeurs => ({
-  definition: { ...data.definition, periodiciteMode: 'recommandee' },
+  definition: {
+    ...data.definition,
+    aggregationResultat: null,
+    aggregationObjectif: null,
+  },
   valeurs: data.valeurs.map((valeur) => ({
     ...valeur,
     periodicite: 'annuelle',

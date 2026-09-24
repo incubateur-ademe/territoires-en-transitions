@@ -10,7 +10,7 @@ import { useDemarchePcaetAvisRecus } from '@/app/demarches/pcaet/data/use-avis-r
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
-import { useDownloadDocument } from '@/app/referentiels/preuves/data/use-download-document';
+import { useDownloadDocument } from '@/app/collectivites/documents/data/use-download-document';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';

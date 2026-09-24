@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
-import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   isFailedResult,
@@ -20,7 +19,6 @@ import type { ImportIndicateurDefinitionError } from './import-indicateur-defini
 import { ImportIndicateurDefinitionRepository } from './import-indicateur-definition.repository';
 import type {
   ImportIndicateurContext,
-  PeriodiciteChangeDefinition,
   UpsertIndicateurDefinitionsResult,
 } from './import-indicateur-definition.types';
 import type { ImportObjectifType } from './import-indicateur-objectif.dto';
@@ -94,11 +92,14 @@ export class UpsertIndicateurDefinitionsService {
         );
         return requested && requested.periodicite !== definition.periodicite;
       });
-      const preflight = await this.checkNoValeurs(
-        periodiciteChanges,
-        context.tx
-      );
-      if (!preflight.success) return preflight;
+      if (periodiciteChanges.length) {
+        return failure(
+          'INVALID_IMPORT',
+          new Error(
+            `La périodicité de l'indicateur ${periodiciteChanges[0].identifiantReferentiel} est fixée à sa création`
+          )
+        );
+      }
 
       const result = await this.transactionManager.executeSingle<
         UpsertIndicateurDefinitionsResult,
@@ -123,7 +124,6 @@ export class UpsertIndicateurDefinitionsService {
             if (
               expected.has(identifiant) !== current.has(identifiant) ||
               before?.periodicite !== now?.periodicite ||
-              before?.periodiciteMode !== now?.periodiciteMode ||
               hasIndicateurFormulaChanged(
                 before?.valeurCalcule,
                 now?.valeurCalcule
@@ -137,13 +137,7 @@ export class UpsertIndicateurDefinitionsService {
               );
             }
           }
-          // Recheck after the exclusive graph lock: a value writer may have
-          // committed between the optimistic check and this transaction.
-          const guarded = await this.checkNoValeurs(periodiciteChanges, tx);
-          if (!guarded.success) return guarded;
-
-          // Remove imported child edges before changing either endpoint's
-          // cadence. All relationships are restored in this same transaction.
+          // Replace imported relationships within the catalogue transaction.
           await this.repository.deleteGroupRelationsByChildIds(
             existing.map(({ id }) => id),
             tx
@@ -237,24 +231,5 @@ export class UpsertIndicateurDefinitionsService {
         error instanceof Error ? error : new Error(String(error))
       );
     }
-  }
-
-  private async checkNoValeurs(
-    changes: PeriodiciteChangeDefinition[],
-    tx?: Transaction
-  ): Promise<Result<void, ImportIndicateurDefinitionError>> {
-    if (!changes.length) return success(undefined);
-    const id = await this.repository.findFirstIndicateurIdWithValeur(
-      changes.map(({ id }) => id),
-      tx
-    );
-    if (id === null) return success(undefined);
-    const definition = changes.find((definition) => definition.id === id);
-    return failure(
-      'INVALID_IMPORT',
-      new Error(
-        `Impossible de modifier la périodicité de l'indicateur ${definition?.identifiantReferentiel}: des valeurs existent déjà`
-      )
-    );
   }
 }

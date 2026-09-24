@@ -1,7 +1,6 @@
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { AnalysisJobErrorEnum } from '../analysis-job.errors';
-import { VoletErrorEnum } from '../volet.errors';
 import { ClassificationOutcome } from '../models/classification-outcome';
 import { AnalysisJob, AnalysisJobStatusEnum } from '../models/analysis-job';
 import { FicheVolet } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
@@ -9,14 +8,6 @@ import { ScoreMobilisationService } from './score-mobilisation.service';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 7;
-
-const classificationTokens = {
-  promptTokens: 100,
-  cachedTokens: 0,
-  candidatesTokens: 50,
-  thoughtsTokens: 10,
-  totalTokens: 160,
-};
 
 const mobilisationTokens = {
   promptTokens: 10,
@@ -35,12 +26,17 @@ const job: AnalysisJob = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 0,
   totalBatches: 0,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',
   modifiedAt: '2026-09-15T00:00:00Z',
 };
+
+const voletsOnTwoLeviers: FicheVolet[] = [
+  { ficheId: 1, levierId: 'velo_transport_commun', categorie: 'amenagement' },
+  { ficheId: 2, levierId: 'covoiturage', categorie: 'amenagement' },
+];
 
 const oneVoletOnVelo: FicheVolet[] = [
   { ficheId: 1, levierId: 'velo_transport_commun', categorie: 'amenagement' },
@@ -49,17 +45,16 @@ const oneVoletOnVelo: FicheVolet[] = [
 const toOutcome = (
   volets: FicheVolet[] = oneVoletOnVelo
 ): ClassificationOutcome => ({
-  draft: { fiches: [] },
+  report: { fiches: [] },
   fiches: [{ ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' }],
   volets,
-  tokens: classificationTokens,
 });
 
 const toDependencies = ({
   scoringFails = false,
   collectiviteIsUnreadable = false,
   phaseIsRefused = false,
-  mobilisationWriteFails = false,
+  scoringFailsAfterFirstLevier = false,
 } = {}) => {
   const jobRepository = {
     startMobilisationPhase: vi
@@ -70,17 +65,8 @@ const toDependencies = ({
           : success(undefined)
       ),
     recordProcessedBatches: vi.fn().mockResolvedValue(undefined),
-    markDone: vi.fn().mockResolvedValue(success(undefined)),
+    addTokenUsage: vi.fn().mockResolvedValue(undefined),
     markFailed: vi.fn().mockResolvedValue(success(undefined)),
-  };
-  const mobilisationRepository = {
-    replaceMobilisation: vi
-      .fn()
-      .mockResolvedValue(
-        mobilisationWriteFails
-          ? failure(VoletErrorEnum.SAVE_VOLETS_ERROR)
-          : success(undefined)
-      ),
   };
   const collectivitesService = {
     getCollectiviteAvecType: vi.fn().mockImplementation(async () => {
@@ -90,42 +76,48 @@ const toDependencies = ({
       return { nom: 'Ville de test', population: 3000 };
     }),
   };
-  const llm = {
-    generateStructured: vi.fn(async (_args: { prompt: string }) =>
-      scoringFails
-        ? failure({ kind: 'llm_error' })
-        : success({
-            data: { '1': 3, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 },
-            tokens: mobilisationTokens,
-          })
-    ),
-  };
+  const scoredLevier = success({
+    data: { '1': 3, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 },
+    tokens: mobilisationTokens,
+  });
+  const unscoredLevier = failure({ kind: 'rate_limited' });
+
+  const generateStructured = vi.fn().mockResolvedValue(scoredLevier);
+  if (scoringFails) {
+    generateStructured.mockResolvedValue(unscoredLevier);
+  }
+  if (scoringFailsAfterFirstLevier) {
+    generateStructured
+      .mockResolvedValueOnce(scoredLevier)
+      .mockResolvedValue(unscoredLevier);
+  }
+  const llm = { generateStructured };
 
   const service = new ScoreMobilisationService(
     jobRepository as never,
-    mobilisationRepository as never,
     collectivitesService as never,
     llm as never
   );
 
-  return { service, jobRepository, mobilisationRepository, llm };
+  return { service, jobRepository, llm };
 };
 
 describe('ScoreMobilisationService.score', () => {
-  it('interrompt une classification qui ne rattache aucun levier, sans appeler le modèle', async () => {
+  it('rend une mobilisation vide, sans appeler le modèle, quand la classification ne rattache aucun levier', async () => {
     const { service, llm, jobRepository } = toDependencies();
 
     const result = await service.score(job, toOutcome([]));
 
     expect({
-      success: result.success,
+      leviers: result.success ? result.data.leviers : undefined,
       llmCalls: llm.generateStructured.mock.calls.length,
-      failureMessage: jobRepository.markFailed.mock.calls[0]?.[1],
+      mobilisationPhase: jobRepository.startMobilisationPhase.mock.calls[0],
+      markFailedCalls: jobRepository.markFailed.mock.calls.length,
     }).toEqual({
-      success: false,
+      leviers: [],
       llmCalls: 0,
-      failureMessage:
-        "La classification n'a rattaché aucune action à un levier : il n'y a rien à évaluer.",
+      mobilisationPhase: [jobId, 0],
+      markFailedCalls: 0,
     });
   });
 
@@ -140,18 +132,6 @@ describe('ScoreMobilisationService.score', () => {
     ]);
   });
 
-  it("n'ecrit aucune mobilisation par lui-meme", async () => {
-    const { service, mobilisationRepository, jobRepository } = toDependencies();
-
-    await service.score(job, toOutcome());
-
-    expect({
-      mobilisationWrites:
-        mobilisationRepository.replaceMobilisation.mock.calls.length,
-      doneCalls: jobRepository.markDone.mock.calls.length,
-    }).toEqual({ mobilisationWrites: 0, doneCalls: 0 });
-  });
-
   it("avorte quand un levier échoue, sans qu'aucune écriture ait eu lieu", async () => {
     const { service, jobRepository } = toDependencies({ scoringFails: true });
 
@@ -163,11 +143,23 @@ describe('ScoreMobilisationService.score', () => {
     }).toEqual({
       success: false,
       failureMessage:
-        "Mobilisation abandonnée : 1 levier(s) en échec sur 1. Aucune écriture n'a eu lieu.",
+        "Mobilisation abandonnée : 1 levier(s) en échec sur 1 — Vélo et transport en commun (rate_limited). Aucune écriture n'a eu lieu.",
     });
   });
 
-  it('rend les leviers notes et les jetons des deux phases', async () => {
+  it('enregistre les jetons deja depenses meme quand un levier echoue', async () => {
+    const { service, jobRepository } = toDependencies({
+      scoringFailsAfterFirstLevier: true,
+    });
+
+    await service.score(job, toOutcome(voletsOnTwoLeviers));
+
+    expect(jobRepository.addTokenUsage.mock.calls).toEqual([
+      [jobId, mobilisationTokens],
+    ]);
+  });
+
+  it('rend les leviers notes, sans les jetons qui vont en base', async () => {
     const { service } = toDependencies();
 
     const result = await service.score(job, toOutcome());
@@ -186,13 +178,6 @@ describe('ScoreMobilisationService.score', () => {
           ],
         },
       ],
-      tokens: {
-        promptTokens: 110,
-        cachedTokens: 0,
-        candidatesTokens: 55,
-        thoughtsTokens: 11,
-        totalTokens: 176,
-      },
     });
   });
 

@@ -35,7 +35,12 @@ describe('ScoreIndicatifRepository', () => {
       select: vi.fn().mockReturnValue(query),
     } as unknown as Transaction;
     const repository = new ScoreIndicatifRepository({} as DatabaseService);
-    await repository.listCompatibleValeurIds(firstScope, [101, 102], tx);
+    await repository.filterIndicateurValeurIdsBelongingTo(
+      [101, 102],
+      firstScope.collectiviteId,
+      firstScope.indicateurId,
+      tx
+    );
     const condition = new PgDialect().sqlToQuery(
       query.where.mock.calls[0][0] as SQL
     );
@@ -46,8 +51,8 @@ describe('ScoreIndicatifRepository', () => {
       101,
       102,
       IndicateurPeriodiciteEnum.ANNUELLE,
-      firstScope.indicateurId,
       firstScope.collectiviteId,
+      firstScope.indicateurId,
     ]);
   });
 

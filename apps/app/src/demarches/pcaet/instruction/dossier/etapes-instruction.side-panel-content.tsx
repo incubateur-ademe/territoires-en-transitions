@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import type { PcaetInstructionPartie } from '@tet/domain/demarches';
-import { cn } from '@tet/ui';
+import { Alert, cn } from '@tet/ui';
 import type { ReactNode } from 'react';
 import {
   AvisDeposesList,
@@ -19,8 +19,18 @@ export type EtapesInstructionSidePanelContentProps = {
   etapes: EtapeInstruction[];
   activeEtape: PcaetInstructionPartie;
   onSelect: (etape: PcaetInstructionPartie) => void;
-  /** Nécessaire au téléchargement des rapports d'avis. */
-  demandeAvisId: number;
+  /**
+   * Nécessaire au téléchargement des rapports d'avis. Absente sans saisine :
+   * un dépôt en élaboration n'a aucun rapport à télécharger.
+   */
+  demandeAvisId?: number;
+  /**
+   * Le dépôt n'a pas encore été transmis : le service le lit tel qu'il est,
+   * avant l'heure. Le panneau le dit en tête, là où l'agent lit d'ordinaire ce
+   * qu'il a à instruire — sinon des étapes « à consulter » et aucun avis
+   * ressembleraient à un dossier transmis qu'on aurait oublié de lui adresser.
+   */
+  enElaboration: boolean;
   avis: AvisAffiche[];
   footer?: ReactNode;
 };
@@ -30,10 +40,21 @@ export const EtapesInstructionSidePanelContent = ({
   activeEtape,
   onSelect,
   demandeAvisId,
+  enElaboration,
   avis,
   footer,
 }: EtapesInstructionSidePanelContentProps) => (
   <div className="flex flex-col gap-3 p-4">
+    {enElaboration && (
+      <div data-test="demarches.pcaet.instruction.en-elaboration">
+        <Alert
+          state="info"
+          customIcon="edit-box-line"
+          title={appLabels.instructionDossierEnElaborationTitre}
+          description={appLabels.instructionDossierEnElaborationDescription}
+        />
+      </div>
+    )}
     {etapes.map((etape, index) => {
       const isActive = etape.key === activeEtape;
 

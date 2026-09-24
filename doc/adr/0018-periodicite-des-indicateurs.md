@@ -4,156 +4,175 @@ Date : 2026-09-03
 
 ## Statut
 
-Proposé. À valider avant la revue et la fusion des PRs d’implémentation.
-
-Décision de déploiement précisée le 2026-09-14 : chaque PR doit être déployable indépendamment.
-Une fenêtre de maintenance planifiée est acceptée pour la PR fonctionnelle complète.
+Validé.
 
 ## Contexte
 
-Les indicateurs sont historiquement suivis à l’année. Le programme Électrification nécessite
-un suivi mensuel, sans modifier le sens des données existantes ni les parcours annuels, notamment PCAET.
-Le modèle couvre les **indicateurs prédéfinis et personnalisés** et distingue la périodicité de saisie,
-l’identité d’une valeur et sa présentation. Un indicateur personnalisé est une définition appartenant
-à une collectivité ; personnaliser le suivi d’un indicateur prédéfini ne crée pas de nouvelle définition.
+Les collectivités suivent des indicateurs annuels, semestriels, trimestriels ou mensuels.
+Elles doivent pouvoir consulter des valeurs regroupées sans modifier leur déclaration.
 
-Cette décision introduit les périodicités **annuelle et mensuelle**. D’autres périodicités pourront
-étendre le même modèle. Une grille mensuelle générique et l’agrégation entre périodicités restent hors périmètre.
+Le modèle couvre les **indicateurs prédéfinis et personnalisés** et distingue la périodicité
+de déclaration, l'identité d'une valeur et sa visualisation. Un indicateur personnalisé est
+une définition appartenant à une collectivité.
 
 ## Décisions
 
-### 1. La définition recommande ou impose la périodicité de déclaration
+### 1. La périodicité de déclaration est fixe dès la création
 
-Chaque indicateur porte une `periodicite` et un `periodicite_mode` :
+Chaque définition porte une seule `periodicite` parmi **annuelle, semestrielle, trimestrielle
+et mensuelle**. Elle détermine la périodicité des déclarations locales pour cet indicateur.
 
-- `recommandee` : chaque collectivité peut choisir sa propre périodicité ;
-- `imposee` : la collectivité ne peut pas personnaliser la périodicité. L’API et la base font respecter cette règle.
+- Pour un **indicateur prédéfini**, la périodicité est définie à la création dans le catalogue
+  et s'applique à toutes les collectivités.
+- Pour un **indicateur personnalisé**, la collectivité choisit la périodicité à la création,
+  y compris depuis une action. Sans choix explicite, la périodicité est annuelle.
+- Après création, la périodicité n'est plus modifiable, **même sans valeur enregistrée**.
+  L'API, les imports du catalogue et la base font respecter cette règle.
 
-La préférence locale appartient au couple indicateur/collectivité. Sans préférence, la périodicité
-de la définition s’applique. Pour un indicateur prédéfini, l’administration du catalogue fixe le mode ;
-les commandes des collectivités ne permettent pas de le modifier.
+La définition est l'unique source de la périodicité de déclaration, sans mode ni préférence
+locale par collectivité.
+La grille de déclaration utilise la périodicité de la définition ; les déclarations locales
+à une autre périodicité sont refusées.
 
-**Tous les indicateurs existants, y compris personnalisés, sont classés annuels et recommandés.**
-À la création d’un indicateur personnalisé, la collectivité choisit une périodicité disponible, annuelle
-ou mensuelle, en mode recommandé. Sans choix explicite, les anciens contrats conservent le défaut
-annuel recommandé. Les modifications restent soumises aux droits de sa collectivité propriétaire.
-Le changement ultérieur de périodicité passe par la même préférence locale que pour un indicateur
-prédéfini recommandé ; il ne modifie pas la périodicité initiale de la définition et ne permet pas
-de choisir le mode imposé.
+### 2. La périodicité de visualisation est indépendante de la déclaration
 
-Une collectivité peut suivre mensuellement un indicateur annuel recommandé, même après saisie.
-Ses lectures courantes sélectionnent la périodicité effective ; les autres séries restent accessibles
-par demande explicite de leur périodicité. Revenir à l’annuel retrouve les valeurs annuelles,
-sans conversion, suppression ni effet sur les autres collectivités.
+La périodicité de déclaration détermine les valeurs à enregistrer. La périodicité de visualisation
+(affichage) détermine leur restitution : à périodicité identique,
+les valeurs déclarées sont affichées ; à une périodicité plus large, elles sont regroupées
+et agrégées selon la règle métier de l'indicateur.
 
-La périodicité de la définition devient immuable dès la première valeur. Le passage à `imposee` est refusé
-tant qu’une préférence locale non nulle ou une valeur d’une autre périodicité existe.
-Les modifications de politique et les écritures concurrentes doivent respecter les mêmes invariants.
+Pour une série de valeurs sources à une périodicité donnée :
 
-### 2. L’affichage ne change pas la déclaration ni les valeurs
+| Périodicité des valeurs sources | Périodicités de visualisation prises en charge   |
+| ------------------------------- | ------------------------------------------------ |
+| Mensuelle                       | Mensuelle, trimestrielle, semestrielle, annuelle |
+| Trimestrielle                   | Trimestrielle, semestrielle, annuelle            |
+| Semestrielle                    | Semestrielle, annuelle                           |
+| Annuelle                        | Annuelle                                         |
 
-Pour les indicateurs prédéfinis comme personnalisés, la périodicité de déclaration détermine
-les périodes saisies et les séries lues. Le graphique conserve un **axe temporel continu** :
-chaque point reste positionné à sa date. Le choix d’affichage change uniquement les graduations
-et leurs libellés.
+À périodicité identique, conserver chaque valeur déclarée. À une périodicité plus large,
+calculer une valeur par trimestre, semestre ou année civile selon la règle de l'indicateur.
 
-| Déclaration | Graduations du graphique autorisées | Points conservés                       |
-| ----------- | ----------------------------------- | -------------------------------------- |
-| Mensuelle   | Mensuelles ou annuelles             | Chaque observation à sa date mensuelle |
-| Annuelle    | Annuelles                           | Chaque observation à sa date annuelle  |
+Les regroupements appliquent la règle métier d'agrégation de l'indicateur. Les indicateurs
+additionnables utilisent la somme, notamment pour une visualisation mensuelle → annuelle.
+La règle de calcul doit être définie pour les stocks, pourcentages, objectifs et données
+incomplètes ; une règle inconnue ne devient pas automatiquement une somme.
+Les valeurs absentes ne sont pas assimilées à zéro.
 
-Par exemple, 24 observations mensuelles de 2025–2026 restent **24 points aux mêmes dates**.
-Avec des graduations annuelles, janvier, février et les autres mois restent répartis entre
-les repères d’années ; le survol indique toujours le mois et sa valeur.
-Ce choix allège les repères d’une série couvrant plusieurs années. Il ne calcule pas de valeur
-annuelle : aucune somme, moyenne ou interpolation, et aucun mélange avec la série annuelle enregistrée.
+**Exemple :** pour un indicateur additionnable, douze déclarations mensuelles de `10` donnent
+**quatre points trimestriels de `30`**, **deux points semestriels de `60`** ou **un point annuel
+de `120`**. Revenir à l'affichage mensuel retrouve les **douze points de `10`**.
+Le calcul ne modifie ni les valeurs sources ni leurs objectifs, commentaires, références ou sources.
+Un simple changement des graduations de l'axe ne réalise pas cette agrégation.
 
-L’utilisateur peut choisir ces graduations annuelles même si la déclaration mensuelle est imposée :
-le mode imposé protège les périodes de saisie, pas les graduations du graphique.
-Le réglage est local à la vue, suit la déclaration par défaut et n’est pas enregistré comme
-préférence de la collectivité. Cartes, téléchargements et rendus serveur suivent la même règle ;
-saisie et exports de valeurs conservent les périodes déclarées.
+Une valeur annuelle, semestrielle ou trimestrielle ne permet pas de reconstituer des valeurs
+à une périodicité plus fine. L'affichage n'invente
+ni ne répartit des observations absentes. Il ne mélange pas implicitement une série annuelle
+enregistrée avec les agrégats de la série mensuelle couvrant les mêmes dates.
+
+Un agrégat affiché n'est pas une nouvelle valeur enregistrée et n'est pas directement éditable.
+La grille de déclaration édite les valeurs sources.
+Les calculs enregistrés et la périodicité de déclaration restent inchangés.
+
+Le réglage de visualisation reste local à la vue et suit la déclaration par défaut.
+Il ne modifie jamais la périodicité de la définition. Les choix disponibles dépendent de
+la périodicité des valeurs sources ; une source externe annuelle n'est pas transformée en mois.
+
+La présentation des commentaires, références et sources des valeurs regroupées doit être
+explicitement définie. Les données d'origine restent intactes dans tous les cas.
+
+Le tableau de consultation, le graphique, les cartes et les rendus serveur appliquent les mêmes
+règles d'agrégation. Les téléchargements de graphiques reprennent la restitution affichée ;
+les exports de valeurs conservent la périodicité et les dates des valeurs enregistrées.
 
 ### 3. La périodicité fait partie de l’identité de chaque valeur
 
-Le stockage reste dans une seule table de valeurs. Schéma limité aux champs concernés :
+Les valeurs sont stockées dans une seule table. Schéma limité aux champs concernés :
 
 ```mermaid
 erDiagram
-    indicateur_definition ||--o{ indicateur_collectivite : personnalisation
     indicateur_definition ||--o{ indicateur_valeur : observations
 
     indicateur_definition {
         int id PK
         int collectivite_id FK "null : predefini ; sinon : proprietaire"
         string periodicite FK "periodicite de la definition"
-        string periodicite_mode "recommandee ou imposee"
-    }
-    indicateur_collectivite {
-        int indicateur_id PK, FK
-        int collectivite_id PK, FK
-        string periodicite FK "nullable : utiliser la definition"
     }
     indicateur_valeur {
         int id PK
         int indicateur_id FK
         int collectivite_id FK
         string periodicite FK "periodicite de cette valeur"
-        date date_valeur "debut canonique de la periode"
+        date date_valeur "date de debut canonique selon la periodicite"
         int metadonnee_id FK "source, nullable"
     }
 ```
 
-L’unicité inclut collectivité, indicateur, périodicité, début de période et identité de source.
-**Janvier 2026 et l’année 2026 sont distincts**, même si leur date de début est `2026-01-01`.
-La préférence locale ne réinterprète jamais les valeurs stockées ; les imports gardent leur périodicité.
-Les valeurs historiques sans périodicité explicite sont classées annuelles, sans changer leurs résultats
-ou leurs sources. La normalisation des dates est auditée, sans fusion automatique des collisions.
+L’unicité inclut collectivité, indicateur, périodicité, date de début et identité de source.
+**Janvier, le premier trimestre, le premier semestre et l’année 2026 sont distincts**, même si
+leur date de début est `2026-01-01`.
+Une déclaration locale porte la périodicité fixée par la définition. Les sources externes
+importées et les historiques conservent leur périodicité d'origine ; ils restent distincts
+des nouvelles déclarations locales. Un changement de visualisation ne modifie aucune identité.
 
 Le domaine utilise un objet immuable et sérialisable, `IndicateurPeriod`, qui associe explicitement
 la périodicité et la date de début. Les données reçues par l’API ou lues en base sont validées
-avant de construire cet objet : périodicité connue et date de début conforme à celle-ci
-(premier du mois pour le mensuel, 1er janvier pour l’annuel).
-Les opérations reçoivent ensuite cette période complète ; une date seule ou une forme de chaîne
+avant de construire cet objet : périodicité connue et date de début conforme à celle-ci.
+
+| Périodicité   | Date de début canonique                | Libellé de déclaration       |
+| ------------- | -------------------------------------- | ---------------------------- |
+| Annuelle      | 1er janvier                            | 2026                         |
+| Semestrielle  | 1er janvier ou 1er juillet             | S1 2026, S2 2026             |
+| Trimestrielle | 1er janvier, avril, juillet ou octobre | T1 2026 à T4 2026            |
+| Mensuelle     | Premier du mois                        | Janvier 2026 à décembre 2026 |
+
+Les trimestres et semestres suivent l'année civile. Le trimestre suivant T4 2026 est T1 2027 ;
+le semestre suivant S2 2026 est S1 2027.
+
+Les opérations reçoivent ensuite ce couple périodicité/date ; une date seule ou une forme de chaîne
 ne permet jamais de choisir la périodicité.
 
 Le catalogue des périodicités et les règles de canonisation sont cohérents entre domaine et SQL.
 Une périodicité publiée est immuable ; changer son sens exige un nouvel identifiant et une migration métier.
 Une périodicité inconnue est refusée, indépendamment par l’application et par la base.
 
-Les calculs regroupent les valeurs par collectivité, périodicité, période et source. Une formule
-recommandée s’évalue séparément sur chaque série disponible ; une cible imposée ne produit que
-sa périodicité. Les périodicités des définitions doivent être homogènes entre formule et dépendances,
-comme entre parents et enfants d’un groupe.
+Les calculs enregistrés regroupent les valeurs par collectivité, périodicité, date de début
+et source. Une formule produit des résultats à la périodicité fixée par sa définition.
+Les périodicités des définitions doivent être homogènes entre formule et dépendances,
+comme entre parents et enfants d'un groupe.
+L'agrégation de visualisation reste un calcul à la lecture, distinct des calculs enregistrés.
 
-Aucune conversion n’est implicite : une future agrégation exigera une règle métier distincte.
-Les horizons annuels de référence restent séparés des observations. PCAET, score indicatif et
-publication GES sélectionnent explicitement la série annuelle, même si le suivi local est mensuel.
+Les horizons annuels de référence restent séparés des observations. PCAET, score indicatif
+et publication GES sélectionnent explicitement la série annuelle et traitent son absence,
+sans enregistrer une série annuelle à partir d'un agrégat de visualisation.
 
-### 4. Les règles de période sont partagées
+### 4. Les règles de périodicité et de date sont partagées
 
-Une même période doit être comprise de la même façon lors de la saisie, du calcul et de l’affichage.
+Le couple périodicité/date doit être compris de la même façon lors de la déclaration, du calcul et de l’affichage.
 Pour cela, le code distingue trois responsabilités :
 
-- **Manipuler les périodes (domaine)** : vérifier leur validité, trouver la suivante ou les comparer.
+- **Manipuler les dates selon la périodicité (domaine)** : vérifier leur validité, trouver la suivante ou les comparer.
   Par exemple, le mois suivant décembre 2026 est janvier 2027. Ces fonctions sont partagées entre
   frontend et backend et ne dépendent ni des graphiques ni de la base de données.
-- **Présenter les périodes** : choisir les libellés, comme « mars 2026 », et les graduations
-  du graphique. Le frontend et le rendu serveur utilisent les mêmes règles.
+- **Restituer les valeurs** : appliquer la règle d'agrégation d'affichage puis choisir les libellés
+  et les graduations du graphique. Frontend et rendu serveur partagent ces règles ; le calcul
+  des agrégats reste distinct de la mise en forme des dates.
 - **Enregistrer les valeurs** : le service vérifie les droits et les règles métier ; le repository
-  lit et écrit en base dans la transaction du service. Les contraintes SQL protègent aussi les données.
+  lit et écrit en base dans la transaction du service. La déclaration respecte la périodicité
+  fixe de l'indicateur. Les contraintes SQL protègent aussi les données et l'immuabilité de cette périodicité.
 
-Une nouvelle périodicité doit définir ses règles de période et de présentation ; elle ne reçoit
-pas automatiquement le comportement annuel.
+Les quatre périodicités sont prises en charge par le catalogue, les validations API et SQL,
+les choix à la création, les libellés, la navigation entre dates et les imports/exports.
+Chaque périodicité applique ses propres règles de date et de visualisation.
 
-**Exemple de saisie.** Une collectivité saisit `42` pour mars 2026. Le frontend transmet la valeur,
-l’indicateur, la collectivité et la période mensuelle commençant le `2026-03-01`. Le backend vérifie
-les droits, la périodicité autorisée et la date, puis enregistre la valeur. Pour une saisie par lot,
+**Exemple de déclaration.** Une collectivité déclare `42` pour mars 2026. Le frontend transmet la valeur,
+l’indicateur, la collectivité, la périodicité mensuelle et la date `2026-03-01`. Le backend vérifie
+les droits, la périodicité autorisée et la date, puis enregistre la valeur. Pour une déclaration par lot,
 les valeurs et les résultats calculés pendant cet enregistrement sont validés ensemble : une erreur annule tout le lot.
 
-**Exemple d’affichage.** Le graphique à l’écran et sa version générée par le serveur affichent
-« mars 2026 » dans l’infobulle du même point. Ils réutilisent les règles de présentation :
-passer aux graduations annuelles conserve ce point à sa date mensuelle, dans les deux rendus.
+**Exemple d'affichage agrégé.** Pour un indicateur additionnable, douze valeurs mensuelles de `10`
+produisent une valeur annuelle affichée de `120`, à l'écran comme dans le graphique généré
+par le serveur. Revenir au mensuel retrouve les douze valeurs de `10`, sans écriture en base.
 
 L’import du catalogue enregistre ensemble les définitions, les objectifs de référence et les demandes
 de recalcul. Les recalculs globaux s’exécutent ensuite : les résultats peuvent donc être temporairement
@@ -161,45 +180,35 @@ décalés par rapport aux définitions. Un échec reste visible et peut être re
 les résultats automatiques obsolètes, préserve les valeurs manuelles et distingue absence, `null` et zéro.
 Terminer un recalcul ne supprime pas une demande plus récente.
 
-Le plan d’implémentation détaille ce traitement et les accès historiques qui dérogent à l’architecture.
-Ces accès doivent être migrés avant toute extension.
-
-Le schéma montre le parcours d’une saisie et les règles réutilisées. Les flèches pleines représentent
+Le schéma montre le parcours d’une déclaration et les règles réutilisées. Les flèches pleines représentent
 les échanges de données ; les pointillés indiquent l’utilisation de code partagé, sans appel réseau.
 
 ```mermaid
 flowchart TB
-    UI["Frontend<br/>Saisir une valeur et afficher le graphique"] <--> API["Routeur tRPC<br/>Recevoir la demande et renvoyer la réponse"]
+    UI["Frontend<br/>Déclarer une valeur et afficher le graphique"] <--> API["Routeur tRPC<br/>Recevoir la demande et renvoyer la réponse"]
     API <--> SERVICE["Service<br/>Vérifier les droits et coordonner l'enregistrement"]
     SERVICE <--> REPO["Repository<br/>Lire et écrire dans la transaction du service"]
     REPO <--> DB[("PostgreSQL<br/>Stocker les valeurs et vérifier les contraintes")]
 
-    UI -.-> PERIODES["Règles de période<br/>Valider, trouver la suivante, comparer"]
+    UI -.-> PERIODES["Périodicité et dates<br/>Valider, trouver la suivante, comparer"]
     SERVICE -.-> PERIODES
-    UI -.-> PRESENTATION["Règles de présentation<br/>Libellés et graduations"]
+    UI -.-> PRESENTATION["Règles de restitution<br/>Agrégation, libellés et graduations"]
     RENDU["Serveur<br/>Générer le graphique à télécharger"] -.-> PRESENTATION
     PRESENTATION -.-> PERIODES
 ```
 
-## Conséquences et alternatives
+## Conséquences
 
-Ce modèle conserve l’identité des valeurs de la saisie au calcul et à l’export. Il nécessite une
-validation des périodes reçues, des règles communes de calcul et d’affichage, et une adaptation
-des anciens contrats annuels.
+La périodicité de déclaration est fixée une fois pour toutes à la création de l'indicateur.
+Les valeurs conservent leur identité de la déclaration au calcul et à l'export.
+Les couples périodicité/date sont validés aux frontières API et base de données.
 
-Une table mensuelle séparée dupliquerait les règles et les accès. Une périodicité déduite des dates,
-ou transportée séparément de la période, permettrait des interprétations incohérentes.
-Des classes sérialisées perdraient leur comportement aux frontières JSON ; les périodes restent
-des données simples. Une agrégation automatique est écartée car son sens dépend de l’indicateur.
-
-La durée de maintenance est mesurée en répétant la migration et la reprise sur une copie récente.
-Avant la réouverture, un échec peut être traité en restaurant le schéma et les données sauvegardés
-après l'arrêt des écritures, puis les versions applicatives précédentes. Après la réouverture,
-une correction doit préserver les nouvelles données ; le retour à l'ancien modèle nécessite
-une analyse métier et ne constitue pas un downgrade automatique sans perte.
+La visualisation réutilise les règles d'agrégation entre tableau, graphique, cartes et rendu
+serveur. Elle exige une règle métier explicite pour chaque regroupement et préserve les
+valeurs sources. Les agrégats de consultation restent distincts des observations enregistrées.
 
 ## Documents associés
 
-Les étapes de déploiement et de reprise sont maintenues dans la
-[documentation de la base](../../data_layer/README.md). Le plan de phase 1 porte les tâches,
-les exceptions temporaires et les scénarios de validation.
+- [Cadrage Électrification](https://app.notion.com/p/accelerateur-transition-ecologique-ademe/lectrification-indicateurs-3c76523d57d78013aa2ae3785cf09f1f).
+- [Plan de phase 1](../plans/2026-08-31-001-feat-electrification-indicateurs-plan/phase-1-socle-mensuel.md) : tâches, migration et validation.
+- [Documentation de la base](../../data_layer/README.md) : déploiement et reprise.

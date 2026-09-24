@@ -2,7 +2,6 @@ import {
   indicateurDefinitionPeriodiciteSelection,
   indicateurValeurPeriodiciteSelection,
 } from '../definitions/indicateur-periodicite.column';
-import { indicateurEffectivePeriodicite } from '../definitions/indicateur-periodicite.column';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { Injectable } from '@nestjs/common';
 import {
@@ -88,12 +87,12 @@ export class CrudValeursRepository {
   private getListConditions(
     options: ListIndicateurValeursQuery
   ): (SQLWrapper | SQL)[] {
-    const conditions: (SQLWrapper | SQL)[] = [
-      eq(
-        indicateurValeurPeriodiciteSelection.periodicite,
-        options.periodicite ?? indicateurEffectivePeriodicite
-      ),
-    ];
+    const conditions: (SQLWrapper | SQL)[] = [];
+    if (options.periodicite) {
+      conditions.push(
+        eq(indicateurValeurTable.periodicite, options.periodicite)
+      );
+    }
     if (options.collectiviteId) {
       conditions.push(
         eq(indicateurValeurTable.collectiviteId, options.collectiviteId)

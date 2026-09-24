@@ -6,8 +6,10 @@ import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-ind
 import { PALETTE_LIGHT } from '@/app/ui/charts/echarts/constants';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
+  aggregateIndicateurValeurs,
   formatIndicateurPeriod,
-  IndicateurPeriods,
+  getIndicateurSourcePeriodicite,
+  type IndicateurAggregationOptions,
   type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
@@ -77,12 +79,6 @@ export const useIndicateurChartInfo = ({
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
-  const { periodiciteAffichage, setPeriodiciteAffichage } =
-    useIndicateurDisplayPeriodicite({
-      indicateurId,
-      collectiviteId: dataCollectiviteId,
-      periodicite: definition?.periodicite,
-    });
   const sourceFilter = useSourceFilter({
     periodicite: definition?.periodicite,
     collectiviteId: dataCollectiviteId,
@@ -94,7 +90,6 @@ export const useIndicateurChartInfo = ({
     useListIndicateurValeurs(
       {
         collectiviteId: dataCollectiviteId,
-        periodicite: definition?.periodicite,
         indicateurIds: indicateurId ? [indicateurId] : undefined,
         sources: sourceFilter.sources,
       },
@@ -105,6 +100,21 @@ export const useIndicateurChartInfo = ({
 
   // Données brutes du parent, utilisées par le modèle de présentation.
   const rawData = valeurs?.indicateurs?.[0];
+  const sourcePeriodicite = definition?.periodicite
+    ? getIndicateurSourcePeriodicite(
+        definition.periodicite,
+        Object.values(rawData?.sources ?? {}).flatMap((source) =>
+          source.valeurs.map((value) => value.periodicite)
+        )
+      )
+    : undefined;
+  const { periodiciteAffichage, setPeriodiciteAffichage } =
+    useIndicateurDisplayPeriodicite({
+      indicateurId,
+      collectiviteId: dataCollectiviteId,
+      periodicite: sourcePeriodicite,
+      defaultPeriodicite: definition?.periodicite,
+    });
 
   // pour les agrégations il faut aussi charger les valeurs des sous-indicateurs
   const indicateurIds = useMemo(
@@ -115,7 +125,6 @@ export const useIndicateurChartInfo = ({
     useListIndicateurValeurs(
       {
         collectiviteId: dataCollectiviteId,
-        periodicite: definition?.periodicite,
         indicateurIds,
         sources: sourceFilter.sources,
       },
@@ -145,10 +154,19 @@ export const useIndicateurChartInfo = ({
   >();
 
   const preparedChart = useMemo(() => {
+    const displayOptions = periodiciteAffichage
+      ? {
+          periodiciteAffichage,
+          aggregationResultat: definition?.aggregationResultat,
+          aggregationObjectif: definition?.aggregationObjectif,
+        }
+      : undefined;
     const objectifs = prepareData(
       rawData,
       'objectif',
-      sourceFilter.avecDonneesCollectivite
+      sourceFilter.avecDonneesCollectivite,
+      [],
+      displayOptions
     );
     // Groupe les indicateurs enfant par type de segmentation et conserve les
     // objectifs dont la segmentation n'existe pas dans les résultats.
@@ -156,7 +174,8 @@ export const useIndicateurChartInfo = ({
       definitionEnfants,
       valeursSegments,
       'resultat',
-      sourceFilter.avecSecteursSNBC
+      sourceFilter.avecSecteursSNBC,
+      displayOptions
     );
     const knownSegmentations = new Set(
       segmentationsResultat.map(({ segmentation }) => segmentation)
@@ -167,7 +186,8 @@ export const useIndicateurChartInfo = ({
         definitionEnfants,
         valeursSegments,
         'objectif',
-        sourceFilter.avecSecteursSNBC
+        sourceFilter.avecSecteursSNBC,
+        displayOptions
       ).filter(({ segmentation }) => !knownSegmentations.has(segmentation)),
     ];
 
@@ -206,16 +226,20 @@ export const useIndicateurChartInfo = ({
         })
       );
 
-    const periodicite =
-      rawData?.definition.periodicite ?? definition?.periodicite;
+    const periodicite = sourcePeriodicite;
     const moyenne = periodicite
-      ? prepareMoyenne(sourceFilter.moyenne, periodicite)
+      ? prepareMoyenne(
+          sourceFilter.moyenne,
+          definition?.periodicite ?? periodicite,
+          displayOptions
+        )
       : null;
     const resultats = prepareData(
       rawData,
       'resultat',
       sourceFilter.avecDonneesCollectivite,
-      moyenne ? [moyenne] : []
+      moyenne ? [moyenne] : [],
+      displayOptions
     );
     const hasValeurCollectivite =
       (objectifs.donneesCollectivite?.valeurs.length ?? 0) +
@@ -247,6 +271,10 @@ export const useIndicateurChartInfo = ({
     };
   }, [
     definition?.periodicite,
+    definition?.aggregationResultat,
+    definition?.aggregationObjectif,
+    periodiciteAffichage,
+    sourcePeriodicite,
     definitionEnfants,
     rawData,
     selectedSegmentation,
@@ -283,7 +311,8 @@ export const useIndicateurChartInfo = ({
 
 function prepareMoyenne(
   moyenne: IndicateurMoyenneOutput | undefined,
-  periodicite: IndicateurPeriodicite
+  periodicite: IndicateurPeriodicite,
+  displayOptions?: IndicateurAggregationOptions
 ): PreparedData['sources'][number] | null {
   if (!moyenne?.valeurs?.length) return null;
 
@@ -313,21 +342,23 @@ function prepareMoyenne(
     ],
     ordreAffichage: null,
     source: 'moyenne',
-    valeurs: moyenne.valeurs.map((v) => {
-      const periode = IndicateurPeriods.fromDateValeur(
+    valeurs: aggregateIndicateurValeurs(
+      moyenne.valeurs.map((value) => ({
+        ...value,
         periodicite,
-        v.dateValeur
-      );
-      return {
-        id: -1,
-        commentaire: null,
-        calculAuto: true,
-        periode,
-        periodeLabel: formatIndicateurPeriod(periode),
-        dateValeurISO: `${v.dateValeur}T00:00:00.000Z`,
-        valeur: v.valeur,
-      };
-    }),
+        resultat: value.valeur,
+      })),
+      { periodiciteAffichage: periodicite, ...displayOptions }
+    ).map((value) => ({
+      id: undefined,
+      commentaire: null,
+      calculAuto: true,
+      periode: value.period,
+      periodeLabel: formatIndicateurPeriod(value.period),
+      dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
+      valeur: value.resultat,
+      isAggregated: value.isAggregated,
+    })),
   };
 }
 
@@ -336,7 +367,8 @@ function prepareEnfantsParSegmentation(
   enfants: IndicateurDefinitionListItem[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
-  avecSecteursSNBC: boolean
+  avecSecteursSNBC: boolean,
+  displayOptions?: IndicateurAggregationOptions
 ): PreparedSegmentation[] {
   const enfantsParSegmentation: Record<string, PreparedSegment[]> = {
     [SEGMENTATION_PAR_DEFAUT]: [],
@@ -357,7 +389,19 @@ function prepareEnfantsParSegmentation(
     }
 
     // et transformées pour l'affichage
-    const data = prepareData(valeursEnfant, type, false);
+    const data = prepareData(
+      valeursEnfant,
+      type,
+      false,
+      [],
+      displayOptions
+        ? {
+            ...displayOptions,
+            aggregationResultat: enfant.aggregationResultat,
+            aggregationObjectif: enfant.aggregationObjectif,
+          }
+        : undefined
+    );
     dataParId[enfant.id] = data;
 
     // sélectionne la source la plus appropriée
@@ -367,9 +411,8 @@ function prepareEnfantsParSegmentation(
         a === null ? 1 : b === null ? -1 : a - b
       )
       .find(
-        // il faut au moins 2 valeurs pour afficher une surface dans le graphe StackedArea
         (s) =>
-          s.valeurs?.length > 1 &&
+          s.valeurs.some((value) => value.valeur != null) &&
           // et on n'affiche pas les objectifs de la SNBC à part si le filtre
           // SNBC est le seul sélectionné
           (s.source !== 'snbc' || avecSecteursSNBC)
@@ -390,11 +433,14 @@ function prepareEnfantsParSegmentation(
     const data = dataParId[enfant.id];
 
     // sélectionne les données pour la source voulue
-    const sourceValeursEnfant = data?.sources.find(
-      (s) => s.source === bestSource
-    );
+    const sourcesValeursEnfant =
+      data?.sources.filter(
+        (source) =>
+          source.source === bestSource &&
+          source.valeurs.some((value) => value.valeur != null)
+      ) ?? [];
 
-    if (sourceValeursEnfant?.valeurs?.length) {
+    for (const sourceValeursEnfant of sourcesValeursEnfant) {
       // segmentations auxquelles est rattaché l'indicateur
       const categorieNames = enfant.categories?.map((c) => c.nom) ?? [];
       const segmentations = intersection(categorieNames, SEGMENTATIONS);

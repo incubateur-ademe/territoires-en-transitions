@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/nextjs-vite';
+import { Meta, type StoryObj } from '@storybook/nextjs-vite';
 import { IndicateurPeriods } from '@tet/domain/indicateurs';
 import type { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 
@@ -18,6 +18,9 @@ const definition = {
   description: 'Description',
   unite: 'm2/hab',
   periodicite: 'annuelle',
+  aggregationResultat: null,
+  aggregationObjectif: null,
+  isApplicable: true,
   precision: 2,
   borneMin: null,
   borneMax: null,
@@ -109,6 +112,7 @@ const props = {
             {
               id: 3,
               collectiviteId: 1,
+              periodicite: 'annuelle',
               dateValeur: '2021-01-01',
               resultat: 22.33,
               objectif: 23.33,
@@ -148,6 +152,7 @@ const props = {
             {
               id: 3,
               collectiviteId: 1,
+              periodicite: 'annuelle',
               dateValeur: '2021-01-01',
               resultat: 22.33,
               objectif: 23.33,
@@ -161,6 +166,8 @@ const props = {
         segments: [],
       },
     },
+    periodiciteAffichage: 'annuelle',
+    setPeriodiciteAffichage: () => undefined,
     hasValeurCollectivite: true,
     hasValeur: true,
     isLoading: false,
@@ -177,6 +184,6 @@ export default {
   component: IndicateurCardBase,
 } as Meta;
 
-export const Default = {
+export const Default: StoryObj<typeof IndicateurCardBase> = {
   args: props,
 };

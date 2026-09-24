@@ -12,7 +12,7 @@ function makeValeur(params: {
   annee: number;
   month?: number;
   periodicite?: 'annuelle' | 'mensuelle';
-  periodiciteParDefaut?: 'annuelle' | 'mensuelle';
+  periodiciteDefinition?: 'annuelle' | 'mensuelle';
   resultat?: number | null;
   objectif?: number | null;
   sourceId?: string;
@@ -22,7 +22,7 @@ function makeValeur(params: {
     annee,
     month = 1,
     periodicite = 'annuelle',
-    periodiciteParDefaut = periodicite,
+    periodiciteDefinition = periodicite,
     resultat,
     objectif,
     sourceId,
@@ -36,8 +36,7 @@ function makeValeur(params: {
     },
     indicateurDefinition: {
       id: indicateurId,
-      periodicite: periodiciteParDefaut,
-      periodiciteMode: 'recommandee',
+      periodicite: periodiciteDefinition,
     },
     indicateurSourceMetadonnee: sourceId
       ? { id: 1, sourceId, dateVersion: `${annee}-01-01` }
@@ -174,14 +173,14 @@ describe('buildConsolidatedSheet — sources open-data', () => {
     expect(row).toContain(20);
   });
 
-  it('exporte les mois saisis localement pour un indicateur annuel recommandé', () => {
+  it('exporte les observations mensuelles historiques avec leurs dates originales', () => {
     const ws = getSheet([
       makeValeur({
         indicateurId: 1,
         annee: 2026,
         month: 1,
         periodicite: 'mensuelle',
-        periodiciteParDefaut: 'annuelle',
+        periodiciteDefinition: 'annuelle',
         resultat: 10,
         objectif: 15,
       }),
@@ -190,7 +189,7 @@ describe('buildConsolidatedSheet — sources open-data', () => {
         annee: 2026,
         month: 2,
         periodicite: 'mensuelle',
-        periodiciteParDefaut: 'annuelle',
+        periodiciteDefinition: 'annuelle',
         resultat: 20,
         objectif: 25,
       }),

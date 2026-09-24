@@ -1,14 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { Enjeu } from '@tet/domain/shared';
 import { AnalysisJobRepository } from '../analysis-job.repository';
-import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
-import {
-  LevierMobilisation,
-  MobilisationRepository,
-} from '../mobilisation.repository';
+import { EnjeuRepositories } from '../enjeu.repositories';
+import { LevierMobilisation } from '../mobilisation.repository';
 import { type AnalysisPersistFailure } from '../models/analysis.errors';
 import { AnalysisJob } from '../models/analysis-job';
 
@@ -16,42 +11,34 @@ import { AnalysisJob } from '../models/analysis-job';
 export class PersistMobilisationService {
   constructor(
     private readonly jobRepository: AnalysisJobRepository,
-    private readonly collectiviteVoletGesRepository: CollectiviteVoletGesRepository
+    private readonly enjeuRepositories: EnjeuRepositories
   ) {}
-
-  private readonly mobilisationsByEnjeu: Record<Enjeu, MobilisationRepository> =
-    {
-      ges: this.collectiviteVoletGesRepository,
-    };
 
   async persist({
     job,
     leviers,
-    tokens,
     tx,
   }: {
     job: AnalysisJob;
     leviers: LevierMobilisation[];
-    tokens: TokenUsage;
     tx: Transaction;
   }): Promise<Result<undefined, AnalysisPersistFailure>> {
-    const mobilisationResult = await this.mobilisationsByEnjeu[
-      job.enjeu
-    ].replaceMobilisation({
-      collectiviteId: job.collectiviteId,
-      leviers,
-      tx,
-    });
+    const mobilisationResult = await this.enjeuRepositories
+      .mobilisationOf(job.enjeu)
+      .updateMobilisation({
+        collectiviteId: job.collectiviteId,
+        leviers,
+        tx,
+      });
     if (!mobilisationResult.success) {
       return failure({
-        step: 'replace_mobilisation',
+        step: 'update_mobilisation',
         cause: mobilisationResult.error,
       });
     }
 
     const doneResult = await this.jobRepository.markDone({
       id: job.id,
-      tokenUsage: tokens,
       tx,
     });
     if (!doneResult.success) {

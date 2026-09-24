@@ -91,7 +91,8 @@ export const DiagnosticTabs = ({
               const statut = config
                 ? getDiagnosticIndicateurTopicStatut(
                     config,
-                    diagnostic.indicateurValeurs
+                    diagnostic.indicateurValeurs,
+                    diagnostic.indicateurDefinitions
                   )
                 : getDiagnosticVulnerabiliteTopicStatut();
               return (

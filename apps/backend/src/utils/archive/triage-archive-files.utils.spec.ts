@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import type { ArchiveFile } from './archive-arborescence.types';
 import {
-  MAX_FILE_SIZE_BYTES,
   splitTriagedArchiveFiles,
   triageArchiveFile,
 } from './triage-archive-files.utils';
@@ -78,20 +77,6 @@ describe('triageArchiveFile', () => {
         raison: 'Taille du fichier invalide (-1 octets)',
       },
     });
-  });
-
-  test('écarte un fichier au-dela de 100 Mo', () => {
-    const triage = triageArchiveFile({
-      file: {
-        bucketId: 'collectivite-1',
-        hash: 'abc',
-        filename: 'enorme.pdf',
-        filesize: MAX_FILE_SIZE_BYTES + 1,
-      },
-      folderSegments: [],
-    });
-
-    expect(triage.kind).toBe('skipped');
   });
 
   test('nomme un fichier sans filename par son empreinte', () => {

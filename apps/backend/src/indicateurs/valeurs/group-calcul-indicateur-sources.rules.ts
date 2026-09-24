@@ -98,13 +98,8 @@ export const fillCalculSourceGroups = (
   );
   for (const valeur of valeurs) {
     if (!neededIdentifiants.has(valeur.indicateurIdentifiant)) continue;
-    // A formula is evaluated independently for each available series. An
-    // imposed target cannot produce another cadence; no conversion is inferred.
-    if (
-      definition.periodiciteMode === 'imposee' &&
-      valeur.period.periodicite !== definition.periodicite
-    )
-      continue;
+    // Stored calculations always follow the target definition's cadence.
+    if (valeur.period.periodicite !== definition.periodicite) continue;
     const sourceId = normalizeCalculSourceId(valeur.sourceId);
     const sources = [
       sourceId,

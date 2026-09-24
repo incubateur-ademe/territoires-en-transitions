@@ -1,6 +1,10 @@
-import { render } from '@testing-library/react';
-import { IndicateurPeriods } from '@tet/domain/indicateurs';
+import { act, render } from '@testing-library/react';
+import {
+  IndicateurPeriods,
+  type IndicateurPeriodicite,
+} from '@tet/domain/indicateurs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { prepareData } from '../data/prepare-data';
 import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import IndicateurChart from './IndicateurChart';
 
@@ -21,30 +25,39 @@ vi.mock('./use-resize-graph-on-container-size-update', () => ({
   useResizeGraphOnContainerSizeUpdate: vi.fn(),
 }));
 
-function makeMonthlyChartInfo(months: number[]): IndicateurChartInfo {
+function makeMonthlyChartInfo(
+  months: number[],
+  periodiciteAffichage: IndicateurPeriodicite = 'mensuelle'
+): IndicateurChartInfo {
   const periods = months.map((month) =>
     IndicateurPeriods.parse(
       'mensuelle',
       `2026-${String(month).padStart(2, '0')}`
     )
   );
-  const preparedSource = {
-    source: 'collectivite',
-    libelle: '',
-    ordreAffichage: -1,
-    calculAuto: false,
-    metadonnees: [],
-    type: 'resultat',
-    valeurs: periods.map((period, index) => ({
-      id: index + 1,
-      calculAuto: false,
-      periode: period,
-      periodeLabel: `mois ${months[index]}`,
-      dateValeurISO: `${IndicateurPeriods.toDateValeur(period)}T00:00:00.000Z`,
-      valeur: (index + 1) * 12,
-      commentaire: null,
-    })),
-  };
+  const resultats = prepareData(
+    {
+      definition: { id: 1, periodicite: 'mensuelle' },
+      sources: {
+        collectivite: {
+          source: 'collectivite',
+          libelle: '',
+          ordreAffichage: -1,
+          metadonnees: [],
+          valeurs: periods.map((period, index) => ({
+            id: index + 1,
+            periodicite: 'mensuelle',
+            dateValeur: period.dateDebut,
+            resultat: (index + 1) * 12,
+          })),
+        },
+      },
+    } as unknown as NonNullable<Parameters<typeof prepareData>[0]>,
+    'resultat',
+    true,
+    [],
+    { periodiciteAffichage, aggregationResultat: 'somme' }
+  );
   const emptyPreparedData = {
     indicateurId: 1,
     dernierePeriodeModePrive: undefined,
@@ -58,15 +71,12 @@ function makeMonthlyChartInfo(months: number[]): IndicateurChartInfo {
       unite: 't',
       periodicite: 'mensuelle',
       valeurs: {
-        resultats: {
-          ...emptyPreparedData,
-          sources: [preparedSource],
-          donneesCollectivite: preparedSource,
-        },
+        resultats,
         objectifs: emptyPreparedData,
         segments: [],
       },
     },
+    periodiciteAffichage,
     segmentItemParId: new Map(),
     sourceFilter: { valeursReference: undefined },
   } as unknown as IndicateurChartInfo;
@@ -102,12 +112,12 @@ describe('IndicateurChart', () => {
   });
 
   it.each(['detail', 'modal', 'thumbnail'] as const)(
-    'keeps every monthly point with annual ticks in the %s chart',
+    'displays the annual sum in the %s chart',
     (variant) => {
       const chartInfo = makeMonthlyChartInfo(
-        Array.from({ length: 12 }, (_, month) => month + 1)
+        Array.from({ length: 12 }, (_, month) => month + 1),
+        'annuelle'
       );
-      chartInfo.periodiciteAffichage = 'annuelle';
       const originalValues = structuredClone(chartInfo.data);
 
       render(
@@ -132,12 +142,9 @@ describe('IndicateurChart', () => {
           };
         };
       };
-      expect(option.dataset[0].source).toEqual(
-        originalValues.valeurs.resultats.sources[0].valeurs.map(
-          ({ dateValeurISO, valeur }) => ({ dateValeurISO, valeur })
-        )
-      );
-      expect(option.dataset[0].source).toHaveLength(12);
+      expect(option.dataset[0].source).toEqual([
+        { dateValeurISO: '2026-01-01T00:00:00.000Z', valeur: 936 },
+      ]);
       expect(option.xAxis.axisLabel.formatter(Date.UTC(2026, 1, 1))).toBe(
         '2026'
       );
@@ -149,8 +156,45 @@ describe('IndicateurChart', () => {
           axisDimension: 'x',
           value: Date.UTC(2026, 1, 1),
         })
-      ).toBe('février 2026');
+      ).toBe('2026');
       expect(chartInfo.data).toEqual(originalValues);
     }
   );
+  it('distingue les versions d’une même source dans la légende et ses infobulles', () => {
+    const chartInfo = makeMonthlyChartInfo([2]);
+    const source = chartInfo.data.valeurs.resultats.sources[0];
+    chartInfo.data.valeurs.resultats.sources = [2024, 2025].map((year) => ({
+      ...source,
+      source: 'external',
+      seriesKey: `external:mensuelle:${year}`,
+      periodiciteSource: 'mensuelle',
+      libelle: 'Données externes',
+      metadonnees: [
+        {
+          id: year,
+          sourceId: 'external',
+          dateVersion: `${year}-01-01`,
+          nomDonnees: 'Relevés',
+          diffuseur: null,
+          producteur: null,
+          methodologie: null,
+          limites: null,
+        },
+      ],
+    }));
+    render(<IndicateurChart chartInfo={chartInfo} isLoading={false} />);
+    const option = renderChart.mock.calls[0][0] as {
+      dataset: Array<{ name: string }>;
+      legend: { tooltip: { formatter: (params: { name: string }) => string } };
+    };
+    expect(new Set(option.dataset.map(({ name }) => name)).size).toBe(2);
+    act(() => {
+      expect(
+        option.legend.tooltip.formatter({ name: option.dataset[0].name })
+      ).toContain('2024');
+      expect(
+        option.legend.tooltip.formatter({ name: option.dataset[1].name })
+      ).toContain('2025');
+    });
+  });
 });

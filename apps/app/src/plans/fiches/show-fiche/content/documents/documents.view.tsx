@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
-import { DocumentCard } from '@/app/referentiels/preuves/Bibliotheque/document-card';
-import { useDuplicatedDocumentState } from '@/app/referentiels/preuves/duplicated-document-state.utils';
+import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
+import { useDuplicatedDocumentState } from '@/app/collectivites/documents/duplicated-document-state.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
@@ -15,7 +15,7 @@ export const DocumentsView = () => {
   const { fiche, isReadonly, documents } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
+  const { isLoading, addFile, addLink } = useAddAnnexe(fiche.id);
   const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
     useDuplicatedDocumentState();
 
@@ -79,7 +79,7 @@ export const DocumentsView = () => {
       {!isReadonly && (
         <ModaleAjoutDocument
           fiche={fiche}
-          handlers={{ addFileFromLib, addLink }}
+          handlers={{ addFile, addLink }}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
           onDuplicatedDocumentsAdded={registerDuplicatedDocuments}

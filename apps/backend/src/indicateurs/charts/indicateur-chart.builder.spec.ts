@@ -26,56 +26,191 @@ describe('IndicateurChartBuilder', () => {
     drom: false,
   };
 
-  test('affiche douze points mensuels inchangés sur un axe annuel', () => {
-    const valeurs = Array.from({ length: 12 }, (_, index) => ({
-      dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
-      periodicite: 'mensuelle',
-      resultat: index * 10,
-      objectif: (index + 1) * 10,
-    }));
-    const monthlyValeurs = {
+  test.each([
+    [
+      'trimestrielle',
+      ['2026-01-01', '2026-04-01', '2026-07-01', '2026-10-01'],
+      30,
+    ],
+    ['semestrielle', ['2026-01-01', '2026-07-01'], 60],
+    ['annuelle', ['2026-01-01'], 120],
+  ] as const)(
+    'agrège les douze déclarations mensuelles en restitution %s',
+    (periodiciteAffichage, dates, total) => {
+      const valeurs = Array.from({ length: 12 }, (_, index) => ({
+        dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+        periodicite: 'mensuelle',
+        resultat: 10,
+        objectif: 20,
+      }));
+      const monthlyValeurs = {
+        ...indicateurValeurs,
+        definition: {
+          ...indicateurValeurs.definition,
+          aggregationResultat: 'somme',
+          aggregationObjectif: 'somme',
+        },
+        sources: { collectivite: { libelle: 'Collectivité', valeurs } },
+      } as unknown as IndicateurAvecValeursParSource;
+      const original = structuredClone(monthlyValeurs);
+      const chart = builder.build({
+        indicateurValeurs: monthlyValeurs,
+        periodiciteAffichage,
+      });
+      const datasets = chart.dataset as DatasetComponentOption[];
+      expect(datasets[0].source).toEqual(
+        dates.map((dateValeur) => ({ dateValeur, valeur: total }))
+      );
+      expect(datasets[1].source).toEqual(
+        dates.map((dateValeur) => ({ dateValeur, valeur: total * 2 }))
+      );
+      const monthlyChart = builder.build({ indicateurValeurs: monthlyValeurs });
+      expect(
+        (monthlyChart.dataset as DatasetComponentOption[])[0].source
+      ).toHaveLength(12);
+      expect(monthlyValeurs).toEqual(original);
+    }
+  );
+
+  test('ne somme pas les valeurs quand la règle d’agrégation est inconnue', () => {
+    const chart = builder.build({
+      indicateurValeurs: {
+        ...indicateurValeurs,
+        sources: {
+          collectivite: {
+            libelle: 'Collectivité',
+            valeurs: Array.from({ length: 12 }, (_, index) => ({
+              dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+              periodicite: 'mensuelle',
+              resultat: 10,
+            })),
+          },
+        },
+      } as unknown as IndicateurAvecValeursParSource,
+      periodiciteAffichage: 'annuelle',
+    });
+    expect(chart.dataset).toEqual([]);
+  });
+
+  test('conserve une série annuelle externe distincte des agrégats mensuels', () => {
+    const chart = builder.build({
+      indicateurValeurs: {
+        ...indicateurValeurs,
+        definition: {
+          ...indicateurValeurs.definition,
+          aggregationResultat: 'somme',
+        },
+        sources: {
+          externe: {
+            libelle: 'Source externe',
+            valeurs: [
+              {
+                dateValeur: '2026-01-01',
+                periodicite: 'annuelle',
+                resultat: 500,
+              },
+              ...Array.from({ length: 12 }, (_, index) => ({
+                dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+                periodicite: 'mensuelle',
+                resultat: 10,
+              })),
+            ],
+          },
+        },
+      } as unknown as IndicateurAvecValeursParSource,
+      periodiciteAffichage: 'annuelle',
+    });
+    const datasets = chart.dataset as DatasetComponentOption[];
+    expect(datasets).toHaveLength(2);
+    expect(new Set(datasets.map(({ id }) => id)).size).toBe(2);
+    expect(datasets.map(({ source }) => source)).toEqual(
+      expect.arrayContaining([
+        [{ dateValeur: '2026-01-01', valeur: 500 }],
+        [{ dateValeur: '2026-01-01', valeur: 120 }],
+      ])
+    );
+  });
+
+  test('affiche une source mensuelle externe pour une définition annuelle', () => {
+    const chart = builder.build({
+      indicateurValeurs: {
+        ...indicateurValeurs,
+        definition: {
+          ...indicateurValeurs.definition,
+          periodicite: 'annuelle',
+        },
+        sources: {
+          externe: {
+            libelle: 'Source externe',
+            valeurs: [
+              {
+                dateValeur: '2026-02-01',
+                periodicite: 'mensuelle',
+                resultat: 10,
+              },
+            ],
+          },
+        },
+      } as unknown as IndicateurAvecValeursParSource,
+      periodiciteAffichage: 'mensuelle',
+    });
+    expect((chart.dataset as DatasetComponentOption[])[0].source).toEqual([
+      { dateValeur: '2026-02-01', valeur: 10 },
+    ]);
+  });
+
+  test('conserve les agrégats uniques des segments sans additionner les séries de cadences différentes', () => {
+    const child = {
       ...indicateurValeurs,
       definition: {
         ...indicateurValeurs.definition,
-        periodiciteMode: 'imposee',
+        id: 2,
+        titre: 'Segment',
+        aggregationResultat: 'somme',
       },
       sources: {
-        collectivite: { libelle: 'Collectivité', valeurs },
+        externe: {
+          libelle: 'Source externe',
+          valeurs: [
+            {
+              dateValeur: '2026-01-01',
+              periodicite: 'annuelle',
+              resultat: 500,
+            },
+            ...Array.from({ length: 12 }, (_, index) => ({
+              dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+              periodicite: 'mensuelle',
+              resultat: 10,
+            })),
+          ],
+        },
       },
     } as unknown as IndicateurAvecValeursParSource;
-    const monthlyChart = builder.build({ indicateurValeurs: monthlyValeurs });
-    const yearlyChart = builder.build({
-      indicateurValeurs: monthlyValeurs,
+    const chart = builder.build({
+      indicateurValeurs,
       periodiciteAffichage: 'annuelle',
+      segmentation: {
+        type: 'vecteur',
+        source: 'externe',
+        valeurType: 'resultat',
+        indicateursEnfantValeurs: [child],
+      },
     });
-
-    expect(yearlyChart.dataset).toEqual(monthlyChart.dataset);
-    expect(yearlyChart.series).toEqual(monthlyChart.series);
-    const datasets = yearlyChart.dataset as DatasetComponentOption[];
-    expect(datasets[0].source).toEqual(
-      valeurs.map(({ dateValeur, resultat }) => ({
-        dateValeur,
-        valeur: resultat,
-      }))
+    const datasets = chart.dataset as DatasetComponentOption[];
+    expect(datasets.map(({ source }) => source)).toEqual(
+      expect.arrayContaining([
+        [{ dateValeur: '2026-01-01', valeur: 500 }],
+        [{ dateValeur: '2026-01-01', valeur: 120 }],
+      ])
     );
-    expect(datasets[1].source).toEqual(
-      valeurs.map(({ dateValeur, objectif }) => ({
-        dateValeur,
-        valeur: objectif,
-      }))
-    );
-    const xAxis = Array.isArray(yearlyChart.xAxis)
-      ? yearlyChart.xAxis[0]
-      : yearlyChart.xAxis;
-    expect(xAxis).toMatchObject({
-      type: 'time',
-      minInterval: 365 * 24 * 60 * 60 * 1000,
-    });
-    const formatter = (
-      xAxis?.axisLabel as { formatter: (value: number) => string }
-    ).formatter;
-    expect(formatter(Date.UTC(2026, 1, 1))).toBe('2026');
-    expect(monthlyValeurs.definition.periodicite).toBe('mensuelle');
+    const series = Array.isArray(chart.series) ? chart.series : [];
+    expect(series).toHaveLength(2);
+    expect(
+      new Set(
+        series.map((serie) => ('stack' in serie ? serie.stack : undefined))
+      ).size
+    ).toBe(2);
+    expect(new Set(series.map((serie) => serie.name)).size).toBe(2);
   });
 
   test('refuse de présenter des valeurs annuelles sur un axe mensuel', () => {
@@ -169,7 +304,13 @@ describe('IndicateurChartBuilder', () => {
           sources: {
             collectivite: {
               libelle: 'Collectivité',
-              valeurs: [{ dateValeur: '2026-01-01', resultat: 1 }],
+              valeurs: [
+                {
+                  dateValeur: '2026-01-01',
+                  periodicite: 'mensuelle',
+                  resultat: 1,
+                },
+              ],
             },
           },
         } as unknown as IndicateurAvecValeursParSource,

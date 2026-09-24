@@ -14,6 +14,7 @@ const indicateurDom: IndicateurDefinitionAvecCategories = {
   titre: 'Indicateur DOM',
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   categories: ['dom'],
+  isApplicable: true,
 };
 
 const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
@@ -23,6 +24,7 @@ const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
   titre: 'Indicateur hors DOM',
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   categories: ['hors_dom'],
+  isApplicable: true,
 };
 
 const indicateurNeutre: IndicateurDefinitionAvecCategories = {
@@ -32,6 +34,7 @@ const indicateurNeutre: IndicateurDefinitionAvecCategories = {
   titre: 'Indicateur neutre',
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   categories: [],
+  isApplicable: true,
 };
 
 describe('indicateurs-associes.rules', () => {
@@ -90,6 +93,7 @@ describe('indicateurs-associes.rules', () => {
           periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           identifiantReferentiel: 'ind_neutre',
           optional: false,
+          isApplicable: true,
         },
       ]);
     });

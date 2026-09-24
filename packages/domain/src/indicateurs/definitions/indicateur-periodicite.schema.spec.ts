@@ -5,12 +5,28 @@ import {
 } from './indicateur-periodicite.schema';
 
 describe('périodicité des définitions indicateur', () => {
-  it('accepte uniquement les périodicités enregistrées', () => {
-    expect(indicateurPeriodiciteValues).toEqual(['annuelle', 'mensuelle']);
-    expect(indicateurPeriodiciteSchema.parse('annuelle')).toBe('annuelle');
-    expect(indicateurPeriodiciteSchema.parse('mensuelle')).toBe('mensuelle');
-    expect(indicateurPeriodiciteSchema.safeParse('trimestrielle').success).toBe(
-      false
-    );
+  it('publie les quatre périodicités de déclaration', () => {
+    expect(indicateurPeriodiciteValues).toEqual([
+      'annuelle',
+      'semestrielle',
+      'trimestrielle',
+      'mensuelle',
+    ]);
   });
+
+  it.each(['annuelle', 'semestrielle', 'trimestrielle', 'mensuelle'])(
+    'accepte la périodicité %s',
+    (periodicite) => {
+      expect(indicateurPeriodiciteSchema.parse(periodicite)).toBe(periodicite);
+    }
+  );
+
+  it.each(['hebdomadaire', '', null, undefined])(
+    'refuse une périodicité inconnue ou absente : %s',
+    (periodicite) => {
+      expect(indicateurPeriodiciteSchema.safeParse(periodicite).success).toBe(
+        false
+      );
+    }
+  );
 });

@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import { ReactElement } from 'react';
-import { useDownloadDocument } from '@/app/referentiels/preuves/data/use-download-document';
+import { useDownloadDocument } from '@/app/collectivites/documents/data/use-download-document';
 
 export const DownloadPreuveButton = ({
   collectiviteId,

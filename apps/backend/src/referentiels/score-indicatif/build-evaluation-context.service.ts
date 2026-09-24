@@ -35,18 +35,32 @@ export class BuildEvaluationContextService {
     identiteCollectivite: CollectiviteAvecType,
     ctx?: ServiceSecondArg
   ): Promise<Result<EvaluationContext, ScoreIndicatifError>> {
-    let referentielContextResult: Result<
-      { referentielId: ReferentielId; version: string },
-      ScoreIndicatifError
-    >;
-    try {
-      referentielContextResult = await this.deriveReferentielContext(actionIds);
-    } catch (error) {
-      return failure(
-        ScoreIndicatifErrorEnum.REFERENTIEL_DEFINITION_ERROR,
-        error instanceof Error ? error : new Error(String(error))
-      );
-    }
+    // contexte référentiel et réponses de personnalisation : deux requêtes
+    // indépendantes, lancées en parallèle plutôt qu'à la suite. (`est_suivi(...)`
+    // est évalué par action/type de score directement dans
+    // `ScoreIndicatifService`, à partir des valeurs déjà sélectionnées — pas
+    // besoin de le préparer ici.)
+    // `deriveReferentielContext` capture déjà toutes ses erreurs en interne et
+    // résout toujours vers un `Result` : pas besoin d'un `.catch()` ici.
+    const [referentielContextResult, personnalisationReponsesResult] =
+      await Promise.all([
+        this.deriveReferentielContext(actionIds),
+        this.personnalisationsService
+          .getPersonnalisationReponses(
+            input.collectiviteId,
+            undefined,
+            ctx?.user,
+            ctx?.tx
+          )
+          .then(success)
+          .catch((error) =>
+            failure(
+              ScoreIndicatifErrorEnum.PERSONNALISATION_REPONSES_ERROR,
+              error instanceof Error ? error : new Error(String(error))
+            )
+          ),
+      ]);
+
     if (!referentielContextResult.success) {
       return failure(
         referentielContextResult.error,
@@ -55,22 +69,13 @@ export class BuildEvaluationContextService {
     }
     const referentielContext = referentielContextResult.data;
 
-    // réponses aux questions de personnalisation
-    let personnalisationReponses;
-    try {
-      personnalisationReponses =
-        await this.personnalisationsService.getPersonnalisationReponses(
-          input.collectiviteId,
-          undefined,
-          ctx?.user,
-          ctx?.tx
-        );
-    } catch (error) {
+    if (!personnalisationReponsesResult.success) {
       return failure(
-        ScoreIndicatifErrorEnum.PERSONNALISATION_REPONSES_ERROR,
-        error instanceof Error ? error : new Error(String(error))
+        personnalisationReponsesResult.error,
+        personnalisationReponsesResult.cause
       );
     }
+    const personnalisationReponses = personnalisationReponsesResult.data;
 
     // valeurs de référence (cible/limite)
     const valeursCible: Array<[string, number]> = [];
@@ -119,6 +124,8 @@ export class BuildEvaluationContextService {
         cible: Object.fromEntries(valeursCible),
         limite: Object.fromEntries(valeursLimite),
       },
+      // `indicateursSuivis` est ajouté par `ScoreIndicatifService`, par action
+      // et par type de score (fait/programme), avant l'évaluation.
     };
 
     return success(evaluationContext);

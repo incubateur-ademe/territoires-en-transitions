@@ -26,10 +26,11 @@ import {
 } from '../classify-batch/classify-batch.queue';
 import {
   FICHES_TO_CLASSIFY_FILTERS,
-  toAnalysisDeadline,
+  toClassificationDeadlineFrom,
 } from '../models/analysis-job';
 import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
 import { EnqueueAnalysisInput } from './enqueue-analysis.input';
+import { EnqueueAnalysisOutput } from './enqueue-analysis.output';
 
 const GENERATE_ANALYSIS_JOB_NAME = 'generate-analysis';
 const CLASSIFY_BATCH_JOB_NAME = 'classify-batch';
@@ -49,7 +50,7 @@ export class EnqueueAnalysisService {
   async enqueue(
     { collectiviteId, enjeu }: EnqueueAnalysisInput,
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<{ jobId: string }, AnalysisJobError>> {
+  ): Promise<Result<EnqueueAnalysisOutput, AnalysisJobError>> {
     const isCollectiviteVisible = await this.isAllowedToClassify(
       user,
       collectiviteId
@@ -85,7 +86,12 @@ export class EnqueueAnalysisService {
       return failure(AnalysisJobErrorEnum.UPDATE_JOB_ERROR);
     }
 
-    return this.spawnFlow({ jobId, enjeu, batches });
+    return this.spawnFlow({
+      jobId,
+      enjeu,
+      batches,
+      createdAt: jobResult.data.createdAt,
+    });
   }
 
   private async listFichesToClassify(
@@ -137,12 +143,14 @@ export class EnqueueAnalysisService {
     jobId,
     enjeu,
     batches,
+    createdAt,
   }: {
     jobId: string;
     enjeu: Enjeu;
     batches: FicheToClassify[][];
-  }): Promise<Result<{ jobId: string }, AnalysisJobError>> {
-    const deadlineAt = toAnalysisDeadline();
+    createdAt: string;
+  }): Promise<Result<EnqueueAnalysisOutput, AnalysisJobError>> {
+    const deadlineAt = toClassificationDeadlineFrom(createdAt);
 
     try {
       await this.flow.add({

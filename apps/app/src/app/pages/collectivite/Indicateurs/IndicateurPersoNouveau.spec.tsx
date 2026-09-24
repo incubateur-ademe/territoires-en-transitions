@@ -45,7 +45,11 @@ vi.mock('@tet/ui', async (importOriginal) => {
       onChange: (value: string) => void;
     }) => (
       <select
-        aria-label={appLabels.champPeriodiciteIndicateur}
+        aria-label={
+          options.some((option) => option.value === 'annuelle')
+            ? appLabels.champPeriodiciteIndicateur
+            : undefined
+        }
         value={values}
         onChange={(event) => onChange(event.target.value)}
       >
@@ -69,34 +73,39 @@ describe('IndicateurPersoNouveau', () => {
     mocks.push.mockReset();
   });
 
-  it('transmet la périodicité choisie à la création', async () => {
-    render(<IndicateurPersoNouveau />);
+  it.each(['annuelle', 'semestrielle', 'trimestrielle', 'mensuelle'])(
+    'transmet la périodicité %s choisie à la création',
+    async (periodicite) => {
+      render(<IndicateurPersoNouveau />);
 
-    fireEvent.change(screen.getByLabelText(appLabels.champNomIndicateur), {
-      target: { value: 'Consommation mensuelle' },
-    });
-    fireEvent.change(
-      screen.getByLabelText(appLabels.champPeriodiciteIndicateur),
-      { target: { value: 'mensuelle' } }
-    );
+      fireEvent.change(screen.getByLabelText(appLabels.champNomIndicateur), {
+        target: { value: 'Consommation mensuelle' },
+      });
+      fireEvent.change(
+        screen.getByLabelText(appLabels.champPeriodiciteIndicateur),
+        { target: { value: periodicite } }
+      );
 
-    const submit = screen.getByRole('button', { name: appLabels.valider });
-    await waitFor(() =>
-      expect((submit as HTMLButtonElement).disabled).toBe(false)
-    );
-    fireEvent.click(submit);
+      const submit = screen.getByRole('button', { name: appLabels.valider });
+      await waitFor(() =>
+        expect((submit as HTMLButtonElement).disabled).toBe(false)
+      );
+      fireEvent.click(submit);
 
-    await waitFor(() =>
-      expect(mocks.createIndicateur).toHaveBeenCalledWith({
-        collectiviteId: 42,
-        titre: 'Consommation mensuelle',
-        commentaire: '',
-        thematiques: [],
-        unite: '',
-        periodicite: 'mensuelle',
-        ficheId: undefined,
-        estFavori: false,
-      })
-    );
-  });
+      await waitFor(() =>
+        expect(mocks.createIndicateur).toHaveBeenCalledWith({
+          collectiviteId: 42,
+          titre: 'Consommation mensuelle',
+          commentaire: '',
+          thematiques: [],
+          unite: '',
+          periodicite,
+          aggregationResultat: null,
+          aggregationObjectif: null,
+          ficheId: undefined,
+          estFavori: false,
+        })
+      );
+    }
+  );
 });

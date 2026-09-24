@@ -8,7 +8,7 @@ import {
 } from '@tet/backend/utils/column.utils';
 import {
   indicateurPeriodiciteValues,
-  indicateurPeriodiciteModeValues,
+  indicateurAggregationValues,
 } from '@tet/domain/indicateurs';
 import {
   boolean,
@@ -42,11 +42,12 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
     .references(() => indicateurPeriodiciteTable.code)
     .default('annuelle')
     .notNull(),
-  periodiciteMode: text('periodicite_mode', {
-    enum: indicateurPeriodiciteModeValues,
-  })
-    .default('recommandee')
-    .notNull(),
+  aggregationResultat: text('aggregation_resultat', {
+    enum: indicateurAggregationValues,
+  }),
+  aggregationObjectif: text('aggregation_objectif', {
+    enum: indicateurAggregationValues,
+  }),
   precision: integer('precision').default(2).notNull(), // Number of decimal in order to round the value
   borneMin: doublePrecision('borne_min'),
   borneMax: doublePrecision('borne_max'),

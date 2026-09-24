@@ -14,14 +14,6 @@ const jobId = '00000000-0000-0000-0000-000000000001';
 
 const transaction = { marker: 'transaction' } as unknown as Transaction;
 
-const scoreTokens = {
-  promptTokens: 110,
-  cachedTokens: 0,
-  candidatesTokens: 55,
-  thoughtsTokens: 11,
-  totalTokens: 176,
-};
-
 const toJobRow = (
   status: AnalysisJobStatus = AnalysisJobStatusEnum.RUNNING
 ): AnalysisJob => ({
@@ -33,7 +25,7 @@ const toJobRow = (
   status,
   processedBatches: 0,
   totalBatches: 1,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',
@@ -94,7 +86,7 @@ const toDependencies = ({
             jobId,
             message: 'modele indisponible',
           })
-        : success({ leviers: [], tokens: scoreTokens })
+        : success({ leviers: [] })
     ),
   };
   const persistMobilisationService = {
@@ -136,12 +128,10 @@ describe('GenerateAnalysisService.generate', () => {
       success: result.success,
       classificationTx: classificationService.persist.mock.calls[0]?.[0].tx,
       mobilisationTx: persistMobilisationService.persist.mock.calls[0]?.[0].tx,
-      tokens: persistMobilisationService.persist.mock.calls[0]?.[0].tokens,
     }).toEqual({
       success: true,
       classificationTx: transaction,
       mobilisationTx: transaction,
-      tokens: scoreTokens,
     });
   });
 

@@ -5,6 +5,7 @@ import {
   isIndicateurDisplayPeriodiciteAllowed,
   listIndicateurDisplayPeriodicites,
   resolveIndicateurDisplayPeriodicite,
+  resolveIndicateurSourceDisplayPeriodicite,
 } from './indicateur-display-periodicite.rules';
 
 describe('périodicité de déclaration et affichage du graphique', () => {
@@ -20,9 +21,11 @@ describe('périodicité de déclaration et affichage du graphique', () => {
     }
   );
 
-  it('autorise les repères annuels pour des observations mensuelles', () => {
+  it('autorise les regroupements calendaires pour des observations mensuelles', () => {
     expect(listIndicateurDisplayPeriodicites('mensuelle')).toEqual([
       'mensuelle',
+      'trimestrielle',
+      'semestrielle',
       'annuelle',
     ]);
     expect(resolveIndicateurDisplayPeriodicite('mensuelle', 'annuelle')).toBe(
@@ -43,5 +46,27 @@ describe('périodicité de déclaration et affichage du graphique', () => {
         details: { declaration: 'annuelle', display: 'mensuelle' },
       })
     );
+  });
+  it('suit la déclaration par défaut sans inventer des observations plus fines', () => {
+    expect(
+      resolveIndicateurSourceDisplayPeriodicite('annuelle', ['mensuelle'])
+    ).toBe('annuelle');
+    expect(
+      resolveIndicateurSourceDisplayPeriodicite('mensuelle', ['annuelle'])
+    ).toBe('annuelle');
+    expect(
+      resolveIndicateurSourceDisplayPeriodicite(
+        'annuelle',
+        ['mensuelle'],
+        'trimestrielle'
+      )
+    ).toBe('trimestrielle');
+    expect(() =>
+      resolveIndicateurSourceDisplayPeriodicite(
+        'mensuelle',
+        ['annuelle'],
+        'mensuelle'
+      )
+    ).toThrow();
   });
 });

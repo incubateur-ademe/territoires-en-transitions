@@ -19,7 +19,10 @@ const toJob = (
   } as unknown as Job<ClassifyBatchJobData>);
 
 const toWorker = (outcome: unknown) => {
-  const jobRepository = { countProcessedBatch: vi.fn() };
+  const jobRepository = {
+    addTokenUsage: vi.fn(),
+    countProcessedBatch: vi.fn(),
+  };
   const worker = new ClassifyBatchWorker(
     { classify: vi.fn().mockResolvedValue(outcome) } as never,
     jobRepository as never
@@ -46,9 +49,15 @@ describe('ClassifyBatchWorker.process', () => {
 
     await worker.process(toJob());
 
-    expect(jobRepository.countProcessedBatch.mock.calls).toEqual([
-      ['00000000-0000-0000-0000-000000000001'],
-    ]);
+    expect({
+      processedBatchCalls: jobRepository.countProcessedBatch.mock.calls,
+      tokenUsageCalls: jobRepository.addTokenUsage.mock.calls,
+    }).toEqual({
+      processedBatchCalls: [['00000000-0000-0000-0000-000000000001']],
+      tokenUsageCalls: [
+        ['00000000-0000-0000-0000-000000000001', outcome.tokens],
+      ],
+    });
   });
 
   it('ne compte pas un lot que le modele a refuse', async () => {
@@ -58,7 +67,10 @@ describe('ClassifyBatchWorker.process', () => {
 
     await expect(worker.process(toJob())).rejects.toThrow();
 
-    expect(jobRepository.countProcessedBatch.mock.calls).toEqual([]);
+    expect({
+      processedBatchCalls: jobRepository.countProcessedBatch.mock.calls,
+      tokenUsageCalls: jobRepository.addTokenUsage.mock.calls,
+    }).toEqual({ processedBatchCalls: [], tokenUsageCalls: [] });
   });
 
   it('classe encore un lot enfile avant que le deadline existe', async () => {

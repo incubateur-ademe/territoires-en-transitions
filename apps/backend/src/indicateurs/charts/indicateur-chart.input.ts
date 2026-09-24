@@ -50,7 +50,7 @@ export const indicateurChartInputSchema = z.object({
     .enum(indicateurPeriodiciteValues)
     .optional()
     .describe(
-      'Graduation du graphique ; les valeurs conservent leur périodicité de saisie'
+      'Périodicité de restitution ; les agrégats sont calculés sans modifier les valeurs déclarées'
     ),
   sources: indicateurChartSourceFilterSchema.optional(),
   identifiantReferentiel: z.string().optional(),

@@ -18,13 +18,19 @@ export const hydrateIndicateurPeriod = ({
 }: StoredIndicateurPeriod): IndicateurPeriod =>
   IndicateurPeriods.fromDateValeur(periodicite, dateValeur);
 
-/** Preserve date-only annual clients; explicit monthly dates remain strict. */
+/** Preserve date-only annual clients; every explicit cadence remains strict. */
 export const hydrateLegacyIndicateurPeriod = ({
   periodicite,
   dateValeur,
-}: StoredIndicateurPeriod): IndicateurPeriod =>
-  periodicite === IndicateurPeriodiciteEnum.ANNUELLE
-    ? IndicateurPeriods.containing(periodicite, dateValeur)
+}: Readonly<{
+  periodicite?: IndicateurPeriodicite;
+  dateValeur: string;
+}>): IndicateurPeriod =>
+  periodicite === undefined
+    ? IndicateurPeriods.containing(
+        IndicateurPeriodiciteEnum.ANNUELLE,
+        dateValeur
+      )
     : hydrateIndicateurPeriod({ periodicite, dateValeur });
 
 export const dehydrateIndicateurPeriod = (

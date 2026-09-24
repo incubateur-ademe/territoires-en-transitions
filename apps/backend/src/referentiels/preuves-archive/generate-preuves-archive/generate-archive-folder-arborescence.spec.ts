@@ -3,10 +3,10 @@ import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
 import type {
-  CollectedFilePreuve,
-  CollectedLinkPreuve,
-  CollectedPreuves,
-} from '../collect-audit-preuves/collect-preuves.repository';
+  CollectedFile,
+  CollectedLink,
+  CollectedDocuments,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
 import {
   generateArchiveFolderArborescence,
   type GenerateArchiveFolderArborescenceInput,
@@ -65,8 +65,8 @@ const referentielTree: ReferentielTreeNode = {
 };
 
 function makeFile(
-  overrides: Partial<CollectedFilePreuve> = {}
-): CollectedFilePreuve {
+  overrides: Partial<CollectedFile> = {}
+): CollectedFile {
   return {
     bucketId: 'bucket-1',
     hash: HASH_1,
@@ -78,8 +78,8 @@ function makeFile(
 }
 
 function makeLink(
-  overrides: Partial<CollectedLinkPreuve> = {}
-): CollectedLinkPreuve {
+  overrides: Partial<CollectedLink> = {}
+): CollectedLink {
   return {
     url: 'https://example.org',
     titre: 'Un lien',
@@ -89,10 +89,12 @@ function makeLink(
   };
 }
 
-const empty: CollectedPreuves = { files: [], missingFiles: [], links: [] };
+const empty: CollectedDocuments = { files: [], missingFiles: [], links: [] };
 
 function buildInput(
-  preuves: Partial<Record<keyof PreuvesByOrigin, Partial<CollectedPreuves>>> = {}
+  preuves: Partial<
+    Record<keyof PreuvesByOrigin, Partial<CollectedDocuments>>
+  > = {}
 ): GenerateArchiveFolderArborescenceInput {
   return {
     preuves: {
@@ -178,33 +180,6 @@ describe('generateArchiveFolderArborescence', () => {
       '1.1 Sous-axe un',
       '1.1.1 Mesure un',
     ]);
-  });
-
-  it('ignore un fichier trop volumineux et le consigne', () => {
-    const result = generateArchiveFolderArborescence(
-      buildInput({
-        mesure: {
-          files: [
-            makeFile({
-              actionId: 'cae_1.1.1',
-              filename: 'gros.zip',
-              filesize: 200 * 1024 * 1024,
-            }),
-            makeFile({ actionId: 'cae_1.1.1', filename: 'ok.pdf' }),
-          ],
-          links: [],
-        },
-      })
-    );
-
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-    expect(result.data.files.map((file) => file.filename)).toEqual(['ok.pdf']);
-    expect(result.data.skippedFiles).toHaveLength(1);
-    expect(result.data.skippedFiles[0]).toMatchObject({
-      filename: 'gros.zip',
-      emplacement: 'mesures/1 Axe un/1.1 Sous-axe un/1.1.1 Mesure un',
-    });
   });
 
   it('consigne un fichier absent du stockage dans le dossier de sa mesure', () => {

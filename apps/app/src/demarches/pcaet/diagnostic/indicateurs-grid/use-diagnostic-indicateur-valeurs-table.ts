@@ -45,7 +45,7 @@ export const useDiagnosticIndicateurValeursTable = ({
         resultYears: rows.flatMap((row) =>
           row.indicateurValeurs.map((valeur) =>
             toAnnualIndicateurYear(
-              row.indicateurDefinition.periodicite,
+              valeur.periodicite,
               valeur.dateValeur,
               'Diagnostic PCAET'
             )

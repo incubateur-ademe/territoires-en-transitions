@@ -1,6 +1,4 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS } from '@tet/domain/demarches';
-import { assertAnnualIndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { getErrorMessage } from '@tet/domain/utils';
 import { DepGraph } from 'dependency-graph';
 import type { ImportIndicateurDefinitionType } from './import-indicateur-definition.dto';
@@ -23,23 +21,6 @@ export function validateIndicateurDefinitions(
 ): Result<void, ImportIndicateurDefinitionError> {
   const byIdentifiant = new Map<string, ImportIndicateurDefinitionType>();
   for (const definition of definitions) {
-    if (
-      ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS.includes(
-        definition.identifiantReferentiel
-      )
-    ) {
-      try {
-        assertAnnualIndicateurPeriodicite(
-          definition.periodicite,
-          `Le diagnostic PCAET (${definition.identifiantReferentiel})`
-        );
-      } catch (error) {
-        return failure(
-          'INVALID_IMPORT',
-          error instanceof Error ? error : new Error(getErrorMessage(error))
-        );
-      }
-    }
     if (byIdentifiant.has(definition.identifiantReferentiel)) {
       return failure(
         'INVALID_IMPORT',

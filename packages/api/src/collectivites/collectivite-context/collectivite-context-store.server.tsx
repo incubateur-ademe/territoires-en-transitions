@@ -7,6 +7,7 @@ import { CollectiviteProviderStoreClient } from './collectivite-context-store.cl
 export const CollectiviteProviderStore = async ({
   collectiviteId,
   demandeAvisId,
+  demarcheId,
   children,
 }: {
   collectiviteId: number;
@@ -15,9 +16,15 @@ export const CollectiviteProviderStore = async ({
    * à la bannière — la saisine la plus récente au lieu de celle du dossier ouvert.
    */
   demandeAvisId?: number;
+  /** Démarche désignée par l'URL d'un dépôt en élaboration, sans saisine. */
+  demarcheId?: number;
   children: ReactNode;
 }) => {
-  const collectivite = await getCollectivite(collectiviteId, demandeAvisId);
+  const collectivite = await getCollectivite(
+    collectiviteId,
+    demandeAvisId,
+    demarcheId
+  );
 
   return (
     <CollectiviteProviderStoreClient collectivite={collectivite}>

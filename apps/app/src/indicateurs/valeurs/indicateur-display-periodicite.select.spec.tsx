@@ -16,7 +16,7 @@ describe('indicator chart display selection', () => {
     fireEvent.click(screen.getByText('Annuelle'));
 
     expect(onChange).toHaveBeenCalledWith('annuelle');
-    expect(screen.getByText(/sans agrégation/)).toBeTruthy();
+    expect(screen.getByText(/Les valeurs sont regroupées/)).toBeTruthy();
   });
 
   it('offers only annual display for annual declarations', () => {

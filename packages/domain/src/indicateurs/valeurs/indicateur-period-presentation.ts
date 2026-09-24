@@ -51,6 +51,28 @@ const presentationByPeriodicite: IndicateurPeriodPresentationRegistry =
         maxInterval: 5 * 365 * DAY_IN_MILLISECONDS,
       },
     },
+    [IndicateurPeriodiciteEnum.SEMESTRIELLE]: {
+      formatLabel: (period) => {
+        const [year, semester] = IndicateurPeriods.serialize(period).split('-');
+        return `${semester} ${year}`;
+      },
+      chartTimeAxis: {
+        useUTC: true,
+        minInterval: 181 * DAY_IN_MILLISECONDS,
+        maxInterval: 365 * DAY_IN_MILLISECONDS,
+      },
+    },
+    [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: {
+      formatLabel: (period) => {
+        const [year, quarter] = IndicateurPeriods.serialize(period).split('-');
+        return `${quarter} ${year}`;
+      },
+      chartTimeAxis: {
+        useUTC: true,
+        minInterval: 90 * DAY_IN_MILLISECONDS,
+        maxInterval: 365 * DAY_IN_MILLISECONDS,
+      },
+    },
     [IndicateurPeriodiciteEnum.MENSUELLE]: {
       formatLabel: formatMonthlyPeriod,
       chartTimeAxis: {

@@ -9,7 +9,6 @@ BEGIN;
 -- contrat de reporting qui sait les exprimer est restauré.
 DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait
     ON public.indicateur_definition;
-DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait ON public.indicateur_collectivite;
 DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait ON public.indicateur_valeur;
 DROP FUNCTION IF EXISTS migration.empecher_periodicite_non_annuelle_pendant_retrait();
 

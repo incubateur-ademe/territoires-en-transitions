@@ -5,9 +5,9 @@ import { analysisJobErrorConfig } from './analysis-job.trpc-errors';
 import { enqueueAnalysisInputSchema } from './enqueue-analysis/enqueue-analysis.input';
 import { enqueueAnalysisOutputSchema } from './enqueue-analysis/enqueue-analysis.output';
 import { EnqueueAnalysisService } from './enqueue-analysis/enqueue-analysis.service';
-import { getAnalysisStatusInputSchema } from './get-analysis-status/get-analysis-status.input';
-import { getAnalysisStatusOutputSchema } from './get-analysis-status/get-analysis-status.output';
-import { GetAnalysisStatusService } from './get-analysis-status/get-analysis-status.service';
+import { getLastAnalysisInputSchema } from './get-last-analysis/get-last-analysis.input';
+import { getLastAnalysisOutputSchema } from './get-last-analysis/get-last-analysis.output';
+import { GetLastAnalysisService } from './get-last-analysis/get-last-analysis.service';
 import { getMobilisationInputSchema } from './get-mobilisation/get-mobilisation.input';
 import { mobilisationSchema } from './get-mobilisation/get-mobilisation.output';
 import { GetMobilisationService } from './get-mobilisation/get-mobilisation.service';
@@ -17,7 +17,7 @@ export class AnalysisRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly enqueueService: EnqueueAnalysisService,
-    private readonly statusService: GetAnalysisStatusService,
+    private readonly lastAnalysisService: GetLastAnalysisService,
     private readonly mobilisationService: GetMobilisationService
   ) {}
 
@@ -34,11 +34,13 @@ export class AnalysisRouter {
         return this.getResultDataOrThrowError(result);
       }),
 
-    getAnalysisStatus: this.trpc.authedProcedure
-      .input(getAnalysisStatusInputSchema)
-      .output(getAnalysisStatusOutputSchema)
+    getLastAnalysis: this.trpc.authedProcedure
+      .input(getLastAnalysisInputSchema)
+      .output(getLastAnalysisOutputSchema)
       .query(async ({ input, ctx: { user } }) => {
-        const result = await this.statusService.getStatus(input, { user });
+        const result = await this.lastAnalysisService.getLastAnalysis(input, {
+          user,
+        });
         return this.getResultDataOrThrowError(result);
       }),
 

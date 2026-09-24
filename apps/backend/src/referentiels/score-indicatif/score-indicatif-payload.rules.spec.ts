@@ -1,7 +1,4 @@
-import {
-  IndicateurPeriodErrorEnum,
-  IndicateurPeriodiciteEnum,
-} from '@tet/domain/indicateurs';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { ActionScoreIndicatif } from '@tet/domain/referentiels';
 import {
   actionBelongsToReferentiel,
@@ -30,8 +27,8 @@ describe('score-indicatif-payload.rules', () => {
   });
 
   describe('formatScoreIndicatifForPayload', () => {
-    it('refuse un snapshot mensuel sans politique de calcul annuel', () => {
-      expect(() =>
+    it('conserve le contrat annuel du score même si la déclaration est mensuelle', () => {
+      expect(
         formatScoreIndicatifForPayload({
           actionId: 'cae_1.1.1',
           indicateurs: [
@@ -41,15 +38,19 @@ describe('score-indicatif-payload.rules', () => {
               identifiantReferentiel: 'ind_test',
               titre: 'Indicateur de test',
               unite: '%',
+              isApplicable: true,
               periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
             },
           ],
           fait: null,
           programme: null,
         })
-      ).toThrow(
-        IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
-      );
+      ).toEqual({
+        periodicite: 'annuelle',
+        unite: '%',
+        fait: null,
+        programme: null,
+      });
     });
 
     it('formate le score fait et laisse le score programme à null', () => {
@@ -63,6 +64,7 @@ describe('score-indicatif-payload.rules', () => {
             titre: 'Indicateur de test',
             periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             unite: '%',
+            isApplicable: true,
           },
         ],
         fait: {

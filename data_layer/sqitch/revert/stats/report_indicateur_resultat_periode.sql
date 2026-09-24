@@ -21,12 +21,9 @@ CREATE FUNCTION migration.empecher_periodicite_non_annuelle_pendant_retrait()
 AS $$
 BEGIN
     IF TG_TABLE_NAME = 'indicateur_definition' THEN
-        IF NEW.periodicite_mode <> 'recommandee' THEN
-            RAISE EXCEPTION USING ERRCODE = '23514', MESSAGE = 'Un retrait de la périodicité est en cours';
-        END IF;
-    ELSIF TG_TABLE_NAME = 'indicateur_collectivite' THEN
-        IF NEW.periodicite IS NOT NULL THEN
-            RAISE EXCEPTION USING ERRCODE = '23514', MESSAGE = 'Un retrait de la périodicité est en cours';
+        IF NEW.aggregation_resultat IS NOT NULL OR NEW.aggregation_objectif IS NOT NULL THEN
+            RAISE EXCEPTION USING ERRCODE = '23514',
+                MESSAGE = 'Une agrégation ne peut pas être configurée pendant le retrait de la périodicité';
         END IF;
     END IF;
     IF COALESCE(NEW.periodicite, 'annuelle') <> 'annuelle' THEN
@@ -39,14 +36,11 @@ END;
 $$;
 
 CREATE TRIGGER empecher_periodicite_non_annuelle_pendant_retrait
-    BEFORE INSERT OR UPDATE OF periodicite, periodicite_mode
+    BEFORE INSERT OR UPDATE OF periodicite, aggregation_resultat, aggregation_objectif
     ON public.indicateur_definition
     FOR EACH ROW
     EXECUTE FUNCTION migration.empecher_periodicite_non_annuelle_pendant_retrait();
 
-CREATE TRIGGER empecher_periodicite_non_annuelle_pendant_retrait
-    BEFORE INSERT OR UPDATE OF periodicite ON public.indicateur_collectivite
-    FOR EACH ROW EXECUTE FUNCTION migration.empecher_periodicite_non_annuelle_pendant_retrait();
 CREATE TRIGGER empecher_periodicite_non_annuelle_pendant_retrait
     BEFORE INSERT OR UPDATE OF periodicite ON public.indicateur_valeur
     FOR EACH ROW EXECUTE FUNCTION migration.empecher_periodicite_non_annuelle_pendant_retrait();

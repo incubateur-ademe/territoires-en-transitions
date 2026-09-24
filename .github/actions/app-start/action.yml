@@ -3,7 +3,7 @@ description: Prepare and start a built app process, then wait for it to become r
 
 inputs:
   name:
-    description: App name ('app', 'auth', etc.)
+    description: App name ('app', 'site', etc.)
     required: true
   port:
     description: App port
@@ -29,7 +29,7 @@ runs:
         set -euo pipefail
 
         case "$APP_NAME" in
-          app|auth|panier|site)
+          app|site)
             app_kind='next'
             ;;
           backend|tools)

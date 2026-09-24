@@ -4,9 +4,8 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   toAcceptAttribute,
   toFileConstraints,
-} from '@/app/referentiels/preuves/upload/constants';
-import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
-import type { RouterOutput } from '@tet/api';
+} from '@/app/collectivites/documents/upload/constants';
+import { validateFile } from '@/app/collectivites/documents/upload/validate-file';
 import {
   DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   type PcaetAvisAuTitreDe,
@@ -17,10 +16,9 @@ import { useUploadAvisFile } from './data/use-upload-avis-file';
 import { useUpsertAvis } from './data/use-upsert-avis';
 import { useValiderAvis } from './data/use-valider-avis';
 
-type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
-
 type Props = {
-  dossier: Dossier;
+  /** La saisine sur laquelle l'avis se dépose : on ne finalise qu'un dossier transmis. */
+  demandeAvisId: number;
   /**
    * Le titre au nom duquel l'avis est rendu. Il n'est pas demandé à
    * l'instructeur : chaque émetteur n'en porte qu'un — le préfet de région pour
@@ -38,7 +36,7 @@ const AVIS_FILE_CONSTRAINTS = toFileConstraints({
 });
 
 export const FinaliserInstructionModal = ({
-  dossier,
+  demandeAvisId,
   auTitreDe,
   onClose,
 }: Props) => {
@@ -50,7 +48,7 @@ export const FinaliserInstructionModal = ({
 
   const uploadAvisFile = useUploadAvisFile();
   const upsertAvis = useUpsertAvis();
-  const validerAvis = useValiderAvis(dossier.demandeAvisId);
+  const validerAvis = useValiderAvis(demandeAvisId);
 
   const selectFiles = (files: FileList | null) => {
     const file = files?.[0];
@@ -74,7 +72,7 @@ export const FinaliserInstructionModal = ({
         return;
       }
       const avis = await upsertAvis.mutateAsync({
-        demandeAvisId: dossier.demandeAvisId,
+        demandeAvisId,
         auTitreDe,
         fichierRef: hash,
       });
@@ -84,7 +82,7 @@ export const FinaliserInstructionModal = ({
         return;
       }
       await validerAvis.mutateAsync({
-        demandeAvisId: dossier.demandeAvisId,
+        demandeAvisId,
         avisId: avisDepose.id,
       });
       setEtape('confirmation');

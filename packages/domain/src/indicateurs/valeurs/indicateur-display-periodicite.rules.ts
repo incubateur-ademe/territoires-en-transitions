@@ -8,15 +8,26 @@ import {
 } from './indicateur-period.errors';
 
 /**
- * Chart display controls calendar ticks, never the identity or number of values.
+ * Display cadences group source observations without changing their stored identity.
  * Each declaration cadence explicitly lists its supported display cadences.
  */
 const displayPeriodicites: Readonly<
   Record<IndicateurPeriodicite, readonly IndicateurPeriodicite[]>
 > = {
   [IndicateurPeriodiciteEnum.ANNUELLE]: [IndicateurPeriodiciteEnum.ANNUELLE],
+  [IndicateurPeriodiciteEnum.SEMESTRIELLE]: [
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    IndicateurPeriodiciteEnum.ANNUELLE,
+  ],
+  [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: [
+    IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    IndicateurPeriodiciteEnum.ANNUELLE,
+  ],
   [IndicateurPeriodiciteEnum.MENSUELLE]: [
     IndicateurPeriodiciteEnum.MENSUELLE,
+    IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
     IndicateurPeriodiciteEnum.ANNUELLE,
   ],
 };
@@ -41,4 +52,41 @@ export const resolveIndicateurDisplayPeriodicite = (
     });
   }
   return display;
+};
+
+/** Finest available source cadence, with declaration as the empty-view default. */
+export const getIndicateurSourcePeriodicite = (
+  declaration: IndicateurPeriodicite,
+  sourcePeriodicites: readonly IndicateurPeriodicite[]
+): IndicateurPeriodicite => {
+  let finest: IndicateurPeriodicite | undefined;
+  for (const periodicite of sourcePeriodicites) {
+    if (
+      !finest ||
+      listIndicateurDisplayPeriodicites(periodicite).length >
+        listIndicateurDisplayPeriodicites(finest).length
+    ) {
+      finest = periodicite;
+    }
+  }
+  return finest ?? declaration;
+};
+
+/** Shared view default and validation for browser and server chart rendering. */
+export const resolveIndicateurSourceDisplayPeriodicite = (
+  declaration: IndicateurPeriodicite,
+  sourcePeriodicites: readonly IndicateurPeriodicite[],
+  requested?: IndicateurPeriodicite
+): IndicateurPeriodicite => {
+  const source = getIndicateurSourcePeriodicite(
+    declaration,
+    sourcePeriodicites
+  );
+  return resolveIndicateurDisplayPeriodicite(
+    source,
+    requested ??
+      (isIndicateurDisplayPeriodiciteAllowed(source, declaration)
+        ? declaration
+        : source)
+  );
 };

@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useOpenPreuve } from '@/app/referentiels/preuves/Bibliotheque/use-open-preuve';
+import { useOpenPreuve } from '@/app/collectivites/documents/bibliotheque/use-open-preuve';
 import {
   getAuthorAndDate,
   getFormattedTitle,
-} from '@/app/referentiels/preuves/Bibliotheque/document-label.utils';
+} from '@/app/collectivites/documents/bibliotheque/document-label.utils';
 import { getDocumentFilename } from '@tet/domain/collectivites';
-import { MissingFileBadge } from '@/app/referentiels/preuves/Bibliotheque/missing-file.badge';
+import { MissingFileBadge } from '@/app/collectivites/documents/bibliotheque/missing-file.badge';
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
 import { AuditReport } from '../data/use-list-reports-by-audit';

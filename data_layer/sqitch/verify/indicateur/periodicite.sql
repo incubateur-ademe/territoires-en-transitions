@@ -15,6 +15,24 @@ BEGIN
           AND data_type = 'text'
     ), 'indicateur_definition.periodicite doit exister et être de type text';
 
+    ASSERT (
+        SELECT count(*) = 2
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'indicateur_definition'
+          AND column_name IN ('aggregation_resultat', 'aggregation_objectif')
+          AND data_type = 'text'
+          AND is_nullable = 'YES'
+    ), 'Les règles de restitution des résultats et objectifs doivent rester explicites et facultatives';
+
+    ASSERT EXISTS (
+        SELECT 1 FROM pg_trigger
+        WHERE tgname = 'verifier_periodicite_valeur_indicateur'
+          AND tgrelid = 'public.indicateur_valeur'::regclass
+          AND tgenabled = 'O'
+          AND NOT tgisinternal
+    ), 'Les déclarations locales doivent respecter la périodicité de leur définition';
+
     ASSERT to_regclass('migration.indicateur_valeur_periodicite_audit') IS NOT NULL,
         'La table d''audit des dates historiques doit exister';
 
@@ -25,12 +43,14 @@ BEGIN
         SELECT 1
         FROM (VALUES
             ('annuelle', 'mois', 12, DATE '2000-01-01'),
+            ('semestrielle', 'mois', 6, DATE '2000-01-01'),
+            ('trimestrielle', 'mois', 3, DATE '2000-01-01'),
             ('mensuelle', 'mois', 1, DATE '2000-01-01')
         ) AS attendue(code, unite_calendaire, nombre_unites, date_ancrage)
         LEFT JOIN public.indicateur_periodicite effective
           USING (code, unite_calendaire, nombre_unites, date_ancrage)
         WHERE effective.code IS NULL
-    ), 'Le catalogue doit conserver les politiques annuelle et mensuelle livrées';
+    ), 'Le catalogue doit conserver les quatre cadences calendaires livrées';
 
     ASSERT to_regprocedure(
         'public.indicateur_date_debut_periode(text,date)'
@@ -168,7 +188,6 @@ BEGIN
                       'id',
                       'identifiant_referentiel',
                       'periodicite',
-                      'periodicite_mode',
                       'valeur_calcule'
                   ]::name[]
               )

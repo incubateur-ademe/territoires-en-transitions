@@ -18,6 +18,13 @@ export const createIndicateurDefinitionInputSchema = z.object({
     .enum(indicateurPeriodiciteValues)
     .optional()
     .default('annuelle'),
+  aggregationResultat: z.optional(
+    indicateurDefinitionSchemaCreate.shape.aggregationResultat
+  ),
+  aggregationObjectif: z.optional(
+    indicateurDefinitionSchemaCreate.shape.aggregationObjectif
+  ),
+  isApplicable: z.boolean().optional().default(true),
   collectiviteId: z.number(),
   thematiques: z
     .array(z.object({ id: thematiqueSchema.shape.id }))
@@ -63,11 +70,15 @@ export const updateIndicateurDefinitionInputSchema = z.object({
         thematiques: true,
         estFavori: true,
         estConfidentiel: true,
+        isApplicable: true,
+        aggregationResultat: true,
+        aggregationObjectif: true,
       }).shape,
 
       // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
       // "absent du payload" d'une mise à jour explicite.
-      periodicite: z.enum(indicateurPeriodiciteValues).nullable().optional(),
+      periodicite: z.never().optional(),
+      isApplicable: z.boolean().optional(),
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),

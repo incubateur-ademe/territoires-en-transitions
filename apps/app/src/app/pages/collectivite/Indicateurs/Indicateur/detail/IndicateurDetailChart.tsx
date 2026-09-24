@@ -47,7 +47,7 @@ const IndicateurDetailChart = ({
       >
         <div className="mx-8 mb-4">
           <IndicateurDisplayPeriodiciteSelect
-            periodicite={definition.periodicite}
+            periodicite={chartInfo.data.periodicite ?? definition.periodicite}
             periodiciteAffichage={chartInfo.periodiciteAffichage}
             onChange={chartInfo.setPeriodiciteAffichage}
           />

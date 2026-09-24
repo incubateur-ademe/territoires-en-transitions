@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  makeDemarcheInstructionUrl,
+  makeDossierInstructionUrl,
+} from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
@@ -10,6 +14,7 @@ import {
 } from '@tet/domain/demarches';
 import { Button, cn } from '@tet/ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import type { DossierInstructionRef } from '../dossier-instruction-ref';
 import { useDossierInstruction } from './data/use-dossier-instruction';
 import { DossierInstructionHeader } from './dossier.header';
 import { EtapeDiagnosticSection } from './etape-diagnostic.section';
@@ -33,14 +38,15 @@ const ETAPE_DESCRIPTIONS: Record<PcaetInstructionPartie, string> = {
 
 export const DossierInstructionPage = ({
   collectiviteInstruiteId,
-  demandeAvisId,
+  dossierRef,
 }: {
   /** Prise dans l'URL : le store est en retard d'un rendu à l'arrivée. */
   collectiviteInstruiteId: number;
-  demandeAvisId: number;
+  /** Ce que l'URL désigne : une saisine, ou la démarche d'un dépôt en élaboration. */
+  dossierRef: DossierInstructionRef;
 }) => {
   const { dossier, isLoading, isError, refetch } =
-    useDossierInstruction(demandeAvisId);
+    useDossierInstruction(dossierRef);
   const [etape, setEtape] = useQueryState(
     'etape',
     parseAsStringLiteral(pcaetInstructionPartieValues).withDefault(
@@ -56,12 +62,28 @@ export const DossierInstructionPage = ({
     })
   );
 
+  // Le panneau ne survit qu'à l'URL du dossier ouvert : celle de sa saisine,
+  // ou celle de sa démarche tant qu'il n'a saisi personne.
+  const dossierPath =
+    'demandeAvisId' in dossierRef
+      ? makeDossierInstructionUrl({
+          collectiviteInstruiteId,
+          demandeAvisId: dossierRef.demandeAvisId,
+        })
+      : makeDemarcheInstructionUrl({
+          collectiviteInstruiteId,
+          demarcheId: dossierRef.demarcheId,
+        });
+
   const { isOpen, toggle } = useEtapesInstructionSidePanel(
     {
       etapes,
       activeEtape: etape,
       onSelect: setEtape,
-      demandeAvisId,
+      demandeAvisId: dossier?.demandeAvisId ?? undefined,
+      // Sans saisine, le dossier n'a pas été transmis : il se lit en
+      // élaboration, et le panneau doit le dire.
+      enElaboration: dossier !== undefined && dossier.demandeAvisId === null,
       // Projection vers la forme de la liste : l'instructeur voit aussi ses
       // brouillons, d'où `valideLe` nullable.
       //
@@ -85,7 +107,7 @@ export const DossierInstructionPage = ({
       })),
       footer: dossier ? <FinaliserInstructionButton dossier={dossier} /> : null,
     },
-    { collectiviteId: collectiviteInstruiteId, demandeAvisId }
+    { dossierPath }
   );
 
   if (isLoading) {
@@ -138,13 +160,13 @@ export const DossierInstructionPage = ({
 
       {etape === PcaetInstructionPartieEnum.DOCUMENTS && (
         <EtapeDocumentsSection
-          demandeAvisId={demandeAvisId}
+          dossierRef={dossierRef}
           documents={dossier.documents}
         />
       )}
       {etape === PcaetInstructionPartieEnum.DIAGNOSTIC && (
         <EtapeDiagnosticSection
-          demandeAvisId={demandeAvisId}
+          dossierRef={dossierRef}
           demarcheId={dossier.demarcheId}
         />
       )}

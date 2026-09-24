@@ -1,6 +1,7 @@
 import {
   type IndicateurPeriodicite,
   resolveIndicateurDisplayPeriodicite,
+  resolveIndicateurSourceDisplayPeriodicite,
 } from '@tet/domain/indicateurs';
 import { useCallback, useState } from 'react';
 
@@ -8,6 +9,7 @@ type Input = {
   indicateurId?: number;
   collectiviteId: number;
   periodicite?: IndicateurPeriodicite;
+  defaultPeriodicite?: IndicateurPeriodicite;
 };
 
 /** Local chart preference; declaration cadence and stored values stay unchanged. */
@@ -15,8 +17,9 @@ export const useIndicateurDisplayPeriodicite = ({
   indicateurId,
   collectiviteId,
   periodicite,
+  defaultPeriodicite = periodicite,
 }: Input) => {
-  const scope = `${collectiviteId}/${indicateurId}/${periodicite}`;
+  const scope = `${collectiviteId}/${indicateurId}/${periodicite}/${defaultPeriodicite}`;
   const [selection, setSelection] = useState<{
     scope: string;
     periodicite?: IndicateurPeriodicite;
@@ -28,8 +31,9 @@ export const useIndicateurDisplayPeriodicite = ({
   }
 
   const periodiciteAffichage = periodicite
-    ? resolveIndicateurDisplayPeriodicite(
-        periodicite,
+    ? resolveIndicateurSourceDisplayPeriodicite(
+        defaultPeriodicite ?? periodicite,
+        [periodicite],
         selection.scope === scope ? selection.periodicite : undefined
       )
     : undefined;

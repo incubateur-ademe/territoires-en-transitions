@@ -1,16 +1,16 @@
 import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
 import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
-import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/use-edit-preuve';
+import { useRemovePreuve } from '@/app/collectivites/documents/bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
-  MAX_FILE_SIZE_MB,
-} from '@/app/referentiels/preuves/upload/constants';
+  MAX_UPLOAD_SIZE_MB,
+} from '@/app/collectivites/documents/upload/constants';
 import {
   FileValidationError,
   validateFile,
-} from '@/app/referentiels/preuves/upload/validate-file';
-import { useAddPreuveAudit } from '@/app/referentiels/preuves/useAddPreuves';
+} from '@/app/collectivites/documents/upload/validate-file';
+import { useAddPreuveAudit } from '@/app/collectivites/documents/use-add-preuves';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -41,10 +41,10 @@ export type AuditReportUploadState = {
 const toValidationMessage = (error: FileValidationError): string => {
   const formats = EXPECTED_FORMATS.join(', ');
   const messageByError: Record<FileValidationError, string> = {
-    sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_FILE_SIZE_MB }),
+    sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_UPLOAD_SIZE_MB }),
     formatError: appLabels.fichierFormatNonSupporte({ formats }),
     formatAndSizeError: appLabels.fichierFormatEtTailleInvalides({
-      maxMo: MAX_FILE_SIZE_MB,
+      maxMo: MAX_UPLOAD_SIZE_MB,
       formats,
     }),
   };

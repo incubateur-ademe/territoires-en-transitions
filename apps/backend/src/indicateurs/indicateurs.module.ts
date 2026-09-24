@@ -155,6 +155,7 @@ const DEFINITIONS_PROVIDERS = [
   ],
   exports: [
     ListPlatformDefinitionsService,
+    ListPlatformDefinitionsRepository,
     ListIndicateursService,
 
     IndicateurExpressionService,

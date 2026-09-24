@@ -113,7 +113,7 @@ SELECT throws_ok(
     'Supprimer une source encore référencée est refusé'
 );
 
-SELECT lives_ok(
+SELECT throws_ok(
     $$
         UPDATE public.indicateur_definition
         SET periodicite = 'mensuelle'
@@ -122,28 +122,20 @@ SELECT lives_ok(
             'test-formule-cible'
         )
     $$,
-    'Une instruction multi-lignes peut déplacer atomiquement un graphe homogène'
-);
-
-UPDATE public.indicateur_definition
-SET periodicite = 'annuelle'
-WHERE identifiant_referentiel IN (
-    'test-formule-source-annuelle',
-    'test-formule-cible'
+    23514,
+    NULL,
+    'La modification simultanée d un graphe ne contourne pas la cadence fixée à la création'
 );
 
 SELECT lives_ok(
     $$
-        SET CONSTRAINTS verifier_periodicite_dependances_formule DEFERRED;
-        UPDATE public.indicateur_definition
-        SET periodicite = 'mensuelle'
-        WHERE identifiant_referentiel = 'test-formule-source-annuelle';
-        UPDATE public.indicateur_definition
-        SET periodicite = 'mensuelle'
-        WHERE identifiant_referentiel = 'test-formule-cible';
-        SET CONSTRAINTS verifier_periodicite_dependances_formule IMMEDIATE
+        INSERT INTO public.indicateur_definition
+            (identifiant_referentiel, titre, unite, periodicite, valeur_calcule)
+        VALUES
+            ('test-formule-cible-mensuelle', 'Formule mensuelle', 'kWh', 'mensuelle',
+             'val(test-formule-source-mensuelle)')
     $$,
-    'Une migration peut différer le contrôle pour remplacer le graphe en plusieurs instructions'
+    'Une nouvelle formule mensuelle peut référencer une source mensuelle'
 );
 
 SELECT lives_ok(
@@ -166,4 +158,5 @@ SELECT is_empty(
     'Retirer une formule vide sa projection dérivée'
 );
 
+SELECT * FROM finish();
 ROLLBACK;

@@ -74,8 +74,7 @@ export const demarchesLabels = {
   instructionStatutDepotHorsPlateforme: 'Dépôt hors plateforme',
   demarcheAvanceEtapeHorsPlateforme:
     'Réalisée hors plateforme : rien à y faire ici',
-  demarcheCreerHorsPlateforme:
-    'PCAET déjà transmis pour avis hors plateforme',
+  demarcheCreerHorsPlateforme: 'PCAET déjà transmis pour avis hors plateforme',
   demarcheCreerHorsPlateformeDescription:
     'En activant ceci, vous arriverez directement à l’étape de finalisation de votre dépôt PCAET adopté. Les documents, les volets du diagnostic et le plan d’actions y restent à renseigner. Ce choix est définitif.',
   /**
@@ -93,6 +92,8 @@ export const demarchesLabels = {
    * déclaration. */
   demarcheScotAecBadgeAbsent: 'PCAET seul',
   instructionStatutEnInstruction: 'En instruction',
+  /** « En instruction » pour le service qui rend l'avis : c'est à lui d'agir. */
+  instructionStatutAInstruire: 'À instruire',
   instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
   instructionStatutInstruit: 'Instruit',
   instructionStatutAdopte: 'Adopté',
@@ -253,7 +254,7 @@ export const demarchesLabels = {
     "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
   demarcheAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarcheAvanceEtapeTransmisDescription:
-    'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
+    'Consultations auprès du conseil régional et du préfet de région.',
   demarcheAvanceEtapeTransmisInfo:
     'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
   demarcheAvanceEtapeFinalisationLabel: 'Finalisation de la démarche de dépôt',
@@ -627,6 +628,14 @@ export const demarchesLabels = {
   instructionDossierMetaInstruitLe: 'Instruit le',
   instructionDossierMetaEcheanceDepassee: ({ date }: { date: string }) =>
     `${date} (délai écoulé)`,
+  /**
+   * En tête du panneau d'un dépôt lu avant sa transmission. Le service voit un
+   * dossier incomplet, sans avis ni échéance : il doit lire d'emblée que c'est
+   * normal, et qu'on ne lui demande rien.
+   */
+  instructionDossierEnElaborationTitre: 'PCAET en cours d’élaboration',
+  instructionDossierEnElaborationDescription:
+    'La collectivité n’a pas encore transmis ce PCAET pour avis. Vous le consultez tel qu’il est aujourd’hui : son contenu peut encore évoluer, et aucun avis n’est attendu de votre service à ce stade.',
   instructionDossierEtapesTitre: 'Les étapes de l’instruction',
   instructionDossierPanneauBouton: 'Étapes',
   instructionDossierEtapeDocuments: 'Documents déposés',
@@ -712,4 +721,8 @@ export const demarchesLabels = {
     'Année de référence mise à jour, les valeurs saisies ont suivi.',
   pcaetDiagnosticAnneeReferenceEchec:
     "L'année de référence n'a pas pu être modifiée.",
-};
+  pcaetDiagnosticApplicabiliteEchec:
+    "L'applicabilité de l'indicateur n'a pas pu être modifiée.",
+  pcaetDiagnosticIndicateurNonApplicable: 'Non applicable',
+  pcaetDiagnosticValeurNonApplicable: 'N/A',
+} as const;

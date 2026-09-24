@@ -6,24 +6,24 @@ export const analysisJobErrorConfig: TrpcErrorHandlerConfig<AnalysisJobSpecificE
     specificErrors: {
       CREATE_JOB_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'La création du job de classification a échoué',
+        message: "La création du job d'analyse a échoué",
       },
       GET_JOB_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'La lecture du job de classification a échoué',
+        message: "La lecture du job d'analyse a échoué",
       },
       UPDATE_JOB_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'La mise à jour du job de classification a échoué',
+        message: "La mise à jour du job d'analyse a échoué",
       },
       JOB_NOT_FOUND: {
         code: 'NOT_FOUND',
-        message: "Le job de classification demandé n'existe pas",
+        message: "Le job d'analyse demandé n'existe pas",
       },
       JOB_TRANSITION_REFUSED: {
         code: 'CONFLICT',
         message:
-          "Le job de classification n'est pas dans un état permettant cette transition",
+          "Le job d'analyse n'est pas dans un état permettant cette transition",
       },
       IN_FLIGHT_JOB_EXISTS: {
         code: 'CONFLICT',

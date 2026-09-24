@@ -1,5 +1,7 @@
 import { expect } from '@playwright/test';
+import { addTestCommunesMembres } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { test } from 'tests/main.fixture';
+import { databaseService } from 'tests/shared/database.service';
 import { DemarchePcaetPom } from './demarche-pcaet.pom';
 
 /**
@@ -15,7 +17,7 @@ const PLAN_CHALEUR_FROID = ligneDocument('pcaet_plan_chaleur_froid');
 const PROGRAMME_ACTIONS = ligneDocument('pcaet_plan_actions');
 
 test.describe('Démarche PCAET - pièces attendues des seules collectivités assujetties', () => {
-  test('un EPCI à fiscalité propre de plus de 100 000 habitants se voit demander les deux plans annexes', async ({
+  test('un EPCI à fiscalité propre de plus de 100 000 habitants avec une commune de plus de 45 000 se voit demander les deux plans annexes', async ({
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     plans, // requis pour cleanup auto
@@ -24,6 +26,15 @@ test.describe('Démarche PCAET - pièces attendues des seules collectivités ass
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       collectiviteArgs: { population: 684371, natureInsee: 'CA' },
       userArgs: { autoLogin: true },
+    });
+    // Le plan chaleur et froid se lit sur les communes membres, pas sur la
+    // population du groupement.
+    const communes = await addTestCommunesMembres(databaseService, {
+      parentId: collectivite.data.id,
+      populations: [500000],
+    });
+    collectivites.registerCleanupFunc({
+      cleanupByCollectiviteId: async () => communes.cleanup(),
     });
     const demarchePcaetPom = new DemarchePcaetPom(page);
 
@@ -46,6 +57,15 @@ test.describe('Démarche PCAET - pièces attendues des seules collectivités ass
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       collectiviteArgs: { population: 10000, natureInsee: 'CA' },
       userArgs: { autoLogin: true },
+    });
+    // Une composition connue, sans grande commune : un EPCI sans aucune
+    // commune membre garderait le plan chaleur et froid par prudence.
+    const communes = await addTestCommunesMembres(databaseService, {
+      parentId: collectivite.data.id,
+      populations: [6000],
+    });
+    collectivites.registerCleanupFunc({
+      cleanupByCollectiviteId: async () => communes.cleanup(),
     });
     const demarchePcaetPom = new DemarchePcaetPom(page);
 

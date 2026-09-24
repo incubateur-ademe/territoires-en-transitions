@@ -7,8 +7,7 @@ import { ListCollectiviteDefinitionsRepository } from './list-collectivite-defin
 describe('ListCollectiviteDefinitionsRepository', () => {
   it('utilise la transaction fournie en conservant le périmètre de la collectivité', async () => {
     const where = vi.fn().mockResolvedValue([]);
-    const leftJoin = vi.fn(() => ({ where }));
-    const from = vi.fn(() => ({ leftJoin }));
+    const from = vi.fn(() => ({ where }));
     const select = vi.fn(() => ({ from }));
     const baseSelect = vi.fn();
     const repository = new ListCollectiviteDefinitionsRepository({

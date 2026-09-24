@@ -27,7 +27,8 @@ export function prepareScoreIndicatifData(
     return {
       ...valeur,
       indicateurTitre: indicateur?.titre ?? '',
-      periodicite: indicateur?.periodicite,
+      // The score endpoint selects stored annual observations explicitly.
+      periodicite: 'annuelle' as const,
     };
   };
 

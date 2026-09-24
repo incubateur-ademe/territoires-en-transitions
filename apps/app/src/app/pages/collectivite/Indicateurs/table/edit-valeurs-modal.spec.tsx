@@ -50,6 +50,8 @@ describe('EditValeursModal', () => {
   it.each([
     { periodicite: 'annuelle', periode: '2026' },
     { periodicite: 'mensuelle', periode: '2026-02' },
+    { periodicite: 'trimestrielle', periode: '2026-T2' },
+    { periodicite: 'semestrielle', periode: '2026-S2' },
   ] as const)(
     'conserve le brouillon après un retour au champ de période $periodicite inchangé',
     ({ periodicite, periode }) => {
@@ -221,4 +223,45 @@ describe('EditValeursModal', () => {
       expect.objectContaining({ dateValeur: '2026-02-01', resultat: 12 })
     );
   });
+  it.each([
+    {
+      periodicite: 'trimestrielle',
+      input: '2026-T4',
+      dateValeur: '2026-10-01',
+      next: '2027-T1',
+      button: 'Valider et ajouter un trimestre',
+    },
+    {
+      periodicite: 'semestrielle',
+      input: '2026-S2',
+      dateValeur: '2026-07-01',
+      next: '2027-S1',
+      button: 'Valider et ajouter un semestre',
+    },
+  ] as const)(
+    'enregistre et avance la période $periodicite à l’année suivante',
+    async ({ periodicite, input, dateValeur, next, button }) => {
+      upsertValeur.mockResolvedValue(undefined);
+      render(
+        <EditValeursModal
+          collectiviteId={1}
+          definition={{ id: 2, periodicite }}
+          openState={{ isOpen: true, setIsOpen: vi.fn() }}
+          data={data}
+        />
+      );
+      const [periodInput, resultInput] = screen.getAllByRole('textbox');
+      fireEvent.change(periodInput, { target: { value: input } });
+      fireEvent.change(resultInput, { target: { value: '42' } });
+      fireEvent.click(screen.getByRole('button', { name: button }));
+      await waitFor(() =>
+        expect(upsertValeur).toHaveBeenCalledWith(
+          expect.objectContaining({ periodicite, dateValeur, resultat: 42 })
+        )
+      );
+      await waitFor(() =>
+        expect((periodInput as HTMLInputElement).value).toBe(next)
+      );
+    }
+  );
 });

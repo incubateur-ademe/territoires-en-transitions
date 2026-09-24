@@ -28,6 +28,22 @@ const strategyCasesByPeriodicity = {
     nextSerialized: '2027',
     endExclusive: '2027-01-01',
   },
+  semestrielle: {
+    periodicite: 'semestrielle',
+    serialized: '2026-S2',
+    dateValeur: '2026-07-01',
+    containingDate: '2026-11-23',
+    nextSerialized: '2027-S1',
+    endExclusive: '2027-01-01',
+  },
+  trimestrielle: {
+    periodicite: 'trimestrielle',
+    serialized: '2026-T4',
+    dateValeur: '2026-10-01',
+    containingDate: '2026-11-23',
+    nextSerialized: '2027-T1',
+    endExclusive: '2027-01-01',
+  },
   mensuelle: {
     periodicite: 'mensuelle',
     serialized: '2026-02',
@@ -81,6 +97,38 @@ describe.each(strategyCases)(
 );
 
 describe('IndicateurPeriods', () => {
+  it.each([
+    ['trimestrielle', '2026-T1', 'T1 2026'],
+    ['semestrielle', '2026-S2', 'S2 2026'],
+  ] as const)('présente la période %s', (periodicite, value, label) => {
+    expect(
+      formatIndicateurPeriod(IndicateurPeriods.parse(periodicite, value))
+    ).toBe(label);
+  });
+
+  it.each(['trimestrielle', 'semestrielle'] as const)(
+    'refuse un début non canonique pour %s',
+    (periodicite) => {
+      expect(() =>
+        IndicateurPeriods.fromDateValeur(periodicite, '2026-02-01')
+      ).toThrow(IndicateurPeriodErrorEnum.INDICATEUR_PERIOD_DATE_NON_CANONICAL);
+    }
+  );
+
+  it('distingue les quatre périodes commençant le premier janvier', () => {
+    const periods = (
+      ['annuelle', 'semestrielle', 'trimestrielle', 'mensuelle'] as const
+    ).map((periodicite) =>
+      IndicateurPeriods.fromDateValeur(periodicite, '2026-01-01')
+    );
+    expect(new Set(periods.map(IndicateurPeriods.key)).size).toBe(4);
+    periods.forEach((period) => {
+      expect(IndicateurPeriods.fromKey(IndicateurPeriods.key(period))).toEqual(
+        period
+      );
+    });
+  });
+
   it('partage une politique de présentation exhaustive entre les runtimes', () => {
     const monthly = IndicateurPeriods.parse('mensuelle', '2026-02');
 

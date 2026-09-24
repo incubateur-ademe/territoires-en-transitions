@@ -49,7 +49,7 @@ export class WriteIndicateurValeursService {
             periodicite: getLegacyIndicateurPeriodicite(valeur.periodicite),
             dateValeur: this.getCanonicalDateValeur(valeur.dateValeur, {
               id: definition.id,
-              periodicite: getLegacyIndicateurPeriodicite(valeur.periodicite),
+              periodicite: valeur.periodicite,
             }),
             resultat: !isNil(valeur.resultat)
               ? round(valeur.resultat, definition.precision)
@@ -131,7 +131,7 @@ export class WriteIndicateurValeursService {
             ? undefined
             : this.getCanonicalDateValeur(data.dateValeur, {
                 id: indicateurId,
-                periodicite,
+                periodicite: data.periodicite,
               });
         const now = new Date().toISOString();
         const fields = {
@@ -190,21 +190,20 @@ export class WriteIndicateurValeursService {
     );
   }
   private assertPeriodiciteAllowed(
-    definition: Pick<IndicateurDefinition, 'periodicite' | 'periodiciteMode'>,
+    definition: Pick<IndicateurDefinition, 'periodicite'>,
     periodicite: IndicateurPeriodicite
   ) {
-    if (
-      definition.periodiciteMode === 'imposee' &&
-      definition.periodicite !== periodicite
-    ) {
+    if (definition.periodicite !== periodicite) {
       throw new BadRequestException(
-        'La valeur doit respecter la périodicité imposée'
+        'La valeur doit respecter la périodicité de déclaration'
       );
     }
   }
   private getCanonicalDateValeur(
     dateValeur: string,
-    definition: Pick<IndicateurDefinition, 'id' | 'periodicite'>
+    definition: Pick<IndicateurDefinition, 'id'> & {
+      periodicite?: IndicateurPeriodicite;
+    }
   ): string {
     try {
       return dehydrateIndicateurPeriod(

@@ -69,7 +69,7 @@ ALTER TABLE public.indicateur_definition
     ALTER COLUMN periodicite SET NOT NULL;
 
 COMMENT ON COLUMN public.indicateur_definition.periodicite IS
-    'Cadence recommandée ou imposée par la définition et référencée dans public.indicateur_periodicite.';
+    'Cadence de déclaration fixée à la création de la définition et référencée dans public.indicateur_periodicite.';
 
 CREATE FUNCTION public.verifier_date_valeur_selon_periodicite()
     RETURNS trigger

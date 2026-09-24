@@ -21,7 +21,11 @@ export const InputSwitch = forwardRef(
     ref?: Ref<HTMLInputElement>
   ) => {
     return (
-      <div className="relative flex">
+      // La `className` passée par le consommateur est portée par ce wrapper,
+      // et non par l'`<input>` : la coche ci-dessous est un élément frère
+      // positionné en absolu, qu'une classe comme `opacity-0` doit couvrir
+      // elle aussi pour masquer tout l'interrupteur.
+      <div className={cn('relative flex', className)}>
         <input
           type="checkbox"
           ref={ref}
@@ -31,8 +35,7 @@ export const InputSwitch = forwardRef(
           disabled={disabled}
           className={cn(
             '!appearance-none shrink-0 checked:bg-primary checked:disabled:bg-primary-5',
-            'relative bg-grey-4 rounded-full w-10 h-6',
-            className
+            'relative bg-grey-4 rounded-full w-10 h-6'
           )}
           {...props}
         />

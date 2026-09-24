@@ -64,6 +64,7 @@ const documents: DemarcheDocumentDepose[] = [
   {
     id: 1,
     documentId: 'pcaet_diagnostic',
+    etape: 'amont',
     commentaire: '',
     modifiedAt: '2026-08-20T00:00:00Z',
     modifiedBy: null,

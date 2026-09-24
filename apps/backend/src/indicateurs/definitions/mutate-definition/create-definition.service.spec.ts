@@ -47,6 +47,7 @@ describe('CreateDefinitionService', () => {
           thematiques: [],
           estFavori: false,
           estConfidentiel: true,
+          isApplicable: true,
           ficheId: 9,
         },
         {
@@ -66,10 +67,13 @@ describe('CreateDefinitionService', () => {
         titre: 'Indicateur mensuel',
         unite: 't',
         periodicite: 'mensuelle',
+        aggregationResultat: undefined,
+        aggregationObjectif: undefined,
         thematiqueIds: [],
         commentaire: undefined,
         estFavori: false,
         estConfidentiel: true,
+        isApplicable: true,
         modifiedBy: '00000000-0000-0000-0000-000000000001',
       },
       tx

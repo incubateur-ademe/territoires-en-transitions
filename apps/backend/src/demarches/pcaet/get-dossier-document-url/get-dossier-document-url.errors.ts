@@ -5,6 +5,7 @@ import {
 
 const specificErrors = [
   'DEMANDE_AVIS_NOT_FOUND',
+  'DEMARCHE_PCAET_NOT_FOUND',
   'DOCUMENT_NOT_FOUND',
   'DOCUMENT_URL_ERROR',
 ] as const;
@@ -16,6 +17,10 @@ export const getDossierDocumentUrlErrorConfig: TrpcErrorHandlerConfig<SpecificEr
       DEMANDE_AVIS_NOT_FOUND: {
         code: 'NOT_FOUND',
         message: "La demande d'avis n'a pas été trouvée",
+      },
+      DEMARCHE_PCAET_NOT_FOUND: {
+        code: 'NOT_FOUND',
+        message: "La démarche PCAET n'a pas été trouvée",
       },
       DOCUMENT_NOT_FOUND: {
         code: 'NOT_FOUND',

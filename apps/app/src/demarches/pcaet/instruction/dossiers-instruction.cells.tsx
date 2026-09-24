@@ -1,11 +1,15 @@
 'use client';
 
-import { makeDossierInstructionUrl } from '@/app/app/paths';
+import {
+  makeDemarcheInstructionUrl,
+  makeDossierInstructionUrl,
+} from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
 import {
   DemarchePcaetObligationEnum,
+  DemarchePcaetStatusEnum,
   PcaetStatutInstructionEnum,
 } from '@tet/domain/demarches';
 import { Badge, Button, cn, Icon } from '@tet/ui';
@@ -23,17 +27,33 @@ const estUrgente = (avisDeadlineAt: string | null): boolean => {
 };
 
 /**
- * Le dossier ne s'ouvre qu'une fois transmis : c'est la transmission qui saisit
- * le service, et sans saisine il n'a rien à consulter. La ligne informe alors
- * sans conduire nulle part — de quoi relancer, pas de quoi lire un brouillon.
+ * Deux portes vers le dossier. La saisine, une fois le dépôt transmis : c'est
+ * elle qui ouvre le dossier. La démarche, tant qu'il est en élaboration : le
+ * service qui couvre la collectivité le lit déjà, tel qu'il est, pour suivre
+ * l'avancement d'un dépôt qu'il instruira.
+ *
+ * Un dépôt transmis sans saisine pour ce service, lui, ne s'ouvre pas : la
+ * transmission a désigné d'autres destinataires, et la ligne informe sans
+ * conduire nulle part.
  */
-const getDossierHref = (dossier: Dossier): string | null =>
-  dossier.demandeAvisId === null
-    ? null
-    : makeDossierInstructionUrl({
-        collectiviteInstruiteId: dossier.collectivite.id,
-        demandeAvisId: dossier.demandeAvisId,
-      });
+const getDossierHref = (dossier: Dossier): string | null => {
+  if (dossier.demandeAvisId !== null) {
+    return makeDossierInstructionUrl({
+      collectiviteInstruiteId: dossier.collectivite.id,
+      demandeAvisId: dossier.demandeAvisId,
+    });
+  }
+  if (
+    dossier.demarcheId !== null &&
+    dossier.demarcheStatus === DemarchePcaetStatusEnum.EN_ELABORATION
+  ) {
+    return makeDemarcheInstructionUrl({
+      collectiviteInstruiteId: dossier.collectivite.id,
+      demarcheId: dossier.demarcheId,
+    });
+  }
+  return null;
+};
 
 export const DateCell = ({ date }: { date: string | null }) =>
   date ? (
@@ -143,39 +163,28 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
   const href = getDossierHref(dossier);
 
   if (href === null) {
-    // Un dépôt encore en chantier n'a saisi personne ; un dépôt transmis sans
-    // saisine pour ce service est un tout autre cas, et l'annoncer « non
-    // transmis » serait faux — son échéance est là, sous les yeux de l'agent.
-    const transmis =
-      dossier.demarcheStatus !== null &&
-      dossier.demarcheStatus !== 'en_elaboration';
-
+    // Sans lien, il ne reste que le dépôt transmis sans saisine pour ce
+    // service : la transmission a désigné d'autres destinataires, et
+    // l'annoncer « non transmis » serait faux — son échéance est là, sous les
+    // yeux de l'agent. Une collectivité sans dépôt n'a rien à dire ici.
     return (
-      <div
-        className={cn('flex items-center gap-2', {
-          // « Dossier non transmis » se lit dans le prolongement du dépôt en
-          // chantier, pas à la place d'un bouton : il n'y a rien à cliquer.
-          // « Service non saisi » reste à droite, sur la colonne d'actions des
-          // dossiers bel et bien partis.
-          'justify-start': !transmis,
-          'justify-end': transmis,
-        })}
-      >
+      <div className="flex items-center gap-2 justify-end">
         <span className="text-grey-6">
           {dossier.demarcheStatus === null
             ? null
-            : transmis
-            ? appLabels.instructionListeNonSaisi
-            : appLabels.instructionListeNonTransmis}
+            : appLabels.instructionListeNonSaisi}
         </span>
       </div>
     );
   }
 
   // Un dossier encore à instruire s'ouvre pour y travailler ; les autres se
-  // consultent.
+  // consultent. Un dépôt en élaboration se consulte aussi, mais il n'y a pas
+  // d'instruction à voir : c'est le PCAET lui-même qu'on lit.
   const instructionOuverte =
     dossier.statut === PcaetStatutInstructionEnum.EN_INSTRUCTION;
+  const enElaboration =
+    dossier.statut === PcaetStatutInstructionEnum.EN_ELABORATION;
 
   return (
     <div className="flex items-center gap-2 justify-end">
@@ -185,7 +194,7 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
         size="xs"
         icon={instructionOuverte ? 'draft-line' : 'eye-line'}
       >
-        {instructionOuverte
+        {instructionOuverte || enElaboration
           ? appLabels.instructionListeConsulter
           : appLabels.instructionListeVoirInstruction}
       </Button>

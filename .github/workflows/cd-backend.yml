@@ -73,7 +73,9 @@ jobs:
     name: Déploie le backend
     if: ${{ github.event.inputs.is-test-backend != 'true' }}
     needs: build-backend
-    environment: ${{ github.event.inputs.target }}
+    environment:
+      name: ${{ github.event.inputs.target }}
+      url: ${{ steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -119,11 +121,19 @@ jobs:
           --env INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
           --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
 
+      - id: deployment-url
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: ${{ github.event.inputs.target }}-backend
+          public-url: ${{ vars.BACKEND_URL }}
+
   deploy-test-backend:
     name: Déploie le backend de test
     if: ${{ github.event.inputs.is-test-backend == 'true' }}
     needs: build-backend
-    environment: ${{ github.event.inputs.target }}
+    environment:
+      name: ${{ github.event.inputs.target }}
+      url: ${{ steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -169,3 +179,8 @@ jobs:
           --env PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
           --env INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
           --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
+
+      - id: deployment-url
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: test-${{ github.event.inputs.target }}-backend

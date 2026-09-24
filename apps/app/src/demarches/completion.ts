@@ -39,12 +39,17 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
  */
 export const getDiagnosticIndicateurTopicStatut = (
   config: PcaetDiagnosticIndicateurParentConfig,
-  valeurs: PcaetDiagnostic['indicateurValeurs']
+  valeurs: PcaetDiagnostic['indicateurValeurs'],
+  definitions: PcaetDiagnostic['indicateurDefinitions']
 ): DemarcheCompletionStatut =>
   config.optional === true
     ? 'optional'
     : toStatut(
-        isPcaetDiagnosticIndicateurComplet({ config, indicateurs: valeurs })
+        isPcaetDiagnosticIndicateurComplet({
+          config,
+          indicateurs: valeurs,
+          definitions,
+        })
       );
 
 /** La vulnérabilité n'exige rien : toujours optionnelle. */

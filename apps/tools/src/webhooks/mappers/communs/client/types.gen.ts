@@ -71,24 +71,6 @@ export type ProjectPublicInfoResponse = {
     phase: 'Idée' | 'Étude' | 'Opération';
 };
 
-export type ExtraField = {
-    /**
-     * Name of the extra field
-     */
-    name: string;
-    /**
-     * Value of the extra field
-     */
-    value: string;
-};
-
-export type CreateProjetExtraFieldRequest = {
-    /**
-     * Array of extra field names, values, and labels
-     */
-    extraFields: Array<ExtraField>;
-};
-
 export type CollectiviteReference = {
     /**
      * Types of the collectivite
@@ -99,11 +81,9 @@ export type CollectiviteReference = {
      */
     code: string;
     /**
-     * Not part of the upstream OpenAPI schema (openapi-ts.ts); added manually so
-     * consumers can correlate by our internal collectivite id. Regenerating this
-     * file from the spec will drop it until the API exposes it.
+     * Identifiant interne de la collectivité côté source (ex. collectiviteId TeT), pour le deep-link.
      */
-    collectiviteId?: number;
+    collectiviteId?: string;
 };
 
 export type CreateProjetRequest = {
@@ -475,6 +455,356 @@ export type ClassificationResponse = {
     } | null;
 };
 
+export type AideFinancerFull = {
+    id: number;
+    name: string;
+    logo: string | null;
+};
+
+export type AideTypeGroup = {
+    id: number;
+    name: string;
+};
+
+export type AideTypeFull = {
+    id: number;
+    name: string;
+    group: AideTypeGroup;
+};
+
+export type AideClassificationScore = {
+    label: string;
+    score: number;
+};
+
+export type AideClassification = {
+    thematiques: Array<AideClassificationScore>;
+    sites: Array<AideClassificationScore>;
+    interventions: Array<AideClassificationScore>;
+};
+
+export type AjoutManuelResponse = {
+    /**
+     * Id de la décision — à fournir pour retirer cet ajout.
+     */
+    decisionId: string;
+    /**
+     * Le message saisi lors de l'ajout.
+     */
+    message?: string;
+    /**
+     * Plateforme qui a procédé à l'ajout (dérivée de la clé d'API).
+     */
+    plateforme: string;
+    /**
+     * Date de l'ajout (ISO 8601).
+     */
+    date: string;
+    /**
+     * PROVENANCE — services uniquement. `true` si le service ne vient PAS de notre catalogue : ses informations ont été saisies par un agent, il n'a pas de fiche chez nous, et son logo n'est pas hébergé par l'API. Le client peut donc le présenter différemment (pas de lien vers une fiche catalogue, pas de caution éditoriale de notre part).
+     *
+     * Ce n'est PAS une information de classification : les thématiques ne servent qu'à SÉLECTIONNER un service pour un projet, et un ajout manuel a déjà été sélectionné — par un humain. Absent sur les aides, où la notion de catalogue n'a pas de sens.
+     */
+    horsCatalogue?: boolean;
+};
+
+export type AideLabelsCommuns = {
+    thematiques: Array<string>;
+    sites: Array<string>;
+    interventions: Array<string>;
+};
+
+export type AideWithClassification = {
+    id: number;
+    slug: string;
+    url: string;
+    name: string;
+    name_initial: string;
+    short_title: string | null;
+    financers: Array<string>;
+    financers_full: Array<AideFinancerFull>;
+    instructors: Array<string>;
+    programs: Array<string>;
+    description: string | null;
+    eligibility: string | null;
+    perimeter: string;
+    perimeter_id: number;
+    perimeter_scale: string;
+    categories: Array<string>;
+    targeted_audiences: Array<string>;
+    aid_types: Array<string>;
+    aid_types_full: Array<AideTypeFull>;
+    mobilization_steps: Array<string>;
+    origin_url: string | null;
+    application_url: string | null;
+    is_call_for_project: boolean | null;
+    start_date: string | null;
+    submission_deadline: string | null;
+    subvention_rate_lower_bound: number | null;
+    subvention_rate_upper_bound: number | null;
+    subvention_comment: string | null;
+    contact: string | null;
+    recurrence: string | null;
+    project_examples: string | null;
+    date_created: string | null;
+    date_updated: string | null;
+    classification?: AideClassification;
+    /**
+     * Présent si cette aide a été ajoutée À LA MAIN sur ce projet, et non retenue par le moteur. Porte le message de la personne qui l'a ajoutée (« recommandée par la DDT lors du COPIL »). Ces aides remontent en tête et échappent au cutoff : quelqu'un les a délibérément mises là.
+     */
+    ajoutManuel?: AjoutManuelResponse;
+    /**
+     * Score de pertinence thématique de l'aide pour le projet
+     */
+    matchingScore?: number;
+    normalizedScore?: number;
+    axesMatched?: number;
+    labelsCommuns?: AideLabelsCommuns;
+    /**
+     * Score de pertinence textuelle (0-1). Présent si la recherche textuelle complémentaire est activée.
+     */
+    textualScore?: number;
+    /**
+     * Score de pertinence global de l'aide — critère de tri des résultats
+     */
+    combinedScore?: number;
+    /**
+     * Termes du projet retrouvés dans le contenu de l'aide
+     */
+    matchedTerms?: Array<string>;
+};
+
+export type AidesListResponse = {
+    /**
+     * Statut du résultat — `ok` : aides pertinentes trouvées, triées par pertinence ; `no_match` : des aides existent sur le périmètre mais aucune n'est jugée pertinente pour le projet ; `no_aides_on_perimeter` : aucune aide n'a été trouvée sur le territoire du projet.
+     */
+    status: 'ok' | 'no_match' | 'no_aides_on_perimeter';
+    aides: Array<AideWithClassification>;
+    /**
+     * Nombre total d'aides AT trouvées sur le périmètre (avant filtrage matching)
+     */
+    total: number;
+};
+
+export type ClassificationPendingResponse = {
+    status: 'classification_pending';
+    /**
+     * ID du projet en cours de classification
+     */
+    projetId: string;
+    /**
+     * Délai recommandé (en secondes) avant de réessayer la requête
+     */
+    retryAfter: number;
+    /**
+     * Indique si un job de classification a été (re)déclenché par cette requête. `false` signifie qu'un job était déjà en cours.
+     */
+    classificationTriggered: boolean;
+};
+
+export type AidesSearchLabel = {
+    /**
+     * Libellé du label
+     */
+    label: string;
+    /**
+     * Niveau de confiance du label (0-1)
+     */
+    score: number;
+};
+
+export type AidesSearchRequest = {
+    /**
+     * Thématiques recherchées (label + score)
+     */
+    thematiques?: Array<AidesSearchLabel>;
+    /**
+     * Sites / lieux recherchés (label + score)
+     */
+    sites?: Array<AidesSearchLabel>;
+    /**
+     * Interventions / modalités recherchées (label + score)
+     */
+    interventions?: Array<AidesSearchLabel>;
+    /**
+     * Codes INSEE des communes à couvrir (périmètre Aides-Territoires). Au moins une.
+     */
+    communes: Array<string>;
+    /**
+     * Nombre max de résultats (défaut: 20)
+     */
+    limit?: number;
+    /**
+     * Active une recherche de pertinence textuelle complémentaire (nécessite `query`).
+     */
+    textual?: boolean;
+    /**
+     * Texte libre support du matching textuel complémentaire (utilisé si `textual` est activé).
+     */
+    query?: string;
+    /**
+     * Score de pertinence minimal (0-1) sous lequel une aide est écartée. Défaut : aucun seuil.
+     */
+    cutoff?: number;
+    /**
+     * Seuil de confiance (0-1) des labels d'une aide pris en compte. Défaut : 0.8.
+     */
+    aideThreshold?: number;
+    /**
+     * Seuil de confiance (0-1) des labels recherchés pris en compte. Défaut bas conseillé pour le texte libre (ex. 0.3).
+     */
+    projetThreshold?: number;
+};
+
+export type AidesSyncResponse = {
+    classified: number;
+    cached: number;
+    total: number;
+    warmupStarted: boolean;
+};
+
+export type CreateAideFeedbackRequest = {
+    /**
+     * ID du projet (communId)
+     */
+    projetId: string;
+    /**
+     * ID Aides Territoires de l'aide
+     */
+    idAt: string;
+    /**
+     * Type de feedback
+     */
+    feedback?: string;
+    /**
+     * Raison du feedback (expired, wrong_territory, wrong_theme, other)
+     */
+    reason?: string;
+    /**
+     * Source du feedback (MEC, etc.)
+     */
+    source?: string;
+};
+
+export type AideFeedbackResponse = {
+    id: string;
+    projetId: string;
+    idAt: string;
+    feedback: string;
+    reason?: {
+        [key: string]: unknown;
+    };
+    source?: {
+        [key: string]: unknown;
+    };
+    createdAt: string;
+};
+
+export type DeleteAideFeedbackRequest = {
+    /**
+     * ID du projet
+     */
+    projetId: string;
+    /**
+     * ID Aides Territoires de l'aide
+     */
+    idAt: string;
+};
+
+export type CreateDecisionDto = {
+    /**
+     * Type de décision — ENUM FERMÉE (toute autre valeur est rejetée en 400). Chaque type impose ses contraintes croisées sur objetB, verdict et payload (voir docs/api/GUIDE_DECISIONS.md).
+     */
+    typeDecision: 'doublon_signale' | 'doublon_confirme' | 'doublon_infirme' | 'rattachement_pcaet' | 'projet_statut' | 'correction_signalee' | 'recommandation_arbitrage' | 'ajout_manuel';
+    /**
+     * Type de l'objet A concerné par la décision.
+     */
+    objetAType: 'projet' | 'fiche_action' | 'plan' | 'financement';
+    /**
+     * ID STABLE de l'objet A (UUID source, id cop_*, dgcl-*…). JAMAIS un cluster_id : les identifiants de cluster sont recalculés à chaque run de l'ETL.
+     */
+    objetAId: string;
+    /**
+     * Type de l'objet B (décisions binaires). Inclut 'pcaet' : pour rattachement_pcaet, objetB désigne un PCAET par le SIREN de son porteur (objetBId = 9 chiffres).
+     */
+    objetBType?: 'projet' | 'fiche_action' | 'plan' | 'financement' | 'pcaet' | 'recommandation' | 'aide' | 'service_numerique';
+    /**
+     * ID STABLE de l'objet B (mêmes règles que objetAId — jamais un cluster_id). Pour objetBType='pcaet' : SIREN du porteur (9 chiffres).
+     */
+    objetBId?: string;
+    /**
+     * Verdict associé. Valeurs contraintes par type : confirme|infirme (rattachement_pcaet), valide|obsolete|termine (projet_statut) ; interdit pour les doublons et correction_signalee. Cas spécial : 'annule' est valide pour TOUS les types si supersedes est fourni (révocation sans rien affirmer ; ces lignes sont exclues des effets de lecture).
+     */
+    verdict?: string;
+    /**
+     * Identifiant de l'agent auteur, si transmis par la plateforme.
+     */
+    auteur?: string;
+    /**
+     * Commentaire libre.
+     */
+    commentaire?: string;
+    /**
+     * ID de la décision que celle-ci révoque (chaîne de révocation append-only : le nouvel événement pointe vers l'ancien, aucune ligne n'est mutée).
+     */
+    supersedes?: string;
+    /**
+     * Charge utile structurée additionnelle propre à la décision (max 10240 octets sérialisés). REQUISE et de forme imposée pour correction_signalee : { champ: string, valeurProposee: string, source?: string }.
+     */
+    payload?: {
+        [key: string]: unknown;
+    };
+};
+
+export type DecisionCreatedResponse = {
+    /**
+     * ID de la décision créée.
+     */
+    id: string;
+    /**
+     * Horodatage de création (ISO 8601).
+     */
+    createdAt: string;
+};
+
+export type DecisionRecordResponse = {
+    id: string;
+    createdAt: string;
+    typeDecision: string;
+    objetAType: 'projet' | 'fiche_action' | 'plan' | 'financement';
+    objetAId: string;
+    objetBType?: 'projet' | 'fiche_action' | 'plan' | 'financement' | 'pcaet' | 'recommandation' | 'aide' | 'service_numerique';
+    objetBId?: {
+        [key: string]: unknown;
+    } | null;
+    verdict?: {
+        [key: string]: unknown;
+    } | null;
+    auteur?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Plateforme émettrice, dérivée de la clé API authentifiée.
+     */
+    plateformeSource: string;
+    commentaire?: {
+        [key: string]: unknown;
+    } | null;
+    payload?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * ID de la décision que celle-ci révoque, le cas échéant.
+     */
+    supersedes?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type DecisionListResponse = {
+    items: Array<DecisionRecordResponse>;
+};
+
 export type PlanReference = {
     /**
      * ID externe du plan côté source
@@ -589,6 +919,681 @@ export type GlobalStatsResponse = {
      * Total number of service context in the database
      */
     servicesCount: number;
+};
+
+export type MecPlanReference = {
+    /**
+     * ID externe du plan côté MEC
+     */
+    externalId: string;
+    /**
+     * Nom du plan
+     */
+    nom?: string;
+    /**
+     * Type de plan (PCAET, CRTE, PAT...)
+     */
+    type?: string;
+};
+
+export type CreateMecProjetRequest = {
+    /**
+     * Nom du projet
+     */
+    nom: string;
+    /**
+     * ID externe (MEC)
+     */
+    externalId: string;
+    /**
+     * Collectivités concernées (SIREN ou code INSEE)
+     */
+    collectivites: Array<CollectiviteReference>;
+    /**
+     * Description du projet
+     */
+    description?: string;
+    /**
+     * Budget prévisionnel en euros
+     */
+    budgetPrevisionnel?: number;
+    /**
+     * Date de début (ISO)
+     */
+    dateDebut?: string;
+    /**
+     * Date de fin (ISO)
+     */
+    dateFin?: string;
+    /**
+     * Phase (Idée, Étude, Opération)
+     */
+    phase?: string;
+    /**
+     * Statut de la phase
+     */
+    phaseStatut?: string;
+    /**
+     * SIRET du porteur opérationnel
+     */
+    porteurSiret?: string;
+    /**
+     * Compétences M57
+     */
+    competences?: Array<string>;
+    /**
+     * Leviers SGPE
+     */
+    leviers?: Array<string>;
+    /**
+     * Programmes de rattachement
+     */
+    programmes?: Array<string>;
+    /**
+     * Codes INSEE des communes du territoire
+     */
+    territoireCommunes?: Array<string>;
+    /**
+     * Classification thématiques v0.2
+     */
+    classificationThematiques?: Array<string>;
+    /**
+     * Classification sites v0.2
+     */
+    classificationSites?: Array<string>;
+    /**
+     * Classification interventions v0.2
+     */
+    classificationInterventions?: Array<string>;
+    /**
+     * ID du CRTE
+     */
+    crteId?: string;
+    /**
+     * Année d'inscription au CRTE
+     */
+    crteAnneeInscription?: number;
+    /**
+     * Orientation stratégique CRTE
+     */
+    crteOrientationStrategique?: string;
+    /**
+     * Source MEC (crte, pcaet, fnv...)
+     */
+    sourceMec?: string;
+    /**
+     * Opération inscrite au PCAET
+     */
+    pcaetOperationInscrite?: boolean;
+    /**
+     * Thématiques Fonds Vert
+     */
+    fnvThematiques?: string;
+    /**
+     * Mots clés
+     */
+    motsCles?: string;
+    /**
+     * Besoins identifiés
+     */
+    besoins?: string;
+    /**
+     * Plan de rattachement
+     */
+    planRattachement?: string;
+    /**
+     * Plans de transition liés
+     */
+    plans?: Array<MecPlanReference>;
+};
+
+export type CreateMecProjetResponse = {
+    id: string;
+};
+
+export type BulkCreateMecProjetsRequest = {
+    /**
+     * Liste de projets à créer en masse
+     */
+    projets: Array<CreateMecProjetRequest>;
+};
+
+export type BulkCreateMecProjetsResponse = {
+    ids: Array<string>;
+};
+
+export type UpdateMecProjetRequest = {
+    /**
+     * Collectivités concernées (résout SIREN + territoire)
+     */
+    collectivites?: Array<CollectiviteReference>;
+    nom?: string;
+    description?: string;
+    budgetPrevisionnel?: number;
+    dateDebut?: string;
+    dateFin?: string;
+    phase?: string;
+    phaseStatut?: string;
+    porteurSiret?: string;
+    competences?: Array<string>;
+    leviers?: Array<string>;
+    programmes?: Array<string>;
+    territoireCommunes?: Array<string>;
+    classificationThematiques?: Array<string>;
+    classificationSites?: Array<string>;
+    classificationInterventions?: Array<string>;
+    crteId?: string;
+    crteAnneeInscription?: number;
+    crteOrientationStrategique?: string;
+    sourceMec?: string;
+    pcaetOperationInscrite?: boolean;
+    fnvThematiques?: string;
+    motsCles?: string;
+    besoins?: string;
+    planRattachement?: string;
+};
+
+export type TerritoireTraceDto = {
+    /**
+     * Rôle de la trace dans le groupe.
+     */
+    role: 'projet' | 'financement';
+    /**
+     * Source d'origine (source_origine).
+     */
+    source: string;
+    /**
+     * ID stable de la trace.
+     */
+    id: string;
+    nom?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Statut de phase (phaseStatut).
+     */
+    statut?: {
+        [key: string]: unknown;
+    } | null;
+    phase?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Coût du projet / montant demandé (budget prévisionnel plafonné).
+     */
+    budgetPrevisionnel?: number | null;
+    /**
+     * Subvention attribuée (somme des montants attribués des financements liés). Renseigné surtout pour les traces de financement (DGCL). À distinguer de budgetPrevisionnel (coût/montant demandé).
+     */
+    montantAttribue?: number | null;
+    /**
+     * Millésime COP (cop_millesime).
+     */
+    copMillesime?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Statut vivier COP (cop_statut_vivier).
+     */
+    copStatutVivier?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * External ID MEC (traces MEC uniquement).
+     */
+    externalId?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type TerritoireDecisionDto = {
+    /**
+     * Type de décision (vocabulaire fermé).
+     */
+    type: string;
+    /**
+     * Verdict associé, selon le type.
+     */
+    verdict?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Plateforme émettrice de la décision.
+     */
+    plateforme: string;
+    /**
+     * Horodatage de création (ISO 8601).
+     */
+    createdAt: string;
+    /**
+     * ID de l'objet A visé par la décision (une trace du groupe, ou son pair).
+     */
+    objetAId: string;
+    /**
+     * ID de l'objet B (doublons, ou SIREN PCAET pour un rattachement).
+     */
+    objetBId?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Commentaire libre attaché à la décision.
+     */
+    commentaire?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type TerritoireGroupeDto = {
+    /**
+     * Confiance du cluster ; null pour un groupe singleton (projet sans cluster).
+     */
+    confiance?: 'CERTAIN' | 'PROBABLE';
+    traces: Array<TerritoireTraceDto>;
+    /**
+     * Décisions humaines ACTIVES portant sur une trace du groupe (toutes plateformes confondues, sans l'auteur). Tableau vide si aucune décision.
+     */
+    decisions: Array<TerritoireDecisionDto>;
+};
+
+export type TerritoireProjetsResponse = {
+    /**
+     * Nombre total de groupes correspondant aux filtres.
+     */
+    total: number;
+    limit: number;
+    offset: number;
+    groupes: Array<TerritoireGroupeDto>;
+};
+
+export type PcaetEnteteDto = {
+    /**
+     * SIREN du porteur du PCAET (clé stable, 9 chiffres).
+     */
+    sirenPorteur: string;
+    /**
+     * Nom du PCAET.
+     */
+    nom?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Source de la fiche PCAET de référence (source_nom).
+     */
+    source?: 'snapshot' | 'opendata';
+};
+
+export type TerritoireGroupeRattacheDto = {
+    /**
+     * Confiance du cluster ; null pour un groupe singleton (projet sans cluster).
+     */
+    confiance?: 'CERTAIN' | 'PROBABLE';
+    traces: Array<TerritoireTraceDto>;
+    /**
+     * Décisions humaines ACTIVES portant sur une trace du groupe (toutes plateformes confondues, sans l'auteur). Tableau vide si aucune décision.
+     */
+    decisions: Array<TerritoireDecisionDto>;
+    /**
+     * État du rattachement du groupe (projet réel) à CE PCAET :
+     * - `confirme` / `infirme` : dérivé de la décision active `rattachement_pcaet` la plus récente entre une trace du groupe et ce PCAET (SIREN porteur) ;
+     * - `suggere` : aucune décision humaine, mais au moins une trace du groupe est marquée opération PCAET par le pipeline (`pcaet_operation_inscrite`) — signal indicatif, à confirmer côté TeT ;
+     * - `aucun` : ni décision, ni signal.
+     */
+    rattachement: 'confirme' | 'infirme' | 'suggere' | 'aucun';
+};
+
+export type PlansProjetsTerritoireResponse = {
+    /**
+     * PCAET résolu depuis la clé.
+     */
+    pcaet: PcaetEnteteDto;
+    /**
+     * Nombre total de groupes du territoire correspondant aux filtres.
+     */
+    total: number;
+    limit: number;
+    offset: number;
+    groupes: Array<TerritoireGroupeRattacheDto>;
+};
+
+export type PcaetReferenceDto = {
+    /**
+     * Nom du PCAET.
+     */
+    nom: string | null;
+    /**
+     * SIREN du porteur du PCAET.
+     */
+    sirenPorteur: string | null;
+    /**
+     * Le PCAET a-t-il un identifiant de plan TeT (tetExternalId) exploitable pour le deep-link ? Vrai quand le plan provient du canal live ou snapshot TeT.
+     */
+    presentDansTet: boolean;
+    /**
+     * Identifiant du plan côté TeT (= planId du deep-link /collectivite/:collectiviteId/plans/:planId).
+     */
+    tetExternalId?: string | null;
+    /**
+     * Identifiant interne de la collectivité porteuse côté TeT (= collectiviteId du deep-link /collectivite/:collectiviteId/plans/:planId). Null si le PCAET ne vient que de l'opendata.
+     */
+    collectiviteId?: string | null;
+    /**
+     * Source de la fiche PCAET de référence (source_nom).
+     */
+    source: 'live' | 'snapshot' | 'opendata';
+    /**
+     * État du rattachement projet ↔ PCAET, dérivé de la décision active rattachement_pcaet la plus récente entre ce projet et ce PCAET (SIREN porteur). 'aucun' si aucune décision active.
+     */
+    rattachement: 'confirme' | 'infirme' | 'aucun';
+};
+
+export type PlansTerritoireResponse = {
+    /**
+     * PCAET couvrant les communes du projet.
+     */
+    pcaet: Array<PcaetReferenceDto>;
+    /**
+     * Fiches action suggérées (bonus hors scope immédiat — tableau vide pour l'instant).
+     */
+    fichesActionSuggerees: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+export type QualificationResponse = {
+    /**
+     * External ID MEC interrogé.
+     */
+    externalId: string;
+    /**
+     * ID stable du projet dans le schéma commun.
+     */
+    projetId: string;
+    /**
+     * Leviers SGPE (colonne CSV découpée en tableau).
+     */
+    leviersSgpe: Array<string>;
+    /**
+     * Thématiques LLM (jsonb tel quel : [{ label, score }]).
+     */
+    llmThematiques?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Sites LLM (jsonb tel quel — taxonomie des sites, 60 labels). Éléments : { label, score }, avec une clé additionnelle possible `nom_propre` (nom propre du site). Ne parsez pas en mode strict.
+     */
+    llmSites?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Interventions LLM (jsonb tel quel : [{ label, score }] — taxonomie des interventions, 15 labels).
+     */
+    llmInterventions?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Leviers prédits par nos modèles (jsonb : [{ label, score }], scores 0–1). Distinct de leviersSgpe (déclaratif MEC) : filtrez selon vos seuils. null tant que la prédiction n'a pas été livrée.
+     */
+    llmLeviers?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Probabilité de transition écologique (0–1).
+     */
+    llmProbabiliteTe?: number | null;
+    /**
+     * Horodatage de classification LLM (ISO 8601).
+     */
+    llmClassifiedAt?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type BanniereResponse = {
+    icone?: string;
+    titre: string;
+    sousTitre: string;
+};
+
+export type FeedbackResponse = {
+    ton: 'success' | 'warning' | 'info';
+    message: string;
+};
+
+export type OptionResponse = {
+    /**
+     * Unique au sein de la question.
+     */
+    id: string;
+    libelle: string;
+    /**
+     * Texte secondaire affiché sous le libellé.
+     */
+    aide?: string;
+    /**
+     * Pastille de couleur associée à l'option.
+     */
+    signal: 'favorable' | 'vigilance' | 'neutre';
+    /**
+     * Explication affichée à la sélection.
+     */
+    feedback?: FeedbackResponse;
+};
+
+export type QuestionResponse = {
+    /**
+     * Unique au sein du questionnaire.
+     */
+    id: string;
+    type: 'choix-unique';
+    intitule: string;
+    options: Array<OptionResponse>;
+};
+
+export type QuestionnaireResponse = {
+    /**
+     * Identifiant stable du questionnaire.
+     */
+    slug: string;
+    /**
+     * Fige l'interprétation des réponses. Incrémentée dès que la définition change ; les réponses devenues ininterprétables sont écartées à la lecture.
+     */
+    version: number;
+    /**
+     * Calculé par l'API : non_commence (aucune réponse), complet (toutes), en_cours (entre les deux).
+     */
+    statut: 'non_commence' | 'en_cours' | 'complet';
+    banniere: BanniereResponse;
+    /**
+     * Dans l'ordre d'affichage.
+     */
+    questions: Array<QuestionResponse>;
+    /**
+     * Réponses enregistrées : { [questionId]: optionId }. Peut être vide.
+     */
+    reponses: {
+        [key: string]: unknown;
+    };
+};
+
+export type ProjetQuestionnairesResponse = {
+    questionnaires: Array<QuestionnaireResponse>;
+};
+
+export type PutReponsesRequest = {
+    /**
+     * Jeu COMPLET des réponses connues ({ [questionId]: optionId }), jamais un delta : une question absente est considérée comme non répondue (permet la désélection). Toute question ou option inconnue pour ce questionnaire est rejetée en 400.
+     */
+    reponses: {
+        [key: string]: unknown;
+    };
+};
+
+export type TaxonomiesResponse = {
+    thematiques: Array<string>;
+    sites: Array<string>;
+    interventions: Array<string>;
+};
+
+export type QuestionnaireEditionRequest = {
+    /**
+     * Nom du partenaire qui fournit le contenu (« AtoutBiodiv »).
+     */
+    sourceNom: string;
+    /**
+     * Bandeau : { icone, titre, sousTitre }.
+     */
+    banniere: {
+        [key: string]: unknown;
+    };
+    /**
+     * Questions et leurs options.
+     */
+    questions: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Recommandations AVEC leurs conditions.
+     */
+    recommandations: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Étiquettes que le projet doit TOUTES porter.
+     */
+    etiquettesRequises: {
+        [key: string]: unknown;
+    };
+    /**
+     * Qui édite — pour la traçabilité.
+     */
+    editePar?: string;
+};
+
+export type RecommandationSourceResponse = {
+    /**
+     * Famille de source (ex. « questionnaire »). DESCRIPTIF, non structurant : le client peut s'en servir pour grouper ou étiqueter l'affichage, mais n'en dépend pas fonctionnellement. Une recommandation se tranche par son seul id, sans référence à sa source.
+     */
+    type: string;
+    /**
+     * Identifiant dans la source (ex. slug du questionnaire d'origine).
+     */
+    ref?: string;
+    /**
+     * Libellé affichable de la source.
+     */
+    libelle?: string;
+};
+
+export type FinancementResponse = {
+    icone?: string;
+    libelle: string;
+    description?: string;
+    url: string;
+    /**
+     * Identifiant Aides-territoires, quand le financement désigne une AIDE PRÉCISE. Permet de proposer « ajouter cette aide au projet » (POST /projets/:id/aides/ajouts) sans que l'agent ait à la retrouver.
+     *
+     * ABSENT quand le financement désigne une FAMILLE d'aides (« Fonds vert », « DETR ») : leur `url` est une recherche, pas une fiche, et inventer un id enverrait la collectivité vers la mauvaise aide.
+     *
+     * PRÉSENT N'EST PAS GARANTI AJOUTABLE : l'ajout vérifie que l'aide est disponible sur le territoire du projet, et une aide régionale ne l'est pas partout. Un 400 à l'ajout n'est donc pas une anomalie — c'est le territoire.
+     */
+    aideId?: number;
+};
+
+export type RessourceResponse = {
+    icone?: string;
+    source: string;
+    nom: string;
+    description?: string;
+    url: string;
+};
+
+export type RecommandationResponse = {
+    /**
+     * Unique à l'échelle du PROJET, toutes sources confondues, et DÉTERMINISTE : le même contexte produit toujours le même id. C'est ce qui permet à l'arbitrage de survivre à la disparition puis à la réapparition d'une recommandation.
+     */
+    id: string;
+    source: RecommandationSourceResponse;
+    /**
+     * Emoji.
+     */
+    icone?: string;
+    titre: string;
+    description: string;
+    financements: Array<FinancementResponse>;
+    ressources: Array<RessourceResponse>;
+    /**
+     * Formulation de l'engagement, affichée lorsque decision = integree.
+     */
+    engagement: string;
+    /**
+     * Décision courante de la collectivité. null = non tranchée.
+     */
+    decision: 'a_etudier' | 'integree' | 'ignoree';
+};
+
+export type ProjetRecommandationsResponse = {
+    recommandations: Array<RecommandationResponse>;
+};
+
+export type PutDecisionRequest = {
+    /**
+     * Décision à enregistrer. null efface la décision (retour à « non tranchée ») — techniquement une RÉVOCATION dans le journal append-only des décisions humaines, jamais une suppression de ligne.
+     */
+    decision: 'a_etudier' | 'integree' | 'ignoree';
+};
+
+export type LienResponse = {
+    url: string;
+    libelle?: string;
+};
+
+export type ServiceResponse = {
+    /**
+     * Identifiant stable.
+     */
+    id: string;
+    nom: string;
+    baseline?: string;
+    /**
+     * Description courte, prête à afficher.
+     */
+    description: string;
+    /**
+     * Description longue, dépliée à la demande.
+     */
+    descriptionLongue?: string;
+    logoUrl?: string;
+    /**
+     * Nature(s) du service. Un service peut en cumuler plusieurs (un outil expert qui recense aussi des aides financières) — d'où un tableau et non une valeur unique.
+     */
+    categories: Array<'expert' | 'contenu' | 'inspirants' | 'discussions' | 'conseil' | 'aides'>;
+    niveauExpertise?: 'bas' | 'moyen' | 'haut';
+    /**
+     * Le service est-il utilisable par un agent NON SPÉCIALISTE ? Propriété descriptive du service (comme `niveauExpertise`), et non un critère de sélection : elle ne décide de rien côté serveur. Le client peut filtrer dessus. Absent = le catalogue ne renseigne pas l'information — ce qui n'est pas la même chose que `false`.
+     */
+    profilGeneraliste?: boolean;
+    operateur?: string;
+    /**
+     * Lien sortant vers le service.
+     */
+    redirection?: LienResponse;
+    /**
+     * Aperçu intégré. L'URL peut porter des variables que le client substitue avant affichage : {collectiviteType}, {collectiviteCode}, {collectiviteLabel}, {epciCodeSiren}.
+     */
+    iframe?: LienResponse;
+    /**
+     * Présent si ce service a été ajouté À LA MAIN sur ce projet, et non retenu par le score. Porte le message de la personne qui l'a ajouté (« recommandé par la DDT lors du COPIL »). Absent = le service a été retenu par le moteur.
+     */
+    ajoutManuel?: AjoutManuelResponse;
+};
+
+export type ProjetServicesResponse = {
+    /**
+     * Services sélectionnés et ORDONNÉS par pertinence décroissante par l'API. Le client affiche la liste telle quelle : il ne trie pas, et n'a pas à refaire la sélection.
+     *
+     * Il peut en revanche demander un autre SEUIL (`?seuil=`) : une plateforme peut légitimement vouloir être plus permissive ou plus stricte. Mais c'est l'API qui l'applique — le client ne rejoue pas la règle de son côté, sinon deux définitions de la pertinence coexisteraient et finiraient par diverger.
+     */
+    services: Array<ServiceResponse>;
 };
 
 export type ProjetsControllerFindAllData = {
@@ -723,64 +1728,6 @@ export type ProjetsControllerGetPublicInfoResponses = {
 };
 
 export type ProjetsControllerGetPublicInfoResponse = ProjetsControllerGetPublicInfoResponses[keyof ProjetsControllerGetPublicInfoResponses];
-
-export type ProjetsControllerGetExtraFieldsData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query: {
-        /**
-         * Type of ID provided
-         */
-        idType: 'communId' | 'tetId';
-    };
-    url: '/projets/{id}/extra-fields';
-};
-
-export type ProjetsControllerGetExtraFieldsErrors = {
-    /**
-     * Error response
-     */
-    default: ErrorResponse;
-};
-
-export type ProjetsControllerGetExtraFieldsError = ProjetsControllerGetExtraFieldsErrors[keyof ProjetsControllerGetExtraFieldsErrors];
-
-export type ProjetsControllerGetExtraFieldsResponses = {
-    200: Array<ExtraField>;
-};
-
-export type ProjetsControllerGetExtraFieldsResponse = ProjetsControllerGetExtraFieldsResponses[keyof ProjetsControllerGetExtraFieldsResponses];
-
-export type ProjetsControllerUpdateExtraFieldsData = {
-    body: CreateProjetExtraFieldRequest;
-    path: {
-        id: string;
-    };
-    query: {
-        /**
-         * Type of ID provided
-         */
-        idType: 'communId' | 'tetId';
-    };
-    url: '/projets/{id}/extra-fields';
-};
-
-export type ProjetsControllerUpdateExtraFieldsErrors = {
-    /**
-     * Error response
-     */
-    default: ErrorResponse;
-};
-
-export type ProjetsControllerUpdateExtraFieldsError = ProjetsControllerUpdateExtraFieldsErrors[keyof ProjetsControllerUpdateExtraFieldsErrors];
-
-export type ProjetsControllerUpdateExtraFieldsResponses = {
-    201: Array<ExtraField>;
-};
-
-export type ProjetsControllerUpdateExtraFieldsResponse = ProjetsControllerUpdateExtraFieldsResponses[keyof ProjetsControllerUpdateExtraFieldsResponses];
 
 export type ProjetsControllerCreateBulkData = {
     body: BulkCreateProjetsRequest;
@@ -1009,26 +1956,87 @@ export type ClassificationControllerClassifyResponse = ClassificationControllerC
 export type AidesControllerListAidesData = {
     body?: never;
     path?: never;
-    query?: {
-        /**
-         * Code INSEE commune ou code EPCI pour filtrer par territoire
-         */
-        code_insee?: string;
-        /**
-         * ID projet pour calculer le matching
-         */
-        projet_id?: string;
+    query: {
         /**
          * Nombre max de résultats (défaut: 20)
          */
         limit?: string;
+        /**
+         * Déprécié — utiliser `projetId` (camelCase). Sera supprimé après migration des consommateurs.
+         *
+         * @deprecated
+         */
+        projet_id?: string;
+        /**
+         * Active une recherche de pertinence textuelle complémentaire (sur le contenu du projet et des aides). Optionnel — désactivé par défaut.
+         */
+        textual?: string;
+        /**
+         * Score de pertinence minimal (0-1) sous lequel une aide est écartée du résultat. Optionnel — aucun seuil par défaut.
+         */
+        cutoff?: string;
+        /**
+         * Seuil de confiance (0-1) des labels de classification d'une aide pris en compte dans le matching. Défaut : 0.8.
+         */
+        aideThreshold?: string;
+        /**
+         * Seuil de confiance (0-1) des labels de classification du projet pris en compte dans le matching. Défaut : 0.8.
+         */
+        projetThreshold?: string;
+        /**
+         * ID projet pour filtrer par territoire et calculer le matching
+         */
+        projetId: unknown;
     };
     url: '/aides';
 };
 
-export type AidesControllerListAidesResponses = {
-    200: unknown;
+export type AidesControllerListAidesErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
 };
+
+export type AidesControllerListAidesError = AidesControllerListAidesErrors[keyof AidesControllerListAidesErrors];
+
+export type AidesControllerListAidesResponses = {
+    /**
+     * Aides enrichies avec score de matching (status: ok | no_match | no_aides_on_perimeter)
+     */
+    200: AidesListResponse;
+    /**
+     * Le projet n'a pas encore été classifié. Un job de classification a été (re)déclenché. Réessayer après `retryAfter` secondes.
+     */
+    202: ClassificationPendingResponse;
+};
+
+export type AidesControllerListAidesResponse = AidesControllerListAidesResponses[keyof AidesControllerListAidesResponses];
+
+export type AidesControllerSearchAidesData = {
+    body: AidesSearchRequest;
+    path?: never;
+    query?: never;
+    url: '/aides/recherche';
+};
+
+export type AidesControllerSearchAidesErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type AidesControllerSearchAidesError = AidesControllerSearchAidesErrors[keyof AidesControllerSearchAidesErrors];
+
+export type AidesControllerSearchAidesResponses = {
+    /**
+     * Aides enrichies avec score de matching (status: ok | no_match | no_aides_on_perimeter)
+     */
+    200: AidesListResponse;
+};
+
+export type AidesControllerSearchAidesResponse = AidesControllerSearchAidesResponses[keyof AidesControllerSearchAidesResponses];
 
 export type AidesControllerSyncClassificationsData = {
     body?: never;
@@ -1037,9 +2045,153 @@ export type AidesControllerSyncClassificationsData = {
     url: '/aides/sync';
 };
 
-export type AidesControllerSyncClassificationsResponses = {
-    200: unknown;
+export type AidesControllerSyncClassificationsErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
 };
+
+export type AidesControllerSyncClassificationsError = AidesControllerSyncClassificationsErrors[keyof AidesControllerSyncClassificationsErrors];
+
+export type AidesControllerSyncClassificationsResponses = {
+    /**
+     * Résultat de la synchronisation
+     */
+    200: AidesSyncResponse;
+};
+
+export type AidesControllerSyncClassificationsResponse = AidesControllerSyncClassificationsResponses[keyof AidesControllerSyncClassificationsResponses];
+
+export type AidesControllerDeleteFeedbackData = {
+    body: DeleteAideFeedbackRequest;
+    path?: never;
+    query?: never;
+    url: '/aides/feedback';
+};
+
+export type AidesControllerDeleteFeedbackErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type AidesControllerDeleteFeedbackError = AidesControllerDeleteFeedbackErrors[keyof AidesControllerDeleteFeedbackErrors];
+
+export type AidesControllerDeleteFeedbackResponses = {
+    204: void;
+};
+
+export type AidesControllerDeleteFeedbackResponse = AidesControllerDeleteFeedbackResponses[keyof AidesControllerDeleteFeedbackResponses];
+
+export type AidesControllerGetFeedbacksData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * ID du projet (UUID, communId)
+         */
+        projetId: string;
+    };
+    url: '/aides/feedback';
+};
+
+export type AidesControllerGetFeedbacksErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type AidesControllerGetFeedbacksError = AidesControllerGetFeedbacksErrors[keyof AidesControllerGetFeedbacksErrors];
+
+export type AidesControllerGetFeedbacksResponses = {
+    200: Array<AideFeedbackResponse>;
+};
+
+export type AidesControllerGetFeedbacksResponse = AidesControllerGetFeedbacksResponses[keyof AidesControllerGetFeedbacksResponses];
+
+export type AidesControllerCreateFeedbackData = {
+    body: CreateAideFeedbackRequest;
+    path?: never;
+    query?: never;
+    url: '/aides/feedback';
+};
+
+export type AidesControllerCreateFeedbackErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type AidesControllerCreateFeedbackError = AidesControllerCreateFeedbackErrors[keyof AidesControllerCreateFeedbackErrors];
+
+export type AidesControllerCreateFeedbackResponses = {
+    201: AideFeedbackResponse;
+};
+
+export type AidesControllerCreateFeedbackResponse = AidesControllerCreateFeedbackResponses[keyof AidesControllerCreateFeedbackResponses];
+
+export type DecisionsControllerFindData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * ID stable de l'objet à inspecter.
+         */
+        objetId?: string;
+        /**
+         * Type de décision à filtrer (vocabulaire fermé).
+         */
+        type?: 'doublon_signale' | 'doublon_confirme' | 'doublon_infirme' | 'rattachement_pcaet' | 'projet_statut' | 'correction_signalee' | 'recommandation_arbitrage' | 'ajout_manuel';
+    };
+    url: '/decisions';
+};
+
+export type DecisionsControllerFindErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type DecisionsControllerFindError = DecisionsControllerFindErrors[keyof DecisionsControllerFindErrors];
+
+export type DecisionsControllerFindResponses = {
+    /**
+     * Décisions correspondant aux filtres
+     */
+    200: DecisionListResponse;
+};
+
+export type DecisionsControllerFindResponse = DecisionsControllerFindResponses[keyof DecisionsControllerFindResponses];
+
+export type DecisionsControllerCreateData = {
+    body: CreateDecisionDto;
+    path?: never;
+    query?: never;
+    url: '/decisions';
+};
+
+export type DecisionsControllerCreateErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type DecisionsControllerCreateError = DecisionsControllerCreateErrors[keyof DecisionsControllerCreateErrors];
+
+export type DecisionsControllerCreateResponses = {
+    /**
+     * Décision enregistrée
+     */
+    201: DecisionCreatedResponse;
+};
+
+export type DecisionsControllerCreateResponse = DecisionsControllerCreateResponses[keyof DecisionsControllerCreateResponses];
 
 export type FichesActionControllerCreateData = {
     body: CreateFicheActionRequest;
@@ -1176,3 +2328,457 @@ export type AnalyticsControllerGetGlobalStatsResponses = {
 };
 
 export type AnalyticsControllerGetGlobalStatsResponse = AnalyticsControllerGetGlobalStatsResponses[keyof AnalyticsControllerGetGlobalStatsResponses];
+
+export type MecControllerCreateData = {
+    body: CreateMecProjetRequest;
+    path?: never;
+    query?: never;
+    url: '/mec/v1/projets';
+};
+
+export type MecControllerCreateErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type MecControllerCreateError = MecControllerCreateErrors[keyof MecControllerCreateErrors];
+
+export type MecControllerCreateResponses = {
+    /**
+     * Projet MEC créé ou mis à jour
+     */
+    201: CreateMecProjetResponse;
+};
+
+export type MecControllerCreateResponse = MecControllerCreateResponses[keyof MecControllerCreateResponses];
+
+export type MecControllerCreateBulkData = {
+    body: BulkCreateMecProjetsRequest;
+    path?: never;
+    query?: never;
+    url: '/mec/v1/projets/bulk';
+};
+
+export type MecControllerCreateBulkErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type MecControllerCreateBulkError = MecControllerCreateBulkErrors[keyof MecControllerCreateBulkErrors];
+
+export type MecControllerCreateBulkResponses = {
+    /**
+     * Projets MEC créés ou mis à jour en masse
+     */
+    201: BulkCreateMecProjetsResponse;
+};
+
+export type MecControllerCreateBulkResponse = MecControllerCreateBulkResponses[keyof MecControllerCreateBulkResponses];
+
+export type MecControllerFindOneData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/mec/v1/projets/{id}';
+};
+
+export type MecControllerFindOneResponses = {
+    200: unknown;
+};
+
+export type MecControllerUpdateData = {
+    body: UpdateMecProjetRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/mec/v1/projets/{id}';
+};
+
+export type MecControllerUpdateResponses = {
+    200: unknown;
+};
+
+export type TerritoiresControllerTerritoireProjetsData = {
+    body?: never;
+    path: {
+        code: string;
+    };
+    query?: {
+        /**
+         * Exclure les groupes dont une trace est marquée obsolète (décision active projet_statut, verdict 'obsolete'). Défaut false.
+         */
+        masquerObsoletes?: unknown;
+        /**
+         * Inclure les groupes dont toutes les traces sont des financements (défaut false).
+         */
+        inclureFinancementsSeuls?: unknown;
+        /**
+         * Défaut 0.
+         */
+        offset?: unknown;
+        /**
+         * Défaut 50, borné à 1..200.
+         */
+        limit?: unknown;
+        /**
+         * Statut vivier COP (cop_statut_vivier).
+         */
+        copStatutVivier?: 'a_remonter' | 'a_travailler' | 'hors_cop_mais_crte' | 'non_remonte';
+        copMillesime?: '2024' | '2025';
+        /**
+         * Sources (répétables ou séparées par des virgules), ex. MEC,Vivier COP.
+         */
+        sources?: unknown;
+    };
+    url: '/territoires/{code}/projets';
+};
+
+export type TerritoiresControllerTerritoireProjetsErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type TerritoiresControllerTerritoireProjetsError = TerritoiresControllerTerritoireProjetsErrors[keyof TerritoiresControllerTerritoireProjetsErrors];
+
+export type TerritoiresControllerTerritoireProjetsResponses = {
+    /**
+     * Groupes de projets du territoire
+     */
+    200: TerritoireProjetsResponse;
+};
+
+export type TerritoiresControllerTerritoireProjetsResponse = TerritoiresControllerTerritoireProjetsResponses[keyof TerritoiresControllerTerritoireProjetsResponses];
+
+export type TerritoiresControllerPlansProjetsTerritoireData = {
+    body?: never;
+    path: {
+        cle: string;
+    };
+    query?: {
+        /**
+         * Exclure les groupes dont une trace est marquée obsolète (décision active projet_statut, verdict 'obsolete'). Défaut false.
+         */
+        masquerObsoletes?: unknown;
+        /**
+         * Inclure les groupes dont toutes les traces sont des financements (défaut false).
+         */
+        inclureFinancementsSeuls?: unknown;
+        /**
+         * Défaut 0.
+         */
+        offset?: unknown;
+        /**
+         * Défaut 50, borné à 1..200.
+         */
+        limit?: unknown;
+        /**
+         * Statut vivier COP (cop_statut_vivier).
+         */
+        copStatutVivier?: 'a_remonter' | 'a_travailler' | 'hors_cop_mais_crte' | 'non_remonte';
+        copMillesime?: '2024' | '2025';
+        /**
+         * Sources (répétables ou séparées par des virgules), ex. MEC,Vivier COP.
+         */
+        sources?: unknown;
+    };
+    url: '/plans/{cle}/projets-territoire';
+};
+
+export type TerritoiresControllerPlansProjetsTerritoireErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type TerritoiresControllerPlansProjetsTerritoireError = TerritoiresControllerPlansProjetsTerritoireErrors[keyof TerritoiresControllerPlansProjetsTerritoireErrors];
+
+export type TerritoiresControllerPlansProjetsTerritoireResponses = {
+    /**
+     * Projets du territoire du PCAET, avec rattachement par groupe
+     */
+    200: PlansProjetsTerritoireResponse;
+};
+
+export type TerritoiresControllerPlansProjetsTerritoireResponse = TerritoiresControllerPlansProjetsTerritoireResponses[keyof TerritoiresControllerPlansProjetsTerritoireResponses];
+
+export type TerritoiresControllerPlansTerritoireData = {
+    body?: never;
+    path: {
+        externalId: string;
+    };
+    query?: never;
+    url: '/projets/mec/{externalId}/plans-territoire';
+};
+
+export type TerritoiresControllerPlansTerritoireErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type TerritoiresControllerPlansTerritoireError = TerritoiresControllerPlansTerritoireErrors[keyof TerritoiresControllerPlansTerritoireErrors];
+
+export type TerritoiresControllerPlansTerritoireResponses = {
+    /**
+     * PCAET du territoire du projet
+     */
+    200: PlansTerritoireResponse;
+};
+
+export type TerritoiresControllerPlansTerritoireResponse = TerritoiresControllerPlansTerritoireResponses[keyof TerritoiresControllerPlansTerritoireResponses];
+
+export type TerritoiresControllerQualificationData = {
+    body?: never;
+    path: {
+        externalId: string;
+    };
+    query?: never;
+    url: '/projets/mec/{externalId}/qualification';
+};
+
+export type TerritoiresControllerQualificationErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type TerritoiresControllerQualificationError = TerritoiresControllerQualificationErrors[keyof TerritoiresControllerQualificationErrors];
+
+export type TerritoiresControllerQualificationResponses = {
+    /**
+     * Qualification du projet
+     */
+    200: QualificationResponse;
+};
+
+export type TerritoiresControllerQualificationResponse = TerritoiresControllerQualificationResponses[keyof TerritoiresControllerQualificationResponses];
+
+export type QuestionnairesControllerFindForProjetData = {
+    body?: never;
+    path: {
+        /**
+         * Identifiant Communs du projet (UUID).
+         */
+        projetId: string;
+    };
+    query?: never;
+    url: '/projets/{projetId}/questionnaires';
+};
+
+export type QuestionnairesControllerFindForProjetErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type QuestionnairesControllerFindForProjetError = QuestionnairesControllerFindForProjetErrors[keyof QuestionnairesControllerFindForProjetErrors];
+
+export type QuestionnairesControllerFindForProjetResponses = {
+    /**
+     * Questionnaires éligibles, éventuellement vide
+     */
+    200: ProjetQuestionnairesResponse;
+};
+
+export type QuestionnairesControllerFindForProjetResponse = QuestionnairesControllerFindForProjetResponses[keyof QuestionnairesControllerFindForProjetResponses];
+
+export type QuestionnairesControllerRemplacerReponsesData = {
+    body: PutReponsesRequest;
+    path: {
+        /**
+         * Identifiant Communs du projet (UUID).
+         */
+        projetId: string;
+        /**
+         * Identifiant stable du questionnaire.
+         */
+        slug: string;
+    };
+    query?: never;
+    url: '/projets/{projetId}/questionnaires/{slug}/reponses';
+};
+
+export type QuestionnairesControllerRemplacerReponsesErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type QuestionnairesControllerRemplacerReponsesError = QuestionnairesControllerRemplacerReponsesErrors[keyof QuestionnairesControllerRemplacerReponsesErrors];
+
+export type QuestionnairesControllerRemplacerReponsesResponses = {
+    /**
+     * Questionnaires à jour
+     */
+    200: ProjetQuestionnairesResponse;
+};
+
+export type QuestionnairesControllerRemplacerReponsesResponse = QuestionnairesControllerRemplacerReponsesResponses[keyof QuestionnairesControllerRemplacerReponsesResponses];
+
+export type QuestionnairesAdminControllerTaxonomiesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/admin/taxonomies';
+};
+
+export type QuestionnairesAdminControllerTaxonomiesErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type QuestionnairesAdminControllerTaxonomiesError = QuestionnairesAdminControllerTaxonomiesErrors[keyof QuestionnairesAdminControllerTaxonomiesErrors];
+
+export type QuestionnairesAdminControllerTaxonomiesResponses = {
+    /**
+     * Taxonomies
+     */
+    200: TaxonomiesResponse;
+};
+
+export type QuestionnairesAdminControllerTaxonomiesResponse = QuestionnairesAdminControllerTaxonomiesResponses[keyof QuestionnairesAdminControllerTaxonomiesResponses];
+
+export type QuestionnairesAdminControllerSupprimerData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/admin/questionnaires/{slug}';
+};
+
+export type QuestionnairesAdminControllerSupprimerResponses = {
+    204: void;
+};
+
+export type QuestionnairesAdminControllerSupprimerResponse = QuestionnairesAdminControllerSupprimerResponses[keyof QuestionnairesAdminControllerSupprimerResponses];
+
+export type QuestionnairesAdminControllerEditerData = {
+    body: QuestionnaireEditionRequest;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/admin/questionnaires/{slug}';
+};
+
+export type QuestionnairesAdminControllerEditerResponses = {
+    200: unknown;
+};
+
+export type RecommandationsControllerFindForProjetData = {
+    body?: never;
+    path: {
+        /**
+         * Identifiant Communs du projet (UUID).
+         */
+        projetId: string;
+    };
+    query?: never;
+    url: '/projets/{projetId}/recommandations';
+};
+
+export type RecommandationsControllerFindForProjetErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type RecommandationsControllerFindForProjetError = RecommandationsControllerFindForProjetErrors[keyof RecommandationsControllerFindForProjetErrors];
+
+export type RecommandationsControllerFindForProjetResponses = {
+    /**
+     * Recommandations du projet, éventuellement vide
+     */
+    200: ProjetRecommandationsResponse;
+};
+
+export type RecommandationsControllerFindForProjetResponse = RecommandationsControllerFindForProjetResponses[keyof RecommandationsControllerFindForProjetResponses];
+
+export type RecommandationsControllerTrancherData = {
+    body: PutDecisionRequest;
+    path: {
+        /**
+         * Identifiant Communs du projet (UUID).
+         */
+        projetId: string;
+        /**
+         * Id de la recommandation, unique à l'échelle du projet.
+         */
+        recommandationId: string;
+    };
+    query?: never;
+    url: '/projets/{projetId}/recommandations/{recommandationId}/decision';
+};
+
+export type RecommandationsControllerTrancherErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type RecommandationsControllerTrancherError = RecommandationsControllerTrancherErrors[keyof RecommandationsControllerTrancherErrors];
+
+export type RecommandationsControllerTrancherResponses = {
+    /**
+     * Recommandations à jour
+     */
+    200: ProjetRecommandationsResponse;
+};
+
+export type RecommandationsControllerTrancherResponse = RecommandationsControllerTrancherResponses[keyof RecommandationsControllerTrancherResponses];
+
+export type ServicesNumeriquesControllerFindForProjetData = {
+    body?: never;
+    path: {
+        /**
+         * Identifiant Communs du projet (UUID).
+         */
+        projetId: string;
+    };
+    query?: {
+        /**
+         * Score de pertinence minimal, entre 0 et 1. **Défaut : 0.3** — celui que l'API applique si vous ne demandez rien, et celui sur lequel elle est réglée.
+         *
+         * Une plateforme peut légitimement vouloir être plus permissive (montrer davantage, quitte à afficher du moins pertinent) ou plus stricte. Le seuil est donc à vous — mais le DÉFAUT reste à nous : c'est lui qui fait foi, et c'est lui qu'on règle quand la pertinence est en cause.
+         */
+        seuil?: string;
+    };
+    url: '/projets/{projetId}/services';
+};
+
+export type ServicesNumeriquesControllerFindForProjetErrors = {
+    /**
+     * Error response
+     */
+    default: ErrorResponse;
+};
+
+export type ServicesNumeriquesControllerFindForProjetError = ServicesNumeriquesControllerFindForProjetErrors[keyof ServicesNumeriquesControllerFindForProjetErrors];
+
+export type ServicesNumeriquesControllerFindForProjetResponses = {
+    /**
+     * Services pertinents, éventuellement vide
+     */
+    200: ProjetServicesResponse;
+};
+
+export type ServicesNumeriquesControllerFindForProjetResponse = ServicesNumeriquesControllerFindForProjetResponses[keyof ServicesNumeriquesControllerFindForProjetResponses];

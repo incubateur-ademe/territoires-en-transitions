@@ -14,7 +14,7 @@ import {
  *
  * À ne pas confondre avec `PLUS_DE_45000`, qui est le seuil du plan local de
  * chaleur et de froid — intégré au PCAET, mais qui n'en déclenche pas
- * l'obligation.
+ * l'obligation, et qui se lit sur une commune membre, pas sur le groupement.
  */
 export const SEUIL_POPULATION_PCAET = 20_000;
 

@@ -6,7 +6,10 @@ import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
+import {
+  indicateurPeriodiciteValues,
+  indicateurAggregationValues,
+} from '@tet/domain/indicateurs';
 import {
   Alert,
   Button,
@@ -30,6 +33,8 @@ const validationSchema = z.object({
   unite: z.string().optional(),
   commentaire: z.string().optional(),
   periodicite: z.enum(indicateurPeriodiciteValues),
+  aggregationResultat: z.enum(indicateurAggregationValues).nullable(),
+  aggregationObjectif: z.enum(indicateurAggregationValues).nullable(),
 });
 
 type FormData = z.infer<typeof validationSchema>;
@@ -93,11 +98,21 @@ const IndicateurPersoNouveau = ({
       titre: '',
       commentaire: '',
       unite: '',
+      periodicite: 'annuelle',
+      aggregationResultat: null,
+      aggregationObjectif: null,
     },
   });
 
   const onSave: SubmitHandler<FormData> = (data) => {
-    const { titre, commentaire, unite, periodicite } = data;
+    const {
+      titre,
+      commentaire,
+      unite,
+      periodicite,
+      aggregationResultat,
+      aggregationObjectif,
+    } = data;
     createIndicateur({
       collectiviteId,
       titre,
@@ -105,6 +120,8 @@ const IndicateurPersoNouveau = ({
       thematiques: (thematiqueIds ?? []).map((id) => ({ id })),
       unite: unite || '',
       periodicite,
+      aggregationResultat,
+      aggregationObjectif,
       ficheId,
       estFavori: favoriCollectivite,
     });
@@ -140,6 +157,7 @@ const IndicateurPersoNouveau = ({
           render={({ field }) => (
             <Field
               title={appLabels.champPeriodiciteIndicateur}
+              hint={appLabels.periodiciteImmuable}
               className="col-span-1"
             >
               <Select
@@ -156,6 +174,51 @@ const IndicateurPersoNouveau = ({
             </Field>
           )}
         />
+
+        {(['aggregationResultat', 'aggregationObjectif'] as const).map(
+          (name) => (
+            <Controller
+              key={name}
+              name={name}
+              control={control}
+              render={({ field }) => (
+                <Field
+                  title={
+                    name === 'aggregationResultat'
+                      ? appLabels.indicateurAggregationResultat
+                      : appLabels.indicateurAggregationObjectif
+                  }
+                  hint={appLabels.indicateurAggregationHint}
+                >
+                  <Select
+                    values={field.value ?? 'aucune'}
+                    options={[
+                      {
+                        value: 'aucune',
+                        label: appLabels.indicateurAggregationAucune,
+                      },
+                      {
+                        value: 'somme',
+                        label: appLabels.indicateurAggregationSomme,
+                      },
+                      {
+                        value: 'moyenne',
+                        label: appLabels.indicateurAggregationMoyenne,
+                      },
+                      {
+                        value: 'derniere_valeur',
+                        label: appLabels.indicateurAggregationDerniereValeur,
+                      },
+                    ]}
+                    onChange={(value) =>
+                      field.onChange(value === 'aucune' ? null : value)
+                    }
+                  />
+                </Field>
+              )}
+            />
+          )
+        )}
 
         <Field title={appLabels.thematique()} className="col-span-2">
           <ThematiquesDropdown

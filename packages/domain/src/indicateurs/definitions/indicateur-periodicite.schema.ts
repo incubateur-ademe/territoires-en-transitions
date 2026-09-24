@@ -1,7 +1,12 @@
 import * as z from 'zod/mini';
 import { createEnumObject } from '../../utils/enum.utils';
 
-export const indicateurPeriodiciteValues = ['annuelle', 'mensuelle'] as const;
+export const indicateurPeriodiciteValues = [
+  'annuelle',
+  'semestrielle',
+  'trimestrielle',
+  'mensuelle',
+] as const;
 
 export const IndicateurPeriodiciteEnum = createEnumObject(
   indicateurPeriodiciteValues

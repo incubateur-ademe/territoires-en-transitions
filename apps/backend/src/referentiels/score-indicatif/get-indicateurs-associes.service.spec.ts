@@ -1,7 +1,6 @@
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
 import { GetIndicateursAssociesService } from './get-indicateurs-associes.service';
-import { ScoreIndicatifErrorEnum } from './score-indicatif.errors';
 import type { IndicateurDefinitionAvecCategories } from './score-indicatif.repository';
 
 const createService = (
@@ -53,11 +52,13 @@ describe('GetIndicateursAssociesService periodicity', () => {
     });
   });
 
-  it('returns a typed failure for monthly score definitions before calculation', async () => {
+  it('preserves monthly definitions so their external annual series can be queried', async () => {
     const service = createService(IndicateurPeriodiciteEnum.MENSUELLE);
     await expect(service.getIndicateursAssocies(input)).resolves.toMatchObject({
-      success: false,
-      error: ScoreIndicatifErrorEnum.INDICATEUR_PERIODICITE_NOT_SUPPORTED,
+      success: true,
+      data: {
+        indicateursAssocies: [{ indicateurId: 42, periodicite: 'mensuelle' }],
+      },
     });
   });
 });

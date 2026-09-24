@@ -68,7 +68,9 @@ jobs:
   deploy-tools:
     name: Déploie l'api d'automatisation technique
     needs: build-tools
-    environment: ${{ github.event.inputs.target }}
+    environment:
+      name: ${{ github.event.inputs.target }}
+      url: ${{ steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -88,6 +90,7 @@ jobs:
         env:
           ENV_NAME: ${{ github.event.inputs.target }}
           IMAGE: ${{ needs.build-tools.outputs.image }}
+          APP_URL: ${{ vars.APP_URL }}
           DEPLOYMENT_TIMESTAMP: ${{ steps.meta.outputs.deployment-timestamp }}
         run: >
           koyeb services update $ENV_NAME-tools-autom-api/tools
@@ -113,3 +116,9 @@ jobs:
           --env AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID
           --env AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID
           --env AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID
+          --env APP_URL=$APP_URL
+
+      - id: deployment-url
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: ${{ github.event.inputs.target }}-tools-autom-api

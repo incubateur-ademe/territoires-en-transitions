@@ -58,6 +58,8 @@ import { ListDocumentsReferentielRepository } from './documents/list-documents-r
 import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
 import { ListDocumentsReferentielService } from './documents/list-documents-referentiel/list-documents-referentiel.service';
 import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
+import { DownloadDocumentsMesureController } from './documents/download-documents-mesure/download-documents-mesure.controller';
+import { DownloadDocumentsMesureService } from './documents/download-documents-mesure/download-documents-mesure.service';
 import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
 import { ListDocumentsAuditRepository } from './documents/list-documents-audit/list-documents-audit.repository';
@@ -79,18 +81,19 @@ import { GeneratePreuvesArchiveService } from './preuves-archive/generate-preuve
 import { GeneratePreuvesArchiveWorker } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.worker';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
 import { GetPreuvesArchiveService } from './preuves-archive/get-preuves-archive/get-preuves-archive.service';
-import { CollectPreuvesRepository } from './preuves-archive/collect-audit-preuves/collect-preuves.repository';
 import { CollectAuditPreuvesService } from './preuves-archive/collect-audit-preuves/collect-audit-preuves.service';
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import {
-    PREUVES_ARCHIVE_JOB_OPTIONS,
-    PREUVES_ARCHIVE_QUEUE_NAME,
+  PREUVES_ARCHIVE_JOB_OPTIONS,
+  PREUVES_ARCHIVE_QUEUE_NAME,
 } from './preuves-archive/preuves-archive.queue';
 import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { RequestPreuvesArchiveService } from './preuves-archive/request-preuves-archive/request-preuves-archive.service';
 import { ReferentielsCoreModule } from './referentiels-core.module';
+import { SetScoreFromIndicateurRouter } from './set-score-from-indicateur/set-score-from-indicateur.router';
+import { SetScoreFromIndicateurService } from './set-score-from-indicateur/set-score-from-indicateur.service';
 import { ReferentielsRouter } from './referentiels.router';
 import { ComputeReferentielEngagementService } from './reset-display-preferences/compute-referentiel-engagement.service';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
@@ -109,6 +112,7 @@ import { UpdateActionCommentaireRouter } from './update-action-commentaire/updat
 import { UpdateActionCommentaireService } from './update-action-commentaire/update-action-commentaire.service';
 import { UpdateActionFichesRouter } from './update-action-fiches/update-action-fiches.router';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut/update-action-statut-historique.repository';
+import { UpdateActionStatutRepository } from './update-action-statut/update-action-statut.repository';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
@@ -149,7 +153,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     // Archive ZIP des preuves d'audit
     PreuvesArchiveRepository,
-    CollectPreuvesRepository,
     CollectAuditPreuvesService,
     DeletePreuvesArchiveService,
     RequestPreuvesArchiveService,
@@ -165,8 +168,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ActionPersonnalisationsService,
     ActionPersonnalisationsRouter,
 
+    UpdateActionStatutRepository,
     UpdateActionStatutService,
     UpdateActionStatutRouter,
+
+    SetScoreFromIndicateurService,
+    SetScoreFromIndicateurRouter,
     UpdateActionCommentaireHistoriqueRepository,
     UpdateActionCommentaireService,
     UpdateActionCommentaireRouter,
@@ -207,6 +214,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListDocumentsMesureRepository,
     ListDocumentsMesureService,
     ListDocumentsMesureRouter,
+    DownloadDocumentsMesureService,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
     ValidateAuditService,
@@ -250,6 +258,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ImportReferentielController,
     ExportScoreComparisonController,
     ReferentielsScoringController,
+    DownloadDocumentsMesureController,
   ],
 })
 export class ReferentielsModule {}

@@ -13,7 +13,7 @@
 # persisté dans .env.local sous COMPOSE_PROFILES) ou explicitement (make up
 # apps=<...>, cf. scripts/dev-apps.mts) :
 #   supabase / studio / redis / strapi → services
-#   app / site / panier / backend / tools → un conteneur par app,
+#   app / site / backend / tools → un conteneur par app,
 #     daemon nx partagé (voir la section « Apps Node » en fin de fichier)
 #   dbtools   → sqitch (migrations), seeder (données de test) — via make db-*
 #   functions → edge-runtime Deno (supabase/functions)
@@ -192,7 +192,9 @@ services:
         condition: service_healthy
     environment:
       PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      PGRST_DB_SCHEMAS: public,storage # supabase/config.toml [api].schemas
+      # storage retire : plus aucun appel PostgREST ne le vise, et l exposer
+      # laissait lire storage.objects au JWT de l utilisateur.
+      PGRST_DB_SCHEMAS: public # supabase/config.toml [api].schemas
       PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
       PGRST_DB_MAX_ROWS: "5000"
       PGRST_DB_ANON_ROLE: anon
@@ -483,7 +485,7 @@ services:
   # des natifs (canvas, binaire supabase). Hors conteneur d'app car l'install
   # n'a rien d'interactif. Équivalent de `make install`.
   deps:
-    profiles: &app-profiles [ app, site, panier, backend, tools ]
+    profiles: &app-profiles [ app, site, backend, tools ]
     image: tet-node-dev # socle construit par `make up` (node-base)
     working_dir: /repo
     init: true
@@ -543,17 +545,16 @@ services:
     ulimits:
       nofile: *app-nofile
     volumes: *app-volumes
-    command: [ "pnpm", "exec", "nx", "run-many", "-t", "build-deps", "-p", "app", "site", "panier", "backend", "tools", "--output-style=stream" ]
+    command: [ "pnpm", "exec", "nx", "run-many", "-t", "build-deps", "-p", "app", "site", "backend", "tools", "--output-style=stream" ]
     depends_on:
       deps: { condition: service_completed_successfully }
       nx-daemon: { condition: service_healthy }
 
-  # Les 6 apps : même squelette (ancre &app-service), seuls APP, le profil,
+  # Les apps : même squelette (ancre &app-service), seuls APP, le profil,
   # le healthcheck (port) et les dépendances d'infra changent. Entrypoint
   # générique .docker/apps/app-entrypoint.sh → dotenvx (env per-app) + nx dev.
   # start_period généreux : premier boot Next/Turbopack à froid.
-  # Les 6 apps : même squelette (ancre &app-service), seuls APP, le profil,
-  # le port et les dépendances d'infra changent. Le port est interpolé depuis
+  # Le port est interpolé depuis
   # l'environnement appelant (*_PORT, défaut = port standard) : un worktree
   # (make up, projet tet-wt<slot>) source son .env.local et obtient ses ports
   # décalés — le process d'app ET le healthcheck lisent la même variable.
@@ -604,20 +605,6 @@ services:
       strapi: { condition: service_started }
     healthcheck:
       test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.SITE_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
-      interval: 10s
-      timeout: 10s
-      retries: 6
-      start_period: 240s
-
-  panier:
-    <<: *app-service
-    profiles: [ panier ]
-    environment:
-      <<: *nx-env
-      APP: panier
-      PANIER_PORT: ${PANIER_PORT:-3002}
-    healthcheck:
-      test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.PANIER_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
       interval: 10s
       timeout: 10s
       retries: 6

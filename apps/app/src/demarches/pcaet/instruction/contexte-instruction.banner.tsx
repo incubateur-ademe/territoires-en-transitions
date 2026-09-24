@@ -2,6 +2,7 @@
 
 import {
   makeDemandesAvisUrl,
+  makeDemarcheInstructionUrl,
   makeDossierInstructionUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
@@ -36,10 +37,18 @@ export const ContexteInstructionBanner = () => {
     return null;
   }
 
-  const dossierUrl = makeDossierInstructionUrl({
-    collectiviteInstruiteId: collectivite.collectiviteId,
-    demandeAvisId: contexte.demandeAvisId,
-  });
+  // Le dossier s'adresse par sa saisine, ou par sa démarche tant qu'il est en
+  // élaboration et n'a saisi personne.
+  const dossierUrl =
+    contexte.demandeAvisId !== null
+      ? makeDossierInstructionUrl({
+          collectiviteInstruiteId: collectivite.collectiviteId,
+          demandeAvisId: contexte.demandeAvisId,
+        })
+      : makeDemarcheInstructionUrl({
+          collectiviteInstruiteId: collectivite.collectiviteId,
+          demarcheId: contexte.demarcheId,
+        });
 
   return (
     <div

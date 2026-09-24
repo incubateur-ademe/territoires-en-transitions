@@ -14,7 +14,7 @@ export default async function Page({
   return (
     <DossierInstructionPage
       collectiviteInstruiteId={collectiviteId}
-      demandeAvisId={demandeAvisId}
+      dossierRef={{ demandeAvisId }}
     />
   );
 }

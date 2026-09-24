@@ -11,7 +11,6 @@ import {
 } from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
 import { indicateurObjectifTable } from '@tet/backend/indicateurs/shared/models/indicateur-objectif.table';
-import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -19,7 +18,6 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CategorieTagCreate } from '@tet/domain/collectivites';
 import {
   IndicateurPeriodicite,
-  IndicateurPeriodiciteMode,
   IndicateurThematiqueCreate,
 } from '@tet/domain/indicateurs';
 import { ThematiqueCreate } from '@tet/domain/shared';
@@ -34,7 +32,6 @@ type ImportDefinitionRow = typeof indicateurDefinitionTable.$inferInsert;
 type ImportDefinitionSnapshot = Readonly<{
   identifiantReferentiel: string | null;
   periodicite: IndicateurPeriodicite;
-  periodiciteMode: IndicateurPeriodiciteMode;
   valeurCalcule: string | null;
 }>;
 
@@ -47,21 +44,6 @@ type ImportObjectifRow = Readonly<{
 @Injectable()
 export class ImportIndicateurDefinitionRepository {
   constructor(private readonly databaseService: DatabaseService) {}
-
-  async findFirstIndicateurIdWithValeur(
-    indicateurIds: number[],
-    tx?: Transaction
-  ): Promise<number | null> {
-    if (indicateurIds.length === 0) {
-      return null;
-    }
-    const [definition] = await (tx ?? this.databaseService.db)
-      .select({ indicateurId: indicateurValeurTable.indicateurId })
-      .from(indicateurValeurTable)
-      .where(inArray(indicateurValeurTable.indicateurId, indicateurIds))
-      .limit(1);
-    return definition?.indicateurId ?? null;
-  }
 
   listThematiques(tx?: Transaction) {
     return (tx ?? this.databaseService.db).select().from(thematiqueTable);
@@ -83,7 +65,7 @@ export class ImportIndicateurDefinitionRepository {
         identifiantReferentiel:
           indicateurDefinitionTable.identifiantReferentiel,
         periodicite: indicateurDefinitionTable.periodicite,
-        periodiciteMode: indicateurDefinitionTable.periodiciteMode,
+
         valeurCalcule: indicateurDefinitionTable.valeurCalcule,
       })
       .from(indicateurDefinitionTable)
@@ -130,7 +112,8 @@ export class ImportIndicateurDefinitionRepository {
           'exprSeuil',
           'libelleCibleSeuil',
           'periodicite',
-          'periodiciteMode',
+          'aggregationResultat',
+          'aggregationObjectif',
           'modifiedAt',
           'modifiedBy',
           'version',

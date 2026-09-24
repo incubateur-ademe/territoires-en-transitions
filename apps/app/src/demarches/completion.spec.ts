@@ -143,6 +143,7 @@ const valeur = ({
   ({
     indicateurValeur: {
       indicateurId: 1,
+      periodicite: 'annuelle',
       dateValeur: `${year}-01-01`,
       resultat,
       objectif,
@@ -151,7 +152,7 @@ const valeur = ({
       identifiantReferentiel: identifiant,
       periodicite: 'annuelle',
     },
-  }) as PcaetDiagnostic['indicateurValeurs'][number];
+  } as PcaetDiagnostic['indicateurValeurs'][number]);
 
 const valeursCompletes = (): PcaetDiagnostic['indicateurValeurs'] => [
   valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
@@ -373,17 +374,33 @@ describe('getDemarchePcaetCompletion', () => {
 describe('getDiagnosticIndicateurTopicStatut', () => {
   it('annonce optionnel un topic marqué optional', () => {
     expect(
-      getDiagnosticIndicateurTopicStatut(parentConfig({ optional: true }), [])
+      getDiagnosticIndicateurTopicStatut(
+        parentConfig({ optional: true }),
+        [],
+        []
+      )
     ).toBe('optional');
   });
 
   it('reprend la saisie pour un topic à indicateurs', () => {
     expect(
-      getDiagnosticIndicateurTopicStatut(parentConfig(), valeursCompletes())
+      getDiagnosticIndicateurTopicStatut(parentConfig(), valeursCompletes(), [])
     ).toBe('complete');
-    expect(getDiagnosticIndicateurTopicStatut(parentConfig(), [])).toBe(
+    expect(getDiagnosticIndicateurTopicStatut(parentConfig(), [], [])).toBe(
       'incomplete'
     );
+  });
+
+  it('annonce complet un topic dont la ligne manquante est non applicable', () => {
+    expect(
+      getDiagnosticIndicateurTopicStatut(parentConfig(), [], [
+        {
+          id: 1,
+          identifiantReferentiel: 'cae_1.c',
+          isApplicable: false,
+        },
+      ] as PcaetDiagnostic['indicateurDefinitions'])
+    ).toBe('complete');
   });
 });
 

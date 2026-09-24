@@ -7145,7 +7145,6 @@ export type Database = {
       };
       indicateur_collectivite: {
         Row: {
-          periodicite: string | null;
           collectivite_id: number;
           commentaire: string | null;
           confidentiel: boolean;
@@ -7153,7 +7152,6 @@ export type Database = {
           indicateur_id: number;
         };
         Insert: {
-          periodicite?: string | null;
           collectivite_id: number;
           commentaire?: string | null;
           confidentiel?: boolean;
@@ -7161,7 +7159,6 @@ export type Database = {
           indicateur_id: number;
         };
         Update: {
-          periodicite?: string | null;
           collectivite_id?: number;
           commentaire?: string | null;
           confidentiel?: boolean;
@@ -7169,13 +7166,6 @@ export type Database = {
           indicateur_id?: number;
         };
         Relationships: [
-          {
-            foreignKeyName: 'indicateur_collectivite_periodicite_fkey';
-            columns: ['periodicite'];
-            isOneToOne: false;
-            referencedRelation: 'indicateur_periodicite';
-            referencedColumns: ['code'];
-          },
           {
             foreignKeyName: 'indicateur_collectivite_collectivite_id_fkey';
             columns: ['collectivite_id'];
@@ -7383,7 +7373,8 @@ export type Database = {
       };
       indicateur_definition: {
         Row: {
-          periodicite_mode: string;
+          aggregation_objectif: string | null;
+          aggregation_resultat: string | null;
           borne_max: number | null;
           borne_min: number | null;
           collectivite_id: number | null;
@@ -7416,7 +7407,8 @@ export type Database = {
             | null;
         };
         Insert: {
-          periodicite_mode?: string;
+          aggregation_objectif?: string | null;
+          aggregation_resultat?: string | null;
           borne_max?: number | null;
           borne_min?: number | null;
           collectivite_id?: number | null;
@@ -7443,7 +7435,8 @@ export type Database = {
           version?: string;
         };
         Update: {
-          periodicite_mode?: string;
+          aggregation_objectif?: string | null;
+          aggregation_resultat?: string | null;
           borne_max?: number | null;
           borne_min?: number | null;
           collectivite_id?: number | null;
@@ -19694,6 +19687,8 @@ export type Database = {
           '': Database['public']['Tables']['indicateur_definition']['Row'];
         };
         Returns: {
+          aggregation_objectif: string | null;
+          aggregation_resultat: string | null;
           borne_max: number | null;
           borne_min: number | null;
           collectivite_id: number | null;
@@ -19710,7 +19705,6 @@ export type Database = {
           modified_by: string | null;
           participation_score: boolean;
           periodicite: string;
-          periodicite_mode: string;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;
@@ -19726,6 +19720,8 @@ export type Database = {
           '': Database['public']['Tables']['indicateur_definition']['Row'];
         };
         Returns: {
+          aggregation_objectif: string | null;
+          aggregation_resultat: string | null;
           borne_max: number | null;
           borne_min: number | null;
           collectivite_id: number | null;
@@ -19742,7 +19738,6 @@ export type Database = {
           modified_by: string | null;
           participation_score: boolean;
           periodicite: string;
-          periodicite_mode: string;
           precision: number;
           sans_valeur_utilisateur: boolean;
           titre: string;

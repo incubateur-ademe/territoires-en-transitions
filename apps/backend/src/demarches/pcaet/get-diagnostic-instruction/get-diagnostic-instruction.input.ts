@@ -1,9 +1,6 @@
-import { z } from 'zod';
+import { dossierInstructionRefSchema } from '../shared/dossier-instruction-ref.input';
 
-export const getDiagnosticInstructionInputSchema = z.object({
-  demandeAvisId: z.number().int().positive(),
-});
+export const getDiagnosticInstructionInputSchema = dossierInstructionRefSchema;
 
-export type GetDiagnosticInstructionInput = z.infer<
-  typeof getDiagnosticInstructionInputSchema
->;
+export type GetDiagnosticInstructionInput =
+  typeof getDiagnosticInstructionInputSchema._output;

@@ -1,4 +1,4 @@
-import { extractDemandeAvisIdFromPath } from '@/app/demarches/pcaet/instruction/dossier-instruction-path';
+import { extractDossierInstructionRefFromPath } from '@/app/demarches/pcaet/instruction/dossier-instruction-path';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
 import {
   CollectiviteProviderStore,
@@ -20,17 +20,22 @@ export default async function Layout({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  // Sur la route d'un dossier, le contexte doit porter la saisine que l'URL
-  // désigne — pas la plus récente. Le layout du dossier n'étant rendu qu'après
-  // celui-ci, la seule façon de la connaître ici est le chemin courant, que le
-  // proxy réécrit et qui n'est donc pas falsifiable (cf. `proxy.ts`).
-  const demandeAvisId = extractDemandeAvisIdFromPath(
+  // Sur la route d'un dossier, le contexte doit porter le dossier que l'URL
+  // désigne — sa saisine, ou sa démarche pour un dépôt en élaboration — et non
+  // le plus récent. Le layout du dossier n'étant rendu qu'après celui-ci, la
+  // seule façon de le connaître ici est le chemin courant, que le proxy réécrit
+  // et qui n'est donc pas falsifiable (cf. `proxy.ts`).
+  const dossier = extractDossierInstructionRefFromPath(
     (await headers()).get('x-current-path')
   );
+  const demandeAvisId =
+    dossier && 'demandeAvisId' in dossier ? dossier.demandeAvisId : undefined;
+  const demarcheId =
+    dossier && 'demarcheId' in dossier ? dossier.demarcheId : undefined;
 
   const [user, collectivite] = await Promise.all([
     getUser(),
-    getCollectivite(collectiviteId, demandeAvisId ?? undefined),
+    getCollectivite(collectiviteId, demandeAvisId, demarcheId),
   ]);
 
   const userIsNotInCollectivite = !user.collectivites.some(
@@ -56,7 +61,8 @@ export default async function Layout({
     // alimente.
     <CollectiviteProviderStore
       collectiviteId={collectiviteId}
-      demandeAvisId={demandeAvisId ?? undefined}
+      demandeAvisId={demandeAvisId}
+      demarcheId={demarcheId}
     >
       {userNotAllowedToVisitCollectivite ? <UnverifiedUserCard /> : children}
     </CollectiviteProviderStore>

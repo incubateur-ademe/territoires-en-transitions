@@ -20,12 +20,8 @@ DROP TRIGGER IF EXISTS verrouiller_graphe_calcul_indicateur_definition
     ON public.indicateur_definition;
 DROP FUNCTION IF EXISTS public.verrouiller_graphe_calcul_indicateur_partage();
 DROP FUNCTION IF EXISTS public.verrouiller_graphe_calcul_indicateur_exclusif();
-DROP TRIGGER verifier_personnalisation_periodicite_indicateur ON public.indicateur_collectivite;
-DROP FUNCTION public.verifier_personnalisation_periodicite_indicateur();
-DROP TRIGGER verifier_mode_periodicite_indicateur ON public.indicateur_definition;
-DROP FUNCTION public.verifier_mode_periodicite_indicateur();
-DROP TRIGGER verifier_periodicite_valeur_imposee ON public.indicateur_valeur;
-DROP FUNCTION public.verifier_periodicite_valeur_imposee();
+DROP TRIGGER verifier_periodicite_valeur_indicateur ON public.indicateur_valeur;
+DROP FUNCTION public.verifier_periodicite_valeur_indicateur();
 
 -- Retire la dépendance de la fonction publique à la colonne avant de
 -- supprimer celle-ci, et restaure exactement le contrat antérieur : la
@@ -67,7 +63,6 @@ END;
 
 DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait
     ON public.indicateur_definition;
-DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait ON public.indicateur_collectivite;
 DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait ON public.indicateur_valeur;
 DROP FUNCTION IF EXISTS migration.empecher_periodicite_non_annuelle_pendant_retrait();
 
@@ -112,6 +107,7 @@ BEGIN
         WHERE audit.statut = 'normalisee'
           AND valeur.indicateur_id = audit.indicateur_id
           AND valeur.collectivite_id = audit.collectivite_id
+          AND valeur.periodicite = audit.periodicite
           AND valeur.metadonnee_id IS NOT DISTINCT FROM audit.metadonnee_id
           AND valeur.date_valeur = audit.date_valeur_canonique
     ) THEN
@@ -133,6 +129,7 @@ WHERE audit.valeur_id = valeur.id
   -- historique ne doit surtout pas lui être réappliquée.
   AND valeur.indicateur_id = audit.indicateur_id
   AND valeur.collectivite_id = audit.collectivite_id
+  AND valeur.periodicite = audit.periodicite
   AND valeur.metadonnee_id IS NOT DISTINCT FROM audit.metadonnee_id
   AND valeur.date_valeur = audit.date_valeur_canonique;
 ALTER TABLE public.indicateur_valeur ENABLE TRIGGER modified_by;
@@ -143,8 +140,7 @@ DROP TABLE migration.indicateur_valeur_periodicite_audit;
 DROP FUNCTION migration.verifier_retrait_periodicite_indicateur();
 
 ALTER TABLE public.indicateur_definition
-    DROP COLUMN periodicite, DROP COLUMN periodicite_mode;
-ALTER TABLE public.indicateur_collectivite DROP COLUMN periodicite;
+    DROP COLUMN periodicite, DROP COLUMN aggregation_resultat, DROP COLUMN aggregation_objectif;
 ALTER TABLE public.indicateur_valeur DROP COLUMN periodicite;
 
 DROP TRIGGER empecher_modification_periodicite

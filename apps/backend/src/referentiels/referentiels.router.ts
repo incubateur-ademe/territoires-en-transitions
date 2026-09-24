@@ -24,6 +24,7 @@ import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/g
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
+import { SetScoreFromIndicateurRouter } from './set-score-from-indicateur/set-score-from-indicateur.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
@@ -35,6 +36,7 @@ export class ReferentielsRouter {
     private readonly trpc: TrpcService,
     private readonly addPreuveRouter: AddPreuveRouter,
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
+    private readonly setScoreFromIndicateurRouter: SetScoreFromIndicateurRouter,
     private readonly updateActionCommentaireRouter: UpdateActionCommentaireRouter,
     private readonly updateActionFichesRouter: UpdateActionFichesRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
@@ -67,6 +69,7 @@ export class ReferentielsRouter {
   private readonly actionsMutationsRouter = this.trpc.mergeRouters(
     this.addPreuveRouter.router,
     this.updateActionStatutRouter.router,
+    this.setScoreFromIndicateurRouter.router,
     this.updateActionCommentaireRouter.router,
     this.updateActionFichesRouter.router,
     this.listActionStatutRouter.router

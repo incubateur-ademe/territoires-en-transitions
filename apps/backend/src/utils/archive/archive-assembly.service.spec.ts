@@ -7,6 +7,8 @@ import { type ArchiveFolderArborescence } from './archive-arborescence.types';
 import { ArchiveAssemblyErrorEnum } from './archive-assembly.errors';
 import { ArchiveAssemblyService } from './archive-assembly.service';
 
+const ABSENT_DOCUMENT_HASH = '1'.repeat(64);
+
 const toArborescence = (
   filenames: string[] = ['deliberation.pdf']
 ): ArchiveFolderArborescence => ({
@@ -33,6 +35,21 @@ const toDocumentStorage = (
     },
   } as unknown as DocumentStorageService;
 };
+
+const toDocumentStorageMissing = (
+  missingKeys: string[]
+): DocumentStorageService =>
+  ({
+    getDocumentStream: async ({ key }: { key: string }) => {
+      if (missingKeys.includes(key)) {
+        return failure(
+          DocumentStorageErrorEnum.READ_DOCUMENT_ERROR,
+          new Error('document not found')
+        );
+      }
+      return success(Readable.from(['abcd']));
+    },
+  } as unknown as DocumentStorageService);
 
 const toCollectingDestination = (): Writable & { collected: Buffer[] } => {
   const collected: Buffer[] = [];
@@ -111,6 +128,66 @@ describe('ArchiveAssemblyService.assembleZip', () => {
     expect(result).toEqual(success({ totalFiles: 1 }));
     expect(Buffer.concat(destination.collected).subarray(0, 2)).toEqual(
       Buffer.from('PK')
+    );
+  });
+
+  test('compte 1 fichier sur 2 quand un téléchargement échoue', async () => {
+    const service = new ArchiveAssemblyService(
+      toDocumentStorageMissing([ABSENT_DOCUMENT_HASH])
+    );
+
+    const result = await service.assembleZip({
+      arborescence: toArborescence(['present.pdf', 'absent.pdf']),
+      destination: toCollectingDestination(),
+    });
+
+    expect(result).toEqual(success({ totalFiles: 1 }));
+  });
+
+  test('suffixe un document utilisateur `liens.csv` quand la mesure porte aussi des liens', async () => {
+    const service = new ArchiveAssemblyService(toDocumentStorage());
+    const destination = toCollectingDestination();
+
+    await service.assembleZip({
+      arborescence: {
+        files: [
+          {
+            folderSegments: ['mesures', 'axe-1'],
+            filename: 'liens.csv',
+            bucketId: 'collectivite-1',
+            hash: '0'.repeat(64),
+            filesize: 4,
+          },
+        ],
+        linkFolders: [
+          {
+            folderSegments: ['mesures', 'axe-1'],
+            links: [{ titre: 'Site', url: 'https://x', commentaire: '' }],
+          },
+        ],
+        skippedFiles: [],
+      },
+      destination,
+    });
+
+    expect(Buffer.concat(destination.collected).toString('utf8')).toContain(
+      'mesures/axe-1/liens (2).csv'
+    );
+  });
+
+  test('inscrit le fichier non téléchargé parmi les fichiers manquants', async () => {
+    const service = new ArchiveAssemblyService(
+      toDocumentStorageMissing([ABSENT_DOCUMENT_HASH])
+    );
+    const destination = toCollectingDestination();
+
+    await service.assembleZip({
+      arborescence: toArborescence(['present.pdf', 'absent.pdf']),
+      destination,
+    });
+
+    expect(Buffer.concat(destination.collected).toString('utf8')).toContain(
+      '/absent.pdf — Téléchargement échoué'
     );
   });
 

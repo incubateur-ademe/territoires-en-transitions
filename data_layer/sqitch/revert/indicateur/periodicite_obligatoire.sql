@@ -41,6 +41,7 @@ BEGIN
         WHERE valeur.id = audit.valeur_id
           AND valeur.indicateur_id = audit.indicateur_id
           AND valeur.collectivite_id = audit.collectivite_id
+          AND valeur.periodicite = audit.periodicite
           AND valeur.metadonnee_id IS NOT DISTINCT FROM audit.metadonnee_id
     );
 
@@ -125,6 +126,7 @@ BEGIN
       AND audit.statut = 'normalisee'
       AND valeur.indicateur_id = audit.indicateur_id
       AND valeur.collectivite_id = audit.collectivite_id
+      AND valeur.periodicite = audit.periodicite
       AND valeur.metadonnee_id IS NOT DISTINCT FROM audit.metadonnee_id
       AND valeur.date_valeur = audit.date_valeur_avant;
 END;
@@ -160,6 +162,7 @@ BEGIN
       AND (
           audit.indicateur_id IS DISTINCT FROM NEW.indicateur_id
           OR audit.collectivite_id IS DISTINCT FROM NEW.collectivite_id
+          OR audit.periodicite IS DISTINCT FROM NEW.periodicite
           OR audit.metadonnee_id IS DISTINCT FROM NEW.metadonnee_id
       );
 

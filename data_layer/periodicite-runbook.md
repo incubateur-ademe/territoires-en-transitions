@@ -1,8 +1,8 @@
 # Périodicité des indicateurs — déploiement de #4981
 
-Ce guide accompagne la mise en service du mensuel dans #4981, après fusion de #4961.
+Ce guide accompagne la mise en service des quatre périodicités dans #4981, après fusion de #4961.
 Une seule fenêtre de maintenance couvre les migrations et le déploiement des applications
-compatibles. À la réouverture, le mensuel est disponible pour toutes les collectivités.
+compatibles. À la réouverture, les déclarations mensuelles, trimestrielles et semestrielles sont disponibles pour toutes les collectivités.
 #4961 conserve le fonctionnement annuel et peut rester en production jusqu'à cette intervention.
 
 ## Préparer la maintenance
@@ -56,11 +56,32 @@ les vérifications des migrations ni les tests applicatifs.
    est transactionnel ; l'ensemble ne forme pas une transaction unique. Les tags intermédiaires
    ordonnent les migrations et leurs tests, sans déploiement applicatif entre ces étapes.
 4. Déployer les versions préparées. Avant de rouvrir, vérifier lecture et écriture annuelles,
-   saisie mensuelle, coexistence de janvier et de l'année correspondante, modes imposé/recommandé,
-   calculs, imports et reporting.
+   saisies mensuelle, trimestrielle et semestrielle, immuabilité dès création et refus des déclarations
+   locales incompatibles. Vérifier les sources externes à leur cadence d'origine, les calculs, les imports
+   et le reporting. Configurer explicitement `aggregation_resultat` et `aggregation_objectif`
+   (`somme`, `moyenne` ou `derniere_valeur`) pour autoriser les regroupements de consultation ;
+   `NULL` n'applique aucune agrégation. Les périodes incomplètes ne produisent pas d'agrégat.
 5. Si les vérifications passent, rouvrir les accès et reprendre les imports et tâches compatibles. Dans `tools`, vérifier que
    `drain-indicateur-formula-reconciliations` s'exécute ; l'inclure dans `CRON_JOBS_FILTER` si ce filtre
    est configuré. Reprendre les sauvegardes et les restaurations entre schémas compatibles.
+
+## Règles de consultation
+
+Chaque définition configure séparément `aggregation_resultat` et `aggregation_objectif`
+(champs API `aggregationResultat` et `aggregationObjectif`) : `somme`, `moyenne` ou
+`derniere_valeur`. La valeur `NULL` signifie qu'aucune règle métier n'est connue : aucun
+agrégat n'est produit pour ce champ à une périodicité plus large.
+
+Un regroupement exige toutes les périodes sources du trimestre, semestre ou de l'année civile.
+Une observation absente ou `NULL` n'est jamais remplacée par zéro. Cette règle s'applique
+également à la dernière valeur : l'affichage ne présente pas une période incomplète comme complète.
+Les objectifs suivent leur propre règle explicite, indépendamment des résultats.
+
+Les séries de sources, versions de métadonnées et périodicités différentes restent séparées.
+Les commentaires regroupés sont présentés avec les libellés des périodes d'origine ; les
+agrégats sont consultables uniquement. La grille de déclaration édite toujours les valeurs
+sources. Les mêmes calculs sont partagés par les vues et les graphiques générés par le serveur.
+Les exports de valeurs conservent les dates, périodicités et contenus enregistrés.
 
 ## En cas d'échec
 

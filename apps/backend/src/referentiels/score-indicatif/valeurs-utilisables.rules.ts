@@ -12,7 +12,6 @@ import {
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
 import { groupBy, mapValues } from 'es-toolkit';
-import { assertAnnualScoreIndicateurs } from './score-indicatif-periodicite.rules';
 
 /**
  * Prépare les données pour fournir les valeurs utilisables des indicateurs
@@ -48,9 +47,7 @@ export function mapIndicateurToValeurUtilisable(
   valeursGroupees: { indicateurs: IndicateurAvecValeursParSource[] },
   valeursUtilisees: ValeurUtilisee[]
 ): ScoreIndicatifActionValeurUtilisable['indicateurs'][number] | null {
-  const { indicateurId, identifiantReferentiel, unite, titre, periodicite } =
-    indicateur;
-  assertAnnualScoreIndicateurs([indicateur]);
+  const { indicateurId, identifiantReferentiel, unite, titre } = indicateur;
   const sourcesObj = valeursGroupees.indicateurs.find(
     (ind) => ind.definition.id === indicateurId
   )?.sources;
@@ -125,7 +122,7 @@ export function mapIndicateurToValeurUtilisable(
     identifiantReferentiel,
     unite,
     titre,
-    periodicite,
+    periodicite: 'annuelle',
     selection,
     sources: Object.values(sourcesObj)
       .map((s) => ({

@@ -13,7 +13,7 @@ LOCK TABLE public.indicateur_definition IN SHARE ROW EXCLUSIVE MODE;
 LOCK TABLE public.indicateur_valeur IN SHARE ROW EXCLUSIVE MODE;
 
 -- Une périodicité est une description de cadence immuable, et non une série
--- de branches recopiées dans chaque consommateur. Les deux périodicités
+-- de branches recopiées dans chaque consommateur. Les quatre périodicités
 -- livrées utilisent la même famille calendaire fondée sur le mois.
 CREATE TABLE public.indicateur_periodicite
 (
@@ -43,6 +43,8 @@ INSERT INTO public.indicateur_periodicite
     (code, unite_calendaire, nombre_unites, date_ancrage)
 VALUES
     ('annuelle', 'mois', 12, DATE '2000-01-01'),
+    ('semestrielle', 'mois', 6, DATE '2000-01-01'),
+    ('trimestrielle', 'mois', 3, DATE '2000-01-01'),
     ('mensuelle', 'mois', 1, DATE '2000-01-01');
 
 -- Catalogue public en lecture, mais administré uniquement par migration. Sans
@@ -159,13 +161,13 @@ ALTER TABLE public.indicateur_definition
         FOREIGN KEY (periodicite)
         REFERENCES public.indicateur_periodicite(code);
 
--- La recommandation est personnalisable par collectivité. Les données gardent
--- leur cadence propre même après un changement de préférence.
+-- L'agrégation est une restitution explicitement configurée par champ.
+-- NULL conserve uniquement la série déclarée, sans somme implicite.
 ALTER TABLE public.indicateur_definition
-    ADD COLUMN periodicite_mode text NOT NULL DEFAULT 'recommandee'
-        CHECK (periodicite_mode IN ('recommandee', 'imposee'));
-ALTER TABLE public.indicateur_collectivite
-    ADD COLUMN periodicite text REFERENCES public.indicateur_periodicite(code);
+    ADD COLUMN aggregation_resultat text
+        CHECK (aggregation_resultat IN ('somme', 'moyenne', 'derniere_valeur')),
+    ADD COLUMN aggregation_objectif text
+        CHECK (aggregation_objectif IN ('somme', 'moyenne', 'derniere_valeur'));
 ALTER TABLE public.indicateur_valeur
     ADD COLUMN periodicite text NOT NULL DEFAULT 'annuelle'
         REFERENCES public.indicateur_periodicite(code);
@@ -237,11 +239,11 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM public.indicateur_definition
-        WHERE COALESCE(periodicite, 'annuelle') <> 'annuelle' OR periodicite_mode <> 'recommandee'
+        WHERE COALESCE(periodicite, 'annuelle') <> 'annuelle'
+           OR aggregation_resultat IS NOT NULL
+           OR aggregation_objectif IS NOT NULL
     ) OR EXISTS (
         SELECT 1 FROM public.indicateur_valeur WHERE periodicite <> 'annuelle'
-    ) OR EXISTS (
-        SELECT 1 FROM public.indicateur_collectivite WHERE periodicite IS NOT NULL
     ) THEN
         RAISE EXCEPTION USING
             ERRCODE = '23514',
@@ -315,6 +317,7 @@ BEGIN
         WHERE valeur.id = audit.valeur_id
           AND valeur.indicateur_id = audit.indicateur_id
           AND valeur.collectivite_id = audit.collectivite_id
+          AND valeur.periodicite = audit.periodicite
           AND valeur.metadonnee_id IS NOT DISTINCT FROM audit.metadonnee_id
     );
 
@@ -399,6 +402,7 @@ BEGIN
       AND audit.statut = 'normalisee'
       AND valeur.indicateur_id = audit.indicateur_id
       AND valeur.collectivite_id = audit.collectivite_id
+      AND valeur.periodicite = audit.periodicite
       AND valeur.metadonnee_id IS NOT DISTINCT FROM audit.metadonnee_id
       AND valeur.date_valeur = audit.date_valeur_avant;
 END;
@@ -456,7 +460,7 @@ CREATE TRIGGER verrouiller_graphe_calcul_indicateur_definition
 
 CREATE TRIGGER verrouiller_graphe_calcul_indicateur_definition_update
     BEFORE UPDATE OF id, collectivite_id, identifiant_referentiel,
-                     valeur_calcule, periodicite, periodicite_mode
+                     valeur_calcule, periodicite
     ON public.indicateur_definition
     FOR EACH STATEMENT
     EXECUTE FUNCTION public.verrouiller_graphe_calcul_indicateur_exclusif();
@@ -494,6 +498,7 @@ BEGIN
       AND (
           audit.indicateur_id IS DISTINCT FROM NEW.indicateur_id
           OR audit.collectivite_id IS DISTINCT FROM NEW.collectivite_id
+          OR audit.periodicite IS DISTINCT FROM NEW.periodicite
           OR audit.metadonnee_id IS DISTINCT FROM NEW.metadonnee_id
           OR audit.date_valeur_canonique IS DISTINCT FROM NEW.date_valeur
       );
@@ -540,6 +545,7 @@ BEGIN
       AND (
           audit.indicateur_id IS DISTINCT FROM NEW.indicateur_id
           OR audit.collectivite_id IS DISTINCT FROM NEW.collectivite_id
+          OR audit.periodicite IS DISTINCT FROM NEW.periodicite
           OR audit.metadonnee_id IS DISTINCT FROM NEW.metadonnee_id
       );
 
@@ -655,39 +661,12 @@ AS $$
 BEGIN
     IF COALESCE(OLD.periodicite, 'annuelle')
            IS DISTINCT FROM COALESCE(NEW.periodicite, 'annuelle') THEN
-      IF EXISTS (
-           SELECT 1
-           FROM public.indicateur_valeur valeur
-           WHERE valeur.indicateur_id = OLD.id
-       ) THEN
         RAISE EXCEPTION USING
             ERRCODE = '23514',
             MESSAGE = format(
-                'La périodicité de l''indicateur %s ne peut plus changer après sa première valeur',
+                'La périodicité de l''indicateur %s est fixée à sa création',
                 OLD.id
             );
-      END IF;
-
-      IF EXISTS (
-          SELECT 1
-          FROM public.indicateur_groupe groupe
-          JOIN public.indicateur_definition autre_definition
-            ON autre_definition.id = CASE
-                WHEN groupe.parent = OLD.id THEN groupe.enfant
-                ELSE groupe.parent
-            END
-          WHERE OLD.id IN (groupe.parent, groupe.enfant)
-            AND autre_definition.id <> OLD.id
-            AND COALESCE(autre_definition.periodicite, 'annuelle')
-                IS DISTINCT FROM COALESCE(NEW.periodicite, 'annuelle')
-      ) THEN
-          RAISE EXCEPTION USING
-              ERRCODE = '23514',
-              MESSAGE = format(
-                  'La périodicité de l''indicateur %s doit rester identique à celle de son groupe',
-                  OLD.id
-              );
-      END IF;
     END IF;
 
     RETURN NEW;
@@ -695,7 +674,7 @@ END;
 $$;
 
 COMMENT ON FUNCTION public.empecher_changement_periodicite_indicateur() IS
-    'Interdit de réinterpréter les valeurs existantes en changeant la périodicité de leur définition.';
+    'Interdit de changer la périodicité de déclaration après création, même sans valeur.';
 
 CREATE TRIGGER empecher_changement_periodicite_indicateur
     BEFORE UPDATE OF periodicite
@@ -759,76 +738,37 @@ CREATE TRIGGER verifier_periodicite_groupe_indicateur
 COMMENT ON COLUMN public.indicateur_definition.periodicite IS
     'Cadence en cours de classification, référencée dans public.indicateur_periodicite.';
 
--- Le même ordre graphe -> définition que les writers évite les courses entre
--- une cadence imposée et la création d'une préférence ou d'une valeur.
-CREATE FUNCTION public.verifier_personnalisation_periodicite_indicateur()
+-- Les déclarations locales, y compris celles du diagnostic PCAET identifiées
+-- par une métadonnée interne, suivent leur définition. Les sources importées
+-- (dont pcaet) conservent leur cadence d'origine et leur identité indépendante.
+CREATE FUNCTION public.verifier_periodicite_valeur_indicateur()
     RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
     SET search_path = pg_catalog, public AS $$
 DECLARE
-    definition public.indicateur_definition%ROWTYPE;
+    definition_periodicite text;
 BEGIN
-    SELECT * INTO definition FROM public.indicateur_definition
+    SELECT periodicite INTO definition_periodicite
+    FROM public.indicateur_definition
     WHERE id = NEW.indicateur_id FOR SHARE;
-    IF NEW.periodicite IS NOT NULL AND definition.periodicite_mode = 'imposee' THEN
-        RAISE EXCEPTION USING ERRCODE = '23514',
-            MESSAGE = 'La périodicité imposée ne peut pas être personnalisée';
-    END IF;
-    RETURN NEW;
-END;
-$$;
-CREATE TRIGGER verifier_personnalisation_periodicite_indicateur
-    BEFORE INSERT OR UPDATE OF indicateur_id, collectivite_id, periodicite
-    ON public.indicateur_collectivite FOR EACH ROW
-    EXECUTE FUNCTION public.verifier_personnalisation_periodicite_indicateur();
 
-CREATE FUNCTION public.verifier_mode_periodicite_indicateur()
-    RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path = pg_catalog, public AS $$
-BEGIN
-    IF auth.role() = 'authenticated' AND (
-        NEW.periodicite_mode IS DISTINCT FROM OLD.periodicite_mode
-        OR (OLD.periodicite_mode = 'imposee' AND NEW.periodicite IS DISTINCT FROM OLD.periodicite)
-    ) THEN
-        RAISE EXCEPTION USING ERRCODE = '42501',
-            MESSAGE = 'Seule l''administration du catalogue peut modifier une périodicité imposée ou son mode';
-    END IF;
-    IF NEW.periodicite_mode = 'imposee' AND (
-        EXISTS (SELECT 1 FROM public.indicateur_collectivite
-                WHERE indicateur_id = NEW.id AND periodicite IS NOT NULL)
-        OR EXISTS (SELECT 1 FROM public.indicateur_valeur
-                   WHERE indicateur_id = NEW.id AND periodicite <> NEW.periodicite)
-    ) THEN
-        RAISE EXCEPTION USING ERRCODE = '23514',
-            MESSAGE = 'Des préférences ou séries existantes empêchent d''imposer cette périodicité';
-    END IF;
-    RETURN NEW;
-END;
-$$;
-CREATE TRIGGER verifier_mode_periodicite_indicateur
-    BEFORE UPDATE OF periodicite_mode, periodicite ON public.indicateur_definition
-    FOR EACH ROW EXECUTE FUNCTION public.verifier_mode_periodicite_indicateur();
-
-CREATE FUNCTION public.verifier_periodicite_valeur_imposee()
-    RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
-    SET search_path = pg_catalog, public AS $$
-DECLARE
-    definition public.indicateur_definition%ROWTYPE;
-BEGIN
-    SELECT * INTO definition FROM public.indicateur_definition
-    WHERE id = NEW.indicateur_id FOR SHARE;
-    IF definition.periodicite_mode = 'imposee' AND NEW.periodicite <> definition.periodicite THEN
-        RAISE EXCEPTION USING ERRCODE = '23514',
-            MESSAGE = 'La valeur doit respecter la périodicité imposée';
-    END IF;
     IF TG_OP = 'UPDATE' AND NEW.periodicite IS DISTINCT FROM OLD.periodicite THEN
         RAISE EXCEPTION USING ERRCODE = '23514',
             MESSAGE = 'La périodicité d''une valeur enregistrée est immuable';
     END IF;
+
+    IF (NEW.metadonnee_id IS NULL OR EXISTS (
+        SELECT 1 FROM public.indicateur_source_metadonnee metadonnee
+        WHERE metadonnee.id = NEW.metadonnee_id
+          AND metadonnee.source_id = 'pcaet-collectivite'
+    )) AND NEW.periodicite IS DISTINCT FROM COALESCE(definition_periodicite, 'annuelle') THEN
+        RAISE EXCEPTION USING ERRCODE = '23514',
+            MESSAGE = 'La déclaration locale doit respecter la périodicité de sa définition';
+    END IF;
     RETURN NEW;
 END;
 $$;
-CREATE TRIGGER verifier_periodicite_valeur_imposee
+CREATE TRIGGER verifier_periodicite_valeur_indicateur
     BEFORE INSERT OR UPDATE ON public.indicateur_valeur
-    FOR EACH ROW EXECUTE FUNCTION public.verifier_periodicite_valeur_imposee();
+    FOR EACH ROW EXECUTE FUNCTION public.verifier_periodicite_valeur_indicateur();
 
 COMMIT;

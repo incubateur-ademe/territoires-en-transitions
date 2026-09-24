@@ -46,7 +46,7 @@ const definition = (
     identifiantReferentiel,
     valeurCalcule,
     periodicite,
-    periodiciteMode: 'recommandee',
+
     collectiviteId: null,
     precision: 2,
   } as IndicateurDefinition);

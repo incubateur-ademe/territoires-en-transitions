@@ -6,7 +6,7 @@ import {
 } from '@tet/domain/collectivites';
 import {
   IndicateurAvecValeursParSource,
-  isIndicateurDisplayPeriodiciteAllowed,
+  resolveIndicateurSourceDisplayPeriodicite,
 } from '@tet/domain/indicateurs';
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
@@ -91,7 +91,6 @@ export class IndicateurChartService {
         {
           collectiviteId,
           indicateurIds: segmentatedIndicateursEnfantIds,
-          periodicite: definition.periodicite,
         },
         { isUserTrusted: true }
       )
@@ -164,19 +163,6 @@ export class IndicateurChartService {
           }
         );
 
-    const periodiciteAffichage =
-      args.periodiciteAffichage ?? definition.periodicite;
-    if (
-      !isIndicateurDisplayPeriodiciteAllowed(
-        definition.periodicite,
-        periodiciteAffichage
-      )
-    ) {
-      throw new BadRequestException(
-        "La périodicité d'affichage ne peut pas être plus fine que la périodicité de saisie"
-      );
-    }
-
     // Parallelize all independent queries
     const [
       indicateurValeurs,
@@ -190,7 +176,6 @@ export class IndicateurChartService {
           {
             collectiviteId,
             indicateurIds: [definition.id],
-            periodicite: definition.periodicite,
             sources: sources?.map((s) => s.sourceId),
           },
           { isUserTrusted: true }
@@ -225,6 +210,21 @@ export class IndicateurChartService {
           )
         : Promise.resolve(null),
     ]);
+
+    let periodiciteAffichage;
+    try {
+      periodiciteAffichage = resolveIndicateurSourceDisplayPeriodicite(
+        definition.periodicite,
+        Object.values(indicateurValeurs.sources).flatMap(({ valeurs }) =>
+          valeurs.map(({ periodicite }) => periodicite)
+        ),
+        args.periodiciteAffichage
+      );
+    } catch {
+      throw new BadRequestException(
+        "La périodicité d'affichage ne peut pas être plus fine que les valeurs sources"
+      );
+    }
 
     const chartData = this.chartBuilder.build({
       indicateurValeurs,

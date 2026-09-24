@@ -14,7 +14,3 @@ export type UpsertIndicateurDefinitionsResult = Readonly<{
   importedIndicateurIds: number[];
   reconciliationWorkItemsCount: number;
 }>;
-export type PeriodiciteChangeDefinition = Readonly<{
-  id: number;
-  identifiantReferentiel: string | null;
-}>;

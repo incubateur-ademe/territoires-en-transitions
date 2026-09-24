@@ -1,7 +1,7 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { appLabels } from '@/app/labels/catalog';
-import { Button, ButtonGroup } from '@tet/ui';
+import { Alert, Button, ButtonGroup } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
@@ -46,6 +46,9 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
       : selectedType;
   const typeInverse = type === 'resultat' ? 'objectif' : 'resultat';
   const data = type === 'resultat' ? resultats : objectifs;
+  const isAggregated =
+    chartInfo.periodiciteAffichage !== undefined &&
+    chartInfo.periodiciteAffichage !== definition.periodicite;
 
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = openModalState?.isOpen ?? internalIsOpen;
@@ -90,10 +93,14 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           </Button>
         )}
       </div>
+      {isAggregated && (
+        <Alert description={appLabels.indicateurAggregationConsultation} />
+      )}
       {/** tableau pour le type de valeurs (objectif | résultat) sélectionné */}
       <IndicateurValeursTable
         {...props}
         data={data}
+        readonly={readonly || isAggregated}
         type={type}
         disableComments={!chartInfo.sourceFilter.avecDonneesCollectivite}
       />

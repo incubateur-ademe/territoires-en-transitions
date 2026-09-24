@@ -1,10 +1,14 @@
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   AuthRole,
   type AuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { describe, expect, it, vi } from 'vitest';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 import { AnalysisJobErrorEnum } from '../analysis-job.errors';
+import { EnjeuRepositories } from '../enjeu.repositories';
 import { type LevierMobilisation } from '../mobilisation.repository';
 import { VoletErrorEnum, type VoletError } from '../volet.errors';
 import { GetMobilisationService } from './get-mobilisation.service';
@@ -18,10 +22,10 @@ const user: AuthenticatedUser = {
   jwtPayload: { role: AuthRole.AUTHENTICATED },
 } as AuthenticatedUser;
 
-const leviers = [
+const leviers: LevierMobilisation[] = [
   {
-    levierId: 'covoiturage' as const,
-    volets: [{ categorie: 'amenagement' as const, note: 2, ficheIds: [42] }],
+    levierId: 'covoiturage',
+    volets: [{ categorie: 'amenagement', note: 2, ficheIds: [42] }],
   },
 ];
 
@@ -31,27 +35,42 @@ const toService = ({
     VoletError
   >,
   isAllowed = true,
-} = {}) => {
-  const permissions = {
-    isAllowed: vi
-      .fn()
-      .mockResolvedValue(
-        isAllowed ? success(undefined) : failure('UNAUTHORIZED')
-      ),
-  };
+  isCollectivitePrivate = false,
+} = {}): {
+  service: GetMobilisationService;
+  isAllowedSpy: Mock;
+} => {
+  const isAllowedSpy = vi
+    .fn()
+    .mockResolvedValue(
+      isAllowed ? success(undefined) : failure('UNAUTHORIZED')
+    );
+  const permissionService = {
+    isAllowed: isAllowedSpy,
+  } as unknown as PermissionService;
+  const collectivitesService = {
+    isPrivate: vi.fn().mockResolvedValue(isCollectivitePrivate),
+  } as unknown as CollectivitesService;
   const mobilisationRepository = {
     getMobilisation: vi.fn().mockResolvedValue(mobilisationOutcome),
   };
+  const enjeuRepositories = {
+    mobilisationOf: () => mobilisationRepository,
+  } as unknown as EnjeuRepositories;
 
-  return new GetMobilisationService(
-    permissions as never,
-    mobilisationRepository as never
-  );
+  return {
+    service: new GetMobilisationService(
+      permissionService,
+      collectivitesService,
+      enjeuRepositories
+    ),
+    isAllowedSpy,
+  };
 };
 
 describe('GetMobilisationService.getMobilisation', () => {
-  it('rend la mobilisation de la collectivite a un de ses membres', async () => {
-    const service = toService();
+  it('rend, par levier et par catégorie, le nombre de fiches mobilisées', async () => {
+    const { service } = toService();
 
     const result = await service.getMobilisation(
       { collectiviteId, enjeu: 'ges' },
@@ -60,12 +79,142 @@ describe('GetMobilisationService.getMobilisation', () => {
 
     expect(result).toEqual({
       success: true,
-      data: { collectiviteId, leviers },
+      data: {
+        collectiviteId,
+        leviers: [
+          {
+            levierId: 'covoiturage',
+            ficheCount: 1,
+            volets: [{ categorie: 'amenagement', note: 2, ficheCount: 1 }],
+          },
+        ],
+      },
     });
   });
 
-  it("presente la collectivite comme introuvable a qui n'en est pas membre", async () => {
-    const service = toService({ isAllowed: false });
+  it("compte au levier l'union des fiches de ses catégories, une fiche partagée comptant une fois", async () => {
+    const { service } = toService({
+      mobilisationOutcome: success([
+        {
+          levierId: 'covoiturage',
+          volets: [
+            { categorie: 'amenagement', note: 2, ficheIds: [42, 43] },
+            { categorie: 'planification', note: 1, ficheIds: [42, 44] },
+          ],
+        },
+      ]),
+    });
+
+    const result = await service.getMobilisation(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
+
+    expect(result).toEqual({
+      success: true,
+      data: {
+        collectiviteId,
+        leviers: [
+          {
+            levierId: 'covoiturage',
+            ficheCount: 3,
+            volets: [
+              { categorie: 'amenagement', note: 2, ficheCount: 2 },
+              { categorie: 'planification', note: 1, ficheCount: 2 },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it('compte une seule fois une fiche répétée dans une même catégorie', async () => {
+    const { service } = toService({
+      mobilisationOutcome: success([
+        {
+          levierId: 'covoiturage',
+          volets: [{ categorie: 'amenagement', note: 2, ficheIds: [42, 42] }],
+        },
+      ]),
+    });
+
+    const result = await service.getMobilisation(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
+
+    expect(result).toEqual({
+      success: true,
+      data: {
+        collectiviteId,
+        leviers: [
+          {
+            levierId: 'covoiturage',
+            ficheCount: 1,
+            volets: [{ categorie: 'amenagement', note: 2, ficheCount: 1 }],
+          },
+        ],
+      },
+    });
+  });
+
+  it('compte zéro fiche à un levier dont aucune catégorie ne rattache de fiche', async () => {
+    const { service } = toService({
+      mobilisationOutcome: success([
+        {
+          levierId: 'covoiturage',
+          volets: [{ categorie: 'amenagement', note: 0, ficheIds: [] }],
+        },
+      ]),
+    });
+
+    const result = await service.getMobilisation(
+      { collectiviteId, enjeu: 'ges' },
+      { user }
+    );
+
+    expect(result).toEqual({
+      success: true,
+      data: {
+        collectiviteId,
+        leviers: [
+          {
+            levierId: 'covoiturage',
+            ficheCount: 0,
+            volets: [{ categorie: 'amenagement', note: 0, ficheCount: 0 }],
+          },
+        ],
+      },
+    });
+  });
+
+  it.each([
+    {
+      isCollectivitePrivate: false,
+      operation: PermissionOperationEnum['PLANS.FICHES.READ'],
+    },
+    {
+      isCollectivitePrivate: true,
+      operation: PermissionOperationEnum['PLANS.FICHES.READ_CONFIDENTIEL'],
+    },
+  ])(
+    'exige $operation quand la collectivite est privee : $isCollectivitePrivate',
+    async ({ isCollectivitePrivate, operation }) => {
+      const { service, isAllowedSpy } = toService({ isCollectivitePrivate });
+
+      await service.getMobilisation({ collectiviteId, enjeu: 'ges' }, { user });
+
+      expect(isAllowedSpy).toHaveBeenCalledWith(
+        user,
+        operation,
+        ResourceType.COLLECTIVITE,
+        { collectiviteId }
+      );
+    }
+  );
+
+  it('presente la collectivite comme introuvable a qui ne peut pas en lire les fiches', async () => {
+    const { service } = toService({ isAllowed: false });
 
     const result = await service.getMobilisation(
       { collectiviteId, enjeu: 'ges' },
@@ -79,7 +228,7 @@ describe('GetMobilisationService.getMobilisation', () => {
   });
 
   it('traduit une lecture de mobilisation impossible en erreur de mobilisation', async () => {
-    const service = toService({
+    const { service } = toService({
       mobilisationOutcome: failure(VoletErrorEnum.GET_VOLETS_ERROR),
     });
 

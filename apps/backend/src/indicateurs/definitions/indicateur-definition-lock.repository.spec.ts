@@ -25,7 +25,6 @@ describe('IndicateurDefinitionLockRepository', () => {
     expect(select).toHaveBeenCalledWith(
       expect.objectContaining({
         periodicite: expect.anything(),
-        periodiciteMode: expect.anything(),
       })
     );
     expect(orderBy).toHaveBeenCalledOnce();

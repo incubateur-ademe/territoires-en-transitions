@@ -2,7 +2,7 @@
 
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { appLabels } from '@/app/labels/catalog';
-import { ReferentielDocumentCard } from '@/app/referentiels/preuves/Bibliotheque/referentiel-document.card';
+import { ReferentielDocumentCard } from '@/app/collectivites/documents/bibliotheque/referentiel-document.card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';

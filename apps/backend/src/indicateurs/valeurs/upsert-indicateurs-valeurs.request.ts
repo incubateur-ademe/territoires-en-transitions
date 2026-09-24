@@ -1,11 +1,19 @@
-import { indicateurValeurSchemaCreate } from '@tet/domain/indicateurs';
+import {
+  indicateurPeriodiciteSchema,
+  indicateurValeurSchemaCreate,
+} from '@tet/domain/indicateurs';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const upsertIndicateursValeursRequestSchema = z
   .object({
     valeurs: z
-      .array(indicateurValeurSchemaCreate)
+      .array(
+        z.object({
+          ...indicateurValeurSchemaCreate.shape,
+          periodicite: z.optional(indicateurPeriodiciteSchema),
+        })
+      )
       .min(1)
       .describe('Liste de valeurs'),
   })

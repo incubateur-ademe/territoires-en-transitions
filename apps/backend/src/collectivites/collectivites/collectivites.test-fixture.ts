@@ -32,6 +32,7 @@ import { justificationTable } from '../personnalisations/models/justification.ta
 import { reponseBinaireTable } from '../personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '../personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '../personnalisations/models/reponse-proportion.table';
+import { collectiviteRelationsTable } from '../shared/models/collectivite-relations.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 
 /**
@@ -225,6 +226,44 @@ export async function addTestCollectivite(
       }: ${getErrorMessage(err)}`
     );
   }
+}
+
+/**
+ * Rattache à un groupement des membres neufs, un par population donnée — des
+ * communes par défaut, ou des EPCI pour composer un syndicat. La composition
+ * d'un groupement se lit dans `collectivite_relations`, comme le fait la fiche
+ * collectivité ; les relations cascadent avec les membres.
+ */
+export async function addTestCommunesMembres(
+  { db }: DatabaseServiceInterface,
+  {
+    parentId,
+    populations,
+    type = collectiviteTypeEnum.COMMUNE,
+  }: { parentId: number; populations: number[]; type?: CollectiviteType }
+): Promise<{ communes: Collectivite[]; cleanup: () => Promise<void> }> {
+  const membres = await Promise.all(
+    populations.map((population) =>
+      addTestCollectivite({ db }, { type, population })
+    )
+  );
+
+  if (membres.length > 0) {
+    await db
+      .insert(collectiviteRelationsTable)
+      .values(
+        membres.map(({ collectivite }) => ({ id: collectivite.id, parentId }))
+      );
+  }
+
+  return {
+    communes: membres.map(({ collectivite }) => collectivite),
+    cleanup: async () => {
+      for (const { cleanup } of membres) {
+        await cleanup();
+      }
+    },
+  };
 }
 
 // ajoute une collectivité et un utilisateur rattaché à celle-ci

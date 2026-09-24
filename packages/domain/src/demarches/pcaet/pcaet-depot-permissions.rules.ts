@@ -6,6 +6,10 @@ import {
   isTypeInstructeur,
   PerimetreInstructeurEnum,
 } from './pcaet-instructeur.rules';
+import {
+  PcaetPerimetreSaisineEnum,
+  type PcaetPerimetreSaisine,
+} from './pcaet-perimetre-saisine.enum.schema';
 
 /**
  * Les territoires de part et d'autre, en **listes** et non en codes uniques :
@@ -59,6 +63,54 @@ export const instructeurCouvreCollectivite = ({
     );
   }
   return false;
+};
+
+/**
+ * Ce qu'il faut de plus pour dire *par quel* territoire le service atteint la
+ * déposante : le siège de celle-ci, à part de ses territoires secondaires.
+ */
+export type PerimetreSaisineEntree = PerimetreInstructeurEntree & {
+  collectiviteRegionCode: string | null;
+  collectiviteDepartementCode: string | null;
+};
+
+/**
+ * Par quel territoire de la déposante ce service l'atteint — `null` s'il ne la
+ * couvre pas.
+ *
+ * Le pendant en mémoire du `case when` qui pose `perimetre` à la transmission :
+ * principal quand le service couvre le **siège** de la déposante, secondaire
+ * quand il ne l'atteint que par un territoire débordant. Le national est
+ * principal par construction — il couvre le pays, pas un territoire qui
+ * pourrait être secondaire.
+ *
+ * Sert là où aucune saisine ne porte encore le fait : un dépôt en élaboration,
+ * que le service lit au titre de son périmètre.
+ */
+export const getPerimetreSaisine = (
+  entree: PerimetreSaisineEntree
+): PcaetPerimetreSaisine | null => {
+  if (!instructeurCouvreCollectivite(entree)) {
+    return null;
+  }
+
+  const perimetre = getPerimetreInstructeur(entree.instructeurType);
+  if (perimetre === PerimetreInstructeurEnum.NATIONAL) {
+    return PcaetPerimetreSaisineEnum.PRINCIPAL;
+  }
+
+  const siege =
+    perimetre === PerimetreInstructeurEnum.REGION
+      ? entree.collectiviteRegionCode
+      : entree.collectiviteDepartementCode;
+  const codes =
+    perimetre === PerimetreInstructeurEnum.REGION
+      ? entree.instructeurRegionCodes
+      : entree.instructeurDepartementCodes;
+
+  return siege !== null && codes.includes(siege)
+    ? PcaetPerimetreSaisineEnum.PRINCIPAL
+    : PcaetPerimetreSaisineEnum.SECONDAIRE;
 };
 
 export type FenetreAvisEntree = {

@@ -1,37 +1,32 @@
-import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { AddLinkHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
-import { useAddPreuveRapport } from '@/app/referentiels/preuves/useAddPreuves';
+import { AddFileHandler } from '@/app/collectivites/documents/add-document/add-file';
+import { AddLinkHandler } from '@/app/collectivites/documents/add-document/add-link';
+import { useAddPreuveRapport } from '@/app/collectivites/documents/use-add-preuves';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
-type TAddDocs = (date: string) => {
-  /** ajoute un fichier sélectionné depuis la bibliothèque */
-  addFileFromLib: AddFileFromLibHandler;
-  /** ou un lien */
+type AddRapportVisiteHandlers = {
+  addFile: AddFileHandler;
   addLink: AddLinkHandler;
 };
 
-/** Renvoie les gestionnaires d'événements du dialogue d'ajout de
- * fichiers au parcours de labellisation en cours */
-export const useAddRapportVisite: TAddDocs = (date) => {
-  const collectivite_id = useCollectiviteId();
+export const useAddRapportVisite = (date: string): AddRapportVisiteHandlers => {
+  const collectiviteId = useCollectiviteId();
   const { mutate: addPreuve } = useAddPreuveRapport();
 
-  // associe un fichier de la bibliothèque à la demande
-  const addFileFromLib: AddFileFromLibHandler = (fichier_id) => {
-    if (collectivite_id) {
+  const addFile: AddFileHandler = (fichierId) => {
+    if (collectiviteId) {
       addPreuve({
-        collectivite_id,
+        collectiviteId,
         commentaire: '',
-        fichier_id,
+        fichierId,
         date: new Date(date).toISOString(),
       });
     }
   };
 
   const addLink: AddLinkHandler = (titre, url) => {
-    if (collectivite_id) {
+    if (collectiviteId) {
       addPreuve({
-        collectivite_id,
+        collectiviteId,
         commentaire: '',
         titre,
         url,
@@ -41,7 +36,7 @@ export const useAddRapportVisite: TAddDocs = (date) => {
   };
 
   return {
-    addFileFromLib,
+    addFile,
     addLink,
   };
 };

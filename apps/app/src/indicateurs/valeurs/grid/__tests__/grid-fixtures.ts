@@ -1,5 +1,6 @@
 import {
   IndicateurDefinition,
+  IndicateurPeriodiciteEnum,
   IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import { IndicateurTableRow } from '../types';
@@ -30,14 +31,15 @@ const fakeIndicateurDefinition = (
   id,
   version: '1.0.0',
   groupementId: null,
+  aggregationResultat: null,
+  aggregationObjectif: null,
   collectiviteId: null,
+  periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   identifiantReferentiel: `fake_${id}`,
   titre,
   titreLong: null,
   titreCourt: null,
   description: null,
-  periodicite: 'annuelle',
-  periodiciteMode: 'recommandee',
   unite: 't/an',
   precision: 2,
   borneMin: null,
@@ -82,7 +84,7 @@ const fakeIndicateurValeurs = (indicateurId: number): IndicateurValeur[] =>
       id: indicateurId * 100 + index,
       collectiviteId: 1,
       indicateurId,
-      periodicite: 'annuelle',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       dateValeur: `${year}-01-01`,
       metadonneeId: null,
       resultat: isReference ? value : null,
@@ -104,17 +106,20 @@ export const fakeRow = ({
   indicateurLabel,
   indicateurValeurs = fakeIndicateurValeurs(indicateurId),
   optionalYears,
+  isApplicable = true,
 }: {
   indicateurId: number;
   indicateurLabel: string;
   indicateurValeurs?: IndicateurValeur[];
   optionalYears?: readonly number[];
+  isApplicable?: boolean;
 }): IndicateurTableRow => ({
   indicateurId,
   indicateurLabel,
   indicateurDefinition: fakeIndicateurDefinition(indicateurId, indicateurLabel),
   indicateurValeurs,
   optionalYears,
+  isApplicable,
 });
 
 export const fakeRows: IndicateurTableRow[] = sectors.flatMap(

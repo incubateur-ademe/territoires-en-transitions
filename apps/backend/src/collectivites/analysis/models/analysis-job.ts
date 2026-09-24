@@ -1,7 +1,7 @@
 import { Enjeu, AnalysisStep } from '@tet/domain/shared';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { createEnumObject } from '@tet/domain/utils';
-import { ClassificationDraft } from './classification-draft';
+import { ClassificationReport } from './classification-report';
 
 export const analysisJobStatusValues = [
   'pending',
@@ -19,15 +19,23 @@ export const analysisJobInFlightStatuses: AnalysisJobStatus[] = [
   AnalysisJobStatusEnum.RUNNING,
 ];
 
-export const CLASSIFICATION_DEADLINE_MS = 30 * 60 * 1000;
+export const CLASSIFICATION_BUDGET_MS = 30 * 60 * 1000;
+
+export const MOBILISATION_BUDGET_MS = 30 * 60 * 1000;
+
+export const ANALYSIS_BUDGET_MS =
+  CLASSIFICATION_BUDGET_MS + MOBILISATION_BUDGET_MS;
 
 export const IN_FLIGHT_LEASE_MARGIN_MS = 5 * 60 * 1000;
 
 export const IN_FLIGHT_LEASE_MS =
-  CLASSIFICATION_DEADLINE_MS + IN_FLIGHT_LEASE_MARGIN_MS;
+  ANALYSIS_BUDGET_MS + IN_FLIGHT_LEASE_MARGIN_MS;
 
-export const toAnalysisDeadline = (): string =>
-  new Date(Date.now() + CLASSIFICATION_DEADLINE_MS).toISOString();
+export const toClassificationDeadlineFrom = (createdAt: string): string =>
+  new Date(Date.parse(createdAt) + CLASSIFICATION_BUDGET_MS).toISOString();
+
+export const toAnalysisDeadlineFrom = (createdAt: string): string =>
+  new Date(Date.parse(createdAt) + ANALYSIS_BUDGET_MS).toISOString();
 
 export const toDeadlineSignal = (
   deadlineAt: string | undefined
@@ -38,7 +46,7 @@ export const toDeadlineSignal = (
 
   return AbortSignal.timeout(
     Number.isNaN(remainingMs)
-      ? CLASSIFICATION_DEADLINE_MS
+      ? CLASSIFICATION_BUDGET_MS
       : Math.max(0, remainingMs)
   );
 };
@@ -57,7 +65,7 @@ export type AnalysisJob = {
   status: AnalysisJobStatus;
   processedBatches: number;
   totalBatches: number;
-  draft: ClassificationDraft | null;
+  report: ClassificationReport | null;
   tokenUsage: TokenUsage | null;
   error: string | null;
   createdAt: string;

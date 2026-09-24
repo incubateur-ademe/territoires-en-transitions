@@ -10,22 +10,14 @@ export interface PreparedFileEntry {
 }
 
 export function prepareArchiveEntries(
-  files: ArchiveFile[]
+  files: ArchiveFile[],
+  reservedPaths: string[]
 ): PreparedFileEntry[] {
-  const seenPaths = new Map<string, number>();
+  const takenPaths = new Set<string>(reservedPaths);
 
-  return files.map((file) => {
-    const basePath = buildArchivePath([...file.folderSegments, file.filename]);
-    const occurrence = seenPaths.get(basePath) ?? 0;
-    seenPaths.set(basePath, occurrence + 1);
-
-    const entryPath =
-      occurrence === 0
-        ? basePath
-        : buildArchivePath([
-            ...file.folderSegments,
-            suffixBasename(file.filename, occurrence + 1),
-          ]);
+  return files.map((file, index) => {
+    const entryPath = toFreeEntryPath(file, index, takenPaths);
+    takenPaths.add(entryPath);
 
     return {
       entryPath,
@@ -35,6 +27,35 @@ export function prepareArchiveEntries(
       emplacement: file.folderSegments.join('/'),
     };
   });
+}
+
+function toFreeEntryPath(
+  file: ArchiveFile,
+  index: number,
+  takenPaths: ReadonlySet<string>
+): string {
+  const basePath = buildArchivePath([...file.folderSegments, file.filename]);
+  if (!takenPaths.has(basePath)) {
+    return basePath;
+  }
+
+  const suffixedPaths = Array.from({ length: takenPaths.size }, (_, rank) =>
+    buildArchivePath([
+      ...file.folderSegments,
+      suffixBasename(file.filename, rank + 2),
+    ])
+  );
+  const freePath = suffixedPaths.find(
+    (candidate) => !takenPaths.has(candidate)
+  );
+  if (freePath !== undefined) {
+    return freePath;
+  }
+
+  return buildArchivePath([
+    ...file.folderSegments,
+    `${index + 1} ${file.filename}`,
+  ]);
 }
 
 function suffixBasename(filename: string, occurrence: number): string {

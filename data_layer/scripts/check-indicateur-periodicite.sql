@@ -35,6 +35,8 @@ WITH dates AS (
                WHEN valeur.date_valeur BETWEEN DATE '0001-01-01' AND DATE '9999-12-31'
                THEN CASE :periodicite_expression
                    WHEN 'annuelle' THEN date_trunc('year', valeur.date_valeur::timestamp)::date
+                   WHEN 'semestrielle' THEN (date_trunc('year', valeur.date_valeur::timestamp) + ((extract(month from valeur.date_valeur)::integer - 1) / 6) * INTERVAL '6 months')::date
+                   WHEN 'trimestrielle' THEN date_trunc('quarter', valeur.date_valeur::timestamp)::date
                    WHEN 'mensuelle' THEN date_trunc('month', valeur.date_valeur::timestamp)::date
                END
            END AS date_canonique
@@ -49,7 +51,7 @@ WITH dates AS (
     FROM dates
 ), rapport AS (
     SELECT CASE
-               WHEN periodicite IS NULL OR periodicite NOT IN ('annuelle', 'mensuelle')
+               WHEN periodicite IS NULL OR periodicite NOT IN ('annuelle', 'semestrielle', 'trimestrielle', 'mensuelle')
                    THEN 'periodicite_inconnue'
                WHEN date_canonique IS NULL THEN 'date_invalide'
                WHEN nombre_valeurs_periode > 1 THEN 'conflit'

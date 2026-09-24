@@ -41,7 +41,7 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { arrayOverlapsPatched } from '../../../utils/drizzle.utils';
 import { indicateurCategorieTagTable } from '../../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
-import { indicateurCollectivitePeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
+import { indicateurDefinitionPeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
 import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurServiceTagTable } from '../handle-definition-services/indicateur-service-tag.table';
@@ -491,6 +491,7 @@ export class ListIndicateursRepository {
       (filters.indicateurIds && filters.indicateurIds.length > 0) === true ||
       filters.mesureId !== undefined ||
       filters.estFavori ||
+      filters.isApplicable !== undefined ||
       filters.ficheIds?.length ||
       filters.axeIds?.length ||
       filters.utilisateurPiloteIds?.length;
@@ -638,6 +639,20 @@ export class ListIndicateursRepository {
       );
     }
 
+    if (filters.isApplicable !== undefined) {
+      // Même piège que pour `estConfidentiel` : `NULL = true` vaut NULL, les
+      // indicateurs sans entrée dans `indicateur_collectivite` seraient exclus
+      // à tort du cas applicable.
+      whereConditions.push(
+        filters.isApplicable
+          ? or(
+              eq(indicateurCollectiviteTable.isApplicable, true),
+              isNull(indicateurCollectiviteTable.isApplicable)
+            )
+          : eq(indicateurCollectiviteTable.isApplicable, false)
+      );
+    }
+
     if (filters.estFavori !== undefined) {
       whereConditions.push(
         eq(indicateurCollectiviteTable.favoris, filters.estFavori)
@@ -698,10 +713,11 @@ export class ListIndicateursRepository {
         estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
 
         // Columns from indicateurCollectiviteTable
-        ...indicateurCollectivitePeriodiciteSelection,
+        ...indicateurDefinitionPeriodiciteSelection,
         commentaire: indicateurCollectiviteTable.commentaire,
         estConfidentiel: sql<boolean>`${indicateurCollectiviteTable.confidentiel} is true`,
         estFavori: indicateurCollectiviteTable.favoris,
+        isApplicable: sql<boolean>`coalesce(${indicateurCollectiviteTable.isApplicable}, true)`,
         modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`
         ),

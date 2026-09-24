@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Démarre la version "build" de app, backend & panier pour
+# Démarre la version "build" de app & backend pour
 # pouvoir lancer les tests e2e localement.
 # Nécessite que le build ait été effectué au préalable avec :
-# `pnpm nx run-many -t build -p app backend panier`
+# `pnpm nx run-many -t build -p app backend`
 
 LOG_DIR=$1
 if [ -z "$LOG_DIR" ]; then
@@ -40,12 +40,8 @@ APP_PID=$PID
 startBackApp backend 8080
 BACK_PID=$PID
 
-startFrontApp panier 3002
-PANIER_PID=$PID
-
 waitForURL http://localhost:3000
 waitForURL http://localhost:8080/api-docs/v1
-waitForURL http://localhost:3002/landing
 
 echo ""
 echo "Ready!"
@@ -53,4 +49,3 @@ echo "Press CTRL+C to stop apps..."
 read -r -s -d ''
 kill "$APP_PID"
 kill "$BACK_PID"
-kill "$PANIER_PID"

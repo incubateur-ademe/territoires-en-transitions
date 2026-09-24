@@ -1,7 +1,7 @@
+import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import {
   assertAnnualIndicateurPeriodicite,
   toAnnualIndicateurYear,
-  type IndicateurDefinition,
   type IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import type { IndicateurTableRow } from '../../../../indicateurs/valeurs/grid/types';
@@ -10,7 +10,10 @@ import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
 export const buildDiagnosticIndicateurTableRows = (
   table: DiagnosticIndicateurTable
 ): IndicateurTableRow[] => {
-  const definitionByIdentifiant = new Map<string, IndicateurDefinition>();
+  const definitionByIdentifiant = new Map<
+    string,
+    PcaetDiagnosticIndicateurDefinition
+  >();
   for (const definition of table.indicateurDefinitions) {
     assertAnnualIndicateurPeriodicite(
       definition.periodicite,
@@ -41,7 +44,7 @@ export const buildDiagnosticIndicateurTableRows = (
     for (const valeur of valeursByIndicateurId.get(indicateurDefinition.id) ??
       []) {
       toAnnualIndicateurYear(
-        indicateurDefinition.periodicite,
+        valeur.periodicite,
         valeur.dateValeur,
         'Diagnostic PCAET'
       );
@@ -54,6 +57,7 @@ export const buildDiagnosticIndicateurTableRows = (
           valeursByIndicateurId.get(indicateurDefinition.id) ?? [],
         indicateurLabel: row.label,
         optionalYears: row.optionalYears,
+        isApplicable: indicateurDefinition.isApplicable,
       },
     ];
   });

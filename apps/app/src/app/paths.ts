@@ -108,6 +108,7 @@ export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
 export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
+export const collectivitePriorisationPath = `${collectivitePath}/priorisation`;
 export const collectiviteModifierPath = `${collectivitePath}/modifier`;
 export const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
 
@@ -180,6 +181,25 @@ export const makeDossierInstructionUrl = ({
   dossierInstructionPath
     .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
     .replace(`:${demandeAvisParam}`, demandeAvisId.toString());
+
+/**
+ * Le même dossier, désigné par sa démarche : un dépôt en élaboration n'a saisi
+ * personne, il n'a pas de saisine à mettre dans l'URL. Le segment `demarche`
+ * le distingue de la route par saisine, qui garde son URL — les emails y
+ * mènent.
+ */
+const demarcheInstructionPath = `${collectivitePath}/instruction/demarche/:${demarcheIdParam}`;
+
+export const makeDemarcheInstructionUrl = ({
+  collectiviteInstruiteId,
+  demarcheId,
+}: {
+  collectiviteInstruiteId: number;
+  demarcheId: number;
+}) =>
+  demarcheInstructionPath
+    .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
 export type TDBViewId = 'synthetique' | 'personnel';
 
@@ -272,6 +292,16 @@ export const makeCollectiviteTrajectoirelUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteTrajectoirePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectivitePriorisationUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}): string =>
+  collectivitePriorisationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
@@ -608,18 +638,3 @@ export const makeCollectiviteAffichageReferentielsUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeCollectivitePanierUrl = ({
-  collectiviteId,
-  panierId,
-}: {
-  collectiviteId?: number | null;
-  panierId?: string;
-}) => {
-  const PANIER_URL = process.env.NEXT_PUBLIC_PANIER_URL;
-  return panierId
-    ? `${PANIER_URL}/panier/${panierId}`
-    : collectiviteId
-    ? `${PANIER_URL}/landing/collectivite/${collectiviteId}`
-    : `${PANIER_URL}/landing`;
-};

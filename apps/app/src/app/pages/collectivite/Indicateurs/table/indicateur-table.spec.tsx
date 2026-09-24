@@ -6,6 +6,7 @@ import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { IndicateurTable } from './indicateur-table';
 
 vi.mock('@tet/ui', () => ({
+  Alert: ({ description }: { description: string }) => <p>{description}</p>,
   Button: ({
     children,
     onClick,
@@ -53,8 +54,18 @@ vi.mock('./edit-valeurs-modal', () => ({
 }));
 
 vi.mock('./indicateur-valeurs-table', () => ({
-  IndicateurValeursTable: ({ type }: { type: string }) => (
-    <div data-testid="rendered-value-type" data-value={type} />
+  IndicateurValeursTable: ({
+    type,
+    readonly,
+  }: {
+    type: string;
+    readonly?: boolean;
+  }) => (
+    <div
+      data-testid="rendered-value-type"
+      data-value={type}
+      data-readonly={Boolean(readonly)}
+    />
   ),
 }));
 
@@ -134,6 +145,24 @@ describe('IndicateurTable', () => {
 
     fireEvent.click(screen.getByTestId('open-editor'));
 
+    expect(screen.queryByTestId('close-editor')).not.toBeNull();
+  });
+  it('affiche les agrégats en lecture seule tout en gardant la déclaration accessible', () => {
+    const chartInfo = {
+      ...makeChartInfo(),
+      periodiciteAffichage: 'annuelle' as const,
+    };
+    render(
+      <IndicateurTable
+        chartInfo={chartInfo}
+        collectiviteId={42}
+        definition={{ ...definition, periodicite: 'mensuelle' }}
+      />
+    );
+    expect(
+      screen.getByTestId('rendered-value-type').getAttribute('data-readonly')
+    ).toBe('true');
+    fireEvent.click(screen.getByTestId('open-editor'));
     expect(screen.queryByTestId('close-editor')).not.toBeNull();
   });
 });

@@ -78,11 +78,8 @@ const anneesDifferentesSelectionnees = (
   typeScore: ScoreIndicatifType
 ) =>
   uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (valeur) => {
-    const periodicite = scoreIndicatif.indicateurs.find(
-      ({ indicateurId }) => indicateurId === valeur.indicateurId
-    )?.periodicite;
     return toAnnualIndicateurYear(
-      periodicite,
+      'annuelle',
       valeur.dateValeur,
       `Le score indicatif (${valeur.indicateurId})`
     );
@@ -164,13 +161,13 @@ const ScoreIndicatifModalIndicateurCard = (
     idx: number;
     indicateur: Pick<
       ScoreIndicatifValeursIndicateur,
-      'indicateurId' | 'titre' | 'unite' | 'periodicite'
+      'indicateurId' | 'titre' | 'unite'
     >;
     onSelect: (index: number) => void;
   }
 ) => {
   const { scoreIndicatif, idx, indicateur, onSelect } = props;
-  const { indicateurId, titre, unite, periodicite } = indicateur;
+  const { indicateurId, titre, unite } = indicateur;
   const { data: valeurUtilisees } = useGetValeursUtilisees(
     scoreIndicatif.actionId,
     indicateurId
@@ -188,7 +185,6 @@ const ScoreIndicatifModalIndicateurCard = (
             indicateurId={indicateurId}
             unite={unite}
             valeurUtilisees={valeurUtilisees}
-            periodicite={periodicite}
             typeScore="fait"
           />
         </li>
@@ -197,7 +193,6 @@ const ScoreIndicatifModalIndicateurCard = (
             indicateurId={indicateurId}
             unite={unite}
             valeurUtilisees={valeurUtilisees}
-            periodicite={periodicite}
             typeScore="programme"
           />
         </li>

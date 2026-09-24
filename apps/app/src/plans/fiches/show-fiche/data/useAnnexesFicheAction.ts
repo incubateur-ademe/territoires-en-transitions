@@ -1,5 +1,5 @@
-import { toDocumentCollectivite } from '@/app/referentiels/preuves/Bibliotheque/to-document-collectivite.utils';
-import { DocumentAnnexe } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { toDocumentCollectivite } from '@/app/collectivites/documents/bibliotheque/to-document-collectivite.utils';
+import { DocumentAnnexe } from '@/app/collectivites/documents/bibliotheque/types';
 import { StoredFile } from '@tet/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
@@ -17,6 +17,20 @@ vi.mock(
   () => ({
     useUpdateDiagnosticIndicateursValeurs: () => ({
       updateIndicateurValeurs: vi.fn().mockResolvedValue(undefined),
+      isPending: false,
+    }),
+  })
+);
+
+const { setIndicateurApplicable } = vi.hoisted(() => ({
+  setIndicateurApplicable: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock(
+  '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable',
+  () => ({
+    useSetIndicateurApplicable: () => ({
+      setIndicateurApplicable,
       isPending: false,
     }),
   })
@@ -155,5 +169,66 @@ describe('IndicateurValeursTable lignes', () => {
 
     expect(screen.getByText('Profil énergie CLIMAT')).toBeDefined();
     expect(screen.getByText(/kteq CO2/)).toBeDefined();
+  });
+});
+
+describe('IndicateurValeursTable applicabilité', () => {
+  beforeEach(() => {
+    setIndicateurApplicable.mockClear();
+  });
+
+  const ligneNonApplicable: IndicateurTableRow[] = [
+    fakeRow({
+      indicateurId: 42,
+      indicateurLabel: 'Branche énergie',
+      isApplicable: false,
+    }),
+  ];
+
+  it('remplace les valeurs par N/A sur une ligne non applicable', () => {
+    renderGrid({ rows: ligneNonApplicable });
+
+    expect(
+      screen.getAllByText(appLabels.pcaetDiagnosticValeurNonApplicable).length
+    ).toBeGreaterThan(0);
+  });
+
+  const TOGGLE_SELECTOR = '[data-test="indicateurs.grid.toggle-applicable"]';
+
+  it('propose la bascule quand la grille est saisissable, pas en lecture seule', () => {
+    const saisissable = renderGrid({ rows: ligneNonApplicable });
+    expect(saisissable.container.querySelector(TOGGLE_SELECTOR)).not.toBeNull();
+    saisissable.unmount();
+
+    const lectureSeule = renderGrid({
+      rows: ligneNonApplicable,
+      isReadonly: true,
+    });
+    expect(lectureSeule.container.querySelector(TOGGLE_SELECTOR)).toBeNull();
+  });
+
+  it('nomme la bascule : le Tooltip seul ne lui donnerait pas de libellé', () => {
+    renderGrid({ rows: ligneNonApplicable });
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: appLabels.pcaetDiagnosticIndicateurNonApplicable,
+      })
+    ).toBeDefined();
+  });
+
+  it('bascule une ligne non applicable vers applicable', () => {
+    renderGrid({ rows: ligneNonApplicable });
+
+    fireEvent.click(
+      screen.getByRole('checkbox', {
+        name: appLabels.pcaetDiagnosticIndicateurNonApplicable,
+      })
+    );
+
+    expect(setIndicateurApplicable).toHaveBeenCalledWith({
+      indicateurId: 42,
+      isApplicable: true,
+    });
   });
 });

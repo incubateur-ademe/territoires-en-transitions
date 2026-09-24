@@ -5,9 +5,11 @@ import {
 } from './indicateur-period-presentation';
 
 describe('options de périodicité des indicateurs', () => {
-  it('propose les périodicités annuelle et mensuelle pour toutes les collectivités', () => {
+  it('propose les quatre périodicités pour toutes les collectivités', () => {
     expect(INDICATEUR_PERIODICITE_OPTIONS.map(({ value }) => value)).toEqual([
       'annuelle',
+      'semestrielle',
+      'trimestrielle',
       'mensuelle',
     ]);
   });
@@ -46,12 +48,12 @@ describe('axe temporel des indicateurs', () => {
     expect(makeIndicateurPeriodTimeAxis('mensuelle').useUTC).toBe(true);
   });
 
-  it('affiche des repères annuels et conserve le mois de la valeur au survol', () => {
+  it('affiche la période annuelle agrégée dans les graduations et au survol', () => {
     const timeAxis = makeIndicateurPeriodTimeAxis('mensuelle', 'annuelle');
     const february = Date.UTC(2026, 1, 1);
 
     expect(timeAxis.formatter?.(february)).toBe('2026');
-    expect(timeAxis.axisPointerFormatter?.(february)).toBe('février 2026');
+    expect(timeAxis.axisPointerFormatter?.(february)).toBe('2026');
   });
 
   it('refuse un affichage plus fin que la déclaration', () => {

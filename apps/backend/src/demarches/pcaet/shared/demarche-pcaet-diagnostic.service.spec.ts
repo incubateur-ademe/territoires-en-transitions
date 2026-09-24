@@ -1,4 +1,3 @@
-import { IndicateurPeriodErrorEnum } from '@tet/domain/indicateurs';
 import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
 
 describe('DemarchePcaetDiagnosticService', () => {
@@ -8,10 +7,16 @@ describe('DemarchePcaetDiagnosticService', () => {
   ) => {
     const valeurs = { getIndicateursValeurs: vi.fn().mockResolvedValue([]) };
     const definitions = {
-      listPlatformDefinitions: vi.fn().mockResolvedValue({
-        success: true,
-        data: [{ id: 7, identifiantReferentiel: 'cae_1.c', periodicite }],
-      }),
+      listPlatformDefinitionsForCollectivite: vi
+        .fn()
+        .mockResolvedValue([
+          {
+            id: 7,
+            identifiantReferentiel: 'cae_1.c',
+            periodicite,
+            isApplicable: true,
+          },
+        ]),
     };
     const metadata = {
       findMetadonneeId: vi.fn().mockResolvedValue(metadonneeId),
@@ -29,12 +34,23 @@ describe('DemarchePcaetDiagnosticService', () => {
     return { service, valeurs, metadata };
   };
 
-  it('refuse un indicateur mensuel dans le diagnostic annuel', async () => {
-    const { service } = setup('mensuelle');
-    await expect(
-      service.loadPayload({ demarcheId: 3, collectiviteId: 42 })
-    ).rejects.toThrow(
-      IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
+  it('sélectionne les observations annuelles indépendamment de la cadence de déclaration', async () => {
+    const { service, valeurs } = setup('mensuelle');
+    const result = await service.loadPayload({
+      demarcheId: 3,
+      collectiviteId: 42,
+    });
+    expect(result.indicateurDefinitions).toEqual([
+      expect.objectContaining({
+        id: 7,
+        periodicite: 'mensuelle',
+        isApplicable: true,
+      }),
+    ]);
+    expect(valeurs.getIndicateursValeurs).toHaveBeenCalledWith(
+      expect.objectContaining({ periodicite: 'annuelle' }),
+      undefined,
+      undefined
     );
   });
 

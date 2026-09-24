@@ -16,6 +16,7 @@ const indicateurAssocie: IndicateurAssocie = {
   titre: 'Indicateur de test',
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
   unite: '%',
+  isApplicable: true,
 };
 
 function buildValeursGroupees(
@@ -76,6 +77,18 @@ describe('valeurs-utilisables.rules', () => {
       ).toThrow(
         IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
       );
+    });
+
+    it('consulte la série annuelle d’un indicateur déclaré mensuellement', () => {
+      const result = mapIndicateurToValeurUtilisable(
+        { ...indicateurAssocie, periodicite: 'mensuelle' },
+        buildValeursGroupees(),
+        []
+      );
+      expect(result?.periodicite).toBe('annuelle');
+      expect(result?.sources[0].fait).toMatchObject([
+        { annee: 2023, valeur: 10 },
+      ]);
     });
 
     it('marque la valeur utilisée dans la sélection "fait"', () => {

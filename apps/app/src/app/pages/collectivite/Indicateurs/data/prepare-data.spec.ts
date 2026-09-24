@@ -165,6 +165,7 @@ describe('prepareData', () => {
         periode: IndicateurPeriods.parse('annuelle', '2020'),
         periodeLabel: '2020',
         collectiviteId: 1,
+        periodicite: 'annuelle',
         dateValeur: '2020-01-01',
         id: 1,
         objectif: 21,
@@ -175,6 +176,7 @@ describe('prepareData', () => {
         periode: IndicateurPeriods.parse('annuelle', '2021'),
         periodeLabel: '2021',
         collectiviteId: 1,
+        periodicite: 'annuelle',
         dateValeur: '2021-01-01',
         id: 2,
         objectif: 13,
@@ -190,11 +192,13 @@ describe('prepareData', () => {
     monthly.sources.collectivite.valeurs = [
       {
         ...monthly.sources.collectivite.valeurs[0],
+        periodicite: 'mensuelle',
         dateValeur: '2026-01-01',
         resultat: 0,
       },
       {
         ...monthly.sources.collectivite.valeurs[1],
+        periodicite: 'mensuelle',
         dateValeur: '2026-02-01',
         resultat: 2,
       },
@@ -247,5 +251,76 @@ describe('prepareData', () => {
 
     expect(resultats.sources).toContain(moyenne);
     expect(resultats.periodes).toContainEqual(period);
+  });
+  test('agrège les mois pour la consultation et conserve les commentaires et données de déclaration', () => {
+    const monthly = structuredClone(fixture.indicateurs[0]);
+    monthly.definition.periodicite = 'mensuelle';
+    const valeurs = Array.from({ length: 12 }, (_, index) => ({
+      ...monthly.sources.collectivite.valeurs[0],
+      id: index + 1,
+      periodicite: 'mensuelle' as const,
+      dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+      resultat: 10,
+      resultatCommentaire: index === 0 ? 'Relevé de janvier' : null,
+    }));
+    monthly.sources = {
+      collectivite: { ...monthly.sources.collectivite, valeurs },
+    };
+    const displayed = prepareData(monthly, 'resultat', false, [], {
+      periodiciteAffichage: 'annuelle',
+      aggregationResultat: 'somme',
+    });
+    expect(displayed.donneesCollectivite?.valeurs).toEqual([
+      expect.objectContaining({
+        valeur: 120,
+        isAggregated: true,
+        commentaire: 'janvier 2026 : Relevé de janvier',
+        valeursSources: valeurs,
+      }),
+    ]);
+    expect(displayed.valeursExistantes).toHaveLength(12);
+    expect(
+      displayed.valeursExistantes.every((value) => value.resultat === 10)
+    ).toBe(true);
+    expect(monthly.sources.collectivite.valeurs).toEqual(valeurs);
+  });
+
+  test('sépare la série annuelle de l’agrégation annuelle d’une série mensuelle', () => {
+    const mixed = structuredClone(fixture.indicateurs[0]);
+    mixed.definition.periodicite = 'mensuelle';
+    const original = mixed.sources.collectivite.valeurs[0];
+    const monthly = Array.from({ length: 12 }, (_, index) => ({
+      ...original,
+      periodicite: 'mensuelle' as const,
+      dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+      resultat: 10,
+    }));
+    mixed.sources = {
+      collectivite: {
+        ...mixed.sources.collectivite,
+        valeurs: [
+          ...monthly,
+          {
+            ...original,
+            periodicite: 'annuelle',
+            dateValeur: '2026-01-01',
+            resultat: 900,
+          },
+        ],
+      },
+    };
+    const displayed = prepareData(mixed, 'resultat', false, [], {
+      periodiciteAffichage: 'annuelle',
+      aggregationResultat: 'somme',
+    });
+    expect(displayed.sources).toHaveLength(2);
+    expect(
+      new Set(displayed.sources.map((source) => source.seriesKey)).size
+    ).toBe(2);
+    expect(
+      displayed.sources.flatMap((source) =>
+        source.valeurs.map((value) => value.valeur)
+      )
+    ).toEqual(expect.arrayContaining([900, 120]));
   });
 });

@@ -5,12 +5,13 @@ import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu, AnalysisStep } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray, lt, sql } from 'drizzle-orm';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { and, desc, eq, inArray, lt, sql } from 'drizzle-orm';
 import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
 } from './analysis-job.errors';
-import { ClassificationDraft } from './models/classification-draft';
+import { ClassificationReport } from './models/classification-report';
 import {
   AnalysisJob,
   analysisJobInFlightStatuses,
@@ -23,8 +24,9 @@ import {
   inFlightStatusPredicate,
 } from './models/analysis-job.table';
 
-const STALE_JOB_ERROR_MESSAGE =
-  'Job abandonné : aucune progression depuis plus de trente minutes';
+const STALE_JOB_ERROR_MESSAGE = `Job abandonné : aucune progression depuis plus de ${
+  IN_FLIGHT_LEASE_MS / 60_000
+} minutes`;
 
 const progressProjection = {
   id: analysisJobTable.id,
@@ -34,15 +36,17 @@ const progressProjection = {
   status: analysisJobTable.status,
   processedBatches: analysisJobTable.processedBatches,
   totalBatches: analysisJobTable.totalBatches,
-  draft: analysisJobTable.draft,
+  report: analysisJobTable.report,
   error: analysisJobTable.error,
+  createdAt: sqlToDateTimeISO(analysisJobTable.createdAt),
+  modifiedAt: sqlToDateTimeISO(analysisJobTable.modifiedAt),
 };
 
-export type ClassificationProgress = {
+export type AnalysisProgress = {
   [K in keyof typeof progressProjection]: AnalysisJob[K];
 };
 
-export type CreateClassificationJobInput = {
+type CreateAnalysisJobInput = {
   collectiviteId: number;
   enjeu: Enjeu;
   etape: AnalysisStep;
@@ -57,7 +61,7 @@ export class AnalysisJobRepository {
   constructor(private readonly database: DatabaseService) {}
 
   async createUnlessInFlight(
-    input: CreateClassificationJobInput
+    input: CreateAnalysisJobInput
   ): Promise<Result<AnalysisJob, AnalysisJobError>> {
     try {
       const job = await this.insertUnlessInFlight(input);
@@ -77,15 +81,13 @@ export class AnalysisJobRepository {
 
       return success(jobAfterExpiry);
     } catch (error) {
-      this.logger.error(
-        `Création du job de classification: ${getErrorMessage(error)}`
-      );
+      this.logger.error(`Création du job d'analyse: ${getErrorMessage(error)}`);
       return failure(AnalysisJobErrorEnum.CREATE_JOB_ERROR);
     }
   }
 
   private async insertUnlessInFlight(
-    input: CreateClassificationJobInput
+    input: CreateAnalysisJobInput
   ): Promise<AnalysisJob | undefined> {
     const [job] = await this.db
       .insert(analysisJobTable)
@@ -108,7 +110,7 @@ export class AnalysisJobRepository {
   private async expireStaleInFlight({
     collectiviteId,
     enjeu,
-  }: CreateClassificationJobInput): Promise<boolean> {
+  }: CreateAnalysisJobInput): Promise<boolean> {
     const expiredJobs = await this.db
       .update(analysisJobTable)
       .set({
@@ -147,30 +149,38 @@ export class AnalysisJobRepository {
       return success(job);
     } catch (error) {
       this.logger.error(
-        `Lecture du job de classification ${id}: ${getErrorMessage(error)}`
+        `Lecture du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
       return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
     }
   }
 
-  async getProgressById(
-    id: string
-  ): Promise<Result<ClassificationProgress, AnalysisJobError>> {
+  async getLastProgressOf({
+    collectiviteId,
+    enjeu,
+  }: {
+    collectiviteId: number;
+    enjeu: Enjeu;
+  }): Promise<Result<AnalysisProgress | undefined, AnalysisJobError>> {
     try {
       const [progress] = await this.db
         .select(progressProjection)
         .from(analysisJobTable)
-        .where(eq(analysisJobTable.id, id))
+        .where(
+          and(
+            eq(analysisJobTable.collectiviteId, collectiviteId),
+            eq(analysisJobTable.enjeu, enjeu)
+          )
+        )
+        .orderBy(desc(analysisJobTable.createdAt))
         .limit(1);
-
-      if (!progress) {
-        return failure(AnalysisJobErrorEnum.JOB_NOT_FOUND);
-      }
 
       return success(progress);
     } catch (error) {
       this.logger.error(
-        `Lecture de la progression du job ${id}: ${getErrorMessage(error)}`
+        `Lecture de la dernière analyse de la collectivité ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
       );
       return failure(AnalysisJobErrorEnum.GET_JOB_ERROR);
     }
@@ -217,7 +227,7 @@ export class AnalysisJobRepository {
         );
     } catch (error) {
       this.logger.error(
-        `Progression du job de classification ${id}: ${getErrorMessage(error)}`
+        `Progression du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
     }
   }
@@ -239,41 +249,64 @@ export class AnalysisJobRepository {
         );
     } catch (error) {
       this.logger.error(
-        `Progression du job de classification ${id}: ${getErrorMessage(error)}`
+        `Progression du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
     }
   }
 
-  async recordClassificationDraft({
+  async addTokenUsage(id: string, spentTokens: TokenUsage): Promise<void> {
+    const toAccumulated = (field: keyof TokenUsage) =>
+      sql`coalesce((${analysisJobTable.tokenUsage} ->> ${field})::bigint, 0) + ${spentTokens[field]}`;
+
+    try {
+      await this.db
+        .update(analysisJobTable)
+        .set({
+          tokenUsage: sql`jsonb_build_object(
+            'promptTokens', ${toAccumulated('promptTokens')},
+            'cachedTokens', ${toAccumulated('cachedTokens')},
+            'candidatesTokens', ${toAccumulated('candidatesTokens')},
+            'thoughtsTokens', ${toAccumulated('thoughtsTokens')},
+            'totalTokens', ${toAccumulated('totalTokens')}
+          )`,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(analysisJobTable.id, id));
+    } catch (error) {
+      this.logger.error(
+        `Jetons consommés par le job ${id}: ${getErrorMessage(error)}`
+      );
+    }
+  }
+
+  async recordClassificationReport({
     id,
-    draft,
+    report,
     tx,
   }: {
     id: string;
-    draft: ClassificationDraft;
+    report: ClassificationReport;
     tx?: Transaction;
   }): Promise<Result<void, AnalysisJobError>> {
     return this.transition({
       id,
       allowedFromStatuses: [AnalysisJobStatusEnum.RUNNING],
-      values: { draft },
+      values: { report },
       tx,
     });
   }
 
   async markDone({
     id,
-    tokenUsage,
     tx,
   }: {
     id: string;
-    tokenUsage: TokenUsage;
     tx?: Transaction;
   }): Promise<Result<void, AnalysisJobError>> {
     return this.transition({
       id,
       allowedFromStatuses: [AnalysisJobStatusEnum.RUNNING],
-      values: { status: AnalysisJobStatusEnum.DONE, tokenUsage },
+      values: { status: AnalysisJobStatusEnum.DONE },
       tx,
     });
   }
@@ -319,7 +352,7 @@ export class AnalysisJobRepository {
       return success(undefined);
     } catch (error) {
       this.logger.error(
-        `Mise à jour du job de classification ${id}: ${getErrorMessage(error)}`
+        `Mise à jour du job d'analyse ${id}: ${getErrorMessage(error)}`
       );
       return failure(AnalysisJobErrorEnum.UPDATE_JOB_ERROR);
     }

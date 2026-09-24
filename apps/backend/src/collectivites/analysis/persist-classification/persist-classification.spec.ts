@@ -1,13 +1,10 @@
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
-import { ClassifyBatchOutcome } from '../classify-batch/classify-batch.service';
 import { AnalysisJob, AnalysisJobStatusEnum } from '../models/analysis-job';
+import { ClassificationOutcome } from '../models/classification-outcome';
 import { VoletErrorEnum, type VoletError } from '../volet.errors';
-import {
-  PersistClassificationService,
-  toClassificationOutcome,
-} from './persist-classification.service';
+import { PersistClassificationService } from './persist-classification.service';
 
 const jobId = '00000000-0000-0000-0000-000000000001';
 const collectiviteId = 7;
@@ -22,24 +19,16 @@ const job: AnalysisJob = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 0,
   totalBatches: 2,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',
   modifiedAt: '2026-09-15T00:00:00Z',
 };
 
-const toTokens = (promptTokens: number) => ({
-  promptTokens,
-  cachedTokens: 0,
-  candidatesTokens: 1,
-  thoughtsTokens: 0,
-  totalTokens: promptTokens + 1,
-});
-
-const classifications: ClassifyBatchOutcome[] = [
-  {
-    classified: [
+const outcome: ClassificationOutcome = {
+  report: {
+    fiches: [
       {
         ficheId: 1,
         justification: 'Piste cyclable protégée',
@@ -53,114 +42,80 @@ const classifications: ClassifyBatchOutcome[] = [
         volets: [],
       },
     ],
-    sources: [
-      { ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' },
-      { ficheId: 2, titre: 'Bulletin municipal', description: null },
-    ],
-    tokens: toTokens(10),
   },
-  {
-    classified: [],
-    sources: [],
-    tokens: toTokens(20),
-  },
-];
+  fiches: [
+    { ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' },
+    { ficheId: 2, titre: 'Bulletin municipal', description: null },
+  ],
+  volets: [{ ficheId: 1, levierId: 'covoiturage', categorie: 'amenagement' }],
+};
 
 const toDependencies = ({
   saveOutcome = success(undefined) as Result<undefined, VoletError>,
 } = {}) => {
   const jobRepository = {
-    recordClassificationDraft: vi.fn().mockResolvedValue(success(undefined)),
+    recordClassificationReport: vi.fn().mockResolvedValue(success(undefined)),
   };
   const ficheActionVoletGesRepository = {
     saveVolets: vi.fn().mockResolvedValue(saveOutcome),
   };
+  const enjeuRepositories = {
+    voletsOf: () => ficheActionVoletGesRepository,
+  };
 
   const service = new PersistClassificationService(
     jobRepository as never,
-    ficheActionVoletGesRepository as never
+    enjeuRepositories as never
   );
 
   return { service, jobRepository, ficheActionVoletGesRepository };
 };
 
-describe('toClassificationOutcome', () => {
-  it('traduit les leviers nommes en identifiants pour la mobilisation', () => {
-    expect(toClassificationOutcome(classifications).volets).toEqual([
-      { ficheId: 1, levierId: 'covoiturage', categorie: 'amenagement' },
-    ]);
-  });
-
-  it('additionne les jetons de toutes les fiches classees', () => {
-    expect(toClassificationOutcome(classifications).tokens.promptTokens).toBe(
-      30
-    );
-  });
-
-  it('rend les fiches sources pour que la mobilisation nourrisse son prompt', () => {
-    expect(toClassificationOutcome(classifications).fiches).toEqual([
-      { ficheId: 1, titre: 'Pistes cyclables', description: 'Dix km' },
-      { ficheId: 2, titre: 'Bulletin municipal', description: null },
-    ]);
-  });
-
-  it("n'ecrit rien par lui-meme", () => {
-    const { ficheActionVoletGesRepository, jobRepository } = toDependencies();
-
-    toClassificationOutcome(classifications);
-
-    expect({
-      saveCalls: ficheActionVoletGesRepository.saveVolets.mock.calls.length,
-      draftCalls: jobRepository.recordClassificationDraft.mock.calls.length,
-    }).toEqual({ saveCalls: 0, draftCalls: 0 });
-  });
-});
-
 describe('PersistClassificationService.persist', () => {
-  it('ecrit les volets et le brouillon dans la transaction recue', async () => {
+  it('ecrit les volets et le compte rendu dans la transaction recue', async () => {
     const { service, jobRepository, ficheActionVoletGesRepository } =
       toDependencies();
 
     const result = await service.persist({
       job,
-      outcome: toClassificationOutcome(classifications),
+      outcome,
       tx: transaction,
     });
 
     const [saveArgs] = ficheActionVoletGesRepository.saveVolets.mock.calls[0];
-    const [draftArgs] = jobRepository.recordClassificationDraft.mock.calls[0];
+    const [reportArgs] = jobRepository.recordClassificationReport.mock.calls[0];
 
     expect({
       success: result.success,
       saveTransaction: saveArgs.tx,
-      draftTransaction: draftArgs.tx,
+      reportTransaction: reportArgs.tx,
     }).toEqual({
       success: true,
       saveTransaction: transaction,
-      draftTransaction: transaction,
+      reportTransaction: transaction,
     });
   });
 
-  it("n'enregistre pas le brouillon quand l'ecriture des volets echoue", async () => {
+  it("n'enregistre pas le compte rendu quand l'ecriture des volets echoue", async () => {
     const { service, jobRepository } = toDependencies({
       saveOutcome: failure(VoletErrorEnum.SAVE_VOLETS_ERROR),
     });
 
     const result = await service.persist({
       job,
-      outcome: toClassificationOutcome(classifications),
+      outcome,
       tx: transaction,
     });
 
     expect({
       failure: result.success ? undefined : result.error,
-      draftCalls: jobRepository.recordClassificationDraft.mock.calls.length,
+      reportCalls: jobRepository.recordClassificationReport.mock.calls.length,
     }).toEqual({
       failure: {
         step: 'save_volets',
         cause: VoletErrorEnum.SAVE_VOLETS_ERROR,
       },
-      draftCalls: 0,
+      reportCalls: 0,
     });
   });
 });

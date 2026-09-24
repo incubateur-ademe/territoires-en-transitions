@@ -49,6 +49,18 @@ const periodStrategies = Object.freeze({
     anchorDate: '2000-01-01',
     serialization: 'year',
   }),
+  [IndicateurPeriodiciteEnum.SEMESTRIELLE]: createCalendarMonthStrategy({
+    periodicite: IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    monthsPerPeriod: 6,
+    anchorDate: '2000-01-01',
+    serialization: 'year-semester',
+  }),
+  [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: createCalendarMonthStrategy({
+    periodicite: IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    monthsPerPeriod: 3,
+    anchorDate: '2000-01-01',
+    serialization: 'year-quarter',
+  }),
   [IndicateurPeriodiciteEnum.MENSUELLE]: createCalendarMonthStrategy({
     periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
     monthsPerPeriod: 1,

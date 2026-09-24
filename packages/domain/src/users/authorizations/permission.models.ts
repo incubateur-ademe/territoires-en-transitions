@@ -60,6 +60,7 @@ const collectiviteAdminPermissions: readonly PermissionOperation[] = [
   ...collectiviteEditionPermissions,
 
   'collectivites.membres.mutate',
+  'collectivites.pertinence-leviers.mutate',
 ];
 
 export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {

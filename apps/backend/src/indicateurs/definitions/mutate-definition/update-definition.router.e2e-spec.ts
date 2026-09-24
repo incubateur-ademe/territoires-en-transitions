@@ -1,4 +1,3 @@
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { INestApplication } from '@nestjs/common';
 import {
   createPersonneTag,
@@ -21,6 +20,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, onTestFinished, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 
@@ -145,40 +145,30 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       expect(dbIndicateur[0].unite).toBe(updateData.indicateurFields.unite);
     });
 
-    test('should update periodicite before the first value', async () => {
+    test('rejects a periodicity change before the first value', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const indicateurId = await createIndicateurPerso({
         caller,
         indicateurData: {
           collectiviteId: collectivite.id,
-          titre: 'Test Personal Indicator Periodicite',
+          titre: 'Fixed declaration cadence',
         },
       });
-
-      await caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: collectivite.id,
-        indicateurFields: { periodicite: 'mensuelle' },
-      });
-
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: { periodicite: 'mensuelle' } as never,
+        })
+      ).rejects.toThrow();
       const [definition] = await databaseService.db
         .select()
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
-      expect(definition?.periodicite).toBe('annuelle');
-      const [preference] = await databaseService.db
-        .select()
-        .from(indicateurCollectiviteTable)
-        .where(
-          and(
-            eq(indicateurCollectiviteTable.indicateurId, indicateurId),
-            eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
-          )
-        );
-      expect(preference?.periodicite).toBe('mensuelle');
+      expect(definition.periodicite).toBe('annuelle');
     });
 
-    test('should atomically update periodicite, fiches and thematiques', async () => {
+    test('should atomically update fiches and thematiques', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -203,7 +193,6 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         indicateurId,
         collectiviteId: collectivite.id,
         indicateurFields: {
-          periodicite: 'mensuelle',
           ficheIds: [ficheId],
           thematiques: [{ id: thematique.id }],
         },
@@ -220,7 +209,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         filters: { indicateurIds: [indicateurId] },
       });
 
-      expect(updatedIndicateur?.periodicite).toBe('mensuelle');
+      expect(updatedIndicateur?.periodicite).toBe('annuelle');
       expect(updatedIndicateur?.thematiques).toContainEqual(
         expect.objectContaining({ id: thematique.id })
       );
@@ -269,7 +258,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         restrictedApiKeyCaller.indicateurs.indicateurs.update({
           indicateurId,
           collectiviteId: collectivite.id,
-          indicateurFields: { periodicite: 'mensuelle' },
+          indicateurFields: { commentaire: 'Updated by the pilot' },
         })
       ).rejects.toThrow(/clé d'api.*indicateurs\.indicateurs\.update/i);
 
@@ -283,7 +272,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       await humanPilotCaller.indicateurs.indicateurs.update({
         indicateurId,
         collectiviteId: collectivite.id,
-        indicateurFields: { periodicite: 'mensuelle' },
+        indicateurFields: { commentaire: 'Updated by the pilot' },
       });
 
       const [definitionAfterHumanUpdate] = await databaseService.db
@@ -297,112 +286,27 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         collectiviteId: collectivite.id,
         filters: { indicateurIds: [indicateurId] },
       });
-      expect(localDefinition.periodicite).toBe('mensuelle');
+      expect(localDefinition.commentaire).toBe('Updated by the pilot');
     });
 
-    test('preserves annual history when a recommendation is customized monthly', async () => {
+    test('rejects local values at a different cadence from the definition', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
-      const [definition] = await databaseService.db
-        .insert(indicateurDefinitionTable)
-        .values({
-          titre: 'Shared annual recommendation',
-          unite: 'kWh',
-          periodicite: 'annuelle',
-        })
-        .returning();
-      onTestFinished(async () => {
-        await databaseService.db
-          .delete(indicateurDefinitionTable)
-          .where(eq(indicateurDefinitionTable.id, definition.id));
-      });
-      const second = await addTestCollectiviteAndUser(databaseService, {
-        user: { role: CollectiviteRole.ADMIN },
-      });
-      const otherCaller = router.createCaller({
-        user: getAuthUserFromUserCredentials(second.user),
-      });
-      const indicateurId = definition.id;
-      await caller.indicateurs.valeurs.upsert({
-        collectiviteId: collectivite.id,
-        indicateurId,
-        dateValeur: '2026-01-01',
-        resultat: 120,
-      });
-      await caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: collectivite.id,
-        indicateurFields: { periodicite: 'mensuelle' },
-      });
-      await caller.indicateurs.valeurs.upsert({
-        collectiviteId: collectivite.id,
-        indicateurId,
-        periodicite: 'mensuelle',
-        dateValeur: '2026-01-01',
-        resultat: 10,
-      });
-      const local = await caller.indicateurs.valeurs.list({
-        collectiviteId: collectivite.id,
-        indicateurIds: [indicateurId],
-      });
-      expect(local.indicateurs[0].definition.periodicite).toBe('mensuelle');
-      expect(local.indicateurs[0].sources.collectivite.valeurs).toEqual([
-        expect.objectContaining({ periodicite: 'mensuelle', resultat: 10 }),
-      ]);
-      const {
-        data: [other],
-      } = await otherCaller.indicateurs.indicateurs.list({
-        collectiviteId: second.collectivite.id,
-        filters: { indicateurIds: [indicateurId] },
-      });
-      expect(other.periodicite).toBe('annuelle');
-      expect(other.periodiciteMode).toBe('recommandee');
-      expect(other.periodicitePersonnalisee).toBeNull();
-      await caller.indicateurs.indicateurs.update({
-        indicateurId,
-        collectiviteId: collectivite.id,
-        indicateurFields: { periodicite: null },
-      });
-      const annual = await caller.indicateurs.valeurs.list({
-        collectiviteId: collectivite.id,
-        indicateurIds: [indicateurId],
-      });
-      expect(annual.indicateurs[0].sources.collectivite.valeurs).toEqual([
-        expect.objectContaining({ periodicite: 'annuelle', resultat: 120 }),
-      ]);
-    });
-
-    test('rejects customization and incompatible writes for an imposed indicator', async () => {
-      const caller = router.createCaller({ user: authenticatedUser });
-      const [definition] = await databaseService.db
-        .insert(indicateurDefinitionTable)
-        .values({
-          titre: 'Imposed annual cadence',
-          unite: 'kWh',
-          periodicite: 'annuelle',
-          periodiciteMode: 'imposee',
-        })
-        .returning();
-      onTestFinished(async () => {
-        await databaseService.db
-          .delete(indicateurDefinitionTable)
-          .where(eq(indicateurDefinitionTable.id, definition.id));
-      });
-      await expect(
-        caller.indicateurs.indicateurs.update({
-          indicateurId: definition.id,
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
           collectiviteId: collectivite.id,
-          indicateurFields: { periodicite: 'mensuelle' },
-        })
-      ).rejects.toThrow(/imposée/);
+          titre: 'Fixed annual cadence',
+        },
+      });
       await expect(
         caller.indicateurs.valeurs.upsert({
-          indicateurId: definition.id,
+          indicateurId,
           collectiviteId: collectivite.id,
           periodicite: 'mensuelle',
           dateValeur: '2026-02-01',
           resultat: 10,
         })
-      ).rejects.toThrow(/imposée/);
+      ).rejects.toThrow(/périodicité de déclaration/);
     });
 
     test('should update multiple fields at once for perso indicator', async () => {
@@ -676,6 +580,176 @@ describe('UpdateIndicateurDefinitionRouter', () => {
           indicateurFields: { pilotes: [{ userId: otherUser.id }] },
         })
       ).rejects.toThrow(/pilotes doivent appartenir/i);
+    });
+  });
+
+  describe('applicabilité', () => {
+    const listIndicateur = async (
+      caller: ReturnType<typeof router.createCaller>,
+      indicateurId: number
+    ) => {
+      const {
+        data: [indicateur],
+      } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      return indicateur;
+    };
+
+    test('un indicateur sans ligne indicateur_collectivite est applicable', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      // Un prédéfini que la collectivité n'a jamais touché : c'est le seul cas
+      // où le LEFT JOIN rend `null`, celui que rattrape le `coalesce`.
+      // `createIndicateurPerso` poserait une ligne et masquerait ce chemin.
+      const [indicateurJamaisTouche] = await databaseService.db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(
+          and(
+            eq(indicateurDefinitionTable.identifiantReferentiel, 'cae_1.c'),
+            isNull(indicateurDefinitionTable.collectiviteId)
+          )
+        )
+        .limit(1);
+      expect(indicateurJamaisTouche).toBeDefined();
+
+      const lignes = await databaseService.db
+        .select()
+        .from(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(
+              indicateurCollectiviteTable.indicateurId,
+              indicateurJamaisTouche.id
+            ),
+            eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+          )
+        );
+      expect(lignes).toHaveLength(0);
+
+      expect(
+        (await listIndicateur(caller, indicateurJamaisTouche.id)).isApplicable
+      ).toBe(true);
+    });
+
+    test('se déclare non applicable, puis redevient applicable', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Bascule applicabilité',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: false },
+      });
+
+      expect((await listIndicateur(caller, indicateurId)).isApplicable).toBe(
+        false
+      );
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: true },
+      });
+
+      expect((await listIndicateur(caller, indicateurId)).isApplicable).toBe(
+        true
+      );
+    });
+
+    test('une mise à jour qui ne parle pas d’applicabilité ne la touche pas', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Applicabilité préservée',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: false },
+      });
+
+      // `estFavori` seul : le champ absent du payload ne doit pas être remis à
+      // sa valeur par défaut par l'upsert.
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { estFavori: true },
+      });
+
+      const indicateur = await listIndicateur(caller, indicateurId);
+      expect(indicateur.isApplicable).toBe(false);
+      expect(indicateur.estFavori).toBe(true);
+    });
+
+    test('le filtre isApplicable sépare les deux populations', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const nonApplicableId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Filtre — non applicable',
+        },
+      });
+      const applicableId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Filtre — applicable',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId: nonApplicableId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { isApplicable: false },
+      });
+
+      // La création insère toujours une ligne `indicateur_collectivite` : on la
+      // supprime pour retrouver le cas — majoritaire en base — d'un indicateur
+      // sans ligne du tout, que le filtre doit compter comme applicable.
+      await databaseService.db
+        .delete(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, applicableId),
+            eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+          )
+        );
+
+      // Restreint aux deux indicateurs du test : la liste est paginée, et la
+      // collectivité en porte bien plus que ça.
+      const indicateurIds = [nonApplicableId, applicableId];
+
+      const { data: nonApplicables } =
+        await caller.indicateurs.indicateurs.list({
+          collectiviteId: collectivite.id,
+          filters: { indicateurIds, isApplicable: false },
+        });
+      expect(nonApplicables.map(({ id }) => id)).toEqual([nonApplicableId]);
+
+      // `applicableId` n'a plus de ligne `indicateur_collectivite` : `NULL =
+      // true` l'exclurait à tort, le filtre doit quand même le remonter.
+      const { data: applicables } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds, isApplicable: true },
+      });
+      expect(applicables.map(({ id }) => id)).toEqual([applicableId]);
     });
   });
 

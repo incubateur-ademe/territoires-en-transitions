@@ -1,4 +1,3 @@
-import { IndicateurPeriodErrorEnum } from '@tet/domain/indicateurs';
 import { ImportIndicateurRelationsService } from './import-indicateur-relations.service';
 import { UpsertIndicateurDefinitionsService } from './upsert-indicateur-definitions.service';
 import { Test } from '@nestjs/testing';
@@ -75,7 +74,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     ),
   };
   const importRepository = {
-    findFirstIndicateurIdWithValeur: vi.fn().mockResolvedValue(null),
     listThematiques: vi.fn().mockResolvedValue([]),
     listCategories: vi.fn().mockResolvedValue([]),
     listDefinitionSnapshots: vi.fn().mockResolvedValue([]),
@@ -158,7 +156,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         }
       }
     );
-    importRepository.findFirstIndicateurIdWithValeur.mockResolvedValue(null);
     importRepository.listThematiques.mockResolvedValue([]);
     importRepository.listCategories.mockResolvedValue([]);
     importRepository.listDefinitionSnapshots.mockResolvedValue([]);
@@ -233,17 +230,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     ).rejects.toThrow('commit failed');
   });
 
-  test('refuse un indicateur mensuel du diagnostic PCAET avant toute écriture', async () => {
-    await expect(
-      importIndicateurDefinitionService.upsertIndicateurDefinitions([
-        { ...sampleImportIndicateurDefinition, periodicite: 'mensuelle' },
-      ])
-    ).rejects.toThrow(
-      IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
-    );
-    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
-  });
-
   test('accepte une nouvelle cadence mensuelle sans activation préalable', async () => {
     const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
     monthlyDefinition.periodicite = 'mensuelle';
@@ -295,7 +281,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
   });
 
-  test("revérifie l'absence de valeur sous le verrou exclusif", async () => {
+  test('refuse de changer la périodicité même sans valeur enregistrée', async () => {
     const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
     monthlyDefinition.periodicite = 'mensuelle';
     monthlyDefinition.identifiantReferentiel = 'test_mensuel';
@@ -311,22 +297,17 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       {
         identifiantReferentiel: existingDefinition.identifiantReferentiel,
         periodicite: existingDefinition.periodicite,
-        periodiciteMode: existingDefinition.periodiciteMode,
+
         valeurCalcule: existingDefinition.valeurCalcule,
       },
     ]);
-    importRepository.findFirstIndicateurIdWithValeur
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(existingDefinition.id);
 
     await expect(
       importIndicateurDefinitionService.upsertIndicateurDefinitions([
         monthlyDefinition,
       ])
-    ).rejects.toThrow(/des valeurs existent déjà/i);
-    expect(
-      importRepository.findFirstIndicateurIdWithValeur
-    ).toHaveBeenNthCalledWith(2, [existingDefinition.id], transaction);
+    ).rejects.toThrow(/fixée à sa création/i);
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
     expect(
       importRepository.deleteGroupRelationsByChildIds
     ).not.toHaveBeenCalled();

@@ -8,6 +8,7 @@ import {
 } from './demarche-pcaet-diagnostic.config';
 import type {
   PcaetDiagnostic,
+  PcaetDiagnosticIndicateurDefinition,
   PcaetDiagnosticIndicateurParentConfig,
 } from './demarche-pcaet-diagnostic.schema';
 
@@ -52,10 +53,9 @@ export const isPcaetDiagnosticReferenceYear = (
 
 const getAnnualYear = ({
   indicateurValeur,
-  indicateurDefinition,
 }: IndicateurValeurAvecMetadonnesDefinition) =>
   toAnnualIndicateurYear(
-    indicateurDefinition?.periodicite,
+    indicateurValeur.periodicite,
     indicateurValeur.dateValeur,
     'Le diagnostic PCAET'
   );
@@ -93,6 +93,24 @@ const isLeafComplet = ({
 };
 
 /**
+ * Identifiants référentiel que la collectivité a déclarés non applicables.
+ * Les définitions servies avec le diagnostic font le pont entre la clé
+ * numérique de `indicateur_collectivite` et les clés `cae_1.c` de la config.
+ */
+const listPcaetDiagnosticIdentifiantsNonApplicables = (
+  definitions: readonly PcaetDiagnosticIndicateurDefinition[]
+): Set<string> => {
+  const identifiants = new Set<string>();
+  for (const definition of definitions) {
+    const identifiant = definition.identifiantReferentiel;
+    if (!definition.isApplicable && identifiant !== null) {
+      identifiants.add(identifiant);
+    }
+  }
+  return identifiants;
+};
+
+/**
  * Un topic indicateur est complet quand chacune de ses lignes requises porte un
  * constat et une cible : un résultat sur l'année de comptabilisation et un
  * objectif sur chaque horizon requis (hors `optionalYears`). Les années ajoutées
@@ -103,15 +121,24 @@ const isLeafComplet = ({
 export const isPcaetDiagnosticIndicateurComplet = ({
   config,
   indicateurs,
+  definitions,
 }: {
   config: PcaetDiagnosticIndicateurParentConfig;
   indicateurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
+  definitions: readonly PcaetDiagnosticIndicateurDefinition[];
 }): boolean => {
   if (config.optional === true) {
     return true;
   }
 
-  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeaves(config);
+  const nonApplicables =
+    listPcaetDiagnosticIdentifiantsNonApplicables(definitions);
+
+  // Une ligne déclarée non applicable n'est plus réclamée : elle sort du socle
+  // exigé, comme le fait `non_concerne` pour une thématique de vulnérabilité.
+  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeaves(
+    config
+  ).filter((leaf) => !nonApplicables.has(leaf.indicateurDefinitionId));
   if (requiredLeaves.length === 0) {
     return true;
   }
@@ -156,5 +183,6 @@ export const isDemarchePcaetDiagnosticComplet = (
     isPcaetDiagnosticIndicateurComplet({
       config,
       indicateurs: diagnostic.indicateurValeurs,
+      definitions: diagnostic.indicateurDefinitions,
     })
   );

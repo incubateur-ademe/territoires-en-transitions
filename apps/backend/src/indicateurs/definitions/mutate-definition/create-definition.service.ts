@@ -32,6 +32,9 @@ export default class CreateDefinitionService {
       commentaire,
       estFavori,
       estConfidentiel,
+      isApplicable,
+      aggregationResultat,
+      aggregationObjectif,
       ficheId,
     }: CreateIndicateurDefinitionInput,
     user: AuthenticatedUser
@@ -61,10 +64,13 @@ export default class CreateDefinitionService {
           titre,
           unite: unite ?? '',
           periodicite,
+          aggregationResultat,
+          aggregationObjectif,
           thematiqueIds: thematiques.map(({ id }) => id),
           commentaire,
           estFavori,
           estConfidentiel,
+          isApplicable,
           modifiedBy: user.id,
         },
         tx

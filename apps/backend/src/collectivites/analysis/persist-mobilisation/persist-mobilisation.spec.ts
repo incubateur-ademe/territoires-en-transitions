@@ -10,14 +10,6 @@ const jobId = '00000000-0000-0000-0000-000000000001';
 
 const transaction = { marker: 'transaction' } as unknown as Transaction;
 
-const tokens = {
-  promptTokens: 110,
-  cachedTokens: 0,
-  candidatesTokens: 55,
-  thoughtsTokens: 11,
-  totalTokens: 176,
-};
-
 const job: AnalysisJob = {
   id: jobId,
   collectiviteId: 7,
@@ -27,7 +19,7 @@ const job: AnalysisJob = {
   status: AnalysisJobStatusEnum.RUNNING,
   processedBatches: 0,
   totalBatches: 1,
-  draft: null,
+  report: null,
   tokenUsage: null,
   error: null,
   createdAt: '2026-09-15T00:00:00Z',
@@ -39,7 +31,7 @@ const toDependencies = ({ mobilisationWriteFails = false } = {}) => {
     markDone: vi.fn().mockResolvedValue(success(undefined)),
   };
   const mobilisationRepository = {
-    replaceMobilisation: vi
+    updateMobilisation: vi
       .fn()
       .mockResolvedValue(
         mobilisationWriteFails
@@ -48,9 +40,13 @@ const toDependencies = ({ mobilisationWriteFails = false } = {}) => {
       ),
   };
 
+  const enjeuRepositories = {
+    mobilisationOf: () => mobilisationRepository,
+  };
+
   const service = new PersistMobilisationService(
     jobRepository as never,
-    mobilisationRepository as never
+    enjeuRepositories as never
   );
 
   return { service, jobRepository, mobilisationRepository };
@@ -63,14 +59,13 @@ describe('PersistMobilisationService.persist', () => {
     const result = await service.persist({
       job,
       leviers: [],
-      tokens,
       tx: transaction,
     });
 
     expect({
       success: result.success,
       mobilisationTx:
-        mobilisationRepository.replaceMobilisation.mock.calls[0]?.[0].tx,
+        mobilisationRepository.updateMobilisation.mock.calls[0]?.[0].tx,
       doneTx: jobRepository.markDone.mock.calls[0]?.[0].tx,
     }).toEqual({
       success: true,
@@ -87,7 +82,6 @@ describe('PersistMobilisationService.persist', () => {
     const result = await service.persist({
       job,
       leviers: [],
-      tokens,
       tx: transaction,
     });
 
@@ -96,7 +90,7 @@ describe('PersistMobilisationService.persist', () => {
       doneCalls: jobRepository.markDone.mock.calls.length,
     }).toEqual({
       failure: {
-        step: 'replace_mobilisation',
+        step: 'update_mobilisation',
         cause: VoletErrorEnum.SAVE_VOLETS_ERROR,
       },
       doneCalls: 0,
@@ -112,7 +106,6 @@ describe('PersistMobilisationService.persist', () => {
     const result = await service.persist({
       job,
       leviers: [],
-      tokens,
       tx: transaction,
     });
 

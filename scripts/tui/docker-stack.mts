@@ -1,11 +1,12 @@
 // Adapter docker compose de la stack `tet` : tout ce qui exécute le binaire
-// docker vit ici (ps, logs -f, start/stop/restart) — le reste du TUI n'en
+// docker vit ici (ps, logs -f, start/stop/restart/create) — le reste du TUI n'en
 // connaît que cette interface. Les commandes tournent à la racine du dépôt
 // (docker-compose.yml, projet `name: tet` fixe) quel que soit le cwd, et le
 // binaire est surchargeable (DOCKER ?= de Makefile.local, relayé par make tui
 // via l'environnement).
 import { execFile, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { composeCommand, isWorktree } from '../compose.mts';
 
 const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -24,7 +25,7 @@ export interface StatsRow {
   MemUsage: string; // « 885.2MiB / 30.34GiB »
 }
 
-export type StackAction = 'start' | 'stop' | 'restart';
+export type StackAction = 'start' | 'stop' | 'restart' | 'create';
 
 interface LogStreamOptions {
   tail: number;
@@ -67,6 +68,7 @@ export class DockerStack {
   // services en une invocation compose (compose les traite en parallèle) —
   // évite un process par service lors d'une bascule de profile.
   run(action: StackAction, ...services: string[]): Promise<string> {
+    if (action === 'create') return this.#create(services);
     return this.#compose(['--profile', '*', action, ...services]);
   }
 
@@ -131,6 +133,37 @@ export class DockerStack {
       }
     }
     return rows;
+  }
+
+  // Crée le conteneur d'un service jamais lancé, que `start` ne sait pas
+  // démarrer. Contrairement aux autres actions, `up` interpole le
+  // docker-compose.yml : il lui faut l'enveloppe dotenvx (secrets chiffrés).
+  // Il relance aussi les one-shots dont le service dépend (deps, libs), d'où
+  // un timeout large. Refusé depuis un worktree : les conteneurs y seraient
+  // créés avec ses bind mounts, dans une stack que ce TUI n'affiche pas.
+  #create(services: string[]): Promise<string> {
+    if (isWorktree)
+      return Promise.reject(
+        new Error('création impossible depuis un worktree — make up ask=1')
+      );
+    const { file, argv, cwd, env } = composeCommand([
+      '--profile',
+      '*',
+      'up',
+      '-d',
+      ...services,
+    ]);
+    return new Promise((resolve, reject) => {
+      execFile(
+        file,
+        argv,
+        { cwd, env, timeout: 10 * 60_000, maxBuffer: 8 * 1024 * 1024 },
+        (err, stdout, stderr) =>
+          err
+            ? reject(new Error(stderr.trim().split('\n').pop() || err.message))
+            : resolve(stdout)
+      );
+    });
   }
 
   #compose(

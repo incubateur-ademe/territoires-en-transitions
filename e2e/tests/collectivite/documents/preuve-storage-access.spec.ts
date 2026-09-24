@@ -8,7 +8,7 @@ import { getCollectivitePreuveFileInfo } from 'tests/shared/preuve-file.utils';
 import { attemptSupabaseStorageDownload } from 'tests/shared/storage-download.utils';
 
 const referentiel: ReferentielId = 'cae';
-const preuveReglementaireId = 'agenda21';
+const preuveReglementaireNom = 'Agenda 21 / Agenda 2030';
 
 async function gotoActionWithDocuments(
   referentielScoresPom: ReferentielScoresPom
@@ -37,7 +37,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     const collectivite = collectivites.getCollectivite();
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
@@ -48,7 +50,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     expect(fileInfo.hash).toMatch(/^[a-f0-9]{64}$/);
   });
 
-  test("Un utilisateur d'une autre collectivité peut télécharger via bucket_id/hash", async ({
+  test("Un utilisateur d'une autre collectivité ne peut pas télécharger via bucket_id/hash", async ({
     referentielScoresPom,
     collectivites,
     page,
@@ -56,7 +58,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     const collectiviteA: CollectiviteFixture = collectivites.getCollectivite();
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     const { bucketId, hash } = await getCollectivitePreuveFileInfo(
       collectiviteA.data.id
@@ -84,11 +88,10 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
       hash
     );
 
-    expect(result.ok).toBe(true);
-    expect(result.errorMessage).toBeUndefined();
+    expect(result.ok).toBe(false);
   });
 
-  test('Un utilisateur ADEME (email @ademe.fr) peut télécharger via bucket_id/hash', async ({
+  test('Un utilisateur ADEME (email @ademe.fr) ne peut pas télécharger via bucket_id/hash', async ({
     referentielScoresPom,
     collectivites,
     users,
@@ -97,7 +100,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     // L'éditeur membre de la collectivité ajoute une preuve via l'UI.
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     const { bucketId, hash } = await getCollectivitePreuveFileInfo(
       collectivite.data.id
@@ -106,7 +111,8 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     // Un utilisateur ADEME (non membre, email @ademe.fr) tente de
     // télécharger le fichier directement via l'API Supabase Storage
     // — exactement ce que fait `supabase.storage.from(...).download(...)`
-    // côté client. La RLS sur storage.objects doit l'autoriser.
+    // côté client. La RLS sur storage.objects doit le refuser : le produit
+    // passe par une URL signée émise en service role, jamais par ce chemin.
     const ademeUser = await users.addUser({ nom: 'ademe' });
     expect(ademeUser.data.email).toMatch(/@ademe\.fr$/);
 
@@ -121,8 +127,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
       hash
     );
 
-    expect(result.ok).toBe(true);
-    expect(result.errorMessage).toBeUndefined();
+    expect(result.ok).toBe(false);
   });
 
   test("Un auditeur conserve l'accès aux preuves de la collectivité auditée", async ({
@@ -135,7 +140,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     const editeurUser = collectivite.getUser();
 
     await gotoActionWithDocuments(referentielScoresPom);
-    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+    await referentielScoresPom.uploadPreuveReglementaire(
+      preuveReglementaireNom
+    );
 
     await referentiels.seedRolePilotes(
       editeurUser,

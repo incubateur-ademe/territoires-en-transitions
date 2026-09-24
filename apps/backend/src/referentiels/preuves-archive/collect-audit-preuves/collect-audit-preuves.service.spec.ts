@@ -1,13 +1,18 @@
+import { ListDocumentsByScopeRepository } from '@tet/backend/collectivites/documents/list-documents-by-scope/list-documents-by-scope.repository';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 import type {
-  CollectedFilePreuve,
-  CollectedLinkPreuve,
-  MissingFilePreuve,
-} from './collect-preuves.repository';
+  DocumentScope,
+  DocumentScopeKind,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/document-scope';
+import type {
+  CollectedDocuments,
+  CollectedFile,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
 import { CollectAuditPreuvesService } from './collect-audit-preuves.service';
 
 const HASH_1 = toDocumentHash('1'.repeat(64));
@@ -24,70 +29,61 @@ const baseInput = {
   user,
 };
 
-const empty = { files: [], missingFiles: [], links: [] };
+type CollectedScopeKind = Extract<
+  DocumentScopeKind,
+  'complementaire' | 'reglementaire' | 'labellisation' | 'audit'
+>;
 
-type PreuvesPayload = {
-  files: CollectedFilePreuve[];
-  missingFiles: MissingFilePreuve[];
-  links: CollectedLinkPreuve[];
+const emptyDocuments: CollectedDocuments = {
+  files: [],
+  missingFiles: [],
+  links: [],
 };
 
 function buildService({
-  complementaire = empty,
-  reglementaire = empty,
-  labellisation = empty,
-  audit = empty,
+  complementaire = emptyDocuments,
+  reglementaire = emptyDocuments,
+  labellisation = emptyDocuments,
+  audit = emptyDocuments,
   canReadConfidentiel = true,
 }: {
-  complementaire?: PreuvesPayload;
-  reglementaire?: PreuvesPayload;
-  labellisation?: PreuvesPayload;
-  audit?: PreuvesPayload;
+  complementaire?: CollectedDocuments;
+  reglementaire?: CollectedDocuments;
+  labellisation?: CollectedDocuments;
+  audit?: CollectedDocuments;
   canReadConfidentiel?: boolean;
 } = {}): {
   service: CollectAuditPreuvesService;
-  permissionsIsAllowed: ReturnType<typeof vi.fn>;
-  getComplementairePreuves: ReturnType<typeof vi.fn>;
-  getReglementairePreuves: ReturnType<typeof vi.fn>;
+  permissionsIsAllowed: Mock;
+  listDocuments: Mock;
 } {
-  const repository = {
-    getComplementairePreuves: vi
-      .fn()
-      .mockResolvedValue({ success: true, data: complementaire }),
-    getReglementairePreuves: vi
-      .fn()
-      .mockResolvedValue({ success: true, data: reglementaire }),
-    getLabellisationPreuves: vi
-      .fn()
-      .mockResolvedValue({ success: true, data: labellisation }),
-    getAuditPreuves: vi
-      .fn()
-      .mockResolvedValue({ success: true, data: audit }),
+  const byScope: Record<CollectedScopeKind, CollectedDocuments> = {
+    complementaire,
+    reglementaire,
+    labellisation,
+    audit,
   };
+  const listDocuments = vi
+    .fn()
+    .mockImplementation((scope: { kind: CollectedScopeKind }) =>
+      Promise.resolve({ success: true, data: byScope[scope.kind] })
+    );
+  const repository = { listDocuments };
 
-  const permissionsIsAllowed = vi.fn().mockResolvedValue(
-    canReadConfidentiel
-      ? { success: true, data: undefined }
-      : { success: false, error: 'UNAUTHORIZED' }
-  );
-  const permissions = { isAllowed: permissionsIsAllowed } as unknown;
+  const permissionResult = canReadConfidentiel
+    ? { success: true, data: undefined }
+    : { success: false, error: 'UNAUTHORIZED' };
+  const permissionsIsAllowed = vi.fn().mockResolvedValue(permissionResult);
 
   const service = new CollectAuditPreuvesService(
-    repository as never,
-    permissions as never
+    repository as unknown as ListDocumentsByScopeRepository,
+    { isAllowed: permissionsIsAllowed } as unknown as PermissionService
   );
 
-  return {
-    service,
-    permissionsIsAllowed,
-    getComplementairePreuves: repository.getComplementairePreuves,
-    getReglementairePreuves: repository.getReglementairePreuves,
-  };
+  return { service, permissionsIsAllowed, listDocuments };
 }
 
-function makeFile(
-  overrides: Partial<CollectedFilePreuve> = {}
-): CollectedFilePreuve {
+function makeFile(overrides: Partial<CollectedFile> = {}): CollectedFile {
   return {
     bucketId: 'bucket-1',
     hash: HASH_1,
@@ -112,17 +108,39 @@ describe('CollectAuditPreuvesService', () => {
     );
   });
 
-  it('transmet le referentielId aux collectes mesure (complémentaire et réglementaire)', async () => {
-    const { service, getComplementairePreuves, getReglementairePreuves } =
-      buildService();
+  it('ferme le confidentiel sur les quatre portées quand la permission est refusée', async () => {
+    const { service, listDocuments } = buildService({
+      canReadConfidentiel: false,
+    });
 
     await service.collect(baseInput);
 
-    expect(getComplementairePreuves).toHaveBeenCalledWith(
-      expect.objectContaining({ referentielId })
+    const scopes: DocumentScope[] = listDocuments.mock.calls.map(
+      ([scope]) => scope
     );
-    expect(getReglementairePreuves).toHaveBeenCalledWith(
-      expect.objectContaining({ referentielId })
+    expect(
+      scopes.map(({ kind, canReadConfidentiel }) => ({
+        kind,
+        canReadConfidentiel,
+      }))
+    ).toEqual([
+      { kind: 'complementaire', canReadConfidentiel: false },
+      { kind: 'reglementaire', canReadConfidentiel: false },
+      { kind: 'labellisation', canReadConfidentiel: false },
+      { kind: 'audit', canReadConfidentiel: false },
+    ]);
+  });
+
+  it('transmet le referentielId aux portées mesure (complémentaire et réglementaire)', async () => {
+    const { service, listDocuments } = buildService();
+
+    await service.collect(baseInput);
+
+    expect(listDocuments).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'complementaire', referentielId })
+    );
+    expect(listDocuments).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'reglementaire', referentielId })
     );
   });
 
@@ -150,34 +168,35 @@ describe('CollectAuditPreuvesService', () => {
     ]);
   });
 
-  it("propage l'échec d'une requête repository", async () => {
-    const repository = {
-      getComplementairePreuves: vi
-        .fn()
-        .mockResolvedValue({ success: false, error: 'COLLECT_PREUVES_ERROR' }),
-      getReglementairePreuves: vi
-        .fn()
-        .mockResolvedValue({ success: true, data: empty }),
-      getLabellisationPreuves: vi
-        .fn()
-        .mockResolvedValue({ success: true, data: empty }),
-      getAuditPreuves: vi
-        .fn()
-        .mockResolvedValue({ success: true, data: empty }),
-    } as unknown;
+  it("propage l'échec d'une portée en échec de collecte", async () => {
+    const cause = new Error('connexion perdue');
+    const listDocuments = vi
+      .fn()
+      .mockImplementation(async (scope: { kind: CollectedScopeKind }) => {
+        if (scope.kind === 'complementaire') {
+          return {
+            success: false,
+            error: 'LIST_DOCUMENTS_BY_SCOPE_ERROR',
+            cause,
+          };
+        }
+        return { success: true, data: emptyDocuments };
+      });
     const service = new CollectAuditPreuvesService(
-      repository as never,
+      { listDocuments } as unknown as ListDocumentsByScopeRepository,
       {
         isAllowed: vi
           .fn()
           .mockResolvedValue({ success: true, data: undefined }),
-      } as never
+      } as unknown as PermissionService
     );
 
     const result = await service.collect(baseInput);
 
-    expect(result.success).toBe(false);
-    if (result.success) return;
-    expect(result.error).toBe('COLLECT_PREUVES_ERROR');
+    expect(result).toEqual({
+      success: false,
+      error: 'COLLECT_PREUVES_ERROR',
+      cause,
+    });
   });
 });

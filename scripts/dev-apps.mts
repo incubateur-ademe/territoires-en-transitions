@@ -24,7 +24,6 @@ interface InfraComponent {
 export const APPS: Record<string, AppDef> = {
   app: { port: 3000, infra: ['supabase'] },
   site: { port: 3001, infra: ['supabase', 'strapi'] },
-  panier: { port: 3002, infra: ['supabase'] },
   backend: { port: 8080, infra: ['supabase', 'redis'] },
   tools: { port: 8081, infra: ['supabase', 'redis'] },
 };
@@ -32,7 +31,7 @@ export const APPS: Record<string, AppDef> = {
 // Apps lancées quand rien n'est précisé (celles de `pnpm dev`) — tools exclu :
 // il exige un env complet (Airtable, Notion…) et reste sélectionnable
 // explicitement.
-export const DEFAULT_APPS: string[] = ['app', 'panier', 'site', 'backend'];
+export const DEFAULT_APPS: string[] = ['app', 'site', 'backend'];
 
 // Composants d'infra proposés par le picker (un profil compose chacun) et
 // dépendances entre profils — docker compose refuse un depends_on vers un
@@ -80,6 +79,15 @@ const savedProfiles = (): string[] =>
     ?.split(',')
     .map((s) => s.trim())
     .filter(Boolean) ?? [];
+
+// Ajoute une app (et l'infra qu'elle exige) à la sélection mémorisée — pour
+// une app créée hors du picker, depuis le TUI.
+export const addAppToSelection = (app: string): void =>
+  writeEnvValue(
+    ENV_LOCAL,
+    'COMPOSE_PROFILES',
+    [...new Set([...savedProfiles(), ...APPS[app].infra, app])].join(',')
+  );
 
 // Composants d'infra cochés EXPLICITEMENT (picker de pick-stack.mts) — par
 // opposition à ceux simplement dérivés des apps sélectionnées (APPS[a].infra).

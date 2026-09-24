@@ -5,6 +5,8 @@ import { DateTime } from 'luxon';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
+import { BuildCrispCrmNoteService } from './build-crisp-crm-note.service';
+import { BuildCrispUserDataService } from './build-crisp-user-data.service';
 import { CrispEventRequest } from '../models/crisp-event.request';
 import { CrispMessageReceivedEventDataDto } from '../models/crisp-message-received-event-data.dto';
 import { CrispOperatorIndo } from '../models/get-crisp-operator.response';
@@ -23,14 +25,24 @@ export class CrispService {
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
   private readonly DEFAULT_FEEDBACK_DAYS = 2;
 
+  // Note réduite à la commande seule : « /crm » ou « /@crm ».
+  private readonly CRM_REGEXP = /^\/@?crm$/i;
+
   // cache des messageKeys en cours de traitement pour éviter les doublons en cas
   // d'appels en parallèle (présuppose que tools est déployé sur seule instance)
   private readonly processingMessages = new Set<string>();
 
+  // conversations déjà enrichies, pour ne solliciter DB et Airtable qu'une fois
+  // par conversation (même hypothèse d'instance unique)
+  private readonly enrichedSessions = new Set<string>();
+  private readonly ENRICHED_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+
   constructor(
     private readonly notionBugCreatorService: NotionBugCreatorService,
     private readonly configurationService: ConfigurationService,
-    private readonly airtableService: AirtableService
+    private readonly airtableService: AirtableService,
+    private readonly buildCrispUserDataService: BuildCrispUserDataService,
+    private readonly buildCrispCrmNoteService: BuildCrispCrmNoteService
   ) {
     this.crispClient = new Crisp();
     this.crispClient.authenticateTier(
@@ -87,6 +99,10 @@ export class CrispService {
       `Handling message ${body.data.type} (identifiant ${messageId}) received from ${body.data.from} for session ${sessionId} on website ${websiteId}: `
     );
 
+    // Le webhook ne reçoit pas forcément les messages visiteur (`message:send`) :
+    // on enrichit sur n'importe quel message, une seule fois par conversation.
+    await this.enrichConversationWithUserData(websiteId, sessionId);
+
     if (body.data.from !== 'operator' || body.data.type !== 'note') {
       this.logger.log(
         `Ignoring message received for session ${sessionId} on website ${websiteId} because it's not from an operator`
@@ -111,7 +127,9 @@ export class CrispService {
       const content = body.data.content?.trim() || '';
       const ticketMatch = content.match(this.TICKET_REGEXP);
       const feedbackMatch = content.match(this.FEEDBACK_REGEXP);
-      if (ticketMatch) {
+      if (this.CRM_REGEXP.test(content)) {
+        return await this.handleCrmRequest(websiteId, sessionId);
+      } else if (ticketMatch) {
         return await this.handleTicketCreationRequest(
           websiteId,
           sessionId,
@@ -127,7 +145,7 @@ export class CrispService {
         );
       } else {
         this.logger.log(
-          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket or feedback`
+          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket, feedback or crm`
         );
 
         return {
@@ -138,6 +156,95 @@ export class CrispService {
       // continue à éviter les doublons tout en limitant la taille du cache
       setTimeout(() => this.processingMessages.delete(messageKey), 30_000);
     }
+  }
+
+  /**
+   * Ajoute le mode de connexion et le lien vers la fiche CRM Airtable aux
+   * données du contact (« Données pour … » dans Crisp), une seule fois par
+   * conversation pour ménager le quota Airtable.
+   */
+  async enrichConversationWithUserData(websiteId: string, sessionId: string) {
+    const sessionKey = `${websiteId}-${sessionId}`;
+    if (this.enrichedSessions.has(sessionKey)) {
+      return;
+    }
+    this.enrichedSessions.add(sessionKey);
+    setTimeout(
+      () => this.enrichedSessions.delete(sessionKey),
+      this.ENRICHED_SESSION_TTL_MS
+    ).unref();
+
+    try {
+      const session: CrispSession =
+        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const email = session.meta?.email;
+      if (!email || !session.people_id) {
+        return;
+      }
+
+      const userData = await this.buildCrispUserDataService.buildUserData(
+        email
+      );
+      if (!userData) {
+        return;
+      }
+
+      // PATCH : fusionne avec les données déjà présentes sur le contact.
+      await this.crispClient.website.updatePeopleData(
+        websiteId,
+        session.people_id,
+        { data: userData }
+      );
+      this.logger.log(
+        `Contact ${
+          session.people_id
+        } (session ${sessionId}) on website ${websiteId} enriched: ${JSON.stringify(
+          userData
+        )}`
+      );
+    } catch (error) {
+      // on retentera au prochain message
+      this.enrichedSessions.delete(sessionKey);
+      this.logger.error(
+        `Error enriching session ${sessionId} on website ${websiteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+    }
+  }
+
+  /** Répond par une note récapitulant le compte, ses collectivités et leurs plans. */
+  async handleCrmRequest(websiteId: string, sessionId: string) {
+    try {
+      const session: CrispSession =
+        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const email = session.meta?.email;
+      const content = email
+        ? await this.buildCrispCrmNoteService.buildCrmNote(email)
+        : 'Aucun email connu pour cette conversation.';
+
+      await this.sendNote(websiteId, sessionId, content);
+      return { type: 'crm' };
+    } catch (error) {
+      this.logger.error(
+        `Error building CRM note for session ${sessionId} on website ${websiteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      await this.sendNote(
+        websiteId,
+        sessionId,
+        `Error building CRM note: ${getErrorMessage(error)}`
+      );
+    }
+  }
+
+  private sendNote(websiteId: string, sessionId: string, content: string) {
+    return this.crispClient.website.sendMessageInConversation(
+      websiteId,
+      sessionId,
+      { type: 'note', from: 'operator', origin: 'chat', content }
+    );
   }
 
   async handleTicketCreationRequest(
