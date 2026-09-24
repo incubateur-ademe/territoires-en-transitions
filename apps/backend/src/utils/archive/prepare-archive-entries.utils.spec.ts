@@ -15,7 +15,7 @@ function makeFile(overrides: Partial<ArchiveFile> = {}): ArchiveFile {
 
 describe('prepareArchiveEntries', () => {
   it('mappe un fichier unique sans suffixe', () => {
-    const entries = prepareArchiveEntries([makeFile()]);
+    const entries = prepareArchiveEntries([makeFile()], []);
 
     expect(entries).toEqual([
       {
@@ -35,7 +35,7 @@ describe('prepareArchiveEntries', () => {
       makeFile({ hash: 'c' }),
     ];
 
-    const entries = prepareArchiveEntries(files);
+    const entries = prepareArchiveEntries(files, []);
 
     expect(entries.map((entry) => entry.entryPath)).toEqual([
       'mesures/axe-1/document.pdf',
@@ -50,7 +50,7 @@ describe('prepareArchiveEntries', () => {
       makeFile({ filename: 'rapport.tar.gz', hash: 'b' }),
     ];
 
-    const entries = prepareArchiveEntries(files);
+    const entries = prepareArchiveEntries(files, []);
 
     expect(entries[1].entryPath).toBe('mesures/axe-1/rapport.tar (2).gz');
   });
@@ -61,7 +61,7 @@ describe('prepareArchiveEntries', () => {
       makeFile({ filename: 'README', hash: 'b' }),
     ];
 
-    const entries = prepareArchiveEntries(files);
+    const entries = prepareArchiveEntries(files, []);
 
     expect(entries[1].entryPath).toBe('mesures/axe-1/README (2)');
   });
@@ -72,7 +72,7 @@ describe('prepareArchiveEntries', () => {
       makeFile({ filename: '.env', hash: 'b' }),
     ];
 
-    const entries = prepareArchiveEntries(files);
+    const entries = prepareArchiveEntries(files, []);
 
     expect(entries[1].entryPath).toBe('mesures/axe-1/.env (2)');
   });
@@ -83,7 +83,7 @@ describe('prepareArchiveEntries', () => {
       makeFile({ folderSegments: ['mesures', 'axe-2'], hash: 'b' }),
     ];
 
-    const entries = prepareArchiveEntries(files);
+    const entries = prepareArchiveEntries(files, []);
 
     expect(entries.map((entry) => entry.entryPath)).toEqual([
       'mesures/axe-1/document.pdf',
@@ -91,10 +91,104 @@ describe('prepareArchiveEntries', () => {
     ]);
   });
 
-  it('expose `emplacement` joint par `/`', () => {
-    const entries = prepareArchiveEntries([
-      makeFile({ folderSegments: ['cycle-labellisation', 'audit'] }),
+  it('ne réattribue pas `document (2).pdf` à un fichier portant déjà ce nom', () => {
+    const files = [
+      makeFile({ filename: 'document.pdf', hash: 'a' }),
+      makeFile({ filename: 'document.pdf', hash: 'b' }),
+      makeFile({ filename: 'document (2).pdf', hash: 'c' }),
+    ];
+
+    const entries = prepareArchiveEntries(files, []);
+
+    expect(entries.map((entry) => entry.entryPath)).toEqual([
+      'mesures/axe-1/document.pdf',
+      'mesures/axe-1/document (2).pdf',
+      'mesures/axe-1/document (2) (2).pdf',
     ]);
+  });
+
+  it('saute une occurrence quand le nom suffixé a été pris plus tôt dans la liste', () => {
+    const files = [
+      makeFile({ filename: 'document.pdf', hash: 'a' }),
+      makeFile({ filename: 'document (2).pdf', hash: 'b' }),
+      makeFile({ filename: 'document.pdf', hash: 'c' }),
+    ];
+
+    const entries = prepareArchiveEntries(files, []);
+
+    expect(entries.map((entry) => entry.entryPath)).toEqual([
+      'mesures/axe-1/document.pdf',
+      'mesures/axe-1/document (2).pdf',
+      'mesures/axe-1/document (3).pdf',
+    ]);
+  });
+
+  it('préfixe par le rang quand la troncature à 255 octets efface le suffixe', () => {
+    const longFilename = `${'a'.repeat(300)}.pdf`;
+    const files = [
+      makeFile({ filename: longFilename, hash: 'a'.repeat(64) }),
+      makeFile({ filename: longFilename, hash: 'b'.repeat(64) }),
+    ];
+
+    const entries = prepareArchiveEntries(files, []);
+
+    expect(entries.map((entry) => entry.entryPath)).toEqual([
+      `mesures/axe-1/${'a'.repeat(251)}.pdf`,
+      `mesures/axe-1/2 ${'a'.repeat(249)}.pdf`,
+    ]);
+  });
+
+  it('distingue trois fichiers de même hash dont le nom dépasse 255 octets', () => {
+    const longFilename = `${'a'.repeat(300)}.pdf`;
+    const sameHash = 'a'.repeat(64);
+    const files = [
+      makeFile({ filename: longFilename, hash: sameHash }),
+      makeFile({ filename: longFilename, hash: sameHash }),
+      makeFile({ filename: longFilename, hash: sameHash }),
+    ];
+
+    const entries = prepareArchiveEntries(files, []);
+
+    expect(entries.map((entry) => entry.entryPath)).toEqual([
+      `mesures/axe-1/${'a'.repeat(251)}.pdf`,
+      `mesures/axe-1/2 ${'a'.repeat(249)}.pdf`,
+      `mesures/axe-1/3 ${'a'.repeat(249)}.pdf`,
+    ]);
+  });
+
+  it('suffixe le document utilisateur qui porte un chemin réservé', () => {
+    const files = [
+      makeFile({ filename: 'liens.csv', hash: 'a' }),
+      makeFile({ filename: 'autre.pdf', hash: 'b' }),
+    ];
+
+    const entries = prepareArchiveEntries(files, ['mesures/axe-1/liens.csv']);
+
+    expect(entries.map((entry) => entry.entryPath)).toEqual([
+      'mesures/axe-1/liens (2).csv',
+      'mesures/axe-1/autre.pdf',
+    ]);
+  });
+
+  it('réserve le chemin quel que soit le rang du document homonyme', () => {
+    const files = [
+      makeFile({ filename: 'autre.pdf', hash: 'a' }),
+      makeFile({ filename: 'liens.csv', hash: 'b' }),
+    ];
+
+    const entries = prepareArchiveEntries(files, ['mesures/axe-1/liens.csv']);
+
+    expect(entries.map((entry) => entry.entryPath)).toEqual([
+      'mesures/axe-1/autre.pdf',
+      'mesures/axe-1/liens (2).csv',
+    ]);
+  });
+
+  it('expose `emplacement` joint par `/`', () => {
+    const entries = prepareArchiveEntries(
+      [makeFile({ folderSegments: ['cycle-labellisation', 'audit'] })],
+      []
+    );
 
     expect(entries[0].emplacement).toBe('cycle-labellisation/audit');
   });
