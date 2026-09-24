@@ -285,6 +285,19 @@ export class ExpressionParser extends CstParser {
     this.CONSUME(common.RPAR);
   };
 
+  protected consumeFuncFourParams = (token: TokenType) => {
+    this.CONSUME(token);
+    this.CONSUME(common.LPAR);
+    this.SUBRULE(this.identifier);
+    this.CONSUME(common.COMMA);
+    this.SUBRULE2(this.primary);
+    this.CONSUME2(common.COMMA);
+    this.SUBRULE3(this.primary);
+    this.CONSUME3(common.COMMA);
+    this.SUBRULE4(this.primary);
+    this.CONSUME(common.RPAR);
+  };
+
   protected consumeFuncTwoTerms = (token: TokenType) => {
     this.CONSUME(token);
     this.CONSUME(LPAR);
