@@ -1,3 +1,4 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -15,7 +16,8 @@ import { AddRapportVisiteRepository } from './add-rapport-visite.repository';
 export class AddRapportVisiteService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly addRapportVisiteRepository: AddRapportVisiteRepository
+    private readonly addRapportVisiteRepository: AddRapportVisiteRepository,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async addRapportVisite(
@@ -40,13 +42,11 @@ export class AddRapportVisiteService {
     const hasFichier = input.fichierId !== undefined;
 
     if (hasFichier) {
-      const fichierCollectiviteId =
-        await this.addRapportVisiteRepository.getFichierCollectiviteId(
-          input.fichierId,
+      const isFichierOwnedByCollectivite =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite(
+          { fichierId: input.fichierId, collectiviteId },
           tx
         );
-      const isFichierOwnedByCollectivite =
-        fichierCollectiviteId === collectiviteId;
       if (!isFichierOwnedByCollectivite) {
         return failure(CommonErrorEnum.NOT_FOUND);
       }

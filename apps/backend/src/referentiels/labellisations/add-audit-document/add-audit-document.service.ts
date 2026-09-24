@@ -1,3 +1,4 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -21,7 +22,8 @@ export class AddAuditDocumentService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly addAuditDocumentRepository: AddAuditDocumentRepository
+    private readonly addAuditDocumentRepository: AddAuditDocumentRepository,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   private async canMutateLabellisationDocuments(
@@ -80,17 +82,12 @@ export class AddAuditDocumentService {
       return failure(AddAuditDocumentErrorEnum.AUDIT_NOT_OPEN);
     }
 
-    const fichierResult =
-      await this.addAuditDocumentRepository.getFichierCollectiviteId(
-        fichierId,
+    const isFichierOwnedByCollectivite =
+      await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite(
+        { fichierId, collectiviteId },
         tx
       );
-    if (!fichierResult.success) {
-      return failure(fichierResult.error);
-    }
-
-    const fichierCollectiviteId = fichierResult.data;
-    if (fichierCollectiviteId !== collectiviteId) {
+    if (!isFichierOwnedByCollectivite) {
       return failure(AddAuditDocumentErrorEnum.FICHIER_NOT_FOUND);
     }
 

@@ -29,4 +29,27 @@ export class BibliothequeFichierRepository {
 
     return fichier;
   }
+
+  async isFichierOwnedByCollectivite(
+    {
+      fichierId,
+      collectiviteId,
+    }: Pick<BibliothequeFichier, 'collectiviteId'> & {
+      fichierId: BibliothequeFichier['id'];
+    },
+    tx?: Transaction
+  ): Promise<boolean> {
+    const [fichier] = await (tx ?? this.databaseService.db)
+      .select({ id: bibliothequeFichierTable.id })
+      .from(bibliothequeFichierTable)
+      .where(
+        and(
+          eq(bibliothequeFichierTable.id, fichierId),
+          eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
+        )
+      )
+      .limit(1);
+
+    return fichier !== undefined;
+  }
 }

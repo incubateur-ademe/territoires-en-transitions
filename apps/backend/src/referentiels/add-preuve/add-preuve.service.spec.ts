@@ -2,6 +2,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { describe, expect, it, vi } from 'vitest';
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { AddPreuveRepository } from './add-preuve.repository';
 import { AddPreuveService } from './add-preuve.service';
 
@@ -10,13 +11,13 @@ const editorUser = { id: 'user-id' } as AuthenticatedUser;
 type BuildServiceParams = {
   isAllowed?: boolean;
   actionIdByPreuve?: string | null;
-  fichierCollectiviteId?: number;
+  isFichierOwnedByCollectivite?: boolean;
 };
 
 function buildService({
   isAllowed = true,
   actionIdByPreuve = 'cae_1.1.3.2',
-  fichierCollectiviteId = 1,
+  isFichierOwnedByCollectivite = true,
 }: BuildServiceParams = {}) {
   const permissionService = {
     isAllowed: vi.fn().mockResolvedValue(
@@ -30,7 +31,6 @@ function buildService({
     getActionIdByPreuveReglementaireId: vi
       .fn()
       .mockResolvedValue(actionIdByPreuve),
-    getFichierCollectiviteId: vi.fn().mockResolvedValue(fichierCollectiviteId),
     addPreuveReglementaireWithFile: vi
       .fn()
       .mockResolvedValue({ success: true, data: { id: 11 } }),
@@ -45,10 +45,21 @@ function buildService({
       .mockResolvedValue({ success: true, data: { id: 22 } }),
   } as unknown as AddPreuveRepository;
 
+  const bibliothequeFichierRepository = {
+    isFichierOwnedByCollectivite: vi
+      .fn()
+      .mockResolvedValue(isFichierOwnedByCollectivite),
+  } as unknown as BibliothequeFichierRepository;
+
   return {
-    service: new AddPreuveService(permissionService, addPreuveRepository),
+    service: new AddPreuveService(
+      permissionService,
+      addPreuveRepository,
+      bibliothequeFichierRepository
+    ),
     permissionService,
     addPreuveRepository,
+    bibliothequeFichierRepository,
   };
 }
 
@@ -100,9 +111,8 @@ describe('AddPreuveService', () => {
   });
 
   it("renvoie NOT_FOUND quand le fichier réglementaire appartient à une autre collectivité", async () => {
-    const { service, addPreuveRepository } = buildService({
-      fichierCollectiviteId: 2,
-    });
+    const { service, addPreuveRepository, bibliothequeFichierRepository } =
+      buildService({ isFichierOwnedByCollectivite: false });
 
     const result = await service.addPreuveReglementaire(
       {
@@ -117,6 +127,9 @@ describe('AddPreuveService', () => {
       success: false,
       error: CommonErrorEnum.NOT_FOUND,
     });
+    expect(
+      bibliothequeFichierRepository.isFichierOwnedByCollectivite
+    ).toHaveBeenCalledWith({ fichierId: 10, collectiviteId: 1 });
     expect(
       addPreuveRepository.addPreuveReglementaireWithFile
     ).not.toHaveBeenCalled();
@@ -220,9 +233,8 @@ describe('AddPreuveService', () => {
   });
 
   it("renvoie NOT_FOUND quand le fichier complémentaire appartient à une autre collectivité", async () => {
-    const { service, addPreuveRepository } = buildService({
-      fichierCollectiviteId: 2,
-    });
+    const { service, addPreuveRepository, bibliothequeFichierRepository } =
+      buildService({ isFichierOwnedByCollectivite: false });
 
     const result = await service.addPreuveComplementaire(
       {
@@ -237,6 +249,9 @@ describe('AddPreuveService', () => {
       success: false,
       error: CommonErrorEnum.NOT_FOUND,
     });
+    expect(
+      bibliothequeFichierRepository.isFichierOwnedByCollectivite
+    ).toHaveBeenCalledWith({ fichierId: 10, collectiviteId: 1 });
     expect(
       addPreuveRepository.addPreuveComplementaireWithFile
     ).not.toHaveBeenCalled();

@@ -1,5 +1,6 @@
+import { and, eq } from 'drizzle-orm';
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable, Logger } from '@nestjs/common';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -9,7 +10,6 @@ import { Result } from '@tet/backend/utils/result.type';
 import { canUpdateAuditReport } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq } from 'drizzle-orm';
 import { auditTable } from '../audit.table';
 import {
   UpdateAuditReportError,
@@ -23,7 +23,8 @@ export class UpdateAuditReportService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissions: PermissionService
+    private readonly permissions: PermissionService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   private async canMutateLabellisationDocuments(
@@ -32,9 +33,7 @@ export class UpdateAuditReportService {
   ): Promise<boolean> {
     const permissionResult = await this.permissions.isAllowed(
       user,
-      PermissionOperationEnum[
-        'REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'
-      ],
+      PermissionOperationEnum['REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'],
       ResourceType.COLLECTIVITE,
       { collectiviteId }
     );
@@ -74,10 +73,11 @@ export class UpdateAuditReportService {
 
       const allowed = canUpdateAuditReport({
         isAuditeur: context.auditeur !== null,
-        canMutateLabellisationDocuments: await this.canMutateLabellisationDocuments(
-          user,
-          context.collectiviteId
-        ),
+        canMutateLabellisationDocuments:
+          await this.canMutateLabellisationDocuments(
+            user,
+            context.collectiviteId
+          ),
         audit: {
           clos: context.clos,
           valide: context.valide,
@@ -93,17 +93,13 @@ export class UpdateAuditReportService {
         };
       }
 
-      const [fichier] = await this.databaseService.db
-        .select({ id: bibliothequeFichierTable.id })
-        .from(bibliothequeFichierTable)
-        .where(
-          and(
-            eq(bibliothequeFichierTable.id, fichierId),
-            eq(bibliothequeFichierTable.collectiviteId, context.collectiviteId)
-          )
-        );
+      const isFichierOwnedByCollectivite =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId,
+          collectiviteId: context.collectiviteId,
+        });
 
-      if (!fichier) {
+      if (!isFichierOwnedByCollectivite) {
         return {
           success: false,
           error: UpdateAuditReportErrorEnum.FICHIER_NOT_FOUND,

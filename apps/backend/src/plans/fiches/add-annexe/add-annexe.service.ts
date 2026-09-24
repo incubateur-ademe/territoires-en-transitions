@@ -1,3 +1,4 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -17,7 +18,8 @@ import {
 export class AddAnnexeService {
   constructor(
     private readonly ficheActionPermissionsService: FicheActionPermissionsService,
-    private readonly addAnnexeRepository: AddAnnexeRepository
+    private readonly addAnnexeRepository: AddAnnexeRepository,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async addAnnexe(
@@ -48,9 +50,12 @@ export class AddAnnexeService {
     const commentaire = input.commentaire ?? '';
 
     if ('fichierId' in input) {
-      const fichierCollectiviteId =
-        await this.addAnnexeRepository.getFichierCollectiviteId(input.fichierId);
-      if (fichierCollectiviteId !== collectiviteId) {
+      const isFichierOwnedByCollectivite =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId: input.fichierId,
+          collectiviteId,
+        });
+      if (!isFichierOwnedByCollectivite) {
         return failure(CommonErrorEnum.NOT_FOUND);
       }
       return this.addAnnexeRepository.addFile({
