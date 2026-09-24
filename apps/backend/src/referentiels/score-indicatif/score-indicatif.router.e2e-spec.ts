@@ -1,24 +1,28 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
   deleteActionScoreIndicateurValeursForCollectivite,
   deleteIndicateurValeursForCollectivite,
   fixturePourScoreIndicatif,
   getAuthUserFromUserCredentials,
   getIndicateurIdByIdentifiant,
+  getSnbcMetadonneeId,
   getTestApp,
   getTestDatabase,
   getTestRouter,
+  insertFixtureAutreActionPourScoreIndicatif,
   insertFixturePourScoreIndicatif,
   insertFixtureScoreAvecExprCible,
+  insertIndicateurValeurs,
   TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 
 /** Action TE présente en seed, utilisée pour les tests referentiel(te_…). */
 const TE_ACTION_ID = 'te_2.2.5';
@@ -698,6 +702,158 @@ describe('ScoreIndicatifRouter', () => {
         fait: { score: 0 },
         programme: { score: 0 },
       },
+    });
+  });
+
+  describe('progression_snbc(...) et reduction(...)', () => {
+    const ID = TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT;
+    const METADONNEE_CITEPA = 1;
+
+    // formule + valeur `fait` sélectionnée : 90 en 2025 (citepa) ; la valeur
+    // `programme` (objectif 60, collectivité) sert à vérifier qu'elle donne
+    // `null` (pas d'année utilisée pour les objectifs)
+    const setup = async (exprScore: string) => {
+      const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+        collectiviteId: testCollectiviteId,
+        actionId: fixturePourScoreIndicatif.actionId,
+        exprCible: 'si referentiel(cae) alors 160 sinon 0',
+        exprScore,
+        dateValeur: fixturePourScoreIndicatif.dateValeur,
+        resultat: 90,
+        objectif: 60,
+      });
+      onTestFinished(() => cleanup());
+      const indicateurId = await getIndicateurIdByIdentifiant(
+        databaseService,
+        ID
+      );
+      const snbcId = await getSnbcMetadonneeId(databaseService);
+      const insert = (
+        valeurs: Parameters<typeof insertIndicateurValeurs>[1]['valeurs']
+      ) =>
+        insertIndicateurValeurs(databaseService, {
+          indicateurId,
+          collectiviteId: testCollectiviteId,
+          valeurs,
+        });
+      return { indicateurId, snbcId, insert };
+    };
+
+    const getScore = async () => {
+      const caller = router.createCaller({ user: testUser });
+      const result = await caller.referentiels.actions.getScoreIndicatif({
+        collectiviteId: testCollectiviteId,
+        actionIds: [fixturePourScoreIndicatif.actionId],
+      });
+      return result[fixturePourScoreIndicatif.actionId];
+    };
+
+    test('progression_snbc : score fait de 0.5, programme null', async () => {
+      const { snbcId, insert } = await setup(`progression_snbc(${ID})`);
+      // 2015 à une date qui n'est pas un 1er janvier
+      await insert([
+        { dateValeur: '2015-06-15', metadonneeId: snbcId, objectif: 100 },
+        { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
+      ]);
+
+      const score = await getScore();
+      expect(score.fait?.score).toBeCloseTo(0.5);
+      expect(score.programme).toBeNull();
+    });
+
+    test('progression_snbc : valeurs snbc manquantes ou valeurDepart = valeurAttendue', async () => {
+      const { snbcId, insert } = await setup(
+        `min(1, progression_snbc(${ID}))`
+      );
+      expect((await getScore()).fait).toBeNull();
+
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: snbcId, objectif: 80 },
+        { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
+      ]);
+      expect((await getScore()).fait).toBeNull();
+    });
+
+    test('reduction : valeurDepart de la collectivité', async () => {
+      const { insert } = await setup(`reduction(${ID}, 2015, 2030, 0.4)`);
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
+      ]);
+
+      const score = await getScore();
+      expect(score.fait?.score).toBeCloseTo(0.375);
+      expect(score.programme).toBeNull();
+    });
+
+    test("reduction : repli sur une source open data, puis null sans aucune valeur de départ", async () => {
+      const { insert } = await setup(`reduction(${ID}, 2015, 2030, 0.4)`);
+      expect((await getScore()).fait).toBeNull();
+
+      await insert([
+        {
+          dateValeur: '2015-01-01',
+          metadonneeId: METADONNEE_CITEPA,
+          resultat: 100,
+        },
+      ]);
+      expect((await getScore()).fait?.score).toBeCloseTo(0.375);
+    });
+
+    test('reduction : la trajectoire reste à la cible après anneeCible', async () => {
+      const { insert } = await setup(`reduction(${ID}, 2015, 2020, 0.4)`);
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
+      ]);
+
+      // valeurAttendue = 60 (cible), résultat 90 : (100 - 90) / (100 - 60)
+      expect((await getScore()).fait?.score).toBeCloseTo(0.25);
+    });
+
+    test("l'année utilisée dépend de l'action (contexte non partagé)", async () => {
+      const autreActionId = 'cae_1.2.3.3.5';
+      const exprScore = `reduction(${ID}, 2015, 2030, 0.4)`;
+      const { indicateurId, insert } = await setup(exprScore);
+      const [, fait2030] = await insert([
+        { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
+        { dateValeur: '2030-01-01', metadonneeId: METADONNEE_CITEPA, resultat: 90 },
+      ]);
+      const [programme] = await databaseService.db
+        .select({ id: indicateurValeurTable.id })
+        .from(indicateurValeurTable)
+        .where(
+          and(
+            eq(indicateurValeurTable.indicateurId, indicateurId),
+            eq(indicateurValeurTable.collectiviteId, testCollectiviteId),
+            eq(indicateurValeurTable.dateValeur, fixturePourScoreIndicatif.dateValeur),
+            isNull(indicateurValeurTable.metadonneeId)
+          )
+        );
+      const cleanupAutreAction = await insertFixtureAutreActionPourScoreIndicatif(
+        databaseService,
+        {
+          actionId: autreActionId,
+          collectiviteId: testCollectiviteId,
+          indicateurId,
+          exprScore,
+          valeurs: [
+            { id: programme.id, metadonneeId: null },
+            { id: fait2030.id, metadonneeId: METADONNEE_CITEPA },
+          ],
+        }
+      );
+      onTestFinished(() => cleanupAutreAction());
+
+      const caller = router.createCaller({ user: testUser });
+      const result = await caller.referentiels.actions.getScoreIndicatif({
+        collectiviteId: testCollectiviteId,
+        actionIds: [fixturePourScoreIndicatif.actionId, autreActionId],
+      });
+
+      // 2025 : avancement 2/3, attendue 73.33 ; 2030 : avancement 1, attendue 60
+      expect(result[fixturePourScoreIndicatif.actionId].fait?.score).toBeCloseTo(
+        0.375
+      );
+      expect(result[autreActionId].fait?.score).toBeCloseTo(0.25);
     });
   });
 

@@ -1,10 +1,11 @@
 import { indicateurActionTable } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 
 export const getIndicateurIdByIdentifiant = async (
   databaseService: DatabaseService,
@@ -400,5 +401,106 @@ export async function insertFixtureIndicateurPourValeursReference(
         .delete(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
     },
+  };
+}
+
+/** Id de la métadonnée la plus récente de la source `snbc` */
+export const getSnbcMetadonneeId = async (
+  databaseService: DatabaseService
+): Promise<number> => {
+  const [metadonnee] = await databaseService.db
+    .select({ id: indicateurSourceMetadonneeTable.id })
+    .from(indicateurSourceMetadonneeTable)
+    .where(eq(indicateurSourceMetadonneeTable.sourceId, 'snbc'))
+    .orderBy(desc(indicateurSourceMetadonneeTable.dateVersion))
+    .limit(1);
+  if (!metadonnee) {
+    throw new Error('Métadonnée de la source snbc introuvable');
+  }
+  return metadonnee.id;
+};
+
+/**
+ * Insère des valeurs d'indicateur (objectif et/ou résultat) pour un indicateur
+ * et une collectivité, sans les associer à un score. Le nettoyage est assuré
+ * par le cleanup de la fixture qui a créé l'indicateur.
+ */
+export const insertIndicateurValeurs = async (
+  databaseService: DatabaseService,
+  {
+    indicateurId,
+    collectiviteId,
+    valeurs,
+  }: {
+    indicateurId: number;
+    collectiviteId: number;
+    valeurs: Array<{
+      dateValeur: string;
+      // `null` pour une valeur saisie par la collectivité
+      metadonneeId: number | null;
+      objectif?: number;
+      resultat?: number;
+    }>;
+  }
+) =>
+  databaseService.db
+    .insert(indicateurValeurTable)
+    .values(
+      valeurs.map((valeur) => ({ indicateurId, collectiviteId, ...valeur }))
+    )
+    .returning();
+
+/**
+ * Lie un indicateur à une autre action, lui donne une formule et sélectionne
+ * les valeurs programme (`metadonneeId` null) et fait (`metadonneeId` 1) à
+ * utiliser. Le cleanup restaure la formule d'origine et supprime la sélection.
+ */
+export async function insertFixtureAutreActionPourScoreIndicatif(
+  databaseService: DatabaseService,
+  {
+    actionId,
+    collectiviteId,
+    indicateurId,
+    exprScore,
+    valeurs,
+  }: {
+    actionId: string;
+    collectiviteId: number;
+    indicateurId: number;
+    exprScore: string;
+    valeurs: { id: number; metadonneeId: number | null }[];
+  }
+): Promise<() => Promise<void>> {
+  const previousExprScore = await databaseService.db
+    .select({ exprScore: actionDefinitionTable.exprScore })
+    .from(actionDefinitionTable)
+    .where(eq(actionDefinitionTable.actionId, actionId))
+    .then((rows) => rows[0]?.exprScore ?? null);
+
+  await prepareActionPourScoreIndicatif(databaseService, {
+    actionId,
+    indicateurId,
+    exprScore,
+  });
+  await insertActionScoreIndicateurValeurs(databaseService, {
+    actionId,
+    collectiviteId,
+    indicateurId,
+    valeurs,
+  });
+
+  return async () => {
+    await databaseService.db
+      .update(actionDefinitionTable)
+      .set({ exprScore: previousExprScore })
+      .where(eq(actionDefinitionTable.actionId, actionId));
+    await databaseService.db
+      .delete(actionScoreIndicateurValeurTable)
+      .where(
+        and(
+          eq(actionScoreIndicateurValeurTable.actionId, actionId),
+          eq(actionScoreIndicateurValeurTable.collectiviteId, collectiviteId)
+        )
+      );
   };
 }
