@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
@@ -39,15 +38,6 @@ export class AddPreuveRepository {
   private readonly logger = new Logger(AddPreuveRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
-
-  async getFichierCollectiviteId(fichierId: number): Promise<number | null> {
-    const [row] = await this.databaseService.db
-      .select({ collectiviteId: bibliothequeFichierTable.collectiviteId })
-      .from(bibliothequeFichierTable)
-      .where(eq(bibliothequeFichierTable.id, fichierId));
-
-    return row?.collectiviteId ?? null;
-  }
 
   async getActionIdByPreuveReglementaireId(
     preuveId: string

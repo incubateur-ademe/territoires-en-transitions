@@ -1,5 +1,5 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable, Logger } from '@nestjs/common';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -9,7 +9,6 @@ import { PreuveLabellisation } from '@tet/domain/collectivites';
 import { canUpdateCandidatureDocuments } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq } from 'drizzle-orm';
 import { GetLabellisationService } from '../get-labellisation.service';
 import {
   CreateLabellisationPreuveError,
@@ -24,7 +23,8 @@ export class CreatePreuveService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly getLabellisationService: GetLabellisationService
+    private readonly getLabellisationService: GetLabellisationService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   private async canMutateLabellisationDocuments(
@@ -33,9 +33,7 @@ export class CreatePreuveService {
   ): Promise<boolean> {
     const permissionResult = await this.permissions.isAllowed(
       user,
-      PermissionOperationEnum[
-        'REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'
-      ],
+      PermissionOperationEnum['REFERENTIELS.LABELLISATIONS.MUTATE_DOCUMENTS'],
       ResourceType.COLLECTIVITE,
       { collectiviteId }
     );
@@ -113,18 +111,13 @@ export class CreatePreuveService {
     }
 
     try {
-      const matchingFichiers = await this.databaseService.db
-        .select({ id: bibliothequeFichierTable.id })
-        .from(bibliothequeFichierTable)
-        .where(
-          and(
-            eq(bibliothequeFichierTable.id, fichierId),
-            eq(bibliothequeFichierTable.collectiviteId, demande.collectiviteId)
-          )
-        )
-        .limit(1);
+      const isFichierOwnedByCollectivite =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId,
+          collectiviteId: demande.collectiviteId,
+        });
 
-      if (matchingFichiers.length === 0) {
+      if (!isFichierOwnedByCollectivite) {
         return failure(CreateLabellisationPreuveErrorEnum.FICHIER_NOT_FOUND);
       }
 
