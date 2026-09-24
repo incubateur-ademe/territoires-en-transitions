@@ -3,7 +3,7 @@ description: Generate .env file for an app
 
 inputs:
   app_name:
-    description: App name ('app', 'auth', etc. )
+    description: App name ('app', 'site', etc. )
     required: true
   json_vars:
     description: 'vars as JSON'
@@ -81,7 +81,7 @@ runs:
         echo "SUPABASE_ANON_KEY=${{ inputs.supabase-anon-key }}" >> $file
 
     # required env. at build time for the other Next apps
-    - if: ${{ contains(fromJSON('["auth", "site"]'), inputs.app_name) }}
+    - if: ${{ contains(fromJSON('["site"]'), inputs.app_name) }}
       shell: bash
       env:
         file: ${{ steps.setup.outputs.file }}
