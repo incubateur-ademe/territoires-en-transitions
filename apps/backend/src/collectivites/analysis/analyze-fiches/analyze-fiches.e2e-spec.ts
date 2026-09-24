@@ -1,4 +1,7 @@
-import { describe, it } from 'vitest';
+import { INestApplication } from '@nestjs/common';
+import { getTestApp, getTestRouter } from '@tet/backend/test';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('full-flow', () => {
   it.todo(
@@ -50,10 +53,40 @@ describe('full-flow-behavior-on-already-processed-action', () => {
 });
 
 describe('only-github-action', () => {
-  it.todo("le router analysis n'expose plus que getMobilisation");
-  it.todo(
-    "aucune procédure tRPC ne déclenche l'analyse, quel que soit le rôle"
-  );
+  let app: INestApplication;
+  let router: TrpcRouter;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    router = await getTestRouter(app);
+
+    return async () => {
+      await app.close();
+    };
+  });
+
+  it("le router analysis n'expose plus que getMobilisation", () => {
+    const analysisPaths = Object.keys(router.appRouter._def.procedures).filter(
+      (path) => path.startsWith('collectivites.analysis.')
+    );
+
+    expect(analysisPaths).toEqual(['collectivites.analysis.getMobilisation']);
+  });
+
+  it("aucune procédure tRPC ne déclenche l'analyse, quel que soit le rôle", () => {
+    const analysisPaths = Object.keys(router.appRouter._def.procedures).filter(
+      (path) => /analys/i.test(path)
+    );
+
+    expect({
+      analysisPaths,
+      getMobilisationType:
+        router.appRouter.collectivites.analysis.getMobilisation._def.type,
+    }).toEqual({
+      analysisPaths: ['collectivites.analysis.getMobilisation'],
+      getMobilisationType: 'query',
+    });
+  });
 });
 
 describe('llm-issue', () => {
