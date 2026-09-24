@@ -1,15 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
-import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
+import { AddDocumentTabs } from './add-document/add-document.tabs';
 import { Button, Field, Input, Modal } from '@tet/ui';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useAddRapportVisite } from './use-add-rapport-visite';
 
-/**
- * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
- * un rapport de visite annuelle
- */
-export const AddRapportVisite = () => {
+export const AddRapportVisiteModal = () => {
   const [opened, setOpened] = useState(false);
   const [date, setDate] = useState('');
   const handlers = useAddRapportVisite(date);
@@ -46,7 +42,7 @@ export const AddRapportVisite = () => {
       }}
     >
       <Button
-        dataTest="AddDocsButton"
+        aria-label={appLabels.ajouterRapportVisite}
         icon="add-line"
         variant="outlined"
         size="sm"
@@ -58,7 +54,6 @@ export const AddRapportVisite = () => {
   );
 };
 
-/** Affiche le sélecteur de date */
 const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
   const [isValid, setIsValid] = useState(false);
   const [value, setValue] = useState('');
@@ -77,11 +72,7 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
           }}
         />
       </Field>
-      <Button
-        dataTest="date-visite"
-        disabled={!isValid}
-        onClick={() => value && setDate(value)}
-      >
+      <Button disabled={!isValid} onClick={() => value && setDate(value)}>
         {appLabels.ajouterRapport}
       </Button>
     </>

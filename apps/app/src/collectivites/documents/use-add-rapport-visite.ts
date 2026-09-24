@@ -1,6 +1,6 @@
-import { AddFileHandler } from '@/app/collectivites/documents/add-document/add-file';
-import { AddLinkHandler } from '@/app/collectivites/documents/add-document/add-link';
-import { invalidateQueries } from '@/app/collectivites/documents/use-add-preuves';
+import { AddFileHandler } from './add-document/add-file';
+import { AddLinkHandler } from './add-document/add-link';
+import { invalidateQueries } from './use-add-preuves';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
