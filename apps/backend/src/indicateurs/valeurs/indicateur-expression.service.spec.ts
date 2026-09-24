@@ -127,6 +127,76 @@ describe('IndicateurExpressionService', () => {
       ]);
     });
 
+    test('progression_snbc(id) équivaut à progression_snbc(id, 2015)', () => {
+      const attendu = [
+        {
+          identifiant: 'cae_1.a',
+          optional: false,
+          tokens: ['progression_snbc'],
+          progressions: [{ token: 'progression_snbc', anneeDepart: 2015 }],
+        },
+      ];
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'progression_snbc(cae_1.a)'
+        )
+      ).toEqual(attendu);
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'progression_snbc(cae_1.a, 2015)'
+        )
+      ).toEqual(attendu);
+    });
+
+    test('progression_snbc avec année de départ', () => {
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'min(1, progression_snbc(cae_1.a, 2019))'
+        )
+      ).toEqual([
+        {
+          identifiant: 'cae_1.a',
+          optional: false,
+          tokens: ['progression_snbc'],
+          progressions: [{ token: 'progression_snbc', anneeDepart: 2019 }],
+        },
+      ]);
+    });
+
+    test('reduction à 4 paramètres', () => {
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'reduction(cae_1.a, 2015, 2030, 0.4)'
+        )
+      ).toEqual([
+        {
+          identifiant: 'cae_1.a',
+          optional: false,
+          tokens: ['reduction'],
+          progressions: [
+            {
+              token: 'reduction',
+              anneeDepart: 2015,
+              anneeCible: 2030,
+              reductionCible: 0.4,
+            },
+          ],
+        },
+      ]);
+    });
+
+    test('dédoublonne les progressions identiques et fusionne les autres', () => {
+      const [ref] =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'progression_snbc(cae_1.a) + progression_snbc(cae_1.a, 2015) + progression_snbc(cae_1.a, 2019) + val(cae_1.a)'
+        );
+      expect(ref.tokens).toEqual(['progression_snbc', 'val']);
+      expect(ref.progressions).toEqual([
+        { token: 'progression_snbc', anneeDepart: 2015 },
+        { token: 'progression_snbc', anneeDepart: 2019 },
+      ]);
+    });
+
     test('Simple formula with dash into identifier', async () => {
       const formula = 'opt_val(cae_49.b-hab) + val(cae_49.c-hab)';
       const neededSourceIndicateurs =
@@ -648,12 +718,140 @@ describe('IndicateurExpressionService', () => {
       ).toBe(42);
     });
 
-    it("retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)", () => {
+    it('retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)', () => {
       expect(
         indicateurExpressionService.parseAndEvaluateExpression(formule, {
           dummy: 1,
         })
       ).toBe(0);
+    });
+  });
+
+  describe('progression_snbc(...) et reduction(...)', () => {
+    const evaluate = (
+      formule: string,
+      valeur: number | null,
+      context?: Parameters<
+        IndicateurExpressionService['parseAndEvaluateExpression']
+      >[2]
+    ) =>
+      indicateurExpressionService.parseAndEvaluateExpression(
+        formule,
+        { cae_1: valeur } as Record<string, number>,
+        context
+      );
+
+    const snbc = {
+      anneesUtilisees: { cae_1: 2025 },
+      valeursProgression: {
+        cae_1: {
+          2015: { objectifSnbc: 100 },
+          2025: { objectifSnbc: 80 },
+        },
+      },
+    };
+
+    it('progression_snbc nominal', () => {
+      expect(evaluate('progression_snbc(cae_1)', 90, snbc)).toBe(0.5);
+    });
+
+    it('progression_snbc(id) équivaut à progression_snbc(id, 2015)', () => {
+      expect(evaluate('progression_snbc(cae_1, 2015)', 90, snbc)).toBe(0.5);
+    });
+
+    it('progression_snbc avec une autre année de départ', () => {
+      expect(
+        evaluate('progression_snbc(cae_1, 2019)', 90, {
+          ...snbc,
+          valeursProgression: {
+            cae_1: { 2019: { objectifSnbc: 200 }, 2025: { objectifSnbc: 100 } },
+          },
+        })
+      ).toBe(1.1);
+    });
+
+    it('progression_snbc renvoie null sans année utilisée (calcul programme)', () => {
+      expect(
+        evaluate('progression_snbc(cae_1)', 90, {
+          valeursProgression: snbc.valeursProgression,
+        })
+      ).toBeNull();
+    });
+
+    it('progression_snbc renvoie null si valeur ou objectif manque', () => {
+      expect(evaluate('progression_snbc(cae_1)', null, snbc)).toBeNull();
+      expect(
+        evaluate('progression_snbc(cae_1)', 90, {
+          ...snbc,
+          valeursProgression: { cae_1: { 2015: { objectifSnbc: 100 } } },
+        })
+      ).toBeNull();
+    });
+
+    it('progression_snbc renvoie null si valeurDepart = valeurAttendue, même sous min(1, ...)', () => {
+      const context = {
+        ...snbc,
+        valeursProgression: {
+          cae_1: { 2015: { objectifSnbc: 80 }, 2025: { objectifSnbc: 80 } },
+        },
+      };
+      expect(evaluate('progression_snbc(cae_1)', 90, context)).toBeNull();
+      expect(
+        evaluate('min(1, progression_snbc(cae_1))', 90, context)
+      ).toBeNull();
+    });
+
+    describe('reduction', () => {
+      const formule = 'reduction(cae_1, 2015, 2030, 0.4)';
+      const context = {
+        anneesUtilisees: { cae_1: 2025 },
+        valeursProgression: { cae_1: { 2015: { resultatDepart: 100 } } },
+      };
+
+      it('nominal', () => {
+        expect(evaluate(formule, 90, context)).toBeCloseTo(0.375);
+      });
+
+      it('est bornée à la cible après anneeCible', () => {
+        expect(
+          evaluate(formule, 80, {
+            ...context,
+            anneesUtilisees: { cae_1: 2040 },
+          })
+        ).toBe(0.5);
+      });
+
+      it('renvoie null à anneeDepart ou avant', () => {
+        expect(
+          evaluate(formule, 90, {
+            ...context,
+            anneesUtilisees: { cae_1: 2015 },
+          })
+        ).toBeNull();
+        expect(
+          evaluate(formule, 90, {
+            ...context,
+            anneesUtilisees: { cae_1: 2010 },
+          })
+        ).toBeNull();
+      });
+
+      it('renvoie null si anneeCible <= anneeDepart', () => {
+        expect(
+          evaluate('reduction(cae_1, 2015, 2015, 0.4)', 90, context)
+        ).toBeNull();
+      });
+
+      it('renvoie null si valeurDepart est introuvable ou sans année utilisée', () => {
+        expect(
+          evaluate(formule, 90, { ...context, valeursProgression: {} })
+        ).toBeNull();
+        expect(
+          evaluate(formule, 90, {
+            valeursProgression: context.valeursProgression,
+          })
+        ).toBeNull();
+      });
     });
   });
 

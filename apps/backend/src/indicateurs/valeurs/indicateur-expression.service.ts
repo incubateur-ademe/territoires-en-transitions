@@ -8,8 +8,13 @@ import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-
 import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { createToken, CstNode } from 'chevrotain';
-import { isNil } from 'es-toolkit';
-import { ReferencedIndicateur } from './referenced-indicateur.dto';
+import { isEqual, isNil } from 'es-toolkit';
+import { computeProgression, computeValeurAttendue } from './progression.rules';
+import { ANNEE_REFERENCE_SNBC_V2 } from '@tet/domain/indicateurs';
+import {
+  ProgressionParams,
+  ReferencedIndicateur,
+} from './referenced-indicateur.dto';
 
 const VAL = createToken({ name: 'VAL', pattern: /val/ });
 const OPT_VAL = createToken({ name: 'OPT_VAL', pattern: /opt_val/ });
@@ -18,9 +23,24 @@ const LIMITE = createToken({ name: 'LIMITE', pattern: /limite/ });
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
 const EST_SUIVI = createToken({ name: 'EST_SUIVI', pattern: /est_suivi/i });
+const PROGRESSION_SNBC = createToken({
+  name: 'PROGRESSION_SNBC',
+  pattern: /progression_snbc/i,
+});
+const REDUCTION = createToken({ name: 'REDUCTION', pattern: /reduction/i });
 
 // tokens ajoutés au parser de base
-const tokens = [VAL, OPT_VAL, CIBLE, LIMITE, IDENTITE, REPONSE, EST_SUIVI];
+const tokens = [
+  VAL,
+  OPT_VAL,
+  CIBLE,
+  LIMITE,
+  IDENTITE,
+  REPONSE,
+  EST_SUIVI,
+  PROGRESSION_SNBC,
+  REDUCTION,
+];
 
 // tokens dont l'évaluation lit une valeur d'indicateur sélectionnée par la
 // collectivité (`sourceIndicateursValeurs`) — seule source dont l'absence
@@ -47,6 +67,8 @@ class IndicateurExpressionParser extends ExpressionParser {
       { ALT: () => this.SUBRULE(this.identite) },
       { ALT: () => this.SUBRULE(this.reponse) },
       { ALT: () => this.SUBRULE(this.est_suivi) },
+      { ALT: () => this.SUBRULE(this.progression_snbc) },
+      { ALT: () => this.SUBRULE(this.reduction) },
       ...this.getCallHandlers.apply(this),
     ]);
   });
@@ -78,6 +100,14 @@ class IndicateurExpressionParser extends ExpressionParser {
   private est_suivi = this.RULE('est_suivi', () => {
     this.consumeFuncOneParam(EST_SUIVI);
   });
+
+  private progression_snbc = this.RULE('progression_snbc', () => {
+    this.consumeFuncTwoParamsLastOptional(PROGRESSION_SNBC);
+  });
+
+  private reduction = this.RULE('reduction', () => {
+    this.consumeFuncFourParams(REDUCTION);
+  });
 }
 
 export const parser = new IndicateurExpressionParser();
@@ -101,7 +131,19 @@ export type EvaluationContext = {
   // est-elle actuellement sélectionnée (et non nulle) pour le calcul du
   // score de cette action, pour ce type de score (fait/programme) ?
   indicateursSuivis?: Record<string, boolean>;
+  // année (`dateValeur`) de la valeur utilisée pour chaque indicateur, pour
+  // `progression_snbc(...)` et `reduction(...)`. Propre à une action et à un
+  // type de score : absent au calcul `programme`.
+  anneesUtilisees?: Record<string, number>;
+  // valeurs préchargées pour `progression_snbc(...)` et `reduction(...)`,
+  // indexées par identifiant d'indicateur puis par année
+  valeursProgression?: ValeursProgression;
 };
+
+export type ValeursProgression = Record<
+  string,
+  Record<number, { objectifSnbc?: number; resultatDepart?: number }>
+>;
 
 class IndicateurExpressionVisitor extends getExpressionVisitor(
   parser.getBaseCstVisitorConstructor()
@@ -112,6 +154,8 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   identiteCollectivite: IdentiteCollectivite | null = null;
   reponses: PersonnalisationReponses | null = null;
   indicateursSuivis: Record<string, boolean> | null = null;
+  anneesUtilisees: Record<string, number> | null = null;
+  valeursProgression: ValeursProgression | null = null;
 
   constructor() {
     super();
@@ -136,6 +180,10 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
         return this.visit(ctx.reponse);
       } else if (ctx.est_suivi) {
         return this.visit(ctx.est_suivi);
+      } else if (ctx.progression_snbc) {
+        return this.visit(ctx.progression_snbc);
+      } else if (ctx.reduction) {
+        return this.visit(ctx.reduction);
       }
     }
   }
@@ -214,6 +262,55 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
     ).toLowerCase();
     return this.indicateursSuivis?.[indicateurIdentifier] ?? false;
   }
+
+  // `null` (aucun score) si la valeur utilisée ou son année manque, ce qui est
+  // le cas au calcul `programme`
+  private getValeurEtAnneeUtilisees(identifiant: string) {
+    if (!this.sourceIndicateursValeurs) {
+      throw new Error(`Missing source indicateur valeurs`);
+    }
+    return {
+      valeurUtilisee: this.sourceIndicateursValeurs[identifiant] ?? null,
+      anneeUtilisee: this.anneesUtilisees?.[identifiant] ?? null,
+    };
+  }
+
+  progression_snbc(ctx: any): number | null {
+    const identifiant = this.visit(ctx.identifier) as string;
+    const anneeDepart = ctx.primary
+      ? (this.visit(ctx.primary) as number)
+      : ANNEE_REFERENCE_SNBC_V2;
+    const { valeurUtilisee, anneeUtilisee } =
+      this.getValeurEtAnneeUtilisees(identifiant);
+    if (anneeUtilisee === null) {
+      return null;
+    }
+    const valeursParAnnee = this.valeursProgression?.[identifiant];
+    return computeProgression(
+      valeursParAnnee?.[anneeDepart]?.objectifSnbc,
+      valeursParAnnee?.[anneeUtilisee]?.objectifSnbc,
+      valeurUtilisee
+    );
+  }
+
+  reduction(ctx: any): number | null {
+    const identifiant = this.visit(ctx.identifier) as string;
+    const [anneeDepart, anneeCible, reductionCible] = (
+      ctx.primary as CstNode[]
+    ).map((node) => this.visit(node) as number);
+    const { valeurUtilisee, anneeUtilisee } =
+      this.getValeurEtAnneeUtilisees(identifiant);
+    const valeurDepart =
+      this.valeursProgression?.[identifiant]?.[anneeDepart]?.resultatDepart;
+    const valeurAttendue = computeValeurAttendue({
+      valeurDepart,
+      anneeDepart,
+      anneeCible,
+      reductionCible,
+      anneeUtilisee,
+    });
+    return computeProgression(valeurDepart, valeurAttendue, valeurUtilisee);
+  }
 }
 
 // Visitor pour extraire les références d'indicateurs
@@ -238,9 +335,10 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
     identifiant: string;
     source?: string;
     token: string;
+    progression?: ProgressionParams;
   }) {
     const identifiant = ref.identifiant.toLowerCase();
-    const { source, token } = ref;
+    const { source, token, progression } = ref;
 
     const existingRef = this.references.find(
       (r) => r.identifiant === identifiant
@@ -255,6 +353,13 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
           existingRef.optional = false;
         }
       }
+      if (progression) {
+        const progressions = existingRef.progressions ?? [];
+        if (!progressions.some((p) => isEqual(p, progression))) {
+          progressions.push(progression);
+        }
+        existingRef.progressions = progressions;
+      }
     } else {
       const newRef: ReferencedIndicateur = {
         identifiant,
@@ -263,6 +368,9 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
       };
       if (source) {
         newRef.sources = [source];
+      }
+      if (progression) {
+        newRef.progressions = [progression];
       }
       this.references.push(newRef);
     }
@@ -286,6 +394,10 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
         return this.visit(ctx.reponse);
       } else if (ctx.est_suivi) {
         return this.visit(ctx.est_suivi);
+      } else if (ctx.progression_snbc) {
+        return this.visit(ctx.progression_snbc);
+      } else if (ctx.reduction) {
+        return this.visit(ctx.reduction);
       }
     }
   }
@@ -327,6 +439,37 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
   est_suivi(ctx: any) {
     const identifiant = this.visit(ctx.identifier) as string;
     this.addReference({ identifiant, token: 'est_suivi' });
+    return null;
+  }
+
+  progression_snbc(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    const anneeDepart = ctx.primary
+      ? (this.visit(ctx.primary) as number)
+      : ANNEE_REFERENCE_SNBC_V2;
+    this.addReference({
+      identifiant,
+      token: 'progression_snbc',
+      progression: { token: 'progression_snbc', anneeDepart },
+    });
+    return null;
+  }
+
+  reduction(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    const [anneeDepart, anneeCible, reductionCible] = (
+      ctx.primary as CstNode[]
+    ).map((node) => this.visit(node) as number);
+    this.addReference({
+      identifiant,
+      token: 'reduction',
+      progression: {
+        token: 'reduction',
+        anneeDepart,
+        anneeCible,
+        reductionCible,
+      },
+    });
     return null;
   }
 }
@@ -382,6 +525,8 @@ export default class IndicateurExpressionService {
       identiteCollectivite,
       reponses,
       indicateursSuivis,
+      anneesUtilisees,
+      valeursProgression,
     } = context || {};
     // une formule peut ne dépendre que d'`est_suivi(...)`, sans aucune
     // valeur source : ne pas court-circuiter dans ce cas.
@@ -400,6 +545,8 @@ export default class IndicateurExpressionService {
     visitor.identiteCollectivite = identiteCollectivite || null;
     visitor.reponses = reponses || null;
     visitor.indicateursSuivis = indicateursSuivis || null;
+    visitor.anneesUtilisees = anneesUtilisees || null;
+    visitor.valeursProgression = valeursProgression || null;
     const result = visitor.visit(cst);
     if (!isFinite(result as number)) {
       this.logger.log(
