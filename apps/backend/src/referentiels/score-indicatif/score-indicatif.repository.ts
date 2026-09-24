@@ -6,6 +6,7 @@ import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { LigneValeurProgression } from '@tet/backend/indicateurs/valeurs/progression.rules';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
@@ -17,7 +18,18 @@ import {
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
-import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
+import {
+  and,
+  eq,
+  getTableColumns,
+  gte,
+  inArray,
+  isNotNull,
+  lte,
+  not,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { groupBy } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
 import { ScoreIndicatifError } from './score-indicatif.errors';
@@ -226,7 +238,7 @@ export class ScoreIndicatifRepository {
     Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
   > {
     try {
-      const rows = await(tx ?? this.databaseService.db)
+      const rows = await (tx ?? this.databaseService.db)
         .selectDistinct({
           collectiviteId: actionScoreIndicateurValeurTable.collectiviteId,
           actionId: actionScoreIndicateurValeurTable.actionId,
@@ -277,6 +289,80 @@ export class ScoreIndicatifRepository {
         );
 
       return success(rows.map((r) => r.id));
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
+  }
+
+  /**
+   * Liste les lignes de valeurs de la collectivité ayant un objectif ou un
+   * résultat, pour les indicateurs et les années donnés, avec leur source
+   * (pour `progression_snbc(...)` et `reduction(...)`). Le filtre d'année porte
+   * sur la plage `[a-01-01, a-12-31]` car `dateValeur` n'est pas forcément un
+   * 1er janvier.
+   */
+  async getValeursProgression(
+    indicateurIds: number[],
+    collectiviteId: number,
+    annees: number[],
+    tx?: Transaction
+  ): Promise<
+    Result<
+      Array<LigneValeurProgression & { indicateurId: number }>,
+      ScoreIndicatifError
+    >
+  > {
+    if (!indicateurIds.length || !annees.length) {
+      return success([]);
+    }
+    try {
+      const rows = await (tx ?? this.databaseService.db)
+        .select({
+          indicateurId: indicateurValeurTable.indicateurId,
+          metadonneeId: indicateurValeurTable.metadonneeId,
+          sourceId: indicateurSourceMetadonneeTable.sourceId,
+          ordreAffichage: indicateurSourceTable.ordreAffichage,
+          dateVersion: indicateurSourceMetadonneeTable.dateVersion,
+          dateValeur: indicateurValeurTable.dateValeur,
+          objectif: indicateurValeurTable.objectif,
+          resultat: indicateurValeurTable.resultat,
+        })
+        .from(indicateurValeurTable)
+        .leftJoin(
+          indicateurSourceMetadonneeTable,
+          eq(
+            indicateurValeurTable.metadonneeId,
+            indicateurSourceMetadonneeTable.id
+          )
+        )
+        .leftJoin(
+          indicateurSourceTable,
+          eq(indicateurSourceMetadonneeTable.sourceId, indicateurSourceTable.id)
+        )
+        .where(
+          and(
+            inArray(indicateurValeurTable.indicateurId, indicateurIds),
+            eq(indicateurValeurTable.collectiviteId, collectiviteId),
+            or(
+              isNotNull(indicateurValeurTable.objectif),
+              isNotNull(indicateurValeurTable.resultat)
+            ),
+            or(
+              ...annees.map((annee) =>
+                and(
+                  gte(indicateurValeurTable.dateValeur, `${annee}-01-01`),
+                  lte(indicateurValeurTable.dateValeur, `${annee}-12-31`)
+                )
+              )
+            )
+          )
+        );
+
+      return success(rows);
     } catch (error) {
       this.logger.error(error);
       return failure(

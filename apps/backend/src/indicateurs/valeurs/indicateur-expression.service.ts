@@ -46,7 +46,12 @@ const tokens = [
 // collectivité (`sourceIndicateursValeurs`) — seule source dont l'absence
 // rend un score non calculable ; `cible`/`limite`/`identite`/`reponse`
 // puisent dans des maps de contexte distinctes et n'en dépendent pas.
-export const VALUE_SOURCE_TOKENS = ['val', 'opt_val'] as const;
+export const VALUE_SOURCE_TOKENS = [
+  'val',
+  'opt_val',
+  'progression_snbc',
+  'reduction',
+] as const;
 
 class IndicateurExpressionParser extends ExpressionParser {
   constructor() {
@@ -215,8 +220,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
       throw new Error(`Missing cible indicateur valeurs`);
     }
     return (
-      this.indicateurValeursComplementaires.cible[indicateurIdentifier] ??
-      null
+      this.indicateurValeursComplementaires.cible[indicateurIdentifier] ?? null
     );
   }
 
@@ -229,8 +233,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
     }
 
     return (
-      this.indicateurValeursComplementaires.limite[indicateurIdentifier] ??
-      null
+      this.indicateurValeursComplementaires.limite[indicateurIdentifier] ?? null
     );
   }
 
@@ -276,7 +279,9 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   }
 
   progression_snbc(ctx: any): number | null {
-    const identifiant = this.visit(ctx.identifier) as string;
+    // en minuscules comme `val`, `cible` et `est_suivi` : les maps sont
+    // indexées par les identifiants extraits en minuscules
+    const identifiant = (this.visit(ctx.identifier) as string).toLowerCase();
     const anneeDepart = ctx.primary
       ? (this.visit(ctx.primary) as number)
       : ANNEE_REFERENCE_SNBC_V2;
@@ -294,7 +299,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   }
 
   reduction(ctx: any): number | null {
-    const identifiant = this.visit(ctx.identifier) as string;
+    const identifiant = (this.visit(ctx.identifier) as string).toLowerCase();
     const [anneeDepart, anneeCible, reductionCible] = (
       ctx.primary as CstNode[]
     ).map((node) => this.visit(node) as number);

@@ -10,12 +10,19 @@ import {
   getReferentielIdFromActionId,
   IndicateurAssocie,
   ReferentielId,
+  ValeurUtilisee,
 } from '@tet/domain/referentiels';
+import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { GetScoreIndicatifRequest } from './get-score-indicatif.request';
 import {
   ScoreIndicatifError,
   ScoreIndicatifErrorEnum,
 } from './score-indicatif.errors';
+import { ScoreIndicatifRepository } from './score-indicatif.repository';
+import {
+  buildValeursProgression,
+  collectProgressionNeeds,
+} from './valeurs-progression.rules';
 
 @Injectable()
 export class BuildEvaluationContextService {
@@ -24,42 +31,64 @@ export class BuildEvaluationContextService {
   constructor(
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly personnalisationsService: PersonnalisationsService,
-    private readonly valeursReferenceService: ValeursReferenceService
+    private readonly valeursReferenceService: ValeursReferenceService,
+    private readonly repository: ScoreIndicatifRepository
   ) {}
 
   /** Charge et agrège les données nécessaires au calcul du score indicatif */
   async buildEvaluationContext(
     input: GetScoreIndicatifRequest,
     actionIds: string[],
+    indicateursParActionId: Record<string, ReferencedIndicateur[]>,
     indicateursAssocies: IndicateurAssocie[],
     identiteCollectivite: CollectiviteAvecType,
-    ctx?: ServiceSecondArg
+    valeursUtiliseesParActionId: Record<string, ValeurUtilisee[]>,
+    // `tx` permet de lire des valeurs écrites dans la même transaction
+    ctx?: Partial<ServiceSecondArg>
   ): Promise<Result<EvaluationContext, ScoreIndicatifError>> {
-    // contexte référentiel et réponses de personnalisation : deux requêtes
-    // indépendantes, lancées en parallèle plutôt qu'à la suite. (`est_suivi(...)`
+    // indicateurs et années à charger pour `progression_snbc(...)` et
+    // `reduction(...)`
+    const { indicateurIdParIdentifiant, annees } = collectProgressionNeeds(
+      indicateursParActionId,
+      indicateursAssocies,
+      valeursUtiliseesParActionId
+    );
+
+    // contexte référentiel, réponses de personnalisation et valeurs de
+    // progression : trois requêtes indépendantes, lancées en parallèle plutôt
+    // qu'à la suite. (`est_suivi(...)`
     // est évalué par action/type de score directement dans
     // `ScoreIndicatifService`, à partir des valeurs déjà sélectionnées — pas
     // besoin de le préparer ici.)
     // `deriveReferentielContext` capture déjà toutes ses erreurs en interne et
     // résout toujours vers un `Result` : pas besoin d'un `.catch()` ici.
-    const [referentielContextResult, personnalisationReponsesResult] =
-      await Promise.all([
-        this.deriveReferentielContext(actionIds),
-        this.personnalisationsService
-          .getPersonnalisationReponses(
-            input.collectiviteId,
-            undefined,
-            ctx?.user,
-            ctx?.tx
+    const [
+      referentielContextResult,
+      personnalisationReponsesResult,
+      valeursProgressionResult,
+    ] = await Promise.all([
+      this.deriveReferentielContext(actionIds),
+      this.personnalisationsService
+        .getPersonnalisationReponses(
+          input.collectiviteId,
+          undefined,
+          ctx?.user,
+          ctx?.tx
+        )
+        .then(success)
+        .catch((error) =>
+          failure(
+            ScoreIndicatifErrorEnum.PERSONNALISATION_REPONSES_ERROR,
+            error instanceof Error ? error : new Error(String(error))
           )
-          .then(success)
-          .catch((error) =>
-            failure(
-              ScoreIndicatifErrorEnum.PERSONNALISATION_REPONSES_ERROR,
-              error instanceof Error ? error : new Error(String(error))
-            )
-          ),
-      ]);
+        ),
+      this.repository.getValeursProgression(
+        Object.values(indicateurIdParIdentifiant),
+        input.collectiviteId,
+        annees,
+        ctx?.tx
+      ),
+    ]);
 
     if (!referentielContextResult.success) {
       return failure(
@@ -76,6 +105,20 @@ export class BuildEvaluationContextService {
       );
     }
     const personnalisationReponses = personnalisationReponsesResult.data;
+
+    if (!valeursProgressionResult.success) {
+      return failure(
+        ScoreIndicatifErrorEnum.VALEURS_PROGRESSION_ERROR,
+        valeursProgressionResult.cause
+      );
+    }
+    const valeursProgression = Object.keys(indicateurIdParIdentifiant).length
+      ? buildValeursProgression(
+          indicateurIdParIdentifiant,
+          annees,
+          valeursProgressionResult.data
+        )
+      : undefined;
 
     // valeurs de référence (cible/limite)
     const valeursCible: Array<[string, number]> = [];
@@ -126,6 +169,7 @@ export class BuildEvaluationContextService {
       },
       // `indicateursSuivis` est ajouté par `ScoreIndicatifService`, par action
       // et par type de score (fait/programme), avant l'évaluation.
+      valeursProgression,
     };
 
     return success(evaluationContext);
