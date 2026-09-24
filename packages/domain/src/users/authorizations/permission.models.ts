@@ -49,6 +49,7 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   'plans.fiches.update',
   'plans.fiches.bulk_update',
   'plans.fiches.delete',
+  'plans.fiches.import',
   'indicateurs.indicateurs.create',
   'indicateurs.indicateurs.update',
   'indicateurs.indicateurs.delete',
@@ -71,7 +72,6 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     ...collectiviteAdminPermissions,
 
     'collectivites.mutate',
-    'plans.fiches.import',
     'referentiels.labellisations.mutate_documents',
     'utils.banner.mutate',
   ],
