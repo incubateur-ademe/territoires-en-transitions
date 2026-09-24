@@ -24,6 +24,28 @@ export const getEmplacement = (l: LigneDiagnostic): Emplacement | null => {
     : null;
 };
 
+/** Garde, appelée par `gardes.ts` : un numéro de T&C absent des tables ; un numéro vide n'en est pas un (écart). */
+export const listCasBloquantsGrille = (lignes: readonly LigneDiagnostic[]) => {
+  const inconnus = new Map<string, number>();
+  for (const l of lignes) {
+    const numeros = [
+      ['secteur', l.secteur, SECTEURS],
+      ['polluant', l.polluant, POLLUANTS],
+      ['filière', l.filiere, FILIERES],
+      ['sol', l.sol, SOLS],
+    ] as const;
+    for (const [nom, numero, table] of numeros) {
+      if (numero !== null && !table.has(numero)) {
+        const cas = `${nom} ${numero} inconnu (${l.table})`;
+        inconnus.set(cas, (inconnus.get(cas) ?? 0) + 1);
+      }
+    }
+  }
+  return [...inconnus].map(
+    ([cas, n]) => `  ${cas} : ${n} ligne${n > 1 ? 's' : ''}`
+  );
+};
+
 // ---------------------------------------------------------------------------
 // La ligne : sur quelle ligne de la grille va une ligne de T&C.
 // ---------------------------------------------------------------------------

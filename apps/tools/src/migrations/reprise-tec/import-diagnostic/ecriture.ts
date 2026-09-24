@@ -3,7 +3,7 @@
 import { ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS } from '@tet/domain/demarches';
 import { PoolClient } from 'pg';
 import type { Valeur } from './diagnostic';
-import type { Dossier } from './dossiers';
+import type { Dossier, Dossiers } from './dossiers';
 
 /** La source que l'écran du diagnostic lit, la même que `PCAET_COLLECTIVITE_SOURCE_ID` du backend. */
 const SOURCE_PCAET = {
@@ -11,10 +11,25 @@ const SOURCE_PCAET = {
   libelle: 'PCAET collectivité',
 };
 
+/** Garde, appelée par `gardes.ts` : le compteur des métadonnées en retard donnerait un id déjà pris. */
+export const listCasBloquantsEcriture = async (client: PoolClient) => {
+  const {
+    rows: [compteur],
+  } = await client.query<{ prochain: number; max: number }>(`
+    select case when is_called then last_value + 1 else last_value end::int as prochain,
+           (select coalesce(max(id), 0) from public.indicateur_source_metadonnee)::int as max
+      from public.indicateur_source_metadonnee_id_seq`);
+  return compteur.prochain > compteur.max
+    ? []
+    : [
+        `  compteur des métadonnées en retard : il donnerait l'id ${compteur.prochain}, la table va déjà jusqu'à ${compteur.max} (voir le README)`,
+      ];
+};
+
 /** Écrit le diagnostic de chaque dossier qui a au moins une valeur ; rend le nombre de dossiers écrits. */
 export const createDiagnostics = async (
   client: PoolClient,
-  dossiers: Map<number, Dossier>,
+  dossiers: Dossiers,
   valeurs: readonly Valeur[]
 ) => {
   const indicateurs = await loadIndicateurs(client);
