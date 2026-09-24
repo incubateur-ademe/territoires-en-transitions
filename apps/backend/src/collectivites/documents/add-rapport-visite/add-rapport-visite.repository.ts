@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -10,7 +9,7 @@ import {
 } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveRapport } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq, InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel } from 'drizzle-orm';
 import type {
   AddRapportVisiteWithFichierInput,
   AddRapportVisiteWithLienInput,
@@ -35,18 +34,6 @@ export class AddRapportVisiteRepository {
   private readonly logger = new Logger(AddRapportVisiteRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
-
-  async getFichierCollectiviteId(
-    fichierId: number,
-    tx?: Transaction
-  ): Promise<number | null> {
-    const [row] = await (tx ?? this.databaseService.db)
-      .select({ collectiviteId: bibliothequeFichierTable.collectiviteId })
-      .from(bibliothequeFichierTable)
-      .where(eq(bibliothequeFichierTable.id, fichierId));
-
-    return row?.collectiviteId ?? null;
-  }
 
   async addRapportVisiteWithFichier(
     params: AddRapportVisiteWithFichierParams,
