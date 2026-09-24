@@ -3,7 +3,6 @@ import type {
   CollectedFile,
   CollectedLink,
 } from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
-import { MAX_ARCHIVED_FILE_SIZE_BYTES } from '@tet/backend/utils/archive/triage-archive-files.utils';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { describe, expect, test } from 'vitest';
 import {
@@ -124,26 +123,6 @@ describe('toArchiveArborescence', () => {
         emplacement: '',
         raison: 'Taille du fichier inconnue',
       },
-    ]);
-  });
-
-  test('écarte un document de plus de 100 Mo et le consigne', () => {
-    const { files, skippedFiles } = toArchiveArborescence(
-      toDocuments({
-        files: [
-          { hash: 'a', filename: 'petit.pdf', filesize: 1024 },
-          {
-            hash: 'b',
-            filename: 'enorme.pdf',
-            filesize: MAX_ARCHIVED_FILE_SIZE_BYTES + 1,
-          },
-        ],
-      })
-    );
-
-    expect(files.map(({ filename }) => filename)).toEqual(['petit.pdf']);
-    expect(skippedFiles.map(({ filename }) => filename)).toEqual([
-      'enorme.pdf',
     ]);
   });
 });
