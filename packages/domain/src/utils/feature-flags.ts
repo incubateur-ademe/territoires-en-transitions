@@ -7,6 +7,7 @@ const FEATURE_FLAGS = [
   'is-action-default-table-view-enabled',
   'is-demarche-pcaet-enabled',
   'is-demarche-pcaet-bypass-diagnostic-enabled',
+  'is-ai-plan-import-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);
