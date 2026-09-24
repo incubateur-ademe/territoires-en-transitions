@@ -242,3 +242,10 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
     ]);
   });
 });
+
+describe('VoletRepository contract', () => {
+  it.todo('saveVolets remplace les volets des fiches données, sans auteur');
+  it.todo('listVolets renvoie les volets des fiches de la CT');
+  it.todo('deleteVolets supprime les volets des fiches données');
+  it.todo('deleteVolets ne touche pas aux volets des autres fiches de la CT');
+});

@@ -35,7 +35,6 @@ export class PersistClassificationService {
       .saveVolets({
         collectiviteId: job.collectiviteId,
         fiches: outcome.report.fiches.map(toFicheVolets),
-        createdBy: job.createdBy,
         tx,
       });
     if (!saveResult.success) {

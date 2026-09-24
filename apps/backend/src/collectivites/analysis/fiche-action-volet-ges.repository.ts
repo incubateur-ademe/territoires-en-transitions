@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { notImplemented } from '@tet/backend/utils/not-implemented';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { LEVIER_ID_BY_NOM } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -16,6 +17,11 @@ export class FicheActionVoletGesRepository implements VoletRepository {
   private readonly logger = new Logger(FicheActionVoletGesRepository.name);
 
   constructor(private readonly database: DatabaseService) {}
+
+  listVolets: VoletRepository['listVolets'] = notImplemented('listVolets');
+
+  deleteVolets: VoletRepository['deleteVolets'] =
+    notImplemented('deleteVolets');
 
   async saveVolets({
     collectiviteId,

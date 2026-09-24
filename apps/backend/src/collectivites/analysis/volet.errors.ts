@@ -1,6 +1,11 @@
 import { createEnumObject } from '@tet/domain/utils';
 
-const voletErrorValues = ['SAVE_VOLETS_ERROR', 'GET_VOLETS_ERROR'] as const;
+const voletErrorValues = [
+  'SAVE_VOLETS_ERROR',
+  'GET_VOLETS_ERROR',
+  'DELETE_VOLETS_ERROR',
+  'LIST_MOBILISATIONS_ERROR',
+] as const;
 
 export const VoletErrorEnum = createEnumObject(voletErrorValues);
 
