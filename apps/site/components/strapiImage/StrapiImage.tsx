@@ -3,7 +3,7 @@
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 import classNames from 'classnames';
-import { CSSProperties, useEffect, useEffectEvent, useState } from 'react';
+import { CSSProperties, useState } from 'react';
 
 const imagePlaceholder = '/placeholder.svg';
 
@@ -52,8 +52,16 @@ export const DEPRECATED_StrapiImage = ({
 }: StrapiImageProps) => {
   const attributes = data.attributes;
 
-  const [src, setSrc] = useState(imagePlaceholder);
-  const updateSrc = useEffectEvent((value: string) => setSrc(value));
+  // L'URL se déduit des props : la placer dans un état alimenté par un effet
+  // affichait le placeholder le temps d'un rendu. Seul l'échec de chargement
+  // est un état — mémorisé par URL, il se réarme dès que la source change.
+  const resolvedSrc = getImageSrc(
+    size,
+    attributes.formats as unknown as Format,
+    attributes.url as unknown as string
+  );
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = failedSrc === resolvedSrc ? imagePlaceholder : resolvedSrc;
 
   const formats = Object.keys(attributes.formats ?? {})
     .map((srcKey) => ({
@@ -61,16 +69,6 @@ export const DEPRECATED_StrapiImage = ({
       width: attributes.formats[srcKey].width as unknown as number,
     }))
     .sort((a, b) => a.width - b.width);
-
-  useEffect(() => {
-    updateSrc(
-      getImageSrc(
-        size,
-        attributes.formats as unknown as Format,
-        attributes.url as unknown as string
-      )
-    );
-  }, [size, attributes]);
 
   return (
     <div
@@ -84,7 +82,7 @@ export const DEPRECATED_StrapiImage = ({
           formats.length ? `${formats.map((f) => `${f.url} ${f.width}w`)},` : ''
         } ${src} ${attributes.width}w`}
         alt={`${attributes.alternativeText ?? ''}`}
-        onError={() => setSrc(imagePlaceholder)}
+        onError={() => setFailedSrc(resolvedSrc)}
       />
 
       {displayCaption && !!attributes.caption && (

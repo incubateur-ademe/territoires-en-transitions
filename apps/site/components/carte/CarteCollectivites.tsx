@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useMemo } from 'react';
 import CarteContainer from './CarteContainer';
 import CollectiviteFeature from './CollectiviteFeature';
 import RegionFeature from './RegionFeature';
@@ -23,78 +23,56 @@ type CarteCollectivitesProps = {
   data: CollectivitesCarteFrance;
 };
 
+// `sort` sur une copie : la liste affichée est dérivée pendant le rendu, elle
+// ne doit pas réordonner le tableau reçu en prop.
+const sortCollectivites = (collectivites: labellisation_w_geojson[]) => {
+  return [...collectivites].sort((a, b) => {
+    if (
+      (a.type_collectivite === 'syndicat' &&
+        (b.type_collectivite === 'EPCI' ||
+          b.type_collectivite === 'commune')) ||
+      (a.type_collectivite === 'EPCI' && b.type_collectivite === 'commune')
+    )
+      return -1;
+    if (
+      (a.type_collectivite === 'commune' &&
+        (b.type_collectivite === 'EPCI' ||
+          b.type_collectivite === 'syndicat')) ||
+      (a.type_collectivite === 'EPCI' && b.type_collectivite === 'syndicat')
+    )
+      return 1;
+    return 0;
+  });
+};
+
 const CarteCollectivites = ({
   filtre,
   etoiles,
   forcedZoom,
   data,
 }: CarteCollectivitesProps) => {
-  const [localData, setLocalData] = useState(data);
-  const updateLocalData = useEffectEvent(
-    (
-      value:
-        | CollectivitesCarteFrance
-        | ((prevData: CollectivitesCarteFrance) => CollectivitesCarteFrance)
-    ) => setLocalData(value)
-  );
-
-  const sortCollectivites = (collectivites: labellisation_w_geojson[]) => {
-    return collectivites.sort((a, b) => {
-      if (
-        (a.type_collectivite === 'syndicat' &&
-          (b.type_collectivite === 'EPCI' ||
-            b.type_collectivite === 'commune')) ||
-        (a.type_collectivite === 'EPCI' && b.type_collectivite === 'commune')
-      )
-        return -1;
-      if (
-        (a.type_collectivite === 'commune' &&
-          (b.type_collectivite === 'EPCI' ||
-            b.type_collectivite === 'syndicat')) ||
-        (a.type_collectivite === 'EPCI' && b.type_collectivite === 'syndicat')
-      )
-        return 1;
-      return 0;
-    });
-  };
-
-  useEffect(() => {
-    const processData = (data: CollectivitesCarteFrance) => {
-      if (data) {
-        return {
-          collectivites: sortCollectivites(data.collectivites),
-          regions: data.regions,
-        };
-      }
-      return data;
-    };
-
-    updateLocalData(processData(data));
-  }, [data]);
-
-  useEffect(() => {
-    let tempCollectivites = data.collectivites;
+  // Le filtre et le tri sont une lecture des props : les calculer ici, plutôt
+  // que de les recopier dans un état via deux effets, évite le rendu
+  // intermédiaire où la carte affichait encore les collectivités précédentes.
+  const localData = useMemo(() => {
+    let collectivites = data.collectivites;
     if (filtre === 'labellisees_cae')
-      tempCollectivites = tempCollectivites.filter(
+      collectivites = collectivites.filter(
         (c) => c.cae_etoiles && etoiles.includes(c.cae_etoiles)
       );
     if (filtre === 'labellisees_eci')
-      tempCollectivites = tempCollectivites.filter(
+      collectivites = collectivites.filter(
         (c) => c.eci_etoiles && etoiles.includes(c.eci_etoiles)
       );
     if (filtre === 'cot_non_labellisees')
-      tempCollectivites = tempCollectivites.filter(
+      collectivites = collectivites.filter(
         (c) => c.cot === true && c.labellisee === false
       );
-    updateLocalData((prevData) => {
-      if (!prevData) return prevData;
-      else
-        return {
-          ...prevData,
-          collectivites: sortCollectivites(tempCollectivites),
-        };
-    });
-  }, [filtre, etoiles, data]);
+    return {
+      ...data,
+      collectivites: sortCollectivites(collectivites),
+    };
+  }, [data, filtre, etoiles]);
 
   return (
     <CarteContainer forcedZoom={forcedZoom}>

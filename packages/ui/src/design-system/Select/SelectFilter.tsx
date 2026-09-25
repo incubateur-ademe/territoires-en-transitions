@@ -46,7 +46,6 @@ export const SelectFilter = ({
         ...options,
       ]);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFilterOptions(options);
     }
   }, [values, options]);

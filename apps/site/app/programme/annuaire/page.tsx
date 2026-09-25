@@ -14,20 +14,30 @@ const Annuaire = () => {
   const [total, setTotal] = useState(0);
   const [data, setData] = useState<ConseillerType[]>([]);
 
-  const getConseillersData = async () => {
-    const { data, pagination } = await getData({
-      page: selectedPage,
-      limit: PAGINATION_LIMIT,
-      search: searchInput,
-    });
-    setData(data);
-    setSelectPage(pagination.start / PAGINATION_LIMIT + 1);
-    setTotal(pagination.total);
-  };
-
   useEffect(() => {
-    getConseillersData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Le drapeau écarte la réponse d'une recherche abandonnée : sans lui, une
+    // requête lente répondant après une plus récente réaffichait ses résultats.
+    let estAbandonne = false;
+
+    const chargerConseillers = async () => {
+      const { data, pagination } = await getData({
+        page: selectedPage,
+        limit: PAGINATION_LIMIT,
+        search: searchInput,
+      });
+      if (estAbandonne) {
+        return;
+      }
+      setData(data);
+      setSelectPage(pagination.start / PAGINATION_LIMIT + 1);
+      setTotal(pagination.total);
+    };
+
+    void chargerConseillers();
+
+    return () => {
+      estAbandonne = true;
+    };
   }, [selectedPage, searchInput]);
 
   return (

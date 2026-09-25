@@ -279,7 +279,6 @@
       "webpack-dev-server": "^5.2.6",
       "ws@8": "^8.21.0",
       "svgo@3": "3.3.2",
-      "eslint-plugin-react-hooks": "7.0.1",
       "@opentelemetry/core": "^2.8.0"
     }
   },
