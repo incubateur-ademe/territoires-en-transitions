@@ -5,6 +5,9 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { exportConnectCreateSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 import { ImportCorrespondantsRouter } from './import-correspondants/import-correspondants.router';
+import { listAdminContactsInputSchema } from './list-admin-contacts/list-admin-contacts.input';
+import { adminContactSchema } from './list-admin-contacts/list-admin-contacts.output';
+import { ListAdminContactsService } from './list-admin-contacts/list-admin-contacts.service';
 import { listMembresInputSchema } from './list-membres/list-membres.input';
 import { ListMembresService } from './list-membres/list-membres.service';
 import { InvitationsRouter } from './mutate-invitations/invitations.router';
@@ -21,6 +24,7 @@ export class CollectiviteMembresRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly listMembresService: ListMembresService,
+    private readonly listAdminContactsService: ListAdminContactsService,
     private readonly mutateMembresService: MutateMembresService,
     private readonly exportConnectService: ExportConnectService,
     private readonly invitationRouter: InvitationsRouter,
@@ -40,6 +44,14 @@ export class CollectiviteMembresRouter {
       .query(({ input, ctx }) =>
         this.listMembresService.list(input, { user: ctx.user })
       ),
+
+    listAdminContacts: this.trpc.authedProcedure
+      .input(listAdminContactsInputSchema)
+      .output(z.array(adminContactSchema))
+      .query(async ({ input }) => {
+        const result = await this.listAdminContactsService.list(input);
+        return this.getResultDataOrThrowError(result);
+      }),
 
     update: this.trpc.authedProcedure
       .input(z.array(updateMembreInputSchema))

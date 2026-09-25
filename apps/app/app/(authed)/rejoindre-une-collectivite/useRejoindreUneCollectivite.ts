@@ -1,10 +1,4 @@
-import {
-  Database,
-  Enums,
-  getCollectivitePath,
-  useSupabase,
-  useTRPC,
-} from '@tet/api';
+import { Enums, getCollectivitePath, RouterOutput, useTRPC } from '@tet/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   CollectivitePublic,
@@ -43,9 +37,8 @@ export type RejoindreUneCollectiviteProps = {
   onCancel: () => void;
 };
 
-type GetReferentContacts = Database['public']['Functions']['referent_contacts'];
-
-type ReferentContact = GetReferentContacts['Returns'][0];
+type ReferentContact =
+  RouterOutput['collectivites']['membres']['listAdminContacts'][number];
 
 export type CollectiviteInfo = {
   id: number;
@@ -63,7 +56,6 @@ export const useRejoindreUneCollectivite = ({
   redirectTo: string;
 }) => {
   const router = useRouter();
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
@@ -142,17 +134,18 @@ export const useRejoindreUneCollectivite = ({
   ) => {
     userInteractedRef.current = true;
     if (id) {
-      const { data: contacts, error } = await supabase.rpc(
-        'referent_contacts',
-        {
-          id,
-        }
-      );
+      const contacts = await queryClient
+        .fetchQuery(
+          trpc.collectivites.membres.listAdminContacts.queryOptions({
+            collectiviteId: id,
+          })
+        )
+        .catch(() => null);
 
       // `nomExplicite` : cas de la pré-sélection OIDC, où la collectivité peut
       // ne pas (encore) figurer dans la liste chargée par la recherche.
       const nom = nomExplicite ?? collectivites?.find((c) => c.id === id)?.nom;
-      if (!error && nom) {
+      if (contacts && nom) {
         setCollectiviteSelectionnee({
           id,
           nom,
