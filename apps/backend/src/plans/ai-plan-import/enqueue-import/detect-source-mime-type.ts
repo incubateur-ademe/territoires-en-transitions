@@ -1,19 +1,24 @@
+import { inspectOoxmlKind } from './validate-ooxml-archive';
+
 const PDF_MIME = 'application/pdf';
 export const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+export const DOCX_MIME =
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 const CSV_MIME = 'text/csv';
 
 export type SourceMimeType =
   | typeof PDF_MIME
   | typeof XLSX_MIME
+  | typeof DOCX_MIME
   | typeof CSV_MIME;
 
 // '%PDF'
 const PDF_MAGIC_BYTES = [0x25, 0x50, 0x44, 0x46];
 
-// 'PK\x03\x04' : un .xlsx est une archive ZIP (Office Open XML),
-// il n'existe pas de magic number propre à Excel.
-const XLSX_ZIP_CONTAINER_MAGIC_BYTES = [0x50, 0x4b, 0x03, 0x04];
+// 'PK\x03\x04' : un .xlsx ou un .docx est une archive ZIP (Office Open XML),
+// il n'existe pas de magic number propre à Excel ni à Word.
+const ZIP_CONTAINER_MAGIC_BYTES = [0x50, 0x4b, 0x03, 0x04];
 
 // Fenêtre conventionnelle du sniff texte/binaire (même ordre de grandeur
 // que git et file(1)) : les formats binaires contiennent quasi toujours
@@ -38,8 +43,9 @@ export const detectSourceMimeType = (
   if (looksLikePdf(buffer)) {
     return PDF_MIME;
   }
-  if (looksLikeXlsx(buffer)) {
-    return XLSX_MIME;
+  if (looksLikeZip(buffer)) {
+    const kind = inspectOoxmlKind(buffer);
+    return kind === 'xlsx' ? XLSX_MIME : kind === 'docx' ? DOCX_MIME : null;
   }
   if (looksLikeCsv(buffer, declaredMimeType)) {
     return CSV_MIME;
@@ -50,12 +56,11 @@ export const detectSourceMimeType = (
 const looksLikePdf = (buffer: Buffer): boolean =>
   startsWithBytes(buffer, PDF_MAGIC_BYTES);
 
-// Heuristique volontairement large : n'importe quel ZIP (docx, archive
-// quelconque) passe ce test. La validation profonde (présence d'un
-// workbook, taille décompressée) est faite par validateXlsxArchive
-// côté service.
-const looksLikeXlsx = (buffer: Buffer): boolean =>
-  startsWithBytes(buffer, XLSX_ZIP_CONTAINER_MAGIC_BYTES);
+// Un ZIP quelconque passe ce test : c'est son répertoire qui dit s'il
+// s'agit d'un classeur ou d'un document Word. La taille décompressée est
+// contrôlée par validateOoxmlArchive côté service.
+const looksLikeZip = (buffer: Buffer): boolean =>
+  startsWithBytes(buffer, ZIP_CONTAINER_MAGIC_BYTES);
 
 // Le CSV n'a pas de signature binaire : on croise le MIME déclaré
 // (compatible texte) avec l'absence d'octets nuls dans l'échantillon,

@@ -1,3 +1,12 @@
+import {
+  Document,
+  HeadingLevel,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+} from 'docx';
 import ExcelJS from 'exceljs';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,6 +19,8 @@ const PDF_MIME = 'application/pdf';
 const CSV_MIME = 'text/csv';
 const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const DOCX_MIME =
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
 const samplePdf = fs.readFileSync(
   path.join(__dirname, '../__fixtures__/sample.pdf')
@@ -159,6 +170,58 @@ describe('readDocument', () => {
       error: { kind: 'scanned_too_long', scannedPages: 2, maxOcrPages: 1 },
     });
     expect(ocrPage).not.toHaveBeenCalled();
+  });
+
+  it('lit un Word : titres en Markdown, une page par titre de niveau 1, tableaux ligne à ligne', async () => {
+    const cell = (text: string) =>
+      new TableCell({ children: [new Paragraph({ text })] });
+    const buffer = await Packer.toBuffer(
+      new Document({
+        sections: [
+          {
+            children: [
+              new Paragraph({
+                text: 'Axe 1 : Bâtiments',
+                heading: HeadingLevel.HEADING_1,
+              }),
+              new Paragraph({ text: 'Rénover & isoler.' }),
+              new Paragraph({
+                text: 'Action 1.1.1 : Isoler',
+                heading: HeadingLevel.HEADING_2,
+              }),
+              new Table({
+                rows: [
+                  new TableRow({
+                    children: [cell('Pilote'), cell('Service bâtiments')],
+                  }),
+                ],
+              }),
+              new Paragraph({
+                text: 'Axe 2 : Mobilité',
+                heading: HeadingLevel.HEADING_1,
+              }),
+            ],
+          },
+        ],
+      })
+    );
+
+    const result = await readDocument({ buffer, mimeType: DOCX_MIME });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.kind).toBe('docx');
+      expect(result.data.pages.map((page) => page.label)).toEqual([
+        'Axe 1 : Bâtiments',
+        'Axe 2 : Mobilité',
+      ]);
+      expect(result.data.pages[0].lines.map((line) => line.text)).toEqual([
+        '# Axe 1 : Bâtiments',
+        'Rénover & isoler.',
+        '## Action 1.1.1 : Isoler',
+        'Pilote\tService bâtiments',
+      ]);
+    }
   });
 
   it('lit un CSV sur une seule page', async () => {

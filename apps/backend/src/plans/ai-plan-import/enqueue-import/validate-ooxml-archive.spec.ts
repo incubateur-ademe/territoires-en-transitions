@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
-import { validateXlsxArchive } from './validate-xlsx-archive';
+import { validateOoxmlArchive } from './validate-ooxml-archive';
 
 const GENEROUS_CAP = 100 * 1024 * 1024;
 
@@ -34,20 +34,20 @@ const toForgedArchive = (
   return Buffer.concat([localStub, directory, endOfDirectory]);
 };
 
-describe('validateXlsxArchive', () => {
+describe('validateOoxmlArchive', () => {
   it('accepte un xlsx réel sous le plafond', async () => {
     const xlsx = await toRealXlsx();
 
-    expect(validateXlsxArchive(xlsx, GENEROUS_CAP)).toEqual({
+    expect(validateOoxmlArchive(xlsx, GENEROUS_CAP)).toEqual({
       success: true,
-      data: undefined,
+      data: { kind: 'xlsx' },
     });
   });
 
   it('rejette un xlsx réel dont les tailles déclarées dépassent le plafond', async () => {
     const xlsx = await toRealXlsx();
 
-    const result = validateXlsxArchive(xlsx, 10);
+    const result = validateOoxmlArchive(xlsx, 10);
 
     expect(result).toMatchObject({
       success: false,
@@ -55,15 +55,27 @@ describe('validateXlsxArchive', () => {
     });
   });
 
-  it('rejette une archive sans structure xlsx (docx)', () => {
+  it('reconnaît un document Word à sa structure', () => {
     const docx = toForgedArchive([
       { name: '[Content_Types].xml', uncompressedBytes: 100 },
       { name: 'word/document.xml', uncompressedBytes: 100 },
     ]);
 
-    expect(validateXlsxArchive(docx, GENEROUS_CAP)).toEqual({
+    expect(validateOoxmlArchive(docx, GENEROUS_CAP)).toEqual({
+      success: true,
+      data: { kind: 'docx' },
+    });
+  });
+
+  it('rejette une archive Office sans classeur ni document', () => {
+    const other = toForgedArchive([
+      { name: '[Content_Types].xml', uncompressedBytes: 100 },
+      { name: 'ppt/presentation.xml', uncompressedBytes: 100 },
+    ]);
+
+    expect(validateOoxmlArchive(other, GENEROUS_CAP)).toEqual({
       success: false,
-      error: { kind: 'not_xlsx' },
+      error: { kind: 'not_ooxml' },
     });
   });
 
@@ -73,7 +85,7 @@ describe('validateXlsxArchive', () => {
       { name: 'xl/sharedStrings.xml', uncompressedBytes: 4_000_000_000 },
     ]);
 
-    const result = validateXlsxArchive(bomb, GENEROUS_CAP);
+    const result = validateOoxmlArchive(bomb, GENEROUS_CAP);
 
     expect(result).toEqual({
       success: false,
@@ -84,9 +96,9 @@ describe('validateXlsxArchive', () => {
   it("rejette un buffer qui n'est pas une archive zip", () => {
     const text = Buffer.from('pas un zip du tout', 'utf-8');
 
-    expect(validateXlsxArchive(text, GENEROUS_CAP)).toEqual({
+    expect(validateOoxmlArchive(text, GENEROUS_CAP)).toEqual({
       success: false,
-      error: { kind: 'not_xlsx' },
+      error: { kind: 'not_ooxml' },
     });
   });
 
@@ -96,9 +108,9 @@ describe('validateXlsxArchive', () => {
     ]);
     archive.writeUInt16LE(60_000, archive.length - 22 + 10);
 
-    expect(validateXlsxArchive(archive, GENEROUS_CAP)).toEqual({
+    expect(validateOoxmlArchive(archive, GENEROUS_CAP)).toEqual({
       success: false,
-      error: { kind: 'not_xlsx' },
+      error: { kind: 'not_ooxml' },
     });
   });
 });

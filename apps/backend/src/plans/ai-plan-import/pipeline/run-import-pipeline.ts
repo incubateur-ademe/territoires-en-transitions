@@ -1,6 +1,10 @@
 import { DisableableField } from '../models/disableable-field';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { joinPages, ReadDocument } from './document/document-page';
+import {
+  isTabularKind,
+  joinPages,
+  ReadDocument,
+} from './document/document-page';
 import { structureUnits } from './extract-actions/structure-units';
 import { consolidateHierarchy } from './consolidate-hierarchy/consolidate-hierarchy';
 import { PlanSkeleton } from '../models/plan-skeleton';
@@ -357,7 +361,7 @@ const readSource = (
   const chunks = splitDocument(text, {
     maxTokens: llm.maxInputTokens,
     overlapTokens: CHUNK_OVERLAP_TOKENS,
-    header: document.kind === 'pdf' ? undefined : text.split('\n', 1)[0],
+    header: isTabularKind(document.kind) ? text.split('\n', 1)[0] : undefined,
   });
   if (chunks.length > MAX_DOCUMENT_CHUNKS) {
     return failure({

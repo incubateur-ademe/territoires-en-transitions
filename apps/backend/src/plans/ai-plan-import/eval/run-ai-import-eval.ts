@@ -30,6 +30,8 @@ const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
   '.pdf': 'application/pdf',
   '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   '.csv': 'text/csv',
+  '.docx':
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 };
 
 const USAGE = `Usage : run-ai-import-eval --file <pdf|xlsx|csv> [--out <json>] [--ref <json>]

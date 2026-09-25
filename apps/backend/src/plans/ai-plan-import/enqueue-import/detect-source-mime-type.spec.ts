@@ -1,8 +1,25 @@
+import { Document, Packer, Paragraph } from 'docx';
+import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
 import { detectSourceMimeType } from './detect-source-mime-type';
 
 const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const DOCX_MIME =
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+const realXlsx = async (): Promise<Buffer> => {
+  const workbook = new ExcelJS.Workbook();
+  workbook.addWorksheet('Plan').addRow(['axe', 'titre']);
+  return Buffer.from(await workbook.xlsx.writeBuffer());
+};
+
+const realDocx = (): Promise<Buffer> =>
+  Packer.toBuffer(
+    new Document({
+      sections: [{ children: [new Paragraph({ text: 'Axe 1' })] }],
+    })
+  );
 
 describe('detectSourceMimeType', () => {
   it('reconnait un PDF par sa signature, quel que soit le mime déclaré', () => {
@@ -12,11 +29,23 @@ describe('detectSourceMimeType', () => {
     );
   });
 
-  it('reconnait un xlsx par la signature ZIP de son conteneur, quel que soit le mime déclaré', () => {
+  it('reconnait un xlsx à sa structure, quel que soit le mime déclaré', async () => {
+    expect(
+      detectSourceMimeType(await realXlsx(), 'application/octet-stream')
+    ).toBe(XLSX_MIME);
+  });
+
+  it('reconnait un document Word à sa structure', async () => {
+    expect(
+      detectSourceMimeType(await realDocx(), 'application/octet-stream')
+    ).toBe(DOCX_MIME);
+  });
+
+  it('rejette une archive ZIP qui n’est ni un classeur ni un document', () => {
     const zipContainer = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00, 0x01]);
-    expect(detectSourceMimeType(zipContainer, 'application/octet-stream')).toBe(
-      XLSX_MIME
-    );
+    expect(
+      detectSourceMimeType(zipContainer, 'application/octet-stream')
+    ).toBeNull();
   });
 
   it('reconnait un CSV texte déclaré comme csv', () => {
