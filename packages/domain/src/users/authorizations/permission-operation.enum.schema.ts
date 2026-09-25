@@ -52,6 +52,7 @@ export const PermissionOperations = [
   'plans.fiches.bulk_update',
   'plans.fiches.delete',
   'plans.fiches.import',
+  'plans.fiches.import_in_parallel',
 
   // Indicateurs
   'indicateurs.indicateurs.read',

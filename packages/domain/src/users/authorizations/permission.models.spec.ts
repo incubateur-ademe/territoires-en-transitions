@@ -13,6 +13,16 @@ describe('permissionsByRole', () => {
     expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
   });
 
+  it("n'exempte que le super admin de la limite d'un import IA en cours par utilisateur", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('plans.fiches.import_in_parallel')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+  });
+
   it("n'accorde la qualification de la pertinence des leviers qu'au super admin et à l'admin de la collectivité", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>

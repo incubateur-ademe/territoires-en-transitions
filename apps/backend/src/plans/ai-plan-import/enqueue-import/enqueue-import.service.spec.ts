@@ -92,6 +92,7 @@ const toXlsxBomb = () => {
 
 type MockOverrides = {
   isAllowed?: boolean;
+  canImportInParallel?: boolean;
   countInFlight?: number;
   planTypes?: { id: number }[];
   createWithinQuotas?: () => Promise<unknown>;
@@ -100,15 +101,22 @@ type MockOverrides = {
 };
 
 const buildService = (overrides: MockOverrides = {}) => {
-  const isAllowed = vi.fn(async () =>
-    (overrides.isAllowed ?? true)
+  const isAllowed = vi.fn(async (_user: unknown, operation: string) =>
+    (
+      operation === 'plans.fiches.import_in_parallel'
+        ? (overrides.canImportInParallel ?? false)
+        : (overrides.isAllowed ?? true)
+    )
       ? { success: true as const, data: undefined }
       : { success: false as const, error: 'UNAUTHORIZED' as const }
   );
   const permissions = { isAllowed } as unknown as PermissionService;
 
   const createWithinQuotas = vi.fn<
-    (input: CreateJobInput) => Promise<unknown>
+    (
+      input: CreateJobInput,
+      quotas: { limitUserInFlight: boolean }
+    ) => Promise<unknown>
   >(overrides.createWithinQuotas ?? (async () => success(job)));
   const deleteIfPending = vi.fn(async () => success(undefined));
   const jobRepository = {
@@ -173,6 +181,29 @@ describe('EnqueueImportService', () => {
       { jobId: 'job-1' }
     );
   });
+
+  it.each([
+    { canImportInParallel: false, limitUserInFlight: true },
+    { canImportInParallel: true, limitUserInFlight: false },
+  ])(
+    'limite les imports en cours par utilisateur sauf permission import_in_parallel ($canImportInParallel)',
+    async ({ canImportInParallel, limitUserInFlight }) => {
+      const { service, createWithinQuotas } = buildService({
+        canImportInParallel,
+      });
+
+      await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options,
+      });
+
+      expect(createWithinQuotas.mock.calls[0][1]).toEqual({
+        limitUserInFlight,
+      });
+    }
+  );
 
   it('refuse un type de plan inconnu avant tout stockage ou enfilement', async () => {
     const { service, createWithinQuotas, storeDocument, add } = buildService({

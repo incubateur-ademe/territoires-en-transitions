@@ -72,6 +72,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     ...collectiviteAdminPermissions,
 
     'collectivites.mutate',
+    'plans.fiches.import_in_parallel',
     'referentiels.labellisations.mutate_documents',
     'utils.banner.mutate',
   ],

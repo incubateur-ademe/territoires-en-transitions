@@ -61,6 +61,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let freshEnqueueUrl: string;
   let freshCollectiviteId: number;
   let otherCollectiviteId: number;
+  let supportUserId: string;
   let editorId: string;
   let readerId: string;
   let cleanupFreshCollectivite: () => Promise<void>;
@@ -116,6 +117,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       role: CollectiviteRole.ADMIN,
     });
     const supportUser = getAuthUserFromUserCredentials(support.user);
+    supportUserId = supportUser.id;
     supportToken = await getAuthToken({
       email: support.user.email ?? '',
       password: support.user.password,
@@ -270,6 +272,36 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     expect(jobs).toHaveLength(0);
   });
 
+  // L'import en cours d'un autre utilisateur sur la collectivité visée arrête
+  // le lancement au tout dernier contrôle, avant storage et file : le refus
+  // porte sur la collectivité, preuve que la limite par utilisateur est levée.
+  it('laisse le super-admin lancer un import pendant un autre import à lui', async () => {
+    await insertJobs(1, {
+      collectiviteId: otherCollectiviteId,
+      createdBy: supportUserId,
+      status: AiPlanImportJobStatusEnum.RUNNING,
+    });
+    await insertJobs(1, {
+      collectiviteId: freshCollectiviteId,
+      createdBy: editorId,
+      status: AiPlanImportJobStatusEnum.RUNNING,
+    });
+
+    const response = await request(app.getHttpServer())
+      .post(freshEnqueueUrl)
+      .set('Authorization', `Bearer ${supportToken}`)
+      .field('planName', 'Plan import IA e2e')
+      .attach('file', csvFile(), {
+        filename: 'plan.csv',
+        contentType: 'text/csv',
+      });
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toContain(
+      'Un import est déjà en cours pour cette collectivité'
+    );
+  });
+
   it(`refuse au-delà de ${AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY} imports sur 24 heures pour la collectivité (429)`, async () => {
     await insertJobs(AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY, {
       collectiviteId: freshCollectiviteId,
@@ -293,14 +325,15 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       createdAt: sql`now() - interval '25 hours'`,
     });
 
-    const created = await app
-      .get(AiPlanImportJobRepository)
-      .createWithinQuotas({
+    const created = await app.get(AiPlanImportJobRepository).createWithinQuotas(
+      {
         collectiviteId: freshCollectiviteId,
         createdBy: editorId,
         sourcePath: `${freshCollectiviteId}/e2e`,
         options: jobOptions,
-      });
+      },
+      { limitUserInFlight: true }
+    );
 
     expect(created.success).toBe(true);
   });

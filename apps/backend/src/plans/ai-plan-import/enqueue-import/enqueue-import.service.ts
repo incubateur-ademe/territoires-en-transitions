@@ -106,13 +106,24 @@ export class EnqueueImportService {
       return failure(AiPlanImportErrorEnum.TOO_MANY_IN_FLIGHT_JOBS);
     }
 
+    // Le super-admin importe pour plusieurs collectivités à la fois.
+    const canImportInParallel = await this.permissions.isAllowed(
+      user,
+      'plans.fiches.import_in_parallel',
+      ResourceType.PLATEFORME,
+      null
+    );
+
     const sourcePath = `${collectiviteId}/${randomUUID()}`;
-    const created = await this.jobRepository.createWithinQuotas({
-      collectiviteId,
-      createdBy: user.id,
-      sourcePath,
-      options,
-    });
+    const created = await this.jobRepository.createWithinQuotas(
+      {
+        collectiviteId,
+        createdBy: user.id,
+        sourcePath,
+        options,
+      },
+      { limitUserInFlight: !canImportInParallel.success }
+    );
     if (!created.success) {
       return created;
     }
