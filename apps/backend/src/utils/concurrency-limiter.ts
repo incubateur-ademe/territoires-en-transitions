@@ -7,7 +7,12 @@ export class ConcurrencyLimiter {
   private active = 0;
   private readonly waiting: Array<() => void> = [];
 
-  constructor(private readonly limit: number) {}
+  constructor(private readonly limit: number) {
+    // Une limite absente ou nulle ne laisserait passer aucun appel, sans erreur.
+    if (!Number.isInteger(limit) || limit < 1) {
+      throw new Error(`Limite d'appels simultanés invalide : ${limit}`);
+    }
+  }
 
   async run<T>(task: () => Promise<T>): Promise<T> {
     if (this.active < this.limit) {
