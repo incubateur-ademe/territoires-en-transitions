@@ -8,6 +8,7 @@
  */
 import { Test } from '@nestjs/testing';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { initGoogleCloudCredentials } from '@tet/backend/utils/google-sheets/gcloud.helper';
 import { LlmCallEvent, LlmObserver } from '@tet/backend/utils/llm/llm-observer';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -65,6 +66,27 @@ const print = (line: string): void => {
   process.stdout.write(`${line}\n`);
 };
 
+// Une promesse qui n'aboutit jamais vide la boucle d'évènements : Node sort
+// alors en code 0 sans un mot. On veut au moins savoir où on en était.
+let lastStep = 'démarrage';
+let finished = false;
+process.on('beforeExit', () => {
+  if (!finished) {
+    print(
+      `✗ Arrêt avant la fin : plus rien n'attend de réponse (dernière étape : ${lastStep}).`
+    );
+    process.exitCode = 1;
+  }
+});
+process.on('unhandledRejection', (reason) => {
+  print(
+    `✗ Rejet non traité : ${
+      reason instanceof Error ? reason.stack : String(reason)
+    }`
+  );
+  process.exitCode = 1;
+});
+
 const main = async (): Promise<number> => {
   const { values } = parseArgs({
     options: {
@@ -95,6 +117,9 @@ const main = async (): Promise<number> => {
     ? (JSON.parse(await readFile(values.ref, 'utf-8')) as EvalRun)
     : null;
 
+  // Comme main.ts : Vertex s'authentifie avec le compte de service du .env,
+  // pas avec les identifiants gcloud personnels du poste.
+  initGoogleCloudCredentials();
   const observer = new CollectingLlmObserver();
   const moduleRef = await Test.createTestingModule({ imports: [EvalModule] })
     .overrideProvider(LlmObserver)
@@ -112,6 +137,7 @@ const main = async (): Promise<number> => {
   print(`⚠ Appel réel à ${provider} (${model ?? 'modèle non défini'})`);
 
   const ocrPage = buildLlmOcrPage(llm);
+  lastStep = 'lecture du document';
   const document = await readDocument(
     { buffer, mimeType },
     { ocr: ocrPage ? { ocrPage } : undefined }
@@ -138,10 +164,14 @@ const main = async (): Promise<number> => {
     disabledFields: [],
     currentDate: new Date().toISOString(),
     onStepStatesChange: async (stepStates) => {
-      print(`  étapes : ${JSON.stringify(stepStates)}`);
+      lastStep = `pipeline ${JSON.stringify(stepStates)}, ${
+        observer.events.length
+      } appel(s) au modèle`;
+      print(`  ${Math.round((Date.now() - startedAt) / 1000)} s · ${lastStep}`);
     },
   });
   const durationMs = Date.now() - startedAt;
+  lastStep = 'écriture du résultat';
   await app.close();
 
   const draft =
@@ -190,6 +220,7 @@ const main = async (): Promise<number> => {
     printDiff(diff);
   }
   print(`→ ${outPath}`);
+  finished = true;
   return outcome.status === 'done' ? 0 : 1;
 };
 
@@ -234,10 +265,18 @@ const printDiff = (diff: EvalDiff): void => {
   print(`Titres en trop : ${diff.extraTitles.length}`);
 };
 
+// Pas de process.exit : il tronque ce qui reste à écrire sur la sortie.
 main().then(
-  (code) => process.exit(code),
+  (code) => {
+    process.exitCode = code;
+  },
   (error: unknown) => {
-    print(`✗ ${error instanceof Error ? error.message : String(error)}`);
-    process.exit(1);
+    finished = true;
+    print(
+      `✗ ${
+        error instanceof Error ? error.stack ?? error.message : String(error)
+      }`
+    );
+    process.exitCode = 1;
   }
 );
