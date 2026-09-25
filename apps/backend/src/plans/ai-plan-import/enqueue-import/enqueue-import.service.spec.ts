@@ -94,7 +94,7 @@ type MockOverrides = {
   isAllowed?: boolean;
   countInFlight?: number;
   planTypes?: { id: number }[];
-  createUnlessInFlight?: () => Promise<unknown>;
+  createWithinQuotas?: () => Promise<unknown>;
   storeDocument?: () => Promise<unknown>;
   queueAdd?: () => Promise<unknown>;
 };
@@ -107,13 +107,13 @@ const buildService = (overrides: MockOverrides = {}) => {
   );
   const permissions = { isAllowed } as unknown as PermissionService;
 
-  const createUnlessInFlight = vi.fn<
+  const createWithinQuotas = vi.fn<
     (input: CreateJobInput) => Promise<unknown>
-  >(overrides.createUnlessInFlight ?? (async () => success(job)));
+  >(overrides.createWithinQuotas ?? (async () => success(job)));
   const deleteIfPending = vi.fn(async () => success(undefined));
   const jobRepository = {
     countInFlight: vi.fn(async () => success(overrides.countInFlight ?? 0)),
-    createUnlessInFlight,
+    createWithinQuotas,
     deleteIfPending,
   } as unknown as AiPlanImportJobRepository;
 
@@ -146,7 +146,7 @@ const buildService = (overrides: MockOverrides = {}) => {
 
   return {
     service,
-    createUnlessInFlight,
+    createWithinQuotas,
     deleteIfPending,
     storeDocument,
     removeDocument,
@@ -175,7 +175,7 @@ describe('EnqueueImportService', () => {
   });
 
   it('refuse un type de plan inconnu avant tout stockage ou enfilement', async () => {
-    const { service, createUnlessInFlight, storeDocument, add } = buildService({
+    const { service, createWithinQuotas, storeDocument, add } = buildService({
       planTypes: [{ id: 1 }],
     });
 
@@ -190,7 +190,7 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE,
     });
-    expect(createUnlessInFlight).not.toHaveBeenCalled();
+    expect(createWithinQuotas).not.toHaveBeenCalled();
     expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
@@ -210,7 +210,7 @@ describe('EnqueueImportService', () => {
   });
 
   it('écrit le même sourcePath dans la ligne du job et dans le storage', async () => {
-    const { service, createUnlessInFlight, storeDocument } = buildService();
+    const { service, createWithinQuotas, storeDocument } = buildService();
 
     await service.enqueue({
       collectiviteId: 10,
@@ -219,7 +219,7 @@ describe('EnqueueImportService', () => {
       options,
     });
 
-    const createdWith = createUnlessInFlight.mock.calls[0][0];
+    const createdWith = createWithinQuotas.mock.calls[0][0];
     expect(createdWith.sourcePath).toMatch(/^10\//);
     expect(storeDocument).toHaveBeenCalledWith(
       expect.objectContaining({ key: createdWith.sourcePath })
@@ -242,7 +242,7 @@ describe('EnqueueImportService', () => {
   });
 
   it('refuse sans permission et sans aucun effet de bord', async () => {
-    const { service, createUnlessInFlight, storeDocument, add } = buildService({
+    const { service, createWithinQuotas, storeDocument, add } = buildService({
       isAllowed: false,
     });
 
@@ -257,13 +257,13 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.UNAUTHORIZED,
     });
-    expect(createUnlessInFlight).not.toHaveBeenCalled();
+    expect(createWithinQuotas).not.toHaveBeenCalled();
     expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
 
   it('refuse un binaire déclaré csv sans aucun effet de bord', async () => {
-    const { service, createUnlessInFlight, storeDocument, add } = buildService();
+    const { service, createWithinQuotas, storeDocument, add } = buildService();
 
     const result = await service.enqueue({
       collectiviteId: 10,
@@ -276,7 +276,7 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE,
     });
-    expect(createUnlessInFlight).not.toHaveBeenCalled();
+    expect(createWithinQuotas).not.toHaveBeenCalled();
     expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
@@ -314,7 +314,7 @@ describe('EnqueueImportService', () => {
   });
 
   it('refuse au-delà de 20 jobs in-flight sans créer de ligne', async () => {
-    const { service, createUnlessInFlight } = buildService({
+    const { service, createWithinQuotas } = buildService({
       countInFlight: 20,
     });
 
@@ -329,13 +329,16 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.TOO_MANY_IN_FLIGHT_JOBS,
     });
-    expect(createUnlessInFlight).not.toHaveBeenCalled();
+    expect(createWithinQuotas).not.toHaveBeenCalled();
   });
 
-  it('propage le conflit in-flight sans toucher storage ni queue', async () => {
+  it.each([
+    AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS,
+    AiPlanImportErrorEnum.USER_IN_FLIGHT_JOB_EXISTS,
+    AiPlanImportErrorEnum.DAILY_QUOTA_EXCEEDED,
+  ])('propage le refus %s sans toucher storage ni queue', async (error) => {
     const { service, storeDocument, add } = buildService({
-      createUnlessInFlight: async () =>
-        failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS),
+      createWithinQuotas: async () => failure(error),
     });
 
     const result = await service.enqueue({
@@ -345,10 +348,7 @@ describe('EnqueueImportService', () => {
       options,
     });
 
-    expect(result).toEqual({
-      success: false,
-      error: AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS,
-    });
+    expect(result).toEqual({ success: false, error });
     expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });

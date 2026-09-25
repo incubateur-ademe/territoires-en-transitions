@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUsers,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthToken,
   getAuthUserFromUserCredentials,
@@ -14,16 +17,38 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, sql, SQL } from 'drizzle-orm';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+} from 'vitest';
+import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
+import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from '../ai-plan-import.constants';
+import {
+  AiPlanImportJobOptions,
+  AiPlanImportJobStatus,
+  AiPlanImportJobStatusEnum,
+} from '../models/ai-plan-import-job';
 import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
+import { initialStepStates } from '../pipeline/run-import-pipeline';
 
 const TEST_COLLECTIVITE_ID = 1;
 const makeEnqueueUrl = (collectiviteId: number) =>
   `/collectivites/${collectiviteId}/plans/import-ia`;
 const ENQUEUE_URL = makeEnqueueUrl(TEST_COLLECTIVITE_ID);
 const csvFile = () => Buffer.from('axe,titre\n1,Action', 'utf-8');
+const jobOptions: AiPlanImportJobOptions = {
+  instructions: '',
+  planName: 'Plan import IA e2e',
+  withVerifications: false,
+  withSousActions: false,
+  disabledFields: [],
+};
 
 describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let app: INestApplication;
@@ -34,13 +59,52 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let editorToken: string;
   let readerToken: string;
   let freshEnqueueUrl: string;
+  let freshCollectiviteId: number;
+  let otherCollectiviteId: number;
+  let editorId: string;
+  let readerId: string;
   let cleanupFreshCollectivite: () => Promise<void>;
+  let cleanupOtherCollectivite: () => Promise<void>;
   let disableSupport: () => Promise<void>;
 
   const deleteJobs = () =>
     db.db
       .delete(aiPlanImportJobTable)
       .where(eq(aiPlanImportJobTable.collectiviteId, TEST_COLLECTIVITE_ID));
+
+  const insertJobs = async (
+    count: number,
+    job: {
+      collectiviteId: number;
+      createdBy: string;
+      status: AiPlanImportJobStatus;
+      createdAt?: SQL;
+    }
+  ) => {
+    await db.db.insert(aiPlanImportJobTable).values(
+      Array.from({ length: count }, () => ({
+        ...job,
+        sourcePath: `${job.collectiviteId}/e2e`,
+        options: jobOptions,
+        stepStates: initialStepStates(),
+      }))
+    );
+    onTestFinished(async () => {
+      await db.db
+        .delete(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.collectiviteId, job.collectiviteId));
+    });
+  };
+
+  const enqueueAsEditor = () =>
+    request(app.getHttpServer())
+      .post(freshEnqueueUrl)
+      .set('Authorization', `Bearer ${editorToken}`)
+      .field('planName', 'Plan import IA e2e')
+      .attach('file', csvFile(), {
+        filename: 'plan.csv',
+        contentType: 'text/csv',
+      });
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -81,7 +145,15 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       ],
     });
     freshEnqueueUrl = makeEnqueueUrl(freshCollectivite.id);
+    freshCollectiviteId = freshCollectivite.id;
+    editorId = editor.id;
+    readerId = reader.id;
     cleanupFreshCollectivite = cleanupFresh;
+
+    const { collectivite: otherCollectivite, cleanup: cleanupOther } =
+      await addTestCollectivite(db);
+    otherCollectiviteId = otherCollectivite.id;
+    cleanupOtherCollectivite = cleanupOther;
     editorToken = await getAuthToken({
       email: editor.email ?? '',
       password: editor.password,
@@ -97,6 +169,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   afterAll(async () => {
     await deleteJobs();
     await cleanupFreshCollectivite();
+    await cleanupOtherCollectivite();
     await disableSupport();
     await app.close();
   });
@@ -176,5 +249,59 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       });
 
     expect(response.status).toBe(400);
+  });
+  it('refuse un second import en parallèle au même utilisateur, même sur une autre collectivité (409)', async () => {
+    await insertJobs(1, {
+      collectiviteId: otherCollectiviteId,
+      createdBy: editorId,
+      status: AiPlanImportJobStatusEnum.RUNNING,
+    });
+
+    const response = await enqueueAsEditor();
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toContain(
+      'Vous avez déjà un import en cours'
+    );
+    const jobs = await db.db
+      .select()
+      .from(aiPlanImportJobTable)
+      .where(eq(aiPlanImportJobTable.collectiviteId, freshCollectiviteId));
+    expect(jobs).toHaveLength(0);
+  });
+
+  it(`refuse au-delà de ${AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY} imports sur 24 heures pour la collectivité (429)`, async () => {
+    await insertJobs(AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY, {
+      collectiviteId: freshCollectiviteId,
+      createdBy: readerId,
+      status: AiPlanImportJobStatusEnum.DONE,
+    });
+
+    const response = await enqueueAsEditor();
+
+    expect(response.status).toBe(429);
+    expect(response.body.message).toContain('limite');
+  });
+
+  // Au niveau du repository : un envoi valide au controller mettrait le job en
+  // file et lancerait la pipeline.
+  it('ne compte pas dans le quota les imports de plus de 24 heures', async () => {
+    await insertJobs(AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY, {
+      collectiviteId: freshCollectiviteId,
+      createdBy: readerId,
+      status: AiPlanImportJobStatusEnum.DONE,
+      createdAt: sql`now() - interval '25 hours'`,
+    });
+
+    const created = await app
+      .get(AiPlanImportJobRepository)
+      .createWithinQuotas({
+        collectiviteId: freshCollectiviteId,
+        createdBy: editorId,
+        sourcePath: `${freshCollectiviteId}/e2e`,
+        options: jobOptions,
+      });
+
+    expect(created.success).toBe(true);
   });
 });

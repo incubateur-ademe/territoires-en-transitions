@@ -1,4 +1,5 @@
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from './ai-plan-import.constants';
 import type { AiPlanImportSpecificError } from './ai-plan-import.errors';
 
 export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecificError> =
@@ -23,6 +24,15 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       IN_FLIGHT_JOB_EXISTS: {
         code: 'CONFLICT',
         message: 'Un import est déjà en cours pour cette collectivité',
+      },
+      USER_IN_FLIGHT_JOB_EXISTS: {
+        code: 'CONFLICT',
+        message:
+          "Vous avez déjà un import en cours : attendez qu'il se termine pour en lancer un autre",
+      },
+      DAILY_QUOTA_EXCEEDED: {
+        code: 'TOO_MANY_REQUESTS',
+        message: `La collectivité a atteint la limite de ${AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY} imports sur 24 heures, veuillez réessayer plus tard`,
       },
       TOO_MANY_IN_FLIGHT_JOBS: {
         code: 'TOO_MANY_REQUESTS',

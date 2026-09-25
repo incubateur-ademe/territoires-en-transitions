@@ -3,7 +3,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, count, desc, eq, inArray, sql } from 'drizzle-orm';
+import { and, count, desc, eq, gt, inArray, sql } from 'drizzle-orm';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -14,6 +14,10 @@ import {
   AiPlanImportJobStatusView,
 } from './models/ai-plan-import-job';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
+import {
+  AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER,
+  AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY,
+} from './ai-plan-import.constants';
 import {
   AiPlanImportErrorEnum,
   type AiPlanImportError,
@@ -49,28 +53,75 @@ export class AiPlanImportJobRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  async createUnlessInFlight(
+  /**
+   * Crée le job si l'utilisateur n'a aucun autre import en cours, si la
+   * collectivité reste sous son quota sur 24 heures glissantes et si elle n'a
+   * pas déjà un import en cours.
+   */
+  async createWithinQuotas(
     input: CreateJobInput
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
-      const [created] = await this.db
-        .insert(aiPlanImportJobTable)
-        .values({
-          collectiviteId: input.collectiviteId,
-          createdBy: input.createdBy,
-          sourcePath: input.sourcePath,
-          options: input.options,
-          status: AiPlanImportJobStatusEnum.PENDING,
-          stepStates: initialStepStates(),
-        })
-        .onConflictDoNothing()
-        .returning();
+      return await this.db.transaction(async (tx) => {
+        // Sans ce verrou, deux lancements simultanés du même utilisateur sur
+        // deux collectivités passeraient chacun le comptage. Le quota
+        // journalier n'en a pas besoin : l'index in-flight n'admet qu'un
+        // lancement à la fois par collectivité.
+        await tx.execute(
+          sql`SELECT pg_advisory_xact_lock(hashtext('ai_plan_import_job'), hashtext(${input.createdBy}))`
+        );
 
-      if (created) {
-        return success(created);
-      }
+        const [userInFlight] = await tx
+          .select({ value: count() })
+          .from(aiPlanImportJobTable)
+          .where(
+            and(
+              eq(aiPlanImportJobTable.createdBy, input.createdBy),
+              inArray(
+                aiPlanImportJobTable.status,
+                aiPlanImportJobInFlightStatuses
+              )
+            )
+          );
+        if (userInFlight.value >= AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER) {
+          return failure(AiPlanImportErrorEnum.USER_IN_FLIGHT_JOB_EXISTS);
+        }
 
-      return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
+        const [lastDay] = await tx
+          .select({ value: count() })
+          .from(aiPlanImportJobTable)
+          .where(
+            and(
+              eq(aiPlanImportJobTable.collectiviteId, input.collectiviteId),
+              gt(
+                aiPlanImportJobTable.createdAt,
+                sql`now() - interval '24 hours'`
+              )
+            )
+          );
+        if (lastDay.value >= AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY) {
+          return failure(AiPlanImportErrorEnum.DAILY_QUOTA_EXCEEDED);
+        }
+
+        const [created] = await tx
+          .insert(aiPlanImportJobTable)
+          .values({
+            collectiviteId: input.collectiviteId,
+            createdBy: input.createdBy,
+            sourcePath: input.sourcePath,
+            options: input.options,
+            status: AiPlanImportJobStatusEnum.PENDING,
+            stepStates: initialStepStates(),
+          })
+          .onConflictDoNothing()
+          .returning();
+
+        if (created) {
+          return success(created);
+        }
+
+        return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
+      });
     } catch (error) {
       this.logger.error(`Création du job d'import: ${getErrorMessage(error)}`);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR, toError(error));
