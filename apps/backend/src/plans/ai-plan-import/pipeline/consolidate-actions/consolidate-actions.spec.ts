@@ -10,6 +10,12 @@ import {
   CONSOLIDATION_BATCH_SIZE,
   consolidateActions,
 } from './consolidate-actions';
+import { wholeDocument } from '../source-chunks/source-chunks';
+
+const inWholeDocument = (actions: ExtractedAction[]) => ({
+  actions,
+  source: wholeDocument('texte', actions.length),
+});
 
 const tokens: TokenUsage = {
   promptTokens: 10,
@@ -66,8 +72,7 @@ describe('consolidateActions', () => {
     const llm = echoingLlm();
 
     const result = await consolidateActions(llm, {
-      actions: [anAction('A', 95), anAction('B', null)],
-      text: 'texte',
+      ...inWholeDocument([anAction('A', 95), anAction('B', null)]),
       disabledFields: [],
     });
 
@@ -90,8 +95,7 @@ describe('consolidateActions', () => {
     const llm = echoingLlm();
 
     const result = await consolidateActions(llm, {
-      actions,
-      text: 'texte',
+      ...inWholeDocument(actions),
       disabledFields: [],
     });
 
@@ -119,8 +123,7 @@ describe('consolidateActions', () => {
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await consolidateActions(llm, {
-      actions: [anAction('A', 50), anAction('B', 95)],
-      text: 'texte',
+      ...inWholeDocument([anAction('A', 50), anAction('B', 95)]),
       disabledFields: [],
     });
 
@@ -138,8 +141,7 @@ describe('consolidateActions', () => {
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await consolidateActions(llm, {
-      actions: [anAction('A', 50)],
-      text: 'texte',
+      ...inWholeDocument([anAction('A', 50)]),
       disabledFields: [],
     });
 
@@ -147,5 +149,32 @@ describe('consolidateActions', () => {
       success: false,
       error: { kind: 'rate_limited' },
     });
+  });
+
+  it("ne mêle pas deux tranches dans un lot, et n'envoie que la tranche du lot", async () => {
+    const llm = echoingLlm();
+
+    const result = await consolidateActions(llm, {
+      actions: [anAction('A', 50), anAction('B', 50)],
+      source: { chunks: ['TRANCHE_0', 'TRANCHE_1'], chunkIndexByAction: [0, 1] },
+      disabledFields: [],
+    });
+
+    const prompts = vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt);
+    const promptOf = (index: number) =>
+      prompts.find((prompt) => prompt.includes(`|${index}|`));
+    expect(prompts).toHaveLength(2);
+    expect(promptOf(0)).toContain('TRANCHE_0');
+    expect(promptOf(1)).toContain('TRANCHE_1');
+    expect(promptOf(1)).not.toContain('TRANCHE_0');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions.map((action) => action.titre)).toEqual([
+        'consolidée 0',
+        'consolidée 1',
+      ]);
+    }
   });
 });

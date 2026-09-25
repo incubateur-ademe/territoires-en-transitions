@@ -1,0 +1,88 @@
+import { describe, expect, it } from 'vitest';
+import {
+  createUnenrichedSousAction,
+  ExtractedAction,
+} from '../../models/extracted-action';
+import { mergeChunkActions } from './merge-chunk-actions';
+
+const anAction = (
+  titre: string,
+  overrides: Partial<ExtractedAction> = {}
+): ExtractedAction => ({
+  axe: 'Axe 1',
+  sousAxe: '1.1',
+  titre,
+  description: null,
+  objectifs: null,
+  structurePilote: null,
+  directionServicePilote: null,
+  personnePilote: null,
+  budget: null,
+  statut: null,
+  confidence: null,
+  sousActions: [],
+  ...overrides,
+});
+
+describe('mergeChunkActions', () => {
+  it("ajoute les actions d'une tranche avec leur index de tranche", () => {
+    const merged = mergeChunkActions(
+      { actions: [anAction('A')], chunkIndexByAction: [0] },
+      [anAction('B')],
+      1
+    );
+
+    expect(merged.actions.map((action) => action.titre)).toEqual(['A', 'B']);
+    expect(merged.chunkIndexByAction).toEqual([0, 1]);
+  });
+
+  it('fusionne une action reprise par le chevauchement, en gardant le plus complet', () => {
+    const merged = mergeChunkActions(
+      {
+        actions: [
+          anAction('1.1.3 Rénover les écoles', {
+            description: 'Rénover',
+            sousActions: [createUnenrichedSousAction('Audit')],
+          }),
+        ],
+        chunkIndexByAction: [0],
+      },
+      [
+        anAction('Rénover les  écoles', {
+          description: 'Rénover les douze écoles de la commune',
+          personnePilote: 'Service bâtiments',
+          sousActions: [
+            createUnenrichedSousAction('Audit'),
+            createUnenrichedSousAction('Travaux'),
+          ],
+        }),
+      ],
+      1
+    );
+
+    expect(merged.actions).toHaveLength(1);
+    expect(merged.chunkIndexByAction).toEqual([0]);
+    const [action] = merged.actions;
+    expect(action.titre).toBe('1.1.3 Rénover les écoles');
+    expect(action.description).toBe('Rénover les douze écoles de la commune');
+    expect(action.personnePilote).toBe('Service bâtiments');
+    expect(action.sousActions.map((sousAction) => sousAction.titre)).toEqual([
+      'Audit',
+      'Travaux',
+    ]);
+  });
+
+  it("ne fusionne pas une action homonyme d'une tranche plus ancienne", () => {
+    const merged = mergeChunkActions(
+      {
+        actions: [anAction('Sensibiliser'), anAction('B')],
+        chunkIndexByAction: [0, 1],
+      },
+      [anAction('Sensibiliser', { axe: 'Axe 4' })],
+      2
+    );
+
+    expect(merged.actions).toHaveLength(3);
+    expect(merged.chunkIndexByAction).toEqual([0, 1, 2]);
+  });
+});

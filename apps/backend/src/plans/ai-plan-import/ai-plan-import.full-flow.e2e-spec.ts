@@ -99,6 +99,7 @@ const buildFakeLlm = (): LlmService => {
   };
 
   return {
+    maxInputTokens: 60_000,
     generateStructured: async ({ schema }: { schema: unknown }) => ({
       success: true,
       data: { data: respondTo(schema), tokens: noTokens },

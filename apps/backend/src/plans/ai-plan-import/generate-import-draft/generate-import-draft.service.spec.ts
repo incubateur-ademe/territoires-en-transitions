@@ -191,7 +191,38 @@ describe('GenerateImportDraftService', () => {
     });
   });
 
-  it("refuse un document trop long pour le modèle sans l'appeler", async () => {
+  it('découpe un document trop long et en extrait les tranches une par une', async () => {
+    const generateStructured = vi.fn(async ({ prompt }: { prompt: string }) =>
+      prompt.includes('auditeur qualité')
+        ? success({ data: { avis: 'Extraction ok' }, tokens })
+        : success({ data: [extractionAction], tokens })
+    );
+    const mocks = buildMocks({
+      maxInputTokens: 40,
+      sourceContent: `axe,titre\n${'1,Action longue\n'.repeat(20)}`,
+      generateStructured: generateStructured as never,
+    });
+    const service = buildService(mocks);
+
+    const result = await service.generate('job-1');
+
+    expect(result).toMatchObject({ success: true });
+    const extractionPrompts = generateStructured.mock.calls
+      .map(([{ prompt }]) => prompt)
+      .filter((prompt) => !prompt.includes('auditeur qualité'));
+    expect(extractionPrompts.length).toBeGreaterThan(1);
+    expect(extractionPrompts[1]).toContain(
+      `Extrait 2 sur ${extractionPrompts.length}`
+    );
+    // L'en-tête du tableau est repris dans chaque tranche.
+    for (const prompt of extractionPrompts) {
+      expect(prompt).toContain('axe,titre\n1,Action longue');
+    }
+    expect(mocks.jobRepository.markFailed).not.toHaveBeenCalled();
+    expect(mocks.jobRepository.markDone).toHaveBeenCalled();
+  });
+
+  it('refuse un document trop long même découpé, sans appeler le modèle', async () => {
     const mocks = buildMocks({
       maxInputTokens: 10,
       sourceContent: `axe,titre\n${'1,Action longue\n'.repeat(20)}`,

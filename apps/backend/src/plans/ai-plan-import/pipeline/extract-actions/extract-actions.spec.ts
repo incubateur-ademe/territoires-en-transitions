@@ -38,7 +38,7 @@ const llmReturning = (
   } as unknown as Pick<LlmService, 'generateStructured'>);
 
 const promptInput = {
-  text: 'texte source',
+  chunks: ['texte source'],
   instructions: '',
   disabledFields: [],
   currentDate: '08/06/2026',
@@ -64,6 +64,56 @@ describe('extractActions', () => {
     const llm = llmReturning(success({ data: [], tokens }));
 
     const result = await extractActions(llm, promptInput);
+
+    expect(result).toMatchObject({
+      success: false,
+      error: { kind: 'no_actions_extracted' },
+    });
+  });
+
+  it("extrait les tranches en série, chacune avec l'axe où s'arrête la précédente", async () => {
+    const prompts: string[] = [];
+    const responses = [
+      [anExtractionAction({ axe: 'Axe 2 Mobilité', titre: '2.1.1 Vélo' })],
+      [],
+      [anExtractionAction({ axe: 'Axe 3 Énergie', titre: '3.1.1 Solaire' })],
+    ];
+    const llm = {
+      generateStructured: async ({ prompt }: { prompt: string }) => {
+        prompts.push(prompt);
+        return success({ data: responses[prompts.length - 1], tokens });
+      },
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await extractActions(llm, {
+      ...promptInput,
+      chunks: ['tranche A', 'tranche B', 'tranche C'],
+    });
+
+    expect(prompts).toHaveLength(3);
+    expect(prompts[0]).not.toContain('Extrait 1');
+    expect(prompts[1]).toContain('Extrait 2 sur 3');
+    expect(prompts[1]).toContain('« Axe 2 Mobilité »');
+    expect(prompts[1]).toContain('« 2.1.1 Vélo »');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      // Une tranche sans action (tranche B) n'est pas une erreur.
+      expect(result.data.actions.map((action) => action.titre)).toEqual([
+        '2.1.1 Vélo',
+        '3.1.1 Solaire',
+      ]);
+      expect(result.data.chunkIndexByAction).toEqual([0, 2]);
+      expect(result.data.tokens.totalTokens).toBe(tokens.totalTokens * 3);
+    }
+  });
+
+  it("échoue quand aucune tranche ne contient d'action", async () => {
+    const llm = llmReturning(success({ data: [], tokens }));
+
+    const result = await extractActions(llm, {
+      ...promptInput,
+      chunks: ['tranche A', 'tranche B'],
+    });
 
     expect(result).toMatchObject({
       success: false,

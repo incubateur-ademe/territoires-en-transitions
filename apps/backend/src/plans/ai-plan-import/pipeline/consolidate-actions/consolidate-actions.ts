@@ -10,6 +10,7 @@ import {
 import { combineResults, Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
+import { groupByChunk, SourceChunks } from '../source-chunks/source-chunks';
 import { buildConsolidationPrompt } from './consolidate-actions.prompt';
 import {
   ConsolidationEntry,
@@ -26,7 +27,7 @@ export const CONSOLIDATION_CONCURRENCY = 5;
 
 export type ConsolidateActionsInput = {
   actions: ExtractedAction[];
-  text: string;
+  source: SourceChunks;
   disabledFields: DisableableField[];
   signal?: AbortSignal;
 };
@@ -40,18 +41,26 @@ type BatchOutcome = { entries: ConsolidationEntry[]; tokens: TokenUsage };
 
 export const consolidateActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { actions, text, disabledFields, signal }: ConsolidateActionsInput
+  { actions, source, disabledFields, signal }: ConsolidateActionsInput
 ): Promise<Result<ConsolidateActionsResult, LlmError>> => {
   const lowScoreActions = selectLowScoreActions(actions);
   if (lowScoreActions.length === 0) {
     return success({ actions, tokens: emptyTokenUsage() });
   }
 
-  const batches = chunk(lowScoreActions, CONSOLIDATION_BATCH_SIZE);
+  // Un lot ne mêle pas deux tranches : il n'envoie que la sienne.
+  const batches = groupByChunk(
+    lowScoreActions,
+    ({ index }) => index,
+    source
+  ).flatMap(({ text, items }) =>
+    chunk(items, CONSOLIDATION_BATCH_SIZE).map((batch) => ({ batch, text }))
+  );
   const outcomes = await mapWithConcurrency(
     batches,
     CONSOLIDATION_CONCURRENCY,
-    (batch) => consolidateBatch(llm, { batch, text, disabledFields, signal })
+    ({ batch, text }) =>
+      consolidateBatch(llm, { batch, text, disabledFields, signal })
   );
 
   const combined = combineResults(outcomes);

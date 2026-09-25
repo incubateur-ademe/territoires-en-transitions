@@ -79,7 +79,7 @@ const routedLlm = (
 const input = (
   overrides: Partial<RunImportPipelineInput> = {}
 ): RunImportPipelineInput => ({
-  text: 'texte source',
+  chunks: ['texte source'],
   instructions: '',
   disabledFields: [],
   currentDate: '2026-06-10',
