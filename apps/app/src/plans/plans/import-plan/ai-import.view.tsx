@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { AiImportBetaLabel } from './ai-import-beta-label';
 import { AiImportFlow } from './ai-import.flow';
+import { RequestPlanImportView } from './request-plan-import-view';
 import { useIsAiPlanImportEnabled } from './use-is-ai-plan-import-enabled';
 
 const BackButton = () => {
@@ -58,7 +59,7 @@ export const AiImportView = () => {
   const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
 
   if (!isAiPlanImportEnabled) {
-    return null;
+    return <RequestPlanImportView />;
   }
 
   return <AiImportContent />;

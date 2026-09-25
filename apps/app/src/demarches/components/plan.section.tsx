@@ -1,14 +1,12 @@
 'use client';
 
-import {
-  makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsImporterUrl,
-} from '@/app/app/paths';
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import {
   DemarcheCreatePlanModal,
   type DemarcheCreatePlanPayload,
 } from '@/app/demarches/components/create-plan.modal';
 import { DemarcheImportPlanModal } from '@/app/demarches/components/import-plan.modal';
+import { DemarcheRequestPlanImportModal } from '@/app/demarches/components/request-plan-import.modal';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
@@ -197,13 +195,11 @@ const ProgrammeActionsPlanRow = ({
  * derrière la flèche.
  */
 const CreatePlanAction = ({
-  collectiviteId,
   planTypeId,
   isReadonly,
   onCreatePlan,
   onPlanImported,
 }: {
-  collectiviteId: number;
   /** Type pré-sélectionné dans la modale de création. */
   planTypeId: number | undefined;
   isReadonly: boolean;
@@ -212,6 +208,8 @@ const CreatePlanAction = ({
 }) => {
   const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
   const [isImportPlanModalOpen, setIsImportPlanModalOpen] = useState(false);
+  const [isRequestPlanImportModalOpen, setIsRequestPlanImportModalOpen] =
+    useState(false);
   const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
 
   return (
@@ -239,9 +237,7 @@ const CreatePlanAction = ({
             : {
                 icon: 'import-line',
                 label: appLabels.demarcheProgrammeImporterPlan,
-                href: makeCollectivitePlansActionsImporterUrl({
-                  collectiviteId,
-                }),
+                onClick: () => setIsRequestPlanImportModalOpen(true),
                 disabled: isReadonly,
               },
         ]}
@@ -263,6 +259,12 @@ const CreatePlanAction = ({
           setIsOpen: setIsImportPlanModalOpen,
         }}
         onPlanImported={onPlanImported}
+      />
+      <DemarcheRequestPlanImportModal
+        openState={{
+          isOpen: isRequestPlanImportModalOpen,
+          setIsOpen: setIsRequestPlanImportModalOpen,
+        }}
       />
     </>
   );
@@ -465,7 +467,6 @@ export const ProgrammeActionsSection = ({
       }
       action={
         <CreatePlanAction
-          collectiviteId={collectiviteId}
           planTypeId={planTypeId}
           isReadonly={isReadonly}
           onCreatePlan={onCreatePlan}
