@@ -496,6 +496,7 @@ export const demarchesLabels = {
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
     `Plan #${id}`,
   demarcheProgrammeLierCePlan: 'Lier ce plan',
+  demarcheProgrammePlanAVerifier: 'À vérifier',
   demarcheProgrammePlanDejaRattache: ({ titre }: { titre: string }): string =>
     `Déjà rattaché à la démarche « ${titre} »`,
   demarchePlanCree: 'Plan d’action créé',

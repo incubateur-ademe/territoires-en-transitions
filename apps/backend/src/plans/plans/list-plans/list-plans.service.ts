@@ -83,6 +83,10 @@ export class ListPlansService {
         // Récupérer le type via getPlan qui inclut le type
         const planResult = await this.getPlanRepository.getPlan({ planId }, tx);
         const type = planResult.success ? planResult.data.type : null;
+        const source = planResult.success ? planResult.data.source : null;
+        const verifiedAt = planResult.success
+          ? planResult.data.verifiedAt
+          : null;
 
         return {
           id: planId,
@@ -93,6 +97,8 @@ export class ListPlansService {
           type,
           collectiviteId: rootAxe.collectiviteId,
           createdAt: rootAxe.createdAt,
+          source,
+          verifiedAt,
         } as Plan;
       })
     );
