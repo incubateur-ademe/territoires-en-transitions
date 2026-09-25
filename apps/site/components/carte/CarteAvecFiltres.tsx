@@ -2,13 +2,29 @@
 
 import { CollectivitesCarteFrance } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
+import { useWindowWidth } from '@/site/src/hooks/use-window-width';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiltresLabels } from '../../components/carte/CarteCollectivites';
 import FiltreEtoiles from './FiltreEtoiles';
 import FiltreLabels from './FiltreLabels';
+
+// Hors du composant : recréer l'import dynamique à chaque rendu redéfinirait un
+// nouveau type de composant, et démonterait la carte à chaque changement de
+// filtre.
+const CarteCollectivites = dynamic(
+  () => import('../../components/carte/CarteCollectivites'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-grey-8 flex items-center justify-center mx-auto max-md:my-9 md:my-20">
+        <p>Chargement...</p>
+      </div>
+    ),
+  }
+);
 
 type Props = {
   data?: CollectivitesCarteFrance | null;
@@ -17,29 +33,7 @@ type Props = {
 const CarteAvecFiltres = ({ data }: Props) => {
   const [filtre, setFiltre] = useState<FiltresLabels>('toutes');
   const [etoiles, setEtoiles] = useState<number[]>([1, 2, 3, 4, 5]);
-  const [windowWidth, setWindowWidth] = useState<number | undefined>();
-
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-
-    window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
-    return () =>
-      window.removeEventListener('resize', () =>
-        setWindowWidth(window.innerWidth)
-      );
-  }, []);
-
-  const CarteCollectivites = dynamic(
-    () => import('../../components/carte/CarteCollectivites'),
-    {
-      ssr: false,
-      loading: () => (
-        <div className="text-grey-8 flex items-center justify-center mx-auto max-md:my-9 md:my-20">
-          <p>Chargement...</p>
-        </div>
-      ),
-    }
-  );
+  const windowWidth = useWindowWidth();
 
   return (
     <Section containerClassName="!pt-0 mt-12">

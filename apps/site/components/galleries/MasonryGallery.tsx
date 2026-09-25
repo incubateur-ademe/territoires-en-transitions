@@ -1,20 +1,33 @@
 'use client';
 
+import { useWindowWidth } from '@/site/src/hooks/use-window-width';
 import classNames from 'classnames';
-import {
-  Fragment,
-  ReactNode,
-  useEffect,
-  useEffectEvent,
-  useState,
-} from 'react';
+import { Fragment, ReactNode } from 'react';
+
+type Breakpoints = { md: number; lg: number };
 
 type MasonryGalleryProps = {
   data: ReactNode[];
   maxCols?: 1 | 2 | 3;
-  breakpoints?: { md: number; lg: number };
+  breakpoints?: Breakpoints;
   gap?: string;
   className?: string;
+};
+
+/**
+ * Nombre de colonnes pour une largeur de fenêtre donnée. Tant qu'elle est
+ * inconnue — rendu serveur et premier rendu client — on retient le maximum,
+ * la grille étant de toute façon repliée par les classes responsive.
+ */
+const getColumns = (
+  windowWidth: number | undefined,
+  breakpoints: Breakpoints,
+  maxCols: number
+) => {
+  if (windowWidth === undefined) return maxCols;
+  if (windowWidth <= breakpoints.md) return 1;
+  if (windowWidth <= breakpoints.lg) return maxCols === 3 ? 2 : 1;
+  return maxCols;
 };
 
 const MasonryGallery = ({
@@ -24,58 +37,19 @@ const MasonryGallery = ({
   gap = 'gap-8',
   className,
 }: MasonryGalleryProps) => {
-  const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(maxCols));
-  const updateDataGallery = useEffectEvent((value: ReactNode[][]) =>
-    setDataGallery(value)
-  );
+  const windowWidth = useWindowWidth();
 
-  const [windowWidth, setWindowWidth] = useState<number | undefined>();
-  const updateWindowWidth = useEffectEvent((value: number | undefined) =>
-    setWindowWidth(value)
-  );
+  // Colonnes et répartition se déduisent des props et de la largeur : les
+  // garder en état, alimentés par trois effets en cascade, laissait la
+  // galerie vide au premier rendu.
+  const columns = getColumns(windowWidth, breakpoints, maxCols);
 
-  const [columns, setColumns] = useState(3);
-  const updateColumns = useEffectEvent((value: number) => setColumns(value));
-
-  useEffect(() => {
-    // Initialisation de windowWith au chargement de la page
-    updateWindowWidth(window.innerWidth);
-
-    // Détecte le changement de taille de la fenêtre
-    window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
-    return () =>
-      window.removeEventListener('resize', () =>
-        setWindowWidth(window.innerWidth)
-      );
-  }, []);
-
-  // Met à jour le nombre de colonnes
-  useEffect(() => {
-    if (windowWidth) {
-      if (windowWidth <= breakpoints.md) {
-        updateColumns(1);
-      } else if (windowWidth <= breakpoints.lg) {
-        if (maxCols === 3) updateColumns(2);
-        else updateColumns(1);
-      } else updateColumns(maxCols);
-    }
-  }, [windowWidth, breakpoints.md, breakpoints.lg, maxCols]);
-
-  // Organise les élémnents par colonne
-  useEffect(() => {
-    const newGalleryContent: ReactNode[][] = [];
-    for (let i = 0; i < columns; i++) newGalleryContent.push([]);
-
-    if (data) {
-      data
-        .filter((d) => d !== null)
-        .forEach((element, index) => {
-          newGalleryContent[index % columns].push(element);
-        });
-    }
-
-    updateDataGallery(newGalleryContent);
-  }, [data, columns]);
+  const dataGallery: ReactNode[][] = Array.from({ length: columns }, () => []);
+  data
+    .filter((element) => element !== null)
+    .forEach((element, index) => {
+      dataGallery[index % columns].push(element);
+    });
 
   return (
     <div

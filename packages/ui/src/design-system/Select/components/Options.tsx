@@ -127,7 +127,6 @@ const Options = ({
       if (index < 0) {
         return;
       }
-      highlightedIndexRef.current = index;
       setManual({ generation, index });
     },
     [generation]
@@ -161,11 +160,14 @@ const Options = ({
         e.preventDefault();
         e.stopPropagation();
         const prev = highlightedIndexRef.current;
-        setHighlight(
+        const next =
           e.key === 'ArrowDown'
             ? Math.min(flatSelectable.length - 1, prev + 1)
-            : Math.max(0, prev - 1)
-        );
+            : Math.max(0, prev - 1);
+        // Deux flèches enchaînées dans le même tour de boucle liraient sinon
+        // le même `prev` : le rendu qui rafraîchit la ref n'a pas encore eu lieu.
+        highlightedIndexRef.current = next;
+        setHighlight(next);
         return;
       }
 
