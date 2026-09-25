@@ -1,7 +1,7 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { enjeuEnumValues, analysisStepEnumValues } from '@tet/domain/shared';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import {

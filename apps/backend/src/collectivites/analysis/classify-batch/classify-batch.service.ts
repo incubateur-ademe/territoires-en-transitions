@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';

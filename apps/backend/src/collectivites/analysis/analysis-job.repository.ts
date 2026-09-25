@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu, AnalysisStep } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';

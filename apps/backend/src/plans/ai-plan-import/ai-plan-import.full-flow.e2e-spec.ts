@@ -18,7 +18,7 @@ import {
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';

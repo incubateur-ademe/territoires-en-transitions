@@ -1,5 +1,5 @@
 import { Enjeu, AnalysisStep } from '@tet/domain/shared';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { createEnumObject } from '@tet/domain/utils';
 import { ClassificationReport } from './classification-report';
 

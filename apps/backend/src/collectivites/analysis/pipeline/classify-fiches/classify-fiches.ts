@@ -1,5 +1,5 @@
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { randomUUID } from 'node:crypto';

@@ -1,4 +1,10 @@
-import { TokenUsage } from './llm.repository';
+export type TokenUsage = {
+  promptTokens: number;
+  cachedTokens: number;
+  candidatesTokens: number;
+  thoughtsTokens: number;
+  totalTokens: number;
+};
 
 export const emptyTokenUsage = (): TokenUsage => ({
   promptTokens: 0,
