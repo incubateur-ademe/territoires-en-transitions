@@ -281,7 +281,9 @@ const readDocumentErrorMessage = (error: ReadDocumentError): string => {
     case 'scanned_too_long':
       return `Document scanné de ${error.scannedPages} pages : l'import en lit au plus ${error.maxOcrPages}, exportez le programme d'actions seul`;
     case 'ocr_failed':
-      return `Lecture des pages scannées impossible (${error.failedPages.length} page(s) en échec)`;
+      return `Lecture des pages scannées impossible (${
+        error.failedPages.length
+      } page(s) en échec : ${error.reasons.join(', ')})`;
   }
 };
 
