@@ -59,6 +59,7 @@ import { ImportCorrespondantsService } from './membres/import-correspondants/imp
 import { ResolveServiceRepository } from './membres/import-correspondants/resolve-service.repository';
 import { SendInvitationCorrespondantService } from './membres/import-correspondants/send-invitation-correspondant.service';
 import { SendInvitationService } from './membres/invite-membre/send-invitation.service';
+import { ListAdminContactsService } from './membres/list-admin-contacts/list-admin-contacts.service';
 import { ListMembresService } from './membres/list-membres/list-membres.service';
 import { ListPendingInvitationsService } from './membres/list-pending-invitations/list-pending-invitations.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
@@ -83,6 +84,7 @@ import { PersonnesService } from './services/personnes.service';
   providers: [
     CollectivitesRouter,
     ListMembresService,
+    ListAdminContactsService,
     ListPendingInvitationsService,
     InvitationService,
     SendInvitationService,

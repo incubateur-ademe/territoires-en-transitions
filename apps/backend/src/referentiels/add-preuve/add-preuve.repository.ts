@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
+import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
+import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { isErrorWithCause } from '@tet/backend/utils/nest/errors.utils';
@@ -12,8 +15,11 @@ import { CommonError, CommonErrorEnum } from '@tet/backend/utils/trpc/common-err
 import { getErrorMessage } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
 import type {
+    AddPreuveAuditInput,
     AddPreuveComplementaireWithFileInput,
     AddPreuveComplementaireWithLinkInput,
+    AddPreuveRapportWithFileInput,
+    AddPreuveRapportWithLinkInput,
     AddPreuveReglementaireWithFileInput,
     AddPreuveReglementaireWithLinkInput,
 } from './add-preuve.input';
@@ -33,6 +39,11 @@ type AddPreuveComplementaireWithFileParams = AddPreuveCommonParams &
   AddPreuveComplementaireWithFileInput;
 type AddPreuveComplementaireWithLinkParams = AddPreuveCommonParams &
   AddPreuveComplementaireWithLinkInput;
+type AddPreuveAuditParams = AddPreuveCommonParams & AddPreuveAuditInput;
+type AddPreuveRapportWithFileParams = AddPreuveCommonParams &
+  AddPreuveRapportWithFileInput;
+type AddPreuveRapportWithLinkParams = AddPreuveCommonParams &
+  AddPreuveRapportWithLinkInput;
 
 @Injectable()
 export class AddPreuveRepository {
@@ -45,6 +56,15 @@ export class AddPreuveRepository {
       .select({ collectiviteId: bibliothequeFichierTable.collectiviteId })
       .from(bibliothequeFichierTable)
       .where(eq(bibliothequeFichierTable.id, fichierId));
+
+    return row?.collectiviteId ?? null;
+  }
+
+  async getAuditCollectiviteId(auditId: number): Promise<number | null> {
+    const [row] = await this.databaseService.db
+      .select({ collectiviteId: auditTable.collectiviteId })
+      .from(auditTable)
+      .where(eq(auditTable.id, auditId));
 
     return row?.collectiviteId ?? null;
   }
@@ -187,6 +207,103 @@ export class AddPreuveRepository {
       return this.handleInsertError(
         error,
         `Erreur lors de la création d'une preuve complémentaire (lien) pour ${actionId}`
+      );
+    }
+  }
+
+  async addPreuveAudit(
+    params: AddPreuveAuditParams,
+    tx?: Transaction
+  ): Promise<Result<AddPreuveOutput, CommonError>> {
+    const { collectiviteId, auditId, fichierId, commentaire, modifiedBy } =
+      params;
+    const db = tx ?? this.databaseService.db;
+
+    try {
+      const [inserted] = await db
+        .insert(preuveAuditTable)
+        .values({
+          collectiviteId,
+          auditId,
+          fichierId,
+          commentaire,
+          modifiedBy,
+          url: null,
+          titre: '',
+        })
+        .returning({ id: preuveAuditTable.id });
+
+      return inserted
+        ? success(inserted)
+        : failure(CommonErrorEnum.DATABASE_ERROR);
+    } catch (error) {
+      return this.handleInsertError(
+        error,
+        `Erreur lors de la création d'une preuve d'audit pour l'audit ${auditId}`
+      );
+    }
+  }
+
+  async addPreuveRapportWithFile(
+    params: AddPreuveRapportWithFileParams,
+    tx?: Transaction
+  ): Promise<Result<AddPreuveOutput, CommonError>> {
+    const { collectiviteId, date, fichierId, commentaire, modifiedBy } = params;
+    const db = tx ?? this.databaseService.db;
+
+    try {
+      const [inserted] = await db
+        .insert(preuveRapportTable)
+        .values({
+          collectiviteId,
+          date,
+          fichierId,
+          commentaire,
+          modifiedBy,
+          url: null,
+          titre: '',
+        })
+        .returning({ id: preuveRapportTable.id });
+
+      return inserted
+        ? success(inserted)
+        : failure(CommonErrorEnum.DATABASE_ERROR);
+    } catch (error) {
+      return this.handleInsertError(
+        error,
+        `Erreur lors de la création d'un rapport de visite (fichier) pour la collectivité ${collectiviteId}`
+      );
+    }
+  }
+
+  async addPreuveRapportWithLink(
+    params: AddPreuveRapportWithLinkParams,
+    tx?: Transaction
+  ): Promise<Result<AddPreuveOutput, CommonError>> {
+    const { collectiviteId, date, lien, commentaire, modifiedBy } = params;
+    const db = tx ?? this.databaseService.db;
+
+    try {
+      const [inserted] = await db
+        .insert(preuveRapportTable)
+        .values({
+          collectiviteId,
+          date,
+          commentaire,
+          modifiedBy,
+          fichierId: null,
+          url: lien.url,
+          titre: lien.titre,
+        })
+        .returning({ id: preuveRapportTable.id });
+
+      return inserted
+        ? success(inserted)
+        : failure(CommonErrorEnum.DATABASE_ERROR);
+    } catch (error) {
+      return this.handleInsertError(
+        error,
+        `Erreur lors de la création d'un rapport de visite (lien) pour la collectivité ${collectiviteId}`
       );
     }
   }

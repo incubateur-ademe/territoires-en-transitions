@@ -4,22 +4,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
-import { AppRouter, useSupabase, useTRPC } from '@tet/api';
+import { AppRouter, useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
-
-// on peut ajouter une preuve sous forme de...
-type FileOrLink =
-  // ...référence à un fichier de la bibliothèque
-  | {
-      fichierId: number;
-      commentaire: string;
-    }
-  // ..ou de lien
-  | {
-      url: string;
-      titre: string;
-      commentaire: string;
-    };
 
 export const useAddPreuveReglementaire = () => {
   const queryClient = useQueryClient();
@@ -84,77 +70,42 @@ export const useAddPreuveLabellisation = (
   );
 };
 
-type AddPreuveAuditInput = {
-  collectiviteId: number;
-  auditId: number;
-  fichierId: number;
-  commentaire: string;
-};
-
 export const useAddPreuveAudit = () => {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-  return useMutation({
-    mutationFn: async (input: AddPreuveAuditInput) =>
-      supabase.from('preuve_audit').insert({
-        collectivite_id: input.collectiviteId,
-        audit_id: input.auditId,
-        fichier_id: input.fichierId,
-        commentaire: input.commentaire,
-      }),
-
-    onSuccess: (data, variables) => {
-      invalidateQueries({
-        queryClient,
-        collectiviteId: variables.collectiviteId,
-        trpc,
-      });
-      queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
-          auditId: variables.auditId,
-        }),
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.actions.addPreuveAudit.mutationOptions({
+      onSuccess: (_data, variables) => {
+        invalidateQueries({
+          queryClient,
+          collectiviteId: variables.collectiviteId,
+          trpc,
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
+            auditId: variables.auditId,
+          }),
+        });
+      },
+    })
+  );
 };
 
 /** Ajoute un rapport de visite annuelle */
-type AddPreuveRapportArgs = {
-  collectiviteId: number;
-  date: string;
-} & FileOrLink;
-
-const toPreuveRapportRow = (preuve: AddPreuveRapportArgs) => {
-  const rapport = {
-    collectivite_id: preuve.collectiviteId,
-    date: preuve.date,
-    commentaire: preuve.commentaire,
-  };
-
-  if ('fichierId' in preuve) {
-    return { ...rapport, fichier_id: preuve.fichierId };
-  }
-
-  return { ...rapport, url: preuve.url, titre: preuve.titre };
-};
-
 export const useAddPreuveRapport = () => {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-  return useMutation({
-    mutationFn: async (preuve: AddPreuveRapportArgs) =>
-      supabase.from('preuve_rapport').insert(toPreuveRapportRow(preuve)),
-
-    onSuccess: (data, variables) => {
-      invalidateQueries({
-        queryClient,
-        collectiviteId: variables.collectiviteId,
-        trpc,
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.actions.addPreuveRapport.mutationOptions({
+      onSuccess: (_data, variables) => {
+        invalidateQueries({
+          queryClient,
+          collectiviteId: variables.collectiviteId,
+          trpc,
+        });
+      },
+    })
+  );
 };
 
 // recharge la liste des preuves
