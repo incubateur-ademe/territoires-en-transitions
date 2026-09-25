@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { capitalize } from '@tet/ui/labels/plural';
-import { ComponentProps } from 'react';
+import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
@@ -36,22 +36,25 @@ vi.mock(
   })
 );
 
+const gridElement = (
+  overrides: Partial<ComponentProps<typeof IndicateurValeursTable>> = {}
+): JSX.Element => (
+  <IndicateurValeursTable
+    demarcheId={1}
+    rows={fakeRows}
+    years={fakeYears}
+    referenceYear={fakeReferenceYear}
+    title="Profil énergie CLIMAT"
+    unit="kteq CO2"
+    onReferenceYearChange={vi.fn()}
+    isRequired
+    {...overrides}
+  />
+);
+
 const renderGrid = (
   overrides: Partial<ComponentProps<typeof IndicateurValeursTable>> = {}
-): ReturnType<typeof render> =>
-  render(
-    <IndicateurValeursTable
-      demarcheId={1}
-      rows={fakeRows}
-      years={fakeYears}
-      referenceYear={fakeReferenceYear}
-      title="Profil énergie CLIMAT"
-      unit="kteq CO2"
-      onReferenceYearChange={vi.fn()}
-      isRequired
-      {...overrides}
-    />
-  );
+): ReturnType<typeof render> => render(gridElement(overrides));
 
 describe('IndicateurValeursTable smoke', () => {
   it('rend sans lever', () => {
@@ -196,28 +199,55 @@ describe('IndicateurValeursTable applicabilité', () => {
     expect(lectureSeule.container.querySelector(TOGGLE_SELECTOR)).toBeNull();
   });
 
-  it('nomme la bascule : le Tooltip seul ne lui donnerait pas de libellé', () => {
+  const nomBascule = appLabels.pcaetDiagnosticIndicateurApplicabiliteBascule({
+    titre: 'Branche énergie',
+  });
+
+  it("nomme la bascule d'après l'indicateur : le Tooltip seul ne lui donnerait pas de libellé", () => {
     renderGrid({ rows: ligneNonApplicable });
 
-    expect(
-      screen.getByRole('checkbox', {
-        name: appLabels.pcaetDiagnosticIndicateurNonApplicable,
-      })
-    ).toBeDefined();
+    expect(screen.getByRole('checkbox', { name: nomBascule })).toBeDefined();
   });
 
   it('bascule une ligne non applicable vers applicable', () => {
     renderGrid({ rows: ligneNonApplicable });
 
-    fireEvent.click(
-      screen.getByRole('checkbox', {
-        name: appLabels.pcaetDiagnosticIndicateurNonApplicable,
-      })
-    );
+    fireEvent.click(screen.getByRole('checkbox', { name: nomBascule }));
 
     expect(setIndicateurApplicable).toHaveBeenCalledWith({
       indicateurId: 42,
       isApplicable: true,
     });
+  });
+
+  it("dit l'état par la coche et garde le même nom d'un état à l'autre", () => {
+    const { rerender } = renderGrid({
+      rows: [
+        fakeRow({
+          indicateurId: 42,
+          indicateurLabel: 'Branche énergie',
+          isApplicable: true,
+        }),
+      ],
+    });
+
+    const bascule = screen.getByRole('checkbox', { name: nomBascule });
+    expect((bascule as HTMLInputElement).checked).toBe(true);
+
+    fireEvent.click(bascule);
+
+    expect(setIndicateurApplicable).toHaveBeenCalledWith({
+      indicateurId: 42,
+      isApplicable: false,
+    });
+
+    // Le nom ne bouge pas — renommer un contrôle à son activation le ferait
+    // disparaître sous l'utilisateur ; seule la coche suit l'état.
+    rerender(gridElement({ rows: ligneNonApplicable }));
+
+    const basculeNonApplicable = screen.getByRole('checkbox', {
+      name: nomBascule,
+    });
+    expect((basculeNonApplicable as HTMLInputElement).checked).toBe(false);
   });
 });

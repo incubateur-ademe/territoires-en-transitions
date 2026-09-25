@@ -33,7 +33,16 @@ export const useSetDiagnosticReferenceYear = (demarcheId: number) => {
         },
 
         onSuccess: async (diagnostic) => {
-          queryClient.setQueryData(queryKey, diagnostic);
+          // Même précaution que pour la saisie des valeurs : la réponse est un
+          // instantané complet du diagnostic, lu avant qu'une bascule
+          // d'applicabilité partie entre-temps ne soit commitée. Le service ne
+          // déplace que des valeurs (`moveValeursToYear`) — on ne reprend donc
+          // que celles-là, et la ligne basculée ne repasse pas applicable.
+          queryClient.setQueryData(queryKey, (old) =>
+            old === undefined
+              ? diagnostic
+              : { ...old, indicateurValeurs: diagnostic.indicateurValeurs }
+          );
 
           await queryClient.invalidateQueries({
             queryKey: trpc.demarches.pcaet.get.queryKey({

@@ -23,7 +23,16 @@ export const useUpdateDiagnosticIndicateursValeurs = (demarcheId: number) => {
       meta: { disableToast: true },
 
       onSuccess: async (diagnostic) => {
-        queryClient.setQueryData(queryKey, diagnostic);
+        // La réponse est un instantané complet du diagnostic, lu côté serveur
+        // avant qu'une bascule d'applicabilité partie entre-temps ne soit
+        // commitée : l'écrire en entier ferait repasser la ligne en applicable,
+        // et rien ne resynchroniserait ensuite. On ne reprend donc que les
+        // valeurs, le seul champ que cette mutation fait bouger.
+        queryClient.setQueryData(queryKey, (old) =>
+          old === undefined
+            ? diagnostic
+            : { ...old, indicateurValeurs: diagnostic.indicateurValeurs }
+        );
 
         await queryClient.invalidateQueries({
           queryKey: trpc.demarches.pcaet.get.queryKey({
