@@ -21,6 +21,7 @@ const tokens: TokenUsage = {
 const stepOf = (prompt: string): StepName => {
   if (prompt.includes('agent de tri documentaire')) return 'scouting';
   if (prompt.includes('squelette du plan')) return 'scouting';
+  if (prompt.includes('agent de mise en cohérence')) return 'hierarchy';
   if (prompt.includes('auditeur qualité')) return 'qualitativeReview';
   if (prompt.includes("agent d'enrichissement")) return 'enrichment';
   if (prompt.includes('Actions ciblées à traiter')) return 'consolidation';
@@ -75,6 +76,19 @@ const routedLlm = (failingStep?: StepName): PipelineLlm =>
       const step = stepOf(prompt);
       if (step === failingStep) {
         return failure({ kind: 'rate_limited' });
+      }
+      if (step === 'hierarchy') {
+        return success({
+          data: [
+            {
+              index: 0,
+              axe: 'Axe 1 : Bâtiments',
+              'sous-axe': '',
+              doublonDe: -1,
+            },
+          ],
+          tokens,
+        });
       }
       if (step === 'scouting') {
         return success({
@@ -303,10 +317,15 @@ describe('runImportPipeline', () => {
       prompts.filter((p) => p.includes('agent de validation'))
     ).toHaveLength(1);
     expect(outcome.status).toBe('done');
+    expect(
+      prompts.filter((p) => p.includes('agent de mise en cohérence'))
+    ).toHaveLength(1);
     if (outcome.status === 'done') {
       expect(outcome.stepStates.reading).toBe('ok');
       expect(outcome.stepStates.scouting).toBe('ok');
+      expect(outcome.stepStates.hierarchy).toBe('ok');
       expect(outcome.draft.actions).toHaveLength(1);
+      expect(outcome.draft.actions[0].axe).toBe('Axe 1 : Bâtiments');
     }
   });
 

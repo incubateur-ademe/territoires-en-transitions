@@ -2,6 +2,7 @@ import { DisableableField } from '../models/disableable-field';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { joinPages, ReadDocument } from './document/document-page';
 import { structureUnits } from './extract-actions/structure-units';
+import { consolidateHierarchy } from './consolidate-hierarchy/consolidate-hierarchy';
 import { PlanSkeleton } from '../models/plan-skeleton';
 import { scoutUnits } from './scout-units/scout-units';
 import { DocumentUnit } from './segment-document/document-unit';
@@ -194,15 +195,41 @@ export const runImportPipeline = async (
     },
   });
   if (!extracted.success) return extracted.outcome;
-  // La mise en cohérence des axes arrive avec la stratégie segmentée.
-  const afterExtraction = markSkipped(extracted.progress, 'hierarchy');
-  await reportProgress(afterExtraction.stepStates);
+  // Rattacher chaque action au squelette et fondre les doublons : des
+  // extraits lus séparément ne se coordonnent pas seuls.
+  const hierarchized = await runStep({
+    progress: extracted.progress,
+    name: 'hierarchy',
+    skipWhen: units === null || skeleton === null,
+    run: async (actions) => {
+      const result = await consolidateHierarchy(llm, {
+        actions,
+        skeleton: skeleton as PlanSkeleton,
+        signal: input.signal,
+      });
+      if (!result.success) {
+        return result;
+      }
+      source = {
+        chunks: source.chunks,
+        chunkIndexByAction: result.data.keptIndexes.map(
+          (index) => source.chunkIndexByAction[index]
+        ),
+      };
+      return success({
+        actions: result.data.actions,
+        tokens: result.data.tokens,
+      });
+    },
+  });
+  if (!hierarchized.success) return hierarchized.outcome;
+  await reportProgress(hierarchized.progress.stepStates);
   if (units) {
     source = coalesceChunks(source, VERIFICATION_WINDOW_TOKENS);
   }
 
   const scored = await runStep({
-    progress: afterExtraction,
+    progress: hierarchized.progress,
     name: 'scoring',
     skipWhen: !input.withVerifications,
     run: (actions) =>
