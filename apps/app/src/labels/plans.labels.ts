@@ -194,7 +194,8 @@ export const plansLabels = {
   importPlanIaBeta: 'Bêta',
   importPlanIaContact:
     "Si l'import ne vous convient pas, contactez-nous à contact@territoiresentransitions.fr en joignant le fichier et en précisant le contexte.",
-  importPlanIaFormatsAcceptes: 'PDF, Excel (.xlsx) ou CSV, 25 Mo maximum',
+  importPlanIaFormatsAcceptes:
+    'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
   importPlanIaTypeVerrouille:
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',

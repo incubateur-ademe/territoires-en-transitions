@@ -8,17 +8,29 @@ const MAX_ZIP_COMMENT_BYTES = 65535;
 const MAX_ENTRY_COUNT = 4096;
 const ZIP64_MARKER = 0xffffffff;
 
-export type XlsxArchiveError =
-  | { kind: 'not_xlsx' }
+export type OoxmlKind = 'xlsx' | 'docx';
+
+export type OoxmlArchiveError =
+  | { kind: 'not_ooxml' }
   | { kind: 'uncompressed_too_large'; declaredBytes: number };
 
-export const validateXlsxArchive = (
+/** Ce qu'une archive ZIP est, d'après son répertoire : un classeur, un document Word, ou ni l'un ni l'autre. */
+export const inspectOoxmlKind = (buffer: Buffer): OoxmlKind | null => {
+  const entries = readCentralDirectoryEntries(buffer);
+  if (entries === null) {
+    return null;
+  }
+  return ooxmlKindOf(entries);
+};
+
+export const validateOoxmlArchive = (
   buffer: Buffer,
   maxUncompressedBytes: number
-): Result<undefined, XlsxArchiveError> => {
+): Result<{ kind: OoxmlKind }, OoxmlArchiveError> => {
   const entries = readCentralDirectoryEntries(buffer);
-  if (entries === null || !hasXlsxStructure(entries)) {
-    return failure({ kind: 'not_xlsx' });
+  const kind = entries === null ? null : ooxmlKindOf(entries);
+  if (entries === null || kind === null) {
+    return failure({ kind: 'not_ooxml' });
   }
 
   const declaredBytes = entries.reduce(
@@ -29,14 +41,23 @@ export const validateXlsxArchive = (
     return failure({ kind: 'uncompressed_too_large', declaredBytes });
   }
 
-  return success(undefined);
+  return success({ kind });
 };
 
 type ZipEntry = { name: string; uncompressedBytes: number };
 
-const hasXlsxStructure = (entries: ZipEntry[]): boolean =>
-  entries.some((entry) => entry.name === '[Content_Types].xml') &&
-  entries.some((entry) => entry.name.startsWith('xl/'));
+const ooxmlKindOf = (entries: ZipEntry[]): OoxmlKind | null => {
+  if (!entries.some((entry) => entry.name === '[Content_Types].xml')) {
+    return null;
+  }
+  if (entries.some((entry) => entry.name.startsWith('xl/'))) {
+    return 'xlsx';
+  }
+  if (entries.some((entry) => entry.name === 'word/document.xml')) {
+    return 'docx';
+  }
+  return null;
+};
 
 const readCentralDirectoryEntries = (buffer: Buffer): ZipEntry[] | null => {
   const eocdOffset = findEndOfCentralDirectory(buffer);

@@ -1,5 +1,9 @@
 import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count';
-import { DocumentPage, ReadDocument } from '../document/document-page';
+import {
+  DocumentPage,
+  isTabularKind,
+  ReadDocument,
+} from '../document/document-page';
 import { cutUnits, CutUnitsOptions } from './cut-units';
 import { detectHeadings } from './detect-headings';
 import {
@@ -25,10 +29,9 @@ export const segmentDocument = (
   options: SegmentDocumentOptions = DEFAULT_SEGMENT_OPTIONS
 ): DocumentUnit[] => {
   const pages = document.pages.filter((page) => page.source !== 'empty');
-  const units =
-    document.kind === 'pdf'
-      ? cutUnits(pages, detectHeadings(pages), options)
-      : pages.flatMap((page) => cutTabularUnits(page, options.maxTokens));
+  const units = isTabularKind(document.kind)
+    ? pages.flatMap((page) => cutTabularUnits(page, options.maxTokens))
+    : cutUnits(pages, detectHeadings(pages), options);
   return numberUnits(units);
 };
 
