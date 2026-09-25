@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { AiImportBetaLabel } from '@/app/plans/plans/import-plan/ai-import-beta-label';
 import { AiImportFlow } from '@/app/plans/plans/import-plan/ai-import.flow';
 import { Button, Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -28,7 +29,9 @@ export const DemarcheImportPlanModal = ({
   return (
     <Modal
       size="lg"
-      title={`${appLabels.importPlanIaTitre} (${appLabels.importPlanIaBeta})`}
+      title={
+        <AiImportBetaLabel>{appLabels.importPlanIaTitre}</AiImportBetaLabel>
+      }
       openState={openState}
       dataTest="demarches.plan.import-plan-modal"
       render={({ close }) => (

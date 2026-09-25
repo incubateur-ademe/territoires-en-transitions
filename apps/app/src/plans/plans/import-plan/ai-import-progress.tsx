@@ -1,14 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
-import { ComponentProps } from 'react';
-import {
-  ImportStepDisplayStatus,
-  ImportStepName,
-  ImportStepView,
-} from './ai-import-steps.model';
+import { Alert, Button, VisibleWhen } from '@tet/ui';
+import { ImportStepName, ImportStepView } from './ai-import-steps.model';
 
 const stepLabels: Record<ImportStepName, string> = {
   extraction: appLabels.importPlanIaEtapeExtraction,
@@ -17,40 +11,6 @@ const stepLabels: Record<ImportStepName, string> = {
   enrichment: appLabels.importPlanIaEtapeEnrichissement,
   qualitativeReview: appLabels.importPlanIaEtapeRevue,
 };
-
-const stepStatusLabels: Record<ImportStepDisplayStatus, string> = {
-  done: appLabels.importPlanIaEtapeStatutTermine,
-  skipped: appLabels.importPlanIaEtapeStatutIgnoree,
-  current: appLabels.importPlanIaEtapeStatutEnCours,
-  waiting: appLabels.importPlanIaEtapeStatutEnAttente,
-};
-
-const stepIndicatorByStatus: Record<
-  Exclude<ImportStepDisplayStatus, 'current'>,
-  { icon: ComponentProps<typeof Icon>['icon']; className: string }
-> = {
-  done: { icon: 'checkbox-circle-fill', className: 'text-success-1' },
-  skipped: { icon: 'subtract-line', className: 'text-grey-6' },
-  waiting: { icon: 'checkbox-blank-circle-line', className: 'text-grey-6' },
-};
-
-const StepIndicator = ({ status }: { status: ImportStepDisplayStatus }) => {
-  if (status === 'current') {
-    return <SpinnerLoader className="w-5 h-5" />;
-  }
-  const indicator = stepIndicatorByStatus[status];
-  return <Icon icon={indicator.icon} size="md" className={indicator.className} />;
-};
-
-const ImportStepRow = ({ step }: { step: ImportStepView }) => (
-  <li className="flex items-center justify-between gap-3">
-    <span className="flex items-center gap-3">
-      <StepIndicator status={step.status} />
-      <span className="text-grey-9">{stepLabels[step.name]}</span>
-    </span>
-    <span className="text-sm text-grey-7">{stepStatusLabels[step.status]}</span>
-  </li>
-);
 
 const ImportFailedAlert = ({
   errorMessage,
@@ -71,23 +31,42 @@ const ImportFailedAlert = ({
   </div>
 );
 
-const ImportStepList = ({ steps }: { steps: ImportStepView[] }) => {
+const toProgressPercent = (steps: ImportStepView[]) => {
+  const finished = steps.filter(
+    (step) => step.status === 'done' || step.status === 'skipped'
+  ).length;
+  // L'étape en cours compte pour moitié : la barre bouge dès le lancement.
+  const current = steps.some((step) => step.status === 'current') ? 0.5 : 0;
+  return Math.round(((finished + current) / steps.length) * 100);
+};
+
+const ImportStepProgress = ({ steps }: { steps: ImportStepView[] }) => {
   const currentStep = steps.find((step) => step.status === 'current');
+  const percent = toProgressPercent(steps);
   return (
-    <div className="flex flex-col gap-6">
-      <p role="status" aria-live="polite" className="sr-only">
-        {currentStep
-          ? `${appLabels.importPlanIaEtapeEnCoursAnnonce} : ${
-              stepLabels[currentStep.name]
-            }`
-          : ''}
+    <div className="flex flex-col items-center gap-4">
+      <p
+        role="status"
+        aria-live="polite"
+        className="mb-0 text-lg font-bold text-primary-9"
+      >
+        {currentStep ? `${stepLabels[currentStep.name]}…` : ''}
       </p>
-      <p className="mb-0 text-grey-7">{appLabels.importPlanIaEnCours}</p>
-      <ol className="flex flex-col gap-3 w-full max-w-md mx-auto">
-        {steps.map((step) => (
-          <ImportStepRow key={step.name} step={step} />
-        ))}
-      </ol>
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        className="w-full h-2 overflow-hidden rounded-full bg-grey-3"
+      >
+        <div
+          className="h-full rounded-full bg-primary-6 transition-[width] duration-500"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <p className="mb-0 text-sm text-grey-7">
+        {appLabels.importPlanIaEnCours}
+      </p>
     </div>
   );
 };
@@ -110,7 +89,7 @@ export const AiImportProgress = ({
       <ImportFailedAlert errorMessage={errorMessage} onRetry={onRetry} />
     </VisibleWhen>
     <VisibleWhen condition={!failed}>
-      <ImportStepList steps={steps} />
+      <ImportStepProgress steps={steps} />
     </VisibleWhen>
   </div>
 );

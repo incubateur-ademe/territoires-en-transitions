@@ -856,7 +856,7 @@ export const appLabels = {
   importPlanIaOptionSousActions: 'Mon document contient des sous-actions',
   importPlanIaLancer: "Lancer l'import",
   importPlanIaEnCours:
-    "Import en cours : cela peut prendre quelques minutes. Vous pouvez quitter cette page, l'import continue.",
+    'Cela peut prendre quelques minutes. Ne fermez pas cette fenêtre.',
   importPlanIaErreur: "L'import a échoué",
   importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeExtraction: 'Lecture du document',
@@ -864,11 +864,6 @@ export const appLabels = {
   importPlanIaEtapeConsolidation: 'Correction des actions incomplètes',
   importPlanIaEtapeEnrichissement: 'Identification des sous-actions',
   importPlanIaEtapeRevue: 'Relecture finale',
-  importPlanIaEtapeStatutEnCours: 'En cours',
-  importPlanIaEtapeStatutTermine: 'Terminé',
-  importPlanIaEtapeStatutIgnoree: 'Ignorée',
-  importPlanIaEtapeStatutEnAttente: 'En attente',
-  importPlanIaEtapeEnCoursAnnonce: 'Étape en cours',
   importPlanTelechargerModele: 'Télécharger le modèle',
   importPlanTelechargerModeleEtapeTitre: 'Téléchargez le modèle de plan',
   importPlanModeleStructureFormat:

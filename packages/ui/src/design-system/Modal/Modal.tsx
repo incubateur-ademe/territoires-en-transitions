@@ -53,7 +53,7 @@ export type ModalProps = {
   /** l'élément qui permet d'afficher la modale au click, généralement un bouton */
   children?: JSX.Element;
   /** Titre de la modale, n'est pas affiché si non défini */
-  title?: string;
+  title?: React.ReactNode;
   /** Sous-titre de la modale, n'est pas affiché si non défini */
   subTitle?: string;
   /** Permet de contrôler l'ouverture de la modale */
