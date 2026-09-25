@@ -109,7 +109,28 @@ export const backendConfigurationSchema = z
       .string()
       .optional()
       .describe(
-        'Identifiant du modèle Albert (ex : openai/gpt-oss-120b) ; requis avec LLM_PROVIDER=albert'
+        'Modèle Albert du palier fort, qui extrait et structure (ex : gpt-oss-120b) ; requis avec LLM_PROVIDER=albert'
+      ),
+    ALBERT_MODEL_LIGHT: z
+      .string()
+      .default('ministral-3-8b-instruct-2512')
+      .describe(
+        'Modèle Albert du palier léger, qui trie les extraits ; vide : le palier fort'
+      ),
+    ALBERT_MODEL_OCR: z
+      .string()
+      .default('lightonocr-2-1b')
+      .describe(
+        "Modèle image-texte d'Albert qui transcrit les pages scannées ; vide : OCR désactivé"
+      ),
+    // Quota observé sur la clé : « 128000 input tokens per minute exceeded ».
+    ALBERT_MAX_INPUT_TOKENS_PER_MINUTE: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(128000)
+      .describe(
+        "Tokens d'entrée par minute accordés à la clé Albert, lissés avant l'appel plutôt que subis en 429"
       ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
