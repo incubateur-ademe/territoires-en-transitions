@@ -20,8 +20,12 @@ import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
-import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count';
-import { ExtractionError, extractText } from '../pipeline/extract-text';
+import {
+  ExtractionError,
+  extractText,
+  isTabularMimeType,
+} from '../pipeline/extract-text';
+import { splitDocument } from '../pipeline/split-document/split-document';
 import {
   initialStepStates,
   PipelineError,
@@ -34,6 +38,14 @@ export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
   | { kind: 'failure_record_failed'; jobId: string; cause: AiPlanImportError }
   | { kind: 'interrupted'; jobId: string; message: string };
+
+/** Reprise d'une tranche à l'autre, pour ne pas couper une action en deux. */
+const CHUNK_OVERLAP_TOKENS = 1_500;
+/**
+ * Garde-fou de coût : au-delà, ce n'est plus un plan d'action. Avec Albert,
+ * 10 tranches font environ 600 000 tokens, soit plusieurs centaines de pages.
+ */
+const MAX_DOCUMENT_CHUNKS = 10;
 
 @Injectable()
 export class GenerateImportDraftService {
@@ -116,16 +128,22 @@ export class GenerateImportDraftService {
       return this.recordFailure(job.id, extractionErrorMessage(text.error));
     }
 
-    const estimatedTokens = estimateTokenCount(text.data);
-    if (estimatedTokens > this.llm.maxInputTokens) {
+    const chunks = splitDocument(text.data, {
+      maxTokens: this.llm.maxInputTokens,
+      overlapTokens: CHUNK_OVERLAP_TOKENS,
+      header: isTabularMimeType(source.mimeType)
+        ? text.data.split('\n', 1)[0]
+        : undefined,
+    });
+    if (chunks.length > MAX_DOCUMENT_CHUNKS) {
       return this.recordFailure(
         job.id,
-        `Document trop long pour l'import (environ ${estimatedTokens} tokens, ${this.llm.maxInputTokens} au maximum) : importez-le en plusieurs parties`
+        `Document trop long pour l'import (${chunks.length} parties à analyser, ${MAX_DOCUMENT_CHUNKS} au maximum) : importez-le en plusieurs fois`
       );
     }
 
     const outcome = await runImportPipeline(this.llm, {
-      text: text.data,
+      chunks,
       instructions: job.options.instructions,
       disabledFields: job.options.disabledFields,
       currentDate: new Date().toISOString(),
