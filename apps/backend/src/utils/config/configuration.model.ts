@@ -141,6 +141,15 @@ export const backendConfigurationSchema = z
       .describe(
         "Requêtes par minute accordées par modèle à la clé Albert, lissées avant l'appel plutôt que subies en 429"
       ),
+    // Optionnel : sans valeur, le modèle garde son effort par défaut (medium
+    // pour gpt-oss). Ses tokens de raisonnement, non comptés dans l'usage, se
+    // prennent sur la limite de réponse.
+    ALBERT_REASONING_EFFORT: z
+      .enum(['low', 'medium', 'high'])
+      .optional()
+      .describe(
+        'Effort de raisonnement du modèle Albert du palier fort (low, medium, high) ; vide : celui du modèle'
+      ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
       .min(1)
