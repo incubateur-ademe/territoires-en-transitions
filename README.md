@@ -127,6 +127,37 @@ sudo apt-get install -y --no-install-recommends \
 brew install pkg-config cairo pango libpng jpeg giflib librsvg
 ```
 
+#### Surcharges de versions (`pnpm.overrides`)
+
+Le bloc `pnpm.overrides` du `package.json` racine force la résolution de quelques
+dépendances **transitives** épinglées trop bas par leurs parents, qui laissaient
+sinon des alertes Dependabot ouvertes sans qu'aucune dépendance directe soit en
+cause :
+
+| Surcharge | Parent qui épingle | Pourquoi |
+| --- | --- | --- |
+| `next` | `@react-email/preview-server` | tirait `next` 16.2.x (+ `postcss`, `sharp` anciens) |
+| `axios`, `brace-expansion@5` | `nx` | épinglages exacts |
+| `handlebars` | `@hey-api/openapi-ts` | épinglage exact |
+| `undici@7` | `@module-federation/dts-plugin` | épinglage exact |
+| `svgo@3` | `@svgr/plugin-svgo` | **downgrade volontaire**, voir ci-dessous |
+| les autres | divers | correctif de sécurité disponible sans changement de majeure |
+
+Règles de maintenance :
+
+- N'ajouter une surcharge que si le correctif **ne change pas de majeure** — sinon
+  c'est une montée de version à traiter comme telle, avec relecture du code appelant.
+- Cibler la majeure concernée (`ws@8`, `js-yaml@4`…) plutôt que le paquet nu, pour
+  ne pas remplacer silencieusement une vieille copie d'une autre majeure.
+- Retirer une surcharge dès que le parent a relâché son épinglage.
+
+⚠️ `svgo@3` est **volontairement figé à 3.3.2**. À partir de 3.3.5, `svgo` remplace
+le fork `@trysound/sax` par `sax` ≥ 1.5, qui impose une limite d'entités XML et fait
+échouer le build de `app` sur `remixicon/fonts/remixicon.svg` (« Parsed entity count
+exceeds max entity count »). `svgo` 4 corrigerait le problème mais reste inatteignable :
+`@svgr/webpack` est bloqué en 8.1.0 et exige `svgo` ^3. Ne pas remonter ce pin sans
+remplacer d'abord la chaîne `@svgr/*`.
+
 ### Variables d'environnement
 
 Les fichiers `.env` du projet (racine **et** apps) sont **versionnés** et gérés avec [dotenvx](https://dotenvx.com) via les commandes `make` (voir `make help`) :
