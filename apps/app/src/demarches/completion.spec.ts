@@ -216,6 +216,7 @@ const completeDemarche: DemarchePcaet = {
   avalModifiable: false,
   pilotes: [],
   planActionIds: [42],
+  unverifiedPlanActionIds: [],
 };
 
 describe('getDemarchePcaetCompletion', () => {
@@ -293,6 +294,16 @@ describe('getDemarchePcaetCompletion', () => {
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
     const completion = getDemarchePcaetCompletion(
       { ...completeDemarche, planActionIds: [] },
+      completeDiagnostic(),
+      completeSnapshot
+    );
+
+    expect(completion.plan).toBe('incomplete');
+  });
+
+  it('laisse le plan en incomplete tant qu’un plan importé rattaché n’est pas vérifié', () => {
+    const completion = getDemarchePcaetCompletion(
+      { ...completeDemarche, planActionIds: [42, 43], unverifiedPlanActionIds: [43] },
       completeDiagnostic(),
       completeSnapshot
     );

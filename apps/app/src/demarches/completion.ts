@@ -69,7 +69,11 @@ export const getDemarchePcaetCompletion = (
   const diagnosticStatut = toStatut(
     diagnostic !== null && isDemarchePcaetDiagnosticComplet(diagnostic)
   );
-  const plan = toStatut(demarche.planActionIds.length > 0);
+  // Un plan importé par IA se rattache, mais ne compte qu'une fois vérifié.
+  const plan = toStatut(
+    demarche.planActionIds.length > 0 &&
+      demarche.unverifiedPlanActionIds.length === 0
+  );
   // Chaque étape documentaire n'existe que si le modèle demande des pièces
   // pour elle ; sans snapshot chargé, l'amont est réputé incomplet (on ne
   // déclare pas complet ce qu'on n'a pas lu) et l'aval inconnu.

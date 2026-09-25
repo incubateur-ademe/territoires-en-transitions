@@ -37,6 +37,7 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
   planActionIds: server.planActionIds,
+  unverifiedPlanActionIds: server.unverifiedPlanActionIds,
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,

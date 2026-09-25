@@ -1,4 +1,5 @@
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
@@ -108,6 +109,11 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   );
   const importPlanService = { save } as unknown as ImportPlanService;
 
+  const markAsImportedByAi = vi.fn(async () => success(undefined));
+  const planVerificationRepository = {
+    markAsImportedByAi,
+  } as unknown as PlanVerificationRepository;
+
   const transactionManager = {
     executeSingle: vi.fn(async (operation) => operation({} as Transaction)),
   } as unknown as TransactionManager;
@@ -117,8 +123,10 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     documentStorage,
     llm,
     importPlanService,
+    planVerificationRepository,
     transactionManager,
     save,
+    markAsImportedByAi,
     removeDocument,
   };
 };
@@ -129,6 +137,7 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.documentStorage,
     mocks.llm,
     mocks.importPlanService,
+    mocks.planVerificationRepository,
     mocks.transactionManager
   );
 
@@ -140,6 +149,7 @@ describe('GenerateImportDraftService', () => {
     const result = await service.generate('job-1');
 
     expect(result).toMatchObject({ success: true });
+    expect(mocks.markAsImportedByAi).toHaveBeenCalledWith(7, {});
     expect(mocks.save).toHaveBeenCalledWith(
       expect.objectContaining({
         collectiviteId: 10,

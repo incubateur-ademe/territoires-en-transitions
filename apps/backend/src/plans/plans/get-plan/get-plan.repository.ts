@@ -5,7 +5,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Personne } from '@tet/domain/collectivites';
-import { AxeLight, PlanType } from '@tet/domain/plans';
+import { AxeLight, PlanSource, PlanType } from '@tet/domain/plans';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
@@ -13,7 +13,11 @@ import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 
-export type GetPlanOutput = AxeLight & { type: PlanType | null };
+export type GetPlanOutput = AxeLight & {
+  type: PlanType | null;
+  source: PlanSource | null;
+  verifiedAt: string | null;
+};
 
 @Injectable()
 export class GetPlanRepository {
@@ -45,6 +49,8 @@ export class GetPlanRepository {
           createdAt: axeTable.createdAt,
           modifiedAt: axeTable.modifiedAt,
           modifiedBy: axeTable.modifiedBy,
+          source: axeTable.source,
+          verifiedAt: axeTable.verifiedAt,
           type: planActionTypeTable,
         })
         .from(axeTable)

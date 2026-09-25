@@ -9,6 +9,8 @@ export type AlertProps = {
   description?: string | React.ReactNode;
   /** Possibilité d'ajouter un composant custom en fin de bloc */
   footer?: React.ReactNode;
+  /** Action placée à droite du bloc, par exemple un bouton */
+  action?: React.ReactNode;
   /** Etat du bloc alerte */
   state?: AlertState;
   /** Remplace l'icône par défaut */
@@ -25,6 +27,7 @@ export const Alert = ({
   title,
   description,
   footer,
+  action,
   state = 'info',
   customIcon,
   className,
@@ -58,6 +61,7 @@ export const Alert = ({
           ))}
         {!!footer && footer}
       </div>
+      {!!action && <div className="shrink-0 self-center">{action}</div>}
     </div>
   );
 };

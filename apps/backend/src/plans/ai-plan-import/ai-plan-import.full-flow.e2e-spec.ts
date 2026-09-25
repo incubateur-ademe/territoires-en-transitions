@@ -325,6 +325,8 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         nom: axeTable.nom,
         collectiviteId: axeTable.collectiviteId,
         parent: axeTable.parent,
+        source: axeTable.source,
+        verifiedAt: axeTable.verifiedAt,
       })
       .from(axeTable)
       .where(eq(axeTable.id, planId));
@@ -332,6 +334,8 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       nom: 'Plan import IA complet',
       collectiviteId: TEST_COLLECTIVITE_ID,
       parent: null,
+      source: 'import_ia',
+      verifiedAt: null,
     });
 
     const actions = await fichesByTitreInPlan(planId, 'Action consolidée 1.1.1');

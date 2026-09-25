@@ -8,6 +8,7 @@ import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
 import { ListPlanTypesRouter } from './list-plan-types/list-plan-types.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
+import { VerifyPlanRouter } from './verify-plan/verify-plan.router';
 
 @Injectable()
 export class PlanRouter {
@@ -20,7 +21,8 @@ export class PlanRouter {
     private readonly listPlanTypesRouter: ListPlanTypesRouter,
     private readonly deletePlanRouter: DeletePlanRouter,
     private readonly duplicatePlanRouter: DuplicatePlanRouter,
-    private readonly importPlanRouter: ImportPlanRouter
+    private readonly importPlanRouter: ImportPlanRouter,
+    private readonly verifyPlanRouter: VerifyPlanRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -31,6 +33,7 @@ export class PlanRouter {
     this.listPlanTypesRouter.router,
     this.deletePlanRouter.router,
     this.duplicatePlanRouter.router,
-    this.importPlanRouter.router
+    this.importPlanRouter.router,
+    this.verifyPlanRouter.router
   );
 }

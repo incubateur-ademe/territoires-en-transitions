@@ -5,7 +5,9 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DEMARCHE_PCAET_EN_COURS_STATUSES } from '@tet/domain/demarches';
-import { and, asc, eq, inArray, ne } from 'drizzle-orm';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { PlanSourceEnum } from '@tet/domain/plans';
+import { and, asc, eq, inArray, isNull, ne } from 'drizzle-orm';
 
 /** Autre démarche active tenant déjà un plan que l'on cherche à rattacher. */
 export type DemarcheHoldingPlan = {
@@ -55,6 +57,55 @@ export class DemarchePlanActionsRepository {
       planActionIdsByDemarcheId.set(row.demarcheId, planActionIds);
     }
     return planActionIdsByDemarcheId;
+  }
+
+  /**
+   * Plans rattachés importés par IA et pas encore vérifiés : ils se rattachent
+   * comme les autres, mais le programme d'actions n'est pas complet tant qu'il
+   * en reste.
+   */
+  async listUnverifiedByDemarcheIds(
+    demarcheIds: number[],
+    tx?: Transaction
+  ): Promise<Map<number, number[]>> {
+    const unverifiedByDemarcheId = new Map<number, number[]>();
+    if (demarcheIds.length === 0) {
+      return unverifiedByDemarcheId;
+    }
+
+    const rows = await (tx ?? this.databaseService.db)
+      .select({
+        demarcheId: demarchePlanActionTable.demarcheId,
+        planActionId: demarchePlanActionTable.planActionId,
+      })
+      .from(demarchePlanActionTable)
+      .innerJoin(axeTable, eq(axeTable.id, demarchePlanActionTable.planActionId))
+      .where(
+        and(
+          inArray(demarchePlanActionTable.demarcheId, demarcheIds),
+          eq(axeTable.source, PlanSourceEnum.IMPORT_IA),
+          isNull(axeTable.verifiedAt)
+        )
+      )
+      .orderBy(asc(demarchePlanActionTable.planActionId));
+
+    for (const row of rows) {
+      const planActionIds = unverifiedByDemarcheId.get(row.demarcheId) ?? [];
+      planActionIds.push(row.planActionId);
+      unverifiedByDemarcheId.set(row.demarcheId, planActionIds);
+    }
+    return unverifiedByDemarcheId;
+  }
+
+  async listUnverifiedPlanActionIds(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<number[]> {
+    const byDemarcheId = await this.listUnverifiedByDemarcheIds(
+      [demarcheId],
+      tx
+    );
+    return byDemarcheId.get(demarcheId) ?? [];
   }
 
   async listPlanActionIds(

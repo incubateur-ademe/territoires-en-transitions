@@ -41,6 +41,9 @@ import { PlanProgressRules } from './progress/plan-progress.rules';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
+import { PlanVerificationRepository } from './verify-plan/plan-verification.repository';
+import { VerifyPlanRouter } from './verify-plan/verify-plan.router';
+import { VerifyPlanService } from './verify-plan/verify-plan.service';
 
 @Module({
   imports: [
@@ -88,6 +91,9 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ImportExcelPlanApplicationService,
     ImportPlanRouter,
     ResolveEntityService,
+    PlanVerificationRepository,
+    VerifyPlanService,
+    VerifyPlanRouter,
   ],
   exports: [
     PlanRouter,
@@ -99,6 +105,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ComputeBudgetRules,
     ImportPlanService,
     ListPlanTypesService,
+    PlanVerificationRepository,
   ],
 })
 export class PlanModule {}

@@ -11,11 +11,12 @@ import {
 } from '@/app/plans/plans/show-plan/plan-arborescence.view/plan-axes.context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { useUser } from '@tet/api/users';
-import { Plan } from '@tet/domain/plans';
+import { isPlanPendingVerification, Plan } from '@tet/domain/plans';
 import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
+import { ImportedPlanBanner } from './imported-plan.banner';
 import { FilteredResults } from './filters/filtered-results';
 import { FiltersMenuButton } from './filters/filters.button-menu';
 import {
@@ -76,16 +77,27 @@ const PlanViewContent = () => {
 
   const user = useUser();
 
+  const canMutatePlans = collectivite.hasCollectivitePermission('plans.mutate');
   const demarcheBannerIsVisible = useIsDemarchePcaetBannerVisibleInPlan({
     planId: plan.id,
-    canMutatePlans: collectivite.hasCollectivitePermission('plans.mutate'),
+    canMutatePlans,
   });
+  const isImportedPlanBannerVisible =
+    canMutatePlans && isPlanPendingVerification(plan);
 
   return (
     <div className="w-full">
-      <VisibleWhen condition={demarcheBannerIsVisible}>
+      {/* La validation de l'import prime : une seule bannière à la fois. */}
+      <VisibleWhen
+        condition={demarcheBannerIsVisible && !isImportedPlanBannerVisible}
+      >
         <div className="mb-6">
           <DemarcheBanner collectiviteId={collectivite.collectiviteId} />
+        </div>
+      </VisibleWhen>
+      <VisibleWhen condition={isImportedPlanBannerVisible}>
+        <div className="mb-6">
+          <ImportedPlanBanner planId={plan.id} />
         </div>
       </VisibleWhen>
       <PlanHeader />
