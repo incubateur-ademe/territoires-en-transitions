@@ -30,4 +30,13 @@ describe('ConcurrencyLimiter', () => {
     ).rejects.toThrow('échec');
     await expect(limiter.run(async () => 'suite')).resolves.toBe('suite');
   });
+
+  it.each([undefined, 0, 1.5, Number.NaN])(
+    'refuse une limite invalide (%s) plutôt que de bloquer tous les appels',
+    (limit) => {
+      expect(() => new ConcurrencyLimiter(limit as number)).toThrow(
+        "Limite d'appels simultanés invalide"
+      );
+    }
+  );
 });
