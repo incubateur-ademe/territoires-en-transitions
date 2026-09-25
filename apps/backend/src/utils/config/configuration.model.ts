@@ -60,13 +60,13 @@ export const backendConfigurationSchema = z
       .string()
       .optional()
       .describe(
-        'Région Vertex AI (ex : europe-west1, ou global) ; requise avec GOOGLE_CLOUD_PROJECT'
+        'Région Vertex AI (ex : eu, multi-région UE, ou global) ; requise avec GOOGLE_CLOUD_PROJECT'
       ),
     GEMINI_MODEL: z
       .string()
       .optional()
       .describe(
-        "Identifiant du modèle Gemini pour l'import IA (ex : gemini-2.5-pro) ; requis à l'usage"
+        "Identifiant du modèle Gemini pour l'import IA (ex : gemini-3.5-flash) ; requis à l'usage"
       ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
