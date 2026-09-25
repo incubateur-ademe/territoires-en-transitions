@@ -7,12 +7,7 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import React, {
-  useEffect,
-  useEffectEvent,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 type TToastFloater = {
   open: boolean;
@@ -31,7 +26,13 @@ export const ToastFloater = ({
   className,
   autoHideDuration,
 }: TToastFloater) => {
-  const { refs, context, strategy } = useFloating({
+  const {
+    context,
+    strategy,
+    // Déstructuré ici : la règle `react-hooks/refs` prend tout ce qui s'appelle
+    // `refs` pour une ref, alors que c'est un callback de montage.
+    refs: { setFloating },
+  } = useFloating({
     open,
     strategy: 'fixed',
   });
@@ -39,15 +40,17 @@ export const ToastFloater = ({
   const { getFloatingProps } = useInteractions([useDismiss(context)]);
 
   const [toastWidth, setToastWidth] = useState<number | undefined>(undefined);
-  const updateToastWidth = useEffectEvent((value: number | undefined) =>
-    setToastWidth(value)
-  );
 
-  useLayoutEffect(() => {
-    updateToastWidth(
-      context.refs.floating.current?.getBoundingClientRect().width
-    );
-  }, [context.refs.floating]);
+  // La largeur sert à centrer le toast en tenant compte de ses marges. Elle se
+  // mesure au montage du nœud, dans le callback de ref : un effet la lirait
+  // dans une ref et la recopierait dans l'état à chaque rendu.
+  const mesurerToast = useCallback(
+    (node: HTMLElement | null) => {
+      setFloating(node);
+      setToastWidth(node?.getBoundingClientRect().width);
+    },
+    [setFloating]
+  );
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -66,7 +69,7 @@ export const ToastFloater = ({
       {open && (
         <div
           {...getFloatingProps({
-            ref: refs.setFloating,
+            ref: mesurerToast,
             style: {
               position: strategy,
               maxWidth: '40rem',
