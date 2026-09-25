@@ -107,6 +107,15 @@ describe('toChatCompletionParams', () => {
     });
   });
 
+  it("n'envoie l'effort de raisonnement que s'il est réglé", () => {
+    expect(toChatCompletionParams('m', request)).not.toHaveProperty(
+      'reasoning_effort'
+    );
+    expect(
+      toChatCompletionParams('m', request, { reasoningEffort: 'low' })
+    ).toMatchObject({ reasoning_effort: 'low' });
+  });
+
   it("n'envoie pas de message système vide", () => {
     const params = toChatCompletionParams('m', {
       ...request,
@@ -205,6 +214,32 @@ describe('AlbertRepository', () => {
     expect(new Headers(init.headers).get('Authorization')).toBe(
       'Bearer sk-test'
     );
+  });
+
+  it("ne règle l'effort de raisonnement que du modèle fort", async () => {
+    const stopped = () =>
+      sseResponse(
+        chunk({
+          choices: [
+            { index: 0, delta: { content: '[]' }, finish_reason: 'stop' },
+          ],
+        })
+      );
+    const fetchMock = vi.fn(async () => stopped());
+    vi.stubGlobal('fetch', fetchMock);
+    const repository = buildRepository({ ALBERT_REASONING_EFFORT: 'low' });
+
+    await repository.complete(request);
+    await repository.complete({ ...request, tier: 'light' });
+
+    const bodies = (
+      fetchMock.mock.calls as unknown as [string, RequestInit][]
+    ).map(([, init]) => JSON.parse(String(init.body)));
+    expect(bodies[0]).toMatchObject({
+      model: 'gpt-oss-120b',
+      reasoning_effort: 'low',
+    });
+    expect(bodies[1]).not.toHaveProperty('reasoning_effort');
   });
 
   it('signale une réponse tronquée par la limite de tokens', async () => {
