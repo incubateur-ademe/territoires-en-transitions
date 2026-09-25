@@ -55,7 +55,7 @@ Nx monorepo with pnpm. Data flow: Frontend (`useQuery`/`useMutation`) → tRPC R
 
 - Don't enqueue jobs, don't call the endpoints (`POST …/plans/import-ia`, analysis mutations…), don't run a script or a spec that reaches the real model, not even "to validate" a prompt or a model switch.
 - Automated tests must keep a fake LLM (see `ai-plan-import.full-flow.e2e-spec.ts`). Never wire a real provider into a spec.
-- When a real run is needed, stop and hand it to the human: give the exact command or UI steps and let them launch it.
+- When a real run is needed, stop and hand it to the human: give the exact command or UI steps and let them launch it. For the AI import, that command is `make ai-import-eval f=<document>` (see `apps/backend/src/plans/ai-plan-import/eval/README.md`).
 
 ## Whole-repo gotchas
 

@@ -4,10 +4,12 @@ import { AlbertRepository } from './repositories/albert/albert.repository';
 import { GeminiRepository } from './repositories/gemini/gemini.repository';
 import { LlmRepository } from './repositories/llm.repository';
 import { LlmService } from './llm.service';
+import { LlmObserver, LoggingLlmObserver } from './llm-observer';
 
 @Module({
   providers: [
     LlmService,
+    { provide: LlmObserver, useClass: LoggingLlmObserver },
     GeminiRepository,
     AlbertRepository,
     {

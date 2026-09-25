@@ -20,6 +20,14 @@
         "cwd": "apps/backend"
       }
     },
+    "eval-ai-import": {
+      "command": "nest build && node dist/plans/ai-plan-import/eval/run-ai-import-eval.js",
+      "cache": false,
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "apps/backend"
+      }
+    },
     "build-deps": {
       "executor": "nx:noop",
       "dependsOn": ["^build"]
