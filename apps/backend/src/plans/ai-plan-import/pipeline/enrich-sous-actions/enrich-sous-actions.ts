@@ -10,6 +10,7 @@ import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { combineResults, Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
+import { groupByChunk, SourceChunks } from '../source-chunks/source-chunks';
 import { applyEnrichments } from './apply-enrichments';
 import { buildEnrichmentPrompt } from './enrich-sous-actions.prompt';
 import {
@@ -27,7 +28,7 @@ export const ENRICHMENT_CONCURRENCY = 5;
 
 export type EnrichSousActionsInput = {
   actions: ExtractedAction[];
-  text: string;
+  source: SourceChunks;
   disabledFields: DisableableField[];
   signal?: AbortSignal;
 };
@@ -41,18 +42,26 @@ type BatchOutcome = { entries: EnrichmentEntry[]; tokens: TokenUsage };
 
 export const enrichSousActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { actions, text, disabledFields, signal }: EnrichSousActionsInput
+  { actions, source, disabledFields, signal }: EnrichSousActionsInput
 ): Promise<Result<EnrichSousActionsResult, LlmError>> => {
   const indexed = indexSousActions(actions);
   if (indexed.length === 0) {
     return success({ actions, tokens: emptyTokenUsage() });
   }
 
-  const batches = chunk(indexed, ENRICHMENT_BATCH_SIZE);
+  // Un lot ne mêle pas deux tranches : il n'envoie que celle des actions parentes.
+  const batches = groupByChunk(
+    indexed,
+    ({ actionIndex }) => actionIndex,
+    source
+  ).flatMap(({ text, items }) =>
+    chunk(items, ENRICHMENT_BATCH_SIZE).map((batch) => ({ batch, text }))
+  );
   const outcomes = await mapWithConcurrency(
     batches,
     ENRICHMENT_CONCURRENCY,
-    (batch) => enrichBatch(llm, { batch, text, disabledFields, signal })
+    ({ batch, text }) =>
+      enrichBatch(llm, { batch, text, disabledFields, signal })
   );
 
   const combined = combineResults(outcomes);

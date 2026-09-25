@@ -44,6 +44,12 @@ export const extractText = async (args: {
   }
 };
 
+/** CSV et Excel : la première ligne du texte est l'en-tête du tableau. */
+export const isTabularMimeType = (mimeType: string): boolean => {
+  const kind = classifyMimeType(mimeType);
+  return kind === 'csv' || kind === 'excel';
+};
+
 const classifyMimeType = (mimeType: string): DocumentKind | null => {
   if (mimeType === 'application/pdf') {
     return 'pdf';

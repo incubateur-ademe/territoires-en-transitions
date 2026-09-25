@@ -17,6 +17,7 @@ import {
 } from './extract-actions/extract-actions';
 import { reviewQuality } from './qualitative-review/qualitative-review';
 import { scoreActions } from './score-actions/score-actions';
+import { SourceChunks } from './source-chunks/source-chunks';
 
 const stepStateSchema = z.enum(['ok', 'skipped', 'pending']);
 
@@ -37,7 +38,8 @@ export type StepName = keyof StepStates;
 export type PipelineError = ExtractActionsError;
 
 export type RunImportPipelineInput = {
-  text: string;
+  /** Texte source, découpé à la taille que le modèle accepte. */
+  chunks: string[];
   instructions: string;
   disabledFields: DisableableField[];
   currentDate: string;
@@ -86,17 +88,28 @@ export const runImportPipeline = async (
   const reportProgress = (stepStates: StepStates): Promise<void> =>
     input.onStepStatesChange?.(stepStates) ?? Promise.resolve();
 
+  // Les étapes suivantes conservent l'ordre des actions : la tranche d'origine
+  // relevée à l'extraction reste valable pour elles.
+  let source: SourceChunks = { chunks: input.chunks, chunkIndexByAction: [] };
   const extracted = await runStep({
     progress: initialProgress(),
     name: 'extraction',
-    run: () =>
-      extractActions(llm, {
-        text: input.text,
+    run: async () => {
+      const result = await extractActions(llm, {
+        chunks: input.chunks,
         instructions: input.instructions,
         disabledFields: input.disabledFields,
         currentDate: input.currentDate,
         signal: input.signal,
-      }),
+      });
+      if (result.success) {
+        source = {
+          chunks: input.chunks,
+          chunkIndexByAction: result.data.chunkIndexByAction,
+        };
+      }
+      return result;
+    },
   });
   if (!extracted.success) return extracted.outcome;
   await reportProgress(extracted.progress.stepStates);
@@ -106,7 +119,7 @@ export const runImportPipeline = async (
     name: 'scoring',
     skipWhen: !input.withVerifications,
     run: (actions) =>
-      scoreActions(llm, { actions, text: input.text, signal: input.signal }),
+      scoreActions(llm, { actions, source, signal: input.signal }),
   });
   if (!scored.success) return scored.outcome;
   await reportProgress(scored.progress.stepStates);
@@ -118,7 +131,7 @@ export const runImportPipeline = async (
     run: (actions) =>
       consolidateActions(llm, {
         actions,
-        text: input.text,
+        source,
         disabledFields: input.disabledFields,
         signal: input.signal,
       }),
@@ -134,7 +147,7 @@ export const runImportPipeline = async (
     run: (actions) =>
       enrichSousActions(llm, {
         actions,
-        text: input.text,
+        source,
         disabledFields: input.disabledFields,
         signal: input.signal,
       }),

@@ -10,6 +10,12 @@ import {
   ENRICHMENT_BATCH_SIZE,
   enrichSousActions,
 } from './enrich-sous-actions';
+import { wholeDocument } from '../source-chunks/source-chunks';
+
+const inWholeDocument = (actions: ExtractedAction[]) => ({
+  actions,
+  source: wholeDocument('texte', actions.length),
+});
 
 const tokens: TokenUsage = {
   promptTokens: 10,
@@ -62,8 +68,7 @@ describe('enrichSousActions', () => {
     const llm = echoingLlm();
 
     const result = await enrichSousActions(llm, {
-      actions: [toAction('Action A', []), toAction('Action B', [])],
-      text: 'texte',
+      ...inWholeDocument([toAction('Action A', []), toAction('Action B', [])]),
       disabledFields: [],
     });
 
@@ -83,8 +88,7 @@ describe('enrichSousActions', () => {
     const llm = echoingLlm();
 
     const result = await enrichSousActions(llm, {
-      actions: [toAction('Action A', sousActionTitres)],
-      text: 'texte',
+      ...inWholeDocument([toAction('Action A', sousActionTitres)]),
       disabledFields: [],
     });
 
@@ -125,8 +129,7 @@ describe('enrichSousActions', () => {
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await enrichSousActions(llm, {
-      actions: [toAction('Action A', ['a0', 'a1'])],
-      text: 'texte',
+      ...inWholeDocument([toAction('Action A', ['a0', 'a1'])]),
       disabledFields: [],
     });
 
@@ -145,8 +148,7 @@ describe('enrichSousActions', () => {
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await enrichSousActions(llm, {
-      actions: [toAction('Action A', ['a0'])],
-      text: 'texte',
+      ...inWholeDocument([toAction('Action A', ['a0'])]),
       disabledFields: [],
     });
 
@@ -154,5 +156,30 @@ describe('enrichSousActions', () => {
       success: false,
       error: { kind: 'rate_limited' },
     });
+  });
+
+  it('envoie à chaque lot la tranche de ses actions parentes', async () => {
+    const llm = echoingLlm();
+
+    const result = await enrichSousActions(llm, {
+      actions: [toAction('Action A', ['a0']), toAction('Action B', ['b0'])],
+      source: { chunks: ['TRANCHE_0', 'TRANCHE_1'], chunkIndexByAction: [0, 1] },
+      disabledFields: [],
+    });
+
+    const prompts = vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt);
+    const promptOf = (titre: string) =>
+      prompts.find((prompt) => prompt.includes(titre));
+    expect(prompts).toHaveLength(2);
+    expect(promptOf('Action A')).toContain('TRANCHE_0');
+    expect(promptOf('Action B')).toContain('TRANCHE_1');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions[1].sousActions[0].description).toBe(
+        'enrichie 1'
+      );
+    }
   });
 });
