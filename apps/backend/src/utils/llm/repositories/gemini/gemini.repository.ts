@@ -23,6 +23,7 @@ const RATE_LIMITED_STATUSES = new Set([429, 503]);
 export class GeminiRepository extends LlmRepository {
   readonly maxConcurrentCalls = 20;
   readonly maxInputTokensPerMinute = null;
+  readonly maxRequestsPerMinute = null;
   // Un seul modèle, capable de lire un document entier : pas de paliers.
   readonly capabilities: LlmCapabilities = {
     ocr: false,

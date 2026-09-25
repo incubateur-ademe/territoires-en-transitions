@@ -25,8 +25,10 @@ export type LlmRawCompletion = {
 export abstract class LlmRepository {
   /** Appels simultanés tolérés par les quotas du fournisseur. */
   abstract readonly maxConcurrentCalls: number;
-  /** Tokens d'entrée par minute accordés à la clé ; null sans quota connu. */
+  /** Tokens d'entrée par minute accordés par modèle ; null sans quota connu. */
   abstract readonly maxInputTokensPerMinute: number | null;
+  /** Requêtes par minute accordées par modèle ; null sans quota connu. */
+  abstract readonly maxRequestsPerMinute: number | null;
   abstract readonly capabilities: LlmCapabilities;
 
   /** Tokens d'entrée au-delà desquels le modèle du palier n'a plus la place de répondre. */
