@@ -54,37 +54,42 @@ export class AiPlanImportJobRepository {
   constructor(private readonly database: DatabaseService) {}
 
   /**
-   * Crée le job si l'utilisateur n'a aucun autre import en cours, si la
-   * collectivité reste sous son quota sur 24 heures glissantes et si elle n'a
-   * pas déjà un import en cours.
+   * Crée le job si l'utilisateur n'a aucun autre import en cours (sauf
+   * `limitUserInFlight: false`), si la collectivité reste sous son quota sur
+   * 24 heures glissantes et si elle n'a pas déjà un import en cours.
    */
   async createWithinQuotas(
-    input: CreateJobInput
+    input: CreateJobInput,
+    { limitUserInFlight }: { limitUserInFlight: boolean }
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
       return await this.db.transaction(async (tx) => {
-        // Sans ce verrou, deux lancements simultanés du même utilisateur sur
-        // deux collectivités passeraient chacun le comptage. Le quota
-        // journalier n'en a pas besoin : l'index in-flight n'admet qu'un
-        // lancement à la fois par collectivité.
-        await tx.execute(
-          sql`SELECT pg_advisory_xact_lock(hashtext('ai_plan_import_job'), hashtext(${input.createdBy}))`
-        );
-
-        const [userInFlight] = await tx
-          .select({ value: count() })
-          .from(aiPlanImportJobTable)
-          .where(
-            and(
-              eq(aiPlanImportJobTable.createdBy, input.createdBy),
-              inArray(
-                aiPlanImportJobTable.status,
-                aiPlanImportJobInFlightStatuses
-              )
-            )
+        if (limitUserInFlight) {
+          // Sans ce verrou, deux lancements simultanés du même utilisateur sur
+          // deux collectivités passeraient chacun le comptage. Le quota
+          // journalier n'en a pas besoin : l'index in-flight n'admet qu'un
+          // lancement à la fois par collectivité.
+          await tx.execute(
+            sql`SELECT pg_advisory_xact_lock(hashtext('ai_plan_import_job'), hashtext(${input.createdBy}))`
           );
-        if (userInFlight.value >= AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER) {
-          return failure(AiPlanImportErrorEnum.USER_IN_FLIGHT_JOB_EXISTS);
+
+          const [userInFlight] = await tx
+            .select({ value: count() })
+            .from(aiPlanImportJobTable)
+            .where(
+              and(
+                eq(aiPlanImportJobTable.createdBy, input.createdBy),
+                inArray(
+                  aiPlanImportJobTable.status,
+                  aiPlanImportJobInFlightStatuses
+                )
+              )
+            );
+          if (
+            userInFlight.value >= AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER
+          ) {
+            return failure(AiPlanImportErrorEnum.USER_IN_FLIGHT_JOB_EXISTS);
+          }
         }
 
         const [lastDay] = await tx
