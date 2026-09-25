@@ -26,14 +26,20 @@ const CheckingOngoingImport = () => (
  */
 export const AiImportFlow = ({
   onPlanCreated,
+  onImportStarted,
   cancelButton,
   lockedPlanTypeId,
 }: {
   /**
-   * `startedHere` : l'import a été lancé depuis ce formulaire, et non repris
-   * d'un import en cours lancé ailleurs, peut-être avec un autre type de plan.
+   * `jobId` : l'import terminé, qu'il ait été lancé depuis ce formulaire ou
+   * repris d'un import en cours lancé ailleurs.
    */
-  onPlanCreated: (planId: number, options: { startedHere: boolean }) => void;
+  onPlanCreated: (planId: number, options: { jobId: string }) => void;
+  /**
+   * Import lancé depuis ce formulaire. Le formulaire est démonté à la
+   * fermeture d'une modale : c'est au parent de s'en souvenir.
+   */
+  onImportStarted?: (jobId: string) => void;
   cancelButton: ReactElement;
   lockedPlanTypeId?: number;
 }) => {
@@ -62,24 +68,19 @@ export const AiImportFlow = ({
     status?.status === 'done' ? status.createdPlanId : null;
   const notifiedPlanId = useRef<number | null>(null);
   useEffect(() => {
-    if (createdPlanId === null || notifiedPlanId.current === createdPlanId) {
+    if (
+      createdPlanId === null ||
+      jobId === null ||
+      notifiedPlanId.current === createdPlanId
+    ) {
       return;
     }
     notifiedPlanId.current = createdPlanId;
     queryClient.invalidateQueries({
       queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
     });
-    onPlanCreated(createdPlanId, {
-      startedHere: typeof chosenJobId === 'string',
-    });
-  }, [
-    createdPlanId,
-    chosenJobId,
-    onPlanCreated,
-    queryClient,
-    trpc,
-    collectiviteId,
-  ]);
+    onPlanCreated(createdPlanId, { jobId });
+  }, [createdPlanId, jobId, onPlanCreated, queryClient, trpc, collectiviteId]);
 
   const handleSubmit = async (values: AiImportFormValues) => {
     try {
@@ -93,6 +94,7 @@ export const AiImportFlow = ({
         withSousActions: values.withSousActions,
       });
       setJobId(newJobId);
+      onImportStarted?.(newJobId);
     } catch (error) {
       setToast('error', getErrorMessage(error));
     }

@@ -411,7 +411,9 @@ export const ProgrammeActionsSection = ({
 
   // Même règle que la création : seul le premier plan est rattaché d'office.
   // Un import repris a pu être lancé ailleurs avec un autre type : jamais
-  // rattaché d'office, il reste à lier depuis le tableau.
+  // rattaché d'office, il reste à lier depuis le tableau. Le rattachement part
+  // en différé et peut échouer : le toast n'annonce que l'import, la ligne du
+  // tableau dit si le plan est rattaché.
   const { setToast } = useToastContext();
   const handlePlanImported = (
     planId: number,
@@ -419,10 +421,8 @@ export const ProgrammeActionsSection = ({
   ) => {
     if (startedHere && linkedPlanIds.length === 0) {
       linkPlan(planId);
-      setToast('success', appLabels.importPlanIaPlanImporteEtLie);
-    } else {
-      setToast('success', appLabels.importPlanIaPlanImporte);
     }
+    setToast('success', appLabels.importPlanIaPlanImporte);
   };
 
   const unlinkPlan = (planId: number) => {
