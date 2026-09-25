@@ -35,6 +35,8 @@ export type ReadDocument = {
     ocrPages: number;
     emptyPages: number;
   };
+  /** Pages dont la transcription a échoué, gardées telles que pdf.js les a lues. */
+  ocrFailures: { pageIndex: number; reason: string }[];
 };
 
 export const buildPage = (
@@ -60,10 +62,12 @@ export const buildPage = (
 
 export const buildDocument = (
   kind: DocumentKind,
-  pages: DocumentPage[]
+  pages: DocumentPage[],
+  ocrFailures: ReadDocument['ocrFailures'] = []
 ): ReadDocument => ({
   kind,
   pages,
+  ocrFailures,
   stats: {
     pageCount: pages.length,
     textPages: pages.filter((page) => page.source === 'text').length,
