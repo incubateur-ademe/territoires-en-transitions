@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Options, default as retry } from 'async-retry';
 import { z, ZodType } from 'zod';
 import { ConcurrencyLimiter } from '../concurrency-limiter';
 import { LlmError } from './llm.errors';
+import { LlmObserver } from './llm-observer';
 import { LlmRawCompletion, LlmRepository } from './repositories/llm.repository';
 import { TokenUsage } from './token-usage';
 import { isTransientError } from './is-transient-error';
@@ -41,7 +42,10 @@ export type StructuredCompletion<Schema extends ZodType> = {
 export class LlmService {
   private readonly limiter: ConcurrencyLimiter;
 
-  constructor(private readonly llmRepository: LlmRepository) {
+  constructor(
+    private readonly llmRepository: LlmRepository,
+    @Optional() private readonly observer?: LlmObserver
+  ) {
     this.limiter = new ConcurrencyLimiter(llmRepository.maxConcurrentCalls);
   }
 
@@ -52,19 +56,33 @@ export class LlmService {
   async generateStructured<Schema extends ZodType>(
     args: GenerateStructuredArgs<Schema>
   ): Promise<Result<StructuredCompletion<Schema>, LlmError>> {
+    const request = {
+      prompt: args.prompt,
+      jsonSchema: z.toJSONSchema(args.schema),
+      systemInstruction: args.systemInstruction,
+      temperature: args.temperature ?? DEFAULT_TEMPERATURE,
+      maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
+      thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
+      signal: args.signal,
+    };
+    const promptChars =
+      request.prompt.length + (request.systemInstruction?.length ?? 0);
     const completionResult = await this.callWithRetry(
-      () =>
-        this.limiter.run(() =>
-          this.llmRepository.complete({
-            prompt: args.prompt,
-            jsonSchema: z.toJSONSchema(args.schema),
-            systemInstruction: args.systemInstruction,
-            temperature: args.temperature ?? DEFAULT_TEMPERATURE,
-            maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
-            thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
-            signal: args.signal,
-          })
-        ),
+      (attempt) =>
+        this.limiter.run(async () => {
+          // Mesuré une fois le tour de file obtenu : le temps d'attente du
+          // limiteur n'est pas celui du modèle.
+          const startedAt = Date.now();
+          const result = await this.llmRepository.complete(request);
+          this.observer?.onCall({
+            attempt,
+            durationMs: Date.now() - startedAt,
+            promptChars,
+            usage: result.success ? result.data.usage : null,
+            error: result.success ? null : result.error,
+          });
+          return result;
+        }),
       args.signal
     );
     if (!completionResult.success) {
@@ -85,13 +103,15 @@ export class LlmService {
   }
 
   private async callWithRetry(
-    call: () => Promise<Result<LlmRawCompletion, LlmError>>,
+    call: (attempt: number) => Promise<Result<LlmRawCompletion, LlmError>>,
     signal?: AbortSignal
   ): Promise<Result<LlmRawCompletion, LlmError>> {
     let lastRetryableResult: Result<LlmRawCompletion, LlmError> | null = null;
+    let attempt = 0;
     try {
       return await retry(async () => {
-        const result = await call();
+        attempt += 1;
+        const result = await call(attempt);
         if (
           !result.success &&
           isTransientError(result.error) &&
