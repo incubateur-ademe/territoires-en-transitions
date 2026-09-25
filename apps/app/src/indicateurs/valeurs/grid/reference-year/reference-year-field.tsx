@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button, InlineEditWrapper, Input } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useRef, useState } from 'react';
 import {
   maxReferenceYear,
   MIN_REFERENCE_YEAR,
@@ -31,43 +31,78 @@ const errorMessage = (
 const displayedYear = (year: number | null): string =>
   year === null ? appLabels.indicateurAnneeReferencePlaceholder : String(year);
 
+const displayedText = (year: number | null): string =>
+  year === null ? '' : String(year);
+
 export const ReferenceYearField = ({
   year,
   years,
   onReferenceYearChange,
 }: ReferenceYearFieldProps): JSX.Element => {
-  const [text, setText] = useState(year === null ? '' : String(year));
+  const [text, setText] = useState(displayedText(year));
   const [error, setError] = useState<string | null>(null);
+  // La fermeture du champ peut être notifiée plusieurs fois pour un même
+  // clic (fermeture explicite + détection du clic extérieur). Ces refs
+  // rendent l'enregistrement idempotent : la saisie courante et la dernière
+  // année enregistrée y sont lues sans attendre le rendu suivant.
+  const textRef = useRef(text);
+  const committedRef = useRef(year);
+
+  const changeText = (value: string): void => {
+    textRef.current = value;
+    setText(value);
+  };
 
   useEffect(() => {
-    setText(year === null ? '' : String(year));
+    committedRef.current = year;
+    changeText(displayedText(year));
     setError(null);
   }, [year]);
 
   const reset = (): void => {
-    setText(year === null ? '' : String(year));
+    changeText(displayedText(committedRef.current));
     setError(null);
   };
 
-  const submit = (close: () => void): void => {
-    if (text.trim() === '') {
+  /** Enregistre la saisie ; renvoie false si elle est invalide. */
+  const commit = (): boolean => {
+    const raw = textRef.current;
+    if (raw.trim() === '') {
       reset();
-      close();
-      return;
+      return true;
     }
-    const result = parseReferenceYear(text, {
-      currentReferenceYear: year,
+    const result = parseReferenceYear(raw, {
+      currentReferenceYear: committedRef.current,
       years,
     });
-    if (result.ok) {
-      if (result.year !== year) {
-        onReferenceYearChange(result.year);
-      }
-      setError(null);
-      close();
-      return;
+    if (!result.ok) {
+      setError(errorMessage(result.reason));
+      return false;
     }
-    setError(errorMessage(result.reason));
+    if (result.year !== committedRef.current) {
+      committedRef.current = result.year;
+      onReferenceYearChange(result.year);
+    }
+    setError(null);
+    return true;
+  };
+
+  /** Clic à côté du champ : la saisie est enregistrée, sinon abandonnée. */
+  const handleClose = (): void => {
+    if (!commit()) {
+      reset();
+    }
+  };
+
+  const submit = (close: () => void): void => {
+    if (commit()) {
+      close();
+    }
+  };
+
+  const cancel = (close: () => void): void => {
+    reset();
+    close();
   };
 
   return (
@@ -77,7 +112,7 @@ export const ReferenceYearField = ({
     >
       <InlineEditWrapper
         floatingMatchReferenceHeight={true}
-        onClose={reset}
+        onClose={handleClose}
         renderOnEdit={({ openState }) => (
           <div className="flex flex-col items-start gap-1">
             <Input
@@ -91,7 +126,7 @@ export const ReferenceYearField = ({
               state={error !== null ? 'error' : undefined}
               value={text}
               onChange={(event) => {
-                setText(event.currentTarget.value);
+                changeText(event.currentTarget.value);
                 setError(null);
               }}
               onFocus={(event) => event.currentTarget.select()}
@@ -101,8 +136,7 @@ export const ReferenceYearField = ({
                   submit(() => openState.setIsOpen(false));
                 } else if (event.key === 'Escape') {
                   event.preventDefault();
-                  reset();
-                  openState.setIsOpen(false);
+                  cancel(() => openState.setIsOpen(false));
                 }
               }}
             />
