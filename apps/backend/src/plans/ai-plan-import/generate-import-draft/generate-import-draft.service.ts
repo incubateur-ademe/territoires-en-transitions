@@ -18,6 +18,7 @@ import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
+import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
 import { ExtractionError, extractText } from '../pipeline/extract-text';
 import {
@@ -43,6 +44,7 @@ export class GenerateImportDraftService {
     private readonly llm: LlmService,
     private readonly importPlanService: ImportPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
+    private readonly notifyPlanImportedService: NotifyPlanImportedService,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -51,7 +53,11 @@ export class GenerateImportDraftService {
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const running = await this.jobRepository.transitionToRunning(jobId);
     if (!running.success) {
-      return failure({ kind: 'transition_failed', jobId, cause: running.error });
+      return failure({
+        kind: 'transition_failed',
+        jobId,
+        cause: running.error,
+      });
     }
     const job = running.data;
 
@@ -196,6 +202,14 @@ export class GenerateImportDraftService {
     if (!created.success) {
       return this.recordFailure(job.id, created.error, normalizedDraft);
     }
+
+    // Hors transaction : un envoi manqué ne défait pas le plan créé.
+    await this.notifyPlanImportedService.notifyPlanImported({
+      createdBy: job.createdBy,
+      collectiviteId: job.collectiviteId,
+      planId: created.data,
+      planName: job.options.planName,
+    });
     return success(undefined);
   }
 
