@@ -89,3 +89,9 @@ export const WithFooter: Story = {
     ),
   },
 };
+
+export const WithAction: Story = {
+  args: {
+    action: <Button size="sm">Valider</Button>,
+  },
+};

@@ -47,6 +47,8 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   pilotes: readonly { userId?: string | null }[];
   /** Plans rattachés au programme d'actions de la démarche. */
   planActionIds?: readonly number[];
+  /** Parmi eux, les plans importés par IA pas encore vérifiés. */
+  unverifiedPlanActionIds?: readonly number[];
   /**
    * Environnements de démonstration : le dossier se passe d'un diagnostic
    * complet (cf. feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`).
@@ -102,12 +104,14 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
       ? true
       : context.documentsComplets === undefined ||
         context.diagnostic === undefined ||
-        context.planActionIds === undefined
+        context.planActionIds === undefined ||
+        context.unverifiedPlanActionIds === undefined
       ? undefined
       : context.documentsComplets &&
         (context.isDiagnosticBypassed === true ||
           isDemarchePcaetDiagnosticComplet(context.diagnostic)) &&
-        context.planActionIds.length > 0,
+        context.planActionIds.length > 0 &&
+        context.unverifiedPlanActionIds.length === 0,
 
   avisTousRendus: (context) =>
     context.demandesAvis === undefined
@@ -210,6 +214,7 @@ export class DemarchePcaetGuardsService {
       documentsSnapshot,
       diagnostic,
       planActionIds,
+      unverifiedPlanActionIds,
       demandesAvis,
     ] = await Promise.all([
       needsPilotes
@@ -237,6 +242,12 @@ export class DemarchePcaetGuardsService {
       needsDossier
         ? this.planActionsRepository.listPlanActionIds(demarche.id, tx)
         : Promise.resolve(undefined),
+      needsDossier
+        ? this.planActionsRepository.listUnverifiedPlanActionIds(
+            demarche.id,
+            tx
+          )
+        : Promise.resolve(undefined),
       needsAvisRendus
         ? this.avisRepository.listAchevementDemandes(demarche.id, tx)
         : Promise.resolve(undefined),
@@ -246,6 +257,7 @@ export class DemarchePcaetGuardsService {
       ...demarche,
       pilotes,
       planActionIds,
+      unverifiedPlanActionIds,
       demandesAvis,
       isDiagnosticBypassed: needsDossier
         ? await this.isDiagnosticBypassed(user, demarche.collectiviteId)

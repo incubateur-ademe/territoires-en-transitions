@@ -44,18 +44,23 @@ export class ListDemarchesPcaetRepository {
         .orderBy(desc(demarcheTable.createdAt));
 
       const demarcheIds = rows.map((row) => row.id);
-      const [pilotesByDemarcheId, planActionIdsByDemarcheId] =
-        await Promise.all([
-          this.getDemarchePcaetRepository.listPilotes(demarcheIds, tx),
-          this.planActionsRepository.listByDemarcheIds(demarcheIds, tx),
-        ]);
+      const [
+        pilotesByDemarcheId,
+        planActionIdsByDemarcheId,
+        unverifiedByDemarcheId,
+      ] = await Promise.all([
+        this.getDemarchePcaetRepository.listPilotes(demarcheIds, tx),
+        this.planActionsRepository.listByDemarcheIds(demarcheIds, tx),
+        this.planActionsRepository.listUnverifiedByDemarcheIds(demarcheIds, tx),
+      ]);
 
       return success(
         rows.map((row) =>
           toDemarchePcaetDto(
             row,
             pilotesByDemarcheId.get(row.id) ?? [],
-            planActionIdsByDemarcheId.get(row.id) ?? []
+            planActionIdsByDemarcheId.get(row.id) ?? [],
+            unverifiedByDemarcheId.get(row.id) ?? []
           )
         )
       );

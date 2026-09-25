@@ -53,15 +53,21 @@ export class GetDemarchePcaetRepository {
         return failure(GetDemarchePcaetErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
       }
 
-      const [pilotesByDemarcheId, planActionIds] = await Promise.all([
-        this.listPilotes([demarcheId], tx),
-        this.planActionsRepository.listPlanActionIds(demarcheId, tx),
-      ]);
+      const [pilotesByDemarcheId, planActionIds, unverifiedPlanActionIds] =
+        await Promise.all([
+          this.listPilotes([demarcheId], tx),
+          this.planActionsRepository.listPlanActionIds(demarcheId, tx),
+          this.planActionsRepository.listUnverifiedPlanActionIds(
+            demarcheId,
+            tx
+          ),
+        ]);
       return success(
         toDemarchePcaetDto(
           rows[0],
           pilotesByDemarcheId.get(demarcheId) ?? [],
-          planActionIds
+          planActionIds,
+          unverifiedPlanActionIds
         )
       );
     } catch (error) {

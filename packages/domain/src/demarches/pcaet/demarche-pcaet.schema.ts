@@ -78,6 +78,11 @@ export type DemarchePcaet = DemarcheBase & {
    */
   planActionIds: number[];
   /**
+   * Plans rattachés importés par IA et pas encore vérifiés : le programme
+   * d'actions n'est complet qu'une fois ce tableau vide.
+   */
+  unverifiedPlanActionIds: number[];
+  /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur
    * (structure du workflow + guards) — le front l'affiche, sans recalculer :
    * `enabled` arme l'action, `blockedBy` dit pourquoi elle ne l'est pas.

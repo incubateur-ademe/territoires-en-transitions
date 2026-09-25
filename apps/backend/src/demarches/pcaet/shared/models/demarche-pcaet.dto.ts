@@ -47,7 +47,8 @@ type DemarchePcaetSelectRow = Omit<DemarcheRow, 'createdBy' | 'modifiedBy'>;
 export const toDemarchePcaetDto = (
   row: DemarchePcaetSelectRow,
   pilotes: PersonneTagOrUser[],
-  planActionIds: number[]
+  planActionIds: number[],
+  unverifiedPlanActionIds: number[]
 ): DemarchePcaet => ({
   id: row.id,
   collectiviteId: row.collectiviteId,
@@ -66,6 +67,7 @@ export const toDemarchePcaetDto = (
   isScotAec: row.isScotAec,
   avisDeadlineAt: row.avisDeadlineAt,
   planActionIds,
+  unverifiedPlanActionIds,
   pilotes,
   // Évaluations fail-closed par défaut (aucun guard renseigné) ;
   // DemarchePcaetGuardsService.enrich les remplace par celles de l'utilisateur.

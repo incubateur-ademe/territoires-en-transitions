@@ -1,8 +1,11 @@
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import {
   createdAt,
   modifiedAt,
   modifiedBy,
+  TIMESTAMP_OPTIONS,
 } from '@tet/backend/utils/column.utils';
+import { planSourceValues } from '@tet/domain/plans';
 import {
   AnyPgColumn,
   date,
@@ -10,6 +13,8 @@ import {
   pgTable,
   serial,
   text,
+  timestamp,
+  uuid,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../../../collectivites/shared/models/collectivite.table';
 import { planActionTypeTable } from './plan-action-type.table';
@@ -29,4 +34,9 @@ export const axeTable = pgTable('axe', {
   createdAt,
   modifiedAt,
   modifiedBy,
+  source: text('source', { enum: planSourceValues }),
+  verifiedAt: timestamp('verified_at', TIMESTAMP_OPTIONS),
+  verifiedBy: uuid('verified_by').references(() => authUsersTable.id, {
+    onDelete: 'set null',
+  }),
 });

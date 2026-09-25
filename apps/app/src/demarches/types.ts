@@ -56,6 +56,8 @@ export type DemarchePcaet = {
   pilotes: PersonneTagOrUser[];
   /** Plans rattachés au programme d'actions, dans l'ordre de rattachement. */
   planActionIds: number[];
+  /** Parmi eux, les plans importés par IA pas encore vérifiés. */
+  unverifiedPlanActionIds: number[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur.
    * Le front ne recompose aucune règle : il lit `enabled` et `blockedBy`.

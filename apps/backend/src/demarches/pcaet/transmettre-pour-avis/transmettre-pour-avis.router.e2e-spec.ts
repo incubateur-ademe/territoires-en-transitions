@@ -14,6 +14,8 @@ import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { PlanSourceEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
@@ -340,6 +342,53 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       demarcheId: created.id,
     });
 
+    const transmise = await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
+
+  test('Un plan importé par IA se rattache, mais retient le dossier tant qu’il n’est pas vérifié', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    const imported = await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      nom: 'Plan importé',
+    });
+    await db.db
+      .update(axeTable)
+      .set({ source: PlanSourceEnum.IMPORT_IA })
+      .where(eq(axeTable.id, imported.id));
+
+    const nonVerifie = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(nonVerifie.planActionIds).toContain(imported.id);
+    expect(nonVerifie.unverifiedPlanActionIds).toEqual([imported.id]);
+    expect(listEnabledTransitions(nonVerifie.transitions)).toEqual([]);
+    await expect(
+      caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).rejects.toThrow('DOSSIER_INCOMPLET');
+
+    await caller.plans.plans.verify({ planId: imported.id });
+
+    const verifie = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(verifie.unverifiedPlanActionIds).toEqual([]);
     const transmise = await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: created.id,

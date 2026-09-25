@@ -5,6 +5,7 @@ import {
 } from '../adapters/extracted-action-to-import-action';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
@@ -41,6 +42,7 @@ export class GenerateImportDraftService {
     private readonly documentStorage: DocumentStorageService,
     private readonly llm: LlmService,
     private readonly importPlanService: ImportPlanService,
+    private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -170,6 +172,13 @@ export class GenerateImportDraftService {
         const planId = await this.createPlan(planInput, job, tx);
         if (!planId.success) {
           return planId;
+        }
+        const marked = await this.planVerificationRepository.markAsImportedByAi(
+          planId.data,
+          tx
+        );
+        if (!marked.success) {
+          return failure('Marquage du plan importé impossible');
         }
         const done = await this.jobRepository.markDone({
           id: job.id,

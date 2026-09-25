@@ -198,4 +198,23 @@ export const plansLabels = {
   importPlanIaTypeVerrouille:
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
+  planImporteBanniereTitre: 'Plan importé automatiquement (version bêta)',
+  planImporteBanniereDescription:
+    "Ce plan a été créé à partir de votre fichier. L'import est en version bêta : certains éléments ont pu être manqués ou mal repérés. Relisez votre plan et corrigez-le si besoin.",
+  planImporteBanniereDemoAvant: 'Réservez un créneau pour suivre une',
+  planImporteBanniereDemoLien: 'démo de prise en main',
+  planImporteBanniereSupportAvant: 'ou prenez un',
+  planImporteBanniereSupportLien: 'rendez-vous de support de 15 minutes',
+  planImporteBanniereSupportApres: "s'il y a un problème avec l'import.",
+  planImporteValider: 'Valider le plan',
+  planImporteValiderTitre: 'Valider le plan importé',
+  planImporteValiderAvertissementTitre:
+    'Vérifiez le plan avant de le valider',
+  planImporteValiderAvertissement:
+    "Comparez le plan à votre document : axes, actions, sous-actions et informations associées. L'import est en version bêta et a pu manquer ou mal repérer certains éléments.",
+  planImporteValiderEngagement:
+    'En validant, vous confirmez que ce plan est conforme au document importé. La validation est enregistrée à votre nom et ne peut pas être annulée.',
+  planImporteValiderConfirmer: 'Je confirme, le plan est conforme',
+  planImporteValide: 'Plan validé',
+  planImporteValidationErreur: 'La validation du plan a échoué',
 };

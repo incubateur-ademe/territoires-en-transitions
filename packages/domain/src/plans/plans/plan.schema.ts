@@ -1,6 +1,7 @@
 import { Personne } from '../../collectivites';
 import { BudgetWithTotal } from '../fiches/fiche-budget.schema';
 import { PlanNode } from './flat-axe.schema';
+import { PlanSource } from './plan-source.enum.schema';
 import { PlanType } from './plan-type.schema';
 
 export type Plan = {
@@ -16,4 +17,7 @@ export type Plan = {
   createdAt: string;
   budget?: BudgetWithTotal;
   totalFiches?: number;
+  /** Renseignés par la lecture d'un plan seul, pas par les listes. */
+  source?: PlanSource | null;
+  verifiedAt?: string | null;
 };

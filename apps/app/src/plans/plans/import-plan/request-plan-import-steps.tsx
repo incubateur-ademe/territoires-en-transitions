@@ -1,6 +1,10 @@
 'use client';
 import { appLabels } from '@/app/labels/catalog';
 import { ButtonMenu, Event, InlineLink, useEventTracker } from '@tet/ui';
+import {
+  IMPORT_PLAN_DEMO_URL,
+  IMPORT_PLAN_SUPPORT_URL,
+} from './import-plan-support.links';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: appLabels.formatExcel },
@@ -41,7 +45,7 @@ export const RequestPlanImportSteps = () => (
       <li>
         {appLabels.importPlanDemoPostImport}{' '}
         <InlineLink
-          href="https://calendly.com/territoiresentransitions/demo-optimisation-pilotage-actions"
+          href={IMPORT_PLAN_DEMO_URL}
           openInNewTab
         >
           {appLabels.enCliquantIci}
@@ -72,7 +76,7 @@ export const RequestPlanImportSteps = () => (
       <li>
         {appLabels.importPlanRendezVousEquipe}{' '}
         <InlineLink
-          href="https://calendly.com/territoiresentransitions/entretien-support-plan-d-action"
+          href={IMPORT_PLAN_SUPPORT_URL}
           openInNewTab
         >
           {appLabels.enCliquantIci}
