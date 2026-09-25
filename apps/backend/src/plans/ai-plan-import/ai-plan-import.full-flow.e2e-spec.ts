@@ -25,7 +25,10 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
+import { NotifiedOnEnum } from '@tet/domain/utils';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from './ai-plan-import.queue';
+import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import { consolidationResponseSchema } from './pipeline/consolidate-actions/consolidate-actions.schema';
 import { enrichmentResponseSchema } from './pipeline/enrich-sous-actions/enrich-sous-actions.schema';
@@ -145,6 +148,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   let db: DatabaseService;
   let router: TrpcRouter;
   let user: AuthenticatedUser;
+  let userEmail: string;
   let userToken: string;
   let cleanupSuperAdmin: () => Promise<void>;
   const createdPlanIds: number[] = [];
@@ -154,16 +158,12 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     `/collectivites/${TEST_COLLECTIVITE_ID}/plans/import-ia`;
 
   const getStatus = (jobId: string) =>
-    router
-      .createCaller({ user })
-      .plans.aiImport.getAiImportStatus({ jobId });
+    router.createCaller({ user }).plans.aiImport.getAiImportStatus({ jobId });
 
   const getCurrentImport = () =>
-    router
-      .createCaller({ user })
-      .plans.aiImport.getCurrentAiImport({
-        collectiviteId: TEST_COLLECTIVITE_ID,
-      });
+    router.createCaller({ user }).plans.aiImport.getCurrentAiImport({
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
 
   const fichesByTitreInPlan = async (planId: number, titre: string) => {
     const axeIds = await db.db
@@ -239,6 +239,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       role: CollectiviteRole.ADMIN,
     });
     user = getAuthUserFromUserCredentials(testUser.user);
+    userEmail = testUser.user.email ?? '';
     userToken = await getAuthToken({
       email: testUser.user.email ?? '',
       password: testUser.user.password,
@@ -252,6 +253,17 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   });
 
   afterAll(async () => {
+    await db.db
+      .delete(notificationTable)
+      .where(
+        and(
+          eq(
+            notificationTable.notifiedOn,
+            NotifiedOnEnum['PLANS.AI_IMPORT.PLAN_IMPORTED']
+          ),
+          inArray(notificationTable.entityId, createdPlanIds.map(String))
+        )
+      );
     for (const planId of createdPlanIds) {
       await deletePlan(planId);
     }
@@ -292,9 +304,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     const ongoing = await getCurrentImport();
     expect(ongoing).toMatchObject({ jobId, status: 'pending' });
 
-    const generated = await app
-      .get(GenerateImportDraftService)
-      .generate(jobId);
+    const generated = await app.get(GenerateImportDraftService).generate(jobId);
     expect(generated).toEqual({ success: true });
 
     expect(await getCurrentImport()).toBeNull();
@@ -338,7 +348,34 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       verifiedAt: null,
     });
 
-    const actions = await fichesByTitreInPlan(planId, 'Action consolidée 1.1.1');
+    const [notification] = await db.db
+      .select()
+      .from(notificationTable)
+      .where(
+        and(
+          eq(
+            notificationTable.notifiedOn,
+            NotifiedOnEnum['PLANS.AI_IMPORT.PLAN_IMPORTED']
+          ),
+          eq(notificationTable.entityId, String(planId))
+        )
+      );
+    expect(notification).toMatchObject({ sendTo: user.id, status: 'pending' });
+    const content = await app
+      .get(NotifyPlanImportedService)
+      .getNotificationContent(notification);
+    expect(content).toMatchObject({
+      success: true,
+      data: {
+        sendToEmail: userEmail,
+        subject: expect.stringContaining('Plan import IA complet'),
+      },
+    });
+
+    const actions = await fichesByTitreInPlan(
+      planId,
+      'Action consolidée 1.1.1'
+    );
     expect(actions).toHaveLength(1);
     expect(actions[0]).toMatchObject({
       description: 'Description consolidée',
@@ -360,9 +397,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       withSousActions: 'false',
     });
 
-    const generated = await app
-      .get(GenerateImportDraftService)
-      .generate(jobId);
+    const generated = await app.get(GenerateImportDraftService).generate(jobId);
     expect(generated).toEqual({ success: true });
 
     const status = await getStatus(jobId);

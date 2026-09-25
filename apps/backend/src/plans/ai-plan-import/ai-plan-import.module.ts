@@ -1,8 +1,11 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { UsersModule } from '@tet/backend/users/users.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
+import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { PlanModule } from '../plans/plans.module';
+import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
@@ -14,12 +17,16 @@ import { GenerateImportDraftService } from './generate-import-draft/generate-imp
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
 import { GetImportStatusRouter } from './get-import-status/get-import-status.router';
 import { GetImportStatusService } from './get-import-status/get-import-status.service';
+import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 
 @Module({
   imports: [
     LlmModule,
     TransactionModule,
     PlanModule,
+    PlansUtilsModule,
+    UsersModule,
+    NotificationsModule,
     BullModule.registerQueue({
       name: AI_PLAN_IMPORT_QUEUE_NAME,
       defaultJobOptions: AI_PLAN_IMPORT_JOB_OPTIONS,
@@ -33,6 +40,7 @@ import { GetImportStatusService } from './get-import-status/get-import-status.se
     GenerateImportDraftWorker,
     GetImportStatusService,
     GetImportStatusRouter,
+    NotifyPlanImportedService,
   ],
   exports: [GetImportStatusRouter],
 })
