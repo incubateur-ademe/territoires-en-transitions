@@ -46,7 +46,7 @@ export const backendConfigurationSchema = z
       .string()
       .optional()
       .describe(
-        "Clé API Google Generative Language (Gemini) pour l'import IA de plan d'action ; à défaut, Gemini passe par Vertex AI"
+        "Clé API Google Generative Language (Gemini) pour l'import IA de plan d'action ; ignorée quand Vertex AI est configuré"
       ),
     // Vertex AI s'authentifie avec le compte de service de GCLOUD_SERVICE_ACCOUNT_KEY
     // (cf. initGoogleCloudCredentials) : aucun secret de plus, juste le projet et la région.
@@ -54,7 +54,7 @@ export const backendConfigurationSchema = z
       .string()
       .optional()
       .describe(
-        'Projet Google Cloud qui porte Vertex AI (Gemini), utilisé quand GOOGLE_API_KEY est absente'
+        'Projet Google Cloud qui porte Vertex AI (Gemini) ; avec GOOGLE_CLOUD_LOCATION, prime sur GOOGLE_API_KEY'
       ),
     GOOGLE_CLOUD_LOCATION: z
       .string()

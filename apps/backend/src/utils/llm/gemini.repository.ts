@@ -120,10 +120,12 @@ export class GeminiRepository extends LlmRepository {
     const apiKey = this.configService.get('GOOGLE_API_KEY');
     const project = this.configService.get('GOOGLE_CLOUD_PROJECT');
     const location = this.configService.get('GOOGLE_CLOUD_LOCATION');
-    if (apiKey) {
-      this.client = new GoogleGenAI({ apiKey });
-    } else if (project && location) {
+    // Vertex d'abord : sa région fixe le lieu du traitement, qu'une clé API
+    // restée dans l'environnement ne doit pas contourner.
+    if (project && location) {
       this.client = new GoogleGenAI({ vertexai: true, project, location });
+    } else if (apiKey) {
+      this.client = new GoogleGenAI({ apiKey });
     } else {
       return null;
     }

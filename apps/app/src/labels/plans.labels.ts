@@ -198,5 +198,4 @@ export const plansLabels = {
   importPlanIaTypeVerrouille:
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
-  importPlanIaPlanImporteEtLie: 'Plan importé et rattaché à la démarche',
 };
