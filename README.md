@@ -270,7 +270,7 @@ make cms-pull   # ⚠ remplace tout le contenu Strapi local
 
 Prérequis : `STRAPI_REMOTE_URL` et `STRAPI_TRANSFER_TOKEN` dans le `.env` racine (via `make env-set`). Le token doit être un **transfer token** (Settings → Transfer tokens sur le remote, permission *pull*) — un API token classique ne fonctionne pas.
 
-Les edge functions Deno ([`supabase/functions/`](./supabase/functions/)) sont un composant cochable de `make up`, décoché par défaut : elles ne servent en local que pour tester le formulaire de contact du site (`site_send_message`). Tant qu'elles ne tournent pas, kong répond simplement 503 sur `/functions/v1/`.
+Il ne reste qu'une edge function Deno ([`supabase/functions/`](./supabase/functions/)) : `send_users_to_brevo`, appelée uniquement par des fonctions SQL via `net.http_post`, et seulement en production — la table `automatisation.supabase_function_url` qui porte son URL n'est pas alimentée en local. Rien ne l'exécute donc sur la stack de développement, et kong répond 503 sur `/functions/v1/`.
 
 ### Réinitialiser complètement la base
 

@@ -101,7 +101,10 @@ services:
     plugins:
       - name: cors
 
-  # Edge functions (profil compose `functions` — 503 si non démarré)
+  # Edge functions. Plus aucun service ne répond en local depuis que le
+  # formulaire de contact est passé par le backend : la route reste pour
+  # refléter la passerelle Supabase, où `send_users_to_brevo` est encore
+  # déployée, et répond 503 en local.
   - name: functions-v1
     url: http://functions:9000/
     routes:

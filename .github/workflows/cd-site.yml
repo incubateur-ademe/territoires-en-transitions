@@ -69,6 +69,7 @@ jobs:
             AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
             APP_URL=${{ vars.APP_URL }}
             CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+            BACKEND_URL=${{ vars.BACKEND_URL }}
 
       - uses: ./.github/actions/koyeb-cli
         with:

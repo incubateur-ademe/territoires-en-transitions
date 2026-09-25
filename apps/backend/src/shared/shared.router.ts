@@ -1,5 +1,6 @@
-import { DepartementService } from '@tet/backend/shared/departements/departement.service';
 import { Injectable } from '@nestjs/common';
+import { SendContactMessageRouter } from '@tet/backend/shared/contact/send-contact-message.router';
+import { DepartementService } from '@tet/backend/shared/departements/departement.service';
 import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
 import { RegionService } from '@tet/backend/shared/regions/region.service';
 import { TempsDeMiseEnOeuvreService } from '@tet/backend/shared/temps-de-mise-en-oeuvre/temps-de-mise-en-oeuvre.service';
@@ -14,10 +15,12 @@ export class SharedRouter {
     private readonly regionService: RegionService,
     private readonly departementService: DepartementService,
     private readonly effetAttenduService: EffetAttenduService,
-    private readonly tempsDeMiseEnOeuvreService: TempsDeMiseEnOeuvreService
+    private readonly tempsDeMiseEnOeuvreService: TempsDeMiseEnOeuvreService,
+    private readonly sendContactMessageRouter: SendContactMessageRouter
   ) {}
 
   router = this.trpc.router({
+    contact: this.sendContactMessageRouter.router,
     thematiques: this.trpc.router({
       list: this.trpc.authedProcedure.query(async () => {
         return this.thematiqueService.listThematiques();
