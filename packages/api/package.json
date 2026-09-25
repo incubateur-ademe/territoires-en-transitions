@@ -14,11 +14,6 @@
       "import": "./src/users/index.ts",
       "default": "./src/users/index.ts"
     },
-    "./plan-actions": {
-      "types": "./src/plan-actions/index.ts",
-      "import": "./src/plan-actions/index.ts",
-      "default": "./src/plan-actions/index.ts"
-    },
     "./tests/auth": {
       "types": "./src/tests/auth.ts",
       "import": "./src/tests/auth.ts",
