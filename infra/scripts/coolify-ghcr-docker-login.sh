@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Authentifie Docker sur le serveur Coolify (root) pour tirer des images GHCR
-# privées.
+# Authentifie Docker (root) sur un serveur applicatif pour tirer des images
+# GHCR privées.
 #
 # Coolify tire via coolify-helper et ne monte les credentials QUE si
 # $HOME/.docker/config.json existe pour le user SSH du serveur (root →
@@ -11,23 +11,36 @@
 # On écrit donc explicitement /root/.docker/config.json avec un auth inline
 # (pas de credsStore), puis on vérifie le pull *dans* coolify-helper.
 #
-# Invoqué par terraform_data.ghcr_docker_login (infra/coolify-preprod/main.tf),
-# ou manuellement. Idempotent.
+# Coolify n'expose aucune API de credentials registry : ce geste reste un SSH.
+#
+# Les serveurs applicatifs n'ont pas de port 22 public : on passe par le
+# serveur Coolify en rebond (ProxyCommand). L'authentification vers le rebond
+# utilise l'identité par défaut de l'opérateur (agent SSH), celle vers la cible
+# la clé root lue dans Secret Manager — d'où le ProxyCommand explicite plutôt
+# qu'un -J, qui propagerait IdentitiesOnly au rebond.
+#
+# Invoqué par terraform_data.ghcr_docker_login (infra/coolify/main.tf), ou
+# manuellement. Idempotent.
 #
 # Le PAT n'entre pas dans le state Terraform : lecture à l'apply via `scw`.
 # Format du secret : <github-username>|<pat-with-read:packages>
 #
 # Variables attendues :
-#   COOLIFY_PUBLIC_IP       IP publique de la VM Coolify
-#   HOST_KEY_SECRET_NAME    secret SM de la clé privée SSH root (host)
+#   TARGET_HOST             IP (privée) du serveur applicatif cible
+#   SERVER_KEY_SECRET_NAME  secret SM de la clé privée SSH root du serveur
 #   GHCR_PULL_SECRET_NAME   secret SM username|token GHCR
+#   BASTION_HOST            (optionnel) IP publique du serveur Coolify. Si vide,
+#                           connexion directe à TARGET_HOST.
+#   BASTION_USER            (optionnel) utilisateur du rebond, défaut tet-ops
 #   GHCR_PULL_TEST_IMAGE    (optionnel) image:tag à tester dans le helper
 set -euo pipefail
 
-: "${COOLIFY_PUBLIC_IP:?COOLIFY_PUBLIC_IP non défini}"
-: "${HOST_KEY_SECRET_NAME:?HOST_KEY_SECRET_NAME non défini}"
+: "${TARGET_HOST:?TARGET_HOST non défini}"
+: "${SERVER_KEY_SECRET_NAME:?SERVER_KEY_SECRET_NAME non défini}"
 : "${GHCR_PULL_SECRET_NAME:?GHCR_PULL_SECRET_NAME non défini}"
 
+_bastion_host="${BASTION_HOST:-}"
+_bastion_user="${BASTION_USER:-tet-ops}"
 _HELPER_IMAGE="${COOLIFY_HELPER_IMAGE:-docker.io/coollabsio/coolify-helper:1.0.16}"
 # Si défini (ex. ghcr.io/incubateur-ademe/tet-app:prod-a5f7544ea), vérifie le
 # pull *dans* le helper — le même chemin que Coolify. Sinon on s'arrête après
@@ -44,14 +57,14 @@ done
 _tmpdir="$(mktemp -d)"
 trap 'rm -rf "$_tmpdir"' EXIT
 
-echo "→ Lecture de la clé host (${HOST_KEY_SECRET_NAME})…"
+echo "→ Lecture de la clé root du serveur (${SERVER_KEY_SECRET_NAME})…"
 scw secret version access-by-path \
-  secret-name="${HOST_KEY_SECRET_NAME}" secret-path=/ revision=latest \
+  secret-name="${SERVER_KEY_SECRET_NAME}" secret-path=/ revision=latest \
   --output=json | jq -r '.data // empty' | base64 --decode \
-  >"${_tmpdir}/host_key"
-chmod 600 "${_tmpdir}/host_key"
-if ! grep -q "BEGIN OPENSSH PRIVATE KEY\|BEGIN.*PRIVATE KEY" "${_tmpdir}/host_key"; then
-  echo "✗ Clé host invalide ou secret vide (${HOST_KEY_SECRET_NAME})." >&2
+  >"${_tmpdir}/server_key"
+chmod 600 "${_tmpdir}/server_key"
+if ! grep -q "BEGIN OPENSSH PRIVATE KEY\|BEGIN.*PRIVATE KEY" "${_tmpdir}/server_key"; then
+  echo "✗ Clé invalide ou secret vide (${SERVER_KEY_SECRET_NAME})." >&2
   exit 1
 fi
 
@@ -70,16 +83,24 @@ fi
 # auth = base64(username:token), portable macOS/Linux (pas de -w0).
 _auth="$(printf '%s:%s' "${_ghcr_user}" "${_ghcr_token}" | base64 | tr -d '\n')"
 
+_ssh_opts=(
+  -i "${_tmpdir}/server_key"
+  -o IdentitiesOnly=yes
+  -o StrictHostKeyChecking=accept-new
+  -o UserKnownHostsFile="${_tmpdir}/known_hosts"
+)
+if [ -n "${_bastion_host}" ]; then
+  echo "  rebond via ${_bastion_user}@${_bastion_host}"
+  _ssh_opts+=(-o "ProxyCommand=ssh -W %h:%p -o StrictHostKeyChecking=accept-new ${_bastion_user}@${_bastion_host}")
+fi
+
 _ssh() {
-  ssh -i "${_tmpdir}/host_key" -o IdentitiesOnly=yes \
-    -o StrictHostKeyChecking=accept-new \
-    -o UserKnownHostsFile="${_tmpdir}/known_hosts" \
-    "root@${COOLIFY_PUBLIC_IP}" "$@"
+  ssh "${_ssh_opts[@]}" "root@${TARGET_HOST}" "$@"
 }
 
-echo "→ Écriture de /root/.docker/config.json (auth inline, user=${_ghcr_user})…"
-# Écriture atomique côté remote : Coolify teste ce chemin via `echo $HOME`
-# puis monte le fichier dans coolify-helper.
+echo "→ Écriture de /root/.docker/config.json sur ${TARGET_HOST} (user=${_ghcr_user})…"
+# Coolify teste ce chemin via `echo $HOME` puis monte le fichier dans
+# coolify-helper.
 _ssh bash -s <<EOF
 set -euo pipefail
 mkdir -p /root/.docker
@@ -131,9 +152,9 @@ docker run --rm \\
   ${_HELPER_IMAGE} \\
   docker pull $(printf '%q' "${_TEST_IMAGE}")
 EOF
-  echo "✓ GHCR prêt pour Coolify (config montable + pull helper OK)."
+  echo "✓ GHCR prêt sur ${TARGET_HOST} (config montable + pull helper OK)."
 else
-  echo "✓ /root/.docker/config.json écrit (auth inline)."
+  echo "✓ /root/.docker/config.json écrit sur ${TARGET_HOST} (auth inline)."
   echo "  Pour valider comme Coolify :"
   echo "    GHCR_PULL_TEST_IMAGE=ghcr.io/incubateur-ademe/tet-app:<tag> $0"
 fi

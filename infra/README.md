@@ -3,55 +3,127 @@
 Terraform qui décrit l'infrastructure cible TET sur Scaleway, dans le cadre de la migration depuis Supabase Cloud + Koyeb. Voir le brainstorm de référence :
 [`doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md`](../doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md).
 
+## Topologie
+
+Une instance Coolify **unique et transverse**, sur son propre serveur, pilote quatre
+environnements répartis sur trois serveurs applicatifs.
+
+| Serveur | Tier | Rôle |
+|---|---|---|
+| `tet-platform-coolify` | platform | Control plane Coolify + bastion SSH. Aucune application. |
+| `tet-prod-apps` | prod | Applications de production. |
+| `tet-nonprod-apps` | nonprod | Mutualisé : preprod **et** staging. |
+| `tet-preview-apps` | preview | Previews éphémères, une par pull request. |
+
+| Environnement | Postgres | Redis |
+|---|---|---|
+| prod | RDB managé Scaleway | Redis managé Scaleway |
+| preprod | RDB managé Scaleway | Redis managé Scaleway |
+| staging | conteneur Coolify | conteneur Coolify |
+| preview | conteneur Coolify, éphémère | conteneur Coolify, éphémère |
+
+Preprod reste sur du managé pour rester **iso-prod**. L'admin RDB Scaleway n'est pas
+superuser : c'est cette contrainte qui impose `scaleway_rdb_user.supabase_auth_admin`,
+le rôle `postgres` NOLOGIN factice et la mise en commentaire de `pgcrypto` dans
+[`nonprod/supabase-api/sql/001-bootstrap-auth-roles.sql`](nonprod/supabase-api/sql/001-bootstrap-auth-roles.sql).
+Un Postgres conteneurisé donne le superuser et masquerait cette classe de bug jusqu'à
+la production.
+
+## Réseau
+
+Un **seul VPC** `tet`, `enable_routing = true`, un Private Network par tier, et une ACL
+VPC en `default_policy = "drop"`.
+
+| Private Network | CIDR | Membres | IP fixe du serveur |
+|---|---|---|---|
+| `tet-platform-pn` | `10.0.0.0/24` | VM Coolify | `10.0.0.10` |
+| `tet-nonprod-pn` | `10.0.1.0/24` | VM nonprod, RDB preprod, Redis preprod | `10.0.1.10` |
+| `tet-prod-pn` | `10.0.3.0/24` | VM prod, RDB prod, Redis prod | `10.0.3.10` |
+| `tet-preview-pn` | `10.0.4.0/24` | VM preview | `10.0.4.10` |
+
+`10.0.2.0/24` est laissé libre : staging n'a pas de Private Network propre, ses
+conteneurs vivent sur le serveur nonprod.
+
+Le seul flux inter-Private Networks autorisé est **TCP/22 depuis le control plane vers
+chaque serveur applicatif**. Conséquences :
+
+- Coolify pilote ses serveurs **uniquement sur IP privée** ;
+- le port 22 est **fermé publiquement** sur les trois serveurs d'apps ;
+- prod, nonprod et preview ne peuvent pas se joindre entre eux ;
+- le trafic intra-PN reste en L2 et n'est pas filtré : aucune règle nécessaire pour les
+  accès app → Postgres/Redis, qui vivent dans le même PN que leur serveur ;
+- les humains passent par le bastion : `ssh -J tet-ops@<ip-coolify> …`.
+
+> Les Security Groups Scaleway ne filtrent que l'**interface publique**. L'ACL du VPC est
+> le seul point de contrôle du trafic privé.
+
+Le plan d'adressage est déclaré dans `platform/variables.tf` (`network_plan`). Chaque
+stack applicatif redéclare l'IP de *son* serveur dans `server_private_ipv4_address` :
+**les deux doivent rester alignés**, sinon l'ACL bloque le SSH de Coolify.
+
 ## Structure
 
 ```
 infra/
-├── modules/            Modules réutilisables (postgres, redis, vpc, coolify)
-├── scripts/            Helpers d'env à sourcer (tf-env.sh, coolify-env.sh) + scripts d'API
-│                       (assign-host-key, ghcr-docker-login, configure-s3-storage)
-├── preprod/            Couche 1 — infra Scaleway (VM, RDB, Redis, bucket backups, secrets)  [state A]
-│   ├── backend.tf      State distant sur Scaleway Object Storage (S3)
-│   ├── providers.tf    Provider Scaleway
-│   ├── variables.tf    Variables d'entrée
-│   ├── main.tf         Appel des modules
-│   ├── outputs.tf      Sorties (endpoint, mots de passe, URI)
-│   └── terraform.tfvars.example
-└── coolify-preprod/    Couche 2 — Coolify-as-code (provider coolify)         [state B]
-    │                   Dépend de la couche 1 (Coolify up). State séparé.
-    ├── backend.tf      Même bucket, clé coolify-preprod/
-    ├── providers.tf    Providers coolify (API) + scaleway (lecture secret)
-    ├── main.tf         Clé host, assignation localhost, docker login GHCR, S3 storage
-    └── terraform.tfvars.example
+├── modules/
+│   ├── network/              VPC partagé + Private Networks + ACL
+│   ├── coolify-controller/   VM du control plane Coolify (+ bastion)
+│   ├── app-server/           VM Docker générique pilotée par Coolify
+│   ├── postgres/             Instance RDB managée
+│   └── redis/                Cluster Redis managé
+├── scripts/                  Helpers à sourcer (tf-env.sh, coolify-env.sh)
+│                             + scripts d'API (upsert-server, ghcr-docker-login,
+│                               configure-s3-storage)
+├── platform/                 Socle transverse : VPC, ACL, DNS, VM Coolify, buckets
+├── prod/                     Serveur prod + RDB prod + Redis prod
+├── nonprod/                  Serveur mutualisé + RDB preprod + Redis preprod
+│   ├── supabase-api/         Stack Docker Compose GoTrue + Storage (collée dans Coolify)
+│   └── Makefile              Bootstrap SQL des rôles GoTrue
+├── preview/                  Serveur preview + wildcard DNS
+└── coolify/                  Coolify-as-code : clés, serveurs, projets, S3 storage
 ```
 
-Les environnements `staging/` et `prod/` seront ajoutés ultérieurement, en réutilisant le même module avec des valeurs adaptées.
+Un **state par stack**, tous dans le bucket `tet-tfstate` :
+`platform/`, `prod/`, `nonprod/`, `preview/`, `coolify/`.
+
+`coolify/` a un state distinct parce qu'il suppose Coolify **déjà up et joignable** : le
+garder séparé évite que le `plan` de l'infra Scaleway exige que l'application tourne.
+
+### Ordre d'application
+
+```
+platform  →  nonprod / prod / preview  →  coolify
+```
+
+`platform` produit le VPC, les Private Networks et le control plane. Les stacks
+applicatifs consomment ces valeurs **par report manuel** dans leur `terraform.tfvars`
+(pas de `terraform_remote_state` : les stacks restent découplés). `coolify` vient en
+dernier, quand les serveurs existent et que Coolify répond.
 
 ## Pré-requis
 
-- **Terraform >= 1.10.0** (`tfenv use 1.10.x` ou supérieur recommandé — requis pour `use_lockfile`)
-- **Compte Scaleway** avec un projet dédié par environnement
-- **Clés d'accès Scaleway** (Access Key + Secret Key) pour l'IAM utilisateur ou applicatif qui pilote Terraform
-- **Bucket Scaleway Object Storage** dédié au state Terraform (cf. Bootstrap ci-dessous)
+- **Terraform >= 1.10.0** (requis pour `use_lockfile`)
+- **Compte Scaleway** avec un projet dédié
+- **Clés d'accès Scaleway** (Access Key + Secret Key) pour l'IAM qui pilote Terraform
+- **Bucket Scaleway Object Storage** dédié au state (cf. Bootstrap ci-dessous)
+- `scw`, `aws`, `jq`, `curl`, `ssh` — et `psql` pour le bootstrap SQL
 
-## Bootstrap initial (une fois par environnement)
+## Bootstrap initial (une fois)
 
-Le bucket de state Terraform doit exister **avant** le premier `terraform init`. Étapes manuelles :
+Le bucket de state doit exister **avant** le premier `terraform init`.
 
 ```sh
-# 1. Créer un projet Scaleway dédié à preprod 
-#    via la console : https://console.scaleway.com/project/
-#    ou via le CLI Scaleway
+# 1. Créer un projet Scaleway via la console ou le CLI
 scw init
 
 # 2. Créer le bucket de state avec versioning ET Object Lock activés.
 #    Object Lock est obligatoire : il active les conditional writes S3
 #    (If-None-Match: *) dont dépend use_lockfile pour le state locking Terraform.
-scw object bucket create name=$(BUCKET_NAME) region=fr-par enable-versioning=true
+scw object bucket create name=tet-tfstate region=fr-par enable-versioning=true
 
 aws s3api put-object-lock-configuration \
   --endpoint-url https://s3.fr-par.scw.cloud \
-  --bucket $(BUCKET_NAME) \
+  --bucket tet-tfstate \
   --object-lock-configuration '{
     "ObjectLockEnabled": "Enabled",
     "Rule": {
@@ -65,7 +137,7 @@ aws s3api put-object-lock-configuration \
 
 ## Workflow en local
 
-Pré-requis une fois pour toutes : installer la CLI Scaleway et la configurer.
+Pré-requis une fois pour toutes :
 
 ```sh
 brew install scw   # macOS ; sur Linux voir https://github.com/scaleway/scaleway-cli
@@ -74,7 +146,6 @@ scw init           # crée ~/.config/scw/config.yaml (access key, secret, projec
 
 Installer la CLI AWS :
 [https://www.scaleway.com/en/docs/object-storage/api-cli/object-storage-aws-cli/#how-to-install-the-aws-cli](https://www.scaleway.com/en/docs/object-storage/api-cli/object-storage-aws-cli/#how-to-install-the-aws-cli)
-
 
 Ensuite, à chaque session de travail :
 
@@ -85,9 +156,8 @@ Ensuite, à chaque session de travail :
 # se perdent dans le sous-shell.
 source infra/scripts/tf-env.sh
 
-cd infra/preprod
+cd infra/platform
 
-# Renseigner les variables (UUID projet, IPs autorisées, etc.)
 cp terraform.tfvars.example terraform.tfvars
 $EDITOR terraform.tfvars
 
@@ -98,63 +168,76 @@ terraform plan -out=tfplan
 terraform apply tfplan
 ```
 
-Le wrapper [`infra/scripts/tf-env.sh`](scripts/tf-env.sh) lit `scw config` et exporte :
+Le wrapper [`scripts/tf-env.sh`](scripts/tf-env.sh) lit `scw config` et exporte :
 
 - `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` — utilisés par le backend S3 pour lire/écrire le state distant (le backend S3 réutilise les conventions de nommage AWS, c'est normal)
 - `SCW_ACCESS_KEY` / `SCW_SECRET_KEY` — utilisés par le provider `scaleway/scaleway` pour piloter les ressources
 - `SCW_DEFAULT_PROJECT_ID` / `SCW_DEFAULT_ORGANIZATION_ID` — defaults pour les appels API
 
-Après le premier apply, **récupérer immédiatement** le mot de passe admin et le stocker dans Scaleway Secret Manager (ou un coffre équivalent) :
+Puis, pour un stack applicatif, reporter les valeurs produites par `platform` :
 
 ```sh
-terraform output -raw pg_admin_password
-# → copier dans Scaleway Secret Manager sous le nom "tet-preprod-pg-admin-password"
-terraform output -raw pg_connection_uri
-# → idem, "tet-preprod-pg-connection-uri"
+terraform -chdir=platform output -json private_network_ids | jq -r .nonprod
+terraform -chdir=platform output -raw coolify_public_ip
 ```
 
-Ces secrets pourront ensuite être référencés par les workflows GitHub Actions et la configuration Coolify.
+Après le premier apply d'un stack applicatif, **récupérer immédiatement** les mots de
+passe générés et les stocker dans Secret Manager :
+
+```sh
+cd infra/nonprod
+terraform output -raw pg_admin_password
+terraform output -raw redis_admin_password
+terraform output -raw supabase_auth_admin_password
+```
+
+## Accès aux serveurs (bastion)
+
+Les serveurs applicatifs n'exposent pas le port 22. Le seul chemin est le control plane :
+
+```sh
+# Se connecter au bastion
+ssh tet-ops@$(terraform -chdir=infra/platform output -raw coolify_public_ip)
+
+# Rebondir vers un serveur applicatif, en root, avec sa clé de Secret Manager
+scw secret version access-by-path \
+  secret-name="$(terraform -chdir=infra/nonprod output -raw server_ssh_key_secret_name)" \
+  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > /tmp/srv_key
+chmod 600 /tmp/srv_key
+
+ssh -J tet-ops@<ip-coolify> -i /tmp/srv_key \
+  root@$(terraform -chdir=infra/nonprod output -raw server_private_ip)
+```
+
+Vérifier au passage que l'isolation tient : depuis le serveur nonprod, une connexion
+vers le serveur prod doit échouer.
+
+```sh
+nc -zv -w3 10.0.3.10 22   # attendu : timeout
+```
 
 ## Clé SSH « host » de Coolify (serveur localhost)
 
-Coolify tourne dans un conteneur Docker et pilote **son propre serveur** en SSH,
-en tant que `root@host.docker.internal`. Par défaut il génère lui-même une paire
-de clés à l'installation (`/data/coolify/ssh/keys/`). Problème : cette clé est
-**régénérée à chaque update ou réinstall de Coolify** (ou si `APP_KEY` change),
-ce qui casse la connexion avec l'erreur *« Server is not reachable — Permission
-denied (publickey) »*.
+Coolify tourne dans un conteneur Docker et pilote **son propre serveur** en SSH, en tant
+que `root@host.docker.internal`. Par défaut il génère lui-même une paire de clés à
+l'installation (`/data/coolify/ssh/keys/`). Problème : cette clé est **régénérée à chaque
+update ou réinstall de Coolify** (ou si `APP_KEY` change), ce qui casse la connexion avec
+l'erreur *« Server is not reachable — Permission denied (publickey) »*.
 
-Pour fermer cette boucle, Terraform génère une paire ED25519 **maîtrisée par
-nous** (`tls_private_key.coolify_host` dans le module `coolify`) :
+Pour fermer cette boucle, Terraform génère une paire ED25519 **maîtrisée par nous**
+(`tls_private_key.host` dans le module `coolify-controller`) :
 
-- la **clé publique** est injectée dans `/root/.ssh/authorized_keys` via cloud-init
-  (déterministe, rejouée à chaque `terraform apply` from-scratch) ;
-- la **clé privée** est stockée dans **Scaleway Secret Manager**
-  (`tet-<env>-coolify-host-ssh-key`) — source de vérité partageable (R4).
+- la **clé publique** est injectée dans `/root/.ssh/authorized_keys` via cloud-init ;
+- la **clé privée** est stockée dans Secret Manager (`tet-platform-coolify-host-ssh-key`).
 
-### Étape manuelle post-apply : enregistrer la clé dans Coolify
-
-Le provider Terraform Coolify est volontairement hors scope (cf. brainstorm).
-Cette étape se fait donc **une fois** dans l'UI, après le premier `apply` :
-
-```sh
-# 1. Récupérer la clé privée depuis Secret Manager
-scw secret version access-by-path \
-  secret-name="$(terraform output -raw coolify_host_ssh_key_secret_name)" \
-  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d
-```
-
-2. Dans Coolify : **Keys & Tokens → Private Keys → Add** → coller la clé privée
-   (format `-----BEGIN OPENSSH PRIVATE KEY-----`).
-3. **Servers → localhost → Private Key** → sélectionner cette clé → **Validate**.
-
-La clé publique correspondante est déjà sur `root` (via cloud-init), donc la
-validation passe immédiatement. La clé auto-générée par Coolify reste présente
-dans `authorized_keys` mais n'est plus utilisée — sans conflit.
+Le stack `coolify/` l'enregistre ensuite dans Coolify et l'assigne au serveur localhost,
+sans intervention dans l'UI. Le même mécanisme vaut pour chaque serveur applicatif, avec
+**une clé par serveur** (`tet-<tier>-server-ssh-key`) : révoquer l'accès à un serveur
+compromis ne casse pas les autres.
 
 > **Auto-update Coolify** : désactivé par cloud-init (`AUTOUPDATE=false` dans
-> `/data/coolify/source/.env`) pour éviter qu'un update régénère les clés dans
-> notre dos. Les montées de version se font manuellement, quand on le décide.
+> `/data/coolify/source/.env`) pour éviter qu'un update régénère les clés dans notre dos.
+> Les montées de version se font manuellement, quand on le décide.
 >
 > **Version figée** : `coolify_version` (défaut `4.3.19`, dernière stable CDN
 > `coolify.v4.version`). cloud-init ne rejoue pas (`lifecycle.ignore_changes` sur
@@ -168,117 +251,154 @@ dans `authorized_keys` mais n'est plus utilisée — sans conflit.
 >   || echo 'AUTOUPDATE=false' | sudo tee -a /data/coolify/source/.env
 > ```
 
-## Couche Coolify-as-code (`infra/coolify-preprod/`)
+## Dashboard Coolify
 
-Configuration de l'instance Coolify (clés, serveurs, et à terme projects /
-applications / env vars) via le provider Terraform communautaire
-[`sierrajc/coolify`](https://registry.terraform.io/providers/sierrajc/coolify).
+Le port 8000 (dashboard en clair) n'est **jamais** ouvert. Le dashboard est servi en
+HTTPS sur 443 par le Traefik de Coolify, une fois son FQDN configuré.
 
-**State séparé, volontairement.** Cette couche dépend de Coolify *déjà up et
-joignable* : la garder distincte de `infra/preprod/` évite que le `plan` de
-l'infra Scaleway exige que l'appli tourne (couplage / poule-œuf au 1er boot).
-Elle s'exécute **après** que la VM est provisionnée et Coolify installé.
+1. Poser chez le registrar un enregistrement A `coolify.territoiresentransitions.fr`
+   vers `terraform -chdir=infra/platform output -raw coolify_public_ip`.
+2. Premier accès, avant que le FQDN soit actif, par tunnel SSH :
+   `ssh -L 8000:localhost:8000 tet-ops@<ip-coolify>` puis http://localhost:8000
+3. Créer le compte admin, puis **Settings → Instance Domain** → le FQDN. Coolify
+   déclenche l'émission du certificat Let's Encrypt (challenge HTTP-01 sur le port 80,
+   ouvert au monde par le security group).
 
-> ⚠️ Provider en beta (Coolify v4). La ressource `coolify_server` est marquée
-> « not fully implemented » : on ne l'utilise **pas** pour le serveur localhost
-> (qui héberge les projects). L'assignation de la clé + validation passe par un
-> appel API direct (`scripts/coolify-assign-host-key.sh`, endpoints vérifiés).
+`APP_URL` est déjà aligné sur le FQDN par cloud-init, mais le routage Traefik dépend du
+réglage « Instance Domain », stocké en base : l'étape 3 reste manuelle.
 
-### Bootstrap du token API (une fois par environnement)
+## DNS
+
+L'apex `territoiresentransitions.fr` et les noms de production restent chez le registrar
+actuel. Seules les zones non-prod sont déléguées à Scaleway.
+
+Prérequis manuel, une fois :
+
+```sh
+# Enregistre le domaine racine comme domaine externe (validation par TXT
+# d'ownership — les NS de l'apex ne bougent pas).
+scw domain external-domain register domain=territoiresentransitions.fr
+```
+
+Puis passer `dns_enabled = true` dans `platform/terraform.tfvars` et appliquer. Récupérer
+les serveurs de noms de chaque zone créée et les poser chez le registrar sous forme
+d'enregistrements NS :
+
+```sh
+terraform -chdir=infra/platform output -json dns_zone_nameservers
+```
+
+Les enregistrements eux-mêmes appartiennent aux stacks applicatifs : un `*` et un apex par
+zone, pointant sur l'IP publique du serveur du tier. Coolify émet ensuite un certificat
+par sous-domaine en HTTP-01 — ni DNS-01 ni certificat wildcard nécessaires.
+
+## Couche Coolify-as-code (`infra/coolify/`)
+
+Configuration de l'instance Coolify (clés, serveurs, projets, S3 storage) via le provider
+communautaire [`sierrajc/coolify`](https://registry.terraform.io/providers/sierrajc/coolify)
+et, quand il ne couvre pas le besoin, des appels API directs.
+
+> ⚠️ Provider en beta (Coolify v4). La ressource `coolify_server` est marquée « not fully
+> implemented » : on ne l'utilise **pas**. L'enregistrement des serveurs passe par
+> [`scripts/coolify-upsert-server.sh`](scripts/coolify-upsert-server.sh) (endpoints
+> vérifiés), idempotent par nom de serveur. `coolify_private_key` et `coolify_project`
+> sont en revanche utilisés nativement.
+
+### Bootstrap du token API (une fois)
 
 Les tokens API Coolify se créent **uniquement dans l'UI** :
 
 1. Coolify → **Security → API Tokens** → créer un token **scope `root`**
-   (nécessaire pour gérer serveurs + clés + projects + env vars).
+   (nécessaire pour gérer serveurs + clés + projets + env vars).
 2. Le stocker dans Secret Manager :
    ```sh
-   scw secret create name=tet-preprod-coolify-api-token-permissions-root
-   scw secret version create secret-name=tet-preprod-coolify-api-token-permissions-root \
+   scw secret create name=tet-platform-coolify-api-token
+   scw secret version create secret-name=tet-platform-coolify-api-token \
      secret-path=/ data='<id>|<token>'
    ```
 
-### Bootstrap des credentials GHCR (une fois par environnement)
+### Bootstrap des credentials GHCR (une fois)
 
-Coolify tire les images privées `ghcr.io/incubateur-ademe/*` via Docker sur
-la VM (`root`). Il n'existe pas d'API Coolify pour ça : on automatise l'écriture
-de `/root/.docker/config.json` (auth inline) depuis Terraform
-(`scripts/coolify-ghcr-docker-login.sh`). Coolify monte ce fichier dans
-`coolify-helper` uniquement s'il existe pour `$HOME` du user SSH — un
-`docker pull` réussi sur l'hôte ne suffit pas.
+Coolify tire les images privées `ghcr.io/incubateur-ademe/*` via Docker sur chaque
+serveur applicatif (`root`). Il n'existe pas d'API Coolify pour ça : on automatise
+l'écriture de `/root/.docker/config.json` (auth inline) depuis Terraform
+([`scripts/coolify-ghcr-docker-login.sh`](scripts/coolify-ghcr-docker-login.sh)). Coolify
+monte ce fichier dans `coolify-helper` uniquement s'il existe pour `$HOME` du user SSH —
+un `docker pull` réussi sur l'hôte ne suffit pas.
 
-1. Créer un PAT GitHub (classic `read:packages`, ou fine-grained avec lecture
-   des packages de l'org) — idéalement un **machine user** dédié.
-2. Le stocker dans Secret Manager au format `username|token` :
+Le script passe par le bastion : les serveurs applicatifs n'ont pas de SSH public.
+
+1. Créer un PAT GitHub (classic `read:packages`, ou fine-grained avec lecture des packages
+   de l'org) — idéalement un **machine user** dédié.
+2. Le stocker dans Secret Manager au format `username|token`. Un seul secret pour tous les
+   serveurs :
    ```sh
-   scw secret create name=tet-preprod-ghcr-pull
-   scw secret version create secret-name=tet-preprod-ghcr-pull \
+   scw secret create name=tet-platform-ghcr-pull
+   scw secret version create secret-name=tet-platform-ghcr-pull \
      secret-path=/ data='<github-username>|<pat>'
    ```
-3. Renseigner `coolify_public_ip` dans `terraform.tfvars` (output
-   `coolify_public_ip` de `infra/preprod`).
 
 Après rotation du PAT : créer une nouvelle version du secret, puis incrémenter
-`ghcr_pull_credentials_revision` dans `terraform.tfvars` (ou
-`terraform apply -replace=terraform_data.ghcr_docker_login`).
+`ghcr_pull_credentials_revision` dans `coolify/terraform.tfvars`.
 
 ### Bootstrap des credentials Object Storage (S3 Coolify)
 
-Coolify enregistre un **S3 storage** (cible des backups DB / volumes) via
-l'API `POST/PATCH /s3-storages` + `POST …/validate`. Le provider
-`sierrajc/coolify` n'a pas de ressource native : on automatise avec
-`scripts/coolify-configure-s3-storage.sh` (même pattern que l'assignation
-de la clé host).
+Coolify enregistre un **S3 storage** (cible des backups DB / volumes) via l'API
+`POST/PATCH /s3-storages` + `POST …/validate`. Le provider n'a pas de ressource native :
+on automatise avec [`scripts/coolify-configure-s3-storage.sh`](scripts/coolify-configure-s3-storage.sh).
 
-1. Appliquer `infra/preprod` pour créer le bucket
-   (`coolify_backups_bucket_name`, défaut `tet-preprod-coolify-backups`).
-2. Créer une paire de clés IAM Scaleway avec droits Object Storage sur ce
-   bucket (idéalement une API key dédiée, pas les clés Terraform).
+1. Appliquer `platform` pour créer le bucket (`coolify_backups_bucket_name`, défaut
+   `tet-coolify-backups`). Il est transverse : un seul S3 storage sert tous les
+   environnements.
+2. Créer une paire de clés IAM Scaleway avec droits Object Storage sur ce bucket
+   (idéalement une API key dédiée, pas les clés Terraform).
 3. Les stocker dans Secret Manager au format `access_key|secret_key` :
    ```sh
-   scw secret create name=tet-preprod-coolify-s3-credentials
-   scw secret version create secret-name=tet-preprod-coolify-s3-credentials \
+   scw secret create name=tet-platform-coolify-s3-credentials
+   scw secret version create secret-name=tet-platform-coolify-s3-credentials \
      secret-path=/ data='SCWXXXX|<secret_key>'
    ```
-4. Dans `infra/coolify-preprod/terraform.tfvars`, aligner si besoin
-   `s3_bucket` / `s3_endpoint` sur les outputs preprod
-   (`coolify_backups_bucket_name`, `coolify_backups_s3_endpoint`).
 
 Après rotation des clés : nouvelle version du secret, puis incrémenter
-`s3_credentials_revision` (ou
-`terraform apply -replace=terraform_data.s3_storage`).
+`s3_credentials_revision`.
 
 ### Workflow
 
 ```sh
-source infra/scripts/tf-env.sh        # creds Scaleway (backend S3 + provider + secret)
+source infra/scripts/tf-env.sh        # creds Scaleway (backend S3 + provider + secrets)
 source infra/scripts/coolify-env.sh   # COOLIFY_ENDPOINT + COOLIFY_TOKEN (+ TF_VAR_coolify_token)
 
-cd infra/coolify-preprod
+cd infra/coolify
 cp terraform.tfvars.example terraform.tfvars && $EDITOR terraform.tfvars
 terraform init
 terraform plan -out=tfplan
 terraform apply tfplan
 ```
 
-L'`apply` : (1) enregistre la clé host dans Coolify (`coolify_private_key`),
-(2) l'assigne au serveur localhost et déclenche la validation via l'API,
-(3) authentifie Docker sur `ghcr.io` en `root` sur la VM (pull des images
-privées), (4) crée/met à jour le S3 storage Scaleway et le valide. La clé
-publique host est déjà sur `root` (cloud-init côté `infra/preprod`), donc
-SSH + validation passent.
+L'`apply` : (1) enregistre les clés SSH dans Coolify, (2) assigne la clé host au serveur
+localhost, (3) crée ou met à jour les trois serveurs applicatifs et déclenche leur
+validation, (4) authentifie Docker sur `ghcr.io` en `root` sur chacun, (5) crée les
+projets, (6) crée/met à jour le S3 storage Scaleway et le valide.
+
+Vérifier que Coolify voit bien tous ses serveurs :
+
+```sh
+curl -sH "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/servers" \
+  | jq -r '.[] | "\(.name) \(.ip)"'
+```
 
 ## State backend : locking natif
 
 Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque `plan` ou `apply`, Terraform écrit un fichier `.tflock` dans le bucket via un **conditional write S3** (`If-None-Match: *`) : si le fichier existe déjà, l'opération échoue immédiatement avec un message d'erreur explicite, ce qui empêche deux applies simultanés.
 
-Ce mécanisme repose sur le support des conditional writes par Scaleway Object Storage, activé depuis mai 2026 via la feature **Object Lock** — d'où la nécessité d'activer Object Lock sur le bucket lors du bootstrap (étape 2 ci-dessus).
+Ce mécanisme repose sur le support des conditional writes par Scaleway Object Storage, activé depuis mai 2026 via la feature **Object Lock** — d'où la nécessité d'activer Object Lock sur le bucket lors du bootstrap.
 
 > **En cas de lock fantôme** (apply interrompu brutalement sans libérer le lock) :
 > ```sh
-> # Identifier le fichier de lock
-> aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://$(BUCKET_NAME)/preprod/
+> # Identifier le fichier de lock (adapter le préfixe au stack concerné)
+> aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://tet-tfstate/platform/
 > # Le supprimer manuellement après vérification qu'aucun apply n'est en cours
-> aws s3 rm --endpoint-url https://s3.fr-par.scw.cloud s3://$(BUCKET_NAME)/preprod/terraform.tfstate.tflock
+> aws s3 rm --endpoint-url https://s3.fr-par.scw.cloud s3://tet-tfstate/platform/terraform.tfstate.tflock
 > ```
 
 ## Hygiène
@@ -287,14 +407,17 @@ Ce mécanisme repose sur le support des conditional writes par Scaleway Object S
 # Formatage cohérent
 terraform fmt -recursive
 
-# Validation syntaxe / typage
-cd preprod && terraform validate
+# Validation syntaxe / typage, sur chaque stack
+for d in platform nonprod prod preview coolify; do
+  terraform -chdir=$d init -backend=false && terraform -chdir=$d validate
+done
 
 # Linting (à installer : https://github.com/terraform-linters/tflint)
 tflint --recursive
 ```
 
-Le lockfile `.terraform.lock.hcl` de chaque environnement **doit être versionné** — il fige les versions exactes des providers et garantit la reproductibilité.
+Le lockfile `.terraform.lock.hcl` de chaque stack **doit être versionné** — il fige les
+versions exactes des providers et garantit la reproductibilité.
 
 ## CI/CD (à venir)
 
@@ -307,8 +430,13 @@ Workflow `.github/workflows/ci-infra.yml` à créer :
 
 ## Décisions architecturales actées
 
-- **Mono-VM Coolify** plutôt que Kapsule (cf. brainstorm) : pas d'orchestrateur K8s
+- **Instance Coolify dédiée et transverse** : le control plane ne partage ni CPU, ni disque, ni cycle de vie avec les applications, et pilote tous les environnements
+- **Serveur de production isolé** : VPC ACL en `drop` par défaut, prod injoignable depuis nonprod et preview
+- **SSH privé uniquement** sur les serveurs applicatifs, le control plane servant de bastion
+- **preprod iso-prod sur du managé**, staging et preview conteneurisés : le gate avant production doit reproduire la contrainte non-superuser de RDB
+- **Mono-VM Coolify par tier** plutôt que Kapsule (cf. brainstorm) : pas d'orchestrateur K8s
 - **State backend S3 Scaleway avec locking natif** : `use_lockfile = true` via conditional writes S3 (Object Lock Scaleway, mai 2026)
+- **Un state par stack**, liés par valeurs et noms de secrets — jamais par `terraform_remote_state`
 - **GoTrue self-hosté** plutôt que self-hosting complet de Supabase : préserve JWT_SECRET, schéma auth, bcrypt
 - **Sous-domaines dédiés par service** plutôt que reverse proxy unique
 - **Stratégie de bascule DB** : `pg_dump` / `pg_restore` en maintenance window, **pas** de réplication logique

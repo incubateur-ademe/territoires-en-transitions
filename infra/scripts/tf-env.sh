@@ -9,7 +9,7 @@
 # dans le shell appelant :
 #
 #     source infra/scripts/tf-env.sh
-#     cd infra/preprod && terraform init
+#     cd infra/platform && terraform init
 #
 # Pré-requis : `scw init` exécuté au moins une fois (crée ~/.config/scw/config.yaml).
 

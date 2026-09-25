@@ -1,0 +1,19 @@
+# Copier en terraform.tfvars (gitignoré) et compléter.
+# private_network_id se récupère après l'apply de infra/platform :
+#   terraform -chdir=../platform output -json private_network_ids | jq -r .nonprod
+
+scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+private_network_id  = "fr-par/00000000-0000-0000-0000-000000000000"
+
+server_ssh_authorized_keys = [
+  "ssh-ed25519 AAAA... prenom.nom@example.org",
+]
+
+# Accès opérateur au Postgres preprod. Les conteneurs passent par le réseau
+# privé : ne pas y ajouter l'IP du serveur applicatif.
+pg_allowed_ips = {
+  "203.0.113.10/32" = "poste opérateur"
+}
+
+# Passer à true une fois les zones créées par infra/platform et déléguées.
+dns_enabled = false

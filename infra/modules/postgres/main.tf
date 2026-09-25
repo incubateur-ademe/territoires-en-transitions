@@ -12,9 +12,19 @@ terraform {
 }
 
 resource "random_password" "admin" {
-  length           = 32
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  length  = 32
+  special = true
+  # Set restreint aux caractères URL-safe : ce mot de passe est injecté tel quel
+  # dans des connection strings (postgres://user:PASSWORD@host/db, rediss://...).
+  # L'ancien set contenait #, ? et % qui y sont structurants — # ouvre un
+  # fragment, ? une query, % une percent-escape invalide — et cassaient
+  # silencieusement les URI produites par les outputs *_connection_uri.
+  override_special = "-_.!*~"
+  # Scaleway exige au moins un caractère de chaque classe.
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  min_special = 1
 }
 
 resource "scaleway_rdb_instance" "main" {

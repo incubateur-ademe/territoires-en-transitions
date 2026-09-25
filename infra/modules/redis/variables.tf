@@ -2,8 +2,8 @@ variable "environment" {
   description = "Nom de l'environnement (preprod, staging, prod). Utilisé pour le nommage des ressources."
   type        = string
   validation {
-    condition     = contains(["preprod", "staging", "prod"], var.environment)
-    error_message = "environment doit être l'une des valeurs : preprod, staging, prod."
+    condition     = contains(["preprod", "staging", "prod", "preview"], var.environment)
+    error_message = "environment doit être l'une des valeurs : preprod, staging, prod, preview."
   }
 }
 
@@ -38,7 +38,7 @@ variable "admin_user_name" {
 }
 
 variable "private_network_id" {
-  description = "ID du Private Network Scaleway à attacher au cluster Redis. À passer depuis module.vpc.private_network_id."
+  description = "ID du Private Network Scaleway à attacher au cluster Redis. À passer depuis module.network.private_network_ids[<tier>]."
   type        = string
   default     = null
 }

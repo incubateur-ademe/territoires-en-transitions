@@ -1,0 +1,15 @@
+# Copier en terraform.tfvars (gitignoré) et compléter.
+# private_network_id se récupère après l'apply de infra/platform :
+#   terraform -chdir=../platform output -json private_network_ids | jq -r .prod
+
+scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+private_network_id  = "fr-par/00000000-0000-0000-0000-000000000000"
+
+server_ssh_authorized_keys = [
+  "ssh-ed25519 AAAA... prenom.nom@example.org",
+]
+
+# Avant la mise en service réelle de la production, revoir au minimum :
+#   server_instance_type          — dimensionner sur la charge mesurée
+#   pg_node_type / pg_is_ha_cluster — HA à activer
+#   pg_volume_size_in_gb          — taille réelle de la base + marge

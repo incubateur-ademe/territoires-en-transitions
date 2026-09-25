@@ -1,0 +1,34 @@
+# Copier en terraform.tfvars (gitignoré) et compléter.
+#
+# Prérequis : les stacks platform, nonprod, prod et preview sont appliqués, et
+# le token API Coolify existe dans Secret Manager.
+#
+#   source infra/scripts/tf-env.sh
+#   source infra/scripts/coolify-env.sh
+#
+# Les valeurs ci-dessous se récupèrent avec :
+#   terraform -chdir=../platform output -raw coolify_public_ip
+#   terraform -chdir=../nonprod  output -raw server_private_ip
+#   terraform -chdir=../nonprod  output -raw server_ssh_key_secret_name
+#   (idem pour prod et preview)
+
+scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+coolify_public_ip   = "203.0.113.20"
+
+app_servers = {
+  nonprod = {
+    name                = "tet-nonprod-apps"
+    private_ip          = "10.0.1.10"
+    ssh_key_secret_name = "tet-nonprod-server-ssh-key"
+  }
+  prod = {
+    name                = "tet-prod-apps"
+    private_ip          = "10.0.3.10"
+    ssh_key_secret_name = "tet-prod-server-ssh-key"
+  }
+  preview = {
+    name                = "tet-preview-apps"
+    private_ip          = "10.0.4.10"
+    ssh_key_secret_name = "tet-preview-server-ssh-key"
+  }
+}

@@ -1,0 +1,82 @@
+#cloud-config
+
+# Control plane Coolify. Aucune application métier ne tourne ici : ce serveur
+# n'héberge que Coolify lui-même, et sert de bastion SSH vers les serveurs
+# applicatifs (dont le port 22 n'est pas exposé publiquement).
+
+users:
+  - default
+  - name: tet-ops
+    # Pas de groupe docker ici : il n'existe pas encore au moment de la création
+    # de l'utilisateur (Docker est installé plus bas dans runcmd), et cloud-init
+    # échouerait. L'ajout se fait via usermod en fin de boot.
+    groups:
+      - sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+%{ for key in ssh_authorized_keys ~}
+      - ${key}
+%{ endfor ~}
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - jq
+  - fail2ban
+  # openssh-server est requis par Coolify : il pilote chaque serveur (y compris
+  # localhost) en SSH root. Déclaré explicitement pour ne pas dépendre de l'image.
+  - openssh-server
+
+write_files:
+  # Config sshd dédiée Coolify (drop-in, survit aux upgrades du paquet openssh).
+  # Le sshd_config Ubuntu inclut /etc/ssh/sshd_config.d/*.conf par défaut.
+  # Voir https://coolify.io/docs/knowledge-base/server/openssh
+  - path: /etc/ssh/sshd_config.d/50-coolify.conf
+    permissions: "0644"
+    content: |
+      PubkeyAuthentication yes
+      PermitRootLogin prohibit-password
+      PasswordAuthentication no
+
+  # Clé publique « host » maîtrisée par Terraform, autorisée sur root : c'est
+  # elle que Coolify utilise pour piloter localhost (root@host.docker.internal).
+  # Contrairement à la clé auto-générée par install.sh dans /data/coolify/ssh/keys/
+  # (régénérée à chaque update/réinstall → connexion cassée), celle-ci est stable
+  # et versionnée dans Scaleway Secret Manager.
+  - path: /root/.ssh/authorized_keys
+    owner: root:root
+    permissions: "0600"
+    content: |
+      ${coolify_host_authorized_key}
+
+runcmd:
+  # Verrouiller les permissions de /root/.ssh (sinon sshd ignore authorized_keys)
+  - chmod 700 /root/.ssh
+  - chown root:root /root/.ssh
+  # Valider puis recharger sshd avec la config Coolify
+  - sshd -t
+  - systemctl restart ssh
+  # Installer Docker (prérequis Coolify)
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker tet-ops
+  # Installer Coolify à une version stable figée (auto-update désactivé ensuite).
+  # Monter de version sur une VM existante :
+  #   curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s ${coolify_version}
+  # puis réappliquer AUTOUPDATE=false (install.sh peut le réécrire).
+  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s ${coolify_version}
+  # Désactiver l'auto-update Coolify : on maîtrise quand on monte de version
+  # (un update régénère les clés SSH et casse la connexion au serveur).
+  # Prend effet au prochain cycle du scheduler qui relit le .env.
+  - bash -c 'f=/data/coolify/source/.env; [ -f "$f" ] && { grep -q "^AUTOUPDATE=" "$f" && sed -i "s/^AUTOUPDATE=.*/AUTOUPDATE=false/" "$f" || echo "AUTOUPDATE=false" >> "$f"; }'
+  # Aligner APP_URL sur le FQDN public : Coolify s'en sert pour les URL qu'il
+  # génère (liens de mail, webhooks, callbacks OAuth).
+  #
+  # Ne suffit PAS à exposer le dashboard en HTTPS : le routage Traefik dépend du
+  # réglage « Instance Domain », stocké en base et à poser une fois dans l'UI
+  # (Settings > Configuration). Procédure dans infra/README.md.
+  - bash -c 'f=/data/coolify/source/.env; [ -f "$f" ] && { grep -q "^APP_URL=" "$f" && sed -i "s#^APP_URL=.*#APP_URL=https://${coolify_fqdn}#" "$f" || echo "APP_URL=https://${coolify_fqdn}" >> "$f"; }'
+
+final_message: "TET Coolify bootstrap terminé en $UPTIME secondes. Dashboard temporaire : ssh -L 8000:localhost:8000 tet-ops@<ip-vm> — puis configurer Settings > Instance Domain sur ${coolify_fqdn}."
