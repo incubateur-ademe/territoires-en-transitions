@@ -130,7 +130,16 @@ export const backendConfigurationSchema = z
       .positive()
       .prefault(128000)
       .describe(
-        "Tokens d'entrée par minute accordés à la clé Albert, lissés avant l'appel plutôt que subis en 429"
+        "Tokens d'entrée par minute accordés par modèle à la clé Albert, lissés avant l'appel plutôt que subis en 429"
+      ),
+    // Quota observé sur la clé : « 10 requests per minute exceeded ».
+    ALBERT_MAX_REQUESTS_PER_MINUTE: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(10)
+      .describe(
+        "Requêtes par minute accordées par modèle à la clé Albert, lissées avant l'appel plutôt que subies en 429"
       ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()

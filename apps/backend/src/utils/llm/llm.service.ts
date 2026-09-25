@@ -3,10 +3,10 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Options, default as retry } from 'async-retry';
 import { z, ZodType } from 'zod';
 import { ConcurrencyLimiter } from '../concurrency-limiter';
-import { TokenRateLimiter } from '../token-rate-limiter';
 import { estimateRequestTokens } from './estimate-request-tokens';
 import { LlmError } from './llm.errors';
 import { LlmObserver } from './llm-observer';
+import { ModelRateLimiters } from './model-rate-limiters';
 import { LlmCapabilities, LlmImage, LlmTier } from './llm-tier';
 import {
   LlmCompletionRequest,
@@ -64,15 +64,16 @@ export type TextCompletion = {
 @Injectable()
 export class LlmService {
   private readonly limiter: ConcurrencyLimiter;
-  private readonly tokenLimiter: TokenRateLimiter;
+  private readonly rateLimiters: ModelRateLimiters;
 
   constructor(
     private readonly llmRepository: LlmRepository,
     @Optional() private readonly observer?: LlmObserver
   ) {
     this.limiter = new ConcurrencyLimiter(llmRepository.maxConcurrentCalls);
-    this.tokenLimiter = new TokenRateLimiter(
-      llmRepository.maxInputTokensPerMinute
+    this.rateLimiters = new ModelRateLimiters(
+      llmRepository.maxInputTokensPerMinute,
+      llmRepository.maxRequestsPerMinute
     );
   }
 
@@ -116,35 +117,39 @@ export class LlmService {
     const promptChars =
       request.prompt.length + (request.systemInstruction?.length ?? 0);
     const estimatedTokens = estimateRequestTokens(request);
-    return this.callWithRetry(async (attempt) => {
-      const settle = await this.tokenLimiter.acquire(
-        estimatedTokens,
-        request.signal
-      );
-      return this.limiter.run(async () => {
-        // Mesuré une fois le tour de file obtenu : le temps d'attente des
-        // limiteurs n'est pas celui du modèle.
-        const startedAt = Date.now();
-        const completion = await this.llmRepository.complete(request);
-        settle(
-          completion.success ? completion.data.usage.promptTokens : undefined
-        );
-        if (!completion.success && completion.error.kind === 'rate_limited') {
-          this.tokenLimiter.penalize(RATE_LIMIT_PENALTY_MS);
-        }
-        const result = completion.success
-          ? toResult(completion.data)
-          : completion;
-        this.observer?.onCall({
-          attempt,
-          durationMs: Date.now() - startedAt,
-          promptChars,
-          usage: completion.success ? completion.data.usage : null,
-          error: result.success ? null : result.error,
-        });
-        return result;
-      });
-    }, request.signal);
+    const model = this.llmRepository.modelFor(request.tier) ?? request.tier;
+    return this.callWithRetry(
+      (attempt) =>
+        this.limiter.run(async () => {
+          // Réservé une fois le tour de file obtenu : le fournisseur compte la
+          // requête à son envoi, pas à son entrée dans la file.
+          const settle = await this.rateLimiters.acquire(
+            model,
+            estimatedTokens,
+            request.signal
+          );
+          const startedAt = Date.now();
+          const completion = await this.llmRepository.complete(request);
+          settle(
+            completion.success ? completion.data.usage.promptTokens : undefined
+          );
+          if (!completion.success && completion.error.kind === 'rate_limited') {
+            this.rateLimiters.penalize(model, RATE_LIMIT_PENALTY_MS);
+          }
+          const result = completion.success
+            ? toResult(completion.data)
+            : completion;
+          this.observer?.onCall({
+            attempt,
+            durationMs: Date.now() - startedAt,
+            promptChars,
+            usage: completion.success ? completion.data.usage : null,
+            error: result.success ? null : result.error,
+          });
+          return result;
+        }),
+      request.signal
+    );
   }
 
   private async callWithRetry<T>(
