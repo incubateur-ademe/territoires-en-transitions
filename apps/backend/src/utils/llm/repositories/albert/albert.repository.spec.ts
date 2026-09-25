@@ -5,6 +5,7 @@ import { LlmCompletionRequest } from '../llm.repository';
 
 const request: LlmCompletionRequest = {
   prompt: 'Extrais les actions',
+  tier: 'strong',
   systemInstruction: 'Tu réponds en JSON',
   jsonSchema: { type: 'array' },
   temperature: 0.2,
@@ -19,6 +20,9 @@ const buildRepository = (overrides: Record<string, unknown> = {}) => {
     ALBERT_API_BASE_URL: 'https://albert.test/v1',
     ALBERT_MAX_INPUT_TOKENS: 60000,
     ALBERT_MAX_CONCURRENT_CALLS: 2,
+    ALBERT_MAX_INPUT_TOKENS_PER_MINUTE: 128000,
+    ALBERT_MODEL_LIGHT: 'ministral-3-8b-instruct-2512',
+    ALBERT_MODEL_OCR: 'lightonocr-2-1b',
     ...overrides,
   };
   const configService = {
@@ -77,6 +81,31 @@ describe('toChatCompletionParams', () => {
     });
   });
 
+  it('répond en texte libre sans schéma', () => {
+    const params = toChatCompletionParams('m', {
+      ...request,
+      jsonSchema: undefined,
+    });
+    expect(params).not.toHaveProperty('response_format');
+  });
+
+  it('joint les images au message utilisateur en data URL', () => {
+    const params = toChatCompletionParams('m', {
+      ...request,
+      images: [{ mimeType: 'image/jpeg', base64: 'AAAA' }],
+    });
+    expect(params.messages[1]).toEqual({
+      role: 'user',
+      content: [
+        { type: 'text', text: 'Extrais les actions' },
+        {
+          type: 'image_url',
+          image_url: { url: 'data:image/jpeg;base64,AAAA' },
+        },
+      ],
+    });
+  });
+
   it("n'envoie pas de message système vide", () => {
     const params = toChatCompletionParams('m', {
       ...request,
@@ -89,6 +118,42 @@ describe('toChatCompletionParams', () => {
 });
 
 describe('AlbertRepository', () => {
+  it('sert un modèle par palier, le palier léger retombant sur le fort', () => {
+    const repository = buildRepository({
+      ALBERT_MODEL_LIGHT: '',
+      ALBERT_MODEL_OCR: 'lightonocr-2-1b',
+    });
+
+    expect(repository.modelFor('strong')).toBe('gpt-oss-120b');
+    expect(repository.modelFor('light')).toBe('gpt-oss-120b');
+    expect(repository.modelFor('ocr')).toBe('lightonocr-2-1b');
+    expect(repository.capabilities).toEqual({
+      ocr: true,
+      strategy: 'segmented',
+    });
+    expect(repository.maxInputTokensFor('strong')).toBe(60000);
+    expect(repository.maxInputTokensFor('ocr')).toBeLessThan(16384);
+  });
+
+  it("désactive l'OCR sans modèle image-texte", () => {
+    const repository = buildRepository({ ALBERT_MODEL_OCR: '' });
+
+    expect(repository.capabilities.ocr).toBe(false);
+    expect(repository.modelFor('ocr')).toBeUndefined();
+  });
+
+  it('refuse un appel OCR sans modèle image-texte, sans rien appeler', async () => {
+    const fetchMock = stubFetch(sseResponse());
+
+    const result = await buildRepository({ ALBERT_MODEL_OCR: '' }).complete({
+      ...request,
+      tier: 'ocr',
+    });
+
+    expect(result).toMatchObject({ success: false });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('appelle chat/completions avec la clé, recolle le flux et lit l’usage final', async () => {
     const first = chunk({
       choices: [{ index: 0, delta: { content: '[{"titre":' } }],
