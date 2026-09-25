@@ -24,6 +24,7 @@ export const toFaultyFicheIds: ToFaultyFicheIds = ({ failure, fiches }) => {
       { kind: 'truncated' },
       { kind: 'invalid_json' },
       { kind: 'api_error' },
+      { kind: 'unsupported' },
       { kind: 'empty_batch' },
       { kind: 'batch_too_large' },
       { kind: 'empty_response' },

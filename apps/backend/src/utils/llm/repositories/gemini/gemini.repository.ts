@@ -8,6 +8,7 @@ import ConfigurationService from '@tet/backend/utils/config/configuration.servic
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { describeError } from '../describe-error';
 import { LlmError } from '../../llm.errors';
+import { LlmCapabilities, LlmTier } from '../../llm-tier';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
@@ -20,9 +21,13 @@ const RATE_LIMITED_STATUSES = new Set([429, 503]);
 
 @Injectable()
 export class GeminiRepository extends LlmRepository {
-  // Contexte d'un million de tokens, sortie maximale de 65 536.
-  readonly maxInputTokens = 900_000;
   readonly maxConcurrentCalls = 20;
+  readonly maxInputTokensPerMinute = null;
+  // Un seul modèle, capable de lire un document entier : pas de paliers.
+  readonly capabilities: LlmCapabilities = {
+    ocr: false,
+    strategy: 'whole-document',
+  };
   private readonly logger = new Logger(GeminiRepository.name);
   private readonly model: string | undefined;
   private client: GoogleGenAI | null = null;
@@ -32,9 +37,21 @@ export class GeminiRepository extends LlmRepository {
     this.model = configService.get('GEMINI_MODEL');
   }
 
+  // Contexte d'un million de tokens, sortie maximale de 65 536.
+  maxInputTokensFor(_tier: LlmTier): number {
+    return 900_000;
+  }
+
+  modelFor(_tier: LlmTier): string | undefined {
+    return this.model;
+  }
+
   async complete(
     request: LlmCompletionRequest
   ): Promise<Result<LlmRawCompletion, LlmError>> {
+    if (request.images?.length) {
+      return failure({ kind: 'unsupported', feature: 'images' });
+    }
     const client = this.getClient();
     if (!client) {
       this.logger.error(
@@ -56,8 +73,12 @@ export class GeminiRepository extends LlmRepository {
         model: this.model,
         contents: request.prompt,
         config: {
-          responseMimeType: 'application/json',
-          responseJsonSchema: request.jsonSchema,
+          ...(request.jsonSchema
+            ? {
+                responseMimeType: 'application/json',
+                responseJsonSchema: request.jsonSchema,
+              }
+            : {}),
           systemInstruction: request.systemInstruction,
           temperature: request.temperature,
           maxOutputTokens: request.maxOutputTokens,

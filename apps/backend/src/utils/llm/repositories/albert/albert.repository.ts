@@ -2,10 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import OpenAI from 'openai';
-import type { ChatCompletionCreateParamsStreaming } from 'openai/resources/chat/completions';
+import type {
+  ChatCompletionContentPart,
+  ChatCompletionCreateParamsStreaming,
+} from 'openai/resources/chat/completions';
 import type { CompletionUsage } from 'openai/resources/completions';
 import { describeError } from '../describe-error';
 import { LlmError } from '../../llm.errors';
+import { LlmCapabilities, LlmTier } from '../../llm-tier';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
@@ -17,6 +21,11 @@ const CALL_TIMEOUT_MS = 9 * 60 * 1000;
 // 503 « Model is too busy » : saturation passagère, comme un quota dépassé.
 const RATE_LIMITED_STATUSES = new Set([429, 503]);
 
+// Fenêtres : ministral 262 144 tokens, lightonocr 16 384 (une page à la fois).
+// Le palier fort garde sa marge configurable pour loger la réponse.
+const LIGHT_MAX_INPUT_TOKENS = 100_000;
+const OCR_MAX_INPUT_TOKENS = 8_000;
+
 /**
  * Albert API, l'inférence du socle interministériel d'IA générative (DINUM),
  * appelée par le SDK OpenAI comme le recommande sa documentation. Aucun
@@ -25,17 +34,33 @@ const RATE_LIMITED_STATUSES = new Set([429, 503]);
  */
 @Injectable()
 export class AlbertRepository extends LlmRepository {
-  readonly maxInputTokens: number;
   readonly maxConcurrentCalls: number;
+  readonly maxInputTokensPerMinute: number;
+  readonly capabilities: LlmCapabilities;
   private readonly logger = new Logger(AlbertRepository.name);
-  private readonly model: string | undefined;
+  private readonly models: Record<LlmTier, string | undefined>;
+  private readonly strongMaxInputTokens: number;
   private readonly client: OpenAI | null;
 
   constructor(configService: ConfigurationService) {
     super();
-    this.maxInputTokens = configService.get('ALBERT_MAX_INPUT_TOKENS');
+    this.strongMaxInputTokens = configService.get('ALBERT_MAX_INPUT_TOKENS');
     this.maxConcurrentCalls = configService.get('ALBERT_MAX_CONCURRENT_CALLS');
-    this.model = configService.get('ALBERT_MODEL');
+    this.maxInputTokensPerMinute = configService.get(
+      'ALBERT_MAX_INPUT_TOKENS_PER_MINUTE'
+    );
+    // Un palier sans modèle propre retombe sur le palier fort ; l'OCR, lui,
+    // exige un modèle image-texte : vide, il est désactivé.
+    const strong = configService.get('ALBERT_MODEL');
+    this.models = {
+      strong,
+      light: configService.get('ALBERT_MODEL_LIGHT') || strong,
+      ocr: configService.get('ALBERT_MODEL_OCR') || undefined,
+    };
+    this.capabilities = {
+      ocr: this.models.ocr !== undefined,
+      strategy: 'segmented',
+    };
     const apiKey = configService.get('ALBERT_API_KEY');
     // Les reprises sont celles de LlmService, pas celles du SDK.
     this.client = apiKey
@@ -48,25 +73,43 @@ export class AlbertRepository extends LlmRepository {
       : null;
   }
 
+  maxInputTokensFor(tier: LlmTier): number {
+    switch (tier) {
+      case 'strong':
+        return this.strongMaxInputTokens;
+      case 'light':
+        return LIGHT_MAX_INPUT_TOKENS;
+      case 'ocr':
+        return OCR_MAX_INPUT_TOKENS;
+    }
+  }
+
+  modelFor(tier: LlmTier): string | undefined {
+    return this.models[tier];
+  }
+
   async complete(
     request: LlmCompletionRequest
   ): Promise<Result<LlmRawCompletion, LlmError>> {
-    if (!this.client || !this.model) {
+    const model = this.modelFor(request.tier);
+    if (!this.client || !model) {
       this.logger.error(
-        'ALBERT_API_KEY ou ALBERT_MODEL manquant : appel Albert impossible'
+        `ALBERT_API_KEY ou modèle du palier ${request.tier} manquant : appel Albert impossible`
       );
       return failure({ kind: 'api_error', httpStatus: null });
     }
 
     this.logger.log(
-      `Albert call (model ${this.model}, prompt ${
+      `Albert call (model ${model}, prompt ${
         request.prompt.length
-      } chars, instruction ${request.systemInstruction?.length ?? 0} chars)`
+      } chars, instruction ${request.systemInstruction?.length ?? 0} chars${
+        request.images?.length ? `, ${request.images.length} image(s)` : ''
+      })`
     );
 
     try {
       const stream = await this.client.chat.completions.create(
-        toChatCompletionParams(this.model, request),
+        toChatCompletionParams(model, request),
         { signal: request.signal }
       );
 
@@ -84,7 +127,7 @@ export class AlbertRepository extends LlmRepository {
       const tokenUsage = toTokenUsage(usage);
       if (finishReason !== 'stop') {
         this.logger.warn(
-          `Incomplete Albert response (model ${this.model}, finishReason ${
+          `Incomplete Albert response (model ${model}, finishReason ${
             finishReason ?? 'unknown'
           }, ${tokenUsage.candidatesTokens} tokens generated of ${
             request.maxOutputTokens
@@ -101,9 +144,9 @@ export class AlbertRepository extends LlmRepository {
       const httpStatus =
         error instanceof OpenAI.APIError ? error.status ?? null : null;
       this.logger.error(
-        `Albert API error (model ${
-          this.model
-        }, status ${httpStatus}): ${describeError(error)}`
+        `Albert API error (model ${model}, status ${httpStatus}): ${describeError(
+          error
+        )}`
       );
       if (httpStatus !== null && RATE_LIMITED_STATUSES.has(httpStatus)) {
         return failure({ kind: 'rate_limited' });
@@ -122,17 +165,38 @@ export const toChatCompletionParams = (
     ...(request.systemInstruction
       ? [{ role: 'system' as const, content: request.systemInstruction }]
       : []),
-    { role: 'user', content: request.prompt },
+    { role: 'user', content: toUserContent(request) },
   ],
   temperature: request.temperature,
   max_completion_tokens: request.maxOutputTokens,
-  response_format: {
-    type: 'json_schema',
-    json_schema: { name: 'response', schema: request.jsonSchema },
-  },
+  ...(request.jsonSchema
+    ? {
+        response_format: {
+          type: 'json_schema',
+          json_schema: { name: 'response', schema: request.jsonSchema },
+        },
+      }
+    : {}),
   stream: true,
   stream_options: { include_usage: true },
 });
+
+const toUserContent = (
+  request: LlmCompletionRequest
+): string | ChatCompletionContentPart[] => {
+  if (!request.images?.length) {
+    return request.prompt;
+  }
+  return [
+    { type: 'text', text: request.prompt },
+    ...request.images.map(
+      (image): ChatCompletionContentPart => ({
+        type: 'image_url',
+        image_url: { url: `data:${image.mimeType};base64,${image.base64}` },
+      })
+    ),
+  ];
+};
 
 const toTokenUsage = (usage: CompletionUsage | undefined): TokenUsage => {
   const thoughtsTokens =

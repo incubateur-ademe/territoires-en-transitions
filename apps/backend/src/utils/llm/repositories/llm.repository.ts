@@ -1,10 +1,14 @@
 import { Result } from '@tet/backend/utils/result.type';
 import { LlmError } from '../llm.errors';
+import { LlmCapabilities, LlmImage, LlmTier } from '../llm-tier';
 import { TokenUsage } from '../token-usage';
 
 export type LlmCompletionRequest = {
   prompt: string;
-  jsonSchema: Record<string, unknown>;
+  tier: LlmTier;
+  /** Absent : réponse en texte libre (transcription d'une page, par exemple). */
+  jsonSchema?: Record<string, unknown>;
+  images?: LlmImage[];
   systemInstruction?: string;
   temperature?: number;
   maxOutputTokens?: number;
@@ -19,10 +23,19 @@ export type LlmRawCompletion = {
 };
 
 export abstract class LlmRepository {
-  /** Tokens d'entrée au-delà desquels le modèle n'a plus la place de répondre. */
-  abstract readonly maxInputTokens: number;
   /** Appels simultanés tolérés par les quotas du fournisseur. */
   abstract readonly maxConcurrentCalls: number;
+  /** Tokens d'entrée par minute accordés à la clé ; null sans quota connu. */
+  abstract readonly maxInputTokensPerMinute: number | null;
+  abstract readonly capabilities: LlmCapabilities;
+
+  /** Tokens d'entrée au-delà desquels le modèle du palier n'a plus la place de répondre. */
+  abstract maxInputTokensFor(tier: LlmTier): number;
+  abstract modelFor(tier: LlmTier): string | undefined;
+
+  get maxInputTokens(): number {
+    return this.maxInputTokensFor('strong');
+  }
 
   abstract complete(
     request: LlmCompletionRequest
