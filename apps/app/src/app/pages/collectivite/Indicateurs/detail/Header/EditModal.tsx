@@ -8,7 +8,7 @@ import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
   openState?: OpenState;
@@ -28,28 +28,31 @@ const EditModal = ({ openState, definition }: Props) => {
 
   // TODO refacto : use react-hook-form
 
-  useEffect(() => {
-    setEditedPilotes(pilotes);
-  }, [pilotes]);
-
-  useEffect(() => setEditedServices(services), [services]);
+  /**
+   * L'état ne retient que la saisie en cours : tant qu'on n'a rien modifié, il
+   * vaut `undefined` et les champs affichent la définition. Deux effets la
+   * recopiaient dans l'état à chaque rendu — et comme `definition.pilotes || []`
+   * fabrique un tableau neuf quand la valeur est nulle, ils se redéclenchaient
+   * en boucle.
+   */
+  const pilotesAffiches = editedPilotes ?? pilotes;
+  const servicesAffiches = editedServices ?? services;
 
   const handleSave = () => {
-    if (!isEqual(editedPilotes, pilotes)) {
+    if (!isEqual(pilotesAffiches, pilotes)) {
       updateIndicateur({
-        pilotes: editedPilotes ?? [],
+        pilotes: pilotesAffiches,
       });
     }
 
     if (
       !isEqual(
-        editedServices?.map((s) => s.id),
+        servicesAffiches.map((s) => s.id),
         services
-      ) &&
-      !!editedServices
+      )
     ) {
       updateIndicateur({
-        services: editedServices,
+        services: servicesAffiches,
       });
     }
   };
@@ -65,7 +68,7 @@ const EditModal = ({ openState, definition }: Props) => {
           {/* Personnes pilote */}
           <Field title={appLabels.personnePilote()} className="col-span-2">
             <PersonneTagDropdown
-              values={editedPilotes?.map((p) => getPersonneStringId(p))}
+              values={pilotesAffiches.map((p) => getPersonneStringId(p))}
               onChange={({ personnes }) => {
                 setEditedPilotes(personnes);
               }}
@@ -78,7 +81,7 @@ const EditModal = ({ openState, definition }: Props) => {
             className="col-span-2"
           >
             <ServiceTagDropdown
-              values={editedServices?.map((s) => s.id)}
+              values={servicesAffiches.map((s) => s.id)}
               onChange={({ values: services }) => setEditedServices(services)}
             />
           </Field>

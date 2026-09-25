@@ -6,7 +6,7 @@ import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-ind
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { intersection } from 'es-toolkit';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import {
   getAnneesDistinctes,
@@ -133,11 +133,19 @@ export const useIndicateurChartInfo = ({
   const [segmentation, setSegmentation] = useState<string | undefined>(
     segmentationParDefaut
   );
-  useEffect(() => {
+
+  // Revient à la segmentation par défaut quand celle-ci change, les segments
+  // disponibles ayant changé avec elle. L'ajuster pendant le rendu, plutôt que
+  // dans un effet, évite de chercher un instant les sous-indicateurs d'une
+  // segmentation qui n'existe plus.
+  const [previousSegmentationParDefaut, setPreviousSegmentationParDefaut] =
+    useState(segmentationParDefaut);
+  if (previousSegmentationParDefaut !== segmentationParDefaut) {
+    setPreviousSegmentationParDefaut(segmentationParDefaut);
     if (segmentationParDefaut) {
       setSegmentation(segmentationParDefaut);
     }
-  }, [segmentationParDefaut]);
+  }
 
   // extrait les sous-indicateurs et leurs valeurs pour la segmentation courante
   const segments =

@@ -6,7 +6,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { Alert, Icon, Modal, ModalFooterOKCancel, RadioButton } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export type DownloadScoreProps = {
   referentielId: ReferentielId;
@@ -50,11 +50,17 @@ export const DownloadScoreModal = ({
     }));
   }, [rawSnapshots]);
 
-  useEffect(() => {
+  // Vide la sélection quand la liste des états des lieux change : une référence
+  // sélectionnée pourrait avoir disparu. L'ajuster pendant le rendu, plutôt que
+  // dans un effet, évite de proposer l'export d'une sélection déjà caduque.
+  const [previousRawSnapshots, setPreviousRawSnapshots] =
+    useState(rawSnapshots);
+  if (previousRawSnapshots !== rawSnapshots) {
+    setPreviousRawSnapshots(rawSnapshots);
     if (rawSnapshots) {
       setSelectedSnapshots([]);
     }
-  }, [rawSnapshots]);
+  }
 
   if (!rawSnapshots) {
     return <SpinnerLoader />;

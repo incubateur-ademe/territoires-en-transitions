@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useEffectEvent,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useEffectEvent, useState } from 'react';
 import {
   FloatingPortal,
   useDismiss,
@@ -30,7 +25,13 @@ export const ToastFloater = ({
   className,
   autoHideDuration,
 }: TToastFloater) => {
-  const { refs, context, strategy } = useFloating({
+  const {
+    context,
+    strategy,
+    // Déstructuré ici : la règle `react-hooks/refs` prend tout ce qui s'appelle
+    // `refs` pour une ref, alors que c'est un callback de montage.
+    refs: { setFloating },
+  } = useFloating({
     open,
     strategy: 'fixed',
   });
@@ -39,9 +40,16 @@ export const ToastFloater = ({
 
   const [toastWidth, setToastWidth] = useState<number | undefined>(undefined);
 
-  useLayoutEffect(() => {
-    setToastWidth(context.refs.floating.current?.getBoundingClientRect().width);
-  });
+  // La largeur sert à centrer le toast en tenant compte de ses marges. Elle se
+  // mesure au montage du nœud, dans le callback de ref : l'effet précédent la
+  // lisait dans une ref et la recopiait dans l'état à chaque rendu.
+  const mesurerToast = useCallback(
+    (node: HTMLElement | null) => {
+      setFloating(node);
+      setToastWidth(node?.getBoundingClientRect().width);
+    },
+    [setFloating]
+  );
 
   // `onClose` hors des dépendances (via useEffectEvent) : le provider la recrée
   // à chaque rendu, la garder en dépendance réarmerait le minuteur sans fin.
@@ -63,7 +71,7 @@ export const ToastFloater = ({
       {open && (
         <div
           {...getFloatingProps({
-            ref: refs.setFloating,
+            ref: mesurerToast,
             style: {
               position: strategy,
               maxWidth: '40rem',

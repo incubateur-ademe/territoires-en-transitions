@@ -53,10 +53,20 @@ export const ReferenceYearField = ({
     setText(value);
   };
 
+  // Réaffiche l'année enregistrée quand elle change. L'ajuster pendant le
+  // rendu, plutôt que dans un effet, évite d'afficher un instant l'année
+  // précédente une fois l'enregistrement confirmé.
+  const [previousYear, setPreviousYear] = useState(year);
+  if (previousYear !== year) {
+    setPreviousYear(year);
+    setText(displayedText(year));
+    setError(null);
+  }
+
+  // Les refs, elles, ne peuvent être écrites que pendant la phase de commit.
   useEffect(() => {
     committedRef.current = year;
-    changeText(displayedText(year));
-    setError(null);
+    textRef.current = displayedText(year);
   }, [year]);
 
   const reset = (): void => {

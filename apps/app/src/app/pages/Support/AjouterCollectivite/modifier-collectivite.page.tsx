@@ -16,7 +16,7 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Divider, Field, Input, InputNumber } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export const ModifierCollectivitePage = () => {
   const collectiviteId = useCollectiviteId();
@@ -30,11 +30,16 @@ export const ModifierCollectivitePage = () => {
     { message: string; ok: boolean } | undefined
   >();
 
-  useEffect(() => {
+  // Recharge le formulaire quand la collectivité arrive (ou change). L'ajuster
+  // pendant le rendu, plutôt que dans un effet, évite d'afficher un instant le
+  // formulaire de la collectivité précédente.
+  const [previousData, setPreviousData] = useState(data);
+  if (previousData !== data) {
+    setPreviousData(data);
     if (data) {
       setCollectivite(data);
     }
-  }, [data]);
+  }
 
   const updateCollectivite = (key: string, value: any) => {
     if (!collectivite) return;

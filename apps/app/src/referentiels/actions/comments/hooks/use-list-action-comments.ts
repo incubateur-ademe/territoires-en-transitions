@@ -37,6 +37,15 @@ export const useListActionComments = ({
     action !== undefined ? action.actionId : 'all'
   );
 
+  // Aligne l'action sélectionnée sur celle reçue en prop. L'ajuster pendant le
+  // rendu, plutôt que dans un effet, évite de demander au serveur les
+  // discussions de l'action précédente le temps d'un rendu.
+  const [previousAction, setPreviousAction] = useState(action);
+  if (previousAction !== action) {
+    setPreviousAction(action);
+    setSelectedActionId(action === undefined ? 'all' : action.actionId);
+  }
+
   const selectedAction = useMemo(() => {
     return actions && selectedActionId && selectedActionId !== 'all'
       ? actions.actionsById[selectedActionId]
@@ -46,7 +55,6 @@ export const useListActionComments = ({
   const [selectedStatus, setSelectedStatus] = useState<DiscussionStatus>(
     discussionStatus.OUVERT
   );
-  const [commentsCount, setCommentsCount] = useState<number>(0);
 
   const [selectedOrderByState, setSelectedOrderBy] =
     useState<DiscussionOrderBy>(selectedOrderBy);
@@ -92,24 +100,18 @@ export const useListActionComments = ({
     setSelectedOrderBy(value);
   };
 
-  // Update comments count and panel title
-  useEffect(() => {
-    const count = displayedDiscussions.reduce(
-      (acc, discussion) => acc + discussion.messages.length,
-      0
-    );
-    setCommentsCount(count);
-    updateTitlePanel?.(appLabels.commentaires({ count }));
-  }, [displayedDiscussions, updateTitlePanel]);
+  // Le total se calcule pendant le rendu : le tenir dans un état alimenté par
+  // un effet le laissait en retard d'un rendu sur les discussions affichées.
+  const commentsCount = displayedDiscussions.reduce(
+    (acc, discussion) => acc + discussion.messages.length,
+    0
+  );
 
-  // Set selected action based on actionId
+  // Le titre du panneau appartient à un autre composant : le mettre à jour
+  // reste un effet de bord, et reste donc dans un effet.
   useEffect(() => {
-    if (action === undefined) {
-      setSelectedActionId('all');
-    } else {
-      setSelectedActionId(action.actionId);
-    }
-  }, [action]);
+    updateTitlePanel?.(appLabels.commentaires({ count: commentsCount }));
+  }, [commentsCount, updateTitlePanel]);
 
   return {
     discussions,
