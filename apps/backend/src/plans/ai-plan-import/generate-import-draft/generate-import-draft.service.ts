@@ -20,12 +20,12 @@ import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
+import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import {
-  ExtractionError,
-  extractText,
-  isTabularMimeType,
-} from '../pipeline/extract-text';
-import { splitDocument } from '../pipeline/split-document/split-document';
+  readDocument,
+  ReadDocumentError,
+} from '../pipeline/read-document/read-document';
+import { AI_PLAN_IMPORT_MAX_OCR_PAGES } from '../ai-plan-import.constants';
 import {
   initialStepStates,
   PipelineError,
@@ -38,14 +38,6 @@ export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
   | { kind: 'failure_record_failed'; jobId: string; cause: AiPlanImportError }
   | { kind: 'interrupted'; jobId: string; message: string };
-
-/** Reprise d'une tranche à l'autre, pour ne pas couper une action en deux. */
-const CHUNK_OVERLAP_TOKENS = 1_500;
-/**
- * Garde-fou de coût : au-delà, ce n'est plus un plan d'action. Avec Albert,
- * 10 tranches font environ 600 000 tokens, soit plusieurs centaines de pages.
- */
-const MAX_DOCUMENT_CHUNKS = 10;
 
 @Injectable()
 export class GenerateImportDraftService {
@@ -123,27 +115,21 @@ export class GenerateImportDraftService {
       );
     }
 
-    const text = await extractText(source);
-    if (!text.success) {
-      return this.recordFailure(job.id, extractionErrorMessage(text.error));
-    }
-
-    const chunks = splitDocument(text.data, {
-      maxTokens: this.llm.maxInputTokens,
-      overlapTokens: CHUNK_OVERLAP_TOKENS,
-      header: isTabularMimeType(source.mimeType)
-        ? text.data.split('\n', 1)[0]
+    const ocrPage = buildLlmOcrPage(this.llm);
+    const document = await readDocument(source, {
+      ocr: ocrPage
+        ? { ocrPage, policy: { maxOcrPages: AI_PLAN_IMPORT_MAX_OCR_PAGES } }
         : undefined,
     });
-    if (chunks.length > MAX_DOCUMENT_CHUNKS) {
+    if (!document.success) {
       return this.recordFailure(
         job.id,
-        `Document trop long pour l'import (${chunks.length} parties à analyser, ${MAX_DOCUMENT_CHUNKS} au maximum) : importez-le en plusieurs fois`
+        readDocumentErrorMessage(document.error)
       );
     }
 
     const outcome = await runImportPipeline(this.llm, {
-      chunks,
+      document: document.data,
       instructions: job.options.instructions,
       disabledFields: job.options.disabledFields,
       currentDate: new Date().toISOString(),
@@ -282,7 +268,7 @@ export class GenerateImportDraftService {
   }
 }
 
-const extractionErrorMessage = (error: ExtractionError): string => {
+const readDocumentErrorMessage = (error: ReadDocumentError): string => {
   switch (error.kind) {
     case 'unsupported_mime':
       return `Type de fichier non supporté (${error.mimeType})`;
@@ -292,10 +278,17 @@ const extractionErrorMessage = (error: ExtractionError): string => {
       return 'Lecture du document impossible';
     case 'timeout':
       return 'Lecture du document trop longue';
+    case 'scanned_too_long':
+      return `Document scanné de ${error.scannedPages} pages : l'import en lit au plus ${error.maxOcrPages}, exportez le programme d'actions seul`;
+    case 'ocr_failed':
+      return `Lecture des pages scannées impossible (${error.failedPages.length} page(s) en échec)`;
   }
 };
 
 const pipelineErrorMessage = (
   failedStep: StepName,
   error: PipelineError
-): string => `Étape ${failedStep} en échec (${error.kind})`;
+): string =>
+  error.kind === 'document_too_long'
+    ? `Document trop long pour l'import (${error.chunks} parties à analyser, ${error.maxChunks} au maximum) : importez-le en plusieurs fois`
+    : `Étape ${failedStep} en échec (${error.kind})`;

@@ -9,3 +9,9 @@ export const AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS = 20;
 export const AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER = 1;
 
 export const AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY = 10;
+
+/**
+ * Pages scannées lues par l'OCR, au plus. Au-delà, on refuse plutôt que de
+ * lire une partie du document en silence.
+ */
+export const AI_PLAN_IMPORT_MAX_OCR_PAGES = 60;

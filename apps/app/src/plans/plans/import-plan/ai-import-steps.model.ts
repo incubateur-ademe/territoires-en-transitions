@@ -22,13 +22,22 @@ export type ImportStepView = {
   status: ImportStepDisplayStatus;
 };
 
-const STEP_ORDER: ImportStepName[] = [
-  'extraction',
-  'scoring',
-  'consolidation',
-  'enrichment',
-  'qualitativeReview',
-];
+// Un `Record` plutôt qu'une liste : une étape ajoutée côté serveur ne peut
+// pas être oubliée ici sans que la compilation le signale.
+const STEP_RANK: Record<ImportStepName, number> = {
+  reading: 0,
+  scouting: 1,
+  extraction: 2,
+  hierarchy: 3,
+  scoring: 4,
+  consolidation: 5,
+  enrichment: 6,
+  qualitativeReview: 7,
+};
+
+const STEP_ORDER = (Object.keys(STEP_RANK) as ImportStepName[]).sort(
+  (a, b) => STEP_RANK[a] - STEP_RANK[b]
+);
 
 export const toImportStepViews = (
   stepStates?: ImportStepStates

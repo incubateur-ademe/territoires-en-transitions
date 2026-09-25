@@ -14,9 +14,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { detectSourceMimeType } from '../enqueue-import/detect-source-mime-type';
-import { extractText, isTabularMimeType } from '../pipeline/extract-text';
+import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
+import { readDocument } from '../pipeline/read-document/read-document';
 import { runImportPipeline } from '../pipeline/run-import-pipeline';
-import { splitDocument } from '../pipeline/split-document/split-document';
 import {
   compareWithReference,
   computeEvalMetrics,
@@ -28,13 +28,9 @@ import { EvalModule } from './eval.module';
 
 const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
   '.pdf': 'application/pdf',
-  '.xlsx':
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   '.csv': 'text/csv',
 };
-
-// Mêmes valeurs que GenerateImportDraftService, à unifier avec l'étape de lecture.
-const CHUNK_OVERLAP_TOKENS = 1_500;
 
 const USAGE = `Usage : run-ai-import-eval --file <pdf|xlsx|csv> [--out <json>] [--ref <json>]
   [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]`;
@@ -113,20 +109,20 @@ const main = async (): Promise<number> => {
 
   print(`⚠ Appel réel à ${provider} (${model ?? 'modèle non défini'})`);
 
-  const text = await extractText({ buffer, mimeType });
-  if (!text.success) {
-    print(`✗ Lecture impossible : ${text.error.kind}`);
+  const ocrPage = buildLlmOcrPage(llm);
+  const document = await readDocument(
+    { buffer, mimeType },
+    { ocr: ocrPage ? { ocrPage } : undefined }
+  );
+  if (!document.success) {
+    print(`✗ Lecture impossible : ${document.error.kind}`);
     await app.close();
     return 1;
   }
-  const chunks = splitDocument(text.data, {
-    maxTokens: llm.maxInputTokens,
-    overlapTokens: CHUNK_OVERLAP_TOKENS,
-    header: isTabularMimeType(mimeType)
-      ? text.data.split('\n', 1)[0]
-      : undefined,
-  });
-  print(`Document : ${text.data.length} caractères, ${chunks.length} tranche(s)`);
+  const { stats } = document.data;
+  print(
+    `Document : ${stats.pageCount} page(s), ${stats.textPages} lue(s), ${stats.ocrPages} transcrite(s), ${stats.emptyPages} vide(s)`
+  );
 
   const options = {
     instructions: values.instructions,
@@ -135,7 +131,7 @@ const main = async (): Promise<number> => {
   };
   const startedAt = Date.now();
   const outcome = await runImportPipeline(llm, {
-    chunks,
+    document: document.data,
     ...options,
     disabledFields: [],
     currentDate: new Date().toISOString(),
@@ -179,7 +175,10 @@ const main = async (): Promise<number> => {
     values.out ??
     join(
       'eval-out',
-      `${basename(values.file, extname(values.file))}-${provider}-${Date.now()}.json`
+      `${basename(
+        values.file,
+        extname(values.file)
+      )}-${provider}-${Date.now()}.json`
     );
   await mkdir(join(outPath, '..'), { recursive: true });
   await writeFile(outPath, JSON.stringify(output, null, 2));
@@ -207,7 +206,11 @@ const printMetrics = (
       .join(', ')}`
   );
   print(
-    `Appels ${metrics.calls} (429 : ${metrics.rateLimited}, échecs : ${metrics.failedCalls}) · tokens ${metrics.tokens.totalTokens} (entrée ${metrics.tokens.promptTokens}) · durée ${Math.round(metrics.durationMs / 1000)} s`
+    `Appels ${metrics.calls} (429 : ${metrics.rateLimited}, échecs : ${
+      metrics.failedCalls
+    }) · tokens ${metrics.tokens.totalTokens} (entrée ${
+      metrics.tokens.promptTokens
+    }) · durée ${Math.round(metrics.durationMs / 1000)} s`
   );
 };
 

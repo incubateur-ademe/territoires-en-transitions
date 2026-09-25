@@ -93,7 +93,10 @@ describe('computeEvalMetrics', () => {
 describe('compareWithReference', () => {
   it('donne les écarts et les titres manquants ou en trop, sans tenir compte de la numérotation', () => {
     const run = (titres: string[]) => {
-      const draft = { actions: titres.map((t) => anAction(t)), qualitativeReview: null };
+      const draft = {
+        actions: titres.map((t) => anAction(t)),
+        qualitativeReview: null,
+      };
       return {
         draft,
         metrics: computeEvalMetrics({ draft, events: [], durationMs: 10 }),
@@ -106,7 +109,10 @@ describe('compareWithReference', () => {
     );
 
     expect(diff.deltas.actions).toBe(-1);
-    expect(diff.missingTitles).toEqual(['Planter des arbres', 'Isoler la mairie']);
+    expect(diff.missingTitles).toEqual([
+      'Planter des arbres',
+      'Isoler la mairie',
+    ]);
     expect(diff.extraTitles).toEqual(['Nouvelle action']);
   });
 });

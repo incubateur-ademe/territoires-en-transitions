@@ -4,7 +4,10 @@ import { ImportStepStates, toImportStepViews } from './ai-import-steps.model';
 describe('toImportStepViews', () => {
   it('sans etats, met la premiere etape en cours et les suivantes en attente', () => {
     expect(toImportStepViews()).toEqual([
-      { name: 'extraction', status: 'current' },
+      { name: 'reading', status: 'current' },
+      { name: 'scouting', status: 'waiting' },
+      { name: 'extraction', status: 'waiting' },
+      { name: 'hierarchy', status: 'waiting' },
       { name: 'scoring', status: 'waiting' },
       { name: 'consolidation', status: 'waiting' },
       { name: 'enrichment', status: 'waiting' },
@@ -14,7 +17,10 @@ describe('toImportStepViews', () => {
 
   it('marque la premiere etape encore pending comme en cours', () => {
     const stepStates: ImportStepStates = {
+      reading: 'ok',
+      scouting: 'skipped',
       extraction: 'ok',
+      hierarchy: 'skipped',
       scoring: 'pending',
       consolidation: 'pending',
       enrichment: 'pending',
@@ -22,7 +28,10 @@ describe('toImportStepViews', () => {
     };
 
     expect(toImportStepViews(stepStates)).toEqual([
+      { name: 'reading', status: 'done' },
+      { name: 'scouting', status: 'skipped' },
       { name: 'extraction', status: 'done' },
+      { name: 'hierarchy', status: 'skipped' },
       { name: 'scoring', status: 'current' },
       { name: 'consolidation', status: 'waiting' },
       { name: 'enrichment', status: 'waiting' },
@@ -32,7 +41,10 @@ describe('toImportStepViews', () => {
 
   it('saute les etapes skipped pour designer la prochaine pending en cours', () => {
     const stepStates: ImportStepStates = {
+      reading: 'ok',
+      scouting: 'skipped',
       extraction: 'ok',
+      hierarchy: 'skipped',
       scoring: 'skipped',
       consolidation: 'skipped',
       enrichment: 'pending',
@@ -40,7 +52,10 @@ describe('toImportStepViews', () => {
     };
 
     expect(toImportStepViews(stepStates)).toEqual([
+      { name: 'reading', status: 'done' },
+      { name: 'scouting', status: 'skipped' },
       { name: 'extraction', status: 'done' },
+      { name: 'hierarchy', status: 'skipped' },
       { name: 'scoring', status: 'skipped' },
       { name: 'consolidation', status: 'skipped' },
       { name: 'enrichment', status: 'current' },
@@ -50,7 +65,10 @@ describe('toImportStepViews', () => {
 
   it('ne designe aucune etape en cours quand tout est termine', () => {
     const stepStates: ImportStepStates = {
+      reading: 'ok',
+      scouting: 'skipped',
       extraction: 'ok',
+      hierarchy: 'skipped',
       scoring: 'skipped',
       consolidation: 'skipped',
       enrichment: 'ok',
@@ -58,7 +76,10 @@ describe('toImportStepViews', () => {
     };
 
     expect(toImportStepViews(stepStates)).toEqual([
+      { name: 'reading', status: 'done' },
+      { name: 'scouting', status: 'skipped' },
       { name: 'extraction', status: 'done' },
+      { name: 'hierarchy', status: 'skipped' },
       { name: 'scoring', status: 'skipped' },
       { name: 'consolidation', status: 'skipped' },
       { name: 'enrichment', status: 'done' },
