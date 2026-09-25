@@ -49,6 +49,14 @@ Nx monorepo with pnpm. Data flow: Frontend (`useQuery`/`useMutation`) → tRPC R
 - Tests are **colocated** with source files.
 - DB tests: pgTAP in `data_layer/tests/`.
 
+## Paid external AI calls — humans only (strict)
+
+**Never trigger, as an agent, an AI feature that calls an external paid API** (Gemini / Vertex AI through `LlmService`: the AI plan import, the collectivité analysis, or anything built on them). Each run can cost a lot, and that spending must stay controlled and started by hand.
+
+- Don't enqueue jobs, don't call the endpoints (`POST …/plans/import-ia`, analysis mutations…), don't run a script or a spec that reaches the real model, not even "to validate" a prompt or a model switch.
+- Automated tests must keep a fake LLM (see `ai-plan-import.full-flow.e2e-spec.ts`). Never wire a real provider into a spec.
+- When a real run is needed, stop and hand it to the human: give the exact command or UI steps and let them launch it.
+
 ## Whole-repo gotchas
 
 - Domain names stay in French in code (`fiche`, `mesure`, `collectivite`, `referentiel`). Don't translate them.
