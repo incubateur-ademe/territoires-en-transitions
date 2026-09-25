@@ -1,4 +1,4 @@
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { uniq } from 'es-toolkit';
 import { Enjeu } from '@tet/domain/shared';

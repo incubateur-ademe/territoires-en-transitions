@@ -1,9 +1,9 @@
 import { DisableableField } from '../models/disableable-field';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import {
   emptyTokenUsage,
   sumTokenUsage,
+  TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { Result } from '@tet/backend/utils/result.type';
 import { z } from 'zod';

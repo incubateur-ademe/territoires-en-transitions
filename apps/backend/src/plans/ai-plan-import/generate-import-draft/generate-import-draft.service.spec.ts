@@ -3,7 +3,7 @@ import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
@@ -62,6 +62,7 @@ const extractionAction = {
 
 type MockOverrides = {
   sourceContent?: string;
+  maxInputTokens?: number;
   generateStructured?: () => Promise<unknown>;
   save?: () => Promise<Result<{ planId: number; fichesCount: number }, never>>;
   markDone?: () => Promise<Result<AiPlanImportJob, string>>;
@@ -102,6 +103,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
       success({ data: { avis: 'Extraction ok' }, tokens })
     );
   const llm = {
+    maxInputTokens: overrides.maxInputTokens ?? 900_000,
     generateStructured: overrides.generateStructured
       ? vi.fn(overrides.generateStructured)
       : defaultLlm,
@@ -187,6 +189,25 @@ describe('GenerateImportDraftService', () => {
       bucketId: 'ai-plan-import-sources',
       key: '10/abc',
     });
+  });
+
+  it("refuse un document trop long pour le modèle sans l'appeler", async () => {
+    const mocks = buildMocks({
+      maxInputTokens: 10,
+      sourceContent: `axe,titre\n${'1,Action longue\n'.repeat(20)}`,
+    });
+    const service = buildService(mocks);
+
+    const result = await service.generate('job-1');
+
+    expect(result).toMatchObject({ success: true });
+    expect(mocks.llm.generateStructured).not.toHaveBeenCalled();
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'job-1',
+        error: expect.stringContaining('Document trop long'),
+      })
+    );
   });
 
   it('marque le job failed quand la création du plan échoue', async () => {

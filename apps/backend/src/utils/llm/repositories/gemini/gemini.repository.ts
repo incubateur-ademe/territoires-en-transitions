@@ -6,19 +6,23 @@ import {
 } from '@google/genai';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { LlmError } from './llm.errors';
+import { describeError } from '../describe-error';
+import { LlmError } from '../../llm.errors';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
   LlmRepository,
-  TokenUsage,
-} from './llm.repository';
+} from '../llm.repository';
+import { TokenUsage } from '../../token-usage';
 
 const CALL_TIMEOUT_MS = 9 * 60 * 1000;
 const RATE_LIMITED_STATUSES = new Set([429, 503]);
 
 @Injectable()
 export class GeminiRepository extends LlmRepository {
+  // Contexte d'un million de tokens, sortie maximale de 65 536.
+  readonly maxInputTokens = 900_000;
+  readonly maxConcurrentCalls = 20;
   private readonly logger = new Logger(GeminiRepository.name);
   private readonly model: string | undefined;
   private client: GoogleGenAI | null = null;
@@ -154,19 +158,3 @@ const extractHttpStatus = (error: unknown): number | null => {
   }
   return null;
 };
-
-const describeError = (error: unknown): string => {
-  if (!(error instanceof Error)) {
-    return String(error);
-  }
-  const { cause } = error;
-  if (cause instanceof Error) {
-    const code = errorCode(cause);
-    const prefix = code === null ? '' : `${code} `;
-    return `${error.message} — cause: ${prefix}${cause.message}`;
-  }
-  return error.message;
-};
-
-const errorCode = (error: Error): string | null =>
-  'code' in error && typeof error.code === 'string' ? error.code : null;
