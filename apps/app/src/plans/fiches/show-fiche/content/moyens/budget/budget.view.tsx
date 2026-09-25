@@ -1,7 +1,7 @@
 import { BudgetType } from '@tet/domain/plans';
 import { useOpenState } from '@tet/ui/hooks/use-open-state';
 import { isNil } from 'es-toolkit';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
 import { EditableSection } from '../components/EditableSection';
 import { BudgetTypeChangeModal } from './budget-type-change.modal';
@@ -31,11 +31,16 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
     [budgetsState, type]
   );
 
-  const [view, setView] = useState<'year' | 'summary'>('summary');
+  const [view, setView] = useState<'year' | 'summary'>(defaultView);
 
-  React.useEffect(() => {
+  // Revient à la vue qui correspond aux budgets saisis quand ceux-ci changent.
+  // L'ajuster pendant le rendu, plutôt que dans un effet, évite d'afficher un
+  // instant le tableau vide de l'autre vue.
+  const [previousDefaultView, setPreviousDefaultView] = useState(defaultView);
+  if (previousDefaultView !== defaultView) {
+    setPreviousDefaultView(defaultView);
     setView(defaultView);
-  }, [defaultView]);
+  }
 
   const modalOpenState = useOpenState();
 

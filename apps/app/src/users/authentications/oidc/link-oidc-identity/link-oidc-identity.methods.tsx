@@ -84,22 +84,21 @@ export const LinkOidcIdentityMethods = () => {
     })
   );
 
-  // Erreur de liaison déposée par le callback OIDC dans l'URL : on la CAPTURE en
-  // state au montage, puis on nettoie l'URL. Sans ce state, l'alerte lue
-  // directement depuis `searchParams` disparaîtrait aussitôt que `router.replace`
-  // retire le paramètre (l'erreur flashait puis s'effaçait).
-  const [erreurLiaisonCode, setErreurLiaisonCode] = useState<string | null>(
-    null
+  // Erreur de liaison déposée par le callback OIDC dans l'URL : on la CAPTURE au
+  // montage, dans l'initialiseur de l'état, puis on nettoie l'URL. Sans cette
+  // capture, l'alerte lue directement depuis `searchParams` disparaîtrait
+  // aussitôt que `router.replace` retire le paramètre (l'erreur flashait puis
+  // s'effaçait).
+  const [erreurLiaisonCode] = useState<string | null>(() =>
+    searchParams.get(ERREUR_LIAISON_PARAM)
   );
 
   useEffect(() => {
-    const code = searchParams.get(ERREUR_LIAISON_PARAM);
-    if (!code) {
+    if (!erreurLiaisonCode) {
       return;
     }
 
-    setErreurLiaisonCode(code);
-    trackEvent(Event.auth.oidc.linkError, { erreurType: code });
+    trackEvent(Event.auth.oidc.linkError, { erreurType: erreurLiaisonCode });
 
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete(ERREUR_LIAISON_PARAM);

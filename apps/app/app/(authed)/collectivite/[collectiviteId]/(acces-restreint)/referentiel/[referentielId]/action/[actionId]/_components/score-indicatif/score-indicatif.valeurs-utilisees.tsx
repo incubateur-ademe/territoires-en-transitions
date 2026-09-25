@@ -1,7 +1,7 @@
 import { COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
 import { ScoreIndicatifType } from '@tet/domain/referentiels';
 import { Field, FormSection, Input, Select } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   typeScoreToLabel,
   typeScoreToName,
@@ -127,9 +127,15 @@ const useSelectionValeurIndicateur = (
     id: number | null;
   } | null>(initialSelection);
 
-  useEffect(() => {
+  // Repart de la sélection enregistrée quand elle change. L'ajuster pendant le
+  // rendu, plutôt que dans un effet, évite d'afficher un instant la source et
+  // l'année de la sélection précédente.
+  const [previousInitialSelection, setPreviousInitialSelection] =
+    useState(initialSelection);
+  if (previousInitialSelection !== initialSelection) {
+    setPreviousInitialSelection(initialSelection);
     setSelection(initialSelection);
-  }, [initialSelection]);
+  }
 
   const sources = valeursIndicateur?.sources || [];
 

@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type ModaleFichesLieesProps = {
   isOpen: boolean;
@@ -21,9 +21,18 @@ export const FichesLieesModal = ({
   const [linkedFicheIdsState, setLinkedFicheIdsState] =
     useState<number[]>(linkedFicheIds);
 
-  useEffect(() => {
-    setLinkedFicheIdsState(linkedFicheIds);
-  }, [linkedFicheIds]);
+  /**
+   * Repart des actions liées à chaque ouverture. Un effet les recopiait dès que
+   * la prop changeait d'identité — or le parent la reconstruit à chaque rendu,
+   * si bien qu'une sélection en cours était écrasée dès qu'il se rafraîchissait.
+   */
+  const [etaitOuverte, setEtaitOuverte] = useState(isOpen);
+  if (etaitOuverte !== isOpen) {
+    setEtaitOuverte(isOpen);
+    if (isOpen) {
+      setLinkedFicheIdsState(linkedFicheIds);
+    }
+  }
 
   const handleSave = () => {
     updateLinkedFicheIds(linkedFicheIdsState);

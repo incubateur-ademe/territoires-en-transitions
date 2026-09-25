@@ -3,7 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Button, ButtonGroup } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { SourceType } from '../types';
 import { EditValeursModal } from './edit-valeurs-modal';
@@ -25,15 +25,20 @@ export type IndicateurTableProps = {
 export const IndicateurTable = (props: IndicateurTableProps) => {
   const { chartInfo, collectiviteId, definition, readonly, openModalState } =
     props;
-  const [type, setType] = useState<SourceType>('resultat');
+  const [typeChoisi, setType] = useState<SourceType>('resultat');
   const { resultats, objectifs } = chartInfo.data.valeurs;
-  const data = type === 'resultat' ? resultats : objectifs;
 
   const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
 
-  useEffect(() => {
-    setIsOpen(openModalState?.isOpen ?? false);
-  }, [openModalState?.isOpen]);
+  // Suit l'ouverture pilotée par le parent. L'ajuster pendant le rendu, plutôt
+  // que dans un effet, évite un rendu où le dialogue est encore fermé.
+  const ouvertureParente = openModalState?.isOpen ?? false;
+  const [previousOuvertureParente, setPreviousOuvertureParente] =
+    useState(ouvertureParente);
+  if (previousOuvertureParente !== ouvertureParente) {
+    setPreviousOuvertureParente(ouvertureParente);
+    setIsOpen(ouvertureParente);
+  }
 
   // compte les données disponibles pour chaque type
   const sourcesCount = {
@@ -42,16 +47,15 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
   };
 
   // détermine si il y a des données pour l'onglet sélectionné
-  const typeInverse = type === 'resultat' ? 'objectif' : 'resultat';
-  const shouldChange = !sourcesCount[type] && sourcesCount[typeInverse];
+  const typeInverse = typeChoisi === 'resultat' ? 'objectif' : 'resultat';
+  const shouldChange = !sourcesCount[typeChoisi] && sourcesCount[typeInverse];
 
-  // change d'onglet si il n'y a pas de données à afficher
-  // mais qu'il y a des données pour l'autre onglet
-  useEffect(() => {
-    if (shouldChange && !chartInfo.isLoading) {
-      setType(typeInverse);
-    }
-  }, [shouldChange, typeInverse, chartInfo.isLoading]);
+  // bascule sur l'autre onglet si l'onglet choisi n'a rien à afficher. Déduit
+  // pendant le rendu : un effet qui corrigeait l'état affichait d'abord
+  // l'onglet vide.
+  const type = shouldChange && !chartInfo.isLoading ? typeInverse : typeChoisi;
+
+  const data = type === 'resultat' ? resultats : objectifs;
 
   // n'affiche rien si il n'y a pas de données
   if (!sourcesCount[type] && !sourcesCount[typeInverse]) return;
