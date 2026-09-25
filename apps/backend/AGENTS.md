@@ -104,7 +104,7 @@ Common errors (`SERVER_ERROR`, `UNAUTHORIZED → FORBIDDEN`, `DATABASE_ERROR`, `
 - `private readonly logger = new Logger(<ClassName>.name)` — **never `console.log`**.
 - Every log line auto-attaches `correlationId`, `userId`, `authRole`, `collectiviteId`, `referentielId`, `requestPath`, `trace_id` via AsyncLocalStorage — you don't pass them manually.
 - **Key naming matters for log enrichment:** for `collectiviteId` / `referentielId` to surface in logs, the Zod input field must be named exactly that (constants in `collectivites/collectivite-api.constants.ts` and `referentiels/models/referentiel-api.constants.ts`).
-- Errors auto-forward to Sentry via `AllExceptionsFilter` and the tRPC `onError` hook (UNAUTHORIZED is filtered out).
+- Errors auto-forward to Sentry via `AllExceptionsFilter` and the tRPC `onError` hook (client-fault codes — UNAUTHORIZED, TOO_MANY_REQUESTS — are logged at `warn` and filtered out).
 
 ## Side effects
 

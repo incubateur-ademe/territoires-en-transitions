@@ -30,11 +30,10 @@ const COMPONENTS = [
   })),
 ];
 
-// Par défaut : toute l'infra + les apps de `pnpm dev` — exclus mais cochables :
-// tools (exige un env complet Airtable/Notion, crash-loop sinon) et functions
-// (edge functions rarement utiles ; kong répond 503 sur /functions/v1/ sinon).
+// Par défaut : toute l'infra + les apps de `pnpm dev` — seul tools est exclu
+// mais cochable (exige un env complet Airtable/Notion, crash-loop sinon).
 const DEFAULT_SELECTION = [
-  ...INFRA_COMPONENTS.map((c) => c.value).filter((v) => v !== 'functions'),
+  ...INFRA_COMPONENTS.map((c) => c.value),
   ...DEFAULT_APPS,
 ];
 

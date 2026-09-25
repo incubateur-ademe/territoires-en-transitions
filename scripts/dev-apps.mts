@@ -44,15 +44,10 @@ export const INFRA_COMPONENTS: InfraComponent[] = [
   { value: 'studio', title: 'Supabase Studio (localhost:54323)' },
   { value: 'redis', title: 'Redis (localhost:6379)' },
   { value: 'strapi', title: 'Strapi + sa base Postgres (localhost:1337)' },
-  {
-    value: 'functions',
-    title: 'Edge functions Deno (formulaire de contact du site)',
-  },
 ];
 
 export const REQUIRES: Record<string, string[]> = {
   studio: ['supabase'],
-  functions: ['supabase'],
   ...Object.fromEntries(
     Object.entries(APPS).map(([app, { infra }]) => [app, infra])
   ),

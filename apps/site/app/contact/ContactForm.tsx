@@ -1,6 +1,7 @@
 'use client';
 
 import { ToastFloater } from '@/site/components/floating-ui/ToastFloater';
+import { getTrpcClient, RouterInput } from '@tet/api';
 import {
   Button,
   Field,
@@ -15,8 +16,14 @@ import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useEffectEvent, useState } from 'react';
-import { supabase } from '../initSupabase';
 import { options } from './data';
+
+/**
+ * Objets acceptés par le backend. Dérivé du routeur plutôt que redéclaré :
+ * ajouter une option dans `./data` sans l'ajouter au schéma Zod côté backend
+ * devient une erreur de compilation.
+ */
+type ContactObjet = RouterInput['shared']['contact']['send']['objet'];
 
 type FormData = {
   objet: { value: number | string; label: string };
@@ -25,6 +32,12 @@ type FormData = {
   email: string;
   tel: string;
   message: string;
+  /**
+   * Piège à robots : masqué à l'écran et hors du parcours clavier, un humain
+   * ne le remplit jamais. Le backend ignore en silence les envois où il est
+   * rempli.
+   */
+  website: string;
 };
 
 const initFormData: FormData = {
@@ -34,9 +47,11 @@ const initFormData: FormData = {
   email: '',
   tel: '',
   message: '',
+  website: '',
 };
 
 const ContactForm = () => {
+  const [trpcClient] = useState(() => getTrpcClient());
   const [formData, setFormData] = useState<FormData>(initFormData);
   const updateFormData = useEffectEvent(
     (value: (prevState: FormData) => FormData) => setFormData(value)
@@ -74,7 +89,7 @@ const ContactForm = () => {
     event.preventDefault();
 
     if (
-      !formData.objet ||
+      !formData.objet.value ||
       !formData.nom ||
       !formData.prenom ||
       !formData.email ||
@@ -83,27 +98,18 @@ const ContactForm = () => {
       setIsError(true);
     } else {
       setIsError(false);
-      const sentData = {
-        ...formData,
-        objet: formData.objet.value,
-      };
-      const { data, error } = await supabase.functions.invoke(
-        'site_send_message',
-        {
-          body: sentData,
-        }
-      );
-      if (data) {
+      try {
+        await trpcClient.shared.contact.send.mutate({
+          ...formData,
+          objet: formData.objet.value as ContactObjet,
+        });
         setStatus('success');
         setFormData(initFormData);
         if (objet !== null) {
           router.push('/contact');
         }
-      } else if (error) {
+      } catch (error) {
         console.error(error);
-        setStatus('error');
-      } else {
-        console.error('site_send_message : aucune donnée reçue');
         setStatus('error');
       }
     }
@@ -129,7 +135,7 @@ const ContactForm = () => {
           handleSubmit(event);
           posthog.capture('envoyer_message');
         }}
-        className="bg-white border border-grey-4 rounded-lg px-4 py-5 md:px-12 md:py-14"
+        className="relative bg-white border border-grey-4 rounded-lg px-4 py-5 md:px-12 md:py-14"
       >
         <FormSectionGrid>
           <Field
@@ -238,6 +244,26 @@ const ContactForm = () => {
             />
           </Field>
         </FormSectionGrid>
+
+        {/* Piège à robots. Masqué en position absolue plutôt qu'avec
+            `display: none` ou `type="hidden"`, que les robots savent ignorer.
+            `aria-hidden` + `tabIndex={-1}` le retirent du parcours clavier et
+            des lecteurs d'écran : personne ne peut le remplir par accident. */}
+        <div
+          aria-hidden="true"
+          className="absolute -left-[9999px] h-px w-px overflow-hidden"
+        >
+          <label htmlFor="website">Ne pas remplir ce champ</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            autoComplete="off"
+            tabIndex={-1}
+            onChange={handleChange}
+            value={formData.website}
+          />
+        </div>
 
         <Button type="submit" className="ml-auto mt-6">
           Envoyer

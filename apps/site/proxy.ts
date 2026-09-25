@@ -64,6 +64,7 @@ export function proxy(request: NextRequest) {
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}
       ${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}
+      ${process.env.NEXT_PUBLIC_BACKEND_URL ?? ''}
       ws://${request.nextUrl.host}
       ${process.env.POSTHOG_HOST ?? ''}
       *.axept.io

@@ -22,6 +22,24 @@ import z from 'zod';
 import { UsersRouter } from '../../users/users.router';
 import { TrpcService } from './trpc.service';
 
+/**
+ * Codes d'erreur imputables au client, et non au serveur.
+ *
+ * Une 401 (non authentifié) ou une 429 (limite d'appels atteinte) est le
+ * fonctionnement nominal du contrôle d'accès ou du rate limit, jamais un bug à
+ * investiguer : on les journalise en `warn` et on ne les remonte pas dans
+ * Sentry. Sinon, sur les procédures publiques, l'abus que le rate limit est
+ * justement là pour absorber se transformerait en quota Sentry.
+ *
+ * Les autres codes 4xx (`BAD_REQUEST` en particulier) restent remontés : sur
+ * les routers internes ils signalent en général une vraie incohérence de
+ * contrat entre le front et le back.
+ */
+const CLIENT_FAULT_ERROR_CODES = new Set<string>([
+  'UNAUTHORIZED',
+  'TOO_MANY_REQUESTS',
+]);
+
 @Injectable()
 export class TrpcRouter {
   private readonly logger = new Logger(TrpcRouter.name);
@@ -70,16 +88,20 @@ export class TrpcRouter {
 
         onError: (opts) => {
           const { error } = opts;
+
+          if (CLIENT_FAULT_ERROR_CODES.has(error.code)) {
+            this.logger.warn(error);
+            return;
+          }
+
           this.logger.error(error);
 
-          if (error.code !== 'UNAUTHORIZED') {
-            Sentry.captureException(
-              error,
-              getSentryContextFromApplicationContext(
-                this.contextStoreService.getContext()
-              )
-            );
-          }
+          Sentry.captureException(
+            error,
+            getSentryContextFromApplicationContext(
+              this.contextStoreService.getContext()
+            )
+          );
         },
       })
     );
