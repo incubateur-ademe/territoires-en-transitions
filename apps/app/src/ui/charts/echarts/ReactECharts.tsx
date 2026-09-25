@@ -9,8 +9,15 @@ import type {
   BarSeriesOption,
   LineSeriesOption,
   PieSeriesOption,
+  ScatterSeriesOption,
 } from 'echarts/charts';
-import { BarChart, LineChart, PieChart, TreemapChart } from 'echarts/charts';
+import {
+  BarChart,
+  LineChart,
+  PieChart,
+  ScatterChart,
+  TreemapChart,
+} from 'echarts/charts';
 import type {
   DatasetComponentOption,
   GridComponentOption,
@@ -23,11 +30,13 @@ import {
   DatasetComponent,
   GridComponent,
   LegendComponent,
+  MarkAreaComponent,
   MarkLineComponent,
   TitleComponent,
   ToolboxComponent,
   TooltipComponent,
 } from 'echarts/components';
+import { LabelLayout } from 'echarts/features';
 import type {
   ComposeOption,
   ECElementEvent,
@@ -38,7 +47,7 @@ import type {
   SetOptionOpts,
 } from 'echarts/core';
 import * as echarts from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
 import type { CSSProperties, JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -64,6 +73,7 @@ export interface ReactEChartsProps {
   settings?: SetOptionOpts;
   loading?: boolean;
   theme?: 'light' | 'dark';
+  renderer?: 'canvas' | 'svg';
   onEvents?: Partial<
     Record<
       EchartEventName,
@@ -93,7 +103,10 @@ echarts.use([
   BarChart,
   PieChart,
   LineChart,
+  ScatterChart,
   TreemapChart,
+
+  LabelLayout,
 
   TitleComponent,
   LegendComponent,
@@ -101,15 +114,18 @@ echarts.use([
   GridComponent,
   ToolboxComponent,
   DatasetComponent,
+  MarkAreaComponent,
   MarkLineComponent,
 
   CanvasRenderer,
+  SVGRenderer,
 ]);
 
 export type EChartsOption = ComposeOption<
   | BarSeriesOption
   | PieSeriesOption
   | LineSeriesOption
+  | ScatterSeriesOption
   | TitleComponentOption
   | LegendComponentOption
   | TooltipComponentOption
@@ -126,6 +142,7 @@ export function ReactECharts({
   loading,
   onEvents,
   theme,
+  renderer = 'canvas',
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartStyle, setChartStyle] = useState<CSSProperties>({
@@ -147,12 +164,10 @@ export function ReactECharts({
         setChartStyle((prev) => ({ ...prev, height }));
       }
 
-      const opts: EChartsInitOpts | undefined =
-        heightRatio && height
-          ? {
-              height: height,
-            }
-          : undefined;
+      const hasComputedHeight = Boolean(heightRatio) && height !== undefined;
+      const opts: EChartsInitOpts = hasComputedHeight
+        ? { renderer, height }
+        : { renderer };
 
       chart = echarts.init(chartRef.current, theme, opts);
     }
@@ -169,7 +184,7 @@ export function ReactECharts({
       chart?.dispose();
       window.removeEventListener('resize', resizeChart);
     };
-  }, [theme, heightRatio]);
+  }, [theme, heightRatio, renderer]);
 
   useEffect(() => {
     // Update chart
