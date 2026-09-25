@@ -298,8 +298,8 @@ describe('runImportPipeline', () => {
       .mocked(llm.generateStructured)
       .mock.calls.map(([args]) => (args as { prompt: string }).prompt);
     // L'axe seul est trop court pour vivre seul : il rejoint la première
-    // fiche. Deux unités, deux structurations, puis une seule fenêtre de
-    // contrôle.
+    // fiche. Les deux unités tiennent dans un seul appel de structuration,
+    // puis une seule fenêtre de contrôle.
     expect(
       prompts.filter((p) => p.includes('agent de tri documentaire'))
     ).toHaveLength(1);
@@ -308,7 +308,7 @@ describe('runImportPipeline', () => {
     );
     expect(
       prompts.filter((p) => p.includes('Extrait à structurer'))
-    ).toHaveLength(2);
+    ).toHaveLength(1);
     // Le squelette relevé est cité à chaque structuration.
     expect(prompts.find((p) => p.includes('Extrait à structurer'))).toContain(
       'Axe 1 : Bâtiments'

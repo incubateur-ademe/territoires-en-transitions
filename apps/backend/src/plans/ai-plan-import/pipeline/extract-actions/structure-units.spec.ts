@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { buildDocument, buildPage } from '../document/document-page';
 import { segmentDocument } from '../segment-document/segment-document';
 import { ExtractionAction } from './extract-actions.schema';
-import { structureUnits } from './structure-units';
+import { packUnits, structureUnits } from './structure-units';
 
 const tokens = {
   promptTokens: 10,
@@ -71,34 +71,51 @@ const llmAnswering = (answer: (call: Call) => unknown) => {
   return { llm, calls };
 };
 
-describe('structureUnits', () => {
-  it('structure chaque extrait avec le palier fort, situé et borné, puis recolle dans l’ordre', async () => {
-    const { llm, calls } = llmAnswering((call) =>
-      call.prompt.includes('Isoler')
-        ? [anExtractionAction('1.1.1 Isoler les écoles')]
-        : [anExtractionAction('1.1.2 Rénover la mairie')]
+describe('packUnits', () => {
+  it('regroupe les unités voisines sous le plafond, dans l’ordre', () => {
+    const sized = (tokens: number) => ({ ...units[0], tokenEstimate: tokens });
+
+    const packs = packUnits(
+      [sized(4000), sized(4000), sized(4000), sized(9500)],
+      9000
     );
+
+    expect(packs.map((pack) => pack.map(({ index }) => index))).toEqual([
+      [0, 1],
+      [2],
+      [3],
+    ]);
+  });
+});
+
+describe('structureUnits', () => {
+  it('structure les petites unités en un seul appel au palier fort, situé, puis recolle dans l’ordre', async () => {
+    const { llm, calls } = llmAnswering(() => [
+      anExtractionAction('1.1.1 Isoler les écoles'),
+      anExtractionAction('1.1.2 Rénover la mairie'),
+    ]);
 
     const result = await structureUnits(llm, input);
 
-    expect(calls).toHaveLength(2);
-    expect(calls[0]).toMatchObject({ tier: 'strong', maxOutputTokens: 8000 });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatchObject({ tier: 'strong', maxOutputTokens: 32000 });
     expect(calls[0].systemInstruction).toContain('2026-09-25');
     expect(calls[0].prompt).toContain(
-      'Extrait à structurer (extrait 1 sur 2, pages 1 à 1)'
+      'Extrait à structurer (extraits 1 à 2 sur 2, pages 1 à 2)'
     );
+    expect(calls[0].prompt).toContain('[Extrait 1/2 · page 1]');
+    expect(calls[0].prompt).toContain('[Extrait 2/2 · page 2]');
     expect(calls[0].prompt).toContain('Consigne particulière');
     expect(calls[0].prompt).toContain('Aucun squelette connu');
-    expect(calls[1].prompt).toContain('[Extrait 2/2 · page 2]');
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.actions.map((action) => action.titre)).toEqual([
         '1.1.1 Isoler les écoles',
         '1.1.2 Rénover la mairie',
       ]);
-      expect(result.data.chunkIndexByAction).toEqual([0, 1]);
-      expect(result.data.chunks).toHaveLength(2);
-      expect(result.data.tokens.totalTokens).toBe(30);
+      expect(result.data.chunkIndexByAction).toEqual([0, 0]);
+      expect(result.data.chunks).toHaveLength(1);
+      expect(result.data.warnings).toEqual([]);
     }
   });
 
@@ -121,6 +138,67 @@ describe('structureUnits', () => {
     expect(calls[0].prompt).toContain('Axe 1 : Bâtiments\n  1.1 Rénover');
   });
 
+  it('relance une réponse tronquée avec un budget doublé', async () => {
+    const generateStructured = vi
+      .fn()
+      .mockResolvedValueOnce(failure({ kind: 'truncated' }))
+      .mockResolvedValueOnce(
+        success({ data: [anExtractionAction('A')], tokens })
+      );
+    const llm = { generateStructured } as unknown as Pick<
+      LlmService,
+      'generateStructured'
+    >;
+
+    const result = await structureUnits(llm, input);
+
+    expect(result.success).toBe(true);
+    expect(
+      generateStructured.mock.calls.map(([call]) => call.maxOutputTokens)
+    ).toEqual([32000, 64000]);
+  });
+
+  it('écarte un paquet qui échoue encore, sans faire échouer l’import', async () => {
+    const many = Array.from({ length: 6 }, (_, index) => ({
+      ...units[0],
+      tokenEstimate: 8000,
+      lines: [{ text: `Action ${index}`, pageIndex: index }],
+      pageStart: index,
+      pageEnd: index,
+    }));
+    const llm = {
+      generateStructured: vi.fn(async ({ prompt }: { prompt: string }) =>
+        prompt.includes('extrait 3 sur')
+          ? failure({ kind: 'truncated' })
+          : success({
+              data: [anExtractionAction(`A ${prompt.length}`)],
+              tokens,
+            })
+      ),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await structureUnits(llm, { ...input, units: many });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.chunks).toHaveLength(6);
+      expect(result.data.warnings).toEqual([
+        'Extrait écarté (extrait 3 sur 6, pages 3 à 3) : truncated',
+      ]);
+    }
+  });
+
+  it('échoue quand trop de paquets sont perdus', async () => {
+    const llm = {
+      generateStructured: vi.fn(async () => failure({ kind: 'truncated' })),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    expect(await structureUnits(llm, input)).toMatchObject({
+      success: false,
+      error: { kind: 'truncated' },
+    });
+  });
+
   it('accepte un extrait sans action, mais échoue si aucun n’en contient', async () => {
     const { llm } = llmAnswering(() => []);
 
@@ -130,7 +208,7 @@ describe('structureUnits', () => {
     });
   });
 
-  it('propage la première erreur du modèle', async () => {
+  it('propage une erreur non récupérable du modèle', async () => {
     const llm = {
       generateStructured: vi.fn(async () => failure({ kind: 'rate_limited' })),
     } as unknown as Pick<LlmService, 'generateStructured'>;

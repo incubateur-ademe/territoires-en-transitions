@@ -27,11 +27,3 @@ export const renderUnit = (
   }
   return `${header}\n${body.join('\n')}`;
 };
-
-export const describeUnitPosition = (
-  unit: DocumentUnit,
-  { index, count }: { index: number; count: number }
-): string =>
-  `extrait ${index + 1} sur ${count}, pages ${unit.pageStart + 1} à ${
-    unit.pageEnd + 1
-  }`;
