@@ -51,6 +51,7 @@ type EvalOutput = EvalRun & {
   };
   status: 'done' | 'failed';
   error: string | null;
+  warnings: string[];
   stepStates: unknown;
   diff: EvalDiff | null;
 };
@@ -212,6 +213,7 @@ const main = async (): Promise<number> => {
         ? `${outcome.failedStep}: ${outcome.error.kind}`
         : null,
     stepStates: outcome.stepStates,
+    warnings: outcome.status === 'done' ? outcome.warnings : [],
     metrics,
     draft,
     diff,
@@ -229,6 +231,9 @@ const main = async (): Promise<number> => {
   await writeFile(outPath, JSON.stringify(output, null, 2));
 
   printMetrics(metrics, output.status, output.error);
+  for (const warning of output.warnings) {
+    print(`  ⚠ ${warning}`);
+  }
   if (diff) {
     printDiff(diff);
   }
