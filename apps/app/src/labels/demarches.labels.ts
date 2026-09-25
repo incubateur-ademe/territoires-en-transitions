@@ -728,6 +728,17 @@ export const demarchesLabels = {
     "L'année de référence n'a pas pu être modifiée.",
   pcaetDiagnosticApplicabiliteEchec:
     "L'applicabilité de l'indicateur n'a pas pu être modifiée.",
-  pcaetDiagnosticIndicateurNonApplicable: 'Non applicable',
+  /**
+   * Nom accessible de la bascule : le titre distingue les lignes entre elles, et
+   * l’état n’y figure pas — la coche le dit déjà, et un nom qui changerait à
+   * l’activation renommerait le contrôle sous l’utilisateur.
+   */
+  pcaetDiagnosticIndicateurApplicabiliteBascule: ({
+    titre,
+  }: {
+    titre: string;
+  }) => `Applicabilité : ${titre}`,
+  pcaetDiagnosticIndicateurMarquerApplicable: 'Marquer comme applicable',
+  pcaetDiagnosticIndicateurMarquerNonApplicable: 'Marquer comme non applicable',
   pcaetDiagnosticValeurNonApplicable: 'N/A',
 } as const;

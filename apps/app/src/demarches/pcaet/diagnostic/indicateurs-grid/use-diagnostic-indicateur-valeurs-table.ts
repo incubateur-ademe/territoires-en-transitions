@@ -96,7 +96,17 @@ export const useDiagnosticIndicateurValeursTable = ({
 
   const referenceYear = referenceYearOverride ?? derivedReferenceYear ?? 0;
 
-  const years = [referenceYear, ...OBJECTIF_YEARS];
+  /**
+   * Référence stable : sinon chaque rendu recrée ce tableau, ce qui invalide
+   * la mémoïsation des colonnes en aval (`useListIndicateurValeursTableColumns`)
+   * et fait remonter toutes les cellules à chaque rendu — la bascule
+   * d'applicabilité, entre autres, perdait alors sa transition CSS (montée à
+   * neuf = pas d'état précédent depuis lequel transitionner).
+   */
+  const years = useMemo(
+    () => [referenceYear, ...OBJECTIF_YEARS],
+    [referenceYear]
+  );
 
   const unit = rows[0]?.indicateurDefinition.unite;
 

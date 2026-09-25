@@ -25,7 +25,6 @@ declare module '@tanstack/react-table' {
     onReferenceYearChange?: IndicateurValeursTableMeta['onReferenceYearChange'];
     updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
     setIndicateurApplicable?: IndicateurValeursTableMeta['setIndicateurApplicable'];
-    isSettingIndicateurApplicable?: IndicateurValeursTableMeta['isSettingIndicateurApplicable'];
   }
 }
 
@@ -101,10 +100,8 @@ export const IndicateurValeursTable = ({
       }
     };
 
-  const {
-    setIndicateurApplicable: mutateIndicateurApplicable,
-    isPending: isSettingIndicateurApplicable,
-  } = useSetIndicateurApplicable(demarcheId);
+  const { setIndicateurApplicable: mutateIndicateurApplicable } =
+    useSetIndicateurApplicable(demarcheId);
 
   const setIndicateurApplicable: IndicateurValeursTableMeta['setIndicateurApplicable'] =
     async ({ indicateurId, isApplicable }) => {
@@ -132,7 +129,6 @@ export const IndicateurValeursTable = ({
       onReferenceYearChange,
       updateIndicateurValeurs,
       setIndicateurApplicable,
-      isSettingIndicateurApplicable,
     },
   });
 

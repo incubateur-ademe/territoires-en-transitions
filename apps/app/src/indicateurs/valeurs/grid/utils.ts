@@ -21,11 +21,6 @@ export type IndicateurValeursTableMeta = {
     indicateurId: number;
     isApplicable: boolean;
   }) => Promise<boolean>;
-  /**
-   * Vrai le temps de l'aller-retour serveur (invalidation comprise), pendant
-   * lequel les lignes portent encore l'ancienne applicabilité.
-   */
-  isSettingIndicateurApplicable: boolean;
 };
 
 const isTableMetaValid = (
@@ -55,14 +50,6 @@ const isTableMetaValid = (
     'setIndicateurApplicable' in meta &&
     meta.setIndicateurApplicable !== undefined &&
     typeof meta.setIndicateurApplicable !== 'function'
-  ) {
-    return false;
-  }
-
-  if (
-    'isSettingIndicateurApplicable' in meta &&
-    meta.isSettingIndicateurApplicable !== undefined &&
-    typeof meta.isSettingIndicateurApplicable !== 'boolean'
   ) {
     return false;
   }

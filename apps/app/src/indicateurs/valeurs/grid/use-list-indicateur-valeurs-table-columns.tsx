@@ -45,15 +45,13 @@ const listColumns = ({
     id: 'title',
     header: () => <IndicateurHeaderTitleCell title={title} unit={unit} />,
     cell: ({ row, table }) => {
-      const { setIndicateurApplicable, isSettingIndicateurApplicable } =
-        getTableMeta(table);
+      const { setIndicateurApplicable } = getTableMeta(table);
       const { indicateurId, indicateurLabel, isApplicable } = row.original;
 
       return (
         <IndicateurTitleCell
           title={indicateurLabel}
           isApplicable={isApplicable}
-          isApplicableChangePending={isSettingIndicateurApplicable}
           onApplicableChange={
             isReadonly
               ? undefined

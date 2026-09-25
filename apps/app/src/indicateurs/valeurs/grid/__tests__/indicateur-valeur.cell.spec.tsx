@@ -1,8 +1,10 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { IndicateurValeur } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurValeur,
+} from '@tet/domain/indicateurs';
 import { capitalize } from '@tet/ui/labels/plural';
 import { describe, expect, it, vi } from 'vitest';
 import { IndicateurValeurCell } from '../indicateur-valeur.cell';
@@ -61,7 +63,6 @@ const buildCellContext = ({
     onReferenceYearChange: vi.fn(),
     updateIndicateurValeurs,
     setIndicateurApplicable: vi.fn().mockResolvedValue(true),
-    isSettingIndicateurApplicable: false,
   };
 
   const cell = {
