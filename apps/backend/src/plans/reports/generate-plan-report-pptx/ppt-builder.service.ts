@@ -43,7 +43,7 @@ import {
   StatusTracker,
 } from 'pptx-automizer';
 import { ElementInfo, XmlElement } from 'pptx-automizer/dist/types/xml-types';
-import sharp from 'sharp';
+import sharp, { type Metadata } from 'sharp';
 import { CountByService } from '../../fiches/count-by/count-by.service';
 import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
 import { ComputeBudgetRules } from '../../plans/compute-budget/compute-budget.rules';
@@ -786,7 +786,7 @@ export class PptBuilderService {
 
     presentation.loadMedia(logoFileName);
 
-    let metadata: sharp.Metadata;
+    let metadata: Metadata;
     try {
       metadata = await sharp(logoFilePath).metadata();
     } catch (err) {
