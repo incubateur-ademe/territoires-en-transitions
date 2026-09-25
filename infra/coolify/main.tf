@@ -1,0 +1,176 @@
+# Couche « Coolify-as-code » : ce qui vit *dans* Coolify, pas chez Scaleway.
+#
+# State distinct des stacks d'infrastructure : cette couche suppose Coolify
+# déjà up et joignable. La garder séparée évite que le `plan` de l'infra
+# Scaleway exige que l'application tourne (poule-œuf au premier boot).
+
+locals {
+  # Serveur du control plane : Coolify le crée lui-même à l'install pour
+  # piloter sa propre machine. On ne fait que lui substituer une clé stable.
+  host_key_name = "${var.coolify_server_name}-host"
+}
+
+# --- Clé du serveur localhost (control plane) ---
+#
+# Clé privée SSH host, lue depuis Secret Manager (créée par infra/platform,
+# module coolify-controller → tls_private_key + scaleway_secret).
+# `data` est renvoyé en base64 par le provider → on décode pour obtenir la clé
+# OpenSSH telle quelle.
+data "scaleway_secret_version" "host_key" {
+  secret_name = var.host_key_secret_name
+  revision    = "latest"
+}
+
+resource "coolify_private_key" "host" {
+  name        = local.host_key_name
+  description = "Clé host pilotant le serveur localhost du control plane. Gérée par Terraform (infra/coolify). Privée dans Secret Manager (${var.host_key_secret_name})."
+  private_key = base64decode(data.scaleway_secret_version.host_key.data)
+}
+
+resource "terraform_data" "assign_host_key" {
+  # Re-exécute si la clé change (rotation / recréation).
+  triggers_replace = [coolify_private_key.host.uuid]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../scripts/coolify-upsert-server.sh"
+    environment = {
+      COOLIFY_ENDPOINT = var.coolify_endpoint
+      PRIVATE_KEY_UUID = coolify_private_key.host.uuid
+      SERVER_NAME      = "localhost"
+      MATCH_LOCALHOST  = "true"
+      # COOLIFY_TOKEN est hérité de l'environnement (coolify-env.sh).
+    }
+  }
+}
+
+# --- Serveurs applicatifs ---
+#
+# Une clé par serveur : révoquer l'accès à un serveur compromis ne doit pas
+# casser les autres.
+data "scaleway_secret_version" "server_key" {
+  for_each = var.app_servers
+
+  secret_name = each.value.ssh_key_secret_name
+  revision    = "latest"
+}
+
+resource "coolify_private_key" "server" {
+  for_each = var.app_servers
+
+  name        = "${each.value.name}-root"
+  description = "Clé root du serveur ${each.value.name}. Gérée par Terraform (infra/coolify). Privée dans Secret Manager (${each.value.ssh_key_secret_name})."
+  private_key = base64decode(data.scaleway_secret_version.server_key[each.key].data)
+}
+
+# Enregistrement des serveurs distants via l'API REST plutôt que via la
+# ressource coolify_server du provider, marquée « not fully implemented » :
+# un drift sur cette ressource détacherait les projets déployés.
+#
+# Coolify joint ces serveurs sur leur IP *privée* : leur port 22 n'est pas
+# exposé publiquement, seule l'ACL du VPC laisse passer le control plane.
+resource "terraform_data" "server" {
+  for_each = var.app_servers
+
+  triggers_replace = [
+    each.value.name,
+    each.value.private_ip,
+    coolify_private_key.server[each.key].uuid,
+  ]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../scripts/coolify-upsert-server.sh"
+    environment = {
+      COOLIFY_ENDPOINT   = var.coolify_endpoint
+      PRIVATE_KEY_UUID   = coolify_private_key.server[each.key].uuid
+      SERVER_NAME        = each.value.name
+      SERVER_IP          = each.value.private_ip
+      SERVER_USER        = "root"
+      SERVER_PORT        = "22"
+      SERVER_DESCRIPTION = "Tier ${each.key}. Géré par Terraform (infra/${each.key})."
+      # COOLIFY_TOKEN est hérité de l'environnement (coolify-env.sh).
+    }
+  }
+}
+
+# docker login ghcr.io sur root@serveur — prérequis pour tirer les images
+# privées (Coolify n'a pas d'API de credentials registry ; le helper monte
+# /root/.docker/config.json).
+#
+# Le PAT reste hors state : lecture scw + SSH dans le script (R4). Rejouer
+# après rotation : incrémenter ghcr_pull_credentials_revision.
+resource "terraform_data" "ghcr_docker_login" {
+  for_each = var.app_servers
+
+  triggers_replace = [
+    each.value.private_ip,
+    var.coolify_public_ip,
+    var.ghcr_pull_secret_name,
+    var.ghcr_pull_credentials_revision,
+    # Recréation de la clé du serveur ⇒ rejouer le login.
+    coolify_private_key.server[each.key].uuid,
+  ]
+
+  # Après enregistrement du serveur : inutile d'écrire des credentials sur une
+  # machine que Coolify ne pilote pas encore.
+  depends_on = [terraform_data.server]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../scripts/coolify-ghcr-docker-login.sh"
+    environment = {
+      TARGET_HOST            = each.value.private_ip
+      SERVER_KEY_SECRET_NAME = each.value.ssh_key_secret_name
+      GHCR_PULL_SECRET_NAME  = var.ghcr_pull_secret_name
+      # Les serveurs applicatifs n'ont pas de SSH public : rebond obligatoire
+      # par le control plane.
+      BASTION_HOST = var.coolify_public_ip
+      BASTION_USER = var.bastion_user
+    }
+  }
+}
+
+# --- Projets ---
+#
+# Un projet par environnement. staging et preprod partagent un serveur mais
+# restent deux projets distincts : c'est la frontière de configuration
+# (variables, domaines, ressources) qui compte, pas la machine.
+resource "coolify_project" "env" {
+  for_each = var.projects
+
+  name        = each.key
+  description = each.value
+}
+
+# --- S3 storage (backups) ---
+#
+# Le provider sierrajc/coolify n'expose pas coolify_s3_storage (disponible
+# seulement sur coolify-terraform/coolify). On passe par l'API REST vérifiée
+# (GET/POST/PATCH /s3-storages + POST …/validate), comme pour les serveurs.
+# Credentials hors state : Secret Manager + script (R4).
+resource "terraform_data" "s3_storage" {
+  triggers_replace = [
+    var.s3_storage_name,
+    var.s3_bucket,
+    var.s3_endpoint,
+    var.s3_region,
+    var.s3_credentials_secret_name,
+    var.s3_credentials_revision,
+  ]
+
+  # Après la clé host : Coolify est joignable et le token API a déjà été
+  # exercé. Pas de dépendance sur les serveurs (chemins indépendants).
+  depends_on = [terraform_data.assign_host_key]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../scripts/coolify-configure-s3-storage.sh"
+    environment = {
+      COOLIFY_ENDPOINT           = var.coolify_endpoint
+      S3_STORAGE_NAME            = var.s3_storage_name
+      S3_ENDPOINT                = var.s3_endpoint
+      S3_BUCKET                  = var.s3_bucket
+      S3_REGION                  = var.s3_region
+      S3_CREDENTIALS_SECRET_NAME = var.s3_credentials_secret_name
+      S3_DESCRIPTION             = "Scaleway Object Storage (${var.s3_bucket}). Géré par Terraform (infra/coolify)."
+      # COOLIFY_TOKEN hérité de l'environnement (coolify-env.sh).
+    }
+  }
+}

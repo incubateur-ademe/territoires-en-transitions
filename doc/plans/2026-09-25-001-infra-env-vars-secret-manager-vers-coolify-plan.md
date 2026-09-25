@@ -7,26 +7,33 @@ date: 2026-09-25
 
 # Variables d'environnement : Scaleway Secret Manager → Coolify
 
+> **Note de relecture.** Ce plan a été écrit avant la restructuration
+> multi-environnements de `infra/`. Les chemins ont été mis à jour
+> (`infra/preprod` → `infra/nonprod`, `infra/coolify-preprod` → `infra/coolify`),
+> mais le périmètre reste à étendre : le manifeste ne couvre que preprod, alors
+> que la cible compte désormais quatre environnements (prod, preprod, staging,
+> preview) pilotés par une instance Coolify unique. Voir `infra/README.md`.
+
 ## Overview
 
 Les images Docker sont prêtes, mais aucun chemin automatisé n'alimente les conteneurs en
 variables d'environnement. Aujourd'hui c'est du copier-coller :
-`infra/preprod/supabase-api/.env.example` dit « à reporter dans l'onglet Environment
-Variables du Compose dans Coolify », et `infra/preprod/Makefile` termine par un `echo` de la
+`infra/nonprod/supabase-api/.env.example` dit « à reporter dans l'onglet Environment
+Variables du Compose dans Coolify », et `infra/nonprod/Makefile` termine par un `echo` de la
 `DATABASE_URL` GoTrue à recopier à la main.
 
 Deux trous à fermer :
 
 1. **Valeurs dérivées de l'infra** (URI Postgres, IP privée Redis, mot de passe
    `supabase_auth_admin`) : elles ne vivent que comme outputs sensibles du state
-   `infra/preprod`. Les modules `postgres` et `redis` le documentent eux-mêmes — « À stocker
+   `infra/nonprod`. Les modules `postgres` et `redis` le documentent eux-mêmes — « À stocker
    immédiatement dans Scaleway Secret Manager après le premier apply » — geste jamais codé.
 2. **Secrets applicatifs** (Brevo, ProConnect, Mon Compte ADEME, Google) : ils n'ont aucun
    domicile. Ils sont dans `apps/*/.env` chiffrés par dotenvx, qui ne servent qu'au dev local
    (le `.dockerignore` les exclut du contexte de build).
 
 Cible : Secret Manager source de vérité, Terraform le tuyau, Coolify la cible de livraison —
-en réutilisant les patterns déjà en place dans `infra/coolify-preprod/`.
+en réutilisant les patterns déjà en place dans `infra/coolify/`.
 
 Périmètre : `apps/app`, `apps/backend`, stack `supabase-api` (gotrue + storage).
 Hors périmètre : `apps/site` (toujours inliné au build), `apps/tools` (aucun `ARG` applicatif,
@@ -83,7 +90,7 @@ Corollaire acté par le brainstorm (ligne 262) : la base interne de Coolify cont
 env vars et doit être sauvegardée séparément. C'est pourquoi elle ne peut pas être source de
 vérité — Secret Manager l'est, Coolify n'en est qu'un réplica.
 
-**Pont inter-stack : `scaleway_secret` dans `infra/preprod`, pas de `terraform_remote_state`.**
+**Pont inter-stack : `scaleway_secret` dans `infra/nonprod`, pas de `terraform_remote_state`.**
 On garde la convention : entre stacks on passe des *noms* de secrets, jamais des valeurs.
 
 **Layout SM : un secret par variable, regroupés par `path`.** `scaleway_secret` accepte
@@ -91,7 +98,7 @@ On garde la convention : entre stacks on passe des *noms* de secrets, jamais des
 
 **Manifeste : mapping explicite `{ CLÉ_ENV = { … secret_name … } }`.** Le nom du secret n'est
 jamais dérivé du nom de la variable : la convention des secrets est kebab-case préfixé
-(`tet-preprod-…`, comme `tet-preprod-coolify-host-ssh-key`), celle des variables est
+(`tet-preprod-…`, comme `tet-platform-coolify-host-ssh-key`), celle des variables est
 `SCREAMING_SNAKE`, et le jeu de caractères admis pour les *noms* Scaleway n'est pas documenté
 (seuls les `path` le sont). Le mapping rend aussi possible que deux clés visent le même secret.
 
@@ -157,9 +164,9 @@ provoquerait une bataille à chaque apply.
 ## Fichiers
 
 ```
-infra/preprod/
+infra/nonprod/
   coolify-env-secrets.tf              nouveau — 3 valeurs dérivées de l'infra
-infra/coolify-preprod/
+infra/coolify/
   env-manifest.tf                     nouveau — LE manifeste (locals)
   env-secrets.tf                      nouveau — coquilles scaleway_secret (owner="manual")
   env-push.tf                         nouveau — normalisation, préconditions, push, redéploiement
@@ -171,7 +178,7 @@ scripts/
   check-env-manifest.mts              nouveau — contrôle manifeste ↔ code (CI)
 ```
 
-### `infra/preprod/coolify-env-secrets.tf`
+### `infra/nonprod/coolify-env-secrets.tf`
 
 Trois secrets seulement — ceux dont Terraform connaît déjà la valeur (elle est déjà dans le
 state A via `random_password`, donc aucune régression de posture) :
@@ -207,10 +214,10 @@ resource "scaleway_secret_version" "coolify_env" {
 }
 ```
 
-Prérequis : bumper le lock du provider Scaleway de `infra/preprod` (2.76 → 2.79, déjà la
-version lockée côté `coolify-preprod`) pour disposer de `protected`.
+Prérequis : provider Scaleway >= 2.79 pour disposer de `protected`. Déjà satisfait depuis
+la restructuration multi-environnements — tous les stacks déclarent `~> 2.79`.
 
-### `infra/coolify-preprod/env-manifest.tf`
+### `infra/coolify/env-manifest.tf`
 
 Grammaire d'une entrée, identique dans tous les scopes :
 
@@ -377,7 +384,7 @@ Il compare `terraform output -json env_manifest_json` à :
 
 - les clés **requises** de `backendConfigurationSchema` (scope `backend`) ;
 - `PUBLIC_ENV_KEYS` moins la liste d'exclusion, plus les 3 serveur (scope `app`) ;
-- les `${VAR}` extraits de `infra/preprod/supabase-api/docker-compose.yml`.
+- les `${VAR}` extraits de `infra/nonprod/supabase-api/docker-compose.yml`.
 
 Règle : toute clé **requise** du code doit être au manifeste, toute clé du manifeste doit
 exister dans le code. Les clés à `prefault` peuvent manquer. À brancher dans le futur
@@ -439,7 +446,7 @@ done
 ### Étape 2 — Stack A : valeurs dérivées
 
 ```sh
-cd infra/preprod && terraform init -upgrade   # provider 2.76 → 2.79 (attribut `protected`)
+cd infra/nonprod && terraform init            # provider >= 2.79 (attribut `protected`)
 terraform plan -out=tfplan                    # 6 à créer, 0 à détruire
 terraform apply tfplan
 ```
@@ -449,7 +456,8 @@ qu'il ne morde :
 ```sh
 URI="$(scw secret version access-by-path secret-name=tet-preprod-gotrue-db-url \
   secret-path=/coolify-env/supabase-api revision=latest --output=json | jq -r '.data' | base64 --decode)"
-ssh root@$COOLIFY_PUBLIC_IP "docker run --rm postgres:15 psql '$URI' -c 'select 1'"
+ssh -J tet-ops@$COOLIFY_PUBLIC_IP -i "$SERVER_KEY" root@$SERVER_PRIVATE_IP \
+  "docker run --rm postgres:15 psql '$URI' -c 'select 1'"
 # → 1. Un échec de parsing signale un caractère réservé dans le mot de passe.
 ```
 
@@ -457,7 +465,7 @@ ssh root@$COOLIFY_PUBLIC_IP "docker run --rm postgres:15 psql '$URI' -c 'select 
 
 ```sh
 terraform fmt -recursive infra/
-cd infra/coolify-preprod && terraform init && terraform validate && terraform plan
+cd infra/coolify && terraform init && terraform validate && terraform plan
 pnpm tsx scripts/check-env-manifest.mts
 ```
 
@@ -603,13 +611,13 @@ littérale en suivant le README seul.
     qui permet la revue en PR, et ce qui rend les préconditions anti-fuite indispensables. Il
     faudra résister à « juste mettre ce petit token en literal pour débloquer ».
 
-14. **`confirmation.html`** (`infra/preprod/supabase-api/templates/`) contient une URL en dur
+14. **`confirmation.html`** (`infra/nonprod/supabase-api/templates/`) contient une URL en dur
     `http://localhost:3003/signup?...`. Sans rapport avec les env vars, mais bloquant pour un
     preprod fonctionnel — à corriger avant l'étape 7.
 
 ## Fichiers de référence
 
-- `infra/coolify-preprod/main.tf` — pattern `terraform_data` + `local-exec` à répliquer
+- `infra/coolify/main.tf` — pattern `terraform_data` + `local-exec` à répliquer
 - `infra/scripts/coolify-configure-s3-storage.sh` — squelette de script (garde-fous, lecture
   `scw`, logs `→`/`✓`/`✗`), à durcir sur le passage des valeurs hors argv
 - `apps/backend/src/utils/config/configuration.model.ts` — source de vérité des 44 clés backend

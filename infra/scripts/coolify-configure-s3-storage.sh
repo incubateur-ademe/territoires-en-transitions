@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Enregistre (ou met à jour) un S3 storage Scaleway dans Coolify, puis le valide.
 #
-# Invoqué par terraform_data.s3_storage (infra/coolify-preprod/main.tf), ou
+# Invoqué par terraform_data.s3_storage (infra/coolify/main.tf), ou
 # manuellement. Idempotent : GET /s3-storages par name → POST ou PATCH, puis
 # POST /s3-storages/{uuid}/validate (ListObjectsV2 sur le bucket).
 #
@@ -28,7 +28,7 @@ set -euo pipefail
 : "${S3_REGION:?S3_REGION non défini}"
 : "${S3_CREDENTIALS_SECRET_NAME:?S3_CREDENTIALS_SECRET_NAME non défini}"
 
-_DESCRIPTION="${S3_DESCRIPTION:-Scaleway Object Storage géré par Terraform (infra/coolify-preprod).}"
+_DESCRIPTION="${S3_DESCRIPTION:-Scaleway Object Storage géré par Terraform (infra/coolify).}"
 
 for bin in curl jq scw; do
   command -v "$bin" >/dev/null 2>&1 || {

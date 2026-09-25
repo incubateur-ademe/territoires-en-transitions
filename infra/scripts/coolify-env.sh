@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Exporte COOLIFY_ENDPOINT et COOLIFY_TOKEN pour le provider Terraform `coolify`
-# (infra/coolify-preprod/) et les scripts d'API Coolify. À SOURCER, comme
+# (infra/coolify/) et les scripts d'API Coolify. À SOURCER, comme
 # scripts/tf-env.sh :
 #
 #     source infra/scripts/coolify-env.sh
@@ -9,8 +9,10 @@
 # (Security > API Tokens, scope root), puis stocké dans Scaleway Secret Manager.
 # On ne le met jamais en clair dans le repo ni dans le state (R4).
 
-export COOLIFY_ENDPOINT="${COOLIFY_ENDPOINT:-https://coolify.preprod.territoiresentransitions.fr/api/v1}"
-_secret_name="${COOLIFY_TOKEN_SECRET_NAME:-tet-preprod-coolify-api-token-permissions-root}"
+# L'instance Coolify est transverse : un seul endpoint pilote tous les
+# environnements, d'où l'absence de préfixe d'environnement ici.
+export COOLIFY_ENDPOINT="${COOLIFY_ENDPOINT:-https://coolify.territoiresentransitions.fr/api/v1}"
+_secret_name="${COOLIFY_TOKEN_SECRET_NAME:-tet-platform-coolify-api-token}"
 
 if [ -z "${COOLIFY_TOKEN:-}" ] && command -v scw >/dev/null 2>&1; then
   # Secret Manager renvoie la valeur encodée en base64 dans .data → on décode.
