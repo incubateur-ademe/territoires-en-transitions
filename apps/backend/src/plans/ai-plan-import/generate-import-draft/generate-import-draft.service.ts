@@ -155,6 +155,9 @@ export class GenerateImportDraftService {
           });
     }
 
+    for (const warning of outcome.warnings) {
+      this.logger.warn(`Import ${job.id}: ${warning}`);
+    }
     return this.persistDraftAsPlan(job, outcome.draft, outcome.stepStates);
   }
 

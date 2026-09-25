@@ -96,6 +96,8 @@ export type PipelineOutcome =
   | {
       status: 'done';
       draft: PlanDraft;
+      /** Ce qui a été écarté en route sans faire échouer l'import. */
+      warnings: string[];
       stepStates: StepStates;
       tokens: TokenUsage;
     }
@@ -112,12 +114,14 @@ type Progress = {
   review: string | null;
   tokens: TokenUsage;
   stepStates: StepStates;
+  warnings: string[];
 };
 
 type StepProduce = {
   actions?: ExtractedAction[];
   review?: string;
   tokens: TokenUsage;
+  warnings?: string[];
 };
 
 type StepGo =
@@ -324,6 +328,7 @@ const mergeStepResult = (
   review: produce.review ?? progress.review,
   tokens: sumTokenUsage([progress.tokens, produce.tokens]),
   stepStates: { ...progress.stepStates, [name]: 'ok' },
+  warnings: [...progress.warnings, ...(produce.warnings ?? [])],
 });
 
 const markSkipped = (progress: Progress, name: StepName): Progress => ({
@@ -393,6 +398,7 @@ const failed = (
 const done = (progress: Progress): PipelineOutcome => ({
   status: 'done',
   draft: { actions: progress.actions, qualitativeReview: progress.review },
+  warnings: progress.warnings,
   stepStates: progress.stepStates,
   tokens: progress.tokens,
 });
@@ -413,4 +419,5 @@ const initialProgress = (): Progress => ({
   review: null,
   tokens: emptyTokenUsage(),
   stepStates: initialStepStates(),
+  warnings: [],
 });
