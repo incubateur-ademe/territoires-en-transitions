@@ -107,7 +107,7 @@ export class EnqueueImportService {
     }
 
     const sourcePath = `${collectiviteId}/${randomUUID()}`;
-    const created = await this.jobRepository.createUnlessInFlight({
+    const created = await this.jobRepository.createWithinQuotas({
       collectiviteId,
       createdBy: user.id,
       sourcePath,
