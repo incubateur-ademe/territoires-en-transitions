@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Icon, Textarea } from '@tet/ui';
 import { isNil } from 'es-toolkit';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSetPersonnalisationJustification } from '../data/use-set-personnalisation-justification';
 import { QuestionReponseProps } from './question-reponse-props.types';
 
@@ -18,10 +18,15 @@ export const Justification = (props: QuestionReponseProps) => {
   const { mutateAsync: saveJustification } =
     useSetPersonnalisationJustification(collectiviteId);
 
-  // synchronise la valeur initiale car la réponse est chargée de manière asynchrone
-  useEffect(() => {
+  // Synchronise la valeur initiale car la réponse est chargée de manière
+  // asynchrone. L'ajuster pendant le rendu, plutôt que dans un effet, évite
+  // d'afficher un instant un champ vide alors que la justification est connue.
+  const [previousJustification, setPreviousJustification] =
+    useState(justification);
+  if (previousJustification !== justification) {
+    setPreviousJustification(justification);
     setValue(justification);
-  }, [justification]);
+  }
 
   const showLabelBanatic =
     reponse &&

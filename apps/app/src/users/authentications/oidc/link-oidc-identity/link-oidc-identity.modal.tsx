@@ -29,6 +29,14 @@ export const LinkOidcIdentityModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const trackEvent = useEventTracker();
 
+  /**
+   * Seul `set-state-in-effect` restant de l'app, et assumé : l'ouverture ne se
+   * déduit pas du rendu. Elle dépend de `sessionStorage`, qu'on ne peut lire ni
+   * pendant le rendu (impur, et absent côté serveur) ni dans un initialiseur
+   * d'état (il s'exécute aussi au rendu serveur). Et la décision s'accompagne
+   * de deux effets de bord — marquer la session, émettre l'événement de suivi —
+   * qui doivent se produire exactement une fois, au moment où elle est prise.
+   */
   useEffect(() => {
     if (!canShowIncentive || !prefs) return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
@@ -43,6 +51,7 @@ export const LinkOidcIdentityModal = () => {
       origine: 'modale',
       nbAffichages: prefs.modalDisplayCount + 1,
     });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canShowIncentive, prefs]);
