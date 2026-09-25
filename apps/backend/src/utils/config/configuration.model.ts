@@ -68,6 +68,49 @@ export const backendConfigurationSchema = z
       .describe(
         "Identifiant du modèle Gemini pour l'import IA (ex : gemini-3.5-flash) ; requis à l'usage"
       ),
+    // Fournisseur des appels LLM (import IA, analyse des collectivités). Albert
+    // API par défaut ; gemini reste disponible en secours, le retour arrière se
+    // fait par cette seule variable.
+    LLM_PROVIDER: z
+      .enum(['gemini', 'albert'])
+      .default('albert')
+      .describe(
+        'Fournisseur LLM : gemini (Vertex AI) ou albert (Albert API, socle interministériel de la DINUM)'
+      ),
+    ALBERT_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        "Clé d'API Albert (sk-…, expire au plus tard un an après sa création) ; requise avec LLM_PROVIDER=albert"
+      ),
+    ALBERT_API_BASE_URL: z
+      .string()
+      .default('https://albert.api.etalab.gouv.fr/v1')
+      .describe("URL de base de l'API Albert, compatible OpenAI"),
+    // Contexte de 131 072 tokens pour gpt-oss-120b : il faut y loger la sortie
+    // (DEFAULT_MAX_OUTPUT_TOKENS) et les consignes des prompts.
+    ALBERT_MAX_INPUT_TOKENS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(60000)
+      .describe(
+        'Taille maximale estimée, en tokens, du document envoyé au modèle Albert'
+      ),
+    ALBERT_MAX_CONCURRENT_CALLS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(2)
+      .describe(
+        "Appels simultanés vers Albert API, tous imports confondus : 10 à 50 requêtes par minute selon l'offre"
+      ),
+    ALBERT_MODEL: z
+      .string()
+      .optional()
+      .describe(
+        'Identifiant du modèle Albert (ex : openai/gpt-oss-120b) ; requis avec LLM_PROVIDER=albert'
+      ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
       .min(1)

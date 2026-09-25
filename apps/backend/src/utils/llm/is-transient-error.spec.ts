@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isTransientError } from './llm.service';
+import { isTransientError } from './is-transient-error';
 
 describe('isTransientError', () => {
   it('réessaie une limitation de débit', () => {

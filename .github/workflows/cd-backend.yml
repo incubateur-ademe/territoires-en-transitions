@@ -107,6 +107,9 @@ jobs:
           --env GOOGLE_CLOUD_PROJECT=tet-gcloud
           --env GOOGLE_CLOUD_LOCATION=eu
           --env GEMINI_MODEL=gemini-3.5-flash
+          --env LLM_PROVIDER=albert
+          --env ALBERT_API_KEY=@ALBERT_API_KEY
+          --env ALBERT_MODEL=gpt-oss-120b
           --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME
           --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME
           --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
@@ -169,6 +172,9 @@ jobs:
           --env GOOGLE_CLOUD_PROJECT=tet-gcloud
           --env GOOGLE_CLOUD_LOCATION=eu
           --env GEMINI_MODEL=gemini-3.5-flash
+          --env LLM_PROVIDER=albert
+          --env ALBERT_API_KEY=@ALBERT_API_KEY
+          --env ALBERT_MODEL=gpt-oss-120b
           --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME
           --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME
           --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
