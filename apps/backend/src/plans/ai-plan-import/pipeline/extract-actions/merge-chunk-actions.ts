@@ -45,7 +45,7 @@ export const mergeChunkActions = (
 };
 
 // La numérotation peut varier d'une tranche à l'autre quand le modèle la génère.
-const normalizeTitle = (titre: string): string =>
+export const normalizeTitle = (titre: string): string =>
   titre
     .replace(/^[\d.\s]+/, '')
     .replace(/\s+/g, ' ')
