@@ -318,6 +318,12 @@ describe('SnapshotsRouter', () => {
     const scoresIndicatifs = await getScoresIndicatifsFromSnapshot(snapshot);
     expect(scoresIndicatifs).toMatchObject({
       [fixturePourScoreIndicatif.actionId]: {
+        calcul: {
+          type: 'valeur_cible_seuil',
+          identifiantReferentiel: 'cae_7',
+          cible: expect.any(Number),
+          seuil: expect.any(Number),
+        },
         fait: {
           score: -0.045,
           valeursUtilisees: [

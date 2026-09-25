@@ -16,10 +16,70 @@ export const scoreIndicatifTypeEnumValues = [
 export type ScoreIndicatifType =
   (typeof scoreIndicatifTypeEnum)[keyof typeof scoreIndicatifTypeEnum];
 
+// type de calcul du score indicatif, déduit des fonctions utilisées par la formule
+export const typeCalculScoreIndicatifEnum = {
+  PRESENCE_ABSENCE: 'presence_absence',
+  VALEUR_CIBLE_SEUIL: 'valeur_cible_seuil',
+  PROGRESSION_SNBC: 'progression_snbc',
+  REDUCTION: 'reduction',
+} as const;
+
+export type TypeCalculScoreIndicatif =
+  (typeof typeCalculScoreIndicatifEnum)[keyof typeof typeCalculScoreIndicatifEnum];
+
+/**
+ * Type de calcul du score indicatif et données ayant servi au calcul, pour
+ * l'affichage (et la persistance dans les snapshots)
+ */
+export const calculScoreIndicatifSchema = z.discriminatedUnion('type', [
+  // `est_suivi(...)`
+  z.object({
+    type: z.literal(typeCalculScoreIndicatifEnum.PRESENCE_ABSENCE),
+  }),
+  // `cible(...)` et/ou `limite(...)`
+  z.object({
+    type: z.literal(typeCalculScoreIndicatifEnum.VALEUR_CIBLE_SEUIL),
+    identifiantReferentiel: z.string(),
+    cible: z.number().nullable(),
+    seuil: z.number().nullable(),
+  }),
+  // `progression_snbc(...)`
+  z.object({
+    type: z.literal(typeCalculScoreIndicatifEnum.PROGRESSION_SNBC),
+    identifiantReferentiel: z.string(),
+    anneeDepart: z.number(),
+    // objectif snbc à l'année de départ
+    objectifSnbcDepart: z.number().nullable(),
+    // dépendent de la valeur `fait` sélectionnée (`null` si aucune)
+    anneeUtilisee: z.number().nullable(),
+    valeurUtilisee: z.number().nullable(),
+    // objectif snbc à l'année de la valeur utilisée
+    objectifSnbc: z.number().nullable(),
+  }),
+  // `reduction(...)`
+  z.object({
+    type: z.literal(typeCalculScoreIndicatifEnum.REDUCTION),
+    identifiantReferentiel: z.string(),
+    anneeDepart: z.number(),
+    resultatDepart: z.number().nullable(),
+    anneeCible: z.number(),
+    reductionCible: z.number(),
+    // dépendent de la valeur `fait` sélectionnée (`null` si aucune)
+    anneeUtilisee: z.number().nullable(),
+    valeurUtilisee: z.number().nullable(),
+    // valeur attendue à l'année de la valeur utilisée
+    valeurCible: z.number().nullable(),
+  }),
+]);
+
+export type CalculScoreIndicatif = z.infer<typeof calculScoreIndicatifSchema>;
+
 // score indicatif d'une action
 export type ActionScoreIndicatif = {
   actionId: string;
   indicateurs: IndicateurAssocie[];
+  // `null` si la formule ne correspond à aucun type de calcul connu
+  calcul: CalculScoreIndicatif | null;
   fait: ScoreIndicatif | null;
   programme: ScoreIndicatif | null;
 };
@@ -120,6 +180,8 @@ const scoreIndicatifPayloadValeurSchema = z.object({
  */
 export const scoreIndicatifPayloadSchema = z.object({
   unite: z.string(),
+  // optionnel : absent des snapshots antérieurs
+  calcul: calculScoreIndicatifSchema.nullish(),
   fait: z
     .object({
       score: z.number(),

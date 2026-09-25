@@ -31,6 +31,7 @@ export function formatScoreIndicatifForPayload(
 ): ScoreIndicatifPayload {
   return {
     unite: scoreIndicatif.indicateurs?.[0].unite,
+    calcul: scoreIndicatif.calcul,
     fait: formatValeursForPayload(scoreIndicatif, scoreIndicatifTypeEnum.FAIT),
     programme: formatValeursForPayload(
       scoreIndicatif,

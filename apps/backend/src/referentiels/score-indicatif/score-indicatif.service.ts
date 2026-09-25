@@ -29,6 +29,7 @@ import {
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { groupBy, keyBy } from 'es-toolkit';
 import { BuildEvaluationContextService } from './build-evaluation-context.service';
+import { buildCalculScoreIndicatif } from './calcul-score-indicatif.rules';
 import {
   buildAnneesPourExpression,
   buildValeursPourExpression,
@@ -411,9 +412,23 @@ export class ScoreIndicatifService {
           buildIndicateursSuivis(scoreIndicatifTypeEnum.PROGRAMME)
         );
 
+        // type de calcul et données ayant servi au calcul, pour l'affichage ;
+        // sans valeur utilisée si un indicateur est non applicable (le score
+        // est alors forcé à 0 sans évaluer la formule, cf. `computeScore`)
+        const estNonApplicable = indicateurs.some((ind) => !ind.isApplicable);
+        const calcul = buildCalculScoreIndicatif({
+          references: indicateursParActionId[actionId] ?? [],
+          indicateursAssocies: indicateurs,
+          evaluationContext,
+          valeursUtiliseesFait: estNonApplicable
+            ? []
+            : valeursParTypeScore[scoreIndicatifTypeEnum.FAIT] || [],
+        });
+
         return {
           actionId,
           indicateurs,
+          calcul,
           fait,
           programme,
         };
