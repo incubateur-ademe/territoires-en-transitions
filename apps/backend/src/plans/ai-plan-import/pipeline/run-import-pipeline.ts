@@ -1,6 +1,10 @@
 import { DisableableField } from '../models/disableable-field';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { joinPages, ReadDocument } from './document/document-page';
+import { structureUnits } from './extract-actions/structure-units';
+import { DocumentUnit } from './segment-document/document-unit';
+import { segmentDocument } from './segment-document/segment-document';
+import { coalesceChunks } from './source-chunks/coalesce-chunks';
 import { splitDocument } from './split-document/split-document';
 import {
   emptyTokenUsage,
@@ -62,6 +66,13 @@ const CHUNK_OVERLAP_TOKENS = 1_500;
  * 10 tranches font environ 600 000 tokens, soit plusieurs centaines de pages.
  */
 export const MAX_DOCUMENT_CHUNKS = 10;
+/** Même garde-fou pour la stratégie segmentée, à la maille de la fiche. */
+export const MAX_DOCUMENT_UNITS = 300;
+/**
+ * Les vérifications relisent des fenêtres d'unités adjacentes : elles n'ont
+ * pas besoin de la finesse d'une fiche, et un appel par fiche coûterait cher.
+ */
+const VERIFICATION_WINDOW_TOKENS = 12_000;
 
 export type RunImportPipelineInput = {
   document: ReadDocument;
@@ -113,11 +124,12 @@ export const runImportPipeline = async (
   const reportProgress = (stepStates: StepStates): Promise<void> =>
     input.onStepStatesChange?.(stepStates) ?? Promise.resolve();
 
-  const read = readChunks(llm, input.document);
+  const read = readSource(llm, input.document);
   if (!read.success) {
     return failed(initialProgress(), 'reading', read.error);
   }
-  const chunks = read.data;
+  let { chunks } = read.data;
+  const { units } = read.data;
   // Le repérage arrive avec la stratégie segmentée ; d'ici là, rien à trier.
   const afterReading = markSkipped(
     markOk(initialProgress(), 'reading'),
@@ -132,18 +144,30 @@ export const runImportPipeline = async (
     progress: afterReading,
     name: 'extraction',
     run: async () => {
-      const result = await extractActions(llm, {
-        chunks,
+      const extraction = {
         instructions: input.instructions,
         disabledFields: input.disabledFields,
         currentDate: input.currentDate,
         signal: input.signal,
-      });
+      };
+      if (units) {
+        const result = await structureUnits(llm, {
+          units,
+          skeleton: null,
+          ...extraction,
+        });
+        if (result.success) {
+          chunks = result.data.chunks;
+          source = {
+            chunks,
+            chunkIndexByAction: result.data.chunkIndexByAction,
+          };
+        }
+        return result;
+      }
+      const result = await extractActions(llm, { chunks, ...extraction });
       if (result.success) {
-        source = {
-          chunks,
-          chunkIndexByAction: result.data.chunkIndexByAction,
-        };
+        source = { chunks, chunkIndexByAction: result.data.chunkIndexByAction };
       }
       return result;
     },
@@ -152,6 +176,9 @@ export const runImportPipeline = async (
   // La mise en cohérence des axes arrive avec la stratégie segmentée.
   const afterExtraction = markSkipped(extracted.progress, 'hierarchy');
   await reportProgress(afterExtraction.stepStates);
+  if (units) {
+    source = coalesceChunks(source, VERIFICATION_WINDOW_TOKENS);
+  }
 
   const scored = await runStep({
     progress: afterExtraction,
@@ -257,11 +284,27 @@ const markOk = (progress: Progress, name: StepName): Progress => ({
   stepStates: { ...progress.stepStates, [name]: 'ok' },
 });
 
-/** Le texte des pages, en tranches que le modèle accepte. */
-const readChunks = (
+type ReadSource = { chunks: string[]; units: DocumentUnit[] | null };
+
+/**
+ * Le document tel que l'extraction le lira : des unités de la taille d'une
+ * fiche pour un modèle qui résume au-delà, le texte en tranches sinon.
+ */
+const readSource = (
   llm: PipelineLlm,
   document: ReadDocument
-): Result<string[], ReadingError> => {
+): Result<ReadSource, ReadingError> => {
+  if (llm.capabilities.strategy === 'segmented') {
+    const units = segmentDocument(document);
+    if (units.length > MAX_DOCUMENT_UNITS) {
+      return failure({
+        kind: 'document_too_long',
+        chunks: units.length,
+        maxChunks: MAX_DOCUMENT_UNITS,
+      });
+    }
+    return success({ chunks: [], units });
+  }
   const text = joinPages(document);
   const chunks = splitDocument(text, {
     maxTokens: llm.maxInputTokens,
@@ -275,7 +318,7 @@ const readChunks = (
       maxChunks: MAX_DOCUMENT_CHUNKS,
     });
   }
-  return success(chunks);
+  return success({ chunks, units: null });
 };
 
 const clearSousActions = (progress: Progress): Progress => ({
