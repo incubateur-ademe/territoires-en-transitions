@@ -36,6 +36,7 @@ const OCR_MAX_INPUT_TOKENS = 8_000;
 export class AlbertRepository extends LlmRepository {
   readonly maxConcurrentCalls: number;
   readonly maxInputTokensPerMinute: number;
+  readonly maxRequestsPerMinute: number;
   readonly capabilities: LlmCapabilities;
   private readonly logger = new Logger(AlbertRepository.name);
   private readonly models: Record<LlmTier, string | undefined>;
@@ -48,6 +49,9 @@ export class AlbertRepository extends LlmRepository {
     this.maxConcurrentCalls = configService.get('ALBERT_MAX_CONCURRENT_CALLS');
     this.maxInputTokensPerMinute = configService.get(
       'ALBERT_MAX_INPUT_TOKENS_PER_MINUTE'
+    );
+    this.maxRequestsPerMinute = configService.get(
+      'ALBERT_MAX_REQUESTS_PER_MINUTE'
     );
     // Un palier sans modèle propre retombe sur le palier fort ; l'OCR, lui,
     // exige un modèle image-texte : vide, il est désactivé.

@@ -21,6 +21,7 @@ const buildRepository = (overrides: Record<string, unknown> = {}) => {
     ALBERT_MAX_INPUT_TOKENS: 60000,
     ALBERT_MAX_CONCURRENT_CALLS: 2,
     ALBERT_MAX_INPUT_TOKENS_PER_MINUTE: 128000,
+    ALBERT_MAX_REQUESTS_PER_MINUTE: 10,
     ALBERT_MODEL_LIGHT: 'ministral-3-8b-instruct-2512',
     ALBERT_MODEL_OCR: 'lightonocr-2-1b',
     ...overrides,

@@ -20,6 +20,7 @@ const usage = {
 class FakeRepository extends LlmRepository {
   readonly maxConcurrentCalls = 2;
   readonly maxInputTokensPerMinute = null;
+  readonly maxRequestsPerMinute = null;
   readonly capabilities = { ocr: true, strategy: 'segmented' as const };
   readonly requests: LlmCompletionRequest[] = [];
   private readonly responses: LlmRawCompletion[];
