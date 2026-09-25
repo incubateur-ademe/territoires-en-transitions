@@ -2,61 +2,47 @@
 
 import { RedStar } from '@/site/components/labellisation/Star';
 import { Checkbox } from '@tet/ui';
-import { useEffect, useState } from 'react';
+
+const NIVEAUX = [1, 2, 3, 4, 5];
 
 type FiltreEtoilesProps = {
   initEtoiles: number[];
   onChangeEtoiles: (etoiles: number[]) => void;
 };
 
+/**
+ * Cases à cocher des niveaux de labellisation.
+ *
+ * Les niveaux cochés se lisent directement dans `initEtoiles` : les recopier
+ * dans un état local obligeait à le resynchroniser dans un effet, et à
+ * remonter la sélection dans un second — deux rendus en cascade pour une
+ * valeur que le parent détient déjà.
+ */
 const FiltreEtoiles = ({
   initEtoiles,
   onChangeEtoiles,
 }: FiltreEtoilesProps) => {
-  const [etoiles, setEtoiles] = useState(
-    [1, 2, 3, 4, 5].map((et) => {
-      if (initEtoiles.includes(et)) return true;
-      else return false;
-    })
-  );
-
-  useEffect(() => {
-    setEtoiles(
-      [1, 2, 3, 4, 5].map((et) => {
-        if (initEtoiles.includes(et)) return true;
-        else return false;
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initEtoiles.length]);
-
-  useEffect(() => {
-    const etoilesFiltrees: number[] = [];
-    etoiles.forEach((etoile, index) => {
-      if (etoile) etoilesFiltrees.push(index + 1);
-    });
-    onChangeEtoiles(etoilesFiltrees);
-  }, [etoiles, onChangeEtoiles]);
-
   return (
     <div className="flex flex-col items-start gap-4 ml-1">
-      {etoiles.map((etoile, index) => (
+      {NIVEAUX.map((niveau) => (
         <Checkbox
-          id={`${index + 1}etoiles`}
-          key={index}
-          name={`${index + 1}etoiles`}
-          aria-describedby={`${index + 1} étoile(s)`}
-          checked={etoile}
-          onChange={() => {
-            const values = [...etoiles];
-            values[index] = !etoiles[index];
-            setEtoiles(values);
-          }}
-          label={[1, 2, 3, 4, 5]
-            .filter((e) => e <= index + 1)
-            .map((e) => (
-              <RedStar key={e} className="h-[19px] mt-0.5 mr-2" />
-            ))}
+          id={`${niveau}etoiles`}
+          key={niveau}
+          name={`${niveau}etoiles`}
+          aria-describedby={`${niveau} étoile(s)`}
+          checked={initEtoiles.includes(niveau)}
+          onChange={() =>
+            onChangeEtoiles(
+              initEtoiles.includes(niveau)
+                ? initEtoiles.filter((etoile) => etoile !== niveau)
+                : NIVEAUX.filter(
+                    (n) => n === niveau || initEtoiles.includes(n)
+                  )
+            )
+          }
+          label={NIVEAUX.filter((n) => n <= niveau).map((n) => (
+            <RedStar key={n} className="h-[19px] mt-0.5 mr-2" />
+          ))}
         />
       ))}
     </div>

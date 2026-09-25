@@ -15,7 +15,7 @@ import {
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useState } from 'react';
 import { options } from './data';
 
 /**
@@ -52,18 +52,30 @@ const initFormData: FormData = {
 
 const ContactForm = () => {
   const [trpcClient] = useState(() => getTrpcClient());
-  const [formData, setFormData] = useState<FormData>(initFormData);
-  const updateFormData = useEffectEvent(
-    (value: (prevState: FormData) => FormData) => setFormData(value)
-  );
-
-  const [status, setStatus] = useState<'success' | 'error' | null>(null);
-  const [isError, setIsError] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const objet = searchParams.get('objet');
+  const objetOption = options.find((opt) => opt.value === objet);
+
+  const [formData, setFormData] = useState<FormData>(() =>
+    objetOption ? { ...initFormData, objet: objetOption } : initFormData
+  );
+
+  // Préremplit l'objet quand l'URL change (`/contact?objet=…`). L'ajuster
+  // pendant le rendu, plutôt que dans un effet, évite d'afficher un instant le
+  // champ vide.
+  const [previousObjet, setPreviousObjet] = useState(objet);
+  if (previousObjet !== objet) {
+    setPreviousObjet(objet);
+    if (objetOption) {
+      setFormData((prevState) => ({ ...prevState, objet: objetOption }));
+    }
+  }
+
+  const [status, setStatus] = useState<'success' | 'error' | null>(null);
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -114,19 +126,6 @@ const ContactForm = () => {
       }
     }
   };
-
-  useEffect(() => {
-    if (objet === 'programme') {
-      const option = options.find((opt) => opt.value === objet);
-
-      if (option) {
-        updateFormData((prevState) => ({
-          ...prevState,
-          objet: option,
-        }));
-      }
-    }
-  }, [objet]);
 
   return (
     <>

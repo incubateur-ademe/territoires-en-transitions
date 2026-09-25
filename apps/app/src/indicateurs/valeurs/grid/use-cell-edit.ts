@@ -27,12 +27,22 @@ export const useCellEdit = ({
   const hasPendingSave = useRef(false);
   const pendingSavedRaw = useRef<string | undefined>(undefined);
   const draftValueRef = useRef<string | null>(null);
-  draftValueRef.current = draftValue;
   const currentValueRef = useRef(currentValue);
-  currentValueRef.current = currentValue;
 
   const currentText = currentValue === null ? '' : String(currentValue);
   const text = draftValue ?? currentText;
+
+  /**
+   * `save` est appelée à la fermeture de la cellule, hors du rendu qui l'a
+   * créée : elle lit la saisie et la valeur courante dans des refs plutôt que
+   * dans sa fermeture. Les rafraîchir ici — et non pendant le rendu — garde
+   * l'écriture de la ref dans la phase de commit, seule phase où React
+   * l'autorise. Placé avant l'effet suivant, qui les relit.
+   */
+  useEffect(() => {
+    draftValueRef.current = draftValue;
+    currentValueRef.current = currentValue;
+  });
 
   useEffect(() => {
     if (status !== 'saved') {
@@ -70,41 +80,43 @@ export const useCellEdit = ({
       hasPendingSave.current = true;
       return;
     }
-    const savedRaw = draftValueRef.current;
-    if (savedRaw === null) {
-      return;
-    }
-    const parsedValue = parseCellNumber(savedRaw);
-    const isUnparseable = savedRaw.trim() !== '' && parsedValue === null;
-    if (isUnparseable) {
-      setStatus('error');
-      return;
-    }
-    const isUnchanged = parsedValue === currentValueRef.current;
-    if (isUnchanged) {
-      setDraftValue(null);
-      setStatus('idle');
-      return;
-    }
-    isSaving.current = true;
-    setStatus('saving');
-    try {
-      const writeResult = await onSave(parsedValue);
-      if (writeResult) {
-        pendingSavedRaw.current = savedRaw;
-        setStatus((current) => (current === 'saving' ? 'saved' : current));
-      } else {
+    // Une boucle plutôt qu'un rappel récursif de `save` : la reprise ne
+    // dépend plus de la fermeture du rendu courant, et l'appelant peut
+    // attendre la dernière écriture et non seulement la première.
+    do {
+      hasPendingSave.current = false;
+      const savedRaw = draftValueRef.current;
+      if (savedRaw === null) {
+        return;
+      }
+      const parsedValue = parseCellNumber(savedRaw);
+      const isUnparseable = savedRaw.trim() !== '' && parsedValue === null;
+      if (isUnparseable) {
         setStatus('error');
+        return;
       }
-    } catch {
-      setStatus('error');
-    } finally {
-      isSaving.current = false;
-      if (hasPendingSave.current) {
-        hasPendingSave.current = false;
-        void save();
+      const isUnchanged = parsedValue === currentValueRef.current;
+      if (isUnchanged) {
+        setDraftValue(null);
+        setStatus('idle');
+        return;
       }
-    }
+      isSaving.current = true;
+      setStatus('saving');
+      try {
+        const writeResult = await onSave(parsedValue);
+        if (writeResult) {
+          pendingSavedRaw.current = savedRaw;
+          setStatus((current) => (current === 'saving' ? 'saved' : current));
+        } else {
+          setStatus('error');
+        }
+      } catch {
+        setStatus('error');
+      } finally {
+        isSaving.current = false;
+      }
+    } while (hasPendingSave.current);
   }, [onSave]);
 
   return { text, status, onChange, save, cancel };

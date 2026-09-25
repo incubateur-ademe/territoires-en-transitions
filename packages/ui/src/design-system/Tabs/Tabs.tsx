@@ -1,11 +1,5 @@
 import classNames from 'classnames';
-import {
-  Children,
-  cloneElement,
-  ReactElement,
-  useEffect,
-  useState,
-} from 'react';
+import { Children, cloneElement, ReactElement, useState } from 'react';
 
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
@@ -54,10 +48,15 @@ export const Tabs = ({
 }: TabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
-  // synchronise l'état interne
-  useEffect(() => {
+  // Synchronise l'état interne quand le parent change d'onglet actif. L'ajuster
+  // pendant le rendu, plutôt que dans un effet, évite d'afficher un instant
+  // l'ancien onglet avant la correction.
+  const [previousDefaultActiveTab, setPreviousDefaultActiveTab] =
+    useState(defaultActiveTab);
+  if (previousDefaultActiveTab !== defaultActiveTab) {
+    setPreviousDefaultActiveTab(defaultActiveTab);
     setActiveTab(defaultActiveTab);
-  }, [defaultActiveTab]);
+  }
 
   // gère le clic sur un onglet
   const handleChange = (index: number) => {
