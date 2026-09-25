@@ -8,7 +8,7 @@ import {
 import { normalizePages } from '../normalize-text/normalize-pages';
 import { decideOcr, DEFAULT_OCR_POLICY, OcrPolicy } from './decide-ocr';
 import { OcrPageFn } from './llm-ocr-page';
-import { ocrPages } from './ocr-pages';
+import { ocrPages, OcrPagesResult } from './ocr-pages';
 import { readDocxPages } from './read-docx';
 import { PdfReader, readPdf } from './read-pdf';
 import { readCsvPages, readXlsxPages } from './read-tabular';
@@ -20,7 +20,7 @@ export type ReadDocumentError =
   | { kind: 'parse_failed' }
   | { kind: 'timeout' }
   | { kind: 'scanned_too_long'; scannedPages: number; maxOcrPages: number }
-  | { kind: 'ocr_failed'; failedPages: number[] };
+  | { kind: 'ocr_failed'; failedPages: number[]; reasons: string[] };
 
 export type ReadDocumentOptions = {
   /** Transcription des pages sans texte ; absente, elles restent vides. */
@@ -49,17 +49,21 @@ export const readDocument = async (
   if (!read.success) {
     return read;
   }
-  const pages =
+  const transcribed =
     kind === 'pdf' && options.ocr
       ? await transcribeScannedPages(read.data, args.buffer, {
           ...options,
           ocr: options.ocr,
         })
-      : success(read.data);
-  if (!pages.success) {
-    return pages;
+      : success({ pages: read.data, failures: [] });
+  if (!transcribed.success) {
+    return transcribed;
   }
-  const document = buildDocument(kind, normalizePages(pages.data));
+  const document = buildDocument(
+    kind,
+    normalizePages(transcribed.data.pages),
+    transcribed.data.failures
+  );
   if (document.stats.textPages === 0 && document.stats.ocrPages === 0) {
     return failure({ kind: 'empty_text' });
   }
@@ -93,11 +97,11 @@ const transcribeScannedPages = (
   }: ReadDocumentOptions & {
     ocr: NonNullable<ReadDocumentOptions['ocr']>;
   }
-): Promise<Result<DocumentPage[], ReadDocumentError>> => {
+): Promise<Result<OcrPagesResult, ReadDocumentError>> => {
   const decision = decideOcr(pages, { ...DEFAULT_OCR_POLICY, ...ocr.policy });
   switch (decision.kind) {
     case 'none':
-      return Promise.resolve(success(pages));
+      return Promise.resolve(success({ pages, failures: [] }));
     case 'refuse':
       return Promise.resolve(
         failure({
@@ -110,6 +114,7 @@ const transcribeScannedPages = (
       return ocrPages({
         pages,
         pageIndexes: decision.pageIndexes,
+        fullScan: decision.fullScan,
         renderPage: renderPage ?? buildPdfPageRenderer(buffer),
         ocrPage: ocr.ocrPage,
         signal,

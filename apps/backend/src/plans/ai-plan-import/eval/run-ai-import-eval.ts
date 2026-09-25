@@ -6,6 +6,7 @@
  *
  *   make ai-import-eval f=plan.pdf [ref=eval-out/reference.json] [out=…]
  */
+import { ConsoleLogger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { initGoogleCloudCredentials } from '@tet/backend/utils/google-sheets/gcloud.helper';
@@ -121,7 +122,10 @@ const main = async (): Promise<number> => {
   // pas avec les identifiants gcloud personnels du poste.
   initGoogleCloudCredentials();
   const observer = new CollectingLlmObserver();
+  // Le logger de test de Nest n'affiche rien : on veut voir les avertissements
+  // (réponse tronquée) et les erreurs d'Albert.
   const moduleRef = await Test.createTestingModule({ imports: [EvalModule] })
+    .setLogger(new ConsoleLogger({ logLevels: ['error', 'warn'] }))
     .overrideProvider(LlmObserver)
     .useValue(observer)
     .compile();
@@ -143,7 +147,7 @@ const main = async (): Promise<number> => {
     { ocr: ocrPage ? { ocrPage } : undefined }
   );
   if (!document.success) {
-    print(`✗ Lecture impossible : ${document.error.kind}`);
+    print(`✗ Lecture impossible : ${JSON.stringify(document.error)}`);
     await app.close();
     return 1;
   }
@@ -151,6 +155,15 @@ const main = async (): Promise<number> => {
   print(
     `Document : ${stats.pageCount} page(s), ${stats.textPages} lue(s), ${stats.ocrPages} transcrite(s), ${stats.emptyPages} vide(s)`
   );
+  if (document.data.ocrFailures.length > 0) {
+    print(
+      `  OCR en échec sur ${
+        document.data.ocrFailures.length
+      } page(s), gardées telles quelles : ${document.data.ocrFailures
+        .map((f) => `p${f.pageIndex + 1} (${f.reason})`)
+        .join(', ')}`
+    );
+  }
 
   const options = {
     instructions: values.instructions,
@@ -268,6 +281,7 @@ const printDiff = (diff: EvalDiff): void => {
 // Pas de process.exit : il tronque ce qui reste à écrire sur la sortie.
 main().then(
   (code) => {
+    finished = true;
     process.exitCode = code;
   },
   (error: unknown) => {

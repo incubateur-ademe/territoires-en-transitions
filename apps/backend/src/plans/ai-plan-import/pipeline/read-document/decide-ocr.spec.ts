@@ -12,20 +12,44 @@ describe('decideOcr', () => {
     });
   });
 
-  it('désigne les pages presque vides', () => {
-    expect(decideOcr([pageOf(0, 1500), pageOf(1, 12), pageOf(2, 0)])).toEqual({
+  it('désigne les pages presque vides d’un PDF texte, sans en faire un scan', () => {
+    expect(
+      decideOcr([
+        pageOf(0, 1500),
+        pageOf(1, 1500),
+        pageOf(2, 12),
+        pageOf(3, 1500),
+        pageOf(4, 0),
+      ])
+    ).toEqual({ kind: 'ocr', pageIndexes: [2, 4], fullScan: false });
+  });
+
+  it('reconnaît un document scanné de bout en bout', () => {
+    expect(decideOcr([pageOf(0, 0), pageOf(1, 3)])).toEqual({
       kind: 'ocr',
-      pageIndexes: [1, 2],
+      pageIndexes: [0, 1],
+      fullScan: true,
     });
   });
 
-  it('refuse un document scanné trop long plutôt que de le lire en partie', () => {
+  it('refuse un scan trop long plutôt que de le lire en partie', () => {
     const pages = Array.from({ length: 5 }, (_, index) => pageOf(index, 0));
 
     expect(decideOcr(pages, { minCharsPerPage: 200, maxOcrPages: 4 })).toEqual({
       kind: 'refuse',
       scannedPages: 5,
       maxOcrPages: 4,
+    });
+  });
+
+  it('se passe d’OCR dans un PDF texte aux trop nombreuses pages photo', () => {
+    const pages = [
+      ...Array.from({ length: 5 }, (_, index) => pageOf(index, 0)),
+      ...Array.from({ length: 20 }, (_, index) => pageOf(index + 5, 1500)),
+    ];
+
+    expect(decideOcr(pages, { minCharsPerPage: 200, maxOcrPages: 4 })).toEqual({
+      kind: 'none',
     });
   });
 });
