@@ -25,8 +25,12 @@ import {
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
-import { detectSourceMimeType, XLSX_MIME } from './detect-source-mime-type';
-import { validateXlsxArchive } from './validate-xlsx-archive';
+import {
+  detectSourceMimeType,
+  DOCX_MIME,
+  XLSX_MIME,
+} from './detect-source-mime-type';
+import { validateOoxmlArchive } from './validate-ooxml-archive';
 
 const GENERATE_IMPORT_DRAFT_JOB_NAME = 'generate-import-draft';
 
@@ -84,14 +88,14 @@ export class EnqueueImportService {
       return failure(AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE);
     }
 
-    if (mimeType === XLSX_MIME) {
-      const archive = validateXlsxArchive(
+    if (mimeType === XLSX_MIME || mimeType === DOCX_MIME) {
+      const archive = validateOoxmlArchive(
         file.buffer,
         AI_PLAN_IMPORT_MAX_UNCOMPRESSED_BYTES
       );
       if (!archive.success) {
         return failure(
-          archive.error.kind === 'not_xlsx'
+          archive.error.kind === 'not_ooxml'
             ? AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE
             : AiPlanImportErrorEnum.FILE_TOO_LARGE
         );
@@ -148,7 +152,9 @@ export class EnqueueImportService {
       );
     } catch (error) {
       this.logger.error(
-        `Mise en file d'attente du job d'import ${jobId}: ${getErrorMessage(error)}`
+        `Mise en file d'attente du job d'import ${jobId}: ${getErrorMessage(
+          error
+        )}`
       );
       await this.documentStorage.removeDocument({
         bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,

@@ -847,7 +847,7 @@ export const appLabels = {
   revenirEtapePrecedente: "Revenir à l'étape précédente",
   importerUnPlan: 'Importer un plan',
   importPlanIaTitre: 'Importer un plan',
-  importPlanIaSousTitre: 'depuis un fichier PDF ou Excel',
+  importPlanIaSousTitre: 'depuis un fichier PDF, Word ou Excel',
   importPlanIaDescription:
     'Nous importons les actions, les sous-actions et les personnes pilotes, et parfois davantage lorsque nous parvenons à les repérer automatiquement (descriptions, dates, etc.). Le résultat peut contenir des erreurs : relisez votre plan, et corrigez-le si besoin.',
   importPlanIaChampFichier: 'Document à importer',
@@ -855,7 +855,7 @@ export const appLabels = {
   importPlanIaFichierRequis: 'Un document est requis',
   importPlanIaNomRequis: 'Le nom du plan est requis',
   importPlanIaFormatNonSupporte:
-    'Format non supporté (PDF, Excel .xlsx ou CSV attendu)',
+    'Format non supporté (PDF, Word, Excel .xlsx ou CSV attendu)',
   importPlanIaOptionVerifications: 'Vérifier et consolider les actions',
   importPlanIaOptionSousActions: 'Mon document contient des sous-actions',
   importPlanIaLancer: "Lancer l'import",

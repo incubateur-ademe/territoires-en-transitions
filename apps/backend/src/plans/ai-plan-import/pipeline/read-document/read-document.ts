@@ -9,6 +9,7 @@ import { normalizePages } from '../normalize-text/normalize-pages';
 import { decideOcr, DEFAULT_OCR_POLICY, OcrPolicy } from './decide-ocr';
 import { OcrPageFn } from './llm-ocr-page';
 import { ocrPages } from './ocr-pages';
+import { readDocxPages } from './read-docx';
 import { PdfReader, readPdf } from './read-pdf';
 import { readCsvPages, readXlsxPages } from './read-tabular';
 import { buildPdfPageRenderer, RenderPage } from './render-page-image';
@@ -73,6 +74,8 @@ const readPages = (
   switch (kind) {
     case 'pdf':
       return readPdf(buffer, options.pdfReader);
+    case 'docx':
+      return readDocxPages(buffer);
     case 'xlsx':
       return readXlsxPages(buffer);
     case 'csv':
@@ -123,6 +126,12 @@ export const isTabularMimeType = (mimeType: string): boolean => {
 const classifyMimeType = (mimeType: string): DocumentKind | null => {
   if (mimeType === 'application/pdf') {
     return 'pdf';
+  }
+  if (
+    mimeType ===
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ) {
+    return 'docx';
   }
   if (mimeType === 'text/csv' || mimeType === 'application/csv') {
     return 'csv';

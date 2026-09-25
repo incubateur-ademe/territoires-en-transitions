@@ -20,7 +20,11 @@ export type DocumentPage = {
   height?: number;
 };
 
-export type DocumentKind = 'pdf' | 'xlsx' | 'csv';
+export type DocumentKind = 'pdf' | 'docx' | 'xlsx' | 'csv';
+
+/** Un tableur : la première ligne est l'en-tête, chaque ligne une entrée. */
+export const isTabularKind = (kind: DocumentKind): boolean =>
+  kind === 'xlsx' || kind === 'csv';
 
 export type ReadDocument = {
   kind: DocumentKind;

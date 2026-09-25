@@ -14,7 +14,7 @@ import { useListPlanTypes } from '../use-list-plan-types';
 // Filtre sur l'extension : le MIME d'un CSV varie selon l'OS (text/plain,
 // application/vnd.ms-excel sous Windows avec Excel…). Le serveur tranche
 // ensuite sur le contenu.
-const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.csv', '.xlsx'];
+const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.docx', '.csv', '.xlsx'];
 
 const aiImportFormSchema = z.object({
   file: z
