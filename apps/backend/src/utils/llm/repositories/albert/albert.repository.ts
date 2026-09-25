@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import OpenAI from 'openai';
@@ -26,6 +27,10 @@ const RATE_LIMITED_STATUSES = new Set([429, 503]);
 const LIGHT_MAX_INPUT_TOKENS = 100_000;
 const OCR_MAX_INPUT_TOKENS = 8_000;
 
+type ReasoningEffort = NonNullable<
+  BackendConfigurationType['ALBERT_REASONING_EFFORT']
+>;
+
 /**
  * Albert API, l'inférence du socle interministériel d'IA générative (DINUM),
  * appelée par le SDK OpenAI comme le recommande sa documentation. Aucun
@@ -41,6 +46,7 @@ export class AlbertRepository extends LlmRepository {
   private readonly logger = new Logger(AlbertRepository.name);
   private readonly models: Record<LlmTier, string | undefined>;
   private readonly strongMaxInputTokens: number;
+  private readonly reasoningEffort: ReasoningEffort | undefined;
   private readonly client: OpenAI | null;
 
   constructor(configService: ConfigurationService) {
@@ -61,6 +67,7 @@ export class AlbertRepository extends LlmRepository {
       light: configService.get('ALBERT_MODEL_LIGHT') || strong,
       ocr: configService.get('ALBERT_MODEL_OCR') || undefined,
     };
+    this.reasoningEffort = configService.get('ALBERT_REASONING_EFFORT');
     this.capabilities = {
       ocr: this.models.ocr !== undefined,
       strategy: 'segmented',
@@ -113,7 +120,11 @@ export class AlbertRepository extends LlmRepository {
 
     try {
       const stream = await this.client.chat.completions.create(
-        toChatCompletionParams(model, request),
+        toChatCompletionParams(model, request, {
+          // Seul le modèle fort raisonne : les autres ne reçoivent pas ce réglage.
+          reasoningEffort:
+            model === this.models.strong ? this.reasoningEffort : undefined,
+        }),
         { signal: request.signal }
       );
 
@@ -162,7 +173,8 @@ export class AlbertRepository extends LlmRepository {
 
 export const toChatCompletionParams = (
   model: string,
-  request: LlmCompletionRequest
+  request: LlmCompletionRequest,
+  { reasoningEffort }: { reasoningEffort?: ReasoningEffort } = {}
 ): ChatCompletionCreateParamsStreaming => ({
   model,
   messages: [
@@ -173,6 +185,7 @@ export const toChatCompletionParams = (
   ],
   temperature: request.temperature,
   max_completion_tokens: request.maxOutputTokens,
+  ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}),
   ...(request.jsonSchema
     ? {
         response_format: {
