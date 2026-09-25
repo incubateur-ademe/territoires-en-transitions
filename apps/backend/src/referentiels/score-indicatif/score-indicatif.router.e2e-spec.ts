@@ -268,7 +268,7 @@ describe('ScoreIndicatifRouter', () => {
     });
   });
 
-  test("Demander un score pour un indicateur marqué non applicable force le résultat à 0, même si des valeurs sont sélectionnées", async () => {
+  test('Demander un score pour un indicateur marqué non applicable force le résultat à 0, même si des valeurs sont sélectionnées', async () => {
     const caller = router.createCaller({ user: testUser });
 
     await caller.indicateurs.indicateurs.update({
@@ -555,6 +555,12 @@ describe('ScoreIndicatifRouter', () => {
             unite: expect.any(String),
           },
         ],
+        calcul: {
+          type: 'valeur_cible_seuil',
+          identifiantReferentiel: 'cae_6.a',
+          cible: 480,
+          seuil: 580,
+        },
         fait: {
           score: 0,
           valeursUtilisees: [
@@ -616,6 +622,7 @@ describe('ScoreIndicatifRouter', () => {
 
     expect(result).toMatchObject({
       [fixturePourScoreIndicatif.actionId]: {
+        calcul: { type: 'presence_absence' },
         fait: { score: 1 },
         programme: { score: 1 },
       },
@@ -759,12 +766,58 @@ describe('ScoreIndicatifRouter', () => {
       const score = await getScore();
       expect(score.fait?.score).toBeCloseTo(0.5);
       expect(score.programme).toBeNull();
+      expect(score.calcul).toEqual({
+        type: 'progression_snbc',
+        identifiantReferentiel: ID,
+        anneeDepart: 2015,
+        objectifSnbcDepart: 100,
+        anneeUtilisee: 2025,
+        valeurUtilisee: 90,
+        objectifSnbc: 80,
+      });
+    });
+
+    test('progression_snbc : indicateur non applicable, calcul sans valeur utilisée', async () => {
+      const { indicateurId, snbcId, insert } = await setup(
+        `progression_snbc(${ID})`
+      );
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: snbcId, objectif: 100 },
+        { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
+      ]);
+      const caller = router.createCaller({ user: testUser });
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: testCollectiviteId,
+        indicateurFields: { isApplicable: false },
+      });
+      // `ID` est partagé par les autres tests de ce fichier
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurCollectiviteTable)
+          .where(
+            and(
+              eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+              eq(indicateurCollectiviteTable.collectiviteId, testCollectiviteId)
+            )
+          );
+      });
+
+      const score = await getScore();
+      expect(score.fait).toEqual({ score: 0, valeursUtilisees: [] });
+      expect(score.calcul).toEqual({
+        type: 'progression_snbc',
+        identifiantReferentiel: ID,
+        anneeDepart: 2015,
+        objectifSnbcDepart: 100,
+        anneeUtilisee: null,
+        valeurUtilisee: null,
+        objectifSnbc: null,
+      });
     });
 
     test('progression_snbc : valeurs snbc manquantes ou valeurDepart = valeurAttendue', async () => {
-      const { snbcId, insert } = await setup(
-        `min(1, progression_snbc(${ID}))`
-      );
+      const { snbcId, insert } = await setup(`min(1, progression_snbc(${ID}))`);
       expect((await getScore()).fait).toBeNull();
 
       await insert([
@@ -783,9 +836,23 @@ describe('ScoreIndicatifRouter', () => {
       const score = await getScore();
       expect(score.fait?.score).toBeCloseTo(0.375);
       expect(score.programme).toBeNull();
+      expect(score.calcul).toMatchObject({
+        type: 'reduction',
+        identifiantReferentiel: ID,
+        anneeDepart: 2015,
+        resultatDepart: 100,
+        anneeCible: 2030,
+        reductionCible: 0.4,
+        anneeUtilisee: 2025,
+        valeurUtilisee: 90,
+      });
+      // 100 * (1 - 0.4 * 10 / 15)
+      expect(
+        score.calcul?.type === 'reduction' ? score.calcul.valeurCible : null
+      ).toBeCloseTo(73.333);
     });
 
-    test("reduction : repli sur une source open data, puis null sans aucune valeur de départ", async () => {
+    test('reduction : repli sur une source open data, puis null sans aucune valeur de départ', async () => {
       const { insert } = await setup(`reduction(${ID}, 2015, 2030, 0.4)`);
       expect((await getScore()).fait).toBeNull();
 
@@ -815,7 +882,11 @@ describe('ScoreIndicatifRouter', () => {
       const { indicateurId, insert } = await setup(exprScore);
       const [, fait2030] = await insert([
         { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
-        { dateValeur: '2030-01-01', metadonneeId: METADONNEE_CITEPA, resultat: 90 },
+        {
+          dateValeur: '2030-01-01',
+          metadonneeId: METADONNEE_CITEPA,
+          resultat: 90,
+        },
       ]);
       const [programme] = await databaseService.db
         .select({ id: indicateurValeurTable.id })
@@ -824,13 +895,15 @@ describe('ScoreIndicatifRouter', () => {
           and(
             eq(indicateurValeurTable.indicateurId, indicateurId),
             eq(indicateurValeurTable.collectiviteId, testCollectiviteId),
-            eq(indicateurValeurTable.dateValeur, fixturePourScoreIndicatif.dateValeur),
+            eq(
+              indicateurValeurTable.dateValeur,
+              fixturePourScoreIndicatif.dateValeur
+            ),
             isNull(indicateurValeurTable.metadonneeId)
           )
         );
-      const cleanupAutreAction = await insertFixtureAutreActionPourScoreIndicatif(
-        databaseService,
-        {
+      const cleanupAutreAction =
+        await insertFixtureAutreActionPourScoreIndicatif(databaseService, {
           actionId: autreActionId,
           collectiviteId: testCollectiviteId,
           indicateurId,
@@ -839,8 +912,7 @@ describe('ScoreIndicatifRouter', () => {
             { id: programme.id, metadonneeId: null },
             { id: fait2030.id, metadonneeId: METADONNEE_CITEPA },
           ],
-        }
-      );
+        });
       onTestFinished(() => cleanupAutreAction());
 
       const caller = router.createCaller({ user: testUser });
@@ -850,9 +922,9 @@ describe('ScoreIndicatifRouter', () => {
       });
 
       // 2025 : avancement 2/3, attendue 73.33 ; 2030 : avancement 1, attendue 60
-      expect(result[fixturePourScoreIndicatif.actionId].fait?.score).toBeCloseTo(
-        0.375
-      );
+      expect(
+        result[fixturePourScoreIndicatif.actionId].fait?.score
+      ).toBeCloseTo(0.375);
       expect(result[autreActionId].fait?.score).toBeCloseTo(0.25);
     });
   });
