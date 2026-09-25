@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
+    addPreuveAuditInputSchema,
     addPreuveComplementaireInputSchema,
+    addPreuveRapportInputSchema,
     addPreuveReglementaireInputSchema,
 } from './add-preuve.input';
 import { addPreuveOutputSchema } from './add-preuve.output';
@@ -33,6 +35,23 @@ export class AddPreuveRouter {
       .output(addPreuveOutputSchema)
       .mutation(async ({ input, ctx: { user } }) => {
         const result = await this.addPreuveService.addPreuveComplementaire(
+          input,
+          user
+        );
+        return this.getResultDataOrThrowError(result);
+      }),
+    addPreuveAudit: this.trpc.authedProcedure
+      .input(addPreuveAuditInputSchema)
+      .output(addPreuveOutputSchema)
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.addPreuveService.addPreuveAudit(input, user);
+        return this.getResultDataOrThrowError(result);
+      }),
+    addPreuveRapport: this.trpc.authedProcedure
+      .input(addPreuveRapportInputSchema)
+      .output(addPreuveOutputSchema)
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.addPreuveService.addPreuveRapport(
           input,
           user
         );

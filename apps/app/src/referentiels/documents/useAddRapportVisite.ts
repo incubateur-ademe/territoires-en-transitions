@@ -28,9 +28,8 @@ export const useAddRapportVisite = (date: string): AddRapportVisiteHandlers => {
       addPreuve({
         collectiviteId,
         commentaire: '',
-        titre,
-        url,
-        date,
+        lien: { titre, url },
+        date: new Date(date).toISOString(),
       });
     }
   };

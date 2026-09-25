@@ -2,20 +2,27 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
+import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 
 type AddPreuveReglementaireInput = inferProcedureInput<
@@ -24,6 +31,14 @@ type AddPreuveReglementaireInput = inferProcedureInput<
 
 type AddPreuveComplementaireInput = inferProcedureInput<
   AppRouter['referentiels']['actions']['addPreuveComplementaire']
+>;
+
+type AddPreuveAuditInput = inferProcedureInput<
+  AppRouter['referentiels']['actions']['addPreuveAudit']
+>;
+
+type AddPreuveRapportInput = inferProcedureInput<
+  AppRouter['referentiels']['actions']['addPreuveRapport']
 >;
 
 const PREUVE_REGLEMENTAIRE = {
@@ -77,6 +92,9 @@ describe('AddPreuveRouter', () => {
   });
 
   afterAll(async () => {
+    await databaseService.db
+      .delete(preuveRapportTable)
+      .where(eq(preuveRapportTable.collectiviteId, collectivite.id));
     await databaseService.db
       .delete(preuveComplementaireTable)
       .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
@@ -302,5 +320,157 @@ describe('AddPreuveRouter', () => {
         commentaire: '',
       } satisfies AddPreuveReglementaireInput)
     ).rejects.toThrow(/permissions nécessaires/i);
+  });
+
+  describe("preuves d'audit", () => {
+    const createAuditEnCours = async (collectiviteId = collectivite.id) => {
+      const { audit } = await createAuditWithOnTestFinished({
+        databaseService,
+        collectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      });
+      return audit;
+    };
+
+    test("un éditeur peut associer un rapport d'audit depuis la bibliothèque", async () => {
+      const audit = await createAuditEnCours();
+      const caller = router.createCaller({ user: editorUser });
+
+      const result = await caller.referentiels.actions.addPreuveAudit({
+        collectiviteId: collectivite.id,
+        auditId: audit.id,
+        fichierId: createdDocumentId,
+        commentaire: '',
+      } satisfies AddPreuveAuditInput);
+
+      const [inserted] = await databaseService.db
+        .select()
+        .from(preuveAuditTable)
+        .where(eq(preuveAuditTable.id, result.id));
+
+      expect(inserted).toMatchObject({
+        collectiviteId: collectivite.id,
+        auditId: audit.id,
+        fichierId: createdDocumentId,
+        commentaire: '',
+        modifiedBy: editorUser.id,
+      });
+    });
+
+    test("l'auditeur, sans rôle dans la collectivité, peut associer un rapport d'audit", async () => {
+      const audit = await createAuditEnCours();
+
+      const { user, cleanup } = await addTestUser(databaseService);
+      onTestFinished(cleanup);
+      const auditeurUser = getAuthUserFromUserCredentials(user);
+      const auditeurPermission = await addAuditeurPermission({
+        databaseService,
+        auditId: audit.id,
+        userId: auditeurUser.id,
+      });
+      onTestFinished(auditeurPermission.cleanup);
+
+      const result = await router
+        .createCaller({ user: auditeurUser })
+        .referentiels.actions.addPreuveAudit({
+          collectiviteId: collectivite.id,
+          auditId: audit.id,
+          fichierId: createdDocumentId,
+        } satisfies AddPreuveAuditInput);
+
+      expect(result.id).toEqual(expect.any(Number));
+    });
+
+    test("un lecteur ne peut pas associer un rapport d'audit", async () => {
+      const audit = await createAuditEnCours();
+
+      await expect(
+        router
+          .createCaller({ user: readerUser })
+          .referentiels.actions.addPreuveAudit({
+            collectiviteId: collectivite.id,
+            auditId: audit.id,
+            fichierId: createdDocumentId,
+          } satisfies AddPreuveAuditInput)
+      ).rejects.toThrow(/permissions nécessaires/i);
+    });
+
+    test("refuse un audit d'une autre collectivité", async () => {
+      const autreFixture = await addTestCollectiviteAndUsers(databaseService, {
+        users: [{ role: CollectiviteRole.EDITION }],
+      });
+      onTestFinished(autreFixture.cleanup);
+      const autreAudit = await createAuditEnCours(autreFixture.collectivite.id);
+
+      await expect(
+        router
+          .createCaller({ user: editorUser })
+          .referentiels.actions.addPreuveAudit({
+            collectiviteId: collectivite.id,
+            auditId: autreAudit.id,
+            fichierId: createdDocumentId,
+          } satisfies AddPreuveAuditInput)
+      ).rejects.toThrow(/n'existe pas/i);
+    });
+  });
+
+  describe('rapports de visite annuelle', () => {
+    const date = new Date('2025-06-15').toISOString();
+
+    test('un éditeur peut ajouter un rapport de visite depuis la bibliothèque', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const result = await caller.referentiels.actions.addPreuveRapport({
+        collectiviteId: collectivite.id,
+        date,
+        fichierId: createdDocumentId,
+      } satisfies AddPreuveRapportInput);
+
+      const [inserted] = await databaseService.db
+        .select()
+        .from(preuveRapportTable)
+        .where(eq(preuveRapportTable.id, result.id));
+
+      expect(inserted).toMatchObject({
+        collectiviteId: collectivite.id,
+        fichierId: createdDocumentId,
+        commentaire: '',
+        modifiedBy: editorUser.id,
+      });
+      expect(new Date(inserted.date).toISOString()).toBe(date);
+    });
+
+    test('un éditeur peut ajouter un rapport de visite avec un lien', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const result = await caller.referentiels.actions.addPreuveRapport({
+        collectiviteId: collectivite.id,
+        date,
+        lien: { url: 'https://example.com/rapport', titre: 'Rapport 2025' },
+      } satisfies AddPreuveRapportInput);
+
+      const [inserted] = await databaseService.db
+        .select()
+        .from(preuveRapportTable)
+        .where(eq(preuveRapportTable.id, result.id));
+
+      expect(inserted).toMatchObject({
+        url: 'https://example.com/rapport',
+        titre: 'Rapport 2025',
+        fichierId: null,
+      });
+    });
+
+    test('un lecteur ne peut pas ajouter un rapport de visite', async () => {
+      await expect(
+        router
+          .createCaller({ user: readerUser })
+          .referentiels.actions.addPreuveRapport({
+            collectiviteId: collectivite.id,
+            date,
+            fichierId: createdDocumentId,
+          } satisfies AddPreuveRapportInput)
+      ).rejects.toThrow(/permissions nécessaires/i);
+    });
   });
 });

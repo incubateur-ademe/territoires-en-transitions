@@ -57,3 +57,34 @@ export const addPreuveComplementaireInputSchema = z.union([
 export type AddPreuveComplementaireInput = z.infer<
   typeof addPreuveComplementaireInputSchema
 >;
+export const addPreuveAuditInputSchema = addPreuveBaseSchema.extend({
+  auditId: z.number().int().positive(),
+  fichierId: z.number().int().positive(),
+});
+export type AddPreuveAuditInput = z.infer<typeof addPreuveAuditInputSchema>;
+
+const addPreuveRapportBaseSchema = addPreuveBaseSchema.extend({
+  date: z.iso.datetime(),
+});
+
+export const addPreuveRapportWithFileInputSchema =
+  addPreuveRapportBaseSchema.extend({
+    fichierId: z.number().int().positive(),
+  });
+export type AddPreuveRapportWithFileInput = z.infer<
+  typeof addPreuveRapportWithFileInputSchema
+>;
+
+export const addPreuveRapportWithLinkInputSchema =
+  addPreuveRapportBaseSchema.extend({
+    lien: lienSchema,
+  });
+export type AddPreuveRapportWithLinkInput = z.infer<
+  typeof addPreuveRapportWithLinkInputSchema
+>;
+
+export const addPreuveRapportInputSchema = z.union([
+  addPreuveRapportWithFileInputSchema,
+  addPreuveRapportWithLinkInputSchema,
+]);
+export type AddPreuveRapportInput = z.infer<typeof addPreuveRapportInputSchema>;
