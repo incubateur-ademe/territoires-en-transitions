@@ -29,6 +29,7 @@
     "@google/genai": "2.8.0",
     "@gouvfr/dsfr": "1.10.2",
     "@hookform/resolvers": "5.2.2",
+    "@napi-rs/canvas": "0.1.98",
     "@nestjs/bullmq": "11.0.3",
     "@nestjs/common": "11.2.6",
     "@nestjs/config": "4.0.2",

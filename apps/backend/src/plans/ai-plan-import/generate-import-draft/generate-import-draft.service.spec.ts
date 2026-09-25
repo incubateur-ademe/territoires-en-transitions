@@ -104,6 +104,8 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     );
   const llm = {
     maxInputTokens: overrides.maxInputTokens ?? 900_000,
+    capabilities: { ocr: false, strategy: 'whole-document' },
+    maxInputTokensFor: () => overrides.maxInputTokens ?? 900_000,
     generateStructured: overrides.generateStructured
       ? vi.fn(overrides.generateStructured)
       : defaultLlm,
@@ -178,7 +180,10 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.updateStepStates).toHaveBeenLastCalledWith(
       'job-1',
       {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'skipped',
         consolidation: 'skipped',
         enrichment: 'skipped',

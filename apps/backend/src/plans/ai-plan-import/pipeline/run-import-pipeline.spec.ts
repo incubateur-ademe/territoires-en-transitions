@@ -1,8 +1,9 @@
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
-import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
+import { buildDocument, buildPage } from './document/document-page';
 import {
+  PipelineLlm,
   RunImportPipelineInput,
   runImportPipeline,
   StepName,
@@ -25,7 +26,8 @@ const stepOf = (prompt: string): StepName => {
   return 'extraction';
 };
 
-const responseByStep: Record<StepName, unknown> = {
+// Seules les étapes qui interrogent le modèle ont une réponse.
+const responseByStep: Partial<Record<StepName, unknown>> = {
   extraction: [
     {
       axe: 'Axe 1',
@@ -63,10 +65,10 @@ const responseByStep: Record<StepName, unknown> = {
   qualitativeReview: { avis: 'Extraction cohérente' },
 };
 
-const routedLlm = (
-  failingStep?: StepName
-): Pick<LlmService, 'generateStructured'> =>
+const routedLlm = (failingStep?: StepName): PipelineLlm =>
   ({
+    maxInputTokens: 900_000,
+    capabilities: { ocr: false, strategy: 'whole-document' },
     generateStructured: vi.fn(async ({ prompt }: { prompt: string }) => {
       const step = stepOf(prompt);
       if (step === failingStep) {
@@ -74,12 +76,15 @@ const routedLlm = (
       }
       return success({ data: responseByStep[step], tokens });
     }),
-  } as unknown as Pick<LlmService, 'generateStructured'>);
+  } as unknown as PipelineLlm);
+
+const documentOf = (text: string) =>
+  buildDocument('pdf', [buildPage(0, [{ text }])]);
 
 const input = (
   overrides: Partial<RunImportPipelineInput> = {}
 ): RunImportPipelineInput => ({
-  chunks: ['texte source'],
+  document: documentOf('texte source'),
   instructions: '',
   disabledFields: [],
   currentDate: '2026-06-10',
@@ -103,7 +108,10 @@ describe('runImportPipeline', () => {
       expect(action.sousActions[0].description).toBe('desc enrichie');
       expect(outcome.draft.qualitativeReview).toBe('Extraction cohérente');
       expect(outcome.stepStates).toEqual({
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
@@ -153,8 +161,9 @@ describe('runImportPipeline', () => {
 
   it('émet la progression cumulée après chaque étape', async () => {
     const llm = routedLlm();
-    const onStepStatesChange =
-      vi.fn<(stepStates: StepStates) => Promise<void>>(async () => {});
+    const onStepStatesChange = vi.fn<(stepStates: StepStates) => Promise<void>>(
+      async () => {}
+    );
 
     await runImportPipeline(llm, input({ onStepStatesChange }));
 
@@ -163,35 +172,60 @@ describe('runImportPipeline', () => {
     );
     expect(reportedStates).toEqual([
       {
-        extraction: 'ok',
+        reading: 'ok',
+        scouting: 'skipped',
+        extraction: 'pending',
+        hierarchy: 'pending',
         scoring: 'pending',
         consolidation: 'pending',
         enrichment: 'pending',
         qualitativeReview: 'pending',
       },
       {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
+        scoring: 'pending',
+        consolidation: 'pending',
+        enrichment: 'pending',
+        qualitativeReview: 'pending',
+      },
+      {
+        reading: 'ok',
+        scouting: 'skipped',
+        extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'ok',
         consolidation: 'pending',
         enrichment: 'pending',
         qualitativeReview: 'pending',
       },
       {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'pending',
         qualitativeReview: 'pending',
       },
       {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
         qualitativeReview: 'pending',
       },
       {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
@@ -210,7 +244,10 @@ describe('runImportPipeline', () => {
       failedStep: 'scoring',
       error: { kind: 'rate_limited' },
       stepStates: {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'pending',
         consolidation: 'pending',
         enrichment: 'pending',
