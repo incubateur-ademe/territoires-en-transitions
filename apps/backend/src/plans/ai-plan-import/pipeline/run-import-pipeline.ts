@@ -2,6 +2,8 @@ import { DisableableField } from '../models/disableable-field';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { joinPages, ReadDocument } from './document/document-page';
 import { structureUnits } from './extract-actions/structure-units';
+import { PlanSkeleton } from '../models/plan-skeleton';
+import { scoutUnits } from './scout-units/scout-units';
 import { DocumentUnit } from './segment-document/document-unit';
 import { segmentDocument } from './segment-document/segment-document';
 import { coalesceChunks } from './source-chunks/coalesce-chunks';
@@ -129,19 +131,38 @@ export const runImportPipeline = async (
     return failed(initialProgress(), 'reading', read.error);
   }
   let { chunks } = read.data;
-  const { units } = read.data;
-  // Le repérage arrive avec la stratégie segmentée ; d'ici là, rien à trier.
-  const afterReading = markSkipped(
-    markOk(initialProgress(), 'reading'),
-    'scouting'
-  );
+  let { units } = read.data;
+  let skeleton: PlanSkeleton | null = null;
+  const afterReading = markOk(initialProgress(), 'reading');
   await reportProgress(afterReading.stepStates);
+
+  // Écarter ce qui ne contient pas d'action et relever le squelette du plan :
+  // seulement quand le document est lu par unités.
+  const scouted = await runStep({
+    progress: afterReading,
+    name: 'scouting',
+    skipWhen: units === null,
+    run: async () => {
+      const result = await scoutUnits(llm, {
+        units: units as DocumentUnit[],
+        signal: input.signal,
+      });
+      if (!result.success) {
+        return result;
+      }
+      units = result.data.keptUnits;
+      skeleton = result.data.skeleton;
+      return success({ tokens: result.data.tokens });
+    },
+  });
+  if (!scouted.success) return scouted.outcome;
+  await reportProgress(scouted.progress.stepStates);
 
   // Les étapes suivantes conservent l'ordre des actions : la tranche d'origine
   // relevée à l'extraction reste valable pour elles.
   let source: SourceChunks = { chunks, chunkIndexByAction: [] };
   const extracted = await runStep({
-    progress: afterReading,
+    progress: scouted.progress,
     name: 'extraction',
     run: async () => {
       const extraction = {
@@ -153,7 +174,7 @@ export const runImportPipeline = async (
       if (units) {
         const result = await structureUnits(llm, {
           units,
-          skeleton: null,
+          skeleton,
           ...extraction,
         });
         if (result.success) {

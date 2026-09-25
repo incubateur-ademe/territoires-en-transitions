@@ -19,6 +19,8 @@ const tokens: TokenUsage = {
 };
 
 const stepOf = (prompt: string): StepName => {
+  if (prompt.includes('agent de tri documentaire')) return 'scouting';
+  if (prompt.includes('squelette du plan')) return 'scouting';
   if (prompt.includes('auditeur qualité')) return 'qualitativeReview';
   if (prompt.includes("agent d'enrichissement")) return 'enrichment';
   if (prompt.includes('Actions ciblées à traiter')) return 'consolidation';
@@ -73,6 +75,17 @@ const routedLlm = (failingStep?: StepName): PipelineLlm =>
       const step = stepOf(prompt);
       if (step === failingStep) {
         return failure({ kind: 'rate_limited' });
+      }
+      if (step === 'scouting') {
+        return success({
+          data: prompt.includes('squelette du plan')
+            ? { axes: [{ numero: '1', titre: 'Bâtiments', sousAxes: [] }] }
+            : [
+                { index: 0, type: 'fiche_action' },
+                { index: 1, type: 'diagnostic' },
+              ],
+          tokens,
+        });
       }
       return success({ data: responseByStep[step], tokens });
     }),
@@ -173,6 +186,16 @@ describe('runImportPipeline', () => {
     expect(reportedStates).toEqual([
       {
         reading: 'ok',
+        scouting: 'pending',
+        extraction: 'pending',
+        hierarchy: 'pending',
+        scoring: 'pending',
+        consolidation: 'pending',
+        enrichment: 'pending',
+        qualitativeReview: 'pending',
+      },
+      {
+        reading: 'ok',
         scouting: 'skipped',
         extraction: 'pending',
         hierarchy: 'pending',
@@ -264,14 +287,25 @@ describe('runImportPipeline', () => {
     // fiche. Deux unités, deux structurations, puis une seule fenêtre de
     // contrôle.
     expect(
+      prompts.filter((p) => p.includes('agent de tri documentaire'))
+    ).toHaveLength(1);
+    expect(prompts.filter((p) => p.includes('squelette du plan'))).toHaveLength(
+      1
+    );
+    expect(
       prompts.filter((p) => p.includes('Extrait à structurer'))
     ).toHaveLength(2);
+    // Le squelette relevé est cité à chaque structuration.
+    expect(prompts.find((p) => p.includes('Extrait à structurer'))).toContain(
+      'Axe 1 : Bâtiments'
+    );
     expect(
       prompts.filter((p) => p.includes('agent de validation'))
     ).toHaveLength(1);
     expect(outcome.status).toBe('done');
     if (outcome.status === 'done') {
       expect(outcome.stepStates.reading).toBe('ok');
+      expect(outcome.stepStates.scouting).toBe('ok');
       expect(outcome.draft.actions).toHaveLength(1);
     }
   });
