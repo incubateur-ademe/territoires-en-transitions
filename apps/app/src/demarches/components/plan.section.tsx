@@ -22,7 +22,7 @@ import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
-import { Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
+import { Alert, Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 import { DemarcheSection } from './section';
@@ -351,6 +351,15 @@ const ListEligiblePlansTable = ({
             </tbody>
           </table>
         </div>
+        {!isReadonly && (
+          <div data-test="demarches.plan.verifier-plans-info">
+            <Alert
+              state="info"
+              title={appLabels.demarcheProgrammeVerifierPlansTitre}
+              description={appLabels.demarcheProgrammeVerifierPlansDescription}
+            />
+          </div>
+        )}
       </div>
     </ProgrammeActionsColumn>
   );

@@ -487,6 +487,10 @@ export const demarchesLabels = {
   }) =>
     `Lier votre programme d’actions à un plan ${type.nom} existant de votre collectivité dans la plateforme, ou créez-en un nouveau.`,
   demarcheProgrammeDetacher: 'Détacher',
+  demarcheProgrammeVerifierPlansTitre:
+    'Vérifiez vos plans avant de valider le dépôt',
+  demarcheProgrammeVerifierPlansDescription:
+    'Consultez les actions et les secteurs réglementaires de chaque plan lié depuis sa fiche, corrigez-les si besoin, puis marquez le plan comme vérifié dans ce tableau.',
   demarcheProgrammeLectureSeule:
     'La démarche n’est plus en élaboration : le programme d’actions n’est plus modifiable.',
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
