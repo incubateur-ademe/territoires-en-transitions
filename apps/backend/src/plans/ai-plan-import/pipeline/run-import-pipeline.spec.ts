@@ -234,6 +234,48 @@ describe('runImportPipeline', () => {
     ]);
   });
 
+  it('structure chaque fiche à part avec la stratégie segmentée, puis vérifie par fenêtres', async () => {
+    const llm = routedLlm();
+    (llm as { capabilities: unknown }).capabilities = {
+      ocr: false,
+      strategy: 'segmented',
+    };
+    const document = buildDocument('pdf', [
+      buildPage(0, [
+        { text: 'Axe 1 : Bâtiments' },
+        { text: 'Action 1.1.1 : Isoler' },
+        { text: 'Pilote : Service' },
+      ]),
+      buildPage(1, [
+        { text: 'Action 1.1.2 : Rénover' },
+        { text: 'Budget : 10' },
+      ]),
+    ]);
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({ document, withSousActions: false })
+    );
+
+    const prompts = vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt);
+    // L'axe seul est trop court pour vivre seul : il rejoint la première
+    // fiche. Deux unités, deux structurations, puis une seule fenêtre de
+    // contrôle.
+    expect(
+      prompts.filter((p) => p.includes('Extrait à structurer'))
+    ).toHaveLength(2);
+    expect(
+      prompts.filter((p) => p.includes('agent de validation'))
+    ).toHaveLength(1);
+    expect(outcome.status).toBe('done');
+    if (outcome.status === 'done') {
+      expect(outcome.stepStates.reading).toBe('ok');
+      expect(outcome.draft.actions).toHaveLength(1);
+    }
+  });
+
   it('échoue à la première étape qui échoue, sans brouillon', async () => {
     const llm = routedLlm('scoring');
 

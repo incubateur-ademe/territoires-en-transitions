@@ -1,11 +1,31 @@
+import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count';
 import { isNotNil } from 'es-toolkit';
 import {
   ExtractedAction,
   ExtractedSousAction,
 } from '../../models/extracted-action';
 
-export const renderActionsCompact = (actions: ExtractedAction[]): string =>
-  actions.map(renderAction).join('\n');
+// La relecture porte un jugement d'ensemble : un échantillon suffit, et
+// l'entrée doit tenir dans la fenêtre du modèle avec sa réponse.
+export const DEFAULT_REVIEW_MAX_TOKENS = 30_000;
+
+export const renderActionsCompact = (
+  actions: ExtractedAction[],
+  { maxTokens = DEFAULT_REVIEW_MAX_TOKENS }: { maxTokens?: number } = {}
+): string => {
+  const lines: string[] = [];
+  let tokens = 0;
+  for (const [index, action] of actions.entries()) {
+    const rendered = renderAction(action);
+    tokens += estimateTokenCount(rendered) + 1;
+    if (tokens > maxTokens && lines.length > 0) {
+      lines.push(`… et ${actions.length - index} autres actions non listées.`);
+      break;
+    }
+    lines.push(rendered);
+  }
+  return lines.join('\n');
+};
 
 const renderAction = (action: ExtractedAction): string =>
   [
