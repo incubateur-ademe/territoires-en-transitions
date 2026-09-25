@@ -22,6 +22,9 @@ export const useVerifyPlan = (planId: number) => {
             queryKey: trpc.plans.plans.get.queryKey({ planId }),
           }),
           queryClient.invalidateQueries({
+            queryKey: trpc.plans.plans.list.pathKey(),
+          }),
+          queryClient.invalidateQueries({
             queryKey: trpc.demarches.pcaet.get.pathKey(),
           }),
           queryClient.invalidateQueries({

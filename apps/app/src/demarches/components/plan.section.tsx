@@ -22,7 +22,16 @@ import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
-import { Alert, Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
+import {
+  Alert,
+  Badge,
+  Button,
+  cn,
+  Icon,
+  SplitButton,
+  TableHeaderCell,
+} from '@tet/ui';
+import { isPlanPendingVerification } from '@tet/domain/plans';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 import { DemarcheSection } from './section';
@@ -131,6 +140,20 @@ const ProgrammeActionsPlanRow = ({
             {nom}
             <Icon icon="external-link-line" className="ml-2" />
           </Link>
+          {isPlanPendingVerification(plan) && (
+            <Link
+              href={planUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-test="demarches.plan.a-verifier-badge"
+            >
+              <Badge
+                title={appLabels.demarcheProgrammePlanAVerifier}
+                variant="warning"
+                size="sm"
+              />
+            </Link>
+          )}
         </div>
       </td>
       <td className="px-4 py-3 text-grey-7">

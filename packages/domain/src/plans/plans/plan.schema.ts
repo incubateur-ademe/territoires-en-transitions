@@ -17,7 +17,6 @@ export type Plan = {
   createdAt: string;
   budget?: BudgetWithTotal;
   totalFiches?: number;
-  /** Renseignés par la lecture d'un plan seul, pas par les listes. */
   source?: PlanSource | null;
   verifiedAt?: string | null;
 };
