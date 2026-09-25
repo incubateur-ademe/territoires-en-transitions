@@ -55,7 +55,7 @@ export const normalizeTitle = (titre: string): string =>
 const richer = (a: string | null, b: string | null): string | null =>
   b !== null && (a === null || b.length > a.length) ? b : a;
 
-const mergeActions = (
+export const mergeActions = (
   first: ExtractedAction,
   second: ExtractedAction
 ): ExtractedAction => ({
