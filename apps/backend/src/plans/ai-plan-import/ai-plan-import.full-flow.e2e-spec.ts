@@ -100,6 +100,8 @@ const buildFakeLlm = (): LlmService => {
 
   return {
     maxInputTokens: 60_000,
+    maxInputTokensFor: () => 60_000,
+    capabilities: { ocr: false, strategy: 'whole-document' },
     generateStructured: async ({ schema }: { schema: unknown }) => ({
       success: true,
       data: { data: respondTo(schema), tokens: noTokens },
@@ -316,7 +318,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       error: null,
       qualitativeReview: QUALITATIVE_REVIEW_TEXT,
       stepStates: {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
@@ -405,7 +410,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     expect(status).toMatchObject({
       status: 'done',
       stepStates: {
+        reading: 'ok',
+        scouting: 'skipped',
         extraction: 'ok',
+        hierarchy: 'skipped',
         scoring: 'skipped',
         consolidation: 'skipped',
         enrichment: 'skipped',

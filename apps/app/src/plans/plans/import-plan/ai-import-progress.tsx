@@ -5,7 +5,10 @@ import { Alert, Button, VisibleWhen } from '@tet/ui';
 import { ImportStepName, ImportStepView } from './ai-import-steps.model';
 
 const stepLabels: Record<ImportStepName, string> = {
+  reading: appLabels.importPlanIaEtapeLecture,
+  scouting: appLabels.importPlanIaEtapeReperage,
   extraction: appLabels.importPlanIaEtapeExtraction,
+  hierarchy: appLabels.importPlanIaEtapeHierarchie,
   scoring: appLabels.importPlanIaEtapeVerification,
   consolidation: appLabels.importPlanIaEtapeConsolidation,
   enrichment: appLabels.importPlanIaEtapeEnrichissement,
