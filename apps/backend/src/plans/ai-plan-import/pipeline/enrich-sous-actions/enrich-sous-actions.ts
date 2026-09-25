@@ -1,10 +1,10 @@
 import { DisableableField } from '../../models/disableable-field';
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
-import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import {
   emptyTokenUsage,
   sumTokenUsage,
+  TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { combineResults, Result, success } from '@tet/backend/utils/result.type';

@@ -20,6 +20,7 @@ import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
+import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count';
 import { ExtractionError, extractText } from '../pipeline/extract-text';
 import {
   initialStepStates,
@@ -113,6 +114,14 @@ export class GenerateImportDraftService {
     const text = await extractText(source);
     if (!text.success) {
       return this.recordFailure(job.id, extractionErrorMessage(text.error));
+    }
+
+    const estimatedTokens = estimateTokenCount(text.data);
+    if (estimatedTokens > this.llm.maxInputTokens) {
+      return this.recordFailure(
+        job.id,
+        `Document trop long pour l'import (environ ${estimatedTokens} tokens, ${this.llm.maxInputTokens} au maximum) : importez-le en plusieurs parties`
+      );
     }
 
     const outcome = await runImportPipeline(this.llm, {

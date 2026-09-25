@@ -2,18 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Options, default as retry } from 'async-retry';
 import { z, ZodType } from 'zod';
+import { ConcurrencyLimiter } from '../concurrency-limiter';
 import { LlmError } from './llm.errors';
-import { LlmRawCompletion, LlmRepository, TokenUsage } from './llm.repository';
+import { LlmRawCompletion, LlmRepository } from './repositories/llm.repository';
+import { TokenUsage } from './token-usage';
+import { isTransientError } from './is-transient-error';
 import { parseStructuredResponse } from './parse-json-response';
 
 const DEFAULT_TEMPERATURE = 0.2;
 const DEFAULT_MAX_OUTPUT_TOKENS = 64000;
 const DEFAULT_THINKING_BUDGET = 8192;
+// Jusqu'à une minute d'attente cumulée : les quotas se comptent souvent par
+// minute (Albert API : requêtes et tokens par minute).
 const RETRY_OPTIONS: Options = {
-  retries: 5,
+  retries: 6,
   factor: 2,
-  minTimeout: 500,
-  maxTimeout: 8000,
+  minTimeout: 1000,
+  maxTimeout: 30000,
   randomize: true,
 };
 
@@ -34,22 +39,32 @@ export type StructuredCompletion<Schema extends ZodType> = {
 
 @Injectable()
 export class LlmService {
-  constructor(private readonly llmRepository: LlmRepository) {}
+  private readonly limiter: ConcurrencyLimiter;
+
+  constructor(private readonly llmRepository: LlmRepository) {
+    this.limiter = new ConcurrencyLimiter(llmRepository.maxConcurrentCalls);
+  }
+
+  get maxInputTokens(): number {
+    return this.llmRepository.maxInputTokens;
+  }
 
   async generateStructured<Schema extends ZodType>(
     args: GenerateStructuredArgs<Schema>
   ): Promise<Result<StructuredCompletion<Schema>, LlmError>> {
     const completionResult = await this.callWithRetry(
       () =>
-        this.llmRepository.complete({
-          prompt: args.prompt,
-          jsonSchema: z.toJSONSchema(args.schema),
-          systemInstruction: args.systemInstruction,
-          temperature: args.temperature ?? DEFAULT_TEMPERATURE,
-          maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
-          thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
-          signal: args.signal,
-        }),
+        this.limiter.run(() =>
+          this.llmRepository.complete({
+            prompt: args.prompt,
+            jsonSchema: z.toJSONSchema(args.schema),
+            systemInstruction: args.systemInstruction,
+            temperature: args.temperature ?? DEFAULT_TEMPERATURE,
+            maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
+            thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
+            signal: args.signal,
+          })
+        ),
       args.signal
     );
     if (!completionResult.success) {
@@ -94,13 +109,3 @@ export class LlmService {
     }
   }
 }
-
-export const isTransientError = (error: LlmError): boolean => {
-  if (error.kind === 'rate_limited') {
-    return true;
-  }
-  if (error.kind === 'api_error') {
-    return error.httpStatus === null || error.httpStatus >= 500;
-  }
-  return false;
-};
