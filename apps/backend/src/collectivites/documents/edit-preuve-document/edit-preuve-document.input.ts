@@ -1,11 +1,14 @@
-import { lienSchema, preuveTypeEnumSchema } from '@tet/domain/collectivites';
+import {
+  lienInputSchema,
+  preuveTypeEnumSchema,
+} from '@tet/domain/collectivites';
 import z from 'zod';
 
 export const updatePreuveInputSchema = z
   .object({
     preuveId: z.number().int().positive(),
     preuveType: preuveTypeEnumSchema,
-    lien: z.object(lienSchema.shape).optional(),
+    lien: z.optional(lienInputSchema),
     commentaire: z.string().optional(),
   })
   .refine(

@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { lienFormSchema } from '@/app/collectivites/documents/lien-schema';
 import { Lien } from '@tet/domain/collectivites';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
@@ -21,6 +22,13 @@ export const EditLienModal = (props: EditLienModalProps) => {
 
   const { mutate: editLien, isPending } = useUpdatePreuveLien();
 
+  const lienSaisi = lienFormSchema.safeParse({ titre, url });
+  const messageDErreur = (champ: 'titre' | 'url'): string | undefined =>
+    lienSaisi.success
+      ? undefined
+      : lienSaisi.error.issues.find((issue) => issue.path[0] === champ)
+          ?.message;
+
   return (
     <Modal
       dataTest="edit-lien"
@@ -28,14 +36,22 @@ export const EditLienModal = (props: EditLienModalProps) => {
       title={appLabels.editerLien}
       render={() => (
         <>
-          <Field title="Titre du lien">
+          <Field
+            title={appLabels.titreLienObligatoire}
+            state={messageDErreur('titre') ? 'error' : 'default'}
+            message={messageDErreur('titre')}
+          >
             <Input
               type="text"
               value={titre}
               onChange={(e) => setTitre(e.currentTarget.value)}
             />
           </Field>
-          <Field title="Lien">
+          <Field
+            title={appLabels.lienObligatoire}
+            state={messageDErreur('url') ? 'error' : 'default'}
+            message={messageDErreur('url')}
+          >
             <Input
               type="text"
               value={url}
@@ -48,16 +64,18 @@ export const EditLienModal = (props: EditLienModalProps) => {
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close, disabled: isPending }}
           btnOKProps={{
-            disabled: isPending || !titre.trim() || !url,
-            onClick: () => {
-              editLien({
-                id: preuve.id,
-                preuveType: preuve.preuveType,
-                collectiviteId: preuve.collectiviteId,
-                lien: { titre, url },
-              });
-              close();
-            },
+            disabled: isPending || !lienSaisi.success,
+            onClick: () =>
+              lienSaisi.success &&
+              editLien(
+                {
+                  id: preuve.id,
+                  preuveType: preuve.preuveType,
+                  collectiviteId: preuve.collectiviteId,
+                  lien: lienSaisi.data,
+                },
+                { onSuccess: close }
+              ),
           }}
         />
       )}
