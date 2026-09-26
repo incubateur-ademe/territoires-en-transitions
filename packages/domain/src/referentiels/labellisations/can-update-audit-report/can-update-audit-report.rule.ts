@@ -1,3 +1,4 @@
+import { isAuditOpen } from '../is-audit-open.rule';
 import { AUDIT_REPORT_UPDATE_WINDOW_DAYS } from '../labellisation-audit.schema';
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -9,7 +10,7 @@ type Audit = {
 };
 
 function isAuditeurUpdateWindowOpen(audit: Audit, now: Date): boolean {
-  if (!audit.valide && !audit.clos) {
+  if (isAuditOpen(audit)) {
     return true;
   }
   if (audit.dateFin === null) {
