@@ -1,3 +1,4 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -16,7 +17,8 @@ import { AddPreuveRepository } from './add-preuve.repository';
 export class AddPreuveService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly addPreuveRepository: AddPreuveRepository
+    private readonly addPreuveRepository: AddPreuveRepository,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async addPreuveReglementaire(
@@ -44,9 +46,12 @@ export class AddPreuveService {
     const commentaire = input.commentaire ?? '';
 
     if ('fichierId' in input) {
-      const fichierCollectiviteId =
-        await this.addPreuveRepository.getFichierCollectiviteId(input.fichierId);
-      if (fichierCollectiviteId !== input.collectiviteId) {
+      const isFichierOwnedByCollectivite =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId: input.fichierId,
+          collectiviteId: input.collectiviteId,
+        });
+      if (!isFichierOwnedByCollectivite) {
         return failure(CommonErrorEnum.NOT_FOUND);
       }
 
@@ -80,9 +85,12 @@ export class AddPreuveService {
     const commentaire = input.commentaire ?? '';
 
     if ('fichierId' in input) {
-      const fichierCollectiviteId =
-        await this.addPreuveRepository.getFichierCollectiviteId(input.fichierId);
-      if (fichierCollectiviteId !== input.collectiviteId) {
+      const isFichierOwnedByCollectivite =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId: input.fichierId,
+          collectiviteId: input.collectiviteId,
+        });
+      if (!isFichierOwnedByCollectivite) {
         return failure(CommonErrorEnum.NOT_FOUND);
       }
 
