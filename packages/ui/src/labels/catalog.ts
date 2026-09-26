@@ -8,6 +8,7 @@ const uiLabels = {
   rechercher: 'Rechercher',
   rechercherParMotsCles: 'Rechercher par mots-clés',
   saisirLeTexte: 'Saisir le texte',
+  texteTronque: 'Texte tronqué',
   saisirTexteRichTextEditor:
     'Saisir le texte ou taper / pour afficher les options de mise en page',
   chargementEnCours: 'Chargement en cours...',
