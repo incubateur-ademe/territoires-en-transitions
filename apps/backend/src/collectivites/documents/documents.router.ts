@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { AddRapportVisiteRouter } from './add-rapport-visite/add-rapport-visite.router';
 import { CreateUploadTokenRouter } from './create-upload-token/create-upload-token.router';
 import { EditPreuveDocumentRouter } from './edit-preuve-document/edit-preuve-document.router';
 import { GetDownloadUrlRouter } from './get-download-url/get-download-url.router';
@@ -16,7 +17,8 @@ export class DocumentsRouter {
     private readonly editPreuveDocumentRouter: EditPreuveDocumentRouter,
     private readonly createUploadTokenRouter: CreateUploadTokenRouter,
     private readonly getDownloadUrlRouter: GetDownloadUrlRouter,
-    private readonly listBibliothequeDocumentsRouter: ListBibliothequeDocumentsRouter
+    private readonly listBibliothequeDocumentsRouter: ListBibliothequeDocumentsRouter,
+    private readonly addRapportVisiteRouter: AddRapportVisiteRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -25,7 +27,8 @@ export class DocumentsRouter {
     this.editPreuveDocumentRouter.router,
     this.createUploadTokenRouter.router,
     this.getDownloadUrlRouter.router,
-    this.listBibliothequeDocumentsRouter.router
+    this.listBibliothequeDocumentsRouter.router,
+    this.addRapportVisiteRouter.router
   );
 
   createCaller = this.trpc.createCallerFactory(this.router);

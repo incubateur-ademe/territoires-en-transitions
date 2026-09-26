@@ -23,7 +23,7 @@ export type DocumentCollectiviteBase = z.infer<
   typeof documentCollectiviteBaseSchema
 >;
 
-const notApplicable = z.optional(z.never());
+export const notApplicable = z.optional(z.never());
 
 export const fichierSupportSchema = z.object({
   type: z.literal('fichier'),

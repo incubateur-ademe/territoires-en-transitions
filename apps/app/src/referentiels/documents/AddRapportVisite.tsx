@@ -3,7 +3,7 @@ import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-
 import { Button, Field, Input, Modal } from '@tet/ui';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
-import { useAddRapportVisite } from './useAddRapportVisite';
+import { useAddRapportVisite } from './use-add-rapport-visite';
 
 /**
  * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
