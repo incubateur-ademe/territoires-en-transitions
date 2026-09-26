@@ -7,7 +7,7 @@ const BEFORE_ANALYSIS = new Date('2026-08-15T10:00:00Z');
 const AFTER_ANALYSIS = new Date('2026-09-10T10:00:00Z');
 
 describe('full-flow', () => {
-  it.skip('classe une fiche sans statut', () => {
+  it('classe une fiche sans statut', () => {
     const fiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -28,7 +28,7 @@ describe('full-flow', () => {
 });
 
 describe('full-flow-behavior-on-already-processed-action', () => {
-  it.skip("ne classe pas une fiche traitée dont l'empreinte est inchangée", () => {
+  it("ne classe pas une fiche traitée dont l'empreinte est inchangée", () => {
     const plan = buildAnalysisRunPlan({
       fiches: [
         {
@@ -57,7 +57,7 @@ describe('full-flow-behavior-on-already-processed-action', () => {
     expect(plan).toEqual({ toClassify: [], toMarkStale: [], toRemove: [] });
   });
 
-  it.skip('ne classe, sur une CT déjà analysée, que les fiches nouvelles, périmées ou en erreur', () => {
+  it('ne classe, sur une CT déjà analysée, que les fiches nouvelles, périmées ou en erreur', () => {
     const plan = buildAnalysisRunPlan({
       fiches: [
         {
@@ -125,7 +125,7 @@ describe('full-flow-behavior-on-already-processed-action', () => {
 });
 
 describe('cron-action-management', () => {
-  it.skip('marque périmée et classe une fiche traitée dont le titre a changé', () => {
+  it('marque périmée et classe une fiche traitée dont le titre a changé', () => {
     const fiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -158,7 +158,7 @@ describe('cron-action-management', () => {
     });
   });
 
-  it.skip('ne marque pas périmée une fiche traitée modifiée hors titre et description', () => {
+  it('ne marque pas périmée une fiche traitée modifiée hors titre et description', () => {
     const plan = buildAnalysisRunPlan({
       fiches: [
         {
@@ -187,7 +187,7 @@ describe('cron-action-management', () => {
     expect(plan).toEqual({ toClassify: [], toMarkStale: [], toRemove: [] });
   });
 
-  it.skip('marque périmée et classe une fiche en erreur modifiée après sa dernière analyse', () => {
+  it('marque périmée et classe une fiche en erreur modifiée après sa dernière analyse', () => {
     const fiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -219,7 +219,7 @@ describe('cron-action-management', () => {
 });
 
 describe('daily-ct-check', () => {
-  it.skip('classe une fiche périmée sans la marquer périmée une seconde fois', () => {
+  it('classe une fiche périmée sans la marquer périmée une seconde fois', () => {
     const fiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -254,7 +254,7 @@ describe('daily-ct-check', () => {
 });
 
 describe('retry-on-failure', () => {
-  it.skip('classe de nouveau une fiche en erreur non modifiée, sans la marquer périmée', () => {
+  it('classe de nouveau une fiche en erreur non modifiée, sans la marquer périmée', () => {
     const fiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -286,7 +286,7 @@ describe('retry-on-failure', () => {
 });
 
 describe('reclassification-on-deletion', () => {
-  it.skip('désigne pour nettoyage une fiche supprimée qui a un statut, sans la classer', () => {
+  it('désigne pour nettoyage une fiche supprimée qui a un statut, sans la classer', () => {
     const fiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -319,7 +319,7 @@ describe('reclassification-on-deletion', () => {
     });
   });
 
-  it.skip('ignore une fiche supprimée sans statut', () => {
+  it('ignore une fiche supprimée sans statut', () => {
     const plan = buildAnalysisRunPlan({
       fiches: [
         {
@@ -337,7 +337,7 @@ describe('reclassification-on-deletion', () => {
     expect(plan).toEqual({ toClassify: [], toMarkStale: [], toRemove: [] });
   });
 
-  it.skip('ne touche pas aux autres fiches traitées de la CT', () => {
+  it('ne touche pas aux autres fiches traitées de la CT', () => {
     const removedFiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -392,7 +392,7 @@ describe('reclassification-on-deletion', () => {
 });
 
 describe('invariants', () => {
-  it.skip('toute fiche marquée périmée est aussi à classer', () => {
+  it('toute fiche marquée périmée est aussi à classer', () => {
     const renamedFiche = {
       ficheId: 1,
       collectiviteId: 10,
@@ -440,7 +440,7 @@ describe('invariants', () => {
     });
   });
 
-  it.skip("ignore un statut dont la fiche n'est pas dans le passage", () => {
+  it("ignore un statut dont la fiche n'est pas dans le passage", () => {
     const plan = buildAnalysisRunPlan({
       fiches: [],
       analyses: [
@@ -457,7 +457,7 @@ describe('invariants', () => {
     expect(plan).toEqual({ toClassify: [], toMarkStale: [], toRemove: [] });
   });
 
-  it.skip("garde l'ordre des fiches reçues dans les fiches à classer", () => {
+  it("garde l'ordre des fiches reçues dans les fiches à classer", () => {
     const plan = buildAnalysisRunPlan({
       fiches: [
         {

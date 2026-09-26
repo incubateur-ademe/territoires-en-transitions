@@ -5,7 +5,7 @@ const toFicheFailures = (ficheIds: number[]): RunFailure[] =>
   ficheIds.map((ficheId) => ({ kind: 'fiche', ficheId }));
 
 describe('llm-issue', () => {
-  it.skip('laisse le passage continuer à 9 fiches en échec définitif', () => {
+  it('laisse le passage continuer à 9 fiches en échec définitif', () => {
     const failuresResult = addRunFailures(
       [],
       toFicheFailures([1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -17,7 +17,7 @@ describe('llm-issue', () => {
     });
   });
 
-  it.skip('abandonne le passage à la 10e fiche en échec définitif, en rapportant toutes les fiches', () => {
+  it('abandonne le passage à la 10e fiche en échec définitif, en rapportant toutes les fiches', () => {
     const failuresResult = addRunFailures(
       toFicheFailures([1, 2, 3, 4, 5, 6, 7, 8, 9]),
       toFicheFailures([10])
@@ -32,7 +32,7 @@ describe('llm-issue', () => {
     });
   });
 
-  it.skip('abandonne quand un seul lot fait passer le compte de 8 à 12', () => {
+  it('abandonne quand un seul lot fait passer le compte de 8 à 12', () => {
     const failuresResult = addRunFailures(
       toFicheFailures([1, 2, 3, 4, 5, 6, 7, 8]),
       toFicheFailures([9, 10, 11, 12])
@@ -47,7 +47,7 @@ describe('llm-issue', () => {
     });
   });
 
-  it.skip('additionne fiches et CT en échec dans le même seuil', () => {
+  it('additionne fiches et CT en échec dans le même seuil', () => {
     const failuresResult = addRunFailures(
       [],
       [
@@ -74,7 +74,7 @@ describe('llm-issue', () => {
 });
 
 describe('invariants', () => {
-  it.skip('un passage sans échec continue', () => {
+  it('un passage sans échec continue', () => {
     const failuresResult = addRunFailures([], []);
 
     expect(failuresResult).toEqual({ success: true, data: [] });
