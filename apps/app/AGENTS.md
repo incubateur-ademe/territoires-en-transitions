@@ -2,6 +2,13 @@
 
 Next.js 16 (App Router) admin dashboard for collectivites's users.
 
+## Skills
+
+Before writing, reviewing, or refactoring any React/Next.js code in this app,
+invoke the `vercel-react-best-practices` skill. For component API or composition
+design (compound components, render props, context providers, boolean-prop
+proliferation), also invoke `vercel-composition-patterns`.
+
 ## Layout
 
 - **`apps/app/app/`** = Next.js App Router routes only. **`apps/app/src/`** = all feature code.
