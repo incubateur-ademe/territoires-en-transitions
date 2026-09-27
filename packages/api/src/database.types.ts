@@ -19798,22 +19798,6 @@ export type Database = {
         Args: { '': unknown };
         Returns: string;
       };
-      json_matches_schema: {
-        Args: { schema: Json; instance: Json };
-        Returns: boolean;
-      };
-      jsonb_matches_schema: {
-        Args: { schema: Json; instance: Json };
-        Returns: boolean;
-      };
-      jsonschema_is_valid: {
-        Args: { schema: Json };
-        Returns: boolean;
-      };
-      jsonschema_validation_errors: {
-        Args: { schema: Json; instance: Json };
-        Returns: string[];
-      };
       labellisation_cloturer_audit: {
         Args: { audit_id: number; date_fin?: string };
         Returns: {
