@@ -275,6 +275,26 @@ select setval('public.indicateur_source_metadonnee_id_seq',
               (select max(id) from public.indicateur_source_metadonnee));
 ```
 
+### 4. Saisir les services
+
+Chaque dossier repris transmis pour avis reçoit une saisine de chaque service
+qui couvre sa collectivité (DREAL, région, DDT, DR ADEME, services nationaux),
+comme l'aurait fait sa transmission dans TeT : même règle de couverture
+(`listInstructeursCouvrants` du backend), `source = 'transmission'`, périmètre
+principal ou secondaire. Chaque saisine est datée du jour de la transmission
+pour avis du dossier. Un dossier en élaboration n'est jamais saisi. Aucun avis
+n'est écrit : ils viendront avec leur fichier.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-saisines/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+Après l'import, `rattraper-saisines-pcaet` ne trouve rien à faire sur les
+dossiers repris. Ne pas le lancer entre l'import des dossiers et celui-ci : il
+saisirait les services avec la date du jour.
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
