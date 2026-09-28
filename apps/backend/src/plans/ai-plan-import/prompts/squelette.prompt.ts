@@ -15,6 +15,7 @@ ${extraits}
 
 Règles
 - Reprenez les libellés et les numérotations exacts du document ; ne créez aucun axe absent des sources.
+- Quand les titres sont rangés par partie du document, les axes sont ceux de la partie qui présente les actions (plan ou programme d'actions), jamais ceux du diagnostic, de l'état des lieux ou de la stratégie.
 - Un sous-axe a un titre complet, jamais un simple numéro.
 - Si le plan n'a qu'un niveau, laissez "sousAxes" vide.
 - Ne mettez aucune action dans le squelette.

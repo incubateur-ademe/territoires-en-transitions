@@ -17,6 +17,7 @@ export const unitCategoryValues = [
   'fiche_action',
   'structure',
   'diagnostic',
+  'engagement_partenaire',
   'autre',
 ] as const;
 
@@ -87,7 +88,11 @@ export const classifyUnits = async (
 
 const renderPreview = (unit: DocumentUnit, index: number): string => {
   const preview = unit.text.replace(/\s+/g, ' ').slice(0, PREVIEW_CHARS);
-  return `#${index} | pages ${unit.pageStart + 1}–${
-    unit.pageEnd + 1
+  const place = [
+    ...(unit.section ? [`partie « ${unit.section} »`] : []),
+    ...unit.headingPath,
+  ].join(' > ');
+  return `#${index} | pages ${unit.pageStart + 1}–${unit.pageEnd + 1} | ${
+    place || '-'
   } | ${preview}`;
 };

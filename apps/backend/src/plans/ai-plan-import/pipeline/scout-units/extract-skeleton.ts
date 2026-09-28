@@ -65,17 +65,27 @@ export const extractSkeleton = async (
   });
 };
 
-/** Les chemins de titres, dans l'ordre du document, chacun une fois. */
+/**
+ * Les chemins de titres, dans l'ordre du document, chacun une fois, rangés
+ * sous la partie du document qui les contient quand elle est titrée.
+ */
 const distinctHeadingPaths = (units: DocumentUnit[]): string[] => {
   const seen = new Set<string>();
   const titles: string[] = [];
+  let currentSection: string | undefined;
   for (const unit of units) {
+    const indent = unit.section ? 1 : 0;
     unit.headingPath.forEach((title, depth) => {
-      const key = `${depth}:${title}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        titles.push(`${'  '.repeat(depth)}${title}`);
+      const key = `${unit.section ?? ''}|${depth}:${title}`;
+      if (seen.has(key)) {
+        return;
       }
+      seen.add(key);
+      if (unit.section && unit.section !== currentSection) {
+        currentSection = unit.section;
+        titles.push(`Partie « ${unit.section} »`);
+      }
+      titles.push(`${'  '.repeat(indent + depth)}${title}`);
     });
   }
   return titles;
