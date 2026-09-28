@@ -22,8 +22,11 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  listCalculatedMobilisations: MobilisationRepository['listCalculatedMobilisations'] =
-    notImplemented('listCalculatedMobilisations');
+  listCollectivitesWithMobilisation: MobilisationRepository['listCollectivitesWithMobilisation'] =
+    notImplemented('listCollectivitesWithMobilisation');
+
+  getMobilisationState: MobilisationRepository['getMobilisationState'] =
+    notImplemented('getMobilisationState');
 
   async updateMobilisation({
     collectiviteId,

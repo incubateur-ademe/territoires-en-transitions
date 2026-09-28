@@ -28,12 +28,8 @@ export type FicheAnalysisUpsert = z.output<typeof ficheAnalysisUpsertSchema>;
 
 export abstract class FicheAnalysisStatusRepository {
   abstract listAnalyses(input: {
-    readonly ficheIds: readonly number[];
+    readonly collectiviteId: number;
   }): Promise<Result<FicheAnalysis[], FicheAnalysisStatusError>>;
-
-  abstract listAnalysesOfAnalyzedCollectivites(): Promise<
-    Result<FicheAnalysis[], FicheAnalysisStatusError>
-  >;
 
   abstract upsertAnalyses(input: {
     readonly analyses: readonly FicheAnalysisUpsert[];

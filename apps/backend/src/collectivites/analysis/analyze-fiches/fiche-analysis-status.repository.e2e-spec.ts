@@ -16,8 +16,6 @@ describe('FicheAnalysisStatusRepository contract', () => {
   it.todo("chaque écriture met la date d'analyse à l'heure de la base");
   it.todo('deleteAnalyses supprime les statuts des fiches données');
   it.todo("la suppression physique d'une fiche supprime son statut");
-  it.todo('listAnalyses renvoie les statuts des fiches demandées');
-  it.todo(
-    'listAnalysesOfAnalyzedCollectivites renvoie tous les statuts des CT qui ont au moins un statut'
-  );
+  it.todo('listAnalyses renvoie tous les statuts de la CT demandée');
+  it.todo("listAnalyses ne renvoie pas les statuts d'une autre CT");
 });
