@@ -1,6 +1,7 @@
 import { AddFileHandler } from '@/app/collectivites/documents/add-document/add-file';
 import { AddLinkHandler } from '@/app/collectivites/documents/add-document/add-link';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInvalidateDocuments } from '@/app/collectivites/documents/use-invalidate-documents';
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
 type AddAnnexeHandlers = {
@@ -11,8 +12,8 @@ type AddAnnexeHandlers = {
 };
 
 export const useAddAnnexe = (ficheId: number): AddAnnexeHandlers => {
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
 
   const {
     mutate: addAnnexeSync,
@@ -22,9 +23,7 @@ export const useAddAnnexe = (ficheId: number): AddAnnexeHandlers => {
   } = useMutation(
     trpc.plans.fiches.addAnnexe.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
-        });
+        void invalidateDocuments({ type: 'ficheAction' });
       },
     })
   );
