@@ -78,6 +78,12 @@ export const identiteCollectiviteSchema = z.object({
   communesMembresPopulationTags: z
     .array(z.enum(CollectivitePopulationTypeEnum))
     .optional(),
+  /**
+   * Typologie SINOE (ADEME) de la collectivité : id de `typologie_sinoe`.
+   * `null` pour une collectivité sans typologie connue ; absent quand le
+   * contexte qui sert l'identité ne l'a pas chargée.
+   */
+  sinoeId: z.string().nullable().optional(),
 });
 
 export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;

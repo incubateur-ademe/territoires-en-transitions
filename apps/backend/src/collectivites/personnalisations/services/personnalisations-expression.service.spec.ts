@@ -876,7 +876,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
         )
       ).toThrow(
         'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
-          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre.'
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre, sinoe.'
       );
     });
   });
@@ -957,6 +957,61 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           { identiteCollectivite: sansCommunes }
         )
       ).toThrow('communes membres');
+    });
+  });
+
+  describe('identite(sinoe, …)', () => {
+    const expression = 'si identite(sinoe, urbain) alors 1 sinon 0';
+    const identiteSinoe = (sinoeId?: string | null) => ({
+      type: CollectiviteTypeEnum.COMMUNE,
+      soustype: null,
+      populationTags: [],
+      drom: false,
+      sinoeId,
+    });
+
+    it('rend 1 quand la typologie correspond', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: identiteSinoe('urbain'),
+        })
+      ).toBe(1);
+    });
+
+    it('ignore la casse', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(sinoe, URBAIN)',
+          { identiteCollectivite: identiteSinoe('urbain') }
+        )
+      ).toBe(true);
+    });
+
+    it('rend 0 pour une autre typologie', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: identiteSinoe('rural_disperse'),
+        })
+      ).toBe(0);
+    });
+
+    it('rend 0 pour une collectivité sans typologie connue', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: identiteSinoe(null),
+        })
+      ).toBe(0);
+    });
+
+    // Une identité servie sans sa typologie ne doit pas répondre « non » en
+    // silence.
+    it('lève quand la typologie n’a pas été chargée', () => {
+      const { sinoeId: _, ...sansTypologie } = identiteSinoe();
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: sansTypologie,
+        })
+      ).toThrow('typologie SINOE');
     });
   });
 
