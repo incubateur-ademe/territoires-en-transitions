@@ -155,9 +155,11 @@ diagnostic d'une démarche affiche. Le diagnostic se lit sur la ligne « mise en
 œuvre » du dossier, jamais sur son doublon « définitif ».
 
 ```bash
+export TET_API_URL="https://..."           # le backend TeT
+export TET_API_TOKEN="<service role>"      # jeton service role du backend
 SCRIPT=apps/tools/src/migrations/reprise-tec/import-diagnostic/index.ts
 pnpx tsx $SCRIPT            # simulation
-pnpx tsx $SCRIPT --confirm  # import
+pnpx tsx $SCRIPT --confirm  # import, puis recalcul
 ```
 
 Les objectifs 2021 et 2026 ne sont pas écrits : la grille de TeT n'a pas ces
@@ -184,6 +186,8 @@ du dossier, `valeur_vide`, `sans_indicateur_cible`, puis la colonne.
 | `constat_sans_annee`                   | constat sans année, ou à une année impossible (0, 1900, 2900…)                                                                                         |
 | `valeur_sans_periode`                  | valeur sans période dans T&C : ni constat ni objectif connu, ni année                                                                                  |
 | `commentaire_sans_place`               | texte libre (commentaire d'onglet, commentaires sur les réseaux) : TeT ne commente qu'une valeur                                                       |
+| `total_recalcule`                      | total de polluant déclaré, écrit puis remplacé par le calcul de TeT ; seule ligne à la fois écrite et écartée                                          |
+| `total_melange`                        | dossier dont les totaux sont calculés sur un mélange avec un autre dossier de la même collectivité, à la même date (sur le dossier, table `demarche`)  |
 
 Relire les objectifs 2021 et 2026 écartés, par exemple pour les émissions :
 
@@ -195,6 +199,45 @@ select e.tec_id, g.demarche_id, g.secteur_obligatoire_id, g.periode_id, g.emissi
    and e.motif = 'objectif_sans_colonne'
  order by g.demarche_id, g.secteur_obligatoire_id, g.periode_id;
 ```
+
+#### Le recalcul des totaux
+
+L'écriture directe en base ne déclenche pas le calcul des totaux (GES,
+consommation, EnR, séquestration, polluants) que TeT fait à chaque saisie.
+Avec `--confirm`, après le commit, le script appelle donc le recalcul du
+backend (`indicateurs.valeurs.recompute`, service role), une collectivité à la
+fois, puis inscrit :
+
+- `total_recalcule` : chaque total de polluant déclaré que TeT a remplacé (sa
+  formule du PM10 omet le transport routier ; il arrondit à 2 décimales) ;
+- `total_melange` : chaque dossier dont une collectivité a un autre dossier
+  repris à la même date. Le recalcul regroupe par collectivité, date et source,
+  pas par dossier : leurs totaux mélangent les dossiers, et changent d'un
+  recalcul à l'autre.
+
+En simulation, le recalcul ne tourne pas : le script **prévoit** ces écarts en
+refaisant l'addition de TeT (formules et arrondis lus en base).
+
+Le recalcul refait aussi les totaux des autres sources des collectivités
+touchées : ceux-là ne s'annulent pas, le rapport les compte à part.
+
+S'il s'arrête en route, l'import est déjà validé ; le relancer seul :
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-diagnostic/recalculer.ts
+```
+
+#### Annuler le diagnostic
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-diagnostic/annuler.ts [--confirm]
+```
+
+Retire, étiquette par étiquette, les valeurs écrites et les totaux que le
+recalcul a rangés dans les dossiers, puis les étiquettes et leurs liens, puis
+les traces et les écarts de la tranche. Aucune tranche ne dépend de celle-ci :
+pas de garde. **Non annulable** : les totaux que le recalcul a refaits sur les
+autres sources des collectivités touchées.
 
 #### Ce qui arrête l'import du diagnostic
 
