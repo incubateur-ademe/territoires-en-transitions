@@ -1,6 +1,13 @@
 import { describe, it } from 'vitest';
 
 describe('full-flow', () => {
+  it.todo('un lancement sur une liste de CT ne parcourt que ces CT');
+  it.todo(
+    'un lancement sur all parcourt toute CT qui a une fiche candidate ou un engagement'
+  );
+  it.todo(
+    "termine les fiches, les statuts et l'engagement d'une CT avant de lire les fiches de la suivante"
+  );
   it.todo(
     'relit toutes les fiches des CT demandées sans tenir compte du dernier passage'
   );
@@ -25,15 +32,12 @@ describe('daily-ct-check', () => {
     'lit les fiches en attente depuis le début du dernier passage quotidien terminé'
   );
   it.todo(
-    "lit toutes les fiches quand aucun passage quotidien n'a encore été enregistré"
+    "lit toutes les fiches de chaque CT quand aucun passage quotidien n'a encore été enregistré"
   );
   it.todo(
-    "vérifie l'engagement de toutes les CT qui ont au moins un statut, même hors du périmètre du passage"
+    'parcourt toute CT qui a une fiche candidate ou un engagement, même sans fiche en attente'
   );
   it.todo("vérifie l'engagement des CT qui n'ont plus aucun statut");
-  it.todo(
-    "traite comme jamais calculé l'engagement d'une CT qui a des statuts mais pas d'engagement"
-  );
   it.todo(
     "recalcule l'engagement des CT périmées avec les volets et le texte de leurs fiches classées"
   );
@@ -79,8 +83,9 @@ describe('full-flow-behavior-on-already-processed-action', () => {
 
 describe('llm-issue', () => {
   it.todo(
-    'abandonne le passage au 10e échec définitif, fiches et CT confondues'
+    'abandonne le passage au 10e échec définitif, fiches et CT confondues, même réparti sur plusieurs CT'
   );
+  it.todo('ne traite aucune CT après un abandon');
   it.todo("n'enregistre pas un passage abandonné");
   it.todo("garde les statuts déjà écrits avant l'abandon");
 });

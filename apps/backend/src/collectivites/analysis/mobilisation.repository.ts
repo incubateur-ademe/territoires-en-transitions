@@ -1,7 +1,7 @@
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { type Result } from '@tet/backend/utils/result.type';
 import { CategorieAction, LevierId } from '@tet/domain/shared';
-import { CollectiviteMobilisation } from './models/mobilisation-state';
+import { MobilisationState } from './models/mobilisation-state';
 import { type VoletError } from './volet.errors';
 
 export type VoletMobilisation = {
@@ -26,7 +26,9 @@ export type MobilisationRepository = {
     collectiviteId: number
   ): Promise<Result<LevierMobilisation[], VoletError>>;
 
-  listCalculatedMobilisations(): Promise<
-    Result<CollectiviteMobilisation[], VoletError>
-  >;
+  listCollectivitesWithMobilisation(): Promise<Result<number[], VoletError>>;
+
+  getMobilisationState(input: {
+    collectiviteId: number;
+  }): Promise<Result<MobilisationState, VoletError>>;
 };

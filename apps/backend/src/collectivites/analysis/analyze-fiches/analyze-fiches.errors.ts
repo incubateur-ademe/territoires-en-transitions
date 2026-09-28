@@ -2,7 +2,10 @@ import { createEnumObject } from '@tet/domain/utils';
 import { type VoletError } from '../volet.errors';
 import { RunAborted } from './add-run-failures.rules';
 
-const ficheCandidateErrorValues = ['LIST_FICHE_CANDIDATES_ERROR'] as const;
+const ficheCandidateErrorValues = [
+  'LIST_COLLECTIVITES_WITH_FICHE_CANDIDATES_ERROR',
+  'LIST_FICHE_CANDIDATES_ERROR',
+] as const;
 
 export const FicheCandidateErrorEnum = createEnumObject(
   ficheCandidateErrorValues
@@ -52,7 +55,9 @@ export type AnalyzeFichesError =
     }
   | {
       readonly kind: 'step_failed';
-      readonly step: 'list_fiche_candidates';
+      readonly step:
+        | 'list_collectivites_with_fiche_candidates'
+        | 'list_fiche_candidates';
       readonly cause: FicheCandidateError;
     }
   | {
@@ -71,7 +76,8 @@ export type AnalyzeFichesError =
         | 'save_volets'
         | 'list_volets'
         | 'delete_volets'
-        | 'list_mobilisations'
+        | 'list_collectivites_with_mobilisation'
+        | 'get_mobilisation_state'
         | 'update_mobilisation';
       readonly cause: VoletError;
     };

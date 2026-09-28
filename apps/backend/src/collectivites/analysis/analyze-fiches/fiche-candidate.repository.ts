@@ -2,18 +2,19 @@ import { type Result } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
 import { FicheCandidate } from '../models/fiche-analysis';
 import { FicheCandidateError } from './analyze-fiches.errors';
-import { collectiviteSelectionSchema } from './analyze-fiches.input';
+
+const collectiviteIdSchema = z.number().int().positive();
 
 export const ficheCandidateSelectionSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('every_fiche'),
-    collectivites: collectiviteSelectionSchema,
+    collectiviteId: collectiviteIdSchema,
     since: z.optional(z.undefined()),
   }),
   z.object({
     kind: z.literal('pending_since'),
+    collectiviteId: collectiviteIdSchema,
     since: z.date(),
-    collectivites: z.optional(z.undefined()),
   }),
 ]);
 
@@ -22,6 +23,10 @@ export type FicheCandidateSelection = z.output<
 >;
 
 export abstract class FicheCandidateRepository {
+  abstract listCollectivitesWithFicheCandidates(): Promise<
+    Result<number[], FicheCandidateError>
+  >;
+
   abstract listFicheCandidates(
     selection: FicheCandidateSelection
   ): Promise<Result<FicheCandidate[], FicheCandidateError>>;
