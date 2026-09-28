@@ -4,7 +4,13 @@ import {
   createUnenrichedSousAction,
   ExtractedAction,
 } from '../models/extracted-action';
-import { compareWithReference, computeEvalMetrics } from './eval-metrics';
+import {
+  compareWithManualReference,
+  compareWithReference,
+  computeEvalMetrics,
+  ManualReference,
+  titlesMatch,
+} from './eval-metrics';
 
 const anAction = (
   titre: string,
@@ -114,5 +120,76 @@ describe('compareWithReference', () => {
       'Isoler la mairie',
     ]);
     expect(diff.extraTitles).toEqual(['Nouvelle action']);
+  });
+});
+
+describe('titlesMatch', () => {
+  it.each([
+    [
+      '1.1 Ancrer l’administration dans l’éco-responsabilité',
+      "1 Ancrer l'administration dans l'écoresponsabilité",
+    ],
+    [
+      'ACCOMPAGNER LE DÉPLOIEMENT DE MOTORISATIONS PROPRES',
+      '18 Accompagner le déploiement de motorisations alternatives',
+    ],
+    ['Axe 1 : Tous héros ordinaires', 'I. TOUS HÉROS ORDINAIRES'],
+  ])('rapproche « %s » et « %s »', (a, b) => {
+    expect(titlesMatch(a, b)).toBe(true);
+  });
+
+  it('distingue deux actions voisines', () => {
+    expect(
+      titlesMatch('Eco-rénover l’habitat social', 'Eco-rénover l’habitat privé')
+    ).toBe(false);
+  });
+});
+
+describe('compareWithManualReference', () => {
+  const reference: ManualReference = {
+    manual: true,
+    document: 'test',
+    axes: ['I. Bâtiments', 'II. Mobilité'],
+    actions: [
+      { axe: 'I. Bâtiments', titre: '1 Rénover les écoles' },
+      { axe: 'I. Bâtiments', titre: '2 Isoler la mairie' },
+      { axe: 'II. Mobilité', titre: '3 Développer le covoiturage' },
+    ],
+  };
+  const run = (actions: ExtractedAction[]) => {
+    const draft = { actions, qualitativeReview: null };
+    return {
+      draft,
+      metrics: computeEvalMetrics({ draft, events: [], durationMs: 10 }),
+    };
+  };
+
+  it('compte les actions retrouvées, manquantes, mal rangées ou passées en sous-axe', () => {
+    const diff = compareWithManualReference(
+      run([
+        anAction('Rénover les écoles', { axe: 'Axe 1 : Bâtiments' }),
+        anAction('Organiser des trajets partagés', {
+          axe: 'Axe 1 : Bâtiments',
+          sousAxe: '1.2 Développer le covoiturage',
+        }),
+        anAction('Isoler la mairie', { axe: 'Axe 2 : Mobilité' }),
+      ]),
+      reference
+    );
+
+    expect(diff).toEqual({
+      axes: { expected: 2, actual: 2, missing: [] },
+      actions: { expected: 3, actual: 3, found: 2 },
+      missingTitles: ['3 Développer le covoiturage'],
+      extraTitles: ['Organiser des trajets partagés'],
+      titlesFoundAsSousAxe: ['3 Développer le covoiturage'],
+      misplacedTitles: [
+        {
+          titre: '2 Isoler la mairie',
+          expectedAxe: 'I. Bâtiments',
+          actualAxe: 'Axe 2 : Mobilité',
+        },
+      ],
+    });
   });
 });

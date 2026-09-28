@@ -20,11 +20,15 @@ import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
 import { runImportPipeline } from '../pipeline/run-import-pipeline';
 import {
+  compareWithManualReference,
   compareWithReference,
   computeEvalMetrics,
   EvalDiff,
   EvalMetrics,
   EvalRun,
+  isManualReference,
+  ManualReference,
+  ManualReferenceDiff,
 } from './eval-metrics';
 import { EvalModule } from './eval.module';
 
@@ -53,7 +57,7 @@ type EvalOutput = EvalRun & {
   error: string | null;
   warnings: string[];
   stepStates: unknown;
-  diff: EvalDiff | null;
+  diff: EvalDiff | ManualReferenceDiff | null;
 };
 
 class CollectingLlmObserver extends LlmObserver {
@@ -116,7 +120,9 @@ const main = async (): Promise<number> => {
   }
   // Lue avant le premier appel payant : une référence illisible arrête tout.
   const reference = values.ref
-    ? (JSON.parse(await readFile(values.ref, 'utf-8')) as EvalRun)
+    ? (JSON.parse(await readFile(values.ref, 'utf-8')) as
+        | EvalRun
+        | ManualReference)
     : null;
 
   // Comme main.ts : Vertex s'authentifie avec le compte de service du .env,
@@ -197,9 +203,12 @@ const main = async (): Promise<number> => {
     events: observer.events,
     durationMs,
   });
-  const diff = reference
-    ? compareWithReference({ draft, metrics }, reference)
-    : null;
+  const diff =
+    reference === null
+      ? null
+      : isManualReference(reference)
+      ? compareWithManualReference({ draft, metrics }, reference)
+      : compareWithReference({ draft, metrics }, reference);
 
   const output: EvalOutput = {
     file: basename(values.file),
@@ -235,7 +244,11 @@ const main = async (): Promise<number> => {
     print(`  ⚠ ${warning}`);
   }
   if (diff) {
-    printDiff(diff);
+    if ('deltas' in diff) {
+      printDiff(diff);
+    } else {
+      printManualDiff(diff);
+    }
   }
   print(`→ ${outPath}`);
   finished = true;
@@ -281,6 +294,42 @@ const printDiff = (diff: EvalDiff): void => {
     }`
   );
   print(`Titres en trop : ${diff.extraTitles.length}`);
+};
+
+const printManualDiff = (diff: ManualReferenceDiff): void => {
+  const list = (titles: string[]) =>
+    titles.length > 0 ? `\n  - ${titles.slice(0, 30).join('\n  - ')}` : '';
+  print(
+    `Structure attendue : axes ${diff.axes.actual}/${diff.axes.expected}, actions retrouvées ${diff.actions.found}/${diff.actions.expected} (${diff.actions.actual} extraites)`
+  );
+  if (diff.axes.missing.length > 0) {
+    print(
+      `Axes introuvables : ${diff.axes.missing.length}${list(
+        diff.axes.missing
+      )}`
+    );
+  }
+  print(
+    `Actions introuvables : ${diff.missingTitles.length}${list(
+      diff.missingTitles
+    )}`
+  );
+  if (diff.titlesFoundAsSousAxe.length > 0) {
+    print(
+      `… dont retrouvées en sous-axe (niveau inventé) : ${
+        diff.titlesFoundAsSousAxe.length
+      }${list(diff.titlesFoundAsSousAxe)}`
+    );
+  }
+  print(
+    `Actions sous un autre axe : ${diff.misplacedTitles.length}${list(
+      diff.misplacedTitles.map(
+        (m) =>
+          `${m.titre} (attendu : ${m.expectedAxe} ; obtenu : ${m.actualAxe})`
+      )
+    )}`
+  );
+  print(`Titres en trop : ${diff.extraTitles.length}${list(diff.extraTitles)}`);
 };
 
 // Pas de process.exit : il tronque ce qui reste à écrire sur la sortie.
