@@ -1,22 +1,19 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { QueryClient, useMutation } from '@tanstack/react-query';
 import { AppRouter, useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { referentielQueryKeys } from './document-target';
+import { useInvalidateDocuments } from './use-invalidate-documents';
 
 export const useAddPreuveReglementaire = () => {
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
   return useMutation(
     trpc.referentiels.actions.addPreuveReglementaire.mutationOptions({
       onSuccess: (_data, variables) => {
-        invalidateQueries({
-          queryClient,
+        void invalidateDocuments({
+          type: 'preuveReglementaire',
           collectiviteId: variables.collectiviteId,
-          trpc,
         });
       },
     })
@@ -24,15 +21,14 @@ export const useAddPreuveReglementaire = () => {
 };
 
 export const useAddPreuveComplementaire = () => {
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
   return useMutation(
     trpc.referentiels.actions.addPreuveComplementaire.mutationOptions({
       onSuccess: (_data, variables) => {
-        invalidateQueries({
-          queryClient,
+        void invalidateDocuments({
+          type: 'mesure',
           collectiviteId: variables.collectiviteId,
-          trpc,
         });
       },
     })
@@ -44,26 +40,17 @@ export const useAddPreuveLabellisation = (
   collectiviteId: number,
   referentielId: ReferentielId
 ) => {
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
 
   return useMutation(
     trpc.referentiels.labellisations.createLabellisationPreuve.mutationOptions({
       onSettled: (_data, _error, variables) => {
-        invalidateQueries({ queryClient, collectiviteId, trpc });
-        queryClient.invalidateQueries({
-          queryKey:
-            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey(
-              {
-                demandeId: variables.demandeId,
-              }
-            ),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
-            collectiviteId,
-            referentielId,
-          }),
+        void invalidateDocuments({
+          type: 'demandeLabellisation',
+          collectiviteId,
+          demandeId: variables.demandeId,
+          referentielId,
         });
       },
     })
@@ -79,15 +66,7 @@ export const invalidateQueries = ({
   collectiviteId: number;
   trpc: TRPCOptionsProxy<AppRouter>;
 }): void => {
-  queryClient.invalidateQueries({
-    queryKey: trpc.referentiels.documents.listDocumentsReferentiel.pathKey(),
-  });
-  queryClient.invalidateQueries({
-    queryKey: trpc.referentiels.documents.listDocumentsMesure.pathKey(),
-  });
-  queryClient.invalidateQueries({
-    queryKey: trpc.referentiels.actions.countPreuves.queryKey({
-      collectiviteId,
-    }),
+  referentielQueryKeys(trpc, collectiviteId).forEach((queryKey) => {
+    void queryClient.invalidateQueries({ queryKey });
   });
 };

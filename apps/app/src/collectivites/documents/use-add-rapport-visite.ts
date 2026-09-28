@@ -1,7 +1,7 @@
 import { AddFileHandler } from './add-document/add-file';
 import { AddLinkHandler } from './add-document/add-link';
-import { invalidateQueries } from './use-add-preuves';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInvalidateDocuments } from './use-invalidate-documents';
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
@@ -12,17 +12,13 @@ type AddRapportVisiteHandlers = {
 
 export const useAddRapportVisite = (date: string): AddRapportVisiteHandlers => {
   const collectiviteId = useCollectiviteId();
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
 
   const { mutate } = useMutation(
     trpc.collectivites.documents.addRapportVisite.mutationOptions({
-      onSuccess: (_data, variables) => {
-        invalidateQueries({
-          queryClient,
-          collectiviteId: variables.collectiviteId,
-          trpc,
-        });
+      onSuccess: () => {
+        void invalidateDocuments({ type: 'rapportVisite' });
       },
     })
   );
