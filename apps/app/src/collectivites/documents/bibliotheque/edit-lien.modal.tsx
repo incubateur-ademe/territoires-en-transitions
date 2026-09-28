@@ -22,12 +22,18 @@ export const EditLienModal = (props: EditLienModalProps) => {
 
   const { mutate: editLien, isPending } = useUpdatePreuveLien();
 
-  const lienSaisi = lienFormSchema.safeParse({ titre, url });
-  const messageDErreur = (champ: 'titre' | 'url'): string | undefined =>
-    lienSaisi.success
-      ? undefined
-      : lienSaisi.error.issues.find((issue) => issue.path[0] === champ)
-          ?.message;
+  const lienParseResult = lienFormSchema.safeParse({ titre, url });
+
+  const getErrorMessage = (field: 'titre' | 'url'): string | undefined => {
+    if (lienParseResult.success) {
+      return undefined;
+    }
+    return lienParseResult.error.issues.find((issue) => issue.path[0] === field)
+      ?.message;
+  };
+
+  const titreError = getErrorMessage('titre');
+  const urlError = getErrorMessage('url');
 
   return (
     <Modal
@@ -38,8 +44,8 @@ export const EditLienModal = (props: EditLienModalProps) => {
         <>
           <Field
             title={appLabels.titreLienObligatoire}
-            state={messageDErreur('titre') ? 'error' : 'default'}
-            message={messageDErreur('titre')}
+            state={titreError ? 'error' : 'default'}
+            message={titreError}
           >
             <Input
               type="text"
@@ -49,13 +55,13 @@ export const EditLienModal = (props: EditLienModalProps) => {
           </Field>
           <Field
             title={appLabels.lienObligatoire}
-            state={messageDErreur('url') ? 'error' : 'default'}
-            message={messageDErreur('url')}
+            state={urlError ? 'error' : 'default'}
+            message={urlError}
           >
             <Input
               type="text"
               value={url}
-              onChange={(e) => setUrl(e.currentTarget.value.trim())}
+              onChange={(e) => setUrl(e.currentTarget.value)}
             />
           </Field>
         </>
@@ -64,18 +70,21 @@ export const EditLienModal = (props: EditLienModalProps) => {
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close, disabled: isPending }}
           btnOKProps={{
-            disabled: isPending || !lienSaisi.success,
-            onClick: () =>
-              lienSaisi.success &&
+            disabled: isPending || !lienParseResult.success,
+            onClick: () => {
+              if (!lienParseResult.success) {
+                return;
+              }
               editLien(
                 {
                   id: preuve.id,
                   preuveType: preuve.preuveType,
                   collectiviteId: preuve.collectiviteId,
-                  lien: lienSaisi.data,
+                  lien: lienParseResult.data,
                 },
                 { onSuccess: close }
-              ),
+              );
+            },
           }}
         />
       )}

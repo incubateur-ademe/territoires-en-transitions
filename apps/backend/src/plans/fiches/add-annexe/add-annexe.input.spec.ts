@@ -19,10 +19,19 @@ describe('addAnnexeInputSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('refuse une annexe dont le lien ne respecte pas le contrat', () => {
+  it("refuse une annexe dont l'url n'est pas du web, même avec un titre valide", () => {
     const result = addAnnexeInputSchema.safeParse({
       ficheId,
-      lien: { url: 'pas-une-url', titre: '' },
+      lien: { url: 'javascript:alert(1)', titre: 'Une note' },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('refuse une annexe au titre vide, même avec une url valide', () => {
+    const result = addAnnexeInputSchema.safeParse({
+      ficheId,
+      lien: { url: 'https://example.org/note.pdf', titre: '' },
     });
 
     expect(result.success).toBe(false);

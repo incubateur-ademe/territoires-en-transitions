@@ -4,11 +4,15 @@ import { lienInputSchema } from './document-lien.schema';
 const url = 'https://example.org/note.pdf';
 
 describe('lienInputSchema', () => {
-  it('accepte une url http et un titre', () => {
-    expect(lienInputSchema.safeParse({ url, titre: 'Une note' }).success).toBe(
-      true
-    );
-  });
+  it.each(['http://example.org/note.pdf', 'https://example.org/note.pdf'])(
+    'accepte %s, dont le protocole est celui du web',
+    (urlAcceptee) => {
+      expect(
+        lienInputSchema.safeParse({ url: urlAcceptee, titre: 'Une note' })
+          .success
+      ).toBe(true);
+    }
+  );
 
   it('normalise le titre en retirant les espaces de bord', () => {
     const result = lienInputSchema.safeParse({ url, titre: '  Une note  ' });

@@ -20,10 +20,28 @@ describe('updatePreuveInputSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('refuse un lien qui ne respecte pas le contrat', () => {
+  it('accepte un lien conforme', () => {
     const result = updatePreuveInputSchema.safeParse({
       ...preuve,
-      lien: { url: 'pas-une-url', titre: '' },
+      lien: { url: 'https://example.org/note.pdf', titre: 'Une note' },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("refuse un lien dont l'url n'est pas du web, même avec un titre valide", () => {
+    const result = updatePreuveInputSchema.safeParse({
+      ...preuve,
+      lien: { url: 'javascript:alert(1)', titre: 'Une note' },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('refuse un lien au titre vide, même avec une url valide', () => {
+    const result = updatePreuveInputSchema.safeParse({
+      ...preuve,
+      lien: { url: 'https://example.org/note.pdf', titre: '' },
     });
 
     expect(result.success).toBe(false);
