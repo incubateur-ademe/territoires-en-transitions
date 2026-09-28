@@ -1,6 +1,7 @@
 /** Les listes de T&C qui qualifient une action, absentes de la copie, et ce que chaque valeur devient dans TeT, désignée par son libellé. */
 
 import { CibleEnum, type Cible } from '@tet/domain/plans';
+import type { Dossier } from './dossiers';
 
 /** La valeur d'un numéro de T&C dans une des listes ci-dessous ; arrête s'il est inconnu. */
 export const translate = <V>(
@@ -108,3 +109,25 @@ export const SECTEURS = new Map<number, Classement>([
   [25, { thematique: 'Activités économiques' }], // Tertiaire
   [26, { thematique: 'Mobilité et transport' }], // Transport routier
 ]);
+
+/** Garde, appelée par `gardes.ts` : un numéro de T&C absent des listes ci-dessus, compté par liste. */
+export const listCasBloquantsListesTec = (dossiers: readonly Dossier[]) => {
+  const actions = dossiers.flatMap((d) => d.actions);
+  const listes = [
+    ['volet', VOLETS, actions.flatMap((a) => a.volets)],
+    ['cible', CIBLES, actions.flatMap((a) => a.cibles)],
+    ['secteur', SECTEURS, actions.flatMap((a) => a.secteurs)],
+    ['type de porteur', TYPES_PORTEUR, actions.flatMap((a) => a.typesPorteur)],
+    ["type d'action", TYPES_ACTION, actions.flatMap((a) => a.typesAction)],
+  ] as const;
+  return listes.flatMap(([nom, liste, numeros]) =>
+    [...new Set(numeros)]
+      .filter((n) => !liste.has(n))
+      .map(
+        (n) =>
+          `  ${nom} : numéro T&C ${n} inconnu, ${
+            numeros.filter((m) => m === n).length
+          } qualification(s)`
+      )
+  );
+};

@@ -163,3 +163,26 @@ const getPlanId = (planIds: ReadonlyMap<number, number>, f: Fiche) => {
   }
   return id;
 };
+
+/** Garde, appelée par `gardes.ts` : sans le compte système, aucune note ne peut s'écrire (auteur obligatoire). */
+export const listCasBloquantsEcriture = async (client: PoolClient) => {
+  const {
+    rows: [compte],
+  } = await client.query<{ existe: boolean; nom: string | null }>(
+    `select exists (select from auth.users where id = $1) as existe,
+            (select nom from public.dcp where user_id = $1) as nom`,
+    [COMPTE_SYSTEME]
+  );
+  return [
+    ...(compte.existe
+      ? []
+      : [
+          `  compte système ${COMPTE_SYSTEME} absent : les notes ne peuvent pas s'écrire`,
+        ]),
+    ...(compte.existe && compte.nom === null
+      ? [
+          `  compte système ${COMPTE_SYSTEME} sans nom : les notes seraient anonymes`,
+        ]
+      : []),
+  ];
+};
