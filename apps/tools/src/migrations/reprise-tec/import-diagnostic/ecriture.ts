@@ -47,9 +47,6 @@ export const createDiagnostics = async (
   }
   for (const [tecId, valeursDuDossier] of parDossier) {
     const dossier = dossiers.get(tecId);
-    if (!dossier) {
-      throw new Error(`Dossier T&C ${tecId} absent de la correspondance.`);
-    }
     await createDiagnostic(
       client,
       dossier,
