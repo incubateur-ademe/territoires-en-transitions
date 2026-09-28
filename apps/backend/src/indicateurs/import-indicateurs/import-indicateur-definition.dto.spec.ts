@@ -28,12 +28,15 @@ describe('Import de définitions périodiques', () => {
     });
   });
 
-  it.each(['annuelle'])('accepte la périodicité %s', (periodicite) => {
-    const input = { ...definition, periodicite };
-    expect(importIndicateurDefinitionSchema.parse(input)).toEqual(input);
-  });
+  it.each(['annuelle', 'semestrielle', 'trimestrielle', 'mensuelle'])(
+    'accepte la périodicité %s',
+    (periodicite) => {
+      const input = { ...definition, periodicite };
+      expect(importIndicateurDefinitionSchema.parse(input)).toEqual(input);
+    }
+  );
 
-  it.each(['semestrielle', 'trimestrielle', 'mensuelle', 'hebdomadaire', null])(
+  it.each(['hebdomadaire', null])(
     'refuse une périodicité non prise en charge : %s',
     (periodicite) => {
       const result = importIndicateurDefinitionSchema.safeParse({
@@ -44,23 +47,6 @@ describe('Import de définitions périodiques', () => {
       expect(result.error?.issues).toEqual([
         expect.objectContaining({ path: ['periodicite'] }),
       ]);
-    }
-  );
-  it.each(['aggregationResultat', 'aggregationObjectif'])(
-    'rejects %s configuration before activation',
-    (field) => {
-      expect(
-        importIndicateurDefinitionSchema.safeParse({
-          ...definition,
-          [field]: 'moyenne',
-        }).success
-      ).toBe(false);
-      expect(
-        importIndicateurDefinitionSchema.safeParse({
-          ...definition,
-          [field]: null,
-        }).success
-      ).toBe(true);
     }
   );
 });

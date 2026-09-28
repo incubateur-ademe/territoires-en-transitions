@@ -84,6 +84,7 @@ export const IndicateurValeursTable = ({
 
   const updateIndicateurValeurs: IndicateurValeursTableMeta['updateIndicateurValeurs'] =
     async ({ indicateurId, year, field, value }) => {
+      if (isReadonly) return false;
       try {
         await mutateIndicateurValeurs({
           valeurs: [{ indicateurId, year, field, value }],
@@ -120,7 +121,7 @@ export const IndicateurValeursTable = ({
     data: rows,
     columns,
     meta: {
-      onReferenceYearChange,
+      onReferenceYearChange: isReadonly ? undefined : onReferenceYearChange,
       updateIndicateurValeurs,
       setIndicateurApplicable,
     },

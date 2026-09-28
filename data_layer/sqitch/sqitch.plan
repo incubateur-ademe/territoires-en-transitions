@@ -1129,3 +1129,5 @@ stats/report_indicateur_resultat_periode [indicateur/periodicite_obligatoire col
 indicateur/periodicite_annuelle [indicateur/periodicite_formules stats/report_indicateur_resultat_periode] 2026-09-28T09:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Première livraison : migration et compatibilité annuelle, nouvelles cadences fermées
 indicateur/reserver-ecriture-valeurs-backend [indicateur/periodicite_annuelle private_schema] 2026-09-29T09:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Réserve les mutations directes au backend et aux imports privilégiés
 @indicateur-periodicite-annuelle 2026-09-29T09:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Première PR déployable indépendamment de l activation
+indicateur/periodicite_activation [indicateur/periodicite_annuelle indicateur/reserver-ecriture-valeurs-backend] 2026-09-29T10:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Quatrième livraison : ouvre les quatre cadences et l agrégation sans remigrer les données
+@indicateur-periodicite-activee 2026-09-29T10:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Activation après validation de la livraison backend annuelle

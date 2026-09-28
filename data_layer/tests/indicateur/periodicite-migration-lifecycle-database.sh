@@ -116,7 +116,7 @@ clone_database_schema() {
       --set=ON_ERROR_STOP=1 \
       --dbname="$source_database_url" \
       --command="
-        SELECT count(*) = 8 AND (SELECT count(*) = 1 FROM private.indicateur_valeur_write_acl)
+        SELECT count(*) = 9 AND (SELECT count(*) = 1 FROM private.indicateur_valeur_write_acl)
         FROM sqitch.changes
         WHERE project = 'tet'
           AND change IN (
@@ -127,7 +127,8 @@ clone_database_schema() {
             'indicateur/periodicite_formules',
             'stats/report_indicateur_resultat_periode',
             'indicateur/reserver-ecriture-valeurs-backend',
-            'indicateur/periodicite_annuelle'
+            'indicateur/periodicite_annuelle',
+            'indicateur/periodicite_activation'
           )
       "
   )"
@@ -215,7 +216,7 @@ clone_database_schema() {
         SELECT concat_ws('|',
           to_regclass('public.indicateur_periodicite'),
           to_regclass('migration.indicateur_valeur_periodicite_audit'),
-          count(*) = 8 AND (SELECT count(*) = 1 FROM private.indicateur_valeur_write_acl)
+          count(*) = 9 AND (SELECT count(*) = 1 FROM private.indicateur_valeur_write_acl)
         )
         FROM sqitch.changes
         WHERE project = 'tet'
@@ -227,7 +228,8 @@ clone_database_schema() {
             'indicateur/periodicite_formules',
             'stats/report_indicateur_resultat_periode',
             'indicateur/reserver-ecriture-valeurs-backend',
-            'indicateur/periodicite_annuelle'
+            'indicateur/periodicite_annuelle',
+            'indicateur/periodicite_activation'
           )
       "
   )"
@@ -271,8 +273,9 @@ assert_pre_expand() {
                 'indicateur/periodicite_obligatoire',
                 'indicateur/periodicite_formules',
                 'stats/report_indicateur_resultat_periode',
-                'indicateur/reserver-ecriture-valeurs-backend',
-                'indicateur/periodicite_annuelle'
+            'indicateur/reserver-ecriture-valeurs-backend',
+            'indicateur/periodicite_annuelle',
+            'indicateur/periodicite_activation'
               )
           )
         )

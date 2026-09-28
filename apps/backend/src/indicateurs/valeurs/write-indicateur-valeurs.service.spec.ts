@@ -1,4 +1,3 @@
-import { IndicateurValeurCreate } from '@tet/domain/indicateurs';
 import {
   IndicateurDefinition,
   IndicateurPeriodiciteEnum,
@@ -155,7 +154,7 @@ describe('WriteIndicateurValeursService', () => {
       {} as never,
       { lock: vi.fn() } as never
     );
-    const { valeurs }: { valeurs: IndicateurValeurCreate[] } = {
+    const { valeurs } = upsertIndicateursValeursRequestSchema.parse({
       valeurs: [
         { ...valeur, dateValeur: '2026-12-31' },
         {
@@ -171,7 +170,7 @@ describe('WriteIndicateurValeursService', () => {
           resultat: 12,
         },
       ],
-    };
+    });
 
     const result = await service.saveBatch(
       { valeurs, definitions: { 10: definition } },
@@ -213,7 +212,7 @@ describe('WriteIndicateurValeursService', () => {
       {} as never,
       { lock: vi.fn() } as never
     );
-    const { valeurs }: { valeurs: IndicateurValeurCreate[] } = {
+    const { valeurs } = upsertIndicateursValeursRequestSchema.parse({
       valeurs: [
         valeur,
         {
@@ -223,7 +222,7 @@ describe('WriteIndicateurValeursService', () => {
           metadonneeId: 7,
         },
       ],
-    };
+    });
 
     const result = await service.saveBatch(
       { valeurs, definitions: { 10: definition } },

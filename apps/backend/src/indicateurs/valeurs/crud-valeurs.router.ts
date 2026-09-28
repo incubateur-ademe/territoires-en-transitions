@@ -4,12 +4,16 @@ import { collectiviteIdInputSchemaPartial } from '@tet/backend/collectivites/col
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ResourceType } from '@tet/domain/users';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import IndicateurValeursService from './crud-valeurs.service';
 import { deleteValeurIndicateurSchema } from './delete-valeur-indicateur.request';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
 import { getValeursReferenceRequestSchema } from './get-valeurs-reference.request';
 import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs.input';
 import { upsertValeurIndicateurSchema } from './upsert-valeur-indicateur.request';
+import { upsertGridValeursInputSchema } from './upsert-grid-valeurs.input';
+import { upsertGridValeursErrorConfig } from './upsert-grid-valeurs.errors';
+import { UpsertGridValeursService } from './upsert-grid-valeurs.service';
 import ValeursMoyenneService from './valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs-reference.service';
 
@@ -19,9 +23,14 @@ export class IndicateurValeursRouter {
     private readonly trpc: TrpcService,
     private readonly permissionService: PermissionService,
     private readonly service: IndicateurValeursService,
+    private readonly upsertGridValeursService: UpsertGridValeursService,
     private readonly valeursMoyenne: ValeursMoyenneService,
     private readonly valeursReference: ValeursReferenceService
   ) {}
+
+  private readonly getUpsertGridValeursResultOrThrow = createTrpcErrorHandler(
+    upsertGridValeursErrorConfig
+  );
 
   router = this.trpc.router({
     list: this.trpc.authedOrServiceRoleProcedure
@@ -44,6 +53,15 @@ export class IndicateurValeursRouter {
           }
           throw error;
         }
+      }),
+    upsertMany: this.trpc.authedProcedure
+      .input(upsertGridValeursInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.upsertGridValeursService.upsertGridValeurs(
+          input,
+          { user: ctx.user }
+        );
+        return this.getUpsertGridValeursResultOrThrow(result);
       }),
     delete: this.trpc.authedProcedure
       .input(deleteValeurIndicateurSchema)
