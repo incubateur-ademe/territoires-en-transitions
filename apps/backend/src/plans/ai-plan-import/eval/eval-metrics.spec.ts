@@ -9,8 +9,8 @@ import {
   compareWithReference,
   computeEvalMetrics,
   ManualReference,
-  titlesMatch,
 } from './eval-metrics';
+import { titlesMatch } from '../pipeline/extract-actions/similar-titles';
 
 const anAction = (
   titre: string,

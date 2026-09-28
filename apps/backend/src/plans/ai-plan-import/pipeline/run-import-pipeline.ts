@@ -7,6 +7,7 @@ import {
 } from './document/document-page';
 import { structureUnits } from './extract-actions/structure-units';
 import { consolidateHierarchy } from './consolidate-hierarchy/consolidate-hierarchy';
+import { dropRedundantSousAxes } from './consolidate-hierarchy/drop-redundant-sous-axes';
 import { PlanSkeleton } from '../models/plan-skeleton';
 import { scoutUnits } from './scout-units/scout-units';
 import { DocumentUnit } from './segment-document/document-unit';
@@ -239,12 +240,20 @@ export const runImportPipeline = async (
   });
   if (!hierarchized.success) return hierarchized.outcome;
   await reportProgress(hierarchized.progress.stepStates);
+  // Lus par morceaux, le sommaire et la fiche se répondent : une fiche peut
+  // s'y retrouver sous-axe d'elle-même.
+  const structured = units
+    ? {
+        ...hierarchized.progress,
+        actions: dropRedundantSousAxes(hierarchized.progress.actions),
+      }
+    : hierarchized.progress;
   if (units) {
     source = coalesceChunks(source, VERIFICATION_WINDOW_TOKENS);
   }
 
   const scored = await runStep({
-    progress: hierarchized.progress,
+    progress: structured,
     name: 'scoring',
     skipWhen: !input.withVerifications,
     run: (actions) =>

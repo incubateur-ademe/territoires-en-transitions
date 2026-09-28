@@ -9,6 +9,7 @@ import {
 import { Result, success } from '@tet/backend/utils/result.type';
 import { PlanSkeleton, planSkeletonSchema } from '../../models/plan-skeleton';
 import { SQUELETTE_PROMPT } from '../../prompts/squelette.prompt';
+import { titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
 
 // Les extraits de structure sont rarement longs ; au-delà, le sommaire suffit.
@@ -39,6 +40,9 @@ export const extractSkeleton = async (
   }
 ): Promise<Result<ExtractSkeletonResult, LlmError>> => {
   const titles = distinctHeadingPaths(units);
+  const ficheTitles = units.flatMap((unit) =>
+    unit.kind === 'fiche' && unit.title && !unit.continued ? [unit.title] : []
+  );
   const extraits = capByTokens(structureUnits, STRUCTURE_MAX_TOKENS);
   if (titles.length === 0 && extraits.length === 0) {
     return success({ skeleton: null, tokens: emptyTokenUsage() });
@@ -48,6 +52,10 @@ export const extractSkeleton = async (
     tier: 'strong',
     prompt: generatePrompt(SQUELETTE_PROMPT, {
       titres: titles.length > 0 ? titles.join('\n') : '(aucun titre relevé)',
+      fiches:
+        ficheTitles.length > 0
+          ? ficheTitles.join('\n')
+          : '(aucune fiche relevée)',
       extraits:
         extraits.length > 0
           ? extraits.join('\n\n')
@@ -61,12 +69,31 @@ export const extractSkeleton = async (
   if (!completion.success) {
     return completion;
   }
-  const { data: skeleton, tokens } = completion.data;
+  const skeleton = withoutFicheSousAxes(completion.data.data, ficheTitles);
   return success({
     skeleton: skeleton.axes.length > 0 ? skeleton : null,
-    tokens,
+    tokens: completion.data.tokens,
   });
 };
+
+/**
+ * Un sous-axe qui porte le titre d'une fiche est la fiche elle-même, vue dans
+ * le sommaire : garder ce niveau doublerait chaque action d'un sous-axe vide.
+ */
+const withoutFicheSousAxes = (
+  skeleton: PlanSkeleton,
+  ficheTitles: string[]
+): PlanSkeleton => ({
+  axes: skeleton.axes.map((axe) => ({
+    ...axe,
+    sousAxes: axe.sousAxes.filter(
+      (sousAxe) =>
+        !ficheTitles.some((fiche) =>
+          titlesMatch(fiche, `${sousAxe.numero} ${sousAxe.titre}`)
+        )
+    ),
+  })),
+});
 
 /**
  * Les chemins de titres, dans l'ordre du document, chacun une fois, rangés

@@ -112,6 +112,48 @@ describe('extractSkeleton', () => {
   });
 });
 
+describe('extractSkeleton, avec des fiches', () => {
+  it('cite les titres des fiches et retire les sous-axes qui en reprennent un', async () => {
+    const { llm, calls } = llmRouting(
+      () => [],
+      () => ({
+        axes: [
+          {
+            numero: 'I',
+            titre: 'Tous héros ordinaires',
+            sousAxes: [
+              {
+                numero: '1',
+                titre: 'Ancrer l’administration dans l’écoresponsabilité',
+              },
+              { numero: 'I.A', titre: 'Mobiliser les acteurs publics' },
+            ],
+          },
+        ],
+      })
+    );
+    const fiche = {
+      ...unit('Texte de la fiche', 'fiche', ['I TOUS HÉROS ORDINAIRES']),
+      title: '1 ANCRER L’ADMINISTRATION DANS L’ECO-RESPONSABILITE',
+    };
+
+    const result = await extractSkeleton(llm, {
+      units: [fiche],
+      structureUnits: [],
+    });
+
+    expect(calls[0].prompt).toContain(
+      '1 ANCRER L’ADMINISTRATION DANS L’ECO-RESPONSABILITE'
+    );
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.skeleton?.axes[0].sousAxes).toEqual([
+        { numero: 'I.A', titre: 'Mobiliser les acteurs publics' },
+      ]);
+    }
+  });
+});
+
 describe('extractSkeleton, avec des parties titrées', () => {
   it('range les titres sous leur partie du document', async () => {
     const { llm, calls } = llmRouting(
