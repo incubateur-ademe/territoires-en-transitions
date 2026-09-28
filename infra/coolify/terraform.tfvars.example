@@ -32,3 +32,9 @@ app_servers = {
     ssh_key_secret_name = "tet-preview-server-ssh-key"
   }
 }
+
+# Clés publiques age des opérateurs habilités à restaurer Coolify
+# (age-keygen, cf. infra/README.md « Sauvegarde de l'instance Coolify »).
+instance_backup_age_recipients = [
+  "age1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+]

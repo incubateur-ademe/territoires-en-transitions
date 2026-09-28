@@ -75,3 +75,13 @@ output "coolify_backups_s3_endpoint" {
   description = "Endpoint S3 régional (path-style), sans le nom du bucket."
   value       = "https://s3.${var.scaleway_region}.scw.cloud"
 }
+
+output "backups_project_id" {
+  description = "ID du projet Scaleway dédié aux backups."
+  value       = scaleway_account_project.backups.id
+}
+
+output "coolify_backups_credentials_secret_name" {
+  description = "Secret Secret Manager de la clé Object Storage des backups. À reporter dans la variable s3_credentials_secret_name du stack infra/coolify."
+  value       = scaleway_secret.coolify_backups_credentials.name
+}

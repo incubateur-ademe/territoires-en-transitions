@@ -347,20 +347,30 @@ Coolify enregistre un **S3 storage** (cible des backups DB / volumes) via l'API
 `POST/PATCH /s3-storages` + `POST …/validate`. Le provider n'a pas de ressource native :
 on automatise avec [`scripts/coolify-configure-s3-storage.sh`](scripts/coolify-configure-s3-storage.sh).
 
-1. Appliquer `platform` pour créer le bucket (`coolify_backups_bucket_name`, défaut
-   `tet-coolify-backups`). Il est transverse : un seul S3 storage sert tous les
-   environnements.
-2. Créer une paire de clés IAM Scaleway avec droits Object Storage sur ce bucket
-   (idéalement une API key dédiée, pas les clés Terraform).
-3. Les stocker dans Secret Manager au format `access_key|secret_key` :
-   ```sh
-   scw secret create name=tet-platform-coolify-s3-credentials
-   scw secret version create secret-name=tet-platform-coolify-s3-credentials \
-     secret-path=/ data='SCWXXXX|<secret_key>'
-   ```
+Rien à créer à la main : `platform` crée tout ce dont ce S3 storage a besoin.
 
-Après rotation des clés : nouvelle version du secret, puis incrémenter
-`s3_credentials_revision`.
+- Un **projet Scaleway dédié** (`tet-backups`). Les permissions IAM Object Storage
+  valent pour un projet entier : dans le projet principal, la clé des backups pourrait
+  aussi lire `tet-tfstate`. Les credentials Terraform doivent pouvoir créer des projets
+  dans l'organisation.
+- Le **bucket** (`tet-coolify-backups`), transverse à tous les environnements, avec
+  versioning et **Object Lock en mode COMPLIANCE** (14 jours) : aucune version ne peut être
+  supprimée avant l'échéance, par personne. Coolify garde sa propre rétention (ses
+  suppressions posent un delete marker), et une règle de cycle de vie purge les versions
+  supprimées une fois le verrou expiré.
+- Une **application IAM** `tet-coolify-backups` limitée aux objets de ce projet (pas de
+  droit sur le cycle de vie, le verrou ou la politique du bucket), sa clé d'API, et le
+  secret `tet-platform-coolify-s3-credentials` (format `access_key|secret_key`) que lisent
+  les scripts de `infra/coolify`.
+
+La clé d'API passe par le state de `platform`, comme les autres secrets générés.
+
+Rotation de la clé :
+
+```sh
+terraform -chdir=infra/platform apply -replace=scaleway_iam_api_key.coolify_backups
+# puis incrémenter s3_credentials_revision dans coolify/terraform.tfvars et appliquer
+```
 
 ### Workflow
 
@@ -386,6 +396,81 @@ Vérifier que Coolify voit bien tous ses serveurs :
 curl -sH "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/servers" \
   | jq -r '.[] | "\(.name) \(.ip)"'
 ```
+
+## Sauvegarde de l'instance Coolify
+
+Les backups configurés dans Coolify couvrent les bases des applications, pas Coolify
+lui-même. Sa base porte pourtant toute la configuration des quatre environnements
+(applications, variables, secrets). L'`apply` de `infra/coolify` installe donc sur le
+control plane un timer systemd (`tet-coolify-backup.timer`, quotidien) qui :
+
+1. fait un `pg_dump` de `coolify-db` et copie `/data/coolify/source/.env` (qui porte
+   l'`APP_KEY`, sans laquelle la base restaurée est illisible) ;
+2. chiffre l'archive avec [age](https://age-encryption.org) vers les clés publiques des
+   opérateurs ;
+3. l'envoie sur le bucket de backups, sous `coolify-instance/`. La rétention
+   (30 jours par défaut) est une règle de cycle de vie du bucket, dans `infra/platform`.
+
+Base + `APP_KEY` = tous les secrets de tous les environnements : le serveur ne détient
+aucune clé privée age, et un backup lu sur le bucket est inexploitable sans elle.
+
+### Clés age des opérateurs (une fois par opérateur)
+
+```sh
+age-keygen -o ~/tet-coolify-backup.key   # affiche la clé publique (age1…)
+```
+
+Ranger la clé privée dans le gestionnaire de mots de passe de l'équipe, **hors** Scaleway :
+un backup doit rester restaurable si le projet Scaleway est compromis ou perdu. Ajouter la
+clé publique à `instance_backup_age_recipients` dans `coolify/terraform.tfvars`, puis
+`apply` : les backups suivants sont chiffrés pour la nouvelle liste. Les anciens restent
+lisibles uniquement par les clés de l'époque.
+
+Le premier `apply` lance un backup immédiat et échoue si la chaîne est cassée. Ensuite :
+
+```sh
+ssh tet-ops@<ip-coolify> 'sudo systemctl list-timers tet-coolify-backup.timer'
+ssh tet-ops@<ip-coolify> 'sudo journalctl -u tet-coolify-backup.service -n 20'
+```
+
+### Restauration
+
+Procédure Coolify officielle ([instance-restore](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/core/backup-and-recovery/instance-restore.mdx)),
+appliquée à nos archives :
+
+```sh
+# 1. Récupérer et déchiffrer la dernière archive (poste opérateur).
+#    Le bucket vit dans le projet tet-backups : utiliser sa clé dédiée, que l'API S3
+#    résout dans le bon projet (les credentials perso visent le projet principal).
+_c="$(scw secret version access-by-path secret-name=tet-platform-coolify-s3-credentials \
+  secret-path=/ revision=latest -o json | jq -r .data | base64 --decode)"
+export AWS_ACCESS_KEY_ID="${_c%%|*}" AWS_SECRET_ACCESS_KEY="${_c#*|}"; unset _c
+aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://tet-coolify-backups/coolify-instance/
+aws s3 cp --endpoint-url https://s3.fr-par.scw.cloud \
+  s3://tet-coolify-backups/coolify-instance/<archive>.tar.gz.age .
+age -d -i ~/tet-coolify-backup.key <archive>.tar.gz.age | tar -xzf -
+# → coolify.dump + coolify.env
+
+# 2. Sur un control plane à la *même version* de Coolify (coolify_version),
+#    copier coolify.dump, puis restaurer :
+docker exec -i coolify-db pg_restore --clean --if-exists --exit-on-error \
+  --no-acl --no-owner --username=coolify --dbname=coolify < coolify.dump
+
+# 3. Dans /data/coolify/source/.env, remplacer UNIQUEMENT la ligne APP_KEY= par celle
+#    de coolify.env. Les autres valeurs (DB_PASSWORD…) appartiennent à la nouvelle
+#    installation.
+
+# 4. Relancer l'installeur à la même version : il redémarre Coolify et applique
+#    les migrations éventuelles
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s <coolify_version>
+```
+
+Erreur « Invalid MAC » ou de chiffrement dans le dashboard : l'`APP_KEY` active n'est pas
+celle de l'archive. Arrêter `coolify`, corriger `APP_KEY` dans le `.env`, relancer
+l'installeur. Ne pas utiliser `APP_PREVIOUS_KEYS`.
+
+Tester cette restauration sur une VM jetable après chaque montée de version de Coolify :
+un backup jamais restauré n'est pas un backup.
 
 ## State backend : locking natif
 

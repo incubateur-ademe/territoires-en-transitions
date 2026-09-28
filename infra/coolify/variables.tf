@@ -130,13 +130,36 @@ variable "s3_region" {
 }
 
 variable "s3_credentials_secret_name" {
-  description = "Nom du secret SM contenant les credentials Object Storage au format <access_key>|<secret_key>. Créé manuellement (bootstrap README)."
+  description = "Nom du secret SM contenant les credentials Object Storage au format <access_key>|<secret_key>. Créé par infra/platform (output coolify_backups_credentials_secret_name)."
   type        = string
   default     = "tet-platform-coolify-s3-credentials"
 }
 
 variable "s3_credentials_revision" {
-  description = "Compteur opaque à incrémenter après rotation des clés Object Storage pour rejouer create/update + validate (les clés ne sont pas dans le state)."
+  description = "Compteur opaque à incrémenter après rotation des clés Object Storage (nouvelle clé dans infra/platform) pour les repousser dans Coolify et sur le control plane (les clés ne sont pas dans le state de ce stack)."
   type        = string
   default     = "1"
+}
+
+# --- Sauvegarde de l'instance Coolify ---
+
+variable "instance_backup_age_recipients" {
+  description = "Clés publiques age (age1…) vers lesquelles chiffrer les backups de l'instance Coolify. Une par opérateur habilité à restaurer ; les clés privées restent hors du serveur et hors du repo (cf. README)."
+  type        = list(string)
+  validation {
+    condition     = length(var.instance_backup_age_recipients) > 0 && alltrue([for r in var.instance_backup_age_recipients : can(regex("^age1[0-9a-z]{58}$", r))])
+    error_message = "Au moins une clé publique age valide (age1 suivi de 58 caractères) est requise."
+  }
+}
+
+variable "instance_backup_on_calendar" {
+  description = "Planification du backup de l'instance, au format OnCalendar systemd (heure du serveur, UTC)."
+  type        = string
+  default     = "*-*-* 03:15:00"
+}
+
+variable "instance_backup_prefix" {
+  description = "Préfixe des objets de backup de l'instance dans le bucket. Doit rester aligné sur coolify_instance_backup_prefix (infra/platform), qui porte la règle de rétention."
+  type        = string
+  default     = "coolify-instance"
 }
