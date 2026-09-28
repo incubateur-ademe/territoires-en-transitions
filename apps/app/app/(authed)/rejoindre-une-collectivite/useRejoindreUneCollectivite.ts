@@ -1,9 +1,10 @@
-import { Enums, getCollectivitePath, RouterOutput, useTRPC } from '@tet/api';
+import { getCollectivitePath, RouterOutput, useTRPC } from '@tet/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   CollectivitePublic,
   type MembreFonction,
 } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -12,8 +13,8 @@ export type MatchingCollectivites = Pick<CollectivitePublic, 'id' | 'nom'>[];
 
 export type RejoindreUneCollectiviteData = {
   collectiviteId?: number | null;
-  role?: Enums<'membre_fonction'> | null;
-  champ_intervention?: Array<Enums<'referentiel'>>;
+  role?: MembreFonction | null;
+  champ_intervention?: ReferentielId[];
   poste?: string;
   est_referent?: boolean;
 };

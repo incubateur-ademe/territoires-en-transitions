@@ -1,6 +1,5 @@
 export * as CollectiviteEngagee from './collectiviteEngagees/types';
 export type { Json } from './json.types';
-export * from './typeUtils';
 export * from './users/user-context/user-provider';
 export * from './utils/get-request-url';
 export * from './utils/isAllowedOrigin';
