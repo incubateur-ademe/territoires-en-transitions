@@ -64,12 +64,17 @@ export const normalizeTitle = (titre: string): string =>
 export const dedupeByTitle = (merged: ChunkedActions): ChunkedActions => {
   const actions: ExtractedAction[] = [];
   const chunkIndexByAction: number[] = [];
-  const positionByKey = new Map<string, number>();
+  const positionsByKey = new Map<string, number[]>();
   merged.actions.forEach((action, index) => {
     const key = normalizeTitle(action.titre);
-    const position = key ? positionByKey.get(key) : undefined;
+    const positions = key ? positionsByKey.get(key) ?? [] : [];
+    const position = positions.find((candidate) =>
+      isSameOrEcho(actions[candidate], action)
+    );
     if (position === undefined) {
-      positionByKey.set(key, actions.length);
+      if (key) {
+        positionsByKey.set(key, [...positions, actions.length]);
+      }
       actions.push(action);
       chunkIndexByAction.push(merged.chunkIndexByAction[index]);
       return;
@@ -84,6 +89,21 @@ export const dedupeByTitle = (merged: ChunkedActions): ChunkedActions => {
     }
   });
   return { actions, chunkIndexByAction };
+};
+
+/**
+ * Un même titre dans deux axes différents est deux actions réelles quand
+ * chacune porte son propre contenu (« Sensibiliser le grand public » existe
+ * dans plusieurs axes) ; un écho sans contenu (sommaire, rappel) se fond,
+ * lui, quel que soit son rattachement.
+ */
+const isSameOrEcho = (a: ExtractedAction, b: ExtractedAction): boolean => {
+  if (contentLength(a) === 0 || contentLength(b) === 0) {
+    return true;
+  }
+  const axeA = normalizeTitle(a.axe);
+  const axeB = normalizeTitle(b.axe);
+  return axeA === '' || axeB === '' || axeA === axeB;
 };
 
 const contentLength = (action: ExtractedAction): number =>
