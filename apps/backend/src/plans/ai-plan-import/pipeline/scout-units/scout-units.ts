@@ -14,15 +14,24 @@ export type ScoutUnitsResult = {
   tokens: TokenUsage;
 };
 
+// Les engagements des partenaires décrivent ce que d'autres feront, pas le
+// plan de la collectivité : une partie ainsi titrée n'est pas lue.
+const PARTNER_SECTION = /partenaire/i;
+
 /**
- * Écarte ce qui ne contient pas d'action (diagnostic, éditorial) et relève
- * le squelette du plan. Un tri léger peut se tromper : une unité que le
- * découpage tient déjà pour une fiche, ou que le modèle a oubliée, reste.
+ * Écarte ce qui ne contient pas d'action (diagnostic, éditorial, engagements
+ * des partenaires) et relève le squelette du plan. Un tri léger peut se
+ * tromper : une unité que le découpage tient déjà pour une fiche, ou que le
+ * modèle a oubliée, reste.
  */
 export const scoutUnits = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { units, signal }: { units: DocumentUnit[]; signal?: AbortSignal }
+  { units: allUnits, signal }: { units: DocumentUnit[]; signal?: AbortSignal }
 ): Promise<Result<ScoutUnitsResult, LlmError>> => {
+  const units = allUnits.filter(
+    (unit) => !unit.section || !PARTNER_SECTION.test(unit.section)
+  );
+  const partnerCount = allUnits.length - units.length;
   const classified = await classifyUnits(llm, { units, signal });
   if (!classified.success) {
     return classified;
@@ -48,7 +57,9 @@ export const scoutUnits = async (
     // Tout écarter serait louche : on lit alors tout, comme sans repérage.
     keptUnits: keptUnits.length > 0 ? keptUnits : units,
     skeleton: skeleton.data.skeleton,
-    discardedCount: keptUnits.length > 0 ? units.length - keptUnits.length : 0,
+    discardedCount:
+      partnerCount +
+      (keptUnits.length > 0 ? units.length - keptUnits.length : 0),
     tokens: sumTokenUsage([classified.data.tokens, skeleton.data.tokens]),
   });
 };

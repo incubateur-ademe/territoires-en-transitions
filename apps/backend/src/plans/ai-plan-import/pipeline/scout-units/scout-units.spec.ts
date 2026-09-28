@@ -17,8 +17,9 @@ const tokens = {
 const unit = (
   text: string,
   kind: 'fiche' | 'section' | 'unknown',
-  headingPath: string[] = []
-) => buildUnit([{ text, pageIndex: 0 }], headingPath, kind);
+  headingPath: string[] = [],
+  section?: string
+) => buildUnit([{ text, pageIndex: 0 }], headingPath, kind, { section });
 
 const units = numberUnits([
   unit('Sommaire : Axe 1 Bâtiments, Axe 2 Mobilité', 'section'),
@@ -61,7 +62,10 @@ describe('classifyUnits', () => {
     const result = await classifyUnits(llm, { units });
 
     expect(calls[0]).toMatchObject({ tier: 'light' });
-    expect(calls[0].prompt).toContain('#2 | pages 1–1 | Action 1.1.1');
+    expect(calls[0].prompt).toContain(
+      '#2 | pages 1–1 | 1 Bâtiments | Action 1.1.1'
+    );
+    expect(calls[0].prompt).toContain('#0 | pages 1–1 | - | Sommaire');
     expect(result.success).toBe(true);
     if (result.success) {
       expect([...result.data.categories.entries()]).toEqual([
@@ -108,7 +112,76 @@ describe('extractSkeleton', () => {
   });
 });
 
+describe('extractSkeleton, avec des parties titrées', () => {
+  it('range les titres sous leur partie du document', async () => {
+    const { llm, calls } = llmRouting(
+      () => [],
+      () => ({ axes: [] })
+    );
+
+    await extractSkeleton(llm, {
+      units: [
+        unit('Bilan', 'section', ['I BILAN ÉNERGÉTIQUE'], 'ÉTAT DES LIEUX'),
+        unit('Ancrer', 'fiche', ['I TOUS HÉROS'], "PLAN D'ACTIONS"),
+      ],
+      structureUnits: [],
+    });
+
+    expect(calls[0].prompt).toContain(
+      "Partie « ÉTAT DES LIEUX »\n  I BILAN ÉNERGÉTIQUE\nPartie « PLAN D'ACTIONS »\n  I TOUS HÉROS"
+    );
+  });
+});
+
 describe('scoutUnits', () => {
+  it('écarte sans les trier les engagements des partenaires, fiches comprises', async () => {
+    const { llm, calls } = llmRouting(() => [
+      { index: 0, type: 'fiche_action' },
+    ]);
+
+    const result = await scoutUnits(llm, {
+      units: [
+        unit('Action 1 : Isoler', 'fiche', [], "PLAN D'ACTIONS"),
+        unit(
+          'ACTION 14 : nos bornes',
+          'fiche',
+          [],
+          'ENGAGEMENT DES PARTENAIRES'
+        ),
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keptUnits.map((u) => u.text)).toEqual([
+        'Action 1 : Isoler',
+      ]);
+      expect(result.data.discardedCount).toBe(1);
+    }
+    expect(calls[0].prompt).not.toContain('nos bornes');
+  });
+
+  it('écarte un engagement de partenaire repéré par le tri, sauf une fiche', async () => {
+    const { llm } = llmRouting(() => [
+      { index: 0, type: 'engagement_partenaire' },
+      { index: 1, type: 'engagement_partenaire' },
+    ]);
+
+    const result = await scoutUnits(llm, {
+      units: [
+        unit('La société X s’engage à…', 'section'),
+        unit('Action 2 : Covoiturage', 'fiche'),
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keptUnits.map((u) => u.text)).toEqual([
+        'Action 2 : Covoiturage',
+      ]);
+    }
+  });
+
   it('écarte le diagnostic, garde fiches, structure, tables et unités oubliées', async () => {
     const { llm } = llmRouting(() => [
       { index: 0, type: 'structure' },
