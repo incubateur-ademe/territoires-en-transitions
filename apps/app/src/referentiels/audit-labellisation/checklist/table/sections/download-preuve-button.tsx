@@ -12,15 +12,13 @@ export const DownloadPreuveButton = ({
   collectiviteId: number;
   fichierId: number;
 }): ReactElement => {
-  const { mutate: downloadDocument, isPending } = useDownloadDocument({
-    collectiviteId,
-  });
+  const { mutate: downloadDocument, isPending } = useDownloadDocument();
 
   return (
     <Button
       icon="download-line"
       title={appLabels.telechargerFichier}
-      onClick={() => downloadDocument(fichierId)}
+      onClick={() => downloadDocument({ collectiviteId, fichierId })}
       loading={isPending}
       disabled={isPending}
       size="xs"

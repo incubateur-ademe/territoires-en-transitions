@@ -6,13 +6,11 @@ export const useOpenPreuve = ({
 }: {
   collectiviteId: number;
 }): ((preuve: DocumentRattache) => void) => {
-  const { mutate: downloadDocument, isPending } = useDownloadDocument({
-    collectiviteId,
-  });
+  const { mutate: downloadDocument, isPending } = useDownloadDocument();
 
   return (preuve: DocumentRattache): void => {
     if (preuve.type === 'fichier' && !isPending) {
-      downloadDocument(preuve.fichier.id);
+      downloadDocument({ collectiviteId, fichierId: preuve.fichier.id });
       return;
     }
     if (preuve.type === 'lien') {

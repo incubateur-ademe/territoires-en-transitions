@@ -37,7 +37,7 @@ export const useIsPendingReport = () => {
     },
   });
 
-  const { mutate: downloadDocument } = useDownloadDocument({ collectiviteId });
+  const { mutate: downloadDocument } = useDownloadDocument();
 
   // Handle report status changes
   useEffect(() => {
@@ -64,15 +64,17 @@ export const useIsPendingReport = () => {
     if (lastDownloadedReportIdRef.current === reportStatus.id) return;
 
     lastDownloadedReportIdRef.current = reportStatus.id;
-    downloadDocument(fileId, {
-      onSettled: () => setPendingReportId(null),
-    });
+    downloadDocument(
+      { collectiviteId, fichierId: fileId },
+      { onSettled: () => setPendingReportId(null) }
+    );
   }, [
     reportStatus,
     pendingReportId,
     setToast,
     downloadDocument,
     setPendingReportId,
+    collectiviteId,
   ]);
 
   return {

@@ -3,9 +3,7 @@
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
 import { DemarcheSection } from '@/app/demarches/components/section';
 import { appLabels } from '@/app/labels/catalog';
-import { saveBlob } from '@/app/utils/save-blob';
-import { useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { useDownloadDossierDocument } from '../../data/use-download-demarche-document';
 import {
   computeDemarcheDocumentsCoverage,
   DemarcheTypeEnum,
@@ -24,24 +22,15 @@ export const EtapeDocumentsSection = ({
   dossierRef: DossierInstructionRef;
   documents: DemarcheDocumentsSnapshot;
 }) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const { mutate: downloadDossierDocument } = useDownloadDossierDocument();
 
   const coverage = useMemo(
     () => computeDemarcheDocumentsCoverage(documents),
     [documents]
   );
 
-  const downloadDocument = async ({ documentId }: DemarcheDocumentDepose) => {
-    const { url, filename } = await queryClient.fetchQuery(
-      trpc.demarches.pcaet.getDossierDocumentUrl.queryOptions(
-        { ...dossierRef, documentId },
-        { staleTime: 0 }
-      )
-    );
-    const response = await fetch(url);
-    saveBlob(await response.blob(), filename);
-    return true;
+  const downloadDemarcheDocument = ({ documentId }: DemarcheDocumentDepose) => {
+    downloadDossierDocument({ ...dossierRef, documentId });
   };
 
   return (
@@ -66,7 +55,7 @@ export const EtapeDocumentsSection = ({
         onRenameAdditional={noop}
         onAddFichierAdditional={noop}
         onRemoveAdditional={noop}
-        onDownload={downloadDocument}
+        onDownload={downloadDemarcheDocument}
       />
     </DemarcheSection>
   );

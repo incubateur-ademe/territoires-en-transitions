@@ -1,10 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { saveBlob } from '@/app/utils/save-blob';
+import { useDownloadAvisRapport } from '../data/use-download-demarche-document';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
 import type { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
 import { Button, cn } from '@tet/ui';
 
@@ -54,30 +52,17 @@ export const AvisDeposesList = ({
   titre?: string;
   className?: string;
 }) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const { mutate: downloadAvisRapportFile } = useDownloadAvisRapport();
 
   if (avis.length === 0) {
     return null;
   }
 
-  /**
-   * L'URL signée est courte : on la demande au clic plutôt que de la charger
-   * avec la liste, où elle aurait expiré avant d'avoir servi. D'où le
-   * `staleTime: 0`, qui interdit d'en resservir une du cache.
-   */
-  const telechargerRapport = async (unAvis: AvisAffiche) => {
-    const { url, filename } = await queryClient.fetchQuery(
-      trpc.demarches.pcaet.getAvisFileUrl.queryOptions(
-        {
-          demandeAvisId: unAvis.demandeAvisId ?? demandeAvisId,
-          avisId: unAvis.id,
-        },
-        { staleTime: 0 }
-      )
-    );
-    const response = await fetch(url);
-    saveBlob(await response.blob(), filename);
+  const downloadAvisRapport = (unAvis: AvisAffiche) => {
+    downloadAvisRapportFile({
+      demandeAvisId: unAvis.demandeAvisId ?? demandeAvisId,
+      avisId: unAvis.id,
+    });
   };
 
   return (
@@ -124,7 +109,7 @@ export const AvisDeposesList = ({
                 aria-label={appLabels.instructionDossierAvisTelechargerAria({
                   titre,
                 })}
-                onClick={() => telechargerRapport(unAvis)}
+                onClick={() => downloadAvisRapport(unAvis)}
               >
                 {appLabels.instructionDossierAvisTelecharger}
               </Button>

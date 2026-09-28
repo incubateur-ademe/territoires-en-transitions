@@ -61,7 +61,7 @@ export const DemarchePcaetDocumentsPage = () => {
       demarche?.transmisHorsPlateforme !== true,
   });
 
-  const { mutate: downloadDocument } = useDownloadDocument({ collectiviteId });
+  const { mutate: downloadDocument } = useDownloadDocument();
 
   if (isLoading) {
     return (
@@ -97,7 +97,7 @@ export const DemarchePcaetDocumentsPage = () => {
     fichier,
   }: DemarcheDocumentDepose | DemarcheDocumentAdditional): void => {
     if (fichier) {
-      downloadDocument(fichier.id);
+      downloadDocument({ collectiviteId, fichierId: fichier.id });
     }
   };
 

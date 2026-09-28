@@ -35,12 +35,15 @@ describe('useOpenPreuve', () => {
     telechargementEnCours.value = false;
   });
 
-  it('télécharge le fichier par son identifiant', () => {
+  it('télécharge le fichier de la bibliothèque de sa collectivité', () => {
     const openPreuve = renderOpenPreuve();
 
     openPreuve.current(preuveReglementaireFichier);
 
-    expect(downloadDocument).toHaveBeenCalledWith(21);
+    expect(downloadDocument).toHaveBeenCalledWith({
+      collectiviteId: COLLECTIVITE_ID,
+      fichierId: 21,
+    });
   });
 
   it('ignore un clic tant que le téléchargement précédent est en cours', () => {
