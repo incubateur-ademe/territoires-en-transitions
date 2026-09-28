@@ -61,8 +61,12 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
 
   return (
     <>
-      <Field title={appLabels.champDateVisiteAnnuelle}>
+      <Field
+        title={appLabels.champDateVisiteAnnuelle}
+        htmlFor="dateVisiteAnnuelle"
+      >
         <Input
+          id="dateVisiteAnnuelle"
           type="date"
           ref={inputRef}
           pattern="\d{4}-\d{2}-\d{2}"
