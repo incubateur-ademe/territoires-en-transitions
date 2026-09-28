@@ -107,6 +107,47 @@ describe('dedupeByTitle', () => {
     expect(deduped.chunkIndexByAction).toEqual([5, 1]);
   });
 
+  it('garde distinctes deux actions de même titre riches dans deux axes différents', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Sensibiliser le grand public', {
+          axe: 'Axe 2 : Habitat',
+          description: 'Ateliers rénovation énergétique.',
+        }),
+        anAction('Sensibiliser le grand public', {
+          axe: 'Axe 5 : Mobilité',
+          description: 'Campagne vélo au quotidien.',
+        }),
+      ],
+      chunkIndexByAction: [0, 3],
+    });
+
+    expect(deduped.actions).toHaveLength(2);
+    expect(deduped.actions.map((a) => a.axe)).toEqual([
+      'Axe 2 : Habitat',
+      'Axe 5 : Mobilité',
+    ]);
+  });
+
+  it("fond l'écho sans contenu d'un titre même venu d'un autre axe", () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Sensibiliser le grand public', {
+          axe: 'Axe 2 : Habitat',
+          description: 'Ateliers rénovation énergétique.',
+        }),
+        anAction('Sensibiliser le grand public', { axe: 'Sommaire' }),
+      ],
+      chunkIndexByAction: [0, 3],
+    });
+
+    expect(deduped.actions).toHaveLength(1);
+    expect(deduped.actions[0]).toMatchObject({
+      axe: 'Axe 2 : Habitat',
+      description: 'Ateliers rénovation énergétique.',
+    });
+  });
+
   it('garde distinctes deux actions voisines', () => {
     const deduped = dedupeByTitle({
       actions: [
