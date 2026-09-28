@@ -5,6 +5,7 @@ import {
   Catch,
   HttpException,
   type HttpServer,
+  HttpStatus,
   Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
@@ -35,6 +36,20 @@ export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
   return httpErrorResponse;
 };
 
+/**
+ * Statuts HTTP imputables au client, et non au serveur.
+ *
+ * Même logique que `CLIENT_FAULT_ERROR_CODES` côté tRPC, plus la 404 : une
+ * route inexistante appelée par un client externe (scanner, webhook obsolète…)
+ * n'est pas un bug à investiguer. On les journalise en `warn` et on ne les
+ * remonte pas dans Sentry.
+ */
+const CLIENT_FAULT_HTTP_STATUSES = new Set<number>([
+  HttpStatus.UNAUTHORIZED,
+  HttpStatus.NOT_FOUND,
+  HttpStatus.TOO_MANY_REQUESTS,
+]);
+
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -51,21 +66,25 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    this.logger.error(getErrorMessage(exception));
-    this.logger.error(exception);
-
-    // report it to sentry with context
-    Sentry.captureException(
-      exception,
-      getSentryContextFromApplicationContext(
-        this.contextStoreService.getContext()
-      )
-    );
-
     const httpErrorResponse = {
       ...getHttpErrorResponse(exception),
       path: request.url,
     };
+
+    if (CLIENT_FAULT_HTTP_STATUSES.has(httpErrorResponse.status)) {
+      this.logger.warn(getErrorMessage(exception));
+    } else {
+      this.logger.error(getErrorMessage(exception));
+      this.logger.error(exception);
+
+      // report it to sentry with context
+      Sentry.captureException(
+        exception,
+        getSentryContextFromApplicationContext(
+          this.contextStoreService.getContext()
+        )
+      );
+    }
 
     this.logger.log(`Response with status ${httpErrorResponse.status}`, {
       error_response: httpErrorResponse,
