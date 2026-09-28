@@ -116,9 +116,14 @@ resource "scaleway_instance_server" "coolify" {
   security_group_id = scaleway_instance_security_group.coolify.id
   ip_id             = scaleway_instance_ip.coolify.id
 
+  # Le disque racine porte la base Coolify (applications, variables d'env,
+  # secrets de tous les environnements) : protégé contre la suppression via
+  # l'API, et conservé si le serveur est détruit malgré tout.
+  protected = true
+
   root_volume {
     size_in_gb            = var.root_volume_size_in_gb
-    delete_on_termination = true
+    delete_on_termination = false
   }
 
   user_data = {
@@ -135,7 +140,8 @@ resource "scaleway_instance_server" "coolify" {
   # cloud-init ne tourne qu'au premier boot. Ignorer les changements ultérieurs
   # évite une destruction/recréation accidentelle du control plane.
   lifecycle {
-    ignore_changes = [user_data]
+    ignore_changes  = [user_data]
+    prevent_destroy = true
   }
 }
 

@@ -27,6 +27,9 @@ module "app_server" {
   # orphelines. Sans GC, le volume racine sature en quelques semaines.
   docker_gc_enabled = true
   docker_gc_until   = var.docker_gc_until
+
+  # Rien à préserver : chaque preview est recréable depuis sa PR.
+  deletion_protection = false
 }
 
 # --- DNS ---
