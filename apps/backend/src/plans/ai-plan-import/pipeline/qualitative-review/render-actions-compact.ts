@@ -43,7 +43,13 @@ const renderActionLine = (action: ExtractedAction): string =>
     labelled('Structure pilote', action.structurePilote),
     labelled('Direction ou service pilote', action.directionServicePilote),
     labelled('Personne pilote', action.personnePilote),
+    labelled('Partenaires', action.partenaires),
     labelled('Budget', action.budget === null ? null : String(action.budget)),
+    labelled('Financements', action.financements),
+    labelled('Moyens humains', action.moyensHumains),
+    labelled('Priorité', action.priorite),
+    labelled('Date de début', action.dateDebut),
+    labelled('Date de fin', action.dateFin),
     labelled('Statut', action.statut),
   ]
     .filter(isNotNil)

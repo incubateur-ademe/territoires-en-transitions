@@ -1,4 +1,5 @@
-import { Statut } from '@tet/domain/plans';
+import { Priorite, Statut } from '@tet/domain/plans';
+import { frenchDateToIso } from '../../adapters/french-date-to-iso';
 import {
   createUnenrichedSousAction,
   ExtractedAction,
@@ -18,7 +19,13 @@ const toExtractedAction = (action: ExtractionAction): ExtractedAction => ({
   structurePilote: toNullable(action['structure pilote']),
   directionServicePilote: toNullable(action['direction ou service pilote']),
   personnePilote: toNullable(action['personne pilote']),
+  partenaires: toNullable(action.partenaires),
   budget: toBudget(action.budget),
+  financements: toNullable(action.financements),
+  moyensHumains: toNullable(action['moyens humains']),
+  priorite: toPriorite(action.priorite),
+  dateDebut: frenchDateToIso(action['date de debut']),
+  dateFin: frenchDateToIso(action['date de fin']),
   statut: toStatut(action.statut),
   confidence: null,
   sousActions: action['sous-actions']
@@ -41,4 +48,7 @@ const toBudget = (value: string): number | null => {
 };
 
 const toStatut = (value: '' | Statut): Statut | null =>
+  value === '' ? null : value;
+
+const toPriorite = (value: '' | Priorite): Priorite | null =>
   value === '' ? null : value;

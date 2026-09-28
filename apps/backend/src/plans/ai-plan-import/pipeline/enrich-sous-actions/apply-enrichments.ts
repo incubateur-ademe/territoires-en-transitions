@@ -1,4 +1,5 @@
 import { Statut } from '@tet/domain/plans';
+import { frenchDateToIso } from '../../adapters/french-date-to-iso';
 import {
   ExtractedAction,
   ExtractedSousAction,
@@ -62,20 +63,3 @@ const toNullable = (value: string): string | null => {
 
 const toStatut = (value: '' | Statut): Statut | null =>
   value === '' ? null : value;
-
-const FRENCH_DATE = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-
-const frenchDateToIso = (value: string): string | null => {
-  const match = value.trim().match(FRENCH_DATE);
-  if (!match) {
-    return null;
-  }
-  const [, day, month, year] = match;
-  const iso = `${year}-${month}-${day}`;
-  return isValidIsoDate(iso) ? iso : null;
-};
-
-const isValidIsoDate = (iso: string): boolean => {
-  const date = new Date(iso);
-  return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(iso);
-};

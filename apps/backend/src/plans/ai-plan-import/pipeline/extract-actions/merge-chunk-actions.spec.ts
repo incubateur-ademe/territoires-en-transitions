@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import { dedupeByTitle, mergeChunkActions } from './merge-chunk-actions';
@@ -8,21 +9,13 @@ import { dedupeByTitle, mergeChunkActions } from './merge-chunk-actions';
 const anAction = (
   titre: string,
   overrides: Partial<ExtractedAction> = {}
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    ...overrides,
+  });
 
 describe('mergeChunkActions', () => {
   it("ajoute les actions d'une tranche avec leur index de tranche", () => {

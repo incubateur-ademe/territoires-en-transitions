@@ -1,28 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { ExtractedAction } from '../../models/extracted-action';
+import {
+  createEmptyExtractedAction,
+  ExtractedAction,
+} from '../../models/extracted-action';
 import { renderActionsCompact } from './render-actions-compact';
 
-const toAction = (overrides: Partial<ExtractedAction>): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre: '1.1.1 Action',
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+const toAction = (overrides: Partial<ExtractedAction>): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre: '1.1.1 Action',
+    ...overrides,
+  });
 
 describe('renderActionsCompact', () => {
-  it("rend une ligne par action avec ses champs renseignés", () => {
+  it('rend une ligne par action avec ses champs renseignés', () => {
     const rendu = renderActionsCompact([
       toAction({
-        titre: '1.1.1 Réduire l\'autosolisme',
+        titre: "1.1.1 Réduire l'autosolisme",
         description: 'Développer le covoiturage',
         personnePilote: 'Jean Dupont',
       }),

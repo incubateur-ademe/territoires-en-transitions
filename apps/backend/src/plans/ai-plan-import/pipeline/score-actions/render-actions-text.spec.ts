@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createEmptyExtractedAction,
   ExtractedAction,
   ExtractedSousAction,
 } from '../../models/extracted-action';
@@ -14,21 +15,13 @@ const aSousAction = (titre: string): ExtractedSousAction => ({
   dateFin: null,
 });
 
-const anAction = (overrides: Partial<ExtractedAction>): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre: 'Titre',
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+const anAction = (overrides: Partial<ExtractedAction>): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre: 'Titre',
+    ...overrides,
+  });
 
 describe('renderActionsText', () => {
   it('rend les en-têtes axe / sous-axe et les champs renseignés', () => {
@@ -41,7 +34,10 @@ describe('renderActionsText', () => {
         personnePilote: 'Jean Dupont',
         budget: 24000,
         statut: 'En cours',
-        sousActions: [aSousAction('Déployer des lignes'), aSousAction('Autopartage')],
+        sousActions: [
+          aSousAction('Déployer des lignes'),
+          aSousAction('Autopartage'),
+        ],
       }),
     ]);
 

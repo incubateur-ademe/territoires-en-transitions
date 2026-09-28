@@ -4,6 +4,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import {
   ActionConfidence,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import {
@@ -31,23 +32,13 @@ const confidence = (score: number): ActionConfidence => ({
   amelioree: false,
 });
 
-const anAction = (
-  titre: string,
-  score: number | null
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: score === null ? null : confidence(score),
-  sousActions: [],
-});
+const anAction = (titre: string, score: number | null): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    confidence: score === null ? null : confidence(score),
+  });
 
 const echoingLlm = (): Pick<LlmService, 'generateStructured'> =>
   ({
@@ -115,8 +106,18 @@ describe('consolidateActions', () => {
       generateStructured: async () =>
         success({
           data: [
-            { index: 0, titre: 'consolidée 0', description: '', 'sous-actions': [] },
-            { index: 1, titre: 'CORROMPU', description: '', 'sous-actions': [] },
+            {
+              index: 0,
+              titre: 'consolidée 0',
+              description: '',
+              'sous-actions': [],
+            },
+            {
+              index: 1,
+              titre: 'CORROMPU',
+              description: '',
+              'sous-actions': [],
+            },
           ],
           tokens,
         }),
@@ -156,7 +157,10 @@ describe('consolidateActions', () => {
 
     const result = await consolidateActions(llm, {
       actions: [anAction('A', 50), anAction('B', 50)],
-      source: { chunks: ['TRANCHE_0', 'TRANCHE_1'], chunkIndexByAction: [0, 1] },
+      source: {
+        chunks: ['TRANCHE_0', 'TRANCHE_1'],
+        chunkIndexByAction: [0, 1],
+      },
       disabledFields: [],
     });
 

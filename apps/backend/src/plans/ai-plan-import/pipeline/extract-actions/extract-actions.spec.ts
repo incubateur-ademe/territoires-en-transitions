@@ -25,7 +25,13 @@ const anExtractionAction = (
   'structure pilote': '',
   'direction ou service pilote': '',
   'personne pilote': '',
+  partenaires: '',
   budget: '',
+  financements: '',
+  'moyens humains': '',
+  priorite: '',
+  'date de debut': '',
+  'date de fin': '',
   statut: '',
   ...overrides,
 });

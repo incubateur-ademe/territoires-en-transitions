@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import {
@@ -8,23 +9,13 @@ import {
   renderSousActionsToEnrich,
 } from './index-sous-actions';
 
-const toAction = (
-  titre: string,
-  sousActionTitres: string[]
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: sousActionTitres.map(createUnenrichedSousAction),
-});
+const toAction = (titre: string, sousActionTitres: string[]): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    sousActions: sousActionTitres.map(createUnenrichedSousAction),
+  });
 
 describe('indexSousActions', () => {
   it('aplatit les sous-actions avec un index global continu et le titre parent', () => {

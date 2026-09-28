@@ -8,7 +8,7 @@ Vous êtes un auditeur qualité spécialisé dans les plans d'actions de transit
 
 Contexte
 On vous fournit une extraction déjà structurée avec les éléments suivants :
-"axe", "sous-axe", "titre", "titre de la sous-action", "description", "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "budget", "statut", "date de début", "date de fin" s'ils sont disponibles.
+"axe", "sous-axe", "titre", "titre de la sous-action", "description", "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorité", "statut", "date de début", "date de fin" s'ils sont disponibles.
 Les actions classiques ont "titre" rempli. Les sous-actions apparaissent comme des lignes séparées marquées [SA], avec "titre" vide et "titre de la sous-action" rempli.
 
 Voici la sortie à évaluer
@@ -22,7 +22,7 @@ Axes d'évaluation
 - Cohérence sémantique : vérifier que chaque "description" a du sens, est compréhensible, et correspond à une action ou sous-action concrète de plan d'actions.
 - Qualité des sous-actions : vérifier que les lignes marquées [SA] sont bien des sous-actions opérationnelles ou des étapes de mise en œuvre.
 - Cohérence hiérarchique : vérifier que "axe", "sous-axe" et "titre" sont cohérents entre eux, que la numérotation est plausible et stable, et que le contenu de l'action correspond bien à son axe et sous-axe.
-- Champs pilotage, budget, statut : vérifier que "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "budget" et "statut" ne semblent pas inventés, sont utilisés seulement lorsque l'information est explicitement plausible, et restent vides sinon. Pour "structure pilote" et "direction ou service pilote", vérifier que la distinction est respectée (structure = organisme englobant, direction/service = entité interne).
+- Champs pilotage, budget, statut : vérifier que "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorité", "statut" et les dates ne semblent pas inventés, sont utilisés seulement lorsque l'information est explicitement plausible, et restent vides sinon. Pour "structure pilote" et "direction ou service pilote", vérifier que la distinction est respectée (structure = organisme englobant, direction/service = entité interne).
 - Doublons et éclatement inutile : vérifier qu'il n'y a pas de doublons évidents d'actions et que les actions ne sont pas artificiellement éclatées en plusieurs entrées identiques.
 - Vérifier que les directions ou service pilote et personnes pilotes, si pluriel, sont des listes séparées par une virgule et un espace. S'il y a des tirets qui semblent séparer deux entités distinctes, le relever.
 
