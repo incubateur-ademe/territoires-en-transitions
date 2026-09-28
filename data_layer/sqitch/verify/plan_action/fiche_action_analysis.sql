@@ -33,12 +33,20 @@ $$
                            'fiche_action_analysis_fingerprint_check',
                            'fiche_action_analysis_processed_fingerprint_check',
                            'fiche_action_analysis_retry_count_check',
+                           'fiche_action_analysis_retry_count_status_check',
                            'fiche_action_analysis_status_check'
                        ]
             FROM pg_constraint
             WHERE conrelid = 'public.fiche_action_analysis'::regclass
               AND contype = 'c'
         ), 'Les contraintes de statut, d''empreinte et de compteur doivent exister';
+
+        ASSERT (
+            SELECT pg_get_constraintdef(oid) LIKE '%failed%retry_count > 0%'
+            FROM pg_constraint
+            WHERE conname = 'fiche_action_analysis_retry_count_status_check'
+              AND conrelid = 'public.fiche_action_analysis'::regclass
+        ), 'Seule une fiche en erreur doit avoir un compteur d''echecs non nul';
 
         ASSERT (
             SELECT COUNT(*) = 1
