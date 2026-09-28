@@ -12,15 +12,21 @@ import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
 import { AiImportBetaLabel } from '@/app/plans/plans/import-plan/ai-import-beta-label';
+import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
+import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-get-ongoing-ai-import';
 import { useIsAiPlanImportEnabled } from '@/app/plans/plans/import-plan/use-is-ai-plan-import-enabled';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import {
   PlanListItem,
   useListPlans,
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import {
+  useCollectiviteId,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
 import {
   Alert,
@@ -33,7 +39,7 @@ import {
 } from '@tet/ui';
 import { isPlanPendingVerification } from '@tet/domain/plans';
 import Link from 'next/link';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { DemarcheSection } from './section';
 
 /**
@@ -64,6 +70,8 @@ type Props = {
   ) => void;
   /** Crée le plan (type imposé par l'appelant) et le rattache à la démarche. */
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
+  /** Fichier et nom proposés d'office à l'import par IA. */
+  importDefaults?: AiImportDefaults;
 };
 
 /**
@@ -222,12 +230,15 @@ const CreatePlanAction = ({
   isReadonly,
   onCreatePlan,
   onPlanImported,
+  importDefaults,
 }: {
   /** Type pré-sélectionné dans la modale de création. */
   planTypeId: number | undefined;
   isReadonly: boolean;
+  importDefaults?: AiImportDefaults;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
-  onPlanImported: (planId: number, options: { startedHere: boolean }) => void;
+  /** Appelé seulement pour un import lancé depuis cette page. */
+  onPlanImported: (planId: number) => void;
 }) => {
   const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
   const [isImportPlanModalOpen, setIsImportPlanModalOpen] = useState(false);
@@ -235,38 +246,107 @@ const CreatePlanAction = ({
     useState(false);
   const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
 
+  // Suivi de l'import ici et non dans la modale, qui démonte son contenu à la
+  // fermeture : l'import continue, et sa fin doit être traitée quand même.
+  const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { setToast } = useToastContext();
+  const {
+    jobId: ongoingJobId,
+    status: ongoingStatus,
+    isOngoing: isImportOngoing,
+  } = useGetOngoingAiImport(collectiviteId, {
+    enabled: isAiPlanImportEnabled,
+  });
+  const [startedJobId, setStartedJobId] = useState<string | null>(null);
+  const handledJobId = useRef<string | null>(null);
+  useEffect(() => {
+    if (ongoingJobId === null || handledJobId.current === ongoingJobId) {
+      return;
+    }
+    // Le suivi est à la maille de la collectivité : un import lancé par
+    // quelqu'un d'autre rafraîchit la liste mais ne toaste pas ici.
+    const startedHere = ongoingJobId === startedJobId;
+    if (
+      ongoingStatus?.status === 'done' &&
+      ongoingStatus.createdPlanId !== null
+    ) {
+      handledJobId.current = ongoingJobId;
+      queryClient.invalidateQueries({
+        queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
+      });
+      if (startedHere) {
+        onPlanImported(ongoingStatus.createdPlanId);
+      }
+    } else if (ongoingStatus?.status === 'failed') {
+      handledJobId.current = ongoingJobId;
+      // Modale ouverte, l'échec y est déjà affiché avec son détail.
+      if (startedHere && !isImportPlanModalOpen) {
+        setToast('error', appLabels.importPlanIaErreur);
+      }
+    }
+  }, [
+    ongoingJobId,
+    ongoingStatus,
+    startedJobId,
+    isImportPlanModalOpen,
+    onPlanImported,
+    queryClient,
+    trpc,
+    collectiviteId,
+    setToast,
+  ]);
+
   return (
     <>
-      <SplitButton
-        size="sm"
-        icon={<Icon icon="add-line" />}
-        onClick={() => setIsCreatePlanModalOpen(true)}
-        disabled={isReadonly}
-        dataTest="demarches.plan.creer-pcaet-button"
-        menuDataTest="demarches.plan.creer-plan-menu"
-        className="shrink-0"
-        menuActions={[
-          isAiPlanImportEnabled
-            ? {
-                icon: 'import-line',
-                label: (
-                  <AiImportBetaLabel>
-                    {appLabels.demarcheProgrammeImporterPlan}
-                  </AiImportBetaLabel>
-                ),
-                onClick: () => setIsImportPlanModalOpen(true),
-                disabled: isReadonly,
-              }
-            : {
-                icon: 'import-line',
-                label: appLabels.demarcheProgrammeImporterPlan,
-                onClick: () => setIsRequestPlanImportModalOpen(true),
-                disabled: isReadonly,
-              },
-        ]}
-      >
-        {appLabels.demarcheProgrammeCreerPlan}
-      </SplitButton>
+      {/* La pastille signale un import en cours sans ouvrir le menu, sur la
+          flèche qui y mène. */}
+      <div className="relative shrink-0">
+        <SplitButton
+          size="sm"
+          icon={<Icon icon="add-line" />}
+          onClick={() => setIsCreatePlanModalOpen(true)}
+          disabled={isReadonly}
+          dataTest="demarches.plan.creer-pcaet-button"
+          menuDataTest="demarches.plan.creer-plan-menu"
+          menuActions={[
+            isAiPlanImportEnabled
+              ? {
+                  icon: 'import-line',
+                  label: isImportOngoing ? (
+                    <span className="inline-flex items-center gap-2">
+                      {appLabels.importPlanIaEnCoursCourt}
+                      <SpinnerLoader className="w-4 h-4" />
+                    </span>
+                  ) : (
+                    <AiImportBetaLabel>
+                      {appLabels.demarcheProgrammeImporterPlan}
+                    </AiImportBetaLabel>
+                  ),
+                  onClick: () => setIsImportPlanModalOpen(true),
+                  disabled: isReadonly,
+                }
+              : {
+                  icon: 'import-line',
+                  label: appLabels.demarcheProgrammeImporterPlan,
+                  onClick: () => setIsRequestPlanImportModalOpen(true),
+                  disabled: isReadonly,
+                },
+          ]}
+        >
+          {appLabels.demarcheProgrammeCreerPlan}
+        </SplitButton>
+        {isImportOngoing && (
+          <span
+            role="status"
+            aria-label={appLabels.importPlanIaEnCoursCourt}
+            title={appLabels.importPlanIaEnCoursCourt}
+            data-test="demarches.plan.import-en-cours-badge"
+            className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-warning-1 ring-2 ring-white"
+          />
+        )}
+      </div>
       <DemarcheCreatePlanModal
         defaultTypeId={planTypeId}
         openState={{
@@ -277,11 +357,12 @@ const CreatePlanAction = ({
       />
       <DemarcheImportPlanModal
         planTypeId={planTypeId}
+        importDefaults={importDefaults}
         openState={{
           isOpen: isImportPlanModalOpen,
           setIsOpen: setIsImportPlanModalOpen,
         }}
-        onPlanImported={onPlanImported}
+        onImportStarted={setStartedJobId}
       />
       <DemarcheRequestPlanImportModal
         openState={{
@@ -394,6 +475,7 @@ export const ProgrammeActionsSection = ({
   isLoadingEligibility = false,
   onUpdateAction,
   onCreatePlan,
+  importDefaults,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId } = collectivite;
@@ -444,16 +526,12 @@ export const ProgrammeActionsSection = ({
   };
 
   // Même règle que la création : seul le premier plan est rattaché d'office.
-  // Un import repris a pu être lancé ailleurs avec un autre type : jamais
-  // rattaché d'office, il reste à lier depuis le tableau. Le rattachement part
-  // en différé et peut échouer : le toast n'annonce que l'import, la ligne du
-  // tableau dit si le plan est rattaché.
+  // Le rattachement part en différé et peut échouer : le toast n'annonce que
+  // l'import, la ligne du tableau dit si le plan est rattaché. Un import lancé
+  // ailleurs ne passe pas ici : son plan reste à lier depuis le tableau.
   const { setToast } = useToastContext();
-  const handlePlanImported = (
-    planId: number,
-    { startedHere }: { startedHere: boolean }
-  ) => {
-    if (startedHere && linkedPlanIds.length === 0) {
+  const handlePlanImported = (planId: number) => {
+    if (linkedPlanIds.length === 0) {
       linkPlan(planId);
     }
     setToast('success', appLabels.importPlanIaPlanImporte);
@@ -503,6 +581,7 @@ export const ProgrammeActionsSection = ({
           isReadonly={isReadonly}
           onCreatePlan={onCreatePlan}
           onPlanImported={handlePlanImported}
+          importDefaults={importDefaults}
         />
       }
     >

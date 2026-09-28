@@ -495,6 +495,16 @@ export const demarchesLabels = {
     'La démarche n’est plus en élaboration : le programme d’actions n’est plus modifiable.',
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
     `Plan #${id}`,
+  demarcheProgrammeNomPlanImporte: ({
+    annee,
+    collectiviteNom,
+  }: {
+    annee: string | null;
+    collectiviteNom: string;
+  }): string =>
+    annee
+      ? `Plan d'actions - PCAET ${annee} - ${collectiviteNom}`
+      : `Plan d'actions - PCAET - ${collectiviteNom}`,
   demarcheProgrammeLierCePlan: 'Lier ce plan',
   demarcheProgrammePlanAVerifier: 'À vérifier',
   demarcheProgrammePlanDejaRattache: ({ titre }: { titre: string }): string =>
