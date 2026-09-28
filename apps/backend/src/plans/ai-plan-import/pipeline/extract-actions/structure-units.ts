@@ -1,4 +1,4 @@
-import { LlmError } from '@tet/backend/utils/llm/llm.errors';
+import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
@@ -117,7 +117,10 @@ export const structureUnits = async (
     tokens: sumTokenUsage(outcomes.flatMap(({ tokens }) => tokens)),
     warnings: failures.map(
       ({ pack, error }) =>
-        `Extrait écarté (${describePackPosition(pack, count)}) : ${error.kind}`
+        `Extrait écarté (${describePackPosition(
+          pack,
+          count
+        )}) : ${describeLlmError(error)}`
     ),
   });
 };

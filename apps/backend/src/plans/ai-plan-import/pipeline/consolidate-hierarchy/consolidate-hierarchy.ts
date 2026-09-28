@@ -1,4 +1,4 @@
-import { LlmError } from '@tet/backend/utils/llm/llm.errors';
+import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
@@ -129,7 +129,9 @@ const consolidateBatch = async (
     entries: [],
     tokens: [],
     warnings: [
-      `Mise en cohérence non faite pour les actions ${first} à ${last} : ${kind}`,
+      `Mise en cohérence non faite pour les actions ${first} à ${last} : ${describeLlmError(
+        completion.error
+      )}`,
     ],
   };
 };

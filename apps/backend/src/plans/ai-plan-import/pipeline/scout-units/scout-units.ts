@@ -1,4 +1,4 @@
-import { LlmError } from '@tet/backend/utils/llm/llm.errors';
+import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { Result, success } from '@tet/backend/utils/result.type';
@@ -12,6 +12,7 @@ export type ScoutUnitsResult = {
   skeleton: PlanSkeleton | null;
   discardedCount: number;
   tokens: TokenUsage;
+  warnings: string[];
 };
 
 // Les engagements des partenaires décrivent ce que d'autres feront, pas le
@@ -44,23 +45,29 @@ export const scoutUnits = async (
     (_, index) => categories.get(index) === 'structure'
   );
 
+  // Sans squelette, la mise en cohérence est sautée : l'import y perd en
+  // finesse, pas en contenu.
   const skeleton = await extractSkeleton(llm, {
     units,
     structureUnits,
     signal,
   });
-  if (!skeleton.success) {
-    return skeleton;
-  }
+  const skeletonWarnings = skeleton.success
+    ? []
+    : [`Squelette du plan non relevé : ${describeLlmError(skeleton.error)}`];
 
   return success({
     // Tout écarter serait louche : on lit alors tout, comme sans repérage.
     keptUnits: keptUnits.length > 0 ? keptUnits : units,
-    skeleton: skeleton.data.skeleton,
+    skeleton: skeleton.success ? skeleton.data.skeleton : null,
     discardedCount:
       partnerCount +
       (keptUnits.length > 0 ? units.length - keptUnits.length : 0),
-    tokens: sumTokenUsage([classified.data.tokens, skeleton.data.tokens]),
+    tokens: sumTokenUsage([
+      classified.data.tokens,
+      ...(skeleton.success ? [skeleton.data.tokens] : []),
+    ]),
+    warnings: [...classified.data.warnings, ...skeletonWarnings],
   });
 };
 

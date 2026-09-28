@@ -220,14 +220,49 @@ describe('scoutUnits', () => {
     }
   });
 
-  it('propage une erreur du tri', async () => {
+  it('lit tout, sans squelette, quand le modèle ne sait ni trier ni relever la structure', async () => {
     const llm = {
       generateStructured: vi.fn(async () => failure({ kind: 'rate_limited' })),
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
-    expect(await scoutUnits(llm, { units })).toMatchObject({
-      success: false,
-      error: { kind: 'rate_limited' },
-    });
+    const result = await scoutUnits(llm, { units });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keptUnits).toHaveLength(units.length);
+      expect(result.data.skeleton).toBeNull();
+      expect(result.data.warnings).toEqual([
+        'Tri non fait pour les extraits 1 à 4 : rate_limited',
+        'Squelette du plan non relevé : rate_limited',
+      ]);
+    }
+  });
+
+  it('retente un lot au JSON invalide avant de renoncer à le trier', async () => {
+    let classifyCalls = 0;
+    const llm = {
+      generateStructured: vi.fn(async (call: Call) => {
+        if (!call.prompt.includes('agent de tri documentaire')) {
+          return success({ data: { axes: [] }, tokens });
+        }
+        classifyCalls += 1;
+        return classifyCalls === 1
+          ? failure({
+              kind: 'invalid_json',
+              rawTextLength: 10,
+              schemaIssue: { path: [0, 'type'], code: 'invalid_value' },
+            })
+          : success({ data: [{ index: 1, type: 'diagnostic' }], tokens });
+      }),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await scoutUnits(llm, { units });
+
+    expect(classifyCalls).toBe(2);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.discardedCount).toBe(1);
+      expect(result.data.warnings).toEqual([]);
+    }
   });
 });
