@@ -5,8 +5,9 @@ import { Result, success } from '@tet/backend/utils/result.type';
 import { OCR_PROMPT } from '../../prompts/ocr.prompt';
 import { PageImage } from './render-page-image';
 
-// Une page dense fait 1 500 à 2 500 tokens de texte.
-const OCR_MAX_OUTPUT_TOKENS = 6_000;
+// Une page dense fait 1 500 à 2 500 tokens de texte. Au-delà, le modèle
+// répète en boucle ce qu'il voit sur une photo ou un intercalaire.
+const OCR_MAX_OUTPUT_TOKENS = 3_500;
 
 export type OcrPageFn = (
   image: PageImage,

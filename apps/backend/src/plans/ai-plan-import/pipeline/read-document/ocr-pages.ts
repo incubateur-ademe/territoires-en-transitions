@@ -39,7 +39,10 @@ export type OcrPagesError = {
 };
 
 const DEFAULT_CONCURRENCY = 2;
-const DEFAULT_PAGE_TIMEOUT_MS = 90_000;
+const SCAN_PAGE_TIMEOUT_MS = 90_000;
+// Dans un document qui a du texte, une page presque vide est le plus souvent
+// une photo : elle ne vaut pas d'attendre.
+const SPARSE_PAGE_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_FAILED_RATIO = 0.2;
 
 type PageOutcome =
@@ -57,7 +60,7 @@ export const ocrPages = async ({
   fullScan,
   signal,
   concurrency = DEFAULT_CONCURRENCY,
-  pageTimeoutMs = DEFAULT_PAGE_TIMEOUT_MS,
+  pageTimeoutMs = fullScan ? SCAN_PAGE_TIMEOUT_MS : SPARSE_PAGE_TIMEOUT_MS,
   maxFailedRatio = DEFAULT_MAX_FAILED_RATIO,
 }: OcrPagesOptions): Promise<Result<OcrPagesResult, OcrPagesError>> => {
   const outcomes = await mapWithConcurrency(pageIndexes, concurrency, (index) =>
