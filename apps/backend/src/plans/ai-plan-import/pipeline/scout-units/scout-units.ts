@@ -18,6 +18,13 @@ export type ScoutUnitsResult = {
 // Les engagements des partenaires décrivent ce que d'autres feront, pas le
 // plan de la collectivité : une partie ainsi titrée n'est pas lue.
 const PARTNER_SECTION = /partenaire/i;
+// Un PCAET suit une structure réglementaire (diagnostic, stratégie, programme
+// d'actions, suivi) : quand le programme d'actions est titré et contient des
+// fiches, le reste du document n'a pas d'action à donner. Il ne sert plus
+// qu'au squelette.
+const ACTION_PLAN_SECTION =
+  /(?:plan|programme) d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel/i;
+const MIN_FICHES_IN_ACTION_PLAN = 3;
 
 /**
  * Écarte ce qui ne contient pas d'action (diagnostic, éditorial, engagements
@@ -29,17 +36,27 @@ export const scoutUnits = async (
   llm: Pick<LlmService, 'generateStructured'>,
   { units: allUnits, signal }: { units: DocumentUnit[]; signal?: AbortSignal }
 ): Promise<Result<ScoutUnitsResult, LlmError>> => {
-  const units = allUnits.filter(
+  const readable = allUnits.filter(
     (unit) => !unit.section || !PARTNER_SECTION.test(unit.section)
   );
-  const partnerCount = allUnits.length - units.length;
+  const actionPlan = readable.filter(
+    (unit) => unit.section && ACTION_PLAN_SECTION.test(unit.section)
+  );
+  const hasActionPlan =
+    actionPlan.filter((unit) => unit.kind === 'fiche').length >=
+    MIN_FICHES_IN_ACTION_PLAN;
+  const units = hasActionPlan ? actionPlan : readable;
+  const setAsideCount = allUnits.length - units.length;
   const classified = await classifyUnits(llm, { units, signal });
   if (!classified.success) {
     return classified;
   }
   const { categories } = classified.data;
+  // Avec des fiches, le sommaire et les tableaux récapitulatifs redisent ce
+  // qu'elles détaillent : ils servent au squelette, pas à l'extraction.
+  const withFiches = units.some((unit) => unit.kind === 'fiche');
   const keptUnits = units.filter((unit, index) =>
-    isKept(unit, categories.get(index))
+    isKept(unit, categories.get(index), withFiches)
   );
   const structureUnits = units.filter(
     (_, index) => categories.get(index) === 'structure'
@@ -61,7 +78,7 @@ export const scoutUnits = async (
     keptUnits: keptUnits.length > 0 ? keptUnits : units,
     skeleton: skeleton.success ? skeleton.data.skeleton : null,
     discardedCount:
-      partnerCount +
+      setAsideCount +
       (keptUnits.length > 0 ? units.length - keptUnits.length : 0),
     tokens: sumTokenUsage([
       classified.data.tokens,
@@ -73,10 +90,11 @@ export const scoutUnits = async (
 
 const isKept = (
   unit: DocumentUnit,
-  category: UnitCategory | undefined
+  category: UnitCategory | undefined,
+  withFiches: boolean
 ): boolean =>
   unit.kind === 'fiche' ||
   unit.kind === 'table' ||
   category === undefined ||
   category === 'fiche_action' ||
-  category === 'structure';
+  (category === 'structure' && !withFiches);
