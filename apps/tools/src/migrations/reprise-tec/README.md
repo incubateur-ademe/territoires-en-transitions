@@ -295,6 +295,10 @@ Après l'import, `rattraper-saisines-pcaet` ne trouve rien à faire sur les
 dossiers repris. Ne pas le lancer entre l'import des dossiers et celui-ci : il
 saisirait les services avec la date du jour.
 
+Le rapport compte les saisines par type de service et par périmètre, puis
+nomme les dossiers qui n'ont aucune saisine principale d'un type. Pour la DDT,
+c'est attendu : l'outre-mer, Paris et la petite couronne n'en ont pas.
+
 #### Ce qui arrête l'import des saisines
 
 Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
