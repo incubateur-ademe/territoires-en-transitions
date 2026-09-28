@@ -238,15 +238,19 @@ const calculateDates = (
   };
 };
 
-/** La plus tardive des deux saisines, sinon la réception du projet. */
+/**
+ * La réception du projet, sinon la plus précoce des deux dates « envoi avis ».
+ * Malgré leur nom, ces deux dates sont celles des avis rendus, pas de l'envoi du dossier.
+ */
 const calculateTransmission = (ligne: LigneDemarche) => {
-  const envois = [jour(ligne.envoiDreal), jour(ligne.envoiCr)].filter(
+  const reception = jour(ligne.receptionProjet);
+  if (reception !== null) {
+    return reception;
+  }
+  const avis = [jour(ligne.envoiDreal), jour(ligne.envoiCr)].filter(
     (d): d is string => d !== null
   );
-  if (envois.length > 0) {
-    return envois.reduce((a, b) => (a > b ? a : b));
-  }
-  return jour(ligne.receptionProjet);
+  return avis.length > 0 ? avis.reduce((a, b) => (a < b ? a : b)) : null;
 };
 
 /** Le dépôt définitif, l'approbation du suivi, ou la dernière mise à jour ; avec sa source. */
