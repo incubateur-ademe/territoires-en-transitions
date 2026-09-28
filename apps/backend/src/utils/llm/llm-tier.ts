@@ -18,3 +18,6 @@ export type LlmImage = {
   mimeType: 'image/png' | 'image/jpeg';
   base64: string;
 };
+
+/** Effort de raisonnement demandé à un modèle qui raisonne avant de répondre. */
+export type LlmReasoningEffort = 'low' | 'medium' | 'high';

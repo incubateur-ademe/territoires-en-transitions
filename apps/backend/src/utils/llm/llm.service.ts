@@ -7,7 +7,12 @@ import { estimateRequestTokens } from './estimate-request-tokens';
 import { LlmError } from './llm.errors';
 import { LlmObserver } from './llm-observer';
 import { ModelRateLimiters } from './model-rate-limiters';
-import { LlmCapabilities, LlmImage, LlmTier } from './llm-tier';
+import {
+  LlmCapabilities,
+  LlmImage,
+  LlmReasoningEffort,
+  LlmTier,
+} from './llm-tier';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
@@ -42,6 +47,7 @@ type CommonArgs = {
   temperature?: number;
   maxOutputTokens?: number;
   thinkingBudget?: number;
+  reasoningEffort?: LlmReasoningEffort;
   signal?: AbortSignal;
 };
 
@@ -188,6 +194,7 @@ const toRequest = (args: CommonArgs): LlmCompletionRequest => ({
   temperature: args.temperature ?? DEFAULT_TEMPERATURE,
   maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
   thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
+  reasoningEffort: args.reasoningEffort,
   signal: args.signal,
 });
 

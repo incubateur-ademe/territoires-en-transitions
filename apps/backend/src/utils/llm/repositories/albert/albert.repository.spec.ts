@@ -231,6 +231,7 @@ describe('AlbertRepository', () => {
 
     await repository.complete(request);
     await repository.complete({ ...request, tier: 'light' });
+    await repository.complete({ ...request, reasoningEffort: 'high' });
 
     const bodies = (
       fetchMock.mock.calls as unknown as [string, RequestInit][]
@@ -240,6 +241,8 @@ describe('AlbertRepository', () => {
       reasoning_effort: 'low',
     });
     expect(bodies[1]).not.toHaveProperty('reasoning_effort');
+    // La demande de l'appel prime sur la configuration.
+    expect(bodies[2]).toMatchObject({ reasoning_effort: 'high' });
   });
 
   it('signale une réponse tronquée par la limite de tokens', async () => {

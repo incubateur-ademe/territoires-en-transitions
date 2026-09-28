@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import OpenAI from 'openai';
@@ -10,7 +9,7 @@ import type {
 import type { CompletionUsage } from 'openai/resources/completions';
 import { describeError } from '../describe-error';
 import { LlmError } from '../../llm.errors';
-import { LlmCapabilities, LlmTier } from '../../llm-tier';
+import { LlmCapabilities, LlmReasoningEffort, LlmTier } from '../../llm-tier';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
@@ -27,10 +26,6 @@ const RATE_LIMITED_STATUSES = new Set([429, 503]);
 const LIGHT_MAX_INPUT_TOKENS = 100_000;
 const OCR_MAX_INPUT_TOKENS = 8_000;
 
-type ReasoningEffort = NonNullable<
-  BackendConfigurationType['ALBERT_REASONING_EFFORT']
->;
-
 /**
  * Albert API, l'inférence du socle interministériel d'IA générative (DINUM),
  * appelée par le SDK OpenAI comme le recommande sa documentation. Aucun
@@ -46,7 +41,7 @@ export class AlbertRepository extends LlmRepository {
   private readonly logger = new Logger(AlbertRepository.name);
   private readonly models: Record<LlmTier, string | undefined>;
   private readonly strongMaxInputTokens: number;
-  private readonly reasoningEffort: ReasoningEffort | undefined;
+  private readonly reasoningEffort: LlmReasoningEffort | undefined;
   private readonly client: OpenAI | null;
 
   constructor(configService: ConfigurationService) {
@@ -123,7 +118,9 @@ export class AlbertRepository extends LlmRepository {
         toChatCompletionParams(model, request, {
           // Seul le modèle fort raisonne : les autres ne reçoivent pas ce réglage.
           reasoningEffort:
-            model === this.models.strong ? this.reasoningEffort : undefined,
+            model === this.models.strong
+              ? request.reasoningEffort ?? this.reasoningEffort
+              : undefined,
         }),
         { signal: request.signal }
       );
@@ -174,7 +171,7 @@ export class AlbertRepository extends LlmRepository {
 export const toChatCompletionParams = (
   model: string,
   request: LlmCompletionRequest,
-  { reasoningEffort }: { reasoningEffort?: ReasoningEffort } = {}
+  { reasoningEffort }: { reasoningEffort?: LlmReasoningEffort } = {}
 ): ChatCompletionCreateParamsStreaming => ({
   model,
   messages: [

@@ -1,6 +1,11 @@
 import { Result } from '@tet/backend/utils/result.type';
 import { LlmError } from '../llm.errors';
-import { LlmCapabilities, LlmImage, LlmTier } from '../llm-tier';
+import {
+  LlmCapabilities,
+  LlmImage,
+  LlmReasoningEffort,
+  LlmTier,
+} from '../llm-tier';
 import { TokenUsage } from '../token-usage';
 
 export type LlmCompletionRequest = {
@@ -13,6 +18,8 @@ export type LlmCompletionRequest = {
   temperature?: number;
   maxOutputTokens?: number;
   thinkingBudget?: number;
+  /** Pour une tâche mécanique (tri, rattachement), où raisonner ne sert à rien. */
+  reasoningEffort?: LlmReasoningEffort;
   signal?: AbortSignal;
 };
 
