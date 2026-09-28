@@ -6,6 +6,7 @@ export type Dossier = {
   tecId: number;
   demarcheId: number;
   collectiviteId: number;
+  collectivite: string;
 };
 
 export type Dossiers = Awaited<ReturnType<typeof loadDossiers>>;
@@ -13,7 +14,7 @@ export type Dossiers = Awaited<ReturnType<typeof loadDossiers>>;
 /** Les dossiers écrits par la tranche 2, avec leur collectivité et s'ils ont déjà un diagnostic rangé, et les motifs des dossiers écartés. */
 export const loadDossiers = async (client: PoolClient) => {
   const { rows } = await client.query<
-    Dossier & { collectivite: string; aDejaUnDiagnostic: boolean }
+    Dossier & { aDejaUnDiagnostic: boolean }
   >(`
     select c.tec_id::int         as "tecId",
            d.id                  as "demarcheId",
@@ -37,8 +38,14 @@ export const loadDossiers = async (client: PoolClient) => {
   const motifs = new Map(ecartes.map((e) => [e.tecId, e.motif]));
 
   return {
-    /** Le dossier repris qui porte ce numéro T&C, s'il y en a un. */
-    get: (tecId: number) => dossiers.get(tecId),
+    /** Le dossier repris qui porte ce numéro T&C ; arrête s'il n'est pas repris. */
+    get: (tecId: number) => {
+      const dossier = dossiers.get(tecId);
+      if (!dossier) {
+        throw new Error(`Dossier T&C ${tecId} absent des dossiers repris.`);
+      }
+      return dossier;
+    },
 
     /** Le motif de la tranche 2 pour un dossier non repris (`doublon`…), que prennent ses lignes ; `null` s'il est repris. */
     getMotifEcart: (tecId: number) => {
