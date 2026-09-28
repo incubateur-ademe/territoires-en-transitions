@@ -1,9 +1,9 @@
 /** Le rapport : ce que l'import a lu, écarté et écrit. Uniquement pour le debug. */
 
-import { Dossier } from './dossier';
+import { decrireDossier, type Dossier } from './dossier';
 import type { Ecart } from './ecarts';
 
-/** Affiche les comptes (écarts, statuts, sources de l'obligation et de l'adoption), les dates revues et les collectivités à deux dossiers en cours. */
+/** Affiche les comptes (écarts, statuts, sources de l'obligation et de l'adoption), les dates revues, les transmissions que le suivi contredit et les collectivités à deux dossiers en cours. */
 export const printRapport = ({
   lues,
   ecarts,
@@ -47,6 +47,17 @@ export const printRapport = ({
     );
     for (const d of avecDatesRevues) {
       console.log(`  dossier ${d.tecId} : ${d.datesRevues.join(', ')}`);
+    }
+  }
+  const avecTransmissionRevue = ecrits.filter(
+    (d) => d.transmissionRevue !== null
+  );
+  if (avecTransmissionRevue.length > 0) {
+    console.log(
+      `\nDossiers dont l'avis de l'État du suivi précède la transmission : ${avecTransmissionRevue.length}`
+    );
+    for (const d of avecTransmissionRevue) {
+      console.log(`  ${decrireDossier(d)} : ${d.transmissionRevue}`);
     }
   }
   if (deuxDossiersEnCours.length > 0) {

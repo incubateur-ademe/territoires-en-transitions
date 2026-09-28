@@ -71,6 +71,13 @@ des avis rendus (elles tombent le jour du courrier d'avis déposé), pas celles
 de l'envoi du dossier. Un dossier en élaboration n'a jamais de date de
 transmission : la clôture de nuit le passerait en instruit.
 
+Le suivi ADEME contrôle cette date : l'avis de l'État qu'il porte ne peut pas
+la précéder. S'il la précède de moins d'un an, la transmission est ramenée à la
+plus précoce des dates de T&C qui ne suit pas l'avis, à défaut au jour de
+l'avis. S'il la précède de plus d'un an, la date de T&C est gardée : le suivi
+parle d'une collectivité, et l'avis peut être celui de son PCAET précédent. Le
+rapport nomme chaque dossier concerné.
+
 Une date saisie à la main avant l'an 2000 (lancement, envoi pour avis,
 réception du projet) est une faute de frappe dans T&C. Une année sur deux
 chiffres, de 10 à 99, est lue 20AA (`0023-01-25` devient 2023-01-25) ; les
