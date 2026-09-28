@@ -1,25 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { ExtractedAction } from '../../models/extracted-action';
+import {
+  createEmptyExtractedAction,
+  ExtractedAction,
+} from '../../models/extracted-action';
 import { dropRedundantSousAxes } from './drop-redundant-sous-axes';
 
 const anAction = (
   titre: string,
   sousAxe: string,
   axe = 'Axe I : Tous héros ordinaires'
-): ExtractedAction => ({
-  axe,
-  sousAxe,
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-});
+): ExtractedAction => createEmptyExtractedAction({ axe, sousAxe, titre });
 
 describe('dropRedundantSousAxes', () => {
   it("retire un sous-axe qui ne contient que l'action du même titre", () => {

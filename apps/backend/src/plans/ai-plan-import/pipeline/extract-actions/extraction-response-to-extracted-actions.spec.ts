@@ -14,7 +14,13 @@ const anExtractionAction = (
   'structure pilote': '',
   'direction ou service pilote': '',
   'personne pilote': '',
+  partenaires: '',
   budget: '',
+  financements: '',
+  'moyens humains': '',
+  priorite: '',
+  'date de debut': '',
+  'date de fin': '',
   statut: '',
   ...overrides,
 });
@@ -28,7 +34,13 @@ describe('extractionResponseToExtractedActions', () => {
         'structure pilote': 'DDT',
         'direction ou service pilote': 'Service mobilité',
         'personne pilote': 'Jean Dupont',
+        partenaires: 'Région, ADEME',
         budget: '24000',
+        financements: 'Fonds vert',
+        'moyens humains': '0,5 ETP',
+        priorite: 'Élevé',
+        'date de debut': '01/01/2024',
+        'date de fin': '31/12/2026',
         statut: 'En cours',
       }),
     ]);
@@ -42,11 +54,29 @@ describe('extractionResponseToExtractedActions', () => {
       structurePilote: 'DDT',
       directionServicePilote: 'Service mobilité',
       personnePilote: 'Jean Dupont',
+      partenaires: 'Région, ADEME',
       budget: 24000,
+      financements: 'Fonds vert',
+      moyensHumains: '0,5 ETP',
+      priorite: 'Élevé',
+      dateDebut: '2024-01-01',
+      dateFin: '2026-12-31',
       statut: 'En cours',
       confidence: null,
       sousActions: [],
     });
+  });
+
+  it('ignore une date qui ne respecte pas le format JJ/MM/AAAA', () => {
+    const [action] = extractionResponseToExtractedActions([
+      anExtractionAction({
+        'date de debut': '2024',
+        'date de fin': '31/02/2026',
+      }),
+    ]);
+
+    expect(action.dateDebut).toBeNull();
+    expect(action.dateFin).toBeNull();
   });
 
   it('convertit les chaînes vides en null et le budget en nombre', () => {

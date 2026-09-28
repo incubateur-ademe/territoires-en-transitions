@@ -3,6 +3,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import { applyHierarchy } from './apply-hierarchy';
@@ -19,21 +20,13 @@ const tokens = {
 const anAction = (
   titre: string,
   overrides: Partial<ExtractedAction> = {}
-): ExtractedAction => ({
-  axe: 'Axe 1 : Bâtiments',
-  sousAxe: '1.1 Rénover',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1 : Bâtiments',
+    sousAxe: '1.1 Rénover',
+    titre,
+    ...overrides,
+  });
 
 const skeleton = {
   axes: [

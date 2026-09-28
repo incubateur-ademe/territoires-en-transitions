@@ -101,15 +101,17 @@ const dateSchema = z
   )
   .optional();
 
+/** Virgule séparatrice d'une liste, hors parenthèses, guillemets et « … ». */
+export const LIST_ITEM_SEPARATOR =
+  /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
+
 const listSchema = z
   .preprocess(richTextPreprocessor, z.string())
   .default('')
   .transform((val) => {
-    const regexSeparator =
-      /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
     if (!val) return [];
     const items = String(val)
-      .split(regexSeparator)
+      .split(LIST_ITEM_SEPARATOR)
       .map((item) => cleanText(item))
       .filter((item): item is string => !!item);
 

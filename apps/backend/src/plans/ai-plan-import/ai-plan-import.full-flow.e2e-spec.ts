@@ -58,7 +58,13 @@ const extractionAction = {
   'structure pilote': 'Direction Transition',
   'direction ou service pilote': 'Service Environnement',
   'personne pilote': 'Jean Dupont',
+  partenaires: 'ADEME, Région',
   budget: '10000',
+  financements: 'Fonds vert',
+  'moyens humains': '0,5 ETP',
+  priorite: 'Élevé',
+  'date de debut': '01/01/2024',
+  'date de fin': '31/12/2026',
   statut: '',
 };
 
@@ -366,7 +372,17 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
           eq(notificationTable.entityId, String(planId))
         )
       );
-    expect(notification).toMatchObject({ sendTo: user.id, status: 'pending' });
+    expect(notification).toMatchObject({
+      sendTo: user.id,
+      status: 'pending',
+      notificationData: {
+        recap: {
+          axesCount: expect.any(Number),
+          sousAxesCount: expect.any(Number),
+          fichesCount: expect.any(Number),
+        },
+      },
+    });
     const content = await app
       .get(NotifyPlanImportedService)
       .getNotificationContent(notification);

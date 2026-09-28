@@ -1,21 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { ExtractedAction } from '../../models/extracted-action';
+import {
+  createEmptyExtractedAction,
+  ExtractedAction,
+} from '../../models/extracted-action';
 import { applyScores } from './apply-scores';
 
-const anAction = (titre: string): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-});
+const anAction = (titre: string): ExtractedAction =>
+  createEmptyExtractedAction({ axe: 'Axe 1', sousAxe: '1.1', titre });
 
 describe('applyScores', () => {
   it('attache la confiance par index avec amelioree à false', () => {

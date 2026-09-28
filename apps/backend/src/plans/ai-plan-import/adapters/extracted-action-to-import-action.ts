@@ -3,6 +3,7 @@ import {
   ImportActionInput,
   ImportActionOrSousAction,
   ImportSousActionInput,
+  LIST_ITEM_SEPARATOR,
 } from '@tet/backend/plans/plans/import-plan-aggregate/schemas/import-action.input';
 import { uniqBy } from 'es-toolkit';
 import {
@@ -87,18 +88,18 @@ const actionToImport = (
     : undefined,
   gouvernance: undefined,
   objectifs: action.objectifs ? textToRichText(action.objectifs) : undefined,
-  resources: undefined,
-  financements: undefined,
+  resources: action.moyensHumains ?? undefined,
+  financements: action.financements ?? undefined,
   notesComplementaire: undefined,
   participationCitoyenne: undefined,
   budget: action.budget ?? undefined,
   instanceGouvernance: [],
-  dateDebut: undefined,
-  dateFin: undefined,
+  dateDebut: toDate(action.dateDebut),
+  dateFin: toDate(action.dateFin),
   structures: toList(action.structurePilote),
-  partenaires: [],
+  partenaires: toList(action.partenaires),
   services: toList(action.directionServicePilote),
-  priorite: undefined,
+  priorite: action.priorite ?? undefined,
   participation: undefined,
   cible: undefined,
   status: action.statut ?? undefined,
@@ -148,9 +149,16 @@ const toAxisPath = (axe: string, sousAxe: string): string[] | undefined => {
   return segments.length > 0 ? segments : undefined;
 };
 
+// Même convention que l'import Excel (listSchema) : une liste séparée par des
+// virgules, sans couper « DDT (unité eau, forêt) » ni un nom entre guillemets.
 const toList = (value: string | null): string[] => {
-  const trimmed = value?.trim();
-  return trimmed ? [trimmed] : [];
+  if (!value) {
+    return [];
+  }
+  return value
+    .split(LIST_ITEM_SEPARATOR)
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
 };
 
 const toDate = (value: string | null): Date | undefined =>
