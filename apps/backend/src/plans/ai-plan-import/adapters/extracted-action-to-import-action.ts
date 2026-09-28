@@ -9,6 +9,7 @@ import {
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
+import { textToRichText } from './text-to-rich-text';
 
 export const MAX_FICHE_TITLE_LENGTH = 300;
 
@@ -81,9 +82,11 @@ const actionToImport = (
 ): ImportActionInput => ({
   axisPath,
   titre: action.titre,
-  description: action.description ?? undefined,
+  description: action.description
+    ? textToRichText(action.description)
+    : undefined,
   gouvernance: undefined,
-  objectifs: action.objectifs ?? undefined,
+  objectifs: action.objectifs ? textToRichText(action.objectifs) : undefined,
   resources: undefined,
   financements: undefined,
   notesComplementaire: undefined,
