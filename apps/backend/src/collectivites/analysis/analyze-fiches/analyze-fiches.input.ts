@@ -1,11 +1,14 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { enjeuEnumValues } from '@tet/domain/shared';
+import { uniq } from 'es-toolkit';
 import { z } from 'zod';
 import { AnalyzeFichesInputError } from './analyze-fiches.errors';
 
+const collectiviteIdSchema = z.number().int().positive();
+
 export const collectiviteSelectionSchema = z.union([
   z.literal('all'),
-  z.array(z.number().int().positive()).nonempty().readonly(),
+  z.array(collectiviteIdSchema).nonempty().readonly(),
 ]);
 
 const analyzeFichesInputScopeSchema = z.discriminatedUnion('kind', [
@@ -52,12 +55,15 @@ const isCanonicalNumber = (rawCollectiviteId: string): boolean =>
 
 const isCollectiviteId = (rawCollectiviteId: string): boolean =>
   isCanonicalNumber(rawCollectiviteId) &&
-  collectiviteSelectionSchema.safeParse([Number(rawCollectiviteId)]).success;
+  collectiviteIdSchema.safeParse(Number(rawCollectiviteId)).success;
+
+const toRawCollectiviteIds = (collectivitesValue: string): string[] =>
+  collectivitesValue === '' ? [] : collectivitesValue.split(',');
 
 const toCollectiviteIdsScope = (
-  value: string
+  collectivitesValue: string
 ): Result<AnalyzeFichesInputScope, AnalyzeFichesInputError> => {
-  const rawCollectiviteIds = value.split(',');
+  const rawCollectiviteIds = toRawCollectiviteIds(collectivitesValue);
   const invalidRawCollectiviteId = rawCollectiviteIds.find(
     (rawCollectiviteId) => !isCollectiviteId(rawCollectiviteId)
   );
@@ -68,7 +74,7 @@ const toCollectiviteIdsScope = (
     });
   }
   const selection = collectiviteSelectionSchema.safeParse(
-    rawCollectiviteIds.map(Number)
+    uniq(rawCollectiviteIds.map(Number))
   );
   if (!selection.success) {
     return failure({ kind: 'empty_collectivites' });
@@ -77,15 +83,12 @@ const toCollectiviteIdsScope = (
 };
 
 const toCollectivitesScope = (
-  value: string
+  collectivitesValue: string
 ): Result<AnalyzeFichesInputScope, AnalyzeFichesInputError> => {
-  if (value === '') {
-    return failure({ kind: 'empty_collectivites' });
-  }
-  if (value === 'all') {
+  if (collectivitesValue === 'all') {
     return success({ kind: 'collectivites', collectivites: 'all' });
   }
-  return toCollectiviteIdsScope(value);
+  return toCollectiviteIdsScope(collectivitesValue);
 };
 
 export const toAnalyzeFichesInputScope: ToAnalyzeFichesInputScope = (argv) => {
@@ -96,9 +99,9 @@ export const toAnalyzeFichesInputScope: ToAnalyzeFichesInputScope = (argv) => {
   if (extraArgument !== undefined) {
     return failure({ kind: 'unknown_argument', argument: extraArgument });
   }
-  const value = toCollectivitesValue(argument);
-  if (value === undefined) {
+  const collectivitesValue = toCollectivitesValue(argument);
+  if (collectivitesValue === undefined) {
     return failure({ kind: 'unknown_argument', argument });
   }
-  return toCollectivitesScope(value);
+  return toCollectivitesScope(collectivitesValue);
 };

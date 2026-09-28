@@ -9,6 +9,13 @@ describe('full-flow', () => {
     });
   });
 
+  it("--collectivites=12,45,12 ne cible la CT 12 qu'une fois", () => {
+    expect(toAnalyzeFichesInputScope(['--collectivites=12,45,12'])).toEqual({
+      success: true,
+      data: { kind: 'collectivites', collectivites: [12, 45] },
+    });
+  });
+
   it('--collectivites=all cible les fiches de toutes les CT', () => {
     expect(toAnalyzeFichesInputScope(['--collectivites=all'])).toEqual({
       success: true,
