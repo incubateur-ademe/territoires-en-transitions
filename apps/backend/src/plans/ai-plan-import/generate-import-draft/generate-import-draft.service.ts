@@ -290,10 +290,24 @@ const readDocumentErrorMessage = (error: ReadDocumentError): string => {
   }
 };
 
+const WRONG_TOME_LABELS: Record<string, string> = {
+  evaluation_environnementale:
+    'une évaluation environnementale stratégique (EES)',
+  diagnostic: 'un diagnostic',
+};
+
 const pipelineErrorMessage = (
   failedStep: StepName,
   error: PipelineError
-): string =>
-  error.kind === 'document_too_long'
-    ? `Document trop long pour l'import (${error.chunks} parties à analyser, ${error.maxChunks} au maximum) : importez-le en plusieurs fois`
-    : `Étape ${failedStep} en échec (${error.kind})`;
+): string => {
+  switch (error.kind) {
+    case 'document_too_long':
+      return `Document trop long pour l'import (${error.chunks} parties à analyser, ${error.maxChunks} au maximum) : importez-le en plusieurs fois`;
+    case 'wrong_document_tome':
+      return `Ce document semble être ${WRONG_TOME_LABELS[error.tome]} (« ${
+        error.evidence
+      } »), pas un programme d'actions : déposez le document qui contient les fiches actions`;
+    default:
+      return `Étape ${failedStep} en échec (${error.kind})`;
+  }
+};
