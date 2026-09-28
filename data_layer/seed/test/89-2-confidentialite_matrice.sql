@@ -138,15 +138,6 @@ values
     ('table', 'client_scores', 'edition', 'non', 'oui', 'non', 'non'),
     ('table', 'client_scores', 'admin', 'non', 'oui', 'non', 'non'),
     ('table', 'client_scores', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Table client_scores_update
-    ('table', 'client_scores_update', 'public', 'non', 'non', 'non', 'non'),
-    ('table', 'client_scores_update', 'connecte', 'non', 'non', 'non', 'non'),
-    ('table', 'client_scores_update', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('table', 'client_scores_update', 'support', 'non', 'oui', 'non', 'non'),
-    ('table', 'client_scores_update', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('table', 'client_scores_update', 'edition', 'non', 'oui', 'non', 'non'),
-    ('table', 'client_scores_update', 'admin', 'non', 'oui', 'non', 'non'),
-    ('table', 'client_scores_update', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Table collectivite
     ('table', 'collectivite', 'public', 'non', 'non', 'non', 'non'),
     ('table', 'collectivite', 'connecte', 'non', 'oui', 'non', 'non'),
