@@ -1,5 +1,7 @@
 import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import {
+  isNewReferentiel,
+  ReferentielId,
   ScoreIndicatifPayload,
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -15,14 +17,19 @@ const typeScoreToLabel: Record<ScoreIndicatifType, string> = {
  * Génère le libellé complet du score indicatif
  */
 export function getLibelleScoreIndicatif(
-  scoreIndicatif: ScoreIndicatifPayload
+  scoreIndicatif: ScoreIndicatifPayload,
+  referentielId: ReferentielId
 ) {
+  const getText = isNewReferentiel(referentielId)
+    ? getTextValeursUtilisees
+    : getTextScoreIndicatif;
+
   return [
     scoreIndicatif.fait
-      ? getTextScoreIndicatif(scoreIndicatifTypeEnum.FAIT, scoreIndicatif)
+      ? getText(scoreIndicatifTypeEnum.FAIT, scoreIndicatif)
       : null,
     scoreIndicatif.programme
-      ? getTextScoreIndicatif(scoreIndicatifTypeEnum.PROGRAMME, scoreIndicatif)
+      ? getText(scoreIndicatifTypeEnum.PROGRAMME, scoreIndicatif)
       : null,
   ]
     .filter(Boolean)
@@ -68,6 +75,32 @@ function getTextScoreIndicatif(
       ? ` atteint${valeurSecondaire ? 's' : ''}`
       : '')
   );
+}
+
+/**
+ * Génère le texte du score indicatif fait ou programmé pour les nouveaux
+ * référentiels : uniquement la ou les valeurs utilisées
+ * ("<valeur> <unite> en <annee> (<source>)")
+ */
+function getTextValeursUtilisees(
+  typeScore: ScoreIndicatifType,
+  scoreIndicatif: ScoreIndicatifPayload
+) {
+  const donnees = scoreIndicatif[typeScore];
+  if (!donnees?.valeursUtilisees.length) return null;
+
+  return donnees.valeursUtilisees
+    .map((valeurUtilisee) => {
+      const { valeurEtUnite, annee } = getSegmentsValeurUtilisee({
+        typeScore,
+        unite: scoreIndicatif.unite,
+        valeurUtilisee,
+      });
+      const source =
+        valeurUtilisee.sourceLibelle ?? typeScoreToLabel[typeScore];
+      return [valeurEtUnite, annee, `(${source})`].filter(Boolean).join(' ');
+    })
+    .join(' et ');
 }
 
 /**
