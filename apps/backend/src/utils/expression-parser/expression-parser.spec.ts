@@ -228,4 +228,63 @@ describe('ExpressionParser', () => {
       expect(parseAndEvaluateExpression('3 = 4')).toBe(false);
     });
   });
+
+  describe('lexer', () => {
+    function tokenNames(inputText: string): string[] {
+      return parser.lexer
+        .tokenize(inputText)
+        .tokens.map((token) => token.tokenType.name);
+    }
+
+    it.each([
+      'sinoe',
+      'ouvert',
+      'etat',
+      'minimum',
+      'maximum',
+      'nonce',
+      'vraiment',
+      'siret',
+      'alorsx',
+      'fauxfuyant',
+      'score_x',
+    ])(
+      "lit %s comme un seul identifiant, même s'il commence par un mot-clé",
+      (identifiant) => {
+        expect(tokenNames(identifiant)).toEqual(['CNAME']);
+        expect(parseAndEvaluateExpression(identifiant)).toBe(identifiant);
+      }
+    );
+
+    it('lit toujours les mots-clés entiers comme des mots-clés', () => {
+      expect(
+        tokenNames('si oui ou non et vrai alors min(1, 2) sinon max(faux, 3)')
+      ).toEqual([
+        'SI',
+        'OUI',
+        'OU',
+        'NON',
+        'ET',
+        'VRAI',
+        'ALORS',
+        'MIN',
+        'LPAR',
+        'NUMBER',
+        'COMMA',
+        'NUMBER',
+        'RPAR',
+        'SINON',
+        'MAX',
+        'LPAR',
+        'FAUX',
+        'COMMA',
+        'NUMBER',
+        'RPAR',
+      ]);
+    });
+
+    it('si sinoe alors 1 sinon 2', () => {
+      expect(parseAndEvaluateExpression('si sinoe alors 1 sinon 2')).toBe(1);
+    });
+  });
 });

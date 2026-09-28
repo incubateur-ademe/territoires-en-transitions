@@ -4,26 +4,36 @@
 
 import { createToken, CstParser, Lexer, TokenType } from 'chevrotain';
 
-const VRAI = createToken({ name: 'VRAI', pattern: /vrai/i });
-const FAUX = createToken({ name: 'FAUX', pattern: /faux/i });
-const OUI = createToken({ name: 'OUI', pattern: /oui/i });
-const NON = createToken({ name: 'NON', pattern: /non/i });
-
 const CNAME = createToken({
   name: 'CNAME',
   pattern: /[a-zA-Z_][a-zA-Z_0-9.-]*/,
 });
 const NUMBER = createToken({ name: 'NUMBER', pattern: /-?\d+(\.\d+)?/ });
 
-const SI = createToken({ name: 'SI', pattern: /si/i });
-const ALORS = createToken({ name: 'ALORS', pattern: /alors/i });
-const SINON = createToken({ name: 'SINON', pattern: /sinon/i });
+/**
+ * Crée un mot-clé du DSL. Le lexer retient le premier token qui matche : sans
+ * `longer_alt`, un identifiant qui commence par un mot-clé (`sinoe`, `ouvert`,
+ * `minimum`…) serait coupé en deux. Avec, le mot-clé ne l'emporte que s'il
+ * couvre tout l'identifiant.
+ */
+export function createKeywordToken(name: string, pattern: RegExp): TokenType {
+  return createToken({ name, pattern, longer_alt: CNAME });
+}
 
-const MIN = createToken({ name: 'MIN', pattern: /min/i });
-const MAX = createToken({ name: 'MAX', pattern: /max/i });
+const VRAI = createKeywordToken('VRAI', /vrai/i);
+const FAUX = createKeywordToken('FAUX', /faux/i);
+const OUI = createKeywordToken('OUI', /oui/i);
+const NON = createKeywordToken('NON', /non/i);
 
-const OU = createToken({ name: 'OU', pattern: /ou/i });
-const ET = createToken({ name: 'ET', pattern: /et/i });
+const SI = createKeywordToken('SI', /si/i);
+const ALORS = createKeywordToken('ALORS', /alors/i);
+const SINON = createKeywordToken('SINON', /sinon/i);
+
+const MIN = createKeywordToken('MIN', /min/i);
+const MAX = createKeywordToken('MAX', /max/i);
+
+const OU = createKeywordToken('OU', /ou/i);
+const ET = createKeywordToken('ET', /et/i);
 
 const ADDITION_OPERATOR = createToken({
   name: 'ADDITION_OPERATOR',

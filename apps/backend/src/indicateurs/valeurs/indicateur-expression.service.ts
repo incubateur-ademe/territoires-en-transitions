@@ -1,13 +1,14 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { PersonnalisationReponses } from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
+  createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
 } from '@tet/backend/utils/expression-parser';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
-import { createToken, CstNode } from 'chevrotain';
+import { CstNode } from 'chevrotain';
 import { isEqual, isNil } from 'es-toolkit';
 import { computeProgression, computeValeurAttendue } from './progression.rules';
 import { ANNEE_REFERENCE_SNBC_V2 } from '@tet/domain/indicateurs';
@@ -16,18 +17,18 @@ import {
   ReferencedIndicateur,
 } from './referenced-indicateur.dto';
 
-const VAL = createToken({ name: 'VAL', pattern: /val/ });
-const OPT_VAL = createToken({ name: 'OPT_VAL', pattern: /opt_val/ });
-const CIBLE = createToken({ name: 'CIBLE', pattern: /cible/ });
-const LIMITE = createToken({ name: 'LIMITE', pattern: /limite/ });
-const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
-const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
-const EST_SUIVI = createToken({ name: 'EST_SUIVI', pattern: /est_suivi/i });
-const PROGRESSION_SNBC = createToken({
-  name: 'PROGRESSION_SNBC',
-  pattern: /progression_snbc/i,
-});
-const REDUCTION = createToken({ name: 'REDUCTION', pattern: /reduction/i });
+const VAL = createKeywordToken('VAL', /val/);
+const OPT_VAL = createKeywordToken('OPT_VAL', /opt_val/);
+const CIBLE = createKeywordToken('CIBLE', /cible/);
+const LIMITE = createKeywordToken('LIMITE', /limite/);
+const IDENTITE = createKeywordToken('IDENTITE', /identite/i);
+const REPONSE = createKeywordToken('REPONSE', /reponse/i);
+const EST_SUIVI = createKeywordToken('EST_SUIVI', /est_suivi/i);
+const PROGRESSION_SNBC = createKeywordToken(
+  'PROGRESSION_SNBC',
+  /progression_snbc/i
+);
+const REDUCTION = createKeywordToken('REDUCTION', /reduction/i);
 
 // tokens ajoutés au parser de base
 const tokens = [

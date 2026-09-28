@@ -1,5 +1,6 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
+  createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
 } from '@tet/backend/utils/expression-parser';
@@ -15,16 +16,13 @@ import {
 } from '@tet/backend/utils/expression-parser/parse-referentiel-arg';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { createToken, CstNode } from 'chevrotain';
+import { CstNode } from 'chevrotain';
 
-const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
-const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
-const SCORE = createToken({ name: 'SCORE', pattern: /score/i });
-const REFERENTIEL = createToken({
-  name: 'REFERENTIEL',
-  pattern: /referentiel/i,
-});
-const DEMARCHE = createToken({ name: 'DEMARCHE', pattern: /demarche/i });
+const IDENTITE = createKeywordToken('IDENTITE', /identite/i);
+const REPONSE = createKeywordToken('REPONSE', /reponse/i);
+const SCORE = createKeywordToken('SCORE', /score/i);
+const REFERENTIEL = createKeywordToken('REFERENTIEL', /referentiel/i);
+const DEMARCHE = createKeywordToken('DEMARCHE', /demarche/i);
 
 // tokens ajoutés au parser de base
 const tokens = [IDENTITE, REPONSE, SCORE, REFERENTIEL, DEMARCHE];

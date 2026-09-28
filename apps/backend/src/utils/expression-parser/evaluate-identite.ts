@@ -7,9 +7,8 @@ import {
 /**
  * Champs interrogeables par `identite(champ, valeur)`.
  *
- * Attention en ajoutant un champ : les mots-clés du DSL sont déclarés avant
- * `CNAME` dans le lexer, sans `longer_alt`. Un nom qui commence par `si`, `min`,
- * `max`, `ou`, `et`, `non`, `vrai`, `faux` ou `oui` serait coupé en deux.
+ * Un nom de champ ne doit pas être exactement un mot-clé du DSL (`si`, `ou`,
+ * `min`…) : à longueur égale, le lexer retient le mot-clé.
  */
 type IdentiteField =
   | 'type'
