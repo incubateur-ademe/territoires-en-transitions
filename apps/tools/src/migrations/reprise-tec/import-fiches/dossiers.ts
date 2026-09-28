@@ -120,3 +120,29 @@ export const listCasBloquantsDossiers = (dossiers: readonly Dossier[]) =>
 
 export const decrireDossier = (d: Dossier) =>
   `T&C ${d.tecId}, démarche ${d.demarcheId}, ${d.collectivite}`;
+
+/** Les dossiers dont le doublon « définitif », écarté, portait plus d'actions : ce qu'il a en plus est perdu. */
+export const listDefinitifsAvecPlusDActions = async (
+  client: PoolClient,
+  dossiers: readonly Dossier[]
+) => {
+  const { rows } = await client.query<{ tecId: number; actions: number }>(
+    `select d.id::int as "tecId", count(a.id)::int as actions
+       from reprise_tec.staging_demarche d
+       join reprise_tec.staging_action a on a.demarche_id = d.pcaet_definitif
+      where d.id = any($1)
+      group by d.id`,
+    [dossiers.map((d) => d.tecId)]
+  );
+  const actionsDuDoublon = new Map(rows.map((r) => [r.tecId, r.actions]));
+  return dossiers.flatMap((d) => {
+    const doublon = actionsDuDoublon.get(d.tecId) ?? 0;
+    return doublon > d.actions.length
+      ? [
+          `${decrireDossier(d)} : ${
+            d.actions.length
+          } actions reprises, ${doublon} dans le doublon`,
+        ]
+      : [];
+  });
+};
