@@ -70,3 +70,9 @@ variable "tags" {
   type        = list(string)
   default     = []
 }
+
+variable "deletion_protection" {
+  description = "Protège le serveur contre la suppression (attribut protected Scaleway) et conserve son disque racine s'il est détruit. À false uniquement pour un serveur sans donnée à préserver (preview)."
+  type        = bool
+  default     = true
+}
