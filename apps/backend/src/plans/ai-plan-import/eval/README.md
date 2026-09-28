@@ -25,8 +25,25 @@ résultat est écrit dans `apps/backend/eval-out/` (ignoré par git).
   429 et les échecs ; tokens ; durée.
 - `draft` : le brouillon complet, tel qu'il serait enregistré.
 - `diff` (avec `ref=`) : écarts de métriques, titres de la référence
-  introuvables dans le résultat (comparés sans numérotation ni casse), titres
-  en trop.
+  introuvables dans le résultat, titres en trop. Les titres sont comparés sans
+  numérotation, casse ni accents, et deux reformulations qui partagent
+  l'essentiel de leurs mots sont tenues pour le même titre.
+
+## Références manuelles
+
+Un résultat de modèle, même bon, peut se tromper de structure : sur le PCAET
+de Lyon, Gemini range les 23 actions en sous-axes et invente leurs titres.
+`references/` contient des structures relevées à la main dans le sommaire
+(`"manual": true`, axes et titres des actions attendus) :
+
+```sh
+make ai-import-eval f=lyon.pdf ref=apps/backend/src/plans/ai-plan-import/eval/references/lyon-pcaet-2030.json
+```
+
+Le `diff` donne alors les axes et actions retrouvés, les actions introuvables,
+celles retrouvées en sous-axe (niveau inventé), celles rangées sous un autre
+axe et les titres en trop. Il juge la structure, pas le contenu des fiches :
+pour le contenu, comparer aussi avec une référence Gemini.
 
 ## Méthode conseillée
 

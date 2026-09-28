@@ -5,7 +5,6 @@ import {
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { ExtractedAction } from '../models/extracted-action';
-import { normalizeTitle } from '../pipeline/extract-actions/merge-chunk-actions';
 import { PlanDraft } from '../models/plan-draft';
 
 const FILL_RATE_FIELDS = [
@@ -85,12 +84,90 @@ export const computeEvalMetrics = ({
   };
 };
 
+/**
+ * La structure attendue d'un document, relevée à la main dans son sommaire :
+ * sert à juger la structure, pas le contenu des fiches.
+ */
+export type ManualReference = {
+  manual: true;
+  document: string;
+  axes: string[];
+  actions: { axe: string; titre: string }[];
+};
+
+export type ManualReferenceDiff = {
+  axes: { expected: number; actual: number; missing: string[] };
+  actions: { expected: number; actual: number; found: number };
+  missingTitles: string[];
+  extraTitles: string[];
+  /** Titres attendus retrouvés en sous-axe : le modèle a inventé un niveau. */
+  titlesFoundAsSousAxe: string[];
+  /** Actions retrouvées sous un autre axe que celui attendu. */
+  misplacedTitles: { titre: string; expectedAxe: string; actualAxe: string }[];
+};
+
+export const isManualReference = (
+  reference: EvalRun | ManualReference
+): reference is ManualReference =>
+  (reference as ManualReference).manual === true;
+
+export const compareWithManualReference = (
+  actual: EvalRun,
+  reference: ManualReference
+): ManualReferenceDiff => {
+  const { actions } = actual.draft;
+  const actualAxes = [...new Set(actions.map((action) => action.axe))];
+  const matches = reference.actions.map((expected) => ({
+    expected,
+    action: actions.find((action) => titlesMatch(action.titre, expected.titre)),
+  }));
+  const missing = matches.filter(({ action }) => !action);
+
+  return {
+    axes: {
+      expected: reference.axes.length,
+      actual: actualAxes.length,
+      missing: reference.axes.filter(
+        (axe) => !actualAxes.some((actualAxe) => titlesMatch(actualAxe, axe))
+      ),
+    },
+    actions: {
+      expected: reference.actions.length,
+      actual: actions.length,
+      found: matches.length - missing.length,
+    },
+    missingTitles: missing.map(({ expected }) => expected.titre),
+    extraTitles: actions
+      .filter(
+        (action) =>
+          !reference.actions.some((expected) =>
+            titlesMatch(action.titre, expected.titre)
+          )
+      )
+      .map((action) => action.titre),
+    titlesFoundAsSousAxe: missing
+      .filter(({ expected }) =>
+        actions.some((action) => titlesMatch(action.sousAxe, expected.titre))
+      )
+      .map(({ expected }) => expected.titre),
+    misplacedTitles: matches.flatMap(({ expected, action }) =>
+      action && !titlesMatch(action.axe, expected.axe)
+        ? [
+            {
+              titre: expected.titre,
+              expectedAxe: expected.axe,
+              actualAxe: action.axe,
+            },
+          ]
+        : []
+    ),
+  };
+};
+
 export const compareWithReference = (
   actual: EvalRun,
   reference: EvalRun
 ): EvalDiff => {
-  const actualTitles = new Set(actual.draft.actions.map(titleKey));
-  const referenceTitles = new Set(reference.draft.actions.map(titleKey));
   const numericKeys = [
     'actions',
     'actionsSansAxe',
@@ -116,17 +193,59 @@ export const compareWithReference = (
         actual.metrics.fillRates[field] - reference.metrics.fillRates[field],
       ])
     ) as Record<FillRateField, number>,
-    missingTitles: reference.draft.actions
-      .filter((action) => !actualTitles.has(titleKey(action)))
-      .map((action) => action.titre),
-    extraTitles: actual.draft.actions
-      .filter((action) => !referenceTitles.has(titleKey(action)))
-      .map((action) => action.titre),
+    missingTitles: unmatchedTitles(
+      reference.draft.actions,
+      actual.draft.actions
+    ),
+    extraTitles: unmatchedTitles(actual.draft.actions, reference.draft.actions),
   };
 };
 
-const titleKey = (action: ExtractedAction): string =>
-  normalizeTitle(action.titre);
+const unmatchedTitles = (
+  actions: ExtractedAction[],
+  others: ExtractedAction[]
+): string[] =>
+  actions
+    .filter(
+      (action) =>
+        !others.some((other) => titlesMatch(action.titre, other.titre))
+    )
+    .map((action) => action.titre);
+
+// Deux titres reformulés gardent l'essentiel de leurs mots : « motorisations
+// alternatives » et « motorisations propres » désignent la même action.
+const TITLE_SIMILARITY_THRESHOLD = 0.6;
+const STOP_WORDS = new Set(
+  'le la les l de des du d et en a au aux pour sur un une dans par avec entre ses son sa leur leurs'.split(
+    ' '
+  )
+);
+
+/** Même titre à la numérotation, à la casse, aux accents et à la reformulation près. */
+export const titlesMatch = (a: string, b: string): boolean => {
+  const left = titleWords(a);
+  const right = titleWords(b);
+  if (left.size === 0 || right.size === 0) {
+    return false;
+  }
+  const common = [...left].filter((word) => right.has(word)).length;
+  const union = new Set([...left, ...right]).size;
+  return common / union >= TITLE_SIMILARITY_THRESHOLD;
+};
+
+const titleWords = (title: string): Set<string> =>
+  new Set(
+    title
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .toLowerCase()
+      // « Axe 2 : », « IV. », « 1.2.3 » : la numérotation n'est pas le titre.
+      .replace(/^\s*(?:axe\s*)?(?:[ivx]+|\d+(?:\.\d+)*)\b\s*[:.)\-–—]?\s*/u, '')
+      // « éco-rénover » et « écorénover » : un seul mot.
+      .replace(/(\p{L})[-‐](\p{L})/gu, '$1$2')
+      .split(/[^\p{L}\p{N}]+/u)
+      .filter((word) => word.length > 0 && !STOP_WORDS.has(word))
+  );
 
 const distinctCount = (values: string[]): number =>
   new Set(values.map((value) => value.trim().toLowerCase()).filter(Boolean))

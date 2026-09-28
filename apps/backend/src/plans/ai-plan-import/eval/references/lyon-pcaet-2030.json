@@ -1,0 +1,105 @@
+{
+  "manual": true,
+  "document": "Plan Climat Air Énergie Territorial 2030 de la Métropole de Lyon (lyon.pdf), sommaire du plan d'actions p. 66–67 ; la partie « Engagement des partenaires » n'est pas attendue",
+  "axes": [
+    "I. Tous héros ordinaires",
+    "II. Une économie intégrant les enjeux du changement climatique",
+    "III. Un aménagement durable et solidaire",
+    "IV. Un système de mobilité sobre et décarboné",
+    "V. Notre territoire en lien avec ses ressources"
+  ],
+  "actions": [
+    {
+      "axe": "I. Tous héros ordinaires",
+      "titre": "1 Ancrer l'administration dans l'écoresponsabilité"
+    },
+    {
+      "axe": "I. Tous héros ordinaires",
+      "titre": "2 Favoriser les initiatives locales des communes"
+    },
+    {
+      "axe": "I. Tous héros ordinaires",
+      "titre": "3 Susciter et accompagner les changements d'habitudes"
+    },
+    {
+      "axe": "II. Une économie intégrant les enjeux du changement climatique",
+      "titre": "4 Promouvoir une industrie sobre en carbone"
+    },
+    {
+      "axe": "II. Une économie intégrant les enjeux du changement climatique",
+      "titre": "5 Accompagner les petites et moyennes entreprises vers la transition énergétique"
+    },
+    {
+      "axe": "II. Une économie intégrant les enjeux du changement climatique",
+      "titre": "6 Adapter les pratiques agricoles"
+    },
+    {
+      "axe": "II. Une économie intégrant les enjeux du changement climatique",
+      "titre": "7 Approfondir la connaissance scientifique locale"
+    },
+    {
+      "axe": "III. Un aménagement durable et solidaire",
+      "titre": "8 Planifier et construire une métropole sobre en carbone"
+    },
+    {
+      "axe": "III. Un aménagement durable et solidaire",
+      "titre": "9 Eco-rénover l'habitat social"
+    },
+    {
+      "axe": "III. Un aménagement durable et solidaire",
+      "titre": "10 Eco-rénover l'habitat privé"
+    },
+    {
+      "axe": "III. Un aménagement durable et solidaire",
+      "titre": "11 Eco-rénover les bâtiments tertiaires"
+    },
+    {
+      "axe": "III. Un aménagement durable et solidaire",
+      "titre": "12 Se préparer au climat de demain : la ville perméable et végétale"
+    },
+    {
+      "axe": "IV. Un système de mobilité sobre et décarboné",
+      "titre": "13 Mieux articuler les modes de transport entre eux"
+    },
+    {
+      "axe": "IV. Un système de mobilité sobre et décarboné",
+      "titre": "14 Développer la pratique des modes actifs"
+    },
+    {
+      "axe": "IV. Un système de mobilité sobre et décarboné",
+      "titre": "15 Améliorer la performance et l'attractivité des transports collectifs"
+    },
+    {
+      "axe": "IV. Un système de mobilité sobre et décarboné",
+      "titre": "16 Réguler la mobilité automobile"
+    },
+    {
+      "axe": "IV. Un système de mobilité sobre et décarboné",
+      "titre": "17 Agir sur le transport de marchandises"
+    },
+    {
+      "axe": "IV. Un système de mobilité sobre et décarboné",
+      "titre": "18 Accompagner le déploiement de motorisations propres"
+    },
+    {
+      "axe": "V. Notre territoire en lien avec ses ressources",
+      "titre": "19 Augmenter la production d'EnR&R locales"
+    },
+    {
+      "axe": "V. Notre territoire en lien avec ses ressources",
+      "titre": "20 Organiser le développement et la transition des réseaux de distribution d'énergie"
+    },
+    {
+      "axe": "V. Notre territoire en lien avec ses ressources",
+      "titre": "21 Contribuer à la structuration de la filière bois régionale"
+    },
+    {
+      "axe": "V. Notre territoire en lien avec ses ressources",
+      "titre": "22 Préserver la ressource en eau et les milieux aquatiques"
+    },
+    {
+      "axe": "V. Notre territoire en lien avec ses ressources",
+      "titre": "23 Développer les partenariats avec les territoires proches"
+    }
+  ]
+}
