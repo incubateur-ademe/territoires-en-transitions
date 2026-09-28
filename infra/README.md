@@ -477,6 +477,70 @@ l'installeur. Ne pas utiliser `APP_PREVIOUS_KEYS`.
 Tester cette restauration sur une VM jetable après chaque montée de version de Coolify :
 un backup jamais restauré n'est pas un backup.
 
+## Migration du state preprod (une fois)
+
+Avant le passage à un Coolify dédié, preprod avait son propre stack (`infra/preprod`, state
+`tet-preprod-tfstate/preprod/terraform.tfstate`) : Postgres `tet-preprod-pg`, Redis
+`tet-preprod-redis`, et une VM portant à la fois Coolify et les applis. `nonprod` déclare
+les mêmes instances : **ne jamais l'appliquer avant cette migration**, il créerait des
+bases neuves et vides à côté des anciennes.
+
+La bascule coupe l'accès des applis de l'ancien Coolify à la base : à faire dans une
+fenêtre de maintenance, une fois les applis preprod prêtes sur le nouveau Coolify.
+
+```sh
+source infra/scripts/tf-env.sh
+terraform -chdir=infra/nonprod init
+
+# 1. Adopter les bases existantes (dry-run, puis exécution)
+infra/scripts/migrate-preprod-state.sh
+CONFIRM=yes infra/scripts/migrate-preprod-state.sh
+
+# 2. Relire le plan AVANT tout apply
+terraform -chdir=infra/nonprod plan -out=tfplan
+```
+
+Le plan doit montrer, pour `tet-preprod-pg` et `tet-preprod-redis`, des **update
+in-place** et jamais un `replace` : sinon, s'arrêter. Changements attendus :
+
+- `private_network` : bascule de l'ancien PN `tet-preprod-pn` vers le PN nonprod. Les IP
+  privées des bases changent ;
+- mots de passe admin PG/Redis et `supabase_auth_admin` **régénérés**. Les anciens
+  contenaient `#`, `?` et `%`, qui cassaient les URI, et les importer aurait exposé
+  leur valeur sur la ligne de commande ;
+- endpoint public PG : conservé si `pg_allowed_ips` est renseigné, supprimé sinon ;
+- tags, et la création du serveur, des DNS et des secrets nonprod.
+
+```sh
+# 3. Appliquer, puis reporter les nouvelles URI dans les variables Coolify de tet-preprod
+terraform -chdir=infra/nonprod apply tfplan
+terraform -chdir=infra/nonprod output -raw pg_private_connection_uri
+```
+
+Le script sauvegarde les deux states dans `infra/.state-backups/` (gitignoré, `0600`)
+avant toute modification. Retour arrière avant l'apply : `terraform state push` de ces
+copies.
+
+### Décommissionner l'ancien stack preprod
+
+Une fois preprod servi par le nouveau Coolify, il reste dans l'ancien state la VM
+`tet-preprod-coolify`, son IP, son security group, le VPC `tet-preprod`, le PN
+`tet-preprod-pn`, le secret de sa clé host et le bucket vide `tet-preprod-coolify-backups`.
+On les détruit avec le code de l'époque :
+
+```sh
+git worktree add /tmp/tet-preprod-old bfedd1527^
+cp infra/preprod/terraform.tfvars /tmp/tet-preprod-old/infra/preprod/
+terraform -chdir=/tmp/tet-preprod-old/infra/preprod init
+terraform -chdir=/tmp/tet-preprod-old/infra/preprod plan -destroy   # ni PG ni Redis dans la liste
+terraform -chdir=/tmp/tet-preprod-old/infra/preprod apply -destroy
+git worktree remove /tmp/tet-preprod-old
+```
+
+Supprimer ensuite le state `coolify-preprod`, qui ne décrit que l'ancienne instance
+Coolify, puis le bucket `tet-preprod-tfstate` et les dossiers locaux `infra/preprod/` et
+`infra/coolify-preprod/` (tfvars et `tfplan` obsolètes, gitignorés).
+
 ## State backend : locking natif
 
 Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque `plan` ou `apply`, Terraform écrit un fichier `.tflock` dans le bucket via un **conditional write S3** (`If-None-Match: *`) : si le fichier existe déjà, l'opération échoue immédiatement avec un message d'erreur explicite, ce qui empêche deux applies simultanés.
