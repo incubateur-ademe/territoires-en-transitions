@@ -9,6 +9,10 @@ import { structureUnits } from './extract-actions/structure-units';
 import { consolidateHierarchy } from './consolidate-hierarchy/consolidate-hierarchy';
 import { dropRedundantSousAxes } from './consolidate-hierarchy/drop-redundant-sous-axes';
 import { PlanSkeleton } from '../models/plan-skeleton';
+import {
+  detectDocumentTome,
+  WrongTome,
+} from './detect-document-tome/detect-document-tome';
 import { scoutUnits } from './scout-units/scout-units';
 import { DocumentUnit } from './segment-document/document-unit';
 import { segmentDocument } from './segment-document/segment-document';
@@ -54,11 +58,18 @@ export type StepStates = z.infer<typeof stepStatesSchema>;
 
 export type StepName = keyof StepStates;
 
-export type ReadingError = {
-  kind: 'document_too_long';
-  chunks: number;
-  maxChunks: number;
-};
+export type ReadingError =
+  | {
+      kind: 'document_too_long';
+      chunks: number;
+      maxChunks: number;
+    }
+  | {
+      /** Le document déposé est un autre tome du PCAET, sans fiche action. */
+      kind: 'wrong_document_tome';
+      tome: WrongTome;
+      evidence: string;
+    };
 
 export type PipelineError = ExtractActionsError | ReadingError;
 
@@ -367,6 +378,14 @@ const readSource = (
   llm: PipelineLlm,
   document: ReadDocument
 ): Result<ReadSource, ReadingError> => {
+  const tome = detectDocumentTome(document);
+  if (tome.verdict === 'wrong_tome') {
+    return failure({
+      kind: 'wrong_document_tome',
+      tome: tome.tome,
+      evidence: tome.evidence,
+    });
+  }
   if (llm.capabilities.strategy === 'segmented') {
     const units = segmentDocument(document);
     if (units.length > MAX_DOCUMENT_UNITS) {
