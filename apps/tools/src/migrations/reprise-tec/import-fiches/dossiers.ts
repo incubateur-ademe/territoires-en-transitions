@@ -109,3 +109,14 @@ const aggregate = (nom: string, table: string, valeur: string) => `
       from reprise_tec.${table}
      group by action_id
   )`;
+
+/** Garde, appelée par `gardes.ts` : aucun dossier repris ne porte d'action, l'import des dossiers n'a pas tourné. */
+export const listCasBloquantsDossiers = (dossiers: readonly Dossier[]) =>
+  dossiers.length === 0
+    ? [
+        "  aucun dossier repris qui porte des actions : l'import des dossiers (import-demarches) n'a pas tourné",
+      ]
+    : [];
+
+export const decrireDossier = (d: Dossier) =>
+  `T&C ${d.tecId}, démarche ${d.demarcheId}, ${d.collectivite}`;
