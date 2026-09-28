@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { IndicateurPeriodErrorEnum } from '../../../indicateurs/valeurs/indicateur-period.errors';
 import { PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS } from './demarche-pcaet-diagnostic.config';
 import {
   deriveReferenceYearFromIndicateurValeurYears,
@@ -45,10 +46,11 @@ const valeur = ({
     indicateurValeur: {
       indicateurId: 1,
       dateValeur: `${year}-01-01`,
+      periodicite: 'annuelle',
       resultat,
       objectif,
     },
-    indicateurDefinition: { identifiantReferentiel },
+    indicateurDefinition: { identifiantReferentiel, periodicite: 'annuelle' },
   } as PcaetDiagnostic['indicateurValeurs'][number]);
 
 /** Constat + objectifs requis (2050 exclu via optionalYears). */
@@ -447,5 +449,21 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
         })
       )
     ).toBe(true);
+  });
+});
+
+describe('PCAET annual boundary', () => {
+  it('rejects a monthly observation in annual completeness', () => {
+    const monthlyValeur = valeur({ year: 2021, resultat: 12 });
+    if (!monthlyValeur.indicateurDefinition)
+      throw new Error('Missing test definition');
+    monthlyValeur.indicateurValeur.periodicite = 'mensuelle';
+    expect(() =>
+      isPcaetDiagnosticIndicateurComplet({
+        config: parentConfig(),
+        indicateurs: [monthlyValeur],
+        definitions: [],
+      })
+    ).toThrow(IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED);
   });
 });

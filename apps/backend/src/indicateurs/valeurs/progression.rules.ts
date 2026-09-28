@@ -1,3 +1,7 @@
+import {
+  IndicateurPeriodiciteEnum,
+  toAnnualIndicateurYearFromHistoricalDate,
+} from '@tet/domain/indicateurs';
 import { isNil } from 'es-toolkit';
 
 /** Ligne de valeur d'indicateur d'une collectivité, avec sa source éventuelle */
@@ -14,7 +18,13 @@ export type LigneValeurProgression = {
 
 const SOURCE_SNBC = 'snbc';
 
-export const getAnnee = (dateValeur: string) => Number(dateValeur.slice(0, 4));
+/** Les valeurs de progression sont filtrées sur la cadence annuelle en lecture. */
+export const getAnnee = (dateValeur: string) =>
+  toAnnualIndicateurYearFromHistoricalDate(
+    IndicateurPeriodiciteEnum.ANNUELLE,
+    dateValeur,
+    'La progression du score indicatif'
+  );
 
 const isFiniteNumber = (value: number | null | undefined): value is number =>
   !isNil(value) && Number.isFinite(value);

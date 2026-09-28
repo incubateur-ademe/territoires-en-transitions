@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { TRPCError } from '@trpc/server';
 import { collectiviteIdInputSchemaPartial } from '@tet/backend/collectivites/collectivite-id.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
@@ -26,12 +27,23 @@ export class IndicateurValeursRouter {
     list: this.trpc.authedOrServiceRoleProcedure
       .input(listIndicateurValeursInputSchema)
       .query(({ ctx, input }) => {
-        return this.service.listIndicateurValeurs(input, ctx.user);
+        return this.service.listIndicateurValeurs(input, { user: ctx.user });
       }),
     upsert: this.trpc.authedProcedure
       .input(upsertValeurIndicateurSchema)
-      .mutation(({ input, ctx }) => {
-        return this.service.upsertValeur(input, ctx.user);
+      .mutation(async ({ input, ctx }) => {
+        try {
+          return await this.service.upsertValeur(input, ctx.user);
+        } catch (error) {
+          if (error instanceof BadRequestException) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: error.message,
+              cause: error,
+            });
+          }
+          throw error;
+        }
       }),
     delete: this.trpc.authedProcedure
       .input(deleteValeurIndicateurSchema)
@@ -58,7 +70,7 @@ export class IndicateurValeursRouter {
       }),
     recompute: this.trpc.serviceRoleProcedure
       .input(collectiviteIdInputSchemaPartial)
-      .query(({ ctx, input }) => {
+      .mutation(({ ctx, input }) => {
         return this.service.recomputeAllCalculatedIndicateurValeurs(
           input.collectiviteId,
           ctx.user

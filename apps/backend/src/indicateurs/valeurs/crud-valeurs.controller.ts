@@ -11,7 +11,10 @@ import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../users/models/auth.models';
+import type {
+  AuthenticatedOrServiceRoleUser,
+  AuthenticatedUser,
+} from '../../users/models/auth.models';
 import CrudValeursService from './crud-valeurs.service';
 import { getIndicateursValeursApiRequestSchema } from './get-indicateur-valeurs.api-request';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
@@ -51,7 +54,7 @@ export class IndicateursValeursController {
     @Query() request: GetIndicateursValeursApiRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    return this.service.listIndicateurValeurs(request, tokenInfo);
+    return this.service.listIndicateurValeurs(request, { user: tokenInfo });
   }
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
@@ -67,11 +70,11 @@ export class IndicateursValeursController {
   })
   async upsertIndicateurValeurs(
     @Body() request: UpsertIndicateursValeursRequest,
-    @TokenInfo() tokenInfo: AuthenticatedUser
+    @TokenInfo() tokenInfo: AuthenticatedOrServiceRoleUser
   ): Promise<UpsertIndicateursValeursResponse> {
     const upsertedValeurs = await this.service.upsertIndicateurValeurs(
       request.valeurs,
-      tokenInfo
+      { user: tokenInfo }
     );
     return { valeurs: upsertedValeurs };
   }

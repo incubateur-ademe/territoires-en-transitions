@@ -16,4 +16,6 @@ export const getValeursReferenceRequestSchema = z
     'Donne les valeurs de référence (cible et/ou seuil) des indicateurs pour une collectivité'
   );
 
-export type GetValeursReferenceRequest = z.infer<typeof getValeursReferenceRequestSchema>;
+export type GetValeursReferenceRequest = z.infer<
+  typeof getValeursReferenceRequestSchema
+>;

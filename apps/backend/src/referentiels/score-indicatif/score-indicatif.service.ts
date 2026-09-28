@@ -28,6 +28,7 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { groupBy, keyBy } from 'es-toolkit';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { BuildEvaluationContextService } from './build-evaluation-context.service';
 import { buildCalculScoreIndicatif } from './calcul-score-indicatif.rules';
 import {
@@ -94,8 +95,9 @@ export class ScoreIndicatifService {
         {
           collectiviteId: input.collectiviteId,
           indicateurIds,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         },
-        user
+        { user }
       );
 
     const valeursUtiliseesResult =
@@ -144,6 +146,7 @@ export class ScoreIndicatifService {
     }
 
     return this.transactionManager.executeSingle(async (transaction) => {
+      await this.repository.lockSelectionScope(input, transaction);
       const validationResult = await this.validateValeursUtiliseesInput(input, {
         tx: transaction,
       });
