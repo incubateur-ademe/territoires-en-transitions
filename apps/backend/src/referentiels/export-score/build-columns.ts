@@ -351,10 +351,10 @@ function buildScoreColumns(
       width: WIDTH_MEDIUM,
     },
     headCellProps: lastHeadCellProps,
-    getValue: ({ scoreRow: row }) => {
+    getValue: ({ scoreRow: row, data }) => {
       const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
       if (scoreIndicatif) {
-        return getLibelleScoreIndicatif(scoreIndicatif);
+        return getLibelleScoreIndicatif(scoreIndicatif, data.referentielId);
       }
     },
   });
