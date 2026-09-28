@@ -64,6 +64,19 @@ describe('reconstructPageLines', () => {
     expect(lines[0].text).toBe('Budget 12 000 €');
   });
 
+  it('ne double pas un texte dessiné deux fois au même endroit', () => {
+    const lines = reconstructPageLines(
+      [
+        item('ÉTAT', 40, 100, 70),
+        item('ÉTAT', 41, 100, 70),
+        item('ÉTAT', 400, 100, 70),
+      ],
+      PAGE_HEIGHT
+    );
+
+    expect(lines.map((line) => line.text)).toEqual(['ÉTAT ÉTAT']);
+  });
+
   it('ignore les fragments vides', () => {
     expect(reconstructPageLines([item('', 40, 100)], PAGE_HEIGHT)).toEqual([]);
   });

@@ -16,6 +16,8 @@ export type DocumentUnit = {
   pageEnd: number;
   /** Titres de niveau axe et sous-axe qui couvrent l'unité. */
   headingPath: string[];
+  /** Partie du document (diagnostic, plan d'actions, annexes…), si elle est titrée. */
+  section?: string;
   kind: UnitKind;
   tokenEstimate: number;
   /** Fenêtre d'une unité trop longue, coupée arbitrairement. */
@@ -26,7 +28,7 @@ export const buildUnit = (
   lines: UnitLine[],
   headingPath: string[],
   kind: UnitKind,
-  extra: { continued?: boolean } = {}
+  extra: { continued?: boolean; section?: string } = {}
 ): DocumentUnit => {
   const text = lines.map((line) => line.text).join('\n');
   return {
@@ -38,6 +40,7 @@ export const buildUnit = (
     headingPath,
     kind,
     tokenEstimate: estimateTokenCount(text),
+    ...(extra.section ? { section: extra.section } : {}),
     ...(extra.continued ? { continued: true } : {}),
   };
 };

@@ -2,7 +2,12 @@ import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count'
 import { DocumentPage } from '../document/document-page';
 import { DetectedHeading } from './detect-headings';
 import { buildUnit, DocumentUnit, UnitKind, UnitLine } from './document-unit';
-import { HeadingMatch, isFicheLabel } from './heading-patterns';
+import {
+  FICHE_LEVEL,
+  HeadingMatch,
+  isFicheLabel,
+  SECTION_LEVEL,
+} from './heading-patterns';
 
 export type CutUnitsOptions = {
   /** En dessous, l'unité est fusionnée avec sa voisine. */
@@ -17,11 +22,15 @@ export type CutUnitsOptions = {
 const FICHE_LABEL_WINDOW_LINES = 12;
 const FICHE_LABEL_MIN_COUNT = 3;
 const RETRO_OPEN_LOOKBACK_LINES = 6;
-const FICHE_LEVEL = 3;
 
-type StackEntry = { level: number; label: string };
+type StackEntry = { level: number; label: string; number: string | null };
 
-type OpenUnit = { lines: UnitLine[]; headingPath: string[]; kind: UnitKind };
+type OpenUnit = {
+  lines: UnitLine[];
+  headingPath: string[];
+  kind: UnitKind;
+  section?: string;
+};
 
 /**
  * Découpe le document aux frontières de fiches et de titres, puis ramène
@@ -40,46 +49,80 @@ export const cutUnits = (
   );
   const units: DocumentUnit[] = [];
   const stack: StackEntry[] = [];
+  let section: string | undefined;
   let open: OpenUnit = { lines: [], headingPath: [], kind: 'unknown' };
   let labelsInWindow: number[] = [];
 
   const close = () => {
     if (open.lines.some((line) => line.text.trim().length > 0)) {
-      units.push(buildUnit(open.lines, open.headingPath, open.kind));
+      units.push(
+        buildUnit(open.lines, open.headingPath, open.kind, {
+          section: open.section,
+        })
+      );
     }
   };
   const start = (kind: UnitKind, lines: UnitLine[] = []) => {
-    open = { lines, headingPath: pathOf(stack), kind };
+    open = { lines, headingPath: pathOf(stack), kind, section };
     labelsInWindow = [];
   };
+  const isRecall = (heading: HeadingMatch) =>
+    stack.some(
+      (entry) =>
+        entry.level === heading.level &&
+        (entry.label === labelOf(heading) ||
+          (heading.number !== null && entry.number === heading.number))
+    );
 
   for (const page of pages) {
     page.lines.forEach((line, lineIndex) => {
       const unitLine: UnitLine = { text: line.text, pageIndex: page.index };
       const heading = headingAt.get(`${page.index}:${lineIndex}`);
-      if (heading && heading.level >= FICHE_LEVEL) {
-        close();
-        popTo(stack, FICHE_LEVEL);
-        start('fiche', [unitLine]);
-        stack.push({ level: FICHE_LEVEL, label: labelOf(heading) });
-        return;
-      }
-      if (heading) {
-        // Le rappel de l'axe en bandeau d'une fiche n'ouvre rien.
-        const label = labelOf(heading);
-        if (
-          stack.some(
-            (entry) => entry.level === heading.level && entry.label === label
-          )
-        ) {
+      if (heading && heading.level === SECTION_LEVEL) {
+        // Le nom de la partie repris en bandeau n'ouvre rien.
+        if (labelOf(heading) === section) {
           open.lines.push(unitLine);
           return;
         }
         close();
+        stack.length = 0;
+        section = labelOf(heading);
+        start('section', [unitLine]);
+        return;
+      }
+      // Le rappel de l'axe ou de la fiche en bandeau n'ouvre rien, pas plus
+      // qu'un intertitre en majuscules dans une fiche (« LES OUTILS »).
+      if (
+        heading &&
+        (isRecall(heading) ||
+          (open.kind === 'fiche' &&
+            heading.kind === 'majuscules' &&
+            heading.level >= 2))
+      ) {
+        open.lines.push(unitLine);
+        return;
+      }
+      if (heading && heading.level >= FICHE_LEVEL) {
+        close();
+        popTo(stack, FICHE_LEVEL);
+        start('fiche', [unitLine]);
+        stack.push({
+          level: FICHE_LEVEL,
+          label: labelOf(heading),
+          number: heading.number,
+        });
+        return;
+      }
+      if (heading) {
+        close();
         popTo(stack, heading.level);
         // Le chemin d'une unité, ce sont ses ancêtres : son propre titre est dans son texte.
         start('section', [unitLine]);
-        stack.push({ level: heading.level, label });
+        stack.push({
+          level: heading.level,
+          label: labelOf(heading),
+          number: heading.number,
+        });
         return;
       }
 
@@ -146,7 +189,12 @@ const looksLikeTitle = (text: string): boolean => {
   );
 };
 
-/** Une unité trop courte rejoint sa voisine ; deux fiches ne fusionnent jamais. */
+/**
+ * Une unité trop courte rejoint sa voisine, dans la même partie du document.
+ * Une fiche reste seule : elle ne prend ni le sommaire qui la précède, ni
+ * l'introduction de l'axe suivant ; les extraits sont de toute façon
+ * regroupés par appel à la structuration.
+ */
 const mergeSmallUnits = (
   units: DocumentUnit[],
   minTokens: number
@@ -157,14 +205,15 @@ const mergeSmallUnits = (
     if (
       previous &&
       (previous.tokenEstimate < minTokens || unit.tokenEstimate < minTokens) &&
-      !(previous.kind === 'fiche' && unit.kind === 'fiche')
+      previous.section === unit.section &&
+      previous.kind !== 'fiche' &&
+      unit.kind !== 'fiche'
     ) {
       merged[merged.length - 1] = buildUnit(
         [...previous.lines, ...unit.lines],
-        previous.kind === 'fiche' ? previous.headingPath : unit.headingPath,
-        previous.kind === 'fiche' || unit.kind === 'fiche'
-          ? 'fiche'
-          : previous.kind
+        unit.headingPath,
+        previous.kind,
+        { section: unit.section }
       );
     } else {
       merged.push(unit);
@@ -191,6 +240,7 @@ const windowUnits = (
         windows.push(
           buildUnit(lines, unit.headingPath, unit.kind, {
             continued: windows.length > 0,
+            section: unit.section,
           })
         );
         const overlap = tailByTokens(lines, overlapTokens);
@@ -207,6 +257,7 @@ const windowUnits = (
       windows.push(
         buildUnit(lines, unit.headingPath, unit.kind, {
           continued: windows.length > 0,
+          section: unit.section,
         })
       );
     }

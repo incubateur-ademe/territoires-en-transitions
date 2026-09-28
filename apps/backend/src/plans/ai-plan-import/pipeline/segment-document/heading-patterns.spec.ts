@@ -61,14 +61,32 @@ describe('matchHeading', () => {
     ['2.3.1. Rénover les écoles', 'fiche', 3, '2.3.1', 'Rénover les écoles'],
     ['## Fiche action 3', 'markdown', 2, null, 'Fiche action 3'],
     ['### 2.3 Rénover', 'markdown', 3, '2.3', 'Rénover'],
-    ['PROGRAMME D’ACTIONS', 'section', 1, null, 'PROGRAMME D’ACTIONS'],
+    ['PROGRAMME D’ACTIONS', 'section', 0, null, 'PROGRAMME D’ACTIONS'],
     [
       '3. Stratégie territoriale',
       'section',
-      1,
+      0,
       null,
       '3. Stratégie territoriale',
     ],
+    ["PLAN D'ACTIONS À 2030", 'section', 0, null, "PLAN D'ACTIONS À 2030"],
+    [
+      'Programme d’actions 2024-2030',
+      'section',
+      0,
+      null,
+      'Programme d’actions 2024-2030',
+    ],
+    ['ÉTAT DES LIEUX', 'section', 0, null, 'ÉTAT DES LIEUX'],
+    [
+      'ENGAGEMENT DES PARTENAIRES',
+      'section',
+      0,
+      null,
+      'ENGAGEMENT DES PARTENAIRES',
+    ],
+    ['I. TOUS HÉROS ORDINAIRES', 'axe', 1, 'I', 'TOUS HÉROS ORDINAIRES'],
+    ['IV – UN SYSTÈME DE MOBILITÉ', 'axe', 1, 'IV', 'UN SYSTÈME DE MOBILITÉ'],
   ])('reconnaît « %s »', (line, kind, level, number, title) => {
     expect(matchHeading(line)).toMatchObject({ kind, level, number, title });
   });
@@ -84,6 +102,26 @@ describe('matchHeading', () => {
     ).toMatchObject({ level: 1, confidence: 0.8 });
   });
 
+  it('prend un chiffre romain devant un titre en casse mixte pour un axe, en grande police seulement', () => {
+    expect(matchHeading('II. Une économie sobre')).toBeNull();
+    expect(
+      matchHeading('II. Une économie sobre', { isLarge: true })
+    ).toMatchObject({ kind: 'axe', number: 'II', title: 'Une économie sobre' });
+  });
+
+  it('prend un numéro seul devant un titre en majuscules pour une fiche, en grande police seulement', () => {
+    expect(
+      matchHeading('1 DANS L’ÉCO-RESPONSABILITÉ', { isLarge: true })
+    ).toMatchObject({
+      kind: 'numero',
+      level: 3,
+      number: '1',
+      title: 'DANS L’ÉCO-RESPONSABILITÉ',
+    });
+    expect(matchHeading('1 DANS L’ÉCO-RESPONSABILITÉ')).toBeNull();
+    expect(matchHeading('10 communes engagées', { isLarge: true })).toBeNull();
+  });
+
   it.each([
     '1.5 tonnes de CO2 évitées par an',
     '2.3 % de la consommation',
@@ -92,6 +130,7 @@ describe('matchHeading', () => {
     'INDICATEURS DE SUIVI',
     'Cette action vise à réduire les consommations des bâtiments communaux de vingt pour cent d’ici à la fin du mandat.',
     'ABC',
+    '400 000 € SYTRAL',
     '',
   ])('ne prend pas « %s » pour un titre', (line) => {
     expect(matchHeading(line)).toBeNull();
