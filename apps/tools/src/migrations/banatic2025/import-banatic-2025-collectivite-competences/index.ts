@@ -20,8 +20,8 @@ import { sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { z } from 'zod';
 import { findCollectiviteIdBySiren } from '../collectivite-db';
-import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../csv';
-import { getDatabase } from '../db';
+import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../../shared/csv';
+import { getDatabase } from '../../shared/db';
 
 const COL_SIREN = 3; // D
 const COL_NATURE_JURIDIQUE = 5; // F

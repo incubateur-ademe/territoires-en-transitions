@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { describe, expect, it } from 'vitest';
-import { parseCsvRows } from '../csv';
+import { parseCsvRows } from '../../shared/csv';
 import {
   formatNatureTransfert,
   groupByEpci,

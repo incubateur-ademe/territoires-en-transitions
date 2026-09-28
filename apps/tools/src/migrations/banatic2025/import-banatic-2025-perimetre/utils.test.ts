@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { describe, expect, it } from 'vitest';
-import { parseCsvRecords } from '../csv';
+import { parseCsvRecords } from '../../shared/csv';
 import {
   collectDeclaredNbMembres,
   countCommunesByEpci,
