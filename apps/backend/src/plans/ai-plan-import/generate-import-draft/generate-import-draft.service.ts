@@ -140,6 +140,9 @@ export class GenerateImportDraftService {
       },
     });
 
+    for (const warning of outcome.warnings) {
+      this.logger.warn(`Import ${job.id}: ${warning}`);
+    }
     if (outcome.status === 'failed') {
       const marked = await this.jobRepository.markFailed({
         id: job.id,
@@ -155,9 +158,6 @@ export class GenerateImportDraftService {
           });
     }
 
-    for (const warning of outcome.warnings) {
-      this.logger.warn(`Import ${job.id}: ${warning}`);
-    }
     return this.persistDraftAsPlan(job, outcome.draft, outcome.stepStates);
   }
 
