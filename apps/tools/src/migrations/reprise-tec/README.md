@@ -64,6 +64,13 @@ pnpx tsx $SCRIPT --suivi <csv> --date-reference <AAAA-MM-JJ> --confirm  # import
 `--date-reference` est **la date du jour de l'import**, pas la date de gel de
 T&C : elle décide si une fenêtre d'avis est encore ouverte.
 
+La date de transmission d'un dossier est la **réception du projet** ; à
+défaut, la plus précoce des deux dates « envoi avis DREAL » et « envoi avis
+CR » ; à défaut, aucune. Malgré leur nom, ces deux dates de T&C sont celles
+des avis rendus (elles tombent le jour du courrier d'avis déposé), pas celles
+de l'envoi du dossier. Un dossier en élaboration n'a jamais de date de
+transmission : la clôture de nuit le passerait en instruit.
+
 Une date saisie à la main avant l'an 2000 (lancement, envoi pour avis,
 réception du projet) est une faute de frappe dans T&C. Une année sur deux
 chiffres, de 10 à 99, est lue 20AA (`0023-01-25` devient 2023-01-25) ; les
