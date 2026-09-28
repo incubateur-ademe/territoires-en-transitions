@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { notImplemented } from '@tet/backend/utils/not-implemented';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { LevierId } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import {
   LevierMobilisation,
   MobilisationRepository,
   VoletMobilisation,
 } from './mobilisation.repository';
 import { collectiviteVoletGesTable } from './models/collectivite-volet-ges.table';
+import { MobilisationState } from './models/mobilisation-state';
 import { toCollectiviteVoletGesRows } from './to-collectivite-volet-ges-rows';
 import { VoletErrorEnum, type VoletError } from './volet.errors';
 
@@ -22,11 +22,70 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  listCollectivitesWithMobilisation: MobilisationRepository['listCollectivitesWithMobilisation'] =
-    notImplemented('listCollectivitesWithMobilisation');
+  async listCollectivitesWithMobilisation(): Promise<
+    Result<number[], VoletError>
+  > {
+    try {
+      const rows = await this.db
+        .selectDistinct({
+          collectiviteId: collectiviteVoletGesTable.collectiviteId,
+        })
+        .from(collectiviteVoletGesTable)
+        .orderBy(collectiviteVoletGesTable.collectiviteId);
 
-  getMobilisationState: MobilisationRepository['getMobilisationState'] =
-    notImplemented('getMobilisationState');
+      return success(rows.map(({ collectiviteId }) => collectiviteId));
+    } catch (error) {
+      this.logger.error(
+        `Could not list collectivites with mobilisation: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(VoletErrorEnum.LIST_COLLECTIVITES_WITH_MOBILISATION_ERROR);
+    }
+  }
+
+  async getMobilisationState({
+    collectiviteId,
+  }: {
+    collectiviteId: number;
+  }): Promise<Result<MobilisationState, VoletError>> {
+    try {
+      const citedFiches = sql.identifier('cited_fiches');
+      const ficheIdColumn = sql.identifier('fiche_id');
+      const citedFiche = sql`${citedFiches}.${ficheIdColumn}`;
+      const [row] = await this.db
+        .select({
+          calculatedAt: sql<string>`min(${collectiviteVoletGesTable.createdAt})`,
+          ficheIds: sql<
+            number[]
+          >`coalesce(array_agg(distinct ${citedFiche} order by ${citedFiche}) filter (where ${citedFiche} is not null), '{}')`,
+        })
+        .from(collectiviteVoletGesTable)
+        .leftJoin(
+          sql`unnest(${collectiviteVoletGesTable.ficheIds}) as ${citedFiches}(${ficheIdColumn})`,
+          sql`true`
+        )
+        .where(eq(collectiviteVoletGesTable.collectiviteId, collectiviteId))
+        .groupBy(collectiviteVoletGesTable.collectiviteId);
+
+      if (row === undefined) {
+        return success({ kind: 'never_calculated' });
+      }
+
+      return success({
+        kind: 'calculated',
+        calculatedAt: new Date(row.calculatedAt),
+        ficheIds: row.ficheIds,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Could not read mobilisation state of collectivite ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(VoletErrorEnum.GET_MOBILISATION_STATE_ERROR);
+    }
+  }
 
   async updateMobilisation({
     collectiviteId,
