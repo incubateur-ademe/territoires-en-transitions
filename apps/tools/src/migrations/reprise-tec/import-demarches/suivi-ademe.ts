@@ -1,10 +1,11 @@
-/** Le suivi ADEME : l'obligation et l'approbation de chaque collectivité, par SIREN. */
+/** Le suivi ADEME : l'obligation, l'avis de l'État et l'approbation de chaque collectivité, par SIREN. */
 
 import { parse } from 'csv-parse/sync';
 import { readFileSync } from 'fs';
 
 export type LigneSuivi = {
   obligation: string;
+  avisEtat: string | null;
   approbation: string | null;
 };
 
@@ -16,7 +17,12 @@ export const readSuiviAdeme = (chemin: string) => {
     columns: true,
     skip_empty_lines: true,
     bom: true,
-  }) as { siren: string; obligation: string; date_approbation: string }[];
+  }) as {
+    siren: string;
+    obligation: string;
+    date_avis_etat: string;
+    date_approbation: string;
+  }[];
 
   const parSiren = new Map<string, typeof lignes>();
   for (const l of lignes) {
@@ -29,7 +35,14 @@ export const readSuiviAdeme = (chemin: string) => {
       .filter(([, memeSiren]) => memeSiren.length === 1)
       .map(([siren, [l]]) => [
         siren,
-        { obligation: l.obligation, approbation: l.date_approbation || null },
+        {
+          obligation: l.obligation,
+          /** Une date seulement : « tacite », « non rendu »… ne datent rien. */
+          avisEtat: /^\d{4}-\d{2}-\d{2}$/.test(l.date_avis_etat)
+            ? l.date_avis_etat
+            : null,
+          approbation: l.date_approbation || null,
+        },
       ])
   );
 

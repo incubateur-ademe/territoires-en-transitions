@@ -39,6 +39,8 @@ export type Dossier = {
   misAJourLe: string | null;
   /** Les dates saisies avant l'an 2000, lues 20AA ou ignorées, pour le rapport. */
   datesRevues: string[];
+  /** La transmission que l'avis de l'État du suivi contredit, ramenée ou gardée, pour le rapport. */
+  transmissionRevue: string | null;
   sources: {
     obligation: SourceObligation;
     adoption: SourceAdoption | null;
@@ -67,14 +69,19 @@ export const buildDossier = (
   const { ligne, datesRevues } = correctDatesSaisies(ligneSource);
   const ligneSuivi = suivi.getLigne(porteur?.siren);
   const approbation = ligneSuivi?.approbation ?? null;
-  const statut = calculateStatut(ligne, approbation);
-  const dates = calculateDates(ligne, statut, approbation);
+  const transmission = calculateTransmission(
+    ligne,
+    ligneSuivi?.avisEtat ?? null
+  );
+  const statut = calculateStatut(ligne, transmission.date, approbation);
+  const dates = calculateDates(ligne, statut, transmission.date, approbation);
   const obligation = calculateObligation(ligne.oblige, ligneSuivi, porteur);
 
   return {
     tecId: ligne.id,
     misAJourLe: ligne.misAJourLe,
     datesRevues,
+    transmissionRevue: statut === EN_ELABORATION ? null : transmission.revue,
     sources: {
       obligation: obligation.source,
       adoption: dates.sourceAdoption,
@@ -176,6 +183,7 @@ export const decrireDossier = (d: Dossier) =>
  */
 const calculateStatut = (
   ligne: LigneDemarche,
+  transmission: string | null,
   approbation: string | null
 ): Statut => {
   if (ligne.etat === null || ligne.etat === 'mise_en_oeuvre') {
@@ -188,7 +196,7 @@ const calculateStatut = (
     if (approbation === null) {
       return INSTRUIT;
     }
-    const reference = calculateTransmission(ligne) ?? jour(ligne.creeLe);
+    const reference = transmission ?? jour(ligne.creeLe);
     if (reference === null) {
       return PUBLIE;
     }
@@ -209,10 +217,10 @@ const calculateStatut = (
 const calculateDates = (
   ligne: LigneDemarche,
   statut: Statut,
+  transmission: string | null,
   approbation: string | null
 ) => {
-  const transmittedAt =
-    statut === EN_ELABORATION ? null : calculateTransmission(ligne);
+  const transmittedAt = statut === EN_ELABORATION ? null : transmission;
   const avisDeadlineAt =
     transmittedAt &&
     computeAvisDeadline(new Date(transmittedAt)).toISOString().slice(0, 10);
@@ -239,10 +247,47 @@ const calculateDates = (
 };
 
 /**
+ * La date de transmission pour avis, contrôlée par l'avis de l'État du suivi
+ * ADEME : un avis ne précède pas la transmission.
+ * - l'avis du suivi est à moins d'un an avant la date de T&C : la transmission
+ *   est ramenée à la plus précoce des dates de T&C qui ne le suit pas, à défaut
+ *   au jour de l'avis ;
+ * - il est à plus d'un an : la date de T&C est gardée, le suivi parle d'une
+ *   collectivité et peut dater l'avis de son PCAET précédent.
+ * `revue` décrit le cas pour le rapport, `null` si le suivi ne contredit rien.
+ */
+const calculateTransmission = (
+  ligne: LigneDemarche,
+  avisEtat: string | null
+): { date: string | null; revue: string | null } => {
+  const date = calculateTransmissionTec(ligne);
+  if (date === null || avisEtat === null || avisEtat >= date) {
+    return { date, revue: null };
+  }
+  const unAnAvant = format(subMonths(parseISO(date), 12), 'yyyy-MM-dd');
+  if (avisEtat < unAnAvant) {
+    return {
+      date,
+      revue: `transmission ${date} gardée, avis de l'État du suivi le ${avisEtat}, plus d'un an avant`,
+    };
+  }
+  const compatibles = [
+    jour(ligne.receptionProjet),
+    jour(ligne.envoiDreal),
+    jour(ligne.envoiCr),
+  ].filter((d): d is string => d !== null && d <= avisEtat);
+  const ramenee = compatibles.length > 0 ? plusPrecoce(compatibles) : avisEtat;
+  return {
+    date: ramenee,
+    revue: `transmission ${date} ramenée au ${ramenee}, avis de l'État du suivi le ${avisEtat}`,
+  };
+};
+
+/**
  * La réception du projet, sinon la plus précoce des deux dates « envoi avis ».
  * Malgré leur nom, ces deux dates sont celles des avis rendus, pas de l'envoi du dossier.
  */
-const calculateTransmission = (ligne: LigneDemarche) => {
+const calculateTransmissionTec = (ligne: LigneDemarche) => {
   const reception = jour(ligne.receptionProjet);
   if (reception !== null) {
     return reception;
@@ -250,8 +295,11 @@ const calculateTransmission = (ligne: LigneDemarche) => {
   const avis = [jour(ligne.envoiDreal), jour(ligne.envoiCr)].filter(
     (d): d is string => d !== null
   );
-  return avis.length > 0 ? avis.reduce((a, b) => (a < b ? a : b)) : null;
+  return avis.length > 0 ? plusPrecoce(avis) : null;
 };
+
+const plusPrecoce = (dates: readonly string[]) =>
+  dates.reduce((a, b) => (a < b ? a : b));
 
 /** Le dépôt définitif, l'approbation du suivi, ou la dernière mise à jour ; avec sa source. */
 const calculatePublishedAt = (
