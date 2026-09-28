@@ -38,12 +38,26 @@ explicites du 28 septembre 2026 sur les neuf observations inventoriées :
 | 24464 | Bouguenais (1466), `cae_62` (135) | `0001-01-01 BC` → `2024-01-01` |
 | 27353 | CA du Saint-Quentinois (3830), `cae_1.h` (333) | Supprimer cette saisie locale ; conserver les données Atmo |
 | 287811340 | Collectivité Démo (5596), nombre de réunions (45906) | Supprimer cette observation |
-| 11979621 | Margny-lès-Compiègne (2181), test (31816) | `202501-01-01` → `2025-01-01` |
-| 11979622 | Margny-lès-Compiègne (2181), test (31816) | `202502-01-01` → `2025-02-01` |
-| 11979623 | Margny-lès-Compiègne (2181), test (31816) | `202503-01-01` → `2025-03-01` |
-| 11979624 | Margny-lès-Compiègne (2181), test (31816) | `202504-01-01` → `2025-04-01` |
-| 12374016 | Margny-lès-Compiègne (2181), Nombre de projets analysés (32392) | `202511-01-01` → `2025-11-01` |
-| 12374017 | Margny-lès-Compiègne (2181), Nombre de projets analysés (32392) | `202512-01-01` → `2025-12-01` |
+| 11979621 | Margny-lès-Compiègne (2181), test (31816) | Archiver puis supprimer le résultat 5 / objectif 3 |
+| 11979622 | Margny-lès-Compiègne (2181), test (31816) | Archiver puis supprimer le résultat 7 / objectif 5 |
+| 11979623 | Margny-lès-Compiègne (2181), test (31816) | Archiver puis supprimer le résultat 2 / objectif 7 |
+| 11979624 | Margny-lès-Compiègne (2181), test (31816) | Conserver le résultat 8 / objectif 9 ; `202504-01-01` → `2025-01-01` |
+| 12374016 | Margny-lès-Compiègne (2181), Nombre de projets analysés (32392) | Archiver puis supprimer l’objectif 2 |
+| 12374017 | Margny-lès-Compiègne (2181), Nombre de projets analysés (32392) | Conserver l’objectif 3, sans résultat ; `202512-01-01` → `2025-01-01` |
+
+Pour Margny, la décision métier retient explicitement la dernière observation de
+chaque indicateur au 1er janvier 2025. Les valeurs ne sont ni additionnées ni
+agrégées. Les quatre autres observations quittent les données actives après
+archivage.
+
+Les six observations originales de Margny ont été exportées depuis la copie de
+la sauvegarde avant toute correction, avec tous leurs champs, les dates erronées
+intactes et les libellés de collectivité et d’indicateur. Les fichiers privés
+`margny-historique-observations-2026-09-28.csv` et
+`margny-historique-observations-2026-09-28.json`, accompagnés de leur provenance
+et de leurs empreintes SHA-256, sont remis séparément pour conservation. Ils ne
+sont pas versionnés dans ce dépôt. La migration conserve aussi les six originaux
+dans son archive administrative.
 
 La migration vérifie l’identité complète, la date initiale, le caractère manuel
 sans métadonnée et la date de dernière modification observée dans la sauvegarde.
@@ -52,12 +66,12 @@ une référence de score sur une observation à supprimer annule toute la migrat
 Les verrous empêchent une écriture concurrente de contourner ces contrôles.
 
 Une observation absente n’est pas créée. Une date déjà corrigée reste inchangée.
-Les sept corrections préservent résultats, objectifs, commentaires et provenance ;
+Les trois corrections préservent résultats, objectifs, commentaires et provenance ;
 les triggers ordinaires mettent à jour les métadonnées de modification.
 Aucun indicateur ni aucune série externe n’est supprimé ou recalculé.
 
 `private.indicateur_valeur_date_repair` conserve les images complètes avant/après
-des seules observations effectivement traitées, dont les deux supprimées.
+des seules observations effectivement traitées, dont les six supprimées.
 Cette archive administrative est inaccessible aux rôles applicatifs. Les
 horodatages JSON sont sérialisés en UTC pour permettre les contrôles depuis
 n’importe quel fuseau de connexion.
@@ -72,27 +86,15 @@ initial. L’archive est supprimée après une restauration réussie.
 
 ## Conséquence pour #5214
 
-Les six observations de Margny sont confirmées comme un historique mensuel.
-La réparation les conserve séparément ; elle n’ajoute pas encore de colonne de
-périodicité et ne modifie pas la déclaration des définitions.
+Les deux observations conservées de Margny sont au 1er janvier 2025, conformément
+à la décision métier. Elles ne nécessitent aucune exception mensuelle pour la
+migration annuelle. Cette réparation ne change pas les déclarations de
+périodicité des définitions.
 
-#5214 attribue actuellement `annuelle` à toutes les valeurs avant normalisation.
-Avec les dates corrigées, cela produit **deux groupes de collisions**, soit six
-observations concernées et cinq dates non canoniques à auditer : janvier–avril
-pour l’indicateur 31816, novembre–décembre pour 32392.
-
-Avant son déploiement, #5214 doit classer explicitement ces six identités approuvées
-comme mensuelles avant normalisation, les préserver dans les contraintes de la
-livraison annuelle et maintenir leur consultation. Cette classification s’appuie
-sur la décision métier, sans déduction depuis la date ni modification implicite
-de la déclaration des définitions. Il ne faut ni fusionner ces observations ni
-les convertir en une valeur annuelle pour contourner le blocage.
-
-L’interface actuelle prépare encore ces données par année
-(`apps/app/src/app/pages/collectivite/Indicateurs/data/prepare-data.ts`). Coordonner
-la mise en production des corrections mensuelles avec une lecture compatible,
-pendant la maintenance précédant la réouverture ; cette PR ne constitue pas à elle
-seule une livraison mensuelle utilisable avec l’interface annuelle actuelle.
+Après les deux réparations, le précontrôle réel de #5214 ne signale plus de date
+invalide, de date à normaliser ou de collision dans la copie de production. Ce
+résultat lève les anomalies de données inventoriées ; il ne valide pas les autres
+changements de #5214 ou de #5215 au regard du plan et de l’ADR 0018.
 
 ## Validation de cette réparation
 
@@ -104,18 +106,20 @@ initiale de la copie. Ce contrôle ne vaut pas répétition de la migration de
 périodicité de #5214.
 
 Le cycle des dates a également été répété sur cette copie dans une transaction
-annulée : sept mises à jour, deux suppressions archivées, aucune date hors du
-calendrier restant parmi 4 772 457 observations, aucune dépendance de formule
-introuvable après la correction précédente. Les autres observations des cinq
+annulée : trois mises à jour, six suppressions et neuf originaux archivés, aucune
+date hors du calendrier restant parmi 4 772 453 observations, aucune dépendance
+de formule introuvable après la correction précédente. Les autres observations des cinq
 couples indicateur/collectivité concernés, notamment les séries externes, restent
 identiques. Le revert restitue toutes les images initiales et réactive les deux
-triggers de métadonnées. Le précontrôle réel de #5214 signale encore les six
-observations mensuelles en collision si elles sont traitées comme annuelles.
+triggers de métadonnées. Le précontrôle réel de #5214 ne signale aucune anomalie
+parmi les 4 772 453 observations restantes.
 
-Les suites pgTAP passent : 22 assertions pour la formule et 37 pour les dates,
+Les suites pgTAP passent : 22 assertions pour la formule et 40 pour les dates,
 avec les vrais fichiers deploy/verify/revert. Elles couvrent aussi le rejeu,
 les collisions, les données modifiées depuis l’approbation, les références de
 score, le retour arrière après éditions concurrentes et les changements de fuseau.
+Elles vérifient aussi les deux valeurs de Margny retenues au 1er janvier, le
+résultat absent conservé à NULL et l’archivage de leurs six observations originales.
 La vérification durable accepte les éditions métier ordinaires et les colonnes
 ajoutées ultérieurement ; les contrôles de rejeu et de revert restent stricts.
 

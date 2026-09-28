@@ -3,7 +3,7 @@
 \set ON_ERROR_STOP on
 CREATE EXTENSION IF NOT EXISTS pgtap;
 CREATE SCHEMA private;
-SELECT plan(37);
+SELECT plan(40);
 CREATE TABLE public.indicateur_definition (id integer PRIMARY KEY);
 CREATE TABLE public.indicateur_valeur (
  id integer PRIMARY KEY, indicateur_id integer NOT NULL, collectivite_id integer NOT NULL,
@@ -21,12 +21,12 @@ INSERT INTO public.approved_dates VALUES
     (24464, 135, 1466, DATE '0001-01-01 BC', DATE '2024-01-01', TIMESTAMPTZ '2023-09-08 14:20:15.021497+00'),
     (27353, 333, 3830, DATE '0001-01-01 BC', NULL, TIMESTAMPTZ '2024-12-16 10:57:34.65994+00'),
     (287811340, 45906, 5596, DATE '20225-01-01', NULL, TIMESTAMPTZ '2026-03-05 10:12:11.546324+00'),
-    (11979621, 31816, 2181, DATE '202501-01-01', DATE '2025-01-01', TIMESTAMPTZ '2025-08-05 10:00:27.486379+00'),
-    (11979622, 31816, 2181, DATE '202502-01-01', DATE '2025-02-01', TIMESTAMPTZ '2025-08-05 10:00:29.529076+00'),
-    (11979623, 31816, 2181, DATE '202503-01-01', DATE '2025-03-01', TIMESTAMPTZ '2025-08-05 10:00:31.201245+00'),
-    (11979624, 31816, 2181, DATE '202504-01-01', DATE '2025-04-01', TIMESTAMPTZ '2025-08-05 10:00:34.413885+00'),
-    (12374016, 32392, 2181, DATE '202511-01-01', DATE '2025-11-01', TIMESTAMPTZ '2025-09-04 19:49:53.948972+00'),
-    (12374017, 32392, 2181, DATE '202512-01-01', DATE '2025-12-01', TIMESTAMPTZ '2025-09-04 19:50:03.704695+00');
+    (11979621, 31816, 2181, DATE '202501-01-01', NULL::date, TIMESTAMPTZ '2025-08-05 10:00:27.486379+00'),
+    (11979622, 31816, 2181, DATE '202502-01-01', NULL::date, TIMESTAMPTZ '2025-08-05 10:00:29.529076+00'),
+    (11979623, 31816, 2181, DATE '202503-01-01', NULL::date, TIMESTAMPTZ '2025-08-05 10:00:31.201245+00'),
+    (11979624, 31816, 2181, DATE '202504-01-01', DATE '2025-01-01', TIMESTAMPTZ '2025-08-05 10:00:34.413885+00'),
+    (12374016, 32392, 2181, DATE '202511-01-01', NULL::date, TIMESTAMPTZ '2025-09-04 19:49:53.948972+00'),
+    (12374017, 32392, 2181, DATE '202512-01-01', DATE '2025-01-01', TIMESTAMPTZ '2025-09-04 19:50:03.704695+00');
 CREATE FUNCTION public.fixture_observations() RETURNS jsonb LANGUAGE sql STABLE AS $$
  SELECT coalesce(jsonb_agg(to_jsonb(v) ORDER BY id),'[]'::jsonb) FROM public.indicateur_valeur v
 $$;
@@ -36,7 +36,11 @@ SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair),0::bigint
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
 SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,'Empty revert removes its empty archive');
 INSERT INTO public.indicateur_valeur
-SELECT id,indicateur_id,collectivite_id,old_date,NULL,id%11,'synthetic result comment',id%13,'synthetic objective comment',2.5,
+SELECT id,indicateur_id,collectivite_id,old_date,NULL,
+ CASE id WHEN 11979621 THEN 5 WHEN 11979622 THEN 7 WHEN 11979623 THEN 2 WHEN 11979624 THEN 8 WHEN 12374016 THEN NULL WHEN 12374017 THEN NULL ELSE id%11 END,
+ 'synthetic result comment',
+ CASE id WHEN 11979621 THEN 3 WHEN 11979622 THEN 5 WHEN 11979623 THEN 7 WHEN 11979624 THEN 9 WHEN 12374016 THEN 2 WHEN 12374017 THEN 3 ELSE id%13 END,
+ 'synthetic objective comment',2.5,
  old_modified_at,TIMESTAMPTZ '2020-01-01 12:00:00+00','00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002',false,ARRAY['synthetic.dependency']
 FROM public.approved_dates;
 INSERT INTO public.indicateur_valeur (id,indicateur_id,collectivite_id,date_valeur,metadonnee_id,resultat,modified_at,created_at,calcul_auto)
@@ -85,13 +89,16 @@ SELECT public.fixture_reset();
 \ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
 \ir ../../sqitch/verify/indicateur/correct-dates-historiques.sql
 SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair),9::bigint,'All nine changed records are archived');
-SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE apres IS NULL),2::bigint,'Exactly two approved deletions are archived');
-SELECT is((SELECT count(*) FROM public.indicateur_valeur v JOIN public.approved_dates m USING(id) WHERE v.date_valeur=m.new_date),7::bigint,'Exactly seven approved date mappings are applied');
-SELECT is((SELECT count(*) FROM public.indicateur_valeur WHERE id IN (27353,287811340)),0::bigint,'Only the two designated local observations are removed');
+SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE apres IS NULL),6::bigint,'Exactly six approved deletions are archived');
+SELECT is((SELECT count(*) FROM public.indicateur_valeur v JOIN public.approved_dates m USING(id) WHERE v.date_valeur=m.new_date),3::bigint,'Exactly three approved date mappings are applied');
+SELECT is((SELECT count(*) FROM public.indicateur_valeur WHERE id IN (27353,287811340,11979621,11979622,11979623,12374016)),0::bigint,'Only the six designated local observations are removed');
 SELECT ok(NOT EXISTS(SELECT 1 FROM private.indicateur_valeur_date_repair a JOIN public.indicateur_valeur v ON v.id=a.valeur_id WHERE (to_jsonb(v)-ARRAY['date_valeur','modified_at','modified_by']) IS DISTINCT FROM (a.avant-ARRAY['date_valeur','modified_at','modified_by'])),'Results, objectives, comments, provenance and other fields are preserved');
 SELECT is((SELECT jsonb_agg(to_jsonb(v) ORDER BY id) FROM public.indicateur_valeur v WHERE id IN (42,43)),(SELECT jsonb_agg(r ORDER BY (r->>'id')::integer) FROM public.fixture_baseline b CROSS JOIN LATERAL jsonb_array_elements(b.observations) r WHERE (r->>'id')::integer IN (42,43)),'Unrelated and imported source rows are unchanged');
 SELECT is((SELECT date_valeur FROM public.indicateur_valeur WHERE id=24464),DATE '2024-01-01','Bouguenais is assigned to 2024');
-SELECT is((SELECT array_agg(date_valeur::text ORDER BY date_valeur) FROM public.indicateur_valeur WHERE collectivite_id=2181),ARRAY['2025-01-01','2025-02-01','2025-03-01','2025-04-01','2025-11-01','2025-12-01'],'Margny retains six separate monthly dates');
+SELECT is((SELECT array_agg(date_valeur::text ORDER BY date_valeur) FROM public.indicateur_valeur WHERE collectivite_id=2181),ARRAY['2025-01-01','2025-01-01'],'Margny retains one January 1 observation per indicator');
+SELECT is((SELECT jsonb_build_array(id,resultat,objectif) FROM public.indicateur_valeur WHERE indicateur_id=31816 AND collectivite_id=2181),'[11979624,8,9]'::jsonb,'The approved latest result 8 and objective 9 are retained without aggregation');
+SELECT is((SELECT jsonb_build_array(id,resultat,objectif) FROM public.indicateur_valeur WHERE indicateur_id=32392 AND collectivite_id=2181),'[12374017,null,3]'::jsonb,'The approved latest objective 3 is retained and missing result stays null');
+SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE (avant->>'collectivite_id')::integer=2181),6::bigint,'All six original Margny observations remain in the private archive');
 SELECT ok(NOT has_table_privilege('anon','private.indicateur_valeur_date_repair','SELECT') AND NOT has_table_privilege('authenticated','private.indicateur_valeur_date_repair','SELECT') AND NOT has_table_privilege('service_role','private.indicateur_valeur_date_repair','SELECT'),'Archive is inaccessible to application roles');
 SELECT public.fixture_observations() AS after_repair \gset
 SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) AS archive_after FROM private.indicateur_valeur_date_repair a \gset

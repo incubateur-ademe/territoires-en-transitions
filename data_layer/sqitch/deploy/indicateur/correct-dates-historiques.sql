@@ -7,8 +7,10 @@ SET LOCAL TIME ZONE 'UTC';
 SET LOCAL DateStyle = 'ISO, YMD';
 SET LOCAL lock_timeout = '5s';
 
--- Décisions métier explicites du 28 septembre 2026. Aucun calcul de cadence
--- depuis une date : les six observations de Margny restent six observations.
+-- Décisions métier explicites du 28 septembre 2026. Après export des six
+-- originaux de Margny, conserver seulement les observations 11979624 et 12374017
+-- au 1er janvier 2025. Les quatre autres sont archivées avant suppression.
+-- Aucun choix automatique de dernière valeur ni agrégation à partir des dates.
 CREATE TEMP TABLE indicateur_date_repairs (
     valeur_id integer PRIMARY KEY,
     indicateur_id integer NOT NULL,
@@ -21,14 +23,14 @@ INSERT INTO indicateur_date_repairs VALUES
     (24464, 135, 1466, DATE '0001-01-01 BC', DATE '2024-01-01', TIMESTAMPTZ '2023-09-08 14:20:15.021497+00'),
     (27353, 333, 3830, DATE '0001-01-01 BC', NULL, TIMESTAMPTZ '2024-12-16 10:57:34.65994+00'),
     (287811340, 45906, 5596, DATE '20225-01-01', NULL, TIMESTAMPTZ '2026-03-05 10:12:11.546324+00'),
-    (11979621, 31816, 2181, DATE '202501-01-01', DATE '2025-01-01', TIMESTAMPTZ '2025-08-05 10:00:27.486379+00'),
-    (11979622, 31816, 2181, DATE '202502-01-01', DATE '2025-02-01', TIMESTAMPTZ '2025-08-05 10:00:29.529076+00'),
-    (11979623, 31816, 2181, DATE '202503-01-01', DATE '2025-03-01', TIMESTAMPTZ '2025-08-05 10:00:31.201245+00'),
-    (11979624, 31816, 2181, DATE '202504-01-01', DATE '2025-04-01', TIMESTAMPTZ '2025-08-05 10:00:34.413885+00'),
-    (12374016, 32392, 2181, DATE '202511-01-01', DATE '2025-11-01', TIMESTAMPTZ '2025-09-04 19:49:53.948972+00'),
-    (12374017, 32392, 2181, DATE '202512-01-01', DATE '2025-12-01', TIMESTAMPTZ '2025-09-04 19:50:03.704695+00');
+    (11979621, 31816, 2181, DATE '202501-01-01', NULL::date, TIMESTAMPTZ '2025-08-05 10:00:27.486379+00'),
+    (11979622, 31816, 2181, DATE '202502-01-01', NULL::date, TIMESTAMPTZ '2025-08-05 10:00:29.529076+00'),
+    (11979623, 31816, 2181, DATE '202503-01-01', NULL::date, TIMESTAMPTZ '2025-08-05 10:00:31.201245+00'),
+    (11979624, 31816, 2181, DATE '202504-01-01', DATE '2025-01-01', TIMESTAMPTZ '2025-08-05 10:00:34.413885+00'),
+    (12374016, 32392, 2181, DATE '202511-01-01', NULL::date, TIMESTAMPTZ '2025-09-04 19:49:53.948972+00'),
+    (12374017, 32392, 2181, DATE '202512-01-01', DATE '2025-01-01', TIMESTAMPTZ '2025-09-04 19:50:03.704695+00');
 
--- Archive administrative, sans FK : les deux observations supprimées doivent
+-- Archive administrative, sans FK : les six observations supprimées doivent
 -- rester restaurables. Aucun accès par les rôles applicatifs.
 CREATE TABLE IF NOT EXISTS private.indicateur_valeur_date_repair (
     valeur_id integer PRIMARY KEY,
