@@ -16,8 +16,8 @@
 import { collectiviteBanatic2025TransfertTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-transfert.table';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { findCollectiviteIdBySiren } from '../collectivite-db';
-import { getCsvPathFromArgv, parseCsvRows, readCsvFile } from '../csv';
-import { getDatabase } from '../db';
+import { getCsvPathFromArgv, parseCsvRows, readCsvFile } from '../../shared/csv';
+import { getDatabase } from '../../shared/db';
 import {
   formatNatureTransfert,
   groupByEpci,

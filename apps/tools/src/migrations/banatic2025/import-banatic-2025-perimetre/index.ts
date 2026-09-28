@@ -24,8 +24,8 @@ import { collectiviteBanatic2025PerimetreTable } from '@tet/backend/collectivite
 import { sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { findCollectiviteIdBySiren } from '../collectivite-db';
-import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../csv';
-import { getDatabase } from '../db';
+import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../../shared/csv';
+import { getDatabase } from '../../shared/db';
 import {
   collectDeclaredNbMembres,
   countCommunesByEpci,
