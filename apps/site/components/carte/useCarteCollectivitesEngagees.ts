@@ -1,12 +1,44 @@
-import { Json, Views } from '@tet/api';
+import { Json } from '@tet/api';
 import { supabase } from '@/site/app/initSupabase';
 import useSWR from 'swr';
 
-export type labellisation_w_geojson = Views<'site_labellisation'> & {
+/** Ligne de la vue `site_labellisation` */
+type SiteLabellisation = {
+  active: boolean | null;
+  cae_etoiles: number | null;
+  cae_obtenue_le: string | null;
+  cae_score_programme: number | null;
+  cae_score_realise: number | null;
+  code_siren_insee: string | null;
+  collectivite_id: number | null;
+  cot: boolean | null;
+  departement_code: string | null;
+  departement_name: string | null;
+  eci_etoiles: number | null;
+  eci_obtenue_le: string | null;
+  eci_score_programme: number | null;
+  eci_score_realise: number | null;
+  engagee: boolean | null;
+  labellisee: boolean | null;
+  nature_collectivite: string | null;
+  nom: string | null;
+  population_totale: number | null;
+  region_code: string | null;
+  region_name: string | null;
+  type_collectivite: string | null;
+};
+
+/** Ligne de la vue `site_region` */
+type SiteRegion = {
+  insee: string | null;
+  libelle: string | null;
+};
+
+export type labellisation_w_geojson = SiteLabellisation & {
   geojson?: Json;
 };
 
-type region_w_geojson = Views<'site_region'> & {
+export type region_w_geojson = SiteRegion & {
   geojson?: Json;
 };
 

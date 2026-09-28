@@ -2,17 +2,34 @@ import { supabase } from '@/site/app/initSupabase';
 import { EtoilesLabel } from '@/site/app/types';
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Tables } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
 
-export type Labellisations = Tables<'labellisation'>;
+export type Labellisations = {
+  annee: number | null;
+  collectivite_id: number | null;
+  etoiles: number;
+  id: number;
+  obtenue_le: string;
+  referentiel: ReferentielId;
+  score_programme: number | null;
+  score_realise: number | null;
+};
 export type Indicateurs = {
   date_valeur: string;
   resultat: number;
   identifiant: string;
   source?: string;
 };
-export type IndicateurArtificialisation =
-  Tables<'indicateur_artificialisation'>;
+export type IndicateurArtificialisation = {
+  activite: number;
+  collectivite_id: number;
+  ferroviaire: number;
+  habitat: number;
+  inconnue: number;
+  mixte: number;
+  routiere: number;
+  total: number;
+};
 
 type Collectivite = {
   collectivite_id: number;

@@ -1,13 +1,11 @@
 'use client';
 
-import { Json, Views } from '@tet/api';
+import { labellisation_w_geojson } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';
 import { useRouter } from 'next/navigation';
 import { FeatureGroup, GeoJSON, Tooltip } from 'react-leaflet';
-
-type labellisation_w_geojson = Views<'site_labellisation'> & { geojson?: Json };
 
 type CollectiviteFeatureProps = {
   collectivite: labellisation_w_geojson;

@@ -1,13 +1,9 @@
 'use client';
 
-import { Json, Views } from '@tet/api';
+import { region_w_geojson } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';
 import { FeatureGroup, GeoJSON } from 'react-leaflet';
-
-type region_w_geojson = Views<'site_region'> & {
-  geojson?: Json;
-};
 
 type RegionFeatureProps = {
   region: region_w_geojson;

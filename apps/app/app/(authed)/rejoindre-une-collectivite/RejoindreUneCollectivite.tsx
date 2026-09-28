@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Enums } from '@tet/api';
+import { MembreFonction } from '@tet/domain/collectivites';
 import {
   Accordion,
   Checkbox,
@@ -21,7 +21,7 @@ import {
   RejoindreUneCollectiviteProps,
 } from './useRejoindreUneCollectivite';
 
-const ROLES: Array<{ value: Enums<'membre_fonction'>; label: string }> = [
+const ROLES: Array<{ value: MembreFonction; label: string }> = [
   { value: 'politique', label: 'Équipe politique' },
   { value: 'technique', label: 'Directions et services techniques' },
   { value: 'partenaire', label: 'Partenaire' },

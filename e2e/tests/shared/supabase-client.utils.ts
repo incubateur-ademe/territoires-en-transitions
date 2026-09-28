@@ -1,6 +1,5 @@
 import { BrowserContext, Cookie } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '@tet/api';
 
 export class SupabaseClient {
   private readonly client;
@@ -11,7 +10,7 @@ export class SupabaseClient {
     if (!url || !key) {
       throw new Error('Supabase credentials missing');
     }
-    this.client = createClient<Database>(url, key);
+    this.client = createClient(url, key);
   }
 
   /**
