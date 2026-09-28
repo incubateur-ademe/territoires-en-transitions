@@ -15,7 +15,10 @@ export const renderUnit = (
   const section = unit.section ? ` · partie « ${unit.section} »` : '';
   const path =
     unit.headingPath.length > 0 ? ` · ${unit.headingPath.join(' > ')}` : '';
-  const header = `[Extrait ${index + 1}/${count} · ${pages}${section}${path}]`;
+  const title = unit.title ? ` · fiche « ${unit.title} »` : '';
+  const header = `[Extrait ${
+    index + 1
+  }/${count} · ${pages}${section}${path}${title}]`;
 
   const body: string[] = [];
   let currentPage: number | null = null;
