@@ -13,8 +13,9 @@
 #
 # Coolify n'expose aucune API de credentials registry : ce geste reste un SSH.
 #
-# Les serveurs applicatifs n'ont pas de port 22 public : on passe par le
-# serveur Coolify en rebond (ProxyCommand). L'authentification vers le rebond
+# On passe par le serveur Coolify en rebond (ProxyCommand) : nonprod et preview
+# n'ont pas de port 22 public, et celui de la prod n'accepte que l'IP de
+# Coolify. L'authentification vers le rebond
 # utilise l'identité par défaut de l'opérateur (agent SSH), celle vers la cible
 # la clé root lue dans Secret Manager — d'où le ProxyCommand explicite plutôt
 # qu'un -J, qui propagerait IdentitiesOnly au rebond.
@@ -29,6 +30,10 @@
 #   TARGET_HOST             IP (privée) du serveur applicatif cible
 #   SERVER_KEY_SECRET_NAME  secret SM de la clé privée SSH root du serveur
 #   GHCR_PULL_SECRET_NAME   secret SM username|token GHCR
+#   SECRET_PROJECT_ID       projet Scaleway du secret GHCR (explicite : le
+#                           projet par défaut du profil scw peut être un autre)
+#   SERVER_KEY_SECRET_PROJECT_ID  (optionnel) projet de la clé du serveur, si
+#                           différent (prod), défaut SECRET_PROJECT_ID
 #   BASTION_HOST            (optionnel) IP publique du serveur Coolify. Si vide,
 #                           connexion directe à TARGET_HOST.
 #   BASTION_USER            (optionnel) utilisateur du rebond, défaut tet-ops
@@ -38,6 +43,8 @@ set -euo pipefail
 : "${TARGET_HOST:?TARGET_HOST non défini}"
 : "${SERVER_KEY_SECRET_NAME:?SERVER_KEY_SECRET_NAME non défini}"
 : "${GHCR_PULL_SECRET_NAME:?GHCR_PULL_SECRET_NAME non défini}"
+: "${SECRET_PROJECT_ID:?SECRET_PROJECT_ID non défini}"
+_server_key_project="${SERVER_KEY_SECRET_PROJECT_ID:-${SECRET_PROJECT_ID}}"
 
 _bastion_host="${BASTION_HOST:-}"
 _bastion_user="${BASTION_USER:-tet-ops}"
@@ -60,6 +67,7 @@ trap 'rm -rf "$_tmpdir"' EXIT
 echo "→ Lecture de la clé root du serveur (${SERVER_KEY_SECRET_NAME})…"
 scw secret version access-by-path \
   secret-name="${SERVER_KEY_SECRET_NAME}" secret-path=/ revision=latest \
+  project-id="${_server_key_project}" \
   --output=json | jq -r '.data // empty' | base64 --decode \
   >"${_tmpdir}/server_key"
 chmod 600 "${_tmpdir}/server_key"
@@ -71,6 +79,7 @@ fi
 echo "→ Lecture des credentials GHCR (${GHCR_PULL_SECRET_NAME})…"
 _ghcr_raw="$(scw secret version access-by-path \
   secret-name="${GHCR_PULL_SECRET_NAME}" secret-path=/ revision=latest \
+  project-id="${SECRET_PROJECT_ID}" \
   --output=json | jq -r '.data // empty' | base64 --decode)"
 _ghcr_user="${_ghcr_raw%%|*}"
 _ghcr_token="${_ghcr_raw#*|}"

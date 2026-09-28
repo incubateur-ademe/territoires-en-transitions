@@ -10,7 +10,9 @@
 #   terraform -chdir=../platform output -raw coolify_public_ip
 #   terraform -chdir=../nonprod  output -raw server_private_ip
 #   terraform -chdir=../nonprod  output -raw server_ssh_key_secret_name
-#   (idem pour prod et preview)
+#   (idem pour preview)
+#   terraform -chdir=../prod     output -raw server_ssh_host
+#   terraform -chdir=../platform output -raw prod_project_id
 
 scaleway_project_id = "00000000-0000-0000-0000-000000000000"
 coolify_public_ip   = "203.0.113.20"
@@ -18,17 +20,18 @@ coolify_public_ip   = "203.0.113.20"
 app_servers = {
   nonprod = {
     name                = "tet-nonprod-apps"
-    private_ip          = "10.0.1.10"
+    ssh_host            = "10.0.1.10"
     ssh_key_secret_name = "tet-nonprod-server-ssh-key"
   }
   prod = {
     name                = "tet-prod-apps"
-    private_ip          = "10.0.3.10"
+    ssh_host            = "203.0.113.30" # IP publique : VPC séparé
     ssh_key_secret_name = "tet-prod-server-ssh-key"
+    ssh_key_project_id  = "11111111-1111-1111-1111-111111111111"
   }
   preview = {
     name                = "tet-preview-apps"
-    private_ip          = "10.0.4.10"
+    ssh_host            = "10.0.4.10"
     ssh_key_secret_name = "tet-preview-server-ssh-key"
   }
 }

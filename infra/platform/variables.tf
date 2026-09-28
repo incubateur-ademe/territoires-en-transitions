@@ -29,11 +29,16 @@ variable "network_plan" {
 
     Ces adresses sont le contrat entre ce stack et les stacks applicatifs :
     chaque stack déclare la même valeur dans sa propre variable
-    private_ipv4_address. Les modifier ici sans les reporter dans prod/,
-    nonprod/ et preview/ casse le pilotage SSH par Coolify.
+    private_ipv4_address. Les modifier ici sans les reporter dans nonprod/ et
+    preview/ casse le pilotage SSH par Coolify.
+
+    La prod n'est pas dans ce VPC : elle a son propre projet et son propre VPC
+    (infra/prod), sans lien réseau avec celui-ci.
 
     10.0.2.0/24 est volontairement laissé libre : staging n'a pas de Private
-    Network propre, ses conteneurs vivent sur le serveur nonprod.
+    Network propre, ses conteneurs vivent sur le serveur nonprod. 10.0.3.0/24
+    l'est aussi : c'était l'ancien PN prod, le garder libre évite toute
+    confusion avec le VPC prod qui l'utilise.
   EOT
   type = map(object({
     ipv4_subnet         = string
@@ -42,7 +47,6 @@ variable "network_plan" {
   default = {
     platform = { ipv4_subnet = "10.0.0.0/24", server_ipv4_address = "10.0.0.10" }
     nonprod  = { ipv4_subnet = "10.0.1.0/24", server_ipv4_address = "10.0.1.10" }
-    prod     = { ipv4_subnet = "10.0.3.0/24", server_ipv4_address = "10.0.3.10" }
     preview  = { ipv4_subnet = "10.0.4.0/24", server_ipv4_address = "10.0.4.10" }
   }
   validation {
@@ -169,4 +173,10 @@ variable "coolify_backups_credentials_secret_name" {
   description = "Nom du secret Secret Manager portant la clé Object Storage des backups (access_key|secret_key). Doit rester aligné sur s3_credentials_secret_name (infra/coolify)."
   type        = string
   default     = "tet-platform-coolify-s3-credentials"
+}
+
+variable "prod_project_name" {
+  description = "Nom du projet Scaleway de production, créé par ce stack. La prod y a son propre VPC, sans lien réseau avec le VPC partagé."
+  type        = string
+  default     = "tet-prod"
 }

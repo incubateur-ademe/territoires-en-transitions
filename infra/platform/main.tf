@@ -1,6 +1,10 @@
 # Socle transverse : réseau, control plane Coolify, zones DNS et stockage.
-# Rien ici n'appartient à un environnement applicatif — les stacks prod,
-# nonprod et preview viennent s'y brancher.
+# Rien ici n'appartient à un environnement applicatif — les stacks nonprod et
+# preview viennent s'y brancher.
+#
+# La prod est à part : projet Scaleway dédié (créé ici), VPC propre (créé par
+# infra/prod), aucun lien réseau avec le VPC partagé. Coolify la pilote en SSH
+# sur son IP publique, ouverte à la seule IP publique du control plane.
 
 locals {
   # Tiers portant un serveur applicatif. Le tier platform n'en fait pas partie :
@@ -73,6 +77,21 @@ module "coolify" {
 
   ssh_allowed_ips     = var.coolify_ssh_allowed_ips
   ssh_authorized_keys = var.coolify_ssh_authorized_keys
+}
+
+# --- Projet de production ---
+#
+# Un projet par frontière de confiance : prod n'est joignable ni par le réseau
+# ni, à terme, par les droits IAM des autres environnements. Les ressources
+# prod sont créées par infra/prod dans ce projet ; seul le projet vit ici, pour
+# que platform puisse en publier l'ID sans dépendre de prod.
+resource "scaleway_account_project" "prod" {
+  name        = var.prod_project_name
+  description = "Production TET. VPC isolé, piloté par Coolify en SSH public filtré. Géré par Terraform (infra/platform)."
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # --- DNS ---

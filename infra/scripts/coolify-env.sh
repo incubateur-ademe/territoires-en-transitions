@@ -13,11 +13,16 @@
 # environnements, d'où l'absence de préfixe d'environnement ici.
 export COOLIFY_ENDPOINT="${COOLIFY_ENDPOINT:-https://coolify.territoiresentransitions.fr/api/v1}"
 _secret_name="${COOLIFY_TOKEN_SECRET_NAME:-tet-platform-coolify-api-token}"
+# Projet du secret. Sans valeur, scw prend le projet par défaut du profil : si
+# celui-ci vise un autre projet, le token est introuvable, ou pire, c'est un
+# secret homonyme d'un autre projet qui est lu.
+_project_arg=()
+[ -n "${COOLIFY_TOKEN_SECRET_PROJECT_ID:-}" ] && _project_arg=(project-id="$COOLIFY_TOKEN_SECRET_PROJECT_ID")
 
 if [ -z "${COOLIFY_TOKEN:-}" ] && command -v scw >/dev/null 2>&1; then
   # Secret Manager renvoie la valeur encodée en base64 dans .data → on décode.
   COOLIFY_TOKEN="$(scw secret version access-by-path \
-    secret-name="$_secret_name" secret-path=/ revision=latest \
+    secret-name="$_secret_name" secret-path=/ revision=latest "${_project_arg[@]}" \
     --output=json 2>/dev/null | jq -r '.data // empty' | base64 --decode 2>/dev/null || true)"
 fi
 
@@ -35,3 +40,4 @@ export COOLIFY_TOKEN
 # Le provider Terraform `coolify` exige `token` : on le fournit via TF_VAR_*.
 export TF_VAR_coolify_token="$COOLIFY_TOKEN"
 echo "coolify-env.sh : COOLIFY_TOKEN chargé, endpoint=$COOLIFY_ENDPOINT"
+unset _project_arg

@@ -43,13 +43,19 @@ resource "scaleway_secret_version" "server_key" {
 
 # Security group : ne filtre que l'interface *publique* sur Scaleway.
 #
-# Le port 22 n'est volontairement ouvert pour personne par défaut
-# (ssh_allowed_ips = []). Coolify joint ce serveur par son IP privée, et les
-# humains passent par le serveur Coolify en bastion (ssh -J). Le trafic privé
-# est filtré par l'ACL du VPC, pas ici.
+# Port 22 fermé par défaut (ssh_allowed_ips = []) : Coolify joint le serveur
+# par son IP privée et les humains rebondissent par le serveur Coolify
+# (ssh -J). Le trafic privé est filtré par l'ACL du VPC, pas ici.
+#
+# Exception : la prod, dans un VPC séparé, ouvre le 22 à la seule IP publique
+# du control plane.
 resource "scaleway_instance_security_group" "server" {
-  name                    = "${local.server_name}-sg"
-  description             = "Serveur applicatif TET (${var.tier}). SSH public fermé : accès via bastion Coolify sur IP privée."
+  name = "${local.server_name}-sg"
+  description = (
+    length(var.ssh_allowed_ips) > 0
+    ? "Serveur applicatif TET (${var.tier}). SSH public limité à : ${join(", ", var.ssh_allowed_ips)}."
+    : "Serveur applicatif TET (${var.tier}). SSH public fermé : accès via bastion Coolify sur IP privée."
+  )
   inbound_default_policy  = "drop"
   outbound_default_policy = "accept"
   external_rules          = true

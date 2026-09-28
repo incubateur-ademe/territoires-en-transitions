@@ -16,8 +16,18 @@ output "server_public_ip" {
 }
 
 output "server_private_ip" {
-  description = "IP privée du serveur de production. Adresse SSH enregistrée dans Coolify."
+  description = "IP privée du serveur de production, dans le VPC prod. Injoignable depuis Coolify : ne pas l'enregistrer comme adresse SSH."
   value       = module.app_server.private_ip
+}
+
+output "server_ssh_host" {
+  description = "Adresse SSH du serveur de production pour Coolify : son IP publique, ouverte à la seule IP du control plane. Valeur ssh_host de app_servers.prod dans infra/coolify."
+  value       = module.app_server.public_ip
+}
+
+output "vpc_id" {
+  description = "ID du VPC prod."
+  value       = module.network.vpc_id
 }
 
 output "server_ssh_key_secret_name" {

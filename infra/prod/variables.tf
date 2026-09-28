@@ -1,5 +1,5 @@
 variable "scaleway_project_id" {
-  description = "UUID du projet Scaleway. À récupérer dans la console Scaleway (Project Settings)."
+  description = "UUID du projet Scaleway de production, distinct du projet principal. Valeur de : terraform -chdir=../platform output -raw prod_project_id"
   type        = string
 }
 
@@ -17,19 +17,33 @@ variable "scaleway_zone" {
 
 # --- Réseau ---
 #
-# Valeurs produites par infra/platform. Référencées par valeur et non par
-# terraform_remote_state : les stacks restent découplés, au prix d'un report
-# manuel après le premier apply de platform.
+# VPC propre à la prod, créé par ce stack. Seul lien avec infra/platform :
+# l'IP publique du control plane, reportée par valeur (pas de
+# terraform_remote_state, les stacks restent découplés).
 
-variable "private_network_id" {
-  description = "ID du Private Network prod. Valeur de : terraform -chdir=../platform output -json private_network_ids | jq -r .prod"
+variable "private_network_ipv4_subnet" {
+  description = "CIDR du Private Network prod, dans le VPC prod."
   type        = string
+  default     = "10.0.3.0/24"
 }
 
 variable "server_private_ipv4_address" {
-  description = "IP privée fixe du serveur prod. Doit correspondre à network_plan[\"prod\"].server_ipv4_address dans infra/platform, sinon l'ACL du VPC bloque le SSH de Coolify."
+  description = "IP privée fixe du serveur prod dans son Private Network. Doit appartenir à private_network_ipv4_subnet."
   type        = string
   default     = "10.0.3.10"
+}
+
+variable "coolify_public_ip" {
+  description = "IP publique du control plane Coolify : seule source autorisée sur le port 22 du serveur prod. Valeur de : terraform -chdir=../platform output -raw coolify_public_ip. À réappliquer si elle change, sinon Coolify perd l'accès à la prod."
+  type        = string
+  validation {
+    condition = (
+      can(regex("^(\\d{1,3}\\.){3}\\d{1,3}$", var.coolify_public_ip)) &&
+      can(cidrhost("${var.coolify_public_ip}/32", 0)) &&
+      !can(regex("^(0\\.|10\\.|127\\.|169\\.254\\.|192\\.168\\.|172\\.(1[6-9]|2\\d|3[01])\\.)", var.coolify_public_ip))
+    )
+    error_message = "coolify_public_ip doit être l'IPv4 publique du control plane, sans masque (ni privée, ni 0.0.0.0)."
+  }
 }
 
 # --- Serveur applicatif ---
@@ -47,7 +61,7 @@ variable "server_root_volume_size_in_gb" {
 }
 
 variable "server_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait via le bastion Coolify (ssh -J), le port 22 n'étant pas exposé publiquement."
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait via le bastion Coolify (ssh -J), le port 22 n'étant ouvert qu'à l'IP du control plane."
   type        = list(string)
   default     = []
 }

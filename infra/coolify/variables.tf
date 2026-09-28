@@ -62,16 +62,20 @@ variable "app_servers" {
 
     Chaque valeur provient des outputs du stack du tier correspondant :
       name                = server_name
-      private_ip          = server_private_ip
+      ssh_host            = server_private_ip (nonprod, preview)
+                            server_ssh_host   (prod : IP publique, VPC séparé)
       ssh_key_secret_name = server_ssh_key_secret_name
+      ssh_key_project_id  = projet du secret, si ce n'est pas scaleway_project_id
+                            (prod : terraform -chdir=../platform output -raw prod_project_id)
 
     Le lien entre stacks se fait par valeurs et noms de secrets, jamais par
     terraform_remote_state : les stacks restent découplés.
   EOT
   type = map(object({
     name                = string
-    private_ip          = string
+    ssh_host            = string
     ssh_key_secret_name = string
+    ssh_key_project_id  = optional(string)
   }))
   default = {}
 }

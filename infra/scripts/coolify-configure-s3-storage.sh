@@ -17,6 +17,8 @@
 #   S3_BUCKET                 nom du bucket Scaleway
 #   S3_REGION                 ex. fr-par
 #   S3_CREDENTIALS_SECRET_NAME  secret SM access_key|secret_key
+#   SECRET_PROJECT_ID           projet Scaleway du secret (explicite : le
+#                               projet par défaut du profil scw peut être un autre)
 #   S3_DESCRIPTION            (optionnel) description Coolify
 set -euo pipefail
 
@@ -27,6 +29,7 @@ set -euo pipefail
 : "${S3_BUCKET:?S3_BUCKET non défini}"
 : "${S3_REGION:?S3_REGION non défini}"
 : "${S3_CREDENTIALS_SECRET_NAME:?S3_CREDENTIALS_SECRET_NAME non défini}"
+: "${SECRET_PROJECT_ID:?SECRET_PROJECT_ID non défini}"
 
 _DESCRIPTION="${S3_DESCRIPTION:-Scaleway Object Storage géré par Terraform (infra/coolify).}"
 
@@ -40,6 +43,7 @@ done
 echo "→ Lecture des credentials Object Storage (${S3_CREDENTIALS_SECRET_NAME})…"
 _creds_raw="$(scw secret version access-by-path \
   secret-name="${S3_CREDENTIALS_SECRET_NAME}" secret-path=/ revision=latest \
+  project-id="${SECRET_PROJECT_ID}" \
   --output=json | jq -r '.data // empty' | base64 --decode)"
 _s3_key="${_creds_raw%%|*}"
 _s3_secret="${_creds_raw#*|}"
