@@ -22,20 +22,15 @@ export const IndicateursListFilters = ({
   setSearchParams: setFilters,
 }: Props) => {
   return (
-    <div className="w-96 md:w-[48rem] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8">
-      <FormSection title="Typologie :" className="!grid-cols-1">
-        <Checkbox
-          label="Données Open Data"
-          checked={filters.hasOpenData}
-          onChange={() => {
-            const { hasOpenData, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!hasOpenData ? { hasOpenData: true } : {}),
-            });
-          }}
-        />
-        <Field title="Catégorie">
+    <div
+      className="w-96 md:w-[48rem] max-w-[calc(100vw-2rem)] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8"
+      data-test="indicateurs.list.filters-panel"
+    >
+      <FormSection
+        title={appLabels.indicateurVueTypologie}
+        className="!grid-cols-1"
+      >
+        <Field title={appLabels.indicateurModele}>
           <IndicateurCategoriesDropdown
             values={filters.categorieNoms}
             onChange={({ categories }) => {
@@ -49,7 +44,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Indicateur complété par la collectivité">
+        <Field title={appLabels.indicateurCompleteParCollectivite}>
           <IndicateurCompletsDropdown
             values={
               filters.estRempli === undefined
@@ -83,6 +78,17 @@ export const IndicateursListFilters = ({
           }}
         />
         <Checkbox
+          label={appLabels.donneesOpenData}
+          checked={filters.hasOpenData}
+          onChange={() => {
+            const { hasOpenData, ...rest } = filters;
+            setFilters({
+              ...rest,
+              ...(!hasOpenData ? { hasOpenData: true } : {}),
+            });
+          }}
+        />
+        <Checkbox
           label={appLabels.indicateursPrives}
           checked={filters.estConfidentiel}
           onChange={() => {
@@ -106,8 +112,11 @@ export const IndicateursListFilters = ({
         />
       </FormSection>
 
-      <FormSection title="Pilotage :" className="!grid-cols-1">
-        <Field title="Plan">
+      <FormSection
+        title={appLabels.indicateurVuePilotage}
+        className="!grid-cols-1"
+      >
+        <Field title={appLabels.tableauPlan}>
           <PlansActionDropdown
             values={filters.planIds}
             onChange={({ plans }) => {

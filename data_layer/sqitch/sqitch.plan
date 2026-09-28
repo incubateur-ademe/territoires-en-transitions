@@ -1119,3 +1119,4 @@ indicateur/correct-dates-historiques [referentiel/action_score_indicateur_valeur
 @indicateur-periodicite-base 2026-09-30T12:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Réparations appliquées, schéma historique
 indicateur/periodicite_schema [indicateur/correct-dates-historiques] 2026-09-30T12:01:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute le schéma annuel compatible avec les anciens lecteurs et writers
 @indicateur-periodicite-schema 2026-09-30T12:01:01Z Emilien Escalle <emilien.escalle@escemi.com> # Livraison autonome du schéma, avant le backend
+indicateur/indicateur_vue [collectivite/collectivite utils/auth] 2026-09-28T16:00:00Z TeT <contact@territoiresentransitions.fr> # Vues filtrees des indicateurs partagees par les membres de la collectivite

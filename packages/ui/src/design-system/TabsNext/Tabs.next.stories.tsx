@@ -1,8 +1,10 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { fn } from 'storybook/test';
 import { StoryWrapper } from '../../storybook/story.wrapper';
+import { ButtonMenu } from '../Button/button-menu';
 import { TabSize } from '../Tabs/Tabs';
-import { Tabs } from './Tabs.next';
+import { Tabs, TabVariant } from './Tabs.next';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -168,6 +170,81 @@ export const All: Story = {
       </StoryWrapper>
     </div>
   ),
+};
+
+export const WithActions: Story = {
+  name: 'Avec actions',
+  args: { size: 'md', variant: 'pill' },
+  argTypes: {
+    size: { control: 'inline-radio', options: ['md', 'sm', 'xs'] },
+    variant: { control: 'inline-radio', options: ['pill', 'card'] },
+  },
+  render: ({ size, variant }) => (
+    <StoryWrapper
+      title="Onglets avec actions"
+      description="Comparez les onglets avec et sans actions. Le menu reste accessible sur les onglets actifs et inactifs, sans changer l'onglet sélectionné."
+    >
+      <TabsWithActions size={size} variant={variant} />
+    </StoryWrapper>
+  ),
+};
+
+const onRenameTab = fn();
+const onDeleteTab = fn();
+
+const TabsWithActions = ({
+  size,
+  variant,
+}: {
+  size?: TabSize;
+  variant?: TabVariant;
+}) => {
+  const [activeTab, setActiveTab] = useState('Avec actions 1');
+
+  return (
+    <Tabs size={size} variant={variant}>
+      <Tabs.List>
+        {['Sans actions', 'Avec actions 1', 'Avec actions 2'].map((label) => (
+          <Tabs.Tab
+            key={label}
+            label={label}
+            isActive={activeTab === label}
+            onClick={() => setActiveTab(label)}
+            actions={
+              label !== 'Sans actions' ? (
+                <ButtonMenu
+                  size="xs"
+                  variant="white"
+                  icon="more-2-fill"
+                  title={`Actions de l'onglet ${label}`}
+                  className="border-0 rounded !p-1 bg-transparent"
+                  menu={{
+                    placement: 'bottom-start',
+                    actions: [
+                      {
+                        label: 'Renommer',
+                        icon: 'edit-line',
+                        onClick: () => onRenameTab(label),
+                      },
+                      {
+                        label: 'Supprimer',
+                        icon: 'delete-bin-line',
+                        variant: 'destructive',
+                        onClick: () => onDeleteTab(label),
+                      },
+                    ],
+                  }}
+                />
+              ) : undefined
+            }
+          />
+        ))}
+      </Tabs.List>
+      <Tabs.Panel className="p-4 mt-4 bg-white">
+        Contenu ({activeTab})
+      </Tabs.Panel>
+    </Tabs>
+  );
 };
 
 const cardSizes: TabSize[] = ['md', 'sm', 'xs'];

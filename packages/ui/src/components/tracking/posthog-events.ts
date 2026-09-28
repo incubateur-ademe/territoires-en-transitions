@@ -83,6 +83,11 @@ export const Event = {
     trajectoires: {
       secteurLevierClick: 'indicateurs:trajectoires:secteur_levier_click',
     },
+    vues: {
+      create: 'indicateurs:vues:create',
+      updateFilters: 'indicateurs:vues:update_filters',
+      delete: 'indicateurs:vues:delete',
+    },
   },
   plans: {
     sideNavAjouterPlanClick: 'plansAction:side-nav-ajouter-plan-click',
