@@ -4,13 +4,13 @@ output "instance_id" {
 }
 
 output "endpoint_ip" {
-  description = "IP publique de l'endpoint load balancer (public)."
-  value       = scaleway_rdb_instance.main.load_balancer[0].ip
+  description = "IP publique de l'endpoint load balancer (null sans endpoint public)."
+  value       = local.public_endpoint ? scaleway_rdb_instance.main.load_balancer[0].ip : null
 }
 
 output "endpoint_port" {
-  description = "Port d'écoute Postgres sur l'endpoint public."
-  value       = scaleway_rdb_instance.main.load_balancer[0].port
+  description = "Port d'écoute Postgres sur l'endpoint public (null sans endpoint public)."
+  value       = local.public_endpoint ? scaleway_rdb_instance.main.load_balancer[0].port : null
 }
 
 output "database_name" {
@@ -30,15 +30,15 @@ output "admin_password" {
 }
 
 output "connection_uri" {
-  description = "URI Postgres publique (sslmode=require). Pour la migration initiale depuis Supabase Cloud."
-  value = format(
+  description = "URI Postgres publique (sslmode=require), null sans endpoint public. Pour la migration initiale depuis Supabase Cloud."
+  value = local.public_endpoint ? format(
     "postgres://%s:%s@%s:%d/%s?sslmode=require",
     scaleway_rdb_instance.main.user_name,
     random_password.admin.result,
     scaleway_rdb_instance.main.load_balancer[0].ip,
     scaleway_rdb_instance.main.load_balancer[0].port,
     scaleway_rdb_database.main.name,
-  )
+  ) : null
   sensitive = true
 }
 

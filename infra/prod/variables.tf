@@ -85,7 +85,7 @@ variable "pg_backup_schedule_retention" {
 }
 
 variable "pg_allowed_ips" {
-  description = "CIDR autorisés à joindre le Postgres de production via l'endpoint public. Les conteneurs passent par le réseau privé : garder cette liste aussi courte que possible."
+  description = "CIDR autorisés à joindre le Postgres de production via l'endpoint public. Vide (défaut) : pas d'endpoint public, les conteneurs passent par le réseau privé. À renseigner le temps de la migration, puis à revider."
   type        = map(string)
   default     = {}
 }

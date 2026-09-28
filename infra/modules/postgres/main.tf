@@ -11,6 +11,10 @@ terraform {
   }
 }
 
+locals {
+  public_endpoint = length(var.allowed_ips) > 0
+}
+
 resource "random_password" "admin" {
   length  = 32
   special = true
@@ -48,11 +52,15 @@ resource "scaleway_rdb_instance" "main" {
 
   settings = var.settings
 
-  # Endpoint public (load balancer Scaleway). Requis explicitement dès qu'un
-  # private_network est aussi déclaré, sinon Scaleway supprime l'endpoint public
-  # par défaut. Nécessaire pendant la migration (restore depuis Supabase Cloud
-  # via CI runner) et pour l'accès opérateur.
-  load_balancer {}
+  # Endpoint public (load balancer Scaleway), créé seulement si des IP y sont
+  # autorisées. Une instance RDB sans règle d'ACL accepte 0.0.0.0/0 : ne jamais
+  # exposer l'endpoint public sans ACL. Le bloc doit être explicite dès qu'un
+  # private_network est déclaré, sinon Scaleway ne crée pas l'endpoint public.
+  # Vider allowed_ips supprime l'endpoint public (fin de migration).
+  dynamic "load_balancer" {
+    for_each = local.public_endpoint ? [1] : []
+    content {}
+  }
 
   dynamic "private_network" {
     for_each = var.private_network_id != null ? [1] : []
@@ -73,6 +81,11 @@ resource "scaleway_rdb_instance" "main" {
 
   lifecycle {
     prevent_destroy = true
+
+    precondition {
+      condition     = local.public_endpoint || var.private_network_id != null
+      error_message = "L'instance n'aurait aucun endpoint : renseigner private_network_id ou allowed_ips."
+    }
   }
 }
 
@@ -88,7 +101,10 @@ resource "scaleway_rdb_privilege" "admin" {
   permission    = "all"
 }
 
+# Le provider exige au moins une règle : pas de ressource ACL sans endpoint public.
 resource "scaleway_rdb_acl" "main" {
+  count = local.public_endpoint ? 1 : 0
+
   instance_id = scaleway_rdb_instance.main.id
 
   dynamic "acl_rules" {
@@ -98,4 +114,9 @@ resource "scaleway_rdb_acl" "main" {
       description = acl_rules.value
     }
   }
+}
+
+moved {
+  from = scaleway_rdb_acl.main
+  to   = scaleway_rdb_acl.main[0]
 }
