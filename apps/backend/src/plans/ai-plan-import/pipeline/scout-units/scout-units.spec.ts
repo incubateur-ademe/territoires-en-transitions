@@ -182,7 +182,7 @@ describe('scoutUnits', () => {
     }
   });
 
-  it('écarte le diagnostic, garde fiches, structure, tables et unités oubliées', async () => {
+  it('écarte le diagnostic et, faute de fiches ailleurs, garde fiches, tables et unités oubliées', async () => {
     const { llm } = llmRouting(() => [
       { index: 0, type: 'structure' },
       { index: 1, type: 'diagnostic' },
@@ -194,14 +194,58 @@ describe('scoutUnits', () => {
 
     expect(result.success).toBe(true);
     if (result.success) {
+      // Le sommaire (structure) ne sert qu'au squelette : il y a des fiches.
       expect(result.data.keptUnits.map((u) => u.id)).toEqual([
-        'u0001',
         'u0003',
         'u0004',
       ]);
-      expect(result.data.discardedCount).toBe(1);
+      expect(result.data.discardedCount).toBe(2);
       expect(result.data.tokens.totalTokens).toBe(30);
     }
+  });
+
+  it('garde un tableau récapitulatif quand le document n’a pas de fiches', async () => {
+    const { llm } = llmRouting(() => [{ index: 0, type: 'structure' }]);
+
+    const result = await scoutUnits(llm, {
+      units: [unit('Tableau : Axe 1, action A, pilote X', 'section')],
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keptUnits).toHaveLength(1);
+    }
+  });
+
+  it("ne lit que le plan d'actions quand il est titré et contient des fiches", async () => {
+    const { llm, calls } = llmRouting((call) =>
+      [...call.prompt.matchAll(/#(\d+) \|/g)].map((m) => ({
+        index: Number(m[1]),
+        type: 'fiche_action',
+      }))
+    );
+    const plan = 'PLAN D’ACTIONS À 2030';
+
+    const result = await scoutUnits(llm, {
+      units: [
+        unit('Levier : planter des arbres', 'section', [], 'STRATÉGIE'),
+        unit('Action 1 : A', 'fiche', [], plan),
+        unit('Action 2 : B', 'fiche', [], plan),
+        unit('Action 3 : C', 'fiche', [], plan),
+        unit('Fiche 7 | indicateur', 'fiche', [], 'ANNEXES'),
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keptUnits.map((u) => u.text)).toEqual([
+        'Action 1 : A',
+        'Action 2 : B',
+        'Action 3 : C',
+      ]);
+      expect(result.data.discardedCount).toBe(2);
+    }
+    expect(calls[0].prompt).not.toContain('planter des arbres');
   });
 
   it('lit tout plutôt que rien quand le tri écarte toutes les unités', async () => {
