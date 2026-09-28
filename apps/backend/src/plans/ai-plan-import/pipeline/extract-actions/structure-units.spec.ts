@@ -104,8 +104,8 @@ describe('structureUnits', () => {
     expect(calls[0].prompt).toContain(
       'Extrait à structurer (extraits 1 à 2 sur 2, pages 1 à 2)'
     );
-    expect(calls[0].prompt).toContain('[Extrait 1/2 · page 1]');
-    expect(calls[0].prompt).toContain('[Extrait 2/2 · page 2]');
+    expect(calls[0].prompt).toContain('[Extrait 1/2 · page 1 · fiche « 1.1.1 Isoler les écoles »]');
+    expect(calls[0].prompt).toContain('[Extrait 2/2 · page 2 · fiche « 1.1.2 Rénover la mairie »]');
     expect(calls[0].prompt).toContain('Consigne particulière');
     expect(calls[0].prompt).toContain('Aucun squelette connu');
     expect(result.success).toBe(true);

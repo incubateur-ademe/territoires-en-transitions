@@ -18,6 +18,8 @@ export type DocumentUnit = {
   headingPath: string[];
   /** Partie du document (diagnostic, plan d'actions, annexes…), si elle est titrée. */
   section?: string;
+  /** Titre complet d'une fiche, même réparti sur plusieurs lignes du texte. */
+  title?: string;
   kind: UnitKind;
   tokenEstimate: number;
   /** Fenêtre d'une unité trop longue, coupée arbitrairement. */
@@ -28,7 +30,7 @@ export const buildUnit = (
   lines: UnitLine[],
   headingPath: string[],
   kind: UnitKind,
-  extra: { continued?: boolean; section?: string } = {}
+  extra: { continued?: boolean; section?: string; title?: string } = {}
 ): DocumentUnit => {
   const text = lines.map((line) => line.text).join('\n');
   return {
@@ -41,6 +43,7 @@ export const buildUnit = (
     kind,
     tokenEstimate: estimateTokenCount(text),
     ...(extra.section ? { section: extra.section } : {}),
+    ...(extra.title ? { title: extra.title } : {}),
     ...(extra.continued ? { continued: true } : {}),
   };
 };

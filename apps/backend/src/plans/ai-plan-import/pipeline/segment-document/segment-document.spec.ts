@@ -184,7 +184,7 @@ describe('renderUnit', () => {
     );
 
     expect(renderUnit(unit, { index: 1, count: 3 })).toBe(
-      '[Extrait 2/3 · pages 4–5]\nAction 1.1.1 : Isoler\nDébut.\n[page 5]\nSuite.'
+      '[Extrait 2/3 · pages 4–5 · fiche « 1.1.1 Isoler »]\nAction 1.1.1 : Isoler\nDébut.\n[page 5]\nSuite.'
     );
   });
 
@@ -201,7 +201,7 @@ describe('renderUnit', () => {
     );
 
     expect(renderUnit(units[2], { index: 2, count: 3 })).toBe(
-      "[Extrait 3/3 · page 1 · partie « PLAN D'ACTIONS » · 1 Bâtiments]\nAction 1.1 : Isoler"
+      "[Extrait 3/3 · page 1 · partie « PLAN D'ACTIONS » · 1 Bâtiments · fiche « 1.1 Isoler »]\nAction 1.1 : Isoler"
     );
   });
 });
