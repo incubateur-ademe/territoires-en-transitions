@@ -210,5 +210,5 @@ valeurs sources. Les agrégats de consultation restent distincts des observation
 ## Documents associés
 
 - [Cadrage Électrification](https://app.notion.com/p/accelerateur-transition-ecologique-ademe/lectrification-indicateurs-3c76523d57d78013aa2ae3785cf09f1f).
-- [Plan de phase 1](https://github.com/incubateur-ademe/territoires-en-transitions/blob/85cf830f2fd89132b4c1b89df1237b8220ab9061/doc/plans/2026-08-31-001-feat-electrification-indicateurs-plan/phase-1-socle-mensuel.md) : tâches, migration et validation.
+- [Plan de phase 1](../plans/2026-08-31-001-feat-electrification-indicateurs-plan/phase-1-socle-mensuel.md) : tâches, migration et validation.
 - [Documentation de la base](../../data_layer/README.md) : déploiement et reprise.
