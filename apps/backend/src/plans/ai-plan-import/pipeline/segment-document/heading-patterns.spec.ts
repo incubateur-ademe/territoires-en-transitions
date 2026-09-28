@@ -87,6 +87,56 @@ describe('matchHeading', () => {
     ],
     ['I. TOUS HÉROS ORDINAIRES', 'axe', 1, 'I', 'TOUS HÉROS ORDINAIRES'],
     ['IV – UN SYSTÈME DE MOBILITÉ', 'axe', 1, 'IV', 'UN SYSTÈME DE MOBILITÉ'],
+    [
+      'Orientation stratégique 3 : Se déplacer autrement',
+      'orientation',
+      2,
+      '3',
+      'Se déplacer autrement',
+    ],
+    [
+      'Évaluation environnementale stratégique',
+      'section',
+      0,
+      null,
+      'Évaluation environnementale stratégique',
+    ],
+    ['Résumé non technique', 'section', 0, null, 'Résumé non technique'],
+    [
+      'État initial de l’environnement',
+      'section',
+      0,
+      null,
+      'État initial de l’environnement',
+    ],
+    [
+      'Analyse des incidences sur Natura 2000',
+      'section',
+      0,
+      null,
+      'Analyse des incidences sur Natura 2000',
+    ],
+    [
+      'Diagnostic climat-air-énergie',
+      'section',
+      0,
+      null,
+      'Diagnostic climat-air-énergie',
+    ],
+    [
+      'Vue d’ensemble du programme d’actions',
+      'section',
+      0,
+      null,
+      'Vue d’ensemble du programme d’actions',
+    ],
+    [
+      'Annexe 2 : Tableau de suivi des actions',
+      'section',
+      0,
+      null,
+      'Annexe 2 : Tableau de suivi des actions',
+    ],
   ])('reconnaît « %s »', (line, kind, level, number, title) => {
     expect(matchHeading(line)).toMatchObject({ kind, level, number, title });
   });
@@ -148,6 +198,16 @@ describe('isFicheLabel', () => {
     'Indicateurs de suivi :',
     'ÉTAT D’AVANCEMENT',
     'Maître d’ouvrage',
+    'Structure porteuse',
+    'Moyens humains',
+    'Sources de financement et subventions :',
+    'Temps de mise en œuvre',
+    'Étapes de mise en œuvre :',
+    'Partenaires / financeurs',
+    'Trajectoire',
+    'Gains estimés',
+    'Impacts de l’action',
+    'Actions opérationnelles',
   ])('reconnaît le libellé « %s »', (label) => {
     expect(isFicheLabel(label)).toBe(true);
   });

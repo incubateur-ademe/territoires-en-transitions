@@ -33,7 +33,7 @@ const AXE = new RegExp(
   'iu'
 );
 const ORIENTATION = new RegExp(
-  String.raw`^(?:orientation|objectif(?:\s+strat[ée]gique|\s+op[ée]rationnel)?|enjeu|d[ée]fi|priorit[ée]|th[ée]matique|volet|ambition|levier|chantier|pilier|sous[- ]axe)\s*${NUMBER}(\d+(?:\.\d+)*|[IVX]{1,4}|[A-Z])${SEPARATOR}(.*)$`,
+  String.raw`^(?:orientation(?:\s+strat[ée]gique)?|objectif(?:\s+strat[ée]gique|\s+op[ée]rationnel)?|enjeu|d[ée]fi|priorit[ée]|th[ée]matique|volet|ambition|levier|chantier|pilier|sous[- ]axe)\s*${NUMBER}(\d+(?:\.\d+)*|[IVX]{1,4}|[A-Z])${SEPARATOR}(.*)$`,
   'iu'
 );
 const FICHE = new RegExp(
@@ -46,7 +46,7 @@ const NUMEROTATION =
 const MARKDOWN = /^(#{1,4})\s+(.+)$/u;
 // « Plan d'actions à 2030 », « Programme d'actions 2024-2030 » : l'horizon suit parfois le nom.
 const SECTION = new RegExp(
-  String.raw`^(?:\d{1,2}[.)]?\s+)?(sommaire|table des mati[èe]res|diagnostic(?: territorial)?|[ée]tat des lieux|strat[ée]gie(?: territoriale)?|programme d['’]actions?|plan d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel|engagements? des partenaires|suivi et [ée]valuation|gouvernance|annexes?|glossaire)(?:\s+(?:[àa]\s+|horizon\s+)?\d{4}(?:\s*[-–]\s*\d{4})?)?\s*$`,
+  String.raw`^(?:\d{1,2}[.)]?\s+)?(sommaire|table des mati[èe]res|diagnostic(?: territorial| climat[\s-]air[\s-][ée]nergie)?|[ée]tat des lieux|strat[ée]gie(?: territoriale)?|programme d['’]actions?|plan d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel|vue d['’]ensemble du programme d['’]actions?|synth[èe]se du programme d['’]actions?|engagements? des partenaires|suivi et [ée]valuation|indicateurs et modalit[ée]s de suivi|gouvernance|m[ée]thodologie|[ée]valuation environnementale(?: strat[ée]gique)?|r[ée]sum[ée] non technique|[ée]tat initial de l['’]environnement|(?:analyse|[ée]valuation) des incidences(?:\s.+)?|incidences du pcaet|mesures d['’][ée]vitement, de r[ée]duction et de compensation|justification des choix|articulation avec les autres plans(?:\s.+)?|annexes?(?:\s+\d+\s*[:\-–—].+)?|glossaire)(?:\s+(?:[àa]\s+|horizon\s+)?\d{4}(?:\s*[-–]\s*\d{4})?)?\s*$`,
   'iu'
 );
 // « I. TOUS HÉROS ORDINAIRES » : un axe numéroté en chiffres romains.
@@ -56,7 +56,7 @@ const ROMAIN = /^([IVX]{1,4})(?:\s*[.)]|\s+[-–—])\s+(.{3,})$/u;
 const NUMERO_SEUL = /^(\d{1,2})\s*[.)\-–—:]?\s+(.{3,})$/u;
 // Le contenu d'une fiche : un libellé de champ, pas un titre.
 const FICHE_LABEL =
-  /^(description|contexte|objectifs?|pilote|porteur|ma[iî]tr(?:e|ise) d['’]ouvrage|partenaires?|calendrier|[ée]ch[ée]ance|planning|budget|co[uû]t(?: estim[ée])?|financements?|indicateurs?(?: de suivi)?|cibles?|publics? vis[ée]s?|moyens|r[ée]sultats attendus|priorit[ée]|statut|[ée]tat d['’]avancement|gains? (?:ges|[ée]nerg[ée]tiques?))\s*[:：]?\s*$/iu;
+  /^(description|contexte|objectifs?|pilote|porteur|structure porteuse|porteurs? de l['’]action|ma[iî]tr(?:e|ise) d['’]ouvrage|partenaires?(?: (?:et|\/) financeurs)?|financeurs?|calendrier|[ée]ch[ée]ance|planning|[ée]tapes de mise en œuvre|temps de mise en œuvre|budget|co[uû]t(?: estim[ée])?|financements?|sources? de financements?(?: et subventions)?|subventions?|indicateurs?(?: de suivi)?|cibles?|publics? vis[ée]s?|moyens(?: humains| financiers)?|r[ée]sultats attendus|gains? estim[ée]s|impacts? de l['’]action|trajectoire|actions? op[ée]rationnelles?|priorit[ée]|statut|[ée]tat d['’]avancement|gains? (?:ges|[ée]nerg[ée]tiques?))\s*[:：]?\s*$/iu;
 // « Axe : » ou « Axe : 2 » : la valeur d'un champ de fiche, pas une frontière.
 const FIELD_VALUE = /^(?:axe|orientation|objectif)\s*[:：]/iu;
 
