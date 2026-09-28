@@ -17,7 +17,7 @@ const toFicheIdsAt = (
   });
 
 export const toFaultyFicheIds: ToFaultyFicheIds = ({ failure, fiches }) => {
-  const wholeBatch = (): number[] => fiches.map(({ ficheId }) => ficheId);
+  const toBatchFicheIds = (): number[] => fiches.map(({ ficheId }) => ficheId);
   return match(failure)
     .with(
       { kind: 'rate_limited' },
@@ -29,7 +29,7 @@ export const toFaultyFicheIds: ToFaultyFicheIds = ({ failure, fiches }) => {
       { kind: 'empty_response' },
       { kind: 'unexpected_index' },
       { kind: 'unknown_enjeu' },
-      wholeBatch
+      toBatchFicheIds
     )
     .with(
       { kind: 'duplicate_index' },

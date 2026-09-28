@@ -1,8 +1,11 @@
 import { match } from 'ts-pattern';
+import { z } from 'zod';
 import {
   AnalysisRunPlan,
+  failedFicheAnalysisSchema,
   FicheAnalysis,
   FicheCandidate,
+  processedFicheAnalysisSchema,
 } from '../models/fiche-analysis';
 import { calculateFicheFingerprint } from './calculate-fiche-fingerprint.rules';
 
@@ -13,14 +16,18 @@ type BuildAnalysisRunPlan = (input: {
 
 type FicheDecision = 'skip' | 'classify' | 'mark_stale' | 'remove';
 
+type ProcessedFicheAnalysis = z.output<typeof processedFicheAnalysisSchema>;
+
+type FailedFicheAnalysis = z.output<typeof failedFicheAnalysisSchema>;
+
 const hasFingerprintChanged = (
   fiche: FicheCandidate,
-  analysis: Extract<FicheAnalysis, { status: 'processed' }>
+  analysis: ProcessedFicheAnalysis
 ): boolean => calculateFicheFingerprint(fiche) !== analysis.fingerprint;
 
 const isModifiedSinceFailedAnalysis = (
   fiche: FicheCandidate,
-  analysis: Extract<FicheAnalysis, { status: 'failed' }>
+  analysis: FailedFicheAnalysis
 ): boolean => fiche.modifiedAt > analysis.analyzedAt;
 
 const decideAnalyzedFiche = (
