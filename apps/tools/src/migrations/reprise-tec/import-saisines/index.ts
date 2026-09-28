@@ -8,8 +8,9 @@
  *     apps/tools/src/migrations/reprise-tec/import-saisines/index.ts [--confirm]
  */
 import { getCible } from '../db';
-import { loadDossiersTransmis } from './dossiers';
+import { loadDossiers } from './dossiers';
 import { createSaisines } from './ecriture';
+import { validateGardes } from './gardes';
 import { listSaisines } from './services';
 
 const main = async () => {
@@ -18,8 +19,9 @@ const main = async () => {
   const client = await pool.connect();
 
   try {
-    const dossiers = await loadDossiersTransmis(client);
-    const saisines = await listSaisines(pool, dossiers);
+    const dossiers = await loadDossiers(client);
+    const saisines = await listSaisines(pool, dossiers.transmis);
+    validateGardes(dossiers, saisines, new Date().toISOString().slice(0, 10));
 
     await client.query('begin');
     let ecrites: number;
@@ -31,7 +33,9 @@ const main = async () => {
       throw e;
     }
 
-    console.log(`${dossiers.length} dossiers repris transmis pour avis`);
+    console.log(
+      `${dossiers.transmis.length} dossiers repris transmis pour avis`
+    );
     console.log(`${ecrites} saisines écrites`);
     console.log(
       isConfirmed
