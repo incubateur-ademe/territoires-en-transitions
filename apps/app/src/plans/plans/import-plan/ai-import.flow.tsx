@@ -9,7 +9,11 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { AiImportProgress } from './ai-import-progress';
 import { toImportStepViews } from './ai-import-steps.model';
-import { AiImportForm, AiImportFormValues } from './ai-import.form';
+import {
+  AiImportDefaults,
+  AiImportForm,
+  AiImportFormValues,
+} from './ai-import.form';
 import { useEnqueueAiImport } from './data/use-enqueue-ai-import';
 import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
@@ -29,6 +33,7 @@ export const AiImportFlow = ({
   onImportStarted,
   cancelButton,
   lockedPlanTypeId,
+  defaults,
 }: {
   /**
    * `jobId` : l'import terminé, qu'il ait été lancé depuis ce formulaire ou
@@ -42,6 +47,7 @@ export const AiImportFlow = ({
   onImportStarted?: (jobId: string) => void;
   cancelButton: ReactElement;
   lockedPlanTypeId?: number;
+  defaults?: AiImportDefaults;
 }) => {
   const collectiviteId = useCollectiviteId();
   const { setToast } = useToastContext();
@@ -57,15 +63,14 @@ export const AiImportFlow = ({
   const isCheckingOngoingImport =
     chosenJobId === undefined && !isFetchedAfterMount;
   const resumedJobId = isFetchedAfterMount
-    ? (currentImport?.jobId ?? null)
+    ? currentImport?.jobId ?? null
     : null;
   const jobId = chosenJobId === undefined ? resumedJobId : chosenJobId;
 
   const enqueue = useEnqueueAiImport();
   const { data: status } = useGetAiImportStatus(jobId);
 
-  const createdPlanId =
-    status?.status === 'done' ? status.createdPlanId : null;
+  const createdPlanId = status?.status === 'done' ? status.createdPlanId : null;
   const notifiedPlanId = useRef<number | null>(null);
   useEffect(() => {
     if (
@@ -118,6 +123,7 @@ export const AiImportFlow = ({
       onSubmit={handleSubmit}
       cancelButton={cancelButton}
       lockedPlanTypeId={lockedPlanTypeId}
+      defaults={defaults}
     />
   );
 };

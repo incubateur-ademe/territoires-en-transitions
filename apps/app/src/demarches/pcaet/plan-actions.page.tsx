@@ -13,8 +13,10 @@ import { RappelPlanSection } from '@/app/demarches/pcaet/components/rappel-plan.
 import { appLabels } from '@/app/labels/catalog';
 import { useCreateAndLinkPlan } from '@/app/demarches/pcaet/data/use-create-and-link-plan';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
+import { useGetProgrammeActionsFichier } from '@/app/demarches/pcaet/data/use-get-programme-actions-fichier';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetPlanActionsPage = () => {
@@ -31,6 +33,8 @@ export const DemarchePcaetPlanActionsPage = () => {
 
   const { data: planTypes, isLoading: isLoadingPlanTypes } = useListPlanTypes();
   const pcaetPlanType = findPcaetPlanType(planTypes);
+  const programmeActionsFichier = useGetProgrammeActionsFichier(demarcheId);
+  const { nom: collectiviteNom } = useCurrentCollectivite();
 
   // Le rattachement d'office ne vaut que pour le premier plan : la règle vit
   // côté serveur, le front n'a rien à en déduire.
@@ -88,6 +92,14 @@ export const DemarchePcaetPlanActionsPage = () => {
           isLoadingEligibility={isLoadingPlanTypes}
           onUpdateAction={update}
           onCreatePlan={createPlan}
+          importDefaults={{
+            fichierId: programmeActionsFichier?.id,
+            // AAAA-MM-JJ : l'année se lit sans passer par `Date` (fuseau).
+            planName: appLabels.demarcheProgrammeNomPlanImporte({
+              annee: demarche.dateLancement?.slice(0, 4) ?? null,
+              collectiviteNom,
+            }),
+          }}
         />
       )}
     </DemarcheShell>
