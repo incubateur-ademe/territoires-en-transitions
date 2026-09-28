@@ -58,6 +58,7 @@ type Call = {
   systemInstruction?: string;
   tier?: string;
   maxOutputTokens?: number;
+  reasoningEffort?: string;
 };
 
 const llmAnswering = (answer: (call: Call) => unknown) => {
@@ -138,7 +139,42 @@ describe('structureUnits', () => {
     expect(calls[0].prompt).toContain('Axe 1 : Bâtiments\n  1.1 Rénover');
   });
 
-  it('relance une réponse tronquée avec un budget doublé', async () => {
+  it('coupe en deux un paquet tronqué au lieu de laisser le modèle écrire plus', async () => {
+    const generateStructured = vi.fn(async (call: Call) =>
+      call.prompt.includes('Isoler') && call.prompt.includes('Rénover')
+        ? failure({ kind: 'truncated' })
+        : success({
+            data: [
+              anExtractionAction(
+                call.prompt.includes('Isoler') ? 'Isoler' : 'Rénover'
+              ),
+            ],
+            tokens,
+          })
+    );
+    const llm = { generateStructured } as unknown as Pick<
+      LlmService,
+      'generateStructured'
+    >;
+
+    const result = await structureUnits(llm, input);
+
+    expect(generateStructured).toHaveBeenCalledTimes(3);
+    expect(
+      generateStructured.mock.calls.map(([call]) => call.maxOutputTokens)
+    ).toEqual([32000, 32000, 32000]);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions.map((a) => a.titre)).toEqual([
+        'Isoler',
+        'Rénover',
+      ]);
+      expect(result.data.chunks).toHaveLength(1);
+      expect(result.data.warnings).toEqual([]);
+    }
+  });
+
+  it('retente une unité seule tronquée en raisonnant moins', async () => {
     const generateStructured = vi
       .fn()
       .mockResolvedValueOnce(failure({ kind: 'truncated' }))
@@ -150,12 +186,15 @@ describe('structureUnits', () => {
       'generateStructured'
     >;
 
-    const result = await structureUnits(llm, input);
+    const result = await structureUnits(llm, {
+      ...input,
+      units: [units[0]],
+    });
 
     expect(result.success).toBe(true);
     expect(
-      generateStructured.mock.calls.map(([call]) => call.maxOutputTokens)
-    ).toEqual([32000, 64000]);
+      generateStructured.mock.calls.map(([call]) => call.reasoningEffort)
+    ).toEqual([undefined, 'low']);
   });
 
   it('écarte un paquet qui échoue encore, sans faire échouer l’import', async () => {
