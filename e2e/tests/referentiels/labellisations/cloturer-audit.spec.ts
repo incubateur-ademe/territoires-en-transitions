@@ -287,4 +287,22 @@ test.describe("Modale de clôture d'audit", () => {
     ).toBeVisible();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeEnabled();
   });
+
+  test('Refus serveur : un audit clos pendant la saisie fait échouer le rattachement, et le fichier reste dans la bibliothèque', async ({
+    labellisationPom,
+    auditLabellisationPom,
+    referentiels,
+  }) => {
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await labellisationPom.cloturerAuditButton.click();
+
+    await referentiels.closeAudit(collectiviteId, referentiel);
+
+    await labellisationPom.cloturerAuditFileInput.setInputFiles(TEST_PDF_PATH);
+
+    await expect(
+      labellisationPom.cloturerAuditRattachementErrorToast
+    ).toBeVisible();
+    await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
+  });
 });
