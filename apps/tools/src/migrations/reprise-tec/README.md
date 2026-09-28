@@ -357,6 +357,25 @@ thématique du même sens), nomme les dossiers dont le doublon « définitif »
 portait plus d'actions, et les collectivités qui reçoivent deux plans du même
 nom (deux dossiers lancés la même année).
 
+#### Annuler les fiches
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-fiches/annuler.ts [--confirm]
+```
+
+Retire, d'après `lignes_ecrites`, les fiches que l'import a écrites avec leurs
+liens et leurs notes, puis les lignes d'historique que TeT a écrites pour
+elles, puis les plans et leur lien au dossier, puis les tags que l'import a
+créés et que plus aucune fiche ne porte, et enfin les traces et les écarts de
+l'étape. Refuse de tourner si les étapes des pièces ou des contacts ont écrit
+sur les fiches : les annuler d'abord.
+
+**Ce qu'elle laisse** : les tags qui existaient avant l'import (réutilisés),
+et ceux que l'import a créés mais qu'une autre fiche porte depuis. **Ce
+qu'elle emporte** : tout ce que la collectivité a changé sur les fiches
+reprises depuis l'import (le rapport compte les fiches modifiées). Un axe
+ajouté par la collectivité dans un plan repris bloque l'annulation.
+
 #### Ce qui arrête l'import des fiches
 
 Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
