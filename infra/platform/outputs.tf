@@ -85,3 +85,8 @@ output "coolify_backups_credentials_secret_name" {
   description = "Secret Secret Manager de la clé Object Storage des backups. À reporter dans la variable s3_credentials_secret_name du stack infra/coolify."
   value       = scaleway_secret.coolify_backups_credentials.name
 }
+
+output "prod_project_id" {
+  description = "ID du projet Scaleway de production. À reporter dans la variable scaleway_project_id du stack infra/prod."
+  value       = scaleway_account_project.prod.id
+}

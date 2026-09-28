@@ -20,6 +20,8 @@
 #   S3_REGION                   ex. fr-par
 #   S3_PREFIX                   préfixe des objets, ex. coolify-instance
 #   S3_CREDENTIALS_SECRET_NAME  secret SM access_key|secret_key
+#   SECRET_PROJECT_ID           projet Scaleway des deux secrets (explicite : le
+#                               projet par défaut du profil scw peut être un autre)
 #   AGE_RECIPIENTS              clés publiques age, une par ligne
 #   BACKUP_ON_CALENDAR          expression OnCalendar systemd
 set -euo pipefail
@@ -31,6 +33,7 @@ set -euo pipefail
 : "${S3_REGION:?S3_REGION non défini}"
 : "${S3_PREFIX:?S3_PREFIX non défini}"
 : "${S3_CREDENTIALS_SECRET_NAME:?S3_CREDENTIALS_SECRET_NAME non défini}"
+: "${SECRET_PROJECT_ID:?SECRET_PROJECT_ID non défini}"
 : "${AGE_RECIPIENTS:?AGE_RECIPIENTS non défini}"
 : "${BACKUP_ON_CALENDAR:?BACKUP_ON_CALENDAR non défini}"
 
@@ -48,6 +51,7 @@ trap 'rm -rf "$_tmpdir"' EXIT
 echo "→ Lecture de la clé host du control plane (${HOST_KEY_SECRET_NAME})…"
 scw secret version access-by-path \
   secret-name="${HOST_KEY_SECRET_NAME}" secret-path=/ revision=latest \
+  project-id="${SECRET_PROJECT_ID}" \
   --output=json | jq -r '.data // empty' | base64 --decode \
   >"${_tmpdir}/host_key"
 chmod 600 "${_tmpdir}/host_key"
@@ -59,6 +63,7 @@ fi
 echo "→ Lecture des credentials Object Storage (${S3_CREDENTIALS_SECRET_NAME})…"
 _creds_raw="$(scw secret version access-by-path \
   secret-name="${S3_CREDENTIALS_SECRET_NAME}" secret-path=/ revision=latest \
+  project-id="${SECRET_PROJECT_ID}" \
   --output=json | jq -r '.data // empty' | base64 --decode)"
 _s3_key="${_creds_raw%%|*}"
 _s3_secret="${_creds_raw#*|}"

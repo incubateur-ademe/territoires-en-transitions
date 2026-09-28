@@ -5,6 +5,11 @@
 # Scaleway exige que l'application tourne (poule-œuf au premier boot).
 
 locals {
+  # Projet où lire la clé SSH de chaque serveur : la prod a le sien.
+  server_key_project_ids = {
+    for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.scaleway_project_id)
+  }
+
   # Serveur du control plane : Coolify le crée lui-même à l'install pour
   # piloter sa propre machine. On ne fait que lui substituer une clé stable.
   host_key_name = "${var.coolify_server_name}-host"
@@ -18,6 +23,7 @@ locals {
 # OpenSSH telle quelle.
 data "scaleway_secret_version" "host_key" {
   secret_name = var.host_key_secret_name
+  project_id  = var.scaleway_project_id
   revision    = "latest"
 }
 
@@ -51,6 +57,7 @@ data "scaleway_secret_version" "server_key" {
   for_each = var.app_servers
 
   secret_name = each.value.ssh_key_secret_name
+  project_id  = local.server_key_project_ids[each.key]
   revision    = "latest"
 }
 
@@ -66,14 +73,15 @@ resource "coolify_private_key" "server" {
 # ressource coolify_server du provider, marquée « not fully implemented » :
 # un drift sur cette ressource détacherait les projets déployés.
 #
-# Coolify joint ces serveurs sur leur IP *privée* : leur port 22 n'est pas
-# exposé publiquement, seule l'ACL du VPC laisse passer le control plane.
+# nonprod et preview : Coolify les joint sur leur IP privée, seule l'ACL du VPC
+# laisse passer le control plane. prod : VPC séparé, Coolify la joint sur son
+# IP publique, ouverte à la seule IP du control plane.
 resource "terraform_data" "server" {
   for_each = var.app_servers
 
   triggers_replace = [
     each.value.name,
-    each.value.private_ip,
+    each.value.ssh_host,
     coolify_private_key.server[each.key].uuid,
   ]
 
@@ -83,7 +91,7 @@ resource "terraform_data" "server" {
       COOLIFY_ENDPOINT   = var.coolify_endpoint
       PRIVATE_KEY_UUID   = coolify_private_key.server[each.key].uuid
       SERVER_NAME        = each.value.name
-      SERVER_IP          = each.value.private_ip
+      SERVER_IP          = each.value.ssh_host
       SERVER_USER        = "root"
       SERVER_PORT        = "22"
       SERVER_DESCRIPTION = "Tier ${each.key}. Géré par Terraform (infra/${each.key})."
@@ -102,7 +110,7 @@ resource "terraform_data" "ghcr_docker_login" {
   for_each = var.app_servers
 
   triggers_replace = [
-    each.value.private_ip,
+    each.value.ssh_host,
     var.coolify_public_ip,
     var.ghcr_pull_secret_name,
     var.ghcr_pull_credentials_revision,
@@ -117,11 +125,13 @@ resource "terraform_data" "ghcr_docker_login" {
   provisioner "local-exec" {
     command = "${path.module}/../scripts/coolify-ghcr-docker-login.sh"
     environment = {
-      TARGET_HOST            = each.value.private_ip
-      SERVER_KEY_SECRET_NAME = each.value.ssh_key_secret_name
-      GHCR_PULL_SECRET_NAME  = var.ghcr_pull_secret_name
-      # Les serveurs applicatifs n'ont pas de SSH public : rebond obligatoire
-      # par le control plane.
+      TARGET_HOST                  = each.value.ssh_host
+      SERVER_KEY_SECRET_NAME       = each.value.ssh_key_secret_name
+      SERVER_KEY_SECRET_PROJECT_ID = local.server_key_project_ids[each.key]
+      GHCR_PULL_SECRET_NAME        = var.ghcr_pull_secret_name
+      SECRET_PROJECT_ID            = var.scaleway_project_id
+      # Rebond obligatoire par le control plane : nonprod et preview n'ont pas
+      # de SSH public, et celui de la prod n'accepte que l'IP de Coolify.
       BASTION_HOST = var.coolify_public_ip
       BASTION_USER = var.bastion_user
     }
@@ -164,6 +174,7 @@ resource "terraform_data" "s3_storage" {
     command = "${path.module}/../scripts/coolify-configure-s3-storage.sh"
     environment = {
       COOLIFY_ENDPOINT           = var.coolify_endpoint
+      SECRET_PROJECT_ID          = var.scaleway_project_id
       S3_STORAGE_NAME            = var.s3_storage_name
       S3_ENDPOINT                = var.s3_endpoint
       S3_BUCKET                  = var.s3_bucket
@@ -206,6 +217,7 @@ resource "terraform_data" "instance_backup" {
     environment = {
       TARGET_HOST                = var.coolify_public_ip
       HOST_KEY_SECRET_NAME       = var.host_key_secret_name
+      SECRET_PROJECT_ID          = var.scaleway_project_id
       S3_ENDPOINT                = var.s3_endpoint
       S3_BUCKET                  = var.s3_bucket
       S3_REGION                  = var.s3_region

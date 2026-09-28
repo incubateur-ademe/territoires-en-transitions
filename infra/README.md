@@ -8,12 +8,16 @@ Terraform qui décrit l'infrastructure cible TET sur Scaleway, dans le cadre de 
 Une instance Coolify **unique et transverse**, sur son propre serveur, pilote quatre
 environnements répartis sur trois serveurs applicatifs.
 
-| Serveur | Tier | Rôle |
-|---|---|---|
-| `tet-platform-coolify` | platform | Control plane Coolify + bastion SSH. Aucune application. |
-| `tet-prod-apps` | prod | Applications de production. |
-| `tet-nonprod-apps` | nonprod | Mutualisé : preprod **et** staging. |
-| `tet-preview-apps` | preview | Previews éphémères, une par pull request. |
+| Serveur | Tier | Projet Scaleway | Rôle |
+|---|---|---|---|
+| `tet-platform-coolify` | platform | principal | Control plane Coolify + bastion SSH. Aucune application. |
+| `tet-prod-apps` | prod | **`tet-prod`** | Applications de production. |
+| `tet-nonprod-apps` | nonprod | principal | Mutualisé : preprod **et** staging. |
+| `tet-preview-apps` | preview | principal | Previews éphémères, une par pull request. |
+
+La prod a son propre projet Scaleway (créé par `platform`) et son propre VPC (créé par
+`prod`), sans aucun lien réseau avec le VPC partagé. Les backups ont aussi leur projet,
+`tet-backups` (cf. [Sauvegarde de l'instance Coolify](#sauvegarde-de-linstance-coolify)).
 
 | Environnement | Postgres | Redis |
 |---|---|---|
@@ -31,24 +35,38 @@ la production.
 
 ## Réseau
 
-Un **seul VPC** `tet`, `enable_routing = true`, un Private Network par tier, et deux ACL
-VPC en `default_policy = "drop"` : une IPv4, une IPv6.
+Deux VPC sans lien entre eux :
+
+- `tet` (projet principal) : `enable_routing = true`, un Private Network par tier hors
+  prod, et deux ACL en `default_policy = "drop"`, une IPv4 et une IPv6 ;
+- `tet-prod` (projet `tet-prod`) : un seul Private Network, `10.0.3.0/24`, avec le
+  serveur, le Postgres et le Redis de production.
 
 | Private Network | CIDR | Membres | IP fixe du serveur |
 |---|---|---|---|
 | `tet-platform-pn` | `10.0.0.0/24` | VM Coolify | `10.0.0.10` |
 | `tet-nonprod-pn` | `10.0.1.0/24` | VM nonprod, RDB preprod, Redis preprod | `10.0.1.10` |
-| `tet-prod-pn` | `10.0.3.0/24` | VM prod, RDB prod, Redis prod | `10.0.3.10` |
+| `tet-prod-pn` *(VPC `tet-prod`)* | `10.0.3.0/24` | VM prod, RDB prod, Redis prod | `10.0.3.10` |
 | `tet-preview-pn` | `10.0.4.0/24` | VM preview | `10.0.4.10` |
 
 `10.0.2.0/24` est laissé libre : staging n'a pas de Private Network propre, ses
 conteneurs vivent sur le serveur nonprod.
 
-Le seul flux inter-Private Networks autorisé est **TCP/22 depuis le control plane vers
-chaque serveur applicatif**. Conséquences :
+Dans le VPC `tet`, le seul flux inter-Private Networks autorisé est **TCP/22 depuis le
+control plane vers les serveurs nonprod et preview**.
 
-- Coolify pilote ses serveurs **uniquement sur IP privée** ;
-- le port 22 est **fermé publiquement** sur les trois serveurs d'apps ;
+La prod n'a **aucune route** depuis ce VPC. Coolify la pilote en SSH sur son **IP
+publique**, que son security group n'ouvre qu'à l'IP publique du control plane
+(`coolify_public_ip` dans `prod/terraform.tfvars`). Isoler par l'absence de chemin plutôt
+que par des règles de filtrage : une erreur d'ACL côté nonprod ou preview ne peut pas
+ouvrir la prod. Contrepartie : si l'IP publique de Coolify change, réappliquer `prod`, sinon
+Coolify perd l'accès.
+
+Conséquences :
+
+- Coolify pilote nonprod et preview **sur IP privée**, la prod sur IP publique filtrée ;
+- le port 22 est **fermé publiquement** sur nonprod et preview, et limité à l'IP de
+  Coolify sur la prod ;
 - prod, nonprod et preview ne peuvent pas se joindre entre eux ;
 - le trafic intra-PN reste en L2 et n'est pas filtré : aucune règle nécessaire pour les
   accès app → Postgres/Redis, qui vivent dans le même PN que leur serveur ;
@@ -62,8 +80,9 @@ chaque serveur applicatif**. Conséquences :
 > tout : aucun flux légitime ne passe en IPv6 entre PN. Sans elle, l'IPv6 serait routé
 > librement et prod redeviendrait joignable depuis nonprod et preview.
 
-Le plan d'adressage est déclaré dans `platform/variables.tf` (`network_plan`). Chaque
-stack applicatif redéclare l'IP de *son* serveur dans `server_private_ipv4_address` :
+Le plan d'adressage du VPC `tet` est déclaré dans `platform/variables.tf` (`network_plan`),
+celui de la prod dans `prod/variables.tf`. Nonprod et preview redéclarent l'IP de *leur*
+serveur dans `server_private_ipv4_address` :
 **les deux doivent rester alignés**, sinon l'ACL bloque le SSH de Coolify.
 
 ## Structure
@@ -100,7 +119,9 @@ garder séparé évite que le `plan` de l'infra Scaleway exige que l'application
 platform  →  nonprod / prod / preview  →  coolify
 ```
 
-`platform` produit le VPC, les Private Networks et le control plane. Les stacks
+`platform` produit le VPC partagé, ses Private Networks, le control plane et les projets
+`tet-prod` et `tet-backups`. `prod` crée son propre VPC dans le projet `tet-prod` et ne
+reprend de `platform` que l'ID de ce projet et l'IP publique de Coolify. Les stacks
 applicatifs consomment ces valeurs **par report manuel** dans leur `terraform.tfvars`
 (pas de `terraform_remote_state` : les stacks restent découplés). `coolify` vient en
 dernier, quand les serveurs existent et que Coolify répond.
@@ -198,7 +219,8 @@ terraform output -raw supabase_auth_admin_password
 
 ## Accès aux serveurs (bastion)
 
-Les serveurs applicatifs n'exposent pas le port 22. Le seul chemin est le control plane :
+Le seul chemin vers les serveurs applicatifs est le control plane : nonprod et preview
+n'exposent pas le port 22, et celui de la prod n'accepte que l'IP de Coolify.
 
 ```sh
 # Se connecter au bastion
@@ -214,11 +236,26 @@ ssh -J tet-ops@<ip-coolify> -i /tmp/srv_key \
   root@$(terraform -chdir=infra/nonprod output -raw server_private_ip)
 ```
 
-Vérifier au passage que l'isolation tient : depuis le serveur nonprod, une connexion
-vers le serveur prod doit échouer.
+Pour la prod, même rebond, mais vers son **IP publique**, avec la clé lue dans le projet
+`tet-prod` :
 
 ```sh
-nc -zv -w3 10.0.3.10 22   # attendu : timeout
+scw secret version access-by-path project-id="$(terraform -chdir=infra/platform output -raw prod_project_id)" \
+  secret-name="$(terraform -chdir=infra/prod output -raw server_ssh_key_secret_name)" \
+  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > /tmp/prod_key
+chmod 600 /tmp/prod_key
+
+ssh -J tet-ops@<ip-coolify> -i /tmp/prod_key \
+  root@$(terraform -chdir=infra/prod output -raw server_ssh_host)
+```
+
+Vérifier au passage que l'isolation tient : depuis le serveur nonprod, aucune connexion
+vers la prod ne doit aboutir, ni en privé (pas de route), ni en public (IP source ≠
+Coolify).
+
+```sh
+nc -zv -w3 10.0.3.10 22        # attendu : timeout
+nc -zv -w3 <ip-publique-prod> 22   # attendu : timeout
 ```
 
 ## Clé SSH « host » de Coolify (serveur localhost)
@@ -585,8 +622,9 @@ Workflow `.github/workflows/ci-infra.yml` à créer :
 ## Décisions architecturales actées
 
 - **Instance Coolify dédiée et transverse** : le control plane ne partage ni CPU, ni disque, ni cycle de vie avec les applications, et pilote tous les environnements
-- **Serveur de production isolé** : VPC ACL en `drop` par défaut, prod injoignable depuis nonprod et preview
-- **SSH privé uniquement** sur les serveurs applicatifs, le control plane servant de bastion
+- **Production dans un projet Scaleway séparé**, avec son propre VPC et aucun lien réseau avec le VPC partagé : prod injoignable depuis nonprod et preview par construction, pas par filtrage. Pas de VPC Peering : il réintroduirait un chemin qu'il faudrait filtrer par quatre ACL (IPv4/IPv6 des deux côtés)
+- **SSH des serveurs applicatifs** : privé uniquement pour nonprod et preview ; IP publique limitée à l'IP du control plane pour la prod. Le control plane sert de bastion dans tous les cas
+- **Backups dans un projet Scaleway dédié**, bucket sous Object Lock COMPLIANCE : la clé des backups ne voit que ce projet
 - **preprod iso-prod sur du managé**, staging et preview conteneurisés : le gate avant production doit reproduire la contrainte non-superuser de RDB
 - **Mono-VM Coolify par tier** plutôt que Kapsule (cf. brainstorm) : pas d'orchestrateur K8s
 - **State backend S3 Scaleway avec locking natif** : `use_lockfile = true` via conditional writes S3 (Object Lock Scaleway, mai 2026)

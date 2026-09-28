@@ -1,7 +1,29 @@
 # Tier prod : serveur dédié, Postgres et Redis managés.
 #
-# Isolé réseau des autres tiers par l'ACL du VPC (infra/platform) : seul le
-# control plane Coolify peut joindre ce serveur, et uniquement en SSH.
+# Projet Scaleway dédié (créé par infra/platform) et VPC propre, sans lien
+# réseau avec le VPC partagé : nonprod et preview n'ont aucune route vers la
+# prod. Coolify pilote le serveur en SSH sur son IP publique, que le security
+# group n'ouvre qu'à l'IP publique du control plane.
+
+module "network" {
+  source = "../modules/network"
+
+  region   = var.scaleway_region
+  vpc_name = "tet-prod"
+
+  private_networks = {
+    prod = { ipv4_subnet = var.private_network_ipv4_subnet }
+  }
+
+  # Un seul PN : aucun trafic routé entre PN à filtrer aujourd'hui. Les ACL
+  # (IPv4 et IPv6, drop par défaut) restent en place pour qu'un PN ajouté plus
+  # tard soit isolé d'office.
+  acl_default_policy = "drop"
+}
+
+locals {
+  private_network_id = module.network.private_network_ids["prod"]
+}
 
 module "app_server" {
   source = "../modules/app-server"
@@ -11,11 +33,12 @@ module "app_server" {
   instance_type          = var.server_instance_type
   root_volume_size_in_gb = var.server_root_volume_size_in_gb
 
-  private_network_id   = var.private_network_id
+  private_network_id   = local.private_network_id
   private_ipv4_address = var.server_private_ipv4_address
 
-  # Port 22 fermé sur l'IP publique : l'accès passe par le bastion Coolify.
-  ssh_allowed_ips     = []
+  # Port 22 ouvert à la seule IP publique du control plane : c'est par là que
+  # Coolify pilote ce serveur, et que les opérateurs rebondissent (ssh -J).
+  ssh_allowed_ips     = ["${var.coolify_public_ip}/32"]
   ssh_authorized_keys = var.server_ssh_authorized_keys
 }
 
@@ -30,7 +53,7 @@ module "postgres" {
   volume_size_in_gb  = var.pg_volume_size_in_gb
   allowed_ips        = var.pg_allowed_ips
   database_name      = "tet"
-  private_network_id = var.private_network_id
+  private_network_id = local.private_network_id
 
   backup_schedule_frequency = var.pg_backup_schedule_frequency
   backup_schedule_retention = var.pg_backup_schedule_retention
@@ -80,7 +103,7 @@ module "redis" {
   zone               = var.scaleway_zone
   node_type          = var.redis_node_type
   cluster_size       = var.redis_cluster_size
-  private_network_id = var.private_network_id
+  private_network_id = local.private_network_id
   allowed_ips        = var.redis_allowed_ips
 }
 
