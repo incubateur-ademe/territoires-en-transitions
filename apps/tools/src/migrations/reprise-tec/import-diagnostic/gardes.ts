@@ -1,10 +1,10 @@
 /** Les gardes : tout ce qui peut arrêter l'import, rassemblé en un seul endroit. */
 
 import { PoolClient } from 'pg';
-import type { LigneDiagnostic } from './diagnostic';
+import type { LigneDiagnostic } from './tables-grille';
 import type { Dossiers } from './dossiers';
 import { listCasBloquantsEcriture } from './ecriture';
-import { listCasBloquantsGrille } from './grille';
+import { listCasBloquantsGrille } from './emplacement';
 
 /** Arrête l'import avant toute écriture si une garde trouve un cas ; liste tous les cas d'un coup. */
 export const validateGardes = async (

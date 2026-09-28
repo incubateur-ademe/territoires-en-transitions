@@ -2,7 +2,7 @@
 
 import { ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS } from '@tet/domain/demarches';
 import { PoolClient } from 'pg';
-import type { Valeur } from './diagnostic';
+import type { Valeur } from './tables-grille';
 import type { Dossier, Dossiers } from './dossiers';
 
 /** La source que l'écran du diagnostic lit, la même que `PCAET_COLLECTIVITE_SOURCE_ID` du backend. */

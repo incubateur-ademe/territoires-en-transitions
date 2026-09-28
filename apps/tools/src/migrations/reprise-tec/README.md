@@ -177,6 +177,39 @@ pnpx tsx $SCRIPT --confirm  # import
 Les objectifs 2021 et 2026 ne sont pas écrits : la grille de TeT n'a pas ces
 colonnes.
 
+Toute ligne du diagnostic de T&C (onze tables, dossiers repris ou non) finit
+soit écrite, soit dans `ecarts` avec un motif, une seule fois : le script le
+vérifie table par table avant d'écrire (lues = écrites + écartées). Une ligne
+sans numéro dans T&C est repérée par son dossier (`tec_id`) et sa `precision`
+(`sol 2`, `periode 3`, `cible 4`). Une partie de ligne peut aussi être
+écartée : la consommation EnR (`precision = 'consommation'`), un commentaire
+d'onglet du dossier (`precision` = le nom de la colonne).
+
+Quand plusieurs motifs s'appliquent, le premier de cet ordre gagne : le motif
+du dossier, `valeur_vide`, `sans_indicateur_cible`, puis la colonne.
+
+| Motif                                  | Sens                                                                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `doublon`                              | ligne du doublon « définitif » d'un dossier déposé ; seule la ligne « mise en œuvre » est reprise                                                      |
+| `coquille_vide`, `sans_etat_invisible` | ligne d'un dossier que l'import des dossiers a écarté pour ce motif                                                                                    |
+| `valeur_vide`                          | case vide dans T&C : rien à reprendre                                                                                                                  |
+| `sans_indicateur_cible`                | aucune ligne pour la recevoir dans la grille de TeT : filière sans ligne, potentiels EnR, séquestration hors estimation, consommation EnR, numéro vide |
+| `objectif_sans_colonne`                | objectif 2021 ou 2026 : la grille de TeT n'a pas ces colonnes                                                                                          |
+| `constat_sans_annee`                   | constat sans année, ou à une année impossible (0, 1900, 2900…)                                                                                         |
+| `valeur_sans_periode`                  | valeur sans période dans T&C : ni constat ni objectif connu, ni année                                                                                  |
+| `commentaire_sans_place`               | texte libre (commentaire d'onglet, commentaires sur les réseaux) : TeT ne commente qu'une valeur                                                       |
+
+Relire les objectifs 2021 et 2026 écartés, par exemple pour les émissions :
+
+```sql
+select e.tec_id, g.demarche_id, g.secteur_obligatoire_id, g.periode_id, g.emission_ges
+  from reprise_tec.ecarts e
+  join reprise_tec.staging_demarche_emission_ges g on g.id = e.tec_id
+ where e.table_source = 'demarche_emission_ges'
+   and e.motif = 'objectif_sans_colonne'
+ order by g.demarche_id, g.secteur_obligatoire_id, g.periode_id;
+```
+
 #### Ce qui arrête l'import du diagnostic
 
 Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
@@ -186,7 +219,7 @@ s'il en trouve un :
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | aucun dossier repris                                                      | lancer d'abord l'import des dossiers (étape 2)                                                          |
 | un dossier a déjà un diagnostic rangé                                     | l'import a déjà tourné (l'annuler d'abord), ou la collectivité a saisi le sien : décider au cas par cas |
-| un numéro de secteur, de polluant, de filière ou de sol inconnu du script | l'ajouter à sa table dans `grille.ts`, avec sa ligne de la grille ou `null`                             |
+| un numéro de secteur, de polluant, de filière ou de sol inconnu du script | l'ajouter à sa table dans `emplacement.ts`, avec sa ligne de la grille ou `null`                        |
 | le compteur des métadonnées est en retard sur la table                    | le recaler, après avoir compris pourquoi il l'est (commande ci-dessous)                                 |
 
 ```sql
