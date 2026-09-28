@@ -329,7 +329,7 @@ describe('runImportPipeline', () => {
     }
   });
 
-  it('échoue à la première étape qui échoue, sans brouillon', async () => {
+  it('échoue à la première étape qui échoue, en gardant les actions déjà extraites', async () => {
     const llm = routedLlm('scoring');
 
     const outcome = await runImportPipeline(llm, input());
@@ -350,5 +350,8 @@ describe('runImportPipeline', () => {
       },
     });
     expect(llm.generateStructured).toHaveBeenCalledTimes(2);
+    if (outcome.status === 'failed') {
+      expect(outcome.partialDraft.actions.length).toBeGreaterThan(0);
+    }
   });
 });
