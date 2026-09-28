@@ -18,7 +18,7 @@ variable "private_networks" {
 }
 
 variable "acl_enabled" {
-  description = "Crée l'ACL VPC. Mettre à false uniquement pour déboguer un problème de routage privé — le trafic inter-PN devient alors entièrement ouvert."
+  description = "Crée les ACL VPC (IPv4 et IPv6). Mettre à false uniquement pour déboguer un problème de routage privé — le trafic inter-PN devient alors entièrement ouvert."
   type        = bool
   default     = true
 }

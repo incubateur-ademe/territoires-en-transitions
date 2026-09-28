@@ -31,8 +31,8 @@ la production.
 
 ## Réseau
 
-Un **seul VPC** `tet`, `enable_routing = true`, un Private Network par tier, et une ACL
-VPC en `default_policy = "drop"`.
+Un **seul VPC** `tet`, `enable_routing = true`, un Private Network par tier, et deux ACL
+VPC en `default_policy = "drop"` : une IPv4, une IPv6.
 
 | Private Network | CIDR | Membres | IP fixe du serveur |
 |---|---|---|---|
@@ -54,8 +54,13 @@ chaque serveur applicatif**. Conséquences :
   accès app → Postgres/Redis, qui vivent dans le même PN que leur serveur ;
 - les humains passent par le bastion : `ssh -J tet-ops@<ip-coolify> …`.
 
-> Les Security Groups Scaleway ne filtrent que l'**interface publique**. L'ACL du VPC est
+> Les Security Groups Scaleway ne filtrent que l'**interface publique**. Les ACL du VPC sont
 > le seul point de contrôle du trafic privé.
+>
+> Chaque Private Network reçoit d'office un /64 IPv6, qu'on ne peut ni choisir ni
+> désactiver, et Scaleway tient une ACL distincte par version d'IP. L'ACL IPv6 refuse donc
+> tout : aucun flux légitime ne passe en IPv6 entre PN. Sans elle, l'IPv6 serait routé
+> librement et prod redeviendrait joignable depuis nonprod et preview.
 
 Le plan d'adressage est déclaré dans `platform/variables.tf` (`network_plan`). Chaque
 stack applicatif redéclare l'IP de *son* serveur dans `server_private_ipv4_address` :
