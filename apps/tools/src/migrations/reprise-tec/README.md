@@ -258,7 +258,9 @@ select setval('public.indicateur_source_metadonnee_id_seq',
 
 ### 4. Saisir les services
 
-Chaque dossier repris transmis pour avis reçoit une saisine de chaque service
+Une saisine est la demande d'avis adressée à un service sur un dossier : sans
+elle, le service ne peut pas ouvrir le dossier. Chaque dossier repris transmis
+pour avis reçoit une saisine de chaque service
 qui couvre sa collectivité (DREAL, région, DDT, DR ADEME, services nationaux),
 comme l'aurait fait sa transmission dans TeT : même règle de couverture
 (`listInstructeursCouvrants` du backend), `source = 'transmission'`, périmètre
@@ -279,6 +281,18 @@ saisirait les services avec la date du jour.
 Le rapport compte les saisines par type de service et par périmètre, puis
 nomme les dossiers qui n'ont aucune saisine principale d'un type. Pour la DDT,
 c'est attendu : l'outre-mer, Paris et la petite couronne n'en ont pas.
+
+#### Annuler les saisines
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-saisines/annuler.ts [--confirm]
+```
+
+Retire les saisines que l'import a écrites (d'après `lignes_ecrites`), et
+seulement elles : les dossiers ne sont pas touchés, une saisine posée hors
+reprise (transmission, rattrapage) reste. Un avis déposé par un service sur une
+de ces saisines depuis l'import part avec elle : le script les compte.
+Refuse de tourner si la reprise a écrit des avis : annuler d'abord leur import.
 
 #### Ce qui arrête l'import des saisines
 
