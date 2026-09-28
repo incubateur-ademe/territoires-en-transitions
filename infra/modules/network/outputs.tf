@@ -19,6 +19,11 @@ output "private_network_subnets" {
 }
 
 output "acl_id" {
-  description = "ID de l'ACL VPC. Null si acl_enabled = false."
+  description = "ID de l'ACL VPC IPv4. Null si acl_enabled = false."
   value       = var.acl_enabled ? scaleway_vpc_acl.main[0].id : null
+}
+
+output "acl_ipv6_id" {
+  description = "ID de l'ACL VPC IPv6. Null si acl_enabled = false."
+  value       = var.acl_enabled ? scaleway_vpc_acl.ipv6[0].id : null
 }

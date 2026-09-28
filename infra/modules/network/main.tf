@@ -76,3 +76,28 @@ resource "scaleway_vpc_acl" "main" {
     }
   }
 }
+
+# Pendant IPv6 de l'ACL ci-dessus. Chaque VPC a deux ACL indépendantes, une par
+# version d'IP, et chaque Private Network reçoit d'office un /64 IPv6 que l'on
+# ne peut ni choisir ni désactiver. Sans cette ACL, le trafic IPv6 est routé
+# librement entre PN : prod redeviendrait joignable depuis nonprod et preview.
+#
+# Aucun flux IPv6 légitime entre PN : Coolify pilote les serveurs sur leur IPv4
+# privée. La règle drop explicite double le default_policy, par précaution si
+# Scaleway n'appliquait pas ce dernier à une liste sans règle.
+resource "scaleway_vpc_acl" "ipv6" {
+  count = var.acl_enabled ? 1 : 0
+
+  vpc_id         = scaleway_vpc.main.id
+  region         = var.region
+  is_ipv6        = true
+  default_policy = "drop"
+
+  rules {
+    protocol    = "ANY"
+    source      = "::/0"
+    destination = "::/0"
+    action      = "drop"
+    description = "Aucun trafic IPv6 entre Private Networks"
+  }
+}
