@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { notImplemented } from '@tet/backend/utils/not-implemented';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { LEVIER_ID_BY_NOM } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import { VoletErrorEnum, type VoletError } from './volet.errors';
 import { ficheActionVoletGesTable } from './models/fiche-action-volet-ges.table';
+import { FicheVolet } from './pipeline/calculate-mobilisation/group-volets-by-levier';
 import { FicheVolets, VoletRepository } from './volet.repository';
 
 @Injectable()
@@ -18,10 +18,63 @@ export class FicheActionVoletGesRepository implements VoletRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  listVolets: VoletRepository['listVolets'] = notImplemented('listVolets');
+  async listVolets({
+    collectiviteId,
+  }: {
+    collectiviteId: number;
+  }): Promise<Result<FicheVolet[], VoletError>> {
+    try {
+      const volets = await this.db
+        .select({
+          ficheId: ficheActionVoletGesTable.ficheId,
+          levierId: ficheActionVoletGesTable.levierId,
+          categorie: ficheActionVoletGesTable.categorie,
+        })
+        .from(ficheActionVoletGesTable)
+        .innerJoin(
+          ficheActionTable,
+          eq(ficheActionTable.id, ficheActionVoletGesTable.ficheId)
+        )
+        .where(eq(ficheActionTable.collectiviteId, collectiviteId))
+        .orderBy(
+          asc(ficheActionVoletGesTable.ficheId),
+          asc(ficheActionVoletGesTable.levierId),
+          asc(ficheActionVoletGesTable.categorie)
+        );
 
-  deleteVolets: VoletRepository['deleteVolets'] =
-    notImplemented('deleteVolets');
+      return success(volets);
+    } catch (error) {
+      this.logger.error(
+        `Lecture des volets de la collectivité ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(VoletErrorEnum.GET_VOLETS_ERROR);
+    }
+  }
+
+  async deleteVolets({
+    ficheIds,
+    tx,
+  }: {
+    ficheIds: readonly number[];
+    tx?: Transaction;
+  }): Promise<Result<void, VoletError>> {
+    try {
+      await (tx ?? this.db)
+        .delete(ficheActionVoletGesTable)
+        .where(inArray(ficheActionVoletGesTable.ficheId, [...ficheIds]));
+
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(
+        `Suppression des volets de ${ficheIds.length} fiches: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(VoletErrorEnum.DELETE_VOLETS_ERROR);
+    }
+  }
 
   async saveVolets({
     collectiviteId,

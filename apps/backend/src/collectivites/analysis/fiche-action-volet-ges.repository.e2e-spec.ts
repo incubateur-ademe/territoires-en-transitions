@@ -273,7 +273,94 @@ describe('VoletRepository contract', () => {
       ],
     });
   });
-  it.todo('listVolets renvoie les volets des fiches de la CT');
-  it.todo('deleteVolets supprime les volets des fiches données');
-  it.todo('deleteVolets ne touche pas aux volets des autres fiches de la CT');
+
+  it('listVolets renvoie les volets des fiches de la CT', async () => {
+    registerVoletsCleanup();
+
+    await db.db.insert(ficheActionVoletGesTable).values([
+      {
+        ficheId,
+        levierId: 'velo_transport_commun',
+        categorie: 'amenagement',
+      },
+      { ficheId, levierId: 'covoiturage', categorie: 'sensibilisation' },
+      {
+        ficheId: autreFicheId,
+        levierId: 'covoiturage',
+        categorie: 'amenagement',
+      },
+      {
+        ficheId: ficheAutreCollectiviteId,
+        levierId: 'biogaz',
+        categorie: 'financement',
+      },
+    ]);
+
+    expect(await repository.listVolets({ collectiviteId })).toEqual({
+      success: true,
+      data: [
+        { ficheId, levierId: 'covoiturage', categorie: 'sensibilisation' },
+        {
+          ficheId,
+          levierId: 'velo_transport_commun',
+          categorie: 'amenagement',
+        },
+        {
+          ficheId: autreFicheId,
+          levierId: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      ],
+    });
+  });
+
+  it('deleteVolets supprime les volets des fiches données', async () => {
+    registerVoletsCleanup();
+
+    await db.db.insert(ficheActionVoletGesTable).values([
+      {
+        ficheId,
+        levierId: 'velo_transport_commun',
+        categorie: 'amenagement',
+      },
+      { ficheId, levierId: 'covoiturage', categorie: 'sensibilisation' },
+      {
+        ficheId: autreFicheId,
+        levierId: 'covoiturage',
+        categorie: 'amenagement',
+      },
+    ]);
+
+    const deleteResult = await repository.deleteVolets({
+      ficheIds: [ficheId, autreFicheId],
+    });
+
+    expect({ deleteResult, rows: await readVolets() }).toEqual({
+      deleteResult: { success: true, data: undefined },
+      rows: [],
+    });
+  });
+
+  it('deleteVolets ne touche pas aux volets des autres fiches de la CT', async () => {
+    registerVoletsCleanup();
+
+    await db.db.insert(ficheActionVoletGesTable).values([
+      {
+        ficheId,
+        levierId: 'velo_transport_commun',
+        categorie: 'amenagement',
+      },
+      {
+        ficheId: autreFicheId,
+        levierId: 'covoiturage',
+        categorie: 'amenagement',
+      },
+    ]);
+
+    await repository.deleteVolets({ ficheIds: [ficheId] });
+
+    expect(await readVolets()).toEqual([
+      { ficheId: autreFicheId, levierId: 'covoiturage' },
+    ]);
+  });
 });
