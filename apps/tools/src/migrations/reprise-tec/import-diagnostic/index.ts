@@ -7,11 +7,13 @@
  *     apps/tools/src/migrations/reprise-tec/import-diagnostic/index.ts [--confirm]
  */
 import { getCible } from '../db';
-import { loadDiagnostic } from './diagnostic';
+import { loadTablesGrille } from './tables-grille';
 import { loadDossiers } from './dossiers';
+import { createEcarts, validateBilan } from './ecarts';
 import { createDiagnostics } from './ecriture';
 import { validateGardes } from './gardes';
 import { printRapport } from './rapport';
+import { loadTablesHorsGrille } from './tables-hors-grille';
 
 const main = async () => {
   const isConfirmed = process.argv.includes('--confirm');
@@ -20,20 +22,39 @@ const main = async () => {
 
   try {
     const dossiers = await loadDossiers(client);
-    const { lignes, valeurs } = await loadDiagnostic(client);
-    await validateGardes(client, dossiers, lignes);
+    const tablesGrille = await loadTablesGrille(client, dossiers);
+    const tablesHorsGrille = await loadTablesHorsGrille(client, dossiers);
+    const ecarts = [...tablesGrille.ecarts, ...tablesHorsGrille.ecarts];
+
+    await validateGardes(client, dossiers, tablesGrille.lignes);
+    const bilan = validateBilan(
+      [...tablesGrille.lignes, ...tablesHorsGrille.lignes],
+      tablesGrille.valeurs,
+      ecarts
+    );
 
     await client.query('begin');
     let dossiersEcrits: number;
     try {
-      dossiersEcrits = await createDiagnostics(client, dossiers, valeurs);
+      dossiersEcrits = await createDiagnostics(
+        client,
+        dossiers,
+        tablesGrille.valeurs
+      );
+      await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
       await client.query('rollback');
       throw e;
     }
 
-    printRapport({ lignes, valeurs, dossiersEcrits, isConfirmed });
+    printRapport({
+      bilan,
+      ecarts,
+      valeursEcrites: tablesGrille.valeurs.length,
+      dossiersEcrits,
+      isConfirmed,
+    });
   } finally {
     client.release();
     await pool.end();
