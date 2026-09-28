@@ -26,12 +26,11 @@ export const STRUCTURATION_CONCURRENCY = 4;
  * minute (10) : des paquets de cette taille remplissent le quota de tokens
  * sans le dépasser, et restent loin de la taille où le modèle résume.
  */
-export const STRUCTURATION_PACK_TOKENS = 9_000;
+export const STRUCTURATION_PACK_TOKENS = 6_000;
 // gpt-oss raisonne avant de répondre, et ce raisonnement se prend sur le
 // budget de réponse sans qu'Albert le déclare : il faut large. Le quota ne
 // compte que les tokens d'entrée.
 const STRUCTURATION_MAX_OUTPUT_TOKENS = 32_000;
-const STRUCTURATION_RETRY_MAX_OUTPUT_TOKENS = 64_000;
 /** Part des paquets qu'on accepte de perdre avant de faire échouer l'import. */
 const MAX_SKIPPED_PACK_RATIO = 0.2;
 
@@ -80,51 +79,45 @@ export const structureUnits = async (
   const ignoreDirective = buildIgnoreDirective(disabledFields);
   const renderedSkeleton = renderSkeleton(skeleton);
 
+  const promptOf = (pack: IndexedUnit[]) =>
+    ignoreDirective +
+    generatePrompt(STRUCTURATION_USER_PROMPT, {
+      squelette: renderedSkeleton,
+      instructions,
+      position: describePackPosition(pack, count),
+      extrait: pack
+        .map(({ unit, index }) => renderUnit(unit, { index, count }))
+        .join('\n\n'),
+    });
+
   const outcomes = await mapWithConcurrency(
-    packs.map((pack, packIndex) => ({ pack, packIndex })),
+    packs,
     STRUCTURATION_CONCURRENCY,
-    ({ pack, packIndex }) =>
-      structurePack(llm, {
-        systemInstruction,
-        prompt:
-          ignoreDirective +
-          generatePrompt(STRUCTURATION_USER_PROMPT, {
-            squelette: renderedSkeleton,
-            instructions,
-            position: describePackPosition(pack, count),
-            extrait: chunks[packIndex],
-          }),
-        signal,
-      })
+    (pack) => structurePack(llm, { pack, systemInstruction, promptOf, signal })
   );
 
-  const skipped = outcomes.flatMap((outcome, packIndex) =>
-    outcome.success ? [] : [{ packIndex, error: outcome.error }]
-  );
-  if (skipped.length > Math.floor(packs.length * MAX_SKIPPED_PACK_RATIO)) {
-    return failure(skipped[0].error);
+  const failures = outcomes.flatMap(({ failures }) => failures);
+  const failedPacks = outcomes.filter(
+    ({ failures }) => failures.length > 0
+  ).length;
+  if (failedPacks > Math.floor(packs.length * MAX_SKIPPED_PACK_RATIO)) {
+    return failure(failures[0].error);
   }
 
   let merged: ChunkedActions = { actions: [], chunkIndexByAction: [] };
-  const usages: TokenUsage[] = [];
   outcomes.forEach((outcome, chunkIndex) => {
-    if (outcome.success) {
-      usages.push(outcome.data.tokens);
-      merged = mergeChunkActions(merged, outcome.data.actions, chunkIndex);
-    }
+    merged = mergeChunkActions(merged, outcome.actions, chunkIndex);
   });
   if (merged.actions.length === 0) {
-    return failure(skipped[0]?.error ?? { kind: 'no_actions_extracted' });
+    return failure(failures[0]?.error ?? { kind: 'no_actions_extracted' });
   }
   return success({
     ...merged,
     chunks,
-    tokens: sumTokenUsage(usages),
-    warnings: skipped.map(
-      ({ packIndex, error }) =>
-        `Extrait écarté (${describePackPosition(packs[packIndex], count)}) : ${
-          error.kind
-        }`
+    tokens: sumTokenUsage(outcomes.flatMap(({ tokens }) => tokens)),
+    warnings: failures.map(
+      ({ pack, error }) =>
+        `Extrait écarté (${describePackPosition(pack, count)}) : ${error.kind}`
     ),
   });
 };
@@ -166,42 +159,71 @@ const describePackPosition = (pack: IndexedUnit[], count: number): string => {
   }`;
 };
 
+type PackOutcome = {
+  actions: ExtractedAction[];
+  tokens: TokenUsage[];
+  /** Morceaux du paquet que le modèle n'a pas su structurer. */
+  failures: { pack: IndexedUnit[]; error: LlmError }[];
+};
+
 /**
- * Une réponse tronquée ou mal formée se retente une fois, avec plus de place
- * pour une réponse tronquée : le raisonnement du modèle varie d'un appel à
- * l'autre.
+ * Une réponse tronquée ou mal formée vient d'un paquet trop riche : on le
+ * coupe en deux plutôt que de laisser le modèle écrire plus longtemps. Une
+ * unité seule se retente une fois, en raisonnant moins.
  */
 const structurePack = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  args: { systemInstruction: string; prompt: string; signal?: AbortSignal }
-): Promise<
-  Result<{ actions: ExtractedAction[]; tokens: TokenUsage }, LlmError>
-> => {
-  const first = await structureUnit(llm, {
-    ...args,
-    maxOutputTokens: STRUCTURATION_MAX_OUTPUT_TOKENS,
-  });
-  if (
-    first.success ||
-    (first.error.kind !== 'truncated' && first.error.kind !== 'invalid_json')
-  ) {
-    return first;
+  args: {
+    pack: IndexedUnit[];
+    systemInstruction: string;
+    promptOf: (pack: IndexedUnit[]) => string;
+    signal?: AbortSignal;
   }
-  return structureUnit(llm, {
-    ...args,
-    maxOutputTokens:
-      first.error.kind === 'truncated'
-        ? STRUCTURATION_RETRY_MAX_OUTPUT_TOKENS
-        : STRUCTURATION_MAX_OUTPUT_TOKENS,
-  });
+): Promise<PackOutcome> => {
+  const { pack, systemInstruction, promptOf, signal } = args;
+  const call = (reasoningEffort?: 'low') =>
+    structureUnit(llm, {
+      systemInstruction,
+      prompt: promptOf(pack),
+      reasoningEffort,
+      signal,
+    });
+
+  let result = await call();
+  if (!result.success && isRecoverable(result.error)) {
+    if (pack.length > 1) {
+      const middle = Math.ceil(pack.length / 2);
+      const halves = await Promise.all(
+        [pack.slice(0, middle), pack.slice(middle)].map((half) =>
+          structurePack(llm, { ...args, pack: half })
+        )
+      );
+      return {
+        actions: halves.flatMap(({ actions }) => actions),
+        tokens: halves.flatMap(({ tokens }) => tokens),
+        failures: halves.flatMap(({ failures }) => failures),
+      };
+    }
+    result = await call('low');
+  }
+  return result.success
+    ? {
+        actions: result.data.actions,
+        tokens: [result.data.tokens],
+        failures: [],
+      }
+    : { actions: [], tokens: [], failures: [{ pack, error: result.error }] };
 };
+
+const isRecoverable = (error: LlmError): boolean =>
+  error.kind === 'truncated' || error.kind === 'invalid_json';
 
 const structureUnit = async (
   llm: Pick<LlmService, 'generateStructured'>,
   args: {
     systemInstruction: string;
     prompt: string;
-    maxOutputTokens: number;
+    reasoningEffort?: 'low';
     signal?: AbortSignal;
   }
 ): Promise<
@@ -212,7 +234,8 @@ const structureUnit = async (
     systemInstruction: args.systemInstruction,
     prompt: args.prompt,
     schema: extractionResponseSchema,
-    maxOutputTokens: args.maxOutputTokens,
+    maxOutputTokens: STRUCTURATION_MAX_OUTPUT_TOKENS,
+    reasoningEffort: args.reasoningEffort,
     signal: args.signal,
   });
   if (!completion.success) {
