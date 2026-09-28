@@ -172,7 +172,11 @@ describe('GenerateImportDraftService', () => {
     expect(result).toMatchObject({ success: true });
     expect(mocks.markAsImportedByAi).toHaveBeenCalledWith(7, {});
     expect(mocks.notifyPlanImported).toHaveBeenCalledWith(
-      expect.objectContaining({ planId: 7, collectiviteId: 10 })
+      expect.objectContaining({
+        planId: 7,
+        collectiviteId: 10,
+        recap: { axesCount: 1, sousAxesCount: 1, fichesCount: 1 },
+      })
     );
     expect(mocks.save).toHaveBeenCalledWith(
       expect.objectContaining({

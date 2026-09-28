@@ -19,6 +19,7 @@ import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
+import { countPlanContent } from './count-plan-content';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import {
@@ -225,6 +226,7 @@ export class GenerateImportDraftService {
       collectiviteId: job.collectiviteId,
       planId: created.data,
       planName: job.options.planName,
+      recap: countPlanContent(planInput),
     });
     return success(undefined);
   }

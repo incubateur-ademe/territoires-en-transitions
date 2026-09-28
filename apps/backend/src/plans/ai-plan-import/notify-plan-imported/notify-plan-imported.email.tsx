@@ -12,7 +12,7 @@ import { NotifyPlanImportedProps } from './notify-plan-imported.props';
 export const NotifyPlanImportedEmail = (
   props: NotifyPlanImportedProps
 ): React.ReactNode => {
-  const { planName, planUrl, sendToEmail } = props;
+  const { planName, planRecap, planUrl, sendToEmail } = props;
 
   return (
     <EmailContainer>
@@ -20,7 +20,8 @@ export const NotifyPlanImportedEmail = (
 
       <Text>
         Votre plan <b>{planName}</b> a été créé à partir du fichier que vous
-        avez importé. Il est disponible sur la plateforme.
+        avez importé{planRecap ? <> : {planRecap}</> : null}. Il est disponible
+        sur la plateforme.
       </Text>
 
       <Text>
@@ -46,6 +47,7 @@ export const NotifyPlanImportedEmail = (
 // exemple pour react-email-preview (en dev)
 NotifyPlanImportedEmail.PreviewProps = {
   planName: 'PCAET 2024-2030',
+  planRecap: '5 axes, 11 sous-axes, 224 actions et sous-actions',
   planUrl: 'https://app.territoiresentransitions.fr',
   sendToEmail: 'editeur@collectivite.fr',
 };
