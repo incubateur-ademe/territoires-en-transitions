@@ -15,7 +15,6 @@
 groups:
   technical_group:
     - evaluation.service_configuration
-    - automatisation.supabase_function_url
     - config.service_configurations
     #- cron.job # Need rights
     - storage.buckets
