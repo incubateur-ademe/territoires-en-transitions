@@ -515,32 +515,6 @@ export class GetLabellisationService {
     };
   }
 
-  getScorePgFunction({ collectiviteId }: { collectiviteId: number }) {
-    const statement = sql`with
-      ref as (select unnest(enum_range(null::referentiel)) as referentiel),
-
-      -- Score JSON en format table SQL
-      scores as (
-        select s.*
-        from ref
-        left join client_scores cs on cs.referentiel = ref.referentiel
-        join private.convert_client_scores(cs.scores) s on true
-        where cs.collectivite_id = ${collectiviteId}
-      )
-
-      select s.referentiel,
-        ss.proportion_fait,
-        ss.proportion_programme,
-        ss.completude,
-        ss.complete
-      from scores s
-      join private.score_summary_of(s) ss on true
-      where s.action_id = s.referentiel::action_id
-    `;
-
-    return this.db.execute(statement);
-  }
-
   /**
    * Équivalent de la fonction PG `labellisation.referentiel_score`, basée sur `client_scores`,
    * et utilisant elle-même les fonctions PG :
