@@ -57,7 +57,11 @@ export const loadListesTet = async (client: PoolClient) => {
         const thematiqueId = find(thematiques, c.thematique, 'thématique')?.id;
         return [
           secteur,
-          { thematiqueId: thematiqueId ?? -1, sousThematiqueId: null },
+          {
+            thematiqueId: thematiqueId ?? -1,
+            sousThematiqueId: null,
+            thematiqueExacte: c.exacte === true,
+          },
         ];
       }
       const sousThematique = find(
@@ -70,6 +74,7 @@ export const loadListesTet = async (client: PoolClient) => {
         {
           thematiqueId: sousThematique?.thematiqueId ?? -1,
           sousThematiqueId: sousThematique?.id ?? -1,
+          thematiqueExacte: false,
         },
       ];
     })
@@ -90,6 +95,11 @@ export const loadListesTet = async (client: PoolClient) => {
   };
 };
 
-type ClassementTet = { thematiqueId: number; sousThematiqueId: number | null };
+type ClassementTet = {
+  thematiqueId: number;
+  sousThematiqueId: number | null;
+  // la thématique dit déjà tout du secteur : pas de filtre perdu sans sous-thématique
+  thematiqueExacte: boolean;
+};
 
 type Libelle = { id: number; libelle: string };
