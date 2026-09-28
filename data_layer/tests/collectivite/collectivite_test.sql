@@ -12,8 +12,6 @@ values ((select id from collectivite where nom = 'testsql' limit 1), 'eci_2.1', 
 -- action_statut
 insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
 values ((select id from collectivite where nom = 'testsql' limit 1), 'eci_1.1.1.1', 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
--- score
-select evaluation.update_late_collectivite_scores(20);
 -- labellisation
 insert into labellisation (collectivite_id, referentiel, obtenue_le, etoiles, score_realise, score_programme)
 values ((select id from collectivite where nom = 'testsql' limit 1), 'eci', now(), 1, 1.0, 1.0);
