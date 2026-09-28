@@ -1,7 +1,3 @@
-/**
- * Affiche le formulaire d'ajout de liens
- */
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { appLabels } from '@/app/labels/catalog';
 import { Button, Field, Input } from '@tet/ui';
