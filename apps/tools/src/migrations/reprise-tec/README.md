@@ -295,6 +295,18 @@ Après l'import, `rattraper-saisines-pcaet` ne trouve rien à faire sur les
 dossiers repris. Ne pas le lancer entre l'import des dossiers et celui-ci : il
 saisirait les services avec la date du jour.
 
+#### Ce qui arrête l'import des saisines
+
+Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
+s'il en trouve un :
+
+| Garde                                                                                 | Quoi faire                                                                                                       |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris                                                                  | lancer d'abord l'import des dossiers (étape 2)                                                                   |
+| un dossier repris a déjà une saisine                                                  | l'import a déjà tourné (l'annuler d'abord), ou le rattrapage des saisines est passé avant : retirer ses saisines |
+| un dossier transmis dont l'échéance d'avis n'est pas passée, jour compris, ou absente | vérifier la date de transmission ; si elle est juste, attendre la fin de la consultation                         |
+| un dossier transmis sans DREAL ou sans région qui couvre son siège                    | créer le service, ou corriger son périmètre, avant l'import                                                      |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |

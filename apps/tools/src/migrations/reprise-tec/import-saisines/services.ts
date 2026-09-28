@@ -2,15 +2,23 @@
 
 import { PcaetInstructeursRepository } from '@tet/backend/demarches/pcaet/shared/pcaet-instructeurs.repository';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { PcaetPerimetreSaisine } from '@tet/domain/demarches';
+import {
+  collectiviteTypeEnum,
+  type CollectiviteType,
+} from '@tet/domain/collectivites';
+import {
+  PcaetPerimetreSaisineEnum,
+  type PcaetPerimetreSaisine,
+} from '@tet/domain/demarches';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import type { Dossier } from './dossiers';
+import { decrireDossier, type Dossier } from './dossiers';
 
 export type Saisine = {
   dossier: Dossier;
   serviceId: number;
   service: string;
+  type: CollectiviteType;
   perimetre: PcaetPerimetreSaisine;
 };
 
@@ -46,9 +54,35 @@ export const listSaisines = async (
         dossier,
         serviceId: couvrant.collectiviteId,
         service: couvrant.nom,
+        type: couvrant.type,
         perimetre: couvrant.perimetre,
       });
     }
   }
   return saisines;
 };
+
+const SERVICES_ATTENDUS = [
+  { type: collectiviteTypeEnum.DREAL, nom: 'DREAL' },
+  { type: collectiviteTypeEnum.REGION, nom: 'région' },
+];
+
+/** Garde, appelée par `gardes.ts` : un dossier transmis sans DREAL ou sans région principale, personne ne rendrait l'avis attendu. */
+export const listCasBloquantsServices = (
+  dossiers: readonly Dossier[],
+  saisines: readonly Saisine[]
+) =>
+  dossiers.flatMap((dossier) =>
+    SERVICES_ATTENDUS.filter(
+      ({ type }) =>
+        !saisines.some(
+          (s) =>
+            s.dossier.demarcheId === dossier.demarcheId &&
+            s.type === type &&
+            s.perimetre === PcaetPerimetreSaisineEnum.PRINCIPAL
+        )
+    ).map(
+      ({ nom }) =>
+        `  dossier sans ${nom} principale : ${decrireDossier(dossier)}`
+    )
+  );
