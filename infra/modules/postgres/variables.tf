@@ -79,7 +79,7 @@ variable "private_network_id" {
 }
 
 variable "allowed_ips" {
-  description = "Liste des plages IP autorisées à se connecter à l'instance, en notation CIDR. Pendant la migration, inclure : (1) IP publique de la VM Coolify, (2) IP du runner CI qui pilote le restore, (3) IP des postes opérateurs autorisés."
+  description = "CIDR autorisés sur l'endpoint public ({ cidr = description }). Vide : pas d'endpoint public, accès uniquement par le Private Network. Pendant la migration, inclure : (1) IP du runner CI qui pilote le restore, (2) IP des postes opérateurs autorisés."
   type        = map(string)
   default     = {}
 }
