@@ -121,8 +121,6 @@ begin
     -- action_statut
     insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
     values (colid, 'eci_1.1.1.1', 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
-    -- score
-    perform evaluation.update_late_collectivite_scores(20);
     -- pre_audit_scores
     insert into  pre_audit_scores (collectivite_id, referentiel, scores, modified_at, payload_timestamp, audit_id)
     values (colid, 'eci', '[
