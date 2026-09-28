@@ -3,7 +3,11 @@
  * Reprise T&C, étape 3 : écrit le diagnostic de chaque dossier repris, rangé
  * dans son dossier. Simulation par défaut, `--confirm` pour valider.
  *
- *   SUPABASE_DATABASE_URL="postgresql://..." pnpx tsx \
+ * Avec `--confirm`, TeT recalcule ensuite les totaux de chaque collectivité
+ * touchée ; en simulation, le script prévoit seulement ce que le recalcul changera.
+ *
+ *   SUPABASE_DATABASE_URL="postgresql://..." TET_API_URL="https://..." \
+ *   TET_API_TOKEN="<service role>" pnpx tsx \
  *     apps/tools/src/migrations/reprise-tec/import-diagnostic/index.ts [--confirm]
  */
 import { getCible } from '../db';
@@ -12,7 +16,9 @@ import { loadDossiers } from './dossiers';
 import { createEcarts, validateBilan } from './ecarts';
 import { createDiagnostics } from './ecriture';
 import { validateGardes } from './gardes';
-import { printRapport } from './rapport';
+import { prevoirRecalcul } from './prevision';
+import { lancerRecalcul } from './recalcul';
+import { printRapport, printRecalcul } from './rapport';
 import { loadTablesHorsGrille } from './tables-hors-grille';
 
 const main = async () => {
@@ -55,6 +61,30 @@ const main = async () => {
       dossiersEcrits,
       isConfirmed,
     });
+    if (isConfirmed) {
+      const recalcul = await lancerRecalcul(
+        client,
+        dossiers,
+        tablesGrille.valeurs
+      ).catch((e) => {
+        throw new Error(
+          `Recalcul interrompu (${e instanceof Error ? e.message : e}). ` +
+            "L'import est validé : lancer recalculer.ts pour finir le recalcul."
+        );
+      });
+      printRecalcul('Constaté après le recalcul', recalcul, dossiers);
+    } else {
+      const prevu = await prevoirRecalcul(
+        client,
+        dossiers,
+        tablesGrille.valeurs
+      );
+      printRecalcul(
+        'Prévu au recalcul (simulation : le recalcul ne tourne pas)',
+        prevu,
+        dossiers
+      );
+    }
   } finally {
     client.release();
     await pool.end();
