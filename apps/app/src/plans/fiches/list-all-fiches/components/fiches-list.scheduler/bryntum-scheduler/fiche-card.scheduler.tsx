@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import Link from 'next/link';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
@@ -32,21 +32,18 @@ export const FicheCardScheduler = ({
       'plans.fiches.read_confidentiel'
     );
 
-  const cardRef = useRef<HTMLAnchorElement>(null);
-
-  const contentRef = useRef<HTMLAnchorElement>(null);
-
   const [cardWidth, setCardWidth] = useState(0);
   const [contentWidth, setContentWidth] = useState(0);
 
   // Permet de comparer la taille réelle de la carte qui match la durée de la fiche,
   // et la taille du contenu (titre, statut, pilotes) pour savoir si on doit
   // truncate le titre ou pas
-  useLayoutEffect(() => {
-    const cardWidth = cardRef?.current?.getBoundingClientRect().width;
-    setCardWidth(cardWidth ?? 0);
-    const contentWidth = contentRef?.current?.getBoundingClientRect().width;
-    setContentWidth(contentWidth ?? 0);
+  const measureCard = useCallback((node: HTMLAnchorElement | null) => {
+    setCardWidth(node?.getBoundingClientRect().width ?? 0);
+  }, []);
+
+  const measureContent = useCallback((node: HTMLAnchorElement | null) => {
+    setContentWidth(node?.getBoundingClientRect().width ?? 0);
   }, []);
 
   // Href est donné à la carte et au contenu afin que le clic fonctionne partout.
@@ -69,7 +66,7 @@ export const FicheCardScheduler = ({
     <div className="group relative flex">
       {/* Card background qui représente la taille exacte de l'event */}
       <Card
-        ref={cardRef}
+        ref={measureCard}
         className={cn('h-15 absolute inset-0 m-0', {
           'group-hover:border-primary-3 group-hover:bg-primary-1':
             !isNotClickable,
@@ -80,7 +77,7 @@ export const FicheCardScheduler = ({
       {/* Contenu principal en overflow de l'event */}
       <div className="sticky left-0 flex items-center">
         <Link
-          ref={contentRef}
+          ref={measureContent}
           data-test="FicheActionCarte"
           onClick={(e) => isNotClickable && e.preventDefault()}
           href={href}
