@@ -1,4 +1,4 @@
-import { storedFileSchema } from '@tet/domain/collectivites';
+import { lienSchema, storedFileSchema } from '@tet/domain/collectivites';
 import {
   etoileAsStringEnumSchema,
   referentielIdEnumSchema,
@@ -8,6 +8,7 @@ import z from 'zod';
 
 const supportSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('fichier'), fichier: storedFileSchema }),
+  z.object({ type: z.literal('lien'), lien: z.object(lienSchema.shape) }),
   z.object({ type: z.literal('fichierManquant'), filename: z.string() }),
 ]);
 

@@ -27,10 +27,19 @@ import { createTestDemandePreuve } from '../../labellisations/create-preuve/crea
 
 type DocumentLu =
   | { type: 'fichier'; fichier: { filename: string } }
+  | { type: 'lien'; lien: { titre: string } }
   | { type: 'fichierManquant'; filename: string };
 
-const toFilename = (document: DocumentLu): string =>
-  document.type === 'fichier' ? document.fichier.filename : document.filename;
+const toFilename = (document: DocumentLu): string => {
+  switch (document.type) {
+    case 'fichier':
+      return document.fichier.filename;
+    case 'lien':
+      return document.lien.titre;
+    case 'fichierManquant':
+      return document.filename;
+  }
+};
 
 describe('List Documents Router', () => {
   let router: TrpcRouter;
