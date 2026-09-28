@@ -34,7 +34,7 @@ x-dev-values:
 services:
   # ——————————————————————————— Base de données ———————————————————————————
   # Postgres 15 (parité prod/CI, cf. supabase/config.toml major_version) —
-  # l'image Supabase embarque extensions (pg_net, pg_cron, http…), rôles et
+  # l'image Supabase embarque extensions (pg_cron, http…), rôles et
   # schémas auth/storage requis par les migrations sqitch.
   db:
     profiles: [supabase]
