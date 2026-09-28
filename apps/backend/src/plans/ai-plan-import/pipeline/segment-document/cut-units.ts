@@ -30,6 +30,7 @@ type OpenUnit = {
   headingPath: string[];
   kind: UnitKind;
   section?: string;
+  title?: string;
 };
 
 /**
@@ -58,12 +59,13 @@ export const cutUnits = (
       units.push(
         buildUnit(open.lines, open.headingPath, open.kind, {
           section: open.section,
+          title: open.title,
         })
       );
     }
   };
-  const start = (kind: UnitKind, lines: UnitLine[] = []) => {
-    open = { lines, headingPath: pathOf(stack), kind, section };
+  const start = (kind: UnitKind, lines: UnitLine[] = [], title?: string) => {
+    open = { lines, headingPath: pathOf(stack), kind, section, title };
     labelsInWindow = [];
   };
   const isRecall = (heading: HeadingMatch) =>
@@ -105,7 +107,7 @@ export const cutUnits = (
       if (heading && heading.level >= FICHE_LEVEL) {
         close();
         popTo(stack, FICHE_LEVEL);
-        start('fiche', [unitLine]);
+        start('fiche', [unitLine], labelOf(heading));
         stack.push({
           level: FICHE_LEVEL,
           label: labelOf(heading),
@@ -161,7 +163,7 @@ export const cutUnits = (
     const fiche = open.lines.slice(titleIndex);
     open = { ...open, lines: before };
     close();
-    start('fiche', fiche);
+    start('fiche', fiche, fiche[0].text.trim());
   }
 };
 
@@ -241,6 +243,7 @@ const windowUnits = (
           buildUnit(lines, unit.headingPath, unit.kind, {
             continued: windows.length > 0,
             section: unit.section,
+            title: unit.title,
           })
         );
         const overlap = tailByTokens(lines, overlapTokens);
@@ -258,6 +261,7 @@ const windowUnits = (
         buildUnit(lines, unit.headingPath, unit.kind, {
           continued: windows.length > 0,
           section: unit.section,
+          title: unit.title,
         })
       );
     }

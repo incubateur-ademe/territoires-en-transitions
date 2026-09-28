@@ -19,7 +19,7 @@ Règles d'extraction
 - Une entrée par action présente dans l'extrait, avec tout son contenu : ne résumez pas, ne regroupez pas plusieurs actions en une.
 - Si l'extrait ne contient aucune action (diagnostic, sommaire, méthodologie, page de garde), répondez avec un tableau vide [].
 - Ne jamais inventer d'information ni de chiffre. Un champ absent du texte reste "".
-- Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas.
+- Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre".
 - Le texte peut venir d'un PDF converti, avec des artefacts de mise en page : retirez seulement les artefacts manifestes, conservez l'orthographe et les majuscules des noms propres et sigles.
 
 Sortie : un tableau JSON dont chaque objet a exactement ces champs
