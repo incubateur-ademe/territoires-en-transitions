@@ -194,10 +194,10 @@ const main = async (): Promise<number> => {
   lastStep = 'écriture du résultat';
   await app.close();
 
+  // Un import en échec rend les actions d'avant l'étape fautive : on les
+  // mesure quand même, c'est ce qui dit pourquoi l'étape a échoué.
   const draft =
-    outcome.status === 'done'
-      ? outcome.draft
-      : { actions: [], qualitativeReview: null };
+    outcome.status === 'done' ? outcome.draft : outcome.partialDraft;
   const metrics = computeEvalMetrics({
     draft,
     events: observer.events,
@@ -222,7 +222,7 @@ const main = async (): Promise<number> => {
         ? `${outcome.failedStep}: ${outcome.error.kind}`
         : null,
     stepStates: outcome.stepStates,
-    warnings: outcome.status === 'done' ? outcome.warnings : [],
+    warnings: outcome.warnings,
     metrics,
     draft,
     diff,

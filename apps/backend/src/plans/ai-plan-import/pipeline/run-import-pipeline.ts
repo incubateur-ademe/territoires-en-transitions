@@ -105,6 +105,9 @@ export type PipelineOutcome =
       status: 'failed';
       failedStep: StepName;
       error: PipelineError;
+      /** Les actions telles qu'avant l'étape en échec : de quoi comprendre. */
+      partialDraft: PlanDraft;
+      warnings: string[];
       stepStates: StepStates;
       tokens: TokenUsage;
     };
@@ -392,6 +395,11 @@ const failed = (
   status: 'failed',
   failedStep,
   error,
+  partialDraft: {
+    actions: progress.actions,
+    qualitativeReview: progress.review,
+  },
+  warnings: progress.warnings,
   stepStates: progress.stepStates,
   tokens: progress.tokens,
 });
