@@ -13,7 +13,9 @@ import { DocumentUnit } from '../segment-document/document-unit';
 
 // Les extraits de structure sont rarement longs ; au-delà, le sommaire suffit.
 const STRUCTURE_MAX_TOKENS = 15_000;
-const SKELETON_MAX_OUTPUT_TOKENS = 4_000;
+// Le squelette tient en quelques centaines de tokens ; le reste revient au
+// raisonnement de gpt-oss, qui se prend sur ce budget sans être déclaré.
+const SKELETON_MAX_OUTPUT_TOKENS = 16_000;
 
 export type ExtractSkeletonResult = {
   skeleton: PlanSkeleton | null;
@@ -53,6 +55,7 @@ export const extractSkeleton = async (
     }),
     schema: planSkeletonSchema,
     maxOutputTokens: SKELETON_MAX_OUTPUT_TOKENS,
+    reasoningEffort: 'low',
     signal,
   });
   if (!completion.success) {
