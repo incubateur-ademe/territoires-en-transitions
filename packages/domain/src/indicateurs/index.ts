@@ -25,3 +25,6 @@ export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/iso-date.utils';
 export * from './valeurs/values.constants';
 export * from './verification-trajectoire-status';
+export * from './vues/indicateur-vue-filters.rules';
+export * from './vues/indicateur-vue-filters.schema';
+export * from './vues/indicateur-vue-nom.schema';

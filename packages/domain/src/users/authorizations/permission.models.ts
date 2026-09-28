@@ -54,6 +54,8 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   'indicateurs.indicateurs.update',
   'indicateurs.indicateurs.delete',
   'indicateurs.valeurs.mutate',
+  'indicateurs.vues.read',
+  'indicateurs.vues.mutate',
   'demarches.pcaet.mutate',
 ];
 
@@ -85,7 +87,10 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'indicateurs.indicateurs.read_confidentiel',
     'indicateurs.valeurs.read_confidentiel',
   ],
-  [CollectiviteRole.LECTURE]: [...collectiviteLecturePermissions],
+  [CollectiviteRole.LECTURE]: [
+    ...collectiviteLecturePermissions,
+    'indicateurs.vues.read',
+  ],
   [CollectiviteRole.EDITION]: [...collectiviteEditionPermissions],
   [CollectiviteRole.ADMIN]: [...collectiviteAdminPermissions],
   [CollectiviteRole.EDITION_FICHES_INDICATEURS]: [
@@ -96,6 +101,8 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'plans.fiches.update_piloted_by_me',
     'indicateurs.indicateurs.update_piloted_by_me',
     'indicateurs.valeurs.mutate_piloted_by_me',
+    'indicateurs.vues.read',
+    'indicateurs.vues.mutate',
 
     'collectivites.tags.mutate',
     'collectivites.documents.mutate',

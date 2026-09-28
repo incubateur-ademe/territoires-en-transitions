@@ -9,7 +9,7 @@ export const listDefinitionsInputFiltersSchema = z.object({
   ficheIds: z.number().int().array().optional(),
   identifiantsReferentiel: z.string().array().optional(),
   thematiqueIds: z.number().int().array().optional(),
-  utilisateurPiloteIds: z.string().array().optional(),
+  utilisateurPiloteIds: z.uuid().array().optional(),
   personnePiloteIds: z.number().int().array().optional(),
   serviceIds: z.number().int().array().optional(),
   planIds: z.number().int().array().optional(),

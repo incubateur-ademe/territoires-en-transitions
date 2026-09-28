@@ -52,3 +52,34 @@ describe('permissionsByRole', () => {
     expect(rolesMutatingWithoutConfidentielRead).toEqual([]);
   });
 });
+
+describe('permissions des vues indicateurs', () => {
+  it('réserve la lecture aux membres et au super admin', () => {
+    const roles = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('indicateurs.vues.read')
+      )
+      .map(([role]) => role);
+    expect(roles).toEqual([
+      PlatformRole.SUPER_ADMIN,
+      CollectiviteRole.LECTURE,
+      CollectiviteRole.EDITION,
+      CollectiviteRole.ADMIN,
+      CollectiviteRole.EDITION_FICHES_INDICATEURS,
+    ]);
+  });
+
+  it('permet à tous les rôles en écriture de gérer les vues collectives', () => {
+    const roles = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('indicateurs.vues.mutate')
+      )
+      .map(([role]) => role);
+    expect(roles).toEqual([
+      PlatformRole.SUPER_ADMIN,
+      CollectiviteRole.EDITION,
+      CollectiviteRole.ADMIN,
+      CollectiviteRole.EDITION_FICHES_INDICATEURS,
+    ]);
+  });
+});

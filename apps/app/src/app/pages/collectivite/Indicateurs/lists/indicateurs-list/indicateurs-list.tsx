@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { Pagination } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 
@@ -14,10 +15,13 @@ import {
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurCardSkeleton } from '../IndicateurCard/indicateur-card.skeleton';
 import BadgeList from './badge-list';
-import { IndicateursListeOptions } from './indicateurs-list-options';
+import { getIndicateurBadgeFilters } from './get-indicateur-badge-filters.rules';
+import {
+  IndicateursListeOptions,
+  IndicateursListeOptionsProps,
+} from './indicateurs-list-options';
 import { SearchParams, sortByItems } from './use-indicateurs-list-params';
 
 type Props = {
@@ -25,7 +29,9 @@ type Props = {
   setSearchParams: (prams: SearchParams) => void;
   resetFilters?: () => void;
   defaultFilters?: ListDefinitionsInputFilters;
-  renderSettings?: (openState: OpenState) => React.ReactNode;
+  renderSettings?: IndicateursListeOptionsProps['renderSettings'];
+  status?: IndicateursListeOptionsProps['status'];
+  settingsOpenState?: OpenState;
   renderEmpty?: (
     isFiltered: boolean,
     setIsSettingsOpen?: (isOpen: boolean) => void
@@ -47,6 +53,8 @@ const IndicateursListe = (props: Props) => {
     isEditable,
     maxNbOfCards = 9,
     renderSettings,
+    status,
+    settingsOpenState,
   } = props;
 
   const { collectiviteId, hasCollectivitePermission } =
@@ -57,28 +65,26 @@ const IndicateursListe = (props: Props) => {
 
   // indique si le panneau des filtres est ouvert
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const effectiveSettingsOpenState = settingsOpenState ?? {
+    isOpen: isSettingsOpen,
+    setIsOpen: setIsSettingsOpen,
+  };
 
   const sort = sortByItems
     .filter((item) => item.value === sortBy)
     .map((item) => ({ field: item.value, direction: item.direction }));
 
-  const { data: { data: definitions, count = 0 } = {}, isPending } =
-    useListIndicateurs({
-      collectiviteId,
-      filters,
-      queryOptions: { page: currentPage, limit: maxNbOfCards, sort },
-    });
+  const {
+    data: { data: definitions, count = 0 } = {},
+    isPending,
+    isError,
+  } = useListIndicateurs({
+    collectiviteId,
+    filters,
+    queryOptions: { page: currentPage, limit: maxNbOfCards, sort },
+  });
 
-  /** Filtres (définis par la vue courante) à exclure des badges */
-  let filtresBadges = filters;
-  if (defaultFilters) {
-    const defaultFilterKeys = Object.keys(defaultFilters);
-    filtresBadges = Object.fromEntries(
-      Object.entries(filters).filter(
-        ([key]) => !defaultFilterKeys.includes(key)
-      )
-    );
-  }
+  const filtresBadges = getIndicateurBadgeFilters(filters, defaultFilters);
   const isFiltered = Object.keys(filtresBadges).length > 0;
 
   return (
@@ -86,15 +92,12 @@ const IndicateursListe = (props: Props) => {
       <IndicateursListeOptions
         {...props}
         searchParams={searchParams}
-        setSearchParams={(options) =>
-          setSearchParams({ ...searchParams, ...options })
-        }
+        setSearchParams={setSearchParams}
         isLoading={isPending}
+        isError={isError}
         countTotal={count}
-        settingsOpenState={{
-          isOpen: isSettingsOpen,
-          setIsOpen: setIsSettingsOpen,
-        }}
+        status={status}
+        settingsOpenState={effectiveSettingsOpenState}
       />
       {/** Liste des filtres appliqués et bouton d'export */}
       <BadgeList
@@ -126,10 +129,12 @@ const IndicateursListe = (props: Props) => {
         renderEmpty ? (
           renderEmpty(
             isFiltered,
-            renderSettings ? setIsSettingsOpen : undefined
+            renderSettings ? effectiveSettingsOpenState.setIsOpen : undefined
           )
         ) : (
-          <IndicateursListNoResults setIsSettingsOpen={setIsSettingsOpen} />
+          <IndicateursListNoResults
+            setIsSettingsOpen={effectiveSettingsOpenState.setIsOpen}
+          />
         )
       ) : (
         /** Liste des indicateurs */

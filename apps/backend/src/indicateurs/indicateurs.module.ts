@@ -43,6 +43,9 @@ import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
 import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs/valeurs-reference.service';
+import { IndicateurVuesRepository } from './vues/indicateur-vues.repository';
+import { IndicateurVuesRouter } from './vues/indicateur-vues.router';
+import { IndicateurVuesService } from './vues/indicateur-vues.service';
 
 // Sub-domain indicateurs.definitions
 const DEFINITIONS_PROVIDERS = [
@@ -95,6 +98,10 @@ const DEFINITIONS_PROVIDERS = [
 
     ComputeValeursService,
     IndicateursRouter,
+
+    IndicateurVuesRepository,
+    IndicateurVuesService,
+    IndicateurVuesRouter,
 
     ...DEFINITIONS_PROVIDERS,
   ],
