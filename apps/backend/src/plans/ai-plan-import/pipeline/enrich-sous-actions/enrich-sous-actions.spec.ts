@@ -4,6 +4,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import {
@@ -25,30 +26,20 @@ const tokens: TokenUsage = {
   totalTokens: 15,
 };
 
-const toAction = (
-  titre: string,
-  sousActionTitres: string[]
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: sousActionTitres.map(createUnenrichedSousAction),
-});
+const toAction = (titre: string, sousActionTitres: string[]): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    sousActions: sousActionTitres.map(createUnenrichedSousAction),
+  });
 
 const echoingLlm = (): Pick<LlmService, 'generateStructured'> =>
   ({
     generateStructured: vi.fn(async ({ prompt }: { prompt: string }) => {
-      const indices = [
-        ...prompt.matchAll(/(\d+) \| \[Action parente/g),
-      ].map((match) => Number(match[1]));
+      const indices = [...prompt.matchAll(/(\d+) \| \[Action parente/g)].map(
+        (match) => Number(match[1])
+      );
       return success({
         data: indices.map((index) => ({
           index,
@@ -64,7 +55,7 @@ const echoingLlm = (): Pick<LlmService, 'generateStructured'> =>
   } as unknown as Pick<LlmService, 'generateStructured'>);
 
 describe('enrichSousActions', () => {
-  it('ne fait aucun appel LLM quand aucune action n\'a de sous-action', async () => {
+  it("ne fait aucun appel LLM quand aucune action n'a de sous-action", async () => {
     const llm = echoingLlm();
 
     const result = await enrichSousActions(llm, {
@@ -163,7 +154,10 @@ describe('enrichSousActions', () => {
 
     const result = await enrichSousActions(llm, {
       actions: [toAction('Action A', ['a0']), toAction('Action B', ['b0'])],
-      source: { chunks: ['TRANCHE_0', 'TRANCHE_1'], chunkIndexByAction: [0, 1] },
+      source: {
+        chunks: ['TRANCHE_0', 'TRANCHE_1'],
+        chunkIndexByAction: [0, 1],
+      },
       disabledFields: [],
     });
 

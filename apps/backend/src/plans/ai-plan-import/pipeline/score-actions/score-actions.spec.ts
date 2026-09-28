@@ -2,7 +2,10 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it } from 'vitest';
-import { ExtractedAction } from '../../models/extracted-action';
+import {
+  createEmptyExtractedAction,
+  ExtractedAction,
+} from '../../models/extracted-action';
 import { scoreActions } from './score-actions';
 import { ScoringEntry } from './score-actions.schema';
 import { wholeDocument } from '../source-chunks/source-chunks';
@@ -20,20 +23,8 @@ const tokens: TokenUsage = {
   totalTokens: 105,
 };
 
-const anAction = (titre: string): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-});
+const anAction = (titre: string): ExtractedAction =>
+  createEmptyExtractedAction({ axe: 'Axe 1', sousAxe: '1.1', titre });
 
 const llmReturning = (
   result: Result<{ data: ScoringEntry[]; tokens: TokenUsage }, never>
@@ -96,7 +87,10 @@ describe('scoreActions', () => {
 
     const result = await scoreActions(llm, {
       actions: [anAction('A'), anAction('B')],
-      source: { chunks: ['TRANCHE_0', 'TRANCHE_1'], chunkIndexByAction: [0, 1] },
+      source: {
+        chunks: ['TRANCHE_0', 'TRANCHE_1'],
+        chunkIndexByAction: [0, 1],
+      },
     });
 
     expect(prompts).toHaveLength(2);

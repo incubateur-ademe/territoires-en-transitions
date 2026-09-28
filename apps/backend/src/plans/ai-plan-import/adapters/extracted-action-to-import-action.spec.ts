@@ -3,6 +3,7 @@ import { isSousAction } from '@tet/backend/plans/plans/import-plan-aggregate/sch
 import { validateImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/validators/plan.rules';
 import { describe, expect, it } from 'vitest';
 import {
+  createEmptyExtractedAction,
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
@@ -27,23 +28,13 @@ const toSousAction = (
   ...overrides,
 });
 
-const toAction = (
-  overrides: Partial<ExtractedAction> = {}
-): ExtractedAction => ({
-  axe: 'Mobilité',
-  sousAxe: 'Covoiturage',
-  titre: 'Réduire l autosolisme',
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+const toAction = (overrides: Partial<ExtractedAction> = {}): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Mobilité',
+    sousAxe: 'Covoiturage',
+    titre: 'Réduire l autosolisme',
+    ...overrides,
+  });
 
 describe('extractedActionToImportActions', () => {
   it('mappe une action (axisPath, statut, budget, pilote)', () => {

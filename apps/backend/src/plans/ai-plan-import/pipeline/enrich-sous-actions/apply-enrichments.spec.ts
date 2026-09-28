@@ -1,29 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import { applyEnrichments } from './apply-enrichments';
 import { EnrichmentEntry } from './enrich-sous-actions.schema';
 import { indexSousActions } from './index-sous-actions';
 
-const toAction = (
-  titre: string,
-  sousActionTitres: string[]
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: sousActionTitres.map(createUnenrichedSousAction),
-});
+const toAction = (titre: string, sousActionTitres: string[]): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    sousActions: sousActionTitres.map(createUnenrichedSousAction),
+  });
 
 const emptyEntry = (index: number): EnrichmentEntry => ({
   index,

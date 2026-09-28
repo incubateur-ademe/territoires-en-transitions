@@ -58,7 +58,13 @@ const extractionAction = {
   'structure pilote': 'Direction Transition',
   'direction ou service pilote': 'Service Environnement',
   'personne pilote': 'Jean Dupont',
+  partenaires: 'ADEME, Région',
   budget: '10000',
+  financements: 'Fonds vert',
+  'moyens humains': '0,5 ETP',
+  priorite: 'Élevé',
+  'date de debut': '01/01/2024',
+  'date de fin': '31/12/2026',
   statut: '',
 };
 

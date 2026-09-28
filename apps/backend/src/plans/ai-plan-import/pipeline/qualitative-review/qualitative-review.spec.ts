@@ -2,7 +2,10 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it } from 'vitest';
-import { ExtractedAction } from '../../models/extracted-action';
+import {
+  createEmptyExtractedAction,
+  ExtractedAction,
+} from '../../models/extracted-action';
 import { reviewQuality } from './qualitative-review';
 
 const tokens: TokenUsage = {
@@ -13,20 +16,11 @@ const tokens: TokenUsage = {
   totalTokens: 15,
 };
 
-const action: ExtractedAction = {
+const action: ExtractedAction = createEmptyExtractedAction({
   axe: 'Axe 1',
   sousAxe: '1.1',
   titre: '1.1.1 Action',
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-};
+});
 
 describe('reviewQuality', () => {
   it("renvoie l'avis textuel et les tokens", async () => {

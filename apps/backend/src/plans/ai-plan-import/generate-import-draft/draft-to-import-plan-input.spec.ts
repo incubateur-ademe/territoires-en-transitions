@@ -1,25 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../models/extracted-action';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
 
-const toAction = (overrides: Partial<ExtractedAction> = {}): ExtractedAction => ({
-  axe: 'Mobilité',
-  sousAxe: 'Vélo',
-  titre: 'Développer le réseau cyclable',
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+const toAction = (overrides: Partial<ExtractedAction> = {}): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Mobilité',
+    sousAxe: 'Vélo',
+    titre: 'Développer le réseau cyclable',
+    ...overrides,
+  });
 
 describe('draftToImportPlanInput', () => {
   it('reporte le nom et le type de plan saisis', () => {

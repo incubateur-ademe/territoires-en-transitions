@@ -109,7 +109,13 @@ export const mergeActions = (
     second.directionServicePilote
   ),
   personnePilote: richer(first.personnePilote, second.personnePilote),
+  partenaires: richer(first.partenaires, second.partenaires),
   budget: first.budget ?? second.budget,
+  financements: richer(first.financements, second.financements),
+  moyensHumains: richer(first.moyensHumains, second.moyensHumains),
+  priorite: first.priorite ?? second.priorite,
+  dateDebut: first.dateDebut ?? second.dateDebut,
+  dateFin: first.dateFin ?? second.dateFin,
   statut: first.statut ?? second.statut,
   sousActions: mergeSousActions(first.sousActions, second.sousActions),
 });

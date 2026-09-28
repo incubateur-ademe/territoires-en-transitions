@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ActionConfidence,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../../models/extracted-action';
 import { selectLowScoreActions } from './select-low-score-actions';
@@ -8,20 +9,13 @@ import { selectLowScoreActions } from './select-low-score-actions';
 const anAction = (
   titre: string,
   confidence: ActionConfidence | null
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence,
-  sousActions: [],
-});
+): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    confidence,
+  });
 
 const confidence = (score: number): ActionConfidence => ({
   score,

@@ -31,7 +31,13 @@ Chaque entrée du tableau est un objet avec exactement ces champs
  "structure pilote",
  "direction ou service pilote",
  "personne pilote",
+ "partenaires",
  "budget",
+ "financements",
+ "moyens humains",
+ "priorite",
+ "date de debut",
+ "date de fin",
  "statut"
 ]
 
@@ -45,7 +51,12 @@ Types et formats attendus
 • "structure pilote" est une chaîne. Une ou plusieurs structures (organisme englobant : la collectivité elle-même, ou par exemple "Chambre d'agriculture", "DDT", etc.) séparées par ", ". Distinct de "direction ou service pilote" qui est interne à la structure. Si l'information n'est pas explicitement présente, laisser ""
 • "direction ou service pilote" est une chaîne
 • "personne pilote" est une chaîne
+• "partenaires" est une chaîne. Les organismes cités comme partenaires, financeurs ou acteurs associés de l'action (rubriques "Partenaires", "Partenaires / financeurs", "Acteurs mobilisés"…), séparés par ", ". Ne jamais y mettre les pilotes ni les porteurs, qui vont dans "structure pilote" ou "direction ou service pilote". Si l'information n'est pas explicitement présente, laisser ""
 • "budget" est soit la valeur vide "", soit un entier sans séparateur d’espace
+• "financements" est une chaîne. Les sources de financement et subventions citées par la fiche (rubriques "Financements", "Sources de financement et subventions", "Fonds vert", "CEE"…), telles quelles. Si l'information n'est pas explicitement présente, laisser ""
+• "moyens humains" est une chaîne. Les moyens humains cités par la fiche (ETP, temps agent, services mobilisés), tels quels (par exemple "0,5 ETP chargé de mission"). Si l'information n'est pas explicitement présente, laisser ""
+• "priorite" est l'une des valeurs "Élevé", "Moyen", "Bas", sinon "". Convertir l'échelle du document : "Priorité 1", "P1", "***", "Majeur", "Forte", "Prioritaire" donnent "Élevé" ; "Priorité 2", "P2", "**", "Moyenne" donnent "Moyen" ; "Priorité 3", "P3", "*", "Faible", "Secondaire" donnent "Bas". Sans mention explicite de priorité, laisser ""
+• "date de debut" et "date de fin" sont des chaînes au format JJ/MM/AAAA, sinon "". Elles viennent du calendrier de l'action ("Calendrier", "Échéance", "Temps de mise en œuvre", "2024-2030"…). Une année seule de début donne le 01/01 de l'année ("2024" → "01/01/2024") ; une année seule de fin donne le 31/12 ("2030" → "31/12/2030"). Un calendrier "2024-2030" donne "date de debut" = "01/01/2024" et "date de fin" = "31/12/2030". Ne jamais inventer de date
 • "statut" est une chaîne
 
 Définitions opérationnelles
@@ -79,7 +90,7 @@ Tâches obligatoires et ordre d’exécution
 4 Rattachement hiérarchique
    • Associer chaque action à son sous axe et à son axe
 5 Complétude des champs
-   • Remplir "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "budget" et "statut" uniquement si l’information est explicite et non ambiguë. "objectifs" et "structure pilote" sont des champs facultatifs : ne pas inventer, laisser "" en l'absence d'information explicite
+   • Remplir "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorite", "date de debut", "date de fin" et "statut" uniquement si l’information est explicite et non ambiguë. Ces champs sont facultatifs : ne pas inventer, laisser "" en l'absence d'information explicite
    • Lorsque le texte présente pour une action des dates ou un calendrier (sans libellé de statut explicite pour cette action), vous pouvez déduire « statut » uniquement parmi « À venir » et « En cours » en vous appuyant sur ces dates et la date du jour (${dateDuJour}). Si seule une année est mentionnée sans mois précis (par exemple "2026"), considérer le statut comme « En cours » si cette année correspond à l'année actuelle, et « À venir » si elle est dans le futur
 6 Validation du format
    • Produire un JSON valide
@@ -94,13 +105,15 @@ Règles générales
 1 Ne jamais inventer des informations ou des chiffres
 2 Ne pas réécrire le sens de la "description". La nettoyer uniquement pour supprimer des artefacts évidents
 3 "statut" ne peut prendre que l’une des valeurs suivantes sinon ""
-   ["À venir", "À discuter", "En cours", "Réalisé", "En retard", "En pause", "Bloqué"]
+   ["À venir", "A discuter", "En cours", "Réalisé", "En retard", "En pause", "Bloqué", "Abandonné"]
+   Convertir le vocabulaire du document vers ces valeurs : "Engagée", "Déjà engagée", "En cours de réalisation", "À poursuivre" donnent "En cours" ; "À initier", "Nouvelle", "À lancer", "Programmée", "Prévue" donnent "À venir" ; "Réalisée", "Terminée", "Achevée" donnent "Réalisé" ; "Abandonnée" donne "Abandonné"
 4 "direction ou service pilote" contient uniquement des organismes ou services. "personne pilote" contient uniquement des noms de personnes
 4 bis Distinction entre "structure pilote" et "direction ou service pilote" :
    • "structure pilote" est l'organisme global englobant (ex. la collectivité, "Chambre d'agriculture", "DDT", "Communauté de communes X").
    • "direction ou service pilote" est l'entité interne à cette structure (ex. "Service urbanisme", "Service économique", "Direction de la transition écologique").
    • Exemple : si le document indique "Service urbanisme de la Collectivité X", alors "structure pilote" = "Collectivité X" et "direction ou service pilote" = "Service urbanisme".
    • Si une seule des deux informations est présente, ne remplir que ce champ et laisser l'autre à "".
+4 ter "partenaires" ne contient jamais un organisme déjà cité comme pilote ou porteur de l'action : un même organisme ne peut pas être à la fois pilote et partenaire de la même action.
 5 Majuscules. Mettre une majuscule au premier mot de chaque champ texte. Conserver les majuscules des noms propres et des sigles. Supprimer les espaces superflus au début et à la fin
 6 Respect strict des libellés existants pour axes et sous axes lorsque fournis. En l’absence de libellé explicite, créer un libellé concis et fidèle au contenu
 7 Ordre de tri. Le tableau doit être trié selon la hiérarchie axe puis sous axe puis ordre des actions
@@ -126,7 +139,7 @@ Texte source
 • S’appuyer sur l’offre existante proposée par Blablacar Daily pour le covoiturage domicile travail
 • Déployer des lignes de covoiturage à haut niveau de service et les aménagements associés
 • Réfléchir à des solutions d’autopartage en boucle.
-Budget de 24000€ pour cette action en cours menée par Jean Dupoint du Service mobilité, piloté par la DDT, qui a pour but de rendre la pratique du covoiturage plus courante."
+Budget de 24000€ pour cette action prioritaire en cours menée de 2024 à 2026 par Jean Dupoint du Service mobilité, piloté par la DDT, en partenariat avec la Région et l'ADEME, financée par le Fonds vert (0,5 ETP mobilisé), qui a pour but de rendre la pratique du covoiturage plus courante."
 
 Extraction attendue pour une action située dans le sous axe "4.2 Mettre en œuvre les conditions favorables à des déplacements plus sobres"
 {
@@ -143,7 +156,13 @@ Extraction attendue pour une action située dans le sous axe "4.2 Mettre en œuv
  "structure pilote": "DDT",
  "direction ou service pilote": "Service mobilité",
  "personne pilote": "Jean Dupoint",
+ "partenaires": "Région, ADEME",
  "budget": "24000",
+ "financements": "Fonds vert",
+ "moyens humains": "0,5 ETP mobilisé",
+ "priorite": "Élevé",
+ "date de debut": "01/01/2024",
+ "date de fin": "31/12/2026",
  "statut": "En cours"
 }
 

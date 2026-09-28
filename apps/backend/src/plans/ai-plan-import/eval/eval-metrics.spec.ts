@@ -2,6 +2,7 @@ import { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { describe, expect, it } from 'vitest';
 import {
   createUnenrichedSousAction,
+  createEmptyExtractedAction,
   ExtractedAction,
 } from '../models/extracted-action';
 import {
@@ -15,21 +16,13 @@ import { titlesMatch } from '../pipeline/extract-actions/similar-titles';
 const anAction = (
   titre: string,
   overrides: Partial<ExtractedAction> = {}
-): ExtractedAction => ({
-  axe: 'Axe 1',
-  sousAxe: '1.1',
-  titre,
-  description: null,
-  objectifs: null,
-  structurePilote: null,
-  directionServicePilote: null,
-  personnePilote: null,
-  budget: null,
-  statut: null,
-  confidence: null,
-  sousActions: [],
-  ...overrides,
-});
+): ExtractedAction =>
+  createEmptyExtractedAction({
+    axe: 'Axe 1',
+    sousAxe: '1.1',
+    titre,
+    ...overrides,
+  });
 
 const anEvent = (overrides: Partial<LlmCallEvent> = {}): LlmCallEvent => ({
   attempt: 1,

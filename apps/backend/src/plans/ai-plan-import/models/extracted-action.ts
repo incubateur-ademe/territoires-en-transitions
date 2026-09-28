@@ -1,4 +1,4 @@
-import { statutEnumValues } from '@tet/domain/plans';
+import { prioriteEnumValues, statutEnumValues } from '@tet/domain/plans';
 import { z } from 'zod';
 
 export const actionConfidenceSchema = z.object({
@@ -25,7 +25,16 @@ export const extractedActionSchema = z.object({
   structurePilote: z.string().nullable(),
   directionServicePilote: z.string().nullable(),
   personnePilote: z.string().nullable(),
+  /** Partenaires et financeurs associés, séparés par ", " : jamais des pilotes. */
+  partenaires: z.string().nullable(),
   budget: z.number().nullable(),
+  /** Sources de financement et subventions, telles que la fiche les cite. */
+  financements: z.string().nullable(),
+  /** Moyens humains de la fiche (ETP, services mobilisés), tels quels. */
+  moyensHumains: z.string().nullable(),
+  priorite: z.enum(prioriteEnumValues).nullable(),
+  dateDebut: z.string().date().nullable(),
+  dateFin: z.string().date().nullable(),
   statut: z.enum(statutEnumValues).nullable(),
   confidence: actionConfidenceSchema.nullable(),
   sousActions: z.array(extractedSousActionSchema),
@@ -44,4 +53,29 @@ export const createUnenrichedSousAction = (
   statut: null,
   dateDebut: null,
   dateFin: null,
+});
+
+/** Une action sans aucun champ rempli : base des conversions et des tests. */
+export const createEmptyExtractedAction = (
+  overrides: Partial<ExtractedAction> = {}
+): ExtractedAction => ({
+  axe: '',
+  sousAxe: '',
+  titre: '',
+  description: null,
+  objectifs: null,
+  structurePilote: null,
+  directionServicePilote: null,
+  personnePilote: null,
+  partenaires: null,
+  budget: null,
+  financements: null,
+  moyensHumains: null,
+  priorite: null,
+  dateDebut: null,
+  dateFin: null,
+  statut: null,
+  confidence: null,
+  sousActions: [],
+  ...overrides,
 });
