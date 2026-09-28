@@ -135,13 +135,63 @@ describe('consolidateHierarchy', () => {
     }
   });
 
-  it("propage l'erreur du modèle", async () => {
+  it('coupe en deux un lot tronqué, et laisse tel quel ce qui échoue encore', async () => {
+    const sizes: number[] = [];
+    const llm = {
+      generateStructured: vi.fn(async (call: { prompt: string }) => {
+        const lines = call.prompt
+          .split('\n')
+          .filter((line) => /^\|\d+\|/.test(line));
+        sizes.push(lines.length);
+        if (lines.length > 5) {
+          return failure({ kind: 'truncated' });
+        }
+        return success({
+          data: lines.map((line) => ({
+            index: Number(line.split('|')[1]),
+            axe: 'Axe 2 : Mobilité',
+            'sous-axe': '',
+            doublonDe: -1,
+          })),
+          tokens,
+        });
+      }),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await consolidateHierarchy(llm, {
+      actions: Array.from({ length: 8 }, (_, i) => anAction(`Action ${i}`)),
+      skeleton,
+    });
+
+    expect(sizes).toEqual([8, 4, 4]);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(
+        result.data.actions.every((a) => a.axe === 'Axe 2 : Mobilité')
+      ).toBe(true);
+      expect(result.data.warnings).toEqual([]);
+    }
+  });
+
+  it("garde les rattachements de l'extraction quand le modèle échoue, avec un avertissement", async () => {
     const llm = {
       generateStructured: vi.fn(async () => failure({ kind: 'rate_limited' })),
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
-    expect(
-      await consolidateHierarchy(llm, { actions: [anAction('A')], skeleton })
-    ).toMatchObject({ success: false, error: { kind: 'rate_limited' } });
+    const result = await consolidateHierarchy(llm, {
+      actions: [anAction('A'), anAction('B')],
+      skeleton,
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions.map((a) => a.axe)).toEqual([
+        'Axe 1 : Bâtiments',
+        'Axe 1 : Bâtiments',
+      ]);
+      expect(result.data.warnings).toEqual([
+        'Mise en cohérence non faite pour les actions 1 à 2 : rate_limited',
+      ]);
+    }
   });
 });

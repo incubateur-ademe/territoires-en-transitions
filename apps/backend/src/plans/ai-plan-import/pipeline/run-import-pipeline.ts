@@ -227,6 +227,7 @@ export const runImportPipeline = async (
       return success({
         actions: result.data.actions,
         tokens: result.data.tokens,
+        warnings: result.data.warnings,
       });
     },
   });

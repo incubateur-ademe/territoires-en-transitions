@@ -58,6 +58,7 @@ export const classifyUnits = async (
         }),
         schema: classifyUnitsResponseSchema,
         maxOutputTokens: CLASSIFY_MAX_OUTPUT_TOKENS,
+        reasoningEffort: 'low',
         signal,
       });
       if (!completion.success) {
