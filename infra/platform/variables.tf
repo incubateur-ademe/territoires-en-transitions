@@ -134,3 +134,39 @@ variable "coolify_backups_bucket_name" {
   type        = string
   default     = "tet-coolify-backups"
 }
+
+variable "coolify_instance_backup_prefix" {
+  description = "Préfixe des backups de l'instance Coolify dans le bucket. Doit rester aligné sur instance_backup_prefix (infra/coolify)."
+  type        = string
+  default     = "coolify-instance"
+}
+
+variable "coolify_instance_backup_retention_days" {
+  description = "Durée de conservation des backups de l'instance Coolify, en jours."
+  type        = number
+  default     = 30
+}
+
+variable "backups_project_name" {
+  description = "Nom du projet Scaleway dédié aux backups. Créé par ce stack : les credentials Terraform doivent pouvoir créer des projets dans l'organisation."
+  type        = string
+  default     = "tet-backups"
+}
+
+variable "backups_lock_days" {
+  description = "Durée du verrou Object Lock (COMPLIANCE) appliqué à chaque objet du bucket de backups, en jours. Ne peut pas être raccourcie pour les objets déjà écrits."
+  type        = number
+  default     = 14
+}
+
+variable "backups_noncurrent_version_days" {
+  description = "Délai avant purge d'une version supprimée ou remplacée, en jours. Une version encore verrouillée n'est purgée qu'à l'expiration du verrou."
+  type        = number
+  default     = 7
+}
+
+variable "coolify_backups_credentials_secret_name" {
+  description = "Nom du secret Secret Manager portant la clé Object Storage des backups (access_key|secret_key). Doit rester aligné sur s3_credentials_secret_name (infra/coolify)."
+  type        = string
+  default     = "tet-platform-coolify-s3-credentials"
+}

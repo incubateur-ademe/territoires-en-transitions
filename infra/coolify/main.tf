@@ -174,3 +174,45 @@ resource "terraform_data" "s3_storage" {
     }
   }
 }
+
+# --- Sauvegarde de l'instance Coolify ---
+#
+# Les backups configurés dans Coolify couvrent les bases des applications, pas
+# Coolify lui-même. Or sa base porte toute la configuration des quatre
+# environnements (applications, variables, secrets) : sans elle, reconstruire
+# le control plane revient à tout ressaisir.
+#
+# Timer systemd sur le control plane : pg_dump de coolify-db + .env (APP_KEY),
+# chiffrés avec age vers les clés publiques des opérateurs, puis envoyés sur le
+# bucket de backups sous instance_backup_prefix. Rétention : règle de cycle de
+# vie du bucket (infra/platform). Restauration : infra/README.md.
+resource "terraform_data" "instance_backup" {
+  triggers_replace = [
+    filesha256("${path.module}/../scripts/coolify-instance-backup.sh"),
+    filesha256("${path.module}/../scripts/coolify-install-instance-backup.sh"),
+    var.coolify_public_ip,
+    var.instance_backup_age_recipients,
+    var.instance_backup_on_calendar,
+    var.instance_backup_prefix,
+    var.s3_bucket,
+    var.s3_endpoint,
+    var.s3_region,
+    var.s3_credentials_secret_name,
+    var.s3_credentials_revision,
+  ]
+
+  provisioner "local-exec" {
+    command = "${path.module}/../scripts/coolify-install-instance-backup.sh"
+    environment = {
+      TARGET_HOST                = var.coolify_public_ip
+      HOST_KEY_SECRET_NAME       = var.host_key_secret_name
+      S3_ENDPOINT                = var.s3_endpoint
+      S3_BUCKET                  = var.s3_bucket
+      S3_REGION                  = var.s3_region
+      S3_PREFIX                  = var.instance_backup_prefix
+      S3_CREDENTIALS_SECRET_NAME = var.s3_credentials_secret_name
+      AGE_RECIPIENTS             = join("\n", var.instance_backup_age_recipients)
+      BACKUP_ON_CALENDAR         = var.instance_backup_on_calendar
+    }
+  }
+}

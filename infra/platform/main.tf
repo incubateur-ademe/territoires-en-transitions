@@ -96,20 +96,70 @@ resource "scaleway_domain_zone" "env" {
   subdomain = each.value
 }
 
-# --- Stockage ---
+# --- Stockage des backups ---
 #
-# Bucket cible des backups Coolify (bases de données et volumes de tous les
-# environnements). Transverse : un seul S3 storage est enregistré dans Coolify,
-# d'où le nom sans préfixe d'environnement.
+# Bucket cible de tous les backups Coolify : bases des applications (via le S3
+# storage Coolify) et instance Coolify elle-même (infra/coolify,
+# terraform_data.instance_backup).
 #
-# Pas d'Object Lock ici, contrairement au bucket de state : Coolify doit pouvoir
-# supprimer librement selon la rétention configurée sur chaque backup.
+# Projet Scaleway dédié : les permissions IAM Object Storage valent pour un
+# projet entier, pas pour un bucket. Dans le projet principal, la clé des
+# backups pourrait aussi lire tet-tfstate, qui contient les mots de passe et les
+# clés SSH. Ici, elle ne voit que ce bucket.
+resource "scaleway_account_project" "backups" {
+  name        = var.backups_project_name
+  description = "Backups TET (Coolify). Isolé du projet principal : la clé IAM des backups n'a accès qu'à ce projet. Géré par Terraform (infra/platform)."
+}
+
+# Object Lock en mode COMPLIANCE : aucune version ne peut être supprimée avant
+# l'échéance, par personne, pas même un admin de l'organisation. Un Coolify ou
+# des credentials compromis ne peuvent donc pas effacer l'historique.
+#
+# Les suppressions de Coolify (sa propre rétention) restent possibles : sans
+# VersionId, elles posent un delete marker et la version passe « noncurrent ».
+# La règle noncurrent-versions la purge ensuite, une fois le verrou expiré.
+#
+# object_lock_enabled ne peut être posé qu'à la création du bucket (ForceNew).
 resource "scaleway_object_bucket" "coolify_backups" {
-  name   = var.coolify_backups_bucket_name
-  region = var.scaleway_region
+  name       = var.coolify_backups_bucket_name
+  region     = var.scaleway_region
+  project_id = scaleway_account_project.backups.id
+
+  object_lock_enabled = true
 
   versioning {
     enabled = true
+  }
+
+  # Rétention des backups de l'instance Coolify. Ceux-là ne passent pas par
+  # Coolify, qui ne peut donc pas les purger lui-même. Limitée au préfixe : les
+  # backups des applications gardent la rétention configurée dans Coolify.
+  lifecycle_rule {
+    id      = "coolify-instance-retention"
+    prefix  = "${var.coolify_instance_backup_prefix}/"
+    enabled = true
+
+    expiration {
+      days = var.coolify_instance_backup_retention_days
+    }
+  }
+
+  # Sans cette règle, le versioning garde indéfiniment chaque backup supprimé
+  # (par Coolify ou par la règle ci-dessus) : le stockage grossit sans limite.
+  lifecycle_rule {
+    id      = "noncurrent-versions"
+    enabled = true
+
+    abort_incomplete_multipart_upload_days = 1
+
+    noncurrent_version_expiration {
+      noncurrent_days = var.backups_noncurrent_version_days
+    }
+
+    # Retire les delete markers qui ne masquent plus aucune version.
+    expiration {
+      expired_object_delete_marker = true
+    }
   }
 
   tags = {
@@ -117,4 +167,69 @@ resource "scaleway_object_bucket" "coolify_backups" {
     purpose    = "coolify-backups"
     managed_by = "terraform"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
+  bucket     = scaleway_object_bucket.coolify_backups.name
+  region     = var.scaleway_region
+  project_id = scaleway_account_project.backups.id
+
+  rule {
+    default_retention {
+      mode = "COMPLIANCE"
+      days = var.backups_lock_days
+    }
+  }
+}
+
+# Clé dédiée aux backups, utilisée par le S3 storage Coolify et par le backup
+# de l'instance. Pas de BucketsWrite : elle ne peut modifier ni le cycle de vie,
+# ni le verrou, ni la politique du bucket.
+resource "scaleway_iam_application" "coolify_backups" {
+  name        = "tet-coolify-backups"
+  description = "Écriture des backups Coolify dans le projet ${var.backups_project_name}. Géré par Terraform (infra/platform)."
+}
+
+resource "scaleway_iam_policy" "coolify_backups" {
+  name           = "tet-coolify-backups"
+  description    = "Objets du projet ${var.backups_project_name} uniquement. Géré par Terraform (infra/platform)."
+  application_id = scaleway_iam_application.coolify_backups.id
+
+  rule {
+    project_ids = [scaleway_account_project.backups.id]
+    permission_set_names = [
+      "ObjectStorageBucketsRead",
+      "ObjectStorageObjectsRead",
+      "ObjectStorageObjectsWrite",
+      # Pour la rétention de Coolify. Le verrou COMPLIANCE empêche toujours la
+      # suppression d'une version avant l'échéance.
+      "ObjectStorageObjectsDelete",
+    ]
+  }
+}
+
+# default_project_id : l'API S3 de Scaleway résout les buckets dans le projet
+# par défaut de la clé.
+resource "scaleway_iam_api_key" "coolify_backups" {
+  application_id     = scaleway_iam_application.coolify_backups.id
+  default_project_id = scaleway_account_project.backups.id
+  description        = "S3 storage Coolify + backup de l'instance. Géré par Terraform (infra/platform)."
+}
+
+# Les scripts de infra/coolify lisent la clé ici, au format access_key|secret_key.
+# Le secret reste dans le projet principal, avec les autres secrets du control
+# plane : la clé des backups n'a aucun droit dessus.
+resource "scaleway_secret" "coolify_backups_credentials" {
+  name        = var.coolify_backups_credentials_secret_name
+  description = "Clé Object Storage des backups Coolify (access_key|secret_key). Gérée par Terraform (infra/platform)."
+  tags        = ["tet", "tier:platform", "managed-by:terraform"]
+}
+
+resource "scaleway_secret_version" "coolify_backups_credentials" {
+  secret_id = scaleway_secret.coolify_backups_credentials.id
+  data      = "${scaleway_iam_api_key.coolify_backups.access_key}|${scaleway_iam_api_key.coolify_backups.secret_key}"
 }
