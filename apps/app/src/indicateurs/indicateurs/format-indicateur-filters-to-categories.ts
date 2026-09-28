@@ -39,7 +39,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.categorieNoms?.length) {
     categories.push({
       key: 'categorieNoms',
-      title: appLabels.categorie,
+      title: appLabels.indicateurModele,
       selectedFilters: filters.categorieNoms.map(getCategorieLabel),
     });
   }

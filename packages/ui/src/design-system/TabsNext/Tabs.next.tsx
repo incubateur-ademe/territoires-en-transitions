@@ -181,6 +181,8 @@ export type TabProps = {
   href?: Route;
   /** Appelée au clic sur l'onglet */
   onClick?: () => void;
+  /** Appelée lors de la navigation dans cet onglet, sans les clics ouvrant une nouvelle fenêtre */
+  onNavigate?: () => void;
   isActive?: boolean;
   icon?: IconValue;
   iconClassName?: string;
@@ -189,6 +191,8 @@ export type TabProps = {
   title?: string;
   tooltip?: string;
   badge?: Omit<BadgeProps, 'size'>;
+  /** Actions affichées dans le cadre de l'onglet, à côté du contrôle de navigation */
+  actions?: ReactNode;
   /** Id de l'onglet, déduit du `href` ou généré automatiquement */
   id?: string;
   /** Id pour les tests e2e */
@@ -317,7 +321,11 @@ export const TabsTab = (props: TabProps) => {
   );
 
   const commonProps = {
-    className,
+    className: props.actions
+      ? cn(className, 'border-0 shadow-none bg-transparent hover:shadow-none', {
+          'px-3 py-1 hover:!bg-transparent': !isCard,
+        })
+      : className,
     role: 'tab' as const,
     id: tabId,
     'aria-selected': isTabActive,
@@ -347,6 +355,7 @@ export const TabsTab = (props: TabProps) => {
         href={props.href}
         scroll={false}
         onClick={props.onClick}
+        onNavigate={props.onNavigate}
         onKeyDown={activateLinkOnSpace}
       >
         {content}
@@ -365,8 +374,9 @@ export const TabsTab = (props: TabProps) => {
   return (
     <li
       role="presentation"
-      className={cn('p-0', {
-        'shrink-0': isCard,
+      className={cn('p-0', props.actions && className, {
+        'p-0 gap-0': props.actions,
+        'shrink-0': isCard || !!props.actions,
         'w-48': isCard && size === 'md',
         'w-40': isCard && size === 'sm',
         'w-32': isCard && size === 'xs',
@@ -376,6 +386,9 @@ export const TabsTab = (props: TabProps) => {
         <Tooltip label={props.tooltip}>{control}</Tooltip>
       ) : (
         control
+      )}
+      {props.actions && (
+        <div className="flex shrink-0 items-center pr-1">{props.actions}</div>
       )}
     </li>
   );

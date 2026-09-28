@@ -265,6 +265,18 @@ export const makeCollectiviteIndicateursListUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .concat(listId ? `/${listId}` : '');
 
+export const makeCollectiviteIndicateursVueUrl = ({
+  collectiviteId,
+  vueId,
+}: {
+  collectiviteId: number;
+  vueId: string;
+}) =>
+  makeCollectiviteIndicateursListUrl({ collectiviteId }).concat(
+    '/vue/',
+    encodeURIComponent(vueId)
+  );
+
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
   indicateurView,
