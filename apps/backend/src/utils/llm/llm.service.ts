@@ -165,9 +165,20 @@ export class LlmService {
     let lastRetryableResult: Result<T, LlmError> | null = null;
     let attempt = 0;
     try {
-      return await retry(async () => {
+      return await retry(async (bail) => {
         attempt += 1;
-        const result = await call(attempt);
+        let result: Result<T, LlmError>;
+        try {
+          result = await call(attempt);
+        } catch (error) {
+          // L'attente du limiteur rejette quand l'appel est annulé : ne pas
+          // rejouer, et laisser l'annulation visible de l'appelant.
+          if (signal?.aborted) {
+            bail(error instanceof Error ? error : new Error(String(error)));
+            return undefined as never;
+          }
+          throw error;
+        }
         if (
           !result.success &&
           isTransientError(result.error) &&
@@ -178,7 +189,10 @@ export class LlmService {
         }
         return result;
       }, RETRY_OPTIONS);
-    } catch {
+    } catch (error) {
+      if (signal?.aborted) {
+        throw error;
+      }
       return (
         lastRetryableResult ?? failure({ kind: 'api_error', httpStatus: null })
       );
