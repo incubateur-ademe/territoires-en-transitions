@@ -50,9 +50,9 @@ modalités de contrôle ne sont pas définis. Le reporting ADEME/État reste à 
 
 | Lot                                                              | Contenu                                                                                                      | Dépendances restantes                                                          |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| [Phase 1 — Périodicités](phase-1-socle-mensuel.md)               | Déclaration fixe, retrait des modes/préférences, extension trimestrielle/semestrielle, visualisation agrégée | Reprise des préférences/historiques existants ; règles de visualisation        |
-| [Phase 2 — Parcours Électrification](phase-2-electrification.md) | Import progressif, vues/preset, plan par défaut et verrouillage, liens avec les actions                      | Lots d'indicateurs validés, liste des lauréats, structure applicable et droits |
-| [Phase 3 — Cadrage du reporting](phase-3-reporting.md)           | Besoins ADEME/SGPE/services déconcentrés, métriques et éventuel POC                                          | Interlocuteurs, règles métier, permissions, choix de surface                   |
+| [Phase 1 — Périodicités](phase-1-periodicites-des-indicateurs.md)               | Déclaration fixe, retrait des modes/préférences, extension trimestrielle/semestrielle, visualisation agrégée | Reprise des préférences/historiques existants ; règles de visualisation        |
+| [Phase 2 — Parcours Électrification](phase-2-catalogue-et-parcours-electrification.md) | Import progressif, vues/preset, plan par défaut et verrouillage, liens avec les actions                      | Lots d'indicateurs validés, liste des lauréats, structure applicable et droits |
+| [Phase 3 — Cadrage du reporting](phase-3-cadrage-reporting.md)           | Besoins ADEME/SGPE/services déconcentrés, métriques et éventuel POC                                          | Interlocuteurs, règles métier, permissions, choix de surface                   |
 
 La préparation du catalogue et les vues génériques peuvent avancer en parallèle de l'adaptation
 du socle annuel/mensuel. Les parcours trimestriels et semestriels utilisent les contrats étendus
