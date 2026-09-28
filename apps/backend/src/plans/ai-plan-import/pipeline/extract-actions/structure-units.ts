@@ -17,7 +17,11 @@ import { renderUnit } from '../segment-document/render-unit';
 import { ExtractActionsError, ExtractActionsResult } from './extract-actions';
 import { extractionResponseSchema } from './extract-actions.schema';
 import { extractionResponseToExtractedActions } from './extraction-response-to-extracted-actions';
-import { ChunkedActions, mergeChunkActions } from './merge-chunk-actions';
+import {
+  ChunkedActions,
+  dedupeByTitle,
+  mergeChunkActions,
+} from './merge-chunk-actions';
 
 // Le limiteur du service borne les appels réels ; ceci borne le travail en vol.
 export const STRUCTURATION_CONCURRENCY = 4;
@@ -112,7 +116,7 @@ export const structureUnits = async (
     return failure(failures[0]?.error ?? { kind: 'no_actions_extracted' });
   }
   return success({
-    ...merged,
+    ...dedupeByTitle(merged),
     chunks,
     tokens: sumTokenUsage(outcomes.flatMap(({ tokens }) => tokens)),
     warnings: failures.map(

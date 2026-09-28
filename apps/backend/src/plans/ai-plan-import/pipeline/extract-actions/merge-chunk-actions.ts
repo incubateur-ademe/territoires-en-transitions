@@ -44,13 +44,52 @@ export const mergeChunkActions = (
   return { actions, chunkIndexByAction };
 };
 
-// La numérotation peut varier d'une tranche à l'autre quand le modèle la génère.
+// La numérotation peut varier d'une tranche à l'autre quand le modèle la
+// génère, la casse, les accents et la ponctuation selon qu'il recopie un
+// titre en capitales ou le sommaire.
 export const normalizeTitle = (titre: string): string =>
   titre
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
     .replace(/^[\d.\s]+/, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
+
+/**
+ * Fond les actions de même titre, où qu'elles soient dans le document : un
+ * titre repris ailleurs (sommaire, rappel) ne doit pas créer une seconde
+ * action. La plus complète sert de base, à la place de la première.
+ */
+export const dedupeByTitle = (merged: ChunkedActions): ChunkedActions => {
+  const actions: ExtractedAction[] = [];
+  const chunkIndexByAction: number[] = [];
+  const positionByKey = new Map<string, number>();
+  merged.actions.forEach((action, index) => {
+    const key = normalizeTitle(action.titre);
+    const position = key ? positionByKey.get(key) : undefined;
+    if (position === undefined) {
+      positionByKey.set(key, actions.length);
+      actions.push(action);
+      chunkIndexByAction.push(merged.chunkIndexByAction[index]);
+      return;
+    }
+    const kept = actions[position];
+    const actionIsRicher = contentLength(action) > contentLength(kept);
+    actions[position] = actionIsRicher
+      ? mergeActions(action, kept)
+      : mergeActions(kept, action);
+    if (actionIsRicher) {
+      chunkIndexByAction[position] = merged.chunkIndexByAction[index];
+    }
+  });
+  return { actions, chunkIndexByAction };
+};
+
+const contentLength = (action: ExtractedAction): number =>
+  (action.description?.length ?? 0) +
+  (action.objectifs?.length ?? 0) +
+  action.sousActions.length * 50;
 
 const richer = (a: string | null, b: string | null): string | null =>
   b !== null && (a === null || b.length > a.length) ? b : a;

@@ -3,7 +3,7 @@ import {
   createUnenrichedSousAction,
   ExtractedAction,
 } from '../../models/extracted-action';
-import { mergeChunkActions } from './merge-chunk-actions';
+import { dedupeByTitle, mergeChunkActions } from './merge-chunk-actions';
 
 const anAction = (
   titre: string,
@@ -84,5 +84,45 @@ describe('mergeChunkActions', () => {
 
     expect(merged.actions).toHaveLength(3);
     expect(merged.chunkIndexByAction).toEqual([0, 1, 2]);
+  });
+});
+
+describe('dedupeByTitle', () => {
+  it('fond les titres identiques à la casse, aux accents et à la ponctuation près, sur la plus complète', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Ancrer l’administration dans l’éco‑responsabilité', {
+          axe: '',
+        }),
+        anAction('Rénover les écoles'),
+        anAction('1 ANCRER L’ADMINISTRATION DANS L’ECO-RESPONSABILITE', {
+          axe: 'Axe I',
+          description: 'Renforcer et rendre visible l’action de la métropole.',
+        }),
+      ],
+      chunkIndexByAction: [0, 1, 5],
+    });
+
+    expect(deduped.actions.map((a) => a.titre)).toEqual([
+      '1 ANCRER L’ADMINISTRATION DANS L’ECO-RESPONSABILITE',
+      'Rénover les écoles',
+    ]);
+    expect(deduped.actions[0]).toMatchObject({
+      axe: 'Axe I',
+      description: 'Renforcer et rendre visible l’action de la métropole.',
+    });
+    expect(deduped.chunkIndexByAction).toEqual([5, 1]);
+  });
+
+  it('garde distinctes deux actions voisines', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Éco-rénover l’habitat social'),
+        anAction('Éco-rénover l’habitat privé'),
+      ],
+      chunkIndexByAction: [0, 0],
+    });
+
+    expect(deduped.actions).toHaveLength(2);
   });
 });
