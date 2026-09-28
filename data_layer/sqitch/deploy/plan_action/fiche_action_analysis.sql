@@ -15,6 +15,7 @@ CREATE TABLE public.fiche_action_analysis
     CONSTRAINT fiche_action_analysis_status_check CHECK (status IN ('processed', 'stale', 'failed')),
     CONSTRAINT fiche_action_analysis_fingerprint_check CHECK (fingerprint ~ '^[0-9a-f]{64}$'),
     CONSTRAINT fiche_action_analysis_retry_count_check CHECK (retry_count >= 0),
+    CONSTRAINT fiche_action_analysis_retry_count_status_check CHECK ((status = 'failed') = (retry_count > 0)),
     CONSTRAINT fiche_action_analysis_processed_fingerprint_check CHECK (status <> 'processed' OR fingerprint IS NOT NULL)
 );
 

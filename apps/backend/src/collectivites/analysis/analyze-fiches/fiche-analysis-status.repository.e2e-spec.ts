@@ -8,13 +8,19 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { type Result } from '@tet/backend/utils/result.type';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray, sql } from 'drizzle-orm';
+import { TransactionRollbackError } from 'drizzle-orm/errors';
+import { sortBy } from 'es-toolkit';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { z } from 'zod';
 import { FicheActionAnalysisRepository } from '../fiche-action-analysis.repository';
 import { ficheActionAnalysisTable } from '../models/fiche-action-analysis.table';
+import { FicheAnalysis } from '../models/fiche-analysis';
+import { FicheAnalysisStatusError } from './analyze-fiches.errors';
 import {
   FicheAnalysisUpsert,
   ficheAnalysisUpsertSchema,
@@ -32,6 +38,26 @@ type UpsertedAnalysis = z.input<typeof ficheAnalysisUpsertSchema>;
 
 type FicheAnalysisCaller = ReturnType<TrpcRouter['createCaller']>;
 
+type NeighborCollectiviteWithFiche = {
+  readonly collectiviteId: number;
+  readonly ficheId: number;
+  readonly ficheCleanup: () => Promise<void>;
+};
+
+type ListAnalysesResult = Result<FicheAnalysis[], FicheAnalysisStatusError>;
+
+const sortAnalysesByFicheId = (
+  listResult: ListAnalysesResult
+): ListAnalysesResult => {
+  if (!listResult.success) {
+    return listResult;
+  }
+  return {
+    ...listResult,
+    data: sortBy(listResult.data, [({ ficheId }) => ficheId]),
+  };
+};
+
 describe('FicheAnalysisStatusRepository contract', () => {
   let app: INestApplication;
   let db: DatabaseService;
@@ -42,6 +68,24 @@ describe('FicheAnalysisStatusRepository contract', () => {
   let otherFicheId: number;
   let neighborCollectiviteId: number;
   let neighborFicheId: number;
+
+  const createNeighborCollectiviteWithFiche = async (
+    router: TrpcRouter
+  ): Promise<NeighborCollectiviteWithFiche> => {
+    const neighbor = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.EDITION },
+    });
+    const neighborFiche = await createFicheAndCleanupFunction({
+      caller: router.createCaller({
+        user: getAuthUserFromUserCredentials(neighbor.user),
+      }),
+      ficheInput: {
+        collectiviteId: neighbor.collectivite.id,
+        titre: 'Fiche de la collectivité voisine',
+      },
+    });
+    return { collectiviteId: neighbor.collectivite.id, ...neighborFiche };
+  };
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -57,14 +101,6 @@ describe('FicheAnalysisStatusRepository contract', () => {
       user: getAuthUserFromUserCredentials(user),
     });
 
-    const neighbor = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    neighborCollectiviteId = neighbor.collectivite.id;
-    const neighborCaller = router.createCaller({
-      user: getAuthUserFromUserCredentials(neighbor.user),
-    });
-
     const [fiche, otherFiche, neighborFiche] = await Promise.all([
       createFicheAndCleanupFunction({
         caller,
@@ -74,16 +110,11 @@ describe('FicheAnalysisStatusRepository contract', () => {
         caller,
         ficheInput: { collectiviteId, titre: 'Développer le covoiturage' },
       }),
-      createFicheAndCleanupFunction({
-        caller: neighborCaller,
-        ficheInput: {
-          collectiviteId: neighborCollectiviteId,
-          titre: 'Fiche de la collectivité voisine',
-        },
-      }),
+      createNeighborCollectiviteWithFiche(router),
     ]);
     ficheId = fiche.ficheId;
     otherFicheId = otherFiche.ficheId;
+    neighborCollectiviteId = neighborFiche.collectiviteId;
     neighborFicheId = neighborFiche.ficheId;
 
     return async () => {
@@ -113,9 +144,10 @@ describe('FicheAnalysisStatusRepository contract', () => {
   };
 
   const readStored = async (
-    ficheIds: number[] = trackedFicheIds()
+    ficheIds: number[] = trackedFicheIds(),
+    runner: DatabaseService['db'] | Transaction = db.db
   ): Promise<StoredAnalysis[]> =>
-    db.db
+    runner
       .select({
         ficheId: ficheActionAnalysisTable.ficheId,
         status: ficheActionAnalysisTable.status,
@@ -134,11 +166,26 @@ describe('FicheAnalysisStatusRepository contract', () => {
   };
 
   const readAnalyzedAt = async (): Promise<Date | undefined> => {
-    const [stored] = await db.db
+    const [storedAnalysis] = await db.db
       .select({ analyzedAt: ficheActionAnalysisTable.analyzedAt })
       .from(ficheActionAnalysisTable)
       .where(eq(ficheActionAnalysisTable.ficheId, ficheId));
-    return stored?.analyzedAt;
+    return storedAnalysis?.analyzedAt;
+  };
+
+  const runInRolledBackTransaction = async (
+    write: (tx: Transaction) => Promise<void>
+  ): Promise<void> => {
+    try {
+      await db.db.transaction(async (tx) => {
+        await write(tx);
+        tx.rollback();
+      });
+    } catch (error) {
+      if (!(error instanceof TransactionRollbackError)) {
+        throw error;
+      }
+    }
   };
 
   const registerStatusCleanup = (): void => {
@@ -151,6 +198,12 @@ describe('FicheAnalysisStatusRepository contract', () => {
 
   it("upsertAnalyses d'une fiche traitée écrit le statut et l'empreinte, et remet le compteur à 0", async () => {
     registerStatusCleanup();
+    await upsert({
+      ficheId,
+      collectiviteId,
+      status: 'processed',
+      fingerprint: firstFingerprint,
+    });
     await upsert({ ficheId, collectiviteId, status: 'failed' });
     await upsert({ ficheId, collectiviteId, status: 'failed' });
 
@@ -158,17 +211,40 @@ describe('FicheAnalysisStatusRepository contract', () => {
       ficheId,
       collectiviteId,
       status: 'processed',
-      fingerprint: firstFingerprint,
+      fingerprint: secondFingerprint,
     });
 
     expect(await readStored()).toEqual([
       {
         ficheId,
         status: 'processed',
-        fingerprint: firstFingerprint,
+        fingerprint: secondFingerprint,
         retryCount: 0,
       },
     ]);
+  });
+
+  it("upsertAnalyses dans la transaction de l'appelant n'écrit rien si elle est annulée", async () => {
+    registerStatusCleanup();
+
+    await runInRolledBackTransaction(async (tx) => {
+      const upsertResult = await repository.upsertAnalyses({
+        analyses: [toUpsert({ ficheId, collectiviteId, status: 'failed' })],
+        tx,
+      });
+
+      expect({
+        upsertResult,
+        storedInTransaction: await readStored(trackedFicheIds(), tx),
+      }).toEqual({
+        upsertResult: { success: true, data: undefined },
+        storedInTransaction: [
+          { ficheId, status: 'failed', fingerprint: null, retryCount: 1 },
+        ],
+      });
+    });
+
+    expect(await readStored()).toEqual([]);
   });
 
   it("upsertAnalyses d'une fiche en erreur sans statut écrit un compteur à 1 et aucune empreinte", async () => {
@@ -222,6 +298,72 @@ describe('FicheAnalysisStatusRepository contract', () => {
         fingerprint: firstFingerprint,
         retryCount: 0,
       },
+    ]);
+  });
+
+  it('upsertAnalyses sans analyse ne modifie aucun statut', async () => {
+    registerStatusCleanup();
+    await upsert({ ficheId, collectiviteId, status: 'failed' });
+
+    const upsertResult = await repository.upsertAnalyses({ analyses: [] });
+
+    expect({ upsertResult, stored: await readStored() }).toEqual({
+      upsertResult: { success: true, data: undefined },
+      stored: [{ ficheId, status: 'failed', fingerprint: null, retryCount: 1 }],
+    });
+  });
+
+  it("upsertAnalyses d'une même fiche donnée deux fois n'écrit que sa dernière analyse", async () => {
+    registerStatusCleanup();
+
+    await upsert(
+      { ficheId, collectiviteId, status: 'failed' },
+      {
+        ficheId,
+        collectiviteId,
+        status: 'processed',
+        fingerprint: firstFingerprint,
+      }
+    );
+
+    expect(await readStored()).toEqual([
+      {
+        ficheId,
+        status: 'processed',
+        fingerprint: firstFingerprint,
+        retryCount: 0,
+      },
+    ]);
+  });
+
+  it("upsertAnalyses n'écrit pas le statut d'une fiche donnée avec une autre CT que la sienne", async () => {
+    registerStatusCleanup();
+
+    await upsert(
+      { ficheId: neighborFicheId, collectiviteId, status: 'failed' },
+      { ficheId, collectiviteId, status: 'failed' }
+    );
+
+    expect(await readStored()).toEqual([
+      { ficheId, status: 'failed', fingerprint: null, retryCount: 1 },
+    ]);
+  });
+
+  it("upsertAnalyses n'écrit pas le statut d'une fiche supprimée physiquement, et écrit celui des autres fiches", async () => {
+    registerStatusCleanup();
+    const deletedFiche = await createFicheAndCleanupFunction({
+      caller,
+      ficheInput: { collectiviteId, titre: 'Fiche supprimée avant écriture' },
+    });
+    await deletedFiche.ficheCleanup();
+
+    await upsert(
+      { ficheId: deletedFiche.ficheId, collectiviteId, status: 'failed' },
+      { ficheId, collectiviteId, status: 'failed' }
+    );
+
+    expect(await readStored([deletedFiche.ficheId, ficheId])).toEqual([
+      { ficheId, status: 'failed', fingerprint: null, retryCount: 1 },
     ]);
   });
 
@@ -282,6 +424,42 @@ describe('FicheAnalysisStatusRepository contract', () => {
     });
   });
 
+  it('deleteAnalyses sans fiche ne supprime aucun statut', async () => {
+    registerStatusCleanup();
+    await upsert({ ficheId, collectiviteId, status: 'failed' });
+
+    const deleteResult = await repository.deleteAnalyses({ ficheIds: [] });
+
+    expect({ deleteResult, stored: await readStored() }).toEqual({
+      deleteResult: { success: true, data: undefined },
+      stored: [{ ficheId, status: 'failed', fingerprint: null, retryCount: 1 }],
+    });
+  });
+
+  it("deleteAnalyses dans la transaction de l'appelant ne supprime rien si elle est annulée", async () => {
+    registerStatusCleanup();
+    await upsert({ ficheId, collectiviteId, status: 'failed' });
+
+    await runInRolledBackTransaction(async (tx) => {
+      const deleteResult = await repository.deleteAnalyses({
+        ficheIds: [ficheId],
+        tx,
+      });
+
+      expect({
+        deleteResult,
+        storedInTransaction: await readStored(trackedFicheIds(), tx),
+      }).toEqual({
+        deleteResult: { success: true, data: undefined },
+        storedInTransaction: [],
+      });
+    });
+
+    expect(await readStored()).toEqual([
+      { ficheId, status: 'failed', fingerprint: null, retryCount: 1 },
+    ]);
+  });
+
   it("la suppression physique d'une fiche supprime son statut", async () => {
     registerStatusCleanup();
     const deletedFiche = await createFicheAndCleanupFunction({
@@ -329,23 +507,26 @@ describe('FicheAnalysisStatusRepository contract', () => {
 
     const listResult = await repository.listAnalyses({ collectiviteId });
 
-    expect(listResult).toEqual({
+    expect(sortAnalysesByFicheId(listResult)).toEqual({
       success: true,
-      data: [
-        {
-          ficheId,
-          collectiviteId,
-          status: 'processed',
-          fingerprint: firstFingerprint,
-          analyzedAt: expect.any(Date),
-        },
-        {
-          ficheId: otherFicheId,
-          collectiviteId,
-          status: 'stale',
-          analyzedAt: expect.any(Date),
-        },
-      ].sort((a, b) => a.ficheId - b.ficheId),
+      data: sortBy(
+        [
+          {
+            ficheId,
+            collectiviteId,
+            status: 'processed',
+            fingerprint: firstFingerprint,
+            analyzedAt: expect.any(Date),
+          },
+          {
+            ficheId: otherFicheId,
+            collectiviteId,
+            status: 'stale',
+            analyzedAt: expect.any(Date),
+          },
+        ],
+        [(analysis) => analysis.ficheId]
+      ),
     });
   });
 

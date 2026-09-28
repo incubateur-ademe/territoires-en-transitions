@@ -22,7 +22,7 @@ export class AnalysisRunTableRepository extends AnalysisRunRepository {
         const [lastRun] = await this.db
           .select({ startedAt: analysisRunTable.startedAt })
           .from(analysisRunTable)
-          .orderBy(desc(analysisRunTable.finishedAt))
+          .orderBy(desc(analysisRunTable.finishedAt), desc(analysisRunTable.id))
           .limit(1);
         return success(lastRun?.startedAt ?? null);
       } catch (error) {
