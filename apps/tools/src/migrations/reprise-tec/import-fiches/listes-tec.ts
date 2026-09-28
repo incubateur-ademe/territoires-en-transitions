@@ -70,7 +70,7 @@ export const TYPES_ACTION = new Map<number, string>([
 
 export type Classement =
   | { sousThematique: string }
-  | { thematique: string; sousThematique?: never };
+  | { thematique: string; exacte?: true; sousThematique?: never };
 
 /**
  * Secteur (T&C) → sous-thématique quand elle dit la même chose, sinon la seule thématique.
@@ -96,8 +96,8 @@ export const SECTEURS = new Map<number, Classement>([
   [28, { sousThematique: 'Forêts' }], // Forêt
 
   // La seule thématique.
-  // Agriculture : la thématique du même nom, pas la sous-thématique homonyme, rangée sous « Activités économiques ».
-  [1, { thematique: 'Agriculture et alimentation' }], // Agriculture
+  // Agriculture : la thématique du même nom dit tout (la sous-thématique homonyme est sous « Activités économiques »).
+  [1, { thematique: 'Agriculture et alimentation', exacte: true }], // Agriculture
   [6, { thematique: 'Économie circulaire et déchets' }], // Déchets
   [7, { thematique: 'Activités économiques' }], // Développement économique
   [8, { thematique: 'Eau, milieux aquatiques et assainissement' }], // Eau
