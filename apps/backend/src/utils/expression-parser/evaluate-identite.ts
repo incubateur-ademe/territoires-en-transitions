@@ -16,7 +16,8 @@ type IdentiteField =
   | 'population'
   | 'localisation'
   | 'dans_aire_urbaine'
-  | 'commune_membre';
+  | 'commune_membre'
+  | 'sinoe';
 
 /**
  * Le second argument d'`identite(...)` passe par la règle `primary`, qui rend un
@@ -92,6 +93,17 @@ const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
     return identite.communesMembresPopulationTags.includes(
       primary as CollectivitePopulationTypeEnum
     );
+  },
+  sinoe: (identite, primary) => {
+    // Lever plutôt que répondre « non » : une identité servie sans sa typologie
+    // masquerait en silence un seuil ou une cible.
+    if (identite.sinoeId === undefined) {
+      throw new Error(
+        `identite(sinoe, ${primary}) : la typologie SINOE de la collectivité n'a pas été chargée`
+      );
+    }
+    // `null` : collectivité sans typologie connue, qui ne répond à aucune.
+    return identite.sinoeId?.toLowerCase() === String(primary).toLowerCase();
   },
 };
 
