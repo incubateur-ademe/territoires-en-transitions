@@ -196,9 +196,15 @@ export const plansLabels = {
     "Si l'import ne vous convient pas, contactez-nous à contact@territoiresentransitions.fr en joignant le fichier et en précisant le contexte.",
   importPlanIaFormatsAcceptes:
     'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
+  importPlanIaFichierSuggere:
+    "Programme d'actions déposé à l'étape Documents, pré-sélectionné pour vous.",
+  importPlanIaFichierSuggereChargement:
+    "Récupération du programme d'actions déposé…",
+  importPlanIaRetirerFichier: 'Retirer',
   importPlanIaTypeVerrouille:
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
+  importPlanIaEnCoursCourt: 'Import en cours',
   planImporteBanniereTitre: 'Plan importé automatiquement (version bêta)',
   planImporteBanniereDescription:
     "Ce plan a été créé à partir de votre fichier. L'import est en version bêta : certains éléments ont pu être manqués ou mal repérés. Relisez votre plan et corrigez-le si besoin.",
@@ -209,8 +215,7 @@ export const plansLabels = {
   planImporteBanniereSupportApres: "s'il y a un problème avec l'import.",
   planImporteValider: 'Valider le plan',
   planImporteValiderTitre: 'Valider le plan importé',
-  planImporteValiderAvertissementTitre:
-    'Vérifiez le plan avant de le valider',
+  planImporteValiderAvertissementTitre: 'Vérifiez le plan avant de le valider',
   planImporteValiderAvertissement:
     "Comparez le plan à votre document : axes, actions, sous-actions et informations associées. L'import est en version bêta et a pu manquer ou mal repérer certains éléments.",
   planImporteValiderEngagement:
