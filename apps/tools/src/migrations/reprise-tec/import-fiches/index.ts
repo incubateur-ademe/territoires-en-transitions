@@ -10,6 +10,7 @@ import { getCible } from '../db';
 import { loadDossiers } from './dossiers';
 import { createFiches } from './ecriture';
 import { buildFiche } from './fiches';
+import { validateGardes } from './gardes';
 import { createPlans } from './plans';
 import { loadListesTet } from './listes-tet';
 import { createTags, type Tags } from './tags';
@@ -22,6 +23,7 @@ const main = async () => {
   try {
     const dossiers = await loadDossiers(client);
     const listesTet = await loadListesTet(client);
+    await validateGardes(client, dossiers, listesTet);
     const fiches = dossiers.flatMap((d) =>
       d.actions.map((a) => buildFiche(a, d, listesTet))
     );
