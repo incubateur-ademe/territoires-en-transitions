@@ -12,9 +12,10 @@ export const renderUnit = (
     unit.pageStart === unit.pageEnd
       ? `page ${unit.pageStart + 1}`
       : `pages ${unit.pageStart + 1}–${unit.pageEnd + 1}`;
+  const section = unit.section ? ` · partie « ${unit.section} »` : '';
   const path =
     unit.headingPath.length > 0 ? ` · ${unit.headingPath.join(' > ')}` : '';
-  const header = `[Extrait ${index + 1}/${count} · ${pages}${path}]`;
+  const header = `[Extrait ${index + 1}/${count} · ${pages}${section}${path}]`;
 
   const body: string[] = [];
   let currentPage: number | null = null;

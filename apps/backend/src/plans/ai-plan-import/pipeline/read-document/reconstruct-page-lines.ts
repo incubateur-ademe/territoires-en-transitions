@@ -23,6 +23,9 @@ type PositionedItem = {
 // mots sans rendre l'espace).
 const SAME_LINE_TOLERANCE = 0.5;
 const WORD_GAP_RATIO = 0.15;
+// Un texte dessiné deux fois au même endroit (contour, faux gras) sortirait
+// en double : « ÉTATÉTAT ».
+const OVERPRINT_TOLERANCE = 0.2;
 
 /**
  * Recompose les lignes d'une page à partir des fragments de pdf.js, dans
@@ -55,7 +58,7 @@ export const reconstructPageLines = (
   }
 
   return lines
-    .map((line) => line.sort((a, b) => a.x - b.x))
+    .map((line) => dropOverprints(line.sort((a, b) => a.x - b.x)))
     .map(toPageLine)
     .filter((line) => line.text.length > 0);
 };
@@ -73,6 +76,19 @@ const toPositionedItem =
       fontSize,
     };
   };
+
+const dropOverprints = (items: PositionedItem[]): PositionedItem[] =>
+  items.filter(
+    (item, index) =>
+      !items
+        .slice(0, index)
+        .some(
+          (kept) =>
+            kept.text === item.text &&
+            Math.abs(kept.x - item.x) <= OVERPRINT_TOLERANCE * item.fontSize &&
+            Math.abs(kept.y - item.y) <= OVERPRINT_TOLERANCE * item.fontSize
+        )
+  );
 
 const toPageLine = (items: PositionedItem[]): PageLine => {
   let text = '';
