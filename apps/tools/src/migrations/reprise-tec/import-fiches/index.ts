@@ -7,11 +7,13 @@
  *     apps/tools/src/migrations/reprise-tec/import-fiches/index.ts [--confirm]
  */
 import { getCible } from '../db';
-import { loadDossiers } from './dossiers';
+import { listDefinitifsAvecPlusDActions, loadDossiers } from './dossiers';
+import { createEcarts, loadEcarts, validateBilan } from './ecarts';
 import { createFiches } from './ecriture';
 import { buildFiche } from './fiches';
 import { validateGardes } from './gardes';
 import { createPlans } from './plans';
+import { printRapport } from './rapport';
 import { loadListesTet } from './listes-tet';
 import { createTags, type Tags } from './tags';
 
@@ -27,6 +29,19 @@ const main = async () => {
     const fiches = dossiers.flatMap((d) =>
       d.actions.map((a) => buildFiche(a, d, listesTet))
     );
+    const { lues, ecrites, ecarts } = await loadEcarts(client);
+    const definitifsAvecPlusDActions = await listDefinitifsAvecPlusDActions(
+      client,
+      dossiers
+    );
+    const bilan = validateBilan(
+      lues,
+      [
+        ...fiches.map((f) => ({ table: 'action', id: f.tecId, precision: '' })),
+        ...ecrites,
+      ],
+      ecarts
+    );
 
     await client.query('begin');
     let tags: Tags;
@@ -39,26 +54,23 @@ const main = async () => {
           `${fiches.length} fiches calculées, ${ecrites} écrites : rien n'est validé.`
         );
       }
+      await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
       await client.query('rollback');
       throw e;
     }
 
-    const { structure_tag, libre_tag } = tags.comptes;
-    console.log(`${dossiers.length} plans, ${fiches.length} fiches`);
-    console.log(`${fiches.flatMap((f) => f.notes).length} notes`);
-    console.log(
-      `Structures pilotes : ${structure_tag.reutilises} réutilisées, ${structure_tag.crees} créées`
-    );
-    console.log(
-      `Tags personnalisés : ${libre_tag.reutilises} réutilisés, ${libre_tag.crees} créés`
-    );
-    console.log(
-      isConfirmed
-        ? 'Import terminé.'
-        : 'Simulation : tout a été annulé. Relancer avec --confirm pour importer.'
-    );
+    printRapport({
+      bilan,
+      ecarts,
+      dossiers,
+      fiches,
+      listesTet,
+      tags: tags.comptes,
+      definitifsAvecPlusDActions,
+      isConfirmed,
+    });
   } finally {
     client.release();
     await pool.end();
