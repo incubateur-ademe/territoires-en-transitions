@@ -1,7 +1,7 @@
 /** La fiche : ce que devient une action de T&C dans TeT, et tout ce qui s'y rattache. */
 
 import { StatutEnum } from '@tet/domain/plans';
-import type { Action, Dossier } from './dossiers';
+import { decrireDossier, type Action, type Dossier } from './dossiers';
 import type { ListesTet } from './listes-tet';
 import { CIBLES, translate, TYPES_ACTION, TYPES_PORTEUR } from './listes-tec';
 
@@ -67,3 +67,28 @@ const correctDateSaisie = (date: string | null) => {
 };
 
 const unique = <T>(valeurs: readonly T[]) => [...new Set(valeurs)];
+
+/** Garde, appelée par `gardes.ts` : un titre ou une description plus longs que la colonne de TeT, qu'il faudrait tronquer. */
+export const listCasBloquantsFiches = (dossiers: readonly Dossier[]) => {
+  // Les longueurs des colonnes `titre` et `description` de `fiche_action`.
+  const titreMax = 300;
+  const descriptionMax = 20_000;
+  return dossiers.flatMap((d) =>
+    d.actions.flatMap((a) => [
+      ...(a.titre.length > titreMax
+        ? [
+            `  titre de plus de ${titreMax} caractères : action T&C ${
+              a.tecId
+            }, ${decrireDossier(d)}`,
+          ]
+        : []),
+      ...((a.description?.length ?? 0) > descriptionMax
+        ? [
+            `  description de plus de ${descriptionMax} caractères : action T&C ${
+              a.tecId
+            }, ${decrireDossier(d)}`,
+          ]
+        : []),
+    ])
+  );
+};
