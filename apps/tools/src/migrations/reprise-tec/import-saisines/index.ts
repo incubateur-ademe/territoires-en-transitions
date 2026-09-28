@@ -11,6 +11,7 @@ import { getCible } from '../db';
 import { loadDossiers } from './dossiers';
 import { createSaisines } from './ecriture';
 import { validateGardes } from './gardes';
+import { printRapport } from './rapport';
 import { listSaisines } from './services';
 
 const main = async () => {
@@ -27,21 +28,23 @@ const main = async () => {
     let ecrites: number;
     try {
       ecrites = await createSaisines(client, saisines);
+      if (ecrites !== saisines.length) {
+        throw new Error(
+          `${saisines.length} saisines calculées, ${ecrites} écrites : rien n'est validé.`
+        );
+      }
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
       await client.query('rollback');
       throw e;
     }
 
-    console.log(
-      `${dossiers.transmis.length} dossiers repris transmis pour avis`
-    );
-    console.log(`${ecrites} saisines écrites`);
-    console.log(
-      isConfirmed
-        ? '\nImport terminé.'
-        : '\nSimulation : tout a été annulé. Relancer avec --confirm pour importer.'
-    );
+    printRapport({
+      dossiers: dossiers.transmis,
+      saisines,
+      ecrites,
+      isConfirmed,
+    });
   } finally {
     client.release();
     await pool.end();
