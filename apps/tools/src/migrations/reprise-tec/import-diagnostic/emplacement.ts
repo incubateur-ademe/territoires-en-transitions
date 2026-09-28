@@ -1,5 +1,5 @@
 /**
- * La grille : où se range un chiffre de T&C dans le diagnostic de TeT, sa ligne et sa colonne.
+ * L'emplacement : où se range un chiffre de T&C dans la grille de TeT, sa ligne et sa colonne.
  * La ligne : numéro T&C → nom de la ligne à l'écran (tables ci-dessous) → code `cae_*` lu dans la grille de l'app.
  */
 
@@ -7,7 +7,7 @@ import {
   isPcaetDiagnosticReferenceYear,
   PCAET_DIAGNOSTIC_INDICATEURS,
 } from '@tet/domain/demarches';
-import type { LigneDiagnostic } from './diagnostic';
+import type { LigneDiagnostic } from './tables-grille';
 
 export type Emplacement = {
   identifiant: string;
@@ -15,13 +15,22 @@ export type Emplacement = {
   champ: 'resultat' | 'objectif';
 };
 
-/** Règle : l'emplacement d'une ligne de T&C dans la grille ; aucun s'il lui manque la ligne ou la colonne. */
-export const getEmplacement = (l: LigneDiagnostic): Emplacement | null => {
+export type MotifSansEmplacement =
+  | 'sans_indicateur_cible'
+  | 'objectif_sans_colonne'
+  | 'constat_sans_annee'
+  | 'valeur_sans_periode';
+
+/** Règle : l'emplacement d'une ligne de T&C dans la grille, ou le motif pour lequel elle n'en a pas (la ligne d'abord, puis la colonne). */
+export const getEmplacement = (
+  l: LigneDiagnostic
+): Emplacement | MotifSansEmplacement => {
   const identifiant = getLigne(l);
+  if (identifiant === null) {
+    return 'sans_indicateur_cible';
+  }
   const colonne = getColonne(l.periode, l.annee);
-  return identifiant !== null && colonne !== null
-    ? { identifiant, ...colonne }
-    : null;
+  return typeof colonne === 'string' ? colonne : { identifiant, ...colonne };
 };
 
 /** Garde, appelée par `gardes.ts` : un numéro de T&C absent des tables ; un numéro vide n'en est pas un (écart). */
@@ -165,23 +174,30 @@ const findIdentifiant = (
 // La colonne : dans quelle colonne de la grille va une ligne de T&C.
 // ---------------------------------------------------------------------------
 
-/** Règle : la colonne d'une période T&C ; les objectifs 2021 et 2026 n'en ont pas ; un constat n'en a une que si le domaine accepte son année. */
+/** Règle : la colonne d'une période T&C, ou le motif pour lequel elle n'en a pas ; un constat n'en a une que si le domaine accepte son année. */
 const getColonne = (
   periode: number | null,
   annee: number | null
-): Pick<Emplacement, 'annee' | 'champ'> | null => {
+):
+  | Pick<Emplacement, 'annee' | 'champ'>
+  | Exclude<MotifSansEmplacement, 'sans_indicateur_cible'> => {
   switch (periode) {
     case 1:
       return annee !== null && isPcaetDiagnosticReferenceYear(annee)
         ? { annee, champ: 'resultat' }
-        : null;
+        : 'constat_sans_annee';
+    case 2:
+    case 3:
+      return 'objectif_sans_colonne';
     case 4:
     case 6:
       return { annee: 2030, champ: 'objectif' };
     case 5:
     case 7:
       return { annee: 2050, champ: 'objectif' };
+    case null:
+      return 'valeur_sans_periode';
     default:
-      return null;
+      throw new Error(`Période T&C ${periode} inconnue du script.`);
   }
 };
