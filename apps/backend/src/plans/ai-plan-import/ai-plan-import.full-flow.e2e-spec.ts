@@ -372,7 +372,17 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
           eq(notificationTable.entityId, String(planId))
         )
       );
-    expect(notification).toMatchObject({ sendTo: user.id, status: 'pending' });
+    expect(notification).toMatchObject({
+      sendTo: user.id,
+      status: 'pending',
+      notificationData: {
+        recap: {
+          axesCount: expect.any(Number),
+          sousAxesCount: expect.any(Number),
+          fichesCount: expect.any(Number),
+        },
+      },
+    });
     const content = await app
       .get(NotifyPlanImportedService)
       .getNotificationContent(notification);

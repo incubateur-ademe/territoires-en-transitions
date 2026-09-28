@@ -11,12 +11,15 @@ import {
 } from '@tet/domain/utils';
 import { z } from 'zod';
 import NotifyPlanImportedEmail from './notify-plan-imported.email';
+import { formatPlanRecap, planRecapSchema } from './plan-recap';
 
 /** Format du champ `notificationData`. */
 const planImportedNotificationDataSchema = z.object({
   collectiviteId: z.number(),
   planId: z.number(),
   planName: z.string(),
+  // Absent des notifications créées avant l'ajout du récapitulatif.
+  recap: planRecapSchema.optional(),
 });
 
 type PlanImportedNotificationData = z.infer<
@@ -74,7 +77,7 @@ export class NotifyPlanImportedService {
       );
       return failure('PARSING_NOTIFICATION_DATA_ERROR');
     }
-    const { collectiviteId, planId, planName } = parsed.data;
+    const { collectiviteId, planId, planName, recap } = parsed.data;
 
     const recipient = await this.listUsersService.getUserBasicInfo({
       userId: notification.sendTo,
@@ -92,6 +95,7 @@ export class NotifyPlanImportedService {
         sendToEmail,
         subject,
         planName,
+        planRecap: recap ? formatPlanRecap(recap) : undefined,
         planUrl: this.getPlanUrlService.getPlanUrl({ collectiviteId, planId }),
       }),
     });
