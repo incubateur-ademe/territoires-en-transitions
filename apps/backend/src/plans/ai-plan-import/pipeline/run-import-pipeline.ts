@@ -164,7 +164,10 @@ export const runImportPipeline = async (
       }
       units = result.data.keptUnits;
       skeleton = result.data.skeleton;
-      return success({ tokens: result.data.tokens });
+      return success({
+        tokens: result.data.tokens,
+        warnings: result.data.warnings,
+      });
     },
   });
   if (!scouted.success) return scouted.outcome;

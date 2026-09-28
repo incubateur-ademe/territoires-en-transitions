@@ -1,13 +1,13 @@
-import { LlmError } from '@tet/backend/utils/llm/llm.errors';
+import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
-import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
-import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import {
-  combineResults,
-  Result,
-  success,
-} from '@tet/backend/utils/result.type';
+  emptyTokenUsage,
+  sumTokenUsage,
+  TokenUsage,
+} from '@tet/backend/utils/llm/token-usage';
+import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { z } from 'zod';
 import { REPERAGE_PROMPT } from '../../prompts/reperage.prompt';
@@ -27,6 +27,8 @@ export const classifyUnitsResponseSchema = z.array(
   z.object({ index: z.number().int(), type: z.enum(unitCategoryValues) })
 );
 
+type ClassifyEntry = z.output<typeof classifyUnitsResponseSchema>[number];
+
 export const CLASSIFY_BATCH_SIZE = 40;
 export const CLASSIFY_CONCURRENCY = 3;
 // Le début d'un extrait suffit à dire ce qu'il est.
@@ -37,9 +39,17 @@ export type ClassifyUnitsResult = {
   /** Catégorie par index d'unité ; une unité oubliée par le modèle n'y est pas. */
   categories: Map<number, UnitCategory>;
   tokens: TokenUsage;
+  /** Lots que le modèle n'a pas su trier : leurs unités sont toutes lues. */
+  warnings: string[];
 };
 
-/** Trie les unités par lots, avec le palier léger : c'est un tri, pas une lecture. */
+type IndexedUnit = { unit: DocumentUnit; index: number };
+
+/**
+ * Trie les unités par lots, avec le palier léger : c'est un tri, pas une
+ * lecture. Un lot que le modèle ne sait pas trier, même à la seconde
+ * tentative, n'écarte rien : ses unités sont lues comme sans tri.
+ */
 export const classifyUnits = async (
   llm: Pick<LlmService, 'generateStructured'>,
   { units, signal }: { units: DocumentUnit[]; signal?: AbortSignal }
@@ -49,41 +59,63 @@ export const classifyUnits = async (
     chunk(indexed, CLASSIFY_BATCH_SIZE),
     CLASSIFY_CONCURRENCY,
     async (batch) => {
-      const completion = await llm.generateStructured({
-        tier: 'light',
-        prompt: generatePrompt(REPERAGE_PROMPT, {
-          extraits: batch
-            .map(({ unit, index }) => renderPreview(unit, index))
-            .join('\n'),
-        }),
-        schema: classifyUnitsResponseSchema,
-        maxOutputTokens: CLASSIFY_MAX_OUTPUT_TOKENS,
-        reasoningEffort: 'low',
-        signal,
-      });
-      if (!completion.success) {
-        return completion;
+      let result = await classifyBatch(llm, batch, signal);
+      if (!result.success && isTransientForTri(result.error)) {
+        result = await classifyBatch(llm, batch, signal);
       }
-      const requested = new Set(batch.map(({ index }) => index));
-      return success({
-        entries: completion.data.data.filter((entry) =>
-          requested.has(entry.index)
-        ),
-        tokens: completion.data.tokens,
-      });
+      return result.success
+        ? { ...result.data, warning: null }
+        : {
+            entries: [],
+            tokens: emptyTokenUsage(),
+            warning: `Tri non fait pour les extraits ${batch[0].index + 1} à ${
+              batch[batch.length - 1].index + 1
+            } : ${describeLlmError(result.error)}`,
+          };
     }
   );
-  const combined = combineResults(outcomes);
-  if (!combined.success) {
-    return combined;
-  }
   return success({
     categories: new Map(
-      combined.data.flatMap(({ entries }) =>
+      outcomes.flatMap(({ entries }) =>
         entries.map((entry) => [entry.index, entry.type] as const)
       )
     ),
-    tokens: sumTokenUsage(combined.data.map(({ tokens }) => tokens)),
+    tokens: sumTokenUsage(outcomes.map(({ tokens }) => tokens)),
+    warnings: outcomes.flatMap(({ warning }) => (warning ? [warning] : [])),
+  });
+};
+
+// Un JSON mal formé ou tronqué varie d'un appel à l'autre ; le reste (quota,
+// panne) a déjà été retenté par le service.
+const isTransientForTri = (error: LlmError): boolean =>
+  error.kind === 'invalid_json' || error.kind === 'truncated';
+
+const classifyBatch = async (
+  llm: Pick<LlmService, 'generateStructured'>,
+  batch: IndexedUnit[],
+  signal?: AbortSignal
+): Promise<
+  Result<{ entries: ClassifyEntry[]; tokens: TokenUsage }, LlmError>
+> => {
+  const completion = await llm.generateStructured({
+    tier: 'light',
+    prompt: generatePrompt(REPERAGE_PROMPT, {
+      extraits: batch
+        .map(({ unit, index }) => renderPreview(unit, index))
+        .join('\n'),
+    }),
+    schema: classifyUnitsResponseSchema,
+    maxOutputTokens: CLASSIFY_MAX_OUTPUT_TOKENS,
+    reasoningEffort: 'low',
+    signal,
+  });
+  if (!completion.success) {
+    return completion;
+  }
+  const requested = new Set(batch.map(({ index }) => index));
+  return success({
+    entries: completion.data.data.filter((entry) => requested.has(entry.index)),
+    tokens: completion.data.tokens,
   });
 };
 
