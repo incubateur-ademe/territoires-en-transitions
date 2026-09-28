@@ -1,21 +1,23 @@
 {
-    "mcpServers": {
-        "staging-db": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@dotenvx/dotenvx",
-                "run",
-                "--env-keys-file=.env.keys",
-                "--strict",
-                "-f",
-                ".env.staging",
-                "--",
-                "uvx",
-                "postgres-mcp",
-                "--access-mode",
-                "unrestricted"
-            ]
-        }
+  "mcpServers": {
+    "staging-db": {
+      "command": "node_modules/.bin/dotenvx",
+      "args": [
+        "run",
+        "--env-keys-file=.env.keys",
+        "--strict",
+        "-f",
+        ".env.staging",
+        "--",
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "DATABASE_URI",
+        "crystaldba/postgres-mcp",
+        "--access-mode=unrestricted"
+      ]
     }
+  }
 }
