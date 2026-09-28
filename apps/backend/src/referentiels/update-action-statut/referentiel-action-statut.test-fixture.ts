@@ -1,4 +1,5 @@
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
+import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
@@ -362,6 +363,14 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
     .returning();
   console.log(
     `${preuveAuditRet.length} audit preuves removed from collectivite ${collectiviteId}`
+  );
+
+  const preuveRapportRet = await databaseService.db
+    .delete(preuveRapportTable)
+    .where(eq(preuveRapportTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${preuveRapportRet.length} rapport preuves removed from collectivite ${collectiviteId}`
   );
 
   const snapshotRet = await databaseService.db

@@ -265,6 +265,22 @@ describe('AddRapportVisiteRouter', () => {
     );
   });
 
+  test("un dépôt dont le lien porte une url mais pas de titre est refusé et n'écrit rien", async () => {
+    const rapportCountBefore = await countRapportsVisite(collectivite.id);
+
+    await expect(
+      postAsUntypedClient(editorUser, {
+        collectiviteId: collectivite.id,
+        date: DATE_VISITE,
+        lien: { url: 'https://example.com/rapport', titre: '' },
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+
+    await expect(countRapportsVisite(collectivite.id)).resolves.toBe(
+      rapportCountBefore
+    );
+  });
+
   test("un dépôt dont le lien n'est pas une url est refusé et n'écrit rien", async () => {
     const rapportCountBefore = await countRapportsVisite(collectivite.id);
 
