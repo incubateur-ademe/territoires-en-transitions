@@ -874,6 +874,70 @@ describe('UpdateFicheService', () => {
       );
     });
 
+    test('should reject linking a fiche the user cannot write', async () => {
+      const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+      const [otherFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche liée dans autre collectivité',
+          collectiviteId: otherCollectivite.id,
+        })
+        .returning();
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, otherFiche.id));
+      });
+
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      await expect(() =>
+        caller.update({
+          ficheId,
+          ficheFields: { fichesLiees: [{ id: otherFiche.id }] },
+        })
+      ).rejects.toThrowError(/Droits insuffisants/i);
+    });
+
+    test('should reject unlinking a fiche the user cannot write', async () => {
+      const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+      const [otherFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche déjà liée dans autre collectivité',
+          collectiviteId: otherCollectivite.id,
+        })
+        .returning();
+      await db.db
+        .insert(ficheActionLienTable)
+        .values({ ficheUne: otherFiche.id, ficheDeux: ficheId });
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionLienTable)
+          .where(eq(ficheActionLienTable.ficheUne, otherFiche.id));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, otherFiche.id));
+      });
+
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      await expect(() =>
+        caller.update({
+          ficheId,
+          ficheFields: { fichesLiees: [] },
+        })
+      ).rejects.toThrowError(/Droits insuffisants/i);
+
+      const liens = await db.db
+        .select()
+        .from(ficheActionLienTable)
+        .where(eq(ficheActionLienTable.ficheUne, otherFiche.id));
+      expect(liens).toHaveLength(1);
+    });
+
     describe('IDOR — cross-collectivité relation injection', () => {
       let otherCollectiviteId: number;
       let otherAxeId: number;
