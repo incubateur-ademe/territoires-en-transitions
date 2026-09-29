@@ -13,7 +13,10 @@ import {
 import { useListDocumentsReferentiel } from './data/use-list-documents-referentiel';
 import { AddRapportVisiteModal } from '@/app/collectivites/documents/add-rapport-visite.modal';
 import { groupeParDemande } from './groupeParDemande';
-import { addInfoToEntry, PreuvesLabellisation } from './PreuveLabellisation';
+import {
+  addInfoToEntry,
+  PreuvesLabellisation,
+} from './preuves-labellisation.list';
 import { PreuvesTable } from './PreuvesTable';
 import { useTableData } from './useTableData';
 

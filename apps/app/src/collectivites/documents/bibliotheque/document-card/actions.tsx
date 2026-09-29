@@ -1,133 +1,104 @@
-import { appLabels } from '@/app/labels/catalog';
 import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
-import { Modal, VisibleWhen } from '@tet/ui';
-import { ElementType, JSX, ReactNode } from 'react';
+import { appLabels } from '@/app/labels/catalog';
+import { Modal } from '@tet/ui';
+import { JSX, useState } from 'react';
 import { DeleteConfirmationAlert } from '../delete-confirmation.alert';
 import { EditDocumentModal } from '../edit-document.modal';
+import { DocumentRattache } from '../types';
 import { useRemovePreuve } from '../use-edit-preuve';
-import { useDocumentCard } from './context';
-import { toDeclaredChildren } from './declared-children';
+import { EditState } from '../use-edit-state';
 import { DocumentCardMenu } from './menu';
+import { OpenedDocumentModal } from './opened-modal';
 
-export type ActionVisibility = { visibleWhen?: boolean };
+type ReplaceFichier = (fichierId: number) => Promise<void>;
 
-export const Edit = (_props: ActionVisibility): JSX.Element | null => {
-  const { document, openedModal, setOpenedModal } = useDocumentCard();
-  const isOpen = openedModal === 'edit';
-
-  if (document.type === 'fichierManquant' || document.type === 'nonRenseigne') {
-    return null;
-  }
-
-  return (
-    <VisibleWhen condition={isOpen}>
-      <EditDocumentModal
-        isOpen={isOpen}
-        setIsOpen={() => setOpenedModal(null)}
-        document={document}
-      />
-    </VisibleWhen>
-  );
+export type DocumentCardActions = {
+  edit?: boolean;
+  comment?: boolean;
+  remove?: boolean;
+  replace?: ReplaceFichier;
 };
 
-export const CommentAction = (_props: ActionVisibility): null => {
-  useDocumentCard();
-  return null;
-};
-
-export const Delete = (_props: ActionVisibility): JSX.Element => {
-  const { document, openedModal, setOpenedModal } = useDocumentCard();
-  const { mutate: removePreuve } = useRemovePreuve();
-  const isOpen = openedModal === 'delete';
-
-  return (
-    <VisibleWhen condition={isOpen}>
-      <DeleteConfirmationAlert
-        isOpen={isOpen}
-        setIsOpen={() => setOpenedModal(null)}
-        title={appLabels.supprimerDocument}
-        message={appLabels.supprimerDocumentMessage}
-        onDelete={() => removePreuve(document)}
-      />
-    </VisibleWhen>
-  );
-};
-
-export const Replace = ({
+const ReplaceModal = ({
   onReplace,
-}: ActionVisibility & {
-  onReplace: (fichierId: number) => Promise<void>;
-}): JSX.Element => {
-  const { openedModal, setOpenedModal } = useDocumentCard();
-  const isOpen = openedModal === 'replace';
+  onClose,
+}: {
+  onReplace: ReplaceFichier;
+  onClose: () => void;
+}): JSX.Element => (
+  <Modal
+    size="lg"
+    openState={{ isOpen: true, setIsOpen: onClose }}
+    title={appLabels.remplacerLeFichier}
+    render={({ close }) => (
+      <AddDocumentTabs onClose={close} handlers={{ addFile: onReplace }} />
+    )}
+  />
+);
 
-  return (
-    <VisibleWhen condition={isOpen}>
-      <Modal
-        size="lg"
-        openState={{
-          isOpen,
-          setIsOpen: () => setOpenedModal(null),
-        }}
-        title={appLabels.remplacerLeFichier}
-        render={({ close }) => (
-          <AddDocumentTabs onClose={close} handlers={{ addFile: onReplace }} />
-        )}
-      />
-    </VisibleWhen>
-  );
+type ActionsProps = {
+  document: DocumentRattache;
+  actions: DocumentCardActions;
+  editComment: EditState;
 };
-
-const ACTIONS = [Edit, CommentAction, Delete, Replace];
 
 export const Actions = ({
-  children,
-  visibleWhen = true,
-}: ActionVisibility & {
-  children: ReactNode;
-}): JSX.Element | null => {
-  const { document, editComment, setOpenedModal } = useDocumentCard();
-  const isFichierManquant = document.type === 'fichierManquant';
-  const visibleActions = toDeclaredChildren(children, {
-    owner: 'DocumentCard.Actions',
-    accepted: ACTIONS,
-    label: 'its own actions',
-  })
-    .filter((action) => action.props.visibleWhen !== false)
-    .filter((action) => !(isFichierManquant && action.type === Edit));
-  const declaredActions = visibleActions.map((action) => action.type);
-  const isDeclared = (action: ElementType): boolean =>
-    declaredActions.includes(action);
+  document,
+  actions,
+  editComment,
+}: ActionsProps): JSX.Element => {
+  const { mutate: removePreuve } = useRemovePreuve();
+  const [openedModal, setOpenedModal] = useState<OpenedDocumentModal | null>(
+    null
+  );
+  const closeModal = () => setOpenedModal(null);
 
-  const menuActions = {
-    edit: isDeclared(Edit) ? () => setOpenedModal('edit') : undefined,
-    comment: isDeclared(CommentAction) ? () => editComment.enter() : undefined,
-    replace: isDeclared(Replace) ? () => setOpenedModal('replace') : undefined,
-    delete: isDeclared(Delete) ? () => setOpenedModal('delete') : undefined,
-  };
-  const hasVisibleAction = declaredActions.length > 0;
-  const isMenuShown = hasVisibleAction && !editComment.isEditing;
+  const editableDocument =
+    document.type === 'fichier' || document.type === 'lien' ? document : null;
 
-  if (!visibleWhen) {
-    return null;
-  }
+  const canEdit = actions.edit === true && editableDocument !== null;
+  const hasMenuEntry =
+    canEdit || actions.comment === true || actions.remove === true;
+  const isReplaceOffered = actions.replace !== undefined;
 
   return (
     <>
-      {isMenuShown && (
+      {(hasMenuEntry || isReplaceOffered) && !editComment.isEditing && (
         <DocumentCardMenu
           document={document}
           className="absolute top-4 right-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto"
-          actions={menuActions}
+          actions={{
+            edit: canEdit ? () => setOpenedModal('edit') : undefined,
+            comment: actions.comment ? () => editComment.enter() : undefined,
+            replace: actions.replace
+              ? () => setOpenedModal('replace')
+              : undefined,
+            remove: actions.remove ? () => setOpenedModal('delete') : undefined,
+          }}
         />
       )}
-      {visibleActions}
+
+      {openedModal === 'edit' && editableDocument !== null && (
+        <EditDocumentModal
+          isOpen
+          setIsOpen={closeModal}
+          document={editableDocument}
+        />
+      )}
+
+      {openedModal === 'delete' && (
+        <DeleteConfirmationAlert
+          isOpen
+          setIsOpen={closeModal}
+          title={appLabels.supprimerDocument}
+          message={appLabels.supprimerDocumentMessage}
+          onDelete={() => removePreuve(document)}
+        />
+      )}
+
+      {openedModal === 'replace' && actions.replace && (
+        <ReplaceModal onReplace={actions.replace} onClose={closeModal} />
+      )}
     </>
   );
 };
-
-Edit.displayName = 'DocumentCard.Edit';
-CommentAction.displayName = 'DocumentCard.Comment';
-Delete.displayName = 'DocumentCard.Delete';
-Replace.displayName = 'DocumentCard.Replace';
-Actions.displayName = 'DocumentCard.Actions';

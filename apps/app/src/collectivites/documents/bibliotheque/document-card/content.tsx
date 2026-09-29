@@ -49,7 +49,6 @@ export const Title = ({
 export const Identifier = ({ value }: { value: string }): JSX.Element => (
   <span className="text-grey-6 leading-6 flex gap-2">{value}</span>
 );
-Identifier.displayName = 'DocumentCard.Identifier';
 
 export const Duplicate = ({
   information,
@@ -60,7 +59,6 @@ export const Duplicate = ({
     storedFilenameKept={information.storedFilenameKept}
   />
 );
-Duplicate.displayName = 'DocumentCard.Duplicate';
 
 export const Author = ({
   document,

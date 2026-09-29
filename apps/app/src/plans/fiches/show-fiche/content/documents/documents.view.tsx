@@ -19,6 +19,10 @@ export const DocumentsView = () => {
   const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
     useDuplicatedDocumentState();
 
+  const mutatingActions = isReadonly
+    ? undefined
+    : { edit: true, comment: true, remove: true };
+
   return (
     <>
       <ContentLayout.Root>
@@ -58,21 +62,14 @@ export const DocumentsView = () => {
             </VisibleWhen>
           }
         >
-          {(doc) => {
-            const duplicateInformation = getDuplicatedDocumentInformation(doc);
-            return (
-              <DocumentCard key={doc.id} document={doc}>
-                {duplicateInformation && (
-                  <DocumentCard.Duplicate information={duplicateInformation} />
-                )}
-                <DocumentCard.Actions visibleWhen={!isReadonly}>
-                  <DocumentCard.Edit />
-                  <DocumentCard.Comment />
-                  <DocumentCard.Delete />
-                </DocumentCard.Actions>
-              </DocumentCard>
-            );
-          }}
+          {(doc) => (
+            <DocumentCard
+              key={doc.id}
+              document={doc}
+              duplicate={getDuplicatedDocumentInformation(doc)}
+              actions={mutatingActions}
+            />
+          )}
         </ContentLayout.Content>
       </ContentLayout.Root>
 
