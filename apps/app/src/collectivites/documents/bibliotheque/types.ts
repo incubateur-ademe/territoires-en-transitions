@@ -5,7 +5,6 @@ import {
   PreuveReglementaireDefinition,
 } from '@tet/domain/collectivites';
 import { LabellisationDemande } from '@tet/domain/referentiels';
-import { EditState } from './use-edit-state';
 
 type DocumentReglementaireFields = {
   preuveType: 'reglementaire';
@@ -65,12 +64,4 @@ export type DocumentAttendu = {
   action: Pick<ActionIdentity, 'actionId' | 'identifiant'>;
   preuveReglementaire: PreuveReglementaireDefinition;
   documents: DocumentReglementaire[];
-};
-
-export type EditHandlers = {
-  remove: () => void;
-  editComment: EditState;
-  editFilename: EditState;
-  isLoading: boolean;
-  isError: boolean;
 };

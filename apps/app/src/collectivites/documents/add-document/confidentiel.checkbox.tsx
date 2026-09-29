@@ -22,8 +22,17 @@ export const ConfidentielCheckbox = ({
   docType?: DocType;
   confidentiel: boolean;
   setConfidentiel: (value: boolean) => void;
-}) =>
-  canChooseConfidentiel(docType) ? (
+}) => {
+  if (!canChooseConfidentiel(docType)) {
+    return null;
+  }
+
+  const confidentialiteInfo =
+    docType === 'annexe'
+      ? appLabels.preuveAnnexeConfidentielle
+      : appLabels.preuveDocConfidentiel;
+
+  return (
     <div className="flex flex-row items-center gap-2">
       <Checkbox
         variant="switch"
@@ -34,15 +43,9 @@ export const ConfidentielCheckbox = ({
       <InfoTooltip
         iconClassName="text-primary-8"
         className="whitespace-break-spaces !text-lg"
-        label={
-          docType === 'annexe'
-            ? MSG_ANNEXE_CONFIDENTIELLE
-            : MSG_DOC_CONFIDENTIEL
-        }
+        label={confidentialiteInfo}
         size="md"
       />
     </div>
-  ) : null;
-
-export const MSG_ANNEXE_CONFIDENTIELLE = appLabels.preuveAnnexeConfidentielle;
-export const MSG_DOC_CONFIDENTIEL = appLabels.preuveDocConfidentiel;
+  );
+};

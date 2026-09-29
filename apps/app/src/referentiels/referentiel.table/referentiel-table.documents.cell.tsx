@@ -45,11 +45,6 @@ function DocumentsCellContent({
     setPanel({
       type: 'open',
       title: panelTitle,
-      // Title: () => (
-      //   <h5 className="text-primary-9 font-bold leading-7 text-xl">
-      //     {action.identifiant} {action.nom}
-      //   </h5>
-      // ),
       content: (
         <div className="px-6 py-4">
           <ReferentielProvider referentielId={referentielId}>
