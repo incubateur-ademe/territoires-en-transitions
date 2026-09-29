@@ -1,52 +1,25 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { AddFileHandler } from './add-document/add-file';
-import { AddLinkHandler } from './add-document/add-link';
+import { AddDocumentTabsHandlers } from './add-document/add-document.tabs';
 import {
   useAddPreuveComplementaire,
   useAddPreuveReglementaire,
 } from './use-add-preuves';
 
-type AddPreuveHandlers = {
-  addFile: AddFileHandler;
-  addLink: AddLinkHandler;
-};
+type AddPreuveHandlers = Required<AddDocumentTabsHandlers>;
 
 export const useAddPreuveComplementaireToAction = (
   actionId: string
 ): AddPreuveHandlers => {
   const collectiviteId = useCollectiviteId();
-  const {
-    mutate: addPreuveComplementaireSync,
-    mutateAsync: addPreuveComplementaire,
-  } = useAddPreuveComplementaire();
-
-  const addFile: AddFileHandler = async (fichierId) => {
-    if (collectiviteId) {
-      const preuve = await addPreuveComplementaire({
-        actionId,
-        collectiviteId,
-        commentaire: '',
-        fichierId,
-      });
-
-      return { documentId: preuve.id };
-    }
-  };
-
-  const addLink: AddLinkHandler = (titre, url) => {
-    if (collectiviteId) {
-      addPreuveComplementaireSync({
-        actionId,
-        collectiviteId,
-        commentaire: '',
-        lien: { titre, url },
-      });
-    }
-  };
+  const { mutate, mutateAsync } = useAddPreuveComplementaire();
+  const input = { actionId, collectiviteId, commentaire: '' };
 
   return {
-    addFile,
-    addLink,
+    addFile: async (fichierId) => {
+      const preuve = await mutateAsync({ ...input, fichierId });
+      return { documentId: preuve.id };
+    },
+    addLink: (titre, url) => mutate({ ...input, lien: { titre, url } }),
   };
 };
 
@@ -54,37 +27,14 @@ export const useAddPreuveReglementaireToAction = (
   preuveId: string
 ): AddPreuveHandlers => {
   const collectiviteId = useCollectiviteId();
-  const {
-    mutate: addPreuveReglementaireSync,
-    mutateAsync: addPreuveReglementaire,
-  } = useAddPreuveReglementaire();
-
-  const addFile: AddFileHandler = async (fichierId) => {
-    if (collectiviteId) {
-      const preuve = await addPreuveReglementaire({
-        preuveId,
-        collectiviteId,
-        commentaire: '',
-        fichierId,
-      });
-
-      return { documentId: preuve.id };
-    }
-  };
-
-  const addLink: AddLinkHandler = (titre, url) => {
-    if (collectiviteId) {
-      addPreuveReglementaireSync({
-        preuveId,
-        collectiviteId,
-        commentaire: '',
-        lien: { titre, url },
-      });
-    }
-  };
+  const { mutate, mutateAsync } = useAddPreuveReglementaire();
+  const input = { preuveId, collectiviteId, commentaire: '' };
 
   return {
-    addFile,
-    addLink,
+    addFile: async (fichierId) => {
+      const preuve = await mutateAsync({ ...input, fichierId });
+      return { documentId: preuve.id };
+    },
+    addLink: (titre, url) => mutate({ ...input, lien: { titre, url } }),
   };
 };
