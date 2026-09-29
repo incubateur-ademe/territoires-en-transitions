@@ -1218,15 +1218,6 @@ values
     ('fonction', 'flat_axes', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'flat_axes', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'flat_axes', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction geojson
-    ('fonction', 'geojson', 'public', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'geojson', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction have_admin_acces
     ('fonction', 'have_admin_acces', 'public', 'non', 'oui', 'non', 'non'),
     ('fonction', 'have_admin_acces', 'connecte', 'non', 'oui', 'non', 'non'),
@@ -1299,24 +1290,6 @@ values
     ('fonction', 'indicateur_action', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'indicateur_action', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'indicateur_action', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction indicateur_artificialisation
-    ('fonction', 'indicateur_artificialisation', 'public', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateur_artificialisation', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction indicateurs_gaz_effet_serre
-    ('fonction', 'indicateurs_gaz_effet_serre', 'public', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'indicateurs_gaz_effet_serre', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction is_any_role_on
     ('fonction', 'is_any_role_on', 'public', 'non', 'oui', 'non', 'non'),
     ('fonction', 'is_any_role_on', 'connecte', 'non', 'oui', 'non', 'non'),
@@ -1389,15 +1362,6 @@ values
     ('fonction', 'labellisation_peut_commencer_audit', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'labellisation_peut_commencer_audit', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'labellisation_peut_commencer_audit', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction labellisations
-    ('fonction', 'labellisations', 'public', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'labellisations', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction naturalsort
     ('fonction', 'naturalsort', 'public', 'non', 'oui', 'non', 'non'),
     ('fonction', 'naturalsort', 'connecte', 'non', 'oui', 'non', 'non'),
@@ -2027,13 +1991,4 @@ values
     ('vue', 'retool_user_list', 'lecture', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_user_list', 'edition', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_user_list', 'admin', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_user_list', 'auditeur', 'non', 'non', 'non', 'non'),
-    -- Vue site_region
-    ('vue', 'site_region', 'public', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'support', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'edition', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'admin', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'auditeur', 'non', 'oui', 'non', 'non');
+    ('vue', 'retool_user_list', 'auditeur', 'non', 'non', 'non', 'non');
