@@ -2,6 +2,7 @@ import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import { makeDemarcheSectionUrl, type DemarcheSectionKey } from '../steps';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
 import {
+  DEMARCHE_PCAET_DELAI_AVIS_MOIS,
   DemarchePcaetStatusEnum,
   getEtapeIndexDemarchePcaet,
   getIndexEtapeDemarchePcaet,
@@ -205,7 +206,9 @@ const buildSteps = (
   {
     label: appLabels.demarcheAvanceEtapeTransmisLabel,
     description: appLabels.demarcheAvanceEtapeTransmisDescription,
-    info: appLabels.demarcheAvanceEtapeTransmisInfo,
+    info: appLabels.demarcheAvanceEtapeTransmisInfo({
+      mois: DEMARCHE_PCAET_DELAI_AVIS_MOIS,
+    }),
   },
   {
     label: appLabels.demarcheAvanceEtapeFinalisationLabel,

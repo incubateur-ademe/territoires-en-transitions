@@ -8,7 +8,7 @@ import { type PcaetAvisAuTitreDe } from '../../pcaet-avis-au-titre-de.enum.schem
  */
 
 /** Délai légal laissé aux instances consultatives pour rendre leurs avis. */
-export const DEMARCHE_PCAET_DELAI_AVIS_MOIS = 3;
+export const DEMARCHE_PCAET_DELAI_AVIS_MOIS = 4;
 
 /**
  * Échéance de remise des avis pour une transmission donnée — ce que le guard

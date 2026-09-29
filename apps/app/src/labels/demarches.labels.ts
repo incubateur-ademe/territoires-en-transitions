@@ -255,8 +255,8 @@ export const demarchesLabels = {
   demarcheAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarcheAvanceEtapeTransmisDescription:
     'Consultations auprès du conseil régional et du préfet de région.',
-  demarcheAvanceEtapeTransmisInfo:
-    'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
+  demarcheAvanceEtapeTransmisInfo: ({ mois }: { mois: number }) =>
+    `Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de ${mois} mois`,
   demarcheAvanceEtapeFinalisationLabel: 'Finalisation de la démarche de dépôt',
   demarcheAvanceEtapeFinalisationDescription:
     'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche.',

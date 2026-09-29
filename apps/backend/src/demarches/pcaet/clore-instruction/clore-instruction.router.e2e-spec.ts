@@ -32,8 +32,8 @@ describe('Clôture de l’instruction PCAET', () => {
   const nettoyages: (() => Promise<void>)[] = [];
 
   const hier = () => new Date(Date.now() - 24 * 3600 * 1000).toISOString();
-  const dansTroisMois = () =>
-    new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString();
+  const dansQuatreMois = () =>
+    new Date(Date.now() + 120 * 24 * 3600 * 1000).toISOString();
 
   /**
    * Un dossier transmis, avec sa déposante et sa demande d'avis.
@@ -183,7 +183,7 @@ describe('Clôture de l’instruction PCAET', () => {
   it('clôt sur les avis tous rendus, échéance encore ouverte', async () => {
     const cible = await dossier({
       status: 'transmis_pour_avis',
-      avisDeadlineAt: dansTroisMois(),
+      avisDeadlineAt: dansQuatreMois(),
       titresValides: ['prefet_region'],
     });
 
@@ -196,7 +196,7 @@ describe('Clôture de l’instruction PCAET', () => {
   it("ne fait rien quand l'avis manque et que le délai court", async () => {
     const cible = await dossier({
       status: 'transmis_pour_avis',
-      avisDeadlineAt: dansTroisMois(),
+      avisDeadlineAt: dansQuatreMois(),
       titresValides: [],
     });
 
@@ -224,7 +224,7 @@ describe('Clôture de l’instruction PCAET', () => {
     });
     const parLesAvis = await dossier({
       status: 'transmis_pour_avis',
-      avisDeadlineAt: dansTroisMois(),
+      avisDeadlineAt: dansQuatreMois(),
       titresValides: ['prefet_region'],
     });
 
@@ -242,7 +242,7 @@ describe('Clôture de l’instruction PCAET', () => {
    *
    * Sans la qualification de la saisine, la DREAL voisine se verrait attribuer
    * les deux titres de sa famille, qu'elle ne rendra jamais — le dossier ne
-   * pourrait plus s'achever que par l'échéance des trois mois.
+   * pourrait plus s'achever que par l'échéance des quatre mois.
    */
   describe('saisine au titre d’un périmètre secondaire', () => {
     const saisir = async (
@@ -263,7 +263,7 @@ describe('Clôture de l’instruction PCAET', () => {
         status: 'transmis_pour_avis',
         // L'échéance reste loin : seul le chemin « avis tous rendus » peut
         // clore, ce qui rend le test aveugle au délai.
-        avisDeadlineAt: dansTroisMois(),
+        avisDeadlineAt: dansQuatreMois(),
         titresValides: ['prefet_region'],
       });
       await saisir(cible.demarcheId, drealVoisineId, 'secondaire');
@@ -283,7 +283,7 @@ describe('Clôture de l’instruction PCAET', () => {
     it('à l’inverse, une seconde saisine principale retient le dossier', async () => {
       const cible = await dossier({
         status: 'transmis_pour_avis',
-        avisDeadlineAt: dansTroisMois(),
+        avisDeadlineAt: dansQuatreMois(),
         titresValides: ['prefet_region'],
       });
       await saisir(cible.demarcheId, drealVoisineId, 'principal');
