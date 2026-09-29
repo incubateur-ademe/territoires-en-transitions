@@ -40,8 +40,9 @@ let db: DatabaseService;
 let repository: FicheActionVoletGesRepository;
 let collectiviteId: number;
 let ficheId: number;
-let autreFicheId: number;
-let ficheAutreCollectiviteId: number;
+let otherFicheId: number;
+let otherCollectiviteFicheId: number;
+let caller: ReturnType<TrpcRouter['createCaller']>;
 
 beforeAll(async () => {
   app = await getTestApp();
@@ -53,7 +54,7 @@ beforeAll(async () => {
     user: { role: CollectiviteRole.EDITION },
   });
   collectiviteId = collectivite.id;
-  const caller = router.createCaller({
+  caller = router.createCaller({
     user: getAuthUserFromUserCredentials(user),
   });
 
@@ -63,30 +64,30 @@ beforeAll(async () => {
   });
   ficheId = fiche.ficheId;
 
-  const autreFiche = await createFicheAndCleanupFunction({
+  const otherFiche = await createFicheAndCleanupFunction({
     caller,
     ficheInput: { collectiviteId, titre: 'Développer le covoiturage' },
   });
-  autreFicheId = autreFiche.ficheId;
+  otherFicheId = otherFiche.ficheId;
 
-  const voisine = await addTestCollectiviteAndUser(db, {
+  const otherCollectivite = await addTestCollectiviteAndUser(db, {
     user: { role: CollectiviteRole.EDITION },
   });
-  const ficheVoisine = await createFicheAndCleanupFunction({
+  const otherCollectiviteFiche = await createFicheAndCleanupFunction({
     caller: router.createCaller({
-      user: getAuthUserFromUserCredentials(voisine.user),
+      user: getAuthUserFromUserCredentials(otherCollectivite.user),
     }),
     ficheInput: {
-      collectiviteId: voisine.collectivite.id,
+      collectiviteId: otherCollectivite.collectivite.id,
       titre: 'Fiche de la collectivité voisine',
     },
   });
-  ficheAutreCollectiviteId = ficheVoisine.ficheId;
+  otherCollectiviteFicheId = otherCollectiviteFiche.ficheId;
 
   return async () => {
     await fiche.ficheCleanup();
-    await autreFiche.ficheCleanup();
-    await ficheVoisine.ficheCleanup();
+    await otherFiche.ficheCleanup();
+    await otherCollectiviteFiche.ficheCleanup();
     await app.close();
   };
 });
@@ -101,8 +102,8 @@ const readVolets = async (): Promise<VoletRow[]> =>
     .where(
       inArray(ficheActionVoletGesTable.ficheId, [
         ficheId,
-        autreFicheId,
-        ficheAutreCollectiviteId,
+        otherFicheId,
+        otherCollectiviteFicheId,
       ])
     );
 
@@ -113,8 +114,8 @@ const registerVoletsCleanup = (): void => {
       .where(
         inArray(ficheActionVoletGesTable.ficheId, [
           ficheId,
-          autreFicheId,
-          ficheAutreCollectiviteId,
+          otherFicheId,
+          otherCollectiviteFicheId,
         ])
       );
   });
@@ -153,7 +154,7 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       collectiviteId,
       fiches: [
         toFicheVolets(ficheId, veloAmenagement),
-        toFicheVolets(autreFicheId, veloAmenagement),
+        toFicheVolets(otherFicheId, veloAmenagement),
       ],
     });
 
@@ -161,7 +162,7 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       collectiviteId,
       fiches: [
         toFicheVolets(ficheId, covoiturageSensibilisation),
-        toFicheVolets(autreFicheId),
+        toFicheVolets(otherFicheId),
       ],
     });
 
@@ -217,7 +218,7 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
     registerVoletsCleanup();
 
     await db.db.insert(ficheActionVoletGesTable).values({
-      ficheId: ficheAutreCollectiviteId,
+      ficheId: otherCollectiviteFicheId,
       levierId: 'biogaz',
       categorie: 'financement',
     });
@@ -226,12 +227,12 @@ describe('FicheActionVoletGesRepository.saveVolets', () => {
       collectiviteId,
       fiches: [
         toFicheVolets(ficheId, veloAmenagement),
-        toFicheVolets(ficheAutreCollectiviteId, covoiturageSensibilisation),
+        toFicheVolets(otherCollectiviteFicheId, covoiturageSensibilisation),
       ],
     });
 
     expect(await readVolets()).toEqual([
-      { ficheId: ficheAutreCollectiviteId, levierId: 'biogaz' },
+      { ficheId: otherCollectiviteFicheId, levierId: 'biogaz' },
       { ficheId, levierId: 'velo_transport_commun' },
     ]);
   });
@@ -285,12 +286,12 @@ describe('VoletRepository contract', () => {
       },
       { ficheId, levierId: 'covoiturage', categorie: 'sensibilisation' },
       {
-        ficheId: autreFicheId,
+        ficheId: otherFicheId,
         levierId: 'covoiturage',
         categorie: 'amenagement',
       },
       {
-        ficheId: ficheAutreCollectiviteId,
+        ficheId: otherCollectiviteFicheId,
         levierId: 'biogaz',
         categorie: 'financement',
       },
@@ -306,8 +307,42 @@ describe('VoletRepository contract', () => {
           categorie: 'amenagement',
         },
         {
-          ficheId: autreFicheId,
+          ficheId: otherFicheId,
           levierId: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      ],
+    });
+  });
+
+  it('listVolets ne renvoie pas les volets des fiches supprimées en douce', async () => {
+    const softDeletedFiche = await createFicheAndCleanupFunction({
+      caller,
+      ficheInput: { collectiviteId, titre: 'Fiche supprimée en douce' },
+    });
+    onTestFinished(softDeletedFiche.ficheCleanup);
+    registerVoletsCleanup();
+
+    await db.db.insert(ficheActionVoletGesTable).values([
+      {
+        ficheId,
+        levierId: 'velo_transport_commun',
+        categorie: 'amenagement',
+      },
+      {
+        ficheId: softDeletedFiche.ficheId,
+        levierId: 'covoiturage',
+        categorie: 'amenagement',
+      },
+    ]);
+    await caller.plans.fiches.delete({ ficheId: softDeletedFiche.ficheId });
+
+    expect(await repository.listVolets({ collectiviteId })).toEqual({
+      success: true,
+      data: [
+        {
+          ficheId,
+          levierId: 'velo_transport_commun',
           categorie: 'amenagement',
         },
       ],
@@ -325,14 +360,14 @@ describe('VoletRepository contract', () => {
       },
       { ficheId, levierId: 'covoiturage', categorie: 'sensibilisation' },
       {
-        ficheId: autreFicheId,
+        ficheId: otherFicheId,
         levierId: 'covoiturage',
         categorie: 'amenagement',
       },
     ]);
 
     const deleteResult = await repository.deleteVolets({
-      ficheIds: [ficheId, autreFicheId],
+      ficheIds: [ficheId, otherFicheId],
     });
 
     expect({ deleteResult, rows: await readVolets() }).toEqual({
@@ -351,7 +386,7 @@ describe('VoletRepository contract', () => {
         categorie: 'amenagement',
       },
       {
-        ficheId: autreFicheId,
+        ficheId: otherFicheId,
         levierId: 'covoiturage',
         categorie: 'amenagement',
       },
@@ -360,7 +395,7 @@ describe('VoletRepository contract', () => {
     await repository.deleteVolets({ ficheIds: [ficheId] });
 
     expect(await readVolets()).toEqual([
-      { ficheId: autreFicheId, levierId: 'covoiturage' },
+      { ficheId: otherFicheId, levierId: 'covoiturage' },
     ]);
   });
 });

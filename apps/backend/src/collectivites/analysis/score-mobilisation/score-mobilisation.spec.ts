@@ -1,4 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { LEVIER_NOM_BY_ID, LevierId } from '@tet/domain/shared';
 import { describe, expect, it, Mock, vi } from 'vitest';
@@ -34,22 +36,8 @@ const toInput = (
 
 type Dependencies = {
   service: ScoreMobilisationService;
-  collectivitesService: { getCollectiviteAvecType: Mock };
   llm: { generateStructured: Mock };
-  usedDependencyMembers: string[];
 };
-
-const recordingUsedMembers = <T extends object>(
-  dependencyName: string,
-  dependency: T,
-  usedMembers: string[]
-): T =>
-  new Proxy(dependency, {
-    get: (target, member, receiver) => {
-      usedMembers.push(`${dependencyName}.${String(member)}`);
-      return Reflect.get(target, member, receiver);
-    },
-  });
 
 const toDependencies = ({
   collectiviteIsMissing = false,
@@ -61,39 +49,37 @@ const toDependencies = ({
   unscoredLevierId?: LevierId;
 } = {}): Dependencies => {
   const collectivitesService = {
-    getCollectiviteAvecType: vi.fn().mockImplementation(async () => {
+    getCollectivite: vi.fn().mockImplementation(async () => {
       if (collectiviteIsMissing) {
-        throw new NotFoundException(
-          `Collectivité ${collectiviteId} introuvable`
-        );
+        throw new NotFoundException(`Collectivite ${collectiviteId} not found`);
       }
       if (collectiviteReadError !== undefined) {
         throw collectiviteReadError;
       }
-      return { nom: 'Ville de test', population: 3000 };
+      return { collectivite: { nom: 'Ville de test', population: 3000 } };
     }),
   };
   const generateStructured = vi
     .fn()
-    .mockImplementation(async ({ prompt }: { prompt: string }) =>
-      unscoredLevierId !== undefined &&
-      prompt.includes(LEVIER_NOM_BY_ID[unscoredLevierId])
+    .mockImplementation(async ({ prompt }: { prompt: string }) => {
+      const isPromptForUnscoredLevier =
+        unscoredLevierId !== undefined &&
+        prompt.includes(LEVIER_NOM_BY_ID[unscoredLevierId]);
+      return isPromptForUnscoredLevier
         ? failure({ kind: 'rate_limited' })
-        : scoredLevier
-    );
+        : scoredLevier;
+    });
   const llm = { generateStructured };
-  const usedDependencyMembers: string[] = [];
 
+  const collectivitesServiceDependency =
+    collectivitesService as unknown as CollectivitesService;
+  const llmDependency = llm as unknown as LlmService;
   const service = new ScoreMobilisationService(
-    recordingUsedMembers(
-      'collectivitesService',
-      collectivitesService,
-      usedDependencyMembers
-    ) as never,
-    recordingUsedMembers('llm', llm, usedDependencyMembers) as never
+    collectivitesServiceDependency,
+    llmDependency
   );
 
-  return { service, collectivitesService, llm, usedDependencyMembers };
+  return { service, llm };
 };
 
 describe('daily-ct-check', () => {
@@ -151,10 +137,28 @@ describe('daily-ct-check', () => {
     });
   });
 
-  it("n'écrit pas l'engagement calculé", async () => {
-    const { service, usedDependencyMembers } = toDependencies();
+  it("n'appelle pas le LLM pour un levier dont aucune fiche n'a de texte", async () => {
+    const { service, llm } = toDependencies();
 
-    await service.calculateCollectiviteMobilisation(
+    const result = await service.calculateCollectiviteMobilisation(
+      toInput([
+        { ficheId: 99, levierId: 'covoiturage', categorie: 'amenagement' },
+      ])
+    );
+
+    expect({
+      result,
+      llmCalls: llm.generateStructured.mock.calls.length,
+    }).toEqual({
+      result: { success: true, data: { leviers: [] } },
+      llmCalls: 0,
+    });
+  });
+
+  it("n'écrit pas l'engagement calculé", async () => {
+    const { service } = toDependencies();
+
+    const result = await service.calculateCollectiviteMobilisation(
       toInput([
         {
           ficheId: 1,
@@ -164,10 +168,7 @@ describe('daily-ct-check', () => {
       ])
     );
 
-    expect(usedDependencyMembers).toEqual([
-      'collectivitesService.getCollectiviteAvecType',
-      'llm.generateStructured',
-    ]);
+    expect(result.success).toBe(true);
   });
 
   it("renvoie leviers_not_scored quand un levier n'a pas pu être noté", async () => {
@@ -220,7 +221,7 @@ describe('daily-ct-check', () => {
   });
 
   it("propage une erreur de lecture de la CT qui n'est pas une absence", async () => {
-    const connectionLost = new Error('connexion à la base perdue');
+    const connectionLost = new Error('database connection lost');
     const { service, llm } = toDependencies({
       collectiviteReadError: connectionLost,
     });

@@ -43,7 +43,6 @@ export type CalculateMobilisationInput = {
   fichesById: Map<number, FicheToScore>;
   collectiviteNom: string;
   population: number | null;
-  signal?: AbortSignal;
 };
 
 export const UNKNOWN_POPULATION_LABEL = 'inconnue';
@@ -55,7 +54,6 @@ export const calculateMobilisation = async (
     fichesById,
     collectiviteNom,
     population,
-    signal,
   }: CalculateMobilisationInput
 ): Promise<Result<LevierScore, LlmError>> => {
   const { levierId, ficheIdsByCategorie } = levierVolets;
@@ -78,7 +76,6 @@ export const calculateMobilisation = async (
     systemInstruction: MOBILISATION_SYSTEM_INSTRUCTION,
     schema: mobilisationResponseSchema,
     thinkingBudget: MOBILISATION_THINKING_BUDGET,
-    signal,
   });
   if (!completion.success) {
     return completion;
