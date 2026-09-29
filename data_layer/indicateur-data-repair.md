@@ -192,33 +192,41 @@ la copie de production.
 
 ### Risques et limites actualisés
 
-- **Recalcul des saisies manuelles avec métadonnées : risque toujours présent.**
-  Les 32 observations PCAET manuelles d’indicateurs calculés constituent une
-  exposition possible, pas un décompte de pertes certaines. Dans #5214 au commit
-  `1304106ca`, l’upsert avec métadonnées ne possède pas la protection de l’upsert
-  sans métadonnées. Un recalcul peut remplacer une saisie s’il produit la même
-  identité indicateur/collectivité/période/métadonnée. Protéger ces écritures avant
-  tout recalcul historique ; la réparation SQL de formule n’en déclenche aucun.
-  Voir [les deux chemins d’upsert](https://github.com/incubateur-ademe/territoires-en-transitions/blob/1304106ca/apps/backend/src/indicateurs/valeurs/crud-valeurs.repository.ts#L438).
-- **Provenance externe fournie par l’API REST : écart de droits encore à traiter.**
-  Un utilisateur autorisé à écrire dans sa collectivité peut transmettre une
-  métadonnée externe existante, sans capacité d’import distincte vérifiée.
-  Le risque concerne une écriture sous cette provenance pour un indicateur
-  disponible et autorisant les valeurs utilisateur. Ce constat de code ne
-  démontre ni accès anonyme ni écriture intercollectivités ; #5214 impose encore
-  l’annuel. Voir [la validation des métadonnées](https://github.com/incubateur-ademe/territoires-en-transitions/blob/1304106ca/apps/backend/src/indicateurs/valeurs/validate-indicateur-valeurs-write.service.ts#L127).
+- **Recalcul manuel : protection ajoutée dans #5214.** L’upsert avec métadonnée
+  refuse désormais qu’un calcul remplace une saisie (`calcul_auto = false` ou
+  `NULL`), y compris après attente d’un verrou concurrent. Les dix tests PostgreSQL
+  passent. Une répétition des vrais services de calcul/réconciliation sur les
+  trois collectivités concernées préserve les **71 lignes PCAET complètes**,
+  dont 32 sur formule : 1 142 écritures/propagations exercées, 800 résultats
+  automatiques cohérents. La transaction est annulée et les 3 909 observations
+  concernées retrouvent exactement leur empreinte initiale. **Cette pré-PR seule
+  n’active pas la protection** et sa correction SQL de formule ne lance toujours
+  aucun recalcul historique.
+- **Provenance : fermeture des chemins utilisateur dans #5214.** REST/tRPC
+  refusent les métadonnées importées sans capacité interne ; le parcours PCAET
+  dispose d’une capacité bornée, les imports privilégiés restent fonctionnels.
+  Les tests couvrent aussi le refus atomique du lot et les tentatives de
+  falsification. Une migration réversible retire les mutations directes
+  d’`indicateur_valeur` aux rôles utilisateurs/PostgREST, conserve la lecture et
+  `service_role`, et archive les ACL de la cible pour un revert exact. Ses
+  38 contrôles SQL passent. Les ACL ne figurent pas dans l’archive de production :
+  les droits réels sont donc contrôlés au déploiement, avec arrêt atomique en cas
+  d’héritage ou d’état inattendu.
 - **Catalogue externe : vérification toujours nécessaire.** La sauvegarde ne
   permet pas de contrôler la cellule Google Sheets pouvant réintroduire
   `cae_2.lpcaet`. La préparation décrite plus haut reste applicable.
-- **Ordre de livraison et fraîcheur des données.** Appliquer la pré-PR #5220 avant
-  la migration #5214, puis l’activation #5215. Relancer les contrôles sur la cible
-  au moment prévu par le runbook : de nouvelles écritures peuvent modifier les
-  états approuvés, créer une collision ou une référence de score. Les contrôles
-  stricts feront alors échouer la migration des dates sans correction partielle.
-  La correction de formule, migration distincte, peut déjà être appliquée.
-- **La conformité complète au plan et à l’ADR reste distincte de cet inventaire.**
-  La migration complète du schéma de #5214, l’activation de #5215, leur reprise et
-  les parcours applicatifs n’ont pas été répétés ici. La validation métier des
-  agrégations reste également à établir ; elle ne se déduit pas du dump.
-  La décision annuelle de Margny n’impose plus d’exception mensuelle pour ces
-  données et ne démontre pas l’existence d’un historique à cadence différente.
+- **Ordre de livraison et fraîcheur des données.** Appliquer #5220, puis #5214,
+  puis #5215. Les branches et le plan Sqitch imposent cette dépendance. Relancer
+  les contrôles sur la cible au moment prévu par le runbook : de nouvelles
+  écritures peuvent modifier les états approuvés, créer une collision ou une
+  référence de score. Les contrôles stricts feront alors échouer la migration des
+  dates sans correction partielle. La correction de formule, migration distincte,
+  peut déjà être appliquée.
+- **Validation du schéma et des parcours.** Les répétitions de migration,
+  activation et retour arrière, ainsi que les tests API, de restitution et
+  d’export, sont détaillés dans le
+  [rapport de validation de #5214/#5215](https://github.com/incubateur-ademe/territoires-en-transitions/blob/split/periodicite-data-migration/data_layer/periodicite-validation-2026-09-29.md).
+  Elles ne remplacent pas les checks CI du commit publié, les contrôles avant
+  réouverture ni la validation métier des règles d’agrégation. La décision
+  annuelle de Margny n’impose plus d’exception mensuelle et ne démontre pas
+  l’existence d’un historique à cadence différente.
