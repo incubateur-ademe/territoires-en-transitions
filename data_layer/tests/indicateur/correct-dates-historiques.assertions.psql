@@ -1,9 +1,10 @@
 -- Dedicated disposable database only; invoked by correct-dates-historiques.spec.sh.
 -- Actual Sqitch scripts own their transactions. Never include in normal *.sql tests.
 \set ON_ERROR_STOP on
+\getenv fixture_deploy INDICATEUR_DATE_REPAIR_TEST_DEPLOY
 CREATE EXTENSION IF NOT EXISTS pgtap;
 CREATE SCHEMA private;
-SELECT plan(40);
+SELECT plan(55);
 CREATE TABLE public.indicateur_definition (id integer PRIMARY KEY);
 CREATE TABLE public.indicateur_valeur (
  id integer PRIMARY KEY, indicateur_id integer NOT NULL, collectivite_id integer NOT NULL,
@@ -30,7 +31,7 @@ INSERT INTO public.approved_dates VALUES
 CREATE FUNCTION public.fixture_observations() RETURNS jsonb LANGUAGE sql STABLE AS $$
  SELECT coalesce(jsonb_agg(to_jsonb(v) ORDER BY id),'[]'::jsonb) FROM public.indicateur_valeur v
 $$;
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 \ir ../../sqitch/verify/indicateur/correct-dates-historiques.sql
 SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair),0::bigint,'Empty database archives no absent observations');
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
@@ -47,6 +48,7 @@ INSERT INTO public.indicateur_valeur (id,indicateur_id,collectivite_id,date_vale
 VALUES (42,999,999,'2020-01-01',NULL,42,'2020-01-01','2020-01-01',false),
        (43,333,3830,'2023-01-01',77,0.58,'2020-01-01','2020-01-01',false);
 CREATE TABLE public.fixture_baseline AS SELECT public.fixture_observations() AS observations;
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" prepare-fixture
 CREATE FUNCTION public.fixture_touch() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.modified_at=clock_timestamp(); RETURN NEW; END; $$;
 CREATE FUNCTION public.fixture_actor() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.modified_by='00000000-0000-0000-0000-000000000003'; RETURN NEW; END; $$;
 CREATE TRIGGER modified_at BEFORE INSERT OR UPDATE ON public.indicateur_valeur FOR EACH ROW EXECUTE FUNCTION public.fixture_touch();
@@ -80,13 +82,69 @@ UPDATE public.indicateur_valeur SET resultat=123456 WHERE id=287811340;
 \! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy changed_data
 SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='changed_data'),'23514','Data changed since approval cannot be deleted');
 SELECT public.fixture_reset();
+-- A timestamp alone is not proof that the approved payload is still present.
+ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_at;
+ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_by;
+UPDATE public.indicateur_valeur SET resultat=123456 WHERE id=287811340;
+SELECT is((SELECT modified_at FROM public.indicateur_valeur WHERE id=287811340),
+          (SELECT old_modified_at FROM public.approved_dates WHERE id=287811340),
+          'Regression changes only the result, keeping the approved timestamp');
+SELECT public.fixture_observations() AS before_failure \gset
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy changed_result_only
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='changed_result_only'),'23514','Changed result is refused even with unchanged modified_at');
+SELECT is(public.fixture_observations(),:'before_failure'::jsonb,'Result-only rejection preserves every observation');
+SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,'Result-only rejection archives nothing');
+SELECT public.fixture_reset();
+ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_at;
+ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_by;
+UPDATE public.indicateur_valeur SET objectif_commentaire='changed without timestamp' WHERE id=11979624;
+SELECT public.fixture_observations() AS before_failure \gset
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy changed_comment_only
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='changed_comment_only'),'23514','Full image check also protects comments on a retained observation');
+SELECT is(public.fixture_observations(),:'before_failure'::jsonb,'Comment-only rejection preserves every observation');
+SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,'Comment-only rejection archives nothing');
+SELECT public.fixture_reset();
+
+-- A role subject to RLS must fail instead of operating on a filtered view.
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT USAGE, CREATE ON SCHEMA private TO authenticated;
+GRANT ALL ON public.indicateur_valeur TO authenticated;
+GRANT SELECT ON public.action_score_indicateur_valeur TO authenticated;
+ALTER TABLE public.indicateur_valeur ENABLE ROW LEVEL SECURITY;
+CREATE POLICY fixture_read ON public.indicateur_valeur FOR SELECT TO authenticated USING (true);
+CREATE POLICY fixture_update ON public.indicateur_valeur FOR UPDATE TO authenticated USING (true);
+SELECT public.fixture_observations() AS before_failure \gset
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy filtered_rls authenticated
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='filtered_rls'),'42501','A migration role subject to RLS is refused');
+SELECT is(public.fixture_observations(),:'before_failure'::jsonb,'RLS rejection preserves every observation');
+SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,'RLS rejection leaves no archive');
+DROP POLICY fixture_update ON public.indicateur_valeur;
+DROP POLICY fixture_read ON public.indicateur_valeur;
+ALTER TABLE public.indicateur_valeur DISABLE ROW LEVEL SECURITY;
+REVOKE ALL ON public.indicateur_valeur, public.action_score_indicateur_valeur FROM authenticated;
+REVOKE CREATE ON SCHEMA private FROM authenticated;
+
+-- Check the actual effects even when a trigger silently skips a mutation.
+CREATE FUNCTION public.fixture_skip() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END; $$;
+CREATE TRIGGER fixture_skip BEFORE DELETE ON public.indicateur_valeur FOR EACH ROW EXECUTE FUNCTION public.fixture_skip();
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy skipped_delete
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='skipped_delete'),'23514','A skipped deletion fails the postflight');
+SELECT is(public.fixture_observations(),:'before_failure'::jsonb,'Skipped deletion rolls back earlier date updates');
+SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,'Skipped deletion leaves no false deletion archive');
+DROP TRIGGER fixture_skip ON public.indicateur_valeur;
+CREATE TRIGGER fixture_skip BEFORE UPDATE ON public.indicateur_valeur FOR EACH ROW EXECUTE FUNCTION public.fixture_skip();
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy skipped_update
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='skipped_update'),'23514','A skipped date update also fails the postflight');
+SELECT is(public.fixture_observations(),:'before_failure'::jsonb,'Skipped update rolls back later deletions');
+DROP TRIGGER fixture_skip ON public.indicateur_valeur;
+
 INSERT INTO public.action_score_indicateur_valeur VALUES (1,27353);
 \! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy score_reference
 SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='score_reference'),'23503','Referenced observation cannot cascade-delete a score link');
 SELECT is((SELECT count(*) FROM public.action_score_indicateur_valeur),1::bigint,'Score reference survives rejected deletion');
 SELECT public.fixture_reset();
 
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 \ir ../../sqitch/verify/indicateur/correct-dates-historiques.sql
 SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair),9::bigint,'All nine changed records are archived');
 SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE apres IS NULL),6::bigint,'Exactly six approved deletions are archived');
@@ -102,7 +160,7 @@ SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE (ava
 SELECT ok(NOT has_table_privilege('anon','private.indicateur_valeur_date_repair','SELECT') AND NOT has_table_privilege('authenticated','private.indicateur_valeur_date_repair','SELECT') AND NOT has_table_privilege('service_role','private.indicateur_valeur_date_repair','SELECT'),'Archive is inaccessible to application roles');
 SELECT public.fixture_observations() AS after_repair \gset
 SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) AS archive_after FROM private.indicateur_valeur_date_repair a \gset
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 SELECT is(public.fixture_observations(),:'after_repair'::jsonb,'Redeploy does not rewrite repaired records');
 SELECT is((SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a),:'archive_after'::jsonb,'Redeploy preserves the original archive');
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
@@ -112,7 +170,7 @@ SELECT is((SELECT count(*) FROM pg_trigger WHERE tgrelid='public.indicateur_vale
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
 SELECT is(public.fixture_observations(),(SELECT observations FROM public.fixture_baseline),'Revert with no archive is a no-op');
 
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 UPDATE public.indicateur_valeur SET resultat=98765, resultat_commentaire='later comment' WHERE id=24464;
 \ir ../../sqitch/verify/indicateur/correct-dates-historiques.sql
 SELECT pass('Historical verification permits ordinary later edits');
@@ -121,17 +179,17 @@ SELECT public.fixture_observations() AS before_failure \gset
 SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='later_edit'),'23514','Revert refuses later changes');
 SELECT is(public.fixture_observations(),:'before_failure'::jsonb,'Refused revert preserves subsequent edits');
 SELECT public.fixture_reset();
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 INSERT INTO public.indicateur_valeur SELECT 27353,999,999,'2022-01-01',NULL,1,NULL,NULL,NULL,NULL,now(),now(),NULL,NULL,false,NULL;
 \! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure revert reused_deleted_id
 SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='reused_deleted_id'),'23514','Revert does not overwrite a reused deleted ID');
 SELECT public.fixture_reset();
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 INSERT INTO public.indicateur_valeur SELECT 88,135,1466,DATE '0001-01-01 BC',NULL,1,NULL,NULL,NULL,NULL,now(),now(),NULL,NULL,false,NULL;
 \! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure revert old_date_collision
 SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='old_date_collision'),'23505','Revert refuses a newly occupied original date');
 SELECT public.fixture_reset();
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 ALTER TABLE public.indicateur_valeur ADD COLUMN newer_contract text;
 \ir ../../sqitch/verify/indicateur/correct-dates-historiques.sql
 SELECT pass('Historical verification survives a later schema extension');
@@ -140,22 +198,22 @@ SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario=
 ALTER TABLE public.indicateur_valeur DROP COLUMN newer_contract;
 SELECT public.fixture_reset();
 DELETE FROM public.indicateur_valeur WHERE id=24464;
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair),8::bigint,'A record already absent is not invented or archived');
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
 SELECT is((SELECT count(*) FROM public.indicateur_valeur WHERE id=24464),0::bigint,'Revert does not resurrect an observation absent before deployment');
 SELECT public.fixture_reset();
 UPDATE public.indicateur_valeur SET date_valeur='2024-01-01' WHERE id=24464;
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 SELECT is((SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE valeur_id=24464),0::bigint,'An already corrected date is not archived by this migration');
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
 SELECT is((SELECT date_valeur FROM public.indicateur_valeur WHERE id=24464),DATE '2024-01-01','Revert retains a correction made before deployment');
 SELECT public.fixture_reset();
 SET TIME ZONE 'Europe/Paris';
 SELECT public.fixture_observations() AS before_timezone_cycle \gset
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 SET TIME ZONE 'Pacific/Auckland';
-\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\i :fixture_deploy
 \ir ../../sqitch/verify/indicateur/correct-dates-historiques.sql
 \ir ../../sqitch/revert/indicateur/correct-dates-historiques.sql
 SET TIME ZONE 'Europe/Paris';

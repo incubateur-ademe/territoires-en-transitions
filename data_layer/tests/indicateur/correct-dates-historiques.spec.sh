@@ -27,6 +27,38 @@ psql_test() {
     --set=VERBOSITY=verbose --dbname="$repair_database_url" "$@"
 }
 
+# Pin synthetic images once, before any test mutates them. Only the nine approval
+# constants in a temporary copy change; the real migration's SQL stays identical.
+# Production constants are also exercised separately on the private backup copy.
+if [[ "${1:-}" == prepare-fixture ]]; then
+  fixture_hashes="$(psql_test --tuples-only --no-align <<'SQL'
+SET TIME ZONE 'UTC';
+SET DateStyle = 'ISO, YMD';
+SET extra_float_digits = 3;
+SELECT jsonb_object_agg(v.id, encode(sha256(convert_to(to_jsonb(v)::text, 'UTF8')), 'hex'))
+FROM public.indicateur_valeur v JOIN public.approved_dates a USING (id);
+SQL
+)"
+  REPAIR_APPROVED_HASHES="$fixture_hashes" node --input-type=module <<'JS'
+import { readFileSync, writeFileSync } from 'node:fs';
+const path = process.env.INDICATEUR_DATE_REPAIR_TEST_DEPLOY;
+const hashes = JSON.parse(process.env.REPAIR_APPROVED_HASHES);
+if (Object.keys(hashes).length !== 9) throw new Error('Expected nine synthetic approvals');
+let count = 0;
+const sql = readFileSync(path, 'utf8').replace(
+  /^(    \((\d+),.+, ')[0-9a-f]{64}('\)[,;])$/gm,
+  (_, prefix, id, suffix) => {
+    if (!/^[0-9a-f]{64}$/.test(hashes[id])) throw new Error(`Missing synthetic image: ${id}`);
+    count++;
+    return prefix + hashes[id] + suffix;
+  }
+);
+if (count !== 9) throw new Error('Only nine approval constants may be replaced');
+writeFileSync(path, sql);
+JS
+  exit 0
+fi
+
 # Failed migration transactions need a separate connection with ON_ERROR_STOP.
 # Save their actual SQLSTATE so the pgTAP session can make the assertions.
 if [[ "${1:-}" == expected-failure ]]; then
@@ -36,7 +68,17 @@ if [[ "${1:-}" == expected-failure ]]; then
   error_log="$(mktemp)"
   trap 'rm -f "$error_log"' EXIT
   actual_state=00000
-  if ! psql_test --file="$data_layer_dir/sqitch/$direction/indicateur/correct-dates-historiques.sql" >"$error_log" 2>&1; then
+  migration_file="$data_layer_dir/sqitch/$direction/indicateur/correct-dates-historiques.sql"
+  if [[ "$direction" == deploy ]]; then
+    migration_file="${INDICATEUR_DATE_REPAIR_TEST_DEPLOY:?Synthetic deploy copy required}"
+  fi
+  role_options=()
+  if [[ "${4:-}" == authenticated ]]; then
+    role_options=(--command='SET ROLE authenticated')
+  elif [[ -n "${4:-}" ]]; then
+    exit 2
+  fi
+  if ! psql_test "${role_options[@]}" --file="$migration_file" >"$error_log" 2>&1; then
     actual_state=unknown
     error_output="$(cat "$error_log")"
     if [[ "$error_output" =~ ERROR:[[:space:]]+([[:alnum:]]{5}): ]]; then
@@ -61,6 +103,10 @@ if [[ "$fixture_is_empty" != t ]]; then
   echo 'Refusing a database with existing indicator tables or an unexpected name.' >&2
   exit 2
 fi
+fixture_directory="$(mktemp -d)"
+trap 'rm -rf "$fixture_directory"' EXIT
+export INDICATEUR_DATE_REPAIR_TEST_DEPLOY="$fixture_directory/deploy.sql"
+cp "$data_layer_dir/sqitch/deploy/indicateur/correct-dates-historiques.sql" "$INDICATEUR_DATE_REPAIR_TEST_DEPLOY"
 export INDICATEUR_DATA_REPAIR_TEST_RUNNER="$script_dir/correct-dates-historiques.spec.sh"
 pg_prove --dbname="$repair_database_url" --ext .psql --verbose "$script_dir/correct-dates-historiques.assertions.psql"
 printf 'Synthetic fixtures remain in %s; caller must drop the disposable database.\n' "$fixture_database_name"

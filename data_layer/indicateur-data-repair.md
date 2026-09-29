@@ -61,11 +61,21 @@ et de leurs empreintes SHA-256, sont remis séparément pour conservation. Ils n
 sont pas versionnés dans ce dépôt. La migration conserve aussi les six originaux
 dans son archive administrative.
 
-La migration vérifie l’identité complète, la date initiale, le caractère manuel
-sans métadonnée et la date de dernière modification observée dans la sauvegarde.
+La migration vérifie l’identité, la date initiale, le caractère manuel sans
+métadonnée, la date de dernière modification et **l’empreinte SHA-256 de l’image
+JSONB complète approuvée**. Ces neuf empreintes sont figées dans le script,
+vérifiées sur la sauvegarde du 29 septembre ; elles ne sont jamais recalculées
+à partir des lignes courantes lors du déploiement. Résultat, objectif,
+commentaires, auteurs et tous les autres champs sont donc contrôlés même si
+`modified_at` reste inchangé, sans publier les images privées dans le dépôt.
 Un changement intervenu depuis cet inventaire, une collision à la date cible ou
 une référence de score sur une observation à supprimer annule toute la migration.
 Les verrous empêchent une écriture concurrente de contourner ces contrôles.
+Les scripts imposent `row_security = off` : ce réglage ne contourne pas les RLS,
+il fait échouer le script si le rôle reçoit une vue filtrée. Utiliser un rôle
+propriétaire non soumis à RLS ou disposant de `BYPASSRLS`. Un contrôle final
+vérifie que toutes les suppressions et corrections archivées ont réellement eu
+lieu ; un trigger qui ignore une mutation fait annuler tout le lot.
 
 Une observation absente n’est pas créée. Une date déjà corrigée reste inchangée.
 Les trois corrections préservent résultats, objectifs, commentaires et provenance ;
@@ -75,8 +85,8 @@ Aucun indicateur ni aucune série externe n’est supprimé ou recalculé.
 `private.indicateur_valeur_date_repair` conserve les images complètes avant/après
 des seules observations effectivement traitées, dont les six supprimées.
 Cette archive administrative est inaccessible aux rôles applicatifs. Les
-horodatages JSON sont sérialisés en UTC pour permettre les contrôles depuis
-n’importe quel fuseau de connexion.
+horodatages JSON sont sérialisés en UTC, les dates en ISO/YMD et les flottants
+avec `extra_float_digits = 3`, indépendamment des réglages de connexion.
 
 Le revert restaure exactement ces images initiales, y compris les observations
 supprimées et leurs métadonnées. Il refuse d’écraser une modification ultérieure,
@@ -116,8 +126,11 @@ identiques. Le revert restitue toutes les images initiales et réactive les deux
 triggers de métadonnées. Le précontrôle réel de #5214 ne signale aucune anomalie
 parmi les 4 772 453 observations restantes.
 
-Les suites pgTAP passent : 22 assertions pour la formule et 40 pour les dates,
-avec les vrais fichiers deploy/verify/revert. Elles couvrent aussi le rejeu,
+Les suites pgTAP comptaient initialement 22 assertions pour la formule et
+40 pour les dates. La suite des dates passe désormais **55 assertions** après
+les correctifs de revue du 29 septembre : résultat/commentaire modifié sans
+changement d’horodatage, rôle soumis à RLS, suppression et mise à jour ignorées
+par un trigger. Elles couvrent aussi le rejeu,
 les collisions, les données modifiées depuis l’approbation, les références de
 score, le retour arrière après éditions concurrentes et les changements de fuseau.
 Elles vérifient aussi les deux valeurs de Margny retenues au 1er janvier, le
@@ -125,8 +138,16 @@ résultat absent conservé à NULL et l’archivage de leurs six observations or
 La vérification durable accepte les éditions métier ordinaires et les colonnes
 ajoutées ultérieurement ; les contrôles de rejeu et de revert restent stricts.
 
-Les tests de cycle utilisent les fichiers Sqitch réels sur des fixtures
-synthétiques dans une base locale vide dédiée. Ils nécessitent Node.js, `psql`,
+Les tests de cycle utilisent le SQL Sqitch sur des fixtures synthétiques dans
+une base locale vide dédiée. Le runner remplace uniquement les neuf constantes
+d’approbation dans une copie temporaire du deploy par les empreintes des fixtures,
+figées **avant** les mutations de test. Aucun contrôle SQL n’est modifié, et
+aucune donnée de production n’est publiée. Les constantes livrées sont vérifiées
+séparément sur les neuf images réelles de la copie privée, avec deploy, verify,
+revert puis rollback intégral. Comme le dump original n’exporte pas les ACL,
+le droit d’usage du schéma `auth` par le propriétaire de `auth.users` a été
+rétabli uniquement dans cette transaction de test, puis annulé avec elle.
+Ils nécessitent Node.js, `psql`,
 `pg_prove` et l’extension PostgreSQL `pgtap`. Leur commande est :
 
 ```sh
@@ -185,10 +206,11 @@ métadonnées sont réactivés après revert.
 
 Cette répétition s’est terminée par un rollback : la copie locale conserve les
 observations originales du 29 septembre. Aucune écriture n’a été faite en production.
-Le code des réparations et les décisions métier du 28 septembre sont inchangés.
-Les 62 assertions pgTAP ont été exécutées le 28 septembre ; la nouvelle validation
-du 29 septembre porte sur la restauration, l’inventaire et cette répétition sur
-la copie de production.
+Les décisions métier du 28 septembre sont inchangées ; les contrôles du deploy ont été renforcés après revue.
+Les 62 assertions pgTAP initiales ont été exécutées le 28 septembre. Après revue,
+les 55 assertions de dates passent et une nouvelle répétition transactionnelle
+sur le schéma métier original vérifie les neuf empreintes livrées, les trois
+corrections, les six suppressions, le revert exact et le rollback intégral.
 
 ### Risques et limites actualisés
 
@@ -216,7 +238,12 @@ la copie de production.
   permet pas de contrôler la cellule Google Sheets pouvant réintroduire
   `cae_2.lpcaet`. La préparation décrite plus haut reste applicable.
 - **Ordre de livraison et fraîcheur des données.** Appliquer #5220, puis #5214,
-  puis #5215. Les branches et le plan Sqitch imposent cette dépendance. Relancer
+  puis #5215. Les branches et le plan Sqitch imposent cette dépendance.
+  **Garder la même maintenance entre #5220 et #5214** : arrêter les écritures
+  utilisateur, imports et workers susceptibles de recalculer avant #5220 ; ne les
+  reprendre qu’après déploiement et validation du backend protecteur de #5214.
+  La pré-PR peut être revue/fusionnée séparément, mais ne doit pas être livrée
+  seule en production avec l’ancienne application active. Relancer
   les contrôles sur la cible au moment prévu par le runbook : de nouvelles
   écritures peuvent modifier les états approuvés, créer une collision ou une
   référence de score. Les contrôles stricts feront alors échouer la migration des

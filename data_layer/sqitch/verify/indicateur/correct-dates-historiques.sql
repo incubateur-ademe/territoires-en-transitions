@@ -3,6 +3,9 @@
 BEGIN;
 SET LOCAL TIME ZONE 'UTC';
 SET LOCAL DateStyle = 'ISO, YMD';
+SET LOCAL extra_float_digits = 3;
+-- Refuse une vue filtrée par RLS ; ce réglage ne contourne pas les politiques.
+SET LOCAL row_security = off;
 -- L'archive prouve l'opération ponctuelle. Les observations vivantes peuvent
 -- ensuite évoluer, être supprimées ou recevoir de nouvelles colonnes.
 DO $verify$
