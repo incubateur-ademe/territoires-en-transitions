@@ -3,14 +3,11 @@ import { EditFichierModal } from './edit-fichier.modal';
 import { EditLienModal } from './edit-lien.modal';
 import { DocumentRattache } from './types';
 
-export type DocumentModifiable = Pick<
-  DocumentRattache,
-  'id' | 'collectiviteId' | 'preuveType'
-> &
+export type EditableDocument = DocumentRattache &
   Extract<DocumentCollectivite, { type: 'fichier' | 'lien' }>;
 
 export type EditDocumentModalProps = {
-  document: DocumentModifiable;
+  document: EditableDocument;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 };

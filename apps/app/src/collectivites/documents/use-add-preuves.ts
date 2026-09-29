@@ -1,8 +1,6 @@
-import { QueryClient, useMutation } from '@tanstack/react-query';
-import { AppRouter, useTRPC } from '@tet/api';
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
-import { referentielQueryKeys } from './document-target';
 import { useInvalidateDocuments } from './use-invalidate-documents';
 
 export const useAddPreuveReglementaire = () => {
@@ -55,18 +53,4 @@ export const useAddPreuveLabellisation = (
       },
     })
   );
-};
-
-export const invalidateQueries = ({
-  queryClient,
-  collectiviteId,
-  trpc,
-}: {
-  queryClient: QueryClient;
-  collectiviteId: number;
-  trpc: TRPCOptionsProxy<AppRouter>;
-}): void => {
-  referentielQueryKeys(trpc, collectiviteId).forEach((queryKey) => {
-    void queryClient.invalidateQueries({ queryKey });
-  });
 };

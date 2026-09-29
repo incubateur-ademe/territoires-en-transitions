@@ -17,9 +17,10 @@ export type DocumentTarget =
       referentielId: ReferentielId;
     }
   | { type: 'ficheAction' }
-  | { type: 'audit'; collectiviteId: number; auditId: number };
+  | { type: 'audit'; collectiviteId: number; auditId: number }
+  | { type: 'bibliothequeFichier'; collectiviteId: number };
 
-export const referentielQueryKeys = (
+const referentielQueryKeys = (
   trpc: Trpc,
   collectiviteId: number
 ): QueryKey[] => [
@@ -60,5 +61,11 @@ export const queryKeysToInvalidate = (
     ])
     .with({ type: 'ficheAction' }, () => [
       trpc.plans.fiches.ficheAnnexes.pathKey(),
+    ])
+    .with({ type: 'bibliothequeFichier' }, ({ collectiviteId }) => [
+      ...referentielQueryKeys(trpc, collectiviteId),
+      trpc.collectivites.documents.listBibliothequeDocuments.pathKey(),
+      trpc.plans.fiches.ficheAnnexes.pathKey(),
+      trpc.referentiels.documents.listDocumentsDemandeLabellisation.pathKey(),
     ])
     .exhaustive();

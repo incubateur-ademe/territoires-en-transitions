@@ -1,18 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { invalidateQueries } from '../use-add-preuves';
+import { toDocumentTargets } from '../to-document-target';
+import { useInvalidateDocuments } from '../use-invalidate-documents';
+import { DocumentRattache } from './types';
 
-export const useReplaceAuditReportFile = (collectiviteId: number) => {
-  const queryClient = useQueryClient();
+export const useReplaceAuditReportFile = (document: DocumentRattache) => {
   const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
 
   return useMutation(
     trpc.referentiels.labellisations.updateAuditReport.mutationOptions({
       onSuccess: () => {
-        invalidateQueries({ queryClient, collectiviteId, trpc });
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.documents.listDocumentsAudit.pathKey(),
-        });
+        void invalidateDocuments(...toDocumentTargets(document));
       },
     })
   );
