@@ -3,7 +3,7 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { Button, Icon } from '@tet/ui';
+import { Button, Icon, Tooltip } from '@tet/ui';
 import { JSX, useState } from 'react';
 import type { DuplicatedDocumentInformation } from '../../duplicated-document-state.utils';
 import { getAuthorAndDate, getFormattedTitle } from '../document-label.utils';
@@ -33,14 +33,16 @@ export const Title = ({
       : appLabels.telechargerFichier;
 
   return (
-    <span
-      className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-      data-test="name"
-      title={openLabel}
-      onClick={onOpen}
-    >
-      {getFormattedTitle(document)}
-    </span>
+    <Tooltip label={openLabel}>
+      <button
+        type="button"
+        className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer text-left"
+        data-test="name"
+        onClick={onOpen}
+      >
+        {getFormattedTitle(document)}
+      </button>
+    </Tooltip>
   );
 };
 
