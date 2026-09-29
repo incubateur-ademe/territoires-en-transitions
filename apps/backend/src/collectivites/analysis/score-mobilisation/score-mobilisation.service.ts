@@ -32,16 +32,16 @@ export class ScoreMobilisationService {
   }: CalculateCollectiviteMobilisationInput): Promise<
     Result<MobilisationScore, CalculateCollectiviteMobilisationError>
   > {
-    const collectivite = await this.readCollectivite(collectiviteId);
-    if (!collectivite) {
-      return failure({ kind: 'collectivite_not_found', collectiviteId });
+    const collectiviteResult = await this.readCollectivite(collectiviteId);
+    if (!collectiviteResult.success) {
+      return collectiviteResult;
     }
 
     return match(enjeu)
       .with('ges', () =>
         this.calculateGesMobilisation({
           collectiviteId,
-          collectivite,
+          collectivite: collectiviteResult.data,
           volets,
           fiches,
         })
@@ -96,17 +96,26 @@ export class ScoreMobilisationService {
 
   private async readCollectivite(
     collectiviteId: number
-  ): Promise<Pick<Collectivite, 'nom' | 'population'> | undefined> {
+  ): Promise<
+    Result<
+      Pick<Collectivite, 'nom' | 'population'>,
+      CalculateCollectiviteMobilisationError
+    >
+  > {
     try {
       const { collectivite } = await this.collectivitesService.getCollectivite(
         collectiviteId
       );
-      return collectivite;
+      return success(collectivite);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        return undefined;
+        return failure({ kind: 'collectivite_not_found', collectiviteId });
       }
-      throw error;
+      const readError = error instanceof Error ? error : undefined;
+      return failure(
+        { kind: 'collectivite_read_failed', collectiviteId },
+        readError
+      );
     }
   }
 }
