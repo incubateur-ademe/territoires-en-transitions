@@ -67,6 +67,7 @@ describe('Referentiels routes', () => {
       identifiant: '',
       actionType: ActionTypeEnum.REFERENTIEL,
       categorie: null,
+      exprScore: '',
       level: 0,
       nom: 'Climat Air Énergie',
       preuves: null,

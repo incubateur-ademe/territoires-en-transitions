@@ -3,6 +3,7 @@ import {
   getScoreFromOrigineActionsAndRatio,
 } from '@tet/backend/referentiels/compute-score/score-from-origines.rules';
 import {
+  ActionTypeEnum,
   StatutAvancementEnum,
   type ActionScoreFinal,
   type ActionStatutCreate,
@@ -165,6 +166,11 @@ export const mergeStatuts = (ctx: SwitchToTeContext): ActionStatutCreate[] => {
       // du parent est ignoré, pas de reprise de score sur le parent — les tâches
       // sont utilisées uniquement pour le calcul de score à partir des indicateurs.
       continue;
+    } else if (cible.actionType === ActionTypeEnum.TACHE) {
+      // tâche concernée (case à cocher manuelle) : aucun statut déduit des
+      // origines, même NON_CONCERNE si aucune origine n'est concernée, et pas
+      // de ligne écrite en base.
+      continue;
     } else if (cible.originesConcernees.length === 0) {
       derivedStatut = deriveStatutFromProjection({
         concernedSourceCount: 0,
@@ -173,6 +179,11 @@ export const mergeStatuts = (ctx: SwitchToTeContext): ActionStatutCreate[] => {
         pointPasFait: 0,
         pointPotentiel: tePointPotentiel,
       });
+    } else if (cible.hasExprScore) {
+      // action avec formule `exprScore` (score calculé depuis les indicateurs) :
+      // pas de projection depuis les points des origines (même 1→1) et pas de
+      // ligne écrite en base.
+      continue;
     } else {
       const ratio = getRatioFromOrigineActions(
         cible.originesConcernees,
