@@ -1,12 +1,9 @@
-import { AddFileHandler } from '@/app/collectivites/documents/add-document/add-file';
-import { AddLinkHandler } from '@/app/collectivites/documents/add-document/add-link';
+import { AddDocumentTabsHandlers } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import { useInvalidateDocuments } from '@/app/collectivites/documents/use-invalidate-documents';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
-type AddAnnexeHandlers = {
-  addFile: AddFileHandler;
-  addLink: AddLinkHandler;
+type AddAnnexeHandlers = Required<AddDocumentTabsHandlers> & {
   isLoading: boolean;
   isError: boolean;
 };
@@ -28,23 +25,14 @@ export const useAddAnnexe = (ficheId: number): AddAnnexeHandlers => {
     })
   );
 
-  const addFile: AddFileHandler = async (fichierId) => {
-    const annexe = await addAnnexe({
-      ficheId,
-      commentaire: '',
-      fichierId,
-    });
-
-    return { documentId: annexe.id };
-  };
-
-  const addLink: AddLinkHandler = (titre, url) => {
-    addAnnexeSync({ ficheId, commentaire: '', lien: { titre, url } });
-  };
-
   return {
-    addFile,
-    addLink,
+    addFile: async (fichierId) => {
+      const annexe = await addAnnexe({ ficheId, commentaire: '', fichierId });
+      return { documentId: annexe.id };
+    },
+    addLink: (titre, url) => {
+      addAnnexeSync({ ficheId, commentaire: '', lien: { titre, url } });
+    },
     isLoading: isPending,
     isError,
   };

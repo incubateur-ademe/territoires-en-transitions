@@ -1,14 +1,10 @@
-import { AddFileHandler } from './add-document/add-file';
-import { AddLinkHandler } from './add-document/add-link';
+import { AddDocumentTabsHandlers } from './add-document/add-document.tabs';
 import { useInvalidateDocuments } from './use-invalidate-documents';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
-type AddRapportVisiteHandlers = {
-  addFile: AddFileHandler;
-  addLink: AddLinkHandler;
-};
+type AddRapportVisiteHandlers = Required<AddDocumentTabsHandlers>;
 
 export const useAddRapportVisite = (date: string): AddRapportVisiteHandlers => {
   const collectiviteId = useCollectiviteId();
@@ -23,14 +19,9 @@ export const useAddRapportVisite = (date: string): AddRapportVisiteHandlers => {
     })
   );
 
-  const addFile: AddFileHandler = (fichierId) =>
-    mutate({ collectiviteId, date, fichierId });
-
-  const addLink: AddLinkHandler = (titre, url) =>
-    mutate({ collectiviteId, date, lien: { titre, url } });
-
   return {
-    addFile,
-    addLink,
+    addFile: (fichierId) => mutate({ collectiviteId, date, fichierId }),
+    addLink: (titre, url) =>
+      mutate({ collectiviteId, date, lien: { titre, url } }),
   };
 };
