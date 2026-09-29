@@ -117,7 +117,7 @@ export const Actions = ({
       {isMenuShown && (
         <DocumentCardMenu
           document={document}
-          className="absolute top-4 right-4 invisible group-hover:visible"
+          className="absolute top-4 right-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto"
           actions={menuActions}
         />
       )}
