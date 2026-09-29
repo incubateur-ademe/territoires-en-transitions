@@ -46,6 +46,7 @@ export const actionDefinitionEssentialSchema = z.object({
   points: z.nullable(z.number()),
   level: z.number(),
   actionType: actionTypeSchema,
+  exprScore: z.optional(z.nullable(z.string())),
   // action catalogues include cae, eci but also biodiversite, eau
   tags: z.optional(z.array(z.string())),
   preuves: z.optional(z.array(preuveSchemaEssential)),

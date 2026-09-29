@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { type ReferentielResponse } from '@tet/backend/referentiels/get-referentiel/get-referentiel.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -16,6 +17,7 @@ import {
 import {
   ActionTypeEnum,
   flatMapActionsEnfants,
+  ReferentielIdEnum,
   StatutAvancementEnum,
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
@@ -332,10 +334,9 @@ describe('mergeStatuts', () => {
     );
 
     if (!parentAvecTaches) {
-      console.warn(
-        'mergeStatuts e2e : aucune sous-mesure TE avec tâches + origine dans le CSV courant, assertion ignorée'
+      throw new Error(
+        'mergeStatuts e2e : aucune sous-mesure TE avec tâches + origine dans le CSV courant'
       );
-      return;
     }
 
     const data = mergeStatuts(ctx);
@@ -349,14 +350,82 @@ describe('mergeStatuts', () => {
       (noeud) =>
         noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
         (noeud.actionsOrigine?.length ?? 0) > 0 &&
+        !noeud.exprScore?.trim() &&
         (noeud.actionsEnfant ?? []).every(
           (enfant) => enfant.actionType !== ActionTypeEnum.TACHE
         )
     );
-    if (feuilleAvecOrigine) {
-      expect(
-        data.some((statut) => statut.actionId === feuilleAvecOrigine.actionId)
-      ).toBe(true);
+    if (!feuilleAvecOrigine) {
+      throw new Error(
+        'mergeStatuts e2e : aucune sous-mesure TE feuille avec origine dans le CSV courant'
+      );
     }
+    expect(
+      data.some((statut) => statut.actionId === feuilleAvecOrigine.actionId)
+    ).toBe(true);
+  });
+
+  // détecte dans l'arbre TE courant une action avec origine selon `predicate` ;
+  // à réviser si la structure du CSV TE change (cf. MERGE_STATUTS_FIXTURE).
+  async function expectAucunStatutMalgreSourceFaite(
+    predicate: (noeud: ReferentielResponse['itemsTree']) => boolean,
+    libelle: string
+  ) {
+    const ctxResultAvantStatut = await buildCtx(prefsEligibleCaeAndEci);
+    expect(ctxResultAvantStatut.success).toBe(true);
+    if (!ctxResultAvantStatut.success) {
+      throw new Error('buildSwitchToTeContext a échoué');
+    }
+    const noeuds = flatMapActionsEnfants(
+      ctxResultAvantStatut.data.referentielTe.itemsTree
+    );
+
+    const cible = noeuds.find(
+      (noeud) => (noeud.actionsOrigine?.length ?? 0) > 0 && predicate(noeud)
+    );
+
+    if (!cible) {
+      throw new Error(
+        `mergeStatuts e2e : aucune ${libelle} avec origine dans le CSV courant`
+      );
+    }
+
+    const caeOrigineActionId = cible.actionsOrigine?.find(
+      (origine) => origine.referentielId === ReferentielIdEnum.CAE
+    )?.actionId;
+    const origineActionId =
+      caeOrigineActionId ?? cible.actionsOrigine?.[0]?.actionId;
+    if (!origineActionId) {
+      throw new Error(`${libelle} sans actionId d’origine exploitable`);
+    }
+
+    await setActionStatut(origineActionId, StatutAvancementEnum.FAIT);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
+
+    expect(data.some((statut) => statut.actionId === cible.actionId)).toBe(
+      false
+    );
+  }
+
+  test('tâche TE avec origine concernée : aucun statut malgré un statut fait sur la source', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    await expectAucunStatutMalgreSourceFaite(
+      (noeud) => noeud.actionType === ActionTypeEnum.TACHE,
+      'tâche TE'
+    );
+  });
+
+  test('sous-mesure TE avec exprScore et origine concernée : aucun statut malgré un statut fait sur la source', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    await expectAucunStatutMalgreSourceFaite(
+      (noeud) =>
+        noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
+        Boolean(noeud.exprScore?.trim()),
+      'sous-mesure TE avec exprScore'
+    );
   });
 });

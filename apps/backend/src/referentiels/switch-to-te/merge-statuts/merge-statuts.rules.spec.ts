@@ -1,5 +1,6 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import {
+  ActionTypeEnum,
   ReferentielIdEnum,
   StatutAvancementEnum,
   type ActionScore,
@@ -204,11 +205,13 @@ describe('mergeStatuts', () => {
     overrides: Partial<ActionCible> & Pick<ActionCible, 'actionId'>
   ): ActionCible => ({
     actionId: overrides.actionId,
+    actionType: overrides.actionType ?? ActionTypeEnum.SOUS_ACTION,
     actionsOrigine: overrides.actionsOrigine ?? [],
     originesConcernees: overrides.originesConcernees ?? [],
     originesCommentaire: overrides.originesCommentaire ?? [],
     concernee: overrides.concernee ?? true,
     aDesTachesEnfant: overrides.aDesTachesEnfant ?? false,
+    hasExprScore: overrides.hasExprScore ?? false,
   });
 
   const createCtx = (
@@ -315,6 +318,114 @@ describe('mergeStatuts', () => {
         collectiviteId: 1,
         actionId: 'te_1.1.1.1.1',
         statut: StatutAvancementEnum.FAIT,
+      },
+    ]);
+  });
+
+  it("n'émet aucune ligne pour une tâche avec une origine concernée (pas de projection)", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1.1',
+          actionType: ActionTypeEnum.TACHE,
+          concernee: true,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  it("n'émet aucune ligne pour une sous-action avec exprScore et une origine concernée", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: true,
+          hasExprScore: true,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  it('émet NON_CONCERNE pour une sous-action avec exprScore désactivée côté TE', () => {
+    const ctx = createCtx([
+      createCible({
+        actionId: 'te_1.1.1.1',
+        concernee: false,
+        hasExprScore: true,
+        originesConcernees: [origineFait()],
+      }),
+    ]);
+
+    expect(mergeStatuts(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1.1',
+        statut: StatutAvancementEnum.NON_CONCERNE,
+      },
+    ]);
+  });
+
+  it("n'émet aucune ligne pour une tâche sans origine concernée", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1.1',
+          actionType: ActionTypeEnum.TACHE,
+          concernee: true,
+          originesConcernees: [],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  it('émet NON_CONCERNE pour une sous-action avec exprScore sans origine concernée', () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: true,
+          hasExprScore: true,
+          originesConcernees: [],
+        }),
+      ],
+      tePotentiel5('te_1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1.1',
+        statut: StatutAvancementEnum.NON_CONCERNE,
+      },
+    ]);
+  });
+
+  it('émet NON_CONCERNE pour une tâche désactivée côté TE malgré une origine concernée', () => {
+    const ctx = createCtx([
+      createCible({
+        actionId: 'te_1.1.1.1.1',
+        actionType: ActionTypeEnum.TACHE,
+        concernee: false,
+        originesConcernees: [origineFait()],
+      }),
+    ]);
+
+    expect(mergeStatuts(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1.1.1',
+        statut: StatutAvancementEnum.NON_CONCERNE,
       },
     ]);
   });

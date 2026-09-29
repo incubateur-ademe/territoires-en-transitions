@@ -128,6 +128,7 @@ export class GetReferentielRepository {
             points: actionDefinitionTable.points,
             categorie: actionDefinitionTable.categorie,
             pourcentage: actionDefinitionTable.pourcentage,
+            exprScore: actionDefinitionTable.exprScore,
           }
         : getTableColumns(actionDefinitionTable);
 

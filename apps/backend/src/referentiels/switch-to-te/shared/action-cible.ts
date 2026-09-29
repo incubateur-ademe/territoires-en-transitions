@@ -4,6 +4,7 @@ import {
   ActionTypeEnum,
   flatMapActionsEnfants,
   type ActionScore,
+  type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { type CorrelatedActionTexte } from '../../correlated-actions/referentiel-action-origine-texte.dto';
@@ -27,6 +28,18 @@ export type CommentaireOrigine = {
  */
 export type ActionCible = {
   actionId: string;
+  /**
+   * type de l'action cible TE. Lu uniquement par mergeStatuts : aucun statut
+   * n'est émis pour une TACHE avec origines concernées — cf. commentaire dans
+   * mergeStatuts.
+   */
+  actionType: ActionType;
+  /**
+   * true si l'action cible TE a une formule `exprScore` : son score est calculé
+   * à partir des indicateurs, mergeStatuts n'émet alors aucun statut projeté
+   * depuis les origines concernées.
+   */
+  hasExprScore: boolean;
   /** false si désactivée / non concernée par personnalisation TE */
   concernee: boolean;
   /**
@@ -73,11 +86,13 @@ export const getPointPotentiel = (
 
 const buildActionCible = (
   actionId: string,
+  actionType: ActionType,
   actionsOrigine: CorrelatedAction[],
   scoreMapsByReferentiel: Map<ReferentielId, Map<string, ActionScore>>,
   teScoreMap: Map<string, ActionScore>,
   actionsOrigineTexte: CorrelatedActionTexte[] = [],
-  aDesTachesEnfant = false
+  aDesTachesEnfant = false,
+  hasExprScore = false
 ): ActionCible => {
   const correlatedActions = buildCorrelatedActionsWithScore(
     actionsOrigine,
@@ -102,8 +117,10 @@ const buildActionCible = (
 
   return {
     actionId,
+    actionType,
     concernee: isCibleConcernee(teScoreMap, actionId),
     aDesTachesEnfant,
+    hasExprScore,
     actionsOrigine,
     originesConcernees,
     originesCommentaire,
@@ -127,13 +144,15 @@ export const listSousActionsEtTachesCibles = (input: {
   return teActionsWithOrigine.map((teAction) =>
     buildActionCible(
       teAction.actionId,
+      teAction.actionType,
       teAction.actionsOrigine ?? [],
       input.scoreMapsByReferentiel,
       input.teScoreMap,
       teAction.actionsOrigineTexte ?? [],
       (teAction.actionsEnfant ?? []).some(
         (enfant) => enfant.actionType === ActionTypeEnum.TACHE
-      )
+      ),
+      Boolean(teAction.exprScore?.trim())
     )
   );
 };
@@ -164,6 +183,7 @@ export const listCommentaireCibles = (input: {
     .map((action) =>
       buildActionCible(
         action.actionId,
+        action.actionType,
         action.actionsOrigine ?? [],
         input.scoreMapsByReferentiel,
         input.teScoreMap,
@@ -193,6 +213,7 @@ export const listMesuresCibles = (input: {
     return [
       buildActionCible(
         mesure.actionId,
+        mesure.actionType,
         actionsOrigine,
         input.scoreMapsByReferentiel,
         input.teScoreMap
