@@ -1,4 +1,4 @@
-/** Les annexes, qui accrochent à une fiche soit une pièce de la bibliothèque, soit un lien ; et « Modifié le » des fiches gardé. */
+/** Les annexes, qui accrochent à une fiche soit un fichier de la bibliothèque, soit un lien ; et « Modifié le » des fiches gardé. */
 
 import { PoolClient } from 'pg';
 import type { Bibliotheque } from './bibliotheque';
@@ -8,7 +8,7 @@ import type { UrlSiteWebValide } from './url-site-web';
 /** Le compte « Territoires & Climat », auteur des annexes reprises. */
 export const COMPTE_TERRITOIRES_CLIMAT = '00000000-0000-0000-0000-000000000002';
 
-/** Écrit une annexe par pièce et par « site web », au nom de « Territoires & Climat », datée de la création de l'action, et leur trace. */
+/** Écrit une annexe par fichier et par « site web », au nom de « Territoires & Climat », datée de la création de l'action, et leur trace. */
 export const createAnnexes = async (
   client: PoolClient,
   fichiers: readonly Fichier[],

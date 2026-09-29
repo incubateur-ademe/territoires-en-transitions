@@ -1,13 +1,15 @@
 #!/usr/bin/env tsx
 /**
- * Reprise T&C, étape 6 : écrit sur les fiches reprises les pièces, les images (sans leur fichier) et les « site web » de leurs actions.
+ * Reprise T&C, étape 6 : écrit sur les fiches reprises les fichiers (sans leur contenu) et les « site web » de leurs actions.
  * Simulation par défaut, `--confirm` pour valider.
  *
  *   SUPABASE_DATABASE_URL="postgresql://..." pnpx tsx \
  *     apps/tools/src/migrations/reprise-tec/import-pieces-fiches/index.ts [--confirm]
  */
 import { getCible } from '../db';
+import { createEcarts, validateBilan } from '../import-fiches/ecarts';
 import { createFichiers, type Bibliotheque } from './bibliotheque';
+import { loadEcarts } from './ecarts';
 import { createAnnexes, keepModifieLe } from './ecriture';
 import { validateGardes } from './gardes';
 import { loadPieces } from './pieces';
@@ -27,6 +29,12 @@ const main = async () => {
     const ficheIds = [...fichiers, ...urlsSiteWeb.valides].map(
       (p) => p.ficheId
     );
+    const { lues, ecrites, ecarts } = await loadEcarts(
+      client,
+      fichiers,
+      urlsSiteWeb
+    );
+    const bilan = validateBilan(lues, ecrites, ecarts);
 
     await client.query('begin');
     let bibliotheque: Bibliotheque;
@@ -35,6 +43,7 @@ const main = async () => {
       await keepModifieLe(client, ficheIds, () =>
         createAnnexes(client, fichiers, urlsSiteWeb.valides, bibliotheque)
       );
+      await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
       await client.query('rollback');
@@ -42,9 +51,11 @@ const main = async () => {
     }
 
     printRapport({
+      bilan,
+      ecarts,
       fichiers,
       urlsSiteWeb,
-      bibliotheque: bibliotheque.comptes,
+      bibliotheque,
       isConfirmed,
     });
   } finally {
