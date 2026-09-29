@@ -13,7 +13,7 @@ const repositoryRoot = fileURLToPath(
   new URL('../../../../../', import.meta.url)
 );
 
-const sourceRoots = ['apps', 'packages', 'supabase/functions'] as const;
+const sourceRoots = ['apps', 'packages'] as const;
 const ignoredDirectoryNames = new Set([
   '.next',
   '.storybook',
