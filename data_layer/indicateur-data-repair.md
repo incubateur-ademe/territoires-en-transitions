@@ -3,6 +3,8 @@
 Le contrôle de la sauvegarde de production du 28 septembre 2026 a trouvé une
 référence de formule inexistante et neuf dates hors du calendrier pris en charge.
 Ces données doivent être traitées avant la migration de schéma de la PR #5214.
+L’inventaire et les réparations ont été revalidés sur la sauvegarde du 29 septembre ;
+les mesures et risques actualisés figurent en fin de document.
 
 ## Référence de formule
 
@@ -141,3 +143,82 @@ une URL hors boucle locale, un autre préfixe de base ou un schéma indicateur d
 présent. Il ne faut pas l’exécuter dans la base restaurée. Les assertions pgTAP
 portent notamment sur la préservation des observations, le rejeu, le revert et
 le refus d’une dépendance de remplacement absente.
+
+## Actualisation sur la sauvegarde du 29 septembre 2026
+
+Restauration locale avec `make db-restore-local-from-prod-backup d=latest` :
+archive `backup-2026-09-29.dump`, créée à 02:21:05 CEST depuis PostgreSQL 15.8,
+version applicative de production `e32417f9e` déployée le 25 septembre.
+Les 165 tables configurées ont été restaurées et tous les contrôles de fin ont
+réussi. Le schéma de l’archive et son journal Sqitch ont été examinés séparément
+du schéma local : aucune colonne de périodicité, préférence locale associée
+ni migration de périodicité n’y figure. Le socle annuel/mensuel décrit dans le plan ne doit donc pas être
+considéré comme déjà déployé dans cette sauvegarde. Les dates seules ne prouvent
+pas la périodicité métier d’une série.
+
+| Mesure | 28 septembre | 29 septembre |
+| --- | ---: | ---: |
+| Observations avant réparation | 4 772 459 | 4 772 554 |
+| Dates invalides avant réparation | 9 | 9 |
+| Observations après les six suppressions approuvées | 4 772 453 | 4 772 548 |
+| Observations de `cae_2.a`, intégralement préservées | 60 636 | 60 639 |
+| Observations manuelles PCAET avec métadonnées | 69 | 71 |
+| Dont observations d’indicateurs avec formule | 30 | 32 |
+
+Le catalogue contient 26 554 définitions, dont 78 formules. Le graphe garde
+294 références, dont une introuvable avant réparation et aucune après.
+Le précontrôle de #5214 retrouve uniquement les neuf dates invalides connues
+avant réparation, puis aucune anomalie sur les 4 772 548 observations restantes :
+aucune date invalide, aucune date à normaliser et aucune collision.
+
+Les six originaux de Margny correspondent champ par champ à l’export du
+28 septembre ; ses empreintes SHA-256 sont inchangées. Les garde-fous de la
+migration valident encore les neuf identités et états initiaux, les trois dates
+cibles libres et l’absence de référence de score sur les six suppressions.
+La répétition des vrais SQL deploy/verify/revert applique trois corrections et
+six suppressions, conserve les neuf originaux en archive privée, puis les
+restaure exactement. Les deux valeurs retenues de Margny sont bien `8 / 9` et
+`NULL / 3` au 1er janvier 2025. Les autres observations des cinq couples
+indicateur/collectivité concernés, dont Atmo, et l’empreinte de tous les champs
+des 60 639 observations de `cae_2.a` restent identiques. Les deux triggers de
+métadonnées sont réactivés après revert.
+
+Cette répétition s’est terminée par un rollback : la copie locale conserve les
+observations originales du 29 septembre. Aucune écriture n’a été faite en production.
+Le code des réparations et les décisions métier du 28 septembre sont inchangés.
+Les 62 assertions pgTAP ont été exécutées le 28 septembre ; la nouvelle validation
+du 29 septembre porte sur la restauration, l’inventaire et cette répétition sur
+la copie de production.
+
+### Risques et limites actualisés
+
+- **Recalcul des saisies manuelles avec métadonnées : risque toujours présent.**
+  Les 32 observations PCAET manuelles d’indicateurs calculés constituent une
+  exposition possible, pas un décompte de pertes certaines. Dans #5214 au commit
+  `1304106ca`, l’upsert avec métadonnées ne possède pas la protection de l’upsert
+  sans métadonnées. Un recalcul peut remplacer une saisie s’il produit la même
+  identité indicateur/collectivité/période/métadonnée. Protéger ces écritures avant
+  tout recalcul historique ; la réparation SQL de formule n’en déclenche aucun.
+  Voir [les deux chemins d’upsert](https://github.com/incubateur-ademe/territoires-en-transitions/blob/1304106ca/apps/backend/src/indicateurs/valeurs/crud-valeurs.repository.ts#L438).
+- **Provenance externe fournie par l’API REST : écart de droits encore à traiter.**
+  Un utilisateur autorisé à écrire dans sa collectivité peut transmettre une
+  métadonnée externe existante, sans capacité d’import distincte vérifiée.
+  Le risque concerne une écriture sous cette provenance pour un indicateur
+  disponible et autorisant les valeurs utilisateur. Ce constat de code ne
+  démontre ni accès anonyme ni écriture intercollectivités ; #5214 impose encore
+  l’annuel. Voir [la validation des métadonnées](https://github.com/incubateur-ademe/territoires-en-transitions/blob/1304106ca/apps/backend/src/indicateurs/valeurs/validate-indicateur-valeurs-write.service.ts#L127).
+- **Catalogue externe : vérification toujours nécessaire.** La sauvegarde ne
+  permet pas de contrôler la cellule Google Sheets pouvant réintroduire
+  `cae_2.lpcaet`. La préparation décrite plus haut reste applicable.
+- **Ordre de livraison et fraîcheur des données.** Appliquer la pré-PR #5220 avant
+  la migration #5214, puis l’activation #5215. Relancer les contrôles sur la cible
+  au moment prévu par le runbook : de nouvelles écritures peuvent modifier les
+  états approuvés, créer une collision ou une référence de score. Les contrôles
+  stricts feront alors échouer la migration des dates sans correction partielle.
+  La correction de formule, migration distincte, peut déjà être appliquée.
+- **La conformité complète au plan et à l’ADR reste distincte de cet inventaire.**
+  La migration complète du schéma de #5214, l’activation de #5215, leur reprise et
+  les parcours applicatifs n’ont pas été répétés ici. La validation métier des
+  agrégations reste également à établir ; elle ne se déduit pas du dump.
+  La décision annuelle de Margny n’impose plus d’exception mensuelle pour ces
+  données et ne démontre pas l’existence d’un historique à cadence différente.
