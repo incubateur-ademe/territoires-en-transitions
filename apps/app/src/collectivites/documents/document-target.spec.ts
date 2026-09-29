@@ -19,6 +19,7 @@ const trpc = {
           'listDocumentsDemandeLabellisation',
           demandeId,
         ],
+        pathKey: () => ['listDocumentsDemandeLabellisation'],
       },
     },
     actions: {
@@ -38,6 +39,13 @@ const trpc = {
           collectiviteId: number;
           referentielId: string;
         }) => ['getParcours', collectiviteId, referentielId],
+      },
+    },
+  },
+  collectivites: {
+    documents: {
+      listBibliothequeDocuments: {
+        pathKey: () => ['listBibliothequeDocuments'],
       },
     },
   },
@@ -108,5 +116,19 @@ describe('queryKeysToInvalidate', () => {
     const target: DocumentTarget = { type: 'ficheAction' };
 
     expect(queryKeysToInvalidate(trpc, target)).toEqual([['ficheAnnexes']]);
+  });
+
+  it('rafraîchit toutes les listes qui nomment un fichier quand celui-ci est renommé', () => {
+    const target: DocumentTarget = {
+      type: 'bibliothequeFichier',
+      collectiviteId,
+    };
+
+    expect(queryKeysToInvalidate(trpc, target)).toEqual([
+      ...referentielKeys,
+      ['listBibliothequeDocuments'],
+      ['ficheAnnexes'],
+      ['listDocumentsDemandeLabellisation'],
+    ]);
   });
 });

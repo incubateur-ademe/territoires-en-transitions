@@ -99,7 +99,7 @@ const DocAuditOuLabellisation = ({
       'referentiels.labellisations.mutate_documents'
     ),
   });
-  const replaceAuditReport = useReplaceAuditReportFile(preuve.collectiviteId);
+  const replaceAuditReport = useReplaceAuditReportFile(preuve);
   const isRapportAudit = audit !== null;
 
   return (

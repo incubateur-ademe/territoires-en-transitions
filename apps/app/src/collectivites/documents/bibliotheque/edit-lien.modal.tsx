@@ -1,15 +1,12 @@
 import { appLabels } from '@/app/labels/catalog';
 import { lienFormSchema } from '@/app/collectivites/documents/lien-schema';
-import { Lien } from '@tet/domain/collectivites';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
-import { DocumentRattache } from './types';
+import { EditableDocument } from './edit-document.modal';
 import { useUpdatePreuveLien } from './use-edit-preuve';
 
 export type EditLienModalProps = {
-  preuve: Pick<DocumentRattache, 'id' | 'collectiviteId' | 'preuveType'> & {
-    lien: Lien;
-  };
+  preuve: Extract<EditableDocument, { type: 'lien' }>;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };
@@ -76,12 +73,7 @@ export const EditLienModal = (props: EditLienModalProps) => {
                 return;
               }
               editLien(
-                {
-                  id: preuve.id,
-                  preuveType: preuve.preuveType,
-                  collectiviteId: preuve.collectiviteId,
-                  lien: lienParseResult.data,
-                },
+                { ...preuve, lien: lienParseResult.data },
                 { onSuccess: close }
               );
             },
