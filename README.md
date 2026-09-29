@@ -70,7 +70,7 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 
   - [gotrue](https://github.com/netlify/gotrue) pour l'authentification OAuth2
   - [PostgreSQL](https://www.postgresql.org/) la base qui nous apporte le typage et la consistence des données.
-  - [PostgREST](https://postgrest.org/en/stable/) qui transforme la base de donnée en une API RESTful.
+  - [Storage](https://github.com/supabase/storage) pour les fichiers (documents, preuves).
 
 - le `business` est développé en Python 🐍.
 

@@ -109,8 +109,6 @@ services:
     depends_on:
       gotrue:
         condition: service_started
-      rest:
-        condition: service_started
     healthcheck:
       test: ['CMD', 'kong', 'health']
       interval: 5s
@@ -189,26 +187,6 @@ services:
     volumes:
       - ./supabase/templates:/usr/share/nginx/html:ro
 
-  # ———————————————————————————— API REST ——————————————————————————————————
-  rest:
-    profiles: [supabase]
-    image: postgrest/postgrest:v13.0.7
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      # storage retire : plus aucun appel PostgREST ne le vise, et l exposer
-      # laissait lire storage.objects au JWT de l utilisateur.
-      PGRST_DB_SCHEMAS: public # supabase/config.toml [api].schemas
-      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
-      PGRST_DB_MAX_ROWS: '5000'
-      PGRST_DB_ANON_ROLE: anon
-      PGRST_DB_USE_LEGACY_GUCS: 'false'
-      PGRST_JWT_SECRET: *jwt-secret
-      PGRST_APP_SETTINGS_JWT_SECRET: *jwt-secret
-      PGRST_APP_SETTINGS_JWT_EXP: '3600'
-
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:
     profiles: [supabase]
@@ -216,14 +194,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      rest:
-        condition: service_started
     environment:
       ANON_KEY: *anon-key
       SERVICE_KEY: *service-role-key
       AUTH_JWT_SECRET: *jwt-secret
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      POSTGREST_URL: http://rest:3000
       FILE_SIZE_LIMIT: '52428800' # 50MiB (supabase/config.toml)
       STORAGE_BACKEND: file
       FILE_STORAGE_BACKEND_PATH: /var/lib/storage
@@ -283,9 +258,6 @@ services:
       POSTGRES_PASSWORD: *pg-password
       POSTGRES_USER_READ_WRITE: postgres
       PG_META_CRYPTO_KEY: ${PG_META_CRYPTO_KEY:-dev-crypto-key}
-      PGRST_DB_SCHEMAS: public,storage
-      PGRST_DB_MAX_ROWS: '5000'
-      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
       DEFAULT_ORGANIZATION_NAME: Territoires en Transitions
       DEFAULT_PROJECT_NAME: tet-local
       SUPABASE_URL: http://kong:8000

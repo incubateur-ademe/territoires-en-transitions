@@ -9,13 +9,13 @@ inputs:
     description: Pull image from the registry
     required: false
   api-url:
-    description: Optional Supabase API base URL used to wait for REST and Auth readiness
+    description: Optional Supabase API base URL used to wait for Auth readiness
     required: false
     default: ''
   excluded-containers:
     description: Supabase services to exclude from startup and image prefetching
     required: false
-    default: imgproxy,postgres-meta,logflare,vector,supavisor,studio
+    default: postgrest,imgproxy,postgres-meta,logflare,vector,supavisor,studio
 
 outputs:
   started:
@@ -56,14 +56,6 @@ runs:
         EXCLUDED_CONTAINERS: ${{ inputs.excluded-containers }}
         SUPABASE_NETWORK: ${{ inputs.network }}
       run: bash "$GITHUB_ACTION_PATH/start-supabase.sh" "$EXCLUDED_CONTAINERS" "$SUPABASE_NETWORK"
-
-    - name: Wait for REST API
-      if: ${{ inputs.api-url != '' }}
-      uses: ./.github/actions/wait-for-url
-      with:
-        url: ${{ inputs.api-url }}/rest/v1/
-        retry: '60'
-        retry_delay: '2'
 
     - name: Wait for Auth API
       if: ${{ inputs.api-url != '' }}
