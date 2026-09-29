@@ -1,4 +1,4 @@
-import { saveBlob } from '@/app/utils/save-blob';
+import { fetchAndSaveFile } from '@/app/utils/fetch-and-save-file';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/toast/download-file-mutation-options';
 import { useMutation } from '@tanstack/react-query';
 
@@ -7,10 +7,7 @@ export const useDownloadFile = () =>
   useMutation({
     mutationKey: ['download_file'],
 
-    mutationFn: async (filename: string) => {
-      const response = await fetch(`/${filename}`);
-      const blob = await response.blob();
-      await saveBlob(blob, filename);
-    },
+    mutationFn: (filename: string) =>
+      fetchAndSaveFile({ url: `/${filename}`, filename }),
     ...DOWNLOAD_FILE_MUTATION_OPTIONS,
   });

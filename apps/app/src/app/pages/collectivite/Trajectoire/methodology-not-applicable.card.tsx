@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useDownloadFile } from '@/app/utils/useDownloadFile';
+import { useDownloadFile } from '@/app/utils/use-download-file';
 import { EmptyCard, Event, useEventTracker } from '@tet/ui';
 import { DOC_METHODO } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import DbErrorPicto from './db-error.svg';
