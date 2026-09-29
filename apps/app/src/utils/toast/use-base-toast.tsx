@@ -1,7 +1,7 @@
 import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type Hidden = null;
 export type ToastStatus = Hidden | 'success' | 'error' | 'info';
@@ -27,16 +27,15 @@ export const useBaseToast = () => {
    * soit invoquée dans le rendu d'un composant react pour que l'affichage soit
    * effectif)
    */
-  const setToast = (
-    status: ToastStatus,
-    message: string,
-    autoHideDuration?: number
-  ) => {
-    setMessage(message);
-    setStatus(status);
-    setDuration(autoHideDuration);
-    setOccurrence((n) => n + 1);
-  };
+  const setToast = useCallback(
+    (status: ToastStatus, message: string, autoHideDuration?: number) => {
+      setMessage(message);
+      setStatus(status);
+      setDuration(autoHideDuration);
+      setOccurrence((n) => n + 1);
+    },
+    []
+  );
 
   /**
    * Assure le rendu du composant (affiche le message quand `setToast` a été appelé)
