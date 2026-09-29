@@ -35,6 +35,7 @@ import { setupTrpcClient } from 'tests/shared/trpc.utils';
 import { UserFixture } from 'tests/users/users.fixture';
 import { LabellisationPom } from './labellisations/labellisation.pom';
 import { AuditLabellisationPom } from './labellisations/audit-labellisation.pom';
+import { IndicateursLiesAuScorePom } from './scores/indicateurs-lies-au-score.pom';
 import { ReferentielScoresPom } from './scores/referentiel-scores.pom';
 
 class ReferentielsFixtureFactory extends FixtureFactory {
@@ -297,6 +298,7 @@ export const testWithReferentiels = testWithCollectivites.extend<{
   labellisationPom: LabellisationPom;
   auditLabellisationPom: AuditLabellisationPom;
   referentielScoresPom: ReferentielScoresPom;
+  indicateursLiesAuScorePom: IndicateursLiesAuScorePom;
 }>({
   referentiels: async ({ collectivites }, use) => {
     const referentiels = new ReferentielsFixtureFactory();
@@ -314,5 +316,8 @@ export const testWithReferentiels = testWithCollectivites.extend<{
   referentielScoresPom: async ({ page }, use) => {
     const referentielScoresPom = new ReferentielScoresPom(page);
     await use(referentielScoresPom);
+  },
+  indicateursLiesAuScorePom: async ({ page }, use) => {
+    await use(new IndicateursLiesAuScorePom(page));
   },
 });
