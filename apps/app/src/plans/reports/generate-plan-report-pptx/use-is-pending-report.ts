@@ -16,7 +16,7 @@ export const useIsPendingReport = () => {
   const trpc = useTRPC();
   const { setToast, renderToast } = useBaseToast();
   const collectiviteId = useCollectiviteId();
-  const lastDownloadedReportIdRef = useRef<string | null>(null);
+  const handledReportIdRef = useRef<string | null>(null);
   const [pendingReportId, setPendingReportId] =
     useQueryState('downloadReportId');
 
@@ -43,7 +43,16 @@ export const useIsPendingReport = () => {
   useEffect(() => {
     if (!reportStatus || !pendingReportId) return;
 
-    if (reportStatus.status === ReportGenerationStatusEnum.FAILED) {
+    const { status } = reportStatus;
+    const isGenerationOver =
+      status === ReportGenerationStatusEnum.COMPLETED ||
+      status === ReportGenerationStatusEnum.FAILED;
+    if (!isGenerationOver) return;
+
+    if (handledReportIdRef.current === reportStatus.id) return;
+    handledReportIdRef.current = reportStatus.id;
+
+    if (status === ReportGenerationStatusEnum.FAILED) {
       setToast(
         'error',
         appLabels.rapportGenerationEchouee(reportStatus.errorMessage)
@@ -52,8 +61,6 @@ export const useIsPendingReport = () => {
       return;
     }
 
-    if (reportStatus.status !== ReportGenerationStatusEnum.COMPLETED) return;
-
     const { fileId } = reportStatus;
     if (fileId === null) {
       setToast('error', appLabels.rapportFichierIntrouvable);
@@ -61,9 +68,6 @@ export const useIsPendingReport = () => {
       return;
     }
 
-    if (lastDownloadedReportIdRef.current === reportStatus.id) return;
-
-    lastDownloadedReportIdRef.current = reportStatus.id;
     downloadDocument(
       { collectiviteId, fichierId: fileId },
       { onSettled: () => setPendingReportId(null) }
