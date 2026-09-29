@@ -10,7 +10,7 @@ import {
  * « 60 jours ou plus » : passé deux mois, le dépassement compte plus que sa
  * valeur.
  *
- * À ne pas confondre avec `DEMARCHE_PCAET_DELAI_AVIS_MOIS` (3 mois), le délai
+ * À ne pas confondre avec `DEMARCHE_PCAET_DELAI_AVIS_MOIS`, le délai
  * légal au-delà duquel l'instruction se clôt d'elle-même. Ce plafond-ci est un
  * repère d'affichage, plus court, demandé par le métier.
  */

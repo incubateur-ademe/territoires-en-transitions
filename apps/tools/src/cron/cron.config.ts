@@ -55,7 +55,7 @@ export const JOBS_CONFIG = [
   {
     // Une fois par nuit : la validation du dernier avis clôt le dossier sur le
     // moment, cette passe n'est là que pour les dossiers restés sans avis
-    // jusqu'à l'échéance — un délai légal de trois mois, insensible à la
+    // jusqu'à l'échéance — un délai légal de plusieurs mois, insensible à la
     // latence. Elle rattrape aussi les bascules manquées (statut revenu en
     // arrière, échec au moment de la validation).
     name: 'clore-instructions-pcaet',

@@ -116,7 +116,7 @@ export const TransmisEcheanceProche: Story = {
   },
 };
 
-/** Délai légal de 3 mois écoulé : badge d'erreur, l'adoption devient possible. */
+/** Délai légal écoulé : badge d'erreur, l'adoption devient possible. */
 export const TransmisDelaiEcoule: Story = {
   args: {
     statut: 'transmis_pour_avis',

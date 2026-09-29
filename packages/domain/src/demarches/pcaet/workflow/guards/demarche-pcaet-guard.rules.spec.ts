@@ -98,10 +98,10 @@ describe('règles pures des guards', () => {
   it('computeAvisDeadline : délai légal appliqué à la date de transmission', () => {
     expect(
       computeAvisDeadline(new Date('2026-08-06T10:00:00.000Z')).toISOString()
-    ).toBe('2026-11-06T10:00:00.000Z');
-    // Fin de mois : le débordement est reporté (31 août + 3 mois → 1er déc.).
+    ).toBe('2026-12-06T10:00:00.000Z');
+    // Fin de mois : le débordement est reporté (31 oct. + 4 mois → 3 mars).
     expect(
-      computeAvisDeadline(new Date('2026-08-31T10:00:00.000Z')).toISOString()
-    ).toBe('2026-12-01T10:00:00.000Z');
+      computeAvisDeadline(new Date('2026-10-31T10:00:00.000Z')).toISOString()
+    ).toBe('2027-03-03T10:00:00.000Z');
   });
 });
