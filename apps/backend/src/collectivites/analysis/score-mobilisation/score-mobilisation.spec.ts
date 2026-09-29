@@ -220,13 +220,13 @@ describe('daily-ct-check', () => {
     });
   });
 
-  it("propage une erreur de lecture de la CT qui n'est pas une absence", async () => {
+  it("renvoie collectivite_read_failed quand la lecture de la CT échoue pour une autre raison qu'une absence", async () => {
     const connectionLost = new Error('database connection lost');
     const { service, llm } = toDependencies({
       collectiviteReadError: connectionLost,
     });
 
-    const calculation = service.calculateCollectiviteMobilisation(
+    const result = await service.calculateCollectiviteMobilisation(
       toInput([
         {
           ficheId: 1,
@@ -236,7 +236,16 @@ describe('daily-ct-check', () => {
       ])
     );
 
-    await expect(calculation).rejects.toBe(connectionLost);
-    expect(llm.generateStructured).not.toHaveBeenCalled();
+    expect({
+      result,
+      llmCalls: llm.generateStructured.mock.calls.length,
+    }).toEqual({
+      result: {
+        success: false,
+        error: { kind: 'collectivite_read_failed', collectiviteId },
+        cause: connectionLost,
+      },
+      llmCalls: 0,
+    });
   });
 });
