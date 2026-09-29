@@ -453,6 +453,25 @@ son action. Le rapport compte les « site web » par collectivité, et nomme les
 fichiers posés sur une ligne de bibliothèque qui existait déjà (la fiche affiche
 alors le nom de cette ligne) et les « site web » refusés, avec leur adresse.
 
+#### Annuler les pièces des fiches
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-pieces-fiches/annuler.ts [--confirm]
+```
+
+Retire, d'après `lignes_ecrites`, les annexes que l'import a écrites, en
+remettant « Modifié le » de leurs fiches tel qu'il était, puis les lignes de
+bibliothèque que l'import a créées et auxquelles plus aucun document ne pointe,
+et enfin les traces et les écarts de l'étape. À lancer avant d'annuler l'import
+des fiches, qui refuse sinon.
+
+**Ce qu'elle laisse** : les lignes de bibliothèque qui existaient avant
+l'import, et celles qu'il a créées mais qu'un autre document utilise depuis
+(preuve, pièce de dossier, autre annexe) ; les lignes que le produit écrit dans
+l'historique des fiches à chaque annexe ajoutée ou retirée (l'annulation des
+fiches les retire). **Ce qu'elle emporte** : ce que la collectivité a changé
+sur les annexes reprises depuis l'import (le rapport les compte).
+
 #### Ce qui arrête l'import des pièces
 
 | Garde                                                               | Quoi faire                                                                   |
