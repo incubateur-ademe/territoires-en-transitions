@@ -92,6 +92,9 @@ test.describe('Create and update document', () => {
       .click();
 
     await referentielScoresPom.documentsPom.setTestDocument();
+    // Le nom du fichier s'affiche dès la sélection : sans attendre la carte, le
+    // rôle passe en lecture avant le rattachement de la preuve, qui est refusé.
+    await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
     // Now change to lecture user
     await collectivite.setUserCollectiviteRole(CollectiviteRole.LECTURE);
