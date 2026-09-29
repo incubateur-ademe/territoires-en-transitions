@@ -3,6 +3,8 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { Collectivite } from '@tet/domain/collectivites';
+import { match } from 'ts-pattern';
 import { LevierMobilisation } from '../mobilisation.repository';
 import { calculateMobilisation } from '../pipeline/calculate-mobilisation/calculate-mobilisation';
 import { groupVoletsByLevier } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
@@ -15,8 +17,6 @@ export type MobilisationScore = {
   leviers: LevierMobilisation[];
 };
 
-type CollectiviteForPrompt = { nom: string; population: number | null };
-
 @Injectable()
 export class ScoreMobilisationService {
   constructor(
@@ -25,6 +25,7 @@ export class ScoreMobilisationService {
   ) {}
 
   async calculateCollectiviteMobilisation({
+    enjeu,
     collectiviteId,
     volets,
     fiches,
@@ -36,10 +37,35 @@ export class ScoreMobilisationService {
       return failure({ kind: 'collectivite_not_found', collectiviteId });
     }
 
+    return match(enjeu)
+      .with('ges', () =>
+        this.calculateGesMobilisation({
+          collectiviteId,
+          collectivite,
+          volets,
+          fiches,
+        })
+      )
+      .exhaustive();
+  }
+
+  private async calculateGesMobilisation({
+    collectiviteId,
+    collectivite,
+    volets,
+    fiches,
+  }: Omit<CalculateCollectiviteMobilisationInput, 'enjeu'> & {
+    collectivite: Pick<Collectivite, 'nom' | 'population'>;
+  }): Promise<
+    Result<MobilisationScore, CalculateCollectiviteMobilisationError>
+  > {
     const fichesById = new Map(fiches.map((fiche) => [fiche.ficheId, fiche]));
+    const voletsOfKnownFiches = volets.filter(({ ficheId }) =>
+      fichesById.has(ficheId)
+    );
 
     const outcomes = await mapWithConcurrency(
-      groupVoletsByLevier(volets),
+      groupVoletsByLevier(voletsOfKnownFiches),
       LEVIERS_IN_PARALLEL,
       async (levierVolets) => ({
         levierId: levierVolets.levierId,
@@ -70,11 +96,12 @@ export class ScoreMobilisationService {
 
   private async readCollectivite(
     collectiviteId: number
-  ): Promise<CollectiviteForPrompt | undefined> {
+  ): Promise<Pick<Collectivite, 'nom' | 'population'> | undefined> {
     try {
-      const { nom, population } =
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-      return { nom, population };
+      const { collectivite } = await this.collectivitesService.getCollectivite(
+        collectiviteId
+      );
+      return collectivite;
     } catch (error) {
       if (error instanceof NotFoundException) {
         return undefined;

@@ -13,8 +13,8 @@ describe('MobilisationRepository contract', () => {
   let db: DatabaseService;
   let repository: CollectiviteVoletGesRepository;
   let collectiviteId: number;
-  let autreCollectiviteId: number;
-  let collectiviteSansEngagementId: number;
+  let otherCollectiviteId: number;
+  let collectiviteWithoutMobilisationId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -22,11 +22,12 @@ describe('MobilisationRepository contract', () => {
     repository = app.get(CollectiviteVoletGesRepository);
 
     const collectivite = await addTestCollectivite(db);
-    const autreCollectivite = await addTestCollectivite(db);
-    const collectiviteSansEngagement = await addTestCollectivite(db);
+    const otherCollectivite = await addTestCollectivite(db);
+    const collectiviteWithoutMobilisation = await addTestCollectivite(db);
     collectiviteId = collectivite.collectivite.id;
-    autreCollectiviteId = autreCollectivite.collectivite.id;
-    collectiviteSansEngagementId = collectiviteSansEngagement.collectivite.id;
+    otherCollectiviteId = otherCollectivite.collectivite.id;
+    collectiviteWithoutMobilisationId =
+      collectiviteWithoutMobilisation.collectivite.id;
 
     await db.db.insert(collectiviteVoletGesTable).values([
       {
@@ -54,7 +55,7 @@ describe('MobilisationRepository contract', () => {
         createdAt: '2026-09-20T02:00:00.000Z',
       },
       {
-        collectiviteId: autreCollectiviteId,
+        collectiviteId: otherCollectiviteId,
         levierId: 'biogaz',
         categorie: 'financement',
         note: 1,
@@ -65,8 +66,8 @@ describe('MobilisationRepository contract', () => {
 
     return async () => {
       await collectivite.cleanup();
-      await autreCollectivite.cleanup();
-      await collectiviteSansEngagement.cleanup();
+      await otherCollectivite.cleanup();
+      await collectiviteWithoutMobilisation.cleanup();
       await app.close();
     };
   });
@@ -74,35 +75,40 @@ describe('MobilisationRepository contract', () => {
   const listTestCollectivitesWithMobilisation = async (): Promise<
     Result<number[], VoletError>
   > => {
-    const result = await repository.listCollectivitesWithMobilisation();
-    if (!result.success) {
-      return result;
+    const collectiviteIdsResult =
+      await repository.listCollectivitesWithMobilisation();
+    if (!collectiviteIdsResult.success) {
+      return collectiviteIdsResult;
     }
     const testCollectiviteIds = [
       collectiviteId,
-      autreCollectiviteId,
-      collectiviteSansEngagementId,
+      otherCollectiviteId,
+      collectiviteWithoutMobilisationId,
     ];
     return success(
-      result.data.filter((id) => testCollectiviteIds.includes(id))
+      collectiviteIdsResult.data.filter((id) =>
+        testCollectiviteIds.includes(id)
+      )
     );
   };
 
   it('listCollectivitesWithMobilisation renvoie toutes les CT qui ont un engagement', async () => {
     expect(await listTestCollectivitesWithMobilisation()).toEqual({
       success: true,
-      data: [collectiviteId, autreCollectiviteId],
+      data: [collectiviteId, otherCollectiviteId],
     });
   });
 
   it('listCollectivitesWithMobilisation ne renvoie pas une CT sans engagement', async () => {
-    const result = await repository.listCollectivitesWithMobilisation();
+    const collectiviteIdsResult =
+      await repository.listCollectivitesWithMobilisation();
 
     expect({
-      success: result.success,
-      hasCollectiviteSansEngagement:
-        result.success && result.data.includes(collectiviteSansEngagementId),
-    }).toEqual({ success: true, hasCollectiviteSansEngagement: false });
+      success: collectiviteIdsResult.success,
+      hasCollectiviteWithoutMobilisation:
+        collectiviteIdsResult.success &&
+        collectiviteIdsResult.data.includes(collectiviteWithoutMobilisationId),
+    }).toEqual({ success: true, hasCollectiviteWithoutMobilisation: false });
   });
 
   it("getMobilisationState renvoie la date de calcul de l'engagement de la CT et toutes les fiches qu'il cite", async () => {
@@ -119,7 +125,7 @@ describe('MobilisationRepository contract', () => {
   it('getMobilisationState renvoie never_calculated pour une CT sans engagement', async () => {
     expect(
       await repository.getMobilisationState({
-        collectiviteId: collectiviteSansEngagementId,
+        collectiviteId: collectiviteWithoutMobilisationId,
       })
     ).toEqual({
       success: true,

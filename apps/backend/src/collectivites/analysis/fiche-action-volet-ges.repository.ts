@@ -35,7 +35,12 @@ export class FicheActionVoletGesRepository implements VoletRepository {
           ficheActionTable,
           eq(ficheActionTable.id, ficheActionVoletGesTable.ficheId)
         )
-        .where(eq(ficheActionTable.collectiviteId, collectiviteId))
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, collectiviteId),
+            eq(ficheActionTable.deleted, false)
+          )
+        )
         .orderBy(
           asc(ficheActionVoletGesTable.ficheId),
           asc(ficheActionVoletGesTable.levierId),
@@ -45,7 +50,7 @@ export class FicheActionVoletGesRepository implements VoletRepository {
       return success(volets);
     } catch (error) {
       this.logger.error(
-        `Lecture des volets de la collectivité ${collectiviteId}: ${getErrorMessage(
+        `Could not list volets of collectivite ${collectiviteId}: ${getErrorMessage(
           error
         )}`
       );
@@ -68,9 +73,9 @@ export class FicheActionVoletGesRepository implements VoletRepository {
       return success(undefined);
     } catch (error) {
       this.logger.error(
-        `Suppression des volets de ${ficheIds.length} fiches: ${getErrorMessage(
-          error
-        )}`
+        `Could not delete volets of ${
+          ficheIds.length
+        } fiches: ${getErrorMessage(error)}`
       );
       return failure(VoletErrorEnum.DELETE_VOLETS_ERROR);
     }

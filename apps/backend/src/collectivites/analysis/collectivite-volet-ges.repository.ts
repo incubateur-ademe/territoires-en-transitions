@@ -4,7 +4,8 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { LevierId } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { uniq } from 'es-toolkit';
 import {
   LevierMobilisation,
   MobilisationRepository,
@@ -50,32 +51,29 @@ export class CollectiviteVoletGesRepository implements MobilisationRepository {
     collectiviteId: number;
   }): Promise<Result<MobilisationState, VoletError>> {
     try {
-      const citedFiches = sql.identifier('cited_fiches');
-      const ficheIdColumn = sql.identifier('fiche_id');
-      const citedFiche = sql`${citedFiches}.${ficheIdColumn}`;
-      const [row] = await this.db
+      const mobilisationRows = await this.db
         .select({
-          calculatedAt: sql<string>`min(${collectiviteVoletGesTable.createdAt})`,
-          ficheIds: sql<
-            number[]
-          >`coalesce(array_agg(distinct ${citedFiche} order by ${citedFiche}) filter (where ${citedFiche} is not null), '{}')`,
+          createdAt: collectiviteVoletGesTable.createdAt,
+          ficheIds: collectiviteVoletGesTable.ficheIds,
         })
         .from(collectiviteVoletGesTable)
-        .leftJoin(
-          sql`unnest(${collectiviteVoletGesTable.ficheIds}) as ${citedFiches}(${ficheIdColumn})`,
-          sql`true`
-        )
-        .where(eq(collectiviteVoletGesTable.collectiviteId, collectiviteId))
-        .groupBy(collectiviteVoletGesTable.collectiviteId);
+        .where(eq(collectiviteVoletGesTable.collectiviteId, collectiviteId));
 
-      if (row === undefined) {
+      if (mobilisationRows.length === 0) {
         return success({ kind: 'never_calculated' });
       }
 
+      const citedFicheIds = uniq(
+        mobilisationRows.flatMap(({ ficheIds }) => ficheIds)
+      );
       return success({
         kind: 'calculated',
-        calculatedAt: new Date(row.calculatedAt),
-        ficheIds: row.ficheIds,
+        calculatedAt: new Date(
+          Math.min(
+            ...mobilisationRows.map(({ createdAt }) => Date.parse(createdAt))
+          )
+        ),
+        ficheIds: citedFicheIds.toSorted((a, b) => a - b),
       });
     } catch (error) {
       this.logger.error(
