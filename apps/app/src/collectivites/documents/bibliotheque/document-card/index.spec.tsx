@@ -174,6 +174,11 @@ const cardChildren = (container: HTMLElement): Element[] => [
   ...(container.querySelector('[data-test="carte-doc"]')?.children ?? []),
 ];
 
+const menuButtonLabels = (container: HTMLElement): string[] =>
+  [...container.querySelectorAll('button')]
+    .filter((button) => button.textContent?.trim() === '')
+    .map((button) => button.getAttribute('title') ?? '');
+
 describe('DocumentCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -227,7 +232,7 @@ describe('DocumentCard', () => {
       <DocumentCard document={preuveReglementaireFichier} />
     );
 
-    expect(container.querySelector('button')).toBeNull();
+    expect(cardChildren(container)).toHaveLength(1);
     expect(container.innerHTML).toMatchSnapshot();
   });
 
@@ -349,9 +354,42 @@ describe('DocumentCard', () => {
   test('un clic sur le titre ouvre le document', () => {
     render(<DocumentCard document={preuveReglementaireFichier} />);
 
-    fireEvent.click(screen.getByTitle('Télécharger le fichier'));
+    fireEvent.click(screen.getByRole('button', { name: /preuve_input\.txt/ }));
 
     expect(openPreuve).toHaveBeenCalledWith(preuveReglementaireFichier);
+  });
+
+  test("le titre d'un fichier est un bouton nommé par le nom du fichier", () => {
+    render(<DocumentCard document={preuveReglementaireFichier} />);
+
+    expect(
+      screen.getByRole('button', { name: /preuve_input\.txt/ })
+    ).toBeTruthy();
+  });
+
+  test("le titre d'un lien est un bouton nommé par le titre du lien", () => {
+    render(<DocumentCard document={preuveReglementaireLien} />);
+
+    expect(screen.getByRole('button', { name: 'dodo' })).toBeTruthy();
+  });
+
+  test('le titre est focusable', () => {
+    render(<DocumentCard document={preuveReglementaireFichier} />);
+    const titleButton = screen.getByRole('button', {
+      name: /preuve_input\.txt/,
+    });
+
+    titleButton.focus();
+
+    expect(document.activeElement).toBe(titleButton);
+  });
+
+  test("le nom d'un fichier introuvable n'est pas un bouton", () => {
+    render(<DocumentCard document={documentFichierManquant} />);
+
+    expect(
+      screen.queryByRole('button', { name: /rapport-perdu\.pdf/ })
+    ).toBeNull();
   });
 
   test('deplier puis replier le commentaire tronque', () => {
@@ -450,14 +488,10 @@ describe('DocumentCard', () => {
     expect(onReplace).toHaveBeenCalledWith(FICHIER_CHOISI_ID);
   });
 
-  test('un fichier introuvable affiche son nom sans lien de téléchargement', () => {
-    const { container } = render(
-      <DocumentCard document={documentFichierManquant} />
-    );
+  test('un fichier introuvable affiche son nom', () => {
+    render(<DocumentCard document={documentFichierManquant} />);
 
-    const titre = container.querySelector('[data-test="name"]');
-    expect(titre?.textContent).toContain('rapport-perdu.pdf');
-    expect(titre?.getAttribute('title')).toBeNull();
+    expect(screen.getByText(/rapport-perdu\.pdf/)).toBeTruthy();
   });
 
   test('un fichier introuvable est signalé par un badge', () => {
@@ -512,7 +546,7 @@ describe('DocumentCard', () => {
   });
 
   test('une action masquee par visibleWhen ne donne pas son entree de menu', () => {
-    const { container } = render(
+    render(
       <DocumentCard document={preuveReglementaireFichier}>
         <DocumentCard.Actions>
           <DocumentCard.Edit />
@@ -525,7 +559,6 @@ describe('DocumentCard', () => {
       screen.getByRole('button', { name: 'Éditer le document' })
     ).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Supprimer' })).toBeNull();
-    expect(container.querySelectorAll('button')).toHaveLength(1);
   });
 
   test('un conteneur d actions masque ne rend pas le menu', () => {
@@ -567,11 +600,11 @@ describe('DocumentCard', () => {
       </DocumentCard>
     );
 
-    expect(
-      [...container.querySelectorAll('button')].map((button) =>
-        button.getAttribute('title')
-      )
-    ).toEqual(['Éditer le document', 'Commenter', 'Supprimer']);
+    expect(menuButtonLabels(container)).toEqual([
+      'Éditer le document',
+      'Commenter',
+      'Supprimer',
+    ]);
   });
 
   test('refuse deux fois la meme action', () => {
