@@ -4,7 +4,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useUpdateBibliothequeFichier } from '../bibliotheque/use-edit-preuve';
 import {
   DEFAULT_FILE_CONSTRAINTS,
@@ -29,7 +29,6 @@ import {
   DuplicatedPreuveType,
   OnDuplicatedDocumentsAdded,
   UploadStatusCode,
-  UploadStatusCompleted,
 } from './types';
 import { useFileUploadList } from './use-file-upload-list';
 
@@ -73,7 +72,7 @@ export const AddFile = (props: AddFileProps) => {
 
   const collectiviteId = useCollectiviteId();
 
-  const { mutate: updateDocument } = useUpdateBibliothequeFichier();
+  const { mutateAsync: updateDocument } = useUpdateBibliothequeFichier();
 
   const {
     items: currentSelection,
@@ -88,14 +87,28 @@ export const AddFile = (props: AddFileProps) => {
   const submission = getFilesSubmission(currentSelection);
   const isSubmitDisabled = !submission.canSubmit || isSubmitting;
 
+  const canSetConfidentiel = canChooseConfidentiel(docType);
+
   const submitValidFile = async ({
     file,
     status,
-  }: ValidFileItem): Promise<SubmittedValidFile> => ({
-    file,
-    status,
-    addedDocument: await onAddFile(status.fichierId),
-  });
+  }: ValidFileItem): Promise<SubmittedValidFile> => {
+    const isUploadedFromThisModal = status.code === UploadStatusCode.completed;
+
+    if (isUploadedFromThisModal && canSetConfidentiel) {
+      await updateDocument({
+        collectiviteId,
+        hash: status.hash,
+        confidentiel,
+      });
+    }
+
+    return {
+      file,
+      status,
+      addedDocument: await onAddFile(status.fichierId),
+    };
+  };
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -129,38 +142,6 @@ export const AddFile = (props: AddFileProps) => {
 
     onClose();
   };
-
-  // La confidentialité choisie ici ne s'applique qu'aux fichiers téléversés
-  // depuis cette modale : un fichier déjà présent dans la bibliothèque garde la
-  // sienne, et on ne touche à rien si le type de document n'offre pas le choix.
-  const uploadedFiles = useMemo(
-    () =>
-      currentSelection.filter(
-        ({ status }) => status.code === UploadStatusCode.completed
-      ),
-    [currentSelection]
-  );
-
-  useEffect(() => {
-    const update = async () => {
-      if (
-        collectiviteId &&
-        uploadedFiles.length &&
-        canChooseConfidentiel(docType)
-      ) {
-        await Promise.all(
-          uploadedFiles.map(({ status }) =>
-            updateDocument({
-              collectiviteId,
-              hash: (status as UploadStatusCompleted).hash,
-              confidentiel,
-            })
-          )
-        );
-      }
-    };
-    update();
-  }, [collectiviteId, confidentiel, docType, updateDocument, uploadedFiles]);
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
