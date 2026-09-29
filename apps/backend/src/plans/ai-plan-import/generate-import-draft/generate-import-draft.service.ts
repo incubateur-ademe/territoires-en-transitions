@@ -11,9 +11,14 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
-import { AI_PLAN_IMPORT_SOURCE_BUCKET } from '../ai-plan-import.constants';
+import {
+  AI_PLAN_IMPORT_SOURCE_BUCKET,
+  EVENT_AI_PLAN_IMPORT_FAILED,
+  EVENT_AI_PLAN_IMPORT_SUCCEEDED,
+} from '../ai-plan-import.constants';
 import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
@@ -51,7 +56,8 @@ export class GenerateImportDraftService {
     private readonly importPlanService: ImportPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly notifyPlanImportedService: NotifyPlanImportedService,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly trackingService: TrackingService
   ) {}
 
   async generate(
@@ -95,14 +101,36 @@ export class GenerateImportDraftService {
   private async markFailed(
     jobId: string,
     message: string,
-    draft?: PlanDraft
+    {
+      draft,
+      stepStates,
+      failedStep,
+    }: {
+      draft?: PlanDraft;
+      stepStates?: StepStates;
+      failedStep?: StepName;
+    } = {}
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
-    return this.jobRepository.markFailed({
+    const marked = await this.jobRepository.markFailed({
       id: jobId,
       error: message,
-      stepStates: initialStepStates(),
+      stepStates: stepStates ?? initialStepStates(),
       draft,
     });
+    if (marked.success) {
+      this.trackingService.capture({
+        distinctId: marked.data.createdBy,
+        event: EVENT_AI_PLAN_IMPORT_FAILED,
+        properties: {
+          collectiviteId: marked.data.collectiviteId,
+          jobId,
+          failedStep,
+          reason: message,
+          durationSeconds: secondsSince(marked.data.createdAt),
+        },
+      });
+    }
+    return marked;
   }
 
   private async runPipeline(
@@ -145,18 +173,11 @@ export class GenerateImportDraftService {
       this.logger.warn(`Import ${job.id}: ${warning}`);
     }
     if (outcome.status === 'failed') {
-      const marked = await this.jobRepository.markFailed({
-        id: job.id,
-        error: pipelineErrorMessage(outcome.failedStep, outcome.error),
-        stepStates: outcome.stepStates,
-      });
-      return marked.success
-        ? success(undefined)
-        : failure({
-            kind: 'failure_record_failed',
-            jobId: job.id,
-            cause: marked.error,
-          });
+      return this.recordFailure(
+        job.id,
+        pipelineErrorMessage(outcome.failedStep, outcome.error),
+        { stepStates: outcome.stepStates, failedStep: outcome.failedStep }
+      );
     }
 
     return this.persistDraftAsPlan(job, outcome.draft, outcome.stepStates);
@@ -217,8 +238,23 @@ export class GenerateImportDraftService {
     );
 
     if (!created.success) {
-      return this.recordFailure(job.id, created.error, normalizedDraft);
+      return this.recordFailure(job.id, created.error, {
+        draft: normalizedDraft,
+      });
     }
+
+    const recap = countPlanContent(planInput);
+    this.trackingService.capture({
+      distinctId: job.createdBy,
+      event: EVENT_AI_PLAN_IMPORT_SUCCEEDED,
+      properties: {
+        collectiviteId: job.collectiviteId,
+        jobId: job.id,
+        planId: created.data,
+        ...recap,
+        durationSeconds: secondsSince(job.createdAt),
+      },
+    });
 
     // Hors transaction : un envoi manqué ne défait pas le plan créé.
     await this.notifyPlanImportedService.notifyPlanImported({
@@ -226,7 +262,7 @@ export class GenerateImportDraftService {
       collectiviteId: job.collectiviteId,
       planId: created.data,
       planName: job.options.planName,
-      recap: countPlanContent(planInput),
+      recap,
     });
     return success(undefined);
   }
@@ -254,9 +290,13 @@ export class GenerateImportDraftService {
   private async recordFailure(
     jobId: string,
     message: string,
-    draft?: PlanDraft
+    options: {
+      draft?: PlanDraft;
+      stepStates?: StepStates;
+      failedStep?: StepName;
+    } = {}
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const marked = await this.markFailed(jobId, message, draft);
+    const marked = await this.markFailed(jobId, message, options);
     return marked.success
       ? success(undefined)
       : failure({ kind: 'failure_record_failed', jobId, cause: marked.error });
@@ -291,6 +331,9 @@ const readDocumentErrorMessage = (error: ReadDocumentError): string => {
       } page(s) en échec : ${error.reasons.join(', ')})`;
   }
 };
+
+const secondsSince = (isoDate: string): number =>
+  Math.max(0, Math.round((Date.now() - new Date(isoDate).getTime()) / 1000));
 
 const WRONG_TOME_LABELS: Record<string, string> = {
   evaluation_environnementale:

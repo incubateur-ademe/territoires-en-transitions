@@ -5,6 +5,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
@@ -14,6 +15,7 @@ import {
   AI_PLAN_IMPORT_MAX_SOURCE_BYTES,
   AI_PLAN_IMPORT_MAX_UNCOMPRESSED_BYTES,
   AI_PLAN_IMPORT_SOURCE_BUCKET,
+  EVENT_AI_PLAN_IMPORT_STARTED,
 } from '../ai-plan-import.constants';
 import {
   AiPlanImportErrorEnum,
@@ -50,6 +52,7 @@ export class EnqueueImportService {
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
     private readonly listPlanTypesService: ListPlanTypesService,
+    private readonly trackingService: TrackingService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -164,6 +167,19 @@ export class EnqueueImportService {
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
     }
 
+    this.trackingService.capture({
+      distinctId: user.id,
+      event: EVENT_AI_PLAN_IMPORT_STARTED,
+      properties: {
+        collectiviteId,
+        jobId,
+        mimeType,
+        fileSizeBytes: file.size,
+        planType: options.planType,
+        withVerifications: options.withVerifications,
+        withSousActions: options.withSousActions,
+      },
+    });
     return success({ jobId });
   }
 

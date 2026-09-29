@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { EVENT_AI_PLAN_IMPORT_VERIFIED } from '@tet/backend/plans/ai-plan-import/ai-plan-import.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { PlanSourceEnum } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetPlanRepository } from '../get-plan/get-plan.repository';
@@ -14,7 +16,8 @@ export class VerifyPlanService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly getPlanRepository: GetPlanRepository,
-    private readonly planVerificationRepository: PlanVerificationRepository
+    private readonly planVerificationRepository: PlanVerificationRepository,
+    private readonly trackingService: TrackingService
   ) {}
 
   /** Confirme qu'un plan importé par IA est conforme à son document. */
@@ -53,6 +56,16 @@ export class VerifyPlanService {
       return verified;
     }
     if (verified.data) {
+      // Émis dans la transaction appelante quand il y en a une : fenêtre
+      // assumée, comme pour la liaison OIDC.
+      this.trackingService.capture({
+        distinctId: user.id,
+        event: EVENT_AI_PLAN_IMPORT_VERIFIED,
+        properties: {
+          collectiviteId: plan.data.collectiviteId,
+          planId,
+        },
+      });
       return success(verified.data);
     }
 

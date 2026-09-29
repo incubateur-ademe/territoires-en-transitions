@@ -4,6 +4,7 @@ import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/l
 import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -104,8 +105,8 @@ const buildService = (overrides: MockOverrides = {}) => {
   const isAllowed = vi.fn(async (_user: unknown, operation: string) =>
     (
       operation === 'plans.fiches.import_in_parallel'
-        ? (overrides.canImportInParallel ?? false)
-        : (overrides.isAllowed ?? true)
+        ? overrides.canImportInParallel ?? false
+        : overrides.isAllowed ?? true
     )
       ? { success: true as const, data: undefined }
       : { success: false as const, error: 'UNAUTHORIZED' as const }
@@ -144,16 +145,21 @@ const buildService = (overrides: MockOverrides = {}) => {
     listPlanTypes,
   } as unknown as ListPlanTypesService;
 
+  const capture = vi.fn();
+  const trackingService = { capture } as unknown as TrackingService;
+
   const service = new EnqueueImportService(
     permissions,
     jobRepository,
     documentStorage,
     listPlanTypesService,
+    trackingService,
     queue
   );
 
   return {
     service,
+    capture,
     createWithinQuotas,
     deleteIfPending,
     storeDocument,
@@ -180,6 +186,28 @@ describe('EnqueueImportService', () => {
       { jobId: 'job-1' },
       { jobId: 'job-1' }
     );
+  });
+
+  it("émet l'événement de lancement une fois le job enfilé", async () => {
+    const { service, capture } = buildService();
+
+    await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(capture).toHaveBeenCalledWith({
+      distinctId: user.id,
+      event: 'plans:import-ia:started',
+      properties: expect.objectContaining({
+        collectiviteId: 10,
+        jobId: 'job-1',
+        mimeType: 'text/csv',
+        fileSizeBytes: expect.any(Number),
+      }),
+    });
   });
 
   it.each([
@@ -407,7 +435,7 @@ describe('EnqueueImportService', () => {
   });
 
   it("supprime l'objet storage puis la ligne quand la mise en file d'attente échoue", async () => {
-    const { service, deleteIfPending, removeDocument, storeDocument } =
+    const { service, deleteIfPending, removeDocument, storeDocument, capture } =
       buildService({
         queueAdd: async () => {
           throw new Error('redis down');
@@ -434,5 +462,6 @@ describe('EnqueueImportService', () => {
     expect(removeDocument.mock.invocationCallOrder[0]).toBeLessThan(
       deleteIfPending.mock.invocationCallOrder[0]
     );
+    expect(capture).not.toHaveBeenCalled();
   });
 });
