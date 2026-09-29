@@ -2,6 +2,7 @@ import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregat
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
@@ -136,6 +137,9 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     executeSingle: vi.fn(async (operation) => operation({} as Transaction)),
   } as unknown as TransactionManager;
 
+  const capture = vi.fn();
+  const trackingService = { capture } as unknown as TrackingService;
+
   return {
     jobRepository,
     documentStorage,
@@ -144,6 +148,8 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     planVerificationRepository,
     notifyPlanImportedService,
     transactionManager,
+    trackingService,
+    capture,
     save,
     markAsImportedByAi,
     notifyPlanImported,
@@ -159,7 +165,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.importPlanService,
     mocks.planVerificationRepository,
     mocks.notifyPlanImportedService,
-    mocks.transactionManager
+    mocks.transactionManager,
+    mocks.trackingService
   );
 
 describe('GenerateImportDraftService', () => {
@@ -187,6 +194,20 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'job-1', createdPlanId: 7 })
     );
+    expect(mocks.capture).toHaveBeenCalledTimes(1);
+    expect(mocks.capture).toHaveBeenCalledWith({
+      distinctId: 'user-1',
+      event: 'plans:import-ia:succeeded',
+      properties: expect.objectContaining({
+        collectiviteId: 10,
+        jobId: 'job-1',
+        planId: 7,
+        axesCount: 1,
+        sousAxesCount: 1,
+        fichesCount: 1,
+        durationSeconds: expect.any(Number),
+      }),
+    });
     expect(mocks.jobRepository.updateStepStates).toHaveBeenLastCalledWith(
       'job-1',
       {
@@ -254,6 +275,16 @@ describe('GenerateImportDraftService', () => {
         error: expect.stringContaining('Document trop long'),
       })
     );
+    expect(mocks.capture).toHaveBeenCalledWith({
+      distinctId: 'user-1',
+      event: 'plans:import-ia:failed',
+      properties: expect.objectContaining({
+        collectiviteId: 10,
+        jobId: 'job-1',
+        failedStep: 'reading',
+        reason: expect.stringContaining('Document trop long'),
+      }),
+    });
   });
 
   it('marque le job failed quand la création du plan échoue', async () => {
@@ -267,6 +298,10 @@ describe('GenerateImportDraftService', () => {
     expect(result).toMatchObject({ success: true });
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
     expect(mocks.notifyPlanImported).not.toHaveBeenCalled();
+    expect(mocks.capture).toHaveBeenCalledTimes(1);
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'plans:import-ia:failed' })
+    );
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'job-1',
@@ -382,5 +417,7 @@ describe('GenerateImportDraftService', () => {
         cause: AiPlanImportErrorEnum.UPDATE_JOB_ERROR,
       },
     });
+    // Rien n'est enregistré : pas d'événement pour un échec qui n'existe pas en base.
+    expect(mocks.capture).not.toHaveBeenCalled();
   });
 });
