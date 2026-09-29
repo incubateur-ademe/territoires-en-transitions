@@ -20,11 +20,9 @@ export const listDossiersInstructionInputSchema = z.object({
   /** Le service instructeur dont on liste le territoire. */
   collectiviteId: z.number().int().positive(),
   /**
-   * Les statuts retenus. Trois cas, et il faut les trois :
+   * Les statuts retenus :
    *
-   * - champ absent : le défaut, qui reproduit ce que l'écran montrait avant
-   *   les filtres — sans les dépôts en chantier, les cycles clos ni les
-   *   collectivités qui n'ont rien déposé, un millier de lignes pour la DGEC ;
+   * - champ absent : le défaut du domaine, partagé avec l'écran ;
    * - liste vide : aucun filtre, tous les statuts. C'est ce que dit
    *   « Désélectionner les options » ;
    * - liste garnie : ces statuts-là.

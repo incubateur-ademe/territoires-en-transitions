@@ -71,26 +71,12 @@ export type PcaetStatutInstruction = z.infer<
 >;
 
 /**
- * Ce que le service voit sans rien demander.
- *
- * Reproduit ce que l'écran montrait avant les filtres : les dossiers dont il a
- * la charge, sans les dépôts en chantier ni les cycles clos. Les exclus sont
- * précisément les nouveautés — une DREAL, et plus encore la DGEC avec son
- * périmètre national, ne veut pas ouvrir sa liste sur un millier de
- * collectivités qui n'ont rien déposé.
- *
- * Le dépôt hors plateforme, lui, y figure : le service y est saisi, et c'est le
- * seul endroit où il apprendra l'existence du dossier — aucune notification ne
- * lui est envoyée, l'instruction ayant eu lieu en dehors. Il le voit sans que
- * rien ne lui soit demandé, et il ne compte pas dans sa charge.
+ * Ce que le service voit sans rien demander : tous les statuts, dépôts en
+ * chantier et collectivités sans dossier compris. Une liste vide n'est pas un
+ * filtre — c'est ce que dit « Désélectionner les options ».
  */
-export const STATUTS_INSTRUCTION_PAR_DEFAUT = [
-  PcaetStatutInstructionEnum.EN_INSTRUCTION,
-  PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
-  PcaetStatutInstructionEnum.INSTRUIT,
-  PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME,
-  PcaetStatutInstructionEnum.ADOPTE,
-] as const;
+export const STATUTS_INSTRUCTION_PAR_DEFAUT: readonly PcaetStatutInstruction[] =
+  [];
 
 /**
  * Traduction de l'état d'une saisine dans le vocabulaire du suivi.

@@ -106,9 +106,8 @@ export const listDossiersInstructionOutputSchema = z.object({
    * Nombre de lignes du périmètre, filtres ignorés.
    *
    * Ce qui distingue « ce service n'a rien à instruire » de « ces filtres-ci ne
-   * rendent rien » — le filtre par défaut masquant à lui seul les dépôts en
-   * chantier et les collectivités sans dossier, `total` à zéro ne dit pas que
-   * le territoire est vide. Ne se déduit pas de `countByStatut`, qui ne compte
+   * rendent rien » : `total` à zéro ne dit pas que le territoire est vide. Ne
+   * se déduit pas de `countByStatut`, qui ne compte
    * que la charge du service et laisse de côté ce qu'il reçoit en lecture.
    */
   totalPerimetre: z.number().int(),

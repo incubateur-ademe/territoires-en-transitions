@@ -55,7 +55,7 @@ const parsers = {
  * La sélection de statuts est-elle celle que l'écran propose de lui-même ?
  *
  * Ce défaut n'est pas un choix de l'agent : le badge du filtre ne doit pas
- * annoncer quatre statuts retenus à quelqu'un qui vient d'arriver.
+ * l'annoncer à quelqu'un qui vient d'arriver.
  */
 const estDefautStatuts = (statuts: PcaetStatutInstruction[]): boolean =>
   statuts.length === STATUTS_INSTRUCTION_PAR_DEFAUT.length &&
