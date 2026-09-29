@@ -502,10 +502,10 @@ describe('DocumentCard', () => {
     expect(container.querySelector('.ri-error-warning-fill')).toBeTruthy();
   });
 
-  test("un fichier introuvable annonce son indisponibilité en toutes lettres", () => {
+  test('un fichier introuvable annonce son indisponibilité en toutes lettres', () => {
     render(<DocumentCard document={documentFichierManquant} />);
 
-    expect(screen.getByText(appLabels.fichierIndisponibleInfo)).toBeTruthy();
+    expect(screen.getByText(appLabels.fichierIndisponible)).toBeTruthy();
   });
 
   test('un fichier confidentiel annonce son mode privé en toutes lettres', () => {

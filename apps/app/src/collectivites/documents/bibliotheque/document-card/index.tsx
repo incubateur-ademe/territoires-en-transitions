@@ -26,18 +26,21 @@ const getVisitDate = (document: DocumentRattache): string | null =>
 
 type DocumentBadgeProps = {
   icon: 'error-warning-fill' | 'lock-fill';
-  label: string;
+  tooltip: string;
+  name: string;
   dataTest?: string;
 };
 
 const DocumentBadge = ({
   icon,
-  label,
+  tooltip,
+  name,
   dataTest,
 }: DocumentBadgeProps): JSX.Element => (
-  <Tooltip label={label}>
+  <Tooltip label={tooltip}>
     <div data-test={dataTest} className="absolute -top-3 left-5">
       <Notification icon={icon} size="xs" classname="w-6 h-6" />
+      <span className="sr-only">{name}</span>
     </div>
   </Tooltip>
 );
@@ -82,18 +85,18 @@ export const DocumentCard = ({
         {document.type === 'fichierManquant' && (
           <DocumentBadge
             icon="error-warning-fill"
-            label={appLabels.fichierIndisponibleInfo}
+            tooltip={appLabels.fichierIndisponibleInfo}
+            name={appLabels.fichierIndisponible}
           />
         )}
         {fichier?.confidentiel && (
           <DocumentBadge
             icon="lock-fill"
-            label={appLabels.fichierModePrive}
+            tooltip={appLabels.fichierModePrive}
+            name={appLabels.fichierModePrive}
             dataTest="carte-doc-confidentiel"
           />
         )}
-        {childOfType(Actions)}
-
         <Card className="p-4 h-full gap-1">
           <Title document={document} onOpen={() => openPreuve(document)} />
           {childOfType(Identifier)}
@@ -105,6 +108,8 @@ export const DocumentCard = ({
           />
           {visitDate && <VisitDate date={visitDate} />}
         </Card>
+
+        {childOfType(Actions)}
       </div>
     </DocumentCardProvider>
   );
