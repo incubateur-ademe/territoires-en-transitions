@@ -1,12 +1,12 @@
 'use client';
 
-import { region_w_geojson } from '@/site/components/carte/useCarteCollectivitesEngagees';
+import { SiteCarteRegion } from '@/site/src/trpc/trpc-client';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';
 import { FeatureGroup, GeoJSON } from 'react-leaflet';
 
 type RegionFeatureProps = {
-  region: region_w_geojson;
+  region: SiteCarteRegion;
 };
 
 const RegionFeature = ({ region }: RegionFeatureProps) => {

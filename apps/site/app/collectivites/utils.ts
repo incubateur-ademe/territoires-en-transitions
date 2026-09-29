@@ -1,85 +1,22 @@
-import { supabase } from '@/site/app/initSupabase';
-import { EtoilesLabel } from '@/site/app/types';
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
 
-export type Labellisations = {
-  annee: number | null;
-  collectivite_id: number | null;
-  etoiles: number;
-  id: number;
-  obtenue_le: string;
-  referentiel: ReferentielId;
-  score_programme: number | null;
-  score_realise: number | null;
-};
-export type Indicateurs = {
-  date_valeur: string;
-  resultat: number;
-  identifiant: string;
-  source?: string;
-};
-export type IndicateurArtificialisation = {
-  activite: number;
-  collectivite_id: number;
-  ferroviaire: number;
-  habitat: number;
-  inconnue: number;
-  mixte: number;
-  routiere: number;
-  total: number;
-};
+export const fetchCollectivite = async (codeSirenInsee: string) => {
+  const collectivite =
+    await getSiteTrpcClient().collectivites.site.getCollectivite.query({
+      codeSirenInsee,
+    });
 
-type Collectivite = {
-  collectivite_id: number;
-  nom: string;
-  type_collectivite: string;
-  nature_collectivite: string;
-  code_siren_insee: string;
-  region_name: string;
-  region_code: string;
-  departement_name: string;
-  departement_code: string;
-  population_totale: number;
-  active: true;
-  cot: false;
-  engagee: true;
-  labellisee: true;
-  cae_obtenue_le: string;
-  cae_etoiles: EtoilesLabel;
-  cae_score_realise: number;
-  cae_score_programme: number;
-  eci_obtenue_le: string;
-  eci_etoiles: EtoilesLabel;
-  eci_score_realise: number;
-  eci_score_programme: number;
-  labellisations: Labellisations[];
-  indicateurs_gaz_effet_serre: Indicateurs[] | null;
-  indicateur_artificialisation: IndicateurArtificialisation | null;
-};
-
-export const fetchCollectivite = async (code_siren_insee: string) => {
-  const { data, error } = await supabase
-    .from('site_labellisation')
-    .select(
-      '*,labellisations, indicateurs_gaz_effet_serre, indicateur_artificialisation'
-    )
-    .match({ code_siren_insee });
-
-  if (error) {
-    throw new Error(`site_labellisation-${code_siren_insee}`);
-  }
-  if (!data || !data.length) {
+  if (!collectivite) {
     return null;
   }
 
-  const collectivite = data[0] as unknown as Collectivite;
   let annuaireUrl = null;
 
-  if (collectivite.type_collectivite === 'commune') {
+  if (collectivite.typeCollectivite === 'commune') {
     const response = await fetch(
-      `https://api.collectivite.fr/api/commune/url/${code_siren_insee}`,
+      `https://api.collectivite.fr/api/commune/url/${codeSirenInsee}`,
       { method: 'GET' }
     );
 

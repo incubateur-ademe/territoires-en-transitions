@@ -62,7 +62,6 @@ export function proxy(request: NextRequest) {
     font-src 'self' client.crisp.chat fonts.axept.io;
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}
       ${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}
       ${process.env.NEXT_PUBLIC_BACKEND_URL ?? ''}
       ws://${request.nextUrl.host}
