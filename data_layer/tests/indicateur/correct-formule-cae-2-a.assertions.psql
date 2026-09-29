@@ -3,7 +3,7 @@
 -- No outer BEGIN: actual deploy/revert COMMIT and verify ROLLBACK must execute.
 \set ON_ERROR_STOP on
 CREATE EXTENSION IF NOT EXISTS pgtap;
-SELECT plan(22);
+SELECT plan(27);
 
 CREATE TABLE public.indicateur_definition (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -45,6 +45,13 @@ $$;
 CREATE TRIGGER modified_at BEFORE UPDATE ON public.indicateur_definition
 FOR EACH ROW EXECUTE FUNCTION public.mark_fixture_definition_modified();
 
+-- Keep RLS enabled for both the filtered-role failures and owner no-op cases.
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT SELECT, UPDATE ON public.indicateur_definition TO authenticated;
+ALTER TABLE public.indicateur_definition ENABLE ROW LEVEL SECURITY;
+CREATE POLICY fixture_read ON public.indicateur_definition FOR SELECT TO authenticated USING (false);
+CREATE POLICY fixture_update ON public.indicateur_definition FOR UPDATE TO authenticated USING (true);
+
 -- Catalogue is empty when a new installation first applies this change.
 \ir ../../sqitch/deploy/indicateur/correct-formule-cae-2-a.sql
 \ir ../../sqitch/verify/indicateur/correct-formule-cae-2-a.sql
@@ -66,6 +73,19 @@ SELECT id, 42, DATE '2024-01-01', 0, NULL, true
 FROM public.indicateur_definition WHERE identifiant_referentiel='cae_2.a';
 SELECT public.fixture_observations() AS observations_before \gset
 SELECT to_jsonb(d) AS unrelated_before FROM public.indicateur_definition d WHERE identifiant_referentiel='test.other' \gset
+-- A hidden target must not be mistaken for a legitimately missing catalogue.
+SELECT public.fixture_definitions() AS before_rls_failure \gset
+SET ROLE authenticated;
+SELECT count(*) AS visible_target_rows FROM public.indicateur_definition WHERE identifiant_referentiel='cae_2.a' \gset
+RESET ROLE;
+SELECT is(:'visible_target_rows'::bigint, 0::bigint, 'RLS hides the existing target despite table privileges');
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure deploy filtered_rls_deploy authenticated
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='filtered_rls_deploy'), '42501', 'Deploy rejects a migration role subject to RLS');
+\! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure verify filtered_rls_verify authenticated
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='filtered_rls_verify'), '42501', 'Verify rejects a migration role subject to RLS');
+SELECT is(public.fixture_definitions(), :'before_rls_failure'::jsonb, 'RLS failures preserve every formula and its modification metadata');
+SELECT is(public.fixture_observations(), :'observations_before'::jsonb, 'RLS failures preserve every stored observation');
+
 \! bash "$INDICATEUR_DATA_REPAIR_TEST_RUNNER" expected-failure verify before_repair
 SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='before_repair'), '23514', 'Verify detects the broken predefined reference');
 \ir ../../sqitch/deploy/indicateur/correct-formule-cae-2-a.sql
@@ -151,6 +171,6 @@ SELECT public.fixture_definitions() AS before_definitions \gset
 \ir ../../sqitch/deploy/indicateur/correct-formule-cae-2-a.sql
 \ir ../../sqitch/verify/indicateur/correct-formule-cae-2-a.sql
 SELECT is(public.fixture_definitions(), :'before_definitions'::jsonb, 'A blank formula stays untouched');
-SELECT is((SELECT count(*) FROM public.fixture_migration_outcome), 4::bigint, 'Every expected failure executed the actual migration in a separate connection');
+SELECT is((SELECT count(*) FROM public.fixture_migration_outcome), 6::bigint, 'Every expected failure executed the actual migration in a separate connection');
 SELECT is((SELECT count(*) FROM public.indicateur_valeur), 0::bigint, 'Catalogue-only migrations never create observations');
 SELECT * FROM finish();

@@ -2,6 +2,8 @@
 -- requires: indicateur/fusion
 
 BEGIN;
+-- Refuse une vue filtrée par RLS ; ce réglage ne contourne pas les politiques.
+SET LOCAL row_security = off;
 
 -- Corrige uniquement la référence erronée du catalogue. Les observations
 -- enregistrées ne sont ni recalculées ni modifiées par cette réparation.

@@ -1,6 +1,8 @@
 -- Verify tet:indicateur/correct-formule-cae-2-a on pg
 
 BEGIN;
+-- Refuse une vue filtrée par RLS ; ce réglage ne contourne pas les politiques.
+SET LOCAL row_security = off;
 
 DO $verify$
 BEGIN

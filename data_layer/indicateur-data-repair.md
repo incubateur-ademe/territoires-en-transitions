@@ -16,6 +16,8 @@ Les autres termes de la formule sont conservés.
 Le changement verrouille la définition et refuse une réparation si la référence
 erronée apparaît plusieurs fois ou si la définition cible prédéfinie manque.
 Il ne fait rien avant le peuplement du catalogue ou si la formule est déjà corrigée.
+Le deploy et le verify refusent un rôle soumis à RLS pour ne pas confondre une
+définition masquée avec un catalogue absent.
 La vérification porte sur cette référence uniquement. Le revert conserve la
 correction de données : il ne réintroduit pas une référence inexistante.
 
@@ -127,7 +129,11 @@ triggers de métadonnées. Le précontrôle réel de #5214 ne signale aucune ano
 parmi les 4 772 453 observations restantes.
 
 Les suites pgTAP comptaient initialement 22 assertions pour la formule et
-40 pour les dates. La suite des dates passe désormais **55 assertions** après
+40 pour les dates. La suite de formule compte désormais **27 assertions** : elle
+vérifie aussi le refus du deploy et du verify lorsque RLS masque la définition,
+avec préservation des formules et observations. Les cas de catalogue vide ou de
+définition absente restent acceptés par le rôle propriétaire, avec RLS activé.
+La suite des dates passe désormais **55 assertions** après
 les correctifs de revue du 29 septembre : résultat/commentaire modifié sans
 changement d’horodatage, rôle soumis à RLS, suppression et mise à jour ignorées
 par un trigger. Elles couvrent aussi le rejeu,

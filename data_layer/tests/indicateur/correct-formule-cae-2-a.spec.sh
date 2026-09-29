@@ -36,7 +36,13 @@ if [[ "${1:-}" == expected-failure ]]; then
   error_log="$(mktemp)"
   trap 'rm -f "$error_log"' EXIT
   actual_state=00000
-  if ! psql_test --file="$data_layer_dir/sqitch/$direction/indicateur/correct-formule-cae-2-a.sql" >"$error_log" 2>&1; then
+  role_options=()
+  if [[ "${4:-}" == authenticated ]]; then
+    role_options=(--command='SET ROLE authenticated')
+  elif [[ -n "${4:-}" ]]; then
+    exit 2
+  fi
+  if ! psql_test "${role_options[@]}" --file="$data_layer_dir/sqitch/$direction/indicateur/correct-formule-cae-2-a.sql" >"$error_log" 2>&1; then
     actual_state=unknown
     error_output="$(cat "$error_log")"
     if [[ "$error_output" =~ ERROR:[[:space:]]+([[:alnum:]]{5}): ]]; then
