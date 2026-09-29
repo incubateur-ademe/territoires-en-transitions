@@ -25,6 +25,7 @@ export const SubactionIndicateur = ({ action, scoreIndicatif }: Props) => {
   return (
     <>
       <button
+        data-test={`referentiels.indicateurs-score.carte-${action.identifiant}`}
         className="flex flex-col gap-2 pt-2 pb-3 px-4 text-left font-normal border border-grey-3 hover:border-primary-4 rounded-md"
         onClick={() => {
           setIsScoreModalOpen(true);
