@@ -479,6 +479,12 @@ export class CrudValeursRepository {
             `excluded.${indicateurValeurTable.modifiedBy.name}`
           ),
         },
+        // Rechecked by PostgreSQL after waiting for a concurrent row writer.
+        // Manual observations also exist under the PCAET metadata source.
+        setWhere: sql`
+          excluded.calcul_auto IS NOT TRUE
+          OR ${indicateurValeurTable.calculAuto} IS TRUE
+        `,
       })
       .returning();
   }

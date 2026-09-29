@@ -390,7 +390,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source`, async () => {
+  it(`Import service-role et calcul d'un autre indicateur de la même source`, async () => {
     const indicateurCae1eId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.e'
@@ -420,7 +420,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -436,7 +436,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurCae1fId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: 2,
-      modifiedBy: testUserId,
+      modifiedBy: null,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -448,7 +448,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurCae1eId,
       indicateurIdentifiant: 'cae_1.e',
       metadonneeId: 2,
-      modifiedBy: testUserId,
+      modifiedBy: null,
       resultat: 100,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -475,7 +475,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source ayant des valeurs manquantes`, async () => {
+  it(`Import service-role et calcul d'un autre indicateur de la même source ayant des valeurs manquantes`, async () => {
     const indicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.ca'
@@ -494,7 +494,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -510,7 +510,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.ca',
       metadonneeId: 2,
-      modifiedBy: testUserId,
+      modifiedBy: null,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -538,7 +538,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur impliquant une autre source avec arrondi`, async () => {
+  it(`Import service-role et calcul d'un autre indicateur impliquant une autre source avec arrondi`, async () => {
     const indicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.a'
@@ -551,7 +551,7 @@ describe('Indicateurs', () => {
     // restore the population value
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send({
         valeurs: [
           {
@@ -579,7 +579,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -595,7 +595,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.a',
       metadonneeId: 2,
-      modifiedBy: testUserId,
+      modifiedBy: null,
       resultat: 10000,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -635,7 +635,7 @@ describe('Indicateurs', () => {
 
     const responseAfterPopulationUpdate = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurPopulationValeurPayload)
       .expect(201);
     const upsertIndicateurPopulationValeursResponse: UpsertIndicateursValeursResponse =
@@ -653,7 +653,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurPopulationId,
       indicateurIdentifiant: 'terr_1',
       metadonneeId: 5,
-      modifiedBy: testUserId,
+      modifiedBy: null,
       resultat: 20000,
       resultatCommentaire: null,
       sourceId: 'insee',
@@ -678,7 +678,7 @@ describe('Indicateurs', () => {
     // restore the population value
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send({
         valeurs: [
           {

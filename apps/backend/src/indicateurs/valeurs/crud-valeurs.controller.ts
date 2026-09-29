@@ -62,7 +62,7 @@ export class IndicateursValeursController {
   @ApiOperation({
     summary: "Création ou mise à jour des valeurs d'indicateur(s).",
     description:
-      "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**",
+      "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**. Les saisies utilisateur ne peuvent pas fournir de `metadonneeId` : les écritures sous une provenance importée sont réservées aux intégrations `service_role`. Les saisies du diagnostic PCAET passent par leur parcours dédié. Une provenance non autorisée entraîne le refus de tout le lot.",
   })
   @ApiCreatedResponse({
     type: UpsertIndicateursValeursRequest,

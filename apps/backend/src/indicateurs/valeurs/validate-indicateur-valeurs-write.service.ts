@@ -80,7 +80,13 @@ export class ValidateIndicateurValeursWriteService {
           definitions,
           valeurs: valeurs.map((valeur) =>
             !isUserTrusted && user?.role === AuthRole.AUTHENTICATED && user.id
-              ? { ...valeur, createdBy: user.id, modifiedBy: user.id }
+              ? {
+                  ...valeur,
+                  calculAuto: false,
+                  calculAutoIdentifiantsManquants: null,
+                  createdBy: user.id,
+                  modifiedBy: user.id,
+                }
               : valeur
           ),
         };
@@ -141,6 +147,20 @@ export class ValidateIndicateurValeursWriteService {
       );
       for (const valeur of input.valeurs) {
         const definition = definitionsById[valeur.indicateurId];
+        if (enforceUserRules && valeur.metadonneeId != null) {
+          const authorization = !context.isUserTrusted
+            ? context.pcaetMetadataAuthorization
+            : undefined;
+          if (
+            !localMetadataIds.has(valeur.metadonneeId) ||
+            authorization?.collectiviteId !== valeur.collectiviteId ||
+            authorization?.metadonneeId !== valeur.metadonneeId
+          ) {
+            throw new ForbiddenException(
+              "L'écriture sous une métadonnée nécessite une autorisation interne dédiée"
+            );
+          }
+        }
         if (
           (valeur.metadonneeId == null ||
             localMetadataIds.has(valeur.metadonneeId)) &&

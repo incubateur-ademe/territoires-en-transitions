@@ -120,6 +120,7 @@ export class UpdateDiagnosticIndicateursValeursService {
     await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
       user,
       tx,
+      pcaetMetadataAuthorization: { collectiviteId, metadonneeId },
     });
 
     const payload = await this.diagnosticService.loadPayload(
@@ -189,9 +190,6 @@ export class UpdateDiagnosticIndicateursValeursService {
         objectif: indicateurValeurTable.objectif,
         resultatCommentaire: indicateurValeurTable.resultatCommentaire,
         objectifCommentaire: indicateurValeurTable.objectifCommentaire,
-        calculAuto: indicateurValeurTable.calculAuto,
-        calculAutoIdentifiantsManquants:
-          indicateurValeurTable.calculAutoIdentifiantsManquants,
       })
       .from(indicateurValeurTable)
       .where(
@@ -226,9 +224,8 @@ export class UpdateDiagnosticIndicateursValeursService {
         objectif,
         resultatCommentaire: existing?.resultatCommentaire ?? null,
         objectifCommentaire: existing?.objectifCommentaire ?? null,
-        calculAuto: existing?.calculAuto ?? false,
-        calculAutoIdentifiantsManquants:
-          existing?.calculAutoIdentifiantsManquants ?? null,
+        calculAuto: false,
+        calculAutoIdentifiantsManquants: null,
       };
 
       nowValues.push(upsert);

@@ -77,9 +77,15 @@ describe('UpdateDiagnosticIndicateursValeursService annual boundary', () => {
           metadonneeId: 17,
           dateValeur: '2025-01-01',
           resultat: 12,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         }),
       ],
-      { user, tx }
+      {
+        user,
+        tx,
+        pcaetMetadataAuthorization: { collectiviteId: 42, metadonneeId: 17 },
+      }
     );
     expect(diagnostic.loadPayload).toHaveBeenCalledWith(
       { demarcheId: 3, collectiviteId: 42 },
