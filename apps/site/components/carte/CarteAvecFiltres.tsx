@@ -1,6 +1,6 @@
 'use client';
 
-import { CollectivitesCarteFrance } from '@/site/components/carte/useCarteCollectivitesEngagees';
+import { SiteCarte } from '@/site/src/trpc/trpc-client';
 import Section from '@/site/components/sections/Section';
 import { useWindowWidth } from '@/site/src/hooks/use-window-width';
 import { Divider } from '@tet/ui';
@@ -27,7 +27,7 @@ const CarteCollectivites = dynamic(
 );
 
 type Props = {
-  data?: CollectivitesCarteFrance | null;
+  data?: SiteCarte | null;
 };
 
 const CarteAvecFiltres = ({ data }: Props) => {

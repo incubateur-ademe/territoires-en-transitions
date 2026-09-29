@@ -19,24 +19,24 @@ const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
   ) as Set<any>;
 
   const tempArray =
-    data?.collectivites.filter((col) => sirenArray.has(col.code_siren_insee)) ??
+    data?.collectivites.filter((col) => sirenArray.has(col.codeSirenInsee)) ??
     [];
 
   const collectivitesALaUne = tempArray?.map((col) => ({
     nom: col.nom ?? '',
-    region: col.region_name,
-    departement: col.departement_name,
-    population: col.population_totale,
-    type: col.nature_collectivite
-      ? natureCollectiviteToLabel[col.nature_collectivite]
-      : col.type_collectivite,
-    etoilesCAE: col.cae_etoiles ?? 0,
-    etoilesECI: col.eci_etoiles ?? 0,
-    siren: col.code_siren_insee,
+    region: col.regionName,
+    departement: col.departementName,
+    population: col.populationTotale,
+    type: col.natureCollectivite
+      ? natureCollectiviteToLabel[col.natureCollectivite]
+      : col.typeCollectivite,
+    etoilesCAE: col.caeEtoiles ?? 0,
+    etoilesECI: col.eciEtoiles ?? 0,
+    siren: col.codeSirenInsee,
     cover: collectivitesStrapi.find(
       (c) =>
         (c.attributes.code_siren_insee as unknown as string) ===
-        col.code_siren_insee
+        col.codeSirenInsee
     )?.attributes.couverture.data as unknown as StrapiItem,
   }));
 

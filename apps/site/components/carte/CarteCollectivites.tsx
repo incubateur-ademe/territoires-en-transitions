@@ -4,10 +4,7 @@ import { useMemo } from 'react';
 import CarteContainer from './CarteContainer';
 import CollectiviteFeature from './CollectiviteFeature';
 import RegionFeature from './RegionFeature';
-import {
-  CollectivitesCarteFrance,
-  labellisation_w_geojson,
-} from './useCarteCollectivitesEngagees';
+import { SiteCarte, SiteCarteCollectivite } from '@/site/src/trpc/trpc-client';
 
 export type FiltresLabels =
   | 'toutes'
@@ -20,25 +17,23 @@ type CarteCollectivitesProps = {
   filtre: FiltresLabels;
   etoiles: number[];
   forcedZoom?: number;
-  data: CollectivitesCarteFrance;
+  data: SiteCarte;
 };
 
 // `sort` sur une copie : la liste affichée est dérivée pendant le rendu, elle
 // ne doit pas réordonner le tableau reçu en prop.
-const sortCollectivites = (collectivites: labellisation_w_geojson[]) => {
+const sortCollectivites = (collectivites: SiteCarteCollectivite[]) => {
   return [...collectivites].sort((a, b) => {
     if (
-      (a.type_collectivite === 'syndicat' &&
-        (b.type_collectivite === 'EPCI' ||
-          b.type_collectivite === 'commune')) ||
-      (a.type_collectivite === 'EPCI' && b.type_collectivite === 'commune')
+      (a.typeCollectivite === 'syndicat' &&
+        (b.typeCollectivite === 'EPCI' || b.typeCollectivite === 'commune')) ||
+      (a.typeCollectivite === 'EPCI' && b.typeCollectivite === 'commune')
     )
       return -1;
     if (
-      (a.type_collectivite === 'commune' &&
-        (b.type_collectivite === 'EPCI' ||
-          b.type_collectivite === 'syndicat')) ||
-      (a.type_collectivite === 'EPCI' && b.type_collectivite === 'syndicat')
+      (a.typeCollectivite === 'commune' &&
+        (b.typeCollectivite === 'EPCI' || b.typeCollectivite === 'syndicat')) ||
+      (a.typeCollectivite === 'EPCI' && b.typeCollectivite === 'syndicat')
     )
       return 1;
     return 0;
@@ -58,11 +53,11 @@ const CarteCollectivites = ({
     let collectivites = data.collectivites;
     if (filtre === 'labellisees_cae')
       collectivites = collectivites.filter(
-        (c) => c.cae_etoiles && etoiles.includes(c.cae_etoiles)
+        (c) => c.caeEtoiles && etoiles.includes(c.caeEtoiles)
       );
     if (filtre === 'labellisees_eci')
       collectivites = collectivites.filter(
-        (c) => c.eci_etoiles && etoiles.includes(c.eci_etoiles)
+        (c) => c.eciEtoiles && etoiles.includes(c.eciEtoiles)
       );
     if (filtre === 'cot_non_labellisees')
       collectivites = collectivites.filter(
@@ -84,7 +79,7 @@ const CarteCollectivites = ({
       {localData.collectivites
         .filter((c) => !!c.geojson)
         .map((c) => (
-          <CollectiviteFeature collectivite={c} key={c.collectivite_id} />
+          <CollectiviteFeature collectivite={c} key={c.collectiviteId} />
         ))}
     </CarteContainer>
   );

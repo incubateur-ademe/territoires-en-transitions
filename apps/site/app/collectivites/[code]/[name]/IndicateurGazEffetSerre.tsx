@@ -1,4 +1,4 @@
-import { Indicateurs } from '@/site/app/collectivites/utils';
+import { SiteIndicateurGes } from '@/site/src/trpc/trpc-client';
 import { getFormattedNumber } from '@tet/domain/utils';
 import { secteurIdToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
@@ -8,7 +8,7 @@ const getYear = (dateIso: string) => new Date(dateIso).getFullYear();
 
 type IndicateurGazEffetSerreProps = {
   defaultData?: IndicateurDefaultData;
-  data: Indicateurs[] | null;
+  data: SiteIndicateurGes[] | null;
 };
 
 const IndicateurGazEffetSerre = ({
@@ -18,11 +18,11 @@ const IndicateurGazEffetSerre = ({
   if (!defaultData || !data || data.length === 0) return null;
 
   // Récupère les données de l'année la plus récente associées à la source CITEPA
-  const lastYear = Math.max(...data.map((d) => getYear(d.date_valeur)));
+  const lastYear = Math.max(...data.map((d) => getYear(d.dateValeur)));
 
   const lastYearData = data.filter(
     (d) =>
-      getYear(d.date_valeur) === lastYear &&
+      getYear(d.dateValeur) === lastYear &&
       secteurIdToLabel[d.identifiant] !== 'Total' &&
       d.source === 'CITEPA'
   );
@@ -30,7 +30,7 @@ const IndicateurGazEffetSerre = ({
   // Récupère le total associé à cette année et à la source CITEPA
   const lastYearTotal = data.find(
     (d) =>
-      getYear(d.date_valeur) === lastYear &&
+      getYear(d.dateValeur) === lastYear &&
       secteurIdToLabel[d.identifiant] === 'Total' &&
       d.source === 'CITEPA'
   );

@@ -74,6 +74,10 @@ import { PersonnesRouter } from './personnes.router';
 import { PertinenceLeviersModule } from './pertinence-leviers/pertinence-leviers.module';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
+import { GetSiteCollectiviteService } from './site/get-site-collectivite/get-site-collectivite.service';
+import { ListSiteCarteService } from './site/list-site-carte/list-site-carte.service';
+import { SearchSiteCollectivitesService } from './site/search-site-collectivites/search-site-collectivites.service';
+import { SiteRouter } from './site/site.router';
 
 @Module({
   imports: [
@@ -86,6 +90,10 @@ import { PersonnesService } from './services/personnes.service';
   ],
   providers: [
     CollectivitesRouter,
+    SearchSiteCollectivitesService,
+    GetSiteCollectiviteService,
+    ListSiteCarteService,
+    SiteRouter,
     ListMembresService,
     ListAdminContactsService,
     ListPendingInvitationsService,

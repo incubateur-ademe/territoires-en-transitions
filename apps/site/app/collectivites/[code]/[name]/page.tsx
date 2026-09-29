@@ -90,8 +90,8 @@ const DetailCollectivite = async ({
             ...strapiData,
             type:
               natureCollectiviteToLabel[
-                collectiviteData.collectivite.nature_collectivite
-              ] ?? collectiviteData.collectivite.type_collectivite,
+                collectiviteData.collectivite.natureCollectivite ?? ''
+              ] ?? collectiviteData.collectivite.typeCollectivite,
             couvertureDefaut: strapiDefaultData?.couverture,
             annuaireUrl: collectiviteData.annuaireUrl,
           }}
@@ -108,8 +108,8 @@ const DetailCollectivite = async ({
         {collectiviteData.collectivite.labellisee && (
           <div className="flex flex-col items-center md:rounded-[10px] bg-white pt-6 pb-10 px-2">
             <LabellisationLogo
-              cae={collectiviteData.collectivite.cae_etoiles ?? undefined}
-              eci={collectiviteData.collectivite.eci_etoiles ?? undefined}
+              cae={collectiviteData.collectivite.caeEtoiles ?? undefined}
+              eci={collectiviteData.collectivite.eciEtoiles ?? undefined}
             />
           </div>
         )}
@@ -158,9 +158,9 @@ const DetailCollectivite = async ({
               defaultData={strapiDefaultData.indicateurs}
               indicateurs={{
                 artificialisation_sols:
-                  collectiviteData.collectivite.indicateur_artificialisation,
+                  collectiviteData.collectivite.indicateurArtificialisation,
                 gaz_effet_serre:
-                  collectiviteData.collectivite.indicateurs_gaz_effet_serre,
+                  collectiviteData.collectivite.indicateursGazEffetSerre,
               }}
             />
           ) : null
