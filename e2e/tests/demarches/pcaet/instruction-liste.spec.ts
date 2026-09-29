@@ -57,7 +57,7 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
     return { demarcheId: demarche.id, demandeAvisId: demande.id };
   };
 
-  test('le service voit son territoire, et le filtre de statut lui ouvre ce que le défaut masque', async ({
+  test('le service voit tout son territoire par défaut, dépôts en chantier et collectivités sans dépôt compris', async ({
     collectivites,
     page,
   }) => {
@@ -106,15 +106,7 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
     const pom = new InstructionPom(page);
     await pom.goToDemandesAvis(dreal.data.id);
 
-    // Par défaut, l'écran s'en tient aux dossiers dont le service a la charge.
     await expect(pom.row(demandeAvisId as number)).toBeVisible();
-    await expect(pom.rowDemarche(demarcheEnChantier)).toBeHidden();
-    await expect(pom.rowSansDepot(sansDepot.data.id)).toBeHidden();
-
-    // Le filtre ouvre ce que le défaut masque, sans quoi ces deux populations
-    // resteraient invisibles.
-    await pom.selectAllStatuts();
-
     await expect(pom.rowDemarche(demarcheEnChantier)).toBeVisible();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
 
@@ -131,10 +123,6 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
     await expect(
       pom.rowSansDepot(sansDepot.data.id).locator('a')
     ).toHaveCount(0);
-
-    // Le filtre voyage dans l'URL : la vue se partage et se recharge.
-    await page.reload();
-    await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
   });
 
   /**
@@ -166,7 +154,6 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
 
     // Le service couvre plusieurs régions, donc la colonne apparaît — elle
     // reste masquée pour une DREAL, qui n'en a qu'une.
-    await pom.selectAllStatuts();
     await expect(
       page.getByRole('columnheader', { name: /Région/ })
     ).toBeVisible();
@@ -247,7 +234,8 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
       userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
     });
 
-    // Une collectivité que le filtre par défaut masque : elle n'a rien déposé.
+    // Une collectivité qui n'a rien déposé : un filtre « en instruction » la
+    // masque.
     const sansDepot = await collectivites.addCollectivite({
       regionCode: REGION,
       nom: 'Deposante e2e deselection',
@@ -256,15 +244,17 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
     });
 
     const pom = new InstructionPom(page);
-    await pom.goToDemandesAvis(dreal.data.id);
+    await page.goto(
+      `/collectivite/${dreal.data.id}/demandes-avis?$st=en_instruction`
+    );
 
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeHidden();
 
     await pom.deselectAllStatuts();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
 
-    // Le rechargement doit retrouver « aucun filtre », et non retomber sur le
-    // défaut : c'est l'URL qui doit porter la différence.
+    // Le rechargement doit retrouver « aucun filtre », et non le filtre
+    // d'origine : c'est l'URL qui doit porter la différence.
     await page.reload();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
   });

@@ -157,9 +157,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
 
     const pom = new InstructionPom(page);
 
-    // Le défaut masque les dépôts en chantier : il faut les demander.
     await pom.goToDemandesAvis(dreal.data.id);
-    await pom.selectAllStatuts();
     await expect(pom.rowDemarche(demarche.id)).toBeVisible();
 
     await pom.openDemarche({

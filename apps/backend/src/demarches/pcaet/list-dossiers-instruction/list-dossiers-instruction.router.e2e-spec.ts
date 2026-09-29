@@ -17,7 +17,6 @@ import {
   estNaturePorteusePcaet,
   PcaetStatutInstructionEnum,
   SEUIL_POPULATION_PCAET,
-  STATUTS_INSTRUCTION_PAR_DEFAUT,
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inArray } from 'drizzle-orm';
@@ -46,13 +45,25 @@ describe('listDossiersInstruction', () => {
   const dansNJours = (n: number) =>
     new Date(Date.now() + n * 24 * 3600 * 1000).toISOString();
 
+  /**
+   * Les dossiers déposés : sans les collectivités qui n'ont rien déposé ni les
+   * dépôts en chantier, les tris et la pagination se lisent sur deux lignes.
+   */
+  const STATUTS_DEPOSES = [
+    PcaetStatutInstructionEnum.EN_INSTRUCTION,
+    PcaetStatutInstructionEnum.PAS_D_AVIS_DEPOSE,
+    PcaetStatutInstructionEnum.INSTRUIT,
+    PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME,
+    PcaetStatutInstructionEnum.ADOPTE,
+  ];
+
   const appeler = (user: AuthenticatedUser, input: Record<string, unknown>) =>
     router.createCaller({ user }).demarches.pcaet.listDossiersInstruction({
       collectiviteId: drealId,
+      statuts: STATUTS_DEPOSES,
       ...input,
     });
 
-  /** Tous les statuts : ce que l'écran montre quand l'agent ouvre le filtre. */
   const TOUS_STATUTS = Object.values(PcaetStatutInstructionEnum);
 
   const creerDossier = async ({
@@ -274,18 +285,20 @@ describe('listDossiersInstruction', () => {
       );
     });
 
-    it('le filtre par défaut reproduit ce que montrait la liste des saisines', async () => {
-      const result = await appeler(camille, {});
+    it('ne filtre aucun statut par défaut', async () => {
+      const parDefaut = await appeler(camille, {
+        statuts: undefined,
+        limit: 200,
+      });
+      const tous = await appeler(camille, {
+        statuts: TOUS_STATUTS,
+        limit: 200,
+      });
 
-      // Ni les dépôts en chantier, ni les collectivités absentes : le défaut ne
-      // doit pas ouvrir l'écran sur un territoire entier.
-      expect(result.items.map((item) => item.collectivite.nom).sort()).toEqual([
-        'Abricot Communaute',
-        'Zitrone Agglo',
-      ]);
-      expect(STATUTS_INSTRUCTION_PAR_DEFAUT).not.toContain(
-        PcaetStatutInstructionEnum.AUCUN_DEPOT
-      );
+      expect(parDefaut.total).toBe(tous.total);
+      const noms = parDefaut.items.map((item) => item.collectivite.nom);
+      expect(noms).toContain('Nectarine Agglo sans depot');
+      expect(noms).toContain('Cerise Agglo en cours');
     });
 
     it('dit le volume du périmètre, que les filtres ne réduisent pas', async () => {
@@ -422,7 +435,7 @@ describe('listDossiersInstruction', () => {
 
       // Dans la liste par défaut : c'est le seul endroit où le service
       // l'apprendra.
-      const parDefaut = await appeler(camille, {});
+      const parDefaut = await appeler(camille, { statuts: undefined });
       const ligne = parDefaut.items.find(
         (item) => item.collectivite.nom === 'Kiwi Agglo hors plateforme'
       );

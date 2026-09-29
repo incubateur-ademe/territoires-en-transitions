@@ -90,10 +90,8 @@ export const DossiersInstructionPage = ({
           // Un périmètre sans le moindre dossier : il n'y a pas de filtre à
           // desserrer, et le tableau n'aurait que ses en-têtes à montrer.
           //
-          // Se lit sur le périmètre et non sur `total` : le filtre par défaut
-          // masque à lui seul les dépôts en chantier et les collectivités sans
-          // dossier, et un écran sans en-tête priverait alors l'agent du seul
-          // moyen d'aller les voir.
+          // Se lit sur le périmètre et non sur `total` : un filtre qui ne rend
+          // rien ne doit pas escamoter l'en-tête qui le porte.
           <EmptyCard
             picto={(props) => <PictoDashboard {...props} />}
             title={appLabels.instructionListeVide({ deposeAvis })}

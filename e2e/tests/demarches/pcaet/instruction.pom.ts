@@ -78,20 +78,6 @@ export class InstructionPom {
   }
 
   /**
-   * Coche les statuts que le défaut écarte — les dépôts en chantier et les
-   * collectivités sans dossier — puis referme le menu.
-   *
-   * Les entrées du dropdown DS sont des boutons portant le libellé de l'option.
-   */
-  async selectAllStatuts() {
-    await this.filtreStatut.click();
-    for (const libelle of ['Aucun dépôt', 'En élaboration', 'Archivé']) {
-      await this.page.getByRole('button', { name: libelle, exact: true }).click();
-    }
-    await this.page.keyboard.press('Escape');
-  }
-
-  /**
    * Ouvre un dossier depuis la liste. Le lien est ciblé par son URL plutôt que
    * par son libellé : c'est précisément ce que le test vérifie — la liste renvoie
    * vers la collectivité instruite, pas vers le service.

@@ -19,9 +19,9 @@ import {
  * Le déclencheur d'un filtre de colonne : discret tant que rien n'est posé,
  * porteur du nombre de valeurs retenues ensuite.
  *
- * `filterCount` ne se déduit pas de la sélection : le filtre de statut arrive
- * garni de son défaut, qui n'est pas un choix de l'agent et ne doit donc rien
- * afficher. C'est l'appelant qui compte — voir `nbFiltresActifs`.
+ * `filterCount` ne se déduit pas de la sélection : un filtre garni de son
+ * défaut n'est pas un choix de l'agent et ne doit donc rien afficher. C'est
+ * l'appelant qui compte — voir `nbFiltresActifs`.
  */
 const FilterButton = ({ filterCount, ...props }: { filterCount: number }) => (
   <Button
