@@ -11,8 +11,8 @@ import { NotifyInstructionCloseProps } from './notify-instruction-close.props';
  *
  * Le message dit pourquoi : « tous les avis rendus » laisse des avis à traiter
  * dans le mémoire de réponse, « délai échu » veut dire que des services n'ont
- * pas répondu et qu'on avance sans eux. Sans la raison, le destinataire ne sait
- * pas ce qui l'attend.
+ * pas répondu et que le projet est réputé favorable à leur égard. Sans la
+ * raison, le destinataire ne sait pas ce qui l'attend.
  */
 export const NotifyInstructionCloseEmail = (
   props: NotifyInstructionCloseProps
@@ -23,20 +23,25 @@ export const NotifyInstructionCloseEmail = (
     <EmailContainer>
       <Text>Bonjour,</Text>
 
-      <Text>
-        L&apos;instruction de votre projet de PCAET <b>{demarcheTitre}</b> est
-        close :{' '}
-        {motif === DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS
-          ? 'tous les avis attendus ont été rendus.'
-          : 'le délai imparti aux services consultés est échu.'}
-      </Text>
+      {motif === DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS ? (
+        <Text>
+          L&apos;instruction de votre projet de PCAET <b>{demarcheTitre}</b> est
+          close : tous les avis attendus ont été rendus.
+        </Text>
+      ) : (
+        <Text>
+          Le délai réglementaire pour déposer des avis sur votre projet de PCAET{' '}
+          <b>{demarcheTitre}</b> est terminé. Si vous n&apos;avez pas reçu
+          d&apos;avis sur la plateforme, ni par d&apos;autres canaux, votre
+          PCAET est réputé favorable.
+        </Text>
+      )}
 
       {/* Sans détailler les avis : sur un délai échu, il peut n'y en avoir
           aucun à consulter. */}
       <Text>
-        Il vous revient maintenant de finaliser la démarche : déposez le mémoire
-        de réponse et la délibération d&apos;adoption, puis publiez votre
-        démarche.
+        Vous devez maintenant finaliser la démarche : déposez le mémoire de
+        réponse et la délibération d&apos;adoption, puis publiez votre démarche.
       </Text>
 
       <Section className="my-8 text-center">

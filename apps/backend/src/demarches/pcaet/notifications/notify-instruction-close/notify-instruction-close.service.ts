@@ -154,7 +154,7 @@ export class NotifyInstructionCloseService {
 
     const props: NotifyInstructionCloseProps = {
       sendToEmail: destinataire.email,
-      subject: 'Votre projet de PCAET est instruit',
+      subject: 'Finalisez votre dépôt de PCAET',
       demarcheTitre: demarche.titre,
       motif,
       documentsUrl: this.getDemarcheUrlService.getDemarchePcaetDocumentsUrl({

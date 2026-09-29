@@ -155,7 +155,7 @@ export class NotifyAvisRecuService {
 
     const props: NotifyAvisRecuProps = {
       sendToEmail: destinataire.email,
-      subject: 'Avis rendu sur votre projet de PCAET',
+      subject: "Consultez l'avis rendu sur votre projet de PCAET",
       demarcheTitre: avis.demarcheTitre,
       serviceNom: avis.serviceNom,
       auTitreDe: libelleAuTitreDe[avis.auTitreDe] ?? null,
