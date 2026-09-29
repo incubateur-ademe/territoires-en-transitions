@@ -46,10 +46,6 @@ vi.mock('@tet/api', () => ({
   }),
 }));
 
-vi.mock('@tet/api/collectivites', () => ({
-  useCollectiviteId: () => COLLECTIVITE_ID,
-}));
-
 vi.mock('../referentiel-context', () => ({
   useReferentielId: () => REFERENTIEL_ID,
 }));

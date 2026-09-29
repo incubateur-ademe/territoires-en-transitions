@@ -12,7 +12,7 @@ import {
 } from '@/app/collectivites/documents/upload/validate-file';
 import { useInvalidateDocuments } from '@/app/collectivites/documents/use-invalidate-documents';
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEffect, useRef, useState } from 'react';
@@ -57,7 +57,6 @@ export const useUploadAuditReport = (
   const collectiviteId = useCollectiviteId();
   const { reports, isLoading: isLoadingReports } =
     useListReportsByAudit(auditId);
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
   const uploadFile = useUploadFile();
   const invalidateDocuments = useInvalidateDocuments();
@@ -86,13 +85,6 @@ export const useUploadAuditReport = (
   );
 
   const isUploading = uploadingReport !== null;
-
-  const refetchReports = (): Promise<void> =>
-    queryClient.refetchQueries({
-      queryKey: trpc.referentiels.documents.listDocumentsAudit.queryKey({
-        auditId,
-      }),
-    });
 
   const uploadReport = async (files: FileList | null): Promise<void> => {
     const file = files?.[0];
@@ -139,7 +131,6 @@ export const useUploadAuditReport = (
     setRemovingReportIds((prev) => new Set(prev).add(report.id));
     try {
       await removePreuve(report);
-      await refetchReports();
     } catch (error) {
       console.error(error);
       setToast('error', appLabels.echecSuppressionRapport);
