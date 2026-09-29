@@ -71,6 +71,9 @@ export const PermissionOperations = [
 
   // Utils
   'utils.banner.mutate',
+
+  // Shared
+  'shared.actions-de-reference.mutate',
 ] as const;
 
 export const permissionOperationEnumSchema = z.enum(PermissionOperations);
