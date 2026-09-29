@@ -7,12 +7,16 @@ import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/traje
 import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import { EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.rules';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
+  getTestDatabase,
   getTestApp,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
+import { CollectiviteRole } from '@tet/domain/users';
+import { inArray } from 'drizzle-orm';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
@@ -21,15 +25,62 @@ import { expect, vi } from 'vitest';
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  type Fixture = Awaited<ReturnType<typeof addTestCollectiviteAndUser>>;
+  let commune: Fixture;
+  let emptyEpci: Fixture;
+  let existingEpci: Fixture;
+  let forbiddenEpci: Fixture;
+  const fixtures: Fixture[] = [];
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    const database = await getTestDatabase(app);
+    const createFixture = async (type: 'commune' | 'epci') => {
+      const fixture = await addTestCollectiviteAndUser(database, {
+        collectivite: {
+          type,
+          natureInsee: type === 'epci' ? 'CA' : null,
+          siren:
+            type === 'epci'
+              ? String(900000000 + Math.floor(Math.random() * 99999999))
+              : null,
+        },
+        user: { role: CollectiviteRole.LECTURE },
+      });
+      fixtures.push(fixture);
+      return fixture;
+    };
+    commune = await createFixture('commune');
+    emptyEpci = await createFixture('epci');
+    existingEpci = await createFixture('epci');
+    forbiddenEpci = await createFixture('epci');
 
     const trajectoiresDataService = app.get(TrajectoiresDataService);
     const sheetService = app.get(SheetService);
+    const metadata =
+      await trajectoiresDataService.getTrajectoireIndicateursMetadonnees();
+    const definitions = await database.db
+      .select({ id: indicateurDefinitionTable.id })
+      .from(indicateurDefinitionTable)
+      .where(
+        inArray(
+          indicateurDefinitionTable.identifiantReferentiel,
+          trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL
+        )
+      );
+    expect(definitions.length).toBeGreaterThan(0);
+    await database.db.insert(indicateurValeurTable).values(
+      definitions.map(({ id }) => ({
+        collectiviteId: existingEpci.collectivite.id,
+        indicateurId: id,
+        periodicite: 'annuelle' as const,
+        dateValeur: '2030-01-01',
+        objectif: 1,
+        metadonneeId: metadata.id,
+        calculAuto: true,
+      }))
+    );
     const trajectoireRows = Array.from(
       {
         length:
@@ -56,25 +107,29 @@ describe('Calcul de trajectoire SNBC', () => {
   });
 
   test(`Suppression sans acces`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(commune.user),
+    });
 
     await expect(() =>
       caller.indicateurs.trajectoires.snbc.delete({
-        collectiviteId: 3,
+        collectiviteId: forbiddenEpci.collectivite.id,
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité 3`
+        `Droits insuffisants, l'utilisateur ${commune.user.id} n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité ${forbiddenEpci.collectivite.id}`
       )
     );
   });
 
   test(`Verification avec une commune`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(commune.user),
+    });
 
     const statusResponse =
       await caller.indicateurs.trajectoires.snbc.checkStatus({
-        collectiviteId: 1,
+        collectiviteId: commune.collectivite.id,
       });
 
     expect(statusResponse).toMatchObject({
@@ -83,11 +138,13 @@ describe('Calcul de trajectoire SNBC', () => {
   });
 
   test(`Calcul avec une commune`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(commune.user),
+    });
 
     await expect(() =>
       caller.indicateurs.trajectoires.snbc.getOrCompute({
-        collectiviteId: 1,
+        collectiviteId: commune.collectivite.id,
       })
     ).toThrowTrpcHttpError(
       new UnprocessableEntityException(EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE)
@@ -99,9 +156,9 @@ describe('Calcul de trajectoire SNBC', () => {
       status: VerificationTrajectoireStatus.DONNEES_MANQUANTES,
       epci: {
         type: 'epci',
-        id: 3812,
-        nom: 'CA du Bassin de Bourg-en-Bresse',
-        siren: '200071751',
+        id: emptyEpci.collectivite.id,
+        nom: emptyEpci.collectivite.nom,
+        siren: emptyEpci.collectivite.siren as string,
         natureInsee: 'CA',
       },
       donneesEntree: {
@@ -290,22 +347,26 @@ describe('Calcul de trajectoire SNBC', () => {
       },
     };
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(emptyEpci.user),
+    });
 
     const statusResponse =
       await caller.indicateurs.trajectoires.snbc.checkStatus({
-        collectiviteId: 3812,
+        collectiviteId: emptyEpci.collectivite.id,
         epciInfo: true,
       });
     expect(statusResponse).toMatchObject(verificationReponseAttendue);
   });
 
   test(`Calcul avec donnees manquantes`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(emptyEpci.user),
+    });
 
     await expect(() =>
       caller.indicateurs.trajectoires.snbc.getOrCompute({
-        collectiviteId: 3812,
+        collectiviteId: emptyEpci.collectivite.id,
       })
     ).toThrowTrpcHttpError(
       new UnprocessableEntityException(
@@ -315,28 +376,42 @@ describe('Calcul de trajectoire SNBC', () => {
   }, 10000);
 
   test(`Calcul/récupération avec droit suffisant - visite`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(commune.user),
+    });
 
     const trajectoire = await caller.indicateurs.trajectoires.snbc.getOrCompute(
       {
-        collectiviteId: 3895,
+        collectiviteId: existingEpci.collectivite.id,
       }
     );
     expect(trajectoire).toBeDefined();
   }, 30000);
 
   test(`Calcul/récupération avec droit suffisant - lecture`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(existingEpci.user),
+    });
 
     const trajectoire = await caller.indicateurs.trajectoires.snbc.getOrCompute(
       {
-        collectiviteId: 3895,
+        collectiviteId: existingEpci.collectivite.id,
       }
     );
     expect(trajectoire).toBeDefined();
   }, 30000);
 
   afterAll(async () => {
+    const database = await getTestDatabase(app);
+    if (fixtures.length) {
+      await database.db.delete(indicateurValeurTable).where(
+        inArray(
+          indicateurValeurTable.collectiviteId,
+          fixtures.map(({ collectivite }) => collectivite.id)
+        )
+      );
+    }
+    for (const fixture of fixtures.reverse()) await fixture.cleanup();
     await app.close();
   }, 30000);
 });

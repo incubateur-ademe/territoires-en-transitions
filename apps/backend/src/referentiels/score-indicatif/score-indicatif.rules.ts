@@ -100,6 +100,7 @@ function getTextValeursUtilisees(
       const { valeurEtUnite, annee } = getSegmentsValeurUtilisee({
         typeScore,
         unite: scoreIndicatif.unite,
+        periodicite: scoreIndicatif.periodicite,
         valeurUtilisee,
       });
       const source =

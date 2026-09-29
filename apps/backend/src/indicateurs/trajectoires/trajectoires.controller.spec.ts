@@ -1,21 +1,34 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { CalculTrajectoireResultatMode } from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.response';
 import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
 import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
 import {
-  getAuthUser,
+  getAuthToken,
+  getAuthUserFromUserCredentials,
+  getIndicateurIdByIdentifiant,
+  getTestDatabase,
   getTestApp,
   getTestRouter,
-  signInWith,
-  YOLO_DODO,
+  signTestAuthToken,
 } from '@tet/backend/test';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthRole,
+  AuthenticatedUser,
+} from '@tet/backend/users/models/auth.models';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { sleep } from '@tet/backend/utils/sleep.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
+import { CollectiviteRole } from '@tet/domain/users';
+import { eq, inArray } from 'drizzle-orm';
+import { readFileSync } from 'node:fs';
 import request from 'supertest';
 import { expect, onTestFinished, vi } from 'vitest';
 import { trajectoireSnbcCalculRetour } from './fixtures/trajectoire-snbc-calcul-retour';
@@ -24,15 +37,107 @@ import TrajectoiresDataService from './trajectoires-data.service';
 describe('Téléchargement de la trajectoire SNBC', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoToken: string;
-  let yoloDodoUser: AuthenticatedUser;
+  let authToken: string;
+  let authenticatedUser: AuthenticatedUser;
+  let databaseService: DatabaseService;
+  let serviceRoleToken: string;
+  let collectiviteId: number;
+  let cleanupFixture: () => Promise<void>;
+  let metadataIds: number[];
+  let expectedSiren: string;
+  const collectiviteName = 'Collectivite de test SNBC';
+  const collectiviteSiren = '000000000';
+  const downloadSpies: Array<{ mockRestore: () => void }> = [];
 
   beforeAll(async () => {
+    const localWorkbook = readFileSync(
+      new URL(
+        '../../../../site/public/outil-numerique/trajectoire/Trajectoire-GES-de-reference-V1-1-20240905.xlsx',
+        import.meta.url
+      )
+    );
+    // Intercepter aussi le préchargement déclenché au démarrage de l'application.
+    downloadSpies.push(
+      vi
+        .spyOn(SheetService.prototype, 'getFileData')
+        .mockResolvedValue(localWorkbook),
+      vi
+        .spyOn(SheetService.prototype, 'getFileName')
+        .mockResolvedValue('modele-trajectoire.xlsx')
+    );
     app = await getTestApp();
     router = await getTestRouter(app);
-    const yoloDodo = await signInWith(YOLO_DODO);
-    yoloDodoToken = yoloDodo.data.session?.access_token || '';
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    expectedSiren = app.get(
+      TrajectoiresDataService
+    ).TEST_COLLECTIVITE_VALID_SIREN;
+    databaseService = await getTestDatabase(app);
+    const fixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        nom: collectiviteName,
+        siren: collectiviteSiren,
+        natureInsee: 'METRO',
+      },
+    });
+    collectiviteId = fixture.collectivite.id;
+    cleanupFixture = fixture.cleanup;
+    authenticatedUser = getAuthUserFromUserCredentials(fixture.user);
+    authToken = await getAuthToken({
+      email: fixture.user.email ?? '',
+      password: fixture.user.password,
+    });
+    serviceRoleToken = signTestAuthToken(
+      { role: AuthRole.SERVICE_ROLE },
+      app.get(ConfigurationService).get('SUPABASE_JWT_SECRET')
+    );
+
+    const [rareMetadata, aldoMetadata] = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values([
+        { sourceId: 'rare', dateVersion: '2026-01-01' },
+        { sourceId: 'aldo', dateVersion: '2026-01-01' },
+      ])
+      .returning();
+    metadataIds = [rareMetadata.id, aldoMetadata.id];
+    const annualInputs: Array<[string, number]> = [
+      ['cae_1.c', 447.868],
+      ['cae_1.d', 471.107],
+      ['cae_1.i', 348.525],
+      ['cae_1.g', 28.839],
+      ['cae_1.e', 653.6],
+      ['cae_1.f', 21.492],
+      ['cae_1.h', 39.791],
+      ['cae_1.j', 13.5],
+      ['cae_2.e', 3092.7],
+      ['cae_2.f', 3295.15],
+      ['cae_2.i', 61],
+      ['cae_2.g', 2600],
+      ['cae_2.h', 68.6499999999996],
+      ['cae_2.j', 0],
+      ['cae_63.ca', -0.13844],
+      ['cae_63.db', -0.2279],
+      ['cae_63.b', 7.81264],
+      ['cae_63.e', 0.62713],
+    ];
+    await databaseService.db.insert(indicateurValeurTable).values(
+      await Promise.all(
+        annualInputs.map(async ([identifiant, resultat]) => ({
+          collectiviteId,
+          indicateurId: await getIndicateurIdByIdentifiant(
+            databaseService,
+            identifiant
+          ),
+          periodicite: 'annuelle' as const,
+          dateValeur: identifiant.startsWith('cae_63.')
+            ? '2018-01-01'
+            : '2015-01-01',
+          metadonneeId: identifiant.startsWith('cae_63.')
+            ? aldoMetadata.id
+            : rareMetadata.id,
+          resultat,
+        }))
+      )
+    );
   });
 
   test(`Telechargement du modele`, () => {
@@ -43,8 +148,8 @@ describe('Téléchargement de la trajectoire SNBC', () => {
 
   test(`Téléchargement du fichier xlsx prérempli pour un epci avec donnees completes`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/trajectoires/snbc/telechargement?collectiviteId=4936')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .get(`/trajectoires/snbc/telechargement?collectiviteId=${collectiviteId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200)
       .responseType('blob');
 
@@ -52,13 +157,12 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       .split('filename=')[1]
       .split(';')[0];
     expect(fileName).toBe(
-      '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"'
+      `"Trajectoire SNBC - ${expectedSiren} - ${collectiviteName}.xlsx"`
     );
   }, 60000);
 
   test(`Verification, calcul avec donnees completes et gestion de la mise à jour`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
-    const collectiviteId = 4936;
+    const caller = router.createCaller({ user: authenticatedUser });
     const sheetService = app.get(SheetService);
     const trajectoiresDataService = app.get(TrajectoiresDataService);
     const spreadsheetId = 'test-trajectoire-snbc-spreadsheet';
@@ -113,9 +217,9 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     // Restauration de la valeur d'indicateur
     const response = await request(app.getHttpServer())
       .get(
-        `/indicateurs/valeurs?identifiantsReferentiel=cae_1.e&collectiviteId=4936&sources=rare`
+        `/indicateurs/valeurs?identifiantsReferentiel=cae_1.e&collectiviteId=${collectiviteId}&sources=rare`
       )
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
     const indicateurExistingValeurs =
       response.body as GetIndicateursValeursResponse;
@@ -137,7 +241,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     };
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(restaureIndicateurValeurPayload)
       .expect(201);
 
@@ -150,8 +254,8 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       status: VerificationTrajectoireStatus.PRET_A_CALCULER,
       epci: {
         id: collectiviteId,
-        nom: 'Eurométropole de Strasbourg',
-        siren: '246700488',
+        nom: collectiviteName,
+        siren: expectedSiren,
         natureInsee: 'METRO',
         type: 'epci',
       },
@@ -326,11 +430,29 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     // Calcul de la trajectoire
     const responseCalcul = await request(app.getHttpServer())
       .get(`/trajectoires/snbc?collectiviteId=${collectiviteId}`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
     expect((responseCalcul.body as CalculTrajectoireResponse).mode).toEqual(
       CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET
     );
+    const calculatedValues = Object.values(
+      (responseCalcul.body as CalculTrajectoireResponse).trajectoire
+    ).flatMap((indicateurs) => indicateurs.flatMap(({ valeurs }) => valeurs));
+    expect(calculatedValues.length).toBeGreaterThan(0);
+    expect(calculatedValues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          periodicite: 'annuelle',
+          dateValeur: '2015-01-01',
+        }),
+      ])
+    );
+    expect(
+      calculatedValues.every(
+        ({ periodicite, dateValeur }) =>
+          periodicite === 'annuelle' && dateValeur.endsWith('-01-01')
+      )
+    ).toBe(true);
     expect(copyFile).toHaveBeenCalledTimes(1);
     expect(overwriteRawDataToSheet).toHaveBeenCalledTimes(4);
     expect(getRawDataFromSheet).toHaveBeenCalledExactlyOnceWith(
@@ -353,8 +475,8 @@ describe('Téléchargement de la trajectoire SNBC', () => {
         ],
         epci: {
           id: collectiviteId,
-          nom: 'Eurométropole de Strasbourg',
-          siren: '246700488',
+          nom: collectiviteName,
+          siren: expectedSiren,
           natureInsee: 'METRO',
           type: 'epci',
         },
@@ -372,7 +494,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     // Si on requête de nouveau le calcul, il doit provenir de la base de données
     const responseRecalcul = await request(app.getHttpServer())
       .get(`/trajectoires/snbc?collectiviteId=${collectiviteId}`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
     expect((responseRecalcul.body as CalculTrajectoireResponse).mode).toEqual(
       CalculTrajectoireResultatMode.DONNEES_EN_BDD
@@ -385,7 +507,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: 4936,
+          collectiviteId,
           indicateurId: indicateurCae1eId,
           dateValeur: '2015-01-01',
           metadonneeId: indicateurCae1eMetadataId,
@@ -395,7 +517,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     };
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
 
@@ -416,7 +538,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       .get(
         `/trajectoires/snbc?collectiviteId=${collectiviteId}&mode=${CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT}`
       )
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
     const calculTrajectoireResponse =
       responseApresMajEtRecalcul.body as CalculTrajectoireResponse;
@@ -445,6 +567,14 @@ describe('Téléchargement de la trajectoire SNBC', () => {
   }, 60_000);
 
   afterAll(async () => {
+    await databaseService.db
+      .delete(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.collectiviteId, collectiviteId));
+    await databaseService.db
+      .delete(indicateurSourceMetadonneeTable)
+      .where(inArray(indicateurSourceMetadonneeTable.id, metadataIds));
+    await cleanupFixture();
+    downloadSpies.forEach((spy) => spy.mockRestore());
     await app.close();
   });
 });

@@ -11,6 +11,12 @@ maintenance. Le frontend conserve son fonctionnement annuel.
 
 ## Préparer la maintenance
 
+La [pré-PR #5220](indicateur-data-repair.md) doit être appliquée avant cette livraison.
+Les protections des saisies manuelles et de provenance font partie de #5214 :
+un calcul automatique ne remplace pas une saisie, y compris sous métadonnée PCAET ;
+un appel REST utilisateur ne peut pas fournir de `metadonneeId`. Les imports
+privilégiés et le parcours PCAET dédié conservent leurs autorisations propres.
+
 - Choisir la cible et le commit de `split/periodicite-data-migration` à livrer. Préparer les versions correspondantes du backend,
   du frontend et de `tools`, ainsi que les versions précédentes pour une reprise.
 - Sur une copie récente de la production, exécuter le contrôle des dates ci-dessous, résoudre
