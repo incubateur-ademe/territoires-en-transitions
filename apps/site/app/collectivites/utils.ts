@@ -2,6 +2,8 @@ import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
 
+const CODE_INSEE_COMMUNE_REGEX = /^(\d{5}|2[AB]\d{3})$/;
+
 export const fetchCollectivite = async (codeSirenInsee: string) => {
   const collectivite =
     await getSiteTrpcClient().collectivites.site.getCollectivite.query({
@@ -14,9 +16,18 @@ export const fetchCollectivite = async (codeSirenInsee: string) => {
 
   let annuaireUrl = null;
 
-  if (collectivite.typeCollectivite === 'commune') {
+  // On interroge l'annuaire avec le code connu en base (et non le paramètre
+  // d'URL), après avoir vérifié qu'il s'agit bien d'un code INSEE de commune.
+  const codeInsee = collectivite.codeSirenInsee;
+  if (
+    collectivite.typeCollectivite === 'commune' &&
+    codeInsee &&
+    CODE_INSEE_COMMUNE_REGEX.test(codeInsee)
+  ) {
     const response = await fetch(
-      `https://api.collectivite.fr/api/commune/url/${codeSirenInsee}`,
+      `https://api.collectivite.fr/api/commune/url/${encodeURIComponent(
+        codeInsee
+      )}`,
       { method: 'GET' }
     );
 
