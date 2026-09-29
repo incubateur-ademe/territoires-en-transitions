@@ -158,6 +158,22 @@ describe('AddFile', () => {
   it("n'écrit pas de confidentialité pour un type de document qui n'offre pas le choix", async () => {
     renderAddFile({ preuveType: 'rapport' });
 
+    expect(
+      screen.queryByRole('checkbox', { name: appLabels.fichierModePrive })
+    ).toBeNull();
+
+    await submitModal();
+
+    expect(updateDocument).not.toHaveBeenCalled();
+  });
+
+  it("n'offre pas la confidentialité quand le document n'est rattaché à aucun type de preuve", async () => {
+    renderAddFile();
+
+    expect(
+      screen.queryByRole('checkbox', { name: appLabels.fichierModePrive })
+    ).toBeNull();
+
     await submitModal();
 
     expect(updateDocument).not.toHaveBeenCalled();

@@ -2,19 +2,24 @@ import { appLabels } from '@/app/labels/catalog';
 import { PreuveType } from '@tet/domain/collectivites';
 import { Checkbox, InfoTooltip } from '@tet/ui';
 
-const PREUVE_TYPES_CONFIDENTIABLES: PreuveType[] = [
+const PREUVE_TYPES_WITH_CONFIDENTIEL_CHOICE = [
   'reglementaire',
   'complementaire',
   'annexe',
-];
+] as const satisfies readonly PreuveType[];
+
+type PreuveTypeWithConfidentielChoice =
+  (typeof PREUVE_TYPES_WITH_CONFIDENTIEL_CHOICE)[number];
 
 /**
  * L'utilisateur peut-il choisir la confidentialité pour ce type de document ?
  * Sinon, il ne faut pas non plus l'imposer : la confidentialité des fichiers
  * déjà présents dans la bibliothèque n'a pas à changer.
  */
-export const canChooseConfidentiel = (preuveType?: PreuveType): boolean =>
-  !!preuveType && PREUVE_TYPES_CONFIDENTIABLES.includes(preuveType);
+export const canChooseConfidentiel = (
+  preuveType?: PreuveType
+): preuveType is PreuveTypeWithConfidentielChoice =>
+  PREUVE_TYPES_WITH_CONFIDENTIEL_CHOICE.some((type) => type === preuveType);
 
 export const ConfidentielCheckbox = ({
   preuveType,

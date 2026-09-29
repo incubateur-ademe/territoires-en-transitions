@@ -7,7 +7,7 @@ import {
 import type { OnDuplicatedDocumentsAdded } from '@/app/collectivites/documents/add-document/types';
 import { FicheWithRelations } from '@tet/domain/plans';
 
-type AddDocumentModalProps = {
+type AddFicheDocumentModalProps = {
   handlers: AddDocumentTabsHandlers;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
@@ -15,13 +15,13 @@ type AddDocumentModalProps = {
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
-export const AddDocumentModal = ({
+export const AddFicheDocumentModal = ({
   isOpen,
   handlers,
   setIsOpen,
   fiche,
   onDuplicatedDocumentsAdded,
-}: AddDocumentModalProps) => {
+}: AddFicheDocumentModalProps) => {
   return (
     <BaseUpdateFicheModal
       fiche={fiche}
