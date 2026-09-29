@@ -1,69 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { getDocumentFichier } from './to-document-collectivite.utils';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { Lien } from '@tet/domain/collectivites';
 import { toDocumentTargets } from '../to-document-target';
 import { useInvalidateDocuments } from '../use-invalidate-documents';
-import { EditHandlers, DocumentRattache } from './types';
-import { useEditFilenameState, useEditState } from './use-edit-state';
-
-type EditPreuve = (preuve: DocumentRattache) => EditHandlers;
-
-/** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
- * (édition commentaire & suppression) */
-export const useEditPreuve: EditPreuve = (preuve) => {
-  const {
-    mutate: removePreuve,
-    isPending: isRemovePreuveLoading,
-    isError: isRemovePreuveError,
-  } = useRemovePreuve();
-  const {
-    mutate: updatePreuveCommentaire,
-    isPending: isUpdateCommentaireLoadind,
-    isError: isUpdateCommentaireError,
-  } = useUpdatePreuveCommentaire();
-  const {
-    mutate: updateBibliothequeFichier,
-    isPending: isUpdateFilenameLoading,
-    isError: isUpdateFilenameError,
-  } = useUpdateBibliothequeFichier();
-  const { commentaire } = preuve;
-  const fichier = getDocumentFichier(preuve);
-  const editComment = useEditState({
-    initialValue: commentaire,
-    onUpdate: (updatedComment) =>
-      updatePreuveCommentaire({ ...preuve, commentaire: updatedComment }),
-  });
-  const editFilename = useEditFilenameState({
-    initialValue: fichier?.filename,
-    onUpdate: (updatedFilename) => {
-      if (!fichier) {
-        return;
-      }
-      updateBibliothequeFichier({
-        collectiviteId: preuve.collectiviteId,
-        hash: fichier.hash,
-        filename: updatedFilename,
-      });
-    },
-  });
-
-  const remove = () => {
-    removePreuve(preuve);
-  };
-
-  return {
-    remove,
-    editComment,
-    editFilename,
-    isLoading:
-      isRemovePreuveLoading ||
-      isUpdateCommentaireLoadind ||
-      isUpdateFilenameLoading,
-    isError:
-      isRemovePreuveError || isUpdateCommentaireError || isUpdateFilenameError,
-  };
-};
+import { DocumentRattache } from './types';
 
 // renvoie une fonction de suppression d'une preuve
 export const useRemovePreuve = () => {
