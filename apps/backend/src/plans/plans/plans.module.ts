@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
+import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AxeModule } from '../axes/axe.module';
 import { DeleteAxeRepository } from '../axes/delete-axe/delete-axe.repository';
@@ -50,6 +51,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     forwardRef(() => CollectivitesModule),
     forwardRef(() => FichesModule),
     AxeModule,
+    TrackingModule,
     TransactionModule,
   ],
   providers: [

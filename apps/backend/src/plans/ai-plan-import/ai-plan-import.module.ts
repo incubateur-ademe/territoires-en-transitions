@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
+import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { PlanModule } from '../plans/plans.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
@@ -27,6 +28,7 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
     PlansUtilsModule,
     UsersModule,
     NotificationsModule,
+    TrackingModule,
     BullModule.registerQueue({
       name: AI_PLAN_IMPORT_QUEUE_NAME,
       defaultJobOptions: AI_PLAN_IMPORT_JOB_OPTIONS,
