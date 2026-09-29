@@ -1,34 +1,36 @@
 import { appLabels } from '@/app/labels/catalog';
+import { PreuveType } from '@tet/domain/collectivites';
 import { Checkbox, InfoTooltip } from '@tet/ui';
-import { DocType } from './types';
 
-// types de documents pour lesquels l'utilisateur peut choisir l'option "confidentiel"
-const ALLOW_PRIVATE: DocType[] = ['reglementaire', 'complementaire', 'annexe'];
+const PREUVE_TYPES_CONFIDENTIABLES: PreuveType[] = [
+  'reglementaire',
+  'complementaire',
+  'annexe',
+];
 
 /**
  * L'utilisateur peut-il choisir la confidentialité pour ce type de document ?
  * Sinon, il ne faut pas non plus l'imposer : la confidentialité des fichiers
  * déjà présents dans la bibliothèque n'a pas à changer.
  */
-export const canChooseConfidentiel = (docType?: DocType): boolean =>
-  !!docType && ALLOW_PRIVATE.includes(docType);
+export const canChooseConfidentiel = (preuveType?: PreuveType): boolean =>
+  !!preuveType && PREUVE_TYPES_CONFIDENTIABLES.includes(preuveType);
 
-/** Affiche le bouton permettant de passer en document en "confidentiel" */
 export const ConfidentielCheckbox = ({
-  docType,
+  preuveType,
   confidentiel,
   setConfidentiel,
 }: {
-  docType?: DocType;
+  preuveType?: PreuveType;
   confidentiel: boolean;
   setConfidentiel: (value: boolean) => void;
 }) => {
-  if (!canChooseConfidentiel(docType)) {
+  if (!canChooseConfidentiel(preuveType)) {
     return null;
   }
 
   const confidentialiteInfo =
-    docType === 'annexe'
+    preuveType === 'annexe'
       ? appLabels.preuveAnnexeConfidentielle
       : appLabels.preuveDocConfidentiel;
 

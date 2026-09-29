@@ -3,6 +3,7 @@
  */
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { PreuveType } from '@tet/domain/collectivites';
 import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useState } from 'react';
 import { useUpdateBibliothequeFichier } from '../bibliotheque/use-edit-preuve';
@@ -25,7 +26,6 @@ import {
 import { FileUploadItem } from './file-item';
 import { FileItemsList } from './file-items-list';
 import {
-  DocType,
   DuplicatedPreuveType,
   OnDuplicatedDocumentsAdded,
   UploadStatusCode,
@@ -37,11 +37,11 @@ export type AddFileHandler = (
 ) => Promise<AddedDocumentResult | void> | AddedDocumentResult | void;
 
 const isDuplicatedPreuveType = (
-  docType?: DocType
-): docType is DuplicatedPreuveType =>
-  docType === 'annexe' ||
-  docType === 'complementaire' ||
-  docType === 'reglementaire';
+  preuveType?: PreuveType
+): preuveType is DuplicatedPreuveType =>
+  preuveType === 'annexe' ||
+  preuveType === 'complementaire' ||
+  preuveType === 'reglementaire';
 
 const isFulfilledSubmittedFile = (
   result: PromiseSettledResult<SubmittedValidFile>
@@ -49,7 +49,7 @@ const isFulfilledSubmittedFile = (
   result.status === 'fulfilled';
 
 export type AddFileProps = {
-  docType?: DocType;
+  preuveType?: PreuveType;
   initialSelection?: Array<FileUploadItem>;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
@@ -60,7 +60,7 @@ export type AddFileProps = {
 
 export const AddFile = (props: AddFileProps) => {
   const {
-    docType,
+    preuveType,
     initialSelection,
     fileConstraints = DEFAULT_FILE_CONSTRAINTS,
     onAddFile,
@@ -87,7 +87,7 @@ export const AddFile = (props: AddFileProps) => {
   const submission = getFilesSubmission(currentSelection);
   const isSubmitDisabled = !submission.canSubmit || isSubmitting;
 
-  const canSetConfidentiel = canChooseConfidentiel(docType);
+  const canSetConfidentiel = canChooseConfidentiel(preuveType);
 
   const submitValidFile = async ({
     file,
@@ -129,10 +129,10 @@ export const AddFile = (props: AddFileProps) => {
       .filter(isFulfilledSubmittedFile)
       .map((result) => result.value);
 
-    if (onDuplicatedDocumentsAdded && isDuplicatedPreuveType(docType)) {
+    if (onDuplicatedDocumentsAdded && isDuplicatedPreuveType(preuveType)) {
       const duplicatedDocuments = buildDuplicatedDocuments(
         submittedFiles,
-        docType
+        preuveType
       );
 
       if (duplicatedDocuments.length > 0) {
@@ -163,7 +163,7 @@ export const AddFile = (props: AddFileProps) => {
         />
       </Field>
       <ConfidentielCheckbox
-        docType={docType}
+        preuveType={preuveType}
         confidentiel={confidentiel}
         setConfidentiel={setConfidentiel}
       />

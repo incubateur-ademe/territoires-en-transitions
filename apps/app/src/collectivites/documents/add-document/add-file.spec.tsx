@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
-import { toDocumentHash } from '@tet/domain/collectivites';
+import { PreuveType, toDocumentHash } from '@tet/domain/collectivites';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AddFile } from './add-file';
 import { FileUploadItem } from './file-item';
-import { DocType, UploadStatusCode } from './types';
+import { UploadStatusCode } from './types';
 
 const COLLECTIVITE_ID = 1;
 const UPLOADED_FICHIER_ID = 7;
@@ -80,8 +80,10 @@ const duplicatedFichier: FileUploadItem = {
   },
 };
 
-const renderAddFile = ({ docType }: { docType?: DocType } = {}) =>
-  render(<AddFile docType={docType} onAddFile={onAddFile} onClose={onClose} />);
+const renderAddFile = ({ preuveType }: { preuveType?: PreuveType } = {}) =>
+  render(
+    <AddFile preuveType={preuveType} onAddFile={onAddFile} onClose={onClose} />
+  );
 
 const checkConfidentiel = () =>
   fireEvent.click(
@@ -103,13 +105,13 @@ describe('AddFile', () => {
   });
 
   it("n'écrit pas la confidentialité tant que la modale n'est pas validée", () => {
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     expect(updateDocument).not.toHaveBeenCalled();
   });
 
   it("n'écrit pas la confidentialité en cochant la case", () => {
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     checkConfidentiel();
 
@@ -117,7 +119,7 @@ describe('AddFile', () => {
   });
 
   it('écrit une seule fois la confidentialité cochée, à la validation', async () => {
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     checkConfidentiel();
     await submitModal();
@@ -131,7 +133,7 @@ describe('AddFile', () => {
 
   it('laisse sa confidentialité à un fichier déjà présent dans la bibliothèque', async () => {
     items.current = [duplicatedFichier];
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     checkConfidentiel();
     await submitModal();
@@ -141,7 +143,7 @@ describe('AddFile', () => {
 
   it("n'écrit la confidentialité que sur le fichier téléversé quand la sélection mélange les deux", async () => {
     items.current = [duplicatedFichier, uploadedFichier];
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     checkConfidentiel();
     await submitModal();
@@ -154,7 +156,7 @@ describe('AddFile', () => {
   });
 
   it("n'écrit pas de confidentialité pour un type de document qui n'offre pas le choix", async () => {
-    renderAddFile({ docType: 'rapport' });
+    renderAddFile({ preuveType: 'rapport' });
 
     await submitModal();
 
@@ -162,7 +164,7 @@ describe('AddFile', () => {
   });
 
   it('rattache le fichier et ferme la modale quand tout aboutit', async () => {
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     checkConfidentiel();
     await submitModal();
@@ -173,7 +175,7 @@ describe('AddFile', () => {
 
   it('ne rattache pas le fichier et laisse la modale ouverte quand la confidentialité échoue', async () => {
     updateDocument.mockRejectedValueOnce(new Error('UPDATE_FAILED'));
-    renderAddFile({ docType: 'complementaire' });
+    renderAddFile({ preuveType: 'complementaire' });
 
     checkConfidentiel();
     await submitModal();

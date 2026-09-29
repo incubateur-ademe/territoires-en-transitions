@@ -55,7 +55,7 @@ export const AddPreuveComplementaireModal = (
           <SelectSubAction action={action} setSubaction={setSubaction} />
         ) : (
           <AddDocumentTabs
-            docType="complementaire"
+            preuveType="complementaire"
             onClose={onClose}
             handlers={handlers}
             onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}

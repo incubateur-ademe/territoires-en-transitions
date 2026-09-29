@@ -1,12 +1,13 @@
 /**
  * Affiche le sélecteur de ressources (fichiers ou liens)
  */
+import { PreuveType } from '@tet/domain/collectivites';
 import { Tab, Tabs } from '@tet/ui';
 import { FileConstraints } from '../upload/constants';
 import { AddFile, AddFileHandler } from './add-file';
 import AddFromBibliotheque from './add-from-bibliotheque';
 import { AddLink, AddLinkHandler } from './add-link';
-import { DocType, OnDuplicatedDocumentsAdded } from './types';
+import { OnDuplicatedDocumentsAdded } from './types';
 
 export type AddDocumentTabsHandlers = {
   addFile: AddFileHandler;
@@ -17,8 +18,8 @@ export type AddDocumentTabsHandlers = {
 export type AddDocumentTabsProps = {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
-  /** Type des documents attendus */
-  docType?: DocType;
+  /** Type de preuve auquel le document sera rattaché */
+  preuveType?: PreuveType;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque) */
   fileConstraints?: FileConstraints;
   /** Gestionnaires d'événements */
