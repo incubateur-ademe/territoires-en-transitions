@@ -77,7 +77,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-test-deployment-guards db-test-periodicite-migration db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
+        db-init db-migrate db-test-deployment-guards db-test-periodicite-migration db-test-indicateur-valeurs-acl db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local gcloud
 
 help: ## Affiche cette aide
@@ -267,6 +267,9 @@ db-test-deployment-guards: ## Teste les politiques d'URL, backup/schéma et base
 	node --test data_layer/scripts/validate-database-url.spec.mjs
 	bash data_layer/backup/check-restore-compatibility.spec.sh
 	bash data_layer/tests/indicateur/periodicite-migration-lifecycle-database.spec.sh
+
+db-test-indicateur-valeurs-acl: ## Teste les droits indicateur_valeur sur INDICATEUR_VALEURS_ACL_TEST_DATABASE_URL (base vide jetable)
+	sh data_layer/tests/indicateur/reserver-ecriture-valeurs-backend.spec.sh
 
 db-test-periodicite-migration: ## Teste le cycle Sqitch sur PERIODICITE_MIGRATION_TEST_DATABASE_URL (base jetable)
 	bash data_layer/tests/indicateur/periodicite-migration-lifecycle.sh

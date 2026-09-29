@@ -116,7 +116,7 @@ clone_database_schema() {
       --set=ON_ERROR_STOP=1 \
       --dbname="$source_database_url" \
       --command="
-        SELECT count(*) = 7
+        SELECT count(*) = 8 AND (SELECT count(*) = 1 FROM private.indicateur_valeur_write_acl)
         FROM sqitch.changes
         WHERE project = 'tet'
           AND change IN (
@@ -126,6 +126,7 @@ clone_database_schema() {
             'indicateur/periodicite_obligatoire',
             'indicateur/periodicite_formules',
             'stats/report_indicateur_resultat_periode',
+            'indicateur/reserver-ecriture-valeurs-backend',
             'indicateur/periodicite_annuelle'
           )
       "
@@ -176,11 +177,14 @@ clone_database_schema() {
     --dbname="$target_database_name" \
     "$schema_archive"
 
+  # Copy the ACL snapshot with its schema so Sqitch can revert this clone.
+  # This is deployment metadata; no application observations are copied.
   pg_dump \
     "$source_database_url" \
     --format=custom \
     --data-only \
-    --schema=sqitch \
+    --table='sqitch.*' \
+    --table=private.indicateur_valeur_write_acl \
     --file="$registry_archive"
   PGPASSWORD="$superuser_password" pg_restore \
     --exit-on-error \
@@ -211,7 +215,7 @@ clone_database_schema() {
         SELECT concat_ws('|',
           to_regclass('public.indicateur_periodicite'),
           to_regclass('migration.indicateur_valeur_periodicite_audit'),
-          count(*) = 7
+          count(*) = 8 AND (SELECT count(*) = 1 FROM private.indicateur_valeur_write_acl)
         )
         FROM sqitch.changes
         WHERE project = 'tet'
@@ -222,6 +226,7 @@ clone_database_schema() {
             'indicateur/periodicite_obligatoire',
             'indicateur/periodicite_formules',
             'stats/report_indicateur_resultat_periode',
+            'indicateur/reserver-ecriture-valeurs-backend',
             'indicateur/periodicite_annuelle'
           )
       "
@@ -253,6 +258,7 @@ assert_pre_expand() {
               AND column_name = 'periodicite'
           ),
           to_regclass('private.indicateur_reconciliation_formule') IS NULL,
+          to_regclass('private.indicateur_valeur_write_acl') IS NULL,
           to_regprocedure('private.extraire_dependances_formule_indicateur(text)') IS NULL,
           NOT EXISTS (
             SELECT 1
@@ -265,13 +271,14 @@ assert_pre_expand() {
                 'indicateur/periodicite_obligatoire',
                 'indicateur/periodicite_formules',
                 'stats/report_indicateur_resultat_periode',
-            'indicateur/periodicite_annuelle'
+                'indicateur/reserver-ecriture-valeurs-backend',
+                'indicateur/periodicite_annuelle'
               )
           )
         )
       "
   )"
-  [[ "$pre_expand_state" == 't|t|t|t|t' ]] ||
+  [[ "$pre_expand_state" == 't|t|t|t|t|t' ]] ||
     fail "la base jetable n'est pas exactement pré-expand: '$pre_expand_state'"
 }
 

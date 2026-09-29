@@ -29,6 +29,7 @@ import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import request from 'supertest';
 import { expect, onTestFinished, vi } from 'vitest';
 import { trajectoireSnbcCalculRetour } from './fixtures/trajectoire-snbc-calcul-retour';
@@ -51,9 +52,9 @@ describe('Téléchargement de la trajectoire SNBC', () => {
 
   beforeAll(async () => {
     const localWorkbook = readFileSync(
-      new URL(
-        '../../../../site/public/outil-numerique/trajectoire/Trajectoire-GES-de-reference-V1-1-20240905.xlsx',
-        import.meta.url
+      resolve(
+        __dirname,
+        '../../../../site/public/outil-numerique/trajectoire/Trajectoire-GES-de-reference-V1-1-20240905.xlsx'
       )
     );
     // Intercepter aussi le préchargement déclenché au démarrage de l'application.

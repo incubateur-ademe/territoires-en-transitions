@@ -1,0 +1,138 @@
+-- Disposable empty local database only; this file commits real migration scripts.
+\set ON_ERROR_STOP on
+CREATE EXTENSION IF NOT EXISTS pgtap;
+CREATE SCHEMA private;
+SELECT no_plan();
+CREATE TABLE public.indicateur_valeur (id integer PRIMARY KEY, resultat double precision);
+INSERT INTO public.indicateur_valeur VALUES (1,0),(2,NULL);
+CREATE TABLE public.fixture_migration_outcome (scenario text PRIMARY KEY, sqlstate text NOT NULL);
+CREATE FUNCTION public.fixture_acl() RETURNS jsonb LANGUAGE sql STABLE AS $$
+ SELECT coalesce(jsonb_agg(to_jsonb(grant_entry) ORDER BY scope,grantor,grantee,privilege_type),'[]'::jsonb)
+ FROM (
+   SELECT 'table'::text AS scope, acl.* FROM pg_class relation
+   CROSS JOIN LATERAL aclexplode(relation.relacl) acl
+   WHERE relation.oid='public.indicateur_valeur'::regclass
+   UNION ALL
+   SELECT attribute.attname::text,acl.* FROM pg_attribute attribute
+   CROSS JOIN LATERAL aclexplode(attribute.attacl) acl
+   WHERE attribute.attrelid='public.indicateur_valeur'::regclass AND attribute.attnum>0 AND NOT attribute.attisdropped
+ ) grant_entry
+$$;
+CREATE FUNCTION public.fixture_as_role(role_name text, command text) RETURNS text LANGUAGE plpgsql AS $$
+DECLARE original_role text := current_user; actual_state text;
+BEGIN
+ EXECUTE format('SET LOCAL ROLE %I',role_name);
+ EXECUTE command;
+ EXECUTE format('SET LOCAL ROLE %I',original_role);
+ RETURN '00000';
+EXCEPTION WHEN OTHERS THEN
+ GET STACKED DIAGNOSTICS actual_state=RETURNED_SQLSTATE;
+ RETURN actual_state;
+END;
+$$;
+GRANT ALL ON public.indicateur_valeur TO anon,authenticated,service_role;
+SELECT public.fixture_acl() AS original_acl \gset
+SELECT jsonb_agg(to_jsonb(valeur) ORDER BY id) AS original_rows FROM public.indicateur_valeur valeur \gset
+\ir ../../sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
+\ir ../../sqitch/verify/indicateur/reserver-ecriture-valeurs-backend.sql
+SELECT is(public.fixture_as_role(role_name,command),'42501',description)
+FROM (VALUES
+ ('anon','INSERT INTO public.indicateur_valeur VALUES (3,3)','Anonymous INSERT is refused'),
+ ('anon','UPDATE public.indicateur_valeur SET resultat=4 WHERE id=1','Anonymous UPDATE is refused'),
+ ('anon','DELETE FROM public.indicateur_valeur WHERE id=1','Anonymous DELETE is refused'),
+ ('anon','TRUNCATE public.indicateur_valeur','Anonymous TRUNCATE is refused'),
+ ('authenticated','INSERT INTO public.indicateur_valeur VALUES (3,3)','Authenticated INSERT is refused'),
+ ('authenticated','UPDATE public.indicateur_valeur SET resultat=4 WHERE id=1','Authenticated UPDATE is refused'),
+ ('authenticated','DELETE FROM public.indicateur_valeur WHERE id=1','Authenticated DELETE is refused'),
+ ('authenticated','TRUNCATE public.indicateur_valeur','Authenticated TRUNCATE is refused')
+) attempts(role_name,command,description);
+SELECT ok(NOT has_any_column_privilege('anon','public.indicateur_valeur','INSERT,UPDATE,REFERENCES') AND NOT has_any_column_privilege('authenticated','public.indicateur_valeur','INSERT,UPDATE,REFERENCES'),'No column grant bypass remains');
+SELECT is((SELECT jsonb_agg(to_jsonb(valeur) ORDER BY id) FROM public.indicateur_valeur valeur),:'original_rows'::jsonb,'Rejected writes preserve zero, null, IDs and all fields');
+SELECT is(public.fixture_as_role('anon','SELECT * FROM public.indicateur_valeur'),'00000','Anonymous SELECT remains available');
+SELECT is(public.fixture_as_role('authenticated','SELECT * FROM public.indicateur_valeur'),'00000','Authenticated SELECT remains available');
+SELECT lives_ok('UPDATE public.indicateur_valeur SET resultat=0 WHERE id=1','The backend table owner can still write');
+SELECT is(public.fixture_as_role('service_role','INSERT INTO public.indicateur_valeur VALUES (3,3)'),'00000','Privileged imports can INSERT');
+SELECT is(public.fixture_as_role('service_role','UPDATE public.indicateur_valeur SET resultat=4 WHERE id=3'),'00000','Privileged imports can UPDATE');
+SELECT is(public.fixture_as_role('service_role','DELETE FROM public.indicateur_valeur WHERE id=3'),'00000','Privileged imports can DELETE');
+SELECT ok((SELECT relrowsecurity FROM pg_class WHERE oid='private.indicateur_valeur_write_acl'::regclass) AND NOT has_table_privilege('anon','private.indicateur_valeur_write_acl','SELECT,INSERT,UPDATE,DELETE') AND NOT has_table_privilege('authenticated','private.indicateur_valeur_write_acl','SELECT,INSERT,UPDATE,DELETE') AND NOT has_table_privilege('service_role','private.indicateur_valeur_write_acl','SELECT,INSERT,UPDATE,DELETE'),'The rollback archive remains private with RLS enabled');
+SELECT to_jsonb(archive) AS original_archive FROM private.indicateur_valeur_write_acl archive \gset
+\ir ../../sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
+SELECT is((SELECT to_jsonb(archive) FROM private.indicateur_valeur_write_acl archive),:'original_archive'::jsonb,'Deployment replay preserves the original ACL archive');
+\ir ../../sqitch/revert/indicateur/reserver-ecriture-valeurs-backend.sql
+SELECT is(public.fixture_acl(),:'original_acl'::jsonb,'Revert restores every default ACL, including service and owner privileges');
+SELECT ok(to_regclass('private.indicateur_valeur_write_acl') IS NULL,'Revert removes its archive');
+
+-- A customized installation must restore precisely its prior subset of rights.
+REVOKE ALL ON public.indicateur_valeur FROM anon,authenticated;
+GRANT SELECT ON public.indicateur_valeur TO anon,authenticated;
+GRANT INSERT ON public.indicateur_valeur TO PUBLIC;
+GRANT DELETE ON public.indicateur_valeur TO anon;
+GRANT UPDATE(resultat),REFERENCES(id) ON public.indicateur_valeur TO authenticated WITH GRANT OPTION;
+SELECT public.fixture_acl() AS customized_acl \gset
+\ir ../../sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
+\ir ../../sqitch/verify/indicateur/reserver-ecriture-valeurs-backend.sql
+SELECT is(public.fixture_as_role('authenticated','UPDATE public.indicateur_valeur SET resultat=4 WHERE id=1'),'42501','Column UPDATE grant is removed');
+SELECT is(public.fixture_as_role('anon','INSERT INTO public.indicateur_valeur VALUES (3,3)'),'42501','Inherited PUBLIC INSERT grant is removed');
+SELECT ok(NOT has_column_privilege('authenticated','public.indicateur_valeur','id','REFERENCES'),'Column REFERENCES grant is removed');
+\ir ../../sqitch/revert/indicateur/reserver-ecriture-valeurs-backend.sql
+SELECT is(public.fixture_acl(),:'customized_acl'::jsonb,'Revert restores customized PUBLIC, column and grant-option ACLs exactly');
+
+-- Lost read/import capabilities must fail before publishing any ACL change.
+REVOKE SELECT ON public.indicateur_valeur FROM anon;
+SELECT public.fixture_acl() AS before_failure \gset
+\! sh "$INDICATEUR_VALEURS_ACL_TEST_RUNNER" expected-failure deploy missing_read
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='missing_read'),'42501','Missing anonymous read capability refuses deployment');
+SELECT is(public.fixture_acl(),:'before_failure'::jsonb,'Missing-read failure leaves all prior rights intact');
+SELECT ok(to_regclass('private.indicateur_valeur_write_acl') IS NULL,'Failed deployment leaves no partial archive');
+GRANT SELECT ON public.indicateur_valeur TO anon;
+REVOKE UPDATE ON public.indicateur_valeur FROM service_role;
+SELECT public.fixture_acl() AS before_failure \gset
+\! sh "$INDICATEUR_VALEURS_ACL_TEST_RUNNER" expected-failure deploy missing_import
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='missing_import'),'42501','Missing privileged import capability refuses deployment');
+SELECT is(public.fixture_acl(),:'before_failure'::jsonb,'Missing-import failure is atomic');
+GRANT UPDATE ON public.indicateur_valeur TO service_role;
+
+-- A delegation signed by another grantor must not be silently flattened.
+REVOKE INSERT ON public.indicateur_valeur FROM PUBLIC;
+REVOKE ALL (id,resultat) ON public.indicateur_valeur FROM anon,authenticated;
+GRANT UPDATE(resultat) ON public.indicateur_valeur TO anon WITH GRANT OPTION;
+SET ROLE anon;
+GRANT UPDATE(resultat) ON public.indicateur_valeur TO authenticated;
+RESET ROLE;
+SELECT public.fixture_acl() AS before_failure \gset
+\! sh "$INDICATEUR_VALEURS_ACL_TEST_RUNNER" expected-failure deploy delegated
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='delegated'),'55000','Delegated grantors require an explicit ACL decision');
+SELECT is(public.fixture_acl(),:'before_failure'::jsonb,'Delegation refusal preserves the entire ACL');
+SET ROLE anon;
+REVOKE UPDATE(resultat) ON public.indicateur_valeur FROM authenticated;
+RESET ROLE;
+REVOKE UPDATE(resultat) ON public.indicateur_valeur FROM anon;
+
+-- This role has privileges only on the disposable fixture table, never in
+-- another database. Its temporary membership cannot grant rights elsewhere.
+SELECT 'fixture_indicateur_acl_writer_' || substr(md5(current_database()),1,8) AS writer_role \gset
+CREATE ROLE :"writer_role" NOLOGIN;
+GRANT UPDATE ON public.indicateur_valeur TO :"writer_role";
+GRANT :"writer_role" TO authenticated;
+SELECT public.fixture_acl() AS before_failure \gset
+\! sh "$INDICATEUR_VALEURS_ACL_TEST_RUNNER" expected-failure deploy inherited
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='inherited'),'42501','An inherited writer permission refuses deployment');
+SELECT is(public.fixture_acl(),:'before_failure'::jsonb,'Inherited-permission refusal preserves all prior rights');
+SELECT ok(to_regclass('private.indicateur_valeur_write_acl') IS NULL,'Inherited-permission refusal leaves no partial archive');
+REVOKE :"writer_role" FROM authenticated;
+REVOKE UPDATE ON public.indicateur_valeur FROM :"writer_role";
+DROP ROLE :"writer_role";
+
+-- A later authorization change must not be discarded by a rollback.
+\ir ../../sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
+GRANT UPDATE(resultat) ON public.indicateur_valeur TO authenticated;
+SELECT public.fixture_acl() AS before_failure \gset
+\! sh "$INDICATEUR_VALEURS_ACL_TEST_RUNNER" expected-failure verify later_grant_verify
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='later_grant_verify'),'42501','Verification detects an added column permission');
+\! sh "$INDICATEUR_VALEURS_ACL_TEST_RUNNER" expected-failure revert later_grant_revert
+SELECT is((SELECT sqlstate FROM public.fixture_migration_outcome WHERE scenario='later_grant_revert'),'42501','Rollback refuses subsequent permission changes');
+SELECT is(public.fixture_acl(),:'before_failure'::jsonb,'Refused rollback keeps the new grant intact');
+SELECT is((SELECT count(*) FROM private.indicateur_valeur_write_acl),1::bigint,'Refused rollback preserves the recovery archive');
+REVOKE UPDATE(resultat) ON public.indicateur_valeur FROM authenticated;
+\ir ../../sqitch/revert/indicateur/reserver-ecriture-valeurs-backend.sql
+SELECT * FROM finish();

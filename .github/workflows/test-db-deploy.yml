@@ -91,6 +91,25 @@ jobs:
           echo "database-url=$DATABASE_URL" >> "$GITHUB_OUTPUT"
           echo "sqitch-target=db:pg://${DATABASE_URL#postgresql://}" >> "$GITHUB_OUTPUT"
 
+      - name: Test indicator write privileges in an empty disposable database
+        env:
+          ACL_DATABASE_NAME: periodicite_migration_lifecycle_test_acl_${{ github.run_id }}_${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          # The network namespace pins loopback to the container verified above.
+          docker exec --env PGPASSWORD=postgres supabase_db_tet \
+            createdb --host=127.0.0.1 --username=postgres --owner=postgres "$ACL_DATABASE_NAME"
+          trap 'docker exec --env PGPASSWORD=postgres supabase_db_tet dropdb --host=127.0.0.1 --username=postgres --if-exists --force "$ACL_DATABASE_NAME"' EXIT
+          docker run \
+            --rm \
+            --network container:supabase_db_tet \
+            --env "INDICATEUR_VALEURS_ACL_TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/$ACL_DATABASE_NAME" \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --entrypoint sh \
+            public.ecr.aws/supabase/pg_prove:3.36 \
+            data_layer/tests/indicateur/reserver-ecriture-valeurs-backend.spec.sh
+
       - name: Test restore guard with a real Sqitch archive
         env:
           DATABASE_URL: ${{ steps.local-supabase.outputs.database-url }}

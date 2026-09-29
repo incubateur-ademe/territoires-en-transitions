@@ -87,6 +87,12 @@ case "$command_name" in
       echo t
     fi
     ;;
+  pg_dump)
+    if [[ "$*" == *'--data-only'* ]]; then
+      [[ "$*" == *'--table=sqitch.*'* ]] || exit 18
+      [[ "$*" == *'--table=private.indicateur_valeur_write_acl'* ]] || exit 19
+    fi
+    ;;
   pg_restore)
     if [[ "${1:-}" == --list ]]; then
       cat <<'TOC'

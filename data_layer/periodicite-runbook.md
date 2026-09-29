@@ -16,6 +16,16 @@ Les protections des saisies manuelles et de provenance font partie de #5214 :
 un calcul automatique ne remplace pas une saisie, y compris sous métadonnée PCAET ;
 un appel REST utilisateur ne peut pas fournir de `metadonneeId`. Les imports
 privilégiés et le parcours PCAET dédié conservent leurs autorisations propres.
+La migration `indicateur/reserver-ecriture-valeurs-backend` retire les écritures
+directes de `PUBLIC`, `anon` et `authenticated`, tout en conservant les lectures
+et les imports `service_role`. Elle doit tourner avec le propriétaire de la table ;
+un héritage de droits inattendu bloque la migration. Ses ACL initiales sont
+archivées pour un retour arrière exact. La restauration de données conserve
+les ACL et cette archive propres à la cible.
+
+La [répétition du 29 septembre](periodicite-validation-2026-09-29.md) documente
+les protections, les tests et leurs limites ; elle ne remplace pas les contrôles
+sur une sauvegarde à jour avant la maintenance.
 
 - Choisir la cible et le commit de `split/periodicite-data-migration` à livrer. Préparer les versions correspondantes du backend,
   du frontend et de `tools`, ainsi que les versions précédentes pour une reprise.
@@ -71,7 +81,9 @@ les vérifications des migrations ni les tests applicatifs.
    graphiques et exports existants. Une date historique annuelle est rattachée au
    1er janvier de son année, même si le client transmet `periodicite: annuelle`.
    Vérifier que les créations/imports non annuels et la configuration d’agrégation
-   sont refusés par l’API et que les écritures SQL directes restent limitées à l’annuel.
+   sont refusés par l’API et que les écritures SQL privilégiées restent limitées à l’annuel.
+   Vérifier le refus des mutations directes `anon`/`authenticated` sur
+   `indicateur_valeur`, tout en conservant lecture, imports et parcours PCAET.
 5. Si les vérifications passent, rouvrir les accès et reprendre les imports et tâches compatibles. Dans `tools`, vérifier que
    `drain-indicateur-formula-reconciliations` s'exécute ; l'inclure dans `CRON_JOBS_FILTER` si ce filtre
    est configuré. Reprendre les sauvegardes et les restaurations entre schémas compatibles.

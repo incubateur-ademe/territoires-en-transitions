@@ -353,11 +353,14 @@ formula_source_id="$(scalar "INSERT INTO public.indicateur_definition (identifia
 apply_change data_layer/sqitch/deploy/stats/report_indicateur_resultat_periode.sql
 apply_change data_layer/sqitch/verify/stats/report_indicateur_resultat_periode.sql
 apply_change data_layer/sqitch/deploy/indicateur/periodicite_annuelle.sql
+apply_change data_layer/sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
+apply_change data_layer/sqitch/verify/indicateur/reserver-ecriture-valeurs-backend.sql
 release_test_output="$(psql_test --file="$repository_root/data_layer/tests/indicateur/periodicite-release.sql")"
 if [[ "$release_test_output" == *"not ok"* || "$release_test_output" == *"Looks like"* ]]; then
   printf '%s\n' "$release_test_output" >&2
   exit 1
 fi
+apply_change data_layer/sqitch/revert/indicateur/reserver-ecriture-valeurs-backend.sql
 apply_change data_layer/sqitch/revert/indicateur/periodicite_annuelle.sql
 
 # Une restauration charge indicateur_definition avec les triggers USER coupés.
