@@ -15,7 +15,7 @@ describe('Contenu des emails de démarches PCAET', () => {
     const props = {
       sendToEmail: 'agent@dreal.gouv.fr',
       subject:
-        'Projet de PCAET de Redon Agglomération : transmission pour avis',
+        'Déposez votre avis pour le projet de PCAET de Redon Agglomération',
       collectiviteNom: 'Redon Agglomération',
       serviceNom: 'DREAL Bretagne',
       dossierUrl: 'https://app.test/collectivite/1/instruction/7',
@@ -33,6 +33,9 @@ describe('Contenu des emails de démarches PCAET', () => {
 
       expect(html).toContain('est saisi pour avis sur ce dossier');
       expect(html).toContain('Les avis sont attendus avant le 15/12/2026');
+      expect(html).toContain(
+        'le diagnostic, les objectifs et le programme d&#x27;actions'
+      );
       expect(html).toContain(props.dossierUrl);
     });
 
@@ -72,7 +75,7 @@ describe('Contenu des emails de démarches PCAET', () => {
   describe('avis reçu', () => {
     const props = {
       sendToEmail: 'pilote@collectivite.fr',
-      subject: 'Avis rendu sur votre projet de PCAET',
+      subject: "Consultez l'avis rendu sur votre projet de PCAET",
       demarcheTitre: 'PCAET 2024-2030',
       serviceNom: 'DREAL Bretagne',
       documentsUrl:
@@ -106,7 +109,7 @@ describe('Contenu des emails de démarches PCAET', () => {
   describe('instruction close', () => {
     const props = {
       sendToEmail: 'pilote@collectivite.fr',
-      subject: 'Votre projet de PCAET est instruit',
+      subject: 'Finalisez votre dépôt de PCAET',
       demarcheTitre: 'PCAET 2024-2030',
       documentsUrl:
         'https://app.test/collectivite/1/demarche-pcaet/2/documents',
@@ -122,12 +125,13 @@ describe('Contenu des emails de démarches PCAET', () => {
 
       expect(html).toContain('tous les avis attendus ont été rendus');
       expect(html).toContain('publiez votre démarche');
+      expect(html).not.toContain('réputé favorable');
       // Neutre à dessein : sur un délai échu, il peut n'y avoir aucun avis.
       expect(html).not.toContain('consultez les avis');
       expect(html).toContain(props.documentsUrl);
     });
 
-    it('dit que le délai est échu, sans parler des avis rendus', async () => {
+    it('dit que le délai est échu et le projet réputé favorable', async () => {
       const html = await render(
         NotifyInstructionCloseEmail({
           ...props,
@@ -135,9 +139,9 @@ describe('Contenu des emails de démarches PCAET', () => {
         })
       );
 
-      expect(html).toContain(
-        'le délai imparti aux services consultés est échu'
-      );
+      expect(html).toContain('pour déposer des avis sur votre projet');
+      expect(html).toContain('est réputé favorable');
+      expect(html).toContain('publiez votre démarche');
       expect(html).not.toContain('tous les avis attendus ont été rendus');
     });
   });

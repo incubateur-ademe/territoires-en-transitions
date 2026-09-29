@@ -248,7 +248,9 @@ export class NotifyDossierTransmisService {
 
     const props: NotifyDossierTransmisProps = {
       sendToEmail: destinataire.email,
-      subject: `Projet de PCAET de ${saisine.collectiviteNom} : transmission pour avis`,
+      subject: saisiPourAvis
+        ? `Déposez votre avis pour le projet de PCAET de ${saisine.collectiviteNom}`
+        : `Projet de PCAET de ${saisine.collectiviteNom} : transmis pour information`,
       collectiviteNom: saisine.collectiviteNom,
       serviceNom: saisine.serviceNom,
       saisiPourAvis,

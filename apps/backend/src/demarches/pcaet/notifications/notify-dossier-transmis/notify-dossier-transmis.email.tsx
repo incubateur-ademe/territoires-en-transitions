@@ -48,8 +48,8 @@ export const NotifyDossierTransmisEmail = (
       )}
 
       <Text>
-        Le dossier, les documents déposés, le diagnostic et le programme
-        d&apos;actions sont consultables sur la plateforme.
+        Le dossier, les documents déposés, le diagnostic, les objectifs et le
+        programme d&apos;actions sont consultables sur la plateforme.
       </Text>
 
       <Section className="my-8 text-center">
