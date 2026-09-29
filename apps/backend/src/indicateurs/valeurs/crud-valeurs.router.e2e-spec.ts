@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   deleteIndicateurValeursForCollectivite,
   getAuthUserFromUserCredentials,
@@ -1058,31 +1061,99 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(resultAfter.indicateurs[0].sources.collectivite).toBeUndefined();
   });
 
-  test('Donne la moyenne des valeurs pour un indicateur', async () => {
-    const caller = router.createCaller({ user: authenticatedUser });
+  test('Donne la moyenne annuelle des collectivités de même type', async () => {
+    const fixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: { natureInsee: 'CA' },
+    });
+    const sameType = await addTestCollectivite(databaseService, {
+      natureInsee: 'CA',
+    });
+    const otherType = await addTestCollectivite(databaseService, {
+      natureInsee: 'CC',
+    });
+    const [definition] = await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values({
+        titre: 'Indicateur de moyenne isolé',
+        unite: 'MWh',
+        periodicite: 'annuelle',
+      })
+      .returning();
+    const sourceId = `average-${randomUUID()}`;
+    const sourceLibelle = 'Source de moyenne de test';
+    await databaseService.db.insert(indicateurSourceTable).values({
+      id: sourceId,
+      libelle: sourceLibelle,
+      ordreAffichage: 0,
+    });
+    const [metadata] = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values({
+        sourceId,
+        dateVersion: '2026-01-01',
+      })
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, definition.id));
+      await databaseService.db
+        .delete(indicateurSourceMetadonneeTable)
+        .where(eq(indicateurSourceMetadonneeTable.id, metadata.id));
+      await databaseService.db
+        .delete(indicateurSourceTable)
+        .where(eq(indicateurSourceTable.id, sourceId));
+      await fixture.cleanup();
+      await sameType.cleanup();
+      await otherType.cleanup();
+    });
+    const annualResults = [
+      { dateValeur: '2014-01-01', resultat: 6.78 },
+      { dateValeur: '2016-01-01', resultat: 6.94 },
+      { dateValeur: '2017-01-01', resultat: 6.96 },
+    ];
+    await databaseService.db.insert(indicateurValeurTable).values([
+      ...annualResults
+        .flatMap(({ dateValeur, resultat }) => [
+          { collectiviteId: fixture.collectivite.id, dateValeur, resultat },
+          { collectiviteId: sameType.collectivite.id, dateValeur, resultat: 8 },
+          {
+            collectiviteId: otherType.collectivite.id,
+            dateValeur,
+            resultat: 100,
+          },
+        ])
+        .map((valeur) => ({
+          ...valeur,
+          indicateurId: definition.id,
+          metadonneeId: metadata.id,
+          periodicite: 'annuelle' as const,
+        })),
+      {
+        collectiviteId: fixture.collectivite.id,
+        indicateurId: definition.id,
+        metadonneeId: metadata.id,
+        periodicite: 'mensuelle',
+        dateValeur: '2014-01-01',
+        resultat: 100,
+      },
+    ]);
+
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(fixture.user),
+    });
     const result = await caller.indicateurs.valeurs.average({
-      collectiviteId: 3895,
-      indicateurId: 73,
+      collectiviteId: fixture.collectivite.id,
+      indicateurId: definition.id,
     });
     expect(result).toStrictEqual({
-      indicateurId: 73,
+      indicateurId: definition.id,
       typeCollectivite: 'CA',
       valeurs: [
-        {
-          dateValeur: '2014-01-01',
-          valeur: 7.39,
-          sourceLibelle: 'RARE-OREC',
-        },
-        {
-          dateValeur: '2016-01-01',
-          valeur: 7.47,
-          sourceLibelle: 'RARE-OREC',
-        },
-        {
-          dateValeur: '2017-01-01',
-          valeur: 7.48,
-          sourceLibelle: 'RARE-OREC',
-        },
+        { dateValeur: '2014-01-01', valeur: 7.39, sourceLibelle },
+        { dateValeur: '2016-01-01', valeur: 7.47, sourceLibelle },
+        { dateValeur: '2017-01-01', valeur: 7.48, sourceLibelle },
       ],
     });
   });

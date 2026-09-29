@@ -8,6 +8,7 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { CollectiviteRole } from '@tet/domain/users';
+import { IndicateurPeriodErrorEnum } from '@tet/domain/indicateurs';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { onTestFinished } from 'vitest';
@@ -322,12 +323,67 @@ describe('Périodicité de déclaration des indicateurs', () => {
     ]);
   });
 
+  test.each([undefined, 'annuelle'] as const)(
+    'normalise une date annuelle historique avec periodicite=%s',
+    async (periodicite) => {
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId,
+        titre: 'Compatibilité annuelle',
+        periodicite: 'annuelle',
+      });
+      const saved = await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId,
+        periodicite,
+        dateValeur: '2026-01-02',
+        resultat: 1,
+      });
+      expect(saved).toMatchObject({
+        periodicite: 'annuelle',
+        dateValeur: '2026-01-01',
+        resultat: 1,
+      });
+      const listed = await caller.indicateurs.valeurs.list({
+        collectiviteId,
+        indicateurIds: [indicateurId],
+      });
+      expect(listed.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+        { periodicite: 'annuelle', dateValeur: '2026-01-01', resultat: 1 },
+      ]);
+    }
+  );
+
   test.each([
     'annuelle',
     'semestrielle',
     'trimestrielle',
     'mensuelle',
   ] as const)(
+    'rejette une date non canonique de la nouvelle grille %s',
+    async (periodicite) => {
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId,
+        titre: 'Grille canonique',
+        periodicite,
+      });
+      await expect(
+        caller.indicateurs.valeurs.upsertMany({
+          collectiviteId,
+          valeurs: [
+            {
+              indicateurId,
+              period: { periodicite, dateDebut: '2026-01-02' } as never,
+              resultat: 1,
+            },
+          ],
+        })
+      ).rejects.toThrow(
+        IndicateurPeriodErrorEnum.INDICATEUR_PERIOD_DATE_NON_CANONICAL
+      );
+    }
+  );
+
+  test.each(['semestrielle', 'trimestrielle', 'mensuelle'] as const)(
     'rejects a noncanonical date for an explicit %s observation',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
