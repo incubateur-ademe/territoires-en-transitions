@@ -64,7 +64,7 @@ export class ScoreMobilisationService {
       fichesById.has(ficheId)
     );
 
-    const outcomes = await mapWithConcurrency(
+    const levierScorings = await mapWithConcurrency(
       groupVoletsByLevier(voletsOfKnownFiches),
       LEVIERS_IN_PARALLEL,
       async (levierVolets) => ({
@@ -78,19 +78,24 @@ export class ScoreMobilisationService {
       })
     );
 
-    const unscored = outcomes.flatMap(({ levierId, scoring }) =>
-      scoring.success ? [] : [{ levierId, kind: scoring.error.kind }]
-    );
+    const unscored = levierScorings.flatMap(({ levierId, scoring }) => {
+      if (scoring.success) {
+        return [];
+      }
+      return [{ levierId, kind: scoring.error.kind }];
+    });
     if (unscored.length > 0) {
       return failure({ kind: 'leviers_not_scored', collectiviteId, unscored });
     }
 
     return success({
-      leviers: outcomes.flatMap(({ scoring }) =>
-        scoring.success
-          ? [{ levierId: scoring.data.levierId, volets: scoring.data.volets }]
-          : []
-      ),
+      leviers: levierScorings.flatMap(({ scoring }) => {
+        if (!scoring.success) {
+          return [];
+        }
+        const { levierId, volets: scoredVolets } = scoring.data;
+        return [{ levierId, volets: scoredVolets }];
+      }),
     });
   }
 

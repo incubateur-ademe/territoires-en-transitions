@@ -17,7 +17,7 @@ const mobilisationTokens = {
   totalTokens: 16,
 };
 
-const scoredLevier = success({
+const scoredLevierCompletion = success({
   data: { '1': 3, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 },
   tokens: mobilisationTokens,
 });
@@ -34,27 +34,25 @@ const toInput = (
   ],
 });
 
-type Dependencies = {
+type ServiceUnderTest = {
   service: ScoreMobilisationService;
   llm: { generateStructured: Mock };
 };
 
-const toDependencies = ({
-  collectiviteIsMissing = false,
-  collectiviteReadError,
+const toServiceUnderTest = ({
+  collectiviteReadFailure,
   unscoredLevierId,
 }: {
-  collectiviteIsMissing?: boolean;
-  collectiviteReadError?: Error;
+  collectiviteReadFailure?: 'not_found' | Error;
   unscoredLevierId?: LevierId;
-} = {}): Dependencies => {
+} = {}): ServiceUnderTest => {
   const collectivitesService = {
     getCollectivite: vi.fn().mockImplementation(async () => {
-      if (collectiviteIsMissing) {
+      if (collectiviteReadFailure === 'not_found') {
         throw new NotFoundException(`Collectivite ${collectiviteId} not found`);
       }
-      if (collectiviteReadError !== undefined) {
-        throw collectiviteReadError;
+      if (collectiviteReadFailure instanceof Error) {
+        throw collectiviteReadFailure;
       }
       return { collectivite: { nom: 'Ville de test', population: 3000 } };
     }),
@@ -67,7 +65,7 @@ const toDependencies = ({
         prompt.includes(LEVIER_NOM_BY_ID[unscoredLevierId]);
       return isPromptForUnscoredLevier
         ? failure({ kind: 'rate_limited' })
-        : scoredLevier;
+        : scoredLevierCompletion;
     });
   const llm = { generateStructured };
 
@@ -84,7 +82,7 @@ const toDependencies = ({
 
 describe('daily-ct-check', () => {
   it("renvoie l'engagement d'une CT calculé à partir de ses volets et du texte de ses fiches, sans job d'analyse", async () => {
-    const { service, llm } = toDependencies();
+    const { service, llm } = toServiceUnderTest();
 
     const result = await service.calculateCollectiviteMobilisation(
       toInput([
@@ -124,7 +122,7 @@ describe('daily-ct-check', () => {
   });
 
   it("renvoie un engagement vide pour une CT qui n'a plus aucun volet", async () => {
-    const { service, llm } = toDependencies();
+    const { service, llm } = toServiceUnderTest();
 
     const result = await service.calculateCollectiviteMobilisation(toInput([]));
 
@@ -137,8 +135,8 @@ describe('daily-ct-check', () => {
     });
   });
 
-  it("n'appelle pas le LLM pour un levier dont aucune fiche n'a de texte", async () => {
-    const { service, llm } = toDependencies();
+  it("n'appelle pas le LLM pour un levier dont aucune fiche ne figure parmi les textes reçus", async () => {
+    const { service, llm } = toServiceUnderTest();
 
     const result = await service.calculateCollectiviteMobilisation(
       toInput([
@@ -156,7 +154,7 @@ describe('daily-ct-check', () => {
   });
 
   it("n'écrit pas l'engagement calculé", async () => {
-    const { service } = toDependencies();
+    const { service } = toServiceUnderTest();
 
     const result = await service.calculateCollectiviteMobilisation(
       toInput([
@@ -168,11 +166,14 @@ describe('daily-ct-check', () => {
       ])
     );
 
-    expect(result.success).toBe(true);
+    expect({
+      constructorDependencies: ScoreMobilisationService.length,
+      success: result.success,
+    }).toEqual({ constructorDependencies: 2, success: true });
   });
 
   it("renvoie leviers_not_scored quand un levier n'a pas pu être noté", async () => {
-    const { service } = toDependencies({ unscoredLevierId: 'covoiturage' });
+    const { service } = toServiceUnderTest({ unscoredLevierId: 'covoiturage' });
 
     const result = await service.calculateCollectiviteMobilisation(
       toInput([
@@ -196,7 +197,9 @@ describe('daily-ct-check', () => {
   });
 
   it('renvoie collectivite_not_found pour une CT introuvable', async () => {
-    const { service, llm } = toDependencies({ collectiviteIsMissing: true });
+    const { service, llm } = toServiceUnderTest({
+      collectiviteReadFailure: 'not_found',
+    });
 
     const result = await service.calculateCollectiviteMobilisation(
       toInput([
@@ -222,8 +225,8 @@ describe('daily-ct-check', () => {
 
   it("renvoie collectivite_read_failed quand la lecture de la CT échoue pour une autre raison qu'une absence", async () => {
     const connectionLost = new Error('database connection lost');
-    const { service, llm } = toDependencies({
-      collectiviteReadError: connectionLost,
+    const { service, llm } = toServiceUnderTest({
+      collectiviteReadFailure: connectionLost,
     });
 
     const result = await service.calculateCollectiviteMobilisation(
