@@ -102,23 +102,27 @@ const DocAuditOuLabellisation = ({
   const replaceAuditReport = useReplaceAuditReportFile(preuve);
   const isRapportAudit = audit !== null;
 
+  if (!canUpdate) {
+    return <DocumentCard document={preuve} />;
+  }
+
   return (
-    <DocumentCard document={preuve}>
-      <DocumentCard.Actions visibleWhen={canUpdate}>
-        <DocumentCard.Edit />
-        <DocumentCard.Comment />
-        <DocumentCard.Replace
-          visibleWhen={isRapportAudit}
-          onReplace={async (fichierId) => {
-            await replaceAuditReport.mutateAsync({
-              preuveId: preuve.id,
-              fichierId,
-            });
-          }}
-        />
-        <DocumentCard.Delete visibleWhen={!isRapportAudit} />
-      </DocumentCard.Actions>
-    </DocumentCard>
+    <DocumentCard
+      document={preuve}
+      actions={{
+        edit: true,
+        comment: true,
+        remove: !isRapportAudit,
+        replace: isRapportAudit
+          ? async (fichierId) => {
+              await replaceAuditReport.mutateAsync({
+                preuveId: preuve.id,
+                fichierId,
+              });
+            }
+          : undefined,
+      }}
+    />
   );
 };
 

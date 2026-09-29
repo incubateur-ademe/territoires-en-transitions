@@ -32,17 +32,16 @@ export const ReferentielDocumentCard = (
       : null;
   const duplicateInformation = props.duplicatedDocumentInformation;
 
+  const actions = canEdit
+    ? { edit: true, comment: true, remove: true }
+    : undefined;
+
   return (
-    <DocumentCard document={props.preuve}>
-      {identifier && <DocumentCard.Identifier value={identifier} />}
-      {duplicateInformation && (
-        <DocumentCard.Duplicate information={duplicateInformation} />
-      )}
-      <DocumentCard.Actions visibleWhen={canEdit}>
-        <DocumentCard.Edit />
-        <DocumentCard.Comment />
-        <DocumentCard.Delete />
-      </DocumentCard.Actions>
-    </DocumentCard>
+    <DocumentCard
+      document={props.preuve}
+      identifier={identifier}
+      duplicate={duplicateInformation}
+      actions={actions}
+    />
   );
 };

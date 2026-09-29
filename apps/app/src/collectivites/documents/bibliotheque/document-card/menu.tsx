@@ -49,17 +49,17 @@ const DeleteDocumentButton = ({ onDelete }: { onDelete: () => void }) => (
   <DeleteButton title={appLabels.supprimer} size="xs" onClick={onDelete} />
 );
 
-type DocumentCardActions = {
+type DocumentCardMenuActions = {
   edit?: () => void;
   replace?: () => void;
   comment?: () => void;
-  delete?: () => void;
+  remove?: () => void;
 };
 
 type DocumentCardMenuProps = {
   document: DocumentCollectivite & Pick<DocumentRattache, 'preuveType'>;
   className?: string;
-  actions: DocumentCardActions;
+  actions: DocumentCardMenuActions;
 };
 
 export const DocumentCardMenu = ({
@@ -73,6 +73,6 @@ export const DocumentCardMenu = ({
     )}
     {actions.replace && <ReplaceFileButton onReplace={actions.replace} />}
     {actions.comment && <CommentButton onComment={actions.comment} />}
-    {actions.delete && <DeleteDocumentButton onDelete={actions.delete} />}
+    {actions.remove && <DeleteDocumentButton onDelete={actions.remove} />}
   </div>
 );

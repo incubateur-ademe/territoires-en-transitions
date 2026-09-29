@@ -1,12 +1,13 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Card, Notification, Tooltip } from '@tet/ui';
-import { ElementType, JSX, ReactNode, useState } from 'react';
+import { JSX } from 'react';
+import type { DuplicatedDocumentInformation } from '../../duplicated-document-state.utils';
 import { getDocumentFichier } from '../to-document-collectivite.utils';
 import { DocumentRattache } from '../types';
-import { useEditState } from '../use-edit-state';
 import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
+import { useEditState } from '../use-edit-state';
 import { useOpenPreuve } from '../use-open-preuve';
-import { Actions, CommentAction, Delete, Edit, Replace } from './actions';
+import { Actions, DocumentCardActions } from './actions';
 import {
   Author,
   CommentBlock,
@@ -15,11 +16,6 @@ import {
   Title,
   VisitDate,
 } from './content';
-import { DocumentCardProvider } from './context';
-import { toDeclaredChildren } from './declared-children';
-import { OpenedDocumentModal } from './opened-modal';
-
-const CHILDREN = [Actions, Duplicate, Identifier];
 
 const getVisitDate = (document: DocumentRattache): string | null =>
   document.preuveType === 'rapport' ? document.rapport.date : null;
@@ -47,12 +43,16 @@ const DocumentBadge = ({
 
 type DocumentCardProps = {
   document: DocumentRattache;
-  children?: ReactNode;
+  identifier?: string | null;
+  duplicate?: DuplicatedDocumentInformation;
+  actions?: DocumentCardActions;
 };
 
 export const DocumentCard = ({
   document,
-  children,
+  identifier,
+  duplicate,
+  actions,
 }: DocumentCardProps): JSX.Element | null => {
   const openPreuve = useOpenPreuve({ collectiviteId: document.collectiviteId });
   const { mutate: updateCommentaire } = useUpdatePreuveCommentaire();
@@ -60,65 +60,48 @@ export const DocumentCard = ({
     initialValue: document.commentaire,
     onUpdate: (commentaire) => updateCommentaire({ ...document, commentaire }),
   });
-  const [openedModal, setOpenedModal] = useState<OpenedDocumentModal | null>(
-    null
-  );
-
-  const declaredChildren = toDeclaredChildren(children, {
-    owner: 'DocumentCard',
-    accepted: CHILDREN,
-    label: 'its own actions and content',
-  });
-  const childOfType = (type: ElementType): ReactNode =>
-    declaredChildren.find((child) => child.type === type);
-
   const fichier = getDocumentFichier(document);
   const visitDate = getVisitDate(document);
 
   if (document.type === 'nonRenseigne') return null;
 
   return (
-    <DocumentCardProvider
-      value={{ document, editComment, openedModal, setOpenedModal }}
-    >
-      <div className="relative group max-w-screen-md" data-test="carte-doc">
-        {document.type === 'fichierManquant' && (
-          <DocumentBadge
-            icon="error-warning-fill"
-            tooltip={appLabels.fichierIndisponibleInfo}
-            name={appLabels.fichierIndisponible}
-          />
-        )}
-        {fichier?.confidentiel && (
-          <DocumentBadge
-            icon="lock-fill"
-            tooltip={appLabels.fichierModePrive}
-            name={appLabels.fichierModePrive}
-            dataTest="carte-doc-confidentiel"
-          />
-        )}
-        <Card className="p-4 h-full gap-1">
-          <Title document={document} onOpen={() => openPreuve(document)} />
-          {childOfType(Identifier)}
-          <Author document={document} />
-          {childOfType(Duplicate)}
-          <CommentBlock
-            commentaire={document.commentaire}
-            editComment={editComment}
-          />
-          {visitDate && <VisitDate date={visitDate} />}
-        </Card>
+    <div className="relative group max-w-screen-md" data-test="carte-doc">
+      {document.type === 'fichierManquant' && (
+        <DocumentBadge
+          icon="error-warning-fill"
+          tooltip={appLabels.fichierIndisponibleInfo}
+          name={appLabels.fichierIndisponible}
+        />
+      )}
+      {fichier?.confidentiel && (
+        <DocumentBadge
+          icon="lock-fill"
+          tooltip={appLabels.fichierModePrive}
+          name={appLabels.fichierModePrive}
+          dataTest="carte-doc-confidentiel"
+        />
+      )}
 
-        {childOfType(Actions)}
-      </div>
-    </DocumentCardProvider>
+      <Card className="p-4 h-full gap-1">
+        <Title document={document} onOpen={() => openPreuve(document)} />
+        {identifier && <Identifier value={identifier} />}
+        <Author document={document} />
+        {duplicate && <Duplicate information={duplicate} />}
+        <CommentBlock
+          commentaire={document.commentaire}
+          editComment={editComment}
+        />
+        {visitDate && <VisitDate date={visitDate} />}
+      </Card>
+
+      {actions && (
+        <Actions
+          document={document}
+          actions={actions}
+          editComment={editComment}
+        />
+      )}
+    </div>
   );
 };
-
-DocumentCard.Actions = Actions;
-DocumentCard.Comment = CommentAction;
-DocumentCard.Delete = Delete;
-DocumentCard.Duplicate = Duplicate;
-DocumentCard.Edit = Edit;
-DocumentCard.Identifier = Identifier;
-DocumentCard.Replace = Replace;

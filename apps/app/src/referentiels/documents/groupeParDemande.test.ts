@@ -1,7 +1,7 @@
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { DocumentAuditOuLabellisation } from '@/app/collectivites/documents/bibliotheque/types';
 import { describe, expect, test } from 'vitest';
-import { addInfoToEntry } from './PreuveLabellisation';
+import { addInfoToEntry } from './preuves-labellisation.list';
 import { groupeParDemande } from './groupeParDemande';
 
 describe('groupeParDemande', () => {
