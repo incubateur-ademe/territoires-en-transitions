@@ -18,9 +18,8 @@ export const useRemovePreuve = () => {
       });
     },
 
-    onSuccess: (_data, variables) => {
-      void invalidateDocuments(...toDocumentTargets(variables));
-    },
+    onSuccess: (_data, variables) =>
+      invalidateDocuments(...toDocumentTargets(variables)),
   });
 };
 
@@ -36,9 +35,8 @@ export const useUpdatePreuveLien = () => {
         lien: preuve.lien,
       }),
 
-    onSuccess: (_data, variables) => {
-      void invalidateDocuments(...toDocumentTargets(variables));
-    },
+    onSuccess: (_data, variables) =>
+      invalidateDocuments(...toDocumentTargets(variables)),
   });
 };
 
@@ -56,9 +54,8 @@ export const useUpdatePreuveCommentaire = () => {
       });
     },
 
-    onSuccess: (_data, variables) => {
-      void invalidateDocuments(...toDocumentTargets(variables));
-    },
+    onSuccess: (_data, variables) =>
+      invalidateDocuments(...toDocumentTargets(variables)),
   });
 };
 

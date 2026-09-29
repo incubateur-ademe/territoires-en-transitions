@@ -1,49 +1,39 @@
+import { toDemandeTarget } from '@/app/collectivites/documents/to-document-target';
+import { useInvalidateDocuments } from '@/app/collectivites/documents/use-invalidate-documents';
 import { appLabels } from '@/app/labels/catalog';
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { useReferentielId } from '../referentiel-context';
 import { useCycleLabellisation } from './useCycleLabellisation';
 
 export const useRemovePreuveFromDemande = (): {
   removePreuve: (preuveId: number) => void;
 } => {
-  const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const invalidateDocuments = useInvalidateDocuments();
   const { parcours } = useCycleLabellisation(referentielId);
   const { setToast } = useToastContext();
 
+  const demande = parcours?.demande ?? null;
+
+  const invalidateDemandeDocuments = async (): Promise<void> => {
+    if (demande === null) {
+      return;
+    }
+    await invalidateDocuments(toDemandeTarget(demande));
+  };
+
   const { mutate } = useMutation(
     trpc.collectivites.documents.removePreuve.mutationOptions({
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
-            collectiviteId,
-            referentielId,
-          }),
-        });
-
-        const demandeId = parcours?.demande?.id;
-        if (!demandeId) {
-          return;
-        }
-        await queryClient.invalidateQueries({
-          queryKey:
-            trpc.referentiels.documents.listDocumentsDemandeLabellisation.queryKey(
-              { demandeId }
-            ),
-        });
-      },
+      onSuccess: invalidateDemandeDocuments,
       onError: () => setToast('error', appLabels.mutationError),
     })
   );
 
   const removePreuve = (preuveId: number): void => {
-    const demandeId = parcours?.demande?.id;
-    if (!demandeId) {
+    if (demande === null) {
       setToast('error', appLabels.acteEngagementNoDemandeError);
       return;
     }

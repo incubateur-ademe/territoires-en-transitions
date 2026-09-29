@@ -5,7 +5,9 @@ import { DocumentTarget } from './document-target';
 
 type DemandeTarget = Extract<DocumentTarget, { type: 'demandeLabellisation' }>;
 
-const toDemandeTarget = (demande: LabellisationDemande): DemandeTarget => ({
+export const toDemandeTarget = (
+  demande: LabellisationDemande
+): DemandeTarget => ({
   type: 'demandeLabellisation',
   collectiviteId: demande.collectiviteId,
   demandeId: demande.id,
