@@ -21,6 +21,11 @@ import {
  * `est_suivi(...)`. Renvoie `null` si aucune de ces fonctions n'est utilisée,
  * ou si `reduction(...)` n'a pas d'année cible ou de réduction cible.
  *
+ * `est_suivi(x)` combiné à `val(x)` sur le même indicateur (ex.
+ * `est_suivi(x) et val(x) > 0`) donne `presence_absence_positif` : la
+ * comparaison elle-même n'est pas vérifiée, toutes les formules de ce type
+ * exigeant une valeur positive.
+ *
  * Seules la première référence portant une progression et sa première
  * progression sont exposées, même si la formule en combine plusieurs.
  *
@@ -124,8 +129,18 @@ export function buildCalculScoreIndicatif({
     };
   }
 
-  if (referencesAssociees.some((ref) => ref.tokens.includes('est_suivi'))) {
-    return { type: typeCalculScoreIndicatifEnum.PRESENCE_ABSENCE };
+  const refEstSuivi = referencesAssociees.find((ref) =>
+    ref.tokens.includes('est_suivi')
+  );
+  if (refEstSuivi) {
+    const avecValeur =
+      refEstSuivi.tokens.includes('val') ||
+      refEstSuivi.tokens.includes('opt_val');
+    return {
+      type: avecValeur
+        ? typeCalculScoreIndicatifEnum.PRESENCE_ABSENCE_POSITIF
+        : typeCalculScoreIndicatifEnum.PRESENCE_ABSENCE,
+    };
   }
 
   return null;

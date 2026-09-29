@@ -65,6 +65,28 @@ describe('buildCalculScoreIndicatif', () => {
     ).toEqual({ type: 'presence_absence' });
   });
 
+  test('presence_absence_positif pour une formule `est_suivi(x) et val(x) > 0`', () => {
+    expect(
+      buildCalculScoreIndicatif({
+        references: [ref('cae_1', ['est_suivi', 'val'])],
+        indicateursAssocies,
+        evaluationContext,
+        valeursUtiliseesFait: [],
+      })
+    ).toEqual({ type: 'presence_absence_positif' });
+  });
+
+  test('presence_absence si `val(...)` porte sur un autre indicateur', () => {
+    expect(
+      buildCalculScoreIndicatif({
+        references: [ref('cae_1', ['est_suivi']), ref('cae_2', ['val'])],
+        indicateursAssocies: [associe(1, 'cae_1'), associe(2, 'cae_2')],
+        evaluationContext,
+        valeursUtiliseesFait: [],
+      })
+    ).toEqual({ type: 'presence_absence' });
+  });
+
   test('valeur_cible_seuil pour une formule `cible(...)`/`limite(...)`', () => {
     expect(
       buildCalculScoreIndicatif({

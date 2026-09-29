@@ -19,6 +19,7 @@ export type ScoreIndicatifType =
 // type de calcul du score indicatif, déduit des fonctions utilisées par la formule
 export const typeCalculScoreIndicatifEnum = {
   PRESENCE_ABSENCE: 'presence_absence',
+  PRESENCE_ABSENCE_POSITIF: 'presence_absence_positif',
   VALEUR_CIBLE_SEUIL: 'valeur_cible_seuil',
   PROGRESSION_SNBC: 'progression_snbc',
   REDUCTION: 'reduction',
@@ -35,6 +36,10 @@ export const calculScoreIndicatifSchema = z.discriminatedUnion('type', [
   // `est_suivi(...)`
   z.object({
     type: z.literal(typeCalculScoreIndicatifEnum.PRESENCE_ABSENCE),
+  }),
+  // `est_suivi(x) et val(x) > 0`
+  z.object({
+    type: z.literal(typeCalculScoreIndicatifEnum.PRESENCE_ABSENCE_POSITIF),
   }),
   // `cible(...)` et/ou `limite(...)`
   z.object({
