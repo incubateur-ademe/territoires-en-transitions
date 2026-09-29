@@ -1,4 +1,4 @@
-/** La bibliothèque de la collectivité : une ligne par pièce, référencée par son nom de stockage T&C, sans le fichier. */
+/** La bibliothèque de la collectivité : une ligne par fichier, référencée par son nom de stockage T&C, sans son contenu. */
 
 import {
   legacyDocumentHashSchema,
@@ -15,7 +15,7 @@ const toCle = ({ collectiviteId, reference }: Reference) =>
   `${collectiviteId}|${reference}`;
 
 /**
- * Inscrit chaque pièce dans la bibliothèque de sa collectivité, pour que l'annexe y pointe ; rend `getId` et les comptes.
+ * Inscrit chaque fichier dans la bibliothèque de sa collectivité, pour que l'annexe y pointe.
  * Une ligne qui existe déjà est réutilisée sans trace : l'annulation ne la retire pas.
  */
 export const createFichiers = async (
@@ -59,10 +59,10 @@ export const createFichiers = async (
     ]
   );
   const ids = new Map(rows.map((r) => [toCle(r), r.id]));
-  const crees = rows.filter((r) => r.cree).length;
+  const dejaLa = new Set(rows.filter((r) => !r.cree).map(toCle));
 
   return {
-    /** L'id de la ligne de bibliothèque qui porte cette pièce. */
+    /** L'id de la ligne de bibliothèque qui porte ce fichier. */
     getId: (f: Reference) => {
       const id = ids.get(toCle(f));
       if (id === undefined) {
@@ -72,7 +72,9 @@ export const createFichiers = async (
       }
       return id;
     },
-    comptes: { reutilisees: rows.length - crees, creees: crees },
+    creees: rows.filter((r) => r.cree).length,
+    // les fichiers dont la collectivité avait déjà la référence
+    reutilisees: fichiers.filter((f) => dejaLa.has(toCle(f))),
   };
 };
 

@@ -390,6 +390,58 @@ s'il en trouve un :
 | un numéro de T&C inconnu (volet, cible, secteur, type de porteur, type d'action)              | l'ajouter à sa liste dans `listes-tec.ts`                                                                |
 | un titre de plus de 300 caractères, une description de plus de 20 000                         | décider quoi faire du texte : le script ne tronque pas                                                   |
 
+### 6. Importer les pièces des fiches
+
+Les fichiers et le « site web » de chaque action reprise deviennent
+des annexes de sa fiche. Les fichiers de T&C ne sont pas encore récupérés : un
+fichier est écrit sans son contenu, il s'affiche sur la fiche avec son nom et
+son téléchargement échoue. Les pièces des dossiers et les avis ne sont pas lus
+ici.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-pieces-fiches/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+| Dans T&C                                 | Dans TeT                                                                                                                                                               |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| fichier d'une action (document ou image) | une ligne de la bibliothèque de la collectivité (nom affiché, et nom de stockage T&C comme référence), réutilisée si elle existe ; une annexe de la fiche qui y pointe |
+| « site web » d'une action                | une annexe de la fiche avec un lien : l'adresse complète (`https://` ajouté s'il manque), titrée du nom du site sans `www.`                                            |
+| date de création de l'action             | « Modifié le » de l'annexe                                                                                                                                             |
+| (aucun déposant)                         | le compte « Territoires & Climat » (`00000000-0000-0000-0000-000000000002`), connexion bloquée : « Modifié le … par Territoires & Climat »                             |
+
+Le produit met « Modifié le » d'une fiche au jour même à chaque annexe : le
+script le lit avant d'écrire et le remet après, avec son auteur.
+
+Tout fichier et « site web » de la copie (actions reprises ou non) finit
+soit écrit, soit dans `ecarts`, une seule fois : le script le vérifie table par
+table avant d'écrire. Un « site web » est repéré par son action (`tec_id`) et
+la `precision` `url_site_web`.
+
+| Motif                 | Sens                                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `vitrine`             | fichier ou « site web » d'une action sans dossier (vitrine de T&C), non reprise                                     |
+| `doublon`             | fichier ou « site web » d'une action du doublon « définitif » d'un dossier ; seule la « mise en œuvre » est reprise |
+| `sans_etat_invisible` | fichier ou « site web » d'une action d'un dossier que l'import des dossiers a écarté pour ce motif                  |
+| `orphelin`            | fichier d'une action qui n'existe pas                                                                               |
+| `lien_invalide`       | « site web » d'une action reprise que le produit refuse (adresse qui n'est pas en http(s))                          |
+
+Une ligne d'une action écartée prend le motif que l'import des fiches a donné à
+son action. Le rapport compte les « site web » par collectivité, et nomme les
+fichiers posés sur une ligne de bibliothèque qui existait déjà (la fiche affiche
+alors le nom de cette ligne) et les « site web » refusés, avec leur adresse.
+
+#### Ce qui arrête l'import des pièces
+
+| Garde                                                               | Quoi faire                                                                   |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| aucune fiche reprise                                                | lancer d'abord l'import des fiches (étape 5)                                 |
+| une fiche qui doit recevoir un fichier ou un « site web » a disparu | décider au cas par cas : la fiche a été supprimée depuis l'import des fiches |
+| des annexes de la reprise existent déjà                             | l'import des pièces a déjà tourné : l'annuler d'abord                        |
+| le compte « Territoires & Climat » est absent ou sans nom           | le créer : une annexe exige un auteur                                        |
+| un nom de stockage T&C refusé comme référence par le produit        | décider quoi faire du fichier : le script ne renomme pas                     |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
