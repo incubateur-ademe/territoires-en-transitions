@@ -9,7 +9,7 @@ import { useFicheContext } from '../../context/fiche-context';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { ContentLayout } from '../content-layout';
 import DocumentPicto from './DocumentPicto';
-import { AddDocumentModal } from './add-document.modal';
+import { AddFicheDocumentModal } from './add-fiche-document.modal';
 
 export const DocumentsView = () => {
   const { fiche, isReadonly, documents } = useFicheContext();
@@ -77,7 +77,7 @@ export const DocumentsView = () => {
       </ContentLayout.Root>
 
       {!isReadonly && (
-        <AddDocumentModal
+        <AddFicheDocumentModal
           fiche={fiche}
           handlers={{ addFile, addLink }}
           isOpen={isModalOpen}

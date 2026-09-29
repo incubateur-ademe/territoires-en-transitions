@@ -18,7 +18,6 @@ export type AddDocumentTabsHandlers = {
 export type AddDocumentTabsProps = {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
-  /** Type de preuve auquel le document sera rattaché */
   preuveType?: PreuveType;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque) */
   fileConstraints?: FileConstraints;

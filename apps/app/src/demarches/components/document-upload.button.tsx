@@ -29,9 +29,8 @@ type UploadProps = {
  * reste « Fichier » et « Bibliothèque », le fichier atterrissant dans la
  * bibliothèque de la collectivité comme n'importe quel document.
  *
- * Aucun `preuveType` non plus : une pièce de dossier n'est pas une preuve, et
- * la confidentialité ne lui est donc pas proposée — le dossier est destiné aux
- * instances consultatives.
+ * Une pièce de dossier n'est pas une preuve : elle est destinée aux instances
+ * consultatives, et la confidentialité ne lui est pas proposée.
  *
  * S'ouvre soit au clic sur l'élément passé en enfant, soit par `openState` quand
  * le déclencheur n'est pas un simple bouton (cas du bouton scindé, dont seule la
