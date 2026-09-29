@@ -257,9 +257,9 @@ export const demarchesLabels = {
     'Consultations auprès du conseil régional et du préfet de région.',
   demarcheAvanceEtapeTransmisInfo: ({ mois }: { mois: number }) =>
     `Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de ${mois} mois`,
-  demarcheAvanceEtapeFinalisationLabel: 'Finalisation de la démarche de dépôt',
+  demarcheAvanceEtapeFinalisationLabel: 'Consultation des avis et délibération',
   demarcheAvanceEtapeFinalisationDescription:
-    'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche.',
+    'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche',
   demarcheAvanceEtapeFinalisationHorsPlateformeDescription:
     'Renseignez les documents, les volets du diagnostic et le plan d’actions, déposez la délibération d’adoption, puis publiez votre démarche.',
   demarcheAvanceEtapePublieLabel: 'Adopté, publié et en cours de mise en œuvre',
