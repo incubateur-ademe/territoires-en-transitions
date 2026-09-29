@@ -1,4 +1,4 @@
-import { useDownloadSignedFile } from '@/app/collectivites/documents/data/use-download-signed-file';
+import { useDownloadSignedFile } from '@/app/utils/use-download-signed-file';
 import { type UseMutationResult } from '@tanstack/react-query';
 import { RouterInput, useTRPCClient } from '@tet/api';
 

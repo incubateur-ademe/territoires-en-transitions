@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchAndSaveDocument } from './fetch-and-save-document';
+import { fetchAndSaveFile } from './fetch-and-save-file';
 
 const { saveBlob } = vi.hoisted(() => ({ saveBlob: vi.fn() }));
 
 vi.mock('@/app/utils/save-blob', () => ({ saveBlob }));
 
-const url = 'https://example.org/signed/note.pdf';
-const filename = 'note.pdf';
+const url = 'https://example.org/rapport.pdf';
+const filename = 'rapport.pdf';
 const fileBytes = new Blob(['des octets']);
 
 const stubFetchResponse = (response: Partial<Response>) => {
@@ -15,19 +15,19 @@ const stubFetchResponse = (response: Partial<Response>) => {
   return fetch;
 };
 
-describe('fetchAndSaveDocument', () => {
+describe('fetchAndSaveFile', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     saveBlob.mockReset();
   });
 
-  it("sauvegarde sous le nom du document les octets lus à l'url signée", async () => {
+  it('sauvegarde les octets lus sous le nom demandé', async () => {
     const fetch = stubFetchResponse({
       ok: true,
       blob: () => Promise.resolve(fileBytes),
     });
 
-    await fetchAndSaveDocument({ url, filename });
+    await fetchAndSaveFile({ url, filename });
 
     expect(fetch).toHaveBeenCalledWith(url);
     expect(saveBlob).toHaveBeenCalledWith(fileBytes, filename);
@@ -40,7 +40,7 @@ describe('fetchAndSaveDocument', () => {
       blob: () => Promise.resolve(fileBytes),
     });
 
-    await expect(fetchAndSaveDocument({ url, filename })).rejects.toThrow(
+    await expect(fetchAndSaveFile({ url, filename })).rejects.toThrow(
       'HTTP 403'
     );
     expect(saveBlob).not.toHaveBeenCalled();

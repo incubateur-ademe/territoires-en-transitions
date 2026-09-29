@@ -1,14 +1,14 @@
 import { saveBlob } from '@/app/utils/save-blob';
 
-export type SignedDownload = {
+export type FileToSave = {
   url: string;
   filename: string;
 };
 
-export const fetchAndSaveDocument = async ({
+export const fetchAndSaveFile = async ({
   url,
   filename,
-}: SignedDownload): Promise<void> => {
+}: FileToSave): Promise<void> => {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`);
