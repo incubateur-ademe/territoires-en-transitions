@@ -502,6 +502,18 @@ describe('DocumentCard', () => {
     expect(container.querySelector('.ri-error-warning-fill')).toBeTruthy();
   });
 
+  test("un fichier introuvable annonce son indisponibilité en toutes lettres", () => {
+    render(<DocumentCard document={documentFichierManquant} />);
+
+    expect(screen.getByText(appLabels.fichierIndisponibleInfo)).toBeTruthy();
+  });
+
+  test('un fichier confidentiel annonce son mode privé en toutes lettres', () => {
+    render(<DocumentCard document={fichierConfidentiel} />);
+
+    expect(screen.getByText(appLabels.fichierModePrive)).toBeTruthy();
+  });
+
   test("un fichier introuvable n'offre pas l'édition", () => {
     render(
       <DocumentCard document={documentFichierManquant}>
