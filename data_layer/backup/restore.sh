@@ -362,7 +362,11 @@ for group in "${GROUP_ORDER[@]}"; do
         # aborts the entire transaction and no data gets restored.
         # We check for real data errors manually instead.
         set +e
-        restore_stderr=$(pg_restore \
+        # Force LC_ALL=C so pg_restore's messages stay in English: the harmless-error
+        # detection below matches literal English text, and a localized client
+        # (e.g. LANG=fr_FR) would otherwise produce "erreur :" instead of "error:"
+        # and make every restore fail on the known transaction_timeout preamble error.
+        restore_stderr=$(LC_ALL=C pg_restore \
           --no-acl \
           --no-owner \
           --no-privileges \
