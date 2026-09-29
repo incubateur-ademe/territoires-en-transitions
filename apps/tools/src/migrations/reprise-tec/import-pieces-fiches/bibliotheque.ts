@@ -1,6 +1,9 @@
 /** La bibliothèque de la collectivité : une ligne par pièce, référencée par son nom de stockage T&C, sans le fichier. */
 
-import { toLegacyDocumentHash } from '@tet/domain/collectivites';
+import {
+  legacyDocumentHashSchema,
+  toLegacyDocumentHash,
+} from '@tet/domain/collectivites';
 import { PoolClient } from 'pg';
 import type { Fichier } from './pieces';
 
@@ -72,3 +75,13 @@ export const createFichiers = async (
     comptes: { reutilisees: rows.length - crees, creees: crees },
   };
 };
+
+/** Garde, appelée par `gardes.ts` : un nom de stockage T&C que le produit refuse comme référence. */
+export const listCasBloquantsBibliotheque = (fichiers: readonly Fichier[]) =>
+  fichiers.flatMap((f) =>
+    legacyDocumentHashSchema.safeParse(f.reference).success
+      ? []
+      : [
+          `  référence refusée par le produit : ${f.table} ${f.tecId}, « ${f.reference} »`,
+        ]
+  );

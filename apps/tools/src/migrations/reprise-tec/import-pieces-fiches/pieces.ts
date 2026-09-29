@@ -59,3 +59,34 @@ export const loadPieces = async (client: PoolClient) => {
 
   return { fichiers, urlsSiteWeb };
 };
+
+/** Garde, appelée par `gardes.ts` : l'import des fiches n'a pas tourné, ou une fiche qui doit recevoir une pièce a disparu. */
+export const listCasBloquantsPieces = async (client: PoolClient) => {
+  const { rows } = await client.query<{
+    actionId: number | null;
+    ficheId: number | null;
+  }>(`
+    with actions_avec_piece as (
+      select action_id from reprise_tec.staging_action_fichier
+      union
+      select action_id from reprise_tec.staging_action_image
+      union
+      select id from reprise_tec.staging_action
+       where nullif(trim(url_site_web), '') is not null
+    )
+    select null::int as "actionId", null::int as "ficheId"
+     where not exists (select from reprise_tec.correspondance
+                        where table_cible = 'fiche_action')
+    union all
+    select c.tec_id::int, c.tet_id::int
+      from reprise_tec.correspondance c
+     where c.table_cible = 'fiche_action'
+       and c.tec_id in (select action_id from actions_avec_piece)
+       and not exists (select from public.fiche_action f where f.id = c.tet_id)
+     order by 1 nulls first`);
+  return rows.map((r) =>
+    r.actionId === null
+      ? "  aucune fiche reprise : l'import des fiches (import-fiches) n'a pas tourné"
+      : `  fiche ${r.ficheId} introuvable : action T&C ${r.actionId}, ses pièces n'ont plus de place`
+  );
+};

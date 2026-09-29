@@ -9,6 +9,7 @@
 import { getCible } from '../db';
 import { createFichiers, type Bibliotheque } from './bibliotheque';
 import { createAnnexes, keepModifieLe } from './ecriture';
+import { validateGardes } from './gardes';
 import { loadPieces } from './pieces';
 import { printRapport } from './rapport';
 import { buildUrlsSiteWeb } from './url-site-web';
@@ -21,6 +22,7 @@ const main = async () => {
   try {
     const pieces = await loadPieces(client);
     const { fichiers } = pieces;
+    await validateGardes(client, fichiers);
     const urlsSiteWeb = buildUrlsSiteWeb(pieces.urlsSiteWeb);
     const ficheIds = [...fichiers, ...urlsSiteWeb.valides].map(
       (p) => p.ficheId
