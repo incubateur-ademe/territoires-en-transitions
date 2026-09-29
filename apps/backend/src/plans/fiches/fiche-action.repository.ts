@@ -1,4 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  FicheCandidateError,
+  FicheCandidateErrorEnum,
+  FicheTextError,
+  FicheTextErrorEnum,
+} from '@tet/backend/collectivites/analysis/analyze-fiches/analyze-fiches.errors';
+import {
+  FicheCandidateRepository,
+  FicheCandidateSelection,
+} from '@tet/backend/collectivites/analysis/analyze-fiches/fiche-candidate.repository';
+import { FicheTextRepository } from '@tet/backend/collectivites/analysis/analyze-fiches/fiche-text.repository';
+import { ficheActionAnalysisTable } from '@tet/backend/collectivites/analysis/models/fiche-action-analysis.table';
+import {
+  FicheAnalysis,
+  FicheCandidate,
+  FicheText,
+} from '@tet/backend/collectivites/analysis/models/fiche-analysis';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
@@ -6,6 +23,7 @@ import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-t
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { isErrorWithCause } from '@tet/backend/utils/nest/errors.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -16,18 +34,26 @@ import {
   ficheSchemaUpdate,
   FicheWithRelations,
 } from '@tet/domain/plans';
+import { getErrorMessage } from '@tet/domain/utils';
 import {
+  and,
   Column,
   ColumnBaseConfig,
   ColumnDataType,
   eq,
+  gt,
   inArray,
+  isNotNull,
+  isNull,
+  ne,
   or,
+  SQL,
   TableConfig,
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { partition } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
+import { match } from 'ts-pattern';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { ficheActionNoteTable } from './fiche-action-note/fiche-action-note.table';
 import { axeTable } from './shared/models/axe.table';
@@ -56,6 +82,31 @@ export type FicheActionWriteError =
   | 'RELATION_COLLECTIVITE_MISMATCH'
   | 'SERVER_ERROR';
 
+const PROCESSED_STATUS = 'processed' satisfies FicheAnalysis['status'];
+
+const isFicheCandidate = and(
+  isNull(ficheActionTable.parentId),
+  or(
+    eq(ficheActionTable.deleted, false),
+    isNotNull(ficheActionAnalysisTable.ficheId)
+  )
+);
+
+const toSelectionCondition = (
+  selection: FicheCandidateSelection
+): SQL | undefined =>
+  match(selection)
+    .with({ kind: 'every_fiche' }, () => undefined)
+    .with({ kind: 'pending_since' }, ({ since }) =>
+      or(
+        eq(ficheActionTable.deleted, true),
+        isNull(ficheActionAnalysisTable.ficheId),
+        ne(ficheActionAnalysisTable.status, PROCESSED_STATUS),
+        gt(ficheActionTable.modifiedAt, since.toISOString())
+      )
+    )
+    .exhaustive();
+
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
   object,
@@ -77,8 +128,119 @@ type RelationObjectType =
   | { ficheId: number | string; effetAttenduId: number };
 
 @Injectable()
-export class FicheActionRepository {
+export class FicheActionRepository
+  implements FicheCandidateRepository, FicheTextRepository
+{
   private readonly logger = new Logger(FicheActionRepository.name);
+
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async listCollectivitesWithFicheCandidates(): Promise<
+    Result<number[], FicheCandidateError>
+  > {
+    try {
+      const collectiviteRows = await this.databaseService.db
+        .selectDistinct({ collectiviteId: ficheActionTable.collectiviteId })
+        .from(ficheActionTable)
+        .leftJoin(
+          ficheActionAnalysisTable,
+          eq(ficheActionAnalysisTable.ficheId, ficheActionTable.id)
+        )
+        .where(isFicheCandidate)
+        .orderBy(ficheActionTable.collectiviteId);
+
+      return success(
+        collectiviteRows.map(({ collectiviteId }) => collectiviteId)
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not list collectivites with fiche candidates: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        FicheCandidateErrorEnum.LIST_COLLECTIVITES_WITH_FICHE_CANDIDATES_ERROR
+      );
+    }
+  }
+
+  async listFicheCandidates(
+    selection: FicheCandidateSelection
+  ): Promise<Result<FicheCandidate[], FicheCandidateError>> {
+    try {
+      const ficheRows = await this.databaseService.db
+        .select({
+          ficheId: ficheActionTable.id,
+          collectiviteId: ficheActionTable.collectiviteId,
+          titre: ficheActionTable.titre,
+          description: ficheActionTable.description,
+          modifiedAt: ficheActionTable.modifiedAt,
+          deleted: ficheActionTable.deleted,
+        })
+        .from(ficheActionTable)
+        .leftJoin(
+          ficheActionAnalysisTable,
+          eq(ficheActionAnalysisTable.ficheId, ficheActionTable.id)
+        )
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, selection.collectiviteId),
+            isFicheCandidate,
+            toSelectionCondition(selection)
+          )
+        );
+
+      return success(
+        ficheRows.map(({ titre, modifiedAt, deleted, ...fiche }) => ({
+          ...fiche,
+          titre: titre ?? '',
+          modifiedAt: new Date(modifiedAt),
+          isDeleted: deleted === true,
+        }))
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not list fiche candidates of collectivite ${
+          selection.collectiviteId
+        }: ${getErrorMessage(error)}`
+      );
+      return failure(FicheCandidateErrorEnum.LIST_FICHE_CANDIDATES_ERROR);
+    }
+  }
+
+  async listFicheTexts({
+    ficheIds,
+  }: {
+    readonly ficheIds: readonly number[];
+  }): Promise<Result<FicheText[], FicheTextError>> {
+    if (ficheIds.length === 0) {
+      return success([]);
+    }
+    try {
+      const ficheTextRows = await this.databaseService.db
+        .select({
+          ficheId: ficheActionTable.id,
+          titre: ficheActionTable.titre,
+          description: ficheActionTable.description,
+        })
+        .from(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [...ficheIds]));
+
+      return success(
+        ficheTextRows.map(({ titre, ...fiche }) => ({
+          ...fiche,
+          titre: titre ?? '',
+        }))
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not list texts of ${ficheIds.length} fiches: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(FicheTextErrorEnum.LIST_FICHE_TEXTS_ERROR);
+    }
+  }
 
   async applyCreate({
     fiche,

@@ -1,4 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { FicheCandidateRepository } from '@tet/backend/collectivites/analysis/analyze-fiches/fiche-candidate.repository';
+import { FicheTextRepository } from '@tet/backend/collectivites/analysis/analyze-fiches/fiche-text.repository';
 import AxeService from '@tet/backend/plans/fiches/axe.service';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { ExportPlanController } from '@tet/backend/plans/fiches/export/export-plan.controller';
@@ -65,6 +67,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
   providers: [
     PlanActionsService,
     FicheActionRepository,
+    { provide: FicheCandidateRepository, useExisting: FicheActionRepository },
+    { provide: FicheTextRepository, useExisting: FicheActionRepository },
     FicheActionPermissionsService,
     ShareFicheService,
     AxeService,
@@ -135,6 +139,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionLinkRepository,
     FicheActionLinkService,
     FicheActionRepository,
+    FicheCandidateRepository,
+    FicheTextRepository,
 
     DeleteFicheService,
     DeleteFicheRouter,
