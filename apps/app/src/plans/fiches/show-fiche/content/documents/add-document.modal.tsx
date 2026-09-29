@@ -7,7 +7,7 @@ import {
 import type { OnDuplicatedDocumentsAdded } from '@/app/collectivites/documents/add-document/types';
 import { FicheWithRelations } from '@tet/domain/plans';
 
-type ModaleAjoutDocumentProps = {
+type AddDocumentModalProps = {
   handlers: AddDocumentTabsHandlers;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
@@ -15,13 +15,13 @@ type ModaleAjoutDocumentProps = {
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
-const ModaleAjoutDocument = ({
+export const AddDocumentModal = ({
   isOpen,
   handlers,
   setIsOpen,
   fiche,
   onDuplicatedDocumentsAdded,
-}: ModaleAjoutDocumentProps) => {
+}: AddDocumentModalProps) => {
   return (
     <BaseUpdateFicheModal
       fiche={fiche}
@@ -31,7 +31,7 @@ const ModaleAjoutDocument = ({
       render={({ close }) => (
         <div>
           <AddDocumentTabs
-            docType="annexe"
+            preuveType="annexe"
             onClose={close}
             handlers={handlers}
             onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
@@ -41,5 +41,3 @@ const ModaleAjoutDocument = ({
     />
   );
 };
-
-export default ModaleAjoutDocument;

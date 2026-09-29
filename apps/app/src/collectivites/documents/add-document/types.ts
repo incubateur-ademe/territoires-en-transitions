@@ -65,18 +65,6 @@ export const isUploadInFlight = (
   status.code === UploadStatusCode.preparing ||
   status.code === UploadStatusCode.running;
 
-/** type des documents attendus */
-export type DocType =
-  | 'reglementaire'
-  | 'complementaire'
-  | 'annexe'
-  | 'labellisation'
-  | 'audit'
-  | 'rapport'
-  // Dossier réglementaire d'une démarche : jamais confidentiel, il est destiné
-  // aux instances consultatives.
-  | 'demarche_pcaet';
-
 export type DuplicatedPreuveType = Extract<
   PreuveType,
   'reglementaire' | 'complementaire' | 'annexe'

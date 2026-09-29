@@ -176,14 +176,14 @@ export const TeleversementAbouti: Story = {
  */
 export const DocReglementaire: Story = {
   args: {
-    docType: 'reglementaire',
+    preuveType: 'reglementaire',
   },
 };
 
 /** Annexe : même choix, avec un message d'explication qui lui est propre. */
 export const DocAnnexe: Story = {
   args: {
-    docType: 'annexe',
+    preuveType: 'annexe',
   },
 };
 
@@ -193,6 +193,6 @@ export const DocAnnexe: Story = {
  */
 export const SansChoixDeConfidentialite: Story = {
   args: {
-    docType: 'rapport',
+    preuveType: 'rapport',
   },
 };

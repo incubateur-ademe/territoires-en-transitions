@@ -71,7 +71,7 @@ export const EditFichierModal = (props: EditFichierModalProps) => {
               />
             </Field>
             <ConfidentielCheckbox
-              docType={preuve.preuveType}
+              preuveType={preuve.preuveType}
               confidentiel={confidentiel}
               setConfidentiel={setConfidentiel}
             />

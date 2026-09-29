@@ -35,7 +35,7 @@ export const AddPreuveReglementaireModal = (
       render={({ close }) => {
         return (
           <AddDocumentTabs
-            docType="reglementaire"
+            preuveType="reglementaire"
             onClose={close}
             handlers={handlers}
             onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
