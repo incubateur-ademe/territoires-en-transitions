@@ -87,3 +87,37 @@ export const keepModifieLe = async <T>(
   );
   return resultat;
 };
+
+/** Garde, appelée par `gardes.ts` : l'import est déjà passé, ou le compte « Territoires & Climat » manque ou n'a pas de nom. */
+export const listCasBloquantsEcriture = async (client: PoolClient) => {
+  const {
+    rows: [etat],
+  } = await client.query<{
+    annexes: number;
+    compteExiste: boolean;
+    nom: string | null;
+  }>(
+    `select (select count(*) from reprise_tec.lignes_ecrites
+              where table_cible = 'annexe')::int as annexes,
+            exists (select from auth.users where id = $1) as "compteExiste",
+            (select nullif(trim(nom), '') from public.dcp where user_id = $1) as nom`,
+    [COMPTE_TERRITOIRES_CLIMAT]
+  );
+  return [
+    ...(etat.annexes > 0
+      ? [
+          `  ${etat.annexes} annexes déjà écrites par la reprise : l'import des pièces est déjà passé (l'annuler d'abord)`,
+        ]
+      : []),
+    ...(etat.compteExiste
+      ? []
+      : [
+          `  compte « Territoires & Climat » ${COMPTE_TERRITOIRES_CLIMAT} absent : les annexes exigent un auteur`,
+        ]),
+    ...(etat.compteExiste && etat.nom === null
+      ? [
+          `  compte « Territoires & Climat » ${COMPTE_TERRITOIRES_CLIMAT} sans nom : les annexes s'afficheraient sans auteur`,
+        ]
+      : []),
+  ];
+};
