@@ -1,8 +1,7 @@
 'use client';
 
-import { captureException } from '@/app/utils/sentry/sentry-client.lazy';
+import { captureException } from '@/app/utils/error-tracking/capture-exception';
 import NextError from 'next/error';
-import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
 export default function GlobalError({
@@ -12,7 +11,6 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     captureException({ error });
-    posthog.captureException(error);
   }, [error]);
 
   return (

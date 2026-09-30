@@ -1,6 +1,4 @@
 import { withPostHogConfig } from '@posthog/nextjs-config';
-import { uuid4 } from '@sentry/core';
-import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -81,7 +79,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   generateBuildId: async () => {
-    return process.env.GIT_SHORT_HASH || uuid4();
+    return process.env.GIT_SHORT_HASH || crypto.randomUUID();
   },
 
   async redirects() {
@@ -157,49 +155,11 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
 };
 
-const sentryConfig = {
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
-
-  org: 'betagouv',
-  project: 'territoires-en-transitions',
-  sentryUrl: 'https://sentry.incubateur.net/',
-
-  // Useful to upload source maps
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
-
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
-
-  // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js proxy, otherwise reporting of client-
-  // side errors will fail.
-  // tunnelRoute: "/monitoring",
-
-  // Hides source maps from generated client bundles
-  hideSourceMaps: false,
-
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  webpack: {
-    treeshake: {
-      removeDebugLogging: true,
-    },
-  },
-};
-
-const nextConfigWithSentry = withSentryConfig(nextConfig, sentryConfig);
 const posthogApiKey = process.env.POSTHOG_API_KEY;
 const posthogProjectId = process.env.POSTHOG_PROJECT_ID;
 
 export default posthogApiKey && posthogProjectId
-  ? withPostHogConfig(nextConfigWithSentry, {
+  ? withPostHogConfig(nextConfig, {
       personalApiKey: posthogApiKey,
       projectId: posthogProjectId,
       host: process.env.POSTHOG_HOST,
@@ -208,4 +168,4 @@ export default posthogApiKey && posthogProjectId
         deleteAfterUpload: true,
       },
     })
-  : nextConfigWithSentry;
+  : nextConfig;

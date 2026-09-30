@@ -4,7 +4,6 @@
 #   docker build -f apps/app/Dockerfile \
 #     --build-arg GIT_SHORT_HASH=$(git rev-parse --short HEAD) \
 #     --secret id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-#     --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
 #     -t app .
 #
 # L'image ne contient aucune valeur spécifique à un environnement : une seule
@@ -77,12 +76,11 @@ ENV GITHUB_ACTIONS=$GITHUB_ACTIONS \
     POSTHOG_HOST=$POSTHOG_HOST \
     NEXT_TELEMETRY_DISABLED=1
 
-# SENTRY_AUTH_TOKEN and POSTHOG_API_KEY are only used by their respective build
-# plugins to upload source maps; both stay out of ENV and image history. The
+# POSTHOG_API_KEY is only used by the PostHog build plugin to upload source
+# maps; it stays out of ENV and image history. The
 # bryntum secret here just silences pnpm's harmless "can't resolve
 # ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).
-RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-    --mount=type=secret,id=posthog_api_key,env=POSTHOG_API_KEY \
+RUN --mount=type=secret,id=posthog_api_key,env=POSTHOG_API_KEY \
     --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     pnpm run build:app
 
