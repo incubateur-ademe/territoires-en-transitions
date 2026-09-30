@@ -1,13 +1,23 @@
 # Stack supabase-api : GoTrue + Storage API derrière un sous-domaine unique
 # avec routing par path via Traefik. Pas de PostgREST (P1 acquis).
 #
-# Sous-domaine cible : supabase-api.preprod.territoiresentransitions.fr
+# Sous-domaine cible : ${SUPABASE_API_HOST}, ex. supabase-api.preprod.territoiresentransitions.fr
 #   /auth/v1/*    → gotrue:9999
 #   /storage/v1/* → storage:5000
 #
+# Un seul fichier pour tous les environnements : preprod et staging tournent
+# sur le même serveur, derrière le même Traefik, dont l'espace de noms des
+# routeurs est global. Tout ce qui est propre à un environnement passe donc par
+# deux variables obligatoires :
+#   STACK_ENV          préfixe des routeurs / middlewares Traefik et TENANT_ID
+#                      (minuscules, chiffres, tirets : preprod, staging…)
+#   SUPABASE_API_HOST  sous-domaine servi, sans schéma
+#
 # Import dans Coolify : Resources → New → Docker Compose, coller ce fichier.
 # Les variables ${...} sont déclarées dans l'onglet "Environment Variables" du
-# service (ou dans un fichier .env importé). Cf. .env.example à côté.
+# service (ou dans un fichier .env importé). Cf. .env.example à côté. Laisser
+# vides les domaines des services dans Coolify : le routage est porté par les
+# labels ci-dessous, et un domaine Coolify ajouterait un second routeur.
 
 services:
   gotrue:
@@ -21,14 +31,14 @@ services:
     environment:
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: 9999
-      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+      API_EXTERNAL_URL: https://${SUPABASE_API_HOST:?SUPABASE_API_HOST requis}
 
       # Connexion DB : rôle supabase_auth_admin, créé par Terraform
       # (scaleway_rdb_user). search_path=auth pointe GoTrue sur son schéma.
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: ${GOTRUE_DB_DATABASE_URL}
 
-      # JWT : strictement identique à Supabase preprod pour préserver tokens
+      # JWT : strictement identique au projet Supabase de l'environnement, pour préserver tokens
       # et refresh tokens existants.
       GOTRUE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
       GOTRUE_JWT_AUD: authenticated
@@ -70,14 +80,17 @@ services:
     volumes:
       - ./templates:/etc/gotrue/templates:ro
     labels:
+      # Noms préfixés par STACK_ENV : uniques par environnement sur le Traefik
+      # partagé du serveur.
       - traefik.enable=true
-      - traefik.http.routers.gotrue.rule=Host(`supabase-api.preprod.territoiresentransitions.fr`) && PathPrefix(`/auth/v1`)
-      - traefik.http.routers.gotrue.entrypoints=https
-      - traefik.http.routers.gotrue.tls=true
-      - traefik.http.routers.gotrue.tls.certresolver=letsencrypt
-      - traefik.http.middlewares.gotrue-strip.stripprefix.prefixes=/auth/v1
-      - traefik.http.routers.gotrue.middlewares=gotrue-strip
-      - traefik.http.services.gotrue.loadbalancer.server.port=9999
+      - traefik.http.routers.tet-${STACK_ENV:?STACK_ENV requis}-gotrue.rule=Host(`${SUPABASE_API_HOST:?SUPABASE_API_HOST requis}`) && PathPrefix(`/auth/v1`)
+      - traefik.http.routers.tet-${STACK_ENV}-gotrue.entrypoints=https
+      - traefik.http.routers.tet-${STACK_ENV}-gotrue.tls=true
+      - traefik.http.routers.tet-${STACK_ENV}-gotrue.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.tet-${STACK_ENV}-gotrue-strip.stripprefix.prefixes=/auth/v1
+      - traefik.http.routers.tet-${STACK_ENV}-gotrue.middlewares=tet-${STACK_ENV}-gotrue-strip
+      - traefik.http.routers.tet-${STACK_ENV}-gotrue.service=tet-${STACK_ENV}-gotrue
+      - traefik.http.services.tet-${STACK_ENV}-gotrue.loadbalancer.server.port=9999
 
   storage:
     image: supabase/storage-api:v1.11.13
@@ -94,7 +107,7 @@ services:
       # Mode tenant unique : évite la dépendance à PostgREST pour la lookup
       # tenant. La config est lue directement depuis les env vars.
       IS_MULTITENANT: "false"
-      TENANT_ID: tet-preprod
+      TENANT_ID: tet-${STACK_ENV:?STACK_ENV requis}
       SERVER_PORT: 5000
 
       ANON_KEY: ${SUPABASE_ANON_KEY}
@@ -130,11 +143,14 @@ services:
       # Transformation d'images désactivée pour le bootstrap (nécessite imgproxy).
       ENABLE_IMAGE_TRANSFORMATION: "false"
     labels:
+      # Noms préfixés par STACK_ENV : uniques par environnement sur le Traefik
+      # partagé du serveur.
       - traefik.enable=true
-      - traefik.http.routers.storage.rule=Host(`supabase-api.preprod.territoiresentransitions.fr`) && PathPrefix(`/storage/v1`)
-      - traefik.http.routers.storage.entrypoints=https
-      - traefik.http.routers.storage.tls=true
-      - traefik.http.routers.storage.tls.certresolver=letsencrypt
-      - traefik.http.middlewares.storage-strip.stripprefix.prefixes=/storage/v1
-      - traefik.http.routers.storage.middlewares=storage-strip
-      - traefik.http.services.storage.loadbalancer.server.port=5000
+      - traefik.http.routers.tet-${STACK_ENV:?STACK_ENV requis}-storage.rule=Host(`${SUPABASE_API_HOST:?SUPABASE_API_HOST requis}`) && PathPrefix(`/storage/v1`)
+      - traefik.http.routers.tet-${STACK_ENV}-storage.entrypoints=https
+      - traefik.http.routers.tet-${STACK_ENV}-storage.tls=true
+      - traefik.http.routers.tet-${STACK_ENV}-storage.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.tet-${STACK_ENV}-storage-strip.stripprefix.prefixes=/storage/v1
+      - traefik.http.routers.tet-${STACK_ENV}-storage.middlewares=tet-${STACK_ENV}-storage-strip
+      - traefik.http.routers.tet-${STACK_ENV}-storage.service=tet-${STACK_ENV}-storage
+      - traefik.http.services.tet-${STACK_ENV}-storage.loadbalancer.server.port=5000
