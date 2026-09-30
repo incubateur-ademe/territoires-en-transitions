@@ -52,3 +52,28 @@ export const loadLignes = async (client: PoolClient): Promise<Ligne[]> => {
     objectif: readObjectif(objectifFixe),
   }));
 };
+
+/** Garde, appelée par `gardes.ts` : aucun dossier repris, ou la démarche d'un dossier qui a des lignes de vulnérabilité a disparu. */
+export const listCasBloquantsDossiers = async (client: PoolClient) => {
+  const { rows } = await client.query<{
+    cas: 'aucun_dossier' | 'demarche';
+    tecId: number | null;
+    tetId: number | null;
+  }>(
+    `select 'aucun_dossier' as cas, null::int as "tecId", null::int as "tetId"
+      where not exists (select from reprise_tec.correspondance
+                         where table_cible = 'demarche')
+     union all
+     select distinct 'demarche', c.tec_id::int, c.tet_id::int
+       from reprise_tec.correspondance c
+       join reprise_tec.staging_demarche_domaine_vulnerabilite v on v.demarche_id = c.tec_id
+      where c.table_cible = 'demarche'
+        and not exists (select from public.demarche d where d.id = c.tet_id)
+      order by 1, 2`
+  );
+  return rows.map(({ cas, tecId, tetId }) =>
+    cas === 'aucun_dossier'
+      ? "  aucun dossier repris : l'import des dossiers (import-demarches) n'a pas tourné"
+      : `  démarche ${tetId} introuvable : dossier T&C ${tecId}, sa vulnérabilité n'a plus de place`
+  );
+};

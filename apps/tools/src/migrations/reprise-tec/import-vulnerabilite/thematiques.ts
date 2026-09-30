@@ -82,3 +82,16 @@ export const createThematiquesDechets = async (
     reutilisees: rows.filter((r) => !r.creee).length,
   };
 };
+
+/** Garde, appelée par `gardes.ts` : un code de la table des libellés que le socle n'a plus (le socle a bougé). */
+export const listCasBloquantsSocle = (socle: ReadonlyMap<string, number>) =>
+  [
+    ...new Set(
+      [...LIBELLES.values()].flatMap((t) => ('code' in t ? [t.code] : []))
+    ),
+  ]
+    .filter((code) => !socle.has(code))
+    .map(
+      (code) =>
+        `  thématique « ${code} » absente du socle : la table des libellés (libelles.ts) est à reprendre`
+    );
