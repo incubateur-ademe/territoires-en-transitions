@@ -1,4 +1,4 @@
-variable "main_project_id" {
+variable "project_id" {
   description = "UUID du projet Scaleway. À récupérer dans la console Scaleway (Project Settings)."
   type        = string
 }

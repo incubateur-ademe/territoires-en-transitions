@@ -87,6 +87,11 @@ output "coolify_backups_credentials_secret_name" {
 }
 
 output "prod_project_id" {
-  description = "ID du projet Scaleway de production. À reporter dans la variable main_project_id du stack infra/prod."
+  description = "ID du projet Scaleway de production. À reporter dans la variable project_id du stack infra/prod."
   value       = var.prod_project_id
+}
+
+output "main_project_id" {
+  description = "ID du projet Scaleway principal. À reporter dans la variable project_id du stack infra/preview."
+  value       = var.main_project_id
 }

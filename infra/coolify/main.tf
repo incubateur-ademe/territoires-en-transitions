@@ -7,7 +7,7 @@
 locals {
   # Projet où lire la clé SSH de chaque serveur : la prod a le sien.
   server_key_project_ids = {
-    for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.main_project_id)
+    for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.project_id)
   }
 
   # Serveur du control plane : Coolify le crée lui-même à l'install pour
@@ -23,7 +23,7 @@ locals {
 # OpenSSH telle quelle.
 data "scaleway_secret_version" "host_key" {
   secret_name = var.host_key_secret_name
-  project_id  = var.main_project_id
+  project_id  = var.project_id
   revision    = "latest"
 }
 
