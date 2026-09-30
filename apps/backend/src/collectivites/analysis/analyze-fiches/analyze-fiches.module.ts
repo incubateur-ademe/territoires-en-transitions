@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import { ConfigurationModule } from '@tet/backend/utils/config/configuration.module';
 import { DatabaseModule } from '@tet/backend/utils/database/database.module';
@@ -10,6 +9,7 @@ import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.reposi
 import { EnjeuRepositories } from '../enjeu.repositories';
 import { FicheActionAnalysisRepository } from '../fiche-action-analysis.repository';
 import { FicheActionVoletGesRepository } from '../fiche-action-volet-ges.repository';
+import { CollectiviteIdentityRepository } from '../score-mobilisation/collectivite-identity.repository';
 import { ScoreMobilisationService } from '../score-mobilisation/score-mobilisation.service';
 import { AnalysisRunRepository } from './analysis-run.repository';
 import { AnalyzeFichesService } from './analyze-fiches.service';
@@ -23,7 +23,7 @@ import { FicheTextRepository } from './fiche-text.repository';
     AnalyzeFichesService,
     ClassifyBatchService,
     ScoreMobilisationService,
-    CollectivitesService,
+    CollectiviteIdentityRepository,
     EnjeuRepositories,
     FicheActionVoletGesRepository,
     CollectiviteVoletGesRepository,

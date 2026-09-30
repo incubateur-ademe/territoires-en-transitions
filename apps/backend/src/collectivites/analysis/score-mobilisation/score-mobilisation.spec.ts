@@ -1,9 +1,8 @@
-import { NotFoundException } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { LEVIER_NOM_BY_ID, LevierId } from '@tet/domain/shared';
 import { describe, expect, it, Mock, vi } from 'vitest';
+import { CollectiviteIdentityRepository } from './collectivite-identity.repository';
 import { CalculateCollectiviteMobilisationInput } from './score-mobilisation.input';
 import { ScoreMobilisationService } from './score-mobilisation.service';
 
@@ -46,15 +45,18 @@ const toServiceUnderTest = ({
   collectiviteReadFailure?: 'not_found' | Error;
   unscoredLevierId?: LevierId;
 } = {}): ServiceUnderTest => {
-  const collectivitesService = {
-    getCollectivite: vi.fn().mockImplementation(async () => {
+  const collectiviteIdentityRepository = {
+    getCollectiviteIdentity: vi.fn().mockImplementation(async () => {
       if (collectiviteReadFailure === 'not_found') {
-        throw new NotFoundException(`Collectivite ${collectiviteId} not found`);
+        return failure('COLLECTIVITE_NOT_FOUND');
       }
       if (collectiviteReadFailure instanceof Error) {
-        throw collectiviteReadFailure;
+        return failure(
+          'GET_COLLECTIVITE_IDENTITY_ERROR',
+          collectiviteReadFailure
+        );
       }
-      return { collectivite: { nom: 'Ville de test', population: 3000 } };
+      return success({ nom: 'Ville de test', population: 3000 });
     }),
   };
   const generateStructured = vi
@@ -69,11 +71,11 @@ const toServiceUnderTest = ({
     });
   const llm = { generateStructured };
 
-  const collectivitesServiceDependency =
-    collectivitesService as unknown as CollectivitesService;
+  const collectiviteIdentityDependency =
+    collectiviteIdentityRepository as unknown as CollectiviteIdentityRepository;
   const llmDependency = llm as unknown as LlmService;
   const service = new ScoreMobilisationService(
-    collectivitesServiceDependency,
+    collectiviteIdentityDependency,
     llmDependency
   );
 
