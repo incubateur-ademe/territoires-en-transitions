@@ -7,11 +7,13 @@ import { DocumentTitleOptions, getDocumentTitle } from './document-label.utils';
 type DocumentTitleProps = DocumentTitleOptions & {
   document: DocumentSupportRenseigne;
   onOpen: () => void;
+  disabled?: boolean;
 };
 
 export const DocumentTitle = ({
   document,
   onOpen,
+  disabled,
   withExtension,
   withFilesize,
 }: DocumentTitleProps): JSX.Element => {
@@ -31,6 +33,7 @@ export const DocumentTitle = ({
       <button
         type="button"
         className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer text-left"
+        disabled={disabled}
         onClick={onOpen}
       >
         {title}

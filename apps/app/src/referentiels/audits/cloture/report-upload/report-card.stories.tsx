@@ -46,7 +46,6 @@ const rapportIntrouvable = {
 } as unknown as AuditReport;
 
 export default {
-  title: 'Referentiels/Audits/PersistedReportCard',
   component: PersistedReportCard,
   args: { isRemoving: false, onRemove: fn() },
   decorators: [
@@ -75,4 +74,15 @@ export const RapportIntrouvable: Story = {
 
 export const SuppressionEnCours: Story = {
   args: { report: rapportFichier, isRemoving: true },
+};
+
+/** Le titre passe à la ligne : badge et corbeille se centrent sur l'ensemble. */
+export const RapportAuNomLong: Story = {
+  args: {
+    report: {
+      ...rapportIntrouvable,
+      filename:
+        'rapport-audit-climat-air-energie-territorial-communaute-agglomeration-2026-version-definitive-relue.pdf',
+    } as unknown as AuditReport,
+  },
 };

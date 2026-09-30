@@ -1,65 +1,24 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useOpenPreuve } from '@/app/collectivites/documents/bibliotheque/use-open-preuve';
-import {
-  getAuthorAndDate,
-  getFormattedTitle,
-} from '@/app/collectivites/documents/bibliotheque/document-label.utils';
+import { DocumentLastModified } from '@/app/collectivites/documents/bibliotheque/document-last-modified';
+import { DocumentTitle } from '@/app/collectivites/documents/bibliotheque/document-title';
 import { getDocumentFilename } from '@tet/domain/collectivites';
 import { MissingFileBadge } from '@/app/collectivites/documents/bibliotheque/missing-file.badge';
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
 import { AuditReport } from '../data/use-list-reports-by-audit';
 
-const ReportMetadata = ({ text }: { text: string | null }): JSX.Element => (
-  <>{text && <span className="text-grey-6 text-sm font-medium">{text}</span>}</>
-);
-
-const ReportTitle = ({
-  report,
-  isRemoving,
-  onOpen,
-}: {
-  report: AuditReport;
+type RemoveReportButtonProps = {
+  filename: string;
   isRemoving: boolean;
-  onOpen: () => void;
-}): JSX.Element => {
-  const title = getFormattedTitle(report) ?? '';
-
-  if (report.type !== 'fichier' && report.type !== 'lien') {
-    return (
-      <span className="flex-1 text-left text-base font-bold text-grey-7">
-        {title}
-      </span>
-    );
-  }
-
-  const openLabel =
-    report.type === 'lien'
-      ? appLabels.ouvrirLien
-      : appLabels.telechargerFichier;
-
-  return (
-    <button
-      type="button"
-      className="flex-1 text-left text-base font-bold transition text-primary-9 hover:text-primary-8 cursor-pointer disabled:text-grey-6 disabled:opacity-50 disabled:cursor-default"
-      title={openLabel}
-      disabled={isRemoving}
-      onClick={onOpen}
-    >
-      {title}
-    </button>
-  );
+  onClick: () => void;
 };
 
 const RemoveReportButton = ({
   filename,
   isRemoving,
   onClick,
-}: {
-  filename: string;
-  isRemoving: boolean;
-  onClick: () => void;
-}): JSX.Element => (
+}: RemoveReportButtonProps): JSX.Element => (
   <Button
     icon="delete-bin-line"
     variant="white"
@@ -93,35 +52,42 @@ const UploadingTitle = ({
   </span>
 );
 
+type PersistedReportCardProps = {
+  report: AuditReport;
+  isRemoving: boolean;
+  onRemove: () => void;
+};
+
 export const PersistedReportCard = ({
   report,
   isRemoving,
   onRemove,
-}: {
-  report: AuditReport;
-  isRemoving: boolean;
-  onRemove: () => void;
-}): JSX.Element => {
+}: PersistedReportCardProps): JSX.Element => {
   const openPreuve = useOpenPreuve({ collectiviteId: report.collectiviteId });
   const filename = getDocumentFilename(report) ?? '';
   const isMissing = report.type === 'fichierManquant';
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
       <div className="flex items-center gap-1">
-        <ReportTitle
-          report={report}
-          isRemoving={isRemoving}
-          onOpen={() => openPreuve(report)}
-        />
         {isMissing && <MissingFileBadge />}
+        <div className="min-w-0 flex-1">
+          <DocumentTitle
+            document={report}
+            onOpen={() => openPreuve(report)}
+            disabled={isRemoving}
+            withExtension
+            withFilesize
+          />
+        </div>
         <RemoveReportButton
           filename={filename}
           isRemoving={isRemoving}
           onClick={onRemove}
         />
       </div>
-      <ReportMetadata
-        text={getAuthorAndDate(report.modifiedAt, report.modifiedByNom)}
+      <DocumentLastModified
+        modifiedAt={report.modifiedAt}
+        modifiedByNom={report.modifiedByNom}
       />
     </Card>
   );
@@ -135,7 +101,7 @@ export const UploadingReportCard = ({
   progress: number;
 }): JSX.Element => (
   <Card className="p-4 gap-1 animate-pulse" aria-busy>
-    <div className="flex items-start gap-1">
+    <div className="flex items-center gap-1">
       <UploadingTitle filename={filename} progress={progress} />
     </div>
   </Card>

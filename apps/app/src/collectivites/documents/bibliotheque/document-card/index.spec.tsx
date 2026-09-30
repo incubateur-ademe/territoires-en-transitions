@@ -1,8 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import {
-  toDocumentHash,
-  toLegacyDocumentHash,
-} from '@tet/domain/collectivites';
+import { toLegacyDocumentHash } from '@tet/domain/collectivites';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DocumentCard } from '.';
@@ -10,14 +7,12 @@ import {
   preuveComplementaireFichier,
   preuveComplementaireLien,
   preuveReglementaireFichier,
+  preuveReglementaireFichierConfidentiel,
+  preuveReglementaireFichierManquant,
   preuveReglementaireLien,
   preuveReglementaireNonRenseignee,
 } from '../documents.fixture';
-import {
-  DocumentAudit,
-  DocumentRapport,
-  DocumentReglementaire,
-} from '../types';
+import { DocumentAudit, DocumentRapport } from '../types';
 
 const { openPreuve, removePreuve, updateCommentaire } = vi.hoisted(() => ({
   openPreuve: vi.fn(),
@@ -62,52 +57,6 @@ vi.mock('@/app/collectivites/documents/add-document/add-document.tabs', () => ({
 }));
 
 const MUTATION_ACTIONS = { edit: true, comment: true, remove: true };
-
-const documentFichierManquant: DocumentReglementaire = {
-  preuveType: 'reglementaire',
-  id: 7,
-  collectiviteId: 1,
-  type: 'fichierManquant',
-  filename: 'rapport-perdu.pdf',
-  commentaire: '',
-  modifiedAt: '2022-09-06T16:43:41.423515+00:00',
-  modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-  modifiedByNom: 'Yolo Dodo',
-  action: { actionId: 'eci_1.1.3', identifiant: '1.1.3' },
-  preuveReglementaire: {
-    id: 'etude_vulnerabilite',
-    nom: 'Etude de vulnerabilite',
-    description: '',
-  },
-};
-
-const fichierConfidentiel: DocumentReglementaire = {
-  preuveType: 'reglementaire',
-  id: 2,
-  collectiviteId: 1,
-  type: 'fichier',
-  fichier: {
-    id: 21,
-    collectiviteId: 1,
-    hash: toDocumentHash(
-      'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'
-    ),
-    filename: 'preuve_input.txt',
-    filesize: 34,
-    bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
-    confidentiel: true,
-  },
-  commentaire: 'commentaire preuve fichier',
-  modifiedAt: '2022-09-06T16:43:41.423515+00:00',
-  modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-  modifiedByNom: 'Yolo Dodo',
-  action: { actionId: 'eci_1.1.3', identifiant: '1.1.3' },
-  preuveReglementaire: {
-    id: 'etude_vulnerabilite',
-    nom: 'Etude de vulnerabilite',
-    description: '',
-  },
-};
 
 const COMMENTAIRE_LONG =
   'Ce commentaire depasse cent soixante caracteres. '.repeat(5);
@@ -202,7 +151,10 @@ describe('DocumentCard', () => {
 
   test('signale un fichier confidentiel par un cadenas', () => {
     const { container } = render(
-      <DocumentCard document={fichierConfidentiel} actions={MUTATION_ACTIONS} />
+      <DocumentCard
+        document={preuveReglementaireFichierConfidentiel}
+        actions={MUTATION_ACTIONS}
+      />
     );
 
     expect(
@@ -379,7 +331,7 @@ describe('DocumentCard', () => {
   });
 
   test("le nom d'un fichier introuvable n'est pas un bouton", () => {
-    render(<DocumentCard document={documentFichierManquant} />);
+    render(<DocumentCard document={preuveReglementaireFichierManquant} />);
 
     expect(
       screen.queryByRole('button', { name: /rapport-perdu\.pdf/ })
@@ -483,27 +435,28 @@ describe('DocumentCard', () => {
   });
 
   test('un fichier introuvable affiche son nom', () => {
-    render(<DocumentCard document={documentFichierManquant} />);
+    render(<DocumentCard document={preuveReglementaireFichierManquant} />);
 
     expect(screen.getByText(/rapport-perdu\.pdf/)).toBeTruthy();
   });
 
   test('un fichier introuvable est signalé par un badge', () => {
     const { container } = render(
-      <DocumentCard document={documentFichierManquant} />
+      <DocumentCard document={preuveReglementaireFichierManquant} />
     );
 
     expect(container.querySelector('.ri-error-warning-fill')).toBeTruthy();
+    expect(container.innerHTML).toMatchSnapshot();
   });
 
   test('un fichier introuvable annonce son indisponibilité en toutes lettres', () => {
-    render(<DocumentCard document={documentFichierManquant} />);
+    render(<DocumentCard document={preuveReglementaireFichierManquant} />);
 
     expect(screen.getByText(appLabels.fichierIndisponible)).toBeTruthy();
   });
 
   test('un fichier confidentiel annonce son mode privé en toutes lettres', () => {
-    render(<DocumentCard document={fichierConfidentiel} />);
+    render(<DocumentCard document={preuveReglementaireFichierConfidentiel} />);
 
     expect(screen.getByText(appLabels.fichierModePrive)).toBeTruthy();
   });
@@ -511,7 +464,7 @@ describe('DocumentCard', () => {
   test("un fichier introuvable n'offre pas l'édition", () => {
     render(
       <DocumentCard
-        document={documentFichierManquant}
+        document={preuveReglementaireFichierManquant}
         actions={MUTATION_ACTIONS}
       />
     );

@@ -7,11 +7,9 @@ import { DocumentSupportRenseigne } from '@tet/domain/collectivites';
 import { Button, Icon } from '@tet/ui';
 import { JSX, useState } from 'react';
 import type { DuplicatedDocumentInformation } from '../../duplicated-document-state.utils';
-import { getAuthorAndDate } from '../document-label.utils';
 import { DocumentTitle } from '../document-title';
 import { DuplicatedDocumentAlert } from '../duplicated-document.alert';
 import { EditStateInput } from '../edit-state.input';
-import { DocumentRattache } from '../types';
 import { EditState } from '../use-edit-state';
 
 export const Title = ({
@@ -41,16 +39,6 @@ export const Duplicate = ({
   <DuplicatedDocumentAlert
     storedFilenameKept={information.storedFilenameKept}
   />
-);
-
-export const Author = ({
-  document,
-}: {
-  document: DocumentRattache;
-}): JSX.Element => (
-  <span className="text-grey-8 text-sm font-medium">
-    {getAuthorAndDate(document.modifiedAt, document.modifiedByNom)}
-  </span>
 );
 
 export const CommentBlock = ({
