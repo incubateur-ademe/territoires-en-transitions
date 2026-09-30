@@ -63,6 +63,7 @@ describe('FicheCandidateRepository contract', () => {
   let restrictedOnlyCollectiviteId: number;
   let deletedWithStatusOnlyCollectiviteId: number;
   let subFicheAndDeletedOnlyCollectiviteId: number;
+  let activeSubFicheId: number;
 
   let activeFicheId: number;
   let restrictedFicheId: number;
@@ -211,23 +212,30 @@ describe('FicheCandidateRepository contract', () => {
     return deletedWithStatusOnly.collectiviteId;
   };
 
-  const setUpSubFicheAndDeletedOnlyCollectivite = async (): Promise<number> => {
+  const setUpSubFicheAndDeletedOnlyCollectivite = async (): Promise<{
+    collectiviteId: number;
+    subFicheId: number;
+  }> => {
     const subFicheAndDeletedOnly = await addCollectiviteWithCaller();
     const deletedParentFicheId = await createFiche({
       caller: subFicheAndDeletedOnly.caller,
       ficheCollectiviteId: subFicheAndDeletedOnly.collectiviteId,
       titre: 'Fiche parente supprimée sans statut',
     });
-    await createFiche({
+    const subFicheId = await createFiche({
       caller: subFicheAndDeletedOnly.caller,
       ficheCollectiviteId: subFicheAndDeletedOnly.collectiviteId,
       titre: 'Sous-fiche',
       parentId: deletedParentFicheId,
     });
-    await subFicheAndDeletedOnly.caller.plans.fiches.delete({
-      ficheId: deletedParentFicheId,
-    });
-    return subFicheAndDeletedOnly.collectiviteId;
+    await db.db
+      .update(ficheActionTable)
+      .set({ deleted: true })
+      .where(inArray(ficheActionTable.id, [deletedParentFicheId]));
+    return {
+      collectiviteId: subFicheAndDeletedOnly.collectiviteId,
+      subFicheId,
+    };
   };
 
   const setUpOtherCollectiviteFiche = async (): Promise<number> => {
@@ -250,8 +258,10 @@ describe('FicheCandidateRepository contract', () => {
     restrictedOnlyCollectiviteId = await setUpRestrictedOnlyCollectivite();
     deletedWithStatusOnlyCollectiviteId =
       await setUpDeletedWithStatusOnlyCollectivite();
-    subFicheAndDeletedOnlyCollectiviteId =
-      await setUpSubFicheAndDeletedOnlyCollectivite();
+    ({
+      collectiviteId: subFicheAndDeletedOnlyCollectiviteId,
+      subFicheId: activeSubFicheId,
+    } = await setUpSubFicheAndDeletedOnlyCollectivite());
     otherCollectiviteFicheId = await setUpOtherCollectiviteFiche();
 
     return async () => {
@@ -337,17 +347,26 @@ describe('FicheCandidateRepository contract', () => {
   });
 
   it("listCollectivitesWithFicheCandidates ne renvoie pas une CT qui n'a que des sous-fiches ou des fiches supprimées sans statut", async () => {
+    const [subFiche] = await db.db
+      .select({ deleted: ficheActionTable.deleted })
+      .from(ficheActionTable)
+      .where(inArray(ficheActionTable.id, [activeSubFicheId]));
     const collectiviteIdsResult =
       await listTestCollectivitesWithFicheCandidates();
 
     expect({
+      isSubFicheActive: subFiche?.deleted === false,
       success: collectiviteIdsResult.success,
       hasSubFicheAndDeletedOnlyCollectivite:
         collectiviteIdsResult.success &&
         collectiviteIdsResult.data.includes(
           subFicheAndDeletedOnlyCollectiviteId
         ),
-    }).toEqual({ success: true, hasSubFicheAndDeletedOnlyCollectivite: false });
+    }).toEqual({
+      isSubFicheActive: true,
+      success: true,
+      hasSubFicheAndDeletedOnlyCollectivite: false,
+    });
   });
 
   it('every_fiche renvoie les fiches non supprimées de la CT demandée, y compris hors plan et restreintes, sans les sous-fiches', async () => {
