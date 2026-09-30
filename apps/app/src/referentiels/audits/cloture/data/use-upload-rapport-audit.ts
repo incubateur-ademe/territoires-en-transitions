@@ -17,24 +17,24 @@ import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEffect, useRef, useState } from 'react';
 import {
-  AuditReport,
-  useListReportsByAudit,
-} from './use-list-reports-by-audit';
+  RapportAudit,
+  useListRapportsByAudit,
+} from './use-list-rapports-by-audit';
 
-export type UploadingReport = {
+export type UploadingRapport = {
   filename: string;
   progress: number;
 };
 
-export type AuditReportUploadState = {
-  reports: Array<AuditReport>;
-  isLoadingReports: boolean;
-  uploadingReport: UploadingReport | null;
+export type RapportAuditUploadState = {
+  reports: Array<RapportAudit>;
+  isLoadingRapports: boolean;
+  uploadingRapport: UploadingRapport | null;
   isUploading: boolean;
-  removingReportIds: ReadonlySet<number>;
+  removingRapportIds: ReadonlySet<number>;
   canProceed: boolean;
-  uploadReport: (files: FileList | null) => Promise<void>;
-  removeReport: (report: AuditReport) => Promise<void>;
+  uploadRapport: (files: FileList | null) => Promise<void>;
+  removeRapport: (report: RapportAudit) => Promise<void>;
   abortUpload: () => void;
 };
 
@@ -51,12 +51,12 @@ const toValidationMessage = (error: FileValidationError): string => {
   return messageByError[error];
 };
 
-export const useUploadAuditReport = (
+export const useUploadRapportAudit = (
   auditId: number
-): AuditReportUploadState => {
+): RapportAuditUploadState => {
   const collectiviteId = useCollectiviteId();
-  const { reports, isLoading: isLoadingReports } =
-    useListReportsByAudit(auditId);
+  const { reports, isLoading: isLoadingRapports } =
+    useListRapportsByAudit(auditId);
   const trpc = useTRPC();
   const uploadFile = useUploadFile();
   const invalidateDocuments = useInvalidateDocuments();
@@ -70,9 +70,9 @@ export const useUploadAuditReport = (
   const { mutateAsync: removePreuve } = useRemovePreuve();
   const { setToast } = useToastContext();
 
-  const [uploadingReport, setUploadingReport] =
-    useState<UploadingReport | null>(null);
-  const [removingReportIds, setRemovingReportIds] = useState<
+  const [uploadingRapport, setUploadingRapport] =
+    useState<UploadingRapport | null>(null);
+  const [removingRapportIds, setRemovingRapportIds] = useState<
     ReadonlySet<number>
   >(() => new Set<number>());
   const uploadAbortRef = useRef<AbortController | null>(null);
@@ -84,9 +84,9 @@ export const useUploadAuditReport = (
     []
   );
 
-  const isUploading = uploadingReport !== null;
+  const isUploading = uploadingRapport !== null;
 
-  const uploadReport = async (files: FileList | null): Promise<void> => {
+  const uploadRapport = async (files: FileList | null): Promise<void> => {
     const file = files?.[0];
     if (!file) return;
 
@@ -98,7 +98,7 @@ export const useUploadAuditReport = (
 
     const controller = new AbortController();
     uploadAbortRef.current = controller;
-    setUploadingReport({ filename: file.name, progress: 0 });
+    setUploadingRapport({ filename: file.name, progress: 0 });
     try {
       const { fichierId } = await uploadFile({
         collectiviteId,
@@ -107,7 +107,7 @@ export const useUploadAuditReport = (
         signal: controller.signal,
         onProgress: (progress) => {
           if (controller.signal.aborted) return;
-          setUploadingReport({ filename: file.name, progress });
+          setUploadingRapport({ filename: file.name, progress });
         },
       });
       if (controller.signal.aborted) return;
@@ -122,20 +122,20 @@ export const useUploadAuditReport = (
         uploadAbortRef.current = null;
       }
       if (!controller.signal.aborted) {
-        setUploadingReport(null);
+        setUploadingRapport(null);
       }
     }
   };
 
-  const removeReport = async (report: AuditReport): Promise<void> => {
-    setRemovingReportIds((prev) => new Set(prev).add(report.id));
+  const removeRapport = async (report: RapportAudit): Promise<void> => {
+    setRemovingRapportIds((prev) => new Set(prev).add(report.id));
     try {
       await removePreuve(report);
     } catch (error) {
       console.error(error);
       setToast('error', appLabels.echecSuppressionRapport);
     } finally {
-      setRemovingReportIds((prev) => {
+      setRemovingRapportIds((prev) => {
         const next = new Set(prev);
         next.delete(report.id);
         return next;
@@ -146,22 +146,22 @@ export const useUploadAuditReport = (
   const abortUpload = (): void => {
     uploadAbortRef.current?.abort();
     uploadAbortRef.current = null;
-    setUploadingReport(null);
+    setUploadingRapport(null);
   };
 
   return {
     reports,
-    isLoadingReports,
-    uploadingReport,
+    isLoadingRapports,
+    uploadingRapport,
     isUploading,
-    removingReportIds,
+    removingRapportIds,
     canProceed:
-      !isLoadingReports &&
+      !isLoadingRapports &&
       reports.length > 0 &&
       !isUploading &&
-      removingReportIds.size === 0,
-    uploadReport,
-    removeReport,
+      removingRapportIds.size === 0,
+    uploadRapport,
+    removeRapport,
     abortUpload,
   };
 };

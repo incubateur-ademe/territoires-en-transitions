@@ -2,10 +2,10 @@ import { appLabels } from '@/app/labels/catalog';
 import { EXPECTED_FORMATS_LIST } from '@/app/collectivites/documents/upload/constants';
 import { Field, Icon, Input, Spacer, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
-import { AuditReportUploadState } from '../data/use-upload-audit-report';
-import { ReportsList } from './audit-reports.list';
+import { RapportAuditUploadState } from '../data/use-upload-rapport-audit';
+import { RapportsList } from './rapports.list';
 
-const ReportDropzone = ({
+const RapportDropzone = ({
   onDropFiles,
 }: {
   onDropFiles: (files: FileList | null) => Promise<void>;
@@ -39,23 +39,23 @@ const ReplacementInfoBanner = (): JSX.Element => (
   </aside>
 );
 
-type AuditReportUploaderProps = Pick<
-  AuditReportUploadState,
+type RapportAuditUploaderProps = Pick<
+  RapportAuditUploadState,
   | 'reports'
-  | 'uploadingReport'
-  | 'removingReportIds'
-  | 'uploadReport'
-  | 'removeReport'
+  | 'uploadingRapport'
+  | 'removingRapportIds'
+  | 'uploadRapport'
+  | 'removeRapport'
 >;
 
-export const AuditReportUploader = ({
+export const RapportAuditUploader = ({
   reports,
-  uploadingReport,
-  removingReportIds,
-  uploadReport,
-  removeReport,
-}: AuditReportUploaderProps): JSX.Element => {
-  const canAddReport = reports.length === 0 && uploadingReport === null;
+  uploadingRapport,
+  removingRapportIds,
+  uploadRapport,
+  removeRapport,
+}: RapportAuditUploaderProps): JSX.Element => {
+  const canAddRapport = reports.length === 0 && uploadingRapport === null;
 
   return (
     <div className="flex flex-col">
@@ -64,14 +64,14 @@ export const AuditReportUploader = ({
         state="info"
         className="font-medium text-grey-8 text-sm"
       >
-        <ReportsList
+        <RapportsList
           reports={reports}
-          uploadingReport={uploadingReport}
-          removingReportIds={removingReportIds}
-          onRemove={removeReport}
+          uploadingRapport={uploadingRapport}
+          removingRapportIds={removingRapportIds}
+          onRemove={removeRapport}
         />
-        <VisibleWhen condition={canAddReport}>
-          <ReportDropzone onDropFiles={uploadReport} />
+        <VisibleWhen condition={canAddRapport}>
+          <RapportDropzone onDropFiles={uploadRapport} />
         </VisibleWhen>
       </Field>
       <Spacer height={0.5} />

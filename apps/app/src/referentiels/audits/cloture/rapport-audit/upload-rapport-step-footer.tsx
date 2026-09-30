@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { ModalFooterOKCancel } from '@tet/ui';
 import { JSX } from 'react';
 
-export const UploadReportStepFooter = ({
+export const UploadRapportStepFooter = ({
   onCancel,
   onNext,
   canGoToNextStep,

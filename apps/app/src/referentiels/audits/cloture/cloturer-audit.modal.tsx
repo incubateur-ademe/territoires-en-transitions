@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Modal } from '@tet/ui';
 import { JSX, useState } from 'react';
-import { useUploadAuditReport } from './data/use-upload-audit-report';
+import { useUploadRapportAudit } from './data/use-upload-rapport-audit';
 import { useMailStep } from './mail-template/use-mail-step';
-import { useReportUploadStep } from './report-upload/use-report-upload-step';
+import { useUploadRapportStep } from './rapport-audit/use-upload-rapport-step';
 
-const STEPS = ['report-upload', 'mail-template'] as const;
+const STEPS = ['depot-rapport', 'mail-template'] as const;
 
 type WizardStep = (typeof STEPS)[number];
 
@@ -20,18 +20,18 @@ export const CloturerAuditModal = ({
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }): JSX.Element => {
-  const [step, setStep] = useState<WizardStep>('report-upload');
+  const [step, setStep] = useState<WizardStep>('depot-rapport');
   const [engagementChecked, setEngagementChecked] = useState(false);
-  const uploadState = useUploadAuditReport(auditId);
+  const uploadState = useUploadRapportAudit(auditId);
 
   const closeAndReset = (): void => {
     uploadState.abortUpload();
     setIsOpen(false);
-    setStep('report-upload');
+    setStep('depot-rapport');
     setEngagementChecked(false);
   };
 
-  const reportUploadStep = useReportUploadStep({
+  const uploadRapportStep = useUploadRapportStep({
     uploadState,
     onNext: () => setStep('mail-template'),
     onCancel: closeAndReset,
@@ -42,13 +42,13 @@ export const CloturerAuditModal = ({
     isUploading: uploadState.isUploading,
     engagementChecked,
     onEngagementCheckedChange: setEngagementChecked,
-    onBack: () => setStep('report-upload'),
+    onBack: () => setStep('depot-rapport'),
     onCancel: closeAndReset,
     onCompleted: closeAndReset,
   });
 
   const { body, footer } =
-    step === 'report-upload' ? reportUploadStep : mailStep;
+    step === 'depot-rapport' ? uploadRapportStep : mailStep;
 
   const stepNumber = STEPS.indexOf(step) + 1;
   const totalSteps = STEPS.length;

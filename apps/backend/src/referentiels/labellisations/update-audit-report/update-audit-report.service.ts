@@ -7,7 +7,7 @@ import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
-import { canUpdateAuditReport } from '@tet/domain/referentiels';
+import { canUpdateRapportAudit } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { auditTable } from '../audit.table';
 import {
@@ -62,7 +62,7 @@ export class UpdateAuditReportService {
           { collectiviteId: context.collectiviteId },
           { user }
         );
-      const allowed = canUpdateAuditReport({
+      const allowed = canUpdateRapportAudit({
         isAuditeur: context.auditeur !== null,
         canMutateLabellisationDocuments,
         audit: {

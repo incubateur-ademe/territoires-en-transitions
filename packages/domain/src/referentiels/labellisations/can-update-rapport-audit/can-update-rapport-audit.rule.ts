@@ -21,7 +21,7 @@ function isAuditeurUpdateWindowOpen(audit: Audit, now: Date): boolean {
   return new Date(audit.dateFin).getTime() > editWindowStart;
 }
 
-export function canUpdateAuditReport({
+export function canUpdateRapportAudit({
   isAuditeur,
   canMutateLabellisationDocuments,
   audit,

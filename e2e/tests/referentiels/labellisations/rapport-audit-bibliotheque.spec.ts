@@ -7,16 +7,16 @@ import { testWithReferentiels } from '../referentiels.fixture';
 
 const referentiel: ReferentielId = 'eci';
 
-type ClosedAuditReport = {
+type RapportAuditClos = {
   collectivite: CollectiviteFixture;
   collectiviteId: number;
   auditeurUser: UserFixture;
 };
 
 const test = testWithReferentiels.extend<{
-  closedAuditReport: ClosedAuditReport;
+  rapportAuditClos: RapportAuditClos;
 }>({
-  closedAuditReport: async (
+  rapportAuditClos: async (
     {
       page,
       collectivites,
@@ -52,7 +52,7 @@ const test = testWithReferentiels.extend<{
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await labellisationPom.cloturerAuditSuivantButton.click();
     await labellisationPom.cloturerAuditEngagementCheckbox.check();
     await labellisationPom.cloturerAuditValiderButton.click();
@@ -67,9 +67,9 @@ const test = testWithReferentiels.extend<{
 test.describe("Rapport d'audit dans la bibliothèque", () => {
   test("l'auditeur voit le bouton « Remplacer le fichier » pendant la fenêtre de 15 jours", async ({
     page,
-    closedAuditReport,
+    rapportAuditClos,
   }) => {
-    const { collectiviteId, auditeurUser } = closedAuditReport;
+    const { collectiviteId, auditeurUser } = rapportAuditClos;
 
     await auditeurUser.login();
     await page.goto(
@@ -82,11 +82,11 @@ test.describe("Rapport d'audit dans la bibliothèque", () => {
   test("l'auditeur ne voit plus le bouton « Remplacer le fichier » une fois la fenêtre de 15 jours dépassée", async ({
     page,
     referentiels,
-    closedAuditReport,
+    rapportAuditClos,
   }) => {
-    const { collectiviteId, auditeurUser } = closedAuditReport;
+    const { collectiviteId, auditeurUser } = rapportAuditClos;
 
-    await referentiels.expireAuditReportEditWindow({
+    await referentiels.expireRapportAuditEditWindow({
       collectiviteId,
       referentielId: referentiel,
     });
@@ -101,9 +101,9 @@ test.describe("Rapport d'audit dans la bibliothèque", () => {
 
   test('un membre admin de la collectivité ne voit pas le bouton « Remplacer le fichier »', async ({
     page,
-    closedAuditReport,
+    rapportAuditClos,
   }) => {
-    const { collectivite, collectiviteId } = closedAuditReport;
+    const { collectivite, collectiviteId } = rapportAuditClos;
 
     const adminUser = await collectivite.addUser({
       role: CollectiviteRole.ADMIN,
@@ -121,22 +121,24 @@ test.describe("Rapport d'audit dans la bibliothèque", () => {
     page,
     collectivites,
     referentiels,
-    closedAuditReport,
+    rapportAuditClos,
   }) => {
-    const { collectiviteId } = closedAuditReport;
+    const { collectiviteId } = rapportAuditClos;
 
-    await referentiels.expireAuditReportEditWindow({
+    await referentiels.expireRapportAuditEditWindow({
       collectiviteId,
       referentielId: referentiel,
     });
 
-    const { user: superAdminUser } = await collectivites.addCollectiviteAndUser({
-      userArgs: {
-        autoLogin: true,
-        isSupport: true,
-        isSuperAdminRoleEnabled: true,
-      },
-    });
+    const { user: superAdminUser } = await collectivites.addCollectiviteAndUser(
+      {
+        userArgs: {
+          autoLogin: true,
+          isSupport: true,
+          isSuperAdminRoleEnabled: true,
+        },
+      }
+    );
 
     await superAdminUser.login();
     await page.goto(
@@ -148,9 +150,9 @@ test.describe("Rapport d'audit dans la bibliothèque", () => {
 
   test('un visiteur en lecture seule ne voit pas le bouton « Remplacer le fichier »', async ({
     page,
-    closedAuditReport,
+    rapportAuditClos,
   }) => {
-    const { collectivite, collectiviteId } = closedAuditReport;
+    const { collectivite, collectiviteId } = rapportAuditClos;
 
     const visiteurUser = await collectivite.addUser({
       role: CollectiviteRole.LECTURE,

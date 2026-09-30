@@ -6,19 +6,19 @@ import { getDocumentFilename } from '@tet/domain/collectivites';
 import { MissingFileBadge } from '@/app/collectivites/documents/bibliotheque/missing-file.badge';
 import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
-import { AuditReport } from '../data/use-list-reports-by-audit';
+import { RapportAudit } from '../data/use-list-rapports-by-audit';
 
-type RemoveReportButtonProps = {
+type RemoveRapportButtonProps = {
   filename: string;
   isRemoving: boolean;
   onClick: () => void;
 };
 
-const RemoveReportButton = ({
+const RemoveRapportButton = ({
   filename,
   isRemoving,
   onClick,
-}: RemoveReportButtonProps): JSX.Element => (
+}: RemoveRapportButtonProps): JSX.Element => (
   <Button
     icon="delete-bin-line"
     variant="white"
@@ -52,17 +52,17 @@ const UploadingTitle = ({
   </span>
 );
 
-type PersistedReportCardProps = {
-  report: AuditReport;
+type PersistedRapportCardProps = {
+  report: RapportAudit;
   isRemoving: boolean;
   onRemove: () => void;
 };
 
-export const PersistedReportCard = ({
+export const PersistedRapportCard = ({
   report,
   isRemoving,
   onRemove,
-}: PersistedReportCardProps): JSX.Element => {
+}: PersistedRapportCardProps): JSX.Element => {
   const openPreuve = useOpenPreuve({ collectiviteId: report.collectiviteId });
   const filename = getDocumentFilename(report) ?? '';
   const isMissing = report.type === 'fichierManquant';
@@ -79,7 +79,7 @@ export const PersistedReportCard = ({
             withFilesize
           />
         </div>
-        <RemoveReportButton
+        <RemoveRapportButton
           filename={filename}
           isRemoving={isRemoving}
           onClick={onRemove}
@@ -93,7 +93,7 @@ export const PersistedReportCard = ({
   );
 };
 
-export const UploadingReportCard = ({
+export const UploadingRapportCard = ({
   filename,
   progress,
 }: {

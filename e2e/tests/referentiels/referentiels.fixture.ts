@@ -176,7 +176,7 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     });
   }
 
-  async expireAuditReportEditWindow({
+  async expireRapportAuditEditWindow({
     collectiviteId,
     referentielId,
   }: {

@@ -1,5 +1,5 @@
 import { toDocumentHash } from '@tet/domain/collectivites';
-import { AuditReport } from '../data/use-list-reports-by-audit';
+import { RapportAudit } from '../data/use-list-rapports-by-audit';
 
 const audit = {
   id: 3,
@@ -27,7 +27,7 @@ const rapportBase = {
   audit,
 } as const;
 
-export const rapportFichier: AuditReport = {
+export const rapportFichier: RapportAudit = {
   ...rapportBase,
   type: 'fichier',
   fichier: {
@@ -43,19 +43,19 @@ export const rapportFichier: AuditReport = {
   },
 };
 
-export const rapportLien: AuditReport = {
+export const rapportLien: RapportAudit = {
   ...rapportBase,
   type: 'lien',
   lien: { url: 'https://exemple.test/rapport', titre: 'Rapport en ligne' },
 };
 
-export const rapportFichierManquant: AuditReport = {
+export const rapportFichierManquant: RapportAudit = {
   ...rapportBase,
   type: 'fichierManquant',
   filename: 'rapport-perdu.pdf',
 };
 
-export const rapportFichierManquantAuNomLong: AuditReport = {
+export const rapportFichierManquantAuNomLong: RapportAudit = {
   ...rapportFichierManquant,
   filename:
     'rapport-audit-climat-air-energie-territorial-communaute-agglomeration-2026-version-definitive-relue.pdf',

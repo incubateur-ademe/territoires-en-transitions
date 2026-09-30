@@ -6,10 +6,10 @@ import {
   rapportFichierManquant,
   rapportLien,
 } from './rapports.fixture';
-import { PersistedReportCard } from './report-card';
+import { PersistedRapportCard } from './rapport.card';
 
 export default {
-  component: PersistedReportCard,
+  component: PersistedRapportCard,
   args: { isRemoving: false, onRemove: fn() },
   decorators: [
     (Story) => (
@@ -18,9 +18,9 @@ export default {
       </div>
     ),
   ],
-} as Meta<typeof PersistedReportCard>;
+} as Meta<typeof PersistedRapportCard>;
 
-type Story = StoryObj<typeof PersistedReportCard>;
+type Story = StoryObj<typeof PersistedRapportCard>;
 
 export const RapportFichier: Story = {
   args: { report: rapportFichier },

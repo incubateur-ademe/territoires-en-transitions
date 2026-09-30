@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AuditEnCours } from '@/app/referentiels/audits/types';
 import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
-import { useReplaceAuditReportFile } from '@/app/collectivites/documents/bibliotheque/use-replace-audit-report-file';
+import { useReplaceRapportAuditFile } from '@/app/collectivites/documents/bibliotheque/use-replace-rapport-audit-file';
 import {
   DocumentAudit,
   DocumentAuditOuLabellisation,
@@ -9,7 +9,7 @@ import {
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
-  canUpdateAuditReport,
+  canUpdateRapportAudit,
   canUpdateCandidatureDocuments,
   Etoile,
   getParcoursLabellisationStatus,
@@ -99,7 +99,7 @@ const DocAuditOuLabellisation = ({
       'referentiels.labellisations.mutate_documents'
     ),
   });
-  const replaceAuditReport = useReplaceAuditReportFile(preuve);
+  const replaceRapportAudit = useReplaceRapportAuditFile(preuve);
   const isRapportAudit = audit !== null;
 
   if (!canUpdate) {
@@ -115,7 +115,7 @@ const DocAuditOuLabellisation = ({
         remove: !isRapportAudit,
         replace: isRapportAudit
           ? async (fichierId) => {
-              await replaceAuditReport.mutateAsync({
+              await replaceRapportAudit.mutateAsync({
                 preuveId: preuve.id,
                 fichierId,
               });
@@ -140,7 +140,7 @@ const canUpdateAuditOrLabellisationPreuve = ({
   canMutateLabellisationDocuments: boolean;
 }): boolean => {
   if (preuve.preuveType === 'audit') {
-    return canUpdateAuditReport({
+    return canUpdateRapportAudit({
       isAuditeur: isUserAuditeurForAudit(user, preuve.audit.id),
       canMutateLabellisationDocuments,
       audit: preuve.audit,

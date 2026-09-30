@@ -65,7 +65,7 @@ test.describe("Modale de clôture d'audit", () => {
     // Bouton "Suivant" disabled tant qu'aucun rapport
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeEnabled();
     await labellisationPom.cloturerAuditSuivantButton.click();
 
@@ -118,7 +118,7 @@ test.describe("Modale de clôture d'audit", () => {
     await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await labellisationPom.cloturerAuditSuivantButton.click();
 
     await expect(labellisationPom.cloturerAuditValiderButton).toBeDisabled();
@@ -135,7 +135,7 @@ test.describe("Modale de clôture d'audit", () => {
     await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await labellisationPom.cloturerAuditSuivantButton.click();
     await labellisationPom.cloturerAuditEngagementCheckbox.check();
 
@@ -164,7 +164,7 @@ test.describe("Modale de clôture d'audit", () => {
 
     await expect(labellisationPom.cloturerAuditFileInput).toBeAttached();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
 
     await expect(
       labellisationPom.cloturerAuditModal
@@ -181,12 +181,12 @@ test.describe("Modale de clôture d'audit", () => {
     await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeEnabled();
     await expect(labellisationPom.cloturerAuditFileInput).not.toBeAttached();
 
     await labellisationPom
-      .cloturerAuditDeleteReportButton('document_test.pdf')
+      .cloturerAuditDeleteRapportButton('document_test.pdf')
       .click();
 
     await expect(
@@ -195,7 +195,7 @@ test.describe("Modale de clôture d'audit", () => {
     await expect(labellisationPom.cloturerAuditFileInput).toBeAttached();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeEnabled();
   });
 
@@ -206,7 +206,7 @@ test.describe("Modale de clôture d'audit", () => {
     await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await labellisationPom.cloturerAuditSuivantButton.click();
     await expect(
       labellisationPom.cloturerAuditModal.getByText('Étape 2/2')
@@ -231,7 +231,7 @@ test.describe("Modale de clôture d'audit", () => {
     await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
-    await labellisationPom.uploadCloturerAuditReport();
+    await labellisationPom.uploadCloturerAuditRapport();
     await labellisationPom.cloturerAuditSuivantButton.click();
     await labellisationPom.cloturerAuditEngagementCheckbox.check();
 

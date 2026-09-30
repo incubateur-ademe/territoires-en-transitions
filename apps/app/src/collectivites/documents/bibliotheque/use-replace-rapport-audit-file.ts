@@ -4,7 +4,7 @@ import { toDocumentTargets } from '../to-document-target';
 import { useInvalidateDocuments } from '../use-invalidate-documents';
 import { DocumentRattache } from './types';
 
-export const useReplaceAuditReportFile = (document: DocumentRattache) => {
+export const useReplaceRapportAuditFile = (document: DocumentRattache) => {
   const trpc = useTRPC();
   const invalidateDocuments = useInvalidateDocuments();
 

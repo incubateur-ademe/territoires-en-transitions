@@ -37,7 +37,7 @@ export * from './labellisations/objet-preuve.enum.schema';
 export * from './labellisations/parcours-labellisation-status.enum';
 export * from './labellisations/parcours-labellisation.schema';
 export * from './labellisations/can-add-audit-document/can-add-audit-document.rule';
-export * from './labellisations/can-update-audit-report/can-update-audit-report.rule';
+export * from './labellisations/can-update-rapport-audit/can-update-rapport-audit.rule';
 export * from './labellisations/request-labellisation/request-labellisation.rules';
 export * from './labellisations/request-labellisation/request-labellisation.rules-errors';
 export * from './labellisations/requestable-star';

@@ -30,7 +30,6 @@ export class LabellisationPom {
       name: "Les attendus pour l'audit ou",
     });
 
-
     this.cloturerAuditButton = page.getByRole('button', {
       name: "Clôturer l'audit",
     });
@@ -77,11 +76,9 @@ export class LabellisationPom {
       this.cloturerAuditModal.locator('input[type="file"]');
     this.cloturerAuditUploadingCard =
       this.cloturerAuditModal.locator('[aria-busy="true"]');
-
   }
 
-
-  async uploadCloturerAuditReport(filePath: string = TEST_PDF_PATH) {
+  async uploadCloturerAuditRapport(filePath: string = TEST_PDF_PATH) {
     const filename = filePath.split('/').pop() ?? '';
     await this.cloturerAuditFileInput.setInputFiles(filePath);
     await expect(
@@ -89,21 +86,19 @@ export class LabellisationPom {
     ).toBeVisible();
   }
 
-  async closeAuditWithReport(): Promise<void> {
+  async closeAuditWithRapport(): Promise<void> {
     await this.cloturerAuditButton.click();
-    await this.uploadCloturerAuditReport();
+    await this.uploadCloturerAuditRapport();
     await this.cloturerAuditSuivantButton.click();
     await this.cloturerAuditEngagementCheckbox.check();
     await this.cloturerAuditValiderButton.click();
   }
 
-  cloturerAuditDeleteReportButton(filename: string): Locator {
+  cloturerAuditDeleteRapportButton(filename: string): Locator {
     return this.cloturerAuditModal.getByRole('button', {
       name: `Supprimer le rapport d'audit « ${filename} »`,
     });
   }
-
-
 
   async goto(referentielId: ReferentielId) {
     await this.page

@@ -2,8 +2,8 @@ import { appLabels } from '@/app/labels/catalog';
 import { rapportFichier, rapportFichierManquant } from './rapports.fixture';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { AuditReport } from '../data/use-list-reports-by-audit';
-import { PersistedReportCard } from './report-card';
+import { RapportAudit } from '../data/use-list-rapports-by-audit';
+import { PersistedRapportCard } from './rapport.card';
 
 const { openPreuve } = vi.hoisted(() => ({ openPreuve: vi.fn() }));
 
@@ -19,16 +19,16 @@ vi.mock(
   })
 );
 
-const renderCard = (report: AuditReport) =>
+const renderCard = (report: RapportAudit) =>
   render(
-    <PersistedReportCard
+    <PersistedRapportCard
       report={report}
       isRemoving={false}
       onRemove={vi.fn()}
     />
   );
 
-describe('PersistedReportCard', () => {
+describe('PersistedRapportCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -66,7 +66,7 @@ describe('PersistedReportCard', () => {
 
   test("le titre n'ouvre plus le rapport pendant sa suppression", () => {
     render(
-      <PersistedReportCard
+      <PersistedRapportCard
         report={rapportFichier}
         isRemoving
         onRemove={vi.fn()}

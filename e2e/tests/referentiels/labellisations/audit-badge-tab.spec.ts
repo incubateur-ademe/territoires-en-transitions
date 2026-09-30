@@ -338,7 +338,7 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
     await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
-    await labellisationPom.closeAuditWithReport();
+    await labellisationPom.closeAuditWithRapport();
 
     await expect(auditBadgeTab(page, /Audit terminé/)).toBeVisible();
 

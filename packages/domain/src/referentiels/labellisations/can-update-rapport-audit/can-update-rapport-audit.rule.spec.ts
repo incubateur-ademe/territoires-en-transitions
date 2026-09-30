@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canUpdateAuditReport } from './can-update-audit-report.rule';
+import { canUpdateRapportAudit } from './can-update-rapport-audit.rule';
 
 const now = new Date('2026-06-22T12:00:00.000Z');
 const daysAgo = (days: number) =>
@@ -7,16 +7,21 @@ const daysAgo = (days: number) =>
 
 const auditeur = { isAuditeur: true, canMutateLabellisationDocuments: false };
 const tiers = { isAuditeur: false, canMutateLabellisationDocuments: false };
-const porteurPermission = { isAuditeur: false, canMutateLabellisationDocuments: true };
+const porteurPermission = {
+  isAuditeur: false,
+  canMutateLabellisationDocuments: true,
+};
 
-describe('canUpdateAuditReport', () => {
+describe('canUpdateRapportAudit', () => {
   it("refuse une preuve sans rapport d'audit", () => {
-    expect(canUpdateAuditReport({ ...auditeur, audit: null, now })).toBe(false);
+    expect(canUpdateRapportAudit({ ...auditeur, audit: null, now })).toBe(
+      false
+    );
   });
 
   it("refuse un tiers à l'audit", () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...tiers,
         audit: { clos: false, valide: false, dateFin: null },
         now,
@@ -26,7 +31,7 @@ describe('canUpdateAuditReport', () => {
 
   it("autorise l'auditeur tant que l'audit n'est pas valide", () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...auditeur,
         audit: { clos: false, valide: false, dateFin: null },
         now,
@@ -36,7 +41,7 @@ describe('canUpdateAuditReport', () => {
 
   it('autorise dans les 15 jours suivant la validation', () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...auditeur,
         audit: { clos: false, valide: true, dateFin: daysAgo(14) },
         now,
@@ -46,7 +51,7 @@ describe('canUpdateAuditReport', () => {
 
   it('refuse plus de 15 jours apres la validation', () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...auditeur,
         audit: { clos: false, valide: true, dateFin: daysAgo(16) },
         now,
@@ -56,7 +61,7 @@ describe('canUpdateAuditReport', () => {
 
   it('autorise dans les 15 jours même si l’audit est clos', () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...auditeur,
         audit: { clos: true, valide: true, dateFin: daysAgo(14) },
         now,
@@ -66,7 +71,7 @@ describe('canUpdateAuditReport', () => {
 
   it("refuse plus de 15 jours après la clôture, même si l'audit est clos", () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...auditeur,
         audit: { clos: true, valide: true, dateFin: daysAgo(16) },
         now,
@@ -76,7 +81,7 @@ describe('canUpdateAuditReport', () => {
 
   it('refuse un audit valide sans date de fin', () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...auditeur,
         audit: { clos: false, valide: true, dateFin: null },
         now,
@@ -84,9 +89,9 @@ describe('canUpdateAuditReport', () => {
     ).toBe(false);
   });
 
-  it("autorise la permission sur un audit clos depuis plus de 15 jours", () => {
+  it('autorise la permission sur un audit clos depuis plus de 15 jours', () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...porteurPermission,
         audit: { clos: true, valide: true, dateFin: daysAgo(16) },
         now,
@@ -96,7 +101,7 @@ describe('canUpdateAuditReport', () => {
 
   it('autorise la permission sur un audit valide sans date de fin', () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         ...porteurPermission,
         audit: { clos: false, valide: true, dateFin: null },
         now,
@@ -106,7 +111,7 @@ describe('canUpdateAuditReport', () => {
 
   it("autorise l'auditeur hors fenêtre qui détient aussi la permission", () => {
     expect(
-      canUpdateAuditReport({
+      canUpdateRapportAudit({
         isAuditeur: true,
         canMutateLabellisationDocuments: true,
         audit: { clos: true, valide: true, dateFin: daysAgo(16) },
@@ -117,7 +122,7 @@ describe('canUpdateAuditReport', () => {
 
   it("refuse la permission quand la preuve n'a pas de rapport d'audit", () => {
     expect(
-      canUpdateAuditReport({ ...porteurPermission, audit: null, now })
+      canUpdateRapportAudit({ ...porteurPermission, audit: null, now })
     ).toBe(false);
   });
 });
