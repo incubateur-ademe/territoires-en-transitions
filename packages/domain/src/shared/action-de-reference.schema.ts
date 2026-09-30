@@ -10,9 +10,28 @@ export const actionDeReferenceIdSchema = z
 
 export type ActionDeReferenceId = z.infer<typeof actionDeReferenceIdSchema>;
 
+const TITRE_MAX_CHARACTER_COUNT = 300;
+
+const titreSchema = nonBlankTextSchema.check(
+  z.superRefine((titre, ctx) => {
+    const exceedsMaxCharacterCount =
+      titre.length > 2 * TITRE_MAX_CHARACTER_COUNT ||
+      [...titre].length > TITRE_MAX_CHARACTER_COUNT;
+    if (exceedsMaxCharacterCount) {
+      ctx.addIssue({
+        code: 'too_big',
+        origin: 'string',
+        maximum: TITRE_MAX_CHARACTER_COUNT,
+        inclusive: true,
+        input: titre,
+      });
+    }
+  })
+);
+
 export const actionDeReferenceSchema = z.object({
   id: actionDeReferenceIdSchema,
-  titre: nonBlankTextSchema,
+  titre: titreSchema,
   description: nonBlankTextSchema,
   levier: z.enum(levierIdEnumValues),
   categorie: z.enum(categorieActionEnumValues),
