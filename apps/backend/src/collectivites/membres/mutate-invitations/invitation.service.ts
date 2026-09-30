@@ -303,6 +303,7 @@ export class InvitationService {
             await this.personneTagService.changeTagAndDelete(
               trx,
               tag.id,
+              user.id,
               user.id
             );
           }

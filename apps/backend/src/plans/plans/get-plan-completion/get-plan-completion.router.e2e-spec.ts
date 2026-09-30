@@ -150,8 +150,8 @@ describe('GetPlanCompletionRouter tests', () => {
       });
       // Associate fiches to the plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: fiche1.id, axeId: testPlanId },
-        { ficheId: fiche2.id, axeId: testPlanId },
+        { ficheId: fiche1.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: fiche2.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -187,12 +187,14 @@ describe('GetPlanCompletionRouter tests', () => {
       await databaseService.db.insert(ficheActionPiloteTable).values({
         ficheId: fiche.id,
         userId: testUser.id,
+        createdBy: testUser.id,
       });
 
       // Associate the fiche to the plan
       await databaseService.db.insert(ficheActionAxeTable).values({
         ficheId: fiche.id,
         axeId: testPlanId,
+        createdBy: testUser.id,
       });
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -228,12 +230,14 @@ describe('GetPlanCompletionRouter tests', () => {
       await databaseService.db.insert(ficheActionPiloteTable).values({
         ficheId: fiche.id,
         userId: testUser.id,
+        createdBy: testUser.id,
       });
 
       // Add an indicateur
       await databaseService.db.insert(ficheActionIndicateurTable).values({
         ficheId: fiche.id,
         indicateurId: 1,
+        createdBy: testUser.id,
       });
 
       // Add a budget
@@ -258,6 +262,7 @@ describe('GetPlanCompletionRouter tests', () => {
       await databaseService.db.insert(ficheActionAxeTable).values({
         ficheId: fiche.id,
         axeId: testPlanId,
+        createdBy: testUser.id,
       });
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -296,8 +301,8 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Associate fiches to plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: fiche1.id, axeId: testPlanId },
-        { ficheId: fiche2.id, axeId: testPlanId },
+        { ficheId: fiche1.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: fiche2.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -370,13 +375,14 @@ describe('GetPlanCompletionRouter tests', () => {
       await databaseService.db.insert(ficheActionPiloteTable).values({
         ficheId: fiche3.id,
         userId: testUser.id,
+        createdBy: testUser.id,
       });
 
       // Associate all fiches to the plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: fiche1.id, axeId: testPlanId },
-        { ficheId: fiche2.id, axeId: testPlanId },
-        { ficheId: fiche3.id, axeId: testPlanId },
+        { ficheId: fiche1.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: fiche2.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: fiche3.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -466,9 +472,9 @@ describe('GetPlanCompletionRouter tests', () => {
       ]);
       // Associate the fiche to the plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: recentFiche.id, axeId: testPlanId },
-        { ficheId: oldFicheWithOldNote.id, axeId: testPlanId },
-        { ficheId: oldFicheWithRecentNote.id, axeId: testPlanId },
+        { ficheId: recentFiche.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: oldFicheWithOldNote.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: oldFicheWithRecentNote.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -515,8 +521,8 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Associer les deux fiches au plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: ficheNormale.id, axeId: testPlanId },
-        { ficheId: ficheSoftDeleted.id, axeId: testPlanId },
+        { ficheId: ficheNormale.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: ficheSoftDeleted.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -561,8 +567,8 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Associer les fiches au plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: fiche1.id, axeId: testPlanId },
-        { ficheId: fiche2.id, axeId: testPlanId },
+        { ficheId: fiche1.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: fiche2.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -628,10 +634,10 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Associer toutes les fiches au plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: ficheNormale1.id, axeId: testPlanId },
-        { ficheId: ficheNormale2.id, axeId: testPlanId },
-        { ficheId: ficheSoftDeleted1.id, axeId: testPlanId },
-        { ficheId: ficheSoftDeleted2.id, axeId: testPlanId },
+        { ficheId: ficheNormale1.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: ficheNormale2.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: ficheSoftDeleted1.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: ficheSoftDeleted2.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({
@@ -681,13 +687,13 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Ajouter des pilotes, indicateurs et budgets pour compléter les fiches
       await databaseService.db.insert(ficheActionPiloteTable).values([
-        { ficheId: ficheNormale.id, userId: testUser.id },
-        { ficheId: ficheSoftDeleted.id, userId: testUser.id },
+        { ficheId: ficheNormale.id, userId: testUser.id, createdBy: testUser.id },
+        { ficheId: ficheSoftDeleted.id, userId: testUser.id, createdBy: testUser.id },
       ]);
 
       await databaseService.db.insert(ficheActionIndicateurTable).values([
-        { ficheId: ficheNormale.id, indicateurId: 1 },
-        { ficheId: ficheSoftDeleted.id, indicateurId: 1 },
+        { ficheId: ficheNormale.id, indicateurId: 1, createdBy: testUser.id },
+        { ficheId: ficheSoftDeleted.id, indicateurId: 1, createdBy: testUser.id },
       ]);
 
       await databaseService.db.insert(ficheActionBudgetTable).values([
@@ -729,8 +735,8 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Associer les fiches au plan
       await databaseService.db.insert(ficheActionAxeTable).values([
-        { ficheId: ficheNormale.id, axeId: testPlanId },
-        { ficheId: ficheSoftDeleted.id, axeId: testPlanId },
+        { ficheId: ficheNormale.id, axeId: testPlanId, createdBy: testUser.id },
+        { ficheId: ficheSoftDeleted.id, axeId: testPlanId, createdBy: testUser.id },
       ]);
 
       const result = await caller.plans.plans.getPlanCompletion({

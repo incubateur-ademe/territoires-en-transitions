@@ -8,6 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { personneTagTable } from '../../../../collectivites/tags/personnes/personne-tag.table';
 import { ficheActionTable } from './fiche-action.table';
+import { relationAuditColumns } from './relation-audit.column';
 
 export const ficheActionPiloteTable = pgTable(
   'fiche_action_pilote',
@@ -15,6 +16,7 @@ export const ficheActionPiloteTable = pgTable(
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     tagId: integer('tag_id').references(() => personneTagTable.id),
     userId: uuid('user_id'), // references dcp
+    ...relationAuditColumns,
   },
   (table) => {
     return {

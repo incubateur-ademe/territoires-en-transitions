@@ -151,8 +151,8 @@ describe('Test les invitations', () => {
     });
 
     await databaseService.db.insert(ficheActionPiloteTable).values([
-      { ficheId: fiche1.id, tagId: testTag.id },
-      { ficheId: fiche2.id, tagId: testTag.id },
+      { ficheId: fiche1.id, tagId: testTag.id, createdBy: adminUser.id },
+      { ficheId: fiche2.id, tagId: testTag.id, createdBy: adminUser.id },
     ]);
 
     // Vérifie que l'utilisateur n'est pas vérifié
@@ -290,8 +290,8 @@ describe('Test les invitations', () => {
     });
 
     await databaseService.db.insert(ficheActionPiloteTable).values([
-      { ficheId: fiche1.id, tagId: testTag.id },
-      { ficheId: fiche2.id, tagId: testTag.id },
+      { ficheId: fiche1.id, tagId: testTag.id, createdBy: adminUser.id },
+      { ficheId: fiche2.id, tagId: testTag.id, createdBy: adminUser.id },
     ]);
 
     const condition = and(

@@ -1,6 +1,7 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { axeTable } from './axe.table';
 import { ficheActionTable } from './fiche-action.table';
+import { relationAuditColumns } from './relation-audit.column';
 
 export const ficheActionAxeTable = pgTable(
   'fiche_action_axe',
@@ -11,6 +12,7 @@ export const ficheActionAxeTable = pgTable(
     axeId: integer('axe_id')
       .notNull()
       .references(() => axeTable.id),
+    ...relationAuditColumns,
   },
   (table) => [primaryKey({ columns: [table.ficheId, table.axeId] })]
 );

@@ -349,7 +349,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: axeTable.id, collectiviteId: axeTable.collectiviteId })
+              .select({
+                id: axeTable.id,
+                collectiviteId: axeTable.collectiviteId,
+              })
               .from(axeTable)
               .where(inArray(axeTable.id, ids))
         );
@@ -361,7 +364,8 @@ export class FicheActionRepository
           ficheActionAxeTable,
           ['id'],
           ficheActionAxeTable.ficheId,
-          [ficheActionAxeTable.axeId]
+          [ficheActionAxeTable.axeId],
+          user.id
         );
       }
 
@@ -373,7 +377,8 @@ export class FicheActionRepository
           ficheActionThematiqueTable,
           ['id'],
           ficheActionThematiqueTable.ficheId,
-          [ficheActionThematiqueTable.thematiqueId]
+          [ficheActionThematiqueTable.thematiqueId],
+          user.id
         );
       }
 
@@ -385,7 +390,8 @@ export class FicheActionRepository
           ficheActionSousThematiqueTable,
           ['id'],
           ficheActionSousThematiqueTable.ficheId,
-          [ficheActionSousThematiqueTable.thematiqueId]
+          [ficheActionSousThematiqueTable.thematiqueId],
+          user.id
         );
       }
 
@@ -396,7 +402,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: partenaireTagTable.id, collectiviteId: partenaireTagTable.collectiviteId })
+              .select({
+                id: partenaireTagTable.id,
+                collectiviteId: partenaireTagTable.collectiviteId,
+              })
               .from(partenaireTagTable)
               .where(inArray(partenaireTagTable.id, ids))
         );
@@ -419,7 +428,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: structureTagTable.id, collectiviteId: structureTagTable.collectiviteId })
+              .select({
+                id: structureTagTable.id,
+                collectiviteId: structureTagTable.collectiviteId,
+              })
               .from(structureTagTable)
               .where(inArray(structureTagTable.id, ids))
         );
@@ -444,7 +456,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: personneTagTable.id, collectiviteId: personneTagTable.collectiviteId })
+              .select({
+                id: personneTagTable.id,
+                collectiviteId: personneTagTable.collectiviteId,
+              })
               .from(personneTagTable)
               .where(inArray(personneTagTable.id, ids))
         );
@@ -456,7 +471,8 @@ export class FicheActionRepository
           ficheActionPiloteTable,
           ['tagId', 'userId'],
           ficheActionPiloteTable.ficheId,
-          [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
+          [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId],
+          user.id
         );
       }
 
@@ -469,7 +485,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: personneTagTable.id, collectiviteId: personneTagTable.collectiviteId })
+              .select({
+                id: personneTagTable.id,
+                collectiviteId: personneTagTable.collectiviteId,
+              })
               .from(personneTagTable)
               .where(inArray(personneTagTable.id, ids))
         );
@@ -481,7 +500,8 @@ export class FicheActionRepository
           ficheActionReferentTable,
           ['tagId', 'userId'],
           ficheActionReferentTable.ficheId,
-          [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
+          [ficheActionReferentTable.tagId, ficheActionReferentTable.userId],
+          user.id
         );
       }
 
@@ -505,7 +525,8 @@ export class FicheActionRepository
           ficheActionIndicateurTable,
           ['id'],
           ficheActionIndicateurTable.ficheId,
-          [ficheActionIndicateurTable.indicateurId]
+          [ficheActionIndicateurTable.indicateurId],
+          user.id
         );
       }
 
@@ -516,7 +537,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: serviceTagTable.id, collectiviteId: serviceTagTable.collectiviteId })
+              .select({
+                id: serviceTagTable.id,
+                collectiviteId: serviceTagTable.collectiviteId,
+              })
               .from(serviceTagTable)
               .where(inArray(serviceTagTable.id, ids))
         );
@@ -541,7 +565,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: financeurTagTable.id, collectiviteId: financeurTagTable.collectiviteId })
+              .select({
+                id: financeurTagTable.id,
+                collectiviteId: financeurTagTable.collectiviteId,
+              })
               .from(financeurTagTable)
               .where(inArray(financeurTagTable.id, ids))
         );
@@ -614,7 +641,10 @@ export class FicheActionRepository
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: libreTagTable.id, collectiviteId: libreTagTable.collectiviteId })
+              .select({
+                id: libreTagTable.id,
+                collectiviteId: libreTagTable.collectiviteId,
+              })
               .from(libreTagTable)
               .where(inArray(libreTagTable.id, ids))
         );
@@ -666,7 +696,9 @@ export class FicheActionRepository
   private async assertIdsInCollectivite(
     ids: number[],
     collectiviteId: number,
-    fetchRows: (ids: number[]) => Promise<{ id: number; collectiviteId: number }[]>
+    fetchRows: (
+      ids: number[]
+    ) => Promise<{ id: number; collectiviteId: number }[]>
   ): Promise<Result<void, 'RELATION_COLLECTIVITE_MISMATCH'>> {
     if (ids.length === 0) return success(undefined);
     const uniqueIds = [...new Set(ids)];
@@ -680,9 +712,7 @@ export class FicheActionRepository
     return success(undefined);
   }
 
-  private toServerError(
-    error: unknown
-  ): Result<never, FicheActionWriteError> {
+  private toServerError(error: unknown): Result<never, FicheActionWriteError> {
     if (isErrorWithCause(error)) {
       this.logger.error(
         `Error cause: ${error.cause.message} (${error.cause.code}, ${error.cause.constraint})`
@@ -773,6 +803,15 @@ export class FicheActionRepository
     }
   }
 
+  /**
+   * Ne supprime/insère que les relations qui changent réellement, pour que
+   * created_at/created_by des relations inchangées ne soient pas réinitialisés
+   * à chaque sauvegarde de la fiche (et pour poser created_by sur les
+   * relations effectivement créées : ces tables n'ont plus de défaut
+   * `auth.uid()`, valeur toujours null sous connexion Drizzle — cf
+   * setRestreintForPlanFiches (upsert-plan.repository.ts) — created_by y est donc obligatoire et
+   * posé applicativement).
+   */
   private async updateRelations(
     ficheActionId: number,
     relations: any[] | null,
@@ -780,9 +819,10 @@ export class FicheActionRepository
     table: PgTable<TableConfig>,
     relationIdKeys: string[],
     ficheIdColumn: ColumnType,
-    relationIdColumns: ColumnType[]
+    relationIdColumns: ColumnType[],
+    userId?: string
   ) {
-    const relationsToUpdate = this.buildRelationsToUpdate(
+    const desiredRelations = this.buildRelationsToUpdate(
       ficheActionId,
       ficheIdColumn,
       relationIdColumns,
@@ -790,13 +830,57 @@ export class FicheActionRepository
       relationIdKeys
     );
 
-    await tx.delete(table).where(eq(ficheIdColumn, ficheActionId));
+    const existingRows: any[] = await tx
+      .select()
+      .from(table)
+      .where(eq(ficheIdColumn, ficheActionId));
 
-    if (relationsToUpdate.length > 0) {
-      return await tx.insert(table).values(relationsToUpdate).returning();
+    const relationKey = (row: any) =>
+      JSON.stringify(
+        relationIdColumns.map((column) => row[toCamel(column.name)])
+      );
+
+    const existingKeys = new Set(existingRows.map(relationKey));
+    const desiredKeys = new Set(desiredRelations.map(relationKey));
+
+    const rowsToDelete = existingRows.filter(
+      (row) => !desiredKeys.has(relationKey(row))
+    );
+    const rowsToInsert = desiredRelations.filter(
+      (relation) => !existingKeys.has(relationKey(relation))
+    );
+
+    if (rowsToDelete.length > 0) {
+      await tx.delete(table).where(
+        and(
+          eq(ficheIdColumn, ficheActionId),
+          or(
+            ...rowsToDelete.map((row) =>
+              and(
+                ...relationIdColumns.map((column) => {
+                  const value = row[toCamel(column.name)];
+                  return value === null ? isNull(column) : eq(column, value);
+                })
+              )
+            )
+          )
+        )
+      );
     }
 
-    return [];
+    if (rowsToInsert.length === 0) {
+      return [];
+    }
+
+    return await tx
+      .insert(table)
+      .values(
+        rowsToInsert.map((relation) => ({
+          ...relation,
+          ...(userId ? { createdBy: userId } : {}),
+        }))
+      )
+      .returning();
   }
 
   private buildRelationsToUpdate(

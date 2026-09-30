@@ -134,7 +134,7 @@ export class PersonneTagService {
         this.logger.log(
           `Remplace le tag ${tag.nom} (${tag.id}) de la collectivité ${tag.collectiviteId} par l'utilisateur ${userId} :`
         );
-        await this.changeTagAndDelete(tx, tag.id, userId);
+        await this.changeTagAndDelete(tx, tag.id, userId, token.id ?? userId);
       }
     };
     // Exécuter les requêtes dans la transaction trx donnée si elle existe
@@ -153,10 +153,17 @@ export class PersonneTagService {
    * @trx
    * @tagId
    * @userId
+   * @authorId auteur des relations recréées qui n'en avaient pas (antérieures
+   * à l'ajout de created_by)
    */
-  async changeTagAndDelete(trx: Transaction, tagId: number, userId: string) {
+  async changeTagAndDelete(
+    trx: Transaction,
+    tagId: number,
+    userId: string,
+    authorId: string
+  ) {
     for (const table of tables) {
-      await this.changeTagToUser(trx, tagId, userId, table);
+      await this.changeTagToUser(trx, tagId, userId, authorId, table);
     }
     // Supprime le tag
     await trx.delete(personneTagTable).where(eq(personneTagTable.id, tagId));
@@ -167,6 +174,7 @@ export class PersonneTagService {
    * @param trx
    * @param tagId
    * @param userId
+   * @param authorId
    * @param table
    * @private
    */
@@ -174,6 +182,7 @@ export class PersonneTagService {
     trx: Transaction,
     tagId: number,
     userId: string,
+    authorId: string,
     table: PgTable & { tagId: AnyColumn }
   ) {
     // Récupère les enregistrements de la table
@@ -191,6 +200,11 @@ export class PersonneTagService {
         );
         return {
           ...tag,
+          // Une relation antérieure à l'ajout de created_by n'a pas d'auteur :
+          // la recréer sans en poser un violerait la contrainte created_by.
+          ...('createdBy' in tag
+            ? { createdBy: tag.createdBy ?? authorId }
+            : {}),
           tagId: null,
           userId: userId,
         };
