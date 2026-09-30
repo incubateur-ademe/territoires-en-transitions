@@ -113,7 +113,7 @@ describe('list-actions', () => {
 
     expect(
       await caller.shared.actionsDeReference.list({
-        titre: searchedTitre,
+        searchedText: searchedTitre,
         leviers: ['covoiturage'],
       })
     ).toEqual([insertedCarpoolingAction]);
@@ -153,8 +153,7 @@ describe('list-actions', () => {
     const caller = router.createCaller({ user: userWithoutRole });
 
     const withBlankSearchedText = await caller.shared.actionsDeReference.list({
-      titre: '   ',
-      description: ' \t ',
+      searchedText: ' \t ',
     });
     const withoutFilter = await caller.shared.actionsDeReference.list({});
 
