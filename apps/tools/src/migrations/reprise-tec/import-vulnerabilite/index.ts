@@ -8,6 +8,8 @@
  *     apps/tools/src/migrations/reprise-tec/import-vulnerabilite/index.ts [--confirm]
  */
 import { getCible } from '../db';
+import { createEcarts, validateBilan } from '../import-fiches/ecarts';
+import { loadEcarts } from './ecarts';
 import { createValeurs } from './ecriture';
 import { mergeLignes } from './fusion';
 import { validateGardes } from './gardes';
@@ -29,6 +31,12 @@ const main = async () => {
     await validateGardes(client, socle);
     const lignes = await loadLignes(client);
     const valeurs = mergeLignes(lignes);
+    const {
+      lues,
+      ecrites: lignesEcrites,
+      ecarts,
+    } = await loadEcarts(client, valeurs);
+    const bilan = validateBilan(lues, lignesEcrites, ecarts);
 
     await client.query('begin');
     try {
@@ -50,9 +58,18 @@ const main = async () => {
         }
         return id;
       });
+      await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
 
-      printRapport({ lignes, valeurs, ecrites, dechets, isConfirmed });
+      printRapport({
+        bilan,
+        ecarts,
+        lignes,
+        valeurs,
+        ecrites,
+        dechets,
+        isConfirmed,
+      });
     } catch (e) {
       await client.query('rollback');
       throw e;
