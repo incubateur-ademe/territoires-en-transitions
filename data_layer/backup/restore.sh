@@ -298,6 +298,24 @@ RESTORE_START=$(date +%s)
 group_index=0
 total_groups=${#GROUP_ORDER[@]}
 
+# NOT VALID checks dropped for the current table ("conname<TAB>definition"
+# lines). Re-added after its restore, or by the EXIT trap if the script stops
+# in between, so the schema is never left without them. The definition keeps
+# "NOT VALID". A failed one doesn't stop the others.
+dropped_checks=""
+readd_checks_exit=0
+readd_dropped_checks() {
+    local conname condef
+    while IFS=$'\t' read -r conname condef; do
+        [ -z "$conname" ] && continue
+        "${PSQL[@]}" -d "$TO_DB_URL" -qc \
+          "ALTER TABLE \"$schema\".\"$table_name\" ADD CONSTRAINT \"$conname\" $condef;" \
+          || { readd_checks_exit=$?; echo "  Could not re-add constraint $conname on $schema.$table_name"; }
+    done <<< "$dropped_checks"
+    dropped_checks=""
+}
+trap readd_dropped_checks EXIT
+
 for group in "${GROUP_ORDER[@]}"; do
     group_index=$((group_index + 1))
 
@@ -356,6 +374,21 @@ for group in "${GROUP_ORDER[@]}"; do
             echo -n " (warning: could not disable triggers — not table owner)"
         fi
 
+        # NOT VALID CHECK constraints skip existing rows but still reject every
+        # new one, COPY included: historical rows (e.g. fiche_action_axe with a
+        # null created_by) would fail. A full pg_restore adds them after the
+        # data; we do the same: drop them here, re-add them after the restore.
+        not_valid_checks=$("${PSQL[@]}" -d "$TO_DB_URL" -AtF $'\t' -c \
+          "SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint
+           WHERE conrelid = '\"$schema\".\"$table_name\"'::regclass
+             AND contype = 'c' AND NOT convalidated;")
+        while IFS=$'\t' read -r conname condef; do
+            [ -z "$conname" ] && continue
+            "${PSQL[@]}" -d "$TO_DB_URL" -qc \
+              "ALTER TABLE \"$schema\".\"$table_name\" DROP CONSTRAINT \"$conname\";"
+            dropped_checks+="$conname"$'\t'"$condef"$'\n'
+        done <<< "$not_valid_checks"
+
         # Don't use --exit-on-error or --single-transaction: pg_restore executes
         # SET statements from the dump preamble (e.g. SET transaction_timeout = 0)
         # which fail on older PostgreSQL versions. With --single-transaction, this
@@ -378,9 +411,23 @@ for group in "${GROUP_ORDER[@]}"; do
         restore_exit=$?
         set -e
 
-        # Re-enable user triggers after restore
+        # Re-enable user triggers after restore. A failure is reported only once
+        # the NOT VALID checks below are back.
+        enable_triggers_exit=0
         if [ "$triggers_disabled" = true ]; then
-            "${PSQL[@]}" -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" ENABLE TRIGGER USER;"
+            "${PSQL[@]}" -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" ENABLE TRIGGER USER;" \
+              || enable_triggers_exit=$?
+        fi
+
+        # Re-add the dropped checks even if the restore failed; the script fails
+        # once all were attempted.
+        readd_dropped_checks
+
+        if [ "$enable_triggers_exit" -ne 0 ]; then
+            exit "$enable_triggers_exit"
+        fi
+        if [ "$readd_checks_exit" -ne 0 ]; then
+            exit "$readd_checks_exit"
         fi
 
         if [ -n "$restore_stderr" ]; then
