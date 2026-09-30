@@ -29,6 +29,7 @@ Public service methods return `Result<Data, E>` instead of throwing (see `apps/b
 - Helpers: `success(data)`, `failure(error, cause?)`, `isSuccess`, `isFailure`, `combineResults` — from `apps/backend/src/utils/result.type.ts`.
 - Routers convert Result → TRPCError with `private readonly getResultDataOrThrowError = createTrpcErrorHandler(<feature>ErrorConfig)` (stored on the class, not invoked inline).
 - REST `@Controller` classes use `createControllerErrorHandler` instead (maps TRPC codes to `HttpException`s) — `apps/backend/src/utils/nest/controller-error-handler.ts`.
+- Optional input: `''`, `[]` and `null` mean absent (no filter, same fingerprint); the `*.input.ts` zod schema normalizes them. Not for a computed result: an empty result is not a missing one.
 
 ## tRPC routers as NestJS providers
 
