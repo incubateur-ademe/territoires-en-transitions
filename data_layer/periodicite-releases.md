@@ -56,3 +56,19 @@ Le contrôle de restauration refuse une sauvegarde de la livraison backend ou
 activée, ainsi qu'une sauvegarde avec colonnes nouvelles vers un schéma historique.
 Pour un retour arrière en production, préparer une restauration cohérente du schéma,
 des données et des applications ; `backup/restore.sh` cible local/staging/preprod.
+
+## Vérification du schéma autonome
+
+Sur une base locale vide et jetable, avec `psql` et `pg_prove` installés :
+
+```sh
+PERIODICITE_SCHEMA_TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/periodicite_schema_test_local \
+  bash data_layer/tests/indicateur/periodicite-schema.spec.sh
+```
+
+Les 18 assertions exécutent les vrais fichiers deploy/verify/revert. Elles couvrent
+les upserts historiques locaux et importés, les valeurs zéro/null, les dates non
+canoniques, les droits inchangés et la conservation des écritures lors du revert.
+Le 30 septembre 2026, un scénario des vrais routeurs de l'ancien backend a aussi
+validé insertion, upsert, édition, lecture et suppression avant et après ce schéma,
+sur deux bases jetables avec fixtures synthétiques.
