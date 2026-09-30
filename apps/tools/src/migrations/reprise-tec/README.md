@@ -519,6 +519,35 @@ près, les utilisateurs T&C réunis sous un même nom, les pilotes rattachés da
 T&C à une autre collectivité, les dossiers repris sans pilote, et les textes
 d'élu référent qui ne sont qu'un nom.
 
+#### Annuler les pilotes
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-pilotes/annuler.ts [--confirm]
+```
+
+Retire les pilotes des démarches et des fiches notées dans `lignes_ecrites`
+dont le `personne_tag` est noté dans `correspondance`, puis les
+`personne_tag` créés par l'import que plus rien n'utilise (aucune clé
+étrangère vers `personne_tag` ni invitation ne les vise), et enfin les traces
+et les écarts de l'étape. À lancer avant d'annuler l'import des fiches ou des
+dossiers, qui refusent sinon.
+
+**Ce qu'elle laisse** : les `personne_tag` qui existaient avant l'import
+(l'import les a réutilisés, il ne les a pas créés) ; ceux qu'il a créés mais
+qu'une fiche, un indicateur, un plan ou une invitation a pris depuis ; les
+pilotes à compte. **Ce qu'elle emporte** : un pilote identique (même démarche
+ou fiche, même `personne_tag`) ajouté à la main après l'import.
+
+#### Ce qui arrête l'import des pilotes
+
+| Garde                                                              | Quoi faire                                                      |
+| ------------------------------------------------------------------ | --------------------------------------------------------------- |
+| aucun dossier repris                                               | lancer d'abord l'import des dossiers (étape 2)                  |
+| aucune fiche reprise alors que des actions reprises ont un contact | lancer d'abord l'import des fiches (étape 5)                    |
+| une démarche ou une fiche qui doit recevoir un pilote a disparu    | décider au cas par cas : elle a été supprimée depuis son import |
+| un utilisateur T&C à nommer sans prénom ni nom                     | décider quoi écrire : le script n'invente pas de nom            |
+| l'import des pilotes a déjà tourné (traces présentes)              | l'annuler d'abord                                               |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
