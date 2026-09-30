@@ -3,11 +3,13 @@ import CrudValeursService, {
   IndicateurValeurDeletionListener,
   IndicateurValeurUpsertedEvent,
 } from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   getReferentielIdFromActionId,
@@ -23,7 +25,10 @@ import { UpdateActionStatutErrorEnum } from '../update-action-statut/update-acti
 import { UpdateActionStatutService } from '../update-action-statut/update-action-statut.service';
 import { calculateAvancementFromScore } from './calculate-avancement-from-score.rules';
 import { SetScoreFromIndicateurError } from './set-score-from-indicateur.errors';
-import { SetScoreFromIndicateurInput } from './set-score-from-indicateur.input';
+import {
+  SetIndicateurSuiviInput,
+  SetScoreFromIndicateurInput,
+} from './set-score-from-indicateur.input';
 
 @Injectable()
 export class SetScoreFromIndicateurService {
@@ -34,7 +39,8 @@ export class SetScoreFromIndicateurService {
     private readonly scoreIndicatifService: ScoreIndicatifService,
     private readonly updateActionStatutService: UpdateActionStatutService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly indicateurValeursService: CrudValeursService
+    private readonly indicateurValeursService: CrudValeursService,
+    private readonly updateDefinitionService: UpdateDefinitionService
   ) {
     // Une valeur d'indicateur retenue pour un score peut être corrigée après
     // coup (sans changer la sélection) : le score et l'avancement qui en
@@ -263,8 +269,69 @@ export class SetScoreFromIndicateurService {
     input: SetScoreFromIndicateurInput,
     { user }: ServiceSecondArg
   ): Promise<Result<ScoreSnapshot, SetScoreFromIndicateurError>> {
-    const { collectiviteId, actionId } = input;
+    return this.writeAndRefreshScore(input, user, (tx) =>
+      this.scoreIndicatifService.setValeursUtilisees(input, { user, tx })
+    );
+  }
 
+  /**
+   * Marque un indicateur associé à une action comme suivi ou non suivi par la
+   * collectivité, puis recalcule le statut d'avancement de l'action et renvoie
+   * le snapshot de score recalculé.
+   *
+   * Marquer l'indicateur "non suivi" désélectionne la valeur retenue pour
+   * l'action (comme une désélection manuelle) afin que le score se recalcule
+   * sans elle. Le redevenir laisse la sélection telle quelle.
+   *
+   * Le flag, la sélection et le statut sont écrits dans une même transaction.
+   */
+  async setIndicateurSuivi(
+    input: SetIndicateurSuiviInput,
+    { user }: ServiceSecondArg
+  ): Promise<Result<ScoreSnapshot, SetScoreFromIndicateurError>> {
+    const { collectiviteId, actionId, indicateurId, isSuivi } = input;
+
+    // vérifié hors transaction : `updateDefinition` lève une exception en cas
+    // de droits insuffisants, que `TransactionManager` ne sait pas convertir
+    // en erreur typée
+    const canUpdate = await this.updateDefinitionService.canUpdateDefinition(
+      user,
+      collectiviteId,
+      indicateurId,
+      true
+    );
+    if (!canUpdate) {
+      return failure(CommonErrorEnum.UNAUTHORIZED);
+    }
+
+    return this.writeAndRefreshScore(input, user, async (tx) => {
+      await this.updateDefinitionService.updateDefinition(
+        { collectiviteId, indicateurId, indicateurFields: { isSuivi } },
+        { user, tx }
+      );
+
+      if (isSuivi) {
+        return success(undefined);
+      }
+      return this.scoreIndicatifService.setValeursUtilisees(
+        { collectiviteId, actionId, indicateurId, valeurs: [] },
+        { user, tx }
+      );
+    });
+  }
+
+  /**
+   * Applique `write` puis recalcule le statut d'avancement de l'action dans
+   * une même transaction, et renvoie le snapshot de score recalculé après le
+   * commit.
+   */
+  private async writeAndRefreshScore(
+    { collectiviteId, actionId }: { collectiviteId: number; actionId: string },
+    user: AuthenticatedUser,
+    write: (
+      tx: Transaction
+    ) => Promise<Result<unknown, SetScoreFromIndicateurError>>
+  ): Promise<Result<ScoreSnapshot, SetScoreFromIndicateurError>> {
     let referentielId: ReferentielId;
     try {
       referentielId = getReferentielIdFromActionId(actionId);
@@ -282,18 +349,13 @@ export class SetScoreFromIndicateurService {
       void,
       SetScoreFromIndicateurError
     >(async (tx) => {
-      const valeursResult =
-        await this.scoreIndicatifService.setValeursUtilisees(input, {
-          user,
-          tx,
-        });
-      if (!valeursResult.success) {
-        return failure(valeursResult.error, valeursResult.cause);
+      const result = await write(tx);
+      if (!result.success) {
+        return failure(result.error, result.cause);
       }
 
       // recalcule le score dans la transaction, donc à partir de la sélection
-      // de l'action entière (tous indicateurs confondus) après la valeur qui
-      // vient d'être écrite
+      // de l'action entière (tous indicateurs confondus) après l'écriture
       return this.refreshAvancementForAction(collectiviteId, actionId, {
         user,
         tx,

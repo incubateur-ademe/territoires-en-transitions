@@ -145,7 +145,6 @@ export class ScoreIndicatifService {
 
     return this.transactionManager.executeSingle(async (transaction) => {
       const validationResult = await this.validateValeursUtiliseesInput(input, {
-        user,
         tx: transaction,
       });
       if (!validationResult.success) {
@@ -169,7 +168,7 @@ export class ScoreIndicatifService {
    */
   private async validateValeursUtiliseesInput(
     input: SetValeursUtiliseesRequest,
-    { user, tx }: { user: ServiceSecondArg['user']; tx: Transaction }
+    { tx }: { tx: Transaction }
   ): Promise<Result<void, ScoreIndicatifError>> {
     const formulesResult = await this.repository.getFormules(
       [input.actionId],
@@ -193,7 +192,7 @@ export class ScoreIndicatifService {
       const indicateursAssociesResult =
         await this.getIndicateursAssociesService.getIndicateursAssocies(
           { collectiviteId: input.collectiviteId, formules: [formule] },
-          { user, tx }
+          { tx }
         );
       if (!indicateursAssociesResult.success) {
         return failure(
@@ -268,10 +267,11 @@ export class ScoreIndicatifService {
     const valeursUtiliseesParActionId = valeursUtiliseesResult.data;
 
     const indicateursAssociesResult =
-      await this.getIndicateursAssociesService.getIndicateursAssocies({
-        collectiviteId: input.collectiviteId,
-        formules,
-      });
+      await this.getIndicateursAssociesService.getIndicateursAssocies(
+        { collectiviteId: input.collectiviteId, formules },
+        // lit dans `tx` le flag `isSuivi` éventuellement modifié par l'appelant
+        { tx }
+      );
     if (!indicateursAssociesResult.success) {
       return failure(indicateursAssociesResult.error);
     }

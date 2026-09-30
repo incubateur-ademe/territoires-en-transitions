@@ -35,7 +35,7 @@ export class GetIndicateursAssociesService {
       collectiviteId: number;
       formules: Formule[];
     },
-    ctx?: ServiceSecondArg
+    ctx?: Pick<ServiceSecondArg, 'tx'>
   ): Promise<
     Result<
       {

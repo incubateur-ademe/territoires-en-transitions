@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -8,6 +9,7 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
@@ -539,12 +541,34 @@ describe('SetScoreFromIndicateurRouter', () => {
     });
   });
 
-  describe('Indicateur marqué non suivi', () => {
-    test('Redevenir suivi sans resélectionner de valeur redonne un statut non renseigné, et non figé au score forcé', async () => {
-      const caller = router.createCaller({ user: editorUser });
+  describe('Indicateur marqué non suivi (setIndicateurSuivi)', () => {
+    const getIsSuivi = () =>
+      databaseService.db
+        .select({ isSuivi: indicateurCollectiviteTable.isSuivi })
+        .from(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.collectiviteId, collectiviteId),
+            eq(indicateurCollectiviteTable.indicateurId, indicateurId)
+          )
+        )
+        .then((rows) => rows[0]?.isSuivi ?? true);
 
-      // les valeurs partagées `valeurIds` ont pu être supprimées par des
-      // tests précédents : on insère une valeur dédiée à ce test
+    afterEach(async () => {
+      await databaseService.db
+        .update(indicateurCollectiviteTable)
+        .set({ isSuivi: true })
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.collectiviteId, collectiviteId),
+            eq(indicateurCollectiviteTable.indicateurId, indicateurId)
+          )
+        );
+    });
+
+    /** insère une valeur dédiée : `valeurIds` a pu être supprimé par des tests précédents */
+    const insertAndSelectValeur = async () => {
+      const caller = router.createCaller({ user: editorUser });
       const valeur = await caller.indicateurs.valeurs.upsert({
         collectiviteId,
         indicateurId,
@@ -563,45 +587,104 @@ describe('SetScoreFromIndicateurRouter', () => {
         avancement: 'detaille',
         avancementDetaille: [0.5, 0, 0.5],
       });
+      return valeur;
+    };
 
-      // marquer l'indicateur non suivi désélectionne automatiquement la
-      // valeur retenue (reproduit l'orchestration du front) : le score est
-      // forcé à 0, une décision explicite de la collectivité
-      await caller.indicateurs.indicateurs.update({
-        collectiviteId,
-        indicateurId,
-        indicateurFields: { isSuivi: false },
-      });
-      await caller.referentiels.actions.setScoreFromIndicateur({
-        collectiviteId,
-        actionId: ACTION_AVEC_FORMULE,
-        indicateurId,
-        valeurs: [],
-      });
+    test('Marquer non suivi désélectionne la valeur et force le score, redevenir suivi redonne un statut non renseigné', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      await insertAndSelectValeur();
+
+      // non suivi : le flag est écrit, la valeur retenue est désélectionnée
+      // et le score est forcé à 0, une décision explicite de la collectivité
+      const snapshotNonSuivi =
+        await caller.referentiels.actions.setIndicateurSuivi({
+          collectiviteId,
+          actionId: ACTION_AVEC_FORMULE,
+          indicateurId,
+          isSuivi: false,
+        });
+      expect(await getIsSuivi()).toBe(false);
+      expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toEqual([]);
       expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
         avancement: 'pas_fait',
         avancementDetaille: null,
       });
+      expect(snapshotNonSuivi.referentielId).toBe(ReferentielIdEnum.TE);
 
-      // redevenir suivi, sans jamais resélectionner de valeur : plus
-      // aucun score forcé, et plus aucune valeur sélectionnée — le statut
-      // doit redevenir non renseigné (pas rester figé à "pas fait")
-      await caller.indicateurs.indicateurs.update({
-        collectiviteId,
-        indicateurId,
-        indicateurFields: { isSuivi: true },
-      });
-      await caller.referentiels.actions.setScoreFromIndicateur({
+      // redevenir suivi, sans jamais resélectionner de valeur : plus aucun
+      // score forcé ni valeur sélectionnée — le statut doit redevenir non
+      // renseigné (pas rester figé à "pas fait")
+      await caller.referentiels.actions.setIndicateurSuivi({
         collectiviteId,
         actionId: ACTION_AVEC_FORMULE,
         indicateurId,
-        valeurs: [],
+        isSuivi: true,
       });
-
+      expect(await getIsSuivi()).toBe(true);
       expect(await getStatut(ACTION_AVEC_FORMULE)).toMatchObject({
         avancement: 'non_renseigne',
         avancementDetaille: null,
       });
+    });
+
+    test("Sans droit de modification de l'indicateur, rien n'est modifié", async () => {
+      const { user, cleanup } = await addTestUser(databaseService, {
+        collectiviteId,
+        role: CollectiviteRole.LECTURE,
+      });
+      onTestFinished(cleanup);
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+
+      await expect(
+        caller.referentiels.actions.setIndicateurSuivi({
+          collectiviteId,
+          actionId: ACTION_AVEC_FORMULE,
+          indicateurId,
+          isSuivi: false,
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+
+      expect(await getIsSuivi()).toBe(true);
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toBeUndefined();
+    });
+
+    test("Sans droit d'écriture sur les statuts, le flag n'est pas modifié non plus", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // un audit en cours réserve l'écriture des statuts aux auditeurs
+      await createAuditWithOnTestFinished({
+        databaseService,
+        collectiviteId,
+        referentielId: ReferentielIdEnum.TE,
+      });
+
+      await expect(
+        caller.referentiels.actions.setIndicateurSuivi({
+          collectiviteId,
+          actionId: ACTION_AVEC_FORMULE,
+          indicateurId,
+          isSuivi: false,
+        })
+      ).rejects.toThrow(/audit est en cours/i);
+
+      expect(await getIsSuivi()).toBe(true);
+    });
+
+    test('Une action hors référentiel TE est refusée', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.referentiels.actions.setIndicateurSuivi({
+          collectiviteId,
+          actionId: 'cae_1.1.1',
+          indicateurId,
+          isSuivi: false,
+        })
+      ).rejects.toThrow();
+
+      expect(await getIsSuivi()).toBe(true);
     });
   });
 });
