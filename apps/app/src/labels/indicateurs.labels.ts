@@ -21,6 +21,7 @@ export const indicateursLabels = {
   indicateurCompleteParCollectivite: 'Indicateur complété par la collectivité',
   indicateurNonSuiviCheckboxLabel:
     'Je valide que ma collectivité ne suit pas cet indicateur',
+  indicateurNonSuiviUpdateError: "L'indicateur n'a pas pu être mis à jour",
 
   /** Actions */
   indicateurCreer: 'Créer un indicateur',

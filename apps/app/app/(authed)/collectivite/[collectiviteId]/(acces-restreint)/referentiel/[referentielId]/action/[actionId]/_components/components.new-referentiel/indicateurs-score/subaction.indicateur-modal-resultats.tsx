@@ -1,6 +1,5 @@
 import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useUser } from '@tet/api';
@@ -14,7 +13,10 @@ import {
 } from './subaction.indicateur-modal-resultats.table';
 import { SubactionIndicateurScore } from './subaction.indicateur-score';
 import { useIsScoreIndicateurEnabled } from './use-is-score-indicateur-enabled';
-import { useSetScoreFromIndicateur } from './use-set-score-from-indicateur';
+import {
+  useSetIndicateurSuivi,
+  useSetScoreFromIndicateur,
+} from './use-set-score-from-indicateur';
 
 type Props = {
   action: ActionListItem;
@@ -56,8 +58,8 @@ const SubactionIndicateurModalResultatsContent = ({
     useSetScoreFromIndicateur();
 
   const { data: definition } = useGetIndicateur(indicateurId, collectiviteId);
-  const { mutate: updateIndicateur, isPending: isUpdatingNonSuivi } =
-    useUpdateIndicateur(indicateurId);
+  const { mutate: setIndicateurSuivi, isPending: isUpdatingNonSuivi } =
+    useSetIndicateurSuivi();
   const nonSuivi = definition ? !definition.isSuivi : false;
   const canEditNonSuivi = definition
     ? canUpdateIndicateurDefinition(
@@ -91,21 +93,15 @@ const SubactionIndicateurModalResultatsContent = ({
     });
   };
 
+  // en cochant la case, le backend désélectionne aussi la valeur retenue et
+  // recalcule le score de l'action
   const handleToggleNonSuivi = () => {
-    const nextNonSuivi = !nonSuivi;
-    // en cochant la case, la valeur sélectionnée (s'il y en a une) est
-    // désélectionnée comme lors d'une désélection manuelle, pour que le
-    // score se recalcule sans elle
-    const nextSelectionneeId = nextNonSuivi ? null : selectionneeId;
-
-    // le score affiché (pointFait/pointPotentiel) vient d'un statut persisté
-    // qui n'est recalculé que par setScoreFromIndicateur qu'il faut donc
-    // appeler après la mise à jour du flag, même sans valeur sélectionnée,
-    // afin que le score se mette à jour (neutralisation ou non de l'indicateur)
-    updateIndicateur(
-      { isSuivi: !nextNonSuivi },
-      { onSuccess: () => handleSelect(nextSelectionneeId) }
-    );
+    setIndicateurSuivi({
+      actionId,
+      collectiviteId,
+      indicateurId,
+      isSuivi: nonSuivi,
+    });
   };
 
   return (

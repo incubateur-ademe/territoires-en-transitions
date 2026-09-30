@@ -102,6 +102,7 @@ const DEFINITIONS_PROVIDERS = [
     ListCollectiviteDefinitionsRepository,
     ListPlatformDefinitionsRepository,
     ListIndicateursService,
+    UpdateDefinitionService,
 
     IndicateurExpressionService,
     CrudValeursService,
