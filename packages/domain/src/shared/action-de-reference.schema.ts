@@ -63,8 +63,7 @@ const toFilterListSchema = <Value extends string>(
   );
 
 export const listActionsDeReferenceInputSchema = z.object({
-  titre: searchedTextSchema,
-  description: searchedTextSchema,
+  searchedText: searchedTextSchema,
   leviers: toFilterListSchema(levierIdEnumValues),
   categories: toFilterListSchema(categorieActionEnumValues),
   sortBy: z._default(z.enum(actionDeReferenceSortFieldEnumValues), 'titre'),

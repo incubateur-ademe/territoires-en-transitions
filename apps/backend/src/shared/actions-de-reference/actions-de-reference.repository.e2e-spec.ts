@@ -169,7 +169,7 @@ describe('ActionsDeReferenceRepository contract', () => {
     it("trouve une action dont le titre contient le texte cherché, n'importe où dans le champ", async () => {
       await expectListed({
         actions: allActions,
-        input: { sortBy: 'titre', titre: 'les comb' },
+        input: { sortBy: 'titre', searchedText: 'les comb' },
         expected: [atticInsulationAction],
       });
     });
@@ -177,82 +177,106 @@ describe('ActionsDeReferenceRepository contract', () => {
     it("trouve une action dont la description contient le texte cherché, n'importe où dans le champ", async () => {
       await expectListed({
         actions: allActions,
-        input: { sortBy: 'titre', description: 'par la toit' },
+        input: { sortBy: 'titre', searchedText: 'par la toit' },
         expected: [atticInsulationAction],
       });
     });
 
-    it('ignore la casse du texte cherché dans le titre et la description', async () => {
+    it("renvoie à la fois l'action dont seul le titre contient le texte cherché et celle dont seule la description le contient", async () => {
       await expectListed({
         actions: allActions,
-        input: {
-          sortBy: 'titre',
-          titre: 'COMBLES',
-          description: 'TOITURE',
-        },
-        expected: [atticInsulationAction],
+        input: { sortBy: 'titre', searchedText: 'chaleur' },
+        expected: [atticInsulationAction, heatNetworkAction],
       });
     });
 
-    it('ignore la casse du champ dans le titre et la description', async () => {
+    it.each([
+      { field: 'le titre', searchedText: 'COMBLES' },
+      { field: 'la description', searchedText: 'TOITURE' },
+    ])(
+      'ignore la casse du texte cherché dans $field',
+      async ({ searchedText }) => {
+        await expectListed({
+          actions: allActions,
+          input: { sortBy: 'titre', searchedText },
+          expected: [atticInsulationAction],
+        });
+      }
+    );
+
+    it.each([
+      { field: 'le titre', searchedText: 'éteindre' },
+      { field: 'la description', searchedText: 'couper les' },
+    ])('ignore la casse du champ dans $field', async ({ searchedText }) => {
       await expectListed({
         actions: allActions,
-        input: {
-          sortBy: 'titre',
-          titre: 'éteindre',
-          description: 'couper les',
-        },
+        input: { sortBy: 'titre', searchedText },
         expected: [streetLightingAction],
       });
     });
 
-    it('ignore les accents du champ dans le titre et la description', async () => {
+    it.each([
+      { field: 'le titre', searchedText: 'electricite' },
+      { field: 'la description', searchedText: 'a garantie' },
+    ])('ignore les accents du champ dans $field', async ({ searchedText }) => {
       await expectListed({
         actions: allActions,
-        input: {
-          sortBy: 'titre',
-          titre: 'electricite',
-          description: 'a garantie',
-        },
+        input: { sortBy: 'titre', searchedText },
         expected: [greenElectricityAction],
       });
     });
 
-    it('ignore les accents du texte cherché dans le titre et la description', async () => {
-      await expectListed({
-        actions: allActions,
-        input: {
-          sortBy: 'titre',
-          titre: 'écoles',
-          description: 'bâtiments',
-        },
-        expected: [heatNetworkAction],
-      });
-    });
+    it.each([
+      { field: 'le titre', searchedText: 'écoles' },
+      { field: 'la description', searchedText: 'bâtiments' },
+    ])(
+      'ignore les accents du texte cherché dans $field',
+      async ({ searchedText }) => {
+        await expectListed({
+          actions: allActions,
+          input: { sortBy: 'titre', searchedText },
+          expected: [heatNetworkAction],
+        });
+      }
+    );
 
-    it('cherche % et _ comme des caractères, pas comme des jokers', async () => {
-      await expectListed({
-        actions: [
-          ...allActions,
+    it.each([
+      {
+        searchedText: '%',
+        expected: [greenElectricityAction, withWildcardCharactersAction],
+      },
+      {
+        searchedText: '_',
+        expected: [
           withWildcardCharactersAction,
           withUnderscoreOnlyInDescriptionAction,
         ],
-        input: { sortBy: 'titre', titre: '%', description: '_' },
-        expected: [withWildcardCharactersAction],
-      });
-    });
-
-    it('cherche ％ et ＿ en pleine chasse comme des caractères, pas comme des jokers', async () => {
-      await expectListed({
-        actions: [
-          ...allActions,
+      },
+      {
+        searchedText: '％',
+        expected: [greenElectricityAction, withWildcardCharactersAction],
+      },
+      {
+        searchedText: '＿',
+        expected: [
           withWildcardCharactersAction,
           withUnderscoreOnlyInDescriptionAction,
         ],
-        input: { sortBy: 'titre', titre: '％', description: '＿' },
-        expected: [withWildcardCharactersAction],
-      });
-    });
+      },
+    ])(
+      'cherche $searchedText comme un caractère, pas comme un joker',
+      async ({ searchedText, expected }) => {
+        await expectListed({
+          actions: [
+            ...allActions,
+            withWildcardCharactersAction,
+            withUnderscoreOnlyInDescriptionAction,
+          ],
+          input: { sortBy: 'titre', searchedText },
+          expected,
+        });
+      }
+    );
 
     it("renvoie une action qui porte l'un des leviers demandés", async () => {
       await expectListed({
@@ -315,22 +339,10 @@ describe('ActionsDeReferenceRepository contract', () => {
         actions: [...allActions, publicBuildingsInsulationAction],
         input: {
           sortBy: 'titre',
-          titre: 'combles',
+          searchedText: 'combles',
           leviers: ['covoiturage', 'electricite_renouvelable'],
         },
         expected: [publicBuildingsInsulationAction],
-      });
-    });
-
-    it('ne renvoie pas une action dont seul le titre contient le texte cherché quand une description est aussi cherchée', async () => {
-      await expectListed({
-        actions: allActions,
-        input: {
-          sortBy: 'titre',
-          titre: 'combles',
-          description: 'lampadaires',
-        },
-        expected: [],
       });
     });
 
@@ -344,7 +356,7 @@ describe('ActionsDeReferenceRepository contract', () => {
         actions: [...allActions, carpoolingDepotInsulationAction],
         input: {
           sortBy: 'titre',
-          titre: 'combles',
+          searchedText: 'combles',
           leviers: ['covoiturage'],
           categories: ['amenagement', 'sensibilisation'],
         },
@@ -352,15 +364,33 @@ describe('ActionsDeReferenceRepository contract', () => {
       });
     });
 
-    it("ne renvoie pas une action qui ne satisfait qu'une partie des filtres", async () => {
+    it("renvoie une action dont la description contient le texte cherché et qui porte l'un des leviers ou l'une des catégories demandés", async () => {
+      const heatedCarpoolingShelterAction: ActionToInsert = {
+        ...carpoolingAction,
+        titre: 'Chauffer les abris de covoiturage',
+        description: 'Récupérer la chaleur fatale des bâtiments voisins',
+      };
+
       await expectListed({
-        actions: [atticInsulationAction, greenElectricityAction],
+        actions: [...allActions, heatedCarpoolingShelterAction],
         input: {
           sortBy: 'titre',
-          titre: 'combles',
-          description: 'toiture',
+          searchedText: 'chaleur',
           leviers: ['covoiturage'],
-          categories: ['sensibilisation'],
+          categories: ['amenagement'],
+        },
+        expected: [heatedCarpoolingShelterAction, atticInsulationAction],
+      });
+    });
+
+    it("ne renvoie pas une action dont le titre ou la description contient le texte cherché mais qui ne porte ni l'un des leviers ni l'une des catégories demandés", async () => {
+      await expectListed({
+        actions: allActions,
+        input: {
+          sortBy: 'titre',
+          searchedText: 'chaleur',
+          leviers: ['covoiturage'],
+          categories: ['gouvernance'],
         },
         expected: [],
       });
@@ -383,7 +413,7 @@ describe('ActionsDeReferenceRepository contract', () => {
     it('ne filtre pas sur le titre ni sur la description quand le texte cherché est absent', async () => {
       await expectListed({
         actions: allActions,
-        input: { sortBy: 'titre', titre: undefined, description: undefined },
+        input: { sortBy: 'titre', searchedText: undefined },
         expected: [
           greenElectricityAction,
           streetLightingAction,
@@ -394,13 +424,12 @@ describe('ActionsDeReferenceRepository contract', () => {
       });
     });
 
-    it('renvoie les seules actions des leviers ou catégories demandés quand le titre et la description cherchés sont absents', async () => {
+    it('renvoie les seules actions des leviers ou catégories demandés quand le texte cherché est absent', async () => {
       await expectListed({
         actions: allActions,
         input: {
           sortBy: 'titre',
-          titre: undefined,
-          description: undefined,
+          searchedText: undefined,
           leviers: ['covoiturage'],
           categories: ['amenagement'],
         },
@@ -411,7 +440,7 @@ describe('ActionsDeReferenceRepository contract', () => {
     it('renvoie une liste vide quand aucune action ne correspond', async () => {
       await expectListed({
         actions: allActions,
-        input: { sortBy: 'titre', titre: 'méthanisation' },
+        input: { sortBy: 'titre', searchedText: 'méthanisation' },
         expected: [],
       });
     });

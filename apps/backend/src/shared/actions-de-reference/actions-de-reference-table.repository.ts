@@ -30,16 +30,18 @@ const ascendingByIdentifier = (column: PgColumn): SQL =>
 const toMatchingCondition = (
   input: ListActionsDeReferenceInput
 ): SQL | undefined => {
-  const titreCondition =
-    input.titre === undefined
+  const searchedTextCondition =
+    input.searchedText === undefined
       ? undefined
-      : containsSearchedText(actionDeReferenceTable.titre, input.titre);
-  const descriptionCondition =
-    input.description === undefined
-      ? undefined
-      : containsSearchedText(
-          actionDeReferenceTable.description,
-          input.description
+      : or(
+          containsSearchedText(
+            actionDeReferenceTable.titre,
+            input.searchedText
+          ),
+          containsSearchedText(
+            actionDeReferenceTable.description,
+            input.searchedText
+          )
         );
   const leviersCondition =
     input.leviers === undefined
@@ -50,11 +52,7 @@ const toMatchingCondition = (
       ? undefined
       : inArray(actionDeReferenceTable.categorie, input.categories);
 
-  return and(
-    titreCondition,
-    descriptionCondition,
-    or(leviersCondition, categoriesCondition)
-  );
+  return and(searchedTextCondition, or(leviersCondition, categoriesCondition));
 };
 
 const toOrderBy = (sortBy: ListActionsDeReferenceInput['sortBy']): SQL[] =>

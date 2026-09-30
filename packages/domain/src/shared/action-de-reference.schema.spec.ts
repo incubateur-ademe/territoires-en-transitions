@@ -48,8 +48,7 @@ describe('list-actions', () => {
 
   it('accepte tous les filtres à la fois', () => {
     const result = listActionsDeReferenceInputSchema.safeParse({
-      titre: 'vélo',
-      description: 'piste',
+      searchedText: 'vélo',
       leviers: ['velo_transport_commun'],
       categories: ['amenagement', 'financement'],
       sortBy: 'levier',
@@ -58,8 +57,7 @@ describe('list-actions', () => {
     expect(result).toEqual({
       success: true,
       data: {
-        titre: 'vélo',
-        description: 'piste',
+        searchedText: 'vélo',
         leviers: ['velo_transport_commun'],
         categories: ['amenagement', 'financement'],
         sortBy: 'levier',
@@ -335,21 +333,27 @@ describe('invariants', () => {
   });
 
   it("retire les espaces autour du texte cherché, un texte vide ou fait d'espaces devient absent", () => {
-    const blankTitre = listActionsDeReferenceInputSchema.safeParse({
-      titre: '   ',
-      description: ' piste ',
+    const paddedSearchedText = listActionsDeReferenceInputSchema.safeParse({
+      searchedText: ' piste ',
     });
-    const emptyTitre = listActionsDeReferenceInputSchema.safeParse({
-      titre: '',
+    const blankSearchedText = listActionsDeReferenceInputSchema.safeParse({
+      searchedText: ' \t ',
+    });
+    const emptySearchedText = listActionsDeReferenceInputSchema.safeParse({
+      searchedText: '',
     });
 
-    expect(blankTitre).toStrictEqual({
+    expect(paddedSearchedText).toStrictEqual({
       success: true,
-      data: { titre: undefined, description: 'piste', sortBy: 'titre' },
+      data: { searchedText: 'piste', sortBy: 'titre' },
     });
-    expect(emptyTitre).toStrictEqual({
+    expect(blankSearchedText).toStrictEqual({
       success: true,
-      data: { titre: undefined, sortBy: 'titre' },
+      data: { searchedText: undefined, sortBy: 'titre' },
+    });
+    expect(emptySearchedText).toStrictEqual({
+      success: true,
+      data: { searchedText: undefined, sortBy: 'titre' },
     });
   });
 
