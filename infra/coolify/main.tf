@@ -76,10 +76,15 @@ resource "coolify_private_key" "server" {
 # nonprod et preview : Coolify les joint sur leur IP privée, seule l'ACL du VPC
 # laisse passer le control plane. prod : VPC séparé, Coolify la joint sur son
 # IP publique, ouverte à la seule IP du control plane.
+#
+# Rejoué à chaque changement de nom, d'adresse ou de clé : le script retrouve
+# le serveur par le marqueur [tet-server:<tier>] de sa description et le met à
+# jour, sans jamais en créer un second.
 resource "terraform_data" "server" {
   for_each = var.app_servers
 
   triggers_replace = [
+    each.key,
     each.value.name,
     each.value.ssh_host,
     coolify_private_key.server[each.key].uuid,
@@ -90,12 +95,52 @@ resource "terraform_data" "server" {
     environment = {
       COOLIFY_ENDPOINT   = var.coolify_endpoint
       PRIVATE_KEY_UUID   = coolify_private_key.server[each.key].uuid
+      SERVER_ID          = each.key
       SERVER_NAME        = each.value.name
       SERVER_IP          = each.value.ssh_host
       SERVER_USER        = "root"
       SERVER_PORT        = "22"
       SERVER_DESCRIPTION = "Tier ${each.key}. Géré par Terraform (infra/${each.key})."
       # COOLIFY_TOKEN est hérité de l'environnement (coolify-env.sh).
+    }
+  }
+}
+
+# Présence du serveur dans Coolify, liée au tier seul.
+#
+# Séparée de terraform_data.server : celui-ci est remplacé à chaque rotation de
+# clé ou changement d'adresse, et un provisioner de destruction y retirerait le
+# serveur de Coolify à chaque fois. Ici, seul le retrait du tier de app_servers
+# détruit la ressource, et donc retire le serveur de Coolify.
+#
+# Coolify refuse de retirer un serveur qui héberge encore des ressources :
+# l'apply échoue alors, volontairement. Rien n'est forcé.
+#
+# depends_on sur terraform_data.server, qui dépend de la clé : à la
+# destruction, le serveur est retiré avant que Terraform ne supprime sa clé,
+# que Coolify refuserait de supprimer tant qu'elle est utilisée.
+resource "terraform_data" "server_registration" {
+  for_each = var.app_servers
+
+  triggers_replace = [each.key]
+
+  # Un provisioner de destruction ne peut lire que self : tout ce dont le
+  # script a besoin est figé ici. COOLIFY_TOKEN vient de l'environnement.
+  input = {
+    coolify_endpoint = var.coolify_endpoint
+    server_id        = each.key
+    server_name      = each.value.name
+  }
+
+  depends_on = [terraform_data.server]
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/../scripts/coolify-delete-server.sh"
+    environment = {
+      COOLIFY_ENDPOINT = self.input.coolify_endpoint
+      SERVER_ID        = self.input.server_id
+      SERVER_NAME      = self.input.server_name
     }
   }
 }
