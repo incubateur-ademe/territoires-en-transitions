@@ -10,6 +10,7 @@
 import { getCible } from '../db';
 import { createValeurs } from './ecriture';
 import { mergeLignes } from './fusion';
+import { validateGardes } from './gardes';
 import { loadLignes } from './lignes';
 import { printRapport } from './rapport';
 import {
@@ -24,9 +25,10 @@ const main = async () => {
   const client = await pool.connect();
 
   try {
+    const socle = await loadThematiquesDuSocle(client);
+    await validateGardes(client, socle);
     const lignes = await loadLignes(client);
     const valeurs = mergeLignes(lignes);
-    const socle = await loadThematiquesDuSocle(client);
 
     await client.query('begin');
     try {

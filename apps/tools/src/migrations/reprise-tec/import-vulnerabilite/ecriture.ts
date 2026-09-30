@@ -36,3 +36,22 @@ export const createValeurs = async (
   );
   return rows[0];
 };
+
+/** Garde, appelée par `gardes.ts` : l'import est déjà passé, reconnu à ses traces. */
+export const listCasBloquantsEcriture = async (client: PoolClient) => {
+  const { rows } = await client.query<{ table: string; nombre: number }>(
+    `select table_cible as "table", count(*)::int as nombre
+       from reprise_tec.lignes_ecrites
+      where table_cible in ('demarche_pcaet_vulnerabilite_thematique',
+                            'demarche_pcaet_vulnerabilite_valeur')
+      group by table_cible
+      order by 1`
+  );
+  return rows.length === 0
+    ? []
+    : [
+        `  import de la vulnérabilité déjà passé (${rows
+          .map((r) => `${r.nombre} lignes_ecrites ${r.table}`)
+          .join(', ')}) : l'annuler d'abord`,
+      ];
+};
