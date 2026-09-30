@@ -83,3 +83,25 @@ export const createPilotesFiches = async (
   );
   return rows[0];
 };
+
+/** Garde, appelée par `gardes.ts` : l'import est déjà passé, reconnu à ses traces. */
+export const listCasBloquantsEcriture = async (client: PoolClient) => {
+  const { rows } = await client.query<{ table: string; nombre: number }>(
+    `select 'correspondance personne_tag' as "table", count(*)::int as nombre
+       from reprise_tec.correspondance where table_cible = 'personne_tag'
+     union all
+     select 'lignes_ecrites ' || table_cible, count(*)::int
+       from reprise_tec.lignes_ecrites
+      where table_cible in ('personne_tag', 'demarche_pilote', 'fiche_action_pilote')
+      group by table_cible
+      order by 1`
+  );
+  const traces = rows.filter((r) => r.nombre > 0);
+  return traces.length === 0
+    ? []
+    : [
+        `  import des pilotes déjà passé (${traces
+          .map((r) => `${r.nombre} ${r.table}`)
+          .join(', ')}) : l'annuler d'abord`,
+      ];
+};

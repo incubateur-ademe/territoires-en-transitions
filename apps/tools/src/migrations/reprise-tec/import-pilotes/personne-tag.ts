@@ -79,3 +79,20 @@ export const createPersonneTags = async (
 
 const toCle = ({ collectiviteId, nom }: PersonneTag) =>
   `${collectiviteId}|${nom}`;
+
+/** Garde, appelée par `gardes.ts` : un utilisateur T&C à nommer sans prénom ni nom ; le script n'invente pas de nom. */
+export const listCasBloquantsNoms = (
+  utilisateurs: readonly (PersonneTag & {
+    utilisateurId: number;
+    collectivite: string;
+  })[]
+) => [
+  ...new Map(
+    utilisateurs
+      .filter((u) => u.nom === '')
+      .map((u) => [
+        u.utilisateurId,
+        `  utilisateur T&C ${u.utilisateurId} sans prénom ni nom, pilote dans ${u.collectivite} : son personne_tag serait vide`,
+      ])
+  ).values(),
+];

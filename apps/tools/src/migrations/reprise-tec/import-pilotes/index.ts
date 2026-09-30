@@ -8,6 +8,7 @@
  */
 import { getCible } from '../db';
 import { createPilotesDossiers, createPilotesFiches } from './ecriture';
+import { validateGardes } from './gardes';
 import { createPersonneTags } from './personne-tag';
 import { loadPilotes } from './pilotes';
 import { printRapport } from './rapport';
@@ -19,6 +20,7 @@ const main = async () => {
 
   try {
     const pilotes = await loadPilotes(client);
+    await validateGardes(client, pilotes);
 
     await client.query('begin');
     try {

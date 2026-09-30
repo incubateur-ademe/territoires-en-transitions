@@ -6,6 +6,19 @@ import { buildNom, type PersonneTag } from './personne-tag';
 // Chef de projet, participant ou coporteur, élu référent : les rôles T&C qui deviennent pilotes.
 const ROLES_PILOTES = [1, 2, 3];
 
+// Les lignes T&C d'un dossier repris : la sienne et celle de son doublon « définitif », toutes deux vers la démarche reprise.
+const LIGNES_DES_DOSSIERS = `
+  with lignes as (
+    select c.tec_id as dossier, c.tec_id as ligne, c.tet_id as demarche_id
+      from reprise_tec.correspondance c
+     where c.table_cible = 'demarche'
+    union all
+    select c.tec_id, d.pcaet_definitif, c.tet_id
+      from reprise_tec.correspondance c
+      join reprise_tec.staging_demarche d on d.id = c.tec_id
+     where c.table_cible = 'demarche' and d.pcaet_definitif is not null
+  )`;
+
 type Pilote = PersonneTag & {
   utilisateurId: number;
   collectivite: string;
@@ -39,16 +52,7 @@ export const loadPilotes = async (client: PoolClient) => {
   const { rows: dossiers } = await client.query<
     Ligne & Omit<PiloteDossier, keyof Pilote>
   >(
-    `with lignes as (
-       select c.tec_id as dossier, c.tec_id as ligne, c.tet_id as demarche_id
-         from reprise_tec.correspondance c
-        where c.table_cible = 'demarche'
-       union all
-       select c.tec_id, d.pcaet_definitif, c.tet_id
-         from reprise_tec.correspondance c
-         join reprise_tec.staging_demarche d on d.id = c.tec_id
-        where c.table_cible = 'demarche' and d.pcaet_definitif is not null
-     )
+    `${LIGNES_DES_DOSSIERS}
      select l.dossier::int as "dossierTecId", l.ligne::int as "ligneTecId",
             l.demarche_id::int as "demarcheId", du.utilisateur_id::int as "utilisateurId",
             du.role_demarche_action_id::int as role, dm.collectivite_id as "collectiviteId",
@@ -89,3 +93,50 @@ const toPilote = <T extends Ligne>({ prenom, nomDeFamille, ...ligne }: T) => ({
   ...ligne,
   nom: buildNom(prenom, nomDeFamille),
 });
+
+/** Garde, appelée par `gardes.ts` : aucun dossier ou aucune fiche repris, ou une démarche ou une fiche qui doit recevoir un pilote a disparu. */
+export const listCasBloquantsPilotes = async (client: PoolClient) => {
+  const { rows } = await client.query<{
+    cas: 'aucun_dossier' | 'aucune_fiche' | 'demarche' | 'fiche';
+    tecId: number | null;
+    tetId: number | null;
+  }>(
+    `${LIGNES_DES_DOSSIERS}
+     select 'aucun_dossier' as cas, null::int as "tecId", null::int as "tetId"
+      where not exists (select from reprise_tec.correspondance
+                         where table_cible = 'demarche')
+     union all
+     select 'aucune_fiche', null, null
+      where not exists (select from reprise_tec.correspondance
+                         where table_cible = 'fiche_action')
+        and exists (select from reprise_tec.staging_action_contact ac
+                      join reprise_tec.staging_action a on a.id = ac.action_id
+                      join lignes l on l.ligne = a.demarche_id and l.ligne = l.dossier)
+     union all
+     select distinct 'demarche', l.dossier::int, l.demarche_id::int
+       from lignes l
+       join reprise_tec.staging_demarche_utilisateur du on du.demarche_id = l.ligne
+      where du.role_demarche_action_id = any($1)
+        and not exists (select from public.demarche d where d.id = l.demarche_id)
+     union all
+     select distinct 'fiche', c.tec_id::int, c.tet_id::int
+       from reprise_tec.correspondance c
+       join reprise_tec.staging_action_contact ac on ac.action_id = c.tec_id
+      where c.table_cible = 'fiche_action'
+        and not exists (select from public.fiche_action f where f.id = c.tet_id)
+      order by 1, 2`,
+    [ROLES_PILOTES]
+  );
+  return rows.map(({ cas, tecId, tetId }) => {
+    switch (cas) {
+      case 'aucun_dossier':
+        return "  aucun dossier repris : l'import des dossiers (import-demarches) n'a pas tourné";
+      case 'aucune_fiche':
+        return "  aucune fiche reprise alors que des actions reprises ont un contact : l'import des fiches (import-fiches) n'a pas tourné";
+      case 'demarche':
+        return `  démarche ${tetId} introuvable : dossier T&C ${tecId}, ses pilotes n'ont plus de place`;
+      case 'fiche':
+        return `  fiche ${tetId} introuvable : action T&C ${tecId}, son pilote n'a plus de place`;
+    }
+  });
+};
