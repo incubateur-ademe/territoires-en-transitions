@@ -11,6 +11,7 @@ describe('collectivites.site', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
+  let collectiviteId: number;
 
   const siren = `9${Math.random().toString().substring(2, 10)}`;
   const nom = `Sitevitrine${siren}`;
@@ -24,6 +25,7 @@ describe('collectivites.site', () => {
       databaseService,
       { nom, siren, isCOT: true }
     );
+    collectiviteId = collectivite.id;
     await databaseService.db.insert(labellisationTable).values({
       collectiviteId: collectivite.id,
       referentiel: 'cae',
@@ -95,6 +97,45 @@ describe('collectivites.site', () => {
       indicateursGazEffetSerre: null,
       indicateurArtificialisation: null,
     });
+  });
+
+  test('la publication GES ne mélange pas les observations annuelles et mensuelles', async () => {
+    const metadonnees = await databaseService.db.execute<{ id: number }>(sql`
+      insert into indicateur_source_metadonnee (source_id, date_version)
+      values ('citepa', '2026-01-01') returning id
+    `);
+    const metadonneeId = metadonnees.rows[0].id;
+    try {
+      await databaseService.db.execute(sql`
+        insert into indicateur_valeur
+          (collectivite_id, indicateur_id, metadonnee_id, periodicite, date_valeur, resultat)
+        select ${collectiviteId}, definition.id, ${metadonneeId},
+               valeur.periodicite, valeur.date_valeur, valeur.resultat
+        from indicateur_definition definition
+        cross join (values
+          ('annuelle', date '2025-01-01', 100),
+          ('mensuelle', date '2025-02-01', 999)
+        ) valeur(periodicite, date_valeur, resultat)
+        where definition.identifiant_referentiel = 'cae_1.a'
+      `);
+      const collectivite = await anonymousCaller().getCollectivite({
+        codeSirenInsee: siren,
+      });
+      expect(collectivite?.indicateursGazEffetSerre).toEqual([
+        expect.objectContaining({
+          dateValeur: '2025-01-01',
+          resultat: 100,
+          identifiant: 'cae_1.a',
+        }),
+      ]);
+    } finally {
+      await databaseService.db.execute(
+        sql`delete from indicateur_valeur where metadonnee_id = ${metadonneeId}`
+      );
+      await databaseService.db.execute(
+        sql`delete from indicateur_source_metadonnee where id = ${metadonneeId}`
+      );
+    }
   });
 
   test('renvoie null pour un code inconnu', async () => {

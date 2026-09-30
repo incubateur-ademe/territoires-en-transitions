@@ -161,13 +161,8 @@ SELECT is(
 );
 
 SELECT ok(
-    position(
-        'iri.periodicite'
-        IN pg_get_functiondef(
-            'public.indicateurs_gaz_effet_serre(site_labellisation)'::regprocedure
-        )
-    ) > 0,
-    'La projection publique des GES transporte explicitement la périodicité'
+    to_regprocedure('public.indicateurs_gaz_effet_serre(site_labellisation)') IS NULL,
+    'La migration ne recrée pas le RPC GES retiré au profit du backend'
 );
 
 SELECT throws_ok(

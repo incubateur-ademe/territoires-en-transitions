@@ -3,6 +3,7 @@ import {
   IndicateurPeriodiciteEnum,
 } from '@tet/domain/indicateurs';
 import { success } from '../../utils/result.type';
+import { upsertIndicateursValeursRequestSchema } from './upsert-indicateurs-valeurs.request';
 import { WriteIndicateurValeursService } from './write-indicateur-valeurs.service';
 
 describe('WriteIndicateurValeursService', () => {
