@@ -5,11 +5,60 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   PgDataException,
   PgIntegrityConstraintViolation,
+  PgSyntaxErrorOrAccessRuleViolation,
 } from '@tet/backend/utils/postgresql-error-codes.enum';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { actionDeReferenceSchema } from '@tet/domain/shared';
 import { sql, SQL } from 'drizzle-orm';
 import { TransactionRollbackError } from 'drizzle-orm/errors';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { omitBy } from 'es-toolkit';
+import { execFile } from 'node:child_process';
+import path from 'node:path';
+import { promisify } from 'node:util';
+import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
+import * as z from 'zod/mini';
 import { actionDeReferenceTable } from './models/action-de-reference.table';
+
+const loadedActionsSchema = z.array(
+  z.omit(actionDeReferenceSchema, { id: true })
+);
+
+type LoadedAction = z.output<typeof loadedActionsSchema>[number];
+
+type ScratchActionTable = {
+  table: SQL;
+  runLoadFile: () => Promise<void>;
+};
+
+const execFileAsync = promisify(execFile);
+
+const LOAD_FILE_PATH = path.resolve(
+  __dirname,
+  '../../../../../data_layer/seed/content/31-actions-de-reference.sql'
+);
+
+const PSQL_SCRIPT_ERROR_EXIT_CODE = 3;
+
+const PSQL_TIMEOUT_IN_MS = 5_000;
+
+const toPsqlConnectionEnv = (databaseUrl: string): Record<string, string> => {
+  const url = new URL(databaseUrl);
+  const connectionEnv = {
+    PGHOST: url.hostname,
+    PGPORT: url.port,
+    PGUSER: decodeURIComponent(url.username),
+    PGPASSWORD: decodeURIComponent(url.password),
+    PGDATABASE: decodeURIComponent(url.pathname.slice(1)),
+  };
+  const sslMode = url.searchParams.get('sslmode');
+  if (sslMode === null) {
+    return connectionEnv;
+  }
+  return { ...connectionEnv, PGSSLMODE: sslMode };
+};
+
+const isLibpqVariable = (_value: unknown, name: PropertyKey): boolean =>
+  String(name).startsWith('PG');
 
 const TEST_TITRE_PREFIX = 'load-actions-de-reference-e2e';
 
@@ -19,10 +68,12 @@ const toTestTitre = (suffix: string): string =>
 describe('load-data', () => {
   let app: INestApplication;
   let db: DatabaseService;
+  let databaseUrl: string;
 
   beforeAll(async () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
+    databaseUrl = app.get(ConfigurationService).get('SUPABASE_DATABASE_URL');
 
     return async (): Promise<void> => {
       await app.close();
@@ -65,9 +116,78 @@ describe('load-data', () => {
     categorie: sql`'amenagement'`,
   };
 
-  it.todo(
-    'le seed local et CI remplit la table avec chaque ligne du fichier de chargement'
-  );
+  const runLoadFileWithPsql = async (searchedSchema: string): Promise<void> => {
+    await execFileAsync(
+      'psql',
+      [
+        '--no-psqlrc',
+        '--quiet',
+        '--set',
+        'VERBOSITY=verbose',
+        '--file',
+        LOAD_FILE_PATH,
+      ],
+      {
+        env: {
+          ...omitBy(process.env, isLibpqVariable),
+          ...toPsqlConnectionEnv(databaseUrl),
+          PGOPTIONS: `-c search_path=${searchedSchema}`,
+        },
+        timeout: PSQL_TIMEOUT_IN_MS,
+        killSignal: 'SIGKILL',
+      }
+    );
+  };
+
+  const createScratchSchema = async (): Promise<string> => {
+    const scratchSchema = `load_actions_de_reference_${
+      process.pid
+    }_${Date.now()}`;
+    await db.db.execute(sql`create schema ${sql.identifier(scratchSchema)}`);
+    onTestFinished(async () => {
+      await db.db.execute(
+        sql`drop schema ${sql.identifier(scratchSchema)} cascade`
+      );
+    });
+    return scratchSchema;
+  };
+
+  const createScratchActionTable = async (): Promise<ScratchActionTable> => {
+    const scratchSchema = await createScratchSchema();
+    const table = sql`${sql.identifier(scratchSchema)}.action_de_reference`;
+    await db.db.execute(
+      sql`create table ${table} (like ${actionDeReferenceTable} including all)`
+    );
+    return {
+      table,
+      runLoadFile: () => runLoadFileWithPsql(scratchSchema),
+    };
+  };
+
+  const listActionsOf = async (table: SQL): Promise<LoadedAction[]> => {
+    const { rows } = await db.db.execute(
+      sql`select titre, description, levier, categorie from ${table}`
+    );
+    return loadedActionsSchema.parse(rows);
+  };
+
+  it('le seed local et CI remplit la table avec chaque ligne du fichier de chargement', async () => {
+    const { table, runLoadFile } = await createScratchActionTable();
+
+    await runLoadFile();
+    const loadedActions = await listActionsOf(table);
+    const seededActions = await db.db
+      .select({
+        titre: actionDeReferenceTable.titre,
+        description: actionDeReferenceTable.description,
+        levier: actionDeReferenceTable.levier,
+        categorie: actionDeReferenceTable.categorie,
+      })
+      .from(actionDeReferenceTable);
+
+    expect(loadedActions).not.toHaveLength(0);
+    expect(seededActions).toEqual(expect.arrayContaining(loadedActions));
+  });
 
   it('la table refuse une seconde action avec le même levier, la même catégorie et le même titre', async () => {
     const action = {
@@ -205,7 +325,34 @@ describe('load-data', () => {
     });
   });
 
-  it.todo(
-    "rejouer le fichier de chargement sur une table qui contient déjà une de ses lignes échoue et n'ajoute aucune ligne"
-  );
+  it("rejouer le fichier de chargement sur une table qui contient déjà une de ses lignes échoue et n'ajoute aucune ligne", async () => {
+    const { table, runLoadFile } = await createScratchActionTable();
+
+    await runLoadFile();
+    await db.db.execute(
+      sql`delete from ${table} where id <> (select max(id) from ${table})`
+    );
+    const [lastLoadedAction] = await listActionsOf(table);
+
+    await expect(runLoadFile()).rejects.toMatchObject({
+      code: PSQL_SCRIPT_ERROR_EXIT_CODE,
+      stderr: expect.stringContaining(
+        PgIntegrityConstraintViolation.UniqueViolation
+      ),
+    });
+    expect(await listActionsOf(table)).toEqual([lastLoadedAction]);
+  });
+
+  it("le chargement du test échoue sur la table absente du schéma jetable au lieu d'écrire dans la table publique", async () => {
+    const scratchSchemaWithoutTable = await createScratchSchema();
+
+    await expect(
+      runLoadFileWithPsql(scratchSchemaWithoutTable)
+    ).rejects.toMatchObject({
+      code: PSQL_SCRIPT_ERROR_EXIT_CODE,
+      stderr: expect.stringContaining(
+        PgSyntaxErrorOrAccessRuleViolation.UndefinedTable
+      ),
+    });
+  });
 });
