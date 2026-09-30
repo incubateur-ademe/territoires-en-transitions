@@ -256,6 +256,8 @@ if ! pg_restore --list "$DUMP_FILE" > /dev/null; then
     exit 1
 fi
 
+TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE"
+
 echo "Restoring to $(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|') from $DUMP_FILE"
 if [ -z "${CI:-}" ]; then
     echo "Waiting for 10 seconds before starting the restore, please double check urls"
