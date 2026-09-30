@@ -85,7 +85,7 @@ _ghcr_user="${_ghcr_raw%%|*}"
 _ghcr_token="${_ghcr_raw#*|}"
 if [ -z "${_ghcr_user}" ] || [ -z "${_ghcr_token}" ] || [ "${_ghcr_user}" = "${_ghcr_raw}" ]; then
   echo "✗ Secret GHCR mal formé. Attendu : <github-username>|<pat>" >&2
-  echo "  scw secret version create secret-name=${GHCR_PULL_SECRET_NAME} secret-path=/ data='user|token'" >&2
+  echo "  scw secret version create \"\$(scw secret secret list name=${GHCR_PULL_SECRET_NAME} -o json | jq -r '.[0].id')\" data='user|token'" >&2
   exit 1
 fi
 

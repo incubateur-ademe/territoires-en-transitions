@@ -30,8 +30,8 @@ if [ -z "${COOLIFY_TOKEN:-}" ]; then
   echo "coolify-env.sh : COOLIFY_TOKEN introuvable." >&2
   echo "  1. Créer un token dans Coolify (Security > API Tokens, scope root)." >&2
   echo "  2. Le stocker dans Secret Manager :" >&2
-  echo "       scw secret create name=$_secret_name" >&2
-  echo "       scw secret version create secret-name=$_secret_name secret-path=/ data='<id>|<token>'" >&2
+  echo "       _id=\"\$(scw secret secret create name=$_secret_name -o json | jq -r .id)\"" >&2
+  echo "       scw secret version create \"\$_id\" data='<id>|<token>'" >&2
   echo "  ou l'exporter manuellement : export COOLIFY_TOKEN='<id>|<token>'" >&2
   return 1 2>/dev/null || exit 1
 fi
