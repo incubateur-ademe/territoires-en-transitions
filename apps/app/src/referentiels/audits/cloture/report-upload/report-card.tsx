@@ -107,7 +107,7 @@ export const PersistedReportCard = ({
   const isMissing = report.type === 'fichierManquant';
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
-      <div className="flex items-start gap-1">
+      <div className="flex items-center gap-1">
         <ReportTitle
           report={report}
           isRemoving={isRemoving}
