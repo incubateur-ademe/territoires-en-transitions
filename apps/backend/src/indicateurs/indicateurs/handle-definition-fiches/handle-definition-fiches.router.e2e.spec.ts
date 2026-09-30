@@ -118,6 +118,16 @@ describe('IndicateurDefinitionFichesRouter', () => {
       [ficheId1, ficheId2].sort()
     );
 
+    const initialLinks = await db.db
+      .select()
+      .from(ficheActionIndicateurTable)
+      .where(eq(ficheActionIndicateurTable.indicateurId, indicateurId));
+    expect(initialLinks.map((link) => link.createdBy)).toEqual([
+      testUser.id,
+      testUser.id,
+    ]);
+    expect(initialLinks.every((link) => link.createdAt !== null)).toBe(true);
+
     await caller.indicateurs.indicateurs.update({
       indicateurId,
       collectiviteId: collectivite.id,
@@ -133,6 +143,13 @@ describe('IndicateurDefinitionFichesRouter', () => {
 
     expect(fiches.count).toEqual(1);
     expect(fiches.data[0].id).toEqual(ficheId2);
+    const retainedLinks = await db.db
+      .select()
+      .from(ficheActionIndicateurTable)
+      .where(eq(ficheActionIndicateurTable.indicateurId, indicateurId));
+    expect(retainedLinks).toEqual(
+      initialLinks.filter((link) => link.ficheId === ficheId2)
+    );
   });
 
   async function createSharedFiche() {

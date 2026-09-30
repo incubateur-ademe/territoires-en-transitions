@@ -607,7 +607,14 @@ describe('UpdateIndicateurDefinitionRouter', () => {
             .select()
             .from(ficheActionIndicateurTable)
             .where(eq(ficheActionIndicateurTable.indicateurId, h.definition.id))
-        ).toEqual([{ indicateurId: h.definition.id, ficheId }]);
+        ).toEqual([
+          {
+            indicateurId: h.definition.id,
+            ficheId,
+            createdBy: authenticatedUser.id,
+            createdAt: expect.any(String),
+          },
+        ]);
         expect(
           await databaseService.db
             .select()

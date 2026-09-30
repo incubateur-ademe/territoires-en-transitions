@@ -58,7 +58,7 @@ describe('HandleDefinitionFichesService', () => {
     );
     expect(permissions.canWriteFiche).toHaveBeenCalledWith(3, user, tx);
     expect(repository.upsertIndicateurFiches).toHaveBeenCalledWith(
-      { ...input, ficheIdsToUnlink: [] },
+      { ...input, ficheIdsToUnlink: [], createdBy: user.id },
       tx
     );
   });
@@ -92,7 +92,7 @@ describe('HandleDefinitionFichesService', () => {
       [4, user, tx],
     ]);
     expect(repository.upsertIndicateurFiches).toHaveBeenCalledWith(
-      { ...input, ficheIds: [5], ficheIdsToUnlink: [4] },
+      { ...input, ficheIds: [5], ficheIdsToUnlink: [4], createdBy: user.id },
       tx
     );
   });
