@@ -1,10 +1,15 @@
 import { CellContext } from '@tanstack/react-table';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
+import { ReferentielTableFeatures } from './utils';
 import { categorieToLabel } from '../utils';
 
 type Props = {
-  info: CellContext<ActionListItem, ActionListItem['categorie']>;
+  info: CellContext<
+    ReferentielTableFeatures,
+    ActionListItem,
+    ActionListItem['categorie']
+  >;
 };
 
 export const ReferentielTableCategorieCell = ({ info }: Props) => {

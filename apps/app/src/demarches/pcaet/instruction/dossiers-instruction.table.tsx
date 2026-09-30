@@ -6,9 +6,10 @@ import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
 import { Badge, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { createContext, useContext, useMemo } from 'react';
 import type {
@@ -197,7 +198,9 @@ const EcheanceHeader = () => {
   );
 };
 
-const columnHelper = createColumnHelper<Dossier>();
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<typeof features, Dossier>();
 
 /**
  * Les largeurs sont posées colonne par colonne, et volontairement absentes des
@@ -364,7 +367,8 @@ export const DossiersInstructionTable = ({
     ]
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: dossiers,
     // La colonne se masque plutôt qu'elle ne disparaît de la définition : la
@@ -373,7 +377,6 @@ export const DossiersInstructionTable = ({
     // Le tri et le filtrage se font côté serveur, page par page : la clé d'une
     // ligne doit donc venir du dossier, et non de son rang dans la page.
     getRowId: getRowKey,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   return (

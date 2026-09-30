@@ -8,10 +8,10 @@ import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 function FichesCellContent({
@@ -19,7 +19,7 @@ function FichesCellContent({
   action,
   cellId,
 }: {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
   action: ActionListItem;
   cellId: string;
 }) {

@@ -1,8 +1,9 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  RowData,
-  useReactTable,
+  metaHelper,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
@@ -20,19 +21,23 @@ import { FichesListCellTitle } from './cells/fiches-list.cell-title';
 import { FichesListPrioriteCell } from './cells/fiches-list.priorite.cell';
 import { FichesListStatutCell } from './cells/fiches-list.statut.cell';
 
-declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData> {
-    selectedFicheIds?: number[] | 'all';
-    selectAction?: (ficheId: number) => void;
-    onUnlink?: (ficheId: number) => void;
-    collectiviteId?: number;
-  }
-}
+type FichesListTableMeta = {
+  selectedFicheIds?: number[] | 'all';
+  selectAction?: (ficheId: number) => void;
+  onUnlink?: (ficheId: number) => void;
+};
 
-const columnHelper = createColumnHelper<FicheWithRelationsAndCollectivite>();
+const features = tableFeatures({
+  columnVisibilityFeature,
+  tableMeta: metaHelper<FichesListTableMeta>(),
+});
 
-const columns = [
+const columnHelper = createColumnHelper<
+  typeof features,
+  FicheWithRelationsAndCollectivite
+>();
+
+const columns = columnHelper.columns([
   columnHelper.display({
     id: 'select',
     header: () => <TableHeaderCell className="w-12" />,
@@ -119,7 +124,7 @@ const columns = [
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
     cell: (info) => <FichesListCellActions fiche={info.row.original} />,
   }),
-];
+]);
 
 type Props = {
   collectivite: CollectiviteCurrent;
@@ -151,14 +156,14 @@ export const FichesListTable = ({
 }: Props) => {
   const [columnVisibility, setColumnVisibility] = useState({});
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: fiches,
     state: {
       columnVisibility,
     },
     onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
     meta: {
       selectedFicheIds:
         enableSelection && 'selectedFicheIds' in selectionProps

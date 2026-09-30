@@ -1,4 +1,5 @@
 import { Cell } from '@tanstack/react-table';
+import { ReferentielTableFeatures } from './utils';
 import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -6,7 +7,7 @@ import { ScoreProgressBar } from '../scores/score.progress-bar';
 
 type Props = {
   row: ActionListItem;
-  cell: Cell<ActionListItem, unknown>;
+  cell: Cell<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 export const ReferentielTableProgressionCell = ({ row, cell }: Props) => {

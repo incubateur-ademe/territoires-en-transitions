@@ -3,7 +3,7 @@
 import { useSetIndicateurApplicable } from '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable';
 import { useUpdateDiagnosticIndicateursValeurs } from '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs';
 import { appLabels } from '@/app/labels/catalog';
-import { getCoreRowModel, RowData, useReactTable } from '@tanstack/react-table';
+import { useTable } from '@tanstack/react-table';
 import { cn, Table } from '@tet/ui';
 import { CSSProperties, JSX, useMemo, useRef } from 'react';
 import { IndicateurValeursTableBody } from './indicateur-valeurs.table-body';
@@ -17,16 +17,10 @@ import {
 import { useHorizontalScrollEdges } from './use-horizontal-scroll-edges';
 import { useListIndicateurValeursTableColumns } from './use-list-indicateur-valeurs-table-columns';
 import { useTableHeadHeight } from './use-table-head-height';
-import { IndicateurValeursTableMeta } from './utils';
-
-declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData> {
-    onReferenceYearChange?: IndicateurValeursTableMeta['onReferenceYearChange'];
-    updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
-    setIndicateurApplicable?: IndicateurValeursTableMeta['setIndicateurApplicable'];
-  }
-}
+import {
+  indicateurValeursTableFeatures,
+  IndicateurValeursTableMeta,
+} from './utils';
 
 type Props = {
   demarcheId: number;
@@ -121,10 +115,10 @@ export const IndicateurValeursTable = ({
     referenceYear,
   });
 
-  const table = useReactTable({
+  const table = useTable({
+    features: indicateurValeursTableFeatures,
     data: rows,
     columns,
-    getCoreRowModel: getCoreRowModel(),
     meta: {
       onReferenceYearChange,
       updateIndicateurValeurs,

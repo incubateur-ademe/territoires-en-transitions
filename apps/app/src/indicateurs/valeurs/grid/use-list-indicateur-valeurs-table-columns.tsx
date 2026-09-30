@@ -9,9 +9,12 @@ import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
 import { IndicateurValeurYearHeaderCell } from './indicateur-valeur-year.header-cell';
 import { IndicateurValeurCell } from './indicateur-valeur.cell';
 import { IndicateurTableRow, isUnsetReferenceYear } from './types';
-import { getTableMeta } from './utils';
+import { getTableMeta, IndicateurValeursTableFeatures } from './utils';
 
-const columnHelper = createColumnHelper<IndicateurTableRow>();
+const columnHelper = createColumnHelper<
+  IndicateurValeursTableFeatures,
+  IndicateurTableRow
+>();
 
 const EmptyValueCell = ({
   className,
@@ -116,7 +119,7 @@ const listColumns = ({
     cell: () => <EmptyValueCell aria-hidden />,
   });
 
-  return [titleColumn, ...yearColumns, widthBufferColumn];
+  return columnHelper.columns([titleColumn, ...yearColumns, widthBufferColumn]);
 };
 
 export function useListIndicateurValeursTableColumns({

@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { VisibilityState } from '@tanstack/react-table';
+import { ColumnVisibilityState } from '@tanstack/react-table';
 import { useUser } from '@tet/api/users';
 import { isNewReferentiel, ReferentielId } from '@tet/domain/referentiels';
 import { capitalize } from '@tet/ui/labels/plural';
@@ -91,7 +91,7 @@ export type ReferentielTableColumnOption = {
 };
 
 export type ReferentielTableColumnVisibility = {
-  columnVisibility: VisibilityState;
+  columnVisibility: ColumnVisibilityState;
   visibleColumnIds: ReferentielTableColumnId[];
   setVisibleColumnIds: (ids: ReferentielTableColumnId[]) => void;
   columnOptions: ReferentielTableColumnOption[];
@@ -99,7 +99,7 @@ export type ReferentielTableColumnVisibility = {
 
 function getDefaultColumnVisibility(
   options: readonly ReferentielTableColumnOption[]
-): VisibilityState {
+): ColumnVisibilityState {
   return Object.fromEntries(
     options.map(({ id, default: defaultValue }) => [id, defaultValue])
   );
@@ -110,14 +110,14 @@ function getStorageKey(userId: string) {
 }
 
 type StoredColumnVisibility = readonly [
-  VisibilityState | undefined,
-  (next: VisibilityState) => void
+  ColumnVisibilityState | undefined,
+  (next: ColumnVisibilityState) => void
 ];
 
 function useStoredColumnVisibility(): StoredColumnVisibility {
   const user = useUser();
 
-  const [stored, setStored] = useLocalStorage<VisibilityState>(
+  const [stored, setStored] = useLocalStorage<ColumnVisibilityState>(
     getStorageKey(user.id),
     getDefaultColumnVisibility(REFERENTIEL_TABLE_COLUMN_OPTIONS)
   );
@@ -154,7 +154,7 @@ export function useReferentielTableColumnVisibility({
 
   const [stored, setStored] = useStoredColumnVisibility();
 
-  const columnVisibility: VisibilityState = {
+  const columnVisibility: ColumnVisibilityState = {
     ...getDefaultColumnVisibility(columnOptions),
     ...(stored ?? {}),
   };

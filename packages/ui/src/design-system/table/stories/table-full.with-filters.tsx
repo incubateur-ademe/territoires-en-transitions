@@ -1,7 +1,8 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import { Badge } from '../../Badge';
@@ -60,7 +61,13 @@ const HeaderFilter = ({
   />
 );
 
-const columnHelper = createColumnHelper<FakeVueTabulaireAction>();
+// Filtres et tri appliqués en amont sur `data`.
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<
+  typeof features,
+  FakeVueTabulaireAction
+>();
 
 type Props = {
   isLoading?: boolean;
@@ -111,73 +118,74 @@ export const TableFullWithFilters = ({ isLoading, filtresInitiaux }: Props) => {
   }, [statuts, pilotes, sort, direction]);
 
   const columns = useMemo(
-    () => [
-      columnHelper.accessor('title', {
-        header: () => <TableHeaderCell title="Titre" />,
-        cell: (info) => (
-          <TableCell>
-            <div className="line-clamp-2">{info.getValue()}</div>
-          </TableCell>
-        ),
-      }),
-      columnHelper.accessor('statut', {
-        header: () => (
-          <TableHeaderCell
-            className="w-40"
-            title="Statut"
-            sortFn={() => trierPar('statut')}
-            sortDirection={sort === 'statut' ? direction : null}
-            filter={
-              <HeaderFilter
-                options={statutOptions}
-                values={statuts}
-                onChange={setStatuts}
-              />
-            }
-          />
-        ),
-        cell: (info) => (
-          <TableCell>
-            <Badge variant="info" title={info.getValue()} size="sm" />
-          </TableCell>
-        ),
-      }),
-      columnHelper.accessor('pilotes', {
-        header: () => (
-          <TableHeaderCell
-            className="w-44"
-            title="Pilotes"
-            filter={
-              <HeaderFilter
-                options={piloteOptions}
-                values={pilotes}
-                onChange={setPilotes}
-              />
-            }
-          />
-        ),
-        cell: (info) => <TableCell>{info.getValue()?.join(', ')}</TableCell>,
-      }),
-      columnHelper.accessor('dateDeFin', {
-        header: () => (
-          <TableHeaderCell
-            className="w-36"
-            title="Date de fin"
-            sortFn={() => trierPar('dateDeFin')}
-            sortDirection={sort === 'dateDeFin' ? direction : null}
-          />
-        ),
-        cell: (info) => <TableCell>{info.getValue()}</TableCell>,
-      }),
-    ],
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor('title', {
+          header: () => <TableHeaderCell title="Titre" />,
+          cell: (info) => (
+            <TableCell>
+              <div className="line-clamp-2">{info.getValue()}</div>
+            </TableCell>
+          ),
+        }),
+        columnHelper.accessor('statut', {
+          header: () => (
+            <TableHeaderCell
+              className="w-40"
+              title="Statut"
+              sortFn={() => trierPar('statut')}
+              sortDirection={sort === 'statut' ? direction : null}
+              filter={
+                <HeaderFilter
+                  options={statutOptions}
+                  values={statuts}
+                  onChange={setStatuts}
+                />
+              }
+            />
+          ),
+          cell: (info) => (
+            <TableCell>
+              <Badge variant="info" title={info.getValue()} size="sm" />
+            </TableCell>
+          ),
+        }),
+        columnHelper.accessor('pilotes', {
+          header: () => (
+            <TableHeaderCell
+              className="w-44"
+              title="Pilotes"
+              filter={
+                <HeaderFilter
+                  options={piloteOptions}
+                  values={pilotes}
+                  onChange={setPilotes}
+                />
+              }
+            />
+          ),
+          cell: (info) => <TableCell>{info.getValue()?.join(', ')}</TableCell>,
+        }),
+        columnHelper.accessor('dateDeFin', {
+          header: () => (
+            <TableHeaderCell
+              className="w-36"
+              title="Date de fin"
+              sortFn={() => trierPar('dateDeFin')}
+              sortDirection={sort === 'dateDeFin' ? direction : null}
+            />
+          ),
+          cell: (info) => <TableCell>{info.getValue()}</TableCell>,
+        }),
+      ]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [statuts, pilotes, sort, direction]
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   return (

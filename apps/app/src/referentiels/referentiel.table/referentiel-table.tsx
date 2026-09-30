@@ -1,21 +1,16 @@
 import { appLabels } from '@/app/labels/catalog';
 import {
   ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFilteredRowModel,
+  ColumnVisibilityState,
+  FlexRender,
   Table as ReactTable,
-  RowData,
-  useReactTable,
-  VisibilityState,
+  useTable,
 } from '@tanstack/react-table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionTypeEnum,
   isNewReferentiel as isNewReferentielUtils,
   ReferentielId,
-  StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import {
@@ -26,13 +21,7 @@ import {
   TableLoading,
   TableRow,
 } from '@tet/ui';
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
@@ -51,6 +40,7 @@ import { AuditColumnsScope, getAuditColumnsScope } from './audit-columns-scope';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
+import { removeStalePendingDetailleALaTache } from './remove-stale-pending-detaille-a-la-tache';
 import { ReferentielTableThematiquesViews } from './referentiel-table.thematiques.views';
 import {
   ReferentielTableFiltersState,
@@ -64,15 +54,12 @@ import {
   ReferentielThematiqueViewProvider,
   useReferentielThematiqueView,
 } from './use-referentiel-thematique-view';
-import { ReferentielTableMeta, rowClassNameByActionType } from './utils';
-
-declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData>
-    extends Partial<ReferentielTableMeta> {
-    [key: string]: unknown;
-  }
-}
+import {
+  referentielTableFeatures,
+  ReferentielTableFeatures,
+  ReferentielTableMeta,
+  rowClassNameByActionType,
+} from './utils';
 
 export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
@@ -126,7 +113,7 @@ function ReferentielTable({
   referentielId: ReferentielId;
   isPending: boolean;
   filtersState: ReferentielTableFiltersState;
-  columnVisibility: VisibilityState;
+  columnVisibility: ColumnVisibilityState;
   auditColumnsScope: AuditColumnsScope;
 }) {
   const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
@@ -225,30 +212,15 @@ function ReferentielTable({
     setPendingDetailleALaTacheByActionId,
   ] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    setPendingDetailleALaTacheByActionId((prev) => {
-      const next = { ...prev };
-      let hasChanged = false;
-
-      for (const actionId in prev) {
-        if (!prev[actionId]) continue;
-        const action = actions[actionId];
-
-        // Nettoie le flag quand la ligne a disparu, n'est plus une sous-action
-        // ou que l'inférence backend affiche enfin "détaillé à la tâche".
-        if (
-          !action ||
-          action.actionType !== ActionTypeEnum.SOUS_ACTION ||
-          action.score.statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE
-        ) {
-          delete next[actionId];
-          hasChanged = true;
-        }
-      }
-
-      return hasChanged ? next : prev;
-    });
-  }, [actions]);
+  // Les flags se nettoient à chaque nouvelle liste d'actions, pendant le rendu
+  // plutôt que dans un effet : pas de rendu intermédiaire avec un flag périmé.
+  const [actionsForPendingFlags, setActionsForPendingFlags] = useState(actions);
+  if (actionsForPendingFlags !== actions) {
+    setActionsForPendingFlags(actions);
+    setPendingDetailleALaTacheByActionId((prev) =>
+      removeStalePendingDetailleALaTache(prev, actions)
+    );
+  }
 
   const tableState = useMemo(
     () => ({
@@ -286,7 +258,7 @@ function ReferentielTable({
   );
 
   const tableMeta = useMemo(
-    () => ({
+    (): ReferentielTableMeta => ({
       collectiviteId,
       referentielId,
       permissions: {
@@ -332,12 +304,10 @@ function ReferentielTable({
     referentielId,
   });
 
-  const table = useReactTable({
+  const table = useTable({
+    features: referentielTableFeatures,
     columns,
     data,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
     getSubRows,
     getRowId: (row) => row.actionId,
     state: tableState,
@@ -365,7 +335,11 @@ function ReferentielTable({
   return <TableContent table={table} />;
 }
 
-function TableContent({ table }: { table: ReactTable<ActionListItem> }) {
+function TableContent({
+  table,
+}: {
+  table: ReactTable<ReferentielTableFeatures, ActionListItem>;
+}) {
   const referentielId = table.options.meta?.referentielId;
   const isNewReferentiel =
     referentielId && isNewReferentielUtils(referentielId);
@@ -399,9 +373,7 @@ function TableContent({ table }: { table: ReactTable<ActionListItem> }) {
               )}
             >
               {row.getVisibleCells().map((cell) => (
-                <React.Fragment key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </React.Fragment>
+                <FlexRender key={cell.id} cell={cell} />
               ))}
             </TableRow>
           ))}
@@ -425,7 +397,11 @@ const SUMMABLE_COLUMN_IDS = [
 
 type SummableColumnId = (typeof SUMMABLE_COLUMN_IDS)[number];
 
-function TableTotalRow({ table }: { table: ReactTable<ActionListItem> }) {
+function TableTotalRow({
+  table,
+}: {
+  table: ReactTable<ReferentielTableFeatures, ActionListItem>;
+}) {
   // On somme uniquement les lignes de premier niveau (axes) du modèle filtré :
   // leurs scores sont déjà agrégés sur toute la descendance, ce qui évite
   // tout double comptage via les sous-lignes dépliées.
@@ -504,7 +480,7 @@ function TableWrapper({
   table,
 }: {
   children: ReactNode;
-  table: ReactTable<ActionListItem>;
+  table: ReactTable<ReferentielTableFeatures, ActionListItem>;
 }) {
   const { panel } = useSidePanel();
 
@@ -512,9 +488,7 @@ function TableWrapper({
     .getHeaderGroups()
     .map((headerGroup) =>
       headerGroup.headers.map((header) => (
-        <React.Fragment key={header.id}>
-          {flexRender(header.column.columnDef.header, header.getContext())}
-        </React.Fragment>
+        <FlexRender key={header.id} header={header} />
       ))
     );
 
@@ -541,7 +515,7 @@ function TableWrapper({
 function ReferentielTableLoading({
   table,
 }: {
-  table: ReactTable<ActionListItem>;
+  table: ReactTable<ReferentielTableFeatures, ActionListItem>;
 }) {
   return (
     <TableWrapper table={table}>

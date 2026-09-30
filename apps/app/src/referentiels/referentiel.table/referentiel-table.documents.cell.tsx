@@ -7,6 +7,7 @@ import { useActionPreuvesCount } from '@/app/collectivites/documents/use-action-
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CellContext } from '@tanstack/react-table';
+import { ReferentielTableFeatures } from './utils';
 import {
   ActionType,
   ActionTypeEnum,
@@ -17,7 +18,7 @@ import { useCallback } from 'react';
 import { EmptyCell } from './empty-cell';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 function DocumentsCellContent({

@@ -1,8 +1,13 @@
 import {
   createColumnHelper,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
+  columnVisibilityFeature,
+  createSortedRowModel,
+  rowSelectionFeature,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_text,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Badge } from '../../Badge';
@@ -11,9 +16,22 @@ import { TableCell, TableHeaderCell } from '../index';
 import { ReactTable } from '../react-table';
 import { FakeVueTabulaireAction, fakeVueTabulaireData } from './fixtures';
 
-const columnHelper = createColumnHelper<FakeVueTabulaireAction>();
+const features = tableFeatures({
+  columnVisibilityFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  // Le tri `auto` ne résout que les fonctions enregistrées : celles qu'il
+  // retient pour des colonnes texte.
+  sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text },
+});
 
-const columns = [
+const columnHelper = createColumnHelper<
+  typeof features,
+  FakeVueTabulaireAction
+>();
+
+const columns = columnHelper.columns([
   columnHelper.display({
     id: 'select',
     header: ({ table }) => (
@@ -84,7 +102,7 @@ const columns = [
     ),
     cell: (info) => <TableCell>{info.getValue()}</TableCell>,
   }),
-];
+]);
 
 type Props = {
   isLoading?: boolean;
@@ -94,7 +112,8 @@ type Props = {
 export const TableFull = ({ isLoading, isEmpty }: Props) => {
   const [rowSelection, setRowSelection] = useState({});
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: fakeVueTabulaireData,
     state: {
@@ -102,8 +121,6 @@ export const TableFull = ({ isLoading, isEmpty }: Props) => {
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   return <ReactTable table={table} isLoading={isLoading} isEmpty={isEmpty} />;

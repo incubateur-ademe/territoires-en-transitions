@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table';
+import { ReferentielTableFeatures } from './utils';
 import {
   ActionTypeEnum,
   getParentId,
@@ -42,7 +43,7 @@ function findNearestActionOfType(
 }
 
 export function getTextFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   _columnId: string,
   filterValue: string
 ) {
@@ -60,7 +61,7 @@ export function getTextFilterFn(
 }
 
 export function getExplicationFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   _columnId: string,
   filterValue: string
 ) {
@@ -73,7 +74,7 @@ export function getExplicationFilterFn(
 }
 
 export function getStatutFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   columnId: string,
   filterValue: string[]
 ) {
@@ -84,7 +85,7 @@ export function getStatutFilterFn(
 
 export function getPilotesFilterFn(actions: Record<string, ActionListItem>) {
   return (
-    row: Row<ActionListItem>,
+    row: Row<ReferentielTableFeatures, ActionListItem>,
     _columnId: string,
     filterValue: string[]
   ) => {
@@ -110,7 +111,7 @@ export function getPilotesFilterFn(actions: Record<string, ActionListItem>) {
 
 export function getCategorieFilterFn(actions: Record<string, ActionListItem>) {
   return (
-    row: Row<ActionListItem>,
+    row: Row<ReferentielTableFeatures, ActionListItem>,
     columnId: string,
     filterValue: string[]
   ) => {
@@ -133,7 +134,7 @@ export function getCategorieFilterFn(actions: Record<string, ActionListItem>) {
 }
 
 export function getScoreRangeFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   columnId: string,
   filterValue: string[]
 ) {
@@ -155,7 +156,7 @@ export function getScoreRangeFilterFn(
 }
 
 export function getLabelsFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   columnId: string,
   filterValue: string[]
 ) {
@@ -168,7 +169,7 @@ export function getLabelsFilterFn(
 
 export function getServicesFilterFn(actions: Record<string, ActionListItem>) {
   return (
-    row: Row<ActionListItem>,
+    row: Row<ReferentielTableFeatures, ActionListItem>,
     _columnId: string,
     filterValue: number[]
   ) => {
