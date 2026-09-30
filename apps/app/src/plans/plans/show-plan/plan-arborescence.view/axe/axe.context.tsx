@@ -20,7 +20,7 @@ import { useToggleAxe } from '../use-toggle-axe';
 export const AxeCreatedEvent = 'axe-created';
 export const AxeDescriptionCreatedEvent = 'axe-description-created';
 
-export type AxeContextValue = {
+type AxeContextValue = {
   updateAxe: ReturnType<typeof useUpdateAxe>;
   createFicheResume: ReturnType<typeof useCreateFicheResume>;
   createSousAxe: ReturnType<typeof useCreateAxe>;

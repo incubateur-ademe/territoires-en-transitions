@@ -8,7 +8,7 @@ import type {
 
 // Alias en français des types du header, portés par @tet/domain/demarches.
 export type DemarchePcaetStatut = DemarchePcaetStatus;
-export type DemarchePcaetObligation = DomainObligation;
+type DemarchePcaetObligation = DomainObligation;
 
 export type DemarchePcaetTopicStatut = 'complete' | 'incomplete';
 

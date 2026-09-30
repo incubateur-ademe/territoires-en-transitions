@@ -1,10 +1,7 @@
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { ListIndicateurValeurOuput } from './use-list-indicateur-valeurs';
-
-export type UpsertIndicateurValeurInput =
-  RouterInput['indicateurs']['valeurs']['upsert'];
 
 export const useUpsertIndicateurValeur = () => {
   const trpc = useTRPC();

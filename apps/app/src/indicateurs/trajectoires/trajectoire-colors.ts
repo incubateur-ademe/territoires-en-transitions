@@ -4,7 +4,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { INDICATEURS_TRAJECTOIRE } from './trajectoire-constants';
 
-export const COULEURS_BY_SECTEUR: Record<TrajectoireSecteursType, string> = {
+const COULEURS_BY_SECTEUR: Record<TrajectoireSecteursType, string> = {
   Résidentiel: '#FFD0BB',
   Tertiaire: '#FBE7B5',
   Industrie: '#F7B1C2',

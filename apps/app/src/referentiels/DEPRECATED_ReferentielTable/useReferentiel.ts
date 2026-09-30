@@ -131,7 +131,7 @@ const useReferentielData = (referentielId: ReferentielId) => {
   };
 };
 
-export const useToggleRowExpandedReducer = (rows: ActionListItem[]) => {
+const useToggleRowExpandedReducer = (rows: ActionListItem[]) => {
   // état courant des touches "modificatrices"
   const modifierStateRef = useModifierStateRef();
 

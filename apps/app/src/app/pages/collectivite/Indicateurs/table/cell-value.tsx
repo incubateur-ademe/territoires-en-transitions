@@ -3,7 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { InputValue } from './input-value';
 
 // pour formater les chiffres
-export const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
+const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
 type CellValueProps = {
   value: number | '';

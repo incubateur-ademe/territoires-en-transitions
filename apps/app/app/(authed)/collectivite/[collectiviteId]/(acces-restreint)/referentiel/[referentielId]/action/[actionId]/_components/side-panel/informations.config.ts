@@ -23,7 +23,7 @@ export type ActionInfoSection = {
 };
 
 // configuration (libellés, ordre) de l'affichage des sections
-export const ACTION_INFORMATIONS_SECTIONS: Array<ActionInfoSection> = [
+const ACTION_INFORMATIONS_SECTIONS: Array<ActionInfoSection> = [
   { sectionId: 'description', label: 'Description' },
   { sectionId: 'contexte', label: 'Contexte et réglementation' },
   {

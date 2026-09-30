@@ -51,7 +51,7 @@ export const preuveReglementaireLien: DocumentReglementaire = {
   },
 };
 
-export const preuveReglementaireLienSansDescription: DocumentReglementaire = {
+const preuveReglementaireLienSansDescription: DocumentReglementaire = {
   preuveType: 'reglementaire',
   id: 12,
   collectiviteId: 1,

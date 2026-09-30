@@ -34,7 +34,7 @@ export function buildLinkIdentityUrl(args: {
  * (`apps/backend/src/users/authentications/oidc/oidc.models.ts`) que le
  * callback peut effectivement produire pour ce parcours.
  */
-export const linkIdentityErrorCodes = [
+const linkIdentityErrorCodes = [
   'oidc-identite-deja-liee-ailleurs',
   'oidc-compte-supprime',
 ] as const;

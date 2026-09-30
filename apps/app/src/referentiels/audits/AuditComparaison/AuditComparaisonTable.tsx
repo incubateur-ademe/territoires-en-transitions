@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import {
   CellProps,
   Column,
-  HeaderProps,
   useExpanded,
   useFlexLayout,
   useTable,
@@ -20,10 +19,7 @@ import { TableData } from './useTableData';
 export type TDetailTacheTableProps = {
   tableData: TableData;
 };
-export type THeaderProps = HeaderProps<TScoreAuditTableRow> & {
-  headerData?: TScoreAuditRowData;
-};
-export type TCellProps = CellProps<TScoreAuditTableRow>;
+type TCellProps = CellProps<TScoreAuditTableRow>;
 export type TColumn = Column<TScoreAuditTableRow>;
 
 /** Vérifie si la valeur courante d'un champ diffère de sa valeur avant audit */

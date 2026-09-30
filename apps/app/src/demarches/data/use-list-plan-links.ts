@@ -1,10 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { RouterOutput, useTRPC } from '@tet/api';
-
-export type DemarchePlanLink =
-  RouterOutput['demarches']['listPlanLinks'][number];
+import { useTRPC } from '@tet/api';
 
 /**
  * Plans tenus par une démarche de la collectivité, tous statuts et tous

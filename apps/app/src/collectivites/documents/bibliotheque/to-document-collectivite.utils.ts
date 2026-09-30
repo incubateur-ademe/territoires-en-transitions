@@ -27,6 +27,3 @@ export const toDocumentCollectivite = ({
 export const getDocumentFichier = (
   document: DocumentCollectivite
 ): StoredFile | null => (document.type === 'fichier' ? document.fichier : null);
-
-export const getDocumentLien = (document: DocumentCollectivite): Lien | null =>
-  document.type === 'lien' ? document.lien : null;

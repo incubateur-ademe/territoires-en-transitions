@@ -14,7 +14,7 @@ export const importStepDisplayStatusValues = [
   'waiting',
 ] as const;
 
-export type ImportStepDisplayStatus =
+type ImportStepDisplayStatus =
   (typeof importStepDisplayStatusValues)[number];
 
 export type ImportStepView = {

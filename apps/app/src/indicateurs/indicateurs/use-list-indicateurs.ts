@@ -24,10 +24,6 @@ export const getFiltersForMyIndicateurs = (userId: string) => ({
   utilisateurPiloteIds: [userId],
 });
 
-export const getFiltersForPersonalizedIndicateurs = () => ({
-  estPerso: true,
-});
-
 export const useListIndicateurs = (
   input: ListDefinitionsInput,
   options: {

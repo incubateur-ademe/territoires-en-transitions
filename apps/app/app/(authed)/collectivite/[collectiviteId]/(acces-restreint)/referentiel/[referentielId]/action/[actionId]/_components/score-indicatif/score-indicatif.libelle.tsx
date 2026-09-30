@@ -71,7 +71,7 @@ export default ScoreIndicatifLibelle;
 /**
  * Affiche le libellé du score indicatif (fait ou programmé)
  */
-export const LibelleScoreIndicatif = ({
+const LibelleScoreIndicatif = ({
   typeScore,
   donnees,
   unite,
@@ -127,7 +127,7 @@ const LibelleScoreFait = ({ score }: { score: number }) => {
 /**
  * Génère le texte principal pour le score indicatif "programme"
  */
-export function LibelleScoreProgramme({
+function LibelleScoreProgramme({
   score,
   dateValeur,
 }: {

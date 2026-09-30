@@ -11,7 +11,7 @@ const LAYERS = {
 };
 
 /** Charge la liste des sources de données indicateurs */
-export const useIndicateurSources = () => {
+const useIndicateurSources = () => {
   const trpc = useTRPC();
   return useQuery(trpc.indicateurs.sources.list.queryOptions());
 };
@@ -27,7 +27,7 @@ export const useIndicateurAvailableSources = (
 };
 
 /** Attribut une couleur à chaque source de données  */
-export const useColorBySourceId = () => {
+const useColorBySourceId = () => {
   const { data: sources } = useIndicateurSources();
   const colorBySourceId: Record<string, string> = {};
   (sources ?? [])

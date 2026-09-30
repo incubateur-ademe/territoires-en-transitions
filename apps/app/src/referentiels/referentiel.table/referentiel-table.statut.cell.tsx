@@ -32,7 +32,7 @@ type Props = {
   >;
 };
 
-export const actionTypesWithStatut = new Set<ActionType>([
+const actionTypesWithStatut = new Set<ActionType>([
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
 ]);

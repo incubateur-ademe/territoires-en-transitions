@@ -4,7 +4,7 @@ import { ActionDetailed } from '../../use-snapshot';
 
 // alias et règle les imperfections du typage auto-généré
 
-export type TComparaisonScoreAudit = {
+type TComparaisonScoreAudit = {
   collectiviteId: number;
   referentielId: ReferentielId;
   actionId: string;

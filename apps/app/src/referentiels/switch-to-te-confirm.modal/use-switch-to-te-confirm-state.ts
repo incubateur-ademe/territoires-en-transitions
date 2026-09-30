@@ -3,7 +3,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { useState } from 'react';
 import { useSwitchToTe } from './use-switch-to-te';
 
-export type SwitchToTeStep =
+type SwitchToTeStep =
   | 'info'
   | 'confirmation'
   | 'progress'

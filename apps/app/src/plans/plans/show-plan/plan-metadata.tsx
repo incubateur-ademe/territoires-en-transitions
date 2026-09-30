@@ -16,7 +16,7 @@ import { useListPlanTypes } from '../use-list-plan-types';
 import { useUpdatePlan } from './data/use-update-plan';
 import { PlanCalendarInlineEditableField } from './plan-calendar.inline-editable-field';
 
-export type UpdatePlanFn = ReturnType<typeof useUpdatePlan>['mutate'];
+type UpdatePlanFn = ReturnType<typeof useUpdatePlan>['mutate'];
 
 type PlanMetadataProps = {
   plan: Plan;

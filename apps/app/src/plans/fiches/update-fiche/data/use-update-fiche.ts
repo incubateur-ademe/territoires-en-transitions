@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
 
@@ -7,8 +7,6 @@ type Args = Partial<{
   invalidatePlanId: number;
   onUpdateCallback: () => void;
 }>;
-
-export type UpdateFicheInput = RouterInput['plans']['fiches']['update'];
 
 export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();

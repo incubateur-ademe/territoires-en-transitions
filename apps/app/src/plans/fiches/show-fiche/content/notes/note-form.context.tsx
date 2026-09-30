@@ -4,7 +4,7 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-export const noteFormSchema = z.object({
+const noteFormSchema = z.object({
   year: z
     .number({
       message: "L'année est requise",

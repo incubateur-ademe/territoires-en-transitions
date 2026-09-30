@@ -6,7 +6,7 @@ const STORAGE_KEY_PREFIX = 'tet_financeurs_draft';
 
 export type DraftFinanceursRecord = Record<string, DraftFinanceurRowFormValues>;
 
-export const getStorageKey = (ficheId: number): string => {
+const getStorageKey = (ficheId: number): string => {
   return `${STORAGE_KEY_PREFIX}_${ficheId}`;
 };
 

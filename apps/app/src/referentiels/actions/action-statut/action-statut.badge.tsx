@@ -11,7 +11,7 @@ type Props = {
   size?: SizeVariant;
 };
 
-export const statusToState: Record<
+const statusToState: Record<
   StatutAvancement,
   { state: ColorVariant; type?: TypeVariant }
 > = {

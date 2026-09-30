@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { parseCellNumber } from './parse-cell-number';
 
-export type CellEditStatus = 'idle' | 'saving' | 'saved' | 'error';
+type CellEditStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 export type CellEdit = {
   text: string;

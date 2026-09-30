@@ -21,18 +21,17 @@ export const findPcaetPlanType = (types: PlanType[]): PlanType | undefined =>
       t.type === PCAET_PLAN_TYPE_KEY.type
   );
 
-export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
-  {
-    en_elaboration: 'En élaboration',
-    transmis_pour_avis: 'Transmis pour avis',
-    instruit: 'Instruit',
-    // Même étape que `instruit`, atteinte autrement : le dossier n'a pas été
-    // instruit ici, et le dire évite de laisser croire à une instruction menée
-    // sur la plateforme.
-    instruit_hors_plateforme: 'Instruit hors plateforme',
-    publie: 'Publié',
-    archive: 'Archivé',
-  };
+const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> = {
+  en_elaboration: 'En élaboration',
+  transmis_pour_avis: 'Transmis pour avis',
+  instruit: 'Instruit',
+  // Même étape que `instruit`, atteinte autrement : le dossier n'a pas été
+  // instruit ici, et le dire évite de laisser croire à une instruction menée
+  // sur la plateforme.
+  instruit_hors_plateforme: 'Instruit hors plateforme',
+  publie: 'Publié',
+  archive: 'Archivé',
+};
 
 export const formatDemarcheStatut = (statut: DemarchePcaetStatut) =>
   DEMARCHE_PCAET_STATUT_LABELS[statut];
@@ -68,7 +67,7 @@ export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
 export type DemarchePcaetMenuTransition =
   keyof typeof DEMARCHE_PCAET_TRANSITION_ACTIONS;
 
-export type DemarchePcaetContact = {
+type DemarchePcaetContact = {
   nom: string;
   email: string;
   situation: string;

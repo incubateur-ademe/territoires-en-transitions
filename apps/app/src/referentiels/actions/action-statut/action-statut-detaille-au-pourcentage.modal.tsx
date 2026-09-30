@@ -8,8 +8,9 @@ import { ActionListItem } from '../use-list-actions';
 import AvancementDetailleSlider from './action-statut-detaille-au-pourcentage.slider';
 import { useUpdateActionStatut } from './use-update-action-statut';
 
-export const DEFAULT_STATUT_DETAILLE_AU_POURCENTAGE: [number, number, number] =
-  [0.5, 0.25, 0.25];
+const DEFAULT_STATUT_DETAILLE_AU_POURCENTAGE: [number, number, number] = [
+  0.5, 0.25, 0.25,
+];
 
 type Props = {
   action: ActionListItem;

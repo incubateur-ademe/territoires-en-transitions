@@ -3,10 +3,7 @@ import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { ListActionsInput } from '@tet/domain/referentiels';
 import { useMemo } from 'react';
-import {
-  ActionFilterCategoryKey,
-  formatActionFiltersToCategories,
-} from './format-action-filters-to-categories';
+import { formatActionFiltersToCategories } from './format-action-filters-to-categories';
 
 type Args = {
   filters: ListActionsInput;
@@ -37,5 +34,3 @@ export const useActionFilterCategories = ({
     [filters, includeReferentielIds, personnes, services]
   );
 };
-
-export type { ActionFilterCategoryKey };

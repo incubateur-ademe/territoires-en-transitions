@@ -210,7 +210,7 @@ const prepareReferenceDataset = (chartInfo: IndicateurChartInfo) => {
 };
 
 /** Props du graphique générique Indicateur */
-export type IndicateurChartProps = {
+type IndicateurChartProps = {
   /** Données pour le graphe */
   chartInfo: IndicateurChartInfo;
   /** Titre du graphe */

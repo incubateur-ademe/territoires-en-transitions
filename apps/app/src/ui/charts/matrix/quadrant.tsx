@@ -25,4 +25,4 @@ type QuadrantProps = {
 const Quadrant = (_props: QuadrantProps): null => null;
 
 export { Quadrant };
-export type { MatrixTone, QuadrantColors, QuadrantProps, TitleAnchor };
+export type { MatrixTone, QuadrantProps, TitleAnchor };

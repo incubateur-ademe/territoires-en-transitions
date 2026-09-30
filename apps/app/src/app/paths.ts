@@ -57,9 +57,9 @@ export const authProconnectPath = '/auth/proconnect';
 export const profilPath = '/profil';
 
 export const recherchesPath = '/recherches';
-export const recherchesParam = 'recherchesId';
+const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
-export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
+const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
 export const getRechercheViewUrl = (args: {
   collectiviteId?: number;
   view: RecherchesViewParam;
@@ -79,8 +79,8 @@ export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
 
 const collectiviteParam = 'collectiviteId';
-export const indicateurViewParam = 'vue';
-export const indicateurIdParam = 'indicateurId';
+const indicateurViewParam = 'vue';
+const indicateurIdParam = 'indicateurId';
 
 const actionParam = 'actionId';
 
@@ -102,15 +102,14 @@ export const referentielTabs = ['progression', 'evolutions'] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
 export const collectiviteBasePath = '/collectivite';
-export const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
+const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
 
-export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
-export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
-export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
-export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
-export const collectivitePriorisationPath = `${collectivitePath}/priorisation`;
-export const collectiviteModifierPath = `${collectivitePath}/modifier`;
-export const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
+const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
+const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
+const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
+const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
+const collectiviteModifierPath = `${collectivitePath}/modifier`;
+const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
 
 const referentielIdParam = 'referentielId';
 const referentielVueParam = 'referentielVue';
@@ -120,30 +119,29 @@ const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${refere
 const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}`;
 const referentielAuditLabellisationPath = `${referentielRootPath}/:${referentielIdParam}/audit-labellisation`;
 
-export const collectiviteUsersPath = `${collectivitePath}/users`;
+const collectiviteUsersPath = `${collectivitePath}/users`;
 
 const maCollectiviteVueParam = 'paramsVue';
-export const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
+const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
 const demarcheIdParam = 'demarcheId';
-export const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
-export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
-export const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}`;
-export const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
-export const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
-export const collectiviteDemarchePcaetDocumentsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/documents`;
-export const collectiviteDemarchePcaetVueDrealPath = `${collectiviteDemarchePcaetPath}/vue-dreal`;
+const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
+const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
+const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}`;
+const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
+const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
+const collectiviteDemarchePcaetDocumentsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/documents`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
-export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
-export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
-export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
-export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
-export const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
-export const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
-export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
-export const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
-export const collectiviteActionPath = `${collectiviteActionsPath}/:${ficheParam}/:content`;
+const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
+const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
+const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
+const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
+const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
+const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
+const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
+const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
+const collectiviteActionPath = `${collectiviteActionsPath}/:${ficheParam}/:content`;
 
 // TDB = tableau de bord PA
 const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
@@ -161,7 +159,7 @@ export const makeDemandesAvisUrl = ({
 }) =>
   demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
 
-export const demandeAvisParam = 'demandeAvisId';
+const demandeAvisParam = 'demandeAvisId';
 
 /**
  * Le dossier vit sous la collectivité **instruite**, pas sous le service qui
@@ -292,16 +290,6 @@ export const makeCollectiviteTrajectoirelUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteTrajectoirePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectivitePriorisationUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}): string =>
-  collectivitePriorisationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

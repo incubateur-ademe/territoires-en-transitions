@@ -9,7 +9,7 @@ export type ModuleFilters =
   | ListFichesRequestFilters
   | ListActionsInput;
 
-export const isActionModuleFilters = (
+const isActionModuleFilters = (
   filters: ModuleFilters
 ): filters is ListActionsInput =>
   'referentielIds' in filters ||

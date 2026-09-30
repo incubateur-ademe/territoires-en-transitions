@@ -23,15 +23,14 @@ type TSelectDropdownBaseProps<T extends string> = TSelectBase & {
 type TSelectButtonProps<T extends string> = TSelectDropdownBaseProps<T> &
   TSelectSelectionButtonBase;
 
-export type TSelectDropdownProps<T extends string> =
-  TSelectDropdownBaseProps<T> & {
-    /** si à true, il n'est pas possible de déselectionner une valeur (optionnel) */
-    required?: boolean;
-    /** fait le rendu d'une option de la liste (optionnel) */
-    renderOption?: (option: TOption) => React.ReactElement;
-    /** appelée quand l'option sélectionnée change (reçoit la nouvelle valeur) */
-    onSelect: (value: T) => void;
-  };
+type TSelectDropdownProps<T extends string> = TSelectDropdownBaseProps<T> & {
+  /** si à true, il n'est pas possible de déselectionner une valeur (optionnel) */
+  required?: boolean;
+  /** fait le rendu d'une option de la liste (optionnel) */
+  renderOption?: (option: TOption) => React.ReactElement;
+  /** appelée quand l'option sélectionnée change (reçoit la nouvelle valeur) */
+  onSelect: (value: T) => void;
+};
 
 const SelectDropdown = <T extends string>({
   value,

@@ -8,9 +8,7 @@ import { cn } from '@tet/ui/utils/cn';
 import { usePathname } from 'next/navigation';
 import { JSX, useEffect, useRef } from 'react';
 
-export const DefaultSidePanelTitle = ({
-  title,
-}: SidePanelTitleProps): JSX.Element => (
+const DefaultSidePanelTitle = ({ title }: SidePanelTitleProps): JSX.Element => (
   <h6 className="mb-0 text-sm uppercase">{title}</h6>
 );
 
