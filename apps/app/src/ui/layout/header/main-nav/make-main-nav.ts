@@ -1,6 +1,5 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { ENV } from '@tet/api/environmentVariables';
 import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { hasRole, PlatformRole } from '@tet/domain/users';
 import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
@@ -45,7 +44,6 @@ export const makeMainNav: MakeMainNav = ({
       currentCollectivite,
       referentielDisplay,
       isDemarchePcaetEnabled,
-      applicationEnv: ENV.application_env,
     });
   }
 };

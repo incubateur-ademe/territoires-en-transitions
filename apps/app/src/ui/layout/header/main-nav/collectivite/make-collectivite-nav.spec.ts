@@ -37,8 +37,19 @@ const simplifiedViewAccess: CollectiviteRolesAndPermissions = {
   role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
 };
 
+const connectedRoles: readonly PlatformRole[] = [
+  PlatformRole.CONNECTED,
+  PlatformRole.VERIFIED,
+];
+
+const superAdminRoles: readonly PlatformRole[] = [
+  ...connectedRoles,
+  PlatformRole.SUPER_ADMIN,
+];
+
 const toUser = (
-  access: CollectiviteRolesAndPermissions
+  access: CollectiviteRolesAndPermissions,
+  roles: readonly PlatformRole[]
 ): UserWithRolesAndPermissions => ({
   id: 'utilisateur-connecte',
   nom: 'Test',
@@ -47,7 +58,7 @@ const toUser = (
   telephone: null,
   cguAccepteesLe: null,
   newEmail: null,
-  roles: [PlatformRole.CONNECTED, PlatformRole.VERIFIED],
+  roles: [...roles],
   permissions: [],
   collectivites: [access],
 });
@@ -59,8 +70,10 @@ const toRootLinks = (items: NavItem[] | undefined): RootLink[] =>
     .filter(isNavLink)
     .map((link) => ({ label: link.children, href: link.href }));
 
-const toCollectiviteRootLinks = (applicationEnv: string): RootLink[] => {
-  const user = toUser(epciAccess);
+const toCollectiviteRootLinks = (
+  roles: readonly PlatformRole[]
+): RootLink[] => {
+  const user = toUser(epciAccess, roles);
   return toRootLinks(
     makeCollectiviteNav({
       user,
@@ -69,7 +82,6 @@ const toCollectiviteRootLinks = (applicationEnv: string): RootLink[] => {
         user
       ),
       isDemarchePcaetEnabled: false,
-      applicationEnv,
     })?.startItems
   );
 };
@@ -77,7 +89,7 @@ const toCollectiviteRootLinks = (applicationEnv: string): RootLink[] => {
 const toMainRootLinks = (
   access: CollectiviteRolesAndPermissions
 ): RootLink[] => {
-  const user = toUser(access);
+  const user = toUser(access, superAdminRoles);
   return toRootLinks(
     makeMainNav({
       user,
@@ -95,29 +107,28 @@ const actionsDeReferenceLink: RootLink = {
   href: '/collectivite/20/actions-reference',
 };
 
-describe('entree-nav-masquee-en-prod', () => {
-  it.skip.each(['dev', 'preprod', 'staging'])(
-    'en %s, une entrée à la racine mène aux actions de référence de la collectivité',
-    (applicationEnv) => {
-      expect(toCollectiviteRootLinks(applicationEnv)).toContainEqual(
-        actionsDeReferenceLink
-      );
-    }
-  );
+describe('entree-nav-reservee-au-super-admin', () => {
+  it('un super admin a une entrée à la racine qui mène aux actions de référence de la collectivité', () => {
+    expect(toCollectiviteRootLinks(superAdminRoles)).toContainEqual(
+      actionsDeReferenceLink
+    );
+  });
 
-  it.skip('en prod, aucune entrée ne mène aux actions de référence', () => {
-    const labels = toCollectiviteRootLinks('prod').map((link) => link.label);
+  it("un utilisateur qui n'est pas super admin n'a pas l'entrée des actions de référence", () => {
+    const labels = toCollectiviteRootLinks(connectedRoles).map(
+      (link) => link.label
+    );
 
     expect(labels).not.toContain(appLabels.actionsDeReference);
   });
 
-  it.skip("un service déconcentré n'a pas l'entrée des actions de référence", () => {
+  it("un super admin en service déconcentré n'a pas l'entrée des actions de référence", () => {
     const labels = toMainRootLinks(drealAccess).map((link) => link.label);
 
     expect(labels).not.toContain(appLabels.actionsDeReference);
   });
 
-  it.skip("un utilisateur en vue simplifiée n'a pas l'entrée des actions de référence", () => {
+  it("un super admin en vue simplifiée n'a pas l'entrée des actions de référence", () => {
     const labels = toMainRootLinks(simplifiedViewAccess).map(
       (link) => link.label
     );
