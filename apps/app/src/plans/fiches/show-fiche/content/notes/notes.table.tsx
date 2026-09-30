@@ -1,8 +1,9 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
   Row,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
@@ -31,7 +32,9 @@ type NotesTableProps = {
   onDeleteNote: (noteToDeleteId: number) => Promise<void>;
 };
 
-const columnHelper = createColumnHelper<FicheNote>();
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<typeof features, FicheNote>();
 
 export const NotesTable = ({
   notes,
@@ -55,42 +58,41 @@ export const NotesTable = ({
   );
 
   const columns = useMemo(
-    () => [
-      columnHelper.accessor('dateNote', {
-        header: () => (
-          <TableHeaderCell title={appLabels.annee} className="w-32" />
-        ),
-        cell: () => <NoteYearCell />,
-      }),
-      columnHelper.accessor('note', {
-        header: () => <TableHeaderCell title={appLabels.description()} />,
-        cell: () => <NoteDescriptionCell />,
-      }),
-      columnHelper.display({
-        id: 'metadata',
-        header: () => (
-          <TableHeaderCell
-            title={appLabels.noteHeaderAuteurDate}
-            className="w-96"
-          />
-        ),
-        cell: () => <NoteMetadataCell />,
-      }),
-      columnHelper.display({
-        id: 'actions',
-        header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
-        cell: () => (
-          <NoteActionsCell fiche={fiche} onDeleteNote={onDeleteNote} />
-        ),
-      }),
-    ],
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor('dateNote', {
+          header: () => (
+            <TableHeaderCell title={appLabels.annee} className="w-32" />
+          ),
+          cell: () => <NoteYearCell />,
+        }),
+        columnHelper.accessor('note', {
+          header: () => <TableHeaderCell title={appLabels.description()} />,
+          cell: () => <NoteDescriptionCell />,
+        }),
+        columnHelper.display({
+          id: 'metadata',
+          header: () => (
+            <TableHeaderCell
+              title={appLabels.noteHeaderAuteurDate}
+              className="w-96"
+            />
+          ),
+          cell: () => <NoteMetadataCell />,
+        }),
+        columnHelper.display({
+          id: 'actions',
+          header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
+          cell: () => (
+            <NoteActionsCell fiche={fiche} onDeleteNote={onDeleteNote} />
+          ),
+        }),
+      ]),
     [fiche, onDeleteNote]
   );
 
-  // React Compiler does not work well with useReactTable()
-  // See: https://github.com/TanStack/table/issues/6137
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: sortedNotes,
     getRowId: (row, index) => row.id?.toString() ?? `new-${index}`,
@@ -98,7 +100,6 @@ export const NotesTable = ({
       columnVisibility,
     },
     onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   useEffect(() => {
@@ -119,7 +120,7 @@ export const NotesTable = ({
             row,
             children,
           }: {
-            row: Row<FicheNote>;
+            row: Row<typeof features, FicheNote>;
             children: ReactNode;
           }) => (
             <NoteFormProvider

@@ -6,10 +6,14 @@ import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<
+    ReferentielTableFeatures,
+    ActionListItem,
+    ActionListItem['services']
+  >;
 };
 
 export const ReferentielTableServicesPilotesCell = ({ info }: Props) => {

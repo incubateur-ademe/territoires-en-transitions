@@ -3,10 +3,14 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { CellContext } from '@tanstack/react-table';
 import { TableCellRichTextEditor } from '@tet/ui';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta, isAuditableMesure } from './utils';
+import {
+  getTableMeta,
+  isAuditableMesure,
+  ReferentielTableFeatures,
+} from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 export const ReferentielTableAuditNotesCell = ({ info }: Props) => {

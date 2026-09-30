@@ -1,8 +1,13 @@
 import {
   createColumnHelper,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
+  columnVisibilityFeature,
+  createSortedRowModel,
+  rowSelectionFeature,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_text,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Badge } from '../../Badge';
@@ -18,7 +23,20 @@ import {
   fakeVueTabulaireData,
 } from './fixtures';
 
-const columnHelper = createColumnHelper<FakeVueTabulaireAction>();
+const features = tableFeatures({
+  columnVisibilityFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  // Le tri `auto` ne résout que les fonctions enregistrées : celles qu'il
+  // retient pour des colonnes texte.
+  sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text },
+});
+
+const columnHelper = createColumnHelper<
+  typeof features,
+  FakeVueTabulaireAction
+>();
 
 const DescriptionCell = ({ initialValue }: { initialValue?: string }) => {
   const [value, setValue] = useState(initialValue);
@@ -98,7 +116,7 @@ const StatusCell = ({ initialValue }: { initialValue?: string }) => {
   );
 };
 
-const columns = [
+const columns = columnHelper.columns([
   columnHelper.accessor('description', {
     header: () => <TableHeaderCell title="Description" />,
     cell: (info) => <DescriptionCell initialValue={info.cell.getValue()} />,
@@ -133,7 +151,7 @@ const columns = [
     ),
     cell: (info) => <TableCell>{info.getValue()}</TableCell>,
   }),
-];
+]);
 
 type Props = {
   isLoading?: boolean;
@@ -143,7 +161,8 @@ type Props = {
 export const TableFullEditing = ({ isLoading, isEmpty }: Props) => {
   const [rowSelection, setRowSelection] = useState({});
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: fakeVueTabulaireData,
     state: {
@@ -151,8 +170,6 @@ export const TableFullEditing = ({ isLoading, isEmpty }: Props) => {
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   return <ReactTable table={table} isLoading={isLoading} isEmpty={isEmpty} />;

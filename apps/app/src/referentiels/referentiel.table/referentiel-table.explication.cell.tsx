@@ -4,10 +4,14 @@ import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCellRichTextEditor } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<
+    ReferentielTableFeatures,
+    ActionListItem,
+    ActionListItem['score']['explication']
+  >;
 };
 
 const actionTypesWithExplication = new Set<ActionType>([

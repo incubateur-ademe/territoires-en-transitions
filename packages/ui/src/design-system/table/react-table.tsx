@@ -1,4 +1,11 @@
-import { flexRender, Row, Table as TableProps } from '@tanstack/react-table';
+import {
+  columnVisibilityFeature,
+  FlexRender,
+  Row,
+  RowData,
+  Table as TableProps,
+  TableFeatures,
+} from '@tanstack/react-table';
 import { Fragment, HTMLAttributes, ReactNode } from 'react';
 
 import { EmptyCardProps } from '../../components/EmptyCard/EmptyCard';
@@ -17,14 +24,30 @@ export type TableRowAttributes = HTMLAttributes<HTMLTableRowElement> & {
   [attribute: `data-${string}`]: string | undefined;
 };
 
-export type ReactTableProps<T = unknown> = {
-  table: TableProps<T>;
+/**
+ * Les tableaux rendus ici doivent enregistrer `columnVisibilityFeature` : seules
+ * les cellules et colonnes visibles sont affichées.
+ */
+type VisibilityFeatures = {
+  columnVisibilityFeature: typeof columnVisibilityFeature;
+};
+
+export type ReactTableFeatures = TableFeatures & VisibilityFeatures;
+
+export type ReactTableProps<
+  TFeatures extends ReactTableFeatures,
+  T extends RowData
+> = {
+  table: TableProps<TFeatures, T>;
   isLoading?: boolean; // Pour afficher uniquement des loading rows
   isLoadingNewRow?: boolean; // Pour afficher un loading row en plus des rows existants
   nbLoadingRows?: TableLoadingProps['nbOfRows'];
   isEmpty?: boolean;
   emptyCard?: EmptyCardProps;
-  rowWrapper?: (props: { row: Row<T>; children: ReactNode }) => ReactNode;
+  rowWrapper?: (props: {
+    row: Row<TFeatures, T>;
+    children: ReactNode;
+  }) => ReactNode;
   /**
    * Le nom accessible du tableau. À renseigner dès qu'une page en porte
    * plusieurs, ou qu'aucun titre voisin ne dit ce que celui-ci liste.
@@ -35,10 +58,13 @@ export type ReactTableProps<T = unknown> = {
    * Les attributs à poser sur chaque ligne — un `data-test`, une classe
    * conditionnelle. Pour remplacer la ligne elle-même, voir `rowWrapper`.
    */
-  getRowProps?: (row: Row<T>) => TableRowAttributes;
+  getRowProps?: (row: Row<TFeatures, T>) => TableRowAttributes;
 };
 
-export const ReactTable = <T,>({
+export const ReactTable = <
+  TFeatures extends ReactTableFeatures,
+  T extends RowData
+>({
   table,
   isLoading,
   isLoadingNewRow,
@@ -49,15 +75,19 @@ export const ReactTable = <T,>({
   ariaLabel,
   className,
   getRowProps,
-}: ReactTableProps<T>) => {
-  const renderRow = (row: Row<T>) => {
-    const cells = row
+}: ReactTableProps<TFeatures, T>) => {
+  // TS ne résout pas `Row<TFeatures, T>` ni `Table<TFeatures, T>` pour un
+  // `TFeatures` générique : on les lit à travers la seule feature requise.
+  const visibleColumnIds = (
+    table as unknown as TableProps<VisibilityFeatures, T>
+  )
+    .getVisibleFlatColumns()
+    .map((col) => col.id);
+
+  const renderRow = (row: Row<TFeatures, T>) => {
+    const cells = (row as unknown as Row<VisibilityFeatures, T>)
       .getVisibleCells()
-      .map((cell) => (
-        <Fragment key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </Fragment>
-      ));
+      .map((cell) => <FlexRender key={cell.id} cell={cell} />);
     if (rowWrapper) {
       return (
         <Fragment key={row.id}>
@@ -78,35 +108,21 @@ export const ReactTable = <T,>({
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <Fragment key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext()
-                )}
-              </Fragment>
+              <FlexRender key={header.id} header={header} />
             ))}
           </tr>
         ))}
       </TableHead>
       <tbody>
         {isLoading ? (
-          <TableLoading
-            columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            nbOfRows={nbLoadingRows}
-          />
+          <TableLoading columnIds={visibleColumnIds} nbOfRows={nbLoadingRows} />
         ) : isEmpty ? (
-          <TableEmpty
-            columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            {...emptyCard}
-          />
+          <TableEmpty columnIds={visibleColumnIds} {...emptyCard} />
         ) : (
           table.getRowModel().rows.map(renderRow)
         )}
         {isLoadingNewRow && (
-          <TableLoading
-            columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            nbOfRows={1}
-          />
+          <TableLoading columnIds={visibleColumnIds} nbOfRows={1} />
         )}
       </tbody>
     </Table>

@@ -1,10 +1,11 @@
-import { flexRender, Table } from '@tanstack/react-table';
+import { FlexRender, Table } from '@tanstack/react-table';
 import { TableHead, TableRow } from '@tet/ui';
-import { Fragment, JSX } from 'react';
+import { JSX } from 'react';
 import { IndicateurTableRow } from './types';
+import { IndicateurValeursTableFeatures } from './utils';
 
 type Props = {
-  table: Table<IndicateurTableRow>;
+  table: Table<IndicateurValeursTableFeatures, IndicateurTableRow>;
 };
 
 export const IndicateurValeursTableHead = ({ table }: Props): JSX.Element => (
@@ -16,9 +17,7 @@ export const IndicateurValeursTableHead = ({ table }: Props): JSX.Element => (
       .map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <Fragment key={header.id}>
-              {flexRender(header.column.columnDef.header, header.getContext())}
-            </Fragment>
+            <FlexRender key={header.id} header={header} />
           ))}
         </TableRow>
       ))}

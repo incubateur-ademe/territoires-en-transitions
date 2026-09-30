@@ -9,7 +9,10 @@ import { capitalize } from '@tet/ui/labels/plural';
 import { describe, expect, it, vi } from 'vitest';
 import { IndicateurValeurCell } from '../indicateur-valeur.cell';
 import { IndicateurTableRow } from '../types';
-import { IndicateurValeursTableMeta } from '../utils';
+import {
+  IndicateurValeursTableFeatures,
+  IndicateurValeursTableMeta,
+} from '../utils';
 import { fakeRow } from './grid-fixtures';
 
 const indicateurId = 12;
@@ -50,7 +53,11 @@ const buildCellContext = ({
   objectif: number | null;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }): {
-  cell: CellContext<IndicateurTableRow, unknown>;
+  cell: CellContext<
+    IndicateurValeursTableFeatures,
+    IndicateurTableRow,
+    unknown
+  >;
   updateIndicateurValeurs: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 } => {
   const row = fakeRow({
@@ -68,7 +75,11 @@ const buildCellContext = ({
   const cell = {
     row: { original: row },
     table: { options: { meta } },
-  } as unknown as CellContext<IndicateurTableRow, unknown>;
+  } as unknown as CellContext<
+    IndicateurValeursTableFeatures,
+    IndicateurTableRow,
+    unknown
+  >;
 
   return { cell, updateIndicateurValeurs };
 };

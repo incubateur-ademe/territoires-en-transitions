@@ -16,10 +16,10 @@ import {
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 function CommentsCellContent({
@@ -27,7 +27,7 @@ function CommentsCellContent({
   action,
   cellId,
 }: {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
   action: ActionListItem;
   cellId: string;
 }) {

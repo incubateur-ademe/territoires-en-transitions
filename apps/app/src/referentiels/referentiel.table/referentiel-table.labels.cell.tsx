@@ -2,6 +2,7 @@ import { CellContext } from '@tanstack/react-table';
 import { ReferentielLabelEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
+import { ReferentielTableFeatures } from './utils';
 
 const labelDisplayNames: Record<string, string> = {
   [ReferentielLabelEnum.TE_CAE]: 'CAE',
@@ -9,7 +10,11 @@ const labelDisplayNames: Record<string, string> = {
 };
 
 type Props = {
-  info: CellContext<ActionListItem, ActionListItem['labels']>;
+  info: CellContext<
+    ReferentielTableFeatures,
+    ActionListItem,
+    ActionListItem['labels']
+  >;
 };
 
 export const ReferentielTableLabelsCell = ({ info }: Props) => {

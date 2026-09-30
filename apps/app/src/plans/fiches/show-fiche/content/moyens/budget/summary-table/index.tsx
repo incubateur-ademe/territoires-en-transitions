@@ -1,8 +1,9 @@
 import { getFormattedNumber } from '@tet/domain/utils';
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { Input, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import { isNil } from 'es-toolkit';
@@ -22,7 +23,9 @@ type SummaryField = 'montant' | 'depense' | 'etpPrevisionnel' | 'etpReel';
 type BudgetSummaryRow = {
   id: 'summary';
 } & Pick<Budget, SummaryField>;
-const columnHelper = createColumnHelper<BudgetSummaryRow>();
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<typeof features, BudgetSummaryRow>();
 
 const CellValue = ({
   value,
@@ -33,7 +36,9 @@ const CellValue = ({
 }) => {
   if (!value)
     return (
-      <span className="font-normal italic text-grey-6">{appLabels.ajouterValeur}</span>
+      <span className="font-normal italic text-grey-6">
+        {appLabels.ajouterValeur}
+      </span>
     );
   if (item.unit === 'ETP') return <ETPValue value={value} />;
   return (
@@ -190,10 +195,10 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
     );
   }, [tableData]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: tableData,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   return (

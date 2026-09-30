@@ -18,10 +18,18 @@ import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dro
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta, ReferentielTableMeta } from './utils';
+import {
+  getTableMeta,
+  ReferentielTableMeta,
+  ReferentielTableFeatures,
+} from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, StatutAvancement | null | undefined>;
+  info: CellContext<
+    ReferentielTableFeatures,
+    ActionListItem,
+    StatutAvancement | null | undefined
+  >;
 };
 
 export const actionTypesWithStatut = new Set<ActionType>([
@@ -111,7 +119,7 @@ function InlineEditActionStatutDropdown({
   statut: StatutAvancement | null | undefined;
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   inlineEditOpenState: OpenState;
-  row: Row<ActionListItem>;
+  row: Row<ReferentielTableFeatures, ActionListItem>;
   setPendingDetailleALaTache: ReferentielTableMeta['setPendingDetailleALaTache'];
 }) {
   const selectedStatutRef = useRef<StatutAvancement | null | undefined>(null);

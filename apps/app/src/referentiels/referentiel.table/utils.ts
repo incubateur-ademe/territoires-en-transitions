@@ -1,5 +1,15 @@
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { Table, TableMeta } from '@tanstack/react-table';
+import {
+  columnFilteringFeature,
+  columnVisibilityFeature,
+  createExpandedRowModel,
+  createFilteredRowModel,
+  globalFilteringFeature,
+  metaHelper,
+  rowExpandingFeature,
+  Table,
+  tableFeatures,
+} from '@tanstack/react-table';
 import {
   ActionId,
   ActionType,
@@ -15,32 +25,6 @@ import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-p
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
 import { MesureAuditStatutRow } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
 import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
-
-const isTableMetaValid = (
-  meta?: TableMeta<ActionListItem>
-): meta is ReferentielTableMeta => {
-  return (
-    meta !== undefined &&
-    'collectiviteId' in meta &&
-    'referentielId' in meta &&
-    'permissions' in meta &&
-    meta.permissions !== undefined &&
-    'canMutateReferentiel' in meta.permissions &&
-    typeof meta.permissions.canMutateReferentiel === 'boolean' &&
-    'updateActionStatut' in meta &&
-    typeof meta.updateActionStatut === 'function' &&
-    'updateActionPilotes' in meta &&
-    typeof meta.updateActionPilotes === 'function' &&
-    'updateActionServices' in meta &&
-    typeof meta.updateActionServices === 'function' &&
-    'updateActionExplication' in meta &&
-    typeof meta.updateActionExplication === 'function' &&
-    'isPendingDetailleALaTache' in meta &&
-    typeof meta.isPendingDetailleALaTache === 'function' &&
-    'setPendingDetailleALaTache' in meta &&
-    typeof meta.setPendingDetailleALaTache === 'function'
-  );
-};
 
 export type ReferentielTableMeta = {
   collectiviteId: number;
@@ -73,11 +57,23 @@ export type ReferentielTableMeta = {
   setPendingDetailleALaTache: (actionId: ActionId, isPending: boolean) => void;
 };
 
+export const referentielTableFeatures = tableFeatures({
+  columnFilteringFeature,
+  columnVisibilityFeature,
+  globalFilteringFeature,
+  rowExpandingFeature,
+  filteredRowModel: createFilteredRowModel(),
+  expandedRowModel: createExpandedRowModel(),
+  tableMeta: metaHelper<ReferentielTableMeta>(),
+});
+
+export type ReferentielTableFeatures = typeof referentielTableFeatures;
+
 export const getTableMeta = (
-  table: Table<ActionListItem>
+  table: Table<ReferentielTableFeatures, ActionListItem>
 ): ReferentielTableMeta => {
   const meta = table.options.meta;
-  if (!isTableMetaValid(meta)) {
+  if (meta === undefined) {
     throw new ReferentielException('Table meta is not valid');
   }
   return meta;

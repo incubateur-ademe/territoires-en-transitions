@@ -1,5 +1,5 @@
-import { Table, TableMeta } from '@tanstack/react-table';
-import { IndicateurTableRow } from './types';
+import { metaHelper, Table, tableFeatures } from '@tanstack/react-table';
+import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
 
 export type IndicateurValeursTableMeta = {
   onReferenceYearChange: (year: number) => void;
@@ -23,45 +23,24 @@ export type IndicateurValeursTableMeta = {
   }) => Promise<boolean>;
 };
 
-const isTableMetaValid = (
-  meta?: TableMeta<IndicateurTableRow>
-): meta is IndicateurValeursTableMeta => {
-  if (meta === undefined) {
-    return false;
-  }
-
-  if (
-    'onReferenceYearChange' in meta &&
-    meta.onReferenceYearChange !== undefined &&
-    typeof meta.onReferenceYearChange !== 'function'
-  ) {
-    return false;
-  }
-
-  if (
-    'updateIndicateurValeurs' in meta &&
-    meta.updateIndicateurValeurs !== undefined &&
-    typeof meta.updateIndicateurValeurs !== 'function'
-  ) {
-    return false;
-  }
-
-  if (
-    'setIndicateurApplicable' in meta &&
-    meta.setIndicateurApplicable !== undefined &&
-    typeof meta.setIndicateurApplicable !== 'function'
-  ) {
-    return false;
-  }
-
-  return true;
+export type IndicateurValeursColumnMeta = {
+  year: number;
+  indicateurValeurType: PcaetIndicateurValeurType;
 };
 
+export const indicateurValeursTableFeatures = tableFeatures({
+  tableMeta: metaHelper<IndicateurValeursTableMeta>(),
+  columnMeta: metaHelper<IndicateurValeursColumnMeta>(),
+});
+
+export type IndicateurValeursTableFeatures =
+  typeof indicateurValeursTableFeatures;
+
 export const getTableMeta = (
-  table: Table<IndicateurTableRow>
+  table: Table<IndicateurValeursTableFeatures, IndicateurTableRow>
 ): IndicateurValeursTableMeta => {
   const meta = table.options.meta;
-  if (!isTableMetaValid(meta)) {
+  if (meta === undefined) {
     throw new Error('Indicateur valeurs table meta is not valid');
   }
   return meta;

@@ -1,18 +1,17 @@
-import { flexRender, Row } from '@tanstack/react-table';
+import { FlexRender, Row } from '@tanstack/react-table';
 import { TableRow } from '@tet/ui';
-import { Fragment, JSX } from 'react';
+import { JSX } from 'react';
 import { IndicateurTableRow } from './types';
+import { IndicateurValeursTableFeatures } from './utils';
 
 export const IndicateurValeursTableRow = ({
   row,
 }: {
-  row: Row<IndicateurTableRow>;
+  row: Row<IndicateurValeursTableFeatures, IndicateurTableRow>;
 }): JSX.Element => (
   <TableRow className="last:border-b">
-    {row.getVisibleCells().map((cell) => (
-      <Fragment key={cell.id}>
-        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-      </Fragment>
+    {row.getAllCells().map((cell) => (
+      <FlexRender key={cell.id} cell={cell} />
     ))}
   </TableRow>
 );

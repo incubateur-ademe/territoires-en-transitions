@@ -15,10 +15,14 @@ import { parseCellNumber } from './parse-cell-number';
 import { SaveAck } from './save-ack';
 import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
 import { useCellEdit } from './use-cell-edit';
-import { getTableMeta } from './utils';
+import { getTableMeta, IndicateurValeursTableFeatures } from './utils';
 
 type IndicateurValeurCellProps = {
-  cell: CellContext<IndicateurTableRow, unknown>;
+  cell: CellContext<
+    IndicateurValeursTableFeatures,
+    IndicateurTableRow,
+    unknown
+  >;
   indicateurValeurType: Extract<IndicateurValeurType, 'resultat' | 'objectif'>;
   year: number;
   isReadonly?: boolean;

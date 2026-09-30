@@ -1,9 +1,10 @@
 import { getFormattedNumber } from '@tet/domain/utils';
 import { appLabels } from '@/app/labels/catalog';
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import {
   Button,
@@ -40,7 +41,9 @@ type BudgetTableRow =
       type: 'total';
     };
 
-const columnHelper = createColumnHelper<BudgetTableRow>();
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<typeof features, BudgetTableRow>();
 
 const TotalTableCell = ({
   children,
@@ -147,12 +150,16 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'etpPrevisionnel',
-        header: () => <TableHeaderCell title={appLabels.budgetEtpPrevisionnel} />,
+        header: () => (
+          <TableHeaderCell title={appLabels.budgetEtpPrevisionnel} />
+        ),
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
               <TotalTableCell>
-                {`${getFormattedNumber(totals.etpPrevisionnel)} ${appLabels.uniteEtp}`}
+                {`${getFormattedNumber(totals.etpPrevisionnel)} ${
+                  appLabels.uniteEtp
+                }`}
               </TotalTableCell>
             );
           }
@@ -192,11 +199,11 @@ export const BudgetPerYearTable = ({
     [allYearsOptions, usedYears, fiche, deleteBudgets, type, totals]
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: tableData,
     getRowId: (row) => row.id,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   useEffect(() => {

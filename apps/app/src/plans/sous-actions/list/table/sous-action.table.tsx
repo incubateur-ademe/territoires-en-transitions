@@ -1,8 +1,10 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
+  rowSortingFeature,
   SortingState,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
@@ -18,9 +20,11 @@ import { SousActionPilotesCell } from './sous-action.pilotes.cell';
 import { SousActionStatutCell } from './sous-action.statut.cell';
 import { SousActionTitleCell } from './sous-action.title.cell';
 
-const columnHelper = createColumnHelper<FicheWithRelations>();
+const features = tableFeatures({ columnVisibilityFeature, rowSortingFeature });
 
-const columns = [
+const columnHelper = createColumnHelper<typeof features, FicheWithRelations>();
+
+const columns = columnHelper.columns([
   columnHelper.accessor('titre', {
     header: () => (
       <TableHeaderCell title={appLabels.tableauTitre} className="w-80" />
@@ -72,9 +76,12 @@ const columns = [
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
     cell: (info) => <SousActionActionsCell sousAction={info.row.original} />,
   }),
-];
+]);
 
-type Props = Omit<ReactTableProps, 'table'> & {
+type Props = Omit<
+  ReactTableProps<typeof features, FicheWithRelations>,
+  'table'
+> & {
   sousActions: FicheWithRelations[];
   createSousAction?: () => void;
   hiddenColumns?: (keyof FicheWithRelations | 'actions')[];
@@ -96,7 +103,8 @@ export const SousActionTable = ({
 
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: sousActions,
     manualSorting: true,
@@ -107,7 +115,6 @@ export const SousActionTable = ({
     },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   useEffect(() => {
