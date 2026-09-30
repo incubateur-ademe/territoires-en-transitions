@@ -1,10 +1,8 @@
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
-import { Tables } from '@tet/api';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 
-export type Labellisations = Tables<'labellisation'>;
 export type Indicateurs = {
   date_valeur: string;
   resultat: number;
@@ -12,8 +10,6 @@ export type Indicateurs = {
   periodicite: IndicateurPeriodicite;
   source?: string;
 };
-export type IndicateurArtificialisation =
-  Tables<'indicateur_artificialisation'>;
 
 const CODE_INSEE_COMMUNE_REGEX = /^(\d{5}|2[AB]\d{3})$/;
 
