@@ -78,10 +78,11 @@ export class DocumentsPom {
     await expect(this.page.getByText(filename).first()).toBeVisible();
   }
 
-  /** Clique sur le nom du document et attend le téléchargement déclenché par l'UI. */
-  public async downloadDocument(): Promise<Download> {
+  public async downloadDocument(documentTitle: string): Promise<Download> {
     const downloadPromise = this.page.waitForEvent('download');
-    await this.documentCard.locator('[data-test="name"]').click();
+    await this.documentCard
+      .getByRole('button', { name: documentTitle })
+      .click();
     return downloadPromise;
   }
 }
