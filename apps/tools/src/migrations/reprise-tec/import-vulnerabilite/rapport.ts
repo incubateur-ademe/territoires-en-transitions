@@ -1,16 +1,23 @@
-/** Le rapport : ce que l'import a lu et écrit. */
+/** Le rapport : ce que l'import a lu, écrit et écarté, chaque fusion, et les cas à connaître. */
 
+import type { Ecart } from '../import-fiches/ecarts';
 import type { Valeur } from './fusion';
 import type { Ligne } from './lignes';
+import { toTexte } from './niveau';
+import type { Thematique } from './thematiques';
 
-/** Affiche les lignes lues et écrites, les lignes TeT par niveau, et les « Déchets ». */
+/** Affiche le bilan, les écarts par motif, ce qui est écrit, chaque fusion, les libellés non reconnus et les dossiers sans rien d'affiché. */
 export const printRapport = ({
+  bilan,
+  ecarts,
   lignes,
   valeurs,
   ecrites,
   dechets,
   isConfirmed,
 }: {
+  bilan: { table: string; lues: number; ecrites: number; ecartees: number }[];
+  ecarts: readonly Ecart[];
   lignes: readonly Ligne[];
   valeurs: readonly Valeur[];
   ecrites: { lignes: number; demarches: number };
@@ -18,31 +25,86 @@ export const printRapport = ({
   isConfirmed: boolean;
 }) => {
   const aEcrire = valeurs.filter((v) => v.aEcrire);
-  const sansThematique = lignes.filter((l) => l.thematique === null).length;
-  const lignesEcrites = valeurs.flatMap((v) =>
-    v.lignes.filter((l) => l.ecrite)
-  ).length;
+  const collectivites = new Map(
+    lignes.map((l) => [l.collectiviteId, l.collectivite])
+  );
+  const toCollectivite = (id: number) => `${collectivites.get(id)} (${id})`;
+
+  console.log('Lignes de T&C : lues = écrites + écartées');
+  for (const b of bilan) {
+    console.log(`  ${b.table} : ${b.lues} = ${b.ecrites} + ${b.ecartees}`);
+  }
+  console.log('Écarts par motif (ligne entière, puis partie de ligne)');
+  printComptes(
+    ecarts.map((e) =>
+      e.precision === '' ? e.motif : `${e.precision}, ${e.motif}`
+    )
+  );
 
   console.log(
-    `${lignes.length} lignes T&C lues sur les dossiers repris : ${
-      lignes.length - sansThematique
-    } avec une thématique, ${sansThematique} sans`
+    `\n${ecrites.lignes} lignes de demarche_pcaet_vulnerabilite_valeur, sur ${ecrites.demarches} démarches :`
   );
-  console.log(`${lignesEcrites} lignes T&C écrites`);
+  printComptes(aEcrire.map((v) => v.niveau ?? 'objectif sans niveau'));
   console.log(
-    `${ecrites.lignes} lignes de demarche_pcaet_vulnerabilite_valeur, sur ${ecrites.demarches} démarches :`
+    'Niveaux 2050 et 2100, objectifs 2100 : vides partout (T&C ne les demandait pas)'
   );
-  for (const [nom, n] of [
-    ['non concerné', aEcrire.filter((v) => v.niveau === 'non_concerne')],
-    ['faible', aEcrire.filter((v) => v.niveau === 'faible')],
-    ['moyen', aEcrire.filter((v) => v.niveau === 'moyen')],
-    ['fort', aEcrire.filter((v) => v.niveau === 'fort')],
-    ['objectif sans niveau', aEcrire.filter((v) => v.niveau === null)],
-  ] as const) {
-    console.log(`  ${nom} : ${n.length}`);
-  }
   console.log(
     `« Déchets » : ${dechets.creees} créées, ${dechets.reutilisees} réutilisées (déjà là dans la collectivité)`
+  );
+
+  printCas(
+    'Fusions : lignes TeT qui réunissent plusieurs lignes T&C',
+    valeurs
+      .filter((v) => v.lignes.length > 1)
+      .map((v) => {
+        const origine = v.lignes
+          .map(
+            ({ ligne }) => `« ${toTexte(ligne.libelle)} » ${toNiveauLu(ligne)}`
+          )
+          .join(', ');
+        const retenu = v.aEcrire ? v.niveau ?? 'sans niveau' : "rien d'écrit";
+        const objectifs =
+          v.lignes.filter((l) => l.ligne.objectif.objectif !== null).length > 1
+            ? ` ; objectifs : ${v.objectifs}`
+            : '';
+        return `${toCollectivite(v.collectiviteId)}, démarche ${
+          v.demarcheId
+        }, ${toNom(v.thematique)} : ${origine} → ${retenu}${objectifs}`;
+      })
+  );
+  printCas(
+    'Libellés non reconnus (texte, nombre de lignes)',
+    listNombres(
+      lignes.filter((l) => l.thematique === null).map((l) => toTexte(l.libelle))
+    )
+  );
+  const parId = new Map(lignes.map((l) => [l.id, l]));
+  printCas(
+    'Texte après le mot de niveau, sans place (lignes écrites)',
+    ecarts
+      .filter((e) => e.motif === 'texte_sans_place')
+      .map((e) => {
+        const l = parId.get(e.id) as Ligne;
+        return `${toCollectivite(l.collectiviteId)}, ligne T&C ${l.id} : ${
+          l.vulnerable.texte
+        }`;
+      })
+  );
+  const montrees = new Set(aEcrire.map((v) => v.demarcheId));
+  printCas(
+    "Dossiers repris qui avaient une vulnérabilité et n'en montrent rien",
+    [
+      ...new Map(
+        lignes
+          .filter((l) => !montrees.has(l.demarcheId))
+          .map((l) => [
+            l.demarcheId,
+            `${toCollectivite(l.collectiviteId)} : dossier T&C ${
+              l.dossierTecId
+            }, démarche ${l.demarcheId}`,
+          ])
+      ).values(),
+    ]
   );
 
   console.log(
@@ -50,4 +112,35 @@ export const printRapport = ({
       ? '\nImport terminé.'
       : '\nSimulation : tout a été annulé. Relancer avec --confirm pour importer.'
   );
+};
+
+/** Ce que la cellule « vulnérable » d'une ligne a donné : son niveau, « oui » ou rien. */
+const toNiveauLu = ({ vulnerable }: Ligne) =>
+  vulnerable.niveau ?? (vulnerable.oui ? 'oui' : 'sans niveau');
+
+const toNom = (thematique: Thematique) =>
+  'code' in thematique ? thematique.code : thematique.label;
+
+/** Chaque valeur distincte avec son nombre, les plus fréquentes d'abord. */
+const listNombres = (valeurs: readonly string[]) => {
+  const nombres = new Map<string, number>();
+  for (const v of valeurs) {
+    nombres.set(v, (nombres.get(v) ?? 0) + 1);
+  }
+  return [...nombres]
+    .sort(([x, n], [y, m]) => m - n || x.localeCompare(y, 'fr'))
+    .map(([v, n]) => `${v} : ${n}`);
+};
+
+const printComptes = (valeurs: readonly string[]) => {
+  for (const v of [...new Set(valeurs)].sort()) {
+    console.log(`  ${v} : ${valeurs.filter((x) => x === v).length}`);
+  }
+};
+
+const printCas = (titre: string, cas: readonly string[]) => {
+  console.log(`\n${titre} : ${cas.length}`);
+  for (const c of cas) {
+    console.log(`  ${c}`);
+  }
 };
