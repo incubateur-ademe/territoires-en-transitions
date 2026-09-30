@@ -720,6 +720,7 @@ export class ListIndicateursRepository {
         // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
         // un indicateur dont la collectivité n'a rien dit est applicable.
         isApplicable: sql<boolean>`coalesce(${indicateurCollectiviteTable.isApplicable}, true)`,
+        isSuivi: sql<boolean>`coalesce(${indicateurCollectiviteTable.isSuivi}, true)`,
         modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`
         ),

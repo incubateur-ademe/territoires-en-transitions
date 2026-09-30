@@ -81,6 +81,7 @@ export const updateIndicateurDefinitionInputSchema = z.object({
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
       isApplicable: z.boolean().optional(),
+      isSuivi: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),
       services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),

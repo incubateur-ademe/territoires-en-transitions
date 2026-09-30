@@ -26,6 +26,7 @@ export const indicateurCollectiviteTable = pgTable(
     confidentiel: boolean('confidentiel').default(false).notNull(),
     favoris: boolean('favoris').default(false).notNull(),
     isApplicable: boolean('is_applicable').default(true).notNull(),
+    isSuivi: boolean('is_suivi').default(true).notNull(),
     modifiedBy,
     modifiedAt,
   },
