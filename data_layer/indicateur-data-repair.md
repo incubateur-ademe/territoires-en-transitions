@@ -1,36 +1,14 @@
-# Réparation des données avant la migration des périodicités
+# Réparation des dates avant le schéma des périodicités
 
-Le contrôle de la sauvegarde de production du 28 septembre 2026 a trouvé une
-référence de formule inexistante et neuf dates hors du calendrier pris en charge.
-Ces données doivent être traitées avant la migration de schéma de la PR #5214.
-L’inventaire et les réparations ont été revalidés sur la sauvegarde du 29 septembre ;
-les mesures et risques actualisés figurent en fin de document.
+Cette PR (#5220) corrige uniquement les neuf observations approuvées sur le
+schéma historique. Elle ne modifie aucune formule et ne lance aucun recalcul.
+Elle peut être déployée avec le backend actuel, avant la PR de schéma compatible.
 
-## Référence de formule
-
-Le changement Sqitch `indicateur/correct-formule-cae-2-a` remplace le seul jeton
-`cae_2.lpcaet` par `cae_2.l_pcaet` dans la formule prédéfinie `cae_2.a`. La définition
-cible existe en production et l’échantillon du catalogue utilise déjà ce nom.
-Les autres termes de la formule sont conservés.
-
-Le changement verrouille la définition et refuse une réparation si la référence
-erronée apparaît plusieurs fois ou si la définition cible prédéfinie manque.
-Il ne fait rien avant le peuplement du catalogue ou si la formule est déjà corrigée.
-Le deploy et le verify refusent un rôle soumis à RLS pour ne pas confondre une
-définition masquée avec un catalogue absent.
-La vérification porte sur cette référence uniquement. Le revert conserve la
-correction de données : il ne réintroduit pas une référence inexistante.
-
-Avant le déploiement, vérifier également la cellule `valeurCalcule` de `cae_2.a`
-dans le catalogue configuré par `INDICATEUR_DEFINITIONS_SHEET_ID`, onglet
-`Indicateur definitions`, pour éviter qu’un import ultérieur réintroduise la faute.
-
-Cette réparation directe ne recalcule pas les observations enregistrées. L’import
-applicatif du catalogue, lui, lance un recalcul lorsque la formule change ; il ne
-sert donc pas à exécuter cette réparation. Le recalcul historique reste à planifier
-après la protection des observations manuelles avec métadonnées identifiée par
-l’audit de la PR #5214. Importer ensuite une formule déjà corrigée ne suffit pas
-à déclencher ce recalcul.
+Ordre : **réparations #5220 → schéma compatible → backend #5214 → activation #5215**.
+La correction de `cae_2.lpcaet` en `cae_2.l_pcaet` est livrée avec le backend
+protecteur de #5214, avant ses contrôles de dépendances des formules. Elle doit
+rester absente de cette livraison : les recalculs de l'ancien backend ne protègent
+pas encore toutes les saisies PCAET manuelles avec métadonnées.
 
 ## Dates et suppressions validées
 
@@ -98,168 +76,71 @@ métadonnées sont suspendus pendant cette restauration, sous verrou et dans la
 transaction ; les contraintes restent actives et les triggers retrouvent leur état
 initial. L’archive est supprimée après une restauration réussie.
 
-## Conséquence pour #5214
+## Contrôler les dates avant et après la réparation
 
-Les deux observations conservées de Margny sont au 1er janvier 2025, conformément
-à la décision métier. Elles ne nécessitent aucune exception mensuelle pour la
-migration annuelle. Cette réparation ne change pas les déclarations de
-périodicité des définitions.
-
-Après les deux réparations, le précontrôle réel de #5214 ne signale plus de date
-invalide, de date à normaliser ou de collision dans la copie de production. Ce
-résultat lève les anomalies de données inventoriées ; il ne valide pas les autres
-changements de #5214 ou de #5215 au regard du plan et de l’ADR 0018.
-
-## Validation de cette réparation
-
-Le corps SQL a été répété dans une transaction annulée sur la copie locale de la
-sauvegarde du 28 septembre 2026 : la référence erronée disparaît, le graphe passe
-de une à zéro dépendance introuvable, et l’empreinte de tous les champs des
-60 636 observations de `cae_2.a` reste identique. Le rollback restitue la formule
-initiale de la copie. Ce contrôle ne vaut pas répétition de la migration de
-périodicité de #5214.
-
-Le cycle des dates a également été répété sur cette copie dans une transaction
-annulée : trois mises à jour, six suppressions et neuf originaux archivés, aucune
-date hors du calendrier restant parmi 4 772 453 observations, aucune dépendance
-de formule introuvable après la correction précédente. Les autres observations des cinq
-couples indicateur/collectivité concernés, notamment les séries externes, restent
-identiques. Le revert restitue toutes les images initiales et réactive les deux
-triggers de métadonnées. Le précontrôle réel de #5214 ne signale aucune anomalie
-parmi les 4 772 453 observations restantes.
-
-Les suites pgTAP comptaient initialement 22 assertions pour la formule et
-40 pour les dates. La suite de formule compte désormais **27 assertions** : elle
-vérifie aussi le refus du deploy et du verify lorsque RLS masque la définition,
-avec préservation des formules et observations. Les cas de catalogue vide ou de
-définition absente restent acceptés par le rôle propriétaire, avec RLS activé.
-La suite des dates passe désormais **55 assertions** après
-les correctifs de revue du 29 septembre : résultat/commentaire modifié sans
-changement d’horodatage, rôle soumis à RLS, suppression et mise à jour ignorées
-par un trigger. Elles couvrent aussi le rejeu,
-les collisions, les données modifiées depuis l’approbation, les références de
-score, le retour arrière après éditions concurrentes et les changements de fuseau.
-Elles vérifient aussi les deux valeurs de Margny retenues au 1er janvier, le
-résultat absent conservé à NULL et l’archivage de leurs six observations originales.
-La vérification durable accepte les éditions métier ordinaires et les colonnes
-ajoutées ultérieurement ; les contrôles de rejeu et de revert restent stricts.
-
-Les tests de cycle utilisent le SQL Sqitch sur des fixtures synthétiques dans
-une base locale vide dédiée. Le runner remplace uniquement les neuf constantes
-d’approbation dans une copie temporaire du deploy par les empreintes des fixtures,
-figées **avant** les mutations de test. Aucun contrôle SQL n’est modifié, et
-aucune donnée de production n’est publiée. Les constantes livrées sont vérifiées
-séparément sur les neuf images réelles de la copie privée, avec deploy, verify,
-revert puis rollback intégral. Comme le dump original n’exporte pas les ACL,
-le droit d’usage du schéma `auth` par le propriétaire de `auth.users` a été
-rétabli uniquement dans cette transaction de test, puis annulé avec elle.
-Ils nécessitent Node.js, `psql`,
-`pg_prove` et l’extension PostgreSQL `pgtap`. Leur commande est :
+Le [rapport de dates](scripts/check-indicateur-periodicite.sql) est en lecture seule
+et fonctionne sur le schéma historique puis sur le schéma avec périodicité :
 
 ```sh
-INDICATEUR_DATA_REPAIR_TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/tet_indicateur_data_repair_test_local \
-  bash data_layer/tests/indicateur/correct-formule-cae-2-a.spec.sh
+psql --no-psqlrc --dbname="${PERIODICITE_CHECK_DATABASE_URL:?URL de la copie requise}" \
+  --file=data_layer/scripts/check-indicateur-periodicite.sql
+```
 
-# Utiliser une autre base vide pour la suite des dates.
+Un code de sortie 0 signifie que le rapport a été exécuté : lire aussi ses lignes.
+`date_invalide` et `conflit` exigent une réparation métier ; `a_normaliser` indique
+une date annuelle différente du 1er janvier. Aucune fusion ni correction générique
+n'est exécutée par ce contrôle.
+
+Sur la sauvegarde du **29 septembre 2026**, les neuf observations approuvées étaient
+les seules anomalies. Après les trois corrections et six suppressions :
+**4 772 548 observations, aucune date invalide, aucune date à normaliser et aucune
+collision**. Les dates de Margny sont au 1er janvier 2025, avec `8 / 9` et `NULL / 3`.
+Il n'est donc pas nécessaire d'ajouter une réécriture générale des dates à cette PR.
+Ce constat porte sur cette sauvegarde ; refaire le contrôle sur une copie récente
+et avant la bascule du backend. Les écritures de l'ancien backend restent possibles
+entre les livraisons et peuvent introduire de nouvelles anomalies.
+
+## Déploiement et retour arrière
+
+Déployer cette PR avant tout ajout de colonne de périodicité : les empreintes
+approuvées couvrent les lignes complètes du schéma historique. Prendre une sauvegarde
+avant le changement. La migration prend les verrous nécessaires et applique le lot
+atomiquement ; un état différent de celui approuvé bloque le déploiement.
+
+Après vérification des réparations, le backend actuel peut continuer à fonctionner.
+Les formules, imports et règles de recalcul conservent leur état antérieur. La
+protection générale des saisies manuelles sera livrée dans #5214 ; aucun recalcul
+historique ne doit être déclenché pour valider cette réparation.
+
+Revenir sur les migrations de schéma ultérieures avant le revert de cette PR.
+Le revert refuse d'écraser une édition métier postérieure. Une fois les écritures
+reprises, privilégier une correction en avant qui préserve ces éditions.
+
+## Preuves et limites
+
+Les répétitions des 28 et 29 septembre sur copies locales ont appliqué les trois
+corrections et six suppressions, puis restauré exactement les neuf originaux par
+revert et rollback. Les séries voisines, dont Atmo, sont restées identiques. Les
+empreintes approuvées et les exports de Margny étaient identiques sur les deux
+sauvegardes. Aucune écriture en production n'a été effectuée.
+
+Les **55 assertions pgTAP** de dates couvrent notamment : identité complète approuvée,
+RLS, collisions, références de score, refus des mutations ignorées par un trigger,
+rejeu, archivage, retour arrière et changements de fuseau. Les fixtures sont
+synthétiques ; seules les constantes d'approbation d'une copie temporaire du script
+sont remplacées, avant les mutations de test. Les empreintes livrées restent figées.
+
+```sh
 INDICATEUR_DATA_REPAIR_TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/tet_indicateur_data_repair_test_dates \
   bash data_layer/tests/indicateur/correct-dates-historiques.spec.sh
 ```
 
-Créer cette base jetable avant le test et la supprimer après. Le runner refuse
-une URL hors boucle locale, un autre préfixe de base ou un schéma indicateur déjà
-présent. Il ne faut pas l’exécuter dans la base restaurée. Les assertions pgTAP
-portent notamment sur la préservation des observations, le rejeu, le revert et
-le refus d’une dépendance de remplacement absente.
+Créer cette base locale vide et jetable avant le test, puis la supprimer. Le runner
+requiert Node.js, `psql`, `pg_prove` et l'extension `pgtap` ; il refuse une cible
+hors boucle locale ou contenant déjà les tables d'indicateurs.
 
-## Actualisation sur la sauvegarde du 29 septembre 2026
-
-Restauration locale avec `make db-restore-local-from-prod-backup d=latest` :
-archive `backup-2026-09-29.dump`, créée à 02:21:05 CEST depuis PostgreSQL 15.8,
-version applicative de production `e32417f9e` déployée le 25 septembre.
-Les 165 tables configurées ont été restaurées et tous les contrôles de fin ont
-réussi. Le schéma de l’archive et son journal Sqitch ont été examinés séparément
-du schéma local : aucune colonne de périodicité, préférence locale associée
-ni migration de périodicité n’y figure. Le socle annuel/mensuel décrit dans le plan ne doit donc pas être
-considéré comme déjà déployé dans cette sauvegarde. Les dates seules ne prouvent
-pas la périodicité métier d’une série.
-
-| Mesure | 28 septembre | 29 septembre |
-| --- | ---: | ---: |
-| Observations avant réparation | 4 772 459 | 4 772 554 |
-| Dates invalides avant réparation | 9 | 9 |
-| Observations après les six suppressions approuvées | 4 772 453 | 4 772 548 |
-| Observations de `cae_2.a`, intégralement préservées | 60 636 | 60 639 |
-| Observations manuelles PCAET avec métadonnées | 69 | 71 |
-| Dont observations d’indicateurs avec formule | 30 | 32 |
-
-Le catalogue contient 26 554 définitions, dont 78 formules. Le graphe garde
-294 références, dont une introuvable avant réparation et aucune après.
-Le précontrôle de #5214 retrouve uniquement les neuf dates invalides connues
-avant réparation, puis aucune anomalie sur les 4 772 548 observations restantes :
-aucune date invalide, aucune date à normaliser et aucune collision.
-
-Les six originaux de Margny correspondent champ par champ à l’export du
-28 septembre ; ses empreintes SHA-256 sont inchangées. Les garde-fous de la
-migration valident encore les neuf identités et états initiaux, les trois dates
-cibles libres et l’absence de référence de score sur les six suppressions.
-La répétition des vrais SQL deploy/verify/revert applique trois corrections et
-six suppressions, conserve les neuf originaux en archive privée, puis les
-restaure exactement. Les deux valeurs retenues de Margny sont bien `8 / 9` et
-`NULL / 3` au 1er janvier 2025. Les autres observations des cinq couples
-indicateur/collectivité concernés, dont Atmo, et l’empreinte de tous les champs
-des 60 639 observations de `cae_2.a` restent identiques. Les deux triggers de
-métadonnées sont réactivés après revert.
-
-Cette répétition s’est terminée par un rollback : la copie locale conserve les
-observations originales du 29 septembre. Aucune écriture n’a été faite en production.
-Les décisions métier du 28 septembre sont inchangées ; les contrôles du deploy ont été renforcés après revue.
-Les 62 assertions pgTAP initiales ont été exécutées le 28 septembre. Après revue,
-les 55 assertions de dates passent et une nouvelle répétition transactionnelle
-sur le schéma métier original vérifie les neuf empreintes livrées, les trois
-corrections, les six suppressions, le revert exact et le rollback intégral.
-
-### Risques et limites actualisés
-
-- **Recalcul manuel : protection ajoutée dans #5214.** L’upsert avec métadonnée
-  refuse désormais qu’un calcul remplace une saisie (`calcul_auto = false` ou
-  `NULL`), y compris après attente d’un verrou concurrent. Les dix tests PostgreSQL
-  passent. Une répétition des vrais services de calcul/réconciliation sur les
-  trois collectivités concernées préserve les **71 lignes PCAET complètes**,
-  dont 32 sur formule : 1 142 écritures/propagations exercées, 800 résultats
-  automatiques cohérents. La transaction est annulée et les 3 909 observations
-  concernées retrouvent exactement leur empreinte initiale. **Cette pré-PR seule
-  n’active pas la protection** et sa correction SQL de formule ne lance toujours
-  aucun recalcul historique.
-- **Provenance : fermeture des chemins utilisateur dans #5214.** REST/tRPC
-  refusent les métadonnées importées sans capacité interne ; le parcours PCAET
-  dispose d’une capacité bornée, les imports privilégiés restent fonctionnels.
-  Les tests couvrent aussi le refus atomique du lot et les tentatives de
-  falsification. Une migration réversible retire les mutations directes
-  d’`indicateur_valeur` aux rôles utilisateurs/PostgREST, conserve la lecture et
-  `service_role`, et archive les ACL de la cible pour un revert exact. Ses
-  38 contrôles SQL passent. Les ACL ne figurent pas dans l’archive de production :
-  les droits réels sont donc contrôlés au déploiement, avec arrêt atomique en cas
-  d’héritage ou d’état inattendu.
-- **Catalogue externe : vérification toujours nécessaire.** La sauvegarde ne
-  permet pas de contrôler la cellule Google Sheets pouvant réintroduire
-  `cae_2.lpcaet`. La préparation décrite plus haut reste applicable.
-- **Ordre de livraison et fraîcheur des données.** Appliquer #5220, puis #5214,
-  puis #5215. Les branches et le plan Sqitch imposent cette dépendance.
-  **Garder la même maintenance entre #5220 et #5214** : arrêter les écritures
-  utilisateur, imports et workers susceptibles de recalculer avant #5220 ; ne les
-  reprendre qu’après déploiement et validation du backend protecteur de #5214.
-  La pré-PR peut être revue/fusionnée séparément, mais ne doit pas être livrée
-  seule en production avec l’ancienne application active. Relancer
-  les contrôles sur la cible au moment prévu par le runbook : de nouvelles
-  écritures peuvent modifier les états approuvés, créer une collision ou une
-  référence de score. Les contrôles stricts feront alors échouer la migration des
-  dates sans correction partielle. La correction de formule, migration distincte,
-  peut déjà être appliquée.
-- **Validation du schéma et des parcours.** Les répétitions de migration,
-  activation et retour arrière, ainsi que les tests API, de restitution et
-  d’export, sont détaillés dans le
-  [rapport de validation de #5214/#5215](https://github.com/incubateur-ademe/territoires-en-transitions/blob/split/periodicite-data-migration/data_layer/periodicite-validation-2026-09-29.md).
-  Elles ne remplacent pas les checks CI du commit publié, les contrôles avant
-  réouverture ni la validation métier des règles d’agrégation. La décision
-  annuelle de Margny n’impose plus d’exception mensuelle et ne démontre pas
-  l’existence d’un historique à cadence différente.
+Les validations historiques des formules, protections PCAET et droits SQL concernent
+la livraison backend, décrite dans le [rapport de #5214](https://github.com/incubateur-ademe/territoires-en-transitions/blob/split/periodicite-data-migration/data_layer/periodicite-validation-2026-09-29.md).
+Elles ne constituent pas une validation du nouveau découpage ; celui-ci doit tester
+l'ancien backend après réparation, puis après ajout du schéma, et le nouveau backend
+après sa bascule SQL.

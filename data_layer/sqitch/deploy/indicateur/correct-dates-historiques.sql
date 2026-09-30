@@ -1,5 +1,4 @@
 -- Deploy tet:indicateur/correct-dates-historiques to pg
--- requires: indicateur/correct-formule-cae-2-a
 -- requires: referentiel/action_score_indicateur_valeur
 
 BEGIN;
