@@ -159,43 +159,15 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     indicateurIds: number[],
     enqueuedWorkItemsCount: number
   ): Promise<FormulaReconciliationResult> {
-    try {
-      const reconciliation = await this.formulaReconciliationService.drain({
-        indicateurIds,
-        // Une reprise explicite ne doit pas attendre le backoff du cron.
-        includeDeferred: true,
-      });
-      if (reconciliation.identifiants.length > 0) {
-        this.logger.log(
-          `Recomputed valeurs for identifiants: ${reconciliation.identifiants.join(
-            ', '
-          )}`
-        );
-      }
-
-      const status =
-        reconciliation.failedCount > 0
-          ? 'failed'
-          : reconciliation.complete
-          ? 'complete'
-          : 'pending';
-      return {
-        status,
-        identifiantsRecalcules: reconciliation.identifiants,
-        reconciliationsMisesEnFile: enqueuedWorkItemsCount,
-        reconciliationsRestantes: reconciliation.remainingCount,
-        reconciliationsEchouees: reconciliation.failedCount,
-        ...(status === 'failed'
-          ? {
-              message:
-                'Le catalogue est importé, mais certaines réconciliations de formules ont échoué.',
-            }
-          : {}),
-      };
-    } catch (error) {
+    const result = await this.formulaReconciliationService.drain({
+      indicateurIds,
+      // Une reprise explicite ne doit pas attendre le backoff du cron.
+      includeDeferred: true,
+    });
+    if (!result.success) {
       this.logger.error(
         'Le catalogue est importé, mais le drain des réconciliations de formules a échoué.',
-        error instanceof Error ? error.stack : undefined
+        result.cause?.stack
       );
       return {
         status: 'failed',
@@ -209,6 +181,35 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           'Le catalogue est importé, mais la réconciliation des formules reste à reprendre.',
       };
     }
+
+    const reconciliation = result.data;
+    if (reconciliation.identifiants.length > 0) {
+      this.logger.log(
+        `Recomputed valeurs for identifiants: ${reconciliation.identifiants.join(
+          ', '
+        )}`
+      );
+    }
+
+    const status =
+      reconciliation.failedCount > 0
+        ? 'failed'
+        : reconciliation.complete
+        ? 'complete'
+        : 'pending';
+    return {
+      status,
+      identifiantsRecalcules: reconciliation.identifiants,
+      reconciliationsMisesEnFile: enqueuedWorkItemsCount,
+      reconciliationsRestantes: reconciliation.remainingCount,
+      reconciliationsEchouees: reconciliation.failedCount,
+      ...(status === 'failed'
+        ? {
+            message:
+              'Le catalogue est importé, mais certaines réconciliations de formules ont échoué.',
+          }
+        : {}),
+    };
   }
 
   // Create a template data to set version & initialize null properties

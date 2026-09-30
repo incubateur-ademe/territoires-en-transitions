@@ -35,7 +35,15 @@ export class ImportIndicateurRelationsService {
         this.repository.listCategories(tx),
         this.repository.listThematiques(tx),
       ]);
-      const categoryIds = new Map(categories.map(({ nom, id }) => [nom, id]));
+      // Catalogue relations must not resolve to a local or groupement homonym.
+      const categoryIds = new Map(
+        categories
+          .filter(
+            ({ collectiviteId, groupementId }) =>
+              collectiviteId === null && groupementId === null
+          )
+          .map(({ nom, id }) => [nom, id])
+      );
       const thematiqueIds = new Map(
         thematiques.map(({ mdId, id }) => [mdId, id])
       );

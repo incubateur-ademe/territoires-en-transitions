@@ -1,10 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { failure, success } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { IndicateurDefinitionLockRepository } from './indicateur-definition-lock.repository';
 import { normalizeIndicateurFormula } from './indicateur-formula.rules';
+import {
+  FormulaReconciliationError,
+  FormulaReconciliationErrorEnum,
+} from './indicateur-formula-reconciliation.errors';
 import {
   IndicateurFormulaReconciliationRepository,
   type IndicateurFormulaReconciliationWorkItem,
@@ -59,7 +63,12 @@ export class IndicateurFormulaReconciliationService {
 
   async drain(
     options: DrainIndicateurFormulaReconciliationsOptions = {}
-  ): Promise<DrainIndicateurFormulaReconciliationsResult> {
+  ): Promise<
+    Result<
+      DrainIndicateurFormulaReconciliationsResult,
+      FormulaReconciliationError
+    >
+  > {
     const {
       limit = DEFAULT_FORMULA_RECONCILIATION_DRAIN_LIMIT,
       indicateurIds,
@@ -70,78 +79,85 @@ export class IndicateurFormulaReconciliationService {
       limit < 1 ||
       limit > MAX_FORMULA_RECONCILIATION_DRAIN_LIMIT
     ) {
-      throw new RangeError(
-        `Formula reconciliation drain limit must be between 1 and ${MAX_FORMULA_RECONCILIATION_DRAIN_LIMIT}`
-      );
+      return failure(FormulaReconciliationErrorEnum.INVALID_DRAIN_LIMIT);
     }
 
     if (indicateurIds && indicateurIds.length === 0) {
-      return {
+      return success({
         processedCount: 0,
         obsoleteCount: 0,
         failedCount: 0,
         remainingCount: 0,
         complete: true,
         identifiants: [],
-      };
+      });
     }
 
-    let processedCount = 0;
-    let obsoleteCount = 0;
-    let failedCount = 0;
-    const identifiants = new Set<string>();
-    const attemptedWorkItemIds: string[] = [];
+    try {
+      let processedCount = 0;
+      let obsoleteCount = 0;
+      let failedCount = 0;
+      const identifiants = new Set<string>();
+      const attemptedWorkItemIds: string[] = [];
 
-    for (let index = 0; index < limit; index++) {
-      try {
-        const result = await this.processNext({
-          indicateurIds,
-          includeDeferred,
-          attemptedWorkItemIds,
-        });
+      for (let index = 0; index < limit; index++) {
+        try {
+          const result = await this.processNext({
+            indicateurIds,
+            includeDeferred,
+            attemptedWorkItemIds,
+          });
 
-        if (!result) {
-          break;
-        }
-        if (result.status === 'obsolete') {
-          obsoleteCount++;
-        } else {
-          processedCount++;
-          result.identifiants.forEach((identifiant) =>
-            identifiants.add(identifiant)
+          if (!result) {
+            break;
+          }
+          if (result.status === 'obsolete') {
+            obsoleteCount++;
+          } else {
+            processedCount++;
+            result.identifiants.forEach((identifiant) =>
+              identifiants.add(identifiant)
+            );
+          }
+        } catch (error) {
+          // Une erreur avant le claim indique une indisponibilité de
+          // l'infrastructure : poursuivre ne ferait que boucler sur le même
+          // incident. Seule une intention effectivement claimée est différée.
+          if (!(error instanceof IndicateurFormulaReconciliationError)) {
+            throw error;
+          }
+          failedCount++;
+          const message = error.message;
+          this.logger.error(
+            `Formula reconciliation ${error.workItem.id} failed: ${message}`
+          );
+          await this.repository.recordFailure(
+            error.workItem.id,
+            error.workItem.generation,
+            message
           );
         }
-      } catch (error) {
-        // Une erreur avant le claim indique une indisponibilité de
-        // l'infrastructure : poursuivre ne ferait que boucler sur le même
-        // incident. Seule une intention effectivement claimée est différée.
-        if (!(error instanceof IndicateurFormulaReconciliationError)) {
-          throw error;
-        }
-        failedCount++;
-        const message = error.message;
-        this.logger.error(
-          `Formula reconciliation ${error.workItem.id} failed: ${message}`
-        );
-        await this.repository.recordFailure(
-          error.workItem.id,
-          error.workItem.generation,
-          message
-        );
       }
-    }
 
-    const remainingCount = await this.repository.countPending(indicateurIds);
-    const result = {
-      processedCount,
-      obsoleteCount,
-      failedCount,
-      remainingCount,
-      complete: remainingCount === 0,
-      identifiants: [...identifiants],
-    };
-    this.logger.log(`Formula reconciliation drain: ${JSON.stringify(result)}`);
-    return result;
+      const remainingCount = await this.repository.countPending(indicateurIds);
+      const result = {
+        processedCount,
+        obsoleteCount,
+        failedCount,
+        remainingCount,
+        complete: remainingCount === 0,
+        identifiants: [...identifiants],
+      };
+      this.logger.log(
+        `Formula reconciliation drain: ${JSON.stringify(result)}`
+      );
+      return success(result);
+    } catch (error) {
+      return failure(
+        FormulaReconciliationErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
   }
 
   private async processNext(options: {

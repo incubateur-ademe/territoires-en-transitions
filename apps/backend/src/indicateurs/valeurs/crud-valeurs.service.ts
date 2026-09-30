@@ -306,7 +306,7 @@ export default class CrudValeursService {
     const changed: IndicateurValeur[] = [];
     const saved = await this.executeTransaction(async (tx) => {
       const saved = getIndicateurValeursDataOrThrow(
-        await this.writer.saveSingle({ data, definition }, { user, tx })
+        await this.writer.saveSingle({ data }, { user, tx })
       );
       if (!saved) return undefined;
       const calculated = getIndicateurValeursDataOrThrow(

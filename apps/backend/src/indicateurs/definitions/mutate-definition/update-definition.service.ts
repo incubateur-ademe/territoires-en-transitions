@@ -45,11 +45,13 @@ export class UpdateDefinitionService {
     user: AuthenticatedUser,
     collectiviteId: number,
     indicateurId: number,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<boolean> {
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({
         userId: user.id,
+        tx,
       });
 
     if (!userPermissionsResult.success) {
@@ -80,11 +82,10 @@ export class UpdateDefinitionService {
       )
     ) {
       const pilotes =
-        await this.handleDefinitionPilotesService.listIndicateurPilotes({
-          indicateurId,
-          collectiviteId,
-          user,
-        });
+        await this.handleDefinitionPilotesService.listIndicateurPilotes(
+          { indicateurId, collectiviteId, user },
+          tx
+        );
 
       if (pilotes.some((p) => p.userId === user.id)) {
         return true;
@@ -109,7 +110,8 @@ export class UpdateDefinitionService {
   ): asserts definition is DefinitionOwnership {
     if (
       !definition ||
-      (definition.collectiviteId !== null &&
+      (definition.groupementId == null &&
+        definition.collectiviteId !== null &&
         definition.collectiviteId !== requestedCollectiviteId)
     ) {
       throw new NotFoundException(
@@ -120,6 +122,7 @@ export class UpdateDefinitionService {
 
   private assertRequestedFieldsAreMutable(
     definition: DefinitionOwnership,
+    collectiviteId: number,
     indicateurId: number,
     indicateurFields: UpdateIndicateurDefinitionInput['indicateurFields']
   ): void {
@@ -128,7 +131,7 @@ export class UpdateDefinitionService {
         'La périodicité est fixée à la création de l’indicateur'
       );
     }
-    if (definition.collectiviteId !== null) {
+    if (definition.collectiviteId === collectiviteId) {
       return;
     }
 
@@ -137,7 +140,7 @@ export class UpdateDefinitionService {
       titre !== undefined || unite !== undefined || thematiques !== undefined;
     if (updatesGlobalDefinitionFields) {
       throw new BadRequestException(
-        `Les champs globaux de l'indicateur prédéfini ${indicateurId} ne peuvent pas être modifiés depuis une collectivité`
+        `Les champs globaux de l'indicateur ${indicateurId} ne peuvent être modifiés que par sa collectivité propriétaire`
       );
     }
   }
@@ -164,13 +167,7 @@ export class UpdateDefinitionService {
       indicateurId
     );
 
-    const authorizationCollectiviteId =
-      definition.collectiviteId ?? collectiviteId;
-    await this.canUpdateDefinition(
-      user,
-      authorizationCollectiviteId,
-      indicateurId
-    );
+    await this.canUpdateDefinition(user, collectiviteId, indicateurId);
 
     this.logger.log(
       `Mise à jour de l'indicateur dont l'id est ${indicateurId}`
@@ -192,6 +189,7 @@ export class UpdateDefinitionService {
 
     this.assertRequestedFieldsAreMutable(
       definition,
+      collectiviteId,
       indicateurId,
       indicateurFields
     );
@@ -211,8 +209,31 @@ export class UpdateDefinitionService {
       );
       this.assertRequestedFieldsAreMutable(
         lockedDefinition,
+        collectiviteId,
         indicateurId,
         indicateurFields
+      );
+
+      // The owner retains its metadata access; shared local customizations
+      // require membership locked until all writes have committed.
+      if (
+        lockedDefinition.groupementId != null &&
+        lockedDefinition.collectiviteId !== collectiviteId &&
+        !(await this.repository.lockGroupementMembership(
+          { groupementId: lockedDefinition.groupementId, collectiviteId },
+          tx
+        ))
+      ) {
+        throw new NotFoundException(
+          `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
+        );
+      }
+      await this.canUpdateDefinition(
+        user,
+        collectiviteId,
+        indicateurId,
+        false,
+        tx
       );
 
       if (

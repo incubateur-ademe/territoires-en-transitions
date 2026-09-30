@@ -104,12 +104,7 @@ export class WriteIndicateurValeursService {
   }
 
   saveSingle(
-    {
-      data,
-    }: {
-      data: UpsertValeurIndicateur;
-      definition: Pick<IndicateurDefinition, 'periodicite'>;
-    },
+    { data }: { data: UpsertValeurIndicateur },
     { user, tx }: IndicateurValeursWriteContext & { user: AuthenticatedUser }
   ) {
     return captureIndicateurValeursResult(

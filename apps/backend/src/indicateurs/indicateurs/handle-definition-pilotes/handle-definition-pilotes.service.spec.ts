@@ -1,3 +1,8 @@
+import {
+  AuthRole,
+  type AuthenticatedUser,
+} from '@tet/backend/users/models/auth.models';
+import { ResourceType } from '@tet/domain/users';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -139,4 +144,40 @@ describe('HandleDefinitionPilotesService', () => {
     ).rejects.toThrow(/pilotes doivent appartenir/i);
     expect(repository.upsertIndicateurPilotes).not.toHaveBeenCalled();
   });
+});
+
+test('lit les pilotes et leurs permissions dans la transaction fournie', async () => {
+  const tx = {} as Transaction;
+  const user = {
+    id: crypto.randomUUID(),
+    role: AuthRole.AUTHENTICATED,
+  } as AuthenticatedUser;
+  const repository = {
+    listIndicateurPilotes: vi.fn().mockResolvedValue([{ userId: user.id }]),
+  };
+  const permissionService = {
+    assertAllowed: vi.fn().mockResolvedValue(undefined),
+  };
+  const service = new HandleDefinitionPilotesService(
+    repository as never,
+    permissionService as never,
+    {} as never
+  );
+  await expect(
+    service.listIndicateurPilotes(
+      { indicateurId: 42, collectiviteId: 1, user },
+      tx
+    )
+  ).resolves.toEqual([{ userId: user.id }]);
+  expect(permissionService.assertAllowed).toHaveBeenCalledWith(
+    user,
+    'indicateurs.indicateurs.read_confidentiel',
+    ResourceType.COLLECTIVITE,
+    { collectiviteId: 1 },
+    tx
+  );
+  expect(repository.listIndicateurPilotes).toHaveBeenCalledWith(
+    { indicateurId: 42, collectiviteId: 1 },
+    tx
+  );
 });

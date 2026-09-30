@@ -1,5 +1,6 @@
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable } from '@nestjs/common';
+import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -36,6 +37,7 @@ type CreatePersonalizedDefinition = Readonly<{
 
 export type DefinitionOwnership = Readonly<{
   collectiviteId: number | null;
+  groupementId: number | null;
   periodicite: IndicateurPeriodicite;
 }>;
 
@@ -124,6 +126,7 @@ export class MutateDefinitionRepository {
     const [definition] = await this.databaseService.db
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
+        groupementId: indicateurDefinitionTable.groupementId,
         periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
       })
       .from(indicateurDefinitionTable)
@@ -140,6 +143,7 @@ export class MutateDefinitionRepository {
     const [definition] = await tx
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
+        groupementId: indicateurDefinitionTable.groupementId,
         periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
       })
       .from(indicateurDefinitionTable)
@@ -148,6 +152,28 @@ export class MutateDefinitionRepository {
       .for('update');
 
     return definition ?? null;
+  }
+
+  async lockGroupementMembership(
+    {
+      groupementId,
+      collectiviteId,
+    }: { groupementId: number; collectiviteId: number },
+    tx: Transaction
+  ): Promise<boolean> {
+    const [membership] = await tx
+      .select({ groupementId: groupementCollectiviteTable.groupementId })
+      .from(groupementCollectiviteTable)
+      .where(
+        and(
+          eq(groupementCollectiviteTable.groupementId, groupementId),
+          eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      )
+      .limit(1)
+      .for('share');
+
+    return Boolean(membership);
   }
 
   async deletePersonalizedDefinition(

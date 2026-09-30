@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { z } from 'zod';
+import { indicateurFormulaReconciliationErrorConfig } from './indicateur-formula-reconciliation.errors';
 import {
   DEFAULT_FORMULA_RECONCILIATION_DRAIN_LIMIT,
   IndicateurFormulaReconciliationService,
@@ -23,9 +25,16 @@ export class IndicateurFormulaReconciliationRouter {
     private readonly service: IndicateurFormulaReconciliationService
   ) {}
 
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    indicateurFormulaReconciliationErrorConfig
+  );
+
   router = this.trpc.router({
     drain: this.trpc.serviceRoleProcedure
       .input(drainFormulaReconciliationsInput)
-      .mutation(({ input }) => this.service.drain({ limit: input.limit })),
+      .mutation(async ({ input }) => {
+        const result = await this.service.drain({ limit: input.limit });
+        return this.getResultDataOrThrowError(result);
+      }),
   });
 }

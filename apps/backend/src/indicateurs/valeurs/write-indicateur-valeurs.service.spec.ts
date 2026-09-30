@@ -4,7 +4,6 @@ import {
   IndicateurPeriodiciteEnum,
 } from '@tet/domain/indicateurs';
 import { success } from '../../utils/result.type';
-import { upsertIndicateursValeursRequestSchema } from './upsert-indicateurs-valeurs.request';
 import { WriteIndicateurValeursService } from './write-indicateur-valeurs.service';
 
 describe('WriteIndicateurValeursService', () => {
@@ -97,7 +96,7 @@ describe('WriteIndicateurValeursService', () => {
     );
     const tx = {} as never;
     const result = await service.saveSingle(
-      { data: { ...valeur, dateValeur: '2026-12-31' }, definition },
+      { data: { ...valeur, dateValeur: '2026-12-31' } },
       { tx, user: { id: 'user' } as never }
     );
     expect(result.success).toBe(true);

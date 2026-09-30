@@ -107,11 +107,11 @@ export class HandleDefinitionPilotesRepository {
     return tags.length === tagIds.length && users.length === userIds.length;
   }
 
-  listIndicateurPilotes({
-    indicateurId,
-    collectiviteId,
-  }: IndicateurPilotesScope) {
-    return this.databaseService.db
+  listIndicateurPilotes(
+    { indicateurId, collectiviteId }: IndicateurPilotesScope,
+    tx?: Transaction
+  ) {
+    return (tx ?? this.databaseService.db)
       .select({
         ...getTableColumns(indicateurPiloteTable),
         nom: sql<string>`

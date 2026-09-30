@@ -1,3 +1,4 @@
+import { failure, success } from '@tet/backend/utils/result.type';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
@@ -6,7 +7,10 @@ import {
   IndicateurFormulaReconciliationRepository,
   type IndicateurFormulaReconciliationWorkItem,
 } from './indicateur-formula-reconciliation.repository';
-import { IndicateurFormulaReconciliationService } from './indicateur-formula-reconciliation.service';
+import {
+  IndicateurFormulaReconciliationService,
+  MAX_FORMULA_RECONCILIATION_DRAIN_LIMIT,
+} from './indicateur-formula-reconciliation.service';
 import { ListPlatformDefinitionsRepository } from './list-platform-definitions/list-platform-definitions.repository';
 
 const workItem = (
@@ -74,6 +78,8 @@ describe('IndicateurFormulaReconciliationService', () => {
       crudValeursService as unknown as CrudValeursService
     );
     definitionLockRepository.lockForValueWrite.mockResolvedValue(undefined);
+    repository.claimNext.mockResolvedValue(null);
+    repository.countPending.mockResolvedValue(0);
     repository.complete.mockResolvedValue(undefined);
     repository.recordFailure.mockResolvedValue(undefined);
   });
@@ -96,14 +102,16 @@ describe('IndicateurFormulaReconciliationService', () => {
 
     await expect(
       service.drain({ indicateurIds: [21], includeDeferred: true })
-    ).resolves.toEqual({
-      processedCount: 1,
-      obsoleteCount: 0,
-      failedCount: 0,
-      remainingCount: 0,
-      complete: true,
-      identifiants: ['target_21'],
-    });
+    ).resolves.toEqual(
+      success({
+        processedCount: 1,
+        obsoleteCount: 0,
+        failedCount: 0,
+        remainingCount: 0,
+        complete: true,
+        identifiants: ['target_21'],
+      })
+    );
     expect(definitionLockRepository.lockForValueWrite).toHaveBeenCalledBefore(
       repository.claimNext
     );
@@ -133,9 +141,12 @@ describe('IndicateurFormulaReconciliationService', () => {
     repository.countPending.mockResolvedValue(0);
 
     await expect(service.drain({ limit: 3 })).resolves.toMatchObject({
-      processedCount: 1,
-      obsoleteCount: 1,
-      complete: true,
+      success: true,
+      data: {
+        processedCount: 1,
+        obsoleteCount: 1,
+        complete: true,
+      },
     });
     expect(repository.complete).toHaveBeenNthCalledWith(1, obsolete.id, tx);
     expect(repository.complete).toHaveBeenNthCalledWith(2, current.id, tx);
@@ -165,10 +176,13 @@ describe('IndicateurFormulaReconciliationService', () => {
     await expect(
       service.drain({ limit: 3, includeDeferred: true })
     ).resolves.toMatchObject({
-      processedCount: 1,
-      failedCount: 1,
-      remainingCount: 1,
-      complete: false,
+      success: true,
+      data: {
+        processedCount: 1,
+        failedCount: 1,
+        remainingCount: 1,
+        complete: false,
+      },
     });
     expect(repository.recordFailure).toHaveBeenCalledWith(
       poison.id,
@@ -185,13 +199,97 @@ describe('IndicateurFormulaReconciliationService', () => {
   });
 
   it("interrompt le drain si l'infrastructure échoue avant tout claim", async () => {
-    repository.claimNext.mockRejectedValueOnce(
-      new Error('database unavailable')
-    );
+    const cause = new Error('database unavailable');
+    repository.claimNext.mockRejectedValueOnce(cause);
 
-    await expect(service.drain()).rejects.toThrow('database unavailable');
+    await expect(service.drain()).resolves.toEqual(
+      failure('DATABASE_ERROR', cause)
+    );
     expect(repository.recordFailure).not.toHaveBeenCalled();
     expect(repository.countPending).not.toHaveBeenCalled();
     expect(transactionManager.executeSingle).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    0,
+    -1,
+    1.5,
+    NaN,
+    Infinity,
+    MAX_FORMULA_RECONCILIATION_DRAIN_LIMIT + 1,
+  ])(
+    'retourne un échec typé pour la limite invalide %s avant toute transaction',
+    async (limit) => {
+      await expect(service.drain({ limit })).resolves.toEqual(
+        failure('INVALID_DRAIN_LIMIT')
+      );
+      expect(transactionManager.executeSingle).not.toHaveBeenCalled();
+      expect(repository.countPending).not.toHaveBeenCalled();
+    }
+  );
+
+  it('termine une sélection vide sans ouvrir de transaction', async () => {
+    await expect(service.drain({ indicateurIds: [] })).resolves.toEqual(
+      success({
+        processedCount: 0,
+        obsoleteCount: 0,
+        failedCount: 0,
+        remainingCount: 0,
+        complete: true,
+        identifiants: [],
+      })
+    );
+    expect(transactionManager.executeSingle).not.toHaveBeenCalled();
+    expect(repository.countPending).not.toHaveBeenCalled();
+  });
+
+  it("interrompt le drain si l'enregistrement de l'échec est indisponible", async () => {
+    const pending = workItem('1', 21, 'val(source_a)');
+    const cause = new Error('failure recording unavailable');
+    repository.claimNext.mockResolvedValueOnce(pending);
+    definitionsRepository.listPlatformDefinitions.mockResolvedValue([
+      definition(21, 'val(source_a)'),
+    ]);
+    crudValeursService.reconcileCollectiviteCalculatedIndicateurValeurs.mockRejectedValueOnce(
+      new Error('invalid calculation')
+    );
+    repository.recordFailure.mockRejectedValueOnce(cause);
+
+    await expect(service.drain()).resolves.toEqual(
+      failure('DATABASE_ERROR', cause)
+    );
+    expect(repository.recordFailure).toHaveBeenCalledExactlyOnceWith(
+      pending.id,
+      pending.generation,
+      'invalid calculation'
+    );
+    expect(repository.complete).not.toHaveBeenCalled();
+    expect(repository.countPending).not.toHaveBeenCalled();
+    expect(transactionManager.executeSingle).toHaveBeenCalledOnce();
+  });
+
+  it('retourne un échec typé si le décompte échoue après une intention acquittée', async () => {
+    const pending = workItem('1', 21, 'val(source_a)');
+    const cause = new Error('pending count unavailable');
+    repository.claimNext.mockResolvedValueOnce(pending);
+    definitionsRepository.listPlatformDefinitions.mockResolvedValue([
+      definition(21, 'val(source_a)'),
+    ]);
+    crudValeursService.reconcileCollectiviteCalculatedIndicateurValeurs.mockResolvedValueOnce(
+      {
+        collectiviteId: pending.collectiviteId,
+        valeursCount: 1,
+        identifiants: ['target_21'],
+      }
+    );
+    repository.countPending.mockRejectedValueOnce(cause);
+
+    await expect(service.drain({ indicateurIds: [21] })).resolves.toEqual(
+      failure('DATABASE_ERROR', cause)
+    );
+    expect(repository.complete).toHaveBeenCalledExactlyOnceWith(pending.id, tx);
+    expect(repository.countPending).toHaveBeenCalledExactlyOnceWith([21]);
+    expect(repository.recordFailure).not.toHaveBeenCalled();
+    expect(transactionManager.executeSingle).toHaveBeenCalledTimes(2);
   });
 });

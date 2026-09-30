@@ -18,30 +18,34 @@ export class HandleDefinitionPilotesService {
     private readonly transactionManager: TransactionManager
   ) {}
 
-  async listIndicateurPilotes({
-    indicateurId,
-    collectiviteId,
-    user,
-  }: {
-    indicateurId: number;
-    collectiviteId: number;
-    user: AuthUser;
-  }) {
+  async listIndicateurPilotes(
+    {
+      indicateurId,
+      collectiviteId,
+      user,
+    }: {
+      indicateurId: number;
+      collectiviteId: number;
+      user: AuthUser;
+    },
+    tx?: Transaction
+  ) {
     await this.permissionService.assertAllowed(
       user,
       'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      { collectiviteId }
+      { collectiviteId },
+      tx
     );
 
     this.logger.log(
       `Récupération des pilotes de l'indicateur dont l'id est ${indicateurId}`
     );
 
-    return this.repository.listIndicateurPilotes({
-      indicateurId,
-      collectiviteId,
-    });
+    return this.repository.listIndicateurPilotes(
+      { indicateurId, collectiviteId },
+      tx
+    );
   }
 
   async upsertIndicateurPilotes(

@@ -172,8 +172,9 @@ ALTER TABLE public.indicateur_valeur
     ADD COLUMN periodicite text NOT NULL DEFAULT 'annuelle'
         REFERENCES public.indicateur_periodicite(code);
 
--- Les index historiques restent présents pendant la coexistence des writers.
--- Le contract les retire après le déploiement des écritures taguées.
+-- Les index historiques restent présents pendant cette étape SQL intermédiaire.
+-- periodicite_obligatoire les retire pendant la maintenance, avant le démarrage
+-- des applications compatibles.
 CREATE UNIQUE INDEX unique_indicateur_valeur_utilisateur_periode
     ON public.indicateur_valeur (indicateur_id, collectivite_id, periodicite, date_valeur)
     WHERE metadonnee_id IS NULL;

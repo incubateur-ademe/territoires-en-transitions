@@ -1,5 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
+import { createGroupement } from '@tet/backend/collectivites/shared/models/groupement.test-fixture';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { indicateurServiceTagTable } from '@tet/backend/indicateurs/indicateurs/handle-definition-services/indicateur-service-tag.table';
+import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
+import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -480,6 +487,297 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         filters: { indicateurIds, isApplicable: true },
       });
       expect(applicables.map(({ id }) => id)).toEqual([applicableId]);
+    });
+  });
+
+  describe('groupement — personnalisations locales', () => {
+    async function createSharedDefinition({
+      withOwner = true,
+      isMember = true,
+    }: { withOwner?: boolean; isMember?: boolean } = {}) {
+      const owner = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      const groupement = await createGroupement({
+        database: databaseService,
+        groupementData: {
+          nom: 'Groupement de personnalisation',
+          collectiviteIds: isMember ? [collectivite.id] : [],
+        },
+      });
+      const [definition] = await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          collectiviteId: withOwner ? owner.collectivite.id : null,
+          groupementId: groupement.id,
+          titre: 'Indicateur partagé historique',
+          unite: 't',
+          periodicite: 'annuelle',
+        })
+        .returning();
+      const caller = router.createCaller({ user: authenticatedUser });
+      const ownerCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(owner.user),
+      });
+      const input = {
+        indicateurId: definition.id,
+        collectiviteId: collectivite.id,
+      };
+      const readLocalFields = () =>
+        databaseService.db
+          .select()
+          .from(indicateurCollectiviteTable)
+          .where(eq(indicateurCollectiviteTable.indicateurId, definition.id));
+      return {
+        definition,
+        owner,
+        groupement,
+        caller,
+        ownerCaller,
+        input,
+        readLocalFields,
+      };
+    }
+
+    test.each([true, false])(
+      'le membre personnalise les champs locaux et les relations, propriétaire : %s',
+      async (withOwner) => {
+        const h = await createSharedDefinition({ withOwner });
+        const ficheId = await createFiche({
+          caller: h.caller,
+          ficheInput: {
+            collectiviteId: collectivite.id,
+            titre: 'Fiche du membre',
+          },
+        });
+        const [service] = await databaseService.db
+          .insert(serviceTagTable)
+          .values({
+            nom: `Service du membre ${h.definition.id}`,
+            collectiviteId: collectivite.id,
+          })
+          .returning();
+        await h.caller.indicateurs.indicateurs.update({
+          ...h.input,
+          indicateurFields: {
+            commentaire: 'Méthode locale',
+            estFavori: true,
+            estConfidentiel: true,
+            isApplicable: false,
+            pilotes: [{ userId: authenticatedUser.id }],
+            services: [{ id: service.id }],
+            ficheIds: [ficheId],
+          },
+        });
+        expect(await h.readLocalFields()).toEqual([
+          expect.objectContaining({
+            collectiviteId: collectivite.id,
+            commentaire: 'Méthode locale',
+            favoris: true,
+            confidentiel: true,
+            isApplicable: false,
+            modifiedBy: authenticatedUser.id,
+          }),
+        ]);
+        expect(
+          await databaseService.db
+            .select()
+            .from(indicateurPiloteTable)
+            .where(eq(indicateurPiloteTable.indicateurId, h.definition.id))
+        ).toEqual([
+          expect.objectContaining({
+            collectiviteId: collectivite.id,
+            userId: authenticatedUser.id,
+          }),
+        ]);
+        expect(
+          await databaseService.db
+            .select()
+            .from(indicateurServiceTagTable)
+            .where(eq(indicateurServiceTagTable.indicateurId, h.definition.id))
+        ).toEqual([
+          {
+            indicateurId: h.definition.id,
+            collectiviteId: collectivite.id,
+            serviceTagId: service.id,
+          },
+        ]);
+        expect(
+          await databaseService.db
+            .select()
+            .from(ficheActionIndicateurTable)
+            .where(eq(ficheActionIndicateurTable.indicateurId, h.definition.id))
+        ).toEqual([{ indicateurId: h.definition.id, ficheId }]);
+        expect(
+          await databaseService.db
+            .select()
+            .from(indicateurDefinitionTable)
+            .where(eq(indicateurDefinitionTable.id, h.definition.id))
+        ).toEqual([h.definition]);
+      }
+    );
+
+    test.each([true, false])(
+      'refuse un non-membre sans écrire de personnalisation, propriétaire : %s',
+      async (withOwner) => {
+        const h = await createSharedDefinition({ withOwner, isMember: false });
+        await expect(
+          h.caller.indicateurs.indicateurs.update({
+            ...h.input,
+            indicateurFields: { estFavori: true },
+          })
+        ).rejects.toThrow(/non trouvé/);
+        expect(await h.readLocalFields()).toEqual([]);
+      }
+    );
+
+    test.each([
+      { titre: 'Titre non autorisé' },
+      { unite: 'kg' },
+      { thematiques: [] },
+    ])(
+      'refuse les champs globaux au membre sans changement partiel : %j',
+      async (fields) => {
+        const h = await createSharedDefinition();
+        await expect(
+          h.caller.indicateurs.indicateurs.update({
+            ...h.input,
+            indicateurFields: { ...fields, estFavori: true },
+          })
+        ).rejects.toThrow(/collectivité propriétaire/);
+        expect(await h.readLocalFields()).toEqual([]);
+        expect(
+          await databaseService.db
+            .select()
+            .from(indicateurDefinitionTable)
+            .where(eq(indicateurDefinitionTable.id, h.definition.id))
+        ).toEqual([h.definition]);
+      }
+    );
+
+    test('conserve les droits du propriétaire sur les champs globaux sans appartenance au groupement', async () => {
+      const h = await createSharedDefinition();
+      await h.ownerCaller.indicateurs.indicateurs.update({
+        indicateurId: h.definition.id,
+        collectiviteId: h.owner.collectivite.id,
+        indicateurFields: {
+          titre: 'Titre du propriétaire',
+          unite: 'kg',
+          thematiques: [],
+        },
+      });
+      expect(
+        await databaseService.db
+          .select()
+          .from(indicateurDefinitionTable)
+          .where(eq(indicateurDefinitionTable.id, h.definition.id))
+      ).toEqual([
+        expect.objectContaining({
+          collectiviteId: h.owner.collectivite.id,
+          titre: 'Titre du propriétaire',
+          unite: 'kg',
+          periodicite: 'annuelle',
+        }),
+      ]);
+    });
+
+    test('refuse toujours un indicateur personnalisé sans partage appartenant à une autre collectivité', async () => {
+      const h = await createSharedDefinition();
+      await databaseService.db
+        .update(indicateurDefinitionTable)
+        .set({ groupementId: null })
+        .where(eq(indicateurDefinitionTable.id, h.definition.id));
+      await expect(
+        h.caller.indicateurs.indicateurs.update({
+          ...h.input,
+          indicateurFields: { estFavori: true },
+        })
+      ).rejects.toThrow(/non trouvé/);
+      expect(await h.readLocalFields()).toEqual([]);
+    });
+
+    test('le propriétaire ne peut pas personnaliser une autre collectivité sans permission locale', async () => {
+      const h = await createSharedDefinition();
+      await expect(
+        h.ownerCaller.indicateurs.indicateurs.update({
+          ...h.input,
+          indicateurFields: { estFavori: true },
+        })
+      ).rejects.toThrow(/[Dd]roits insuffisants/);
+      expect(await h.readLocalFields()).toEqual([]);
+    });
+
+    test('la périodicité du partage reste immuable', async () => {
+      const h = await createSharedDefinition();
+      await expect(
+        h.caller.indicateurs.indicateurs.update({
+          ...h.input,
+          indicateurFields: {
+            estFavori: true,
+            periodicite: 'mensuelle',
+          } as never,
+        })
+      ).rejects.toThrow();
+      expect(await h.readLocalFields()).toEqual([]);
+      expect(
+        await databaseService.db
+          .select()
+          .from(indicateurDefinitionTable)
+          .where(eq(indicateurDefinitionTable.id, h.definition.id))
+      ).toEqual([h.definition]);
+    });
+
+    test('annule les personnalisations et les pilotes si un service appartient à une autre collectivité', async () => {
+      const h = await createSharedDefinition();
+      const [foreignService] = await databaseService.db
+        .insert(serviceTagTable)
+        .values({
+          nom: 'Service réservé au propriétaire',
+          collectiviteId: h.owner.collectivite.id,
+        })
+        .returning();
+      await expect(
+        h.caller.indicateurs.indicateurs.update({
+          ...h.input,
+          indicateurFields: {
+            estFavori: true,
+            pilotes: [{ userId: authenticatedUser.id }],
+            services: [{ id: foreignService.id }],
+          },
+        })
+      ).rejects.toThrow(/services doivent appartenir/);
+      expect(await h.readLocalFields()).toEqual([]);
+      expect(
+        await databaseService.db
+          .select()
+          .from(indicateurPiloteTable)
+          .where(eq(indicateurPiloteTable.indicateurId, h.definition.id))
+      ).toEqual([]);
+    });
+
+    test('retirer une appartenance empêche la personnalisation suivante', async () => {
+      const h = await createSharedDefinition();
+      await h.caller.indicateurs.indicateurs.update({
+        ...h.input,
+        indicateurFields: { estFavori: true },
+      });
+      await databaseService.db
+        .delete(groupementCollectiviteTable)
+        .where(
+          and(
+            eq(groupementCollectiviteTable.groupementId, h.groupement.id),
+            eq(groupementCollectiviteTable.collectiviteId, collectivite.id)
+          )
+        );
+      await expect(
+        h.caller.indicateurs.indicateurs.update({
+          ...h.input,
+          indicateurFields: { estFavori: false },
+        })
+      ).rejects.toThrow(/non trouvé/);
+      expect(await h.readLocalFields()).toEqual([
+        expect.objectContaining({ favoris: true }),
+      ]);
     });
   });
 

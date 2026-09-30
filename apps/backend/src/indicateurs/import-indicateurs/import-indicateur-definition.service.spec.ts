@@ -11,7 +11,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { failure } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
@@ -173,14 +173,16 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       generation: '00000000-0000-4000-8000-000000000001',
       workItemsCount: 0,
     });
-    formulaReconciliationService.drain.mockResolvedValue({
-      processedCount: 0,
-      obsoleteCount: 0,
-      failedCount: 0,
-      remainingCount: 0,
-      complete: true,
-      identifiants: [],
-    });
+    formulaReconciliationService.drain.mockResolvedValue(
+      success({
+        processedCount: 0,
+        obsoleteCount: 0,
+        failedCount: 0,
+        remainingCount: 0,
+        complete: true,
+        identifiants: [],
+      })
+    );
     permissionService.hasServiceRole.mockReturnValue(true);
   });
 
@@ -384,8 +386,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         importedIndicateurIds: [committedDefinition.id],
         reconciliationWorkItemsCount: 3,
       });
-    formulaReconciliationService.drain.mockRejectedValueOnce(
-      new Error('worker unavailable')
+    formulaReconciliationService.drain.mockResolvedValueOnce(
+      failure('DATABASE_ERROR', new Error('worker unavailable'))
     );
 
     await expect(
@@ -417,57 +419,66 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     upsertDefinitions.mockRestore();
   });
 
-  test('explicite les réconciliations échouées sans annuler le catalogue', async () => {
-    const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
-    const committedDefinition = {
-      ...importedDefinition,
-      id: 42,
-      version: '2.0.0',
-    };
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
-      [committedDefinition]
-    );
-    const checkLastVersion = vi
-      .spyOn(importIndicateurDefinitionService, 'checkLastVersion')
-      .mockResolvedValueOnce('2.0.0');
-    sheetService.getDataFromSheet
-      .mockResolvedValueOnce({ data: [importedDefinition] })
-      .mockResolvedValueOnce({ data: [] });
-    const upsertDefinitions = vi
-      .spyOn(importIndicateurDefinitionService, 'upsertIndicateurDefinitions')
-      .mockResolvedValueOnce({
-        definitions: [committedDefinition] as never,
-        updatedFormulaDefinitions: [committedDefinition] as never,
-        importedIndicateurIds: [committedDefinition.id],
-        reconciliationWorkItemsCount: 3,
+  test.each([
+    { status: 'complete', failedCount: 0, remainingCount: 0, complete: true },
+    { status: 'pending', failedCount: 0, remainingCount: 2, complete: false },
+    { status: 'failed', failedCount: 2, remainingCount: 2, complete: false },
+  ])(
+    'explicite le statut $status des réconciliations sans annuler le catalogue',
+    async ({ status, failedCount, remainingCount, complete }) => {
+      const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      const committedDefinition = {
+        ...importedDefinition,
+        id: 42,
+        version: '2.0.0',
+      };
+      listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
+        [committedDefinition]
+      );
+      const checkLastVersion = vi
+        .spyOn(importIndicateurDefinitionService, 'checkLastVersion')
+        .mockResolvedValueOnce('2.0.0');
+      sheetService.getDataFromSheet
+        .mockResolvedValueOnce({ data: [importedDefinition] })
+        .mockResolvedValueOnce({ data: [] });
+      const upsertDefinitions = vi
+        .spyOn(importIndicateurDefinitionService, 'upsertIndicateurDefinitions')
+        .mockResolvedValueOnce({
+          definitions: [committedDefinition] as never,
+          updatedFormulaDefinitions: [committedDefinition] as never,
+          importedIndicateurIds: [committedDefinition.id],
+          reconciliationWorkItemsCount: 3,
+        });
+      formulaReconciliationService.drain.mockResolvedValueOnce(
+        success({
+          processedCount: 1,
+          obsoleteCount: 0,
+          failedCount,
+          remainingCount,
+          complete,
+          identifiants: ['cae_1.a'],
+        })
+      );
+
+      await expect(
+        importIndicateurDefinitionService.importIndicateurDefinitions(
+          serviceRoleUser
+        )
+      ).resolves.toMatchObject({
+        status: 'committed',
+        reconciliation: {
+          status,
+          identifiantsRecalcules: ['cae_1.a'],
+          reconciliationsMisesEnFile: 3,
+          reconciliationsRestantes: remainingCount,
+          reconciliationsEchouees: failedCount,
+        },
       });
-    formulaReconciliationService.drain.mockResolvedValueOnce({
-      processedCount: 1,
-      obsoleteCount: 0,
-      failedCount: 2,
-      remainingCount: 2,
-      complete: false,
-      identifiants: ['cae_1.a'],
-    });
 
-    await expect(
-      importIndicateurDefinitionService.importIndicateurDefinitions(
-        serviceRoleUser
-      )
-    ).resolves.toMatchObject({
-      status: 'committed',
-      reconciliation: {
-        status: 'failed',
-        identifiantsRecalcules: ['cae_1.a'],
-        reconciliationsMisesEnFile: 3,
-        reconciliationsRestantes: 2,
-        reconciliationsEchouees: 2,
-      },
-    });
-
-    checkLastVersion.mockRestore();
-    upsertDefinitions.mockRestore();
-  });
+      checkLastVersion.mockRestore();
+      upsertDefinitions.mockRestore();
+    }
+  );
 
   test('refuse un import de production à version identique sans le confondre avec un drain', async () => {
     const definition = {
