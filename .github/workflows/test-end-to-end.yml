@@ -157,7 +157,7 @@ jobs:
 
       - name: Run serial tests (non isoles)
         # Serial suite is tiny and must run once; pin it to the first shard.
-        if: ${{ matrix.shard == 1 && !cancelled() }}
+        if: ${{ success() && matrix.shard == 1 && !cancelled() }}
         env:
           PW_ARTIFACTS_SUFFIX: serial
           SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}

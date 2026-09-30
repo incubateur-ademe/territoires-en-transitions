@@ -31,6 +31,7 @@ runs:
       uses: actions/setup-node@v7.0.0
       with:
         node-version: 24.18.0
+        package-manager-cache: false
         cache: ${{ inputs.cache-key == '' && 'pnpm' || '' }}
 
     - name: Restore installed dependencies
