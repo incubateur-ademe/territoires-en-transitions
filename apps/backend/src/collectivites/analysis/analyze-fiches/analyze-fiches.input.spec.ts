@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { toAnalyzeFichesInputScope } from './analyze-fiches.input';
+import { toAnalyzeFichesInput } from './analyze-fiches.script';
 
 describe('full-flow', () => {
   it('--collectivites=12,45,78 cible les fiches de ces trois CT', () => {
@@ -25,7 +26,20 @@ describe('full-flow', () => {
 });
 
 describe('enjeu', () => {
-  it.todo("fixe l'enjeu à ges, seul enjeu analysé");
+  it("fixe l'enjeu à ges, seul enjeu analysé", () => {
+    const startedAt = new Date('2026-09-29T02:00:00.000Z');
+
+    expect(
+      toAnalyzeFichesInput({ argv: ['--collectivites=12'], startedAt })
+    ).toEqual({
+      success: true,
+      data: {
+        enjeu: 'ges',
+        scope: { kind: 'collectivites', collectivites: [12] },
+        startedAt,
+      },
+    });
+  });
 });
 
 describe('daily-ct-check', () => {
