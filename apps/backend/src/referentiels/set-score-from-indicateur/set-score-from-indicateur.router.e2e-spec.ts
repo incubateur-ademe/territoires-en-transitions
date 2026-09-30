@@ -539,8 +539,8 @@ describe('SetScoreFromIndicateurRouter', () => {
     });
   });
 
-  describe('Indicateur marqué non applicable', () => {
-    test('Redevenir applicable sans resélectionner de valeur redonne un statut non renseigné, et non figé au score forcé', async () => {
+  describe('Indicateur marqué non suivi', () => {
+    test('Redevenir suivi sans resélectionner de valeur redonne un statut non renseigné, et non figé au score forcé', async () => {
       const caller = router.createCaller({ user: editorUser });
 
       // les valeurs partagées `valeurIds` ont pu être supprimées par des
@@ -564,13 +564,13 @@ describe('SetScoreFromIndicateurRouter', () => {
         avancementDetaille: [0.5, 0, 0.5],
       });
 
-      // marquer l'indicateur non applicable désélectionne automatiquement la
+      // marquer l'indicateur non suivi désélectionne automatiquement la
       // valeur retenue (reproduit l'orchestration du front) : le score est
       // forcé à 0, une décision explicite de la collectivité
       await caller.indicateurs.indicateurs.update({
         collectiviteId,
         indicateurId,
-        indicateurFields: { isApplicable: false },
+        indicateurFields: { isSuivi: false },
       });
       await caller.referentiels.actions.setScoreFromIndicateur({
         collectiviteId,
@@ -583,13 +583,13 @@ describe('SetScoreFromIndicateurRouter', () => {
         avancementDetaille: null,
       });
 
-      // redevenir applicable, sans jamais resélectionner de valeur : plus
+      // redevenir suivi, sans jamais resélectionner de valeur : plus
       // aucun score forcé, et plus aucune valeur sélectionnée — le statut
       // doit redevenir non renseigné (pas rester figé à "pas fait")
       await caller.indicateurs.indicateurs.update({
         collectiviteId,
         indicateurId,
-        indicateurFields: { isApplicable: true },
+        indicateurFields: { isSuivi: true },
       });
       await caller.referentiels.actions.setScoreFromIndicateur({
         collectiviteId,

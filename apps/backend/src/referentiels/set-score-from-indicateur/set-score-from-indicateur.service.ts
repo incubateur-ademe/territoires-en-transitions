@@ -164,11 +164,11 @@ export class SetScoreFromIndicateurService {
    * `hasValeurSelectionnee` (tous indicateurs de l'action confondus, dérivé
    * du score qui vient d'être recalculé — pas de requête supplémentaire)
    * prime sur le résultat du calcul, SAUF quand un indicateur associé est
-   * marqué "non applicable" : certains tokens optionnels (`est_suivi(...)`,
+   * marqué "non suivi" : certains tokens optionnels (`est_suivi(...)`,
    * `opt_val(...)`) ne bloquent jamais le calcul et produisent un score
    * défini (souvent 0) même sans aucune sélection — sans cette priorité, une
    * action jamais renseignée par la collectivité afficherait "pas fait" au
-   * lieu de "non renseignée". Le marquage "non applicable" est en revanche
+   * lieu de "non renseignée". Le marquage "non suivi" est en revanche
    * une décision explicite de la collectivité : le score à 0 qui en résulte
    * doit rester écrit même sans aucune sélection (contrairement à une
    * absence de sélection "par défaut", qui redevient "non renseignée").
@@ -192,8 +192,8 @@ export class SetScoreFromIndicateurService {
       return failure(scoreResult.error, scoreResult.cause);
     }
     const actionScore = scoreResult.data[actionId];
-    const indicateurNonApplicable =
-      actionScore?.indicateurs?.some((indicateur) => !indicateur.isApplicable) ??
+    const indicateurNonSuivi =
+      actionScore?.indicateurs?.some((indicateur) => !indicateur.isSuivi) ??
       false;
     // `actionScore` est `undefined` quand le score n'est pas calculable du
     // tout pour cette action (formule ou indicateurs manquants) : dans ce cas
@@ -205,7 +205,7 @@ export class SetScoreFromIndicateurService {
         (actionScore.programme?.valeursUtilisees.length ?? 0) > 0
       : true;
 
-    if (!hasValeurSelectionnee && !indicateurNonApplicable) {
+    if (!hasValeurSelectionnee && !indicateurNonSuivi) {
       const resetResult =
         await this.updateActionStatutService.upsertActionStatutsWithoutSnapshot(
           [

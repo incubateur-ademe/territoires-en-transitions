@@ -42,7 +42,7 @@ export type IndicateurDefinitionAvecCategories = {
   unite: string;
   titre: string;
   categories: string[];
-  isApplicable: boolean;
+  isSuivi: boolean;
 };
 
 @Injectable()
@@ -104,7 +104,7 @@ export class ScoreIndicatifRepository {
               '[]'::json
             )
           `,
-          isApplicable: sql<boolean>`coalesce(bool_and(${indicateurCollectiviteTable.isApplicable}), true)`,
+          isSuivi: sql<boolean>`coalesce(bool_and(${indicateurCollectiviteTable.isSuivi}), true)`,
         })
         .from(indicateurDefinitionTable)
         .leftJoin(

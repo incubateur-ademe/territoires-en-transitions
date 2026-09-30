@@ -11,7 +11,7 @@ const indicateurAssocie: IndicateurAssocie = {
   identifiantReferentiel: 'ind_test',
   titre: 'Indicateur de test',
   unite: '%',
-  isApplicable: true,
+  isSuivi: true,
 };
 
 const valeurUtilisee: ValeurUtilisee = {
