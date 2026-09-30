@@ -1,5 +1,8 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { createElement } from 'react';
+import { ActionsDeReferenceView } from '@/app/shared/actions-de-reference/actions-de-reference.view';
+import ActionsReferencePage from './actions-reference/page';
 
 /**
  * Il n'existe pas de groupe `(standard)` qui rassemblerait les routes réservées
@@ -22,8 +25,10 @@ const guardModule = 'standard-only.layout';
 const segmentsHorsGardeStandard: Record<string, string> = {
   '(commun)': 'routes partagées par tous les contextes (gestion des membres)',
   '(instruction)': 'réservé aux services déconcentrés — porte la garde inverse',
+  'actions-reference':
+    'actions de référence communes à tous les contextes, service déconcentré compris',
   instruction:
-    "dossier consulté par un service sur la collectivité instruite — gardé par la saisine, pas par le type de collectivité",
+    'dossier consulté par un service sur la collectivité instruite — gardé par la saisine, pas par le type de collectivité',
 };
 
 describe('garde standard des routes de collectivité', () => {
@@ -59,10 +64,26 @@ describe('garde standard des routes de collectivité', () => {
 });
 
 describe('page-accessible-par-url-en-prod', () => {
-  it.todo(
-    'le segment actions-reference existe et délègue à la vue des actions de référence'
-  );
-  it.todo(
-    'le segment actions-reference est déclaré hors garde standard, service déconcentré compris'
-  );
+  const actionsReferenceSegment = 'actions-reference';
+
+  it('le segment actions-reference existe et délègue à la vue des actions de référence', () => {
+    expect(ActionsReferencePage()).toEqual(
+      createElement(ActionsDeReferenceView)
+    );
+  });
+
+  it('le segment actions-reference est déclaré hors garde standard, service déconcentré compris', () => {
+    const segmentFiles = readdirSync(
+      path.join(routesDir, actionsReferenceSegment)
+    );
+
+    expect({
+      isDeclaredOutsideStandardGuard:
+        actionsReferenceSegment in segmentsHorsGardeStandard,
+      hasOwnLayout: segmentFiles.includes('layout.tsx'),
+    }).toEqual({
+      isDeclaredOutsideStandardGuard: true,
+      hasOwnLayout: false,
+    });
+  });
 });
