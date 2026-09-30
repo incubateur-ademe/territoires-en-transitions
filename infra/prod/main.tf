@@ -96,6 +96,35 @@ resource "scaleway_rdb_privilege" "supabase_auth_admin" {
   permission    = "all"
 }
 
+# Rôle de connexion de Storage API self-hostée (supabase/storage-api), créé via
+# l'API Scaleway pour la même raison que supabase_auth_admin : seule l'API peut
+# lui accorder CONNECT/CREATE sur la base. Les rôles de requête (anon,
+# authenticated, service_role), sa membership et le schéma storage sont posés
+# ensuite par supabase-api/sql/002 et 003 (cf. README de la stack).
+resource "random_password" "supabase_storage_admin" {
+  length           = 32
+  special          = true
+  override_special = "-_.!*~"
+  min_lower        = 1
+  min_upper        = 1
+  min_numeric      = 1
+  min_special      = 1
+}
+
+resource "scaleway_rdb_user" "supabase_storage_admin" {
+  instance_id = module.postgres.instance_id
+  name        = "supabase_storage_admin"
+  password    = random_password.supabase_storage_admin.result
+  is_admin    = false
+}
+
+resource "scaleway_rdb_privilege" "supabase_storage_admin" {
+  instance_id   = module.postgres.instance_id
+  database_name = module.postgres.database_name
+  user_name     = scaleway_rdb_user.supabase_storage_admin.name
+  permission    = "all"
+}
+
 module "redis" {
   source = "../modules/redis"
 

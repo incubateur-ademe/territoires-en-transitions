@@ -81,6 +81,12 @@ output "supabase_auth_admin_password" {
   sensitive   = true
 }
 
+output "supabase_storage_admin_password" {
+  description = "Mot de passe du rôle supabase_storage_admin. À injecter dans STORAGE_DB_DATABASE_URL (Storage API)."
+  value       = random_password.supabase_storage_admin.result
+  sensitive   = true
+}
+
 # --- Redis (preprod) ---
 
 output "redis_cluster_id" {
