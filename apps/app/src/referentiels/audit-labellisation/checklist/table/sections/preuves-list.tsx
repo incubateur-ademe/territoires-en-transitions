@@ -1,6 +1,6 @@
 'use client';
 
-import { getDocumentFilename } from '@tet/domain/collectivites';
+import { getDocumentTitle } from '@/app/collectivites/documents/bibliotheque/document-label.utils';
 import { ReactElement } from 'react';
 import { ChecklistPreuve } from './checklist-preuve';
 import { DeletePreuveButton } from './delete-preuve-button';
@@ -17,13 +17,10 @@ const PreuveLine = ({
 }): ReactElement => {
   const isDownloadable = preuve.type === 'fichier';
   const isRenamable = canEdit && preuve.type === 'fichier';
-  const label =
-    preuve.type === 'lien' ? preuve.lien.titre : getDocumentFilename(preuve);
-
   return (
     <li>
       <DocumentLine
-        filename={label}
+        filename={getDocumentTitle(preuve)}
         isMissing={preuve.type === 'fichierManquant'}
       >
         {isDownloadable && (

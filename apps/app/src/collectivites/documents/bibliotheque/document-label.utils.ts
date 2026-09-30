@@ -37,9 +37,6 @@ export const getDocumentTitle = (
   }
 };
 
-export const getFormattedTitle = (document: DocumentSupport): string | null =>
-  getDocumentTitle(document, { withExtension: true, withFilesize: true });
-
 export const getAuthorAndDate = (
   date: string | null,
   author: string | null

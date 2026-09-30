@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   toDocumentHash,
   toFichier,
@@ -59,7 +60,40 @@ describe('DocumentTitle', () => {
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 
-  test("l'extension et la taille ne s'affichent que si elles sont demandees", () => {
+  test('un titre désactivé ne demande pas son ouverture au clic', () => {
+    const onOpen = vi.fn();
+    render(
+      <DocumentTitle document={documentFichier} onOpen={onOpen} disabled />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'rapport.pdf' }));
+
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+
+  test('un fichier annonce son téléchargement au survol du titre', async () => {
+    render(<DocumentTitle document={documentFichier} onOpen={vi.fn()} />);
+
+    fireEvent.mouseEnter(screen.getByRole('button', { name: 'rapport.pdf' }));
+
+    expect((await screen.findByRole('tooltip')).textContent).toBe(
+      appLabels.telechargerFichier
+    );
+  });
+
+  test('un lien annonce son ouverture au survol du titre', async () => {
+    render(<DocumentTitle document={documentLien} onOpen={vi.fn()} />);
+
+    fireEvent.mouseEnter(
+      screen.getByRole('button', { name: 'Rapport en ligne' })
+    );
+
+    expect((await screen.findByRole('tooltip')).textContent).toBe(
+      appLabels.ouvrirLien
+    );
+  });
+
+  test("l'extension et la taille ne s'affichent que si elles sont demandées", () => {
     render(
       <DocumentTitle
         document={documentFichier}

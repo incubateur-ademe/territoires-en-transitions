@@ -1,4 +1,3 @@
-import { appLabels } from '@/app/labels/catalog';
 import { toDocumentHash } from '@tet/domain/collectivites';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -50,12 +49,6 @@ const rapportFichier = {
   },
 } as unknown as AuditReport;
 
-const rapportLien = {
-  ...base,
-  type: 'lien',
-  lien: { url: 'https://exemple.test/rapport', titre: 'Rapport en ligne' },
-} as unknown as AuditReport;
-
 const rapportIntrouvable = {
   ...base,
   type: 'fichierManquant',
@@ -76,26 +69,6 @@ describe('PersistedReportCard', () => {
     vi.clearAllMocks();
   });
 
-  test('un rapport déposé en fichier annonce son téléchargement', () => {
-    renderCard(rapportFichier);
-
-    expect(
-      screen
-        .getByRole('button', { name: /^rapport-audit\.pdf/ })
-        .getAttribute('title')
-    ).toBe(appLabels.telechargerFichier);
-  });
-
-  test('un rapport déposé en lien annonce son ouverture', () => {
-    renderCard(rapportLien);
-
-    expect(
-      screen
-        .getByRole('button', { name: 'Rapport en ligne' })
-        .getAttribute('title')
-    ).toBe(appLabels.ouvrirLien);
-  });
-
   test("le nom d'un rapport introuvable n'est pas un bouton", () => {
     renderCard(rapportIntrouvable);
 
@@ -113,5 +86,21 @@ describe('PersistedReportCard', () => {
     );
 
     expect(openPreuve).toHaveBeenCalledWith(rapportFichier);
+  });
+
+  test("le titre n'ouvre plus le rapport pendant sa suppression", () => {
+    render(
+      <PersistedReportCard
+        report={rapportFichier}
+        isRemoving
+        onRemove={vi.fn()}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /^rapport-audit\.pdf/ })
+    );
+
+    expect(openPreuve).not.toHaveBeenCalled();
   });
 });

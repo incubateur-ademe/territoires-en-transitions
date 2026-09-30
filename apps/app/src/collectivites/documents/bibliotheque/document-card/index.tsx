@@ -7,9 +7,10 @@ import { DocumentRattache } from '../types';
 import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
 import { useEditState } from '../use-edit-state';
 import { useOpenPreuve } from '../use-open-preuve';
+import { DocumentLastModified } from '../document-last-modified';
+import { MissingFileBadge } from '../missing-file.badge';
 import { Actions, DocumentCardActions } from './actions';
 import {
-  Author,
   CommentBlock,
   Duplicate,
   Identifier,
@@ -20,23 +21,11 @@ import {
 const getVisitDate = (document: DocumentRattache): string | null =>
   document.preuveType === 'rapport' ? document.rapport.date : null;
 
-type DocumentBadgeProps = {
-  icon: 'error-warning-fill' | 'lock-fill';
-  tooltip: string;
-  name: string;
-  dataTest?: string;
-};
-
-const DocumentBadge = ({
-  icon,
-  tooltip,
-  name,
-  dataTest,
-}: DocumentBadgeProps): JSX.Element => (
-  <Tooltip label={tooltip}>
-    <div data-test={dataTest} className="absolute -top-3 left-5">
-      <Notification icon={icon} size="xs" classname="w-6 h-6" />
-      <span className="sr-only">{name}</span>
+const ConfidentialFileBadge = (): JSX.Element => (
+  <Tooltip label={appLabels.fichierModePrive}>
+    <div data-test="carte-doc-confidentiel" className="absolute -top-3 left-5">
+      <Notification icon="lock-fill" size="xs" classname="w-6 h-6" />
+      <span className="sr-only">{appLabels.fichierModePrive}</span>
     </div>
   </Tooltip>
 );
@@ -67,26 +56,18 @@ export const DocumentCard = ({
 
   return (
     <div className="relative group max-w-screen-md" data-test="carte-doc">
-      {document.type === 'fichierManquant' && (
-        <DocumentBadge
-          icon="error-warning-fill"
-          tooltip={appLabels.fichierIndisponibleInfo}
-          name={appLabels.fichierIndisponible}
-        />
-      )}
-      {fichier?.confidentiel && (
-        <DocumentBadge
-          icon="lock-fill"
-          tooltip={appLabels.fichierModePrive}
-          name={appLabels.fichierModePrive}
-          dataTest="carte-doc-confidentiel"
-        />
-      )}
+      {fichier?.confidentiel && <ConfidentialFileBadge />}
 
       <Card className="p-4 h-full gap-1">
-        <Title document={document} onOpen={() => openPreuve(document)} />
+        <div className="flex items-center gap-2">
+          {document.type === 'fichierManquant' && <MissingFileBadge />}
+          <Title document={document} onOpen={() => openPreuve(document)} />
+        </div>
         {identifier && <Identifier value={identifier} />}
-        <Author document={document} />
+        <DocumentLastModified
+          modifiedAt={document.modifiedAt}
+          modifiedByNom={document.modifiedByNom}
+        />
         {duplicate && <Duplicate information={duplicate} />}
         <CommentBlock
           commentaire={document.commentaire}
