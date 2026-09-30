@@ -74,6 +74,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'collectivites.mutate',
     'plans.fiches.import_in_parallel',
     'referentiels.labellisations.mutate_documents',
+    'shared.actions-de-reference.mutate',
     'utils.banner.mutate',
   ],
   [PlatformRole.ADEME]: [
