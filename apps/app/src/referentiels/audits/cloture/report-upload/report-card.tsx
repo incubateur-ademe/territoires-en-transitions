@@ -14,25 +14,42 @@ const ReportMetadata = ({ text }: { text: string | null }): JSX.Element => (
   <>{text && <span className="text-grey-6 text-sm font-medium">{text}</span>}</>
 );
 
-const DownloadableTitle = ({
-  title,
-  onClick,
-  disabled,
+const ReportTitle = ({
+  report,
+  isRemoving,
+  onOpen,
 }: {
-  title: string;
-  onClick: () => void;
-  disabled: boolean;
-}): JSX.Element => (
-  <button
-    type="button"
-    className="flex-1 text-left text-base font-bold transition text-primary-9 hover:text-primary-8 cursor-pointer disabled:text-grey-6 disabled:opacity-50 disabled:cursor-default"
-    title={appLabels.telechargerFichier}
-    disabled={disabled}
-    onClick={onClick}
-  >
-    {title}
-  </button>
-);
+  report: AuditReport;
+  isRemoving: boolean;
+  onOpen: () => void;
+}): JSX.Element => {
+  const title = getFormattedTitle(report) ?? '';
+
+  if (report.type !== 'fichier' && report.type !== 'lien') {
+    return (
+      <span className="flex-1 text-left text-base font-bold text-grey-7">
+        {title}
+      </span>
+    );
+  }
+
+  const openLabel =
+    report.type === 'lien'
+      ? appLabels.ouvrirLien
+      : appLabels.telechargerFichier;
+
+  return (
+    <button
+      type="button"
+      className="flex-1 text-left text-base font-bold transition text-primary-9 hover:text-primary-8 cursor-pointer disabled:text-grey-6 disabled:opacity-50 disabled:cursor-default"
+      title={openLabel}
+      disabled={isRemoving}
+      onClick={onOpen}
+    >
+      {title}
+    </button>
+  );
+};
 
 const RemoveReportButton = ({
   filename,
@@ -87,15 +104,14 @@ export const PersistedReportCard = ({
 }): JSX.Element => {
   const openPreuve = useOpenPreuve({ collectiviteId: report.collectiviteId });
   const filename = getDocumentFilename(report) ?? '';
-  const isOpenable = report.type === 'fichier' || report.type === 'lien';
   const isMissing = report.type === 'fichierManquant';
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
       <div className="flex items-start gap-1">
-        <DownloadableTitle
-          title={getFormattedTitle(report) ?? ''}
-          onClick={() => openPreuve(report)}
-          disabled={isRemoving || !isOpenable}
+        <ReportTitle
+          report={report}
+          isRemoving={isRemoving}
+          onOpen={() => openPreuve(report)}
         />
         {isMissing && <MissingFileBadge />}
         <RemoveReportButton
