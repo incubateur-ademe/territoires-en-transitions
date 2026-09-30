@@ -23,8 +23,8 @@ services:
       GOTRUE_API_PORT: 9999
       API_EXTERNAL_URL: ${API_EXTERNAL_URL}
 
-      # Connexion DB : utilise le rôle supabase_auth_admin (créé par le dump
-      # Supabase). search_path=auth pointe GoTrue sur son schéma.
+      # Connexion DB : rôle supabase_auth_admin, créé par Terraform
+      # (scaleway_rdb_user). search_path=auth pointe GoTrue sur son schéma.
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: ${GOTRUE_DB_DATABASE_URL}
 
@@ -103,8 +103,14 @@ services:
       AUTH_JWT_ALGORITHM: HS256
       PGRST_JWT_SECRET: ${SUPABASE_JWT_SECRET}
 
-      # Connexion DB : rôle supabase_storage_admin (créé par le dump).
+      # Connexion DB : rôle supabase_storage_admin, créé par Terraform
+      # (scaleway_rdb_user). Storage bascule vers anon / authenticated /
+      # service_role à chaque requête : ces rôles, la membership et les droits
+      # sur le schéma storage sont posés par sql/002 et sql/003.
       DATABASE_URL: ${STORAGE_DB_DATABASE_URL}
+      # false : l'admin Scaleway n'est pas superuser, les migrations ne
+      # peuvent pas créer les rôles (ni donner BYPASSRLS à service_role).
+      # sql/003 fait ce travail, politiques RLS service_role comprises.
       DB_INSTALL_ROLES: "false"
 
       FILE_SIZE_LIMIT: 52428800

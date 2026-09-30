@@ -3,7 +3,7 @@
 -- Partage de responsabilité avec Terraform :
 --   - Le rôle supabase_auth_admin et son privilège DB-level (CONNECT/CREATE)
 --     sont gérés par scaleway_rdb_user + scaleway_rdb_privilege dans
---     infra/preprod/main.tf. Sur Scaleway l'admin (tet_admin) n'est pas
+--     infra/nonprod/main.tf. Sur Scaleway l'admin (tet_admin) n'est pas
 --     superuser, n'a pas le grant option sur la DB, et seul l'API Scaleway
 --     (qui agit comme _rdb_superadmin) peut accorder ces privilèges.
 --   - Ce script prend le relais pour ce que la TF ne sait pas faire :
@@ -16,7 +16,7 @@
 --
 -- À exécuter via la cible Makefile dédiée :
 --
---   cd infra/preprod && make bootstrap-supabase-auth-roles-sql
+--   cd infra/nonprod && make bootstrap-supabase-auth-roles-sql
 --
 -- Sortie attendue : BEGIN / CREATE EXTENSION / DO / CREATE SCHEMA / COMMIT,
 -- aucun WARNING.
