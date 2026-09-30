@@ -70,8 +70,6 @@ export const sharedLabels = {
     `Modifier l'action « ${titre} »`,
   actionDeReferenceModificationTitre: "Modifier l'action de référence",
   actionDeReferenceModificationSucces: 'Action de référence modifiée',
-  actionDeReferenceModificationErreur:
-    "La modification de l'action de référence a échoué",
   actionDeReferenceModificationsNonEnregistreesTitre:
     'Modifications non enregistrées',
   actionDeReferenceModificationsNonEnregistreesDescription:
