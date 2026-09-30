@@ -7,6 +7,7 @@
 #   source infra/scripts/coolify-env.sh
 #
 # Les valeurs ci-dessous se récupèrent avec :
+#   terraform -chdir=../platform output -raw main_project_id
 #   terraform -chdir=../platform output -raw coolify_public_ip
 #   terraform -chdir=../nonprod  output -raw server_private_ip
 #   terraform -chdir=../nonprod  output -raw server_ssh_key_secret_name
@@ -14,7 +15,7 @@
 #   terraform -chdir=../prod     output -raw server_ssh_host
 #   terraform -chdir=../platform output -raw prod_project_id
 
-main_project_id = "00000000-0000-0000-0000-000000000000"
+project_id = "00000000-0000-0000-0000-000000000000"
 coolify_public_ip   = "203.0.113.20"
 
 app_servers = {

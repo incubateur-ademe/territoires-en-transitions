@@ -1,4 +1,4 @@
-variable "main_project_id" {
+variable "project_id" {
   description = "UUID du projet Scaleway. Nécessaire pour lire les clés SSH dans Secret Manager."
   type        = string
 }
