@@ -57,6 +57,7 @@ export const sharedLabels = {
   actionsDeReferenceAucune:
     'Aucune action de référence ne correspond à votre recherche',
   actionsDeReferenceEffacerFiltres: 'Effacer les filtres',
+  actionsDeReferenceReessayer: 'Réessayer',
   actionDeReferenceTitreLabel: 'Titre',
   actionDeReferenceDescriptionLabel: 'Description',
   actionDeReferenceLevierLabel: 'Levier',
