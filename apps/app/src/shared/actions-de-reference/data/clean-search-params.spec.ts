@@ -4,7 +4,7 @@ const toRecord = (searchParams: URLSearchParams): Record<string, string> =>
   Object.fromEntries(searchParams);
 
 describe('filtre-url-inconnu-ignore', () => {
-  it.skip('retire un levier inconnu et garde les leviers connus', () => {
+  it('retire un levier inconnu et garde les leviers connus', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({
         leviers: 'covoiturage,levier_inconnu,gestion_haies',
@@ -16,7 +16,7 @@ describe('filtre-url-inconnu-ignore', () => {
     });
   });
 
-  it.skip("retire le paramètre des leviers quand aucun levier n'est connu", () => {
+  it("retire le paramètre des leviers quand aucun levier n'est connu", () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ leviers: 'levier_inconnu,autre_inconnu' })
     );
@@ -24,7 +24,7 @@ describe('filtre-url-inconnu-ignore', () => {
     expect(toRecord(cleaned)).toEqual({});
   });
 
-  it.skip('retire une catégorie inconnue et garde les catégories connues', () => {
+  it('retire une catégorie inconnue et garde les catégories connues', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ categories: 'financement,subvention' })
     );
@@ -32,7 +32,7 @@ describe('filtre-url-inconnu-ignore', () => {
     expect(toRecord(cleaned)).toEqual({ categories: 'financement' });
   });
 
-  it.skip("retire le paramètre des catégories quand aucune catégorie n'est connue", () => {
+  it("retire le paramètre des catégories quand aucune catégorie n'est connue", () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ categories: 'subvention' })
     );
@@ -40,13 +40,13 @@ describe('filtre-url-inconnu-ignore', () => {
     expect(toRecord(cleaned)).toEqual({});
   });
 
-  it.skip('retire un tri inconnu', () => {
+  it('retire un tri inconnu', () => {
     const cleaned = cleanSearchParams(new URLSearchParams({ sortBy: 'prix' }));
 
     expect(toRecord(cleaned)).toEqual({});
   });
 
-  it.skip('retire chaque valeur inconnue et garde le reste de la recherche', () => {
+  it('retire chaque valeur inconnue et garde le reste de la recherche', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({
         searchedText: 'combles',
@@ -64,7 +64,7 @@ describe('filtre-url-inconnu-ignore', () => {
 });
 
 describe('invariants', () => {
-  it.skip('laisse intacte une recherche dont toutes les valeurs sont connues', () => {
+  it('laisse intacte une recherche dont toutes les valeurs sont connues', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({
         searchedText: 'combles',
@@ -82,7 +82,7 @@ describe('invariants', () => {
     });
   });
 
-  it.skip('garde le texte cherché tel que saisi, casse et accents compris', () => {
+  it('garde le texte cherché tel que saisi, casse et accents compris', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ searchedText: 'Combles Perdus isolés' })
     );
@@ -92,13 +92,13 @@ describe('invariants', () => {
     });
   });
 
-  it.skip('laisse une URL sans paramètre sans paramètre', () => {
+  it('laisse une URL sans paramètre sans paramètre', () => {
     const cleaned = cleanSearchParams(new URLSearchParams());
 
     expect(toRecord(cleaned)).toEqual({});
   });
 
-  it.skip('garde un paramètre étranger à la recherche', () => {
+  it('garde un paramètre étranger à la recherche', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ view: 'grid', leviers: 'levier_inconnu' })
     );
@@ -106,7 +106,7 @@ describe('invariants', () => {
     expect(toRecord(cleaned)).toEqual({ view: 'grid' });
   });
 
-  it.skip('retire le tri par titre, qui est le tri par défaut', () => {
+  it('retire le tri par titre, qui est le tri par défaut', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ searchedText: 'combles', sortBy: 'titre' })
     );
@@ -114,7 +114,7 @@ describe('invariants', () => {
     expect(toRecord(cleaned)).toEqual({ searchedText: 'combles' });
   });
 
-  it.skip('retire un texte cherché vide', () => {
+  it('retire un texte cherché vide', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({ searchedText: '', sortBy: 'levier' })
     );
@@ -122,7 +122,7 @@ describe('invariants', () => {
     expect(toRecord(cleaned)).toEqual({ sortBy: 'levier' });
   });
 
-  it.skip('ne modifie pas les paramètres reçus', () => {
+  it('ne modifie pas les paramètres reçus', () => {
     const received = new URLSearchParams({
       leviers: 'covoiturage,levier_inconnu',
       sortBy: 'prix',
