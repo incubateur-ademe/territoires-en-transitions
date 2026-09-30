@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { notImplemented } from '@tet/backend/utils/not-implemented';
 import { type Result } from '@tet/backend/utils/result.type';
 import {
   ActionDeReference,
   ListActionsDeReferenceInput,
 } from '@tet/domain/shared';
 import { ListActionsDeReferenceError } from '../actions-de-reference.errors';
+import { ActionsDeReferenceRepository } from '../actions-de-reference.repository';
 
 type ListActionsDeReference = (
   input: ListActionsDeReferenceInput
@@ -13,5 +13,7 @@ type ListActionsDeReference = (
 
 @Injectable()
 export class ListActionsDeReferenceService {
-  listActions: ListActionsDeReference = notImplemented('listActions');
+  constructor(private readonly repository: ActionsDeReferenceRepository) {}
+
+  listActions: ListActionsDeReference = (input) => this.repository.list(input);
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ActionsDeReferenceRouter } from '@tet/backend/shared/actions-de-reference/actions-de-reference.router';
 import { SendContactMessageRouter } from '@tet/backend/shared/contact/send-contact-message.router';
 import { DepartementService } from '@tet/backend/shared/departements/departement.service';
 import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
@@ -16,11 +17,13 @@ export class SharedRouter {
     private readonly departementService: DepartementService,
     private readonly effetAttenduService: EffetAttenduService,
     private readonly tempsDeMiseEnOeuvreService: TempsDeMiseEnOeuvreService,
-    private readonly sendContactMessageRouter: SendContactMessageRouter
+    private readonly sendContactMessageRouter: SendContactMessageRouter,
+    private readonly actionsDeReferenceRouter: ActionsDeReferenceRouter
   ) {}
 
   router = this.trpc.router({
     contact: this.sendContactMessageRouter.router,
+    actionsDeReference: this.actionsDeReferenceRouter.router,
     thematiques: this.trpc.router({
       list: this.trpc.authedProcedure.query(async () => {
         return this.thematiqueService.listThematiques();

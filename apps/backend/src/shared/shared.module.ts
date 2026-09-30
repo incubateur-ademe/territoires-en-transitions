@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ActionsDeReferenceModule } from '@tet/backend/shared/actions-de-reference/actions-de-reference.module';
 import { SendContactMessageRouter } from '@tet/backend/shared/contact/send-contact-message.router';
 import { SendContactMessageService } from '@tet/backend/shared/contact/send-contact-message.service';
 import { DepartementService } from '@tet/backend/shared/departements/departement.service';
@@ -11,7 +12,7 @@ import { NotificationsModule } from '@tet/backend/utils/notifications/notificati
 
 @Module({
   // NotificationsModule pour EmailService, utilisé par le formulaire de contact.
-  imports: [NotificationsModule],
+  imports: [NotificationsModule, ActionsDeReferenceModule],
   providers: [
     ThematiqueService,
     RegionService,
