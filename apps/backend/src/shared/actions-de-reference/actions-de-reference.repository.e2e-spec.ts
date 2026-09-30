@@ -4,13 +4,17 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   ActionDeReference,
+  ActionDeReferenceChanges,
+  ActionDeReferenceId,
+  actionDeReferenceIdSchema,
   ListActionsDeReferenceInput,
   listActionsDeReferenceInputSchema,
 } from '@tet/domain/shared';
-import { sql } from 'drizzle-orm';
+import { asc, sql } from 'drizzle-orm';
 import { TransactionRollbackError } from 'drizzle-orm/errors';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { ActionsDeReferenceTableRepository } from './actions-de-reference-table.repository';
+import { ActionsDeReferenceErrorEnum } from './actions-de-reference.errors';
 import { ActionsDeReferenceRepository } from './actions-de-reference.repository';
 import { actionDeReferenceTable } from './models/action-de-reference.table';
 
@@ -102,7 +106,11 @@ describe('ActionsDeReferenceRepository contract', () => {
 
   const checkWithOnlyActions = async (
     actions: readonly ActionToInsert[],
-    check: (repository: ActionsDeReferenceRepository) => Promise<void>
+    check: (context: {
+      repository: ActionsDeReferenceRepository;
+      tx: Transaction;
+      insertedIds: ActionDeReferenceId[];
+    }) => Promise<void>
   ): Promise<void> => {
     try {
       await db.db.transaction(async (tx: Transaction) => {
@@ -110,12 +118,17 @@ describe('ActionsDeReferenceRepository contract', () => {
           sql`lock table ${actionDeReferenceTable} in exclusive mode`
         );
         await tx.delete(actionDeReferenceTable);
-        await tx.insert(actionDeReferenceTable).values([...actions]);
-        await check(
-          new ActionsDeReferenceTableRepository({
+        const insertedRows = await tx
+          .insert(actionDeReferenceTable)
+          .values([...actions])
+          .returning({ id: actionDeReferenceTable.id });
+        await check({
+          repository: new ActionsDeReferenceTableRepository({
             db: tx,
-          } as unknown as DatabaseService)
-        );
+          } as unknown as DatabaseService),
+          tx,
+          insertedIds: insertedRows.map((row) => row.id),
+        });
         tx.rollback();
       });
     } catch (error) {
@@ -134,7 +147,7 @@ describe('ActionsDeReferenceRepository contract', () => {
     input: ListActionsDeReferenceInput;
     expected: readonly ActionToInsert[];
   }): Promise<void> =>
-    checkWithOnlyActions(actions, async (repository) => {
+    checkWithOnlyActions(actions, async ({ repository }) => {
       expect(await repository.list(input)).toEqual(toListedActions(expected));
     });
 
@@ -634,23 +647,236 @@ describe('ActionsDeReferenceRepository contract', () => {
   });
 
   describe('update-action', () => {
-    it.todo(
-      "modifie le titre, la description, le levier et la catégorie donnés et renvoie l'id"
-    );
-    it.todo('laisse inchangés les champs absents de la mise à jour');
-    it.todo(
-      "renvoie l'id sans rien modifier quand seul l'id est donné et que l'action existe"
-    );
-    it.todo(
-      "renvoie l'id sans rien modifier, sans erreur, quand tous les champs à modifier sont undefined"
-    );
-    it.todo('renvoie ACTION_DE_REFERENCE_NOT_FOUND pour un id inconnu');
-    it.todo(
-      "renvoie ACTION_DE_REFERENCE_NOT_FOUND pour un id inconnu quand seul l'id est donné"
-    );
-    it.todo(
-      'renvoie ACTION_DE_REFERENCE_CONFLICT quand le triplet levier, catégorie, titre existe déjà sur une autre action'
-    );
-    it.todo("laisse l'action inchangée en base après un conflit");
+    const unknownActionDeReferenceId =
+      actionDeReferenceIdSchema.parse(2147483647);
+
+    const readStoredActions = (tx: Transaction): Promise<ActionToInsert[]> =>
+      tx
+        .select({
+          titre: actionDeReferenceTable.titre,
+          description: actionDeReferenceTable.description,
+          levier: actionDeReferenceTable.levier,
+          categorie: actionDeReferenceTable.categorie,
+        })
+        .from(actionDeReferenceTable)
+        .orderBy(asc(actionDeReferenceTable.id));
+
+    const atticTripletChanges: ActionDeReferenceChanges = {
+      titre: atticInsulationAction.titre,
+      levier: atticInsulationAction.levier,
+      categorie: atticInsulationAction.categorie,
+    };
+
+    const toRepositoryWithoutOwnDatabase = (): ActionsDeReferenceRepository =>
+      new ActionsDeReferenceTableRepository({
+        db: undefined,
+      } as unknown as DatabaseService);
+
+    const expectUnknownIdUpdate = async (
+      changes: ActionDeReferenceChanges
+    ): Promise<void> =>
+      checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, tx }) => {
+          const updateResult = await repository.update({
+            id: unknownActionDeReferenceId,
+            changes,
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: {
+              success: false,
+              error: ActionsDeReferenceErrorEnum.ACTION_DE_REFERENCE_NOT_FOUND,
+            },
+            storedActions: [atticInsulationAction, carpoolingAction],
+          });
+        }
+      );
+
+    it("modifie le titre, la description, le levier et la catégorie donnés et renvoie l'id", async () => {
+      const lostAtticInsulationAction: ActionToInsert = {
+        titre: 'Isoler les combles perdus',
+        description: 'Souffler de la ouate de cellulose',
+        levier: 'chaudieres_gaz_renovation_residentiel',
+        categorie: 'financement',
+      };
+
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, tx, insertedIds: [atticId] }) => {
+          const updateResult = await repository.update({
+            id: atticId,
+            changes: lostAtticInsulationAction,
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: { success: true, data: { id: atticId } },
+            storedActions: [lostAtticInsulationAction, carpoolingAction],
+          });
+        }
+      );
+    });
+
+    it('laisse inchangés les champs absents de la mise à jour', async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, tx, insertedIds: [atticId] }) => {
+          const updateResult = await repository.update({
+            id: atticId,
+            changes: { titre: 'Isoler les combles perdus' },
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: { success: true, data: { id: atticId } },
+            storedActions: [
+              { ...atticInsulationAction, titre: 'Isoler les combles perdus' },
+              carpoolingAction,
+            ],
+          });
+        }
+      );
+    });
+
+    it("renvoie l'id sans rien modifier quand seul l'id est donné et que l'action existe", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, tx, insertedIds: [atticId] }) => {
+          const updateResult = await repository.update({
+            id: atticId,
+            changes: {},
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: { success: true, data: { id: atticId } },
+            storedActions: [atticInsulationAction, carpoolingAction],
+          });
+        }
+      );
+    });
+
+    it("renvoie l'id sans rien modifier, sans erreur, quand tous les champs à modifier sont undefined", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, tx, insertedIds: [atticId] }) => {
+          const updateResult = await repository.update({
+            id: atticId,
+            changes: {
+              titre: undefined,
+              description: undefined,
+              levier: undefined,
+              categorie: undefined,
+            },
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: { success: true, data: { id: atticId } },
+            storedActions: [atticInsulationAction, carpoolingAction],
+          });
+        }
+      );
+    });
+
+    it('renvoie ACTION_DE_REFERENCE_NOT_FOUND pour un id inconnu', async () => {
+      await expectUnknownIdUpdate({ titre: 'Isoler les combles perdus' });
+    });
+
+    it("renvoie ACTION_DE_REFERENCE_NOT_FOUND pour un id inconnu quand seul l'id est donné", async () => {
+      await expectUnknownIdUpdate({});
+    });
+
+    it('renvoie ACTION_DE_REFERENCE_CONFLICT quand le triplet levier, catégorie, titre existe déjà sur une autre action', async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, insertedIds: [, carpoolingId] }) => {
+          expect(
+            await repository.update({
+              id: carpoolingId,
+              changes: atticTripletChanges,
+            })
+          ).toEqual({
+            success: false,
+            error: ActionsDeReferenceErrorEnum.ACTION_DE_REFERENCE_CONFLICT,
+          });
+        }
+      );
+    });
+
+    it("laisse l'action inchangée en base après un conflit", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, tx, insertedIds: [, carpoolingId] }) => {
+          const updateResult = await repository.update({
+            id: carpoolingId,
+            changes: atticTripletChanges,
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: {
+              success: false,
+              error: ActionsDeReferenceErrorEnum.ACTION_DE_REFERENCE_CONFLICT,
+            },
+            storedActions: [atticInsulationAction, carpoolingAction],
+          });
+        }
+      );
+    });
+
+    it("applique la mise à jour dans la transaction passée par l'appelant", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ tx, insertedIds: [atticId] }) => {
+          const updateResult = await toRepositoryWithoutOwnDatabase().update({
+            id: atticId,
+            changes: { titre: 'Isoler les combles perdus' },
+            tx,
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: { success: true, data: { id: atticId } },
+            storedActions: [
+              { ...atticInsulationAction, titre: 'Isoler les combles perdus' },
+              carpoolingAction,
+            ],
+          });
+        }
+      );
+    });
+
+    it("laisse utilisable la transaction passée par l'appelant après un conflit", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ tx, insertedIds: [, carpoolingId] }) => {
+          const updateResult = await toRepositoryWithoutOwnDatabase().update({
+            id: carpoolingId,
+            changes: atticTripletChanges,
+            tx,
+          });
+          expect({
+            updateResult,
+            storedActions: await readStoredActions(tx),
+          }).toEqual({
+            updateResult: {
+              success: false,
+              error: ActionsDeReferenceErrorEnum.ACTION_DE_REFERENCE_CONFLICT,
+            },
+            storedActions: [atticInsulationAction, carpoolingAction],
+          });
+        }
+      );
+    });
   });
 });
