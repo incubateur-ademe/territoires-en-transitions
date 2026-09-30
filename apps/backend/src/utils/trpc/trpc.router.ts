@@ -4,7 +4,6 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import { CollectivitesRouter } from '@tet/backend/collectivites/collectivites.router';
 import { DemarchesRouter } from '@tet/backend/demarches/demarches.router';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
@@ -15,7 +14,7 @@ import { SharedRouter } from '@tet/backend/shared/shared.router';
 import { BannerRouter } from '@tet/backend/utils/banner/banner.router';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { NotificationsRouter } from '@tet/backend/utils/notifications/notifications.router';
-import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
+import { captureException } from '@tet/backend/utils/error-tracking/capture-exception';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { Response } from 'express';
 import z from 'zod';
@@ -28,8 +27,8 @@ import { TrpcService } from './trpc.service';
  * Une 401 (non authentifié) ou une 429 (limite d'appels atteinte) est le
  * fonctionnement nominal du contrôle d'accès ou du rate limit, jamais un bug à
  * investiguer : on les journalise en `warn` et on ne les remonte pas dans
- * Sentry. Sinon, sur les procédures publiques, l'abus que le rate limit est
- * justement là pour absorber se transformerait en quota Sentry.
+ * Sentry ni PostHog. Sinon, sur les procédures publiques, l'abus que le rate
+ * limit est justement là pour absorber se transformerait en quota d'erreurs.
  *
  * Les autres codes 4xx (`BAD_REQUEST` en particulier) restent remontés : sur
  * les routers internes ils signalent en général une vraie incohérence de
@@ -96,12 +95,7 @@ export class TrpcRouter {
 
           this.logger.error(error);
 
-          Sentry.captureException(
-            error,
-            getSentryContextFromApplicationContext(
-              this.contextStoreService.getContext()
-            )
-          );
+          captureException(error, this.contextStoreService.getContext());
         },
       })
     );

@@ -5,10 +5,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@tet/backend/utils/bullmq/queue-names.constants';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
+import { captureException } from '@tet/backend/utils/error-tracking/capture-exception';
 import { webhookConfigurationTable } from '@tet/backend/utils/webhooks/webhook-configuration.table';
 import { webhookMessageTable } from '@tet/backend/utils/webhooks/webhook-message.table';
 import {
@@ -271,17 +270,12 @@ export class WebhookConsumerService extends WorkerHost {
         )}`
       );
 
-      Sentry.captureException(
-        error,
-        getSentryContextFromApplicationContext(
-          this.contextStoreService.getContext(),
+      captureException(error, this.contextStoreService.getContext(),
           {
             jobId: job.id,
             jobName: job.name,
             queueName: WEBHOOK_NOTIFICATIONS_QUEUE_NAME,
-          }
-        )
-      );
+          });
 
       if (job.id) {
         await this.databaseService.db
