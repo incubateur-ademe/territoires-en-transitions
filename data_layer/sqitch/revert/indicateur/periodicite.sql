@@ -23,44 +23,6 @@ DROP FUNCTION IF EXISTS public.verrouiller_graphe_calcul_indicateur_exclusif();
 DROP TRIGGER verifier_periodicite_valeur_indicateur ON public.indicateur_valeur;
 DROP FUNCTION public.verifier_periodicite_valeur_indicateur();
 
--- Retire la dépendance de la fonction publique à la colonne avant de
--- supprimer celle-ci, et restaure exactement le contrat antérieur : la
--- cadence n'était pas encore transportée dans chaque entrée JSON.
-CREATE OR REPLACE FUNCTION public.indicateurs_gaz_effet_serre(site_labellisation)
-    RETURNS jsonb
-    SECURITY DEFINER
-    LANGUAGE sql
-BEGIN ATOMIC
-SELECT to_jsonb(array_agg(d))
-FROM (
-    SELECT iri.date_valeur,
-           iri.resultat,
-           id.identifiant_referentiel AS identifiant,
-           src.libelle AS source
-    FROM indicateur_valeur iri
-    JOIN indicateur_definition id ON iri.indicateur_id = id.id
-    JOIN indicateur_source_metadonnee ism ON ism.id = iri.metadonnee_id
-    JOIN indicateur_source src ON src.id = ism.source_id
-    WHERE iri.collectivite_id = ($1).collectivite_id
-      AND iri.metadonnee_id IS NOT NULL
-      AND iri.resultat IS NOT NULL
-      AND src.id IN ('citepa')
-      AND id.identifiant_referentiel::text = ANY (
-          ARRAY [
-              'cae_1.g'::character varying,
-              'cae_1.f'::character varying,
-              'cae_1.h'::character varying,
-              'cae_1.j'::character varying,
-              'cae_1.i'::character varying,
-              'cae_1.c'::character varying,
-              'cae_1.e'::character varying,
-              'cae_1.d'::character varying,
-              'cae_1.a'::character varying
-          ]::text[]
-      )
-) d;
-END;
-
 DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait
     ON public.indicateur_definition;
 DROP TRIGGER IF EXISTS empecher_periodicite_non_annuelle_pendant_retrait ON public.indicateur_valeur;
@@ -139,14 +101,15 @@ DROP FUNCTION IF EXISTS migration.auditer_et_normaliser_dates_indicateur();
 DROP TABLE migration.indicateur_valeur_periodicite_audit;
 DROP FUNCTION migration.verifier_retrait_periodicite_indicateur();
 
+-- Le schéma additif appartient à la PR précédente : le conserver avec ses
+-- garde-fous et index permet de reprendre l'ancien backend après ce revert.
 ALTER TABLE public.indicateur_definition
-    DROP COLUMN periodicite, DROP COLUMN aggregation_resultat, DROP COLUMN aggregation_objectif;
-ALTER TABLE public.indicateur_valeur DROP COLUMN periodicite;
-
-DROP TRIGGER empecher_modification_periodicite
-    ON public.indicateur_periodicite;
-DROP FUNCTION public.empecher_modification_periodicite();
+    ADD CONSTRAINT indicateur_definition_schema_annuel CHECK (
+        periodicite IS NOT DISTINCT FROM 'annuelle'
+        AND aggregation_resultat IS NULL AND aggregation_objectif IS NULL
+    );
+ALTER TABLE public.indicateur_valeur
+    ADD CONSTRAINT indicateur_valeur_schema_annuel CHECK (periodicite = 'annuelle');
 DROP FUNCTION public.indicateur_date_debut_periode(text, date);
-DROP TABLE public.indicateur_periodicite;
 
 COMMIT;

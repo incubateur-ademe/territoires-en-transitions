@@ -1,17 +1,23 @@
-# Périodicité des indicateurs — livraison 1 : migration annuelle
+# Périodicité des indicateurs — livraison backend annuelle (#5214)
 
-Cette première livraison migre le stockage, normalise les dates annuelles et adapte
-le backend ainsi que les tâches `tools`. Elle peut rester en production sans la
+Cette troisième livraison utilise le schéma compatible déjà déployé, contrôle les
+dates annuelles et adapte le backend ainsi que les tâches `tools`. Elle peut rester en production sans la
 livraison d’activation : créations, imports et valeurs restent annuels, l’agrégation
 reste désactivée. Des validations API et des contraintes SQL imposent cette limite.
 
-Le [découpage des deux livraisons](periodicite-releases.md) décrit leur périmètre.
-La migration et les applications compatibles se déploient dans la même fenêtre de
+Le [découpage des quatre livraisons](periodicite-releases.md) décrit leur périmètre.
+Le SQL de bascule et les applications compatibles se déploient dans la même fenêtre de
 maintenance. Le frontend conserve son fonctionnement annuel.
 
 ## Préparer la maintenance
 
-La [pré-PR #5220](indicateur-data-repair.md) doit être appliquée avant cette livraison.
+La [PR de réparations #5220](indicateur-data-repair.md), puis la PR
+`split/periodicite-schema` jusqu'à `@indicateur-periodicite-schema`, doivent être
+appliquées avant cette livraison. L'ancien backend peut fonctionner entre ces
+livraisons ; arrêter tous ses producteurs avant d'appliquer la bascule ci-dessous.
+La correction SQL de formule `correct-formule-cae-2-a` est maintenant dans #5214.
+Elle remplace le jeton `cae_2.lpcaet` par `cae_2.l_pcaet` sans recalculer les
+observations. Les recalculs reprennent seulement avec le backend protecteur.
 Les protections des saisies manuelles et de provenance font partie de #5214 :
 un calcul automatique ne remplace pas une saisie, y compris sous métadonnée PCAET ;
 un appel REST utilisateur ne peut pas fournir de `metadonneeId`. Les imports
@@ -23,7 +29,7 @@ un héritage de droits inattendu bloque la migration. Ses ACL initiales sont
 archivées pour un retour arrière exact. La restauration de données conserve
 les ACL et cette archive propres à la cible.
 
-La [répétition du 29 septembre](periodicite-validation-2026-09-29.md) documente
+La [répétition historique du déploiement groupé du 29 septembre](periodicite-validation-2026-09-29.md) documente
 les protections, les tests et leurs limites ; elle ne remplace pas les contrôles
 sur une sauvegarde à jour avant la maintenance.
 
@@ -39,7 +45,7 @@ sur une sauvegarde à jour avant la maintenance.
 
 ### Contrôler les dates avant migration
 
-Le [script de contrôle](scripts/check-indicateur-periodicite.sql) est livré avec cette première PR.
+Le [script de contrôle](scripts/check-indicateur-periodicite.sql) est livré dès #5220.
 Depuis la racine d'un checkout de cette version, définir `PERIODICITE_CHECK_DATABASE_URL`
 vers la copie **encore au schéma précédent**, avec un compte pouvant lire toutes les valeurs :
 
@@ -70,6 +76,8 @@ les vérifications des migrations ni les tests applicatifs.
 2. Prendre la sauvegarde de reprise du schéma et des données après l'arrêt des écritures.
    Réexécuter le contrôle des dates sur la cible : toute nouvelle anomalie bloquante doit être résolue
    avant de migrer, avec une nouvelle sauvegarde si les données sont corrigées.
+   Vérifier la cellule `valeurCalcule` de `cae_2.a` dans le catalogue Google Sheets
+   pour que la référence erronée `cae_2.lpcaet` ne soit pas réintroduite.
 3. Depuis la racine du commit préparé, exécuter
    `sqitch deploy --mode all --verify --target <cible>` jusqu'au schéma final.
    Les migrations revérifient les données sous verrou et refusent les conflits. Chaque changement SQL
@@ -97,7 +105,7 @@ Les nouvelles écritures utilisent une seule valeur par indicateur, collectivit�
 source/version et année. Les dates historiques transmises par les clients annuels
 sont normalisées avant l’upsert. Les instantanés de scores restent inchangés.
 
-L’état de restauration est `annual`. Une sauvegarde `legacy`, `expand` ou activée
+L’état de restauration est `annual`. Une sauvegarde `legacy`, `schema`, `expand` ou activée
 (`contract`) ne peut pas être restaurée avec le script de restauration de données
 sur cette livraison. Utiliser une sauvegarde du même état ou une reprise complète
 cohérente du schéma, des données et des applications.
@@ -111,6 +119,9 @@ il ne constitue pas une procédure de reprise de production couvrant le schéma.
 
 Après la réouverture, préserver les nouvelles écritures et privilégier une correction en avant.
 Restaurer l'ancienne sauvegarde ou supprimer les colonnes de périodicité pourrait perdre des données.
+
+La [validation du découpage du 30 septembre](periodicite-validation-2026-09-30.md)
+consigne les contrôles sur fixtures synthétiques et leurs limites.
 
 ## Vérifications locales
 

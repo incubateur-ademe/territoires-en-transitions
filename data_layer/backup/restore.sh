@@ -240,7 +240,7 @@ GROUP_ORDER=(
 
 # Ces tables n'existent pas dans le schéma legacy. L'égalité de phase vérifiée
 # ci-dessus garantit qu'elles existent à la fois dans la cible et le snapshot.
-if [ "$PERIODICITE_RESTORE_PHASE" != "legacy" ]; then
+if [[ "$PERIODICITE_RESTORE_PHASE" != "legacy" && "$PERIODICITE_RESTORE_PHASE" != "schema" ]]; then
     GROUP_ORDER+=(periodicite_group)
 fi
 
@@ -280,8 +280,6 @@ if [ -n "$missing_tables" ]; then
     printf '%s\n' "$missing_tables"
     exit 1
 fi
-
-TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE"
 
 echo "Restoring to $(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|') from $DUMP_FILE"
 if [ -z "${CI:-}" ]; then

@@ -135,6 +135,10 @@ wait "$expand_delete_pid"
 assert_equal "0" "$(scalar "SELECT count(*) FROM public.indicateur_definition WHERE id = $expand_delete_id")" \
   "l'ordre définition puis valeur de l'expand doit laisser finir une ancienne suppression en cascade"
 
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_schema.sql
+apply_change data_layer/sqitch/verify/indicateur/periodicite_schema.sql
+apply_change data_layer/sqitch/deploy/indicateur/correct-formule-cae-2-a.sql
+apply_change data_layer/sqitch/verify/indicateur/correct-formule-cae-2-a.sql
 apply_change data_layer/sqitch/deploy/indicateur/periodicite.sql
 apply_change data_layer/sqitch/verify/indicateur/periodicite.sql
 apply_change data_layer/sqitch/deploy/indicateur/reconciliation_formules.sql
@@ -415,9 +419,8 @@ apply_change data_layer/sqitch/revert/indicateur/periodicite_obligatoire.sql
 apply_change data_layer/sqitch/revert/indicateur/dependances_formules.sql
 apply_change data_layer/sqitch/revert/indicateur/reconciliation_formules.sql
 apply_change data_layer/sqitch/revert/indicateur/periodicite.sql
-assert_equal "0" \
-  "$(scalar "SELECT position('iri.periodicite' IN pg_get_functiondef('public.indicateurs_gaz_effet_serre(site_labellisation)'::regprocedure))")" \
-  "le revert doit restaurer la projection GES sans dépendance à la colonne supprimée"
+apply_change data_layer/sqitch/verify/indicateur/periodicite_schema.sql
+apply_change data_layer/sqitch/revert/indicateur/periodicite_schema.sql
 assert_equal "2020-01-01" "$(scalar "SELECT date_valeur FROM public.indicateur_valeur WHERE id = $origin_value_id")" \
   "le revert ne doit pas restaurer la date d'un audit invalidé"
 assert_equal "1" "$(scalar "SELECT count(*) FROM public.indicateur_valeur WHERE indicateur_id = $concurrency_id AND date_valeur = DATE '2021-02-01'")" \

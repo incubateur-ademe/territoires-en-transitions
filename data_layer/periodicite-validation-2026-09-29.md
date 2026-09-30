@@ -1,3 +1,9 @@
+> Rapport historique du 29 septembre, avant séparation de la PR de schéma.
+> Le nouvel ordre est **réparations #5220 → schéma compatible → backend #5214 → activation #5215**.
+> Les résultats ci-dessous concernent la chaîne groupée de cette date et ne prouvent
+> pas la compatibilité de l'ancien backend entre les nouvelles livraisons.
+> La formule est désormais corrigée dans #5214, avec la protection des saisies.
+
 # Validation de la phase 1 — 29 septembre 2026
 
 Périmètre : [phase 1](../doc/plans/2026-08-31-001-feat-electrification-indicateurs-plan/phase-1-periodicites-des-indicateurs.md)

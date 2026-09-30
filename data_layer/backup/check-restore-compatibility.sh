@@ -12,6 +12,7 @@ if [ -z "${TO_DB_URL:-}" ]; then
 fi
 
 DUMP_FILE="$1"
+SCHEMA_CHANGE="indicateur/periodicite_schema"
 EXPAND_CHANGE="indicateur/periodicite"
 EXPAND_RECONCILIATION_CHANGE="indicateur/reconciliation_formules"
 EXPAND_DEPENDENCIES_CHANGE="indicateur/dependances_formules"
@@ -82,6 +83,7 @@ target_phase=$(psql \
                     )
                 ) > 0
                     THEN 'partial-expand'
+                WHEN count(*) FILTER (WHERE change = '$SCHEMA_CHANGE') > 0 THEN 'schema'
                 ELSE 'legacy'
             END AS phase,
             count(*) FILTER (WHERE change = '$ANNUAL_CHANGE') > 0 AS annual_applied,
@@ -92,6 +94,14 @@ target_phase=$(psql \
         ),
         physical_state AS (
             SELECT
+                (SELECT count(*) = 2 FROM pg_constraint WHERE convalidated AND (
+                    (conrelid = to_regclass('public.indicateur_definition') AND conname = 'indicateur_definition_schema_annuel')
+                    OR (conrelid = to_regclass('public.indicateur_valeur') AND conname = 'indicateur_valeur_schema_annuel')))
+                    AND to_regclass('public.unique_indicateur_valeur_utilisateur') IS NOT NULL
+                    AND to_regclass('public.unique_indicateur_valeur_importee') IS NOT NULL
+                    AND (SELECT column_default = '''annuelle''::text' FROM information_schema.columns
+                         WHERE table_schema = 'public' AND table_name = 'indicateur_valeur' AND column_name = 'periodicite')
+                    AS schema_compatible,
                 to_regclass(
                     'public.indicateur_periodicite'
                 ) IS NOT NULL AS periodicity_catalog_exists,
@@ -264,6 +274,17 @@ target_phase=$(psql \
              AND NOT strict_date_function_exists
              AND NOT strict_date_trigger_exists
                 THEN 'legacy'
+            WHEN phase = 'schema'
+             AND NOT annual_applied AND NOT activation_applied AND annual_guards_absent
+             AND schema_compatible AND periodicity_catalog_exists
+             AND periodicity_column_is_expand_compatible
+             AND NOT canonical_date_function_exists AND NOT audit_table_exists
+             AND NOT reconciliation_queue_exists AND NOT dependency_projection_exists
+             AND NOT dependency_extractor_exists AND NOT dependency_verifier_exists
+             AND NOT audit_function_exists AND NOT transition_date_function_exists
+             AND NOT transition_date_trigger_exists AND NOT strict_date_function_exists
+             AND NOT strict_date_trigger_exists
+                THEN 'schema'
             WHEN phase = 'expand'
              AND NOT annual_applied AND NOT activation_applied AND annual_guards_absent
              AND periodicity_catalog_exists
@@ -307,7 +328,7 @@ target_phase=$(psql \
     ")
 
 case "$target_phase" in
-    legacy|expand|annual|contract)
+    legacy|schema|expand|annual|contract)
         ;;
     partial-expand)
         echo "Refusing to restore: target is inside a partial periodicity expand." >&2
@@ -341,6 +362,7 @@ source_phase=$(pg_restore \
     --file=- \
     "$DUMP_FILE" \
     | awk -F '\t' \
+        -v schema_change="$SCHEMA_CHANGE" \
         -v expand_change="$EXPAND_CHANGE" \
         -v reconciliation_change="$EXPAND_RECONCILIATION_CHANGE" \
         -v dependencies_change="$EXPAND_DEPENDENCIES_CHANGE" \
@@ -351,6 +373,7 @@ source_phase=$(pg_restore \
         -v activation_change="$ACTIVATION_CHANGE" \
         -v project="$SQITCH_PROJECT" '
         $4 == project { registry_seen = 1 }
+        $3 == schema_change && $4 == project { schema_applied = 1 }
         $3 == expand_change && $4 == project { expand_applied = 1 }
         $3 == reconciliation_change && $4 == project { reconciliation_applied = 1 }
         $3 == dependencies_change && $4 == project { dependencies_applied = 1 }
@@ -375,6 +398,8 @@ source_phase=$(pg_restore \
             } else if (expand_applied \
                        || reconciliation_applied || dependencies_applied) {
                 print "partial-expand"
+            } else if (schema_applied) {
+                print "schema"
             } else {
                 print "legacy"
             }
@@ -382,7 +407,7 @@ source_phase=$(pg_restore \
     ')
 
 case "$source_phase" in
-    legacy|expand|annual|contract)
+    legacy|schema|expand|annual|contract)
         ;;
     partial-expand)
         echo "Refusing to restore: backup is inside a partial periodicity expand." >&2
@@ -417,7 +442,7 @@ archive_has_table_data() {
 # Both rows sets are durable domain/migration state in expand and contract.
 # Without their TABLE DATA entries, the table-by-table restore would truncate
 # valid target state and could otherwise treat a selective archive as empty.
-if [ "$source_phase" != "legacy" ]; then
+if [[ "$source_phase" != "legacy" && "$source_phase" != "schema" ]]; then
     if ! archive_has_table_data \
         migration indicateur_valeur_periodicite_audit; then
         echo "Refusing to restore: backup lacks periodicity audit data." >&2
@@ -430,11 +455,11 @@ if [ "$source_phase" != "legacy" ]; then
     fi
 fi
 
-if [ "$source_phase" != "$target_phase" ]; then
+if [[ "$source_phase" != "$target_phase" && "$source_phase:$target_phase" != "legacy:schema" ]]; then
     echo "Refusing to restore: periodicity phases differ" >&2
     echo "(backup: $source_phase, target: $target_phase)." >&2
     exit 1
 fi
 
-echo "Restore compatibility: source and target phase is $target_phase." >&2
+echo "Restore compatibility: source=$source_phase, target=$target_phase." >&2
 printf '%s\n' "$target_phase"

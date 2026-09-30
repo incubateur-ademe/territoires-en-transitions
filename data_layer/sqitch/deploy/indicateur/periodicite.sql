@@ -1,6 +1,6 @@
 -- Deploy tet:indicateur/periodicite to pg
--- requires: indicateur/referentiel
--- requires: indicateur/indicateurs_gaz_effet_serre
+-- requires: indicateur/periodicite_schema
+-- requires: indicateur/correct-formule-cae-2-a
 -- requires: demarche/pcaet_diagnostic_drop_referentiel_tables
 -- requires: migration_schema
 
@@ -12,54 +12,11 @@ BEGIN;
 LOCK TABLE public.indicateur_definition IN SHARE ROW EXCLUSIVE MODE;
 LOCK TABLE public.indicateur_valeur IN SHARE ROW EXCLUSIVE MODE;
 
--- Une périodicité est une description de cadence immuable, et non une série
--- de branches recopiées dans chaque consommateur. Les quatre périodicités
--- livrées utilisent la même famille calendaire fondée sur le mois.
-CREATE TABLE public.indicateur_periodicite
-(
-    code               text     PRIMARY KEY,
-    unite_calendaire   text     NOT NULL
-        CHECK (unite_calendaire IN ('mois', 'semaine', 'jour')),
-    nombre_unites      integer  NOT NULL CHECK (nombre_unites > 0),
-    date_ancrage       date     NOT NULL
-        CONSTRAINT indicateur_periodicite_date_ancrage_supported_check
-        CHECK (date_ancrage BETWEEN DATE '0001-01-01' AND DATE '9999-12-31'),
-    CONSTRAINT indicateur_periodicite_mois_valides_check
-        CHECK (
-            unite_calendaire <> 'mois'
-            OR (
-                EXTRACT(DAY FROM date_ancrage) = 1
-                AND MOD(12, nombre_unites) = 0
-            )
-        )
-);
-
-COMMENT ON TABLE public.indicateur_periodicite IS
-    'Catalogue en lecture seule des cadences applicables aux indicateurs. Une politique publiée est immuable ; changer son sens exige un nouveau code.';
-COMMENT ON COLUMN public.indicateur_periodicite.date_ancrage IS
-    'Début d''une période de référence utilisé pour aligner toutes les occurrences de la cadence.';
-
-INSERT INTO public.indicateur_periodicite
-    (code, unite_calendaire, nombre_unites, date_ancrage)
-VALUES
-    ('annuelle', 'mois', 12, DATE '2000-01-01'),
-    ('semestrielle', 'mois', 6, DATE '2000-01-01'),
-    ('trimestrielle', 'mois', 3, DATE '2000-01-01'),
-    ('mensuelle', 'mois', 1, DATE '2000-01-01');
-
--- Catalogue public en lecture, mais administré uniquement par migration. Sans
--- cette frontière un client REST pourrait ajouter une cadence inconnue du
--- registre TypeScript ou modifier une ligne pas encore utilisée.
-ALTER TABLE public.indicateur_periodicite ENABLE ROW LEVEL SECURITY;
-CREATE POLICY indicateur_periodicite_allow_read
-    ON public.indicateur_periodicite
-    FOR SELECT
-    USING (true);
-REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER
-    ON public.indicateur_periodicite
-    FROM PUBLIC, anon, authenticated, service_role;
-GRANT SELECT ON public.indicateur_periodicite
-    TO anon, authenticated, service_role;
+-- Le schéma additif est déjà exploité par le backend historique. La bascule
+-- se fait avec les producteurs arrêtés ; les contraintes finales arrivent
+-- dans les changements suivants de cette même maintenance.
+ALTER TABLE public.indicateur_definition DROP CONSTRAINT indicateur_definition_schema_annuel;
+ALTER TABLE public.indicateur_valeur DROP CONSTRAINT indicateur_valeur_schema_annuel;
 
 -- Unique implémentation SQL de l'arithmétique des cadences. Ajouter une
 -- cadence utilisant une famille existante ne requiert qu'une ligne de
@@ -153,81 +110,11 @@ $$;
 COMMENT ON FUNCTION public.indicateur_date_debut_periode(text, date) IS
     'Retourne le début canonique de la période contenant une date, selon le catalogue des périodicités.';
 
--- La colonne reste nullable pendant cette première étape de déploiement
--- progressif. La clé étrangère remplace une liste de valeurs codée en dur.
-ALTER TABLE public.indicateur_definition
-    ADD COLUMN periodicite text DEFAULT 'annuelle',
-    ADD CONSTRAINT indicateur_definition_periodicite_fkey
-        FOREIGN KEY (periodicite)
-        REFERENCES public.indicateur_periodicite(code);
-
--- L'agrégation est une restitution explicitement configurée par champ.
--- NULL conserve uniquement la série déclarée, sans somme implicite.
-ALTER TABLE public.indicateur_definition
-    ADD COLUMN aggregation_resultat text
-        CHECK (aggregation_resultat IN ('somme', 'moyenne', 'derniere_valeur')),
-    ADD COLUMN aggregation_objectif text
-        CHECK (aggregation_objectif IN ('somme', 'moyenne', 'derniere_valeur'));
-ALTER TABLE public.indicateur_valeur
-    ADD COLUMN periodicite text NOT NULL DEFAULT 'annuelle'
-        REFERENCES public.indicateur_periodicite(code);
-
--- Les index historiques restent présents pendant cette étape SQL intermédiaire.
--- periodicite_obligatoire les retire pendant la maintenance, avant le démarrage
--- des applications compatibles.
-CREATE UNIQUE INDEX unique_indicateur_valeur_utilisateur_periode
-    ON public.indicateur_valeur (indicateur_id, collectivite_id, periodicite, date_valeur)
-    WHERE metadonnee_id IS NULL;
-CREATE UNIQUE INDEX unique_indicateur_valeur_importee_periode
-    ON public.indicateur_valeur (indicateur_id, collectivite_id, periodicite, date_valeur, metadonnee_id)
-    WHERE metadonnee_id IS NOT NULL;
-
 -- Les définitions historiques ont été conçues et exposées comme annuelles. La
 -- classification ne se déduit jamais des dates déjà saisies.
 UPDATE public.indicateur_definition
 SET periodicite = 'annuelle'
 WHERE periodicite IS NULL;
-
--- La fonction publique doit transporter la cadence avec chaque valeur. Elle
--- ne projette pas elle-même une période sur une année : le consommateur peut
--- ainsi appliquer explicitement sa capacité (annuelle aujourd'hui) et échouer
--- fermé si une cadence incompatible lui parvient.
-CREATE OR REPLACE FUNCTION public.indicateurs_gaz_effet_serre(site_labellisation)
-    RETURNS jsonb
-    SECURITY DEFINER
-    LANGUAGE sql
-BEGIN ATOMIC
-SELECT to_jsonb(array_agg(d))
-FROM (
-    SELECT iri.date_valeur,
-           iri.resultat,
-           id.identifiant_referentiel AS identifiant,
-           iri.periodicite,
-           src.libelle AS source
-    FROM indicateur_valeur iri
-    JOIN indicateur_definition id ON iri.indicateur_id = id.id
-    JOIN indicateur_source_metadonnee ism ON ism.id = iri.metadonnee_id
-    JOIN indicateur_source src ON src.id = ism.source_id
-    WHERE iri.collectivite_id = ($1).collectivite_id
-      AND iri.periodicite = 'annuelle'
-      AND iri.metadonnee_id IS NOT NULL
-      AND iri.resultat IS NOT NULL
-      AND src.id IN ('citepa')
-      AND id.identifiant_referentiel::text = ANY (
-          ARRAY [
-              'cae_1.g'::character varying,
-              'cae_1.f'::character varying,
-              'cae_1.h'::character varying,
-              'cae_1.j'::character varying,
-              'cae_1.i'::character varying,
-              'cae_1.c'::character varying,
-              'cae_1.e'::character varying,
-              'cae_1.d'::character varying,
-              'cae_1.a'::character varying
-          ]::text[]
-      )
-) d;
-END;
 
 -- Le schéma historique ne sait représenter qu'une cadence annuelle. Ce garde
 -- partagé par les reverts du reporting et du catalogue empêche un downgrade
@@ -255,31 +142,6 @@ $$;
 
 COMMENT ON FUNCTION migration.verifier_retrait_periodicite_indicateur() IS
     'Refuse un retour au schéma annuel lorsque celui-ci perdrait le sens de définitions non annuelles.';
-
--- Une politique publiée ne change jamais de sens, qu'elle soit déjà utilisée
--- ou non. Toute évolution ajoute un nouveau code par migration ; cette règle
--- inconditionnelle ferme aussi la course avec une attribution concurrente.
-CREATE FUNCTION public.empecher_modification_periodicite()
-    RETURNS trigger
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = pg_catalog, public
-AS $$
-BEGIN
-    RAISE EXCEPTION USING
-        ERRCODE = '23514',
-        MESSAGE = format(
-            'La politique de périodicité %s est immuable ; créer un nouveau code',
-            OLD.code
-        );
-END;
-$$;
-
-CREATE TRIGGER empecher_modification_periodicite
-    BEFORE UPDATE OR DELETE
-    ON public.indicateur_periodicite
-    FOR EACH ROW
-    EXECUTE FUNCTION public.empecher_modification_periodicite();
 
 -- Conserve la date d'origine de chaque valeur non canonique. Les groupes qui
 -- convergeraient vers la même période sont seulement audités : les fusionner

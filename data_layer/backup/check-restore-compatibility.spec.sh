@@ -41,6 +41,9 @@ printf '%s\n' \
     'if [ "${SOURCE_PHASE:-legacy}" != "missing-registry" ]; then' \
     '  printf "change-id\\thash\\tbaseline/change\\ttet\\tnote\\n"' \
     'fi' \
+    'if [ "${SOURCE_PHASE:-legacy}" = "schema" ]; then' \
+    '  printf "change-id\\thash\\tindicateur/periodicite_schema\\ttet\\tnote\\n"' \
+    'fi' \
     'if [ "${SOURCE_PHASE:-legacy}" = "partial-expand" ]; then' \
     '  printf "change-id\\thash\\tindicateur/periodicite\\ttet\\tnote\\n"' \
     'fi' \
@@ -236,3 +239,8 @@ for target in legacy expand annual contract; do
         fi
     done
 done
+
+assert_success 'schema snapshots restore to schema targets' SOURCE_PHASE=schema TARGET_PHASE=schema bash "$CHECK_SCRIPT" "$DUMP_FILE"
+assert_success 'legacy snapshots restore to additive schema targets' SOURCE_PHASE=legacy TARGET_PHASE=schema bash "$CHECK_SCRIPT" "$DUMP_FILE"
+assert_failure 'schema snapshots cannot restore to legacy targets' SOURCE_PHASE=schema TARGET_PHASE=legacy bash "$CHECK_SCRIPT" "$DUMP_FILE"
+assert_failure 'schema snapshots cannot restore to annual targets' SOURCE_PHASE=schema TARGET_PHASE=annual bash "$CHECK_SCRIPT" "$DUMP_FILE"

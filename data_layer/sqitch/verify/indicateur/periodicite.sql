@@ -203,17 +203,6 @@ BEGIN
           AND NOT tgisinternal
     ), 'Les agrégations parent/enfant doivent conserver une périodicité homogène';
 
-    ASSERT to_regprocedure(
-        'public.indicateurs_gaz_effet_serre(site_labellisation)'
-    ) IS NOT NULL
-    AND position(
-        'iri.periodicite'
-        IN pg_get_functiondef(
-            'public.indicateurs_gaz_effet_serre(site_labellisation)'::regprocedure
-        )
-    ) > 0,
-        'La fonction publique des GES doit transporter la périodicité';
-
     -- Le changement suivant remplace le trigger compatible qui normalise et
     -- audite par le trigger strict. L'un des deux doit toujours fermer la
     -- fenêtre de course entre l'audit et les écritures.
