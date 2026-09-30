@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { chunk, uniq } from 'es-toolkit';
@@ -54,6 +54,24 @@ type CollectiviteStep = {
   readonly enjeu: Enjeu;
   readonly collectiviteId: number;
   readonly progress: RunProgress;
+};
+
+type RunPosition = {
+  readonly index: number;
+  readonly total: number;
+};
+
+const formatRunPosition = ({ index, total }: RunPosition): string =>
+  `${index + 1}/${total}`;
+
+const describeScope = (scope: AnalyzeFichesInput['scope']): string => {
+  if (scope.kind === 'daily') {
+    return 'daily run';
+  }
+  if (scope.collectivites === 'all') {
+    return 'manual run on every collectivite';
+  }
+  return `manual run on collectivites ${scope.collectivites.join(', ')}`;
 };
 
 const EMPTY_PROGRESS: RunProgress = {
@@ -121,6 +139,8 @@ const toFicheIds = (fiches: readonly { ficheId: number }[]): number[] =>
 
 @Injectable()
 export class AnalyzeFichesService {
+  private readonly logger = new Logger(AnalyzeFichesService.name);
+
   constructor(
     private readonly ficheCandidates: FicheCandidateRepository,
     private readonly ficheTexts: FicheTextRepository,
@@ -147,10 +167,16 @@ export class AnalyzeFichesService {
     if (!collectiviteIdsResult.success) {
       return collectiviteIdsResult;
     }
+    const collectiviteIds = collectiviteIdsResult.data;
+    this.logger.log(
+      `Run started (${describeScope(scope)}): ${
+        collectiviteIds.length
+      } collectivite(s) to check`
+    );
 
-    const runResult = await collectiviteIdsResult.data.reduce<
+    const runResult = await collectiviteIds.reduce<
       Promise<StepResult<RunProgress>>
-    >(async (previous, collectiviteId) => {
+    >(async (previous, collectiviteId, index) => {
       const previousResult = await previous;
       if (!previousResult.success) {
         return previousResult;
@@ -160,12 +186,12 @@ export class AnalyzeFichesService {
         collectiviteId,
         toSelection: selectionResult.data,
         progress: previousResult.data,
+        position: { index, total: collectiviteIds.length },
       });
     }, Promise.resolve(success(EMPTY_PROGRESS)));
     if (!runResult.success) {
       return runResult;
     }
-
     if (scope.kind === 'daily') {
       const runCreationResult = await this.analysisRuns.createCompletedRun({
         startedAt,
@@ -178,6 +204,10 @@ export class AnalyzeFichesService {
         });
       }
     }
+    const durationInSeconds = Math.round(
+      (Date.now() - startedAt.getTime()) / 1000
+    );
+    this.logger.log(`Run finished in ${durationInSeconds}s`);
     return success(runResult.data.output);
   }
 
@@ -197,8 +227,10 @@ export class AnalyzeFichesService {
     }
     const since = lastRunResult.data;
     if (since === null) {
+      this.logger.log('No completed daily run yet: every fiche is read');
       return success(everyFiche);
     }
+    this.logger.log(`Reading fiches pending since ${since.toISOString()}`);
     return success((collectiviteId) => ({
       kind: 'pending_since',
       collectiviteId,
@@ -248,8 +280,10 @@ export class AnalyzeFichesService {
     collectiviteId,
     toSelection,
     progress,
+    position,
   }: CollectiviteStep & {
     readonly toSelection: ToFicheSelection;
+    readonly position: RunPosition;
   }): Promise<StepResult<RunProgress>> {
     const fichesResult = await this.ficheCandidates.listFicheCandidates(
       toSelection(collectiviteId)
@@ -275,6 +309,13 @@ export class AnalyzeFichesService {
       fiches: fichesResult.data,
       analyses: analysesResult.data,
     });
+    this.logger.log(
+      `Collectivite ${formatRunPosition(position)} (id ${collectiviteId}): ${
+        fichesResult.data.length
+      } fiche(s) read, ${plan.toClassify.length} to classify (${
+        plan.toMarkStale.length
+      } stale), ${plan.toRemove.length} to remove`
+    );
 
     const preparationResult = await this.prepareFiches({
       enjeu,
@@ -362,20 +403,23 @@ export class AnalyzeFichesService {
   }: CollectiviteStep & {
     readonly fiches: readonly FicheCandidate[];
   }): Promise<StepResult<RunProgress>> {
-    return chunk([...fiches], CLASSIFICATION_BATCH_SIZE).reduce<
-      Promise<StepResult<RunProgress>>
-    >(async (previous, batch) => {
-      const previousResult = await previous;
-      if (!previousResult.success) {
-        return previousResult;
-      }
-      return this.classifyBatch({
-        enjeu,
-        collectiviteId,
-        batch,
-        progress: previousResult.data,
-      });
-    }, Promise.resolve(success(progress)));
+    const batches = chunk([...fiches], CLASSIFICATION_BATCH_SIZE);
+    return batches.reduce<Promise<StepResult<RunProgress>>>(
+      async (previous, batch, index) => {
+        const previousResult = await previous;
+        if (!previousResult.success) {
+          return previousResult;
+        }
+        return this.classifyBatch({
+          enjeu,
+          collectiviteId,
+          batch,
+          progress: previousResult.data,
+          position: { index, total: batches.length },
+        });
+      },
+      Promise.resolve(success(progress))
+    );
   }
 
   private async classifyBatch({
@@ -383,8 +427,10 @@ export class AnalyzeFichesService {
     collectiviteId,
     batch,
     progress,
+    position,
   }: CollectiviteStep & {
     readonly batch: readonly FicheCandidate[];
+    readonly position: RunPosition;
   }): Promise<StepResult<RunProgress>> {
     const { classified, failedFicheIds } = await this.classifyWithRetries({
       enjeu,
@@ -392,6 +438,11 @@ export class AnalyzeFichesService {
       failedAttempts: new Map(),
       classification: { classified: [], failedFicheIds: [] },
     });
+    this.logger.log(
+      `Collectivite ${collectiviteId}, batch ${formatRunPosition(position)}: ${
+        classified.length
+      } classified, ${failedFicheIds.length} failed`
+    );
     const writeResult = await this.writeClassification({
       enjeu,
       collectiviteId,
@@ -408,6 +459,10 @@ export class AnalyzeFichesService {
     if (!failuresResult.success) {
       return failuresResult;
     }
+    this.logRunFailures({
+      previousCount: progress.failures.length,
+      currentCount: failuresResult.data.length,
+    });
     return success(
       withOutput(
         { ...progress, failures: failuresResult.data },
@@ -579,6 +634,9 @@ export class AnalyzeFichesService {
       analyses: analysesResult.data,
     });
     if (!isStale) {
+      this.logger.log(
+        `Collectivite ${collectiviteId}: mobilisation up to date`
+      );
       return success(progress);
     }
 
@@ -591,12 +649,19 @@ export class AnalyzeFichesService {
     }
     const scoreResult = await this.scoreWithRetries(scoringInputResult.data, 1);
     if (!scoreResult.success) {
+      this.logger.warn(
+        `Collectivite ${collectiviteId}: mobilisation failed after ${MAX_ATTEMPTS} attempts (${scoreResult.error.kind})`
+      );
       const failuresResult = addRunFailures(progress.failures, [
         { kind: 'mobilisation', collectiviteId },
       ]);
       if (!failuresResult.success) {
         return failuresResult;
       }
+      this.logRunFailures({
+        previousCount: progress.failures.length,
+        currentCount: failuresResult.data.length,
+      });
       return success(
         withOutput(
           { ...progress, failures: failuresResult.data },
@@ -615,9 +680,26 @@ export class AnalyzeFichesService {
         cause: updateResult.error,
       });
     }
+    this.logger.log(
+      `Collectivite ${collectiviteId}: mobilisation recalculated (${scoreResult.data.leviers.length} levier(s))`
+    );
     return success(
       withOutput(progress, { recalculatedCollectiviteIds: [collectiviteId] })
     );
+  }
+
+  private logRunFailures({
+    previousCount,
+    currentCount,
+  }: {
+    readonly previousCount: number;
+    readonly currentCount: number;
+  }): void {
+    const hasNewFailures = currentCount > previousCount;
+    if (!hasNewFailures) {
+      return;
+    }
+    this.logger.warn(`${currentCount} definitive failure(s) in this run`);
   }
 
   private async readScoringInput({
