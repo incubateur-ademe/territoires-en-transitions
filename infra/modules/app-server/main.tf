@@ -98,6 +98,18 @@ resource "scaleway_instance_ip" "server" {
   tags = local.common_tags
 }
 
+# Sous-réseau du Private Network cible, pour vérifier au plan que l'IP privée
+# demandée y appartient. Sans ça, un private_network_id recopié depuis un
+# autre tier n'échoue qu'à l'apply, après création du serveur, avec un message
+# IPAM peu parlant (« These IPs are in no existing subnets »).
+data "scaleway_vpc_private_network" "server" {
+  private_network_id = var.private_network_id
+}
+
+locals {
+  pn_ipv4_subnet = data.scaleway_vpc_private_network.server.ipv4_subnet[0].subnet
+}
+
 # IP privée réservée : l'adresse que Coolify enregistre comme cible SSH du
 # serveur. La réserver explicitement évite qu'un remplacement de NIC change
 # l'adresse et casse la connexion côté Coolify.
@@ -109,6 +121,16 @@ resource "scaleway_ipam_ip" "server" {
   }
 
   tags = local.common_tags
+
+  lifecycle {
+    precondition {
+      condition = (
+        cidrhost("${var.private_ipv4_address}/${split("/", local.pn_ipv4_subnet)[1]}", 0)
+        == cidrhost(local.pn_ipv4_subnet, 0)
+      )
+      error_message = "private_ipv4_address (${var.private_ipv4_address}) n'appartient pas au Private Network ${data.scaleway_vpc_private_network.server.name} (${local.pn_ipv4_subnet}) : private_network_id vise probablement le PN d'un autre tier."
+    }
+  }
 }
 
 resource "scaleway_instance_server" "server" {
