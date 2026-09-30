@@ -98,8 +98,8 @@ describe('makeReferentielTacheUrl', () => {
   });
 });
 
-describe('entree-nav-masquee-en-prod', () => {
-  it.skip('les actions de référence ont leur URL sous la collectivité', () => {
+describe('entree-nav-reservee-au-super-admin', () => {
+  it('les actions de référence ont leur URL sous la collectivité', () => {
     expect(
       makeCollectiviteActionsDeReferenceUrl({ collectiviteId: 5596 })
     ).toBe('/collectivite/5596/actions-reference');
