@@ -257,7 +257,6 @@ describe('VoletRepository contract', () => {
         ficheId: ficheActionVoletGesTable.ficheId,
         levierId: ficheActionVoletGesTable.levierId,
         categorie: ficheActionVoletGesTable.categorie,
-        createdBy: ficheActionVoletGesTable.createdBy,
       })
       .from(ficheActionVoletGesTable)
       .where(eq(ficheActionVoletGesTable.ficheId, ficheId));
@@ -269,7 +268,6 @@ describe('VoletRepository contract', () => {
           ficheId,
           levierId: 'covoiturage',
           categorie: 'sensibilisation',
-          createdBy: null,
         },
       ],
     });
