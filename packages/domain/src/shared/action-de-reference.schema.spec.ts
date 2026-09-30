@@ -189,6 +189,52 @@ describe('update-action', () => {
     });
   });
 
+  it('accepte un titre de 300 caractères', () => {
+    const titre = 'a'.repeat(300);
+
+    const result = updateActionDeReferenceInputSchema.safeParse({
+      id: 12,
+      titre,
+    });
+
+    expect(result).toEqual({ success: true, data: { id: 12, titre } });
+  });
+
+  it('refuse un titre de 301 caractères', () => {
+    const result = updateActionDeReferenceInputSchema.safeParse({
+      id: 12,
+      titre: 'a'.repeat(301),
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: { issues: [{ path: ['titre'], code: 'too_big' }] },
+    });
+  });
+
+  it('accepte un titre de 300 caractères hors du plan multilingue de base, comme la base', () => {
+    const titre = '😀'.repeat(300);
+
+    const result = updateActionDeReferenceInputSchema.safeParse({
+      id: 12,
+      titre,
+    });
+
+    expect(result).toEqual({ success: true, data: { id: 12, titre } });
+  });
+
+  it('refuse un titre de 301 caractères hors du plan multilingue de base', () => {
+    const result = updateActionDeReferenceInputSchema.safeParse({
+      id: 12,
+      titre: '😀'.repeat(301),
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: { issues: [{ path: ['titre'], code: 'too_big' }] },
+    });
+  });
+
   it('refuse une description vide', () => {
     const result = updateActionDeReferenceInputSchema.safeParse({
       id: 12,
