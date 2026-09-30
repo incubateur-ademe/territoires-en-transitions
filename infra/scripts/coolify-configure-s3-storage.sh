@@ -49,7 +49,7 @@ _s3_key="${_creds_raw%%|*}"
 _s3_secret="${_creds_raw#*|}"
 if [ -z "${_s3_key}" ] || [ -z "${_s3_secret}" ] || [ "${_s3_key}" = "${_creds_raw}" ]; then
   echo "✗ Secret S3 mal formé. Attendu : <access_key>|<secret_key>" >&2
-  echo "  scw secret version create secret-name=${S3_CREDENTIALS_SECRET_NAME} secret-path=/ data='SCWXXXX|<secret>'" >&2
+  echo "  scw secret version create \"\$(scw secret secret list name=${S3_CREDENTIALS_SECRET_NAME} project-id=${SECRET_PROJECT_ID} -o json | jq -r '.[0].id')\" data='SCWXXXX|<secret>'" >&2
   exit 1
 fi
 

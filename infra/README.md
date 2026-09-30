@@ -381,9 +381,9 @@ Les tokens API Coolify se créent **uniquement dans l'UI** :
    (nécessaire pour gérer serveurs + clés + projets + env vars).
 2. Le stocker dans Secret Manager :
    ```sh
-   scw secret create name=tet-platform-coolify-api-token
-   scw secret version create secret-name=tet-platform-coolify-api-token \
-     secret-path=/ data='<id>|<token>'
+   _id="$(scw secret secret create name=tet-platform-coolify-api-token \
+     project-id=<projet-principal> -o json | jq -r .id)"
+   scw secret version create "$_id" data='<id>|<token>'
    ```
 
 ### Bootstrap des credentials GHCR (une fois)
@@ -402,9 +402,9 @@ Le script passe par le bastion : les serveurs applicatifs n'ont pas de SSH publi
 2. Le stocker dans Secret Manager au format `username|token`. Un seul secret pour tous les
    serveurs :
    ```sh
-   scw secret create name=tet-platform-ghcr-pull
-   scw secret version create secret-name=tet-platform-ghcr-pull \
-     secret-path=/ data='<github-username>|<pat>'
+   _id="$(scw secret secret create name=tet-platform-ghcr-pull \
+     project-id=<projet-principal> -o json | jq -r .id)"
+   scw secret version create "$_id" data='<github-username>|<pat>'
    ```
 
 Après rotation du PAT : créer une nouvelle version du secret, puis incrémenter
@@ -429,8 +429,9 @@ dépose à la main, au format `access_key|secret_key` lu par les scripts de `inf
 elle n'entre donc pas dans le state.
 
 ```sh
-scw secret version create secret-name=tet-platform-coolify-s3-credentials \
-  project-id=<projet-principal> secret-path=/ data='SCWXXXX|<secret_key>'
+_id="$(scw secret secret list name=tet-platform-coolify-s3-credentials \
+  project-id=<projet-principal> -o json | jq -r '.[0].id')"
+scw secret version create "$_id" data='SCWXXXX|<secret_key>'
 ```
 
 Rotation : l'admin crée une nouvelle clé pour l'application, on dépose une nouvelle
