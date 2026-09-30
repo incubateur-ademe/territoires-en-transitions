@@ -9,7 +9,7 @@ import { ActivityLogModal } from '../menu/actions/activity-log/activity-log.moda
 import { ExportFicheModal } from '../menu/actions/pdf-export/ExportModal/export-fa-modal';
 import { ModalType } from './edition-modal-manager-context';
 
-export type EditionModalRendererContext = {
+type EditionModalRendererContext = {
   fiche: FicheWithRelations;
   planId?: number;
   onClose: () => void;

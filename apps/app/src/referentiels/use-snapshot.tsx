@@ -1,48 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  RouterInput,
-  RouterOutput,
-  TRPCUseQueryResult,
-  useTRPC,
-} from '@tet/api';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
-import {
-  ReferentielException,
-  ReferentielId,
-  findActionById,
-  getReferentielIdFromActionId,
-} from '@tet/domain/referentiels';
 import { useReferentielId } from './referentiel-context';
 
-export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
+type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
 
 export type SnapshotListItem =
   RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
 
 export type ActionDetailed = Snapshot['scoresPayload']['scores'];
-
-function useGetCurrentSnapshot({
-  actionId,
-  externalCollectiviteId,
-}: {
-  actionId: string;
-  externalCollectiviteId?: number;
-}): TRPCUseQueryResult<Snapshot> {
-  const collectiviteId = useCollectiviteId();
-  const referentielId = getReferentielIdFromActionId(actionId);
-  const trpc = useTRPC();
-
-  return useQuery(
-    trpc.referentiels.snapshots.getCurrent.queryOptions(
-      {
-        collectiviteId: externalCollectiviteId ?? collectiviteId,
-        referentielId,
-      },
-      DISABLE_AUTO_REFETCH
-    )
-  );
-}
 
 type UseListSnapshotsProps = Omit<
   RouterInput['referentiels']['snapshots']['list'],
@@ -70,28 +36,6 @@ export function useListSnapshots({
       }
     )
   );
-}
-
-export function useAction(actionId: string, externalCollectiviteId?: number) {
-  const { data: snapshot, isPending } = useGetCurrentSnapshot({
-    actionId,
-    externalCollectiviteId,
-  });
-
-  const toAction = (snapshot: Snapshot) => {
-    const subAction = findActionById(snapshot.scoresPayload.scores, actionId);
-
-    if (subAction === null) {
-      throw new ReferentielException(`Action not found: '${actionId}'`);
-    }
-
-    return subAction;
-  };
-
-  return {
-    isPending,
-    data: snapshot ? toAction(snapshot) : undefined,
-  };
 }
 
 /**
@@ -166,19 +110,4 @@ export function useSnapshotDelete() {
       },
     })
   );
-}
-
-export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
-  const {
-    data: snapshot,
-    isLoading,
-    isError,
-  } = useGetCurrentSnapshot({ actionId: referentielId });
-
-  if (isLoading || isError || !snapshot) {
-    return { started: false, isLoading, isError };
-  }
-
-  const { score } = snapshot.scoresPayload.scores;
-  return { started: score.completedTachesCount > 0, isLoading, isError };
 }

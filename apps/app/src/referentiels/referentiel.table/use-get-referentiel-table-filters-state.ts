@@ -21,7 +21,7 @@ const referentielFiltersBaseParsers = {
   labels: parseAsArrayOf(parseAsString),
 };
 
-export const referentielFiltersParsers = {
+const referentielFiltersParsers = {
   identifiantAndTitre:
     referentielFiltersBaseParsers.identifiantAndTitre.withDefault(''),
   explication: referentielFiltersBaseParsers.explication.withDefault(''),
@@ -35,7 +35,7 @@ export const referentielFiltersParsers = {
   labels: referentielFiltersBaseParsers.labels.withDefault([]),
 };
 
-export const referentielFiltersUrlKeys = {
+const referentielFiltersUrlKeys = {
   identifiantAndTitre: 't',
   explication: 'e',
   statuts: 's',

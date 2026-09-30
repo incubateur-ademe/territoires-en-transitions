@@ -47,7 +47,7 @@ export const DeleteSnapshotModal = ({
   );
 };
 
-export const DeleteSnapshotModalContent = () => {
+const DeleteSnapshotModalContent = () => {
   return (
     <Alert
       title={appLabels.supprimerSauvegarde}

@@ -35,8 +35,8 @@ export type FormFilters = {
   pilotes?: PiloteOrNot[];
 };
 
-export type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
-export type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
+type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
+type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
 
 export const queryPayloadSchema = listFichesRequestFiltersSchema.pick({
   noPilote: true,

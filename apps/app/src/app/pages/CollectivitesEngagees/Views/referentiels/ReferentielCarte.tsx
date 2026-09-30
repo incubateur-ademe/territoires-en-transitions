@@ -88,7 +88,7 @@ export const ReferentielCarte = ({ collectivite, isClickable }: Props) => {
   );
 };
 
-export type TReferentielColProps = {
+type TReferentielColProps = {
   referentiel: ReferentielId;
   etoiles: number;
   scoreRealise: number;
@@ -99,7 +99,7 @@ export type TReferentielColProps = {
 /**
  * Une colonne avec les éléments de score pour la carte collectivité.
  */
-export const ReferentielCol = ({
+const ReferentielCol = ({
   referentiel,
   concerne,
   etoiles,
@@ -138,7 +138,7 @@ export const ReferentielCol = ({
   );
 };
 
-export type TCinqEtoilesProps = {
+type TCinqEtoilesProps = {
   etoiles: number;
 };
 

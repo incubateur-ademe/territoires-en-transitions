@@ -12,7 +12,7 @@ import { FicheCardScheduler } from './fiche-card.scheduler';
 // Configure la langue française
 LocaleManager.applyLocale('FrFr');
 
-export type FicheActionEvent = EventModelConfig & {
+type FicheActionEvent = EventModelConfig & {
   fiche?: FicheWithRelationsAndCollectivite;
 };
 

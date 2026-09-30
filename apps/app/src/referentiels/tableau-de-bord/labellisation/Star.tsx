@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-export const Star = ({
+const Star = ({
   fill,
   title,
   className,

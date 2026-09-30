@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesOutput } from '../../fiches/list-all-fiches/data/use-list-fiches';
 
 type Args = Partial<{
   onUpdateCallback: () => void;
 }>;
-
-export type UpdateFicheInput = RouterInput['plans']['fiches']['update'];
 
 export const useUpdateSousAction = (args?: Args) => {
   const collectiviteId = useCollectiviteId();

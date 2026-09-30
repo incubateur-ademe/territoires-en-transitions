@@ -31,7 +31,7 @@ const toAnnexeFichier = (annexe: AnnexeDocument): StoredFile | null => {
   };
 };
 
-export function toDocumentAnnexe(annexe: AnnexeDocument): DocumentAnnexe {
+function toDocumentAnnexe(annexe: AnnexeDocument): DocumentAnnexe {
   return {
     ...toDocumentCollectivite({
       id: annexe.id,

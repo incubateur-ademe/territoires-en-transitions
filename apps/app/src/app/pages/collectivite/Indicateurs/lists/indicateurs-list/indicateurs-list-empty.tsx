@@ -8,7 +8,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonProps, EmptyCard, Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
-export const validEmptyListId = ['collectivite'] as const;
+const validEmptyListId = ['collectivite'] as const;
 export type EmptyListId = (typeof validEmptyListId)[number];
 
 const messageByListId: Record<

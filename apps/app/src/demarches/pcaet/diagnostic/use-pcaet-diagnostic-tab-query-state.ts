@@ -2,7 +2,7 @@
 
 import { createSerializer, parseAsString, useQueryState } from 'nuqs';
 
-export const DEMARCHE_TOPIC_PARAM = 'topic';
+const DEMARCHE_TOPIC_PARAM = 'topic';
 
 /**
  * Tab sélectionné du diagnostic, porté par l'URL (?topic=) pour être

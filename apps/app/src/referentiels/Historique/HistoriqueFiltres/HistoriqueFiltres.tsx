@@ -6,7 +6,7 @@ import { ClearAllFiltersButton } from '@tet/ui';
 import { Filters, SetFilters } from '../filters';
 import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
-export type HistoriqueFiltresProps = {
+type HistoriqueFiltresProps = {
   itemsNumber: number;
   filters: Filters;
   setFilters: SetFilters;

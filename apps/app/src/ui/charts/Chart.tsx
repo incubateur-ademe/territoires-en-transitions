@@ -4,7 +4,7 @@ import ChartModal from './ChartModal';
 import DonutChart, { DonutChartProps } from './Donut/DonutChart';
 
 /** Informations détaillées du graphique visible sur la modale de téléchargement */
-export type ChartInfosProps = {
+type ChartInfosProps = {
   /** État d'ouverture de la modale et configuration */
   modal?: {
     isOpen: boolean;

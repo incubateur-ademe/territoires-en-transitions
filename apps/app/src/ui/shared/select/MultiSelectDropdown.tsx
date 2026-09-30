@@ -20,10 +20,10 @@ type TMultiSelectDropdownBaseProps<T extends string> = TSelectBase & {
   renderSelection?: (values: T[]) => React.ReactElement;
 };
 
-export type TMultiSelectButtonProps<T extends string> =
+type TMultiSelectButtonProps<T extends string> =
   TMultiSelectDropdownBaseProps<T> & TSelectSelectionButtonBase;
 
-export type TMultiSelectDropdownProps<T extends string> =
+type TMultiSelectDropdownProps<T extends string> =
   TMultiSelectDropdownBaseProps<T> & {
     /** fait le rendu d'une option de la liste (optionnel) */
     renderOption?: (option: TOption) => React.ReactElement;

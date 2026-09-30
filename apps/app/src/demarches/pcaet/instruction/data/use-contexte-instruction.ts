@@ -11,7 +11,7 @@ import { ContexteInstruction } from '@tet/domain/demarches';
  * un dossier, la collectivité courante est la **déposante**, et confondre les
  * deux ferait écrire dans la bibliothèque de la collectivité instruite.
  */
-export const useContexteInstruction = (): ContexteInstruction | null =>
+const useContexteInstruction = (): ContexteInstruction | null =>
   useCurrentCollectivite().contexteInstruction;
 
 /**

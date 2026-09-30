@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { ListFichesRequestFilters } from '@tet/domain/plans';
 
-export type ListFichesInput = RouterInput['plans']['fiches']['listFiches'];
-export type QueryOptionsSchema = NonNullable<ListFichesInput['queryOptions']>;
+type ListFichesInput = RouterInput['plans']['fiches']['listFiches'];
+type QueryOptionsSchema = NonNullable<ListFichesInput['queryOptions']>;
 export type SortOptions = QueryOptionsSchema['sort'];
 export type SortValue = NonNullable<SortOptions>[number]['field'];
 

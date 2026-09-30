@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { JSX, useRef, useState } from 'react';
 import BarChart, { BarChartProps } from './BarChart';
 
-export const Legend = ({
+const Legend = ({
   legend,
 }: {
   legend: { name: string; color: string }[];

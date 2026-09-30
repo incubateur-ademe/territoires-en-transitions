@@ -11,7 +11,7 @@ import {
 import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
 import { useAudit, useIsAuditeur } from './useAudit';
 
-export type TActionAuditStatutProps = {
+type TActionAuditStatutProps = {
   action: ActionListItem;
   className?: string;
 };

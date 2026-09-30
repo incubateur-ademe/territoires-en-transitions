@@ -29,7 +29,7 @@ import {
   WITHOUT,
 } from './types';
 
-export const fromWithOrWithoutToBoolean = (
+const fromWithOrWithoutToBoolean = (
   value: WithOrWithoutOptions | undefined
 ) => {
   if (value === undefined) {
@@ -232,7 +232,7 @@ const emptyFilters = Object.keys(searchParametersParser).reduce((acc, key) => {
   return acc;
 }, {} as Record<FilterKeys, null>);
 
-export const parameterMustBeNull = (value: any) => {
+const parameterMustBeNull = (value: any) => {
   return (
     value === undefined ||
     value === '' ||

@@ -56,9 +56,9 @@ const { colors } = preset.theme.extend;
 /**
  * ECharts event
  */
-export type EchartEventType = ElementEvent['event'] | ECElementEvent;
+type EchartEventType = ElementEvent['event'] | ECElementEvent;
 
-export type EchartEventName =
+type EchartEventName =
   | ElementEvent['type']
   | 'brushSelected'
   | 'rendered'

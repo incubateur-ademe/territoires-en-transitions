@@ -50,10 +50,6 @@ function useActionContext() {
   return context;
 }
 
-export function useAction() {
-  return useActionContext().action;
-}
-
 export function useActionAvailabilityState() {
   return useActionContext().availability;
 }

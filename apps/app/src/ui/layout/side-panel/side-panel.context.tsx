@@ -33,7 +33,7 @@ type PanelAction =
   | { type: 'closeOnRouteChange'; path: string }
   | { type: 'setTitle'; title: string };
 
-export type PanelState = Panel & {
+type PanelState = Panel & {
   isOpen: boolean;
 };
 

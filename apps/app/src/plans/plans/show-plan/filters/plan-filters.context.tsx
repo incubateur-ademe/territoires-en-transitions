@@ -16,7 +16,7 @@ import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import { FormFilters } from '../data/use-fiches-filters-list/types';
-export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
+type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
 type PlanActionFiltersContextType = {

@@ -70,4 +70,4 @@ const isScoreStrongEnough = (password: string, otherValues: string[]) => {
   return score >= PASSWORD_MIN_STRENGTH;
 };
 
-export { isScoreStrongEnough, PASSWORD_MIN_STRENGTH, useGetPasswordStrength };
+export { isScoreStrongEnough, useGetPasswordStrength };

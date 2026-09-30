@@ -361,4 +361,4 @@ const MatrixChart = ({
 };
 
 export { MatrixChart };
-export type { AxisProps, MatrixChartProps, MatrixPoint };
+export type { MatrixPoint };

@@ -5,7 +5,7 @@ export const openedThematiquesUrlKeys = {
   autoOpenThematiques: 'ao',
 } as const;
 
-export const personnalisationPageUrlKeys = {
+const personnalisationPageUrlKeys = {
   ...personnalisationUrlKeys,
   ...openedThematiquesUrlKeys,
 } as const;

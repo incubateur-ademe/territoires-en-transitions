@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 
-export type IndicateurActionId =
+type IndicateurActionId =
   | 'remove-from-favorites'
   | 'add-to-favorites'
   | 'download-chart';

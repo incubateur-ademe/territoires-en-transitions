@@ -1,12 +1,5 @@
-import { appLabels } from '@/app/labels/catalog';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { useCollectiviteId } from '@tet/api/collectivites';
-import { Notification, Tooltip } from '@tet/ui';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
-
-type FicheShareInfoProps = {
-  fiche: FicheShareProperties;
-};
 
 export const SHARE_ICON = 'share-forward-fill';
 
@@ -44,65 +37,3 @@ export const getFicheActionShareText = (
       )}`
     : `Cette action vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
 };
-
-const FicheActionShareInfoText = ({
-  fiche,
-  collectiviteId,
-}: {
-  fiche: FicheShareProperties;
-  collectiviteId: number;
-}) => {
-  if (!fiche.sharedWithCollectivites?.length) {
-    return null;
-  }
-
-  if (fiche.collectiviteId === collectiviteId) {
-    return (
-      <span>
-        {appLabels.actionPartageeEnEditionAvec}{' '}
-        <span className="font-extrabold">
-          {ficheSharedSingularAndPluralText(fiche.sharedWithCollectivites)}
-        </span>
-      </span>
-    );
-  }
-
-  return (
-    <span>
-      {appLabels.actionVousEstPartageeEnEditionPar}{' '}
-      <span className="font-extrabold">{fiche.collectiviteNom}</span>
-    </span>
-  );
-};
-
-const FicheShareInfo = ({ fiche }: FicheShareInfoProps) => {
-  const { sharedWithCollectivites } = fiche;
-  const collectiviteId = useCollectiviteId();
-
-  if (!sharedWithCollectivites || sharedWithCollectivites.length === 0) {
-    return null;
-  }
-
-  return (
-    <Tooltip
-      label={`Partagée avec les collectivités : ${sharedWithCollectivites
-        .map((c) => c.nom)
-        .join(', ')}`}
-    >
-      <div className="flex items-start gap-2">
-        <Notification
-          variant="success"
-          icon={getFicheActionShareIcon(fiche, collectiviteId)}
-          size="xs"
-          classname="h-6 w-8 justify-center"
-        />
-        <FicheActionShareInfoText
-          fiche={fiche}
-          collectiviteId={collectiviteId}
-        />
-      </div>
-    </Tooltip>
-  );
-};
-
-export default FicheShareInfo;

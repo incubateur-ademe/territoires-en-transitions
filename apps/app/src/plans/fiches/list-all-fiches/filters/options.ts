@@ -25,7 +25,7 @@ export const INDICATEURS_OPTIONS = [
   { label: appLabels.optionActionsSansIndicateurs, value: WITHOUT },
 ];
 
-export const NOTES_PROPERTIES: Record<
+const NOTES_PROPERTIES: Record<
   NotesOption,
   { label: string; value: NotesOption }
 > = {

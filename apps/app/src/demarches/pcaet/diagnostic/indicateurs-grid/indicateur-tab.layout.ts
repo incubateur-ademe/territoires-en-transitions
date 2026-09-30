@@ -3,13 +3,13 @@ import type {
   PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
 
-export type DiagnosticTableRow = {
+type DiagnosticTableRow = {
   label: string;
   indicateurDefinitionId: string;
   optionalYears: readonly number[] | 'all';
 };
 
-export type DiagnosticIndicateurTableLayout = {
+type DiagnosticIndicateurTableLayout = {
   id: string;
   title: string;
   isOptional: boolean;
@@ -37,7 +37,7 @@ const identifiantsInTable = (
   table: DiagnosticIndicateurTableLayout
 ): Set<string> => new Set(table.rows.map((row) => row.indicateurDefinitionId));
 
-export const attachIndicateurDataToTable = (
+const attachIndicateurDataToTable = (
   table: DiagnosticIndicateurTableLayout,
   {
     definitions,
@@ -104,7 +104,7 @@ const toTableRow = (child: ChildConfig): DiagnosticTableRow | null => {
  * Lignes saisissables d’un enfant direct : ses feuilles imbriquées, ou lui-même
  * s’il n’a pas d’enfants.
  */
-export const rowsForChild = (child: ChildConfig): DiagnosticTableRow[] => {
+const rowsForChild = (child: ChildConfig): DiagnosticTableRow[] => {
   if (child.children !== undefined && child.children.length > 0) {
     return child.children.flatMap((leaf) => {
       const row = toTableRow(leaf);

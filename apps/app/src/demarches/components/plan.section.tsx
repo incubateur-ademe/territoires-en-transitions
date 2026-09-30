@@ -41,7 +41,7 @@ import { DemarcheSection } from './section';
  * Ce qui varie d'un type à l'autre — quel type de plan est éligible et sous
  * quel libellé — est injecté par l'appelant.
  */
-export type DemarchePlanEligibility = {
+type DemarchePlanEligibility = {
   /** Libellé du type de plan attendu, affiché à défaut de celui du plan. */
   planTypeLabel: string;
   /** Id du type de plan éligible, résolu par l'appelant. */

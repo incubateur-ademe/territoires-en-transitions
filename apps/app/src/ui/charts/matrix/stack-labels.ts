@@ -39,4 +39,4 @@ const stackLabelsVertically = ({
     ).placements;
 
 export { stackLabelsVertically };
-export type { LabelAnchor, LabelPlacement, LabelPlacements };
+export type { LabelAnchor, LabelPlacements };

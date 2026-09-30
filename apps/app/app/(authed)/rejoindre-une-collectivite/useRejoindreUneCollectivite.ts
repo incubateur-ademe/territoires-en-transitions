@@ -8,7 +8,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-export const NB_COLLECTIVITES_FETCH = 20;
+const NB_COLLECTIVITES_FETCH = 20;
 export type MatchingCollectivites = Pick<CollectivitePublic, 'id' | 'nom'>[];
 
 export type RejoindreUneCollectiviteData = {

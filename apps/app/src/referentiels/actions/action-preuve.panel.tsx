@@ -7,8 +7,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
 import { ComponentPropsWithoutRef } from 'react';
 
-export interface TActionPreuvePanelProps
-  extends ComponentPropsWithoutRef<'div'> {
+interface TActionPreuvePanelProps extends ComponentPropsWithoutRef<'div'> {
   /** Identifiant de l'action ou de la sous-action concernée */
   action: ActionIdentity;
   /** indique si les preuves associées aux sous-actions sont également chargées */

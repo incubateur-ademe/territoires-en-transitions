@@ -12,7 +12,7 @@ const STORAGE_KEY_PREFIX = 'tet_referentiel_table_columns_visibility';
 
 // Ordre de présentation des colonnes dans le sélecteur de visibilité.
 // Garde la colonne "Intitulé" toujours visible en l'excluant de cette liste.
-export const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
+const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'description', label: 'Description', default: false },
   { id: 'categorie', label: 'Phase', default: false },
   { id: 'pointPotentiel', label: 'Potentiel personnalisé', default: true },

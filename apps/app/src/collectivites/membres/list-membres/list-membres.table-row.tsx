@@ -19,7 +19,7 @@ import {
   TAccesDropdownOption,
 } from './list-membres.table-row.editable-cell';
 
-export type TMembreListTableRowProps = {
+type TMembreListTableRowProps = {
   membre: Membre;
   updateMembre: TUpdateMembre;
   canMutateMembres: boolean;

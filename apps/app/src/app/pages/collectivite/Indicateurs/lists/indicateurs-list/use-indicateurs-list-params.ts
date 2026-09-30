@@ -56,7 +56,7 @@ const optionsNameToParams: Record<keyof ListOptions, string> = {
 } as const;
 
 export type SearchParams = ListDefinitionsInputFilters & ListOptions;
-export const searchParamsShortMap = {
+const searchParamsShortMap = {
   ...indicateursNameToParams,
   ...optionsNameToParams,
 };

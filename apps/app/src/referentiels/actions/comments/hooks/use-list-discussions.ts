@@ -3,8 +3,7 @@ import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 
-export type ListDiscussionsInput =
-  RouterInput['collectivites']['discussions']['list'];
+type ListDiscussionsInput = RouterInput['collectivites']['discussions']['list'];
 
 export type DiscussionListItem =
   RouterOutput['collectivites']['discussions']['list']['discussions'][number];
