@@ -1,8 +1,7 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, NotFoundException } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
+import { captureException } from '@tet/backend/utils/error-tracking/capture-exception';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Job } from 'bullmq';
 import {
@@ -88,7 +87,7 @@ export class CronConsumerService extends WorkerHost {
         } for queue ${CRON_JOBS_QUEUE_NAME}: ${getErrorMessage(error)}`
       );
 
-      // N'envoie à Sentry qu'à la dernière tentative pour ne pas multiplier
+      // Ne remonte l'erreur (Sentry, PostHog) qu'à la dernière tentative pour ne pas multiplier
       // les captures pendant les retries de BullMQ. Si attemptsMade est
       // indéfini ou que l'option attempts n'est pas posée, on capture par
       // défaut (comportement précédent).
@@ -97,19 +96,14 @@ export class CronConsumerService extends WorkerHost {
       const isFinalAttempt =
         maxAttempts === undefined || attemptsMade + 1 >= maxAttempts;
       if (isFinalAttempt) {
-        Sentry.captureException(
-          error,
-          getSentryContextFromApplicationContext(
-            this.contextStoreService.getContext(),
+        captureException(error, this.contextStoreService.getContext(),
             {
               jobId: job.id,
               jobName: job.name,
               queueName: CRON_JOBS_QUEUE_NAME,
               attemptsMade,
               maxAttempts,
-            }
-          )
-        );
+            });
       }
 
       // Throw to trigger retry
