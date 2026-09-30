@@ -32,7 +32,6 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   const crispHelpdeskUrl = 'https://*.crisp.help';
   // Domaine custom du helpdesk Crisp (iframe « Aide »)
   const aideUrl = 'https://aide.territoiresentransitions.fr';
-  const sentryOrigin = getSentryOrigin();
   const rootDomain = getRootDomain(url.hostname);
 
   const cspHeader = `
@@ -50,7 +49,6 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
       *.${rootDomain}
       ${backendUrl}
       ${posthogSource}
-      ${sentryOrigin}
       ${crispUrl}
       wss://*.relay.crisp.chat
       wss://*.relay.rescue.crisp.chat;
@@ -83,22 +81,6 @@ function getPostHogSource(host: string): string {
     return hostname === 'posthog.com' || hostname.endsWith('.posthog.com')
       ? 'https://*.posthog.com'
       : origin;
-  } catch {
-    return '';
-  }
-}
-
-/**
- * Origine du serveur Sentry (collecte des erreurs + Session Replay), déduite du
- * DSN. Renvoie une chaîne vide si le DSN est absent ou invalide.
- */
-function getSentryOrigin(): string {
-  const dsn = process.env.SENTRY_DSN;
-  if (!dsn) {
-    return '';
-  }
-  try {
-    return new URL(dsn).origin;
   } catch {
     return '';
   }

@@ -137,6 +137,6 @@ Titles that need a capital: `capitalize` from the same module — `capitalize(ap
 - `src/labels/catalog.ts` — public `appLabels` entry (spreads `*.labels.ts` domain files).
 - `src/app/paths.ts` — URL builders.
 - `src/utils/toast/` — toast context + mutation subscriber.
-- `src/utils/error/error.page.tsx` + `error.card.tsx` — error UI + Sentry capture (handles `TRPCClientErrorLike`).
+- `src/utils/error/error.page.tsx` + `error.card.tsx` — error UI + PostHog error tracking capture (handles `TRPCClientErrorLike`).
 - `src/utils/formatUtils.ts`, `to-locale-fixed.ts`, `to-percent-string.ts`, `naturalSort.ts` — prefer these over ad-hoc `Intl.NumberFormat`.
 - `es-toolkit` (`pick`, `omit`, `without`) — the chosen utility lib. **Don't add lodash.**

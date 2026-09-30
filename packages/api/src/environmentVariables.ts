@@ -24,9 +24,6 @@ export const ENV = {
   get backend_url() {
     return getPublicEnv().BACKEND_URL;
   },
-  get sentry_dsn() {
-    return getPublicEnv().SENTRY_DSN;
-  },
   get crisp_website_id() {
     return getPublicEnv().CRISP_WEBSITE_ID;
   },

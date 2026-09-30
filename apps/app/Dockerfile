@@ -4,7 +4,6 @@
 #   docker build -f apps/app/Dockerfile \
 #     --build-arg GIT_SHORT_HASH=$(git rev-parse --short HEAD) \
 #     --secret id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-#     --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
 #     -t app .
 #
 # L'image ne contient aucune valeur spécifique à un environnement : une seule
@@ -82,8 +81,8 @@ ENV GITHUB_ACTIONS=$GITHUB_ACTIONS \
 # (ni token Nx) n'est nécessaire dans ce build Docker.
 ENV NX_NO_CLOUD=true
 
-# SENTRY_AUTH_TOKEN and POSTHOG_API_KEY are only used by their respective build
-# plugins to upload source maps; both stay out of ENV and image history. The
+# POSTHOG_API_KEY is only used by the PostHog build plugin to upload source
+# maps; it stays out of ENV and image history. The
 # bryntum secret here just silences pnpm's harmless "can't resolve
 # ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).
 # Les caches de travail Next/Nx restent locaux au builder : ils ne doivent
@@ -92,7 +91,6 @@ ENV NX_NO_CLOUD=true
 # conserve les couches de dépendances et les artefacts compilés uniquement.
 RUN --mount=type=cache,id=tet-app-next,target=/workspace/apps/app/.next/cache \
     --mount=type=cache,id=tet-app-nx,target=/workspace/.nx/cache \
-    --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
     --mount=type=secret,id=posthog_api_key,env=POSTHOG_API_KEY \
     --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     pnpm run build:app

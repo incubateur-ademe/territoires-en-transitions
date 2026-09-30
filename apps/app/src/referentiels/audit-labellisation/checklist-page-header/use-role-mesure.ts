@@ -6,7 +6,7 @@ import {
   useUpsertMesurePilotes,
 } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { captureException } from '@/app/utils/sentry/sentry-client.lazy';
+import { captureException } from '@/app/utils/error-tracking/capture-exception';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import {
   useCollectiviteId,

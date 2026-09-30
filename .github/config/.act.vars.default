@@ -29,7 +29,6 @@ SITE_URL=http://localhost:3001
 BACKEND_URL=http://localhost:8080
 AXEPTIO_ID=
 CRISP_WEBSITE_ID=
-SENTRY_DSN=
 POSTHOG_HOST=
 
 # nécessaire seulement pour faire passer test-tools en local via act
