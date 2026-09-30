@@ -3,13 +3,13 @@ import { Icon } from '@tet/ui';
 import { ReactElement, ReactNode } from 'react';
 
 type DocumentLineProps = {
-  filename: string | null;
+  documentTitle: string | null;
   isMissing: boolean;
   children: ReactNode;
 };
 
 export const DocumentLine = ({
-  filename,
+  documentTitle,
   isMissing,
   children,
 }: DocumentLineProps): ReactElement => (
@@ -21,9 +21,9 @@ export const DocumentLine = ({
     )}
     <span
       className="min-w-0 flex-1 truncate font-medium"
-      title={filename ?? undefined}
+      title={documentTitle ?? undefined}
     >
-      {filename}
+      {documentTitle}
     </span>
     <div className="flex shrink-0 items-center gap-1">{children}</div>
   </div>

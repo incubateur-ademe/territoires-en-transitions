@@ -6,7 +6,7 @@ import { DocumentLine } from './document-line';
 export default {
   component: DocumentLine,
   args: {
-    filename: 'deliberation-2026.pdf',
+    documentTitle: 'deliberation-2026.pdf',
     isMissing: false,
     children: (
       <>
@@ -33,14 +33,14 @@ type Story = StoryObj<typeof DocumentLine>;
 
 export const Fichier: Story = {};
 
-/** Le glyphe de tete devient le badge : le probleme se lit avant le nom. */
+/** Le glyphe de tête devient le badge : le problème se lit avant le nom. */
 export const FichierIntrouvable: Story = {
-  args: { filename: 'deliberation-perdue.pdf', isMissing: true },
+  args: { documentTitle: 'deliberation-perdue.pdf', isMissing: true },
 };
 
 export const NomLong: Story = {
   args: {
-    filename:
+    documentTitle:
       'deliberation-conseil-communautaire-adoption-plan-climat-air-energie-2026.pdf',
   },
 };

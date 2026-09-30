@@ -68,7 +68,7 @@ export const PersistedReportCard = ({
   const isMissing = report.type === 'fichierManquant';
   return (
     <Card className="p-4 gap-1" aria-busy={isRemoving}>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {isMissing && <MissingFileBadge />}
         <div className="min-w-0 flex-1">
           <DocumentTitle
@@ -101,7 +101,7 @@ export const UploadingReportCard = ({
   progress: number;
 }): JSX.Element => (
   <Card className="p-4 gap-1 animate-pulse" aria-busy>
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
       <UploadingTitle filename={filename} progress={progress} />
     </div>
   </Card>

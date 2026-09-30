@@ -119,6 +119,7 @@ const toAttendu = (
 
 export const preuveReglementaireFichierConfidentiel: DocumentReglementaire = {
   ...preuveReglementaireFichier,
+  id: 8,
   type: 'fichier',
   fichier: { ...fichierPreuve, confidentiel: true },
 };
@@ -178,17 +179,7 @@ export const preuveComplementaireFichier: DocumentComplementaire = {
   id: 4,
   collectiviteId: 1,
   type: 'fichier',
-  fichier: {
-    id: 21,
-    collectiviteId: 1,
-    hash: toDocumentHash(
-      'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'
-    ),
-    filename: 'preuve_input.txt',
-    filesize: 34,
-    bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
-    confidentiel: false,
-  },
+  fichier: fichierPreuve,
   commentaire: 'lala',
   modifiedAt: '2022-09-06T16:46:31.355212+00:00',
   modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
