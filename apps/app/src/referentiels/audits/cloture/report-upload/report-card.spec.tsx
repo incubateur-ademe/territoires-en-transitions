@@ -1,10 +1,9 @@
-import { toDocumentHash } from '@tet/domain/collectivites';
+import { appLabels } from '@/app/labels/catalog';
+import { rapportFichier, rapportFichierManquant } from './rapports.fixture';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AuditReport } from '../data/use-list-reports-by-audit';
 import { PersistedReportCard } from './report-card';
-
-const COLLECTIVITE_ID = 1;
 
 const { openPreuve } = vi.hoisted(() => ({ openPreuve: vi.fn() }));
 
@@ -20,41 +19,6 @@ vi.mock(
   })
 );
 
-const base = {
-  id: 1,
-  collectiviteId: COLLECTIVITE_ID,
-  commentaire: null,
-  modifiedAt: '2026-09-06T16:43:41.423515+00:00',
-  modifiedBy: null,
-  modifiedByNom: 'Yolo Dodo',
-  preuveType: 'audit',
-  auditId: 3,
-  demande: null,
-  audit: { id: 3 },
-};
-
-const rapportFichier = {
-  ...base,
-  type: 'fichier',
-  fichier: {
-    id: 21,
-    collectiviteId: COLLECTIVITE_ID,
-    hash: toDocumentHash(
-      'c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'
-    ),
-    filename: 'rapport-audit.pdf',
-    filesize: 2048,
-    bucketId: '9d4ccd86-268b-4292-aeda-18bfbe6496df',
-    confidentiel: false,
-  },
-} as unknown as AuditReport;
-
-const rapportIntrouvable = {
-  ...base,
-  type: 'fichierManquant',
-  filename: 'rapport-perdu.pdf',
-} as unknown as AuditReport;
-
 const renderCard = (report: AuditReport) =>
   render(
     <PersistedReportCard
@@ -69,8 +33,20 @@ describe('PersistedReportCard', () => {
     vi.clearAllMocks();
   });
 
+  test('un rapport introuvable porte le signalement de fichier indisponible', () => {
+    renderCard(rapportFichierManquant);
+
+    expect(screen.getByText(appLabels.fichierIndisponible)).toBeTruthy();
+  });
+
+  test('un rapport déposé ne porte aucun signalement', () => {
+    renderCard(rapportFichier);
+
+    expect(screen.queryByText(appLabels.fichierIndisponible)).toBeNull();
+  });
+
   test("le nom d'un rapport introuvable n'est pas un bouton", () => {
-    renderCard(rapportIntrouvable);
+    renderCard(rapportFichierManquant);
 
     expect(
       screen.queryByRole('button', { name: /^rapport-perdu\.pdf/ })

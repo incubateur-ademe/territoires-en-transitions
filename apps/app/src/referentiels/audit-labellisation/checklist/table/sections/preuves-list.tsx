@@ -20,7 +20,7 @@ const PreuveLine = ({
   return (
     <li>
       <DocumentLine
-        filename={getDocumentTitle(preuve)}
+        documentTitle={getDocumentTitle(preuve)}
         isMissing={preuve.type === 'fichierManquant'}
       >
         {isDownloadable && (

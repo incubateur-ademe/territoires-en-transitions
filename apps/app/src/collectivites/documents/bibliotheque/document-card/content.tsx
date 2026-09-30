@@ -3,29 +3,12 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { DocumentSupportRenseigne } from '@tet/domain/collectivites';
 import { Button, Icon } from '@tet/ui';
 import { JSX, useState } from 'react';
 import type { DuplicatedDocumentInformation } from '../../duplicated-document-state.utils';
-import { DocumentTitle } from '../document-title';
 import { DuplicatedDocumentAlert } from '../duplicated-document.alert';
 import { EditStateInput } from '../edit-state.input';
 import { EditState } from '../use-edit-state';
-
-export const Title = ({
-  document,
-  onOpen,
-}: {
-  document: DocumentSupportRenseigne;
-  onOpen: () => void;
-}): JSX.Element => (
-  <DocumentTitle
-    document={document}
-    onOpen={onOpen}
-    withExtension
-    withFilesize
-  />
-);
 
 export const Identifier = ({ value }: { value: string }): JSX.Element => (
   <span className="text-grey-6 leading-6 flex gap-2">{value}</span>

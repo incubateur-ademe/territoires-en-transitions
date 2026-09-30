@@ -8,15 +8,10 @@ import { useUpdatePreuveCommentaire } from '../use-edit-preuve';
 import { useEditState } from '../use-edit-state';
 import { useOpenPreuve } from '../use-open-preuve';
 import { DocumentLastModified } from '../document-last-modified';
+import { DocumentTitle } from '../document-title';
 import { MissingFileBadge } from '../missing-file.badge';
 import { Actions, DocumentCardActions } from './actions';
-import {
-  CommentBlock,
-  Duplicate,
-  Identifier,
-  Title,
-  VisitDate,
-} from './content';
+import { CommentBlock, Duplicate, Identifier, VisitDate } from './content';
 
 const getVisitDate = (document: DocumentRattache): string | null =>
   document.preuveType === 'rapport' ? document.rapport.date : null;
@@ -61,7 +56,12 @@ export const DocumentCard = ({
       <Card className="p-4 h-full gap-1">
         <div className="flex items-center gap-2">
           {document.type === 'fichierManquant' && <MissingFileBadge />}
-          <Title document={document} onOpen={() => openPreuve(document)} />
+          <DocumentTitle
+            document={document}
+            onOpen={() => openPreuve(document)}
+            withExtension
+            withFilesize
+          />
         </div>
         {identifier && <Identifier value={identifier} />}
         <DocumentLastModified
