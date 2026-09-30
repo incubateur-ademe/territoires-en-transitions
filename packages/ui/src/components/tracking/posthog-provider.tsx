@@ -52,6 +52,8 @@ const ensureInitialized = ({ host, key, environment }: PostHogConfig): void => {
     // Disable automatic pageview capture, as we capture manually
     capture_pageview: false,
     capture_pageleave: true,
+    // Error tracking : exceptions non gérées et rejets de promesses
+    capture_exceptions: true,
     evaluation_contexts: environment ? [environment] : undefined,
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();

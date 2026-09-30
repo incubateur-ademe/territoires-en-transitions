@@ -1,3 +1,4 @@
+import { withPostHogConfig } from '@posthog/nextjs-config';
 import { uuid4 } from '@sentry/core';
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
@@ -193,4 +194,25 @@ const sentryConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, sentryConfig);
+const nextConfigWithSentry = withSentryConfig(nextConfig, sentryConfig);
+// Une valeur encore chiffrée par dotenvx vient du .env relu tel quel par
+// `next build`, sans déchiffrement (CI hors déploiement) : pas de téléversement.
+const getDecryptedEnv = (name: string) => {
+  const value = process.env[name];
+  return value && !value.startsWith('encrypted:') ? value : undefined;
+};
+
+const posthogApiKey = getDecryptedEnv('POSTHOG_API_KEY');
+const posthogProjectId = getDecryptedEnv('POSTHOG_PROJECT_ID');
+
+export default posthogApiKey && posthogProjectId
+  ? withPostHogConfig(nextConfigWithSentry, {
+      personalApiKey: posthogApiKey,
+      projectId: posthogProjectId,
+      host: process.env.POSTHOG_HOST,
+      sourcemaps: {
+        enabled: true,
+        deleteAfterUpload: true,
+      },
+    })
+  : nextConfigWithSentry;

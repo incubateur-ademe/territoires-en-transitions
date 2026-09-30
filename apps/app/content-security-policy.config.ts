@@ -27,7 +27,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   const supabaseUrl = process.env.SUPABASE_URL ?? '';
   const supabaseWsUrl = supabaseUrl.replace('http', 'ws');
   const backendUrl = process.env.BACKEND_URL ?? '';
-  const posthogHost = process.env.POSTHOG_HOST ?? '';
+  const posthogSource = getPostHogSource(process.env.POSTHOG_HOST ?? '');
   const crispUrl = 'https://*.crisp.chat';
   const crispHelpdeskUrl = 'https://*.crisp.help';
   // Domaine custom du helpdesk Crisp (iframe « Aide »)
@@ -40,7 +40,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
     img-src 'self' blob: data: ${supabaseUrl} ${crispUrl};
     font-src 'self' data: ${crispUrl};
     media-src 'self' data: ${crispUrl};
-    script-src ${scriptSrc} ${posthogHost} ${crispUrl};
+    script-src ${scriptSrc} ${posthogSource} ${crispUrl};
     style-src ${styleSrc} ${crispUrl};
     object-src 'none';
     worker-src 'self' blob: ${crispUrl};
@@ -49,7 +49,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
       ${supabaseWsUrl}
       *.${rootDomain}
       ${backendUrl}
-      ${posthogHost}
+      ${posthogSource}
       ${sentryOrigin}
       ${crispUrl}
       wss://*.relay.crisp.chat
@@ -67,6 +67,25 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
 
   // supprime les retours à la ligne et les espaces en trop
   return cspHeader.replace(/\s{2,}/g, ' ').trim();
+}
+
+/**
+ * Source PostHog autorisée pour les scripts et les requêtes, selon la doc
+ * PostHog (posthog.com/docs/advanced/content-security-policy) :
+ * - hôte PostHog cloud : `https://*.posthog.com`, car PostHog peut changer les
+ *   sous-domaines qui servent ses scripts (ex. `eu-assets.i.posthog.com`) ;
+ * - reverse proxy : son origine seule, qui sert alors aussi les scripts.
+ * Renvoie une chaîne vide si l'hôte est absent ou invalide.
+ */
+function getPostHogSource(host: string): string {
+  try {
+    const { hostname, origin } = new URL(host);
+    return hostname === 'posthog.com' || hostname.endsWith('.posthog.com')
+      ? 'https://*.posthog.com'
+      : origin;
+  } catch {
+    return '';
+  }
 }
 
 /**
