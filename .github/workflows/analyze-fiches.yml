@@ -1,0 +1,48 @@
+name: Analyse des fiches action (priorisation des actions)
+
+run-name: Analyse des fiches action des CT ${{ inputs.collectivites }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      collectivites:
+        type: string
+        description: 'CT à analyser : identifiants séparés par des virgules (ex : 12,45,78), ou all pour toutes les CT.'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: analyze-fiches
+  cancel-in-progress: false
+
+jobs:
+  analyze-fiches:
+    name: Passage d'analyse des fiches
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - name: Build du backend
+        run: pnpm nx build backend
+
+      - name: Passage d'analyse
+        env:
+          NODE_ENV: production
+          COLLECTIVITES: ${{ inputs.collectivites }}
+          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+        run: node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js "--collectivites=$COLLECTIVITES"
