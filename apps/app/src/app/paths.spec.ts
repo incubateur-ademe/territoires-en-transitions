@@ -1,5 +1,10 @@
 import { ActionTypeEnum, type ActionType } from '@tet/domain/referentiels';
-import { makeReferentielTacheUrl, makeSignInUrl, signInPath } from './paths';
+import {
+  makeCollectiviteActionsDeReferenceUrl,
+  makeReferentielTacheUrl,
+  makeSignInUrl,
+  signInPath,
+} from './paths';
 
 const hierarchieAvecSousAxe: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,
@@ -90,5 +95,13 @@ describe('makeReferentielTacheUrl', () => {
         hierarchie: [],
       })
     ).toBe('/collectivite/1/referentiel/te/action/te_1.1.1.1');
+  });
+});
+
+describe('entree-nav-masquee-en-prod', () => {
+  it.skip('les actions de référence ont leur URL sous la collectivité', () => {
+    expect(
+      makeCollectiviteActionsDeReferenceUrl({ collectiviteId: 5596 })
+    ).toBe('/collectivite/5596/actions-reference');
   });
 });

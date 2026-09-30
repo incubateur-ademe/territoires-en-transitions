@@ -1,33 +1,19 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { CollectiviteCurrent } from '@tet/api/collectivites';
-import {
-  isServiceDeconcentre,
-  ReferentielDisplayMap,
-} from '@tet/domain/collectivites';
-import {
-  hasRole,
-  PlatformRole,
-  UserWithRolesAndPermissions,
-} from '@tet/domain/users';
-import { HeaderProps } from '@tet/ui';
+import { ENV } from '@tet/api/environmentVariables';
+import { isServiceDeconcentre } from '@tet/domain/collectivites';
+import { hasRole, PlatformRole } from '@tet/domain/users';
 import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
 import { makeSimplifiedViewNav } from './collectivite/make-role-edition-actions-indicateurs-nav';
 import { makeServiceDeconcentreNav } from './collectivite/make-service-deconcentre-nav';
+import type { MakeMainNav } from './make-main-nav.contract';
 
-type Props = {
-  user: UserWithRolesAndPermissions;
-  currentCollectivite: CollectiviteCurrent | null;
-  referentielDisplay?: ReferentielDisplayMap;
-  isDemarchePcaetEnabled: boolean;
-};
-
-export const makeMainNav = ({
+export const makeMainNav: MakeMainNav = ({
   user,
   currentCollectivite,
   referentielDisplay,
   isDemarchePcaetEnabled,
-}: Props): HeaderProps['mainNav'] => {
+}) => {
   const hasToCompleteRegistration =
     !hasRole(user, PlatformRole.VERIFIED) && user.collectivites.length === 0;
 
@@ -59,6 +45,7 @@ export const makeMainNav = ({
       currentCollectivite,
       referentielDisplay,
       isDemarchePcaetEnabled,
+      applicationEnv: ENV.application_env,
     });
   }
 };

@@ -476,6 +476,8 @@ export const appLabels = {
       'Les pièces attendues après les avis (délibération d’adoption…) doivent être déposées pour publier la démarche.',
     DEMARCHE_PCAET_NON_MODIFIABLE:
       'Cette partie du dossier n’est plus modifiable au statut actuel de la démarche.',
+    ACTION_DE_REFERENCE_CONFLICT:
+      'Une action de référence identique existe déjà.',
   } as Record<string, string | undefined>,
   indicateurValeurReferenceLigne: ({
     source,

@@ -49,4 +49,28 @@ export const sharedLabels = {
   placeholderRecherchezIntitule: 'Rechercher par intitulé',
 
   preferences: 'Préférences',
+
+  actionsDeReference: 'Actions de référence',
+  actionsDeReferenceRecherche: 'Rechercher une action de référence',
+  actionsDeReferenceLeviersLabel: 'Leviers',
+  actionsDeReferenceCategoriesLabel: 'Catégories',
+  actionsDeReferenceAucune:
+    'Aucune action de référence ne correspond à votre recherche',
+  actionsDeReferenceEffacerFiltres: 'Effacer les filtres',
+  actionDeReferenceTitreLabel: 'Titre',
+  actionDeReferenceDescriptionLabel: 'Description',
+  actionDeReferenceLevierLabel: 'Levier',
+  actionDeReferenceCategorieLabel: 'Catégorie',
+  actionDeReferenceModifier: (titre: string): string =>
+    `Modifier l'action « ${titre} »`,
+  actionDeReferenceModificationTitre: "Modifier l'action de référence",
+  actionDeReferenceModificationSucces: 'Action de référence modifiée',
+  actionDeReferenceModificationErreur:
+    "La modification de l'action de référence a échoué",
+  actionDeReferenceModificationsNonEnregistreesTitre:
+    'Modifications non enregistrées',
+  actionDeReferenceModificationsNonEnregistreesDescription:
+    'Les modifications apportées à cette action seront perdues.',
+  actionDeReferenceAbandonnerModifications: 'Fermer sans enregistrer',
+  actionDeReferencePoursuivreModification: 'Poursuivre la modification',
 };

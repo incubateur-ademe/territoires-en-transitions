@@ -7,43 +7,25 @@ import {
   makeDemandesAvisUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { CollectiviteCurrent } from '@tet/api/collectivites';
-import {
-  getReferentielDisplayMap,
-  ReferentielDisplayMap,
-} from '@tet/domain/collectivites';
+import { getReferentielDisplayMap } from '@tet/domain/collectivites';
 import { isTypeInstructeur } from '@tet/domain/demarches';
-import {
-  hasRole,
-  isUserVisitor,
-  PlatformRole,
-  UserWithRolesAndPermissions,
-} from '@tet/domain/users';
-import {
-  HeaderProps,
-  isNavDropdown,
-  NavDropdown,
-  NavItem,
-  NavLink,
-} from '@tet/ui';
+import { hasRole, isUserVisitor, PlatformRole } from '@tet/domain/users';
+import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateEdlDropdown } from './generate-edl-dropdown';
 import { generateIndicateursDropdown } from './generate-indicateurs-dropdown';
 import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown';
 import { generateTdbLink } from './generate-tdb-dropdown';
 
-type AddtionalProps = {
-  isVisible?: boolean;
-};
+import type {
+  CollectiviteNavItem,
+  MakeCollectiviteNav,
+} from './make-collectivite-nav.contract';
 
-export type CollectiviteNavLink = NavLink & AddtionalProps;
-
-type CollectiviteNavDropdown = NavDropdown &
-  AddtionalProps & {
-    links: CollectiviteNavLink[];
-  };
-
-export type CollectiviteNavItem = CollectiviteNavLink | CollectiviteNavDropdown;
+export type {
+  CollectiviteNavItem,
+  CollectiviteNavLink,
+} from './make-collectivite-nav.contract';
 
 export const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
   const { isVisible, ...rest } = item;
@@ -63,17 +45,12 @@ export const filterNavItems = (
     )
     .map(cleanButtonProps);
 
-export const makeCollectiviteNav = ({
+export const makeCollectiviteNav: MakeCollectiviteNav = ({
   user,
   currentCollectivite,
   referentielDisplay,
   isDemarchePcaetEnabled,
-}: {
-  user: UserWithRolesAndPermissions;
-  currentCollectivite: CollectiviteCurrent;
-  referentielDisplay?: ReferentielDisplayMap;
-  isDemarchePcaetEnabled: boolean;
-}): HeaderProps['mainNav'] => {
+}) => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
   /**

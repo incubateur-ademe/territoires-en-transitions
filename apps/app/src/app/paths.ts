@@ -19,6 +19,8 @@ import {
 import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
+import { notImplemented } from '../utils/not-implemented';
+import type { MakeCollectiviteActionsDeReferenceUrl } from './paths.contract';
 
 export const homePath = '/';
 
@@ -626,3 +628,6 @@ export const makeCollectiviteAffichageReferentielsUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeCollectiviteActionsDeReferenceUrl: MakeCollectiviteActionsDeReferenceUrl =
+  notImplemented('makeCollectiviteActionsDeReferenceUrl');

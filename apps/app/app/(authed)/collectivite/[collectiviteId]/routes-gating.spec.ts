@@ -57,3 +57,12 @@ describe('garde standard des routes de collectivité', () => {
     ).toContain(guardModule);
   });
 });
+
+describe('page-accessible-par-url-en-prod', () => {
+  it.todo(
+    'le segment actions-reference existe et délègue à la vue des actions de référence'
+  );
+  it.todo(
+    'le segment actions-reference est déclaré hors garde standard, service déconcentré compris'
+  );
+});

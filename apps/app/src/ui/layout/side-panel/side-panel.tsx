@@ -1,7 +1,5 @@
-import {
-  SidePanelTitleProps,
-  useSidePanel,
-} from '@/app/ui/layout/side-panel/side-panel.context';
+import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
+import type { SidePanelTitleProps } from '@/app/ui/layout/side-panel/side-panel.contract';
 import { Icon } from '@tet/ui';
 import { uiLabels } from '@tet/ui/labels/catalog';
 import { cn } from '@tet/ui/utils/cn';
