@@ -1,3 +1,5 @@
+import { PgIntegrityConstraintViolation } from '@tet/backend/utils/postgresql-error-codes.enum';
+
 export function getErrorCode(error: unknown) {
   if (isErrorWithCause(error)) {
     return error.cause.code;
@@ -18,5 +20,12 @@ type ErrorWithCause = Error & {
 export function isErrorWithCause(error: unknown): error is ErrorWithCause {
   return (
     error instanceof Error && 'cause' in error && error.cause instanceof Error
+  );
+}
+
+export function isUniqueViolation(error: unknown): error is ErrorWithCause {
+  return (
+    isErrorWithCause(error) &&
+    error.cause.code === PgIntegrityConstraintViolation.UniqueViolation
   );
 }

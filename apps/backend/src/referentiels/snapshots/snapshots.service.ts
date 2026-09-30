@@ -34,8 +34,7 @@ import { CollectiviteReferentielModeService } from '../../collectivites/collecti
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { Transaction } from '../../utils/database/transaction.utils';
-import { isErrorWithCause } from '../../utils/nest/errors.utils';
-import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import { isUniqueViolation } from '../../utils/nest/errors.utils';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
@@ -468,10 +467,7 @@ export class SnapshotsService {
         );
       }
     } catch (error) {
-      if (
-        isErrorWithCause(error) &&
-        error.cause.code === PgIntegrityConstraintViolation.UniqueViolation
-      ) {
+      if (isUniqueViolation(error)) {
         this.logger.error(
           `Unique violation for snapshot ${createScoreSnapshot.ref}: ${error.cause.detail} (${error.cause.code}, ${error.cause.constraint})`
         );
