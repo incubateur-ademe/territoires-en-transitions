@@ -102,6 +102,9 @@ resource "scaleway_instance_ip" "server" {
 # demandée y appartient. Sans ça, un private_network_id recopié depuis un
 # autre tier n'échoue qu'à l'apply, après création du serveur, avec un message
 # IPAM peu parlant (« These IPs are in no existing subnets »).
+#
+# Recherché par ID, le data source ne renseigne pas `name` (reste null) : ne
+# pas l'utiliser dans les messages.
 data "scaleway_vpc_private_network" "server" {
   private_network_id = var.private_network_id
 }
@@ -128,7 +131,7 @@ resource "scaleway_ipam_ip" "server" {
         cidrhost("${var.private_ipv4_address}/${split("/", local.pn_ipv4_subnet)[1]}", 0)
         == cidrhost(local.pn_ipv4_subnet, 0)
       )
-      error_message = "private_ipv4_address (${var.private_ipv4_address}) n'appartient pas au Private Network ${data.scaleway_vpc_private_network.server.name} (${local.pn_ipv4_subnet}) : private_network_id vise probablement le PN d'un autre tier."
+      error_message = "private_ipv4_address (${var.private_ipv4_address}) n'appartient pas au Private Network ${var.private_network_id} (${local.pn_ipv4_subnet}) : private_network_id vise probablement le PN d'un autre tier."
     }
   }
 }
