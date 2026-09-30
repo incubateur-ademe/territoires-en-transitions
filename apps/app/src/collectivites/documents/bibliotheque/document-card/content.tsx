@@ -3,10 +3,12 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { Button, Icon, Tooltip } from '@tet/ui';
+import { DocumentSupportRenseigne } from '@tet/domain/collectivites';
+import { Button, Icon } from '@tet/ui';
 import { JSX, useState } from 'react';
 import type { DuplicatedDocumentInformation } from '../../duplicated-document-state.utils';
-import { getAuthorAndDate, getFormattedTitle } from '../document-label.utils';
+import { getAuthorAndDate } from '../document-label.utils';
+import { DocumentTitle } from '../document-title';
 import { DuplicatedDocumentAlert } from '../duplicated-document.alert';
 import { EditStateInput } from '../edit-state.input';
 import { DocumentRattache } from '../types';
@@ -16,35 +18,16 @@ export const Title = ({
   document,
   onOpen,
 }: {
-  document: DocumentRattache;
+  document: DocumentSupportRenseigne;
   onOpen: () => void;
-}): JSX.Element => {
-  if (document.type === 'fichierManquant') {
-    return (
-      <span className="text-grey-7 text-base font-bold" data-test="name">
-        {getFormattedTitle(document)}
-      </span>
-    );
-  }
-
-  const openLabel =
-    document.type === 'lien'
-      ? appLabels.ouvrirLien
-      : appLabels.telechargerFichier;
-
-  return (
-    <Tooltip label={openLabel}>
-      <button
-        type="button"
-        className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer text-left"
-        data-test="name"
-        onClick={onOpen}
-      >
-        {getFormattedTitle(document)}
-      </button>
-    </Tooltip>
-  );
-};
+}): JSX.Element => (
+  <DocumentTitle
+    document={document}
+    onOpen={onOpen}
+    withExtension
+    withFilesize
+  />
+);
 
 export const Identifier = ({ value }: { value: string }): JSX.Element => (
   <span className="text-grey-6 leading-6 flex gap-2">{value}</span>

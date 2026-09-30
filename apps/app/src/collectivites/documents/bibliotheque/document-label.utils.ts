@@ -3,17 +3,31 @@ import { formatFileSize, getExtension } from '@/app/utils/file';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { DocumentSupport, StoredFile } from '@tet/domain/collectivites';
 
-const getFichierTitle = ({ filename, filesize }: StoredFile): string => {
-  const extension = getExtension(filename)?.toUpperCase();
-  const size = filesize === null ? null : formatFileSize(filesize);
+export type DocumentTitleOptions = {
+  withExtension?: boolean;
+  withFilesize?: boolean;
+};
+
+const getFichierTitle = (
+  { filename, filesize }: StoredFile,
+  { withExtension, withFilesize }: DocumentTitleOptions
+): string => {
+  const extension = withExtension
+    ? getExtension(filename)?.toUpperCase()
+    : null;
+  const size =
+    withFilesize && filesize !== null ? formatFileSize(filesize) : null;
   const details = [extension, size].filter(Boolean).join(', ');
   return details ? `${filename} (${details})` : filename;
 };
 
-export const getFormattedTitle = (document: DocumentSupport): string | null => {
+export const getDocumentTitle = (
+  document: DocumentSupport,
+  options: DocumentTitleOptions = {}
+): string | null => {
   switch (document.type) {
     case 'fichier':
-      return getFichierTitle(document.fichier);
+      return getFichierTitle(document.fichier, options);
     case 'lien':
       return document.lien.titre;
     case 'fichierManquant':
@@ -22,6 +36,9 @@ export const getFormattedTitle = (document: DocumentSupport): string | null => {
       return null;
   }
 };
+
+export const getFormattedTitle = (document: DocumentSupport): string | null =>
+  getDocumentTitle(document, { withExtension: true, withFilesize: true });
 
 export const getAuthorAndDate = (
   date: string | null,

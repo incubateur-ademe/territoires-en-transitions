@@ -43,7 +43,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
-    const download = await referentielScoresPom.documentsPom.downloadDocument();
+    const download = await referentielScoresPom.documentsPom.downloadDocument(
+      'document_test.pdf'
+    );
     expect(download.suggestedFilename()).toBe('document_test.pdf');
 
     const fileInfo = await getCollectivitePreuveFileInfo(collectivite.data.id);
@@ -182,7 +184,9 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
-    const download = await referentielScoresPom.documentsPom.downloadDocument();
+    const download = await referentielScoresPom.documentsPom.downloadDocument(
+      'document_test.pdf'
+    );
     expect(download.suggestedFilename()).toBe('document_test.pdf');
   });
 });
