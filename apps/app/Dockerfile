@@ -56,19 +56,35 @@ COPY . .
 # (cf. packages/api/src/public-env.ts).
 # https://nextjs.org/docs/app/guides/environment-variables#runtime-environment-variables
 #
-# Seul GIT_SHORT_HASH reste un build arg : il identifie le commit, pas
-# l'environnement, et `next.config.ts` s'en sert pour `generateBuildId`.
+# GIT_SHORT_HASH identifie le commit pour `generateBuildId`. Les variables
+# GITHUB_* donnent aussi au téléversement des source maps PostHog le nom et la
+# version de la release, car le contexte Docker ne contient pas le dépôt Git.
+# POSTHOG_PROJECT_ID et POSTHOG_HOST ne sont pas secrets et ne sont disponibles
+# que dans ce stage de build.
 ARG GIT_SHORT_HASH
-
-ENV NEXT_TELEMETRY_DISABLED=1
+ARG GITHUB_ACTIONS
+ARG GITHUB_SHA
+ARG GITHUB_REF_NAME
+ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
+ARG POSTHOG_PROJECT_ID
+ARG POSTHOG_HOST
+ENV GITHUB_ACTIONS=$GITHUB_ACTIONS \
+    GITHUB_SHA=$GITHUB_SHA \
+    GITHUB_REF_NAME=$GITHUB_REF_NAME \
+    GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
+    GITHUB_SERVER_URL=$GITHUB_SERVER_URL \
+    POSTHOG_PROJECT_ID=$POSTHOG_PROJECT_ID \
+    POSTHOG_HOST=$POSTHOG_HOST \
+    NEXT_TELEMETRY_DISABLED=1
 
 # Le cache distant est géré par BuildKit : aucune connexion à Nx Cloud
 # (ni token Nx) n'est nécessaire dans ce build Docker.
 ENV NX_NO_CLOUD=true
 
-# SENTRY_AUTH_TOKEN is only used by the Sentry build plugin to upload source
-# maps; kept out of ENV so it never gets baked into the image. The bryntum
-# secret here just silences pnpm's harmless "can't resolve
+# SENTRY_AUTH_TOKEN and POSTHOG_API_KEY are only used by their respective build
+# plugins to upload source maps; both stay out of ENV and image history. The
+# bryntum secret here just silences pnpm's harmless "can't resolve
 # ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).
 # Les caches de travail Next/Nx restent locaux au builder : ils ne doivent
 # pas gonfler la couche exportée à chaque commit. Ces mounts ne sont pas
@@ -77,6 +93,7 @@ ENV NX_NO_CLOUD=true
 RUN --mount=type=cache,id=tet-app-next,target=/workspace/apps/app/.next/cache \
     --mount=type=cache,id=tet-app-nx,target=/workspace/.nx/cache \
     --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
+    --mount=type=secret,id=posthog_api_key,env=POSTHOG_API_KEY \
     --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     pnpm run build:app
 
