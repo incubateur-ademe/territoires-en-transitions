@@ -9,19 +9,26 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
+import { match } from 'ts-pattern';
 
 import type {
   Panel,
   PanelAction,
   PanelState,
   UseSidePanel,
+  UseSidePanelOptions,
 } from './side-panel.contract';
+
+type OnCloseRequest = NonNullable<UseSidePanelOptions['onCloseRequest']>;
 
 type PanelContextType = {
   panel: PanelState;
   setPanel: (action: PanelAction) => void;
   setTitle: (title: string) => void;
   registerOnClose: (callback: (() => void) | undefined) => void;
+  registerOnCloseRequest: (callback: OnCloseRequest) => void;
+  unregisterOnCloseRequest: (callback: OnCloseRequest) => void;
+  requestClose: () => void;
 };
 
 const PanelContext = createContext<PanelContextType | undefined>(undefined);
@@ -41,6 +48,40 @@ const panelReducer = (state: PanelState, action: PanelAction): PanelState => {
     default:
       throw new Error(`Action non gérée`);
   }
+};
+
+type CloseRequestRegistration = {
+  readonly registerOnCloseRequest: (callback: OnCloseRequest) => void;
+  readonly unregisterOnCloseRequest: (callback: OnCloseRequest) => void;
+  readonly requestClose: () => void;
+};
+
+const useCloseRequestRegistration = (
+  close: () => void
+): CloseRequestRegistration => {
+  const registeredCallback = useRef<OnCloseRequest | undefined>(undefined);
+
+  const registerOnCloseRequest = useCallback((callback: OnCloseRequest) => {
+    registeredCallback.current = callback;
+  }, []);
+
+  const unregisterOnCloseRequest = useCallback((callback: OnCloseRequest) => {
+    const isRegisteredCallback = registeredCallback.current === callback;
+    if (!isRegisteredCallback) {
+      return;
+    }
+    registeredCallback.current = undefined;
+  }, []);
+
+  const requestClose = useCallback(() => {
+    const outcome = registeredCallback.current?.() ?? 'close';
+    match(outcome)
+      .with('stay-open', () => undefined)
+      .with('close', () => close())
+      .exhaustive();
+  }, [close]);
+
+  return { registerOnCloseRequest, unregisterOnCloseRequest, requestClose };
 };
 
 export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
@@ -72,6 +113,9 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: 'close' });
   }, []);
 
+  const { registerOnCloseRequest, unregisterOnCloseRequest, requestClose } =
+    useCloseRequestRegistration(close);
+
   const setPanel = useCallback(
     (action: PanelAction) => {
       if (action.type === 'close') {
@@ -98,19 +142,39 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <PanelContext value={{ panel, setPanel, setTitle, registerOnClose }}>
+    <PanelContext
+      value={{
+        panel,
+        setPanel,
+        setTitle,
+        registerOnClose,
+        registerOnCloseRequest,
+        unregisterOnCloseRequest,
+        requestClose,
+      }}
+    >
       {children}
     </PanelContext>
   );
 };
 
-export const useSidePanel: UseSidePanel = (options) => {
+const usePanelContext = (): PanelContextType => {
   const context = useContext(PanelContext);
   if (!context) {
     throw new Error('usePanel doit être utilisé dans PanelProvider');
   }
+  return context;
+};
 
-  const { registerOnClose, ...rest } = context;
+export const useSidePanel: UseSidePanel = (options) => {
+  const {
+    registerOnClose,
+    registerOnCloseRequest,
+    unregisterOnCloseRequest,
+    panel,
+    setPanel,
+    setTitle,
+  } = usePanelContext();
 
   useEffect(() => {
     if (options?.onClose) {
@@ -119,5 +183,20 @@ export const useSidePanel: UseSidePanel = (options) => {
     }
   }, [options?.onClose, registerOnClose]);
 
-  return rest;
+  useEffect(() => {
+    const onCloseRequest = options?.onCloseRequest;
+    if (onCloseRequest) {
+      registerOnCloseRequest(onCloseRequest);
+      return () => unregisterOnCloseRequest(onCloseRequest);
+    }
+  }, [
+    options?.onCloseRequest,
+    registerOnCloseRequest,
+    unregisterOnCloseRequest,
+  ]);
+
+  return { panel, setPanel, setTitle };
 };
+
+export const useRequestSidePanelClose = (): (() => void) =>
+  usePanelContext().requestClose;

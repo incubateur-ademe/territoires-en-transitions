@@ -1,4 +1,7 @@
-import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
+import {
+  useRequestSidePanelClose,
+  useSidePanel,
+} from '@/app/ui/layout/side-panel/side-panel.context';
 import type { SidePanelTitleProps } from '@/app/ui/layout/side-panel/side-panel.contract';
 import { Icon } from '@tet/ui';
 import { uiLabels } from '@tet/ui/labels/catalog';
@@ -54,7 +57,8 @@ const useCloseOnRouteChange = (): void => {
 };
 
 export const SidePanel = (): JSX.Element => {
-  const { panel, setPanel } = useSidePanel();
+  const { panel } = useSidePanel();
+  const requestClose = useRequestSidePanelClose();
   useCloseOnRouteChange();
 
   return (
@@ -71,7 +75,7 @@ export const SidePanel = (): JSX.Element => {
     >
       <div className="shrink-0 bg-white p-4 border-b border-primary-3">
         <div className="flex items-start gap-2">
-          <CloseButton onClick={() => setPanel({ type: 'close' })} />
+          <CloseButton onClick={requestClose} />
           <Divider />
           {panel.title && <DefaultSidePanelTitle title={panel.title} />}
         </div>
