@@ -10,32 +10,12 @@ import React, {
   useRef,
 } from 'react';
 
-export type SidePanelTitleProps = {
-  title?: string;
-};
-
-type Panel = {
-  isPersistentWithNextPath?: (path: string) => boolean;
-  title?: string;
-  content?: React.ReactNode;
-};
-
-type PanelAction =
-  | ({
-      type: 'open';
-    } & Panel)
-  | { type: 'close' }
-  /**
-   * Changement de route : ferme le panneau, sauf s'il se déclare persistant
-   * pour le chemin atteint. Le tri se fait au dispatch, pas dans le reducer —
-   * voir `isPersistentRef`.
-   */
-  | { type: 'closeOnRouteChange'; path: string }
-  | { type: 'setTitle'; title: string };
-
-type PanelState = Panel & {
-  isOpen: boolean;
-};
+import type {
+  Panel,
+  PanelAction,
+  PanelState,
+  UseSidePanel,
+} from './side-panel.contract';
 
 type PanelContextType = {
   panel: PanelState;
@@ -124,19 +104,7 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-type UseSidePanelOptions = {
-  onClose?: () => void;
-};
-
-type UseSidePanelReturn = {
-  panel: PanelState;
-  setPanel: (action: PanelAction) => void;
-  setTitle: (title: string) => void;
-};
-
-export const useSidePanel = (
-  options?: UseSidePanelOptions
-): UseSidePanelReturn => {
+export const useSidePanel: UseSidePanel = (options) => {
   const context = useContext(PanelContext);
   if (!context) {
     throw new Error('usePanel doit être utilisé dans PanelProvider');
