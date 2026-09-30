@@ -3,8 +3,13 @@
 # validation.
 #
 # Invoqué par terraform_data.servers (infra/coolify/main.tf), ou manuellement.
-# Idempotent : la recherche se fait par nom, puis POST /servers si absent,
-# PATCH /servers/{uuid} sinon.
+# Idempotent : POST /servers si absent, PATCH /servers/{uuid} sinon.
+#
+# Le serveur est retrouvé par un marqueur stable posé dans sa description,
+# [tet-server:<SERVER_ID>], puis, à défaut, par son nom, puis par son IP. Le nom
+# seul ne suffit pas : renommer un serveur dans Terraform en créait un second à
+# la même IP. Les deux replis servent aux serveurs enregistrés avant le
+# marqueur, qui le reçoivent au passage.
 #
 # Passe par l'API REST plutôt que par la ressource coolify_server du provider,
 # marquée « not fully implemented » : un drift sur cette ressource détruirait
@@ -24,7 +29,9 @@
 #   COOLIFY_ENDPOINT     URL de base (…/api/v1)
 #   COOLIFY_TOKEN        token Bearer (via scripts/coolify-env.sh)
 #   PRIVATE_KEY_UUID     UUID de la clé privée à assigner
-#   SERVER_NAME          nom du serveur dans Coolify (clé d'idempotence)
+#   SERVER_NAME          nom du serveur dans Coolify
+#   SERVER_ID            (hors MATCH_LOCALHOST) identifiant stable, ex. le tier ;
+#                        porté par le marqueur de description
 #   SERVER_IP            IP SSH cible (ignorée si MATCH_LOCALHOST=true)
 #   SERVER_USER          (optionnel) utilisateur SSH, défaut root
 #   SERVER_PORT          (optionnel) port SSH, défaut 22
@@ -44,6 +51,9 @@ _description="${SERVER_DESCRIPTION:-Géré par Terraform (infra/coolify).}"
 
 if [ "$_match_localhost" != "true" ]; then
   : "${SERVER_IP:?SERVER_IP non défini (requis hors MATCH_LOCALHOST)}"
+  : "${SERVER_ID:?SERVER_ID non défini (requis hors MATCH_LOCALHOST)}"
+  _marker="[tet-server:${SERVER_ID}]"
+  _description="${_description} ${_marker}"
 fi
 
 for bin in curl jq; do
@@ -73,8 +83,16 @@ if [ "$_match_localhost" = "true" ]; then
     exit 1
   fi
 else
-  srv_uuid="$(printf '%s' "$servers" | jq -r --arg n "$SERVER_NAME" '
-    .[] | select(.name == $n) | .uuid' | head -n1)"
+  # Marqueur d'abord ; nom et IP seulement pour un serveur qui n'en porte pas
+  # encore, afin de ne jamais adopter le serveur d'un autre tier.
+  srv_uuid="$(printf '%s' "$servers" | jq -r \
+    --arg m "$_marker" --arg n "$SERVER_NAME" --arg ip "$SERVER_IP" '
+    ([.[] | select((.description // "") | contains($m))] +
+     [.[] | select((.description // "") | test("\\[tet-server:") | not)
+          | select(.name == $n)] +
+     [.[] | select((.description // "") | test("\\[tet-server:") | not)
+          | select((.ip // .ip_address) == $ip)])
+    | first | .uuid // empty')"
 fi
 
 if [ -n "$srv_uuid" ] && [ "$srv_uuid" != "null" ]; then
