@@ -12,7 +12,7 @@ const indicateurDom: IndicateurDefinitionAvecCategories = {
   unite: '%',
   titre: 'Indicateur DOM',
   categories: ['dom'],
-  isApplicable: true,
+  isSuivi: true,
 };
 
 const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
@@ -21,7 +21,7 @@ const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
   unite: '%',
   titre: 'Indicateur hors DOM',
   categories: ['hors_dom'],
-  isApplicable: true,
+  isSuivi: true,
 };
 
 const indicateurNeutre: IndicateurDefinitionAvecCategories = {
@@ -30,7 +30,7 @@ const indicateurNeutre: IndicateurDefinitionAvecCategories = {
   unite: '%',
   titre: 'Indicateur neutre',
   categories: [],
-  isApplicable: true,
+  isSuivi: true,
 };
 
 describe('indicateurs-associes.rules', () => {
@@ -88,7 +88,7 @@ describe('indicateurs-associes.rules', () => {
           titre: 'Indicateur neutre',
           identifiantReferentiel: 'ind_neutre',
           optional: false,
-          isApplicable: true,
+          isSuivi: true,
         },
       ]);
     });

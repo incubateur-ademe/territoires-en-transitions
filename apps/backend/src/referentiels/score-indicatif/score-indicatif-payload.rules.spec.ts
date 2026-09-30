@@ -39,7 +39,7 @@ describe('score-indicatif-payload.rules', () => {
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
             unite: '%',
-            isApplicable: true,
+            isSuivi: true,
           },
         ],
         calcul: {
@@ -107,7 +107,7 @@ describe('score-indicatif-payload.rules', () => {
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
             unite: '%',
-            isApplicable: true,
+            isSuivi: true,
           },
         ],
         calcul: null,

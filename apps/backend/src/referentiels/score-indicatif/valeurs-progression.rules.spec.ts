@@ -14,7 +14,7 @@ const associe = (
   identifiantReferentiel,
   titre: '',
   unite: '',
-  isApplicable: true,
+  isSuivi: true,
 });
 
 const valeur = (overrides: Partial<ValeurUtilisee>): ValeurUtilisee => ({

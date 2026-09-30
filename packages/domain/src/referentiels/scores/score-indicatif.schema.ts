@@ -97,9 +97,9 @@ export type IndicateurAssocie = {
   titre: string;
   unite: string;
   optional?: boolean;
-  // false si la collectivité a déclaré cet indicateur non applicable : sa
-  // valeur doit alors être ignorée (traitée comme 0) dans le calcul du score
-  isApplicable: boolean;
+  // false si la collectivité a déclaré cet indicateur non suivi : le score
+  // est alors forcé à 0 ("100% pas fait", à distinguer de "non renseigné")
+  isSuivi: boolean;
 };
 
 // score indicatif programmé ou fait

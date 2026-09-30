@@ -268,13 +268,13 @@ describe('ScoreIndicatifRouter', () => {
     });
   });
 
-  test('Demander un score pour un indicateur marqué non applicable force le résultat à 0, même si des valeurs sont sélectionnées', async () => {
+  test('Demander un score pour un indicateur marqué non suivi force le résultat à 0, même si des valeurs sont sélectionnées', async () => {
     const caller = router.createCaller({ user: testUser });
 
     await caller.indicateurs.indicateurs.update({
       indicateurId: indicateurIdCae7,
       collectiviteId: testCollectiviteId,
-      indicateurFields: { isApplicable: false },
+      indicateurFields: { isSuivi: false },
     });
     onTestFinished(async () => {
       // Supprime la ligne (plutôt que de remettre le flag à false) pour ne
@@ -303,11 +303,11 @@ describe('ScoreIndicatifRouter', () => {
     });
   });
 
-  test('Un indicateur non applicable force le score à 0 même pour une formule à seuil où une valeur basse serait "bonne"', async () => {
+  test('Un indicateur non suivi force le score à 0 même pour une formule à seuil où une valeur basse serait "bonne"', async () => {
     const caller = router.createCaller({ user: testUser });
 
     // Cas réel (proche de te_2.3.1.5.a) : une valeur basse est "bonne" pour
-    // cet indicateur. Si on neutralisait l'indicateur non applicable en
+    // cet indicateur. Si on neutralisait l'indicateur non suivi en
     // forçant `val()` à 0 dans la formule, on obtiendrait 1 (100% fait) au
     // lieu du 0% attendu, car 0 < cible. Le résultat doit être forcé à 0
     // sans même évaluer la formule.
@@ -329,12 +329,12 @@ describe('ScoreIndicatifRouter', () => {
     await caller.indicateurs.indicateurs.update({
       indicateurId,
       collectiviteId: testCollectiviteId,
-      indicateurFields: { isApplicable: false },
+      indicateurFields: { isSuivi: false },
     });
     // Nettoyage explicite plutôt que de compter sur la suppression en
     // cascade de `cleanup()` ci-dessus : `TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT`
     // est réutilisé par les autres tests de ce fichier, qui partagent
-    // `testCollectiviteId` — un `isApplicable: false` qui fuiterait forcerait
+    // `testCollectiviteId` — un `isSuivi: false` qui fuiterait forcerait
     // silencieusement leur score à 0.
     onTestFinished(async () => {
       await databaseService.db
@@ -777,7 +777,7 @@ describe('ScoreIndicatifRouter', () => {
       });
     });
 
-    test('progression_snbc : indicateur non applicable, calcul sans valeur utilisée', async () => {
+    test('progression_snbc : indicateur non suivi, calcul sans valeur utilisée', async () => {
       const { indicateurId, snbcId, insert } = await setup(
         `progression_snbc(${ID})`
       );
@@ -789,7 +789,7 @@ describe('ScoreIndicatifRouter', () => {
       await caller.indicateurs.indicateurs.update({
         indicateurId,
         collectiviteId: testCollectiviteId,
-        indicateurFields: { isApplicable: false },
+        indicateurFields: { isSuivi: false },
       });
       // `ID` est partagé par les autres tests de ce fichier
       onTestFinished(async () => {

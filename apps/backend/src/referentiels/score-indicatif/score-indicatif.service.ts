@@ -413,14 +413,14 @@ export class ScoreIndicatifService {
         );
 
         // type de calcul et données ayant servi au calcul, pour l'affichage ;
-        // sans valeur utilisée si un indicateur est non applicable (le score
-        // est alors forcé à 0 sans évaluer la formule, cf. `computeScore`)
-        const estNonApplicable = indicateurs.some((ind) => !ind.isApplicable);
+        // sans valeur utilisée si un indicateur est non suivi (le score est
+        // alors forcé à 0 sans évaluer la formule, cf. `computeScore`)
+        const estNonSuivi = indicateurs.some((ind) => !ind.isSuivi);
         const calcul = buildCalculScoreIndicatif({
           references: indicateursParActionId[actionId] ?? [],
           indicateursAssocies: indicateurs,
           evaluationContext,
-          valeursUtiliseesFait: estNonApplicable
+          valeursUtiliseesFait: estNonSuivi
             ? []
             : valeursParTypeScore[scoreIndicatifTypeEnum.FAIT] || [],
         });
@@ -466,14 +466,14 @@ export class ScoreIndicatifService {
     formuleNecessiteUneValeur: boolean,
     indicateursSuivis: Record<string, boolean> | undefined
   ) {
-    // Si un des indicateurs associés est marqué "non applicable" par la
+    // Si un des indicateurs associés est marqué "non suivi" par la
     // collectivité, le résultat est forcé à 0 sans évaluer la formule.
     // Injecter une valeur (même 0) dans la formule ne serait pas fiable :
     // beaucoup de formules comparent la valeur à un seuil/une cible
     // (`si val < cible alors 1 sinon 0`) où une valeur basse est souvent
     // "bonne" (ex. émissions, déchets) — forcer `val()` à 0 produirait
     // alors un score de 100% au lieu du 0% attendu.
-    if (indicateursAssocies.some((indicateur) => !indicateur.isApplicable)) {
+    if (indicateursAssocies.some((indicateur) => !indicateur.isSuivi)) {
       return { score: 0, valeursUtilisees: [] };
     }
 
