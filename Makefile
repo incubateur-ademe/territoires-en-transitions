@@ -71,7 +71,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get env-keys \
-	lint lint-fix test typecheck \
+	lint lint-fix test typecheck build \
         install dev graph \
 	hooks hooks-off \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
@@ -389,6 +389,13 @@ typecheck: preflight-env-keys ## Lance le typecheck : make typecheck [project=<n
 
 test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
 	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
+
+# Sur l'hôte, avec le même env que make dev : le .env de l'app déchiffré (et
+# ses variantes .local), puis le .env racine. Les variables injectées priment
+# sur le .env que next build relit lui-même, encore chiffré.
+build: preflight-env-keys ensure-deps ## Build un projet Nx avec son env déchiffré : make build project=<nx-project>
+	@if [ -z "$(project)" ]; then echo "✗ renseignez project=<nx-project>"; exit 1; fi
+	@$(call decrypt_env,$(wildcard apps/$(project)/.env) $(ENV_ROOT)) -- pnpm exec nx build "$(project)"
 
 hooks: ## Active les hooks git du dépôt (.githooks)
 	@node scripts/toggle-hooks.mts on
