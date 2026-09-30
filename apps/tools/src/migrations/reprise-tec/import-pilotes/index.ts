@@ -7,10 +7,12 @@
  *     apps/tools/src/migrations/reprise-tec/import-pilotes/index.ts [--confirm]
  */
 import { getCible } from '../db';
+import { createEcarts, validateBilan } from '../import-fiches/ecarts';
+import { loadEcarts } from './ecarts';
 import { createPilotesDossiers, createPilotesFiches } from './ecriture';
 import { validateGardes } from './gardes';
 import { createPersonneTags } from './personne-tag';
-import { loadPilotes } from './pilotes';
+import { listDossiersSansPilote, loadPilotes } from './pilotes';
 import { printRapport } from './rapport';
 
 const main = async () => {
@@ -21,6 +23,15 @@ const main = async () => {
   try {
     const pilotes = await loadPilotes(client);
     await validateGardes(client, pilotes);
+    const { lues, ecrites, ecarts, elusReferents } = await loadEcarts(
+      client,
+      pilotes
+    );
+    const bilan = validateBilan(lues, ecrites, ecarts);
+    const dossiersSansPilote = await listDossiersSansPilote(
+      client,
+      pilotes.dossiers
+    );
 
     await client.query('begin');
     try {
@@ -38,12 +49,18 @@ const main = async () => {
         pilotes.fiches,
         personneTags
       );
+      await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
 
       printRapport({
+        bilan,
+        ecarts,
+        pilotes,
         personneTags,
         pilotesDossiers,
         pilotesFiches,
+        dossiersSansPilote,
+        elusReferents,
         isConfirmed,
       });
     } catch (e) {
