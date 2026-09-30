@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, PageHeader, VisibleWhen } from '@tet/ui';
@@ -31,13 +31,6 @@ const LevierCardList = ({
   </ul>
 );
 
-const LevierCardsLoading = (): JSX.Element => (
-  <div role="status" className="flex h-96 items-center justify-center">
-    <SpinnerLoader className="h-8 w-8" />
-    <span className="sr-only">{appLabels.chargementEnCours}</span>
-  </div>
-);
-
 const LevierCardsContent = ({
   levierCards,
   upsertPertinence,
@@ -46,7 +39,7 @@ const LevierCardsContent = ({
   upsertPertinence?: UpsertPertinence;
 }): JSX.Element =>
   match(levierCards)
-    .with({ status: 'loading' }, () => <LevierCardsLoading />)
+    .with({ status: 'loading' }, () => <LoadingStatus />)
     .with({ status: 'error' }, ({ retry }) => (
       <ErrorCard title={appLabels.uneErreurEstSurvenue} retry={retry} />
     ))
