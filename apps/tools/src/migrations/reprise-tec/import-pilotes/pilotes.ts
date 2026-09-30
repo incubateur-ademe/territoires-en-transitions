@@ -4,10 +4,10 @@ import { PoolClient } from 'pg';
 import { buildNom, type PersonneTag } from './personne-tag';
 
 // Chef de projet, participant ou coporteur, élu référent : les rôles T&C qui deviennent pilotes.
-const ROLES_PILOTES = [1, 2, 3];
+export const ROLES_PILOTES = [1, 2, 3];
 
 // Les lignes T&C d'un dossier repris : la sienne et celle de son doublon « définitif », toutes deux vers la démarche reprise.
-const LIGNES_DES_DOSSIERS = `
+export const LIGNES_DES_DOSSIERS = `
   with lignes as (
     select c.tec_id as dossier, c.tec_id as ligne, c.tet_id as demarche_id
       from reprise_tec.correspondance c
@@ -32,6 +32,8 @@ export type PiloteDossier = Pilote & {
   demarcheId: number;
   // 1 chef de projet, 2 participant ou coporteur, 3 élu référent
   role: number;
+  // la collectivité T&C de l'utilisateur, quand ce n'est aucune de celles du dossier
+  autreCollectiviteTec: string | null;
 };
 
 export type PiloteFiche = Pilote & {
@@ -44,7 +46,7 @@ type Ligne = {
   collectiviteId: number;
   collectivite: string;
   prenom: string | null;
-  nomDeFamille: string | null;
+  nom: string | null;
 };
 
 /** Lit les pilotes des dossiers et des fiches repris, chacun avec son nom et la collectivité TeT du dossier ou de la fiche ; triés, pour que deux runs écrivent dans le même ordre. */
@@ -56,10 +58,15 @@ export const loadPilotes = async (client: PoolClient) => {
      select l.dossier::int as "dossierTecId", l.ligne::int as "ligneTecId",
             l.demarche_id::int as "demarcheId", du.utilisateur_id::int as "utilisateurId",
             du.role_demarche_action_id::int as role, dm.collectivite_id as "collectiviteId",
-            co.nom as collectivite, u.prenom, u.nom as "nomDeFamille"
+            co.nom as collectivite, u.prenom, u.nom,
+            case when not exists (
+              select from reprise_tec.staging_demarche_collectivite dc
+               where dc.demarche_id = l.ligne and dc.collectivite_id = u.collectivite_id
+            ) then sc.nom end as "autreCollectiviteTec"
        from lignes l
        join reprise_tec.staging_demarche_utilisateur du on du.demarche_id = l.ligne
        join reprise_tec.staging_utilisateur u on u.id = du.utilisateur_id
+       left join reprise_tec.staging_collectivite sc on sc.id = u.collectivite_id
        join public.demarche dm on dm.id = l.demarche_id
        join public.collectivite co on co.id = dm.collectivite_id
       where du.role_demarche_action_id = any($1)
@@ -72,7 +79,7 @@ export const loadPilotes = async (client: PoolClient) => {
   >(
     `select c.tec_id::int as "actionTecId", f.id as "ficheId",
             ac.utilisateur_id::int as "utilisateurId", f.collectivite_id as "collectiviteId",
-            co.nom as collectivite, u.prenom, u.nom as "nomDeFamille"
+            co.nom as collectivite, u.prenom, u.nom
        from reprise_tec.staging_action_contact ac
        join reprise_tec.correspondance c
          on c.table_cible = 'fiche_action' and c.tec_id = ac.action_id
@@ -88,10 +95,10 @@ export const loadPilotes = async (client: PoolClient) => {
   };
 };
 
-/** Remplace le prénom et le nom de famille de T&C par le nom du personne_tag. */
-const toPilote = <T extends Ligne>({ prenom, nomDeFamille, ...ligne }: T) => ({
+/** Réunit le prénom et le nom de T&C en un seul nom, « Prénom Nom ». */
+const toPilote = <T extends Ligne>({ prenom, nom, ...ligne }: T) => ({
   ...ligne,
-  nom: buildNom(prenom, nomDeFamille),
+  nom: buildNom(prenom, nom),
 });
 
 /** Garde, appelée par `gardes.ts` : aucun dossier ou aucune fiche repris, ou une démarche ou une fiche qui doit recevoir un pilote a disparu. */
@@ -139,4 +146,28 @@ export const listCasBloquantsPilotes = async (client: PoolClient) => {
         return `  fiche ${tetId} introuvable : action T&C ${tecId}, son pilote n'a plus de place`;
     }
   });
+};
+
+/** Les dossiers repris qui ne reçoivent aucun pilote, pour le rapport. */
+export const listDossiersSansPilote = async (
+  client: PoolClient,
+  pilotes: readonly PiloteDossier[]
+) => {
+  const { rows } = await client.query<{
+    tecId: number;
+    demarcheId: number;
+    collectivite: string;
+  }>(
+    `select c.tec_id::int as "tecId", d.id as "demarcheId", co.nom as collectivite
+       from reprise_tec.correspondance c
+       join public.demarche d on d.id = c.tet_id
+       join public.collectivite co on co.id = d.collectivite_id
+      where c.table_cible = 'demarche' and not (c.tet_id = any($1))
+      order by co.nom, c.tec_id`,
+    [[...new Set(pilotes.map((p) => p.demarcheId))]]
+  );
+  return rows.map(
+    (r) =>
+      `${r.collectivite} : dossier T&C ${r.tecId}, démarche ${r.demarcheId}`
+  );
 };

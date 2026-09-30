@@ -14,7 +14,8 @@ export const buildNom = (prenom: string | null, nom: string | null) =>
   `${prenom ?? ''} ${nom ?? ''}`.replace(/\s+/g, ' ').trim();
 
 /**
- * Crée les personne_tag qui manquent, sans auteur, réutilise les autres, et note chaque utilisateur T&C avec le sien.
+ * Crée le personne_tag de chaque nom absent de la collectivité ; si le nom y est déjà, prend la ligne existante
+ * (l'annulation ne la retirera pas). Note pour chaque utilisateur T&C le personne_tag qu'il devient.
  * Le dernier `select` ne voit pas ce que la même requête insère : il ne rend que les personne_tag d'avant.
  */
 export const createPersonneTags = async (
