@@ -2,6 +2,7 @@ import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
   importerPlanUrl,
+  makeCollectiviteActionsDeReferenceUrl,
   makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
   makeDemandesAvisUrl,
@@ -48,6 +49,7 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
 }) => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
+  const isSuperAdmin = hasRole(user, PlatformRole.SUPER_ADMIN);
   /**
    * Membre de cette collectivité, au sens strict du layout d'instruction — un
    * super-admin qui n'en est pas membre n'y accède pas davantage, la nav ne doit
@@ -91,6 +93,11 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
       isDemarchePcaetEnabled,
     }),
     {
+      isVisible: isSuperAdmin,
+      children: appLabels.actionsDeReference,
+      href: makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
+    },
+    {
       // Une collectivité qui instruit sans être un service déconcentré — le
       // conseil régional — garde cette nav et atteint l'instruction par ici.
       // Une DREAL ou une DDT n'a pas cette nav du tout.
@@ -105,7 +112,7 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
       href: makeDemandesAvisUrl({ collectiviteId }),
     },
     {
-      isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
+      isVisible: isSuperAdmin,
       children: appLabels.roleSuperAdmin,
       links: [
         {

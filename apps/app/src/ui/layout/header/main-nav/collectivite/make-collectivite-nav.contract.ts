@@ -21,7 +21,6 @@ export type MakeCollectiviteNavArgs = {
   currentCollectivite: CollectiviteCurrent;
   referentielDisplay?: ReferentielDisplayMap;
   isDemarchePcaetEnabled: boolean;
-  applicationEnv: string | undefined;
 };
 
 export type MakeCollectiviteNav = (
