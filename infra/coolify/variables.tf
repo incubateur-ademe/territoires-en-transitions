@@ -1,4 +1,4 @@
-variable "scaleway_project_id" {
+variable "main_project_id" {
   description = "UUID du projet Scaleway. Nécessaire pour lire les clés SSH dans Secret Manager."
   type        = string
 }
@@ -65,7 +65,7 @@ variable "app_servers" {
       ssh_host            = server_private_ip (nonprod, preview)
                             server_ssh_host   (prod : IP publique, VPC séparé)
       ssh_key_secret_name = server_ssh_key_secret_name
-      ssh_key_project_id  = projet du secret, si ce n'est pas scaleway_project_id
+      ssh_key_project_id  = projet du secret, si ce n'est pas main_project_id
                             (prod : terraform -chdir=../platform output -raw prod_project_id)
 
     Le lien entre stacks se fait par valeurs et noms de secrets, jamais par

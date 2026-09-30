@@ -7,7 +7,7 @@
 locals {
   # Projet où lire la clé SSH de chaque serveur : la prod a le sien.
   server_key_project_ids = {
-    for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.scaleway_project_id)
+    for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.main_project_id)
   }
 
   # Serveur du control plane : Coolify le crée lui-même à l'install pour
@@ -18,12 +18,12 @@ locals {
 # --- Clé du serveur localhost (control plane) ---
 #
 # Clé privée SSH host, lue depuis Secret Manager (créée par infra/platform,
-# module coolify-controller → tls_private_key + scaleway_secret).
+# module coolify → tls_private_key + scaleway_secret).
 # `data` est renvoyé en base64 par le provider → on décode pour obtenir la clé
 # OpenSSH telle quelle.
 data "scaleway_secret_version" "host_key" {
   secret_name = var.host_key_secret_name
-  project_id  = var.scaleway_project_id
+  project_id  = var.main_project_id
   revision    = "latest"
 }
 
@@ -129,7 +129,7 @@ resource "terraform_data" "ghcr_docker_login" {
       SERVER_KEY_SECRET_NAME       = each.value.ssh_key_secret_name
       SERVER_KEY_SECRET_PROJECT_ID = local.server_key_project_ids[each.key]
       GHCR_PULL_SECRET_NAME        = var.ghcr_pull_secret_name
-      SECRET_PROJECT_ID            = var.scaleway_project_id
+      SECRET_PROJECT_ID            = var.main_project_id
       # Rebond obligatoire par le control plane : nonprod et preview n'ont pas
       # de SSH public, et celui de la prod n'accepte que l'IP de Coolify.
       BASTION_HOST = var.coolify_public_ip
@@ -174,7 +174,7 @@ resource "terraform_data" "s3_storage" {
     command = "${path.module}/../scripts/coolify-configure-s3-storage.sh"
     environment = {
       COOLIFY_ENDPOINT           = var.coolify_endpoint
-      SECRET_PROJECT_ID          = var.scaleway_project_id
+      SECRET_PROJECT_ID          = var.main_project_id
       S3_STORAGE_NAME            = var.s3_storage_name
       S3_ENDPOINT                = var.s3_endpoint
       S3_BUCKET                  = var.s3_bucket
@@ -217,7 +217,7 @@ resource "terraform_data" "instance_backup" {
     environment = {
       TARGET_HOST                = var.coolify_public_ip
       HOST_KEY_SECRET_NAME       = var.host_key_secret_name
-      SECRET_PROJECT_ID          = var.scaleway_project_id
+      SECRET_PROJECT_ID          = var.main_project_id
       S3_ENDPOINT                = var.s3_endpoint
       S3_BUCKET                  = var.s3_bucket
       S3_REGION                  = var.s3_region

@@ -2,7 +2,7 @@
 # private_network_id se récupère après l'apply de infra/platform :
 #   terraform -chdir=../platform output -json private_network_ids | jq -r .preview
 
-scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+main_project_id = "00000000-0000-0000-0000-000000000000"
 private_network_id  = "fr-par/00000000-0000-0000-0000-000000000000"
 
 server_ssh_authorized_keys = [

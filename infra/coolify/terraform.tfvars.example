@@ -14,7 +14,7 @@
 #   terraform -chdir=../prod     output -raw server_ssh_host
 #   terraform -chdir=../platform output -raw prod_project_id
 
-scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+main_project_id = "00000000-0000-0000-0000-000000000000"
 coolify_public_ip   = "203.0.113.20"
 
 app_servers = {

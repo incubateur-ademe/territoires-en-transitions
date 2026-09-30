@@ -2,7 +2,7 @@
 # Rien ici n'appartient à un environnement applicatif — les stacks nonprod et
 # preview viennent s'y brancher.
 #
-# La prod est à part : projet Scaleway dédié (créé ici), VPC propre (créé par
+# La prod est à part : projet Scaleway dédié (créé par un admin), VPC propre (créé par
 # infra/prod), aucun lien réseau avec le VPC partagé. Coolify la pilote en SSH
 # sur son IP publique, ouverte à la seule IP publique du control plane.
 
@@ -63,7 +63,7 @@ module "network" {
 }
 
 module "coolify" {
-  source = "../modules/coolify-controller"
+  source = "../modules/coolify"
 
   name                   = var.coolify_name
   zone                   = var.scaleway_zone
@@ -81,18 +81,10 @@ module "coolify" {
 
 # --- Projet de production ---
 #
-# Un projet par frontière de confiance : prod n'est joignable ni par le réseau
-# ni, à terme, par les droits IAM des autres environnements. Les ressources
-# prod sont créées par infra/prod dans ce projet ; seul le projet vit ici, pour
-# que platform puisse en publier l'ID sans dépendre de prod.
-resource "scaleway_account_project" "prod" {
-  name        = var.prod_project_name
-  description = "Production TET. VPC isolé, piloté par Coolify en SSH public filtré. Géré par Terraform (infra/platform)."
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
+# La prod vit dans son propre projet Scaleway (var.prod_project_id), où
+# infra/prod crée son VPC et ses ressources. Le projet est créé par un admin de
+# l'organisation : créer un projet exige des droits d'organisation que les
+# credentials Terraform n'ont pas. Ce stack ne fait que relayer son ID.
 
 # --- DNS ---
 #
@@ -121,14 +113,13 @@ resource "scaleway_domain_zone" "env" {
 # storage Coolify) et instance Coolify elle-même (infra/coolify,
 # terraform_data.instance_backup).
 #
-# Projet Scaleway dédié : les permissions IAM Object Storage valent pour un
-# projet entier, pas pour un bucket. Dans le projet principal, la clé des
-# backups pourrait aussi lire tet-tfstate, qui contient les mots de passe et les
-# clés SSH. Ici, elle ne voit que ce bucket.
-resource "scaleway_account_project" "backups" {
-  name        = var.backups_project_name
-  description = "Backups TET (Coolify). Isolé du projet principal : la clé IAM des backups n'a accès qu'à ce projet. Géré par Terraform (infra/platform)."
-}
+# Projet Scaleway dédié (var.backups_project_id) : les permissions IAM Object
+# Storage valent pour un projet entier, pas pour un bucket. Dans le projet
+# principal, la clé des backups pourrait aussi lire tet-tfstate, qui contient
+# les mots de passe et les clés SSH. Là, elle ne voit que ce bucket.
+#
+# Le projet et la clé IAM sont créés par un admin de l'organisation (droits
+# d'organisation requis, cf. README « Prérequis admin »).
 
 # Object Lock en mode COMPLIANCE : aucune version ne peut être supprimée avant
 # l'échéance, par personne, pas même un admin de l'organisation. Un Coolify ou
@@ -142,7 +133,7 @@ resource "scaleway_account_project" "backups" {
 resource "scaleway_object_bucket" "coolify_backups" {
   name       = var.coolify_backups_bucket_name
   region     = var.scaleway_region
-  project_id = scaleway_account_project.backups.id
+  project_id = var.backups_project_id
 
   object_lock_enabled = true
 
@@ -195,7 +186,7 @@ resource "scaleway_object_bucket" "coolify_backups" {
 resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
   bucket     = scaleway_object_bucket.coolify_backups.name
   region     = var.scaleway_region
-  project_id = scaleway_account_project.backups.id
+  project_id = var.backups_project_id
 
   rule {
     default_retention {
@@ -206,49 +197,16 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 }
 
 # Clé dédiée aux backups, utilisée par le S3 storage Coolify et par le backup
-# de l'instance. Pas de BucketsWrite : elle ne peut modifier ni le cycle de vie,
-# ni le verrou, ni la politique du bucket.
-resource "scaleway_iam_application" "coolify_backups" {
-  name        = "tet-coolify-backups"
-  description = "Écriture des backups Coolify dans le projet ${var.backups_project_name}. Géré par Terraform (infra/platform)."
-}
-
-resource "scaleway_iam_policy" "coolify_backups" {
-  name           = "tet-coolify-backups"
-  description    = "Objets du projet ${var.backups_project_name} uniquement. Géré par Terraform (infra/platform)."
-  application_id = scaleway_iam_application.coolify_backups.id
-
-  rule {
-    project_ids = [scaleway_account_project.backups.id]
-    permission_set_names = [
-      "ObjectStorageBucketsRead",
-      "ObjectStorageObjectsRead",
-      "ObjectStorageObjectsWrite",
-      # Pour la rétention de Coolify. Le verrou COMPLIANCE empêche toujours la
-      # suppression d'une version avant l'échéance.
-      "ObjectStorageObjectsDelete",
-    ]
-  }
-}
-
-# default_project_id : l'API S3 de Scaleway résout les buckets dans le projet
-# par défaut de la clé.
-resource "scaleway_iam_api_key" "coolify_backups" {
-  application_id     = scaleway_iam_application.coolify_backups.id
-  default_project_id = scaleway_account_project.backups.id
-  description        = "S3 storage Coolify + backup de l'instance. Géré par Terraform (infra/platform)."
-}
-
-# Les scripts de infra/coolify lisent la clé ici, au format access_key|secret_key.
-# Le secret reste dans le projet principal, avec les autres secrets du control
-# plane : la clé des backups n'a aucun droit dessus.
+# de l'instance. L'application IAM, sa politique (objets du projet backups
+# uniquement, sans droit sur le cycle de vie, le verrou ni la politique du
+# bucket) et sa clé sont créées par l'admin de l'organisation.
+#
+# Terraform ne gère que le secret qui la porte, au format access_key|secret_key
+# lu par les scripts de infra/coolify. Sa valeur est déposée à la main (cf.
+# README) : elle n'entre donc pas dans le state. Le secret reste dans le projet
+# principal, avec les autres secrets du control plane.
 resource "scaleway_secret" "coolify_backups_credentials" {
   name        = var.coolify_backups_credentials_secret_name
-  description = "Clé Object Storage des backups Coolify (access_key|secret_key). Gérée par Terraform (infra/platform)."
+  description = "Clé Object Storage des backups Coolify (access_key|secret_key). Secret géré par Terraform (infra/platform), valeur déposée à la main."
   tags        = ["tet", "tier:platform", "managed-by:terraform"]
-}
-
-resource "scaleway_secret_version" "coolify_backups_credentials" {
-  secret_id = scaleway_secret.coolify_backups_credentials.id
-  data      = "${scaleway_iam_api_key.coolify_backups.access_key}|${scaleway_iam_api_key.coolify_backups.secret_key}"
 }

@@ -1,6 +1,6 @@
 # Tier prod : serveur dédié, Postgres et Redis managés.
 #
-# Projet Scaleway dédié (créé par infra/platform) et VPC propre, sans lien
+# Projet Scaleway dédié (créé par un admin de l'organisation) et VPC propre, sans lien
 # réseau avec le VPC partagé : nonprod et preview n'ont aucune route vers la
 # prod. Coolify pilote le serveur en SSH sur son IP publique, que le security
 # group n'ouvre qu'à l'IP publique du control plane.
