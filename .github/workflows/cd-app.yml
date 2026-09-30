@@ -64,7 +64,6 @@ jobs:
         uses: ./.github/actions/docker-build-push
         env:
           BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         with:
           dockerfile: apps/app/Dockerfile
@@ -74,7 +73,6 @@ jobs:
           reuse-image: ${{ github.event.inputs.force-rebuild != 'true' }}
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
-            sentry_auth_token=SENTRY_AUTH_TOKEN
             posthog_api_key=POSTHOG_API_KEY
           # Métadonnées du commit uniquement : tout ce qui est spécifique à un
           # environnement est injecté au déploiement (cf. deploy-app). Les
@@ -128,7 +126,6 @@ jobs:
           BACKEND_URL: ${{ vars.BACKEND_URL }}
           APP_URL: ${{ vars.APP_URL }}
           CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
-          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
         run: >
           koyeb services update $ENV_NAME-app/front
           --docker "$IMAGE"
@@ -143,7 +140,6 @@ jobs:
           --env BACKEND_URL=$BACKEND_URL
           --env APP_URL=$APP_URL
           --env CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-          --env SENTRY_DSN=$SENTRY_DSN
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url
@@ -183,14 +179,13 @@ jobs:
           NAME: ${{ steps.test-app-name.outputs.name }}
           # `preprod`, comme l'environnement GitHub du job : les secrets et
           # variables lus ici sont ceux de preprod, l'app de test ne doit pas se
-          # déclarer `prod` à Sentry ni aux feature flags.
+          # déclarer `prod` à PostHog (feature flags, error tracking).
           ENV_NAME: preprod
           SUPABASE_URL: ${{ secrets.API_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
           BACKEND_URL: ${{ vars.BACKEND_TEST_URL }}
           APP_URL: ${{ vars.APP_URL }}
           CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
-          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
         run: |
           # Seule différence avec l'app déployée : BACKEND_URL pointe sur le
           # backend de test. C'était un build arg, c'est désormais une variable
@@ -202,7 +197,6 @@ jobs:
             --env "BACKEND_URL=$BACKEND_URL"
             --env "APP_URL=$APP_URL"
             --env "CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID"
-            --env "SENTRY_DSN=$SENTRY_DSN"
           )
 
           if koyeb apps get "test-app-$NAME" >/dev/null 2>&1; then

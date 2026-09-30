@@ -87,7 +87,16 @@ export function Consent({
 }
 
 /**
- * Vrai si l'utilisateur a accepté PostHog avec Axept.io
+ * Vrai si l'utilisateur a accepté PostHog avec Axept.io. Faux si le navigateur
+ * refuse l'accès aux cookies (SecurityError, par exemple dans une iframe
+ * sandboxée) : l'init de PostHog ne doit pas échouer pour autant.
  */
-export const getConsent = (): boolean =>
-  Boolean(document.cookie.match(/axeptio_authorized_vendors=([^;]*?)posthog/));
+export const getConsent = (): boolean => {
+  try {
+    return Boolean(
+      document.cookie.match(/axeptio_authorized_vendors=([^;]*?)posthog/)
+    );
+  } catch {
+    return false;
+  }
+};

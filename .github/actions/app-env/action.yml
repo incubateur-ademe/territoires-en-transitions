@@ -75,7 +75,6 @@ runs:
         echo "APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
         echo "APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
         echo "CRISP_WEBSITE_ID=${{ fromJSON(inputs.json_vars).CRISP_WEBSITE_ID }}" >> $file
-        echo "SENTRY_DSN=${{ fromJSON(inputs.json_vars).SENTRY_DSN }}" >> $file
         echo "BACKEND_URL=${{ fromJSON(inputs.json_vars).BACKEND_URL }}" >> $file
         echo "SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file
         echo "SUPABASE_ANON_KEY=${{ inputs.supabase-anon-key }}" >> $file
@@ -93,7 +92,6 @@ runs:
         echo "NEXT_PUBLIC_APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
         echo "NEXT_PUBLIC_AXEPTIO_ID=${{ fromJSON(inputs.json_vars).AXEPTIO_ID }}" >> $file
         echo "NEXT_PUBLIC_CRISP_WEBSITE_ID=${{ fromJSON(inputs.json_vars).CRISP_WEBSITE_ID }}" >> $file
-        echo "NEXT_PUBLIC_SENTRY_DSN=${{ fromJSON(inputs.json_vars).SENTRY_DSN }}" >> $file
         echo "NEXT_PUBLIC_POSTHOG_HOST=${{ fromJSON(inputs.json_vars).POSTHOG_HOST }}" >> $file
         echo "NEXT_PUBLIC_BACKEND_URL=${{ fromJSON(inputs.json_vars).BACKEND_URL }}" >> $file
         echo "NEXT_PUBLIC_SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file

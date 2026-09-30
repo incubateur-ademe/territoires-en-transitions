@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './global.css';
@@ -12,7 +11,7 @@ const shared = {
   description: "Prioriser - Mettre en œuvre - Planifier - Suivre l'impact",
 };
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL('https://app.territoiresentransitions.fr'),
   title: shared.title,
   description: shared.description,
@@ -62,16 +61,6 @@ const metadata: Metadata = {
     },
   },
 };
-
-export function generateMetadata(): Metadata {
-  return {
-    ...metadata,
-    other: {
-      // Enable Sentry distributed tracing for App Router
-      ...Sentry.getTraceData(),
-    },
-  };
-}
 
 export default async function RootLayout({
   children,

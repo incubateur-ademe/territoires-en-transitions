@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { captureException } from '@/app/utils/sentry/sentry-client.lazy';
+import { captureException } from '@/app/utils/error-tracking/capture-exception';
 import { getErrorMessage } from '@tet/domain/utils';
 import { TRPCClientErrorLike } from '@trpc/client';
 import { useEffect, useState } from 'react';
