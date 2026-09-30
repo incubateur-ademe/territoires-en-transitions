@@ -37,10 +37,6 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .preprocess((value) => value || undefined, z.url().optional())
     .describe("URL de l'app, pour les liens envoyés dans Crisp"),
   TET_API_URL: z.string().min(1).describe("Url de l'API TeT"),
-  MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z
-    .string()
-    .min(1)
-    .describe('Url du webhook pour les notifications Mattermost'),
   QUEUE_REDIS_HOST: z
     .string()
     .min(1)

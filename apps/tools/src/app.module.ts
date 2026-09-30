@@ -21,7 +21,6 @@ import { ConnectModule } from './connect/connect.module';
 import { CrispModule } from './crisp/crisp.module';
 import { NotionModule } from './notion/notion.module';
 import { PosthogModule } from './posthog/posthog.module';
-import { SentryNotificationModule } from './sentry/sentry-notification.module';
 import { DatabaseModule } from './utils/database/database.module';
 import { UtilsModule } from './utils/utils.module';
 
@@ -66,7 +65,6 @@ const appLogger = new Logger('AppModule');
     DatabaseModule,
     NotionModule,
     CrispModule,
-    SentryNotificationModule,
     WebhookModule,
     AirtableModule,
     CalendlyModule,
