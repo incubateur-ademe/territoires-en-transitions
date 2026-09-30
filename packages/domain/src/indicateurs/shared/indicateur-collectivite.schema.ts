@@ -11,6 +11,12 @@ export const indicateurCollectiviteSchema = z.object({
    * est plus réclamé. `true` par défaut, y compris sans ligne en base.
    */
   isApplicable: z.boolean(),
+  /**
+   * Utilisé dans le calcul du score depuis un indicateur pour distinguer les
+   * cas "non renseigné" et "pas fait". `true` par défaut, y compris sans
+   * ligne en base. Distinct de `isApplicable`.
+   */
+  isSuivi: z.boolean(),
   modifiedBy: z.nullable(z.uuid()),
   modifiedAt: z.string(),
 });

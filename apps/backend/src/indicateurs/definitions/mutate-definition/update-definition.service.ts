@@ -117,6 +117,7 @@ export class UpdateDefinitionService {
       estConfidentiel,
       estFavori,
       isApplicable,
+      isSuivi,
       titre,
       unite,
       ficheIds,
@@ -130,7 +131,8 @@ export class UpdateDefinitionService {
         commentaire !== undefined ||
         estConfidentiel !== undefined ||
         estFavori !== undefined ||
-        isApplicable !== undefined
+        isApplicable !== undefined ||
+        isSuivi !== undefined
       ) {
         await tx
           .insert(indicateurCollectiviteTable)
@@ -148,6 +150,9 @@ export class UpdateDefinitionService {
             }),
             ...(isApplicable !== undefined && {
               isApplicable,
+            }),
+            ...(isSuivi !== undefined && {
+              isSuivi,
             }),
             modifiedBy: user.id,
             modifiedAt: SQL_CURRENT_TIMESTAMP,
@@ -169,6 +174,9 @@ export class UpdateDefinitionService {
               }),
               ...(isApplicable !== undefined && {
                 isApplicable,
+              }),
+              ...(isSuivi !== undefined && {
+                isSuivi,
               }),
               modifiedBy: user.id,
               modifiedAt: SQL_CURRENT_TIMESTAMP,
