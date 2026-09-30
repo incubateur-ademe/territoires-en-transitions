@@ -1,4 +1,4 @@
-variable "scaleway_project_id" {
+variable "main_project_id" {
   description = "UUID du projet Scaleway. À récupérer dans la console Scaleway (Project Settings)."
   type        = string
 }
@@ -151,12 +151,6 @@ variable "coolify_instance_backup_retention_days" {
   default     = 30
 }
 
-variable "backups_project_name" {
-  description = "Nom du projet Scaleway dédié aux backups. Créé par ce stack : les credentials Terraform doivent pouvoir créer des projets dans l'organisation."
-  type        = string
-  default     = "tet-backups"
-}
-
 variable "backups_lock_days" {
   description = "Durée du verrou Object Lock (COMPLIANCE) appliqué à chaque objet du bucket de backups, en jours. Ne peut pas être raccourcie pour les objets déjà écrits."
   type        = number
@@ -175,8 +169,22 @@ variable "coolify_backups_credentials_secret_name" {
   default     = "tet-platform-coolify-s3-credentials"
 }
 
-variable "prod_project_name" {
-  description = "Nom du projet Scaleway de production, créé par ce stack. La prod y a son propre VPC, sans lien réseau avec le VPC partagé."
+# --- Projets créés par l'admin de l'organisation ---
+
+variable "prod_project_id" {
+  description = "ID du projet Scaleway de production (tet-prod), créé par un admin de l'organisation. Relayé en output pour infra/prod."
   type        = string
-  default     = "tet-prod"
+  validation {
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.prod_project_id))
+    error_message = "prod_project_id doit être un UUID de projet Scaleway."
+  }
+}
+
+variable "backups_project_id" {
+  description = "ID du projet Scaleway des backups (tet-backups), créé par un admin de l'organisation. Porte le bucket de backups."
+  type        = string
+  validation {
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.backups_project_id))
+    error_message = "backups_project_id doit être un UUID de projet Scaleway."
+  }
 }

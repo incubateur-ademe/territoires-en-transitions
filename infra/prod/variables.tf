@@ -1,4 +1,4 @@
-variable "scaleway_project_id" {
+variable "main_project_id" {
   description = "UUID du projet Scaleway de production, distinct du projet principal. Valeur de : terraform -chdir=../platform output -raw prod_project_id"
   type        = string
 }

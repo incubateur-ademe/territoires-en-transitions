@@ -8,23 +8,23 @@ Terraform qui décrit l'infrastructure cible TET sur Scaleway, dans le cadre de 
 Une instance Coolify **unique et transverse**, sur son propre serveur, pilote quatre
 environnements répartis sur trois serveurs applicatifs.
 
-| Serveur | Tier | Projet Scaleway | Rôle |
-|---|---|---|---|
-| `tet-platform-coolify` | platform | principal | Control plane Coolify + bastion SSH. Aucune application. |
-| `tet-prod-apps` | prod | **`tet-prod`** | Applications de production. |
-| `tet-nonprod-apps` | nonprod | principal | Mutualisé : preprod **et** staging. |
-| `tet-preview-apps` | preview | principal | Previews éphémères, une par pull request. |
+| Serveur                | Tier     | Projet Scaleway | Rôle                                                     |
+| ---------------------- | -------- | --------------- | -------------------------------------------------------- |
+| `tet-platform-coolify` | platform | principal       | Control plane Coolify + bastion SSH. Aucune application. |
+| `tet-prod-apps`        | prod     | **`tet-prod`**  | Applications de production.                              |
+| `tet-nonprod-apps`     | nonprod  | principal       | Mutualisé : preprod **et** staging.                      |
+| `tet-preview-apps`     | preview  | principal       | Previews éphémères, une par pull request.                |
 
-La prod a son propre projet Scaleway (créé par `platform`) et son propre VPC (créé par
+La prod a son propre projet Scaleway (créé par un admin, cf. [Prérequis admin](#prérequis-admin-organisation-scaleway)) et son propre VPC (créé par
 `prod`), sans aucun lien réseau avec le VPC partagé. Les backups ont aussi leur projet,
 `tet-backups` (cf. [Sauvegarde de l'instance Coolify](#sauvegarde-de-linstance-coolify)).
 
-| Environnement | Postgres | Redis |
-|---|---|---|
-| prod | RDB managé Scaleway | Redis managé Scaleway |
-| preprod | RDB managé Scaleway | Redis managé Scaleway |
-| staging | conteneur Coolify | conteneur Coolify |
-| preview | conteneur Coolify, éphémère | conteneur Coolify, éphémère |
+| Environnement | Postgres                    | Redis                       |
+| ------------- | --------------------------- | --------------------------- |
+| prod          | RDB managé Scaleway         | Redis managé Scaleway       |
+| preprod       | RDB managé Scaleway         | Redis managé Scaleway       |
+| staging       | conteneur Coolify           | conteneur Coolify           |
+| preview       | conteneur Coolify, éphémère | conteneur Coolify, éphémère |
 
 Preprod reste sur du managé pour rester **iso-prod**. L'admin RDB Scaleway n'est pas
 superuser : c'est cette contrainte qui impose `scaleway_rdb_user.supabase_auth_admin`,
@@ -42,12 +42,12 @@ Deux VPC sans lien entre eux :
 - `tet-prod` (projet `tet-prod`) : un seul Private Network, `10.0.3.0/24`, avec le
   serveur, le Postgres et le Redis de production.
 
-| Private Network | CIDR | Membres | IP fixe du serveur |
-|---|---|---|---|
-| `tet-platform-pn` | `10.0.0.0/24` | VM Coolify | `10.0.0.10` |
-| `tet-nonprod-pn` | `10.0.1.0/24` | VM nonprod, RDB preprod, Redis preprod | `10.0.1.10` |
-| `tet-prod-pn` *(VPC `tet-prod`)* | `10.0.3.0/24` | VM prod, RDB prod, Redis prod | `10.0.3.10` |
-| `tet-preview-pn` | `10.0.4.0/24` | VM preview | `10.0.4.10` |
+| Private Network                  | CIDR          | Membres                                | IP fixe du serveur |
+| -------------------------------- | ------------- | -------------------------------------- | ------------------ |
+| `tet-platform-pn`                | `10.0.0.0/24` | VM Coolify                             | `10.0.0.10`        |
+| `tet-nonprod-pn`                 | `10.0.1.0/24` | VM nonprod, RDB preprod, Redis preprod | `10.0.1.10`        |
+| `tet-prod-pn` _(VPC `tet-prod`)_ | `10.0.3.0/24` | VM prod, RDB prod, Redis prod          | `10.0.3.10`        |
+| `tet-preview-pn`                 | `10.0.4.0/24` | VM preview                             | `10.0.4.10`        |
 
 `10.0.2.0/24` est laissé libre : staging n'a pas de Private Network propre, ses
 conteneurs vivent sur le serveur nonprod.
@@ -81,7 +81,7 @@ Conséquences :
 > librement et prod redeviendrait joignable depuis nonprod et preview.
 
 Le plan d'adressage du VPC `tet` est déclaré dans `platform/variables.tf` (`network_plan`),
-celui de la prod dans `prod/variables.tf`. Nonprod et preview redéclarent l'IP de *leur*
+celui de la prod dans `prod/variables.tf`. Nonprod et preview redéclarent l'IP de _leur_
 serveur dans `server_private_ipv4_address` :
 **les deux doivent rester alignés**, sinon l'ACL bloque le SSH de Coolify.
 
@@ -90,21 +90,21 @@ serveur dans `server_private_ipv4_address` :
 ```
 infra/
 ├── modules/
-│   ├── network/              VPC partagé + Private Networks + ACL
-│   ├── coolify-controller/   VM du control plane Coolify (+ bastion)
-│   ├── app-server/           VM Docker générique pilotée par Coolify
-│   ├── postgres/             Instance RDB managée
-│   └── redis/                Cluster Redis managé
-├── scripts/                  Helpers à sourcer (tf-env.sh, coolify-env.sh)
-│                             + scripts d'API (upsert-server, ghcr-docker-login,
-│                               configure-s3-storage)
-├── platform/                 Socle transverse : VPC, ACL, DNS, VM Coolify, buckets
-├── prod/                     Serveur prod + RDB prod + Redis prod
-├── nonprod/                  Serveur mutualisé + RDB preprod + Redis preprod
-│   ├── supabase-api/         Stack Docker Compose GoTrue + Storage (collée dans Coolify)
-│   └── Makefile              Bootstrap SQL des rôles GoTrue
-├── preview/                  Serveur preview + wildcard DNS
-└── coolify/                  Coolify-as-code : clés, serveurs, projets, S3 storage
+│   ├── network/       VPC partagé + Private Networks + ACL
+│   ├── coolify/       VM du control plane Coolify (+ bastion)
+│   ├── app-server/    VM Docker générique pilotée par Coolify
+│   ├── postgres/      Instance RDB managée
+│   └── redis/         Cluster Redis managé
+├── scripts/           Helpers à sourcer (tf-env.sh, coolify-env.sh)
+│                      + scripts d'API (upsert-server, ghcr-docker-login,
+│                        configure-s3-storage)
+├── platform/          Socle transverse : VPC, ACL, DNS, VM Coolify, buckets
+├── prod/              Serveur prod + RDB prod + Redis prod
+├── nonprod/           Serveur mutualisé + RDB preprod + Redis preprod
+│   ├── supabase-api/  Stack Docker Compose GoTrue + Storage (collée dans Coolify)
+│   └── Makefile       Bootstrap SQL des rôles GoTrue
+├── preview/           Serveur preview + wildcard DNS
+└── coolify/           Coolify-as-code : clés, serveurs, projets, S3 storage
 ```
 
 Un **state par stack**, tous dans le bucket `tet-tfstate` :
@@ -119,9 +119,9 @@ garder séparé évite que le `plan` de l'infra Scaleway exige que l'application
 platform  →  nonprod / prod / preview  →  coolify
 ```
 
-`platform` produit le VPC partagé, ses Private Networks, le control plane et les projets
-`tet-prod` et `tet-backups`. `prod` crée son propre VPC dans le projet `tet-prod` et ne
-reprend de `platform` que l'ID de ce projet et l'IP publique de Coolify. Les stacks
+`platform` produit le VPC partagé, ses Private Networks, le control plane et le bucket de
+backups, et relaie l'ID du projet `tet-prod` créé par l'admin. `prod` crée son propre VPC
+dans ce projet et ne reprend de `platform` que cet ID et l'IP publique de Coolify. Les stacks
 applicatifs consomment ces valeurs **par report manuel** dans leur `terraform.tfvars`
 (pas de `terraform_remote_state` : les stacks restent découplés). `coolify` vient en
 dernier, quand les serveurs existent et que Coolify répond.
@@ -133,6 +133,33 @@ dernier, quand les serveurs existent et que Coolify répond.
 - **Clés d'accès Scaleway** (Access Key + Secret Key) pour l'IAM qui pilote Terraform
 - **Bucket Scaleway Object Storage** dédié au state (cf. Bootstrap ci-dessous)
 - `scw`, `aws`, `jq`, `curl`, `ssh` — et `psql` pour le bootstrap SQL
+- les **prérequis admin** ci-dessous, faits par un admin de l'organisation Scaleway
+
+### Prérequis admin (organisation Scaleway)
+
+Créer un projet ou une application IAM exige des droits d'organisation, que les
+credentials Terraform n'ont pas. Un admin crée donc, une fois :
+
+1. **Trois projets** : `tet` (projet principal), `tet-prod` (la production, isolée du projet principal)
+   et `tet-backups` (le bucket de backups). Leurs IDs vont dans `main_project_id`,
+   `prod_project_id` et `backups_project_id` de `platform/terraform.tfvars`.
+2. **Les droits des opérateurs Terraform** sur ces projets, en plus du projet principal :
+   - `tet-prod` : de quoi créer serveur, VPC, IPAM, RDB, Redis, secrets et DNS. Le plus
+     simple : `AllProductsFullAccess` limité à ce projet ;
+   - `tet-backups` : `ObjectStorageFullAccess` limité à ce projet (bucket, verrou, cycle
+     de vie). Le verrou COMPLIANCE empêche quand même toute suppression de version avant
+     l'échéance.
+3. **L'application IAM `tet-coolify-backups`**, pour Coolify et le backup de son instance :
+
+   - une politique limitée au projet `tet-backups`, avec les permission sets
+     `ObjectStorageBucketsRead`, `ObjectStorageObjectsRead`, `ObjectStorageObjectsWrite`
+     et `ObjectStorageObjectsDelete`. Surtout pas `BucketsWrite` : la clé ne doit pouvoir
+     modifier ni le cycle de vie, ni le verrou, ni la politique du bucket ;
+   - une clé d'API dont le **projet par défaut est `tet-backups`** : l'API S3 de Scaleway
+     résout les buckets dans le projet par défaut de la clé.
+
+   L'admin transmet la clé par un canal sûr, et un opérateur la dépose dans Secret Manager
+   (cf. [Bootstrap des credentials Object Storage](#bootstrap-des-credentials-object-storage-s3-coolify)).
 
 ## Bootstrap initial (une fois)
 
@@ -264,10 +291,10 @@ Coolify tourne dans un conteneur Docker et pilote **son propre serveur** en SSH,
 que `root@host.docker.internal`. Par défaut il génère lui-même une paire de clés à
 l'installation (`/data/coolify/ssh/keys/`). Problème : cette clé est **régénérée à chaque
 update ou réinstall de Coolify** (ou si `APP_KEY` change), ce qui casse la connexion avec
-l'erreur *« Server is not reachable — Permission denied (publickey) »*.
+l'erreur _« Server is not reachable — Permission denied (publickey) »_.
 
 Pour fermer cette boucle, Terraform génère une paire ED25519 **maîtrisée par nous**
-(`tls_private_key.host` dans le module `coolify-controller`) :
+(`tls_private_key.host` dans le module `coolify`) :
 
 - la **clé publique** est injectée dans `/root/.ssh/authorized_keys` via cloud-init ;
 - la **clé privée** est stockée dans Secret Manager (`tet-platform-coolify-host-ssh-key`).
@@ -389,30 +416,27 @@ Coolify enregistre un **S3 storage** (cible des backups DB / volumes) via l'API
 `POST/PATCH /s3-storages` + `POST …/validate`. Le provider n'a pas de ressource native :
 on automatise avec [`scripts/coolify-configure-s3-storage.sh`](scripts/coolify-configure-s3-storage.sh).
 
-Rien à créer à la main : `platform` crée tout ce dont ce S3 storage a besoin.
+`platform` crée le **bucket** (`tet-coolify-backups`) dans le projet `tet-backups`,
+transverse à tous les environnements, avec versioning et **Object Lock en mode
+COMPLIANCE** (14 jours) : aucune version ne peut être supprimée avant l'échéance, par
+personne. Coolify garde sa propre rétention (ses suppressions posent un delete marker), et
+une règle de cycle de vie purge les versions supprimées une fois le verrou expiré.
 
-- Un **projet Scaleway dédié** (`tet-backups`). Les permissions IAM Object Storage
-  valent pour un projet entier : dans le projet principal, la clé des backups pourrait
-  aussi lire `tet-tfstate`. Les credentials Terraform doivent pouvoir créer des projets
-  dans l'organisation.
-- Le **bucket** (`tet-coolify-backups`), transverse à tous les environnements, avec
-  versioning et **Object Lock en mode COMPLIANCE** (14 jours) : aucune version ne peut être
-  supprimée avant l'échéance, par personne. Coolify garde sa propre rétention (ses
-  suppressions posent un delete marker), et une règle de cycle de vie purge les versions
-  supprimées une fois le verrou expiré.
-- Une **application IAM** `tet-coolify-backups` limitée aux objets de ce projet (pas de
-  droit sur le cycle de vie, le verrou ou la politique du bucket), sa clé d'API, et le
-  secret `tet-platform-coolify-s3-credentials` (format `access_key|secret_key`) que lisent
-  les scripts de `infra/coolify`.
-
-La clé d'API passe par le state de `platform`, comme les autres secrets générés.
-
-Rotation de la clé :
+Il crée aussi le secret `tet-platform-coolify-s3-credentials`, vide. La clé qu'il doit
+porter, celle de l'application IAM `tet-coolify-backups`, est créée par l'admin de
+l'organisation (cf. [Prérequis admin](#prérequis-admin-organisation-scaleway)). On la
+dépose à la main, au format `access_key|secret_key` lu par les scripts de `infra/coolify` :
+elle n'entre donc pas dans le state.
 
 ```sh
-terraform -chdir=infra/platform apply -replace=scaleway_iam_api_key.coolify_backups
-# puis incrémenter s3_credentials_revision dans coolify/terraform.tfvars et appliquer
+scw secret version create secret-name=tet-platform-coolify-s3-credentials \
+  project-id=<projet-principal> secret-path=/ data='SCWXXXX|<secret_key>'
 ```
+
+Rotation : l'admin crée une nouvelle clé pour l'application, on dépose une nouvelle
+version du secret, puis on incrémente `s3_credentials_revision` dans
+`coolify/terraform.tfvars` et on applique `coolify`. L'admin supprime ensuite l'ancienne
+clé.
 
 ### Workflow
 
@@ -585,6 +609,7 @@ Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque 
 Ce mécanisme repose sur le support des conditional writes par Scaleway Object Storage, activé depuis mai 2026 via la feature **Object Lock** — d'où la nécessité d'activer Object Lock sur le bucket lors du bootstrap.
 
 > **En cas de lock fantôme** (apply interrompu brutalement sans libérer le lock) :
+>
 > ```sh
 > # Identifier le fichier de lock (adapter le préfixe au stack concerné)
 > aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://tet-tfstate/platform/

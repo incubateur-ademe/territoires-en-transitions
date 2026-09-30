@@ -78,7 +78,7 @@ output "coolify_backups_s3_endpoint" {
 
 output "backups_project_id" {
   description = "ID du projet Scaleway dédié aux backups."
-  value       = scaleway_account_project.backups.id
+  value       = var.backups_project_id
 }
 
 output "coolify_backups_credentials_secret_name" {
@@ -87,6 +87,6 @@ output "coolify_backups_credentials_secret_name" {
 }
 
 output "prod_project_id" {
-  description = "ID du projet Scaleway de production. À reporter dans la variable scaleway_project_id du stack infra/prod."
-  value       = scaleway_account_project.prod.id
+  description = "ID du projet Scaleway de production. À reporter dans la variable main_project_id du stack infra/prod."
+  value       = var.prod_project_id
 }
