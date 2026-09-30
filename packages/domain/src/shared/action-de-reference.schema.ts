@@ -39,7 +39,7 @@ export const actionDeReferenceSchema = z.object({
 
 export type ActionDeReference = z.infer<typeof actionDeReferenceSchema>;
 
-const actionDeReferenceSortFieldEnumValues = [
+export const actionDeReferenceSortFieldEnumValues = [
   'titre',
   'levier',
   'categorie',
