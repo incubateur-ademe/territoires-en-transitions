@@ -751,6 +751,26 @@ texte après le mot de niveau, et les dossiers repris qui avaient une
 vulnérabilité et n'en montrent rien. Les collectivités y sont nommées avec
 leur id : deux collectivités peuvent porter le même nom.
 
+#### Annuler la vulnérabilité
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-vulnerabilite/annuler.ts [--confirm]
+```
+
+Retire toutes les lignes de `demarche_pcaet_vulnerabilite_valeur` des
+démarches notées dans `lignes_ecrites`, puis les « Déchets » créées par
+l'import qu'aucune ligne de valeur ne vise plus, et enfin les traces et les
+écarts de l'étape. À lancer avant d'annuler l'import des dossiers, qui refuse
+sinon.
+
+**Ce qu'elle laisse** : une « Déchets » qui existait avant l'import (l'import
+l'a réutilisée, il ne l'a pas créée) ; une « Déchets » créée par l'import
+qu'une autre démarche de la collectivité a reçue depuis (un nouveau PCAET la
+reçoit à sa création). **Ce qu'elle emporte** : la table des valeurs n'a pas
+d'id, la trace note la démarche ; une valeur saisie par la collectivité après
+l'import sur un dossier repris (possible tant qu'il est en élaboration) part
+avec.
+
 #### Ce qui arrête l'import de la vulnérabilité
 
 | Garde                                                         | Quoi faire                                                      |
