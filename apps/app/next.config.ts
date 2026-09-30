@@ -1,3 +1,4 @@
+import { withPostHogConfig } from '@posthog/nextjs-config';
 import { uuid4 } from '@sentry/core';
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
@@ -193,4 +194,18 @@ const sentryConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, sentryConfig);
+const nextConfigWithSentry = withSentryConfig(nextConfig, sentryConfig);
+const posthogApiKey = process.env.POSTHOG_API_KEY;
+const posthogProjectId = process.env.POSTHOG_PROJECT_ID;
+
+export default posthogApiKey && posthogProjectId
+  ? withPostHogConfig(nextConfigWithSentry, {
+      personalApiKey: posthogApiKey,
+      projectId: posthogProjectId,
+      host: process.env.POSTHOG_HOST,
+      sourcemaps: {
+        enabled: true,
+        deleteAfterUpload: true,
+      },
+    })
+  : nextConfigWithSentry;
