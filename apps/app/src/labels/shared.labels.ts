@@ -50,6 +50,11 @@ export const sharedLabels = {
 
   preferences: 'Préférences',
 
+  champObligatoireErreur: 'Ce champ est obligatoire',
+  champTropLongErreur: (maximum: number | bigint): string =>
+    `${maximum} caractères maximum`,
+  champValeurInvalideErreur: 'Valeur invalide',
+
   actionsDeReference: 'Actions de référence',
   actionsDeReferenceRecherche: 'Rechercher une action de référence',
   actionsDeReferenceLeviersLabel: 'Leviers',
