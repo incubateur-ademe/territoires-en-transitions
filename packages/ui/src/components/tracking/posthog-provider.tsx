@@ -53,10 +53,6 @@ const ensureInitialized = ({ host, key, environment }: PostHogConfig): void => {
     capture_pageview: false,
     capture_pageleave: true,
     evaluation_contexts: environment ? [environment] : undefined,
-    integrations: {
-      crispChat: true,
-      intercom: false,
-    },
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();
     },
