@@ -9,6 +9,7 @@ const FEATURE_FLAGS = [
   'is-demarche-pcaet-bypass-diagnostic-enabled',
   'is-ai-plan-import-enabled',
   'is-score-indicateur-enabled',
+  'is-fiche-secteurs-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);
