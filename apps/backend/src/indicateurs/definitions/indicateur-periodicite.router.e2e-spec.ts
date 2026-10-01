@@ -49,6 +49,32 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     await app.close();
   });
 
+  test('conserve le suivi explicite lors des mises à jour partielles', async () => {
+    const indicateurId = await caller.indicateurs.indicateurs.create({
+      collectiviteId,
+      titre: 'Indicateur avec suivi',
+    });
+
+    for (const isSuivi of [false, true]) {
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { isSuivi },
+      });
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { commentaire: 'Mise à jour indépendante du suivi' },
+      });
+
+      const { data } = await caller.indicateurs.indicateurs.list({
+        collectiviteId,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(data).toMatchObject([{ id: indicateurId, isSuivi }]);
+    }
+  });
+
   test.each([undefined, 'annuelle'] as const)(
     'expose les métadonnées annuelles après création avec periodicite=%s',
     async (periodicite) => {
@@ -113,14 +139,14 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   );
 
-  test('conserve les dates historiques distinctes et les valeurs nulles ou zéro', async () => {
+  test('normalise les dates historiques et conserve les valeurs nulles ou zéro', async () => {
     const indicateurId = await caller.indicateurs.indicateurs.create({
       collectiviteId,
       titre: 'Dates historiques',
     });
     const valeurs = [
       { dateValeur: '2024-06-30', resultat: 0, objectif: null },
-      { dateValeur: '2024-12-31', resultat: null, objectif: 42 },
+      { dateValeur: '2025-12-31', resultat: null, objectif: 42 },
     ];
 
     for (const valeur of valeurs) {
@@ -139,8 +165,8 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       periodicite: 'annuelle',
     });
     expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
-      { dateValeur: '2024-06-30', periodicite: 'annuelle', resultat: 0 },
-      { dateValeur: '2024-12-31', periodicite: 'annuelle', objectif: 42 },
+      { dateValeur: '2024-01-01', periodicite: 'annuelle', resultat: 0 },
+      { dateValeur: '2025-01-01', periodicite: 'annuelle', objectif: 42 },
     ]);
     expect(
       result.indicateurs[0].sources.collectivite.valeurs[0]

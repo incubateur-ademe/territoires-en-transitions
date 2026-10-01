@@ -12,6 +12,8 @@ const platformDefinitionSchema = z.pick(indicateurDefinitionSchema, {
   description: true,
   unite: true,
   periodicite: true,
+  aggregationResultat: true,
+  aggregationObjectif: true,
   precision: true,
   borneMin: true,
   borneMax: true,

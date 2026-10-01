@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { IndicateurSourceMetadonnee } from '../../indicateurs';
+import type { IndicateurPeriodicite } from '../../indicateurs/definitions/indicateur-periodicite.schema';
+import type { IndicateurSourceMetadonnee } from '../../indicateurs/shared/indicateur-source-metadonnee.schema';
 
 export const scoreIndicatifTypeEnum = {
   FAIT: 'fait',
@@ -96,6 +97,7 @@ export type IndicateurAssocie = {
   identifiantReferentiel: string;
   titre: string;
   unite: string;
+  periodicite: IndicateurPeriodicite;
   optional?: boolean;
   // false si la collectivité a déclaré cet indicateur non suivi : le score
   // est alors forcé à 0 ("100% pas fait", à distinguer de "non renseigné")
@@ -135,6 +137,7 @@ export type ScoreIndicatifActionValeurUtilisable = {
     identifiantReferentiel: string;
     unite: string;
     titre: string;
+    periodicite: IndicateurPeriodicite;
     // sélection actuelle
     selection: Record<
       ScoreIndicatifType,
@@ -184,6 +187,10 @@ const scoreIndicatifPayloadValeurSchema = z.object({
  * action donnée et destinées à être sauvegardées dans un snapshot
  */
 export const scoreIndicatifPayloadSchema = z.object({
+  // Les snapshots antérieurs à l'ADR 0018 sont tous annuels. Ce défaut est
+  // limité à leur frontière de désérialisation et ne s'applique pas aux
+  // définitions courantes.
+  periodicite: z.literal('annuelle').default('annuelle'),
   unite: z.string(),
   // optionnel : absent des snapshots antérieurs
   calcul: calculScoreIndicatifSchema.nullish(),

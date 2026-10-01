@@ -1,8 +1,9 @@
-import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
 import {
-  indicateurDefinitionSchema,
-  IndicateurPeriodiciteEnum,
-} from '@tet/domain/indicateurs';
+  annualReleasePeriodiciteSchema,
+  annualReleaseAggregationSchema,
+} from '../definitions/indicateur-annual-release.input';
+import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
+import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 export const importIndicateurDefinitionSchema = z.object({
@@ -13,13 +14,17 @@ export const importIndicateurDefinitionSchema = z.object({
     createdBy: true,
     id: true,
     periodicite: true,
+    aggregationResultat: true,
+    aggregationObjectif: true,
+
     groupementId: true,
     collectiviteId: true,
   }).shape,
 
-  // Le stockage annuel refuse une périodicité explicite qu'il ne peut conserver.
-  periodicite: z.optional(z.literal(IndicateurPeriodiciteEnum.ANNUELLE)),
   identifiantReferentiel: z.string(), // Mandatory in this case
+  periodicite: z._default(annualReleasePeriodiciteSchema, 'annuelle'),
+  aggregationResultat: z.optional(annualReleaseAggregationSchema),
+  aggregationObjectif: z.optional(annualReleaseAggregationSchema),
   parents: getZodStringArrayFromQueryString().nullable().optional(),
   categories: getZodStringArrayFromQueryString().nullable().optional(),
   thematiques: getZodStringArrayFromQueryString().nullable().optional(),

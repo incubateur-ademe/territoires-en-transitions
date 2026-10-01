@@ -7,6 +7,10 @@ import {
   version,
 } from '@tet/backend/utils/column.utils';
 import {
+  indicateurPeriodiciteValues,
+  indicateurAggregationValues,
+} from '@tet/domain/indicateurs';
+import {
   boolean,
   doublePrecision,
   integer,
@@ -14,6 +18,7 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
+import { indicateurPeriodiciteTable } from './indicateur-periodicite.table';
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
@@ -31,6 +36,18 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   titreCourt: text('titre_court'),
   description: text('description'),
   unite: text('unite').notNull(),
+  periodicite: text('periodicite', {
+    enum: indicateurPeriodiciteValues,
+  })
+    .references(() => indicateurPeriodiciteTable.code)
+    .default('annuelle')
+    .notNull(),
+  aggregationResultat: text('aggregation_resultat', {
+    enum: indicateurAggregationValues,
+  }),
+  aggregationObjectif: text('aggregation_objectif', {
+    enum: indicateurAggregationValues,
+  }),
   precision: integer('precision').default(2).notNull(), // Number of decimal in order to round the value
   borneMin: doublePrecision('borne_min'),
   borneMax: doublePrecision('borne_max'),

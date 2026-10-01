@@ -25,6 +25,7 @@ export async function createIndicateurPerso({
     'collectiviteId',
     'titre',
     'unite',
+    'periodicite',
     'thematiques',
     'commentaire',
     'estFavori',

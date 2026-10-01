@@ -83,3 +83,9 @@ il faut mettre à jour les variables d'environnement :
   - le websocket `wss://{ID}.supabase.co`
   - la clé privée **service_role**
   - l'url postgres `postgresql://postgres:{PASSWORD}@db.{ID}.supabase.co:5432/postgres`
+
+### Périodicité des indicateurs
+
+Le [guide de la migration annuelle](periodicite-runbook.md) décrit la maintenance de migration des données annuelles, les vérifications et la reprise en cas d'échec. Le
+[contrôle préalable des dates](scripts/check-indicateur-periodicite.sql) s'exécute depuis cette
+version sur une copie de la base avant migration ; il est en lecture seule.
