@@ -13,6 +13,7 @@ import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
+import { Secteurs } from '../secteurs';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
@@ -257,6 +258,7 @@ export const Description = () => {
             />
           )}
         />
+        <Secteurs />
       </div>
     </>
   );
