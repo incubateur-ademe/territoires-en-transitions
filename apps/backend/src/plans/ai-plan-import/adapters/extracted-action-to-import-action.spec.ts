@@ -230,6 +230,24 @@ describe('normalizeExtractedActions', () => {
     ).toBe(true);
   });
 
+  it('retire le numéro des titres et donne une seule graphie à un même axe', () => {
+    const result = normalizeExtractedActions([
+      toAction({
+        axe: 'Axe 6 : DEVELOPPER LE POTENTIEL',
+        titre: '6.2.5 Développer l’énergie hydraulique',
+      }),
+      toAction({
+        axe: 'Axe 6 : Développer le potentiel',
+        titre: 'ACTION 6 - Développer le stockage',
+      }),
+    ]);
+
+    expect(result.actions.map(({ axe, titre }) => [axe, titre])).toEqual([
+      ['Axe 6 : Développer le potentiel', 'Développer l’énergie hydraulique'],
+      ['Axe 6 : Développer le potentiel', 'Développer le stockage'],
+    ]);
+  });
+
   it('ne signale ni doublon ni troncature sur des actions propres', () => {
     const result = normalizeExtractedActions([
       toAction({ titre: 'Action A' }),
