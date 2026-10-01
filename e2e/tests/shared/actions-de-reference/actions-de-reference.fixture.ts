@@ -1,11 +1,15 @@
 import { actionDeReferenceTable } from '@tet/backend/shared/actions-de-reference/models/action-de-reference.table';
+import { Collectivite } from '@tet/domain/collectivites';
 import { ActionDeReference, ActionDeReferenceId } from '@tet/domain/shared';
 import { inArray } from 'drizzle-orm';
+import { Collectivites } from 'tests/collectivite/collectivites.fixture';
 import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { ActionsDeReferencePom } from './actions-de-reference.pom';
 
 type NewActionDeReference = Omit<ActionDeReference, 'id'>;
+
+type CollectiviteId = Collectivite['id'];
 
 const withRunSuffix = (titre: string): string =>
   `${titre} ${crypto.randomUUID().slice(0, 8)}`;
@@ -55,7 +59,31 @@ class ActionsDeReferenceFactory {
 
 export type ActionsDeReference = Omit<ActionsDeReferenceFactory, 'restore'>;
 
-export { withRunSuffix };
+const openUpdatePanelAsSuperAdmin = async ({
+  collectivites,
+  actionsDeReference,
+  actionsDeReferencePom,
+  action,
+}: {
+  readonly collectivites: Collectivites;
+  readonly actionsDeReference: ActionsDeReference;
+  readonly actionsDeReferencePom: ActionsDeReferencePom;
+  readonly action: NewActionDeReference;
+}): Promise<CollectiviteId> => {
+  await actionsDeReference.add([action]);
+  const { collectivite } = await collectivites.addCollectiviteAndUser({
+    userArgs: {
+      autoLogin: true,
+      isSupport: true,
+      isSuperAdminRoleEnabled: true,
+    },
+  });
+  await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+  await actionsDeReferencePom.openUpdatePanel(action.titre);
+  return collectivite.data.id;
+};
+
+export { openUpdatePanelAsSuperAdmin, withRunSuffix };
 
 export const testWithActionsDeReference = test.extend<{
   actionsDeReference: ActionsDeReference;

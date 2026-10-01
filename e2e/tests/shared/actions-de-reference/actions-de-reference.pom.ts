@@ -1,9 +1,14 @@
 import { expect, Locator, Page, Route } from '@playwright/test';
 
 const LIST_URL_PATTERN = /\/trpc\/shared\.actionsDeReference\.list/;
+const UPDATE_URL_PATTERN = /\/trpc\/shared\.actionsDeReference\.update/;
 
 type HeldListResponses = {
   readonly release: () => Promise<void>;
+};
+
+type CountedUpdateRequests = {
+  readonly count: () => number;
 };
 
 export class ActionsDeReferencePom {
@@ -24,6 +29,13 @@ export class ActionsDeReferencePom {
   readonly levierSelect: Locator;
   readonly categorieSelect: Locator;
   readonly saveButton: Locator;
+  readonly closePanelButton: Locator;
+  readonly titreFieldBlock: Locator;
+  readonly descriptionFieldBlock: Locator;
+  readonly discardChangesDialog: Locator;
+  readonly discardChangesButton: Locator;
+  readonly keepEditingButton: Locator;
+  readonly indicateursListNavLink: Locator;
 
   constructor(readonly page: Page) {
     this.leviersFilter = page
@@ -42,6 +54,26 @@ export class ActionsDeReferencePom {
       .nth(1);
     this.saveButton = this.updatePanel.getByRole('button', {
       name: 'Enregistrer',
+    });
+    this.closePanelButton = this.updatePanel.getByTitle('Fermer', {
+      exact: true,
+    });
+    this.titreFieldBlock = this.fieldBlock('Titre');
+    this.descriptionFieldBlock = this.fieldBlock('Description');
+    this.discardChangesDialog = page.getByRole('dialog', {
+      name: 'Modifications non enregistrées',
+    });
+    this.discardChangesButton = this.discardChangesDialog.getByRole('button', {
+      name: 'Fermer sans enregistrer',
+      exact: true,
+    });
+    this.keepEditingButton = this.discardChangesDialog.getByRole('button', {
+      name: 'Poursuivre la modification',
+      exact: true,
+    });
+    this.indicateursListNavLink = page.getByRole('link', {
+      name: 'Indicateurs',
+      exact: true,
     });
     this.title = page.getByRole('heading', {
       level: 1,
@@ -90,6 +122,18 @@ export class ActionsDeReferencePom {
     });
   }
 
+  private fieldBlock(fieldTitle: string): Locator {
+    return this.updatePanel
+      .locator('div')
+      .filter({ has: this.page.getByText(fieldTitle, { exact: true }) })
+      .filter({ has: this.page.getByRole('textbox') })
+      .filter({ hasNot: this.page.getByRole('button') });
+  }
+
+  toast(message: string): Locator {
+    return this.page.getByText(message, { exact: true });
+  }
+
   updateButton(titre: string): Locator {
     return this.card(titre).getByRole('button', {
       name: `Modifier l'action « ${titre} »`,
@@ -125,6 +169,10 @@ export class ActionsDeReferencePom {
 
   url(collectiviteId: number): string {
     return `/collectivite/${collectiviteId}/actions-reference`;
+  }
+
+  indicateursListUrl(collectiviteId: number): string {
+    return `/collectivite/${collectiviteId}/indicateurs/liste`;
   }
 
   dashboardUrl(collectiviteId: number): string {
@@ -167,5 +215,32 @@ export class ActionsDeReferencePom {
 
   async stopFailingListResponses(): Promise<void> {
     await this.page.unroute(LIST_URL_PATTERN);
+  }
+
+  async failUpdateResponses(): Promise<void> {
+    await this.page.route(UPDATE_URL_PATTERN, (route) =>
+      route.fulfill({ status: 500 })
+    );
+  }
+
+  countUpdateRequests(): CountedUpdateRequests {
+    let updateRequestCount = 0;
+    this.page.on('request', (request) => {
+      if (UPDATE_URL_PATTERN.test(request.url())) {
+        updateRequestCount += 1;
+      }
+    });
+    return { count: () => updateRequestCount };
+  }
+
+  async saveAndWaitForUpdateResponse(): Promise<void> {
+    const updateResponse = this.page.waitForResponse(UPDATE_URL_PATTERN);
+    await this.saveButton.click();
+    await updateResponse;
+  }
+
+  async leaveThroughIndicateursNav(): Promise<void> {
+    await this.indicateursNavEntry.click();
+    await this.indicateursListNavLink.click();
   }
 }

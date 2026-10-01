@@ -4,6 +4,7 @@ import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { databaseService } from 'tests/shared/database.service';
 import {
+  openUpdatePanelAsSuperAdmin,
   testWithActionsDeReference as test,
   withRunSuffix,
 } from './actions-de-reference.fixture';
@@ -466,7 +467,6 @@ test.describe('modification-reservee-super-admin', () => {
 
 test.describe('modifier-action', () => {
   test("un super admin modifie les quatre champs d'une action, la liste se met à jour et un toast confirme", async ({
-    page,
     collectivites,
     actionsDeReference,
     actionsDeReferencePom,
@@ -528,7 +528,7 @@ test.describe('modifier-action', () => {
     });
     await test.step('Then : le toast « Action de référence modifiée » est visible et le volet est fermé', async () => {
       await expect(
-        page.getByText('Action de référence modifiée')
+        actionsDeReferencePom.toast('Action de référence modifiée')
       ).toBeVisible();
       await expect(actionsDeReferencePom.updatePanel).toBeHidden();
     });
@@ -544,167 +544,307 @@ test.describe('modifier-action', () => {
 });
 
 test.describe('modifier-action-conflit', () => {
-  test.fixme(
-    "enregistrer un triplet levier, catégorie et titre déjà pris affiche le message d'action identique",
-    async () => {
-      await test.step(
-        'Given : un super admin et deux actions de même levier et même catégorie, « Action A » et « Action B »',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il ouvre le volet de « Action B », saisit « Action A » dans le champ « Titre » et clique le bouton « Enregistrer »',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : le toast d'erreur « Une action de référence identique existe déjà. » est visible",
-        toBeAutomated
-      );
-      await test.step(
-        'Then : le volet reste ouvert avec la saisie, et la card « Action B » est inchangé dans la liste',
-        toBeAutomated
-      );
-    }
-  );
+  test("enregistrer un triplet levier, catégorie et titre déjà pris affiche le message d'action identique", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const actionATitre = withRunSuffix('Action A');
+    const actionBTitre = withRunSuffix('Action B');
+    const actionBDescription = 'Seconde action insérée pour le conflit.';
+
+    const { collectivite } =
+      await test.step('Given : un super admin et deux actions de même levier et même catégorie, « Action A » et « Action B »', async () => {
+        await actionsDeReference.add([
+          {
+            titre: actionATitre,
+            description: 'Première action insérée pour le conflit.',
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+          {
+            titre: actionBTitre,
+            description: actionBDescription,
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: {
+            autoLogin: true,
+            isSupport: true,
+            isSuperAdminRoleEnabled: true,
+          },
+        });
+      });
+    await test.step('When : il ouvre le volet de « Action B », saisit « Action A » dans le champ « Titre » et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await actionsDeReferencePom.openUpdatePanel(actionBTitre);
+      await actionsDeReferencePom.titreField.fill(actionATitre);
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step("Then : le toast d'erreur « Une action de référence identique existe déjà. » est visible", async () => {
+      await expect(
+        actionsDeReferencePom.toast(
+          'Une action de référence identique existe déjà.'
+        )
+      ).toBeVisible();
+    });
+    await test.step('Then : le volet reste ouvert avec la saisie, et la card « Action B » est inchangée dans la liste', async () => {
+      await expect(actionsDeReferencePom.updatePanel).toBeVisible();
+      await expect(actionsDeReferencePom.titreField).toHaveValue(actionATitre);
+      const actionBCard = actionsDeReferencePom.card(actionBTitre);
+      await expect(actionBCard).toBeVisible();
+      await expect(actionBCard).toContainText(actionBDescription);
+      await expect(actionsDeReferencePom.card(actionATitre)).toHaveCount(1);
+    });
+  });
 });
 
 test.describe('modifier-action-validation', () => {
-  test.fixme(
-    "un titre vide, un titre de 301 caractères ou une description vide bloquent l'enregistrement avant l'envoi",
-    async () => {
-      await test.step(
-        "Given : un super admin a ouvert le volet d'une action, les appels à shared.actionsDeReference.update sont comptés par page.route",
-        toBeAutomated
+  test("un titre vide, un titre de 301 caractères ou une description vide bloquent l'enregistrement avant l'envoi", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const updateRequests =
+      await test.step("Given : un super admin a ouvert le volet d'une action, les appels à shared.actionsDeReference.update sont comptés", async () => {
+        await openUpdatePanelAsSuperAdmin({
+          collectivites,
+          actionsDeReference,
+          actionsDeReferencePom,
+          action: {
+            titre: withRunSuffix('Action de référence e2e à valider'),
+            description: 'Action insérée pour le parcours de validation.',
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        });
+        return actionsDeReferencePom.countUpdateRequests();
+      });
+    await test.step('When : il vide le champ « Titre » et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.titreField.fill('');
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step("Then : un message d'erreur est visible sous « Titre » et le focus revient sur « Titre »", async () => {
+      await expect(actionsDeReferencePom.titreFieldBlock).toContainText(
+        'Ce champ est obligatoire'
       );
-      await test.step('When : il vide le champ « Titre »', toBeAutomated);
-      await test.step(
-        "Then : un message d'erreur est visible sous « Titre » et le bouton « Enregistrer » est désactivé",
-        toBeAutomated
+      await expect(actionsDeReferencePom.titreField).toBeFocused();
+    });
+    await test.step('When : il saisit 301 caractères dans le champ « Titre » et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.titreField.fill('a'.repeat(301));
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step("Then : un message d'erreur est visible sous « Titre » et le focus revient sur « Titre »", async () => {
+      await expect(actionsDeReferencePom.titreFieldBlock).toContainText(
+        '300 caractères maximum'
       );
-      await test.step(
-        'When : il saisit 301 caractères dans le champ « Titre »',
-        toBeAutomated
+      await expect(actionsDeReferencePom.titreField).toBeFocused();
+    });
+    await test.step('When : il saisit 300 caractères dans « Titre », vide le champ « Description » et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.titreField.fill('a'.repeat(300));
+      await actionsDeReferencePom.descriptionField.fill('');
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step("Then : un message d'erreur est visible sous « Description » et le focus revient sur « Description »", async () => {
+      await expect(actionsDeReferencePom.titreFieldBlock).not.toContainText(
+        '300 caractères maximum'
       );
-      await test.step(
-        "Then : un message d'erreur est visible sous « Titre » et le bouton « Enregistrer » est désactivé",
-        toBeAutomated
+      await expect(actionsDeReferencePom.descriptionFieldBlock).toContainText(
+        'Ce champ est obligatoire'
       );
-      await test.step(
-        'When : il saisit 300 caractères dans « Titre » et vide le champ « Description »',
-        toBeAutomated
+      await expect(actionsDeReferencePom.descriptionField).toBeFocused();
+    });
+    await test.step('When : il saisit un titre et une description valides et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.titreField.fill(
+        withRunSuffix('Action de référence e2e validée')
       );
-      await test.step(
-        "Then : un message d'erreur est visible sous « Description » et le bouton « Enregistrer » est désactivé",
-        toBeAutomated
+      await actionsDeReferencePom.descriptionField.fill(
+        'Description valide saisie après les refus.'
       );
-      await test.step(
-        "Then : aucun appel à shared.actionsDeReference.update n'a été émis",
-        toBeAutomated
-      );
-    }
-  );
+      await actionsDeReferencePom.saveAndWaitForUpdateResponse();
+    });
+    await test.step("Then : un seul appel à shared.actionsDeReference.update a été émis, celui de l'enregistrement valide", () => {
+      expect(updateRequests.count()).toBe(1);
+    });
+  });
 });
 
 test.describe('modifier-action-en-erreur', () => {
-  test.fixme(
-    "une erreur de l'API hors conflit affiche un toast d'erreur",
-    async () => {
-      await test.step(
-        "Given : un super admin a ouvert le volet d'une action, shared.actionsDeReference.update répond 500 par page.route",
-        toBeAutomated
-      );
-      await test.step(
-        'When : il change le champ « Titre » et clique le bouton « Enregistrer »',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : le toast d'erreur « La modification de l'action de référence a échoué » est visible",
-        toBeAutomated
-      );
-      await test.step(
-        'Then : le volet reste ouvert avec la saisie',
-        toBeAutomated
-      );
-    }
-  );
+  test("une erreur de l'API hors conflit affiche un toast d'erreur", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const typedTitre = withRunSuffix('Titre saisi avant une erreur');
+
+    await test.step("Given : un super admin a ouvert le volet d'une action, shared.actionsDeReference.update répond 500 par page.route", async () => {
+      await openUpdatePanelAsSuperAdmin({
+        collectivites,
+        actionsDeReference,
+        actionsDeReferencePom,
+        action: {
+          titre: withRunSuffix('Action de référence e2e en échec'),
+          description: "Action insérée pour le parcours d'erreur à l'envoi.",
+          levier: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      });
+      await actionsDeReferencePom.failUpdateResponses();
+    });
+    await test.step('When : il change le champ « Titre » et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.titreField.fill(typedTitre);
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step("Then : le toast d'erreur « Erreur lors de l'enregistrement » est visible", async () => {
+      await expect(
+        actionsDeReferencePom.toast("Erreur lors de l'enregistrement")
+      ).toBeVisible();
+    });
+    await test.step('Then : le volet reste ouvert avec la saisie', async () => {
+      await expect(actionsDeReferencePom.updatePanel).toBeVisible();
+      await expect(actionsDeReferencePom.titreField).toHaveValue(typedTitre);
+    });
+  });
 });
 
 test.describe('fermer-volet-modifications-non-enregistrees', () => {
-  test.fixme(
-    'fermer le volet avec une saisie non enregistrée demande confirmation, et poursuivre garde la saisie',
-    async () => {
-      await test.step(
-        "Given : un super admin a ouvert le volet d'une action et changé le champ « Titre »",
-        toBeAutomated
-      );
-      await test.step(
-        'When : il clique le bouton « Fermer » du volet',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : la boîte de dialogue « Modifications non enregistrées » est visible',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il clique le bouton « Poursuivre la modification »',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : la boîte de dialogue est fermée, le volet est ouvert et le champ « Titre » porte la saisie',
-        toBeAutomated
-      );
-    }
-  );
+  test('fermer le volet avec une saisie non enregistrée demande confirmation, et poursuivre garde la saisie', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const typedTitre = withRunSuffix('Titre saisi puis poursuivi');
 
-  test.fixme('confirmer la fermeture abandonne la saisie', async () => {
-    await test.step(
-      "Given : un super admin a ouvert le volet d'une action et changé le champ « Titre »",
-      toBeAutomated
-    );
-    await test.step(
-      'When : il clique le bouton « Fermer » du volet puis le bouton « Fermer sans enregistrer »',
-      toBeAutomated
-    );
-    await test.step(
-      "Then : le volet est fermé et la card affiche son titre d'origine",
-      toBeAutomated
-    );
+    await test.step("Given : un super admin a ouvert le volet d'une action et changé le champ « Titre »", async () => {
+      await openUpdatePanelAsSuperAdmin({
+        collectivites,
+        actionsDeReference,
+        actionsDeReferencePom,
+        action: {
+          titre: withRunSuffix('Action de référence e2e à poursuivre'),
+          description: 'Action insérée pour le parcours de poursuite.',
+          levier: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      });
+      await actionsDeReferencePom.titreField.fill(typedTitre);
+    });
+    await test.step('When : il clique le bouton « Fermer » du volet', () =>
+      actionsDeReferencePom.closePanelButton.click());
+    await test.step('Then : la boîte de dialogue « Modifications non enregistrées » est visible', async () => {
+      await expect(actionsDeReferencePom.discardChangesDialog).toBeVisible();
+    });
+    await test.step('When : il clique le bouton « Poursuivre la modification »', () =>
+      actionsDeReferencePom.keepEditingButton.click());
+    await test.step('Then : la boîte de dialogue est fermée, le volet est ouvert et le champ « Titre » porte la saisie', async () => {
+      await expect(actionsDeReferencePom.discardChangesDialog).toBeHidden();
+      await expect(actionsDeReferencePom.updatePanel).toBeVisible();
+      await expect(actionsDeReferencePom.titreField).toHaveValue(typedTitre);
+    });
   });
 
-  test.fixme(
-    'fermer le volet sans avoir rien changé ne demande aucune confirmation',
-    async () => {
-      await test.step(
-        "Given : un super admin a ouvert le volet d'une action sans rien changer",
-        toBeAutomated
-      );
-      await test.step(
-        'When : il clique le bouton « Fermer » du volet',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : le volet est fermé et aucune boîte de dialogue ne s'est ouverte",
-        toBeAutomated
-      );
-    }
-  );
+  test('confirmer la fermeture abandonne la saisie', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const titre = withRunSuffix('Action de référence e2e à abandonner');
+    const typedTitre = withRunSuffix('Titre saisi puis abandonné');
 
-  test.fixme(
-    'quitter la page avec une saisie non enregistrée ferme le volet sans confirmation',
-    async () => {
-      await test.step(
-        "Given : un super admin a ouvert le volet d'une action et changé le champ « Titre »",
-        toBeAutomated
+    await test.step("Given : un super admin a ouvert le volet d'une action et changé le champ « Titre »", async () => {
+      await openUpdatePanelAsSuperAdmin({
+        collectivites,
+        actionsDeReference,
+        actionsDeReferencePom,
+        action: {
+          titre,
+          description: "Action insérée pour le parcours d'abandon.",
+          levier: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      });
+      await actionsDeReferencePom.titreField.fill(typedTitre);
+    });
+    await test.step('When : il clique le bouton « Fermer » du volet puis le bouton « Fermer sans enregistrer »', async () => {
+      await actionsDeReferencePom.closePanelButton.click();
+      await actionsDeReferencePom.discardChangesButton.click();
+    });
+    await test.step("Then : le volet est fermé et la card affiche son titre d'origine", async () => {
+      await expect(actionsDeReferencePom.updatePanel).toBeHidden();
+      await expect(actionsDeReferencePom.discardChangesDialog).toBeHidden();
+      await expect(actionsDeReferencePom.card(titre)).toBeVisible();
+      await expect(actionsDeReferencePom.card(typedTitre)).toHaveCount(0);
+    });
+    await test.step('When : il rouvre le volet de la même action', () =>
+      actionsDeReferencePom.openUpdatePanel(titre));
+    await test.step("Then : le champ « Titre » porte le titre d'origine", async () => {
+      await expect(actionsDeReferencePom.titreField).toHaveValue(titre);
+    });
+  });
+
+  test('fermer le volet sans avoir rien changé ne demande aucune confirmation', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    await test.step("Given : un super admin a ouvert le volet d'une action sans rien changer", () =>
+      openUpdatePanelAsSuperAdmin({
+        collectivites,
+        actionsDeReference,
+        actionsDeReferencePom,
+        action: {
+          titre: withRunSuffix('Action de référence e2e fermée sans saisie'),
+          description: 'Action insérée pour le parcours de fermeture directe.',
+          levier: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      }));
+    await test.step('When : il clique le bouton « Fermer » du volet', () =>
+      actionsDeReferencePom.closePanelButton.click());
+    await test.step("Then : le volet est fermé et aucune boîte de dialogue ne s'est ouverte", async () => {
+      await expect(actionsDeReferencePom.updatePanel).toBeHidden();
+      await expect(actionsDeReferencePom.discardChangesDialog).toHaveCount(0);
+    });
+  });
+
+  test('quitter la page avec une saisie non enregistrée ferme le volet sans confirmation', async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const collectiviteId =
+      await test.step("Given : un super admin a ouvert le volet d'une action et changé le champ « Titre »", async () => {
+        const openedCollectiviteId = await openUpdatePanelAsSuperAdmin({
+          collectivites,
+          actionsDeReference,
+          actionsDeReferencePom,
+          action: {
+            titre: withRunSuffix('Action de référence e2e quittée'),
+            description: 'Action insérée pour le parcours de sortie de page.',
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        });
+        await actionsDeReferencePom.titreField.fill(
+          withRunSuffix('Titre saisi avant de quitter')
+        );
+        return openedCollectiviteId;
+      });
+    await test.step('When : il clique un autre lien de la navigation', () =>
+      actionsDeReferencePom.leaveThroughIndicateursNav());
+    await test.step("Then : la page change, aucune boîte de dialogue ne s'ouvre", async () => {
+      await expect(page).toHaveURL(
+        (url) =>
+          url.pathname ===
+          actionsDeReferencePom.indicateursListUrl(collectiviteId)
       );
-      await test.step(
-        'When : il clique un autre lien de la navigation',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : la page change, aucune boîte de dialogue ne s'ouvre",
-        toBeAutomated
-      );
-    }
-  );
+      await expect(actionsDeReferencePom.updatePanel).toBeHidden();
+      await expect(actionsDeReferencePom.discardChangesDialog).toHaveCount(0);
+    });
+  });
 });
 
 test.describe('action-modifiee-sort-des-filtres', () => {
