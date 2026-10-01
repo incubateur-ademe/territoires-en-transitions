@@ -148,7 +148,7 @@ const SubactionIndicateurModalResultatsContent = ({
         unite={unite}
         selectionneeId={selectionneeId}
         isPending={isPending}
-        disabled={nonSuivi}
+        disabled={nonSuivi || isUpdatingNonSuivi}
         onSelect={handleSelect}
       />
     </div>
