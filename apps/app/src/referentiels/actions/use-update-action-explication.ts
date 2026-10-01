@@ -1,30 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {
-  ActionId,
-  ActionsGroupedById,
   getReferentielIdFromActionId,
+  ListActionsGroupedByIdResult,
 } from '@tet/domain/referentiels';
-
-function patchActionExplicationInCache(
-  old: ActionsGroupedById | undefined,
-  actionId: ActionId,
-  commentaire: string
-): ActionsGroupedById | undefined {
-  if (!old) return old;
-  const action = old[actionId];
-  if (!action) return old;
-  return {
-    ...old,
-    [actionId]: {
-      ...action,
-      score: {
-        ...action.score,
-        explication: commentaire,
-      },
-    },
-  };
-}
+import { patchActionExplicationInCache } from './patch-action-explication-in-cache';
 
 export const useUpdateActionExplication = () => {
   const trpc = useTRPC();
@@ -42,9 +22,11 @@ export const useUpdateActionExplication = () => {
         await queryClient.cancelQueries(listActionsFilter);
 
         const previousQueries =
-          queryClient.getQueriesData<ActionsGroupedById>(listActionsFilter);
+          queryClient.getQueriesData<ListActionsGroupedByIdResult>(
+            listActionsFilter
+          );
 
-        queryClient.setQueriesData<ActionsGroupedById>(
+        queryClient.setQueriesData<ListActionsGroupedByIdResult>(
           listActionsFilter,
           (old) => patchActionExplicationInCache(old, actionId, commentaire)
         );
