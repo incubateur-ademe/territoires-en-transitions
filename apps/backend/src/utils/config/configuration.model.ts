@@ -202,6 +202,20 @@ export const backendConfigurationSchema = z
       .describe(
         "Identifiant de la feuille de calcul Google Sheets pour l'import des questions de personnalisation"
       ),
+    // Optionnelles au boot : sans elles, les secteurs des fiches restent
+    // « en cours de calcul » au lieu de casser le démarrage du backend.
+    COMMUNS_API_URL: z
+      .url()
+      .optional()
+      .describe(
+        "Url de base de l'API Communs (ex : https://api.collectivites.beta.gouv.fr), pour les secteurs réglementaires des fiches"
+      ),
+    COMMUNS_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        "Clé TeT de l'API Communs (Authorization: Bearer), pour les secteurs réglementaires des fiches"
+      ),
     MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z
       .string()
       .optional()
