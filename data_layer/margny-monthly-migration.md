@@ -1,6 +1,7 @@
 # Migration mensuelle des indicateurs de Margny
 
-Cette cinquième livraison suit #5215 et précède le nettoyage #5296. Elle convertit
+La PR [#5312](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5312)
+est la cinquième livraison : elle suit #5215 et précède le nettoyage #5296. Elle convertit
 les deux indicateurs existants de Margny (collectivité 2181) en mensuels et reprend
 les six images archivées par #5220, avec identifiants, commentaires, provenance,
 auteurs et horodatages d'origine.
@@ -48,3 +49,6 @@ aller-retour réel `pg_dump`/`pg_restore` des originaux et 96 assertions SQL ré
 Les contrôles shell refusent aussi les sauvegardes de l'autre état de migration.
 Ces vérifications locales doivent être répétées sur une copie récente avant le
 déploiement, en mesurant les verrous au volume réel.
+
+Les vrais scripts ont aussi été déployés, vérifiés, annulés puis redéployés avec
+Sqitch sur une installation sans données de Margny, avant le nettoyage séparé.

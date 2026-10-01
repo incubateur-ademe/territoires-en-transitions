@@ -6,7 +6,7 @@
 | 2 | #5292 — `split/periodicite-schema` | Catalogue, colonnes annuelles et index supplémentaires | Backend actuel, schéma compatible |
 | 3 | #5214 — `split/periodicite-data-migration` | Backend, protection des saisies, correction de formule, contrôles et bascule SQL | Nouveau backend annuel |
 | 4 | #5215 — `split/periodicite-activation` | Nouvelles cadences, saisie et agrégations de restitution | Quatre cadences |
-| 5 | PR dédiée — `fix/margny-indicateurs-mensuels` | Migration mensuelle des deux indicateurs et six observations de Margny | Schéma activé, archives conservées |
+| 5 | #5312 — `fix/margny-indicateurs-mensuels` | Migration mensuelle des deux indicateurs et six observations de Margny | Schéma activé, archives conservées |
 | 6 | #5296 — `chore/periodicite-cleanup` | Retrait du temporaire après validation et sauvegarde complète | Schéma final nettoyé |
 
 Les livraisons 1 et 2 peuvent rester en production avec le backend actuel.
