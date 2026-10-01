@@ -17,8 +17,32 @@ export class ActionsDeReferencePom {
   readonly updateButtons: Locator;
   readonly navEntry: Locator;
   readonly indicateursNavEntry: Locator;
+  readonly leviersFilter: Locator;
+  readonly updatePanel: Locator;
+  readonly titreField: Locator;
+  readonly descriptionField: Locator;
+  readonly levierSelect: Locator;
+  readonly categorieSelect: Locator;
+  readonly saveButton: Locator;
 
   constructor(readonly page: Page) {
+    this.leviersFilter = page
+      .getByRole('group', { name: 'Leviers' })
+      .getByRole('button', { name: 'ouvrir le menu' });
+    this.updatePanel = page.getByRole('complementary', {
+      name: "Modifier l'action de référence",
+    });
+    this.titreField = this.updatePanel.getByRole('textbox').nth(0);
+    this.descriptionField = this.updatePanel.getByRole('textbox').nth(1);
+    this.levierSelect = this.updatePanel
+      .getByRole('button', { name: 'ouvrir le menu' })
+      .nth(0);
+    this.categorieSelect = this.updatePanel
+      .getByRole('button', { name: 'ouvrir le menu' })
+      .nth(1);
+    this.saveButton = this.updatePanel.getByRole('button', {
+      name: 'Enregistrer',
+    });
     this.title = page.getByRole('heading', {
       level: 1,
       name: 'Actions de référence',
@@ -64,6 +88,39 @@ export class ActionsDeReferencePom {
         exact: true,
       }),
     });
+  }
+
+  updateButton(titre: string): Locator {
+    return this.card(titre).getByRole('button', {
+      name: `Modifier l'action « ${titre} »`,
+    });
+  }
+
+  async openUpdatePanel(titre: string): Promise<void> {
+    await this.updateButton(titre).click();
+    await expect(this.updatePanel).toBeVisible();
+  }
+
+  async chooseOption({
+    select,
+    optionLabel,
+  }: {
+    readonly select: Locator;
+    readonly optionLabel: string;
+  }): Promise<void> {
+    await select.click();
+    await this.page
+      .getByRole('button', { name: optionLabel, exact: true })
+      .click();
+    await expect(select).toContainText(optionLabel);
+  }
+
+  async chooseLevierFilter(levierLabel: string): Promise<void> {
+    await this.leviersFilter.click();
+    await this.page
+      .getByRole('button', { name: levierLabel, exact: true })
+      .click();
+    await this.page.keyboard.press('Escape');
   }
 
   url(collectiviteId: number): string {

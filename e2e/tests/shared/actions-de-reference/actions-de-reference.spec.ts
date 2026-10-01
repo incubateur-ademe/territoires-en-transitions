@@ -419,55 +419,128 @@ test.describe('modification-reservee-super-admin', () => {
     });
   });
 
-  test.fixme(
-    'un super admin voit un bouton de modification sur chaque card',
-    async () => {
-      await test.step(
-        'Given : un super admin et deux actions de référence',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il ouvre la vue des actions de référence',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : chaque card porte un bouton « Modifier l'action « <titre> » »",
-        toBeAutomated
-      );
-    }
-  );
+  test('un super admin voit un bouton de modification sur chaque card', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const isolationTitre = withRunSuffix('Isoler les combles perdus');
+    const covoiturageTitre = withRunSuffix('Aménager des aires de covoiturage');
+
+    const { collectivite } =
+      await test.step('Given : un super admin et deux actions de référence', async () => {
+        await actionsDeReference.add([
+          {
+            titre: isolationTitre,
+            description: 'Réduire les pertes de chaleur par la toiture.',
+            levier: 'sobriete_batiments_residentiel',
+            categorie: 'amenagement',
+          },
+          {
+            titre: covoiturageTitre,
+            description: 'Créer des points de rencontre pour les covoitureurs.',
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: {
+            autoLogin: true,
+            isSupport: true,
+            isSuperAdminRoleEnabled: true,
+          },
+        });
+      });
+    await test.step('When : il ouvre la vue des actions de référence', () =>
+      actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+    await test.step("Then : chaque card porte un bouton « Modifier l'action « <titre> » »", async () => {
+      await expect(
+        actionsDeReferencePom.updateButton(isolationTitre)
+      ).toBeVisible();
+      await expect(
+        actionsDeReferencePom.updateButton(covoiturageTitre)
+      ).toBeVisible();
+    });
+  });
 });
 
 test.describe('modifier-action', () => {
-  test.fixme(
-    "un super admin modifie les quatre champs d'une action, la liste se met à jour et un toast confirme",
-    async () => {
-      await test.step(
-        'Given : un super admin et une action « Aménager des aires de covoiturage »',
-        toBeAutomated
+  test("un super admin modifie les quatre champs d'une action, la liste se met à jour et un toast confirme", async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const covoiturageTitre = withRunSuffix('Aménager des aires de covoiturage');
+    const covoiturageDescription =
+      'Créer des points de rencontre pour les covoitureurs.';
+    const updatedTitre = withRunSuffix('Planter des haies bocagères');
+    const updatedDescription = 'Replanter les linéaires de haies arrachés.';
+
+    const { collectivite } =
+      await test.step('Given : un super admin et une action « Aménager des aires de covoiturage »', async () => {
+        await actionsDeReference.add([
+          {
+            titre: covoiturageTitre,
+            description: covoiturageDescription,
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: {
+            autoLogin: true,
+            isSupport: true,
+            isSuperAdminRoleEnabled: true,
+          },
+        });
+      });
+    await test.step("When : il clique le bouton « Modifier l'action « Aménager des aires de covoiturage » »", async () => {
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await actionsDeReferencePom.openUpdatePanel(covoiturageTitre);
+    });
+    await test.step("Then : le volet « Modifier l'action de référence » s'ouvre, ses champs « Titre », « Description », « Levier » et « Catégorie » sont préremplis", async () => {
+      await expect(actionsDeReferencePom.titreField).toHaveValue(
+        covoiturageTitre
       );
-      await test.step(
-        "When : il clique le bouton « Modifier l'action « Aménager des aires de covoiturage » »",
-        toBeAutomated
+      await expect(actionsDeReferencePom.descriptionField).toHaveValue(
+        covoiturageDescription
       );
-      await test.step(
-        "Then : le volet « Modifier l'action de référence » s'ouvre, ses champs « Titre », « Description », « Levier » et « Catégorie » sont préremplis",
-        toBeAutomated
+      await expect(actionsDeReferencePom.levierSelect).toContainText(
+        'Covoiturage'
       );
-      await test.step(
-        'When : il change les quatre champs et clique le bouton « Enregistrer »',
-        toBeAutomated
+      await expect(actionsDeReferencePom.categorieSelect).toContainText(
+        'Aménagement & infrastructures'
       );
-      await test.step(
-        'Then : le toast « Action de référence modifiée » est visible et le volet est fermé',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : la card affiche le nouveau titre, la nouvelle description, le nouveau levier et la nouvelle catégorie',
-        toBeAutomated
-      );
-    }
-  );
+    });
+    await test.step('When : il change les quatre champs et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.titreField.fill(updatedTitre);
+      await actionsDeReferencePom.descriptionField.fill(updatedDescription);
+      await actionsDeReferencePom.chooseOption({
+        select: actionsDeReferencePom.levierSelect,
+        optionLabel: 'Gestion des haies',
+      });
+      await actionsDeReferencePom.chooseOption({
+        select: actionsDeReferencePom.categorieSelect,
+        optionLabel: 'Financement & fiscalité',
+      });
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step('Then : le toast « Action de référence modifiée » est visible et le volet est fermé', async () => {
+      await expect(
+        page.getByText('Action de référence modifiée')
+      ).toBeVisible();
+      await expect(actionsDeReferencePom.updatePanel).toBeHidden();
+    });
+    await test.step('Then : la card affiche le nouveau titre, la nouvelle description, le nouveau levier et la nouvelle catégorie', async () => {
+      const updatedCard = actionsDeReferencePom.card(updatedTitre);
+      await expect(updatedCard).toBeVisible();
+      await expect(updatedCard).toContainText(updatedDescription);
+      await expect(updatedCard).toContainText('Gestion des haies');
+      await expect(updatedCard).toContainText('Financement & fiscalité');
+      await expect(actionsDeReferencePom.card(covoiturageTitre)).toHaveCount(0);
+    });
+  });
 });
 
 test.describe('modifier-action-conflit', () => {
@@ -635,27 +708,57 @@ test.describe('fermer-volet-modifications-non-enregistrees', () => {
 });
 
 test.describe('action-modifiee-sort-des-filtres', () => {
-  test.fixme(
-    'une action dont le levier change disparaît de la liste filtrée sur son ancien levier',
-    async () => {
-      await test.step(
-        'Given : un super admin a choisi « Covoiturage » dans la liste « Leviers », la card « Aménager des aires de covoiturage » est visible',
-        toBeAutomated
+  test('une action dont le levier change disparaît de la liste filtrée sur son ancien levier', async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const covoiturageTitre = withRunSuffix('Aménager des aires de covoiturage');
+    const pageLoadsAfterFiltering: string[] = [];
+
+    await test.step('Given : un super admin a choisi « Covoiturage » dans la liste « Leviers », la card « Aménager des aires de covoiturage » est visible', async () => {
+      await actionsDeReference.add([
+        {
+          titre: covoiturageTitre,
+          description: 'Créer des points de rencontre pour les covoitureurs.',
+          levier: 'covoiturage',
+          categorie: 'amenagement',
+        },
+      ]);
+      const { collectivite } = await collectivites.addCollectiviteAndUser({
+        userArgs: {
+          autoLogin: true,
+          isSupport: true,
+          isSuperAdminRoleEnabled: true,
+        },
+      });
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await actionsDeReferencePom.chooseLevierFilter('Covoiturage');
+      await expect(page).toHaveURL(/leviers=covoiturage/);
+      await expect(actionsDeReferencePom.card(covoiturageTitre)).toBeVisible();
+      page.on('load', () => pageLoadsAfterFiltering.push(page.url()));
+    });
+    await test.step('When : il ouvre le volet de cette action, choisit « Gestion des haies » dans le champ « Levier » et clique le bouton « Enregistrer »', async () => {
+      await actionsDeReferencePom.openUpdatePanel(covoiturageTitre);
+      await actionsDeReferencePom.chooseOption({
+        select: actionsDeReferencePom.levierSelect,
+        optionLabel: 'Gestion des haies',
+      });
+      await actionsDeReferencePom.saveButton.click();
+    });
+    await test.step('Then : la card « Aménager des aires de covoiturage » disparaît de la liste sans rechargement de la page', async () => {
+      await expect(actionsDeReferencePom.updatePanel).toBeHidden();
+      await expect(actionsDeReferencePom.card(covoiturageTitre)).toHaveCount(0);
+      expect(pageLoadsAfterFiltering).toEqual([]);
+    });
+    await test.step('Then : « Covoiturage » reste le levier choisi dans la liste « Leviers »', async () => {
+      await expect(actionsDeReferencePom.leviersFilter).toContainText(
+        'Covoiturage'
       );
-      await test.step(
-        'When : il ouvre le volet de cette action, choisit « Gestion des haies » dans le champ « Levier » et clique le bouton « Enregistrer »',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : la card « Aménager des aires de covoiturage » disparaît de la liste sans rechargement de la page',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : « Covoiturage » reste le levier choisi dans la liste « Leviers »',
-        toBeAutomated
-      );
-    }
-  );
+      await expect(page).toHaveURL(/leviers=covoiturage/);
+    });
+  });
 });
 
 test.describe('entree-nav-reservee-au-super-admin', () => {
