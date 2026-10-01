@@ -49,6 +49,32 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     await app.close();
   });
 
+  test('conserve le suivi explicite lors des mises à jour partielles', async () => {
+    const indicateurId = await caller.indicateurs.indicateurs.create({
+      collectiviteId,
+      titre: 'Indicateur avec suivi',
+    });
+
+    for (const isSuivi of [false, true]) {
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { isSuivi },
+      });
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { commentaire: 'Mise à jour indépendante du suivi' },
+      });
+
+      const { data } = await caller.indicateurs.indicateurs.list({
+        collectiviteId,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(data).toMatchObject([{ id: indicateurId, isSuivi }]);
+    }
+  });
+
   test.each([undefined, 'annuelle'] as const)(
     'expose les métadonnées annuelles après création avec periodicite=%s',
     async (periodicite) => {
