@@ -5,7 +5,7 @@ import {
   IMPORT_PLAN_DEMO_URL,
   IMPORT_PLAN_SUPPORT_URL,
 } from '@/app/plans/plans/import-plan/import-plan-support.links';
-import { Alert, Button, InlineLink } from '@tet/ui';
+import { Alert, Badge, Button, InlineLink } from '@tet/ui';
 import { useState } from 'react';
 import { VerifyImportedPlanModal } from './verify-imported-plan.modal';
 
@@ -16,8 +16,17 @@ export const ImportedPlanBanner = ({ planId }: { planId: number }) => {
   return (
     <div data-test="plans.imported-plan-banner">
       <Alert
-        state="info"
-        title={appLabels.planImporteBanniereTitre}
+        state="warning"
+        title={
+          <span className="flex flex-wrap items-center gap-2">
+            {appLabels.planImporteBanniereTitre}
+            <Badge
+              title={appLabels.planImporteBanniereAVerifier}
+              variant="warning"
+              size="sm"
+            />
+          </span>
+        }
         description={
           <p className="mb-0 text-sm font-medium text-grey-9">
             {appLabels.planImporteBanniereDescription}{' '}
@@ -35,6 +44,7 @@ export const ImportedPlanBanner = ({ planId }: { planId: number }) => {
         action={
           <Button
             size="sm"
+            variant="outlined"
             onClick={() => setIsVerifyModalOpen(true)}
             dataTest="plans.imported-plan-banner.valider"
           >
