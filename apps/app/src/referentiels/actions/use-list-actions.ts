@@ -1,14 +1,12 @@
-import { RouterOutput } from '@tet/api';
 import {
-  ActionId,
+  Action,
   getReferentielIdFromActionId,
   ListActionsInput,
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 
-export type ActionListItem =
-  RouterOutput['referentiels']['actions']['listActionsGroupedById']['actionsById'][ActionId];
+export type ActionListItem = Action;
 
 export type ActionIdentity = Pick<
   ActionListItem,

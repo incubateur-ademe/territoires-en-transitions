@@ -17,15 +17,14 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
-  Action,
+  ActionDynamicState,
   ActionId,
   ActionThematique,
   ActionType,
-  ActionWithDefinitionAndPilotes,
   filterHiddenActionsFromGroupedById,
-  HiddenActionSummary,
   isNewReferentiel,
-  ListActionsGroupedByIdResult,
+  ListActionsDynamicStateResult,
+  ReferentielId,
   ReferentielLabel,
   ReferentielLabelEnum,
   ReferentielTagTypeEnum,
@@ -34,16 +33,15 @@ import {
 import { ResourceType } from '@tet/domain/users';
 import {
   and,
-  asc,
   count,
   eq,
   getTableColumns,
   inArray,
-  SQL,
   sql,
 } from 'drizzle-orm';
 import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
+import { actionDepth } from '../models/action-depth.column';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
@@ -54,11 +52,6 @@ import {
   ListActionsErrorEnum,
   type ListActionsError,
 } from './list-actions.errors';
-
-type ActionWithoutChildrenIdsWithExprScore = Omit<
-  Action,
-  'childrenIdsWithExprScore'
->;
 
 @Injectable()
 export class ListActionsService {
@@ -71,10 +64,15 @@ export class ListActionsService {
 
   private db = this.databaseService.db;
 
+  /**
+   * Partie dynamique des actions d'un référentiel pour une collectivité :
+   * scores, généalogie, pilotes et services. Les définitions (partie statique)
+   * sont servies par `listActionDefinitions`.
+   */
   async listActionsGroupedById(
     input: ListActionsGroupedByIdInput,
     { user }: { user: AuthenticatedUser }
-  ): Promise<Result<ListActionsGroupedByIdResult, ListActionsError>> {
+  ): Promise<Result<ListActionsDynamicStateResult, ListActionsError>> {
     const { referentielId, collectiviteId } = input;
 
     const collectiviteIsPrivate = await this.collectiviteService.isPrivate(
@@ -110,26 +108,25 @@ export class ListActionsService {
       );
     }
 
-    const [
-      actionsWithDefinitionAndPilotes,
-      actionsWithScoreAndGenealogyGroupedById,
-    ] = await Promise.all([
-      this.listActionsWithDefinitionAndPilotesGroupedById({
-        collectiviteId,
-        referentielId,
-      }),
-      Promise.resolve(
-        scoreSnapshotTreeToActionsWithGenealogyGroupedById(
-          snapshotResult.data.scoresPayload.scores,
-          { includeDesactive }
-        )
-      ),
-    ]);
+    const [referentielVersion, pilotesAndServicesByActionId] =
+      await Promise.all([
+        this.getPublishedReferentielVersion(referentielId),
+        this.listPilotesAndServicesGroupedByActionId(
+          collectiviteId,
+          referentielId
+        ),
+      ]);
+    if (referentielVersion === null) {
+      return failure('NOT_FOUND');
+    }
 
-    const actionsById = {} as Record<
-      ActionId,
-      ActionWithoutChildrenIdsWithExprScore
-    >;
+    const actionsWithScoreAndGenealogyGroupedById =
+      scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        snapshotResult.data.scoresPayload.scores,
+        { includeDesactive }
+      );
+
+    const actionsById: Record<ActionId, ActionDynamicState> = {};
 
     for (const actionId in actionsWithScoreAndGenealogyGroupedById) {
       if (
@@ -141,84 +138,153 @@ export class ListActionsService {
         continue;
       }
 
+      // sélection explicite : les champs du nœud de snapshot qui doublonnent
+      // la définition (nom, identifiant, points, tags…) ne sont pas renvoyés
+      const {
+        score,
+        scoresTag,
+        scoreIndicatif,
+        parentId,
+        childrenIds,
+        nextId,
+        previousId,
+      } = actionsWithScoreAndGenealogyGroupedById[actionId];
+
       actionsById[actionId] = {
-        ...actionsWithScoreAndGenealogyGroupedById[actionId],
-        ...actionsWithDefinitionAndPilotes[actionId],
+        actionId,
+        score,
+        scoresTag,
+        ...(scoreIndicatif !== undefined ? { scoreIndicatif } : {}),
+        parentId,
+        childrenIds,
+        nextId,
+        previousId,
+        pilotes: pilotesAndServicesByActionId.pilotes.get(actionId) ?? [],
+        services: pilotesAndServicesByActionId.services.get(actionId) ?? [],
       };
     }
 
     if (!isNewReferentiel(referentielId)) {
       return success({
-        actionsById: this.addChildrenIdsWithExprScore(actionsById),
-        hiddenActions: [],
+        referentielVersion,
+        actionsById,
+        hiddenActionIds: [],
       });
     }
 
-    const hiddenActions: HiddenActionSummary[] = Object.values(actionsById)
+    const hiddenActionIds = Object.values(actionsById)
       .filter((action) => action.score.desactive)
-      .map(({ actionId, identifiant, nom }) => ({
-        actionId,
-        identifiant,
-        nom,
-      }));
+      .map(({ actionId }) => actionId);
 
     return success({
-      actionsById: this.addChildrenIdsWithExprScore(
-        filterHiddenActionsFromGroupedById(actionsById)
-      ),
-      hiddenActions,
+      referentielVersion,
+      actionsById: filterHiddenActionsFromGroupedById(actionsById),
+      hiddenActionIds,
     });
   }
 
-  private addChildrenIdsWithExprScore(
-    actionsById: Record<ActionId, ActionWithoutChildrenIdsWithExprScore>
-  ): ListActionsGroupedByIdResult['actionsById'] {
-    const actionsWithChildrenIdsWithExprScore =
-      {} as ListActionsGroupedByIdResult['actionsById'];
+  /** Version publiée courante du référentiel (et non celle du snapshot) */
+  private async getPublishedReferentielVersion(
+    referentielId: ReferentielId
+  ): Promise<string | null> {
+    const [referentiel] = await this.db
+      .select({ version: referentielDefinitionTable.version })
+      .from(referentielDefinitionTable)
+      .where(eq(referentielDefinitionTable.id, referentielId));
 
-    for (const actionId in actionsById) {
-      if (!Object.prototype.hasOwnProperty.call(actionsById, actionId)) {
-        continue;
-      }
-
-      const action = actionsById[actionId];
-      actionsWithChildrenIdsWithExprScore[actionId] = {
-        ...action,
-        childrenIdsWithExprScore: action.childrenIds.filter((childId) => {
-          const exprScore = actionsById[childId]?.exprScore;
-          return Boolean(exprScore?.trim());
-        }),
-      };
-    }
-
-    return actionsWithChildrenIdsWithExprScore;
+    return referentiel?.version ?? null;
   }
 
-  private async listActionsWithDefinitionAndPilotesGroupedById({
-    collectiviteId,
-    referentielId,
-  }: ListActionsGroupedByIdInput): Promise<
-    Record<ActionId, ActionWithDefinitionAndPilotes>
-  > {
-    const subQuery = this.db
-      .$with('action_definition_with_details')
-      .as(this.listWithDetails(collectiviteId));
+  private async listPilotesAndServicesGroupedByActionId(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<{
+    pilotes: Map<ActionId, PersonneTagOrUser[]>;
+    services: Map<ActionId, TagWithCollectiviteId[]>;
+  }> {
+    const [pilotes, services] = await Promise.all([
+      this.db
+        .select({
+          actionId: actionPiloteTable.actionId,
+          pilotes: sql<Array<PersonneTagOrUser>>`
+            array_remove(
+              array_agg(
+                DISTINCT
+                CASE
+                  WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
+                    jsonb_build_object(
+                      'collectiviteId', ${actionPiloteTable.collectiviteId},
+                      'userId', ${actionPiloteTable.userId},
+                      'tagId', null,
+                      'nom', CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
+                    )
+                  WHEN ${personneTagTable.id} IS NOT NULL THEN
+                    jsonb_build_object(
+                      'collectiviteId', ${actionPiloteTable.collectiviteId},
+                      'userId', null,
+                      'tagId', ${personneTagTable.id},
+                      'nom', ${personneTagTable.nom}
+                    )
+                END
+              ),
+              null
+            )
+          `,
+        })
+        .from(actionPiloteTable)
+        .innerJoin(
+          actionDefinitionTable,
+          eq(actionDefinitionTable.actionId, actionPiloteTable.actionId)
+        )
+        .leftJoin(dcpTable, eq(dcpTable.id, actionPiloteTable.userId))
+        .leftJoin(
+          personneTagTable,
+          eq(personneTagTable.id, actionPiloteTable.tagId)
+        )
+        .where(
+          and(
+            eq(actionPiloteTable.collectiviteId, collectiviteId),
+            eq(actionDefinitionTable.referentielId, referentielId)
+          )
+        )
+        .groupBy(actionPiloteTable.actionId),
 
-    const request = this.db.with(subQuery).select().from(subQuery);
+      this.db
+        .select({
+          actionId: actionServiceTable.actionId,
+          services: sql<Array<TagWithCollectiviteId>>`
+            array_agg(
+              DISTINCT
+              jsonb_build_object(
+                'collectiviteId', ${actionServiceTable.collectiviteId},
+                'nom', ${serviceTagTable.nom},
+                'id', ${actionServiceTable.serviceTagId}
+              )
+            )
+          `,
+        })
+        .from(actionServiceTable)
+        .innerJoin(
+          actionDefinitionTable,
+          eq(actionDefinitionTable.actionId, actionServiceTable.actionId)
+        )
+        .leftJoin(
+          serviceTagTable,
+          eq(serviceTagTable.id, actionServiceTable.serviceTagId)
+        )
+        .where(
+          and(
+            eq(actionServiceTable.collectiviteId, collectiviteId),
+            eq(actionDefinitionTable.referentielId, referentielId)
+          )
+        )
+        .groupBy(actionServiceTable.actionId),
+    ]);
 
-    const queryFilters: SQL[] = [];
-
-    queryFilters.push(eq(subQuery.referentielId, referentielId));
-
-    request.where(and(...queryFilters));
-    request.orderBy(asc(subQuery.actionId));
-
-    const actions = await request;
-
-    return actions.reduce((acc, action) => {
-      acc[action.actionId] = action;
-      return acc;
-    }, {} as Record<ActionId, ActionWithDefinitionAndPilotes>);
+    return {
+      pilotes: new Map(pilotes.map((row) => [row.actionId, row.pilotes])),
+      services: new Map(services.map((row) => [row.actionId, row.services])),
+    };
   }
 
   private listWithDepth() {
@@ -226,13 +292,7 @@ export class ListActionsService {
       .select({
         ...getTableColumns(actionDefinitionTable),
 
-        // Add a column with the depth of the action depending on the number of dots in the identifiant
-        // Ex: 1.1   => depth 2
-        //     1.1.1 => depth 3
-        depth: sql<number>`CASE
-          WHEN ${actionDefinitionTable.identifiant} IS NULL OR ${actionDefinitionTable.identifiant} LIKE '' THEN 0
-          ELSE REGEXP_COUNT(${actionDefinitionTable.identifiant}, '\\.') + 1
-          END`.as('depth'),
+        depth: actionDepth.as('depth'),
       })
       .from(actionDefinitionTable);
   }

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {
   getReferentielIdFromActionId,
-  ListActionsGroupedByIdResult,
+  ListActionsDynamicStateResult,
 } from '@tet/domain/referentiels';
 import { patchActionExplicationInCache } from './patch-action-explication-in-cache';
 
@@ -22,11 +22,11 @@ export const useUpdateActionExplication = () => {
         await queryClient.cancelQueries(listActionsFilter);
 
         const previousQueries =
-          queryClient.getQueriesData<ListActionsGroupedByIdResult>(
+          queryClient.getQueriesData<ListActionsDynamicStateResult>(
             listActionsFilter
           );
 
-        queryClient.setQueriesData<ListActionsGroupedByIdResult>(
+        queryClient.setQueriesData<ListActionsDynamicStateResult>(
           listActionsFilter,
           (old) => patchActionExplicationInCache(old, actionId, commentaire)
         );

@@ -1,6 +1,6 @@
 import {
   ActionId,
-  ListActionsGroupedByIdResult,
+  ListActionsDynamicStateResult,
 } from '@tet/domain/referentiels';
 
 /**
@@ -8,10 +8,10 @@ import {
  * `listActionsGroupedById`, pour la mise à jour optimiste du commentaire.
  */
 export function patchActionExplicationInCache(
-  old: ListActionsGroupedByIdResult | undefined,
+  old: ListActionsDynamicStateResult | undefined,
   actionId: ActionId,
   commentaire: string
-): ListActionsGroupedByIdResult | undefined {
+): ListActionsDynamicStateResult | undefined {
   if (!old) return old;
   const action = old.actionsById[actionId];
   if (!action) return old;

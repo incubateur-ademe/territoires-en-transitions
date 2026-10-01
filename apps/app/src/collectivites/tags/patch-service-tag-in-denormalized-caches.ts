@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { AppRouter } from '@tet/api';
 import {
   ActionId,
-  ListActionsGroupedByIdResult,
+  ListActionsDynamicStateResult,
 } from '@tet/domain/referentiels';
 import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
@@ -27,13 +27,13 @@ export const patchServiceTagInDenormalizedCaches = ({
     trpc.referentiels.actions.listActionsGroupedById.queryFilter({
       collectiviteId,
     }),
-    (oldValue: ListActionsGroupedByIdResult | undefined) => {
+    (oldValue: ListActionsDynamicStateResult | undefined) => {
       if (!oldValue) {
         return oldValue;
       }
 
       let changed = false;
-      const nextValue: ListActionsGroupedByIdResult = {
+      const nextValue: ListActionsDynamicStateResult = {
         ...oldValue,
         actionsById: { ...oldValue.actionsById },
       };
