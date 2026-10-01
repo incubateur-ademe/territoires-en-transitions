@@ -862,7 +862,6 @@ export const appLabels = {
   importPlanIaEnCours:
     'Cela peut prendre quelques minutes. Ne fermez pas cette fenêtre.',
   importPlanIaErreur: "L'import a échoué",
-  importPlanIaEtapeExtraction: 'Lecture du document',
   importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeLecture: 'Lecture du document',
   importPlanIaEtapeReperage: 'Repérage des fiches action',
