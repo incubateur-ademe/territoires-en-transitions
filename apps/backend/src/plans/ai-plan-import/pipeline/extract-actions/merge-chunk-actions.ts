@@ -46,12 +46,17 @@ export const mergeChunkActions = (
 
 // La numérotation peut varier d'une tranche à l'autre quand le modèle la
 // génère, la casse, les accents et la ponctuation selon qu'il recopie un
-// titre en capitales ou le sommaire.
+// titre en capitales ou le sommaire ; « ACTION 3 - » et « 2.1.3 » numérotent
+// la même fiche, l'un dans la fiche, l'autre dans le tableau récapitulatif.
 export const normalizeTitle = (titre: string): string =>
   titre
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
+    .replace(
+      /^(?:fiche(?:[\s-]*actions?)?|action|mesure)\s*(?:n[°º]\s*)?[a-z]{0,3}[\s-]?\d+(?:[.-]\d+)*/u,
+      ''
+    )
     .replace(/^[\d.\s]+/, '')
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();

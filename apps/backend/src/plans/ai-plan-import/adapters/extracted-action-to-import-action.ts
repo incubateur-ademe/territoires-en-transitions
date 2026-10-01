@@ -10,6 +10,7 @@ import {
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
+import { stripTitleNumber, unifyAxisLabels } from './normalize-plan-labels';
 import { textToRichText } from './text-to-rich-text';
 
 export const MAX_FICHE_TITLE_LENGTH = 300;
@@ -53,8 +54,14 @@ export type NormalizedExtractedActions = {
 };
 
 export const normalizeExtractedActions = (
-  actions: ExtractedAction[]
+  extracted: ExtractedAction[]
 ): NormalizedExtractedActions => {
+  const actions = unifyAxisLabels(
+    extracted.map((action) => ({
+      ...action,
+      titre: stripTitleNumber(action.titre) || action.titre,
+    }))
+  );
   const truncatedCount = countOverlongTitles(actions);
   const capped = capExtractedActionTitles(actions);
   const deduped = dedupeExtractedActions(capped);
