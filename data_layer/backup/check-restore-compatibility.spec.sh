@@ -36,6 +36,9 @@ printf '%s\n' \
     '  if [ "${ARCHIVE_QUEUE_TABLE_MISSING:-false}" != "true" ]; then' \
     '    printf "3; 0 3 TABLE DATA private indicateur_reconciliation_formule owner\\n"' \
     '  fi' \
+    '  if [ "${ARCHIVE_REPAIR_TABLE_MISSING:-false}" != "true" ]; then' \
+    '    printf "4; 0 4 TABLE DATA private indicateur_valeur_date_repair owner\\n"' \
+    '  fi' \
     '  exit 0' \
     'fi' \
     'if [ "${SOURCE_PHASE:-legacy}" != "missing-registry" ]; then' \
@@ -47,20 +50,25 @@ printf '%s\n' \
     'if [ "${SOURCE_PHASE:-legacy}" = "partial-expand" ]; then' \
     '  printf "change-id\\thash\\tindicateur/periodicite\\ttet\\tnote\\n"' \
     'fi' \
-    'if [ "${SOURCE_PHASE:-legacy}" = "expand" ] || [ "${SOURCE_PHASE:-legacy}" = "partial-contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract" ] || [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
+    'if [ "${SOURCE_PHASE:-legacy}" = "expand" ] || [ "${SOURCE_PHASE:-legacy}" = "partial-contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract-margny" ] || [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
     '  printf "change-id\\thash\\tindicateur/periodicite\\ttet\\tnote\\n"' \
     '  printf "change-id\\thash\\tindicateur/reconciliation_formules\\ttet\\tnote\\n"' \
     '  printf "change-id\\thash\\tindicateur/dependances_formules\\ttet\\tnote\\n"' \
     'fi' \
-    'if [ "${SOURCE_PHASE:-legacy}" = "partial-contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract" ] || [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
+    'if [ "${SOURCE_PHASE:-legacy}" = "partial-contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract-margny" ] || [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
     '  printf "change-id\\thash\\tindicateur/periodicite_obligatoire\\ttet\\tnote\\n"' \
     'fi' \
-    'if [ "${SOURCE_PHASE:-legacy}" = "contract" ] || [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
+    'if [ "${SOURCE_PHASE:-legacy}" = "contract" ] || [ "${SOURCE_PHASE:-legacy}" = "contract-margny" ] || [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
     '  printf "change-id\\thash\\tindicateur/periodicite_formules\\ttet\\tnote\\n"' \
     '  printf "change-id\\thash\\tstats/report_indicateur_resultat_periode\\ttet\\tnote\\n"' \
     'fi' \
     'if [ "${SOURCE_PHASE:-legacy}" = "annual" ]; then' \
     '  printf "change-id\\thash\\tindicateur/periodicite_annuelle\\ttet\\tnote\\n"' \
+    'fi' \
+    'if [ "${SOURCE_PHASE:-legacy}" = "contract-margny" ]; then' \
+    '  printf "change-id\\thash\\tindicateur/periodicite_annuelle\\ttet\\tnote\\n"' \
+    '  printf "change-id\\thash\\tindicateur/periodicite_activation\\ttet\\tnote\\n"' \
+    '  printf "change-id\\thash\\tindicateur/margny_indicateurs_mensuels\\ttet\\tnote\\n"' \
     'fi' \
     > "$FAKE_BIN/pg_restore"
 
@@ -244,3 +252,8 @@ assert_success 'schema snapshots restore to schema targets' SOURCE_PHASE=schema 
 assert_success 'legacy snapshots restore to additive schema targets' SOURCE_PHASE=legacy TARGET_PHASE=schema bash "$CHECK_SCRIPT" "$DUMP_FILE"
 assert_failure 'schema snapshots cannot restore to legacy targets' SOURCE_PHASE=schema TARGET_PHASE=legacy bash "$CHECK_SCRIPT" "$DUMP_FILE"
 assert_failure 'schema snapshots cannot restore to annual targets' SOURCE_PHASE=schema TARGET_PHASE=annual bash "$CHECK_SCRIPT" "$DUMP_FILE"
+
+assert_success 'Margny snapshots restore on a Margny target' SOURCE_PHASE=contract-margny TARGET_PHASE=contract-margny bash "$CHECK_SCRIPT" "$DUMP_FILE"
+assert_failure 'Margny snapshots cannot restore before the data migration' SOURCE_PHASE=contract-margny TARGET_PHASE=contract bash "$CHECK_SCRIPT" "$DUMP_FILE"
+assert_failure 'older snapshots cannot undo Margny without reverting its registry' SOURCE_PHASE=contract TARGET_PHASE=contract-margny bash "$CHECK_SCRIPT" "$DUMP_FILE"
+assert_failure 'Margny snapshots retain original repair images' SOURCE_PHASE=contract-margny TARGET_PHASE=contract-margny ARCHIVE_REPAIR_TABLE_MISSING=true bash "$CHECK_SCRIPT" "$DUMP_FILE"

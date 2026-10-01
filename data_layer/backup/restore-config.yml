@@ -149,6 +149,7 @@ groups:
   periodicite_group:
     - migration.indicateur_valeur_periodicite_audit
     - private.indicateur_reconciliation_formule
+    - private.indicateur_valeur_date_repair
 
   pai_group:
     - action_impact_complexite

@@ -21,6 +21,7 @@ SOURCE_FORMULA_CHANGE="indicateur/periodicite_formules"
 SOURCE_FINAL_CHANGE="stats/report_indicateur_resultat_periode"
 ANNUAL_CHANGE="indicateur/periodicite_annuelle"
 ACTIVATION_CHANGE="indicateur/periodicite_activation"
+MARGNY_CHANGE="indicateur/margny_indicateurs_mensuels"
 SQITCH_PROJECT="tet"
 
 # The registry identifies the intended phase, while the physical object checks
@@ -88,6 +89,7 @@ target_phase=$(psql \
             END AS phase,
             count(*) FILTER (WHERE change = '$ANNUAL_CHANGE') > 0 AS annual_applied,
             count(*) FILTER (WHERE change = '$ACTIVATION_CHANGE') > 0 AS activation_applied,
+            count(*) FILTER (WHERE change = '$MARGNY_CHANGE') > 0 AS margny_applied,
             count(*) > 0 AS registry_seen
             FROM sqitch.changes
             WHERE project = '$SQITCH_PROJECT'
@@ -258,6 +260,8 @@ target_phase=$(psql \
         SELECT CASE
             WHEN NOT registry_seen
                 THEN 'missing-registry'
+            WHEN margny_applied AND (phase <> 'contract' OR NOT annual_applied OR NOT activation_applied)
+                THEN 'physical-drift-margny'
             WHEN phase = 'legacy'
              AND NOT annual_applied AND NOT activation_applied AND annual_guards_absent
              AND NOT periodicity_catalog_exists
@@ -306,6 +310,7 @@ target_phase=$(psql \
              AND periodicity_column_is_contract_compatible
              AND canonical_date_function_exists
              AND audit_table_exists
+             AND (NOT margny_applied OR to_regclass('private.indicateur_valeur_date_repair') IS NOT NULL)
              AND reconciliation_queue_exists
              AND dependency_projection_exists
              AND dependency_extractor_exists
@@ -318,7 +323,8 @@ target_phase=$(psql \
              AND ((annual_applied AND NOT activation_applied AND annual_guards_valid)
                   OR (NOT annual_applied AND NOT activation_applied AND annual_guards_absent)
                   OR (annual_applied AND activation_applied AND annual_guards_absent))
-                THEN CASE WHEN annual_applied AND NOT activation_applied THEN 'annual' ELSE 'contract' END
+                THEN CASE WHEN margny_applied THEN 'contract-margny'
+                          WHEN annual_applied AND NOT activation_applied THEN 'annual' ELSE 'contract' END
             WHEN phase IN ('partial-expand', 'partial-contract')
                 THEN phase
             ELSE 'physical-drift-' || phase
@@ -328,7 +334,7 @@ target_phase=$(psql \
     ")
 
 case "$target_phase" in
-    legacy|schema|expand|annual|contract)
+    legacy|schema|expand|annual|contract|contract-margny)
         ;;
     partial-expand)
         echo "Refusing to restore: target is inside a partial periodicity expand." >&2
@@ -371,6 +377,7 @@ source_phase=$(pg_restore \
         -v final_change="$SOURCE_FINAL_CHANGE" \
         -v annual_change="$ANNUAL_CHANGE" \
         -v activation_change="$ACTIVATION_CHANGE" \
+        -v margny_change="$MARGNY_CHANGE" \
         -v project="$SQITCH_PROJECT" '
         $4 == project { registry_seen = 1 }
         $3 == schema_change && $4 == project { schema_applied = 1 }
@@ -382,16 +389,18 @@ source_phase=$(pg_restore \
         $3 == final_change && $4 == project { final_applied = 1 }
         $3 == annual_change && $4 == project { annual_applied = 1 }
         $3 == activation_change && $4 == project { activation_applied = 1 }
+        $3 == margny_change && $4 == project { margny_applied = 1 }
         END {
             expand_complete = expand_applied \
                 && reconciliation_applied && dependencies_applied
             if (!registry_seen) {
                 print "missing-registry"
             } else if (expand_complete && mandatory_applied && formula_applied && final_applied) {
-                if (activation_applied && !annual_applied) print "partial-contract"
+                if ((activation_applied && !annual_applied) || (margny_applied && (!annual_applied || !activation_applied))) print "partial-contract"
+                else if (margny_applied) print "contract-margny"
                 else if (annual_applied && !activation_applied) print "annual"
                 else print "contract"
-            } else if (annual_applied || activation_applied || mandatory_applied || formula_applied || final_applied) {
+            } else if (margny_applied || annual_applied || activation_applied || mandatory_applied || formula_applied || final_applied) {
                 print "partial-contract"
             } else if (expand_complete) {
                 print "expand"
@@ -407,7 +416,7 @@ source_phase=$(pg_restore \
     ')
 
 case "$source_phase" in
-    legacy|schema|expand|annual|contract)
+    legacy|schema|expand|annual|contract|contract-margny)
         ;;
     partial-expand)
         echo "Refusing to restore: backup is inside a partial periodicity expand." >&2
@@ -453,6 +462,14 @@ if [[ "$source_phase" != "legacy" && "$source_phase" != "schema" ]]; then
         echo "Refusing to restore: backup lacks formula reconciliation data." >&2
         exit 1
     fi
+fi
+
+# Keep the original repair images with a Margny snapshot so its guarded revert
+# remains possible until cleanup. Do not load it onto an unmigrated registry.
+if [[ "$source_phase" == "contract-margny" ]] && ! archive_has_table_data \
+    private indicateur_valeur_date_repair; then
+    echo "Refusing to restore: backup lacks Margny repair archive data." >&2
+    exit 1
 fi
 
 if [[ "$source_phase" != "$target_phase" && "$source_phase:$target_phase" != "legacy:schema" ]]; then

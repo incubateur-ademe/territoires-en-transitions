@@ -3,9 +3,11 @@
 | Ordre | PR / branche | Responsabilité | Application après déploiement |
 | --- | --- | --- | --- |
 | 1 | #5220 — `fix/indicateur-data-before-periodicite` | Réparations des neuf observations approuvées et contrôle des dates | Backend actuel, schéma historique |
-| 2 | `split/periodicite-schema` | Catalogue, colonnes annuelles et index supplémentaires | Backend actuel, schéma compatible |
+| 2 | #5292 — `split/periodicite-schema` | Catalogue, colonnes annuelles et index supplémentaires | Backend actuel, schéma compatible |
 | 3 | #5214 — `split/periodicite-data-migration` | Backend, protection des saisies, correction de formule, contrôles et bascule SQL | Nouveau backend annuel |
 | 4 | #5215 — `split/periodicite-activation` | Nouvelles cadences, saisie et agrégations de restitution | Quatre cadences |
+| 5 | PR dédiée — `fix/margny-indicateurs-mensuels` | Migration mensuelle des deux indicateurs et six observations de Margny | Schéma activé, archives conservées |
+| 6 | #5296 — `chore/periodicite-cleanup` | Retrait du temporaire après validation et sauvegarde complète | Schéma final nettoyé |
 
 Les livraisons 1 et 2 peuvent rester en production avec le backend actuel.
 Chaque livraison se base sur la précédente. Après fusion/squash du parent,
@@ -72,3 +74,8 @@ canoniques, les droits inchangés et la conservation des écritures lors du reve
 Le 30 septembre 2026, un scénario des vrais routeurs de l'ancien backend a aussi
 validé insertion, upsert, édition, lecture et suppression avant et après ce schéma,
 sur deux bases jetables avec fixtures synthétiques.
+
+## Migration métier de Margny
+
+Après #5215, suivre le [guide de migration mensuelle de Margny](margny-monthly-migration.md).
+Cette livraison reste déployable avant le nettoyage #5296.

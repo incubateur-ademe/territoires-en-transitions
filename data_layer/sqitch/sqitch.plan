@@ -1131,3 +1131,5 @@ indicateur/reserver-ecriture-valeurs-backend [indicateur/periodicite_annuelle pr
 @indicateur-periodicite-annuelle 2026-09-29T09:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Première PR déployable indépendamment de l activation
 indicateur/periodicite_activation [indicateur/periodicite_annuelle indicateur/reserver-ecriture-valeurs-backend] 2026-09-29T10:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Quatrième livraison : ouvre les quatre cadences et l agrégation sans remigrer les données
 @indicateur-periodicite-activee 2026-09-29T10:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Activation après validation de la livraison backend annuelle
+indicateur/margny_indicateurs_mensuels [indicateur/periodicite_activation] 2026-10-01T08:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Cinquième livraison : réintègre les six observations de Margny au mensuel sans supprimer les archives
+@indicateur-margny-mensuel 2026-10-01T08:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Migration métier de Margny validée avant nettoyage
