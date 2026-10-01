@@ -45,7 +45,7 @@ const main = async () => {
   }
 };
 
-/** Supprime toutes les valeurs des démarches notées ; la table n'a pas d'id : une valeur saisie après l'import sur ces démarches part avec. */
+/** La table n'a pas d'id : une valeur saisie après l'import sur ces démarches part avec. */
 const deleteValeurs = async (client: PoolClient) => {
   const { rowCount } = await client.query(
     `delete from public.demarche_pcaet_vulnerabilite_valeur
@@ -55,7 +55,7 @@ const deleteValeurs = async (client: PoolClient) => {
   return rowCount ?? 0;
 };
 
-/** Supprime les « Déchets » créées par l'import qu'aucune valeur ne vise plus ; celle qu'un autre dossier a reçue reste. */
+/** Une « Déchets » qu'un nouveau PCAET de la collectivité a reçue depuis reste. */
 const deleteThematiquesInutilisees = async (client: PoolClient) => {
   const { rows } = await client.query<{ retirees: number; gardees: number }>(
     `with creees as (
@@ -74,7 +74,6 @@ const deleteThematiquesInutilisees = async (client: PoolClient) => {
   return rows[0];
 };
 
-/** Supprime les traces de l'étape (`lignes_ecrites`) et ses écarts. */
 const deleteTraces = async (client: PoolClient) => {
   await client.query(
     `delete from reprise_tec.lignes_ecrites

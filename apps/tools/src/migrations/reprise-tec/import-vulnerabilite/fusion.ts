@@ -1,5 +1,3 @@
-/** La fusion : une ligne TeT par démarche et par thématique, où plusieurs libellés T&C peuvent tomber (Résidentiel et Tertiaire dans Bâtiments). */
-
 import type { Ligne } from './lignes';
 import { toTexte, type Niveau } from './niveau';
 import type { Thematique } from './thematiques';
@@ -10,13 +8,10 @@ export type Valeur = {
   thematique: Thematique;
   niveau: Niveau | null;
   objectifs: string | null;
-  // la ligne s'écrit dans TeT : elle a un niveau ou un objectif ; pour une thématique de la collectivité, autre chose que « non concerné »
   aEcrire: boolean;
-  // les lignes T&C réunies, chacune écrite si son niveau est celui retenu ou si son objectif est écrit
   lignes: { ligne: Ligne; ecrite: boolean }[];
 };
 
-// Le rang d'une ligne dans la fusion : le plus haut l'emporte. « Oui » sans niveau passe devant « non concerné ».
 const RANGS: Record<Niveau | 'oui', number> = {
   fort: 5,
   moyen: 4,
@@ -25,7 +20,6 @@ const RANGS: Record<Niveau | 'oui', number> = {
   non_concerne: 1,
 };
 
-/** Réunit les lignes d'une démarche et d'une thématique ; niveau retenu : fort > moyen > faible > « Oui » sans niveau > non concerné > rien. */
 export const mergeLignes = (lignes: readonly Ligne[]): Valeur[] => {
   const groupes = new Map<string, Ligne[]>();
   for (const ligne of lignes) {
@@ -72,11 +66,10 @@ export const mergeLignes = (lignes: readonly Ligne[]): Valeur[] => {
   });
 };
 
-/** Le rang d'une ligne : son niveau, « oui » pour un « Oui » sans niveau, `null` si elle ne dit rien. */
 const toRang = ({ vulnerable }: Ligne) =>
   vulnerable.niveau ?? (vulnerable.oui ? 'oui' : null);
 
-/** Colle les objectifs : un seul tel quel ; plusieurs, « libellé T&C : texte », séparés par « / » ; un texte identique une fois. */
+/** Séparés par « / » : l'écran n'affiche pas les retours à la ligne. */
 const joinObjectifs = (groupe: readonly Ligne[]) => {
   const parTexte = new Map<string, string>();
   for (const { libelle, objectif } of groupe) {
