@@ -1,7 +1,7 @@
-import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { CstNode } from 'chevrotain';
 import { ExpressionParser } from './expression-parser';
 import { getExpressionVisitor } from './expression-visitor';
+import { tokenizeAndParse } from './tokenize-and-parse';
 
 // Exemple de parser dérivé du parser de base
 class TestParser extends ExpressionParser {
@@ -28,16 +28,7 @@ class TestVisitor extends getExpressionVisitor(
 const visitor = new TestVisitor();
 
 function parseExpression(inputText: string): CstNode {
-  const lexingResult = parser.lexer.tokenize(inputText);
-  parser.input = lexingResult.tokens;
-  const cst = parser.statement();
-
-  if (parser.errors && parser.errors.length > 0) {
-    throw new Error(getFormmattedErrors(parser.errors), {
-      cause: parser.errors,
-    });
-  }
-  return cst;
+  return tokenizeAndParse(parser, inputText);
 }
 
 // décommenter (et lancer les tests) pour màj la doc

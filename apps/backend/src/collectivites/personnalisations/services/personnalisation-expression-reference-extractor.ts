@@ -1,4 +1,7 @@
-import { getExpressionVisitor } from '@tet/backend/utils/expression-parser';
+import {
+  getExpressionVisitor,
+  tokenizeAndParse,
+} from '@tet/backend/utils/expression-parser';
 import { PersonnalisationExpressionReferences } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
 import { parser } from './personnalisations-expression.service';
 
@@ -82,9 +85,7 @@ class PersonnalisationExpressionReferenceExtractor extends getExpressionVisitor(
 export function extractReferencesFromExpression(
   formula: string
 ): PersonnalisationExpressionReferences {
-  const lexingResult = parser.lexer.tokenize(formula);
-  parser.input = lexingResult.tokens;
-  const cst = parser.statement();
+  const cst = tokenizeAndParse(parser, formula);
 
   const extractor = new PersonnalisationExpressionReferenceExtractor();
   extractor.visit(cst);

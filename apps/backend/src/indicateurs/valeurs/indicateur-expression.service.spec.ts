@@ -3,6 +3,7 @@ import {
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
+import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
 import IndicateurExpressionService from './indicateur-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -22,6 +23,14 @@ describe('IndicateurExpressionService', () => {
   });
 
   describe('extractNeededSourceIndicateursFromFormula', () => {
+    test('lève InvalidExpressionError sur un caractère non reconnu', () => {
+      expect(() =>
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'val(cae_1.e) % 2'
+        )
+      ).toThrow(InvalidExpressionError);
+    });
+
     test('Test simple formula', async () => {
       const formula = 'val(Cae_1.e ) + val( cae_1.F)';
       const neededSourceIndicateurs =

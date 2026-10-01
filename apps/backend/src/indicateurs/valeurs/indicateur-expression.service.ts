@@ -1,12 +1,12 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PersonnalisationReponses } from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
+  tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
-import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { CstNode } from 'chevrotain';
 import { isEqual, isNil } from 'es-toolkit';
@@ -487,37 +487,20 @@ export default class IndicateurExpressionService {
   extractNeededSourceIndicateursFromFormula(
     formula: string
   ): ReferencedIndicateur[] {
-    // On parse la formule pour obtenir le CST
-    const lexingResult = parser.lexer.tokenize(formula);
-    parser.input = lexingResult.tokens;
-    const cst = parser.statement();
-    if (parser.errors.length > 0) {
-      this.logger.error(
-        `Parsing errors detected: ${JSON.stringify(parser.errors)}`
-      );
-      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
-        cause: parser.errors,
-      });
-    }
+    const cst = this.parseExpression(formula);
     const refVisitor = new IndicateurReferenceExtractionVisitor();
     refVisitor.visit(cst);
     return refVisitor.references;
   }
 
   parseExpression(inputText: string): CstNode {
-    const lexingResult = parser.lexer.tokenize(inputText);
-    parser.input = lexingResult.tokens;
-    const cst = parser.statement();
-
-    if (parser.errors.length > 0) {
+    try {
+      return tokenizeAndParse(parser, inputText);
+    } catch (error) {
       this.logger.error(
-        `Parsing errors detected: ${JSON.stringify(parser.errors)}`
+        `Parsing errors detected: ${JSON.stringify((error as Error).cause)}`
       );
-      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
-        cause: parser.errors,
-      });
-    } else {
-      return cst;
+      throw error;
     }
   }
 
