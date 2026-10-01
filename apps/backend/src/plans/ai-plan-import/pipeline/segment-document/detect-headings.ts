@@ -31,9 +31,13 @@ const MAX_JOINED_LENGTH = 120;
 const MAX_JOINED_EXPLICIT_LENGTH = 200;
 // Une page qui aligne des lignes « 2.1.3 Titre » presque sans texte entre
 // elles est un tableau récapitulatif : ce sont des lignes de tableau, pas des
-// fiches.
+// fiches. Un plan compact donne au moins deux lignes de texte par action.
 const SUMMARY_MIN_ROWS = 4;
-const SUMMARY_MAX_LINES_PER_ROW = 4;
+const SUMMARY_MAX_LINES_PER_ROW = 2.5;
+// Après un intertitre, la fiche suivante ou le bandeau de son objectif.
+const SOUS_AXE_LEVEL = 2;
+// Deux morceaux d'une même ligne physique, côte à côte en deux colonnes.
+const SAME_ROW_TOLERANCE = 0.5;
 // Les numéros de fiches se suivent : un saut plus grand trahit un numéro de
 // page ou un chiffre clé en grand.
 const MAX_NUMBER_GAP = 3;
@@ -71,10 +75,12 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
             explicit,
             isLargeLine: (other) => sizeOf(other) === 'large',
           })
-        : [];
-      const continuationText = continuation.map((l) => l.text.trim()).join(' ');
+        : { lines: [], lastLineIndex: lineIndex };
+      const continuationText = continuation.lines
+        .map((l) => l.text.trim())
+        .join(' ');
       const joined =
-        continuation.length === 0
+        continuation.lines.length === 0
           ? null
           : explicit && alone
           ? { ...alone, title: `${alone.title} ${continuationText}`.trim() }
@@ -87,9 +93,7 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
       if (!match) {
         return;
       }
-      const lastLineIndex = joined
-        ? lineIndex + continuation.length
-        : lineIndex;
+      const lastLineIndex = joined ? continuation.lastLineIndex : lineIndex;
       skipUntil = lastLineIndex;
       headings.push({
         pageIndex: page.index,
@@ -107,7 +111,8 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
       dropIntertitleSections(
         demoteCapitalsBelowExplicitAxes(
           dropSummaryRows(demoteBannersAboveFiches(detected), pages)
-        )
+        ),
+        pages
       )
     ),
     pages,
@@ -196,22 +201,34 @@ const demoteCapitalsBelowExplicitAxes = (
 };
 
 /**
- * « Suivi et évaluation » en corps de texte, juste après le titre d'une
- * fiche : un intertitre de la fiche, pas une partie du document.
+ * « Suivi et évaluation » en corps de texte entre deux fiches (ou le bandeau
+ * d'objectif de la suivante) : un intertitre de la fiche, pas une partie du
+ * document. Sans taille de police connue (Word, OCR), ou après la dernière
+ * fiche (« Annexes »), le titre reste une partie.
  */
 const dropIntertitleSections = (
-  headings: DetectedHeading[]
-): DetectedHeading[] =>
-  headings.filter((heading, index) => {
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): DetectedHeading[] => {
+  const hasFontSize = (heading: DetectedHeading) =>
+    pages.find((page) => page.index === heading.pageIndex)?.lines[
+      heading.lineIndex
+    ]?.fontSize !== undefined;
+  return headings.filter((heading, index) => {
     const previous = headings[index - 1];
+    const next = headings[index + 1];
     return !(
       heading.match.level === SECTION_LEVEL &&
       !heading.isLarge &&
+      hasFontSize(heading) &&
       previous !== undefined &&
       previous.match.level >= FICHE_LEVEL &&
-      heading.pageIndex - previous.pageIndex <= 1
+      heading.pageIndex - previous.pageIndex <= 1 &&
+      next !== undefined &&
+      next.match.level >= SOUS_AXE_LEVEL
     );
   });
+};
 
 const accepted = (match: HeadingMatch | null): HeadingMatch | null =>
   match && match.confidence >= HEADING_CONFIDENCE_THRESHOLD ? match : null;
@@ -219,7 +236,9 @@ const accepted = (match: HeadingMatch | null): HeadingMatch | null =>
 /**
  * Les lignes suivantes de même grande police, sans rien de minuscule : la
  * suite du titre. Un titre explicite (fiche, objectif, axe) admet une suite
- * plus longue, dans une autre police tant qu'elle reste grande.
+ * plus longue, dans une autre police tant qu'elle reste grande, mais jamais
+ * un chiffre clé en encadré (« 2030 », « 400 000 € »). Le morceau de la
+ * colonne voisine, posé sur la même ligne physique, est sauté.
  */
 const continuationOf = (
   lines: PageLine[],
@@ -228,10 +247,11 @@ const continuationOf = (
     explicit,
     isLargeLine,
   }: { explicit: boolean; isLargeLine: (line: PageLine) => boolean }
-): PageLine[] => {
+): { lines: PageLine[]; lastLineIndex: number } => {
   const first = lines[lineIndex];
   const maxLength = explicit ? MAX_JOINED_EXPLICIT_LENGTH : MAX_JOINED_LENGTH;
   const continuation: PageLine[] = [];
+  let lastLineIndex = lineIndex;
   let length = first.text.trim().length;
   for (
     let index = lineIndex + 1;
@@ -240,6 +260,9 @@ const continuationOf = (
   ) {
     const line = lines[index];
     const text = line.text.trim();
+    if (isSameRow(lines[lastLineIndex], line)) {
+      continue;
+    }
     length += text.length + 1;
     const sameFont =
       first.fontSize !== undefined &&
@@ -253,14 +276,24 @@ const continuationOf = (
       // « II. » ou « 3 » : le début du titre suivant, pas la suite de celui-ci.
       /^(?:[IVX]{1,4}|\d{1,2})[.)]?(?:\s|$)/u.test(text) ||
       // « ACTION 1- PILOTER » sous « 1- ASSURER LA GOUVERNANCE » : un autre titre.
-      startsExplicitHeading(text)
+      startsExplicitHeading(text) ||
+      (explicit && isKeyFigure(text))
     ) {
       break;
     }
     continuation.push(line);
+    lastLineIndex = index;
   }
-  return continuation;
+  return { lines: continuation, lastLineIndex };
 };
+
+const isSameRow = (a: PageLine, b: PageLine): boolean =>
+  a.y !== undefined &&
+  b.y !== undefined &&
+  Math.abs(a.y - b.y) <= SAME_ROW_TOLERANCE * (a.fontSize ?? 1);
+
+const isKeyFigure = (text: string): boolean =>
+  /^\d/u.test(text) || text.replace(/[^\p{L}]/gu, '').length < 3;
 
 const startsExplicitHeading = (text: string): boolean => {
   const match = matchHeading(text);

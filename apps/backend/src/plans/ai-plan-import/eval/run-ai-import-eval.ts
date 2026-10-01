@@ -58,6 +58,7 @@ type EvalOutput = EvalRun & {
   error: string | null;
   warnings: string[];
   stepStates: unknown;
+  plan: EvalRun['draft'];
   diff: EvalDiff | ManualReferenceDiff | null;
 };
 
@@ -197,12 +198,14 @@ const main = async (): Promise<number> => {
 
   // Un import en échec rend les actions d'avant l'étape fautive : on les
   // mesure quand même, c'est ce qui dit pourquoi l'étape a échoué.
-  // Mesuré tel que le plan sera créé : titres sans numéro, axes unifiés.
-  const pipelineDraft =
+  const draft =
     outcome.status === 'done' ? outcome.draft : outcome.partialDraft;
-  const draft = {
-    ...pipelineDraft,
-    actions: normalizeExtractedActions(pipelineDraft.actions).actions,
+  // Le plan tel qu'il sera créé (titres sans numéro, axes unifiés) : c'est
+  // lui que juge une référence manuelle. Le brouillon brut reste la base des
+  // métriques, comparables d'un run à l'autre, et du diagnostic.
+  const plan = {
+    ...draft,
+    actions: normalizeExtractedActions(draft.actions).actions,
   };
   const metrics = computeEvalMetrics({
     draft,
@@ -213,7 +216,7 @@ const main = async (): Promise<number> => {
     reference === null
       ? null
       : isManualReference(reference)
-      ? compareWithManualReference({ draft, metrics }, reference)
+      ? compareWithManualReference({ draft: plan, metrics }, reference)
       : compareWithReference({ draft, metrics }, reference);
 
   const output: EvalOutput = {
@@ -231,6 +234,7 @@ const main = async (): Promise<number> => {
     warnings: outcome.warnings,
     metrics,
     draft,
+    plan,
     diff,
   };
   const outPath =

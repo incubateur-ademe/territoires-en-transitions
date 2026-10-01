@@ -107,9 +107,11 @@ l'étape 7 s'il désactive les sous-actions.
 Avant la création du plan, le brouillon est normalisé
 (`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un
 titre d'action (« 2.1.3 », « Action 3 - ») est retiré, car il ne sert qu'au
-rattachement pendant l'import ; un même axe ou sous-axe libellé de deux façons
-(même numéro, ou mêmes mots aux accents et à la casse près) prend une seule
-graphie, en casse normale de préférence ; les doublons exacts sont écartés.
+rattachement pendant l'import, sauf s'il est seul à distinguer deux fiches ;
+un même axe ou sous-axe libellé de deux façons (mêmes mots aux accents et à
+la casse près) prend une seule graphie, en casse normale de préférence, et un
+numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro ; les
+doublons exacts sont écartés.
 
 La lecture (étape 1) porte aussi un garde-fou déterministe,
 `pipeline/detect-document-tome/` : un PCAET se publie en plusieurs tomes, et
