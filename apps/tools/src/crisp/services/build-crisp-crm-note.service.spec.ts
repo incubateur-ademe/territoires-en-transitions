@@ -83,7 +83,7 @@ describe('formatCrmNote', () => {
         '👤 Jean Dupont — compte TeT créé le 12/03/2024',
         '🔐 ProConnect : jean.dupont@ville.fr (MonCompteAdeme)',
         '',
-        '🏛 Ville de X — Admin',
+        '🏛 Ville de X — Admin → https://app.tet.fr/collectivite/12',
         '   Fiche CRM : https://airtable.com/app/tbl/rec1',
         '   Référentiels :',
         '     • CAE : 3★ (2023) · réalisé 52,3 % · programmé 18,1 %',
