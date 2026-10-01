@@ -39,7 +39,8 @@ export const readPdfPages: PdfReader = async (buffer) => {
     }
     return pages;
   } finally {
-    await document.destroy();
+    // Le PDFDocumentProxy d'unpdf 1.8 n'a plus de destroy() : seule la tâche de chargement libère le worker.
+    await document.loadingTask.destroy();
   }
 };
 
