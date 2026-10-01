@@ -6,7 +6,6 @@ import {
   PersonnalisationReponseValue,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
-import { referentielIdEnumValues } from '@tet/domain/referentiels';
 import { transformReponseToWrite } from './transform-reponse';
 
 /**
@@ -76,20 +75,6 @@ export const useSetPersonnalisationReponse = () => {
     },
 
     onSettled: async () => {
-      await Promise.all(
-        referentielIdEnumValues
-          .filter((referentielId) => referentielId !== 'te-test')
-          .map((referentielId) =>
-            queryClient.invalidateQueries({
-              queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
-                collectiviteId,
-                referentielId,
-              }),
-              refetchType: 'all',
-            })
-          )
-      );
-
       // refetchType 'all' : la personnalisation est sur une autre page, les queries
       // listActionsGroupedById sont inactives ; sans ça + DISABLE_AUTO_REFETCH,
       // le référentiel affiche encore l'ancienne liste au retour.

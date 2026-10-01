@@ -40,7 +40,7 @@ export function useListSnapshots({
 
 /**
  * @returns the mutation that will re-compute all action's scores,
- * save them into current snapshot, and invalidate the current snapshot query
+ * save them into current snapshot, and invalidate the actions list query
  */
 export function useSnapshotComputeAndUpdate() {
   const trpc = useTRPC();
@@ -48,12 +48,7 @@ export function useSnapshotComputeAndUpdate() {
 
   const { mutate: computeScoreAndUpdateCurrentSnapshot } = useMutation(
     trpc.referentiels.snapshots.computeAndUpsert.mutationOptions({
-      onSuccess: (snapshot, inputParams) => {
-        queryClient.setQueryData(
-          trpc.referentiels.snapshots.getCurrent.queryKey(inputParams),
-          snapshot
-        );
-
+      onSuccess: (snapshot) => {
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: snapshot.collectiviteId,
