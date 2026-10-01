@@ -10,51 +10,43 @@ inputs:
     required: true
   cache-scope:
     description: >
-      Scope du cache BuildKit (backend GitHub Actions) ; désactivé si vide.
-      À garder au niveau de l'image (`tet-backend`) et non de l'environnement
-      cible (`tet-backend-prod`) : le cache Actions est limité à 10 Go par
-      dépôt, partagé avec tous les autres workflows, avec éviction LRU. Un
-      scope par (image, cible) multiplierait les caches par 3 — ils
-      s'évinceraient mutuellement et évinceraient ceux de la CI, pour un taux
-      de hit final proche de zéro. Un scope par image laisse au contraire les
-      trois cibles partager le préfixe coûteux (fetch + install pnpm), qui est
-      identique pour toutes puisque les ARG/ENV spécifiques à
-      l'environnement n'interviennent qu'après.
+      Scope du cache BuildKit dans le registre de l'image ; désactivé si vide.
+      Le cache est publié sous le tag buildcache-<scope>, partagé entre les
+      branches et les environnements. Garder un scope par image (tet-app,
+      tet-backend, etc.) pour réutiliser les couches fetch/install pnpm.
     required: false
-    default: ""
+    default: ''
   build-args:
     description: Liste de build-args au format KEY=VALUE, une par ligne
     required: false
-    default: ""
+    default: ''
   secrets:
     description: >
       Liste de secrets BuildKit au format id=NOM_VAR_ENV, une par ligne.
       NOM_VAR_ENV doit être défini via `env:` sur l'étape qui appelle cette action.
     required: false
-    default: ""
+    default: ''
   push:
     description: Pousse l'image construite vers le registre (désactivé lors des exécutions locales via act)
     required: false
-    default: "true"
+    default: 'true'
+  reuse-image:
+    description: >
+      Réutilise l'image si son tag existe déjà dans le registre. À activer
+      uniquement pour les images dont tous les inputs sont fixés par le
+      commit (sans configuration d'environnement au build).
+    required: false
+    default: 'false'
 
 runs:
   using: composite
 
   steps:
     - name: Prépare un builder BuildKit avec driver docker-container
-      # nécessaire pour --push et --cache-to type=gha : le builder par défaut
+      # nécessaire pour --push et --cache-to type=registry : le builder par défaut
       # des runners (driver "docker") ne supporte pas ces exports.
       shell: bash
       run: docker buildx create --use --name ci-builder --driver docker-container 2>/dev/null || docker buildx use ci-builder
-
-    - name: Expose les identifiants du cache GitHub Actions
-      # docker buildx build est appelé directement (pas via
-      # docker/build-push-action), donc ACTIONS_CACHE_URL/ACTIONS_RUNTIME_TOKEN
-      # ne sont pas exposées automatiquement : cette action les injecte dans
-      # l'environnement du job pour que --cache-to/--cache-from type=gha
-      # puissent s'authentifier.
-      if: ${{ inputs.push == 'true' && inputs.cache-scope != '' }}
-      uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4.0.0
 
     - name: Build (et push) de l'image
       shell: bash
@@ -68,8 +60,18 @@ runs:
         BUILD_ARGS_INPUT: ${{ inputs.build-args }}
         SECRETS_INPUT: ${{ inputs.secrets }}
         PUSH: ${{ inputs.push }}
+        REUSE_IMAGE: ${{ inputs.reuse-image }}
       run: |
         set -euo pipefail
+
+        # Une promotion ou un redéploiement du même commit n'a pas besoin de
+        # recompiler ni de réexporter le cache. Un registre indisponible ou un
+        # tag absent laisse le build normal prendre le relais.
+        if [ "$PUSH" = "true" ] && [ "$REUSE_IMAGE" = "true" ] \
+          && docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
+          echo "Image $IMAGE déjà publiée, réutilisation sans build."
+          exit 0
+        fi
 
         build_args=()
         while IFS= read -r line; do
@@ -116,11 +118,14 @@ runs:
         if [ "$PUSH" = "true" ]; then
           output_args+=(--push)
           if [ -n "$CACHE_SCOPE" ]; then
-            # ignore-error : une écriture de cache qui échoue (quota atteint,
-            # service Actions indisponible) ne doit pas faire échouer un
-            # déploiement.
-            cache_args+=(--cache-from "type=gha,scope=$CACHE_SCOPE")
-            cache_args+=(--cache-to "type=gha,mode=max,scope=$CACHE_SCOPE,ignore-error=true")
+            # GHCR partage le cache entre branches sans concurrencer les
+            # caches de la CI dans le quota Actions. mode=max conserve les
+            # couches intermédiaires fetch/install du build multi-stage ;
+            # zstd niveau 1 réduit le coût de compression des grosses couches.
+            # Une erreur d'export de cache ne doit pas bloquer le déploiement.
+            cache_ref="${IMAGE%:*}:buildcache-$CACHE_SCOPE"
+            cache_args+=(--cache-from "type=registry,ref=$cache_ref")
+            cache_args+=(--cache-to "type=registry,ref=$cache_ref,mode=max,compression=zstd,compression-level=1,ignore-error=true")
           fi
         else
           # Sans --push ni --load, le driver docker-container jette le

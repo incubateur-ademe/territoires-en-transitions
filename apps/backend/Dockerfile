@@ -44,7 +44,7 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 # ---- store pnpm ----
 # `pnpm fetch` ne lit que le lockfile : cette couche — la seule qui accède au
 # réseau — n'est invalidée que quand pnpm-lock.yaml change, jamais par une
-# modification de source. C'est ce qui rend `--cache-from type=gha` utile.
+# modification de source. C'est ce qui rend `--cache-from type=registry` utile.
 #
 # Un `RUN --mount=type=cache` ne suffirait pas : son contenu est local au
 # builder et n'est PAS exporté par `--cache-to`. Sur des runners éphémères il
