@@ -4,13 +4,14 @@ import { FicheActionSecteurAttribution } from './fiche-action-secteur-attributio
 export const toFicheSecteurs = (
   attribution: Pick<FicheActionSecteurAttribution, 'origine' | 'secteurs'>
 ): FicheSecteurs => {
-  if (attribution.origine === OrigineSecteursEnum.INDISPONIBLE) {
+  const { origine } = attribution;
+  if (origine === OrigineSecteursEnum.INDISPONIBLE) {
     return { etat: 'a_renseigner' };
   }
   if (attribution.secteurs.length === 0) {
-    return { etat: 'non_attribuable' };
+    return { etat: 'non_attribuable', origine };
   }
-  return { etat: 'attribue', secteurs: attribution.secteurs };
+  return { etat: 'attribue', secteurs: attribution.secteurs, origine };
 };
 
 /** Au-delà, un 404 est définitif : si Communs devait recevoir la fiche, il l'aurait reçue */

@@ -182,6 +182,7 @@ describe('Lecture des secteurs d’une fiche', () => {
     expect(await getSecteurs(ficheId)).toEqual({
       etat: 'attribue',
       secteurs: ['dechets'],
+      origine: 'automatique',
     });
 
     const attribution = await getAttribution(ficheId);
@@ -204,6 +205,7 @@ describe('Lecture des secteurs d’une fiche', () => {
     const attendu = {
       etat: 'attribue',
       secteurs: ['residentiel', 'branche_energie'],
+      origine: 'automatique',
     };
     expect(await getSecteurs(ficheId)).toEqual(attendu);
     expect(await getSecteurs(ficheId)).toEqual(attendu);
@@ -214,13 +216,19 @@ describe('Lecture des secteurs d’une fiche', () => {
     const ficheId = await nouvelleFiche();
     communs.repondParts(ficheId, { dechets: 0.04 });
 
-    expect(await getSecteurs(ficheId)).toEqual({ etat: 'non_attribuable' });
+    expect(await getSecteurs(ficheId)).toEqual({
+      etat: 'non_attribuable',
+      origine: 'automatique',
+    });
     expect(await getAttribution(ficheId)).toMatchObject({
       secteurs: [],
       origine: 'automatique',
     });
 
-    expect(await getSecteurs(ficheId)).toEqual({ etat: 'non_attribuable' });
+    expect(await getSecteurs(ficheId)).toEqual({
+      etat: 'non_attribuable',
+      origine: 'automatique',
+    });
     expect(communs.getNombreAppels(ficheId)).toBe(1);
   });
 
@@ -235,6 +243,7 @@ describe('Lecture des secteurs d’une fiche', () => {
     expect(await getSecteurs(ficheId)).toEqual({
       etat: 'attribue',
       secteurs: ['agriculture'],
+      origine: 'automatique',
     });
     expect(communs.getNombreAppels(ficheId)).toBe(2);
   });
@@ -295,8 +304,8 @@ describe('Lecture des secteurs d’une fiche', () => {
       getSecteurs(ficheId),
     ]);
     expect(resultats).toEqual([
-      { etat: 'attribue', secteurs: ['tertiaire'] },
-      { etat: 'attribue', secteurs: ['tertiaire'] },
+      { etat: 'attribue', secteurs: ['tertiaire'], origine: 'automatique' },
+      { etat: 'attribue', secteurs: ['tertiaire'], origine: 'automatique' },
     ]);
   });
 
@@ -312,6 +321,7 @@ describe('Lecture des secteurs d’une fiche', () => {
     expect(await getSecteurs(ficheId)).toEqual({
       etat: 'attribue',
       secteurs: ['agriculture'],
+      origine: 'manuelle',
     });
     expect(communs.getNombreAppels(ficheId)).toBe(0);
   });
@@ -347,6 +357,7 @@ describe('Lecture des secteurs d’une fiche', () => {
     expect(await getSecteurs(ficheId, lecteur)).toEqual({
       etat: 'attribue',
       secteurs: ['dechets'],
+      origine: 'automatique',
     });
   });
 
@@ -380,6 +391,7 @@ describe('Lecture des secteurs d’une fiche', () => {
       expect(await getSecteurs(ficheId)).toEqual({
         etat: 'attribue',
         secteurs: ['dechets'],
+        origine: 'automatique',
       });
       expect(communs.getNombreAppels(ficheId)).toBe(1);
     };
@@ -432,6 +444,7 @@ describe('Lecture des secteurs d’une fiche', () => {
       expect(await getSecteurs(sousActionId)).toEqual({
         etat: 'attribue',
         secteurs: ['agriculture'],
+        origine: 'automatique',
       });
       expect(communs.getNombreAppels(sousActionId)).toBe(1);
       expect(communs.getNombreAppels(parentId)).toBe(0);
@@ -453,6 +466,7 @@ describe('Lecture des secteurs d’une fiche', () => {
       expect(await getSecteurs(ficheId)).toEqual({
         etat: 'attribue',
         secteurs: ['agriculture'],
+        origine: 'automatique',
       });
       expect(communs.getNombreAppels(ficheId)).toBe(0);
     });
