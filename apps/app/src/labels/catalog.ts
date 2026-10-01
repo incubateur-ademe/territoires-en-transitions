@@ -860,7 +860,7 @@ export const appLabels = {
   importPlanIaOptionSousActions: 'Mon document contient des sous-actions',
   importPlanIaLancer: "Lancer l'import",
   importPlanIaEnCours:
-    'Cela peut prendre quelques minutes. Ne fermez pas cette fenêtre.',
+    'Cela peut prendre quelques minutes. Vous pouvez fermer cette fenêtre.',
   importPlanIaErreur: "L'import a échoué",
   importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeLecture: 'Lecture du document',
