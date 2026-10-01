@@ -1,6 +1,15 @@
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
+import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
+
+export type Indicateurs = {
+  date_valeur: string;
+  resultat: number;
+  identifiant: string;
+  periodicite: IndicateurPeriodicite;
+  source?: string;
+};
 
 const CODE_INSEE_COMMUNE_REGEX = /^(\d{5}|2[AB]\d{3})$/;
 

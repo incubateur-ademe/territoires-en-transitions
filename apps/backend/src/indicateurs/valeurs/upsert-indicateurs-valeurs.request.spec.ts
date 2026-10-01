@@ -25,17 +25,17 @@ describe('bulk indicateur valeurs input', () => {
     ).toEqual({ valeurs: [annualValeur] });
   });
 
-  it('rejects mixed annual and monthly batches until activation', () => {
+  it('accepts and preserves monthly values alongside annual values', () => {
     const monthlyValeur = {
       ...valeur,
       periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
       dateValeur: '2025-06-01',
     };
     expect(
-      upsertIndicateursValeursRequestSchema.safeParse({
+      upsertIndicateursValeursRequestSchema.parse({
         valeurs: [valeur, monthlyValeur],
-      }).success
-    ).toBe(false);
+      })
+    ).toEqual({ valeurs: [valeur, monthlyValeur] });
   });
 
   it('rejects the entire batch if it contains an unknown periodicite', () => {

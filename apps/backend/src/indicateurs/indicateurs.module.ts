@@ -14,6 +14,7 @@ import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
+import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
 import { IndicateurFormulaReconciliationRepository } from './definitions/indicateur-formula-reconciliation.repository';
@@ -66,6 +67,8 @@ import { ValidateIndicateurValeursWriteService } from './valeurs/validate-indica
 import { WriteIndicateurValeursService } from './valeurs/write-indicateur-valeurs.service';
 import { ReconcileIndicateurValeursService } from './valeurs/reconcile-indicateur-valeurs.service';
 import { IndicateurValeurLockRepository } from './valeurs/indicateur-valeur-lock.repository';
+import { UpsertGridValeursRepository } from './valeurs/upsert-grid-valeurs.repository';
+import { UpsertGridValeursService } from './valeurs/upsert-grid-valeurs.service';
 import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs/valeurs-reference.service';
 
@@ -122,6 +125,8 @@ const DEFINITIONS_PROVIDERS = [
     WriteIndicateurValeursService,
     ReconcileIndicateurValeursService,
     IndicateurValeurLockRepository,
+    UpsertGridValeursRepository,
+    UpsertGridValeursService,
     ImportIndicateurDefinitionService,
     ImportIndicateurDefinitionRepository,
     ImportIndicateurRelationsService,
@@ -131,6 +136,7 @@ const DEFINITIONS_PROVIDERS = [
 
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
+    IndicateurChartBuilder,
     IndicateurChartService,
     VerificationTrajectoireRules,
     TrajectoiresDataService,

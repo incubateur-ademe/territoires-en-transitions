@@ -359,11 +359,56 @@ apply_change data_layer/sqitch/verify/stats/report_indicateur_resultat_periode.s
 apply_change data_layer/sqitch/deploy/indicateur/periodicite_annuelle.sql
 apply_change data_layer/sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
 apply_change data_layer/sqitch/verify/indicateur/reserver-ecriture-valeurs-backend.sql
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_activation.sql
 release_test_output="$(psql_test --file="$repository_root/data_layer/tests/indicateur/periodicite-release.sql")"
 if [[ "$release_test_output" == *"not ok"* || "$release_test_output" == *"Looks like"* ]]; then
   printf '%s\n' "$release_test_output" >&2
   exit 1
 fi
+# Le retour à la livraison annuelle doit refuser les nouvelles données sans
+# retirer partiellement les capacités de la livraison activée ni perdre de
+# valeur, de commentaire, de provenance ou de règle de restitution.
+assert_activation_survives_failed_revert() {
+  expect_change_failure data_layer/sqitch/revert/indicateur/periodicite_activation.sql \
+    "le retour à l'annuel doit refuser un état activé incompatible"
+  apply_change data_layer/sqitch/verify/indicateur/periodicite_activation.sql
+}
+
+for cadence in mensuelle trimestrielle semestrielle; do
+  activated_id="$(scalar "INSERT INTO public.indicateur_definition (collectivite_id, titre, unite, periodicite) VALUES ($collectivite_id, 'cycle-activation-$cadence-$fixture_suffix', 'kWh', '$cadence') RETURNING id")"
+  activated_value_id="$(scalar "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, periodicite, resultat, objectif, resultat_commentaire, objectif_commentaire) VALUES ($activated_id, $collectivite_id, DATE '2042-01-01', '$cadence', 0, NULL, 'Résultat à conserver', 'Objectif absent à conserver') RETURNING id")"
+  activated_before="$(scalar "SELECT to_jsonb(valeur) FROM public.indicateur_valeur valeur WHERE id = $activated_value_id")"
+  assert_activation_survives_failed_revert
+  assert_equal "$activated_before" \
+    "$(scalar "SELECT to_jsonb(valeur) FROM public.indicateur_valeur valeur WHERE id = $activated_value_id")" \
+    "le refus du retour à l'annuel conserve intégralement la valeur $cadence"
+  scalar "DELETE FROM public.indicateur_valeur WHERE id = $activated_value_id; DELETE FROM public.indicateur_definition WHERE id = $activated_id" >/dev/null
+done
+
+# Une source importée peut avoir une cadence propre, même si toutes les
+# définitions locales restent annuelles : le contrôle doit aussi lire les valeurs.
+scalar "INSERT INTO public.indicateur_source (id, libelle) VALUES ('cycle-source-$fixture_suffix', 'Source de cycle de vie')" >/dev/null
+activated_metadonnee_id="$(scalar "INSERT INTO public.indicateur_source_metadonnee (source_id, date_version) VALUES ('cycle-source-$fixture_suffix', TIMESTAMP '2042-01-01') RETURNING id")"
+activated_value_id="$(scalar "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, periodicite, metadonnee_id, resultat) VALUES ($rollback_guard_id, $collectivite_id, DATE '2042-01-01', 'mensuelle', $activated_metadonnee_id, 0) RETURNING id")"
+activated_before="$(scalar "SELECT to_jsonb(valeur) FROM public.indicateur_valeur valeur WHERE id = $activated_value_id")"
+assert_activation_survives_failed_revert
+assert_equal "$activated_before" \
+  "$(scalar "SELECT to_jsonb(valeur) FROM public.indicateur_valeur valeur WHERE id = $activated_value_id")" \
+  "le refus conserve la valeur importée et sa provenance sans contrainte annuelle partielle"
+scalar "DELETE FROM public.indicateur_valeur WHERE id = $activated_value_id; DELETE FROM public.indicateur_source_metadonnee WHERE id = $activated_metadonnee_id; DELETE FROM public.indicateur_source WHERE id = 'cycle-source-$fixture_suffix'" >/dev/null
+
+for aggregation_column in aggregation_resultat aggregation_objectif; do
+  scalar "UPDATE public.indicateur_definition SET $aggregation_column = 'somme' WHERE id = $rollback_guard_id" >/dev/null
+  activated_before="$(scalar "SELECT to_jsonb(definition) FROM public.indicateur_definition definition WHERE id = $rollback_guard_id")"
+  assert_activation_survives_failed_revert
+  assert_equal "$activated_before" \
+    "$(scalar "SELECT to_jsonb(definition) FROM public.indicateur_definition definition WHERE id = $rollback_guard_id")" \
+    "le refus conserve la configuration $aggregation_column et les métadonnées de la définition"
+  scalar "UPDATE public.indicateur_definition SET $aggregation_column = NULL WHERE id = $rollback_guard_id" >/dev/null
+done
+
+apply_change data_layer/sqitch/revert/indicateur/periodicite_activation.sql
+apply_change data_layer/sqitch/verify/indicateur/periodicite_annuelle.sql
 apply_change data_layer/sqitch/revert/indicateur/reserver-ecriture-valeurs-backend.sql
 apply_change data_layer/sqitch/revert/indicateur/periodicite_annuelle.sql
 

@@ -1,8 +1,8 @@
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
+import { Indicateurs } from '@/site/app/collectivites/utils';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import {
   SiteIndicateurArtificialisation,
-  SiteIndicateurGes,
 } from '@/site/src/trpc/trpc-client';
 import IndicateurArtificialisationSols from './IndicateurArtificialisationSols';
 import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
@@ -23,7 +23,7 @@ type IndicateursCollectiviteProps = {
   };
   indicateurs: {
     artificialisation_sols: SiteIndicateurArtificialisation | null;
-    gaz_effet_serre: SiteIndicateurGes[] | null;
+    gaz_effet_serre: Indicateurs[] | null;
   };
 };
 

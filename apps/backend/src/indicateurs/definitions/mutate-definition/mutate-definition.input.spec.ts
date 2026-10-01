@@ -24,38 +24,3 @@ describe('indicateur definition periodicite input boundary', () => {
     expect(input.indicateurFields).not.toHaveProperty('periodicite');
   });
 });
-
-// The storage migration is deployable without exposing the next release.
-describe('annual release input restrictions', () => {
-  const definition = { collectiviteId: 1, titre: 'Indicateur annuel' };
-
-  it.each(['mensuelle', 'trimestrielle', 'semestrielle'])(
-    'rejects a %s creation before activation',
-    (periodicite) => {
-      expect(
-        createIndicateurDefinitionInputSchema.safeParse({
-          ...definition,
-          periodicite,
-        }).success
-      ).toBe(false);
-    }
-  );
-
-  it.each(['aggregationResultat', 'aggregationObjectif'])(
-    'rejects configuring %s before activation',
-    (field) => {
-      expect(
-        createIndicateurDefinitionInputSchema.safeParse({
-          ...definition,
-          [field]: 'somme',
-        }).success
-      ).toBe(false);
-      expect(
-        createIndicateurDefinitionInputSchema.safeParse({
-          ...definition,
-          [field]: null,
-        }).success
-      ).toBe(true);
-    }
-  );
-});

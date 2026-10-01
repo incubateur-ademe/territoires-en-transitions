@@ -1,9 +1,8 @@
-import {
-  annualReleasePeriodiciteSchema,
-  annualReleaseAggregationSchema,
-} from '../indicateur-annual-release.input';
 import { serviceTagSchema } from '@tet/domain/collectivites';
-import { indicateurDefinitionSchemaCreate } from '@tet/domain/indicateurs';
+import {
+  indicateurDefinitionSchemaCreate,
+  indicateurPeriodiciteValues,
+} from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
@@ -15,9 +14,16 @@ export const createIndicateurDefinitionInputSchema = z.object({
   // Compatibilité de l'API historique : l'absence de périodicité est
   // interprétée une seule fois à la frontière d'entrée. Le service reçoit
   // toujours une périodicité explicite.
-  periodicite: z.optional(annualReleasePeriodiciteSchema).default('annuelle'),
-  aggregationResultat: z.optional(annualReleaseAggregationSchema),
-  aggregationObjectif: z.optional(annualReleaseAggregationSchema),
+  periodicite: z
+    .enum(indicateurPeriodiciteValues)
+    .optional()
+    .default('annuelle'),
+  aggregationResultat: z.optional(
+    indicateurDefinitionSchemaCreate.shape.aggregationResultat
+  ),
+  aggregationObjectif: z.optional(
+    indicateurDefinitionSchemaCreate.shape.aggregationObjectif
+  ),
   isApplicable: z.boolean().optional().default(true),
   collectiviteId: z.number(),
   thematiques: z

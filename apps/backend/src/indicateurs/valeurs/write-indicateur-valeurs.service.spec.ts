@@ -1,9 +1,9 @@
-import { IndicateurValeurCreate } from '@tet/domain/indicateurs';
 import {
   IndicateurDefinition,
   IndicateurPeriodiciteEnum,
 } from '@tet/domain/indicateurs';
 import { success } from '../../utils/result.type';
+import { upsertIndicateursValeursRequestSchema } from './upsert-indicateurs-valeurs.request';
 import { WriteIndicateurValeursService } from './write-indicateur-valeurs.service';
 
 describe('WriteIndicateurValeursService', () => {
@@ -155,7 +155,7 @@ describe('WriteIndicateurValeursService', () => {
       {} as never,
       { lock: vi.fn() } as never
     );
-    const { valeurs }: { valeurs: IndicateurValeurCreate[] } = {
+    const { valeurs } = upsertIndicateursValeursRequestSchema.parse({
       valeurs: [
         { ...valeur, dateValeur: '2026-12-31' },
         {
@@ -171,7 +171,7 @@ describe('WriteIndicateurValeursService', () => {
           resultat: 12,
         },
       ],
-    };
+    });
 
     const result = await service.saveBatch(
       { valeurs, definitions: { 10: definition } },
@@ -213,7 +213,7 @@ describe('WriteIndicateurValeursService', () => {
       {} as never,
       { lock: vi.fn() } as never
     );
-    const { valeurs }: { valeurs: IndicateurValeurCreate[] } = {
+    const { valeurs } = upsertIndicateursValeursRequestSchema.parse({
       valeurs: [
         valeur,
         {
@@ -223,7 +223,7 @@ describe('WriteIndicateurValeursService', () => {
           metadonneeId: 7,
         },
       ],
-    };
+    });
 
     const result = await service.saveBatch(
       { valeurs, definitions: { 10: definition } },

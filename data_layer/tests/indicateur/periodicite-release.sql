@@ -13,21 +13,21 @@ SELECT lives_ok($sql$
     INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, date_valeur, resultat)
     SELECT c.id, i.id, DATE '2024-01-01', 0 FROM release_collectivite c CROSS JOIN release_indicateur i
 $sql$, 'Une valeur annuelle nulle au sens numérique est enregistrable');
-SELECT throws_ok($sql$
+SELECT lives_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Mensuel', 'kWh', 'mensuelle')
-$sql$, '23514', NULL, 'La première livraison refuse les définitions mensuelles');
-SELECT throws_ok($sql$
+$sql$, 'La seconde livraison accepte les définitions mensuelles');
+SELECT lives_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Trimestriel', 'kWh', 'trimestrielle')
-$sql$, '23514', NULL, 'La première livraison refuse les définitions trimestrielles');
-SELECT throws_ok($sql$
+$sql$, 'La seconde livraison accepte les définitions trimestrielles');
+SELECT lives_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Semestriel', 'kWh', 'semestrielle')
-$sql$, '23514', NULL, 'La première livraison refuse les définitions semestrielles');
+$sql$, 'La seconde livraison accepte les définitions semestrielles');
 SELECT throws_ok($sql$
     INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, date_valeur, periodicite, metadonnee_id, resultat)
     SELECT c.id, i.id, DATE '2024-01-01', 'mensuelle', NULL, 42 FROM release_collectivite c CROSS JOIN release_indicateur i
-$sql$, '23514', NULL, 'Les écritures directes ne peuvent pas ouvrir une série mensuelle');
-SELECT throws_ok($sql$
+$sql$, '23514', NULL, 'Une valeur locale doit toujours respecter la cadence de sa définition');
+SELECT lives_ok($sql$
     UPDATE public.indicateur_definition SET aggregation_resultat = 'somme' WHERE id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'L agrégation reste fermée');
+$sql$, 'L agrégation peut être configurée explicitement');
 SELECT * FROM finish();
 ROLLBACK;

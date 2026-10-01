@@ -86,6 +86,7 @@ il faut mettre à jour les variables d'environnement :
 
 ### Périodicité des indicateurs
 
-Le [guide de la migration annuelle](periodicite-runbook.md) décrit la maintenance de migration des données annuelles, les vérifications et la reprise en cas d'échec. Le
+Le [guide de la seconde livraison](periodicite-runbook.md) décrit la maintenance de mise en service
+du mensuel, les vérifications et la reprise en cas d'échec. Le
 [contrôle préalable des dates](scripts/check-indicateur-periodicite.sql) s'exécute depuis cette
 version sur une copie de la base avant migration ; il est en lecture seule.

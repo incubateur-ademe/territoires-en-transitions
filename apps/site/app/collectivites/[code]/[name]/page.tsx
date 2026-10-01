@@ -11,6 +11,7 @@ import {
   fetchCollectivite,
   getStrapiData,
   getStrapiDefaultData,
+  type Indicateurs,
 } from '../../utils';
 import AccesCompte from './AccesCompte';
 import CollectiviteHeader from './CollectiviteHeader';
@@ -160,7 +161,15 @@ const DetailCollectivite = async ({
                 artificialisation_sols:
                   collectiviteData.collectivite.indicateurArtificialisation,
                 gaz_effet_serre:
-                  collectiviteData.collectivite.indicateursGazEffetSerre,
+                  collectiviteData.collectivite.indicateursGazEffetSerre?.map(
+                    (indicateur): Indicateurs => ({
+                      date_valeur: indicateur.dateValeur,
+                      resultat: indicateur.resultat,
+                      identifiant: indicateur.identifiant,
+                      periodicite: 'annuelle',
+                      source: indicateur.source,
+                    })
+                  ) ?? null,
               }}
             />
           ) : null

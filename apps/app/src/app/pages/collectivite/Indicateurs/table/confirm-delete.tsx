@@ -31,7 +31,7 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
     objectifCommentaire,
     resultat,
     resultatCommentaire,
-    annee,
+    periodeLabel,
   } = valeur;
 
   return (
@@ -40,12 +40,16 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
       noCloseButton
       size="lg"
       title={appLabels.confirmerSuppression}
-      subTitle={appLabels.suppressionDonneesCollectivite({ annee })}
+      subTitle={appLabels.suppressionDonneesCollectivite({
+        periode: periodeLabel,
+      })}
       openState={{ isOpen, setIsOpen }}
       render={() => (
         <>
           <p className="text-center mb-0">
-            {appLabels.suppressionAnneeAttention({ annee })}
+            {appLabels.suppressionPeriodeAttention({
+              periode: periodeLabel,
+            })}
           </p>
           <DEPRECATED_Table>
             <DEPRECATED_THead>

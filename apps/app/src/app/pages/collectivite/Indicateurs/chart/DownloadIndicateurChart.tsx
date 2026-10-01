@@ -1,4 +1,5 @@
 import { Modal } from '@tet/ui';
+import { IndicateurDisplayPeriodiciteSelect } from '@/app/indicateurs/valeurs/indicateur-display-periodicite.select';
 import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import IndicateurChart from './IndicateurChart';
@@ -23,12 +24,21 @@ const DownloadIndicateurChartModal = ({
       size="xl"
       openState={openState}
       render={() => (
-        <IndicateurChart
-          chartInfo={chartInfo}
-          isLoading={isLoading}
-          title={title}
-          variant="modal"
-        />
+        <>
+          {chartInfo.data.periodicite && (
+            <IndicateurDisplayPeriodiciteSelect
+              periodicite={chartInfo.data.periodicite}
+              periodiciteAffichage={chartInfo.periodiciteAffichage}
+              onChange={chartInfo.setPeriodiciteAffichage}
+            />
+          )}
+          <IndicateurChart
+            chartInfo={chartInfo}
+            isLoading={isLoading}
+            title={title}
+            variant="modal"
+          />
+        </>
       )}
     />
   );

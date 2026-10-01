@@ -1,10 +1,15 @@
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCreateIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-create-indicateur-definition';
 import { appLabels } from '@/app/labels/catalog';
+import { INDICATEUR_PERIODICITE_OPTIONS } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import {
+  indicateurPeriodiciteValues,
+  indicateurAggregationValues,
+} from '@tet/domain/indicateurs';
 import {
   Alert,
   Button,
@@ -12,11 +17,12 @@ import {
   Field,
   FormSectionGrid,
   Input,
+  Select,
   Textarea,
 } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const validationSchema = z.object({
@@ -26,6 +32,9 @@ const validationSchema = z.object({
     .max(300, appLabels.indicateurValidationTitreMax),
   unite: z.string().optional(),
   commentaire: z.string().optional(),
+  periodicite: z.enum(indicateurPeriodiciteValues),
+  aggregationResultat: z.enum(indicateurAggregationValues).nullable(),
+  aggregationObjectif: z.enum(indicateurAggregationValues).nullable(),
 });
 
 type FormData = z.infer<typeof validationSchema>;
@@ -44,6 +53,7 @@ const IndicateurPersoNouveau = ({
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
   const ficheId = fiche?.id;
+  const periodiciteOptions = INDICATEUR_PERIODICITE_OPTIONS;
 
   const { mutate: createIndicateur, isPending } = useCreateIndicateurDefinition(
     {
@@ -78,6 +88,7 @@ const IndicateurPersoNouveau = ({
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { isValid },
   } = useForm<FormData>({
@@ -87,17 +98,30 @@ const IndicateurPersoNouveau = ({
       titre: '',
       commentaire: '',
       unite: '',
+      periodicite: 'annuelle',
+      aggregationResultat: null,
+      aggregationObjectif: null,
     },
   });
 
   const onSave: SubmitHandler<FormData> = (data) => {
-    const { titre, commentaire, unite } = data;
+    const {
+      titre,
+      commentaire,
+      unite,
+      periodicite,
+      aggregationResultat,
+      aggregationObjectif,
+    } = data;
     createIndicateur({
       collectiviteId,
       titre,
       commentaire: commentaire || '',
       thematiques: (thematiqueIds ?? []).map((id) => ({ id })),
       unite: unite || '',
+      periodicite,
+      aggregationResultat,
+      aggregationObjectif,
       ficheId,
       estFavori: favoriCollectivite,
     });
@@ -126,6 +150,75 @@ const IndicateurPersoNouveau = ({
             <Input id="unite" type="text" {...register('unite')} />
           </Field>
         </div>
+
+        <Controller
+          name="periodicite"
+          control={control}
+          render={({ field }) => (
+            <Field
+              title={appLabels.champPeriodiciteIndicateur}
+              hint={appLabels.periodiciteImmuable}
+              className="col-span-1"
+            >
+              <Select
+                values={field.value ?? ''}
+                placeholder={appLabels.placeholderPeriodiciteIndicateur}
+                options={periodiciteOptions}
+                onChange={(value) => {
+                  const option = periodiciteOptions.find(
+                    (candidate) => candidate.value === value
+                  );
+                  field.onChange(option?.value);
+                }}
+              />
+            </Field>
+          )}
+        />
+
+        {(['aggregationResultat', 'aggregationObjectif'] as const).map(
+          (name) => (
+            <Controller
+              key={name}
+              name={name}
+              control={control}
+              render={({ field }) => (
+                <Field
+                  title={
+                    name === 'aggregationResultat'
+                      ? appLabels.indicateurAggregationResultat
+                      : appLabels.indicateurAggregationObjectif
+                  }
+                  hint={appLabels.indicateurAggregationHint}
+                >
+                  <Select
+                    values={field.value ?? 'aucune'}
+                    options={[
+                      {
+                        value: 'aucune',
+                        label: appLabels.indicateurAggregationAucune,
+                      },
+                      {
+                        value: 'somme',
+                        label: appLabels.indicateurAggregationSomme,
+                      },
+                      {
+                        value: 'moyenne',
+                        label: appLabels.indicateurAggregationMoyenne,
+                      },
+                      {
+                        value: 'derniere_valeur',
+                        label: appLabels.indicateurAggregationDerniereValeur,
+                      },
+                    ]}
+                    onChange={(value) =>
+                      field.onChange(value === 'aucune' ? null : value)
+                    }
+                  />
+                </Field>
+              )}
+            />
+          )
+        )}
 
         <Field title={appLabels.thematique()} className="col-span-2">
           <ThematiquesDropdown

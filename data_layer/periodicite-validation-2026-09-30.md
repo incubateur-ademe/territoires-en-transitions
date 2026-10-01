@@ -55,3 +55,30 @@ utiliser les endpoints authentifiés documentés dans le runbook avant sa repris
 
 Les résultats ci-dessus portent sur le découpage et les scénarios indiqués ; ils
 ne constituent ni une répétition de production ni une approbation de review complète.
+
+## Synchronisation de l'activation #5215
+
+La nouvelle PR de schéma est #5292. La chaîne complète est donc :
+**#5220 → #5292 → #5214 → #5215**.
+
+Après rebase de l'activation, les contrôles complémentaires réussissent :
+
+- Cycle SQL complet incluant activation et refus atomique du retour annuel.
+- 96 assertions pgTAP : périodes, formules, collectivités et contrat activé.
+- 392 tests unitaires backend ciblés, dont les deux scénarios rétablis après correction
+  de l'import supprimé au rebase (66 fichiers au total).
+- 56 tests API : définition, autorisations REST et publication du site. Le test GES
+  confirme qu'une observation externe mensuelle est exclue de la publication annuelle.
+- 143 tests frontend ciblés, 716 tests du domaine, 2 tests du composant GES du site
+  et 1 test du composant de saisie partagé.
+- Vérification TypeScript du frontend activé, du site public et des tests backend. Le frontend annuel
+  de #5214 a également passé sa vérification TypeScript.
+
+Le rebase conserve la migration TanStack 9 de `main`. Le callback d'année de référence
+reste facultatif dans la grille en lecture seule. L'assertion visant l'ancien RPC GES
+supprimé de `main` vérifie désormais son absence ; la lecture annuelle est couverte
+par le test du vrai endpoint backend.
+
+Les deux alias de tables Supabase inutilisés que le rebase avait réintroduits dans
+le site sont retirés : ses contrats de labellisation et d'artificialisation restent
+ceux du backend tRPC déjà adopté dans `main`.

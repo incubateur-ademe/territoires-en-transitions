@@ -3,6 +3,7 @@
     {
       "definition": {
         "id": 177,
+        "periodicite": "annuelle",
         "groupementId": null,
         "collectiviteId": null,
         "identifiantReferentiel": "cae_8",
@@ -34,7 +35,8 @@
               "dateValeur": "2020-01-01",
               "resultat": 20,
               "objectif": 21,
-              "resultatCommentaire": "commentaire résultat 2020"
+              "resultatCommentaire": "commentaire résultat 2020",
+              "periodicite": "annuelle"
             },
             {
               "id": 2,
@@ -42,7 +44,8 @@
               "dateValeur": "2021-01-01",
               "resultat": 12,
               "objectif": 13,
-              "objectifCommentaire": "commentaire objectif 2021"
+              "objectifCommentaire": "commentaire objectif 2021",
+              "periodicite": "annuelle"
             }
           ],
           "libelle": "",
@@ -56,13 +59,15 @@
               "id": 3,
               "collectiviteId": 1,
               "dateValeur": "2020-01-01",
-              "resultat": 20.1
+              "resultat": 20.1,
+              "periodicite": "annuelle"
             },
             {
               "id": 4,
               "collectiviteId": 1,
               "dateValeur": "2022-01-01",
-              "resultat": 12.2
+              "resultat": 12.2,
+              "periodicite": "annuelle"
             }
           ],
           "libelle": "CITEPA",
@@ -76,13 +81,15 @@
               "id": 5,
               "collectiviteId": 1,
               "dateValeur": "2020-01-01",
-              "objectif": 19
+              "objectif": 19,
+              "periodicite": "annuelle"
             },
             {
               "id": 6,
               "collectiviteId": 1,
               "dateValeur": "2021-01-01",
-              "objectif": 10
+              "objectif": 10,
+              "periodicite": "annuelle"
             }
           ],
           "libelle": "Territoires & Climat",
