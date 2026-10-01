@@ -7,7 +7,7 @@ Elle ne reclasse ni ne renormalise les observations.
 
 ## Prérequis
 
-Respecter le [découpage des quatre livraisons](periodicite-releases.md) :
+Respecter le [découpage des livraisons](periodicite-releases.md) :
 réparations #5220, schéma compatible, backend annuel #5214, puis cette activation.
 La base doit être déployée et vérifiée jusqu'à `@indicateur-periodicite-annuelle`.
 Valider les lectures, écritures, imports et calculs annuels avant de poursuivre.
@@ -16,8 +16,8 @@ formule PCAET sont déjà livrées dans #5214 et restent actives.
 
 Préparer une sauvegarde du schéma et des données, les versions applicatives à livrer
 et celles de reprise. Répéter la migration et la procédure de restauration sur une
-copie récente avant la maintenance. Le [rapport du découpage](periodicite-validation-2026-09-30.md)
-consigne les tests locaux sur fixtures synthétiques et leurs limites.
+copie récente avant la maintenance. Le [guide de nettoyage final](periodicite-cleanup.md)
+regroupe les vérifications locales et leurs limites.
 
 ## Déploiement
 
@@ -55,9 +55,11 @@ mêmes calculs. Les exports conservent les dates, périodicités et contenus enr
 
 ## Reprise et restauration
 
-L'état de restauration est `contract` : restaurer uniquement une sauvegarde du même
-état. Le script `backup/restore.sh` vise local/staging/preprod ; une reprise de
-production doit couvrir ensemble schéma, données et versions applicatives.
+Cette livraison précède le nettoyage : utiliser les scripts de restauration de
+son commit avec une sauvegarde du même état. Après la sixième livraison,
+`backup/restore.sh` accepte uniquement le schéma final nettoyé. Le script vise
+local/staging/preprod ; une reprise de production doit couvrir ensemble schéma,
+données et versions applicatives.
 
 Avant la réouverture, corriger et reprendre le déploiement ou restaurer la sauvegarde
 cohérente. Le revert d'activation réinstalle les contraintes annuelles et refuse toute
@@ -73,3 +75,10 @@ en avant ; ne pas forcer un revert qui ferait perdre une information métier.
   `periodicite_migration_lifecycle_test_*`, initialisée avant les migrations de périodicité.
 - `data_layer/tests/indicateur/periodicite*.sql` : contrats des périodes, formules,
   collectivités et état activé, sur une base de test initialisée.
+
+## Livraison suivante
+
+Après validation de cette activation en production, déployer la
+[migration mensuelle de Margny](margny-monthly-migration.md), puis la
+[sixième PR de nettoyage](periodicite-cleanup.md) qui retire les objets de transition.
+Elle exige une sauvegarde complète vérifiée et ferme le retour arrière Sqitch.

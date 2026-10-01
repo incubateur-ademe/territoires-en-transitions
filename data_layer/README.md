@@ -86,7 +86,11 @@ il faut mettre à jour les variables d'environnement :
 
 ### Périodicité des indicateurs
 
-Le [guide de la seconde livraison](periodicite-runbook.md) décrit la maintenance de mise en service
-du mensuel, les vérifications et la reprise en cas d'échec. Le
-[contrôle préalable des dates](scripts/check-indicateur-periodicite.sql) s'exécute depuis cette
-version sur une copie de la base avant migration ; il est en lecture seule.
+Le [découpage des livraisons](periodicite-releases.md) décrit l'ordre des PR.
+Le [guide d'activation](periodicite-runbook.md) couvre les quatre cadences ; la
+[migration mensuelle de Margny](margny-monthly-migration.md) est livrée séparément,
+puis le [nettoyage final](periodicite-cleanup.md) ferme le retour arrière après
+validation et sauvegarde complète.
+Après nettoyage, `backup/restore.sh` exige une sauvegarde du schéma final et
+vérifie les contrats Sqitch avant tout effacement. Une sauvegarde historique
+exige sa version correspondante du schéma et des applications avant migration.

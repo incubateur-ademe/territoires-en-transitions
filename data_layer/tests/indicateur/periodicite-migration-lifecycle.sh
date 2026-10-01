@@ -119,7 +119,7 @@ annual_writer_log="$(mktemp)"
 reconciliation_producer_log="$(mktemp)"
 reconciliation_revert_log="$(mktemp)"
 reconciliation_reader_log="$(mktemp)"
-trap 'rm -f "$expand_migration_log" "$expand_delete_log" "$transition_log" "$contract_writer_log" "$graph_definition_log" "$graph_value_log" "$formula_source_log" "$formula_target_log" "$annual_definition_log" "$annual_writer_log" "$reconciliation_producer_log" "$reconciliation_revert_log" "$reconciliation_reader_log" "${margny_dump:-}"' EXIT
+trap 'rm -f "$expand_migration_log" "$expand_delete_log" "$transition_log" "$contract_writer_log" "$graph_definition_log" "$graph_value_log" "$formula_source_log" "$formula_target_log" "$annual_definition_log" "$annual_writer_log" "$reconciliation_producer_log" "$reconciliation_revert_log" "$reconciliation_reader_log" "${cleanup_dump:-}"; if [[ -n "${restore_guard_directory:-}" ]]; then rm -rf "$restore_guard_directory"; fi' EXIT
 
 # L'expand prend définition puis valeur. Une ancienne suppression avec cascade
 # arrivée ensuite attend donc sans détenir la table de valeurs : la migration
@@ -151,33 +151,11 @@ assert_equal "2020-01-01|2020-02-01|normalisee" \
 assert_equal "2" "$(scalar "SELECT count(*) FROM migration.indicateur_valeur_periodicite_audit WHERE indicateur_id = $conflict_id AND statut = 'conflit'")" \
   "l'expand doit auditer sans fusionner les collisions historiques"
 
-expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
-  "le preflight doit refuser un audit contenant encore des conflits"
 expect_change_failure data_layer/sqitch/deploy/indicateur/periodicite_obligatoire.sql \
   "le contract doit refuser un audit contenant encore des conflits"
 scalar "DELETE FROM public.indicateur_valeur WHERE indicateur_id = $conflict_id AND date_valeur = DATE '2019-03-01'; UPDATE public.indicateur_valeur SET date_valeur = DATE '2019-01-01' WHERE indicateur_id = $conflict_id" >/dev/null
 assert_equal "0" "$(scalar "SELECT count(*) FROM migration.indicateur_valeur_periodicite_audit WHERE indicateur_id = $conflict_id")" \
   "la remédiation explicite doit assainir les audits de conflit"
-
-# Simule indicateur_valeur restaurée sans triggers durant la phase expand. Le
-# post-traitement doit rejouer l'audit transitoire et conserver son historique.
-scalar "ALTER TABLE public.indicateur_valeur DISABLE TRIGGER USER" >/dev/null
-expand_restore_value_id="$(scalar "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, resultat) VALUES ($target_id, $collectivite_id, DATE '2025-02-01', 7) RETURNING id")"
-scalar "ALTER TABLE public.indicateur_valeur ENABLE TRIGGER USER" >/dev/null
-apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
-assert_equal "2025-01-01|2025-02-01|normalisee" \
-  "$(scalar "SELECT valeur.date_valeur || '|' || audit.date_valeur_avant || '|' || audit.statut FROM public.indicateur_valeur valeur JOIN migration.indicateur_valeur_periodicite_audit audit ON audit.valeur_id = valeur.id WHERE valeur.id = $expand_restore_value_id")" \
-  "le post-traitement expand doit normaliser et auditer une valeur restaurée sans triggers"
-
-scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-source-inconnue-$fixture_suffix)' WHERE id = $target_id" >/dev/null
-expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
-  "le preflight doit refuser une formule qui référence une définition inconnue"
-monthly_source_id="$(scalar "INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('cycle-monthly-$fixture_suffix', 'Source mensuelle', 'kWh', 'mensuelle') RETURNING id")"
-scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-monthly-$fixture_suffix)' WHERE id = $target_id" >/dev/null
-expect_change_failure data_layer/scripts/check-periodicite-contract.sql \
-  "le preflight doit refuser une formule dont la source a une autre périodicité"
-scalar "UPDATE public.indicateur_definition SET valeur_calcule = NULL WHERE id = $target_id; DELETE FROM public.indicateur_definition WHERE id = $monthly_source_id" >/dev/null
-apply_change data_layer/scripts/check-periodicite-contract.sql
 
 psql_test --command="SET application_name = 'periodicite-lifecycle-transition-writer'; BEGIN; INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, resultat) VALUES ($concurrency_id, $collectivite_id, DATE '2021-02-01', 1); SELECT pg_sleep(3); COMMIT" >"$transition_log" 2>&1 &
 transition_pid=$!
@@ -412,24 +390,6 @@ apply_change data_layer/sqitch/verify/indicateur/periodicite_annuelle.sql
 apply_change data_layer/sqitch/revert/indicateur/reserver-ecriture-valeurs-backend.sql
 apply_change data_layer/sqitch/revert/indicateur/periodicite_annuelle.sql
 
-# Une restauration charge indicateur_definition avec les triggers USER coupés.
-# Simule cet état, puis vérifie que le post-traitement reconstruit la projection,
-# valide le graphe atomiquement et préserve les réconciliations encore dues.
-scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id" >/dev/null
-scalar "INSERT INTO private.indicateur_reconciliation_formule (generation, indicateur_id, collectivite_id, formule_attendue) VALUES (gen_random_uuid(), $formula_target_id, $collectivite_id, 'val(cycle-formula-source-$fixture_suffix)')" >/dev/null
-scalar "ALTER TABLE public.indicateur_definition DISABLE TRIGGER USER; DELETE FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $formula_source_id; ALTER TABLE public.indicateur_definition ENABLE TRIGGER USER" >/dev/null
-expect_change_failure data_layer/backup/rebuild-indicateur-formula-state.sql \
-  "le rebuild post-restore doit refuser atomiquement un graphe inter-périodicité"
-assert_equal "0|1" \
-  "$(scalar "SELECT (SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id) || '|' || (SELECT count(*) FROM private.indicateur_reconciliation_formule WHERE indicateur_id = $formula_target_id)")" \
-  "un rebuild invalide ne doit ni publier une projection ni vider la file"
-scalar "ALTER TABLE public.indicateur_definition DISABLE TRIGGER USER; UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $formula_source_id; ALTER TABLE public.indicateur_definition ENABLE TRIGGER USER" >/dev/null
-apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
-assert_equal "1|1" \
-  "$(scalar "SELECT (SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id AND source_identifiant = 'cycle-formula-source-$fixture_suffix') || '|' || (SELECT count(*) FROM private.indicateur_reconciliation_formule)")" \
-  "le rebuild valide doit restaurer la projection canonique et préserver la file du snapshot"
-scalar "DELETE FROM private.indicateur_reconciliation_formule WHERE indicateur_id = $formula_target_id AND collectivite_id = $collectivite_id" >/dev/null
-
 scalar "UPDATE public.indicateur_valeur SET indicateur_id = $target_id WHERE id = $origin_value_id; UPDATE public.indicateur_valeur SET indicateur_id = $origin_id WHERE id = $origin_value_id" >/dev/null
 assert_equal "0" "$(scalar "SELECT count(*) FROM migration.indicateur_valeur_periodicite_audit WHERE valeur_id = $origin_value_id")" \
   "un déplacement aller-retour ne doit pas ressusciter l'audit d'origine"
@@ -489,6 +449,8 @@ apply_change data_layer/sqitch/deploy/indicateur/periodicite_annuelle.sql
 apply_change data_layer/sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
 expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
   "la conversion de Margny doit attendre l'activation"
+expect_change_failure data_layer/sqitch/deploy/indicateur/periodicite_nettoyage.sql \
+  "le nettoyage doit attendre l'activation et la migration métier"
 apply_change data_layer/sqitch/deploy/indicateur/periodicite_activation.sql
 # Réintégration mensuelle de Margny : refuser toute dérive depuis #5220.
 apply_change data_layer/tests/indicateur/fixtures/margny-monthly.psql
@@ -574,29 +536,105 @@ apply_change data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql
 apply_change data_layer/sqitch/verify/indicateur/margny_indicateurs_mensuels.sql
 echo "Migration autonome de Margny, conservation des archives et retour arrière contrôlé validés."
 
-# Le driver exécute SQL directement ; représenter le registre Sqitch afin de
-# vérifier aussi une vraie sauvegarde de cette étape autonome.
-scalar "INSERT INTO sqitch.projects (project, creator_name, creator_email) VALUES ('tet','test','test@example.invalid') ON CONFLICT DO NOTHING" >/dev/null
+
+# Sixième livraison autonome : aucune conversion de données.
+expect_change_failure data_layer/sqitch/deploy/indicateur/periodicite_nettoyage.sql \
+  "le nettoyage doit attendre l'enregistrement de la migration de Margny"
+scalar "INSERT INTO sqitch.projects (project,creator_name,creator_email) VALUES ('tet','test','test@example.invalid') ON CONFLICT DO NOTHING" >/dev/null
 for change in indicateur/periodicite_schema indicateur/periodicite indicateur/reconciliation_formules \
               indicateur/dependances_formules indicateur/periodicite_obligatoire indicateur/periodicite_formules \
               stats/report_indicateur_resultat_periode indicateur/periodicite_annuelle \
               indicateur/periodicite_activation indicateur/margny_indicateurs_mensuels; do
   scalar "INSERT INTO sqitch.changes (change_id,change,project,committer_name,committer_email,planned_at,planner_name,planner_email) VALUES (md5('$change'),'$change','tet','test','test@example.invalid',now(),'test','test@example.invalid') ON CONFLICT DO NOTHING" >/dev/null
 done
-margny_dump="$(mktemp)"
-pg_dump --format=custom --dbname="$database_url" --file="$margny_dump"
-assert_equal "contract-margny" \
-  "$(TO_DB_URL="$database_url" bash "$repository_root/data_layer/backup/check-restore-compatibility.sh" "$margny_dump")" \
-  "une sauvegarde après migration de Margny doit être reconnue et restaurable"
-archive_before="$(scalar "SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a")"
-scalar "TRUNCATE private.indicateur_valeur_date_repair" >/dev/null
-pg_restore --data-only --file=- --schema=private --table=indicateur_valeur_date_repair "$margny_dump" \
+scalar "INSERT INTO migration.indicateur_valeur_periodicite_audit (valeur_id,indicateur_id,collectivite_id,periodicite,date_valeur_avant,date_valeur_canonique,statut) VALUES (-1,$origin_id,$collectivite_id,'annuelle','2050-02-01','2050-01-01','conflit')" >/dev/null
+expect_change_failure data_layer/sqitch/deploy/indicateur/periodicite_nettoyage.sql \
+  "le nettoyage doit refuser un conflit non résolu"
+scalar "DELETE FROM migration.indicateur_valeur_periodicite_audit WHERE valeur_id = -1" >/dev/null
+scalar "INSERT INTO private.indicateur_reconciliation_formule (generation,indicateur_id,collectivite_id,formule_attendue) VALUES (gen_random_uuid(),$formula_target_id,$collectivite_id,'val(cycle-formula-source-$fixture_suffix)')" >/dev/null
+cleanup_snapshot_sql="SELECT jsonb_build_object(
+ 'valeurs',(SELECT jsonb_agg(to_jsonb(v) ORDER BY id) FROM public.indicateur_valeur v),
+ 'definitions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY id) FROM public.indicateur_definition d),
+ 'queue',(SELECT jsonb_agg(to_jsonb(q) ORDER BY id) FROM private.indicateur_reconciliation_formule q),
+ 'acl',(SELECT relacl FROM pg_class WHERE oid = 'public.indicateur_valeur'::regclass))"
+cleanup_before="$(scalar "$cleanup_snapshot_sql")"
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_nettoyage.sql
+apply_change data_layer/sqitch/verify/indicateur/periodicite_nettoyage.sql
+assert_equal "$cleanup_before" "$(scalar "$cleanup_snapshot_sql")" \
+  "le nettoyage doit préserver intégralement toutes les données métier, y compris Margny"
+assert_equal "||" "$(scalar "SELECT coalesce(to_regclass('migration.indicateur_valeur_periodicite_audit')::text,'') || '|' || coalesce(to_regclass('private.indicateur_valeur_write_acl')::text,'') || '|' || coalesce(to_regclass('private.indicateur_valeur_date_repair')::text,'')")" \
+  "le nettoyage doit retirer les trois archives temporaires"
+expect_change_failure data_layer/sqitch/revert/indicateur/periodicite_nettoyage.sql \
+  "le retour arrière après nettoyage doit être explicitement refusé"
+assert_equal "$cleanup_before" "$(scalar "$cleanup_snapshot_sql")" \
+  "le refus du revert ne doit avoir aucun effet de bord"
+scalar "INSERT INTO sqitch.changes (change_id,change,project,committer_name,committer_email,planned_at,planner_name,planner_email) VALUES (md5('indicateur/periodicite_nettoyage'),'indicateur/periodicite_nettoyage','tet','test','test@example.invalid',now(),'test','test@example.invalid')" >/dev/null
+for change in periodicite_schema periodicite periodicite_obligatoire periodicite_formules \
+              reconciliation_formules reserver-ecriture-valeurs-backend periodicite_activation \
+              margny_indicateurs_mensuels correct-dates-historiques; do
+  apply_change "data_layer/sqitch/verify/indicateur/$change.sql"
+done
+apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
+assert_equal "$cleanup_before" "$(scalar "$cleanup_snapshot_sql")" \
+  "le rebuild après nettoyage préserve les données et le travail restant"
+echo "Nettoyage final, conservation des données et refus du retour arrière validés."
+
+# Vraies archives et vrai catalogue PostgreSQL, au-delà de la matrice shell.
+cleanup_dump="$(mktemp)"
+pg_dump --format=custom --dbname="$database_url" --file="$cleanup_dump"
+TO_DB_URL="$database_url" bash "$repository_root/data_layer/backup/check-restore-compatibility.sh" "$cleanup_dump"
+# Exercer la file durable par un vrai aller-retour pg_dump/pg_restore.
+scalar "TRUNCATE private.indicateur_reconciliation_formule" >/dev/null
+# Les clients PG17 ajoutent ce SET, inconnu du serveur PG15 de test.
+pg_restore --data-only --file=- --schema=private \
+  --table=indicateur_reconciliation_formule "$cleanup_dump" \
   | sed '/^SET transaction_timeout = 0;$/d' | psql_test >/dev/null
-assert_equal "$archive_before" "$(scalar "SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a")" \
-  "la restauration conserve les six images nécessaires au retour arrière"
-pg_dump --format=custom --dbname="$database_url" --exclude-table-data=private.indicateur_valeur_date_repair --file="$margny_dump"
-if TO_DB_URL="$database_url" bash "$repository_root/data_layer/backup/check-restore-compatibility.sh" "$margny_dump" >/dev/null 2>&1; then
-  echo "ÉCHEC: une sauvegarde après Margny sans ses originaux a été acceptée" >&2
+apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
+assert_equal "$cleanup_before" "$(scalar "$cleanup_snapshot_sql")" \
+  "la restauration conserve les recalculs sans réinventer les archives supprimées"
+scalar "ALTER TABLE public.indicateur_valeur DISABLE TRIGGER verifier_date_valeur_selon_periodicite" >/dev/null
+if TO_DB_URL="$database_url" bash "$repository_root/data_layer/backup/check-restore-compatibility.sh" "$cleanup_dump" >/dev/null 2>&1; then
+  echo "ÉCHEC: une cible nettoyée sans validation des dates a été acceptée" >&2
   exit 1
 fi
-echo "Sauvegarde de Margny et aller-retour de ses archives validés."
+scalar "ALTER TABLE public.indicateur_valeur ENABLE TRIGGER verifier_date_valeur_selon_periodicite" >/dev/null
+# Exécuter aussi le vrai point d'entrée : le refus doit précéder même la lecture
+# des groupes YAML, puis le premier TRUNCATE. Le double yq ne sera jamais appelé.
+restore_guard_directory="$(mktemp -d)"
+printf '#!/bin/bash\necho "Unexpected YAML parsing before compatibility refusal" >&2\nexit 99\n' > "$restore_guard_directory/yq"
+chmod +x "$restore_guard_directory/yq"
+for missing_table in private.indicateur_reconciliation_formule; do
+  pg_dump --format=custom --dbname="$database_url" --exclude-table-data="$missing_table" --file="$cleanup_dump"
+  if PATH="$restore_guard_directory:$PATH" CI=true TO_DB_URL="$database_url" \
+      bash "$repository_root/data_layer/backup/restore.sh" "$cleanup_dump" \
+      > "$restore_guard_directory/restore.log" 2>&1; then
+    echo "ÉCHEC: une sauvegarde privée de $missing_table a été acceptée" >&2
+    exit 1
+  fi
+  if ! rg -q 'backup lacks formula reconciliation data' "$restore_guard_directory/restore.log"; then
+    cat "$restore_guard_directory/restore.log" >&2
+    echo "ÉCHEC: la restauration a échoué avant d'exercer le contrôle attendu" >&2
+    exit 1
+  fi
+done
+assert_equal "$cleanup_before" "$(scalar "$cleanup_snapshot_sql")" \
+  "les contrôles de restauration ne modifient aucune donnée"
+echo "Archives réelles après nettoyage et refus des dérives validés."
+
+# Une restauration charge indicateur_definition avec les triggers USER coupés.
+# Simule cet état, puis vérifie que le post-traitement reconstruit la projection,
+# valide le graphe atomiquement et préserve les réconciliations encore dues.
+scalar "UPDATE public.indicateur_definition SET valeur_calcule = 'val(cycle-formula-source-$fixture_suffix)' WHERE id = $formula_target_id" >/dev/null
+scalar "ALTER TABLE public.indicateur_definition DISABLE TRIGGER USER; DELETE FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id; UPDATE public.indicateur_definition SET periodicite = 'mensuelle' WHERE id = $formula_source_id; ALTER TABLE public.indicateur_definition ENABLE TRIGGER USER" >/dev/null
+expect_change_failure data_layer/backup/rebuild-indicateur-formula-state.sql \
+  "le rebuild post-restore doit refuser atomiquement un graphe inter-périodicité"
+assert_equal "0|1" \
+  "$(scalar "SELECT (SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id) || '|' || (SELECT count(*) FROM private.indicateur_reconciliation_formule WHERE indicateur_id = $formula_target_id)")" \
+  "un rebuild invalide ne doit ni publier une projection ni vider la file"
+scalar "ALTER TABLE public.indicateur_definition DISABLE TRIGGER USER; UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = $formula_source_id; ALTER TABLE public.indicateur_definition ENABLE TRIGGER USER" >/dev/null
+apply_change data_layer/backup/rebuild-indicateur-formula-state.sql
+assert_equal "1|1" \
+  "$(scalar "SELECT (SELECT count(*) FROM private.indicateur_definition_dependance_calcul WHERE indicateur_id = $formula_target_id AND source_identifiant = 'cycle-formula-source-$fixture_suffix') || '|' || (SELECT count(*) FROM private.indicateur_reconciliation_formule)")" \
+  "le rebuild valide doit restaurer la projection canonique et préserver la file du snapshot"
+
+echo "Reconstruction atomique du graphe final et conservation de la file validées."

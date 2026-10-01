@@ -217,34 +217,19 @@ if [ ! -s "$DUMP_FILE" ]; then
     exit 1
 fi
 
-# Validate the archive and its schema-contract compatibility before the first
-# destructive statement. Source and target must share the same complete phase;
-# partial phases, physical target drift and both mismatch directions are denied.
+# Check the final SQL contract and the snapshot before any destructive statement.
 if ! pg_restore --list "$DUMP_FILE" > /dev/null; then
     echo "Cannot read the backup archive. Check the file and pg_restore version; no tables were truncated."
     exit 1
 fi
-PERIODICITE_RESTORE_PHASE=$(TO_DB_URL="$TO_DB_URL" \
-    bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE")
+TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE"
 
-# Group order: technical → stats → collectivites → indicateurs →
-# periodicite → referentiels → pai → plans
-# Restores foundational tables before tables that reference them. Truncation
-# runs in the reverse order (see below) so dependents come down first.
+# Foundations first; truncation runs in reverse order.
 GROUP_ORDER=(
   technical_group
   stats_group
   collectivites_group
   indicateurs_group
-)
-
-# Ces tables n'existent pas dans le schéma legacy. L'égalité de phase vérifiée
-# ci-dessus garantit qu'elles existent à la fois dans la cible et le snapshot.
-if [[ "$PERIODICITE_RESTORE_PHASE" != "legacy" && "$PERIODICITE_RESTORE_PHASE" != "schema" ]]; then
-    GROUP_ORDER+=(periodicite_group)
-fi
-
-GROUP_ORDER+=(
   referentiels_group
   pai_group
   plans_group

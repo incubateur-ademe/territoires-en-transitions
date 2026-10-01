@@ -17,7 +17,7 @@ BEGIN
        AND to_regclass('public.unique_indicateur_valeur_importee_periode') IS NOT NULL,
         'Les nouveaux index doivent être présents';
     -- Le backend retire les anciens index : accepter aussi ce schéma ultérieur.
-    IF to_regclass('migration.indicateur_valeur_periodicite_audit') IS NULL THEN
+    IF to_regprocedure('public.indicateur_date_debut_periode(text,date)') IS NULL THEN
         ASSERT to_regclass('public.unique_indicateur_valeur_utilisateur') IS NOT NULL
            AND to_regclass('public.unique_indicateur_valeur_importee') IS NOT NULL,
             'Les anciens upserts doivent conserver leurs index';
