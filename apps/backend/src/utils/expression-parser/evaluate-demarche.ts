@@ -16,7 +16,7 @@ export type DemarcheExpressionContext = {
  * `CNAME` dans le lexer, sans `longer_alt`. Un nom qui commence par `si`, `min`,
  * `max`, `ou`, `et`, `non`, `vrai`, `faux` ou `oui` serait coupé en deux.
  */
-type DemarcheField = keyof DemarcheExpressionContext;
+export type DemarcheField = keyof DemarcheExpressionContext;
 
 const DEMARCHE_EVALUATORS: Record<
   DemarcheField,
@@ -25,14 +25,18 @@ const DEMARCHE_EVALUATORS: Record<
   renouvellement: (contexte) => contexte.renouvellement,
 };
 
-function isDemarcheField(value: string): value is DemarcheField {
+export function isDemarcheField(value: string): value is DemarcheField {
   // `in` traverse la chaîne de prototypes : `toString` ou `constructor` y
   // passeraient pour des champs valides et rendraient une valeur non booléenne.
   return Object.hasOwn(DEMARCHE_EVALUATORS, value);
 }
 
+export const DEMARCHE_FIELDS = Object.keys(
+  DEMARCHE_EVALUATORS
+) as DemarcheField[];
+
 function buildUnknownFieldErrorMessage(identifier: string): string {
-  const allowedFields = Object.keys(DEMARCHE_EVALUATORS).join(', ');
+  const allowedFields = DEMARCHE_FIELDS.join(', ');
   return (
     `Champ de démarche "${identifier}" non reconnu dans demarche(${identifier}). ` +
     `Champs autorisés : ${allowedFields}.`
