@@ -3,7 +3,14 @@ import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectiv
 import { getServiceRoleUser } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { ActionTypeEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
+import {
+  ActionCategorieEnum,
+  ActionType,
+  ActionTypeEnum,
+  mergeActionDefinitionsAndState,
+  ReferentielId,
+  ReferentielIdEnum,
+} from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 import {
@@ -23,6 +30,21 @@ describe('ActionStatutListRouter', () => {
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+
+  /** Reconstitue les actions complètes comme le fait le front */
+  async function listMergedActions(input: {
+    collectiviteId: number;
+    referentielId: ReferentielId;
+  }) {
+    const caller = router.createCaller({ user: testUser });
+    const [definitions, state] = await Promise.all([
+      caller.referentiels.actions.listActionDefinitions({
+        referentielId: input.referentielId,
+      }),
+      caller.referentiels.actions.listActionsGroupedById(input),
+    ]);
+    return mergeActionDefinitionsAndState(definitions, state);
+  }
 
   async function resetDisplayPreferences(collectiviteId: number) {
     const serviceRoleCaller = router.createCaller({
@@ -127,7 +149,9 @@ describe('ActionStatutListRouter', () => {
         expect(action).not.toHaveProperty(definitionField);
       }
 
-      expect(action).not.toHaveProperty('childrenIdsWithExprScore');
+      // TODO: compatibilité temporaire avec l'ancien bundle front, à retirer
+      // avec `withLegacyCompatFields`
+      expect(action).toHaveProperty('childrenIdsWithExprScore', []);
 
       const { actionType } = definitions.definitionsById[actionId];
       const statutApplicableSurScore =
@@ -147,16 +171,10 @@ describe('ActionStatutListRouter', () => {
   });
 
   test('List actions : généalogie ECI', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const result = await caller.referentiels.actions.listActionsGroupedById({
+    const result = await listMergedActions({
       collectiviteId: 1,
-      referentielId: 'eci' as const,
-    };
-
-    const result = await caller.referentiels.actions.listActionsGroupedById(
-      input
-    );
+      referentielId: ReferentielIdEnum.ECI,
+    });
     const actionsGroupedById = result.actionsById;
 
     const actionTypes: ActionType[] = [
@@ -346,34 +364,13 @@ describe('ActionStatutListRouter', () => {
     });
   });
 
-  test('Retourne les labels, le tag coremeasure et les thématiques des mesures du référentiel TE', async () => {
-    const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
-      databaseService,
-      {
-        user: {
-          role: CollectiviteRole.EDITION,
-        },
-      }
-    );
-    const caller = router.createCaller({
-      user: getAuthUserFromUserCredentials(user),
-    });
+  test('Les définitions portent les labels, le tag coremeasure et les thématiques des mesures du référentiel TE', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-    const input = {
-      collectiviteId: collectivite.id,
-      referentielId: ReferentielIdEnum.TE,
-    };
-
-    onTestFinished(async () => {
-      await cleanup();
-    });
-
-    await resetDisplayPreferences(collectivite.id);
-
-    await caller.referentiels.snapshots.computeAndUpsert(input);
-
-    const { actionsById } =
-      await caller.referentiels.actions.listActionsGroupedById(input);
+    const { definitionsById: actionsById } =
+      await caller.referentiels.actions.listActionDefinitions({
+        referentielId: ReferentielIdEnum.TE,
+      });
 
     const mesure = actionsById['te_1.1.1'];
     expect(mesure.labels).toEqual(['te_cae']);
@@ -405,14 +402,12 @@ describe('ActionStatutListRouter', () => {
     const result = await caller.referentiels.actions.listActionsGroupedById(
       input
     );
-    expect(result.hiddenActions).toEqual([]);
+    expect(result.hiddenActionIds).toEqual([]);
     expect(Object.keys(result.actionsById).length).toBeGreaterThan(0);
   });
 
   test('List CAE action summaries down to tache', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const result = await caller.referentiels.actions.listActionsGroupedById({
+    const result = await listMergedActions({
       collectiviteId: 1,
       referentielId: ReferentielIdEnum.CAE,
     });
