@@ -356,6 +356,23 @@ for group in "${GROUP_ORDER[@]}"; do
             echo -n " (warning: could not disable triggers — not table owner)"
         fi
 
+        # NOT VALID check constraints only skip rows present when they were added:
+        # they are still enforced on COPY, and historical rows from the dump violate
+        # them (e.g. fiche_action_axe_created_by_not_null). Drop them for the
+        # restore and re-add them NOT VALID afterwards.
+        not_valid_checks_query="FROM pg_constraint
+          WHERE conrelid = format('%I.%I', '$schema', '$table_name')::regclass
+            AND contype = 'c' AND NOT convalidated"
+        drop_not_valid_checks=$("${PSQL[@]}" -d "$TO_DB_URL" -Atc \
+            "SELECT string_agg(format('ALTER TABLE %s DROP CONSTRAINT %I;', conrelid::regclass, conname), ' ') $not_valid_checks_query;")
+        add_not_valid_checks=$("${PSQL[@]}" -d "$TO_DB_URL" -Atc \
+            "SELECT string_agg(format('ALTER TABLE %s ADD CONSTRAINT %I %s;', conrelid::regclass, conname, pg_get_constraintdef(oid)), ' ') $not_valid_checks_query;")
+        if [ -n "$drop_not_valid_checks" ]; then
+            "${PSQL[@]}" -d "$TO_DB_URL" -c "$drop_not_valid_checks" > /dev/null
+            # Re-add the constraints even if the script exits early (set -e, signal).
+            trap 'echo "Re-adding NOT VALID check constraints on $table_key before exit..."; "${PSQL[@]}" -d "$TO_DB_URL" -c "$add_not_valid_checks" > /dev/null' EXIT
+        fi
+
         # Don't use --exit-on-error or --single-transaction: pg_restore executes
         # SET statements from the dump preamble (e.g. SET transaction_timeout = 0)
         # which fail on older PostgreSQL versions. With --single-transaction, this
@@ -381,6 +398,12 @@ for group in "${GROUP_ORDER[@]}"; do
         # Re-enable user triggers after restore
         if [ "$triggers_disabled" = true ]; then
             "${PSQL[@]}" -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" ENABLE TRIGGER USER;"
+        fi
+
+        # Re-add the NOT VALID check constraints (pg_get_constraintdef keeps NOT VALID).
+        if [ -n "$add_not_valid_checks" ]; then
+            "${PSQL[@]}" -d "$TO_DB_URL" -c "$add_not_valid_checks" > /dev/null
+            trap - EXIT
         fi
 
         if [ -n "$restore_stderr" ]; then
