@@ -1,5 +1,3 @@
-/** Les lignes de vulnérabilité des dossiers repris, lues sur la ligne reprise du dossier seule (son doublon « définitif » n'est pas lu). */
-
 import { PoolClient } from 'pg';
 import {
   readObjectif,
@@ -10,7 +8,6 @@ import {
 import { findThematique, type Thematique } from './thematiques';
 
 export type Ligne = {
-  // la ligne T&C
   id: number;
   dossierTecId: number;
   demarcheId: number;
@@ -22,7 +19,6 @@ export type Ligne = {
   objectif: Objectif;
 };
 
-/** Lit chaque ligne avec sa démarche, sa collectivité, sa thématique, son niveau et son objectif, triées. */
 export const loadLignes = async (client: PoolClient): Promise<Ligne[]> => {
   const { rows } = await client.query<{
     id: number;
@@ -53,7 +49,7 @@ export const loadLignes = async (client: PoolClient): Promise<Ligne[]> => {
   }));
 };
 
-/** Garde, appelée par `gardes.ts` : aucun dossier repris, ou la démarche d'un dossier qui a des lignes de vulnérabilité a disparu. */
+/** Tourne avant `loadLignes`, dont la jointure sur `demarche` ferait disparaître ces lignes en silence. */
 export const listCasBloquantsDossiers = async (client: PoolClient) => {
   const { rows } = await client.query<{
     cas: 'aucun_dossier' | 'demarche';
