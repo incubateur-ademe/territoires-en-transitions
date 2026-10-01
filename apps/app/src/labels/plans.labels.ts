@@ -206,6 +206,7 @@ export const plansLabels = {
   importPlanIaPlanImporte: 'Plan importé',
   importPlanIaEnCoursCourt: 'Import en cours',
   planImporteBanniereTitre: 'Plan importé automatiquement (version bêta)',
+  planImporteBanniereAVerifier: 'À vérifier',
   planImporteBanniereDescription:
     "Ce plan a été créé à partir de votre fichier. L'import est en version bêta : certains éléments ont pu être manqués ou mal repérés. Relisez votre plan et corrigez-le si besoin.",
   planImporteBanniereDemoAvant: 'Réservez un créneau pour suivre une',
