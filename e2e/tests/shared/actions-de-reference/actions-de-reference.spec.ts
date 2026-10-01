@@ -254,7 +254,7 @@ test.describe('recherche-partageable-par-url', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : l'URL porte les paramètres texte, leviers, categories et sortBy",
+        "Then : l'URL porte les paramètres searchedText, leviers, categories et sortBy",
         toBeAutomated
       );
       await test.step('When : il recharge la page', toBeAutomated);

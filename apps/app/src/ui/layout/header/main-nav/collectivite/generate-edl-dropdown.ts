@@ -10,10 +10,10 @@ import type {
   CollectiviteReferentielPreferences,
   ReferentielDisplayMap,
 } from '@tet/domain/collectivites';
-import {
+import type {
   CollectiviteNavItem,
   CollectiviteNavLink,
-} from './make-collectivite-nav';
+} from './make-collectivite-nav.contract';
 
 function isReferentielDisplayed(
   display: ReferentielDisplayMap,

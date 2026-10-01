@@ -4,7 +4,7 @@ import {
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { CollectiviteNavItem } from './make-collectivite-nav';
+import type { CollectiviteNavItem } from './make-collectivite-nav.contract';
 
 export const generatePlansActionsDropdown = ({
   collectiviteId,

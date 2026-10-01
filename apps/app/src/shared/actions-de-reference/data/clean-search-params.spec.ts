@@ -49,7 +49,7 @@ describe('filtre-url-inconnu-ignore', () => {
   it.skip('retire chaque valeur inconnue et garde le reste de la recherche', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({
-        texte: 'combles',
+        searchedText: 'combles',
         leviers: 'covoiturage,levier_inconnu',
         categories: 'subvention',
         sortBy: 'prix',
@@ -57,7 +57,7 @@ describe('filtre-url-inconnu-ignore', () => {
     );
 
     expect(toRecord(cleaned)).toEqual({
-      texte: 'combles',
+      searchedText: 'combles',
       leviers: 'covoiturage',
     });
   });
@@ -67,7 +67,7 @@ describe('invariants', () => {
   it.skip('laisse intacte une recherche dont toutes les valeurs sont connues', () => {
     const cleaned = cleanSearchParams(
       new URLSearchParams({
-        texte: 'combles',
+        searchedText: 'combles',
         leviers: 'covoiturage,gestion_haies',
         categories: 'financement,gouvernance',
         sortBy: 'levier',
@@ -75,7 +75,7 @@ describe('invariants', () => {
     );
 
     expect(toRecord(cleaned)).toEqual({
-      texte: 'combles',
+      searchedText: 'combles',
       leviers: 'covoiturage,gestion_haies',
       categories: 'financement,gouvernance',
       sortBy: 'levier',
@@ -84,10 +84,12 @@ describe('invariants', () => {
 
   it.skip('garde le texte cherché tel que saisi, casse et accents compris', () => {
     const cleaned = cleanSearchParams(
-      new URLSearchParams({ texte: 'Combles Perdus isolés' })
+      new URLSearchParams({ searchedText: 'Combles Perdus isolés' })
     );
 
-    expect(toRecord(cleaned)).toEqual({ texte: 'Combles Perdus isolés' });
+    expect(toRecord(cleaned)).toEqual({
+      searchedText: 'Combles Perdus isolés',
+    });
   });
 
   it.skip('laisse une URL sans paramètre sans paramètre', () => {
@@ -106,15 +108,15 @@ describe('invariants', () => {
 
   it.skip('retire le tri par titre, qui est le tri par défaut', () => {
     const cleaned = cleanSearchParams(
-      new URLSearchParams({ texte: 'combles', sortBy: 'titre' })
+      new URLSearchParams({ searchedText: 'combles', sortBy: 'titre' })
     );
 
-    expect(toRecord(cleaned)).toEqual({ texte: 'combles' });
+    expect(toRecord(cleaned)).toEqual({ searchedText: 'combles' });
   });
 
   it.skip('retire un texte cherché vide', () => {
     const cleaned = cleanSearchParams(
-      new URLSearchParams({ texte: '', sortBy: 'levier' })
+      new URLSearchParams({ searchedText: '', sortBy: 'levier' })
     );
 
     expect(toRecord(cleaned)).toEqual({ sortBy: 'levier' });

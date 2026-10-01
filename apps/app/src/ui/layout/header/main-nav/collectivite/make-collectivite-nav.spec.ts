@@ -10,7 +10,7 @@ import {
   PlatformRole,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
-import { isNavLink, NavItem } from '@tet/ui';
+import { isNavLink, NavItem, NavLink } from '@tet/ui';
 import { makeMainNav } from '../make-main-nav';
 import { makeCollectiviteNav } from './make-collectivite-nav';
 
@@ -52,12 +52,12 @@ const toUser = (
   collectivites: [access],
 });
 
-type RootLink = { label: NavItem['children']; href: string };
+type RootLink = { label: NavItem['children']; href: NavLink['href'] };
 
 const toRootLinks = (items: NavItem[] | undefined): RootLink[] =>
   (items ?? [])
     .filter(isNavLink)
-    .map((link) => ({ label: link.children, href: String(link.href) }));
+    .map((link) => ({ label: link.children, href: link.href }));
 
 const toCollectiviteRootLinks = (applicationEnv: string): RootLink[] => {
   const user = toUser(epciAccess);

@@ -22,11 +22,6 @@ import type {
   MakeCollectiviteNav,
 } from './make-collectivite-nav.contract';
 
-export type {
-  CollectiviteNavItem,
-  CollectiviteNavLink,
-} from './make-collectivite-nav.contract';
-
 export const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
   const { isVisible, ...rest } = item;
   return rest;

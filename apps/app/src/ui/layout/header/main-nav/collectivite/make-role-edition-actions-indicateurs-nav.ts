@@ -4,7 +4,8 @@ import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { isUserVisitor, UserWithRolesAndPermissions } from '@tet/domain/users';
 import { HeaderProps } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
-import { cleanButtonProps, CollectiviteNavItem } from './make-collectivite-nav';
+import { cleanButtonProps } from './make-collectivite-nav';
+import type { CollectiviteNavItem } from './make-collectivite-nav.contract';
 
 export const makeSimplifiedViewNav = ({
   user,
