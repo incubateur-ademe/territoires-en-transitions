@@ -19,8 +19,10 @@ export class ListFichesBudgetRepository {
   async listFicheBudgetsBelongingToPlan(
     {
       planId,
+      includeFichesRestreintes,
     }: {
       planId: number;
+      includeFichesRestreintes: boolean;
     },
     { tx }: { tx?: Transaction } = {}
   ): Promise<Pick<FicheWithRelations, 'id' | 'budgets'>[]> {
@@ -28,6 +30,7 @@ export class ListFichesBudgetRepository {
       await this.listFichesBelongingToPlansRepository.listFichesBelongingToPlans(
         {
           planIds: [planId],
+          includeFichesRestreintes,
         },
         { tx }
       );
