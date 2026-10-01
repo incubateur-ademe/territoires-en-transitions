@@ -1,3 +1,4 @@
+import { SecteurReglementaire } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
 type PlanBudgetCalculArgs = {
@@ -87,6 +88,22 @@ export const plansLabels = {
     one: 'Cible',
     other: 'Cibles',
   }),
+  ficheSecteursReglementaires: 'Secteurs réglementaires',
+  ficheSecteursNonAttribuable: 'Non attribuable',
+  ficheSecteursEnCoursDeCalcul: 'En cours de calcul',
+  ficheSecteursARenseigner: 'À renseigner',
+  ficheSecteursNonRenseigne: 'Non renseigné',
+  ficheSecteursChargement: 'Chargement des secteurs',
+  ficheSecteurReglementaireLabels: {
+    residentiel: 'Résidentiel',
+    tertiaire: 'Tertiaire',
+    transport_routier: 'Transport routier',
+    autres_transports: 'Autres transports',
+    agriculture: 'Agriculture',
+    dechets: 'Déchets',
+    industrie_hors_branche_energie: 'Industrie hors branche énergie',
+    branche_energie: 'Branche énergie',
+  } satisfies Record<SecteurReglementaire, string>,
   ficheInstanceGouvernance: plural({
     one: 'Instance de gouvernance',
     other: 'Instances de gouvernance',
