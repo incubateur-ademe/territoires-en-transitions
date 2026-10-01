@@ -67,46 +67,36 @@ export class LlmService {
     };
     const promptChars =
       request.prompt.length + (request.systemInstruction?.length ?? 0);
-    const completionResult = await this.callWithRetry(
+    return this.callWithRetry(
       (attempt) =>
         this.limiter.run(async () => {
           // Mesuré une fois le tour de file obtenu : le temps d'attente du
           // limiteur n'est pas celui du modèle.
           const startedAt = Date.now();
-          const result = await this.llmRepository.complete(request);
+          const completion = await this.llmRepository.complete(request);
+          // Une réponse tronquée ou hors schéma est un appel en échec, même
+          // quand l'API a répondu.
+          const result = completion.success
+            ? toStructuredCompletion(completion.data, args.schema)
+            : completion;
           this.observer?.onCall({
             attempt,
             durationMs: Date.now() - startedAt,
             promptChars,
-            usage: result.success ? result.data.usage : null,
+            usage: completion.success ? completion.data.usage : null,
             error: result.success ? null : result.error,
           });
           return result;
         }),
       args.signal
     );
-    if (!completionResult.success) {
-      return completionResult;
-    }
-
-    const completion = completionResult.data;
-    const parsed = parseStructuredResponse({
-      completed: completion.completed,
-      text: completion.text,
-      schema: args.schema,
-    });
-    if (!parsed.success) {
-      return parsed;
-    }
-
-    return success({ data: parsed.data, tokens: completion.usage });
   }
 
-  private async callWithRetry(
-    call: (attempt: number) => Promise<Result<LlmRawCompletion, LlmError>>,
+  private async callWithRetry<T>(
+    call: (attempt: number) => Promise<Result<T, LlmError>>,
     signal?: AbortSignal
-  ): Promise<Result<LlmRawCompletion, LlmError>> {
-    let lastRetryableResult: Result<LlmRawCompletion, LlmError> | null = null;
+  ): Promise<Result<T, LlmError>> {
+    let lastRetryableResult: Result<T, LlmError> | null = null;
     let attempt = 0;
     try {
       return await retry(async () => {
@@ -129,3 +119,18 @@ export class LlmService {
     }
   }
 }
+
+const toStructuredCompletion = <Schema extends ZodType>(
+  completion: LlmRawCompletion,
+  schema: Schema
+): Result<StructuredCompletion<Schema>, LlmError> => {
+  const parsed = parseStructuredResponse({
+    completed: completion.completed,
+    text: completion.text,
+    schema,
+  });
+  if (!parsed.success) {
+    return parsed;
+  }
+  return success({ data: parsed.data, tokens: completion.usage });
+};
