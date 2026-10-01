@@ -227,6 +227,33 @@ describe('IndicateurExpressionService', () => {
     });
   });
 
+  describe('extractPersonnalisationReferencesFromFormula', () => {
+    test('extrait les appels identite et reponse avec leurs valeurs telles qu’écrites', () => {
+      const references =
+        indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
+          'si identite(population, plus_de_3000) et reponse(dechets_1, oui) alors val(cae_1.a) * reponse(part_1) sinon max(0, cible(cae_1.b))'
+        );
+      expect(references).toEqual({
+        questions: [
+          { questionId: 'dechets_1', valeur: 'oui' },
+          { questionId: 'part_1' },
+        ],
+        identiteFields: [{ champ: 'population', valeur: 'plus_de_3000' }],
+        scores: [],
+        demarches: [],
+      });
+    });
+
+    test('ne renvoie rien pour une formule sans identite ni reponse', () => {
+      const references =
+        indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
+          'val(cae_1.a) + opt_val(cae_1.b)'
+        );
+      expect(references.questions).toEqual([]);
+      expect(references.identiteFields).toEqual([]);
+    });
+  });
+
   describe('parseExpression', () => {
     test('val(cae_1.e) + val(cae_1.f)', async () => {
       expect(

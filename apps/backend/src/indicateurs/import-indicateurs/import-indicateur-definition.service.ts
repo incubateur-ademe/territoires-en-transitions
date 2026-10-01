@@ -6,6 +6,9 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
+import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collectivites/personnalisations/services/verify-personnalisation-expression-references';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import {
   CreateIndicateurCategorieTag,
@@ -21,13 +24,16 @@ import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.se
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import VersionService from '@tet/backend/utils/version/version.service';
-import { CategorieTagCreate } from '@tet/domain/collectivites';
+import {
+  CategorieTagCreate,
+  QuestionWithChoices,
+} from '@tet/domain/collectivites';
 import { IndicateurThematiqueCreate } from '@tet/domain/indicateurs';
 import { ThematiqueCreate } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { DepGraph } from 'dependency-graph';
 import { inArray } from 'drizzle-orm';
-import { omit } from 'es-toolkit';
+import { capitalize, omit } from 'es-toolkit';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
@@ -44,6 +50,13 @@ import {
   importObjectifSchema,
   ImportObjectifType,
 } from './import-indicateur-objectif.dto';
+
+/**
+ * Les questions sont lues en base : les indicateurs doivent être importés
+ * après elles (cf. `specsAlreadyRunByInitDbSeed` dans `vitest.config.mts`).
+ */
+const UNKNOWN_QUESTION_HINT =
+  "Si cette question vient d'être créée, importez les questions de personnalisation avant les indicateurs.";
 
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
   ReturnType<ListPlatformDefinitionsRepository['listPlatformDefinitions']>
@@ -68,6 +81,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
+    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
     private readonly versionService: VersionService,
@@ -275,6 +289,14 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   ): Promise<void> {
     const graph = new DepGraph();
 
+    // Lues une seule fois pour tout l'import. Les erreurs de références sont
+    // accumulées pour être toutes signalées en une fois.
+    const questions =
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+        []
+      );
+    const errors: string[] = [];
+
     const indicateurDefinitionsMap = new Map<
       string,
       ImportIndicateurDefinitionType
@@ -350,37 +372,24 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         }
       }
 
-      if (indicateur.exprCible) {
-        try {
-          this.personnalisationsExpressionService.validateExpression(
-            indicateur.exprCible
-          );
-        } catch (err) {
-          throw new UnprocessableEntityException(
-            `Invalid expression cible "${
-              indicateur.exprCible
-            }" for indicateur "${
-              indicateur.identifiantReferentiel
-            }": ${getErrorMessage(err)}`
-          );
-        }
-      }
-      if (indicateur.exprSeuil) {
-        try {
-          this.personnalisationsExpressionService.validateExpression(
-            indicateur.exprSeuil
-          );
-        } catch (err) {
-          throw new UnprocessableEntityException(
-            `Invalid expression seuil "${
-              indicateur.exprSeuil
-            }" for indicateur "${
-              indicateur.identifiantReferentiel
-            }": ${getErrorMessage(err)}`
-          );
-        }
-      }
+      errors.push(
+        ...this.verifyValeurCalculeReferences(indicateur, questions),
+        ...this.verifyPersonnalisationExpression({
+          expression: indicateur.exprCible,
+          label: `l'expression cible de l'indicateur ${indicateur.identifiantReferentiel}`,
+          questions,
+        }),
+        ...this.verifyPersonnalisationExpression({
+          expression: indicateur.exprSeuil,
+          label: `l'expression seuil de l'indicateur ${indicateur.identifiantReferentiel}`,
+          questions,
+        })
+      );
     });
+
+    if (errors.length) {
+      throw new UnprocessableEntityException(errors.join('\n'));
+    }
 
     try {
       // overallOrder() will throw an error if a cycle exists
@@ -396,6 +405,53 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         HttpStatus.BAD_REQUEST
       );
     }
+  }
+
+  private verifyPersonnalisationExpression(input: {
+    expression: string | null | undefined;
+    label: string;
+    questions: QuestionWithChoices[];
+  }): string[] {
+    const { expression, label, questions } = input;
+    if (!expression) {
+      return [];
+    }
+    try {
+      this.personnalisationsExpressionService.validateExpression(expression);
+    } catch (err) {
+      return [
+        `${capitalize(label)} "${expression}" est invalide : ${getErrorMessage(
+          err
+        )}`,
+      ];
+    }
+    return verifyPersonnalisationExpressionReferences(
+      extractReferencesFromExpression(expression),
+      { label, questions, unknownQuestionHint: UNKNOWN_QUESTION_HINT }
+    );
+  }
+
+  /**
+   * `identite` et `reponse` sont des règles du parser indicateur : leurs
+   * arguments sont lus par l'extracteur dédié du service d'expressions
+   * indicateur. La syntaxe a déjà été vérifiée.
+   */
+  private verifyValeurCalculeReferences(
+    indicateur: ImportIndicateurDefinitionType,
+    questions: QuestionWithChoices[]
+  ): string[] {
+    if (!indicateur.valeurCalcule) {
+      return [];
+    }
+    const references =
+      this.indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
+        indicateur.valeurCalcule
+      );
+    return verifyPersonnalisationExpressionReferences(references, {
+      label: `la formule de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
+      questions,
+      unknownQuestionHint: UNKNOWN_QUESTION_HINT,
+    });
   }
 
   async upsertIndicateurDefinitions(

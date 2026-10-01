@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { extractRawTokenValue } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
 import { PersonnalisationReponses } from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
+import { PersonnalisationExpressionReferences } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
 import {
   createKeywordToken,
   ExpressionParser,
@@ -480,6 +482,54 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
   }
 }
 
+// Visitor pour extraire les questions et champs d'identité référencés, afin de
+// les vérifier à l'import comme ceux des expressions de personnalisation.
+class IndicateurPersonnalisationReferenceExtractionVisitor extends getExpressionVisitor(
+  parser.getBaseCstVisitorConstructorWithDefaults()
+) {
+  public questions: PersonnalisationExpressionReferences['questions'] = [];
+  public identiteFields: PersonnalisationExpressionReferences['identiteFields'] =
+    [];
+
+  constructor() {
+    super();
+    this.validateVisitor();
+  }
+
+  call(ctx: any) {
+    try {
+      return super.call(ctx);
+    } catch {
+      if (ctx.identite) {
+        return this.visit(ctx.identite);
+      } else if (ctx.reponse) {
+        return this.visit(ctx.reponse);
+      }
+      // Les autres appels ne prennent que des identifiants d'indicateurs et
+      // des nombres : rien à collecter.
+      return null;
+    }
+  }
+
+  identite(ctx: any) {
+    const champ = String(this.visit(ctx.identifier));
+    const valeur = extractRawTokenValue(ctx.primary[0]);
+    this.identiteFields.push({ champ, valeur });
+    return null;
+  }
+
+  reponse(ctx: any) {
+    const questionId = String(this.visit(ctx.identifier));
+    if (ctx.primary) {
+      const valeur = extractRawTokenValue(ctx.primary[0]);
+      this.questions.push({ questionId, valeur });
+      return null;
+    }
+    this.questions.push({ questionId });
+    return null;
+  }
+}
+
 @Injectable()
 export default class IndicateurExpressionService {
   private readonly logger = new Logger(IndicateurExpressionService.name);
@@ -491,6 +541,20 @@ export default class IndicateurExpressionService {
     const refVisitor = new IndicateurReferenceExtractionVisitor();
     refVisitor.visit(cst);
     return refVisitor.references;
+  }
+
+  extractPersonnalisationReferencesFromFormula(
+    formula: string
+  ): PersonnalisationExpressionReferences {
+    const cst = this.parseExpression(formula);
+    const visitor = new IndicateurPersonnalisationReferenceExtractionVisitor();
+    visitor.visit(cst);
+    return {
+      questions: visitor.questions,
+      identiteFields: visitor.identiteFields,
+      scores: [],
+      demarches: [],
+    };
   }
 
   parseExpression(inputText: string): CstNode {
