@@ -154,12 +154,19 @@ describe('UpdateActionStatutRouter', () => {
       renseigne: false,
     };
 
-    const currentFullScoreStatutUpdateResponse =
-      await caller.referentiels.actions.updateStatut(input);
+    const statutUpdateResponse = await caller.referentiels.actions.updateStatut(
+      input
+    );
 
-    expect(
-      currentFullScoreStatutUpdateResponse.scoresPayload.scores.score
-    ).toEqual(expectedCaeRootScoreAfterStatutUpdate);
+    // la réponse ne contient que les totaux du snapshot, sans les payloads
+    expect(statutUpdateResponse).toMatchObject({
+      collectiviteId: collectivite.id,
+      referentielId: ReferentielIdEnum.CAE,
+      pointFait: expectedCaeRootScoreAfterStatutUpdate.pointFait,
+      pointPotentiel: expectedCaeRootScoreAfterStatutUpdate.pointPotentiel,
+    });
+    expect(statutUpdateResponse).not.toHaveProperty('scoresPayload');
+    expect(statutUpdateResponse).not.toHaveProperty('personnalisationReponses');
 
     // Check that the current score has been correctly updated & saved
     const currentFullCurentScore =
@@ -240,10 +247,14 @@ describe('UpdateActionStatutRouter', () => {
       statut: 'programme',
     };
 
-    const response = await caller.referentiels.actions.updateStatut(input);
+    await caller.referentiels.actions.updateStatut(input);
+    const currentSnapshot = await caller.referentiels.snapshots.getCurrent({
+      referentielId: ReferentielIdEnum.CAE,
+      collectiviteId: collectivite.id,
+    });
     expect(
       findActionInTree(
-        [response.scoresPayload.scores],
+        [currentSnapshot.scoresPayload.scores],
         (action) => action.actionId === input.actionId
       )?.score.statut
     ).toEqual('programme');

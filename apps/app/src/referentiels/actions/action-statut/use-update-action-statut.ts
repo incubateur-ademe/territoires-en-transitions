@@ -28,13 +28,6 @@ export const useUpdateActionStatut = () => {
         });
 
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
-            collectiviteId,
-            referentielId,
-          }),
-        });
-
-        queryClient.invalidateQueries({
           queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
             collectiviteId,
             referentielId,

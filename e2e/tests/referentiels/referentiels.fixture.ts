@@ -25,7 +25,7 @@ import {
   ObjetPreuve,
   ReferentielId,
   ROLE_IDENTIFIANTS,
-  ScoreSnapshot,
+  SnapshotWithoutPayloads,
 } from '@tet/domain/referentiels';
 import { and, desc, eq } from 'drizzle-orm';
 import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture';
@@ -250,7 +250,7 @@ class ReferentielsFixtureFactory extends FixtureFactory {
   async updateActionStatut(
     user: UserFixture,
     actionStatut: ActionStatutCreate
-  ): Promise<ScoreSnapshot> {
+  ): Promise<SnapshotWithoutPayloads> {
     const trpcClient = user.getTrpcClient();
     const response = await trpcClient.referentiels.actions.updateStatut.mutate(
       actionStatut
