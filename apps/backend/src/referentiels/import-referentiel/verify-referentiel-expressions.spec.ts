@@ -200,6 +200,35 @@ describe('verifyReferentielExpressions', () => {
     expect(errors).toEqual([]);
   });
 
+  it(`accepte identite(sinoe, ...) et identite(commune_membre, plus_de_*) dans une règle d'action`, () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'identite(sinoe, dense)',
+          reduction:
+            'si identite(commune_membre, plus_de_45000) alors 0.5 sinon 1',
+        },
+      ],
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  it(`retourne une erreur quand demarche(...) référence un champ inconnu`, () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      actions: [
+        { identifiant: '1.1', desactivation: 'demarche(renouvelement)' },
+      ],
+    });
+
+    expect(errors).toEqual([
+      `Le champ de démarche "renouvelement" dans l'expression de désactivation de l'action cae_1.1 n'est pas valide. Champs autorisés : renouvellement`,
+    ]);
+  });
+
   it('retourne une erreur de syntaxe pour les expressions de score', () => {
     const failParse: ParseExpression = () => ({
       success: false,

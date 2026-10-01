@@ -40,6 +40,13 @@ describe('extractReferencesFromExpression', () => {
     });
   });
 
+  describe('demarche()', () => {
+    it('extrait le champ depuis demarche(renouvellement)', () => {
+      const refs = extractReferencesFromExpression('demarche(renouvellement)');
+      expect(refs.demarches).toEqual([{ champ: 'renouvellement' }]);
+    });
+  });
+
   describe('expressions composées', () => {
     it('extrait toutes les questions depuis reponse(q1, OUI) et reponse(q2, NON)', () => {
       const refs = extractReferencesFromExpression(
@@ -82,6 +89,7 @@ describe('extractReferencesFromExpression', () => {
       expect(refs.questions).toEqual([]);
       expect(refs.identiteFields).toEqual([]);
       expect(refs.scores).toEqual([]);
+      expect(refs.demarches).toEqual([]);
     });
 
     it('extrait les références distinctes pour le même questionId avec valeurs différentes', () => {

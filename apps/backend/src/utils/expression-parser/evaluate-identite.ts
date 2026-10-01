@@ -1,7 +1,10 @@
 import {
+  CollectiviteLocalisationTypeEnum,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
+  CollectiviteTypeEnum,
   IdentiteCollectivite,
+  TYPOLOGIES_SINOE,
 } from '@tet/domain/collectivites';
 
 /**
@@ -10,7 +13,7 @@ import {
  * Un nom de champ ne doit pas être exactement un mot-clé du DSL (`si`, `ou`,
  * `min`…) : à longueur égale, le lexer retient le mot-clé.
  */
-type IdentiteField =
+export type IdentiteField =
   | 'type'
   | 'soustype'
   | 'population'
@@ -29,7 +32,7 @@ type IdentiteEvaluator = (
   primary: string | number | boolean
 ) => boolean;
 
-function isIdentiteField(value: string): value is IdentiteField {
+export function isIdentiteField(value: string): value is IdentiteField {
   // `in` traverse la chaîne de prototypes : `toString` ou `constructor` y
   // passeraient pour des champs valides et rendraient une valeur non booléenne.
   return Object.hasOwn(IDENTITE_EVALUATORS, value);
@@ -106,6 +109,28 @@ const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
     return identite.sinoeId?.toLowerCase() === String(primary).toLowerCase();
   },
 };
+
+function lower(enumObject: Record<string, string>): string[] {
+  return Object.values(enumObject).map((value) => value.toLowerCase());
+}
+
+/**
+ * Valeurs acceptées à l'import pour le second argument d'`identite(champ, …)`,
+ * en minuscules. Le typage `Record<IdentiteField, …>` fait d'un champ oublié
+ * une erreur de compilation : cette liste suit `IDENTITE_EVALUATORS`.
+ */
+export const IDENTITE_ALLOWED_VALUES: Record<IdentiteField, readonly string[]> =
+  {
+    type: lower(CollectiviteTypeEnum),
+    soustype: lower(CollectiviteSousTypeEnum),
+    population: lower(CollectivitePopulationTypeEnum),
+    localisation: lower(CollectiviteLocalisationTypeEnum),
+    dans_aire_urbaine: ['oui', 'non'],
+    sinoe: TYPOLOGIES_SINOE.map(({ id }) => id),
+    commune_membre: lower(CollectivitePopulationTypeEnum).filter((value) =>
+      value.startsWith('plus_de_')
+    ),
+  };
 
 function buildUnknownFieldErrorMessage(
   identifier: string,
