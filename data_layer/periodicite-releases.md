@@ -51,6 +51,8 @@ Les contrôles de migration refusent les collisions, sans fusion automatique.
 
 ## Restauration
 
+Pour cette étape, utiliser les scripts du commit du schéma compatible ; ceux de
+la sixième livraison exigent le schéma final nettoyé.
 Conserver le catalogue installé par migration. Les sauvegardes historiques peuvent
 être chargées sur le schéma compatible : les colonnes absentes prennent leurs
 défauts annuels. Une sauvegarde du schéma compatible se restaure sur ce même état.
@@ -79,3 +81,8 @@ sur deux bases jetables avec fixtures synthétiques.
 
 Après #5215, suivre le [guide de migration mensuelle de Margny](margny-monthly-migration.md).
 Cette livraison reste déployable avant le nettoyage #5296.
+
+## Nettoyage final
+
+Après validation de la migration de Margny, suivre le [guide de nettoyage](periodicite-cleanup.md).
+La sixième livraison exige une sauvegarde complète vérifiée et ferme le retour arrière Sqitch.

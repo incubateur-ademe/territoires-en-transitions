@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(48);
+SELECT plan(44);
 
 CREATE TEMPORARY TABLE test_collectivite_periodicite AS
 WITH collectivite AS (
@@ -23,7 +23,7 @@ WITH indicateurs AS (
     FROM test_collectivite_periodicite collectivite
     CROSS JOIN (VALUES
         ('test-annuel', NULL, 'annuelle'),
-        ('test-audit-reaffectation', NULL, 'annuelle'),
+        ('test-reaffectation', NULL, 'annuelle'),
         ('test-sans-valeur', NULL, 'annuelle'),
         ('test-mensuel', NULL, 'mensuelle')
     ) AS donnees(code, referentiel_id, periodicite)
@@ -245,35 +245,6 @@ SELECT lives_ok(
     'Une valeur annuelle au 1er janvier est acceptée directement en base'
 );
 
-SELECT throws_ok(
-    $$ SELECT migration.verifier_retrait_periodicite_indicateur() $$,
-    23514,
-    NULL,
-    'Le downgrade préserve aussi les définitions mensuelles sans valeur'
-);
-
-INSERT INTO migration.indicateur_valeur_periodicite_audit
-    (valeur_id,
-     indicateur_id,
-     collectivite_id,
-     metadonnee_id,
-     periodicite,
-     date_valeur_avant,
-     date_valeur_canonique,
-     statut)
-SELECT valeur.id,
-       valeur.indicateur_id,
-       valeur.collectivite_id,
-       valeur.metadonnee_id,
-       'annuelle',
-       DATE '2027-06-01',
-       valeur.date_valeur,
-       'normalisee'
-FROM public.indicateur_valeur valeur
-WHERE valeur.indicateur_id = (
-    SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel'
-);
-
 SELECT lives_ok(
     format(
         $$ UPDATE public.indicateur_valeur
@@ -282,22 +253,12 @@ SELECT lives_ok(
            UPDATE public.indicateur_valeur
            SET indicateur_id = %s
            WHERE indicateur_id = %s $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'),
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-reaffectation'),
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel'),
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel'),
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation')
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-reaffectation')
     ),
-    'Une ligne normalisée peut être réaffectée puis replacée sur sa définition initiale'
-);
-
-SELECT is_empty(
-    $$ SELECT 1
-       FROM migration.indicateur_valeur_periodicite_audit audit
-       JOIN public.indicateur_valeur valeur ON valeur.id = audit.valeur_id
-       WHERE valeur.indicateur_id = (
-           SELECT id FROM test_indicateur_periodicite WHERE code = 'test-annuel'
-       ) $$,
-    'La première réaffectation invalide définitivement son ancien audit de normalisation'
+    'Une ligne peut être réaffectée puis replacée sur sa définition initiale'
 );
 
 SELECT throws_ok(
@@ -351,7 +312,7 @@ SELECT lives_ok(
     format(
         $$ INSERT INTO public.indicateur_groupe (parent, enfant)
            VALUES (%s, %s) $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'),
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-reaffectation'),
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-sans-valeur')
     ),
     'Un groupe de définitions annuelles homogènes est accepté'
@@ -384,7 +345,7 @@ SELECT throws_ok(
     format(
         $$ INSERT INTO public.indicateur_groupe (parent, enfant)
            VALUES (%s, %s) $$,
-        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-audit-reaffectation'),
+        (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-reaffectation'),
         (SELECT id FROM test_indicateur_periodicite WHERE code = 'test-mensuel')
     ),
     23514,
@@ -412,13 +373,6 @@ SELECT lives_ok(
         (SELECT collectivite_id FROM test_collectivite_periodicite)
     ),
     'Le premier jour de février est accepté pour un indicateur mensuel'
-);
-
-SELECT throws_ok(
-    $$ SELECT migration.verifier_retrait_periodicite_indicateur() $$,
-    23514,
-    NULL,
-    'Le downgrade refuse de perdre le sens d''une définition mensuelle'
 );
 
 SELECT is(
@@ -480,25 +434,12 @@ SELECT is_empty(
         FROM public.indicateur_valeur valeur
         JOIN public.indicateur_definition definition
           ON definition.id = valeur.indicateur_id
-        LEFT JOIN migration.indicateur_valeur_periodicite_audit audit
-          ON audit.valeur_id = valeur.id
-         AND audit.statut = 'conflit'
         WHERE valeur.date_valeur <> public.indicateur_date_debut_periode(
             valeur.periodicite,
             valeur.date_valeur
         )
-          AND audit.valeur_id IS NULL
     $$,
-    'Aucune date non canonique ne peut échapper à l''audit historique'
-);
-
-SELECT is_empty(
-    $$
-        SELECT valeur_id
-        FROM migration.indicateur_valeur_periodicite_audit
-        WHERE statut = 'conflit'
-    $$,
-    'La périodicité obligatoire ne laisse aucun conflit historique non remédié'
+    'Toutes les dates respectent le contrat canonique'
 );
 
 SELECT lives_ok(

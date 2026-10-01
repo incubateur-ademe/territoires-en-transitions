@@ -3,6 +3,8 @@
 BEGIN;
 
 DO $$
+DECLARE
+    cleaned boolean := EXISTS (SELECT FROM sqitch.changes WHERE project = 'tet' AND change = 'indicateur/periodicite_nettoyage');
 BEGIN
     -- Le changement contractuel suivant retire le défaut de compatibilité :
     -- cette vérification historique doit donc accepter les deux états.
@@ -33,7 +35,7 @@ BEGIN
           AND NOT tgisinternal
     ), 'Les déclarations locales doivent respecter la périodicité de leur définition';
 
-    ASSERT to_regclass('migration.indicateur_valeur_periodicite_audit') IS NOT NULL,
+    ASSERT cleaned OR to_regclass('migration.indicateur_valeur_periodicite_audit') IS NOT NULL,
         'La table d''audit des dates historiques doit exister';
 
     ASSERT to_regclass('public.indicateur_periodicite') IS NOT NULL,
@@ -56,7 +58,7 @@ BEGIN
         'public.indicateur_date_debut_periode(text,date)'
     ) IS NOT NULL, 'La fonction canonique des périodes doit exister';
 
-    ASSERT to_regprocedure(
+    ASSERT cleaned OR to_regprocedure(
         'migration.verifier_retrait_periodicite_indicateur()'
     ) IS NOT NULL, 'Le garde anti-perte du downgrade doit exister';
 
@@ -218,7 +220,7 @@ BEGIN
           AND NOT tgisinternal
     ), 'Les écritures de valeurs doivent être auditées en transition ou strictement validées';
 
-    ASSERT EXISTS (
+    ASSERT cleaned OR EXISTS (
         SELECT 1
         FROM pg_trigger
         WHERE tgname = 'assainir_audit_periodicite_indicateur'

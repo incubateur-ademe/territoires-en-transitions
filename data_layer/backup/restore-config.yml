@@ -143,13 +143,7 @@ groups:
     - indicateur_source_source_calcul
     - indicateur_source_metadonnee
     - indicateur_valeur
-
-  # État durable propre aux phases expand/contract. restore.sh n'ajoute ce
-  # groupe que lorsque source et cible partagent exactement l'une de ces phases.
-  periodicite_group:
-    - migration.indicateur_valeur_periodicite_audit
     - private.indicateur_reconciliation_formule
-    - private.indicateur_valeur_date_repair
 
   pai_group:
     - action_impact_complexite

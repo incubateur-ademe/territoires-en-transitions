@@ -3,6 +3,8 @@
 BEGIN;
 
 DO $$
+DECLARE
+    cleaned boolean := EXISTS (SELECT FROM sqitch.changes WHERE project = 'tet' AND change = 'indicateur/periodicite_nettoyage');
 BEGIN
     ASSERT (
         SELECT is_nullable = 'NO' AND column_default = '''annuelle''::text'
@@ -32,12 +34,18 @@ BEGIN
         SELECT 1
         FROM pg_trigger
         WHERE tgname = 'verifier_date_valeur_selon_periodicite'
+          AND tgtype::integer = 23
+          AND tgfoid = 'public.verifier_date_valeur_selon_periodicite()'::regprocedure
+          AND (SELECT array_agg(a.attname ORDER BY a.attname)
+               FROM unnest(tgattr::smallint[]) AS updated(attnum)
+               JOIN pg_attribute a ON a.attrelid = pg_trigger.tgrelid AND a.attnum = updated.attnum)
+              = ARRAY['date_valeur', 'indicateur_id', 'periodicite']::name[]
           AND tgrelid = 'public.indicateur_valeur'::regclass
           AND tgenabled = 'O'
           AND NOT tgisinternal
     ), 'Le trigger de validation des dates doit être actif';
 
-    ASSERT EXISTS (
+    ASSERT cleaned OR EXISTS (
         SELECT 1
         FROM pg_trigger
         WHERE tgname = 'assainir_audit_periodicite_indicateur'
@@ -75,11 +83,13 @@ BEGIN
           AND NOT tgisinternal
     ), 'Le trigger d''homogénéité des groupes doit être actif';
 
-    ASSERT NOT EXISTS (
-        SELECT 1
-        FROM migration.indicateur_valeur_periodicite_audit
-        WHERE statut = 'conflit'
-    ), 'Aucun conflit historique non remédié ne doit subsister';
+    IF NOT cleaned THEN
+        ASSERT NOT EXISTS (
+            SELECT 1
+            FROM migration.indicateur_valeur_periodicite_audit
+            WHERE statut = 'conflit'
+        ), 'Aucun conflit historique non remédié ne doit subsister';
+    END IF;
 
     -- Les conflits historiques ont dû être remédiés avant le verrouillage et
     -- toutes les écritures postérieures sont contrôlées par le trigger.

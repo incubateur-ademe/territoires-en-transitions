@@ -26,6 +26,11 @@ END;
 $$;
 DO $$
 BEGIN
+    IF to_regclass('sqitch.changes') IS NOT NULL THEN
+        IF EXISTS (SELECT FROM sqitch.changes WHERE project = 'tet' AND change = 'indicateur/periodicite_nettoyage') THEN
+            RETURN; -- La dernière livraison retire uniquement la sauvegarde des anciens droits.
+        END IF;
+    END IF;
     IF (SELECT count(*) FROM private.indicateur_valeur_write_acl) <> 1
        OR NOT (SELECT relrowsecurity FROM pg_class
                WHERE oid = 'private.indicateur_valeur_write_acl'::regclass)
