@@ -36,6 +36,38 @@ describe('reconstructPageLines', () => {
     expect(lines[0].y).toBe(100);
   });
 
+  it('sépare deux colonnes de texte posées sur la même ligne', () => {
+    const lines = reconstructPageLines(
+      [
+        item('OBJECTIF 1 - AMELIORER LES BATIMENTS', 40, 200, 10, 180),
+        item('OBJECTIF 4 - REDUIRE LES DEPLACEMENTS', 260, 200, 10, 180),
+      ],
+      PAGE_HEIGHT
+    );
+
+    expect(lines.map((line) => line.text)).toEqual([
+      'OBJECTIF 1 - AMELIORER LES BATIMENTS',
+      'OBJECTIF 4 - REDUIRE LES DEPLACEMENTS',
+    ]);
+  });
+
+  it('garde un numéro ou un libellé court sur la ligne de son texte', () => {
+    const lines = reconstructPageLines(
+      [
+        item('2.1.3', 40, 200, 10, 25),
+        item('Assurer le suivi des consommations', 90, 200),
+        item('Pilote', 40, 300, 10, 30),
+        item('Service bâtiments', 120, 300),
+      ],
+      PAGE_HEIGHT
+    );
+
+    expect(lines.map((line) => line.text)).toEqual([
+      '2.1.3 Assurer le suivi des consommations',
+      'Pilote Service bâtiments',
+    ]);
+  });
+
   it('ne double pas les espaces déjà présents dans les fragments', () => {
     const lines = reconstructPageLines(
       [item('Rénover ', 40, 200, 10, 40), item('les écoles', 80, 200)],

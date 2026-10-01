@@ -77,6 +77,8 @@ describe('detectHeadings', () => {
       {
         pageIndex: 0,
         lineIndex: 0,
+        lastLineIndex: 1,
+        isLarge: true,
         match: expect.objectContaining({
           kind: 'section',
           title: 'ENGAGEMENT DES PARTENAIRES',
@@ -167,8 +169,127 @@ describe('detectHeadings', () => {
       {
         pageIndex: 0,
         lineIndex: 0,
+        lastLineIndex: 0,
+        isLarge: true,
         match: expect.objectContaining({ level: 1, confidence: 0.8 }),
       },
+    ]);
+  });
+});
+
+describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
+  const titles = (pages: ReturnType<typeof buildPage>[]) =>
+    detectHeadings(pages).map(({ match }) => [
+      match.kind,
+      match.level,
+      match.title,
+    ]);
+
+  it("prend le bandeau d'objectif au-dessus d'une fiche pour son sous-axe, et recolle le titre long de la fiche", () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: '1- AMELIORER LA PERFORMANCE DES BATIMENTS', fontSize: 16 },
+          {
+            text: 'ACTION 2 - ACCOMPAGNER LES PROJETS DE CONSTRUCTION POUR ATTEINDRE DES OBJECTIFS DE',
+            fontSize: 16,
+          },
+          {
+            text: 'PERFORMANCE DE "TRES BASSE CONSOMMATION" OU "PASSIF"',
+            fontSize: 16,
+          },
+          ...body(5),
+        ]),
+      ])
+    ).toEqual([
+      ['orientation', 2, 'AMELIORER LA PERFORMANCE DES BATIMENTS'],
+      [
+        'fiche',
+        3,
+        'ACCOMPAGNER LES PROJETS DE CONSTRUCTION POUR ATTEINDRE DES OBJECTIFS DE PERFORMANCE DE "TRES BASSE CONSOMMATION" OU "PASSIF"',
+      ],
+    ]);
+  });
+
+  it("recolle la suite d'un titre de fiche dans une autre grande police, sans avaler le titre suivant", () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: '1- ASSURER LA GOUVERNANCE DU PCAET', fontSize: 16 },
+          { text: 'ACTION 1- PILOTER ET EVALUER LE PCAET', fontSize: 16 },
+          ...body(5),
+        ]),
+        buildPage(1, [
+          {
+            text: "ACTION 1 - SYSTEMATISER L'INTEGRATION DES ENERGIES RENOUVELABLES DANS LES",
+            fontSize: 20,
+          },
+          { text: 'BATIMENTS PUBLICS', fontSize: 16 },
+          ...body(5),
+        ]),
+      ])
+    ).toEqual([
+      ['orientation', 2, 'ASSURER LA GOUVERNANCE DU PCAET'],
+      ['fiche', 3, 'PILOTER ET EVALUER LE PCAET'],
+      [
+        'fiche',
+        3,
+        "SYSTEMATISER L'INTEGRATION DES ENERGIES RENOUVELABLES DANS LES BATIMENTS PUBLICS",
+      ],
+    ]);
+  });
+
+  it("ne prend pas les lignes d'un tableau récapitulatif pour des fiches", () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'Axe stratégique Intitulé de l’action', fontSize: 12 },
+          { text: '2.1.1 Accompagner les collectivités', fontSize: 12 },
+          {
+            text: '2.1.2 Accompagner les projets de construction',
+            fontSize: 12,
+          },
+          { text: '2/ Engager', fontSize: 12 },
+          { text: '2.1.3 Assurer le suivi des consommations', fontSize: 12 },
+          {
+            text: '2.1.4 Réduire la consommation de l’éclairage',
+            fontSize: 12,
+          },
+          ...body(2),
+        ]),
+      ])
+    ).toEqual([]);
+  });
+
+  it('ne prend pas un intertitre de fiche en corps de texte pour une partie du document', () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'ACTION 1- PILOTER ET EVALUER LE PCAET', fontSize: 16 },
+          ...body(3),
+          { text: 'Suivi et évaluation', fontSize: 12 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([['fiche', 3, 'PILOTER ET EVALUER LE PCAET']]);
+  });
+
+  it("ne fait pas un axe d'une ligne en majuscules quand le document nomme ses axes, sauf si elle se dit axe", () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'AXE STRATEGIQUE 4 - AMELIORER LES BÂTIMENTS', fontSize: 20 },
+          ...body(3),
+          { text: 'ENERGETIQUE DES BATIMENTS TERTIAIRES', fontSize: 16 },
+          ...body(3),
+          { text: 'AXE TRANSVERSAL', fontSize: 20 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([
+      ['axe', 1, 'AMELIORER LES BÂTIMENTS'],
+      ['majuscules', 2, 'ENERGETIQUE DES BATIMENTS TERTIAIRES'],
+      ['majuscules', 1, 'AXE TRANSVERSAL'],
     ]);
   });
 });
