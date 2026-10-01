@@ -70,7 +70,7 @@ export const SwitchToTeConfirmModal = ({ isOpen, onClose }: Props) => {
               <ModalFooterOKCancel
                 btnCancelProps={{ children: appLabels.fermer, onClick: close }}
                 btnOKProps={{
-                  children: appLabels.switchToTeConfirmRetry,
+                  children: appLabels.reessayer,
                   onClick: flow.retry,
                 }}
               />

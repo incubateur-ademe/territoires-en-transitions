@@ -26,7 +26,7 @@ const ImportFailedAlert = ({
       description={errorMessage ?? undefined}
     />
     <Button variant="outlined" onClick={onRetry}>
-      {appLabels.importPlanIaReessayer}
+      {appLabels.reessayer}
     </Button>
   </div>
 );

@@ -127,7 +127,6 @@ export const appLabels = {
   preuvesTelechargementNombreFichiers: ({ count }: { count: number }): string =>
     `${count} fichier${count > 1 ? 's' : ''}`,
   preuvesTelechargementLien: 'Télécharger le dossier',
-  preuvesTelechargementReessayer: 'Réessayer',
   preuvesTelechargementErreur: 'La préparation des documents a échoué.',
 
   bonjour: 'Bonjour',
@@ -861,7 +860,6 @@ export const appLabels = {
   importPlanIaEnCours:
     'Cela peut prendre quelques minutes. Ne fermez pas cette fenêtre.',
   importPlanIaErreur: "L'import a échoué",
-  importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeExtraction: 'Lecture du document',
   importPlanIaEtapeVerification: 'Contrôle des actions identifiées',
   importPlanIaEtapeConsolidation: 'Correction des actions incomplètes',
@@ -1403,7 +1401,6 @@ export const appLabels = {
   switchToTeConfirmSubmit: 'Basculer définitivement',
   switchToTeConfirmPrevious: 'Précédent',
   switchToTeConfirmContinue: 'Continuer',
-  switchToTeConfirmRetry: 'Réessayer',
   switchToTeConfirmProgressTitre: 'Bascule en cours…',
   switchToTeConfirmProgressDescription:
     'Cette opération peut prendre de quelques secondes à quelques minutes. Ne fermez pas cette page.',
