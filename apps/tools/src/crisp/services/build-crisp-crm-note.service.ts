@@ -101,7 +101,7 @@ export const formatCrmNote = (
       '',
       `🏛 ${collectivite.nom}${
         collectivite.role ? ` — ${ROLE_LABELS[collectivite.role]}` : ''
-      }`
+      }${collectiviteUrl ? ` → ${collectiviteUrl}` : ''}`
     );
     if (collectivite.ficheCrmUrl) {
       lines.push(`   Fiche CRM : ${collectivite.ficheCrmUrl}`);
