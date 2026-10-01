@@ -1,3 +1,4 @@
+import { UnprocessableEntityException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
@@ -118,6 +119,19 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           indicateurDefinition,
         ])
       ).rejects.toThrow(/référentiel "xx" inconnu/i);
+    });
+
+    test('Expression cible avec caractère non reconnu', async () => {
+      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      indicateurDefinition.exprCible =
+        'si identite(sinoe, rural_dispersé) alors 20 sinon 10';
+
+      const promise =
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+        ]);
+      await expect(promise).rejects.toThrow(UnprocessableEntityException);
+      await expect(promise).rejects.toThrow(/caractère non reconnu « é »/i);
     });
 
     test('Expression seuil avec version mal formée', async () => {

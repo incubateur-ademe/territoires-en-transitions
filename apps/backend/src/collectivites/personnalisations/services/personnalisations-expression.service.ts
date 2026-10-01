@@ -1,15 +1,15 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
+  tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
 import {
   evaluateDemarche,
   type DemarcheExpressionContext,
 } from '@tet/backend/utils/expression-parser/evaluate-demarche';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
-import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import {
   matchReferentiel,
   parseReferentielArg,
@@ -308,20 +308,13 @@ export default class PersonnalisationsExpressionService {
   private readonly logger = new Logger(PersonnalisationsExpressionService.name);
 
   parseExpression(inputText: string): CstNode {
-    const lexingResult = parser.lexer.tokenize(inputText);
-    //console.log(JSON.stringify(lexingResult.tokens));
-    parser.input = lexingResult.tokens;
-    const cst = parser.statement();
-
-    if (parser.errors && parser.errors.length > 0) {
+    try {
+      return tokenizeAndParse(parser, inputText);
+    } catch (error) {
       this.logger.error(
-        `Parsing errors detected: ${JSON.stringify(parser.errors)}`
+        `Parsing errors detected: ${JSON.stringify((error as Error).cause)}`
       );
-      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
-        cause: parser.errors,
-      });
-    } else {
-      return cst;
+      throw error;
     }
   }
 

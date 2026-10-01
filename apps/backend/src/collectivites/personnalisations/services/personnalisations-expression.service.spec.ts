@@ -4,6 +4,7 @@ import {
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
+import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -32,6 +33,18 @@ describe('PersonnalisationsExpressionService', () => {
           'NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:17)'
         );
       }
+    });
+
+    it('lève InvalidExpressionError sur un caractère non reconnu', () => {
+      expect(() =>
+        expressionService.parseExpression('identite(sinoe, rural_dispersé)')
+      ).toThrow(InvalidExpressionError);
+    });
+
+    it('lève InvalidExpressionError sur une erreur de parsing', () => {
+      expect(() => expressionService.parseExpression('si vrai alors')).toThrow(
+        InvalidExpressionError
+      );
     });
 
     it('score(cae_1.2.3) + score(cae_1.2.4)', async () => {

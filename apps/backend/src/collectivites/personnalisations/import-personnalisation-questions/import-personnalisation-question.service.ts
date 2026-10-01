@@ -1,5 +1,4 @@
 import {
-  HttpException,
   Injectable,
   Logger,
   UnprocessableEntityException,
@@ -21,6 +20,7 @@ import {
   questionThematiqueSchema,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
+import { getErrorMessage } from '@tet/domain/utils';
 import { sql } from 'drizzle-orm';
 import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
 import {
@@ -269,9 +269,9 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
           );
         } catch (error) {
           throw new UnprocessableEntityException(
-            `Invalid expression for question ${question.id}: "${
-              (error as HttpException).message
-            }"`
+            `Invalid expression for question ${question.id}: "${getErrorMessage(
+              error
+            )}"`
           );
         }
       }
