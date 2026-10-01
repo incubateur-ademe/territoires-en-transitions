@@ -20,6 +20,7 @@
 # Découpage fetch / manifests / builder : voir apps/backend/Dockerfile pour le
 # détail (le `pnpm fetch` initial ne dépend que du lockfile, l'install ne
 # dépend que des manifests, les sources n'arrivent qu'après).
+# Le cache de ces couches est exporté vers GHCR par docker-build-push.
 
 # Épinglée par digest — cf. apps/backend/Dockerfile. Pour bumper :
 # `docker buildx imagetools inspect node:24-alpine`.
@@ -61,11 +62,21 @@ ARG GIT_SHORT_HASH
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Le cache distant est géré par BuildKit : aucune connexion à Nx Cloud
+# (ni token Nx) n'est nécessaire dans ce build Docker.
+ENV NX_NO_CLOUD=true
+
 # SENTRY_AUTH_TOKEN is only used by the Sentry build plugin to upload source
 # maps; kept out of ENV so it never gets baked into the image. The bryntum
 # secret here just silences pnpm's harmless "can't resolve
 # ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).
-RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
+# Les caches de travail Next/Nx restent locaux au builder : ils ne doivent
+# pas gonfler la couche exportée à chaque commit. Ces mounts ne sont pas
+# restaurés depuis le registre sur les runners éphémères ; le cache distant
+# conserve les couches de dépendances et les artefacts compilés uniquement.
+RUN --mount=type=cache,id=tet-app-next,target=/workspace/apps/app/.next/cache \
+    --mount=type=cache,id=tet-app-nx,target=/workspace/.nx/cache \
+    --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
     --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     pnpm run build:app
 

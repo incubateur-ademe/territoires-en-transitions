@@ -18,6 +18,10 @@ on:
       is-test-app:
         type: boolean
         description: Application de test
+      force-rebuild:
+        type: boolean
+        description: Reconstruire l'image même si ce commit est déjà publié
+        default: false
 
 jobs:
   build-app:
@@ -66,6 +70,7 @@ jobs:
           image: ${{ steps.image.outputs.path }}
           cache-scope: tet-app
           push: ${{ !env.ACT }}
+          reuse-image: ${{ github.event.inputs.force-rebuild != 'true' }}
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
             sentry_auth_token=SENTRY_AUTH_TOKEN
