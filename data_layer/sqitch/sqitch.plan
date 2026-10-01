@@ -1120,3 +1120,4 @@ indicateur/correct-dates-historiques [referentiel/action_score_indicateur_valeur
 indicateur/periodicite_schema [indicateur/correct-dates-historiques] 2026-09-30T12:01:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute le schéma annuel compatible avec les anciens lecteurs et writers
 @indicateur-periodicite-schema 2026-09-30T12:01:01Z Emilien Escalle <emilien.escalle@escemi.com> # Livraison autonome du schéma, avant le backend
 indicateur/indicateur_vue [collectivite/collectivite utils/auth] 2026-09-28T16:00:00Z TeT <contact@territoiresentransitions.fr> # Vues filtrees des indicateurs partagees par les membres de la collectivite
+plan_action/fiche_action_secteur_attribution [plan_action/plan_action] 2026-10-01T09:00:00Z Mehdi Louraoui <med.louraoui@gmail.com> # Ajoute l enum secteur_reglementaire et la table fiche_action_secteur_attribution : secteurs R. 229-52 d une fiche, proposes par Communs ou saisis a la main
