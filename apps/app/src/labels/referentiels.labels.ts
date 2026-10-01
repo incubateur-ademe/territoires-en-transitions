@@ -136,6 +136,8 @@ export const referentielsLabels = {
     `Source : ${source} (${annee})`,
   aucunResultatIndicateurDisponible:
     "Aucun résultat n'a encore été renseigné pour cet indicateur.",
+  resultatsIndicateurErreur:
+    "Les résultats de l'indicateur n'ont pas pu être chargés.",
   source: 'Source',
   sources: plural({ one: 'source', other: 'sources' }),
   scoreIndicatifPasDeDonnee: 'Pas de donnée renseignée',
