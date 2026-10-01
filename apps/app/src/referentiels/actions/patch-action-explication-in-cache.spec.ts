@@ -1,4 +1,7 @@
-import { Action, ListActionsGroupedByIdResult } from '@tet/domain/referentiels';
+import {
+  ActionDynamicState,
+  ListActionsDynamicStateResult,
+} from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 import { patchActionExplicationInCache } from './patch-action-explication-in-cache';
 
@@ -6,14 +9,15 @@ const buildAction = (actionId: string, explication: string | null) =>
   ({
     actionId,
     score: { actionId, explication },
-  } as unknown as Action);
+  } as unknown as ActionDynamicState);
 
-const buildCache = (): ListActionsGroupedByIdResult => ({
+const buildCache = (): ListActionsDynamicStateResult => ({
+  referentielVersion: '1.0.0',
   actionsById: {
     'cae_1.1.1': buildAction('cae_1.1.1', 'ancien commentaire'),
     'cae_1.1.2': buildAction('cae_1.1.2', null),
   },
-  hiddenActions: [{ actionId: 'cae_1.2', identifiant: '1.2', nom: 'Masquée' }],
+  hiddenActionIds: ['cae_1.2'],
 });
 
 describe('patchActionExplicationInCache', () => {
@@ -43,7 +47,7 @@ describe('patchActionExplicationInCache', () => {
     expect(patched?.actionsById['cae_1.1.2']).toBe(
       old.actionsById['cae_1.1.2']
     );
-    expect(patched?.hiddenActions).toBe(old.hiddenActions);
+    expect(patched?.hiddenActionIds).toBe(old.hiddenActionIds);
   });
 
   it("ne mute pas le cache d'origine", () => {
