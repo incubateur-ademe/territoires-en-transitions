@@ -41,12 +41,11 @@ export type UseListActionsDeReference = (
   search: ActionsDeReferenceSearch
 ) => ActionsDeReferenceList;
 
-export type UpdateActionDeReferenceOutcome = 'updated' | 'rejected';
-
 export type ActionDeReferenceUpdate = {
   readonly updateAction: (
-    input: UpdateActionDeReferenceInput
-  ) => Promise<UpdateActionDeReferenceOutcome>;
+    input: UpdateActionDeReferenceInput,
+    callbacks: { readonly onUpdated: () => void }
+  ) => void;
   readonly isPending: boolean;
 };
 
