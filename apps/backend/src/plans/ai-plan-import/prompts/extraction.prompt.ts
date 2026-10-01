@@ -114,7 +114,7 @@ Règles générales
    • Exemple : si le document indique "Service urbanisme de la Collectivité X", alors "structure pilote" = "Collectivité X" et "direction ou service pilote" = "Service urbanisme".
    • Si une seule des deux informations est présente, ne remplir que ce champ et laisser l'autre à "".
 4 ter "partenaires" ne contient jamais un organisme déjà cité comme pilote ou porteur de l'action : un même organisme ne peut pas être à la fois pilote et partenaire de la même action.
-5 Majuscules. Mettre une majuscule au premier mot de chaque champ texte. Conserver les majuscules des noms propres et des sigles. Supprimer les espaces superflus au début et à la fin
+5 Majuscules. Mettre une majuscule au premier mot de chaque champ texte. Conserver les majuscules des noms propres et des sigles. Supprimer les espaces superflus au début et à la fin. Un axe, un sous axe ou un titre écrit tout en capitales dans le texte source est remis en casse de phrase, accents rétablis : "DEVELOPPER LE POTENTIEL ENERGETIQUE" donne "Développer le potentiel énergétique"
 6 Respect strict des libellés existants pour axes et sous axes lorsque fournis. En l’absence de libellé explicite, créer un libellé concis et fidèle au contenu
 7 Ordre de tri. Le tableau doit être trié selon la hiérarchie axe puis sous axe puis ordre des actions
 8 "titre" et "description" ne doivent jamais contenir les mêmes informations. La description apporte un complément au titre. Si le titre suffit à décrire l’action et qu’il n’y a rien de pertinent à ajouter, laisser "description" à ""
