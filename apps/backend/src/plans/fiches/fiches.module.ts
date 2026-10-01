@@ -44,6 +44,11 @@ import { FicheAnnexesRepository } from './fiche-annexes/fiche-annexes.repository
 import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
 import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
 import { FicheDuplicationService } from './fiche-duplication/fiche-duplication.service';
+import { CommunsSecteursClient } from './fiche-secteurs/communs-secteurs.client';
+import { FicheSecteursAttributionRepository } from './fiche-secteurs/fiche-secteurs-attribution.repository';
+import { FicheSecteursEligibiliteRepository } from './fiche-secteurs/fiche-secteurs-eligibilite.repository';
+import { GetFicheSecteursRouter } from './fiche-secteurs/get-fiche-secteurs.router';
+import { GetFicheSecteursService } from './fiche-secteurs/get-fiche-secteurs.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -102,6 +107,11 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheAnnexesService,
     FicheAnnexesRouter,
     FicheDuplicationService,
+    CommunsSecteursClient,
+    FicheSecteursAttributionRepository,
+    FicheSecteursEligibiliteRepository,
+    GetFicheSecteursService,
+    GetFicheSecteursRouter,
     FichesRouter,
     NotifyPiloteService,
     FicheExportPayloadService,
