@@ -21,6 +21,7 @@ describe('listFiches et la confidentialité', () => {
   let collectiviteId: number;
   let ficheRestreinteId: number;
   let ficheOuverteId: number;
+  let ficheRestreintNullId: number;
   let membreEnLecture: AuthenticatedUser;
   let visiteurVerifie: AuthenticatedUser;
 
@@ -49,10 +50,16 @@ describe('listFiches et la confidentialité', () => {
       .values([
         { titre: 'Fiche restreinte', restreint: true, collectiviteId },
         { titre: 'Fiche ouverte', restreint: false, collectiviteId },
+        {
+          titre: 'Fiche sans confidentialité renseignée',
+          restreint: null,
+          collectiviteId,
+        },
       ])
       .returning();
     ficheRestreinteId = fiches[0].id;
     ficheOuverteId = fiches[1].id;
+    ficheRestreintNullId = fiches[2].id;
 
     return async () => {
       await db.db
@@ -77,6 +84,10 @@ describe('listFiches et la confidentialité', () => {
     expect(await listerPour(visiteurVerifie)).toContain(ficheOuverteId);
   });
 
+  it('laisse une fiche à la confidentialité non renseignée visible au visiteur vérifié', async () => {
+    expect(await listerPour(visiteurVerifie)).toContain(ficheRestreintNullId);
+  });
+
   it('montre la fiche restreinte à un membre en lecture', async () => {
     expect(await listerPour(membreEnLecture)).toContain(ficheRestreinteId);
   });
@@ -89,5 +100,17 @@ describe('listFiches et la confidentialité', () => {
         filters: { restreint: true },
       });
     expect(data.map((fiche) => fiche.id)).toEqual([]);
+  });
+
+  it('rend la fiche à la confidentialité non renseignée au membre qui filtre les fiches non restreintes', async () => {
+    const { data } = await router
+      .createCaller({ user: membreEnLecture })
+      .plans.fiches.listFiches({
+        collectiviteId,
+        filters: { restreint: false },
+      });
+    expect(new Set(data.map((fiche) => fiche.id))).toEqual(
+      new Set([ficheOuverteId, ficheRestreintNullId])
+    );
   });
 });
