@@ -144,8 +144,8 @@ groups:
     - indicateur_source_metadonnee
     - indicateur_valeur
 
-  margny_group:
-    - private.indicateur_valeur_date_repair
+  reconciliation_group:
+    - private.indicateur_reconciliation_formule
 
   pai_group:
     - action_impact_complexite
