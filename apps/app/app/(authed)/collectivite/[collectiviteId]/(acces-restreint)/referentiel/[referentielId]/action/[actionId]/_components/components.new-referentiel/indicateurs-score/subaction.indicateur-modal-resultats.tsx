@@ -2,6 +2,8 @@ import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/ind
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CalculScoreIndicatif } from '@tet/domain/referentiels';
@@ -50,14 +52,13 @@ const SubactionIndicateurModalResultatsContent = ({
     useCurrentCollectivite();
   const user = useUser();
 
-  const { data: valeursUtilisables } = useGetValeursUtilisables(
-    actionId,
-    indicateurId
-  );
+  const valeursQuery = useGetValeursUtilisables(actionId, indicateurId);
+  const definitionQuery = useGetIndicateur(indicateurId, collectiviteId);
+  const valeursUtilisables = valeursQuery.data;
+  const definition = definitionQuery.data;
+
   const { mutate: setScoreFromIndicateur, isPending } =
     useSetScoreFromIndicateur();
-
-  const { data: definition } = useGetIndicateur(indicateurId, collectiviteId);
   const { mutate: setIndicateurSuivi, isPending: isUpdatingNonSuivi } =
     useSetIndicateurSuivi();
   const nonSuivi = definition ? !definition.isSuivi : false;
@@ -103,6 +104,27 @@ const SubactionIndicateurModalResultatsContent = ({
       isSuivi: nonSuivi,
     });
   };
+
+  if (valeursQuery.error || definitionQuery.error) {
+    return (
+      <ErrorCard
+        title={appLabels.resultatsIndicateurErreur}
+        retry={() => {
+          valeursQuery.refetch();
+          definitionQuery.refetch();
+        }}
+        retryLabel={appLabels.reessayer}
+      />
+    );
+  }
+
+  if (valeursQuery.isLoading || definitionQuery.isLoading) {
+    return (
+      <div className="flex py-8">
+        <SpinnerLoader className="m-auto" />
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -11,7 +11,7 @@ export const useGetIndicateur = (
   const trpc = useTRPC();
   const estIdReferentiel = typeof indicateurId === 'string';
 
-  const { data, error, isLoading } = useQuery(
+  const { data, ...other } = useQuery(
     trpc.indicateurs.indicateurs.list.queryOptions({
       collectiviteId,
       filters: {
@@ -22,5 +22,5 @@ export const useGetIndicateur = (
     })
   );
 
-  return { data: data?.data?.[0], error, isLoading };
+  return { data: data?.data?.[0], ...other };
 };

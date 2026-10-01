@@ -13,6 +13,7 @@ export const sharedLabels = {
   dupliquer: 'Dupliquer',
   telecharger: 'Télécharger',
   enregistrer: 'Enregistrer',
+  reessayer: 'Réessayer',
   exporter: 'Exporter',
   exporterPdf: 'Exporter en PDF',
   rechercher: 'Rechercher',
