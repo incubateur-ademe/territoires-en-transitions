@@ -1,17 +1,13 @@
 import { appLabels } from '@/app/labels/catalog';
 import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterOutput, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { broadcastQueryInvalidation } from '@tet/api/utils/react-query/cross-tab-invalidation';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
-
-type ScoreSnapshot =
-  RouterOutput['referentiels']['actions']['setScoreFromIndicateur'];
 
 /**
  * Enregistre la valeur d'indicateur retenue pour une action du référentiel CR
  * et en déclenche le calcul du score : le backend dérive et applique le
- * statut d'avancement dans la même transaction, puis renvoie le snapshot
- * recalculé.
+ * statut d'avancement dans la même transaction.
  */
 export const useSetScoreFromIndicateur = () => {
   const trpc = useTRPC();
@@ -19,7 +15,7 @@ export const useSetScoreFromIndicateur = () => {
 
   return useMutation(
     trpc.referentiels.actions.setScoreFromIndicateur.mutationOptions({
-      onSuccess: (snapshot, variables) => onSuccess(snapshot, variables),
+      onSuccess: (_, variables) => onSuccess(variables),
       onSettled,
       meta: {
         disableToast: true,
@@ -32,7 +28,7 @@ export const useSetScoreFromIndicateur = () => {
  * Marque un indicateur associé à une action du référentiel TE comme suivi ou
  * non suivi : le backend met à jour le flag, désélectionne la valeur retenue
  * si l'indicateur devient non suivi et recalcule le statut d'avancement dans
- * la même transaction, puis renvoie le snapshot recalculé.
+ * la même transaction.
  */
 export const useSetIndicateurSuivi = () => {
   const trpc = useTRPC();
@@ -40,8 +36,8 @@ export const useSetIndicateurSuivi = () => {
 
   return useMutation(
     trpc.referentiels.actions.setIndicateurSuivi.mutationOptions({
-      onSuccess: (snapshot, variables) =>
-        onSuccess(snapshot, variables, [
+      onSuccess: (_, variables) =>
+        onSuccess(variables, [
           // source de la définition (et donc du flag `isSuivi`) affichée
           trpc.indicateurs.indicateurs.list.queryKey({
             collectiviteId: variables.collectiviteId,
@@ -56,8 +52,8 @@ export const useSetIndicateurSuivi = () => {
 };
 
 /**
- * Met à jour les caches impactés par un recalcul du score d'une action à
- * partir de ses indicateurs (le backend renvoie le snapshot recalculé).
+ * Invalide les caches impactés par un recalcul du score d'une action à
+ * partir de ses indicateurs.
  * `extraQueryKeys` permet d'invalider en plus des caches propres à l'appelant.
  */
 const useOnScoreFromIndicateurUpdated = () => {
@@ -65,21 +61,10 @@ const useOnScoreFromIndicateurUpdated = () => {
   const queryClient = useQueryClient();
 
   const onSuccess = (
-    snapshot: ScoreSnapshot,
     { collectiviteId, actionId }: { collectiviteId: number; actionId: string },
     extraQueryKeys: QueryKey[] = []
   ) => {
     const referentielId = getReferentielIdFromActionId(actionId);
-
-    // le contrat de la procédure renvoie déjà le snapshot recalculé :
-    // pas besoin d'un second recalcul via `computeScoreAndUpdateCurrentSnapshot`
-    queryClient.setQueryData(
-      trpc.referentiels.snapshots.getCurrent.queryKey({
-        collectiviteId,
-        referentielId,
-      }),
-      snapshot
-    );
 
     queryClient.invalidateQueries({
       queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
@@ -123,14 +108,9 @@ const useOnScoreFromIndicateurUpdated = () => {
       queryClient.invalidateQueries({ queryKey })
     );
 
-    // les autres onglets ouverts sur cette collectivité n'ont pas reçu le
-    // snapshot recalculé : on les invite à invalider leur cache plutôt
-    // que de les laisser afficher un score obsolète jusqu'au rechargement
+    // les autres onglets ouverts sur cette collectivité invalident aussi
+    // leur cache plutôt que d'afficher un score obsolète jusqu'au rechargement
     broadcastQueryInvalidation([
-      trpc.referentiels.snapshots.getCurrent.queryKey({
-        collectiviteId,
-        referentielId,
-      }),
       trpc.referentiels.actions.listActionsGroupedById.queryKey({
         collectiviteId,
         referentielId,

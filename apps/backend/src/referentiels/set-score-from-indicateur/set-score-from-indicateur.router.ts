@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { toSnapshotWithoutPayloads } from '@tet/backend/referentiels/snapshots/snapshot-without-payloads.utils';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { setScoreFromIndicateurErrorConfig } from './set-score-from-indicateur.errors';
 import {
@@ -26,7 +27,9 @@ export class SetScoreFromIndicateurRouter {
         const result = await this.service.setScoreFromIndicateur(input, {
           user: ctx.user,
         });
-        return this.getResultDataOrThrowError(result);
+        return toSnapshotWithoutPayloads(
+          this.getResultDataOrThrowError(result)
+        );
       }),
 
     setIndicateurSuivi: this.trpc.authedProcedure
@@ -35,7 +38,9 @@ export class SetScoreFromIndicateurRouter {
         const result = await this.service.setIndicateurSuivi(input, {
           user: ctx.user,
         });
-        return this.getResultDataOrThrowError(result);
+        return toSnapshotWithoutPayloads(
+          this.getResultDataOrThrowError(result)
+        );
       }),
   });
 }

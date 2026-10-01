@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { toSnapshotWithoutPayloads } from '@tet/backend/referentiels/snapshots/snapshot-without-payloads.utils';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { actionStatutSchemaCreate } from '@tet/domain/referentiels';
 import { updateActionStatutErrorConfig } from './update-action-statut.errors';
@@ -25,7 +26,9 @@ export class UpdateActionStatutRouter {
           [input],
           ctx.user
         );
-        return this.getResultDataOrThrowError(result);
+        return toSnapshotWithoutPayloads(
+          this.getResultDataOrThrowError(result)
+        );
       }),
 
     updateStatuts: this.trpc.authedProcedure
@@ -35,7 +38,9 @@ export class UpdateActionStatutRouter {
           input.actionStatuts,
           ctx.user
         );
-        return this.getResultDataOrThrowError(result);
+        return toSnapshotWithoutPayloads(
+          this.getResultDataOrThrowError(result)
+        );
       }),
   });
 }
