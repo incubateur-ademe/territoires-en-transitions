@@ -634,7 +634,9 @@ export class PptBuilderService {
     >
   > {
     try {
-      const plan = await this.planService.getPlan({ planId });
+      const plan = await this.planService.getPlanWithoutPermissionCheck({
+        planId,
+      });
       if (!plan.success) {
         return {
           success: false,

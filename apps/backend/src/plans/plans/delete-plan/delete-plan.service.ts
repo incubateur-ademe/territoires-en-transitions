@@ -34,8 +34,7 @@ export class DeletePlanService {
       // Récupére le plan pour obtenir le collectiviteId
       const planResult = await this.getPlanService.getPlan(
         { planId: input.planId },
-        user,
-        transaction
+        { user, tx: transaction }
       );
 
       if (!planResult.success) {

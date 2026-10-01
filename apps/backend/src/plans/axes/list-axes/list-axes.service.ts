@@ -41,18 +41,8 @@ export class ListAxesService {
 
   async listAxesRecursively(
     input: ListAxesInput,
-    user?: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<PlanNode[], ListAxesError>> {
-    const isInternalCall = user === undefined;
-    if (isInternalCall) {
-      return this.listAxesRepository.listChildrenRecursively(
-        input,
-        { includeFichesRestreintes: true },
-        tx
-      );
-    }
-
     const permissionResult = await this.checkPermission(
       input.collectiviteId,
       user

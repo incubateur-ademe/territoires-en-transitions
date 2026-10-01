@@ -158,7 +158,7 @@ export class GenerateReportsApplicationService {
 
     const plan = await this.planService.getPlan(
       { planId: reportGenerationResult.data.planId },
-      user
+      { user }
     );
     if (!plan.success) {
       return {
@@ -197,7 +197,7 @@ export class GenerateReportsApplicationService {
     // Get plan to check permissions
     const plan = await this.planService.getPlan(
       { planId: request.planId },
-      user
+      { user }
     );
     if (!plan.success) {
       return {

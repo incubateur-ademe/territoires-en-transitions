@@ -25,10 +25,9 @@ export class ListAxesRouter {
     listRecursively: this.trpc.authedProcedure
       .input(listAxesInputSchema)
       .query(async ({ input, ctx: { user } }) => {
-        const result = await this.listAxesService.listAxesRecursively(
-          input,
-          user
-        );
+        const result = await this.listAxesService.listAxesRecursively(input, {
+          user,
+        });
         return this.getResultDataOrThrowError(result);
       }),
   });
