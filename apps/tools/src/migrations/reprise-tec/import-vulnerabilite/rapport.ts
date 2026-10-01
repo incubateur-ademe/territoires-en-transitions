@@ -1,12 +1,9 @@
-/** Le rapport : ce que l'import a lu, écrit et écarté, chaque fusion, et les cas à connaître. */
-
 import type { Ecart } from '../import-fiches/ecarts';
 import type { Valeur } from './fusion';
 import type { Ligne } from './lignes';
 import { toTexte } from './niveau';
 import type { Thematique } from './thematiques';
 
-/** Affiche le bilan, les écarts par motif, ce qui est écrit, chaque fusion, les libellés non reconnus et les dossiers sans rien d'affiché. */
 export const printRapport = ({
   bilan,
   ecarts,
@@ -114,14 +111,12 @@ export const printRapport = ({
   );
 };
 
-/** Ce que la cellule « vulnérable » d'une ligne a donné : son niveau, « oui » ou rien. */
 const toNiveauLu = ({ vulnerable }: Ligne) =>
   vulnerable.niveau ?? (vulnerable.oui ? 'oui' : 'sans niveau');
 
 const toNom = (thematique: Thematique) =>
   'code' in thematique ? thematique.code : thematique.label;
 
-/** Chaque valeur distincte avec son nombre, les plus fréquentes d'abord. */
 const listNombres = (valeurs: readonly string[]) => {
   const nombres = new Map<string, number>();
   for (const v of valeurs) {

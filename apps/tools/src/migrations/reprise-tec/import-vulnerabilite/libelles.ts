@@ -1,5 +1,3 @@
-/** La table des libellés T&C, rangés sous le `code` de leur thématique du socle, ou sous « Déchets », thématique de la collectivité. */
-
 import type { Thematique } from './thematiques';
 
 const SOCLE: Record<string, readonly string[]> = {

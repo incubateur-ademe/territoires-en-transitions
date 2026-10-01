@@ -1,5 +1,3 @@
-/** Les écarts : chaque ligne de vulnérabilité de T&C, écrite ou écartée avec son motif, une fois ; et ce qu'une ligne écrite perd. */
-
 import { PoolClient } from 'pg';
 import type { Ecart } from '../import-fiches/ecarts';
 import { loadMotifsDossiers } from '../import-fiches/ecarts';
@@ -8,7 +6,6 @@ import type { Ligne } from './lignes';
 
 const TABLE = 'demarche_domaine_vulnerabilite';
 
-/** Lit toutes les lignes de la copie, dossiers repris ou non ; rend les lues, les écrites et les écarts, lignes entières et parties de ligne. */
 export const loadEcarts = async (
   client: PoolClient,
   valeurs: readonly Valeur[]
@@ -61,7 +58,6 @@ export const loadEcarts = async (
 
 type LigneLue = { ligne: Ligne; valeur: Valeur };
 
-/** Règle : pourquoi rien d'une ligne n'apparaît dans TeT, sa thématique étant trouvée. */
 const decideLigne = ({ ligne, valeur }: LigneLue) => {
   const { niveau, oui, texte } = ligne.vulnerable;
   if (niveau === 'non_concerne') {
@@ -78,10 +74,9 @@ const decideLigne = ({ ligne, valeur }: LigneLue) => {
   if (oui) {
     return 'oui_sans_niveau';
   }
-  return texte === null ? 'valeur_vide' : 'niveau_non_lu';
+  return texte === null ? 'valeur_vide' : 'niveau_non_intelligible';
 };
 
-/** Règle : ce qu'une ligne écrite perd, cellule par cellule (la `precision` est la colonne T&C). */
 const listPartiesPerdues = ({
   ligne,
   valeur,
@@ -97,7 +92,7 @@ const listPartiesPerdues = ({
       : texte === null
       ? null
       : niveau === null
-      ? 'niveau_non_lu'
+      ? 'niveau_non_intelligible'
       : 'texte_sans_place';
   return [
     ...(vulnerable === null ? [] : [['vulnerable', vulnerable] as const]),

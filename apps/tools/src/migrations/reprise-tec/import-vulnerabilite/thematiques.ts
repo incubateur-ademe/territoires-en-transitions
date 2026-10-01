@@ -1,20 +1,15 @@
-/** Les thématiques TeT : celle de chaque libellé T&C, et la « Déchets » des collectivités. */
-
 import { PoolClient } from 'pg';
 import type { Valeur } from './fusion';
 import { LIBELLES } from './libelles';
 
 export type Thematique = { code: string } | { label: string };
 
-/** Met un libellé sous la forme de la table : minuscules, espaces réduits, apostrophe droite. */
 const toForme = (libelle: string) =>
   libelle.replace(/’/g, "'").replace(/\s+/g, ' ').trim().toLowerCase();
 
-/** La thématique TeT d'un libellé T&C, `null` s'il n'est pas dans la table. */
 export const findThematique = (libelle: string | null) =>
   LIBELLES.get(toForme(libelle ?? '')) ?? null;
 
-/** Les id des thématiques du socle, par code. */
 export const loadThematiquesDuSocle = async (client: PoolClient) => {
   const { rows } = await client.query<{ code: string; id: number }>(
     `select code, id from public.demarche_pcaet_vulnerabilite_thematique
@@ -23,7 +18,6 @@ export const loadThematiquesDuSocle = async (client: PoolClient) => {
   return new Map(rows.map((r) => [r.code, r.id]));
 };
 
-/** Les collectivités dont une ligne « Déchets » est à écrire : un objectif, ou un niveau fort, moyen ou faible. */
 export const listCollectivitesAvecDechets = (valeurs: readonly Valeur[]) =>
   valeurs.flatMap(({ aEcrire, collectiviteId, thematique }) =>
     aEcrire && 'label' in thematique
@@ -31,7 +25,7 @@ export const listCollectivitesAvecDechets = (valeurs: readonly Valeur[]) =>
       : []
   );
 
-/** Crée « Déchets » dans chaque collectivité qui ne l'a pas (non requise, sans auteur) ; si elle y est, la réutilise sans la tracer. */
+/** Une « Déchets » déjà là est réutilisée sans trace : l'annulation ne la retirera pas. */
 export const createThematiquesDechets = async (
   client: PoolClient,
   voulues: readonly { collectiviteId: number; label: string }[]
@@ -83,7 +77,6 @@ export const createThematiquesDechets = async (
   };
 };
 
-/** Garde, appelée par `gardes.ts` : un code de la table des libellés que le socle n'a plus (le socle a bougé). */
 export const listCasBloquantsSocle = (socle: ReadonlyMap<string, number>) =>
   [
     ...new Set(

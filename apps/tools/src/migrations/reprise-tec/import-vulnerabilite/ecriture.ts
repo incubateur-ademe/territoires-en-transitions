@@ -1,12 +1,7 @@
-/** Les valeurs écrites : une ligne de `demarche_pcaet_vulnerabilite_valeur` par démarche et par thématique, jamais vide. */
-
 import { PoolClient } from 'pg';
 import type { Valeur } from './fusion';
 
-/**
- * Écrit le niveau d'aujourd'hui et les objectifs 2050, sans auteur ; 2050, 2100 et objectifs 2100 restent vides.
- * La table n'a pas d'id : la trace note la démarche.
- */
+/** La table n'a pas d'id : la trace note la démarche. */
 export const createValeurs = async (
   client: PoolClient,
   valeurs: readonly Valeur[],
@@ -37,7 +32,6 @@ export const createValeurs = async (
   return rows[0];
 };
 
-/** Garde, appelée par `gardes.ts` : l'import est déjà passé, reconnu à ses traces. */
 export const listCasBloquantsEcriture = async (client: PoolClient) => {
   const { rows } = await client.query<{ table: string; nombre: number }>(
     `select table_cible as "table", count(*)::int as nombre

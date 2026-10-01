@@ -1,11 +1,8 @@
-/** Les gardes : tout ce qui peut arrêter l'import, rassemblé en un seul endroit. */
-
 import { PoolClient } from 'pg';
 import { listCasBloquantsEcriture } from './ecriture';
 import { listCasBloquantsDossiers } from './lignes';
 import { listCasBloquantsSocle } from './thematiques';
 
-/** Arrête avant toute écriture si une garde trouve un cas ; liste tous les cas d'un coup. */
 export const validateGardes = async (
   client: PoolClient,
   socle: ReadonlyMap<string, number>
