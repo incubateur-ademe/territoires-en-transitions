@@ -68,12 +68,12 @@ export const backendConfigurationSchema = z
       .describe(
         "Identifiant du modèle Gemini pour l'import IA (ex : gemini-3.5-flash) ; requis à l'usage"
       ),
-    // Fournisseur des appels LLM (import IA, analyse des collectivités). Albert
-    // API par défaut ; gemini reste disponible en secours, le retour arrière se
-    // fait par cette seule variable.
+    // Fournisseur des appels LLM (import IA, analyse des collectivités). Gemini
+    // par défaut tant que l'accès à Albert API reste limité ; on bascule par
+    // cette seule variable.
     LLM_PROVIDER: z
       .enum(['gemini', 'albert'])
-      .default('albert')
+      .default('gemini')
       .describe(
         'Fournisseur LLM : gemini (Vertex AI) ou albert (Albert API, socle interministériel de la DINUM)'
       ),
