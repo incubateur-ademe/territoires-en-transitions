@@ -104,6 +104,13 @@ flowchart TD
 Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications, et
 l'étape 7 s'il désactive les sous-actions.
 
+Avant la création du plan, le brouillon est normalisé
+(`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un
+titre d'action (« 2.1.3 », « Action 3 - ») est retiré, car il ne sert qu'au
+rattachement pendant l'import ; un même axe ou sous-axe libellé de deux façons
+(même numéro, ou mêmes mots aux accents et à la casse près) prend une seule
+graphie, en casse normale de préférence ; les doublons exacts sont écartés.
+
 La lecture (étape 1) porte aussi un garde-fou déterministe,
 `pipeline/detect-document-tome/` : un PCAET se publie en plusieurs tomes, et
 seul le programme d'actions s'importe. Si la zone de titre (premières pages,
@@ -188,6 +195,25 @@ flowchart TD
     LB --> RO[3 libellés rapprochés sans titre :<br/>une fiche au titre manqué]
 ```
 
+Ce que la mise en page trompe, et comment la segmentation s'en garde :
+
+- deux colonnes côte à côte : la lecture sépare deux morceaux de texte d'une
+  même ligne quand plus de deux hauteurs de police les séparent, sans détacher
+  un numéro ou un libellé court de sa valeur ;
+- un titre sur plusieurs lignes : recollé jusqu'à quatre lignes de même
+  police ; un titre explicite (« ACTION 2 - … », « OBJECTIF 2 - … ») admet une
+  suite plus longue dans une autre grande police, mais n'avale jamais le titre
+  explicite suivant ;
+- le tableau récapitulatif : une page qui aligne au moins quatre lignes
+  « 2.1.3 Titre » presque sans texte entre elles n'ouvre aucune fiche ;
+- le bandeau d'objectif en tête de fiche (« 1- AMELIORER… » juste au-dessus de
+  « ACTION 2 - … ») est le sous-axe, pas une fiche ;
+- un titre de partie en corps de texte juste après une fiche (« Suivi et
+  évaluation ») est un intertitre de la fiche ;
+- un document qui nomme ses axes (« AXE STRATEGIQUE 4 ») ne prend pas une
+  ligne en majuscules pour un axe, sauf si elle se dit axe (« AXE
+  TRANSVERSAL »).
+
 ### Tri et squelette (`pipeline/scout-units/`)
 
 - **Tri** (palier léger, lots de 40) : chaque unité est classée `fiche_action`,
@@ -207,9 +233,9 @@ flowchart TD
 - Avec des fiches, un extrait classé `structure` (sommaire, tableau
   récapitulatif) sert au squelette mais n'est pas structuré : il redit ce que
   les fiches détaillent.
-- Après la structuration, les actions de même titre (à la casse, aux accents
-  et à la ponctuation près) sont fondues sur tout le document, sur la version
-  la plus complète.
+- Après la structuration, les actions de même titre (à la casse, aux accents,
+  à la ponctuation et à la numérotation près : « ACTION 3 - » et « 2.1.3 »)
+  sont fondues sur tout le document, sur la version la plus complète.
 - **Squelette** (palier fort, un appel) : les axes et sous-axes du plan, tirés
   des titres relevés et des extraits de structure (sommaire, tableau
   récapitulatif). Il sert ensuite de référence à la structuration et à la mise

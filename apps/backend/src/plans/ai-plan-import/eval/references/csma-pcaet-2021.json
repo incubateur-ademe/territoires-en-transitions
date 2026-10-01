@@ -1,0 +1,271 @@
+{
+  "manual": true,
+  "document": "Plan Climat Air Énergie Territorial de Clisson Sèvre et Maine Agglo, tome 3 « Plan d'actions », version adoptée le 25 mai 2021 (csma plan actions.pdf) : tableau récapitulatif p. 11-13, titres complétés par ceux des fiches quand le tableau les abrège ; 7 axes, 23 objectifs, 64 fiches",
+  "axes": [
+    "Axe 1 : Mobiliser et sensibiliser les acteurs du territoire",
+    "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+    "Axe 3 : Se déplacer sobrement sur le territoire",
+    "Axe 4 : Améliorer la performance énergétique des bâtiments",
+    "Axe 5 : Développer et soutenir une économie locale et durable",
+    "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+    "Axe 7 : Atténuer la vulnérabilité et adapter le territoire au changement climatique"
+  ],
+  "actions": [
+    {
+      "axe": "Axe 1 : Mobiliser et sensibiliser les acteurs du territoire",
+      "titre": "1.1.1 Piloter et évaluer le PCAET"
+    },
+    {
+      "axe": "Axe 1 : Mobiliser et sensibiliser les acteurs du territoire",
+      "titre": "1.1.2 Former les élus et les agents"
+    },
+    {
+      "axe": "Axe 1 : Mobiliser et sensibiliser les acteurs du territoire",
+      "titre": "1.2.1 Mobiliser, sensibiliser l'ensemble des acteurs du territoire"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.1.1 Accompagner les collectivités dans l'amélioration énergétique de leurs bâtiments (pilotages des installations et travaux)"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.1.2 Accompagner les projets de construction pour atteindre des objectifs de performance de \"très basse consommation\" ou \"passif\""
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.1.3 Assurer le suivi des consommations d'énergie et d'eau"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.1.4 Réduire la consommation d'énergie de l'éclairage public"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.1.5 Valoriser les dépenses de la maîtrise de la dépense énergétique via les certificats d'économie d'énergie (CEE)"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.2.1 Systématiser la promotion et l'intégration des énergies renouvelables dans les bâtiments publics"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.2.2 Intégrer à la commande publique le recours à l'achat d'énergies renouvelables (biogaz, électricité verte)"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.3.1 Former les élus et les agents aux enjeux de la qualité de l'air intérieur"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.4.1 Optimiser les déplacements des agents des collectivités"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.4.2 Former les agents à l'écoconduite"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.4.3 Favoriser le recours aux alternatives à la voiture individuelle par les agents"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.4.4 Favoriser l'autopartage des véhicules de la flotte des collectivités"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.4.5 Faire évoluer la flotte de véhicules des collectivités vers des carburants à faible impact"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.4.6 Étudier l'impact de la collecte des déchets ménagers"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.5.1 Intégrer les critères de développement durable dans les marchés publics"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.6.1 Diminuer l'impact sur la ressource en eau"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.6.2 Prendre en compte les impacts environnementaux des projets publics"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.6.3 Zéro artificialisation nette des sols pour les projets portés par les collectivités"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.6.4 Communiquer et sensibiliser à la préservation de la biodiversité"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.7.1 Optimiser les usages informatiques et les outils de télécommunication"
+    },
+    {
+      "axe": "Axe 2 : Engager l'intercommunalité et les communes dans une démarche d'exemplarité",
+      "titre": "2.7.2 Développer la prévention et le tri des déchets"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.1.1 Porter et renforcer la politique en faveur des modes actifs"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.1.2 Définir une politique partagée sur l'aménagement de la voirie et des espaces publics"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.1.3 Intégrer la proximité dans la planification du territoire"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.2.1 Faire évoluer l'offre de transports collectifs"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.2.2 Réinterroger les fonctions du réseau routier"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.3.1 Elaborer un plan de communication"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.3.2 Mobiliser des relais pour accompagner la mobilité des habitants"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.3.3 Se servir des outils numériques pour informer et faire évoluer les pratiques"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.4.1 Faire évoluer le parc de véhicules vers des carburants alternatifs"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.4.2 Développer les espaces de travail partagés"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.5.1 Se donner les moyens de suivre, animer et mettre en œuvre le Plan Global de Déplacements"
+    },
+    {
+      "axe": "Axe 3 : Se déplacer sobrement sur le territoire",
+      "titre": "3.5.2 Animer la politique de mobilité du territoire auprès des différents acteurs"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.1.1 Déployer une plateforme territoriale de la rénovation énergétique"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.1.2 Accompagner les ménages modestes dans la rénovation énergétique de leur logement"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.1.3 Inciter à la réalisation d'audit énergétique à destination des particuliers"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.1.4 Accompagner les projets de construction pour atteindre des objectifs de performance de \"très basse consommation\" ou \"passif\""
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.1.5 Inciter et soutenir les particuliers dans l'acquisition d'un système de chauffage moins émetteur"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.1.6 Valoriser les actions de maîtrise de la dépense énergétique via les certificats d'économie d'énergie (CEE)"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.2.1 Encourager l'utilisation de matériaux bio sourcés pour les nouvelles constructions (entreprises et habitat)"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.2.2 Réviser les PLU pour intégrer des obligations en lien avec la maîtrise de la dépense énergétique"
+    },
+    {
+      "axe": "Axe 4 : Améliorer la performance énergétique des bâtiments",
+      "titre": "4.3.1 Créer une mission de Conseils en énergie partagée auprès des entreprises du territoire"
+    },
+    {
+      "axe": "Axe 5 : Développer et soutenir une économie locale et durable",
+      "titre": "5.1.1 Définir un projet alimentaire de territoire"
+    },
+    {
+      "axe": "Axe 5 : Développer et soutenir une économie locale et durable",
+      "titre": "5.1.2 Accompagner le changement de pratiques agricoles"
+    },
+    {
+      "axe": "Axe 5 : Développer et soutenir une économie locale et durable",
+      "titre": "5.2.1 Développer l'économie circulaire dans les entreprises"
+    },
+    {
+      "axe": "Axe 5 : Développer et soutenir une économie locale et durable",
+      "titre": "5.2.2 Créer un réseau local dans l'économie sociale et solidaire"
+    },
+    {
+      "axe": "Axe 5 : Développer et soutenir une économie locale et durable",
+      "titre": "5.2.3 Développer le réemploi"
+    },
+    {
+      "axe": "Axe 5 : Développer et soutenir une économie locale et durable",
+      "titre": "5.2.4 Poursuivre les actions de réduction des déchets"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.1.1 Réaliser une étude du potentiel de développement des énergies renouvelables sur le territoire"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.1.2 Création d'un comité technique pour la production d'énergies renouvelables sur le territoire"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.2.1 Accompagner tous les projets de rénovation et de construction pour intégrer des énergies renouvelables"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.2.2 Développer l'utilisation de l'énergie solaire (photovoltaïque)"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.2.3 Accompagner la filière agricole pour le développement de projets de méthanisation"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.2.4 Favoriser le développement de l'énergie éolienne"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.2.5 Développer l'énergie hydraulique"
+    },
+    {
+      "axe": "Axe 6 : Développer le potentiel énergétique renouvelable du territoire",
+      "titre": "6.2.6 Développer le stockage des énergies renouvelables"
+    },
+    {
+      "axe": "Axe 7 : Atténuer la vulnérabilité et adapter le territoire au changement climatique",
+      "titre": "7.1.1 Mettre en place une politique globale de gestion de la quantité d'eau"
+    },
+    {
+      "axe": "Axe 7 : Atténuer la vulnérabilité et adapter le territoire au changement climatique",
+      "titre": "7.1.2 Encourager la récupération d'eau par les habitants"
+    },
+    {
+      "axe": "Axe 7 : Atténuer la vulnérabilité et adapter le territoire au changement climatique",
+      "titre": "7.1.3 Favoriser l'infiltration de l'eau"
+    },
+    {
+      "axe": "Axe 7 : Atténuer la vulnérabilité et adapter le territoire au changement climatique",
+      "titre": "7.2.1 Développer l'agroforesterie et la plantation de haies"
+    },
+    {
+      "axe": "Axe 7 : Atténuer la vulnérabilité et adapter le territoire au changement climatique",
+      "titre": "7.2.2 Développer l'éco-pâturage pour l'entretien des espaces verts publics"
+    }
+  ]
+}

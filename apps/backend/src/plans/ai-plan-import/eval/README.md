@@ -38,7 +38,14 @@ de Lyon, Gemini range les 23 actions en sous-axes et invente leurs titres.
 
 ```sh
 make ai-import-eval f=lyon.pdf ref=apps/backend/src/plans/ai-plan-import/eval/references/lyon-pcaet-2030.json
+make ai-import-eval f=csma.pdf ref=apps/backend/src/plans/ai-plan-import/eval/references/csma-pcaet-2021.json
 ```
+
+La seconde référence couvre un programme à fiches tabulaires, relevé dans son
+tableau récapitulatif : 7 axes et 64 fiches, avec un bandeau d'objectif en tête
+de chaque fiche et des pages en deux colonnes. `make` coupe le chemin du
+document aux espaces : renommez-le avant (`csma.pdf`). Les métriques portent
+sur le brouillon tel que le plan sera créé (titres sans numéro, axes unifiés).
 
 Le `diff` donne alors les axes et actions retrouvés, les actions introuvables,
 celles retrouvées en sous-axe (niveau inventé), celles rangées sous un autre
