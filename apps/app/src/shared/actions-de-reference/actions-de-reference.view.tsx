@@ -1,6 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { useUser } from '@tet/api/users';
+import { hasPermission } from '@tet/domain/users';
 import { PageHeader } from '@tet/ui';
 import type {
   ActionDeReferenceUpdateAccess,
@@ -10,13 +12,27 @@ import { ActionsDeReferenceFilters } from './actions-de-reference.filters';
 import { ActionsDeReferenceResults } from './actions-de-reference.results';
 import { useActionsDeReferenceSearchParams } from './data/use-actions-de-reference-search-params';
 import { useListActionsDeReference } from './data/use-list-actions-de-reference';
+import { useUpdateActionDeReferenceSidePanel } from './use-update-action-de-reference-side-panel';
 
-const readOnlyAccess: ActionDeReferenceUpdateAccess = { status: 'forbidden' };
+const useActionDeReferenceUpdateAccess = (): ActionDeReferenceUpdateAccess => {
+  const user = useUser();
+  const { open } = useUpdateActionDeReferenceSidePanel();
+  const canUpdateActionsDeReference = hasPermission(
+    user,
+    'shared.actions-de-reference.mutate'
+  );
+
+  if (!canUpdateActionsDeReference) {
+    return { status: 'forbidden' };
+  }
+  return { status: 'allowed', onUpdate: open };
+};
 
 export const ActionsDeReferenceView: ActionsDeReferenceViewComponent = () => {
   const { search, changeSearch, resetSearch } =
     useActionsDeReferenceSearchParams();
   const actionsDeReferenceList = useListActionsDeReference(search);
+  const updateAccess = useActionDeReferenceUpdateAccess();
 
   return (
     <>
@@ -30,7 +46,7 @@ export const ActionsDeReferenceView: ActionsDeReferenceViewComponent = () => {
         />
         <ActionsDeReferenceResults
           list={actionsDeReferenceList}
-          updateAccess={readOnlyAccess}
+          updateAccess={updateAccess}
           onResetSearch={resetSearch}
         />
       </div>
