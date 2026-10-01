@@ -107,6 +107,33 @@ describe('dedupeByTitle', () => {
     expect(deduped.chunkIndexByAction).toEqual([5, 1]);
   });
 
+  it('fond la ligne du tableau récapitulatif dans la fiche numérotée « ACTION 3 - »', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction(
+          "2.1.3 Assurer le suivi des consommations d'énergie et d'eau",
+          {
+            axe: 'Axe 7',
+          }
+        ),
+        anAction(
+          "ACTION 3 - ASSURER LE SUIVI DES CONSOMMATIONS D'ENERGIE ET D'EAU",
+          {
+            axe: 'Axe 2',
+            description: 'Suivre les consommations des bâtiments publics.',
+          }
+        ),
+      ],
+      chunkIndexByAction: [0, 4],
+    });
+
+    expect(deduped.actions).toHaveLength(1);
+    expect(deduped.actions[0]).toMatchObject({
+      axe: 'Axe 2',
+      description: 'Suivre les consommations des bâtiments publics.',
+    });
+  });
+
   it('garde distinctes deux actions de même titre riches dans deux axes différents', () => {
     const deduped = dedupeByTitle({
       actions: [

@@ -15,6 +15,7 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { normalizeExtractedActions } from '../adapters/extracted-action-to-import-action';
 import { detectSourceMimeType } from '../enqueue-import/detect-source-mime-type';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
@@ -196,8 +197,13 @@ const main = async (): Promise<number> => {
 
   // Un import en échec rend les actions d'avant l'étape fautive : on les
   // mesure quand même, c'est ce qui dit pourquoi l'étape a échoué.
-  const draft =
+  // Mesuré tel que le plan sera créé : titres sans numéro, axes unifiés.
+  const pipelineDraft =
     outcome.status === 'done' ? outcome.draft : outcome.partialDraft;
+  const draft = {
+    ...pipelineDraft,
+    actions: normalizeExtractedActions(pipelineDraft.actions).actions,
+  };
   const metrics = computeEvalMetrics({
     draft,
     events: observer.events,
