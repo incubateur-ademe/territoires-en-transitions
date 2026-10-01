@@ -1610,8 +1610,16 @@ export default class ListFichesService {
     if (filters.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));
     }
-    if (!isNil(filters.restreint)) {
-      conditions.push(eq(ficheActionTable.restreint, filters.restreint));
+    if (filters.restreint === true) {
+      conditions.push(eq(ficheActionTable.restreint, true));
+    }
+    if (filters.restreint === false) {
+      conditions.push(
+        or(
+          isNull(ficheActionTable.restreint),
+          eq(ficheActionTable.restreint, false)
+        )
+      );
     }
 
     if (filters.cibles?.length) {
