@@ -1,5 +1,5 @@
 -- Typologie SINOE (ADEME) des communes et EPCI.
--- Source : apps/tools/src/migrations/sinoe/utils.ts (TYPOLOGIES_SINOE)
+-- Source : packages/domain/src/collectivites/typologie-sinoe.ts (TYPOLOGIES_SINOE)
 insert into typologie_sinoe (id, code_sinoe, libelle)
 values ('dense', 'D', 'Urbain dense'),
        ('urbain', 'U', 'Urbain'),

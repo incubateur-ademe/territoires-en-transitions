@@ -56,3 +56,4 @@ export * from './service-deconcentre.rules';
 export * from './service-tag.schema';
 export * from './structure-tag.schema';
 export * from './tag.base.schema';
+export * from './typologie-sinoe';
