@@ -10,7 +10,7 @@ import type { JSX } from 'react';
 export type ActionDeReferenceSortField = ListActionsDeReferenceInput['sortBy'];
 
 export type ActionsDeReferenceSearch = {
-  readonly texte: string;
+  readonly searchedText: string;
   readonly leviers: readonly LevierId[];
   readonly categories: readonly CategorieAction[];
   readonly sortBy: ActionDeReferenceSortField;

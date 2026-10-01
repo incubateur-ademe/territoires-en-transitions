@@ -1,6 +1,6 @@
 import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
-import { CollectiviteNavItem } from './make-collectivite-nav';
+import type { CollectiviteNavItem } from './make-collectivite-nav.contract';
 
 export const generateTdbLink = ({
   user,
