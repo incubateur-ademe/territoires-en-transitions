@@ -54,7 +54,7 @@ export const normalizeTitle = (titre: string): string =>
     .replace(/\p{M}/gu, '')
     .toLowerCase()
     .replace(
-      /^(?:fiche(?:[\s-]*actions?)?|action|mesure)\s*(?:n[°º]\s*)?[a-z]{0,3}[\s-]?\d+(?:[.-]\d+)*/u,
+      /^(?:fiche(?:[\s-]*actions?)?|action|mesure)\b\s*(?:n[°º]\s*)?\d{1,3}(?:[.-]\d{1,3})*(?!\d)/u,
       ''
     )
     .replace(/^[\d.\s]+/, '')

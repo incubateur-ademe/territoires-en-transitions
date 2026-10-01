@@ -134,6 +134,18 @@ describe('dedupeByTitle', () => {
     });
   });
 
+  it('ne prend pas un verbe pour un libellé « Mesure n »', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Mesurer 10 sites pilotes'),
+        anAction('Mesurer 20 sites pilotes'),
+      ],
+      chunkIndexByAction: [0, 1],
+    });
+
+    expect(deduped.actions).toHaveLength(2);
+  });
+
   it('garde distinctes deux actions de même titre riches dans deux axes différents', () => {
     const deduped = dedupeByTitle({
       actions: [

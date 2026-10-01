@@ -261,7 +261,7 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
     ).toEqual([]);
   });
 
-  it('ne prend pas un intertitre de fiche en corps de texte pour une partie du document', () => {
+  it('ne prend pas un intertitre de fiche en corps de texte, entre deux fiches, pour une partie du document', () => {
     expect(
       titles([
         buildPage(0, [
@@ -270,8 +270,15 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
           { text: 'Suivi et évaluation', fontSize: 12 },
           ...body(3),
         ]),
+        buildPage(1, [
+          { text: 'ACTION 2- FORMER LES ELUS', fontSize: 16 },
+          ...body(3),
+        ]),
       ])
-    ).toEqual([['fiche', 3, 'PILOTER ET EVALUER LE PCAET']]);
+    ).toEqual([
+      ['fiche', 3, 'PILOTER ET EVALUER LE PCAET'],
+      ['fiche', 3, 'FORMER LES ELUS'],
+    ]);
   });
 
   it("ne fait pas un axe d'une ligne en majuscules quand le document nomme ses axes, sauf si elle se dit axe", () => {
@@ -291,6 +298,90 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
       ['majuscules', 2, 'ENERGETIQUE DES BATIMENTS TERTIAIRES'],
       ['majuscules', 1, 'AXE TRANSVERSAL'],
     ]);
+  });
+
+  it('garde une partie après la dernière fiche, ou sans taille de police connue', () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'ACTION 1- PILOTER ET EVALUER LE PCAET', fontSize: 16 },
+          ...body(3),
+          { text: 'Annexes', fontSize: 12 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'PILOTER ET EVALUER LE PCAET'],
+      ['section', 0, 'Annexes'],
+    ]);
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'Action 1 : Piloter le PCAET' },
+          { text: 'Un paragraphe de description.' },
+          { text: 'Suivi et évaluation' },
+          { text: 'Action 2 : Former les agents' },
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Piloter le PCAET'],
+      ['section', 0, 'Suivi et évaluation'],
+      ['fiche', 3, 'Former les agents'],
+    ]);
+  });
+
+  it('garde les fiches d’un plan compact, deux lignes de texte par action', () => {
+    const action = (number: string, title: string) => [
+      { text: `${number} ${title}`, fontSize: 12 },
+      { text: 'Une première ligne de description de l’action.', fontSize: 12 },
+      { text: 'Une seconde ligne de description de l’action.', fontSize: 12 },
+    ];
+
+    expect(
+      titles([
+        buildPage(0, [
+          ...action('1.2.1', 'Rénover les écoles'),
+          ...action('1.2.2', 'Isoler la mairie'),
+          ...action('1.2.3', 'Équiper les gymnases'),
+          ...action('1.2.4', 'Suivre les consommations'),
+        ]),
+      ]).map(([kind]) => kind)
+    ).toEqual(['fiche', 'fiche', 'fiche', 'fiche']);
+  });
+
+  it('ne colle pas un chiffre clé en grand au titre de la fiche', () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'ACTION 2 - RÉNOVER LES ÉCOLES', fontSize: 16 },
+          { text: '2030', fontSize: 30 },
+          { text: '400 000 €', fontSize: 24 },
+          ...body(5),
+        ]),
+      ])
+    ).toEqual([['fiche', 3, 'RÉNOVER LES ÉCOLES']]);
+  });
+
+  it('recolle la suite d’un titre en colonne gauche par-dessus le texte de la colonne voisine', () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'ACTION 2 - ACCOMPAGNER LES', fontSize: 16, y: 100 },
+          {
+            text: 'texte courant de la colonne de droite, en minuscules',
+            fontSize: 12,
+            y: 100,
+          },
+          { text: 'PROJETS DE RÉNOVATION', fontSize: 16, y: 120 },
+          {
+            text: 'suite du texte de la colonne de droite',
+            fontSize: 12,
+            y: 120,
+          },
+          ...body(5),
+        ]),
+      ])
+    ).toEqual([['fiche', 3, 'ACCOMPAGNER LES PROJETS DE RÉNOVATION']]);
   });
 });
 

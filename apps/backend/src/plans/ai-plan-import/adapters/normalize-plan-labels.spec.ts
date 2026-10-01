@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { createEmptyExtractedAction } from '../models/extracted-action';
-import { stripTitleNumber, unifyAxisLabels } from './normalize-plan-labels';
+import {
+  stripTitleNumber,
+  stripTitleNumbers,
+  unifyAxisLabels,
+} from './normalize-plan-labels';
 
 describe('stripTitleNumber', () => {
   it.each([
@@ -16,6 +20,8 @@ describe('stripTitleNumber', () => {
       '6.2.5. Développer l’énergie hydraulique',
       'Développer l’énergie hydraulique',
     ],
+    ['3/ Développer le réemploi', 'Développer le réemploi'],
+    ['2 -DEVELOPPER LE RECOURS', 'DEVELOPPER LE RECOURS'],
   ])('retire le numéro de « %s »', (titre, expected) => {
     expect(stripTitleNumber(titre)).toBe(expected);
   });
@@ -25,6 +31,10 @@ describe('stripTitleNumber', () => {
     '1 000 logements rénovés',
     'Actions de sensibilisation des scolaires',
     'Mesure de la qualité de l’air',
+    'Mesurer 10 sites pilotes',
+    'Actionner 3 leviers fiscaux',
+    'Mesures 2030 pour le climat',
+    '2-roues : développer le stationnement',
   ])('laisse « %s » tel quel', (titre) => {
     expect(stripTitleNumber(titre)).toBe(titre);
   });
@@ -73,6 +83,59 @@ describe('unifyAxisLabels', () => {
       'Mobilité durable',
       'Habitat',
       '',
+    ]);
+  });
+
+  it('rattache un numéro nu à son seul libellé complet, en capitales ou non', () => {
+    const actions = unifyAxisLabels([
+      action('AXE 6 : DEVELOPPER LE POTENTIEL', '6.2 FAVORISER LES ENR'),
+      action('AXE 6 : DEVELOPPER LE POTENTIEL', '6.2'),
+      action('Axe 6'),
+    ]);
+
+    expect(actions.map(({ axe, sousAxe }) => [axe, sousAxe])).toEqual([
+      ['AXE 6 : DEVELOPPER LE POTENTIEL', '6.2 FAVORISER LES ENR'],
+      ['AXE 6 : DEVELOPPER LE POTENTIEL', '6.2 FAVORISER LES ENR'],
+      ['AXE 6 : DEVELOPPER LE POTENTIEL', ''],
+    ]);
+  });
+
+  it('garde distincts deux axes de même numéro mais de titres différents', () => {
+    const actions = unifyAxisLabels([
+      action('Axe 1 : Mobilité'),
+      action('Axe 1 : Qualité de l’air'),
+      action('Axe 1'),
+    ]);
+
+    expect(actions.map(({ axe }) => axe)).toEqual([
+      'Axe 1 : Mobilité',
+      'Axe 1 : Qualité de l’air',
+      'Axe 1',
+    ]);
+  });
+});
+
+describe('stripTitleNumbers', () => {
+  it('garde le numéro quand il est seul à distinguer deux fiches du même axe', () => {
+    const actions = stripTitleNumbers([
+      createEmptyExtractedAction({
+        axe: 'Axe 1 : Sensibiliser',
+        titre: 'Fiche 3 : Sensibiliser les habitants',
+      }),
+      createEmptyExtractedAction({
+        axe: 'Axe 1 : Sensibiliser',
+        titre: 'Fiche 7 : Sensibiliser les habitants',
+      }),
+      createEmptyExtractedAction({
+        axe: 'Axe 1 : Sensibiliser',
+        titre: '1.1.2 Former les élus',
+      }),
+    ]);
+
+    expect(actions.map(({ titre }) => titre)).toEqual([
+      'Fiche 3 : Sensibiliser les habitants',
+      'Fiche 7 : Sensibiliser les habitants',
+      'Former les élus',
     ]);
   });
 });
