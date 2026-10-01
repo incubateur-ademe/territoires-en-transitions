@@ -11,8 +11,12 @@ type NewActionDeReference = Omit<ActionDeReference, 'id'>;
 
 type CollectiviteId = Collectivite['id'];
 
-const withRunSuffix = (titre: string): string =>
-  `${titre} ${crypto.randomUUID().slice(0, 8)}`;
+const toRunToken = (): string => crypto.randomUUID().slice(0, 8);
+
+const withRunSuffix = (
+  titre: string,
+  runToken: string = toRunToken()
+): string => `${titre} ${runToken}`;
 
 class ActionsDeReferenceFactory {
   private addedActionIds: readonly ActionDeReferenceId[] = [];
@@ -83,7 +87,7 @@ const openUpdatePanelAsSuperAdmin = async ({
   return collectivite.data.id;
 };
 
-export { openUpdatePanelAsSuperAdmin, withRunSuffix };
+export { openUpdatePanelAsSuperAdmin, toRunToken, withRunSuffix };
 
 export const testWithActionsDeReference = test.extend<{
   actionsDeReference: ActionsDeReference;
