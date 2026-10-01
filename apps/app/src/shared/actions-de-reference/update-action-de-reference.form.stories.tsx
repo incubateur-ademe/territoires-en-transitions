@@ -1,5 +1,5 @@
-import { SidePanelProvider } from '@/app/ui/layout/side-panel/side-panel.context';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { SidePanelProvider } from '../../ui/layout/side-panel/side-panel.context';
 import { isolationComblesAction } from './actions-de-reference.fixture';
 import { UpdateActionDeReferenceForm } from './update-action-de-reference.form';
 
