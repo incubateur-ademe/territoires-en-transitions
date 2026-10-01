@@ -23,6 +23,7 @@ import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
+import { UpdateDefinitionService } from './update-definition.service';
 
 describe('UpdateIndicateurDefinitionRouter', () => {
   let app: INestApplication;
@@ -48,6 +49,49 @@ describe('UpdateIndicateurDefinitionRouter', () => {
   });
 
   describe('indicateur perso', () => {
+    test('annule la modification du suivi si la transaction appelante échoue', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Suivi dans une transaction partagée',
+        },
+      });
+      const updateDefinitionService = app.get(UpdateDefinitionService);
+      const rollbackError = new Error('Échec après modification du suivi');
+
+      await expect(
+        databaseService.db.transaction(async (tx) => {
+          await updateDefinitionService.updateDefinition(
+            {
+              indicateurId,
+              collectiviteId: collectivite.id,
+              indicateurFields: { isSuivi: false },
+            },
+            { user: authenticatedUser, tx }
+          );
+          const [indicateur] = await tx
+            .select({ isSuivi: indicateurCollectiviteTable.isSuivi })
+            .from(indicateurCollectiviteTable)
+            .where(
+              and(
+                eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+                eq(indicateurCollectiviteTable.collectiviteId, collectivite.id)
+              )
+            );
+          expect(indicateur.isSuivi).toBe(false);
+          throw rollbackError;
+        })
+      ).rejects.toBe(rollbackError);
+
+      const { data } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(data).toMatchObject([{ id: indicateurId, isSuivi: true }]);
+    });
+
     test('should update basic fields for perso indicator', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
 

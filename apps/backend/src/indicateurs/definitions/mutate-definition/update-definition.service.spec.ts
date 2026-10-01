@@ -210,13 +210,11 @@ describe('UpdateDefinitionService', () => {
     async (collectiviteId) => {
       const transactionManager = { executeSingle: vi.fn() };
       const repository = {
-        getDefinitionOwnership: vi
-          .fn()
-          .mockResolvedValue({
-            collectiviteId,
-            groupementId: null,
-            periodicite: 'annuelle',
-          }),
+        getDefinitionOwnership: vi.fn().mockResolvedValue({
+          collectiviteId,
+          groupementId: null,
+          periodicite: 'annuelle',
+        }),
       };
       const { getUserPermissionsService, permissionService } =
         createAuthorizationDependencies();
@@ -352,7 +350,7 @@ describe('UpdateDefinitionService — groupement', () => {
             services: [{ id: 12 }],
           },
         },
-        user
+        { user }
       );
 
       expect(h.repository.lockGroupementMembership).toHaveBeenCalledWith(
@@ -397,7 +395,7 @@ describe('UpdateDefinitionService — groupement', () => {
       const h = setup(ownerId);
       h.repository.lockGroupementMembership.mockResolvedValue(false);
       await expect(
-        h.service.updateDefinition(h.input, user)
+        h.service.updateDefinition(h.input, { user })
       ).rejects.toBeInstanceOf(NotFoundException);
       expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
       expect(h.repository.touchDefinitions).not.toHaveBeenCalled();
@@ -411,7 +409,7 @@ describe('UpdateDefinitionService — groupement', () => {
       await expect(
         h.service.updateDefinition(
           { ...h.input, indicateurFields: { ...fields, estFavori: true } },
-          user
+          { user }
         )
       ).rejects.toBeInstanceOf(BadRequestException);
       expect(h.transactionManager.executeSingle).not.toHaveBeenCalled();
@@ -430,7 +428,7 @@ describe('UpdateDefinitionService — groupement', () => {
           thematiques: [],
         },
       },
-      user
+      { user }
     );
     expect(h.repository.lockGroupementMembership).not.toHaveBeenCalled();
     expect(h.repository.updatePersonalizedDefinition).toHaveBeenCalledWith(
@@ -453,7 +451,7 @@ describe('UpdateDefinitionService — groupement', () => {
     await expect(
       h.service.updateDefinition(
         { ...h.input, indicateurFields: { periodicite: 'mensuelle' } as never },
-        user
+        { user }
       )
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(h.transactionManager.executeSingle).not.toHaveBeenCalled();
@@ -466,7 +464,7 @@ describe('UpdateDefinitionService — groupement', () => {
       groupementId: null,
     });
     await expect(
-      h.service.updateDefinition(h.input, user)
+      h.service.updateDefinition(h.input, { user })
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
   });
@@ -479,7 +477,7 @@ describe('UpdateDefinitionService — groupement', () => {
     });
     h.repository.lockGroupementMembership.mockResolvedValue(false);
     await expect(
-      h.service.updateDefinition(h.input, user)
+      h.service.updateDefinition(h.input, { user })
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(h.repository.lockGroupementMembership).toHaveBeenCalledWith(
       { groupementId: 100, collectiviteId: 1 },
@@ -497,7 +495,7 @@ describe('UpdateDefinitionService — groupement', () => {
     await expect(
       h.service.updateDefinition(
         { ...h.input, indicateurFields: { titre: 'Titre' } },
-        user
+        { user }
       )
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(h.repository.updatePersonalizedDefinition).not.toHaveBeenCalled();
@@ -512,7 +510,7 @@ describe('UpdateDefinitionService — groupement', () => {
         data: { roles: [], permissions: [], collectivites: [] },
       });
     await expect(
-      h.service.updateDefinition(h.input, user)
+      h.service.updateDefinition(h.input, { user })
     ).rejects.toBeInstanceOf(ForbiddenException);
     expect(
       h.getUserPermissionsService.getUserRolesAndPermissions
@@ -525,7 +523,7 @@ describe('UpdateDefinitionService — groupement', () => {
     h.permissions.collectivites[0].permissions = [
       'indicateurs.indicateurs.update_piloted_by_me',
     ];
-    await h.service.updateDefinition(h.input, user);
+    await h.service.updateDefinition(h.input, { user });
     expect(h.pilotes.listIndicateurPilotes).toHaveBeenLastCalledWith(
       { indicateurId: 42, collectiviteId: 1, user },
       h.tx
