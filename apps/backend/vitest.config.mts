@@ -4,20 +4,22 @@ import { BaseSequencer, type TestSpecification } from 'vitest/node';
 
 /**
  * Ces specs ne testent pas, elles peuplent : c'est par elles que la base de
- * test reçoit ses indicateurs, ses questions de personnalisation puis ses
+ * test reçoit ses questions de personnalisation, ses indicateurs puis ses
  * référentiels.
  *
  * **L'ordre de cette liste est celui de leurs dépendances**, et il est imposé
- * par le sequencer ci-dessous : l'import d'un référentiel valide chaque
- * expression contre les indicateurs et les questions déjà en base, et échoue
- * sur des centaines d'« indicateurs inexistants » s'il passe le premier.
+ * par le sequencer ci-dessous : l'import des indicateurs valide les
+ * `reponse(...)` de leurs expressions contre les questions déjà en base, et
+ * l'import d'un référentiel valide chaque expression contre les indicateurs et
+ * les questions déjà en base ; il échoue sur des centaines d'« indicateurs
+ * inexistants » s'il passe le premier.
  *
  * Ajouter un import ici suffit : le projet le prendra dans cet ordre, sans que
  * la CI ait à connaître la liste.
  */
 const specsAlreadyRunByInitDbSeed = [
-  'src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts',
   'src/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.controller.e2e-spec.ts',
+  'src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts',
   'src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts',
 ];
 
