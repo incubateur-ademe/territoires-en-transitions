@@ -26,12 +26,17 @@ const WORD_GAP_RATIO = 0.15;
 // Un texte dessiné deux fois au même endroit (contour, faux gras) sortirait
 // en double : « ÉTATÉTAT ».
 const OVERPRINT_TOLERANCE = 0.2;
+// Deux colonnes de texte côte à côte : un blanc de plus de deux hauteurs de
+// police entre deux morceaux qui portent chacun du texte. Un numéro ou un
+// libellé court (« Pilote ») reste sur la ligne de sa valeur.
+const COLUMN_GAP_RATIO = 2;
+const COLUMN_MIN_LETTERS = 10;
 
 /**
  * Recompose les lignes d'une page à partir des fragments de pdf.js, dans
  * l'ordre de lecture haut → bas puis gauche → droite. Les mises en page à
- * deux colonnes ressortent entrelacées : le texte reste complet, seulement
- * désordonné, ce que l'extraction tolère.
+ * deux colonnes ressortent entrelacées, mais chaque colonne garde ses
+ * lignes : un titre n'absorbe pas le texte de la colonne voisine.
  */
 export const reconstructPageLines = (
   items: TextItemLike[],
@@ -59,6 +64,7 @@ export const reconstructPageLines = (
 
   return lines
     .map((line) => dropOverprints(line.sort((a, b) => a.x - b.x)))
+    .flatMap(splitColumns)
     .map(toPageLine)
     .filter((line) => line.text.length > 0);
 };
@@ -88,6 +94,42 @@ const dropOverprints = (items: PositionedItem[]): PositionedItem[] =>
             Math.abs(kept.x - item.x) <= OVERPRINT_TOLERANCE * item.fontSize &&
             Math.abs(kept.y - item.y) <= OVERPRINT_TOLERANCE * item.fontSize
         )
+  );
+
+const splitColumns = (items: PositionedItem[]): PositionedItem[][] => {
+  const segments: PositionedItem[][] = [];
+  items.forEach((item, index) => {
+    const previous = items[index - 1];
+    const isColumnGap =
+      previous !== undefined &&
+      item.x - previous.right > COLUMN_GAP_RATIO * item.fontSize;
+    if (segments.length === 0 || isColumnGap) {
+      segments.push([item]);
+    } else {
+      segments[segments.length - 1].push(item);
+    }
+  });
+  // Un morceau trop court rejoint son voisin de gauche (ou de droite).
+  const merged: PositionedItem[][] = [];
+  for (const segment of segments) {
+    const previous = merged.at(-1);
+    if (
+      previous &&
+      (letterCount(segment) < COLUMN_MIN_LETTERS ||
+        letterCount(previous) < COLUMN_MIN_LETTERS)
+    ) {
+      previous.push(...segment);
+    } else {
+      merged.push(segment);
+    }
+  }
+  return merged;
+};
+
+const letterCount = (items: PositionedItem[]): number =>
+  items.reduce(
+    (count, item) => count + item.text.replace(/[^\p{L}]/gu, '').length,
+    0
   );
 
 const toPageLine = (items: PositionedItem[]): PageLine => {

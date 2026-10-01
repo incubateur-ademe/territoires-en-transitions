@@ -7,6 +7,13 @@ describe('matchHeading', () => {
     ['Axe n°3 - Mobilité', 'axe', 1, '3', 'Mobilité'],
     ['Axe II Habitat', 'axe', 1, 'II', 'Habitat'],
     [
+      'AXE STRATEGIQUE 3 - SE DEPLACER SOBREMENT',
+      'axe',
+      1,
+      '3',
+      'SE DEPLACER SOBREMENT',
+    ],
+    [
       'Orientation 2.3 – Rénover l’habitat',
       'orientation',
       2,
@@ -78,6 +85,13 @@ describe('matchHeading', () => {
       'Programme d’actions 2024-2030',
     ],
     ['ÉTAT DES LIEUX', 'section', 0, null, 'ÉTAT DES LIEUX'],
+    [
+      '2) LE PROGRAMME D’ACTIONS',
+      'section',
+      0,
+      null,
+      '2) LE PROGRAMME D’ACTIONS',
+    ],
     [
       'ENGAGEMENT DES PARTENAIRES',
       'section',
@@ -177,6 +191,10 @@ describe('matchHeading', () => {
     '2.3 % de la consommation',
     'Axe : 2',
     'Pilote :',
+    // L'en-tête d'un tableau récapitulatif, pas l'axe « I ».
+    "Axe stratégique Intitulé de l'action",
+    // Un libellé de fiche collé à sa valeur, pas l'objectif « s ».
+    'Objectifs et enjeux de Réduire la consommation énergétique',
     'INDICATEURS DE SUIVI',
     'Cette action vise à réduire les consommations des bâtiments communaux de vingt pour cent d’ici à la fin du mandat.',
     'ABC',
