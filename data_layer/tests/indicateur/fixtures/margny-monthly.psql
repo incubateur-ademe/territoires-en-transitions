@@ -1,0 +1,33 @@
+-- Synthetic images of the six originals and the two values kept by #5220.
+-- Only used on the disposable database enforced by the lifecycle driver.
+\set ON_ERROR_STOP on
+BEGIN;
+SET LOCAL TIME ZONE 'UTC';
+SET LOCAL DateStyle = 'ISO, YMD';
+SET LOCAL extra_float_digits = 3;
+INSERT INTO public.collectivite (id, nom, type) VALUES (2181, 'Fixture Margny', 'commune');
+INSERT INTO public.indicateur_definition (id, collectivite_id, titre, unite)
+VALUES (31816, 2181, 'Fixture test', 'nombre'), (32392, 2181, 'Fixture projets', 'nombre');
+INSERT INTO public.indicateur_valeur
+    (id, indicateur_id, collectivite_id, date_valeur, resultat, objectif, resultat_commentaire,
+     objectif_commentaire, estimation, created_at, modified_at)
+VALUES
+    (11979624, 31816, 2181, '2025-01-01', 8, 9, 'Commentaire à conserver', 'Objectif à conserver', 0,
+     '2025-08-05 10:00:00+00', '2026-09-28 14:00:00+00'),
+    (12374017, 32392, 2181, '2025-01-01', NULL, 3, NULL, 'Second commentaire', NULL,
+     '2025-09-04 19:00:00+00', '2026-09-28 14:00:00+00');
+
+INSERT INTO private.indicateur_valeur_date_repair (valeur_id, avant, apres)
+SELECT expected.id,
+       (to_jsonb(current_value) - 'periodicite') || jsonb_build_object(
+           'id', expected.id, 'date_valeur', make_date(202500 + expected.mois, 1, 1),
+           'resultat', expected.resultat, 'objectif', expected.objectif,
+           'modified_at', TIMESTAMPTZ '2025-08-05 10:00:00+00'),
+       CASE WHEN expected.id = current_value.id THEN to_jsonb(current_value) - 'periodicite' END
+FROM (VALUES
+    (11979621, 31816, 1, 5::double precision, 3::double precision),
+    (11979622, 31816, 2, 7, 5), (11979623, 31816, 3, 2, 7), (11979624, 31816, 4, 8, 9),
+    (12374016, 32392, 11, NULL, 2), (12374017, 32392, 12, NULL, 3)
+) expected(id, indicateur_id, mois, resultat, objectif)
+JOIN public.indicateur_valeur current_value ON current_value.indicateur_id = expected.indicateur_id;
+COMMIT;

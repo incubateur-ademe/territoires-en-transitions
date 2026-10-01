@@ -119,7 +119,7 @@ annual_writer_log="$(mktemp)"
 reconciliation_producer_log="$(mktemp)"
 reconciliation_revert_log="$(mktemp)"
 reconciliation_reader_log="$(mktemp)"
-trap 'rm -f "$expand_migration_log" "$expand_delete_log" "$transition_log" "$contract_writer_log" "$graph_definition_log" "$graph_value_log" "$formula_source_log" "$formula_target_log" "$annual_definition_log" "$annual_writer_log" "$reconciliation_producer_log" "$reconciliation_revert_log" "$reconciliation_reader_log"' EXIT
+trap 'rm -f "$expand_migration_log" "$expand_delete_log" "$transition_log" "$contract_writer_log" "$graph_definition_log" "$graph_value_log" "$formula_source_log" "$formula_target_log" "$annual_definition_log" "$annual_writer_log" "$reconciliation_producer_log" "$reconciliation_revert_log" "$reconciliation_reader_log" "${margny_dump:-}"' EXIT
 
 # L'expand prend définition puis valeur. Une ancienne suppression avec cascade
 # arrivée ensuite attend donc sans détenir la table de valeurs : la migration
@@ -478,3 +478,125 @@ assert_equal "" "$(scalar "SELECT to_regprocedure('private.extraire_dependances_
   "le revert complet doit retirer l'extracteur de dépendances"
 
 echo "Cycle Sqitch de périodicité validé sur la base jetable '$database_name'."
+
+# Cinquième livraison autonome : migration mensuelle de Margny.
+for change in periodicite_schema periodicite reconciliation_formules dependances_formules \
+              periodicite_obligatoire periodicite_formules; do
+  apply_change "data_layer/sqitch/deploy/indicateur/$change.sql"
+done
+apply_change data_layer/sqitch/deploy/stats/report_indicateur_resultat_periode.sql
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_annuelle.sql
+apply_change data_layer/sqitch/deploy/indicateur/reserver-ecriture-valeurs-backend.sql
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "la conversion de Margny doit attendre l'activation"
+apply_change data_layer/sqitch/deploy/indicateur/periodicite_activation.sql
+# Réintégration mensuelle de Margny : refuser toute dérive depuis #5220.
+apply_change data_layer/tests/indicateur/fixtures/margny-monthly.psql
+scalar "UPDATE private.indicateur_valeur_date_repair SET valeur_id = -valeur_id, avant = jsonb_set(avant, '{id}', to_jsonb(-valeur_id)) WHERE valeur_id = 11979621" >/dev/null
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "une archive partielle de Margny doit bloquer la conversion"
+scalar "UPDATE private.indicateur_valeur_date_repair SET valeur_id = -valeur_id, avant = jsonb_set(avant, '{id}', to_jsonb(-valeur_id)) WHERE valeur_id = -11979621" >/dev/null
+scalar "UPDATE public.indicateur_valeur SET resultat = 77 WHERE id = 11979624" >/dev/null
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "une saisie de Margny modifiée entre les livraisons ne doit pas être écrasée"
+assert_equal "77" "$(scalar "SELECT resultat FROM public.indicateur_valeur WHERE id = 11979624")" \
+  "la saisie modifiée doit rester intacte après le refus"
+scalar "BEGIN; ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_at; ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_by;
+UPDATE public.indicateur_valeur v SET resultat = (a.apres->>'resultat')::double precision, modified_at = (a.apres->>'modified_at')::timestamptz, modified_by = (a.apres->>'modified_by')::uuid FROM private.indicateur_valeur_date_repair a WHERE v.id = a.valeur_id AND v.id = 11979624;
+ALTER TABLE public.indicateur_valeur ENABLE TRIGGER modified_by; ALTER TABLE public.indicateur_valeur ENABLE TRIGGER modified_at; COMMIT" >/dev/null
+scalar "INSERT INTO public.indicateur_valeur (id, indicateur_id, collectivite_id, date_valeur, resultat) VALUES (11979621, $origin_id, $collectivite_id, '2070-01-01', 1)" >/dev/null
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "un identifiant réutilisé depuis l'archivage de Margny ne doit pas être écrasé"
+scalar "DELETE FROM public.indicateur_valeur WHERE id = 11979621" >/dev/null
+margny_extra_id="$(scalar "INSERT INTO public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, resultat) VALUES (31816, 2181, '2030-01-01', 1) RETURNING id")"
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "une nouvelle année de Margny doit exiger une décision avant conversion"
+scalar "DELETE FROM public.indicateur_valeur WHERE id = $margny_extra_id" >/dev/null
+scalar "INSERT INTO public.indicateur_groupe (parent, enfant) VALUES (31816, $origin_id)" >/dev/null
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "une dépendance annuelle nouvelle doit bloquer la conversion de Margny"
+scalar "DELETE FROM public.indicateur_groupe WHERE parent = 31816 AND enfant = $origin_id" >/dev/null
+# Un trigger inattendu qui ignore l'UPDATE doit faire annuler même les INSERT
+# déjà exécutés : aucun nettoyage ne doit masquer une conversion incomplète.
+psql_test <<'SQL' >/dev/null
+CREATE FUNCTION private.ignore_margny_periodicite_test() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN OLD; END $$;
+CREATE TRIGGER ignore_margny_periodicite_test BEFORE UPDATE OF periodicite ON public.indicateur_definition
+FOR EACH ROW WHEN (OLD.id IN (31816,32392)) EXECUTE FUNCTION private.ignore_margny_periodicite_test();
+SQL
+expect_change_failure data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql \
+  "une conversion de définition ignorée doit annuler aussi les valeurs restaurées"
+assert_equal "2|6|annuelle,annuelle" \
+  "$(scalar "SELECT (SELECT count(*) FROM public.indicateur_valeur WHERE indicateur_id IN (31816,32392)) || '|' || (SELECT count(*) FROM private.indicateur_valeur_date_repair WHERE valeur_id IN (11979621,11979622,11979623,11979624,12374016,12374017)) || '|' || (SELECT string_agg(periodicite, ',' ORDER BY id) FROM public.indicateur_definition WHERE id IN (31816,32392))")" \
+  "le refus après écriture restaure entièrement observations, définitions et archives"
+scalar "DROP TRIGGER ignore_margny_periodicite_test ON public.indicateur_definition; DROP FUNCTION private.ignore_margny_periodicite_test()" >/dev/null
+margny_definitions_expected="$(scalar "SELECT jsonb_agg(to_jsonb(d) || jsonb_build_object('periodicite', 'mensuelle') ORDER BY id) FROM public.indicateur_definition d WHERE id IN (31816,32392)")"
+margny_expected="$(scalar "SELECT jsonb_agg(avant || jsonb_build_object('periodicite', 'mensuelle', 'date_valeur', make_date(2025, extract(year from (avant->>'date_valeur')::date)::integer % 100, 1)) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair WHERE valeur_id IN (11979621,11979622,11979623,11979624,12374016,12374017)")"
+
+
+margny_before="$(scalar "SELECT jsonb_build_object(
+ 'definitions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY id) FROM public.indicateur_definition d),
+ 'valeurs',(SELECT jsonb_agg(to_jsonb(v) ORDER BY id) FROM public.indicateur_valeur v),
+ 'archives',(SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a))")"
+apply_change data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql
+apply_change data_layer/sqitch/verify/indicateur/margny_indicateurs_mensuels.sql
+assert_equal "$margny_expected" \
+  "$(scalar "SELECT jsonb_agg(to_jsonb(v) ORDER BY id) FROM public.indicateur_valeur v WHERE indicateur_id IN (31816,32392)")" \
+  "les six originaux de Margny deviennent mensuels avec leurs valeurs, commentaires, auteurs et horodatages"
+assert_equal "$margny_definitions_expected" "$(scalar "SELECT jsonb_agg(to_jsonb(d) ORDER BY id) FROM public.indicateur_definition d WHERE id IN (31816,32392)")" \
+  "la correction préserve intégralement les définitions en changeant uniquement leur cadence"
+assert_equal "mensuelle,mensuelle" "$(scalar "SELECT string_agg(periodicite, ',' ORDER BY id) FROM public.indicateur_definition WHERE id IN (31816,32392)")" \
+  "les deux indicateurs existants de Margny deviennent mensuels"
+if psql_test --command="UPDATE public.indicateur_definition SET periodicite = 'annuelle' WHERE id = 31816" >/dev/null 2>&1; then
+  echo "ÉCHEC: la conversion ponctuelle a laissé la périodicité modifiable" >&2
+  exit 1
+fi
+if psql_test --command="UPDATE public.indicateur_valeur SET periodicite = 'annuelle' WHERE id = 11979621" >/dev/null 2>&1; then
+  echo "ÉCHEC: la conversion ponctuelle a laissé la périodicité des valeurs modifiable" >&2
+  exit 1
+fi
+
+assert_equal "migration.indicateur_valeur_periodicite_audit|private.indicateur_valeur_write_acl|private.indicateur_valeur_date_repair" \
+  "$(scalar "SELECT to_regclass('migration.indicateur_valeur_periodicite_audit') || '|' || to_regclass('private.indicateur_valeur_write_acl') || '|' || to_regclass('private.indicateur_valeur_date_repair')")" \
+  "la migration de Margny doit conserver les trois archives jusqu'au nettoyage"
+scalar "BEGIN; ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_at; ALTER TABLE public.indicateur_valeur DISABLE TRIGGER modified_by; UPDATE public.indicateur_valeur SET resultat = 77 WHERE id = 11979624; COMMIT" >/dev/null
+expect_change_failure data_layer/sqitch/revert/indicateur/margny_indicateurs_mensuels.sql \
+  "le retour arrière de Margny doit refuser une saisie modifiée"
+assert_equal "77" "$(scalar "SELECT resultat FROM public.indicateur_valeur WHERE id = 11979624")" \
+  "le refus du revert ne doit pas écraser une saisie modifiée"
+scalar "UPDATE public.indicateur_valeur SET resultat = 8 WHERE id = 11979624; ALTER TABLE public.indicateur_valeur ENABLE TRIGGER modified_by; ALTER TABLE public.indicateur_valeur ENABLE TRIGGER modified_at" >/dev/null
+apply_change data_layer/sqitch/revert/indicateur/margny_indicateurs_mensuels.sql
+assert_equal "$margny_before" "$(scalar "SELECT jsonb_build_object(
+ 'definitions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY id) FROM public.indicateur_definition d),
+ 'valeurs',(SELECT jsonb_agg(to_jsonb(v) ORDER BY id) FROM public.indicateur_valeur v),
+ 'archives',(SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a))")" \
+  "le retour arrière doit restaurer exactement les images annuelles et conserver les archives"
+apply_change data_layer/sqitch/deploy/indicateur/margny_indicateurs_mensuels.sql
+apply_change data_layer/sqitch/verify/indicateur/margny_indicateurs_mensuels.sql
+echo "Migration autonome de Margny, conservation des archives et retour arrière contrôlé validés."
+
+# Le driver exécute SQL directement ; représenter le registre Sqitch afin de
+# vérifier aussi une vraie sauvegarde de cette étape autonome.
+scalar "INSERT INTO sqitch.projects (project, creator_name, creator_email) VALUES ('tet','test','test@example.invalid') ON CONFLICT DO NOTHING" >/dev/null
+for change in indicateur/periodicite_schema indicateur/periodicite indicateur/reconciliation_formules \
+              indicateur/dependances_formules indicateur/periodicite_obligatoire indicateur/periodicite_formules \
+              stats/report_indicateur_resultat_periode indicateur/periodicite_annuelle \
+              indicateur/periodicite_activation indicateur/margny_indicateurs_mensuels; do
+  scalar "INSERT INTO sqitch.changes (change_id,change,project,committer_name,committer_email,planned_at,planner_name,planner_email) VALUES (md5('$change'),'$change','tet','test','test@example.invalid',now(),'test','test@example.invalid') ON CONFLICT DO NOTHING" >/dev/null
+done
+margny_dump="$(mktemp)"
+pg_dump --format=custom --dbname="$database_url" --file="$margny_dump"
+assert_equal "contract-margny" \
+  "$(TO_DB_URL="$database_url" bash "$repository_root/data_layer/backup/check-restore-compatibility.sh" "$margny_dump")" \
+  "une sauvegarde après migration de Margny doit être reconnue et restaurable"
+archive_before="$(scalar "SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a")"
+scalar "TRUNCATE private.indicateur_valeur_date_repair" >/dev/null
+pg_restore --data-only --file=- --schema=private --table=indicateur_valeur_date_repair "$margny_dump" \
+  | sed '/^SET transaction_timeout = 0;$/d' | psql_test >/dev/null
+assert_equal "$archive_before" "$(scalar "SELECT jsonb_agg(to_jsonb(a) ORDER BY valeur_id) FROM private.indicateur_valeur_date_repair a")" \
+  "la restauration conserve les six images nécessaires au retour arrière"
+pg_dump --format=custom --dbname="$database_url" --exclude-table-data=private.indicateur_valeur_date_repair --file="$margny_dump"
+if TO_DB_URL="$database_url" bash "$repository_root/data_layer/backup/check-restore-compatibility.sh" "$margny_dump" >/dev/null 2>&1; then
+  echo "ÉCHEC: une sauvegarde après Margny sans ses originaux a été acceptée" >&2
+  exit 1
+fi
+echo "Sauvegarde de Margny et aller-retour de ses archives validés."
