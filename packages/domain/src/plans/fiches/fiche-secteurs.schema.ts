@@ -35,12 +35,21 @@ export type ReponseSecteursCommuns = z.infer<
   typeof reponseSecteursCommunsSchema
 >;
 
+const origineSecteursConnusSchema = z.enum([
+  OrigineSecteursEnum.AUTOMATIQUE,
+  OrigineSecteursEnum.MANUELLE,
+]);
+
 export const ficheSecteursSchema = z.discriminatedUnion('etat', [
   z.object({
     etat: z.literal('attribue'),
     secteurs: z.array(secteurReglementaireEnumSchema),
+    origine: origineSecteursConnusSchema,
   }),
-  z.object({ etat: z.literal('non_attribuable') }),
+  z.object({
+    etat: z.literal('non_attribuable'),
+    origine: origineSecteursConnusSchema,
+  }),
   // Communs n'a pas encore classé la fiche, ou n'a pas répondu
   z.object({ etat: z.literal('en_cours_de_calcul') }),
   // fiche inconnue de Communs (404)
