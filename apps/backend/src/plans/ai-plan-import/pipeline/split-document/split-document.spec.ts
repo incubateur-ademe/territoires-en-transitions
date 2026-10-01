@@ -56,6 +56,23 @@ describe('splitDocument', () => {
     }
   });
 
+  it('ne répète pas un en-tête qui ne laisserait pas de place au contenu', () => {
+    const header = 'colonne\t'.repeat(200);
+    const text = [header, ...lines(200)].join('\n');
+
+    const chunks = splitDocument(text, {
+      maxTokens: 200,
+      overlapTokens: 20,
+      header,
+    });
+
+    expect(chunks.length).toBeGreaterThan(1);
+    expect(chunks.slice(1).some((chunk) => chunk.startsWith(header))).toBe(
+      false
+    );
+    expect(chunks.join('\n')).toContain(lines(200).at(-1));
+  });
+
   it('coupe une ligne plus longue que la tranche', () => {
     const chunks = splitDocument('x'.repeat(5000), {
       maxTokens: 200,
