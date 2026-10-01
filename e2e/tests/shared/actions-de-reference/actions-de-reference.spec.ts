@@ -1,167 +1,390 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { databaseService } from 'tests/shared/database.service';
 import {
   openUpdatePanelAsSuperAdmin,
+  type ActionsDeReference,
   testWithActionsDeReference as test,
+  toRunToken,
   withRunSuffix,
 } from './actions-de-reference.fixture';
+import {
+  ActionsDeReferencePom,
+  listedTitres,
+} from './actions-de-reference.pom';
 
-const toBeAutomated = async (): Promise<void> => undefined;
+type NewActionDeReference = Parameters<ActionsDeReference['add']>[0][number];
+
+const toCovoiturageAction = (runToken: string): NewActionDeReference => ({
+  titre: withRunSuffix('Aménager des aires de covoiturage', runToken),
+  description: 'Créer des points de rencontre pour les covoitureurs.',
+  levier: 'covoiturage',
+  categorie: 'amenagement',
+});
+
+const toReseauxChaleurAction = (runToken: string): NewActionDeReference => ({
+  titre: withRunSuffix('Développer les réseaux de chaleur', runToken),
+  description: 'Raccorder les bâtiments publics à une chaufferie bois.',
+  levier: 'reseaux_chaleur_decarbones',
+  categorie: 'amenagement',
+});
 
 test.describe('rechercher-actions', () => {
-  test.fixme(
-    'un utilisateur connecté ne voit que les actions dont le titre ou la description contient le texte cherché',
-    async () => {
-      await test.step(
-        'Given : trois actions de référence existent, « Isoler les combles perdus » (titre), « Rénover les écoles » (description « isolation des COMBLES ») et « Aménager des aires de covoiturage »',
-        toBeAutomated
-      );
-      await test.step(
-        'Given : un utilisateur connecté ouvre /collectivite/:id/actions-reference',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il saisit « combles » dans le champ de recherche nommé « Rechercher une action de référence »',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : les cards « Isoler les combles perdus » et « Rénover les écoles » sont visibles',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : la card « Aménager des aires de covoiturage » est absent',
-        toBeAutomated
-      );
-    }
-  );
+  test('un utilisateur connecté ne voit que les actions dont le titre ou la description contient le texte cherché', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const isolationTitre = withRunSuffix('Isoler les combles perdus', runToken);
+    const ecolesTitre = withRunSuffix('Rénover les écoles', runToken);
+    const covoiturageAction = toCovoiturageAction(runToken);
 
-  test.fixme('la recherche ignore les accents', async () => {
-    await test.step(
-      'Given : une action de référence « Développer les réseaux de chaleur » existe',
-      toBeAutomated
-    );
-    await test.step(
-      "When : l'utilisateur saisit « reseaux » dans le champ de recherche nommé « Rechercher une action de référence »",
-      toBeAutomated
-    );
-    await test.step(
-      'Then : la card « Développer les réseaux de chaleur » est visible',
-      toBeAutomated
-    );
+    await test.step('Given : trois actions de référence existent, « Isoler les combles perdus » (titre), « Rénover les écoles » (description « isolation des COMBLES ») et « Aménager des aires de covoiturage »', () =>
+      actionsDeReference.add([
+        {
+          titre: isolationTitre,
+          description: 'Réduire les pertes de chaleur par la toiture.',
+          levier: 'sobriete_batiments_residentiel',
+          categorie: 'amenagement',
+        },
+        {
+          titre: ecolesTitre,
+          description:
+            "Planifier l'isolation des COMBLES des groupes scolaires.",
+          levier: 'sobriete_batiments_residentiel',
+          categorie: 'planification',
+        },
+        covoiturageAction,
+      ]));
+    await test.step('Given : un utilisateur connecté ouvre /collectivite/:id/actions-reference', async () => {
+      const { collectivite } = await collectivites.addCollectiviteAndUser({
+        userArgs: { autoLogin: true },
+      });
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await expect(
+        actionsDeReferencePom.card(covoiturageAction.titre)
+      ).toBeVisible();
+    });
+    await test.step('When : il saisit « combles » dans le champ de recherche nommé « Rechercher une action de référence »', () =>
+      actionsDeReferencePom.searchField.fill('combles'));
+    await test.step('Then : les cards « Isoler les combles perdus » et « Rénover les écoles » sont visibles', () =>
+      expect(actionsDeReferencePom.cardTitlesContaining(runToken)).toHaveText([
+        isolationTitre,
+        ecolesTitre,
+      ]));
+    await test.step('Then : la card « Aménager des aires de covoiturage » est absente', () =>
+      expect(actionsDeReferencePom.card(covoiturageAction.titre)).toHaveCount(
+        0
+      ));
+  });
+
+  test('la recherche ignore les accents', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const reseauxChaleurAction = toReseauxChaleurAction(runToken);
+    const covoiturageAction = toCovoiturageAction(runToken);
+
+    const { collectivite } =
+      await test.step('Given : une action de référence « Développer les réseaux de chaleur » existe', async () => {
+        await actionsDeReference.add([reseauxChaleurAction, covoiturageAction]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur saisit « reseaux » dans le champ de recherche nommé « Rechercher une action de référence »", async () => {
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await expect(
+        actionsDeReferencePom.card(covoiturageAction.titre)
+      ).toBeVisible();
+      await actionsDeReferencePom.searchField.fill('reseaux');
+    });
+    await test.step('Then : la card « Développer les réseaux de chaleur » est visible', () =>
+      expect(actionsDeReferencePom.cardTitlesContaining(runToken)).toHaveText([
+        reseauxChaleurAction.titre,
+      ]));
   });
 });
 
 test.describe('filtrer-leviers-categories', () => {
-  test.fixme(
-    "plusieurs leviers et plusieurs catégories choisis montrent les actions qui portent l'un des leviers ou l'une des catégories",
-    async () => {
-      await test.step(
-        'Given : quatre actions existent, une sur le levier « Covoiturage », une sur le levier « Gestion des haies », une de catégorie « Financement & fiscalité » sur un autre levier, une sans aucun des trois',
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur choisit « Covoiturage » et « Gestion des haies » dans la liste nommée « Leviers »",
-        toBeAutomated
-      );
-      await test.step(
-        'When : il choisit « Financement & fiscalité » dans la liste nommée « Catégories »',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : les trois premières actions sont visibles et la quatrième est absente',
-        toBeAutomated
-      );
-    }
-  );
+  test("plusieurs leviers et plusieurs catégories choisis montrent les actions qui portent l'un des leviers ou l'une des catégories", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const covoiturageAction = toCovoiturageAction(runToken);
+    const haiesTitre = withRunSuffix('Planter des haies bocagères', runToken);
+    const financementTitre = withRunSuffix(
+      'Subventionner la rénovation des logements',
+      runToken
+    );
+    const unfilteredAction = toReseauxChaleurAction(runToken);
 
-  test.fixme('le filtre se combine en ET avec le texte cherché', async () => {
-    await test.step(
-      'Given : deux actions portent le levier « Covoiturage », une seule contient « aires » dans son titre',
-      toBeAutomated
-    );
-    await test.step(
-      "When : l'utilisateur choisit « Covoiturage » dans la liste nommée « Leviers » et saisit « aires » dans le champ de recherche",
-      toBeAutomated
-    );
-    await test.step(
-      "Then : seule l'action dont le titre contient « aires » est visible",
-      toBeAutomated
-    );
+    const { collectivite } =
+      await test.step('Given : quatre actions existent, une sur le levier « Covoiturage », une sur le levier « Gestion des haies », une de catégorie « Financement & fiscalité » sur un autre levier, une sans aucun des trois', async () => {
+        await actionsDeReference.add([
+          covoiturageAction,
+          {
+            titre: haiesTitre,
+            description: 'Replanter les linéaires de haies arrachés.',
+            levier: 'gestion_haies',
+            categorie: 'amenagement',
+          },
+          {
+            titre: financementTitre,
+            description: 'Abonder les aides locales à la rénovation.',
+            levier: 'sobriete_batiments_residentiel',
+            categorie: 'financement',
+          },
+          unfilteredAction,
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur choisit « Covoiturage » et « Gestion des haies » dans la liste nommée « Leviers »", async () => {
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await expect(
+        actionsDeReferencePom.card(unfilteredAction.titre)
+      ).toBeVisible();
+      await actionsDeReferencePom.chooseLevierFilter('Covoiturage');
+      await actionsDeReferencePom.chooseLevierFilter('Gestion des haies');
+    });
+    await test.step('When : il choisit « Financement & fiscalité » dans la liste nommée « Catégories »', () =>
+      actionsDeReferencePom.chooseCategorieFilter('Financement & fiscalité'));
+    await test.step('Then : les trois premières actions sont visibles et la quatrième est absente', () =>
+      expect(actionsDeReferencePom.cardTitlesContaining(runToken)).toHaveText([
+        covoiturageAction.titre,
+        haiesTitre,
+        financementTitre,
+      ]));
+  });
+
+  test('le filtre se combine en ET avec le texte cherché', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const airesAction = toCovoiturageAction(runToken);
+
+    const { collectivite } =
+      await test.step('Given : deux actions portent le levier « Covoiturage », une seule contient « aires » dans son titre, une troisième contient « aires » sur le levier « Gestion des haies »', async () => {
+        await actionsDeReference.add([
+          airesAction,
+          {
+            titre: withRunSuffix(
+              'Promouvoir le covoiturage solidaire',
+              runToken
+            ),
+            description:
+              'Mettre en relation conducteurs et passagers du territoire.',
+            levier: 'covoiturage',
+            categorie: 'sensibilisation',
+          },
+          {
+            titre: withRunSuffix('Créer des aires de compostage', runToken),
+            description: 'Valoriser les tailles de haies en paillage.',
+            levier: 'gestion_haies',
+            categorie: 'amenagement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur choisit « Covoiturage » dans la liste nommée « Leviers » et saisit « aires » dans le champ de recherche", async () => {
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await actionsDeReferencePom.chooseLevierFilter('Covoiturage');
+      await actionsDeReferencePom.searchField.fill('aires');
+    });
+    await test.step("Then : seule l'action du levier « Covoiturage » dont le titre contient « aires » est visible", () =>
+      expect(actionsDeReferencePom.cardTitlesContaining(runToken)).toHaveText([
+        airesAction.titre,
+      ]));
   });
 });
 
 test.describe('trier-actions', () => {
-  test.fixme("la vue est triée par titre croissant à l'ouverture", async () => {
-    await test.step(
-      'Given : trois actions de titres « Végétaliser », « Aménager », « Isoler » existent',
-      toBeAutomated
-    );
-    await test.step(
-      "When : l'utilisateur ouvre la vue des actions de référence",
-      toBeAutomated
-    );
-    await test.step(
-      "Then : la liste nommée « Tri » affiche « Titre » et les cards se suivent dans l'ordre « Aménager », « Isoler », « Végétaliser »",
-      toBeAutomated
-    );
+  test("la vue est triée par titre croissant à l'ouverture", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const vegetaliserTitre = withRunSuffix('Végétaliser', runToken);
+    const amenagerTitre = withRunSuffix('Aménager', runToken);
+    const isolerTitre = withRunSuffix('Isoler', runToken);
+
+    const { collectivite } =
+      await test.step('Given : trois actions de titres « Végétaliser », « Aménager », « Isoler » existent', async () => {
+        await actionsDeReference.add([
+          {
+            titre: vegetaliserTitre,
+            description: "Planter des arbres dans les cours d'école.",
+            levier: 'gestion_haies',
+            categorie: 'amenagement',
+          },
+          { ...toCovoiturageAction(runToken), titre: amenagerTitre },
+          {
+            titre: isolerTitre,
+            description: 'Réduire les pertes de chaleur par la toiture.',
+            levier: 'sobriete_batiments_residentiel',
+            categorie: 'amenagement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur ouvre la vue des actions de référence", () =>
+      actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+    await test.step("Then : la liste nommée « Trier par » affiche « Titre » et les cards se suivent dans l'ordre « Aménager », « Isoler », « Végétaliser »", async () => {
+      await expect(actionsDeReferencePom.sortSelect).toContainText('Titre');
+      await expect(
+        actionsDeReferencePom.cardTitlesContaining(runToken)
+      ).toHaveText([amenagerTitre, isolerTitre, vegetaliserTitre]);
+    });
   });
 
-  test.fixme(
-    "le tri par levier puis par catégorie réordonne les actions dans l'ordre renvoyé par l'API",
-    async () => {
-      await test.step(
-        'Given : trois actions sur des leviers et des catégories différents existent',
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur choisit « Levier » dans la liste nommée « Tri »",
-        toBeAutomated
-      );
-      await test.step(
-        "Then : les cards se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par levier",
-        toBeAutomated
-      );
-      await test.step(
-        'When : il choisit « Catégorie » dans la liste nommée « Tri »',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : les cards se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par catégorie",
-        toBeAutomated
-      );
-    }
-  );
+  test("le tri par levier puis par catégorie réordonne les actions dans l'ordre renvoyé par l'API", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const isOwnTitre = (titre: string): boolean => titre.endsWith(runToken);
+    const amenagerTitre = withRunSuffix('Aménager', runToken);
+    const isolerTitre = withRunSuffix('Isoler', runToken);
+    const vegetaliserTitre = withRunSuffix('Végétaliser', runToken);
+
+    const { collectivite } =
+      await test.step('Given : trois actions sur des leviers et des catégories différents existent', async () => {
+        await actionsDeReference.add([
+          {
+            titre: amenagerTitre,
+            description: 'Replanter les linéaires de haies arrachés.',
+            levier: 'gestion_haies',
+            categorie: 'sensibilisation',
+          },
+          { ...toReseauxChaleurAction(runToken), titre: isolerTitre },
+          {
+            ...toCovoiturageAction(runToken),
+            titre: vegetaliserTitre,
+            categorie: 'financement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    const levierSortedListResponse =
+      await test.step("When : l'utilisateur choisit « Levier » dans la liste nommée « Trier par »", async () => {
+        await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+        await expect(
+          actionsDeReferencePom.cardTitlesContaining(runToken)
+        ).toHaveText([amenagerTitre, isolerTitre, vegetaliserTitre]);
+        const listResponse =
+          actionsDeReferencePom.waitForListResponseSortedBy('levier');
+        await actionsDeReferencePom.chooseSort('Levier');
+        return listResponse;
+      });
+    await test.step("Then : les cards se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par levier", async () => {
+      const titresSortedByLevier = (
+        await listedTitres(levierSortedListResponse)
+      ).filter(isOwnTitre);
+      expect(titresSortedByLevier).toEqual([
+        vegetaliserTitre,
+        amenagerTitre,
+        isolerTitre,
+      ]);
+      await expect(
+        actionsDeReferencePom.cardTitlesContaining(runToken)
+      ).toHaveText(titresSortedByLevier);
+    });
+    const categorieSortedListResponse =
+      await test.step('When : il choisit « Catégorie » dans la liste nommée « Trier par »', async () => {
+        const listResponse =
+          actionsDeReferencePom.waitForListResponseSortedBy('categorie');
+        await actionsDeReferencePom.chooseSort('Catégorie');
+        return listResponse;
+      });
+    await test.step("Then : les cards se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par catégorie", async () => {
+      const titresSortedByCategorie = (
+        await listedTitres(categorieSortedListResponse)
+      ).filter(isOwnTitre);
+      expect(titresSortedByCategorie).toEqual([
+        isolerTitre,
+        vegetaliserTitre,
+        amenagerTitre,
+      ]);
+      await expect(
+        actionsDeReferencePom.cardTitlesContaining(runToken)
+      ).toHaveText(titresSortedByCategorie);
+    });
+  });
 });
 
 test.describe('aucune-action-trouvee', () => {
-  test.fixme(
-    "une recherche sans résultat montre l'état vide, et « Effacer les filtres » ramène la liste complète",
-    async () => {
-      await test.step(
-        'Given : des actions de référence existent, aucune ne contient « zzzz »',
-        toBeAutomated
+  test("une recherche sans résultat montre l'état vide, et « Effacer les filtres » ramène la liste complète", async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const covoiturageAction = toCovoiturageAction(runToken);
+    const haiesTitre = withRunSuffix('Planter des haies bocagères', runToken);
+
+    const { collectivite } =
+      await test.step('Given : des actions de référence existent, aucune ne contient « zzzz »', async () => {
+        await actionsDeReference.add([
+          covoiturageAction,
+          {
+            titre: haiesTitre,
+            description: 'Replanter les linéaires de haies arrachés.',
+            levier: 'gestion_haies',
+            categorie: 'financement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur choisit « Levier » dans la liste nommée « Trier par », un levier dans « Leviers » et saisit « zzzz » dans le champ de recherche", async () => {
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await actionsDeReferencePom.chooseSort('Levier');
+      await actionsDeReferencePom.chooseLevierFilter('Covoiturage');
+      await actionsDeReferencePom.searchField.fill('zzzz');
+    });
+    await test.step('Then : le texte « Aucune action de référence ne correspond à votre recherche » et le bouton « Effacer les filtres » sont visibles', async () => {
+      await expect(actionsDeReferencePom.emptyStateMessage).toBeVisible();
+      await expect(actionsDeReferencePom.resetFiltersButton).toBeVisible();
+    });
+    await test.step('When : il clique le bouton « Effacer les filtres »', () =>
+      actionsDeReferencePom.resetFiltersButton.click());
+    await test.step("Then : le champ de recherche est vide, aucun levier n'est choisi, la liste « Trier par » affiche « Titre », l'URL ne porte plus aucun paramètre et toutes les actions sont visibles", async () => {
+      await expect(actionsDeReferencePom.searchField).toHaveValue('');
+      await actionsDeReferencePom.expectNoOptionChosen(
+        actionsDeReferencePom.leviersFilter
       );
-      await test.step(
-        "When : l'utilisateur choisit « Levier » dans la liste nommée « Tri », un levier dans « Leviers » et saisit « zzzz » dans le champ de recherche",
-        toBeAutomated
+      await expect(actionsDeReferencePom.sortSelect).toContainText('Titre');
+      await expect(page).toHaveURL(
+        (url) =>
+          url.pathname === actionsDeReferencePom.url(collectivite.data.id) &&
+          url.search === ''
       );
-      await test.step(
-        'Then : le texte « Aucune action de référence ne correspond à votre recherche » et le bouton « Effacer les filtres » sont visibles',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il clique le bouton « Effacer les filtres »',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : le champ de recherche est vide, aucun levier n'est choisi, la liste « Tri » affiche « Titre », l'URL ne porte plus aucun paramètre et toutes les actions sont visibles",
-        toBeAutomated
-      );
-    }
-  );
+      await expect(
+        actionsDeReferencePom.cardTitlesContaining(runToken)
+      ).toHaveText([covoiturageAction.titre, haiesTitre]);
+    });
+  });
 });
 
 test.describe('aucune-action-en-base', () => {
@@ -316,66 +539,200 @@ test.describe('liste-en-erreur', () => {
 });
 
 test.describe('recherche-partageable-par-url', () => {
-  test.fixme(
-    'recharger la page garde le texte, les leviers, les catégories, le tri et les résultats',
-    async () => {
-      await test.step(
-        "Given : l'utilisateur a saisi « combles », choisi un levier, une catégorie et le tri « Levier »",
-        toBeAutomated
-      );
-      await test.step(
-        "Then : l'URL porte les paramètres searchedText, leviers, categories et sortBy",
-        toBeAutomated
-      );
-      await test.step('When : il recharge la page', toBeAutomated);
-      await test.step(
-        'Then : le champ de recherche affiche « combles », le levier et la catégorie restent choisis, la liste « Tri » affiche « Levier » et les mêmes cards sont visibles',
-        toBeAutomated
-      );
-    }
-  );
+  const sharedSearchLevier = 'Sobriété des bâtiments (résidentiel)';
+  const sharedSearchCategorie = 'Financement & fiscalité';
 
-  test.fixme(
-    'la même URL ouverte dans un autre onglet montre la même recherche',
-    async () => {
-      await test.step(
-        "Given : l'URL d'une recherche avec texte, levier, catégorie et tri",
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur ouvre cette URL dans une nouvelle page du même contexte",
-        toBeAutomated
-      );
-      await test.step(
-        'Then : les champs et les cards sont identiques à ceux de la première page',
-        toBeAutomated
-      );
-    }
-  );
+  const toSharedSearchActions = (
+    runToken: string
+  ): {
+    readonly matchingTitres: readonly [string, string];
+    readonly actions: Parameters<ActionsDeReference['add']>[0];
+  } => {
+    const isolationTitre = withRunSuffix('Isoler les combles perdus', runToken);
+    const financementTitre = withRunSuffix(
+      "Subventionner l'isolation des combles",
+      runToken
+    );
+    return {
+      matchingTitres: [financementTitre, isolationTitre],
+      actions: [
+        {
+          titre: isolationTitre,
+          description: 'Réduire les pertes de chaleur par la toiture.',
+          levier: 'sobriete_batiments_residentiel',
+          categorie: 'amenagement',
+        },
+        {
+          titre: financementTitre,
+          description: 'Abonder les aides locales à la rénovation.',
+          levier: 'covoiturage',
+          categorie: 'financement',
+        },
+        {
+          titre: withRunSuffix('Isoler les combles aménagés', runToken),
+          description: 'Isoler les rampants des combles habités.',
+          levier: 'gestion_haies',
+          categorie: 'amenagement',
+        },
+        {
+          ...toCovoiturageAction(runToken),
+          levier: 'sobriete_batiments_residentiel',
+          categorie: 'financement',
+        },
+      ],
+    };
+  };
+
+  const applySharedSearch = async (
+    actionsDeReferencePom: ActionsDeReferencePom
+  ): Promise<void> => {
+    await actionsDeReferencePom.searchField.fill('combles');
+    await actionsDeReferencePom.chooseLevierFilter(sharedSearchLevier);
+    await actionsDeReferencePom.chooseCategorieFilter(sharedSearchCategorie);
+    await actionsDeReferencePom.chooseSort('Levier');
+  };
+
+  const expectSharedSearchUrl = (page: Page): Promise<void> =>
+    expect(page).toHaveURL(
+      (url) =>
+        url.searchParams.get('searchedText') === 'combles' &&
+        url.searchParams.get('leviers') === 'sobriete_batiments_residentiel' &&
+        url.searchParams.get('categories') === 'financement' &&
+        url.searchParams.get('sortBy') === 'levier'
+    );
+
+  const expectSharedSearchShown = async ({
+    actionsDeReferencePom,
+    runToken,
+    matchingTitres,
+  }: {
+    readonly actionsDeReferencePom: ActionsDeReferencePom;
+    readonly runToken: string;
+    readonly matchingTitres: readonly string[];
+  }): Promise<void> => {
+    await expect(actionsDeReferencePom.searchField).toHaveValue('combles');
+    await expect(actionsDeReferencePom.leviersFilter).toHaveText(
+      sharedSearchLevier
+    );
+    await expect(actionsDeReferencePom.categoriesFilter).toHaveText(
+      sharedSearchCategorie
+    );
+    await expect(actionsDeReferencePom.sortSelect).toContainText('Levier');
+    await expect(
+      actionsDeReferencePom.cardTitlesContaining(runToken)
+    ).toHaveText([...matchingTitres]);
+  };
+
+  test('recharger la page garde le texte, les leviers, les catégories, le tri et les résultats', async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const { matchingTitres, actions } = toSharedSearchActions(runToken);
+
+    await test.step("Given : l'utilisateur a saisi « combles », choisi un levier, une catégorie et le tri « Levier »", async () => {
+      await actionsDeReference.add(actions);
+      const { collectivite } = await collectivites.addCollectiviteAndUser({
+        userArgs: { autoLogin: true },
+      });
+      await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+      await applySharedSearch(actionsDeReferencePom);
+      await expect(
+        actionsDeReferencePom.cardTitlesContaining(runToken)
+      ).toHaveText([...matchingTitres]);
+    });
+    await test.step("Then : l'URL porte les paramètres searchedText, leviers, categories et sortBy", () =>
+      expectSharedSearchUrl(page));
+    await test.step('When : il recharge la page', () => page.reload());
+    await test.step('Then : le champ de recherche affiche « combles », le levier et la catégorie restent choisis, la liste « Trier par » affiche « Levier » et les mêmes cards sont visibles', () =>
+      expectSharedSearchShown({
+        actionsDeReferencePom,
+        runToken,
+        matchingTitres,
+      }));
+  });
+
+  test('la même URL ouverte dans un autre onglet montre la même recherche', async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const runToken = toRunToken();
+    const { matchingTitres, actions } = toSharedSearchActions(runToken);
+
+    const sharedSearchUrl =
+      await test.step("Given : l'URL d'une recherche avec texte, levier, catégorie et tri", async () => {
+        await actionsDeReference.add(actions);
+        const { collectivite } = await collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+        await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+        await applySharedSearch(actionsDeReferencePom);
+        await expect(
+          actionsDeReferencePom.cardTitlesContaining(runToken)
+        ).toHaveText([...matchingTitres]);
+        await expectSharedSearchUrl(page);
+        return page.url();
+      });
+    const otherTabPom =
+      await test.step("When : l'utilisateur ouvre cette URL dans une nouvelle page du même contexte", () =>
+        actionsDeReferencePom.openInNewTab(sharedSearchUrl));
+    await test.step('Then : les champs et les cards sont identiques à ceux de la première page', () =>
+      expectSharedSearchShown({
+        actionsDeReferencePom: otherTabPom,
+        runToken,
+        matchingTitres,
+      }));
+  });
 });
 
 test.describe('filtre-url-inconnu-ignore', () => {
-  test.fixme(
-    "une valeur inconnue est ignorée, le reste est appliqué et l'URL est nettoyée",
-    async () => {
-      await test.step(
-        "When : l'utilisateur ouvre /collectivite/:id/actions-reference?leviers=covoiturage,levier_inconnu&categories=subvention&sortBy=prix",
-        toBeAutomated
+  test("une valeur inconnue est ignorée, le reste est appliqué et l'URL est nettoyée", async ({
+    page,
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const covoiturageAction = toCovoiturageAction(toRunToken());
+
+    const { collectivite } =
+      await test.step('Given : une action de référence sur le levier « Covoiturage » existe', async () => {
+        await actionsDeReference.add([covoiturageAction]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur ouvre /collectivite/:id/actions-reference?leviers=covoiturage,levier_inconnu&categories=subvention&sortBy=prix", () =>
+      page.goto(
+        `${actionsDeReferencePom.url(
+          collectivite.data.id
+        )}?leviers=covoiturage,levier_inconnu&categories=subvention&sortBy=prix`
+      ));
+    await test.step("Then : aucun message d'erreur n'est affiché", async () => {
+      await expect(
+        actionsDeReferencePom.card(covoiturageAction.titre)
+      ).toBeVisible();
+      await expect(actionsDeReferencePom.errorTitle).toHaveCount(0);
+    });
+    await test.step("Then : « Covoiturage » est le seul levier choisi, aucune catégorie n'est choisie et la liste « Trier par » affiche « Titre »", async () => {
+      await expect(actionsDeReferencePom.leviersFilter).toHaveText(
+        'Covoiturage'
       );
-      await test.step(
-        "Then : aucun message d'erreur n'est affiché",
-        toBeAutomated
+      await actionsDeReferencePom.expectNoOptionChosen(
+        actionsDeReferencePom.categoriesFilter
       );
-      await test.step(
-        "Then : « Covoiturage » est le seul levier choisi, aucune catégorie n'est choisie et la liste « Tri » affiche « Titre »",
-        toBeAutomated
-      );
-      await test.step(
-        "Then : l'URL devient /collectivite/:id/actions-reference?leviers=covoiturage",
-        toBeAutomated
-      );
-    }
-  );
+      await expect(actionsDeReferencePom.sortSelect).toContainText('Titre');
+    });
+    await test.step("Then : l'URL devient /collectivite/:id/actions-reference?leviers=covoiturage", () =>
+      expect(page).toHaveURL(
+        (url) =>
+          url.pathname === actionsDeReferencePom.url(collectivite.data.id) &&
+          url.search === '?leviers=covoiturage'
+      ));
+  });
 });
 
 test.describe('modification-reservee-super-admin', () => {

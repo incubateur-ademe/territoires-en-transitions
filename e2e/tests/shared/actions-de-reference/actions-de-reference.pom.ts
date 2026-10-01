@@ -1,7 +1,11 @@
-import { expect, Locator, Page, Route } from '@playwright/test';
+import { expect, Locator, Page, Response, Route } from '@playwright/test';
+import type { ListActionsDeReferenceInput } from '@tet/domain/shared';
+import { z } from 'zod';
 
 const LIST_URL_PATTERN = /\/trpc\/shared\.actionsDeReference\.list/;
 const UPDATE_URL_PATTERN = /\/trpc\/shared\.actionsDeReference\.update/;
+
+const NO_OPTION_CHOSEN_PLACEHOLDER = 'Sélectionner une ou plusieurs options';
 
 type HeldListResponses = {
   readonly release: () => Promise<void>;
@@ -10,6 +14,36 @@ type HeldListResponses = {
 type CountedUpdateRequests = {
   readonly count: () => number;
 };
+
+type ActionDeReferenceSortField = ListActionsDeReferenceInput['sortBy'];
+
+const listResponseBodySchema = z.object({
+  result: z.object({ data: z.array(z.object({ titre: z.string() })) }),
+});
+
+const listInputSchema = z.object({ sortBy: z.string() });
+
+const toListInputSortBy = (listUrl: string): string | undefined => {
+  const rawInput = new URL(listUrl).searchParams.get('input');
+  if (rawInput === null) {
+    return undefined;
+  }
+  const input: unknown = JSON.parse(rawInput);
+  const parsedInput = listInputSchema.safeParse(input);
+  return parsedInput.success ? parsedInput.data.sortBy : undefined;
+};
+
+const isListResponseSortedBy = (
+  response: Response,
+  sortBy: ActionDeReferenceSortField
+): boolean =>
+  LIST_URL_PATTERN.test(response.url()) &&
+  toListInputSortBy(response.url()) === sortBy;
+
+export const listedTitres = async (listResponse: Response): Promise<string[]> =>
+  listResponseBodySchema
+    .parse(await listResponse.json())
+    .result.data.map((action) => action.titre);
 
 export class ActionsDeReferencePom {
   readonly title: Locator;
@@ -22,7 +56,10 @@ export class ActionsDeReferencePom {
   readonly updateButtons: Locator;
   readonly navEntry: Locator;
   readonly indicateursNavEntry: Locator;
+  readonly searchField: Locator;
   readonly leviersFilter: Locator;
+  readonly categoriesFilter: Locator;
+  readonly sortSelect: Locator;
   readonly updatePanel: Locator;
   readonly titreField: Locator;
   readonly descriptionField: Locator;
@@ -38,8 +75,17 @@ export class ActionsDeReferencePom {
   readonly indicateursListNavLink: Locator;
 
   constructor(readonly page: Page) {
+    this.searchField = page.getByRole('searchbox', {
+      name: 'Rechercher une action de référence',
+    });
     this.leviersFilter = page
       .getByRole('group', { name: 'Leviers' })
+      .getByRole('button', { name: 'ouvrir le menu' });
+    this.categoriesFilter = page
+      .getByRole('group', { name: 'Catégories' })
+      .getByRole('button', { name: 'ouvrir le menu' });
+    this.sortSelect = page
+      .getByRole('group', { name: 'Trier par' })
       .getByRole('button', { name: 'ouvrir le menu' });
     this.updatePanel = page.getByRole('complementary', {
       name: "Modifier l'action de référence",
@@ -122,6 +168,14 @@ export class ActionsDeReferencePom {
     });
   }
 
+  cardsContaining(text: string): Locator {
+    return this.cards.filter({ hasText: text });
+  }
+
+  cardTitlesContaining(text: string): Locator {
+    return this.cardsContaining(text).getByRole('heading', { level: 2 });
+  }
+
   private fieldBlock(fieldTitle: string): Locator {
     return this.updatePanel
       .locator('div')
@@ -160,10 +214,46 @@ export class ActionsDeReferencePom {
   }
 
   async chooseLevierFilter(levierLabel: string): Promise<void> {
-    await this.leviersFilter.click();
-    await this.page
-      .getByRole('button', { name: levierLabel, exact: true })
-      .click();
+    await this.chooseFilterOption({
+      filter: this.leviersFilter,
+      optionLabel: levierLabel,
+    });
+  }
+
+  async chooseCategorieFilter(categorieLabel: string): Promise<void> {
+    await this.chooseFilterOption({
+      filter: this.categoriesFilter,
+      optionLabel: categorieLabel,
+    });
+  }
+
+  async chooseSort(sortLabel: string): Promise<void> {
+    await this.chooseOption({
+      select: this.sortSelect,
+      optionLabel: sortLabel,
+    });
+  }
+
+  async expectNoOptionChosen(filter: Locator): Promise<void> {
+    await expect(filter).toHaveText(NO_OPTION_CHOSEN_PLACEHOLDER);
+  }
+
+  waitForListResponseSortedBy(
+    sortBy: ActionDeReferenceSortField
+  ): Promise<Response> {
+    return this.page.waitForResponse(
+      (response) => isListResponseSortedBy(response, sortBy) && response.ok()
+    );
+  }
+
+  private async chooseFilterOption({
+    filter,
+    optionLabel,
+  }: {
+    readonly filter: Locator;
+    readonly optionLabel: string;
+  }): Promise<void> {
+    await this.chooseOption({ select: filter, optionLabel });
     await this.page.keyboard.press('Escape');
   }
 
@@ -186,6 +276,16 @@ export class ActionsDeReferencePom {
   async openAndWaitForTitle(collectiviteId: number): Promise<void> {
     await this.open(collectiviteId);
     await expect(this.title).toBeVisible();
+  }
+
+  async openInNewTab(url: string): Promise<ActionsDeReferencePom> {
+    const context = this.page.context();
+    await context.addInitScript(() =>
+      window.sessionStorage.setItem('oidc-modal-seen', '1')
+    );
+    const newTab = await context.newPage();
+    await newTab.goto(url);
+    return new ActionsDeReferencePom(newTab);
   }
 
   async holdListResponses(): Promise<HeldListResponses> {
