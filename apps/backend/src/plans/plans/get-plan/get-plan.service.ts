@@ -8,6 +8,7 @@ import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
+import FicheActionPermissionsService from '../../fiches/fiche-action-permissions.service';
 import { ListFichesBudgetRepository } from '../../fiches/list-fiches/list-fiches-budget.repository';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
@@ -25,7 +26,8 @@ export class GetPlanService {
     private readonly listFichesBudgetRepository: ListFichesBudgetRepository,
     private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly getPlanRepository: GetPlanRepository,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly fichePermissionsService: FicheActionPermissionsService
   ) {}
 
   async getPlan(
@@ -85,10 +87,17 @@ export class GetPlanService {
         return pilotesResult;
       }
 
+      const canReadFichesRestreintes = await this.canReadFichesRestreintes({
+        collectiviteId: plan.collectiviteId,
+        user,
+        tx: transaction,
+      });
+
       const fiches =
         await this.listFichesBudgetRepository.listFicheBudgetsBelongingToPlan(
           {
             planId,
+            includeFichesRestreintes: canReadFichesRestreintes,
           },
           { tx: transaction }
         );
@@ -113,6 +122,28 @@ export class GetPlanService {
       : this.databaseService.db.transaction(async (newTx) =>
           executeInTransaction(newTx)
         );
+  }
+
+  private async canReadFichesRestreintes({
+    collectiviteId,
+    user,
+    tx,
+  }: {
+    collectiviteId: number;
+    user: AuthenticatedUser | undefined;
+    tx: Transaction;
+  }): Promise<boolean> {
+    const isInternalCall = user === undefined;
+    if (isInternalCall) {
+      return true;
+    }
+
+    return this.fichePermissionsService.hasReadFichePermission(
+      { collectiviteId, restreint: true },
+      user,
+      true,
+      tx
+    );
   }
 
   async checkPermission(
