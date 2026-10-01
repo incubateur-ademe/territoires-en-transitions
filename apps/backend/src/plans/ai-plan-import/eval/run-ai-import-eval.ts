@@ -92,6 +92,10 @@ const main = async (): Promise<number> => {
     print(`✗ Format non supporté : ${values.file}`);
     return 1;
   }
+  // Lue avant le premier appel payant : une référence illisible arrête tout.
+  const reference = values.ref
+    ? (JSON.parse(await readFile(values.ref, 'utf-8')) as EvalRun)
+    : null;
 
   const observer = new CollectingLlmObserver();
   const moduleRef = await Test.createTestingModule({ imports: [EvalModule] })
@@ -151,9 +155,6 @@ const main = async (): Promise<number> => {
     events: observer.events,
     durationMs,
   });
-  const reference = values.ref
-    ? (JSON.parse(await readFile(values.ref, 'utf-8')) as EvalRun)
-    : null;
   const diff = reference
     ? compareWithReference({ draft, metrics }, reference)
     : null;

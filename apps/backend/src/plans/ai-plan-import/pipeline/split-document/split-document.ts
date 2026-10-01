@@ -26,7 +26,11 @@ export const splitDocument = (
   }
 
   const maxChars = estimateCharCount(maxTokens);
-  const prefix = header ? `${header}\n` : '';
+  // Un en-tête trop large ne laisserait plus de place au contenu : il reste
+  // alors une ligne comme les autres, dans la première tranche seulement.
+  const repeatedHeader =
+    header && header.length + 1 <= maxChars / 2 ? header : undefined;
+  const prefix = repeatedHeader ? `${repeatedHeader}\n` : '';
   // Le préfixe et la reprise ne doivent pas manger toute la tranche.
   const overlapChars = Math.min(
     estimateCharCount(overlapTokens),
@@ -36,7 +40,7 @@ export const splitDocument = (
   // L'en-tête est la première ligne du texte : il revient par le préfixe.
   const lines = text
     .split('\n')
-    .slice(header ? 1 : 0)
+    .slice(repeatedHeader ? 1 : 0)
     .flatMap((line) => splitLongLine(line, bodyChars));
 
   const chunks: string[][] = [];
