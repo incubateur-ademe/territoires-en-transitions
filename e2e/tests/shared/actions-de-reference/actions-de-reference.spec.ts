@@ -1,4 +1,12 @@
-import { test } from 'tests/main.fixture';
+import { expect } from '@playwright/test';
+import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
+import { databaseService } from 'tests/shared/database.service';
+import {
+  testWithActionsDeReference as test,
+  withRunSuffix,
+} from './actions-de-reference.fixture';
 
 const toBeAutomated = async (): Promise<void> => undefined;
 
@@ -19,11 +27,11 @@ test.describe('rechercher-actions', () => {
         toBeAutomated
       );
       await test.step(
-        'Then : les articles « Isoler les combles perdus » et « Rénover les écoles » sont visibles',
+        'Then : les cards « Isoler les combles perdus » et « Rénover les écoles » sont visibles',
         toBeAutomated
       );
       await test.step(
-        "Then : l'article « Aménager des aires de covoiturage » est absent",
+        'Then : la card « Aménager des aires de covoiturage » est absent',
         toBeAutomated
       );
     }
@@ -39,7 +47,7 @@ test.describe('rechercher-actions', () => {
       toBeAutomated
     );
     await test.step(
-      "Then : l'article « Développer les réseaux de chaleur » est visible",
+      'Then : la card « Développer les réseaux de chaleur » est visible',
       toBeAutomated
     );
   });
@@ -95,7 +103,7 @@ test.describe('trier-actions', () => {
       toBeAutomated
     );
     await test.step(
-      "Then : la liste nommée « Tri » affiche « Titre » et les articles se suivent dans l'ordre « Aménager », « Isoler », « Végétaliser »",
+      "Then : la liste nommée « Tri » affiche « Titre » et les cards se suivent dans l'ordre « Aménager », « Isoler », « Végétaliser »",
       toBeAutomated
     );
   });
@@ -112,7 +120,7 @@ test.describe('trier-actions', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : les articles se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par levier",
+        "Then : les cards se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par levier",
         toBeAutomated
       );
       await test.step(
@@ -120,7 +128,7 @@ test.describe('trier-actions', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : les articles se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par catégorie",
+        "Then : les cards se suivent dans l'ordre renvoyé par shared.actionsDeReference.list triée par catégorie",
         toBeAutomated
       );
     }
@@ -156,93 +164,154 @@ test.describe('aucune-action-trouvee', () => {
 });
 
 test.describe('aucune-action-en-base', () => {
-  test.fixme(
+  test(
     "sans aucune action en base ni filtre actif, le même état vide s'affiche avec son bouton",
-    async () => {
-      await test.step(
-        "Given : aucune action de référence n'existe",
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur ouvre la vue des actions de référence sans paramètre",
-        toBeAutomated
-      );
-      await test.step(
-        'Then : le texte « Aucune action de référence ne correspond à votre recherche » et le bouton « Effacer les filtres » sont visibles',
-        toBeAutomated
-      );
+    { tag: '@serial' },
+    async ({ collectivites, actionsDeReference, actionsDeReferencePom }) => {
+      const { collectivite } =
+        await test.step("Given : aucune action de référence n'existe", async () => {
+          await actionsDeReference.removeAll();
+          return collectivites.addCollectiviteAndUser({
+            userArgs: { autoLogin: true },
+          });
+        });
+      await test.step("When : l'utilisateur ouvre la vue des actions de référence sans paramètre", () =>
+        actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+      await test.step('Then : le texte « Aucune action de référence ne correspond à votre recherche » et le bouton « Effacer les filtres » sont visibles', async () => {
+        await expect(actionsDeReferencePom.emptyStateMessage).toBeVisible();
+        await expect(actionsDeReferencePom.resetFiltersButton).toBeVisible();
+        await expect(actionsDeReferencePom.cards).toHaveCount(0);
+      });
     }
   );
 });
 
 test.describe('card-affiche-action-entiere', () => {
-  test.fixme(
-    'une card montre le titre, la description entière, le levier et la catégorie',
-    async () => {
-      await test.step(
-        'Given : une action « Planter des haies bocagères » existe, description de quatre paragraphes, levier « Gestion des haies », catégorie « Financement & fiscalité »',
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur ouvre la vue des actions de référence",
-        toBeAutomated
-      );
-      await test.step(
-        "Then : l'article « Planter des haies bocagères » contient le titre, les quatre paragraphes de la description, « Gestion des haies » et « Financement & fiscalité »",
-        toBeAutomated
-      );
-    }
-  );
+  test('une card montre le titre, la description entière, le levier et la catégorie', async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const titre = withRunSuffix('Planter des haies bocagères');
+    const paragraphes = [
+      'Recenser avec les agriculteurs les linéaires de haies à conforter ou à recréer.',
+      "Financer la plantation de haies d'essences locales en bordure de parcelles.",
+      'Former les exploitants à la taille douce et à la valorisation du bois produit.',
+      'Suivre chaque année les mètres plantés et la reprise des jeunes plants.',
+    ] as const;
+    const description = paragraphes.join('\n\n');
+
+    const { collectivite } =
+      await test.step('Given : une action « Planter des haies bocagères » existe, description de quatre paragraphes, levier « Gestion des haies », catégorie « Financement & fiscalité »', async () => {
+        await actionsDeReference.add([
+          {
+            titre,
+            description,
+            levier: 'gestion_haies',
+            categorie: 'financement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur ouvre la vue des actions de référence", () =>
+      actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+    await test.step('Then : la card « Planter des haies bocagères » contient le titre, les quatre paragraphes de la description, « Gestion des haies » et « Financement & fiscalité »', async () => {
+      const card = actionsDeReferencePom.card(titre);
+      await expect(card).toBeVisible();
+      const descriptionText = card.getByText(paragraphes[0], { exact: false });
+      await expect(descriptionText).toHaveJSProperty('innerText', description);
+      await expect(card).toContainText('Gestion des haies');
+      await expect(card).toContainText('Financement & fiscalité');
+    });
+  });
 });
 
 test.describe('liste-en-chargement', () => {
-  test.fixme(
-    "un indicateur de chargement remplace les cards tant que la liste n'est pas arrivée",
-    async () => {
-      await test.step(
-        'Given : la réponse de shared.actionsDeReference.list est retenue par page.route',
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur ouvre la vue des actions de référence",
-        toBeAutomated
-      );
-      await test.step(
-        "Then : un élément de rôle status est visible et aucun article n'est affiché",
-        toBeAutomated
-      );
-      await test.step('When : la réponse est relâchée', toBeAutomated);
-      await test.step(
-        "Then : l'élément de rôle status disparaît et les articles sont visibles",
-        toBeAutomated
-      );
-    }
-  );
+  test("un indicateur de chargement remplace les cards tant que la liste n'est pas arrivée", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const titre = withRunSuffix(
+      'Action de référence e2e affichée après le chargement'
+    );
+
+    const { collectivite, heldListResponses } =
+      await test.step('Given : la réponse de shared.actionsDeReference.list est retenue par page.route', async () => {
+        await actionsDeReference.add([
+          {
+            titre,
+            description: 'Action insérée pour le parcours de chargement.',
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        ]);
+        const { collectivite } = await collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+        return {
+          collectivite,
+          heldListResponses: await actionsDeReferencePom.holdListResponses(),
+        };
+      });
+    await test.step("When : l'utilisateur ouvre la vue des actions de référence", () =>
+      actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+    await test.step("Then : un élément de rôle status est visible et aucune card n'est affichée", async () => {
+      await expect(actionsDeReferencePom.loadingStatus).toBeVisible();
+      await expect(actionsDeReferencePom.cards).toHaveCount(0);
+    });
+    await test.step('When : la réponse est relâchée', () =>
+      heldListResponses.release());
+    await test.step("Then : l'élément de rôle status disparaît et les cards sont visibles", async () => {
+      await expect(actionsDeReferencePom.loadingStatus).toBeHidden();
+      await expect(actionsDeReferencePom.card(titre)).toBeVisible();
+    });
+  });
 });
 
 test.describe('liste-en-erreur', () => {
-  test.fixme(
-    "une erreur de l'API montre un état d'erreur, et « Réessayer » recharge la liste",
-    async () => {
-      await test.step(
-        'Given : shared.actionsDeReference.list répond 500 par page.route',
-        toBeAutomated
-      );
-      await test.step(
-        "When : l'utilisateur ouvre la vue des actions de référence",
-        toBeAutomated
-      );
-      await test.step(
-        "Then : la carte d'erreur et le bouton « Réessayer » sont visibles, aucun article n'est affiché",
-        toBeAutomated
-      );
-      await test.step(
-        "When : la route n'est plus interceptée et il clique le bouton « Réessayer »",
-        toBeAutomated
-      );
-      await test.step('Then : les articles sont visibles', toBeAutomated);
-    }
-  );
+  test("une erreur de l'API montre un état d'erreur, et « Réessayer » recharge la liste", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const titre = withRunSuffix(
+      'Action de référence e2e affichée après une erreur'
+    );
+
+    const { collectivite } =
+      await test.step('Given : shared.actionsDeReference.list répond 500 par page.route', async () => {
+        await actionsDeReference.add([
+          {
+            titre,
+            description: "Action insérée pour le parcours d'erreur.",
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        ]);
+        await actionsDeReferencePom.failListResponses();
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step("When : l'utilisateur ouvre la vue des actions de référence", () =>
+      actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+    await test.step("Then : la carte d'erreur et le bouton « Réessayer » sont visibles, aucune card n'est affichée", async () => {
+      await expect(actionsDeReferencePom.errorTitle).toBeVisible();
+      await expect(actionsDeReferencePom.retryButton).toBeVisible();
+      await expect(actionsDeReferencePom.cards).toHaveCount(0);
+    });
+    await test.step("When : la route n'est plus interceptée et il clique le bouton « Réessayer »", async () => {
+      await actionsDeReferencePom.stopFailingListResponses();
+      await actionsDeReferencePom.retryButton.click();
+    });
+    await test.step('Then : les cards sont visibles', async () => {
+      await expect(actionsDeReferencePom.card(titre)).toBeVisible();
+      await expect(actionsDeReferencePom.errorTitle).toBeHidden();
+    });
+  });
 });
 
 test.describe('recherche-partageable-par-url', () => {
@@ -259,7 +328,7 @@ test.describe('recherche-partageable-par-url', () => {
       );
       await test.step('When : il recharge la page', toBeAutomated);
       await test.step(
-        'Then : le champ de recherche affiche « combles », le levier et la catégorie restent choisis, la liste « Tri » affiche « Levier » et les mêmes articles sont visibles',
+        'Then : le champ de recherche affiche « combles », le levier et la catégorie restent choisis, la liste « Tri » affiche « Levier » et les mêmes cards sont visibles',
         toBeAutomated
       );
     }
@@ -277,7 +346,7 @@ test.describe('recherche-partageable-par-url', () => {
         toBeAutomated
       );
       await test.step(
-        'Then : les champs et les articles sont identiques à ceux de la première page',
+        'Then : les champs et les cards sont identiques à ceux de la première page',
         toBeAutomated
       );
     }
@@ -309,23 +378,46 @@ test.describe('filtre-url-inconnu-ignore', () => {
 });
 
 test.describe('modification-reservee-super-admin', () => {
-  test.fixme(
-    "un utilisateur connecté qui n'est pas super admin ne voit aucun bouton de modification",
-    async () => {
-      await test.step(
-        'Given : un utilisateur connecté sans rôle super admin et deux actions de référence',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il ouvre la vue des actions de référence',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : aucun bouton dont le nom commence par « Modifier l'action » n'est présent",
-        toBeAutomated
-      );
-    }
-  );
+  test("un utilisateur connecté qui n'est pas super admin ne voit aucun bouton de modification", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const firstTitre = withRunSuffix(
+      'Action de référence e2e en lecture seule A'
+    );
+    const secondTitre = withRunSuffix(
+      'Action de référence e2e en lecture seule B'
+    );
+
+    const { collectivite } =
+      await test.step('Given : un utilisateur connecté sans rôle super admin et deux actions de référence', async () => {
+        await actionsDeReference.add([
+          {
+            titre: firstTitre,
+            description: 'Première action insérée pour le parcours en lecture.',
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+          {
+            titre: secondTitre,
+            description: 'Seconde action insérée pour le parcours en lecture.',
+            levier: 'gestion_haies',
+            categorie: 'financement',
+          },
+        ]);
+        return collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+      });
+    await test.step('When : il ouvre la vue des actions de référence', () =>
+      actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id));
+    await test.step("Then : aucun bouton dont le nom commence par « Modifier l'action » n'est présent", async () => {
+      await expect(actionsDeReferencePom.card(firstTitre)).toBeVisible();
+      await expect(actionsDeReferencePom.card(secondTitre)).toBeVisible();
+      await expect(actionsDeReferencePom.updateButtons).toHaveCount(0);
+    });
+  });
 
   test.fixme(
     'un super admin voit un bouton de modification sur chaque card',
@@ -339,7 +431,7 @@ test.describe('modification-reservee-super-admin', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : chaque article porte un bouton « Modifier l'action « <titre> » »",
+        "Then : chaque card porte un bouton « Modifier l'action « <titre> » »",
         toBeAutomated
       );
     }
@@ -371,7 +463,7 @@ test.describe('modifier-action', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : l'article affiche le nouveau titre, la nouvelle description, le nouveau levier et la nouvelle catégorie",
+        'Then : la card affiche le nouveau titre, la nouvelle description, le nouveau levier et la nouvelle catégorie',
         toBeAutomated
       );
     }
@@ -395,7 +487,7 @@ test.describe('modifier-action-conflit', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : le volet reste ouvert avec la saisie, et l'article « Action B » est inchangé dans la liste",
+        'Then : le volet reste ouvert avec la saisie, et la card « Action B » est inchangé dans la liste',
         toBeAutomated
       );
     }
@@ -500,7 +592,7 @@ test.describe('fermer-volet-modifications-non-enregistrees', () => {
       toBeAutomated
     );
     await test.step(
-      "Then : le volet est fermé et l'article affiche son titre d'origine",
+      "Then : le volet est fermé et la card affiche son titre d'origine",
       toBeAutomated
     );
   });
@@ -547,7 +639,7 @@ test.describe('action-modifiee-sort-des-filtres', () => {
     'une action dont le levier change disparaît de la liste filtrée sur son ancien levier',
     async () => {
       await test.step(
-        "Given : un super admin a choisi « Covoiturage » dans la liste « Leviers », l'article « Aménager des aires de covoiturage » est visible",
+        'Given : un super admin a choisi « Covoiturage » dans la liste « Leviers », la card « Aménager des aires de covoiturage » est visible',
         toBeAutomated
       );
       await test.step(
@@ -555,7 +647,7 @@ test.describe('action-modifiee-sort-des-filtres', () => {
         toBeAutomated
       );
       await test.step(
-        "Then : l'article « Aménager des aires de covoiturage » disparaît de la liste sans rechargement de la page",
+        'Then : la card « Aménager des aires de covoiturage » disparaît de la liste sans rechargement de la page',
         toBeAutomated
       );
       await test.step(
@@ -566,60 +658,119 @@ test.describe('action-modifiee-sort-des-filtres', () => {
   );
 });
 
-test.describe('entree-nav-masquee-en-prod', () => {
-  test.fixme(
-    "hors prod, l'entrée « Actions de référence » à la racine de la navigation mène à la vue",
-    async () => {
-      await test.step(
-        "Given : un utilisateur connecté, membre d'une collectivité standard, est sur le tableau de bord de sa collectivité",
-        toBeAutomated
+test.describe('entree-nav-reservee-au-super-admin', () => {
+  test("un super admin a l'entrée « Actions de référence » à la racine de la navigation, qui mène à la vue", async ({
+    collectivites,
+    actionsDeReferencePom,
+    page,
+  }) => {
+    const { collectivite } =
+      await test.step("Given : un super admin, membre d'une collectivité standard, est sur le tableau de bord de sa collectivité", async () => {
+        const collectiviteAndUser = await collectivites.addCollectiviteAndUser({
+          userArgs: {
+            autoLogin: true,
+            isSupport: true,
+            isSuperAdminRoleEnabled: true,
+          },
+        });
+        await page.goto(
+          actionsDeReferencePom.dashboardUrl(
+            collectiviteAndUser.collectivite.data.id
+          )
+        );
+        return collectiviteAndUser;
+      });
+    await test.step('When : il clique le lien « Actions de référence » de la navigation principale', () =>
+      actionsDeReferencePom.navEntry.click());
+    await test.step("Then : l'URL est /collectivite/:id/actions-reference et le titre de page « Actions de référence » est visible", async () => {
+      await expect(page).toHaveURL(
+        (url) =>
+          url.pathname === actionsDeReferencePom.url(collectivite.data.id)
       );
-      await test.step(
-        'When : il clique le lien « Actions de référence » de la navigation principale',
-        toBeAutomated
-      );
-      await test.step(
-        "Then : l'URL est /collectivite/:id/actions-reference et le titre de page « Actions de référence » est visible",
-        toBeAutomated
-      );
-    }
-  );
+      await expect(actionsDeReferencePom.title).toBeVisible();
+    });
+  });
+
+  test("un utilisateur qui n'est pas super admin n'a pas l'entrée « Actions de référence » dans la navigation", async ({
+    collectivites,
+    actionsDeReferencePom,
+    page,
+  }) => {
+    await test.step("Given : un utilisateur connecté sans rôle super admin, membre d'une collectivité standard, est sur le tableau de bord de sa collectivité", async () => {
+      const { collectivite } = await collectivites.addCollectiviteAndUser({
+        userArgs: { autoLogin: true },
+      });
+      await page.goto(actionsDeReferencePom.dashboardUrl(collectivite.data.id));
+    });
+    await test.step('When : la navigation principale est affichée', async () => {
+      await expect(actionsDeReferencePom.indicateursNavEntry).toBeVisible();
+    });
+    await test.step("Then : aucun lien « Actions de référence » n'est présent", async () => {
+      await expect(actionsDeReferencePom.navEntry).toHaveCount(0);
+    });
+  });
 });
 
 test.describe('page-accessible-par-url-en-prod', () => {
-  test.fixme(
-    "la page s'affiche par son URL directe pour un utilisateur connecté",
-    async () => {
-      await test.step(
-        'Given : un utilisateur connecté, non membre de la collectivité visée',
-        toBeAutomated
-      );
-      await test.step(
-        'When : il ouvre directement /collectivite/:id/actions-reference',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : le titre de page « Actions de référence » et les articles sont visibles',
-        toBeAutomated
-      );
-    }
-  );
+  test("la page s'affiche par son URL directe pour un utilisateur connecté", async ({
+    collectivites,
+    actionsDeReference,
+    actionsDeReferencePom,
+  }) => {
+    const titre = withRunSuffix(
+      'Action de référence e2e visible hors collectivité'
+    );
 
-  test.fixme(
-    "la page s'affiche aussi dans le contexte d'un service déconcentré",
-    async () => {
-      await test.step(
-        "Given : un utilisateur connecté, membre d'une DREAL",
-        toBeAutomated
-      );
-      await test.step(
-        'When : il ouvre directement /collectivite/:idDreal/actions-reference',
-        toBeAutomated
-      );
-      await test.step(
-        'Then : le titre de page « Actions de référence » est visible, sans page 404',
-        toBeAutomated
-      );
-    }
-  );
+    const targetCollectivite =
+      await test.step('Given : un utilisateur connecté, non membre de la collectivité visée', async () => {
+        await actionsDeReference.add([
+          {
+            titre,
+            description: "Action insérée pour le parcours d'accès par URL.",
+            levier: 'covoiturage',
+            categorie: 'amenagement',
+          },
+        ]);
+        await collectivites.addCollectiviteAndUser({
+          userArgs: { autoLogin: true },
+        });
+        return collectivites.addCollectivite({});
+      });
+    await test.step('When : il ouvre directement /collectivite/:id/actions-reference', () =>
+      actionsDeReferencePom.open(targetCollectivite.data.id));
+    await test.step('Then : le titre de page « Actions de référence » et les cards sont visibles', async () => {
+      await expect(actionsDeReferencePom.title).toBeVisible();
+      await expect(actionsDeReferencePom.card(titre)).toBeVisible();
+    });
+  });
+
+  test("la page s'affiche aussi dans le contexte d'un service déconcentré", async ({
+    collectivites,
+    actionsDeReferencePom,
+    page,
+  }) => {
+    const { collectivite: dreal } =
+      await test.step("Given : un utilisateur connecté, membre d'une DREAL", async () =>
+        collectivites.addCollectiviteAndUser({
+          collectiviteArgs: {
+            type: collectiviteTypeEnum.DREAL,
+            regionCode: await pickFreeRegionCode(
+              databaseService,
+              collectiviteTypeEnum.DREAL
+            ),
+            nom: 'DREAL e2e actions de référence',
+          },
+          userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
+        }));
+    const drealPageResponse =
+      await test.step('When : il ouvre directement /collectivite/:idDreal/actions-reference', () =>
+        page.goto(actionsDeReferencePom.url(dreal.data.id)));
+    await test.step('Then : le titre de page « Actions de référence » est visible, sans page 404', async () => {
+      expect(drealPageResponse?.status()).not.toBe(404);
+      await expect(actionsDeReferencePom.title).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: '404', exact: true })
+      ).toHaveCount(0);
+    });
+  });
 });
