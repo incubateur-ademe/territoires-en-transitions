@@ -12,6 +12,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { AggregatedBudget } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { GetPlanService } from './get-plan.service';
 
 type PlanTotals = {
   totalFiches: number | undefined;
@@ -20,13 +21,17 @@ type PlanTotals = {
 
 describe('les totaux du plan et la confidentialité des fiches', () => {
   let router: TrpcRouter;
+  let getPlanService: GetPlanService;
   let planId: number;
+  let axeId: number;
+  let ficheRestreintTrueId: number;
   let lectureMember: AuthenticatedUser;
   let verifiedVisitor: AuthenticatedUser;
 
   beforeAll(async () => {
     const app: INestApplication = await getTestApp();
     router = await getTestRouter(app);
+    getPlanService = app.get(GetPlanService);
     const db = await getTestDatabase(app);
 
     const { collectivite } = await addTestCollectivite(db);
@@ -64,6 +69,7 @@ describe('les totaux du plan et la confidentialité des fiches', () => {
       planId,
       parent: planId,
     });
+    axeId = axe.id;
 
     const createFicheInAxe = async (
       titre: string,
@@ -71,15 +77,12 @@ describe('les totaux du plan et la confidentialité des fiches', () => {
     ): Promise<number> => {
       const fiche = await adminCaller.plans.fiches.create({
         fiche: { collectiviteId, titre, restreint },
-        ficheFields: { axes: [{ id: axe.id }] },
+        ficheFields: { axes: [{ id: axeId }] },
       });
       return fiche.id;
     };
 
-    const ficheRestreintTrueId = await createFicheInAxe(
-      'Fiche restreinte',
-      true
-    );
+    ficheRestreintTrueId = await createFicheInAxe('Fiche restreinte', true);
     const ficheRestreintFalseId = await createFicheInAxe(
       'Fiche ouverte',
       false
@@ -132,5 +135,31 @@ describe('les totaux du plan et la confidentialité des fiches', () => {
       totalFiches: 3,
       investissementReel: { total: 1200, nbFiches: 2 },
     });
+  });
+
+  it('rend la fiche restreinte dans les axes, le total et les budgets pour une lecture sans contrôle de permission', async () => {
+    expect(
+      await getPlanService.getPlanWithoutPermissionCheck({ planId })
+    ).toMatchObject({
+      success: true,
+      data: {
+        totalFiches: 3,
+        axes: expect.arrayContaining([
+          expect.objectContaining({
+            id: axeId,
+            fiches: expect.arrayContaining([ficheRestreintTrueId]),
+          }),
+        ]),
+        budget: {
+          investissement: { HT: { budgetReel: { total: 1200, nbFiches: 2 } } },
+        },
+      },
+    });
+  });
+
+  it('rend PLAN_NOT_FOUND pour une lecture sans contrôle de permission sur un plan inexistant', async () => {
+    expect(
+      await getPlanService.getPlanWithoutPermissionCheck({ planId: -1 })
+    ).toEqual({ success: false, error: 'PLAN_NOT_FOUND' });
   });
 });

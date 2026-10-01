@@ -71,8 +71,7 @@ export class DuplicatePlanService {
     >(async (transaction) => {
       const sourceResult = await this.getPlanService.getPlan(
         { planId },
-        user,
-        transaction
+        { user, tx: transaction }
       );
       if (!sourceResult.success) {
         return failure(getPlanErrorToDuplicateError(sourceResult.error));

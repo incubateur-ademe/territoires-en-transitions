@@ -6,3 +6,5 @@ export type ServiceSecondArg = {
   isUserTrusted?: boolean;
   tx?: Transaction;
 };
+
+export type UnsafeServiceSecondArg = Pick<ServiceSecondArg, 'tx'>;

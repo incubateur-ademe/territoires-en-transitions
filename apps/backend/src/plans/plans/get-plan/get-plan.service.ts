@@ -4,16 +4,21 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import {
+  ServiceSecondArg,
+  UnsafeServiceSecondArg,
+} from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
+import { TransactionOperation } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Plan } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
-import { ListAxesService } from '../../axes/list-axes/list-axes.service';
+import { ListAxesRepository } from '../../axes/list-axes/list-axes.repository';
 import FicheActionPermissionsService from '../../fiches/fiche-action-permissions.service';
 import { ListFichesBudgetRepository } from '../../fiches/list-fiches/list-fiches-budget.repository';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 import { GetPlanInput } from './get-plan.input';
-import { GetPlanRepository } from './get-plan.repository';
+import { GetPlanOutput, GetPlanRepository } from './get-plan.repository';
 
 @Injectable()
 export class GetPlanService {
@@ -22,7 +27,7 @@ export class GetPlanService {
   constructor(
     private readonly collectivite: CollectivitesService,
     private readonly databaseService: DatabaseService,
-    private readonly listAxesService: ListAxesService,
+    private readonly listAxesRepository: ListAxesRepository,
     private readonly listFichesBudgetRepository: ListFichesBudgetRepository,
     private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly getPlanRepository: GetPlanRepository,
@@ -32,16 +37,11 @@ export class GetPlanService {
 
   async getPlan(
     input: GetPlanInput,
-    user?: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<Plan, GetPlanError>> {
-    const executeInTransaction = async (
-      transaction: Transaction
-    ): Promise<Result<Plan, GetPlanError>> => {
-      const { collectiviteId, planId } = input;
-
+    return this.executeInTransaction(tx, async (transaction) => {
       const planResult = await this.getPlanRepository.getPlan(
-        { planId, collectiviteId },
+        input,
         transaction
       );
       if (!planResult.success) {
@@ -49,101 +49,105 @@ export class GetPlanService {
       }
       const plan = planResult.data;
 
-      if (user) {
-        const isAllowed = await this.checkPermission(
-          plan.collectiviteId,
-          user
-        );
-        if (!isAllowed) {
-          return {
-            success: false,
-            error: GetPlanErrorEnum.UNAUTHORIZED,
-          };
-        }
+      const isAllowed = await this.checkPermission(plan.collectiviteId, user);
+      if (!isAllowed) {
+        return {
+          success: false,
+          error: GetPlanErrorEnum.UNAUTHORIZED,
+        };
       }
 
-      const axesResult = await this.listAxesService.listAxesRecursively(
-        { collectiviteId: plan.collectiviteId, parentId: plan.id },
-        user,
-        transaction
-      );
-      if (!axesResult.success) {
-        return axesResult;
-      }
-
-      const referentsResult = await this.getPlanRepository.getReferents(
-        planId,
-        transaction
-      );
-      if (!referentsResult.success) {
-        return referentsResult;
-      }
-
-      const pilotesResult = await this.getPlanRepository.getPilotes(
-        planId,
-        transaction
-      );
-      if (!pilotesResult.success) {
-        return pilotesResult;
-      }
-
-      const canReadFichesRestreintes = await this.canReadFichesRestreintes({
-        collectiviteId: plan.collectiviteId,
-        user,
-        tx: transaction,
-      });
-
-      const fiches =
-        await this.listFichesBudgetRepository.listFicheBudgetsBelongingToPlan(
-          {
-            planId,
-            includeFichesRestreintes: canReadFichesRestreintes,
-          },
-          { tx: transaction }
+      const canReadFichesRestreintes =
+        await this.fichePermissionsService.hasReadFichePermission(
+          { collectiviteId: plan.collectiviteId, restreint: true },
+          user,
+          true,
+          transaction
         );
 
-      const budget = this.computeBudgetRules.computeBudget(fiches);
-
-      return {
-        success: true,
-        data: {
-          ...plan,
-          axes: axesResult.data,
-          referents: referentsResult.data,
-          pilotes: pilotesResult.data,
-          budget,
-          totalFiches: fiches.length,
-        },
-      };
-    };
-
-    return tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction(async (newTx) =>
-          executeInTransaction(newTx)
-        );
+      return this.buildPlan(
+        { plan, includeFichesRestreintes: canReadFichesRestreintes },
+        transaction
+      );
+    });
   }
 
-  private async canReadFichesRestreintes({
-    collectiviteId,
-    user,
-    tx,
-  }: {
-    collectiviteId: number;
-    user: AuthenticatedUser | undefined;
-    tx: Transaction;
-  }): Promise<boolean> {
-    const isInternalCall = user === undefined;
-    if (isInternalCall) {
-      return true;
-    }
+  async getPlanWithoutPermissionCheck(
+    input: GetPlanInput,
+    { tx }: UnsafeServiceSecondArg = {}
+  ): Promise<Result<Plan, GetPlanError>> {
+    return this.executeInTransaction(tx, async (transaction) => {
+      const planResult = await this.getPlanRepository.getPlan(
+        input,
+        transaction
+      );
+      if (!planResult.success) {
+        return planResult;
+      }
 
-    return this.fichePermissionsService.hasReadFichePermission(
-      { collectiviteId, restreint: true },
-      user,
-      true,
+      return this.buildPlan(
+        { plan: planResult.data, includeFichesRestreintes: true },
+        transaction
+      );
+    });
+  }
+
+  private async buildPlan(
+    {
+      plan,
+      includeFichesRestreintes,
+    }: {
+      plan: GetPlanOutput;
+      includeFichesRestreintes: boolean;
+    },
+    tx: Transaction
+  ): Promise<Result<Plan, GetPlanError>> {
+    const axesResult = await this.listAxesRepository.listChildrenRecursively(
+      { collectiviteId: plan.collectiviteId, parentId: plan.id },
+      { includeFichesRestreintes },
       tx
     );
+    if (!axesResult.success) {
+      return axesResult;
+    }
+
+    const referentsResult = await this.getPlanRepository.getReferents(
+      plan.id,
+      tx
+    );
+    if (!referentsResult.success) {
+      return referentsResult;
+    }
+
+    const pilotesResult = await this.getPlanRepository.getPilotes(plan.id, tx);
+    if (!pilotesResult.success) {
+      return pilotesResult;
+    }
+
+    const fiches =
+      await this.listFichesBudgetRepository.listFicheBudgetsBelongingToPlan(
+        { planId: plan.id, includeFichesRestreintes },
+        { tx }
+      );
+
+    return {
+      success: true,
+      data: {
+        ...plan,
+        axes: axesResult.data,
+        referents: referentsResult.data,
+        pilotes: pilotesResult.data,
+        budget: this.computeBudgetRules.computeBudget(fiches),
+        totalFiches: fiches.length,
+      },
+    };
+  }
+
+  private executeInTransaction(
+    tx: Transaction | undefined,
+    operation: TransactionOperation<Plan, GetPlanError>
+  ): Promise<Result<Plan, GetPlanError>> {
+    return tx ? operation(tx) : this.databaseService.db.transaction(operation);
   }
 
   async checkPermission(

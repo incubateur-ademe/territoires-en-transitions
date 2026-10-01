@@ -67,8 +67,7 @@ export class DeleteAxeService {
         parentId: input.axeId,
         collectiviteId,
       },
-      user,
-      tx
+      { user, tx }
     );
 
     if (!listAxesResult.success) {

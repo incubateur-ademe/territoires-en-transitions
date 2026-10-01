@@ -55,8 +55,7 @@ export class ListPlansService {
             collectiviteId: rootAxe.collectiviteId,
             parentId: planId,
           },
-          user,
-          tx
+          { user, tx }
         );
 
         if (!axesResult.success) {
