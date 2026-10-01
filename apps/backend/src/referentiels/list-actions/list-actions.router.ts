@@ -3,6 +3,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { ListActionsDynamicStateResult } from '@tet/domain/referentiels';
 import { listActionsGroupedByIdInputSchema } from './list-actions-grouped-by-id.input';
 import { listActionsErrorConfig } from './list-actions.errors';
 import { ListActionsService } from './list-actions.service';
@@ -24,9 +25,42 @@ export class ListActionsRouter {
     listActionsGroupedById: this.trpc.authedProcedure
       .input(listActionsGroupedByIdInputSchema)
       .query(async ({ input, ctx: { user } }) => {
-        return this.getResultDataOrThrowError(
-          await this.listActionsService.listActionsGroupedById(input, { user })
+        return withLegacyCompatFields(
+          this.getResultDataOrThrowError(
+            await this.listActionsService.listActionsGroupedById(input, {
+              user,
+            })
+          )
         );
       }),
   });
+}
+
+/**
+ * TODO: compatibilité temporaire avec les onglets encore ouverts sur l'ancien
+ * bundle front, qui lisent `hiddenActions` et `childrenIdsWithExprScore` sur
+ * cette réponse (et plantent s'ils sont absents). À supprimer dans la release
+ * suivant celle-ci, une fois les anciens onglets rechargés.
+ *
+ * Les champs ne sont pas déclarés dans le type de retour : le front actuel ne
+ * doit pas les lire (`mergeActionDefinitionsAndState` les recalcule).
+ */
+function withLegacyCompatFields(
+  result: ListActionsDynamicStateResult
+): ListActionsDynamicStateResult {
+  const actionsById: ListActionsDynamicStateResult['actionsById'] = {};
+  for (const actionId in result.actionsById) {
+    const actionWithCompatFields = {
+      ...result.actionsById[actionId],
+      childrenIdsWithExprScore: [],
+    };
+    actionsById[actionId] = actionWithCompatFields;
+  }
+
+  const resultWithCompatFields = {
+    ...result,
+    actionsById,
+    hiddenActions: [],
+  };
+  return resultWithCompatFields;
 }

@@ -122,6 +122,43 @@ describe('mergeActionDefinitionsAndState', () => {
     expect(result.actionsById['cae_1'].childrenIds).toEqual(['cae_1.1']);
   });
 
+  test('ignore les champs de compatibilité temporaire renvoyés pour l’ancien bundle front', () => {
+    const states = buildStates(
+      [
+        buildState('te_1', { childrenIds: ['te_1.1'] }),
+        buildState('te_1.1', { parentId: 'te_1' }),
+      ],
+      ['te_1.2']
+    );
+    // champs ajoutés par `withLegacyCompatFields` côté backend
+    const statesWithCompatFields = {
+      ...states,
+      hiddenActions: [],
+      actionsById: Object.fromEntries(
+        Object.entries(states.actionsById).map(([actionId, state]) => [
+          actionId,
+          { ...state, childrenIdsWithExprScore: [] },
+        ])
+      ),
+    };
+
+    const result = mergeActionDefinitionsAndState(
+      buildDefinitions([
+        buildDefinition('te_1'),
+        buildDefinition('te_1.1', { exprScore: 'si identite(EP_1) alors 0' }),
+        buildDefinition('te_1.2'),
+      ]),
+      statesWithCompatFields
+    );
+
+    expect(result.actionsById['te_1'].childrenIdsWithExprScore).toEqual([
+      'te_1.1',
+    ]);
+    expect(result.hiddenActions).toEqual([
+      { actionId: 'te_1.2', identifiant: '1.2', nom: 'Nom te_1.2' },
+    ]);
+  });
+
   test('ignore une action absente de l’état', () => {
     const result = mergeActionDefinitionsAndState(
       buildDefinitions([buildDefinition('cae_1'), buildDefinition('cae_2')]),
