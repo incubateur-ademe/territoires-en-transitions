@@ -20,7 +20,10 @@
  */
 
 import { typologieSinoeTable } from '@tet/backend/collectivites/shared/models/typologie-sinoe.table';
-import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  TYPOLOGIES_SINOE,
+} from '@tet/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as fs from 'fs';
@@ -31,7 +34,6 @@ import {
   detectTypeFichier,
   parseCommunesRecords,
   parseEpciRecords,
-  TYPOLOGIES_SINOE,
   type ParseResult,
   type TypeFichier,
   type TypologieParCle,
