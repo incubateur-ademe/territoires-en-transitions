@@ -10,7 +10,7 @@ import {
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
-import { stripTitleNumber, unifyAxisLabels } from './normalize-plan-labels';
+import { stripTitleNumbers, unifyAxisLabels } from './normalize-plan-labels';
 import { textToRichText } from './text-to-rich-text';
 
 export const MAX_FICHE_TITLE_LENGTH = 300;
@@ -56,17 +56,14 @@ export type NormalizedExtractedActions = {
 export const normalizeExtractedActions = (
   extracted: ExtractedAction[]
 ): NormalizedExtractedActions => {
-  const actions = unifyAxisLabels(
-    extracted.map((action) => ({
-      ...action,
-      titre: stripTitleNumber(action.titre) || action.titre,
-    }))
-  );
+  const actions = unifyAxisLabels(extracted);
   const truncatedCount = countOverlongTitles(actions);
   const capped = capExtractedActionTitles(actions);
+  // Dédoublonné sur les titres encore numérotés : « Fiche 3 » et « Fiche 7 »
+  // de même intitulé sont deux fiches.
   const deduped = dedupeExtractedActions(capped);
   return {
-    actions: deduped,
+    actions: stripTitleNumbers(deduped),
     truncatedCount,
     duplicateCount: capped.length - deduped.length,
   };

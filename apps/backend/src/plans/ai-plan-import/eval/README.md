@@ -44,8 +44,10 @@ make ai-import-eval f=csma.pdf ref=apps/backend/src/plans/ai-plan-import/eval/re
 La référence de Clisson Sèvre et Maine Agglo vient de son tableau
 récapitulatif : 7 axes et 64 fiches tabulaires, avec un bandeau d'objectif en
 tête de chaque fiche et des pages en deux colonnes. `make` coupe le chemin du
-document aux espaces : renommez-le avant (`csma.pdf`). Les métriques portent
-sur le brouillon tel que le plan sera créé (titres sans numéro, axes unifiés).
+document aux espaces : renommez-le avant (`csma.pdf`). Une référence
+manuelle juge le plan tel qu'il sera créé (titres sans numéro, axes unifiés),
+enregistré sous `plan` ; les métriques et `draft` restent la sortie brute du
+pipeline, comparable d'un run à l'autre.
 
 Le `diff` donne alors les axes et actions retrouvés, les actions introuvables,
 celles retrouvées en sous-axe (niveau inventé), celles rangées sous un autre
