@@ -1,7 +1,6 @@
 /**
- * Onglets de la FAQ. Les deux premiers viennent de Strapi (champ `onglet` de la
- * collection `faq`, dont `title` reprend les valeurs) ; celui de la démarche
- * PCAET vient du code, comme la FAQ de sa page.
+ * Onglets de la FAQ : `title` reprend les valeurs du champ `onglet` de la
+ * collection Strapi `faq`, et doit rester identique.
  */
 export const FAQ_TABS = [
   { title: 'Le programme Territoire Engagé', param: 'programme' },
