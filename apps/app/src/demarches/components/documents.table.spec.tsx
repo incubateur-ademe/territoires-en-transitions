@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { appLabels } from '@/app/labels/catalog';
 import type {
+  DemarcheDocumentAdditional,
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
@@ -10,7 +11,10 @@ import type {
 } from '@tet/domain/demarches';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { DemarcheDocumentsTable } from './documents.table';
+import {
+  DemarcheDocumentsTable,
+  type DemarcheDocumentsSection,
+} from './documents.table';
 
 const CONFIG: DemarcheDocumentsConfig = {
   additionalAmont: true,
@@ -75,6 +79,8 @@ const renderTable = ({
   coverage = [],
   etape = 'amont',
   mergeEtapes = false,
+  section,
+  documentsAdditional = [],
   onAddFichier = vi.fn(),
 }: {
   definitions?: DemarcheDocumentDefinition[];
@@ -82,6 +88,8 @@ const renderTable = ({
   coverage?: DemarcheDocumentCoverage[];
   etape?: DemarcheDocumentEtape;
   mergeEtapes?: boolean;
+  section?: DemarcheDocumentsSection;
+  documentsAdditional?: DemarcheDocumentAdditional[];
   onAddFichier?: (
     documentId: string,
     fichierId: number,
@@ -96,9 +104,10 @@ const renderTable = ({
       config={CONFIG}
       definitions={definitions}
       documents={documents}
-      documentsAdditional={[]}
+      documentsAdditional={documentsAdditional}
       coverage={coverage}
       mergeEtapes={mergeEtapes}
+      section={section}
       onAddFichier={onAddFichier}
       onRemoveDocument={vi.fn()}
       onToggleCouverture={vi.fn()}
@@ -218,6 +227,75 @@ describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l�
         name: appLabels.demarcheDocumentsTeleverser,
       })
     ).toBeInTheDocument();
+  });
+});
+
+describe('DemarcheDocumentsTable — les deux blocs de la finalisation', () => {
+  /** Reprise possible après les avis : portée `both`. */
+  const STRATEGIE = definition({
+    id: 'pcaet_strategie_territoriale',
+    nom: 'Stratégie territoriale',
+    ordre: 2,
+    etape: 'both',
+  });
+  const ADOPTION = definition({
+    id: 'pcaet_deliberation_adoption',
+    nom: 'Délibération d’adoption',
+    ordre: 4,
+    etape: 'aval',
+  });
+  const additional = (
+    titre: string,
+    etape: DemarcheDocumentEtape
+  ): DemarcheDocumentAdditional => ({
+    id: etape === 'amont' ? 1 : 2,
+    etape,
+    titre,
+    commentaire: '',
+    modifiedAt: '2026-08-20T00:00:00Z',
+    modifiedBy: null,
+    fichier: null,
+  });
+
+  const renderSection = (section: DemarcheDocumentsSection) =>
+    renderTable({
+      etape: 'aval',
+      section,
+      definitions: [DIAGNOSTIC, STRATEGIE, ADOPTION],
+      documentsAdditional: [
+        additional('Annexe transmise', 'amont'),
+        additional('Annexe de l’adoption', 'aval'),
+      ],
+    });
+
+  it('met en tête les pièces qui suivent les avis, avec les pièces libres et leur ajout', () => {
+    const { container } = renderSection('adoption');
+
+    expect(screen.getByText('Délibération d’adoption')).toBeInTheDocument();
+    expect(screen.getByText('Annexe de l’adoption')).toBeInTheDocument();
+    expect(screen.queryByText('Diagnostic')).toBeNull();
+    expect(screen.queryByText('Stratégie territoriale')).toBeNull();
+    expect(screen.queryByText('Annexe transmise')).toBeNull();
+    expect(
+      container.querySelector(
+        '[data-test="demarches.pcaet.documents.additional.ajouter.aval"]'
+      )
+    ).not.toBeNull();
+  });
+
+  it('range sous le dossier transmis les pièces soumises aux avis, sans ajout libre', () => {
+    const { container } = renderSection('dossier-transmis');
+
+    expect(screen.getByText('Diagnostic')).toBeInTheDocument();
+    expect(screen.getByText('Stratégie territoriale')).toBeInTheDocument();
+    expect(screen.getByText('Annexe transmise')).toBeInTheDocument();
+    expect(screen.queryByText('Délibération d’adoption')).toBeNull();
+    expect(screen.queryByText('Annexe de l’adoption')).toBeNull();
+    expect(
+      container.querySelector(
+        '[data-test^="demarches.pcaet.documents.additional.ajouter"]'
+      )
+    ).toBeNull();
   });
 });
 
