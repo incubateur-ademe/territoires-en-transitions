@@ -18,14 +18,14 @@ export const ImportedPlanBanner = ({ planId }: { planId: number }) => {
       <Alert
         state="warning"
         title={
-          <span className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {appLabels.planImporteBanniereTitre}
             <Badge
               title={appLabels.planImporteBanniereAVerifier}
               variant="warning"
               size="sm"
             />
-          </span>
+          </div>
         }
         description={
           <p className="mb-0 text-sm font-medium text-grey-9">
