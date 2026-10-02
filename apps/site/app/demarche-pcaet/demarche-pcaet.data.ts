@@ -85,6 +85,11 @@ export const QUESTIONS_FREQUENTES = [
       "Le diagnostic, la stratégie et ses objectifs, le programme d'actions et le dispositif de suivi, ainsi que les pièces jointes demandées à l'étape « Élaboration ».",
   },
   {
+    question: "Puis-je importer mon programme d'actions existant ?",
+    reponse:
+      "Oui. Quel que soit son format (PDF, Word ou Excel), importez votre programme d'actions : en quelques minutes, la plateforme en reprend les actions pour constituer votre programme, prêt à être piloté. Plus besoin de tout ressaisir.",
+  },
+  {
     question: 'Que se passe-t-il après la transmission pour avis ?',
     reponse:
       'Le conseil régional et le préfet de région rendent leur avis. Vous les consultez dans votre espace, puis votre collectivité délibère pour adopter le plan.',
