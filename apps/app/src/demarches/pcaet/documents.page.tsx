@@ -22,6 +22,22 @@ import type {
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
+import { ComponentProps, PropsWithChildren } from 'react';
+
+/** Un bloc de l'écran, sous son titre : avis, pièces de l'adoption, dossier transmis. */
+const DocumentsBloc = ({
+  titre,
+  description,
+  children,
+}: PropsWithChildren<{ titre: string; description?: string }>) => (
+  <section className="flex flex-col gap-3">
+    <div className="flex flex-col gap-1">
+      <h3 className="m-0 text-base font-bold text-primary-9">{titre}</h3>
+      {description && <p className="m-0 text-sm text-grey-7">{description}</p>}
+    </div>
+    {children}
+  </section>
+);
 
 export const DemarchePcaetDocumentsPage = () => {
   const demarcheId = useDemarcheId();
@@ -104,6 +120,31 @@ export const DemarchePcaetDocumentsPage = () => {
     }
   };
 
+  const tableProps: ComponentProps<typeof DemarcheDocumentsTable> | null =
+    snapshot
+      ? {
+          demarcheType: demarche.type,
+          etape: etapeCourante,
+          config: snapshot.config,
+          definitions: snapshot.definitions,
+          documents: snapshot.documents,
+          documentsAdditional: snapshot.documentsAdditional,
+          documentAdditionalCreeId,
+          coverage,
+          isEtapeReadonly: isEtapeReadonly(etapeCourante),
+          mergeEtapes: parcours.horsPlateforme,
+          onAddFichier: addDocument,
+          onRemoveDocument: removeDocument,
+          onToggleCouverture: setCouverture,
+          onCreateAdditional: createDocumentAdditional,
+          onRenameAdditional: renameDocumentAdditional,
+          onAddFichierAdditional: addFichierDocumentAdditional,
+          onRemoveAdditional: removeDocumentAdditional,
+          onDownload: downloadDemarcheDocument,
+          onDownloadAdditional: downloadDemarcheDocument,
+        }
+      : null;
+
   return (
     <DemarcheShell
       demarche={demarche}
@@ -136,7 +177,7 @@ export const DemarchePcaetDocumentsPage = () => {
             })}
             retry={() => refetchDocuments()}
           />
-        ) : isLoadingDocuments || !snapshot ? (
+        ) : isLoadingDocuments || !tableProps ? (
           <div className="flex py-8">
             <SpinnerLoader className="m-auto" />
           </div>
@@ -144,62 +185,65 @@ export const DemarchePcaetDocumentsPage = () => {
           <div className="flex flex-col gap-8">
             {/* Les avis d'abord : c'est ce qui commande la reprise du dossier,
                 et la raison d'être de cette étape. */}
-            {montreLesAvis &&
-              (avisRecus.length > 0 ? (
-                <AvisDeposesList
-                  avis={avisRecus.map((unAvis) => ({
-                    id: unAvis.id,
-                    demandeAvisId: unAvis.demandeAvisId,
-                    auTitreDe: unAvis.auTitreDe,
-                    aUnRapport: unAvis.aUnRapport,
-                    valideLe: unAvis.valideLe,
-                    deposeLe: unAvis.valideLe,
-                  }))}
-                />
-              ) : (
-                <EmptyCard
-                  picto={({ className }) => (
-                    <PictoDocument className={className} />
-                  )}
-                  title={appLabels.demarcheDocumentsAucunAvisTitre}
-                  description={appLabels.demarcheDocumentsAucunAvisDescription}
-                />
-              ))}
+            {montreLesAvis && (
+              <DocumentsBloc titre={appLabels.demarcheDocumentsAvisRecusTitre}>
+                {avisRecus.length > 0 ? (
+                  <AvisDeposesList
+                    avis={avisRecus.map((unAvis) => ({
+                      id: unAvis.id,
+                      demandeAvisId: unAvis.demandeAvisId,
+                      auTitreDe: unAvis.auTitreDe,
+                      aUnRapport: unAvis.aUnRapport,
+                      valideLe: unAvis.valideLe,
+                      deposeLe: unAvis.valideLe,
+                    }))}
+                  />
+                ) : (
+                  <EmptyCard
+                    picto={({ className }) => (
+                      <PictoDocument className={className} />
+                    )}
+                    title={appLabels.demarcheDocumentsAucunAvisTitre}
+                    description={
+                      appLabels.demarcheDocumentsAucunAvisDescription
+                    }
+                  />
+                )}
+              </DocumentsBloc>
+            )}
 
-            {/* Un seul tableau, toujours. D'ordinaire celui du temps courant :
-                en aval il porte tout le dossier, dans l'ordre du modèle — les
-                pièces reprises avec leur version transmise, et celles du seul
-                amont en lecture seule, le dossier transmis restant consultable.
+            {/* Après les avis, deux blocs : ce qu'il reste à déposer en tête —
+                noyé sous le dossier transmis, on le cherchait au bas de la
+                liste —, puis le dossier transmis, à reprendre ou à consulter.
 
-                Un dépôt hors plateforme a ses deux temps ouverts : la liste les
-                fusionne, pièces d'élaboration puis pièces d'après-avis. Deux
-                tableaux y donneraient à lire une coupure d'instruction qui n'a
-                pas eu lieu. */}
-            <DemarcheDocumentsTable
-              demarcheType={demarche.type}
-              etape={etapeCourante}
-              config={snapshot.config}
-              definitions={snapshot.definitions}
-              documents={snapshot.documents}
-              documentsAdditional={snapshot.documentsAdditional}
-              documentAdditionalCreeId={documentAdditionalCreeId}
-              coverage={coverage}
-              isEtapeReadonly={isEtapeReadonly(etapeCourante)}
-              mergeEtapes={parcours.horsPlateforme}
-              onAddFichier={(documentId, fichierId, etapeDocument) =>
-                addDocument(documentId, fichierId, etapeDocument)
-              }
-              onRemoveDocument={(documentId, etapeDocument) =>
-                removeDocument(documentId, etapeDocument)
-              }
-              onToggleCouverture={setCouverture}
-              onCreateAdditional={createDocumentAdditional}
-              onRenameAdditional={renameDocumentAdditional}
-              onAddFichierAdditional={addFichierDocumentAdditional}
-              onRemoveAdditional={removeDocumentAdditional}
-              onDownload={downloadDemarcheDocument}
-              onDownloadAdditional={downloadDemarcheDocument}
-            />
+                Un dépôt hors plateforme garde un seul tableau : ses deux temps
+                sont ouverts ensemble, et les séparer donnerait à lire une
+                coupure d'instruction qui n'a pas eu lieu. */}
+            {montreLesAvis ? (
+              <>
+                <DocumentsBloc
+                  titre={appLabels.demarcheDocumentsAdoptionTitre}
+                  description={appLabels.demarcheDocumentsAdoptionDescription}
+                >
+                  <DemarcheDocumentsTable {...tableProps} section="adoption" />
+                </DocumentsBloc>
+                <DocumentsBloc
+                  titre={appLabels.demarcheDocumentsDossierTransmisTitre}
+                  description={
+                    parcours.avalOuvert
+                      ? appLabels.demarcheDocumentsDossierTransmisDescription
+                      : appLabels.demarcheDocumentsDossierTransmisAdopteDescription
+                  }
+                >
+                  <DemarcheDocumentsTable
+                    {...tableProps}
+                    section="dossier-transmis"
+                  />
+                </DocumentsBloc>
+              </>
+            ) : (
+              <DemarcheDocumentsTable {...tableProps} />
+            )}
           </div>
         )}
       </DemarcheSection>

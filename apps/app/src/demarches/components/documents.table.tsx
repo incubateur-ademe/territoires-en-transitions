@@ -289,6 +289,13 @@ const SectionFallback = ({
   </div>
 );
 
+/**
+ * Les deux moitiés de l'écran de finalisation : les pièces qui viennent après
+ * les avis, jusqu'à la délibération d'adoption, et le dossier qui leur a été
+ * soumis.
+ */
+export type DemarcheDocumentsSection = 'adoption' | 'dossier-transmis';
+
 type Props = {
   /** Type de démarche : les libellés affichés en dépendent. */
   demarcheType: DemarcheType;
@@ -322,6 +329,13 @@ type Props = {
    * les deux.
    */
   mergeEtapes?: boolean;
+  /**
+   * Restreint l'écran aval à l'une de ses deux moitiés, chacune sous son propre
+   * titre : sans elle, les pièces nouvelles arrivaient au bas d'une longue
+   * liste de pièces déjà transmises. Seul `adoption` reçoit les pièces libres.
+   * Sans effet en liste fusionnée, ni à l'amont.
+   */
+  section?: DemarcheDocumentsSection;
   /**
    * Le temps de la ligne accompagne le dépôt : en liste fusionnée il varie
    * d'une pièce à l'autre, et c'est lui qui décide si la pièce est couverte.
@@ -369,6 +383,7 @@ export const DemarcheDocumentsTable = ({
   coverage,
   isEtapeReadonly = false,
   mergeEtapes = false,
+  section: sectionDemandee,
   onAddFichier,
   onRemoveDocument,
   onToggleCouverture,
@@ -380,6 +395,11 @@ export const DemarcheDocumentsTable = ({
   onDownloadAdditional,
 }: Props): ReactElement => {
   const fileConstraints = useMemo(() => toFileConstraints(config), [config]);
+  const section =
+    etape === 'aval' && !mergeEtapes ? sectionDemandee : undefined;
+  const isDeLaSection = (etapeExigeante: DemarcheDocumentEtape) =>
+    section === undefined ||
+    (section === 'adoption') === (etapeExigeante === 'aval');
   // Indexé par temps : une pièce de portée `both` a une version par temps, et
   // l'écran n'affiche que celle qui lui revient.
   /**
@@ -390,9 +410,7 @@ export const DemarcheDocumentsTable = ({
    */
   const etapeDe = useCallback(
     (definition: DemarcheDocumentDefinition): DemarcheDocumentEtape =>
-      mergeEtapes
-        ? getEtapeExigeanteDemarcheDocument(definition.etape)
-        : etape,
+      mergeEtapes ? getEtapeExigeanteDemarcheDocument(definition.etape) : etape,
     [mergeEtapes, etape]
   );
 
@@ -450,7 +468,9 @@ export const DemarcheDocumentsTable = ({
           Number(getEtapeExigeanteDemarcheDocument(b.etape) === 'aval')
       )
     : etape === 'aval'
-    ? definitions
+    ? definitions.filter((definition) =>
+        isDeLaSection(getEtapeExigeanteDemarcheDocument(definition.etape))
+      )
     : definitions.filter((definition) =>
         isDemarcheDocumentDeEtape(definition.etape, etape)
       );
@@ -476,7 +496,7 @@ export const DemarcheDocumentsTable = ({
     <div
       className="flex flex-col gap-4"
       data-test={`demarches.pcaet.documents.table.${
-        mergeEtapes ? 'fusionnee' : etape
+        mergeEtapes ? 'fusionnee' : section ?? etape
       }`}
     >
       {/* Sans colonne de statut : la réponse de chaque ligne porte déjà le
@@ -485,6 +505,7 @@ export const DemarcheDocumentsTable = ({
         caption={appLabels.demarcheDocumentsCaption({
           type: appLabels.demarcheTypeLabels[demarcheType],
           etape,
+          section,
         })}
         hasTagColumn
         hasStatusColumn={false}
@@ -511,8 +532,10 @@ export const DemarcheDocumentsTable = ({
                 coverage={coverageByDefinitionId.get(definition.id)}
                 substitutDeclarable={
                   definitionById.get(
-                    findDemarcheDocumentSubstitutDepose(definition, documents) ??
-                      ''
+                    findDemarcheDocumentSubstitutDepose(
+                      definition,
+                      documents
+                    ) ?? ''
                   ) ?? null
                 }
                 substitutCouvrantNom={
@@ -537,11 +560,14 @@ export const DemarcheDocumentsTable = ({
         ))}
 
         {/* Pièces hors catalogue : elles ferment la liste, après ce que le
-            modèle attend. */}
+            modèle attend. Celles du dossier transmis s'y consultent. */}
         {documentsAdditional
-          .filter(
-            (documentAdditional) =>
-              mergeEtapes || documentAdditional.etape === etape
+          .filter((documentAdditional) =>
+            mergeEtapes
+              ? true
+              : section === undefined
+              ? documentAdditional.etape === etape
+              : isDeLaSection(documentAdditional.etape)
           )
           .sort(
             (a, b) => Number(a.etape === 'aval') - Number(b.etape === 'aval')
@@ -552,7 +578,10 @@ export const DemarcheDocumentsTable = ({
               demarcheType={demarcheType}
               fileConstraints={fileConstraints}
               documentAdditional={documentAdditional}
-              isReadonly={isEtapeReadonly}
+              isReadonly={
+                isEtapeReadonly ||
+                (!mergeEtapes && documentAdditional.etape !== etape)
+              }
               isJustCreated={documentAdditional.id === documentAdditionalCreeId}
               onRename={(titre) =>
                 onRenameAdditional(documentAdditional.id, titre)
@@ -569,6 +598,7 @@ export const DemarcheDocumentsTable = ({
             lui-même : c'est l'amont, seul temps qu'une pièce libre puisse
             documenter tant qu'aucun avis n'a été rendu. */}
         {!isEtapeReadonly &&
+          section !== 'dossier-transmis' &&
           isDemarcheDocumentsAdditionalAutorise(config, etapeAdditional) && (
             <DemarcheDocumentAdditionalAddRow
               etape={etapeAdditional}

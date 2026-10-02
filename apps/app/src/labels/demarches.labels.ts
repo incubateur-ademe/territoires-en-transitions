@@ -441,13 +441,34 @@ export const demarchesLabels = {
   demarcheDocumentsCaption: ({
     type,
     etape,
+    section,
   }: {
     type: DemarcheTypeLabels;
     etape: DemarcheDocumentEtape;
+    section?: 'adoption' | 'dossier-transmis';
   }) =>
-    etape === 'amont'
+    section === 'adoption'
+      ? `Pièces de l’adoption du ${type.nom}`
+      : section === 'dossier-transmis'
+      ? `Pièces du dossier ${type.nom} soumis aux avis`
+      : etape === 'amont'
       ? `Dépôt des pièces du dossier ${type.nom}`
       : `Dépôt des pièces du dossier ${type.nom} attendues après les avis`,
+  /**
+   * Les trois blocs de l'écran de finalisation, dans l'ordre où la collectivité
+   * les traite : ce qu'on lui a répondu, ce qu'il lui reste à déposer, ce
+   * qu'elle peut reprendre. « Amont » et « aval » ne sont pas ses mots : les
+   * titres nomment ce que contient chaque bloc.
+   */
+  demarcheDocumentsAvisRecusTitre: 'Avis reçus',
+  demarcheDocumentsAdoptionTitre: 'Pièces de l’adoption',
+  demarcheDocumentsAdoptionDescription:
+    'Les pièces qui complètent le dossier après les avis, jusqu’à la délibération d’adoption.',
+  demarcheDocumentsDossierTransmisTitre: 'Dossier soumis aux avis',
+  demarcheDocumentsDossierTransmisDescription:
+    'Mettez à jour les pièces que vous avez reprises pour tenir compte des avis. Les autres restent dans leur version transmise.',
+  demarcheDocumentsDossierTransmisAdopteDescription:
+    'Les pièces transmises pour avis, avec les mises à jour apportées ensuite.',
   demarcheDocumentsColonneNom: 'Nom du document',
   demarcheDocumentsColonneType: 'Type',
   demarcheDocumentsColonneDocuments: 'Documents liés',
