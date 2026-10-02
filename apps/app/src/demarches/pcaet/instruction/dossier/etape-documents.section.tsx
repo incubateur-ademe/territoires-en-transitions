@@ -12,6 +12,7 @@ import {
 } from '@tet/domain/demarches';
 import { useMemo } from 'react';
 import type { DossierInstructionRef } from '../dossier-instruction-ref';
+import { DownloadDossierDocumentsButton } from './download-dossier-documents.button';
 
 const noop = () => undefined;
 
@@ -29,6 +30,15 @@ export const EtapeDocumentsSection = ({
     [documents]
   );
 
+  // Même périmètre que l'archive : le dossier transmis, pièces libres comprises.
+  const aDesFichiers =
+    documents.documents.some(
+      ({ etape, fichier }) => etape === 'amont' && fichier !== null
+    ) ||
+    documents.documentsAdditional.some(
+      ({ etape, fichier }) => etape === 'amont' && fichier !== null
+    );
+
   const downloadDemarcheDocument = ({ documentId }: DemarcheDocumentDepose) => {
     downloadDossierDocument({ ...dossierRef, documentId });
   };
@@ -37,6 +47,12 @@ export const EtapeDocumentsSection = ({
     <DemarcheSection
       title={appLabels.instructionDossierEtapeDocuments}
       description={appLabels.instructionDossierEtapeDocumentsDescription}
+      action={
+        <DownloadDossierDocumentsButton
+          dossierRef={dossierRef}
+          disabled={!aDesFichiers}
+        />
+      }
       className="gap-2"
     >
       <DemarcheDocumentsTable
