@@ -5,7 +5,7 @@ import { Accordion, Tab, Tabs } from '@tet/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { FAQ_TABS } from './faq.tabs';
-import { FaqData } from './page';
+import type { FaqData } from './faq.data';
 
 type ListeQuestionsProps = {
   questions: FaqData[];

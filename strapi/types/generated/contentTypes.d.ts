@@ -593,7 +593,11 @@ export interface ApiFaqFaq extends Schema.CollectionType {
     createdBy: Attribute.Relation<'api::faq.faq', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     onglet: Attribute.Enumeration<
-      ['Le programme Territoire Engag\u00E9', "L'outil num\u00E9rique"]
+      [
+        'Le programme Territoire Engag\u00E9',
+        "L'outil num\u00E9rique",
+        'D\u00E9marche PCAET'
+      ]
     > &
       Attribute.Required &
       Attribute.DefaultTo<'Le programme Territoire Engag\u00E9'>;
@@ -944,6 +948,38 @@ export interface ApiPageContactPageContact extends Schema.SingleType {
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::page-contact.page-contact',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPageDemarchePcaetPageDemarchePcaet
+  extends Schema.SingleType {
+  collectionName: 'page_demarche_pcaets';
+  info: {
+    description: 'R\u00E9f\u00E9rencement de la page D\u00E9marche PCAET du site public';
+    displayName: '7. D\u00E9marche PCAET';
+    pluralName: 'page-demarche-pcaets';
+    singularName: 'page-demarche-pcaet';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::page-demarche-pcaet.page-demarche-pcaet',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    publishedAt: Attribute.DateTime;
+    seo: Attribute.Component<'shared.seo'>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::page-demarche-pcaet.page-demarche-pcaet',
       'oneToOne',
       'admin::user'
     > &
@@ -1951,6 +1987,7 @@ declare module '@strapi/types' {
       'api::page-budget.page-budget': ApiPageBudgetPageBudget;
       'api::page-collectivite.page-collectivite': ApiPageCollectivitePageCollectivite;
       'api::page-contact.page-contact': ApiPageContactPageContact;
+      'api::page-demarche-pcaet.page-demarche-pcaet': ApiPageDemarchePcaetPageDemarchePcaet;
       'api::page-outils-numerique.page-outils-numerique': ApiPageOutilsNumeriquePageOutilsNumerique;
       'api::page-programme.page-programme': ApiPageProgrammePageProgramme;
       'api::page-trajectoire.page-trajectoire': ApiPageTrajectoirePageTrajectoire;
