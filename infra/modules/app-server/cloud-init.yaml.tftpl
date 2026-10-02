@@ -1,0 +1,107 @@
+#cloud-config
+
+# Serveur applicatif piloté par Coolify. Coolify n'est PAS installé ici :
+# seuls Docker et l'accès SSH root sont préparés, Coolify fait le reste à
+# distance quand le serveur est enregistré (infra/coolify).
+
+users:
+  - default
+  - name: tet-ops
+    # Pas de groupe docker ici : il n'existe pas encore au moment de la
+    # création de l'utilisateur (Docker est installé plus bas dans runcmd),
+    # et cloud-init échouerait. L'ajout se fait via usermod en fin de boot.
+    groups:
+      - sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+%{ for key in ssh_authorized_keys ~}
+      - ${key}
+%{ endfor ~}
+
+# Clé d'hôte sshd imposée par Terraform (cf. tls_private_key.sshd_host) : seule
+# la clé ed25519 existe (genkeytypes ne génère que les types absents), et les
+# clients la vérifient en mode strict.
+ssh_deletekeys: true
+ssh_genkeytypes: [ed25519]
+ssh_keys:
+  ed25519_private: |
+    ${indent(4, sshd_host_private_key)}
+  ed25519_public: ${sshd_host_public_key}
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - jq
+  - git
+  - fail2ban
+  # Coolify pilote chaque serveur en SSH root : ne pas dépendre de l'image pour
+  # la présence du serveur SSH.
+  - openssh-server
+
+write_files:
+  # Drop-in sshd : survit aux upgrades du paquet openssh (sshd_config Ubuntu
+  # inclut /etc/ssh/sshd_config.d/*.conf).
+  # Voir https://coolify.io/docs/knowledge-base/server/openssh
+  - path: /etc/ssh/sshd_config.d/50-coolify.conf
+    permissions: "0644"
+    content: |
+      PubkeyAuthentication yes
+      PermitRootLogin prohibit-password
+      PasswordAuthentication no
+      # Seule clé d'hôte présente (cf. ssh_keys) : évite les avertissements
+      # sur les clés rsa / ecdsa absentes.
+      HostKey /etc/ssh/ssh_host_ed25519_key
+
+  # Clé publique maîtrisée par Terraform, autorisée sur root. C'est le seul
+  # moyen d'accès root : le port 22 n'est pas ouvert sur l'IP publique, donc
+  # cette clé ne sert que depuis le Private Network (serveur Coolify).
+  - path: /root/.ssh/authorized_keys
+    owner: root:root
+    permissions: "0600"
+    content: |
+      ${coolify_public_key}
+
+%{ if docker_gc_enabled ~}
+  # GC disque : sur le tier preview, chaque PR tire de nouvelles images et
+  # laisse derrière elle volumes et couches orphelines. Sans ça le volume
+  # racine sature en quelques semaines.
+  #
+  # Le filtre until protège les objets récents, donc les previews actives.
+  # Les volumes ne sont volontairement PAS élagués (--volumes absent) : une
+  # preview arrêtée mais non détruite perdrait ses données.
+  - path: /etc/cron.daily/tet-docker-gc
+    owner: root:root
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -eu
+      docker system prune --all --force --filter "until=${docker_gc_until}" \
+        >> /var/log/tet-docker-gc.log 2>&1
+
+  - path: /etc/logrotate.d/tet-docker-gc
+    permissions: "0644"
+    content: |
+      /var/log/tet-docker-gc.log {
+        weekly
+        rotate 4
+        compress
+        missingok
+        notifempty
+      }
+%{ endif ~}
+
+runcmd:
+  # Verrouiller les permissions de /root/.ssh (sinon sshd ignore authorized_keys)
+  - chmod 700 /root/.ssh
+  - chown root:root /root/.ssh
+  # Valider puis recharger sshd
+  - sshd -t
+  - systemctl restart ssh
+  # Docker : prérequis de tout ce que Coolify déploie ici.
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker tet-ops
+
+final_message: "TET ${server_name} prêt en $UPTIME secondes. Enregistrer le serveur dans Coolify via infra/coolify."
