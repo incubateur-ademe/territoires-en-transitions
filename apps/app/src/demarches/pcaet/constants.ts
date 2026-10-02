@@ -29,7 +29,7 @@ const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> = {
   // instruit ici, et le dire évite de laisser croire à une instruction menée
   // sur la plateforme.
   instruit_hors_plateforme: 'Instruit hors plateforme',
-  publie: 'Publié',
+  publie: 'Adopté',
   archive: 'Archivé',
 };
 

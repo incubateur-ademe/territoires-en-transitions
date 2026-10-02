@@ -619,8 +619,8 @@ export const AvanceDemarcheSection = ({
               <Alert
                 className="mt-3"
                 state="success"
-                title={appLabels.demarcheDetailPublieeTitre}
-                description={appLabels.demarcheDetailPublieeDescription}
+                title={appLabels.demarcheDetailAdopteeTitre}
+                description={appLabels.demarcheDetailAdopteeDescription}
               />
             )}
             {/* Le dossier publié est adopté : rien ne le reprend, un nouveau

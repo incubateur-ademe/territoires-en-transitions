@@ -200,11 +200,14 @@ export const demarchesLabels = {
   /** Après la clôture de l'instruction : les avis sont là, le dossier se finalise. */
   demarcheDetailDocumentsAvalDescription:
     'Consultez les avis reçus et déposez ou mettez à jour les pièces réglementaires du dossier.',
+  /** Une fois publié, le dossier se consulte : plus rien ne s'y dépose. */
+  demarcheDetailDocumentsAdopteDescription:
+    'Consultez les avis reçus et les pièces du PCAET adopté.',
   demarcheDocumentsAucunAvisTitre: 'Aucun avis reçu',
   demarcheDocumentsAucunAvisDescription:
     'Les instances consultatives n’ont rendu aucun avis sur cette plateforme. Elles ont pu le faire par un autre canal, ou le délai a pu s’écouler sans réponse.',
-  demarcheDetailPublieeTitre: 'Démarche publiée',
-  demarcheDetailPublieeDescription:
+  demarcheDetailAdopteeTitre: 'Démarche adoptée',
+  demarcheDetailAdopteeDescription:
     'Le dossier est adopté : il passe en lecture seule. Les actions et les indicateurs du plan restent modifiables pendant sa mise en œuvre.',
   demarcheContactsTitre: 'Contacts',
   demarcheContactsDescription:
@@ -526,7 +529,7 @@ export const demarchesLabels = {
   demarcheHeaderModifieLe: 'Modifié le',
   demarcheObligationObligatoire: 'Obligatoire',
   demarcheObligationVolontaire: 'Volontaire',
-  demarcheBadgePubliee: 'Publiée',
+  demarcheBadgeAdopte: 'Adopté',
   demarcheHeaderPiloteSingulier: 'Pilote',
   demarcheHeaderPilotePluriel: 'Pilotes',
   demarchePilotesTooltip:

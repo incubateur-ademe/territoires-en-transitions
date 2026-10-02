@@ -16,10 +16,12 @@ import {
  *   figée. Un dépôt hors plateforme n'a pas de transmission pour le fermer :
  *   son amont reste ouvert, en même temps que son aval, et c'est la publication
  *   qui les ferme tous deux.
- * - **aval** — ce qui est attendu après les avis (délibération d'adoption,
- *   évaluations) : s'ouvre à la clôture de l'instruction, et reste ouvert
- *   ensuite. Elle s'ouvre donc **avant** la publication, puisque c'est le dépôt
- *   de la délibération d'adoption qui rend le dossier publiable.
+ * - **aval** — ce qui est attendu après les avis (mémoire de réponse,
+ *   délibération d'adoption) : s'ouvre à la clôture de l'instruction, **avant**
+ *   la publication, puisque c'est le dépôt de la délibération d'adoption qui
+ *   rend le dossier publiable. La publication le referme : le PCAET adopté est
+ *   celui que le public consulte, ses pièces ne bougent plus. Une démarche
+ *   archivée, publiée avant de l'être, reste fermée.
  *
  * Ce ne sont pas des permissions utilisateur : celles-ci sont portées par
  * `demarches.pcaet.mutate` et répondent à « cette personne a-t-elle le droit
@@ -44,9 +46,7 @@ export const isDemarchePcaetAvalModifiable = (
   status: DemarchePcaetStatus
 ): boolean =>
   status === DemarchePcaetStatusEnum.INSTRUIT ||
-  status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME ||
-  status === DemarchePcaetStatusEnum.PUBLIE ||
-  status === DemarchePcaetStatusEnum.ARCHIVE;
+  status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME;
 
 /** Aiguille sur le bon temps du dossier — l'étape d'une pièce s'y branche. */
 export const isDemarchePcaetEtapeModifiable = (
