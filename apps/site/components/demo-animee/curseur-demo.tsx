@@ -10,17 +10,25 @@ export const CurseurDemo = ({
   visible,
   appuye,
   variante,
+  transition = 650,
 }: {
   x: number;
   y: number;
   visible: boolean;
+  /** Durée du déplacement vers la position courante, en ms. */
+  transition?: number;
   /** Le clic (ou le toucher) en cours, rendu par un léger écrasement. */
   appuye: boolean;
   variante: 'souris' | 'tactile';
 }) => (
   <div
-    className="absolute z-10 pointer-events-none transition-[left,top,opacity] duration-[650ms,650ms,300ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
-    style={{ left: x, top: y, opacity: visible ? 1 : 0 }}
+    className="absolute z-10 pointer-events-none transition-[left,top,opacity] ease-[cubic-bezier(0.4,0,0.2,1)]"
+    style={{
+      left: x,
+      top: y,
+      opacity: visible ? 1 : 0,
+      transitionDuration: `${transition}ms, ${transition}ms, 300ms`,
+    }}
   >
     {variante === 'souris' ? (
       <svg

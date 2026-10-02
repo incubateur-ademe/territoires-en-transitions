@@ -1,5 +1,6 @@
 import styles from '@/site/components/demo-animee/demo-animee.module.css';
-import { Badge, Icon } from '@tet/ui';
+import type { DemarchePcaetVulnerabiliteNiveau } from '@tet/domain/demarches';
+import { Badge, BadgeProps, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { ReactNode } from 'react';
 import { EtatEtape, PhaseImport, StatutVolet } from './demo-depot.etat';
@@ -141,6 +142,49 @@ export const BadgeTypeDocument = ({
 export const BadgeRecu = ({ taille = 'sm' }: { taille?: TailleBadge }) => (
   <Badge title="Reçu" variant="success" size={taille} className="flex-none" />
 );
+
+/**
+ * Mêmes libellés et couleurs que le tableau de vulnérabilité de l'app
+ * (`DEMARCHE_PCAET_VULNERABILITE_NIVEAU_*`, que le site ne peut pas importer).
+ */
+const NIVEAU_VULNERABILITE: Record<
+  DemarchePcaetVulnerabiliteNiveau,
+  { libelle: string; variant: NonNullable<BadgeProps['variant']> }
+> = {
+  non_concerne: { libelle: 'non concerné', variant: 'grey' },
+  faible: { libelle: 'faible', variant: 'success' },
+  moyen: { libelle: 'moyen', variant: 'warning' },
+  fort: { libelle: 'fort', variant: 'error' },
+};
+
+/** Niveau saisi, ou l'invite « + niveau » de l'app tant qu'il ne l'est pas. */
+export const NiveauVulnerabilite = ({
+  niveau,
+  taille = 'sm',
+}: {
+  niveau: DemarchePcaetVulnerabiliteNiveau | null;
+  taille?: TailleBadge;
+}) =>
+  niveau ? (
+    <span className={styles.pop}>
+      <Badge
+        title={NIVEAU_VULNERABILITE[niveau].libelle}
+        variant={NIVEAU_VULNERABILITE[niveau].variant}
+        size={taille}
+        trim={false}
+        className="whitespace-nowrap"
+      />
+    </span>
+  ) : (
+    <span
+      className={classNames(
+        'text-grey-8 opacity-60',
+        taille === 'xs' ? 'text-[11px]' : 'text-[13px]'
+      )}
+    >
+      + niveau
+    </span>
+  );
 
 /** Bouton de l'app imité ; `appuye` le fonce pendant un clic simulé. */
 export const BoutonFactice = ({
