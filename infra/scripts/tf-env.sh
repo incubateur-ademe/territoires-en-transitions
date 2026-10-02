@@ -3,7 +3,12 @@
 # noms attendus par Terraform :
 #   - AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY → backend S3 (state distant)
 #   - SCW_ACCESS_KEY    / SCW_SECRET_KEY         → provider scaleway/scaleway
-#   - SCW_DEFAULT_PROJECT_ID / SCW_DEFAULT_ORGANIZATION_ID
+#   - SCW_DEFAULT_ORGANIZATION_ID
+#
+# SCW_DEFAULT_PROJECT_ID n'est volontairement PAS exporté : le provider
+# scaleway donne priorité aux variables d'environnement sur son propre bloc
+# (project_id = var.project_id), ce qui ferait cibler le projet par défaut de
+# `scw config` au lieu de celui du stack.
 #
 # Usage : doit être *sourcé*, pas exécuté, pour que les exports persistent
 # dans le shell appelant :
@@ -36,13 +41,14 @@ fi
 
 _scw_access_key="$(scw config get access-key 2>/dev/null)"
 _scw_secret_key="$(scw config get secret-key 2>/dev/null)"
-_scw_project_id="$(scw config get default-project-id 2>/dev/null)"
 _scw_org_id="$(scw config get default-organization-id 2>/dev/null)"
+# `scw config get` affiche « - » pour une clé absente.
+[ "$_scw_org_id" = "-" ] && _scw_org_id=""
 
 if [ -z "$_scw_access_key" ] || [ -z "$_scw_secret_key" ]; then
   echo "tf-env.sh : 'scw config' ne renvoie pas de credentials." >&2
   echo "  Lance 'scw init' pour configurer la CLI, ou vérifie ~/.config/scw/config.yaml." >&2
-  unset _scw_access_key _scw_secret_key _scw_project_id _scw_org_id
+  unset _scw_access_key _scw_secret_key _scw_org_id
   return 1
 fi
 
@@ -50,9 +56,10 @@ export AWS_ACCESS_KEY_ID="$_scw_access_key"
 export AWS_SECRET_ACCESS_KEY="$_scw_secret_key"
 export SCW_ACCESS_KEY="$_scw_access_key"
 export SCW_SECRET_KEY="$_scw_secret_key"
-[ -n "$_scw_project_id" ] && export SCW_DEFAULT_PROJECT_ID="$_scw_project_id"
-[ -n "$_scw_org_id" ]     && export SCW_DEFAULT_ORGANIZATION_ID="$_scw_org_id"
+[ -n "$_scw_org_id" ] && export SCW_DEFAULT_ORGANIZATION_ID="$_scw_org_id"
 
 echo "tf-env.sh : credentials Scaleway exportés (access-key ${_scw_access_key:0:6}…)."
+# Un SCW_DEFAULT_PROJECT_ID hérité du shell écraserait le project_id des stacks.
+unset SCW_DEFAULT_PROJECT_ID
 
-unset _scw_access_key _scw_secret_key _scw_project_id _scw_org_id
+unset _scw_access_key _scw_secret_key _scw_org_id

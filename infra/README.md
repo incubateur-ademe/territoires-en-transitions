@@ -225,7 +225,9 @@ Le wrapper [`scripts/tf-env.sh`](scripts/tf-env.sh) lit `scw config` et exporte 
 
 - `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` — utilisés par le backend S3 pour lire/écrire le state distant (le backend S3 réutilise les conventions de nommage AWS, c'est normal)
 - `SCW_ACCESS_KEY` / `SCW_SECRET_KEY` — utilisés par le provider `scaleway/scaleway` pour piloter les ressources
-- `SCW_DEFAULT_PROJECT_ID` / `SCW_DEFAULT_ORGANIZATION_ID` — defaults pour les appels API
+- `SCW_DEFAULT_ORGANIZATION_ID` — default pour les appels API
+
+`SCW_DEFAULT_PROJECT_ID` n'est pas exporté (et est même retiré du shell) : le provider donne priorité à cette variable sur le `project_id` déclaré dans chaque stack, qui ciblerait alors le mauvais projet.
 
 Puis, pour un stack applicatif, reporter les valeurs produites par `platform` :
 
