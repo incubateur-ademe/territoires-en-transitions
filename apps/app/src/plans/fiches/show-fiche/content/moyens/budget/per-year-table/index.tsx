@@ -14,7 +14,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from '@tet/ui';
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
 import { BudgetPerYear } from '../../../../context/types';
 import { getYearsOptions } from '@/app/utils/get-years-options';
@@ -204,11 +204,10 @@ export const BudgetPerYearTable = ({
     columns,
     data: tableData,
     getRowId: (row) => row.id,
+    state: {
+      columnVisibility: { actions: !isReadonly },
+    },
   });
-
-  useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isReadonly);
-  }, [isReadonly, table]);
 
   return (
     <div className="p-2 bg-white rounded-lg border border-grey-3">

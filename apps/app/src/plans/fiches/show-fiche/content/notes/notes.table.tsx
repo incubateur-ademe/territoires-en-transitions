@@ -5,7 +5,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
@@ -46,8 +46,6 @@ export const NotesTable = ({
   onUpsertNote,
   onDeleteNote,
 }: NotesTableProps) => {
-  const [columnVisibility, setColumnVisibility] = useState({});
-
   const sortedNotes = useMemo(
     () =>
       [...notes].sort(
@@ -97,14 +95,9 @@ export const NotesTable = ({
     data: sortedNotes,
     getRowId: (row, index) => row.id?.toString() ?? `new-${index}`,
     state: {
-      columnVisibility,
+      columnVisibility: { actions: !isReadonly },
     },
-    onColumnVisibilityChange: setColumnVisibility,
   });
-
-  useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isReadonly);
-  }, [isReadonly, table]);
 
   const isEmpty = sortedNotes.length === 0;
 

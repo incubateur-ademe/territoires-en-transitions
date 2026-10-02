@@ -6,7 +6,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
@@ -99,8 +99,6 @@ export const SousActionTable = ({
   isReadOnly,
   emptyCard,
 }: Props) => {
-  const [columnVisibility, setColumnVisibility] = useState({});
-
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useTable({
@@ -110,19 +108,16 @@ export const SousActionTable = ({
     manualSorting: true,
     getRowId: (row) => row.id.toString(),
     state: {
-      columnVisibility,
+      columnVisibility: {
+        actions: !isReadOnly,
+        ...Object.fromEntries(
+          (hiddenColumns ?? []).map((column) => [column, false])
+        ),
+      },
       sorting,
     },
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
   });
-
-  useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isReadOnly);
-    hiddenColumns?.forEach((column) => {
-      table.getColumn(column)?.toggleVisibility(false);
-    });
-  }, [isReadOnly, table, hiddenColumns]);
 
   return (
     <div className="max-2xl:overflow-x-auto">
