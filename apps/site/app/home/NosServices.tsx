@@ -44,17 +44,40 @@ export const NosServices = () => (
       />
       <div className="px-4">
         <h3 className="font-bold text-primary-10 text-2xl">
-          L’outil opérationnel pour avancer de façon autonome et progressive.
+          La plateforme pour le pilotage des plans
         </h3>
         <p>
           Une plateforme numérique gratuite pour situer et évaluer votre
           collectivité sur l’avancée de sa transition écologique, définir des
           plans d’actions personnalisés, et piloter vos projets efficacement.
         </p>
-        <Button variant="outlined" href="/outil-numerique">
+        <Button variant="outlined" href="/plateforme-numerique">
           La plateforme numérique
         </Button>
-      </div>{' '}
+      </div>
+    </div>
+
+    <div className="flex flex-col lg:flex-row-reverse gap-4 lg:gap-24 items-center lg:items-start">
+      <Image
+        src="/pictogrammes/demarche-pcaet.svg"
+        alt=""
+        width={357}
+        height={309}
+      />
+      <div className="px-4">
+        <h3 className="font-bold text-primary-10 text-2xl">
+          La plateforme de dépôt réglementaire du PCAET
+        </h3>
+        <p>
+          Déposez votre Plan Climat-Air-Énergie Territorial, que votre démarche
+          soit obligatoire ou volontaire, et suivez chaque étape jusqu’à son
+          adoption. Vos documents sont centralisés et votre programme d’actions
+          est prêt à être piloté.
+        </p>
+        <Button variant="outlined" href="/demarche-pcaet">
+          En savoir plus
+        </Button>
+      </div>
     </div>
   </Section>
 );
