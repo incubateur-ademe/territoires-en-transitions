@@ -585,7 +585,7 @@ export const demarchesLabels = {
   instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
   instructionListeTitre: ({ deposeAvis }: { deposeAvis: boolean }) =>
     deposeAvis
-      ? 'Instructions dont je suis en charge'
+      ? 'Instructions dont la DREAL a la charge'
       : 'Dépôts PCAET que je suis',
   /**
    * Sans territoire : l'écran sert les cinq familles d'instructeurs, dont les
@@ -610,7 +610,7 @@ export const demarchesLabels = {
    */
   instructionListeIntitule: ({ deposeAvis }: { deposeAvis: boolean }) =>
     deposeAvis
-      ? 'Instructions dont je suis en charge'
+      ? 'Instructions dont la DREAL a la charge'
       : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   /**
