@@ -12,7 +12,9 @@
 #   1. sauvegarde localement l'ancien state (et celui de nonprod s'il existe) ;
 #   2. importe dans nonprod les ressources RDB/Redis, avec les IDs lus dans
 #      l'ancien state (aucun ID en dur dans le repo) ;
-#   3. les retire de l'ancien state, qui ne doit plus jamais les gérer.
+#   3. reporte tls_enabled sur le Redis importé, que l'import laisse à null
+#      (sinon le plan exige un remplacement, bloqué par prevent_destroy) ;
+#   4. les retire de l'ancien state, qui ne doit plus jamais les gérer.
 #
 # Il ne fait AUCUN apply. Le plan qui suit montre ce que l'apply changera, à
 # relire avant d'appliquer (cf. infra/README.md « Migration du state preprod ») :
@@ -125,6 +127,35 @@ for pair in "${_imports[@]}"; do
   fi
   _run terraform -chdir="${_nonprod}" import -input=false "${_to}" "${_id}"
 done
+
+# L'import Redis laisse tls_enabled à null dans le state (le provider ne le relit
+# pas), alors que l'attribut force le remplacement : le plan demanderait de
+# détruire le cluster, bloqué par prevent_destroy. On reporte la valeur de
+# l'ancien state.
+_redis_addr="module.redis.scaleway_redis_cluster.main"
+_redis_patch() {
+  local tmp="${_backup_dir}/nonprod.tls-patch.tfstate"
+  terraform -chdir="${_nonprod}" state pull |
+    jq --argjson tls "$1" '
+      (.resources[]
+       | select(.module == "module.redis" and .type == "scaleway_redis_cluster")
+       | .instances[0].attributes.tls_enabled) = $tls
+      | .serial += 1' >"${tmp}"
+  chmod 600 "${tmp}"
+  terraform -chdir="${_nonprod}" state push "${tmp}"
+}
+_old_tls="$(jq -r '
+  .resources[]
+  | select(.module == "module.redis" and .type == "scaleway_redis_cluster")
+  | .instances[0].attributes.tls_enabled' "${_old}")"
+_nonprod_tls="$(terraform -chdir="${_nonprod}" state pull | jq -r '
+  [.resources[]
+   | select(.module == "module.redis" and .type == "scaleway_redis_cluster")
+   | .instances[0].attributes.tls_enabled][0]')"
+if [ "${_nonprod_tls}" = "null" ] && [ -n "${_old_tls}" ] && [ "${_old_tls}" != "null" ]; then
+  echo "→ Report de tls_enabled=${_old_tls} sur ${_redis_addr}…"
+  _run _redis_patch "${_old_tls}"
+fi
 
 # Retrait de l'ancien state : un workspace jetable pointant sur l'ancien backend.
 echo "→ Retrait des ressources de l'ancien state (${_OLD_BUCKET}/${_OLD_KEY})…"
