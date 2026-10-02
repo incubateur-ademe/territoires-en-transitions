@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -16,7 +19,16 @@ import {
   type DemarchePcaetStatus,
   type PcaetPerimetreSaisine,
 } from '@tet/domain/demarches';
-import { and, eq, inArray, isNotNull, or, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  eq,
+  inArray,
+  isNotNull,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import { couvreLesCodesSql } from '../shared/perimetre-instructeur.columns';
@@ -25,7 +37,10 @@ import {
   ListDossiersInstructionError,
   ListDossiersInstructionErrorEnum,
 } from './list-dossiers-instruction.errors';
-import type { PerimetreRegion } from './list-dossiers-instruction.output';
+import type {
+  DossierInstructionPilote,
+  PerimetreRegion,
+} from './list-dossiers-instruction.output';
 
 /**
  * Les familles juridiques qui portent un PCAET, pour filtrer l'assiette en SQL.
@@ -272,5 +287,44 @@ export class ListDossiersInstructionRepository {
         ListDossiersInstructionErrorEnum.LIST_DOSSIERS_INSTRUCTION_ERROR
       );
     }
+  }
+
+  /**
+   * Les pilotes désignés sur chaque démarche, dans l'ordre où ils l'ont été :
+   * le premier est celui que l'écran met en avant et sur lequel porte le tri.
+   */
+  async listPilotesParDemarche(
+    demarcheIds: number[],
+    tx?: Transaction
+  ): Promise<Map<number, DossierInstructionPilote[]>> {
+    const parDemarche = new Map<number, DossierInstructionPilote[]>();
+    if (demarcheIds.length === 0) {
+      return parDemarche;
+    }
+
+    const db = tx ?? this.databaseService.db;
+    const rows = await db
+      .select({
+        demarcheId: demarchePiloteTable.demarcheId,
+        nom: sql<string>`CASE WHEN ${demarchePiloteTable.tagId} IS NOT NULL THEN ${personneTagTable.nom} ELSE ${createdByNom} END`,
+        email: sql<
+          string | null
+        >`CASE WHEN ${dcpTable.deleted} OR ${dcpTable.limited} THEN NULL ELSE ${dcpTable.email} END`,
+      })
+      .from(demarchePiloteTable)
+      .leftJoin(
+        personneTagTable,
+        eq(personneTagTable.id, demarchePiloteTable.tagId)
+      )
+      .leftJoin(dcpTable, eq(dcpTable.id, demarchePiloteTable.userId))
+      .where(inArray(demarchePiloteTable.demarcheId, demarcheIds))
+      .orderBy(asc(demarchePiloteTable.createdAt));
+
+    for (const { demarcheId, nom, email } of rows) {
+      const pilotes = parDemarche.get(demarcheId) ?? [];
+      pilotes.push({ nom: nom ?? '', email });
+      parDemarche.set(demarcheId, pilotes);
+    }
+    return parDemarche;
   }
 }

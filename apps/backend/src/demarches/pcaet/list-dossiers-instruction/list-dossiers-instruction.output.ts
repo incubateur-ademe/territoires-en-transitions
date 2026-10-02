@@ -7,14 +7,18 @@ import {
 } from '@tet/domain/demarches';
 import { z } from 'zod';
 
-export const dossierInstructionContactSchema = z.object({
-  prenom: z.string(),
+/**
+ * Un pilote de la démarche, tel que la collectivité l'a désigné. Un pilote
+ * saisi comme simple nom, sans compte sur la plateforme, n'a pas d'email ; un
+ * compte supprimé ou désactivé non plus.
+ */
+export const dossierInstructionPiloteSchema = z.object({
   nom: z.string(),
-  email: z.string(),
+  email: z.string().nullable(),
 });
 
-export type DossierInstructionContact = z.infer<
-  typeof dossierInstructionContactSchema
+export type DossierInstructionPilote = z.infer<
+  typeof dossierInstructionPiloteSchema
 >;
 
 /**
@@ -54,7 +58,8 @@ export const dossierInstructionLigneSchema = z.object({
     regionCode: z.string().nullable(),
     regionLibelle: z.string().nullable(),
   }),
-  contacts: dossierInstructionContactSchema.array(),
+  /** Vide quand la collectivité n'a aucune démarche PCAET. */
+  pilotes: dossierInstructionPiloteSchema.array(),
   /**
    * Ce dossier attend-il un avis de ce service, ou se contente-t-il de le lui
    * donner à lire ?

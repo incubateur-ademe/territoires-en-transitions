@@ -57,10 +57,10 @@ export const estRetenue = (
   return true;
 };
 
-/** Le tri porte-t-il sur une donnée que seuls les contacts apportent ? */
-export const trieSurLesContacts = (
+/** Le tri porte-t-il sur une donnée que seuls les pilotes apportent ? */
+export const trieSurLesPilotes = (
   sort: ListDossiersInstructionInput['sort']
-): boolean => sort === 'contact';
+): boolean => sort === 'pilote';
 
 export const trierDossiers = (
   lignes: DossierInstructionLigne[],
@@ -74,10 +74,8 @@ export const trierDossiers = (
     b: DossierInstructionLigne
   ) => a.collectivite.nom.localeCompare(b.collectivite.nom, 'fr');
 
-  const nomContact = (ligne: DossierInstructionLigne) => {
-    const contact = ligne.contacts[0];
-    return contact ? `${contact.prenom} ${contact.nom}` : null;
-  };
+  const nomPilote = (ligne: DossierInstructionLigne) =>
+    ligne.pilotes[0]?.nom ?? null;
 
   /**
    * Une date absente passe toujours en dernier, quel que soit le sens : une
@@ -115,9 +113,9 @@ export const trierDossiers = (
         pcaetStatutInstructionValues.indexOf(b.statut);
       return ecart === 0 ? parCollectivite(a, b) : sens * ecart;
     }
-    if (sort === 'contact') {
-      const nomA = nomContact(a);
-      const nomB = nomContact(b);
+    if (sort === 'pilote') {
+      const nomA = nomPilote(a);
+      const nomB = nomPilote(b);
       if (nomA === nomB) {
         return parCollectivite(a, b);
       }

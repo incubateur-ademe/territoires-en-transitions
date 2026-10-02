@@ -137,8 +137,8 @@ const PiloteHeader = () => {
   return (
     <TableHeaderCell
       title={appLabels.instructionListeColonnePilotes}
-      sortFn={() => trierPar('contact')}
-      sortDirection={sort === 'contact' ? direction : null}
+      sortFn={() => trierPar('pilote')}
+      sortDirection={sort === 'pilote' ? direction : null}
     />
   );
 };

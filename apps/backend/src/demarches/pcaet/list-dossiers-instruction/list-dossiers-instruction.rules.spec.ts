@@ -26,7 +26,7 @@ const ligne = (
       regionCode: '44',
       regionLibelle: 'Grand Est',
     },
-    contacts: [],
+    pilotes: [],
     deposeAvis: true,
     statut: PcaetStatutInstructionEnum.EN_INSTRUCTION,
     obligation: DemarchePcaetObligationEnum.OBLIGATOIRE,
@@ -204,20 +204,18 @@ describe('trierDossiers', () => {
     ]);
   });
 
-  it('trie par contact, les lignes sans contact en dernier', () => {
-    const contact = (nom: string) => [
-      { prenom: 'Zoe', nom, email: `${nom}@test.fr` },
-    ];
+  it('trie par premier pilote, les lignes sans pilote en dernier', () => {
+    const pilote = (nom: string) => [{ nom, email: null }];
     const lignes = [
-      ligne({ nom: 'Sans contact', contacts: [] }),
-      ligne({ nom: 'Second', contacts: contact('Martin') }),
-      ligne({ nom: 'Premier', contacts: contact('Bernard') }),
+      ligne({ nom: 'Sans pilote', pilotes: [] }),
+      ligne({ nom: 'Second', pilotes: pilote('Zoe Martin') }),
+      ligne({ nom: 'Premier', pilotes: pilote('Alice Bernard') }),
     ];
 
-    expect(noms(trierDossiers(lignes, 'contact', 'asc'))).toEqual([
+    expect(noms(trierDossiers(lignes, 'pilote', 'asc'))).toEqual([
       'Premier',
       'Second',
-      'Sans contact',
+      'Sans pilote',
     ]);
   });
 

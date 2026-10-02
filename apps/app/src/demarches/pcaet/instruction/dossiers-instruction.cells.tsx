@@ -86,11 +86,9 @@ export const EcheanceCell = ({ dossier }: { dossier: Dossier }) => {
   );
 };
 
-/** Qui porte le PCAET dans la collectivité déposante, et comment le relancer. */
+/** Les pilotes désignés sur la démarche, et comment les joindre. */
 export const PiloteCell = ({ dossier }: { dossier: Dossier }) => {
-  const pilote = dossier.contacts[0];
-
-  if (!pilote) {
+  if (dossier.pilotes.length === 0) {
     return (
       <span
         className="text-grey-6"
@@ -102,15 +100,21 @@ export const PiloteCell = ({ dossier }: { dossier: Dossier }) => {
   }
 
   return (
-    <div className="flex flex-col">
-      <span className="text-primary-9">{`${pilote.prenom} ${pilote.nom}`}</span>
-      <a
-        href={`mailto:${pilote.email}`}
-        className="text-primary-7 hover:underline truncate"
-      >
-        {pilote.email}
-      </a>
-    </div>
+    <ul className="m-0 flex list-none flex-col gap-2 p-0">
+      {dossier.pilotes.map((pilote, index) => (
+        <li key={`${pilote.nom}-${index}`} className="flex flex-col p-0">
+          <span className="text-primary-9">{pilote.nom}</span>
+          {pilote.email && (
+            <a
+              href={`mailto:${pilote.email}`}
+              className="text-primary-7 hover:underline truncate"
+            >
+              {pilote.email}
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 };
 

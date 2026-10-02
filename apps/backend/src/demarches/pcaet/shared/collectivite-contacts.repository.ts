@@ -18,9 +18,9 @@ export type CollectiviteContact = {
  * À qui s'adresser dans une collectivité : ses membres actifs, par défaut ses
  * seuls administrateurs.
  *
- * Partagé entre le suivi d'instruction, qui affiche les administrateurs de la
- * déposante pour permettre une relance, et les notifications, qui écrivent
- * selon les cas aux administrateurs ou à tous les membres d'un service saisi.
+ * Sert aux notifications, qui écrivent selon les cas aux administrateurs ou à
+ * tous les membres d'un service saisi. Le suivi d'instruction, lui, affiche
+ * les pilotes de la démarche, pas ces contacts.
  */
 @Injectable()
 export class CollectiviteContactsRepository {
@@ -61,8 +61,7 @@ export class CollectiviteContactsRepository {
           eq(dcpTable.deleted, false)
         )
       )
-      // Le premier contact tient lieu de pilote : sans ordre, il changerait
-      // d'un appel à l'autre.
+      // Sans ordre, la liste changerait d'un appel à l'autre.
       .orderBy(asc(dcpTable.nom), asc(dcpTable.prenom), asc(dcpTable.email));
 
     const parCollectivite = new Map<number, CollectiviteContact[]>();
