@@ -1,6 +1,6 @@
 'use client';
 
-import { captureException } from '@/app/utils/sentry/sentry-client.lazy';
+import { captureException } from '@/app/utils/error-tracking/capture-exception';
 import NextError from 'next/error';
 import { useEffect } from 'react';
 

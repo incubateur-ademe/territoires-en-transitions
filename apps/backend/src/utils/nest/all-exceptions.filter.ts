@@ -1,5 +1,5 @@
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
+import { captureException } from '@tet/backend/utils/error-tracking/capture-exception';
 import {
   ArgumentsHost,
   Catch,
@@ -8,7 +8,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import * as Sentry from '@sentry/nestjs';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Request, Response } from 'express';
 import { getErrorCode } from './errors.utils';
@@ -54,13 +53,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     this.logger.error(getErrorMessage(exception));
     this.logger.error(exception);
 
-    // report it to sentry with context
-    Sentry.captureException(
-      exception,
-      getSentryContextFromApplicationContext(
-        this.contextStoreService.getContext()
-      )
-    );
+    // remontée dans Sentry et PostHog, avec le contexte de la requête
+    captureException(exception, this.contextStoreService.getContext());
 
     const httpErrorResponse = {
       ...getHttpErrorResponse(exception),

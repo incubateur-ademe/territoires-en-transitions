@@ -1,7 +1,7 @@
+import { captureServerException } from '@/app/utils/error-tracking/capture-exception.server';
 import { buildSignupWithOidcUrl } from '@/app/users/authentications/oidc/create-user-with-oidc/create-user-with-oidc.urls';
 import { SignupPageClient } from '@/app/users/authentications/signup-user/signup.view';
 import { trpcInServerFunction } from '@tet/api/utils/trpc/trpc-server-client';
-import * as Sentry from '@sentry/nextjs';
 import { redirect } from 'next/navigation';
 
 /**
@@ -54,7 +54,7 @@ async function getSignupOidcUrl(redirectTo: string): Promise<string | null> {
 function logDegradedSignup(cause: string) {
   const message = `Création de compte en mode dégradé (email + mot de passe) — ${cause}`;
   console.error(message);
-  Sentry.captureMessage(message, 'warning');
+  void captureServerException(new Error(message));
 }
 
 /**

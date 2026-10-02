@@ -27,12 +27,11 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   const supabaseUrl = process.env.SUPABASE_URL ?? '';
   const supabaseWsUrl = supabaseUrl.replace('http', 'ws');
   const backendUrl = process.env.BACKEND_URL ?? '';
-  const posthogHost = process.env.POSTHOG_HOST ?? '';
+  const posthogSource = getPostHogSource(process.env.POSTHOG_HOST ?? '');
   const crispUrl = 'https://*.crisp.chat';
   const crispHelpdeskUrl = 'https://*.crisp.help';
   // Domaine custom du helpdesk Crisp (iframe « Aide »)
   const aideUrl = 'https://aide.territoiresentransitions.fr';
-  const sentryOrigin = getSentryOrigin();
   const rootDomain = getRootDomain(url.hostname);
 
   const cspHeader = `
@@ -40,7 +39,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
     img-src 'self' blob: data: ${supabaseUrl} ${crispUrl};
     font-src 'self' data: ${crispUrl};
     media-src 'self' data: ${crispUrl};
-    script-src ${scriptSrc} ${posthogHost} ${crispUrl};
+    script-src ${scriptSrc} ${posthogSource} ${crispUrl};
     style-src ${styleSrc} ${crispUrl};
     object-src 'none';
     worker-src 'self' blob: ${crispUrl};
@@ -49,8 +48,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
       ${supabaseWsUrl}
       *.${rootDomain}
       ${backendUrl}
-      ${posthogHost}
-      ${sentryOrigin}
+      ${posthogSource}
       ${crispUrl}
       wss://*.relay.crisp.chat
       wss://*.relay.rescue.crisp.chat;
@@ -70,16 +68,19 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
 }
 
 /**
- * Origine du serveur Sentry (collecte des erreurs + Session Replay), déduite du
- * DSN. Renvoie une chaîne vide si le DSN est absent ou invalide.
+ * Source PostHog autorisée pour les scripts et les requêtes, selon la doc
+ * PostHog (posthog.com/docs/advanced/content-security-policy) :
+ * - hôte PostHog cloud : `https://*.posthog.com`, car PostHog peut changer les
+ *   sous-domaines qui servent ses scripts (ex. `eu-assets.i.posthog.com`) ;
+ * - reverse proxy : son origine seule, qui sert alors aussi les scripts.
+ * Renvoie une chaîne vide si l'hôte est absent ou invalide.
  */
-function getSentryOrigin(): string {
-  const dsn = process.env.SENTRY_DSN;
-  if (!dsn) {
-    return '';
-  }
+function getPostHogSource(host: string): string {
   try {
-    return new URL(dsn).origin;
+    const { hostname, origin } = new URL(host);
+    return hostname === 'posthog.com' || hostname.endsWith('.posthog.com')
+      ? 'https://*.posthog.com'
+      : origin;
   } catch {
     return '';
   }

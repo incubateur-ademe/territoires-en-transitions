@@ -4,8 +4,8 @@ import { getPublicEnv, PUBLIC_ENV_GLOBAL } from '@tet/api/public-env';
  * Publie la configuration runtime dans le HTML, à destination du navigateur.
  *
  * Rendu comme premier enfant de `<body>` : le script s'exécute pendant le
- * parsing du document, donc avant les bundles Next (chargés en fin de `<body>`)
- * et avant `instrumentation-client.ts`. Tout code applicatif peut donc
+ * parsing du document, donc avant les bundles Next (chargés en fin de `<body>`).
+ * Tout code applicatif peut donc
  * s'appuyer sur `getPublicEnv()` dès son premier accès.
  *
  * Le `nonce` est obligatoire : la CSP est en `strict-dynamic`, ce qui neutralise
