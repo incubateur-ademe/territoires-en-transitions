@@ -599,6 +599,10 @@ terraform -chdir=infra/nonprod apply tfplan
 terraform -chdir=infra/nonprod output -raw pg_private_connection_uri
 ```
 
+Le script reporte aussi `tls_enabled` de l'ancien state sur le Redis importé :
+`terraform import` le laisse à `null`, et cet attribut force le remplacement — le plan
+réclamerait alors de détruire le cluster, ce que `prevent_destroy` refuse.
+
 Le script sauvegarde les deux states dans `infra/.state-backups/` (gitignoré, `0600`)
 avant toute modification. Retour arrière avant l'apply : `terraform state push` de ces
 copies.
