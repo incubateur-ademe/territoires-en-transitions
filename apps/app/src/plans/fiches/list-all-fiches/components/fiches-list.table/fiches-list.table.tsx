@@ -5,7 +5,6 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
@@ -154,16 +153,21 @@ export const FichesListTable = ({
   enableSelection = true,
   ...selectionProps
 }: Props) => {
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const showUnlinkColumn = !!onUnlink;
 
   const table = useTable({
     features,
     columns,
     data: fiches,
     state: {
-      columnVisibility,
+      columnVisibility: {
+        select: enableSelection && isGroupedActionsOn,
+        unlink: showUnlinkColumn,
+        actions:
+          hasCollectivitePermission('plans.fiches.update') &&
+          !showUnlinkColumn,
+      },
     },
-    onColumnVisibilityChange: setColumnVisibility,
     meta: {
       selectedFicheIds:
         enableSelection && 'selectedFicheIds' in selectionProps
@@ -176,23 +180,6 @@ export const FichesListTable = ({
       onUnlink,
     },
   });
-
-  useEffect(() => {
-    const showUnlinkColumn = !!onUnlink;
-    const showActionsColumn =
-      hasCollectivitePermission('plans.fiches.update') && !showUnlinkColumn;
-    table
-      .getColumn('select')
-      ?.toggleVisibility(enableSelection && isGroupedActionsOn);
-    table.getColumn('unlink')?.toggleVisibility(showUnlinkColumn);
-    table.getColumn('actions')?.toggleVisibility(showActionsColumn);
-  }, [
-    hasCollectivitePermission,
-    enableSelection,
-    isGroupedActionsOn,
-    onUnlink,
-    table,
-  ]);
 
   return (
     <div className="max-xl:overflow-x-auto">
