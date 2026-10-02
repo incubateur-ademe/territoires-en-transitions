@@ -30,6 +30,3 @@ override.tf.json
 # Crash logs
 crash.log
 crash.*.log
-
-# Sauvegardes locales de states (scripts/migrate-preprod-state.sh)
-.state-backups/
