@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
@@ -89,13 +89,16 @@ export const AiImportForm = ({
     },
   });
 
-  const selectFile = (selectedFile: File | undefined) => {
-    if (!selectedFile) {
-      return;
-    }
-    setValue('file', selectedFile, { shouldValidate: true });
-    setValue('withVerifications', selectedFile.type === PDF_MIME_TYPE);
-  };
+  const selectFile = useCallback(
+    (selectedFile: File | undefined) => {
+      if (!selectedFile) {
+        return;
+      }
+      setValue('file', selectedFile, { shouldValidate: true });
+      setValue('withVerifications', selectedFile.type === PDF_MIME_TYPE);
+    },
+    [setValue]
+  );
 
   const { data: suggestedFile, isLoading: isLoadingSuggestedFile } =
     useGetDocumentFile({ collectiviteId, fichierId: defaults?.fichierId });
@@ -110,7 +113,7 @@ export const AiImportForm = ({
     if (getValues('file') === undefined && isAcceptedFile(suggestedFile)) {
       selectFile(suggestedFile);
     }
-  });
+  }, [suggestedFile, getValues, selectFile]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
