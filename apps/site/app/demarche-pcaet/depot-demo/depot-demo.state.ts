@@ -1,72 +1,70 @@
 import {
-  borner,
-  estEntre,
-  getJalonCourant,
-  getProgression,
-} from '@/site/components/demo-animee/timeline';
+  clamp,
+  getCurrentKeyframe,
+  getProgress,
+  isBetween,
+} from '@/site/components/animated-demo/timeline';
 import {
-  ADOPTION,
+  ADOPT_BUTTON,
+  ADOPTION_TIME,
   AVIS,
-  BOUTON_ADOPTER,
-  CLICS,
-  CONFETTIS,
-  COURRIER,
+  CLICK_DURATION,
+  CLICKS,
+  CONFETTI,
   DOCUMENTS,
-  DUREE_CLIC,
-  ECRANS,
+  ELABORATION_SUB_STEPS,
   ETAPES,
-  IMPORT_PROGRAMME,
+  GES_VALUES,
   INCLUSIONS,
-  SECTEURS,
-  SOUS_ETAPES_ELABORATION,
-  VALEURS_GES,
+  MAIL,
+  PROGRAMME_IMPORT,
+  SCREENS,
+  SECTORS,
   VOLETS,
   VULNERABILITE,
-  getEcritureObjectif,
-  getInstantNiveau,
-} from './demo-depot.scenario';
+  getNiveauInputTime,
+  getObjectifTyping,
+} from './depot-demo.scenario';
 
-export type PhaseDepot = 'vide' | 'vol' | 'envoi' | 'depose';
-export type PhaseImport = 'attente' | 'vol' | 'chargement' | 'termine';
-export type StatutVolet = 'complete' | 'a-completer' | 'optionnel';
-export type EtatEtape = 'faite' | 'active' | 'a-venir';
+export type UploadPhase = 'empty' | 'flying' | 'uploading' | 'uploaded';
+export type ImportPhase = 'idle' | 'flying' | 'loading' | 'done';
+export type VoletStatus = 'complete' | 'todo' | 'optional';
+export type EtapeStatus = 'done' | 'active' | 'upcoming';
 
 /** Temps de vol puis d'envoi d'un document déposé. */
-const DUREE_VOL = 0.5;
-const DUREE_ENVOI = 0.9;
+const FLY_DURATION = 0.5;
+const UPLOAD_DURATION = 0.9;
 
-const getPhaseDepot = (temps: number, instant: number): PhaseDepot => {
-  if (temps < instant) return 'vide';
-  if (temps < instant + DUREE_VOL) return 'vol';
-  if (temps < instant + DUREE_VOL + DUREE_ENVOI) return 'envoi';
-  return 'depose';
+const getUploadPhase = (time: number, at: number): UploadPhase => {
+  if (time < at) return 'empty';
+  if (time < at + FLY_DURATION) return 'flying';
+  if (time < at + FLY_DURATION + UPLOAD_DURATION) return 'uploading';
+  return 'uploaded';
 };
 
-const getPhaseImport = (temps: number): PhaseImport => {
-  if (temps < IMPORT_PROGRAMME.vol) return 'attente';
-  if (temps < IMPORT_PROGRAMME.chargement) return 'vol';
-  if (temps < IMPORT_PROGRAMME.termine) return 'chargement';
-  return 'termine';
+const getImportPhase = (time: number): ImportPhase => {
+  if (time < PROGRAMME_IMPORT.flyAt) return 'idle';
+  if (time < PROGRAMME_IMPORT.loadingAt) return 'flying';
+  if (time < PROGRAMME_IMPORT.doneAt) return 'loading';
+  return 'done';
 };
 
-const GLYPHES = '0123456789#%&@';
+const GLYPHS = '0123456789#%&@';
 
 /** Les chiffres « défilent » le temps de leur saisie, avant la vraie valeur. */
-const brouiller = (valeur: number, graine: number, temps: number) =>
+const scramble = (value: number, seed: number, time: number) =>
   Array.from(
-    String(valeur),
+    String(value),
     (_, index) =>
-      GLYPHES[
-        (graine * 7 + index * 13 + Math.floor(temps * 40)) % GLYPHES.length
-      ]
+      GLYPHS[(seed * 7 + index * 13 + Math.floor(time * 40)) % GLYPHS.length]
   ).join('');
 
 /** Valeurs plausibles des volets autres que GES, déterministes. */
-const getValeursVolet = (indexVolet: number) =>
-  indexVolet === 0
-    ? VALEURS_GES
-    : SECTEURS.map((_, ligne) => {
-        const base = 40 + (((ligne + 3) * 131 * (indexVolet + 1)) % 900);
+const getVoletValues = (voletIndex: number) =>
+  voletIndex === 0
+    ? GES_VALUES
+    : SECTORS.map((_, row) => {
+        const base = 40 + (((row + 3) * 131 * (voletIndex + 1)) % 900);
         return [
           base,
           Math.round(base * 0.8),
@@ -75,187 +73,188 @@ const getValeursVolet = (indexVolet: number) =>
         ];
       });
 
-const getDiagnostic = (temps: number) => {
-  const indexVolet = VOLETS.reduce(
-    (courant, volet, index) => (temps >= volet.ouverture ? index : courant),
+const getDiagnostic = (time: number) => {
+  const activeIndex = VOLETS.reduce(
+    (current, volet, index) => (time >= volet.openAt ? index : current),
     0
   );
   const volets = VOLETS.map((volet, index) => {
-    const statut: StatutVolet =
-      temps >= volet.completion
+    const status: VoletStatus =
+      time >= volet.completedAt
         ? 'complete'
-        : volet.optionnel
-        ? 'optionnel'
-        : 'a-completer';
-    return { ...volet, actif: index === indexVolet, statut };
+        : volet.optional
+        ? 'optional'
+        : 'todo';
+    return { ...volet, isActive: index === activeIndex, status };
   });
+  const activeVolet = volets[activeIndex];
 
   // Le premier volet se saisit lentement, ligne par ligne ; les suivants d'un coup.
-  const premierVolet = indexVolet === 0;
-  const dureeSaisie = premierVolet ? 0.25 : 0.12;
-  const valeurs = getValeursVolet(indexVolet);
-  const lignes = SECTEURS.map((secteur, ligne) => {
-    const revelation = (colonne: number) =>
-      premierVolet
-        ? 7.0 + ligne * 0.22 + colonne * 0.05
-        : VOLETS[indexVolet].ouverture + 0.05 + ligne * 0.02 + colonne * 0.01;
+  const isFirstVolet = activeIndex === 0;
+  const inputDuration = isFirstVolet ? 0.25 : 0.12;
+  const values = getVoletValues(activeIndex);
+  const rows = SECTORS.map((sector, row) => {
+    const revealAt = (column: number) =>
+      isFirstVolet
+        ? 7.0 + row * 0.22 + column * 0.05
+        : activeVolet.openAt + 0.05 + row * 0.02 + column * 0.01;
     return {
-      secteur,
-      active: temps >= revelation(0),
-      cellules: valeurs[ligne].map((valeur, colonne) => {
-        const debut = revelation(colonne);
-        const enSaisie = estEntre(temps, debut, debut + dureeSaisie);
+      sector,
+      isActive: time >= revealAt(0),
+      cells: values[row].map((value, column) => {
+        const start = revealAt(column);
+        const isTyping = isBetween(time, start, start + inputDuration);
         return {
-          enSaisie,
-          texte:
-            temps >= debut + dureeSaisie
-              ? String(valeur)
-              : enSaisie
-              ? brouiller(valeur, ligne * 4 + colonne, temps)
+          isTyping,
+          text:
+            time >= start + inputDuration
+              ? String(value)
+              : isTyping
+              ? scramble(value, row * 4 + column, time)
               : '',
         };
       }),
     };
   });
 
-  const voletActif = volets[indexVolet];
   const vulnerabilite =
-    voletActif.nature === 'vulnerabilite'
-      ? VULNERABILITE.thematiques.map(({ nom, niveaux }, ligne) => ({
-          nom,
-          niveaux: niveaux.map((niveau, colonne) =>
-            temps >= getInstantNiveau(ligne, colonne) ? niveau : null
-          ),
-          objectif: getProgression(
-            temps,
-            getEcritureObjectif(ligne).debut,
-            getEcritureObjectif(ligne).duree
-          ),
-        }))
+    activeVolet.kind === 'vulnerabilite'
+      ? VULNERABILITE.thematiques.map(({ name, niveaux }, row) => {
+          const typing = getObjectifTyping(row);
+          return {
+            name,
+            niveaux: niveaux.map((niveau, column) =>
+              time >= getNiveauInputTime(row, column) ? niveau : null
+            ),
+            objectifProgress: getProgress(time, typing.start, typing.duration),
+          };
+        })
       : null;
 
-  return { volets, voletActif, lignes, vulnerabilite };
+  return { volets, activeVolet, rows, vulnerabilite };
 };
 
-const getDocuments = (temps: number) => {
-  let rangInclusion = 0;
+const getDocuments = (time: number) => {
+  let inclusionRank = 0;
   const documents = DOCUMENTS.map((document) => {
-    if (document.depot) {
+    if (document.upload) {
       return {
         ...document,
-        phase: getPhaseDepot(temps, document.depot.instant),
-        progression: getProgression(
-          temps,
-          document.depot.instant + DUREE_VOL,
-          DUREE_ENVOI
+        phase: getUploadPhase(time, document.upload.at),
+        progress: getProgress(
+          time,
+          document.upload.at + FLY_DURATION,
+          UPLOAD_DURATION
         ),
-        inclus: false,
+        isIncluded: false,
       };
     }
-    const inclus = temps >= INCLUSIONS.debut + rangInclusion * INCLUSIONS.pas;
-    rangInclusion += 1;
-    return { ...document, phase: null, progression: 0, inclus };
+    const isIncluded =
+      time >= INCLUSIONS.start + inclusionRank * INCLUSIONS.step;
+    inclusionRank += 1;
+    return { ...document, phase: null, progress: 0, isIncluded };
   });
-  const inclusions = documents.filter(({ depot }) => !depot);
+  const inclusions = documents.filter(({ upload }) => !upload);
   return {
     documents,
     inclusions: {
-      faites: inclusions.filter(({ inclus }) => inclus).length,
+      done: inclusions.filter(({ isIncluded }) => isIncluded).length,
       total: inclusions.length,
     },
   };
 };
 
-/** Tout ce qu'affiche la démo à l'instant de scène `temps`. */
-export const getEtatDemoDepot = (temps: number) => {
-  const ecran = getJalonCourant(
-    ECRANS.map((item) => ({ ...item, instant: item.debut })),
-    temps
-  ).ecran;
+/** Tout ce qu'affiche la démo à l'instant de scène `time`. */
+export const getDepotDemoState = (time: number) => {
+  const screen = getCurrentKeyframe(
+    SCREENS.map((item) => ({ ...item, at: item.start })),
+    time
+  ).screen;
 
   const etapes = ETAPES.map((etape) => {
-    const faite = temps >= etape.fin;
-    const active = !faite && temps >= etape.debut;
-    const etat: EtatEtape = faite ? 'faite' : active ? 'active' : 'a-venir';
-    return {
-      ...etape,
-      etat,
-    };
+    const isDone = time >= etape.end;
+    const status: EtapeStatus = isDone
+      ? 'done'
+      : time >= etape.start
+      ? 'active'
+      : 'upcoming';
+    return { ...etape, status };
   });
 
-  const avisRecus = AVIS.map((avis) => ({
-    ...avis,
-    recu: temps >= avis.reception,
-  }));
-  const phaseImport = getPhaseImport(temps);
-  const validable = temps >= IMPORT_PROGRAMME.validation;
-  const adoptable = estEntre(temps, BOUTON_ADOPTER.apparition, ADOPTION);
-  const adopte = temps >= ADOPTION;
+  const importPhase = getImportPhase(time);
+  const canValidate = time >= PROGRAMME_IMPORT.validatedAt;
+  const canAdopt = isBetween(time, ADOPT_BUTTON.appearsAt, ADOPTION_TIME);
 
-  const boutonPrincipal =
-    ecran === 'documents' || ecran === 'diagnostic'
-      ? { libelle: 'Étape suivante', actif: true, visible: true }
-      : ecran === 'programme'
+  const primaryButton =
+    screen === 'documents' || screen === 'diagnostic'
+      ? { label: 'Étape suivante', enabled: true, visible: true }
+      : screen === 'programme'
       ? {
-          libelle: 'Valider le dépôt pour avis',
-          actif: validable,
+          label: 'Valider le dépôt pour avis',
+          enabled: canValidate,
           visible: true,
         }
-      : { libelle: 'Adopter le PCAET', actif: true, visible: adoptable };
+      : { label: 'Adopter le PCAET', enabled: true, visible: canAdopt };
 
   return {
-    ecran,
-    clic: CLICS.some((clic) => estEntre(temps, clic, clic + DUREE_CLIC)),
-    ...getDocuments(temps),
-    ...getDiagnostic(temps),
+    screen,
+    isClicking: CLICKS.some((click) =>
+      isBetween(time, click, click + CLICK_DURATION)
+    ),
+    ...getDocuments(time),
+    ...getDiagnostic(time),
     programme: {
-      phaseImport,
-      planRattache: phaseImport === 'termine',
-      nombreActions: borner(
+      importPhase,
+      isPlanLinked: importPhase === 'done',
+      actionCount: clamp(
         Math.round(
-          ((temps - IMPORT_PROGRAMME.termine) / 0.5) *
-            IMPORT_PROGRAMME.nombreActions
+          ((time - PROGRAMME_IMPORT.doneAt) / 0.5) *
+            PROGRAMME_IMPORT.actionCount
         ),
         0,
-        IMPORT_PROGRAMME.nombreActions
+        PROGRAMME_IMPORT.actionCount
       ),
-      verifie: temps >= IMPORT_PROGRAMME.verification,
-      validable,
+      isVerified: time >= PROGRAMME_IMPORT.verifiedAt,
+      canValidate,
     },
     etapes,
-    etapeCourante:
-      etapes.find(({ etat }) => etat === 'active') ?? etapes[etapes.length - 1],
-    enElaboration: etapes[0].etat === 'active',
-    sousEtapes: SOUS_ETAPES_ELABORATION.map((sousEtape) => ({
-      ...sousEtape,
-      faite: temps >= sousEtape.completion,
-      courante: sousEtape.ecran === ecran,
+    currentEtape:
+      etapes.find(({ status }) => status === 'active') ??
+      etapes[etapes.length - 1],
+    isElaborating: etapes[0].status === 'active',
+    subSteps: ELABORATION_SUB_STEPS.map((subStep) => ({
+      ...subStep,
+      isDone: time >= subStep.completedAt,
+      isCurrent: subStep.screen === screen,
     })),
     avis: {
-      titre:
-        temps < ETAPES[2].debut
+      title:
+        time < ETAPES[2].start
           ? 'Transmis pour avis'
-          : temps < ADOPTION
+          : time < ADOPTION_TIME
           ? 'Consultation des avis et délibération'
           : 'Adoption',
-      sousTitre:
-        temps < ETAPES[2].debut
+      subtitle:
+        time < ETAPES[2].start
           ? 'Votre dossier a été transmis au conseil régional et au préfet de région.'
-          : temps < ADOPTION
+          : time < ADOPTION_TIME
           ? 'Les avis sont arrivés. Consultez-les, puis adoptez votre plan.'
           : 'Votre plan est adopté. Place au pilotage de vos actions.',
-      courrierArrive: temps >= COURRIER.arrivee,
-      courrierOuvert: temps >= COURRIER.ouverture,
-      rapportSortant: AVIS.find(({ sortie, reception }) =>
-        estEntre(temps, sortie, reception)
+      mailArrived: time >= MAIL.arrivesAt,
+      mailOpened: time >= MAIL.opensAt,
+      outgoingReport: AVIS.find(({ outAt, receivedAt }) =>
+        isBetween(time, outAt, receivedAt)
       ),
-      recus: avisRecus,
-      adoptable,
-      adopte,
+      received: AVIS.map((avis) => ({
+        ...avis,
+        isReceived: time >= avis.receivedAt,
+      })),
+      canAdopt,
+      isAdopted: time >= ADOPTION_TIME,
     },
-    boutonPrincipal,
-    confettis: estEntre(temps, CONFETTIS.debut, CONFETTIS.fin),
+    primaryButton,
+    showConfetti: isBetween(time, CONFETTI.start, CONFETTI.end),
   };
 };
 
-export type EtatDemoDepot = ReturnType<typeof getEtatDemoDepot>;
+export type DepotDemoState = ReturnType<typeof getDepotDemoState>;

@@ -1,63 +1,63 @@
 /**
  * Outils purs des démos scénarisées. Une démo se décrit en « temps de scène » :
  * l'instant où chaque chose se produit. Le « temps réel » de lecture y ajoute
- * des pauses de lecture, pour laisser le temps de lire un écran terminé.
+ * des pauses, pour laisser le temps de lire un écran terminé.
  */
 
 export type Timeline = {
   /** Durée réelle d'une boucle, pauses comprises, en secondes. */
-  duree: number;
-  versScene: (tempsReel: number) => number;
-  versReel: (tempsScene: number) => number;
+  duration: number;
+  toScene: (realTime: number) => number;
+  toReal: (sceneTime: number) => number;
 };
 
-export const creerTimeline = ({
-  duree,
-  pauses,
-  dureePause,
+export const createTimeline = ({
+  duration,
+  holds,
+  holdDuration,
 }: {
-  duree: number;
+  duration: number;
   /** Instants de scène, croissants, où la lecture marque une pause. */
-  pauses: readonly number[];
-  dureePause: number;
+  holds: readonly number[];
+  holdDuration: number;
 }): Timeline => ({
-  duree,
-  versScene: (tempsReel) => {
-    let decalage = 0;
-    for (const pause of pauses) {
-      const debutReel = pause + decalage;
-      if (tempsReel < debutReel) break;
-      if (tempsReel < debutReel + dureePause) return pause;
-      decalage += dureePause;
+  duration,
+  toScene: (realTime) => {
+    let offset = 0;
+    for (const hold of holds) {
+      const realStart = hold + offset;
+      if (realTime < realStart) break;
+      if (realTime < realStart + holdDuration) return hold;
+      offset += holdDuration;
     }
-    return tempsReel - decalage;
+    return realTime - offset;
   },
-  versReel: (tempsScene) => {
-    let decalage = 0;
-    for (const pause of pauses) {
-      if (tempsScene <= pause) break;
-      decalage += dureePause;
+  toReal: (sceneTime) => {
+    let offset = 0;
+    for (const hold of holds) {
+      if (sceneTime <= hold) break;
+      offset += holdDuration;
     }
-    return tempsScene + decalage;
+    return sceneTime + offset;
   },
 });
 
-export const borner = (valeur: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, valeur));
+export const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, value));
 
-export const estEntre = (temps: number, debut: number, fin: number) =>
-  temps >= debut && temps < fin;
+export const isBetween = (time: number, start: number, end: number) =>
+  time >= start && time < end;
 
-/** Avancement de 0 à 1 d'une action qui commence à `debut` et dure `duree`. */
-export const getProgression = (temps: number, debut: number, duree: number) =>
-  borner((temps - debut) / duree, 0, 1);
+/** Avancement de 0 à 1 d'une action qui commence à `start` et dure `duration`. */
+export const getProgress = (time: number, start: number, duration: number) =>
+  clamp((time - start) / duration, 0, 1);
 
-/** Dernier point dont l'instant est atteint (jalons triés par instant). */
-export const getJalonCourant = <T extends { instant: number }>(
-  jalons: readonly T[],
-  temps: number
+/** Dernier jalon atteint (jalons triés par instant). */
+export const getCurrentKeyframe = <T extends { at: number }>(
+  keyframes: readonly T[],
+  time: number
 ): T =>
-  jalons.reduce(
-    (courant, jalon) => (temps >= jalon.instant ? jalon : courant),
-    jalons[0]
+  keyframes.reduce(
+    (current, keyframe) => (time >= keyframe.at ? keyframe : current),
+    keyframes[0]
   );

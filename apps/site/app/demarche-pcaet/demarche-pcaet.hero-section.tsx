@@ -2,13 +2,12 @@ import Section from '@/site/components/sections/Section';
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
 import { Button } from '@tet/ui';
-import { DemarchePcaetSchemaAnime } from './demarche-pcaet.schema-anime';
+import { DemarchePcaetAnimatedDiagram } from './demarche-pcaet.animated-diagram';
+import { getDepotEntryUrl } from './demarche-pcaet.data';
 
 export const DemarchePcaetHeroSection = () => {
   const appUrl = ENV.app_url ?? '';
-  // Le site ignore la collectivité de l'utilisateur : l'app la résout après la
-  // connexion, via son raccourci `/collectivite/demarche-pcaet`.
-  const depotAuthPaths = getAuthPaths(`${appUrl}/collectivite/demarche-pcaet`);
+  const depotAuthPaths = getAuthPaths(getDepotEntryUrl());
   const authPaths = getAuthPaths(appUrl);
 
   return (
@@ -48,7 +47,7 @@ export const DemarchePcaetHeroSection = () => {
             </Button>
           </div>
         </div>
-        <DemarchePcaetSchemaAnime />
+        <DemarchePcaetAnimatedDiagram />
       </div>
     </Section>
   );

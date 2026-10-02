@@ -1,10 +1,7 @@
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
 import { Accordion, Button } from '@tet/ui';
-import {
-  AIDE_DEMARCHE_PCAET_URL,
-  QUESTIONS_FREQUENTES,
-} from './demarche-pcaet.data';
+import { FAQ_ITEMS, PCAET_HELP_URL } from './demarche-pcaet.data';
 
 export const DemarchePcaetFAQSection = () => (
   <Section
@@ -13,11 +10,11 @@ export const DemarchePcaetFAQSection = () => (
   >
     <TitreSection>Questions fréquentes sur le dépôt PCAET</TitreSection>
     <div className="flex flex-col gap-4 w-full max-w-3xl mx-auto">
-      {QUESTIONS_FREQUENTES.map(({ question, reponse }) => (
+      {FAQ_ITEMS.map(({ question, answer }) => (
         <Accordion
           key={question}
           title={question}
-          content={<p className="px-8 pt-4 mb-0">{reponse}</p>}
+          content={<p className="px-8 pt-4 mb-0">{answer}</p>}
           containerClassname="p-4 border bg-white rounded-xl"
           headerClassname="py-2 text-primary-10 font-medium"
         />
@@ -25,7 +22,7 @@ export const DemarchePcaetFAQSection = () => (
     </div>
     <Button
       variant="underlined"
-      href={AIDE_DEMARCHE_PCAET_URL}
+      href={PCAET_HELP_URL}
       external
       className="after:hidden mt-4"
     >

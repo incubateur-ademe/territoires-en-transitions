@@ -4,47 +4,58 @@
  * comment.
  */
 
-.fondu {
-  animation: fondu 0.4s ease-out both;
+.fade {
+  animation: fade 0.4s ease-out both;
 }
 
-.fonduRapide {
-  animation: fondu 0.2s both;
+.fadeFast {
+  animation: fade 0.2s both;
 }
 
-.vol {
-  animation: vol 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+.fly {
+  animation: fly 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .pop {
   animation: pop 0.3s both;
 }
 
-.rotation {
-  animation: rotation 0.6s linear infinite;
+.spin {
+  animation: spin 0.6s linear infinite;
 }
 
-.chute {
-  animation: chute 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+.drop {
+  animation: drop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.montee {
-  animation: montee 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+.rise {
+  animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.glisse {
-  animation: glisse 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+.slideIn {
+  animation: slideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.popHalo {
-  animation: pop 0.4s both, halo 1.2s ease-out 0.4s 2;
+.popGlow {
+  animation: pop 0.4s both, glow 1.2s ease-out 0.4s 2;
 }
 
 .confetti {
   animation: confetti 1.8s cubic-bezier(0.15, 0.7, 0.3, 1) both;
 }
 
-@keyframes fondu {
+/*
+ * Démo en pause : on fige les animations d'ambiance (spinner, confettis, halo).
+ * Les entrées, courtes, se jouent quand même : figées à leur première image,
+ * elles laisseraient invisible un écran atteint en déplaçant la lecture.
+ */
+.paused .spin,
+.paused .confetti,
+.paused .popGlow {
+  animation-play-state: paused;
+}
+
+@keyframes fade {
   from {
     opacity: 0;
     transform: translateY(8px);
@@ -55,7 +66,7 @@
   }
 }
 
-@keyframes vol {
+@keyframes fly {
   0% {
     opacity: 0;
     transform: translate(260px, -180px) rotate(-10deg) scale(0.9);
@@ -84,13 +95,13 @@
   }
 }
 
-@keyframes rotation {
+@keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-@keyframes chute {
+@keyframes drop {
   0% {
     opacity: 0;
     transform: translateY(-160px) rotate(-6deg);
@@ -105,7 +116,7 @@
   }
 }
 
-@keyframes montee {
+@keyframes rise {
   0% {
     transform: translateY(40px);
     opacity: 0;
@@ -119,7 +130,7 @@
   }
 }
 
-@keyframes glisse {
+@keyframes slideIn {
   from {
     opacity: 0;
     transform: translateX(-24px);
@@ -130,7 +141,7 @@
   }
 }
 
-@keyframes halo {
+@keyframes glow {
   0% {
     box-shadow: 0 0 0 0 rgba(64, 64, 146, 0.45);
   }
@@ -139,10 +150,14 @@
   }
 }
 
-/* --dx, --dy et --r sont posés par particule (voir confettis.tsx). */
+/* --dx, --dy et --r sont posés par particule (voir confetti.tsx). */
 @keyframes confetti {
+  /* Invisible au départ : une gerbe figée avant son envol ne se voit pas. */
   0% {
     transform: translate(0, 0) rotate(0) scale(0.4);
+    opacity: 0;
+  }
+  8% {
     opacity: 1;
   }
   40% {
@@ -159,15 +174,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fondu,
-  .fonduRapide,
-  .vol,
+  .fade,
+  .fadeFast,
+  .fly,
   .pop,
-  .rotation,
-  .chute,
-  .montee,
-  .glisse,
-  .popHalo,
+  .spin,
+  .drop,
+  .rise,
+  .slideIn,
+  .popGlow,
   .confetti {
     animation-duration: 0.01s !important;
     animation-iteration-count: 1 !important;

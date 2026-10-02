@@ -1,62 +1,52 @@
 'use client';
 
-import { DemoLecteur } from '@/site/components/demo-animee/demo-lecteur';
-import { useLectureDemo } from '@/site/components/demo-animee/use-lecture-demo';
-import { useEffect, useState } from 'react';
-import { DemoDepotCompact, SCENE_COMPACTE } from './demo-depot-compact';
-import { DemoDepotLarge, SCENE_LARGE } from './demo-depot-large';
-import { getEtatDemoDepot } from './demo-depot.etat';
+import { DemoPlayer } from '@/site/components/animated-demo/demo-player';
+import { useDemoPlayback } from '@/site/components/animated-demo/use-demo-playback';
+import { useMedia } from 'react-use';
+import { COMPACT_SCENE, DepotDemoCompact } from './depot-demo-compact';
+import { DepotDemoWide, WIDE_SCENE } from './depot-demo-wide';
 import {
-  ECRANS,
-  INSTANT_FIXE_SCENE,
-  TIMELINE_DEPOT,
-} from './demo-depot.scenario';
+  DEPOT_TIMELINE,
+  FROZEN_SCENE_TIME,
+  SCREENS,
+} from './depot-demo.scenario';
+import { getDepotDemoState } from './depot-demo.state';
 
 const DESCRIPTION =
   "Démonstration animée du parcours de dépôt d'un PCAET dans Territoires en Transitions : ajout des documents, saisie du diagnostic par volet, import du programme d'actions depuis un PDF, transmission pour avis, réception des rapports de la DREAL et de la Région, puis adoption du plan.";
 
-const CHAPITRES = ECRANS.map(({ chapitre, debut }) => ({
-  libelle: chapitre,
-  debut: TIMELINE_DEPOT.versReel(debut),
+const CHAPTERS = SCREENS.map(({ chapter, start }) => ({
+  label: chapter,
+  start: DEPOT_TIMELINE.toReal(start),
 }));
 
 /** En dessous de `md`, la scène large deviendrait illisible une fois réduite. */
-const useEcranEtroit = () => {
-  const [etroit, setEtroit] = useState(false);
-  useEffect(() => {
-    const requete = window.matchMedia('(max-width: 767px)');
-    const synchroniser = () => setEtroit(requete.matches);
-    synchroniser();
-    requete.addEventListener('change', synchroniser);
-    return () => requete.removeEventListener('change', synchroniser);
-  }, []);
-  return etroit;
-};
+const NARROW_SCREEN_QUERY = '(max-width: 767px)';
 
-export const DemoDepot = () => {
-  const lecture = useLectureDemo({
-    duree: TIMELINE_DEPOT.duree,
-    instantFixe: TIMELINE_DEPOT.versReel(INSTANT_FIXE_SCENE),
+export const DepotDemo = () => {
+  const playback = useDemoPlayback({
+    duration: DEPOT_TIMELINE.duration,
+    frozenTime: DEPOT_TIMELINE.toReal(FROZEN_SCENE_TIME),
   });
-  const compact = useEcranEtroit();
-  const tempsScene = TIMELINE_DEPOT.versScene(lecture.temps);
-  const etat = getEtatDemoDepot(tempsScene);
-  const scene = compact ? SCENE_COMPACTE : SCENE_LARGE;
+  const compact = useMedia(NARROW_SCREEN_QUERY, false);
+  const sceneTime = DEPOT_TIMELINE.toScene(playback.time);
+  const state = getDepotDemoState(sceneTime);
+  const scene = compact ? COMPACT_SCENE : WIDE_SCENE;
 
   return (
-    <DemoLecteur
-      lecture={lecture}
-      largeur={scene.largeur}
-      hauteur={scene.hauteur}
+    <DemoPlayer
+      playback={playback}
+      width={scene.width}
+      height={scene.height}
       description={DESCRIPTION}
-      chapitres={CHAPITRES}
+      chapters={CHAPTERS}
       compact={compact}
     >
       {compact ? (
-        <DemoDepotCompact etat={etat} temps={tempsScene} />
+        <DepotDemoCompact state={state} time={sceneTime} />
       ) : (
-        <DemoDepotLarge etat={etat} temps={tempsScene} />
+        <DepotDemoWide state={state} time={sceneTime} />
       )}
-    </DemoLecteur>
+    </DemoPlayer>
   );
 };

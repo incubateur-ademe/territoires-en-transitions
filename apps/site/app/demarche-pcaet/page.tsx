@@ -4,6 +4,7 @@ import { DemarchePcaetCTASection } from './demarche-pcaet-cta.section';
 import { DemarchePcaetDemoSection } from './demarche-pcaet-demo.section';
 import { DemarchePcaetEtapesSection } from './demarche-pcaet-etapes.section';
 import { DemarchePcaetFAQSection } from './demarche-pcaet-faq.section';
+import { DEPOT_ETAPES } from './demarche-pcaet.data';
 import { DemarchePcaetHeroSection } from './demarche-pcaet.hero-section';
 
 export async function generateMetadata(
@@ -22,7 +23,7 @@ export async function generateMetadata(
 const DemarchePcaetPage = () => (
   <>
     <DemarchePcaetHeroSection />
-    <DemarchePcaetEtapesSection />
+    <DemarchePcaetEtapesSection etapes={DEPOT_ETAPES} />
     <DemarchePcaetDemoSection />
     <DemarchePcaetFAQSection />
     <DemarchePcaetCTASection />

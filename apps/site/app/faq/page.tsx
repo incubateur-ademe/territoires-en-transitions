@@ -5,9 +5,9 @@ import Section from '@/site/components/sections/Section';
 import { fetchCollection } from '@/site/src/strapi/strapi';
 import { sortByRank } from '@/site/src/utils/sortByRank';
 import { Metadata } from 'next';
-import { QUESTIONS_FREQUENTES } from '../demarche-pcaet/demarche-pcaet.data';
+import { FAQ_ITEMS } from '../demarche-pcaet/demarche-pcaet.data';
 import ContactEquipe from './ContactEquipe';
-import { FAQ_ONGLET_DEMARCHE_PCAET } from './faq.onglets';
+import { FAQ_TAB_DEMARCHE_PCAET } from './faq.tabs';
 import ListeQuestions from './ListeQuestions';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,19 +39,19 @@ const getData = async () => {
 };
 
 /** Même source que la FAQ de la page Démarche PCAET. */
-const QUESTIONS_DEMARCHE_PCAET: FaqData[] = QUESTIONS_FREQUENTES.map(
-  ({ question, reponse }, index) => ({
+const DEMARCHE_PCAET_QUESTIONS: FaqData[] = FAQ_ITEMS.map(
+  ({ question, answer }, index) => ({
     id: `demarche-pcaet-${index}`,
     titre: question,
-    contenu: reponse,
-    onglet: FAQ_ONGLET_DEMARCHE_PCAET,
+    contenu: answer,
+    onglet: FAQ_TAB_DEMARCHE_PCAET,
   })
 );
 
 const Faq = async () => {
   const questions: FaqData[] = [
     ...((await getData()) ?? []),
-    ...QUESTIONS_DEMARCHE_PCAET,
+    ...DEMARCHE_PCAET_QUESTIONS,
   ];
 
   return questions.length > 0 ? (

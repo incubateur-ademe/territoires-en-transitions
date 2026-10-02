@@ -4,13 +4,13 @@
  * les animations.
  */
 
-@property --pcaet-vert {
+@property --pcaet-green {
   syntax: '<percentage>';
   inherits: false;
   initial-value: 30%;
 }
 
-@property --pcaet-masque {
+@property --pcaet-mask {
   syntax: '<percentage>';
   inherits: false;
   initial-value: 100%;
@@ -86,36 +86,36 @@
   animation: mail 1.1s ease-in-out both;
 }
 
-.destinataire {
+.recipient {
   animation: pop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both, hit 0.6s ease-out;
 }
 
-.jauge {
-  animation: jaugeHide 0.4s ease-out both;
+.gauge {
+  animation: gaugeHide 0.4s ease-out both;
 }
 
-.jaugeRemplissage {
+.gaugeFill {
   width: 100%;
   background: #48a775;
-  animation: jauge 0.9s linear both;
+  animation: gauge 0.9s linear both;
 }
 
 .donut {
-  --pcaet-vert: 68%;
+  --pcaet-green: 68%;
   background: conic-gradient(
-    #48a775 0 var(--pcaet-vert),
-    #f28e40 var(--pcaet-vert) 82%,
+    #48a775 0 var(--pcaet-green),
+    #f28e40 var(--pcaet-green) 82%,
     #e1e1fd 82%
   );
-  animation: vert 1.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: green 1.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.donutMasque {
+.donutMask {
   background: conic-gradient(
-    transparent 0 var(--pcaet-masque),
-    #fff var(--pcaet-masque)
+    transparent 0 var(--pcaet-mask),
+    #fff var(--pcaet-mask)
   );
-  animation: masque 1.1s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: mask 1.1s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 /* Panneau de détail des étapes et maquette de démo. */
@@ -125,8 +125,9 @@
   animation-duration: 0.4s;
 }
 
-.minuteur {
-  animation: minuteur 5s linear both;
+.timer {
+  /* Durée posée par le composant, alignée sur son intervalle de défilement. */
+  animation: timer linear both;
 }
 
 @keyframes fadeUp {
@@ -248,7 +249,7 @@
   }
 }
 
-@keyframes jauge {
+@keyframes gauge {
   0% {
     width: 0;
     background: #6a6af4;
@@ -273,7 +274,7 @@
   }
 }
 
-@keyframes jaugeHide {
+@keyframes gaugeHide {
   from {
     opacity: 1;
     height: 5px;
@@ -284,25 +285,25 @@
   }
 }
 
-@keyframes vert {
+@keyframes green {
   from {
-    --pcaet-vert: 30%;
+    --pcaet-green: 30%;
   }
   to {
-    --pcaet-vert: 68%;
+    --pcaet-green: 68%;
   }
 }
 
-@keyframes masque {
+@keyframes mask {
   from {
-    --pcaet-masque: 0%;
+    --pcaet-mask: 0%;
   }
   to {
-    --pcaet-masque: 100%;
+    --pcaet-mask: 100%;
   }
 }
 
-@keyframes minuteur {
+@keyframes timer {
   from {
     width: 0;
   }
@@ -319,17 +320,17 @@
   .growY,
   .growYFromBottom,
   .fade,
-  .destinataire,
-  .jauge,
-  .jaugeRemplissage,
+  .recipient,
+  .gauge,
+  .gaugeFill,
   .donut,
-  .donutMasque,
-  .minuteur {
+  .donutMask,
+  .timer {
     animation: none !important;
   }
 
   .mail,
-  .jauge {
+  .gauge {
     display: none;
   }
 }

@@ -2,6 +2,7 @@ import { BookDemoButton } from '@/site/components/buttons/book-demo.button';
 import { CreateAccountButton } from '@/site/components/buttons/create-account.button';
 import Section from '@/site/components/sections/Section';
 import Link from 'next/link';
+import { getDepotEntryUrl } from './demarche-pcaet.data';
 
 export const DemarchePcaetCTASection = () => (
   <Section
@@ -10,7 +11,10 @@ export const DemarchePcaetCTASection = () => (
   >
     <h2 className="mb-0 text-primary-9">Prêt à déposer votre PCAET ?</h2>
     <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 max-sm:w-full">
-      <CreateAccountButton label="Je crée mon compte gratuitement" />
+      <CreateAccountButton
+        label="Je crée mon compte gratuitement"
+        redirectTo={getDepotEntryUrl()}
+      />
       <BookDemoButton label="Je réserve une démo" />
     </div>
     <Link href="/contact?objet=pcaet" className="text-primary-10 underline">
