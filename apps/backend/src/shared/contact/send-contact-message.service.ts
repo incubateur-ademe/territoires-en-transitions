@@ -29,6 +29,7 @@ const OBJET_LABELS: Record<ContactObjet, string> = {
   programme:
     'Questions relatives au programme Territoire Engagé Transition Écologique',
   plateforme: 'Questions relatives à la plateforme Territoires en Transitions',
+  pcaet: 'Questions relatives au dépôt réglementaire PCAET',
   autre: 'Autre',
 };
 
