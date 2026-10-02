@@ -377,7 +377,7 @@ describe('DemarcheDocumentsTable — inclusion déclarée, après les avis', () 
     expect(screen.queryByRole('checkbox')).toBeNull();
     expect(
       screen.getByText(
-        appLabels.demarcheDocumentsCouvertPar({ nom: GLOBAL.nom })
+        appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom })
       )
     ).toBeInTheDocument();
     expect(
@@ -396,7 +396,7 @@ describe('DemarcheDocumentsTable — inclusion déclarée, après les avis', () 
 
     expect(
       screen.queryByText(
-        appLabels.demarcheDocumentsCouvertPar({ nom: GLOBAL.nom })
+        appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom })
       )
     ).toBeNull();
     expect(

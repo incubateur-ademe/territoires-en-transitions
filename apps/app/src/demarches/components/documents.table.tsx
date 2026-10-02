@@ -59,8 +59,11 @@ const SectionRequiredBadge = ({
 /** Couverture sans dépôt : la pièce est comprise dans une autre du dossier. */
 const CouvertureSansFichier = ({
   substitutNom,
+  isInclusionDeclaree = false,
 }: {
   substitutNom: string;
+  /** Déclarée par la collectivité : la mention reprend le libellé de sa case. */
+  isInclusionDeclaree?: boolean;
 }): ReactElement => (
   <div className="flex items-center gap-2 text-grey-9">
     <Icon
@@ -69,7 +72,9 @@ const CouvertureSansFichier = ({
       className="text-success shrink-0"
     />
     <span className="text-sm">
-      {appLabels.demarcheDocumentsCouvertPar({ nom: substitutNom })}
+      {isInclusionDeclaree
+        ? appLabels.demarcheDocumentsInclusDans({ nom: substitutNom })
+        : appLabels.demarcheDocumentsCouvertPar({ nom: substitutNom })}
     </span>
   </div>
 );
@@ -229,6 +234,7 @@ const SectionAnswer = ({
             ? appLabels.demarcheDocumentsDeposerFichierDedie
             : undefined
         }
+        isInclusionDeclaree
         onAddFichier={onAddFichier}
       />
     );
@@ -289,6 +295,7 @@ const SectionFallback = ({
   substitutCouvrantNom,
   isReadonly,
   label = appLabels.demarcheDocumentsTeleverser,
+  isInclusionDeclaree,
   onAddFichier,
 }: {
   demarcheType: DemarcheType;
@@ -298,11 +305,15 @@ const SectionFallback = ({
   substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
   label?: string;
+  isInclusionDeclaree?: boolean;
   onAddFichier: (fichierId: number) => void;
 }): ReactElement => (
   <div className="flex flex-wrap items-center gap-3 min-w-0">
     {coverage?.origine === 'substitut' && substitutCouvrantNom && (
-      <CouvertureSansFichier substitutNom={substitutCouvrantNom} />
+      <CouvertureSansFichier
+        substitutNom={substitutCouvrantNom}
+        isInclusionDeclaree={isInclusionDeclaree}
+      />
     )}
     {!isReadonly && (
       <DemarcheDocumentUploadButton
