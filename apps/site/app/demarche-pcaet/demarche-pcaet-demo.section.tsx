@@ -1,13 +1,7 @@
 import Section from '@/site/components/sections/Section';
 import { Badge, Icon } from '@tet/ui';
-import classNames from 'classnames';
+import Image from 'next/image';
 import { DemarchePcaetDemoAnime } from './demarche-pcaet.demo-anime';
-
-const FORMATS = [
-  { label: 'PDF', className: 'bg-error-1' },
-  { label: 'Word', className: 'bg-info-1' },
-  { label: 'Excel', className: 'bg-success-1' },
-];
 
 export const DemarchePcaetDemoSection = () => (
   <Section
@@ -50,19 +44,7 @@ export const DemarchePcaetDemoSection = () => (
           faire le travail deux fois.
         </p>
         <div aria-hidden className="flex flex-wrap items-center gap-2.5">
-          <div className="flex flex-wrap gap-1.5">
-            {FORMATS.map((format) => (
-              <span
-                key={format.label}
-                className="flex items-center gap-1.5 px-2 py-[5px] bg-white border border-primary-3 rounded-md text-xs font-bold text-primary-10"
-              >
-                <span
-                  className={classNames('w-4 h-5 rounded-sm', format.className)}
-                />
-                {format.label}
-              </span>
-            ))}
-          </div>
+          <Image src="/files-icons.png" alt="" width={125} height={75} />
           <Icon icon="arrow-right-line" className="text-primary-9" />
           <span className="px-2.5 py-1.5 bg-primary-9 rounded-md text-xs font-bold text-white">
             Programme d&apos;actions
