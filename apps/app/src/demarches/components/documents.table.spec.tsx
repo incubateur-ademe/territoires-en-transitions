@@ -81,6 +81,7 @@ const renderTable = ({
   mergeEtapes = false,
   section,
   documentsAdditional = [],
+  hideEmptyRows = false,
   onAddFichier = vi.fn(),
 }: {
   definitions?: DemarcheDocumentDefinition[];
@@ -90,6 +91,7 @@ const renderTable = ({
   mergeEtapes?: boolean;
   section?: DemarcheDocumentsSection;
   documentsAdditional?: DemarcheDocumentAdditional[];
+  hideEmptyRows?: boolean;
   onAddFichier?: (
     documentId: string,
     fichierId: number,
@@ -108,6 +110,8 @@ const renderTable = ({
       coverage={coverage}
       mergeEtapes={mergeEtapes}
       section={section}
+      hideEmptyRows={hideEmptyRows}
+      isEtapeReadonly={hideEmptyRows}
       onAddFichier={onAddFichier}
       onRemoveDocument={vi.fn()}
       onToggleCouverture={vi.fn()}
@@ -296,6 +300,53 @@ describe('DemarcheDocumentsTable — les deux blocs de la finalisation', () => {
         '[data-test^="demarches.pcaet.documents.additional.ajouter"]'
       )
     ).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — lecture d’un dossier sans ses pièces vides', () => {
+  const annexe = (
+    titre: string,
+    avecFichier: boolean
+  ): DemarcheDocumentAdditional => ({
+    id: avecFichier ? 1 : 2,
+    etape: 'amont',
+    titre,
+    commentaire: '',
+    modifiedAt: '2026-08-20T00:00:00Z',
+    modifiedBy: null,
+    fichier: avecFichier ? depose(DIAGNOSTIC.id).fichier : null,
+  });
+
+  it('ne garde que les pièces déposées ou comprises dans une autre', () => {
+    renderTable({
+      hideEmptyRows: true,
+      definitions: [GLOBAL, DIAGNOSTIC, EES],
+      documents: [depose(GLOBAL.id)],
+      coverage: [
+        { documentId: GLOBAL.id, origine: 'fichier', substitutId: null },
+        { documentId: DIAGNOSTIC.id, origine: null, substitutId: null },
+        { documentId: EES.id, origine: 'substitut', substitutId: GLOBAL.id },
+      ],
+      documentsAdditional: [
+        annexe('Annexe déposée', true),
+        annexe('Annexe sans fichier', false),
+      ],
+    });
+
+    expect(screen.getByText('PCAET global')).toBeInTheDocument();
+    expect(screen.getByText('EES')).toBeInTheDocument();
+    expect(screen.getByText('Annexe déposée')).toBeInTheDocument();
+    expect(screen.queryByText('Diagnostic')).toBeNull();
+    expect(screen.queryByText('Annexe sans fichier')).toBeNull();
+  });
+
+  it('le dit quand rien n’a été déposé', () => {
+    renderTable({ hideEmptyRows: true });
+
+    expect(
+      screen.getByText(appLabels.demarcheDocumentsAucunDepot)
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('table')).toBeNull();
   });
 });
 

@@ -133,6 +133,8 @@ export const DemarchePcaetDocumentsPage = () => {
           coverage,
           isEtapeReadonly: isEtapeReadonly(etapeCourante),
           mergeEtapes: parcours.horsPlateforme,
+          // Adopté, le dossier ne se complète plus : il se lit.
+          hideEmptyRows: isPublieDemarchePcaetStatus(demarche.statut),
           onAddFichier: addDocument,
           onRemoveDocument: removeDocument,
           onToggleCouverture: setCouverture,

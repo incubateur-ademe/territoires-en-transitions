@@ -337,6 +337,13 @@ type Props = {
    */
   section?: DemarcheDocumentsSection;
   /**
+   * N'affiche que les pièces dont il y a quelque chose à lire : un fichier, ou
+   * la mention de la pièce qui les contient. Pour qui consulte un dossier sans
+   * pouvoir y déposer — le service instructeur, la collectivité une fois son
+   * PCAET adopté —, une ligne vide n'apprend rien et allonge la liste.
+   */
+  hideEmptyRows?: boolean;
+  /**
    * Le temps de la ligne accompagne le dépôt : en liste fusionnée il varie
    * d'une pièce à l'autre, et c'est lui qui décide si la pièce est couverte.
    */
@@ -384,6 +391,7 @@ export const DemarcheDocumentsTable = ({
   isEtapeReadonly = false,
   mergeEtapes = false,
   section: sectionDemandee,
+  hideEmptyRows = false,
   onAddFichier,
   onRemoveDocument,
   onToggleCouverture,
@@ -475,6 +483,30 @@ export const DemarcheDocumentsTable = ({
         isDemarcheDocumentDeEtape(definition.etape, etape)
       );
 
+  const aDuContenu = (definition: DemarcheDocumentDefinition) =>
+    Boolean(
+      (
+        documentDe(definition) ??
+        documentOriginalByDefinitionId.get(definition.id)
+      )?.fichier
+    ) || coverageByDefinitionId.get(definition.id)?.origine === 'substitut';
+  const definitionsAffichees = hideEmptyRows
+    ? definitionsForEtape.filter(aDuContenu)
+    : definitionsForEtape;
+
+  const documentsAdditionalAffiches = documentsAdditional
+    .filter((documentAdditional) =>
+      mergeEtapes
+        ? true
+        : section === undefined
+        ? documentAdditional.etape === etape
+        : isDeLaSection(documentAdditional.etape)
+    )
+    .filter(
+      (documentAdditional) => !hideEmptyRows || documentAdditional.fichier
+    )
+    .sort((a, b) => Number(a.etape === 'aval') - Number(b.etape === 'aval'));
+
   /** Une pièce hors de son temps se consulte et se télécharge, ne se dépose plus. */
   const isDefinitionReadonly = (definition: DemarcheDocumentDefinition) =>
     isEtapeReadonly ||
@@ -492,13 +524,24 @@ export const DemarcheDocumentsTable = ({
       : 'aval'
     : etape;
 
+  const dataTest = `demarches.pcaet.documents.table.${
+    mergeEtapes ? 'fusionnee' : section ?? etape
+  }`;
+
+  if (
+    hideEmptyRows &&
+    definitionsAffichees.length === 0 &&
+    documentsAdditionalAffiches.length === 0
+  ) {
+    return (
+      <p className="m-0 text-sm text-grey-7" data-test={dataTest}>
+        {appLabels.demarcheDocumentsAucunDepot}
+      </p>
+    );
+  }
+
   return (
-    <div
-      className="flex flex-col gap-4"
-      data-test={`demarches.pcaet.documents.table.${
-        mergeEtapes ? 'fusionnee' : section ?? etape
-      }`}
-    >
+    <div className="flex flex-col gap-4" data-test={dataTest}>
       {/* Sans colonne de statut : la réponse de chaque ligne porte déjà le
           fichier déposé ou la couverture déclarée, avec sa coche. */}
       <ChecklistTable
@@ -515,7 +558,7 @@ export const DemarcheDocumentsTable = ({
           answerHeader={appLabels.demarcheDocumentsColonneDocuments}
           tagHeader={appLabels.demarcheDocumentsColonneType}
         />
-        {definitionsForEtape.map((definition) => (
+        {definitionsAffichees.map((definition) => (
           <ChecklistTable.Row
             key={definition.id}
             tag={<SectionRequiredBadge requis={definition.requis} />}
@@ -561,38 +604,27 @@ export const DemarcheDocumentsTable = ({
 
         {/* Pièces hors catalogue : elles ferment la liste, après ce que le
             modèle attend. Celles du dossier transmis s'y consultent. */}
-        {documentsAdditional
-          .filter((documentAdditional) =>
-            mergeEtapes
-              ? true
-              : section === undefined
-              ? documentAdditional.etape === etape
-              : isDeLaSection(documentAdditional.etape)
-          )
-          .sort(
-            (a, b) => Number(a.etape === 'aval') - Number(b.etape === 'aval')
-          )
-          .map((documentAdditional) => (
-            <DemarcheDocumentAdditionalRow
-              key={documentAdditional.id}
-              demarcheType={demarcheType}
-              fileConstraints={fileConstraints}
-              documentAdditional={documentAdditional}
-              isReadonly={
-                isEtapeReadonly ||
-                (!mergeEtapes && documentAdditional.etape !== etape)
-              }
-              isJustCreated={documentAdditional.id === documentAdditionalCreeId}
-              onRename={(titre) =>
-                onRenameAdditional(documentAdditional.id, titre)
-              }
-              onAddFichier={(fichierId) =>
-                onAddFichierAdditional(documentAdditional.id, fichierId)
-              }
-              onRemove={() => onRemoveAdditional(documentAdditional.id)}
-              onDownload={onDownloadAdditional}
-            />
-          ))}
+        {documentsAdditionalAffiches.map((documentAdditional) => (
+          <DemarcheDocumentAdditionalRow
+            key={documentAdditional.id}
+            demarcheType={demarcheType}
+            fileConstraints={fileConstraints}
+            documentAdditional={documentAdditional}
+            isReadonly={
+              isEtapeReadonly ||
+              (!mergeEtapes && documentAdditional.etape !== etape)
+            }
+            isJustCreated={documentAdditional.id === documentAdditionalCreeId}
+            onRename={(titre) =>
+              onRenameAdditional(documentAdditional.id, titre)
+            }
+            onAddFichier={(fichierId) =>
+              onAddFichierAdditional(documentAdditional.id, fichierId)
+            }
+            onRemove={() => onRemoveAdditional(documentAdditional.id)}
+            onDownload={onDownloadAdditional}
+          />
+        ))}
 
         {/* En liste fusionnée, une pièce hors catalogue rejoint le dossier
             lui-même : c'est l'amont, seul temps qu'une pièce libre puisse
