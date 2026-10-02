@@ -4,7 +4,12 @@ import { z } from 'zod';
  * Objets proposés par le formulaire du site.
  * Doit rester aligné sur `apps/site/app/contact/data.ts`.
  */
-export const contactObjets = ['programme', 'plateforme', 'autre'] as const;
+export const contactObjets = [
+  'programme',
+  'plateforme',
+  'pcaet',
+  'autre',
+] as const;
 export type ContactObjet = (typeof contactObjets)[number];
 
 export const sendContactMessageInputSchema = z.object({

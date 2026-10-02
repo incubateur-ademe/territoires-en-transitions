@@ -125,6 +125,18 @@ describe('SendContactMessageRouter', () => {
     expect(sentEmails[0].to).toBe('territoireengage@ademe.fr');
   });
 
+  it('route les demandes « pcaet » vers la boîte contact', async () => {
+    const input = buildInput({ objet: 'pcaet' });
+
+    await callerFromIp('198.51.100.7').shared.contact.send(input);
+
+    expect(sentEmails).toHaveLength(1);
+    expect(sentEmails[0].to).toBe('contact@territoiresentransitions.fr');
+    expect(sentEmails[0].html).toContain(
+      'Questions relatives au dépôt réglementaire PCAET'
+    );
+  });
+
   it('échappe le HTML saisi dans le formulaire', async () => {
     const input = buildInput({
       nom: '<script>alert(1)</script>',

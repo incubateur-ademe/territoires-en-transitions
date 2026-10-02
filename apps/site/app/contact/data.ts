@@ -9,6 +9,10 @@ export const options = [
     label: 'Questions relatives à la plateforme Territoires en Transitions',
   },
   {
+    value: 'pcaet',
+    label: 'Questions relatives au dépôt réglementaire PCAET',
+  },
+  {
     value: 'autre',
     label: 'Autre',
   },
