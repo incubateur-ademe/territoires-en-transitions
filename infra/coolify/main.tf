@@ -157,6 +157,8 @@ resource "terraform_data" "ghcr_docker_login" {
   triggers_replace = [
     each.value.ssh_host,
     var.coolify_public_ip,
+    var.coolify_sshd_host_public_key,
+    each.value.sshd_host_public_key,
     var.ghcr_pull_secret_name,
     var.ghcr_pull_credentials_revision,
     # Recréation de la clé du serveur ⇒ rejouer le login.
@@ -171,14 +173,16 @@ resource "terraform_data" "ghcr_docker_login" {
     command = "${path.module}/../scripts/coolify-ghcr-docker-login.sh"
     environment = {
       TARGET_HOST                  = each.value.ssh_host
+      TARGET_HOST_KEY              = each.value.sshd_host_public_key
       SERVER_KEY_SECRET_NAME       = each.value.ssh_key_secret_name
       SERVER_KEY_SECRET_PROJECT_ID = local.server_key_project_ids[each.key]
       GHCR_PULL_SECRET_NAME        = var.ghcr_pull_secret_name
       SECRET_PROJECT_ID            = var.project_id
       # Rebond obligatoire par le control plane : nonprod et preview n'ont pas
       # de SSH public, et celui de la prod n'accepte que l'IP de Coolify.
-      BASTION_HOST = var.coolify_public_ip
-      BASTION_USER = var.bastion_user
+      BASTION_HOST     = var.coolify_public_ip
+      BASTION_HOST_KEY = var.coolify_sshd_host_public_key
+      BASTION_USER     = var.bastion_user
     }
   }
 }
@@ -247,6 +251,7 @@ resource "terraform_data" "instance_backup" {
     filesha256("${path.module}/../scripts/coolify-instance-backup.sh"),
     filesha256("${path.module}/../scripts/coolify-install-instance-backup.sh"),
     var.coolify_public_ip,
+    var.coolify_sshd_host_public_key,
     var.instance_backup_age_recipients,
     var.instance_backup_on_calendar,
     var.instance_backup_prefix,
@@ -261,6 +266,7 @@ resource "terraform_data" "instance_backup" {
     command = "${path.module}/../scripts/coolify-install-instance-backup.sh"
     environment = {
       TARGET_HOST                = var.coolify_public_ip
+      TARGET_HOST_KEY            = var.coolify_sshd_host_public_key
       HOST_KEY_SECRET_NAME       = var.host_key_secret_name
       SECRET_PROJECT_ID          = var.project_id
       S3_ENDPOINT                = var.s3_endpoint

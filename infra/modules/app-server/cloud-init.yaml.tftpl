@@ -19,6 +19,16 @@ users:
       - ${key}
 %{ endfor ~}
 
+# Clé d'hôte sshd imposée par Terraform (cf. tls_private_key.sshd_host) : seule
+# la clé ed25519 existe (genkeytypes ne génère que les types absents), et les
+# clients la vérifient en mode strict.
+ssh_deletekeys: true
+ssh_genkeytypes: [ed25519]
+ssh_keys:
+  ed25519_private: |
+    ${indent(4, sshd_host_private_key)}
+  ed25519_public: ${sshd_host_public_key}
+
 package_update: true
 package_upgrade: true
 
@@ -41,6 +51,9 @@ write_files:
       PubkeyAuthentication yes
       PermitRootLogin prohibit-password
       PasswordAuthentication no
+      # Seule clé d'hôte présente (cf. ssh_keys) : évite les avertissements
+      # sur les clés rsa / ecdsa absentes.
+      HostKey /etc/ssh/ssh_host_ed25519_key
 
   # Clé publique maîtrisée par Terraform, autorisée sur root. C'est le seul
   # moyen d'accès root : le port 22 n'est pas ouvert sur l'IP publique, donc

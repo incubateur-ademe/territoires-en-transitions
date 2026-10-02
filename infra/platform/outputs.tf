@@ -32,6 +32,11 @@ output "coolify_public_ip" {
   value       = module.coolify.public_ip
 }
 
+output "coolify_sshd_host_public_key" {
+  description = "Clé d'hôte SSH du control plane, imposée par Terraform. Valeur coolify_sshd_host_public_key dans infra/coolify, et à épingler dans le known_hosts des opérateurs (bastion)."
+  value       = module.coolify.sshd_host_public_key
+}
+
 output "coolify_private_ip" {
   description = "IP privée du control plane. Source des flux SSH autorisés par l'ACL du VPC."
   value       = module.coolify.private_ip

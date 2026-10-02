@@ -48,6 +48,15 @@ variable "coolify_public_ip" {
   type        = string
 }
 
+variable "coolify_sshd_host_public_key" {
+  description = "Clé d'hôte SSH du control plane (ssh-ed25519 …), épinglée par les scripts qui s'y connectent, en direct ou en rebond. Valeur de : terraform -chdir=../platform output -raw coolify_sshd_host_public_key"
+  type        = string
+  validation {
+    condition     = startswith(var.coolify_sshd_host_public_key, "ssh-ed25519 ")
+    error_message = "coolify_sshd_host_public_key doit être une clé publique ssh-ed25519."
+  }
+}
+
 variable "bastion_user" {
   description = "Utilisateur du rebond SSH sur le control plane. L'authentification vers le rebond utilise l'identité par défaut de l'opérateur (agent SSH)."
   type        = string
@@ -65,6 +74,7 @@ variable "app_servers" {
       ssh_host            = server_private_ip (nonprod, preview)
                             server_ssh_host   (prod : IP publique, VPC séparé)
       ssh_key_secret_name = server_ssh_key_secret_name
+      sshd_host_public_key = server_sshd_host_public_key
       ssh_key_project_id  = projet du secret, si ce n'est pas project_id
                             (prod : terraform -chdir=../platform output -raw prod_project_id)
 
@@ -72,10 +82,11 @@ variable "app_servers" {
     terraform_remote_state : les stacks restent découplés.
   EOT
   type = map(object({
-    name                = string
-    ssh_host            = string
-    ssh_key_secret_name = string
-    ssh_key_project_id  = optional(string)
+    name                 = string
+    ssh_host             = string
+    ssh_key_secret_name  = string
+    ssh_key_project_id   = optional(string)
+    sshd_host_public_key = string
   }))
   default = {}
 }

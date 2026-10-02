@@ -33,6 +33,20 @@ resource "tls_private_key" "host" {
   algorithm = "ED25519"
 }
 
+# Clé d'hôte du serveur SSH (sshd), générée par Terraform et installée par
+# cloud-init au premier boot. Sa publique est connue avant toute connexion :
+# les scripts qui poussent des secrets en SSH (clé root, PAT GHCR, clés S3)
+# vérifient ainsi l'hôte en mode strict, au lieu d'accepter la première clé
+# venue.
+#
+# Contrepartie : la privée transite par le state et par le user_data de
+# l'instance, lisible depuis la machine elle-même via l'API de métadonnées. Un
+# attaquant déjà sur la machine pourrait s'en servir pour usurper l'hôte, mais
+# il n'y gagnerait rien de plus que ce qu'il a déjà.
+resource "tls_private_key" "sshd_host" {
+  algorithm = "ED25519"
+}
+
 resource "scaleway_secret" "host_key" {
   name        = "${var.name}-host-ssh-key"
   description = "Clé privée SSH utilisée par Coolify pour piloter son propre serveur (localhost). Gérée par Terraform."
@@ -130,6 +144,8 @@ resource "scaleway_instance_server" "coolify" {
     cloud-init = templatefile("${path.module}/cloud-init.yaml.tftpl", {
       ssh_authorized_keys         = var.ssh_authorized_keys
       coolify_host_authorized_key = trimspace(tls_private_key.host.public_key_openssh)
+      sshd_host_private_key       = trimspace(tls_private_key.sshd_host.private_key_openssh)
+      sshd_host_public_key        = trimspace(tls_private_key.sshd_host.public_key_openssh)
       coolify_version             = var.coolify_version
       coolify_fqdn                = var.fqdn
     })

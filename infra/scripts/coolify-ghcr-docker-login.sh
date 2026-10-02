@@ -27,7 +27,10 @@
 # Format du secret : <github-username>|<pat-with-read:packages>
 #
 # Variables attendues :
-#   TARGET_HOST             IP (privée) du serveur applicatif cible
+#   TARGET_HOST             adresse SSH du serveur cible (IP privée, ou publique
+#                           pour la prod)
+#   TARGET_HOST_KEY         clé d'hôte SSH attendue de la cible (ssh-ed25519 …),
+#                           vérifiée en mode strict
 #   SERVER_KEY_SECRET_NAME  secret SM de la clé privée SSH root du serveur
 #   GHCR_PULL_SECRET_NAME   secret SM username|token GHCR
 #   SECRET_PROJECT_ID       projet Scaleway du secret GHCR (explicite : le
@@ -36,11 +39,14 @@
 #                           différent (prod), défaut SECRET_PROJECT_ID
 #   BASTION_HOST            (optionnel) IP publique du serveur Coolify. Si vide,
 #                           connexion directe à TARGET_HOST.
+#   BASTION_HOST_KEY        clé d'hôte SSH attendue du rebond (requise avec
+#                           BASTION_HOST)
 #   BASTION_USER            (optionnel) utilisateur du rebond, défaut tet-ops
 #   GHCR_PULL_TEST_IMAGE    (optionnel) image:tag à tester dans le helper
 set -euo pipefail
 
 : "${TARGET_HOST:?TARGET_HOST non défini}"
+: "${TARGET_HOST_KEY:?TARGET_HOST_KEY non défini : clé hôte SSH attendue}"
 : "${SERVER_KEY_SECRET_NAME:?SERVER_KEY_SECRET_NAME non défini}"
 : "${GHCR_PULL_SECRET_NAME:?GHCR_PULL_SECRET_NAME non défini}"
 : "${SECRET_PROJECT_ID:?SECRET_PROJECT_ID non défini}"
@@ -92,15 +98,24 @@ fi
 # auth = base64(username:token), portable macOS/Linux (pas de -w0).
 _auth="$(printf '%s:%s' "${_ghcr_user}" "${_ghcr_token}" | base64 | tr -d '\n')"
 
+# Clés d'hôte épinglées, vérifiées en mode strict : ce script pousse une clé
+# root et le PAT GHCR, il ne doit parler qu'aux machines attendues. Les clés
+# viennent de Terraform (tls_private_key.sshd_host), installées au premier boot.
+printf '%s %s\n' "${TARGET_HOST}" "${TARGET_HOST_KEY}" >"${_tmpdir}/known_hosts"
+_host_key_opts="-o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 -o UserKnownHostsFile=${_tmpdir}/known_hosts"
+
 _ssh_opts=(
   -i "${_tmpdir}/server_key"
   -o IdentitiesOnly=yes
-  -o StrictHostKeyChecking=accept-new
+  -o StrictHostKeyChecking=yes
+  -o HostKeyAlgorithms=ssh-ed25519
   -o UserKnownHostsFile="${_tmpdir}/known_hosts"
 )
 if [ -n "${_bastion_host}" ]; then
+  : "${BASTION_HOST_KEY:?BASTION_HOST_KEY non défini : clé hôte SSH attendue du rebond}"
+  printf '%s %s\n' "${_bastion_host}" "${BASTION_HOST_KEY}" >>"${_tmpdir}/known_hosts"
   echo "  rebond via ${_bastion_user}@${_bastion_host}"
-  _ssh_opts+=(-o "ProxyCommand=ssh -W %h:%p -o StrictHostKeyChecking=accept-new ${_bastion_user}@${_bastion_host}")
+  _ssh_opts+=(-o "ProxyCommand=ssh -W %h:%p ${_host_key_opts} ${_bastion_user}@${_bastion_host}")
 fi
 
 _ssh() {
