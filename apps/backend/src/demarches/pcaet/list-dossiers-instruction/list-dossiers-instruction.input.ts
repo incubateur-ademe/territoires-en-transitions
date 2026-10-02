@@ -9,7 +9,7 @@ export const listDossiersInstructionSortValues = [
   'echeance',
   'dateLancement',
   'collectivite',
-  'contact',
+  'pilote',
   'statut',
 ] as const;
 

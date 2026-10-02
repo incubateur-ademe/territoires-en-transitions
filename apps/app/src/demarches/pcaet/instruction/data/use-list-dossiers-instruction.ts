@@ -22,7 +22,7 @@ const SORT_VALUES = [
   'echeance',
   'dateLancement',
   'collectivite',
-  'contact',
+  'pilote',
   'statut',
 ] as const;
 const DIRECTION_VALUES = ['asc', 'desc'] as const;

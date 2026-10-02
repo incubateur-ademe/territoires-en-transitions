@@ -6,7 +6,6 @@ import {
   peutDeposerAvisSaisine,
   type DemandeAvisAchevement,
 } from '@tet/domain/demarches';
-import { CollectiviteContactsRepository } from '../shared/collectivite-contacts.repository';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { toDossierInstructionLigne } from './list-dossiers-instruction.adapter';
@@ -27,7 +26,7 @@ import {
 import {
   estRetenue,
   trierDossiers,
-  trieSurLesContacts,
+  trieSurLesPilotes,
 } from './list-dossiers-instruction.rules';
 
 @Injectable()
@@ -35,7 +34,6 @@ export class ListDossiersInstructionService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly listDossiersInstructionRepository: ListDossiersInstructionRepository,
-    private readonly collectiviteContactsRepository: CollectiviteContactsRepository,
     private readonly pcaetAvisRepository: PcaetAvisRepository
   ) {}
 
@@ -127,10 +125,10 @@ export class ListDossiersInstructionService {
 
     const filtrees = lignes.filter((ligne) => estRetenue(ligne, input));
 
-    // Trier par contact demande de les connaître avant de paginer. Le coût est
+    // Trier par pilote demande de les connaître avant de paginer. Le coût est
     // assumé — il ne se paie que sur ce tri, et l'agent l'a demandé.
-    const avantTri = trieSurLesContacts(input.sort)
-      ? await this.avecContacts(filtrees, tx)
+    const avantTri = trieSurLesPilotes(input.sort)
+      ? await this.avecPilotes(filtrees, tx)
       : filtrees;
 
     const triees = trierDossiers(avantTri, input.sort, input.direction);
@@ -145,12 +143,12 @@ export class ListDossiersInstructionService {
     const affichees = triees.slice(debut, debut + input.limit);
 
     return success({
-      // Les contacts ne se chargent que pour la page affichée : sur un
+      // Les pilotes ne se chargent que pour la page affichée : sur un
       // périmètre national, les demander pour tout le territoire serait une
-      // requête d'un millier de collectivités pour vingt-cinq lignes.
-      items: trieSurLesContacts(input.sort)
+      // requête d'un millier de démarches pour vingt-cinq lignes.
+      items: trieSurLesPilotes(input.sort)
         ? affichees
-        : await this.avecContacts(affichees, tx),
+        : await this.avecPilotes(affichees, tx),
       total: triees.length,
       totalPerimetre: lignes.length,
       page,
@@ -175,23 +173,26 @@ export class ListDossiersInstructionService {
     return this.pcaetAvisRepository.listAchevementParDemarche(demarcheIds, tx);
   }
 
-  private async avecContacts(
+  /**
+   * Les pilotes désignés sur la démarche, et non les administrateurs de la
+   * collectivité : ce sont eux qui portent le PCAET, et que l'instructeur doit
+   * pouvoir joindre. Une collectivité sans démarche n'en a donc aucun.
+   */
+  private async avecPilotes(
     lignes: DossierInstructionLigne[],
     tx: ServiceSecondArg['tx']
   ): Promise<DossierInstructionLigne[]> {
-    const contacts =
-      await this.collectiviteContactsRepository.listContactsParCollectivite(
-        [...new Set(lignes.map((ligne) => ligne.collectivite.id))],
-        {},
+    const pilotes =
+      await this.listDossiersInstructionRepository.listPilotesParDemarche(
+        lignes.flatMap((ligne) =>
+          ligne.demarcheId === null ? [] : [ligne.demarcheId]
+        ),
         tx
       );
     return lignes.map((ligne) => ({
       ...ligne,
-      // Le `userId` que le repository rend sert à notifier, pas à afficher : il
-      // n'a rien à faire dans la réponse envoyée aux services instructeurs.
-      contacts: (contacts.get(ligne.collectivite.id) ?? []).map(
-        ({ prenom, nom, email }) => ({ prenom, nom, email })
-      ),
+      pilotes:
+        ligne.demarcheId === null ? [] : pilotes.get(ligne.demarcheId) ?? [],
     }));
   }
 }

@@ -2,6 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { collectivitePerimetreSecondaireTable } from '@tet/backend/collectivites/shared/models/collectivite-perimetre-secondaire.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
@@ -10,6 +12,7 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { collectiviteNature } from '@tet/domain/collectivites';
 import {
@@ -35,6 +38,7 @@ describe('listDossiersInstruction', () => {
   let drealId: number;
   let serviceNationalId: number;
   let sansDepotId: number;
+  let piloteAbricotEmail: string;
   const demarcheIds: number[] = [];
 
   // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
@@ -77,6 +81,7 @@ describe('listDossiersInstruction', () => {
     avis,
     perimetre = 'principal',
     saisi = true,
+    pilotes = [],
   }: {
     collectiviteId: number;
     status:
@@ -98,6 +103,7 @@ describe('listDossiersInstruction', () => {
      * après coup.
      */
     saisi?: boolean;
+    pilotes?: Array<{ userId: string } | { tagId: number }>;
   }) => {
     const [demarche] = await db.db
       .insert(demarcheTable)
@@ -120,6 +126,14 @@ describe('listDossiersInstruction', () => {
       })
       .returning({ id: demarcheTable.id });
     demarcheIds.push(demarche.id);
+
+    if (pilotes.length > 0) {
+      await db.db
+        .insert(demarchePiloteTable)
+        .values(
+          pilotes.map((pilote) => ({ demarcheId: demarche.id, ...pilote }))
+        );
+    }
 
     if (!saisi) {
       return { demarcheId: demarche.id, demandeId: null };
@@ -175,13 +189,30 @@ describe('listDossiersInstruction', () => {
     marie = getAuthUserFromUserCredentials(aInstruire.user);
 
     const instruit = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN, prenom: 'Alice', nom: 'Bernard' },
+      user: { role: CollectiviteRole.ADMIN, prenom: 'Yves', nom: 'Admin' },
       collectivite: {
         regionCode: REGION,
         departementCode: '67',
         nom: 'Abricot Communaute',
       },
     });
+
+    // Les pilotes ne sont pas les administrateurs : c'est eux que la colonne
+    // « Pilotes » doit montrer. L'un a un compte, l'autre n'est qu'un nom.
+    const piloteAbricot = await addTestUser(db, {
+      collectiviteId: instruit.collectivite.id,
+      role: CollectiviteRole.EDITION,
+      prenom: 'Alice',
+      nom: 'Bernard',
+    });
+    piloteAbricotEmail = piloteAbricot.user.email;
+    const [piloteZitrone] = await db.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Xavier Pilote',
+        collectiviteId: aInstruire.collectivite.id,
+      })
+      .returning({ id: personneTagTable.id });
 
     // Une collectivité porteuse qui n'a jamais rien déposé : c'est elle que le
     // service doit pouvoir relancer, et qui n'existait pas dans l'ancienne
@@ -226,6 +257,7 @@ describe('listDossiersInstruction', () => {
       launchedAt: dansNJours(-200),
       obligation: DemarchePcaetObligationEnum.OBLIGATOIRE,
       isScotAec: true,
+      pilotes: [{ tagId: piloteZitrone.id }],
     });
     await creerDossier({
       collectiviteId: instruit.collectivite.id,
@@ -234,6 +266,7 @@ describe('listDossiersInstruction', () => {
       launchedAt: dansNJours(-400),
       obligation: DemarchePcaetObligationEnum.VOLONTAIRE,
       avis: { valide: true },
+      pilotes: [{ userId: piloteAbricot.user.id }],
     });
     await creerDossier({
       collectiviteId: enElaboration.collectivite.id,
@@ -269,6 +302,10 @@ describe('listDossiersInstruction', () => {
       await enElaboration.cleanup();
       await petiteSansDepot.cleanup();
       await sansDepot.cleanup();
+      await db.db
+        .delete(personneTagTable)
+        .where(inArray(personneTagTable.id, [piloteZitrone.id]));
+      await piloteAbricot.cleanup();
       await instruit.cleanup();
       await aInstruire.cleanup();
       await dreal.cleanup();
@@ -611,12 +648,12 @@ describe('listDossiersInstruction', () => {
       ]);
     });
 
-    it('trie par contact, qu’il faut avoir chargé avant de paginer', async () => {
-      const asc = await appeler(camille, { sort: 'contact', direction: 'asc' });
+    it('trie par pilote, qu’il faut avoir chargé avant de paginer', async () => {
+      const asc = await appeler(camille, { sort: 'pilote', direction: 'asc' });
 
-      expect(asc.items.map((item) => item.contacts[0]?.prenom)).toEqual([
-        'Alice',
-        'Zoe',
+      expect(asc.items.map((item) => item.pilotes[0]?.nom)).toEqual([
+        'Alice Bernard',
+        'Xavier Pilote',
       ]);
     });
   });
@@ -666,10 +703,31 @@ describe('listDossiersInstruction', () => {
       expect(result.items).toHaveLength(1);
     });
 
-    it('expose les contacts de la page', async () => {
-      const result = await appeler(camille, { recherche: 'zitrone' });
+    it('expose les pilotes de la démarche, et non les administrateurs', async () => {
+      const result = await appeler(camille, {});
+      const parNom = new Map(
+        result.items.map((item) => [item.collectivite.nom, item.pilotes])
+      );
 
-      expect(result.items[0].contacts.map((c) => c.prenom)).toContain('Zoe');
+      expect(parNom.get('Abricot Communaute')).toEqual([
+        { nom: 'Alice Bernard', email: piloteAbricotEmail },
+      ]);
+      // Un pilote saisi comme simple nom n'a pas d'email à donner.
+      expect(parNom.get('Zitrone Agglo')).toEqual([
+        { nom: 'Xavier Pilote', email: null },
+      ]);
+    });
+
+    it('ne prête aucun pilote à une collectivité sans démarche', async () => {
+      const result = await appeler(camille, {
+        statuts: [PcaetStatutInstructionEnum.AUCUN_DEPOT],
+        limit: 200,
+      });
+
+      expect(result.items.length).toBeGreaterThan(0);
+      expect(result.items.every((item) => item.pilotes.length === 0)).toBe(
+        true
+      );
     });
   });
 

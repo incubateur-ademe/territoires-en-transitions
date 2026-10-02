@@ -13,8 +13,8 @@ export type ContexteLigne = {
 };
 
 /**
- * Une ligne du suivi, contacts exceptés : ils ne se chargent qu'une fois la
- * page connue, pour ne pas interroger un millier de collectivités dont on
+ * Une ligne du suivi, pilotes exceptés : ils ne se chargent qu'une fois la
+ * page connue, pour ne pas interroger un millier de démarches dont on
  * n'affiche que la première vingtaine.
  */
 export const toDossierInstructionLigne = (
@@ -48,7 +48,7 @@ export const toDossierInstructionLigne = (
       regionCode: row.collectiviteRegionCode,
       regionLibelle: row.collectiviteRegionLibelle,
     },
-    contacts: [],
+    pilotes: [],
     deposeAvis,
     statut: getStatutInstruction(
       {

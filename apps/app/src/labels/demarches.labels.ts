@@ -614,10 +614,9 @@ export const demarchesLabels = {
       : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   /**
-   * « Pilotes » et non « Contact » : les personnes affichées sont celles qui
-   * portent le PCAET dans la collectivité — ses administratrices sur la
-   * plateforme —, pas une adresse de contact générique. Au pluriel, parce
-   * qu'une collectivité peut en compter plusieurs.
+   * « Pilotes » et non « Contact » : les personnes affichées sont les pilotes
+   * désignés sur la démarche, pas les administrateurs de la collectivité. Au
+   * pluriel, parce qu'une démarche peut en compter plusieurs.
    */
   instructionListeColonnePilotes: 'Pilotes',
   instructionListeColonneStatut: 'Statut',
