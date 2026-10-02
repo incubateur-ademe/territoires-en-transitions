@@ -1,0 +1,174 @@
+/*
+ * Animations d'entrée des démos scénarisées. Elles se rejouent à chaque montage
+ * de l'élément : la timeline décide quand un élément apparaît, le CSS seulement
+ * comment.
+ */
+
+.fondu {
+  animation: fondu 0.4s ease-out both;
+}
+
+.fonduRapide {
+  animation: fondu 0.2s both;
+}
+
+.vol {
+  animation: vol 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.pop {
+  animation: pop 0.3s both;
+}
+
+.rotation {
+  animation: rotation 0.6s linear infinite;
+}
+
+.chute {
+  animation: chute 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.montee {
+  animation: montee 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.glisse {
+  animation: glisse 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.popHalo {
+  animation: pop 0.4s both, halo 1.2s ease-out 0.4s 2;
+}
+
+.confetti {
+  animation: confetti 2.4s cubic-bezier(0.15, 0.7, 0.3, 1) both;
+}
+
+@keyframes fondu {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vol {
+  0% {
+    opacity: 0;
+    transform: translate(260px, -180px) rotate(-10deg) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes chute {
+  0% {
+    opacity: 0;
+    transform: translateY(-160px) rotate(-6deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(6px) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes montee {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-78px);
+    opacity: 1;
+  }
+}
+
+@keyframes glisse {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes halo {
+  0% {
+    box-shadow: 0 0 0 0 rgba(64, 64, 146, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(64, 64, 146, 0);
+  }
+}
+
+/* --dx, --dy et --r sont posés par particule (voir confettis.tsx). */
+@keyframes confetti {
+  0% {
+    transform: translate(0, 0) rotate(0) scale(0.4);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(var(--dx), var(--dy)) rotate(calc(var(--r) * 0.4))
+      scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(var(--dx) * 1.15), calc(var(--dy) + 340px))
+      rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fondu,
+  .fonduRapide,
+  .vol,
+  .pop,
+  .rotation,
+  .chute,
+  .montee,
+  .glisse,
+  .popHalo,
+  .confetti {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
