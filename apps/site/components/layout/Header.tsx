@@ -25,6 +25,10 @@ export const Header = () => {
             href: '/programme',
           },
           {
+            children: 'Démarche PCAET',
+            href: '/demarche-pcaet',
+          },
+          {
             children: 'Plateforme numérique',
             href: '/plateforme-numerique',
           },
