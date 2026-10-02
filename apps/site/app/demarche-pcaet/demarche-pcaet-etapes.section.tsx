@@ -12,8 +12,9 @@ const DERNIERE = ETAPES_DEPOT.length - 1;
 const DETAIL_ID = 'demarche-pcaet-etape-detail';
 
 /**
- * Défile seul sur grand écran, tant que la section est visible, que
- * l'utilisateur ne réduit pas les animations et qu'il n'a pas choisi une étape.
+ * Défile seul sur grand écran, tant que la section est visible et que
+ * l'utilisateur ne réduit pas les animations. Le focus ou le clic sur une étape
+ * met en pause, jusqu'à ce qu'il demande la reprise.
  */
 const useDefilementEtapes = () => {
   const section = useRef<HTMLDivElement>(null);
@@ -63,9 +64,9 @@ const useDefilementEtapes = () => {
     section,
     active,
     defile,
-    peutDefiler,
-    enPause,
-    basculerPause: () => setEnPause((pause) => !pause),
+    peutReprendre: peutDefiler && enPause,
+    mettreEnPause: () => setEnPause(true),
+    reprendre: () => setEnPause(false),
     choisir,
   };
 };
@@ -107,6 +108,9 @@ const Actions = ({
   </ul>
 );
 
+const ANNEAU_ACTIF = 'shadow-[0_0_0_6px_theme(colors.primary.3)]';
+
+/** Le survol du bouton parent (`group`) donne à la pastille l'aspect actif. */
 const Pastille = ({
   numero,
   etat,
@@ -119,10 +123,11 @@ const Pastille = ({
   <span
     className={classNames(
       'relative z-[1] flex items-center justify-center rounded-full border-2 border-primary-9 font-bold transition-[background,color,box-shadow] duration-300',
+      'group-hover:bg-primary-9 group-hover:text-white group-hover:shadow-[0_0_0_6px_theme(colors.primary.3)]',
       {
         'bg-primary-9 text-white': etat !== 'a-venir',
         'bg-white text-primary-9': etat === 'a-venir',
-        'shadow-[0_0_0_6px_theme(colors.primary.3)]': etat === 'active',
+        [ANNEAU_ACTIF]: etat === 'active',
       },
       className
     )}
@@ -140,36 +145,39 @@ const EtapesDesktop = ({
   active,
   defile,
   choisir,
+  mettreEnPause,
 }: {
   active: number;
   defile: boolean;
   choisir: (index: number) => void;
+  mettreEnPause: () => void;
 }) => {
   const etape = ETAPES_DEPOT[active];
 
   return (
     <div className="max-lg:hidden flex flex-col gap-7 w-full">
-      <ol className="relative grid grid-cols-5 gap-6 p-0 m-0 list-none">
-        <li
-          aria-hidden
-          className="absolute left-[10%] right-[10%] top-[23px] h-0.5 p-0 bg-primary-3"
-        />
-        <li
-          aria-hidden
-          className="absolute left-[10%] top-[23px] h-0.5 p-0 bg-primary-9 transition-[width] duration-500"
-          style={{ width: `${(active / DERNIERE) * 80}%` }}
-        />
+      <ol className="grid grid-cols-5 gap-6 p-0 m-0 list-none">
         {ETAPES_DEPOT.map((item, index) => (
           <li key={item.titre} className="relative flex p-0">
-            {defile && index === active && index < DERNIERE && (
+            {/* Segment vers l'étape suivante : plein une fois l'étape passée,
+                rempli par le minuteur pendant le défilement. Le segment plein
+                prend le relais du minuteur sans repartir de zéro. */}
+            {index < DERNIERE && (
               <span
                 aria-hidden
-                className="absolute left-1/2 top-[23px] flex h-0.5 w-[calc(100%+24px)]"
+                className="absolute left-1/2 top-[23px] flex h-0.5 w-[calc(100%+24px)] bg-primary-3"
               >
-                <span
-                  key={active}
-                  className={classNames('h-full bg-primary-9', styles.minuteur)}
-                />
+                {index < active && (
+                  <span className="w-full h-full bg-primary-9" />
+                )}
+                {defile && index === active && (
+                  <span
+                    className={classNames(
+                      'h-full bg-primary-9',
+                      styles.minuteur
+                    )}
+                  />
+                )}
               </span>
             )}
             <button
@@ -177,7 +185,8 @@ const EtapesDesktop = ({
               aria-current={index === active ? 'step' : undefined}
               aria-controls={DETAIL_ID}
               onClick={() => choisir(index)}
-              className="flex flex-1 flex-col items-center gap-3 px-1 pb-2 text-center rounded-lg"
+              onFocus={mettreEnPause}
+              className="group flex flex-1 flex-col items-center gap-3 px-1 pb-2 text-center !bg-transparent"
             >
               <Pastille
                 numero={index + 1}
@@ -277,7 +286,7 @@ const EtapesMobile = () => {
                 aria-controls={panneauId}
                 onClick={() => setOuverte(estOuverte ? null : index)}
                 className={classNames(
-                  'min-h-10 text-left text-[17px] leading-snug text-primary-9',
+                  'min-h-10 text-left text-[17px] leading-snug text-primary-9 !bg-transparent',
                   {
                     'font-bold': estOuverte,
                     'font-medium': !estOuverte,
@@ -314,9 +323,9 @@ export const DemarchePcaetEtapesSection = () => {
     section,
     active,
     defile,
-    peutDefiler,
-    enPause,
-    basculerPause,
+    peutReprendre,
+    mettreEnPause,
+    reprendre,
     choisir,
   } = useDefilementEtapes();
 
@@ -329,21 +338,26 @@ export const DemarchePcaetEtapesSection = () => {
             Vous retrouverez ces 5 étapes dans le panneau « Avancement » de
             votre espace.
           </p>
-          {peutDefiler && (
-            <Button
-              variant="underlined"
-              size="xs"
-              icon={enPause ? 'play-line' : 'pause-line'}
-              onClick={basculerPause}
-              className="max-lg:hidden"
-            >
-              {enPause
-                ? 'Reprendre le défilement des étapes'
-                : 'Mettre en pause le défilement des étapes'}
-            </Button>
-          )}
+          {/* Toujours rendu (invisible hors pause) pour ne pas décaler la
+              frise quand il apparaît. */}
+          <Button
+            variant="underlined"
+            size="xs"
+            icon="play-line"
+            onClick={reprendre}
+            className={classNames('max-lg:hidden', {
+              invisible: !peutReprendre,
+            })}
+          >
+            Reprendre le défilement des étapes
+          </Button>
         </div>
-        <EtapesDesktop active={active} defile={defile} choisir={choisir} />
+        <EtapesDesktop
+          active={active}
+          defile={defile}
+          choisir={choisir}
+          mettreEnPause={mettreEnPause}
+        />
         <EtapesMobile />
       </div>
     </Section>
