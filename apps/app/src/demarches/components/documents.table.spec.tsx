@@ -176,10 +176,10 @@ describe('DemarcheDocumentsTable — actions de dépôt', () => {
 });
 
 describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l’aval', () => {
-  /** Délibération d'arrêt : requise, du seul amont, jamais reprise après les avis. */
-  const DELIBERATION_ARRET = definition({
-    id: 'pcaet_deliberation_arret',
-    nom: 'Délibération d’arrêt du PCAET',
+  /** Délibération d'engagement : requise, du seul amont, jamais reprise après les avis. */
+  const DELIBERATION_ENGAGEMENT = definition({
+    id: 'pcaet_deliberation_engagement',
+    nom: 'Délibération d’engagement',
     ordre: 3,
   });
   const ADOPTION = definition({
@@ -192,8 +192,8 @@ describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l�
   const renderAval = () =>
     renderTable({
       etape: 'aval',
-      definitions: [DELIBERATION_ARRET, ADOPTION],
-      documents: [depose(DELIBERATION_ARRET.id)],
+      definitions: [DELIBERATION_ENGAGEMENT, ADOPTION],
+      documents: [depose(DELIBERATION_ENGAGEMENT.id)],
     });
 
   /** La ligne du tableau qui porte cette pièce, pour y chercher ses actions. */
@@ -211,7 +211,7 @@ describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l�
     renderAval();
 
     expect(
-      ligneDe('Délibération d’arrêt du PCAET').getByText('diagnostic.pdf')
+      ligneDe('Délibération d’engagement').getByText('diagnostic.pdf')
     ).toBeInTheDocument();
   });
 
@@ -219,7 +219,7 @@ describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l�
     renderAval();
 
     expect(
-      ligneDe('Délibération d’arrêt du PCAET').queryByRole('button')
+      ligneDe('Délibération d’engagement').queryByRole('button')
     ).toBeNull();
   });
 

@@ -722,6 +722,43 @@ describe('Documents d’une démarche PCAET', () => {
     });
   });
 
+  test('La délibération d’arrêt incluse dans le PCAET global reçoit un fichier dédié après les avis', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+    await completeTestDossierPcaet(db, dossier);
+    await caller.demarches.pcaet.transmettrePourAvis(dossier);
+    await cloreTestInstructionPcaet(app, db, dossier);
+
+    const dediee = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-arret.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      ...dossier,
+      documentId: 'pcaet_deliberation_arret',
+      fichierId: dediee.id,
+      etape: 'aval',
+    });
+
+    const snapshot = await caller.demarches.pcaet.documents.list(dossier);
+    const versions = snapshot.documents.filter(
+      ({ documentId }) => documentId === 'pcaet_deliberation_arret'
+    );
+    // La version transmise reste l'inclusion instruite ; la dédiée s'y ajoute.
+    expect(
+      versions.map(({ etape, fichier }) => [etape, fichier?.filename ?? null])
+    ).toEqual(
+      expect.arrayContaining([
+        ['amont', null],
+        ['aval', 'deliberation-arret.pdf'],
+      ])
+    );
+    expect(versions).toHaveLength(2);
+  });
+
   test('Le PCAET adopté fige ses pièces : rien ne s’y dépose, ne s’y remplace ni ne s’en retire', async () => {
     const { caller, collectivite, demarche } = await createDemarche(db, router);
     const dossier = {
