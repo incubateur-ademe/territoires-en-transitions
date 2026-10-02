@@ -1,7 +1,6 @@
 'use client';
 
 import Section from '@/site/components/sections/Section';
-import { TitreSection } from '@/site/components/sections/TitreSection';
 import { Badge, Button, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
@@ -322,12 +321,10 @@ export const DemarchePcaetEtapesSection = () => {
   } = useDefilementEtapes();
 
   return (
-    <Section containerClassName="lg:!py-20">
-      <div ref={section} className="flex flex-col items-center gap-8 lg:gap-12">
+    <Section containerClassName="pt-0">
+      <div ref={section} className="flex flex-col items-center gap-8 lg:gap-16">
         <div className="flex flex-col items-center gap-3 text-center">
-          <TitreSection className="mb-0 text-primary-9">
-            Les étapes de votre dépôt
-          </TitreSection>
+          <h2 className="mb-0 text-center">Les étapes de votre dépôt</h2>
           <p className="mb-0 text-primary-10 lg:text-[17px]">
             Vous retrouverez ces 5 étapes dans le panneau « Avancement » de
             votre espace.
