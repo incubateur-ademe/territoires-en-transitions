@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "page_demarche_pcaets",
+  "info": {
+    "singularName": "page-demarche-pcaet",
+    "pluralName": "page-demarche-pcaets",
+    "displayName": "7. Démarche PCAET",
+    "description": "Référencement de la page Démarche PCAET du site public"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}
