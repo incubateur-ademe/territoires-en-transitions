@@ -46,6 +46,21 @@ export const readDocxPages = async (
   }
 };
 
+// mammoth échappe le texte du document : il ne reste que ses propres balises,
+// retirées jusqu'à la dernière pour qu'aucune ne se reforme d'un retrait à
+// l'autre.
+const TAG = /<[^>]+>/g;
+
+const stripTags = (html: string): string => {
+  let text = html;
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(TAG, '');
+  } while (text !== previous);
+  return text;
+};
+
 const htmlToLines = (html: string): PageLine[] => {
   const lines: string[] = [];
   const blocks = html
@@ -54,9 +69,7 @@ const htmlToLines = (html: string): PageLine[] => {
     .replace(
       /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/g,
       (_, cell: string) =>
-        `${cell
-          .replace(/<\/?(p|br)[^>]*>/g, ' ')
-          .replace(/<[^>]+>/g, '')
+        `${stripTags(cell.replace(/<\/?(p|br)[^>]*>/g, ' '))
           .replace(/\s+/g, ' ')
           .trim()}\t`
     )
@@ -66,10 +79,8 @@ const htmlToLines = (html: string): PageLine[] => {
       /<(h[1-4])[^>]*>/g,
       (_, tag: string) => `\n${'#'.repeat(Number(tag[1]))} `
     )
-    .replace(/<\/(p|h[1-4]|li|tr|table|ul|ol|div)>/g, '\n')
-    .replace(/<[^>]+>/g, '')
-    .split('\n');
-  for (const block of blocks) {
+    .replace(/<\/(p|h[1-4]|li|tr|table|ul|ol|div)>/g, '\n');
+  for (const block of stripTags(blocks).split('\n')) {
     const text = decodeEntities(block)
       .replace(/[ \t]+$/g, '')
       .trim();
