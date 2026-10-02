@@ -41,7 +41,7 @@
 }
 
 .confetti {
-  animation: confetti 2.4s cubic-bezier(0.15, 0.7, 0.3, 1) both;
+  animation: confetti 1.8s cubic-bezier(0.15, 0.7, 0.3, 1) both;
 }
 
 @keyframes fondu {
@@ -145,14 +145,15 @@
     transform: translate(0, 0) rotate(0) scale(0.4);
     opacity: 1;
   }
-  35% {
+  40% {
     transform: translate(var(--dx), var(--dy)) rotate(calc(var(--r) * 0.4))
       scale(1);
     opacity: 1;
   }
+  /* La gerbe s'éteint sur place plutôt que de retomber. */
   100% {
-    transform: translate(calc(var(--dx) * 1.15), calc(var(--dy) + 340px))
-      rotate(var(--r));
+    transform: translate(calc(var(--dx) * 1.15), calc(var(--dy) * 1.15))
+      rotate(var(--r)) scale(0.6);
     opacity: 0;
   }
 }
