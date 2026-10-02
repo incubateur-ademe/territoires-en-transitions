@@ -256,6 +256,56 @@ select setval('public.indicateur_source_metadonnee_id_seq',
               (select max(id) from public.indicateur_source_metadonnee));
 ```
 
+### 4. Saisir les services
+
+Une saisine est la demande d'avis adressée à un service sur un dossier : sans
+elle, le service ne peut pas ouvrir le dossier. Chaque dossier repris transmis
+pour avis reçoit une saisine de chaque service
+qui couvre sa collectivité (DREAL, région, DDT, DR ADEME, services nationaux),
+comme l'aurait fait sa transmission dans TeT : même règle de couverture
+(`listInstructeursCouvrants` du backend), `source = 'transmission'`, périmètre
+principal ou secondaire. Chaque saisine est datée du jour de la transmission
+pour avis du dossier. Un dossier en élaboration n'est jamais saisi. Aucun avis
+n'est écrit : ils viendront avec leur fichier.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-saisines/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+Après l'import, `rattraper-saisines-pcaet` ne trouve rien à faire sur les
+dossiers repris. Ne pas le lancer entre l'import des dossiers et celui-ci : il
+saisirait les services avec la date du jour.
+
+Le rapport compte les saisines par type de service et par périmètre, puis
+nomme les dossiers qui n'ont aucune saisine principale d'un type. Pour la DDT,
+c'est attendu : l'outre-mer, Paris et la petite couronne n'en ont pas.
+
+#### Annuler les saisines
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-saisines/annuler.ts [--confirm]
+```
+
+Retire les saisines que l'import a écrites (d'après `lignes_ecrites`), et
+seulement elles : les dossiers ne sont pas touchés, une saisine posée hors
+reprise (transmission, rattrapage) reste. Un avis déposé par un service sur une
+de ces saisines depuis l'import part avec elle : le script les compte.
+Refuse de tourner si la reprise a écrit des avis : annuler d'abord leur import.
+
+#### Ce qui arrête l'import des saisines
+
+Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
+s'il en trouve un :
+
+| Garde                                                                                 | Quoi faire                                                                                                       |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris                                                                  | lancer d'abord l'import des dossiers (étape 2)                                                                   |
+| un dossier repris a déjà une saisine                                                  | l'import a déjà tourné (l'annuler d'abord), ou le rattrapage des saisines est passé avant : retirer ses saisines |
+| un dossier transmis dont l'échéance d'avis n'est pas passée, jour compris, ou absente | vérifier la date de transmission ; si elle est juste, attendre la fin de la consultation                         |
+| un dossier transmis sans DREAL ou sans région qui couvre son siège                    | créer le service, ou corriger son périmètre, avant l'import                                                      |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
