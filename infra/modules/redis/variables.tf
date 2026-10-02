@@ -22,7 +22,7 @@ variable "node_type" {
 variable "redis_version" {
   description = "Version Redis à provisionner. Vérifier les versions disponibles sur Scaleway avant toute mise à jour."
   type        = string
-  default     = "8.6.3"
+  default     = "8.6.6"
 }
 
 variable "cluster_size" {
