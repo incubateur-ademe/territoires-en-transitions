@@ -31,15 +31,19 @@ describe('ce qui reste modifiable', () => {
     ).toBe(true);
   });
 
-  it('l’aval s’ouvre à la clôture de l’instruction et ne se referme plus', () => {
+  it('l’aval s’ouvre à la clôture de l’instruction', () => {
     expect(isDemarchePcaetAvalModifiable('en_elaboration')).toBe(false);
     expect(isDemarchePcaetAvalModifiable('transmis_pour_avis')).toBe(false);
     // Avant la publication : c'est le dépôt de la délibération d'adoption qui
     // rend le dossier publiable, il faut donc pouvoir la verser ici.
     expect(isDemarchePcaetAvalModifiable('instruit')).toBe(true);
-    expect(isDemarchePcaetAvalModifiable('publie')).toBe(true);
-    // L'archivage n'interdit pas d'y déposer les pièces attendues.
-    expect(isDemarchePcaetAvalModifiable('archive')).toBe(true);
+  });
+
+  it('la publication fige le PCAET adopté', () => {
+    expect(isDemarchePcaetAmontModifiable('publie')).toBe(false);
+    expect(isDemarchePcaetAvalModifiable('publie')).toBe(false);
+    expect(isDemarchePcaetAvalModifiable('archive')).toBe(false);
+    expect(isDemarchePcaetEtapeModifiable('publie', 'aval')).toBe(false);
   });
 
   it('l’étape d’une pièce désigne le temps du dossier', () => {

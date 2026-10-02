@@ -19,6 +19,7 @@ import type {
   DemarcheDocumentEtape,
   DemarcheDocumentAdditional,
 } from '@tet/domain/demarches';
+import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
 
@@ -49,16 +50,18 @@ export const DemarchePcaetDocumentsPage = () => {
     removeDocumentAdditional,
   } = useDemarchePcaetDocuments(demarcheId);
 
-  // Les avis ne concernent que l'aval : inutile de les demander avant que
-  // l'instruction soit close.
+  // Les avis se lisent dès la clôture de l'instruction, et le restent une fois
+  // le PCAET adopté, quand plus rien ne s'y dépose.
+  const instructionClose =
+    !!demarche &&
+    (demarche.avalModifiable || isPublieDemarchePcaetStatus(demarche.statut));
+
   const { avisRecus } = useDemarchePcaetAvisRecus({
     collectiviteId,
     demarcheId,
     // Un dépôt hors plateforme n'a aucun avis sur la plateforme : les siens ont
     // été rendus ailleurs, et les demander afficherait « aucun avis déposé ».
-    enabled:
-      demarche?.avalModifiable === true &&
-      demarche?.transmisHorsPlateforme !== true,
+    enabled: instructionClose && demarche?.transmisHorsPlateforme !== true,
   });
 
   const { mutate: downloadDocument } = useDownloadDocument();
@@ -91,7 +94,7 @@ export const DemarchePcaetDocumentsPage = () => {
   // d'être « hors plateforme » au sens du parcours — l'écran se remettrait alors
   // à annoncer « aucun avis déposé » sur un dossier dont les avis ont été rendus
   // ailleurs. C'est justement ce que le drapeau de provenance sait encore dire.
-  const montreLesAvis = parcours.avalOuvert && !demarche.transmisHorsPlateforme;
+  const montreLesAvis = instructionClose && !demarche.transmisHorsPlateforme;
 
   const downloadDemarcheDocument = ({
     fichier,
@@ -118,9 +121,11 @@ export const DemarchePcaetDocumentsPage = () => {
             : appLabels.demarcheDetailDocumentsTitre
         }
         description={
-          montreLesAvis
+          !montreLesAvis
+            ? appLabels.demarcheDetailDocumentsDescription
+            : parcours.avalOuvert
             ? appLabels.demarcheDetailDocumentsAvalDescription
-            : appLabels.demarcheDetailDocumentsDescription
+            : appLabels.demarcheDetailDocumentsAdopteDescription
         }
         className="gap-2"
       >

@@ -722,6 +722,62 @@ describe('Documents d’une démarche PCAET', () => {
     });
   });
 
+  test('Le PCAET adopté fige ses pièces : rien ne s’y dépose, ne s’y remplace ni ne s’en retire', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+    await completeTestDossierPcaet(db, dossier);
+    await caller.demarches.pcaet.transmettrePourAvis(dossier);
+    await cloreTestInstructionPcaet(app, db, dossier);
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      ...dossier,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+
+    const publiee = await caller.demarches.pcaet.publier({
+      ...dossier,
+      dateAdoption: '2026-01-15',
+    });
+    expect(publiee.amontModifiable).toBe(false);
+    expect(publiee.avalModifiable).toBe(false);
+
+    const autreFichier = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+    });
+    await expect(
+      caller.demarches.pcaet.documents.add({
+        ...dossier,
+        documentId: 'pcaet_memoire_reponse_avis',
+        fichierId: autreFichier.id,
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+    await expect(
+      caller.demarches.pcaet.documents.remove({
+        ...dossier,
+        documentId: 'pcaet_deliberation_adoption',
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+    await expect(
+      caller.demarches.pcaet.documents.createAdditional({
+        ...dossier,
+        etape: 'aval',
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+  });
+
   test('Une démarche n’est pas accessible via une autre collectivité (IDOR)', async () => {
     const { collectivite, demarche } = await createDemarche(db, router);
     const autre = await freshEditor();
