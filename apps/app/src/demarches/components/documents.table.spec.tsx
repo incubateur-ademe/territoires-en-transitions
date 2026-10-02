@@ -323,9 +323,24 @@ describe('DemarcheDocumentsTable — lecture d’un dossier sans ses pièces vid
       definitions: [GLOBAL, DIAGNOSTIC, EES],
       documents: [depose(GLOBAL.id)],
       coverage: [
-        { documentId: GLOBAL.id, origine: 'fichier', substitutId: null },
-        { documentId: DIAGNOSTIC.id, origine: null, substitutId: null },
-        { documentId: EES.id, origine: 'substitut', substitutId: GLOBAL.id },
+        {
+          documentId: GLOBAL.id,
+          couvert: true,
+          origine: 'fichier',
+          substitutId: null,
+        },
+        {
+          documentId: DIAGNOSTIC.id,
+          couvert: false,
+          origine: null,
+          substitutId: null,
+        },
+        {
+          documentId: EES.id,
+          couvert: true,
+          origine: 'substitut',
+          substitutId: GLOBAL.id,
+        },
       ],
       documentsAdditional: [
         annexe('Annexe déposée', true),
@@ -366,8 +381,18 @@ describe('DemarcheDocumentsTable — inclusion déclarée, après les avis', () 
       definitions: [GLOBAL_REPRISE, EES_REPRISE],
       documents,
       coverage: [
-        { documentId: GLOBAL.id, origine: 'fichier', substitutId: null },
-        { documentId: EES.id, origine: 'substitut', substitutId: GLOBAL.id },
+        {
+          documentId: GLOBAL.id,
+          couvert: true,
+          origine: 'fichier',
+          substitutId: null,
+        },
+        {
+          documentId: EES.id,
+          couvert: true,
+          origine: 'substitut',
+          substitutId: GLOBAL.id,
+        },
       ],
     });
 
