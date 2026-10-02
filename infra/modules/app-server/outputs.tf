@@ -32,3 +32,8 @@ output "ssh_key_secret_id" {
   description = "ID du secret Secret Manager contenant la clé privée SSH root."
   value       = scaleway_secret.server_key.id
 }
+
+output "sshd_host_public_key" {
+  description = "Clé d'hôte publique du serveur SSH (ssh-ed25519 …), imposée par Terraform. À épingler dans known_hosts avant toute connexion."
+  value       = trimspace(tls_private_key.sshd_host.public_key_openssh)
+}

@@ -249,6 +249,24 @@ terraform output -raw supabase_auth_admin_password
 Le seul chemin vers les serveurs applicatifs est le control plane : nonprod et preview
 n'exposent pas le port 22, et celui de la prod n'accepte que l'IP de Coolify.
 
+Les clés d'hôte SSH des serveurs sont générées par Terraform et installées par cloud-init
+au premier boot : elles sont connues avant toute connexion. Les scripts de `infra/coolify`
+les vérifient en mode strict. Côté opérateur, les épingler une fois dans `known_hosts`
+plutôt que d'accepter la première clé présentée :
+
+```sh
+{
+  echo "$(terraform -chdir=infra/platform output -raw coolify_public_ip) $(terraform -chdir=infra/platform output -raw coolify_sshd_host_public_key)"
+  for t in nonprod preview; do
+    echo "$(terraform -chdir=infra/$t output -raw server_private_ip) $(terraform -chdir=infra/$t output -raw server_sshd_host_public_key)"
+  done
+  echo "$(terraform -chdir=infra/prod output -raw server_ssh_host) $(terraform -chdir=infra/prod output -raw server_sshd_host_public_key)"
+} >> ~/.ssh/known_hosts
+```
+
+Un « REMOTE HOST IDENTIFICATION HAS CHANGED » ensuite n'est jamais anodin : soit le serveur
+a été recréé (mettre à jour la ligne), soit la connexion est interceptée.
+
 ```sh
 # Se connecter au bastion
 ssh tet-ops@$(terraform -chdir=infra/platform output -raw coolify_public_ip)

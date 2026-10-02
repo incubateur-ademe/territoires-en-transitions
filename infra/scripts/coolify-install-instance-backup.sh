@@ -14,6 +14,8 @@
 #
 # Variables attendues :
 #   TARGET_HOST                 IP publique du control plane
+#   TARGET_HOST_KEY             clé d'hôte SSH attendue (ssh-ed25519 …), vérifiée
+#                               en mode strict
 #   HOST_KEY_SECRET_NAME        secret SM de la clé privée SSH root du control plane
 #   S3_ENDPOINT                 ex. https://s3.fr-par.scw.cloud
 #   S3_BUCKET                   bucket cible
@@ -27,6 +29,7 @@
 set -euo pipefail
 
 : "${TARGET_HOST:?TARGET_HOST non défini}"
+: "${TARGET_HOST_KEY:?TARGET_HOST_KEY non défini : clé hôte SSH attendue}"
 : "${HOST_KEY_SECRET_NAME:?HOST_KEY_SECRET_NAME non défini}"
 : "${S3_ENDPOINT:?S3_ENDPOINT non défini}"
 : "${S3_BUCKET:?S3_BUCKET non défini}"
@@ -72,10 +75,15 @@ if [ -z "${_s3_key}" ] || [ -z "${_s3_secret}" ] || [ "${_s3_key}" = "${_creds_r
   exit 1
 fi
 
+# Clé d'hôte épinglée, vérifiée en mode strict : ce script pousse les clés
+# Object Storage sur la machine.
+printf '%s %s\n' "${TARGET_HOST}" "${TARGET_HOST_KEY}" >"${_tmpdir}/known_hosts"
+
 _ssh() {
   ssh -i "${_tmpdir}/host_key" \
     -o IdentitiesOnly=yes \
-    -o StrictHostKeyChecking=accept-new \
+    -o StrictHostKeyChecking=yes \
+    -o HostKeyAlgorithms=ssh-ed25519 \
     -o UserKnownHostsFile="${_tmpdir}/known_hosts" \
     "root@${TARGET_HOST}" "$@"
 }

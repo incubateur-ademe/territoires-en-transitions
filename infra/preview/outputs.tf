@@ -22,3 +22,8 @@ output "server_ssh_key_secret_name" {
   description = "Nom du secret Secret Manager contenant la clé privée SSH root du serveur. Consommé par le stack infra/coolify."
   value       = module.app_server.ssh_key_secret_name
 }
+
+output "server_sshd_host_public_key" {
+  description = "Clé d'hôte SSH du serveur, imposée par Terraform. Valeur sshd_host_public_key de app_servers.<tier> dans infra/coolify, et à épingler dans le known_hosts des opérateurs."
+  value       = module.app_server.sshd_host_public_key
+}

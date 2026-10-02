@@ -29,6 +29,20 @@ resource "tls_private_key" "server" {
   algorithm = "ED25519"
 }
 
+# Clé d'hôte du serveur SSH (sshd), générée par Terraform et installée par
+# cloud-init au premier boot. Sa publique est connue avant toute connexion :
+# les scripts qui poussent des secrets en SSH (clé root, PAT GHCR, clés S3)
+# vérifient ainsi l'hôte en mode strict, au lieu d'accepter la première clé
+# venue.
+#
+# Contrepartie : la privée transite par le state et par le user_data de
+# l'instance, lisible depuis la machine elle-même via l'API de métadonnées. Un
+# attaquant déjà sur la machine pourrait s'en servir pour usurper l'hôte, mais
+# il n'y gagnerait rien de plus que ce qu'il a déjà.
+resource "tls_private_key" "sshd_host" {
+  algorithm = "ED25519"
+}
+
 resource "scaleway_secret" "server_key" {
   name        = "tet-${var.tier}-server-ssh-key"
   description = "Clé privée SSH root du serveur ${local.server_name}, utilisée par Coolify. Gérée par Terraform."
@@ -158,11 +172,13 @@ resource "scaleway_instance_server" "server" {
 
   user_data = {
     cloud-init = templatefile("${path.module}/cloud-init.yaml.tftpl", {
-      server_name         = local.server_name
-      ssh_authorized_keys = var.ssh_authorized_keys
-      coolify_public_key  = trimspace(tls_private_key.server.public_key_openssh)
-      docker_gc_enabled   = var.docker_gc_enabled
-      docker_gc_until     = var.docker_gc_until
+      server_name           = local.server_name
+      ssh_authorized_keys   = var.ssh_authorized_keys
+      coolify_public_key    = trimspace(tls_private_key.server.public_key_openssh)
+      sshd_host_private_key = trimspace(tls_private_key.sshd_host.private_key_openssh)
+      sshd_host_public_key  = trimspace(tls_private_key.sshd_host.public_key_openssh)
+      docker_gc_enabled     = var.docker_gc_enabled
+      docker_gc_until       = var.docker_gc_until
     })
   }
 
