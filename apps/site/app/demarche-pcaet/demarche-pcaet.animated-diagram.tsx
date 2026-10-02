@@ -3,39 +3,40 @@
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
+import { useMedia } from 'react-use';
 import styles from './demarche-pcaet.module.css';
 
-const delay = (secondes: number): CSSProperties => ({
-  animationDelay: `${secondes}s`,
+const delay = (seconds: number): CSSProperties => ({
+  animationDelay: `${seconds}s`,
 });
 
-const FICHIERS = ['Documents', 'Diagnostic', "Programme d'actions"];
-const DESTINATAIRES = ['DREAL', 'DDT', 'Région', 'ADEME'];
-const HAUTEURS_GES = [100, 86, 72, 58, 46, 34];
-const MEMBRES = [
-  { initiales: 'CM', className: 'bg-primary-7 text-white' },
-  { initiales: 'DG', className: 'bg-secondary-1 text-primary-10' },
-  { initiales: 'ÉL', className: 'bg-success-1 text-white' },
-  { initiales: '+', className: 'bg-primary-2 text-primary-9' },
+const FILES = ['Documents', 'Diagnostic', "Programme d'actions"];
+const RECIPIENTS = ['DREAL', 'DDT', 'Région', 'ADEME'];
+const GES_BAR_HEIGHTS = [100, 86, 72, 58, 46, 34];
+const MEMBERS = [
+  { initials: 'CM', className: 'bg-primary-7 text-white' },
+  { initials: 'DG', className: 'bg-secondary-1 text-primary-10' },
+  { initials: 'ÉL', className: 'bg-success-1 text-white' },
+  { initials: '+', className: 'bg-primary-2 text-primary-9' },
 ];
 const PLANS = ['Plan climat', 'Plan mobilité', 'Autres plans'];
 
 /** Moments où chaque carte apparaît : le carrousel mobile les suit. */
-const APPARITION_PILOTAGE = 2.55;
-const APPARITION_COLLABORATION = 4.4;
+const PILOTAGE_CARD_AT = 2.55;
+const COLLABORATION_CARD_AT = 4.4;
 
 const DESCRIPTION =
   "Schéma en 3 temps : 1. je dépose mon PCAET, qui est transmis par e-mail à la DREAL, la DDT, la Région et l'ADEME ; 2. je pilote mon plan avec des indicateurs et tableaux de bord ; 3. je collabore en transversalité avec mes équipes sur plusieurs plans ; puis je renouvelle mon plan en repartant du précédent.";
 
-const Carte = ({
-  numero,
-  titre,
+const Card = ({
+  number,
+  title,
   className,
   style,
   children,
 }: {
-  numero: number;
-  titre: string;
+  number: number;
+  title: string;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -51,40 +52,40 @@ const Carte = ({
   >
     <div className="flex items-center gap-2">
       <span className="flex items-center justify-center size-[22px] rounded-full bg-primary-9 text-white text-xs font-bold">
-        {numero}
+        {number}
       </span>
-      <span className="text-sm font-bold">{titre}</span>
+      <span className="text-sm font-bold">{title}</span>
     </div>
     {children}
   </div>
 );
 
-const CarteDepot = ({ className, style }: CarteProps) => (
-  <Carte
-    numero={1}
-    titre="Je dépose mon PCAET"
+const DepotCard = ({ className, style }: CardProps) => (
+  <Card
+    number={1}
+    title="Je dépose mon PCAET"
     className={className}
     style={style}
   >
-    {FICHIERS.map((fichier, index) => (
+    {FILES.map((file, index) => (
       <div
-        key={fichier}
+        key={file}
         className={classNames('flex items-center gap-2.5', styles.slideIn)}
         style={delay(0.3 + index * 0.12)}
       >
         <span className="flex flex-col flex-1 gap-1">
-          <span className="text-[11px] font-medium">{fichier}</span>
+          <span className="text-[11px] font-medium">{file}</span>
           <span
             className={classNames(
               'relative h-[5px] w-full overflow-hidden rounded-sm bg-primary-2',
-              styles.jauge
+              styles.gauge
             )}
             style={delay(1.75 + index * 0.3)}
           >
             <span
               className={classNames(
                 'absolute inset-y-0 left-0 rounded-sm',
-                styles.jaugeRemplissage
+                styles.gaugeFill
               )}
               style={delay(0.45 + index * 0.3)}
             />
@@ -135,27 +136,27 @@ const CarteDepot = ({ className, style }: CarteProps) => (
         </svg>
       </span>
       <div className="flex gap-[5px]">
-        {DESTINATAIRES.map((destinataire, index) => (
+        {RECIPIENTS.map((recipient, index) => (
           <span
-            key={destinataire}
+            key={recipient}
             className={classNames(
               'flex-1 py-[5px] px-0.5 text-center text-[10px] font-bold text-primary-9 bg-primary-0 border border-primary-3 rounded-md',
-              styles.destinataire
+              styles.recipient
             )}
             style={delay(1.55 + index * 0.2)}
           >
-            {destinataire}
+            {recipient}
           </span>
         ))}
       </div>
     </div>
-  </Carte>
+  </Card>
 );
 
-const CartePilotage = ({ className, style }: CarteProps) => (
-  <Carte
-    numero={2}
-    titre="Je pilote mon plan"
+const PilotageCard = ({ className, style }: CardProps) => (
+  <Card
+    number={2}
+    title="Je pilote mon plan"
     className={className}
     style={style}
   >
@@ -171,7 +172,7 @@ const CartePilotage = ({ className, style }: CarteProps) => (
           <div
             className={classNames(
               'absolute -inset-px rounded-full',
-              styles.donutMasque
+              styles.donutMask
             )}
             style={delay(2.95)}
           />
@@ -181,14 +182,14 @@ const CartePilotage = ({ className, style }: CarteProps) => (
       </div>
       <div className="flex flex-col flex-1 gap-2">
         <div className="relative flex items-end gap-[5px] h-[86px] border-b border-primary-3">
-          {HAUTEURS_GES.map((hauteur, index) => (
+          {GES_BAR_HEIGHTS.map((height, index) => (
             <span
-              key={hauteur}
+              key={height}
               className={classNames(
                 'flex-1 rounded-t rounded-b-sm bg-gradient-to-b from-primary-7 to-primary-4',
                 styles.bar
               )}
-              style={{ height: `${hauteur}%`, ...delay(2.95 + index * 0.1) }}
+              style={{ height: `${height}%`, ...delay(2.95 + index * 0.1) }}
             />
           ))}
           <span
@@ -205,30 +206,30 @@ const CartePilotage = ({ className, style }: CarteProps) => (
         <span className="text-[10px] font-bold">Émissions du territoire</span>
       </div>
     </div>
-  </Carte>
+  </Card>
 );
 
-const CarteCollaboration = ({ className, style }: CarteProps) => (
-  <Carte
-    numero={3}
-    titre="Je collabore en transversalité"
+const CollaborationCard = ({ className, style }: CardProps) => (
+  <Card
+    number={3}
+    title="Je collabore en transversalité"
     className={className}
     style={style}
   >
     <div className="flex items-center gap-3">
       <div className="flex">
-        {MEMBRES.map(({ initiales, className: couleurs }, index) => (
+        {MEMBERS.map(({ initials, className: colors }, index) => (
           <span
-            key={initiales}
+            key={initials}
             className={classNames(
               'flex items-center justify-center size-[30px] rounded-full border-2 border-white text-[11px] font-bold',
               { '-ml-2': index > 0 },
-              couleurs,
+              colors,
               styles.pop
             )}
             style={delay(4.75 + index * 0.15)}
           >
-            {initiales}
+            {initials}
           </span>
         ))}
       </div>
@@ -253,19 +254,19 @@ const CarteCollaboration = ({ className, style }: CarteProps) => (
         </span>
       ))}
     </div>
-  </Carte>
+  </Card>
 );
 
-type CarteProps = { className?: string; style?: CSSProperties };
+type CardProps = { className?: string; style?: CSSProperties };
 
-const Connecteur = ({
+const Connector = ({
   className,
   animation,
-  secondes,
+  seconds,
 }: {
   className: string;
   animation: string;
-  secondes: number;
+  seconds: number;
 }) => (
   <div
     aria-hidden
@@ -274,36 +275,36 @@ const Connecteur = ({
       animation,
       className
     )}
-    style={delay(secondes)}
+    style={delay(seconds)}
   />
 );
 
 /** Composition desktop : les trois cartes reliées, puis la boucle de renouvellement. */
-const SchemaDesktop = () => (
+const DesktopDiagram = () => (
   <div
     role="img"
     aria-label={DESCRIPTION}
     className="relative h-[490px] w-[580px]"
   >
-    <Connecteur
+    <Connector
       className="left-[250px] top-[92px] w-[60px] border-t-2"
       animation={styles.growX}
-      secondes={2.35}
+      seconds={2.35}
     />
-    <Connecteur
+    <Connector
       className="left-[400px] top-[178px] h-[150px] border-l-2"
       animation={styles.growY}
-      secondes={3.9}
+      seconds={3.9}
     />
-    <Connecteur
+    <Connector
       className="left-[70px] top-[420px] w-[70px] border-t-2"
       animation={styles.growXFromRight}
-      secondes={5.9}
+      seconds={5.9}
     />
-    <Connecteur
+    <Connector
       className="left-[70px] top-[265px] h-[155px] border-l-2"
       animation={styles.growYFromBottom}
-      secondes={6.1}
+      seconds={6.1}
     />
     <div
       aria-hidden
@@ -325,62 +326,63 @@ const SchemaDesktop = () => (
       renouvellement
     </div>
 
-    <CarteDepot className="absolute left-0 top-5 w-[250px]" style={delay(0)} />
-    <CartePilotage
+    <DepotCard className="absolute left-0 top-5 w-[250px]" style={delay(0)} />
+    <PilotageCard
       className="absolute right-0 top-0 w-[270px]"
-      style={delay(APPARITION_PILOTAGE)}
+      style={delay(PILOTAGE_CARD_AT)}
     />
-    <CarteCollaboration
+    <CollaborationCard
       className="absolute left-[140px] bottom-0 w-[300px]"
-      style={delay(APPARITION_COLLABORATION)}
+      style={delay(COLLABORATION_CARD_AT)}
     />
   </div>
 );
 
-const DIAPOSITIVES = [
+const SLIDES = [
   'Étape 1 : je dépose',
   'Étape 2 : je pilote',
   'Étape 3 : je collabore',
 ];
 
-type Minuteurs = ReturnType<typeof setTimeout>[];
+type Timers = ReturnType<typeof setTimeout>[];
 
-const defilerVers = (piste: HTMLDivElement | null, index: number) => {
-  if (!piste) return;
-  const cible = Math.max(0, Math.min(DIAPOSITIVES.length - 1, index));
-  piste.scrollTo({ left: cible * piste.clientWidth, behavior: 'smooth' });
+const scrollToSlide = (track: HTMLDivElement | null, index: number) => {
+  if (!track) return;
+  const target = Math.max(0, Math.min(SLIDES.length - 1, index));
+  track.scrollTo({ left: target * track.clientWidth, behavior: 'smooth' });
 };
 
 /** Carrousel mobile : avance seul au rythme des apparitions, s'arrête dès qu'on y touche. */
-const SchemaCarrousel = () => {
-  const piste = useRef<HTMLDivElement>(null);
-  const minuteurs = useRef<Minuteurs>([]);
-  const [courante, setCourante] = useState(0);
+const MobileCarousel = () => {
+  const track = useRef<HTMLDivElement>(null);
+  const timers = useRef<Timers>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const reducedMotion = useMedia('(prefers-reduced-motion: reduce)', false);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const auto: Minuteurs = [
+    if (reducedMotion) return;
+    const auto: Timers = [
       setTimeout(
-        () => defilerVers(piste.current, 1),
-        (APPARITION_PILOTAGE - 0.1) * 1000
+        () => scrollToSlide(track.current, 1),
+        (PILOTAGE_CARD_AT - 0.1) * 1000
       ),
       setTimeout(
-        () => defilerVers(piste.current, 2),
-        (APPARITION_COLLABORATION - 0.1) * 1000
+        () => scrollToSlide(track.current, 2),
+        (COLLABORATION_CARD_AT - 0.1) * 1000
       ),
     ];
-    minuteurs.current = auto;
+    timers.current = auto;
     return () => auto.forEach(clearTimeout);
-  }, []);
+  }, [reducedMotion]);
 
-  const arreterAuto = () => {
-    minuteurs.current.forEach(clearTimeout);
-    minuteurs.current = [];
+  const stopAutoplay = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
   };
 
-  const montrer = (index: number) => {
-    arreterAuto();
-    defilerVers(piste.current, index);
+  const showSlide = (index: number) => {
+    stopAutoplay();
+    scrollToSlide(track.current, index);
   };
 
   return (
@@ -391,28 +393,28 @@ const SchemaCarrousel = () => {
       className="flex flex-col gap-1.5 w-full max-w-md mx-auto"
     >
       <div
-        ref={piste}
+        ref={track}
         onScroll={(event) => {
           const element = event.currentTarget;
-          setCourante(
+          setCurrentSlide(
             Math.round(element.scrollLeft / Math.max(1, element.clientWidth))
           );
         }}
-        onPointerDown={arreterAuto}
-        onTouchStart={arreterAuto}
+        onPointerDown={stopAutoplay}
+        onTouchStart={stopAutoplay}
         className="flex items-stretch overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="flex flex-none basis-full snap-center flex-col justify-center px-1 pt-1.5 pb-3.5">
-          <CarteDepot style={delay(0)} />
+          <DepotCard style={delay(0)} />
         </div>
         <div className="flex flex-none basis-full snap-center flex-col justify-center px-1 pt-1.5 pb-3.5">
-          <CartePilotage style={delay(APPARITION_PILOTAGE)} />
+          <PilotageCard style={delay(PILOTAGE_CARD_AT)} />
         </div>
         <div className="flex flex-none basis-full snap-center flex-col justify-center gap-2.5 px-1 pt-1.5 pb-3.5">
-          <CarteCollaboration style={delay(APPARITION_COLLABORATION)} />
+          <CollaborationCard style={delay(COLLABORATION_CARD_AT)} />
           <button
             type="button"
-            onClick={() => montrer(0)}
+            onClick={() => showSlide(0)}
             className={classNames(
               'self-start flex items-center gap-1 text-xs font-medium text-grey-8',
               styles.fade
@@ -428,25 +430,25 @@ const SchemaCarrousel = () => {
         <button
           type="button"
           aria-label="Étape précédente"
-          onClick={() => montrer(courante - 1)}
-          disabled={courante === 0}
+          onClick={() => showSlide(currentSlide - 1)}
+          disabled={currentSlide === 0}
           className="flex items-center justify-center size-11 rounded-full text-primary-9 disabled:opacity-30"
         >
           <Icon icon="arrow-left-s-line" />
         </button>
-        {DIAPOSITIVES.map((libelle, index) => (
+        {SLIDES.map((label, index) => (
           <button
-            key={libelle}
+            key={label}
             type="button"
-            aria-label={libelle}
-            aria-current={courante === index ? 'step' : undefined}
-            onClick={() => montrer(index)}
+            aria-label={label}
+            aria-current={currentSlide === index ? 'step' : undefined}
+            onClick={() => showSlide(index)}
             className="flex items-center justify-center w-6 h-11"
           >
             <span
               className={classNames('h-2 rounded transition-all', {
-                'w-[22px] bg-primary-9': courante === index,
-                'w-2 bg-primary-3': courante !== index,
+                'w-[22px] bg-primary-9': currentSlide === index,
+                'w-2 bg-primary-3': currentSlide !== index,
               })}
             />
           </button>
@@ -454,8 +456,8 @@ const SchemaCarrousel = () => {
         <button
           type="button"
           aria-label="Étape suivante"
-          onClick={() => montrer(courante + 1)}
-          disabled={courante === DIAPOSITIVES.length - 1}
+          onClick={() => showSlide(currentSlide + 1)}
+          disabled={currentSlide === SLIDES.length - 1}
           className="flex items-center justify-center size-11 rounded-full text-primary-9 disabled:opacity-30"
         >
           <Icon icon="arrow-right-s-line" />
@@ -465,13 +467,13 @@ const SchemaCarrousel = () => {
   );
 };
 
-export const DemarchePcaetSchemaAnime = () => (
+export const DemarchePcaetAnimatedDiagram = () => (
   <>
     <div className="max-xl:hidden">
-      <SchemaDesktop />
+      <DesktopDiagram />
     </div>
     <div className="xl:hidden">
-      <SchemaCarrousel />
+      <MobileCarousel />
     </div>
   </>
 );

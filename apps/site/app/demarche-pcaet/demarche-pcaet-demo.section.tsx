@@ -1,7 +1,7 @@
 import Section from '@/site/components/sections/Section';
 import { Badge, Icon } from '@tet/ui';
 import Image from 'next/image';
-import { DemoDepot } from './demo-depot/demo-depot';
+import { DepotDemo } from './depot-demo/depot-demo';
 
 export const DemarchePcaetDemoSection = () => (
   <Section containerClassName="bg-primary-1 lg:!py-20" className="gap-12">
@@ -54,6 +54,6 @@ export const DemarchePcaetDemoSection = () => (
       </div>
     </div>
 
-    <DemoDepot />
+    <DepotDemo />
   </Section>
 );

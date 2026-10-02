@@ -3,136 +3,145 @@
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import {
-  PointerEvent,
   KeyboardEvent,
+  PointerEvent,
   ReactNode,
   useEffect,
   useState,
 } from 'react';
-import styles from './demo-animee.module.css';
-import { borner } from './timeline';
-import { LectureDemo } from './use-lecture-demo';
+import styles from './animated-demo.module.css';
+import { clamp } from './timeline';
+import { DemoPlayback } from './use-demo-playback';
 
-export type ChapitreDemo = {
-  libelle: string;
+export type DemoChapter = {
+  label: string;
   /** Début du chapitre, en temps réel de lecture. */
-  debut: number;
+  start: number;
 };
 
 /** Pas des flèches du clavier sur la barre de lecture, en secondes. */
-const PAS_CLAVIER = 2;
+const KEYBOARD_STEP_SECONDS = 2;
 
-const formaterTemps = (secondes: number) =>
-  `0:${String(Math.floor(secondes)).padStart(2, '0')}`;
+const formatTime = (seconds: number) =>
+  `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(
+    2,
+    '0'
+  )}`;
 
 /**
  * Lecteur d'une démo scénarisée : la scène est dessinée à taille fixe
- * (`largeur` × `hauteur`) puis réduite pour tenir dans la largeur disponible.
+ * (`width` × `height`) puis réduite pour tenir dans la largeur disponible.
  */
-export const DemoLecteur = ({
-  lecture,
-  largeur,
-  hauteur,
+export const DemoPlayer = ({
+  playback,
+  width,
+  height,
   description,
-  chapitres,
+  chapters,
   compact = false,
   children,
 }: {
-  lecture: LectureDemo;
-  largeur: number;
-  hauteur: number;
+  playback: DemoPlayback;
+  width: number;
+  height: number;
   /** Ce que montre la démo, lu par les lecteurs d'écran. */
   description: string;
-  chapitres: ChapitreDemo[];
+  chapters: DemoChapter[];
   compact?: boolean;
   children: ReactNode;
 }) => {
-  const { conteneur, temps, duree, enLecture, deplacement } = lecture;
-  const [echelle, setEchelle] = useState(0);
-  const [survol, setSurvol] = useState(false);
+  const { containerRef, time, duration, isPlaying, isScrubbing } = playback;
+  const [scale, setScale] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    const element = conteneur.current;
+    const element = containerRef.current;
     if (!element) return;
-    const observateur = new ResizeObserver(([entree]) =>
-      setEchelle(Math.min(1, entree.contentRect.width / largeur))
+    const observer = new ResizeObserver(([entry]) =>
+      setScale(Math.min(1, entry.contentRect.width / width))
     );
-    observateur.observe(element);
-    return () => observateur.disconnect();
-  }, [conteneur, largeur]);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [containerRef, width]);
 
-  const bornes = [...chapitres.map(({ debut }) => debut), duree];
-  const segments = chapitres.map((chapitre, index) => {
-    const debut = bornes[index];
-    const fin = bornes[index + 1];
+  const bounds = [...chapters.map(({ start }) => start), duration];
+  const segments = chapters.map((chapter, index) => {
+    const start = bounds[index];
+    const end = bounds[index + 1];
     return {
-      ...chapitre,
-      poids: fin - debut,
-      remplissage: borner((temps - debut) / (fin - debut), 0, 1),
-      courant: temps >= debut && temps < fin,
+      ...chapter,
+      weight: end - start,
+      fill: clamp((time - start) / (end - start), 0, 1),
+      isCurrent: time >= start && time < end,
     };
   });
-  const segmentCourant = segments.find(({ courant }) => courant) ?? segments[0];
+  const currentSegment =
+    segments.find(({ isCurrent }) => isCurrent) ?? segments[0];
 
-  const deplacerVers = (evenement: PointerEvent<HTMLDivElement>) => {
-    const zone = evenement.currentTarget.getBoundingClientRect();
-    const ratio = borner((evenement.clientX - zone.left) / zone.width, 0, 1);
-    lecture.allerA(ratio * duree);
+  const seekToPointer = (event: PointerEvent<HTMLDivElement>) => {
+    const area = event.currentTarget.getBoundingClientRect();
+    const ratio = clamp((event.clientX - area.left) / area.width, 0, 1);
+    playback.seek(ratio * duration);
   };
 
-  const gererClavier = (evenement: KeyboardEvent<HTMLDivElement>) => {
-    const instants: Record<string, number> = {
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const targets: Record<string, number> = {
       Home: 0,
-      End: duree,
-      ArrowLeft: temps - PAS_CLAVIER,
-      ArrowRight: temps + PAS_CLAVIER,
+      End: duration,
+      ArrowLeft: time - KEYBOARD_STEP_SECONDS,
+      ArrowRight: time + KEYBOARD_STEP_SECONDS,
     };
-    if (!(evenement.key in instants)) return;
-    evenement.preventDefault();
-    lecture.allerA(instants[evenement.key]);
+    if (!(event.key in targets)) return;
+    event.preventDefault();
+    playback.seek(targets[event.key]);
   };
 
-  const libelleLecture = enLecture
+  // Le survol n'a de sens qu'à la souris : un toucher ne déclenche jamais de sortie.
+  const setHoverFromPointer =
+    (hovered: boolean) => (event: PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === 'mouse') setIsHovered(hovered);
+    };
+
+  const playbackLabel = isPlaying
     ? 'Mettre la démonstration en pause'
     : 'Lire la démonstration';
 
   return (
-    <div ref={conteneur} className="flex flex-col gap-2.5 w-full">
+    <div ref={containerRef} className="flex flex-col gap-2.5 w-full">
       <div
         role="img"
         aria-label={description}
-        onClick={lecture.basculerLecture}
-        onMouseEnter={() => setSurvol(true)}
-        onMouseLeave={() => setSurvol(false)}
+        onClick={playback.togglePlayback}
+        onPointerEnter={setHoverFromPointer(true)}
+        onPointerLeave={setHoverFromPointer(false)}
         className={classNames(
           'relative mx-auto overflow-hidden cursor-pointer bg-grey-2 border border-primary-3 shadow-[0_10px_30px_rgba(64,64,146,0.12)]',
           compact ? 'rounded-xl' : 'rounded-[10px]',
-          { invisible: echelle === 0 }
+          { invisible: scale === 0 }
         )}
-        style={{ width: largeur * echelle, height: hauteur * echelle }}
+        style={{ width: width * scale, height: height * scale }}
       >
         <div
           aria-hidden
-          className="absolute left-0 top-0 origin-top-left overflow-hidden"
-          style={{
-            width: largeur,
-            height: hauteur,
-            transform: `scale(${echelle})`,
-          }}
+          className={classNames(
+            'absolute left-0 top-0 origin-top-left overflow-hidden',
+            { [styles.paused]: !isPlaying }
+          )}
+          style={{ width, height, transform: `scale(${scale})` }}
         >
           {children}
         </div>
 
-        {!deplacement && (!enLecture || survol) && (
+        {!isScrubbing && (!isPlaying || isHovered) && (
           <div
             aria-hidden
             className={classNames(
               'absolute inset-0 z-20 flex items-center justify-center pointer-events-none',
-              enLecture ? 'bg-primary-10/[0.04]' : 'bg-white/20',
-              styles.fonduRapide
+              isPlaying ? 'bg-primary-10/[0.04]' : 'bg-white/20',
+              styles.fadeFast
             )}
           >
-            {!enLecture && (
+            {!isPlaying && (
               <span className="absolute left-3 top-3 px-2.5 py-1 rounded-xl bg-primary-10 text-xs font-bold tracking-wide text-white">
                 EN PAUSE
               </span>
@@ -144,11 +153,11 @@ export const DemoLecteur = ({
                 styles.pop
               )}
             >
-              <Icon icon={enLecture ? 'pause-fill' : 'play-fill'} size="2xl" />
+              <Icon icon={isPlaying ? 'pause-fill' : 'play-fill'} size="2xl" />
             </span>
-            {survol && (
+            {isHovered && (
               <span className="absolute bottom-3.5 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-xl bg-primary-10/70 text-xs font-bold text-white whitespace-nowrap">
-                {enLecture
+                {isPlaying
                   ? 'Cliquer pour mettre en pause'
                   : 'Cliquer pour reprendre'}
               </span>
@@ -159,39 +168,39 @@ export const DemoLecteur = ({
 
       <div
         className="flex items-end gap-3 mx-auto"
-        style={{ width: echelle ? largeur * echelle : '100%' }}
+        style={{ width: scale ? width * scale : '100%' }}
       >
         <button
           type="button"
-          onClick={lecture.basculerLecture}
-          aria-label={libelleLecture}
+          onClick={playback.togglePlayback}
+          aria-label={playbackLabel}
           className="flex flex-none items-center justify-center gap-1.5 min-w-11 h-11 px-3 rounded-full border border-primary-3 !bg-white text-[13px] font-bold text-primary-9"
         >
-          <Icon icon={enLecture ? 'pause-fill' : 'play-fill'} size="sm" />
-          {!compact && <span>{enLecture ? 'Pause' : 'Lecture'}</span>}
+          <Icon icon={isPlaying ? 'pause-fill' : 'play-fill'} size="sm" />
+          {!compact && <span>{isPlaying ? 'Pause' : 'Lecture'}</span>}
         </button>
 
         <div className="flex flex-col flex-1 gap-1 min-w-0">
           {compact ? (
             <span className="py-0.5 text-[11px] font-bold text-primary-9">
-              {segmentCourant.libelle}
+              {currentSegment.label}
             </span>
           ) : (
             <div className="flex gap-[3px]">
               {segments.map((segment) => (
                 <button
-                  key={segment.libelle}
+                  key={segment.label}
                   type="button"
-                  onClick={() => lecture.allerA(segment.debut + 0.01)}
+                  onClick={() => playback.seek(segment.start + 0.01)}
                   className={classNames(
                     'min-w-0 py-0.5 text-left text-xs truncate !bg-transparent',
-                    segment.courant
+                    segment.isCurrent
                       ? 'font-bold text-primary-9'
                       : 'font-medium text-grey-8'
                   )}
-                  style={{ flex: segment.poids }}
+                  style={{ flex: segment.weight }}
                 >
-                  {segment.libelle}
+                  {segment.label}
                 </button>
               ))}
             </div>
@@ -202,37 +211,33 @@ export const DemoLecteur = ({
             tabIndex={0}
             aria-label="Position dans la démonstration"
             aria-valuemin={0}
-            aria-valuemax={Math.round(duree)}
-            aria-valuenow={Math.round(temps)}
-            aria-valuetext={`${formaterTemps(temps)}, ${
-              segmentCourant.libelle
-            }`}
-            onPointerDown={(evenement) => {
-              evenement.currentTarget.setPointerCapture(evenement.pointerId);
-              lecture.commencerDeplacement();
-              deplacerVers(evenement);
+            aria-valuemax={Math.round(duration)}
+            aria-valuenow={Math.round(time)}
+            aria-valuetext={`${formatTime(time)}, ${currentSegment.label}`}
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              playback.startScrubbing();
+              seekToPointer(event);
             }}
-            onPointerMove={(evenement) =>
-              deplacement && deplacerVers(evenement)
-            }
-            onPointerUp={lecture.terminerDeplacement}
-            onPointerCancel={lecture.terminerDeplacement}
-            onKeyDown={gererClavier}
+            onPointerMove={(event) => isScrubbing && seekToPointer(event)}
+            onPointerUp={playback.stopScrubbing}
+            onPointerCancel={playback.stopScrubbing}
+            onKeyDown={handleKeyDown}
             className="relative h-[22px] rounded cursor-pointer touch-none"
           >
             <div className="absolute inset-x-0 top-1/2 flex gap-[3px] -translate-y-1/2 pointer-events-none">
               {segments.map((segment) => (
                 <div
-                  key={segment.libelle}
+                  key={segment.label}
                   className={classNames(
                     'overflow-hidden rounded-sm bg-primary-3 transition-[height] duration-150',
-                    deplacement ? 'h-[7px]' : 'h-[5px]'
+                    isScrubbing ? 'h-[7px]' : 'h-[5px]'
                   )}
-                  style={{ flex: segment.poids }}
+                  style={{ flex: segment.weight }}
                 >
                   <div
                     className="h-full bg-primary-9"
-                    style={{ width: `${segment.remplissage * 100}%` }}
+                    style={{ width: `${segment.fill * 100}%` }}
                   />
                 </div>
               ))}
@@ -240,15 +245,15 @@ export const DemoLecteur = ({
             <div
               className={classNames(
                 'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary-9 shadow-[0_1px_4px_rgba(42,42,98,0.35)] pointer-events-none transition-[width,height] duration-150',
-                deplacement ? 'size-[18px]' : 'size-3.5'
+                isScrubbing ? 'size-[18px]' : 'size-3.5'
               )}
-              style={{ left: `${(temps / duree) * 100}%` }}
+              style={{ left: `${(time / duration) * 100}%` }}
             />
           </div>
         </div>
 
         <span className="flex-none pb-[3px] text-xs font-medium text-grey-8 tabular-nums">
-          {formaterTemps(temps)} / {formaterTemps(duree)}
+          {formatTime(time)} / {formatTime(duration)}
         </span>
       </div>
     </div>

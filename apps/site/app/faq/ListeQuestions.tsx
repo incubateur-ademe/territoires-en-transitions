@@ -4,7 +4,7 @@ import Markdown from '@/site/components/markdown/Markdown';
 import { Accordion, Tab, Tabs } from '@tet/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { FAQ_ONGLETS } from './faq.onglets';
+import { FAQ_TABS } from './faq.tabs';
 import { FaqData } from './page';
 
 type ListeQuestionsProps = {
@@ -18,16 +18,16 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
 
   const ongletParam = searchParams.get('onglet');
   const currentTab = ongletParam
-    ? FAQ_ONGLETS.findIndex((onglet) => onglet.param === ongletParam)
+    ? FAQ_TABS.findIndex((onglet) => onglet.param === ongletParam)
     : 0;
 
   const handleChangeTab = (activeTab: number) => {
-    router.push(`${pathname}?onglet=${FAQ_ONGLETS[activeTab].param}`);
+    router.push(`${pathname}?onglet=${FAQ_TABS[activeTab].param}`);
   };
 
   useEffect(() => {
     if (currentTab === -1)
-      router.push(`${pathname}?onglet=${FAQ_ONGLETS[0].param}`);
+      router.push(`${pathname}?onglet=${FAQ_TABS[0].param}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,7 +37,7 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
       onChange={handleChangeTab}
       tabsListClassName="!flex !w-fit !mx-auto"
     >
-      {FAQ_ONGLETS.map((onglet, index) => (
+      {FAQ_TABS.map((onglet, index) => (
         <Tab key={index} label={onglet.title}>
           <div className="flex flex-col gap-4">
             {questions
