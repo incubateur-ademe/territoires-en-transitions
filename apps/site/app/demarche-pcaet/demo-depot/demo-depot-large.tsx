@@ -16,12 +16,17 @@ import {
   Enveloppe,
   IconePdf,
   Interrupteur,
+  NiveauVulnerabilite,
   PastilleEtape,
   VerificationPlan,
   ZoneImport,
 } from './demo-depot.elements';
 import { EtatDemoDepot } from './demo-depot.etat';
-import { ANNEES_DIAGNOSTIC, CURSEUR } from './demo-depot.scenario';
+import {
+  ANNEES_DIAGNOSTIC,
+  CURSEUR,
+  VULNERABILITE,
+} from './demo-depot.scenario';
 
 export const SCENE_LARGE = { largeur: 1200, hauteur: 720 };
 
@@ -235,64 +240,151 @@ const EcranDiagnostic = ({ etat }: { etat: EtatDemoDepot }) => (
         </div>
       ))}
     </div>
-    <div className="overflow-hidden bg-white border border-primary-3 rounded-lg">
+    {etat.vulnerabilite ? (
+      <TableauVulnerabilite thematiques={etat.vulnerabilite} />
+    ) : (
+      <TableauIndicateurs voletActif={etat.voletActif} lignes={etat.lignes} />
+    )}
+  </Ecran>
+);
+
+const TableauIndicateurs = ({
+  voletActif,
+  lignes,
+}: Pick<EtatDemoDepot, 'voletActif' | 'lignes'>) => (
+  <div className="overflow-hidden bg-white border border-primary-3 rounded-lg">
+    <div
+      className={classNames(
+        GRILLE_DIAGNOSTIC,
+        'items-center h-10 text-[13px] font-bold border-b border-primary-2 [&>span]:px-3.5'
+      )}
+    >
+      <span className="text-primary-9">
+        {voletActif.nom} ({voletActif.unite})
+      </span>
+      {ANNEES_DIAGNOSTIC.map((annee, index) => (
+        <span key={annee} className="flex items-center gap-1.5">
+          {index === 0 && (
+            <span className="px-[3px] border border-primary-4 rounded-[3px] text-[8px] text-grey-8">
+              RÉF.
+            </span>
+          )}
+          {annee}
+        </span>
+      ))}
+    </div>
+    {lignes.map((ligne) => (
       <div
+        key={ligne.secteur}
         className={classNames(
           GRILLE_DIAGNOSTIC,
-          'items-center h-10 text-[13px] font-bold border-b border-primary-2 [&>span]:px-3.5'
+          'items-center h-[35px] border-t border-primary-1'
         )}
       >
-        <span className="text-primary-9">
-          {etat.voletActif.nom} ({etat.voletActif.unite})
+        <span className="flex items-center justify-between h-full px-3.5 text-xs text-primary-10 border-r border-primary-1">
+          {ligne.secteur}
+          <Interrupteur actif={ligne.active} className="w-8 h-[18px]" />
         </span>
-        {ANNEES_DIAGNOSTIC.map((annee, index) => (
-          <span key={annee} className="flex items-center gap-1.5">
-            {index === 0 && (
-              <span className="px-[3px] border border-primary-4 rounded-[3px] text-[8px] text-grey-8">
-                RÉF.
-              </span>
+        {ligne.cellules.map((cellule, colonne) => (
+          <span
+            key={colonne}
+            className={classNames(
+              'flex items-center gap-1.5 px-3.5 text-[13px] tabular-nums',
+              cellule.enSaisie ? 'font-bold text-primary-7' : 'text-primary-10'
             )}
-            {annee}
+          >
+            <span
+              className={classNames(
+                'flex items-center justify-center size-3 border border-primary-4 text-[8px] text-primary-7',
+                colonne === 0 ? 'rounded-[3px]' : 'rounded-full'
+              )}
+            >
+              {colonne === 0 ? 'R' : 'O'}
+            </span>
+            {cellule.texte}
           </span>
         ))}
       </div>
-      {etat.lignes.map((ligne) => (
-        <div
-          key={ligne.secteur}
-          className={classNames(
-            GRILLE_DIAGNOSTIC,
-            'items-center h-[35px] border-t border-primary-1'
-          )}
-        >
-          <span className="flex items-center justify-between h-full px-3.5 text-xs text-primary-10 border-r border-primary-1">
-            {ligne.secteur}
-            <Interrupteur actif={ligne.active} className="w-8 h-[18px]" />
-          </span>
-          {ligne.cellules.map((cellule, colonne) => (
-            <span
-              key={colonne}
-              className={classNames(
-                'flex items-center gap-1.5 px-3.5 text-[13px] tabular-nums',
-                cellule.enSaisie
-                  ? 'font-bold text-primary-7'
-                  : 'text-primary-10'
-              )}
-            >
-              <span
-                className={classNames(
-                  'flex items-center justify-center size-3 border border-primary-4 text-[8px] text-primary-7',
-                  colonne === 0 ? 'rounded-[3px]' : 'rounded-full'
-                )}
-              >
-                {colonne === 0 ? 'R' : 'O'}
-              </span>
-              {cellule.texte}
-            </span>
-          ))}
-        </div>
+    ))}
+  </div>
+);
+
+const GRILLE_VULNERABILITE =
+  'grid grid-cols-[170px_repeat(3,minmax(0,1fr))_170px]';
+
+/** Longueur finale de chaque objectif « écrit », pour varier les lignes. */
+const LONGUEURS_OBJECTIF = [85, 70, 95, 75, 90, 65, 80, 72];
+
+/** Objectif en cours d'écriture : une ligne squelette qui s'allonge. */
+const ObjectifEcrit = ({
+  progression,
+  longueur,
+}: {
+  progression: number;
+  longueur: number;
+}) =>
+  progression === 0 ? (
+    <span className="text-[13px] text-grey-8">Saisir vos objectifs</span>
+  ) : (
+    <span className="flex items-center gap-0.5">
+      <span
+        className="h-2 rounded-full bg-primary-3"
+        style={{ width: `${progression * longueur}%` }}
+      />
+      {progression < 1 && (
+        <span className="w-0.5 h-3.5 bg-primary-7 animate-pulse" />
+      )}
+    </span>
+  );
+
+/** Volet vulnérabilité : des niveaux par thématique, comme dans l'app. */
+const TableauVulnerabilite = ({
+  thematiques,
+}: {
+  thematiques: NonNullable<EtatDemoDepot['vulnerabilite']>;
+}) => (
+  <div className="overflow-hidden bg-white border border-primary-3 rounded-lg">
+    <div
+      className={classNames(
+        GRILLE_VULNERABILITE,
+        'items-center h-12 text-[11px] font-bold leading-tight tracking-wide text-primary-10 border-b border-primary-2 [&>span]:px-3.5'
+      )}
+    >
+      <span>THÉMATIQUES</span>
+      {VULNERABILITE.horizons.map((horizon) => (
+        <span key={horizon}>
+          VULNÉRABILITÉ
+          <br />
+          {horizon.toUpperCase()}
+        </span>
       ))}
+      <span>OBJECTIFS 2050</span>
     </div>
-  </Ecran>
+    {thematiques.map((thematique, ligne) => (
+      <div
+        key={thematique.nom}
+        className={classNames(
+          GRILLE_VULNERABILITE,
+          'items-center h-[35px] border-t border-primary-1 [&>span]:px-3.5'
+        )}
+      >
+        <span className="text-[13px] font-medium text-primary-9">
+          {thematique.nom}
+        </span>
+        {thematique.niveaux.map((niveau, horizon) => (
+          <span key={horizon}>
+            <NiveauVulnerabilite niveau={niveau} />
+          </span>
+        ))}
+        <span>
+          <ObjectifEcrit
+            progression={thematique.objectif}
+            longueur={LONGUEURS_OBJECTIF[ligne]}
+          />
+        </span>
+      </div>
+    ))}
+  </div>
 );
 
 const EcranProgramme = ({ etat }: { etat: EtatDemoDepot }) => (
@@ -566,6 +658,7 @@ export const DemoDepotLarge = ({
         x={curseur.x}
         y={curseur.y}
         visible={curseur.visible}
+        transition={curseur.transition}
         appuye={etat.clic}
         variante="souris"
       />

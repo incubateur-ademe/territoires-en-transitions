@@ -15,12 +15,17 @@ import {
   Enveloppe,
   IconePdf,
   Interrupteur,
+  NiveauVulnerabilite,
   PastilleEtape,
   VerificationPlan,
   ZoneImport,
 } from './demo-depot.elements';
 import { EtatDemoDepot } from './demo-depot.etat';
-import { ANNEES_DIAGNOSTIC, CURSEUR } from './demo-depot.scenario';
+import {
+  ANNEES_DIAGNOSTIC,
+  CURSEUR,
+  VULNERABILITE,
+} from './demo-depot.scenario';
 
 export const SCENE_COMPACTE = { largeur: 360, hauteur: 580 };
 
@@ -157,54 +162,110 @@ const EcranDiagnostic = ({ etat }: { etat: EtatDemoDepot }) => (
         </div>
       ))}
     </div>
-    <Carte className="overflow-hidden">
+    {etat.vulnerabilite ? (
+      <TableauVulnerabilite thematiques={etat.vulnerabilite} />
+    ) : (
+      <TableauIndicateurs voletActif={etat.voletActif} lignes={etat.lignes} />
+    )}
+  </Ecran>
+);
+
+const TableauIndicateurs = ({
+  voletActif,
+  lignes,
+}: Pick<EtatDemoDepot, 'voletActif' | 'lignes'>) => (
+  <Carte className="overflow-hidden">
+    <div
+      className={classNames(
+        GRILLE_DIAGNOSTIC,
+        'items-center h-7 text-[11px] font-bold border-b border-primary-2'
+      )}
+    >
+      <span className="px-2.5 truncate text-primary-9">
+        {voletActif.court} ({voletActif.unite})
+      </span>
+      {ANNEES_AFFICHEES.map((index) => (
+        <span key={index} className="px-2">
+          {ANNEES_DIAGNOSTIC[index]}
+        </span>
+      ))}
+    </div>
+    {lignes.map((ligne) => (
       <div
+        key={ligne.secteur}
         className={classNames(
           GRILLE_DIAGNOSTIC,
-          'items-center h-7 text-[11px] font-bold border-b border-primary-2'
+          'items-center h-6 text-[11px] border-t border-primary-1'
         )}
       >
-        <span className="px-2.5 truncate text-primary-9">
-          {etat.voletActif.court} ({etat.voletActif.unite})
+        <span className="flex items-center justify-between gap-1.5 px-2.5 overflow-hidden whitespace-nowrap">
+          <span className="truncate">{ligne.secteur}</span>
+          <Interrupteur actif={ligne.active} className="w-6 h-3.5" />
         </span>
-        {ANNEES_AFFICHEES.map((index) => (
-          <span key={index} className="px-2">
-            {ANNEES_DIAGNOSTIC[index]}
+        {ANNEES_AFFICHEES.map((index) => {
+          const cellule = ligne.cellules[index];
+          return (
+            <span
+              key={index}
+              className={classNames(
+                'px-2 tabular-nums',
+                cellule.enSaisie
+                  ? 'font-bold text-primary-7'
+                  : 'text-primary-10'
+              )}
+            >
+              {cellule.texte}
+            </span>
+          );
+        })}
+      </div>
+    ))}
+  </Carte>
+);
+
+/** Horizons tenant sur mobile : le constat et la projection la plus lointaine. */
+const HORIZONS_AFFICHES = [0, VULNERABILITE.horizons.length - 1];
+const GRILLE_VULNERABILITE = 'grid grid-cols-[minmax(0,1fr)_88px_88px]';
+
+const TableauVulnerabilite = ({
+  thematiques,
+}: {
+  thematiques: NonNullable<EtatDemoDepot['vulnerabilite']>;
+}) => (
+  <Carte className="overflow-hidden">
+    <div
+      className={classNames(
+        GRILLE_VULNERABILITE,
+        'items-center h-7 text-[10px] font-bold tracking-wide border-b border-primary-2 [&>span]:px-2.5'
+      )}
+    >
+      <span className="text-primary-9">THÉMATIQUES</span>
+      {HORIZONS_AFFICHES.map((index) => (
+        <span key={index}>{VULNERABILITE.horizons[index].toUpperCase()}</span>
+      ))}
+    </div>
+    {thematiques.map((thematique) => (
+      <div
+        key={thematique.nom}
+        className={classNames(
+          GRILLE_VULNERABILITE,
+          'items-center h-6 text-[11px] border-t border-primary-1 [&>span]:px-2.5'
+        )}
+      >
+        <span className="font-medium text-primary-9 truncate">
+          {thematique.nom}
+        </span>
+        {HORIZONS_AFFICHES.map((index) => (
+          <span key={index}>
+            <NiveauVulnerabilite
+              niveau={thematique.niveaux[index]}
+              taille="xs"
+            />
           </span>
         ))}
       </div>
-      {etat.lignes.map((ligne) => (
-        <div
-          key={ligne.secteur}
-          className={classNames(
-            GRILLE_DIAGNOSTIC,
-            'items-center h-6 text-[11px] border-t border-primary-1'
-          )}
-        >
-          <span className="flex items-center justify-between gap-1.5 px-2.5 overflow-hidden whitespace-nowrap">
-            <span className="truncate">{ligne.secteur}</span>
-            <Interrupteur actif={ligne.active} className="w-6 h-3.5" />
-          </span>
-          {ANNEES_AFFICHEES.map((index) => {
-            const cellule = ligne.cellules[index];
-            return (
-              <span
-                key={index}
-                className={classNames(
-                  'px-2 tabular-nums',
-                  cellule.enSaisie
-                    ? 'font-bold text-primary-7'
-                    : 'text-primary-10'
-                )}
-              >
-                {cellule.texte}
-              </span>
-            );
-          })}
-        </div>
-      ))}
-    </Carte>
-  </Ecran>
+    ))}
+  </Carte>
 );
 
 const EcranProgramme = ({ etat }: { etat: EtatDemoDepot }) => (
@@ -390,6 +451,7 @@ export const DemoDepotCompact = ({
         x={curseur.x}
         y={curseur.y}
         visible={curseur.visible}
+        transition={curseur.transition}
         appuye={etat.clic}
         variante="tactile"
       />

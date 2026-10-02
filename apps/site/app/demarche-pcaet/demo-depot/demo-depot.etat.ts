@@ -21,6 +21,9 @@ import {
   SOUS_ETAPES_ELABORATION,
   VALEURS_GES,
   VOLETS,
+  VULNERABILITE,
+  getEcritureObjectif,
+  getInstantNiveau,
 } from './demo-depot.scenario';
 
 export type PhaseDepot = 'vide' | 'vol' | 'envoi' | 'depose';
@@ -115,7 +118,23 @@ const getDiagnostic = (temps: number) => {
     };
   });
 
-  return { volets, voletActif: volets[indexVolet], lignes };
+  const voletActif = volets[indexVolet];
+  const vulnerabilite =
+    voletActif.nature === 'vulnerabilite'
+      ? VULNERABILITE.thematiques.map(({ nom, niveaux }, ligne) => ({
+          nom,
+          niveaux: niveaux.map((niveau, colonne) =>
+            temps >= getInstantNiveau(ligne, colonne) ? niveau : null
+          ),
+          objectif: getProgression(
+            temps,
+            getEcritureObjectif(ligne).debut,
+            getEcritureObjectif(ligne).duree
+          ),
+        }))
+      : null;
+
+  return { volets, voletActif, lignes, vulnerabilite };
 };
 
 const getDocuments = (temps: number) => {
