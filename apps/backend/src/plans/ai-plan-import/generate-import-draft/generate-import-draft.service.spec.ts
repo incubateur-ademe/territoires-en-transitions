@@ -282,7 +282,7 @@ describe('GenerateImportDraftService', () => {
         collectiviteId: 10,
         jobId: 'job-1',
         failedStep: 'reading',
-        reason: expect.stringContaining('Document trop long'),
+        reason: 'document_too_long',
       }),
     });
   });
@@ -300,7 +300,12 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.notifyPlanImported).not.toHaveBeenCalled();
     expect(mocks.capture).toHaveBeenCalledTimes(1);
     expect(mocks.capture).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'plans:import-ia:failed' })
+      expect.objectContaining({
+        event: 'plans:import-ia:failed',
+        properties: expect.objectContaining({
+          reason: 'plan_creation_failed',
+        }),
+      })
     );
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
       expect.objectContaining({

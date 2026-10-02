@@ -77,7 +77,7 @@ export class GenerateImportDraftService {
       return await this.runPipeline(job);
     } catch (error) {
       const message = `Import interrompu: ${getErrorMessage(error)}`;
-      await this.markFailed(jobId, message);
+      await this.markFailed(jobId, message, 'interrupted');
       return failure({ kind: 'interrupted', jobId, message });
     } finally {
       await this.documentStorage.removeDocument({
@@ -89,7 +89,7 @@ export class GenerateImportDraftService {
 
   async recordTerminalFailure(jobId: string, message: string): Promise<void> {
     const job = await this.jobRepository.getById(jobId);
-    await this.markFailed(jobId, message);
+    await this.markFailed(jobId, message, 'terminal_failure');
     if (job.success) {
       await this.documentStorage.removeDocument({
         bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
@@ -98,9 +98,14 @@ export class GenerateImportDraftService {
     }
   }
 
+  /**
+   * `reason` part dans PostHog : un code stable, jamais le message, qui peut
+   * citer le document importé (« Ce document semble être … (« extrait ») »).
+   */
   private async markFailed(
     jobId: string,
     message: string,
+    reason: string,
     {
       draft,
       stepStates,
@@ -125,7 +130,7 @@ export class GenerateImportDraftService {
           collectiviteId: marked.data.collectiviteId,
           jobId,
           failedStep,
-          reason: message,
+          reason,
           durationSeconds: secondsSince(marked.data.createdAt),
         },
       });
@@ -140,7 +145,8 @@ export class GenerateImportDraftService {
     if (source === null) {
       return this.recordFailure(
         job.id,
-        'Document source illisible depuis le stockage'
+        'Document source illisible depuis le stockage',
+        'source_unreadable'
       );
     }
 
@@ -153,7 +159,8 @@ export class GenerateImportDraftService {
     if (!document.success) {
       return this.recordFailure(
         job.id,
-        readDocumentErrorMessage(document.error)
+        readDocumentErrorMessage(document.error),
+        document.error.kind
       );
     }
 
@@ -176,6 +183,7 @@ export class GenerateImportDraftService {
       return this.recordFailure(
         job.id,
         pipelineErrorMessage(outcome.failedStep, outcome.error),
+        outcome.error.kind,
         { stepStates: outcome.stepStates, failedStep: outcome.failedStep }
       );
     }
@@ -238,7 +246,7 @@ export class GenerateImportDraftService {
     );
 
     if (!created.success) {
-      return this.recordFailure(job.id, created.error, {
+      return this.recordFailure(job.id, created.error, 'plan_creation_failed', {
         draft: normalizedDraft,
       });
     }
@@ -290,13 +298,14 @@ export class GenerateImportDraftService {
   private async recordFailure(
     jobId: string,
     message: string,
+    reason: string,
     options: {
       draft?: PlanDraft;
       stepStates?: StepStates;
       failedStep?: StepName;
     } = {}
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const marked = await this.markFailed(jobId, message, options);
+    const marked = await this.markFailed(jobId, message, reason, options);
     return marked.success
       ? success(undefined)
       : failure({ kind: 'failure_record_failed', jobId, cause: marked.error });
