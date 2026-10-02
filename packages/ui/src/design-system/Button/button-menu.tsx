@@ -239,6 +239,7 @@ const MenuActionItem = ({
     <>
       {icon && (
         <Icon
+          aria-hidden="true"
           icon={icon}
           size={size === 'xs' ? 'xs' : 'sm'}
           className="-mt-0.5"

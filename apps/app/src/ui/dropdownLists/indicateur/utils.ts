@@ -1,18 +1,26 @@
+import { appLabels } from '@/app/labels/catalog';
+
 export function getCategorieLabel(categorieNom: string) {
   switch (categorieNom) {
     case 'cae':
-      return 'Référentiel CAE';
+      return appLabels.indicateurModeleCae;
     case 'eci':
-      return 'Référentiel ECi';
+      return appLabels.indicateurModeleEci;
     case 'CR':
-      return 'Référentiel CR';
+      return appLabels.indicateurModeleCr;
     case 'crte':
-      return 'Indicateurs Contrat de relance et de transition écologique (CRTE)';
+      return appLabels.indicateurModeleCrte;
+    case 'dom':
+      return appLabels.indicateurModeleDom;
+    case 'hors_dom':
+      return appLabels.indicateurModeleHorsDom;
+    case 'pcaet':
+      return appLabels.indicateurModelePcaet;
     case 'clef':
-      return 'Indicateurs clés';
+      return appLabels.indicateurClePluriel;
     case 'prioritaire':
-      return 'Indicateurs prioritaires';
+      return appLabels.indicateurPrioritairePluriel;
     default:
-      return `Indicateurs ${categorieNom.toUpperCase()}`;
+      return appLabels.indicateurCategorieParNom(categorieNom);
   }
 }

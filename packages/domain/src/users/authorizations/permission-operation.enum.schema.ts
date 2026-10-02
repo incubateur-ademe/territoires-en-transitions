@@ -65,6 +65,8 @@ export const PermissionOperations = [
   'indicateurs.valeurs.read_confidentiel',
   'indicateurs.valeurs.mutate',
   'indicateurs.valeurs.mutate_piloted_by_me',
+  'indicateurs.vues.read',
+  'indicateurs.vues.mutate',
 
   // Utilisateurs
   'users.authorizations.mutate_super_admin_role',

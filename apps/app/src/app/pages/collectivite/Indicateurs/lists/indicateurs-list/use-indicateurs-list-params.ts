@@ -1,6 +1,7 @@
-import { appLabels } from '@/app/labels/catalog';
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
 import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { areIndicateurVueFiltersEqual } from '@/app/indicateurs/vues/indicateur-vue-filters.rules';
+import { appLabels } from '@/app/labels/catalog';
 import {
   listDefinitionsInputFiltersSchema,
   ListDefinitionsInputSort,
@@ -15,6 +16,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
+import { useCallback, useEffect, useRef } from 'react';
 
 export type SortBy = ListDefinitionsInputSort;
 
@@ -68,14 +70,16 @@ const searchParamsMap = {
   filter: parseAsJson(listDefinitionsInputFiltersSchema.parse),
 };
 
-export const listIndicateursParamsSerializer =
-  createSerializer(searchParamsMap);
+export const listIndicateursParamsSerializer = createSerializer(
+  searchParamsMap,
+  { urlKeys: searchParamsShortMap }
+);
 
 export const useIndicateursListParams = (
   defaultFilters: ListDefinitionsInputFilters,
   defaultOptions?: Partial<ListOptions>
 ) => {
-  const [searchParams, setSearchParams] = useQueryStates(
+  const [queryParams, setQueryParams] = useQueryStates(
     {
       ...searchParamsMap,
       sortBy: searchParamsMap.sortBy.withDefault(
@@ -84,28 +88,62 @@ export const useIndicateursListParams = (
       displayGraphs: searchParamsMap.displayGraphs.withDefault(
         defaultOptions?.displayGraphs ?? true
       ),
-      filter: searchParamsMap.filter.withDefault(defaultFilters),
     },
     {
       urlKeys: searchParamsShortMap,
     }
   );
+  const restoreDefaultFilters = useCallback(
+    () => void setQueryParams({ filter: null, currentPage: 1 }),
+    [setQueryParams]
+  );
+
+  const previousDefaultFilters = useRef(defaultFilters);
+  useEffect(() => {
+    const hasDefaultsChanged = !areIndicateurVueFiltersEqual(
+      previousDefaultFilters.current,
+      defaultFilters
+    );
+    previousDefaultFilters.current = defaultFilters;
+
+    // A shared vue can change on refetch while this user is on a later page.
+    // An explicit URL filter remains this user's current selection.
+    if (
+      hasDefaultsChanged &&
+      queryParams.filter === null &&
+      queryParams.currentPage !== 1
+    ) {
+      void setQueryParams({ currentPage: 1 });
+    }
+  }, [
+    defaultFilters,
+    queryParams.filter,
+    queryParams.currentPage,
+    setQueryParams,
+  ]);
+
+  const resolvedFilters = queryParams.filter ?? defaultFilters;
 
   return {
+    restoreDefaultFilters,
     searchParams: {
-      ...omit(searchParams, ['filter']),
-      ...searchParams.filter,
+      ...omit(queryParams, ['filter']),
+      // Resolve changing saved filters here: nuqs memoizes object defaults.
+      // An explicit empty object is a reset, so only null uses the saved vue.
+      ...resolvedFilters,
     },
 
     setSearchParams: (searchParams: Partial<SearchParams> | null) => {
       if (searchParams === null) {
-        setSearchParams(null);
+        setQueryParams(null);
         return;
       }
 
-      setSearchParams({
+      const nextFilters = omit(searchParams, optionsKeys);
+
+      setQueryParams({
         ...pick(searchParams, optionsKeys),
-        filter: omit(searchParams, optionsKeys),
+        filter: nextFilters,
       });
     },
   };

@@ -5,6 +5,7 @@ import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indic
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
+import { IndicateurVuesRouter } from './vues/indicateur-vues.router';
 
 @Injectable()
 export class IndicateursRouter {
@@ -15,7 +16,8 @@ export class IndicateursRouter {
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly listIndicateursRouter: ListIndicateursRouter,
-    private readonly mutateDefinitionRouter: MutateDefinitionRouter
+    private readonly mutateDefinitionRouter: MutateDefinitionRouter,
+    private readonly indicateurVuesRouter: IndicateurVuesRouter
   ) {}
 
   router = this.trpc.router({
@@ -27,6 +29,7 @@ export class IndicateursRouter {
     valeurs: this.indicateurValeursRouter.router,
     sources: this.indicateurSourcesRouter.router,
     trajectoires: this.trajectoiresRouter.router,
+    vues: this.indicateurVuesRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);

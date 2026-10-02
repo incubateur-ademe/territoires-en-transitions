@@ -12,8 +12,10 @@ import {
 export type IndicateursListeOptionsProps = {
   menuContainerClassname?: string;
   isLoading?: boolean;
+  isError?: boolean;
   searchParams: SearchParams;
   setSearchParams: (params: SearchParams) => void;
+  status?: React.ReactNode;
   renderSettings?: (openState: OpenState) => React.ReactNode;
 };
 
@@ -26,10 +28,12 @@ export const IndicateursListeOptions = (
 ) => {
   const {
     isLoading,
+    isError,
     countTotal,
     menuContainerClassname,
     searchParams,
     setSearchParams,
+    status,
     renderSettings,
     settingsOpenState,
   } = props;
@@ -37,6 +41,22 @@ export const IndicateursListeOptions = (
 
   // état local du champ de recherche
   const [search, setSearch] = useState<string>(text || '');
+  const [previousFilterText, setPreviousFilterText] = useState(text);
+  if (previousFilterText !== text) {
+    setPreviousFilterText(text);
+    setSearch(text ?? '');
+  }
+
+  const updateSearch = (value: string) => {
+    // Ignore a delayed search invalidated by a reset or an external change.
+    if (value !== search || value === (text ?? '')) return;
+    const { text: previousText, ...params } = searchParams;
+    setSearchParams({
+      ...params,
+      currentPage: 1,
+      ...(value ? { text: value } : {}),
+    });
+  };
 
   return (
     <div
@@ -81,7 +101,9 @@ export const IndicateursListeOptions = (
 
           {/** Nombre total de résultats */}
           <span className="shrink-0 text-grey-7">
-            {isLoading
+            {isError
+              ? appLabels.indicateurVueCountError
+              : isLoading
               ? '--'
               : appLabels.indicateur({
                   count: countTotal,
@@ -90,14 +112,25 @@ export const IndicateursListeOptions = (
         </div>
       </div>
 
-      <div className="flex gap-x-8 gap-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-x-8 gap-y-4">
+        {status}
         {/** Champ de recherche */}
         <Input
           type="search"
           onChange={(e) => setSearch(e.target.value)}
-          onSearch={(v) =>
-            setSearchParams({ ...searchParams, currentPage: 1, text: v })
-          }
+          onBlur={({ relatedTarget }) => {
+            if (!relatedTarget) return;
+            if (
+              relatedTarget instanceof Element &&
+              relatedTarget.closest('a[href]')
+            ) {
+              // A queued URL update must not override the destination of a link.
+              setSearch(text ?? '');
+              return;
+            }
+            updateSearch(search);
+          }}
+          onSearch={updateSearch}
           value={search}
           containerClassname="w-full xl:w-96"
           placeholder={appLabels.rechercherNomDescription}
