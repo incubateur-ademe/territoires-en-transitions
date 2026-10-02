@@ -350,6 +350,63 @@ describe('DemarcheDocumentsTable — lecture d’un dossier sans ses pièces vid
   });
 });
 
+describe('DemarcheDocumentsTable — inclusion déclarée, après les avis', () => {
+  /** Reprise possible après les avis, et déclarable dans le PCAET global. */
+  const EES_REPRISE = definition({ ...EES, etape: 'both' });
+  const GLOBAL_REPRISE = definition({ ...GLOBAL, etape: 'both' });
+  const inclusion = (documentId: string): DemarcheDocumentDepose => ({
+    ...depose(documentId),
+    fichier: null,
+  });
+
+  const renderAvecInclusion = (documents: DemarcheDocumentDepose[]) =>
+    renderTable({
+      etape: 'aval',
+      section: 'dossier-transmis',
+      definitions: [GLOBAL_REPRISE, EES_REPRISE],
+      documents,
+      coverage: [
+        { documentId: GLOBAL.id, origine: 'fichier', substitutId: null },
+        { documentId: EES.id, origine: 'substitut', substitutId: GLOBAL.id },
+      ],
+    });
+
+  it('fige l’inclusion du dossier transmis et propose un fichier dédié', () => {
+    renderAvecInclusion([depose(GLOBAL.id), inclusion(EES.id)]);
+
+    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(
+      screen.getByText(
+        appLabels.demarcheDocumentsCouvertPar({ nom: GLOBAL.nom })
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.demarcheDocumentsDeposerFichierDedie,
+      })
+    ).toBeInTheDocument();
+  });
+
+  it('montre le fichier dédié une fois déposé, à la place de l’inclusion', () => {
+    renderAvecInclusion([
+      depose(GLOBAL.id),
+      inclusion(EES.id),
+      { ...depose(EES.id, 'aval'), id: 2 },
+    ]);
+
+    expect(
+      screen.queryByText(
+        appLabels.demarcheDocumentsCouvertPar({ nom: GLOBAL.nom })
+      )
+    ).toBeNull();
+    expect(
+      screen.getAllByRole('button', {
+        name: appLabels.demarcheDocumentsRemplacerDocument,
+      })
+    ).toHaveLength(1);
+  });
+});
+
 describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce', () => {
   it('ne propose rien à cocher tant que le document qui accueillerait l’inclusion n’est pas déposé', () => {
     renderTable({ definitions: [GLOBAL, EES] });
