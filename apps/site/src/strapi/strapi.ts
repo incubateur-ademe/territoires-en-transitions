@@ -24,6 +24,7 @@ type Single =
   | 'page-budget'
   | 'page-collectivite'
   | 'page-contact'
+  | 'page-demarche-pcaet'
   | 'page-programme'
   | 'page-outils-numerique'
   | 'page-trajectoire';
