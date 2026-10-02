@@ -1,5 +1,7 @@
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
+import { isPcaetLaunched } from '@/site/src/utils/is-pcaet-launched';
 import { Metadata, ResolvingMetadata } from 'next';
+import { notFound } from 'next/navigation';
 import { DemarchePcaetCTASection } from './demarche-pcaet-cta.section';
 import { DemarchePcaetDemoSection } from './demarche-pcaet-demo.section';
 import { DemarchePcaetEtapesSection } from './demarche-pcaet-etapes.section';
@@ -20,14 +22,20 @@ export async function generateMetadata(
   });
 }
 
-const DemarchePcaetPage = () => (
-  <>
-    <DemarchePcaetHeroSection />
-    <DemarchePcaetEtapesSection etapes={DEPOT_ETAPES} />
-    <DemarchePcaetDemoSection />
-    <DemarchePcaetFAQSection />
-    <DemarchePcaetCTASection />
-  </>
-);
+const DemarchePcaetPage = async () => {
+  if (!(await isPcaetLaunched())) {
+    notFound();
+  }
+
+  return (
+    <>
+      <DemarchePcaetHeroSection />
+      <DemarchePcaetEtapesSection etapes={DEPOT_ETAPES} />
+      <DemarchePcaetDemoSection />
+      <DemarchePcaetFAQSection />
+      <DemarchePcaetCTASection />
+    </>
+  );
+};
 
 export default DemarchePcaetPage;

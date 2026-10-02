@@ -608,6 +608,9 @@ services:
       <<: *nx-env
       APP: site
       SITE_PORT: ${SITE_PORT:-3001}
+      # Page Démarche PCAET visible en local ; en prod, elle reste masquée tant
+      # que la variable n'est pas posée sur l'hébergeur.
+      PCAET_LAUNCHED: ${PCAET_LAUNCHED:-true}
     depends_on:
       <<: *app-depends
       strapi: { condition: service_started }

@@ -5,6 +5,7 @@ import Section from '@/site/components/sections/Section';
 import { fetchCollection } from '@/site/src/strapi/strapi';
 import { sortByRank } from '@/site/src/utils/sortByRank';
 import { Metadata } from 'next';
+import { isPcaetLaunched } from '@/site/src/utils/is-pcaet-launched';
 import { FAQ_ITEMS } from '../demarche-pcaet/demarche-pcaet.data';
 import ContactEquipe from './ContactEquipe';
 import { FAQ_TAB_DEMARCHE_PCAET } from './faq.tabs';
@@ -51,7 +52,7 @@ const DEMARCHE_PCAET_QUESTIONS: FaqData[] = FAQ_ITEMS.map(
 const Faq = async () => {
   const questions: FaqData[] = [
     ...((await getData()) ?? []),
-    ...DEMARCHE_PCAET_QUESTIONS,
+    ...((await isPcaetLaunched()) ? DEMARCHE_PCAET_QUESTIONS : []),
   ];
 
   return questions.length > 0 ? (

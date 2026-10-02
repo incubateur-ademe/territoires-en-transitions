@@ -16,18 +16,22 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Un onglet sans question n'est pas affiché (la démarche PCAET avant son lancement).
+  const tabs = FAQ_TABS.filter((tab) =>
+    questions.some((question) => question.onglet === tab.title)
+  );
+
   const ongletParam = searchParams.get('onglet');
   const currentTab = ongletParam
-    ? FAQ_TABS.findIndex((onglet) => onglet.param === ongletParam)
+    ? tabs.findIndex((onglet) => onglet.param === ongletParam)
     : 0;
 
   const handleChangeTab = (activeTab: number) => {
-    router.push(`${pathname}?onglet=${FAQ_TABS[activeTab].param}`);
+    router.push(`${pathname}?onglet=${tabs[activeTab].param}`);
   };
 
   useEffect(() => {
-    if (currentTab === -1)
-      router.push(`${pathname}?onglet=${FAQ_TABS[0].param}`);
+    if (currentTab === -1) router.push(`${pathname}?onglet=${tabs[0].param}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,7 +41,7 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
       onChange={handleChangeTab}
       tabsListClassName="!flex !w-fit !mx-auto"
     >
-      {FAQ_TABS.map((onglet, index) => (
+      {tabs.map((onglet, index) => (
         <Tab key={index} label={onglet.title}>
           <div className="flex flex-col gap-4">
             {questions
