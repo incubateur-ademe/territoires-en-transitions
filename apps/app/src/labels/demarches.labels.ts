@@ -678,6 +678,7 @@ export const demarchesLabels = {
   instructionDossierEtapesTitre: 'Les étapes de l’instruction',
   instructionDossierPanneauBouton: 'Étapes',
   instructionDossierEtapeDocuments: 'Documents déposés',
+  instructionDossierToutTelecharger: 'Tout télécharger',
   instructionDossierEtapeDocumentsDescription:
     'Consultez les pièces déposées par la collectivité pour ce dépôt de PCAET.',
   instructionDossierEtapeDiagnostic: 'Diagnostic',
