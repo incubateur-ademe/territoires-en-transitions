@@ -469,6 +469,7 @@ export const demarchesLabels = {
     'Mettez à jour les pièces que vous avez reprises pour tenir compte des avis. Les autres restent dans leur version transmise.',
   demarcheDocumentsDossierTransmisAdopteDescription:
     'Les pièces transmises pour avis, avec les mises à jour apportées ensuite.',
+  demarcheDocumentsAucunDepot: 'Aucun document déposé.',
   demarcheDocumentsColonneNom: 'Nom du document',
   demarcheDocumentsColonneType: 'Type',
   demarcheDocumentsColonneDocuments: 'Documents liés',

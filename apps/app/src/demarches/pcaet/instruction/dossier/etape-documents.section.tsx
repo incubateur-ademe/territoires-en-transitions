@@ -48,6 +48,7 @@ export const EtapeDocumentsSection = ({
         documentsAdditional={documents.documentsAdditional}
         coverage={coverage}
         isEtapeReadonly
+        hideEmptyRows
         onAddFichier={noop}
         onRemoveDocument={noop}
         onToggleCouverture={noop}
