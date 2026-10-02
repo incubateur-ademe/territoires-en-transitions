@@ -102,6 +102,7 @@ const SectionAnswer = ({
   substitutDeclarable,
   substitutCouvrantNom,
   isReadonly,
+  isInclusionFigee,
   onAddFichier,
   onRemove,
   onToggleCouverture,
@@ -127,6 +128,12 @@ const SectionAnswer = ({
   /** Nom de la pièce qui couvre celle-ci, pour la mention sans case à cocher. */
   substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
+  /**
+   * L'inclusion se déclare sur la version transmise : une fois le dossier
+   * transmis, elle ne se coche ni ne se décoche plus. Reste à déposer un
+   * fichier dédié, qui devient la version de cette pièce après les avis.
+   */
+  isInclusionFigee: boolean;
   onAddFichier: (fichierId: number) => void;
   onRemove: () => void;
   onToggleCouverture: (couvert: boolean) => void;
@@ -208,6 +215,25 @@ const SectionAnswer = ({
   // qui l'accueille, la collectivité dit elle-même qu'elle s'y trouve. La case
   // n'a de sens que si ce document est déposé — sinon il n'y a rien à cocher, et
   // le dépôt d'une pièce propre reste la seule issue.
+  if (substitutDeclarable !== null && isInclusionFigee) {
+    return (
+      <SectionFallback
+        demarcheType={demarcheType}
+        fileConstraints={fileConstraints}
+        documentId={definition.id}
+        coverage={coverage}
+        substitutCouvrantNom={substitutCouvrantNom}
+        isReadonly={isReadonly}
+        label={
+          coverage?.origine === 'substitut'
+            ? appLabels.demarcheDocumentsDeposerFichierDedie
+            : undefined
+        }
+        onAddFichier={onAddFichier}
+      />
+    );
+  }
+
   if (substitutDeclarable !== null) {
     const estDeclareInclus = coverage?.origine === 'substitut';
     return (
@@ -262,6 +288,7 @@ const SectionFallback = ({
   coverage,
   substitutCouvrantNom,
   isReadonly,
+  label = appLabels.demarcheDocumentsTeleverser,
   onAddFichier,
 }: {
   demarcheType: DemarcheType;
@@ -270,6 +297,7 @@ const SectionFallback = ({
   coverage: DemarcheDocumentCoverage | undefined;
   substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
+  label?: string;
   onAddFichier: (fichierId: number) => void;
 }): ReactElement => (
   <div className="flex flex-wrap items-center gap-3 min-w-0">
@@ -281,7 +309,7 @@ const SectionFallback = ({
         demarcheType={demarcheType}
         fileConstraints={fileConstraints}
         variant="outlined"
-        label={appLabels.demarcheDocumentsTeleverser}
+        label={label}
         dataTest={`demarches.pcaet.documents.televerser.${documentId}`}
         onAddFichier={onAddFichier}
       />
@@ -587,6 +615,7 @@ export const DemarcheDocumentsTable = ({
                   )?.nom
                 }
                 isReadonly={isDefinitionReadonly(definition)}
+                isInclusionFigee={!mergeEtapes && etape === 'aval'}
                 onAddFichier={(fichierId) =>
                   onAddFichier(definition.id, fichierId, etapeDe(definition))
                 }

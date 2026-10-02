@@ -434,6 +434,7 @@ export const demarchesLabels = {
   demarcheDocumentsTelechargerVersionOriginale:
     'Télécharger la version originale',
   demarcheDocumentsTeleverser: 'Déposer un document',
+  demarcheDocumentsDeposerFichierDedie: 'Déposer un fichier dédié',
   demarcheDocumentsCouvertPar: ({ nom }: { nom: string }) =>
     `Couvert par « ${nom} »`,
   demarcheDocumentsInclusDans: ({ nom }: { nom: string }) =>
