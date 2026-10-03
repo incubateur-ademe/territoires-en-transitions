@@ -49,6 +49,8 @@ import { FicheSecteursAttributionRepository } from './fiche-secteurs/fiche-secte
 import { FicheSecteursEligibiliteRepository } from './fiche-secteurs/fiche-secteurs-eligibilite.repository';
 import { GetFicheSecteursRouter } from './fiche-secteurs/get-fiche-secteurs.router';
 import { GetFicheSecteursService } from './fiche-secteurs/get-fiche-secteurs.service';
+import { UpsertFicheSecteursRouter } from './fiche-secteurs/upsert-fiche-secteurs.router';
+import { UpsertFicheSecteursService } from './fiche-secteurs/upsert-fiche-secteurs.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -112,6 +114,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheSecteursEligibiliteRepository,
     GetFicheSecteursService,
     GetFicheSecteursRouter,
+    UpsertFicheSecteursService,
+    UpsertFicheSecteursRouter,
     FichesRouter,
     NotifyPiloteService,
     FicheExportPayloadService,

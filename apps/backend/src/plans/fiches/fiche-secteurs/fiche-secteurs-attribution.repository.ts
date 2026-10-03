@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { eq } from 'drizzle-orm';
+import { OrigineSecteursEnum } from '@tet/domain/plans';
+import { eq, sql } from 'drizzle-orm';
 import {
   FicheActionSecteurAttribution,
   ficheActionSecteurAttributionTable,
@@ -41,5 +42,34 @@ export class FicheSecteursAttributionRepository {
       })
       .returning();
     return inserted ?? this.findByFicheId(attribution.ficheId, tx);
+  }
+
+  async upsertManuelle(
+    {
+      ficheId,
+      secteurs,
+      modifiedBy,
+    }: Pick<FicheSecteursAttributionCreate, 'ficheId' | 'secteurs'> & {
+      modifiedBy: string;
+    },
+    tx?: Transaction
+  ): Promise<FicheActionSecteurAttribution> {
+    const attribution = {
+      secteurs,
+      origine: OrigineSecteursEnum.MANUELLE,
+      methode: null,
+      reponseCommuns: null,
+      modifiedAt: sql`now()`,
+      modifiedBy,
+    };
+    const [saved] = await (tx ?? this.databaseService.db)
+      .insert(ficheActionSecteurAttributionTable)
+      .values({ ficheId, ...attribution })
+      .onConflictDoUpdate({
+        target: ficheActionSecteurAttributionTable.ficheId,
+        set: attribution,
+      })
+      .returning();
+    return saved;
   }
 }

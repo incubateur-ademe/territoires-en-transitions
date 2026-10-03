@@ -1,4 +1,4 @@
-import { SecteurReglementaire } from '@tet/domain/plans';
+import { OrigineSecteurs, SecteurReglementaire } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
 type PlanBudgetCalculArgs = {
@@ -94,6 +94,10 @@ export const plansLabels = {
   ficheSecteursARenseigner: 'À renseigner',
   ficheSecteursNonRenseigne: 'Non renseigné',
   ficheSecteursChargement: 'Chargement des secteurs',
+  ficheSecteursOrigineLabels: {
+    automatique: 'Secteurs proposés automatiquement',
+    manuelle: 'Secteurs choisis par la collectivité',
+  } satisfies Record<Exclude<OrigineSecteurs, 'indisponible'>, string>,
   ficheSecteurReglementaireLabels: {
     residentiel: 'Résidentiel',
     tertiaire: 'Tertiaire',
