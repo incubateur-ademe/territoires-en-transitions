@@ -11,6 +11,7 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
 import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
 import { GetFicheSecteursRouter } from './fiche-secteurs/get-fiche-secteurs.router';
+import { UpsertFicheSecteursRouter } from './fiche-secteurs/upsert-fiche-secteurs.router';
 import { ListFichesRouter } from './list-fiches/list-fiches.router';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 
@@ -30,7 +31,8 @@ export class FichesRouter {
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly ficheActionBudgetRouter: FicheActionBudgetRouter,
     private readonly ficheActionPdfExportRouter: FicheActionPdfExportRouter,
-    private readonly getFicheSecteursRouter: GetFicheSecteursRouter
+    private readonly getFicheSecteursRouter: GetFicheSecteursRouter,
+    private readonly upsertFicheSecteursRouter: UpsertFicheSecteursRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -47,7 +49,8 @@ export class FichesRouter {
     this.ficheActionEtapeRouter.router,
     this.ficheActionBudgetRouter.router,
     this.ficheActionPdfExportRouter.router,
-    this.getFicheSecteursRouter.router
+    this.getFicheSecteursRouter.router,
+    this.upsertFicheSecteursRouter.router
   );
 
   createCaller = this.trpc.createCallerFactory(this.router);

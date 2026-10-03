@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { FicheSecteurs } from '@tet/domain/plans';
-import { Badge } from '@tet/ui';
 
 const etatLabels = {
   non_attribuable: appLabels.ficheSecteursNonAttribuable,
@@ -8,10 +8,6 @@ const etatLabels = {
   a_renseigner: appLabels.ficheSecteursARenseigner,
   non_renseigne: appLabels.ficheSecteursNonRenseigne,
 } satisfies Record<Exclude<FicheSecteurs['etat'], 'attribue'>, string>;
-
-const EtatMessage = ({ children }: { children: string }) => (
-  <span className="text-sm text-grey-7">{children}</span>
-);
 
 export const FicheSecteursList = ({
   isLoading,
@@ -21,26 +17,26 @@ export const FicheSecteursList = ({
   secteurs: FicheSecteurs | undefined;
 }) => {
   if (isLoading) {
-    return <EtatMessage>{appLabels.ficheSecteursChargement}</EtatMessage>;
+    return (
+      <span role="status" className="flex items-center h-6">
+        <SpinnerLoader className="w-4 h-4" />
+        <span className="sr-only">{appLabels.ficheSecteursChargement}</span>
+      </span>
+    );
   }
   if (!secteurs) {
     return null;
   }
-  if (secteurs.etat !== 'attribue') {
-    return <EtatMessage>{etatLabels[secteurs.etat]}</EtatMessage>;
-  }
+
   return (
-    <ul className="flex flex-wrap gap-2">
-      {secteurs.secteurs.map((secteur) => (
-        <li key={secteur}>
-          <Badge
-            title={appLabels.ficheSecteurReglementaireLabels[secteur]}
-            variant="info"
-            type="outlined"
-            size="sm"
-          />
-        </li>
-      ))}
-    </ul>
+    <span>
+      {secteurs.etat === 'attribue'
+        ? secteurs.secteurs
+            .map(
+              (secteur) => appLabels.ficheSecteurReglementaireLabels[secteur]
+            )
+            .join(', ')
+        : etatLabels[secteurs.etat]}
+    </span>
   );
 };
