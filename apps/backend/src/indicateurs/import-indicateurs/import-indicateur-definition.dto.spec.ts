@@ -28,12 +28,29 @@ describe('Import de définitions périodiques', () => {
     });
   });
 
-  it.each(['annuelle'])('accepte la périodicité %s', (periodicite) => {
-    const input = { ...definition, periodicite };
-    expect(importIndicateurDefinitionSchema.parse(input)).toEqual(input);
+  it('écarte les anciennes règles d’agrégation temporelle', () => {
+    const input = {
+      ...definition,
+      periodicite: 'mensuelle',
+    };
+    expect(
+      importIndicateurDefinitionSchema.parse({
+        ...input,
+        aggregationResultat: 'somme',
+        aggregationObjectif: 'moyenne',
+      })
+    ).toEqual(input);
   });
 
-  it.each(['semestrielle', 'trimestrielle', 'mensuelle', 'hebdomadaire', null])(
+  it.each(['annuelle', 'semestrielle', 'trimestrielle', 'mensuelle'])(
+    'accepte la périodicité %s',
+    (periodicite) => {
+      const input = { ...definition, periodicite };
+      expect(importIndicateurDefinitionSchema.parse(input)).toEqual(input);
+    }
+  );
+
+  it.each(['hebdomadaire', null])(
     'refuse une périodicité non prise en charge : %s',
     (periodicite) => {
       const result = importIndicateurDefinitionSchema.safeParse({
@@ -44,19 +61,6 @@ describe('Import de définitions périodiques', () => {
       expect(result.error?.issues).toEqual([
         expect.objectContaining({ path: ['periodicite'] }),
       ]);
-    }
-  );
-  it.each(['aggregationResultat', 'aggregationObjectif'])(
-    'strips unsupported %s configuration from the input',
-    (field) => {
-      for (const value of ['moyenne', null]) {
-        const input = importIndicateurDefinitionSchema.parse({
-          ...definition,
-          [field]: value,
-        });
-
-        expect(input).not.toHaveProperty(field);
-      }
     }
   );
 });

@@ -448,6 +448,13 @@ echo "Tables restored: $TOTAL_RESTORED"
 echo "Tables skipped (duplicates): $TOTAL_SKIPPED"
 echo "Total time: ${TOTAL_MINUTES}m${TOTAL_SECONDS}s"
 
+# --- Post-restore: rebuild formula-derived state skipped with USER triggers ---
+echo ""
+echo "=== Rebuilding indicator formula state ==="
+psql -d "$TO_DB_URL" --no-psqlrc --set ON_ERROR_STOP=1 \
+    -f "$SCRIPT_DIR/rebuild-indicateur-formula-state.sql"
+echo "Indicator formula state rebuilt and validated."
+
 # --- Post-restore: reset sequences to match restored data ---
 echo ""
 echo "=== Resetting sequences ==="

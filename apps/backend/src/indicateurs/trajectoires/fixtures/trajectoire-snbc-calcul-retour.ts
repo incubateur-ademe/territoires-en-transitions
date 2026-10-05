@@ -7,7 +7,9 @@ const annualIndicateur = (data: {
   definition: IndicateurAvecValeurs['definition'];
   valeurs: Omit<IndicateurAvecValeurs['valeurs'][number], 'periodicite'>[];
 }): IndicateurAvecValeurs => ({
-  definition: data.definition,
+  definition: {
+    ...data.definition,
+  },
   valeurs: data.valeurs.map((valeur) => ({
     ...valeur,
     periodicite: 'annuelle',

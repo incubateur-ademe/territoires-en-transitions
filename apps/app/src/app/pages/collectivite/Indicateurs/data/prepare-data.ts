@@ -1,9 +1,13 @@
 /** Transforme les données pour l'affichage dans le tableau */
 
-import { getAnnee } from '@/app/ui/charts/echarts';
 import { RouterOutput } from '@tet/api';
-import { getYearFromIsoDate } from '@tet/domain/indicateurs';
-import { uniq } from 'es-toolkit';
+import {
+  formatIndicateurPeriod,
+  IndicateurPeriod,
+  IndicateurPeriods,
+  IndicateurValeurGroupee,
+  IndicateurValeursGroupeeParSource,
+} from '@tet/domain/indicateurs';
 import { SourceType } from '../types';
 
 export type ListIndicateurValeursOutput =
@@ -14,12 +18,45 @@ type IndicateurSources = ListIndicateurValeursOutput['indicateurs'][number];
 type IndicateurSourceData = IndicateurSources['sources'][number];
 export type IndicateurSourceValeur = IndicateurSourceData['valeurs'][number];
 
+type PreparedSourceValue = {
+  id: IndicateurSourceValeur['id'] | undefined;
+  calculAuto: boolean;
+  periode: IndicateurPeriod;
+  periodeLabel: string;
+  dateValeurISO: string;
+  valeur: number | null | undefined;
+  commentaire: string | null | undefined;
+};
+
+type PreparedSource = Omit<IndicateurValeursGroupeeParSource, 'valeurs'> & {
+  calculAuto: boolean;
+  valeurs: PreparedSourceValue[];
+  type: SourceType;
+  seriesKey?: string;
+  periodiciteSource?: IndicateurPeriod['periodicite'];
+};
+
+export type PreparedValue = IndicateurValeurGroupee & {
+  periode: IndicateurPeriod;
+  periodeLabel: string;
+};
+
+export type PreparedData = {
+  indicateurId: number | undefined;
+  dernierePeriodeModePrive: IndicateurPeriod | undefined;
+  periodes: IndicateurPeriod[];
+  sources: PreparedSource[];
+  donneesCollectivite: PreparedSource | undefined;
+  valeursExistantes: PreparedValue[];
+};
+
 /** Prépare les données pour l'affichage dans le tableau */
 export const prepareData = (
   data: IndicateurSources | undefined,
   type: SourceType,
-  avecDonneesCollectiviteVides: boolean
-) => {
+  avecDonneesCollectiviteVides: boolean,
+  additionalSources: readonly PreparedSource[] = []
+): PreparedData => {
   // conserve uniquement les sources ayant des valeurs pour le type de données voulu
   const { collectivite, ...autresSources } = data?.sources || {};
   const sourcesFiltrees = autresSources
@@ -32,36 +69,76 @@ export const prepareData = (
   }
 
   // transforme les valeurs de chaque source
-  const sourcesEtValeursModifiees = sourcesFiltrees.map((sourceData) => ({
-    ...sourceData,
-    calculAuto: sourceData.valeurs.some((v) => v.calculAuto) || false,
-    valeurs: sourceData.valeurs.map((v) => {
-      const { annee, anneeISO } = getAnnee(v.dateValeur);
-      return {
-        id: v.id,
-        calculAuto: Boolean(v.calculAuto),
-        annee,
-        anneeISO,
-        valeur: v[type],
-        commentaire: v[`${type}Commentaire`],
-      };
-    }),
-    metadonnees: sourceData.metadonnees || [],
-    type,
-  }));
+  const sourcesEtValeursModifiees: PreparedSource[] = sourcesFiltrees.flatMap(
+    (sourceData) => {
+      if (!data) return [];
+      const groups = new Map<string, IndicateurSourceValeur[]>();
+      for (const value of sourceData.valeurs.toSorted((a, b) =>
+        a.dateValeur.localeCompare(b.dateValeur)
+      )) {
+        const key = `${value.periodicite}:${value.metadonneeId ?? 'local'}`;
+        const group = groups.get(key);
+        if (group) group.push(value);
+        else groups.set(key, [value]);
+      }
+      // Keep an empty local source visible for declaration.
+      if (!groups.size) groups.set('empty', []);
+      return Array.from(groups, ([key, values]) => ({
+        ...sourceData,
+        ...(groups.size > 1 ||
+        (values[0] && values[0].periodicite !== data.definition.periodicite)
+          ? {
+              seriesKey: `${sourceData.source}:${key}`,
+              periodiciteSource: values[0]?.periodicite,
+            }
+          : {}),
+        calculAuto: sourceData.valeurs.some((v) => v.calculAuto) || false,
+        valeurs: values.map((value): PreparedSourceValue => {
+          const periode = IndicateurPeriods.fromDateValeur(
+            value.periodicite,
+            value.dateValeur
+          );
+          return {
+            id: value.id,
+            calculAuto: Boolean(value.calculAuto),
+            periode,
+            periodeLabel: formatIndicateurPeriod(periode),
+            dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
+            valeur: value[type],
+            commentaire: value[`${type}Commentaire`],
+          };
+        }),
+        metadonnees: (sourceData.metadonnees || []).filter(
+          (metadata) =>
+            !values.length ||
+            values.some((value) => value.metadonneeId === metadata.id)
+        ),
+        type,
+      }));
+    }
+  );
 
   // trie les sources par ordre alphabétique
   // et place les données de la collectivité en premier
-  const sources = sourcesEtValeursModifiees.sort((a, b) => {
-    if (a.source === 'collectivite') return -1;
-    if (b.source === 'collectivite') return 1;
-    return a.source.localeCompare(b.source);
-  });
+  const sources = [...sourcesEtValeursModifiees, ...additionalSources].sort(
+    (a, b) => {
+      if (a.source === b.source) return 0;
+      if (a.source === 'collectivite') return -1;
+      if (b.source === 'collectivite') return 1;
+      return a.source.localeCompare(b.source);
+    }
+  );
 
   // ajoute une source vide pour les données de la collectivité si elles n'existent pas
   // afin que la ligne soit toujours affichée dans le tableau
   // (sauf si le flag `avecDonneesCollectiviteVides` n'est pas activé)
-  let donneesCollectivite = sources?.find((s) => s.source === 'collectivite');
+  let donneesCollectivite =
+    sources.find(
+      (source) =>
+        source.source === 'collectivite' &&
+        (!source.periodiciteSource ||
+          source.periodiciteSource === data?.definition.periodicite)
+    ) ?? sources.find((source) => source.source === 'collectivite');
   if (!donneesCollectivite && avecDonneesCollectiviteVides) {
     donneesCollectivite = {
       source: 'collectivite',
@@ -75,39 +152,48 @@ export const prepareData = (
     sources.unshift(donneesCollectivite);
   }
 
-  // dernière année pour laquelle le résultat peut être en mode privé
-  let anneeModePrive: number | undefined;
+  // dernière période pour laquelle le résultat peut être en mode privé
+  let dernierePeriodeModePrive: IndicateurPeriod | undefined;
   if (type === 'resultat') {
-    anneeModePrive = donneesCollectivite?.valeurs
-      .filter((v) => v.valeur ?? false)
-      .map((v) => v.annee)
-      .sort()
+    dernierePeriodeModePrive = donneesCollectivite?.valeurs
+      .filter((v) => v.valeur !== null && v.valeur !== undefined)
+      .map((v) => v.periode)
+      .sort(IndicateurPeriods.compareTotal)
       .pop();
   }
 
   // tableau des valeurs existantes (permet de vérifier s'il existe déjà une ligne pour une année)
-  const valeursExistantes =
-    data?.sources?.collectivite?.valeurs?.map((v) => ({
-      ...v,
-      annee: getYearFromIsoDate(v.dateValeur),
-    })) || [];
+  const valeursExistantes: PreparedValue[] =
+    data?.sources?.collectivite?.valeurs?.map((v) => {
+      const periode = IndicateurPeriods.fromDateValeur(
+        v.periodicite,
+        v.dateValeur
+      );
+      return {
+        ...v,
+        periode,
+        periodeLabel: formatIndicateurPeriod(periode),
+      };
+    }) || [];
 
   return {
     indicateurId: data?.definition.id,
-    anneeModePrive,
+    dernierePeriodeModePrive,
+    periodes: getPeriodesDistinctes(sources),
     sources,
     donneesCollectivite,
     valeursExistantes,
   };
 };
 
-export function getAnneesDistinctes({ sources }: PreparedData) {
-  // fusionne les tableaux de valeurs de toutes les sources
+function getPeriodesDistinctes(sources: PreparedSource[]): IndicateurPeriod[] {
   const toutesValeurs = sources.flatMap((sourceData) => sourceData.valeurs);
-
-  // extrait les années (pour créer les colonnes)
-  return uniq(toutesValeurs.map((v) => v.annee)).sort();
+  return [
+    ...new Map(
+      toutesValeurs.map((value) => [
+        IndicateurPeriods.key(value.periode),
+        value.periode,
+      ])
+    ).values(),
+  ].sort(IndicateurPeriods.compareTotal);
 }
-
-export type PreparedData = ReturnType<typeof prepareData>;
-export type PreparedValue = PreparedData['valeursExistantes'][number];

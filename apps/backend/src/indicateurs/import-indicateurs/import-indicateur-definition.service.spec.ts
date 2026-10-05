@@ -112,7 +112,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     test('Rejects a formula mixing annual and monthly definitions', async () => {
       const annualDefinition = cloneDeep(sampleImportIndicateurDefinition);
       const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition2);
-      // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
       monthlyDefinition.periodicite = 'mensuelle';
       monthlyDefinition.identifiantReferentiel = 'test_mensuel';
       annualDefinition.valeurCalcule = `val(${monthlyDefinition.identifiantReferentiel}) / 10`;
@@ -128,7 +127,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     test('Rejects a group mixing annual and monthly definitions', async () => {
       const annualParent = cloneDeep(sampleImportIndicateurDefinition);
       const monthlyChild = cloneDeep(sampleImportIndicateurDefinition2);
-      // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
       monthlyChild.periodicite = 'mensuelle';
       monthlyChild.parents = [annualParent.identifiantReferentiel];
 

@@ -14,6 +14,7 @@ import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
+import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
@@ -62,6 +63,8 @@ import { ReconcileIndicateurValeursService } from './valeurs/reconcile-indicateu
 import { IndicateurValeurLockRepository } from './valeurs/indicateur-valeur-lock.repository';
 import ValeursMoyenneService from './valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs/get-valeurs-reference/valeurs-reference.service';
+import { UpsertGridValeursRepository } from './valeurs/upsert-grid-valeurs.repository';
+import { UpsertGridValeursService } from './valeurs/upsert-grid-valeurs.service';
 import { IndicateurVuesRepository } from './vues/indicateur-vues.repository';
 import { IndicateurVuesRouter } from './vues/indicateur-vues.router';
 import { IndicateurVuesService } from './vues/indicateur-vues.service';
@@ -116,12 +119,15 @@ const DEFINITIONS_PROVIDERS = [
     WriteIndicateurValeursService,
     ReconcileIndicateurValeursService,
     IndicateurValeurLockRepository,
+    UpsertGridValeursRepository,
+    UpsertGridValeursService,
     ImportIndicateurDefinitionService,
     ValeursMoyenneService,
     ValeursReferenceService,
 
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
+    IndicateurChartBuilder,
     IndicateurChartService,
     VerificationTrajectoireRules,
     TrajectoiresDataService,

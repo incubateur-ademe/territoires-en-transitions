@@ -83,3 +83,24 @@ export const toLocalDate = ({
     '0'
   )}-${String(day).padStart(2, '0')}` as LocalDate;
 };
+
+export const monthIndex = (year: number, month: number): number =>
+  (year - MIN_YEAR) * MONTHS_PER_YEAR + month - 1;
+
+export const monthFromIndex = (
+  index: number
+): Readonly<{ year: number; month: number }> => {
+  const maximumIndex = (MAX_YEAR - MIN_YEAR + 1) * MONTHS_PER_YEAR - 1;
+  if (!Number.isInteger(index) || index < 0 || index > maximumIndex) {
+    throw createIndicateurPeriodError({
+      code: IndicateurPeriodErrorEnum.INDICATEUR_CALENDAR_OUT_OF_RANGE,
+      details: { index },
+    });
+  }
+  return {
+    year: Math.floor(index / MONTHS_PER_YEAR) + MIN_YEAR,
+    month: (index % MONTHS_PER_YEAR) + 1,
+  };
+};
+
+export const monthsPerYear = MONTHS_PER_YEAR;

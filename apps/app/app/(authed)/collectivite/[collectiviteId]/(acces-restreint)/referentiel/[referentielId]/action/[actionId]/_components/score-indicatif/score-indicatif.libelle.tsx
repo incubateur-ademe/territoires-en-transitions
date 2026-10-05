@@ -2,7 +2,10 @@ import { avancementToLabel } from '@/app/app/labels';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toPercentString } from '@/app/utils/to-percent-string';
-import { getYearFromIsoDate } from '@tet/domain/indicateurs';
+import {
+  type IndicateurPeriodicite,
+  toAnnualIndicateurYear,
+} from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -78,8 +81,14 @@ const LibelleScoreIndicatif = ({
 }: {
   typeScore: ScoreIndicatifType;
   donnees: {
-    valeurPrincipale: ScoreIndicatifValeurUtilisee;
-    valeurSecondaire: ScoreIndicatifValeurUtilisee | null;
+    valeurPrincipale: ScoreIndicatifValeurUtilisee & {
+      periodicite: IndicateurPeriodicite | undefined;
+    };
+    valeurSecondaire:
+      | (ScoreIndicatifValeurUtilisee & {
+          periodicite: IndicateurPeriodicite | undefined;
+        })
+      | null;
     noSource?: boolean;
     score: number;
   };
@@ -94,12 +103,19 @@ const LibelleScoreIndicatif = ({
       {typeScore === scoreIndicatifTypeEnum.FAIT ? (
         <LibelleScoreFait score={score} />
       ) : (
-        <LibelleScoreProgramme score={score} dateValeur={dateValeur} />
+        <LibelleScoreProgramme
+          score={score}
+          dateValeur={dateValeur}
+          periodicite={
+            valeurSecondaire?.periodicite ?? valeurPrincipale.periodicite
+          }
+        />
       )}{' '}
       <LibelleValeurUtilisee
         typeScore={typeScore}
         unite={unite}
         valeurUtilisee={valeurPrincipale}
+        periodicite={valeurPrincipale.periodicite}
         noSource={noSource}
       />
       {valeurSecondaire && (
@@ -110,6 +126,7 @@ const LibelleScoreIndicatif = ({
             typeScore={typeScore}
             unite={unite}
             valeurUtilisee={valeurSecondaire}
+            periodicite={valeurSecondaire.periodicite}
           />
         </>
       )}
@@ -130,15 +147,21 @@ const LibelleScoreFait = ({ score }: { score: number }) => {
 function LibelleScoreProgramme({
   score,
   dateValeur,
+  periodicite,
 }: {
   score: number;
   dateValeur: string;
+  periodicite: IndicateurPeriodicite | null | undefined;
 }) {
-  const annee = getYearFromIsoDate(dateValeur);
+  const annee = toAnnualIndicateurYear(
+    periodicite,
+    dateValeur,
+    'Le libellé du score indicatif'
+  );
   return (
     <>
       {appLabels.scoreIndicatifProgramme({
-        annee: isNaN(Number(annee)) ? '' : annee,
+        annee,
         percent: toPercentString(score),
       })}
     </>
@@ -149,6 +172,7 @@ type LibelleValeurUtiliseeProps = {
   typeScore: ScoreIndicatifType;
   unite: string;
   valeurUtilisee: ScoreIndicatifValeurUtilisee;
+  periodicite: IndicateurPeriodicite | null | undefined;
   noSource?: boolean;
   noYear?: boolean;
 };
@@ -160,11 +184,13 @@ const LibelleValeurUtilisee = ({
   typeScore,
   unite,
   valeurUtilisee,
+  periodicite,
   noSource,
   noYear,
 }: LibelleValeurUtiliseeProps) => {
   const segments = texteValeurUtilisee({
     valeurUtilisee,
+    periodicite,
     unite,
     typeScore,
     noSource,
@@ -205,6 +231,7 @@ export const LibelleValeurSelectionnee = (props: {
           typeScore={typeScore}
           unite={unite}
           valeurUtilisee={valeurUtilisee}
+          periodicite="annuelle"
         />
       ) : (
         <i>{appLabels.aCompleter}</i>

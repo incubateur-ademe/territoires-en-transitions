@@ -61,7 +61,7 @@ export const indicateurValeurTable = pgTable(
   (table) => [
     check(
       'indicateur_valeur_periodicite_check',
-      sql`${table.periodicite} = 'annuelle'`
+      sql`${table.periodicite} IN ('annuelle', 'semestrielle', 'trimestrielle', 'mensuelle')`
     ),
   ]
 );

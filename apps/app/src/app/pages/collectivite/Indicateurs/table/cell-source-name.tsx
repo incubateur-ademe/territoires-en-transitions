@@ -1,3 +1,5 @@
+import { appLabels } from '@/app/labels/catalog';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
 import { DEPRECATED_TCell, Icon } from '@tet/ui';
 import { getSourceLabel } from '../data/get-source-label';
@@ -20,16 +22,31 @@ export const CellSourceName = ({
 }) => {
   const metadonnee = source.metadonnees?.[0];
   const color = getColorBySourceId(source.source, type);
+  const label = getSourceLabel(
+    source.source,
+    metadonnee?.producteur || source.libelle,
+    type
+  );
 
   return (
     <DEPRECATED_TCell className="font-bold text-sm">
       <div className="inline-flex items-center min-w-72 gap-2">
         {type === 'objectif' ? DashedLineSymbol(color) : SolidLineSymbol(color)}
-        {getSourceLabel(
-          source.source,
-          metadonnee?.producteur || source.libelle,
-          type
-        )}
+        {source.periodiciteSource
+          ? appLabels.indicateurSourcePeriodicite(
+              label,
+              [
+                getIndicateurPeriodPresentation(source.periodiciteSource).label,
+                metadonnee?.nomDonnees,
+                metadonnee?.dateVersion,
+                metadonnee
+                  ? appLabels.indicateurSourceVersion(metadonnee.id)
+                  : undefined,
+              ]
+                .filter(Boolean)
+                .join(' · ')
+            )
+          : label}
         <sup className="text-primary-9 leading-tight">{`(${unite})`}</sup>
         {!!metadonnee && (
           <DataSourceTooltip

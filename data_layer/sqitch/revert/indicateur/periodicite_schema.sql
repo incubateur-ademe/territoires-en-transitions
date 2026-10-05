@@ -5,7 +5,7 @@ LOCK TABLE public.indicateur_definition IN SHARE ROW EXCLUSIVE MODE;
 LOCK TABLE public.indicateur_valeur IN SHARE ROW EXCLUSIVE MODE;
 DO $$
 BEGIN
-    IF to_regclass('migration.indicateur_valeur_periodicite_audit') IS NOT NULL THEN
+    IF to_regprocedure('public.verrouiller_graphe_calcul_indicateur_partage()') IS NOT NULL THEN
         RAISE EXCEPTION 'Revenir sur la livraison backend avant de retirer le schéma compatible';
     END IF;
     IF EXISTS (SELECT 1 FROM public.indicateur_definition

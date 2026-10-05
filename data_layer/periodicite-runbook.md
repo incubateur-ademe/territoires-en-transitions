@@ -91,6 +91,26 @@ enregistré avant le recalcul : un échec de recalcul ne l'annule pas. Suspendre
 imports et reprendre le recalcul avant de publier une autre version. Le rollback
 commun du catalogue et des valeurs sera livré séparément dans #5418.
 
+## 2. Activation des cadences — #5215
+
+Arrêter toutes les écritures, imports et tâches, ainsi que les sauvegardes et
+restaurations automatiques. Déployer le backend, l'application, le site et `tools`.
+
+Contrôler :
+
+- Création, saisie, commentaire, import et recalcul pour les quatre cadences.
+- Choix de la périodicité à la création d’un indicateur personnalisé, puis refus
+  de toute modification, même sans valeur enregistrée.
+- Même périodicité pour la déclaration et la visualisation, sans sélecteur de
+  restitution ni agrégation temporelle. Les sources et versions de données
+  restent séparées et conservent leurs périodes d’origine.
+- Graphiques, exports, PCAET, trajectoires, score indicatif et fiche publique du site.
+
+Le retour à `@indicateur-periodicite-annuelle` exige des définitions et valeurs
+uniquement annuelles. Sinon, le revert est refusé. Les anciennes colonnes
+d’agrégation sont recréées à NULL pour restaurer le schéma de préparation.
+Après restauration des données, les scripts reconstruisent les dépendances des formules.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
