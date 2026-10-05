@@ -2,10 +2,10 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ReponseSecteursCommuns } from '@tet/domain/plans';
 import {
   ActionCommunsLookup,
-  CommunsSecteursClient,
-  CommunsSecteursClientError,
+  CommunsSecteursApiService,
+  CommunsSecteursApiError,
   SecteursCommunsLookup,
-} from './communs-secteurs.client';
+} from './communs-secteurs-api.service';
 
 type FakeReponse =
   | { type: 'parts'; parts: Record<string, number> }
@@ -35,8 +35,8 @@ const toReponseCommuns = (
 };
 
 /** Une fiche non programmée est inconnue de Communs (404) */
-export class FakeCommunsSecteursClient
-  implements Pick<CommunsSecteursClient, 'getSecteurs' | 'getAction'>
+export class FakeCommunsSecteursApiService
+  implements Pick<CommunsSecteursApiService, 'getSecteurs' | 'getAction'>
 {
   private readonly reponses = new Map<number, FakeReponse>();
   private readonly appels = new Map<number, number>();
@@ -72,7 +72,7 @@ export class FakeCommunsSecteursClient
 
   async getSecteurs(
     ficheId: number
-  ): Promise<Result<SecteursCommunsLookup, CommunsSecteursClientError>> {
+  ): Promise<Result<SecteursCommunsLookup, CommunsSecteursApiError>> {
     this.appels.set(ficheId, this.getNombreAppels(ficheId) + 1);
 
     const reponse = this.reponses.get(ficheId) ?? { type: 'inconnue' };
@@ -99,7 +99,7 @@ export class FakeCommunsSecteursClient
 
   async getAction(
     ficheId: number
-  ): Promise<Result<ActionCommunsLookup, CommunsSecteursClientError>> {
+  ): Promise<Result<ActionCommunsLookup, CommunsSecteursApiError>> {
     this.appelsAction.set(ficheId, this.getNombreAppelsAction(ficheId) + 1);
     return success({ classee: this.reponses.get(ficheId)?.type === 'muette' });
   }
