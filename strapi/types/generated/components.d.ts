@@ -1,6 +1,6 @@
-import type { Attribute, Schema } from '@strapi/strapi';
+import type { Schema, Struct } from '@strapi/strapi';
 
-export interface ContenuBoutonGroupe extends Schema.Component {
+export interface ContenuBoutonGroupe extends Struct.ComponentSchema {
   collectionName: 'components_shared_bouton_groupes';
   info: {
     description: '';
@@ -8,8 +8,8 @@ export interface ContenuBoutonGroupe extends Schema.Component {
     icon: 'link';
   };
   attributes: {
-    boutons: Attribute.Component<'shared.bouton', true> &
-      Attribute.SetMinMax<
+    boutons: Schema.Attribute.Component<'shared.bouton', true> &
+      Schema.Attribute.SetMinMax<
         {
           min: 1;
         },
@@ -18,7 +18,7 @@ export interface ContenuBoutonGroupe extends Schema.Component {
   };
 }
 
-export interface ContenuGallerie extends Schema.Component {
+export interface ContenuGallerie extends Struct.ComponentSchema {
   collectionName: 'components_contenu_galleries';
   info: {
     description: '';
@@ -26,26 +26,28 @@ export interface ContenuGallerie extends Schema.Component {
     icon: 'grid';
   };
   attributes: {
-    Gallerie: Attribute.Media<'images', true> & Attribute.Required;
-    Legende: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    Gallerie: Schema.Attribute.Media<'images', true> &
+      Schema.Attribute.Required;
+    Legende: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
-    NombreColonnes: Attribute.Integer &
-      Attribute.Required &
-      Attribute.SetMinMax<
+    LegendeVisible: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    NombreColonnes: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
         {
           max: 4;
           min: 1;
         },
         number
       > &
-      Attribute.DefaultTo<2>;
+      Schema.Attribute.DefaultTo<2>;
   };
 }
 
-export interface ContenuImage extends Schema.Component {
+export interface ContenuImage extends Struct.ComponentSchema {
   collectionName: 'components_contenu_images';
   info: {
     description: '';
@@ -53,47 +55,49 @@ export interface ContenuImage extends Schema.Component {
     icon: 'landscape';
   };
   attributes: {
-    Image: Attribute.Media<'images'> & Attribute.Required;
-    LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
+    Image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    LegendeVisible: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
   };
 }
 
-export interface ContenuIndicateur extends Schema.Component {
+export interface ContenuIndicateur extends Struct.ComponentSchema {
   collectionName: 'components_contenu_indicateurs';
   info: {
     description: '';
     displayName: 'Indicateur';
   };
   attributes: {
-    description: Attribute.Text & Attribute.Required;
-    description_encadre: Attribute.Text & Attribute.Required;
-    details: Attribute.RichText;
-    illustration_encadre: Attribute.Media<'images'> & Attribute.Required;
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    description_encadre: Schema.Attribute.Text & Schema.Attribute.Required;
+    details: Schema.Attribute.RichText;
+    illustration_encadre: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.Required;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    titre_encadre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    titre_encadre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface ContenuInfo extends Schema.Component {
+export interface ContenuInfo extends Struct.ComponentSchema {
   collectionName: 'components_contenu_infos';
   info: {
     displayName: 'Info';
     icon: 'information';
   };
   attributes: {
-    Texte: Attribute.RichText & Attribute.Required;
+    Texte: Schema.Attribute.RichText & Schema.Attribute.Required;
   };
 }
 
-export interface ContenuParagraphe extends Schema.Component {
+export interface ContenuParagraphe extends Struct.ComponentSchema {
   collectionName: 'components_contenu_paragraphes';
   info: {
     description: '';
@@ -101,38 +105,39 @@ export interface ContenuParagraphe extends Schema.Component {
     icon: 'file';
   };
   attributes: {
-    AlignementImage: Attribute.Enumeration<
+    AlignementImage: Schema.Attribute.Enumeration<
       ['Gauche', 'Droite', 'Centre Bas', 'Centre Haut']
     > &
-      Attribute.DefaultTo<'Centre Bas'>;
-    Image: Attribute.Media<'images'>;
-    LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
-    Texte: Attribute.RichText;
-    Titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+      Schema.Attribute.DefaultTo<'Centre Bas'>;
+    Image: Schema.Attribute.Media<'images'>;
+    LegendeVisible: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    Texte: Schema.Attribute.RichText;
+    Titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface ContenuTexteCollectivite extends Schema.Component {
+export interface ContenuTexteCollectivite extends Struct.ComponentSchema {
   collectionName: 'components_contenu_texte_collectivites';
   info: {
     description: '';
     displayName: 'TexteCollectivite';
   };
   attributes: {
-    contenu: Attribute.RichText & Attribute.Required;
-    image: Attribute.Media<'images'>;
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    contenu: Schema.Attribute.RichText & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'>;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface ContenuVideo extends Schema.Component {
+export interface ContenuVideo extends Struct.ComponentSchema {
   collectionName: 'components_contenu_videos';
   info: {
     description: '';
@@ -140,11 +145,11 @@ export interface ContenuVideo extends Schema.Component {
     icon: 'play';
   };
   attributes: {
-    URL: Attribute.String & Attribute.Required;
+    URL: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
-export interface ServicesCarte extends Schema.Component {
+export interface ServicesCarte extends Struct.ComponentSchema {
   collectionName: 'components_services_cartes';
   info: {
     description: '';
@@ -152,28 +157,27 @@ export interface ServicesCarte extends Schema.Component {
     icon: 'grid';
   };
   attributes: {
-    boutons: Attribute.Component<'shared.bouton', true> &
-      Attribute.SetMinMax<
+    boutons: Schema.Attribute.Component<'shared.bouton', true> &
+      Schema.Attribute.SetMinMax<
         {
           max: 2;
         },
         number
       >;
-    icone: Attribute.String & Attribute.CustomField<'plugin::react-icons.icon'>;
-    image: Attribute.Media<'images'>;
-    pre_titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    image: Schema.Attribute.Media<'images'>;
+    pre_titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    texte: Attribute.RichText & Attribute.Required;
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    texte: Schema.Attribute.RichText & Schema.Attribute.Required;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface ServicesInfo extends Schema.Component {
+export interface ServicesInfo extends Struct.ComponentSchema {
   collectionName: 'components_services_infos';
   info: {
     description: '';
@@ -181,16 +185,16 @@ export interface ServicesInfo extends Schema.Component {
     icon: 'information';
   };
   attributes: {
-    boutons: Attribute.Component<'shared.bouton', true>;
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    boutons: Schema.Attribute.Component<'shared.bouton', true>;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface ServicesListe extends Schema.Component {
+export interface ServicesListe extends Struct.ComponentSchema {
   collectionName: 'components_services_listes';
   info: {
     description: '';
@@ -198,27 +202,27 @@ export interface ServicesListe extends Schema.Component {
     icon: 'bulletList';
   };
   attributes: {
-    disposition_cartes: Attribute.Enumeration<
+    disposition_cartes: Schema.Attribute.Enumeration<
       ['Gallerie', 'Grille', 'Verticale', 'Vignettes']
     > &
-      Attribute.Required;
-    introduction: Attribute.RichText;
-    liste: Attribute.Component<'services.carte', true>;
-    sous_titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+      Schema.Attribute.Required;
+    introduction: Schema.Attribute.RichText;
+    liste: Schema.Attribute.Component<'services.carte', true>;
+    sous_titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    taille_liste: Attribute.Enumeration<['md', 'lg']> &
-      Attribute.DefaultTo<'lg'>;
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    taille_liste: Schema.Attribute.Enumeration<['md', 'lg']> &
+      Schema.Attribute.DefaultTo<'lg'>;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface ServicesParagraphe extends Schema.Component {
+export interface ServicesParagraphe extends Struct.ComponentSchema {
   collectionName: 'components_services_paragraphes';
   info: {
     description: '';
@@ -226,61 +230,62 @@ export interface ServicesParagraphe extends Schema.Component {
     icon: 'layer';
   };
   attributes: {
-    alignement_image_droite: Attribute.Boolean & Attribute.DefaultTo<false>;
-    image_titre: Attribute.Media<'images'>;
-    images: Attribute.Media<'images', true>;
-    sous_titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    alignement_image_droite: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    image_titre: Schema.Attribute.Media<'images'>;
+    images: Schema.Attribute.Media<'images', true>;
+    sous_titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    taille_image_titre: Attribute.Enumeration<['sm', 'md', 'lg']> &
-      Attribute.DefaultTo<'sm'>;
-    taille_paragraphe: Attribute.Enumeration<['md', 'lg']> &
-      Attribute.DefaultTo<'lg'>;
-    texte: Attribute.RichText;
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    taille_image_titre: Schema.Attribute.Enumeration<['sm', 'md', 'lg']> &
+      Schema.Attribute.DefaultTo<'sm'>;
+    taille_paragraphe: Schema.Attribute.Enumeration<['md', 'lg']> &
+      Schema.Attribute.DefaultTo<'lg'>;
+    texte: Schema.Attribute.RichText;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    titre_centre: Attribute.Boolean & Attribute.DefaultTo<false>;
+    titre_centre: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
   };
 }
 
-export interface SharedBouton extends Schema.Component {
+export interface SharedBouton extends Struct.ComponentSchema {
   collectionName: 'components_shared_boutons';
   info: {
     displayName: 'bouton';
   };
   attributes: {
-    label: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    url: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface SharedParagraphe extends Schema.Component {
+export interface SharedParagraphe extends Struct.ComponentSchema {
   collectionName: 'components_shared_paragraphes';
   info: {
     displayName: 'paragraphe';
     icon: 'layer';
   };
   attributes: {
-    contenu: Attribute.RichText & Attribute.Required;
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    contenu: Schema.Attribute.RichText & Schema.Attribute.Required;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface SharedSeo extends Schema.Component {
+export interface SharedSeo extends Struct.ComponentSchema {
   collectionName: 'components_shared_seos';
   info: {
     description: '';
@@ -288,16 +293,16 @@ export interface SharedSeo extends Schema.Component {
     icon: 'search';
   };
   attributes: {
-    metaDescription: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    metaDescription: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         minLength: 50;
       }>;
-    metaImage: Attribute.Media<'images'>;
-    metaTitle: Attribute.String;
+    metaImage: Schema.Attribute.Media<'images'>;
+    metaTitle: Schema.Attribute.String;
   };
 }
 
-export interface SharedTemoignage extends Schema.Component {
+export interface SharedTemoignage extends Struct.ComponentSchema {
   collectionName: 'components_shared_temoignages';
   info: {
     description: '';
@@ -305,84 +310,84 @@ export interface SharedTemoignage extends Schema.Component {
     icon: 'discuss';
   };
   attributes: {
-    auteur: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    auteur: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
-    portrait: Attribute.Media<'images'>;
-    role: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    portrait: Schema.Attribute.Media<'images'>;
+    role: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 200;
       }>;
-    temoignage: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    temoignage: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 700;
       }>;
   };
 }
 
-export interface SharedVignette extends Schema.Component {
+export interface SharedVignette extends Struct.ComponentSchema {
   collectionName: 'components_shared_vignettes';
   info: {
     displayName: 'vignette';
     icon: 'landscape';
   };
   attributes: {
-    image: Attribute.Media<'images'> & Attribute.Required;
-    legende: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    legende: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface SharedVignetteAvecCta extends Schema.Component {
+export interface SharedVignetteAvecCta extends Struct.ComponentSchema {
   collectionName: 'components_shared_vignette_avec_ctas';
   info: {
     displayName: 'vignette_avec_cta';
   };
   attributes: {
-    cta: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    cta: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 50;
       }>;
-    image: Attribute.Media<'images'> & Attribute.Required;
-    legende: Attribute.RichText & Attribute.Required;
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    legende: Schema.Attribute.RichText & Schema.Attribute.Required;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface SharedVignetteAvecDetails extends Schema.Component {
+export interface SharedVignetteAvecDetails extends Struct.ComponentSchema {
   collectionName: 'components_shared_vignette_avec_details';
   info: {
     description: '';
     displayName: 'vignette_avec_details';
   };
   attributes: {
-    details_cta: Attribute.Component<'shared.bouton'>;
-    details_texte: Attribute.RichText & Attribute.Required;
-    details_titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    details_cta: Schema.Attribute.Component<'shared.bouton', false>;
+    details_texte: Schema.Attribute.RichText & Schema.Attribute.Required;
+    details_titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    image: Attribute.Media<'images'>;
-    legende: Attribute.RichText & Attribute.Required;
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    image: Schema.Attribute.Media<'images'>;
+    legende: Schema.Attribute.RichText & Schema.Attribute.Required;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface SharedVignetteAvecMarkdown extends Schema.Component {
+export interface SharedVignetteAvecMarkdown extends Struct.ComponentSchema {
   collectionName: 'components_shared_vignette_avec_markdowns';
   info: {
     description: '';
@@ -390,16 +395,16 @@ export interface SharedVignetteAvecMarkdown extends Schema.Component {
     icon: 'layout';
   };
   attributes: {
-    image: Attribute.Media<'images'>;
-    legende: Attribute.RichText;
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
+    image: Schema.Attribute.Media<'images'>;
+    legende: Schema.Attribute.RichText;
+    titre: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-export interface SharedVignetteAvecTitre extends Schema.Component {
+export interface SharedVignetteAvecTitre extends Struct.ComponentSchema {
   collectionName: 'components_shared_vignette_avec_titres';
   info: {
     description: '';
@@ -407,23 +412,23 @@ export interface SharedVignetteAvecTitre extends Schema.Component {
     icon: 'landscape';
   };
   attributes: {
-    image: Attribute.Media<'images'>;
-    legende: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    image: Schema.Attribute.Media<'images'>;
+    legende: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
+    titre: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
   };
 }
 
-declare module '@strapi/types' {
-  export module Shared {
-    export interface Components {
+declare module '@strapi/strapi' {
+  export namespace Public {
+    export interface ComponentSchemas {
       'contenu.bouton-groupe': ContenuBoutonGroupe;
       'contenu.gallerie': ContenuGallerie;
       'contenu.image': ContenuImage;

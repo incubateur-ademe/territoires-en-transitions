@@ -115,3 +115,6 @@ exports
 dist
 build
 .strapi-updater.json
+
+# généré au build (client admin)
+.strapi

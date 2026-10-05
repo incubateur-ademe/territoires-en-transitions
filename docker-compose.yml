@@ -408,7 +408,7 @@ services:
       APP_KEYS: ${STRAPI_APP_KEYS:-devKeyA,devKeyB}
       API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT:-dev-api-token-salt}
       ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET:-dev-admin-jwt-secret}
-      JWT_SECRET: ${STRAPI_JWT_SECRET:-dev-jwt-secret}
+      ENCRYPTION_KEY: ${STRAPI_ENCRYPTION_KEY:-dev-encryption-key}
       TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT:-dev-transfer-token-salt}
       # Token API read-only seedé au bootstrap (strapi/src/index.ts) pour que le
       # site lise l'API locale. Doit rester égal à NEXT_PUBLIC_STRAPI_KEY dans

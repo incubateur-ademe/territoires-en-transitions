@@ -25,7 +25,7 @@ secret:
       match: dev-api-token-salt
     - name: 'dev — STRAPI_ADMIN_JWT_SECRET par défaut'
       match: dev-admin-jwt-secret
-    - name: 'dev — STRAPI_JWT_SECRET par défaut'
-      match: dev-jwt-secret
+    - name: 'dev — STRAPI_ENCRYPTION_KEY par défaut'
+      match: dev-encryption-key
     - name: 'dev — STRAPI_TRANSFER_TOKEN_SALT par défaut'
       match: dev-transfer-token-salt
