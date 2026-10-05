@@ -7,15 +7,17 @@ import { getStatsHeroSectionSite } from '../home/getStatsHeroSectionSite';
 export const PlateformeCTASection = async () => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
   const stats = await getStatsHeroSectionSite();
-  const nb_ct_actif_12_mois = stats?.nb_ct_actif_12_mois;
+  const nbCollectivitesActives = stats?.nb_ct_actif_12_mois ?? 0;
 
   return (
     <Section className="text-center">
       <h2>Prêt·e à piloter efficacement votre transition écologique ?</h2>
-      {nb_ct_actif_12_mois && (
+      {nbCollectivitesActives > 0 && (
         <p>
           Rejoignez gratuitement les{' '}
-          <span className="font-bold text-3xl">{nb_ct_actif_12_mois} </span>{' '}
+          <span className="font-bold text-3xl">
+            {new Intl.NumberFormat('fr-FR').format(nbCollectivitesActives)}
+          </span>{' '}
           collectivités qui pilotent déjà leurs plans d&apos;actions sur
           Territoires en Transitions.
         </p>

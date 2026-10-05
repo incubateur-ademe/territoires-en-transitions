@@ -1,4 +1,4 @@
-import { StrapiCollection, StrapiEntry, StrapiMedia } from './types';
+import { StrapiCollection, StrapiEntry } from './types';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const apiKey = process.env.NEXT_PUBLIC_STRAPI_KEY;
@@ -117,17 +117,4 @@ export async function fetchItem<T>(
   });
   const body = await response.json();
   return body.data ?? null;
-}
-
-/** Un fichier de la médiathèque par son `id` numérique (les fichiers ne sont pas des documents). */
-export async function fetchImage(id: number): Promise<StrapiMedia> {
-  const response = await fetch(buildUrl(`upload/files/${id}`, []), {
-    next: { revalidate: 3600 },
-    method: 'GET',
-    headers,
-  });
-  if (!response.ok) {
-    throw new Error(`fetchImage failed (${response.status}) for id=${id}`);
-  }
-  return response.json();
 }

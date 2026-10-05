@@ -1,13 +1,12 @@
 import Section from '@/site/components/sections/Section';
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
-import { fetchImage } from '@/site/src/strapi/strapi';
+import tableauDeBord from '@/site/public/plateforme-numerique/tableau-de-bord-collectivite.png';
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
 import { Button, Icon } from '@tet/ui';
+import Image from 'next/image';
 
-export const PlateformeNumeriqueHeroSection = async () => {
+export const PlateformeNumeriqueHeroSection = () => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
-  const heroImage = await fetchImage(1529);
 
   return (
     <Section
@@ -44,10 +43,15 @@ export const PlateformeNumeriqueHeroSection = async () => {
           </div>
         </div>
         <div className="max-lg:hidden w-full">
-          <ImageStrapi
-            strapiImage={heroImage}
-            imgClassName="w-full h-auto 2xl:scale-125"
-            size="50vw"
+          {/* Masqué sous lg : `sizes` à 1px y réduit le téléchargement à la
+              plus petite variante, tout en gardant le chargement immédiat
+              du visuel principal sur desktop. */}
+          <Image
+            src={tableauDeBord}
+            alt="Tableau de bord d'une collectivité dans Territoires en Transitions"
+            className="w-full h-auto 2xl:scale-125"
+            sizes="(min-width: 1024px) 40vw, 1px"
+            loading="eager"
           />
         </div>
       </div>
