@@ -26,15 +26,15 @@ const actionCommunsSchema = z
 
 export type ActionCommunsLookup = { classee: boolean };
 
-export type CommunsSecteursClientError =
+export type CommunsSecteursApiError =
   | 'COMMUNS_NON_CONFIGURE'
   | 'COMMUNS_ACCES_REFUSE'
   | 'COMMUNS_INJOIGNABLE'
   | 'COMMUNS_REPONSE_INATTENDUE';
 
 @Injectable()
-export class CommunsSecteursClient {
-  private readonly logger = new Logger(CommunsSecteursClient.name);
+export class CommunsSecteursApiService {
+  private readonly logger = new Logger(CommunsSecteursApiService.name);
 
   constructor(private readonly configurationService: ConfigurationService) {
     if (
@@ -49,7 +49,7 @@ export class CommunsSecteursClient {
 
   async getSecteurs(
     ficheId: number
-  ): Promise<Result<SecteursCommunsLookup, CommunsSecteursClientError>> {
+  ): Promise<Result<SecteursCommunsLookup, CommunsSecteursApiError>> {
     const fetched = await this.fetchCommuns(
       `/tet/v1/actions/${ficheId}/secteurs`,
       ficheId
@@ -75,7 +75,7 @@ export class CommunsSecteursClient {
 
   async getAction(
     ficheId: number
-  ): Promise<Result<ActionCommunsLookup, CommunsSecteursClientError>> {
+  ): Promise<Result<ActionCommunsLookup, CommunsSecteursApiError>> {
     const fetched = await this.fetchCommuns(
       `/tet/v1/actions/${ficheId}`,
       ficheId
@@ -99,7 +99,7 @@ export class CommunsSecteursClient {
   private async fetchCommuns(
     path: string,
     ficheId: number
-  ): Promise<Result<unknown | null, CommunsSecteursClientError>> {
+  ): Promise<Result<unknown | null, CommunsSecteursApiError>> {
     const baseUrl = this.configurationService.get('COMMUNS_API_URL');
     const apiKey = this.configurationService.get('COMMUNS_API_KEY');
     if (!baseUrl || !apiKey) {

@@ -20,15 +20,15 @@ import { axeTable } from '../shared/models/axe.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { planActionTypeTable } from '../shared/models/plan-action-type.table';
-import { CommunsSecteursClient } from './communs-secteurs.client';
-import { FakeCommunsSecteursClient } from './communs-secteurs.test-fixture';
+import { CommunsSecteursApiService } from './communs-secteurs-api.service';
+import { FakeCommunsSecteursApiService } from './communs-secteurs-api.test-fixture';
 import { ficheActionSecteurAttributionTable } from './fiche-action-secteur-attribution.table';
 
 describe('Modification des secteurs d’une fiche', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-  const communs = new FakeCommunsSecteursClient();
+  const communs = new FakeCommunsSecteursApiService();
 
   let editeur: AuthenticatedUser;
   let lecteur: AuthenticatedUser;
@@ -38,7 +38,9 @@ describe('Modification des secteurs d’une fiche', () => {
   beforeAll(async () => {
     app = await getDisposableTestApp({
       overrides: (moduleBuilder) => {
-        moduleBuilder.overrideProvider(CommunsSecteursClient).useValue(communs);
+        moduleBuilder
+          .overrideProvider(CommunsSecteursApiService)
+          .useValue(communs);
       },
     });
     router = await getTestRouter(app);

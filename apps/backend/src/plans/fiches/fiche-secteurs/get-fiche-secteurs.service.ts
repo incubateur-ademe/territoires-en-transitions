@@ -19,7 +19,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
-import { CommunsSecteursClient } from './communs-secteurs.client';
+import { CommunsSecteursApiService } from './communs-secteurs-api.service';
 import {
   FicheSecteursAttributionCreate,
   FicheSecteursAttributionRepository,
@@ -44,7 +44,7 @@ export class GetFicheSecteursService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly ficheActionPermissionsService: FicheActionPermissionsService,
-    private readonly communsSecteursClient: CommunsSecteursClient,
+    private readonly communsSecteursApiService: CommunsSecteursApiService,
     private readonly attributionRepository: FicheSecteursAttributionRepository,
     private readonly eligibiliteRepository: FicheSecteursEligibiliteRepository
   ) {}
@@ -103,7 +103,7 @@ export class GetFicheSecteursService {
     ficheId: number,
     ficheModifiedAt: string
   ): Promise<FicheSecteurs> {
-    const lookup = await this.communsSecteursClient.getSecteurs(ficheId);
+    const lookup = await this.communsSecteursApiService.getSecteurs(ficheId);
     if (!lookup.success) {
       this.logger.warn(
         `Secteurs de la fiche ${ficheId} non récupérés : ${lookup.error}`
@@ -142,7 +142,7 @@ export class GetFicheSecteursService {
   }
 
   private async isClasseeParCommuns(ficheId: number): Promise<boolean> {
-    const action = await this.communsSecteursClient.getAction(ficheId);
+    const action = await this.communsSecteursApiService.getAction(ficheId);
     if (!action.success) {
       this.logger.warn(
         `Classification de la fiche ${ficheId} non récupérée : ${action.error}`
