@@ -1,8 +1,12 @@
-import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
+import {
+  CollectiviteSousTypeEnum,
+  type CollectiviteReferentielPreferences,
+} from '@tet/domain/collectivites';
 import { describe, expect, it, test } from 'vitest';
 import {
   buildPostSwitchPreferences,
   canSwitchToTe,
+  getEligibiliteType,
   getSwitchToTeBlockers,
 } from './switch-to-te.rules';
 
@@ -124,6 +128,31 @@ describe('canSwitchToTe', () => {
     };
 
     expect(canSwitchToTe(prefs)).toBe(false);
+  });
+});
+
+describe('getEligibiliteType', () => {
+  test('sous-type syndicat → isSyndicat', () => {
+    expect(
+      getEligibiliteType({
+        soustype: CollectiviteSousTypeEnum.SYNDICAT,
+        drom: false,
+      })
+    ).toEqual({ isSyndicat: true, isDrom: false });
+  });
+
+  test('région DROM → isDrom', () => {
+    expect(getEligibiliteType({ soustype: null, drom: true })).toEqual({
+      isSyndicat: false,
+      isDrom: true,
+    });
+  });
+
+  test('drom null (collectivité de test) → non DROM', () => {
+    expect(getEligibiliteType({ soustype: null, drom: null })).toEqual({
+      isSyndicat: false,
+      isDrom: false,
+    });
   });
 });
 

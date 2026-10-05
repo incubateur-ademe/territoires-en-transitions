@@ -1,7 +1,9 @@
-import type {
-  CollectiviteReferentielPreferences,
-  PopulatedFromCaeEci,
-  ReferentielPreference,
+import {
+  CollectiviteSousTypeEnum,
+  type CollectiviteAvecType,
+  type CollectiviteReferentielPreferences,
+  type PopulatedFromCaeEci,
+  type ReferentielPreference,
 } from '@tet/domain/collectivites';
 import type {
   ParcoursLabellisationStatus,
@@ -48,6 +50,23 @@ export function canSwitchToTe(
   if (prefs.te.mode !== 'readonly') return false;
   // proxy engagement : au moins une source encore en écriture
   return prefs.cae.mode === 'write' || prefs.eci.mode === 'write';
+}
+
+export type EligibiliteType = { isSyndicat: boolean; isDrom: boolean };
+
+/**
+ * Critères d'inéligibilité liés au type de collectivité :
+ * - syndicat (SMF, SMO, SIVU, SIVOM) : pas éligible au référentiel TE ;
+ * - DROM : pas encore éligible au référentiel TE.
+ */
+export function getEligibiliteType({
+  soustype,
+  drom,
+}: Pick<CollectiviteAvecType, 'soustype' | 'drom'>): EligibiliteType {
+  return {
+    isSyndicat: soustype === CollectiviteSousTypeEnum.SYNDICAT,
+    isDrom: drom === true,
+  };
 }
 
 /**
