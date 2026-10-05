@@ -1,9 +1,11 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import { annualReleasePeriodiciteSchema } from '../definitions/indicateur-annual-release.input';
 import { z } from 'zod';
 
 export const listIndicateurValeursInputSchema = z
   .object({
-    periodicite: z.literal(IndicateurPeriodiciteEnum.ANNUELLE).optional(),
+    periodicite: z
+      .optional(annualReleasePeriodiciteSchema)
+      .describe('Série annuelle demandée'),
     collectiviteId: z.int().describe('Identifiant de la collectivité'),
     indicateurIds: z
       .int()

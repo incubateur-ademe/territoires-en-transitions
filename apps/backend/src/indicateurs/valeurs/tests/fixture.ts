@@ -8,6 +8,8 @@ export const indicateur1: IndicateurDefinitionTiny = {
   description: '',
   unite: 'teq CO2',
   periodicite: 'annuelle',
+  aggregationResultat: null,
+  aggregationObjectif: null,
   borneMin: null,
   borneMax: null,
 };
@@ -20,6 +22,8 @@ export const indicateur2: IndicateurDefinitionTiny = {
   description: '',
   unite: 'teq CO2',
   periodicite: 'annuelle',
+  aggregationResultat: null,
+  aggregationObjectif: null,
   borneMin: null,
   borneMax: null,
 };
@@ -33,6 +37,8 @@ export const indicateur3: IndicateurDefinitionTiny = {
   description: '',
   unite: 'teq CO2',
   periodicite: 'annuelle',
+  aggregationResultat: null,
+  aggregationObjectif: null,
   borneMin: null,
   borneMax: null,
 };

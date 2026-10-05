@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -10,38 +9,16 @@ import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/per
 import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collectivites/personnalisations/services/verify-personnalisation-expression-references';
-import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
-import {
-  CreateIndicateurCategorieTag,
-  indicateurCategorieTagTable,
-} from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import {
-  CreateIndicateurGroupe,
-  indicateurGroupeTable,
-} from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
-import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
-import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
+import type { QuestionWithChoices } from '@tet/domain/collectivites';
+import { DEFAULT_ROUNDING_PRECISION } from '../valeurs/valeurs.constants';
 import VersionService from '@tet/backend/utils/version/version.service';
-import {
-  CategorieTagCreate,
-  QuestionWithChoices,
-} from '@tet/domain/collectivites';
-import { IndicateurThematiqueCreate } from '@tet/domain/indicateurs';
-import { ThematiqueCreate } from '@tet/domain/shared';
-import { getErrorMessage } from '@tet/domain/utils';
-import { DepGraph } from 'dependency-graph';
-import { inArray } from 'drizzle-orm';
-import { omit, upperFirst } from 'es-toolkit';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import type { AuthenticatedOrServiceRoleUser } from '@tet/backend/users/models/auth.models';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
-import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { IndicateurFormulaReconciliationService } from '../definitions/indicateur-formula-reconciliation.service';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
-import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
   importIndicateurDefinitionSchema,
@@ -51,6 +28,20 @@ import {
   importObjectifSchema,
   ImportObjectifType,
 } from './import-indicateur-objectif.dto';
+import {
+  formatInvalidExpressionMessage,
+  getImportResultOrThrow,
+} from './import-indicateur-definition.errors';
+import type {
+  PlatformDefinitions,
+  UpsertIndicateurDefinitionsResult,
+} from './import-indicateur-definition.types';
+import { mapIndicateurObjectifs } from './map-indicateur-objectifs.rules';
+import {
+  validateIndicateurDefinitions,
+  validateObjectifIdentifiants,
+} from './validate-indicateur-definitions.rules';
+import { UpsertIndicateurDefinitionsService } from './upsert-indicateur-definitions.service';
 
 /**
  * Les questions sont lues en base : les indicateurs doivent être importés
@@ -59,29 +50,20 @@ import {
 const UNKNOWN_QUESTION_HINT =
   "Si cette question vient d'être créée, importez les questions de personnalisation avant les indicateurs.";
 
-/**
- * Une erreur de syntaxe (`InvalidExpressionError`) porte déjà un extrait de la
- * ligne fautive : la formule n'est alors pas recopiée. Les autres erreurs
- * (référentiel inconnu, indicateur source inconnue…) n'ont pas de position et
- * gardent la formule.
- */
-function formatInvalidExpressionMessage(input: {
-  label: string;
-  expression: string;
-  err: unknown;
-}): string {
-  const { label, expression, err } = input;
-  if (err instanceof InvalidExpressionError) {
-    return `${upperFirst(label)} est invalide ${err.message}`;
-  }
-  return `${upperFirst(label)} "${expression}" est invalide : ${getErrorMessage(
-    err
-  )}`;
-}
+type FormulaReconciliationResult = Readonly<{
+  status: 'complete' | 'pending' | 'failed';
+  identifiantsRecalcules: string[];
+  reconciliationsMisesEnFile: number;
+  reconciliationsRestantes: number | null;
+  reconciliationsEchouees: number | null;
+  message?: string;
+}>;
 
-type GetReferentielIndicateurDefinitionsReturnType = Awaited<
-  ReturnType<ListPlatformDefinitionsRepository['listPlatformDefinitions']>
->;
+type ImportIndicateurDefinitionsResult = Readonly<{
+  status: 'committed';
+  definitions: PlatformDefinitions;
+  reconciliation: FormulaReconciliationResult;
+}>;
 
 @Injectable()
 export default class ImportIndicateurDefinitionService extends BaseSpreadsheetImporterService {
@@ -103,9 +85,10 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
-    private readonly databaseService: DatabaseService,
-    private readonly crudValeursService: CrudValeursService,
+    private readonly formulaReconciliationService: IndicateurFormulaReconciliationService,
     private readonly versionService: VersionService,
+    private readonly permissionService: PermissionService,
+    private readonly upsertService: UpsertIndicateurDefinitionsService,
     sheetService: SheetService
   ) {
     super(sheetService);
@@ -128,10 +111,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return `${this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME}!${this.INDICATEUR_DEFINITIONS_SPREADSHEET_RANGE}`;
   }
 
-  async importIndicateurDefinitions(): Promise<{
-    definitions: GetReferentielIndicateurDefinitionsReturnType;
-    identifiantsRecalcules: string[];
-  }> {
+  async importIndicateurDefinitions(
+    user: AuthenticatedOrServiceRoleUser
+  ): Promise<ImportIndicateurDefinitionsResult> {
+    this.permissionService.hasServiceRole(user);
+
     const indicateurDefinitions =
       await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
         identifiantsReferentiel: ['cae_1.a'],
@@ -139,18 +123,16 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
     const allowVersionOverwrite =
       this.versionService.getVersion().environment !== 'prod';
+    const currentVersion = indicateurDefinitions[0]?.version ?? null;
 
     const spreadsheetId = this.getSpreadsheetId();
     const lastVersion = await this.checkLastVersion(
       spreadsheetId,
-      indicateurDefinitions.length ? indicateurDefinitions[0].version : null,
+      currentVersion,
       allowVersionOverwrite
     );
 
     const sheetRange = this.getIndicateurDefinitionsSheetRange();
-
-    const existingDefinitionsData =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitions();
 
     const indicateurDefinitionsData =
       await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
@@ -164,78 +146,90 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       `Found ${indicateurDefinitionsData.data.length} indicateur definitions`
     );
 
-    const upsertedIndicateurDefinitions =
-      await this.upsertIndicateurDefinitions(indicateurDefinitionsData.data);
+    // Lire et valider toutes les feuilles avant la transaction évite de
+    // publier une nouvelle version du catalogue si la feuille des objectifs
+    // est illisible ou invalide.
+    const importedObjectifs = await this.readObjectifs();
 
-    // Find definitions for which the formula has changed
-    const updatedIndicateurDefinitionFormulas =
-      upsertedIndicateurDefinitions.filter((upsertedIndicateurDefinition) => {
-        const existingDefinition = existingDefinitionsData.find(
-          (def) =>
-            def.identifiantReferentiel ===
-            upsertedIndicateurDefinition.identifiantReferentiel
-        );
-        return (
-          upsertedIndicateurDefinition.valeurCalcule &&
-          upsertedIndicateurDefinition.valeurCalcule.trim().toLowerCase() !==
-            existingDefinition?.valeurCalcule?.trim().toLowerCase()
-        );
-      });
-    this.logger.log(
-      `Found ${updatedIndicateurDefinitionFormulas.length} updated indicateur definitions formulas`
+    const {
+      definitions: upsertedIndicateurDefinitions,
+      updatedFormulaDefinitions,
+      importedIndicateurIds,
+      reconciliationWorkItemsCount,
+    } = await this.upsertIndicateurDefinitions(
+      indicateurDefinitionsData.data,
+      importedObjectifs
     );
-    const identifiantsRecalcules: string[] = [];
-    if (updatedIndicateurDefinitionFormulas.length) {
-      const recomputeResults =
-        await this.crudValeursService.recomputeAllCalculatedIndicateurValeurs(
-          undefined,
-          null,
-          updatedIndicateurDefinitionFormulas,
-          true
-        );
-      recomputeResults.forEach((result) => {
-        result.identifiants.forEach((identifiant) => {
-          if (!identifiantsRecalcules.includes(identifiant)) {
-            identifiantsRecalcules.push(identifiant);
-          }
-        });
-      });
+
+    this.logger.log(
+      `Found ${updatedFormulaDefinitions.length} updated indicateur definitions formulas and ${reconciliationWorkItemsCount} durable reconciliation work items`
+    );
+    const reconciliation = await this.tryDrainFormulaReconciliations(
+      importedIndicateurIds,
+      reconciliationWorkItemsCount
+    );
+
+    return {
+      status: 'committed',
+      definitions: upsertedIndicateurDefinitions,
+      reconciliation,
+    };
+  }
+
+  private async tryDrainFormulaReconciliations(
+    indicateurIds: number[],
+    enqueuedWorkItemsCount: number
+  ): Promise<FormulaReconciliationResult> {
+    const result = await this.formulaReconciliationService.drain({
+      indicateurIds,
+      // Une reprise explicite ne doit pas attendre le backoff du cron.
+      includeDeferred: true,
+    });
+    if (!result.success) {
+      this.logger.error(
+        'Le catalogue est importé, mais le drain des réconciliations de formules a échoué.',
+        result.cause?.stack
+      );
+      return {
+        status: 'failed',
+        identifiantsRecalcules: [],
+        // Le drain ayant échoué, son état exact est inconnu. On distingue donc
+        // explicitement le nombre mis en file du nombre restant à traiter.
+        reconciliationsMisesEnFile: enqueuedWorkItemsCount,
+        reconciliationsRestantes: null,
+        reconciliationsEchouees: null,
+        message:
+          'Le catalogue est importé, mais la réconciliation des formules reste à reprendre.',
+      };
+    }
+
+    const reconciliation = result.data;
+    if (reconciliation.identifiants.length > 0) {
       this.logger.log(
-        `Recomputed valeurs for identifiants: ${identifiantsRecalcules.join(
+        `Recomputed valeurs for identifiants: ${reconciliation.identifiants.join(
           ', '
         )}`
       );
     }
 
-    // importe les objectifs
-    const objectifs = await this.importObjectifs(upsertedIndicateurDefinitions);
-    if (objectifs.length) {
-      try {
-        await this.databaseService.db
-          .insert(indicateurObjectifTable)
-          .values(objectifs)
-          .onConflictDoUpdate({
-            target: [
-              indicateurObjectifTable.indicateurId,
-              indicateurObjectifTable.dateValeur,
-            ],
-            set: buildConflictUpdateColumns(indicateurObjectifTable, [
-              'formule',
-            ]),
-          });
-
-        this.logger.log(`Upsert ${objectifs.length} indicateur objectifs`);
-      } catch (e) {
-        throw new HttpException(
-          `Error upserting indicateur objectifs: ${getErrorMessage(e)}`,
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    }
-
+    const status =
+      reconciliation.failedCount > 0
+        ? 'failed'
+        : reconciliation.complete
+        ? 'complete'
+        : 'pending';
     return {
-      definitions: upsertedIndicateurDefinitions,
-      identifiantsRecalcules,
+      status,
+      identifiantsRecalcules: reconciliation.identifiants,
+      reconciliationsMisesEnFile: enqueuedWorkItemsCount,
+      reconciliationsRestantes: reconciliation.remainingCount,
+      reconciliationsEchouees: reconciliation.failedCount,
+      ...(status === 'failed'
+        ? {
+            message:
+              'Le catalogue est importé, mais certaines réconciliations de formules ont échoué.',
+          }
+        : {}),
     };
   }
 
@@ -251,14 +245,16 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       borneMin: null,
       borneMax: null,
       valeurCalcule: null,
-      precision: CrudValeursService.DEFAULT_ROUNDING_PRECISION,
+      precision: DEFAULT_ROUNDING_PRECISION,
       exprCible: null,
       exprSeuil: null,
       libelleCibleSeuil: null,
     };
   }
 
-  async verifyIndicateurDefinitions() {
+  async verifyIndicateurDefinitions(user: AuthenticatedOrServiceRoleUser) {
+    this.permissionService.hasServiceRole(user);
+
     const spreadsheetId = this.getSpreadsheetId();
 
     const sheetRange = this.getIndicateurDefinitionsSheetRange();
@@ -276,12 +272,20 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     );
 
     await this.checkIndicateurDefinitions(indicateurDefinitionsData.data);
+    const objectifs = await this.readObjectifs();
+    getImportResultOrThrow(
+      validateObjectifIdentifiants(objectifs, indicateurDefinitionsData.data)
+    );
     return { ok: true };
   }
 
-  async importObjectifs(
-    definitions: GetReferentielIndicateurDefinitionsReturnType
-  ) {
+  async importObjectifs(definitions: PlatformDefinitions) {
+    return getImportResultOrThrow(
+      mapIndicateurObjectifs(await this.readObjectifs(), definitions)
+    );
+  }
+
+  private async readObjectifs(): Promise<ImportObjectifType[]> {
     const spreadsheetId = this.getSpreadsheetId();
     const sheetRange = this.sheetService.getDefaultRangeFromHeader(
       this.INDICATEUR_OBJECTIFS_SPREADSHEET_HEADER,
@@ -295,138 +299,40 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         sheetRange
       );
 
-    return objectifsData.data
-      .map(({ identifiantReferentiel, ...other }) => {
-        const indicateurId = definitions.find(
-          (d) => d.identifiantReferentiel === identifiantReferentiel
-        )?.id;
-        return indicateurId ? { indicateurId, ...other } : null;
-      })
-      .filter((row) => row !== null);
+    return objectifsData.data;
   }
 
   async checkIndicateurDefinitions(
-    indicateurDefinitions: ImportIndicateurDefinitionType[]
+    definitions: ImportIndicateurDefinitionType[]
   ): Promise<void> {
-    const graph = new DepGraph();
+    const validation = validateIndicateurDefinitions(definitions, {
+      indicateurs: this.indicateurExpressionService,
+      personnalisations: this.personnalisationsExpressionService,
+    });
+    if (!validation.success && validation.error === 'INVALID_EXPRESSION') {
+      throw new UnprocessableEntityException(validation.cause?.message);
+    }
+    getImportResultOrThrow(validation);
 
-    // Lues une seule fois pour tout l'import. Les erreurs de références sont
-    // accumulées pour être toutes signalées en une fois.
     const questions =
       await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
         []
       );
-    const errors: string[] = [];
-
-    const indicateurDefinitionsMap = new Map<
-      string,
-      ImportIndicateurDefinitionType
-    >();
-
-    indicateurDefinitions.forEach((indicateur) => {
-      if (indicateurDefinitionsMap.has(indicateur.identifiantReferentiel)) {
-        throw new BadRequestException(
-          `Duplicate indicateur identifiantReferentiel ${indicateur.identifiantReferentiel}`
-        );
-      }
-      indicateurDefinitionsMap.set(
-        indicateur.identifiantReferentiel,
-        indicateur
-      );
-
-      if (indicateur.valeurCalcule) {
-        try {
-          const neededSourceIndicateurs =
-            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-              indicateur.valeurCalcule
-            );
-          if (
-            neededSourceIndicateurs.find(
-              (sourceIndicateur) =>
-                sourceIndicateur.identifiant ===
-                indicateur.identifiantReferentiel
-            )
-          ) {
-            throw new HttpException(
-              `Indicateur ${indicateur.identifiantReferentiel} cannot depend on itself in formula`,
-              HttpStatus.BAD_REQUEST
-            );
-          }
-
-          neededSourceIndicateurs.forEach((sourceIndicateur) => {
-            const foundIndicateur = indicateurDefinitions.find(
-              (ind) =>
-                ind.identifiantReferentiel === sourceIndicateur.identifiant
-            );
-            if (!foundIndicateur) {
-              throw new HttpException(
-                `Indicateur ${indicateur.identifiantReferentiel} depends on unknown indicateur ${sourceIndicateur.identifiant}`,
-                HttpStatus.BAD_REQUEST
-              );
-            }
-          });
-
-          this.indicateurExpressionService.parseExpression(
-            indicateur.valeurCalcule
-          );
-
-          if (!graph.hasNode(indicateur.identifiantReferentiel)) {
-            graph.addNode(indicateur.identifiantReferentiel, {
-              formula: indicateur.valeurCalcule,
-            });
-          }
-          neededSourceIndicateurs.forEach((sourceIndicateur) => {
-            if (!graph.hasNode(sourceIndicateur.identifiant)) {
-              graph.addNode(sourceIndicateur.identifiant);
-            }
-            graph.addDependency(
-              indicateur.identifiantReferentiel,
-              sourceIndicateur.identifiant
-            );
-          });
-        } catch (err) {
-          throw new UnprocessableEntityException(
-            formatInvalidExpressionMessage({
-              label: `l'expression de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
-              expression: indicateur.valeurCalcule,
-              err,
-            })
-          );
-        }
-      }
-
-      errors.push(
-        ...this.verifyValeurCalculeReferences(indicateur, questions),
-        ...this.verifyPersonnalisationExpression({
-          expression: indicateur.exprCible,
-          label: `l'expression cible de l'indicateur ${indicateur.identifiantReferentiel}`,
-          questions,
-        }),
-        ...this.verifyPersonnalisationExpression({
-          expression: indicateur.exprSeuil,
-          label: `l'expression seuil de l'indicateur ${indicateur.identifiantReferentiel}`,
-          questions,
-        })
-      );
-    });
-
+    const errors = definitions.flatMap((indicateur) => [
+      ...this.verifyValeurCalculeReferences(indicateur, questions),
+      ...this.verifyPersonnalisationExpression({
+        expression: indicateur.exprCible,
+        label: `l'expression cible de l'indicateur ${indicateur.identifiantReferentiel}`,
+        questions,
+      }),
+      ...this.verifyPersonnalisationExpression({
+        expression: indicateur.exprSeuil,
+        label: `l'expression seuil de l'indicateur ${indicateur.identifiantReferentiel}`,
+        questions,
+      }),
+    ]);
     if (errors.length) {
       throw new UnprocessableEntityException(errors.join('\n\n'));
-    }
-
-    try {
-      // overallOrder() will throw an error if a cycle exists
-      const order = graph.overallOrder();
-      this.logger.log(
-        `No circular dependencies detected. Order: ${order.join(', ')}`
-      );
-    } catch (e) {
-      throw new HttpException(
-        `Circular dependency detected in indicateur definitions: ${getErrorMessage(
-          e
-        )}`,
-        HttpStatus.BAD_REQUEST
-      );
     }
   }
 
@@ -474,206 +380,16 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   }
 
   async upsertIndicateurDefinitions(
-    indicateurDefinitions: ImportIndicateurDefinitionType[]
-  ): Promise<GetReferentielIndicateurDefinitionsReturnType> {
-    await this.checkIndicateurDefinitions(indicateurDefinitions);
-
-    const thematiques = await this.databaseService.db
-      .select()
-      .from(thematiqueTable);
-    const categories = await this.databaseService.db
-      .select()
-      .from(categorieTagTable);
-
-    // Check that existing thematiques and categories are present
-    const categoriesToCreate: CategorieTagCreate[] = [];
-    const thematiquesToCreate: ThematiqueCreate[] = [];
-    indicateurDefinitions.forEach((indicateur) => {
-      indicateur.thematiques?.forEach((thematique) => {
-        if (
-          !thematiques.find((th) => thematique === th.mdId) &&
-          !thematiquesToCreate.find((th) => thematique === th.mdId)
-        ) {
-          thematiquesToCreate.push({ nom: thematique, mdId: thematique });
-        }
-      });
-      indicateur.categories?.forEach((categorie) => {
-        if (
-          !categories.find((cat) => categorie === cat.nom) &&
-          !categoriesToCreate.find((cat) => categorie === cat.nom)
-        ) {
-          // Ok to create new categories automatically
-          categoriesToCreate.push({ nom: categorie });
-        }
-      });
-    });
-
-    const indicateurDefinitionsToCreate = indicateurDefinitions.map(
-      (indicateur) => omit(indicateur, ['categories', 'thematiques', 'parents'])
+    definitions: ImportIndicateurDefinitionType[],
+    objectifs: ImportObjectifType[] = []
+  ): Promise<UpsertIndicateurDefinitionsResult> {
+    await this.checkIndicateurDefinitions(definitions);
+    return getImportResultOrThrow(
+      await this.upsertService.upsert(
+        { definitions, objectifs },
+        // Legacy internal/seed entrypoint; the HTTP facade authorizes the import.
+        { user: null, isUserTrusted: true }
+      )
     );
-
-    this.logger.log(
-      `Upserting ${indicateurDefinitionsToCreate.length} indicateurs with thematiques, categories in a transaction`
-    );
-
-    await this.databaseService.db.transaction(async (tx) => {
-      const createdIndicateurs = await tx
-        .insert(indicateurDefinitionTable)
-        .values(indicateurDefinitionsToCreate)
-        .onConflictDoUpdate({
-          target: [indicateurDefinitionTable.identifiantReferentiel],
-          set: buildConflictUpdateColumns(indicateurDefinitionTable, [
-            'titre',
-            'titreLong',
-            'titreCourt',
-            'unite',
-            'borneMin',
-            'borneMax',
-            'collectiviteId',
-            'participationScore',
-            'sansValeurUtilisateur',
-            'description',
-            //'groupementId',
-            'valeurCalcule',
-            'exprCible',
-            'exprSeuil',
-            'libelleCibleSeuil',
-            'modifiedAt',
-            'modifiedBy',
-            'version',
-          ]),
-        })
-        .returning();
-      const indicateurIds = createdIndicateurs.map(
-        (indicateur) => indicateur.id
-      );
-
-      // Recreate category relationships
-      // Add missing categories
-      if (categoriesToCreate.length) {
-        this.logger.log(
-          `Creating ${categoriesToCreate.length} missing categories`
-        );
-        const createdCategories = await tx
-          .insert(categorieTagTable)
-          .values(categoriesToCreate)
-          .returning();
-        categories.push(...createdCategories);
-      }
-      const indicateurCategorieValues: CreateIndicateurCategorieTag[] = [];
-      indicateurDefinitions.forEach((indicateur) => {
-        indicateur.categories?.forEach((categorie) => {
-          const categorieId = categories.find(
-            (cat) => cat.nom === categorie
-          )?.id;
-          if (!categorieId) {
-            throw new HttpException(
-              `Categorie ${categorieId} not found for indicateur ${indicateur.identifiantReferentiel}`,
-              HttpStatus.BAD_REQUEST
-            );
-          }
-
-          const createdIndicateur = createdIndicateurs.find(
-            (ind) =>
-              ind.identifiantReferentiel === indicateur.identifiantReferentiel
-          );
-          if (createdIndicateur) {
-            indicateurCategorieValues.push({
-              indicateurId: createdIndicateur.id,
-              categorieTagId: categorieId,
-            });
-          }
-        });
-      });
-      this.logger.log(
-        `Recreating ${indicateurCategorieValues.length} indicateur categorie relations`
-      );
-      await tx
-        .delete(indicateurCategorieTagTable)
-        .where(
-          inArray(indicateurCategorieTagTable.indicateurId, indicateurIds)
-        );
-      await tx
-        .insert(indicateurCategorieTagTable)
-        .values(indicateurCategorieValues);
-
-      // Recreate thematiques relationships
-      // Add missing thematiques
-      if (thematiquesToCreate.length) {
-        this.logger.log(
-          `Creating ${thematiquesToCreate.length} missing thematiques`
-        );
-        const createdThematiques = await tx
-          .insert(thematiqueTable)
-          .values(thematiquesToCreate)
-          .returning();
-        thematiques.push(...createdThematiques);
-      }
-      const indicateurThematiqueValues: IndicateurThematiqueCreate[] = [];
-      indicateurDefinitions.forEach((indicateur) => {
-        indicateur.thematiques?.forEach((thematique) => {
-          const thematiqueId = thematiques.find(
-            (them) => them.mdId === thematique || them.nom === thematique
-          )?.id;
-          if (!thematiqueId) {
-            throw new HttpException(
-              `Thematique ${thematique} not found for indicateur ${indicateur.identifiantReferentiel}`,
-              HttpStatus.BAD_REQUEST
-            );
-          }
-
-          const createdIndicateur = createdIndicateurs.find(
-            (ind) =>
-              ind.identifiantReferentiel === indicateur.identifiantReferentiel
-          );
-          if (createdIndicateur) {
-            indicateurThematiqueValues.push({
-              indicateurId: createdIndicateur.id,
-              thematiqueId: thematiqueId,
-            });
-          }
-        });
-      });
-      this.logger.log(
-        `Recreating ${indicateurThematiqueValues.length} indicateur thematique relations`
-      );
-      await tx
-        .delete(indicateurThematiqueTable)
-        .where(inArray(indicateurThematiqueTable.indicateurId, indicateurIds));
-      await tx
-        .insert(indicateurThematiqueTable)
-        .values(indicateurThematiqueValues);
-
-      // Recreate parents relationships
-      const indicateurGroupeValues: CreateIndicateurGroupe[] = [];
-      indicateurDefinitions.forEach((indicateur) => {
-        indicateur.parents?.forEach((parent) => {
-          const createdIndicateurEnfant = createdIndicateurs.find(
-            (ind) =>
-              ind.identifiantReferentiel === indicateur.identifiantReferentiel
-          );
-
-          const createdIndicateurParent = createdIndicateurs.find(
-            (ind) => ind.identifiantReferentiel === parent
-          );
-          if (createdIndicateurEnfant && createdIndicateurParent) {
-            indicateurGroupeValues.push({
-              enfant: createdIndicateurEnfant.id,
-              parent: createdIndicateurParent.id,
-            });
-          }
-        });
-      });
-      this.logger.log(
-        `Recreating ${indicateurGroupeValues.length} indicateur parent relations`
-      );
-      await tx
-        .delete(indicateurGroupeTable)
-        .where(inArray(indicateurGroupeTable.enfant, indicateurIds));
-      await tx.insert(indicateurGroupeTable).values(indicateurGroupeValues);
-    });
-
-    // We query again the db to get indicateurs with parents, etc.
-    return this.listPlatformDefinitionsRepository.listPlatformDefinitions();
   }
 }

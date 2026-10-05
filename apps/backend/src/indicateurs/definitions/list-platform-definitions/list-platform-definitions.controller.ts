@@ -8,10 +8,13 @@ import {
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
 import { listPlatformDefinitionsApiRequestSchema } from './list-platform-definitions.api-request';
 import { listPlatformDefinitionsApiResponseSchema } from './list-platform-definitions.api-response';
-import { ListPlatformDefinitionsRepository } from './list-platform-definitions.repository';
+import { ListPlatformDefinitionsService } from './list-platform-definitions.service';
 
 class ListPlatformDefinitionsApiRequestClass extends createZodDto(
   listPlatformDefinitionsApiRequestSchema
@@ -25,8 +28,9 @@ class ListPlatformDefinitionsApiResponseClass extends createZodDto(
 @ApiBearerAuth()
 @Controller()
 export class ListPlatformDefinitionsController {
+  private readonly getResultDataOrThrowError = createControllerErrorHandler();
   constructor(
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository
+    private readonly listPlatformDefinitionsService: ListPlatformDefinitionsService
   ) {}
 
   @AllowAnonymousAccess()
@@ -42,27 +46,20 @@ export class ListPlatformDefinitionsController {
     type: ListPlatformDefinitionsApiResponseClass,
   })
   async listDefinitions(
-    @Query() input: ListPlatformDefinitionsApiRequestClass
+    @Query() input: ListPlatformDefinitionsApiRequestClass,
+    @TokenInfo() user: AuthUser | null
   ) {
     const result =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitionAggregates(
-        input
+      await this.listPlatformDefinitionsService.listPlatformDefinitionAggregates(
+        input,
+        { user }
       );
 
     // Parsing will strip keys that are not in the schema
     // ensuring consistent API response format
-    const parsedResult = listPlatformDefinitionsApiResponseSchema.parse(result);
-
-    // const mapToNonBreakingPublicApiOutput = (
-    //   definition: ListPlatformDefinitionsApiResponse[number]
-    // ) => ({
-    //   ...omit(definition, ['estFavori', 'estConfidentiel', 'fiches', 'parent']),
-
-    //   favoris: definition.estFavori,
-    //   confidentiel: definition.estConfidentiel,
-    //   ficheActions: definition.fiches,
-    //   parents: definition.parent ? [definition.parent] : [],
-    // });
+    const parsedResult = listPlatformDefinitionsApiResponseSchema.parse(
+      this.getResultDataOrThrowError(result)
+    );
 
     return {
       count: parsedResult.length,

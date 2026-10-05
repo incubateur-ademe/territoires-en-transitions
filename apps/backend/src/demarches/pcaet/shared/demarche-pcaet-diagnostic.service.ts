@@ -12,7 +12,7 @@ import {
   type PcaetDiagnosticVulnerabilite,
   type PcaetDiagnosticVulnerabiliteConfig,
 } from '@tet/domain/demarches';
-import type { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
+import { type IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
 import {
   DemarchePcaetSourceMetadonneeRepository,
   PCAET_COLLECTIVITE_SOURCE_ID,
@@ -48,7 +48,8 @@ export class DemarchePcaetDiagnosticService {
           {
             identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
             collectiviteId,
-          }
+          },
+          tx
         ),
         this.loadIndicateurValeursForDemarche(
           { demarcheId, collectiviteId },
@@ -95,6 +96,7 @@ export class DemarchePcaetDiagnosticService {
     return this.crudValeursService.getIndicateursValeurs(
       {
         collectiviteId,
+        periodicite: 'annuelle',
         identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
         sources: [PCAET_COLLECTIVITE_SOURCE_ID],
         metadonneeId,

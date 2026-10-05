@@ -158,8 +158,8 @@ export default class CollectivitesService {
     return epciBySirenResult[0];
   }
 
-  async isPrivate(collectiviteId: number): Promise<boolean> {
-    const collectivite = await this.getCollectivite(collectiviteId);
+  async isPrivate(collectiviteId: number, tx?: Transaction): Promise<boolean> {
+    const collectivite = await this.getCollectivite(collectiviteId, tx);
     return collectivite.collectivite.accesRestreint || false;
   }
 }

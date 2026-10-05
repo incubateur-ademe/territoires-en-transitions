@@ -2,10 +2,7 @@ import { AirtableModule } from '../airtable/airtable.module';
 import { CalendlyModule } from '../calendly/calendly.module';
 import { ConnectModule } from '../connect/connect.module';
 import { CronConsumerService } from './cron-consumer.service';
-import {
-  CRON_JOBS_QUEUE_NAME,
-  DEFAULT_JOB_OPTIONS,
-} from './cron.config';
+import { CRON_JOBS_QUEUE_NAME, DEFAULT_JOB_OPTIONS } from './cron.config';
 import { ToolsIndicateursModule } from '../indicateurs/tools-indicateurs.module';
 import { PosthogModule } from '../posthog/posthog.module';
 import { UtilsModule } from '../utils/utils.module';
@@ -16,6 +13,7 @@ import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../config/configuration.module';
 import { CronImportPerimetresEpciService } from '../collectivites/cron-import-perimetres-epci.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
+import { CronIndicateurFormulaReconciliationsService } from './cron-indicateur-formula-reconciliations.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CronService } from './cron.service';
 
@@ -42,6 +40,7 @@ import { CronService } from './cron.service';
     CronService,
     CronConsumerService,
     CronNotificationsService,
+    CronIndicateurFormulaReconciliationsService,
     CronCloreInstructionsService,
     CronImportPerimetresEpciService,
   ],

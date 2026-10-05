@@ -2,10 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
-import {
-  getTestApp,
-  getTestDatabase,
-} from '@tet/backend/test';
+import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
@@ -15,6 +12,7 @@ import {
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   createDemarche,
+  ensureTestPcaetMetadonneeId,
 } from '../../demarches-pcaet.test-fixture';
 import { demarchePcaetSourceMetadonneeTable } from '../../shared/models/demarche-pcaet-source-metadonnee.table';
 
@@ -48,7 +46,10 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   });
 
   test('Écrire une valeur met à jour le diagnostic servi', async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
 
     await completeTestDiagnosticPcaet(db, {
       collectiviteId,
@@ -97,8 +98,11 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
     expect(cellApres?.indicateurValeur.resultat).toBe(nextValue);
   });
 
-  test('La valeur écrite est liée à demarche_pcaet_source_metadonnee', async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+  test('La valeur écrite conserve la métadonnée PCAET et son auteur', async () => {
+    const { caller, collectiviteId, demarche, user } = await createDemarche(
+      db,
+      router
+    );
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -132,6 +136,8 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
       .select({
         metadonneeId: indicateurValeurTable.metadonneeId,
         resultat: indicateurValeurTable.resultat,
+        createdBy: indicateurValeurTable.createdBy,
+        modifiedBy: indicateurValeurTable.modifiedBy,
       })
       .from(indicateurValeurTable)
       .where(
@@ -146,12 +152,68 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
     expect(valeurs[0]).toMatchObject({
       metadonneeId: link.metadonneeId,
       resultat: 42,
+      createdBy: user.id,
+      modifiedBy: user.id,
+    });
+  });
+
+  test('Une édition humaine reprend une valeur calculée en conservant sa provenance PCAET', async () => {
+    const { caller, collectiviteId, demarche, user } = await createDemarche(
+      db,
+      router
+    );
+    const indicateurId = await getIndicateurId('cae_1.c');
+    const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    const [before] = await db.db
+      .insert(indicateurValeurTable)
+      .values({
+        collectiviteId,
+        indicateurId,
+        periodicite: 'annuelle',
+        dateValeur: '2021-01-01',
+        metadonneeId,
+        resultat: 42,
+        objectif: 100,
+        resultatCommentaire: 'Commentaire conservé',
+        calculAuto: true,
+        calculAutoIdentifiantsManquants: ['cae_1.ca'],
+      })
+      .returning();
+
+    await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
+      collectiviteId,
+      demarcheId: demarche.id,
+      valeurs: [{ indicateurId, year: 2021, field: 'resultat', value: 84 }],
+    });
+
+    const [after] = await db.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.id, before.id));
+    expect(after).toMatchObject({
+      collectiviteId,
+      indicateurId,
+      metadonneeId,
+      resultat: 84,
+      objectif: 100,
+      resultatCommentaire: 'Commentaire conservé',
+      calculAuto: false,
+      calculAutoIdentifiantsManquants: null,
+      createdAt: before.createdAt,
+      createdBy: before.createdBy,
+      modifiedBy: user.id,
     });
   });
 
   test('Deux PCAET d’une même Ct ont des métadonnées et valeurs isolées', async () => {
-    const { caller, collectiviteId, demarche: premiere } =
-      await createDemarche(db, router);
+    const {
+      caller,
+      collectiviteId,
+      demarche: premiere,
+    } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -242,7 +304,10 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
   });
 
   test("Refus quand le diagnostic n'est plus modifiable", async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
     await completeTestDossierPcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,
