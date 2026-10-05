@@ -6,10 +6,7 @@ import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-ar
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import {
-  CollectiviteSousTypeEnum,
-  type CollectiviteReferentielPreferences,
-} from '@tet/domain/collectivites';
+import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import {
   getParcoursLabellisationStatus,
   ReferentielIdEnum,
@@ -31,6 +28,7 @@ import type { SwitchToTeOutput } from './switch-to-te.output';
 import {
   buildPostSwitchPreferences,
   canSwitchToTe,
+  getEligibiliteType,
   getSwitchToTeBlockers,
   type SwitchToTeBlocker,
 } from './switch-to-te.rules';
@@ -85,7 +83,9 @@ export class SwitchToTeService {
     const [cotActif, { isSyndicat, isDrom }, referentielsEnWrite] =
       await Promise.all([
         this.getLabellisationService.isCotActif(collectiviteId),
-        this.getEligibiliteType(collectiviteId),
+        this.collectivitesService
+          .getCollectiviteAvecType(collectiviteId)
+          .then(getEligibiliteType),
         Promise.all(
           referentielsToCheck.map(async (referentiel) => {
             const demandeEtAudit =
@@ -107,22 +107,6 @@ export class SwitchToTeService {
       isDrom,
       referentielsEnWrite,
     });
-  }
-
-  /**
-   * Critères d'inéligibilité liés au type de collectivité, lus en un seul appel :
-   * - syndicat (SMF, SMO, SIVU, SIVOM) : pas éligible au référentiel TE ;
-   * - DROM : pas encore éligible au référentiel TE.
-   */
-  private async getEligibiliteType(
-    collectiviteId: number
-  ): Promise<{ isSyndicat: boolean; isDrom: boolean }> {
-    const { soustype, drom } =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    return {
-      isSyndicat: soustype === CollectiviteSousTypeEnum.SYNDICAT,
-      isDrom: drom === true,
-    };
   }
 
   /**
