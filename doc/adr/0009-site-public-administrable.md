@@ -15,7 +15,7 @@ Accepté
 
 ## 9.3. Décision
 
-Utilisation de [Strapi v4](https://docs-v4.strapi.io/).
+Utilisation de [Strapi](https://docs.strapi.io/) : v4 à l'origine, [Strapi 5](https://docs.strapi.io/cms/migration/v4-to-v5/introduction-and-faq) depuis octobre 2026.
 
 ## 9.4. Conséquences
 
@@ -27,9 +27,9 @@ Utilisation de [Strapi v4](https://docs-v4.strapi.io/).
 ### 9.4.2. Négatives
 
 1. "Allourdissement" du code front-end du site car la majorité du contenu est administrable via Strapi.
-2. Les typages TypeScript ne sont pas gérés par Strapi, [un workaround est nécessaire](https://docs-v4.strapi.io/dev-docs/typescript) (non mis en place à ce jour).
+2. Strapi ne fournit pas de client typé pour l'API REST : le site décrit lui-même la forme des réponses (`apps/site/src/strapi/types.ts` et un type par content-type à côté de chaque page).
 3. Le développement front-end doit anticiper des contenus aux tailles variables, à moins de prévoir une restriction dans les formulaires Strapi.
-4. Sur la v4, les états `draft` et `publish` ne peuvent pas cohabiter : un élément est soit dans un état, soit dans l'autre, sans possibilité de tester une version mise à jour avant publication. Cela ne permet pas la mise en place d'un véritable environnement de test.
+4. Depuis Strapi 5, chaque entrée a une version brouillon et une version publiée : on peut préparer une modification sans la publier. L'API publique du site ne lit que la version publiée.
 5. Lors du premier lancement en local, il n'y a aucune donnée enregistrée dans les différents champs (à l'exception des champs avec une valeur par défaut).
 
 ## 9.5. Détails techniques
@@ -78,4 +78,5 @@ Lancer la commande `npm run develop` depuis le repo `strapi`.
 
 ## 9.6. Références
 
-- Documentation Strapi v4 : https://docs-v4.strapi.io/
+- Documentation Strapi : https://docs.strapi.io/
+- Migration v4 → v5 : https://docs.strapi.io/cms/migration/v4-to-v5/introduction-and-faq
