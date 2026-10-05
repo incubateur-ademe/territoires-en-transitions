@@ -13,7 +13,7 @@ export type Faq = {
 };
 
 export type FaqData = {
-  /** `documentId` de la question : sert d'ancre à l'accordéon. */
+  /** `documentId` de la question : clé React et identifiant ARIA de l'accordéon. */
   id: string;
   titre: string;
   contenu: string;

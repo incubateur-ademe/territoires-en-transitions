@@ -30,16 +30,34 @@ type Single =
 
 type Params = [string, string][];
 
-// Strapi 5 ignore sans erreur les `populate[0]=champ` d'une requête qui
-// contient aussi un `populate[champ][…]` : le champ revient null. Dans ce cas,
-// tout s'écrit en forme objet (`populate[champ]=true`).
+// Strapi 5 ignore sans erreur les `populate[0]=champ` d'une requête dont le
+// même niveau contient aussi un `populate[champ][…]` : le champ revient null.
+// Un même niveau s'écrit donc soit tout en tableau, soit tout en objet
+// (`populate[champ]=true`). Vérifié à chaque niveau d'imbrication.
 const assertPopulateNotMixed = (params: Params) => {
-  const keys = params.map(([key]) => key).filter((key) => key.startsWith('populate['));
-  const indexed = keys.some((key) => /^populate\[\d+\]$/.test(key));
-  const named = keys.some((key) => /^populate\[[^\d\]][^\]]*\]/.test(key));
-  if (indexed && named) {
+  const kindsByLevel = new Map<string, Set<'index' | 'name'>>();
+  for (const [key] of params) {
+    if (!key.startsWith('populate')) continue;
+    const segments = [
+      'populate',
+      ...[...key.matchAll(/\[([^\]]*)\]/g)].map((match) => match[1]),
+    ];
+    segments.forEach((segment, index) => {
+      if (index === 0 || segments[index - 1] !== 'populate') return;
+      const level = segments.slice(0, index).join('.');
+      const kinds = kindsByLevel.get(level) ?? new Set();
+      kinds.add(/^\d+$/.test(segment) ? 'index' : 'name');
+      kindsByLevel.set(level, kinds);
+    });
+  }
+  const mixedLevels = [...kindsByLevel]
+    .filter(([, kinds]) => kinds.size > 1)
+    .map(([level]) => level);
+  if (mixedLevels.length) {
     throw new Error(
-      `Strapi populate mixte (populate[n] et populate[champ]) : ${keys.join(', ')}`
+      `Strapi : populate mixte (populate[n] et populate[champ]) sous ${mixedLevels.join(
+        ', '
+      )}`
     );
   }
 };

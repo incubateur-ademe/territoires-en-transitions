@@ -14,8 +14,10 @@ import { fetchCollection, fetchItem } from '@/site/src/strapi/strapi';
 const LIMIT = 50;
 
 /**
- * Les anciennes URLs portaient l'`id` numérique, que l'API v5 n'accepte plus
- * dans le chemin : on retrouve alors le `documentId` par filtre pour rediriger.
+ * Les anciennes URLs portaient l'`id` numérique de Strapi 4. En Strapi 5, cet
+ * `id` change à chaque publication : il est donc figé une fois pour toutes dans
+ * le champ caché `legacy_id` (voir `seedActualiteLegacyIds`, strapi/src/index.ts),
+ * qui sert à retrouver le `documentId` pour rediriger.
  */
 export const resolveActualiteDocumentId = async (
   param: string
@@ -25,7 +27,7 @@ export const resolveActualiteDocumentId = async (
   const { data } = await fetchCollection<Pick<Actualite, 'Titre'>>(
     'actualites',
     [
-      ['filters[id][$eq]', param],
+      ['filters[legacy_id][$eq]', param],
       ['fields[0]', 'Titre'],
     ]
   );
