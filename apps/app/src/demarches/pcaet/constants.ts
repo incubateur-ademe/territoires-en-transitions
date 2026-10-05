@@ -49,16 +49,16 @@ export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
 };
 
 /**
- * Entrée de menu qui ouvre le dossier : son libellé dit ce que la collectivité
- * peut encore y faire. Transmis, adopté ou archivé, il n'y a plus rien à
- * saisir — seulement à consulter.
+ * Bouton qui ouvre le dossier depuis la liste : son libellé dit ce que la
+ * collectivité peut encore y faire. Transmis, adopté ou archivé, il n'y a plus
+ * rien à saisir — seulement à consulter.
  */
 export const DEMARCHE_PCAET_OUVERTURE_ACTIONS: Record<
   DemarchePcaetStatut,
   { label: string; icon: string }
 > = {
   en_elaboration: {
-    label: appLabels.demarcheActionContinuerSaisie,
+    label: appLabels.demarcheActionContinuer,
     icon: 'edit-line',
   },
   transmis_pour_avis: {
