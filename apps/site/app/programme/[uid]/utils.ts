@@ -1,6 +1,6 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchCollection } from '@/site/src/strapi/strapi';
 import { Bouton } from '@/site/src/strapi/types';
-import { buildSeoImage } from '../utils';
 import { Service, ServiceSection } from './types';
 
 const toButtonsList = (boutons: Bouton[]) =>
@@ -32,7 +32,7 @@ export const getServiceStrapiData = async (uid: string) => {
     seo: {
       metaTitle: service.seo?.metaTitle ?? undefined,
       metaDescription: service.seo?.metaDescription ?? undefined,
-      metaImage: buildSeoImage(service.seo?.metaImage),
+      metaImage: toOpenGraphImage(service.seo?.metaImage),
     },
     titre: service.titre,
     contenu: service.contenu.map((c): ServiceSection => {

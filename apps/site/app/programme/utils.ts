@@ -1,3 +1,4 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import {
   Seo,
@@ -56,18 +57,6 @@ type PageAccueil = {
   newsletter_btn: string;
 };
 
-/** Image Open Graph au format attendu par `getUpdatedMetadata`. */
-export const buildSeoImage = (media: StrapiMedia | null | undefined) =>
-  media
-    ? {
-        url: media.url,
-        width: media.width ?? 0,
-        height: media.height ?? 0,
-        type: media.mime,
-        alt: media.alternativeText ?? '',
-      }
-    : undefined;
-
 export const getStrapiData = async () => {
   const [programme, accueil] = await Promise.all([
     fetchSingle<PageProgramme>('page-programme', [
@@ -82,7 +71,10 @@ export const getStrapiData = async () => {
       ['populate[couverture_mobile]', 'true'],
       ['populate[objectifs_liste_detaillee][populate][0]', 'image'],
       ['populate[objectifs_liste_detaillee][populate][1]', 'details_cta'],
-      ['populate[temoignages_liste][populate][temoignage][populate]', 'portrait'],
+      [
+        'populate[temoignages_liste][populate][temoignage][populate]',
+        'portrait',
+      ],
     ]),
   ]);
 
@@ -124,7 +116,7 @@ export const getStrapiData = async () => {
     seo: {
       metaTitle: programme.seo?.metaTitle ?? undefined,
       metaDescription: programme.seo?.metaDescription ?? undefined,
-      metaImage: buildSeoImage(programme.seo?.metaImage),
+      metaImage: toOpenGraphImage(programme.seo?.metaImage),
     },
     titre: programme.Titre,
     description: programme.Description ?? undefined,

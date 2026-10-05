@@ -1,3 +1,4 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import {
   Seo,
@@ -52,14 +53,6 @@ export type PageCollectivite = {
 };
 
 const CODE_INSEE_COMMUNE_REGEX = /^(\d{5}|2[AB]\d{3})$/;
-
-const toMetaImage = (image: StrapiMedia) => ({
-  url: image.url,
-  width: image.width ?? 0,
-  height: image.height ?? 0,
-  type: image.mime,
-  alt: image.alternativeText ?? '',
-});
 
 export const fetchCollectivite = async (codeSirenInsee: string) => {
   const collectivite =
@@ -118,7 +111,7 @@ export const getStrapiData = async (codeSirenInsee: string) => {
     seo: {
       metaTitle: seo?.metaTitle ?? collectivite.nom,
       metaDescription: seo?.metaDescription ?? undefined,
-      metaImage: metaImage ? toMetaImage(metaImage) : undefined,
+      metaImage: toOpenGraphImage(metaImage),
     },
     nom: collectivite.nom,
     code_siren_insee: collectivite.code_siren_insee,
@@ -154,7 +147,7 @@ export const getStrapiDefaultData = async () => {
     seo: {
       metaTitle: seo?.metaTitle ?? undefined,
       metaDescription: seo?.metaDescription ?? undefined,
-      metaImage: metaImage ? toMetaImage(metaImage) : undefined,
+      metaImage: toOpenGraphImage(metaImage),
     },
     couverture: data.couverture,
     inscription: {

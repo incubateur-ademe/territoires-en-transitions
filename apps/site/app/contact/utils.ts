@@ -1,3 +1,4 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { Seo, StrapiMedia } from '@/site/src/strapi/types';
 
@@ -27,15 +28,7 @@ export const getStrapiData = async () => {
       metaTitle: data.seo?.metaTitle ?? undefined,
       metaDescription:
         data.seo?.metaDescription ?? data.description ?? undefined,
-      metaImage: metaImage
-        ? {
-            url: metaImage.url,
-            width: metaImage.width ?? 0,
-            height: metaImage.height ?? 0,
-            type: metaImage.mime,
-            alt: metaImage.alternativeText ?? '',
-          }
-        : undefined,
+      metaImage: toOpenGraphImage(metaImage),
     },
     titre: data.titre,
     description: data.description ?? undefined,
