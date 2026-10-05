@@ -6,7 +6,7 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { Event, useEventTracker } from '@tet/ui';
-import { AiImportBetaLabel } from '../../../import-plan/ai-import-beta-label';
+import { BetaLabel } from '@/app/ui/beta.label';
 import { useIsAiPlanImportEnabled } from '../../../import-plan/use-is-ai-plan-import-enabled';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
@@ -36,9 +36,7 @@ export const CreatePlanOptionLinksList = ({
       {isAiPlanImportEnabled ? (
         <Link
           dataTest="choix-creation-plan.importer-ia"
-          title={
-            <AiImportBetaLabel>{appLabels.importPlanIaTitre}</AiImportBetaLabel>
-          }
+          title={<BetaLabel>{appLabels.importPlanIaTitre}</BetaLabel>}
           subTitle={appLabels.importPlanIaSousTitre}
           icon={<ImportPlanPicto />}
           url={makeCollectivitePlansActionsImporterIaUrl({

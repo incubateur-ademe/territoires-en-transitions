@@ -191,7 +191,6 @@ export const plansLabels = {
   /** Création et import de plan */
   creerPlanSousTitre: 'directement sur la plateforme',
   importPlanModeleSousTitre: 'à partir d’un modèle',
-  importPlanIaBeta: 'Bêta',
   importPlanIaContact:
     "Si l'import ne vous convient pas, contactez-nous à contact@territoiresentransitions.fr en joignant le fichier et en précisant le contexte.",
   importPlanIaFormatsAcceptes:
