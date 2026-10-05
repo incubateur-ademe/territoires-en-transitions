@@ -45,6 +45,7 @@ import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
 import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
 import { FicheDuplicationService } from './fiche-duplication/fiche-duplication.service';
 import { CommunsSecteursApiService } from './fiche-secteurs/communs-secteurs-api.service';
+import { CompleteFicheSecteursService } from './fiche-secteurs/complete-fiche-secteurs.service';
 import { FicheSecteursAttributionRepository } from './fiche-secteurs/fiche-secteurs-attribution.repository';
 import { FicheSecteursEligibiliteRepository } from './fiche-secteurs/fiche-secteurs-eligibilite.repository';
 import { GetFicheSecteursRouter } from './fiche-secteurs/get-fiche-secteurs.router';
@@ -112,6 +113,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CommunsSecteursApiService,
     FicheSecteursAttributionRepository,
     FicheSecteursEligibiliteRepository,
+    CompleteFicheSecteursService,
     GetFicheSecteursService,
     GetFicheSecteursRouter,
     UpsertFicheSecteursService,
