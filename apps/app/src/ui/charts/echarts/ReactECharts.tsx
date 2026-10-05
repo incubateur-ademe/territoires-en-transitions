@@ -10,6 +10,7 @@ import type {
   LineSeriesOption,
   PieSeriesOption,
   ScatterSeriesOption,
+  TreemapSeriesOption,
 } from 'echarts/charts';
 import {
   BarChart,
@@ -126,6 +127,7 @@ export type EChartsOption = ComposeOption<
   | PieSeriesOption
   | LineSeriesOption
   | ScatterSeriesOption
+  | TreemapSeriesOption
   | TitleComponentOption
   | LegendComponentOption
   | TooltipComponentOption
