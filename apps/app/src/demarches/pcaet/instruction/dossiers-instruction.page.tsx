@@ -114,7 +114,7 @@ export const DossiersInstructionPage = ({
                 title: appLabels.instructionListeAucunResultat,
                 actions: [
                   {
-                    children: appLabels.instructionListeReinitialiser,
+                    children: appLabels.reinitialiserLesFiltres,
                     onClick: reinitialiserFiltres,
                     variant: 'outlined',
                     size: 'sm',

@@ -11,6 +11,7 @@ import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
 import { Button, EmptyCard } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
+import { useFilterDemarchesPcaet } from './use-filter-demarches-pcaet';
 
 /** Ces écrans sont propres au PCAET : le type est connu. */
 const PCAET_TYPE = {
@@ -21,6 +22,8 @@ export const ListDemarchesPcaetPage = () => {
   const router = useRouter();
   const { collectiviteId } = useCurrentCollectivite();
   const { data: demarches, isLoading, isError } = useListDemarchesPcaet();
+  const { items, reinitialiserFiltres, ...pilotage } =
+    useFilterDemarchesPcaet(demarches);
 
   if (isLoading) {
     return (
@@ -85,7 +88,22 @@ export const ListDemarchesPcaetPage = () => {
         </Button>
       </div>
       <section className="rounded-xl border border-grey-3 bg-white p-6">
-        <DemarchesPcaetTable demarches={demarches} />
+        <DemarchesPcaetTable
+          demarches={items}
+          {...pilotage}
+          etatVide={{
+            picto: (props) => <PictoDashboard {...props} />,
+            title: appLabels.demarcheListeAucunResultat,
+            actions: [
+              {
+                children: appLabels.reinitialiserLesFiltres,
+                onClick: reinitialiserFiltres,
+                variant: 'outlined',
+                size: 'sm',
+              },
+            ],
+          }}
+        />
       </section>
     </div>
   );
