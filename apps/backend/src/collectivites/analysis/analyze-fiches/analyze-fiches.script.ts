@@ -1,5 +1,6 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { initGoogleCloudCredentials } from '@tet/backend/utils/google-sheets/gcloud.helper';
 import { success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -80,6 +81,7 @@ export const runAnalyzeFichesScript = async ({
 
 const analyzeFichesFromCommandLine = async (): Promise<void> => {
   const startedAt = new Date();
+  initGoogleCloudCredentials();
   const app = await NestFactory.createApplicationContext(AnalyzeFichesModule);
   try {
     process.exitCode = await runAnalyzeFichesScript({
