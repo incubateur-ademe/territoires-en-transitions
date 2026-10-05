@@ -66,6 +66,7 @@ Lancer la commande `npm run develop` depuis le repo `strapi`.
 - La création ou mise à jour des types ou des components se fait depuis le Content-Type-Builder.
 - Pour mettre en production les collections mises à jour :
   - pousser les modifications sur la branche `strapi-updates`
+  - vérifier que la version de Node du projet Strapi Cloud (Settings → Node version) est celle de `.docker/strapi/Dockerfile` (24)
   - se connecter à Strapi Cloud et cliquer sur `Trigger deployment` (par défaut, la branche connectée est `strapi-updates`)
 - Une fois les modifications poussées en prod, les droits d’accès et d'édition aux collections se configurent depuis Strapi Admin en prod, dans le menu **Settings** - **Administation panel** - **Roles**.
   - Par défaut, les nouvelles collections ne sont pas accessibles aux utilisteurs de type éditeur. Il faut donc faire la mise à jour pour les champs éditables par l'équipe com du programme TETE.
