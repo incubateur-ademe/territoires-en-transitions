@@ -36,6 +36,7 @@ import {
 } from './complete-plan-secteurs.queue';
 import { CompletePlanSecteursService } from './complete-plan-secteurs.service';
 import { CompletePlanSecteursWorker } from './complete-plan-secteurs.worker';
+import { EnqueueCompletePlanSecteursService } from './enqueue-complete-plan-secteurs.service';
 
 type AddedJob = {
   data: CompletePlanSecteursJobData;
@@ -68,6 +69,9 @@ class FakeQueue {
 }
 
 const fakeLlm = {
+  maxInputTokens: 60_000,
+  maxInputTokensFor: () => 60_000,
+  capabilities: { ocr: false, strategy: 'whole-document' },
   generateStructured: async ({ schema }: { schema: unknown }) => {
     if (schema === extractionResponseSchema) {
       return {
@@ -84,7 +88,13 @@ const fakeLlm = {
               'structure pilote': '',
               'direction ou service pilote': '',
               'personne pilote': '',
+              partenaires: '',
               budget: '',
+              financements: '',
+              'moyens humains': '',
+              priorite: '',
+              'date de debut': '',
+              'date de fin': '',
               statut: '',
             },
           ],
@@ -184,8 +194,18 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
   };
 
   describe('Déclencheurs', () => {
+    const spyEnqueue = () => {
+      const spy = vi.spyOn(
+        app.get(EnqueueCompletePlanSecteursService),
+        'enqueue'
+      );
+      onTestFinished(() => spy.mockRestore());
+      return () => Promise.all(spy.mock.results.map((result) => result.value));
+    };
+
     test('lier un plan existant ajoute un job pour ce plan seulement', async () => {
       const { caller, collectiviteId, demarcheId } = await freshEditor();
+      const enqueued = spyEnqueue();
       const dejaLie = await createPlan(collectiviteId);
       await caller.demarches.pcaet.update({
         collectiviteId,
@@ -199,6 +219,7 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
         demarcheId,
         planActionIds: [dejaLie, nouveau],
       });
+      await enqueued();
 
       expect(queue.addedFor(dejaLie)).toHaveLength(1);
       expect(queue.addedFor(nouveau)).toEqual([
@@ -210,17 +231,20 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
 
     test('créer un plan depuis la démarche ajoute un job, qu’il soit rattaché d’office ou non', async () => {
       const { caller, collectiviteId, demarcheId } = await freshEditor();
+      const enqueued = spyEnqueue();
 
       const { planActionIds } = await caller.demarches.pcaet.createAndLinkPlan({
         collectiviteId,
         demarcheId,
       });
+      await enqueued();
       const premier = planActionIds[0];
       const plansAvant = queue.added.length;
       await caller.demarches.pcaet.createAndLinkPlan({
         collectiviteId,
         demarcheId,
       });
+      await enqueued();
       const [second] = queue.added.slice(plansAvant);
 
       expect(queue.addedFor(premier)).toHaveLength(1);
@@ -266,6 +290,7 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
     test('flag éteint pour la collectivité : aucun job', async () => {
       const { caller, collectiviteId, demarcheId } = await freshEditor();
       const planId = await createPlan(collectiviteId);
+      const enqueued = spyEnqueue();
       const isFeatureEnabledSpy = vi
         .spyOn(app.get(TrackingService), 'isFeatureEnabled')
         .mockImplementation(
@@ -282,6 +307,7 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
         demarcheId,
         planActionIds: [planId],
       });
+      await enqueued();
 
       expect(queue.addedFor(planId)).toEqual([]);
     });
@@ -289,6 +315,7 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
     test('un échec de la file ne fait pas échouer la liaison', async () => {
       const { caller, collectiviteId, demarcheId } = await freshEditor();
       const planId = await createPlan(collectiviteId);
+      const enqueued = spyEnqueue();
       queue.failing = true;
       onTestFinished(() => {
         queue.failing = false;
@@ -299,6 +326,7 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
         demarcheId,
         planActionIds: [planId],
       });
+      await enqueued();
 
       expect(updated.planActionIds).toEqual([planId]);
     });
