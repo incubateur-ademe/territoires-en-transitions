@@ -185,25 +185,26 @@ updates:
       word-separator: "-"
       branch-name-case: lowercase
       max-length: 120
+    # The Strapi 5 admin pins these majors as peer dependencies (React 18,
+    # react-router-dom 6, styled-components 6): they move with @strapi/* only.
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-router-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "styled-components"
+        update-types: ["version-update:semver-major"]
     groups:
       strapi-core:
         patterns:
           - "@strapi/*"
         update-types:
           - major
-      strapi-react:
-        patterns:
-          - "react"
-          - "react-dom"
-          - "react-*"
-          - "@types/react"
-          - "@types/react-dom"
-        update-types:
-          - major
       strapi-sqlite:
         patterns:
           - "better-sqlite3"
-          - "sqlite3"
         update-types:
           - major
       strapi-non-major:

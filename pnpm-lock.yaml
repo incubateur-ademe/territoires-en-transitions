@@ -397,9 +397,6 @@ importers:
       react-hook-form:
         specifier: 7.61.1
         version: 7.61.1(react@19.2.3)
-      react-icons:
-        specifier: 5.5.0
-        version: 5.5.0(react@19.2.3)
       react-leaflet:
         specifier: 5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
