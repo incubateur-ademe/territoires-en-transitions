@@ -116,6 +116,7 @@ jobs:
           koyeb services update $ENV_NAME-app/front
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
+          --docker-skip-verify
           --env POSTHOG_HOST=@POSTHOG_HOST
           --env POSTHOG_KEY=@POSTHOG_KEY
           --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
@@ -190,12 +191,12 @@ jobs:
           if koyeb apps get "test-app-$NAME" >/dev/null 2>&1; then
             echo "App de test déjà déployée sur Koyeb à test-app-$NAME, mise à jour..."
             koyeb services update "test-app-$NAME/test-app-$NAME" \
-              --docker "$IMAGE" --docker-private-registry-secret ghcr \
+              --docker "$IMAGE" --docker-private-registry-secret ghcr --docker-skip-verify \
               "${env_flags[@]}"
           else
             echo "App de test introuvable sur Koyeb à test-app-$NAME, création avec $IMAGE..."
             koyeb apps init "test-app-$NAME" \
-              --docker "$IMAGE" --docker-private-registry-secret ghcr \
+              --docker "$IMAGE" --docker-private-registry-secret ghcr --docker-skip-verify \
               --type web --port 3000:http --route /:3000 --env PORT=3000 \
               "${env_flags[@]}" \
               --regions par

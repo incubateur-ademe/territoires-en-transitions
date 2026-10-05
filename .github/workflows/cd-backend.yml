@@ -101,6 +101,7 @@ jobs:
           --debug
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
+          --docker-skip-verify
           --env ENV_NAME=$ENV_NAME
           --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
           --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY
@@ -167,6 +168,7 @@ jobs:
           --debug
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
+          --docker-skip-verify
           --env ENV_NAME=$ENV_NAME
           --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
           --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY

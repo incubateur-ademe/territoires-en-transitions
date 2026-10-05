@@ -81,6 +81,7 @@ jobs:
           koyeb services update $ENV_NAME-site/front
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
+          --docker-skip-verify
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url
