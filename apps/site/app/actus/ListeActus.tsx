@@ -22,9 +22,11 @@ const actusSearchParams = {
 
 type ListeActusProps = {
   categories: SelectOption[];
+  /** id numérique → documentId, pour les liens filtrés d'avant Strapi 5. */
+  legacyCategoryIds: Record<string, string>;
 };
 
-const ListeActus = ({ categories }: ListeActusProps) => {
+const ListeActus = ({ categories, legacyCategoryIds }: ListeActusProps) => {
   const [{ selectedPage, selectedCategories }, setSearchParams] =
     useQueryStates(actusSearchParams, {
       urlKeys: {
@@ -32,14 +34,14 @@ const ListeActus = ({ categories }: ListeActusProps) => {
         selectedCategories: 'c',
       },
     });
-  const categoriesFilter = useMemo(
-    () =>
-      (selectedCategories ?? []).filter(
-        (documentId): documentId is string =>
-          typeof documentId === 'string' && documentId.length > 0
-      ),
-    [selectedCategories]
-  );
+  // Une valeur inconnue (catégorie supprimée, lien abîmé) est ignorée plutôt
+  // que de vider la liste.
+  const categoriesFilter = useMemo(() => {
+    const knownDocumentIds = new Set(Object.values(legacyCategoryIds));
+    return (selectedCategories ?? [])
+      .map((value) => legacyCategoryIds[value] ?? value)
+      .filter((documentId) => knownDocumentIds.has(documentId));
+  }, [selectedCategories, legacyCategoryIds]);
 
   const {
     data: actusData,
@@ -75,7 +77,7 @@ const ListeActus = ({ categories }: ListeActusProps) => {
       {categories.length > 0 && (
         <Field title="Catégorie" className="w-full sm:w-96 ml-auto mb-6" small>
           <SelectFilter
-            values={selectedCategories}
+            values={categoriesFilter}
             options={categories}
             onChange={({ values }) => {
               // quand le filtre change, on revient sur la page 1
