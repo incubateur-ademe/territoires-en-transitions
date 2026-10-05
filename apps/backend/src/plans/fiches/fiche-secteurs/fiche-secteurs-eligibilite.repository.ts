@@ -15,7 +15,7 @@ import {
   or,
   sql,
 } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/pg-core';
+import { alias, AnyPgColumn } from 'drizzle-orm/pg-core';
 import { axeTable } from '../shared/models/axe.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
@@ -97,7 +97,33 @@ export class FicheSecteursEligibiliteRepository {
   private isConcernee(db: Transaction | DatabaseService['db']) {
     const planTable = alias(axeTable, 'plan');
 
-    const isPlanPcaet = or(
+    return exists(
+      db
+        .select({ axeId: ficheActionAxeTable.axeId })
+        .from(ficheActionAxeTable)
+        .innerJoin(axeTable, eq(axeTable.id, ficheActionAxeTable.axeId))
+        // plan racine : l'axe porte son plan, ou il est lui-même le plan
+        .innerJoin(
+          planTable,
+          eq(planTable.id, sql`coalesce(${axeTable.plan}, ${axeTable.id})`)
+        )
+        .where(
+          and(
+            eq(
+              ficheActionAxeTable.ficheId,
+              sql`coalesce(${ficheActionTable.parentId}, ${ficheActionTable.id})`
+            ),
+            this.isPlanConcerne(db, planTable)
+          )
+        )
+    );
+  }
+
+  isPlanConcerne(
+    db: Transaction | DatabaseService['db'],
+    planTable: { id: AnyPgColumn; typeId: AnyPgColumn }
+  ) {
+    return or(
       exists(
         db
           .select({ id: planActionTypeTable.id })
@@ -125,27 +151,6 @@ export class FicheSecteursEligibiliteRepository {
             )
           )
       )
-    );
-
-    return exists(
-      db
-        .select({ axeId: ficheActionAxeTable.axeId })
-        .from(ficheActionAxeTable)
-        .innerJoin(axeTable, eq(axeTable.id, ficheActionAxeTable.axeId))
-        // plan racine : l'axe porte son plan, ou il est lui-même le plan
-        .innerJoin(
-          planTable,
-          eq(planTable.id, sql`coalesce(${axeTable.plan}, ${axeTable.id})`)
-        )
-        .where(
-          and(
-            eq(
-              ficheActionAxeTable.ficheId,
-              sql`coalesce(${ficheActionTable.parentId}, ${ficheActionTable.id})`
-            ),
-            isPlanPcaet
-          )
-        )
     );
   }
 }
