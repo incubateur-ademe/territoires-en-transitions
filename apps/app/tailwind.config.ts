@@ -19,6 +19,9 @@ export default {
       width: {
         'side-panel': SIDE_PANEL_WIDTH,
       },
+      height: {
+        'matrix-chart': '32rem',
+      },
       gridTemplateColumns: {
         'side-panel-open': `1fr ${SIDE_PANEL_WIDTH}`,
       },

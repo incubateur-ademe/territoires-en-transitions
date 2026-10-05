@@ -64,6 +64,10 @@ export const sharedLabels = {
   actionsDeReferenceCategoriesLabel: 'Catégories',
   actionsDeReferenceAucune:
     'Aucune action de référence ne correspond à votre recherche',
+  actionsDeReferenceTrouvees: plural({
+    one: 'action de référence trouvée',
+    other: 'actions de référence trouvées',
+  }),
   actionsDeReferenceEffacerFiltres: 'Effacer les filtres',
   actionsDeReferenceTriLabel: 'Trier par',
   actionsDeReferenceTriTitre: 'Titre',

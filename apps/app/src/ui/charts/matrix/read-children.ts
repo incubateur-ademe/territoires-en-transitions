@@ -7,13 +7,14 @@ import {
 } from 'react';
 import { XAxis, YAxis, type AxisProps } from './axis';
 import { Caption, type CaptionProps } from './caption';
+import { DataTable, type DataTableProps } from './data-table';
 import { Quadrant, type QuadrantProps } from './quadrant';
 
 const isFragment = (
   child: ReactElement
 ): child is ReactElement<{ children?: ReactNode }> => child.type === Fragment;
 
-const collectFromChildren = <TProps,>(
+const collectFromChildren = <TProps>(
   children: ReactNode,
   matches: (child: ReactElement) => child is ReactElement<TProps>
 ): TProps[] =>
@@ -33,6 +34,10 @@ const collectFromChildren = <TProps,>(
 const isCaption = (child: ReactElement): child is ReactElement<CaptionProps> =>
   child.type === Caption;
 
+const isDataTable = (
+  child: ReactElement
+): child is ReactElement<DataTableProps> => child.type === DataTable;
+
 const isQuadrant = (
   child: ReactElement
 ): child is ReactElement<QuadrantProps> => child.type === Quadrant;
@@ -49,10 +54,13 @@ const readQuadrants = (children: ReactNode): QuadrantProps[] =>
 const readCaption = (children: ReactNode): string | undefined =>
   collectFromChildren(children, isCaption)[0]?.children;
 
+const readDataTable = (children: ReactNode): DataTableProps | undefined =>
+  collectFromChildren(children, isDataTable)[0];
+
 const readXAxis = (children: ReactNode): AxisProps | undefined =>
   collectFromChildren(children, isXAxis)[0];
 
 const readYAxis = (children: ReactNode): AxisProps | undefined =>
   collectFromChildren(children, isYAxis)[0];
 
-export { readCaption, readQuadrants, readXAxis, readYAxis };
+export { readCaption, readDataTable, readQuadrants, readXAxis, readYAxis };

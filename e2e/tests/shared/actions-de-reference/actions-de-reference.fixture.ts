@@ -7,7 +7,7 @@ import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { ActionsDeReferencePom } from './actions-de-reference.pom';
 
-type NewActionDeReference = Omit<ActionDeReference, 'id'>;
+export type NewActionDeReference = Omit<ActionDeReference, 'id'>;
 
 type CollectiviteId = Collectivite['id'];
 

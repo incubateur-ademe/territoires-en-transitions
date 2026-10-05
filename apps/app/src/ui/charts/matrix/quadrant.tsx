@@ -1,12 +1,14 @@
 import type { ColorVariant } from '@tet/design-tokens';
 import type { MatrixCoord } from './matrix-coord';
 
-type MatrixTone = Extract<
-  ColorVariant,
-  'default' | 'success' | 'warning' | 'info' | 'grey'
->;
+type MatrixTone =
+  | Extract<
+      ColorVariant,
+      'default' | 'success' | 'warning' | 'error' | 'info' | 'grey'
+    >
+  | 'light';
 
-type TitleAnchor = 'topLeft' | 'bottomRight';
+type TitleAnchor = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 type QuadrantColors = {
   background?: string;

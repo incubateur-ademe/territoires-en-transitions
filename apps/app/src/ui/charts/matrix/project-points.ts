@@ -1,10 +1,14 @@
 import type { MatrixCoord } from './matrix-coord';
 import type { MatrixGrid } from './matrix-grid';
-import type { LabelAnchor } from './stack-labels';
-
 type PlotSize = {
   width: number;
   height: number;
+};
+
+type ProjectedPoint = {
+  dataIndex: number;
+  x: number;
+  y: number;
 };
 
 const projectPoints = ({
@@ -17,7 +21,7 @@ const projectPoints = ({
   bounds: MatrixCoord;
   grid: MatrixGrid;
   size: PlotSize;
-}): LabelAnchor[] => {
+}): ProjectedPoint[] => {
   const plotWidth = size.width - grid.left - grid.right;
   const plotHeight = size.height - grid.top - grid.bottom;
   const isPlottable =
@@ -35,4 +39,4 @@ const projectPoints = ({
 };
 
 export { projectPoints };
-export type { PlotSize };
+export type { PlotSize, ProjectedPoint };
