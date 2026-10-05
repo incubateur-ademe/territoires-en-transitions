@@ -4,7 +4,7 @@ import posthog from 'posthog-js';
 
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
 import { Button } from '@tet/ui';
 import Arrow from './Arrow';
@@ -21,8 +21,9 @@ const Compte = ({ titre, description, cta, image }: CompteProps) => {
     <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <div className="flex max-lg:flex-col items-center gap-8 md:gap-12 xl:gap-24">
         {!!image && (
-          <DEPRECATED_StrapiImage
-            data={image}
+          <StrapiImage
+            media={image}
+            sizes="(min-width: 1440px) 576px, (min-width: 1024px) 448px, (min-width: 640px) 576px, 100vw"
             containerClassName="w-fit shrink rounded-lg border border-primary-3"
             containerStyle={{ boxShadow: '0px 4px 20px 0px #0000000D' }}
             className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"

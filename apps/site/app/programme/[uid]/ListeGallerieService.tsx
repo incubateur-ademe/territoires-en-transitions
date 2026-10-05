@@ -1,7 +1,7 @@
 import ButtonsList from '@/site/components/buttons/ButtonsList';
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import Markdown from '@/site/components/markdown/Markdown';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { Liste } from './types';
 
 const ListeGallerieService = ({ liste }: { liste: Liste }) => {
@@ -28,8 +28,9 @@ const ListeGallerieService = ({ liste }: { liste: Liste }) => {
             />
 
             {!!l.image && (
-              <DEPRECATED_StrapiImage
-                data={l.image}
+              <StrapiImage
+                media={l.image}
+                sizes="(min-width: 1440px) 620px, (min-width: 1024px) 50vw, 100vw"
                 className="max-h-[300px] max-w-full mx-auto mt-8"
               />
             )}

@@ -4,7 +4,7 @@ import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia, VignetteAvecMarkdown } from '@/site/src/strapi/types';
 import classNames from 'classnames';
 
@@ -37,11 +37,11 @@ const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
 
       {/* Illustration */}
       {image && (
-        <DEPRECATED_StrapiImage
-          data={image}
+        <StrapiImage
+          media={image}
+          sizes="(min-width: 1440px) 1392px, 100vw"
           className="max-h-[500px]"
           containerClassName="mx-auto h-fit mt-8"
-          displayCaption={false}
         />
       )}
 
@@ -66,9 +66,9 @@ const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
             description={exemple.legende ?? ''}
             image={
               exemple.image ? (
-                <DEPRECATED_StrapiImage
-                  data={exemple.image}
-                  displayCaption={false}
+                <StrapiImage
+                  media={exemple.image}
+                  sizes="160px"
                   containerClassName="h-20"
                   className="h-full"
                 />

@@ -1,11 +1,16 @@
 'use client';
 
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
 import { getFormattedNumber } from '@tet/domain/utils';
 import { Badge, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
+
+// Recadrée en 314 px de haut : sous 560 px de large, une photo 16/9 déborde
+// de la largeur de l'écran.
+const COUVERTURE_SIZES =
+  '(min-width: 1440px) 1392px, (min-width: 560px) 100vw, 560px';
 
 type CollectiviteHeaderProps = {
   collectivite: {
@@ -44,11 +49,13 @@ const CollectiviteHeader = ({
     <div className="flex flex-col md:rounded-[10px] bg-primary-7">
       <div className="relative w-full h-[314px] overflow-hidden md:rounded-t-[10px]">
         {couverture ? (
-          <DEPRECATED_StrapiImage
-            data={couverture}
+          <StrapiImage
+            media={couverture}
+            sizes={COUVERTURE_SIZES}
             className="object-cover object-center h-full w-full"
             containerClassName="h-[314px] w-full overflow-hidden"
-            displayCaption
+            caption
+            priority
           />
         ) : (
           <div className="bg-primary-3 h-full w-full relative">
@@ -59,15 +66,16 @@ const CollectiviteHeader = ({
               </p>
             </div>
             {couvertureDefaut ? (
-              <DEPRECATED_StrapiImage
-                data={couvertureDefaut}
+              <StrapiImage
+                media={couvertureDefaut}
+                sizes={COUVERTURE_SIZES}
                 className="object-cover object-center h-full w-full"
                 containerClassName="h-full w-full object-cover object-center hover:opacity-10 transition-opacity duration-500 relative z-10 bg-primary-2"
                 containerStyle={{
                   WebkitTransition:
                     'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
-                displayCaption={false}
+                priority
               />
             ) : (
               <Image
@@ -174,11 +182,11 @@ const CollectiviteHeader = ({
             className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0 h-fit max-w-[250px]"
             style={{ boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.3)' }}
           >
-            <DEPRECATED_StrapiImage
-              data={logo}
+            <StrapiImage
+              media={logo}
+              sizes="250px"
               className="bg-white max-h-[70px] sm:max-h-[100px] lg:max-h-[150px] w-auto"
               containerClassName="h-fit w-fit"
-              displayCaption={false}
             />
           </div>
         )}

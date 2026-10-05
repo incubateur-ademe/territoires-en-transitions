@@ -1,6 +1,17 @@
 import { GallerieArticleData } from '@/site/app/types';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import classNames from 'classnames';
+
+/**
+ * Cellules recadrées (object-cover) de 250 à 300 px de haut : une photo 16/9
+ * y occupe au moins ~545 px de large, quelle que soit l'étroitesse de la
+ * colonne. Dès 2 colonnes (md), ce plancher couvre la largeur d'une colonne
+ * de la galerie (lg:w-4/5 du contenu), d'où une valeur commune.
+ */
+const getGallerySizes = (colonnes: number) =>
+  colonnes >= 2
+    ? '(min-width: 768px) 545px, (min-width: 545px) 100vw, 545px'
+    : '(min-width: 1440px) 1114px, (min-width: 1024px) 80vw, (min-width: 545px) 100vw, 545px';
 
 type GallerieArticleProps = {
   data: GallerieArticleData;
@@ -19,13 +30,11 @@ const GallerieArticle = ({
         })}
       >
         {data.map((image, index) => (
-          <DEPRECATED_StrapiImage
+          <StrapiImage
             key={index}
-            data={image}
-            className={classNames(
-              'w-full h-full min-h-[250px] max-h-[300px] object-cover'
-            )}
-            displayCaption={false}
+            media={image}
+            sizes={getGallerySizes(colonnes)}
+            className="w-full h-full min-h-[250px] max-h-[300px] object-cover"
           />
         ))}
       </div>

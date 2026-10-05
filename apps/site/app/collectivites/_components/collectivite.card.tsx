@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { GreyStar, RedStar } from '@/site/components/labellisation/Star';
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { Badge } from '@tet/ui';
@@ -39,10 +39,10 @@ const CollectiviteCard = ({
     >
       <div className="relative w-full">
         {cover ? (
-          <ImageStrapi
-            strapiImage={cover}
-            size="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
-            imgClassName="w-full object-cover aspect-[5/2] lg:aspect-[3/1]"
+          <StrapiImage
+            media={cover}
+            sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
+            className="w-full object-cover aspect-[5/2] lg:aspect-[3/1]"
           />
         ) : (
           <div className="w-full aspect-[5/2] lg:aspect-[3/1] bg-grey-1" />

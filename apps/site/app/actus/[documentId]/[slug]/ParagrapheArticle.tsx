@@ -1,7 +1,11 @@
 import { ParagrapheCustomArticleData } from '@/site/app/types';
 import Markdown from '@/site/components/markdown/Markdown';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import classNames from 'classnames';
+
+/** Image centrée d'un article : 80 % du contenu d'une Section dès lg. */
+export const ARTICLE_IMAGE_SIZES =
+  '(min-width: 1440px) 1114px, (min-width: 1024px) 80vw, 100vw';
 
 type ParagrapheArticleProps = {
   paragraphe: ParagrapheCustomArticleData;
@@ -17,11 +21,12 @@ const ParagrapheArticle = ({
 
       {/* Image si alignement au centre haut */}
       {image && alignementImage === 'Centre Haut' && (
-        <DEPRECATED_StrapiImage
-          data={image}
+        <StrapiImage
+          media={image}
+          sizes={ARTICLE_IMAGE_SIZES}
           containerClassName="max-w-full lg:max-w-[80%] flex flex-col justify-center items-center mx-auto"
           className="h-auto max-h-[500px]"
-          displayCaption={legendeVisible}
+          caption={legendeVisible}
         />
       )}
 
@@ -33,8 +38,9 @@ const ParagrapheArticle = ({
           {/* Image si alignement à gauche ou à droite */}
           {image &&
             (alignementImage === 'Gauche' || alignementImage === 'Droite') && (
-              <DEPRECATED_StrapiImage
-                data={image}
+              <StrapiImage
+                media={image}
+                sizes="(min-width: 1440px) 490px, (min-width: 768px) 35vw, (min-width: 640px) 50vw, 100vw"
                 className="max-h-full"
                 containerClassName={classNames(
                   'w-full sm:w-auto sm:max-w-[50%] md:max-w-[35%] sm:!min-w-[200px] h-full sm:h-auto flex flex-col sm:block justify-center items-center sm:mb-6',
@@ -43,7 +49,7 @@ const ParagrapheArticle = ({
                     'float-right sm:ml-6': alignementImage === 'Droite',
                   }
                 )}
-                displayCaption={legendeVisible}
+                caption={legendeVisible}
               />
             )}
 
@@ -59,11 +65,12 @@ const ParagrapheArticle = ({
 
       {/* Image si alignement au centre bas */}
       {image && alignementImage === 'Centre Bas' && (
-        <DEPRECATED_StrapiImage
-          data={image}
+        <StrapiImage
+          media={image}
+          sizes={ARTICLE_IMAGE_SIZES}
           containerClassName="max-w-full lg:max-w-[80%] flex flex-col justify-center items-center mx-auto"
           className="h-auto max-h-[500px]"
-          displayCaption={legendeVisible}
+          caption={legendeVisible}
         />
       )}
     </div>

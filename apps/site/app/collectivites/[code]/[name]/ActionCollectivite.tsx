@@ -1,7 +1,7 @@
 'use client';
 
 import Markdown from '@/site/components/markdown/Markdown';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -44,11 +44,14 @@ const ActionCollectivite = ({
   return (
     <div className="rounded-[10px] bg-white overflow-hidden">
       {image && (
-        <DEPRECATED_StrapiImage
-          data={image}
+        <StrapiImage
+          media={image}
+          // Colonne de 8/11 du contenu dès lg, recadrée en 450 px de haut : en
+          // dessous de 800 px de large, une photo 16/9 déborde de la colonne.
+          sizes="(min-width: 1440px) 1000px, (min-width: 1100px) 73vw, 800px"
           className="object-cover object-center h-full w-full"
           containerClassName="h-[450px] w-full overflow-hidden"
-          displayCaption
+          caption
         />
       )}
 

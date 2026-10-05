@@ -1,6 +1,11 @@
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
 import classNames from 'classnames';
+
+// Masquées sous lg : `1px` y fait choisir la plus petite source si le
+// navigateur les charge malgré tout.
+const SECONDARY_SIZES =
+  '(min-width: 1440px) 360px, (min-width: 1024px) 26vw, 1px';
 
 type ThreePicsMosaicProps = {
   images: StrapiMedia[];
@@ -29,8 +34,10 @@ const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
     >
       {/* Image principale */}
       {(isPortrait || (!isPortrait && images.length !== 2)) && (
-        <DEPRECATED_StrapiImage
-          data={images[0]}
+        <StrapiImage
+          media={images[0]}
+          // 26 % du contenu au plus dès lg (4/7 d'une mosaïque de 45 %).
+          sizes="(min-width: 1440px) 380px, (min-width: 1024px) 27vw, 100vw"
           containerClassName={classNames({
             'h-full w-full lg:max-h-[500px]': isPortrait,
             'pb-8': isPortrait && images.length >= 2,
@@ -52,8 +59,9 @@ const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
             'justify-center': !isPortrait,
           })}
         >
-          <DEPRECATED_StrapiImage
-            data={images[images.length === 2 && !isPortrait ? 0 : 1]}
+          <StrapiImage
+            media={images[images.length === 2 && !isPortrait ? 0 : 1]}
+            sizes={SECONDARY_SIZES}
             containerClassName={classNames({
               'pt-8 h-1/2 max-h-[235px] w-full': isPortrait,
               'pl-6': isPortrait && images.length >= 3,
@@ -64,8 +72,9 @@ const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
           />
           {((isPortrait && images.length >= 3) ||
             (!isPortrait && images.length >= 2)) && (
-            <DEPRECATED_StrapiImage
-              data={images[images.length === 2 && !isPortrait ? 1 : 2]}
+            <StrapiImage
+              media={images[images.length === 2 && !isPortrait ? 1 : 2]}
+              sizes={SECONDARY_SIZES}
               containerClassName={classNames({
                 'pr-8 h-1/2 max-h-[203px] w-full': isPortrait,
               })}

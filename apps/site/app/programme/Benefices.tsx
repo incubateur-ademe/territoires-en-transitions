@@ -1,7 +1,7 @@
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
 type BeneficesProps = {
@@ -23,10 +23,10 @@ const Benefices = ({ titre, contenu }: BeneficesProps) => {
               description={c.legende ?? ''}
               image={
                 c.image ? (
-                  <ImageStrapi
-                    strapiImage={c.image}
-                    displayCaption={false}
-                    imgClassName="w-full h-[200px] object-cover"
+                  <StrapiImage
+                    media={c.image}
+                    sizes="(min-width: 1440px) 610px, (min-width: 768px) 50vw, 100vw"
+                    className="w-full h-[200px] object-cover"
                   />
                 ) : undefined
               }
