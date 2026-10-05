@@ -140,7 +140,7 @@ describe('CategoriesAccordion', () => {
       categories: [
         toCategorie({
           categorie: 'exemplarite',
-          pertinenceEffective: { kind: 'propre', pertinence: 'a_discuter' },
+          pertinenceEffective: { kind: 'propre', pertinence: 'pertinent' },
         }),
         toCategorie({
           categorie: 'planification',
@@ -155,7 +155,7 @@ describe('CategoriesAccordion', () => {
 
     expect(
       within(categorieRow('Exemplarité interne')).getByText(
-        "Pertinence : à discuter avec l'élu"
+        'Pertinence : pertinent'
       )
     ).toBeDefined();
     expect(
@@ -180,7 +180,7 @@ describe('CategoriesAccordion', () => {
         }),
         toCategorie({
           categorie: 'exemplarite',
-          pertinenceEffective: { kind: 'propre', pertinence: 'a_discuter' },
+          pertinenceEffective: { kind: 'propre', pertinence: 'pertinent' },
         }),
       ],
       upsertPertinence,
@@ -191,10 +191,10 @@ describe('CategoriesAccordion', () => {
     });
     expect(
       within(selector)
-        .getByRole('button', { name: "À discuter avec l'élu" })
+        .getByRole('button', { name: 'Pertinent' })
         .getAttribute('aria-pressed')
     ).toBe('true');
-    expect(screen.queryByText("Pertinence : à discuter avec l'élu")).toBeNull();
+    expect(screen.queryByText('Pertinence : pertinent')).toBeNull();
 
     fireEvent.click(
       within(selector).getByRole('button', { name: 'Non pertinent' })

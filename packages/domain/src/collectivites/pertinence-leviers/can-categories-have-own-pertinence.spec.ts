@@ -1,13 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { canCategoriesHaveOwnPertinence } from './can-categories-have-own-pertinence';
-import { Pertinence, pertinenceEnumValues } from './pertinence.enum';
+import { Pertinence } from './pertinence.enum';
 
 type OptionalPertinence = Pertinence | undefined;
 
 const admittingLevierPertinences: OptionalPertinence[] = [
-  ...pertinenceEnumValues.filter(
-    (pertinence) => pertinence !== 'non_pertinent'
-  ),
+  'pertinent',
   undefined,
 ];
 

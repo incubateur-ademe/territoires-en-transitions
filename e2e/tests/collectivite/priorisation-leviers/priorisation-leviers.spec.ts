@@ -166,7 +166,6 @@ test.describe('Priorisation des leviers', () => {
       .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Non pertinent')
       .focus();
     await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab');
     await expect(pertinentButton).toBeFocused();
     const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
@@ -471,19 +470,19 @@ test.describe('Priorisation des leviers', () => {
     await priorisationLeviersPom.openCategoriesWithEnter(
       LEVIER_NOM_BY_ID.biogaz
     );
-    const amenagementADiscuter =
+    const amenagementPertinent =
       priorisationLeviersPom.categoriePertinenceButton(
         LEVIER_NOM_BY_ID.biogaz,
         'Aménagement & infrastructures',
-        "À discuter avec l'élu"
+        'Pertinent'
       );
 
     const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
       categorie: 'amenagement',
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
     });
-    await amenagementADiscuter.click();
+    await amenagementPertinent.click();
     await pertinenceSaved;
     await page.reload();
     await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
@@ -493,7 +492,7 @@ test.describe('Priorisation des leviers', () => {
       LEVIER_NOM_BY_ID.biogaz
     );
 
-    await expect(amenagementADiscuter).toHaveAttribute('aria-pressed', 'true');
+    await expect(amenagementPertinent).toHaveAttribute('aria-pressed', 'true');
   });
 
   test("un volet mobilisé n'offre aucun sélecteur, ses voisins non mobilisés en offrent un", async ({
@@ -557,24 +556,24 @@ test.describe('Priorisation des leviers', () => {
       LEVIER_COUNT
     );
     await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
-    const gouvernanceADiscuter =
+    const gouvernancePertinent =
       priorisationLeviersPom.categoriePertinenceButton(
         MOBILISED_LEVIER_NOM,
         'Gouvernance & partenariats',
-        "À discuter avec l'élu"
+        'Pertinent'
       );
 
     const categorieSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'velo_transport_commun',
       categorie: 'gouvernance',
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
     });
     const categorieReloaded =
       priorisationLeviersPom.waitForPertinencesReloaded();
-    await gouvernanceADiscuter.click();
+    await gouvernancePertinent.click();
     await categorieSaved;
     await categorieReloaded;
-    await expect(gouvernanceADiscuter).toHaveAttribute('aria-pressed', 'true');
+    await expect(gouvernancePertinent).toHaveAttribute('aria-pressed', 'true');
 
     const levierNonPertinentSaved =
       priorisationLeviersPom.waitForPertinenceSaved({
@@ -613,8 +612,8 @@ test.describe('Priorisation des leviers', () => {
     );
     await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
 
-    await expect(gouvernanceADiscuter).toBeVisible();
-    await expect(gouvernanceADiscuter).toHaveAttribute('aria-pressed', 'false');
+    await expect(gouvernancePertinent).toBeVisible();
+    await expect(gouvernancePertinent).toHaveAttribute('aria-pressed', 'false');
   });
 
   test('un membre en édition lit la pertinence en texte, sans sélecteur', async ({

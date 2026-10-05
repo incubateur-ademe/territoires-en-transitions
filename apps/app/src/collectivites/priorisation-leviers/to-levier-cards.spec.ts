@@ -70,11 +70,11 @@ describe('toLevierCards', () => {
   it('reprend la pertinence du levier, pas celle de ses catégories', () => {
     const cards = toLevierCards({
       pertinences: [
-        { levierId: 'covoiturage', pertinence: 'a_discuter' },
+        { levierId: 'covoiturage', pertinence: 'pertinent' },
         {
           levierId: 'covoiturage',
           categorie: 'financement',
-          pertinence: 'pertinent',
+          pertinence: 'non_pertinent',
         },
       ],
       mobilisation: emptyMobilisation,
@@ -85,7 +85,7 @@ describe('toLevierCards', () => {
       nom: 'Covoiturage',
       secteur: 'Transports',
       ficheCount: 0,
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
     });
   });
 
@@ -266,7 +266,7 @@ describe('toLevierCards', () => {
   it("reprend la pertinence propre d'une catégorie quand son levier n'est pas non pertinent", () => {
     const cards = toLevierCards({
       pertinences: [
-        { levierId: 'covoiturage', pertinence: 'a_discuter' },
+        { levierId: 'covoiturage', pertinence: 'pertinent' },
         {
           levierId: 'covoiturage',
           categorie: 'exemplarite',

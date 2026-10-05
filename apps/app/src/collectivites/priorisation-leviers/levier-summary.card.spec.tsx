@@ -31,14 +31,12 @@ describe('LevierSummaryCard', () => {
           secteur: 'Transports',
           ficheCount: 0,
           categories: [],
-          pertinence: 'a_discuter',
+          pertinence: 'pertinent',
         }}
       />
     );
 
-    expect(
-      screen.getByText("Pertinence : à discuter avec l'élu")
-    ).toBeDefined();
+    expect(screen.getByText('Pertinence : pertinent')).toBeDefined();
   });
 
   it('accorde au singulier une seule action rattachée', () => {
@@ -83,7 +81,7 @@ describe('LevierSummaryCard', () => {
           secteur: 'Transports',
           ficheCount: 0,
           categories: [],
-          pertinence: 'a_discuter',
+          pertinence: 'non_pertinent',
         }}
         upsertPertinence={upsertPertinence}
       />
@@ -94,10 +92,10 @@ describe('LevierSummaryCard', () => {
     });
     expect(
       within(selector)
-        .getByRole('button', { name: "À discuter avec l'élu" })
+        .getByRole('button', { name: 'Non pertinent' })
         .getAttribute('aria-pressed')
     ).toBe('true');
-    expect(screen.queryByText("Pertinence : à discuter avec l'élu")).toBeNull();
+    expect(screen.queryByText('Pertinence : non pertinent')).toBeNull();
 
     fireEvent.click(
       within(selector).getByRole('button', { name: 'Pertinent' })
@@ -156,7 +154,7 @@ describe('LevierSummaryCard', () => {
       within(selector)
         .getAllByRole('button')
         .map((button) => button.getAttribute('aria-pressed'))
-    ).toEqual(['false', 'false', 'false']);
+    ).toEqual(['false', 'false']);
   });
 
   it("n'écrit rien quand on clique la pertinence déjà posée", () => {
@@ -169,15 +167,13 @@ describe('LevierSummaryCard', () => {
           secteur: 'Transports',
           ficheCount: 0,
           categories: [],
-          pertinence: 'a_discuter',
+          pertinence: 'pertinent',
         }}
         upsertPertinence={upsertPertinence}
       />
     );
 
-    fireEvent.click(
-      screen.getByRole('button', { name: "À discuter avec l'élu" })
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Pertinent' }));
 
     expect(upsertPertinence).not.toHaveBeenCalled();
   });

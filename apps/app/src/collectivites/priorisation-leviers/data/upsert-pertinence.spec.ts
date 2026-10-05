@@ -6,11 +6,11 @@ describe('upsertPertinence', () => {
     expect(
       upsertPertinence({
         pertinences: [{ levierId: 'biogaz', pertinence: 'pertinent' }],
-        pertinence: { levierId: 'covoiturage', pertinence: 'a_discuter' },
+        pertinence: { levierId: 'covoiturage', pertinence: 'non_pertinent' },
       })
     ).toEqual([
       { levierId: 'biogaz', pertinence: 'pertinent' },
-      { levierId: 'covoiturage', pertinence: 'a_discuter' },
+      { levierId: 'covoiturage', pertinence: 'non_pertinent' },
     ]);
   });
 
@@ -22,7 +22,7 @@ describe('upsertPertinence', () => {
           {
             levierId: 'biogaz',
             categorie: 'financement',
-            pertinence: 'a_discuter',
+            pertinence: 'non_pertinent',
           },
           {
             levierId: 'biogaz',
@@ -55,7 +55,7 @@ describe('upsertPertinence', () => {
           {
             levierId: 'biogaz',
             categorie: 'financement',
-            pertinence: 'a_discuter',
+            pertinence: 'non_pertinent',
           },
         ],
         pertinence: { levierId: 'biogaz', pertinence: 'pertinent' },
@@ -64,7 +64,7 @@ describe('upsertPertinence', () => {
       {
         levierId: 'biogaz',
         categorie: 'financement',
-        pertinence: 'a_discuter',
+        pertinence: 'non_pertinent',
       },
       { levierId: 'biogaz', pertinence: 'pertinent' },
     ]);
@@ -78,7 +78,7 @@ describe('upsertPertinence', () => {
           {
             levierId: 'biogaz',
             categorie: 'financement',
-            pertinence: 'a_discuter',
+            pertinence: 'pertinent',
           },
         ],
         pertinence: {

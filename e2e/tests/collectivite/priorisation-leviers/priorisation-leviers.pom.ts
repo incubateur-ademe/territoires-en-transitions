@@ -2,7 +2,7 @@ import { expect, Locator, Page } from '@playwright/test';
 import { Pertinence } from '@tet/domain/collectivites';
 import { CategorieAction, Levier, LevierId } from '@tet/domain/shared';
 
-type PertinenceLabel = 'Non pertinent' | "À discuter avec l'élu" | 'Pertinent';
+type PertinenceLabel = 'Non pertinent' | 'Pertinent';
 
 type CategorieLabel =
   | 'Aménagement & infrastructures'

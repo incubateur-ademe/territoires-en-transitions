@@ -86,7 +86,7 @@ describe('UpsertPertinenceLevierService', { timeout: 30_000 }, () => {
     categorieActionEnumValues.toSorted().map((categorie) => ({
       levierId: 'biogaz',
       categorie,
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
     }));
 
   it("garde la pertinence des catégories quand l'écriture du levier non pertinent échoue", async () => {
@@ -108,7 +108,7 @@ describe('UpsertPertinenceLevierService', { timeout: 30_000 }, () => {
             enjeu: 'ges',
             levierId: 'biogaz',
             categorie,
-            pertinence: 'a_discuter',
+            pertinence: 'pertinent',
           },
           { user: admin }
         )

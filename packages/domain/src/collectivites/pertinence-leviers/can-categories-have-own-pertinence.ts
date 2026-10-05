@@ -6,5 +6,5 @@ export const canCategoriesHaveOwnPertinence = (
 ): boolean =>
   match(levierPertinence)
     .with('non_pertinent', () => false)
-    .with('a_discuter', 'pertinent', undefined, () => true)
+    .with('pertinent', undefined, () => true)
     .exhaustive();
