@@ -1,7 +1,7 @@
-# Strapi (CMS du site vitrine) — projet Node isolé du monorepo, Node 22–24 par
-# ses engines (Strapi 5). Le code est monté en volume par docker-compose ;
+# Strapi (CMS du site vitrine) — projet Node isolé du monorepo, Node 24 (LTS,
+# recommandé par Strapi 5). Le code est monté en volume par docker-compose ;
 # `npm install` s'exécute au démarrage (node_modules en volume nommé).
-FROM node:22-bookworm-slim
+FROM node:24-bookworm-slim
 
 # Outils de build des modules natifs (better-sqlite3, sharp)
 RUN apt-get update && \
