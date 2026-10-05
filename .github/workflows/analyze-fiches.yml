@@ -40,9 +40,11 @@ jobs:
         env:
           NODE_ENV: production
           COLLECTIVITES: ${{ inputs.collectivites }}
-          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          SUPABASE_DATABASE_URL: ${{ secrets.PROD_DB_URL }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PROD_SUPABASE_SERVICE_ROLE_KEY }}
+          GCLOUD_SERVICE_ACCOUNT_KEY: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_CLOUD_PROJECT: tet-gcloud
+          GOOGLE_CLOUD_LOCATION: eu
+          GEMINI_MODEL: gemini-3.5-flash
         run: node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js "--collectivites=$COLLECTIVITES"
