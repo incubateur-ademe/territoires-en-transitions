@@ -1,6 +1,9 @@
 import Section from '@/site/components/sections/Section';
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
-import { fetchImage } from '@/site/src/strapi/strapi';
+import collaboration from '@/site/public/plateforme-numerique/collaboration.png';
+import graphiquesDonnees from '@/site/public/plateforme-numerique/graphiques-donnees.png';
+import suiviBilans from '@/site/public/plateforme-numerique/suivi-bilans.png';
+import trajectoireLeviers from '@/site/public/plateforme-numerique/trajectoire-leviers.png';
+import Image, { StaticImageData } from 'next/image';
 
 const List = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -12,7 +15,8 @@ const List = ({ children }: { children: React.ReactNode }) => {
 
 const items: Item[] = [
   {
-    imageId: 1530,
+    image: suiviBilans,
+    imageAlt: 'Suivi des actions et préparation des bilans',
     title: 'Gagnez du temps sur le suivi et les bilans',
     subtitle:
       'Fini les tableurs Excel éparpillés. Centralisez vos actions, vos indicateurs et vos documents pour faciliter leur suivi et préparer rapidement rapports et restitutions.',
@@ -28,7 +32,8 @@ const items: Item[] = [
     ),
   },
   {
-    imageId: 1536,
+    image: collaboration,
+    imageAlt: "Travail collaboratif sur un plan d'actions",
     title: 'Renforcez la collaboration et la transversalité',
     description: (
       <List>
@@ -52,7 +57,8 @@ const items: Item[] = [
     ),
   },
   {
-    imageId: 1531,
+    image: graphiquesDonnees,
+    imageAlt: 'Graphiques et tableaux de bord des indicateurs',
     title: 'Décidez grâce à la donnée',
     subtitle:
       'Indicateurs open-data déjà pré-remplis, trajectoires SNBC territorialisées et comparaisons entre collectivités pour prioriser vos actions et fixer des objectifs réalistes.',
@@ -74,7 +80,8 @@ const items: Item[] = [
     ),
   },
   {
-    imageId: 1533,
+    image: trajectoireLeviers,
+    imageAlt: "Trajectoire et leviers de transition d'une collectivité",
     title: 'Trajectoires & Leviers de priorisation des actions',
     subtitle: 'Quantifiez vos objectifs climat secteur par secteur',
     description: (
@@ -105,17 +112,18 @@ type Item = {
   title: string;
   subtitle?: string;
   description: React.ReactNode;
-  imageId: number;
+  image: StaticImageData;
+  imageAlt: string;
 };
 
-const Item = async ({
+const Item = ({
   number,
   title,
   subtitle,
   description,
-  imageId,
+  image,
+  imageAlt,
 }: Item) => {
-  const image = await fetchImage(imageId);
   return (
     <div className="group grid grid-cols-1 lg:grid-cols-[3fr_2fr] odd:lg:grid-cols-[2fr_3fr] gap-6 xl:gap-12 text-primary-10">
       <div className="flex flex-col justify-center group-odd:lg:order-2">
@@ -125,7 +133,12 @@ const Item = async ({
         {subtitle && <p className="text-lg font-semibold">{subtitle}</p>}
         {description}
       </div>
-      <ImageStrapi strapiImage={image} imgClassName="w-full h-auto" />
+      <Image
+        src={image}
+        alt={imageAlt}
+        className="w-full h-auto"
+        sizes="(min-width: 1024px) 40vw, 100vw"
+      />
     </div>
   );
 };
