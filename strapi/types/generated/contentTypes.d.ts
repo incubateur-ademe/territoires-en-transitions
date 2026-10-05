@@ -465,6 +465,7 @@ export interface ApiActualiteActualite extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     DateCreation: Schema.Attribute.DateTime;
     Epingle: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    legacy_id: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
