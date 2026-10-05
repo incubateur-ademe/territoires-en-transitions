@@ -1,22 +1,10 @@
-import { CstNode, ILexingError } from 'chevrotain';
+import { CstNode } from 'chevrotain';
 import { ExpressionParser } from './expression-parser';
-import { getFormmattedErrors } from './get-formatted-errors.utils';
+import {
+  formatLexingErrors,
+  formatParsingErrors,
+} from './format-expression-errors.utils';
 import { InvalidExpressionError } from './invalid-expression.error';
-
-// formate les erreurs du lexer en citant le caractère non reconnu et sa position
-export function formatLexingErrors(
-  source: string,
-  errors: ILexingError[]
-): string {
-  return errors
-    .map((e) => {
-      const fragment = source.substring(e.offset, e.offset + e.length);
-      return `Caractère non reconnu « ${fragment} » (${e.line ?? '?'}:${
-        e.column ?? '?'
-      })`;
-    })
-    .join(', ');
-}
 
 /**
  * Tokenise puis parse une expression. Lève `InvalidExpressionError` sur toute
@@ -30,16 +18,17 @@ export function tokenizeAndParse(
   const lexingResult = parser.lexer.tokenize(source);
   if (lexingResult.errors.length > 0) {
     throw new InvalidExpressionError(
-      formatLexingErrors(source, lexingResult.errors),
+      formatLexingErrors(lexingResult.errors, { source }),
       { cause: lexingResult.errors }
     );
   }
   parser.input = lexingResult.tokens;
   const cst = parser.statement();
   if (parser.errors.length > 0) {
-    throw new InvalidExpressionError(getFormmattedErrors(parser.errors), {
-      cause: parser.errors,
-    });
+    throw new InvalidExpressionError(
+      formatParsingErrors(parser.errors, { source }),
+      { cause: parser.errors }
+    );
   }
   return cst;
 }
