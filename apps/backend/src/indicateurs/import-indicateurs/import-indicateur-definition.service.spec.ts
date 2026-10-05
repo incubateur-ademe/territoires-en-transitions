@@ -161,10 +161,10 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         ])
       ).rejects.toThrow(
         [
-          "L'expression cible de l'indicateur cae_1.a est invalide (ligne 2, colonne 17) :",
+          "L'expression cible de l'indicateur cae_1.a est invalide (ligne 2, colonne 10) :",
           '  sinon si dentite(sinoe, touristique) alors 300',
-          '                  ^',
-          "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '(' <--",
+          '           ^^^^^^^',
+          'Fonction inconnue « dentite ». Vouliez-vous dire « identite » ?',
         ].join('\n')
       );
     });

@@ -6,6 +6,7 @@ import {
   createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
+  getFunctionNames,
   tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
@@ -58,7 +59,7 @@ export const VALUE_SOURCE_TOKENS = [
 
 class IndicateurExpressionParser extends ExpressionParser {
   constructor() {
-    super(tokens);
+    super(tokens, getFunctionNames(tokens));
     try {
       this.performSelfAnalysis();
     } catch (err) {

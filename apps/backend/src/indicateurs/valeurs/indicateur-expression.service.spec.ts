@@ -273,7 +273,7 @@ describe('IndicateurExpressionService', () => {
             '(ligne 1, colonne 14) :',
             '  si val(cae_1)',
             '               ^',
-            "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '' <--",
+            "Attendu « alors », trouvé la fin de l'expression.",
           ].join('\n')
         );
       }

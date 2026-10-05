@@ -3,6 +3,7 @@ import {
   createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
+  getFunctionNames,
   tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
 import {
@@ -50,7 +51,7 @@ export type PersonnalisationsExpressionContext = {
 
 class PersonnalisationsExpressionParser extends ExpressionParser {
   constructor() {
-    super(tokens);
+    super(tokens, getFunctionNames(tokens));
     try {
       this.performSelfAnalysis();
     } catch (err) {

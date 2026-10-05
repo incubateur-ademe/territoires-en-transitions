@@ -3,6 +3,7 @@
  */
 
 import { createToken, CstParser, Lexer, TokenType } from 'chevrotain';
+import { parserErrorMessageProvider } from './parser-error-message-provider';
 
 const CNAME = createToken({
   name: 'CNAME',
@@ -142,13 +143,26 @@ export const common = {
 
 const baseTokens = Object.values(common);
 
+/**
+ * Noms des fonctions tels qu'on les écrit, à partir du nom de leurs tokens
+ * (`OPT_VAL` → `opt_val`). Les motifs ne conviennent pas : ils ne portent pas
+ * tous le flag `i`.
+ */
+export function getFunctionNames(functionTokens: TokenType[]): string[] {
+  return functionTokens.map((token) => token.name.toLowerCase());
+}
+
 export class ExpressionParser extends CstParser {
   readonly lexer;
 
-  constructor(tokens: TokenType[]) {
+  // fonctions connues du dialecte, suivies de celles du parser de base
+  readonly functionNames: readonly string[];
+
+  constructor(tokens: TokenType[], functionNames: readonly string[]) {
     const allTokens = [...tokens, ...baseTokens];
-    super(allTokens);
+    super(allTokens, { errorMessageProvider: parserErrorMessageProvider });
     this.lexer = new Lexer(allTokens);
+    this.functionNames = [...functionNames, ...getFunctionNames([MIN, MAX])];
   }
 
   // Statement
