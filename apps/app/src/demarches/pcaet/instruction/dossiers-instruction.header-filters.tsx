@@ -9,33 +9,12 @@ import {
   type DemarchePcaetObligation,
   type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
-import { Badge, Button, SelectFilter } from '@tet/ui';
+import { HeaderFilterButton } from '@/app/demarches/components/header-filter.button';
+import { Badge, SelectFilter } from '@tet/ui';
 import {
   statutInstructionLabel,
   STATUT_INSTRUCTION_VARIANTS,
 } from './instruction.constants';
-
-/**
- * Le déclencheur d'un filtre de colonne : discret tant que rien n'est posé,
- * porteur du nombre de valeurs retenues ensuite.
- *
- * `filterCount` ne se déduit pas de la sélection : un filtre garni de son
- * défaut n'est pas un choix de l'agent et ne doit donc rien afficher. C'est
- * l'appelant qui compte — voir `nbFiltresActifs`.
- */
-const FilterButton = ({ filterCount, ...props }: { filterCount: number }) => (
-  <Button
-    size="xs"
-    variant="grey"
-    className="font-normal text-grey-8"
-    notification={
-      filterCount > 0 ? { size: 'xs', number: filterCount } : undefined
-    }
-    {...props}
-  >
-    {appLabels.filtrer}
-  </Button>
-);
 
 /** Les statuts, dans l'ordre du cycle de vie — celui de l'enum du domaine. */
 export const StatutHeaderFilter = ({
@@ -65,7 +44,7 @@ export const StatutHeaderFilter = ({
     small
     custom={{
       triggerButton: {
-        button: <FilterButton filterCount={filterCount} />,
+        button: <HeaderFilterButton filterCount={filterCount} />,
       },
       renderOptionItem: (item) => (
         <Badge
@@ -113,7 +92,7 @@ export const ObligationHeaderFilter = ({
     small
     custom={{
       triggerButton: {
-        button: <FilterButton filterCount={filterCount} />,
+        button: <HeaderFilterButton filterCount={filterCount} />,
       },
       renderOptionItem: (item) => (
         <Badge
@@ -164,7 +143,7 @@ export const RegionHeaderFilter = ({
     isSearcheable={options.length > 10}
     custom={{
       triggerButton: {
-        button: <FilterButton filterCount={filterCount} />,
+        button: <HeaderFilterButton filterCount={filterCount} />,
       },
     }}
   />

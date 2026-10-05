@@ -24,6 +24,7 @@ export const sharedLabels = {
   filtrer: 'Filtrer',
   filtrerSur: 'Filtrer sur',
   filtreSort: 'Tri',
+  reinitialiserLesFiltres: 'Réinitialiser les filtres',
   resultat: plural({
     one: 'résultat',
     other: 'résultats',

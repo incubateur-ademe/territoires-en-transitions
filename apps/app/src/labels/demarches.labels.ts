@@ -104,7 +104,6 @@ export const demarchesLabels = {
    * dossier : le premier se corrige, le second s'explique.
    */
   instructionListeAucunResultat: 'Aucun dossier ne correspond à ces filtres',
-  instructionListeReinitialiser: 'Réinitialiser les filtres',
 
   instructionListeColonneRegion: 'Région',
   instructionListeColonneDateLancement: 'Date de lancement',
@@ -576,6 +575,7 @@ export const demarchesLabels = {
   demarcheListeColonneLancement: 'Date de lancement',
   demarcheListeColonneModification: 'Modifiée le',
   demarcheListeColonneActions: 'Actions',
+  demarcheListeAucunResultat: 'Aucune démarche ne correspond à ces filtres',
   demarcheActionContinuer: 'Continuer',
   demarcheActionConsulter: 'Consulter',
   demarcheActionFinaliserDepot: 'Finaliser le dépôt',
