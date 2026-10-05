@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { unstable_cache } from 'next/cache';
 import { Client } from 'pg';
 
 export type StatsHeroSectionSite = {
@@ -36,15 +37,24 @@ async function fetchStatsHeroSectionSiteUncached(
   }
 }
 
+// Agrégats sur 12 mois : une lecture par heure suffit, au lieu d'une connexion
+// à la base par visite (accueil et plateforme numérique). L'URL de connexion
+// est lue dans la fonction pour ne pas entrer dans la clé de cache.
+const fetchStatsHeroSectionSiteCached = unstable_cache(
+  async () =>
+    fetchStatsHeroSectionSiteUncached(process.env.DB_STATS_URL?.trim() ?? ''),
+  ['stats-hero-section-site'],
+  { revalidate: 3600 }
+);
+
 export async function getStatsHeroSectionSite(): Promise<StatsHeroSectionSite | null> {
-  const connectionString = process.env.DB_STATS_URL?.trim();
-  if (!connectionString) {
-    return null;
-  }
+  // Sans base de statistiques (dev local), rien à lire ni à mettre en cache.
+  if (!process.env.DB_STATS_URL?.trim()) return null;
 
   try {
-    return await fetchStatsHeroSectionSiteUncached(connectionString);
+    return await fetchStatsHeroSectionSiteCached();
   } catch (error) {
+    // Une erreur n'est pas mise en cache : la visite suivante réessaie.
     console.error('[getStatsHeroSectionSite]', error);
     return null;
   }
