@@ -20,6 +20,8 @@ export const sharedLabels = {
   saisirLeTexte: 'Saisir le texte',
   telechargerLeGraphique: 'Télécharger le graphique',
 
+  beta: 'Bêta',
+
   /** Filtres */
   filtrer: 'Filtrer',
   filtrerSur: 'Filtrer sur',

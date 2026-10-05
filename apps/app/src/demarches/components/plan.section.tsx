@@ -11,7 +11,7 @@ import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
-import { AiImportBetaLabel } from '@/app/plans/plans/import-plan/ai-import-beta-label';
+import { BetaLabel } from '@/app/ui/beta.label';
 import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
 import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-get-ongoing-ai-import';
 import { useIsAiPlanImportEnabled } from '@/app/plans/plans/import-plan/use-is-ai-plan-import-enabled';
@@ -320,9 +320,9 @@ const CreatePlanAction = ({
                       <SpinnerLoader className="w-4 h-4" />
                     </span>
                   ) : (
-                    <AiImportBetaLabel>
+                    <BetaLabel>
                       {appLabels.demarcheProgrammeImporterPlan}
-                    </AiImportBetaLabel>
+                    </BetaLabel>
                   ),
                   onClick: () => setIsImportPlanModalOpen(true),
                   disabled: isReadonly,
