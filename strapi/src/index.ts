@@ -78,7 +78,10 @@ const seedDemarchePcaetSeo = async (strapi: Core.Strapi) => {
 
 const FAQ_TAB = 'Démarche PCAET';
 
-/** `Rang` reste vide, comme pour les autres questions : l'ordre suit l'id. */
+/**
+ * `Rang` reste vide, comme pour les autres questions : à rang égal, le site
+ * trie par date de création, que la publication conserve (l'`id` change).
+ */
 const FAQ_QUESTIONS = [
   {
     titre: 'Qui doit déposer un PCAET ?',
@@ -150,31 +153,74 @@ const FAQ_QUESTIONS = [
  * page Démarche PCAET du site.
  *
  * Seed joué une seule fois, mémorisé dans le core store : une question retirée
- * ensuite depuis l'admin ne revient pas. Si l'onglet contient déjà des
- * questions (seed livré sous Strapi 4 par une migration knex), on se contente
- * de poser le marqueur.
+ * ensuite depuis l'admin ne revient pas. Il ne se joue pas non plus si la
+ * migration knex qui le portait sous Strapi 4 est passée (même règle : ses
+ * questions ont pu être retirées depuis). Création transactionnelle : jamais
+ * d'onglet à moitié rempli.
  */
+const LEGACY_FAQ_MIGRATION = '2026.10.02T00.00.00.add-demarche-pcaet-faq.js';
+
 const seedDemarchePcaetFaq = async (strapi: Core.Strapi) => {
   const store = strapi.store({ type: 'core', name: 'tet' });
   const key = 'faq-demarche-pcaet-seeded';
   if (await store.get({ key })) return;
+
+  const knex = strapi.db.connection;
+  const seededByV4Migration =
+    (await knex.schema.hasTable('strapi_migrations')) &&
+    !!(await knex('strapi_migrations')
+      .where({ name: LEGACY_FAQ_MIGRATION })
+      .first());
 
   const uid = 'api::faq.faq';
   const existing = await strapi
     .documents(uid)
     .findFirst({ filters: { onglet: FAQ_TAB } });
 
-  if (!existing) {
-    for (const { titre, contenu } of FAQ_QUESTIONS) {
-      await strapi.documents(uid).create({
-        data: { Titre: titre, Contenu: contenu, onglet: FAQ_TAB },
-        status: 'published',
-      });
-    }
+  if (!seededByV4Migration && !existing) {
+    await strapi.db.transaction(async () => {
+      for (const { titre, contenu } of FAQ_QUESTIONS) {
+        await strapi.documents(uid).create({
+          data: { Titre: titre, Contenu: contenu, onglet: FAQ_TAB },
+          status: 'published',
+        });
+      }
+    });
     strapi.log.info(
       `[bootstrap] ${FAQ_QUESTIONS.length} questions de la FAQ « ${FAQ_TAB} » créées`
     );
   }
+  await store.set({ key, value: true });
+};
+
+/**
+ * Les URLs publiques des actualités portaient l'`id` numérique de Strapi 4.
+ * En Strapi 5, publier recrée la ligne publiée sous un nouvel `id` : on fige
+ * donc, une seule fois et juste après la migration (les lignes publiées ont
+ * encore leur `id` v4), cet `id` dans le champ caché `legacy_id` du brouillon
+ * comme de la version publiée. La publication recopiant le brouillon, la
+ * valeur survit aux republications ; le site s'en sert pour rediriger les
+ * anciennes URLs `/actus/<id>/…`.
+ */
+const seedActualiteLegacyIds = async (strapi: Core.Strapi) => {
+  const store = strapi.store({ type: 'core', name: 'tet' });
+  const key = 'actualite-legacy-ids-seeded';
+  if (await store.get({ key })) return;
+
+  const { tableName } = strapi.db.metadata.get('api::actualite.actualite');
+  const updated = await strapi.db.connection.raw(
+    `update ?? as a set legacy_id = p.id
+       from ?? as p
+      where p.document_id = a.document_id
+        and p.published_at is not null
+        and a.legacy_id is null`,
+    [tableName, tableName]
+  );
+  strapi.log.info(
+    `[bootstrap] ancien id figé sur ${
+      updated.rowCount ?? 0
+    } lignes d'actualités`
+  );
   await store.set({ key, value: true });
 };
 
@@ -185,5 +231,6 @@ export default {
     await seedLocalReadonlyToken(strapi);
     await seedDemarchePcaetSeo(strapi);
     await seedDemarchePcaetFaq(strapi);
+    await seedActualiteLegacyIds(strapi);
   },
 };

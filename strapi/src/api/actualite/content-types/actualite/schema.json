@@ -58,6 +58,11 @@
         "contenu.info"
       ],
       "required": false
+    },
+    "legacy_id": {
+      "type": "integer",
+      "visible": false,
+      "configurable": false
     }
   }
 }
