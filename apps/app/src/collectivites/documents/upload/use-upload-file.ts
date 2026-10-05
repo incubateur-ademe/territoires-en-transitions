@@ -3,7 +3,7 @@ import { RouterOutput, useTRPC } from '@tet/api';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { uploadToStorage } from './upload-to-storage';
 
-type UploadFileArgs = {
+export type UploadFileArgs = {
   collectiviteId: number;
   file: File;
   hash: DocumentHash;

@@ -1,7 +1,10 @@
 'use client';
 
 import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
-import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
+import {
+  UploadFileArgs,
+  useUploadFile,
+} from '@/app/collectivites/documents/upload/use-upload-file';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { useInstructeurCollectiviteId } from '../../data/use-contexte-instruction';
 
@@ -17,16 +20,23 @@ import { useInstructeurCollectiviteId } from '../../data/use-contexte-instructio
  * rend sans repasser par ici.
  */
 export const useUploadAvisFile = (): ((
-  file: File
+  file: File,
+  options?: Pick<UploadFileArgs, 'signal' | 'onProgress'>
 ) => Promise<DocumentHash | null>) => {
   const collectiviteId = useInstructeurCollectiviteId();
   const uploadFile = useUploadFile();
 
-  return async (file) => {
+  return async (file, options) => {
     if (!collectiviteId) return null;
 
     const hash = await hashFile(file);
-    await uploadFile({ collectiviteId, file, hash, confidentiel: true });
+    await uploadFile({
+      collectiviteId,
+      file,
+      hash,
+      confidentiel: true,
+      ...options,
+    });
     return hash;
   };
 };

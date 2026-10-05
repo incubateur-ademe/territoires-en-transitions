@@ -11,7 +11,7 @@ import {
   type PcaetAvisAuTitreDe,
 } from '@tet/domain/demarches';
 import { Alert, Button, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useUploadAvisFile } from './data/use-upload-avis-file';
 import { useUpsertAvis } from './data/use-upsert-avis';
 import { useValiderAvis } from './data/use-valider-avis';
@@ -45,6 +45,13 @@ export const FinaliserInstructionModal = ({
   const [erreurFichier, setErreurFichier] = useState(false);
   const [erreurDepot, setErreurDepot] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [progression, setProgression] = useState(0);
+  const depotAbortRef = useRef<AbortController | null>(null);
+
+  // Fermer la modale abandonne le dépôt : sans cela, un upload lent finirait
+  // par valider l'avis dans le dos de l'instructeur qui y a renoncé.
+  const abandonnerDepot = () => depotAbortRef.current?.abort();
+  useEffect(() => abandonnerDepot, []);
 
   const uploadAvisFile = useUploadAvisFile();
   const upsertAvis = useUpsertAvis();
@@ -63,10 +70,17 @@ export const FinaliserInstructionModal = ({
 
   const deposerEtValider = async () => {
     if (!fichier) return;
+    const controller = new AbortController();
+    depotAbortRef.current = controller;
     setIsSubmitting(true);
+    setProgression(0);
     setErreurDepot(false);
     try {
-      const hash = await uploadAvisFile(fichier);
+      const hash = await uploadAvisFile(fichier, {
+        signal: controller.signal,
+        onProgress: setProgression,
+      });
+      if (controller.signal.aborted) return;
       if (!hash) {
         setErreurDepot(true);
         return;
@@ -76,6 +90,7 @@ export const FinaliserInstructionModal = ({
         auTitreDe,
         fichierRef: hash,
       });
+      if (controller.signal.aborted) return;
       const avisDepose = avis.find((a) => a.auTitreDe === auTitreDe);
       if (!avisDepose) {
         setErreurDepot(true);
@@ -87,8 +102,12 @@ export const FinaliserInstructionModal = ({
       });
       setEtape('confirmation');
     } catch {
+      if (controller.signal.aborted) return;
       setErreurDepot(true);
     } finally {
+      if (depotAbortRef.current === controller) {
+        depotAbortRef.current = null;
+      }
       setIsSubmitting(false);
     }
   };
@@ -99,7 +118,9 @@ export const FinaliserInstructionModal = ({
       openState={{
         isOpen: true,
         setIsOpen: (isOpen) => {
-          if (!isOpen) onClose();
+          if (isOpen) return;
+          abandonnerDepot();
+          onClose();
         },
       }}
       title={
@@ -123,13 +144,19 @@ export const FinaliserInstructionModal = ({
               {fichier ? (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-grey-8">{fichier.name}</span>
-                  <Button
-                    variant="grey"
-                    size="xs"
-                    icon="delete-bin-line"
-                    aria-label={appLabels.instructionFinaliserRetirerFichier}
-                    onClick={() => setFichier(null)}
-                  />
+                  {isSubmitting ? (
+                    <span className="text-sm text-grey-7" role="status">
+                      {appLabels.progressionUpload({ progress: progression })}
+                    </span>
+                  ) : (
+                    <Button
+                      variant="grey"
+                      size="xs"
+                      icon="delete-bin-line"
+                      aria-label={appLabels.instructionFinaliserRetirerFichier}
+                      onClick={() => setFichier(null)}
+                    />
+                  )}
                 </div>
               ) : (
                 <Input
@@ -171,7 +198,7 @@ export const FinaliserInstructionModal = ({
       renderFooter={({ close }) =>
         etape === 'rapport' ? (
           <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close, disabled: isSubmitting }}
+            btnCancelProps={{ onClick: close }}
             btnOKProps={{
               children: appLabels.instructionFinaliserValider,
               icon: 'arrow-right-line',
