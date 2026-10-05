@@ -244,7 +244,7 @@ export const IndicateurResultatsTable = ({
             )
           : appLabels.selectionnerResultatPourCalculerScore}
       </p>
-      <div className="max-h-64 overflow-y-auto border border-neutral-300 rounded">
+      <div className="max-h-[340px] overflow-y-auto border border-neutral-300 rounded">
         <Table className="text-sm">
           <TableHead>
             <TableRow className="text-grey-8">
