@@ -1,46 +1,48 @@
-'use client';
-
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
-import { useEffect, useState } from 'react';
 
 type ProgrammeHeroSectionProps = {
   couverture: StrapiMedia;
   couvertureMobile?: StrapiMedia | null;
 };
 
+/**
+ * Couverture desktop et, si elle existe, mobile : la bascule se fait en CSS
+ * (breakpoint md). En chargement différé, une image masquée n'est jamais
+ * téléchargée ; seule la couverture unique est chargée en priorité.
+ */
 const ProgrammeHeroSection = ({
   couverture,
   couvertureMobile,
 }: ProgrammeHeroSectionProps) => {
-  const mdBreakpoint = 768; // 768px = breakpoint sm dans tailwind
-  const [windowWidth, setWindowWidth] = useState<number>(mdBreakpoint);
-
-  useEffect(() => {
-    const setWidth = () => setWindowWidth(window.innerWidth);
-
-    // Initialisation de windowWith au chargement de la page
-    setWidth();
-
-    // Détecte le changement de taille de la fenêtre
-    window.addEventListener('resize', setWidth);
-    return () => window.removeEventListener('resize', setWidth);
-  }, []);
-
-  return windowWidth < mdBreakpoint && couvertureMobile != null ? (
-    <ImageStrapi
-      strapiImage={couvertureMobile}
-      containerClassName="w-full"
-      imgClassName="w-full h-auto"
-      displayCaption={false}
+  const desktop = (
+    <StrapiImage
+      media={couverture}
+      sizes="(min-width: 1460px) 1460px, 100vw"
+      containerClassName={
+        couvertureMobile
+          ? 'xl:max-w-[1460px] mx-auto max-md:hidden'
+          : 'xl:max-w-[1460px] mx-auto'
+      }
+      className="w-full h-auto"
+      priority={!couvertureMobile}
+      withIntrinsicSize
     />
-  ) : (
-    <ImageStrapi
-      strapiImage={couverture}
-      containerClassName="xl:max-w-[1460px] mx-auto"
-      imgClassName="w-full h-auto"
-      displayCaption={false}
-    />
+  );
+
+  if (!couvertureMobile) return desktop;
+
+  return (
+    <>
+      <StrapiImage
+        media={couvertureMobile}
+        sizes="100vw"
+        containerClassName="w-full md:hidden"
+        className="w-full h-auto"
+        withIntrinsicSize
+      />
+      {desktop}
+    </>
   );
 };
 

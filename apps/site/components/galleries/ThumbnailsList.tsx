@@ -1,4 +1,4 @@
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
 
 type ThumbnailsListProps = {
@@ -18,8 +18,9 @@ const ThumbnailsList = ({ thumbnails }: ThumbnailsListProps) => {
           className="flex flex-col items-center gap-8 w-fit max-md:mx-auto"
         >
           {!!thumbnail.image && (
-            <DEPRECATED_StrapiImage
-              data={thumbnail.image}
+            <StrapiImage
+              media={thumbnail.image}
+              sizes="196px"
               containerClassName="bg-white rounded-full w-[196px]"
               className="w-[196px] h-[196px] min-w-[196px] min-h-[196px] p-10 object-cover rounded-full"
             />

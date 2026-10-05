@@ -2,7 +2,7 @@
 
 import NoResult from '@/site/components/info/NoResult';
 import Section from '@/site/components/sections/Section';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Alert } from '@tet/ui';
 import { Metadata, ResolvingMetadata } from 'next';
@@ -52,11 +52,13 @@ const Contact = async () => {
       )}
 
       {!!data.couverture && (
-        <DEPRECATED_StrapiImage
-          data={data.couverture}
+        <StrapiImage
+          media={data.couverture}
+          sizes="(min-width: 1440px) 1392px, 100vw"
           className="w-full"
           containerClassName="w-full my-6"
-          displayCaption={data.legendeVisible}
+          caption={data.legendeVisible}
+          withIntrinsicSize
         />
       )}
     </Section>

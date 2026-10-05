@@ -3,7 +3,7 @@ import ButtonsList, {
   ButtonsListType,
 } from '@/site/components/buttons/ButtonsList';
 import Section from '@/site/components/sections/Section';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
 import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
@@ -13,7 +13,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { GallerieArticleData, ImageArticleData } from '../../../types';
 import GallerieArticle from './GallerieArticle';
 import InfoArticle from './InfoArticle';
-import ParagrapheArticle from './ParagrapheArticle';
+import ParagrapheArticle, { ARTICLE_IMAGE_SIZES } from './ParagrapheArticle';
 import { getData, getMetaData, resolveActualiteDocumentId } from './utils';
 
 type ArticleParams = Promise<{ documentId: string; slug: string }>;
@@ -52,11 +52,12 @@ const ImageArticle = ({
   image: ImageArticleData;
 }) =>
   data ? (
-    <DEPRECATED_StrapiImage
-      data={data}
+    <StrapiImage
+      media={data}
+      sizes={ARTICLE_IMAGE_SIZES}
       className="max-h-[400px]"
       containerClassName="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mx-auto mb-6"
-      displayCaption={legendeVisible}
+      caption={legendeVisible}
     />
   ) : null;
 
@@ -75,11 +76,15 @@ const Article = async ({ params }: { params: ArticleParams }) => {
     <>
       {/* Image de couverture */}
       <div className="bg-primary-0 h-fit w-full">
-        <DEPRECATED_StrapiImage
-          data={data.couverture}
+        <StrapiImage
+          media={data.couverture}
+          // Recadrée en 480 px de haut : sous 854 px de large, une photo 16/9
+          // déborde de la largeur de l'écran.
+          sizes="(min-width: 1600px) 1600px, (min-width: 854px) 100vw, 854px"
           className="h-full w-full object-cover object-center"
           containerClassName="h-[480px] w-full overflow-hidden 2xl:max-w-[1600px] mx-auto"
-          displayCaption
+          caption
+          priority
         />
       </div>
 

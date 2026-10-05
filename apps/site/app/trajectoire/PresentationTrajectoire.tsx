@@ -1,6 +1,6 @@
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { StrapiMedia } from '@/site/src/strapi/types';
 
 type PresentationTrajectoireProps = {
@@ -35,8 +35,9 @@ const PresentationTrajectoire = ({
           />
         </div>
         {!!bloc1.image && (
-          <DEPRECATED_StrapiImage
-            data={bloc1.image}
+          <StrapiImage
+            media={bloc1.image}
+            sizes="(min-width: 1440px) 576px, (min-width: 1024px) 448px, (min-width: 640px) 576px, 100vw"
             containerClassName="w-fit shrink max-lg:order-first"
             className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"
           />
@@ -49,8 +50,9 @@ const PresentationTrajectoire = ({
         containerClassName="bg-primary-0 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
       >
         {!!bloc2.image && (
-          <DEPRECATED_StrapiImage
-            data={bloc2.image}
+          <StrapiImage
+            media={bloc2.image}
+            sizes="(min-width: 1440px) 576px, (min-width: 1024px) 448px, (min-width: 640px) 576px, 100vw"
             containerClassName="w-fit shrink"
             className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"
           />

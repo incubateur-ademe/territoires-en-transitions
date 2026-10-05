@@ -6,7 +6,7 @@ import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import CardsSection from '@/site/components/sections/CardsSection';
 import Section from '@/site/components/sections/Section';
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { Button, Modal } from '@tet/ui';
 import { Fragment, useState } from 'react';
 
@@ -49,11 +49,11 @@ const Objectifs = ({ intro, objectifs }: ObjectifsProps) => {
                     image={
                       <div className="relative">
                         {c.image ? (
-                          <ImageStrapi
-                            strapiImage={c.image}
-                            displayCaption={false}
+                          <StrapiImage
+                            media={c.image}
+                            sizes="160px"
                             containerClassName="bg-[#FEF4F2] rounded-lg h-[116px] flex justify-center items-center"
-                            imgClassName="max-w-[70%] max-h-[70%] object-contain"
+                            className="max-w-[70%] max-h-[70%] object-contain"
                           />
                         ) : undefined}
                         <div className="opacity-0 group-hover:opacity-90 transition-all duration-500 absolute top-0 left-0 bg-[#FEF4F2] rounded-lg border-[0.5px] border-[#F28E40] h-[116px] w-full flex justify-center items-center text-primary-10 font-bold">

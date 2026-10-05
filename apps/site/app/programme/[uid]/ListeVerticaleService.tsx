@@ -1,6 +1,6 @@
 import ButtonsList from '@/site/components/buttons/ButtonsList';
 import Markdown from '@/site/components/markdown/Markdown';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { Liste } from './types';
 
 const ListeVerticaleService = ({ liste }: { liste: Liste }) => {
@@ -12,8 +12,9 @@ const ListeVerticaleService = ({ liste }: { liste: Liste }) => {
           className="flex max-md:flex-col gap-6 bg-primary-1 rounded-2xl p-8"
         >
           {!!l.image && (
-            <DEPRECATED_StrapiImage
-              data={l.image}
+            <StrapiImage
+              media={l.image}
+              sizes="115px"
               containerClassName="flex-none w-[115px] h-[115px] max-md:mx-auto"
               className="rounded-2xl h-full w-full object-cover"
             />

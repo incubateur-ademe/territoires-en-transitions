@@ -1,4 +1,4 @@
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
 type PrincipesProps = {
@@ -17,10 +17,11 @@ const Principes = ({ titre, description, liste }: PrincipesProps) => {
       {liste.map((principe) => (
         <div key={principe.id} className="flex items-center gap-5 mb-10">
           {principe.image && (
-            <DEPRECATED_StrapiImage
-              data={principe.image}
+            <StrapiImage
+              media={principe.image}
+              sizes="45px"
               containerClassName="bg-primary-1 rounded-2xl p-4 w-[77px] h-[77px] flex-none"
-              className="w-full f-full"
+              className="w-full h-full object-contain"
             />
           )}
           {principe.titre && (

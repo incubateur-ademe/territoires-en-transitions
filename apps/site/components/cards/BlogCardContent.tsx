@@ -2,7 +2,7 @@ import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { Badge, Button } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { DEPRECATED_StrapiImage } from '../strapiImage/StrapiImage';
+import { StrapiImage } from '../strapiImage/strapi-image';
 import { BlogCardProps } from './BlogCard';
 
 const BlogCardContent = ({
@@ -34,10 +34,12 @@ const BlogCardContent = ({
       {/* Image de la carte */}
       <div className="rounded-t-lg overflow-hidden relative shrink-0">
         {image ? (
-          <DEPRECATED_StrapiImage
-            data={image}
+          <StrapiImage
+            media={image}
+            // Grille de 3 colonnes au plus (CardsWrapper, MasonryGallery),
+            // majorée du zoom au survol.
+            sizes="(min-width: 1440px) 460px, (min-width: 1024px) 35vw, (min-width: 768px) 50vw, 100vw"
             className={classNames('group-hover:brightness-90', imgClassName)}
-            displayCaption={false}
           />
         ) : (
           <Image
