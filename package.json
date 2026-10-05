@@ -170,7 +170,7 @@
     "@dotenvx/dotenvx": "2.21.0",
     "@eslint/js": "8.57.0",
     "@hey-api/client-fetch": "0.10.2",
-    "@hey-api/openapi-ts": "0.86.3",
+    "@hey-api/openapi-ts": "0.97.3",
     "@nestjs/cli": "11.0.10",
     "@nestjs/schematics": "11.0.5",
     "@nestjs/testing": "11.2.6",
