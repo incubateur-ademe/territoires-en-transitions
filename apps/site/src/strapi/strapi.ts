@@ -94,13 +94,23 @@ export async function fetchSingle<T>(
   return body.data ?? null;
 }
 
-/** Une entrée par son `documentId` (l'`id` numérique n'est plus accepté dans l'URL). */
+/** `documentId` Strapi 5 : identifiant cuid2, minuscules et chiffres. */
+const DOCUMENT_ID_PATTERN = /^[a-z0-9]{10,32}$/;
+
+/**
+ * Une entrée par son `documentId` (l'`id` numérique n'est plus accepté dans
+ * l'URL). Le `documentId` vient souvent du chemin de la page : validé, il ne
+ * peut pas détourner la requête vers une autre route de l'API (SSRF).
+ */
 export async function fetchItem<T>(
   path: Collection,
   documentId: string,
   params: Params = [['populate', '*']]
 ): Promise<StrapiEntry<T> | null> {
-  const response = await fetch(buildUrl(`${path}/${documentId}`, params), {
+  if (!DOCUMENT_ID_PATTERN.test(documentId)) return null;
+
+  const url = buildUrl(`${path}/${encodeURIComponent(documentId)}`, params);
+  const response = await fetch(url, {
     next: { revalidate: 3600 },
     method: 'GET',
     headers,
