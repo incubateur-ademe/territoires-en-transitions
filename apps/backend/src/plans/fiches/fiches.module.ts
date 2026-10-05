@@ -168,6 +168,9 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     DeleteFicheRouter,
     DuplicateFicheService,
     DuplicateFicheRouter,
+
+    CompleteFicheSecteursService,
+    FicheSecteursEligibiliteRepository,
   ],
 })
 export class FichesModule {}

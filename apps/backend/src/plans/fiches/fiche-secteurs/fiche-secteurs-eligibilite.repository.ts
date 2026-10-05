@@ -41,7 +41,13 @@ export class FicheSecteursEligibiliteRepository {
       afterFicheId,
       limit,
       collectiviteId,
-    }: { afterFicheId: number; limit: number; collectiviteId?: number },
+      planId,
+    }: {
+      afterFicheId: number;
+      limit: number;
+      collectiviteId?: number;
+      planId?: number;
+    },
     tx?: Transaction
   ): Promise<number[]> {
     const db = tx ?? this.databaseService.db;
@@ -70,6 +76,7 @@ export class FicheSecteursEligibiliteRepository {
           collectiviteId === undefined
             ? undefined
             : eq(ficheActionTable.collectiviteId, collectiviteId),
+          planId === undefined ? undefined : this.isInPlan(db, planId),
           notExists(
             db
               .select({ ficheId: ficheActionSecteurAttributionTable.ficheId })
@@ -87,6 +94,24 @@ export class FicheSecteursEligibiliteRepository {
       .orderBy(asc(ficheActionTable.id))
       .limit(limit);
     return rows.map(({ ficheId }) => ficheId);
+  }
+
+  private isInPlan(db: Transaction | DatabaseService['db'], planId: number) {
+    return exists(
+      db
+        .select({ axeId: ficheActionAxeTable.axeId })
+        .from(ficheActionAxeTable)
+        .innerJoin(axeTable, eq(axeTable.id, ficheActionAxeTable.axeId))
+        .where(
+          and(
+            eq(
+              ficheActionAxeTable.ficheId,
+              sql`coalesce(${ficheActionTable.parentId}, ${ficheActionTable.id})`
+            ),
+            eq(sql`coalesce(${axeTable.plan}, ${axeTable.id})`, planId)
+          )
+        )
+    );
   }
 
   /**
