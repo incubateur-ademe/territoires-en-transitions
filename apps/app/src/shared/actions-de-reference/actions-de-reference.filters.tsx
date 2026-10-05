@@ -6,18 +6,13 @@ import {
   type LevierId,
   levierIdEnumValues,
 } from '@tet/domain/shared';
-import {
-  Input,
-  type Option,
-  type OptionValue,
-  Select,
-  SelectMultiple,
-} from '@tet/ui';
-import { type JSX, type ReactNode, useState } from 'react';
+import { type Option, type OptionValue, Select, SelectMultiple } from '@tet/ui';
+import { type JSX, type ReactNode } from 'react';
 import type {
   ActionDeReferenceSortField,
   ActionsDeReferenceFiltersComponent,
 } from './actions-de-reference.contract';
+import { SearchBar } from './search-bar';
 
 type FilterOption<Value extends string> = Readonly<Pick<Option, 'label'>> & {
   readonly value: Value;
@@ -92,73 +87,6 @@ const MultipleChoiceFilter = <Value extends string>({
         small
       />
     </FilterGroup>
-  );
-};
-
-type SyncedSearchText = {
-  readonly typedText: string;
-  readonly typeText: (text: string) => void;
-  readonly searchTypedText: (text: string) => void;
-};
-
-const useSyncedSearchText = ({
-  searchedText,
-  onSearch,
-}: {
-  readonly searchedText: string;
-  readonly onSearch: (text: string) => void;
-}): SyncedSearchText => {
-  const [typedText, setTypedText] = useState(searchedText);
-  const [lastReceivedText, setLastReceivedText] = useState(searchedText);
-  const [lastTransmittedText, setLastTransmittedText] = useState(searchedText);
-
-  const hasReceivedNewText = searchedText !== lastReceivedText;
-  const isTransmittedTextComingBack = searchedText === lastTransmittedText;
-  const hasReceivedOutsideText =
-    hasReceivedNewText && !isTransmittedTextComingBack;
-  if (hasReceivedNewText) {
-    setLastReceivedText(searchedText);
-  }
-  if (hasReceivedOutsideText) {
-    setLastTransmittedText(searchedText);
-    setTypedText(searchedText);
-  }
-
-  const searchTypedText = (text: string): void => {
-    const isTextStillTyped = text === typedText;
-    if (!isTextStillTyped) {
-      return;
-    }
-    setLastTransmittedText(text);
-    onSearch(text);
-  };
-
-  return { typedText, typeText: setTypedText, searchTypedText };
-};
-
-const SearchBar = ({
-  searchedText,
-  onSearch,
-}: {
-  readonly searchedText: string;
-  readonly onSearch: (text: string) => void;
-}): JSX.Element => {
-  const { typedText, typeText, searchTypedText } = useSyncedSearchText({
-    searchedText,
-    onSearch,
-  });
-
-  return (
-    <Input
-      type="search"
-      aria-label={appLabels.actionsDeReferenceRecherche}
-      placeholder={appLabels.actionsDeReferenceRecherche}
-      value={typedText}
-      onChange={(event) => typeText(event.target.value)}
-      onSearch={searchTypedText}
-      containerClassname="w-full"
-      displaySize="sm"
-    />
   );
 };
 

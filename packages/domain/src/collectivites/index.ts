@@ -50,7 +50,6 @@ export * from './personne-tag.schema';
 export * from './pertinence-leviers/can-categories-have-own-pertinence';
 export * from './pertinence-leviers/pertinence-leviers.schema';
 export * from './pertinence-leviers/pertinence.enum';
-export * from './pertinence-leviers/resolve-pertinence-volet';
 export * from './pertinence-leviers/to-pertinences-by-levier';
 export * from './service-deconcentre.rules';
 export * from './service-tag.schema';

@@ -4,12 +4,8 @@ import {
   LevierPertinences,
   Pertinence,
   PertinenceLevier,
-  PertinenceVoletEffective,
-  resolvePertinenceVolet,
 } from '@tet/domain/collectivites';
 import {
-  CategorieAction,
-  categorieActionEnumValues,
   Levier,
   LEVIER_NOM_BY_ID,
   LEVIER_SECTEURS,
@@ -23,20 +19,11 @@ export type Mobilisation =
 
 type LevierMobilisation = Mobilisation['leviers'][number];
 
-type VoletMobilisation = LevierMobilisation['volets'][number];
-
-export type LevierCategorie = {
-  categorie: CategorieAction;
-  ficheCount: number;
-  pertinenceEffective: PertinenceVoletEffective;
-};
-
 export type LevierCard = {
   levierId: LevierId;
   nom: Levier;
   secteur: LevierSecteur;
   ficheCount: number;
-  categories: LevierCategorie[];
   pertinence?: Pertinence;
 };
 
@@ -53,28 +40,6 @@ const toMobilisationByLevier = (
     ])
   );
 
-const toLevierCategorie = ({
-  categorie,
-  volets,
-  levierPertinences,
-}: {
-  categorie: CategorieAction;
-  volets: VoletMobilisation[];
-  levierPertinences?: LevierPertinences;
-}): LevierCategorie => {
-  const ficheCount =
-    volets.find((volet) => volet.categorie === categorie)?.ficheCount ?? 0;
-  return {
-    categorie,
-    ficheCount,
-    pertinenceEffective: resolvePertinenceVolet({
-      isMobilise: ficheCount > 0,
-      levierPertinence: levierPertinences?.levier,
-      voletPertinence: levierPertinences?.categories.get(categorie),
-    }),
-  };
-};
-
 const toLevierCard = ({
   levierId,
   pertinencesByLevier,
@@ -86,21 +51,13 @@ const toLevierCard = ({
 }): LevierCard => {
   const nom = LEVIER_NOM_BY_ID[levierId];
   const levierMobilisation = mobilisationByLevier.get(levierId);
-  const levierPertinences = pertinencesByLevier.get(levierId);
   const card = {
     levierId,
     nom,
     secteur: LEVIER_SECTEURS[nom],
     ficheCount: levierMobilisation?.ficheCount ?? 0,
-    categories: categorieActionEnumValues.map((categorie) =>
-      toLevierCategorie({
-        categorie,
-        volets: levierMobilisation?.volets ?? [],
-        levierPertinences,
-      })
-    ),
   };
-  const pertinence = levierPertinences?.levier;
+  const pertinence = pertinencesByLevier.get(levierId)?.levier;
 
   if (pertinence === undefined) {
     return card;

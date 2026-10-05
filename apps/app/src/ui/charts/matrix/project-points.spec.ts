@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { MATRIX_GRID } from './matrix-grid';
 import type { MatrixCoord } from './matrix-coord';
-import { projectPoints } from './project-points';
-import type { LabelAnchor } from './stack-labels';
+import { projectPoints, type ProjectedPoint } from './project-points';
 
 describe('projectPoints', () => {
-  const project = (points: MatrixCoord[]): LabelAnchor[] =>
+  const project = (points: MatrixCoord[]): ProjectedPoint[] =>
     projectPoints({
       points,
       bounds: { x: 100, y: 100 },

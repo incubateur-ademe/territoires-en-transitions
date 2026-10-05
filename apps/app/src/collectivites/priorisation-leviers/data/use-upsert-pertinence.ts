@@ -5,6 +5,7 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PertinenceLevier } from '@tet/domain/collectivites';
 import { omit } from 'es-toolkit';
+import { useCallback, useMemo } from 'react';
 import { toPertinencesListInput } from './to-pertinences-list-input';
 import { upsertPertinence } from './upsert-pertinence';
 
@@ -16,7 +17,10 @@ export const useUpsertPertinence = (): UpsertPertinence | undefined => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
-  const listInput = toPertinencesListInput(collectiviteId);
+  const listInput = useMemo(
+    () => toPertinencesListInput(collectiviteId),
+    [collectiviteId]
+  );
   const listQueryKey =
     trpc.collectivites.pertinenceLeviers.list.queryKey(listInput);
   const upsertMutationKey =
@@ -51,11 +55,16 @@ export const useUpsertPertinence = (): UpsertPertinence | undefined => {
     })
   );
 
+  const upsert = useCallback<UpsertPertinence>(
+    (pertinence) => mutate({ ...listInput, ...pertinence }),
+    [mutate, listInput]
+  );
+
   const canUpsertPertinence = hasCollectivitePermission(
     'collectivites.pertinence-leviers.mutate'
   );
   if (!canUpsertPertinence) {
     return undefined;
   }
-  return (pertinence) => mutate({ ...listInput, ...pertinence });
+  return upsert;
 };

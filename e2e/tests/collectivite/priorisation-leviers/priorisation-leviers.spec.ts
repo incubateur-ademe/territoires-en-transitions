@@ -1,14 +1,11 @@
 import { expect } from '@playwright/test';
 import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisation.repository';
-import { Levier, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
+import { LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
 import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_COUNT = 29;
-const CATEGORIE_COUNT = 6;
-const MOBILISED_CATEGORIE_COUNT = 2;
-const MOBILISED_LEVIER_NOM: Levier = 'Vélo et transport en commun';
 
 const mobilisationWithTwoFiches: LevierMobilisation[] = [
   {
@@ -32,7 +29,9 @@ test.describe('Priorisation des leviers', () => {
 
     await priorisationLeviersPom.goto(collectivite.data.id);
 
-    await expect(priorisationLeviersPom.levierNames).toHaveCount(LEVIER_COUNT);
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(
+      LEVIER_COUNT
+    );
     await expect(
       priorisationLeviersPom.missingMobilisationMessage
     ).toBeVisible();
@@ -50,7 +49,9 @@ test.describe('Priorisation des leviers', () => {
 
     await priorisationLeviersPom.goto(collectivite.data.id);
 
-    await expect(priorisationLeviersPom.levierNames).toHaveCount(LEVIER_COUNT);
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(
+      LEVIER_COUNT
+    );
   });
 
   test("un utilisateur vérifié non membre ne voit pas les leviers d'une collectivité en accès restreint", async ({
@@ -71,10 +72,10 @@ test.describe('Priorisation des leviers', () => {
     await expect(
       page.getByText("Cette collectivité n'est pas accessible en mode visite.")
     ).toBeVisible();
-    await expect(priorisationLeviersPom.levierNames).toHaveCount(0);
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
   });
 
-  test('un membre voit le nombre de fiches distinctes rattachées au levier', async ({
+  test('un membre voit le nombre de fiches rattachées aux leviers', async ({
     collectivites,
     mobilisations,
     page,
@@ -90,9 +91,7 @@ test.describe('Priorisation des leviers', () => {
 
     await priorisationLeviersPom.goto(collectivite.data.id);
 
-    await expect(
-      priorisationLeviersPom.levierCard(MOBILISED_LEVIER_NOM)
-    ).toContainText('2 actions déjà rattachées');
+    await expect(priorisationLeviersPom.actionsRattacheesCount).toHaveText('2');
     await expect(
       priorisationLeviersPom.missingMobilisationMessage
     ).toBeHidden();
@@ -115,9 +114,7 @@ test.describe('Priorisation des leviers', () => {
 
     await priorisationLeviersPom.goto(collectivite.data.id);
 
-    await expect(
-      priorisationLeviersPom.levierCard(MOBILISED_LEVIER_NOM)
-    ).toContainText('2 actions déjà rattachées');
+    await expect(priorisationLeviersPom.actionsRattacheesCount).toHaveText('2');
   });
 
   test('un admin qualifie un levier, et la valeur survit au rechargement', async ({
@@ -129,23 +126,25 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
 
     const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
       pertinence: 'non_pertinent',
     });
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
       .click();
     await pertinenceSaved;
     await page.reload();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
 
     await expect(
       priorisationLeviersPom.pertinenceButton(
         LEVIER_NOM_BY_ID.biogaz,
-        'Non pertinent'
+        'Marquer pertinent'
       )
-    ).toHaveAttribute('aria-pressed', 'true');
+    ).toBeVisible();
   });
 
   test('un admin qualifie un levier au clavier seul', async ({
@@ -157,25 +156,37 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
-    const pertinentButton = priorisationLeviersPom.pertinenceButton(
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
+    const marquerPertinentButton = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Pertinent'
+      'Marquer pertinent'
     );
 
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
       .focus();
-    await page.keyboard.press('Tab');
-    await expect(pertinentButton).toBeFocused();
-    const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
+    const nonPertinentSaved = priorisationLeviersPom.waitForPertinenceSaved({
+      levierId: 'biogaz',
+      pertinence: 'non_pertinent',
+    });
+    await page.keyboard.press('Enter');
+    await nonPertinentSaved;
+    await expect(marquerPertinentButton).toBeFocused();
+    const pertinentSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
       pertinence: 'pertinent',
     });
     await page.keyboard.press('Enter');
-    await pertinenceSaved;
+    await pertinentSaved;
     await page.reload();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
 
-    await expect(pertinentButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      priorisationLeviersPom.pertinenceButton(
+        LEVIER_NOM_BY_ID.biogaz,
+        'Marquer non pertinent'
+      )
+    ).toBeVisible();
   });
 
   test('deux leviers qualifiés coup sur coup sont tous deux enregistrés', async ({
@@ -187,13 +198,13 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
-    const biogazNonPertinent = priorisationLeviersPom.pertinenceButton(
+    const biogazMarquerPertinent = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Non pertinent'
+      'Marquer pertinent'
     );
-    const covoiturageNonPertinent = priorisationLeviersPom.pertinenceButton(
+    const covoiturageMarquerPertinent = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.covoiturage,
-      'Non pertinent'
+      'Marquer pertinent'
     );
 
     const pertinencesSaved = Promise.all([
@@ -206,23 +217,24 @@ test.describe('Priorisation des leviers', () => {
         pertinence: 'non_pertinent',
       }),
     ]);
-    await biogazNonPertinent.click();
-    await covoiturageNonPertinent.click();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
+    await priorisationLeviersPom
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .click();
+    await expect(biogazMarquerPertinent).toBeVisible();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.covoiturage);
+    await priorisationLeviersPom
+      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Marquer non pertinent')
+      .click();
+    await expect(covoiturageMarquerPertinent).toBeVisible();
     await pertinencesSaved;
-
-    await expect(biogazNonPertinent).toHaveAttribute('aria-pressed', 'true');
-    await expect(covoiturageNonPertinent).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
 
     await page.reload();
 
-    await expect(biogazNonPertinent).toHaveAttribute('aria-pressed', 'true');
-    await expect(covoiturageNonPertinent).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
+    await expect(biogazMarquerPertinent).toBeVisible();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.covoiturage);
+    await expect(covoiturageMarquerPertinent).toBeVisible();
   });
 
   test("deux clics coup sur coup sur un même levier : le dernier l'emporte, même si le premier tarde", async ({
@@ -234,34 +246,36 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
     await priorisationLeviersPom.delayPertinenceSave({
       saveIndex: 0,
       delayMs: 1_000,
     });
-    const nonPertinentButton = priorisationLeviersPom.pertinenceButton(
+    const marquerNonPertinentButton = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Non pertinent'
+      'Marquer non pertinent'
     );
 
     const pertinencesSaved = Promise.all([
       priorisationLeviersPom.waitForPertinenceSaved({
         levierId: 'biogaz',
-        pertinence: 'pertinent',
+        pertinence: 'non_pertinent',
       }),
       priorisationLeviersPom.waitForPertinenceSaved({
         levierId: 'biogaz',
-        pertinence: 'non_pertinent',
+        pertinence: 'pertinent',
       }),
     ]);
+    await marquerNonPertinentButton.click();
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer pertinent')
       .click();
-    await nonPertinentButton.click();
-    await expect(nonPertinentButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(marquerNonPertinentButton).toBeVisible();
     await pertinencesSaved;
     await page.reload();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
 
-    await expect(nonPertinentButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(marquerNonPertinentButton).toBeVisible();
   });
 
   test("la liste n'est relue qu'une fois, après la dernière écriture de la file", async ({
@@ -273,7 +287,7 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(
       LEVIER_COUNT
     );
     await priorisationLeviersPom.delayPertinenceSave({
@@ -294,11 +308,13 @@ test.describe('Priorisation des leviers', () => {
     ]);
     const pertinencesReloaded =
       priorisationLeviersPom.waitForPertinencesReloaded();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
       .click();
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.covoiturage);
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Marquer non pertinent')
       .click();
     await pertinencesSaved;
     await pertinencesReloaded;
@@ -319,304 +335,28 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
-    const nonPertinentButton = priorisationLeviersPom.pertinenceButton(
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
+    const marquerPertinentButton = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Non pertinent'
-    );
-    const pertinentButton = priorisationLeviersPom.pertinenceButton(
-      LEVIER_NOM_BY_ID.biogaz,
-      'Pertinent'
+      'Marquer pertinent'
     );
     const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
       pertinence: 'non_pertinent',
     });
-    await nonPertinentButton.click();
+    await priorisationLeviersPom
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .click();
     await pertinenceSaved;
 
     await priorisationLeviersPom.failEveryPertinenceSave();
-    await pertinentButton.click();
+    await marquerPertinentButton.click();
 
-    await expect(pertinentButton).toHaveAttribute('aria-pressed', 'false');
-    await expect(nonPertinentButton).toHaveAttribute('aria-pressed', 'true');
     await expect(priorisationLeviersPom.saveErrorToast).toBeVisible();
+    await expect(marquerPertinentButton).toBeVisible();
   });
 
-  test("un membre déplie au clavier les six catégories d'un levier encore non qualifié", async ({
-    collectivites,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-    await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.levierNames).toHaveCount(LEVIER_COUNT);
-
-    await priorisationLeviersPom.openCategoriesWithEnter(
-      LEVIER_NOM_BY_ID.biogaz
-    );
-
-    await expect(
-      priorisationLeviersPom.categorieRows(LEVIER_NOM_BY_ID.biogaz)
-    ).toHaveCount(CATEGORIE_COUNT);
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        LEVIER_NOM_BY_ID.biogaz,
-        'Aménagement & infrastructures'
-      )
-    ).toContainText('Pertinence : non renseignée');
-  });
-
-  test('un membre voit les actions rattachées à chaque catégorie mobilisée', async ({
-    collectivites,
-    mobilisations,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
-    });
-    await mobilisations.add({
-      collectiviteId: collectivite.data.id,
-      leviers: mobilisationWithTwoFiches,
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-    await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.levierNames).toHaveCount(LEVIER_COUNT);
-
-    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
-
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        MOBILISED_LEVIER_NOM,
-        'Financement & fiscalité'
-      )
-    ).toContainText('2 actions déjà rattachées');
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        MOBILISED_LEVIER_NOM,
-        'Aménagement & infrastructures'
-      )
-    ).toContainText('1 action déjà rattachée');
-  });
-
-  test("les catégories non mobilisées héritent de la non-pertinence du levier, l'accordéon reste ouvert", async ({
-    collectivites,
-    mobilisations,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
-    });
-    await mobilisations.add({
-      collectiviteId: collectivite.data.id,
-      leviers: mobilisationWithTwoFiches,
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-    await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
-      LEVIER_COUNT
-    );
-    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
-    const gouvernanceRow = priorisationLeviersPom.categorieRow(
-      MOBILISED_LEVIER_NOM,
-      'Gouvernance & partenariats'
-    );
-    await expect(
-      priorisationLeviersPom.categoriePertinenceSelector(
-        MOBILISED_LEVIER_NOM,
-        'Gouvernance & partenariats'
-      )
-    ).toBeVisible();
-
-    const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
-      levierId: 'velo_transport_commun',
-      pertinence: 'non_pertinent',
-    });
-    const pertinencesReloaded =
-      priorisationLeviersPom.waitForPertinencesReloaded();
-    await priorisationLeviersPom
-      .pertinenceButton(MOBILISED_LEVIER_NOM, 'Non pertinent')
-      .click();
-    await pertinenceSaved;
-    await pertinencesReloaded;
-
-    await expect(gouvernanceRow).toContainText(
-      'Non pertinent, comme le levier'
-    );
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        MOBILISED_LEVIER_NOM,
-        'Financement & fiscalité'
-      )
-    ).toContainText('2 actions déjà rattachées');
-    await expect(
-      priorisationLeviersPom.categoriesAccordion(MOBILISED_LEVIER_NOM)
-    ).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  test('un admin qualifie une catégorie, et la valeur survit au rechargement', async ({
-    collectivites,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-    await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
-      LEVIER_COUNT
-    );
-    await priorisationLeviersPom.openCategoriesWithEnter(
-      LEVIER_NOM_BY_ID.biogaz
-    );
-    const amenagementPertinent =
-      priorisationLeviersPom.categoriePertinenceButton(
-        LEVIER_NOM_BY_ID.biogaz,
-        'Aménagement & infrastructures',
-        'Pertinent'
-      );
-
-    const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
-      levierId: 'biogaz',
-      categorie: 'amenagement',
-      pertinence: 'pertinent',
-    });
-    await amenagementPertinent.click();
-    await pertinenceSaved;
-    await page.reload();
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
-      LEVIER_COUNT
-    );
-    await priorisationLeviersPom.openCategoriesWithEnter(
-      LEVIER_NOM_BY_ID.biogaz
-    );
-
-    await expect(amenagementPertinent).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  test("un volet mobilisé n'offre aucun sélecteur, ses voisins non mobilisés en offrent un", async ({
-    collectivites,
-    mobilisations,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
-    });
-    await mobilisations.add({
-      collectiviteId: collectivite.data.id,
-      leviers: mobilisationWithTwoFiches,
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-    await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
-      LEVIER_COUNT
-    );
-
-    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
-
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        MOBILISED_LEVIER_NOM,
-        'Financement & fiscalité'
-      )
-    ).toContainText('2 actions déjà rattachées');
-    await expect(
-      priorisationLeviersPom.categoriePertinenceSelector(
-        MOBILISED_LEVIER_NOM,
-        'Gouvernance & partenariats'
-      )
-    ).toBeVisible();
-    await expect(
-      priorisationLeviersPom.categoriePertinenceSelector(
-        MOBILISED_LEVIER_NOM,
-        'Financement & fiscalité'
-      )
-    ).toHaveCount(0);
-    await expect(
-      priorisationLeviersPom.categoriePertinenceSelectors(MOBILISED_LEVIER_NOM)
-    ).toHaveCount(CATEGORIE_COUNT - MOBILISED_CATEGORIE_COUNT);
-  });
-
-  test('un levier repassé pertinent rend ses catégories vides, la qualification posée avant ne revient pas', async ({
-    collectivites,
-    mobilisations,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
-    });
-    await mobilisations.add({
-      collectiviteId: collectivite.data.id,
-      leviers: mobilisationWithTwoFiches,
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-    await priorisationLeviersPom.goto(collectivite.data.id);
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
-      LEVIER_COUNT
-    );
-    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
-    const gouvernancePertinent =
-      priorisationLeviersPom.categoriePertinenceButton(
-        MOBILISED_LEVIER_NOM,
-        'Gouvernance & partenariats',
-        'Pertinent'
-      );
-
-    const categorieSaved = priorisationLeviersPom.waitForPertinenceSaved({
-      levierId: 'velo_transport_commun',
-      categorie: 'gouvernance',
-      pertinence: 'pertinent',
-    });
-    const categorieReloaded =
-      priorisationLeviersPom.waitForPertinencesReloaded();
-    await gouvernancePertinent.click();
-    await categorieSaved;
-    await categorieReloaded;
-    await expect(gouvernancePertinent).toHaveAttribute('aria-pressed', 'true');
-
-    const levierNonPertinentSaved =
-      priorisationLeviersPom.waitForPertinenceSaved({
-        levierId: 'velo_transport_commun',
-        pertinence: 'non_pertinent',
-      });
-    const levierNonPertinentReloaded =
-      priorisationLeviersPom.waitForPertinencesReloaded();
-    await priorisationLeviersPom
-      .pertinenceButton(MOBILISED_LEVIER_NOM, 'Non pertinent')
-      .click();
-    await levierNonPertinentSaved;
-    await levierNonPertinentReloaded;
-
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        MOBILISED_LEVIER_NOM,
-        'Gouvernance & partenariats'
-      )
-    ).toContainText('Non pertinent, comme le levier');
-    await expect(
-      priorisationLeviersPom.categoriePertinenceSelectors(MOBILISED_LEVIER_NOM)
-    ).toHaveCount(0);
-
-    const levierPertinentSaved = priorisationLeviersPom.waitForPertinenceSaved({
-      levierId: 'velo_transport_commun',
-      pertinence: 'pertinent',
-    });
-    await priorisationLeviersPom
-      .pertinenceButton(MOBILISED_LEVIER_NOM, 'Pertinent')
-      .click();
-    await levierPertinentSaved;
-    await page.reload();
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(
-      LEVIER_COUNT
-    );
-    await priorisationLeviersPom.openCategoriesWithEnter(MOBILISED_LEVIER_NOM);
-
-    await expect(gouvernancePertinent).toBeVisible();
-    await expect(gouvernancePertinent).toHaveAttribute('aria-pressed', 'false');
-  });
-
-  test('un membre en édition lit la pertinence en texte, sans sélecteur', async ({
+  test('un membre en édition lit la pertinence en texte, sans bouton de pertinence', async ({
     collectivites,
     page,
   }) => {
@@ -625,26 +365,11 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
+    await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
 
     await expect(
-      priorisationLeviersPom.levierCard(LEVIER_NOM_BY_ID.biogaz)
+      priorisationLeviersPom.levierPanel(LEVIER_NOM_BY_ID.biogaz)
     ).toContainText('Pertinence : non renseignée');
-    await expect(priorisationLeviersPom.pertinenceSelectors).toHaveCount(0);
-
-    await priorisationLeviersPom.openCategoriesWithEnter(
-      LEVIER_NOM_BY_ID.biogaz
-    );
-
-    await expect(
-      priorisationLeviersPom.categorieRow(
-        LEVIER_NOM_BY_ID.biogaz,
-        'Aménagement & infrastructures'
-      )
-    ).toContainText('Pertinence : non renseignée');
-    await expect(
-      priorisationLeviersPom.categoriePertinenceSelectors(
-        LEVIER_NOM_BY_ID.biogaz
-      )
-    ).toHaveCount(0);
+    await expect(priorisationLeviersPom.pertinenceToggles).toHaveCount(0);
   });
 });

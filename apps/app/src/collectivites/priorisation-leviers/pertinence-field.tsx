@@ -1,46 +1,19 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Pertinence, PertinenceLevier } from '@tet/domain/collectivites';
-import { CategorieAction } from '@tet/domain/shared';
+import { Pertinence } from '@tet/domain/collectivites';
 import { JSX } from 'react';
 import { UpsertPertinence } from './data/use-upsert-pertinence';
 import { LevierCardInfo } from './levier-card-info';
-import { PertinenceSelector } from './pertinence-selector';
+import { PertinenceToggle } from './pertinence-toggle';
 import { LevierCard } from './to-levier-cards';
 
-type PertinenceTarget = {
+type PertinenceFieldProps = {
   levier: Pick<LevierCard, 'levierId' | 'nom'>;
-  categorie?: CategorieAction;
-};
-
-type PertinenceFieldProps = PertinenceTarget & {
   pertinence?: Pertinence;
   upsertPertinence?: UpsertPertinence;
 };
 
-const toPertinenceLabel = ({ levier, categorie }: PertinenceTarget): string => {
-  if (categorie === undefined) {
-    return appLabels.pertinenceLevierLabel(levier.nom);
-  }
-  return appLabels.pertinenceCategorieLabel({
-    categorie,
-    levierNom: levier.nom,
-  });
-};
-
-const toPertinenceLevier = ({
-  levier,
-  categorie,
-  pertinence,
-}: PertinenceTarget & { pertinence: Pertinence }): PertinenceLevier => {
-  if (categorie === undefined) {
-    return { levierId: levier.levierId, pertinence };
-  }
-  return { levierId: levier.levierId, categorie, pertinence };
-};
-
 export const PertinenceField = ({
   levier,
-  categorie,
   pertinence,
   upsertPertinence,
 }: PertinenceFieldProps): JSX.Element => {
@@ -50,13 +23,11 @@ export const PertinenceField = ({
     );
   }
   return (
-    <PertinenceSelector
-      label={toPertinenceLabel({ levier, categorie })}
+    <PertinenceToggle
+      label={appLabels.pertinenceLevierLabel(levier.nom)}
       value={pertinence}
       onChange={(selected) =>
-        upsertPertinence(
-          toPertinenceLevier({ levier, categorie, pertinence: selected })
-        )
+        upsertPertinence({ levierId: levier.levierId, pertinence: selected })
       }
     />
   );
