@@ -111,7 +111,7 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
           enjeu: 'ges',
           levierId,
           categorie,
-          pertinence: 'a_discuter',
+          pertinence: 'pertinent',
         })
       )
     );
@@ -120,7 +120,7 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
   const toQualifiedCategories = (levierId: LevierId): PertinenceLevier[] =>
     categorieActionEnumValues
       .toSorted()
-      .map((categorie) => ({ levierId, categorie, pertinence: 'a_discuter' }));
+      .map((categorie) => ({ levierId, categorie, pertinence: 'pertinent' }));
 
   it('rend la pertinence posée par un admin sur un levier puis sur une de ses catégories', async () => {
     const { collectiviteId, user: admin } = await addCollectiviteWithMember(
@@ -131,19 +131,23 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
       collectiviteId,
       enjeu: 'ges',
       levierId: 'biogaz',
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
     });
     await callerFor(admin).upsert({
       collectiviteId,
       enjeu: 'ges',
       levierId: 'biogaz',
       categorie: 'financement',
-      pertinence: 'pertinent',
+      pertinence: 'non_pertinent',
     });
 
     expect(await listSortedPertinences(admin, collectiviteId)).toStrictEqual([
-      { levierId: 'biogaz', pertinence: 'a_discuter' },
-      { levierId: 'biogaz', categorie: 'financement', pertinence: 'pertinent' },
+      { levierId: 'biogaz', pertinence: 'pertinent' },
+      {
+        levierId: 'biogaz',
+        categorie: 'financement',
+        pertinence: 'non_pertinent',
+      },
     ]);
   });
 
@@ -428,31 +432,28 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
     });
   });
 
-  it.each(['a_discuter', 'pertinent'] as const)(
-    'garde la pertinence des six catégories quand leur levier devient %s',
-    async (levierPertinence) => {
-      const { collectiviteId, user: admin } = await addCollectiviteWithMember(
-        CollectiviteRole.ADMIN
-      );
-      await qualifyLevierWithAllCategories({
-        admin,
-        collectiviteId,
-        levierId: 'biogaz',
-      });
+  it('garde la pertinence des six catégories quand leur levier est reposé pertinent', async () => {
+    const { collectiviteId, user: admin } = await addCollectiviteWithMember(
+      CollectiviteRole.ADMIN
+    );
+    await qualifyLevierWithAllCategories({
+      admin,
+      collectiviteId,
+      levierId: 'biogaz',
+    });
 
-      await callerFor(admin).upsert({
-        collectiviteId,
-        enjeu: 'ges',
-        levierId: 'biogaz',
-        pertinence: levierPertinence,
-      });
+    await callerFor(admin).upsert({
+      collectiviteId,
+      enjeu: 'ges',
+      levierId: 'biogaz',
+      pertinence: 'pertinent',
+    });
 
-      expect(await listSortedPertinences(admin, collectiviteId)).toStrictEqual([
-        { levierId: 'biogaz', pertinence: levierPertinence },
-        ...toQualifiedCategories('biogaz'),
-      ]);
-    }
-  );
+    expect(await listSortedPertinences(admin, collectiviteId)).toStrictEqual([
+      { levierId: 'biogaz', pertinence: 'pertinent' },
+      ...toQualifiedCategories('biogaz'),
+    ]);
+  });
 
   it("refuse la qualification d'une catégorie sous un levier non pertinent", async () => {
     const { collectiviteId, user: admin } = await addCollectiviteWithMember(

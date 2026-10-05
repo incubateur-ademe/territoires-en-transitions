@@ -7,7 +7,7 @@ describe('toPertinencesByLevier', () => {
       {
         levierId: 'covoiturage',
         categorie: 'financement',
-        pertinence: 'a_discuter',
+        pertinence: 'pertinent',
       },
       { levierId: 'covoiturage', pertinence: 'pertinent' },
       {
@@ -23,7 +23,7 @@ describe('toPertinencesByLevier', () => {
         {
           levier: 'pertinent',
           categories: new Map([
-            ['financement', 'a_discuter'],
+            ['financement', 'pertinent'],
             ['gouvernance', 'non_pertinent'],
           ]),
         },

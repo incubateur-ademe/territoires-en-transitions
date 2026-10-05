@@ -4,7 +4,6 @@ import { capitalize, plural } from '@tet/ui/labels/plural';
 
 const pertinenceLabels = {
   non_pertinent: 'non pertinent',
-  a_discuter: "à discuter avec l'élu",
   pertinent: 'pertinent',
 } satisfies Record<Pertinence, string>;
 

@@ -19,7 +19,6 @@ type Levier = {
 
 const TONE_BY_PERTINENCE: Record<Pertinence, MatrixTone> = {
   pertinent: 'default',
-  a_discuter: 'warning',
   non_pertinent: 'grey',
 };
 
@@ -51,22 +50,27 @@ const LEVIERS: [nom: string, potentiel: number, partMobilisee: number][] = [
 
 const toPoints = ({
   pertinents,
-  aDiscuter,
 }: {
   pertinents: readonly string[];
-  aDiscuter: readonly string[];
 }): MatrixPoint[] =>
   LEVIERS.map(([nom, potentiel, partMobilisee]) => {
     if (pertinents.includes(nom)) {
-      return toMatrixPoint({ nom, potentiel, partMobilisee, pertinence: 'pertinent' });
+      return toMatrixPoint({
+        nom,
+        potentiel,
+        partMobilisee,
+        pertinence: 'pertinent',
+      });
     }
-    if (aDiscuter.includes(nom)) {
-      return toMatrixPoint({ nom, potentiel, partMobilisee, pertinence: 'a_discuter' });
-    }
-    return toMatrixPoint({ nom, potentiel, partMobilisee, pertinence: 'non_pertinent' });
+    return toMatrixPoint({
+      nom,
+      potentiel,
+      partMobilisee,
+      pertinence: 'non_pertinent',
+    });
   });
 
-const POINTS = toPoints({ pertinents: [], aDiscuter: [] });
+const POINTS = toPoints({ pertinents: [] });
 
 const CUT_AT_GAP = 70;
 const CUT_MID_PACK = 50;
@@ -106,7 +110,10 @@ export const OnlyTheAlertZoneIsNamed: Story = {
           title="Angles morts"
           tone="warning"
         />
-        <Quadrant from={{ x: 0, y: 0 }} to={{ x: CUT_AT_GAP, y: Y_THRESHOLD }} />
+        <Quadrant
+          from={{ x: 0, y: 0 }}
+          to={{ x: CUT_AT_GAP, y: Y_THRESHOLD }}
+        />
         <Quadrant
           from={{ x: CUT_AT_GAP, y: Y_THRESHOLD }}
           to={{ x: X_FULL, y: Y_TOP }}
@@ -206,7 +213,6 @@ export const WithPointTones: Story = {
         'Sobriété et isolation des bâtiments (tertiaire)',
         'Changement de chaudière à fioul (tertiaire)',
       ],
-      aDiscuter: ['Véhicules électriques', 'Fret décarboné et multimodalité'],
     }),
     children: (
       <>

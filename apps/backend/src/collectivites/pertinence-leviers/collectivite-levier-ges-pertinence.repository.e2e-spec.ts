@@ -80,7 +80,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
     const upsertResult = await repository.upsert({
       collectiviteId,
       levierId: 'covoiturage',
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
       modifiedBy: adminId,
     });
 
@@ -91,7 +91,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
       upsertResult: { success: true, data: undefined },
       listResult: {
         success: true,
-        data: [{ levierId: 'covoiturage', pertinence: 'a_discuter' }],
+        data: [{ levierId: 'covoiturage', pertinence: 'pertinent' }],
       },
     });
   });
@@ -146,14 +146,14 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
     await repository.upsert({
       collectiviteId,
       levierId: 'biogaz',
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
       modifiedBy: adminId,
     });
     await repository.upsert({
       collectiviteId,
       levierId: 'biogaz',
       categorie: 'financement',
-      pertinence: 'pertinent',
+      pertinence: 'non_pertinent',
       modifiedBy: adminId,
     });
 
@@ -164,11 +164,11 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
       listResult: {
         success: true,
         data: expect.arrayContaining([
-          { levierId: 'biogaz', pertinence: 'a_discuter' },
+          { levierId: 'biogaz', pertinence: 'pertinent' },
           {
             levierId: 'biogaz',
             categorie: 'financement',
-            pertinence: 'pertinent',
+            pertinence: 'non_pertinent',
           },
         ]),
       },
@@ -189,7 +189,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
       collectiviteId,
       levierId: 'biogaz',
       categorie: 'financement',
-      pertinence: 'a_discuter',
+      pertinence: 'non_pertinent',
       modifiedBy: adminId,
     });
 
@@ -217,7 +217,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
       collectiviteId,
       levierId: 'gestion_haies',
       categorie: 'sensibilisation',
-      pertinence: 'a_discuter',
+      pertinence: 'pertinent',
       modifiedBy: adminId,
     });
 
@@ -227,7 +227,7 @@ describe('CollectiviteLevierGesPertinenceRepository', () => {
         {
           levierId: 'gestion_haies',
           categorie: 'sensibilisation',
-          pertinence: 'a_discuter',
+          pertinence: 'pertinent',
         },
       ],
     });
