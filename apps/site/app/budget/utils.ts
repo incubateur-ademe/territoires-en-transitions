@@ -1,3 +1,4 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { Seo, Vignette, VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
@@ -52,15 +53,7 @@ export const getStrapiData = async () => {
     seo: {
       metaTitle: data.seo?.metaTitle ?? undefined,
       metaDescription: data.seo?.metaDescription ?? undefined,
-      metaImage: metaImage
-        ? {
-            url: metaImage.url,
-            width: metaImage.width ?? 0,
-            height: metaImage.height ?? 0,
-            type: metaImage.mime,
-            alt: metaImage.alternativeText ?? '',
-          }
-        : undefined,
+      metaImage: toOpenGraphImage(metaImage),
     },
     header: {
       titre_secondaire: data.titre_secondaire,

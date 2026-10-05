@@ -1,3 +1,4 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import 'server-only';
 
 import { fetchSingle } from '@/site/src/strapi/strapi';
@@ -19,14 +20,6 @@ export const getDemarchePcaetSeo = async () => {
   return {
     title: seo?.metaTitle ?? undefined,
     description: seo?.metaDescription ?? undefined,
-    image: image
-      ? {
-          url: image.url,
-          width: image.width ?? 0,
-          height: image.height ?? 0,
-          type: image.mime,
-          alt: image.alternativeText ?? '',
-        }
-      : undefined,
+    image: toOpenGraphImage(image),
   };
 };

@@ -1,3 +1,4 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { Actualite, getCategoriesNoms } from '@/site/app/actus/utils';
 import {
   ArticleData,
@@ -68,15 +69,7 @@ export const getMetaData = async (documentId: string) => {
   return {
     title: seo?.metaTitle ?? titre,
     description: seo?.metaDescription ?? resume ?? undefined,
-    image: image
-      ? {
-          url: image.url,
-          width: image.width ?? 0,
-          height: image.height ?? 0,
-          type: image.mime,
-          alt: image.alternativeText ?? '',
-        }
-      : undefined,
+    image: toOpenGraphImage(image),
     publishedAt: dateCreation ?? createdAt,
     updatedAt,
   };

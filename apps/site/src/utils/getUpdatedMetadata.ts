@@ -1,3 +1,4 @@
+import { OpenGraphImage } from '@/site/src/strapi/media';
 import { Metadata } from 'next';
 
 export const getUpdatedMetadata = (
@@ -6,13 +7,7 @@ export const getUpdatedMetadata = (
     title?: string;
     networkTitle?: string;
     description?: string;
-    image?: {
-      url: string;
-      width: number;
-      height: number;
-      type: string;
-      alt: string;
-    };
+    image?: OpenGraphImage;
   }
 ) => {
   return {
