@@ -3,6 +3,7 @@ import {
   MAX_FICHE_TITLE_LENGTH,
   normalizeExtractedActions,
 } from '../adapters/extracted-action-to-import-action';
+import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
@@ -57,7 +58,8 @@ export class GenerateImportDraftService {
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly notifyPlanImportedService: NotifyPlanImportedService,
     private readonly transactionManager: TransactionManager,
-    private readonly trackingService: TrackingService
+    private readonly trackingService: TrackingService,
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService
   ) {}
 
   async generate(
@@ -271,6 +273,11 @@ export class GenerateImportDraftService {
       planId: created.data,
       planName: job.options.planName,
       recap,
+    });
+    await this.enqueueCompletePlanSecteursService.enqueue({
+      planIds: [created.data],
+      collectiviteId: job.collectiviteId,
+      userId: job.createdBy,
     });
     return success(undefined);
   }

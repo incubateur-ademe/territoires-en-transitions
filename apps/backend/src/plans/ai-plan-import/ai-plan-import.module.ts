@@ -5,6 +5,7 @@ import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { CompletePlanSecteursModule } from '../fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '../plans/plans.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
@@ -25,6 +26,7 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
     LlmModule,
     TransactionModule,
     PlanModule,
+    CompletePlanSecteursModule,
     PlansUtilsModule,
     UsersModule,
     NotificationsModule,

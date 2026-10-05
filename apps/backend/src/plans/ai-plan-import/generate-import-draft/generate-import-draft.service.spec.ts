@@ -1,3 +1,4 @@
+import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
@@ -139,6 +140,9 @@ const buildMocks = (overrides: MockOverrides = {}) => {
 
   const capture = vi.fn();
   const trackingService = { capture } as unknown as TrackingService;
+  const enqueueCompletePlanSecteursService = {
+    enqueue: vi.fn(async () => undefined),
+  } as unknown as EnqueueCompletePlanSecteursService;
 
   return {
     jobRepository,
@@ -150,6 +154,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     transactionManager,
     trackingService,
     capture,
+    enqueueCompletePlanSecteursService,
     save,
     markAsImportedByAi,
     notifyPlanImported,
@@ -166,7 +171,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.planVerificationRepository,
     mocks.notifyPlanImportedService,
     mocks.transactionManager,
-    mocks.trackingService
+    mocks.trackingService,
+    mocks.enqueueCompletePlanSecteursService
   );
 
 describe('GenerateImportDraftService', () => {

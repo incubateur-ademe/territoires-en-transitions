@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-plan.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -60,13 +61,15 @@ export class CreateAndLinkPlanService {
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly upsertPlanService: UpsertPlanService,
     private readonly updateDemarchePcaetService: UpdateDemarchePcaetService,
-    private readonly getDemarchePcaetService: GetDemarchePcaetService
+    private readonly getDemarchePcaetService: GetDemarchePcaetService,
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService
   ) {}
 
   async createAndLinkPlan(
     input: CreateAndLinkPlanInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaet, CreateAndLinkPlanError>> {
+    let createdPlan: { id: number; collectiviteId: number } | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, CreateAndLinkPlanError>> => {
@@ -138,6 +141,10 @@ export class CreateAndLinkPlanService {
             : CreateAndLinkPlanErrorEnum.CREATE_PLAN_ERROR
         );
       }
+      createdPlan = {
+        id: planResult.data.id,
+        collectiviteId: ref.collectiviteId,
+      };
 
       const planActionIds = await this.planActionsRepository.listPlanActionIds(
         ref.id,
@@ -197,6 +204,17 @@ export class CreateAndLinkPlanService {
       return success(updateResult.data);
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success && !tx && createdPlan) {
+      await this.enqueueCompletePlanSecteursService.enqueue({
+        planIds: [createdPlan.id],
+        collectiviteId: createdPlan.collectiviteId,
+        userId: user.id,
+      });
+    }
+    return result;
   }
 }

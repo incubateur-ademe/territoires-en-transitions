@@ -8,6 +8,7 @@ import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/dem
 import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { AxeModule } from '@tet/backend/plans/axes/axe.module';
+import { CompletePlanSecteursModule } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
@@ -129,6 +130,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     TransactionModule,
     IndicateursModule,
     PlanModule,
+    CompletePlanSecteursModule,
     AxeModule,
     NotificationsModule,
     TrackingModule,

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -25,13 +26,15 @@ export class UpdateDemarchePcaetService {
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
-    private readonly guardsService: DemarchePcaetGuardsService
+    private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService
   ) {}
 
   async updateDemarchePcaet(
     input: UpdateDemarchePcaetInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaet, UpdateDemarchePcaetError>> {
+    let addedPlanIds: number[] = [];
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, UpdateDemarchePcaetError>> => {
@@ -96,6 +99,7 @@ export class UpdateDemarchePcaetService {
               : UpdateDemarchePcaetErrorEnum.SET_PLAN_ACTIONS_ERROR
           );
         }
+        addedPlanIds = planActionsResult.data;
       }
 
       if (input.pilotes !== undefined) {
@@ -129,6 +133,17 @@ export class UpdateDemarchePcaetService {
       };
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success && !tx) {
+      await this.enqueueCompletePlanSecteursService.enqueue({
+        planIds: addedPlanIds,
+        collectiviteId: result.data.collectiviteId,
+        userId: user.id,
+      });
+    }
+    return result;
   }
 }

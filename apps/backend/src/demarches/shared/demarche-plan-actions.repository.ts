@@ -161,7 +161,7 @@ export class DemarchePlanActionsRepository {
     userId: string,
     tx: Transaction
   ): Promise<
-    Result<undefined, 'PLAN_DEJA_RATTACHE' | 'SET_PLAN_ACTIONS_ERROR'>
+    Result<number[], 'PLAN_DEJA_RATTACHE' | 'SET_PLAN_ACTIONS_ERROR'>
   > {
     try {
       const wanted = [...new Set(planActionIds)];
@@ -190,7 +190,7 @@ export class DemarchePlanActionsRepository {
         );
       }
 
-      return success(undefined);
+      return success(added);
     } catch (error) {
       // Course entre deux rattachements simultanés du même plan : le trigger
       // d'exclusivité tranche en dernier ressort.

@@ -27,6 +27,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotifiedOnEnum } from '@tet/domain/utils';
+import { COMPLETE_PLAN_SECTEURS_QUEUE_NAME } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.queue';
+import { CompletePlanSecteursWorker } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.worker';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from './ai-plan-import.queue';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
@@ -162,6 +164,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   let cleanupSuperAdmin: () => Promise<void>;
   const createdPlanIds: number[] = [];
   const createdJobIds: string[] = [];
+  const completePlanSecteursJobs: unknown[] = [];
 
   const enqueueUrl = (): string =>
     `/collectivites/${TEST_COLLECTIVITE_ID}/plans/import-ia`;
@@ -234,6 +237,18 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         moduleBuilder
           .overrideProvider(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME))
           .useValue({ add: async () => ({ id: 'fake-job' }) });
+        moduleBuilder
+          .overrideProvider(CompletePlanSecteursWorker)
+          .useValue({ onModuleInit: () => undefined });
+        moduleBuilder
+          .overrideProvider(getQueueToken(COMPLETE_PLAN_SECTEURS_QUEUE_NAME))
+          .useValue({
+            add: async (_name: string, data: unknown) => {
+              completePlanSecteursJobs.push(data);
+              return { id: 'fake-job' };
+            },
+            setGlobalConcurrency: async () => 1,
+          });
         moduleBuilder.overrideProvider(LlmService).useValue(buildFakeLlm());
         moduleBuilder
           .overrideProvider(DocumentStorageService)
@@ -341,6 +356,11 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       throw new Error('createdPlanId manquant après un import terminé');
     }
     createdPlanIds.push(planId);
+    expect(completePlanSecteursJobs).toContainEqual({
+      planId,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+      passage: 1,
+    });
 
     const [plan] = await db.db
       .select({
