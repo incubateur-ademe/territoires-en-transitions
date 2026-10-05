@@ -392,6 +392,9 @@ services:
   # le premier boot prend quelques minutes.
   strapi:
     profiles: [strapi]
+    # Tag versionné : changer de version de Node reconstruit l'image d'office
+    # au lieu de réutiliser l'ancienne image locale.
+    image: tet-strapi:node24
     build:
       context: .docker/strapi
       args:
@@ -411,8 +414,9 @@ services:
       ENCRYPTION_KEY: ${STRAPI_ENCRYPTION_KEY:-dev-encryption-key}
       TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT:-dev-transfer-token-salt}
       # Token API read-only seedé au bootstrap (strapi/src/index.ts) pour que le
-      # site lise l'API locale. Doit rester égal à NEXT_PUBLIC_STRAPI_KEY dans
-      # apps/site/.env. Valeur non secrète : Strapi local jetable, read-only.
+      # site lise l'API locale. À reporter dans NEXT_PUBLIC_STRAPI_KEY de
+      # apps/site/.env.local (voir apps/site/README.md). Valeur non secrète :
+      # Strapi local jetable, read-only.
       STRAPI_LOCAL_READONLY_TOKEN: ${STRAPI_LOCAL_READONLY_TOKEN:-local-dev-readonly-token}
       DATABASE_CLIENT: postgres
       DATABASE_HOST: strapi-db
