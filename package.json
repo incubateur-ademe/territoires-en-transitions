@@ -98,6 +98,7 @@
     "exceljs": "4.4.0",
     "express": "5.1.0",
     "express-basic-auth": "1.2.1",
+    "fastest-levenshtein": "1.0.16",
     "fuse.js": "7.1.0",
     "gaxios": "6.7.1",
     "geojson": "0.5.0",

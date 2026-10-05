@@ -26,7 +26,11 @@ export function tokenizeAndParse(
   const cst = parser.statement();
   if (parser.errors.length > 0) {
     throw new InvalidExpressionError(
-      formatParsingErrors(parser.errors, { source }),
+      formatParsingErrors(parser.errors, {
+        source,
+        functionNames: parser.functionNames,
+        tokens: lexingResult.tokens,
+      }),
       { cause: parser.errors }
     );
   }

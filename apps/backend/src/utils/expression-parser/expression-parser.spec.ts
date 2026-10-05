@@ -6,7 +6,7 @@ import { tokenizeAndParse } from './tokenize-and-parse';
 // Exemple de parser dérivé du parser de base
 class TestParser extends ExpressionParser {
   constructor() {
-    super([]);
+    super([], []);
     try {
       this.performSelfAnalysis();
     } catch (err) {
@@ -44,21 +44,25 @@ function parseAndEvaluateExpression(
 
 describe('ExpressionParser', () => {
   describe('parseAndEvaluateExpression', () => {
-    it('formate les erreurs de parsing', () => {
-      // cette forme ne semble pas fonctionner : `expect(() => parseExpression('inconnu')).toThrow()`;
-      // alors on utilise un try/catch
-      try {
-        parseExpression('inconnu');
-      } catch (e) {
-        expect((e as Error).message).toEqual(
-          [
-            '(ligne 1, colonne 1) :',
-            '  inconnu',
-            '  ^^^^^^^',
-            'NotAllInputParsedException: Redundant input, expecting EOF but found: inconnu',
-          ].join('\n')
-        );
-      }
+    it('expose les fonctions du parser de base', () => {
+      expect(parser.functionNames).toEqual(['min', 'max']);
+    });
+
+    it('signale une fonction inconnue avec la liste des fonctions du parser', () => {
+      expect(() => parseExpression('moy(1, 2)')).toThrow(
+        [
+          '(ligne 1, colonne 1) :',
+          '  moy(1, 2)',
+          '  ^^^',
+          'Fonction inconnue « moy ». Fonctions disponibles : min, max.',
+        ].join('\n')
+      );
+    });
+
+    it('suggère la fonction du parser de base la plus proche', () => {
+      expect(() => parseExpression('mim(1, 2)')).toThrow(
+        'Fonction inconnue « mim ». Vouliez-vous dire « min » ?'
+      );
     });
 
     it('si VRAI alors 2', async () => {

@@ -34,7 +34,7 @@ describe('PersonnalisationsExpressionService', () => {
             '(ligne 1, colonne 17) :',
             '  score(cae_1.2.3))',
             '                  ^',
-            'NotAllInputParsedException: Redundant input, expecting EOF but found: )',
+            "Texte inattendu après la fin de l'expression : « ) ».",
           ].join('\n')
         );
       }

@@ -29,7 +29,7 @@ describe('import-referentiel.service', () => {
           "L'expression de désactivation de l'action cae_1.2.3 contient une erreur de syntaxe (ligne 1, colonne 7) :",
           '  token non valide',
           '        ^^^',
-          'NotAllInputParsedException: Redundant input, expecting EOF but found: non',
+          "Texte inattendu après la fin de l'expression : « non ».",
         ].join('\n')
       );
     });
@@ -47,7 +47,7 @@ describe('import-referentiel.service', () => {
           "L'expression de réduction de l'action cae_1.2.3 contient une erreur de syntaxe (ligne 1, colonne 7) :",
           '  score()',
           '        ^',
-          "MismatchedTokenException: Expecting token of type --> CNAME <-- but found --> ')' <--",
+          'Attendu un identifiant, trouvé « ) ».',
         ].join('\n')
       );
     });
@@ -61,7 +61,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        /L'expression de score de l'action cae_1.2.3 contient une erreur de syntaxe \(ligne 1, colonne \d+\) :\n {2}1 -- 2\n *\^+\nNoViableAltException: Expecting: one of these possible Token sequences:/
+        /L'expression de score de l'action cae_1.2.3 contient une erreur de syntaxe \(ligne 1, colonne \d+\) :\n {2}1 -- 2\n *\^+\nExpression attendue, trouvé « - »\./
       );
     });
 
@@ -78,7 +78,7 @@ describe('import-referentiel.service', () => {
           "L'expression de score de l'action cae_1.2.3 contient une erreur de syntaxe (ligne 1, colonne 16) :",
           '  limite(cae_1.b))',
           '                 ^',
-          'NotAllInputParsedException: Redundant input, expecting EOF but found: )',
+          "Texte inattendu après la fin de l'expression : « ) ».",
         ].join('\n')
       );
     });
