@@ -9,7 +9,6 @@ describe('import-referentiel.service', () => {
   beforeAll(async () => {
     app = await getTestApp();
     importReferentielService = app.get(ImportReferentielService);
-
   });
 
   afterAll(async () => {
@@ -26,7 +25,12 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'L\'expression de desactivation "token non valide" de l\'action cae_1.2.3 contient une erreur de syntaxe : NotAllInputParsedException: Redundant input, expecting EOF but found: non (1:7 --> 1:9)'
+        [
+          "L'expression de désactivation de l'action cae_1.2.3 contient une erreur de syntaxe (ligne 1, colonne 7) :",
+          '  token non valide',
+          '        ^^^',
+          'NotAllInputParsedException: Redundant input, expecting EOF but found: non',
+        ].join('\n')
       );
     });
 
@@ -39,7 +43,12 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        `L'expression de reduction "score()" de l'action cae_1.2.3 contient une erreur de syntaxe : MismatchedTokenException: Expecting token of type --> CNAME <-- but found --> ')' <-- (1:7)`
+        [
+          "L'expression de réduction de l'action cae_1.2.3 contient une erreur de syntaxe (ligne 1, colonne 7) :",
+          '  score()',
+          '        ^',
+          "MismatchedTokenException: Expecting token of type --> CNAME <-- but found --> ')' <--",
+        ].join('\n')
       );
     });
 
@@ -52,7 +61,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        /L'expression de score "1 -- 2" de l'action cae_1.2.3 contient une erreur de syntaxe : NoViableAltException: Expecting: one of these possible Token sequences:.*/
+        /L'expression de score de l'action cae_1.2.3 contient une erreur de syntaxe \(ligne 1, colonne \d+\) :\n {2}1 -- 2\n *\^+\nNoViableAltException: Expecting: one of these possible Token sequences:/
       );
     });
 
@@ -65,7 +74,12 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'L\'expression de score "limite(cae_1.b))" de l\'action cae_1.2.3 contient une erreur de syntaxe : NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:16)'
+        [
+          "L'expression de score de l'action cae_1.2.3 contient une erreur de syntaxe (ligne 1, colonne 16) :",
+          '  limite(cae_1.b))',
+          '                 ^',
+          'NotAllInputParsedException: Redundant input, expecting EOF but found: )',
+        ].join('\n')
       );
     });
 
@@ -91,7 +105,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'L\'indicateur "cae_1000" référencé dans liste indicateurs de l\'action cae_1.2.3 n\'existe pas'
+        "L'indicateur \"cae_1000\" référencé dans liste indicateurs de l'action cae_1.2.3 n'existe pas"
       );
     });
 
@@ -107,7 +121,7 @@ describe('import-referentiel.service', () => {
         [
           'L\'expression cible manquante pour l\'indicateur "cae_1.a" utilisé dans l\'expression "limite(cae_1.a) < cible(cae_1.a)" de l\'action cae_1.2.3',
           'L\'expression limite manquante pour l\'indicateur "cae_1.a" utilisé dans l\'expression "limite(cae_1.a) < cible(cae_1.a)" de l\'action cae_1.2.3',
-        ].join('\n')
+        ].join('\n\n')
       );
     });
 

@@ -473,6 +473,28 @@ describe('ImportPersonnalisationQuestionService', () => {
           )
         ).toThrow(/question_choix_z[\s\S]*\n[\s\S]*touristqiue/);
       });
+
+      it("signale une erreur de syntaxe par un extrait, sans recopier l'expression", () => {
+        expect(() =>
+          service.verifyPersonnalisationQuestionsAndChoix(
+            [
+              questionChoix,
+              { ...buildQuestion('si vrai alors'), id: 'Question_Visible' },
+            ],
+            choix,
+            [],
+            [],
+            []
+          )
+        ).toThrow(
+          [
+            "L'expression de visibilité de la question Question_Visible est invalide (ligne 1, colonne 14) :",
+            '  si vrai alors',
+            '               ^',
+            '',
+          ].join('\n')
+        );
+      });
     });
   });
 });

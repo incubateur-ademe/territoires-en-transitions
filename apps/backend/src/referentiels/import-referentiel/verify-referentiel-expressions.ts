@@ -3,6 +3,7 @@ import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collect
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { regleTypeEnumValues } from '@tet/domain/collectivites';
 import { ActionQuestion, ReferentielId } from '@tet/domain/referentiels';
+import { upperFirst } from 'es-toolkit';
 import { ImportActionDefinition } from './import-action-definition.dto';
 import {
   ExpressionToVerify,
@@ -233,7 +234,12 @@ function verifyPersonnalisationExpressions(input: {
         accumulator.validExpressions.push(expressionToVerify);
       } else {
         accumulator.syntaxErrors.push(
-          `L'expression de ${expressionToVerify.ruleType} "${expressionToVerify.expression}" de l'action ${expressionToVerify.actionId} contient une erreur de syntaxe : ${result.error}`
+          `${upperFirst(
+            buildRuleExpressionLabel(
+              expressionToVerify.actionId,
+              expressionToVerify.ruleType
+            )
+          )} contient une erreur de syntaxe ${result.error}`
         );
       }
       return accumulator;
@@ -277,7 +283,7 @@ function verifyScoreExpressions(input: {
 
       const actionId = buildActionId(referentielId, action.identifiant);
       return [
-        `L'expression de score "${action.exprScore}" de l'action ${actionId} contient une erreur de syntaxe : ${result.error}`,
+        `L'expression de score de l'action ${actionId} contient une erreur de syntaxe ${result.error}`,
       ];
     });
 }

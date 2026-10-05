@@ -22,6 +22,7 @@ import {
 } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
 import { sql } from 'drizzle-orm';
+import { upperFirst } from 'es-toolkit';
 import { QuestionForVerification } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
 import { extractReferencesFromExpression } from '../services/personnalisation-expression-reference-extractor';
 import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
@@ -280,7 +281,7 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       choixByQuestionMap
     );
     if (expressionErrors.length) {
-      throw new UnprocessableEntityException(expressionErrors.join('\n'));
+      throw new UnprocessableEntityException(expressionErrors.join('\n\n'));
     }
 
     this.logger.log('Verification complete: all data is valid');
@@ -318,11 +319,7 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
           question.exprVisible
         );
       } catch (error) {
-        return [
-          `Invalid expression for question ${question.id}: "${getErrorMessage(
-            error
-          )}"`,
-        ];
+        return [`${upperFirst(label)} est invalide ${getErrorMessage(error)}`];
       }
       return verifyPersonnalisationExpressionReferences(
         extractReferencesFromExpression(question.exprVisible),
