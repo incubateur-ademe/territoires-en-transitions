@@ -94,6 +94,19 @@ export const plansLabels = {
   ficheSecteursARenseigner: 'À renseigner',
   ficheSecteursNonRenseigne: 'Non renseigné',
   ficheSecteursChargement: 'Chargement des secteurs',
+  planSecteursEnCoursDeCalcul: plural({
+    one: 'en cours de calcul',
+    other: 'en cours de calcul',
+  }),
+  planSecteursARenseigner: plural({
+    one: 'à renseigner',
+    other: 'à renseigner',
+  }),
+  planSecteursNonAttribuables: plural({
+    one: 'non attribuable',
+    other: 'non attribuables',
+  }),
+  planSecteursBanniereTitre: 'Secteurs réglementaires des actions à vérifier',
   ficheSecteursOrigineLabels: {
     automatique: 'Secteurs proposés automatiquement',
     manuelle: 'Secteurs choisis par la collectivité',

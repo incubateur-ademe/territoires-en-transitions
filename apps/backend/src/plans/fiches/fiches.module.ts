@@ -50,6 +50,9 @@ import { FicheSecteursAttributionRepository } from './fiche-secteurs/fiche-secte
 import { FicheSecteursEligibiliteRepository } from './fiche-secteurs/fiche-secteurs-eligibilite.repository';
 import { GetFicheSecteursRouter } from './fiche-secteurs/get-fiche-secteurs.router';
 import { GetFicheSecteursService } from './fiche-secteurs/get-fiche-secteurs.service';
+import { ListPlanSecteursCountsRepository } from './fiche-secteurs/list-plan-secteurs-counts.repository';
+import { ListPlanSecteursCountsRouter } from './fiche-secteurs/list-plan-secteurs-counts.router';
+import { ListPlanSecteursCountsService } from './fiche-secteurs/list-plan-secteurs-counts.service';
 import { UpsertFicheSecteursRouter } from './fiche-secteurs/upsert-fiche-secteurs.router';
 import { UpsertFicheSecteursService } from './fiche-secteurs/upsert-fiche-secteurs.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
@@ -118,6 +121,9 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     GetFicheSecteursRouter,
     UpsertFicheSecteursService,
     UpsertFicheSecteursRouter,
+    ListPlanSecteursCountsRepository,
+    ListPlanSecteursCountsService,
+    ListPlanSecteursCountsRouter,
     FichesRouter,
     NotifyPiloteService,
     FicheExportPayloadService,
