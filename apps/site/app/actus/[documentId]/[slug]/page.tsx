@@ -9,19 +9,23 @@ import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Badge, Button } from '@tet/ui';
 import { Metadata, ResolvingMetadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { GallerieArticleData, ImageArticleData } from '../../../types';
 import GallerieArticle from './GallerieArticle';
 import InfoArticle from './InfoArticle';
 import ParagrapheArticle from './ParagrapheArticle';
-import { getData, getMetaData } from './utils';
+import { getData, getMetaData, resolveActualiteDocumentId } from './utils';
+
+type ArticleParams = Promise<{ documentId: string; slug: string }>;
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: ArticleParams },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { id } = await params;
-  const data = await getMetaData(parseInt(id));
+  const resolved = await resolveActualiteDocumentId((await params).documentId);
+  const data = resolved ? await getMetaData(resolved.documentId) : null;
+  if (!data) return { title: 'Actualités' };
+
   const metadata = (await parent) as Metadata;
 
   const newMetaData = getUpdatedMetadata(metadata, {
@@ -42,10 +46,29 @@ export async function generateMetadata(
   };
 }
 
-const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const id = parseInt((await params).id);
-  const data = await getData(id);
+const ImageArticle = ({
+  image: { data, legendeVisible },
+}: {
+  image: ImageArticleData;
+}) =>
+  data ? (
+    <DEPRECATED_StrapiImage
+      data={data}
+      className="max-h-[400px]"
+      containerClassName="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mx-auto mb-6"
+      displayCaption={legendeVisible}
+    />
+  ) : null;
 
+const Article = async ({ params }: { params: ArticleParams }) => {
+  const { documentId: param, slug } = await params;
+  const resolved = await resolveActualiteDocumentId(param);
+  if (!resolved) return notFound();
+  if (resolved.isLegacyId) {
+    permanentRedirect(`/actus/${resolved.documentId}/${slug}`);
+  }
+
+  const data = await getData(resolved.documentId);
   if (!data) return notFound();
 
   return (
@@ -106,14 +129,7 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
                 />
               ) : // Contenu de type image
               section.type === 'image' ? (
-                <DEPRECATED_StrapiImage
-                  data={(section.data as ImageArticleData).data}
-                  className="max-h-[400px]"
-                  containerClassName="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mx-auto mb-6"
-                  displayCaption={
-                    (section.data as ImageArticleData).legendeVisible
-                  }
-                />
+                <ImageArticle image={section.data as ImageArticleData} />
               ) : // Contenu de type gallerie d'images
               section.type === 'gallerie' ? (
                 <GallerieArticle data={section.data as GallerieArticleData} />
@@ -141,9 +157,9 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
       </div>
 
       <Section className="!flex-row flex-wrap justify-between gap-y-14">
-        {!!data.prevId && (
+        {!!data.prevDocumentId && (
           <Button
-            href={`/actus/${data.prevId}`}
+            href={`/actus/${data.prevDocumentId}`}
             variant="underlined"
             icon="arrow-left-line"
             className="order-1"
@@ -158,9 +174,9 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
         >
           Retour à la liste des articles
         </Button>
-        {!!data.nextId && (
+        {!!data.nextDocumentId && (
           <Button
-            href={`/actus/${data.nextId}`}
+            href={`/actus/${data.nextDocumentId}`}
             variant="underlined"
             icon="arrow-right-line"
             iconPosition="right"

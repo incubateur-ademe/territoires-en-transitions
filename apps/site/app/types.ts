@@ -1,16 +1,16 @@
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 
 // Types associés aux pages actualités et collectivités
 
 export type ArticleData = {
   titre: string;
-  couverture: StrapiItem;
+  couverture: StrapiMedia;
   categories: string[];
   dateCreation: Date;
   dateEdition: Date;
   contenu: SectionArticleData[];
-  prevId: number | null;
-  nextId: number | null;
+  prevDocumentId: string | null;
+  nextDocumentId: string | null;
 };
 
 export type SectionArticleData = {
@@ -46,7 +46,7 @@ export type SectionCollectiviteData = {
 export type ParagrapheArticleData = {
   titre?: string;
   texte?: string;
-  image?: StrapiItem;
+  image?: StrapiMedia | null;
   legendeVisible?: boolean;
 };
 
@@ -55,12 +55,12 @@ export type ParagrapheCustomArticleData = ParagrapheArticleData & {
 };
 
 export type ImageArticleData = {
-  data: StrapiItem;
+  data: StrapiMedia | null;
   legendeVisible?: boolean;
 };
 
 export type GallerieArticleData = {
-  data: StrapiItem[];
+  data: StrapiMedia[];
   colonnes: number;
   legende?: string;
   legendeVisible?: boolean;
@@ -92,32 +92,32 @@ export type ActionsCaeFetchedData = {
   __component: string;
   PlanificationTerritoriale: {
     Texte: string;
-    Image: { data: StrapiItem };
+    Image: StrapiMedia | null;
     LegendeVisible: boolean;
   };
   PatrimoineCollectivite: {
     Texte: string;
-    Image: { data: StrapiItem };
+    Image: StrapiMedia | null;
     LegendeVisible: boolean;
   };
   ApprovisionnementEnergie: {
     Texte: string;
-    Image: { data: StrapiItem };
+    Image: StrapiMedia | null;
     LegendeVisible: boolean;
   };
   Mobilite: {
     Texte: string;
-    Image: { data: StrapiItem };
+    Image: StrapiMedia | null;
     LegendeVisible: boolean;
   };
   OrganisationInterne: {
     Texte: string;
-    Image: { data: StrapiItem };
+    Image: StrapiMedia | null;
     LegendeVisible: boolean;
   };
   CommunicationCooperation: {
     Texte: string;
-    Image: { data: StrapiItem };
+    Image: StrapiMedia | null;
     LegendeVisible: boolean;
   };
 };
@@ -126,7 +126,7 @@ export type ParagrapheFetchedData = {
   __component: string;
   Titre: string;
   Texte: string;
-  Image: { data: StrapiItem };
+  Image: StrapiMedia | null;
   LegendeVisible: boolean;
 };
 
@@ -136,13 +136,13 @@ export type ParagrapheCustomFetchedData = ParagrapheFetchedData & {
 
 export type ImageFetchedData = {
   __component: string;
-  Image: { data: StrapiItem };
+  Image: StrapiMedia | null;
   LegendeVisible: boolean;
 };
 
 export type GallerieFetchedData = {
   __component: string;
-  Gallerie: { data: StrapiItem[] };
+  Gallerie: StrapiMedia[];
   NombreColonnes: number;
   Legende: string;
   LegendeVisible: boolean;
@@ -171,21 +171,21 @@ export type VignetteFetchedData = {
   id: number;
   titre?: string;
   legende?: string;
-  image?: { data: StrapiItem };
+  image?: StrapiMedia | null;
 };
 
 export type Vignette = {
   id: number;
   titre?: string;
   legende?: string;
-  image?: StrapiItem;
+  image?: StrapiMedia | null;
 };
 
 export type VignetteAvecDetailsFetchedData = {
   id: number;
   titre?: string;
   legende: string;
-  image?: { data: StrapiItem };
+  image?: StrapiMedia | null;
   details_titre?: string;
   details_texte: string;
   details_cta?: { label: string; url?: string };
@@ -195,7 +195,7 @@ export type VignetteAvecDetails = {
   id: number;
   titre?: string;
   legende: string;
-  image?: StrapiItem;
+  image?: StrapiMedia | null;
   details: {
     titre?: string;
     contenu: string;

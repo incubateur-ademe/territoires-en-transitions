@@ -2,12 +2,12 @@
 
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { Button } from '@tet/ui';
 
 type HeaderTrajectoireProps = {
   titre: string;
-  couverture: StrapiItem;
+  couverture: StrapiMedia;
   ctaConnexion: string;
 };
 

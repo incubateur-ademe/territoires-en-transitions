@@ -1,15 +1,38 @@
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { ContenuArticleFetchedData } from '@/site/app/types';
 import { fetchCollection } from '@/site/src/strapi/strapi';
+import { Seo, StrapiEntry, StrapiMedia } from '@/site/src/strapi/types';
+
+/** Content-type `api/actualites-categorie`. */
+export type ActualiteCategorie = { nom: string | null };
+
+/** Content-type `api/actualite` ; les champs `?:` ne sont là que s'ils ont été demandés dans `populate`. */
+export type Actualite = {
+  Titre: string;
+  DateCreation: string | null;
+  Epingle: boolean | null;
+  Resume: string | null;
+  Couverture: StrapiMedia;
+  categories?: StrapiEntry<ActualiteCategorie>[];
+  seo?: Seo | null;
+  Sections?: ContenuArticleFetchedData;
+};
 
 export type ActuCard = {
-  id: number;
+  documentId: string;
   titre: string;
   dateCreation: Date;
   epingle: boolean;
   categories: string[];
   resume?: string;
-  couverture: StrapiItem;
+  couverture: StrapiMedia;
 };
+
+export const getCategoriesNoms = (
+  categories: StrapiEntry<ActualiteCategorie>[] | undefined
+): string[] =>
+  (categories ?? [])
+    .map((categorie) => categorie.nom)
+    .filter((nom): nom is string => !!nom);
 
 export const getData = async ({
   page,
@@ -18,13 +41,13 @@ export const getData = async ({
 }: {
   page: number;
   limit: number;
-  categories?: number[];
+  categories?: string[];
 }) => {
   const filterCondition: [string, string][] | null =
     categories && categories.length > 0
-      ? categories.map((c, idx) => [
-          `filters[$or][${idx}][categories][id]`,
-          `${c}`,
+      ? categories.map((documentId, idx) => [
+          `filters[$or][${idx}][categories][documentId]`,
+          documentId,
         ])
       : null;
 
@@ -42,32 +65,24 @@ export const getData = async ({
     ['pagination[limit]', `${limit}`]
   );
 
-  const actus = await fetchCollection('actualites', fetchOptions);
+  const actus = await fetchCollection<Actualite>('actualites', fetchOptions);
 
-  const formattedData: ActuCard[] | null = actus.data
-    ? actus.data.map((d) => ({
-        id: d.id,
-        titre: d.attributes.Titre as unknown as string,
-        dateCreation:
-          (d.attributes.DateCreation as unknown as Date) ??
-          (d.attributes.createdAt as unknown as Date),
-        epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
-        categories: (
-          (d.attributes.categories?.data as unknown as StrapiItem[]) ?? []
-        ).map((d) => d.attributes.nom as unknown as string),
-        resume: (d.attributes.Resume as unknown as string) ?? undefined,
-        couverture: d.attributes.Couverture.data as unknown as StrapiItem,
-      }))
-    : [];
+  const formattedData: ActuCard[] = (actus.data ?? []).map((d) => ({
+    documentId: d.documentId,
+    titre: d.Titre,
+    dateCreation: new Date(d.DateCreation ?? d.createdAt),
+    epingle: d.Epingle ?? false,
+    categories: getCategoriesNoms(d.categories),
+    resume: d.Resume ?? undefined,
+    couverture: d.Couverture,
+  }));
 
   return {
     data: formattedData.sort((a, b) => {
       if (a.epingle && !b.epingle) return -1;
       if (!a.epingle && b.epingle) return 1;
 
-      return (
-        new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime()
-      );
+      return b.dateCreation.getTime() - a.dateCreation.getTime();
     }),
     pagination: actus.meta.pagination,
   };

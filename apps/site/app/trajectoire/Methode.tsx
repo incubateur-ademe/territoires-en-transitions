@@ -1,19 +1,18 @@
 'use client';
 
-import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia, VignetteAvecMarkdown } from '@/site/src/strapi/types';
 import classNames from 'classnames';
 
 type MethodeProps = {
   titre: string;
   description: string;
-  exemples: Vignette[];
-  image: StrapiItem;
+  exemples: VignetteAvecMarkdown[];
+  image: StrapiMedia | null;
 };
 
 const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
@@ -37,12 +36,14 @@ const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
       <h2 className="text-center text-primary-10 mb-0">{titre}</h2>
 
       {/* Illustration */}
-      <DEPRECATED_StrapiImage
-        data={image}
-        className="max-h-[500px]"
-        containerClassName="mx-auto h-fit mt-8"
-        displayCaption={false}
-      />
+      {image && (
+        <DEPRECATED_StrapiImage
+          data={image}
+          className="max-h-[500px]"
+          containerClassName="mx-auto h-fit mt-8"
+          displayCaption={false}
+        />
+      )}
 
       {/* Exemple */}
       <Markdown

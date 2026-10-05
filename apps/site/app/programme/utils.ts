@@ -1,191 +1,192 @@
-import {
-  VignetteAvecDetailsFetchedData,
-  VignetteFetchedData,
-} from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import {
+  Seo,
+  StrapiEntry,
+  StrapiMedia,
+  Temoignage,
+  VignetteAvecDetails,
+  VignetteAvecMarkdown,
+  VignetteAvecTitre,
+} from '@/site/src/strapi/types';
+import { Service } from './[uid]/types';
+
+// Single type `api/page-programme`. Les médias, composants et relations ne
+// sont présents que lorsqu'ils sont demandés dans `populate`.
+export type PageProgramme = {
+  seo?: Seo | null;
+  Titre: string;
+  Description: string | null;
+  VideoURL: string | null;
+  benefices_titre: string;
+  benefices_liste?: VignetteAvecTitre[];
+  benefices_liste_markdown?: VignetteAvecMarkdown[];
+  contact_description: string;
+  contact_cta: string;
+  etapes_titre: string;
+  etapes_liste?: VignetteAvecTitre[];
+  etapes_liste_markdown?: VignetteAvecMarkdown[];
+  etapes_cta: string;
+  services_titre: string;
+  services_liste_rel?: StrapiEntry<Service>[];
+  collectivites_titre: string;
+  collectivites_cta: string;
+  annuaire_cta: string;
+  compte_titre: string;
+  compte_description: string;
+  compte_cta: string;
+  compte_image?: StrapiMedia | null;
+};
+
+/** Champs du single type `api/page-accueil` lus par la page programme. */
+type PageAccueil = {
+  couverture_desktop?: StrapiMedia;
+  couverture_mobile?: StrapiMedia | null;
+  accueil_titre: string;
+  accueil_description: string;
+  objectifs_titre: string;
+  objectifs_liste_detaillee?: VignetteAvecDetails[];
+  temoignages_titre: string;
+  temoignages_liste?: StrapiEntry<{
+    temoignage: Temoignage;
+    identifiant: string;
+  }>[];
+  newsletter_titre: string;
+  newsletter_description: string;
+  linkedin_btn: string;
+  newsletter_btn: string;
+};
+
+/** Image Open Graph au format attendu par `getUpdatedMetadata`. */
+export const buildSeoImage = (media: StrapiMedia | null | undefined) =>
+  media
+    ? {
+        url: media.url,
+        width: media.width ?? 0,
+        height: media.height ?? 0,
+        type: media.mime,
+        alt: media.alternativeText ?? '',
+      }
+    : undefined;
 
 export const getStrapiData = async () => {
-  const [data, accueilPage] = await Promise.all([
-    fetchSingle('page-programme', [
-      ['populate[0]', 'seo'],
-      ['populate[1]', 'seo.metaImage'],
-      ['populate[2]', 'benefices_liste_markdown.image'],
-      ['populate[3]', 'etapes_liste_markdown.image'],
-      ['populate[4]', 'services_liste_rel.image'],
-      ['populate[5]', 'compte_image'],
+  const [programme, accueil] = await Promise.all([
+    fetchSingle<PageProgramme>('page-programme', [
+      ['populate[seo][populate]', 'metaImage'],
+      ['populate[benefices_liste_markdown][populate]', 'image'],
+      ['populate[etapes_liste_markdown][populate]', 'image'],
+      ['populate[services_liste_rel][populate]', 'image'],
+      ['populate[compte_image]', 'true'],
     ]),
-    fetchSingle('page-accueil', [
-      ['populate[0]', 'couverture_desktop'],
-      ['populate[1]', 'couverture_mobile'],
-      ['populate[2]', 'objectifs_liste_detaillee.image'],
-      ['populate[3]', 'objectifs_liste_detaillee.details_cta'],
-      ['populate[4]', 'temoignages_liste.temoignage'],
-      ['populate[5]', 'temoignages_liste.temoignage.portrait'],
+    fetchSingle<PageAccueil>('page-accueil', [
+      ['populate[couverture_desktop]', 'true'],
+      ['populate[couverture_mobile]', 'true'],
+      ['populate[objectifs_liste_detaillee][populate][0]', 'image'],
+      ['populate[objectifs_liste_detaillee][populate][1]', 'details_cta'],
+      ['populate[temoignages_liste][populate][temoignage][populate]', 'portrait'],
     ]),
   ]);
 
-  // Formatage de la data
-  if (data) {
-    const programmeData = data.attributes;
-    const accueilAttrs = accueilPage.attributes;
-    const temoignages = accueilAttrs.temoignages_liste
-      ?.data as unknown as StrapiItem[];
-    const couvertureDesktop = accueilAttrs.couverture_desktop
-      ?.data as unknown as StrapiItem;
-    const banner = {
-      couverture: couvertureDesktop,
-      couvertureMobile: accueilAttrs.couverture_mobile
-        ?.data as unknown as StrapiItem,
-    };
-    const accompagnementIntro = {
-      titre: accueilAttrs.accueil_titre as unknown as string,
-      description: accueilAttrs.accueil_description as unknown as
-        | string
-        | undefined,
-    };
-    const objectifs = {
-      titre: accueilAttrs.objectifs_titre as unknown as string,
-      contenu:
-        !!accueilAttrs.objectifs_liste_detaillee &&
-        accueilAttrs.objectifs_liste_detaillee.length
-          ? (
-              accueilAttrs.objectifs_liste_detaillee as unknown as VignetteAvecDetailsFetchedData[]
-            ).map((obj) => ({
-              id: obj.id,
-              titre: obj.titre,
-              legende: obj.legende,
-              image: obj.image?.data,
-              details: {
-                titre: obj.details_titre,
-                contenu: obj.details_texte,
-                cta: obj.details_cta,
-              },
-            }))
-          : null,
-    };
-    const metaImage =
-      (programmeData.seo?.metaImage?.data as unknown as StrapiItem)
-        ?.attributes ?? undefined;
+  if (!programme || !accueil?.couverture_desktop) return null;
 
-    return {
-      banner,
-      accompagnementIntro,
-      objectifs,
-      seo: {
-        metaTitle:
-          (programmeData.seo?.metaTitle as unknown as string) ?? undefined,
-        metaDescription:
-          (programmeData.seo?.metaDescription as unknown as string) ??
-          undefined,
-        metaImage: metaImage
-          ? {
-              url: metaImage.url as unknown as string,
-              width: metaImage.width as unknown as number,
-              height: metaImage.height as unknown as number,
-              type: metaImage.mime as unknown as string,
-              alt: metaImage.alternativeText as unknown as string,
-            }
-          : undefined,
-      },
-      titre: programmeData.Titre as unknown as string,
-      description:
-        (programmeData.Description as unknown as string) ?? undefined,
-      couvertureURL: (programmeData.VideoURL as unknown as string) ?? undefined,
-      benefices: {
-        titre: programmeData.benefices_titre as unknown as string,
-        contenu:
-          !!programmeData.benefices_liste_markdown &&
-          programmeData.benefices_liste_markdown.length
-            ? (
-                programmeData.benefices_liste_markdown as unknown as VignetteFetchedData[]
-              ).map((benef) => ({
-                ...benef,
-                image: benef.image?.data,
-              }))
-            : null,
-      },
-      contact: {
-        description: programmeData.contact_description as unknown as string,
-        cta: programmeData.contact_cta as unknown as string,
-      },
-      etapes: {
-        titre: programmeData.etapes_titre as unknown as string,
-        cta: programmeData.etapes_cta as unknown as string,
-        contenu:
-          !!programmeData.etapes_liste_markdown &&
-          programmeData.etapes_liste_markdown.length
-            ? (
-                programmeData.etapes_liste_markdown as unknown as VignetteFetchedData[]
-              ).map((et) => ({
-                ...et,
-                image: et.image?.data,
-              }))
-            : null,
-      },
-      services: {
-        titre: programmeData.services_titre as unknown as string,
-        contenu:
-          !!programmeData.services_liste_rel.data &&
-          programmeData.services_liste_rel.data.length
-            ? (
-                programmeData.services_liste_rel.data as unknown as {
-                  id: number;
-                  attributes: {
-                    uid: string;
-                    titre: string;
-                    description_markdown: string;
-                    image: { data: StrapiItem };
-                    sous_page: boolean | undefined;
-                  };
-                }[]
-              ).map((serv) => ({
-                id: serv.id,
-                uid: serv.attributes.uid,
-                titre: serv.attributes.titre,
-                description: serv.attributes.description_markdown,
-                image: serv.attributes.image.data,
-                sousPage: serv.attributes.sous_page ?? false,
-              }))
-            : null,
-      },
-      collectivites: {
-        titre: programmeData.collectivites_titre as unknown as string,
-        ctaCollectivites: programmeData.collectivites_cta as unknown as string,
-        ctaAnnuaire: programmeData.annuaire_cta as unknown as string,
-      },
-      compte: {
-        titre: programmeData.compte_titre as unknown as string,
-        description: programmeData.compte_description as unknown as string,
-        image:
-          (programmeData.compte_image?.data as unknown as StrapiItem) ??
-          undefined,
-        cta: programmeData.compte_cta as unknown as string,
-      },
-      temoignages:
-        temoignages && temoignages.length > 0
-          ? {
-              titre: accueilAttrs.temoignages_titre as unknown as string,
-              contenu: temoignages.map((d) => ({
-                id: d.id,
-                auteur: d.attributes.temoignage?.auteur as unknown as string,
-                role:
-                  (d.attributes.temoignage?.role as unknown as string) ??
-                  undefined,
-                temoignage: d.attributes.temoignage
-                  ?.temoignage as unknown as string,
-                portrait:
-                  (d.attributes.temoignage?.portrait
-                    .data as unknown as StrapiItem) ?? undefined,
-              })),
-            }
-          : null,
-      newsletter: {
-        titre: accueilAttrs.newsletter_titre as unknown as string,
-        description: accueilAttrs.newsletter_description as unknown as string,
-        ctaLinkedin: accueilAttrs.linkedin_btn as unknown as string,
-        ctaNewsletter: accueilAttrs.newsletter_btn as unknown as string,
-      },
-    };
-  } else return null;
+  const temoignages = accueil.temoignages_liste ?? [];
+  const services = programme.services_liste_rel ?? [];
+
+  return {
+    banner: {
+      couverture: accueil.couverture_desktop,
+      couvertureMobile: accueil.couverture_mobile,
+    },
+    accompagnementIntro: {
+      titre: accueil.accueil_titre,
+      description: accueil.accueil_description,
+    },
+    objectifs: {
+      titre: accueil.objectifs_titre,
+      contenu: accueil.objectifs_liste_detaillee?.length
+        ? accueil.objectifs_liste_detaillee.map((obj) => ({
+            id: obj.id,
+            titre: obj.titre ?? undefined,
+            legende: obj.legende,
+            image: obj.image,
+            details: {
+              titre: obj.details_titre ?? undefined,
+              contenu: obj.details_texte,
+              cta: obj.details_cta
+                ? {
+                    label: obj.details_cta.label,
+                    url: obj.details_cta.url ?? undefined,
+                  }
+                : undefined,
+            },
+          }))
+        : null,
+    },
+    seo: {
+      metaTitle: programme.seo?.metaTitle ?? undefined,
+      metaDescription: programme.seo?.metaDescription ?? undefined,
+      metaImage: buildSeoImage(programme.seo?.metaImage),
+    },
+    titre: programme.Titre,
+    description: programme.Description ?? undefined,
+    couvertureURL: programme.VideoURL ?? undefined,
+    benefices: {
+      titre: programme.benefices_titre,
+      contenu: programme.benefices_liste_markdown?.length
+        ? programme.benefices_liste_markdown
+        : null,
+    },
+    contact: {
+      description: programme.contact_description,
+      cta: programme.contact_cta,
+    },
+    etapes: {
+      titre: programme.etapes_titre,
+      cta: programme.etapes_cta,
+      contenu: programme.etapes_liste_markdown?.length
+        ? programme.etapes_liste_markdown
+        : null,
+    },
+    services: {
+      titre: programme.services_titre,
+      contenu: services.length
+        ? services.map((service) => ({
+            documentId: service.documentId,
+            uid: service.uid,
+            titre: service.titre,
+            description: service.description_markdown,
+            image: service.image,
+            sousPage: service.sous_page ?? false,
+          }))
+        : null,
+    },
+    collectivites: {
+      titre: programme.collectivites_titre,
+      ctaCollectivites: programme.collectivites_cta,
+      ctaAnnuaire: programme.annuaire_cta,
+    },
+    compte: {
+      titre: programme.compte_titre,
+      description: programme.compte_description,
+      image: programme.compte_image,
+      cta: programme.compte_cta,
+    },
+    temoignages: temoignages.length
+      ? {
+          titre: accueil.temoignages_titre,
+          contenu: temoignages.map((t) => ({
+            id: t.id,
+            auteur: t.temoignage.auteur,
+            role: t.temoignage.role,
+            temoignage: t.temoignage.temoignage,
+            portrait: t.temoignage.portrait ?? undefined,
+          })),
+        }
+      : null,
+    newsletter: {
+      titre: accueil.newsletter_titre,
+      description: accueil.newsletter_description,
+      ctaLinkedin: accueil.linkedin_btn,
+      ctaNewsletter: accueil.newsletter_btn,
+    },
+  };
 };

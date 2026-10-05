@@ -28,7 +28,6 @@ export async function generateMetadata(
   const collectiviteData = await fetchCollectivite(code);
   const strapiData = await getStrapiData(code);
   const strapiDefaultData = await getStrapiDefaultData();
-  const couverture = strapiData?.couverture?.attributes ?? undefined;
 
   if (!collectiviteData || !collectiviteData.collectivite.nom) return metadata;
 
@@ -43,17 +42,7 @@ export async function generateMetadata(
       collectiviteData.collectivite.nom,
     description:
       strapiData?.seo.metaDescription ?? strapiDefaultData?.seo.metaDescription,
-    image: strapiData?.seo.metaImage
-      ? strapiData.seo.metaImage
-      : couverture
-      ? {
-          url: couverture.url as unknown as string,
-          width: couverture.width as unknown as number,
-          height: couverture.height as unknown as number,
-          type: couverture.mime as unknown as string,
-          alt: couverture.alternativeText as unknown as string,
-        }
-      : strapiDefaultData?.seo.metaImage,
+    image: strapiData?.seo.metaImage ?? strapiDefaultData?.seo.metaImage,
   });
 }
 

@@ -1,11 +1,11 @@
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 
 type ThumbnailsListProps = {
   thumbnails: {
     id: number;
     legend: string;
-    image?: StrapiItem;
+    image?: StrapiMedia | null;
   }[];
 };
 

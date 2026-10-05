@@ -5,14 +5,19 @@ import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Field, Pagination, SelectFilter, SelectOption } from '@tet/ui';
-import { parseAsArrayOf, parseAsInteger, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
 import { useMemo } from 'react';
 import { getData } from './utils';
 
 const PAGINATION_LIMIT = 12;
 const actusSearchParams = {
   selectedPage: parseAsInteger.withDefault(1),
-  selectedCategories: parseAsArrayOf(parseAsInteger).withDefault([]),
+  selectedCategories: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 type ListeActusProps = {
@@ -30,8 +35,8 @@ const ListeActus = ({ categories }: ListeActusProps) => {
   const categoriesFilter = useMemo(
     () =>
       (selectedCategories ?? []).filter(
-        (categoryId): categoryId is number =>
-          typeof categoryId === 'number' && Number.isFinite(categoryId)
+        (documentId): documentId is string =>
+          typeof documentId === 'string' && documentId.length > 0
       ),
     [selectedCategories]
   );
@@ -75,7 +80,7 @@ const ListeActus = ({ categories }: ListeActusProps) => {
             onChange={({ values }) => {
               // quand le filtre change, on revient sur la page 1
               setSearchParams({
-                selectedCategories: (values as number[]) ?? [],
+                selectedCategories: (values as string[]) ?? [],
                 selectedPage: 1,
               });
             }}
@@ -90,14 +95,16 @@ const ListeActus = ({ categories }: ListeActusProps) => {
           <MasonryGallery
             data={data.map((actu) => (
               <BlogCard
-                key={actu.id}
+                key={actu.documentId}
                 title={actu.titre}
                 date={actu.dateCreation}
                 description={actu.resume}
                 image={actu.couverture}
                 badge={actu.epingle ? 'À la une' : undefined}
                 categories={actu.categories}
-                href={`/actus/${actu.id}/${convertNameToSlug(actu.titre)}`}
+                href={`/actus/${actu.documentId}/${convertNameToSlug(
+                  actu.titre
+                )}`}
               />
             ))}
           />

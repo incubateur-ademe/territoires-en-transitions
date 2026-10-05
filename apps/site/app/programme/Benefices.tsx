@@ -1,12 +1,12 @@
-import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
 import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
+import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
 type BeneficesProps = {
   titre: string;
-  contenu: Vignette[] | null;
+  contenu: VignetteAvecMarkdown[] | null;
 };
 
 const Benefices = ({ titre, contenu }: BeneficesProps) => {

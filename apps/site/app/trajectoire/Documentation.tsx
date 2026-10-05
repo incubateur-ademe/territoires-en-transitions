@@ -11,7 +11,7 @@ const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
 type DocumentationProps = {
   titre: string;
   description: string;
-  info: string;
+  info: string | null;
   descriptionExcel: string;
   descriptionPdf: string;
 };
@@ -33,7 +33,7 @@ const Documentation = ({
         texte={description}
         className="text-center paragraphe-22 paragraphe-primary-9 markdown_style"
       />
-      <Alert description={<Markdown texte={info} />} />
+      {info && <Alert description={<Markdown texte={info} />} />}
       <CardsWrapper cols={2}>
         {/* Excel */}
         <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex max-md:flex-col gap-5">

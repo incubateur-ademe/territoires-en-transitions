@@ -1,14 +1,14 @@
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import classNames from 'classnames';
 
 type ThreePicsMosaicProps = {
-  images: StrapiItem[];
+  images: StrapiMedia[];
 };
 
 const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
   const isPortrait = images.length
-    ? images[0].attributes.height >= images[0].attributes.width
+    ? (images[0].height ?? 0) >= (images[0].width ?? 0)
     : false;
   const isTwoColumns =
     (isPortrait && images.length >= 2) || (!isPortrait && images.length >= 3);

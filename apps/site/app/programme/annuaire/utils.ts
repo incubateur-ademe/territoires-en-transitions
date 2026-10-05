@@ -1,17 +1,17 @@
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { fetchCollection } from '@/site/src/strapi/strapi';
+import { StrapiMedia } from '@/site/src/strapi/types';
 
-export type ConseillerType = {
-  id: number;
+/** Content-type `api/conseiller` ; `photo` n'est présente que si demandée. */
+export type Conseiller = {
   prenom: string;
   nom: string;
   structure: string;
   region: string;
   ville: string;
   email: string;
-  linkedin: string;
-  site: string;
-  photo: StrapiItem;
+  linkedin: string | null;
+  site: string | null;
+  photo?: StrapiMedia | null;
 };
 
 export const getData = async ({
@@ -23,7 +23,7 @@ export const getData = async ({
   limit: number;
   search?: string;
 }) => {
-  const conseillers = await fetchCollection('conseillers', [
+  const conseillers = await fetchCollection<Conseiller>('conseillers', [
     ['populate[0]', 'photo'],
     ['filters[$or][0][prenom][$startsWithi]', search],
     ['filters[$or][1][nom][$startsWithi]', search],
@@ -35,21 +35,7 @@ export const getData = async ({
   ]);
 
   return {
-    data: !conseillers.data
-      ? []
-      : (conseillers.data.map((d) => ({
-          id: d.id,
-          prenom: d.attributes.prenom as unknown as string,
-          nom: d.attributes.nom as unknown as string,
-          structure: d.attributes.structure as unknown as string,
-          region: d.attributes.region as unknown as string,
-          ville: d.attributes.ville as unknown as string,
-          email: d.attributes.email as unknown as string,
-          linkedin: d.attributes.linkedin as unknown as string,
-          site: d.attributes.site as unknown as string,
-          photo:
-            (d.attributes.photo.data as unknown as StrapiItem) ?? undefined,
-        })) as ConseillerType[]),
+    data: conseillers.data ?? [],
     pagination: conseillers.meta.pagination,
   };
 };

@@ -1,7 +1,7 @@
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
 import TestimonialSlideshow from '@/site/components/slideshow/TestimonialSlideshow';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 
 type TemoignagesProps = {
   contenu: {
@@ -9,7 +9,7 @@ type TemoignagesProps = {
     auteur: string;
     role: string;
     temoignage: string;
-    portrait?: StrapiItem;
+    portrait?: StrapiMedia | null;
   }[];
 };
 

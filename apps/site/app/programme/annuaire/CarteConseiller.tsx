@@ -1,7 +1,7 @@
 'use client';
 
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
 import { useState } from 'react';
 
@@ -12,9 +12,9 @@ type CarteConseillerProps = {
   region: string;
   ville: string;
   email: string;
-  linkedin?: string;
-  site?: string;
-  photo?: StrapiItem;
+  linkedin?: string | null;
+  site?: string | null;
+  photo?: StrapiMedia | null;
 };
 
 const CarteConseiller = ({
@@ -34,7 +34,7 @@ const CarteConseiller = ({
   return (
     <div className="bg-white px-3 py-5 rounded-xl border border-primary-4 flex justify-between items-center gap-4">
       {/* Image */}
-      {photo !== undefined ? (
+      {photo ? (
         <DEPRECATED_StrapiImage
           data={photo}
           className="w-20 h-20 min-w-20 min-h-20 object-cover rounded-full border-primary-2 border-4 shrink-0 grow-0"

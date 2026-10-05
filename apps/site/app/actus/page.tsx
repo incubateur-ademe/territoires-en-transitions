@@ -5,6 +5,7 @@ import { fetchCollection } from '@/site/src/strapi/strapi';
 import { Divider } from '@tet/ui';
 import { Metadata } from 'next';
 import ListeActus from './ListeActus';
+import { ActualiteCategorie } from './utils';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,11 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const getCategories = async () => {
-  const { data } = await fetchCollection('actualites-categories');
-  return data.map((d) => ({
-    value: d.id,
-    label: d.attributes.nom as unknown as string,
-  }));
+  const { data } = await fetchCollection<ActualiteCategorie>(
+    'actualites-categories'
+  );
+  return (data ?? [])
+    .filter((d) => !!d.nom)
+    .map((d) => ({
+      value: d.documentId,
+      label: d.nom as string,
+    }));
 };
 
 const Actualites = async () => {

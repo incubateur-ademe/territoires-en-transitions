@@ -1,12 +1,12 @@
 'use client';
 
 import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { useEffect, useState } from 'react';
 
 type ProgrammeHeroSectionProps = {
-  couverture: StrapiItem;
-  couvertureMobile?: StrapiItem | null;
+  couverture: StrapiMedia;
+  couvertureMobile?: StrapiMedia | null;
 };
 
 const ProgrammeHeroSection = ({

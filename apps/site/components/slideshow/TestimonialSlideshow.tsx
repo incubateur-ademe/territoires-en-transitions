@@ -1,5 +1,5 @@
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { ButtonVariant } from '@tet/ui';
 import classNames from 'classnames';
 import Slideshow from './Slideshow';
@@ -10,7 +10,7 @@ type TestimonialSlideshowProps = {
     auteur: string;
     role: string;
     temoignage: string;
-    portrait?: StrapiItem;
+    portrait?: StrapiMedia | null;
   }[];
   autoSlide?: boolean;
   autoSlideDelay?: number;

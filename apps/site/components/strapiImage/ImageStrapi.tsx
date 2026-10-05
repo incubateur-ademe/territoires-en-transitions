@@ -1,22 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { Attributes, StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { StrapiImageData } from '@/site/src/strapi/types';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import classNames from 'classnames';
-
-function isStrapiItem(image: StrapiImageData): image is StrapiItem {
-  return 'attributes' in image;
-}
-
-function getImageAttributes(image: StrapiImageData) {
-  if (isStrapiItem(image)) {
-    return image.attributes as {
-      url?: string;
-      formats?: Attributes['formats'];
-      alternativeText?: string | null;
-    };
-  }
-  return image;
-}
 
 /**
  * Doc : Utiliser srcset pour optimiser le chargement des images
@@ -28,7 +12,7 @@ function getImageAttributes(image: StrapiImageData) {
 const imagePlaceholder = '/placeholder.svg';
 
 type Props = {
-  strapiImage: StrapiImageData;
+  strapiImage: StrapiMedia;
   /**
    * Taille de l'image souhaitée, par rapport au viewport,
    * aux différents breakpoint de la page. Par défaut, c'est 100vw.
@@ -53,7 +37,7 @@ const ImageStrapi = ({
   containerClassName,
   displayCaption = false,
 }: Props) => {
-  const { url, formats, alternativeText } = getImageAttributes(strapiImage);
+  const { url, formats, alternativeText } = strapiImage;
 
   if (!url) {
     return (
@@ -71,12 +55,13 @@ const ImageStrapi = ({
     <div className={classNames('relative', containerClassName)}>
       <img
         className={classNames('block', imgClassName)}
-        src={(formats?.small?.url ?? url) as unknown as string}
+        src={formats?.small?.url ?? url}
         srcSet={
-          formats &&
-          Object.keys(formats)
-            .map((key) => `${formats[key].url} ${formats[key].width}w`)
-            .join(', ')
+          formats
+            ? Object.values(formats)
+                .map((format) => `${format.url} ${format.width}w`)
+                .join(', ')
+            : undefined
         }
         sizes={size}
         alt={`${alternativeText ?? ''}`}

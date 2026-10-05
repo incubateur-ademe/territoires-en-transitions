@@ -2,17 +2,17 @@ import BlogCard from '@/site/components/cards/BlogCard';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 
 type ServicesProps = {
   titre: string;
   contenu:
     | {
-        id: number;
+        documentId: string;
         uid: string;
         titre: string;
         description: string;
-        image: StrapiItem;
+        image?: StrapiMedia;
         sousPage: boolean;
       }[]
     | null;
@@ -29,7 +29,7 @@ const Services = ({ titre, contenu }: ServicesProps) => {
         {contenu.length > 0 &&
           contenu.map((c) => (
             <BlogCard
-              key={c.id}
+              key={c.documentId}
               title={c.titre}
               description={c.description}
               image={c.image}

@@ -1,114 +1,84 @@
 import { fetchSingle } from '@/site/src/strapi/strapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import {
+  Seo,
+  StrapiEntry,
+  StrapiMedia,
+  Temoignage,
+  VignetteAvecCta,
+  VignetteAvecDetails,
+  VignetteAvecMarkdown,
+} from '@/site/src/strapi/types';
 
-export const getMetaData = async () => {
-  const data = await fetchSingle('page-accueil', [
-    ['populate[0]', 'seo'],
-    ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'couverture_desktop'],
-  ]);
-
-  const metaImage =
-    (data?.attributes?.seo?.metaImage?.data as unknown as StrapiItem)
-      ?.attributes ??
-    (data?.attributes.couverture_desktop.data as unknown as StrapiItem)
-      ?.attributes ??
-    undefined;
-
-  return data
-    ? {
-        metaTitle:
-          (data?.attributes?.seo?.metaTitle as unknown as string) ?? undefined,
-        metaDescription:
-          (data?.attributes?.seo?.metaDescription as unknown as string) ??
-          (data?.attributes.Titre as unknown as string) ??
-          undefined,
-        metaImage: metaImage
-          ? {
-              url: metaImage.url as unknown as string,
-              width: metaImage.width as unknown as number,
-              height: metaImage.height as unknown as number,
-              type: metaImage.mime as unknown as string,
-              alt: metaImage.alternativeText as unknown as string,
-            }
-          : undefined,
-      }
-    : null;
+/** Single type `page-accueil` (strapi/src/api/page-accueil). */
+export type PageAccueil = {
+  seo?: Seo | null;
+  couverture_desktop?: StrapiMedia;
+  couverture_mobile?: StrapiMedia | null;
+  accueil_titre: string;
+  accueil_description: string;
+  programme?: VignetteAvecCta;
+  plateforme?: VignetteAvecCta;
+  objectifs_titre: string;
+  objectifs_liste?: VignetteAvecMarkdown[];
+  objectifs_liste_detaillee?: VignetteAvecDetails[];
+  collectivites_titre: string;
+  collectivites_cta: string;
+  contact_description: string;
+  contact_cta: string;
+  temoignages_titre: string;
+  temoignages_liste?: StrapiEntry<{
+    temoignage: Temoignage;
+    identifiant: string;
+  }>[];
+  newsletter_titre: string;
+  newsletter_description: string;
+  linkedin_btn: string;
+  newsletter_btn: string;
 };
 
-export const getData = async () => {
-  // Fetch du contenu de la page d'accueil
-  const data = await fetchSingle('page-accueil', [
-    ['populate[0]', 'programme.image'],
-    ['populate[1]', 'plateforme.image'],
-    ['populate[2]', 'temoignages_liste.temoignage'],
-    ['populate[3]', 'temoignages_liste.temoignage.portrait'],
+export const getMetaData = async () => {
+  const data = await fetchSingle<PageAccueil>('page-accueil', [
+    ['populate[seo][populate]', 'metaImage'],
+    ['populate[couverture_desktop]', 'true'],
   ]);
 
-  const accueilData = data.attributes;
+  if (!data) return null;
 
-  const temoignages = data?.attributes.temoignages_liste
-    .data as unknown as StrapiItem[];
+  const metaImage = data.seo?.metaImage ?? data.couverture_desktop;
 
-  // Formattage de la data
-  const formattedData = data
-    ? {
-        accompagnement: {
-          contenu: [
-            {
-              titre: accueilData.programme.titre as unknown as string,
-              description: accueilData.programme.legende as unknown as string,
-              image: accueilData.programme.image.data as unknown as StrapiItem,
-              button: {
-                titre: accueilData.programme.cta as unknown as string,
-                href: '/programme',
-              },
-            },
-            {
-              titre: accueilData.plateforme.titre as unknown as string,
-              description: accueilData.plateforme.legende as unknown as string,
-              image: accueilData.plateforme.image.data as unknown as StrapiItem,
-              button: {
-                titre: accueilData.plateforme.cta as unknown as string,
-                href: '/outil-numerique',
-              },
-            },
-          ],
-        },
-        collectivites: {
-          titre: accueilData.collectivites_titre as unknown as string,
-          cta: accueilData.collectivites_cta as unknown as string,
-        },
-        contact: {
-          description: accueilData.contact_description as unknown as string,
-          cta: accueilData.contact_cta as unknown as string,
-        },
-        temoignages:
-          temoignages && temoignages.length > 0
-            ? {
-                titre: accueilData.temoignages_titre as unknown as string,
-                contenu: temoignages.map((d) => ({
-                  id: d.id,
-                  auteur: d.attributes.temoignage?.auteur as unknown as string,
-                  role:
-                    (d.attributes.temoignage?.role as unknown as string) ??
-                    undefined,
-                  temoignage: d.attributes.temoignage
-                    ?.temoignage as unknown as string,
-                  portrait:
-                    (d.attributes.temoignage?.portrait
-                      .data as unknown as StrapiItem) ?? undefined,
-                })),
-              }
-            : null,
-        newsletter: {
-          titre: accueilData.newsletter_titre as unknown as string,
-          description: accueilData.newsletter_description as unknown as string,
-          ctaLinkedin: accueilData.linkedin_btn as unknown as string,
-          ctaNewsletter: accueilData.newsletter_btn as unknown as string,
-        },
-      }
-    : null;
+  return {
+    metaTitle: data.seo?.metaTitle ?? undefined,
+    metaDescription: data.seo?.metaDescription ?? data.accueil_description,
+    metaImage: metaImage
+      ? {
+          url: metaImage.url,
+          width: metaImage.width ?? undefined,
+          height: metaImage.height ?? undefined,
+          type: metaImage.mime,
+          alt: metaImage.alternativeText ?? undefined,
+        }
+      : undefined,
+  };
+};
 
-  return formattedData;
+/**
+ * Contenu de la page d'accueil. Seuls les témoignages viennent encore de
+ * Strapi : les autres sections de `home.page.tsx` sont codées en dur.
+ */
+export const getData = async () => {
+  const data = await fetchSingle<PageAccueil>('page-accueil', [
+    ['populate[temoignages_liste][populate][temoignage][populate]', 'portrait'],
+  ]);
+
+  if (!data) return null;
+
+  return {
+    temoignages: (data.temoignages_liste ?? []).map((t) => ({
+      id: t.id,
+      auteur: t.temoignage.auteur,
+      role: t.temoignage.role,
+      temoignage: t.temoignage.temoignage,
+      portrait: t.temoignage.portrait ?? undefined,
+    })),
+  };
 };
