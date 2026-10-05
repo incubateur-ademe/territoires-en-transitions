@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
+import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collectivites/personnalisations/services/verify-personnalisation-expression-references';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import {
@@ -23,6 +24,7 @@ import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/model
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
   CategorieTagCreate,
@@ -33,14 +35,13 @@ import { ThematiqueCreate } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
 import { DepGraph } from 'dependency-graph';
 import { inArray } from 'drizzle-orm';
-import { capitalize, omit } from 'es-toolkit';
+import { omit, upperFirst } from 'es-toolkit';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
-import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
   importIndicateurDefinitionSchema,
@@ -57,6 +58,26 @@ import {
  */
 const UNKNOWN_QUESTION_HINT =
   "Si cette question vient d'être créée, importez les questions de personnalisation avant les indicateurs.";
+
+/**
+ * Une erreur de syntaxe (`InvalidExpressionError`) porte déjà un extrait de la
+ * ligne fautive : la formule n'est alors pas recopiée. Les autres erreurs
+ * (référentiel inconnu, indicateur source inconnue…) n'ont pas de position et
+ * gardent la formule.
+ */
+function formatInvalidExpressionMessage(input: {
+  label: string;
+  expression: string;
+  err: unknown;
+}): string {
+  const { label, expression, err } = input;
+  if (err instanceof InvalidExpressionError) {
+    return `${upperFirst(label)} est invalide ${err.message}`;
+  }
+  return `${upperFirst(label)} "${expression}" est invalide : ${getErrorMessage(
+    err
+  )}`;
+}
 
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
   ReturnType<ListPlatformDefinitionsRepository['listPlatformDefinitions']>
@@ -365,9 +386,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           });
         } catch (err) {
           throw new UnprocessableEntityException(
-            `Invalid expression "${indicateur.valeurCalcule}" for indicateur "${
-              indicateur.identifiantReferentiel
-            }": ${getErrorMessage(err)}`
+            formatInvalidExpressionMessage({
+              label: `l'expression de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
+              expression: indicateur.valeurCalcule,
+              err,
+            })
           );
         }
       }
@@ -388,7 +411,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     });
 
     if (errors.length) {
-      throw new UnprocessableEntityException(errors.join('\n'));
+      throw new UnprocessableEntityException(errors.join('\n\n'));
     }
 
     try {
@@ -419,11 +442,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     try {
       this.personnalisationsExpressionService.validateExpression(expression);
     } catch (err) {
-      return [
-        `${capitalize(label)} "${expression}" est invalide : ${getErrorMessage(
-          err
-        )}`,
-      ];
+      return [formatInvalidExpressionMessage({ label, expression, err })];
     }
     return verifyPersonnalisationExpressionReferences(
       extractReferencesFromExpression(expression),

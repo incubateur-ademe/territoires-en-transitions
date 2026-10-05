@@ -126,6 +126,14 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         importIndicateurDefinitionService.checkIndicateurDefinitions([
           indicateurDefinition,
         ])
+      ).rejects.toThrow(
+        // erreur sans position : la formule est recopiée
+        `L'expression cible de l'indicateur cae_1.a "si referentiel(xx) alors 20 sinon 10" est invalide : `
+      );
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+        ])
       ).rejects.toThrow(/référentiel "xx" inconnu/i);
     });
 
@@ -140,6 +148,39 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         ]);
       await expect(promise).rejects.toThrow(UnprocessableEntityException);
       await expect(promise).rejects.toThrow(/caractère non reconnu « é »/i);
+    });
+
+    test('Expression cible avec erreur de syntaxe : extrait sans recopie de la formule', async () => {
+      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      indicateurDefinition.exprCible =
+        'si identite(sinoe, dense) alors 280\nsinon si dentite(sinoe, touristique) alors 300\nsinon 380';
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+        ])
+      ).rejects.toThrow(
+        [
+          "L'expression cible de l'indicateur cae_1.a est invalide (ligne 2, colonne 17) :",
+          '  sinon si dentite(sinoe, touristique) alors 300',
+          '                  ^',
+          "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '(' <--",
+        ].join('\n')
+      );
+    });
+
+    test('Formule de calcul avec erreur de syntaxe : libellé en français', async () => {
+      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      indicateurDefinition.valeurCalcule = 'val(cae_1.b) +';
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+          cloneDeep(sampleImportIndicateurDefinition2),
+        ])
+      ).rejects.toThrow(
+        /^L'expression de calcul de l'indicateur cae_1\.a est invalide \(ligne 1, colonne \d+\) :\n {2}val\(cae_1\.b\) \+\n/
+      );
     });
 
     test('Expression seuil avec version mal formée', async () => {

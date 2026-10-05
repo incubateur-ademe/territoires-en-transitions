@@ -542,7 +542,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
 
     if (errors.length) {
-      throw new UnprocessableEntityException(errors.join('\n'));
+      throw new UnprocessableEntityException(errors.join('\n\n'));
     }
     return true;
   }

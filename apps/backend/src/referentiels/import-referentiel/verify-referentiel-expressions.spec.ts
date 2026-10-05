@@ -35,8 +35,9 @@ describe('verifyReferentielExpressions', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0]).toContain('erreur de syntaxe');
-    expect(errors[0]).toContain('invalide !!!');
+    expect(errors[0]).toContain('erreur de syntaxe parse error');
+    // l'erreur de syntaxe porte un extrait : la formule n'est pas recopiée
+    expect(errors[0]).not.toContain('invalide !!!');
     expect(errors[0]).toContain('cae_1.1');
   });
 
