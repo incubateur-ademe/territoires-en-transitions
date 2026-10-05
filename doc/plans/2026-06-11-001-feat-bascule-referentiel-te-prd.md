@@ -121,6 +121,10 @@ Exemples : une CT avec CAE engagé et ECI peu rempli → CAE visible en `write`,
 |---|---|---|---|
 | Au moins un ref. engagé | `mode: readonly`, `display: true` | engagé → `write` + `display: true` ; non engagé → `archived` + `display: false` | Visible (si éligible) |
 | Aucun ref. engagé | `mode: write`, `display: true`, sans `populatedFromCaeEci` | `archived`, `display: false` | Masqué |
+| Syndicat (non éligible à TE) | `mode: readonly`, `display: true` | `cae` → `archived`, `display: true` si engagé (sinon `false`) ; `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_SYNDICAT`) |
+| DROM (pas encore éligible à TE) | `mode: readonly`, `display: true` | `cae` et `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_DROM`) |
+
+Pour les syndicats et les DROM, ces valeurs sont **forcées quel que soit le niveau de remplissage** : ces CT ne peuvent pas basculer et doivent continuer à travailler sur leurs référentiels historiques. Si une CT est à la fois syndicat et DROM, la règle syndicat s'applique.
 
 > **Conséquence produit assumée** : une CT avec un seul critère rempli (ex. 50 statuts CAE seuls) est « non engagée » → démarrage TE direct en `write`, CAE/ECI `archived` masqués, **sans bouton de bascule** ni reprise automatique des données legacy vers TE. Seuil conservé tel quel (règle initialement conçue pour masquer ECI vide dans la nav).
 

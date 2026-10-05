@@ -19,6 +19,10 @@ export function preferenceFromDisplay(
 export type DeriveReferentielPreferencesInput = {
   caeEngaged: boolean;
   eciEngaged: boolean;
+  /** syndicat : non éligible à TE, reste sur ECI (prime sur `isDrom`) */
+  isSyndicat?: boolean;
+  /** DROM : pas encore éligible à TE, reste sur CAE et ECI */
+  isDrom?: boolean;
 };
 
 export function deriveReferentielPreferences(
@@ -29,7 +33,26 @@ export function deriveReferentielPreferences(
     return existing;
   }
 
-  const { caeEngaged, eciEngaged } = input;
+  const { caeEngaged, eciEngaged, isSyndicat, isDrom } = input;
+
+  // collectivités non éligibles à la bascule : valeurs forcées, indépendantes
+  // du niveau de remplissage (sauf la visibilité du CAE archivé des syndicats)
+  if (isSyndicat) {
+    return {
+      cae: { display: caeEngaged, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    };
+  }
+
+  if (isDrom) {
+    return {
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    };
+  }
+
   const collectiviteEngaged = caeEngaged || eciEngaged;
 
   if (collectiviteEngaged) {

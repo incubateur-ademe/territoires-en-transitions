@@ -36,11 +36,17 @@ describe('ResetDisplayPreferencesRouter', () => {
     await app.close();
   });
 
-  const setupIsolatedCollectivite = async (role = CollectiviteRole.EDITION) => {
+  const setupIsolatedCollectivite = async (
+    role = CollectiviteRole.EDITION,
+    collectiviteArgs?: NonNullable<
+      Parameters<typeof addTestCollectiviteAndUser>[1]
+    >['collectivite']
+  ) => {
     const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
       databaseService,
       {
         user: { role },
+        collectivite: collectiviteArgs,
       }
     );
 
@@ -183,6 +189,49 @@ describe('ResetDisplayPreferencesRouter', () => {
     });
     expect(result.referentiels).toEqual({
       cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('Syndicat keeps TE readonly, CAE archived and ECI write whatever its activity', async () => {
+    const { collectivite } = await setupIsolatedCollectivite(
+      CollectiviteRole.EDITION,
+      { natureInsee: 'SIVU' }
+    );
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
+    expect(result.referentiels).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('DROM keeps TE readonly, CAE and ECI write whatever its activity', async () => {
+    const { collectivite } = await setupIsolatedCollectivite(
+      CollectiviteRole.EDITION,
+      // Guadeloupe : drom = true (data_layer/seed/imports/01-region.sql)
+      { regionCode: '01' }
+    );
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'write' },
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
     });

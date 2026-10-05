@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   CollectivitePreferencesErrorEnum,
   type CollectivitePreferencesError,
 } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Result } from '@tet/backend/utils/result.type';
@@ -18,6 +19,10 @@ import {
   type CollectiviteReferentielPreferenceId,
 } from '@tet/domain/collectivites';
 import { chunk } from 'es-toolkit';
+import {
+  getEligibiliteType,
+  type EligibiliteType,
+} from '../switch-to-te/switch-to-te.rules';
 import { ComputeReferentielEngagementService } from './compute-referentiel-engagement.service';
 
 export type ResetAllCollectivitesDisplayPreferencesResult = Record<
@@ -33,17 +38,22 @@ export type ResetAllCollectivitesDisplayPreferencesOutput = {
 /**
  * This service is used to reset the display preferences for a collectivité based on its activities
  * If nothing has been done on ECI, no need to display it but only the new referentiel
+ * Syndicats and DROM are not eligible to the new referentiel: they keep their
+ * legacy referentiels whatever their activity (see `deriveReferentielPreferences`)
  * Temporary need, must be removed once the new referentiel is released
  */
 @Injectable()
 export class ResetDisplayPreferencesService {
+  private readonly logger = new Logger(ResetDisplayPreferencesService.name);
+
   private readonly PARALLEL_COLLECTIVITE_RESET_DISPLAY_PREFERENCES = 10;
 
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly repository: CollectivitePreferencesRepository,
     private readonly transactionManager: TransactionManager,
-    private readonly computeReferentielEngagementService: ComputeReferentielEngagementService
+    private readonly computeReferentielEngagementService: ComputeReferentielEngagementService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   async resetCollectiviteDisplayPreferences(
@@ -62,6 +72,14 @@ export class ResetDisplayPreferencesService {
       );
     }
     const display = displayResult.data;
+
+    // le type de collectivité (syndicat / DROM) ne dépend pas non plus des
+    // préférences : lu hors transaction lui aussi
+    const eligibiliteResult = await this.getEligibiliteType(collectiviteId);
+    if (!eligibiliteResult.success) {
+      return eligibiliteResult;
+    }
+    const { isSyndicat, isDrom } = eligibiliteResult.data;
 
     // verrou + revalidation + écriture dans une transaction : la lecture verrouillée
     // (FOR UPDATE) sérialise les resets/bascules concurrents, et on revalide
@@ -91,13 +109,45 @@ export class ResetDisplayPreferencesService {
         collectiviteId,
         {
           referentiels: deriveReferentielPreferences(
-            { caeEngaged: display.cae, eciEngaged: display.eci },
+            {
+              caeEngaged: display.cae,
+              eciEngaged: display.eci,
+              isSyndicat,
+              isDrom,
+            },
             existingPreferences.referentiels
           ),
         },
         tx
       );
     });
+  }
+
+  private async getEligibiliteType(
+    collectiviteId: number
+  ): Promise<Result<EligibiliteType, CollectivitePreferencesError>> {
+    try {
+      const collectivite =
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      return success(getEligibiliteType(collectivite));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return failure(
+          CollectivitePreferencesErrorEnum.COLLECTIVITE_NOT_FOUND,
+          error
+        );
+      }
+      this.logger.error(
+        `Erreur inattendue lors de la lecture du type de la collectivité ${collectiviteId} : ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        error instanceof Error ? error.stack : undefined
+      );
+      return failure(
+        CollectivitePreferencesErrorEnum.DATABASE_ERROR,
+        error as Error
+      );
+    }
   }
 
   async resetAllCollectivitesDisplayPreferences(): Promise<ResetAllCollectivitesDisplayPreferencesOutput> {
