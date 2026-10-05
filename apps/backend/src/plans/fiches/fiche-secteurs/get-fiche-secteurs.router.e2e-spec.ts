@@ -248,6 +248,49 @@ describe('Lecture des secteurs d’une fiche', () => {
     expect(communs.getNombreAppels(ficheId)).toBe(2);
   });
 
+  test('fiche pas encore classée : la fiche Communs est demandée, sans classification, rien n’est écrit', async () => {
+    const ficheId = await nouvelleFiche();
+    communs.repondPasEncoreCalculee(ficheId);
+
+    expect(await getSecteurs(ficheId)).toEqual({ etat: 'en_cours_de_calcul' });
+    expect(communs.getNombreAppelsAction(ficheId)).toBe(1);
+    expect(await getAttribution(ficheId)).toBeNull();
+  });
+
+  test('fiche classée mais muette : écrit des secteurs vides, renvoie « non attribuable », sans rappeler Communs', async () => {
+    const ficheId = await nouvelleFiche();
+    communs.repondMuette(ficheId);
+
+    expect(await getSecteurs(ficheId)).toEqual({
+      etat: 'non_attribuable',
+      origine: 'automatique',
+    });
+    const attribution = await getAttribution(ficheId);
+    expect(attribution).toMatchObject({
+      secteurs: [],
+      origine: 'automatique',
+      methode: 'mapping-test/agregation-test',
+    });
+    expect(attribution?.reponseCommuns).toMatchObject({
+      secteursDirect: null,
+    });
+
+    expect(await getSecteurs(ficheId)).toEqual({
+      etat: 'non_attribuable',
+      origine: 'automatique',
+    });
+    expect(communs.getNombreAppels(ficheId)).toBe(1);
+    expect(communs.getNombreAppelsAction(ficheId)).toBe(1);
+  });
+
+  test('fiche avec des secteurs : la fiche Communs n’est pas demandée', async () => {
+    const ficheId = await nouvelleFiche();
+    communs.repondParts(ficheId, { dechets: 0.9 });
+
+    await getSecteurs(ficheId);
+    expect(communs.getNombreAppelsAction(ficheId)).toBe(0);
+  });
+
   test('404 sur une fiche non modifiée depuis plus de 30 min : écrit une attribution indisponible, renvoie « à renseigner », sans rappeler Communs', async () => {
     const ficheId = await nouvelleFiche();
     await antidate(ficheId, DELAI_404_DEFINITIF_MS + UNE_MINUTE_MS);

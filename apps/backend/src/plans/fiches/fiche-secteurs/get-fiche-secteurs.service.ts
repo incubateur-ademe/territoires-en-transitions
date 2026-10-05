@@ -122,7 +122,9 @@ export class GetFicheSecteursService {
         origine: OrigineSecteursEnum.INDISPONIBLE,
       };
     } else {
-      const secteurs = getSecteursRetenus(lookup.data.reponse);
+      const secteurs =
+        getSecteursRetenus(lookup.data.reponse) ??
+        ((await this.isClasseeParCommuns(ficheId)) ? [] : null);
       if (secteurs === null) {
         return EN_COURS_DE_CALCUL;
       }
@@ -137,5 +139,16 @@ export class GetFicheSecteursService {
 
     const saved = await this.attributionRepository.createIfAbsent(attribution);
     return saved ? toFicheSecteurs(saved) : EN_COURS_DE_CALCUL;
+  }
+
+  private async isClasseeParCommuns(ficheId: number): Promise<boolean> {
+    const action = await this.communsSecteursClient.getAction(ficheId);
+    if (!action.success) {
+      this.logger.warn(
+        `Classification de la fiche ${ficheId} non récupérée : ${action.error}`
+      );
+      return false;
+    }
+    return action.data.classee;
   }
 }

@@ -6,6 +6,7 @@ import {
   reponseSecteursCommunsSchema,
 } from '@tet/domain/plans';
 import { getErrorMessage } from '@tet/domain/utils';
+import { z } from 'zod';
 
 const TIMEOUT_MS = 10_000;
 
@@ -16,6 +17,14 @@ export type SecteursCommunsLookup =
       reponseBrute: unknown;
     }
   | { statut: 'inconnue' };
+
+const actionCommunsSchema = z
+  .object({
+    classificationScores: z.record(z.string(), z.unknown()).nullish(),
+  })
+  .nullable();
+
+export type ActionCommunsLookup = { classee: boolean };
 
 export type CommunsSecteursClientError =
   | 'COMMUNS_NON_CONFIGURE'
@@ -41,16 +50,65 @@ export class CommunsSecteursClient {
   async getSecteurs(
     ficheId: number
   ): Promise<Result<SecteursCommunsLookup, CommunsSecteursClientError>> {
+    const fetched = await this.fetchCommuns(
+      `/tet/v1/actions/${ficheId}/secteurs`,
+      ficheId
+    );
+    if (!fetched.success) {
+      return fetched;
+    }
+    if (fetched.data === null) {
+      return success({ statut: 'inconnue' });
+    }
+
+    const reponseBrute = fetched.data;
+    const parsed = reponseSecteursCommunsSchema.safeParse(reponseBrute);
+    if (!parsed.success) {
+      this.logger.warn(
+        `Réponse inattendue de Communs pour la fiche ${ficheId} : ${parsed.error.message}`
+      );
+      return failure('COMMUNS_REPONSE_INATTENDUE');
+    }
+
+    return success({ statut: 'trouvee', reponse: parsed.data, reponseBrute });
+  }
+
+  async getAction(
+    ficheId: number
+  ): Promise<Result<ActionCommunsLookup, CommunsSecteursClientError>> {
+    const fetched = await this.fetchCommuns(
+      `/tet/v1/actions/${ficheId}`,
+      ficheId
+    );
+    if (!fetched.success) {
+      return fetched;
+    }
+
+    const parsed = actionCommunsSchema.safeParse(fetched.data);
+    if (!parsed.success) {
+      this.logger.warn(
+        `Réponse inattendue de Communs pour l'action ${ficheId} : ${parsed.error.message}`
+      );
+      return failure('COMMUNS_REPONSE_INATTENDUE');
+    }
+
+    const scores = parsed.data?.classificationScores;
+    return success({ classee: Boolean(scores && Object.keys(scores).length) });
+  }
+
+  private async fetchCommuns(
+    path: string,
+    ficheId: number
+  ): Promise<Result<unknown | null, CommunsSecteursClientError>> {
     const baseUrl = this.configurationService.get('COMMUNS_API_URL');
     const apiKey = this.configurationService.get('COMMUNS_API_KEY');
     if (!baseUrl || !apiKey) {
       return failure('COMMUNS_NON_CONFIGURE');
     }
 
-    const url = new URL(`/tet/v1/actions/${ficheId}/secteurs`, baseUrl);
     let response: Response;
     try {
-      response = await fetch(url, {
+      response = await fetch(new URL(path, baseUrl), {
         headers: { Authorization: `Bearer ${apiKey}` },
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
@@ -64,7 +122,7 @@ export class CommunsSecteursClient {
     }
 
     if (response.status === 404) {
-      return success({ statut: 'inconnue' });
+      return success(null);
     }
     if (response.status === 401 || response.status === 403) {
       this.logger.error(
@@ -79,20 +137,10 @@ export class CommunsSecteursClient {
       return failure('COMMUNS_INJOIGNABLE');
     }
 
-    let reponseBrute: unknown;
     try {
-      reponseBrute = await response.json();
+      return success(await response.json());
     } catch (error) {
       return failure('COMMUNS_REPONSE_INATTENDUE', error as Error);
     }
-    const parsed = reponseSecteursCommunsSchema.safeParse(reponseBrute);
-    if (!parsed.success) {
-      this.logger.warn(
-        `Réponse inattendue de Communs pour la fiche ${ficheId} : ${parsed.error.message}`
-      );
-      return failure('COMMUNS_REPONSE_INATTENDUE');
-    }
-
-    return success({ statut: 'trouvee', reponse: parsed.data, reponseBrute });
   }
 }
