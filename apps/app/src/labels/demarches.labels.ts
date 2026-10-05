@@ -578,6 +578,7 @@ export const demarchesLabels = {
   demarcheListeActionsMenu: 'Actions sur la démarche',
   demarcheActionContinuerSaisie: 'Continuer la saisie',
   demarcheActionConsulter: 'Consulter',
+  demarcheActionFinaliserDepot: 'Finaliser le dépôt',
   demarcheActionSupprimer: 'Supprimer',
   demarcheSupprimerModaleTitre: 'Supprimer la démarche',
   demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>

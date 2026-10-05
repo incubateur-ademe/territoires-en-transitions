@@ -49,6 +49,35 @@ export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
 };
 
 /**
+ * Entrée de menu qui ouvre le dossier : son libellé dit ce que la collectivité
+ * peut encore y faire. Transmis, adopté ou archivé, il n'y a plus rien à
+ * saisir — seulement à consulter.
+ */
+export const DEMARCHE_PCAET_OUVERTURE_ACTIONS: Record<
+  DemarchePcaetStatut,
+  { label: string; icon: string }
+> = {
+  en_elaboration: {
+    label: appLabels.demarcheActionContinuerSaisie,
+    icon: 'edit-line',
+  },
+  transmis_pour_avis: {
+    label: appLabels.demarcheActionConsulter,
+    icon: 'eye-line',
+  },
+  instruit: {
+    label: appLabels.demarcheActionFinaliserDepot,
+    icon: 'edit-line',
+  },
+  instruit_hors_plateforme: {
+    label: appLabels.demarcheActionFinaliserDepot,
+    icon: 'edit-line',
+  },
+  publie: { label: appLabels.demarcheActionConsulter, icon: 'eye-line' },
+  archive: { label: appLabels.demarcheActionConsulter, icon: 'eye-line' },
+};
+
+/**
  * Entrées de menu des transitions : une transition sans entrée ici n'est pas
  * affichée. N'y figurent ni la transmission ni la publication — chacune a son
  * bouton dans le parcours — ni les transitions système, qui ne sont l'acte de
