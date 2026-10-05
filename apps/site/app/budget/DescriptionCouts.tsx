@@ -1,10 +1,10 @@
-import { Vignette } from '@/site/app/types';
 import Markdown from '@/site/components/markdown/Markdown';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
 export type DescriptionCoutsProps = {
   titre: string;
-  liste: Vignette[];
+  liste: VignetteAvecMarkdown[];
 };
 
 const DescriptionCouts = ({ titre, liste }: DescriptionCoutsProps) => {

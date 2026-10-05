@@ -1,10 +1,10 @@
-import { Vignette } from '@/site/app/types';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
 type PrincipesProps = {
   titre: string;
-  description: string;
-  liste: Vignette[];
+  description: string | null;
+  liste: VignetteAvecMarkdown[];
 };
 
 const Principes = ({ titre, description, liste }: PrincipesProps) => {

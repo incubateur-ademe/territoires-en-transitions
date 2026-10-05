@@ -1,5 +1,4 @@
-import { StrapiItem } from './StrapiItem';
-import { ImageGetData } from './types';
+import { StrapiCollection, StrapiEntry, StrapiMedia } from './types';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const apiKey = process.env.NEXT_PUBLIC_STRAPI_KEY;
@@ -29,62 +28,72 @@ type Single =
   | 'page-outils-numerique'
   | 'page-trajectoire';
 
-export async function fetchCollection(
-  path: Collection,
-  params: [string, string][] = [['populate', '*']]
-): Promise<{
-  data: Array<StrapiItem>;
-  meta: { pagination: { start: number; limit: number; total: number } };
-}> {
+type Params = [string, string][];
+
+// Strapi 5 ignore sans erreur les `populate[0]=champ` d'une requête qui
+// contient aussi un `populate[champ][…]` : le champ revient null. Dans ce cas,
+// tout s'écrit en forme objet (`populate[champ]=true`).
+const assertPopulateNotMixed = (params: Params) => {
+  const keys = params.map(([key]) => key).filter((key) => key.startsWith('populate['));
+  const indexed = keys.some((key) => /^populate\[\d+\]$/.test(key));
+  const named = keys.some((key) => /^populate\[[^\d\]][^\]]*\]/.test(key));
+  if (indexed && named) {
+    throw new Error(
+      `Strapi populate mixte (populate[n] et populate[champ]) : ${keys.join(', ')}`
+    );
+  }
+};
+
+const buildUrl = (path: string, params: Params) => {
+  assertPopulateNotMixed(params);
   const url = new URL(`${baseURL}/api/${path}`);
   params.forEach((p) => url.searchParams.append(...p));
+  return url.toString();
+};
 
-  const response = await fetch(url.toString(), {
+export async function fetchCollection<T>(
+  path: Collection,
+  params: Params = [['populate', '*']]
+): Promise<StrapiCollection<T>> {
+  const response = await fetch(buildUrl(path, params), {
     next: { revalidate: 3600 },
     method: 'GET',
     headers,
   });
-  const body = await response.json();
-  return body;
+  return response.json();
 }
 
-export const fetchSingle = async (
+export async function fetchSingle<T>(
   path: Single,
-  params: [string, string][] = [['populate', '*']]
-): Promise<StrapiItem> => {
-  const url = new URL(`${baseURL}/api/${path}`);
-  params.forEach((p) => url.searchParams.append(...p));
-
-  const response = await fetch(`${url}`, {
+  params: Params = [['populate', '*']]
+): Promise<StrapiEntry<T> | null> {
+  const response = await fetch(buildUrl(path, params), {
     cache: 'no-store',
     method: 'GET',
     headers,
   });
   const body = await response.json();
-  return body.data;
-};
+  return body.data ?? null;
+}
 
-export async function fetchItem(
-  path: string,
-  id: number,
-  params: [string, string][] = [['populate', '*']]
-): Promise<StrapiItem> {
-  const url = new URL(`${baseURL}/api/${path}/${id}`);
-  params.forEach((p) => url.searchParams.append(...p));
-
-  const response = await fetch(`${url}`, {
+/** Une entrée par son `documentId` (l'`id` numérique n'est plus accepté dans l'URL). */
+export async function fetchItem<T>(
+  path: Collection,
+  documentId: string,
+  params: Params = [['populate', '*']]
+): Promise<StrapiEntry<T> | null> {
+  const response = await fetch(buildUrl(`${path}/${documentId}`, params), {
     next: { revalidate: 3600 },
     method: 'GET',
     headers,
   });
   const body = await response.json();
-  return body['data'];
+  return body.data ?? null;
 }
 
-export async function fetchImage(id: number): Promise<ImageGetData> {
-  const url = new URL(`${baseURL}/api/upload/files/${id}`);
-
-  const response = await fetch(url.toString(), {
+/** Un fichier de la médiathèque par son `id` numérique (les fichiers ne sont pas des documents). */
+export async function fetchImage(id: number): Promise<StrapiMedia> {
+  const response = await fetch(buildUrl(`upload/files/${id}`, []), {
     next: { revalidate: 3600 },
     method: 'GET',
     headers,
@@ -92,6 +101,5 @@ export async function fetchImage(id: number): Promise<ImageGetData> {
   if (!response.ok) {
     throw new Error(`fetchImage failed (${response.status}) for id=${id}`);
   }
-  const body = await response.json();
-  return body as ImageGetData;
+  return response.json();
 }

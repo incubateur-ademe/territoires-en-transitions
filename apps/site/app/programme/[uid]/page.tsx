@@ -6,7 +6,6 @@ import { notFound } from 'next/navigation';
 import InfoService from './InfoService';
 import ListeService from './ListeService';
 import ParagrapheService from './ParagrapheService';
-import { InfoData, ListeData, ParagrapheData } from './types';
 import { getServiceStrapiData } from './utils';
 
 export async function generateMetadata(
@@ -41,11 +40,11 @@ const ServiceProgramme = async ({ params }: ServiceProgrammeProps) => {
         const key = `${c.type}-${i}`;
         switch (c.type) {
           case 'paragraphe':
-            return <ParagrapheService key={key} {...(c as ParagrapheData)} />;
+            return <ParagrapheService key={key} {...c} />;
           case 'liste':
-            return <ListeService key={key} {...(c as ListeData)} />;
+            return <ListeService key={key} {...c} />;
           case 'info':
-            return <InfoService key={key} {...(c as InfoData)} />;
+            return <InfoService key={key} {...c} />;
           default:
             return notFound();
         }

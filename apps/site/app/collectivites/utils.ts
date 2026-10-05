@@ -1,8 +1,65 @@
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import {
+  Seo,
+  StrapiComponent,
+  StrapiMedia,
+  Temoignage,
+} from '@/site/src/strapi/types';
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
 
+/** Composant `contenu.texte-collectivite` */
+export type TexteCollectivite = StrapiComponent<{
+  titre: string;
+  contenu: string;
+  image?: StrapiMedia | null;
+}>;
+
+/** Composant `contenu.indicateur` */
+export type Indicateur = StrapiComponent<{
+  titre: string;
+  description: string;
+  titre_encadre: string;
+  description_encadre: string;
+  illustration_encadre: StrapiMedia;
+  details: string | null;
+}>;
+
+/** Collection `collectivite` */
+export type Collectivite = {
+  seo?: Seo | null;
+  nom: string;
+  code_siren_insee: string;
+  logo?: StrapiMedia | null;
+  couverture: StrapiMedia | null;
+  url: string | null;
+  video_url: string | null;
+  video_en_haut: boolean;
+  temoignages?: Temoignage[];
+  actions?: TexteCollectivite[];
+  est_a_la_une: boolean | null;
+};
+
+/** Single type `page-collectivite` */
+export type PageCollectivite = {
+  seo?: Seo | null;
+  couverture: StrapiMedia;
+  inscription_description: string;
+  inscription_cta: string;
+  connexion_description: string;
+  connexion_cta: string;
+  gaz_effet_serre?: Indicateur | null;
+  artificialisation_sols?: Indicateur | null;
+};
+
 const CODE_INSEE_COMMUNE_REGEX = /^(\d{5}|2[AB]\d{3})$/;
+
+const toMetaImage = (image: StrapiMedia) => ({
+  url: image.url,
+  width: image.width ?? 0,
+  height: image.height ?? 0,
+  type: image.mime,
+  alt: image.alternativeText ?? '',
+});
 
 export const fetchCollectivite = async (codeSirenInsee: string) => {
   const collectivite =
@@ -40,176 +97,86 @@ export const fetchCollectivite = async (codeSirenInsee: string) => {
 };
 
 export const getStrapiData = async (codeSirenInsee: string) => {
-  const { data } = await fetchCollection('collectivites', [
-    ['filters[code_siren_insee]', `${codeSirenInsee}`],
-    ['populate[0]', 'seo'],
-    ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'couverture'],
-    ['populate[3]', 'logo'],
-    ['populate[4]', 'temoignages'],
-    ['populate[5]', 'temoignages.portrait'],
-    ['populate[6]', 'actions'],
-    ['populate[7]', 'actions.image'],
+  // Mélanger `populate[0]=couverture` et `populate[seo][populate]=metaImage`
+  // donne un objet dont Strapi ignore la clé « 0 » : tout passe par des clés nommées.
+  const { data } = await fetchCollection<Collectivite>('collectivites', [
+    ['filters[code_siren_insee]', codeSirenInsee],
+    ['populate[seo][populate]', 'metaImage'],
+    ['populate[couverture]', 'true'],
+    ['populate[logo]', 'true'],
+    ['populate[temoignages][populate]', 'portrait'],
+    ['populate[actions][populate]', 'image'],
   ]);
 
-  if (data && data.length) {
-    const collectiviteData = data[0].attributes;
-    const isContentDefined =
-      (collectiviteData.actions as unknown as unknown[]).length > 0;
+  const collectivite = data?.[0];
+  if (!collectivite) return null;
 
-    const metaImage =
-      (collectiviteData.seo?.metaImage?.data as unknown as StrapiItem)
-        ?.attributes ??
-      (collectiviteData?.attributes?.couverture.data as unknown as StrapiItem)
-        ?.attributes;
+  const { seo, temoignages = [], actions = [] } = collectivite;
+  const metaImage = seo?.metaImage ?? collectivite.couverture;
 
-    return {
-      seo: {
-        metaTitle:
-          (collectiviteData.seo?.metaTitle as unknown as string) ??
-          (collectiviteData.nom as unknown as string),
-        metaDescription:
-          (collectiviteData.seo?.metaDescription as unknown as string) ??
-          undefined,
-        metaImage: metaImage
-          ? {
-              url: metaImage.url as unknown as string,
-              width: metaImage.width as unknown as number,
-              height: metaImage.height as unknown as number,
-              type: metaImage.mime as unknown as string,
-              alt: metaImage.alternativeText as unknown as string,
-            }
-          : undefined,
-      },
-      nom: collectiviteData.nom as unknown as string,
-      code_siren_insee: collectiviteData.code_siren_insee as unknown as string,
-      couverture:
-        (collectiviteData.couverture.data as unknown as StrapiItem) ??
-        undefined,
-      logo: (collectiviteData.logo.data as unknown as StrapiItem) ?? undefined,
-      url: (collectiviteData.url as unknown as string) ?? undefined,
-      contenu: isContentDefined
+  return {
+    seo: {
+      metaTitle: seo?.metaTitle ?? collectivite.nom,
+      metaDescription: seo?.metaDescription ?? undefined,
+      metaImage: metaImage ? toMetaImage(metaImage) : undefined,
+    },
+    nom: collectivite.nom,
+    code_siren_insee: collectivite.code_siren_insee,
+    couverture: collectivite.couverture ?? undefined,
+    logo: collectivite.logo ?? undefined,
+    url: collectivite.url ?? undefined,
+    contenu:
+      actions.length > 0
         ? {
-            video:
-              (collectiviteData.video_url as unknown as string) ?? undefined,
-            video_en_haut:
-              (collectiviteData.video_en_haut as unknown as boolean) ?? false,
-            temoignages: (
-              collectiviteData.temoignages as unknown as {
-                id: number;
-                auteur: string;
-                role: string;
-                temoignage: string;
-                portrait: { data: StrapiItem };
-              }[]
-            ).map((temoignage) => ({
-              ...temoignage,
-              portrait: temoignage.portrait.data,
-            })),
-            actions: (
-              collectiviteData.actions as unknown as {
-                id: number;
-                titre: string;
-                contenu: string;
-                image: { data: StrapiItem };
-              }[]
-            ).map((action) => ({
-              ...action,
-              image: action.image.data,
-            })),
+            video: collectivite.video_url,
+            video_en_haut: collectivite.video_en_haut ?? false,
+            temoignages,
+            actions,
           }
         : undefined,
-    };
-  } else return null;
+  };
 };
 
 export const getStrapiDefaultData = async () => {
-  const data = await fetchSingle('page-collectivite', [
-    ['populate[0]', 'seo'],
-    ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'couverture'],
-    ['populate[3]', 'artificialisation_sols'],
-    ['populate[4]', 'artificialisation_sols.illustration_encadre'],
-    ['populate[5]', 'gaz_effet_serre'],
-    ['populate[6]', 'gaz_effet_serre.illustration_encadre'],
+  const data = await fetchSingle<PageCollectivite>('page-collectivite', [
+    ['populate[seo][populate]', 'metaImage'],
+    ['populate[couverture]', 'true'],
+    ['populate[artificialisation_sols][populate]', 'illustration_encadre'],
+    ['populate[gaz_effet_serre][populate]', 'illustration_encadre'],
   ]);
 
-  if (data) {
-    const seo = data.attributes.seo;
-    const artificialisation_sols = data.attributes.artificialisation_sols;
-    const gaz_effet_serre = data.attributes.gaz_effet_serre;
+  if (!data) return null;
 
-    const metaImage =
-      (seo?.metaImage?.data as unknown as StrapiItem)?.attributes ??
-      (data?.attributes.couverture.data as unknown as StrapiItem)?.attributes;
+  const { seo, artificialisation_sols, gaz_effet_serre } = data;
+  const metaImage = seo?.metaImage ?? data.couverture;
 
-    return {
-      seo: {
-        metaTitle: (seo?.metaTitle as unknown as string) ?? undefined,
-        metaDescription:
-          (seo?.metaDescription as unknown as string) ?? undefined,
-        metaImage: metaImage
-          ? {
-              url: metaImage.url as unknown as string,
-              width: metaImage.width as unknown as number,
-              height: metaImage.height as unknown as number,
-              type: metaImage.mime as unknown as string,
-              alt: metaImage.alternativeText as unknown as string,
-            }
-          : undefined,
-      },
-      couverture: data.attributes.couverture.data as unknown as StrapiItem,
-      inscription: {
-        description:
-          (data.attributes.inscription_description as unknown as string) ??
-          undefined,
-        cta:
-          (data.attributes.inscription_cta as unknown as string) ?? undefined,
-      },
-      connexion: {
-        description:
-          (data.attributes.connexion_description as unknown as string) ??
-          undefined,
-        cta: (data.attributes.connexionn_cta as unknown as string) ?? undefined,
-      },
-      indicateurs: {
-        artificialisation_sols: artificialisation_sols
-          ? {
-              titre: artificialisation_sols.titre as unknown as string,
-              description:
-                artificialisation_sols.description as unknown as string,
-              titre_encadre:
-                artificialisation_sols.titre_encadre as unknown as string,
-              description_encadre:
-                artificialisation_sols.description_encadre as unknown as string,
-              illustration_encadre: artificialisation_sols.illustration_encadre
-                .data as unknown as StrapiItem,
-              details:
-                (artificialisation_sols.details as unknown as string) ??
-                undefined,
-            }
-          : undefined,
-        gaz_effet_serre: gaz_effet_serre
-          ? {
-              titre: gaz_effet_serre.titre as unknown as string,
-              description: gaz_effet_serre.description as unknown as string,
-              titre_encadre: gaz_effet_serre.titre_encadre as unknown as string,
-              description_encadre:
-                gaz_effet_serre.description_encadre as unknown as string,
-              illustration_encadre: gaz_effet_serre.illustration_encadre
-                .data as unknown as StrapiItem,
-              details:
-                (gaz_effet_serre.details as unknown as string) ?? undefined,
-            }
-          : undefined,
-      },
-    };
-  } else return null;
+  return {
+    seo: {
+      metaTitle: seo?.metaTitle ?? undefined,
+      metaDescription: seo?.metaDescription ?? undefined,
+      metaImage: metaImage ? toMetaImage(metaImage) : undefined,
+    },
+    couverture: data.couverture,
+    inscription: {
+      description: data.inscription_description,
+      cta: data.inscription_cta,
+    },
+    connexion: {
+      description: data.connexion_description,
+      cta: data.connexion_cta,
+    },
+    indicateurs: {
+      artificialisation_sols: artificialisation_sols ?? undefined,
+      gaz_effet_serre: gaz_effet_serre ?? undefined,
+    },
+  };
 };
 
-export const getCollectivitesALaUne = async () =>
-  await fetchCollection('collectivites', [
+export const getCollectivitesALaUne = async () => {
+  const { data } = await fetchCollection<Collectivite>('collectivites', [
     ['filters[est_a_la_une]', 'true'],
     ['pagination[pageSize]', '6'],
     ['populate[0]', 'couverture'],
   ]);
+  return data ?? [];
+};

@@ -1,7 +1,7 @@
 'use client';
 
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { getFormattedNumber } from '@tet/domain/utils';
 import { Badge, Icon } from '@tet/ui';
 import classNames from 'classnames';
@@ -17,9 +17,9 @@ type CollectiviteHeaderProps = {
     type?: string | null;
     populationTotale?: number | null;
     url?: string;
-    couverture?: StrapiItem;
-    couvertureDefaut?: StrapiItem;
-    logo?: StrapiItem;
+    couverture?: StrapiMedia;
+    couvertureDefaut?: StrapiMedia;
+    logo?: StrapiMedia;
     annuaireUrl: string | null;
   };
 };

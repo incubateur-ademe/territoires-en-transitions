@@ -5,7 +5,7 @@ import posthog from 'posthog-js';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { Button } from '@tet/ui';
 import Arrow from './Arrow';
 
@@ -13,7 +13,7 @@ type CompteProps = {
   titre: string;
   description: string;
   cta: string;
-  image: StrapiItem | undefined;
+  image?: StrapiMedia | null;
 };
 
 const Compte = ({ titre, description, cta, image }: CompteProps) => {

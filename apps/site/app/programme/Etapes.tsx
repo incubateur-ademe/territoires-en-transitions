@@ -2,16 +2,16 @@
 
 import posthog from 'posthog-js';
 
-import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 import { Button } from '@tet/ui';
 
 type EtapesProps = {
   titre: string;
-  contenu: Vignette[] | null;
+  contenu: VignetteAvecMarkdown[] | null;
   cta: string;
 };
 

@@ -2,10 +2,10 @@
 
 import Markdown from '@/site/components/markdown/Markdown';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import type { TexteCollectivite } from '../../utils';
 
 const splitContent = (content: string, limit: number) => {
   let newContent = content.slice(0, limit);
@@ -15,11 +15,7 @@ const splitContent = (content: string, limit: number) => {
 };
 
 type ActionCollectiviteProps = {
-  action: {
-    titre: string;
-    contenu: string;
-    image: StrapiItem;
-  };
+  action: TexteCollectivite;
 };
 
 const ActionCollectivite = ({

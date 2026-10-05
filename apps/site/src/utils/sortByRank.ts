@@ -1,9 +1,9 @@
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-
-export const sortByRank = (array: StrapiItem[]): StrapiItem[] =>
+export const sortByRank = <T extends { id: number; Rang?: number | null }>(
+  array: T[]
+): T[] =>
   array.sort((a, b) => {
-    const aRank = (a.attributes.Rang as unknown as number) ?? undefined;
-    const bRank = (b.attributes.Rang as unknown as number) ?? undefined;
+    const aRank = a.Rang ?? undefined;
+    const bRank = b.Rang ?? undefined;
 
     if (aRank && bRank) return aRank - bRank;
     else if (aRank && !bRank) return -1;
