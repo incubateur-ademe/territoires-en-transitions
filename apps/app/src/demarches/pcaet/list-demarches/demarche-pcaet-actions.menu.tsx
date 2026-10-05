@@ -5,15 +5,13 @@ import { PublierDepotFinalModal } from '@/app/demarches/components/publier-depot
 import { useDemarchePcaetTransitionOptions } from '@/app/demarches/pcaet/data/use-transition-options';
 import { useDeleteDemarchePcaet } from '@/app/demarches/pcaet/data/use-delete-demarche-pcaet';
 import {
+  DEMARCHE_PCAET_OUVERTURE_ACTIONS,
   DEMARCHE_PCAET_TRANSITION_ACTIONS,
   type DemarchePcaetMenuTransition,
 } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { RouterOutput, useTRPC } from '@tet/api';
-import {
-  canDeleteDemarchePcaet,
-  isDemarchePcaetEnCours,
-} from '@tet/domain/demarches';
+import { canDeleteDemarchePcaet } from '@tet/domain/demarches';
 import { useMutation } from '@tanstack/react-query';
 import {
   Alert,
@@ -69,10 +67,7 @@ export const DemarchePcaetActionsMenu = ({
 
   const menuActions: MenuAction[] = [
     {
-      label: isDemarchePcaetEnCours(demarche.status)
-        ? appLabels.demarcheActionContinuerSaisie
-        : appLabels.demarcheActionConsulter,
-      icon: 'edit-line',
+      ...DEMARCHE_PCAET_OUVERTURE_ACTIONS[demarche.status],
       onClick: () => router.push(detailUrl),
     },
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
