@@ -1,57 +1,35 @@
-# 🚀 Getting started with Strapi
+# Strapi — CMS du site vitrine
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html) (CLI) which lets you scaffold and manage your project in seconds.
+Strapi 5 (`@strapi/strapi` épinglé dans `package.json`), projet npm isolé du
+monorepo (hors workspace pnpm et Nx). Il alimente `apps/site` via l'API REST,
+lue avec un token API en lecture seule.
 
-### `develop`
+## En local
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-develop)
-
-```
-npm run develop
-# or
-yarn develop
-```
-
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-start)
-
-```
-npm run start
-# or
-yarn start
+```bash
+make up p=strapi      # Strapi + sa base Postgres (localhost:1337), Node 22 en conteneur
+make cms-pull         # ⚠ remplace le contenu local par celui de l'instance distante
 ```
 
-### `build`
+- `docker-compose.yml` fournit les secrets de dev (`APP_KEYS`, `API_TOKEN_SALT`,
+  `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `ENCRYPTION_KEY`) et seede un token
+  API `local-dev-readonly` (`strapi/src/index.ts`) égal à `NEXT_PUBLIC_STRAPI_KEY`
+  dans `apps/site/.env`.
+- `make cms-pull` enchaîne `strapi transfer` (même version majeure des deux côtés
+  obligatoire) puis `scripts/strapi-localize-uploads.mts`, qui rapatrie les médias.
+- Au premier démarrage, le bootstrap crée le référencement de la page Démarche
+  PCAET et les questions de la FAQ « Démarche PCAET » s'ils n'existent pas.
 
-Build your admin panel. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-build)
+## Modèle de contenu
 
-```
-npm run build
-# or
-yarn build
-```
+`src/api/*/content-types/*/schema.json` et `src/components/**`. Tous les types
+sont en Draft & Publish : chaque entrée publiée a une version brouillon jumelle,
+et l'API publique ne renvoie que les publiées. Les entrées s'identifient par
+`documentId` (URLs du site), l'`id` numérique restant disponible pour les filtres.
 
-## ⚙️ Deployment
+## Déploiement
 
-Strapi gives you many possible deployment options for your project. Find the one that suits you on the [deployment section of the documentation](https://docs.strapi.io/developer-docs/latest/setup-deployment-guides/deployment.html).
-
-## 📚 Learn more
-
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://docs.strapi.io) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
-
----
-
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+Strapi Cloud, branché sur la branche `strapi-updates` avec déclenchement manuel
+(« Trigger deployment »). Voir `doc/adr/0009-site-public-administrable.md`.
+Les variables d'environnement ci-dessus doivent y exister ; les migrations de
+données internes de Strapi se jouent au démarrage.
