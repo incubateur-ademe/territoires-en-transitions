@@ -209,7 +209,7 @@ export class CreateAndLinkPlanService {
       tx
     );
     if (result.success && !tx && createdPlan) {
-      await this.enqueueCompletePlanSecteursService.enqueue({
+      void this.enqueueCompletePlanSecteursService.enqueue({
         planIds: [createdPlan.id],
         collectiviteId: createdPlan.collectiviteId,
         userId: user.id,

@@ -138,7 +138,7 @@ export class UpdateDemarchePcaetService {
       tx
     );
     if (result.success && !tx) {
-      await this.enqueueCompletePlanSecteursService.enqueue({
+      void this.enqueueCompletePlanSecteursService.enqueue({
         planIds: addedPlanIds,
         collectiviteId: result.data.collectiviteId,
         userId: user.id,
