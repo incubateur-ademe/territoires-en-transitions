@@ -97,6 +97,7 @@ jobs:
           --debug
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
+          --docker-skip-verify
           --env ENV_NAME=$ENV_NAME
           --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
           --env CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_$ENV_NAME

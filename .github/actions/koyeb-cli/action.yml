@@ -12,6 +12,11 @@ runs:
   steps:
     - name: Installe le CLI Koyeb (version épinglée, checksum vérifié)
       shell: bash
+      # Les déploiements passent --docker-skip-verify : la vérification d'image
+      # du CLI résout le secret `ghcr` parmi les 100 secrets les plus récents
+      # seulement (ResolveSecretArgs, v5.10.2 à 5.12.0), et le trouve
+      # « invalide » dès que l'organisation en compte plus. L'API, elle,
+      # résout le nom sans cette limite.
       # Pour monter de version : changer ces deux valeurs ensemble. Le sha256
       # vient du fichier checksums.txt publié avec la release GitHub
       # (https://github.com/koyeb/koyeb-cli/releases), à vérifier à la main
