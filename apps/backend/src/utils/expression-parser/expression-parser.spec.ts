@@ -51,7 +51,12 @@ describe('ExpressionParser', () => {
         parseExpression('inconnu');
       } catch (e) {
         expect((e as Error).message).toEqual(
-          'NotAllInputParsedException: Redundant input, expecting EOF but found: inconnu (1:7)'
+          [
+            '(ligne 1, colonne 1) :',
+            '  inconnu',
+            '  ^^^^^^^',
+            'NotAllInputParsedException: Redundant input, expecting EOF but found: inconnu',
+          ].join('\n')
         );
       }
     });

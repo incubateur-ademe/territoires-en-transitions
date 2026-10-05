@@ -30,7 +30,12 @@ describe('PersonnalisationsExpressionService', () => {
       } catch (e) {
         expect(e).toBeDefined();
         expect((e as Error).message).toEqual(
-          'NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:17)'
+          [
+            '(ligne 1, colonne 17) :',
+            '  score(cae_1.2.3))',
+            '                  ^',
+            'NotAllInputParsedException: Redundant input, expecting EOF but found: )',
+          ].join('\n')
         );
       }
     });

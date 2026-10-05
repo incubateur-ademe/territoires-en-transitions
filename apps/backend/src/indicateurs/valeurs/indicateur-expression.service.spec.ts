@@ -269,7 +269,12 @@ describe('IndicateurExpressionService', () => {
       } catch (e) {
         expect(e).toBeDefined();
         expect((e as Error).message).toEqual(
-          "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '' <-- (1:13)"
+          [
+            '(ligne 1, colonne 14) :',
+            '  si val(cae_1)',
+            '               ^',
+            "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '' <--",
+          ].join('\n')
         );
       }
     });
