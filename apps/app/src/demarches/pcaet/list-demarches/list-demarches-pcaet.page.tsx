@@ -66,9 +66,9 @@ export const ListDemarchesPcaetPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 grow py-8 px-4 mx-auto w-full max-w-6xl">
+    <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-primary-9 mb-0">
+        <h1 className="text-2xl font-bold text-primary-9 m-0">
           {appLabels.demarcheListeTitre(PCAET_TYPE)}
         </h1>
         <Button
@@ -84,7 +84,9 @@ export const ListDemarchesPcaetPage = () => {
           {appLabels.demarcheListeCommencerDepot}
         </Button>
       </div>
-      <DemarchesPcaetTable demarches={demarches} />
+      <section className="rounded-xl border border-grey-3 bg-white p-6">
+        <DemarchesPcaetTable demarches={demarches} />
+      </section>
     </div>
   );
 };

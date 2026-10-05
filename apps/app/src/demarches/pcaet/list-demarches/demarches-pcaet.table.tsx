@@ -8,82 +8,170 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { RouterOutput } from '@tet/api';
+import { Badge, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import {
-  Badge,
-  Table,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-} from '@tet/ui';
+  columnVisibilityFeature,
+  createColumnHelper,
+  tableFeatures,
+  useTable,
+} from '@tanstack/react-table';
 import Link from 'next/link';
-import { DemarchePcaetActionsMenu } from './demarche-pcaet-actions.menu';
+import { DemarchePcaetActionsButton } from './demarche-pcaet-actions.button';
 
 type Demarche = RouterOutput['demarches']['pcaet']['list'][number];
 
-const formatDate = (date: string | null) =>
-  date ? getTextFormattedDate({ date }) : '—';
+const getDetailUrl = (demarche: Demarche) =>
+  makeCollectiviteDemarchePcaetRootUrl({
+    collectiviteId: demarche.collectiviteId,
+    demarcheId: demarche.id,
+  });
+
+const DateCell = ({ date }: { date: string | null }) =>
+  date ? (
+    <span className="text-primary-9">{getTextFormattedDate({ date })}</span>
+  ) : (
+    <span className="text-grey-6">{'—'}</span>
+  );
+
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<typeof features, Demarche>();
+
+/**
+ * Mêmes conventions que la liste d'instruction des services : largeurs posées
+ * colonne par colonne sauf sur le texte libre, et l'action principale en
+ * bouton visible plutôt que cachée dans un menu.
+ */
+const columns = [
+  columnHelper.display({
+    id: 'titre',
+    header: () => (
+      <TableHeaderCell title={appLabels.demarcheListeColonneTitre} />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <Link
+          href={getDetailUrl(row.original)}
+          className="font-bold text-primary-9 hover:underline"
+        >
+          {row.original.titre}
+        </Link>
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'pilotes',
+    header: () => (
+      <TableHeaderCell title={appLabels.demarcheListeColonnePilotes} />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        {row.original.pilotes.length > 0 ? (
+          <span className="text-primary-9">
+            {row.original.pilotes.map((pilote) => pilote.nom).join(', ')}
+          </span>
+        ) : (
+          <span className="text-grey-6">{'—'}</span>
+        )}
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'statut',
+    header: () => (
+      <TableHeaderCell
+        className="w-44"
+        title={appLabels.demarcheListeColonneStatut}
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <Badge
+          title={formatDemarcheStatut(row.original.status)}
+          variant={DEMARCHE_PCAET_STATUT_VARIANTS[row.original.status]}
+          size="sm"
+        />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'creation',
+    header: () => (
+      <TableHeaderCell
+        className="w-36"
+        title={appLabels.demarcheListeColonneCreation}
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <DateCell date={row.original.createdAt} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'lancement',
+    header: () => (
+      <TableHeaderCell
+        className="w-36"
+        title={appLabels.demarcheListeColonneLancement}
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <DateCell date={row.original.launchedAt} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'modification',
+    header: () => (
+      <TableHeaderCell
+        className="w-36"
+        title={appLabels.demarcheListeColonneModification}
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <DateCell date={row.original.modifiedAt} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'actions',
+    header: () => (
+      <TableHeaderCell
+        className="w-52"
+        title={appLabels.demarcheListeColonneActions}
+        align="right"
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <div className="flex justify-end">
+          <DemarchePcaetActionsButton demarche={row.original} />
+        </div>
+      </TableCell>
+    ),
+  }),
+];
 
 export const DemarchesPcaetTable = ({
   demarches,
 }: {
   demarches: Demarche[];
-}) => (
-  <div className="max-xl:overflow-x-auto bg-white rounded-xl border border-grey-3">
-    <Table>
-      <colgroup>
-        <col />
-        <col className="w-56" />
-        <col className="w-48" />
-        <col className="w-32" />
-        <col className="w-32" />
-        <col className="w-32" />
-        <col className="w-16" />
-      </colgroup>
-      <TableHead>
-        <tr>
-          <TableHeaderCell title={appLabels.demarcheListeColonneTitre} />
-          <TableHeaderCell title={appLabels.demarcheListeColonnePilotes} />
-          <TableHeaderCell title={appLabels.demarcheListeColonneStatut} />
-          <TableHeaderCell title={appLabels.demarcheListeColonneCreation} />
-          <TableHeaderCell title={appLabels.demarcheListeColonneLancement} />
-          <TableHeaderCell title={appLabels.demarcheListeColonneModification} />
-          <TableHeaderCell title="" />
-        </tr>
-      </TableHead>
-      <tbody>
-        {demarches.map((demarche) => (
-          <TableRow key={demarche.id}>
-            <TableCell>
-              <Link
-                href={makeCollectiviteDemarchePcaetRootUrl({
-                  collectiviteId: demarche.collectiviteId,
-                  demarcheId: demarche.id,
-                })}
-                className="font-medium text-primary-9 hover:underline"
-              >
-                {demarche.titre}
-              </Link>
-            </TableCell>
-            <TableCell>
-              {demarche.pilotes.map((pilote) => pilote.nom).join(', ') || '—'}
-            </TableCell>
-            <TableCell>
-              <Badge
-                title={formatDemarcheStatut(demarche.status)}
-                variant={DEMARCHE_PCAET_STATUT_VARIANTS[demarche.status]}
-                size="sm"
-              />
-            </TableCell>
-            <TableCell>{formatDate(demarche.createdAt)}</TableCell>
-            <TableCell>{formatDate(demarche.launchedAt)}</TableCell>
-            <TableCell>{formatDate(demarche.modifiedAt)}</TableCell>
-            <TableCell>
-              <DemarchePcaetActionsMenu demarche={demarche} />
-            </TableCell>
-          </TableRow>
-        ))}
-      </tbody>
-    </Table>
-  </div>
-);
+}) => {
+  const table = useTable({
+    features,
+    columns,
+    data: demarches,
+    getRowId: (demarche) => demarche.id.toString(),
+  });
+
+  return <ReactTable table={table} />;
+};

@@ -15,22 +15,26 @@ import { canDeleteDemarchePcaet } from '@tet/domain/demarches';
 import { useMutation } from '@tanstack/react-query';
 import {
   Alert,
-  ButtonMenu,
+  Button,
   MenuAction,
   Modal,
   ModalFooterOKCancel,
+  SplitButton,
 } from '@tet/ui';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type Demarche = RouterOutput['demarches']['pcaet']['list'][number];
 
-export const DemarchePcaetActionsMenu = ({
+/**
+ * Les actions d'une ligne : ouvrir le dossier à un clic, le reste derrière la
+ * flèche. Sans action secondaire, il ne reste qu'un bouton simple — une flèche
+ * qui n'ouvre rien serait trompeuse.
+ */
+export const DemarchePcaetActionsButton = ({
   demarche,
 }: {
   demarche: Demarche;
 }) => {
-  const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // Publier depuis la liste engage autant que depuis le dossier : même
   // confirmation, et même saisie de la date d'adoption.
@@ -45,11 +49,6 @@ export const DemarchePcaetActionsMenu = ({
   const archiver = useMutation(
     trpc.demarches.pcaet.archiver.mutationOptions(transitionOptions)
   );
-
-  const detailUrl = makeCollectiviteDemarchePcaetRootUrl({
-    collectiviteId: demarche.collectiviteId,
-    demarcheId: demarche.id,
-  });
 
   const ids = {
     collectiviteId: demarche.collectiviteId,
@@ -66,10 +65,6 @@ export const DemarchePcaetActionsMenu = ({
       : [];
 
   const menuActions: MenuAction[] = [
-    {
-      ...DEMARCHE_PCAET_OUVERTURE_ACTIONS[demarche.status],
-      onClick: () => router.push(detailUrl),
-    },
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
     ...transitionAction('publier', () => setIsPublicationOuverte(true)),
     ...transitionAction('archiver', () => archiver.mutate(ids)),
@@ -84,15 +79,22 @@ export const DemarchePcaetActionsMenu = ({
       : []),
   ];
 
+  const ouverture = DEMARCHE_PCAET_OUVERTURE_ACTIONS[demarche.status];
+  const ouvertureProps = {
+    href: makeCollectiviteDemarchePcaetRootUrl(ids),
+    variant: 'outlined',
+    size: 'xs',
+    icon: ouverture.icon,
+    children: ouverture.label,
+  } as const;
+
   return (
     <>
-      <ButtonMenu
-        title={appLabels.demarcheListeActionsMenu}
-        icon="more-line"
-        variant="grey"
-        size="xs"
-        menu={{ actions: menuActions }}
-      />
+      {menuActions.length > 0 ? (
+        <SplitButton {...ouvertureProps} menuActions={menuActions} />
+      ) : (
+        <Button {...ouvertureProps} />
+      )}
       {isPublicationOuverte && (
         <PublierDepotFinalModal
           demarcheType={demarche.type}
