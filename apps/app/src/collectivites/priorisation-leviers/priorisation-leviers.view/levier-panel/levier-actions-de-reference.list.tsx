@@ -14,14 +14,14 @@ import { Accordion, Select, VisibleWhen } from '@tet/ui';
 import { groupBy, partition } from 'es-toolkit';
 import { JSX, ReactNode, useState } from 'react';
 import { match } from 'ts-pattern';
-import { ActionDeReferencePreselectionCard } from './action-de-reference-preselection.card';
-import { LevierCardInfo } from './levier-card-info';
+import { LevierCardInfo } from '../../levier-card-info';
 import {
   FilterField,
   toCategorie,
   toCategorieOption,
-} from './preselection.filters';
-import { Preselection } from './use-preselection';
+} from '../../preselection.filters';
+import { Preselection } from '../../use-preselection';
+import { ActionDeReferencePreselectionCard } from './action-de-reference-preselection.card';
 
 type LevierActionsDeReferenceListProps = {
   levierId: LevierId;

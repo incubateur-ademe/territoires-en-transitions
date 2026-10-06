@@ -8,18 +8,18 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { Button, EmptyCard, Icon, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
-import { ActionDeReferenceSummaryCard } from './action-de-reference-summary.card';
+import { ActionDeReferenceSummaryCard } from '../action-de-reference-summary.card';
+import { LevierCardInfo } from '../levier-card-info';
+import {
+  PreselectionFilters,
+  usePreselectionFiltering,
+} from '../preselection.filters';
+import { ActionAddedToPlan, Preselection } from '../use-preselection';
 import { AddToPlanSplitButton } from './add-to-plan.split-button';
 import {
   ActionsDeReferencePlanAdditions,
   useActionsDeReferencePlanAdditions,
 } from './data/use-actions-de-reference-plan-additions';
-import { LevierCardInfo } from './levier-card-info';
-import {
-  PreselectionFilters,
-  usePreselectionFiltering,
-} from './preselection.filters';
-import { ActionAddedToPlan, Preselection } from './use-preselection';
 
 type PreselectionContentProps = {
   preselection: Preselection;

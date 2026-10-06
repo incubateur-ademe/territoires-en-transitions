@@ -5,11 +5,11 @@ import {
 import { act, renderHook } from '@testing-library/react';
 import { isValidElement, ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { Preselection } from './use-preselection';
+import { Preselection } from '../../use-preselection';
 import {
   LevierPriorisation,
   NO_MOBILISATION,
-} from './to-leviers-priorisation';
+} from '../data/to-leviers-priorisation';
 import { useLevierSidePanel } from './use-levier-side-panel';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/' }));

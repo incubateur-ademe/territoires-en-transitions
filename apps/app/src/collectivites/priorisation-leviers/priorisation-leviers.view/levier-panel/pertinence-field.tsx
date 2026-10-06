@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Pertinence } from '@tet/domain/collectivites';
 import { JSX } from 'react';
-import { UpsertPertinence } from './data/use-upsert-pertinence';
-import { LevierCardInfo } from './levier-card-info';
+import { LevierCardInfo } from '../../levier-card-info';
+import { LevierCard } from '../data/to-levier-cards';
+import { UpsertPertinence } from '../data/use-upsert-pertinence';
 import { PertinenceToggle } from './pertinence-toggle';
-import { LevierCard } from './to-levier-cards';
 
 type PertinenceFieldProps = {
   levier: Pick<LevierCard, 'levierId' | 'nom'>;

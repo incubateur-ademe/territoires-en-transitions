@@ -1,5 +1,5 @@
-import { Pertinence } from '@tet/domain/collectivites';
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { Pertinence } from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
 import { PertinenceToggle } from './pertinence-toggle';
 

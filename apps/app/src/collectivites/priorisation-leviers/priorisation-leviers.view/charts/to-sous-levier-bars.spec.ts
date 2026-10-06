@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NO_MOBILISATION } from './to-leviers-priorisation';
+import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LevierPlace } from './to-matrix-points';
 import { toSousLevierBars } from './to-sous-levier-bars';
 

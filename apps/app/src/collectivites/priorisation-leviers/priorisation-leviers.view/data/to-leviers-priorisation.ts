@@ -3,8 +3,8 @@ import { PertinenceLevier } from '@tet/domain/collectivites';
 import {
   CategorieAction,
   categorieActionEnumValues,
-  LEVIER_ID_BY_NOM,
   Levier,
+  LEVIER_ID_BY_NOM,
   LevierId,
 } from '@tet/domain/shared';
 import { meanBy, round } from 'es-toolkit';

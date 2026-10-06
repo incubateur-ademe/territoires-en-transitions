@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { LevierId } from '@tet/domain/shared';
 import { Button } from '@tet/ui';
 import { JSX, useId } from 'react';
-import { LevierPriorisation } from './to-leviers-priorisation';
+import { LevierPriorisation } from './data/to-leviers-priorisation';
 
 type LeviersWithoutPotentielListProps = {
   leviers: LevierPriorisation[];

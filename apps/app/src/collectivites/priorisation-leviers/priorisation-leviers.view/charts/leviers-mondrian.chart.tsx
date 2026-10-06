@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Caption } from '@/app/ui/charts/matrix/caption';
-import { TreemapChart } from '@/app/ui/charts/treemap/treemap.chart';
 import type {
   HexColor,
   IntensityVariant,
   TreemapGroup,
 } from '@/app/ui/charts/treemap/treemap-group';
+import { TreemapChart } from '@/app/ui/charts/treemap/treemap.chart';
 import {
   CategorieAction,
   LevierId,
@@ -15,6 +15,7 @@ import { preset } from '@tet/ui';
 import { color } from 'echarts/core';
 import { sumBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
+import { SelectLevier } from '../levier-panel/use-levier-side-panel';
 import {
   MOBILISATION_SCALE,
   MobilisationLevel,
@@ -24,7 +25,6 @@ import {
 import { LevierPlace } from './to-matrix-points';
 import { LevierTile, toMondrianTiles } from './to-mondrian-tiles';
 import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
-import { SelectLevier } from './use-levier-side-panel';
 
 type LeviersMondrianChartProps = {
   places: LevierPlace[];

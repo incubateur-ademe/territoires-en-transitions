@@ -3,8 +3,8 @@ import type { ActionDeReference } from '@tet/domain/shared';
 import { Button } from '@tet/ui';
 import { JSX } from 'react';
 import { match } from 'ts-pattern';
-import { ActionDeReferenceSummaryCard } from './action-de-reference-summary.card';
-import { Preselection, PreselectionStatus } from './use-preselection';
+import { ActionDeReferenceSummaryCard } from '../../action-de-reference-summary.card';
+import { Preselection, PreselectionStatus } from '../../use-preselection';
 
 type ActionDeReferencePreselectionCardProps = {
   action: ActionDeReference;

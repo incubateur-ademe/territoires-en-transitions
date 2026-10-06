@@ -6,8 +6,8 @@ import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Breadcrumbs, PageHeader } from '@tet/ui';
 import { JSX } from 'react';
+import { usePreselection } from '../use-preselection';
 import { PreselectionContent } from './preselection.content';
-import { usePreselection } from './use-preselection';
 
 export const PreselectionView = (): JSX.Element => {
   const { collectiviteId } = useCurrentCollectivite();

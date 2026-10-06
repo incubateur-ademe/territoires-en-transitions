@@ -2,13 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { hasMobilisation } from '../to-levier-cards';
+import { hasMobilisation } from './to-levier-cards';
 import {
   LevierPriorisation,
   PotentielsReduction,
   toLeviersPriorisation,
   toPotentielsReduction,
-} from '../to-leviers-priorisation';
+} from './to-leviers-priorisation';
 import { toPertinencesListInput } from './to-pertinences-list-input';
 
 export type LeviersPriorisationQuery =

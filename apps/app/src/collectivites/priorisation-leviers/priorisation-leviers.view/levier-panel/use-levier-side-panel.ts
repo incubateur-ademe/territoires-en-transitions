@@ -1,10 +1,10 @@
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CategorieAction, LevierId } from '@tet/domain/shared';
 import { createElement, useCallback, useEffect, useState } from 'react';
-import { UpsertPertinence } from './data/use-upsert-pertinence';
+import { Preselection } from '../../use-preselection';
+import { LevierPriorisation } from '../data/to-leviers-priorisation';
+import { UpsertPertinence } from '../data/use-upsert-pertinence';
 import { LevierPanel } from './levier.panel';
-import { LevierPriorisation } from './to-leviers-priorisation';
-import { Preselection } from './use-preselection';
 
 export type SelectLevier = (
   levierId: LevierId,
