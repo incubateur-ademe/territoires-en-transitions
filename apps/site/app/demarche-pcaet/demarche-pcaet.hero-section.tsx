@@ -1,12 +1,9 @@
 import Section from '@/site/components/sections/Section';
-import { getAuthPaths } from '@tet/api';
 import { Button } from '@tet/ui';
 import { DemarchePcaetAnimatedDiagram } from './demarche-pcaet.animated-diagram';
 import { getDepotEntryUrl } from './demarche-pcaet.data';
 
 export const DemarchePcaetHeroSection = () => {
-  const depotAuthPaths = getAuthPaths(getDepotEntryUrl());
-
   return (
     <Section
       className="flex flex-col gap-8 lg:gap-16 pt-12 pb-16 border-b border-primary-3"
@@ -28,7 +25,7 @@ export const DemarchePcaetHeroSection = () => {
             <Button
               className="after:hidden"
               variant="primary"
-              href={depotAuthPaths.login}
+              href={getDepotEntryUrl()}
               external
             >
               Commencer mon dépôt

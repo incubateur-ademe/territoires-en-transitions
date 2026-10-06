@@ -6,10 +6,13 @@ import {
 
 /**
  * Entrée du parcours de dépôt dans l'app. Le site ignore la collectivité de
- * l'utilisateur : l'app la résout après la connexion ou l'inscription.
+ * l'utilisateur : l'app la résout après la connexion ou l'inscription. Le
+ * `redirect_to` des pages d'authentification n'accepte qu'un chemin relatif.
  */
-export const getDepotEntryUrl = () =>
-  `${ENV.app_url ?? ''}/collectivite/demarche-pcaet`;
+export const DEPOT_ENTRY_PATH = '/collectivite/demarche-pcaet';
+
+/** Sans session, l'app redirige d'elle-même vers la connexion, puis revient ici. */
+export const getDepotEntryUrl = () => `${ENV.app_url ?? ''}${DEPOT_ENTRY_PATH}`;
 
 export const PCAET_HELP_URL =
   'https://aide.territoiresentransitions.fr/fr/category/demarche-pcaet-1n536fa/';
