@@ -7,7 +7,9 @@ export interface Log extends ApplicationContext {
   message?: string;
 
   /**
-   * Use snake_case to match datadoq reserved attributes
+   * Rattache le log à la personne dans PostHog Logs (même identifiant que
+   * `posthog.identify` côté front). trace_id et span_id sont ajoutés par
+   * l'instrumentation OpenTelemetry de pino, cf. telemetry-init.
    */
-  trace_id?: string;
+  posthogDistinctId?: string;
 }

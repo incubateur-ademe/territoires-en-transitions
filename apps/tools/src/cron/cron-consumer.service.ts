@@ -87,7 +87,7 @@ export class CronConsumerService extends WorkerHost {
         } for queue ${CRON_JOBS_QUEUE_NAME}: ${getErrorMessage(error)}`
       );
 
-      // Ne remonte l'erreur (Sentry, PostHog) qu'à la dernière tentative pour ne pas multiplier
+      // Ne remonte l'erreur à PostHog qu'à la dernière tentative pour ne pas multiplier
       // les captures pendant les retries de BullMQ. Si attemptsMade est
       // indéfini ou que l'option attempts n'est pas posée, on capture par
       // défaut (comportement précédent).

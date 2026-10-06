@@ -27,7 +27,7 @@ import { TrpcService } from './trpc.service';
  * Une 401 (non authentifié) ou une 429 (limite d'appels atteinte) est le
  * fonctionnement nominal du contrôle d'accès ou du rate limit, jamais un bug à
  * investiguer : on les journalise en `warn` et on ne les remonte pas dans
- * Sentry ni PostHog. Sinon, sur les procédures publiques, l'abus que le rate
+ * PostHog. Sinon, sur les procédures publiques, l'abus que le rate
  * limit est justement là pour absorber se transformerait en quota d'erreurs.
  *
  * Les autres codes 4xx (`BAD_REQUEST` en particulier) restent remontés : sur

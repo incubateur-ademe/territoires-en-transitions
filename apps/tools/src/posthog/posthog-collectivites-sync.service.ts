@@ -50,7 +50,7 @@ export class PostHogCollectivitesSyncService {
     if (rows.length === 0) {
       // Une base qui ne renvoie aucune collectivité est un signal de panne en
       // amont, pas un cas nominal. On lève pour que le consumer BullMQ relance
-      // le job (retry + capture Sentry à la dernière tentative) au lieu de le
+      // le job (retry + capture de l'erreur à la dernière tentative) au lieu de le
       // terminer en succès silencieux.
       this.logger.warn(
         'Aucune collectivité lue : synchro PostHog interrompue sans envoi'

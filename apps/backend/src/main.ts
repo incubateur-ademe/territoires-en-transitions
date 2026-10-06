@@ -1,5 +1,5 @@
 // WARNING: Do these imports first
-import './utils/sentry-init';
+import './utils/telemetry-init';
 // Other imports
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
