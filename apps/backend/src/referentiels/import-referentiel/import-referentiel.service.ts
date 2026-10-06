@@ -38,10 +38,13 @@ import {
   ActionTypeEnum,
   getActionTypeFromActionId,
   getParentId,
+  REFERENTIEL_TAG_TYPES_FOR_IMPORT,
   ReferentielDefinition,
   ReferentielId,
   ReferentielLabelEnum,
   referentielLabelEnumSchema,
+  ReferentielTag,
+  ReferentielTagTypeEnum,
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { isNil } from 'es-toolkit';
@@ -51,6 +54,11 @@ import {
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
 import { ActionDefinitionCreate } from '../models/action-definition.table';
+import { BUILTIN_REFERENTIEL_TAGS } from './builtin-referentiel-tags.constants';
+import {
+  ImportReferentielTag,
+  importReferentielTagSchema,
+} from './import-referentiel-tag.dto';
 import { ImportReferentielRepository } from './import-referentiel.repository';
 import {
   buildActionId,
@@ -62,6 +70,7 @@ import {
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
+const REFERENTIEL_TAGS_SPREADSHEET_RANGE = 'Tags!A:C';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
@@ -87,6 +96,17 @@ const actionThematiqueSgpeLabelToKey = Object.fromEntries(
     label.toLowerCase(),
     key as ActionThematiqueSgpe,
   ])
+);
+
+// types autorisés dans l'onglet `Tags`
+const importableReferentielTagTypes = new Set<string>(
+  REFERENTIEL_TAG_TYPES_FOR_IMPORT
+);
+
+const reservedReferentielTagTypes = new Set<string>(
+  Object.values(ReferentielTagTypeEnum).filter(
+    (type) => !REFERENTIEL_TAG_TYPES_FOR_IMPORT.includes(type)
+  )
 );
 
 @Injectable()
@@ -162,6 +182,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       referentielId,
       importActionDefinitions.data
     );
+
+    // Seul le spreadsheet du nouveau référentiel dispose d'un onglet `Tags`
+    const referentielTags = isNewReferentiel
+      ? await this.getReferentielTags(spreadsheetId)
+      : [];
+    const referentielTagRefs = new Set(referentielTags.map(({ ref }) => ref));
 
     const actionDefinitions: ActionDefinitionCreate[] = [];
     const createActionOrigines: ActionOrigine[] = [];
@@ -244,6 +270,17 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             };
             createActionTags.push(labelTag);
           });
+        }
+
+        if (action.tags) {
+          createActionTags.push(
+            ...buildActionTags(
+              referentielId,
+              createActionDefinition.actionId,
+              action.tags,
+              referentielTagRefs
+            )
+          );
         }
 
         if (
@@ -443,6 +480,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       actionDefinitions,
       actionOrigines: createActionOrigines,
       actionOrigineTextes: createActionOrigineTextes,
+      referentielTags,
       actionTags: createActionTags,
       personnalisationRegles: createPersonnalisationRegles,
       questionActionRelations,
@@ -588,6 +626,30 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     } catch (e) {
       return { success: false, error: getErrorMessage(e) };
     }
+  }
+
+  private async getReferentielTags(
+    spreadsheetId: string
+  ): Promise<ReferentielTag[]> {
+    const importReferentielTags =
+      await this.sheetService.getDataFromSheet<ImportReferentielTag>(
+        spreadsheetId,
+        importReferentielTagSchema,
+        REFERENTIEL_TAGS_SPREADSHEET_RANGE,
+        ['id']
+      );
+    const { referentielTags, ignoredTagRefs } = buildReferentielTags(
+      importReferentielTags.data,
+      new Set(BUILTIN_REFERENTIEL_TAGS.map(({ ref }) => ref))
+    );
+    if (ignoredTagRefs.length) {
+      this.logger.warn(
+        `Tags ignorés dans l'onglet Tags car leur id ou leur type est réservé à l'import : ${ignoredTagRefs.join(
+          ', '
+        )}`
+      );
+    }
+    return referentielTags;
   }
 
   private getReferentielSpreadsheetId(referentielId: ReferentielId): string {
@@ -758,5 +820,81 @@ export function buildOrigineTags(
     referentielId,
     actionId,
     tagRef: origineReferentielId,
+  }));
+}
+
+export function buildReferentielTags(
+  importReferentielTags: ImportReferentielTag[],
+  builtinTagRefs: Set<string>
+): { referentielTags: ReferentielTag[]; ignoredTagRefs: string[] } {
+  const referentielTags = new Map<string, ReferentielTag>();
+  const ignoredTagRefs: string[] = [];
+  importReferentielTags.forEach(({ id, nom, type }) => {
+    const ref = id.trim();
+    if (!ref) {
+      throw new UnprocessableEntityException(
+        'A tag of the Tags sheet is missing an id'
+      );
+    }
+    const tagType = type?.trim();
+    // les tags et types de tag intégrés sont réservés à l'import : ils ne
+    // peuvent être ni modifiés ni utilisés depuis le spreadsheet
+    if (
+      builtinTagRefs.has(ref) ||
+      reservedReferentielTagTypes.has(tagType ?? '')
+    ) {
+      ignoredTagRefs.push(ref);
+      return;
+    }
+    if (referentielTags.has(ref)) {
+      throw new UnprocessableEntityException(
+        `Tag ${ref} is duplicated in the spreadsheet`
+      );
+    }
+    if (!nom?.trim()) {
+      throw new UnprocessableEntityException(`Tag ${ref} is missing a name`);
+    }
+    if (!tagType) {
+      throw new UnprocessableEntityException(`Tag ${ref} is missing a type`);
+    }
+    if (!importableReferentielTagTypes.has(tagType)) {
+      throw new UnprocessableEntityException(
+        `Invalid type ${tagType} for tag ${ref}, allowed values are: ${REFERENTIEL_TAG_TYPES_FOR_IMPORT.join(
+          ', '
+        )}`
+      );
+    }
+    referentielTags.set(ref, { ref, nom: nom.trim(), type: tagType });
+  });
+
+  return { referentielTags: [...referentielTags.values()], ignoredTagRefs };
+}
+
+export function buildActionTags(
+  referentielId: ReferentielId,
+  actionId: string,
+  tagIds: string[],
+  referentielTagRefs: Set<string>
+): ActionDefinitionTag[] {
+  const tagRefs = new Set<string>();
+  tagIds.forEach((tagId) => {
+    const tagRef = tagId.trim();
+    if (!tagRef) {
+      return;
+    }
+    if (!referentielTagRefs.has(tagRef)) {
+      throw new UnprocessableEntityException(
+        `Invalid tag ${tagRef} for action ${actionId}, allowed values are: ${[
+          ...referentielTagRefs,
+        ].join(', ')}`
+      );
+    }
+    tagRefs.add(tagRef);
+  });
+
+  return [...tagRefs].map((tagRef) => ({
+    referentielId,
+    actionId,
+    tagRef,
   }));
 }

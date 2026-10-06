@@ -44,6 +44,8 @@ export const importActionDefinitionSchema = z.object({
   origine: z.string().optional(),
   origineTexte: z.string().optional(),
   labels: getZodStringArrayFromQueryString().optional(),
+  /* Identifiants des tags (thématiques transverses, etc.) listés dans l'onglet `Tags` */
+  tags: getZodStringArrayFromQueryString().optional(),
   coremeasure: z.string().optional(),
   /* Lien vers les indicateurs */
   indicateurs: getZodStringArrayFromQueryString().nullable().optional(),

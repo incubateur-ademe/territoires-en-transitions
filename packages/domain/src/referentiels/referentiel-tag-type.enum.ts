@@ -1,19 +1,27 @@
 /**
- * Types des tags attribués par l'import du référentiel lui-même (origine,
- * labels, coremeasure).
+ * Types de tag connus.
  *
- * La colonne `referentiel_tag.type` n'est pas limitée à ces valeurs : d'autres
- * types peuvent être ajoutés librement depuis l'onglet `Tags` du spreadsheet,
- * tant qu'ils ne reprennent pas l'un de ces types réservés.
+ * `Catalogue`, `EEA` et `Label` sont attribués par l'import du référentiel
+ * lui-même (origine, labels, coremeasure) et lui sont réservés. Les autres
+ * types sont ceux listés dans `REFERENTIEL_TAG_TYPES_FOR_IMPORT`.
  */
 export const ReferentielTagTypeEnum = {
   CATALOGUE: 'Catalogue',
   EEA: 'EEA',
   LABEL: 'Label',
+  THEMATIQUE: 'thematique',
 } as const;
 
 export type ReferentielTagType =
   (typeof ReferentielTagTypeEnum)[keyof typeof ReferentielTagTypeEnum];
+
+/**
+ * Seuls les tags de ces types peuvent être déclarés dans l'onglet `Tags` du
+ * spreadsheet d'un référentiel.
+ */
+export const REFERENTIEL_TAG_TYPES_FOR_IMPORT: ReferentielTagType[] = [
+  ReferentielTagTypeEnum.THEMATIQUE,
+];
 
 /**
  * Seuls les tags de ces types donnent lieu à un calcul de score par tag.
