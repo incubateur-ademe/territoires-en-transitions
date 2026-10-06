@@ -1,3 +1,4 @@
+import { useIsHydrated } from '@/app/utils/use-is-hydrated';
 import { useUser } from '@tet/api/users';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
@@ -21,6 +22,7 @@ const actionAddedToPlanSchema = z.object({
 export type ActionAddedToPlan = z.output<typeof actionAddedToPlanSchema>;
 
 export type Preselection = {
+  isReady: boolean;
   actions: readonly ActionDeReference[];
   statusOf: (actionId: ActionDeReferenceId) => PreselectionStatus;
   addedToPlanOf: (
@@ -171,7 +173,10 @@ export const usePreselection = (): Preselection => {
       deserializer: deserializePreselection,
     }
   );
-  const preselection = stored ?? EMPTY_PRESELECTION;
+  const isHydrated = useIsHydrated();
+  const preselection = isHydrated
+    ? stored ?? EMPTY_PRESELECTION
+    : EMPTY_PRESELECTION;
 
   const update = useCallback(
     (transform: (current: StoredPreselection) => StoredPreselection): void => {
@@ -182,6 +187,7 @@ export const usePreselection = (): Preselection => {
 
   return useMemo(
     () => ({
+      isReady: isHydrated,
       actions: preselection.preselected,
       statusOf: (actionId) => toStatus(preselection, actionId),
       addedToPlanOf: (actionId) => toAddedToPlan(preselection, actionId),
@@ -197,6 +203,6 @@ export const usePreselection = (): Preselection => {
       clearAddedToPlan: (actionId) =>
         update((current) => clearAddedToPlan(current, actionId)),
     }),
-    [preselection, update]
+    [isHydrated, preselection, update]
   );
 };

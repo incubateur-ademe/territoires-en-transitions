@@ -122,23 +122,49 @@ export class PriorisationLeviersPom {
     });
   }
 
-  get preselectionSection(): Locator {
-    return this.page.locator('section').filter({
-      has: this.page.getByRole('heading', {
-        level: 2,
-        name: 'Votre présélection',
-      }),
+  get preselectionLink(): Locator {
+    return this.page.getByRole('link', {
+      name: /^Actions pré-sélectionnées \(\d+\)$/,
     });
   }
 
+  get preselectionTitle(): Locator {
+    return this.page.getByRole('heading', {
+      level: 1,
+      name: 'Actions pré-sélectionnées',
+    });
+  }
+
+  get fonctionnementButton(): Locator {
+    return this.page.getByRole('button', { name: 'Comment ça marche ?' });
+  }
+
+  get fonctionnementModal(): Locator {
+    return this.page.getByRole('dialog', { name: 'Comment ça marche ?' });
+  }
+
+  async openPreselection(): Promise<void> {
+    await this.preselectionLink.click();
+    await expect(this.preselectionTitle).toBeVisible();
+  }
+
+  async backToPriorisation(): Promise<void> {
+    await this.page
+      .getByRole('link', { name: 'Priorisation des leviers' })
+      .click();
+    await expect(this.title).toBeVisible();
+  }
+
   get emptyPreselectionMessage(): Locator {
-    return this.preselectionSection.getByText(
+    return this.page.getByText(
       "Aucune action dans la présélection pour l'instant"
     );
   }
 
   get preselectedCards(): Locator {
-    return this.preselectionSection.getByRole('listitem');
+    return this.page.getByRole('listitem').filter({
+      has: this.page.getByRole('heading', { level: 4 }),
+    });
   }
 
   preselectedCard(titre: string): Locator {
@@ -151,7 +177,7 @@ export class PriorisationLeviersPom {
     group: 'Tous les leviers' | 'Toutes les catégories',
     optionValue: LevierId | CategorieAction
   ): Promise<void> {
-    await this.preselectionSection
+    await this.page
       .getByRole('group', { name: group })
       .getByRole('button', { name: 'ouvrir le menu' })
       .click();

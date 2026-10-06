@@ -51,7 +51,31 @@ test.describe('Priorisation : matrice et volet', () => {
     await expect(pom.levierButtons).toHaveCount(29);
     await expect(pom.metricCount(/^actions? à potentiel/)).toHaveText('0');
     await expect(pom.metricCount(/leviers? en angle mort/)).toHaveText('0');
+    await expect(pom.preselectionLink).toHaveText(
+      'Actions pré-sélectionnées (0)'
+    );
+
+    await pom.openPreselection();
+
     await expect(pom.emptyPreselectionMessage).toBeVisible();
+  });
+
+  test("« Comment ça marche ? » ouvre une modale qui explique l'outil", async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new PriorisationLeviersPom(page);
+    await pom.goto(collectivite.data.id);
+
+    await pom.fonctionnementButton.click();
+
+    await expect(pom.fonctionnementModal).toBeVisible();
+    await expect(pom.fonctionnementModal).toContainText(
+      /potentiel de réduction de GES/
+    );
   });
 
   test('le tableau des données du graphique se déplie et se replie', async ({
@@ -179,14 +203,17 @@ test.describe('Priorisation : présélection', () => {
       .click();
 
     await expect(card.getByRole('button', { name: 'Ajoutée' })).toBeVisible();
-    await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
     await expect(pom.metricCount(/^actions? à potentiel/)).toHaveText('1');
+    await expect(pom.preselectionLink).toHaveText(
+      'Actions pré-sélectionnées (1)'
+    );
 
     await page.reload();
     await expect(pom.title).toBeVisible();
 
-    await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
     await expect(pom.metricCount(/^actions? à potentiel/)).toHaveText('1');
+    await pom.openPreselection();
+    await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
   });
 
   test("« Pas intéressé » range l'action dans un accordéon, « Rétablir » la ressort", async ({
@@ -247,6 +274,7 @@ test.describe('Priorisation : présélection', () => {
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
       .getByRole('button', { name: 'Ajouter à la présélection' })
       .click();
+    await pom.openPreselection();
     await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
 
     await pom
@@ -255,6 +283,11 @@ test.describe('Priorisation : présélection', () => {
       .click();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
+    await pom.backToPriorisation();
+    await expect(pom.preselectionLink).toHaveText(
+      'Actions pré-sélectionnées (0)'
+    );
+    await pom.openLevier(LEVIER_NOM);
     await expect(
       pom
         .actionCardInPanel(LEVIER_NOM, amenagement.titre)
@@ -288,6 +321,7 @@ test.describe('Priorisation : présélection', () => {
       .actionCardInPanel(AUTRE_LEVIER_NOM, biogaz.titre)
       .getByRole('button', { name: 'Ajouter à la présélection' })
       .click();
+    await pom.openPreselection();
     await expect(pom.preselectedCards).toHaveCount(3);
 
     await pom.chooseFilter('Tous les leviers', 'covoiturage');
@@ -326,6 +360,7 @@ test.describe('Priorisation : ajout à un plan', () => {
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
       .getByRole('button', { name: 'Ajouter à la présélection' })
       .click();
+    await pom.openPreselection();
     await expect(pom.addToPlanButton(amenagement.titre)).toHaveText(
       `Ajouter à « ${planNom} »`
     );
@@ -347,7 +382,7 @@ test.describe('Priorisation : ajout à un plan', () => {
     );
 
     await page.reload();
-    await expect(pom.title).toBeVisible();
+    await expect(pom.preselectionTitle).toBeVisible();
     await expect(
       pom.addedToPlanStatus(amenagement.titre, planNom)
     ).toBeVisible();
@@ -398,6 +433,7 @@ test.describe('Priorisation : ajout à un plan', () => {
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
       .getByRole('button', { name: 'Ajouter à la présélection' })
       .click();
+    await pom.openPreselection();
 
     await pom.otherPlansButton(amenagement.titre).click();
 

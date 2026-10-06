@@ -7,7 +7,7 @@ import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { Button, EmptyCard, Icon, VisibleWhen } from '@tet/ui';
-import { JSX, ReactNode } from 'react';
+import { JSX } from 'react';
 import { ActionDeReferenceSummaryCard } from './action-de-reference-summary.card';
 import { AddToPlanSplitButton } from './add-to-plan.split-button';
 import {
@@ -21,7 +21,7 @@ import {
 } from './preselection.filters';
 import { ActionAddedToPlan, Preselection } from './use-preselection';
 
-type PreselectionSectionProps = {
+type PreselectionContentProps = {
   preselection: Preselection;
 };
 
@@ -60,12 +60,6 @@ const AddedToPlanFooter = ({
     </Button>
   </>
 );
-
-const PreselectionTitle = ({
-  children,
-}: {
-  children: ReactNode;
-}): JSX.Element => <h2 className="mb-0 text-2xl">{children}</h2>;
 
 const PreselectedActionCard = ({
   action,
@@ -108,7 +102,7 @@ const PreselectedActionCard = ({
 
 const PreselectionList = ({
   preselection,
-}: PreselectionSectionProps): JSX.Element => {
+}: PreselectionContentProps): JSX.Element => {
   const planAdditions = useActionsDeReferencePlanAdditions(preselection);
   const filtering = usePreselectionFiltering(preselection.actions);
   const { collectiviteId, hasCollectivitePermission } =
@@ -148,18 +142,13 @@ const PreselectionList = ({
   );
 };
 
-export const PreselectionSection = ({
+export const PreselectionContent = ({
   preselection,
-}: PreselectionSectionProps): JSX.Element => {
+}: PreselectionContentProps): JSX.Element => {
   const isPreselectionEmpty = preselection.actions.length === 0;
-  return (
-    <section className="flex flex-col gap-4">
-      <PreselectionTitle>{appLabels.votrePreselection}</PreselectionTitle>
-      {isPreselectionEmpty ? (
-        <EmptyPreselection />
-      ) : (
-        <PreselectionList preselection={preselection} />
-      )}
-    </section>
+  return isPreselectionEmpty ? (
+    <EmptyPreselection />
+  ) : (
+    <PreselectionList preselection={preselection} />
   );
 };
