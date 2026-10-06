@@ -43,15 +43,20 @@ const ETAPES_BY_KEY = {
     detail:
       'Une fois le dossier complet, vous le transmettez depuis la plateforme. Le conseil régional et le préfet de région sont informés et accèdent au dossier pour rendre leur avis.',
     actions: ["Suivre l'état de la transmission"],
-    stakeholders: ['Conseil régional', 'Préfet de région'],
+    stakeholders: [
+      'Collectivité',
+      'Équipes projet',
+      'Conseil régional',
+      'Préfet de région',
+    ],
   },
   finalisation: {
     title: 'Consultation des avis et délibération',
     detail:
-      "Les avis reçus sont rattachés à votre dossier. Vous en prenez connaissance, ajustez le plan si nécessaire, puis votre assemblée délibère pour l'adopter.",
+      "Les avis reçus sont rattachés à votre dépôt. Vous en prenez connaissance et ajustez des éléments si nécessaire. Puis votre assemblée délibère pour l'adopter.",
     actions: [
       'Consulter les avis reçus',
-      'Ajuster le plan si besoin',
+      'Ajuster des éléments si besoin',
       'Préparer la délibération',
     ],
     stakeholders: ['Collectivité', 'Élus'],
@@ -59,7 +64,7 @@ const ETAPES_BY_KEY = {
   publie: {
     title: 'Adopté, publié et en cours de mise en œuvre',
     detail:
-      "Vous déposez la délibération : le plan est adopté et publié. Vous pouvez utiliser la plateforme pour suivre votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe.",
+      "Vous déposez la délibération : le plan est adopté et accessible au grand public. Vous pouvez utiliser la plateforme pour suivre votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe.",
     actions: [
       'Déposer la délibération',
       'Piloter vos actions',

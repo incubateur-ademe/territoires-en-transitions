@@ -27,10 +27,27 @@ export const DemarchePcaetDemoSection = () => (
             PCAET
           </li>
         </ul>
+        <div className="flex flex-col gap-2">
+          <p className="mb-0 font-bold text-primary-10">
+            Ce que vous pouvez faire :
+          </p>
+          <ul className="flex flex-col gap-1.5 m-0 pl-5 list-disc text-primary-10 lg:text-[17px]">
+            <li className="p-0">
+              Reprendre votre dépôt là où vous l&apos;avez laissé
+            </li>
+            <li className="p-0">
+              Repartir de votre plan d&apos;actions précédent pour un
+              renouvellement
+            </li>
+            <li className="p-0">
+              Inviter vos collègues à compléter ou à suivre le dépôt
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 p-4 lg:px-[22px] lg:py-5 bg-white border border-primary-3 rounded-lg">
-        <Badge title="Import évolué" variant="high" size="sm" />
+        <Badge title="Import automatique" variant="high" size="sm" />
         <h3 className="mb-0 text-primary-9 text-[17px] lg:text-[19px] leading-snug">
           Importez votre programme d&apos;actions existant en quelques minutes
         </h3>
