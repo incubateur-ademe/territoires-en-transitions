@@ -43,7 +43,7 @@ import {
   toLeviersPlaces,
   toLeviersWithoutPotentiel,
 } from './to-matrix-points';
-import { useLevierSidePanel } from './use-levier-side-panel';
+import { SelectLevier, useLevierSidePanel } from './use-levier-side-panel';
 import { Preselection, usePreselection } from './use-preselection';
 
 type PriorisationAlertsProps = {
@@ -58,7 +58,7 @@ type LeviersSectionProps = {
   places: LevierPlace[];
   preselectedCountByLevier: PreselectedCountByLevier;
   selectedLevierId?: LevierId;
-  onLevierSelected: (levierId: LevierId) => void;
+  onLevierSelected: SelectLevier;
 };
 
 type BreakdownViewProps = Pick<

@@ -32,6 +32,13 @@ const levierIdSchema = z.enum(levierIdEnumValues);
 
 const categorieSchema = z.enum(categorieActionEnumValues);
 
+export const toCategorie = (
+  value: OptionValue | undefined
+): CategorieAction | undefined => {
+  const categorie = categorieSchema.safeParse(value);
+  return categorie.success ? categorie.data : undefined;
+};
+
 const matchesFilter = (
   action: ActionDeReference,
   { levierId, categorie }: PreselectionFilter
@@ -81,11 +88,7 @@ export const usePreselectionFiltering = (
       }));
     },
     chooseCategorie: (value) => {
-      const categorie = categorieSchema.safeParse(value);
-      setFilter((current) => ({
-        ...current,
-        categorie: categorie.success ? categorie.data : undefined,
-      }));
+      setFilter((current) => ({ ...current, categorie: toCategorie(value) }));
     },
   };
 };
@@ -98,17 +101,19 @@ const toLevierOptions = (actions: readonly ActionDeReference[]): Option[] =>
       label: LEVIER_NOM_BY_ID[levierId],
     }));
 
+export const toCategorieOption = (categorie: CategorieAction): Option => ({
+  value: categorie,
+  label: appLabels.categorieActionLabel(categorie),
+});
+
 const toCategorieOptions = (actions: readonly ActionDeReference[]): Option[] =>
   categorieActionEnumValues
     .filter((categorie) =>
       actions.some((action) => action.categorie === categorie)
     )
-    .map((categorie) => ({
-      value: categorie,
-      label: appLabels.categorieActionLabel(categorie),
-    }));
+    .map(toCategorieOption);
 
-const FilterField = ({
+export const FilterField = ({
   label,
   children,
 }: {

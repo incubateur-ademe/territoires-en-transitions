@@ -6,25 +6,30 @@ import type {
   IntensityVariant,
   TreemapGroup,
 } from '@/app/ui/charts/treemap/treemap-group';
-import { LevierId, levierIdEnumValues } from '@tet/domain/shared';
+import {
+  CategorieAction,
+  LevierId,
+  levierIdEnumValues,
+} from '@tet/domain/shared';
 import { preset } from '@tet/ui';
 import { color } from 'echarts/core';
 import { sumBy } from 'es-toolkit';
-import { JSX, useCallback, useMemo } from 'react';
+import { JSX, useMemo } from 'react';
 import {
   MOBILISATION_SCALE,
   MobilisationLevel,
   toMobilisationLabel,
   toMobilisationLevel,
 } from './mobilisation-level';
-import { toImpactPotentielLabel } from './to-impact-potentiel-label';
 import { LevierPlace } from './to-matrix-points';
 import { LevierTile, toMondrianTiles } from './to-mondrian-tiles';
+import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
+import { SelectLevier } from './use-levier-side-panel';
 
 type LeviersMondrianChartProps = {
   places: LevierPlace[];
   selectedLevierId?: LevierId;
-  onLevierSelected: (levierId: LevierId) => void;
+  onLevierSelected: SelectLevier;
 };
 
 const { colors } = preset.theme.extend;
@@ -63,15 +68,15 @@ const toLevierColor = (levier: LevierTile): HexColor => {
 
 const toTreemapGroup = (
   levier: LevierTile
-): TreemapGroup<MobilisationLevel, LevierId> => ({
+): TreemapGroup<MobilisationLevel, LevierId, CategorieAction> => ({
   id: levier.levierId,
   label: levier.nom,
   color: toLevierColor(levier),
-  tiles: levier.categories.map((categorie) => ({
-    id: categorie.categorie,
-    label: appLabels.categorieActionLabel(categorie.categorie),
-    value: categorie.potentielReduction,
-    intensity: toMobilisationLevel(categorie.note),
+  tiles: levier.categories.map((categorieTile) => ({
+    id: categorieTile.categorie,
+    label: appLabels.categorieActionLabel(categorieTile.categorie),
+    value: categorieTile.potentielReduction,
+    intensity: toMobilisationLevel(categorieTile.note),
   })),
 });
 
@@ -82,12 +87,8 @@ export const LeviersMondrianChart = ({
 }: LeviersMondrianChartProps): JSX.Element => {
   const tiles = useMemo(() => toMondrianTiles(places), [places]);
   const groups = useMemo(() => tiles.map(toTreemapGroup), [tiles]);
-  const potentielTotal = sumBy(tiles, (levier) => levier.potentielReduction);
-
-  const formatValue = useCallback(
-    (potentielReduction: number): string =>
-      toImpactPotentielLabel({ potentielReduction, potentielTotal }),
-    [potentielTotal]
+  const formatValue = useFormatImpactPotentiel(
+    sumBy(tiles, (levier) => levier.potentielReduction)
   );
 
   return (

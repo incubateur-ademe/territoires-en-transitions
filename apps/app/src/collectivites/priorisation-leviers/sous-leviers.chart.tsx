@@ -2,18 +2,18 @@ import { appLabels } from '@/app/labels/catalog';
 import { Caption } from '@/app/ui/charts/matrix/caption';
 import type { StatusScale } from '@/app/ui/charts/status-bar/status-bar';
 import { StatusBarChart } from '@/app/ui/charts/status-bar/status-bar.chart';
-import { LevierId } from '@tet/domain/shared';
 import { preset } from '@tet/ui';
 import { sumBy } from 'es-toolkit';
-import { JSX, useCallback, useMemo } from 'react';
+import { JSX, useMemo } from 'react';
 import { toMobilisationLabel } from './mobilisation-level';
-import { toImpactPotentielLabel } from './to-impact-potentiel-label';
 import { LevierPlace } from './to-matrix-points';
 import { toSousLevierBars } from './to-sous-levier-bars';
+import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
+import { SelectLevier } from './use-levier-side-panel';
 
 type SousLeviersChartProps = {
   places: LevierPlace[];
-  onLevierSelected: (levierId: LevierId) => void;
+  onLevierSelected: SelectLevier;
 };
 
 const { colors } = preset.theme.extend;
@@ -30,18 +30,14 @@ export const SousLeviersChart = ({
   onLevierSelected,
 }: SousLeviersChartProps): JSX.Element => {
   const bars = useMemo(() => toSousLevierBars(places), [places]);
-  const potentielTotal = sumBy(bars, ({ value }) => value);
-
-  const formatValue = useCallback(
-    (potentielReduction: number): string =>
-      toImpactPotentielLabel({ potentielReduction, potentielTotal }),
-    [potentielTotal]
+  const formatValue = useFormatImpactPotentiel(
+    sumBy(bars, ({ value }) => value)
   );
 
   const selectBar = (barId: string): void => {
     const bar = bars.find(({ id }) => id === barId);
     if (bar) {
-      onLevierSelected(bar.levierId);
+      onLevierSelected(bar.levierId, bar.categorie);
     }
   };
 

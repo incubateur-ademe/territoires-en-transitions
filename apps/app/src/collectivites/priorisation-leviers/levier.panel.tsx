@@ -1,3 +1,4 @@
+import { CategorieAction } from '@tet/domain/shared';
 import { Divider } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
 import { UpsertPertinence } from './data/use-upsert-pertinence';
@@ -9,6 +10,7 @@ import { Preselection } from './use-preselection';
 
 type LevierPanelProps = {
   levier: LevierPriorisation;
+  initialCategorie?: CategorieAction;
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
 };
@@ -19,6 +21,7 @@ const LevierTitle = ({ children }: { children: ReactNode }): JSX.Element => (
 
 export const LevierPanel = ({
   levier,
+  initialCategorie,
   preselection,
   upsertPertinence,
 }: LevierPanelProps): JSX.Element => (
@@ -33,6 +36,7 @@ export const LevierPanel = ({
     <Divider />
     <LevierActionsDeReferenceList
       levierId={levier.levierId}
+      initialCategorie={initialCategorie}
       preselection={preselection}
     />
   </div>

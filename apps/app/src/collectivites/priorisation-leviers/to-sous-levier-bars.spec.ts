@@ -33,6 +33,7 @@ describe('toSousLevierBars', () => {
         value: 10,
         status: 'Bien mobilisé',
         levierId: 'production_industrielle',
+        categorie: 'financement',
       },
       {
         id: 'production_industrielle/gouvernance',
@@ -40,6 +41,7 @@ describe('toSousLevierBars', () => {
         value: 8,
         status: 'Non mobilisé',
         levierId: 'production_industrielle',
+        categorie: 'gouvernance',
       },
       {
         id: 'production_industrielle/sensibilisation',
@@ -47,6 +49,7 @@ describe('toSousLevierBars', () => {
         value: 2,
         status: 'Non mobilisé',
         levierId: 'production_industrielle',
+        categorie: 'sensibilisation',
       },
     ]);
   });

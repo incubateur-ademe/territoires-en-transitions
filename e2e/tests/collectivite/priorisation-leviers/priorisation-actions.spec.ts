@@ -70,12 +70,10 @@ test.describe('Priorisation : matrice et volet', () => {
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
 
-    await pom.fonctionnementButton.click();
+    await pom.helpButton.click();
 
-    await expect(pom.fonctionnementModal).toBeVisible();
-    await expect(pom.fonctionnementModal).toContainText(
-      /potentiel de réduction de GES/
-    );
+    await expect(pom.helpModal).toBeVisible();
+    await expect(pom.helpModal).toContainText(/potentiel de réduction de GES/);
   });
 
   test("l'onglet « Sous-leviers à prioriser » affiche l'histogramme des sous-leviers", async ({
@@ -156,6 +154,31 @@ test.describe('Priorisation : matrice et volet', () => {
       await expect(pom.noActionMessage(LEVIER_NOM)).toBeVisible();
     }
   );
+
+  test('le filtre par catégorie du volet ne garde que les actions de cette catégorie', async ({
+    collectivites,
+    actionsDeReference,
+    page,
+  }) => {
+    const runToken = crypto.randomUUID().slice(0, 8);
+    const [amenagement, financement] = toCovoiturageActions(runToken);
+    await actionsDeReference.add([amenagement, financement]);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new PriorisationLeviersPom(page);
+    await pom.goto(collectivite.data.id);
+    await pom.openLevier(LEVIER_NOM);
+
+    await pom.chooseCategorieInPanel(LEVIER_NOM, 'Financement & fiscalité');
+
+    await expect(
+      pom.actionCardInPanel(LEVIER_NOM, financement.titre)
+    ).toBeVisible();
+    await expect(
+      pom.actionCardInPanel(LEVIER_NOM, amenagement.titre)
+    ).toBeHidden();
+  });
 
   test('la recherche filtre les actions du volet par titre, et dit quand rien ne correspond', async ({
     collectivites,

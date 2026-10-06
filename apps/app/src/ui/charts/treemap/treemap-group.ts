@@ -9,8 +9,8 @@ type IntensityScale<TIntensity extends string> = readonly [
 
 type IntensityVariant = NonNullable<BadgeProps['variant']>;
 
-type TreemapTile<TIntensity extends string> = {
-  id: string;
+type TreemapTile<TIntensity extends string, TTileId extends string = string> = {
+  id: TTileId;
   label: string;
   value: number;
   intensity: TIntensity;
@@ -18,12 +18,13 @@ type TreemapTile<TIntensity extends string> = {
 
 type TreemapGroup<
   TIntensity extends string,
-  TGroupId extends string = string
+  TGroupId extends string = string,
+  TTileId extends string = string
 > = {
   id: TGroupId;
   label: string;
   color: HexColor;
-  tiles: readonly TreemapTile<TIntensity>[];
+  tiles: readonly TreemapTile<TIntensity, TTileId>[];
 };
 
 export type {
