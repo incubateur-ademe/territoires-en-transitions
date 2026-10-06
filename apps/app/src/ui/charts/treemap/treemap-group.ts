@@ -1,9 +1,13 @@
+import type { BadgeProps } from '@tet/ui';
+
 type HexColor = `#${string}`;
 
 type IntensityScale<TIntensity extends string> = readonly [
   TIntensity,
   ...TIntensity[]
 ];
+
+type IntensityVariant = NonNullable<BadgeProps['variant']>;
 
 type TreemapTile<TIntensity extends string> = {
   id: string;
@@ -12,11 +16,20 @@ type TreemapTile<TIntensity extends string> = {
   intensity: TIntensity;
 };
 
-type TreemapGroup<TIntensity extends string> = {
-  id: string;
+type TreemapGroup<
+  TIntensity extends string,
+  TGroupId extends string = string
+> = {
+  id: TGroupId;
   label: string;
   color: HexColor;
   tiles: readonly TreemapTile<TIntensity>[];
 };
 
-export type { HexColor, IntensityScale, TreemapGroup, TreemapTile };
+export type {
+  HexColor,
+  IntensityScale,
+  IntensityVariant,
+  TreemapGroup,
+  TreemapTile,
+};

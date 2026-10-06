@@ -11,7 +11,8 @@ export const useResizeGraphOnContainerSizeUpdate = ({
   disabled = false,
 }: Props) => {
   useEffect(() => {
-    if (disabled || !containerRef.current) return;
+    const isResizeObservable = typeof ResizeObserver !== 'undefined';
+    if (disabled || !containerRef.current || !isResizeObservable) return;
 
     const container = containerRef.current;
     let rafId: number | null = null;
