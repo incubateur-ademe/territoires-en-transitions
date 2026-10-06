@@ -66,9 +66,10 @@ const seedDemarchePcaetSeo = async (strapi: Core.Strapi) => {
   await strapi.documents(uid).create({
     data: {
       seo: {
-        metaTitle: 'Déposer votre PCAET (Plan Climat-Air-Énergie Territorial)',
+        metaTitle:
+          'Déposer et piloter votre PCAET (Plan Climat-Air-Énergie Territorial)',
         metaDescription:
-          "Déposez votre Plan Climat sur Territoires en Transitions : un parcours de dépôt du PCAET guidé étape par étape, de l'élaboration à l'adoption, et un outil de pilotage pour suivre vos actions.",
+          "Déposez et pilotez votre Plan Climat sur Territoires en Transitions : un parcours de dépôt du PCAET guidé étape par étape, de l'élaboration à l'adoption, et un outil de pilotage pour suivre vos actions.",
       },
     },
     status: 'published',
