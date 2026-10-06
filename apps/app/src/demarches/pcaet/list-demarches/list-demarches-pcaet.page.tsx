@@ -8,8 +8,9 @@ import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
-import { Button, EmptyCard } from '@tet/ui';
+import { Button } from '@tet/ui';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
 import { useFilterDemarchesPcaet } from './use-filter-demarches-pcaet';
 
@@ -24,8 +25,19 @@ export const ListDemarchesPcaetPage = () => {
   const { data: demarches, isLoading, isError } = useListDemarchesPcaet();
   const { items, reinitialiserFiltres, ...pilotage } =
     useFilterDemarchesPcaet(demarches);
+  const creationUrl = makeCollectiviteDemarchePcaetNouveauUrl({
+    collectiviteId,
+  });
+  const isEmpty = demarches?.length === 0;
 
-  if (isLoading) {
+  // Sans démarche, la liste n'a rien à montrer : on va droit à la création.
+  useEffect(() => {
+    if (isEmpty) {
+      router.replace(creationUrl);
+    }
+  }, [isEmpty, creationUrl, router]);
+
+  if (isLoading || isEmpty) {
     return (
       <div className="flex grow items-center justify-center">
         <SpinnerLoader />
@@ -41,32 +53,11 @@ export const ListDemarchesPcaetPage = () => {
     );
   }
 
-  const creationUrl = makeCollectiviteDemarchePcaetNouveauUrl({
-    collectiviteId,
-  });
   // La création est bloquée tant qu'une démarche est « en cours » (même règle
   // que le backend : 409 + index unique partiel).
   const hasActiveDemarche = demarches.some((demarche) =>
     isDemarchePcaetEnCours(demarche.status)
   );
-
-  if (demarches.length === 0) {
-    return (
-      <div className="flex grow items-center justify-center p-8">
-        <EmptyCard
-          picto={(props) => <PictoDashboard {...props} />}
-          title={appLabels.demarcheListeVideTitre(PCAET_TYPE)}
-          description={[appLabels.demarcheListeVideDescription(PCAET_TYPE)]}
-          actions={[
-            {
-              children: appLabels.demarcheListeCommencerDepot,
-              onClick: () => router.push(creationUrl),
-            },
-          ]}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">
