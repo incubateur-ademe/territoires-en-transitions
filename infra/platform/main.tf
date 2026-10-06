@@ -21,6 +21,10 @@ locals {
       protocol      = "TCP"
       source        = local.platform_server_cidr
       destination   = "${var.network_plan[tier].server_ipv4_address}/32"
+      # Plage explicite : bornes inclusives, 0-0 ne vise que le port 0 et
+      # droppe le SYN, émis depuis un port éphémère.
+      src_port_low  = 0
+      src_port_high = 65535
       dst_port_low  = 22
       dst_port_high = 22
       action        = "accept"
@@ -41,6 +45,8 @@ locals {
       destination   = local.platform_server_cidr
       src_port_low  = 22
       src_port_high = 22
+      dst_port_low  = 0
+      dst_port_high = 65535
       action        = "accept"
       description   = "Retour SSH serveur ${tier} -> Coolify"
     }

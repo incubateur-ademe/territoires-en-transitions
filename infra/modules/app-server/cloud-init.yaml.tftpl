@@ -54,13 +54,17 @@ write_files:
       # Seule clé d'hôte présente (cf. ssh_keys) : évite les avertissements
       # sur les clés rsa / ecdsa absentes.
       HostKey /etc/ssh/ssh_host_ed25519_key
+      # Clés gérées par Terraform hors de ~/.ssh : Scaleway réécrit
+      # /root/.ssh/authorized_keys au boot (clés SSH IAM du projet). Ce
+      # fichier-là, personne d'autre n'y touche.
+      AuthorizedKeysFile .ssh/authorized_keys /etc/ssh/authorized_keys.d/%u
 
   # Clé publique maîtrisée par Terraform, autorisée sur root. C'est le seul
   # moyen d'accès root : le port 22 n'est pas ouvert sur l'IP publique, donc
   # cette clé ne sert que depuis le Private Network (serveur Coolify).
-  - path: /root/.ssh/authorized_keys
+  - path: /etc/ssh/authorized_keys.d/root
     owner: root:root
-    permissions: "0600"
+    permissions: "0644"
     content: |
       ${coolify_public_key}
 

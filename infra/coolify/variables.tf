@@ -112,7 +112,7 @@ variable "projects" {
   type        = map(string)
   default = {
     "tet-prod"    = "Production. Serveur dédié tet-prod-apps, Postgres et Redis managés."
-    "tet-preprod" = "Préproduction : gate iso-prod. Serveur tet-nonprod-apps, Postgres et Redis managés."
+    "tet-preprod" = "Préproduction, gate iso-prod. Serveur tet-nonprod-apps, Postgres et Redis managés."
     "tet-staging" = "Intégration continue de main. Serveur tet-nonprod-apps, Postgres et Redis conteneurisés."
     "tet-preview" = "Previews éphémères par pull request. Serveur tet-preview-apps, tout conteneurisé."
   }

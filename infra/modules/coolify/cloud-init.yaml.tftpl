@@ -53,15 +53,20 @@ write_files:
       # Seule clé d'hôte présente (cf. ssh_keys) : évite les avertissements
       # sur les clés rsa / ecdsa absentes.
       HostKey /etc/ssh/ssh_host_ed25519_key
+      # Clés gérées par Terraform hors de ~/.ssh : Scaleway réécrit
+      # /root/.ssh/authorized_keys au boot (clés SSH IAM du projet), et
+      # install.sh y ajoute la sienne. Ce fichier-là, personne d'autre n'y
+      # touche.
+      AuthorizedKeysFile .ssh/authorized_keys /etc/ssh/authorized_keys.d/%u
 
   # Clé publique « host » maîtrisée par Terraform, autorisée sur root : c'est
   # elle que Coolify utilise pour piloter localhost (root@host.docker.internal).
   # Contrairement à la clé auto-générée par install.sh dans /data/coolify/ssh/keys/
   # (régénérée à chaque update/réinstall → connexion cassée), celle-ci est stable
   # et versionnée dans Scaleway Secret Manager.
-  - path: /root/.ssh/authorized_keys
+  - path: /etc/ssh/authorized_keys.d/root
     owner: root:root
-    permissions: "0600"
+    permissions: "0644"
     content: |
       ${coolify_host_authorized_key}
 
@@ -79,7 +84,12 @@ runcmd:
   # Monter de version sur une VM existante :
   #   curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s ${coolify_version}
   # puis réappliquer AUTOUPDATE=false (install.sh peut le réécrire).
-  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s ${coolify_version}
+  #
+  # Pool d'adresses Docker hors 10.0.0.0/8 : le défaut d'install.sh (10.0.0.0/8
+  # en /24) chevauche les Private Networks du VPC. docker0 prenait 10.0.1.0/24,
+  # la route du PN nonprod perdait face à la route noyau du bridge, et Coolify
+  # ne joignait plus le serveur nonprod (« No route to host »).
+  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | DOCKER_ADDRESS_POOL_BASE=172.16.0.0/12 DOCKER_ADDRESS_POOL_SIZE=24 bash -s ${coolify_version}
   # Désactiver l'auto-update Coolify : on maîtrise quand on monte de version
   # (un update régénère les clés SSH et casse la connexion au serveur).
   # Prend effet au prochain cycle du scheduler qui relit le .env.
