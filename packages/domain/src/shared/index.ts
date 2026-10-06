@@ -8,6 +8,7 @@ export * from './filtre-ressource-liees.schema';
 export * from './id-name.schema';
 export * from './levier.enum';
 export * from './non-blank-text.schema';
+export * from './potentiel-share-by-levier.constants';
 export * from './region.schema';
 export * from './sous-thematique.schema';
 export * from './temps-de-mise-en-oeuvre.schema';

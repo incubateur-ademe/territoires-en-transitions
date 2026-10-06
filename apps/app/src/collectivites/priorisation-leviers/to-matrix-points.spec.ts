@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LevierPriorisation } from './to-leviers-priorisation';
+import { LevierPriorisation, NO_MOBILISATION } from './to-leviers-priorisation';
 import {
   isBlindSpot,
   LevierPlace,
@@ -26,6 +26,7 @@ const toLevier = (
   secteur: 'Transports',
   ficheCount: 0,
   mobilisationScore: 0,
+  noteByCategorie: NO_MOBILISATION,
   ...overrides,
 });
 

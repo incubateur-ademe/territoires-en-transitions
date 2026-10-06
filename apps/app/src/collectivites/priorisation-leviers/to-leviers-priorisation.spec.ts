@@ -94,6 +94,32 @@ describe('toLeviersPriorisation', () => {
     ).toBe(50);
   });
 
+  it('donne la note de chaque catégorie, à 0 pour une catégorie sans volet', () => {
+    const leviers = toLeviersPriorisation({
+      pertinences: [],
+      mobilisation: toMobilisation([
+        {
+          levierId: 'covoiturage',
+          ficheCount: 1,
+          volets: [{ categorie: 'gouvernance', note: 2, ficheCount: 1 }],
+        },
+      ]),
+      potentiels: { status: 'indisponible' },
+    });
+
+    expect(
+      leviers.find(({ levierId }) => levierId === 'covoiturage')
+        ?.noteByCategorie
+    ).toEqual({
+      amenagement: 0,
+      planification: 0,
+      financement: 0,
+      gouvernance: 2,
+      exemplarite: 0,
+      sensibilisation: 0,
+    });
+  });
+
   it("met à 0 la mobilisation des leviers absents de l'analyse", () => {
     const leviers = toLeviersPriorisation({
       pertinences: [],
