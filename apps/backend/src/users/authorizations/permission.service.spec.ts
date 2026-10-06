@@ -1,7 +1,7 @@
 import { ForbiddenException } from '@nestjs/common';
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import { ResourceType, UserRolesAndPermissions } from '@tet/domain/users';
 import { describe, expect, it, vi } from 'vitest';
@@ -16,11 +16,11 @@ const humanUser = {
   jwtPayload: { role: AuthRole.AUTHENTICATED },
 } satisfies AuthUser<AuthRole.AUTHENTICATED>;
 
-describe('PermissionService.assertApiKeyPermission', () => {
+describe('PermissionService.isApiKeyAllowed', () => {
   it('does not constrain a human session without an API-key allow-list', () => {
-    expect(() =>
-      service.assertApiKeyPermission(humanUser, 'indicateurs.valeurs.mutate')
-    ).not.toThrow();
+    expect(
+      service.isApiKeyAllowed(humanUser, 'indicateurs.valeurs.mutate')
+    ).toEqual(success(undefined));
   });
 
   it('rejects an operation absent from a restricted API-key allow-list', () => {
@@ -33,12 +33,9 @@ describe('PermissionService.assertApiKeyPermission', () => {
       },
     } satisfies AuthUser<AuthRole.AUTHENTICATED>;
 
-    expect(() =>
-      service.assertApiKeyPermission(
-        readOnlyApiKeyUser,
-        'indicateurs.valeurs.mutate'
-      )
-    ).toThrow(ForbiddenException);
+    expect(
+      service.isApiKeyAllowed(readOnlyApiKeyUser, 'indicateurs.valeurs.mutate')
+    ).toEqual(failure('UNAUTHORIZED'));
   });
 
   it('allows an operation present in a restricted API-key allow-list', () => {
@@ -51,12 +48,9 @@ describe('PermissionService.assertApiKeyPermission', () => {
       },
     } satisfies AuthUser<AuthRole.AUTHENTICATED>;
 
-    expect(() =>
-      service.assertApiKeyPermission(
-        writableApiKeyUser,
-        'indicateurs.valeurs.mutate'
-      )
-    ).not.toThrow();
+    expect(
+      service.isApiKeyAllowed(writableApiKeyUser, 'indicateurs.valeurs.mutate')
+    ).toEqual(success(undefined));
   });
 
   it('keeps service-role integrations unrestricted', () => {
@@ -67,16 +61,36 @@ describe('PermissionService.assertApiKeyPermission', () => {
       jwtPayload: { role: AuthRole.SERVICE_ROLE, permissions: [] },
     } satisfies AuthUser<AuthRole.SERVICE_ROLE>;
 
-    expect(() =>
-      service.assertApiKeyPermission(
-        serviceRoleUser,
-        'indicateurs.valeurs.mutate'
-      )
-    ).not.toThrow();
+    expect(
+      service.isApiKeyAllowed(serviceRoleUser, 'indicateurs.valeurs.mutate')
+    ).toEqual(success(undefined));
   });
 });
 
 describe('PermissionService.isAllowed', () => {
+  it('returns a denial for a restricted API key before loading roles', async () => {
+    const restrictedUser = {
+      ...humanUser,
+      jwtPayload: { ...humanUser.jwtPayload, permissions: [] },
+    };
+    await expect(
+      service.isAllowed(
+        restrictedUser,
+        'indicateurs.valeurs.mutate',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: 42 }
+      )
+    ).resolves.toEqual(failure('UNAUTHORIZED'));
+    await expect(
+      service.assertAllowed(
+        restrictedUser,
+        'indicateurs.valeurs.mutate',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: 42 }
+      )
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
   it('delegates the audit fallback lookup to the repository with the current transaction', async () => {
     const tx = {} as Transaction;
     const userPermissions = {

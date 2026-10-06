@@ -140,18 +140,20 @@ export class PermissionService {
   }
 
   /**
-   * Enforce the operation allow-list carried by restricted API-key JWTs.
+   * Check the operation allow-list carried by restricted API-key JWTs.
    *
    * Human sessions do not carry this claim, so their collectivity role (and
    * feature-specific fallbacks such as "piloted by me") remains authoritative.
    * Service-role tokens keep their existing unrestricted integration access.
    */
-  assertApiKeyPermission(user: AuthUser, operation: PermissionOperation): void {
+  isApiKeyAllowed(
+    user: AuthUser,
+    operation: PermissionOperation
+  ): Result<void, 'UNAUTHORIZED'> {
     if (!this.hasApiKeyPermission(user, operation)) {
-      throw new ForbiddenException(
-        `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
-      );
+      return failure('UNAUTHORIZED');
     }
+    return success(undefined);
   }
 
   private hasApiKeyPermission(
@@ -298,7 +300,11 @@ export class PermissionService {
       throw new ForbiddenException(REFERENTIEL_NOT_WRITABLE_MESSAGE);
     }
 
-    this.assertApiKeyPermission(user, operation);
+    if (!this.isApiKeyAllowed(user, operation).success) {
+      throw new ForbiddenException(
+        `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
+      );
+    }
 
     this.throwForbiddenException(user, operation, resourceType, resourceId);
   }

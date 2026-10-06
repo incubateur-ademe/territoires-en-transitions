@@ -1,11 +1,11 @@
 import {
-  ActionDefinitionTag,
-  ReferentielIdEnum,
-  ReferentielTag,
+    ActionDefinitionTag,
+    ReferentielIdEnum,
+    ReferentielTag,
 } from '@tet/domain/referentiels';
 import {
-  buildActionTags,
-  buildReferentielTags,
+    buildActionTags,
+    buildReferentielTags,
 } from './import-referentiel.service';
 
 describe('ImportReferentielService', () => {

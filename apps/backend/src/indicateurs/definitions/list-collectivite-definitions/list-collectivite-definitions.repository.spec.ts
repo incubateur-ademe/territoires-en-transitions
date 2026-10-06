@@ -30,7 +30,17 @@ describe('ListCollectiviteDefinitionsRepository', () => {
     const query = new PgDialect().sqlToQuery(condition);
     expect(query.sql).toContain('"collectivite_id" =');
     expect(query.sql).toContain('"collectivite_id" is null');
-    expect(query.sql).toContain('"groupement_id" is not null');
-    expect(query.params).toEqual(['CAE_1.A', 7, 42]);
+    expect(query.sql).toContain(
+      '("indicateur_definition"."collectivite_id" is null and "indicateur_definition"."groupement_id" is null)'
+    );
+    expect(query.sql).toContain('exists (');
+    expect(query.sql).toContain('select 1 from "groupement_collectivite"');
+    expect(query.sql).toContain(
+      '"groupement_collectivite"."groupement_id" = "indicateur_definition"."groupement_id"'
+    );
+    expect(query.sql).toContain(
+      '"groupement_collectivite"."collectivite_id" ='
+    );
+    expect(query.params).toEqual(['CAE_1.A', 7, 42, 42]);
   });
 });

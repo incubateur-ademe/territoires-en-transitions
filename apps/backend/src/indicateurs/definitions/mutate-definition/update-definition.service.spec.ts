@@ -7,6 +7,7 @@ import {
   AuthRole,
   type AuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { UpdateDefinitionService } from './update-definition.service';
 
@@ -28,12 +29,50 @@ function createAuthorizationDependencies() {
       }),
     },
     permissionService: {
-      assertApiKeyPermission: vi.fn(),
+      isApiKeyAllowed: vi.fn().mockReturnValue(success(undefined)),
     },
   };
 }
 
 describe('UpdateDefinitionService', () => {
+  it('returns an API-key denial before reading or writing the definition', async () => {
+    const transactionManager = { executeSingle: vi.fn() };
+    const repository = { getDefinitionOwnership: vi.fn() };
+    const { getUserPermissionsService, permissionService } =
+      createAuthorizationDependencies();
+    permissionService.isApiKeyAllowed.mockReturnValue(failure('UNAUTHORIZED'));
+    const service = new UpdateDefinitionService(
+      transactionManager as never,
+      repository as never,
+      getUserPermissionsService as never,
+      permissionService as never,
+      {} as never,
+      {} as never,
+      {} as never,
+      {} as never
+    );
+
+    await expect(
+      service.updateDefinition(
+        {
+          indicateurId: 42,
+          collectiviteId: 1,
+          indicateurFields: { isSuivi: false },
+        },
+        { user }
+      )
+    ).resolves.toEqual(failure('UNAUTHORIZED'));
+    expect(permissionService.isApiKeyAllowed).toHaveBeenCalledWith(
+      user,
+      'indicateurs.indicateurs.update'
+    );
+    expect(repository.getDefinitionOwnership).not.toHaveBeenCalled();
+    expect(
+      getUserPermissionsService.getUserRolesAndPermissions
+    ).not.toHaveBeenCalled();
+    expect(transactionManager.executeSingle).not.toHaveBeenCalled();
+  });
+
   it("refuse l'identifiant d'un indicateur d'une autre collectivité avant l'autorisation", async () => {
     const transactionManager = { executeSingle: vi.fn() };
     const repository = {
@@ -283,7 +322,7 @@ describe('UpdateDefinitionService — groupement', () => {
       }),
     };
     const permissionService = {
-      assertApiKeyPermission: vi.fn(),
+      isApiKeyAllowed: vi.fn().mockReturnValue(success(undefined)),
       throwForbiddenException: vi.fn(() => {
         throw new ForbiddenException();
       }),

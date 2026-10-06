@@ -1,12 +1,11 @@
-import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import {
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnprocessableEntityException,
+    ForbiddenException,
+    HttpException,
+    HttpStatus,
+    Injectable,
+    Logger,
+    NotFoundException,
+    UnprocessableEntityException,
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
@@ -14,64 +13,65 @@ import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definit
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
-  ImportActionDefinition,
-  ImportActionDefinitionCoremeasureType,
-  importActionDefinitionSchema,
+    ImportActionDefinition,
+    ImportActionDefinitionCoremeasureType,
+    importActionDefinitionSchema,
 } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
-  PersonnalisationRegleCreate,
-  regleTypeEnumValues,
+    PersonnalisationRegleCreate,
+    regleTypeEnumValues,
 } from '@tet/domain/collectivites';
 import {
-  ActionDefinitionTag,
-  ActionOrigine,
-  ActionOrigineTexte,
-  ActionRelationCreate,
-  ActionThematiqueSgpe,
-  actionThematiqueSgpeLabels,
-  ActionType,
-  ActionTypeEnum,
-  getActionTypeFromActionId,
-  getParentId,
-  REFERENTIEL_TAG_TYPES_FOR_IMPORT,
-  ReferentielId,
-  ReferentielLabelEnum,
-  referentielLabelEnumSchema,
-  ReferentielTag,
-  ReferentielTagTypeEnum,
+    ActionDefinitionTag,
+    ActionOrigine,
+    ActionOrigineTexte,
+    ActionRelationCreate,
+    ActionThematiqueSgpe,
+    actionThematiqueSgpeLabels,
+    ActionType,
+    ActionTypeEnum,
+    getActionTypeFromActionId,
+    getParentId,
+    REFERENTIEL_TAG_TYPES_FOR_IMPORT,
+    ReferentielId,
+    ReferentielLabelEnum,
+    referentielLabelEnumSchema,
+    ReferentielTag,
+    ReferentielTagTypeEnum,
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { isNil } from 'es-toolkit';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
-  GetReferentielService,
-  ReferentielResponse,
+    GetReferentielService,
+    ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
 import {
-  buildOrigineTags,
-  parseActionsOrigine,
-  parseActionsOrigineTexte,
+    buildOrigineTags,
+    parseActionsOrigine,
+    parseActionsOrigineTexte,
 } from './action-origine.adapter';
 import { BUILTIN_REFERENTIEL_TAGS } from './builtin-referentiel-tags.constants';
 import {
-  ImportReferentielTag,
-  importReferentielTagSchema,
+    ImportReferentielTag,
+    importReferentielTagSchema,
 } from './import-referentiel-tag.dto';
 import {
-  ImportReferentielRepository,
-  type SaveReferentielInput,
+    ImportReferentielRepository,
+    type SaveReferentielInput,
 } from './import-referentiel.repository';
 import {
-  buildActionId,
-  buildIndicateurReferences,
-  buildQuestionActionRelations,
-  normalizeTypeSyndicatExpressions,
-  verifyReferentielExpressions,
+    buildActionId,
+    buildIndicateurReferences,
+    buildQuestionActionRelations,
+    normalizeTypeSyndicatExpressions,
+    verifyReferentielExpressions,
 } from './verify-referentiel-expressions';
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 

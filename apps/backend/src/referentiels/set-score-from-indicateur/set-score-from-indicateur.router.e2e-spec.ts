@@ -650,6 +650,33 @@ describe('SetScoreFromIndicateurRouter', () => {
       expect(await getStatut(ACTION_AVEC_FORMULE)).toBeUndefined();
     });
 
+    test('Une clé API restreinte conserve le suivi, la sélection et le statut', async () => {
+      await insertAndSelectValeur();
+      const selection = await getValeursUtilisees(ACTION_AVEC_FORMULE);
+      const statut = await getStatut(ACTION_AVEC_FORMULE);
+      const caller = router.createCaller({
+        user: {
+          ...editorUser,
+          jwtPayload: {
+            ...editorUser.jwtPayload,
+            permissions: ['indicateurs.valeurs.read'],
+          },
+        },
+      });
+
+      await expect(
+        caller.referentiels.actions.setIndicateurSuivi({
+          collectiviteId,
+          actionId: ACTION_AVEC_FORMULE,
+          indicateurId,
+          isSuivi: false,
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(await getIsSuivi()).toBe(true);
+      expect(await getValeursUtilisees(ACTION_AVEC_FORMULE)).toEqual(selection);
+      expect(await getStatut(ACTION_AVEC_FORMULE)).toEqual(statut);
+    });
+
     test("Sans droit d'écriture sur les statuts, le flag n'est pas modifié non plus", async () => {
       const caller = router.createCaller({ user: editorUser });
 
