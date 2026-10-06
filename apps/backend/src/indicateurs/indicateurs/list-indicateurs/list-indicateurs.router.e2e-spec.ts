@@ -20,9 +20,9 @@ import {
   addTestUser,
   setUserCollectiviteRole,
 } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
 import z from 'zod';
@@ -129,7 +129,7 @@ describe('ListIndicateursRouter', () => {
 
       expect(indicateur.parent?.parent).toEqual({
         id: expect.any(Number),
-        titre: 'Émissions de gaz à effet de serre',
+        titre: 'Émissions de gaz à effet de serre du territoire',
         titreCourt: null,
         identifiantReferentiel: 'cae_1.a',
         parent: null,
