@@ -34,6 +34,21 @@ et l'API publique ne renvoie que les publiées. Les entrées s'identifient par
 `documentId` : publier recrée la ligne publiée sous un nouvel `id` numérique, qui
 ne doit donc servir ni dans une URL, ni pour un tri.
 
+## Serveur MCP
+
+Le serveur MCP de Strapi (`/mcp`) est activé dans `config/server.ts`. Il permet
+de lire et de modifier les contenus depuis un agent, avec les droits d'un admin
+token. Le serveur `strapi` de `.mcp.json` s'y connecte en déchiffrant à la volée
+`STRAPI_REMOTE_URL` et `STRAPI_MCP_TOKEN` depuis le `.env` racine.
+
+Pour l'activer en local :
+
+1. Dans l'admin de prod, créer un admin token limité aux types de contenu à
+   modifier.
+2. Le chiffrer dans le `.env` racine :
+   `pnpm exec dotenvx set STRAPI_MCP_TOKEN <token> --env-keys-file=.env.keys -f .env`
+3. Relancer Claude Code et approuver le serveur `strapi`.
+
 ## Déploiement
 
 Strapi Cloud, branché sur la branche `strapi-updates` avec déclenchement manuel

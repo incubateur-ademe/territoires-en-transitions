@@ -18,6 +18,20 @@
         "crystaldba/postgres-mcp",
         "--access-mode=unrestricted"
       ]
+    },
+    "strapi": {
+      "command": "node_modules/.bin/dotenvx",
+      "args": [
+        "run",
+        "-q",
+        "--env-keys-file=.env.keys",
+        "-f",
+        ".env",
+        "--",
+        "sh",
+        "-c",
+        "exec npx -y mcp-remote@0.14.3 \"$STRAPI_REMOTE_URL/mcp\" --header \"Authorization:Bearer $STRAPI_MCP_TOKEN\""
+      ]
     }
   }
 }

@@ -4,4 +4,8 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  // Serveur MCP sur /mcp, accessible avec un admin token.
+  mcp: {
+    enabled: true,
+  },
 });
