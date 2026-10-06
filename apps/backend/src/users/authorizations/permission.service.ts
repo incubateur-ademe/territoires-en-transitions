@@ -1,8 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { REFERENTIEL_NOT_WRITABLE_MESSAGE } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
-import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import {
@@ -17,24 +15,24 @@ import {
   ResourceType,
   type UserRolesAndPermissions,
 } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { GetUserRolesAndPermissionsService } from './get-user-roles-and-permissions/get-user-roles-and-permissions.service';
+import { PermissionRepository } from './permission.repository';
 
-export type ReferentielPermissionResource = {
+type ReferentielPermissionResource = {
   collectiviteId: number;
   referentielId: ReferentielId;
 };
 
-export type AuditPermissionResource = {
+type AuditPermissionResource = {
   auditId: number;
 };
 
-export type CollectivitePermissionResource = {
+type CollectivitePermissionResource = {
   collectiviteId: number;
 };
 
-export type PermissionResourceId =
+type PermissionResourceId =
   | ReferentielPermissionResource
   | AuditPermissionResource
   | CollectivitePermissionResource
@@ -50,7 +48,7 @@ export type NonReferentielPermissionOperation = Exclude<
   ReferentielPermissionOperation
 >;
 
-export type PermissionDenial = 'UNAUTHORIZED' | 'REFERENTIEL_NOT_WRITABLE';
+type PermissionDenial = 'UNAUTHORIZED' | 'REFERENTIEL_NOT_WRITABLE';
 
 function isAuditPermissionResource(
   resourceId: PermissionResourceId
@@ -121,7 +119,7 @@ export class PermissionService {
   constructor(
     private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly collectivitePreferencesRepository: CollectivitePreferencesRepository,
-    private readonly databaseService: DatabaseService
+    private readonly permissionRepository: PermissionRepository
   ) {}
 
   hasServiceRole(
@@ -139,6 +137,32 @@ export class PermissionService {
     } else {
       return true;
     }
+  }
+
+  /**
+   * Enforce the operation allow-list carried by restricted API-key JWTs.
+   *
+   * Human sessions do not carry this claim, so their collectivity role (and
+   * feature-specific fallbacks such as "piloted by me") remains authoritative.
+   * Service-role tokens keep their existing unrestricted integration access.
+   */
+  assertApiKeyPermission(user: AuthUser, operation: PermissionOperation): void {
+    if (!this.hasApiKeyPermission(user, operation)) {
+      throw new ForbiddenException(
+        `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
+      );
+    }
+  }
+
+  private hasApiKeyPermission(
+    user: AuthUser,
+    operation: PermissionOperation
+  ): boolean {
+    return (
+      user.role === AuthRole.SERVICE_ROLE ||
+      !user.jwtPayload?.permissions ||
+      user.jwtPayload.permissions.includes(operation)
+    );
   }
 
   throwForbiddenException(
@@ -274,14 +298,7 @@ export class PermissionService {
       throw new ForbiddenException(REFERENTIEL_NOT_WRITABLE_MESSAGE);
     }
 
-    if (
-      user.jwtPayload?.permissions &&
-      !user.jwtPayload.permissions.includes(operation)
-    ) {
-      throw new ForbiddenException(
-        `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
-      );
-    }
+    this.assertApiKeyPermission(user, operation);
 
     this.throwForbiddenException(user, operation, resourceType, resourceId);
   }
@@ -301,7 +318,7 @@ export class PermissionService {
       this.logger.log(
         `Checking restricted permissions for client_id ${user.jwtPayload.client_id}`
       );
-      if (!user.jwtPayload.permissions.includes(operation)) {
+      if (!this.hasApiKeyPermission(user, operation)) {
         this.logger.log(
           `La clé d'api n'a pas l'autorisation ${operation}: permissions ${user.jwtPayload.permissions.join(
             ', '
@@ -342,7 +359,11 @@ export class PermissionService {
         findAuditPermissionContext(
           userPermissionsResult.data,
           resourceId.auditId
-        ) ?? (await this.loadAuditPermissionContext(resourceId.auditId, tx));
+        ) ??
+        (await this.permissionRepository.getAuditPermissionContext(
+          resourceId.auditId,
+          tx
+        ));
 
       if (!auditContext) {
         this.logger.warn(
@@ -483,29 +504,5 @@ export class PermissionService {
     }
 
     return success(undefined);
-  }
-
-  private async loadAuditPermissionContext(
-    auditId: number,
-    tx?: Transaction
-  ): Promise<ReferentielPermissionResource | null> {
-    const db = tx ?? this.databaseService.db;
-    const [audit] = await db
-      .select({
-        collectiviteId: auditTable.collectiviteId,
-        referentielId: auditTable.referentielId,
-      })
-      .from(auditTable)
-      .where(eq(auditTable.id, auditId))
-      .limit(1);
-
-    if (!audit) {
-      return null;
-    }
-
-    return {
-      collectiviteId: audit.collectiviteId,
-      referentielId: audit.referentielId as ReferentielId,
-    };
   }
 }

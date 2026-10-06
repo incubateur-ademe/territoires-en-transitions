@@ -1,3 +1,13 @@
+import { TransactionModule } from '../utils/transaction/transaction.module';
+import { FichesModule } from '../plans/fiches/fiches.module';
+import { IndicateurSourcesRepository } from './sources/indicateur-sources.repository';
+import { HandleDefinitionThematiquesRepository } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.repository';
+import { HandleDefinitionServicesRepository } from './indicateurs/handle-definition-services/handle-definition-services.repository';
+import { HandleDefinitionPilotesRepository } from './indicateurs/handle-definition-pilotes/handle-definition-pilotes.repository';
+import { HandleDefinitionFichesRepository } from './indicateurs/handle-definition-fiches/handle-definition-fiches.repository';
+import { MutateDefinitionRepository } from './definitions/mutate-definition/mutate-definition.repository';
+import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
+import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
 import { Module } from '@nestjs/common';
 import CreateDefinitionService from '@tet/backend/indicateurs/definitions/mutate-definition/create-definition.service';
 import { MutateDefinitionRouter } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.router';
@@ -54,17 +64,24 @@ const DEFINITIONS_PROVIDERS = [
   ListIndicateursRouter,
 
   ListPlatformDefinitionsRepository,
+  ListPlatformDefinitionsService,
   ListCollectiviteDefinitionsRepository,
+  IndicateurDefinitionLockRepository,
 
   CreateDefinitionService,
   UpdateDefinitionService,
   DeleteDefinitionService,
+  MutateDefinitionRepository,
   MutateDefinitionRouter,
 
   HandleDefinitionPilotesService,
+  HandleDefinitionPilotesRepository,
   HandleDefinitionServicesService,
+  HandleDefinitionServicesRepository,
   HandleDefinitionThematiquesService,
+  HandleDefinitionThematiquesRepository,
   HandleDefinitionFichesService,
+  HandleDefinitionFichesRepository,
 ];
 
 @Module({
@@ -72,13 +89,15 @@ const DEFINITIONS_PROVIDERS = [
     UsersModule,
     CollectivitesModule,
     SheetModule,
+    TransactionModule,
+    FichesModule,
     PersonnalisationsModule,
     ReferentielsCoreModule,
   ],
   providers: [
     ExportIndicateursService,
     IndicateurSourcesService,
-    IndicateurSourcesService,
+    IndicateurSourcesRepository,
     IndicateurExpressionService,
     CrudValeursService,
     ImportIndicateurDefinitionService,
@@ -106,6 +125,7 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
+    ListPlatformDefinitionsService,
     ListCollectiviteDefinitionsRepository,
     ListPlatformDefinitionsRepository,
     ListIndicateursService,

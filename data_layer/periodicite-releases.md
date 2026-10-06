@@ -1,25 +1,80 @@
 # Livraisons des périodicités
 
-État au **5 octobre 2026** : [#5292](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5292)
-est fusionnée dans [#5220](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5220).
-Les étapes historiques 1/4 (réparations) et 2/4 (schéma compatible) forment donc
-une seule livraison. #5220 cible `main` ; #5214 et #5215 restent en brouillon.
-Le périmètre fonctionnel reste celui de l'[ADR 0018](../doc/adr/0018-periodicite-des-indicateurs.md).
+État au **6 octobre 2026** : les réparations et le schéma compatible de #5220
+sont présents dans `main` (`1be13a48b`). La livraison backend annuelle de #5214
+(`6a3d44176`) est découpée en deux branches locales à publier. L'activation #5215
+reste une livraison distincte. Le périmètre fonctionnel reste celui de
+l'[ADR 0018](../doc/adr/0018-periodicite-des-indicateurs.md).
 
 | Ordre | PR / branche | Responsabilité | Application après déploiement |
 | --- | --- | --- | --- |
-| 1 | [#5220](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5220) — `fix/indicateur-data-before-periodicite`, incluant #5292 | Réparations des neuf observations approuvées, contrôle des dates, catalogue, colonnes annuelles et index supplémentaires | Backend actuel, schéma compatible |
-| 2 | [#5214](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5214) — `split/periodicite-data-migration` | Backend, protection des saisies, correction de formule, contrôles et bascule SQL | Nouveau backend annuel |
-| 3 | [#5215](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5215) — `split/periodicite-activation` | Nouvelles cadences, saisie et agrégations de restitution | Quatre cadences |
+| 1 | [#5220](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5220), incluant #5292 | Réparations et schéma annuel compatible | Backend actuel |
+| 2 | `split/periodicite-backend-preparation` — base `main` | Repositories, transactions et autorisations des définitions, liens, sources et catalogue | Backend annuel historique, aucune migration supplémentaire |
+| 3 | `split/periodicite-annual-cutover` — base `split/periodicite-backend-preparation` | Valeurs, calculs, protection des saisies, normalisation des dates et contraintes SQL | Nouveau backend annuel |
+| 4 | [#5215](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5215) — `split/periodicite-activation` | Nouvelles cadences, saisie et agrégations de restitution | Quatre cadences |
 
-La première livraison peut rester en production avec le backend actuel ; la deuxième
-peut rester en production sans activation.
+Les deux PR qui remplacent #5214 se déploient **préparation puis bascule annuelle**.
+Chacune constitue une livraison complète ; aucune mise en production de code ou
+SQL provenant de la suivante n'est nécessaire pour faire fonctionner la précédente.
+Il n'est pas nécessaire de les livrer le même jour.
 
-La chaîne de PR est **#5220 → #5214 → #5215**. #5214 cible la branche de #5220 ;
-#5215 cible la branche de #5214. Chaque modification du parent nécessite de
-resynchroniser les PR qui en dépendent. Après fusion/squash d'un parent dans `main`, rebaser la PR suivante
-sur le commit effectivement fusionné, retargeter cette PR vers `main`, puis
-resynchroniser les PR qui en dépendent.
+Après fusion/squash d'un parent, rebaser la PR suivante sur le commit effectivement
+fusionné et retargeter cette PR vers `main`. Rebaser ensuite l'activation #5215 sur
+la bascule annuelle ; elle ne doit pas conserver l'ancienne branche #5214 comme
+base. La branche source `split/periodicite-data-migration` est conservée pendant la
+préparation des deux nouvelles PR.
+
+## Préparation backend — première PR issue de #5214
+
+Cette livraison extrait les accès SQL et conserve les contrats de stockage annuels
+existants. Elle comprend les contrôles de périmètre des définitions, les transactions
+partagées pour les liens fiches/pilotes/services/thématiques, les autorisations des
+sources, le service de lecture du catalogue et l'adaptateur des origines de référentiel.
+Les verrous applicatifs de définition préparent la suite ; la protection complète
+du graphe de calcul reste dans la bascule annuelle.
+
+Le plan Sqitch, les migrations, les tables Drizzle, les schémas du domaine, les imports
+d'indicateurs, les écritures de valeurs et les calculs restent ceux de `main`.
+La création d'une définition n'écrit aucune nouvelle colonne. Les anciens index et
+les dates historiques sont conservés. La première PR peut donc rester en production
+avec les producteurs existants, et son retour arrière consiste à redéployer la
+version applicative précédente, sans revert SQL.
+
+Déployer selon la procédure applicative habituelle, puis contrôler création,
+modification et suppression d'un indicateur personnalisé, gestion de ses liens,
+lecture du catalogue et des sources, lecture et écriture des valeurs annuelles.
+Attendre la validation de cette livraison avant de programmer la maintenance suivante.
+
+### Vérification du découpage du 6 octobre 2026
+
+Sur la première branche : compilation TypeScript du backend et lint des fichiers
+extraits réussis ; 80 tests unitaires et 61 tests de routes passent. Les tests de
+routes utilisent le PostgreSQL 15 local, dont les tables d'indicateurs n'ont encore
+aucune colonne de périodicité. Ils couvrent notamment les liens, la création et la
+modification des définitions, ainsi que des valeurs historiques datées du 30 juin
+et du 31 décembre, conservées telles quelles, y compris un résultat égal à zéro.
+
+Les tests HTTP utilisant les jetons émis par le Supabase local reçoivent `401` avant
+les contrôles métier. Ils ne sont pas validés par ce résultat : trois cas HTTP du
+fichier de périodicité sont exclus de la relance ciblée ; les suites HTTP catalogue
+et valeurs restent à rejouer avec une authentification locale opérationnelle.
+Cette vérification ne constitue pas une répétition de la bascule sur une copie de
+production. Les contrôles de dates, collisions et durée de verrouillage restent
+requis avant la seconde livraison.
+
+## Frontière de déploiement
+
+Ne pas séparer les migrations de bascule du backend qui les utilise :
+`periodicite_obligatoire` retire les anciens index `ON CONFLICT`, et le nouveau moteur
+de calcul attend des dates canoniques. La normalisation, les droits SQL, les valeurs,
+les calculs et les tâches de réconciliation restent donc ensemble dans la seconde PR.
+
+La seconde livraison requiert la **fenêtre de maintenance déjà prévue** : suspendre
+les anciens producteurs, sauvegarder, migrer, déployer les applications compatibles,
+vérifier puis rouvrir. Ce découpage n'établit pas une compatibilité permettant de
+faire tourner simultanément anciens et nouveaux producteurs pendant la bascule.
+Les migrations sont transactionnelles individuellement ; une interruption entre
+migrations impose de garder la maintenance et de suivre le runbook de reprise.
 
 ## Réparations et schéma compatible — #5220
 
@@ -66,7 +121,7 @@ Les statuts `date_invalide`, `periodicite_inconnue` et `conflit` exigent une cor
 métier ; `a_normaliser` signale une date annuelle que #5214 devra normaliser.
 Le schéma compatible ne normalise pas les dates écrites par l'ancien backend.
 
-## Bascule backend annuelle — #5214
+## Bascule backend annuelle — seconde PR issue de #5214
 
 Après validation de #5220, arrêter les anciens producteurs pendant la maintenance,
 contrôler à nouveau les dates et collisions, puis déployer jusqu'à
