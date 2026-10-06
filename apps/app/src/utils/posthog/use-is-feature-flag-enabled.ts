@@ -7,7 +7,8 @@ export function useIsFeatureFlagEnabled(featureFlagKey: FeatureFlagKey) {
     useFeatureFlagEnabled(featureFlagKey) ||
     ENV.application_env === 'dev' ||
     ENV.application_env === 'ci' ||
-    (featureFlagKey === 'is-fiche-secteurs-enabled' &&
+    ((featureFlagKey === 'is-fiche-secteurs-enabled' ||
+      featureFlagKey === 'is-demarche-pcaet-enabled') &&
       ENV.application_env === 'staging')
   );
 }
