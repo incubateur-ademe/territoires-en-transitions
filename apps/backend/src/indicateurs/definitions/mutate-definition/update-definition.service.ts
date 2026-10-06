@@ -1,35 +1,38 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   AuthenticatedUser,
   AuthUser,
 } from '@tet/backend/users/models/auth.models';
-import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { hasPermission, ResourceType } from '@tet/domain/users';
-import { and, eq, isNotNull } from 'drizzle-orm';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
 import { HandleDefinitionPilotesService } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
 import { HandleDefinitionServicesService } from '../../indicateurs/handle-definition-services/handle-definition-services.service';
 import { HandleDefinitionThematiquesService } from '../../indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
+import {
+  type DefinitionOwnership,
+  MutateDefinitionRepository,
+} from './mutate-definition.repository';
 
 @Injectable()
 export class UpdateDefinitionService {
   private readonly logger = new Logger(UpdateDefinitionService.name);
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly transactionManager: TransactionManager,
+    private readonly repository: MutateDefinitionRepository,
     private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly permissionService: PermissionService,
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
@@ -42,11 +45,13 @@ export class UpdateDefinitionService {
     user: AuthenticatedUser,
     collectiviteId: number,
     indicateurId: number,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<boolean> {
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({
         userId: user.id,
+        tx,
       });
 
     if (!userPermissionsResult.success) {
@@ -77,11 +82,10 @@ export class UpdateDefinitionService {
       )
     ) {
       const pilotes =
-        await this.handleDefinitionPilotesService.listIndicateurPilotes({
-          indicateurId,
-          collectiviteId,
-          user,
-        });
+        await this.handleDefinitionPilotesService.listIndicateurPilotes(
+          { indicateurId, collectiviteId, user },
+          tx
+        );
 
       if (pilotes.some((p) => p.userId === user.id)) {
         return true;
@@ -99,6 +103,48 @@ export class UpdateDefinitionService {
     return false;
   }
 
+  private assertDefinitionInCollectiviteScope(
+    definition: DefinitionOwnership | null,
+    requestedCollectiviteId: number,
+    indicateurId: number
+  ): asserts definition is DefinitionOwnership {
+    if (
+      !definition ||
+      (definition.groupementId == null &&
+        definition.collectiviteId !== null &&
+        definition.collectiviteId !== requestedCollectiviteId)
+    ) {
+      throw new NotFoundException(
+        `Indicateur ${indicateurId} non trouvé pour la collectivité ${requestedCollectiviteId}`
+      );
+    }
+  }
+
+  private assertRequestedFieldsAreMutable(
+    definition: DefinitionOwnership,
+    collectiviteId: number,
+    indicateurId: number,
+    indicateurFields: UpdateIndicateurDefinitionInput['indicateurFields']
+  ): void {
+    if (indicateurFields.periodicite !== undefined) {
+      throw new BadRequestException(
+        'La périodicité est fixée à la création de l’indicateur'
+      );
+    }
+    if (definition.collectiviteId === collectiviteId) {
+      return;
+    }
+
+    const { titre, unite, thematiques } = indicateurFields;
+    const updatesGlobalDefinitionFields =
+      titre !== undefined || unite !== undefined || thematiques !== undefined;
+    if (updatesGlobalDefinitionFields) {
+      throw new BadRequestException(
+        `Les champs globaux de l'indicateur ${indicateurId} ne peuvent être modifiés que par sa collectivité propriétaire`
+      );
+    }
+  }
+
   async updateDefinition(
     {
       indicateurId,
@@ -107,6 +153,20 @@ export class UpdateDefinitionService {
     }: UpdateIndicateurDefinitionInput,
     { user, tx }: ServiceSecondArg
   ): Promise<void> {
+    this.permissionService.assertApiKeyPermission(
+      user,
+      'indicateurs.indicateurs.update'
+    );
+
+    const definition = await this.repository.getDefinitionOwnership(
+      indicateurId
+    );
+    this.assertDefinitionInCollectiviteScope(
+      definition,
+      collectiviteId,
+      indicateurId
+    );
+
     await this.canUpdateDefinition(user, collectiviteId, indicateurId);
 
     this.logger.log(
@@ -117,17 +177,65 @@ export class UpdateDefinitionService {
       commentaire,
       estConfidentiel,
       estFavori,
-      isApplicable,
       isSuivi,
       titre,
       unite,
+      isApplicable,
       ficheIds,
       pilotes,
       services,
       thematiques,
     } = indicateurFields;
 
-    await (tx ?? this.databaseService.db).transaction(async (tx) => {
+    this.assertRequestedFieldsAreMutable(
+      definition,
+      collectiviteId,
+      indicateurId,
+      indicateurFields
+    );
+
+    const transactionResult = await this.transactionManager.executeSingle<
+      void,
+      unknown
+    >(async (tx) => {
+      const lockedDefinition = await this.repository.lockDefinitionOwnership(
+        indicateurId,
+        tx
+      );
+      this.assertDefinitionInCollectiviteScope(
+        lockedDefinition,
+        collectiviteId,
+        indicateurId
+      );
+      this.assertRequestedFieldsAreMutable(
+        lockedDefinition,
+        collectiviteId,
+        indicateurId,
+        indicateurFields
+      );
+
+      // The owner retains its metadata access; shared local customizations
+      // require membership locked until all writes have committed.
+      if (
+        lockedDefinition.groupementId != null &&
+        lockedDefinition.collectiviteId !== collectiviteId &&
+        !(await this.repository.lockGroupementMembership(
+          { groupementId: lockedDefinition.groupementId, collectiviteId },
+          tx
+        ))
+      ) {
+        throw new NotFoundException(
+          `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
+        );
+      }
+      await this.canUpdateDefinition(
+        user,
+        collectiviteId,
+        indicateurId,
+        false,
+        tx
+      );
+
       if (
         commentaire !== undefined ||
         estConfidentiel !== undefined ||
@@ -135,75 +243,33 @@ export class UpdateDefinitionService {
         isApplicable !== undefined ||
         isSuivi !== undefined
       ) {
-        await tx
-          .insert(indicateurCollectiviteTable)
-          .values({
+        await this.repository.upsertCollectiviteFields(
+          {
             indicateurId,
             collectiviteId,
-            ...(commentaire !== undefined && {
-              commentaire,
-            }),
-            ...(estConfidentiel !== undefined && {
-              confidentiel: estConfidentiel,
-            }),
-            ...(estFavori !== undefined && {
-              favoris: estFavori,
-            }),
-            ...(isApplicable !== undefined && {
-              isApplicable,
-            }),
-            ...(isSuivi !== undefined && {
-              isSuivi,
-            }),
+            commentaire,
+            isApplicable,
+            isSuivi,
+            confidentiel: estConfidentiel,
+            favoris: estFavori,
             modifiedBy: user.id,
-            modifiedAt: SQL_CURRENT_TIMESTAMP,
-          })
-          .onConflictDoUpdate({
-            target: [
-              indicateurCollectiviteTable.indicateurId,
-              indicateurCollectiviteTable.collectiviteId,
-            ],
-            set: {
-              ...(commentaire !== undefined && {
-                commentaire,
-              }),
-              ...(estConfidentiel !== undefined && {
-                confidentiel: estConfidentiel,
-              }),
-              ...(estFavori !== undefined && {
-                favoris: estFavori,
-              }),
-              ...(isApplicable !== undefined && {
-                isApplicable,
-              }),
-              ...(isSuivi !== undefined && {
-                isSuivi,
-              }),
-              modifiedBy: user.id,
-              modifiedAt: SQL_CURRENT_TIMESTAMP,
-            },
-          });
+          },
+          tx
+        );
       }
 
       if (titre !== undefined || unite !== undefined) {
-        const updateResult = await tx
-          .update(indicateurDefinitionTable)
-          .set({
-            ...(titre !== undefined && { titre }),
-            ...(unite !== undefined && { unite }),
-          })
-          .where(
-            and(
-              eq(indicateurDefinitionTable.id, indicateurId),
-              eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
+        const updated = await this.repository.updatePersonalizedDefinition(
+          {
+            indicateurId,
+            collectiviteId,
+            titre,
+            unite,
+          },
+          tx
+        );
 
-              // Petite sécurité supplémentaire pour éviter de modifier un indicateur non perso
-              isNotNull(indicateurDefinitionTable.collectiviteId)
-            )
-          )
-          .returning();
-
-        if (updateResult.length === 0) {
+        if (!updated) {
           throw new NotFoundException(
             `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
           );
@@ -211,28 +277,36 @@ export class UpdateDefinitionService {
       }
 
       if (ficheIds !== undefined) {
-        await this.handleDefinitionFichesService.upsertIndicateurFiches({
-          indicateurId,
-          collectiviteId,
-          ficheIds,
-          userId: user.id,
-        });
+        await this.handleDefinitionFichesService.upsertIndicateurFiches(
+          {
+            indicateurId,
+            collectiviteId,
+            ficheIds,
+          },
+          { user, tx }
+        );
       }
 
       if (pilotes !== undefined) {
-        await this.handleDefinitionPilotesService.upsertIndicateurPilotes({
-          indicateurId,
-          collectiviteId,
-          pilotes,
-        });
+        await this.handleDefinitionPilotesService.upsertIndicateurPilotes(
+          {
+            indicateurId,
+            collectiviteId,
+            pilotes,
+          },
+          tx
+        );
       }
 
       if (services !== undefined) {
-        await this.handleDefinitionServicesService.upsertIndicateurServices({
-          indicateurId,
-          collectiviteId,
-          serviceIds: services.map((s) => s.id),
-        });
+        await this.handleDefinitionServicesService.upsertIndicateurServices(
+          {
+            indicateurId,
+            collectiviteId,
+            serviceIds: services.map((s) => s.id),
+          },
+          tx
+        );
       }
 
       if (thematiques !== undefined) {
@@ -240,7 +314,8 @@ export class UpdateDefinitionService {
           {
             indicateurId,
             thematiqueIds: thematiques.map((t) => t.id),
-          }
+          },
+          tx
         );
       }
 
@@ -264,7 +339,13 @@ export class UpdateDefinitionService {
           tx
         );
       }
-    });
+
+      return success(undefined);
+    }, tx);
+
+    if (!transactionResult.success) {
+      throw transactionResult.cause ?? transactionResult.error;
+    }
   }
 
   async updateDefinitionModifiedFields(
@@ -279,14 +360,38 @@ export class UpdateDefinitionService {
     },
     tx?: Transaction
   ) {
-    await (tx ?? this.databaseService.db)
-      .update(indicateurCollectiviteTable)
-      .set({ modifiedBy: user.id, modifiedAt: SQL_CURRENT_TIMESTAMP })
-      .where(
-        and(
-          eq(indicateurCollectiviteTable.indicateurId, indicateurId),
-          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
-        )
-      );
+    await this.updateDefinitionsModifiedFields(
+      { indicateurIds: [indicateurId], collectiviteId, user },
+      tx
+    );
+  }
+
+  async updateDefinitionsModifiedFields(
+    {
+      indicateurIds,
+      collectiviteId,
+      user,
+    }: {
+      indicateurIds: number[];
+      collectiviteId: number;
+      user: AuthUser;
+    },
+    tx?: Transaction
+  ) {
+    const sortedIndicateurIds = [...new Set(indicateurIds)].sort(
+      (left, right) => left - right
+    );
+    if (sortedIndicateurIds.length === 0) {
+      return;
+    }
+
+    await this.repository.touchDefinitions(
+      {
+        indicateurIds: sortedIndicateurIds,
+        collectiviteId,
+        modifiedBy: user.id,
+      },
+      tx
+    );
   }
 }
