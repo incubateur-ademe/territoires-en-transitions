@@ -15,7 +15,7 @@ export const DemarchePcaetCTASection = () => (
         label="Je crée mon compte gratuitement"
         redirectTo={getDepotEntryUrl()}
       />
-      <BookDemoButton label="Je réserve une démo" />
+      <BookDemoButton href="https://calendly.com/territoiresentransitions/demo-pcaet-decouvrir" />
     </div>
     <Link href="/contact?objet=pcaet" className="text-primary-10 underline">
       Une question sur le dépôt réglementaire ? Contactez-nous
