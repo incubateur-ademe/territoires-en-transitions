@@ -1,14 +1,11 @@
 import Section from '@/site/components/sections/Section';
 import { getAuthPaths } from '@tet/api';
-import { ENV } from '@tet/api/environmentVariables';
 import { Button } from '@tet/ui';
 import { DemarchePcaetAnimatedDiagram } from './demarche-pcaet.animated-diagram';
 import { getDepotEntryUrl } from './demarche-pcaet.data';
 
 export const DemarchePcaetHeroSection = () => {
-  const appUrl = ENV.app_url ?? '';
   const depotAuthPaths = getAuthPaths(getDepotEntryUrl());
-  const authPaths = getAuthPaths(appUrl);
 
   return (
     <Section
@@ -35,15 +32,6 @@ export const DemarchePcaetHeroSection = () => {
               external
             >
               Commencer mon dépôt
-            </Button>
-            <Button
-              className="after:hidden"
-              variant="outlined"
-              icon="account-circle-line"
-              href={authPaths.login}
-              external
-            >
-              Se connecter
             </Button>
           </div>
         </div>
