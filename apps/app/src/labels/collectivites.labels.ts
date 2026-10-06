@@ -123,6 +123,13 @@ export const collectivitesLabels = {
   leviersAPrioriser: 'Leviers à prioriser',
   vueEnsembleLeviers: "Vue d'ensemble",
   sousLeviersAPrioriser: 'Sous-leviers à prioriser',
+  sousLevierLabel: ({
+    levierNom,
+    categorie,
+  }: {
+    levierNom: string;
+    categorie: CategorieAction;
+  }): string => `${levierNom} · ${categorieActionLabels[categorie]}`,
   sousLeviersInfo:
     "Chaque barre est un sous-levier, c'est-à-dire la part du potentiel de réduction de GES d'un levier qui revient à une catégorie d'action, colorée selon la mobilisation de la collectivité. Cliquez sur une barre pour consulter les actions de référence du levier.",
   sousLeviersLegende:

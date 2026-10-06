@@ -114,6 +114,19 @@ export class PriorisationLeviersPom {
       });
   }
 
+  async chooseCategorieInPanel(
+    nom: Levier,
+    categorie: CategorieLabel
+  ): Promise<void> {
+    await this.levierPanel(nom)
+      .getByRole('group', { name: 'Toutes les catégories' })
+      .getByRole('button', { name: 'ouvrir le menu' })
+      .click();
+    await this.page
+      .getByRole('button', { name: categorie, exact: true })
+      .click();
+  }
+
   noActionMessage(nom: Levier): Locator {
     return this.levierPanel(nom).getByText(
       "Nous n'avons pas de recommandation sur ce levier."
@@ -145,11 +158,11 @@ export class PriorisationLeviersPom {
     });
   }
 
-  get fonctionnementButton(): Locator {
+  get helpButton(): Locator {
     return this.page.getByRole('button', { name: 'Comment ça marche ?' });
   }
 
-  get fonctionnementModal(): Locator {
+  get helpModal(): Locator {
     return this.page.getByRole('dialog', { name: 'Comment ça marche ?' });
   }
 

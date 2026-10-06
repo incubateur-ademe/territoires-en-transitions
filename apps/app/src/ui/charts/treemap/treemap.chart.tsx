@@ -31,7 +31,7 @@ type TreemapChartProps<TIntensity extends string, TGroupId extends string> = {
   toIntensityVariant?: (intensity: TIntensity) => IntensityVariant;
   tooltipHint?: string;
   selectedGroupId?: TGroupId;
-  onGroupSelected?: (groupId: TGroupId) => void;
+  onGroupSelected?: (groupId: TGroupId, tileId?: string) => void;
   children?: ReactNode;
   className?: string;
 };
@@ -44,7 +44,7 @@ type TreemapLabels<TIntensity extends string> = {
 type GroupLabelProps<TIntensity extends string, TGroupId extends string> = {
   group: TreemapGroup<TIntensity, TGroupId>;
   isSelected: boolean;
-  onGroupSelected?: (groupId: TGroupId) => void;
+  onGroupSelected?: (groupId: TGroupId, tileId?: string) => void;
 };
 
 type TilesListProps<
@@ -53,7 +53,7 @@ type TilesListProps<
 > = TreemapLabels<TIntensity> & {
   data: readonly TreemapGroup<TIntensity, TGroupId>[];
   selectedGroupId?: TGroupId;
-  onGroupSelected?: (groupId: TGroupId) => void;
+  onGroupSelected?: (groupId: TGroupId, tileId?: string) => void;
 };
 
 const LEGEND_COLOR: HexColor = colors.primary[9];
@@ -287,9 +287,11 @@ const TreemapChart = <
           return;
         }
         const clicked = hoveredNodeByKey.get(event.data.id);
-        if (clicked !== undefined) {
-          onGroupSelected?.(clicked.group.id);
+        if (clicked === undefined) {
+          return;
         }
+        const tileId = clicked.kind === 'tile' ? clicked.tile.id : undefined;
+        onGroupSelected?.(clicked.group.id, tileId);
       },
     }),
     [hoveredNodeByKey, onGroupSelected]
