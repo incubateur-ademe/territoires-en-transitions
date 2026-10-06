@@ -12,6 +12,7 @@ import {
   ActionType,
   ReferentielId,
   referentielIdEnumSchema,
+  ReferentielTagType,
 } from '@tet/domain/referentiels';
 import { isNil } from 'es-toolkit';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
@@ -42,6 +43,11 @@ export class GetReferentielService {
     private readonly getReferentielRepository: GetReferentielRepository,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService
   ) {}
+
+  /** Donne les références des tags des types demandés */
+  async listTagRefs(tagTypes: ReferentielTagType[]): Promise<string[]> {
+    return this.getReferentielRepository.listTagRefs(tagTypes);
+  }
 
   async getReferentielTree(
     referentielId: ReferentielId,

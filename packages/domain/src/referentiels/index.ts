@@ -49,6 +49,7 @@ export * from './labellisations/start-new-audit-cycle/start-new-audit-cycle.rule
 export * from './referentiel-definition.schema';
 export * from './referentiel-id.enum';
 export * from './referentiel-label.enum';
+export * from './referentiel-tag-type.enum';
 export * from './referentiel-tag.schema';
 export * from './referentiel.utils';
 export * from './scores/action-score.schema';

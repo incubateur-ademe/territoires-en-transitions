@@ -18,6 +18,7 @@ import {
   getStatutAvancement,
   LabellisationAudit,
   LabellisationEtoileDefinition,
+  REFERENTIEL_TAG_TYPES_FOR_SCORING,
   ReferentielId,
   ScoreFields,
   ScoreFinalFields,
@@ -1314,11 +1315,15 @@ export default class ScoresService {
   private affectScoreRecursivelyFromOrigineActions(
     action: ActionTreeNode<
       ActionDefinitionEssential & ScoreFields & CorrelatedActionsWithScoreFields
-    >
+    >,
+    scoringTagRefs: ReadonlySet<string>
   ) {
     if (action.actionsEnfant?.length) {
       action.actionsEnfant.forEach((actionEnfant) => {
-        this.affectScoreRecursivelyFromOrigineActions(actionEnfant);
+        this.affectScoreRecursivelyFromOrigineActions(
+          actionEnfant,
+          scoringTagRefs
+        );
       });
     }
 
@@ -1363,14 +1368,15 @@ export default class ScoresService {
     }
 
     // now that the score has been consolidated, we can compute the score by tag
-    if (action.tags) {
-      action.tags.forEach((tag) => {
+    // (only for the tags associated to the scoring)
+    action.tags
+      ?.filter((tag) => scoringTagRefs.has(tag))
+      .forEach((tag) => {
         // if has not already been set by updateFromOrigineActions
         if (!action.scoresTag[tag]) {
           action.scoresTag[tag] = action.score;
         }
       });
-    }
     // Get all tags from children
     const allTags = [
       ...new Set(
@@ -1540,7 +1546,15 @@ export default class ScoresService {
       }
     });
 
-    this.affectScoreRecursivelyFromOrigineActions(actionWithScore);
+    const scoringTagRefs = new Set(
+      await this.getReferentielsService.listTagRefs(
+        REFERENTIEL_TAG_TYPES_FOR_SCORING
+      )
+    );
+    this.affectScoreRecursivelyFromOrigineActions(
+      actionWithScore,
+      scoringTagRefs
+    );
     //Reset original scores at the root level (not exactly the same in case some action have been removed in new referentiel)
     referentielsOrigine.forEach((referentielOrigine) => {
       if (actionWithScore.scoresOrigine) {

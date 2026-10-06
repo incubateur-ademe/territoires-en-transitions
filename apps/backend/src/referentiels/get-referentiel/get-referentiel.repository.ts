@@ -2,8 +2,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { ActionDefinition, ReferentielId } from '@tet/domain/referentiels';
-import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
+import {
+  ActionDefinition,
+  ReferentielId,
+  ReferentielTagType,
+} from '@tet/domain/referentiels';
+import {
+  and,
+  asc,
+  eq,
+  getTableColumns,
+  ilike,
+  inArray,
+  sql,
+} from 'drizzle-orm';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { actionOrigineTexteTable } from '../correlated-actions/action-origine-texte.table';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
@@ -11,6 +23,7 @@ import { GetActionOrigineTexteDtoSchema } from '../correlated-actions/get-action
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDefinitionTable } from '../models/action-definition.table';
 import { actionRelationTable } from '../models/action-relation.table';
+import { referentielTagTable } from '../models/referentiel-tag.table';
 
 export type ActionDefinitionAvecParent = Pick<
   ActionDefinition,
@@ -68,6 +81,14 @@ export class GetReferentielRepository {
         )
       )
       .orderBy(asc(actionOrigineTexteTable.actionId));
+  }
+
+  async listTagRefs(tagTypes: ReferentielTagType[]): Promise<string[]> {
+    const tags = await this.databaseService.db
+      .select({ ref: referentielTagTable.ref })
+      .from(referentielTagTable)
+      .where(inArray(referentielTagTable.type, tagTypes));
+    return tags.map(({ ref }) => ref);
   }
 
   private getActionDefinitionTags() {
