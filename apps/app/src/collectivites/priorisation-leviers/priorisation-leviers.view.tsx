@@ -7,8 +7,14 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { LevierId, levierIdEnumValues } from '@tet/domain/shared';
 import { Alert, PageHeader, VisibleWhen } from '@tet/ui';
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from '@tet/ui/design-system/TabsNext/index';
 import { countBy, sumBy } from 'es-toolkit';
-import { JSX, useMemo } from 'react';
+import { JSX, useMemo, useState } from 'react';
 import { match } from 'ts-pattern';
 import {
   LeviersPriorisationQuery,
@@ -20,6 +26,7 @@ import {
 } from './data/use-upsert-pertinence';
 import { LevierCardInfo } from './levier-card-info';
 import { LeviersMatrixChart } from './leviers-matrix.chart';
+import { LeviersMondrianChart } from './leviers-mondrian.chart';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
 import { PreselectionSection } from './preselection.section';
 import { PriorisationMetrics } from './priorisation.metrics';
@@ -42,13 +49,20 @@ type PriorisationAlertsProps = {
   potentiels: PotentielsReduction;
 };
 
-type MatrixSectionProps = {
+type LeviersView = 'matrix' | 'breakdown';
+
+type LeviersSectionProps = {
   leviers: LevierPriorisation[];
   places: LevierPlace[];
   preselectedCountByLevier: PreselectedCountByLevier;
   selectedLevierId?: LevierId;
   onLevierSelected: (levierId: LevierId) => void;
 };
+
+type BreakdownViewProps = Pick<
+  LeviersSectionProps,
+  'places' | 'selectedLevierId' | 'onLevierSelected'
+>;
 
 type PriorisationBoardProps = {
   leviers: LevierPriorisation[];
@@ -93,17 +107,17 @@ const PriorisationAlerts = ({
   );
 };
 
-const MatrixSection = ({
+const MatrixView = ({
   leviers,
   places,
   preselectedCountByLevier,
   selectedLevierId,
   onLevierSelected,
-}: MatrixSectionProps): JSX.Element => {
+}: LeviersSectionProps): JSX.Element => {
   const leviersWithoutPotentiel = toLeviersWithoutPotentiel(leviers);
   const hasLeviersWithoutPotentiel = leviersWithoutPotentiel.length > 0;
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-grey-3 bg-white p-6">
+    <>
       <LevierCardInfo>{appLabels.selectionnerUnLevier}</LevierCardInfo>
       <LeviersMatrixChart
         places={places}
@@ -117,7 +131,48 @@ const MatrixSection = ({
           onLevierSelected={onLevierSelected}
         />
       </VisibleWhen>
-    </div>
+    </>
+  );
+};
+
+const BreakdownView = ({
+  places,
+  selectedLevierId,
+  onLevierSelected,
+}: BreakdownViewProps): JSX.Element => (
+  <>
+    <LevierCardInfo>{appLabels.repartitionPotentielInfo}</LevierCardInfo>
+    <LeviersMondrianChart
+      places={places}
+      selectedLevierId={selectedLevierId}
+      onLevierSelected={onLevierSelected}
+    />
+  </>
+);
+
+const LeviersSection = (props: LeviersSectionProps): JSX.Element => {
+  const [view, setView] = useState<LeviersView>('matrix');
+  return (
+    <Tabs className="flex flex-col gap-4">
+      <TabsList className="justify-start">
+        <TabsTab
+          label={appLabels.leviersAPrioriser}
+          isActive={view === 'matrix'}
+          onClick={() => setView('matrix')}
+        />
+        <TabsTab
+          label={appLabels.vueEnsembleLeviers}
+          isActive={view === 'breakdown'}
+          onClick={() => setView('breakdown')}
+        />
+      </TabsList>
+      <TabsPanel className="gap-4 rounded-xl border border-grey-3 bg-white p-6">
+        {match(view)
+          .with('matrix', () => <MatrixView {...props} />)
+          .with('breakdown', () => <BreakdownView {...props} />)
+          .exhaustive()}
+      </TabsPanel>
+    </Tabs>
   );
 };
 
@@ -150,7 +205,7 @@ const PriorisationBoard = ({
         hasMobilisation={hasMobilisation}
         potentiels={potentiels}
       />
-      <MatrixSection
+      <LeviersSection
         leviers={leviers}
         places={places}
         preselectedCountByLevier={preselectedCountByLevier}

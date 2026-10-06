@@ -1,6 +1,7 @@
 import { RouterOutput } from '@tet/api';
 import { PertinenceLevier } from '@tet/domain/collectivites';
 import {
+  CategorieAction,
   categorieActionEnumValues,
   LEVIER_ID_BY_NOM,
   Levier,
@@ -16,8 +17,11 @@ export type PotentielsReduction =
   | { status: 'indisponible' }
   | { status: 'disponible'; byLevier: Map<LevierId, number> };
 
+export type NoteByCategorie = Record<CategorieAction, number>;
+
 export type LevierPriorisation = LevierCard & {
   mobilisationScore: number;
+  noteByCategorie: NoteByCategorie;
   potentielReduction?: number;
 };
 
@@ -50,26 +54,41 @@ export const toPotentielsReduction = (
   ),
 });
 
-const toMobilisationScore = (
+const toNoteByCategorie = (
   volets: Mobilisation['leviers'][number]['volets']
-): number => {
-  const noteByCategorie = new Map(
+): NoteByCategorie => {
+  const noteByVoletCategorie = new Map(
     volets.map(({ categorie, note }) => [categorie, note])
   );
+  const noteOf = (categorie: CategorieAction): number =>
+    noteByVoletCategorie.get(categorie) ?? 0;
+  return {
+    amenagement: noteOf('amenagement'),
+    planification: noteOf('planification'),
+    financement: noteOf('financement'),
+    gouvernance: noteOf('gouvernance'),
+    exemplarite: noteOf('exemplarite'),
+    sensibilisation: noteOf('sensibilisation'),
+  };
+};
+
+export const NO_MOBILISATION = toNoteByCategorie([]);
+
+const toMobilisationScore = (noteByCategorie: NoteByCategorie): number => {
   const mean = meanBy(
     categorieActionEnumValues,
-    (categorie) => noteByCategorie.get(categorie) ?? 0
+    (categorie) => noteByCategorie[categorie]
   );
   return round((mean / NOTE_MAX) * SCORE_MAX);
 };
 
-const toMobilisationScoreByLevier = (
+const toNoteByCategorieByLevier = (
   mobilisation: Mobilisation
-): Map<LevierId, number> =>
+): Map<LevierId, NoteByCategorie> =>
   new Map(
     mobilisation.leviers.map(({ levierId, volets }) => [
       levierId,
-      toMobilisationScore(volets),
+      toNoteByCategorie(volets),
     ])
   );
 
@@ -96,11 +115,17 @@ export const toLeviersPriorisation = ({
   mobilisation: Mobilisation;
   potentiels: PotentielsReduction;
 }): LevierPriorisation[] => {
-  const scoreByLevier = toMobilisationScoreByLevier(mobilisation);
-  return toLevierCards({ pertinences, mobilisation }).map((card) =>
-    withPotentiel(
-      { ...card, mobilisationScore: scoreByLevier.get(card.levierId) ?? 0 },
+  const noteByCategorieByLevier = toNoteByCategorieByLevier(mobilisation);
+  return toLevierCards({ pertinences, mobilisation }).map((card) => {
+    const noteByCategorie =
+      noteByCategorieByLevier.get(card.levierId) ?? NO_MOBILISATION;
+    return withPotentiel(
+      {
+        ...card,
+        noteByCategorie,
+        mobilisationScore: toMobilisationScore(noteByCategorie),
+      },
       potentiels
-    )
-  );
+    );
+  });
 };

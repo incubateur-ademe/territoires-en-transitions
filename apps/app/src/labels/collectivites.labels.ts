@@ -114,6 +114,19 @@ export const collectivitesLabels = {
 
   selectionnerUnLevier:
     'Cliquez sur un levier de la matrice pour consulter ses actions de référence.',
+  leviersAPrioriser: 'Leviers à prioriser',
+  vueEnsembleLeviers: "Vue d'ensemble",
+  repartitionPotentielInfo:
+    "Chaque case montre la part du potentiel de réduction de GES d'un levier qui revient à une catégorie d'action ; plus sa couleur est soutenue, plus la collectivité y est mobilisée. Cliquez sur un levier pour consulter ses actions de référence.",
+  repartitionPotentielLegende:
+    "Potentiel de réduction de GES par levier et par catégorie d'action, nuancé par la mobilisation de la collectivité",
+  impactPotentielDuTerritoire: (score: number): string =>
+    `Impact potentiel : ${score}/100 du territoire`,
+  cliquerPourVoirLesActionsDuLevier: 'Cliquez pour voir les actions du levier',
+  mobilisationNulle: 'Non mobilisé',
+  mobilisationFaible: 'Peu mobilisé',
+  mobilisationMoyenne: 'Bien mobilisé',
+  mobilisationForte: 'Très mobilisé',
   rechercherUneActionDeReference:
     'Rechercher une action par titre ou description',
   filtrerParLevier: 'Tous les leviers',
