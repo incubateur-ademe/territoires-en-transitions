@@ -567,12 +567,16 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
   test('Donne la moyenne des valeurs pour un indicateur', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
+    const cae2jIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_2.j'
+    );
     const result = await caller.indicateurs.valeurs.average({
       collectiviteId: 3895,
-      indicateurId: 73,
+      indicateurId: cae2jIndicateurId,
     });
     expect(result).toStrictEqual({
-      indicateurId: 73,
+      indicateurId: cae2jIndicateurId,
       typeCollectivite: 'CA',
       valeurs: [
         {

@@ -79,13 +79,25 @@ describe("Api pour lister les définitions d'indicateur", () => {
 
       categories: expect.any(Array),
       thematiques: expect.any(Array),
-      mesures: [
+      mesures: expect.any(Array),
+    });
+    expect(cae1aDefinition.mesures).toHaveLength(3);
+    expect(cae1aDefinition.mesures).toEqual(
+      expect.arrayContaining([
         {
           id: 'cae_1.1.1',
           nom: 'Définir la vision, les objectifs et la stratégie Climat-Air-Énergie',
         },
-      ],
-    });
+        {
+          id: 'te_1.1.6',
+          nom: "Suivre l'avancement, évaluer régulièrement et valoriser la politique de transition écologique",
+        },
+        {
+          id: 'te_1.1.6.3.a',
+          nom: 'Consommation énergétique finale du territoire',
+        },
+      ])
+    );
 
     // Now search by id
     const indicateurIds = listDefinitionsResponse.data
@@ -106,7 +118,11 @@ describe("Api pour lister les définitions d'indicateur", () => {
     const indicateurIdentifiantsReferentiel = listDefinitionsResponse.data.map(
       (def: IndicateurDefinition) => def.identifiantReferentiel
     );
-    expect(indicateurIdentifiantsReferentiel).toEqual(['cae_2.a', 'cae_2.k']);
+    // l'API ne garantit pas l'ordre des définitions
+    expect(indicateurIdentifiantsReferentiel.sort()).toEqual([
+      'cae_2.a',
+      'cae_2.k',
+    ]);
   });
 
   test("Liste des définitions d'indicateurs prédéfinis dans la plateforme ne contiennent pas de collectiviteId", async () => {

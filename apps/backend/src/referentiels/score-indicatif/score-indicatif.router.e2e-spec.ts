@@ -99,7 +99,7 @@ describe('ScoreIndicatifRouter', () => {
           {
             identifiantReferentiel: 'cae_7',
             indicateurId: indicateurIdCae7,
-            titre: 'Recyclage des déchets',
+            titre: 'Valorisation matière des déchets ménagers et assimilés',
             unite: '%',
             selection: {
               fait: {

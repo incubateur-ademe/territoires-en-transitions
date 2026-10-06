@@ -8,7 +8,7 @@ import { UserFixture } from 'tests/users/users.fixture';
 const SOUS_MESURE = '2.2.4.4';
 const INDICATEUR_IDENTIFIANT = 'cae_18';
 const INDICATEUR_TITRE =
-  'Taux d’achat d’électricité renouvelable pour les bâtiments et équipements de la collectivité';
+  "Taux d'achat d’électricité renouvelable - patrimoine collectivité";
 
 /** Sous-mesure TE dont les deux tâches portent chacune une formule de score */
 const SOUS_MESURE_AVEC_TACHES = '2.3.1.5';
