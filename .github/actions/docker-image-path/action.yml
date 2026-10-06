@@ -9,7 +9,7 @@ inputs:
   username:
     description: Registry username
     required: false
-    default: territoiresentransitions
+    default: incubateur-ademe
   image:
     description: Image name (excluding registry)
     required: true

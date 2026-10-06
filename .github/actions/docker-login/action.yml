@@ -3,12 +3,12 @@ description: Login to GH registry
 
 inputs:
   password:
-    description: Set to GH_TOKEN value to access ghcr.io
+    description: Token with access to ghcr.io (GITHUB_TOKEN in CI)
     required: true
   username:
     description: Registry username
     required: false
-    default: territoiresentransitions
+    default: incubateur-ademe
   registry:
     description: Container registry
     required: false

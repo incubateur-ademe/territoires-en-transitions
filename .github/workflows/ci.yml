@@ -102,6 +102,9 @@ jobs:
   prepare-test-db:
     if: ${{ needs.analyze-affected.outputs.run-prepare-test-db == 'true' }}
     needs: [analyze-affected]
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/prepare-test-db.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
@@ -111,12 +114,19 @@ jobs:
   test-db-deploy:
     if: ${{ needs.analyze-affected.outputs.run-db-deploy == 'true' }}
     needs: [analyze-affected, prepare-test-db]
+    permissions:
+      contents: read
+      packages: read
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
   test-backend-api:
     if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' }}
     needs: [analyze-affected, prepare-test-db]
+    permissions:
+      actions: read
+      contents: read
+      packages: read
     uses: ./.github/workflows/test-backend-api.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
@@ -128,6 +138,10 @@ jobs:
   test-end-to-end:
     if: ${{ needs.analyze-affected.outputs.run-e2e == 'true' }}
     needs: [analyze-affected, prepare-test-db]
+    permissions:
+      actions: read
+      contents: read
+      packages: read
     uses: ./.github/workflows/test-end-to-end.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}

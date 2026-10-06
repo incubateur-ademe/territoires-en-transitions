@@ -7,6 +7,8 @@ name: Prepare test database
 
 permissions:
   contents: read
+  # Push de l'image de la base de test (et de sqitch) sur ghcr.io
+  packages: write
 
 on:
   workflow_call:
@@ -36,7 +38,8 @@ jobs:
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
-          password: ${{ secrets.GH_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get image path
         uses: ./.github/actions/db-path
