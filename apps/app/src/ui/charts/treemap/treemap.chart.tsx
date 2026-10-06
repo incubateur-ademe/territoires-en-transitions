@@ -23,15 +23,19 @@ import { TreemapTooltip } from './treemap.tooltip';
 
 const { colors } = preset.theme.extend;
 
-type TreemapChartProps<TIntensity extends string, TGroupId extends string> = {
-  data: readonly TreemapGroup<NoInfer<TIntensity>, TGroupId>[];
+type TreemapChartProps<
+  TIntensity extends string,
+  TGroupId extends string,
+  TTileId extends string
+> = {
+  data: readonly TreemapGroup<NoInfer<TIntensity>, TGroupId, TTileId>[];
   intensityScale: IntensityScale<TIntensity>;
   formatValue: (value: number) => string;
   toIntensityLabel?: (intensity: TIntensity) => string;
   toIntensityVariant?: (intensity: TIntensity) => IntensityVariant;
   tooltipHint?: string;
   selectedGroupId?: TGroupId;
-  onGroupSelected?: (groupId: TGroupId, tileId?: string) => void;
+  onGroupSelected?: (groupId: TGroupId, tileId?: TTileId) => void;
   children?: ReactNode;
   className?: string;
 };
@@ -44,7 +48,7 @@ type TreemapLabels<TIntensity extends string> = {
 type GroupLabelProps<TIntensity extends string, TGroupId extends string> = {
   group: TreemapGroup<TIntensity, TGroupId>;
   isSelected: boolean;
-  onGroupSelected?: (groupId: TGroupId, tileId?: string) => void;
+  onGroupSelected?: (groupId: TGroupId) => void;
 };
 
 type TilesListProps<
@@ -53,12 +57,16 @@ type TilesListProps<
 > = TreemapLabels<TIntensity> & {
   data: readonly TreemapGroup<TIntensity, TGroupId>[];
   selectedGroupId?: TGroupId;
-  onGroupSelected?: (groupId: TGroupId, tileId?: string) => void;
+  onGroupSelected?: (groupId: TGroupId) => void;
 };
 
 const LEGEND_COLOR: HexColor = colors.primary[9];
 
 const SELECTED_GROUP_COLOR: HexColor = colors.primary[7];
+
+const GROUP_LABEL_COLOR: HexColor = colors.primary[9];
+
+const SELECTED_GROUP_LABEL_COLOR: HexColor = colors.grey[1];
 
 const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
   { itemStyle: { borderWidth: 0, gapWidth: 4 } },
@@ -67,7 +75,7 @@ const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
     upperLabel: {
       show: true,
       height: 24,
-      color: colors.primary[9],
+      color: GROUP_LABEL_COLOR,
       fontSize: 12,
       fontWeight: 'bold',
       overflow: 'truncate',
@@ -110,12 +118,16 @@ const toSeriesData = <TIntensity extends string, TGroupId extends string>({
 }): TreemapSeriesOption['data'] =>
   data.map((group) => {
     const isSelectedGroup = group.id === selectedGroupId;
+    const groupLabelColor = isSelectedGroup
+      ? SELECTED_GROUP_LABEL_COLOR
+      : GROUP_LABEL_COLOR;
     return {
       id: toGroupKey(group),
       name: group.label,
       itemStyle: {
         borderColor: isSelectedGroup ? SELECTED_GROUP_COLOR : group.color,
       },
+      upperLabel: { color: groupLabelColor },
       children: group.tiles.map((tile) => ({
         id: toTileKey({ group, tile }),
         name: tile.label,
@@ -240,7 +252,8 @@ const TilesList = <TIntensity extends string, TGroupId extends string>({
 
 const TreemapChart = <
   TIntensity extends string,
-  TGroupId extends string = string
+  TGroupId extends string = string,
+  TTileId extends string = string
 >({
   data,
   intensityScale,
@@ -252,7 +265,7 @@ const TreemapChart = <
   onGroupSelected,
   children,
   className,
-}: TreemapChartProps<TIntensity, TGroupId>): JSX.Element => {
+}: TreemapChartProps<TIntensity, TGroupId, TTileId>): JSX.Element => {
   const plotRef = useRef<HTMLDivElement>(null);
   useResizeGraphOnContainerSizeUpdate({ containerRef: plotRef });
   const caption = readCaption(children);
