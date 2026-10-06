@@ -128,6 +128,9 @@ jobs:
           --env PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
           --env INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
           --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
+          --env OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i
+          --env OTEL_SERVICE_NAME=backend
+          --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url
@@ -195,6 +198,9 @@ jobs:
           --env PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
           --env INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
           --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
+          --env OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i
+          --env OTEL_SERVICE_NAME=backend
+          --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url

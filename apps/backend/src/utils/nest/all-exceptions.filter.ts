@@ -53,7 +53,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     this.logger.error(getErrorMessage(exception));
     this.logger.error(exception);
 
-    // remontée dans Sentry et PostHog, avec le contexte de la requête
+    // remontée dans PostHog, avec le contexte de la requête
     captureException(exception, this.contextStoreService.getContext());
 
     const httpErrorResponse = {

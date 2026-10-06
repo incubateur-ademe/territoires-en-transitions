@@ -117,6 +117,9 @@ jobs:
           --env AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID
           --env AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID
           --env APP_URL=$APP_URL
+          --env OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i
+          --env OTEL_SERVICE_NAME=tools
+          --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url

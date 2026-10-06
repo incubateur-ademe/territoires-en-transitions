@@ -11,8 +11,6 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { uuid4 } from '@sentry/core';
-import { SentryModule } from '@sentry/nestjs/setup';
 import basicAuth from 'express-basic-auth';
 import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
@@ -28,7 +26,6 @@ const appLogger = new Logger('AppModule');
 
 @Module({
   imports: [
-    SentryModule.forRoot(),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
@@ -58,7 +55,7 @@ const appLogger = new Logger('AppModule');
       adapter: ExpressAdapter,
       middleware: basicAuth({
         challenge: true,
-        users: { admin: process.env.TET_API_TOKEN || uuid4() },
+        users: { admin: process.env.TET_API_TOKEN || crypto.randomUUID() },
       }),
     }),
     UtilsModule,

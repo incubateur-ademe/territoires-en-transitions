@@ -102,9 +102,9 @@ Common errors (`SERVER_ERROR`, `UNAUTHORIZED → FORBIDDEN`, `DATABASE_ERROR`, `
 ## Logging & context
 
 - `private readonly logger = new Logger(<ClassName>.name)` — **never `console.log`**.
-- Every log line auto-attaches `correlationId`, `userId`, `authRole`, `collectiviteId`, `referentielId`, `requestPath`, `trace_id` via AsyncLocalStorage — you don't pass them manually.
+- Every log line auto-attaches `correlationId`, `userId`, `authRole`, `collectiviteId`, `referentielId`, `requestPath` via AsyncLocalStorage (plus `posthogDistinctId` = `userId`, and `trace_id`/`span_id` from the OpenTelemetry pino instrumentation) — you don't pass them manually. Logs and traces go to PostHog over OTLP, cf. `utils/telemetry-init.ts`.
 - **Key naming matters for log enrichment:** for `collectiviteId` / `referentielId` to surface in logs, the Zod input field must be named exactly that (constants in `collectivites/collectivite-api.constants.ts` and `referentiels/models/referentiel-api.constants.ts`).
-- Errors auto-forward to Sentry via `AllExceptionsFilter` and the tRPC `onError` hook (client-fault codes — UNAUTHORIZED, TOO_MANY_REQUESTS — are logged at `warn` and filtered out).
+- Errors auto-forward to PostHog error tracking via `AllExceptionsFilter` and the tRPC `onError` hook (client-fault codes — UNAUTHORIZED, TOO_MANY_REQUESTS — are logged at `warn` and filtered out). Uncaught exceptions and unhandled rejections (including a failed bootstrap) are autocaptured, then the process exits — cf. `utils/error-tracking/error-tracking.client.ts`.
 
 ## Side effects
 

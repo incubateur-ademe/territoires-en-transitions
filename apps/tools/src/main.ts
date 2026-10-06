@@ -1,5 +1,5 @@
 // WARNING: Do these imports first
-import '@tet/backend/utils/sentry-init';
+import '@tet/backend/utils/telemetry-init';
 // Other imports
 import { Logger } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';

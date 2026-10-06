@@ -80,9 +80,9 @@ updates:
           - "@nivo/*"
         update-types:
           - major
-      workspace-sentry:
+      workspace-opentelemetry:
         patterns:
-          - "@sentry/*"
+          - "@opentelemetry/*"
         update-types:
           - major
       workspace-storybook:

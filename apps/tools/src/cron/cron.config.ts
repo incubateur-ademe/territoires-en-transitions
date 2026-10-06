@@ -15,7 +15,7 @@ export const DEFAULT_JOB_OPTIONS: DefaultJobOptions = {
 
 // Les jobs CRM tournent une fois par jour et sont idempotents : un retry du
 // lendemain est plus utile que 10 retries serrés. On limite à 3 tentatives
-// pour éviter d'inonder Sentry et de chevaucher la fenêtre du jour suivant
+// pour éviter d'inonder l'error tracking et de chevaucher la fenêtre du jour suivant
 // en cas de panne Airtable.
 const CRM_SYNC_JOB_OPTIONS: JobsOptions = {
   attempts: 3,
