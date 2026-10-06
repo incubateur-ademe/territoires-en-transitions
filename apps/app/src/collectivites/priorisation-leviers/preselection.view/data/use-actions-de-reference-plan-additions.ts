@@ -9,7 +9,7 @@ import type {
   ActionDeReferenceId,
 } from '@tet/domain/shared';
 import { useCallback, useMemo, useState } from 'react';
-import { Preselection } from '../use-preselection';
+import { Preselection } from '../../use-preselection';
 
 export type AddActionToPlanInput = {
   action: ActionDeReference;

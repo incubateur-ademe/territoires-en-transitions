@@ -1,9 +1,9 @@
 import { RouterOutput } from '@tet/api';
 import {
-  toPertinencesByLevier,
   LevierPertinences,
   Pertinence,
   PertinenceLevier,
+  toPertinencesByLevier,
 } from '@tet/domain/collectivites';
 import {
   Levier,

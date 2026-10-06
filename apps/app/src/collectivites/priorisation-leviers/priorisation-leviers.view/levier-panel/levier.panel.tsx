@@ -1,12 +1,12 @@
 import { CategorieAction } from '@tet/domain/shared';
 import { Divider } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
-import { UpsertPertinence } from './data/use-upsert-pertinence';
+import { LevierCardInfo } from '../../levier-card-info';
+import { Preselection } from '../../use-preselection';
+import { LevierPriorisation } from '../data/to-leviers-priorisation';
+import { UpsertPertinence } from '../data/use-upsert-pertinence';
 import { LevierActionsDeReferenceList } from './levier-actions-de-reference.list';
-import { LevierCardInfo } from './levier-card-info';
 import { PertinenceField } from './pertinence-field';
-import { LevierPriorisation } from './to-leviers-priorisation';
-import { Preselection } from './use-preselection';
 
 type LevierPanelProps = {
   levier: LevierPriorisation;

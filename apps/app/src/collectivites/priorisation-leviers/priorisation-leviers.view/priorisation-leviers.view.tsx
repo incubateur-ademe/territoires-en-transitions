@@ -17,6 +17,22 @@ import {
 import { countBy, sumBy } from 'es-toolkit';
 import { JSX, useMemo, useState } from 'react';
 import { match } from 'ts-pattern';
+import { LevierCardInfo } from '../levier-card-info';
+import { Preselection, usePreselection } from '../use-preselection';
+import { LeviersMatrixChart } from './charts/leviers-matrix.chart';
+import { LeviersMondrianChart } from './charts/leviers-mondrian.chart';
+import { SousLeviersChart } from './charts/sous-leviers.chart';
+import {
+  isBlindSpot,
+  LevierPlace,
+  PreselectedCountByLevier,
+  toLeviersPlaces,
+  toLeviersWithoutPotentiel,
+} from './charts/to-matrix-points';
+import {
+  LevierPriorisation,
+  PotentielsReduction,
+} from './data/to-leviers-priorisation';
 import {
   LeviersPriorisationQuery,
   useLeviersPriorisation,
@@ -25,26 +41,13 @@ import {
   UpsertPertinence,
   useUpsertPertinence,
 } from './data/use-upsert-pertinence';
-import { LevierCardInfo } from './levier-card-info';
-import { LeviersMatrixChart } from './leviers-matrix.chart';
-import { LeviersMondrianChart } from './leviers-mondrian.chart';
+import {
+  SelectLevier,
+  useLevierSidePanel,
+} from './levier-panel/use-levier-side-panel';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
 import { PriorisationHelpModal } from './priorisation-help.modal';
 import { PriorisationMetrics } from './priorisation.metrics';
-import { SousLeviersChart } from './sous-leviers.chart';
-import {
-  LevierPriorisation,
-  PotentielsReduction,
-} from './to-leviers-priorisation';
-import {
-  isBlindSpot,
-  LevierPlace,
-  PreselectedCountByLevier,
-  toLeviersPlaces,
-  toLeviersWithoutPotentiel,
-} from './to-matrix-points';
-import { SelectLevier, useLevierSidePanel } from './use-levier-side-panel';
-import { Preselection, usePreselection } from './use-preselection';
 
 type PriorisationAlertsProps = {
   hasMobilisation: boolean;

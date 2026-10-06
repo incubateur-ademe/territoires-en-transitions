@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LeviersMondrianChart } from './leviers-mondrian.chart';
-import { NO_MOBILISATION } from './to-leviers-priorisation';
 import { LevierPlace } from './to-matrix-points';
 
 const PRODUCTION_INDUSTRIELLE: LevierPlace = {

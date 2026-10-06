@@ -5,11 +5,11 @@ import { StatusBarChart } from '@/app/ui/charts/status-bar/status-bar.chart';
 import { preset } from '@tet/ui';
 import { sumBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
+import { SelectLevier } from '../levier-panel/use-levier-side-panel';
 import { toMobilisationLabel } from './mobilisation-level';
 import { LevierPlace } from './to-matrix-points';
 import { toSousLevierBars } from './to-sous-levier-bars';
 import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
-import { SelectLevier } from './use-levier-side-panel';
 
 type SousLeviersChartProps = {
   places: LevierPlace[];
