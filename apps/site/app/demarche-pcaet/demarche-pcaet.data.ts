@@ -42,11 +42,7 @@ const ETAPES_BY_KEY = {
     title: 'Transmis pour avis',
     detail:
       'Une fois le dossier complet, vous le transmettez depuis la plateforme. Le conseil régional et le préfet de région sont informés et accèdent au dossier pour rendre leur avis.',
-    actions: [
-      'Vérifier que toutes les pièces sont présentes',
-      'Transmettre le dossier pour avis',
-      "Suivre l'état de la transmission",
-    ],
+    actions: ["Suivre l'état de la transmission"],
     stakeholders: ['Conseil régional', 'Préfet de région'],
   },
   finalisation: {
@@ -63,10 +59,10 @@ const ETAPES_BY_KEY = {
   publie: {
     title: 'Adopté, publié et en cours de mise en œuvre',
     detail:
-      "Vous déposez la délibération : le plan est adopté et publié. Votre programme d'actions devient votre outil de pilotage au quotidien.",
+      "Vous déposez la délibération : le plan est adopté et publié. Vous pouvez utiliser la plateforme pour suivre votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe.",
     actions: [
       'Déposer la délibération',
-      "Suivre l'avancement des actions",
+      'Piloter vos actions',
       'Renseigner les indicateurs et tableaux de bord',
     ],
     stakeholders: ['Collectivité', 'Équipes projet', 'Élus'],
@@ -74,12 +70,9 @@ const ETAPES_BY_KEY = {
   archive: {
     title: 'Archivé',
     detail:
-      "À l'échéance du plan ou lors d'un renouvellement, le plan est archivé. Documents, avis et historique restent consultables et servent de base au plan suivant.",
-    actions: [
-      'Consulter les documents et avis du plan',
-      'Repartir de ce plan pour un renouvellement',
-    ],
-    stakeholders: ['Collectivité'],
+      "À l'échéance du plan ou lors d'un renouvellement, le plan est archivé. Documents, avis et historique restent consultables.",
+    actions: ['Consulter les documents et avis du plan'],
+    stakeholders: ['Collectivité', 'Équipes projet'],
   },
 } satisfies Record<DemarchePcaetEtape, DepotEtape>;
 
