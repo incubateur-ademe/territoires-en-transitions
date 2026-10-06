@@ -1,6 +1,8 @@
 import { ActionTypeEnum, type ActionType } from '@tet/domain/referentiels';
 import {
   makeCollectiviteActionsDeReferenceUrl,
+  makeCollectivitePreselectionUrl,
+  makeCollectivitePriorisationUrl,
   makeReferentielTacheUrl,
   makeSignInUrl,
   signInPath,
@@ -103,5 +105,19 @@ describe('entree-nav-reservee-au-super-admin', () => {
     expect(
       makeCollectiviteActionsDeReferenceUrl({ collectiviteId: 5596 })
     ).toBe('/collectivite/5596/actions-reference');
+  });
+});
+
+describe('priorisation', () => {
+  it('la priorisation a son URL sous la collectivité', () => {
+    expect(makeCollectivitePriorisationUrl({ collectiviteId: 4322 })).toBe(
+      '/collectivite/4322/priorisation'
+    );
+  });
+
+  it('les actions pré-sélectionnées ont leur URL sous la priorisation', () => {
+    expect(makeCollectivitePreselectionUrl({ collectiviteId: 4322 })).toBe(
+      '/collectivite/4322/priorisation/actions-preselectionnees'
+    );
   });
 });

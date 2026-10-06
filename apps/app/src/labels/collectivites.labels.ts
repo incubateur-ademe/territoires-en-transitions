@@ -51,6 +51,12 @@ export const collectivitesLabels = {
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
   priorisationLeviersTitre: 'Priorisation des leviers',
+  priorisationFonctionnementTitre: 'Comment ça marche ?',
+  priorisationFonctionnementDescription:
+    "Chaque levier est placé selon son potentiel de réduction de GES sur le territoire et la mobilisation de la collectivité, mesurée par ses actions déjà rattachées. Ouvrez un levier pour consulter ses actions de référence, ajoutez les plus adaptées à votre présélection, puis intégrez-les à l'un de vos plans.",
+  actionsPreselectionneesTitre: 'Actions pré-sélectionnées',
+  actionsPreselectionneesCompte: (count: number): string =>
+    `Actions pré-sélectionnées (${count})`,
   pertinenceInfo: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
   pertinenceLabel: (pertinence: Pertinence): string =>
@@ -142,7 +148,6 @@ export const collectivitesLabels = {
     one: 'action marquée « Pas intéressé »',
     other: 'actions marquées « Pas intéressé »',
   }),
-  votrePreselection: 'Votre présélection',
   actionDeReferenceAdeme: 'Action de référence ADEME',
   ajouterAuPlan: (planNom: string): string => `Ajouter à « ${planNom} »`,
   actionAjouteeAuPlanSucces: 'Action ajoutée au plan',
@@ -152,7 +157,7 @@ export const collectivitesLabels = {
   ajoutAuPlanAnnuleSucces: 'Ajout au plan annulé',
   ajoutAuPlanAnnuleErreur: "Échec de l'annulation de l'ajout au plan",
   actionAjouteeAuPlanInfo:
-    "Une action ajoutée à un plan y reste même si elle est retirée de la présélection. Le potentiel qu'elle couvre sera recalculé au prochain passage d'analyse, le tableau de bord ci-dessus ne le compte pas encore.",
+    "Une action ajoutée à un plan y reste même si elle est retirée de la présélection. Le potentiel qu'elle couvre sera recalculé au prochain passage d'analyse, le tableau de bord de la priorisation ne le compte pas encore.",
   preselectionVide: "Aucune action dans la présélection pour l'instant",
   preselectionVideDescription:
     'Cliquez sur un levier de la matrice puis sur « Ajouter à la présélection » pour retrouver une action ici.',

@@ -1,12 +1,13 @@
 'use client';
 
+import { makeCollectivitePreselectionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { LevierId, levierIdEnumValues } from '@tet/domain/shared';
-import { Alert, PageHeader, VisibleWhen } from '@tet/ui';
+import { Alert, Button, PageHeader, VisibleWhen } from '@tet/ui';
 import {
   Tabs,
   TabsList,
@@ -28,7 +29,7 @@ import { LevierCardInfo } from './levier-card-info';
 import { LeviersMatrixChart } from './leviers-matrix.chart';
 import { LeviersMondrianChart } from './leviers-mondrian.chart';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
-import { PreselectionSection } from './preselection.section';
+import { PriorisationHelpModal } from './priorisation-help.modal';
 import { PriorisationMetrics } from './priorisation.metrics';
 import {
   LevierPriorisation,
@@ -212,7 +213,6 @@ const PriorisationBoard = ({
         selectedLevierId={levierSidePanel.selectedLevierId}
         onLevierSelected={levierSidePanel.select}
       />
-      <PreselectionSection preselection={preselection} />
     </div>
   );
 };
@@ -250,6 +250,21 @@ export const PriorisationLeviersView = (): JSX.Element => {
         <PageHeader.Title>
           <BetaLabel>{appLabels.priorisationLeviersTitre}</BetaLabel>
         </PageHeader.Title>
+        <PageHeader.Actions>
+          <div className="flex flex-wrap gap-4">
+            <PriorisationHelpModal />
+            <Button
+              size="xs"
+              href={makeCollectivitePreselectionUrl({ collectiviteId })}
+            >
+              {preselection.isReady
+                ? appLabels.actionsPreselectionneesCompte(
+                    preselection.actions.length
+                  )
+                : appLabels.actionsPreselectionneesTitre}
+            </Button>
+          </div>
+        </PageHeader.Actions>
       </PageHeader>
       <PriorisationContent
         leviersQuery={leviersQuery}
