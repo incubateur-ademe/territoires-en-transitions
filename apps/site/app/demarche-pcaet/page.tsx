@@ -20,11 +20,12 @@ export async function generateMetadata(
   // Valeurs de repli tant que le référencement n'est pas saisi dans Strapi.
   return getUpdatedMetadata(metadata, {
     title:
-      seo.title ?? 'Déposer votre PCAET (Plan Climat-Air-Énergie Territorial)',
+      seo.title ??
+      'Déposer et piloter votre PCAET (Plan Climat-Air-Énergie Territorial)',
     networkTitle: seo.title,
     description:
       seo.description ??
-      "Déposez votre Plan Climat sur Territoires en Transitions : un parcours de dépôt du PCAET guidé étape par étape, de l'élaboration à l'adoption, et un outil de pilotage pour suivre vos actions.",
+      "Déposez et pilotez votre Plan Climat sur Territoires en Transitions : un parcours de dépôt du PCAET guidé étape par étape, de l'élaboration à l'adoption, et un outil de pilotage pour suivre vos actions.",
     image: seo.image,
   });
 }

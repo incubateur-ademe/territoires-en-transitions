@@ -60,7 +60,7 @@ const ETAPES_BY_KEY = {
     actions: [
       'Consulter les avis reçus',
       'Ajuster des éléments si besoin',
-      'Préparer la délibération',
+      'Déposer la délibération',
     ],
     stakeholders: ['Collectivité', 'Élus'],
   },
@@ -69,9 +69,10 @@ const ETAPES_BY_KEY = {
     detail:
       "Vous déposez la délibération : le plan est adopté et accessible au grand public. Vous pouvez utiliser la plateforme pour suivre votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe.",
     actions: [
-      'Déposer la délibération',
       'Valider le dépôt final',
       "Suivre l'avancement des actions et indicateurs",
+      'Réaliser le bilan à mi-parcours',
+      "Réaliser le bilan à l'échéance",
     ],
     stakeholders: ['Collectivité', 'Équipes projet', 'Élus'],
   },
