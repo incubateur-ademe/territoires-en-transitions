@@ -305,10 +305,13 @@ export class SetScoreFromIndicateurService {
     }
 
     return this.writeAndRefreshScore(input, user, async (tx) => {
-      await this.updateDefinitionService.updateDefinition(
+      const updateResult = await this.updateDefinitionService.updateDefinition(
         { collectiviteId, indicateurId, indicateurFields: { isSuivi } },
         { user, tx }
       );
+      if (!updateResult.success) {
+        return updateResult;
+      }
 
       if (isSuivi) {
         return success(undefined);

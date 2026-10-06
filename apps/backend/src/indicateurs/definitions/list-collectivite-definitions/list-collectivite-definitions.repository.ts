@@ -1,5 +1,6 @@
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable, Logger } from '@nestjs/common';
+import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -7,11 +8,12 @@ import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
   and,
   eq,
+  exists,
   getTableColumns,
   inArray,
-  isNotNull,
   isNull,
   or,
+  sql,
   SQLWrapper,
 } from 'drizzle-orm';
 
@@ -57,12 +59,15 @@ export class ListCollectiviteDefinitionsRepository {
     const byCollectiviteId = collectiviteId
       ? or(
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          isNull(indicateurDefinitionTable.collectiviteId),
-          // Un indicateur de groupement est une restriction d'applicabilité,
-          // pas une définition personnalisée confidentielle. Le groupement
-          // reste donc prioritaire si des données historiques portent les
-          // deux colonnes de périmètre.
-          isNotNull(indicateurDefinitionTable.groupementId)
+          and(
+            isNull(indicateurDefinitionTable.collectiviteId),
+            isNull(indicateurDefinitionTable.groupementId)
+          ),
+          exists(sql`(
+            select 1 from ${groupementCollectiviteTable}
+            where ${groupementCollectiviteTable.groupementId} = ${indicateurDefinitionTable.groupementId}
+              and ${groupementCollectiviteTable.collectiviteId} = ${collectiviteId}
+          )`)
         )
       : undefined;
 

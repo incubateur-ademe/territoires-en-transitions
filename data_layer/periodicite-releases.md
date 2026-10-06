@@ -2,16 +2,18 @@
 
 État au **6 octobre 2026** : les réparations et le schéma compatible de #5220
 sont présents dans `main` (`1be13a48b`). La livraison backend annuelle de #5214
-(`6a3d44176`) est découpée en deux branches locales à publier. L'activation #5215
-reste une livraison distincte. Le périmètre fonctionnel reste celui de
+(`6a3d44176`) est remplacée par #5366 (préparation backend) puis #5367 (bascule annuelle).
+L'activation #5215 reste une livraison distincte. Le périmètre fonctionnel reste celui de
 l'[ADR 0018](../doc/adr/0018-periodicite-des-indicateurs.md).
 
 | Ordre | PR / branche | Responsabilité | Application après déploiement |
 | --- | --- | --- | --- |
 | 1 | [#5220](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5220), incluant #5292 | Réparations et schéma annuel compatible | Backend actuel |
-| 2 | `split/periodicite-backend-preparation` — base `main` | Repositories, transactions et autorisations des définitions, liens, sources et catalogue | Backend annuel historique, aucune migration supplémentaire |
-| 3 | `split/periodicite-annual-cutover` — base `split/periodicite-backend-preparation` | Valeurs, calculs, protection des saisies, normalisation des dates et contraintes SQL | Nouveau backend annuel |
+| 2 | [#5366](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5366) — `split/periodicite-backend-preparation` — base `main` | Repositories, transactions et autorisations des définitions, liens, sources et catalogue | Backend annuel historique, aucune migration supplémentaire |
+| 3 | [#5367](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5367) — `split/periodicite-annual-cutover` — base `split/periodicite-backend-preparation` | Valeurs, calculs, protection des saisies, normalisation des dates et contraintes SQL | Nouveau backend annuel |
 | 4 | [#5215](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5215) — `split/periodicite-activation` | Nouvelles cadences, saisie et agrégations de restitution | Quatre cadences |
+| 5 | [#5312](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5312) — `fix/margny-indicateurs-mensuels`, après validation de #5215 | Migration des six observations de Margny au mensuel | Six observations mensuelles contrôlées |
+| 6 | [#5296](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5296) — `chore/periodicite-cleanup`, après validation de #5312 et vérification de la restauration d'une sauvegarde complète | Nettoyage des archives et outils temporaires | Retour arrière temporaire fermé |
 
 Les deux PR qui remplacent #5214 se déploient **préparation puis bascule annuelle**.
 Chacune constitue une livraison complète ; aucune mise en production de code ou
@@ -24,7 +26,7 @@ la bascule annuelle ; elle ne doit pas conserver l'ancienne branche #5214 comme
 base. La branche source `split/periodicite-data-migration` est conservée pendant la
 préparation des deux nouvelles PR.
 
-## Préparation backend — première PR issue de #5214
+## Préparation backend — #5366
 
 Cette livraison extrait les accès SQL et conserve les contrats de stockage annuels
 existants. Elle comprend les contrôles de périmètre des définitions, les transactions
@@ -118,13 +120,13 @@ psql --no-psqlrc --dbname="${PERIODICITE_CHECK_DATABASE_URL:?URL de la copie req
 Ce contrôle est en lecture seule et fonctionne avant et après l'ajout du schéma.
 Un code de sortie 0 signifie que le rapport a été exécuté : lire aussi ses lignes.
 Les statuts `date_invalide`, `periodicite_inconnue` et `conflit` exigent une correction
-métier ; `a_normaliser` signale une date annuelle que #5214 devra normaliser.
+métier ; `a_normaliser` signale une date annuelle que #5367 devra normaliser.
 Le schéma compatible ne normalise pas les dates écrites par l'ancien backend.
 
-## Bascule backend annuelle — seconde PR issue de #5214
+## Bascule backend annuelle — #5367
 
-Après validation de #5220, arrêter les anciens producteurs pendant la maintenance,
-contrôler à nouveau les dates et collisions, puis déployer jusqu'à
+Après validation de #5220 et de la préparation backend #5366, arrêter les anciens
+producteurs pendant la maintenance, contrôler à nouveau les dates et collisions, puis déployer jusqu'à
 **`@indicateur-periodicite-annuelle`** avec le backend, le frontend annuel et `tools`
 compatibles dans la même fenêtre. Les tags `expand` et `contract` sont des repères
 internes de la bascule, sans reprise des anciens producteurs entre ces étapes.
@@ -139,7 +141,7 @@ Créations, imports et valeurs restent annuels ; l'agrégation reste fermée.
 
 Une anomalie créée entre les livraisons doit être traitée avant la bascule.
 Les contrôles de migration refusent les collisions, sans fusion automatique.
-Voir le [runbook de #5214](https://github.com/incubateur-ademe/territoires-en-transitions/blob/007fe364fd1650b8b145058e15e13feed27349ef/data_layer/periodicite-runbook.md)
+Voir le [runbook de préparation #5366 et de bascule #5367](periodicite-runbook.md)
 pour l'arrêt des producteurs, les versions applicatives, les contrôles de reprise
 et l'adaptation de l'automatisation du catalogue.
 
@@ -152,11 +154,25 @@ temporaires sans remigrer les observations. Les cadences mensuelle, trimestriell
 et semestrielle et les agrégations de restitution explicitement configurées deviennent
 disponibles, en complément de l'annuel.
 
+## Migration de Margny — #5312
+
+Après validation de l'activation #5215, migrer les six observations de Margny au
+mensuel. Contrôler les six observations et valider cette livraison avant le nettoyage.
+
+## Nettoyage — #5296
+
+Après validation de #5312, vérifier la restauration d'une sauvegarde complète du
+schéma et des données avant de supprimer les archives et outils temporaires.
+Cette livraison ferme le chemin temporaire de retour arrière : les reverts décrits
+ci-dessous ne sont utilisables qu'avant ce nettoyage.
+
 ## Retour arrière
 
-Annuler les livraisons dans l'ordre inverse : activation, backend annuel, schéma
-compatible, puis réparation. Le revert d'activation refuse une cadence non annuelle
-ou une agrégation configurée. Le revert du backend conserve le schéma compatible.
+Avant #5296, annuler les livraisons dans l'ordre inverse : migration de Margny,
+activation, backend annuel, préparation backend, schéma compatible, puis réparation.
+La préparation backend se retire par redéploiement applicatif, sans revert SQL.
+Le revert d'activation refuse une cadence non annuelle ou une agrégation configurée.
+Le revert du backend conserve le schéma compatible.
 
 Le revert de `periodicite_schema` retire uniquement ses ajouts et conserve les
 observations, y compris les écritures faites depuis son déploiement. Il refuse un
@@ -176,12 +192,12 @@ ou activées et `schema → legacy` sont refusés.
 
 Conserver le catalogue installé par migration. Avec `legacy → schema`, les colonnes
 absentes de la sauvegarde prennent leurs défauts annuels. Après la bascule backend,
-les scripts exigent une sauvegarde et une cible au même état : `annual` pour #5214,
+les scripts exigent une sauvegarde et une cible au même état : `annual` pour #5367,
 `contract` après activation par #5215.
 
 `backup/restore.sh` cible local/staging/preprod. Pour une reprise de production ou
 un retour à un état antérieur, préparer une restauration cohérente du schéma,
-des données et des applications selon le runbook de #5214.
+des données et des applications selon le [runbook de #5367](periodicite-runbook.md).
 
 ## Vérification de la première livraison
 

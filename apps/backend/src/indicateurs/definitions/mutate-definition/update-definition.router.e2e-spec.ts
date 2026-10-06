@@ -22,6 +22,7 @@ import { describe, expect, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
+import { ListCollectiviteDefinitionsRepository } from '../list-collectivite-definitions/list-collectivite-definitions.repository';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 import { UpdateDefinitionService } from './update-definition.service';
 
@@ -49,6 +50,36 @@ describe('UpdateIndicateurDefinitionRouter', () => {
   });
 
   describe('indicateur perso', () => {
+    test('refuse une clé API sans permission de modification malgré le rôle administrateur', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: { collectiviteId: collectivite.id },
+      });
+      const restrictedCaller = router.createCaller({
+        user: {
+          ...authenticatedUser,
+          jwtPayload: {
+            ...authenticatedUser.jwtPayload,
+            permissions: ['indicateurs.valeurs.read'],
+          },
+        },
+      });
+
+      await expect(
+        restrictedCaller.indicateurs.indicateurs.update({
+          collectiviteId: collectivite.id,
+          indicateurId,
+          indicateurFields: { titre: 'Modification interdite' },
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      const [definition] = await databaseService.db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      expect(definition.titre).toBe('Fixture titre');
+    });
+
     test('annule la modification du suivi si la transaction appelante échoue', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const indicateurId = await createIndicateurPerso({
@@ -581,6 +612,31 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         readLocalFields,
       };
     }
+
+    test.each([
+      { withOwner: true, isMember: true },
+      { withOwner: false, isMember: true },
+      { withOwner: true, isMember: false },
+      { withOwner: false, isMember: false },
+    ])('filtre la lecture des définitions partagées : %j', async (options) => {
+      const h = await createSharedDefinition(options);
+      const repository = app.get(ListCollectiviteDefinitionsRepository);
+      const definitions = await repository.listCollectiviteDefinitions({
+        collectiviteId: collectivite.id,
+        indicateurIds: [h.definition.id],
+      });
+
+      expect(definitions.map(({ id }) => id)).toEqual(
+        options.isMember ? [h.definition.id] : []
+      );
+      if (options.withOwner) {
+        const ownerDefinitions = await repository.listCollectiviteDefinitions({
+          collectiviteId: h.owner.collectivite.id,
+          indicateurIds: [h.definition.id],
+        });
+        expect(ownerDefinitions.map(({ id }) => id)).toEqual([h.definition.id]);
+      }
+    });
 
     test.each([true, false])(
       'le membre personnalise les champs locaux et les relations, propriétaire : %s',

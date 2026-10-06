@@ -57,7 +57,7 @@ export class HandleDefinitionServicesService {
     tx?: Transaction
   ): Promise<void> {
     this.logger.log(
-      `Mise à jour des servicespilotes de l'indicateur dont l'id est ${indicateurId}`
+      `Mise à jour des services de l'indicateur dont l'id est ${indicateurId}`
     );
 
     const transactionResult = await this.transactionManager.executeSingle<

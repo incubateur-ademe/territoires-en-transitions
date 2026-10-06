@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import {
+  IndicateurSource,
   IndicateurSourceCreate,
   IndicateurSourceMetadonnee,
   IndicateurSourceMetadonneeCreate,
@@ -66,18 +68,21 @@ export default class IndicateurSourcesService {
   async getAvailableSources(
     input: GetAvailableSourcesRequestSchemaRequestType,
     { user }: Pick<ServiceSecondArg, 'user'>
-  ) {
+  ): Promise<Result<IndicateurSource[], 'UNAUTHORIZED'>> {
     const { collectiviteId, indicateurId } = input;
-    await this.permissionService.assertAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'indicateurs.valeurs.read',
       ResourceType.COLLECTIVITE,
       { collectiviteId }
     );
+    if (!permissionResult.success) {
+      return failure('UNAUTHORIZED');
+    }
 
     this.logger.log(
       `Liste les sources de données disponibles pour l'indicateur ${indicateurId} et la collectivité ${collectiviteId}`
     );
-    return this.repository.listAvailableSources(input);
+    return success(await this.repository.listAvailableSources(input));
   }
 }

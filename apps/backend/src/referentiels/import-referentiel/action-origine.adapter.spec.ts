@@ -1,15 +1,15 @@
 import {
-  ActionDefinitionTag,
-  ActionOrigine,
-  ActionOrigineTexte,
-  ActionTypeEnum,
-  ReferentielDefinition,
-  ReferentielIdEnum,
+    ActionDefinitionTag,
+    ActionOrigine,
+    ActionOrigineTexte,
+    ActionTypeEnum,
+    ReferentielDefinition,
+    ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import {
-  buildOrigineTags,
-  parseActionsOrigine,
-  parseActionsOrigineTexte,
+    buildOrigineTags,
+    parseActionsOrigine,
+    parseActionsOrigineTexte,
 } from './action-origine.adapter';
 
 const refentielDefinitions: ReferentielDefinition[] = [

@@ -1,6 +1,7 @@
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
 import { IndicateurSourcesRepository } from './indicateur-sources.repository';
 import IndicateurSourcesService from './indicateur-sources.service';
@@ -15,14 +16,14 @@ describe('IndicateurSourcesService', () => {
       listAvailableSources: vi.fn().mockResolvedValue(sources),
     } as unknown as IndicateurSourcesRepository;
     const permissionService = {
-      assertAllowed: vi.fn().mockResolvedValue(undefined),
+      isAllowed: vi.fn().mockResolvedValue(success(undefined)),
     } as unknown as PermissionService;
     const service = new IndicateurSourcesService(repository, permissionService);
 
-    await expect(service.getAvailableSources(input, { user })).resolves.toBe(
-      sources
+    await expect(service.getAvailableSources(input, { user })).resolves.toEqual(
+      success(sources)
     );
-    expect(permissionService.assertAllowed).toHaveBeenCalledWith(
+    expect(permissionService.isAllowed).toHaveBeenCalledWith(
       user,
       'indicateurs.valeurs.read',
       ResourceType.COLLECTIVITE,
@@ -35,14 +36,13 @@ describe('IndicateurSourcesService', () => {
     const repository = {
       listAvailableSources: vi.fn(),
     } as unknown as IndicateurSourcesRepository;
-    const denial = new Error('Droits insuffisants');
     const permissionService = {
-      assertAllowed: vi.fn().mockRejectedValue(denial),
+      isAllowed: vi.fn().mockResolvedValue(failure('UNAUTHORIZED')),
     } as unknown as PermissionService;
     const service = new IndicateurSourcesService(repository, permissionService);
 
-    await expect(service.getAvailableSources(input, { user })).rejects.toBe(
-      denial
+    await expect(service.getAvailableSources(input, { user })).resolves.toEqual(
+      failure('UNAUTHORIZED')
     );
     expect(repository.listAvailableSources).not.toHaveBeenCalled();
   });

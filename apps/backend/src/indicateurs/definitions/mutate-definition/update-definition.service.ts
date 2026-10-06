@@ -13,7 +13,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { success } from '@tet/backend/utils/result.type';
+import { success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { hasPermission, ResourceType } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -152,11 +152,14 @@ export class UpdateDefinitionService {
       indicateurFields,
     }: UpdateIndicateurDefinitionInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<void> {
-    this.permissionService.assertApiKeyPermission(
+  ): Promise<Result<void, 'UNAUTHORIZED'>> {
+    const apiKeyPermissionResult = this.permissionService.isApiKeyAllowed(
       user,
       'indicateurs.indicateurs.update'
     );
+    if (!apiKeyPermissionResult.success) {
+      return apiKeyPermissionResult;
+    }
 
     const definition = await this.repository.getDefinitionOwnership(
       indicateurId
@@ -346,6 +349,7 @@ export class UpdateDefinitionService {
     if (!transactionResult.success) {
       throw transactionResult.cause ?? transactionResult.error;
     }
+    return success(undefined);
   }
 
   async updateDefinitionModifiedFields(

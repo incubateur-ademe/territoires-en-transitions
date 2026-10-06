@@ -19,10 +19,10 @@ export { getAuthUserFromUserCredentials } from './get-auth-user-from-credentials
 
 let supabase: SupabaseClient;
 
-/** Signs a token against the backend verifier, independently of Supabase CLI key formats. */
+/** Signs a token with the secret supplied by ConfigurationService.get('SUPABASE_JWT_SECRET'). */
 export function signTestAuthToken(
   jwtPayload: AuthJwtPayload,
-  jwtSecret = process.env.SUPABASE_JWT_SECRET
+  jwtSecret: string
 ): string {
   if (!jwtSecret) {
     throw new Error('SUPABASE_JWT_SECRET is required to sign a test token');
