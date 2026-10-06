@@ -3,6 +3,8 @@ name: test-db-deploy
 
 permissions:
   contents: read
+  # Pull des images de la base et de sqitch (publiées par prepare-test-db)
+  packages: read
 
 on:
   workflow_call:
@@ -24,7 +26,8 @@ jobs:
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
-          password: ${{ secrets.GH_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Start supabase
         id: start

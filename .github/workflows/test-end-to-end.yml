@@ -4,6 +4,7 @@ name: Test end-to-end
 permissions:
   actions: read
   contents: read
+  packages: read
 
 on:
   workflow_call:
@@ -50,7 +51,8 @@ jobs:
       - if: ${{ !env.ACT }}
         uses: ./.github/actions/docker-login
         with:
-          password: ${{ secrets.GH_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/speedup-dpkg
 

@@ -27,6 +27,9 @@ jobs:
   # Nécessaire lors de la 1ère utilisation ou après avoir utilisé le job
   # `db-delete`.
   prepare-dev-db:
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/prepare-test-db.yml
     secrets: inherit
 

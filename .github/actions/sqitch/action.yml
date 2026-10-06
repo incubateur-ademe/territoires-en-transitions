@@ -18,12 +18,20 @@ runs:
   using: 'composite'
 
   steps:
+    # Tag dérivé du contenu du Dockerfile, comme l'image de la base (`db-path`) :
+    # une PR qui le modifie publie sous un nouveau tag au lieu d'écraser celui
+    # utilisé par les autres runs, et la modification est bien prise en compte.
+    - uses: ./.github/actions/truncate
+      id: hash_files
+      with:
+        string: ${{ hashFiles('.github/actions/sqitch-local/**') }}
+
     - name: Get image path
       uses: ./.github/actions/docker-image-path
       id: get_image_path
       with:
         image: sqitch
-        tag: 15
+        tag: ${{ steps.hash_files.outputs.result }}
 
     - name: Check if sqitch image exists
       uses: ./.github/actions/docker-pull
@@ -31,11 +39,18 @@ runs:
       with:
         image_path: ${{ steps.get_image_path.outputs.path }}
 
+    # Même Dockerfile que `sqitch-local` (act) et le service `sqitch` du
+    # docker-compose, dont l'entrypoint (pensé pour act) est remplacé par
+    # `sqitch` au run, comme dans le docker-compose. Le push est best effort : sans `packages: write` (PR de
+    # fork), l'image construite sert quand même au run courant.
     - name: Build and push if image is missing
       shell: bash
       if: ${{ steps.image_exists.outputs.result != 'success' }}
-      run: echo "Sqitch image not found"
-      # TODO: build and push image
+      env:
+        SQITCH_IMAGE: ${{ steps.get_image_path.outputs.path }}
+      run: |
+        docker build --tag "$SQITCH_IMAGE" .github/actions/sqitch-local
+        docker push "$SQITCH_IMAGE" || echo "::warning::Push de $SQITCH_IMAGE impossible, image utilisée localement seulement."
 
     # Tout `data_layer`, et pas seulement `sqitch` : un change peut inclure un
     # fichier voisin (`\ir ../../../seed/imports/...`), que sqitch ne suit pas
@@ -58,6 +73,7 @@ runs:
         docker run \
           --rm \
           --network "$SQITCH_NETWORK" \
+          --entrypoint sqitch \
           --env PGOPTIONS \
           -v ./sqitch.conf:/sqitch.conf \
           -v ./data_layer:/data_layer \

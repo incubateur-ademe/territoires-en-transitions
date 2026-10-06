@@ -4,6 +4,7 @@ name: Test backend and API
 permissions:
   actions: read
   contents: read
+  packages: read
 
 on:
   workflow_call:
@@ -39,7 +40,8 @@ jobs:
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
-          password: ${{ secrets.GH_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/speedup-dpkg
 

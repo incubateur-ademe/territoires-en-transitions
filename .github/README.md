@@ -32,8 +32,6 @@ cp .github/config/.act.secrets.default .github/config/.act.secrets
 # Éditez et complétez les valeurs nécessaires (IDs de spreadsheets, clés API…)
 ```
 
-Il est notamment nécessaire de [créer un token personnel](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) pour permettre l'accès à la registry ghcr.io et d'utiliser ce token pour la variable `GH_TOKEN` dans le fichier `.github/config/.act.secrets`.
-
 ### Exécuter un workflow avec Act
 
 Les exemples donnés ici utilise le workflow `dev` ([`.github/workflows/dev.yml`](./workflows/dev.yml)).
