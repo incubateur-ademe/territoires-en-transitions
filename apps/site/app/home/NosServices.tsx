@@ -1,7 +1,7 @@
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
 import { isPcaetLaunched } from '@/site/src/utils/is-pcaet-launched';
-import { Button } from '@tet/ui';
+import { Badge, Button } from '@tet/ui';
 import Image from 'next/image';
 
 export const NosServices = async () => {
@@ -23,15 +23,13 @@ export const NosServices = async () => {
         />
         <div className="px-4">
           <h3 className="font-bold text-primary-10 text-2xl">
-            Le programme Territoire Engagé Transition Écologique
+            Le programme Territoire Engagé Transition Écologique (TETE)
           </h3>
           <p>
-            Vous souhaitez planifier votre transition écologique et la
-            structurer ? Vous souhaitez être accompagné par un expert ?
-            Territoire Engagé Transition Écologique, c’est : le programme de
-            référence dédié aux collectivités, notamment aux EPCI, pour faire de
-            la transition écologique une réalité et mobiliser vos équipes avec
-            un accompagnement personnalisé.
+            Planifiez et structurez votre transition écologique, accompagné par
+            un expert. Le programme de référence pour les collectivités,
+            notamment les EPCI, avec un accompagnement personnalisé pour
+            mobiliser vos équipes.
           </p>
           <Button variant="outlined" href="/programme">
             Découvrir le programme
@@ -48,15 +46,15 @@ export const NosServices = async () => {
         />
         <div className="px-4">
           <h3 className="font-bold text-primary-10 text-2xl">
-            La plateforme pour le pilotage des plans
+            Une plateforme gratuite pour piloter vos plans
           </h3>
           <p>
-            Une plateforme numérique gratuite pour situer et évaluer votre
-            collectivité sur l’avancée de sa transition écologique, définir des
-            plans d’actions personnalisés, et piloter vos projets efficacement.
+            Situez votre collectivité dans sa transition écologique, définissez
+            des plans d’actions personnalisés et pilotez vos projets au même
+            endroit.
           </p>
           <Button variant="outlined" href="/plateforme-numerique">
-            La plateforme numérique
+            Découvrir la plateforme
           </Button>
         </div>
       </div>
@@ -70,17 +68,20 @@ export const NosServices = async () => {
             height={309}
           />
           <div className="px-4">
+            <div className="flex flex-wrap gap-2 mb-3">
+              <Badge title="Nouveau" variant="new" size="sm" />
+              <Badge title="Dépôt réglementaire" variant="info" size="sm" />
+            </div>
             <h3 className="font-bold text-primary-10 text-2xl">
-              La plateforme de dépôt réglementaire du PCAET
+              Votre PCAET, de l’élaboration à l’adoption
             </h3>
             <p>
-              Déposez votre Plan Climat-Air-Énergie Territorial, que votre
-              démarche soit obligatoire ou volontaire, et suivez chaque étape
-              jusqu’à son adoption. Vos documents sont centralisés et votre
-              programme d’actions est prêt à être piloté.
+              Que votre démarche soit obligatoire ou volontaire, constituez
+              votre dossier en équipe, transmettez-le pour avis et suivez son
+              avancement.
             </p>
-            <Button variant="outlined" href="/demarche-pcaet">
-              En savoir plus
+            <Button variant="primary" href="/demarche-pcaet">
+              Découvrir la démarche PCAET
             </Button>
           </div>
         </div>
