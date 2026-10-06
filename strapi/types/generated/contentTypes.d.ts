@@ -666,6 +666,13 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    categorie: Schema.Attribute.Enumeration<
+      [
+        'Avant de d\u00E9poser',
+        "Pendant l'instruction",
+        "Apr\u00E8s l'adoption",
+      ]
+    >;
     Contenu: Schema.Attribute.RichText & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
