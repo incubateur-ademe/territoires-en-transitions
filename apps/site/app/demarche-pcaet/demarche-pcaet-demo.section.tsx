@@ -41,7 +41,7 @@ export const DemarchePcaetDemoSection = () => (
           faire le travail deux fois.
         </p>
         <div aria-hidden className="flex flex-wrap items-center gap-2.5">
-          <Image src="/files-icons.png" alt="" width={125} height={75} />
+          <Image src="/files-icons.svg" alt="" width={125} height={75} />
           <Icon icon="arrow-right-line" className="text-primary-9" />
           <span className="px-2.5 py-1.5 bg-primary-9 rounded-md text-xs font-bold text-white">
             Programme d&apos;actions
