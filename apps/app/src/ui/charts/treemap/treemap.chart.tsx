@@ -238,7 +238,10 @@ const TilesList = <TIntensity extends string, TGroupId extends string>({
   </ul>
 );
 
-const TreemapChart = <TIntensity extends string, TGroupId extends string>({
+const TreemapChart = <
+  TIntensity extends string,
+  TGroupId extends string = string
+>({
   data,
   intensityScale,
   formatValue,
