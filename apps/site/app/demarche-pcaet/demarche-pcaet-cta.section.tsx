@@ -2,7 +2,7 @@ import { BookDemoButton } from '@/site/components/buttons/book-demo.button';
 import { CreateAccountButton } from '@/site/components/buttons/create-account.button';
 import Section from '@/site/components/sections/Section';
 import Link from 'next/link';
-import { getDepotEntryUrl } from './demarche-pcaet.data';
+import { DEPOT_ENTRY_PATH } from './demarche-pcaet.data';
 
 export const DemarchePcaetCTASection = () => (
   <Section
@@ -13,7 +13,7 @@ export const DemarchePcaetCTASection = () => (
     <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 max-sm:w-full">
       <CreateAccountButton
         label="Je crée mon compte gratuitement"
-        redirectTo={getDepotEntryUrl()}
+        redirectTo={DEPOT_ENTRY_PATH}
       />
       <BookDemoButton href="https://calendly.com/territoiresentransitions/demo-pcaet-decouvrir" />
     </div>
