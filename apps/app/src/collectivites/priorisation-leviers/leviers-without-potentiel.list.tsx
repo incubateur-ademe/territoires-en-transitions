@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { LevierId } from '@tet/domain/shared';
 import { Button } from '@tet/ui';
-import { JSX, ReactNode, useId } from 'react';
+import { JSX, useId } from 'react';
 import { LevierPriorisation } from './to-leviers-priorisation';
 
 type LeviersWithoutPotentielListProps = {
@@ -9,34 +9,25 @@ type LeviersWithoutPotentielListProps = {
   onLevierSelected: (levierId: LevierId) => void;
 };
 
-const LeviersWithoutPotentielTitle = ({
-  id,
-  children,
-}: {
-  id: string;
-  children: ReactNode;
-}): JSX.Element => (
-  <h2 id={id} className="mb-0 text-base">
-    {children}
-  </h2>
-);
-
 export const LeviersWithoutPotentielList = ({
   leviers,
   onLevierSelected,
 }: LeviersWithoutPotentielListProps): JSX.Element => {
-  const headingId = useId();
+  const labelId = useId();
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-3">
-      <LeviersWithoutPotentielTitle id={headingId}>
+    <section
+      aria-labelledby={labelId}
+      className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-grey-8"
+    >
+      <span id={labelId}>
         {appLabels.leviersSansPotentiel({ count: leviers.length })}
-      </LeviersWithoutPotentielTitle>
-      <ul role="list" className="m-0 flex list-none flex-wrap gap-2 p-0">
+      </span>
+      <ul role="list" className="m-0 flex list-none flex-wrap gap-x-3 p-0">
         {leviers.map((levier) => (
           <li key={levier.levierId} className="p-0">
             <Button
               size="xs"
-              variant="outlined"
+              variant="underlined"
               onClick={() => onLevierSelected(levier.levierId)}
             >
               {levier.nom}
