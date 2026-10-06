@@ -564,10 +564,6 @@ export const demarchesLabels = {
       'du ',
       'le '
     )} adopté ou archivé`,
-  demarcheListeVideTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Aucune démarche ${type.nom}`,
-  demarcheListeVideDescription: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Commencez le dépôt réglementaire de ${type.possessif} pour suivre ses étapes dans la plateforme.`,
   demarcheListeColonneTitre: 'Titre',
   demarcheListeColonnePilotes: 'Pilotes',
   demarcheListeColonneStatut: 'Statut',

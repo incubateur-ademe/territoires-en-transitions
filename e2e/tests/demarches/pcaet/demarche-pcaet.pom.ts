@@ -1,7 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 export class DemarchePcaetPom {
-  readonly startDepotButton: Locator;
   readonly createDemarcheButton: Locator;
   readonly dateLancementInput: Locator;
   readonly createPlanButton: Locator;
@@ -17,9 +16,6 @@ export class DemarchePcaetPom {
   readonly horsPlateformeSwitch: Locator;
 
   constructor(readonly page: Page) {
-    this.startDepotButton = page.getByRole('button', {
-      name: 'Commencer un dépôt',
-    });
     this.createDemarcheButton = page.getByRole('button', {
       name: 'Commencer le dépôt',
     });
@@ -59,13 +55,9 @@ export class DemarchePcaetPom {
     await this.page.goto(`/collectivite/${collectiviteId}/demarche-pcaet`);
   }
 
-  /**
-   * La page d'entrée est la liste des démarches (pas de redirection
-   * automatique) : la création passe par son bouton « Commencer un dépôt ».
-   */
+  /** Sans démarche, la liste redirige d'elle-même vers la création. */
   async gotoCreatePage(collectiviteId: number) {
     await this.goto(collectiviteId);
-    await this.startDepotButton.click();
     await expect(this.page).toHaveURL(
       `/collectivite/${collectiviteId}/demarche-pcaet/nouveau`
     );
