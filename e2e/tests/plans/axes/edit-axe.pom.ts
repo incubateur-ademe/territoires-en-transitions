@@ -88,10 +88,9 @@ export class EditAxePom {
   async editAxeNom(ancienNom: string, nouveauNom: string) {
     const axe = this.getAxeByName(ancienNom);
 
-    // initialement le champ de saisie est désactivé
+    // initialement le champ de saisie est absent
     const titreInput = axe.locator('textarea');
-    await expect(titreInput).toBeDisabled();
-    await expect(titreInput).not.toBeFocused();
+    await expect(titreInput).toBeHidden();
 
     // entre en mode "édition"
     await this.clickOnAxeMenuItem(ancienNom, 'Modifier le titre');
@@ -109,8 +108,7 @@ export class EditAxePom {
     const axeRenamedInput = axeRenamed.locator('textarea');
     await axeRenamedInput.press('Enter');
     await expect(axeRenamed).toBeVisible();
-    await expect(axeRenamedInput).not.toBeFocused();
-    await expect(axeRenamedInput).toBeDisabled();
+    await expect(axeRenamedInput).toBeHidden();
   }
 
   /**

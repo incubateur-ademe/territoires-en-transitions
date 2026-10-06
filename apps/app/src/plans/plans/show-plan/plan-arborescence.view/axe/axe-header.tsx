@@ -20,8 +20,8 @@ export const AxeHeader = () => {
   const { axe } = providerProps;
 
   const axeFontColor = cn({
-    'text-primary-8 disabled:text-primary-10': isMainAxe,
-    'text-grey-8 disabled:text-grey-7': !isMainAxe,
+    'text-primary-8': isMainAxe,
+    'text-grey-8': !isMainAxe,
   });
 
   return (
@@ -35,51 +35,44 @@ export const AxeHeader = () => {
     >
       <div className="flex content-between group/title">
         {/** Titre + picto permettant d'ouvrir/fermer l'axe */}
-        <button
-          type="button"
-          disabled={isOpenEditTitle}
-          className="flex grow hover:!bg-transparent active:!bg-transparent"
-          onClick={(e) => {
-            // shift-click passe le titre en mode édition
-            if (e.shiftKey && !isReadOnly && !isOpenEditTitle) {
-              setIsOpenEditTitle(true);
-            }
-            // ne permet pas de refermer l'axe si le panel est ouvert
-            // ou si l'édition du titre est en cours
-            // (évite l'ouverture/fermeture involontaire de l'axe)
-            else if (!isOpenEditTitle) {
-              setIsOpen(!isOpen);
-            }
-          }}
-          onKeyDown={(e) => {
-            if (
-              e.shiftKey &&
-              e.code === 'Enter' &&
-              !isReadOnly &&
-              !isOpenEditTitle
-            ) {
-              e.preventDefault();
-              setIsOpenEditTitle(true);
-            }
-          }}
-          title={appLabels.cliquerPourOuvrirFermerLAxe}
-        >
-          {/** Picto flèche reflétant l'état d'ouverture de l'axe */}
-          <div
-            className={cn('self-center mr-2', {
-              'rotate-90': isOpen,
-            })}
-          >
-            <Icon
-              icon="arrow-right-s-line"
-              size="lg"
-              className={axeFontColor}
-            />
+        {isOpenEditTitle ? (
+          <div className="flex grow">
+            <AxeToggleIcon isOpen={isOpen} className={axeFontColor} />
+            <AxeTitleInput fontColor={axeFontColor} />
           </div>
-
-          {/** Titre */}
-          <AxeTitleInput fontColor={axeFontColor} />
-        </button>
+        ) : (
+          <button
+            type="button"
+            className="flex grow hover:!bg-transparent active:!bg-transparent"
+            onClick={(e) => {
+              // shift-click passe le titre en mode édition
+              if (e.shiftKey && !isReadOnly) {
+                setIsOpenEditTitle(true);
+              } else {
+                setIsOpen(!isOpen);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.shiftKey && e.code === 'Enter' && !isReadOnly) {
+                e.preventDefault();
+                setIsOpenEditTitle(true);
+              }
+            }}
+            title={appLabels.cliquerPourOuvrirFermerLAxe}
+          >
+            <AxeToggleIcon isOpen={isOpen} className={axeFontColor} />
+            <span
+              className={cn(
+                'grow self-center text-left text-lg font-bold leading-5',
+                isMainAxe && 'text-primary-10',
+                !isMainAxe && 'text-grey-7',
+                !axe.nom && 'italic'
+              )}
+            >
+              {axe.nom || appLabels.sansTitre}
+            </span>
+          </button>
+        )}
 
         {/** Boutons d'édition (au survol ou si la barre de titre a le focus) */}
         {!isReadOnly && (
@@ -111,3 +104,15 @@ export const AxeHeader = () => {
     </div>
   );
 };
+
+const AxeToggleIcon = ({
+  isOpen,
+  className,
+}: {
+  isOpen: boolean;
+  className: string;
+}) => (
+  <div className={cn('self-center mr-2', isOpen && 'rotate-90')}>
+    <Icon icon="arrow-right-s-line" size="lg" className={className} />
+  </div>
+);
