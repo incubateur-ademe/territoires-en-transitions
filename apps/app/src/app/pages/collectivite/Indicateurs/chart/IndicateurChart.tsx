@@ -23,7 +23,7 @@ import {
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
 import { LAYERS } from './layer-parameters';
-import { useResizeGraphOnContainerSizeUpdate } from './use-resize-graph-on-container-size-update';
+import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
