@@ -296,7 +296,7 @@ test.describe('Indicateurs liés au score (référentiel CR)', () => {
       await expect(
         pom.getSourceSelectionneeMessage(SOURCE_COLLECTIVITE, 2024)
       ).toBeVisible();
-      await expect(pom.modal).toContainText('0,4 / 1 point');
+      await expect(pom.modal).toContainText('0,42 / 1 point');
 
       await pom.closeModal();
       await expect(pom.getCarte(SOUS_MESURE)).toContainText('42');

@@ -46,7 +46,7 @@ export const SubactionIndicateurScore = ({
           </span>
         </div>
         <div className={cn('text-primary-9', { 'text-sm': size === 'sm' })}>
-          <span className="font-bold">{toLocaleFixed(pointsFait, 1)}</span>
+          <span className="font-bold">{toLocaleFixed(pointsFait, 2)}</span>
           <span>
             &nbsp;{'/'}&nbsp;
             {appLabels.scorePotentielPointCount({
