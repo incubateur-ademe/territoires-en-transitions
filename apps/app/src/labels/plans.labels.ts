@@ -107,6 +107,27 @@ export const plansLabels = {
     other: 'non attribuables',
   }),
   planSecteursBanniereTitre: 'Secteurs réglementaires des actions à vérifier',
+  planSecteursEnAttente:
+    'Secteurs en cours de récupération, revenez dans quelques minutes',
+  planSecteursVerifier: 'Vérifier',
+  planSecteursAction: plural({
+    one: 'action',
+    other: 'actions',
+  }),
+  planSecteursVerifierTitre: 'Vérifier les secteurs',
+  planSecteursGroupeARenseigner: 'À renseigner',
+  planSecteursGroupeNonAttribuables: 'Non attribuables',
+  planSecteursPosition: ({ index, total }: { index: number; total: number }) =>
+    `${index} sur ${total}`,
+  planSecteursRetourListe: 'Retour à la liste',
+  planSecteursPrecedente: 'Action précédente',
+  planSecteursSuivante: 'Action suivante',
+  planSecteursNonAttribuable: 'Non attribuable',
+  planSecteursEnregistrerEtSuivante: 'Enregistrer et passer à la suivante',
+  planSecteursEnregistrer: 'Enregistrer',
+  planSecteursVerifiee: 'Vérifiée',
+  planSecteursLectureSeule: 'Vous ne pouvez pas modifier cette action',
+  planSecteursOuvrirFiche: "Ouvrir l'action",
   ficheSecteursOrigineLabels: {
     automatique: 'Secteurs proposés automatiquement',
     manuelle: 'Secteurs choisis par la collectivité',
