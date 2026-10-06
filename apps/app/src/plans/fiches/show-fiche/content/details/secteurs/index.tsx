@@ -33,6 +33,9 @@ const SecteursItem = () => {
   const { mutate: upsertSecteurs } = useUpsertFicheSecteurs(fiche.id);
 
   const secteurs = isError ? { etat: 'en_cours_de_calcul' as const } : data;
+  if (isLoading || secteurs?.etat === 'non_renseigne') {
+    return null;
+  }
   const selectedSecteurs: SecteurReglementaire[] =
     secteurs?.etat === 'attribue' ? secteurs.secteurs : [];
 
