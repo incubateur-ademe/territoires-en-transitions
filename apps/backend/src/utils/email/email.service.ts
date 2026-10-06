@@ -82,7 +82,7 @@ export class EmailService {
         };
       }
       // info.pending: addresses that received a temporary failure
-      const isPending = info.pending.includes(email.to);
+      const isPending = info.pending?.includes(email.to) ?? false;
       const status = isPending
         ? 'pending'
         : info.rejected.includes(email.to)

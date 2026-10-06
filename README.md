@@ -141,7 +141,14 @@ cause :
 | `handlebars` | `@hey-api/openapi-ts` | épinglage exact |
 | `undici@7` | `@module-federation/dts-plugin` | épinglage exact |
 | `svgo@3` | `@svgr/plugin-svgo` | **downgrade volontaire**, voir ci-dessous |
+| `source-map-js` | `postcss` (via `next`), `sass` | tirait 1.2.1 |
+| `http-cache-semantics@4` | `cacheable-request` (via `crisp-api`) | tirait 4.2.0 |
+| `image-size@2` | divers | ciblé sur la 2 : `pptxgenjs` et `xlsx-template` restent en 1.x, dont l'API synchrone a disparu en 2 |
 | les autres | divers | correctif de sécurité disponible sans changement de majeure |
+
+`strapi/` suit les mêmes règles avec le bloc `overrides` de son `package.json`
+(npm) : `axios`, `dompurify`, `markdown-it` et `nodemailer` y sont épinglés en
+version exacte par les paquets `@strapi/*`.
 
 Règles de maintenance :
 
