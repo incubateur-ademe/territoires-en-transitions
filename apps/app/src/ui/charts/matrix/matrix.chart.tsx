@@ -1,6 +1,9 @@
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
-import type { ScatterSeriesOption } from 'echarts/charts';
+import type {
+  EffectScatterSeriesOption,
+  ScatterSeriesOption,
+} from 'echarts/charts';
 import { getInstanceByDom } from 'echarts/core';
 import {
   cn,
@@ -97,6 +100,7 @@ const QUADRANT_TITLE_CHAR_WIDTH = 8;
 const QUADRANT_TITLE_LINE_HEIGHT = 14;
 const TRANSPARENT = 'transparent';
 const DESCRIPTION_SEPARATOR = ' · ';
+const PULSE_RIPPLE = { brushType: 'stroke', scale: 2.5, period: 2 } as const;
 
 const resizeChartIn = (plot: HTMLDivElement): void => {
   const chartContainer = plot.firstElementChild;
@@ -307,6 +311,9 @@ type PointStyle = {
   borderWidth: number;
 };
 
+const toPointColor = (point: MatrixPoint): string =>
+  point.color ?? TONE_PALETTE[point.tone].strong;
+
 const toPointStyle = ({
   point,
   isSelected,
@@ -314,10 +321,39 @@ const toPointStyle = ({
   point: MatrixPoint;
   isSelected: boolean;
 }): PointStyle => ({
-  color: point.color ?? TONE_PALETTE[point.tone].strong,
+  color: toPointColor(point),
   borderColor: isSelected ? colors.grey[5] : TRANSPARENT,
   borderWidth: isSelected ? SELECTION_RING_WIDTH : 0,
 });
+
+const buildSelectedPointPulse = ({
+  points,
+  selectedPointId,
+}: {
+  points: readonly MatrixPoint[];
+  selectedPointId: string | undefined;
+}): EffectScatterSeriesOption[] => {
+  const selectedPoint = points.find((point) => point.id === selectedPointId);
+  if (selectedPoint === undefined) {
+    return [];
+  }
+  return [
+    {
+      type: 'effectScatter',
+      silent: true,
+      z: 1,
+      symbolSize: POINT_SIZE,
+      showEffectOn: 'render',
+      rippleEffect: PULSE_RIPPLE,
+      data: [
+        {
+          value: [selectedPoint.x, selectedPoint.y],
+          itemStyle: { color: toPointColor(selectedPoint) },
+        },
+      ],
+    },
+  ];
+};
 
 const buildOption = ({
   points,
@@ -356,8 +392,10 @@ const buildOption = ({
   yAxis: buildAxis({ markers: yAxis, bound: bounds.y, nameGap: 76 }),
   series: [
     {
-      type: 'scatter',
+      type: 'effectScatter',
       symbolSize: POINT_SIZE,
+      showEffectOn: 'emphasis',
+      rippleEffect: PULSE_RIPPLE,
       data: points.map((point, dataIndex) => ({
         name: point.label,
         value: [point.x, point.y],
@@ -388,6 +426,7 @@ const buildOption = ({
         ),
       },
     },
+    ...buildSelectedPointPulse({ points, selectedPointId }),
   ],
 });
 

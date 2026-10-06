@@ -7,6 +7,7 @@
 import { preset } from '@tet/ui';
 import type {
   BarSeriesOption,
+  EffectScatterSeriesOption,
   LineSeriesOption,
   PieSeriesOption,
   ScatterSeriesOption,
@@ -14,6 +15,7 @@ import type {
 } from 'echarts/charts';
 import {
   BarChart,
+  EffectScatterChart,
   LineChart,
   PieChart,
   ScatterChart,
@@ -105,6 +107,7 @@ echarts.use([
   PieChart,
   LineChart,
   ScatterChart,
+  EffectScatterChart,
   TreemapChart,
 
   LabelLayout,
@@ -127,6 +130,7 @@ export type EChartsOption = ComposeOption<
   | PieSeriesOption
   | LineSeriesOption
   | ScatterSeriesOption
+  | EffectScatterSeriesOption
   | TreemapSeriesOption
   | TitleComponentOption
   | LegendComponentOption
