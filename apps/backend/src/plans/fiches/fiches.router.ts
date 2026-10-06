@@ -11,6 +11,7 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
 import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
 import { GetFicheSecteursRouter } from './fiche-secteurs/get-fiche-secteurs.router';
+import { ListPlanFichesSecteursAVerifierRouter } from './fiche-secteurs/list-plan-fiches-secteurs-a-verifier.router';
 import { ListPlanSecteursCountsRouter } from './fiche-secteurs/list-plan-secteurs-counts.router';
 import { UpsertFicheSecteursRouter } from './fiche-secteurs/upsert-fiche-secteurs.router';
 import { ListFichesRouter } from './list-fiches/list-fiches.router';
@@ -34,7 +35,8 @@ export class FichesRouter {
     private readonly ficheActionPdfExportRouter: FicheActionPdfExportRouter,
     private readonly getFicheSecteursRouter: GetFicheSecteursRouter,
     private readonly upsertFicheSecteursRouter: UpsertFicheSecteursRouter,
-    private readonly listPlanSecteursCountsRouter: ListPlanSecteursCountsRouter
+    private readonly listPlanSecteursCountsRouter: ListPlanSecteursCountsRouter,
+    private readonly listPlanFichesSecteursAVerifierRouter: ListPlanFichesSecteursAVerifierRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -53,7 +55,8 @@ export class FichesRouter {
     this.ficheActionPdfExportRouter.router,
     this.getFicheSecteursRouter.router,
     this.upsertFicheSecteursRouter.router,
-    this.listPlanSecteursCountsRouter.router
+    this.listPlanSecteursCountsRouter.router,
+    this.listPlanFichesSecteursAVerifierRouter.router
   );
 
   createCaller = this.trpc.createCallerFactory(this.router);
