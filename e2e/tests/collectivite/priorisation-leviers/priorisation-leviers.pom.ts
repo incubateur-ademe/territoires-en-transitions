@@ -68,6 +68,16 @@ export class PriorisationLeviersPom {
     );
   }
 
+  get sousLeviersTab(): Locator {
+    return this.page.getByRole('tab', { name: 'Sous-leviers à prioriser' });
+  }
+
+  get sousLeviersCaption(): Locator {
+    return this.page.getByText(
+      /^Sous-leviers \(levier × catégorie d'action\) par potentiel/
+    );
+  }
+
   get chartDataToggle(): Locator {
     return this.page.getByText('Voir les données du graphique');
   }
