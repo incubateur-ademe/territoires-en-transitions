@@ -67,6 +67,13 @@ export class PostHogEventTracker
       return true;
     }
 
+    if (
+      featureFlagKey === 'is-fiche-secteurs-enabled' &&
+      process.env.ENV_NAME === 'staging'
+    ) {
+      return true;
+    }
+
     if (!this.posthog) {
       return false;
     }
