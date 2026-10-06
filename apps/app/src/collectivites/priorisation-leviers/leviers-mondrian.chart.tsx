@@ -3,7 +3,6 @@ import { Caption } from '@/app/ui/charts/matrix/caption';
 import { TreemapChart } from '@/app/ui/charts/treemap/treemap.chart';
 import type {
   HexColor,
-  IntensityScale,
   IntensityVariant,
   TreemapGroup,
 } from '@/app/ui/charts/treemap/treemap-group';
@@ -12,6 +11,13 @@ import { preset } from '@tet/ui';
 import { color } from 'echarts/core';
 import { sumBy } from 'es-toolkit';
 import { JSX, useCallback, useMemo } from 'react';
+import {
+  MOBILISATION_SCALE,
+  MobilisationLevel,
+  toMobilisationLabel,
+  toMobilisationLevel,
+} from './mobilisation-level';
+import { toImpactPotentielLabel } from './to-impact-potentiel-label';
 import { LevierPlace } from './to-matrix-points';
 import { LevierTile, toMondrianTiles } from './to-mondrian-tiles';
 
@@ -28,23 +34,6 @@ const NON_PERTINENT_COLOR: HexColor = colors.grey[4];
 const FULL_HUE_CIRCLE = 360;
 const LEVIER_SATURATION = 45;
 const LEVIER_LIGHTNESS = 70;
-const IMPACT_SCALE = 100;
-
-const MOBILISATION_SCALE = [
-  'none',
-  'partial',
-  'good',
-  'full',
-] as const satisfies IntensityScale<string>;
-
-type MobilisationLevel = (typeof MOBILISATION_SCALE)[number];
-
-const LABEL_BY_MOBILISATION_LEVEL: Record<MobilisationLevel, string> = {
-  none: appLabels.mobilisationNulle,
-  partial: appLabels.mobilisationFaible,
-  good: appLabels.mobilisationMoyenne,
-  full: appLabels.mobilisationForte,
-};
 
 const VARIANT_BY_MOBILISATION_LEVEL: Record<
   MobilisationLevel,
@@ -55,12 +44,6 @@ const VARIANT_BY_MOBILISATION_LEVEL: Record<
   good: 'success',
   full: 'success',
 };
-
-const toMobilisationLevel = (note: number): MobilisationLevel =>
-  MOBILISATION_SCALE.at(note) ?? 'none';
-
-const toMobilisationLabel = (level: MobilisationLevel): string =>
-  LABEL_BY_MOBILISATION_LEVEL[level];
 
 const toMobilisationVariant = (level: MobilisationLevel): IntensityVariant =>
   VARIANT_BY_MOBILISATION_LEVEL[level];
@@ -103,9 +86,7 @@ export const LeviersMondrianChart = ({
 
   const formatValue = useCallback(
     (potentielReduction: number): string =>
-      appLabels.impactPotentielDuTerritoire(
-        Math.round((potentielReduction / potentielTotal) * IMPACT_SCALE)
-      ),
+      toImpactPotentielLabel({ potentielReduction, potentielTotal }),
     [potentielTotal]
   );
 
