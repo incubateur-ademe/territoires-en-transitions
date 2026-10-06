@@ -33,6 +33,10 @@
       ],
       "default": "Le programme Territoire Engagé",
       "required": true
+    },
+    "categorie": {
+      "type": "enumeration",
+      "enum": ["Avant de déposer", "Pendant l'instruction", "Après l'adoption"]
     }
   }
 }
