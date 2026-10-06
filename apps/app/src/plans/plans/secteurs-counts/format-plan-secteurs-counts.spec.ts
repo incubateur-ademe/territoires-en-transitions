@@ -10,7 +10,7 @@ describe('formatPlanSecteursCounts', () => {
         aRenseigner: 1,
         nonAttribuables: 3,
       })
-    ).toBe('2 en cours de calcul, 1 à renseigner, 3 non attribuables');
+    ).toEqual(['2 en cours de calcul', '1 à renseigner', '3 non attribuables']);
   });
 
   it('omet les comptes nuls', () => {
@@ -21,10 +21,10 @@ describe('formatPlanSecteursCounts', () => {
         aRenseigner: 0,
         nonAttribuables: 1,
       })
-    ).toBe('1 non attribuable');
+    ).toEqual(['1 non attribuable']);
   });
 
-  it('ne renvoie rien quand les trois comptes sont nuls', () => {
+  it('renvoie une liste vide quand les trois comptes sont nuls', () => {
     expect(
       formatPlanSecteursCounts({
         planId: 1,
@@ -32,6 +32,6 @@ describe('formatPlanSecteursCounts', () => {
         aRenseigner: 0,
         nonAttribuables: 0,
       })
-    ).toBeNull();
+    ).toEqual([]);
   });
 });
