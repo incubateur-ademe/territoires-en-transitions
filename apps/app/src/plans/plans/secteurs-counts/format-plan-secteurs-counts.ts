@@ -5,8 +5,8 @@ export const formatPlanSecteursCounts = ({
   enCoursDeCalcul,
   aRenseigner,
   nonAttribuables,
-}: PlanSecteursCounts): string | null => {
-  const parts = [
+}: PlanSecteursCounts): string[] =>
+  [
     enCoursDeCalcul > 0 &&
       appLabels.planSecteursEnCoursDeCalcul({ count: enCoursDeCalcul }),
     aRenseigner > 0 &&
@@ -14,6 +14,3 @@ export const formatPlanSecteursCounts = ({
     nonAttribuables > 0 &&
       appLabels.planSecteursNonAttribuables({ count: nonAttribuables }),
   ].filter((part) => part !== false);
-
-  return parts.length > 0 ? parts.join(', ') : null;
-};

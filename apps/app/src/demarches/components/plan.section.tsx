@@ -183,7 +183,13 @@ const ProgrammeActionsPlanRow = ({
           className="px-4 py-3 text-sm text-grey-7"
           data-test="demarches.plan.secteurs-counts"
         >
-          {secteursCounts && formatPlanSecteursCounts(secteursCounts)}
+          {secteursCounts && (
+            <div className="flex flex-col gap-1">
+              {formatPlanSecteursCounts(secteursCounts).map((count) => (
+                <span key={count}>{count}</span>
+              ))}
+            </div>
+          )}
         </td>
       )}
       <td className="px-4 py-3">
@@ -449,7 +455,7 @@ const ListEligiblePlansTable = ({
                 {isSecteursColumnVisible && (
                   <TableHeaderCell
                     title={appLabels.demarcheProgrammeColonneSecteurs}
-                    className="w-56"
+                    className="w-56 whitespace-nowrap"
                   />
                 )}
                 <TableHeaderCell className="w-48" />
