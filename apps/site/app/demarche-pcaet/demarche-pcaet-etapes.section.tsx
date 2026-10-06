@@ -214,20 +214,18 @@ const DesktopEtapes = ({
             <p className="mb-0 leading-relaxed text-primary-10">
               {etape.detail}
             </p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-bold text-primary-10">
-                Ce que vous faites :
-              </span>
-              <Actions etape={etape} className="text-[15px]" />
-            </div>
             <div className="flex flex-col gap-2">
               <span className="text-sm font-bold text-primary-10">
                 Qui intervient :
               </span>
               <Stakeholders etape={etape} />
             </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-bold text-primary-10">
+              Ce que vous faites :
+            </span>
+            <Actions etape={etape} className="text-[15px]" />
           </div>
         </div>
       </div>
@@ -292,8 +290,8 @@ const MobileEtapes = ({ etapes }: { etapes: DepotEtape[] }) => {
                   <p className="mb-0 text-sm leading-relaxed text-primary-10">
                     {etape.detail}
                   </p>
-                  <Actions etape={etape} className="text-[13px]" />
                   <Stakeholders etape={etape} />
+                  <Actions etape={etape} className="text-[13px]" />
                 </div>
               )}
             </div>
@@ -328,8 +326,8 @@ export const DemarchePcaetEtapesSection = ({
         <div className="flex flex-col items-center gap-3 text-center">
           <h2 className="mb-0 text-center">Les étapes de votre dépôt</h2>
           <p className="mb-0 text-primary-10 lg:text-[17px]">
-            Vous retrouverez ces {etapes.length} étapes dans le panneau «
-            Avancement » de votre espace.
+            Vous retrouverez ces {etapes.length} étapes dans la barre latérale
+            de votre espace.
           </p>
           {/* Toujours rendu (invisible hors pause) pour ne pas décaler la
               frise quand il apparaît. */}
