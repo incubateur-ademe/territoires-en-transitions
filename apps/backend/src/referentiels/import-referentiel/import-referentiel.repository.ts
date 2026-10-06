@@ -19,8 +19,6 @@ import {
   ActionRelationCreate,
   ReferentielDefinition,
   ReferentielId,
-  ReferentielIdEnum,
-  ReferentielLabelEnum,
   ReferentielTag,
 } from '@tet/domain/referentiels';
 import { eq, ilike, like } from 'drizzle-orm';
@@ -33,7 +31,7 @@ import {
 } from '../models/action-definition.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { referentielTagTable } from '../models/referentiel-tag.table';
-import { ImportActionDefinitionCoremeasureType } from './import-action-definition.dto';
+import { BUILTIN_REFERENTIEL_TAGS } from './builtin-referentiel-tags.constants';
 
 export type SaveReferentielInput = {
   referentielId: ReferentielId;
@@ -42,6 +40,8 @@ export type SaveReferentielInput = {
   actionDefinitions: ActionDefinitionCreate[];
   actionOrigines: ActionOrigine[];
   actionOrigineTextes: ActionOrigineTexte[];
+  /** Tags listés dans l'onglet `Tags` du spreadsheet */
+  referentielTags: ReferentielTag[];
   actionTags: ActionDefinitionTag[];
   personnalisationRegles: PersonnalisationRegleCreate[];
   questionActionRelations: ActionQuestion[];
@@ -67,6 +67,7 @@ export class ImportReferentielRepository {
       actionDefinitions,
       actionOrigines,
       actionOrigineTextes,
+      referentielTags,
       actionTags,
       personnalisationRegles,
       questionActionRelations,
@@ -124,6 +125,19 @@ export class ImportReferentielRepository {
 
       if (actionOrigineTextes.length) {
         await tx.insert(actionOrigineTexteTable).values(actionOrigineTextes);
+      }
+
+      if (referentielTags.length) {
+        await tx
+          .insert(referentielTagTable)
+          .values(referentielTags)
+          .onConflictDoUpdate({
+            target: [referentielTagTable.ref],
+            set: buildConflictUpdateColumns(referentielTagTable, [
+              'nom',
+              'type',
+            ]),
+          });
       }
 
       // Delete & recreate tags
@@ -209,37 +223,9 @@ export class ImportReferentielRepository {
   }
 
   async createReferentielTagsIfNeeded(): Promise<void> {
-    const referentielTags: ReferentielTag[] = [
-      {
-        ref: ReferentielIdEnum.CAE,
-        nom: 'CAE',
-        type: 'Catalogue',
-      },
-      {
-        ref: ReferentielIdEnum.ECI,
-        nom: 'ECI',
-        type: 'Catalogue',
-      },
-      {
-        ref: ImportActionDefinitionCoremeasureType.COREMEASURE,
-        nom: 'EEA Coremeasure',
-        type: 'EEA',
-      },
-      {
-        ref: ReferentielLabelEnum.TE_ECI,
-        nom: 'Label TE ECI',
-        type: 'Label',
-      },
-      {
-        ref: ReferentielLabelEnum.TE_CAE,
-        nom: 'Label TE CAE',
-        type: 'Label',
-      },
-    ];
-
     await this.database.db
       .insert(referentielTagTable)
-      .values(referentielTags)
+      .values(BUILTIN_REFERENTIEL_TAGS)
       .onConflictDoNothing();
   }
 }

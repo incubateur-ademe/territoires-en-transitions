@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { ImportActionDefinitionCoremeasureType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import {
-  ActionCategorieEnum,
   ReferentielIdEnum,
   ReferentielLabelEnum,
   ScoresPayload,
@@ -86,13 +85,12 @@ describe('Referentiels scoring routes', () => {
       ).toBeLessThan(firstCollectiviteScore.scores.score.pointReferentiel);
     });
 
-    // Les catégories, ajoutées aux tags au chargement du référentiel, ne
-    // donnent pas lieu à un calcul de score
-    Object.values(ActionCategorieEnum).forEach((categorie) => {
-      expect(
-        firstCollectiviteScore.scores.scoresTag[categorie]
-      ).toBeUndefined();
-    });
+    // Seuls ces tags donnent lieu à un calcul de score : ni les catégories,
+    // ajoutées aux tags au chargement du référentiel, ni les autres tags
+    // (thématiques, etc.) ne sont donc concernés
+    expect(Object.keys(firstCollectiviteScore.scores.scoresTag).sort()).toEqual(
+      [...expectedTags].sort()
+    );
   });
 
   afterAll(async () => {

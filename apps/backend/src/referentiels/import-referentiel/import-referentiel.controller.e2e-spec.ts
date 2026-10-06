@@ -1,7 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
-import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
+import { actionDefinitionTagTable } from '@tet/backend/referentiels/models/action-definition-tag.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
+import { referentielTagTable } from '@tet/backend/referentiels/models/referentiel-tag.table';
 import {
   getDisposableTestApp,
   getTestDatabase,
@@ -15,6 +17,7 @@ import {
   findActionById,
   flatMapActionsEnfants,
   ReferentielIdEnum,
+  ReferentielLabelEnum,
 } from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
 import * as path from 'path';
@@ -136,6 +139,15 @@ function createLocalSheetServiceMock(): Partial<SheetService> {
             return preuvesResult;
           }
 
+          // Tags sheet
+          if (range?.startsWith('Tags')) {
+            return parseCsvWithSchema<T>(
+              path.join(SAMPLES_DIR, `referentiel-${referentiel}-tags.csv`),
+              schema,
+              templateData
+            );
+          }
+
           // Default: Structure référentiel sheet
           const csvPath = path.join(
             SAMPLES_DIR,
@@ -176,7 +188,6 @@ describe('import-referentiel.controller.e2e-spec', () => {
       },
     });
     databaseService = await getTestDatabase(app);
-
   }, 30_000);
 
   afterAll(async () => {
@@ -324,6 +335,52 @@ describe('import-referentiel.controller.e2e-spec', () => {
       .from(actionDefinitionTable)
       .where(eq(actionDefinitionTable.actionId, 'te_1.1.1'));
     expect(action111?.thematiqueSgpe).toBe(ActionThematiqueSgpeEnum.PLANIFIER);
+
+    // Les tags listés dans l'onglet `Tags` sont enregistrés
+    const thematiqueTags = await databaseService.db
+      .select()
+      .from(referentielTagTable)
+      .where(eq(referentielTagTable.type, 'thematique'));
+    expect(thematiqueTags).toEqual(
+      expect.arrayContaining([
+        { ref: 'eau', nom: 'Eau', type: 'thematique' },
+        {
+          ref: 'qualite_air',
+          nom: "Qualité de l'air",
+          type: 'thematique',
+        },
+        {
+          ref: 'biodiversite',
+          nom: 'Biodiversité',
+          type: 'thematique',
+        },
+        {
+          ref: 'dechets',
+          nom: 'Déchets',
+          type: 'thematique',
+        },
+      ])
+    );
+
+    // et les ids de la colonne `tags` y sont rattachés
+    const action111Tags = await databaseService.db
+      .select({ tagRef: actionDefinitionTagTable.tagRef })
+      .from(actionDefinitionTagTable)
+      .where(eq(actionDefinitionTagTable.actionId, 'te_1.1.1'));
+    const action111TagRefs = action111Tags.map(({ tagRef }) => tagRef);
+    const action111Thematiques = ['dechets', 'qualite_air', 'biodiversite'];
+    expect(action111TagRefs).toEqual(
+      expect.arrayContaining([
+        ...action111Thematiques,
+        ReferentielLabelEnum.TE_CAE,
+      ])
+    );
+    expect(action111TagRefs).not.toContain('eau');
+
+    // et sont présentes dans l'arbre du référentiel
+    expect(
+      findActionById(getReferentielResponse.itemsTree, 'te_1.1.1').tags
+    ).toEqual(expect.arrayContaining(action111Thematiques));
 
     // Lock it
     await databaseService.db
