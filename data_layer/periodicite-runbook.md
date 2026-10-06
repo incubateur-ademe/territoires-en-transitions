@@ -108,8 +108,9 @@ les vérifications des migrations ni les tests applicatifs.
    commentaires), modification par identifiant, imports, calculs, PCAET, score indicatif,
    graphiques et exports existants. Une date historique annuelle est rattachée au
    1er janvier de son année, même si le client transmet `periodicite: annuelle`.
-   Vérifier que les créations/imports non annuels et la configuration d’agrégation
-   sont refusés par l’API et que les écritures SQL privilégiées restent limitées à l’annuel.
+   Vérifier que les créations/imports non annuels sont refusés par l’API et que les
+   écritures SQL privilégiées restent limitées à l’annuel. L’API n’expose aucun réglage
+   d’agrégation.
    Vérifier le refus des mutations directes `anon`/`authenticated` sur
    `indicateur_valeur`, tout en conservant lecture, imports et parcours PCAET.
 5. Si les vérifications passent, rouvrir les accès et reprendre les imports et tâches compatibles. Dans `tools`, vérifier que

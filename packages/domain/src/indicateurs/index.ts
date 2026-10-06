@@ -21,6 +21,9 @@ export * from './trajectoires/trajectoires-carbon-sequestration-properties';
 export * from './trajectoires/types';
 export * from './trajectoires/verification-trajectoire.rules';
 export * from './valeurs/indicateur-valeur-type.enum';
+export * from './valeurs/indicateur-period.errors';
+export * from './valeurs/annual-indicateur-period.adapter';
+export * from './valeurs/indicateur-period';
 export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/iso-date.utils';
 export * from './valeurs/values.constants';
@@ -28,3 +31,5 @@ export * from './verification-trajectoire-status';
 export * from './vues/indicateur-vue-filters.rules';
 export * from './vues/indicateur-vue-filters.schema';
 export * from './vues/indicateur-vue-nom.schema';
+
+export * from './valeurs/indicateur-period-presentation';

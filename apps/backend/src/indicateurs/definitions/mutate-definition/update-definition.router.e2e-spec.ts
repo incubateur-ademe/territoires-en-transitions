@@ -587,6 +587,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
           groupementId: groupement.id,
           titre: 'Indicateur partagé historique',
           unite: 't',
+          periodicite: 'annuelle',
         })
         .returning();
       const caller = router.createCaller({ user: authenticatedUser });
@@ -782,6 +783,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
           collectiviteId: h.owner.collectivite.id,
           titre: 'Titre du propriétaire',
           unite: 'kg',
+          periodicite: 'annuelle',
         }),
       ]);
     });

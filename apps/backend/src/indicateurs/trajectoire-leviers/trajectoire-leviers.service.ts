@@ -299,25 +299,27 @@ export class TrajectoireLeviersService {
     const indicateurValeursObjectifs2030 =
       await this.indicateursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
           sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
           dateDebut: `${this.TARGET_YEAR}-01-01`,
           dateFin: `${this.TARGET_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     const indicateurValeursObjectifs2019 =
       await this.indicateursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
           sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     // On peut extraire la source de données utilisée pour calculer la trajectoire
@@ -336,13 +338,14 @@ export class TrajectoireLeviersService {
     const indicateurValeursResultats2019 =
       await this.indicateursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
           sources: getTrajectoireLeviersDataResponse.sourcesResultats,
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     // On affecte les données aux secteurs à partir de la configuration

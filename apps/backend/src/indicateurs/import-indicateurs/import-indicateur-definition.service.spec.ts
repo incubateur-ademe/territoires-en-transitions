@@ -1,28 +1,113 @@
 import { UnprocessableEntityException } from '@nestjs/common';
+import { ImportIndicateurRelationsService } from './import-indicateur-relations.service';
+import { UpsertIndicateurDefinitionsService } from './upsert-indicateur-definitions.service';
 import { Test } from '@nestjs/testing';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
+import { IndicateurFormulaReconciliationRepository } from '@tet/backend/indicateurs/definitions/indicateur-formula-reconciliation.repository';
+import { IndicateurFormulaReconciliationService } from '@tet/backend/indicateurs/definitions/indicateur-formula-reconciliation.service';
 import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
+import { getServiceRoleUser } from '@tet/backend/test';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import { failure, success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
-import { DatabaseService } from '../../utils/database/database.service';
+import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,
 } from './samples/import-indicateur-definition.sample';
+import { ImportIndicateurDefinitionRepository } from './import-indicateur-definition.repository';
+import { importObjectifSchema } from './import-indicateur-objectif.dto';
+
+describe('importObjectifSchema', () => {
+  test("accepte une date ISO ordinaire pour l'année-horizon", () => {
+    expect(
+      importObjectifSchema.parse({
+        identifiantReferentiel: 'cae_1.a',
+        dateValeur: '2030-12-31',
+        formule: '42',
+      })
+    ).toEqual({
+      identifiantReferentiel: 'cae_1.a',
+      dateValeur: '2030-12-31',
+      formule: '42',
+    });
+  });
+
+  test('refuse une date invalide', () => {
+    expect(
+      importObjectifSchema.safeParse({
+        identifiantReferentiel: 'cae_1.a',
+        dateValeur: '2030-02-30',
+        formule: '42',
+      }).success
+    ).toBe(false);
+  });
+});
 
 describe('Indicateurs → import-indicateur-definition.service', () => {
   let importIndicateurDefinitionService: ImportIndicateurDefinitionService;
+  let versionService: VersionService;
+  const configurationService = { get: vi.fn(() => 'spreadsheet-id') };
+  const sheetService = {
+    getDefaultRangeFromHeader: vi.fn(() => 'Objectifs!A:C'),
+    getDataFromSheet: vi.fn(),
+  };
+  const listPlatformDefinitionsRepository = {
+    listPlatformDefinitions: vi.fn(),
+  };
+  const transaction = {} as Transaction;
+  const transactionManager = {
+    executeSingle: vi.fn(
+      async (operation: (tx: Transaction) => Promise<unknown>) => {
+        try {
+          return await operation(transaction);
+        } catch (error) {
+          return failure(error);
+        }
+      }
+    ),
+  };
+  const importRepository = {
+    listThematiques: vi.fn().mockResolvedValue([]),
+    listCategories: vi.fn().mockResolvedValue([]),
+    listDefinitionSnapshots: vi.fn().mockResolvedValue([]),
+    deleteGroupRelationsByChildIds: vi.fn().mockResolvedValue(undefined),
+    upsertDefinitions: vi.fn().mockResolvedValue([]),
+    createCategories: vi.fn().mockResolvedValue([]),
+    createThematiques: vi.fn().mockResolvedValue([]),
+    replaceCategorieRelations: vi.fn().mockResolvedValue(undefined),
+    replaceThematiqueRelations: vi.fn().mockResolvedValue(undefined),
+    replaceGroupRelations: vi.fn().mockResolvedValue(undefined),
+    upsertObjectifs: vi.fn().mockResolvedValue(undefined),
+  };
+  const definitionLockRepository = {
+    lockForDefinitionMutation: vi.fn(),
+  };
+  const formulaReconciliationRepository = {
+    enqueueForDefinition: vi.fn(),
+  };
+  const formulaReconciliationService = {
+    drain: vi.fn(),
+  };
+  const permissionService = {
+    hasServiceRole: vi.fn(),
+  };
+  const serviceRoleUser = getServiceRoleUser();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ImportIndicateurDefinitionService,
+        ImportIndicateurRelationsService,
+        UpsertIndicateurDefinitionsService,
         IndicateurExpressionService,
         PersonnalisationsExpressionService,
         VersionService,
@@ -36,14 +121,32 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
             ],
           };
         }
-        if (
-          token === DatabaseService ||
-          token === ConfigurationService ||
-          token === ListPlatformDefinitionsRepository ||
-          token === SheetService ||
-          token === CrudValeursService
-        ) {
-          return {};
+        if (token === ConfigurationService) {
+          return configurationService;
+        }
+        if (token === SheetService) {
+          return sheetService;
+        }
+        if (token === ListPlatformDefinitionsRepository) {
+          return listPlatformDefinitionsRepository;
+        }
+        if (token === ImportIndicateurDefinitionRepository) {
+          return importRepository;
+        }
+        if (token === TransactionManager) {
+          return transactionManager;
+        }
+        if (token === IndicateurDefinitionLockRepository) {
+          return definitionLockRepository;
+        }
+        if (token === IndicateurFormulaReconciliationRepository) {
+          return formulaReconciliationRepository;
+        }
+        if (token === IndicateurFormulaReconciliationService) {
+          return formulaReconciliationService;
+        }
+        if (token === PermissionService) {
+          return permissionService;
         }
       })
       .compile();
@@ -51,6 +154,449 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     importIndicateurDefinitionService = moduleRef.get(
       ImportIndicateurDefinitionService
     );
+    versionService = moduleRef.get(VersionService);
+    vi.clearAllMocks();
+    transactionManager.executeSingle.mockImplementation(
+      async (operation: (tx: Transaction) => Promise<unknown>) => {
+        try {
+          return await operation(transaction);
+        } catch (error) {
+          return failure(error);
+        }
+      }
+    );
+    importRepository.listThematiques.mockResolvedValue([]);
+    importRepository.listCategories.mockResolvedValue([]);
+    importRepository.listDefinitionSnapshots.mockResolvedValue([]);
+    importRepository.deleteGroupRelationsByChildIds.mockResolvedValue(
+      undefined
+    );
+    importRepository.upsertDefinitions.mockResolvedValue([]);
+    importRepository.createCategories.mockResolvedValue([]);
+    importRepository.createThematiques.mockResolvedValue([]);
+    importRepository.replaceCategorieRelations.mockResolvedValue(undefined);
+    importRepository.replaceThematiqueRelations.mockResolvedValue(undefined);
+    importRepository.replaceGroupRelations.mockResolvedValue(undefined);
+    importRepository.upsertObjectifs.mockResolvedValue(undefined);
+    formulaReconciliationRepository.enqueueForDefinition.mockResolvedValue({
+      generation: '00000000-0000-4000-8000-000000000001',
+      workItemsCount: 0,
+    });
+    formulaReconciliationService.drain.mockResolvedValue(
+      success({
+        processedCount: 0,
+        obsoleteCount: 0,
+        failedCount: 0,
+        remainingCount: 0,
+        complete: true,
+        identifiants: [],
+      })
+    );
+    permissionService.hasServiceRole.mockReturnValue(true);
+  });
+
+  test("importe un objectif annuel indépendamment de la périodicité d'observation", async () => {
+    sheetService.getDataFromSheet.mockResolvedValueOnce({
+      data: [
+        {
+          identifiantReferentiel: 'cae_1.a',
+          dateValeur: '2030-12-31',
+          formule: '42',
+        },
+      ],
+    });
+    const definitions = [
+      {
+        id: 12,
+        identifiantReferentiel: 'cae_1.a',
+        periodicite: 'mensuelle',
+      },
+    ] as unknown as Parameters<
+      ImportIndicateurDefinitionService['importObjectifs']
+    >[0];
+
+    await expect(
+      importIndicateurDefinitionService.importObjectifs(definitions)
+    ).resolves.toEqual([
+      {
+        indicateurId: 12,
+        dateValeur: '2030-12-31',
+        formule: '42',
+      },
+    ]);
+  });
+
+  test('préserve une erreur de commit renvoyée par le gestionnaire de transaction', async () => {
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      []
+    );
+    transactionManager.executeSingle.mockResolvedValueOnce(
+      failure(new Error('commit failed'))
+    );
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        sampleImportIndicateurDefinition,
+      ])
+    ).rejects.toThrow('commit failed');
+  });
+
+  test('accepte une nouvelle cadence mensuelle sans activation préalable', async () => {
+    const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    monthlyDefinition.periodicite = 'mensuelle';
+    monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      []
+    );
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        monthlyDefinition,
+      ])
+    ).resolves.toBeDefined();
+    expect(importRepository.upsertDefinitions).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ periodicite: 'mensuelle' }),
+      ]),
+      transaction
+    );
+  });
+
+  test("refuse un import dont l'instantané de périodicité a changé avant le verrou exclusif", async () => {
+    const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    monthlyDefinition.periodicite = 'mensuelle';
+    monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      [{ ...monthlyDefinition, id: 42 }]
+    );
+
+    importRepository.listDefinitionSnapshots.mockResolvedValue([
+      {
+        identifiantReferentiel: monthlyDefinition.identifiantReferentiel,
+        periodicite: 'annuelle',
+        valeurCalcule: monthlyDefinition.valeurCalcule,
+      },
+    ]);
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        monthlyDefinition,
+      ])
+    ).rejects.toThrow(/a changé pendant l'import/i);
+    expect(
+      definitionLockRepository.lockForDefinitionMutation
+    ).toHaveBeenCalledWith(transaction);
+    expect(
+      importRepository.deleteGroupRelationsByChildIds
+    ).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
+  test('refuse de changer la périodicité même sans valeur enregistrée', async () => {
+    const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    monthlyDefinition.periodicite = 'mensuelle';
+    monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+    const existingDefinition = {
+      ...monthlyDefinition,
+      id: 42,
+      periodicite: 'annuelle' as const,
+    };
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      [existingDefinition]
+    );
+    importRepository.listDefinitionSnapshots.mockResolvedValue([
+      {
+        identifiantReferentiel: existingDefinition.identifiantReferentiel,
+        periodicite: existingDefinition.periodicite,
+
+        valeurCalcule: existingDefinition.valeurCalcule,
+      },
+    ]);
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        monthlyDefinition,
+      ])
+    ).rejects.toThrow(/fixée à sa création/i);
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+    expect(
+      importRepository.deleteGroupRelationsByChildIds
+    ).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
+  test('refuse un import dont la formule a changé avant le verrou exclusif', async () => {
+    const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    importedDefinition.valeurCalcule = '1';
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      [{ ...importedDefinition, id: 42, valeurCalcule: null }]
+    );
+
+    importRepository.listDefinitionSnapshots.mockResolvedValue([
+      {
+        identifiantReferentiel: importedDefinition.identifiantReferentiel,
+        periodicite: importedDefinition.periodicite,
+        valeurCalcule: '2',
+      },
+    ]);
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        importedDefinition,
+      ])
+    ).rejects.toThrow(/définition.*a changé pendant l'import/i);
+    expect(
+      importRepository.deleteGroupRelationsByChildIds
+    ).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
+  test("refuse les objectifs associés à un identifiant inconnu avant d'ouvrir la transaction", async () => {
+    const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions(
+        [importedDefinition],
+        [
+          {
+            identifiantReferentiel: 'indicateur.inconnu',
+            dateValeur: '2030-12-31',
+            formule: '42',
+          },
+        ]
+      )
+    ).rejects.toThrow(/indicateurs inconnus.*indicateur\.inconnu/i);
+
+    expect(transactionManager.executeSingle).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
+  test('retourne un catalogue commité quand le drain échoue après la transaction', async () => {
+    const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    const committedDefinition = {
+      ...importedDefinition,
+      id: 42,
+      version: '2.0.0',
+    };
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
+      [committedDefinition]
+    );
+    const checkLastVersion = vi
+      .spyOn(importIndicateurDefinitionService, 'checkLastVersion')
+      .mockResolvedValueOnce('2.0.0');
+    sheetService.getDataFromSheet
+      .mockResolvedValueOnce({ data: [importedDefinition] })
+      .mockResolvedValueOnce({ data: [] });
+    const upsertDefinitions = vi
+      .spyOn(importIndicateurDefinitionService, 'upsertIndicateurDefinitions')
+      .mockResolvedValueOnce({
+        definitions: [committedDefinition] as never,
+        updatedFormulaDefinitions: [committedDefinition] as never,
+        importedIndicateurIds: [committedDefinition.id],
+        reconciliationWorkItemsCount: 3,
+      });
+    formulaReconciliationService.drain.mockResolvedValueOnce(
+      failure('DATABASE_ERROR', new Error('worker unavailable'))
+    );
+
+    await expect(
+      importIndicateurDefinitionService.importIndicateurDefinitions(
+        serviceRoleUser
+      )
+    ).resolves.toEqual({
+      status: 'committed',
+      definitions: [committedDefinition],
+      reconciliation: {
+        status: 'failed',
+        identifiantsRecalcules: [],
+        reconciliationsMisesEnFile: 3,
+        reconciliationsRestantes: null,
+        reconciliationsEchouees: null,
+        message:
+          'Le catalogue est importé, mais la réconciliation des formules reste à reprendre.',
+      },
+    });
+    expect(permissionService.hasServiceRole).toHaveBeenCalledWith(
+      serviceRoleUser
+    );
+    expect(formulaReconciliationService.drain).toHaveBeenCalledWith({
+      indicateurIds: [committedDefinition.id],
+      includeDeferred: true,
+    });
+
+    checkLastVersion.mockRestore();
+    upsertDefinitions.mockRestore();
+  });
+
+  test.each([
+    { status: 'complete', failedCount: 0, remainingCount: 0, complete: true },
+    { status: 'pending', failedCount: 0, remainingCount: 2, complete: false },
+    { status: 'failed', failedCount: 2, remainingCount: 2, complete: false },
+  ])(
+    'explicite le statut $status des réconciliations sans annuler le catalogue',
+    async ({ status, failedCount, remainingCount, complete }) => {
+      const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      const committedDefinition = {
+        ...importedDefinition,
+        id: 42,
+        version: '2.0.0',
+      };
+      listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
+        [committedDefinition]
+      );
+      const checkLastVersion = vi
+        .spyOn(importIndicateurDefinitionService, 'checkLastVersion')
+        .mockResolvedValueOnce('2.0.0');
+      sheetService.getDataFromSheet
+        .mockResolvedValueOnce({ data: [importedDefinition] })
+        .mockResolvedValueOnce({ data: [] });
+      const upsertDefinitions = vi
+        .spyOn(importIndicateurDefinitionService, 'upsertIndicateurDefinitions')
+        .mockResolvedValueOnce({
+          definitions: [committedDefinition] as never,
+          updatedFormulaDefinitions: [committedDefinition] as never,
+          importedIndicateurIds: [committedDefinition.id],
+          reconciliationWorkItemsCount: 3,
+        });
+      formulaReconciliationService.drain.mockResolvedValueOnce(
+        success({
+          processedCount: 1,
+          obsoleteCount: 0,
+          failedCount,
+          remainingCount,
+          complete,
+          identifiants: ['cae_1.a'],
+        })
+      );
+
+      await expect(
+        importIndicateurDefinitionService.importIndicateurDefinitions(
+          serviceRoleUser
+        )
+      ).resolves.toMatchObject({
+        status: 'committed',
+        reconciliation: {
+          status,
+          identifiantsRecalcules: ['cae_1.a'],
+          reconciliationsMisesEnFile: 3,
+          reconciliationsRestantes: remainingCount,
+          reconciliationsEchouees: failedCount,
+        },
+      });
+
+      checkLastVersion.mockRestore();
+      upsertDefinitions.mockRestore();
+    }
+  );
+
+  test('refuse un import de production à version identique sans le confondre avec un drain', async () => {
+    const definition = {
+      ...cloneDeep(sampleImportIndicateurDefinition),
+      id: 42,
+      version: '2.0.0',
+      valeurCalcule: 'val(cae_1.b)',
+    };
+    vi.spyOn(versionService, 'getVersion').mockReturnValue({
+      environment: 'prod',
+    } as never);
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
+      [definition]
+    );
+    sheetService.getDataFromSheet.mockResolvedValueOnce({
+      data: [{ version: '2.0.0' }],
+    });
+    const upsertDefinitions = vi.spyOn(
+      importIndicateurDefinitionService,
+      'upsertIndicateurDefinitions'
+    );
+    await expect(
+      importIndicateurDefinitionService.importIndicateurDefinitions(
+        serviceRoleUser
+      )
+    ).rejects.toThrow(/is not greater than current version/i);
+    expect(upsertDefinitions).not.toHaveBeenCalled();
+    expect(formulaReconciliationService.drain).not.toHaveBeenCalled();
+    expect(sheetService.getDataFromSheet).toHaveBeenCalledOnce();
+  });
+
+  test("annule le changement de formule si l'intention durable ne peut pas être créée", async () => {
+    const importedDefinition = {
+      ...cloneDeep(sampleImportIndicateurDefinition),
+      categories: [],
+      thematiques: [],
+      parents: null,
+      valeurCalcule: '1',
+    };
+    const previousDefinition = {
+      ...importedDefinition,
+      id: 42,
+      valeurCalcule: null,
+    };
+    const updatedDefinition = {
+      ...importedDefinition,
+      id: 42,
+    };
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockImplementation(
+      (_input, currentTransaction) =>
+        Promise.resolve(
+          currentTransaction ? [updatedDefinition] : [previousDefinition]
+        )
+    );
+    importRepository.listDefinitionSnapshots.mockResolvedValue([
+      previousDefinition,
+    ]);
+    importRepository.upsertDefinitions.mockResolvedValue([updatedDefinition]);
+    formulaReconciliationRepository.enqueueForDefinition
+      .mockRejectedValueOnce(new Error('enqueue failed'))
+      .mockResolvedValueOnce({
+        generation: '00000000-0000-4000-8000-000000000002',
+        workItemsCount: 3,
+      });
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        importedDefinition,
+      ])
+    ).rejects.toThrow('enqueue failed');
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        importedDefinition,
+      ])
+    ).resolves.toMatchObject({
+      updatedFormulaDefinitions: [updatedDefinition],
+      importedIndicateurIds: [updatedDefinition.id],
+      reconciliationWorkItemsCount: 3,
+    });
+    expect(transactionManager.executeSingle).toHaveBeenCalledTimes(2);
+    expect(
+      formulaReconciliationRepository.enqueueForDefinition
+    ).toHaveBeenCalledTimes(2);
+    expect(
+      formulaReconciliationRepository.enqueueForDefinition
+    ).toHaveBeenNthCalledWith(
+      1,
+      {
+        indicateurId: updatedDefinition.id,
+        expectedFormula: '1',
+        sourceIdentifiants: [],
+      },
+      transaction
+    );
+  });
+
+  test('refuse une référence de personnalisation inconnue avant toute écriture', async () => {
+    const definition = cloneDeep(sampleImportIndicateurDefinition);
+    definition.exprSeuil =
+      'si reponse(question_inexistante, oui) alors 20 sinon 10';
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        definition,
+      ])
+    ).rejects.toThrow(/question "question_inexistante"/i);
+    expect(transactionManager.executeSingle).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
   });
 
   describe('checkIndicateurDefinitions', () => {
@@ -105,6 +651,35 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           indicateurDefinition2,
         ])
       ).resolves.toBeUndefined();
+    });
+
+    test('Rejects a formula mixing annual and monthly definitions', async () => {
+      const annualDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition2);
+      monthlyDefinition.periodicite = 'mensuelle';
+      monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+      annualDefinition.valeurCalcule = `val(${monthlyDefinition.identifiantReferentiel}) / 10`;
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          annualDefinition,
+          monthlyDefinition,
+        ])
+      ).rejects.toThrow(/different periodicite/i);
+    });
+
+    test('Rejects a group mixing annual and monthly definitions', async () => {
+      const annualParent = cloneDeep(sampleImportIndicateurDefinition);
+      const monthlyChild = cloneDeep(sampleImportIndicateurDefinition2);
+      monthlyChild.periodicite = 'mensuelle';
+      monthlyChild.parents = [annualParent.identifiantReferentiel];
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          annualParent,
+          monthlyChild,
+        ])
+      ).rejects.toThrow(/parent.*different periodicite/i);
     });
 
     test('Expression cible avec referentiel(te) valide', async () => {
@@ -237,23 +812,39 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       ).resolves.toBeUndefined();
     });
 
-    test('Les erreurs de plusieurs indicateurs sont réunies dans un seul message', async () => {
-      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
-      const indicateurDefinition2 = cloneDeep(
-        sampleImportIndicateurDefinition2
-      );
-      indicateurDefinition.exprCible = 'si identite(typ, commune) alors 1';
-      indicateurDefinition2.exprSeuil = 'si demarche(inconnu) alors 1';
+    test.each([
+      {
+        type: 'références',
+        exprCible: 'si identite(typ, commune) alors 1',
+        exprSeuil: 'si demarche(inconnu) alors 1',
+      },
+      {
+        type: 'syntaxe et référentiel',
+        exprCible: 'si dentite(sinoe, dense) alors 280 sinon 380',
+        exprSeuil: 'si referentiel(xx) alors 20 sinon 10',
+      },
+    ])(
+      'Les erreurs de plusieurs indicateurs sont réunies dans un seul message ($type)',
+      async ({ exprCible, exprSeuil }) => {
+        const indicateurDefinition = cloneDeep(
+          sampleImportIndicateurDefinition
+        );
+        const indicateurDefinition2 = cloneDeep(
+          sampleImportIndicateurDefinition2
+        );
+        indicateurDefinition.exprCible = exprCible;
+        indicateurDefinition2.exprSeuil = exprSeuil;
 
-      const promise =
-        importIndicateurDefinitionService.checkIndicateurDefinitions([
-          indicateurDefinition,
-          indicateurDefinition2,
-        ]);
-      await expect(promise).rejects.toThrow(
-        /indicateur cae_1\.a[\s\S]*\n[\s\S]*indicateur cae_1\.b/
-      );
-    });
+        const promise =
+          importIndicateurDefinitionService.checkIndicateurDefinitions([
+            indicateurDefinition,
+            indicateurDefinition2,
+          ]);
+        await expect(promise).rejects.toThrow(
+          /indicateur cae_1\.a[\s\S]*\n[\s\S]*indicateur cae_1\.b/
+        );
+      }
+    );
 
     test('Formule de calcul avec une valeur de population inconnue', async () => {
       const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);

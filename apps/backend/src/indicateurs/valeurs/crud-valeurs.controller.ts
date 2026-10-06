@@ -11,7 +11,10 @@ import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../users/models/auth.models';
+import type {
+  AuthenticatedOrServiceRoleUser,
+  AuthenticatedUser,
+} from '../../users/models/auth.models';
 import CrudValeursService from './crud-valeurs.service';
 import { getIndicateursValeursApiRequestSchema } from './get-indicateur-valeurs.api-request';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
@@ -51,7 +54,7 @@ export class IndicateursValeursController {
     @Query() request: GetIndicateursValeursApiRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    return this.service.listIndicateurValeurs(request, tokenInfo);
+    return this.service.listIndicateurValeurs(request, { user: tokenInfo });
   }
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
@@ -59,7 +62,7 @@ export class IndicateursValeursController {
   @ApiOperation({
     summary: "Création ou mise à jour des valeurs d'indicateur(s).",
     description:
-      "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**",
+      "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**. Les saisies utilisateur ne peuvent pas fournir de `metadonneeId` : les écritures sous une provenance importée sont réservées aux intégrations `service_role`. Les saisies du diagnostic PCAET passent par leur parcours dédié. Une provenance non autorisée entraîne le refus de tout le lot.",
   })
   @ApiCreatedResponse({
     type: UpsertIndicateursValeursRequest,
@@ -67,11 +70,11 @@ export class IndicateursValeursController {
   })
   async upsertIndicateurValeurs(
     @Body() request: UpsertIndicateursValeursRequest,
-    @TokenInfo() tokenInfo: AuthenticatedUser
+    @TokenInfo() tokenInfo: AuthenticatedOrServiceRoleUser
   ): Promise<UpsertIndicateursValeursResponse> {
     const upsertedValeurs = await this.service.upsertIndicateurValeurs(
       request.valeurs,
-      tokenInfo
+      { user: tokenInfo }
     );
     return { valeurs: upsertedValeurs };
   }
