@@ -31,6 +31,7 @@ import { LeviersMondrianChart } from './leviers-mondrian.chart';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
 import { PriorisationHelpModal } from './priorisation-help.modal';
 import { PriorisationMetrics } from './priorisation.metrics';
+import { SousLeviersChart } from './sous-leviers.chart';
 import {
   LevierPriorisation,
   PotentielsReduction,
@@ -50,7 +51,7 @@ type PriorisationAlertsProps = {
   potentiels: PotentielsReduction;
 };
 
-type LeviersView = 'matrix' | 'breakdown';
+type LeviersView = 'matrix' | 'sousLeviers' | 'breakdown';
 
 type LeviersSectionProps = {
   leviers: LevierPriorisation[];
@@ -63,6 +64,11 @@ type LeviersSectionProps = {
 type BreakdownViewProps = Pick<
   LeviersSectionProps,
   'places' | 'selectedLevierId' | 'onLevierSelected'
+>;
+
+type SousLeviersViewProps = Pick<
+  LeviersSectionProps,
+  'places' | 'onLevierSelected'
 >;
 
 type PriorisationBoardProps = {
@@ -151,6 +157,16 @@ const BreakdownView = ({
   </>
 );
 
+const SousLeviersView = ({
+  places,
+  onLevierSelected,
+}: SousLeviersViewProps): JSX.Element => (
+  <>
+    <LevierCardInfo>{appLabels.sousLeviersInfo}</LevierCardInfo>
+    <SousLeviersChart places={places} onLevierSelected={onLevierSelected} />
+  </>
+);
+
 const LeviersSection = (props: LeviersSectionProps): JSX.Element => {
   const [view, setView] = useState<LeviersView>('matrix');
   return (
@@ -166,10 +182,16 @@ const LeviersSection = (props: LeviersSectionProps): JSX.Element => {
           isActive={view === 'breakdown'}
           onClick={() => setView('breakdown')}
         />
+        <TabsTab
+          label={appLabels.sousLeviersAPrioriser}
+          isActive={view === 'sousLeviers'}
+          onClick={() => setView('sousLeviers')}
+        />
       </TabsList>
       <TabsPanel className="gap-4 rounded-xl border border-grey-3 bg-white p-6">
         {match(view)
           .with('matrix', () => <MatrixView {...props} />)
+          .with('sousLeviers', () => <SousLeviersView {...props} />)
           .with('breakdown', () => <BreakdownView {...props} />)
           .exhaustive()}
       </TabsPanel>

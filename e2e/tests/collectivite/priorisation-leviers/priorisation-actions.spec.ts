@@ -78,6 +78,21 @@ test.describe('Priorisation : matrice et volet', () => {
     );
   });
 
+  test("l'onglet « Sous-leviers à prioriser » affiche l'histogramme des sous-leviers", async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new PriorisationLeviersPom(page);
+    await pom.goto(collectivite.data.id);
+
+    await pom.sousLeviersTab.click();
+
+    await expect(pom.sousLeviersCaption).toBeVisible();
+  });
+
   test('le tableau des données du graphique se déplie et se replie', async ({
     collectivites,
     page,
