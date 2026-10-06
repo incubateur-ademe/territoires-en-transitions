@@ -45,8 +45,11 @@ locals {
       destination   = local.platform_server_cidr
       src_port_low  = 22
       src_port_high = 22
-      dst_port_low  = 0
-      dst_port_high = 65535
+      # Plage éphémère Linux (ip_local_port_range) : seuls ports où reviennent
+      # les réponses SSH. Plus large, un serveur compromis émettant depuis le
+      # port 22 atteindrait n'importe quel service privé du control plane.
+      dst_port_low  = 32768
+      dst_port_high = 60999
       action        = "accept"
       description   = "Retour SSH serveur ${tier} -> Coolify"
     }
