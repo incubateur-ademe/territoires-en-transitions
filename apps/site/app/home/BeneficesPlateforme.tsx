@@ -62,7 +62,13 @@ const BeneficesPlateformeItem = ({ item }: { item: Item }) => {
   const { titre, description, picto } = item;
   return (
     <div className="flex flex-col max-w-md items-center md:items-start">
-      <Image src={`/pictogrammes/${picto}.svg`} alt="" width={80} height={80} />
+      <Image
+        src={`/pictogrammes/${picto}.svg`}
+        alt=""
+        width={80}
+        height={80}
+        className="self-center"
+      />
       <h3 className="mb-4 text-xl leading-7">{titre}</h3>
       <p className="text-primary-10">{description}</p>
     </div>
