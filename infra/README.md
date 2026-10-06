@@ -348,13 +348,20 @@ HTTPS sur 443 par le Traefik de Coolify, une fois son FQDN configuré.
 1. Poser chez le registrar un enregistrement A `coolify.territoiresentransitions.fr`
    vers `terraform -chdir=infra/platform output -raw coolify_public_ip`.
 2. Premier accès, avant que le FQDN soit actif, par tunnel SSH :
-   `ssh -L 8000:localhost:8000 tet-ops@<ip-coolify>` puis http://localhost:8000
-3. Créer le compte admin, puis **Settings → Instance Domain** → le FQDN. Coolify
-   déclenche l'émission du certificat Let's Encrypt (challenge HTTP-01 sur le port 80,
-   ouvert au monde par le security group).
+   `ssh -L 8000:localhost:8000 -L 6001:localhost:6001 -L 6002:localhost:6002 tet-ops@<ip-coolify>`
+   puis http://localhost:8000. Les ports 6001 (temps réel) et 6002 (terminal) évitent
+   l'avertissement « Cannot connect to real-time service » ; une fois le FQDN actif, ils
+   passent par le 443.
+3. Créer le compte admin, puis démarrer le proxy : **Servers → localhost** (**Validate &
+   configure** s'il n'est pas validé) → onglet **Proxy** → **Traefik** → **Start Proxy**.
+   Sans ce conteneur `coolify-proxy`, rien n'écoute sur 80/443 : le FQDN répond
+   « connection reset ».
+4. **Settings → Instance Domain** → le FQDN. Coolify déclenche l'émission du certificat
+   Let's Encrypt (challenge HTTP-01 sur le port 80, ouvert au monde par le security
+   group).
 
 `APP_URL` est déjà aligné sur le FQDN par cloud-init, mais le routage Traefik dépend du
-réglage « Instance Domain », stocké en base : l'étape 3 reste manuelle.
+réglage « Instance Domain », stocké en base : les étapes 3 et 4 restent manuelles.
 
 ## DNS
 
