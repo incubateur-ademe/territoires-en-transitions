@@ -668,6 +668,7 @@ export class LoadScoreComparisonService {
             filters: {
               mesureIds,
             },
+            readsMaskedFields: true,
           },
           { user }
         );

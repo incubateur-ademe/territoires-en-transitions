@@ -34,6 +34,7 @@ export class ListFichesRouter {
             collectiviteId,
             filters: filters ?? {},
             queryOptions,
+            readsMaskedFields: false,
           },
           { user: ctx.user }
         );

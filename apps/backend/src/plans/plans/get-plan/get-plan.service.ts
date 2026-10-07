@@ -14,6 +14,7 @@ import { Plan } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { ListAxesRepository } from '../../axes/list-axes/list-axes.repository';
 import FicheActionPermissionsService from '../../fiches/fiche-action-permissions.service';
+import { toFichesWithReadableBudget } from '../../fiches/list-fiches/fiches-restreintes.rules';
 import { ListFichesBudgetRepository } from '../../fiches/list-fiches/list-fiches-budget.repository';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
@@ -65,10 +66,7 @@ export class GetPlanService {
           transaction
         );
 
-      return this.buildPlan(
-        { plan, includeFichesRestreintes: canReadFichesRestreintes },
-        transaction
-      );
+      return this.buildPlan({ plan, canReadFichesRestreintes }, transaction);
     });
   }
 
@@ -86,7 +84,7 @@ export class GetPlanService {
       }
 
       return this.buildPlan(
-        { plan: planResult.data, includeFichesRestreintes: true },
+        { plan: planResult.data, canReadFichesRestreintes: true },
         transaction
       );
     });
@@ -95,16 +93,15 @@ export class GetPlanService {
   private async buildPlan(
     {
       plan,
-      includeFichesRestreintes,
+      canReadFichesRestreintes,
     }: {
       plan: GetPlanOutput;
-      includeFichesRestreintes: boolean;
+      canReadFichesRestreintes: boolean;
     },
     tx: Transaction
   ): Promise<Result<Plan, GetPlanError>> {
     const axesResult = await this.listAxesRepository.listChildrenRecursively(
       { collectiviteId: plan.collectiviteId, parentId: plan.id },
-      { includeFichesRestreintes },
       tx
     );
     if (!axesResult.success) {
@@ -126,9 +123,13 @@ export class GetPlanService {
 
     const fiches =
       await this.listFichesBudgetRepository.listFicheBudgetsBelongingToPlan(
-        { planId: plan.id, includeFichesRestreintes },
+        { planId: plan.id },
         { tx }
       );
+    const fichesWithReadableBudget = toFichesWithReadableBudget({
+      fiches,
+      canReadFichesRestreintes,
+    });
 
     return {
       success: true,
@@ -137,7 +138,7 @@ export class GetPlanService {
         axes: axesResult.data,
         referents: referentsResult.data,
         pilotes: pilotesResult.data,
-        budget: this.computeBudgetRules.computeBudget(fiches),
+        budget: this.computeBudgetRules.computeBudget(fichesWithReadableBudget),
         totalFiches: fiches.length,
       },
     };

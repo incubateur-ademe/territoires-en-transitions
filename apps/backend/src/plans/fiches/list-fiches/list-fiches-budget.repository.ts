@@ -17,21 +17,12 @@ export class ListFichesBudgetRepository {
   // version allégée de listFiches pour ne lire que les budgets
   // (utilisée pour calculer le budget consolidé d'un plan)
   async listFicheBudgetsBelongingToPlan(
-    {
-      planId,
-      includeFichesRestreintes,
-    }: {
-      planId: number;
-      includeFichesRestreintes: boolean;
-    },
+    { planId }: { planId: number },
     { tx }: { tx?: Transaction } = {}
-  ): Promise<Pick<FicheWithRelations, 'id' | 'budgets'>[]> {
+  ): Promise<Pick<FicheWithRelations, 'id' | 'restreint' | 'budgets'>[]> {
     const ficheIdsRows =
       await this.listFichesBelongingToPlansRepository.listFichesBelongingToPlans(
-        {
-          planIds: [planId],
-          includeFichesRestreintes,
-        },
+        { planIds: [planId] },
         { tx }
       );
 
@@ -41,11 +32,15 @@ export class ListFichesBudgetRepository {
       return [];
     }
 
-    const ficheBudgetsQuery = this.listFicheBudgetsByFicheId({ ficheIds }, { tx });
+    const ficheBudgetsQuery = this.listFicheBudgetsByFicheId(
+      { ficheIds },
+      { tx }
+    );
 
     const query = (tx ?? this.databaseService.db)
       .select({
         id: ficheActionTable.id,
+        restreint: ficheActionTable.restreint,
         budgets: ficheBudgetsQuery.budgets,
       })
       .from(ficheActionTable)
@@ -58,7 +53,10 @@ export class ListFichesBudgetRepository {
     return query;
   }
 
-  listFicheBudgetsByFicheId({ ficheIds }: { ficheIds: number[] }, { tx }: { tx?: Transaction } = {}) {
+  listFicheBudgetsByFicheId(
+    { ficheIds }: { ficheIds: number[] },
+    { tx }: { tx?: Transaction } = {}
+  ) {
     const query = (tx ?? this.databaseService.db)
       .select({
         ficheId: ficheActionBudgetTable.ficheId,

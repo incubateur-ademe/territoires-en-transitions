@@ -107,6 +107,7 @@ export default class PlanActionsService {
         {
           collectiviteId,
           filters: { planActionIds: [planId] },
+          readsMaskedFields: true,
         },
         { user }
       );

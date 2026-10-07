@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
@@ -54,37 +53,7 @@ export class ListAxesService {
       };
     }
 
-    const canReadFichesRestreintes = await this.canReadFichesRestreintes({
-      collectiviteId: input.collectiviteId,
-      user,
-      tx,
-    });
-
-    return this.listAxesRepository.listChildrenRecursively(
-      input,
-      { includeFichesRestreintes: canReadFichesRestreintes },
-      tx
-    );
-  }
-
-  private async canReadFichesRestreintes({
-    collectiviteId,
-    user,
-    tx,
-  }: {
-    collectiviteId: number;
-    user: AuthenticatedUser;
-    tx?: Transaction;
-  }): Promise<boolean> {
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      'plans.fiches.read_confidentiel',
-      ResourceType.COLLECTIVITE,
-      { collectiviteId },
-      tx
-    );
-
-    return permissionResult.success;
+    return this.listAxesRepository.listChildrenRecursively(input, tx);
   }
 
   private async checkPermission(

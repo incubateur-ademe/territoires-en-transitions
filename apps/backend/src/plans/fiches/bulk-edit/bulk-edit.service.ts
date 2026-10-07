@@ -42,6 +42,7 @@ export class BulkEditService {
       {
         collectiviteId: request.collectiviteId,
         filters,
+        readsMaskedFields: true,
       },
       { user }
     );
@@ -78,6 +79,7 @@ export class BulkEditService {
             {
               collectiviteId: c.collectiviteId,
               filters: { ficheIds: c.ficheIds },
+              readsMaskedFields: true,
             },
             { user }
           );
@@ -278,6 +280,7 @@ export class BulkEditService {
         {
           collectiviteId: request.collectiviteId,
           filters,
+          readsMaskedFields: true,
         },
         { user }
       );
