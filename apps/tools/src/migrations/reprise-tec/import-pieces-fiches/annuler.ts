@@ -17,6 +17,7 @@ const main = async () => {
   const client = await pool.connect();
 
   try {
+    await validatePiecesDesDossiersAnnulees(client);
     await client.query('begin');
     try {
       const annexes = await deleteAnnexes(client);
@@ -50,6 +51,21 @@ const main = async () => {
   } finally {
     client.release();
     await pool.end();
+  }
+};
+
+/** Refuse si l'import des pièces des dossiers a écrit : il a donné leur empreinte aux fichiers des fiches, l'annuler d'abord. */
+const validatePiecesDesDossiersAnnulees = async (client: PoolClient) => {
+  const {
+    rows: [{ lignes }],
+  } = await client.query<{ lignes: number }>(
+    `select count(*)::int as lignes from reprise_tec.correspondance
+      where table_cible in ('action_fichier', 'action_image')`
+  );
+  if (lignes > 0) {
+    throw new Error(
+      `Annulation refusée : l'import des pièces des dossiers a donné leur empreinte à ${lignes} fichiers des fiches. L'annuler d'abord.`
+    );
   }
 };
 
