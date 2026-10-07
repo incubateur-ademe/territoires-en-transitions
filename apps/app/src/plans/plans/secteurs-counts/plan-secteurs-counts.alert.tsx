@@ -88,7 +88,7 @@ export const PlanSecteursCountsAlert = ({
               onClick={ouvrirVerification}
               dataTest="plans.secteurs-counts-alert.verifier"
             >
-              {appLabels.planSecteursVerifier}{' '}
+              {appLabels.planSecteursRenseigner}{' '}
               {appLabels.planSecteursAction({ count: aVerifier })}
             </Button>
           )
