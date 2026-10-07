@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  LevierPriorisation,
-  NO_MOBILISATION,
-} from '../data/to-leviers-priorisation';
+import { LevierPriorisation, NO_MOBILISATION } from './to-leviers-priorisation';
 import {
   isBlindSpot,
   LevierPlace,

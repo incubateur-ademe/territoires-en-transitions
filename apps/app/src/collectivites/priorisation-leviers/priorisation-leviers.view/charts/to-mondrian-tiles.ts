@@ -4,7 +4,7 @@ import {
   POTENTIEL_SHARE_BY_LEVIER,
 } from '@tet/domain/shared';
 import { pick } from 'es-toolkit';
-import { LevierPlace } from './to-matrix-points';
+import { LevierPlace } from '../data/to-matrix-points';
 
 export type CategorieTile = {
   categorie: CategorieAction;

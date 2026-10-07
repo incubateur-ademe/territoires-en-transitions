@@ -4,12 +4,8 @@ import { createElement, useCallback, useEffect, useState } from 'react';
 import { Preselection } from '../../use-preselection';
 import { LevierPriorisation } from '../data/to-leviers-priorisation';
 import { UpsertPertinence } from '../data/use-upsert-pertinence';
+import { SelectLevier } from '../select-levier';
 import { LevierPanel } from './levier.panel';
-
-export type SelectLevier = (
-  levierId: LevierId,
-  categorie?: CategorieAction
-) => void;
 
 type LevierSelection = {
   levierId: LevierId;

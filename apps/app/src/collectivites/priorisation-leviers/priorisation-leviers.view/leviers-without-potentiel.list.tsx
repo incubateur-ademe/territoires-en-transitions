@@ -1,12 +1,12 @@
 import { appLabels } from '@/app/labels/catalog';
-import { LevierId } from '@tet/domain/shared';
 import { Button } from '@tet/ui';
 import { JSX, useId } from 'react';
 import { LevierPriorisation } from './data/to-leviers-priorisation';
+import { SelectLevier } from './select-levier';
 
 type LeviersWithoutPotentielListProps = {
   leviers: LevierPriorisation[];
-  onLevierSelected: (levierId: LevierId) => void;
+  onLevierSelected: SelectLevier;
 };
 
 export const LeviersWithoutPotentielList = ({

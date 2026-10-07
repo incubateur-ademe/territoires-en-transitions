@@ -1,5 +1,4 @@
 import { appLabels } from '@/app/labels/catalog';
-import type { ActionsDeReferenceList } from '@/app/shared/actions-de-reference/actions-de-reference.contract';
 import { useListActionsDeReference } from '@/app/shared/actions-de-reference/data/use-list-actions-de-reference';
 import { SearchBar } from '@/app/shared/actions-de-reference/search-bar';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
@@ -22,6 +21,7 @@ import {
 } from '../../preselection.filters';
 import { Preselection } from '../../use-preselection';
 import { ActionDeReferencePreselectionCard } from './action-de-reference-preselection.card';
+import { keepCategorie } from './keep-categorie';
 
 type LevierActionsDeReferenceListProps = {
   levierId: LevierId;
@@ -123,24 +123,6 @@ const GroupedActions = ({
 };
 
 const CATEGORIE_OPTIONS = categorieActionEnumValues.map(toCategorieOption);
-
-const keepCategorie = ({
-  list,
-  categorie,
-}: {
-  list: ActionsDeReferenceList;
-  categorie: CategorieAction | undefined;
-}): ActionsDeReferenceList => {
-  const hasActionsToFilter =
-    list.status === 'loaded' && categorie !== undefined;
-  if (!hasActionsToFilter) {
-    return list;
-  }
-  return {
-    ...list,
-    actions: list.actions.filter((action) => action.categorie === categorie),
-  };
-};
 
 export const LevierActionsDeReferenceList = ({
   levierId,
