@@ -38,6 +38,12 @@ export const referentielsLabels = {
   referentielTableThematiquesViewsSgpe: 'Planification Écologique',
   referentielTableThematiquesViewsAxes: 'Axes',
   referentielTableColonneLabels: 'Volets',
+  referentielTableColonneAdaptation: 'Adaptation',
+  referentielTableAdaptationExpositionForte: 'Exposition forte',
+  referentielTableAdaptationExpositionPartielle: 'Exposition partielle',
+  referentielTableColonneLabellisationGold: 'Labellisation Gold',
+  referentielTableLabellisationGoldAvec: 'Avec',
+  referentielTableLabellisationGoldSans: 'Sans',
 
   /** Onglets de la vue référentiel */
   referentielOngletMesures: 'Mesures',

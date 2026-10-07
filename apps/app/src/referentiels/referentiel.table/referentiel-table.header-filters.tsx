@@ -6,6 +6,7 @@ import { appLabels } from '@/app/labels/catalog';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
+  ActionAdaptationNiveauEnum,
   ActionCategorieEnum,
   ReferentielLabelEnum,
   StatutAvancement,
@@ -15,6 +16,8 @@ import {
 import { Button, Input, SelectFilter } from '@tet/ui';
 import { useState } from 'react';
 import { categorieToLabel } from '../utils';
+import { LabellisationGoldEnum } from './referentiel-table.filters.utils';
+import { labellisationGoldToLabel } from './referentiel-table.labellisation-gold.cell';
 import { scoreRangeItems } from './referentiel-table.score-ranges';
 import { ReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 
@@ -37,6 +40,25 @@ const labelsOptions = [
   { value: ReferentielLabelEnum.TE_CAE, label: 'CAE' },
   { value: ReferentielLabelEnum.TE_ECI, label: 'ECi' },
 ];
+
+const adaptationOptions = [
+  {
+    value: ActionAdaptationNiveauEnum.EXPOSITION_FORTE,
+    label: appLabels.referentielTableAdaptationExpositionForte,
+  },
+  {
+    value: ActionAdaptationNiveauEnum.EXPOSITION_PARTIELLE,
+    label: appLabels.referentielTableAdaptationExpositionPartielle,
+  },
+];
+
+const labellisationGoldOptions = [
+  LabellisationGoldEnum.AVEC,
+  LabellisationGoldEnum.SANS,
+].map((value) => ({
+  value,
+  label: labellisationGoldToLabel[value],
+}));
 
 const categorieOptions = [
   ActionCategorieEnum.BASES,
@@ -143,6 +165,70 @@ export const LabelsHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     custom={{
       triggerButton: {
         button: <FilterButton filterCount={filters.labels.length} />,
+      },
+    }}
+  />
+);
+
+export const AdaptationHeaderFilter = ({
+  filters,
+  setFilters,
+}: FiltersState) => (
+  <SelectFilter
+    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+    options={adaptationOptions}
+    values={filters.adaptation}
+    onChange={({ values }) =>
+      setFilters({ adaptation: (values ?? []) as string[] })
+    }
+    placeholder={appLabels.filtrer}
+    small
+    custom={{
+      triggerButton: {
+        button: <FilterButton filterCount={filters.adaptation.length} />,
+      },
+    }}
+  />
+);
+
+export const LabellisationGoldHeaderFilter = ({
+  filters,
+  setFilters,
+}: FiltersState) => (
+  <SelectFilter
+    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+    options={labellisationGoldOptions}
+    values={filters.labellisationGold}
+    onChange={({ values }) =>
+      setFilters({ labellisationGold: (values ?? []) as string[] })
+    }
+    placeholder={appLabels.filtrer}
+    small
+    custom={{
+      triggerButton: {
+        button: <FilterButton filterCount={filters.labellisationGold.length} />,
+      },
+    }}
+  />
+);
+
+export const ThematiquesHeaderFilter = ({
+  filters,
+  setFilters,
+  options,
+}: FiltersState & { options: { value: string; label: string }[] }) => (
+  <SelectFilter
+    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+    options={options}
+    values={filters.thematiques}
+    onChange={({ values }) =>
+      setFilters({ thematiques: (values ?? []) as string[] })
+    }
+    placeholder={appLabels.filtrer}
+    small
+    custom={{
+      triggerButton: {
+        button: <FilterButton filterCount={filters.thematiques.length} />,
       },
     }}
   />
