@@ -116,6 +116,7 @@ const IndicateursListView = ({
         actions={
           <IndicateurVueActions
             filters={filters}
+            defaultFilters={defaultFilters}
             vue={vue}
             onOpenVue={handleOpenVue}
             onSaveVueFilters={(saved) => {

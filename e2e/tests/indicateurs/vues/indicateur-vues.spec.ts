@@ -8,6 +8,44 @@ const EAU = 'Vue e2e eau potable';
 test.describe('Vues personnalisées des indicateurs', () => {
   test.setTimeout(120_000);
 
+  test('propose de sauvegarder les favoris uniquement après modification des filtres', async ({
+    page,
+    collectivites,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new IndicateurVuesPom(page);
+    await pom.goto(collectivite.data.id);
+    await pom.tab('Indicateurs favoris').click();
+    await expect(page).toHaveURL(/\/indicateurs\/liste\/collectivite$/);
+    await expect(pom.filterButton).toBeVisible();
+    await expect(pom.createButton).toHaveCount(0);
+
+    await page
+      .getByRole('checkbox', { name: 'Afficher les graphiques' })
+      .uncheck();
+    await expect(pom.createButton).toHaveCount(0);
+
+    await pom.openFilters();
+    await pom.openData.check();
+    await expect(pom.createButton).toBeVisible();
+    await pom.openData.uncheck();
+    await expect(pom.createButton).toHaveCount(0);
+    await pom.closeFilters();
+
+    await pom.filterByText(SOLAIRE);
+    await expect(pom.createButton).toBeVisible();
+    await page
+      .getByRole('button', { name: 'Supprimer tous les filtres' })
+      .click();
+    await expect(pom.search).toHaveValue('');
+    await expect(pom.createButton).toHaveCount(0);
+    await page.reload();
+    await expect(pom.filterButton).toBeVisible();
+    await expect(pom.createButton).toHaveCount(0);
+  });
+
   test('crée, renomme, enregistre explicitement, réinitialise et supprime une vue', async ({
     page,
     collectivites,
