@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Reprise T&C, étape 7 : dépose les fichiers des dossiers repris, les range dans leur dossier et écrit les avis rendus.
+ * Reprise T&C, étape 7 : dépose les fichiers des dossiers repris, les range dans leur dossier, écrit les avis rendus et l'empreinte des fichiers des fiches.
  * Simulation par défaut (rien n'est déposé), `--confirm` pour valider.
  *
  *   SUPABASE_DATABASE_URL=… SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… pnpx tsx \
@@ -18,6 +18,12 @@ import { loadCatalogue } from './catalogue';
 import { loadEcarts } from './ecarts';
 import { createAvis, createDocuments } from './ecriture';
 import { loadFichiers } from './fichiers';
+import {
+  loadFichiersDesFiches,
+  readContenusDesFiches,
+  toDepots,
+  updateFichiersDesFiches,
+} from './fichiers-des-fiches';
 import { validateGardes } from './gardes';
 import { buildPieces, toDepot } from './pieces';
 import { rangePieces } from './rangement';
@@ -34,6 +40,11 @@ const main = async () => {
   try {
     const fichiers = await loadFichiers(client);
     const contenus = await readContenus(archive, fichiers);
+    const fichiersDesFiches = await loadFichiersDesFiches(client);
+    const contenusDesFiches = await readContenusDesFiches(
+      archive,
+      fichiersDesFiches
+    );
     const estAvis = (typeFichierId: number) =>
       TITRES.some((t) => t.typeFichierId === typeFichierId);
 
@@ -62,10 +73,11 @@ const main = async () => {
         confidentiel: true,
       })),
     ];
+    const depotsDesFiches = toDepots(fichiersDesFiches, contenusDesFiches);
     await validateGardes(client, {
       archive,
       avis,
-      depots,
+      depots: [...depots, ...depotsDesFiches],
     });
     const { lues, ecrites, ecarts } = await loadEcarts(
       client,
@@ -77,14 +89,23 @@ const main = async () => {
 
     // Avant la transaction : un fichier sans ligne n'est visible nulle part, et relancer le redépose à l'identique.
     const envoi = isConfirmed
-      ? await uploadFichiers(client, archive, depots)
+      ? await uploadFichiers(client, archive, [...depots, ...depotsDesFiches])
       : null;
 
     await client.query('begin');
     let bibliotheque: Bibliotheque;
     let inclusionsEcrites: number;
+    let empreintesDesFiches: Awaited<
+      ReturnType<typeof updateFichiersDesFiches>
+    >;
     try {
       bibliotheque = await createFichiers(client, depots);
+      // Après la bibliothèque des dossiers : un fichier de fiche peut avoir le contenu d'une pièce.
+      empreintesDesFiches = await updateFichiersDesFiches(
+        client,
+        fichiersDesFiches,
+        contenusDesFiches
+      );
       inclusionsEcrites = await createDocuments(
         client,
         rangements,
@@ -107,6 +128,7 @@ const main = async () => {
       rangements,
       inclusions: inclusionsEcrites,
       avis,
+      empreintesDesFiches,
       bibliotheque,
       envoi,
       isConfirmed,

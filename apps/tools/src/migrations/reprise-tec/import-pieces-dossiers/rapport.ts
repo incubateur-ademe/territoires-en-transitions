@@ -4,6 +4,7 @@ import type { Ecart } from '../import-fiches/ecarts';
 import { isNomDAvis, type buildAvis } from './avis';
 import type { Bibliotheque } from './bibliotheque';
 import type { Fichier } from './fichiers';
+import type { updateFichiersDesFiches } from './fichiers-des-fiches';
 import type { Piece } from './pieces';
 import type { Rangement } from './rangement';
 
@@ -16,6 +17,7 @@ export const printRapport = ({
   rangements,
   inclusions,
   avis,
+  empreintesDesFiches,
   bibliotheque,
   envoi,
   isConfirmed,
@@ -27,6 +29,7 @@ export const printRapport = ({
   rangements: readonly Rangement[];
   inclusions: number;
   avis: ReturnType<typeof buildAvis>;
+  empreintesDesFiches: Awaited<ReturnType<typeof updateFichiersDesFiches>>;
   bibliotheque: Pick<Bibliotheque, 'creees' | 'reutilisees'>;
   envoi: { fichiers: number; octets: number } | null;
   isConfirmed: boolean;
@@ -121,6 +124,16 @@ export const printRapport = ({
     avis.ecartes.map(
       (a) =>
         `${a.fichiers[0].collectivite} (T&C ${a.fichiers[0].dossierTecId}), ${a.titre.auTitreDe} : ${a.motif}, ${a.fichiers.length} fichiers au dossier`
+    )
+  );
+
+  console.log(
+    `\nFichiers des fiches : ${empreintesDesFiches.misAJour.length} reçoivent leur empreinte, ${empreintesDesFiches.fondus.length} rejoignent une ligne de même contenu, ${empreintesDesFiches.sansFichier} sans fichier dans l'archive`
+  );
+  printCas(
+    'Fichiers des fiches qui rejoignent une ligne de même contenu',
+    empreintesDesFiches.fondus.map(
+      (f) => `${f.collectivite} : « ${f.nom} » (${f.table} ${f.tecId})`
     )
   );
 
