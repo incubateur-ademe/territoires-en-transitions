@@ -151,4 +151,9 @@ export const referentielsLabels = {
   scoreIndicatifAnneeSnbc: (annee: number): string => `SNBC ${annee}`,
   scoreIndicatifReductionCible: (reduction: string, annee: number): string =>
     `Objectif de réduction : -${reduction} % en ${annee}`,
+
+  /** Sauvegardes */
+  sauvegardeVersionReferentiel: (version: string): string =>
+    `Référentiel v${version}`,
+  sauvegardeCreeePar: (nom: string): string => `Créée par ${nom}`,
 };
