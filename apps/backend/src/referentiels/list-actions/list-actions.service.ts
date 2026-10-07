@@ -19,6 +19,7 @@ import {
 import {
   Action,
   ActionId,
+  ActionThematique,
   ActionType,
   ActionWithDefinitionAndPilotes,
   filterHiddenActionsFromGroupedById,
@@ -27,6 +28,7 @@ import {
   ListActionsGroupedByIdResult,
   ReferentielLabel,
   ReferentielLabelEnum,
+  ReferentielTagTypeEnum,
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
@@ -40,10 +42,12 @@ import {
   SQL,
   sql,
 } from 'drizzle-orm';
+import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
+import { referentielTagTable } from '../models/referentiel-tag.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ListActionsGroupedByIdInput } from './list-actions-grouped-by-id.input';
 import {
@@ -353,11 +357,39 @@ export class ListActionsService {
         `.as('services'),
 
         labels: sql<Array<ReferentielLabel>>`
-          array_remove(
-            array_agg(DISTINCT ${actionDefinitionTagTable.tagRef}),
-            null
+          COALESCE(
+            array_agg(DISTINCT ${actionDefinitionTagTable.tagRef})
+              FILTER (WHERE ${inArray(actionDefinitionTagTable.tagRef, [
+                ReferentielLabelEnum.TE_CAE,
+                ReferentielLabelEnum.TE_ECI,
+              ])}),
+            '{}'
           )
         `.as('labels'),
+
+        isCoremeasure: sql<boolean>`
+          COALESCE(
+            bool_or(${eq(
+              actionDefinitionTagTable.tagRef,
+              ImportActionDefinitionCoremeasureType.COREMEASURE
+            )}),
+            false
+          )
+        `.as('isCoremeasure'),
+
+        thematiques: sql<Array<ActionThematique>>`
+          COALESCE(
+            jsonb_agg(
+              DISTINCT jsonb_build_object(
+                'ref', ${referentielTagTable.ref},
+                'nom', ${referentielTagTable.nom}
+              )
+            ) FILTER (
+              WHERE ${referentielTagTable.type} = ${ReferentielTagTypeEnum.THEMATIQUE}
+            ),
+            '[]'::jsonb
+          )
+        `.as('thematiques'),
       })
       .from(subQuery)
       .innerJoin(
@@ -394,12 +426,12 @@ export class ListActionsService {
         actionDefinitionTagTable,
         and(
           eq(actionDefinitionTagTable.actionId, subQuery.actionId),
-          eq(actionDefinitionTagTable.referentielId, subQuery.referentielId),
-          inArray(actionDefinitionTagTable.tagRef, [
-            ReferentielLabelEnum.TE_CAE,
-            ReferentielLabelEnum.TE_ECI,
-          ])
+          eq(actionDefinitionTagTable.referentielId, subQuery.referentielId)
         )
+      )
+      .leftJoin(
+        referentielTagTable,
+        eq(referentielTagTable.ref, actionDefinitionTagTable.tagRef)
       )
       .groupBy(
         subQuery.modifiedAt,

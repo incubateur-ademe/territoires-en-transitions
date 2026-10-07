@@ -35,10 +35,25 @@ export const actionLabelsSchema = z.object({
 
 export type ActionLabels = z.infer<typeof actionLabelsSchema>;
 
+export const actionThematiqueSchema = z.object({
+  ref: z.string(),
+  nom: z.string(),
+});
+
+export type ActionThematique = z.infer<typeof actionThematiqueSchema>;
+
+export const actionTagsSchema = z.object({
+  isCoremeasure: z.boolean(),
+  thematiques: z.array(actionThematiqueSchema),
+});
+
+export type ActionTags = z.infer<typeof actionTagsSchema>;
+
 export const actionWithScoreSchema = z.object({
   ...actionDefinitionSchema.shape,
   ...actionPilotesSchema.shape,
   ...actionLabelsSchema.shape,
+  ...actionTagsSchema.shape,
   ...actionGenealogySchema.shape,
 
   score: actionScoreFinalSchema,
@@ -47,7 +62,8 @@ export const actionWithScoreSchema = z.object({
 
 export type ActionWithDefinitionAndPilotes = ActionDefinition &
   ActionPilotes &
-  ActionLabels;
+  ActionLabels &
+  ActionTags;
 
 export type Action = ActionWithDefinitionAndPilotes &
   ActionGenealogy &

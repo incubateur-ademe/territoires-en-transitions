@@ -37,6 +37,8 @@ const action: Action = {
   pilotes: [],
   services: [],
   labels: [],
+  isCoremeasure: false,
+  thematiques: [],
   parentId: 'cae_1.1.1',
   childrenIds: [],
   nextId: null,
