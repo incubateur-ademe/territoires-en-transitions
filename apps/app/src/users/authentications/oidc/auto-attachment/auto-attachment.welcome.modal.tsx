@@ -7,6 +7,7 @@ import {
   useUserPreferences,
 } from '@/app/users/use-user-preferences';
 import { useUser } from '@tet/api/users';
+import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import {
   isTypeInstructeur,
   peutDeposerAvisInstructeur,
@@ -51,6 +52,9 @@ export const AutoAttachmentWelcomeModal = () => {
     updatePreferences({ 'oidc.autoAttachedCollectiviteId': null });
   };
 
+  // Comme l'atterrissage : seul un service déconcentré n'a que l'instruction.
+  // Une région est une collectivité qui instruit aussi.
+  const serviceDeconcentre = isServiceDeconcentre(service.collectiviteType);
   const instructeur = isTypeInstructeur(service.collectiviteType);
   const deposeAvis = peutDeposerAvisInstructeur(service.collectiviteType);
   const admin = service.role === CollectiviteRole.ADMIN;
@@ -76,7 +80,7 @@ export const AutoAttachmentWelcomeModal = () => {
       render={() => (
         <div>
           {/* Tailwind neutralise le `list-style` des `ul`. */}
-          {instructeur ? (
+          {serviceDeconcentre ? (
             <>
               <p className="mb-3">{appLabels.accueilRattachementIntro}</p>
               <ul className="mb-0 list-disc pl-4">
@@ -94,6 +98,9 @@ export const AutoAttachmentWelcomeModal = () => {
                 <li>{appLabels.accueilRattachementCollectivitePlans}</li>
                 <li>{appLabels.accueilRattachementCollectiviteIndicateurs}</li>
                 <li>{appLabels.accueilRattachementCollectiviteReferentiels}</li>
+                {instructeur && (
+                  <li>{appLabels.accueilRattachementConsulter}</li>
+                )}
               </ul>
             </>
           )}
