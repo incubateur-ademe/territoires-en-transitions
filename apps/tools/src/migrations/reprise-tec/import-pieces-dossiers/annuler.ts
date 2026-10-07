@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Reprise T&C, étape 7 : retire ce que `index.ts` a écrit, d'après `lignes_ecrites`, puis les fichiers du stockage que plus rien ne référence.
+ * Reprise T&C, étape 6 bis : retire ce que `index.ts` a écrit, d'après `lignes_ecrites`, puis les fichiers du stockage que plus rien ne référence.
  * Simulation par défaut (rien n'est retiré du stockage), `--confirm` pour valider.
  *
  *   SUPABASE_DATABASE_URL=… SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… pnpx tsx \

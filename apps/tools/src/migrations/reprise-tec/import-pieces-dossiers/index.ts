@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Reprise T&C, étape 7 : dépose les fichiers des dossiers repris, les range dans leur dossier, écrit les avis rendus et l'empreinte des fichiers des fiches.
+ * Reprise T&C, étape 6 bis : dépose les fichiers des dossiers repris, les range dans leur dossier, écrit les avis rendus et l'empreinte des fichiers des fiches.
  * Simulation par défaut (rien n'est déposé), `--confirm` pour valider.
  *
  *   SUPABASE_DATABASE_URL=… SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… pnpx tsx \

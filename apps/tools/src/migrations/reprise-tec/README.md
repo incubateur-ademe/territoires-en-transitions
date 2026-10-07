@@ -482,7 +482,7 @@ sur les annexes reprises depuis l'import (le rapport les compte).
 | le compte « Territoires & Climat » est absent ou sans nom           | le créer : une annexe exige un auteur                                        |
 | un nom de stockage T&C refusé comme référence par le produit        | décider quoi faire du fichier : le script ne renomme pas                     |
 
-### 7. Importer les pièces des dossiers
+### 6 bis. Importer les pièces des dossiers
 
 Les fichiers déposés sur chaque dossier repris (sur sa ligne et sur son doublon
 « définitif ») sont lus dans l'archive de T&C, déposés dans le stockage, et
