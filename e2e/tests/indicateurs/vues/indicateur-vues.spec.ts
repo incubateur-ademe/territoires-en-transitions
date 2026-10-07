@@ -8,7 +8,7 @@ const EAU = 'Vue e2e eau potable';
 test.describe('Vues personnalisées des indicateurs', () => {
   test.setTimeout(120_000);
 
-  test('masque la sauvegarde uniquement sur la page des favoris sans filtre supplémentaire', async ({
+  test('distingue les favoris par défaut du filtre Favori sur tous les indicateurs', async ({
     page,
     collectivites,
   }) => {
@@ -17,7 +17,7 @@ test.describe('Vues personnalisées des indicateurs', () => {
     });
     const pom = new IndicateurVuesPom(page);
     await pom.goto(collectivite.data.id);
-    await expect(pom.createButton).toBeVisible();
+    await expect(pom.createButton).toHaveCount(0);
 
     const filteredTousUrl = new URL(page.url());
     filteredTousUrl.searchParams.set(
@@ -28,7 +28,8 @@ test.describe('Vues personnalisées des indicateurs', () => {
     await expect(pom.filterButton).toBeVisible();
     await expect(pom.createButton).toBeVisible();
 
-    await pom.tab('Indicateurs favoris').click();
+    // Decorative icon glyphs are included in the tab's accessible name.
+    await page.getByRole('tab', { name: /Indicateurs favoris/ }).click();
     await expect(page).toHaveURL(/\/indicateurs\/liste\/collectivite$/);
     await expect(pom.filterButton).toBeVisible();
     await expect(pom.createButton).toHaveCount(0);
@@ -57,27 +58,33 @@ test.describe('Vues personnalisées des indicateurs', () => {
     await expect(pom.createButton).toHaveCount(0);
   });
 
-  test('sauvegarde une vue sans filtre depuis tous les indicateurs', async ({
+  test('masque la sauvegarde sans filtre sur tous les indicateurs', async ({
     page,
     collectivites,
   }) => {
-    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
     const collectiviteId = collectivite.data.id;
     const pom = new IndicateurVuesPom(page);
     await pom.goto(collectiviteId);
-    await pom.createButton.click();
-    await pom.submitName('Tous les indicateurs à suivre');
+    await expect(pom.createButton).toHaveCount(0);
 
-    expect(
-      await user.getTrpcClient().indicateurs.vues.list.query({ collectiviteId })
-    ).toEqual([
-      expect.objectContaining({
-        nom: 'Tous les indicateurs à suivre',
-        filtres: {},
-      }),
-    ]);
+    await pom.filterByText(SOLAIRE);
+    await expect(pom.createButton).toBeVisible();
+    await pom.filterByText('');
+    await expect(pom.createButton).toHaveCount(0);
+
+    await pom.openFilters();
+    await pom.openData.check();
+    await expect(pom.createButton).toBeVisible();
+    await pom.openData.uncheck();
+    await expect(pom.createButton).toHaveCount(0);
+    await pom.closeFilters();
+
+    await page.reload();
+    await expect(pom.filterButton).toBeVisible();
+    await expect(pom.createButton).toHaveCount(0);
   });
 
   test('crée, renomme, enregistre explicitement, réinitialise et supprime une vue', async ({
@@ -105,7 +112,7 @@ test.describe('Vues personnalisées des indicateurs', () => {
     const vue =
       await test.step('Créer une vue à partir de la recherche et la retrouver après rechargement', async () => {
         await pom.goto(collectiviteId);
-        await expect(pom.createButton).toBeVisible();
+        await expect(pom.createButton).toHaveCount(0);
         await pom.filterByText(SOLAIRE);
         await expect(pom.createButton).toHaveText('Sauvegarder cette vue');
         await expect(pom.saveMenuButton).toHaveCount(0);
