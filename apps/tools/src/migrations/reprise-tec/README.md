@@ -482,6 +482,94 @@ sur les annexes reprises depuis l'import (le rapport les compte).
 | le compte « Territoires & Climat » est absent ou sans nom           | le créer : une annexe exige un auteur                                        |
 | un nom de stockage T&C refusé comme référence par le produit        | décider quoi faire du fichier : le script ne renomme pas                     |
 
+### 7. Importer les pièces des dossiers
+
+Les fichiers déposés sur chaque dossier repris (sur sa ligne et sur son doublon
+« définitif ») sont lus dans l'archive de T&C, déposés dans le stockage, et
+rangés dans le catalogue du dossier. Les avis rendus sont écrits, validés, avec
+leur PDF chez l'émetteur. Seules les références de la copie sont lues :
+l'archive ne sert qu'aux octets.
+
+```bash
+export SUPABASE_URL="http://..."              # l'API de stockage de TeT
+export SUPABASE_SERVICE_ROLE_KEY="..."        # pour déposer dans les buckets
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-pieces-dossiers/index.ts
+pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv>            # simulation, rien n'est déposé
+pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv> --confirm  # dépôt puis import
+```
+
+`--archive` est le dossier `Uploads/` de T&C (`Uploads/Demarches/…` y est
+`Demarches/…`) ; `--suivi`, le suivi ADEME de l'import des dossiers. Avec
+`--confirm`, les fichiers sont déposés **avant** la transaction, dans le bucket
+de leur collectivité, sous le nom de leur empreinte et en remplaçant l'objet
+existant, comme le produit : relancer après un échec redépose à l'identique.
+
+| Dans T&C                                          | Dans TeT                                                                                                                                      |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| un fichier de dossier                             | une ligne de la bibliothèque de la collectivité, référencée par l'empreinte sha256 de ses octets ; un objet de stockage                       |
+| le même contenu plusieurs fois                    | une seule pièce par dossier, temps et contenu (les copies du doublon « définitif » s'y fondent) ; une seule ligne de bibliothèque par contenu |
+| rubrique « dépôt pour avis »                      | l'amont du dossier, daté de la transmission                                                                                                   |
+| rubrique « dépôt définitif »                      | l'aval du dossier, daté de la publication                                                                                                     |
+| autre rubrique                                    | documents additionnels de l'amont, datés du jour de l'import                                                                                  |
+| fichier absent de l'archive                       | la pièce, avec le nom de stockage T&C comme référence et sans objet de stockage : elle s'affiche, son téléchargement échoue                   |
+| « Avis DREAL », « Avis CR » d'un dossier transmis | un avis validé au titre du préfet de région ou du président de région, sur la saisine principale de la DREAL ou de la région                  |
+| (aucun déposant)                                  | aucun : `modified_by` et `depose_par` vides                                                                                                   |
+
+**Le rangement.** Une case du catalogue ne reçoit qu'un PDF, du temps de la
+pièce, si la pièce concerne la collectivité (catalogue lu par le produit), et
+un seul fichier : le premier déposé. Le premier mot-clé trouvé dans le nom
+décide de la case (diagnostic, stratégie, programme d'actions, EES…). Une
+délibération va dans la case que dit son nom (engagement, arrêt, adoption),
+sinon dans celle de sa rubrique (arrêt pour le dépôt pour avis, adoption pour le
+dépôt définitif). Un nom générique (« PCAET »), seul fichier de son dépôt, va
+dans le PCAET global, et coche les pièces qu'il comprend d'office, comme dans
+l'app. Tout le reste va dans les documents additionnels.
+
+**Les avis.** Le PDF retenu (format lu sur les octets) est le seul PDF de
+l'avis, ou, parmi plusieurs, celui dont le nom dit avis, courrier ou signé (ni
+annexe, ni MRAe, ni réponse), de préférence celui qui nomme l'émetteur du titre,
+puis signé ou courrier, puis le plus ancien. Il va dans la bibliothèque et le
+bucket de l'émetteur, marqué confidentiel ; aucune copie chez la collectivité.
+Sa date : le suivi ADEME s'il tombe dans l'année qui suit la transmission (avis
+du préfet), puis une date écrite dans le nom du fichier, puis la date « envoi »
+de T&C, la première qui ne précède pas la transmission ; sinon, à moins d'un an
+avant, le jour de la transmission. Les autres fichiers de l'avis, et ceux d'un
+avis qui n'est pas écrit, vont aux documents de l'amont du dossier, rangés comme
+les autres pièces, après elles.
+
+Chaque fichier de dossier de la copie finit soit écrit, soit dans `ecarts`, une
+seule fois : le script le vérifie avant d'écrire. Une copie fondue dans une
+pièce ou un avis est écrite. Un avis qui n'est pas écrit laisse sur chacun de
+ses fichiers (écrits au dossier) un écart de `precision` `avis`.
+
+| Motif                    | Sens                                                                                                     |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| motif du dossier         | fichier d'un dossier que l'import des dossiers a écarté (`elaboration_remplacee`, `sans_etat_invisible`) |
+| `avis_sans_transmission` | (avis) dossier jamais transmis : pas de saisine, pas d'avis                                              |
+| `avis_sans_fichier`      | (avis) aucun de ses fichiers n'est dans l'archive                                                        |
+| `avis_sans_pdf`          | (avis) aucun de ses fichiers n'est un PDF (zip, 7z, image)                                               |
+| `avis_sans_courrier`     | (avis) plusieurs PDF, aucun dont le nom dit avis, courrier ou signé : des pièces du PCAET                |
+| `avis_anterieur`         | (avis) toutes ses dates précèdent la transmission de plus d'un an                                        |
+
+Le rapport donne le bilan, les écarts par motif, le rangement par case, les
+délibérations et les documents additionnels nommés, les pièces sans fichier,
+les avis par titre et par origine de leur date, et nomme les avis à plusieurs
+PDF (avec le fichier retenu), à un seul PDF dont le nom ne dit pas un avis, et
+datés du jour de la transmission ; enfin le volume déposé.
+
+#### Ce qui arrête l'import des pièces des dossiers
+
+Avant tout dépôt et toute écriture :
+
+| Garde                                                                                                      | Quoi faire                                                                     |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| aucun dossier repris, ou aucune saisine reprise                                                            | lancer d'abord l'import des dossiers (étape 2) et celui des saisines (étape 4) |
+| des pièces, avis ou lignes de bibliothèque de cette étape existent déjà                                    | l'import a déjà tourné : l'annuler d'abord                                     |
+| l'archive n'a pas de dossier `Demarches/`                                                                  | vérifier `--archive` : c'est le dossier `Uploads/` de T&C                      |
+| une collectivité ou un émetteur qui doit recevoir un fichier n'a pas de bucket                             | le créer (`private.create_bucket`)                                             |
+| un avis à écrire sans saisine principale de la DREAL ou de la région (seulement une secondaire, ou aucune) | corriger les saisines avant l'import                                           |
+| une saisine principale qui a déjà un avis                                                                  | un service a déposé depuis l'import des saisines : décider au cas par cas      |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
