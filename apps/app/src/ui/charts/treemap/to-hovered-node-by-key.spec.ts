@@ -44,6 +44,17 @@ describe('toHoveredNodeByKey', () => {
     });
   });
 
+  it('resolves a tile to its own id and to the id of its group', () => {
+    const node = toHoveredNodeByKey([BATIMENTS, MOBILITE]).get(
+      toTileKey({ group: MOBILITE, tile: MOBILITE.tiles[0] })
+    );
+
+    expect(node?.kind === 'tile' && [node.group.id, node.tile.id]).toEqual([
+      'mobilite',
+      'financement',
+    ]);
+  });
+
   it('does not confuse a group with a tile whose id matches the group id', () => {
     const homonyme: TreemapGroup<'faible' | 'fort'> = {
       ...BATIMENTS,

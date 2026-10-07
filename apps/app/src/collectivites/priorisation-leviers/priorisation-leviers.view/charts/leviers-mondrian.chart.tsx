@@ -15,14 +15,14 @@ import { preset } from '@tet/ui';
 import { color } from 'echarts/core';
 import { sumBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
-import { SelectLevier } from '../levier-panel/use-levier-side-panel';
+import { LevierPlace } from '../data/to-matrix-points';
+import { SelectLevier } from '../select-levier';
 import {
   MOBILISATION_SCALE,
   MobilisationLevel,
   toMobilisationLabel,
   toMobilisationLevel,
 } from './mobilisation-level';
-import { LevierPlace } from './to-matrix-points';
 import { LevierTile, toMondrianTiles } from './to-mondrian-tiles';
 import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
 

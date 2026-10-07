@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
-import { LevierPlace } from './to-matrix-points';
+import { LevierPlace } from '../data/to-matrix-points';
 import { toMondrianTiles } from './to-mondrian-tiles';
 
 const toPlace = (

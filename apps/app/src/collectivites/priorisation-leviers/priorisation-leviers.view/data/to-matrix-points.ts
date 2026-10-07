@@ -3,7 +3,7 @@ import type { MatrixTone } from '@/app/ui/charts/matrix/quadrant';
 import { Pertinence } from '@tet/domain/collectivites';
 import { LevierId } from '@tet/domain/shared';
 import { round } from 'es-toolkit';
-import { LevierPriorisation } from '../data/to-leviers-priorisation';
+import { LevierPriorisation } from './to-leviers-priorisation';
 
 export const MATRIX_SCALE = 100;
 

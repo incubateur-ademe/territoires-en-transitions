@@ -7,7 +7,6 @@ import { Quadrant } from '@/app/ui/charts/matrix/quadrant';
 import { LevierId, levierIdEnumValues } from '@tet/domain/shared';
 import { JSX, useMemo } from 'react';
 import { z } from 'zod';
-import { LeviersMatrixLegend } from './leviers-matrix.legend';
 import {
   isHighPotentiel,
   LevierPlace,
@@ -17,13 +16,15 @@ import {
   MATRIX_SCALE,
   PreselectedCountByLevier,
   toMatrixPoints,
-} from './to-matrix-points';
+} from '../data/to-matrix-points';
+import { SelectLevier } from '../select-levier';
+import { LeviersMatrixLegend } from './leviers-matrix.legend';
 
 type LeviersMatrixChartProps = {
   places: LevierPlace[];
   preselectedCountByLevier: PreselectedCountByLevier;
   selectedLevierId?: LevierId;
-  onLevierSelected: (levierId: LevierId) => void;
+  onLevierSelected: SelectLevier;
 };
 
 const levierIdSchema = z.enum(levierIdEnumValues);
