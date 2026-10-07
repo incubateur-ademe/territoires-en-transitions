@@ -23,6 +23,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Test backup compatibility
+        run: make db-test-backup-compatibility
+
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
@@ -106,6 +109,17 @@ jobs:
             "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
             --dbname="postgresql://postgres:postgres@127.0.0.1:5432/$SCHEMA_DATABASE_NAME" \
             --ext .psql --verbose data_layer/tests/indicateur/periodicite-schema.assertions.psql
+
+      - name: Test formula reconciliation lifecycle
+        env:
+          DATABASE_URL: ${{ steps.local-supabase.outputs.database-url }}
+          SUPABASE_NETWORK: ${{ vars.SUPABASE_NETWORK }}
+        run: |
+          docker run --rm --network "$SUPABASE_NETWORK" \
+            --env "FORMULA_RECONCILIATION_TEST_DATABASE_URL=$DATABASE_URL" \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" --workdir /workspace \
+            --entrypoint bash "$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)" \
+            data_layer/tests/indicateur/formula-reconciliation-lifecycle.spec.sh
 
       - name: Sqitch revert to ${{ env.tag }}
         if: ${{ !env.ACT }}

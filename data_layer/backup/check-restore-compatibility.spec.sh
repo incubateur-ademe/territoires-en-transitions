@@ -37,7 +37,7 @@ registry() {
     if [[ "$phase" == reconciliation ]]; then
         printf 'indicateur/reconciliation_formules\ttet\n' >> "$test_dir/$phase"
     fi
-    if [[ "$phase" == contract ]]; then
+    if [[ "$phase" == contract || "$phase" == reconciliation ]]; then
         printf 'indicateur/periodicite_obligatoire\ttet\nindicateur/dependances_formules\ttet\nindicateur/periodicite_formules\ttet\n' >> "$test_dir/$phase"
         printf 'indicateur/periodicite_activation\ttet\n' >> "$test_dir/$phase"
     fi
@@ -82,7 +82,7 @@ check failure annual empty
 check failure wrong-project annual
 check failure annual annual ARCHIVE_READ_FAILS=true
 check failure annual annual TARGET_QUERY_FAILS=true
-check failure reconciliation reconciliation
+check success reconciliation reconciliation
 check failure annual reconciliation
 check failure reconciliation annual
 check failure reconciliation reconciliation MISSING_QUEUE=true
@@ -91,6 +91,8 @@ check failure contract contract TARGET_SCHEMA_FAILS=true
 check failure schema schema TARGET_SCHEMA_FAILS=true
 check failure annual contract
 check failure contract reconciliation
+check failure reconciliation contract
+check failure reconciliation reconciliation TARGET_SCHEMA_FAILS=true
 check success contract contract MISSING_QUEUE=true
 for phase in contract-no-extractor contract-no-formulas pending-activation contract-no-obligatoire; do
     check failure "$phase" contract

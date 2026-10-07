@@ -1130,3 +1130,5 @@ indicateur/periodicite_formules [indicateur/periodicite_obligatoire indicateur/d
 stats/report_indicateur_resultat_periode [indicateur/periodicite_obligatoire collectivite/fusion] 2026-09-03T17:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Expose la politique et le début de période tout en maintenant l'année
 indicateur/periodicite_activation [indicateur/periodicite_formules stats/report_indicateur_resultat_periode] 2026-09-29T10:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Deuxième livraison : ouvre les quatre périodicités communes à la déclaration et à la visualisation, sans agrégation temporelle
 @indicateur-periodicite-activee 2026-09-29T10:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Activation après validation de la livraison backend annuelle
+indicateur/reconciliation_formules [indicateur/periodicite_activation private_schema] 2026-10-07T14:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute la file durable après l’activation des cadences
+@indicateur-reconciliation-formules 2026-10-07T14:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Recalcul des changements de formule par lots avec reprises

@@ -11,5 +11,6 @@ export type PlatformDefinitions = Awaited<
 export type UpsertIndicateurDefinitionsResult = Readonly<{
   definitions: PlatformDefinitions;
   updatedFormulaDefinitions: PlatformDefinitions;
-  identifiantsRecalcules: string[];
+  importedIndicateurIds: number[];
+  reconciliationWorkItemsCount: number;
 }>;
