@@ -557,18 +557,26 @@ les avis par titre et par origine de leur date, et nomme les avis à plusieurs
 PDF (avec le fichier retenu), à un seul PDF dont le nom ne dit pas un avis, et
 datés du jour de la transmission ; enfin le volume déposé.
 
+**Les fichiers des fiches.** Les fichiers écrits par l'import des pièces des
+fiches (étape 6), avec le nom de stockage T&C pour référence, reçoivent
+l'empreinte de leurs octets et sont déposés dans le bucket de leur collectivité.
+Si la collectivité a déjà une ligne de bibliothèque de ce contenu (une pièce de
+dossier), l'annexe y pointe et la ligne de l'étape 6 est retirée. « Modifié le »
+des fiches est gardé. `correspondance` retient, pour chaque fichier T&C
+(`action_fichier`, `action_image`), sa ligne de bibliothèque.
+
 #### Ce qui arrête l'import des pièces des dossiers
 
 Avant tout dépôt et toute écriture :
 
-| Garde                                                                                                      | Quoi faire                                                                     |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| aucun dossier repris, ou aucune saisine reprise                                                            | lancer d'abord l'import des dossiers (étape 2) et celui des saisines (étape 4) |
-| des pièces, avis ou lignes de bibliothèque de cette étape existent déjà                                    | l'import a déjà tourné : l'annuler d'abord                                     |
-| l'archive n'a pas de dossier `Demarches/`                                                                  | vérifier `--archive` : c'est le dossier `Uploads/` de T&C                      |
-| une collectivité ou un émetteur qui doit recevoir un fichier n'a pas de bucket                             | le créer (`private.create_bucket`)                                             |
-| un avis à écrire sans saisine principale de la DREAL ou de la région (seulement une secondaire, ou aucune) | corriger les saisines avant l'import                                           |
-| une saisine principale qui a déjà un avis                                                                  | un service a déposé depuis l'import des saisines : décider au cas par cas      |
+| Garde                                                                                                      | Quoi faire                                                                                                |
+| ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris, aucune saisine ou aucune annexe reprise                                              | lancer d'abord l'import des dossiers (étape 2), des saisines (étape 4) et des pièces des fiches (étape 6) |
+| des pièces, avis ou lignes de bibliothèque de cette étape existent déjà                                    | l'import a déjà tourné : l'annuler d'abord                                                                |
+| l'archive n'a pas de dossier `Demarches/`                                                                  | vérifier `--archive` : c'est le dossier `Uploads/` de T&C                                                 |
+| une collectivité ou un émetteur qui doit recevoir un fichier n'a pas de bucket                             | le créer (`private.create_bucket`)                                                                        |
+| un avis à écrire sans saisine principale de la DREAL ou de la région (seulement une secondaire, ou aucune) | corriger les saisines avant l'import                                                                      |
+| une saisine principale qui a déjà un avis                                                                  | un service a déposé depuis l'import des saisines : décider au cas par cas                                 |
 
 ## Le schéma de travail `reprise_tec`
 
