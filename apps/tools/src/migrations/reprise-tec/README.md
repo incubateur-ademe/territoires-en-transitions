@@ -103,13 +103,13 @@ l'ordre inverse.
 Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
 s'il en trouve un :
 
-| Code | Garde                                                                                          | Quoi faire                                                               |
-| ---- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| A27  | collectivité introuvable dans TeT, ou trouvée plusieurs fois                                   | la créer, ou corriger le doublon, avant l'import                         |
-| A3   | fenêtre d'avis de trois mois encore ouverte à la date de référence, jour de l'échéance compris | vérifier la date ; si elle est juste, attendre la fin de la consultation |
-| D3   | dossier qui arriverait instruit sans date de transmission                                      | corriger la source : il serait enfermé dans TeT                          |
-| D4   | collectivité qui a déjà une démarche active dans TeT                                           | décider au cas par cas, on ne touche pas à son dossier                   |
-| D7   | dossier qui arriverait publié sans date de publication                                         | corriger la source                                                       |
+| Code | Garde                                                                                          | Quoi faire                                                                                                                                 |
+| ---- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| A27  | collectivité introuvable dans TeT, ou trouvée plusieurs fois                                   | la créer, ou corriger le doublon, avant l'import ; si elle existe sous un autre SIREN, l'ajouter à `SIRENS_RATTACHES` (`collectivites.ts`) |
+| A3   | fenêtre d'avis de trois mois encore ouverte à la date de référence, jour de l'échéance compris | vérifier la date ; si elle est juste, attendre la fin de la consultation                                                                   |
+| D3   | dossier qui arriverait instruit sans date de transmission                                      | corriger la source : il serait enfermé dans TeT                                                                                            |
+| D4   | collectivité qui a déjà une démarche active dans TeT                                           | décider au cas par cas, on ne touche pas à son dossier                                                                                     |
+| D7   | dossier qui arriverait publié sans date de publication                                         | corriger la source                                                                                                                         |
 
 Le script s'arrête aussi, sans rien écrire, sur un état de dossier T&C ou une
 valeur d'obligation du suivi qu'il ne connaît pas : il ne devine pas.
