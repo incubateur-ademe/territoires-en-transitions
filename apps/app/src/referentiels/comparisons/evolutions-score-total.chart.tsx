@@ -1,5 +1,7 @@
-import { round } from 'es-toolkit';
+import { escape as escapeHtml, round } from 'es-toolkit';
 import { actionAvancementColors } from '@/app/app/theme';
+import { appLabels } from '@/app/labels/catalog';
+import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import {
   EChartsOption,
   ReactECharts,
@@ -13,6 +15,7 @@ import {
 import type { BarSeriesOption } from 'echarts/charts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotListItem } from '../use-snapshot';
+import { hasMixedReferentielVersions } from './has-mixed-referentiel-versions';
 
 const theme = importedTheme;
 
@@ -68,6 +71,7 @@ export const ScoreTotalEvolutionsChart = ({
   isDownloadable?: boolean;
 }) => {
   const snapshots = [...orderedSnapshots].reverse();
+  const showReferentielVersion = hasMixedReferentielVersions(snapshots);
 
   const nameLabels = snapshots.map((snapshot) => {
     if (!snapshot.nom) {
@@ -215,6 +219,16 @@ export const ScoreTotalEvolutionsChart = ({
       {
         type: 'category' as const,
         data: nameLabels,
+        // Le typage d'echarts ne déclare que `show` sur l'info-bulle d'un axe,
+        // mais le libellé survolé lit bien le `formatter` (avec `tickIndex`).
+        tooltip: {
+          show: true,
+          formatter: (params: { tickIndex: number }) =>
+            makeSnapshotTooltip(
+              snapshots[params.tickIndex],
+              showReferentielVersion
+            ),
+        } as { show: boolean },
         axisLabel: {
           fontFamily: theme.fontFamily,
           color: theme.textColor,
@@ -270,6 +284,26 @@ export const ScoreTotalEvolutionsChart = ({
 
   return <ReactECharts option={option} style={{ height: 500 }} />;
 };
+
+const makeSnapshotTooltip = (
+  snapshot: SnapshotListItem,
+  showReferentielVersion: boolean
+) =>
+  [
+    `<strong>${escapeHtml(snapshot.nom ?? '')}</strong>`,
+    getTextFormattedDate({ date: snapshot.date }),
+    snapshot.jalon === SnapshotJalonEnum.DATE_PERSONNALISEE &&
+    snapshot.createdByName
+      ? appLabels.sauvegardeCreeePar(escapeHtml(snapshot.createdByName))
+      : null,
+    showReferentielVersion && snapshot.referentielVersion
+      ? appLabels.sauvegardeVersionReferentiel(
+          escapeHtml(snapshot.referentielVersion)
+        )
+      : null,
+  ]
+    .filter(Boolean)
+    .join('<br/>');
 
 const computePercentage = (point: number, pointPotentiel: number) => {
   return round((point / pointPotentiel) * 100, 1);

@@ -125,6 +125,36 @@ describe('Api pour lister les snapshots', () => {
     });
   });
 
+  test("L'API publique ne renvoie pas l'auteur d'une sauvegarde manuelle", async () => {
+    const caller = router.createCaller({ user: testUser });
+    const snapshot = await caller.snapshots.computeAndUpsert({
+      referentielId,
+      collectiviteId,
+      nom: 'Test api auteur',
+    });
+
+    try {
+      const response = await request(app.getHttpServer())
+        .get(
+          `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots?jalons=${SnapshotJalonEnum.DATE_PERSONNALISEE}`
+        )
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .expect(200);
+
+      const foundSnapshot = (
+        response.body as ListSnapshotsApiResponse
+      ).snapshots.find(({ ref }) => ref === snapshot.ref);
+      expect(foundSnapshot).toBeDefined();
+      expect(foundSnapshot).not.toHaveProperty('createdByName');
+    } finally {
+      await caller.snapshots.delete({
+        collectiviteId,
+        referentielId,
+        snapshotRef: snapshot.ref,
+      });
+    }
+  });
+
   afterAll(async () => {
     await app.close();
   });

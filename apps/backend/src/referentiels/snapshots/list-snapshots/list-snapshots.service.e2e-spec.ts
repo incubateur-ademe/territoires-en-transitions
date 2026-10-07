@@ -8,13 +8,14 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   CollectiviteReferentielPreferences,
   defaultCollectivitePreferences,
 } from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
-import { CollectiviteRole } from '@tet/domain/users';
+import { CollectiviteRole, Dcp } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { ReferentielsRouter } from '../../referentiels.router';
 
@@ -23,6 +24,7 @@ describe('ListSnapshotsService', () => {
   let router: ReferentielsRouter;
   let databaseService: DatabaseService;
   let testUser: AuthenticatedUser;
+  let testUserDcp: Dcp;
   let collectiviteId: number;
 
   beforeAll(async () => {
@@ -39,10 +41,50 @@ describe('ListSnapshotsService', () => {
     );
     collectiviteId = collectivite.id;
     testUser = getAuthUserFromUserCredentials(user);
+    testUserDcp = user;
   });
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test("L'auteur d'une sauvegarde manuelle n'est pas renvoyé sans droit sur une collectivité à accès restreint", async () => {
+    const caller = router.createCaller({ user: testUser });
+    const snapshot = await caller.snapshots.computeAndUpsert({
+      referentielId: ReferentielIdEnum.CAE,
+      collectiviteId,
+      nom: 'Test auteur restreint',
+    });
+    await databaseService.db
+      .update(collectiviteTable)
+      .set({ accesRestreint: true })
+      .where(eq(collectiviteTable.id, collectiviteId));
+    const { user: visiteur, cleanup } = await addTestUser(databaseService);
+
+    try {
+      const { snapshots } = await router
+        .createCaller({ user: getAuthUserFromUserCredentials(visiteur) })
+        .snapshots.list({
+          collectiviteId,
+          referentielId: ReferentielIdEnum.CAE,
+          options: { jalons: [SnapshotJalonEnum.DATE_PERSONNALISEE] },
+        });
+
+      const foundSnapshot = snapshots.find(({ ref }) => ref === snapshot.ref);
+      expect(foundSnapshot).toBeDefined();
+      expect(foundSnapshot?.createdByName).toBeUndefined();
+    } finally {
+      await databaseService.db
+        .update(collectiviteTable)
+        .set({ accesRestreint: false })
+        .where(eq(collectiviteTable.id, collectiviteId));
+      await caller.snapshots.delete({
+        collectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+        snapshotRef: snapshot.ref,
+      });
+      await cleanup();
+    }
   });
 
   async function setReferentielPreferences(
@@ -97,6 +139,7 @@ describe('ListSnapshotsService', () => {
       referentielVersion: snapshot.referentielVersion,
       auditId: null,
       createdBy: testUser.id,
+      createdByName: `${testUserDcp.prenom} ${testUserDcp.nom}`,
       modifiedBy: testUser.id,
       pointFait: snapshot.pointFait,
       pointPasFait: snapshot.pointPasFait,

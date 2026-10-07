@@ -38,8 +38,8 @@ export class SnapshotsRouter {
   router = this.trpc.router({
     list: this.trpc.authedProcedure
       .input(listInputSchema)
-      .query(({ input }) => {
-        return this.listSnapshots.list(input);
+      .query(({ input, ctx }) => {
+        return this.listSnapshots.list(input, { user: ctx.user });
       }),
 
     listWithScores: this.trpc.authedProcedure
