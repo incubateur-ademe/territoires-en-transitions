@@ -123,9 +123,9 @@ describe('les totaux du plan et la confidentialité des fiches', () => {
     };
   };
 
-  it('ne compte pour le visiteur vérifié non membre ni la fiche restreinte ni son budget', async () => {
+  it('compte la fiche restreinte mais pas son budget pour le visiteur vérifié non membre', async () => {
     expect(await getPlanTotalsAs(verifiedVisitor)).toEqual({
-      totalFiches: 2,
+      totalFiches: 3,
       investissementReel: { total: 200, nbFiches: 1 },
     });
   });
