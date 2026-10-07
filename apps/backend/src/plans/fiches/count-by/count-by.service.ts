@@ -2,6 +2,7 @@ import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { countByDateSlots } from '@tet/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import { countByArrayValues } from '@tet/backend/plans/fiches/count-by/utils/count-by-array-value';
+import { isCountByPropertyMasked } from '@tet/backend/plans/fiches/list-fiches/fiches-restreintes.rules';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ficheActionResultatsAttenduValues } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
@@ -462,7 +463,11 @@ export class CountByService {
     try {
       const { data: fiches } =
         await this.ficheActionListService.getFichesActionResumes(
-          { collectiviteId, filters },
+          {
+            collectiviteId,
+            filters,
+            readsMaskedFields: isCountByPropertyMasked(countByProperty),
+          },
           { user }
         );
       return this.countByPropertyWithFiches(fiches, countByProperty, filters);

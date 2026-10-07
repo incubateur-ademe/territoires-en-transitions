@@ -1,5 +1,16 @@
 import { plural } from '@tet/ui/labels/plural';
 
+type PlanBudgetCalculArgs = {
+  nbFiches: number;
+  totalFiches: number | undefined;
+};
+
+const planBudgetCalculInfo = ({
+  nbFiches,
+  totalFiches,
+}: PlanBudgetCalculArgs): string =>
+  `Le budget total est calculé sur la base de ${nbFiches}/${totalFiches} actions.\nLes actions sans budget dépensé HT renseigné ne sont pas incluses dans ce calcul.`;
+
 export const plansLabels = {
   /** Plan */
   plan: plural({ one: 'plan', other: 'plans' }),
@@ -10,6 +21,15 @@ export const plansLabels = {
   type: 'Type',
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
+  planBudgetCalculInfo,
+  planBudgetCalculSansFichesRestreintesInfo: (
+    args: PlanBudgetCalculArgs
+  ): string =>
+    `${planBudgetCalculInfo(args)}\nLes actions en accès restreint ne sont pas incluses non plus.`,
+  planBudgetACompleterInfo:
+    'Complétez les budgets dépensés HT dans les actions pour voir le total ici.',
+  planBudgetAucunVisibleInfo:
+    "Aucun budget dépensé HT n'est visible pour le moment.\nLes actions en accès restreint ne sont pas incluses.",
 
   sansPlanCardTitle: "Aucun plan d'action renseigné !",
   sansPlanCardDescription:

@@ -50,7 +50,6 @@ export class DemarchePlansContenuRepository {
       // fiche mère). La dupliquer serait s'exposer à ce qu'elles divergent.
       const axesResult = await this.listAxesRepository.listChildrenRecursively(
         { parentId: planId, collectiviteId },
-        { includeFichesRestreintes: true },
         tx
       );
       if (!axesResult.success) {

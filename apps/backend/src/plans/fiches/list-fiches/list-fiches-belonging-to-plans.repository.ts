@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { and, eq, inArray, isNull, or } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
 import { axeTable } from '../shared/models/axe.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
@@ -11,19 +11,9 @@ export class ListFichesBelongingToPlansRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
   listFichesBelongingToPlans(
-    {
-      planIds,
-      includeFichesRestreintes,
-    }: { planIds: number[]; includeFichesRestreintes: boolean },
+    { planIds }: { planIds: number[] },
     { tx }: { tx?: Transaction } = {}
   ) {
-    const fichesRestreintesCondition = includeFichesRestreintes
-      ? undefined
-      : or(
-          isNull(ficheActionTable.restreint),
-          eq(ficheActionTable.restreint, false)
-        );
-
     return (tx ?? this.databaseService.db)
       .select({
         ficheId: ficheActionAxeTable.ficheId,
@@ -38,8 +28,7 @@ export class ListFichesBelongingToPlansRepository {
       .where(
         and(
           or(inArray(axeTable.plan, planIds), inArray(axeTable.id, planIds)),
-          eq(ficheActionTable.deleted, false),
-          fichesRestreintesCondition
+          eq(ficheActionTable.deleted, false)
         )
       );
   }

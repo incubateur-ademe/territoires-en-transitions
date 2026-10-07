@@ -7,6 +7,7 @@ import {
   MetadataItemProps,
   MetadataLine,
 } from '@/app/ui/metadata-line';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AggregatedBudget, Plan } from '@tet/domain/plans';
 import { InlineEditWrapper, Select, Tooltip } from '@tet/ui';
 import { plural } from '@tet/ui/labels/plural';
@@ -30,6 +31,10 @@ export const PlanMetadata = ({
   updatePlan,
 }: PlanMetadataProps) => {
   const { options: planTypesOptions } = useListPlanTypes();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canReadFichesRestreintes = hasCollectivitePermission(
+    'plans.fiches.read_confidentiel'
+  );
   const { id, collectiviteId } = plan;
   const axesCountByType = countBy(plan.axes, (axe) =>
     axe.depth === 0 ? 'root' : axe.depth > 1 ? 'sousAxe' : 'axe'
@@ -99,6 +104,7 @@ export const PlanMetadata = ({
           label="Budget d'investissement"
           budget={plan.budget?.investissement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
+          canReadFichesRestreintes={canReadFichesRestreintes}
         />
         <PlanBudgetItem
           dataTest="plan-header-fonctionnement"
@@ -107,6 +113,7 @@ export const PlanMetadata = ({
           label="Budget de fonctionnement"
           budget={plan.budget?.fonctionnement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
+          canReadFichesRestreintes={canReadFichesRestreintes}
         />
       </MetadataLine>
       <MetadataLine className="text-grey-8">
@@ -140,6 +147,15 @@ export const PlanMetadata = ({
   );
 };
 
+type PlanBudgetItemProps = Pick<
+  MetadataItemProps,
+  'hideSeparator' | 'icon' | 'label' | 'dataTest'
+> & {
+  budget: AggregatedBudget | undefined;
+  totalFiches: number | undefined;
+  canReadFichesRestreintes: boolean;
+};
+
 const PlanBudgetItem = ({
   dataTest,
   hideSeparator,
@@ -147,20 +163,18 @@ const PlanBudgetItem = ({
   label,
   budget,
   totalFiches,
-}: Pick<MetadataItemProps, 'hideSeparator' | 'icon' | 'label' | 'dataTest'> & {
-  budget: AggregatedBudget | undefined;
-  totalFiches: number | undefined;
-}) => {
+  canReadFichesRestreintes,
+}: PlanBudgetItemProps) => {
   const formattedBudget = budget && formatBudget(budget.total);
 
   return (
     <Tooltip
       className="whitespace-break-spaces"
-      label={
-        formattedBudget
-          ? `Le budget total est calculé sur la base de ${budget.nbFiches}/${totalFiches} actions.\nLes actions sans budget dépensé HT renseigné ne sont pas incluses dans ce calcul.`
-          : 'Complétez les budgets dépensés HT dans les actions pour voir le total ici.'
-      }
+      label={getBudgetTooltipLabel({
+        budget,
+        totalFiches,
+        canReadFichesRestreintes,
+      })}
     >
       <MetadataItem
         dataTest={dataTest}
@@ -172,6 +186,26 @@ const PlanBudgetItem = ({
     </Tooltip>
   );
 };
+
+function getBudgetTooltipLabel({
+  budget,
+  totalFiches,
+  canReadFichesRestreintes,
+}: Pick<
+  PlanBudgetItemProps,
+  'budget' | 'totalFiches' | 'canReadFichesRestreintes'
+>): string {
+  if (!budget?.total) {
+    return canReadFichesRestreintes
+      ? appLabels.planBudgetACompleterInfo
+      : appLabels.planBudgetAucunVisibleInfo;
+  }
+  const calculArgs = { nbFiches: budget.nbFiches, totalFiches };
+  if (canReadFichesRestreintes) {
+    return appLabels.planBudgetCalculInfo(calculArgs);
+  }
+  return appLabels.planBudgetCalculSansFichesRestreintesInfo(calculArgs);
+}
 
 function formatBudget(budget?: number): string {
   return budget ? BUDGET_FORMATTER.format(budget) : '';

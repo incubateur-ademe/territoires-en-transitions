@@ -100,6 +100,13 @@ import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-a
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheRecursiveAxeView } from '../shared/models/fiche-recursive-axe.view';
 import { checkCompletion } from './completion';
+import {
+  DescriptionSearchScope,
+  FichesRestreintesAccess,
+  getDescriptionSearchScope,
+  getFichesRestreintesAccess,
+  maskFichesRestreintes,
+} from './fiches-restreintes.rules';
 import { ListFichesBudgetRepository } from './list-fiches-budget.repository';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
@@ -123,7 +130,11 @@ export type FicheTextFields = {
 };
 
 type ReadableFichesFilters =
-  | { kind: 'filters'; filters: ListFichesRequestFilters }
+  | {
+      kind: 'filters';
+      filters: ListFichesRequestFilters;
+      access: FichesRestreintesAccess;
+    }
   | { kind: 'no_readable_fiche' };
 
 @Injectable()
@@ -902,12 +913,19 @@ export default class ListFichesService {
     return queryResult[0]?.count ?? 0;
   }
 
-  private getFicheIdsQuery(
-    collectiviteId: number | null,
-    filters?: ListFichesRequestFilters,
-    queryOptions?: QueryOptionsSchema,
-    tx?: Transaction
-  ) {
+  private getFicheIdsQuery({
+    collectiviteId,
+    filters,
+    queryOptions,
+    tx,
+    descriptionSearch,
+  }: {
+    collectiviteId: number | null;
+    filters?: ListFichesRequestFilters;
+    queryOptions?: QueryOptionsSchema;
+    tx?: Transaction;
+    descriptionSearch: DescriptionSearchScope;
+  }) {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
@@ -921,10 +939,11 @@ export default class ListFichesService {
       );
     }
 
-    const conditions: (SQLWrapper | SQL | undefined)[] = this.getConditions(
+    const conditions: (SQLWrapper | SQL | undefined)[] = this.getConditions({
       collectiviteId,
-      filters
-    );
+      filters,
+      descriptionSearch,
+    });
 
     const ficheIdsQuery = (tx || this.databaseService.db)
       .select({
@@ -978,12 +997,38 @@ export default class ListFichesService {
     data: FicheWithRelations[];
     count: number;
   }> {
-    const ficheIdsQuery = this.getFicheIdsQuery(
+    return this.listFichesWithDescriptionSearch({
       collectiviteId,
       filters,
       queryOptions,
-      tx
-    );
+      tx,
+      descriptionSearch: 'all',
+    });
+  }
+
+  private async listFichesWithDescriptionSearch({
+    collectiviteId,
+    filters,
+    queryOptions,
+    tx,
+    descriptionSearch,
+  }: {
+    collectiviteId: number | null;
+    filters?: ListFichesRequestFilters;
+    queryOptions?: QueryOptionsSchema;
+    tx?: Transaction;
+    descriptionSearch: DescriptionSearchScope;
+  }): Promise<{
+    data: FicheWithRelations[];
+    count: number;
+  }> {
+    const ficheIdsQuery = this.getFicheIdsQuery({
+      collectiviteId,
+      filters,
+      queryOptions,
+      tx,
+      descriptionSearch,
+    });
 
     const ficheIdQueryResult = await ficheIdsQuery;
     const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
@@ -1546,10 +1591,15 @@ export default class ListFichesService {
     }
   }
 
-  private getConditions(
-    collectiviteId: number | null,
-    filters: ListFichesRequestFilters = {}
-  ): (SQLWrapper | SQL | undefined)[] {
+  private getConditions({
+    collectiviteId,
+    filters = {},
+    descriptionSearch,
+  }: {
+    collectiviteId: number | null;
+    filters?: ListFichesRequestFilters;
+    descriptionSearch: DescriptionSearchScope;
+  }): (SQLWrapper | SQL | undefined)[] {
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
     // Exclut systématiquement les fiches soft-deleted
     conditions.push(eq(ficheActionTable.deleted, false));
@@ -1919,18 +1969,28 @@ export default class ListFichesService {
     );
     conditions.push(or(...referentConditions));
 
-    const textSearchConditions: (SQLWrapper | SQL)[] = [];
+    const textSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
     if (filters.texteNomOuDescription) {
       this.addTextSearchCondition(
         textSearchConditions,
         sql`${ficheActionTable.titre}`,
         filters.texteNomOuDescription
       );
+      const descriptionSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
       this.addTextSearchCondition(
-        textSearchConditions,
+        descriptionSearchConditions,
         sql`${ficheActionTable.description}`,
         filters.texteNomOuDescription
       );
+      if (descriptionSearch === 'unrestrictedFichesOnly') {
+        descriptionSearchConditions.push(
+          or(
+            isNull(ficheActionTable.restreint),
+            eq(ficheActionTable.restreint, false)
+          )
+        );
+      }
+      textSearchConditions.push(and(...descriptionSearchConditions));
       conditions.push(or(...textSearchConditions));
     }
 
@@ -1969,7 +2029,12 @@ export default class ListFichesService {
     {
       collectiviteId,
       filters,
-    }: { collectiviteId: number; filters: ListFichesRequestFilters },
+      readsMaskedFields,
+    }: {
+      collectiviteId: number;
+      filters: ListFichesRequestFilters;
+      readsMaskedFields: boolean;
+    },
     { user, tx }: FichesReadContext
   ): Promise<ReadableFichesFilters> {
     const canReadFichesRestreintes =
@@ -1980,15 +2045,26 @@ export default class ListFichesService {
         tx
       );
 
-    if (!canReadFichesRestreintes && filters.restreint === true) {
-      return { kind: 'no_readable_fiche' };
+    const access = getFichesRestreintesAccess({
+      canReadFichesRestreintes,
+      filters,
+      readsMaskedFields,
+    });
+
+    const areFichesRestreintesExcluded = access === 'excluded';
+    if (areFichesRestreintesExcluded) {
+      const isFilteringOnlyFichesRestreintes = filters.restreint === true;
+      if (isFilteringOnlyFichesRestreintes) {
+        return { kind: 'no_readable_fiche' };
+      }
+      return {
+        kind: 'filters',
+        filters: { ...filters, restreint: false },
+        access,
+      };
     }
 
-    const readableFilters = canReadFichesRestreintes
-      ? filters
-      : { ...filters, restreint: false };
-
-    return { kind: 'filters', filters: readableFilters };
+    return { kind: 'filters', filters, access };
   }
 
   /**
@@ -2004,10 +2080,12 @@ export default class ListFichesService {
       collectiviteId,
       filters,
       queryOptions,
+      readsMaskedFields,
     }: {
       collectiviteId: number;
       filters: ListFichesRequestFilters;
       queryOptions?: QueryOptionsSchema;
+      readsMaskedFields: boolean;
     },
     { user, tx }: FichesReadContext
   ): Promise<{
@@ -2023,19 +2101,24 @@ export default class ListFichesService {
       }`
     );
     const readable = await this.getReadableFichesFilters(
-      { collectiviteId, filters },
+      { collectiviteId, filters, readsMaskedFields },
       { user, tx }
     );
     if (readable.kind === 'no_readable_fiche') {
       return { count: 0, nextPage: null, nbOfPages: 0, data: [] };
     }
 
-    const { data, count } = await this.listFichesQuery(
+    const { data: fiches, count } = await this.listFichesWithDescriptionSearch({
       collectiviteId,
-      readable.filters,
+      filters: readable.filters,
       queryOptions,
-      tx
-    );
+      tx,
+      descriptionSearch: getDescriptionSearchScope(readable.access),
+    });
+    const areFichesRestreintesReadable = readable.access === 'readable';
+    const data = areFichesRestreintesReadable
+      ? fiches
+      : maskFichesRestreintes(fiches);
 
     if (queryOptions?.limit === 'all' || queryOptions === undefined) {
       return {
