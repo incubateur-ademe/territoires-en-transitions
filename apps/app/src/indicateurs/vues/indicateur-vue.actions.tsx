@@ -36,7 +36,7 @@ export function IndicateurVueActions({
     vue?.filtres != null && !areIndicateurVueFiltersEqual(filters, vue.filtres);
   const hasFilters = Object.keys(filters).length > 0;
 
-  if (vue && !hasUnsavedChanges) return null;
+  if (vue ? !hasUnsavedChanges : !hasFilters) return null;
 
   const isMutating = createMutation.isPending || updateMutation.isPending;
 
