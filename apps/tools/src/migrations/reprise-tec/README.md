@@ -84,6 +84,9 @@ chiffres, de 10 à 99, est lue 20AA (`0023-01-25` devient 2023-01-25) ; les
 autres (`0002-12-01`, `0217-03-02`) sont traitées comme absentes. Le rapport
 nomme chaque dossier concerné.
 
+Un dossier saisi pour essai dans T&C (liste `DOSSIERS_DE_TEST` de
+`perimetre.ts`) est écarté, motif `dossier_de_test`.
+
 Un second `--confirm` échoue sur `correspondance` : les dossiers sont déjà là.
 
 Pour retirer l'import (simulation par défaut) :
