@@ -98,6 +98,7 @@ export function useReferentielTableData({
           exemples: '',
           exprScore: null,
           identifiant: index.toString(),
+          isCoremeasure: false,
           labels: [],
           level: 1,
           modifiedAt: '',
@@ -127,6 +128,7 @@ export function useReferentielTableData({
           scoresTag: {},
           services: [],
           tags: [],
+          thematiques: [],
           thematiqueSgpe: thematique,
           typeCalculScore: null,
         };
