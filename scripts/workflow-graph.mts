@@ -8,6 +8,9 @@ import prompts from 'prompts';
 
 const DOMAIN_SRC = 'packages/domain/src';
 const DOMAIN_DIST = 'packages/domain/dist';
+// Le rendu est celui du domaine, pas une copie : le diagramme reste celui que
+// `workflowToMermaid` produit partout ailleurs.
+const MERMAID_MODULE = 'utils/workflow/workflow-to-mermaid';
 
 type Workflow = {
   initialStatus: string;
@@ -38,18 +41,6 @@ function findWorkflowFiles(dir: string, fileList: string[] = []): string[] {
   return fileList;
 }
 
-function toMermaid(name: string, workflow: Workflow): string {
-  const lines = ['stateDiagram-v2', `  [*] --> ${workflow.initialStatus}`];
-  for (const transition of workflow.transitionNames) {
-    const def = workflow.getTransitionDef(transition);
-    const guards = def.guards?.length ? ` 🔒${def.guards.join(', ')}` : '';
-    for (const from of def.from) {
-      lines.push(`  ${from} --> ${def.to}: ${transition}${guards}`);
-    }
-  }
-  return [`%% ${name}`, ...lines].join('\n');
-}
-
 const sourceFiles = findWorkflowFiles(DOMAIN_SRC);
 if (sourceFiles.length === 0) {
   console.error(`Aucun fichier *.workflow.ts trouvé sous ${DOMAIN_SRC}.`);
@@ -58,21 +49,25 @@ if (sourceFiles.length === 0) {
 
 // Les workflows sont importés depuis le build du domaine (dist) : Node ne
 // sait pas charger les .ts du package directement.
-const candidates = sourceFiles.map((sourcePath) => {
-  const distPath = join(
-    DOMAIN_DIST,
-    relative(DOMAIN_SRC, sourcePath).replace(/\.ts$/, '.js')
-  );
-  return { sourcePath, distPath };
-});
+const toDistPath = (sourcePath: string): string =>
+  join(DOMAIN_DIST, relative(DOMAIN_SRC, sourcePath).replace(/\.ts$/, '.js'));
+
+const candidates = sourceFiles.map((sourcePath) => ({
+  sourcePath,
+  distPath: toDistPath(sourcePath),
+}));
+const mermaidSource = join(DOMAIN_SRC, `${MERMAID_MODULE}.ts`);
 
 // La fraîcheur du build est garantie par le target make (tsc --build) ; les
 // mtimes ne sont pas fiables (cache nx, rebase).
-const missing = candidates.filter(({ distPath }) => !existsSync(distPath));
+const missing = [
+  ...candidates.map(({ sourcePath }) => sourcePath),
+  mermaidSource,
+].filter((sourcePath) => !existsSync(toDistPath(sourcePath)));
 if (missing.length > 0) {
   console.error(
     'Build du domaine absent pour :\n' +
-      missing.map(({ sourcePath }) => `  - ${sourcePath}`).join('\n') +
+      missing.map((sourcePath) => `  - ${sourcePath}`).join('\n') +
       '\n→ lancez `make workflow-graph` (ou `pnpm tsc --build packages/domain/tsconfig.lib.json`).'
   );
   process.exit(1);
@@ -117,6 +112,10 @@ if (choices.length > 1) {
   console.error(`Un seul workflow actif : ${choices[0].title}\n`);
 }
 
+const { workflowToMermaid } = await import(
+  pathToFileURL(toDistPath(mermaidSource)).href
+);
+
 console.log('```mermaid');
-console.log(toMermaid(selected.name, selected.workflow));
+console.log(`%% ${selected.name}\n${workflowToMermaid(selected.workflow)}`);
 console.log('```');
