@@ -132,10 +132,18 @@ cohérente du schéma, des données et des applications.
 
 ## En cas d'échec
 
-Avant la réouverture, garder les accès fermés : corriger et reprendre le déploiement, ou restaurer
-le schéma et les données sauvegardés à l'étape 2 avec les anciennes versions applicatives.
-Le script [backup/restore.sh](backup/restore.sh) restaure des données vers local/staging/preprod ;
-il ne constitue pas une procédure de reprise de production couvrant le schéma.
+Avant la réouverture, garder les accès fermés : corriger et reprendre le déploiement, ou
+revenir à l'état sauvegardé à l'étape 2 avec les anciennes versions applicatives.
+
+La reprise de production — schéma et données — s'appuie sur les sauvegardes managées de
+Supabase (fenêtre de 7 jours, restauration déclenchée par l'opérateur depuis la plateforme
+Supabase), complétées par les sauvegardes décrites dans
+[l'ADR 0016](../doc/adr/0016-strategie-backup-database.md). Le script
+[backup/restore.sh](backup/restore.sh) restaure uniquement des données (`--data-only`) vers
+local/staging/preprod : il ne recrée pas le schéma et ne cible pas la production, il ne
+constitue donc pas à lui seul une procédure de reprise de production. Valider une restauration
+complète (schéma, données et versions applicatives) sur un environnement de préproduction
+avant la fenêtre de maintenance.
 
 Après la réouverture, préserver les nouvelles écritures et privilégier une correction en avant.
 Restaurer l'ancienne sauvegarde ou supprimer les colonnes de périodicité pourrait perdre des données.

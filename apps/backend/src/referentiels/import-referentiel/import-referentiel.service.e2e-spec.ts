@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { ImportReferentielService } from '@tet/backend/referentiels/import-referentiel/import-referentiel.service';
 import { getTestApp } from '@tet/backend/test';
+import { success } from '@tet/backend/utils/result.type';
 
 describe('import-referentiel.service', () => {
   let app: INestApplication;
@@ -135,7 +136,7 @@ describe('import-referentiel.service', () => {
           },
         ]
       );
-      expect(ret).toBe(true);
+      expect(ret).toEqual(success(true));
     });
   });
 
@@ -194,7 +195,7 @@ describe('import-referentiel.service', () => {
           },
         ]
       );
-      expect(ret).toBe(true);
+      expect(ret).toEqual(success(true));
     });
 
     test(`Ne déclenche pas d'erreur pour une expression valide identite(type, commune)`, async () => {
@@ -207,7 +208,7 @@ describe('import-referentiel.service', () => {
           },
         ]
       );
-      expect(ret).toBe(true);
+      expect(ret).toEqual(success(true));
     });
   });
 });

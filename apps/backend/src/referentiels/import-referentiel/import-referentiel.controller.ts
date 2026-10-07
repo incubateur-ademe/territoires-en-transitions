@@ -2,6 +2,7 @@ import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import type { ActionType, ReferentielId } from '@tet/domain/referentiels';
 import {
   ActionDefinitionEssential,
@@ -28,6 +29,8 @@ class ImportReferentielResponse implements ReferentielResponse {
 export class ImportReferentielController {
   private readonly logger = new Logger(ImportReferentielController.name);
 
+  private readonly getResultDataOrThrow = createControllerErrorHandler();
+
   constructor(private readonly importService: ImportReferentielService) {}
 
   @AllowAnonymousAccess()
@@ -37,7 +40,9 @@ export class ImportReferentielController {
   async importReferentiel(
     @Param('referentiel_id') referentielId: ReferentielId
   ) {
-    return this.importService.importReferentiel(referentielId);
+    return this.getResultDataOrThrow(
+      await this.importService.importReferentiel(referentielId)
+    );
   }
 
   @AllowAnonymousAccess()
@@ -47,6 +52,8 @@ export class ImportReferentielController {
   async verifyExpressions(
     @Param('referentiel_id') referentielId: ReferentielId
   ) {
-    return this.importService.verifyReferentiel(referentielId);
+    return this.getResultDataOrThrow(
+      await this.importService.verifyReferentiel(referentielId)
+    );
   }
 }
