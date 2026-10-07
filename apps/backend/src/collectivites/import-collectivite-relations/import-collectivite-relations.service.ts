@@ -9,6 +9,10 @@ import {
   EpciPerimetre,
   epciPerimetreSchema,
 } from '@tet/backend/collectivites/import-collectivite-relations/epci-perimetre.schema';
+import {
+  EPCI_PERIMETRE_DATAGOUV_URL,
+  epciPerimetreCsvPath,
+} from '@tet/backend/collectivites/import-collectivite-relations/epci-perimetre.source';
 import { ImportCollectiviteRelationsResponse } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.response';
 import {
   SyndicatEpci,
@@ -29,9 +33,6 @@ import { join } from 'path';
 @Injectable()
 export class ImportCollectiviteRelationsService {
   private readonly logger = new Logger(ImportCollectiviteRelationsService.name);
-
-  private readonly RELATIONS_EPCI_COMMUNES_URL =
-    'https://www.data.gouv.fr/api/1/datasets/r/6e05c448-62cc-4470-aa0f-4f31adea0bc4';
 
   private readonly RELATIONS_BULK_INSERT_BATCH_SIZE = 1000;
 
@@ -172,11 +173,11 @@ export class ImportCollectiviteRelationsService {
    */
   private async importEpciCommunesRelationsFromUrl(): Promise<ImportCollectiviteRelationsResponse> {
     this.logger.log(
-      `Fetching CSV data from ${this.RELATIONS_EPCI_COMMUNES_URL}`
+      `Fetching CSV data from ${EPCI_PERIMETRE_DATAGOUV_URL}`
     );
 
     try {
-      const response = await fetch(this.RELATIONS_EPCI_COMMUNES_URL);
+      const response = await fetch(EPCI_PERIMETRE_DATAGOUV_URL);
       if (!response.ok) {
         throw new UnprocessableEntityException(
           `Failed to fetch CSV data: ${response.status} ${response.statusText}`
@@ -202,7 +203,7 @@ export class ImportCollectiviteRelationsService {
 
     try {
       // Read the local CSV file
-      const csvFilePath = join(__dirname, 'perimetre-epci-a-fp.csv');
+      const csvFilePath = epciPerimetreCsvPath();
       const csvData = readFileSync(csvFilePath, 'utf-8');
 
       this.logger.log(`Read CSV file from ${csvFilePath}`);

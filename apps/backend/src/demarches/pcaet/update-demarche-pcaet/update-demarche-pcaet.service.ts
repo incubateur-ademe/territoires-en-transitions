@@ -4,6 +4,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { type DemarchePcaet } from '@tet/domain/demarches';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
@@ -22,6 +23,7 @@ export class UpdateDemarchePcaetService {
     private readonly accessService: DemarchePcaetAccessService,
     private readonly updateDemarchePcaetRepository: UpdateDemarchePcaetRepository,
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
+    private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService
   ) {}
@@ -42,15 +44,28 @@ export class UpdateDemarchePcaetService {
       }
       const demarche = access.data;
 
-      if (
-        typeof input.planActionId === 'number' &&
-        !(await this.updateDemarchePcaetRepository.isPlanActionOfCollectivite(
-          input.planActionId,
-          demarche.collectiviteId,
-          transaction
-        ))
-      ) {
-        return failure(UpdateDemarchePcaetErrorEnum.INVALID_PLAN_ACTION);
+      if (input.planActionIds !== undefined) {
+        const horsCollectivite =
+          await this.updateDemarchePcaetRepository.findPlanActionsHorsCollectivite(
+            input.planActionIds,
+            demarche.collectiviteId,
+            transaction
+          );
+        if (horsCollectivite.length > 0) {
+          return failure(UpdateDemarchePcaetErrorEnum.INVALID_PLAN_ACTION);
+        }
+
+        // Exclusivité : un plan n'est tenu que par une seule démarche active.
+        // Réécrire l'ensemble reste idempotent (la démarche est exclue).
+        const holders =
+          await this.planActionsRepository.findActiveDemarchesHoldingPlans(
+            input.planActionIds,
+            demarche.id,
+            transaction
+          );
+        if (holders.length > 0) {
+          return failure(UpdateDemarchePcaetErrorEnum.PLAN_DEJA_RATTACHE);
+        }
       }
 
       const updateResult =
@@ -64,6 +79,23 @@ export class UpdateDemarchePcaetService {
         return failure(
           UpdateDemarchePcaetErrorEnum.UPDATE_DEMARCHE_PCAET_ERROR
         );
+      }
+
+      if (input.planActionIds !== undefined) {
+        const planActionsResult =
+          await this.planActionsRepository.setPlanActions(
+            demarche.id,
+            input.planActionIds,
+            user.id,
+            transaction
+          );
+        if (!planActionsResult.success) {
+          return failure(
+            planActionsResult.error === 'PLAN_DEJA_RATTACHE'
+              ? UpdateDemarchePcaetErrorEnum.PLAN_DEJA_RATTACHE
+              : UpdateDemarchePcaetErrorEnum.SET_PLAN_ACTIONS_ERROR
+          );
+        }
       }
 
       if (input.pilotes !== undefined) {

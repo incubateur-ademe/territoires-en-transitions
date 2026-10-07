@@ -4,6 +4,7 @@ import {
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
+import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -29,9 +30,26 @@ describe('PersonnalisationsExpressionService', () => {
       } catch (e) {
         expect(e).toBeDefined();
         expect((e as Error).message).toEqual(
-          'NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:17)'
+          [
+            '(ligne 1, colonne 17) :',
+            '  score(cae_1.2.3))',
+            '                  ^',
+            "Texte inattendu après la fin de l'expression : « ) ».",
+          ].join('\n')
         );
       }
+    });
+
+    it('lève InvalidExpressionError sur un caractère non reconnu', () => {
+      expect(() =>
+        expressionService.parseExpression('identite(sinoe, rural_dispersé)')
+      ).toThrow(InvalidExpressionError);
+    });
+
+    it('lève InvalidExpressionError sur une erreur de parsing', () => {
+      expect(() => expressionService.parseExpression('si vrai alors')).toThrow(
+        InvalidExpressionError
+      );
     });
 
     it('score(cae_1.2.3) + score(cae_1.2.4)', async () => {
@@ -659,17 +677,14 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
     it('identite(type, epci) en minuscules retourne true (insensible a la casse)', () => {
       expect(
-        expressionService.parseAndEvaluateExpression(
-          'identite(type, epci)',
-          {
-            identiteCollectivite: {
-              type: CollectiviteTypeEnum.EPCI,
-              soustype: CollectiviteSousTypeEnum.EPCI_FP,
-              populationTags: [],
-              drom: false,
-            },
-          }
-        )
+        expressionService.parseAndEvaluateExpression('identite(type, epci)', {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          },
+        })
       ).toBe(true);
     });
   });
@@ -677,17 +692,14 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
   describe('identite(type, ...)', () => {
     it('identite(type, EPCI) retourne true pour un EPCI', () => {
       expect(
-        expressionService.parseAndEvaluateExpression(
-          'identite(type, EPCI)',
-          {
-            identiteCollectivite: {
-              type: CollectiviteTypeEnum.EPCI,
-              soustype: CollectiviteSousTypeEnum.EPCI_FP,
-              populationTags: [],
-              drom: false,
-            },
-          }
-        )
+        expressionService.parseAndEvaluateExpression('identite(type, EPCI)', {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          },
+        })
       ).toBe(true);
     });
 
@@ -765,7 +777,8 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     };
     const desactivation425 =
       'si identite(type, syndicat) et reponse(dechets_2, oui) alors faux sinon vrai';
-    const desactivation124 = 'si identite(type, syndicat) alors faux sinon vrai';
+    const desactivation124 =
+      'si identite(type, syndicat) alors faux sinon vrai';
 
     it('eci_4.2.5 reste active pour un syndicat de traitement ayant declare dechets_2', () => {
       expect(
@@ -850,6 +863,21 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     ).toBe(2);
   });
 
+  describe('identite() rejette les propriétés héritées', () => {
+    it.each(['toString', 'constructor'])('%s n’est pas un champ', (champ) => {
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(`identite(${champ}, x)`, {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          },
+        })
+      ).toThrow('non reconnu');
+    });
+  });
+
   describe("messages d'erreur pour identite()", () => {
     it('lance une erreur avec les enums type et soustype pour un champ inconnu', () => {
       expect(() =>
@@ -866,8 +894,142 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
         )
       ).toThrow(
         'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
-          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre, sinoe.'
       );
+    });
+  });
+
+  describe('identite(commune_membre, …)', () => {
+    const identiteAvecCommunes = (
+      communesMembresPopulationTags: CollectivitePopulationTypeEnum[]
+    ) => ({
+      type: CollectiviteTypeEnum.EPCI,
+      soustype: CollectiviteSousTypeEnum.EPCI_FP,
+      // La population propre de l'EPCI ne compte pas : seule celle de ses
+      // communes membres est interrogée.
+      populationTags: [CollectivitePopulationTypeEnum.PLUS_DE_100000],
+      drom: false,
+      communesMembresPopulationTags,
+    });
+
+    it('est vrai quand une commune membre dépasse le seuil', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          {
+            identiteCollectivite: identiteAvecCommunes([
+              CollectivitePopulationTypeEnum.PLUS_DE_20000,
+              CollectivitePopulationTypeEnum.PLUS_DE_45000,
+            ]),
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('est faux quand aucune commune membre ne dépasse le seuil, même si l’EPCI le dépasse', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          {
+            identiteCollectivite: identiteAvecCommunes([
+              CollectivitePopulationTypeEnum.PLUS_DE_20000,
+            ]),
+          }
+        )
+      ).toBe(false);
+    });
+
+    it('est faux sans aucune commune membre connue', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          { identiteCollectivite: identiteAvecCommunes([]) }
+        )
+      ).toBe(false);
+    });
+
+    // Les tranches sont celles de la commune la plus peuplée : « moins de N »
+    // y voudrait dire « aucune commune de plus de N », ce que le champ ne
+    // promet pas.
+    it('ne répond qu’aux seuils « plus de », et lève sur « moins de »', () => {
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, moins_de_100000)',
+          {
+            identiteCollectivite: identiteAvecCommunes([
+              CollectivitePopulationTypeEnum.MOINS_DE_100000,
+            ]),
+          }
+        )
+      ).toThrow('plus_de_');
+    });
+
+    // Une identité servie sans ses communes membres (personnalisation d'un
+    // référentiel, calcul de score) ne doit pas répondre « non » en silence.
+    it('lève quand les communes membres n’ont pas été chargées', () => {
+      const { communesMembresPopulationTags: _, ...sansCommunes } =
+        identiteAvecCommunes([]);
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(
+          'identite(commune_membre, plus_de_45000)',
+          { identiteCollectivite: sansCommunes }
+        )
+      ).toThrow('communes membres');
+    });
+  });
+
+  describe('identite(sinoe, …)', () => {
+    const expression = 'si identite(sinoe, urbain) alors 1 sinon 0';
+    const identiteSinoe = (sinoeId?: string | null) => ({
+      type: CollectiviteTypeEnum.COMMUNE,
+      soustype: null,
+      populationTags: [],
+      drom: false,
+      sinoeId,
+    });
+
+    it('rend 1 quand la typologie correspond', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: identiteSinoe('urbain'),
+        })
+      ).toBe(1);
+    });
+
+    it('ignore la casse', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(sinoe, URBAIN)',
+          { identiteCollectivite: identiteSinoe('urbain') }
+        )
+      ).toBe(true);
+    });
+
+    it('rend 0 pour une autre typologie', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: identiteSinoe('rural_disperse'),
+        })
+      ).toBe(0);
+    });
+
+    it('rend 0 pour une collectivité sans typologie connue', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: identiteSinoe(null),
+        })
+      ).toBe(0);
+    });
+
+    // Une identité servie sans sa typologie ne doit pas répondre « non » en
+    // silence.
+    it('lève quand la typologie n’a pas été chargée', () => {
+      const { sinoeId: _, ...sansTypologie } = identiteSinoe();
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: sansTypologie,
+        })
+      ).toThrow('typologie SINOE');
     });
   });
 
@@ -891,9 +1053,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     });
 
     it('retourne 10 sans contexte (filet de sécurité évaluateur pur)', () => {
-      expect(
-        expressionService.parseAndEvaluateExpression(expression)
-      ).toBe(10);
+      expect(expressionService.parseAndEvaluateExpression(expression)).toBe(10);
     });
 
     it('retourne 20 avec contexte te-test (famille te)', () => {
@@ -990,6 +1150,73 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           },
         })
       ).toBe(85);
+    });
+  });
+
+  describe('demarche(renouvellement)', () => {
+    const expression = 'demarche(renouvellement)';
+
+    it('est vrai quand la collectivité a déjà mené un PCAET', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          demarcheContext: { renouvellement: true },
+        })
+      ).toBe(true);
+    });
+
+    it('est faux pour une première élaboration', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          demarcheContext: { renouvellement: false },
+        })
+      ).toBe(false);
+    });
+
+    // Le service sert aussi la personnalisation des référentiels et les
+    // indicateurs, qui ne fournissent jamais cette dimension : la fonction doit
+    // y répondre faux, pas exploser. Même parti que referentiel(...).
+    it('est faux sans contexte de démarche, sans lever', () => {
+      expect(expressionService.parseAndEvaluateExpression(expression)).toBe(
+        false
+      );
+    });
+
+    // `in` aurait accepté les propriétés héritées d'Object et rendu une valeur
+    // non booléenne au lieu de lever.
+    it.each(['toString', 'constructor', 'valueOf'])(
+      'rejette la propriété héritée %s',
+      (champ) => {
+        expect(() =>
+          expressionService.parseAndEvaluateExpression(`demarche(${champ})`, {
+            demarcheContext: { renouvellement: true },
+          })
+        ).toThrow('non reconnu');
+      }
+    );
+
+    it('lève sur un champ inconnu, pour qu’une coquille se voie', () => {
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(
+          'demarche(renouvellemnt)',
+          { demarcheContext: { renouvellement: true } }
+        )
+      ).toThrow('Champ de démarche "renouvellemnt" non reconnu');
+    });
+
+    it('se compose avec les autres fonctions du langage', () => {
+      const composee =
+        'demarche(renouvellement) et identite(population, plus_de_45000)';
+      expect(
+        expressionService.parseAndEvaluateExpression(composee, {
+          demarcheContext: { renouvellement: true },
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [CollectivitePopulationTypeEnum.PLUS_DE_45000],
+            drom: false,
+          },
+        })
+      ).toBe(true);
     });
   });
 });

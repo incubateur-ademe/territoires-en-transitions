@@ -1,11 +1,11 @@
 import { parseAsStringLiteral } from 'nuqs';
 
-export const sortField = ['nom', 'createdAt'] as const;
+const sortField = ['nom', 'createdAt'] as const;
 export const isSortValue = (value: any): value is SortField => {
   return sortField.includes(value as SortField);
 };
 export type SortField = (typeof sortField)[number];
-export const sortDirections = ['asc', 'desc'] as const;
+const sortDirections = ['asc', 'desc'] as const;
 export type SortDirection = (typeof sortDirections)[number];
 
 export type SortByOption = {

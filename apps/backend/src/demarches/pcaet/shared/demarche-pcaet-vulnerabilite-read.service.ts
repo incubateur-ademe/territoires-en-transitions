@@ -4,7 +4,7 @@ import type { DemarchePcaetVulnerabilite } from '@tet/domain/demarches';
 import { DemarchePcaetVulnerabiliteRepository } from './demarche-pcaet-vulnerabilite.repository';
 
 /**
- * Service de lecture pour le volet vulnérabilité : charge les domaines de la
+ * Service de lecture pour le volet vulnérabilité : charge les thématiques de la
  * démarche — le socle plus ceux qu'elle rattache — chacun avec sa ligne.
  */
 @Injectable()
@@ -14,9 +14,9 @@ export class DemarchePcaetVulnerabiliteReadService {
   ) {}
 
   /**
-   * Le volet vulnérabilité tel qu'il est servi : les domaines de la démarche —
+   * Le volet vulnérabilité tel qu'il est servi : les thématiques de la démarche —
    * le socle plus ceux qu'elle rattache — chacun avec sa ligne, même vierge,
-   * pour que le front n'ait pas deux formes à gérer. Un domaine du socle
+   * pour que le front n'ait pas deux formes à gérer. Une thématique du socle
    * apparaît même sans rattachement : il s'impose à tous les dépôts.
    */
   async loadVulnerabilite(
@@ -26,23 +26,23 @@ export class DemarchePcaetVulnerabiliteReadService {
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<DemarchePcaetVulnerabilite> {
-    const [domaines, saisies] = await Promise.all([
-      this.vulnerabiliteRepository.listDomainesDeLaDemarche(
+    const [thematiques, saisies] = await Promise.all([
+      this.vulnerabiliteRepository.listThematiquesDeLaDemarche(
         { demarcheId, collectiviteId },
         tx
       ),
       this.vulnerabiliteRepository.listLignes(demarcheId, tx),
     ]);
-    const parDomaine = new Map(
-      saisies.map((ligne) => [ligne.domaineId, ligne])
+    const parThematique = new Map(
+      saisies.map((ligne) => [ligne.thematiqueId, ligne])
     );
 
     return {
-      domaines,
-      lignes: domaines.map(
+      thematiques,
+      lignes: thematiques.map(
         ({ id }) =>
-          parDomaine.get(id) ?? {
-            domaineId: id,
+          parThematique.get(id) ?? {
+            thematiqueId: id,
             niveauMaintenant: null,
             niveau2050: null,
             niveau2100: null,

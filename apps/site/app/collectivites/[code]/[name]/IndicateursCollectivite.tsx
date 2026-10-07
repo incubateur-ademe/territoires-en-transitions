@@ -1,20 +1,13 @@
-import {
-  IndicateurArtificialisation,
-  Indicateurs,
-} from '@/site/app/collectivites/utils';
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import {
+  SiteIndicateurArtificialisation,
+  SiteIndicateurGes,
+} from '@/site/src/trpc/trpc-client';
 import IndicateurArtificialisationSols from './IndicateurArtificialisationSols';
+import type { Indicateur } from '../../utils';
 import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
 
-export type IndicateurDefaultData = {
-  titre: string;
-  description: string;
-  titre_encadre: string;
-  description_encadre: string;
-  illustration_encadre: StrapiItem;
-  details?: string;
-};
+export type IndicateurDefaultData = Indicateur;
 
 type IndicateursCollectiviteProps = {
   defaultData: {
@@ -22,8 +15,8 @@ type IndicateursCollectiviteProps = {
     gaz_effet_serre?: IndicateurDefaultData;
   };
   indicateurs: {
-    artificialisation_sols: IndicateurArtificialisation | null;
-    gaz_effet_serre: Indicateurs[] | null;
+    artificialisation_sols: SiteIndicateurArtificialisation | null;
+    gaz_effet_serre: SiteIndicateurGes[] | null;
   };
 };
 

@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -18,6 +19,7 @@ import {
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
 import {
@@ -42,14 +44,48 @@ const MERGE_COMMENTAIRES_FIXTURE = {
     teActionId: 'te_1.1.1.2',
     caeOrigineActionId: 'cae_1.1.2.2.1',
   },
-  /** TE 5.1.2.3 ← Cae_5.1.2.3 + Eci_1.1.3.3 (fusion 2→1) */
+  /** TE 5.1.2.4 ← Cae_5.1.2.3 + Eci_1.1.3.3 (fusion 2→1) */
   teActionCaeAndEci: {
-    teActionId: 'te_5.1.2.3',
+    teActionId: 'te_5.1.2.4',
     caeOrigineActionId: 'cae_5.1.2.3',
     eciOrigineActionId: 'eci_1.1.3.3',
   },
   /** TE 1.1.1.3 : origine « Nouvelle action », sans source CAE/ECI */
   teNativeActionId: 'te_1.1.1.3',
+} as const;
+
+const ACTION_ORIGINE_TEXTE_FIXTURE = {
+  /**
+   * TE 6.3.3.1 : `action_origine_texte` pointe exclusivement vers Eci_2.5.2,
+   * alors que `action_origine` référence Eci_2.5.1 (source distincte) —
+   * permet de vérifier que `action_origine_texte`, quand renseigné, prime
+   * sur `action_origine`.
+   */
+  teActionAvecOrigineTexteUnique: {
+    teActionId: 'te_6.3.3.1',
+    origineTexteActionId: 'eci_2.5.2',
+    autreOrigineActionId: 'eci_2.5.1',
+  },
+  /**
+   * TE 6.1.3.4 : aucune ligne `action_origine_texte`, seules des origines
+   * `action_origine` (CAE) sont disponibles — exerce le repli sur
+   * `action_origine`.
+   */
+  teActionSansOrigineTexte: {
+    teActionId: 'te_6.1.3.4',
+    caeOrigineActionId: 'cae_6.2.2.3.5',
+  },
+  /**
+   * TE 1.1.1 (niveau action / sous-mesure) : `action_origine_texte` pointe vers
+   * Cae_1.1.2 (niveau action également) et aucune ligne `action_origine`
+   * n'existe à ce niveau. La cible est donc absente de `sousActionsEtTaches` —
+   * vérifie que les liens texte de niveau action sont pris en compte pour la
+   * fusion des commentaires.
+   */
+  teActionNiveauActionAvecOrigineTexte: {
+    teActionId: 'te_1.1.1',
+    origineTexteActionId: 'cae_1.1.2',
+  },
 } as const;
 
 describe('mergeCommentaires', () => {
@@ -168,6 +204,36 @@ describe('mergeCommentaires', () => {
     expect(teCommentaire?.commentaire).toContain(sourceCommentaire);
   });
 
+  test("le nom de l'action source apparaît dans le header du bloc (fix alias origineActionNom)", async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const { teActionId, caeOrigineActionId } =
+      MERGE_COMMENTAIRES_FIXTURE.teActionCae1to1;
+
+    await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
+    await setActionCommentaire(
+      caeOrigineActionId,
+      '<p>Explication pour vérifier le nom affiché.</p>'
+    );
+
+    const [{ nom }] = await databaseService.db
+      .select({ nom: actionDefinitionTable.nom })
+      .from(actionDefinitionTable)
+      .where(eq(actionDefinitionTable.actionId, caeOrigineActionId));
+    expect(nom).toBeTruthy();
+
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+    const teCommentaire = data.find(
+      (commentaire) => commentaire.actionId === teActionId
+    );
+
+    expect(teCommentaire?.commentaire).toContain(
+      `${caeOrigineActionId} - ${nom} - FAIT`
+    );
+  });
+
   test('CAE + ECI write, fusion N→1 : deux blocs ordonnés CAE puis ECI', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
@@ -268,5 +334,127 @@ describe('mergeCommentaires', () => {
           commentaire.actionId === MERGE_COMMENTAIRES_FIXTURE.teNativeActionId
       )
     ).toBe(false);
+  });
+
+  describe('action_origine_texte', () => {
+    test('renseigné avec une seule origine : utilise exclusivement ce lien, ignore action_origine même avec texte valide', async () => {
+      const { teActionId, origineTexteActionId, autreOrigineActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionAvecOrigineTexteUnique;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionStatut(origineTexteActionId, StatutAvancementEnum.FAIT);
+      await setActionStatut(autreOrigineActionId, StatutAvancementEnum.FAIT);
+      await setActionCommentaire(
+        origineTexteActionId,
+        '<p>Bloc ECI utilisé via action_origine_texte.</p>'
+      );
+      await setActionCommentaire(
+        autreOrigineActionId,
+        '<p>Bloc ignoré car action_origine_texte est renseigné pour cette cible.</p>'
+      );
+
+      const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
+
+      const teCommentaire = data.find(
+        (commentaire) => commentaire.actionId === teActionId
+      );
+
+      expect(teCommentaire?.commentaire).toContain(origineTexteActionId);
+      expect(teCommentaire?.commentaire).toContain(
+        'Bloc ECI utilisé via action_origine_texte.'
+      );
+      expect(teCommentaire?.commentaire).not.toContain(autreOrigineActionId);
+      expect(teCommentaire?.commentaire).not.toContain(
+        'Bloc ignoré car action_origine_texte est renseigné pour cette cible.'
+      );
+    });
+
+    test('renseigné mais source non concernée : pas de commentaire, pas de repli sur action_origine', async () => {
+      const { teActionId, origineTexteActionId, autreOrigineActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionAvecOrigineTexteUnique;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionStatut(origineTexteActionId, 'non_concerne');
+      await setActionStatut(autreOrigineActionId, StatutAvancementEnum.FAIT);
+      await setActionCommentaire(
+        origineTexteActionId,
+        '<p>Bloc ECI mais source non concernée.</p>'
+      );
+      await setActionCommentaire(
+        autreOrigineActionId,
+        '<p>Bloc disponible mais jamais utilisé (pas de repli attendu).</p>'
+      );
+
+      const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
+
+      expect(
+        data.some((commentaire) => commentaire.actionId === teActionId)
+      ).toBe(false);
+    });
+
+    test('non renseigné : comportement inchangé, basé sur action_origine (non-régression)', async () => {
+      const { teActionId, caeOrigineActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionSansOrigineTexte;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
+      await setActionCommentaire(
+        caeOrigineActionId,
+        '<p>Explication CAE, aucune ligne action_origine_texte pour cette cible.</p>'
+      );
+
+      const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+      const teCommentaire = data.find(
+        (commentaire) => commentaire.actionId === teActionId
+      );
+
+      expect(teCommentaire?.commentaire).toContain(caeOrigineActionId);
+    });
+
+    test('lien de niveau action : recopie le commentaire de la source action sur la sous-mesure TE (cible absente de sousActionsEtTaches)', async () => {
+      const { teActionId, origineTexteActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionNiveauActionAvecOrigineTexte;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionCommentaire(
+        origineTexteActionId,
+        '<p>Diagnostic CAE de niveau action, à recopier sur la sous-mesure TE.</p>'
+      );
+
+      const ctxResult = await buildCtx(prefsEligibleCaeOnly);
+      expect(ctxResult.success).toBe(true);
+      if (!ctxResult.success) {
+        throw new Error('buildSwitchToTeContext a échoué');
+      }
+
+      // la cible de niveau action n'est pas dans sousActionsEtTaches
+      expect(
+        ctxResult.data.cibles.sousActionsEtTaches.some(
+          (cible) => cible.actionId === teActionId
+        )
+      ).toBe(false);
+
+      const data = mergeCommentaires(ctxResult.data);
+      const teCommentaire = data.find(
+        (commentaire) => commentaire.actionId === teActionId
+      );
+
+      expect(teCommentaire?.commentaire).toContain(origineTexteActionId);
+      expect(teCommentaire?.commentaire).toContain(
+        'Diagnostic CAE de niveau action, à recopier sur la sous-mesure TE.'
+      );
+      // une source de niveau action n'a pas de statut propre : pas de
+      // « NON RENSEIGNÉ » trompeur dans l'en-tête du bloc
+      expect(teCommentaire?.commentaire).not.toContain('NON RENSEIGNÉ');
+    });
   });
 });

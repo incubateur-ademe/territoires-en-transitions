@@ -118,7 +118,7 @@ export const ficheActionForCountBySchema = z.object({
       })
     )
     .nullable()
-    .describe('Élu·e référent·e'),
+    .describe('Personne élue'),
   participationCitoyenneType: z
     .enum([
       'pas-de-participation',
@@ -156,7 +156,7 @@ export const ficheActionForCountBySchema = z.object({
       })
     )
     .nullable()
-    .describe('Indicateurs associés'),
+    .describe('Indicateurs liés'),
   dateDebut: z.string().nullable().describe('Date de début'),
   dateFin: z.string().nullable().describe('Date de fin prévisionnelle'),
   createdAt: z.string().nullable().describe('Date de création'),
@@ -169,7 +169,7 @@ export const ficheActionForCountBySchema = z.object({
       })
     )
     .nullable()
-    .describe('Notes de suivi et points de vigilance'),
+    .describe('Notes'),
   budgetsPrevisionnelInvestissementTotal: budgetSchemaArray.describe(
     `Budget d'investissement prévisionnel total (non détaillé par année)`
   ),

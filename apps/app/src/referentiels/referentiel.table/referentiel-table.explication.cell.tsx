@@ -1,12 +1,17 @@
-import { EmptyCell } from './empty-cell';
+import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCellRichTextEditor } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
-import { getTableMeta } from './utils';
+import { EmptyCell } from './empty-cell';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<
+    ReferentielTableFeatures,
+    ActionListItem,
+    ActionListItem['score']['explication']
+  >;
 };
 
 const actionTypesWithExplication = new Set<ActionType>([
@@ -39,7 +44,10 @@ export const ReferentielTableExplicationCell = ({ info }: Props) => {
       tabIndex={-1}
       data-cell-id={cellId}
       canEdit={canMutateReferentiel}
-      placeholder="Ajouter un état d'avancement"
+      placeholder={appLabels.saisirLetatDavancement}
+      richTextEditorProps={{
+        placeholder: appLabels.saisirLetatDavancement,
+      }}
       initialValue={explication}
       onValueChange={(value) => {
         if (value === explication) {

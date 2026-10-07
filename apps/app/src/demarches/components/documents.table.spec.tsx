@@ -1,0 +1,548 @@
+import '@testing-library/jest-dom/vitest';
+
+import { appLabels } from '@/app/labels/catalog';
+import type {
+  DemarcheDocumentAdditional,
+  DemarcheDocumentCoverage,
+  DemarcheDocumentDefinition,
+  DemarcheDocumentDepose,
+  DemarcheDocumentEtape,
+  DemarcheDocumentsConfig,
+} from '@tet/domain/demarches';
+import { render, screen, within } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  DemarcheDocumentsTable,
+  type DemarcheDocumentsSection,
+} from './documents.table';
+
+const CONFIG: DemarcheDocumentsConfig = {
+  additionalAmont: true,
+  additionalAval: true,
+  formatsAutorises: ['pdf'],
+  mimeTypesAutorises: ['application/pdf'],
+};
+
+const definition = (
+  overrides: Partial<DemarcheDocumentDefinition>
+): DemarcheDocumentDefinition => ({
+  id: 'pcaet_diagnostic',
+  nom: 'Diagnostic',
+  description: '',
+  requis: true,
+  ordre: 1,
+  etape: 'amont',
+  substituts: [],
+  substitutsDeclarables: [],
+  ...overrides,
+});
+
+const GLOBAL = definition({
+  id: 'pcaet_document_global',
+  nom: 'PCAET global',
+  description:
+    'Document unique regroupant une partie des pièces obligatoires attendues.',
+  requis: false,
+  ordre: 0,
+});
+const DIAGNOSTIC = definition({});
+/** Pièce que le global ne couvre pas d'office : son inclusion se déclare. */
+const EES = definition({
+  id: 'pcaet_ees',
+  nom: 'EES',
+  ordre: 2,
+  substitutsDeclarables: [GLOBAL.id],
+});
+
+const depose = (
+  documentId: string,
+  etape: DemarcheDocumentEtape = 'amont'
+): DemarcheDocumentDepose => ({
+  id: 1,
+  documentId,
+  etape,
+  commentaire: '',
+  modifiedAt: '2026-08-20T00:00:00Z',
+  modifiedBy: null,
+  fichier: {
+    id: 7,
+    filename: 'diagnostic.pdf',
+    hash: 'hash',
+    bucketId: 'bucket',
+    filesize: 1024,
+  },
+});
+
+const renderTable = ({
+  definitions = [GLOBAL, DIAGNOSTIC],
+  documents = [],
+  coverage = [],
+  etape = 'amont',
+  mergeEtapes = false,
+  section,
+  documentsAdditional = [],
+  hideEmptyRows = false,
+  onAddFichier = vi.fn(),
+}: {
+  definitions?: DemarcheDocumentDefinition[];
+  documents?: DemarcheDocumentDepose[];
+  coverage?: DemarcheDocumentCoverage[];
+  etape?: DemarcheDocumentEtape;
+  mergeEtapes?: boolean;
+  section?: DemarcheDocumentsSection;
+  documentsAdditional?: DemarcheDocumentAdditional[];
+  hideEmptyRows?: boolean;
+  onAddFichier?: (
+    documentId: string,
+    fichierId: number,
+    etape: DemarcheDocumentEtape
+  ) => void;
+  onToggleCouverture?: (documentId: string, couvert: boolean) => void;
+} = {}) =>
+  render(
+    <DemarcheDocumentsTable
+      demarcheType="pcaet"
+      etape={etape}
+      config={CONFIG}
+      definitions={definitions}
+      documents={documents}
+      documentsAdditional={documentsAdditional}
+      coverage={coverage}
+      mergeEtapes={mergeEtapes}
+      section={section}
+      hideEmptyRows={hideEmptyRows}
+      isEtapeReadonly={hideEmptyRows}
+      onAddFichier={onAddFichier}
+      onRemoveDocument={vi.fn()}
+      onToggleCouverture={vi.fn()}
+      onCreateAdditional={vi.fn()}
+      onRenameAdditional={vi.fn()}
+      onAddFichierAdditional={vi.fn()}
+      onRemoveAdditional={vi.fn()}
+    />
+  );
+
+describe('DemarcheDocumentsTable — une seule liste', () => {
+  it('range le document global dans le tableau, à la place que le modèle lui donne', () => {
+    renderTable();
+
+    // Les lignes du corps, dans l'ordre du modèle : le global d'abord.
+    const [premiere] = screen.getAllByRole('row').slice(1);
+    expect(within(premiere).getByText('PCAET global')).toBeInTheDocument();
+    expect(
+      within(premiere).getByText(/Document unique regroupant/)
+    ).toBeInTheDocument();
+  });
+
+  it('n’a plus de sous-titre de section : le tableau se suffit', () => {
+    renderTable();
+
+    expect(screen.queryByText('Détail par section attendue')).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — actions de dépôt', () => {
+  it('propose le seul dépôt quand aucun document n’est défini', () => {
+    renderTable();
+
+    expect(
+      screen.getAllByRole('button', {
+        name: appLabels.demarcheDocumentsTeleverser,
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.demarcheDocumentsRemplacerDocument,
+      })
+    ).toBeNull();
+  });
+
+  it('scinde le remplacement et le retrait quand un document est défini', () => {
+    renderTable({ documents: [depose(DIAGNOSTIC.id)] });
+
+    expect(screen.getByText('diagnostic.pdf')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.demarcheDocumentsRemplacerDocument,
+      })
+    ).toBeInTheDocument();
+    // Le retrait n'apparaît qu'à l'ouverture du menu.
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.demarcheDocumentsSupprimerDocument,
+      })
+    ).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l’aval', () => {
+  /** Délibération d'engagement : requise, du seul amont, jamais reprise après les avis. */
+  const DELIBERATION_ENGAGEMENT = definition({
+    id: 'pcaet_deliberation_engagement',
+    nom: 'Délibération d’engagement',
+    ordre: 3,
+  });
+  const ADOPTION = definition({
+    id: 'pcaet_deliberation_adoption',
+    nom: 'Délibération d’adoption',
+    ordre: 4,
+    etape: 'aval',
+  });
+
+  const renderAval = () =>
+    renderTable({
+      etape: 'aval',
+      definitions: [DELIBERATION_ENGAGEMENT, ADOPTION],
+      documents: [depose(DELIBERATION_ENGAGEMENT.id)],
+    });
+
+  /** La ligne du tableau qui porte cette pièce, pour y chercher ses actions. */
+  const ligneDe = (nom: string) => {
+    const ligne = screen
+      .getAllByRole('row')
+      .find((row) => within(row).queryByText(nom));
+    if (!ligne) {
+      throw new Error(`Aucune ligne pour la pièce « ${nom} »`);
+    }
+    return within(ligne);
+  };
+
+  it('montre la pièce amont et son fichier, alors qu’elle n’appartient pas à ce temps', () => {
+    renderAval();
+
+    expect(
+      ligneDe('Délibération d’engagement').getByText('diagnostic.pdf')
+    ).toBeInTheDocument();
+  });
+
+  it('la garde en lecture seule : son temps de dépôt est passé', () => {
+    renderAval();
+
+    expect(
+      ligneDe('Délibération d’engagement').queryByRole('button')
+    ).toBeNull();
+  });
+
+  it('laisse la pièce aval déposable', () => {
+    renderAval();
+
+    expect(
+      ligneDe('Délibération d’adoption').getByRole('button', {
+        name: appLabels.demarcheDocumentsTeleverser,
+      })
+    ).toBeInTheDocument();
+  });
+});
+
+describe('DemarcheDocumentsTable — les deux blocs de la finalisation', () => {
+  /** Reprise possible après les avis : portée `both`. */
+  const STRATEGIE = definition({
+    id: 'pcaet_strategie_territoriale',
+    nom: 'Stratégie territoriale',
+    ordre: 2,
+    etape: 'both',
+  });
+  const ADOPTION = definition({
+    id: 'pcaet_deliberation_adoption',
+    nom: 'Délibération d’adoption',
+    ordre: 4,
+    etape: 'aval',
+  });
+  const additional = (
+    titre: string,
+    etape: DemarcheDocumentEtape
+  ): DemarcheDocumentAdditional => ({
+    id: etape === 'amont' ? 1 : 2,
+    etape,
+    titre,
+    commentaire: '',
+    modifiedAt: '2026-08-20T00:00:00Z',
+    modifiedBy: null,
+    fichier: null,
+  });
+
+  const renderSection = (section: DemarcheDocumentsSection) =>
+    renderTable({
+      etape: 'aval',
+      section,
+      definitions: [DIAGNOSTIC, STRATEGIE, ADOPTION],
+      documentsAdditional: [
+        additional('Annexe transmise', 'amont'),
+        additional('Annexe de l’adoption', 'aval'),
+      ],
+    });
+
+  it('met en tête les pièces qui suivent les avis, avec les pièces libres et leur ajout', () => {
+    const { container } = renderSection('adoption');
+
+    expect(screen.getByText('Délibération d’adoption')).toBeInTheDocument();
+    expect(screen.getByText('Annexe de l’adoption')).toBeInTheDocument();
+    expect(screen.queryByText('Diagnostic')).toBeNull();
+    expect(screen.queryByText('Stratégie territoriale')).toBeNull();
+    expect(screen.queryByText('Annexe transmise')).toBeNull();
+    expect(
+      container.querySelector(
+        '[data-test="demarches.pcaet.documents.additional.ajouter.aval"]'
+      )
+    ).not.toBeNull();
+  });
+
+  it('range sous le dossier transmis les pièces soumises aux avis, sans ajout libre', () => {
+    const { container } = renderSection('dossier-transmis');
+
+    expect(screen.getByText('Diagnostic')).toBeInTheDocument();
+    expect(screen.getByText('Stratégie territoriale')).toBeInTheDocument();
+    expect(screen.getByText('Annexe transmise')).toBeInTheDocument();
+    expect(screen.queryByText('Délibération d’adoption')).toBeNull();
+    expect(screen.queryByText('Annexe de l’adoption')).toBeNull();
+    expect(
+      container.querySelector(
+        '[data-test^="demarches.pcaet.documents.additional.ajouter"]'
+      )
+    ).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — lecture d’un dossier sans ses pièces vides', () => {
+  const annexe = (
+    titre: string,
+    avecFichier: boolean
+  ): DemarcheDocumentAdditional => ({
+    id: avecFichier ? 1 : 2,
+    etape: 'amont',
+    titre,
+    commentaire: '',
+    modifiedAt: '2026-08-20T00:00:00Z',
+    modifiedBy: null,
+    fichier: avecFichier ? depose(DIAGNOSTIC.id).fichier : null,
+  });
+
+  it('ne garde que les pièces déposées ou comprises dans une autre', () => {
+    renderTable({
+      hideEmptyRows: true,
+      definitions: [GLOBAL, DIAGNOSTIC, EES],
+      documents: [depose(GLOBAL.id)],
+      coverage: [
+        {
+          documentId: GLOBAL.id,
+          couvert: true,
+          origine: 'fichier',
+          substitutId: null,
+        },
+        {
+          documentId: DIAGNOSTIC.id,
+          couvert: false,
+          origine: null,
+          substitutId: null,
+        },
+        {
+          documentId: EES.id,
+          couvert: true,
+          origine: 'substitut',
+          substitutId: GLOBAL.id,
+        },
+      ],
+      documentsAdditional: [
+        annexe('Annexe déposée', true),
+        annexe('Annexe sans fichier', false),
+      ],
+    });
+
+    expect(screen.getByText('PCAET global')).toBeInTheDocument();
+    expect(screen.getByText('EES')).toBeInTheDocument();
+    expect(screen.getByText('Annexe déposée')).toBeInTheDocument();
+    expect(screen.queryByText('Diagnostic')).toBeNull();
+    expect(screen.queryByText('Annexe sans fichier')).toBeNull();
+  });
+
+  it('le dit quand rien n’a été déposé', () => {
+    renderTable({ hideEmptyRows: true });
+
+    expect(
+      screen.getByText(appLabels.demarcheDocumentsAucunDepot)
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('table')).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — inclusion déclarée, après les avis', () => {
+  /** Reprise possible après les avis, et déclarable dans le PCAET global. */
+  const EES_REPRISE = definition({ ...EES, etape: 'both' });
+  const GLOBAL_REPRISE = definition({ ...GLOBAL, etape: 'both' });
+  const inclusion = (documentId: string): DemarcheDocumentDepose => ({
+    ...depose(documentId),
+    fichier: null,
+  });
+
+  const renderAvecInclusion = (documents: DemarcheDocumentDepose[]) =>
+    renderTable({
+      etape: 'aval',
+      section: 'dossier-transmis',
+      definitions: [GLOBAL_REPRISE, EES_REPRISE],
+      documents,
+      coverage: [
+        {
+          documentId: GLOBAL.id,
+          couvert: true,
+          origine: 'fichier',
+          substitutId: null,
+        },
+        {
+          documentId: EES.id,
+          couvert: true,
+          origine: 'substitut',
+          substitutId: GLOBAL.id,
+        },
+      ],
+    });
+
+  it('fige l’inclusion du dossier transmis et propose un fichier dédié', () => {
+    renderAvecInclusion([depose(GLOBAL.id), inclusion(EES.id)]);
+
+    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(
+      screen.getByText(
+        appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom })
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.demarcheDocumentsDeposerFichierDedie,
+      })
+    ).toBeInTheDocument();
+  });
+
+  it('montre le fichier dédié une fois déposé, à la place de l’inclusion', () => {
+    renderAvecInclusion([
+      depose(GLOBAL.id),
+      inclusion(EES.id),
+      { ...depose(EES.id, 'aval'), id: 2 },
+    ]);
+
+    expect(
+      screen.queryByText(
+        appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom })
+      )
+    ).toBeNull();
+    expect(
+      screen.getAllByRole('button', {
+        name: appLabels.demarcheDocumentsRemplacerDocument,
+      })
+    ).toHaveLength(1);
+  });
+});
+
+describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce', () => {
+  it('ne propose rien à cocher tant que le document qui accueillerait l’inclusion n’est pas déposé', () => {
+    renderTable({ definitions: [GLOBAL, EES] });
+
+    expect(
+      screen.queryByRole('checkbox', {
+        name: appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom }),
+      })
+    ).toBeNull();
+  });
+
+  it('propose la case dès que le PCAET global est déposé', () => {
+    renderTable({
+      definitions: [GLOBAL, EES],
+      documents: [depose(GLOBAL.id)],
+    });
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom }),
+      })
+    ).not.toBeChecked();
+  });
+
+  it('coche la case et retire le dépôt une fois l’inclusion déclarée', () => {
+    renderTable({
+      definitions: [GLOBAL, EES],
+      documents: [depose(GLOBAL.id)],
+      coverage: [
+        {
+          documentId: EES.id,
+          couvert: true,
+          origine: 'substitut',
+          substitutId: GLOBAL.id,
+        },
+      ],
+    });
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: appLabels.demarcheDocumentsInclusDans({ nom: GLOBAL.nom }),
+      })
+    ).toBeChecked();
+    // Le dépôt d'une pièce propre disparaît : l'inclusion tient la place.
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.demarcheDocumentsTeleverser,
+      })
+    ).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — liste fusionnée (dépôt hors plateforme)', () => {
+  const DELIBERATION = definition({
+    id: 'pcaet_deliberation_adoption',
+    nom: 'Délibération d’adoption',
+    ordre: 0,
+    etape: 'aval',
+  });
+  /** Attendue à l'amont, révisable à l'aval : exigée à l'amont. */
+  const STRATEGIE = definition({
+    id: 'pcaet_strategie',
+    nom: 'Stratégie',
+    ordre: 3,
+    etape: 'both',
+  });
+
+  it('range les pièces d’élaboration avant celles attendues après les avis', () => {
+    renderTable({
+      definitions: [DELIBERATION, DIAGNOSTIC, STRATEGIE],
+      mergeEtapes: true,
+    });
+
+    const noms = screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => row.textContent ?? '');
+
+    // L'aval ferme la marche, quel que soit son ordre au catalogue.
+    expect(noms[0]).toContain('Diagnostic');
+    expect(noms[1]).toContain('Stratégie');
+    expect(noms[2]).toContain('Délibération d’adoption');
+  });
+
+  it('n’affiche qu’une ligne par pièce, même de portée « both »', () => {
+    renderTable({
+      definitions: [DELIBERATION, DIAGNOSTIC, STRATEGIE],
+      mergeEtapes: true,
+    });
+
+    // Une pièce `both` appartient aux deux temps : dans une liste qui les
+    // fusionne, elle ne doit pas se dédoubler.
+    const lignesStrategie = screen
+      .getAllByRole('row')
+      .filter((row) => row.textContent?.includes('Stratégie'));
+    expect(lignesStrategie).toHaveLength(1);
+  });
+
+  // Le piège : la couverture s'indexe sur (pièce, temps exigeant). Une pièce
+  // `both` dont le dépôt serait lu au temps du tableau — l'aval — passerait pour
+  // manquante alors qu'elle est déposée.
+  it('lit le dépôt d’une pièce au temps où elle est exigée', () => {
+    renderTable({
+      definitions: [STRATEGIE, DELIBERATION],
+      documents: [depose(STRATEGIE.id, 'amont')],
+      mergeEtapes: true,
+    });
+
+    const [strategie] = screen
+      .getAllByRole('row')
+      .filter((row) => row.textContent?.includes('Stratégie'));
+    expect(within(strategie).getByText('diagnostic.pdf')).toBeInTheDocument();
+  });
+});

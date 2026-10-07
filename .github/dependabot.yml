@@ -1,0 +1,253 @@
+version: 2
+
+registries:
+  bryntum-npm:
+    type: npm-registry
+    url: https://npm.bryntum.com
+    scope: "@bryntum"
+    token: ${{secrets.BRYNTUM_ACCESS_TOKEN}}
+
+multi-ecosystem-groups:
+  infrastructure:
+    schedule:
+      interval: weekly
+      day: thursday
+      time: "06:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 1
+
+updates:
+  # Nx/pnpm workspace with a single root lockfile and package manifests spread
+  # across the monorepo.
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /apps/*
+      - /packages/*
+      - /e2e
+    registries:
+      - bryntum-npm
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Europe/Paris
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+    open-pull-requests-limit: 6
+    rebase-strategy: disabled
+    versioning-strategy: increase-if-necessary
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+    pull-request-branch-name:
+      prefix: chore-deps
+      separator: "-"
+      word-separator: "-"
+      branch-name-case: lowercase
+      max-length: 120
+    groups:
+      workspace-blocknote:
+        patterns:
+          - "@blocknote/*"
+        update-types:
+          - major
+      workspace-react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-*"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - major
+      workspace-nx:
+        patterns:
+          - "nx"
+          - "@nx/*"
+        update-types:
+          - major
+      workspace-nest:
+        patterns:
+          - "@nestjs/*"
+        update-types:
+          - major
+      workspace-nivo:
+        patterns:
+          - "@nivo/*"
+        update-types:
+          - major
+      workspace-sentry:
+        patterns:
+          - "@sentry/*"
+        update-types:
+          - major
+      workspace-storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+        update-types:
+          - major
+      workspace-strapi:
+        patterns:
+          - "@strapi/*"
+          - "strapi*"
+        update-types:
+          - major
+      workspace-supabase:
+        patterns:
+          - "@supabase/*"
+        update-types:
+          - major
+      workspace-tanstack:
+        patterns:
+          - "@tanstack/*"
+        update-types:
+          - major
+      workspace-trpc:
+        patterns:
+          - "@trpc/*"
+        update-types:
+          - major
+      workspace-bull-board:
+        patterns:
+          - "@bull-board/*"
+        update-types:
+          - major
+      workspace-dnd-kit:
+        patterns:
+          - "@dnd-kit/*"
+        update-types:
+          - major
+      workspace-swc:
+        patterns:
+          - "@swc/*"
+        update-types:
+          - major
+      workspace-zxcvbn:
+        patterns:
+          - "@zxcvbn-ts/*"
+        update-types:
+          - major
+      production-non-major:
+        dependency-type: production
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        group-by: dependency-name
+      development-non-major:
+        dependency-type: development
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        group-by: dependency-name
+      production-security:
+        applies-to: security-updates
+        dependency-type: production
+        patterns:
+          - "*"
+      development-security:
+        applies-to: security-updates
+        dependency-type: development
+        patterns:
+          - "*"
+
+  # Standalone Strapi app with its own package-lock.json outside the pnpm
+  # workspace.
+  - package-ecosystem: npm
+    directory: /strapi
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:30"
+      timezone: Europe/Paris
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+    open-pull-requests-limit: 4
+    rebase-strategy: disabled
+    versioning-strategy: increase-if-necessary
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+    pull-request-branch-name:
+      prefix: chore-deps
+      separator: "-"
+      word-separator: "-"
+      branch-name-case: lowercase
+      max-length: 120
+    # The Strapi 5 admin pins these majors as peer dependencies (React 18,
+    # react-router-dom 6, styled-components 6): they move with @strapi/* only.
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-router-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "styled-components"
+        update-types: ["version-update:semver-major"]
+    groups:
+      strapi-core:
+        patterns:
+          - "@strapi/*"
+        update-types:
+          - major
+      strapi-sqlite:
+        patterns:
+          - "better-sqlite3"
+        update-types:
+          - major
+      strapi-non-major:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      strapi-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  # Group infra ecosystems together to collapse low-risk maintenance noise into
+  # a single weekly PR.
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/**/*
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - "*"
+    cooldown:
+      default-days: 7
+    rebase-strategy: disabled
+
+  - package-ecosystem: docker-compose
+    directory: /
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - "*"
+    cooldown:
+      default-days: 7
+    rebase-strategy: disabled
+
+  - package-ecosystem: docker
+    directories:
+      - /.docker/apps
+      - /.docker/strapi
+      - /.github/actions/**/*
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - "*"
+    cooldown:
+      default-days: 7
+    rebase-strategy: disabled

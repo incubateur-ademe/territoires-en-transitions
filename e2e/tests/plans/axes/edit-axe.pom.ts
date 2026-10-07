@@ -88,10 +88,9 @@ export class EditAxePom {
   async editAxeNom(ancienNom: string, nouveauNom: string) {
     const axe = this.getAxeByName(ancienNom);
 
-    // initialement le champ de saisie est désactivé
+    // initialement le champ de saisie est absent
     const titreInput = axe.locator('textarea');
-    await expect(titreInput).toBeDisabled();
-    await expect(titreInput).not.toBeFocused();
+    await expect(titreInput).toBeHidden();
 
     // entre en mode "édition"
     await this.clickOnAxeMenuItem(ancienNom, 'Modifier le titre');
@@ -109,8 +108,7 @@ export class EditAxePom {
     const axeRenamedInput = axeRenamed.locator('textarea');
     await axeRenamedInput.press('Enter');
     await expect(axeRenamed).toBeVisible();
-    await expect(axeRenamedInput).not.toBeFocused();
-    await expect(axeRenamedInput).toBeDisabled();
+    await expect(axeRenamedInput).toBeHidden();
   }
 
   /**
@@ -184,12 +182,12 @@ export class EditAxePom {
   }
 
   /**
-   * Ouvre le panneau pour lier un indicateur à un axe
+   * Ouvre le panneau pour lier des indicateurs à un axe
    * @param axeNom - Le nom de l'axe auquel ajouter un indicateur
    */
   async openLinkIndicateurPanel(axeNom: string) {
-    // Cliquer sur "Lier un indicateur"
-    await this.clickOnAxeMenuItem(axeNom, 'Lier un indicateur');
+    // Cliquer sur "Lier des indicateurs"
+    await this.clickOnAxeMenuItem(axeNom, 'Lier des indicateurs');
 
     // Attendre que le panneau latéral soit ouvert
     const sideMenu = this.getIndicateursPanel();

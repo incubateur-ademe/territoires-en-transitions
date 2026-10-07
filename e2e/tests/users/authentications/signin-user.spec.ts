@@ -60,7 +60,9 @@ test.describe('Login avec mot de passe', () => {
     'réinitialiser son mot de passe',
     { tag: '@serial' },
     async ({ page }) => {
-      await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toBeHidden();
+      await expect(
+        page.locator('[data-test="auth.forgotten-password.form"]')
+      ).toBeHidden();
 
       await page.locator('[data-test="auth.login.forgotten-pwd"]').click();
 
@@ -72,11 +74,17 @@ test.describe('Login avec mot de passe', () => {
         .locator('[data-test="auth.forgotten-password.form"] input[name=email]')
         .fill(EXISTING_USER_EMAIL);
       await page
-        .locator('[data-test="auth.forgotten-password.form"] button[type=submit]')
+        .locator(
+          '[data-test="auth.forgotten-password.form"] button[type=submit]'
+        )
         .click();
 
-      await expect(page.locator('[data-test="auth.login.msg-init-mdp"]')).toBeVisible();
-      await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toBeHidden();
+      await expect(
+        page.locator('[data-test="auth.login.msg-init-mdp"]')
+      ).toBeVisible();
+      await expect(
+        page.locator('[data-test="auth.forgotten-password.form"]')
+      ).toBeHidden();
     }
   );
 
@@ -95,10 +103,14 @@ test.describe('Login avec mot de passe', () => {
       });
 
       await page
-        .locator('[data-test="auth.forgotten-password.form"] button[type=submit]')
+        .locator(
+          '[data-test="auth.forgotten-password.form"] button[type=submit]'
+        )
         .click();
 
-      await expect(page.locator('[data-test="auth.login.msg-init-mdp"]')).toBeHidden();
+      await expect(
+        page.locator('[data-test="auth.login.msg-init-mdp"]')
+      ).toBeHidden();
       await expect(
         page.locator('[data-test="auth.forgotten-password.form"]')
       ).toBeVisible();
@@ -107,6 +119,31 @@ test.describe('Login avec mot de passe', () => {
       ).toContainText("L'envoi du lien de réinitialisation a échoué");
     }
   );
+});
+
+test.describe('Redirection après connexion', () => {
+  test('renvoie vers la page protégée demandée (deep-link) après connexion', async ({
+    page,
+    collectivites,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser();
+    const deepLink = `/collectivite/${collectivite.data.id}/users`;
+
+    // Accès direct, non authentifié, à une page profonde de l'app : le
+    // middleware doit renvoyer vers /login en conservant cette destination.
+    await page.goto(deepLink, { waitUntil: 'domcontentloaded' });
+
+    await expect(page).toHaveURL(
+      `/login?redirect_to=${encodeURIComponent(deepLink)}`
+    );
+
+    const pom = new SigninUserPom(page);
+    await pom.fillAndSubmitLoginForm(user.data.email, user.data.password);
+
+    // Une fois connecté, l'utilisateur atterrit sur la page initialement
+    // demandée plutôt que sur l'accueil.
+    await expect(page).toHaveURL(deepLink);
+  });
 });
 
 test.describe('Login sans mot de passe', () => {
@@ -123,7 +160,9 @@ test.describe('Login sans mot de passe', () => {
     async ({ page }) => {
       await pom.fillAndSubmitLoginForm(EXISTING_USER_EMAIL);
 
-      await expect(page.locator('[data-test="auth.login.msg-lien-envoye"]')).toBeVisible();
+      await expect(
+        page.locator('[data-test="auth.login.msg-lien-envoye"]')
+      ).toBeVisible();
     }
   );
 
@@ -134,6 +173,8 @@ test.describe('Login sans mot de passe', () => {
     const { user } = await collectivites.addCollectiviteAndUser();
     await pom.fillAndSubmitLoginForm(user.data.email);
 
-    await expect(page.locator('[data-test="auth.login.msg-lien-envoye"]')).toBeVisible();
+    await expect(
+      page.locator('[data-test="auth.login.msg-lien-envoye"]')
+    ).toBeVisible();
   });
 });

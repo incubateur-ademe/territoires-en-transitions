@@ -10,7 +10,7 @@ function getSupabaseCredentials() {
 }
 
 /**
- * Reproduit l'appel Supabase Storage utilisé par l'UI (`openPreuve`) :
+ * Reproduit un accès direct au stockage, pour éprouver la RLS :
  * `supabase.storage.from(bucket_id).download(hash)`.
  */
 export async function attemptSupabaseStorageDownload(

@@ -23,14 +23,6 @@ export const avancementToLabel: Record<StatutAvancement, string> = {
   non_concerne: appLabels.avancementNonConcerne,
 };
 
-export const actionIdToLabel: Record<string, string> = {
-  cae_3: appLabels.actionCae3,
-  eci_1: appLabels.actionEci1,
-  eci_2: appLabels.actionEci2,
-  eci_3: appLabels.actionEci3,
-  eci_4: appLabels.actionEci4,
-};
-
 export const membreFonctions: { value: MembreFonction; label: string }[] = [
   { value: 'technique', label: appLabels.membreFonctionTechnique },
   { value: 'politique', label: appLabels.membreFonctionPolitique },

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAddPreuveToDemande } from '@/app/referentiels/labellisations/useAddPreuveToDemande';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
 import { ObjetPreuve } from '@tet/domain/referentiels';
 import { Modal, PillButton } from '@tet/ui';
 import { ReactElement, useState } from 'react';
@@ -24,7 +24,7 @@ export const UploadPreuveButton = ({
       openState={{ isOpen, setIsOpen }}
       title={title}
       render={({ close }) => (
-        <AddPreuveModal onClose={close} handlers={handlers} />
+        <AddDocumentTabs onClose={close} handlers={handlers} />
       )}
     >
       <PillButton

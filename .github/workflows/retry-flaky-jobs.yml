@@ -1,0 +1,48 @@
+# Relance automatiquement (une seule fois) les jobs CI connus pour leurs faux
+# négatifs — flakiness infra sur l'e2e, sur les tests backend/api — quand ils
+# sont les seuls en échec du run.
+name: Retry flaky jobs
+
+permissions:
+  actions: write
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+jobs:
+  retry-flaky-jobs:
+    # run_attempt == 1 : on ne relance qu'une seule fois
+    if: >
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.run_attempt == 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Relance les jobs échoués si seuls des jobs flaky ont échoué
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          REPO: ${{ github.repository }}
+          # Préfixes des jobs relançables. Les jobs issus d'un workflow
+          # réutilisable sont nommés « <job appelant> / <job appelé> », d'où le
+          # « / » optionnel en fin de motif.
+          RETRYABLE: '^(test-e2e|test-end-to-end|test-backend-api)( /|$)'
+        run: |
+          failed_jobs=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs?per_page=100" --paginate \
+            --jq '.jobs[] | select(.conclusion == "failure") | .name')
+
+          if [ -z "$failed_jobs" ]; then
+            echo "Aucun job en échec, rien à relancer."
+            exit 0
+          fi
+
+          if echo "$failed_jobs" | grep -Evq "$RETRYABLE"; then
+            echo "Échec en dehors des jobs relançables, pas de retry automatique :"
+            echo "$failed_jobs"
+            exit 0
+          fi
+
+          echo "Seuls des jobs relançables ont échoué, relance des jobs échoués du run $RUN_ID :"
+          echo "$failed_jobs"
+          gh run rerun "$RUN_ID" --failed --repo "$REPO"

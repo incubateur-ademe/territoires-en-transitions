@@ -1,7 +1,7 @@
 import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type Hidden = null;
 export type ToastStatus = Hidden | 'success' | 'error' | 'info';
@@ -13,6 +13,9 @@ export const useBaseToast = () => {
   const [status, setStatus] = useState<ToastStatus>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [duration, setDuration] = useState<number | undefined>(undefined);
+  // Sert de `key` au `ToastFloater` : le remonter réarme la fermeture
+  // automatique, qu'un toast enchaîné hériterait sinon du précédent.
+  const [occurrence, setOccurrence] = useState(0);
 
   const close = () => {
     setStatus(null);
@@ -24,15 +27,15 @@ export const useBaseToast = () => {
    * soit invoquée dans le rendu d'un composant react pour que l'affichage soit
    * effectif)
    */
-  const setToast = (
-    status: ToastStatus,
-    message: string,
-    autoHideDuration?: number
-  ) => {
-    setMessage(message);
-    setStatus(status);
-    setDuration(autoHideDuration);
-  };
+  const setToast = useCallback(
+    (status: ToastStatus, message: string, autoHideDuration?: number) => {
+      setMessage(message);
+      setStatus(status);
+      setDuration(autoHideDuration);
+      setOccurrence((n) => n + 1);
+    },
+    []
+  );
 
   /**
    * Assure le rendu du composant (affiche le message quand `setToast` a été appelé)
@@ -52,6 +55,7 @@ export const useBaseToast = () => {
     };
     return (
       <ToastFloater
+        key={occurrence}
         open={status !== null && message !== null}
         onClose={() => close()}
         className={classNames('!text-white', {

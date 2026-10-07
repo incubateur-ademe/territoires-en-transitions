@@ -8,9 +8,22 @@ import {
   getOtpFromMailpit,
 } from 'tests/shared/mailpit.utils';
 import { testWithUsers } from 'tests/users/users.fixture';
+import { hasActiveOidcProvider } from './login-user-with-oidc.helpers';
 import { SignupUserPom } from './signup-user.pom';
 
 const test = testWithUsers;
+
+/**
+ * Ces parcours couvrent la création de compte en mode dégradé : dès qu'un
+ * fournisseur d'identité est configuré, `/signup` redirige vers lui et le
+ * formulaire email + mot de passe n'est plus atteignable.
+ */
+test.beforeEach(async () => {
+  test.skip(
+    await hasActiveOidcProvider(),
+    'création de compte assurée par le fournisseur d’identité'
+  );
+});
 
 const generateTestEmail = () => {
   const timestamp = Date.now();

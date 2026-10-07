@@ -1,7 +1,6 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { type ActionScoreWithOnlyPoints } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
-import { isNil } from 'es-toolkit';
+import { isNil, round } from 'es-toolkit';
 
 export const getRatioFromOrigineActions = (
   origineActions: CorrelatedActionWithScore[] | undefined,
@@ -38,7 +37,7 @@ export const getScoreFromOrigineActionsAndRatio = (
     pointPasFait: 0,
     pointNonRenseigne: 0,
   };
-  initialScore.pointFait = roundTo(
+  initialScore.pointFait = round(
     ratio *
       (origineActions?.reduce(
         (acc, origineAction) =>
@@ -52,7 +51,7 @@ export const getScoreFromOrigineActionsAndRatio = (
     roundingDigits
   );
 
-  initialScore.pointProgramme = roundTo(
+  initialScore.pointProgramme = round(
     ratio *
       (origineActions?.reduce(
         (acc, origineAction) =>
@@ -65,7 +64,7 @@ export const getScoreFromOrigineActionsAndRatio = (
       ) || 0),
     roundingDigits
   );
-  initialScore.pointPasFait = roundTo(
+  initialScore.pointPasFait = round(
     ratio *
       (origineActions?.reduce(
         (acc, origineAction) =>
@@ -81,7 +80,7 @@ export const getScoreFromOrigineActionsAndRatio = (
 
   if (isNil(referentielPointsPotentiels)) {
     referentielPointsPotentiels =
-      roundTo(
+      round(
         ratio *
           (origineActions?.reduce(
             (acc, origineAction) =>
@@ -97,7 +96,7 @@ export const getScoreFromOrigineActionsAndRatio = (
     initialScore.pointPotentiel = referentielPointsPotentiels;
   }
 
-  initialScore.pointNonRenseigne = roundTo(
+  initialScore.pointNonRenseigne = round(
     (referentielPointsPotentiels || 0) -
       (initialScore.pointFait || 0) -
       (initialScore.pointProgramme || 0) -

@@ -30,7 +30,7 @@ export const LinkFichesView = () => {
 
   const { searchTextDebounced, planActionIds } = watch();
 
-  const { fiches, count, isLoading } = useListFiches(collectiviteId, {
+  const { fiches, isLoading } = useListFiches(collectiviteId, {
     filters: {
       texteNomOuDescription: searchTextDebounced || undefined,
       planActionIds:
@@ -47,12 +47,12 @@ export const LinkFichesView = () => {
   return (
     <div className="p-4">
       <div className="relative flex flex-col gap-4">
-        <Field title={appLabels.rechercherParIntituleOuDescription} small>
+        <Field title={appLabels.rechercherParNomOuDescription} small>
           <Input
             type="search"
             {...register('searchText')}
             onSearch={(v) => setValue('searchTextDebounced', v)}
-            placeholder={appLabels.placeholderRechercher}
+            placeholder={appLabels.rechercher}
             displaySize="sm"
           />
         </Field>
@@ -78,10 +78,7 @@ export const LinkFichesView = () => {
           <span className="text-grey-6">{appLabels.formChargement}</span>
         ) : (
           <>
-            <SearchResultsSummary
-              count={count}
-              linkedFicheIds={linkedFicheIds}
-            />
+            <SearchResultsSummary linkedFicheIds={linkedFicheIds} />
             <Spacer height={0.5} />
             <FichesSelectorGrid
               fiches={filteredFiches}
@@ -96,15 +93,15 @@ export const LinkFichesView = () => {
 };
 
 const SearchResultsSummary = ({
-  count,
   linkedFicheIds,
 }: {
-  count: number;
   linkedFicheIds: number[];
 }) => {
   return (
     <>
-      <span className="font-bold">{appLabels.resultatCount({ count })}</span>
+      <span className="font-bold">
+        {appLabels.resultat({ count: linkedFicheIds.length })}
+      </span>
       {linkedFicheIds.length > 0 && (
         <>
           {appLabels.separateurPuce}

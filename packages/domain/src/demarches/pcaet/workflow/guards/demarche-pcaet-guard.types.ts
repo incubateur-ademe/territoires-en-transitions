@@ -9,7 +9,11 @@ import type { WorkflowGuardResults } from '../../../../utils/workflow/workflow.t
  *   démarche n'a aucun pilote à compte utilisateur, tout éditeur est autorisé).
  * - `dossierComplet` : pièces amont requises couvertes, lignes requises du
  *   diagnostic renseignées et programme d'actions rattaché.
- * - `delaiAvisEcoule` : avis reçus ou délai légal écoulé depuis la transmission.
+ * - `avisTousRendus` : le dossier a au moins une demande d'avis, et chacune a
+ *   reçu un avis validé pour chaque titre attendu.
+ * - `delaiAvisEcoule` : le délai légal laissé aux instances consultatives est
+ *   écoulé. Ne dit rien des avis eux-mêmes : c'est `avisTousRendus` qui s'en
+ *   charge, et les deux ouvrent chacune leur transition vers `instruit`.
  * - `evaluationFinaleDeposee` : l'évaluation finale du PCAET est déposée.
  * - `documentsAvalComplets` : les pièces attendues après les avis
  *   (délibération d'adoption…) sont déposées.
@@ -20,6 +24,7 @@ import type { WorkflowGuardResults } from '../../../../utils/workflow/workflow.t
 export type DemarchePcaetGuardId =
   | 'estPilote'
   | 'dossierComplet'
+  | 'avisTousRendus'
   | 'delaiAvisEcoule'
   | 'evaluationFinaleDeposee'
   | 'documentsAvalComplets';

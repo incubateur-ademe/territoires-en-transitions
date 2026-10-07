@@ -1,5 +1,5 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useDownloadFile } from '@/app/utils/useDownloadFile';
+import { useDownloadFile } from '@/app/utils/use-download-file';
 import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import {

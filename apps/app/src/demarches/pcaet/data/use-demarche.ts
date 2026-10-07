@@ -9,10 +9,10 @@ import {
   emptyDemarchePcaetCompletion,
   getDemarchePcaetCompletion,
 } from '../../completion';
-import { useDemarchePcaetTransitionOptions } from './use-transition-options';
-import { useDemarchePcaetDiagnostic } from '../diagnostic/data/use-diagnostic';
-import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../../types';
+import { useGetPcaetDiagnostic } from '../diagnostic/data/use-get-pcaet-diagnostic';
+import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
+import { useDemarchePcaetTransitionOptions } from './use-transition-options';
 
 type ServerDemarche = RouterOutput['demarches']['pcaet']['get'];
 type UpdateInput = RouterInput['demarches']['pcaet']['update'];
@@ -30,10 +30,14 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   dateModification: server.modifiedAt,
   dateLancement: server.launchedAt,
   datePublication: server.publishedAt,
+  dateAdoption: server.adoptedAt,
   dateTransmission: server.transmittedAt,
+  transmisHorsPlateforme: server.transmittedOffPlatform,
+  isScotAec: server.isScotAec,
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
-  planActionId: server.planActionId,
+  planActionIds: server.planActionIds,
+  unverifiedPlanActionIds: server.unverifiedPlanActionIds,
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,
@@ -49,9 +53,10 @@ const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {
     ...(patch.dateLancement !== undefined
       ? { launchedAt: patch.dateLancement }
       : {}),
-    ...(patch.planActionId !== undefined
-      ? { planActionId: patch.planActionId }
+    ...(patch.planActionIds !== undefined
+      ? { planActionIds: patch.planActionIds }
       : {}),
+    ...(patch.isScotAec !== undefined ? { isScotAec: patch.isScotAec } : {}),
     ...(patch.pilotes !== undefined
       ? {
           pilotes: patch.pilotes.map((pilote) => ({
@@ -93,9 +98,16 @@ export const useDemarchePcaet = (demarcheId: number) => {
 
   const invalidateList = useCallback(
     () =>
-      queryClient.invalidateQueries({
-        queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
-      }),
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
+        }),
+        // Lier/détacher un plan passe par le header : les liens plan ↔
+        // démarche consommés par la table des plans et le bandeau bougent.
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.listPlanLinks.queryKey({ collectiviteId }),
+        }),
+      ]),
     [queryClient, trpc, collectiviteId]
   );
 
@@ -177,14 +189,7 @@ export const useDemarchePcaet = (demarcheId: number) => {
         flushHeader();
       }
     },
-    [
-      demarche,
-      collectiviteId,
-      demarcheId,
-      queryClient,
-      getQueryKey,
-      flushHeader,
-    ]
+    [demarche, queryClient, getQueryKey, flushHeader]
   );
 
   // Chaque transition a sa route : on appelle l'opération, pas un aiguilleur.
@@ -192,14 +197,8 @@ export const useDemarchePcaet = (demarcheId: number) => {
   const { mutate: transmettrePourAvis } = useMutation(
     trpc.demarches.pcaet.transmettrePourAvis.mutationOptions(transitionOptions)
   );
-  const { mutate: reprendreElaboration } = useMutation(
-    trpc.demarches.pcaet.reprendreElaboration.mutationOptions(transitionOptions)
-  );
   const { mutate: publier } = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
-  );
-  const { mutate: depublier } = useMutation(
-    trpc.demarches.pcaet.depublier.mutationOptions(transitionOptions)
   );
   const ids = useMemo(
     () => ({ collectiviteId, demarcheId }),
@@ -209,15 +208,15 @@ export const useDemarchePcaet = (demarcheId: number) => {
   // Les topics du diagnostic et le dossier documentaire viennent du serveur.
   // Les deux queries sont partagées avec les pages correspondantes (mêmes clés
   // de cache, un seul fetch).
-  const { topics } = useDemarchePcaetDiagnostic(demarcheId);
+  const { diagnostic } = useGetPcaetDiagnostic(demarcheId);
   const { snapshot: documentsSnapshot } =
     useDemarchePcaetDocumentsSnapshot(demarcheId);
   const completion = useMemo(
     () =>
       demarche
-        ? getDemarchePcaetCompletion(demarche, topics, documentsSnapshot)
+        ? getDemarchePcaetCompletion(demarche, diagnostic, documentsSnapshot)
         : emptyDemarchePcaetCompletion(),
-    [demarche, topics, documentsSnapshot]
+    [demarche, diagnostic, documentsSnapshot]
   );
 
   return {
@@ -226,9 +225,9 @@ export const useDemarchePcaet = (demarcheId: number) => {
     isLoading,
     update,
     transmettrePourAvis: () => transmettrePourAvis(ids),
-    reprendreElaboration: () => reprendreElaboration(ids),
-    publier: () => publier(ids),
-    depublier: () => depublier(ids),
+    // La date d'adoption est saisie dans la modale de validation du dépôt
+    // final : elle n'a pas d'autre source.
+    publier: (dateAdoption: string) => publier({ ...ids, dateAdoption }),
     collectiviteId,
   };
 };

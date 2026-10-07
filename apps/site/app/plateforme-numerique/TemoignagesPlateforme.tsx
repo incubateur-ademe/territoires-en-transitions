@@ -1,18 +1,12 @@
 import Section from '@/site/components/sections/Section';
 import TestimonialSlideshow from '@/site/components/slideshow/TestimonialSlideshow';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { getStrapiData } from './utils';
 
-type TemoignagesPlateformeProps = {
-  temoignages: {
-    id: number;
-    auteur: string;
-    role: string;
-    temoignage: string;
-    portrait?: StrapiItem;
-  }[];
-};
+const TemoignagesPlateforme = async () => {
+  // Même requête que generateMetadata : Next la dédoublonne pendant le rendu.
+  const temoignages = (await getStrapiData())?.temoignages ?? [];
+  if (temoignages.length === 0) return null;
 
-const TemoignagesPlateforme = ({ temoignages }: TemoignagesPlateformeProps) => {
   return (
     <Section
       containerClassName="bg-primary-7 max-md:!p-2"

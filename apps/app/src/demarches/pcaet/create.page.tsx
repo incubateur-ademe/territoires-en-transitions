@@ -3,23 +3,25 @@
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
-import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
+import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
 import { DemarcheAvanceSidePanelButton } from '@/app/demarches/components/avance.side-panel-button';
 import { DemarcheDetailLayout } from '@/app/demarches/components/detail.layout';
+import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
 import { useDemarcheAvanceSidePanel } from '@/app/demarches/components/use-avance-side-panel';
-import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
-import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
 import { appLabels } from '@/app/labels/catalog';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { Button, Field, Input } from '@tet/ui';
+import {
+  buildDemarchePcaetTitre,
+  DemarcheTypeEnum,
+} from '@tet/domain/demarches';
+import { Button, Checkbox, Field, Input } from '@tet/ui';
 import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
 /** Ces écrans sont propres au PCAET : le type est connu. */
@@ -28,17 +30,24 @@ const PCAET_TYPE = {
 };
 
 const createDemarchePcaetSchema = z.object({
-  titre: z.string().min(1, appLabels.demarcheCreerIntituleRequis),
-
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
     .min(1, appLabels.demarcheCreerPilotesRequis),
-  dateLancement: z.string().min(1, appLabels.demarcheCreerDateDebutRequise),
+  dateLancement: z.string().min(1, appLabels.demarcheCreerDateLancementRequise),
+  /**
+   * Le PCAET a déjà été transmis pour avis hors de la plateforme : la démarche
+   * démarrera à l'étape de finalisation. Figé ici — aucun écran ne le reprend.
+   */
+  transmisHorsPlateforme: z.boolean(),
+  /**
+   * Le PCAET est porté par un SCoT-AEC. Posé aux seules collectivités ayant la
+   * compétence Banatic SCOT, et pré-rempli sur oui.
+   */
+  isScotAec: z.boolean(),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
 
-const TITRE_FIELD_ID = 'create-demarche-pcaet-titre';
 const PILOTES_FIELD_ID = 'create-demarche-pcaet-pilotes';
 const DATE_LANCEMENT_FIELD_ID = 'create-demarche-pcaet-date-lancement';
 
@@ -52,16 +61,12 @@ export const CreateDemarchePcaetPage = () => {
     trpc.demarches.pcaet.create.mutationOptions()
   );
 
-  const { isOpen, toggle } = useDemarcheAvanceSidePanel(
-    {
-      demarcheType: DemarcheTypeEnum.PCAET,
-      collectiviteId,
-      statut: 'en_elaboration',
-      completion: emptyDemarchePcaetCompletion(),
-      isPreview: true,
-    },
-    { defaultOpen: true }
+  // Ce que la collectivité a le droit de déclarer : la question SCoT-AEC n'a de
+  // sens que pour celles qui portent un SCoT.
+  const { data: depotContext, isPending: contexteEnAttente } = useQuery(
+    trpc.demarches.pcaet.getDepotContext.queryOptions({ collectiviteId })
   );
+  const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
 
   const {
     register,
@@ -72,7 +77,6 @@ export const CreateDemarchePcaetPage = () => {
     resolver: zodResolver(createDemarchePcaetSchema),
     mode: 'onChange',
     defaultValues: {
-      titre: `PCAET réglementaire ${new Date().getFullYear()}`,
       pilotes: [
         {
           nom: `${user.prenom} ${user.nom}`.trim(),
@@ -82,13 +86,36 @@ export const CreateDemarchePcaetPage = () => {
         },
       ],
       dateLancement: '',
+      transmisHorsPlateforme: false,
+      isScotAec: true,
     },
   });
+
+  // Le panneau d'avancement montre le parcours qui attend la collectivité :
+  // cocher la case doit s'y voir tout de suite, avant même de créer.
+  const transmisHorsPlateforme = useWatch({
+    control,
+    name: 'transmisHorsPlateforme',
+  });
+
+  const { isOpen, toggle } = useDemarcheAvanceSidePanel(
+    {
+      demarcheType: DemarcheTypeEnum.PCAET,
+      collectiviteId,
+      statut: 'en_elaboration',
+      completion: emptyDemarchePcaetCompletion(),
+      isPreview: true,
+      horsPlateforme: transmisHorsPlateforme,
+    },
+    { defaultOpen: true }
+  );
 
   const onSubmit = async (data: CreateDemarchePcaetForm) => {
     const demarche = await createDemarche({
       collectiviteId,
-      titre: data.titre,
+      // L'intitulé n'est pas saisi ici : il se déduit de l'année du lancement,
+      // et reste modifiable depuis l'en-tête du dossier.
+      titre: buildDemarchePcaetTitre(data.dateLancement),
       pilotes: data.pilotes.map((pilote) => ({
         tagId: pilote.tagId ?? null,
         userId: pilote.userId ?? null,
@@ -96,6 +123,10 @@ export const CreateDemarchePcaetPage = () => {
       launchedAt: data.dateLancement
         ? new Date(data.dateLancement).toISOString()
         : null,
+      transmittedOffPlatform: data.transmisHorsPlateforme,
+      // Une collectivité à qui la question n'est pas posée ne déclare rien, quoi
+      // que porte le formulaire.
+      isScotAec: peutDeclarerScotAec ? data.isScotAec : false,
     });
     router.push(
       makeCollectiviteDemarchePcaetRootUrl({
@@ -107,8 +138,6 @@ export const CreateDemarchePcaetPage = () => {
 
   return (
     <DemarcheDetailLayout.Root>
-      <DrealContextBanner />
-
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>
           <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6">
@@ -132,20 +161,6 @@ export const CreateDemarchePcaetPage = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-5"
             >
-              <Field
-                title={appLabels.demarcheCreerIntitule}
-                htmlFor={TITRE_FIELD_ID}
-                state={errors.titre ? 'error' : 'default'}
-                message={errors.titre?.message}
-              >
-                <Input
-                  id={TITRE_FIELD_ID}
-                  type="text"
-                  aria-required="true"
-                  {...register('titre')}
-                />
-              </Field>
-
               <div className="flex flex-col gap-2">
                 <div
                   id={`${PILOTES_FIELD_ID}-label`}
@@ -180,7 +195,7 @@ export const CreateDemarchePcaetPage = () => {
               </div>
 
               <Field
-                title={appLabels.demarcheCreerDateDebut}
+                title={appLabels.demarcheCreerDateLancement}
                 htmlFor={DATE_LANCEMENT_FIELD_ID}
                 state={errors.dateLancement ? 'error' : 'default'}
                 message={errors.dateLancement?.message}
@@ -195,13 +210,50 @@ export const CreateDemarchePcaetPage = () => {
                 />
               </Field>
 
+              <Controller
+                control={control}
+                name="transmisHorsPlateforme"
+                render={({ field }) => (
+                  <Checkbox
+                    variant="switch"
+                    label={appLabels.demarcheCreerHorsPlateforme}
+                    message={appLabels.demarcheCreerHorsPlateformeDescription}
+                    containerClassname="gap-3"
+                    data-test="demarches.creer.hors-plateforme"
+                    checked={field.value}
+                    onChange={() => field.onChange(!field.value)}
+                  />
+                )}
+              />
+
+              {peutDeclarerScotAec && (
+                <Controller
+                  control={control}
+                  name="isScotAec"
+                  render={({ field }) => (
+                    <Checkbox
+                      variant="switch"
+                      label={appLabels.demarcheCreerScotAec}
+                      message={appLabels.demarcheCreerScotAecDescription}
+                      containerClassname="gap-3"
+                      data-test="demarches.creer.scot-aec"
+                      checked={field.value}
+                      onChange={() => field.onChange(!field.value)}
+                    />
+                  )}
+                />
+              )}
+
               <div className="flex justify-end gap-3">
                 <Button
                   type="submit"
                   variant="primary"
                   icon="arrow-right-line"
                   iconPosition="right"
-                  disabled={isSubmitting}
+                  // Tant que le contexte n'a pas répondu, la question SCoT-AEC
+                  // n'est pas affichée et sa réponse partirait à « non » — le
+                  // contraire de ce qu'annonce la coche pré-remplie.
+                  disabled={isSubmitting || contexteEnAttente}
                 >
                   {appLabels.demarcheCreerSoumettre}
                 </Button>

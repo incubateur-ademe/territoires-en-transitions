@@ -19,7 +19,7 @@ export class AddAnnexeRouter {
       .input(addAnnexeInputSchema)
       .output(annexeSchema)
       .mutation(async ({ input, ctx: { user } }) => {
-        const result = await this.addAnnexeService.addAnnexe(input, user);
+        const result = await this.addAnnexeService.addAnnexe(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

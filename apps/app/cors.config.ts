@@ -1,4 +1,4 @@
-import { isAllowedOrigin } from '@tet/api';
+import { isAllowedOrigin } from '@tet/api/utils/isAllowedOrigin';
 import { ENV } from '@tet/api/environmentVariables';
 
 const ACCESS_CONTROL_ALLOW_METHODS = 'GET,DELETE,PATCH,POST,PUT,OPTIONS';

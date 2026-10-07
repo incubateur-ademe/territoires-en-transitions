@@ -4,6 +4,6 @@ import { Etoile } from './labellisation-etoile.enum.schema';
 export type LabellisationCritere = {
   atteint: boolean;
   etoiles: Etoile;
-  score_fait: number;
-  score_a_realiser: number;
+  scoreFait: number;
+  scoreARealiser: number;
 };

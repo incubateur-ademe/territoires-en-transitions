@@ -4,7 +4,7 @@ import { LookupConfig } from './use-fiche-action-filters-data';
 export const getFilterValuesLabels = (
   lookupConfig: Partial<Record<FilterKeys, LookupConfig>>,
   categoryKey: FilterKeys,
-  values: string[] | number[]
+  values: (string | number)[]
 ): string[] => {
   const config = lookupConfig[categoryKey];
   if (!config) {

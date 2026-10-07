@@ -116,3 +116,65 @@ describe("DiscussionRouter — contrôle d'accès horizontal (IDOR TET-7357)", (
     );
   });
 });
+
+describe('DiscussionRouter — filtre par mesure', () => {
+  let app: INestApplication;
+  let router: TrpcRouter;
+  let collectivite: Collectivite;
+  let user: AuthenticatedUser;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    router = await getTestRouter(app);
+    const db = await getTestDatabase(app);
+
+    const collectiviteAndAdmin = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = collectiviteAndAdmin.collectivite;
+    user = getAuthUserFromUserCredentials(collectiviteAndAdmin.user);
+
+    const caller = router.createCaller({ user });
+    await Promise.all(
+      ['cae_1.2.3.2.1', 'cae_1.2.3.2.10'].map((actionId) =>
+        caller.collectivites.discussions.create({
+          collectiviteId: collectivite.id,
+          actionId,
+          message: 'Question sur la tâche',
+        })
+      )
+    );
+
+    return async () => {
+      await app.close();
+    };
+  });
+
+  test("ne remonte pas une action voisine dont l'identifiant commence pareil", async () => {
+    const caller = router.createCaller({ user });
+
+    const { discussions } = await caller.collectivites.discussions.list({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      filters: { actionId: 'cae_1.2.3.2.1' },
+    });
+
+    expect(discussions.map((discussion) => discussion.actionId)).toEqual([
+      'cae_1.2.3.2.1',
+    ]);
+  });
+
+  test('remonte les discussions des sous-actions', async () => {
+    const caller = router.createCaller({ user });
+
+    const { discussions } = await caller.collectivites.discussions.list({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      filters: { actionId: 'cae_1.2.3.2' },
+    });
+
+    expect(discussions.map((discussion) => discussion.actionId).sort()).toEqual(
+      ['cae_1.2.3.2.1', 'cae_1.2.3.2.10']
+    );
+  });
+});

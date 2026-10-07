@@ -20,24 +20,21 @@ export async function generateMetadata(
   return getUpdatedMetadata(metadata, {
     title: strapiData?.seo?.metaTitle ?? 'Plateforme numérique',
     networkTitle: strapiData?.seo?.metaTitle,
-    description:
-      strapiData?.seo?.metaDescription ?? strapiData?.header?.accroche,
+    description: strapiData?.seo?.metaDescription,
     image: strapiData?.seo?.metaImage,
   });
 }
 
-const PlateformeNumerique = async () => {
-  const data = await getStrapiData();
-
+// Les sections chargent chacune leurs données : rien n'attend Strapi avant de
+// lancer les autres requêtes.
+const PlateformeNumerique = () => {
   return (
     <>
       <PlateformeNumeriqueHeroSection />
       <ApportsPlateformeSection />
       <HomeCTA />
       <DistingueSection />
-      {data?.temoignages && data.temoignages.length > 0 && (
-        <TemoignagesPlateforme temoignages={data.temoignages} />
-      )}
+      <TemoignagesPlateforme />
       <PlateformeCTASection />
       <PlateformeFAQSection />
       <QuiSommesNousSection />

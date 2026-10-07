@@ -1,4 +1,5 @@
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
+import { preuveRapportTable } from '@tet/backend/collectivites/documents/models/preuve-rapport.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
@@ -85,7 +86,7 @@ async function applyAvancementToAllReferentielActions(
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
       referentielId: referentiel,
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
 
   const actionStatusesToCreate: ActionStatutCreate[] =
@@ -159,7 +160,7 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
       referentielId: referentiel,
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
   console.log(
     `Score for referentiel ${referentiel}: ${scoreSnapshot.scoresPayload.scores.score.pointFait} / ${scoreSnapshot.scoresPayload.scores.score.pointPotentiel}, search for actions to complete`
@@ -167,23 +168,23 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
 
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
-      collectiviteId: collectiviteId,
+      collectiviteId,
       referentielId: referentiel,
     });
 
   const actionStatusesToUpdate: ActionStatutCreate[] = Array.from(
     new Map(
-      parcours.criteres_action
+      parcours.criteresAction
         .map((critere) => {
           if (!critere.atteint) {
-            console.log(`Critere ${critere.action_id} not atteint`);
+            console.log(`Critere ${critere.actionId} not atteint`);
             const action = getActionInScoreTree(
               scoreSnapshot.scoresPayload.scores,
-              critere.action_id
+              critere.actionId
             );
             if (!action) {
               throw new Error(
-                `Action ${critere.action_id} not found in score tree`
+                `Action ${critere.actionId} not found in score tree`
               );
             }
             const actionStatuses: ActionStatutCreate[] =
@@ -362,6 +363,14 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
     .returning();
   console.log(
     `${preuveAuditRet.length} audit preuves removed from collectivite ${collectiviteId}`
+  );
+
+  const preuveRapportRet = await databaseService.db
+    .delete(preuveRapportTable)
+    .where(eq(preuveRapportTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${preuveRapportRet.length} rapport preuves removed from collectivite ${collectiviteId}`
   );
 
   const snapshotRet = await databaseService.db

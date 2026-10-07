@@ -1,71 +1,61 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
-import { indicateurCategorieTagTable } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
+  VALUE_SOURCE_TOKENS,
 } from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
-import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
-import ValeursReferenceService from '@tet/backend/indicateurs/valeurs/valeurs-reference.service';
-import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
-import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@tet/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import {
   ScoreIndicatifError,
   ScoreIndicatifErrorEnum,
 } from '@tet/backend/referentiels/score-indicatif/score-indicatif.errors';
 import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
-import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { CollectiviteAvecType } from '@tet/domain/collectivites';
-import {
-  COLLECTIVITE_SOURCE_ID,
-  IndicateurAvecValeursParSource,
-  IndicateurSourceMetadonnee,
-  IndicateurValeurGroupee,
-} from '@tet/domain/indicateurs';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   ActionScoreIndicatif,
+  getReferentielIdFromActionId,
   IndicateurAssocie,
+  ReferentielId,
   ScoreIndicatifActionValeurUtilisable,
   ScoreIndicatifPayload,
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
-import {
-  getReferentielIdFromActionId,
-  isNewReferentiel,
-  ReferentielId,
-} from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
-import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
-import { objectToCamel } from 'ts-case-convert';
+import { groupBy, keyBy } from 'es-toolkit';
+import { BuildEvaluationContextService } from './build-evaluation-context.service';
+import { buildCalculScoreIndicatif } from './calcul-score-indicatif.rules';
+import {
+  buildAnneesPourExpression,
+  buildValeursPourExpression,
+  pickValeursUtiliseesPourResultat,
+} from './compute-score-indicatif.rules';
+import { GetIndicateursAssociesService } from './get-indicateurs-associes.service';
 import { GetScoreIndicatifRequest } from './get-score-indicatif.request';
+import {
+  actionBelongsToReferentiel,
+  formatScoreIndicatifForPayload,
+} from './score-indicatif-payload.rules';
+import { ScoreIndicatifRepository } from './score-indicatif.repository';
+import { mapActionIdToValeurUtilisable } from './valeurs-utilisables.rules';
 
 @Injectable()
 export class ScoreIndicatifService {
   private readonly logger = new Logger(ScoreIndicatifService.name);
-  private readonly db = this.databaseService.db;
 
   constructor(
-    private readonly databaseService: DatabaseService,
-    private readonly valeursReferenceService: ValeursReferenceService,
-    private readonly collectivitesService: CollectivitesService,
-    private readonly personnalisationsService: PersonnalisationsService,
+    private readonly repository: ScoreIndicatifRepository,
+    private readonly transactionManager: TransactionManager,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly indicateurValeursService: CrudValeursService,
-    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly getIndicateursAssociesService: GetIndicateursAssociesService,
+    private readonly buildEvaluationContextService: BuildEvaluationContextService
   ) {}
 
   /**
@@ -73,20 +63,31 @@ export class ScoreIndicatifService {
    */
   async getValeursUtilisables(
     input: GetValeursUtilisablesRequest,
-    user: AuthUser
-  ): Promise<ScoreIndicatifActionValeurUtilisable[]> {
-    const formules = await this.getFormules(input);
-    const { indicateursAssocies } = await this.getIndicateursAssocies({
-      ...input,
-      formules,
-    });
+    { user }: ServiceSecondArg
+  ): Promise<
+    Result<ScoreIndicatifActionValeurUtilisable[], ScoreIndicatifError>
+  > {
+    const formulesResult = await this.repository.getFormules(input.actionIds);
+    if (!formulesResult.success) {
+      return failure(formulesResult.error);
+    }
+
+    const indicateursAssociesResult =
+      await this.getIndicateursAssociesService.getIndicateursAssocies({
+        collectiviteId: input.collectiviteId,
+        formules: formulesResult.data,
+      });
+    if (!indicateursAssociesResult.success) {
+      return failure(indicateursAssociesResult.error);
+    }
+    const { indicateursAssocies } = indicateursAssociesResult.data;
 
     const indicateurIds = indicateursAssocies.map((ind) => ind.indicateurId);
     if (!indicateurIds.length) {
       this.logger.log(
         `Aucun indicateur trouvé pour les actions ${input.actionIds.join(',')}`
       );
-      return [];
+      return success([]);
     }
     const valeursGroupees =
       await this.indicateurValeursService.listIndicateurValeurs(
@@ -97,144 +98,34 @@ export class ScoreIndicatifService {
         user
       );
 
-    const valeursUtiliseesParActionId =
-      await this.getValeursUtiliseesParActionId(input);
+    const valeursUtiliseesResult =
+      await this.repository.listValeursUtiliseesParActionId(input);
+    if (!valeursUtiliseesResult.success) {
+      return failure(valeursUtiliseesResult.error);
+    }
 
-    return input.actionIds
+    const valeursUtilisables = input.actionIds
       .map((actionId) =>
-        this.mapActionIdToValeurUtilisable(
+        mapActionIdToValeurUtilisable(
           actionId,
           indicateursAssocies,
           valeursGroupees,
-          valeursUtiliseesParActionId
+          valeursUtiliseesResult.data
         )
       )
       .filter(
         (indicateursParActionId) => indicateursParActionId.indicateurs.length
       );
+
+    return success(valeursUtilisables);
   }
 
   /**
-   * Prépare les données pour fournir les valeurs utilisables des indicateurs
-   * associés à une action
+   * Associe ou supprime le lien vers les valeurs utilisées pour le calcul du score indicatif
    */
-  private mapActionIdToValeurUtilisable(
-    actionId: string,
-    indicateursAssocies: IndicateurAssocie[],
-    valeursGroupees: { indicateurs: IndicateurAvecValeursParSource[] },
-    valeursUtiliseesParActionId: Record<string, ValeurUtilisee[]>
-  ): ScoreIndicatifActionValeurUtilisable {
-    return {
-      actionId,
-      indicateurs: indicateursAssocies
-        .filter((ind) => ind.actionId === actionId)
-        .map((ind) =>
-          this.mapIndicateurToValeurUtilisable(
-            ind,
-            valeursGroupees,
-            valeursUtiliseesParActionId[actionId] || []
-          )
-        )
-        .filter((ind): ind is NonNullable<typeof ind> => ind !== null),
-    };
-  }
-
-  /**
-   * Prépare les données pour fournir une valeur utilisable d'un indicateur
-   * associé à une action
-   */
-  private mapIndicateurToValeurUtilisable(
-    indicateur: IndicateurAssocie,
-    valeursGroupees: { indicateurs: IndicateurAvecValeursParSource[] },
-    valeursUtilisees: ValeurUtilisee[]
-  ): ScoreIndicatifActionValeurUtilisable['indicateurs'][number] | null {
-    const { indicateurId, identifiantReferentiel, unite, titre } = indicateur;
-    const sourcesObj = valeursGroupees.indicateurs.find(
-      (ind) => ind.definition.id === indicateurId
-    )?.sources;
-
-    if (!sourcesObj) return null;
-
-    const valeursUtiliseesParTypeScore = mapValues(
-      groupBy(valeursUtilisees, (v) => v.typeScore),
-      (valeurs) => valeurs.map((v) => v.indicateurValeurId)
-    );
-
-    const selection: Record<
-      ScoreIndicatifType,
-      {
-        id: number;
-        annee: number;
-        source: string;
-        valeur: number;
-      } | null
-    > = { fait: null, programme: null };
-
-    const transformeValeur = (
-      v: IndicateurValeurGroupee,
-      typeScore: ScoreIndicatifType,
-      source: string
-    ) => {
-      const utilisee = valeursUtiliseesParTypeScore[typeScore]?.includes(v.id);
-      const valeur = (
-        typeScore === scoreIndicatifTypeEnum.FAIT ? v.resultat : v.objectif
-      ) as number;
-      const annee = new Date(v.dateValeur).getFullYear();
-      if (utilisee) {
-        selection[typeScore] = { id: v.id, annee, source, valeur };
-      }
-      return {
-        id: v.id,
-        valeur,
-        dateValeur: v.dateValeur,
-        annee,
-        utilisee,
-      };
-    };
-
-    const mapValeurs = (
-      s: IndicateurAvecValeursParSource['sources'][string],
-      typeScore: ScoreIndicatifType
-    ) => {
-      const field =
-        typeScore === scoreIndicatifTypeEnum.FAIT ? 'resultat' : 'objectif';
-      return s.valeurs
-        .filter((v) => typeof v[field] === 'number')
-        .map((v) => transformeValeur(v, typeScore, s.source));
-    };
-
-    const getOrdreAffichage = (
-      s: IndicateurAvecValeursParSource['sources'][string]
-    ) =>
-      (s.source === COLLECTIVITE_SOURCE_ID
-        ? 0
-        : s.ordreAffichage === null
-        ? 1000
-        : s.ordreAffichage) as number;
-
-    return {
-      indicateurId,
-      identifiantReferentiel,
-      unite,
-      titre,
-      selection,
-      sources: Object.values(sourcesObj)
-        .map((s) => ({
-          source: s.source,
-          libelle: s.source === COLLECTIVITE_SOURCE_ID ? null : s.libelle,
-          ordreAffichage: getOrdreAffichage(s),
-          fait: mapValeurs(s, scoreIndicatifTypeEnum.FAIT),
-          programme: mapValeurs(s, scoreIndicatifTypeEnum.PROGRAMME),
-        }))
-        .sort((a, b) => a.ordreAffichage - b.ordreAffichage),
-    };
-  }
-
-  /**
-   * Associe ou supprime le lien vers les valeurs utilisées pour le calcul du score indicatif */
   async setValeursUtilisees(
     input: SetValeursUtiliseesRequest,
-    user: AuthUser
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<void, ScoreIndicatifError>> {
     let referentielId: ReferentielId;
     try {
@@ -252,45 +143,99 @@ export class ScoreIndicatifService {
       return failure(permissionResult.error);
     }
 
-    try {
-      const { actionId, collectiviteId, indicateurId } = getTableColumns(
-        actionScoreIndicateurValeurTable
-      );
-      await this.db.transaction(async (tx) => {
-        await tx
-          .delete(actionScoreIndicateurValeurTable)
-          .where(
-            and(
-              eq(actionId, input.actionId),
-              eq(collectiviteId, input.collectiviteId),
-              eq(indicateurId, input.indicateurId)
-            )
-          );
-
-        const valeursNonNulles = input.valeurs.filter(
-          (v) => v.indicateurValeurId !== null
-        );
-        if (valeursNonNulles.length) {
-          await tx.insert(actionScoreIndicateurValeurTable).values(
-            valeursNonNulles.map((v) => ({
-              actionId: input.actionId,
-              collectiviteId: input.collectiviteId,
-              indicateurId: input.indicateurId,
-              indicateurValeurId: v.indicateurValeurId as number,
-              typeScore: v.typeScore,
-            }))
-          );
-        }
+    return this.transactionManager.executeSingle(async (transaction) => {
+      const validationResult = await this.validateValeursUtiliseesInput(input, {
+        tx: transaction,
       });
+      if (!validationResult.success) {
+        return failure(validationResult.error, validationResult.cause);
+      }
 
-      return success(undefined);
-    } catch (error) {
-      this.logger.error(error);
-      return failure(
-        'DATABASE_ERROR',
-        error instanceof Error ? error : new Error(String(error))
+      return this.repository.replaceValeursUtiliseesForAction(
+        input,
+        transaction
       );
+    }, tx);
+  }
+
+  /**
+   * Vérifie, avant toute écriture, que l'action appartient bien au
+   * référentiel attendu, que l'indicateur est associé à cette action (via sa
+   * formule de score) et que les valeurs d'indicateur fournies appartiennent
+   * bien à la collectivité et à l'indicateur donnés — évite qu'un appelant
+   * ne rattache à son score des valeurs d'une autre collectivité ou d'un
+   * autre indicateur.
+   */
+  private async validateValeursUtiliseesInput(
+    input: SetValeursUtiliseesRequest,
+    { tx }: { tx: Transaction }
+  ): Promise<Result<void, ScoreIndicatifError>> {
+    const formulesResult = await this.repository.getFormules(
+      [input.actionId],
+      tx
+    );
+    if (!formulesResult.success) {
+      return failure(formulesResult.error, formulesResult.cause);
     }
+    const formule = formulesResult.data.find(
+      (f) => f.actionId === input.actionId
+    );
+    if (!formule) {
+      return failure(ScoreIndicatifErrorEnum.NOT_FOUND);
+    }
+
+    // Certaines actions du référentiel TE n'ont pas de formule de
+    // score (`exprScore` vide) : la sélection d'une valeur y est tout de
+    // même autorisée (le score reste alors non calculable), donc il n'y a
+    // rien à vérifier contre une formule inexistante.
+    if (formule.exprScore) {
+      const indicateursAssociesResult =
+        await this.getIndicateursAssociesService.getIndicateursAssocies(
+          { collectiviteId: input.collectiviteId, formules: [formule] },
+          { tx }
+        );
+      if (!indicateursAssociesResult.success) {
+        return failure(
+          indicateursAssociesResult.error,
+          indicateursAssociesResult.cause
+        );
+      }
+      const indicateurAssocie =
+        indicateursAssociesResult.data.indicateursAssocies.find(
+          (indicateur) => indicateur.indicateurId === input.indicateurId
+        );
+      if (!indicateurAssocie) {
+        return failure(ScoreIndicatifErrorEnum.NOT_FOUND);
+      }
+    }
+
+    const indicateurValeurIds = input.valeurs
+      .map((v) => v.indicateurValeurId)
+      .filter((id): id is number => id !== null);
+    if (indicateurValeurIds.length) {
+      const valeursTrouveesResult =
+        await this.repository.filterIndicateurValeurIdsBelongingTo(
+          indicateurValeurIds,
+          input.collectiviteId,
+          input.indicateurId,
+          tx
+        );
+      if (!valeursTrouveesResult.success) {
+        return failure(
+          valeursTrouveesResult.error,
+          valeursTrouveesResult.cause
+        );
+      }
+      const valeursTrouvees = new Set(valeursTrouveesResult.data);
+      const contientValeurInconnue = indicateurValeurIds.some(
+        (id) => !valeursTrouvees.has(id)
+      );
+      if (contientValeurInconnue) {
+        return failure(ScoreIndicatifErrorEnum.NOT_FOUND);
+      }
+    }
+
+    return success(undefined);
   }
 
   /**
@@ -298,36 +243,62 @@ export class ScoreIndicatifService {
    * des valeurs/source/année sélectionnées
    */
   async getScoreIndicatif(
-    input: GetScoreIndicatifRequest
+    input: GetScoreIndicatifRequest,
+    // `tx` permet de calculer le score à partir de valeurs écrites dans la
+    // même transaction, avant son commit
+    { tx }: Pick<ServiceSecondArg, 'tx'> = {}
   ): Promise<
     Result<Record<string, ActionScoreIndicatif>, ScoreIndicatifError>
   > {
-    const formules = await this.getFormules(input);
+    const formulesResult = await this.repository.getFormules(
+      input.actionIds,
+      tx
+    );
+    if (!formulesResult.success) {
+      return failure(formulesResult.error);
+    }
+    const formules = formulesResult.data;
 
-    const valeursUtiliseesParActionId =
-      await this.getValeursUtiliseesParActionId(input);
+    const valeursUtiliseesResult =
+      await this.repository.listValeursUtiliseesParActionId(input, tx);
+    if (!valeursUtiliseesResult.success) {
+      return failure(valeursUtiliseesResult.error);
+    }
+    const valeursUtiliseesParActionId = valeursUtiliseesResult.data;
 
-    const { indicateursAssocies, identiteCollectivite } =
-      await this.getIndicateursAssocies({ ...input, formules });
+    const indicateursAssociesResult =
+      await this.getIndicateursAssociesService.getIndicateursAssocies(
+        { collectiviteId: input.collectiviteId, formules },
+        // lit dans `tx` le flag `isSuivi` éventuellement modifié par l'appelant
+        { tx }
+      );
+    if (!indicateursAssociesResult.success) {
+      return failure(indicateursAssociesResult.error);
+    }
+    const {
+      indicateursAssocies,
+      indicateursParActionId,
+      identiteCollectivite,
+    } = indicateursAssociesResult.data;
     const indicateursAssociesParActionId = groupBy(
       indicateursAssocies,
       ({ actionId }) => actionId
     );
 
-    const referentielContextResult = await this.deriveReferentielContext(
-      formules.map((f) => f.actionId)
-    );
-    if (!referentielContextResult.success) {
-      return failure(referentielContextResult.error);
+    const evaluationContextResult =
+      await this.buildEvaluationContextService.buildEvaluationContext(
+        input,
+        formules.map(({ actionId }) => actionId),
+        indicateursParActionId,
+        indicateursAssocies,
+        identiteCollectivite,
+        valeursUtiliseesParActionId,
+        { tx }
+      );
+    if (!evaluationContextResult.success) {
+      return failure(evaluationContextResult.error);
     }
-    const referentielContext = referentielContextResult.data;
-
-    const evaluationContext = await this.getEvaluationContext(
-      input,
-      indicateursAssocies,
-      identiteCollectivite,
-      referentielContext
-    );
+    const evaluationContext = evaluationContextResult.data;
 
     const scoresIndicatifs = formules
       .map(({ actionId, exprScore }) => {
@@ -338,6 +309,12 @@ export class ScoreIndicatifService {
           return null;
         }
 
+        // choix de conception assumé : même une formule reposant uniquement
+        // sur `est_suivi(...)` (qui ne bloque jamais faute de *valeur*) reste
+        // non calculable si la *définition* de l'indicateur qu'elle référence
+        // est introuvable ou filtrée pour cette collectivité (ex. indicateur
+        // hors-DROM). `est_suivi` ne s'affranchit que de l'absence de valeur
+        // sélectionnée, pas de l'absence de définition.
         const indicateurs = indicateursAssociesParActionId[actionId];
         if (!indicateurs?.length) {
           this.logger.log(
@@ -360,6 +337,59 @@ export class ScoreIndicatifService {
           (v) => v.typeScore
         );
 
+        // une formule qui ne référence aucun indicateur via `val`/`opt_val`/
+        // `progression_snbc`/`reduction` (ex. une formule reposant uniquement
+        // sur `est_suivi(...)`) n'a besoin d'aucune valeur sélectionnée par
+        // la collectivité. La liste des tokens concernés vit dans
+        // `VALUE_SOURCE_TOKENS`, aux côtés du reste de la sémantique des tokens
+        // (`IndicateurExpressionService`), pour éviter qu'un futur token soit
+        // ajouté ici sans y être ajouté.
+        const formuleNecessiteUneValeur = (
+          indicateursParActionId[actionId] ?? []
+        ).some((ref) =>
+          ref.tokens.some((token) =>
+            (VALUE_SOURCE_TOKENS as readonly string[]).includes(token)
+          )
+        );
+
+        // pour chaque indicateur référencé par `est_suivi(...)` dans cette
+        // formule : est-il "suivi" pour ce type de score, c'est-à-dire
+        // sélectionné (et non nul) parmi les valeurs retenues pour cette
+        // action ? `est_suivi` ne dépend donc jamais de la simple existence
+        // d'une valeur ailleurs pour la collectivité, seulement de ce qui a
+        // été explicitement retenu pour cette action.
+        const referencesEstSuivi = (
+          indicateursParActionId[actionId] ?? []
+        ).filter((ref) => ref.tokens.includes('est_suivi'));
+
+        // mapping identifiant référentiel -> indicateur associé
+        const indicateurParIdentifiant = referencesEstSuivi.length
+          ? keyBy(indicateurs, (ind) => ind.identifiantReferentiel)
+          : {};
+
+        // `undefined` (et non `{}`) quand la formule n'utilise pas
+        // `est_suivi(...)` : préserve le court-circuit "aucune valeur
+        // disponible" de `parseAndEvaluateExpression` pour les formules qui
+        // n'en ont pas besoin.
+        const buildIndicateursSuivis = (
+          typeScore: ScoreIndicatifType
+        ): Record<string, boolean> | undefined => {
+          if (!referencesEstSuivi.length) {
+            return undefined;
+          }
+          const indicateurIdsSelectionnes = new Set(
+            (valeursParTypeScore[typeScore] || []).map((v) => v.indicateurId)
+          );
+          const suivis: Record<string, boolean> = {};
+          referencesEstSuivi.forEach((ref) => {
+            const indicateurAssocie = indicateurParIdentifiant[ref.identifiant];
+            suivis[ref.identifiant] = indicateurAssocie
+              ? indicateurIdsSelectionnes.has(indicateurAssocie.indicateurId)
+              : false;
+          });
+          return suivis;
+        };
+
         // calcul les scores
         const fait = this.computeScore(
           actionId,
@@ -367,7 +397,9 @@ export class ScoreIndicatifService {
           valeursParTypeScore,
           indicateurs,
           scoreIndicatifTypeEnum.FAIT,
-          evaluationContext
+          evaluationContext,
+          formuleNecessiteUneValeur,
+          buildIndicateursSuivis(scoreIndicatifTypeEnum.FAIT)
         );
         const programme = this.computeScore(
           actionId,
@@ -375,12 +407,28 @@ export class ScoreIndicatifService {
           valeursParTypeScore,
           indicateurs,
           scoreIndicatifTypeEnum.PROGRAMME,
-          evaluationContext
+          evaluationContext,
+          formuleNecessiteUneValeur,
+          buildIndicateursSuivis(scoreIndicatifTypeEnum.PROGRAMME)
         );
+
+        // type de calcul et données ayant servi au calcul, pour l'affichage ;
+        // sans valeur utilisée si un indicateur est non suivi (le score est
+        // alors forcé à 0 sans évaluer la formule, cf. `computeScore`)
+        const estNonSuivi = indicateurs.some((ind) => !ind.isSuivi);
+        const calcul = buildCalculScoreIndicatif({
+          references: indicateursParActionId[actionId] ?? [],
+          indicateursAssocies: indicateurs,
+          evaluationContext,
+          valeursUtiliseesFait: estNonSuivi
+            ? []
+            : valeursParTypeScore[scoreIndicatifTypeEnum.FAIT] || [],
+        });
 
         return {
           actionId,
           indicateurs,
+          calcul,
           fait,
           programme,
         };
@@ -390,271 +438,21 @@ export class ScoreIndicatifService {
     return success(keyBy(scoresIndicatifs, (score) => score.actionId));
   }
 
-  /** Charge les formules à utiliser pour le calcul du score indicatif des actions */
-  private async getFormules(input: GetScoreIndicatifRequest) {
-    const { actionId, exprScore } = getTableColumns(actionDefinitionTable);
-
-    return this.db
-      .select({
-        actionId,
-        exprScore,
-      })
-      .from(actionDefinitionTable)
-      .where(inArray(actionId, input.actionIds));
-  }
-
-  /**
-   * Dérive le contexte référentiel depuis les actionIds fournis :
-   * - extrait les referentielIds depuis les actionIds valides
-   * - guard mono-référentiel : si plusieurs, retourne failure
-   * - lit la version courante du référentiel trouvé
-   */
-  private async deriveReferentielContext(
-    actionIds: string[]
-  ): Promise<
-    Result<{ referentielId: string; version: string }, ScoreIndicatifError>
-  > {
-    const referentielIds = new Set<string>();
-    for (const actionId of actionIds) {
-      try {
-        referentielIds.add(getReferentielIdFromActionId(actionId));
-      } catch {
-        // ignore les actionIds mal formés
-      }
-    }
-
-    if (referentielIds.size > 1) {
-      this.logger.warn(
-        `Actions de référentiels mixtes : ${[...referentielIds].join(', ')}`
-      );
-      return failure(ScoreIndicatifErrorEnum.MIXED_REFERENTIELS);
-    }
-
-    const referentielId =
-      referentielIds.size === 1 ? [...referentielIds][0] : 'te';
-
-    const refDef =
-      await this.getReferentielDefinitionService.getReferentielDefinition(
-        referentielId as any
-      );
-
-    return success({ referentielId, version: refDef.version });
-  }
-
-  /** Liste les indicateurs associés aux actions pour le calcul du score indicatif  */
-  private async getIndicateursAssocies(input: {
-    collectiviteId: number;
-    formules: { actionId: string; exprScore: string | null }[];
-  }) {
-    const indicateursParActionId: Record<
-      string,
-      ReturnType<
-        typeof this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula
-      >
-    > = {};
-    const identifiantReferentielList: string[] = [];
-    input.formules.forEach(({ actionId, exprScore }) => {
-      if (exprScore) {
-        const indicateurs =
-          this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-            exprScore
-          );
-        indicateursParActionId[actionId] = indicateurs;
-        identifiantReferentielList.push(
-          ...indicateurs.map((ind) => ind.identifiant)
-        );
-      }
-    });
-
-    const {
-      identifiantReferentiel,
-      id: indicateurId,
-      unite,
-      titre,
-    } = getTableColumns(indicateurDefinitionTable);
-
-    const indicateurs = await this.db
-      .select({
-        indicateurId,
-        identifiantReferentiel,
-        unite,
-        titre,
-        categories: sql<string[]>`json_agg(${categorieTagTable.nom})`,
-      })
-      .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurCategorieTagTable,
-        eq(indicateurCategorieTagTable.indicateurId, indicateurId)
-      )
-      .leftJoin(
-        categorieTagTable,
-        eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
-      )
-      .where(and(inArray(identifiantReferentiel, identifiantReferentielList)))
-      .groupBy(indicateurId);
-
-    // identité de la collectivité
-    const identiteCollectivite =
-      await this.collectivitesService.getCollectiviteAvecType(
-        input.collectiviteId
-      );
-
-    // Cas particulier : certains indicateurs sont propres à la localisation de la collectivité
-    const excluded = identiteCollectivite.drom ? 'hors_dom' : 'dom';
-    const indicateursFiltres = indicateurs.filter(
-      (ind) => !ind.categories.includes(excluded)
-    );
-
-    const indicateursAssocies = Object.entries(indicateursParActionId)
-      .flatMap(([actionId, actionIndicateurs]) =>
-        typeof actionIndicateurs === 'object'
-          ? actionIndicateurs
-              .map(({ identifiant, optional }) => {
-                const indicateur = indicateursFiltres.find(
-                  (ind) => ind.identifiantReferentiel === identifiant
-                );
-                if (!indicateur) {
-                  this.logger.log(
-                    `Indicateur absent pour l'identifiant ${identifiant} lié à l'action ${actionId}`
-                  );
-                  return null;
-                }
-                const { indicateurId, unite, titre } = indicateur;
-                return {
-                  actionId,
-                  indicateurId,
-                  unite,
-                  titre,
-                  identifiantReferentiel: identifiant,
-                  optional,
-                };
-              })
-              .filter((ind) => ind !== null)
-          : null
-      )
-      .filter((action) => action !== null);
-
-    return {
-      indicateursAssocies,
-      identiteCollectivite,
-    };
-  }
-
   /** Liste les valeurs d'indicateurs utilisées pour le calcul du score indicatif */
-  async getValeursUtiliseesParActionId(input: GetScoreIndicatifRequest) {
-    const valeurs = await this.db
-      .select({
-        actionId: actionScoreIndicateurValeurTable.actionId,
-        indicateurValeurId: actionScoreIndicateurValeurTable.indicateurValeurId,
-        typeScore: actionScoreIndicateurValeurTable.typeScore,
-        indicateurId: actionScoreIndicateurValeurTable.indicateurId,
-        dateValeur: indicateurValeurTable.dateValeur,
-        resultat: indicateurValeurTable.resultat,
-        objectif: indicateurValeurTable.objectif,
-        sourceLibelle: indicateurSourceTable.libelle,
-        sourceMetadonnee:
-          sql<IndicateurSourceMetadonnee | null>`to_jsonb(${indicateurSourceMetadonneeTable})`.as(
-            'sourceMetadonnee'
-          ),
-      })
-      .from(actionScoreIndicateurValeurTable)
-      .innerJoin(
-        indicateurValeurTable,
-        eq(
-          indicateurValeurTable.id,
-          actionScoreIndicateurValeurTable.indicateurValeurId
-        )
-      )
-      .leftJoin(
-        indicateurSourceMetadonneeTable,
-        eq(
-          indicateurSourceMetadonneeTable.id,
-          indicateurValeurTable.metadonneeId
-        )
-      )
-      .leftJoin(
-        indicateurSourceTable,
-        eq(indicateurSourceTable.id, indicateurSourceMetadonneeTable.sourceId)
-      )
-      .where(
-        and(
-          inArray(actionScoreIndicateurValeurTable.actionId, input.actionIds),
-          eq(
-            actionScoreIndicateurValeurTable.collectiviteId,
-            input.collectiviteId
-          )
-        )
-      );
-
-    const valeursNonNulles = objectToCamel(valeurs)
-      .map(({ objectif, resultat, ...v }) => ({
-        ...v,
-        valeur: (v.typeScore === scoreIndicatifTypeEnum.FAIT
-          ? resultat
-          : objectif) as number,
-      }))
-      .filter((v) => v.valeur !== null);
-
-    return groupBy(
-      valeursNonNulles,
-      ({ actionId }: { actionId: string }) => actionId
-    );
+  async getValeursUtiliseesParActionId(
+    input: GetScoreIndicatifRequest,
+    { tx }: Pick<ServiceSecondArg, 'tx'> = {}
+  ): Promise<Result<Record<string, ValeurUtilisee[]>, ScoreIndicatifError>> {
+    return this.repository.listValeursUtiliseesParActionId(input, tx);
   }
 
-  /** Charge et agrège les données nécessaires au calcul */
-  private async getEvaluationContext(
-    input: GetScoreIndicatifRequest,
-    indicateursAssocies: IndicateurAssocie[],
-    identiteCollectivite: CollectiviteAvecType,
-    referentielContext: { referentielId: string; version: string }
-  ) {
-    // réponses aux questions de personnalisation
-    const personnalisationReponses =
-      await this.personnalisationsService.getPersonnalisationReponses(
-        input.collectiviteId
-      );
-
-    // valeurs de référence (cible/limite)
-    const valeursCible: Array<[string, number]> = [];
-    const valeursLimite: Array<[string, number]> = [];
-    const indicateurIds = indicateursAssocies.map(
-      ({ indicateurId }) => indicateurId
-    );
-    const valeursReference =
-      await this.valeursReferenceService.getValeursReference({
-        indicateurIds,
-        collectiviteId: input.collectiviteId,
-        collectiviteAvecType: identiteCollectivite,
-        personnalisationReponses,
-        referentielContext: {
-          referentielId: referentielContext.referentielId as any,
-          version: referentielContext.version,
-        },
-      });
-    indicateursAssocies.forEach(({ identifiantReferentiel }) => {
-      const reference = valeursReference.find(
-        (v) => v?.identifiantReferentiel === identifiantReferentiel
-      );
-      if (reference && identifiantReferentiel) {
-        if (reference.cible !== null) {
-          valeursCible.push([identifiantReferentiel, reference.cible]);
-        }
-        if (reference.seuil !== null) {
-          valeursLimite.push([identifiantReferentiel, reference.seuil]);
-        }
-      }
-    });
-
-    const evaluationContext: EvaluationContext = {
-      identiteCollectivite,
-      reponses: personnalisationReponses,
-      valeursComplementaires: {
-        cible: Object.fromEntries(valeursCible),
-        limite: Object.fromEntries(valeursLimite),
-      },
-    };
-
-    return evaluationContext;
+  /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
+  async getActionsUsingIndicateurValeur(
+    indicateurValeurId: number | number[]
+  ): Promise<
+    Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
+  > {
+    return this.repository.listActionsUsingIndicateurValeur(indicateurValeurId);
   }
 
   /** Calcule le score programmé ou fait */
@@ -664,38 +462,52 @@ export class ScoreIndicatifService {
     valeursParTypeScore: Record<ScoreIndicatifType, ValeurUtilisee[]>,
     indicateursAssocies: IndicateurAssocie[],
     typeScore: ScoreIndicatifType,
-    evaluationContext: EvaluationContext
+    evaluationContext: EvaluationContext,
+    formuleNecessiteUneValeur: boolean,
+    indicateursSuivis: Record<string, boolean> | undefined
   ) {
+    // Si un des indicateurs associés est marqué "non suivi" par la
+    // collectivité, le résultat est forcé à 0 sans évaluer la formule.
+    // Injecter une valeur (même 0) dans la formule ne serait pas fiable :
+    // beaucoup de formules comparent la valeur à un seuil/une cible
+    // (`si val < cible alors 1 sinon 0`) où une valeur basse est souvent
+    // "bonne" (ex. émissions, déchets) — forcer `val()` à 0 produirait
+    // alors un score de 100% au lieu du 0% attendu.
+    if (indicateursAssocies.some((indicateur) => !indicateur.isSuivi)) {
+      return { score: 0, valeursUtilisees: [] };
+    }
+
     const valeursUtilisees = valeursParTypeScore[typeScore] || [];
 
-    // Si aucune valeur présente, log et retourne null
-    if (valeursUtilisees.length === 0) {
+    // Si aucune valeur présente alors qu'elle est requise, log et retourne null
+    if (formuleNecessiteUneValeur && valeursUtilisees.length === 0) {
       this.logger.log(
         `Valeur(s) manquante(s) pour le calcul du score indicatif ${typeScore} de l'action ${actionId}`
       );
       return null;
     }
 
-    const identifiantReferentielParId = Object.fromEntries(
-      indicateursAssocies.map(({ indicateurId, identifiantReferentiel }) => [
-        indicateurId,
-        identifiantReferentiel,
-      ])
+    const valeurs = buildValeursPourExpression(
+      valeursUtilisees,
+      indicateursAssocies
     );
 
-    const valeurs = Object.fromEntries(
-      valeursUtilisees
-        .map(({ indicateurId, valeur }) => {
-          const identifiant = identifiantReferentielParId[indicateurId];
-          return identifiant ? [identifiant, valeur] : null;
-        })
-        .filter(Boolean) as [string, number][]
-    );
-
+    // `evaluationContext` est partagé par toutes les actions : l'année utilisée
+    // dépend de l'action et n'est ajoutée qu'à une copie, et seulement au
+    // calcul `fait` (les objectifs `programme` n'ont pas d'année utilisée)
     const score = this.indicateurExpressionService.parseAndEvaluateExpression(
       exprScore,
       valeurs,
-      evaluationContext
+      typeScore === scoreIndicatifTypeEnum.FAIT
+        ? {
+            ...evaluationContext,
+            indicateursSuivis,
+            anneesUtilisees: buildAnneesPourExpression(
+              valeursUtilisees,
+              indicateursAssocies
+            ),
+          }
+        : { ...evaluationContext, indicateursSuivis }
     );
     if (score === null) {
       this.logger.log(
@@ -706,123 +518,49 @@ export class ScoreIndicatifService {
 
     return {
       score,
-      valeursUtilisees: valeursUtilisees.map((val) =>
-        pick(val, [
-          'valeur',
-          'dateValeur',
-          'sourceLibelle',
-          'sourceMetadonnee',
-          'indicateurId',
-        ])
-      ),
+      valeursUtilisees: pickValeursUtiliseesPourResultat(valeursUtilisees),
     };
   }
 
   /**
    * Calcule et formate les scores indicatifs pour toutes les actions ayant une formule
-   * @param input Les paramètres de la requête
-   * @returns Les scores indicatifs au format attendu pour le snapshot
    */
   async getScoresIndicatifsForPayload(
     collectiviteId: number,
     referentielId: ReferentielId
-  ): Promise<Array<{ actionId: string; score: ScoreIndicatifPayload }>> {
-    const actionIds = (await this.extractActionIdsWithExprScore()).filter(
-      (actionId) => this.actionBelongsToReferentiel(actionId, referentielId)
+  ): Promise<
+    Result<
+      Array<{ actionId: string; score: ScoreIndicatifPayload }>,
+      ScoreIndicatifError
+    >
+  > {
+    const actionIdsResult =
+      await this.repository.extractActionIdsWithExprScore();
+    if (!actionIdsResult.success) {
+      return failure(actionIdsResult.error);
+    }
+    const actionIds = actionIdsResult.data.filter((actionId) =>
+      actionBelongsToReferentiel(actionId, referentielId)
     );
-    if (!actionIds.length) return [];
+    if (!actionIds.length) {
+      return success([]);
+    }
+
     const result = await this.getScoreIndicatif({ collectiviteId, actionIds });
     if (!result.success) {
       this.logger.warn(
         `Impossible de calculer les scores indicatifs : ${result.error}`
       );
-      return [];
+      return success([]);
     }
     const scores = result.data;
-    return Object.entries(scores)
+    const scoresPourPayload = Object.entries(scores)
       .map(([actionId, score]) => ({
         actionId,
-        score: this.formatScoreIndicatifForPayload(score),
+        score: formatScoreIndicatifForPayload(score),
       }))
       .filter(({ score }) => score.fait || score.programme);
-  }
 
-  /**
-   * Extrait tous les identifiants d'actions pour lesquelles il y a une formule
-   * permettant de calculer un score indicatif
-   */
-  private actionBelongsToReferentiel(
-    actionId: string,
-    referentielId: ReferentielId
-  ): boolean {
-    try {
-      const actionReferentielId = getReferentielIdFromActionId(actionId);
-      if (isNewReferentiel(referentielId)) {
-        return isNewReferentiel(actionReferentielId);
-      }
-      return actionReferentielId === referentielId;
-    } catch {
-      return false;
-    }
-  }
-
-  private async extractActionIdsWithExprScore() {
-    const rows = await this.db
-      .select({
-        actionId: actionDefinitionTable.actionId,
-      })
-      .from(actionDefinitionTable)
-      .where(not(eq(actionDefinitionTable.exprScore, '')));
-    return rows.map((r) => r.actionId);
-  }
-
-  /**
-   * Formate un score indicatif pour l'inclure dans le payload du snapshot
-   * @param score Le score indicatif à formater
-   * @returns Le score au format ScoreIndicatifPayload
-   */
-  private formatScoreIndicatifForPayload(
-    scoreIndicatif: ActionScoreIndicatif
-  ): ScoreIndicatifPayload {
-    return {
-      unite: scoreIndicatif.indicateurs?.[0].unite,
-      fait: this.formatValeursForPayload(
-        scoreIndicatif,
-        scoreIndicatifTypeEnum.FAIT
-      ),
-      programme: this.formatValeursForPayload(
-        scoreIndicatif,
-        scoreIndicatifTypeEnum.PROGRAMME
-      ),
-    };
-  }
-
-  private formatValeursForPayload(
-    scoreIndicatif: ActionScoreIndicatif,
-    typeScore: ScoreIndicatifType
-  ) {
-    const scoreData = scoreIndicatif[typeScore];
-    if (!scoreData) return null;
-
-    return {
-      score: scoreData.score,
-      valeursUtilisees: scoreData.valeursUtilisees.map(
-        ({ sourceMetadonnee, ...valeur }) => ({
-          ...pick(valeur, [
-            'indicateurId',
-            'valeur',
-            'dateValeur',
-            'sourceLibelle',
-          ]),
-          sourceMetadonnee: sourceMetadonnee
-            ? pick(sourceMetadonnee, ['sourceId', 'dateVersion'])
-            : null,
-          identifiantReferentiel:
-            scoreIndicatif.indicateurs.find(
-              (ind) => ind.indicateurId === valeur.indicateurId
-            )?.identifiantReferentiel || '',
-        })
-      ),
-    };
+    return success(scoresPourPayload);
   }
 }

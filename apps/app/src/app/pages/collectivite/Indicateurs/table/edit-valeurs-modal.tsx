@@ -1,6 +1,6 @@
-import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { appLabels } from '@/app/labels/catalog';
 import {
   Button,
   Divider,
@@ -11,8 +11,9 @@ import {
   ModalFooter,
   Textarea,
 } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
@@ -30,6 +31,7 @@ export type EditValeursModalProps = {
 export const EditValeursModal = (props: EditValeursModalProps) => {
   const { collectiviteId, data, definition, openState, title } = props;
   const { valeursExistantes } = data;
+  const fieldId = useId();
 
   const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
@@ -78,8 +80,9 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       render={() => {
         return (
           <div className="flex flex-col gap-8">
-            <Field title={appLabels.champAnnee}>
+            <Field title={appLabels.champAnnee} htmlFor={`${fieldId}-annee`}>
               <Input
+                id={`${fieldId}-annee`}
                 type="text"
                 value={annee?.toString() ?? ''}
                 onChange={(e) => {
@@ -95,14 +98,22 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title={appLabels.champResultat}>
+            <Field
+              title={capitalize(appLabels.indicateurResultat())}
+              htmlFor={`${fieldId}-resultat`}
+            >
               <InputValue
+                id={`${fieldId}-resultat`}
                 value={resultat ?? ''}
                 onChange={(value) => setValeur({ ...valeur, resultat: value })}
               />
             </Field>
-            <Field title={appLabels.champAjouterCommentaireResultat}>
+            <Field
+              title={appLabels.champAjouterCommentaireResultat}
+              htmlFor={`${fieldId}-resultat-commentaire`}
+            >
               <Textarea
+                id={`${fieldId}-resultat-commentaire`}
                 value={resultatCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, resultatCommentaire: e.target.value })
@@ -112,14 +123,22 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title={appLabels.champObjectif}>
+            <Field
+              title={capitalize(appLabels.indicateurObjectif())}
+              htmlFor={`${fieldId}-objectif`}
+            >
               <InputValue
+                id={`${fieldId}-objectif`}
                 value={objectif ?? ''}
                 onChange={(value) => setValeur({ ...valeur, objectif: value })}
               />
             </Field>
-            <Field title={appLabels.champAjouterCommentaireObjectif}>
+            <Field
+              title={appLabels.champAjouterCommentaireObjectif}
+              htmlFor={`${fieldId}-objectif-commentaire`}
+            >
               <Textarea
+                id={`${fieldId}-objectif-commentaire`}
                 value={objectifCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, objectifCommentaire: e.target.value })

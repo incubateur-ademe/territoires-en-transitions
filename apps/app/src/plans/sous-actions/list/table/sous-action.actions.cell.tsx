@@ -1,5 +1,5 @@
-import { FicheWithRelations } from '@tet/domain/plans';
 import { appLabels } from '@/app/labels/catalog';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, TableCell } from '@tet/ui';
 import { useState } from 'react';
 import { DeleteSousActionModal } from '../../delete-sous-action.modal';
@@ -19,7 +19,7 @@ export const SousActionActionsCell = ({ sousAction }: Props) => {
         size="xs"
         className="text-grey-6"
         onClick={() => setIsOpen(true)}
-        title={appLabels.supprimerSousAction}
+        title={appLabels.sousActionSupprimer}
       />
       <DeleteSousActionModal
         sousAction={sousAction}

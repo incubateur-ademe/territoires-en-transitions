@@ -1,7 +1,8 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { Injectable } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { Annexe } from '@tet/domain/collectivites';
@@ -17,12 +18,13 @@ import {
 export class AddAnnexeService {
   constructor(
     private readonly ficheActionPermissionsService: FicheActionPermissionsService,
-    private readonly addAnnexeRepository: AddAnnexeRepository
+    private readonly addAnnexeRepository: AddAnnexeRepository,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async addAnnexe(
     input: AddAnnexeInput,
-    user: AuthenticatedUser
+    { user }: ServiceSecondArg
   ): Promise<Result<Annexe, AddAnnexeError>> {
     const { ficheId } = input;
 
@@ -48,9 +50,18 @@ export class AddAnnexeService {
     const commentaire = input.commentaire ?? '';
 
     if ('fichierId' in input) {
-      const fichierCollectiviteId =
-        await this.addAnnexeRepository.getFichierCollectiviteId(input.fichierId);
-      if (fichierCollectiviteId !== collectiviteId) {
+      const fichierOwnershipResult =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId: input.fichierId,
+          collectiviteId,
+        });
+      if (!fichierOwnershipResult.success) {
+        return failure(
+          fichierOwnershipResult.error,
+          fichierOwnershipResult.cause
+        );
+      }
+      if (!fichierOwnershipResult.data) {
         return failure(CommonErrorEnum.NOT_FOUND);
       }
       return this.addAnnexeRepository.addFile({

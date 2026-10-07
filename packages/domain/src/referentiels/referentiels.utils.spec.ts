@@ -1,8 +1,11 @@
 import { ActionTypeEnum } from './actions/action-type.enum';
 import {
   filterHiddenActionsFromGroupedById,
+  getActionLevelIndex,
   getActionTypeFromActionId,
   getLevelFromActionId,
+  getSousActionLevelIndex,
+  hasSousAxeLevel,
   isActionHidden,
   isNewReferentiel,
   normalizeIdentifiantReferentiel,
@@ -124,6 +127,52 @@ describe('rollUpActionIdToActionLevel', () => {
     expect(rollUpActionIdToActionLevel('cae_5.1.4.4.1', sansAction)).toEqual(
       'cae_5.1.4.4.1'
     );
+  });
+});
+
+const hierarchieCae = [
+  ActionTypeEnum.REFERENTIEL,
+  ActionTypeEnum.AXE,
+  ActionTypeEnum.SOUS_AXE,
+  ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+];
+const hierarchieEci = [
+  ActionTypeEnum.REFERENTIEL,
+  ActionTypeEnum.AXE,
+  ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+];
+
+describe('hasSousAxeLevel', () => {
+  test('vrai quand la hiérarchie comporte un niveau sous-axe', () => {
+    expect(hasSousAxeLevel(hierarchieCae)).toBe(true);
+  });
+
+  test('faux sinon', () => {
+    expect(hasSousAxeLevel(hierarchieEci)).toBe(false);
+  });
+});
+
+describe('getActionLevelIndex', () => {
+  test('index du niveau action selon la hiérarchie', () => {
+    expect(getActionLevelIndex(hierarchieCae)).toBe(3);
+    expect(getActionLevelIndex(hierarchieEci)).toBe(2);
+  });
+
+  test('-1 si la hiérarchie ne comporte pas de niveau action', () => {
+    expect(
+      getActionLevelIndex([ActionTypeEnum.REFERENTIEL, ActionTypeEnum.AXE])
+    ).toBe(-1);
+  });
+});
+
+describe('getSousActionLevelIndex', () => {
+  test('index du niveau sous-action selon la hiérarchie', () => {
+    expect(getSousActionLevelIndex(hierarchieCae)).toBe(4);
+    expect(getSousActionLevelIndex(hierarchieEci)).toBe(3);
   });
 });
 

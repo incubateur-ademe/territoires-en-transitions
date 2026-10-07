@@ -15,9 +15,6 @@
       "path": "./apps/backend"
     },
     {
-      "path": "./apps/panier"
-    },
-    {
       "path": "./apps/tools"
     },
     {

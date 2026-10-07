@@ -1,5 +1,5 @@
-import { QueryKey, useQuery } from '@tanstack/react-query';
-import { useTRPCClient } from '@tet/api';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonalDefaultModuleKeys } from '@tet/domain/metrics';
 
@@ -9,20 +9,13 @@ import { PersonalDefaultModuleKeys } from '@tet/domain/metrics';
 export const useTdbPersoFetchSingle = (
   defaultModuleKey: PersonalDefaultModuleKeys
 ) => {
-  const trpcClient = useTRPCClient();
+  const trpc = useTRPC();
   const collectiviteId = useCollectiviteId();
 
-  return useQuery({
-    queryKey: getQueryKey(collectiviteId, defaultModuleKey),
-    queryFn: () =>
-      trpcClient.metrics.users.getModule.query({
-        collectiviteId,
-        defaultKey: defaultModuleKey,
-      }),
-  });
+  return useQuery(
+    trpc.metrics.users.getModule.queryOptions({
+      collectiviteId,
+      defaultKey: defaultModuleKey,
+    })
+  );
 };
-
-export const getQueryKey = (
-  collectiviteId?: number,
-  defaultModuleKey?: string
-): QueryKey => ['personal-dashboard-module', collectiviteId, defaultModuleKey];

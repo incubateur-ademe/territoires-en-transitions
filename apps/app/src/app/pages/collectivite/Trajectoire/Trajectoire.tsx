@@ -7,10 +7,11 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import { Alert, Button, Card, Modal } from '@tet/ui';
+import { match } from 'ts-pattern';
 import { HELPDESK_URL } from '../../../../indicateurs/trajectoires/trajectoire-constants';
-import { CommuneNonSupportee } from './CommuneNonSupportee';
 import DbErrorPicto from './db-error.svg';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
+import { MethodologyNotApplicableCard } from './methodology-not-applicable.card';
 import TrajectoirePicto from './trajectoire.svg';
 import { TrajectoireCalculee } from './TrajectoireCalculee';
 import { useGetStatutTrajectoire } from './use-get-statut-trajectoire';
@@ -39,23 +40,34 @@ const TrajectoireContent = (props: {
     return <ErreurDeChargement />;
   }
 
-  if (data.status === VerificationTrajectoireStatus.DONNEES_MANQUANTES) {
-    return <DonneesNonDispo />;
-  }
-
-  if (data.status === VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE) {
-    return <CommuneNonSupportee />;
-  }
-
-  if (data.status === VerificationTrajectoireStatus.PRET_A_CALCULER) {
-    return <Presentation />;
-  }
-
-  if (data.status === VerificationTrajectoireStatus.DEJA_CALCULE) {
-    return <TrajectoireCalculee />;
-  }
-
-  return <ErreurDeChargement />;
+  return match(data.status)
+    .with(VerificationTrajectoireStatus.DONNEES_MANQUANTES, () => (
+      <DonneesNonDispo />
+    ))
+    .with(VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE, () => (
+      <MethodologyNotApplicableCard
+        title={appLabels.trajectoireMethodologieLimiteeCommunes}
+        description={
+          appLabels.trajectoireMethodologieLimiteeCommunesDescription
+        }
+      />
+    ))
+    .with(VerificationTrajectoireStatus.SYNDICAT_NON_SUPPORTE, () => (
+      <MethodologyNotApplicableCard
+        title={appLabels.trajectoireMethodologieNonApplicableSyndicats}
+        description={
+          appLabels.trajectoireMethodologieNonApplicableSyndicatsDescription
+        }
+      />
+    ))
+    .with(VerificationTrajectoireStatus.PRET_A_CALCULER, () => <Presentation />)
+    .with(VerificationTrajectoireStatus.DEJA_CALCULE, () => (
+      <TrajectoireCalculee />
+    ))
+    .with(VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE, () => (
+      <ErreurDeChargement />
+    ))
+    .exhaustive();
 };
 
 /**
@@ -71,7 +83,9 @@ const DonneesNonDispo = () => {
   return (
     <Card className="flex items-center my-16">
       <DbErrorPicto />
-      <h2 className="mb-6">{appLabels.trajectoireDonneesInsuffisantesCalcul}</h2>
+      <h2 className="mb-6">
+        {appLabels.trajectoireDonneesInsuffisantesCalcul}
+      </h2>
       {canMutateValeurs ? (
         <p className="font-normal text-lg text-center">
           {appLabels.trajectoireDonneesInsuffisantesDescriptionMutateur}
@@ -141,16 +155,18 @@ const Presentation = () => {
     <div className="flex flex-col">
       <div className="flex flex-row gap-14">
         <div className="w-3/5">
-          <h1 className="mb-6">
-            {appLabels.trajectoireTitrePresentation}
-          </h1>
-          <p className="font-bold text-lg">{appLabels.trajectoireSousTitrePresentation}</p>
+          <h1 className="mb-6">{appLabels.trajectoireTitrePresentation}</h1>
+          <p className="font-bold text-lg">
+            {appLabels.trajectoireSousTitrePresentation}
+          </p>
           <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
             <li>{appLabels.trajectoireObjectif1}</li>
             <li>{appLabels.trajectoireObjectif2}</li>
             <li>{appLabels.trajectoireObjectif3}</li>
           </ul>
-          <p className="text-lg mt-2">{appLabels.trajectoirePresentationDescription}</p>
+          <p className="text-lg mt-2">
+            {appLabels.trajectoirePresentationDescription}
+          </p>
           <Button
             size="md"
             variant="underlined"
@@ -179,9 +195,7 @@ const Presentation = () => {
         </Button>
       ) : (
         <div className="flex flex-row gap-2 items-center">
-          {isPending && (
-            <span>{appLabels.trajectoireCalculEnCoursInfo}</span>
-          )}
+          {isPending && <span>{appLabels.trajectoireCalculEnCoursInfo}</span>}
         </div>
       )}
     </div>

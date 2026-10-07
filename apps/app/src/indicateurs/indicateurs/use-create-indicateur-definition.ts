@@ -1,8 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, useTRPC } from '@tet/api';
-
-export type CreateIndicateurDefinitionInput =
-  RouterInput['indicateurs']['indicateurs']['create'];
+import { useTRPC } from '@tet/api';
 
 export const useCreateIndicateurDefinition = (options?: {
   onSuccess: (indicateurId: number) => void;

@@ -54,6 +54,11 @@ export const requestLabellisationErrorConfig: TrpcErrorHandlerConfig<SpecificErr
         message:
           "Un ou plusieurs critères d'action ne sont pas atteints pour demander ce niveau de labellisation.",
       },
+      REFERENT_ROLES_NOT_DEFINED: {
+        code: 'BAD_REQUEST',
+        message:
+          "L'élu référent et le référent technique doivent être désignés comme pilotes pour demander un audit ou une labellisation.",
+      },
       MISSING_FILE: {
         code: 'BAD_REQUEST',
         message:

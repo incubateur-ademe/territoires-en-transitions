@@ -3,7 +3,7 @@ import {
   ScoreComparisonData,
   ScoreRow,
 } from '@tet/backend/referentiels/export-score/load-score-comparison.service';
-import { getLibelleScoreIndicatif } from '@tet/backend/referentiels/score-indicatif/format-score-indicatif.utils';
+import { getLibelleScoreIndicatif } from '@tet/backend/referentiels/score-indicatif/score-indicatif.rules';
 import { PreuveEssential } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
@@ -13,8 +13,8 @@ import {
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { htmlToText, roundTo } from '@tet/domain/utils';
-import { toMerged } from 'es-toolkit';
+import { htmlToText } from '@tet/domain/utils';
+import { round, toMerged } from 'es-toolkit';
 import { CellFormulaValue, Style } from 'exceljs';
 import * as Utils from '../../utils/excel/export-excel.utils';
 
@@ -351,10 +351,10 @@ function buildScoreColumns(
       width: WIDTH_MEDIUM,
     },
     headCellProps: lastHeadCellProps,
-    getValue: ({ scoreRow: row }) => {
+    getValue: ({ scoreRow: row, data }) => {
       const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
       if (scoreIndicatif) {
-        return getLibelleScoreIndicatif(scoreIndicatif);
+        return getLibelleScoreIndicatif(scoreIndicatif, data.referentielId);
       }
     },
   });
@@ -391,7 +391,7 @@ function buildScoreRowUtils(
     const point = score?.[`point${type}`];
     let value =
       point && score.pointPotentiel
-        ? roundTo(point / score.pointPotentiel, 3)
+        ? round(point / score.pointPotentiel, 3)
         : undefined;
 
     // dans certains cas (sous-mesures 5.2.1 et 5.3.1 de ECi) la somme des scores
@@ -424,7 +424,7 @@ function buildScoreRowUtils(
       score?.avancement === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE &&
       value !== undefined
     ) {
-      return roundTo(value, 2);
+      return round(value, 2);
     }
     return value;
   }

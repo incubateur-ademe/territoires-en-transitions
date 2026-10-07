@@ -1,4 +1,5 @@
 import { documentBase } from '@tet/backend/collectivites/documents/models/document.basetable';
+import type { DemarcheDocumentEtape } from '@tet/domain/demarches';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   index,
@@ -25,12 +26,20 @@ export const demarcheDocumentTable = pgTable(
     documentId: text('document_id')
       .notNull()
       .references(() => demarcheDocumentDefinitionTable.id),
+    /**
+     * Temps du dossier où cette version a été déposée. Une pièce de portée
+     * `both` en a jusqu'à deux : sa reprise après les avis n'écrase pas la
+     * version transmise, sur laquelle l'instruction porte.
+     */
+    etape: text('etape').notNull().$type<DemarcheDocumentEtape>(),
   },
   (table) => [
-    // Une seule pièce par (démarche, définition) : « remplacer » est un upsert.
-    uniqueIndex('demarche_document_demarche_id_document_id_key').on(
+    // « Remplacer » reste un upsert, mais à temps égal : une version par
+    // (démarche, pièce, temps).
+    uniqueIndex('demarche_document_demarche_id_document_id_etape_key').on(
       table.demarcheId,
-      table.documentId
+      table.documentId,
+      table.etape
     ),
     index('demarche_document_collectivite_id_idx').on(table.collectiviteId),
     index('demarche_document_document_id_idx').on(table.documentId),

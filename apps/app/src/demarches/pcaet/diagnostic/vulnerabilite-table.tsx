@@ -7,12 +7,11 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import {
   demarchePcaetVulnerabiliteNiveauValues,
-  isObjectifRequis,
   OBJECTIFS_MAX_LENGTH,
-  VULNERABILITE_DOMAINE_LABEL_MAX,
+  VULNERABILITE_THEMATIQUE_LABEL_MAX,
   type DemarchePcaetVulnerabilite,
-  type DemarchePcaetVulnerabiliteDomaine,
   type DemarchePcaetVulnerabiliteNiveau,
+  type DemarchePcaetVulnerabiliteThematique,
 } from '@tet/domain/demarches';
 import {
   Badge,
@@ -28,17 +27,23 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  TableTreeBranch,
+  TableTreeToggle,
+  TableTreeTogglePlaceholder,
+  tableTreeChildIndentClassName,
   type TableCellProps,
 } from '@tet/ui';
-import { useState } from 'react';
+import { cn } from '@tet/ui/utils/cn';
+import { useId, useState } from 'react';
 import {
   useDemarchePcaetVulnerabilite,
-  type AddDomaineFailure,
+  type AddThematiqueFailure,
 } from './data/use-vulnerabilite';
 import {
   NIVEAU_COLUMNS,
   OBJECTIF_COLUMNS,
   toVulnerabiliteRows,
+  type VulnerabiliteRow,
 } from './vulnerabilite-table.rules';
 
 type InlineEditRenderArgs = Parameters<
@@ -98,13 +103,13 @@ const NiveauSelect = ({
  * inertes sur écran tactile.
  */
 const NiveauCell = ({
-  domaineLabel,
+  thematiqueLabel,
   horizonLabel,
   niveau,
   isReadonly,
   onChange,
 }: {
-  domaineLabel: string;
+  thematiqueLabel: string;
   horizonLabel: string;
   niveau: DemarchePcaetVulnerabiliteNiveau | null;
   isReadonly: boolean;
@@ -114,9 +119,9 @@ const NiveauCell = ({
     className="group/niveau"
     canEdit={!isReadonly}
     // Sans nom composé, les 48 cellules du tableau sont homonymes au lecteur
-    // d'écran : ni le domaine ni l'horizon ne ressortent du badge seul.
+    // d'écran : ni la thématique ni l'horizon ne ressortent du badge seul.
     aria-label={appLabels.demarcheVulnerabiliteCelluleNiveau({
-      domaine: domaineLabel,
+      thematique: thematiqueLabel,
       horizon: horizonLabel,
       niveau:
         niveau === null
@@ -150,41 +155,35 @@ const NiveauCell = ({
 );
 
 /**
- * Cellule d'objectif. Un horizon « non concerné » n'attend rien : la cellule
- * reste éditable — la collectivité peut vouloir commenter — mais ne réclame
- * plus rien.
+ * Cellule d'objectif. Rien n'est exigé sur ce volet : toutes les cellules
+ * invitent de la même façon, quel que soit le niveau de l'horizon.
  *
  * Le brouillon vaut `null` tant que rien n'est saisi : l'affichage retombe
  * alors sur la valeur serveur. Sans cela, un brouillon figé au premier rendu
  * réécrivait une valeur périmée dès la fermeture suivante de la cellule.
  */
 const ObjectifCell = ({
-  domaineLabel,
+  thematiqueLabel,
   horizonLabel,
   value,
-  isRequis,
   isReadonly,
   onCommit,
 }: {
-  domaineLabel: string;
+  thematiqueLabel: string;
   horizonLabel: string;
   value: string | null;
-  isRequis: boolean;
   isReadonly: boolean;
   onCommit: (next: string) => void;
 }) => {
   const [draft, setDraft] = useState<string | null>(null);
   const texte = draft ?? value ?? '';
-  const placeholder = isRequis
-    ? appLabels.demarcheVulnerabiliteObjectifs
-    : appLabels.demarcheVulnerabiliteObjectifsNonAttendus;
 
   return (
     <TableCell
       className="align-top"
       canEdit={!isReadonly}
       aria-label={appLabels.demarcheVulnerabiliteCelluleObjectifs({
-        domaine: domaineLabel,
+        thematique: thematiqueLabel,
         horizon: horizonLabel,
         renseigne: Boolean(value),
       })}
@@ -213,148 +212,39 @@ const ObjectifCell = ({
           value ? 'text-primary-9' : 'text-grey-8'
         }`}
       >
-        {value || (isReadonly ? '' : placeholder)}
+        {value || (isReadonly ? '' : appLabels.demarcheVulnerabiliteObjectifs)}
       </span>
     </TableCell>
   );
 };
 
 /**
- * Corbeille de la case du domaine. Le clic est arrêté avant la cellule :
- * celle-ci ouvre l'édition du libellé, retirer et renommer ne doivent pas se
- * déclencher ensemble.
+ * Ajout d'une thématique, ou d'une sous-thématique quand une parente est
+ * donnée. La modale ne se ferme qu'au succès : un libellé refusé doit pouvoir
+ * être corrigé sans le ressaisir.
  */
-const SupprimerDomaineButton = ({
-  domaine,
-  onRemove,
-}: {
-  domaine: DemarchePcaetVulnerabiliteDomaine;
-  onRemove: () => void;
-}) => (
-  <span
-    className="inline-flex opacity-60 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
-    onClick={(e) => e.stopPropagation()}
-    onKeyDown={(e) => e.stopPropagation()}
-  >
-    <Modal
-      title={appLabels.demarcheVulnerabiliteSupprimerDomaineTitre}
-      subTitle={appLabels.demarcheVulnerabiliteSupprimerDomaineDescription({
-        label: domaine.label,
-      })}
-      render={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            // Une action destructrice se nomme : « Valider » ne dit pas ce
-            // qu'on valide.
-            children: appLabels.demarcheVulnerabiliteSupprimerDomaineConfirmer,
-            onClick: () => {
-              onRemove();
-              close();
-            },
-          }}
-        />
-      )}
-    >
-      <Button
-        icon="delete-bin-line"
-        variant="white"
-        size="xs"
-        className="text-grey-8 hover:text-error-1"
-        aria-label={appLabels.demarcheVulnerabiliteSupprimerDomaineNomme({
-          label: domaine.label,
-        })}
-        title={appLabels.demarcheVulnerabiliteSupprimerDomaine}
-      />
-    </Modal>
-  </span>
-);
-
-/**
- * Première colonne. La corbeille se range à droite de la case du domaine : au
- * bout de la ligne, elle imposait un défilement horizontal pour retirer un
- * domaine, et à gauche elle empiétait sur le libellé. Le créneau est réservé
- * sur toutes les lignes pour que les libellés restent alignés.
- */
-const DomaineCell = ({
-  domaine,
-  isReadonly,
-  onRename,
-  onRemove,
-}: {
-  domaine: DemarchePcaetVulnerabiliteDomaine;
-  isReadonly: boolean;
-  onRename: (label: string) => void;
-  onRemove: () => void;
-}) => {
-  const [draft, setDraft] = useState<string | null>(null);
-  const isEditable = !isReadonly && !domaine.isSocle;
-
-  const contenu = (
-    <div className="flex items-start gap-1">
-      <span className="grow text-sm text-primary-9">{domaine.label}</span>
-      <span className="w-6 shrink-0">
-        {isEditable && (
-          <SupprimerDomaineButton domaine={domaine} onRemove={onRemove} />
-        )}
-      </span>
-    </div>
-  );
-
-  if (!isEditable) {
-    return (
-      <TableCell pinnedLeft className="pr-2 font-medium">
-        {contenu}
-      </TableCell>
-    );
-  }
-
-  return (
-    <TableCell
-      pinnedLeft
-      className="pr-2 font-medium"
-      canEdit
-      aria-label={appLabels.demarcheVulnerabiliteCelluleDomaine({
-        label: domaine.label,
-      })}
-      edit={{
-        floatingMatchReferenceHeight: false,
-        onClose: () => {
-          const trimmed = draft?.trim();
-          if (trimmed && trimmed !== domaine.label) {
-            onRename(trimmed);
-          }
-          setDraft(null);
-        },
-        renderOnEdit: ({ openState }) => (
-          <TableCellTextarea
-            value={draft ?? domaine.label}
-            maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
-            onChange={(e) => setDraft(e.target.value)}
-            closeEditing={() => openState.setIsOpen(false)}
-            placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
-            className="text-primary-9"
-          />
-        ),
-      }}
-    >
-      {contenu}
-    </TableCell>
-  );
-};
-
-/**
- * Ajout d'un domaine. La modale ne se ferme qu'au succès : un libellé refusé
- * doit pouvoir être corrigé sans le ressaisir.
- */
-const AjouterDomaineModal = ({
+const AjouterThematiqueModal = ({
+  parent,
   onAdd,
 }: {
-  onAdd: (label: string) => Promise<AddDomaineFailure | null>;
+  parent?: DemarchePcaetVulnerabiliteThematique;
+  onAdd: (label: string) => Promise<AddThematiqueFailure | null>;
 }) => {
   const [label, setLabel] = useState('');
   const [erreur, setErreur] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  // Une modale par racine éligible, plus la globale : un identifiant en dur
+  // ferait pointer `aria-describedby` sur le message d'une autre.
+  const erreurId = useId();
+
+  const titre = parent
+    ? appLabels.demarcheVulnerabiliteAjouterSousThematiqueNomme({
+        parent: parent.label,
+      })
+    : appLabels.demarcheVulnerabiliteAjouterThematique;
+  const nomDuChamp = parent
+    ? appLabels.demarcheVulnerabiliteNomSousThematique
+    : appLabels.demarcheVulnerabiliteNomThematique;
 
   const soumettre = async (close: () => void) => {
     const trimmed = label.trim();
@@ -370,15 +260,15 @@ const AjouterDomaineModal = ({
       return;
     }
     setErreur(
-      echec === 'DOMAINE_DEJA_EXISTANT'
-        ? appLabels.demarcheVulnerabiliteDomaineDejaExistant
+      echec === 'THEMATIQUE_DEJA_EXISTANT'
+        ? appLabels.demarcheVulnerabiliteThematiqueDejaExistant
         : appLabels.mutationError
     );
   };
 
   return (
     <Modal
-      title={appLabels.demarcheVulnerabiliteAjouterDomaine}
+      title={titre}
       onClose={() => {
         setLabel('');
         setErreur(null);
@@ -394,24 +284,18 @@ const AjouterDomaineModal = ({
             type="text"
             value={label}
             autoFocus
-            maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
-            aria-label={appLabels.demarcheVulnerabiliteNomDomaine}
-            placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
+            maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
+            aria-label={nomDuChamp}
+            placeholder={nomDuChamp}
             aria-invalid={erreur !== null}
-            aria-describedby={
-              erreur === null ? undefined : 'vulnerabilite-domaine-erreur'
-            }
+            aria-describedby={erreur === null ? undefined : erreurId}
             onChange={(e) => {
               setLabel(e.target.value);
               setErreur(null);
             }}
           />
           {erreur !== null && (
-            <p
-              id="vulnerabilite-domaine-erreur"
-              role="alert"
-              className="mt-2 text-sm text-error-1"
-            >
+            <p id={erreurId} role="alert" className="mt-2 text-sm text-error-1">
               {erreur}
             </p>
           )}
@@ -425,13 +309,27 @@ const AjouterDomaineModal = ({
         </form>
       )}
     >
-      <Button
-        icon="add-line"
-        size="sm"
-        dataTest="demarches.pcaet.vulnerabilite.ajouter-domaine-button"
-      >
-        {appLabels.demarcheVulnerabiliteAjouterDomaine}
-      </Button>
+      {parent ? (
+        // Dans la case de la parente, le libellé ne tiendrait pas : l'icône
+        // porte le nom accessible, comme la corbeille voisine.
+        <Button
+          icon="add-line"
+          variant="white"
+          size="xs"
+          className="text-grey-8 opacity-60 transition-opacity hover:text-info-1 group-hover:opacity-100 group-focus-within:opacity-100"
+          aria-label={titre}
+          title={appLabels.demarcheVulnerabiliteAjouterSousThematique}
+          dataTest={`demarches.pcaet.vulnerabilite.ajouter-sous-thematique-button-${parent.id}`}
+        />
+      ) : (
+        <Button
+          icon="add-line"
+          size="sm"
+          dataTest="demarches.pcaet.vulnerabilite.ajouter-thematique-button"
+        >
+          {appLabels.demarcheVulnerabiliteAjouterThematique}
+        </Button>
+      )}
     </Modal>
   );
 };
@@ -442,21 +340,228 @@ type Props = {
   isReadonly?: boolean;
 };
 
+/** Corbeille de la case de la thématique. */
+const SupprimerThematiqueButton = ({
+  thematique,
+  enfants,
+  onRemove,
+}: {
+  thematique: DemarchePcaetVulnerabiliteThematique;
+  enfants: number;
+  onRemove: () => void;
+}) => (
+  <Modal
+    title={appLabels.demarcheVulnerabiliteSupprimerThematiqueTitre}
+    subTitle={appLabels.demarcheVulnerabiliteSupprimerThematiqueDescription({
+      label: thematique.label,
+      enfants,
+    })}
+    render={({ close }) => (
+      <ModalFooterOKCancel
+        btnCancelProps={{ onClick: close }}
+        btnOKProps={{
+          // Une action destructrice se nomme : « Valider » ne dit pas ce
+          // qu'on valide.
+          children: appLabels.demarcheVulnerabiliteSupprimerThematiqueConfirmer,
+          onClick: () => {
+            onRemove();
+            close();
+          },
+        }}
+      />
+    )}
+  >
+    <Button
+      icon="delete-bin-line"
+      variant="white"
+      size="xs"
+      className="text-grey-8 opacity-60 transition-opacity hover:text-error-1 group-hover:opacity-100 group-focus-within:opacity-100"
+      aria-label={appLabels.demarcheVulnerabiliteSupprimerThematiqueNomme({
+        label: thematique.label,
+      })}
+      title={appLabels.demarcheVulnerabiliteSupprimerThematique}
+    />
+  </Modal>
+);
+
 /**
- * Tableau des niveaux de vulnérabilité par domaine et des objectifs
- * d'adaptation associés. Poser un niveau pré-remplit les horizons plus
- * lointains restés vides ; les domaines du socle ne se retirent pas,
- * « non concerné » en tient lieu.
+ * Première colonne. Les deux boutons se rangent à droite de la case de la
+ * thématique : au bout de la ligne ils imposaient un défilement horizontal, et
+ * à gauche ils empiétaient sur le libellé. Le créneau est réservé sur toutes
+ * les lignes pour que les libellés restent alignés.
+ *
+ * Une sous-thématique se met en retrait, et tout ce que la collectivité a
+ * ajouté se teinte : sans cela, rien ne distingue à l'œil ce qui relève du
+ * cadre réglementaire de ce qu'elle a écrit elle-même.
+ */
+const ThematiqueCell = ({
+  row,
+  isReadonly,
+  onRename,
+  onRemove,
+  onAddEnfant,
+  onToggle,
+}: {
+  row: VulnerabiliteRow;
+  isReadonly: boolean;
+  onRename: (label: string) => void;
+  onRemove: () => void;
+  onAddEnfant: (label: string) => Promise<AddThematiqueFailure | null>;
+  onToggle: () => void;
+}) => {
+  const [draft, setDraft] = useState<string | null>(null);
+  const {
+    thematique,
+    isEnfant,
+    isDernierEnfant,
+    peutRecevoirEnfant,
+    nombreEnfants,
+    isReplie,
+    parentLabel,
+  } = row;
+  const isEditable = !isReadonly && !thematique.isSocle;
+
+  const contenu = (
+    <>
+      {isEnfant && <TableTreeBranch isLast={isDernierEnfant} />}
+      <div
+        className={cn('flex items-center gap-1', {
+          [tableTreeChildIndentClassName]: isEnfant,
+        })}
+      >
+        {nombreEnfants > 0 ? (
+          <TableTreeToggle
+            isExpanded={!isReplie}
+            onToggle={onToggle}
+            label={
+              isReplie
+                ? appLabels.demarcheVulnerabiliteDeplierThematique({
+                    label: thematique.label,
+                    enfants: nombreEnfants,
+                  })
+                : appLabels.demarcheVulnerabiliteReplierThematique({
+                    label: thematique.label,
+                  })
+            }
+            dataTest={`demarches.pcaet.vulnerabilite.replier-button-${
+              thematique.code ?? thematique.id
+            }`}
+          />
+        ) : (
+          !isEnfant && <TableTreeTogglePlaceholder />
+        )}
+        <span className="grow text-sm text-primary-9">{thematique.label}</span>
+        {parentLabel !== null && (
+          // Les traits d'arborescence sont décoratifs : sans cela,
+          // « Sécheresse » s'entend sans qu'on sache de quoi elle relève.
+          // Voisine du libellé, et non dans son nœud, pour ne pas polluer le
+          // texte visible sur lequel les tests et la recherche s'appuient.
+          <span className="sr-only">
+            {appLabels.demarcheVulnerabiliteSousThematiqueDe({
+              parent: parentLabel,
+            })}
+          </span>
+        )}
+        {/*
+          Le clic est arrêté avant la cellule : celle-ci ouvre l'édition du
+          libellé en ligne, qui volerait le focus au champ de la modale — on
+          se retrouvait à taper dans les deux à la fois.
+        */}
+        <span
+          className="flex w-12 shrink-0 justify-end"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          {!isReadonly && peutRecevoirEnfant && (
+            <AjouterThematiqueModal parent={thematique} onAdd={onAddEnfant} />
+          )}
+          {isEditable && (
+            <SupprimerThematiqueButton
+              thematique={thematique}
+              enfants={nombreEnfants}
+              onRemove={onRemove}
+            />
+          )}
+        </span>
+      </div>
+    </>
+  );
+
+  const className = 'pr-2 font-medium';
+
+  if (!isEditable) {
+    return (
+      <TableCell pinnedLeft className={className}>
+        {contenu}
+      </TableCell>
+    );
+  }
+
+  return (
+    <TableCell
+      pinnedLeft
+      className={className}
+      canEdit
+      aria-label={appLabels.demarcheVulnerabiliteCelluleThematique({
+        label: thematique.label,
+      })}
+      edit={{
+        floatingMatchReferenceHeight: false,
+        onClose: () => {
+          const trimmed = draft?.trim();
+          if (trimmed && trimmed !== thematique.label) {
+            onRename(trimmed);
+          }
+          setDraft(null);
+        },
+        renderOnEdit: ({ openState }) => (
+          <TableCellTextarea
+            value={draft ?? thematique.label}
+            maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
+            onChange={(e) => setDraft(e.target.value)}
+            closeEditing={() => openState.setIsOpen(false)}
+            placeholder={
+              isEnfant
+                ? appLabels.demarcheVulnerabiliteNomSousThematique
+                : appLabels.demarcheVulnerabiliteNomThematique
+            }
+            className="text-primary-9"
+          />
+        ),
+      }}
+    >
+      {contenu}
+    </TableCell>
+  );
+};
+
+/**
+ * Tableau des niveaux de vulnérabilité par thématique et des objectifs
+ * d'adaptation associés. Chaque horizon se saisit pour lui seul ; les
+ * thématiques du socle ne se retirent pas, « non concerné » en tient lieu.
  */
 export const VulnerabiliteTable = ({
   vulnerabilite,
   demarcheId,
   isReadonly = false,
 }: Props) => {
-  const { setLigne, addDomaine, updateDomaine, removeDomaine } =
+  const { setLigne, addThematique, updateThematique, removeThematique } =
     useDemarchePcaetVulnerabilite(demarcheId);
 
-  const rows = toVulnerabiliteRows(vulnerabilite);
+  // Repli de confort, propre à l'écran : rien ne le persiste, une grappe
+  // repliée n'est pas une donnée du dépôt.
+  const [repliees, setRepliees] = useState<ReadonlySet<number>>(new Set());
+
+  const basculerRepli = (thematiqueId: number) =>
+    setRepliees((precedent) => {
+      const suivant = new Set(precedent);
+      if (!suivant.delete(thematiqueId)) {
+        suivant.add(thematiqueId);
+      }
+      return suivant;
+    });
+
+  const rows = toVulnerabiliteRows(vulnerabilite, repliees);
 
   return (
     <div>
@@ -472,8 +577,9 @@ export const VulnerabiliteTable = ({
           aria-label={appLabels.demarcheVulnerabiliteTableauAriaLabel}
         >
           <colgroup>
-            {/* La première colonne loge la corbeille dans sa marge droite. */}
-            <col className="w-52" />
+            {/* La première colonne loge le chevron de repli à gauche, les
+                boutons d'ajout et de retrait dans sa marge droite. */}
+            <col className="w-64" />
             {NIVEAU_COLUMNS.map((col) => (
               <col key={col.key} className="w-44" />
             ))}
@@ -485,7 +591,7 @@ export const VulnerabiliteTable = ({
             <tr>
               <TableHeaderCell
                 scope="col"
-                title={appLabels.demarcheVulnerabiliteDomaines}
+                title={appLabels.demarcheVulnerabiliteThematiques}
                 pinnedLeft
               />
               {NIVEAU_COLUMNS.map((col) => (
@@ -510,63 +616,66 @@ export const VulnerabiliteTable = ({
             </tr>
           </TableHead>
           <tbody>
-            {rows.map(({ domaine, ligne }) => (
-              <TableRow
-                key={domaine.id}
-                className="text-sm"
-                data-test={`demarches.pcaet.vulnerabilite.row-${
-                  domaine.code ?? domaine.id
-                }`}
-              >
-                <DomaineCell
-                  domaine={domaine}
-                  isReadonly={isReadonly}
-                  onRename={(label) => updateDomaine(domaine.id, label)}
-                  onRemove={() => removeDomaine(domaine.id)}
-                />
-                {NIVEAU_COLUMNS.map((col) => (
-                  <NiveauCell
-                    key={col.key}
-                    domaineLabel={domaine.label}
-                    horizonLabel={col.label}
-                    niveau={ligne[col.key]}
+            {rows.map((row) => {
+              const { thematique, ligne } = row;
+              return (
+                <TableRow
+                  key={thematique.id}
+                  className="text-sm"
+                  data-test={`demarches.pcaet.vulnerabilite.row-${
+                    thematique.code ?? thematique.id
+                  }`}
+                >
+                  <ThematiqueCell
+                    row={row}
                     isReadonly={isReadonly}
-                    onChange={(valeur) =>
-                      setLigne({
-                        domaineId: domaine.id,
-                        niveau: { horizon: col.horizon, valeur },
-                      })
-                    }
+                    onRename={(label) => updateThematique(thematique.id, label)}
+                    onRemove={() => removeThematique(thematique.id)}
+                    onAddEnfant={(label) => addThematique(label, thematique.id)}
+                    onToggle={() => basculerRepli(thematique.id)}
                   />
-                ))}
-                {OBJECTIF_COLUMNS.map((col) => (
-                  <ObjectifCell
-                    key={col.key}
-                    domaineLabel={domaine.label}
-                    horizonLabel={col.horizon}
-                    value={ligne[col.key]}
-                    isRequis={isObjectifRequis(ligne[col.niveauKey])}
-                    isReadonly={isReadonly}
-                    onCommit={(texte) =>
-                      setLigne({ domaineId: domaine.id, [col.key]: texte })
-                    }
-                  />
-                ))}
-              </TableRow>
-            ))}
+                  {NIVEAU_COLUMNS.map((col) => (
+                    <NiveauCell
+                      key={col.key}
+                      thematiqueLabel={thematique.label}
+                      horizonLabel={col.label}
+                      niveau={ligne[col.key]}
+                      isReadonly={isReadonly}
+                      onChange={(valeur) =>
+                        setLigne({
+                          thematiqueId: thematique.id,
+                          niveau: { horizon: col.horizon, valeur },
+                        })
+                      }
+                    />
+                  ))}
+                  {OBJECTIF_COLUMNS.map((col) => (
+                    <ObjectifCell
+                      key={col.key}
+                      thematiqueLabel={thematique.label}
+                      horizonLabel={col.horizon}
+                      value={ligne[col.key]}
+                      isReadonly={isReadonly}
+                      onCommit={(texte) =>
+                        setLigne({
+                          thematiqueId: thematique.id,
+                          [col.key]: texte,
+                        })
+                      }
+                    />
+                  ))}
+                </TableRow>
+              );
+            })}
           </tbody>
         </Table>
       </div>
 
       {!isReadonly && (
         <div className="m-4">
-          <AjouterDomaineModal onAdd={addDomaine} />
+          <AjouterThematiqueModal onAdd={addThematique} />
         </div>
       )}
-
-      <p className="text-xs text-grey-8 mt-2">
-        {appLabels.demarcheVulnerabiliteDiagMaintenantLegende}
-      </p>
     </div>
   );
 };

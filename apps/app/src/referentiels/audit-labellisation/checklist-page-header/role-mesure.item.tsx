@@ -20,7 +20,7 @@ export const RoleMesureItem = ({
   icon: IconValue;
   label: (params: { count: number }) => string;
   hideSeparator?: boolean;
-}): ReactElement => {
+}): ReactElement | null => {
   const { pilotes, isLoading, isReadOnly, isMutating, saveRoleMesure } =
     useRoleMesure(actionId);
 
@@ -29,7 +29,11 @@ export const RoleMesureItem = ({
   const setIsOpen = (open: boolean): void =>
     open ? openDropdown(actionId) : closeDropdown();
 
-  const canEdit = !isReadOnly && !isLoading;
+  if (isLoading) {
+    return null;
+  }
+
+  const canEdit = !isReadOnly;
 
   const pilotesNoms = pilotes
     .map((p) => p.nom)
@@ -44,6 +48,7 @@ export const RoleMesureItem = ({
         <PersonneTagDropdown
           buttonClassName="border-none"
           values={pilotes.map(getPersonneStringId)}
+          placeholder={appLabels.placeholderRecherchezMotsCles}
           onChange={({ personnes }) => {
             if (isMutating) {
               return;
@@ -59,7 +64,7 @@ export const RoleMesureItem = ({
         hideSeparator={hideSeparator}
         icon={icon}
         label={label({ count: pilotes.length })}
-        value={isLoading ? appLabels.chargement : pilotesNoms || null}
+        value={pilotesNoms || null}
       />
     </InlineEditWrapper>
   );

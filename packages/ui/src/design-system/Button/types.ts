@@ -11,7 +11,9 @@ export type ButtonVariant =
   | 'outlined'
   | 'white'
   | 'grey'
-  | 'underlined';
+  | 'danger'
+  | 'underlined'
+  | 'link';
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'xl';
 

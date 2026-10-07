@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -20,7 +15,6 @@ import {
   ActionScoreWithOnlyPointsAndStatuts,
   ActionTreeNode,
   ActionTypeEnum,
-  getParentId,
   getStatutAvancement,
   LabellisationAudit,
   LabellisationEtoileDefinition,
@@ -39,9 +33,7 @@ import {
   PermissionOperationEnum,
   ResourceType,
 } from '@tet/domain/users';
-import { roundTo } from '@tet/domain/utils';
-import { and, desc, eq, gte, sql } from 'drizzle-orm';
-import { chunk, isEqual, isNil, pick } from 'es-toolkit';
+import { chunk, isNil, pick, round } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
@@ -50,10 +42,6 @@ import {
   AuthenticatedUser,
   AuthUser as InternalAuthUser,
 } from '../../users/models/auth.models';
-import ConfigurationService from '../../utils/config/configuration.service';
-import { DatabaseService } from '../../utils/database/database.service';
-import MattermostNotificationService from '../../utils/mattermost-notification.service';
-import { sleep } from '../../utils/sleep.utils';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
@@ -65,16 +53,7 @@ import {
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
 import { LabellisationService } from '../labellisations/labellisation.service';
-import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
-import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
-import { CheckScoreStatus } from '../models/check-score-status.enum';
-import {
-  clientScoresTable,
-  ClientScoresType,
-} from '../models/client-scores.table';
 import { GetActionStatutExplicationsResponseType } from '../models/get-action-statut-explications.response';
-import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
-import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { GetReferentielMultipleScoresRequestType } from '../models/get-referentiel-multiple-scores.request';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { inferStatutDetailleAuPourcentageFromStatut } from '../update-action-statut/action-statut-create-to-action-statut-in-database.adapter';
@@ -98,10 +77,7 @@ export default class ScoresService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly configService: ConfigurationService,
-    private readonly mattermostNotificationService: MattermostNotificationService,
     private readonly collectivitesService: CollectivitesService,
-    private readonly databaseService: DatabaseService,
     private readonly getReferentielsService: GetReferentielService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly actionPersonnalisationsService: ActionPersonnalisationsService,
@@ -634,7 +610,7 @@ export default class ScoresService {
     );
     scoreParent.pointPasFait =
       roundingDigits !== undefined
-        ? roundTo(pointPasFait, roundingDigits)
+        ? round(pointPasFait, roundingDigits)
         : pointPasFait;
 
     const pointFait = scoreEnfants.reduce(
@@ -643,7 +619,7 @@ export default class ScoresService {
     );
     scoreParent.pointFait =
       roundingDigits !== undefined
-        ? roundTo(pointFait, roundingDigits)
+        ? round(pointFait, roundingDigits)
         : pointFait;
 
     const pointProgramme = scoreEnfants.reduce(
@@ -652,7 +628,7 @@ export default class ScoresService {
     );
     scoreParent.pointProgramme =
       roundingDigits !== undefined
-        ? roundTo(pointProgramme, roundingDigits)
+        ? round(pointProgramme, roundingDigits)
         : pointProgramme;
 
     const pointNonRenseigne = scoreEnfants.reduce(
@@ -661,7 +637,7 @@ export default class ScoresService {
     );
     scoreParent.pointNonRenseigne =
       roundingDigits !== undefined
-        ? roundTo(pointNonRenseigne, roundingDigits)
+        ? round(pointNonRenseigne, roundingDigits)
         : pointNonRenseigne;
 
     if (includePointPotentielAndReferentiel) {
@@ -671,7 +647,7 @@ export default class ScoresService {
       );
       scoreParent.pointPotentiel =
         roundingDigits !== undefined
-          ? roundTo(pointPotentiel, roundingDigits)
+          ? round(pointPotentiel, roundingDigits)
           : pointPotentiel;
 
       const pointReferentiel = scoreEnfants.reduce(
@@ -680,7 +656,7 @@ export default class ScoresService {
       );
       scoreParent.pointReferentiel =
         roundingDigits !== undefined
-          ? roundTo(pointReferentiel, roundingDigits)
+          ? round(pointReferentiel, roundingDigits)
           : pointReferentiel;
     }
   }
@@ -821,59 +797,54 @@ export default class ScoresService {
 
     referentielActionAvecScore.score.pointPotentiel =
       referentielActionAvecScore.score.pointPotentiel !== null
-        ? roundTo(referentielActionAvecScore.score.pointPotentiel, ndigits)
+        ? round(referentielActionAvecScore.score.pointPotentiel, ndigits)
         : null;
     referentielActionAvecScore.score.pointFait =
       referentielActionAvecScore.score.pointFait !== null
-        ? roundTo(referentielActionAvecScore.score.pointFait, ndigits)
+        ? round(referentielActionAvecScore.score.pointFait, ndigits)
         : null;
     referentielActionAvecScore.score.pointProgramme =
       referentielActionAvecScore.score.pointProgramme !== null
-        ? roundTo(referentielActionAvecScore.score.pointProgramme, ndigits)
+        ? round(referentielActionAvecScore.score.pointProgramme, ndigits)
         : null;
     referentielActionAvecScore.score.pointNonRenseigne =
       referentielActionAvecScore.score.pointNonRenseigne !== null
-        ? roundTo(referentielActionAvecScore.score.pointNonRenseigne, ndigits)
+        ? round(referentielActionAvecScore.score.pointNonRenseigne, ndigits)
         : null;
     referentielActionAvecScore.score.pointPasFait =
       referentielActionAvecScore.score.pointPasFait !== null
-        ? roundTo(referentielActionAvecScore.score.pointPasFait, ndigits)
+        ? round(referentielActionAvecScore.score.pointPasFait, ndigits)
         : null;
     referentielActionAvecScore.score.pointReferentiel =
       referentielActionAvecScore.score.pointReferentiel !== null
-        ? roundTo(referentielActionAvecScore.score.pointReferentiel, ndigits)
+        ? round(referentielActionAvecScore.score.pointReferentiel, ndigits)
         : null;
     if (referentielActionAvecScore.score.pointPotentielPerso) {
       referentielActionAvecScore.score.pointPotentielPerso =
-        roundTo(
-          referentielActionAvecScore.score.pointPotentielPerso,
-          ndigits
-        ) || null;
+        round(referentielActionAvecScore.score.pointPotentielPerso, ndigits) ||
+        null;
     }
     referentielActionAvecScore.score.faitTachesAvancement =
       referentielActionAvecScore.score.faitTachesAvancement !== null
-        ? roundTo(
-            referentielActionAvecScore.score.faitTachesAvancement,
-            ndigits
-          )
+        ? round(referentielActionAvecScore.score.faitTachesAvancement, ndigits)
         : null;
     referentielActionAvecScore.score.pasFaitTachesAvancement =
       referentielActionAvecScore.score.pasFaitTachesAvancement !== null
-        ? roundTo(
+        ? round(
             referentielActionAvecScore.score.pasFaitTachesAvancement,
             ndigits
           )
         : null;
     referentielActionAvecScore.score.programmeTachesAvancement =
       referentielActionAvecScore.score.programmeTachesAvancement !== null
-        ? roundTo(
+        ? round(
             referentielActionAvecScore.score.programmeTachesAvancement,
             ndigits
           )
         : null;
     referentielActionAvecScore.score.pasConcerneTachesAvancement =
       referentielActionAvecScore.score.pasConcerneTachesAvancement !== null
-        ? roundTo(
+        ? round(
             referentielActionAvecScore.score.pasConcerneTachesAvancement,
             ndigits
           )
@@ -938,8 +909,10 @@ export default class ScoresService {
 
     const referentiel = await this.getReferentielsService.getReferentielTree(
       referentielId,
-      true,
-      parameters.avecReferentielsOrigine
+      {
+        onlyForScoring: true,
+        getActionsOrigine: parameters.avecReferentielsOrigine,
+      }
     );
 
     const getReferentielMultipleScoresResponse = {
@@ -1101,8 +1074,10 @@ export default class ScoresService {
     if (!referentiel) {
       referentiel = await this.getReferentielsService.getReferentielTree(
         referentielId,
-        true,
-        parameters.avecReferentielsOrigine
+        {
+          onlyForScoring: true,
+          getActionsOrigine: parameters.avecReferentielsOrigine,
+        }
       );
     }
 
@@ -1198,11 +1173,20 @@ export default class ScoresService {
       // }
 
       // Calcule et ajoute les scores indicatifs dans l'arbre des scores
-      const scoresIndicatifs =
+      const scoresIndicatifsResult =
         await this.scoreIndicatifService.getScoresIndicatifsForPayload(
           collectiviteId,
           referentielId
         );
+      const scoresIndicatifs = scoresIndicatifsResult.success
+        ? scoresIndicatifsResult.data
+        : [];
+      if (!scoresIndicatifsResult.success) {
+        this.logger.warn(
+          +`Scores indicatifs indisponibles pour la collectivité ${collectiviteId} et le referentiel ${referentielId} : ${scoresIndicatifsResult.error}`,
+          scoresIndicatifsResult.cause
+        );
+      }
       this.ajouteScoresIndicatifs(scoresIndicatifs, scoresPayload.scores);
 
       return {
@@ -1316,12 +1300,12 @@ export default class ScoresService {
       );
       if (action.scoresOrigine) {
         action.scoresOrigine[referentielid] = {
-          pointFait: roundTo(pointFait, roundingDigits),
-          pointProgramme: roundTo(pointProgramme, roundingDigits),
-          pointPasFait: roundTo(pointPasFait, roundingDigits),
-          pointNonRenseigne: roundTo(pointNonRenseigne, roundingDigits),
-          pointPotentiel: roundTo(pointPotentiel, roundingDigits),
-          pointReferentiel: roundTo(pointReferentiel, roundingDigits),
+          pointFait: round(pointFait, roundingDigits),
+          pointProgramme: round(pointProgramme, roundingDigits),
+          pointPasFait: round(pointPasFait, roundingDigits),
+          pointNonRenseigne: round(pointNonRenseigne, roundingDigits),
+          pointPotentiel: round(pointPotentiel, roundingDigits),
+          pointReferentiel: round(pointReferentiel, roundingDigits),
         };
       }
     });
@@ -1730,421 +1714,5 @@ export default class ScoresService {
     node.actionsEnfant?.forEach((node) =>
       this.ajouteScoresIndicatifs(scoresIndicatifs, node)
     );
-  }
-
-  private async getCamelcaseKeysFunction(): Promise<any> {
-    const module = await (eval(`import('camelcase-keys')`) as Promise<any>);
-    return module.default;
-  }
-
-  private async getClientScoresForCollectivite(
-    referentielId: ReferentielId,
-    collectiviteId: number,
-    etoilesDefinition?: LabellisationEtoileDefinition[]
-  ): Promise<{
-    date: string;
-    scoresMap: ScoresByActionId;
-  }> {
-    this.logger.log(
-      `Récupération des scores courants de la collectivité ${collectiviteId} pour le referentiel ${referentielId}`
-    );
-
-    const scores = await this.databaseService.db
-      .select()
-      .from(clientScoresTable)
-      .where(
-        and(
-          eq(clientScoresTable.referentiel, referentielId),
-          eq(clientScoresTable.collectiviteId, collectiviteId)
-        )
-      )
-      .orderBy(desc(clientScoresTable.payloadTimestamp));
-    return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
-  }
-
-  private async getFirstDatabaseScoreFromJsonb(
-    scoreRecords: ClientScoresType[],
-    etoilesDefinition?: LabellisationEtoileDefinition[]
-  ): Promise<{
-    date: string;
-    scoresMap: ScoresByActionId;
-  }> {
-    if (!scoreRecords.length) {
-      throw new NotFoundException(`No scores found`);
-    }
-
-    if (!scoreRecords[0].payloadTimestamp || !scoreRecords[0].scores) {
-      throw new HttpException(`Invalid scores`, 500);
-    }
-
-    const getActionScoresResponse: ScoresByActionId = {};
-
-    const lastScoreDate = scoreRecords[0].payloadTimestamp;
-    this.logger.log(`Dernier score enregistré: ${lastScoreDate.toISOString()}`);
-
-    // Due to esm import
-    // See https://stackoverflow.com/questions/74830166/unable-to-import-esm-module-in-nestjs
-    const camelcaseKeys = await this.getCamelcaseKeysFunction();
-    const scoreList = (scoreRecords[0].scores as any[]).map(
-      (score) => camelcaseKeys(score) as ActionScore
-    ) as ActionScore[];
-    scoreList.forEach((score) => {
-      getActionScoresResponse[score.actionId] = score;
-    });
-
-    const rootScore = getActionScoresResponse[scoreRecords[0].referentiel];
-    if (etoilesDefinition && rootScore) {
-      this.fillEtoilesInScore(rootScore, etoilesDefinition);
-    }
-
-    return {
-      date: lastScoreDate.toISOString(),
-      scoresMap: getActionScoresResponse,
-    };
-  }
-
-  async checkScoreForLastModifiedCollectivite(
-    parameters: CheckMultipleReferentielScoresRequestType,
-    hostUrl?: string
-  ): Promise<GetMultipleCheckScoresResponseType> {
-    const statusList = Object.values(CheckScoreStatus);
-    const response: GetMultipleCheckScoresResponseType = {
-      count: 0,
-      countByStatus: {},
-      referentielCountByStatus: {},
-      resultats: [],
-    };
-    statusList.forEach((status) => {
-      response.countByStatus[status] = 0;
-    });
-
-    const lastChangesDate = DateTime.now().minus({
-      days: parameters.nbJours,
-    });
-    this.logger.log(
-      `Recuperation des collectivites dont le score a été modifié depuis ${lastChangesDate.toISO()} (${
-        parameters.nbJours
-      } jours)`
-    );
-
-    const lastChanges = await this.databaseService.db
-      .select()
-      .from(clientScoresTable)
-      .where(gte(clientScoresTable.modifiedAt, lastChangesDate.toJSDate()));
-
-    this.logger.log(`Nombre de scores modifiés: ${lastChanges.length}`);
-    response.count = lastChanges.length;
-
-    const lastChangesChunks = chunk(
-      lastChanges,
-      ScoresService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
-    );
-    const checkScorePromises: Promise<GetCheckScoresResponseType>[] = [];
-    let iChunk = 0;
-    for (const lastChangesChunk of lastChangesChunks) {
-      this.logger.log(
-        `Chunk ${iChunk}/${lastChangesChunks.length} de ${lastChangesChunks.length} verifications`
-      );
-      lastChangesChunk.forEach((lastChange) => {
-        checkScorePromises.push(
-          this.checkScoreForCollectivite(
-            lastChange.referentiel,
-            lastChange.collectiviteId,
-            parameters,
-            hostUrl
-          )
-        );
-      });
-      const checkScores = await Promise.all(checkScorePromises);
-      response.resultats.push(...checkScores);
-      checkScorePromises.length = 0;
-      iChunk++;
-    }
-
-    response.resultats.forEach((resultat) => {
-      response.countByStatus[resultat.verification_status]++;
-      if (!response.referentielCountByStatus[resultat.referentielId]) {
-        response.referentielCountByStatus[resultat.referentielId] = {};
-        statusList.forEach((status) => {
-          response.referentielCountByStatus[resultat.referentielId][status] = 0;
-        });
-      }
-      response.referentielCountByStatus[resultat.referentielId][
-        resultat.verification_status
-      ]++;
-    });
-
-    return response;
-  }
-
-  async checkScoreForCollectivite(
-    referentielId: ReferentielId,
-    collectiviteId: number,
-    parameters: CheckReferentielScoresRequestType,
-    hostUrl?: string,
-    noClientScoreUpdateForMajorDifferences?: boolean
-  ): Promise<GetCheckScoresResponseType> {
-    this.logger.log(
-      `Vérification du score de la collectivité ${collectiviteId} pour le referentiel ${referentielId} (parameters: ${JSON.stringify(
-        parameters
-      )})`
-    );
-
-    const savedScoreResult = await this.getClientScoresForCollectivite(
-      referentielId,
-      collectiviteId
-    );
-
-    const { scoresPayload } = await this.computeScoreForCollectivite(
-      referentielId,
-      collectiviteId,
-      {
-        date: parameters.utiliseDatePourScoreCourant
-          ? savedScoreResult.date
-          : undefined,
-      }
-    );
-
-    const { scores, collectiviteInfo } = scoresPayload;
-    const scoreMap = this.fillScoreMap(scores);
-
-    const getReferentielScores: GetCheckScoresResponseType = {
-      collectiviteId,
-      referentielId: referentielId,
-      date: savedScoreResult.date,
-      verification_status: CheckScoreStatus.MAJOR_DIFFERENCES,
-      differences: {},
-    };
-    const actionIds = Object.keys(scoreMap);
-    actionIds.forEach((actionId) => {
-      const savedScore = savedScoreResult.scoresMap[actionId];
-      if (!isEqual(savedScore, scoreMap[actionId])) {
-        const scoreDiff = this.getScoreDiff(
-          scoreMap[actionId],
-          savedScore,
-          scoreMap
-        );
-        if (scoreDiff) {
-          getReferentielScores.differences[actionId] = scoreDiff;
-        }
-      }
-    });
-    const differencesCount = Object.keys(
-      getReferentielScores.differences
-    ).length;
-    if (!differencesCount) {
-      getReferentielScores.verification_status =
-        CheckScoreStatus.NO_DIFFERENCES;
-    } else {
-      const differenceList = Object.values(getReferentielScores.differences);
-      const majorDifferences = differenceList.filter(
-        (diff) =>
-          diff.calcule?.pointFait !== diff.sauvegarde?.pointFait ||
-          diff.calcule?.pointProgramme !== diff.sauvegarde?.pointProgramme ||
-          diff.calcule?.pointPasFait !== diff.sauvegarde?.pointPasFait
-      );
-      if (majorDifferences.length) {
-        getReferentielScores.verification_status =
-          CheckScoreStatus.MAJOR_DIFFERENCES;
-      } else {
-        getReferentielScores.verification_status =
-          CheckScoreStatus.MINOR_DIFFERENCES;
-      }
-    }
-
-    // If there are major differences, try to trigger manually an update of the score using the legacy algorithm to check if the differences are still present
-    if (
-      getReferentielScores.verification_status ===
-        CheckScoreStatus.MAJOR_DIFFERENCES &&
-      !noClientScoreUpdateForMajorDifferences
-    ) {
-      this.logger.log(
-        `Major differences have been detected, trying to update the score using the legacy algorithm`
-      );
-
-      await this.databaseService.db.execute(
-        sql`select evaluation.evaluate_regles(${collectiviteId},'personnalisation_consequence','client_scores');`
-      );
-
-      this.logger.log(`Wait for client score to be updated`);
-      for (let i = 0; i < 10; i++) {
-        await sleep(1000);
-        const newSavedScoreResult = await this.getClientScoresForCollectivite(
-          referentielId,
-          collectiviteId
-        );
-        if (newSavedScoreResult.date > savedScoreResult.date) {
-          this.logger.log(
-            `Client score updated (${newSavedScoreResult.date}, i=${i})`
-          );
-          break;
-        }
-      }
-
-      const resultAfterUpdate = await this.checkScoreForCollectivite(
-        referentielId,
-        collectiviteId,
-        { ...parameters, notification: false },
-        hostUrl,
-        true
-      );
-      this.logger.log(
-        `Check status after update: ${resultAfterUpdate.verification_status}`
-      );
-      if (
-        resultAfterUpdate.verification_status ===
-        CheckScoreStatus.NO_DIFFERENCES
-      ) {
-        getReferentielScores.verification_status =
-          CheckScoreStatus.MAJOR_DIFFERENCES_FIXED_AFTER_CLIENT_SCORE_UPDATE;
-      }
-    }
-
-    if (differencesCount && parameters.notification) {
-      let message = '';
-      if (
-        getReferentielScores.verification_status ===
-        CheckScoreStatus.MAJOR_DIFFERENCES_FIXED_AFTER_CLIENT_SCORE_UPDATE
-      ) {
-        message = `:grimacing: Différences majeures de score corrigées après un déclenchement manuel de mise à jour pour la collectivité ${collectiviteId} et le referentiel ${referentielId} sur l'environnement ${process.env.ENV_NAME}.`;
-      } else {
-        const majorDifferences =
-          getReferentielScores.verification_status ===
-          CheckScoreStatus.MAJOR_DIFFERENCES;
-
-        message = `${
-          majorDifferences ? ':no_entry:' : ':warning:'
-        } Différence ${majorDifferences ? 'majeure' : 'mineure'} de score${
-          majorDifferences
-            ? ` (points fait calculés: ${scoreMap[referentielId]?.pointFait}, points fait sauvegardés: ${savedScoreResult.scoresMap[referentielId]?.pointFait}, points pas fait calculés: ${scoreMap[referentielId]?.pointPasFait}, points pas fait sauvegardés: ${savedScoreResult.scoresMap[referentielId]?.pointPasFait}, points programmés calculés: ${scoreMap[referentielId]?.pointProgramme}, points pas fait sauvegardés: ${savedScoreResult.scoresMap[referentielId]?.pointProgramme})`
-            : ''
-        } pour la collectivité ${
-          collectiviteInfo.nom
-        } (${collectiviteId}) et le referentiel ${referentielId} sur l'environnement ${
-          process.env.ENV_NAME
-        }${
-          hostUrl
-            ? ` ([details](${hostUrl}/api/v1/collectivites/${collectiviteId}/referentiels/${referentielId}/check-scores?token=${this.configService.get(
-                'SUPABASE_ANON_KEY'
-              )})).`
-            : '.'
-        }`;
-      }
-      if (message) {
-        await this.mattermostNotificationService.postMessage(message);
-      }
-    }
-
-    return getReferentielScores;
-  }
-
-  getScoreDiff(
-    computedScore: ActionScore,
-    savedScore: ActionScore | undefined | null,
-    fullScoreMap?: ScoresByActionId
-  ): {
-    sauvegarde: Partial<ActionScore>;
-    calcule: Partial<ActionScore>;
-  } | null {
-    const savedScoreDiff: any = {};
-    let scoreMapDiff: any = {};
-    const scoreMapKeys = [
-      ...new Set(
-        Object.keys(computedScore).concat(Object.keys(savedScore || {}))
-      ).values(),
-    ] as (keyof ActionScore)[];
-    let hasDiff = false;
-    if (savedScore) {
-      for (const key of scoreMapKeys) {
-        // We ignore renseigne (weird value in python) and point_potentiel_perso for now
-        if (
-          key !== 'etoiles' && // Not existing in python code
-          key !== 'explication' && // Not existing in python code
-          key !== 'renseigne' &&
-          key !== 'pointPotentielPerso'
-        ) {
-          if (!isEqual(savedScore[key], computedScore[key])) {
-            hasDiff = true;
-
-            if (
-              key !== 'pointFait' &&
-              key !== 'pointPotentiel' &&
-              key !== 'pointReferentiel' &&
-              key !== 'pointNonRenseigne' &&
-              key !== 'pointProgramme' &&
-              key !== 'pointPasFait' &&
-              key !== 'faitTachesAvancement' &&
-              key !== 'pasFaitTachesAvancement' &&
-              key !== 'pasConcerneTachesAvancement' &&
-              key !== 'programmeTachesAvancement'
-            ) {
-              hasDiff = true;
-            } else {
-              if (
-                typeof savedScore[key] === 'number' &&
-                typeof computedScore[key] === 'number'
-              ) {
-                const diff = Math.abs(savedScore[key] - computedScore[key]);
-                const diffThreshold =
-                  1 / Math.pow(10, ScoresService.DEFAULT_ROUNDING_DIGITS) +
-                  1 / Math.pow(10, ScoresService.DEFAULT_ROUNDING_DIGITS + 1);
-
-                if (diff <= diffThreshold) {
-                  hasDiff = false;
-                } else {
-                  hasDiff = true;
-                }
-              } else {
-                hasDiff = true;
-              }
-            }
-
-            if (hasDiff) {
-              savedScoreDiff[key] = savedScore[key];
-              scoreMapDiff[key] = computedScore[key];
-            }
-          }
-        }
-      }
-    } else {
-      scoreMapDiff = computedScore;
-    }
-
-    if (hasDiff) {
-      // Specific cases due to python code
-      const diffKeys = Object.keys(savedScoreDiff).sort((a, b) =>
-        a.localeCompare(b)
-      );
-      // Python is not affecting not concerne recursively
-      if (
-        ['concerne', 'pasConcerneTachesAvancement'].every((v) =>
-          diffKeys.includes(v)
-        )
-      ) {
-        if (!computedScore.concerne) {
-          // Check if parent is not concerne
-          let parentActionId = getParentId({
-            actionId: computedScore.actionId,
-          });
-          while (parentActionId) {
-            const parentAction = fullScoreMap?.[parentActionId];
-            if (!parentAction?.concerne) {
-              // Diff coming from python code which can be ignored
-              hasDiff = false;
-              break;
-            }
-            parentActionId = getParentId({ actionId: parentActionId });
-          }
-        }
-      }
-    }
-
-    if (hasDiff) {
-      return {
-        sauvegarde: savedScoreDiff,
-        calcule: scoreMapDiff,
-      };
-    }
-    return null;
   }
 }

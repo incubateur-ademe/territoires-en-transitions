@@ -133,8 +133,7 @@ export class CreatePlanAggregateService {
           pilotes: request.pilotes,
           referents: request.referents,
         },
-        user,
-        tx
+        { user, tx }
       );
       if (!createPlanResult.success) return createPlanResult;
 
@@ -233,8 +232,7 @@ export class CreatePlanAggregateService {
       const nom = axe.path[axe.path.length - 1];
       const createdAxe = await this.upsertAxeService.upsertAxe(
         { planId, parent: parentIdResult.data, collectiviteId, nom },
-        user,
-        tx
+        { user, tx }
       );
       if (!createdAxe.success) return createdAxe;
 

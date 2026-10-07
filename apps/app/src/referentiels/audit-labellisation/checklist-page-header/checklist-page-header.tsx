@@ -11,6 +11,7 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { PageHeader } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { ReactElement } from 'react';
 import { RoleMesures } from '../checklist-view-model';
 import { useOptionalChecklist } from '../checklist.context';
@@ -41,7 +42,7 @@ const ChecklistPageHeaderView = ({
 }): ReactElement => (
   <PageHeader>
     <PageHeader.Title>
-      {appLabels.referentiel} {referentielToName[referentielId]}
+      {capitalize(appLabels.referentiel())} {referentielToName[referentielId]}
     </PageHeader.Title>
     <PageHeader.Actions>
       <ReferentielMenuButton

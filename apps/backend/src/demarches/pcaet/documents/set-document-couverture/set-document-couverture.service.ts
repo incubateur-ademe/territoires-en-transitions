@@ -4,7 +4,10 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
+import {
+  DemarcheTypeEnum,
+  isDemarcheDocumentInclusionDeclarable,
+} from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
 import {
@@ -29,10 +32,14 @@ export class SetDemarchePcaetDocumentCouvertureService {
   ) {}
 
   /**
-   * Déclare une pièce attendue couverte sans document. Seules les pièces dont le
-   * modèle prévoit une couverture par la plateforme sont éligibles. Le
-   * rattachement effectif d'un plan d'actions n'est pas exigé ici : c'est le
-   * guard `dossierComplet` de la transmission qui le vérifie, une bonne fois.
+   * Déclare une pièce attendue comprise dans une autre pièce du dossier. Le
+   * modèle en décide : une pièce à qui il n'ouvre aucune inclusion n'est pas
+   * déclarable.
+   *
+   * Le dépôt du document qui accueille l'inclusion n'est pas exigé ici : la
+   * déclaration dit l'intention, et c'est la règle de couverture qui décide si
+   * elle vaut — le guard `dossierComplet` de la transmission le vérifie, une
+   * bonne fois.
    */
   async setCouverture(
     input: SetDemarchePcaetDocumentCouvertureInput,
@@ -48,6 +55,7 @@ export class SetDemarchePcaetDocumentCouvertureService {
       const definition = await this.demarcheDocumentsRepository.findDefinition(
         DemarcheTypeEnum.PCAET,
         input.documentId,
+        { collectiviteId: input.collectiviteId, demarcheId: input.demarcheId },
         transaction
       );
       if (!definition) {
@@ -60,7 +68,9 @@ export class SetDemarchePcaetDocumentCouvertureService {
       // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
       const access = await this.accessService.assertWritable(
         input,
-        definition.etape,
+        // Déclarer une inclusion parle du dossier transmis : c'est l'amont qui
+        // décide si l'écriture est encore permise, quelle que soit la portée.
+        'amont',
         { user, tx: transaction }
       );
       if (!access.success) {
@@ -70,8 +80,7 @@ export class SetDemarchePcaetDocumentCouvertureService {
       }
       const demarche = access.data;
 
-      const source = definition.couverturePlateforme;
-      if (!source) {
+      if (!isDemarcheDocumentInclusionDeclarable(definition)) {
         return failure(
           SetDemarchePcaetDocumentCouvertureErrorEnum.COUVERTURE_NON_APPLICABLE
         );
@@ -95,11 +104,9 @@ export class SetDemarchePcaetDocumentCouvertureService {
       }
 
       this.logger.log(
-        `Couverture ${source} ${
-          input.couvert ? 'declared' : 'removed'
-        } for document ${definition.id} on demarche PCAET ${
-          demarche.id
-        } by user ${user.id}`
+        `Inclusion ${input.couvert ? 'declared' : 'removed'} for document ${
+          definition.id
+        } on demarche PCAET ${demarche.id} by user ${user.id}`
       );
       return success({ documentId: definition.id, couvert: input.couvert });
     };

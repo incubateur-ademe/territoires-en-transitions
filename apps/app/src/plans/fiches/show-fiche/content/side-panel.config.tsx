@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { ReactNode } from 'react';
 import { FicheProvider } from '../context/fiche-context';
@@ -16,7 +17,7 @@ export const SIDE_PANEL_CONFIG: Record<
   SidePanelConfig
 > = {
   indicateurs: {
-    title: 'Lier des indicateurs existants',
+    title: appLabels.lierIndicateurExistant,
     content: (fiche) => (
       <FicheProvider fiche={fiche}>
         <LinkIndicateursView />

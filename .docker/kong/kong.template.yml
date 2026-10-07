@@ -70,46 +70,6 @@ services:
             - admin
             - anon
 
-  # PostgREST (API REST)
-  - name: rest-v1
-    url: http://rest:3000/
-    routes:
-      - name: rest-v1-all
-        strip_path: true
-        paths:
-          - /rest/v1/
-    plugins:
-      - name: cors
-      - name: key-auth
-        config:
-          hide_credentials: true
-      - name: acl
-        config:
-          hide_groups_header: true
-          allow:
-            - admin
-            - anon
-
-  # Realtime (websockets) — le nom d'hôte sert au parsing du tenant
-  - name: realtime-v1
-    url: http://realtime-dev.supabase-realtime:4000/socket/
-    routes:
-      - name: realtime-v1-all
-        strip_path: true
-        paths:
-          - /realtime/v1/
-    plugins:
-      - name: cors
-      - name: key-auth
-        config:
-          hide_credentials: false
-      - name: acl
-        config:
-          hide_groups_header: true
-          allow:
-            - admin
-            - anon
-
   # Storage (valide lui-même les JWT, pas de key-auth)
   - name: storage-v1
     url: http://storage:5000/
@@ -118,16 +78,5 @@ services:
         strip_path: true
         paths:
           - /storage/v1/
-    plugins:
-      - name: cors
-
-  # Edge functions (profil compose `functions` — 503 si non démarré)
-  - name: functions-v1
-    url: http://functions:9000/
-    routes:
-      - name: functions-v1-all
-        strip_path: true
-        paths:
-          - /functions/v1/
     plugins:
       - name: cors

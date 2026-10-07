@@ -1,9 +1,11 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   MetricCard,
   MetricCardProps,
 } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { capitalize } from '@tet/ui/labels/plural';
 import { useTdbPersoFetchMetrics } from '../_hooks/use-tdb-perso-fetch-metrics';
 
 // Type descriptor for metric cards
@@ -42,13 +44,13 @@ const Metrics = () => {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteFichesCount || 0,
       getTitle: (count) =>
-        `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
+        capitalize(appLabels.action({ count, withoutCount: true })),
     },
     {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteSubFichesCount || 0,
       getTitle: (count) =>
-        `Sous-action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
+        capitalize(appLabels.sousAction({ count, withoutCount: true })),
     },
     {
       isVisible: hasCollectivitePermission(
@@ -56,13 +58,13 @@ const Metrics = () => {
       ),
       getCount: () => metrics?.indicateurs.piloteCount || 0,
       getTitle: (count) =>
-        `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,
+        capitalize(appLabels.indicateur({ count, withoutCount: true })),
     },
     {
       isVisible: hasCollectivitePermission('referentiels.read_confidentiel'),
       getCount: () => metrics?.referentiels.piloteMesuresCount || 0,
       getTitle: (count) =>
-        `Mesure${count > 0 ? 's' : ''} pilotée${count > 0 ? 's' : ''}`,
+        capitalize(appLabels.sousMesure({ count, withoutCount: true })),
     },
   ];
 

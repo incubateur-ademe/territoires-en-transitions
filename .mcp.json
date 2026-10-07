@@ -1,21 +1,37 @@
 {
-    "mcpServers": {
-        "staging-db": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@dotenvx/dotenvx",
-                "run",
-                "--env-keys-file=.env.keys",
-                "--strict",
-                "-f",
-                ".env.staging",
-                "--",
-                "uvx",
-                "postgres-mcp",
-                "--access-mode",
-                "unrestricted"
-            ]
-        }
+  "mcpServers": {
+    "staging-db": {
+      "command": "node_modules/.bin/dotenvx",
+      "args": [
+        "run",
+        "--env-keys-file=.env.keys",
+        "--strict",
+        "-f",
+        ".env.staging",
+        "--",
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "DATABASE_URI",
+        "crystaldba/postgres-mcp",
+        "--access-mode=unrestricted"
+      ]
+    },
+    "strapi": {
+      "command": "node_modules/.bin/dotenvx",
+      "args": [
+        "run",
+        "-q",
+        "--env-keys-file=.env.keys",
+        "-f",
+        ".env",
+        "--",
+        "sh",
+        "-c",
+        "exec npx -y mcp-remote@0.14.3 \"$STRAPI_REMOTE_URL/mcp\" --header \"Authorization:Bearer $STRAPI_MCP_TOKEN\""
+      ]
     }
+  }
 }

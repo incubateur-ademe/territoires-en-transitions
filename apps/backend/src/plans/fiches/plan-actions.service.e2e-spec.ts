@@ -64,7 +64,7 @@ describe('PlanActionsService', () => {
 
     await db.db
       .insert(ficheActionAxeTable)
-      .values({ ficheId: ficheDeleted.id, axeId: planId });
+      .values({ ficheId: ficheDeleted.id, axeId: planId, createdBy: user.id });
 
     onTestFinished(async () => {
       await db.db

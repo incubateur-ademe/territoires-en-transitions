@@ -1,6 +1,7 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { type PersonneId } from '@tet/domain/collectivites';
 import {
+  ActionTypeEnum,
   ReferentielIdEnum,
   type ReferentielId,
 } from '@tet/domain/referentiels';
@@ -193,9 +194,13 @@ describe('mergePilotes', () => {
     overrides: Partial<ActionCible> & Pick<ActionCible, 'actionId'>
   ): ActionCible => ({
     actionId: overrides.actionId,
+    actionType: overrides.actionType ?? ActionTypeEnum.SOUS_ACTION,
     actionsOrigine: overrides.actionsOrigine ?? [],
     originesConcernees: overrides.originesConcernees ?? [],
+    originesCommentaire: overrides.originesCommentaire ?? [],
     concernee: overrides.concernee ?? true,
+    aDesTachesEnfant: overrides.aDesTachesEnfant ?? false,
+    hasExprScore: overrides.hasExprScore ?? false,
   });
 
   const createCtx = (mesures: ActionCible[]): SwitchToTeContext => ({
@@ -207,7 +212,7 @@ describe('mergePilotes', () => {
     hierarchiesByReferentielId: hierarchies,
     pilotesByMesureActionId,
     servicesByMesureActionId: new Map(),
-    cibles: { sousActionsEtTaches: [], mesures },
+    cibles: { sousActionsEtTaches: [], mesures, commentaires: [] },
     sourceFicheLinks: [],
     correspondanceIndexes: {
       directSousActionByOrigineId: new Map(),

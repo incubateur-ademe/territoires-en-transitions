@@ -16,11 +16,22 @@ Elles sont définies à partir des [variables d'environnement de Github](https:/
 
 ## Lancer le site avec Strapi en local
 
-Démarrer strapi en local
+```bash
+make up p=strapi   # Strapi 5 + sa base Postgres sur localhost:1337
+make cms-pull      # optionnel : copie le contenu de l'instance distante
+```
 
-Ouvrir [Strapi admin](http://localhost:1337/admin) en local, et créer une clé depuis Settings > API Tokens. Au premier lancement, il sera nécessaire de créer un compte, puis de compléter les données des pages / collections à tester.
+Par défaut, `apps/site/.env` pointe sur le Strapi distant. Pour brancher le site
+sur le Strapi local, qui seede au démarrage un token API en lecture seule,
+créer `apps/site/.env.local` (ignoré par git, prioritaire sur `apps/site/.env`) :
 
-Valeurs à renseigner dans le fichier .env :
+```
+NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+NEXT_PUBLIC_STRAPI_KEY=local-dev-readonly-token
+```
 
-- NEXT_PUBLIC_STRAPI_KEY (clé créée depuis le menu Settings)
-- NEXT_PUBLIC_STRAPI_URL=http://127.0.0.1:1337
+Supprimer ce fichier pour revenir au Strapi distant. Voir `strapi/README.md`.
+
+Le site lit l'API REST de Strapi 5 : réponses à plat (pas d'enveloppe
+`attributes`), entrées identifiées par `documentId`, population des dynamic
+zones en syntaxe `populate[<zone>][on][<composant>]`.

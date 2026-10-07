@@ -11,44 +11,44 @@ type Item = {
 const items: Array<Item> = [
   {
     titre: 'Centralisez',
-    sousTitre: "Centralisez tous vos plans d'action au même endroit",
+    sousTitre: "tous vos plans d'actions au même endroit",
     description:
       "Rassemblez vos plans d'actions, transverses ou thématiques, sur une seule plateforme. Fini les tableurs Excel éparpillés.",
     picto: 'fiches-action',
   },
   {
     titre: 'Pilotez',
-    sousTitre: 'Pilotez vos actions et leur avancement',
+    sousTitre: 'vos actions et leur avancement',
     description:
-      "Visualisez l'avancement de vos projets, identifiez les blocages et priorisez ce qui compte vraiment pour votre territoire.",
+      "Visualisez l'avancement de vos projets, identifiez les blocages et concentrez-vous sur les priorités de votre territoire.",
     picto: 'dashboard',
   },
   {
     titre: 'Mesurez',
-    sousTitre: "Mesurez l'atteinte de vos objectifs",
+    sousTitre: "l'atteinte de vos objectifs",
     description:
       "Définissez vos indicateurs, accédez aux données de référence en open data et comparez votre impact à celui d'autres territoires.",
     picto: 'data-visualization',
   },
   {
     titre: 'Mobilisez',
-    sousTitre: 'Mobilisez toutes les équipes',
+    sousTitre: 'toutes les équipes',
     description:
       'Donnez de la visibilité à vos services, partagez les responsabilités et coordonnez vos efforts.',
     picto: 'equipe',
   },
   {
     titre: 'Priorisez',
-    sousTitre: "Priorisez vos efforts sur l'essentiel",
+    sousTitre: "vos efforts sur l'essentiel",
     description:
       'Identifiez les actions à fort impact pour votre territoire et orientez vos ressources vers ce qui compte vraiment.',
     picto: 'formation',
   },
   {
     titre: 'Partagez',
-    sousTitre: 'Partagez les informations avec vos partenaires',
+    sousTitre: 'les informations avec vos partenaires',
     description:
-      'Accédez plus facilement aux plans & actions des autres collectivités pour accélérer vos propres actions',
+      'Accédez plus facilement aux plans et aux actions des autres collectivités pour accélérer les vôtres.',
     picto: 'human-cooperation',
   },
 ];
@@ -68,10 +68,12 @@ export const BeneficesPlateforme = () => {
 const BeneficesPlateformeItem = ({ item }: { item: Item }) => {
   const { titre, sousTitre, description, picto } = item;
   return (
-    <div className="flex flex-col max-w-md items-center md:items-start">
+    <div className="flex flex-col max-w-md">
       <Image src={`/pictogrammes/${picto}.svg`} alt="" width={80} height={80} />
-      <h3 className="mb-3 text-2xl">{titre}</h3>
-      <h4 className="text-grey-8 mb-4 text-xl leading-7">{sousTitre}</h4>
+      <h3 className="mb-4">
+        <span className="block mb-3 text-2xl">{titre}</span>{' '}
+        <span className="block text-grey-8 text-xl leading-7">{sousTitre}</span>
+      </h3>
       <p className="text-primary-10">{description}</p>
     </div>
   );

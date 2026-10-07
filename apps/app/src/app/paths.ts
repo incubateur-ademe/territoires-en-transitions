@@ -6,34 +6,61 @@ import {
   referentielFiltersSerializer,
   type ReferentielTableFilters,
 } from '@/app/referentiels/referentiel.table/use-get-referentiel-table-filters-state';
-export type { ReferentielTableFilters };
-import type { ReferentielId } from '@tet/domain/referentiels';
+
+import {
+  isServiceDeconcentre,
+  type CollectiviteType,
+} from '@tet/domain/collectivites';
+import {
+  rollUpActionIdToActionLevel,
+  type ActionType,
+  type ReferentielId,
+} from '@tet/domain/referentiels';
+import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
+import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
+import type { MakeCollectiviteActionsDeReferenceUrl } from './paths.contract';
+
+export const homePath = '/';
 
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
 export const resetPwdPath = `/recover`;
 export const rejoindreCollectivitePath = '/rejoindre-une-collectivite';
 
+/**
+ * Lien relatif vers la page de connexion. `redirectTo` est repris après
+ * authentification via le search param `redirect_to` (déjà géré par /login).
+ * La racine est omise : c'est déjà la destination par défaut.
+ */
+export const makeSignInUrl = (redirectTo?: string | null) => {
+  if (!redirectTo || redirectTo === homePath) {
+    return signInPath;
+  }
+  const params = new URLSearchParams({ redirect_to: redirectTo });
+  return `${signInPath}?${params}`;
+};
+
 /** Lien relatif vers « rejoindre une collectivité » (navigation intra-app). */
-export const makeRejoindreCollectiviteUrl = (redirectTo = '/') => {
+export const makeRejoindreCollectiviteUrl = (redirectTo = homePath) => {
   const params = new URLSearchParams({ redirect_to: redirectTo });
   return `${rejoindreCollectivitePath}?${params}`;
 };
 
-export const errorPath = '/error';
-
 export const invitationPath = '/invitation';
-export const invitationIdParam = 'invitationId';
-export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
+
+// Pont de session OIDC (verifyOtp) et parcours de bienvenue ProConnect (cas 3) :
+// accessibles sans session Supabase établie — le premier POSE la session, le
+// second peut la précéder (aucune correspondance automatique).
+export const authVerifyPath = '/auth/verify';
+export const authProconnectPath = '/auth/proconnect';
 
 export const profilPath = '/profil';
 
 export const recherchesPath = '/recherches';
-export const recherchesParam = 'recherchesId';
+const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
-export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
-export const recherchesCollectivitesUrl = `${recherchesPath}/collectivites`;
+const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
 export const getRechercheViewUrl = (args: {
   collectiviteId?: number;
   view: RecherchesViewParam;
@@ -53,11 +80,10 @@ export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
 
 const collectiviteParam = 'collectiviteId';
-export const indicateurViewParam = 'vue';
-export const indicateurIdParam = 'indicateurId';
+const indicateurViewParam = 'vue';
+const indicateurIdParam = 'indicateurId';
 
 const actionParam = 'actionId';
-const labellisationVueParam = 'labellisationVue';
 
 export type IndicateurViewParamOption =
   | 'cae'
@@ -76,18 +102,16 @@ export type IndicateursListParamOption =
 export const referentielTabs = ['progression', 'evolutions'] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
-type LabellisationTab = 'cycles' | 'criteres';
-
 export const collectiviteBasePath = '/collectivite';
-export const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
+const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
 
-export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
-export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
-export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
-export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
-export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
-export const collectiviteModifierPath = `${collectivitePath}/modifier`;
-export const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
+const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
+const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
+const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
+const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
+const collectiviteModifierPath = `${collectivitePath}/modifier`;
+const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
+const collectiviteActionsDeReferencePath = `${collectivitePath}/actions-reference`;
 
 const referentielIdParam = 'referentielId';
 const referentielVueParam = 'referentielVue';
@@ -95,37 +119,31 @@ const referentielVueParam = 'referentielVue';
 const referentielRootPath = `${collectivitePath}/referentiel`;
 const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${referentielVueParam}`;
 const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}`;
-const referentielLabellisationRootPath = `${referentielRootPath}/:${referentielIdParam}/labellisation`;
-const referentielLabellisationPath = `${referentielLabellisationRootPath}/:${labellisationVueParam}?`;
+const referentielAuditLabellisationPath = `${referentielRootPath}/:${referentielIdParam}/audit-labellisation`;
 
-export const collectiviteUsersPath = `${collectivitePath}/users`;
-export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
+const collectiviteUsersPath = `${collectivitePath}/users`;
 
 const maCollectiviteVueParam = 'paramsVue';
-export const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
-export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
-export const collectiviteJournalPath = `${collectivitePath}/historique`;
+const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
 const demarcheIdParam = 'demarcheId';
-export const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
-export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
-export const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}`;
-export const collectiviteDemarchePcaetIndicateursPath = `${collectiviteDemarchePcaetRootPath}/indicateurs`;
-export const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
-export const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
-export const collectiviteDemarchePcaetDocumentsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/documents`;
-export const collectiviteDemarchePcaetVueDrealPath = `${collectiviteDemarchePcaetPath}/vue-dreal`;
+const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
+const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
+const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}`;
+const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
+const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
+const collectiviteDemarchePcaetDocumentsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/documents`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
-export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
-export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
-export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
-export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
-export const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
-export const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
-export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
-export const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
-export const collectiviteActionPath = `${collectiviteActionsPath}/:${ficheParam}/:content`;
+const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
+const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
+const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
+const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
+const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
+const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
+const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
+const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
+const collectiviteActionPath = `${collectiviteActionsPath}/:${ficheParam}/:content`;
 
 // TDB = tableau de bord PA
 const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
@@ -134,7 +152,69 @@ const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bo
 const tdbCollectivitePath = `${collectivitePath}/tableau-de-bord`;
 export const tdbPathShortcut = `${collectiviteBasePath}/tableau-de-bord`;
 
+const demandesAvisPath = `${collectivitePath}/demandes-avis`;
+
+export const makeDemandesAvisUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
+
+const demandeAvisParam = 'demandeAvisId';
+
+/**
+ * Le dossier vit sous la collectivité **instruite**, pas sous le service qui
+ * l'instruit : l'ouvrir bascule le contexte sur la déposante. La liste, elle,
+ * reste sous le service (`demandesAvisPath`).
+ */
+const dossierInstructionPath = `${collectivitePath}/instruction/:${demandeAvisParam}`;
+
+export const makeDossierInstructionUrl = ({
+  collectiviteInstruiteId,
+  demandeAvisId,
+}: {
+  /** La collectivité déposante — celle dont on prend le contexte. */
+  collectiviteInstruiteId: number;
+  demandeAvisId: number;
+}) =>
+  dossierInstructionPath
+    .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
+    .replace(`:${demandeAvisParam}`, demandeAvisId.toString());
+
+/**
+ * Le même dossier, désigné par sa démarche : un dépôt en élaboration n'a saisi
+ * personne, il n'a pas de saisine à mettre dans l'URL. Le segment `demarche`
+ * le distingue de la route par saisine, qui garde son URL — les emails y
+ * mènent.
+ */
+const demarcheInstructionPath = `${collectivitePath}/instruction/demarche/:${demarcheIdParam}`;
+
+export const makeDemarcheInstructionUrl = ({
+  collectiviteInstruiteId,
+  demarcheId,
+}: {
+  collectiviteInstruiteId: number;
+  demarcheId: number;
+}) =>
+  demarcheInstructionPath
+    .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
+
 export type TDBViewId = 'synthetique' | 'personnel';
+
+export const makeCollectiviteRootUrl = ({
+  user,
+  collectiviteId,
+  collectiviteType,
+}: {
+  user: UserRolesAndPermissions;
+  collectiviteId: number;
+  collectiviteType: CollectiviteType;
+}) =>
+  isServiceDeconcentre(collectiviteType)
+    ? makeDemandesAvisUrl({ collectiviteId })
+    : makeUserTdbUrl({ user, collectiviteId });
 
 export const makeTdbPlansEtActionsUrl = ({
   collectiviteId,
@@ -184,6 +264,18 @@ export const makeCollectiviteIndicateursListUrl = ({
   collectiviteIndicateursListPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .concat(listId ? `/${listId}` : '');
+
+export const makeCollectiviteIndicateursVueUrl = ({
+  collectiviteId,
+  vueId,
+}: {
+  collectiviteId: number;
+  vueId: string;
+}) =>
+  makeCollectiviteIndicateursListUrl({ collectiviteId }).concat(
+    '/vue/',
+    encodeURIComponent(vueId)
+  );
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
@@ -278,40 +370,38 @@ export const makeReferentielTacheUrl = ({
   collectiviteId,
   actionId,
   referentielId,
+  hierarchie,
 }: {
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
   searchParams?: URLSearchParams;
 }) => {
-  const levels = actionId?.split('.') || [];
-  const limitedLevels = levels
-    .slice(0, referentielId === 'cae' ? 3 : 2)
-    .join('.');
+  // remonte jusqu'à la mesure (niveau `action`) et ancre le nœud d'origine
+  const mesureId = hierarchie.length
+    ? rollUpActionIdToActionLevel(actionId, hierarchie)
+    : actionId;
 
   const pathname = makeReferentielActionUrl({
     collectiviteId,
     referentielId,
-    actionId: limitedLevels,
+    actionId: mesureId,
   });
-  const hash =
-    levels.length !== limitedLevels.split('.').length ? `#${actionId}` : '';
+  const hash = mesureId === actionId ? '' : `#${actionId}`;
   return pathname + hash;
 };
 
-export const makeReferentielLabellisationUrl = ({
+export const makeReferentielAuditLabellisationUrl = ({
   collectiviteId,
   referentielId,
-  labellisationTab,
 }: {
   collectiviteId: number;
   referentielId: ReferentielId;
-  labellisationTab?: LabellisationTab;
 }) =>
-  referentielLabellisationPath
+  referentielAuditLabellisationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielIdParam}`, referentielId)
-    .replace(`:${labellisationVueParam}`, labellisationTab || 'criteres');
+    .replace(`:${referentielIdParam}`, referentielId);
 
 export const makeCollectivitePlansActionsNouveauUrl = ({
   collectiviteId,
@@ -498,17 +588,6 @@ export const makeCollectiviteDemarchePcaetRootUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
-export const makeCollectiviteDemarchePcaetIndicateursUrl = ({
-  collectiviteId,
-  demarcheId,
-}: {
-  collectiviteId: number;
-  demarcheId: number;
-}) =>
-  collectiviteDemarchePcaetIndicateursPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarcheIdParam}`, demarcheId.toString());
-
 export const makeCollectiviteDemarchePcaetDiagnosticUrl = ({
   collectiviteId,
   demarcheId,
@@ -542,16 +621,6 @@ export const makeCollectiviteDemarchePcaetDocumentsUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
-export const makeCollectiviteDemarchePcaetVueDrealUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteDemarchePcaetVueDrealPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteModifierUrl = ({
   collectiviteId,
 }: {
@@ -572,20 +641,9 @@ export const makeCollectiviteAffichageReferentielsUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectivitePanierUrl = ({
-  collectiviteId,
-  panierId,
-}: {
-  collectiviteId?: number | null;
-  panierId?: string;
-}) => {
-  const PANIER_URL = process.env.NEXT_PUBLIC_PANIER_URL;
-  return panierId
-    ? `${PANIER_URL}/panier/${panierId}`
-    : collectiviteId
-    ? `${PANIER_URL}/landing/collectivite/${collectiviteId}`
-    : `${PANIER_URL}/landing`;
-};
-
-export const makeInvitationLandingPath = (invitationId: string) =>
-  invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
+export const makeCollectiviteActionsDeReferenceUrl: MakeCollectiviteActionsDeReferenceUrl =
+  ({ collectiviteId }) =>
+    collectiviteActionsDeReferencePath.replace(
+      `:${collectiviteParam}`,
+      collectiviteId.toString()
+    );

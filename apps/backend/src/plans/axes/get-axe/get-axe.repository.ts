@@ -23,7 +23,6 @@ type AxeDbRowFromPlanActionChemin = {
   created_at: string;
   modified_at: string;
   modified_by: string | null;
-  panier_id: string | null;
 };
 
 function axeDbRowToAxeLight(row: AxeDbRowFromPlanActionChemin): AxeLight {
@@ -40,7 +39,6 @@ function axeDbRowToAxeLight(row: AxeDbRowFromPlanActionChemin): AxeLight {
     createdAt: row.created_at,
     modifiedAt: row.modified_at,
     modifiedBy: row.modified_by,
-    panierId: row.panier_id,
   };
 }
 
@@ -116,13 +114,13 @@ export class GetAxeRepository {
         sql`
           WITH RECURSIVE chemin AS (
             SELECT a.id, a.nom, a.description, a.collectivite_id, a.parent,
-                   a.plan, a.type, a.date_debut, a.date_fin, a.created_at, a.modified_at, a.modified_by, a.panier_id,
+                   a.plan, a.type, a.date_debut, a.date_fin, a.created_at, a.modified_at, a.modified_by,
                    a.id AS leaf_axe_id, 0 AS depth
             FROM axe a
             WHERE a.id IN (${axeIdList})
             UNION ALL
             SELECT p.id, p.nom, p.description, p.collectivite_id, p.parent,
-                   p.plan, p.type, p.date_debut, p.date_fin, p.created_at, p.modified_at, p.modified_by, p.panier_id,
+                   p.plan, p.type, p.date_debut, p.date_fin, p.created_at, p.modified_at, p.modified_by,
                    c.leaf_axe_id, c.depth + 1
             FROM axe p
             INNER JOIN chemin c ON c.parent = p.id
@@ -141,8 +139,7 @@ export class GetAxeRepository {
                      'date_fin', date_fin,
                      'created_at', created_at,
                      'modified_at', modified_at,
-                     'modified_by', modified_by,
-                     'panier_id', panier_id
+                     'modified_by', modified_by
                    )
                    ORDER BY depth DESC
                  ) AS chemin

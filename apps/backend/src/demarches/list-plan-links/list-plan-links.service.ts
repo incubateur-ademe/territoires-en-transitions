@@ -1,0 +1,88 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { failure, Result } from '@tet/backend/utils/result.type';
+import {
+  type DemarchePcaetStatus,
+  type DemarcheType,
+} from '@tet/domain/demarches';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
+import {
+  ListPlanLinksError,
+  ListPlanLinksErrorEnum,
+} from './list-plan-links.errors';
+import { ListPlanLinksInput } from './list-plan-links.input';
+
+export type DemarchePlanLink = {
+  demarcheId: number;
+  type: DemarcheType;
+  titre: string;
+  status: DemarchePcaetStatus;
+  planActionId: number;
+};
+
+/**
+ * Plans tenus par une démarche de la collectivité, tous statuts et tous
+ * types de démarches confondus (la table `demarche` est partagée). Une
+ * démarche tenant plusieurs plans y apparaît une fois par plan. Renvoie
+ * chaque lien avec son `status` : à chaque consommateur de filtrer selon son
+ * besoin — le bandeau affiché sur un plan lié doit rester visible quel que
+ * soit le statut (y compris une démarche adoptée), alors que l'exclusivité
+ * plan ↔ démarche ne doit bloquer que les démarches actives.
+ */
+@Injectable()
+export class ListPlanLinksService {
+  private readonly logger = new Logger(ListPlanLinksService.name);
+
+  constructor(
+    private readonly permissionService: PermissionService,
+    private readonly databaseService: DatabaseService
+  ) {}
+
+  async listPlanLinks(
+    input: ListPlanLinksInput,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<DemarchePlanLink[], ListPlanLinksError>> {
+    // Seule permission du domaine demarches à ce jour : elle gate déjà les
+    // deux consommateurs (page démarche et page plan en édition).
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: input.collectiviteId },
+      tx
+    );
+    if (!permissionResult.success) {
+      return failure(ListPlanLinksErrorEnum.UNAUTHORIZED);
+    }
+
+    try {
+      const db = tx || this.databaseService.db;
+      const rows = await db
+        .select({
+          demarcheId: demarcheTable.id,
+          type: demarcheTable.type,
+          titre: demarcheTable.titre,
+          status: demarcheTable.status,
+          planActionId: demarchePlanActionTable.planActionId,
+        })
+        .from(demarchePlanActionTable)
+        .innerJoin(
+          demarcheTable,
+          eq(demarcheTable.id, demarchePlanActionTable.demarcheId)
+        )
+        .where(eq(demarcheTable.collectiviteId, input.collectiviteId));
+
+      return { success: true, data: rows };
+    } catch (error) {
+      this.logger.error(
+        `Error listing plan links for collectivite ${input.collectiviteId}: ${error}`
+      );
+      return failure(ListPlanLinksErrorEnum.LIST_PLAN_LINKS_ERROR);
+    }
+  }
+}

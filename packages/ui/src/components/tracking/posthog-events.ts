@@ -1,5 +1,17 @@
+/**
+ * Méthode de connexion, portée par la propriété `methode` des événements
+ * `auth:login:*` : c'est elle qui permet de comparer la connexion classique
+ * (mot de passe, lien magique) à la connexion par fournisseur d'identité.
+ */
+export type LoginMethod = 'mot_de_passe' | 'lien_magique' | 'oidc';
+
 export const Event = {
   auth: {
+    // Les événements `cta_submit` sont historiques : un même nom pour tous les
+    // formulaires, seule l'URL les distingue dans PostHog. Les événements
+    // nommés ci-dessous (`auth:*`) les doublent avec un nom explicite et des
+    // propriétés — ils ne sont pas retirés pour ne pas casser les tableaux de
+    // bord existants.
     submitRejoindreCollectivite: 'cta_submit',
     submitForgottenPassword: 'cta_submit',
     submitLogin: 'cta_submit',
@@ -10,21 +22,59 @@ export const Event = {
     submitVerifyOTP: 'cta_submit',
     viewAvecMdp: 'onglet_avec_mdp',
     viewSansMdp: 'onglet_sans_mdp',
+    /**
+     * Connexion, toutes méthodes confondues : la propriété `methode`
+     * (`LoginMethod`) distingue mot de passe, lien magique et fournisseur
+     * d'identité, `provider` nomme ce dernier.
+     */
+    login: {
+      /** Départ d'une connexion (soumission du formulaire ou clic ProConnect). */
+      click: 'auth:login:click',
+      /** Session ouverte. */
+      success: 'auth:login:success',
+      /** Échec (identifiants refusés, code invalide, erreur du fournisseur). */
+      error: 'auth:login:error',
+      /** Lien de connexion sans mot de passe envoyé par email. */
+      magicLinkSent: 'auth:login:magic_link_sent',
+    },
+    /** Déconnexion (`methode` : `oidc` si la session SSO amont est fermée). */
+    logout: 'auth:logout',
+    signup: {
+      click: 'auth:signup:click',
+      /** Compte créé et profil complété. */
+      success: 'auth:signup:success',
+      /** Échec à l'une des étapes (`etape`). */
+      error: 'auth:signup:error',
+    },
+    password: {
+      resetRequested: 'auth:password:reset_requested',
+      resetSuccess: 'auth:password:reset_success',
+    },
+    /** Liaison d'une identité de fournisseur d'identité à un compte TeT. */
+    oidc: {
+      /** Clic sur « associer » (`origine` : profil, bannière, modale). */
+      linkClick: 'auth:oidc:link_click',
+      /** Identité effectivement associée au compte. */
+      linked: 'auth:oidc:linked',
+      linkError: 'auth:oidc:link_error',
+      unlinked: 'auth:oidc:unlinked',
+      unlinkError: 'auth:oidc:unlink_error',
+      /** Écran de bienvenue : réponse à « avez-vous déjà un compte ? ». */
+      welcomeChoice: 'auth:oidc:welcome_choice',
+      /** Repli « mot de passe oublié » : demande du mail de rattachement. */
+      invitationRequested: 'auth:oidc:invitation_requested',
+      /** Rattachement confirmé depuis le lien reçu par mail. */
+      invitationConfirmed: 'auth:oidc:invitation_confirmed',
+      /** Incitation à associer son compte (modale, bannière). */
+      incentiveShown: 'auth:oidc:incentive_shown',
+      incentiveDismissed: 'auth:oidc:incentive_dismissed',
+      /** Erreur renvoyée par le parcours du fournisseur d'identité. */
+      error: 'auth:oidc:error',
+    },
   },
   updateFiltres: 'filtres',
   saveScore: 'referentiel_score_save',
   paginationClick: 'pagination_click',
-  panier: {
-    createPlanClick: 'cta_creer_le_plan_click',
-    ctaPanierClick: 'cta_panier_click',
-    filtre: 'panier:filtre',
-    copierPanierUrl: 'copier_panier_URL',
-    clickAjout: 'ajout',
-    clickRetrait: 'retrait',
-    changeStatut: 'statut',
-    validerCreationPanierClick: 'cta_valider_creation_panier_click',
-    selectTab: 'onglet_panier',
-  },
   indicateurs: {
     createIndicateurPerso: 'cta_indicateur_perso_fa',
     downloadXlsx: 'export_xlsx_telechargement',
@@ -33,12 +83,16 @@ export const Event = {
     trajectoires: {
       secteurLevierClick: 'indicateurs:trajectoires:secteur_levier_click',
     },
+    vues: {
+      create: 'indicateurs:vues:create',
+      updateFilters: 'indicateurs:vues:update_filters',
+      delete: 'indicateurs:vues:delete',
+    },
   },
   plans: {
     sideNavAjouterPlanClick: 'plansAction:side-nav-ajouter-plan-click',
     createPlan: 'cta_creer',
     importPlan: 'cta_importer',
-    startPanier: 'cta_commencer_pai',
     exportPlan: 'export_plan',
     import: {
       lancer: 'plans:import:lancer',
@@ -136,6 +190,8 @@ export const Event = {
       'referentiels:valeurs_utilisees_score_indicatif_submit',
     changeViewMode: 'referentiels:change_view_mode',
     changeThematiqueView: 'referentiels:change_thematique_view',
+    /** Bascule vers le référentiel TE menée à son terme. */
+    switchToTeSuccess: 'referentiels:switch_to_te:success',
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',

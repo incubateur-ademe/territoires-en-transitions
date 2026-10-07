@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import type { JwtPayload, SupabaseClient } from '@supabase/supabase-js';
 import { type NextRequest, NextResponse } from 'next/server';
+import { ENV } from '../../environmentVariables';
 import { getCookieOptions } from './cookie-options';
 
 type Output = {
@@ -33,8 +34,8 @@ export async function getNextResponseWithUpdatedSupabaseSession({
   });
 
   const supabaseClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+    ENV.supabase_url ?? '',
+    ENV.supabase_anon_key ?? '',
     {
       cookieOptions: getCookieOptions(),
       cookies: {

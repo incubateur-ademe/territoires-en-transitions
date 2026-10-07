@@ -94,6 +94,14 @@ export const AvecBordsColorés: Story = {
   },
 };
 
+/** Variante extra small : la hauteur d'un bouton `xs`, pour une saisie posée à côté. */
+export const VarianteExtraSmall: Story = {
+  args: {
+    displaySize: 'xs',
+    placeholder: 'placeholder',
+  },
+};
+
 /** Variante small */
 export const VarianteSmall: Story = {
   args: {

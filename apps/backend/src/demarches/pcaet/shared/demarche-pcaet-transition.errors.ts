@@ -8,14 +8,15 @@ import type {
 } from '@tet/domain/demarches';
 
 /**
- * Erreurs communes aux six opérations de transition. Chacune les reprend dans
- * son propre enum : le contrat d'erreur reste lisible route par route.
+ * Erreurs communes aux opérations de transition. Chacune les reprend dans son
+ * propre enum : le contrat d'erreur reste lisible route par route.
  */
 export const demarchePcaetTransitionErrors = [
   'DEMARCHE_PCAET_NOT_FOUND',
   'TRANSITION_NOT_ALLOWED',
   'NON_PILOTE',
   'DOSSIER_INCOMPLET',
+  'AVIS_NON_TOUS_RENDUS',
   'DELAI_AVIS_NON_ECOULE',
   'EVALUATION_FINALE_MANQUANTE',
   'DOCUMENTS_AVAL_INCOMPLETS',
@@ -27,8 +28,15 @@ export type DemarchePcaetTransitionError =
 /**
  * Le code HTTP de chaque cause, et rien de plus : le libellé affiché est celui
  * du catalogue de l'app, qui reçoit ce code dans `data.errorKey`.
+ *
+ * `NonNullable` parce que les opérations le **composent** avec leurs propres
+ * causes : sans lui, le champ étant optionnel dans la config, chaque clé
+ * reprise par diffusion redeviendrait facultative et le `Record` complet ne
+ * serait plus satisfait.
  */
-export const demarchePcaetTransitionErrorConfig: TrpcErrorHandlerConfig<DemarchePcaetTransitionError>['specificErrors'] =
+export const demarchePcaetTransitionErrorConfig: NonNullable<
+  TrpcErrorHandlerConfig<DemarchePcaetTransitionError>['specificErrors']
+> =
   {
     DEMARCHE_PCAET_NOT_FOUND: { code: 'NOT_FOUND' },
     // La transition ne part pas du statut courant : un conflit d'état, pas une
@@ -36,6 +44,7 @@ export const demarchePcaetTransitionErrorConfig: TrpcErrorHandlerConfig<Demarche
     TRANSITION_NOT_ALLOWED: { code: 'CONFLICT' },
     NON_PILOTE: { code: 'FORBIDDEN' },
     DOSSIER_INCOMPLET: { code: 'PRECONDITION_FAILED' },
+    AVIS_NON_TOUS_RENDUS: { code: 'PRECONDITION_FAILED' },
     DELAI_AVIS_NON_ECOULE: { code: 'PRECONDITION_FAILED' },
     EVALUATION_FINALE_MANQUANTE: { code: 'PRECONDITION_FAILED' },
     DOCUMENTS_AVAL_INCOMPLETS: { code: 'PRECONDITION_FAILED' },
@@ -49,6 +58,7 @@ export const DemarchePcaetTransitionErrorEnum = createErrorsEnum(
 const GUARD_ERRORS = {
   estPilote: 'NON_PILOTE',
   dossierComplet: 'DOSSIER_INCOMPLET',
+  avisTousRendus: 'AVIS_NON_TOUS_RENDUS',
   delaiAvisEcoule: 'DELAI_AVIS_NON_ECOULE',
   evaluationFinaleDeposee: 'EVALUATION_FINALE_MANQUANTE',
   documentsAvalComplets: 'DOCUMENTS_AVAL_INCOMPLETS',

@@ -29,8 +29,8 @@ import {
   banatic20212025CrosswalkTable,
   type MappingType,
 } from '@tet/backend/shared/models/banatic-2021-2025-crosswalk.table';
-import { getCsvPathFromArgv, parseCsvRows, readCsvFile } from '../csv';
-import { getDatabase } from '../db';
+import { getCsvPathFromArgv, parseCsvRows, readCsvFile } from '../../shared/csv';
+import { getDatabase } from '../../shared/db';
 import { determineMappingTypes, parseCrosswalkRows } from './utils';
 
 const USAGE =

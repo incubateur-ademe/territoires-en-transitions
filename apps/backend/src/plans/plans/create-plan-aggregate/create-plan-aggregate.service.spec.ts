@@ -311,8 +311,7 @@ describe('CreatePlanAggregateService', () => {
           pilotes: [{ userId: 'pilot-1', tagId: null }],
           referents: [{ userId: null, tagId: 100 }],
         },
-        mockUser,
-        mockTransaction
+        { user: mockUser, tx: mockTransaction }
       );
     });
 
@@ -583,11 +582,7 @@ describe('CreatePlanAggregateService', () => {
           count: refetchedFiches.length,
         });
 
-        const result = await service.create(
-          request,
-          mockUser,
-          mockTransaction
-        );
+        const result = await service.create(request, mockUser, mockTransaction);
 
         expect(result.success).toBe(true);
         expect(
@@ -619,11 +614,7 @@ describe('CreatePlanAggregateService', () => {
           new Error('webhook endpoint down')
         );
 
-        const result = await service.create(
-          request,
-          mockUser,
-          mockTransaction
-        );
+        const result = await service.create(request, mockUser, mockTransaction);
 
         expect(result.success).toBe(true);
       });

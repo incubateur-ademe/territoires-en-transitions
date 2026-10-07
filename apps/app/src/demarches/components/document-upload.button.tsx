@@ -1,63 +1,93 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { PDF_ONLY_FILE_CONSTRAINTS } from '@/app/referentiels/preuves/upload/constants';
+import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
+import {
+  MAX_UPLOAD_SIZE_MB,
+  type FileConstraints,
+} from '@/app/collectivites/documents/upload/constants';
 import type { DemarcheType } from '@tet/domain/demarches';
-import { Button, Modal, PillButton } from '@tet/ui';
-import { ReactElement } from 'react';
+import { Button, MenuAction, Modal, PillButton, SplitButton } from '@tet/ui';
+import { JSX, ReactElement, useState } from 'react';
 
-type Props = {
-  label: string;
+/** L'icône d'ajout de document du parcours preuves, en trait : le dépôt d'une
+ * pièce se signale pareil partout dans l'application. */
+const UPLOAD_ICON = 'file-add-line';
+
+type UploadProps = {
   /** Type de démarche : les libellés affichés en dépendent. */
   demarcheType: DemarcheType;
-
-  /** `file-add-fill` est l'icône d'ajout de document du parcours preuves : le
-   * dépôt d'une pièce se signale pareil partout dans l'application. */
-  icon?: 'file-add-fill';
-  variant?: 'pill' | 'primary' | 'outlined';
-  disabled?: boolean;
-  dataTest?: string;
+  /** Formats acceptés par le dossier, tels que son type les déclare. */
+  fileConstraints: FileConstraints;
   /** Rattache le fichier choisi (téléversé ou pris dans la bibliothèque). */
   onAddFichier: (fichierId: number) => void;
 };
 
 /**
- * Dépôt d'une pièce du dossier via la modale d'ajout de document standard.
+ * Modale d'ajout de document standard, réglée pour le dossier d'une démarche.
  * Aucun gestionnaire de lien n'est fourni : l'onglet « Lien » disparaît et il
  * reste « Fichier » et « Bibliothèque », le fichier atterrissant dans la
  * bibliothèque de la collectivité comme n'importe quel document.
+ *
+ * Une pièce de dossier n'est pas une preuve : elle est destinée aux instances
+ * consultatives, et la confidentialité ne lui est pas proposée.
+ *
+ * S'ouvre soit au clic sur l'élément passé en enfant, soit par `openState` quand
+ * le déclencheur n'est pas un simple bouton (cas du bouton scindé, dont seule la
+ * moitié principale doit ouvrir la modale).
  */
-export const DemarcheDocumentUploadButton = ({
-  label,
+const DemarcheDocumentUploadModal = ({
   demarcheType,
-  icon = 'file-add-fill',
-  variant = 'pill',
-  disabled = false,
-  dataTest,
+  fileConstraints,
   onAddFichier,
-}: Props): ReactElement => (
+  openState,
+  children,
+}: UploadProps & {
+  openState?: { isOpen: boolean; setIsOpen: (opened: boolean) => void };
+  children?: JSX.Element;
+}): ReactElement => (
   <Modal
     size="lg"
     title={appLabels.demarcheDocumentsModaleTitre({
       type: appLabels.demarcheTypeLabels[demarcheType],
     })}
-    subTitle={appLabels.demarcheDocumentsFormatPdf({
-      type: appLabels.demarcheTypeLabels[demarcheType],
+    subTitle={appLabels.aideUploadFichier({
+      tailleMaxMo: MAX_UPLOAD_SIZE_MB,
+      formats: fileConstraints.formats,
     })}
+    openState={openState}
     render={({ close }) => (
-      <AddPreuveModal
-        docType="demarche_pcaet"
-        fileConstraints={PDF_ONLY_FILE_CONSTRAINTS}
+      <AddDocumentTabs
+        fileConstraints={fileConstraints}
         onClose={close}
-        handlers={{ addFileFromLib: (fichierId) => onAddFichier(fichierId) }}
+        handlers={{ addFile: (fichierId) => onAddFichier(fichierId) }}
       />
     )}
   >
+    {children}
+  </Modal>
+);
+
+type ButtonProps = UploadProps & {
+  label: string;
+  variant?: 'pill' | 'primary' | 'outlined';
+  disabled?: boolean;
+  dataTest?: string;
+};
+
+/** Dépôt d'une pièce du dossier, en un seul bouton. */
+export const DemarcheDocumentUploadButton = ({
+  label,
+  variant = 'pill',
+  disabled = false,
+  dataTest,
+  ...uploadProps
+}: ButtonProps): ReactElement => (
+  <DemarcheDocumentUploadModal {...uploadProps}>
     {variant === 'pill' ? (
       <PillButton
-        icon={icon}
-        iconPosition="right"
+        icon={UPLOAD_ICON}
+        iconPosition="left"
         disabled={disabled}
         data-test={dataTest}
       >
@@ -67,8 +97,8 @@ export const DemarcheDocumentUploadButton = ({
       <Button
         variant={variant}
         size="xs"
-        icon={icon}
-        iconPosition="right"
+        icon={UPLOAD_ICON}
+        iconPosition="left"
         className="w-fit"
         disabled={disabled}
         data-test={dataTest}
@@ -76,5 +106,46 @@ export const DemarcheDocumentUploadButton = ({
         {label}
       </Button>
     )}
-  </Modal>
+  </DemarcheDocumentUploadModal>
 );
+
+/**
+ * Dépôt d'une pièce, avec ses actions secondaires rangées derrière la flèche.
+ * Le dépôt domine nettement le reste — retirer la pièce, retirer la ligne : il
+ * reste à un clic là où un menu complet lui en coûterait deux.
+ */
+export const DemarcheDocumentUploadSplitButton = ({
+  label,
+  menuActions,
+  dataTest,
+  menuDataTest,
+  ...uploadProps
+}: UploadProps & {
+  label: string;
+  menuActions: MenuAction[];
+  dataTest?: string;
+  menuDataTest?: string;
+}): ReactElement => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <SplitButton
+        variant="outlined"
+        size="xs"
+        icon={UPLOAD_ICON}
+        iconPosition="left"
+        onClick={() => setIsOpen(true)}
+        dataTest={dataTest}
+        menuDataTest={menuDataTest}
+        menuActions={menuActions}
+      >
+        {label}
+      </SplitButton>
+      <DemarcheDocumentUploadModal
+        {...uploadProps}
+        openState={{ isOpen, setIsOpen }}
+      />
+    </>
+  );
+};

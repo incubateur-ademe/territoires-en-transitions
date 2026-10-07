@@ -14,6 +14,7 @@ import React, { useEffect } from 'react';
 import './rich-text-editor.css';
 
 import { SizeVariant } from '@tet/design-tokens';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { cn } from '../../utils/cn';
 import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
 import { ENABLED_ITEMS, FormattingToolbar } from './FormattingToolbar';
@@ -31,6 +32,7 @@ export type RichTextEditorProps = {
   initialValue?: string;
   placeholder?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
   isLoading?: boolean;
   onChange?: (html: string) => void;
   contentStyle?: {
@@ -69,6 +71,7 @@ export default function RichTextEditor({
   ariaLabel,
   placeholder,
   disabled = false,
+  autoFocus,
   isLoading = false,
   onChange,
   contentStyle,
@@ -99,7 +102,8 @@ export default function RichTextEditor({
       ...locale,
       placeholders: {
         ...locale.placeholders,
-        emptyDocument: placeholder ?? 'Saisissez votre texte',
+        emptyDocument: placeholder ?? uiLabels.saisirLeTexte,
+        default: uiLabels.saisirTexteRichTextEditor,
       },
     },
     // évite l'ajout auto d'un bloc à la fin du champ
@@ -146,8 +150,8 @@ export default function RichTextEditor({
       const blocks = isHtml
         ? await editor.tryParseHTMLToBlocks(content)
         : isLegacyPlainText(content)
-          ? parseLegacyPlainTextToBlocks(content)
-          : await editor.tryParseMarkdownToBlocks(content);
+        ? parseLegacyPlainTextToBlocks(content)
+        : await editor.tryParseMarkdownToBlocks(content);
 
       editor.replaceBlocks(editor.document, blocks);
     }
@@ -193,6 +197,7 @@ export default function RichTextEditor({
     <BlockNoteView
       id={id}
       editor={editor}
+      autoFocus={autoFocus}
       theme="light"
       formattingToolbar={false}
       slashMenu={false}

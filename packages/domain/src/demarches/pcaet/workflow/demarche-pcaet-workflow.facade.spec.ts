@@ -13,35 +13,73 @@ describe('evaluateTransitions', () => {
       'estPilote',
       'dossierComplet',
     ]);
-    // Publier ne se propose pas avant l'adoption : c'est la structure du cycle,
-    // pas une condition non remplie.
+    // Publier ne se propose pas avant la clôture de l'instruction : c'est la
+    // structure du cycle, pas une condition non remplie.
     expect(evaluation.publier.reachable).toBe(false);
     expect(evaluation.publier.blockedBy).toEqual([]);
   });
 
-  it('n’ouvre la publication qu’une fois le dossier adopté', () => {
-    const evaluation = evaluateTransitions('adopte', { estPilote: true });
+  it('n’ouvre la publication qu’une fois l’instruction close', () => {
+    const evaluation = evaluateTransitions('instruit', {
+      estPilote: true,
+      // Attesté à la transmission : c'est l'évaluateur serveur qui le sait.
+      dossierComplet: true,
+    });
     expect(evaluation.publier.reachable).toBe(true);
     expect(evaluation.publier.blockedBy).toEqual(['documentsAvalComplets']);
     // L'archivage attend la publication.
     expect(evaluation.archiver.reachable).toBe(false);
+  });
+
+  // L'autre entrée de la finalisation : le dossier y démarre, donc rien n'a
+  // encore attesté son amont — la publication l'exige en plus des pièces aval.
+  it('exige le dossier amont d’un dépôt hors plateforme', () => {
+    const evaluation = evaluateTransitions('instruit_hors_plateforme', {
+      estPilote: true,
+      documentsAvalComplets: true,
+    });
+    expect(evaluation.publier.reachable).toBe(true);
+    expect(evaluation.publier.blockedBy).toEqual(['dossierComplet']);
+    // Le circuit d'avis ne s'ouvre jamais pour lui.
+    expect(evaluation.transmettre_pour_avis.reachable).toBe(false);
+    expect(evaluation.avis_tous_rendus.reachable).toBe(false);
+  });
+
+  it('ouvre les deux chemins vers l’instruction, indépendamment', () => {
+    const evaluation = evaluateTransitions('transmis_pour_avis', {
+      avisTousRendus: false,
+      delaiAvisEcoule: true,
+    });
+    expect(evaluation.avis_tous_rendus.reachable).toBe(true);
+    expect(evaluation.avis_tous_rendus.enabled).toBe(false);
+    expect(evaluation.delai_avis_echu.enabled).toBe(true);
   });
 });
 
 describe('getRequiredGuards', () => {
   it('ne demande que ce dont le statut courant dépend', () => {
     // La complétude du dossier ne pèse que sur une démarche en élaboration :
-    // c'est ce qui évite de la lire pour les autres statuts.
+    // c'est ce qui évite de la lire pour les autres statuts. L'achèvement des
+    // avis n'y compte pas — un dossier en élaboration n'a jamais été transmis,
+    // donc aucune instance n'y a été saisie.
     expect(getRequiredGuards('en_elaboration')).toEqual([
       'estPilote',
       'dossierComplet',
     ]);
+    // Plus aucun acteur ici : les deux seules sorties d'un dossier transmis
+    // sont constatées par le système, donc `estPilote` n'a rien à garder.
     expect(getRequiredGuards('transmis_pour_avis')).toEqual([
-      'estPilote',
+      'avisTousRendus',
       'delaiAvisEcoule',
     ]);
-    expect(getRequiredGuards('adopte')).toEqual([
+    expect(getRequiredGuards('instruit')).toEqual([
       'estPilote',
+      'dossierComplet',
+      'documentsAvalComplets',
+    ]);
+    expect(getRequiredGuards('instruit_hors_plateforme')).toEqual([
+      'estPilote',
+      'dossierComplet',
       'documentsAvalComplets',
     ]);
     expect(getRequiredGuards('archive')).toEqual([]);
@@ -56,15 +94,34 @@ describe('applyTransition', () => {
       })
     ).toEqual({ success: true, data: { toStatus: 'transmis_pour_avis' } });
     expect(
-      applyTransition('adopte', 'publier', {
-        guardResults: { estPilote: true, documentsAvalComplets: true },
+      applyTransition('instruit', 'publier', {
+        guardResults: {
+          estPilote: true,
+          dossierComplet: true,
+          documentsAvalComplets: true,
+        },
       })
     ).toEqual({ success: true, data: { toStatus: 'publie' } });
     expect(
-      applyTransition('publie', 'depublier', {
-        guardResults: { estPilote: true },
+      applyTransition('instruit_hors_plateforme', 'publier', {
+        guardResults: {
+          estPilote: true,
+          dossierComplet: true,
+          documentsAvalComplets: true,
+        },
       })
-    ).toEqual({ success: true, data: { toStatus: 'adopte' } });
+    ).toEqual({ success: true, data: { toStatus: 'publie' } });
+    // Sans acteur : c'est ce qui rend ces deux-là applicables par le système.
+    expect(
+      applyTransition('transmis_pour_avis', 'avis_tous_rendus', {
+        guardResults: { avisTousRendus: true },
+      })
+    ).toEqual({ success: true, data: { toStatus: 'instruit' } });
+    expect(
+      applyTransition('transmis_pour_avis', 'delai_avis_echu', {
+        guardResults: { delaiAvisEcoule: true },
+      })
+    ).toEqual({ success: true, data: { toStatus: 'instruit' } });
   });
 
   it('refuse une transition hors du statut courant', () => {
@@ -73,14 +130,15 @@ describe('applyTransition', () => {
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],
     });
-    // Un dossier non adopté n'est pas publiable : la structure le dit.
+    // Un dossier dont l'instruction n'est pas close n'est pas publiable : la
+    // structure le dit.
     expect(applyTransition('en_elaboration', 'publier')).toEqual({
       success: false,
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],
     });
     // Ni un dossier non publié archivable.
-    expect(applyTransition('adopte', 'archiver')).toEqual({
+    expect(applyTransition('instruit', 'archiver')).toEqual({
       success: false,
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],
@@ -98,15 +156,15 @@ describe('applyTransition', () => {
       error: 'GUARD_NOT_SATISFIED',
       blockedBy: ['estPilote', 'evaluationFinaleDeposee'],
     });
-    // L'adoption reste une décision du pilote, même le délai d'avis écoulé.
+    // Le délai non échu bloque son propre chemin, sans rien dire de l'autre.
     expect(
-      applyTransition('transmis_pour_avis', 'adopter', {
-        guardResults: { delaiAvisEcoule: true },
+      applyTransition('transmis_pour_avis', 'delai_avis_echu', {
+        guardResults: { delaiAvisEcoule: false },
       })
     ).toEqual({
       success: false,
       error: 'GUARD_NOT_SATISFIED',
-      blockedBy: ['estPilote'],
+      blockedBy: ['delaiAvisEcoule'],
     });
   });
 

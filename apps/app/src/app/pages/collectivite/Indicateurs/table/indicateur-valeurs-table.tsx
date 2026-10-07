@@ -20,7 +20,7 @@ import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
 
 // nombre maximum de colonnes vides à afficher
-export const MAX_PLACEHOLDERS_COUNT = 5;
+const MAX_PLACEHOLDERS_COUNT = 5;
 
 type IndicateurValeursTable = {
   collectiviteId: number;
@@ -215,7 +215,7 @@ export const IndicateurValeursTable = ({
 };
 
 // affiche une colonne vide
-export const PlaceholderColumn = ({ rowSpan }: { rowSpan: number }) => (
+const PlaceholderColumn = ({ rowSpan }: { rowSpan: number }) => (
   <td
     rowSpan={rowSpan}
     className="min-w-40 bg-primary-0 border-l border-primary-4 text-primary-9 text-xs"

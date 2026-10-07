@@ -5,7 +5,7 @@ import * as z from 'zod/mini';
  * front affiche dans l'onglet, sans qu'il ait à connaître les topics un par un.
  * - `indicateurs` : grille de saisie (groupe × ligne × année) adossée au
  *   référentiel CAE.
- * - `vulnerabilite` : table de niveaux par domaine, hors référentiel indicateurs.
+ * - `vulnerabilite` : table de niveaux par thématique, hors référentiel indicateurs.
  */
 export const DemarchePcaetTopicKindEnum = {
   INDICATEURS: 'indicateurs',

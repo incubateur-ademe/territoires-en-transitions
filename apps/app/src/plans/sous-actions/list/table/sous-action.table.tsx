@@ -1,10 +1,12 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
+  rowSortingFeature,
   SortingState,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
@@ -18,17 +20,21 @@ import { SousActionPilotesCell } from './sous-action.pilotes.cell';
 import { SousActionStatutCell } from './sous-action.statut.cell';
 import { SousActionTitleCell } from './sous-action.title.cell';
 
-const columnHelper = createColumnHelper<FicheWithRelations>();
+const features = tableFeatures({ columnVisibilityFeature, rowSortingFeature });
 
-const columns = [
+const columnHelper = createColumnHelper<typeof features, FicheWithRelations>();
+
+const columns = columnHelper.columns([
   columnHelper.accessor('titre', {
-    header: () => <TableHeaderCell title={appLabels.tableauTitre} className="w-80" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.tableauTitre} className="w-80" />
+    ),
     cell: (info) => <SousActionTitleCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('description', {
     header: () => (
       <TableHeaderCell
-        title={appLabels.description}
+        title={appLabels.description()}
         className="max-2xl:w-[32rem]"
       />
     ),
@@ -38,22 +44,31 @@ const columns = [
   }),
   columnHelper.accessor('parentId', {
     header: () => (
-      <TableHeaderCell title={appLabels.sousActionHeaderActionParente} className="w-64" />
+      <TableHeaderCell
+        title={appLabels.sousActionHeaderActionParente}
+        className="w-64"
+      />
     ),
     cell: (info) => (
       <SousActionActionParenteCell parentId={info.row.original.parentId} />
     ),
   }),
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title={appLabels.statut} className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.ficheStatut} className="w-32" />
+    ),
     cell: (info) => <SousActionStatutCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('pilotes', {
-    header: () => <TableHeaderCell title={appLabels.pilotes} className="w-40" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.personnePilote()} className="w-44" />
+    ),
     cell: (info) => <SousActionPilotesCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('dateFin', {
-    header: () => <TableHeaderCell title={appLabels.dateFin} className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.dateFin} className="w-32" />
+    ),
     cell: (info) => <SousActionDateCell sousAction={info.row.original} />,
   }),
   columnHelper.display({
@@ -61,9 +76,12 @@ const columns = [
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
     cell: (info) => <SousActionActionsCell sousAction={info.row.original} />,
   }),
-];
+]);
 
-type Props = Omit<ReactTableProps, 'table'> & {
+type Props = Omit<
+  ReactTableProps<typeof features, FicheWithRelations>,
+  'table'
+> & {
   sousActions: FicheWithRelations[];
   createSousAction?: () => void;
   hiddenColumns?: (keyof FicheWithRelations | 'actions')[];
@@ -81,30 +99,25 @@ export const SousActionTable = ({
   isReadOnly,
   emptyCard,
 }: Props) => {
-  const [columnVisibility, setColumnVisibility] = useState({});
-
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: sousActions,
     manualSorting: true,
     getRowId: (row) => row.id.toString(),
     state: {
-      columnVisibility,
+      columnVisibility: {
+        actions: !isReadOnly,
+        ...Object.fromEntries(
+          (hiddenColumns ?? []).map((column) => [column, false])
+        ),
+      },
       sorting,
     },
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
   });
-
-  useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isReadOnly);
-    hiddenColumns?.forEach((column) => {
-      table.getColumn(column)?.toggleVisibility(false);
-    });
-  }, [isReadOnly, table, hiddenColumns]);
 
   return (
     <div className="max-2xl:overflow-x-auto">
@@ -124,7 +137,7 @@ export const SousActionTable = ({
               : [
                   {
                     onClick: () => createSousAction?.(),
-                    children: appLabels.ajouterSousAction,
+                    children: appLabels.sousActionAjouter,
                     icon: 'add-line',
                   },
                 ],

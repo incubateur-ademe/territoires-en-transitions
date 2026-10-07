@@ -26,12 +26,14 @@ test.describe('Parcours rejoindre une collectivité', () => {
     ).toBeVisible({ timeout: 15000 });
 
     await page
-      .getByRole('button', { name: 'Rejoindre une collectivité' })
+      .getByRole('button', { name: "Rejoindre l'espace d'une collectivité" })
       .click();
 
     await expect(page).toHaveURL(/rejoindre-une-collectivite/);
-    await expect(page.locator('[data-test="select-collectivite"]')).toBeVisible({
-      timeout: 15000,
-    });
+    await expect(page.locator('[data-test="select-collectivite"]')).toBeVisible(
+      {
+        timeout: 15000,
+      }
+    );
   });
 });

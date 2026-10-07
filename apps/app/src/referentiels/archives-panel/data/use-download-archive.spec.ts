@@ -11,15 +11,22 @@ const { fetchQuery, getQueryOptions, setToast } = vi.hoisted(() => ({
 
 vi.mock('@tet/api', () => ({
   useTRPC: () => ({
-    referentiels: { preuvesArchive: { get: { queryOptions: getQueryOptions } } },
+    referentiels: {
+      preuvesArchive: { get: { queryOptions: getQueryOptions } },
+    },
   }),
 }));
 vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({ fetchQuery }),
 }));
-vi.mock('../../../utils/toast/toast-context', () => ({
-  useToastContext: () => ({ setToast }),
-}));
+vi.mock(
+  '../../../utils/toast/toast-context',
+  (): Partial<
+    Record<keyof typeof import('../../../utils/toast/toast-context'), unknown>
+  > => ({
+    useToastContext: () => ({ setToast }),
+  })
+);
 
 describe('useDownloadArchive', () => {
   beforeEach(() => {

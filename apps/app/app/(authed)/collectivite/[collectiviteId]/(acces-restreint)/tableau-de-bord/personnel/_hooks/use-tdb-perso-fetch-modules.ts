@@ -1,20 +1,13 @@
-import { QueryKey, useQuery } from '@tanstack/react-query';
-import { useTRPCClient } from '@tet/api';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
 /** Charges les différents modules du tableau de bord personnel */
 export const useTdbPersoFetchModules = () => {
-  const trpcClient = useTRPCClient();
+  const trpc = useTRPC();
   const collectiviteId = useCollectiviteId();
 
-  return useQuery({
-    queryKey: getQueryKey(collectiviteId),
-    queryFn: () =>
-      trpcClient.metrics.users.listModules.query({
-        collectiviteId,
-      }),
-  });
+  return useQuery(
+    trpc.metrics.users.listModules.queryOptions({ collectiviteId })
+  );
 };
-
-export const getQueryKey = (collectiviteId: number): QueryKey =>
-  ['personal-dashboard-modules', collectiviteId] as const;

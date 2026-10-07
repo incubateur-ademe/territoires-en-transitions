@@ -1,11 +1,13 @@
 'use client';
 
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { DiagnosticTopicsSection } from '@/app/demarches/pcaet/diagnostic/diagnostic-topics-section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
-import { useDemarchePcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-diagnostic';
+import { useGetPcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-get-pcaet-diagnostic';
+import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
+import { getDemarcheParcours } from '@/app/demarches/steps';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
+import { appLabels } from '@/app/labels/catalog';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetDiagnosticPage = () => {
@@ -16,18 +18,15 @@ export const DemarchePcaetDiagnosticPage = () => {
     isLoading,
     update,
     transmettrePourAvis,
-    reprendreElaboration,
     publier,
-    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
   const {
-    topics,
-    snapshotDate,
+    diagnostic,
     isLoading: isDiagnosticLoading,
     isError: isDiagnosticError,
     refetch: refetchDiagnostic,
-  } = useDemarchePcaetDiagnostic(demarcheId);
+  } = useGetPcaetDiagnostic(demarcheId);
 
   if (isLoading) {
     return (
@@ -41,6 +40,11 @@ export const DemarchePcaetDiagnosticPage = () => {
     notFound();
   }
 
+  // Passée la clôture de l'instruction, l'écran ne sert plus à compléter le
+  // diagnostic mais à le relire pour répondre aux avis. Se lit sur l'amont : un
+  // dépôt hors plateforme a l'aval ouvert alors qu'il reste à le remplir.
+  const estRappel = !getDemarcheParcours(demarche).amontOuvert;
+
   return (
     <DemarcheShell
       demarche={demarche}
@@ -49,18 +53,25 @@ export const DemarchePcaetDiagnosticPage = () => {
       activeSection="diagnostic"
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
-      onReprendre={reprendreElaboration}
       onPublish={publier}
-      onUnpublish={depublier}
     >
-      <DiagnosticTopicsSection
+      <DiagnosticTabs
         demarcheId={demarcheId}
-        topics={topics}
+        diagnostic={diagnostic}
         isLoading={isDiagnosticLoading}
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}
-        snapshotDate={snapshotDate}
         isReadonly={!demarche.amontModifiable}
+        title={
+          estRappel
+            ? appLabels.demarcheAvanceRappelDiagnosticLabel
+            : appLabels.demarcheDiagnosticTitre
+        }
+        description={
+          estRappel
+            ? appLabels.demarcheAvanceRappelDiagnosticDescription
+            : appLabels.demarcheDiagnosticDescription
+        }
       />
     </DemarcheShell>
   );

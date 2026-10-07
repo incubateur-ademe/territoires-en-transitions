@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { ContexteInstruction, isTypeInstructeur } from '@tet/domain/demarches';
 import { CollectiviteRolesAndPermissions } from '@tet/domain/users';
 import { cache } from 'react';
 import { getUser } from '../users/user-details.fetch.server';
@@ -7,19 +8,87 @@ import {
   getQueryClient,
   trpcInServerComponent,
 } from '../utils/trpc/trpc-server-client';
+import { CollectiviteWithContexteInstruction } from './collectivite-context/type';
 
+/**
+ * @param demandeAvisId Saisine désignée par l'URL d'un dossier ; sans elle, le
+ * contexte rendu est la plus récente. **Tous les appelants d'une requête doivent
+ * passer la même valeur** — `cache()` mémoïse par arguments, deux valeurs
+ * donneraient deux contextes.
+ * @param demarcheId Démarche désignée par l'URL d'un dépôt en élaboration, qui
+ * n'a pas de saisine à nommer. Deux scalaires plutôt qu'un objet : `cache()`
+ * compare ses arguments par identité, un objet neuf à chaque appel ne serait
+ * jamais retrouvé.
+ */
 export const getCollectivite = cache(
-  async (collectiviteId: number): Promise<CollectiviteRolesAndPermissions> => {
+  async (
+    collectiviteId: number,
+    demandeAvisId?: number,
+    demarcheId?: number
+  ): Promise<CollectiviteWithContexteInstruction> => {
     const user = await getUser();
     const collectiviteUserIsMemberOf = user.collectivites.find(
       (c) => c.collectiviteId === collectiviteId
     );
 
-    const collectivite =
-      collectiviteUserIsMemberOf ??
-      (await fetchCollectiviteWhenVisiteMode(collectiviteId));
+    // Hors route de dossier, être membre dispense de chercher un contexte : on y
+    // est chez soi, la bannière n'a rien à annoncer, et la question coûterait une
+    // requête sur la quasi totalité des pages de collectivité.
+    //
+    // Sur la route d'un dossier, en revanche, le contexte est ce qui *autorise*
+    // — et ce droit vient de la saisine, pas de la non-appartenance. Un agent
+    // porte parfois deux casquettes, membre d'un EPCI et correspondant d'un
+    // service saisi ; court-circuiter ici l'enfermait dehors, et le compte de
+    // développement du seed, membre de tout, ne pouvait ouvrir aucun dossier.
+    const contexteAResoudre =
+      demandeAvisId !== undefined ||
+      demarcheId !== undefined ||
+      !collectiviteUserIsMemberOf;
 
-    return collectivite;
+    const [collectivite, contexteInstruction] = await Promise.all([
+      collectiviteUserIsMemberOf ??
+        fetchCollectiviteWhenVisiteMode(collectiviteId),
+      contexteAResoudre
+        ? fetchContexteInstruction(collectiviteId, demandeAvisId, demarcheId)
+        : null,
+    ]);
+
+    return { ...collectivite, contexteInstruction };
+  }
+);
+
+/**
+ * « Cette collectivité, je la consulte au titre de quel service ? »
+ *
+ * Court-circuité pour qui n'est membre d'aucun service instructeur, sinon la
+ * question coûterait une requête sur chaque page visitée. Une panne rend `null`
+ * plutôt que d'emporter le layout : là où le contexte garde une route, `null`
+ * ferme l'accès.
+ */
+const fetchContexteInstruction = cache(
+  async (
+    collectiviteId: number,
+    demandeAvisId?: number,
+    demarcheId?: number
+  ): Promise<ContexteInstruction | null> => {
+    const user = await getUser();
+
+    const membreDunService = user.collectivites.some((acces) =>
+      isTypeInstructeur(acces.collectiviteType)
+    );
+    if (!membreDunService) {
+      return null;
+    }
+
+    try {
+      return await getQueryClient().fetchQuery(
+        trpcInServerComponent.demarches.pcaet.getContexteInstruction.queryOptions(
+          { collectiviteId, demandeAvisId, demarcheId }
+        )
+      );
+    } catch {
+      return null;
+    }
   }
 );
 
@@ -39,6 +108,7 @@ const fetchCollectiviteWhenVisiteMode = cache(
     return {
       collectiviteId: collectivite.id,
       collectiviteNom: collectivite.nom,
+      collectiviteType: collectivite.type,
       collectiviteAccesRestreint: collectivite.accesRestreint ?? false,
       collectivitePreferences: collectivite.preferences,
       role: null,

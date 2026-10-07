@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Tag } from '@tet/domain/collectivites';
+import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import type { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
   and,
@@ -22,6 +24,7 @@ import {
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 
 @Injectable()
 export class ListPlatformDefinitionsRepository {
@@ -42,11 +45,63 @@ export class ListPlatformDefinitionsRepository {
     });
 
     const definitions = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+      })
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 
     this.logger.log(`${definitions.length} définitions trouvées`);
+
+    return definitions;
+  }
+
+  /**
+   * Définitions du référentiel augmentées de l'applicabilité décidée par la
+   * collectivité. Méthode distincte de `listPlatformDefinitions` : celle-ci a
+   * dix appelants (imports, trajectoires, calcul auto) que cette jointure ne
+   * concerne pas, on ne change pas leur type de retour pour autant.
+   */
+  async listPlatformDefinitionsForCollectivite({
+    identifiantsReferentiel,
+    indicateurIds,
+    collectiviteId,
+  }: {
+    identifiantsReferentiel?: string[];
+    indicateurIds?: number[];
+    collectiviteId: number;
+  }): Promise<PcaetDiagnosticIndicateurDefinition[]> {
+    const conditions = this.getQueryConditions({
+      identifiantsReferentiel,
+      indicateurIds,
+    });
+
+    const definitions = await this.databaseService.db
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+
+        // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
+        // un indicateur dont la collectivité n'a rien dit est applicable.
+        isApplicable: sql<boolean>`coalesce(${indicateurCollectiviteTable.isApplicable}, true)`,
+      })
+      .from(indicateurDefinitionTable)
+      .leftJoin(
+        indicateurCollectiviteTable,
+        and(
+          eq(
+            indicateurCollectiviteTable.indicateurId,
+            indicateurDefinitionTable.id
+          ),
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      )
+      .where(and(...conditions));
+
+    this.logger.log(
+      `${definitions.length} définitions trouvées pour la collectivité ${collectiviteId}`
+    );
 
     return definitions;
   }
@@ -70,6 +125,7 @@ export class ListPlatformDefinitionsRepository {
     const definitions = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
 
         categories: sql<
           Tag[]
@@ -151,7 +207,10 @@ export class ListPlatformDefinitionsRepository {
     }
 
     const computedIndicateurDefinitions = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        ...indicateurDefinitionPeriodiciteSelection,
+      })
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
 

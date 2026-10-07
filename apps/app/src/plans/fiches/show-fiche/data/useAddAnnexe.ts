@@ -1,49 +1,39 @@
-import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { TAddLink } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
-import { useAddPreuveAnnexe } from '@/app/referentiels/preuves/useAddPreuves';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { AddDocumentTabsHandlers } from '@/app/collectivites/documents/add-document/add-document.tabs';
+import { useInvalidateDocuments } from '@/app/collectivites/documents/use-invalidate-documents';
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 
-/** Renvoie les gestionnaires d'événements du dialogue d'ajout de
- * fichiers/liens à une fiche action */
-export const useAddAnnexe = (
-  ficheId: number
-): {
-  addFileFromLib: TAddFileFromLib;
-  addLink: TAddLink;
+type AddAnnexeHandlers = Required<AddDocumentTabsHandlers> & {
   isLoading: boolean;
   isError: boolean;
-} => {
-  const collectivite_id = useCollectiviteId();
-  const { mutate: addPreuve, isPending, isError } = useAddPreuveAnnexe();
+};
 
-  // associe un fichier de la bibliothèque à l'audit
-  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
-    if (collectivite_id) {
-      addPreuve({
-        fiche_id: ficheId,
-        collectivite_id,
-        commentaire: '',
-        fichier_id,
-      });
-    }
-  };
+export const useAddAnnexe = (ficheId: number): AddAnnexeHandlers => {
+  const trpc = useTRPC();
+  const invalidateDocuments = useInvalidateDocuments();
 
-  const addLink: TAddLink = (titre, url) => {
-    if (collectivite_id) {
-      addPreuve({
-        fiche_id: ficheId,
-        collectivite_id,
-        commentaire: '',
-        titre,
-        url,
-      });
-    }
-  };
+  const {
+    mutate: addAnnexeSync,
+    mutateAsync: addAnnexe,
+    isPending,
+    isError,
+  } = useMutation(
+    trpc.plans.fiches.addAnnexe.mutationOptions({
+      onSuccess: () => {
+        void invalidateDocuments({ type: 'ficheAction' });
+      },
+    })
+  );
 
   return {
-    addFileFromLib,
-    addLink,
+    addFile: async (fichierId) => {
+      const annexe = await addAnnexe({ ficheId, commentaire: '', fichierId });
+      return { documentId: annexe.id };
+    },
+    addLink: (titre, url) => {
+      addAnnexeSync({ ficheId, commentaire: '', lien: { titre, url } });
+    },
     isLoading: isPending,
-    isError: isError,
+    isError,
   };
 };

@@ -1,10 +1,8 @@
 import {
-  makeCollectiviteDemarchePcaetUrl,
-  makeCollectiviteDemarchePcaetVueDrealUrl,
+  makeCollectiviteRootUrl,
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
   makeRejoindreCollectiviteUrl,
-  makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
@@ -20,13 +18,11 @@ import { filterNavItems } from './make-collectivite-nav';
 type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
-  isDemarchePcaetEnabled?: boolean;
 };
 
 export const generateCollectiviteNavItem = ({
   user,
   currentCollectivite,
-  isDemarchePcaetEnabled,
 }: Props): NavItem => {
   const isSimplifiedView = currentCollectivite.isSimplifiedView;
 
@@ -50,8 +46,10 @@ export const generateCollectiviteNavItem = ({
   if (isSimplifiedView && otherCollectivites.length === 0) {
     return {
       children: <CollectiviteWithBadge collectivite={currentCollectivite} />,
-      href: makeTdbCollectiviteUrl({
+      href: makeCollectiviteRootUrl({
+        user,
         collectiviteId: currentCollectivite.collectiviteId,
+        collectiviteType: currentCollectivite.collectiviteType,
       }),
     };
   }
@@ -74,42 +72,24 @@ export const generateCollectiviteNavItem = ({
       }),
       urlPrefix: ['/ma-collectivite'],
     },
-    {
-      isVisible: isDemarchePcaetEnabled,
-      children: appLabels.navDemarchePcaet,
-      dataTest: 'params-demarche-pcaet',
-      href: makeCollectiviteDemarchePcaetUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-      }),
-      urlPrefix: [
-        makeCollectiviteDemarchePcaetUrl({
-          collectiviteId: currentCollectivite.collectiviteId,
-        }),
-      ],
-    },
-    {
-      isVisible: isDemarchePcaetEnabled,
-      children: appLabels.navVueDrealPcaet,
-      dataTest: 'params-vue-dreal-pcaet',
-      href: makeCollectiviteDemarchePcaetVueDrealUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-      }),
-      urlPrefix: [
-        makeCollectiviteDemarchePcaetVueDrealUrl({
-          collectiviteId: currentCollectivite.collectiviteId,
-        }),
-      ],
-    },
-    ...user.collectivites.map((c) => ({
+    ...user.collectivites.map((collectivite) => ({
       children: (
-        <CollectiviteWithBadge collectivite={toCollectiviteCurrent(c, user)} />
+        <CollectiviteWithBadge
+          collectivite={toCollectiviteCurrent(
+            // Le sélecteur ne liste que les collectivités dont on est membre :
+            // aucune n'y est consultée au titre d'un service.
+            { ...collectivite, contexteInstruction: null },
+            user
+          )}
+        />
       ),
-      href: makeTdbCollectiviteUrl({
-        collectiviteId: c.collectiviteId,
-        view: 'personnel',
+      href: makeCollectiviteRootUrl({
+        user,
+        collectiviteId: collectivite.collectiviteId,
+        collectiviteType: collectivite.collectiviteType,
       }),
       icon:
-        c.collectiviteId === currentCollectivite.collectiviteId
+        collectivite.collectiviteId === currentCollectivite.collectiviteId
           ? 'checkbox-circle-fill'
           : undefined,
     })),

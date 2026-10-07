@@ -1,6 +1,6 @@
-import { appLabels } from '@/app/labels/catalog';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCreateIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-create-indicateur-definition';
+import { appLabels } from '@/app/labels/catalog';
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -106,7 +106,7 @@ const IndicateurPersoNouveau = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSave)}>
       {/* Message d'information sur les indicateurs personnalisés */}
-      <Alert description={appLabels.indicateurAlertDescription} />
+      <Alert description={appLabels.indicateurCreerAlertDescription} />
 
       {/* Champs du formulaire */}
       <FormSectionGrid>
@@ -127,7 +127,7 @@ const IndicateurPersoNouveau = ({
           </Field>
         </div>
 
-        <Field title={appLabels.thematique} className="col-span-2">
+        <Field title={appLabels.thematique()} className="col-span-2">
           <ThematiquesDropdown
             values={thematiqueIds}
             onChange={setThematiqueIds}
@@ -144,7 +144,7 @@ const IndicateurPersoNouveau = ({
 
         <Checkbox
           containerClassname="col-span-2"
-          label={appLabels.checkboxAjouterIndicateurFavoris}
+          label={appLabels.indicateurCreerCheckboxFavoris}
           checked={favoriCollectivite}
           onChange={() => setFavoriCollectivite(!favoriCollectivite)}
           disabled={isFavoriCollectivite}
@@ -159,9 +159,7 @@ const IndicateurPersoNouveau = ({
           </Button>
         )}
         <Button type="submit" data-test="ok" disabled={isPending || !isValid}>
-          {isPending
-            ? appLabels.enregistrementEnCours
-            : appLabels.validerCompleter}
+          {isPending ? appLabels.enregistrementEnCours : appLabels.valider}
         </Button>
       </div>
     </form>

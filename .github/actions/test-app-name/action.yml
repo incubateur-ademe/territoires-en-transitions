@@ -1,0 +1,32 @@
+name: test-app-name
+description: Dérive un nom d'app Koyeb stable et sans collision à partir d'un nom de branche
+
+inputs:
+  branch-name:
+    description: Nom de la branche à partir duquel dériver le nom
+    required: true
+
+outputs:
+  name:
+    description: Nom dérivé (sans le préfixe test-app-)
+    value: ${{ steps.derive.outputs.name }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: derive
+      shell: bash
+      env:
+        BRANCH_NAME: ${{ inputs.branch-name }}
+      run: |
+        set -euo pipefail
+        # Koyeb limite les noms d'app à 23 caractères ; préfixés par
+        # `test-app-` (9 caractères), il reste 14 caractères ici. Un simple
+        # filtrage alphanumérique + troncature ferait collisionner des
+        # branches comme `foo-bar` et `foobar` (le `-` est supprimé par le
+        # filtrage) : on ajoute un suffixe dérivé du nom complet de la
+        # branche pour lever l'ambiguïté.
+        base=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]' | head -c 4)
+        hash=$(echo -n "$BRANCH_NAME" | sha256sum | head -c 10)
+        echo "name=${base}${hash}" >> "$GITHUB_OUTPUT"

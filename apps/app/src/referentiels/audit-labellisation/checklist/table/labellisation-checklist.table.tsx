@@ -1,17 +1,23 @@
 'use client';
 
-import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { makeReferentielTacheUrl, makeReferentielUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
+import { useShowReferentielTableColumn } from '@/app/referentiels/referentiel.table/use-referentiel-table-column-visibility';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ActionId, ReferentielId } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  ActionType,
+  ReferentielId,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { ChecklistTable, PillButton } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
   MesureViewModel,
+  MinimumScoreViewModel,
   Parcours,
   RoleMesures,
-  MinimumScoreViewModel,
 } from '../../checklist-view-model';
 import { useChecklist, useRoleDropdown } from '../../checklist.context';
 import { formatReponseAttendue } from './format-reponse-attendue';
@@ -46,12 +52,14 @@ const MesureActionButton = ({
   isRoleAction,
   collectiviteId,
   referentielId,
+  hierarchie,
   onOpenDropdown,
 }: {
   mesure: MesureViewModel;
   isRoleAction: boolean;
   collectiviteId: number;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
   onOpenDropdown: () => void;
 }): ReactElement => {
   if (isRoleAction) {
@@ -72,6 +80,7 @@ const MesureActionButton = ({
         collectiviteId,
         actionId: mesure.actionId,
         referentielId,
+        hierarchie,
       })}
     >
       {appLabels.voirLaMesure}
@@ -79,20 +88,56 @@ const MesureActionButton = ({
   );
 };
 
+const MesuresNonRenseigneesButton = ({
+  collectiviteId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+}): ReactElement => {
+  const showColumn = useShowReferentielTableColumn();
+
+  return (
+    <PillButton
+      icon="arrow-right-line"
+      href={makeReferentielUrl({
+        collectiviteId,
+        referentielId,
+        filters: { statuts: [StatutAvancementEnum.NON_RENSEIGNE] },
+      })}
+      onClick={() => showColumn('statut')}
+    >
+      {appLabels.voirLesMesures}
+    </PillButton>
+  );
+};
+
+type CompletudeRowProps = {
+  completude: Parcours['completude'];
+  collectiviteId: number;
+  referentielId: ReferentielId;
+};
+
 const CompletudeRow = ({
   completude,
-}: {
-  completude: Parcours['completude'];
-}): ReactElement => (
+  collectiviteId,
+  referentielId,
+}: CompletudeRowProps): ReactElement => (
   <ChecklistTable.Row
     done={completude.done}
     criterion={{
       label: appLabels.completudeCritere,
+      action: (
+        <MesuresNonRenseigneesButton
+          collectiviteId={collectiviteId}
+          referentielId={referentielId}
+        />
+      ),
     }}
     answer={
       <span className="inline-flex flex-wrap items-center gap-1">
         {appLabels.completudeReponsePrefix}
-        <ActionStatutBadge statut="non_renseigne" />
+        <ActionStatutBadge statut={StatutAvancementEnum.NON_RENSEIGNE} />
       </span>
     }
   />
@@ -121,12 +166,14 @@ const MesuresRows = ({
   roleActionIds,
   collectiviteId,
   referentielId,
+  hierarchie,
   onOpenDropdown,
 }: {
   mesures: readonly MesureViewModel[];
   roleActionIds: ReadonlySet<ActionId>;
   collectiviteId: number;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
   onOpenDropdown: (actionId: ActionId) => void;
 }): ReactElement => {
   const { hasReferentielPermission } = useCurrentCollectivite();
@@ -157,6 +204,7 @@ const MesuresRows = ({
                   isRoleAction={isRoleAction}
                   collectiviteId={collectiviteId}
                   referentielId={referentielId}
+                  hierarchie={hierarchie}
                   onOpenDropdown={() => onOpenDropdown(mesure.actionId)}
                 />
               ),
@@ -181,12 +229,14 @@ type LabellisationChecklistTableProps = {
   viewModel: Parcours;
   collectiviteId: number;
   referentielId: ReferentielId;
+  hierarchie: ActionType[];
 };
 
 export const LabellisationChecklistTable = ({
   viewModel,
   collectiviteId,
   referentielId,
+  hierarchie,
 }: LabellisationChecklistTableProps): ReactElement => {
   const { openDropdown } = useRoleDropdown();
   const { showActeEngagement, showCandidatureDocuments } = useChecklist();
@@ -198,13 +248,18 @@ export const LabellisationChecklistTable = ({
         labelHeader={appLabels.criteres}
         answerHeader={appLabels.elementsAttendus}
       />
-      <CompletudeRow completude={viewModel.completude} />
+      <CompletudeRow
+        completude={viewModel.completude}
+        collectiviteId={collectiviteId}
+        referentielId={referentielId}
+      />
       <MinimumScoreRow minimumScore={viewModel.minimumScore} />
       <MesuresRows
         mesures={viewModel.mesures}
         roleActionIds={roleActionIds}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
+        hierarchie={hierarchie}
         onOpenDropdown={openDropdown}
       />
       {showActeEngagement && <ActeEngagementRow />}

@@ -11,10 +11,10 @@ import { MouseEvent } from 'react';
 import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useReferentielThematiqueView } from './use-referentiel-thematique-view';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, string>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, string>;
 };
 
 export const ReferentielTableTitleCell = ({ info }: Props) => {
@@ -109,7 +109,7 @@ function OpenActionPageButton({
   cell,
 }: {
   action: Action;
-  cell: CellContext<ActionListItem, string>;
+  cell: CellContext<ReferentielTableFeatures, ActionListItem, string>;
 }) {
   const { referentielId, collectiviteId } = getTableMeta(cell.table);
 

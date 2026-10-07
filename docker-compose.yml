@@ -13,10 +13,9 @@
 # persisté dans .env.local sous COMPOSE_PROFILES) ou explicitement (make up
 # apps=<...>, cf. scripts/dev-apps.mts) :
 #   supabase / studio / redis / strapi → services
-#   app / site / panier / backend / tools → un conteneur par app,
+#   app / site / backend / tools → un conteneur par app,
 #     daemon nx partagé (voir la section « Apps Node » en fin de fichier)
 #   dbtools   → sqitch (migrations), seeder (données de test) — via make db-*
-#   functions → edge-runtime Deno (supabase/functions)
 
 name: tet
 
@@ -35,13 +34,13 @@ x-dev-values:
 services:
   # ——————————————————————————— Base de données ———————————————————————————
   # Postgres 15 (parité prod/CI, cf. supabase/config.toml major_version) —
-  # l'image Supabase embarque extensions (pg_net, pg_cron, http…), rôles et
+  # l'image Supabase embarque extensions (pg_cron, http…), rôles et
   # schémas auth/storage requis par les migrations sqitch.
   db:
-    profiles: [ supabase ]
+    profiles: [supabase]
     image: supabase/postgres:15.14.1.159
     ports:
-      - "54322:5432"
+      - '54322:5432'
     command:
       - postgres
       - -c
@@ -50,34 +49,33 @@ services:
       - log_min_messages=fatal
     environment:
       POSTGRES_HOST: /var/run/postgresql
-      PGPORT: "5432"
-      POSTGRES_PORT: "5432"
+      PGPORT: '5432'
+      POSTGRES_PORT: '5432'
       PGPASSWORD: &pg-password ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_PASSWORD: *pg-password
       PGDATABASE: postgres
       POSTGRES_DB: postgres
       JWT_SECRET: *jwt-secret
-      JWT_EXP: "3600"
+      JWT_EXP: '3600'
     volumes:
       - ./.docker/postgres/init/98-webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:ro
       - ./.docker/postgres/init/99-roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
       - ./.docker/postgres/init/99-jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
-      - ./.docker/postgres/init/99-realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:ro
       - db-data:/var/lib/postgresql/data
       - db-config:/etc/postgresql-custom
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "postgres", "-h", "localhost" ]
+      test: ['CMD', 'pg_isready', '-U', 'postgres', '-h', 'localhost']
       interval: 5s
       timeout: 5s
       retries: 10
 
   # ————————————————————— Passerelle API (port 54321) —————————————————————
   kong:
-    profiles: [ supabase ]
+    profiles: [supabase]
     image: kong:2.8.5-alpine
     platform: linux/amd64
     ports:
-      - "54321:8000"
+      - '54321:8000'
     # Kong 2.8 ne lit pas l'environnement dans sa config déclarative :
     # l'entrypoint rend le template en substituant les deux clés (sed ciblé,
     # pas d'eval : le reste du fichier n'est jamais interprété par le shell),
@@ -98,7 +96,7 @@ services:
             /home/kong/kong.template.yml > /home/kong/kong.yml
         exec /docker-entrypoint.sh kong docker-start
     environment:
-      KONG_DATABASE: "off"
+      KONG_DATABASE: 'off'
       KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
       KONG_DNS_ORDER: LAST,A,CNAME
       KONG_PLUGINS: request-transformer,cors,key-auth,acl
@@ -111,10 +109,8 @@ services:
     depends_on:
       gotrue:
         condition: service_started
-      rest:
-        condition: service_started
     healthcheck:
-      test: [ "CMD", "kong", "health" ]
+      test: ['CMD', 'kong', 'health']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -123,14 +119,14 @@ services:
   # Réplique supabase/config.toml : site_url, confirmations, sujets et
   # templates d'emails FR (servis par mail-templates), rate limits e2e.
   gotrue:
-    profiles: [ supabase ]
+    profiles: [supabase]
     image: supabase/gotrue:v2.193.1
     depends_on:
       db:
         condition: service_healthy
     environment:
       GOTRUE_API_HOST: 0.0.0.0
-      GOTRUE_API_PORT: "9999"
+      GOTRUE_API_PORT: '9999'
       API_EXTERNAL_URL: http://localhost:54321
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
@@ -139,16 +135,16 @@ services:
       # (worktrees sur ports décalés). Le glob gotrue ne traverse pas « / »,
       # d'où les deux motifs (racine + chemins).
       GOTRUE_URI_ALLOW_LIST: http://localhost:*,http://localhost:*/**
-      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_DISABLE_SIGNUP: 'false'
       GOTRUE_JWT_ADMIN_ROLES: service_role
       GOTRUE_JWT_AUD: authenticated
       GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
-      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_EXP: '3600'
       GOTRUE_JWT_SECRET: *jwt-secret
       GOTRUE_JWT_ISSUER: http://localhost:54321/auth/v1
-      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
-      GOTRUE_MAILER_AUTOCONFIRM: "false"
-      GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: "false"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: 'true'
+      GOTRUE_MAILER_AUTOCONFIRM: 'false'
+      GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: 'false'
       GOTRUE_MAILER_URLPATHS_INVITE: http://localhost:54321/auth/v1/verify
       GOTRUE_MAILER_URLPATHS_CONFIRMATION: http://localhost:54321/auth/v1/verify
       GOTRUE_MAILER_URLPATHS_RECOVERY: http://localhost:54321/auth/v1/verify
@@ -162,101 +158,66 @@ services:
       GOTRUE_MAILER_SUBJECTS_RECOVERY: Réinitialiser votre mot de passe sur Territoires en Transitions
       GOTRUE_MAILER_SUBJECTS_EMAIL_CHANGE: Confirmer le changement de votre email sur Territoires en Transitions
       GOTRUE_SMTP_HOST: mailpit
-      GOTRUE_SMTP_PORT: "1025"
+      GOTRUE_SMTP_PORT: '1025'
       GOTRUE_SMTP_ADMIN_EMAIL: admin@territoiresentransitions.fr
       GOTRUE_SMTP_SENDER_NAME: Territoires en Transitions
       GOTRUE_SMTP_MAX_FREQUENCY: 1s
-      GOTRUE_RATE_LIMIT_EMAIL_SENT: "50"
-      GOTRUE_RATE_LIMIT_TOKEN_REFRESH: "50"
-      GOTRUE_RATE_LIMIT_VERIFY: "50"
-      GOTRUE_RATE_LIMIT_OTP: "50"
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: '50'
+      GOTRUE_RATE_LIMIT_TOKEN_REFRESH: '50'
+      GOTRUE_RATE_LIMIT_VERIFY: '50'
+      GOTRUE_RATE_LIMIT_OTP: '50'
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health" ]
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://localhost:9999/health',
+        ]
       interval: 5s
       timeout: 5s
       retries: 3
 
   # Sert les templates d'emails FR à gotrue (comme le fait la CLI)
   mail-templates:
-    profiles: [ supabase ]
+    profiles: [supabase]
     image: nginx:1.29-alpine
     volumes:
       - ./supabase/templates:/usr/share/nginx/html:ro
 
-  # ———————————————————————————— API REST ——————————————————————————————————
-  rest:
-    profiles: [ supabase ]
-    image: postgrest/postgrest:v13.0.7
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      PGRST_DB_SCHEMAS: public,storage # supabase/config.toml [api].schemas
-      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
-      PGRST_DB_MAX_ROWS: "5000"
-      PGRST_DB_ANON_ROLE: anon
-      PGRST_DB_USE_LEGACY_GUCS: "false"
-      PGRST_JWT_SECRET: *jwt-secret
-      PGRST_APP_SETTINGS_JWT_SECRET: *jwt-secret
-      PGRST_APP_SETTINGS_JWT_EXP: "3600"
-
-  # ———————————————————————————— Realtime ——————————————————————————————————
-  realtime:
-    profiles: [ supabase ]
-    image: supabase/realtime:v2.119.0
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      default:
-        aliases:
-          - realtime-dev.supabase-realtime # le tenant est déduit du sous-domaine
-    environment:
-      PORT: "4000"
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_USER: supabase_admin
-      DB_PASSWORD: *pg-password
-      DB_NAME: postgres
-      DB_AFTER_CONNECT_QUERY: SET search_path TO _realtime
-      DB_ENC_KEY: supabaserealtime
-      API_JWT_SECRET: *jwt-secret
-      METRICS_JWT_SECRET: *jwt-secret
-      SECRET_KEY_BASE: ${REALTIME_SECRET_KEY_BASE:?déchiffré du .env racine par make via dotenvx}
-      ERL_AFLAGS: -proto_dist inet_tcp
-      DNS_NODES: "''"
-      RLIMIT_NOFILE: "10000"
-      APP_NAME: realtime
-      SEED_SELF_HOST: "true"
-      RUN_JANITOR: "true"
-
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:
-    profiles: [ supabase ]
-    image: supabase/storage-api:v1.67.13
+    profiles: [supabase]
+    image: supabase/storage-api:v1.77.0
     depends_on:
       db:
         condition: service_healthy
-      rest:
-        condition: service_started
     environment:
       ANON_KEY: *anon-key
       SERVICE_KEY: *service-role-key
       AUTH_JWT_SECRET: *jwt-secret
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      POSTGREST_URL: http://rest:3000
-      FILE_SIZE_LIMIT: "52428800" # 50MiB (supabase/config.toml)
+      FILE_SIZE_LIMIT: '52428800' # 50MiB (supabase/config.toml)
       STORAGE_BACKEND: file
       FILE_STORAGE_BACKEND_PATH: /var/lib/storage
       TENANT_ID: stub
       REGION: stub
       GLOBAL_S3_BUCKET: stub
-      ENABLE_IMAGE_TRANSFORMATION: "false" # pas d'imgproxy (comme en CI)
+      ENABLE_IMAGE_TRANSFORMATION: 'false' # pas d'imgproxy (comme en CI)
     volumes:
       - storage-data:/var/lib/storage
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5000/status" ]
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://127.0.0.1:5000/status',
+        ]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -264,25 +225,25 @@ services:
 
   # ————————————————— Supabase Studio (interface d'admin) ——————————————————
   meta:
-    profiles: [ studio ]
+    profiles: [studio]
     image: supabase/postgres-meta:v0.96.6
     depends_on:
       db:
         condition: service_healthy
     environment:
-      PG_META_PORT: "8080"
+      PG_META_PORT: '8080'
       PG_META_DB_HOST: db
-      PG_META_DB_PORT: "5432"
+      PG_META_DB_PORT: '5432'
       PG_META_DB_NAME: postgres
       PG_META_DB_USER: postgres
       PG_META_DB_PASSWORD: *pg-password
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY:-dev-crypto-key}
 
   studio:
-    profiles: [ studio ]
+    profiles: [studio]
     image: supabase/studio:latest
     ports:
-      - "54323:3000" # supabase/config.toml [studio].port
+      - '54323:3000' # supabase/config.toml [studio].port
     depends_on:
       db:
         condition: service_healthy
@@ -292,14 +253,11 @@ services:
       HOSTNAME: 0.0.0.0
       STUDIO_PG_META_URL: http://meta:8080
       POSTGRES_HOST: db
-      POSTGRES_PORT: "5432"
+      POSTGRES_PORT: '5432'
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: *pg-password
       POSTGRES_USER_READ_WRITE: postgres
       PG_META_CRYPTO_KEY: ${PG_META_CRYPTO_KEY:-dev-crypto-key}
-      PGRST_DB_SCHEMAS: public,storage
-      PGRST_DB_MAX_ROWS: "5000"
-      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
       DEFAULT_ORGANIZATION_NAME: Territoires en Transitions
       DEFAULT_PROJECT_NAME: tet-local
       SUPABASE_URL: http://kong:8000
@@ -307,9 +265,13 @@ services:
       SUPABASE_ANON_KEY: *anon-key
       SUPABASE_SERVICE_KEY: *service-role-key
       AUTH_JWT_SECRET: *jwt-secret
-      ENABLED_FEATURES_LOGS_ALL: "false"
+      ENABLED_FEATURES_LOGS_ALL: 'false'
     healthcheck:
-      test: [ "CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})\"" ]
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://localhost:3000/api/platform/profile'').then((r) => {if (r.status !== 200) throw new Error(r.status)})"',
+        ]
       timeout: 10s
       interval: 5s
       retries: 3
@@ -317,25 +279,25 @@ services:
 
   # —————————————————————— Emails de test (Mailpit) ————————————————————————
   mailpit:
-    profiles: [ supabase ]
+    profiles: [supabase]
     image: axllent/mailpit:v1.30.2
     ports:
-      - "54324:8025" # interface web
-      - "54325:1025" # SMTP
+      - '54324:8025' # interface web
+      - '54325:1025' # SMTP
     environment:
-      MP_SMTP_AUTH_ACCEPT_ANY: "1"
-      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+      MP_SMTP_AUTH_ACCEPT_ANY: '1'
+      MP_SMTP_AUTH_ALLOW_INSECURE: '1'
 
   # ———————————————————————— Redis (files BullMQ) ——————————————————————————
   redis:
-    profiles: [ redis ]
+    profiles: [redis]
     image: redis:8-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -344,10 +306,10 @@ services:
   # Migrations sqitch : réutilise l'image de la CI (.github/actions/sqitch-local),
   # lancée ponctuellement par `make db-migrate` (docker compose run --rm).
   sqitch:
-    profiles: [ dbtools ]
+    profiles: [dbtools]
     build:
       context: .github/actions/sqitch-local
-    entrypoint: [ sqitch ] # neutralise l'entrypoint act
+    entrypoint: [sqitch] # neutralise l'entrypoint act
     working_dir: /repo
     environment:
       SQITCH_TARGET: db:pg://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
@@ -360,9 +322,9 @@ services:
 
   # Données de test : exécute data_layer/seed/*.sh (psql fourni par l'image db)
   seeder:
-    profiles: [ dbtools ]
+    profiles: [dbtools]
     image: supabase/postgres:15.14.1.151
-    entrypoint: [ sh ]
+    entrypoint: [sh]
     working_dir: /data_layer
     environment:
       PG_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
@@ -372,39 +334,47 @@ services:
       db:
         condition: service_healthy
 
-  # ———————————————————— Edge functions (profil functions) —————————————————
-  functions:
-    profiles: [ functions ]
-    image: supabase/edge-runtime:v1.74.2
-    # main est monté À CÔTÉ des functions, pas dedans : un point de montage
-    # imbriqué dans un bind mount read-only ne peut pas être créé (le dossier
-    # main/ n'existe pas dans supabase/functions, et ne doit pas y exister —
-    # la CLI supabase le prendrait pour une function à déployer).
-    command: [ start, --main-service, /home/deno/main ]
+  # ———————————————————— gcloud CLI (profil gcloud) ————————————————————————
+  # Lancé ponctuellement par `make gcloud`, qui lui transmet la clé du compte de
+  # service du backend (JSON ou base64, comme initGoogleCloudCredentials). Elle
+  # n'est écrite que dans le /tmp du conteneur éphémère. La CLI ignore
+  # GOOGLE_APPLICATION_CREDENTIALS (réservé à l'ADC des librairies) : le compte
+  # est activé dans la config temporaire, pour que `auth list` l'affiche. Le
+  # projet vient de la clé, ou de `project=` : jamais de l'environnement du poste.
+  gcloud:
+    profiles: [gcloud]
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:586.0.0-alpine
+    user: '${UID:-1000}:${GID:-1000}'
+    working_dir: /workspace
     environment:
-      JWT_SECRET: *jwt-secret
-      SUPABASE_URL: http://kong:8000
-      SUPABASE_ANON_KEY: *anon-key
-      SUPABASE_SERVICE_ROLE_KEY: *service-role-key
-      SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      VERIFY_JWT: "false"
-      # Les emails des functions partent dans Mailpit (http://localhost:54324)
-      # via son API d'envoi — jamais vers les vrais fournisseurs (Resend).
-      MAILPIT_URL: http://mailpit:8025
+      GCLOUD_SERVICE_ACCOUNT_KEY:
+      CLOUDSDK_CONFIG: /tmp/gcloud
     volumes:
-      - ./supabase/functions:/home/deno/functions:ro
-      - ./.docker/edge-runtime/main:/home/deno/main:ro
-    depends_on:
-      db:
-        condition: service_healthy
-      mailpit:
-        condition: service_started
+      - .:/workspace
+    entrypoint:
+      - sh
+      - -ec
+      - |
+        umask 077
+        key=/tmp/keyfile.json
+        case "$$GCLOUD_SERVICE_ACCOUNT_KEY" in
+          *{*) printf %s "$$GCLOUD_SERVICE_ACCOUNT_KEY" ;;
+          *) printf %s "$$GCLOUD_SERVICE_ACCOUNT_KEY" | base64 -d ;;
+        esac > "$$key"
+        unset GCLOUD_SERVICE_ACCOUNT_KEY
+        export GOOGLE_APPLICATION_CREDENTIALS="$$key"
+        out=$$(gcloud auth activate-service-account --key-file="$$key" --quiet 2>&1) \
+          || { printf '%s\n' "$$out" >&2; exit 1; }
+        export CLOUDSDK_CORE_PROJECT="$${CLOUDSDK_CORE_PROJECT:-$$(sed -n 's/.*"project_id": *"\([^"]*\)".*/\1/p' "$$key")}"
+        if [ $$# -eq 0 ]; then exec bash; fi
+        exec gcloud "$$@"
+      - gcloud
 
   # ———————————————————————————— CMS Strapi —————————————————————————————————
   # Postgres dédié (indépendant du Postgres Supabase), comme le Strapi Cloud
   # distant — nécessaire notamment pour `strapi transfer` (make cms-pull).
   strapi-db:
-    profiles: [ strapi ]
+    profiles: [strapi]
     image: postgres:18-alpine
     environment:
       POSTGRES_DB: strapi
@@ -413,7 +383,7 @@ services:
     volumes:
       - strapi-db-data:/var/lib/postgresql
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "strapi" ]
+      test: ['CMD', 'pg_isready', '-U', 'strapi']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -421,32 +391,36 @@ services:
   # npm install s'exécute au premier démarrage (node_modules en volume nommé) :
   # le premier boot prend quelques minutes.
   strapi:
-    profiles: [ strapi ]
+    profiles: [strapi]
+    # Tag versionné : changer de version de Node reconstruit l'image d'office
+    # au lieu de réutiliser l'ancienne image locale.
+    image: tet-strapi:node24
     build:
       context: .docker/strapi
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
     ports:
-      - "1337:1337"
+      - '1337:1337'
     depends_on:
       strapi-db:
         condition: service_healthy
     environment:
       HOST: 0.0.0.0
-      PORT: "1337"
+      PORT: '1337'
       APP_KEYS: ${STRAPI_APP_KEYS:-devKeyA,devKeyB}
       API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT:-dev-api-token-salt}
       ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET:-dev-admin-jwt-secret}
-      JWT_SECRET: ${STRAPI_JWT_SECRET:-dev-jwt-secret}
+      ENCRYPTION_KEY: ${STRAPI_ENCRYPTION_KEY:-dev-encryption-key}
       TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT:-dev-transfer-token-salt}
       # Token API read-only seedé au bootstrap (strapi/src/index.ts) pour que le
-      # site lise l'API locale. Doit rester égal à NEXT_PUBLIC_STRAPI_KEY dans
-      # apps/site/.env. Valeur non secrète : Strapi local jetable, read-only.
+      # site lise l'API locale. À reporter dans NEXT_PUBLIC_STRAPI_KEY de
+      # apps/site/.env.local (voir apps/site/README.md). Valeur non secrète :
+      # Strapi local jetable, read-only.
       STRAPI_LOCAL_READONLY_TOKEN: ${STRAPI_LOCAL_READONLY_TOKEN:-local-dev-readonly-token}
       DATABASE_CLIENT: postgres
       DATABASE_HOST: strapi-db
-      DATABASE_PORT: "5432"
+      DATABASE_PORT: '5432'
       DATABASE_NAME: strapi
       DATABASE_USERNAME: strapi
       DATABASE_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
@@ -483,31 +457,46 @@ services:
   # des natifs (canvas, binaire supabase). Hors conteneur d'app car l'install
   # n'a rien d'interactif. Équivalent de `make install`.
   deps:
-    profiles: &app-profiles [ app, site, panier, backend, tools ]
+    profiles: &app-profiles [app, site, backend, tools]
     image: tet-node-dev # socle construit par `make up` (node-base)
     working_dir: /repo
     init: true
-    restart: "no"
+    restart: 'no'
     network_mode: host
     pid: host
     volumes:
       - .:/repo
       - node-modules:/repo/node_modules
       - pnpm-store:/home/node/.local/share/pnpm
-    command: [ "dotenvx", "run", "--env-keys-file=.env.keys", "--ignore=MISSING_ENV_FILE", "-f", ".env.local", "-f", ".env", "--", "sh", "-c", "pnpm install && pnpm rebuild canvas supabase" ]
+    command:
+      [
+        'dotenvx',
+        'run',
+        '--env-keys-file=.env.keys',
+        '--ignore=MISSING_ENV_FILE',
+        '-f',
+        '.env.local',
+        '-f',
+        '.env',
+        '--',
+        'sh',
+        '-c',
+        'pnpm install && pnpm rebuild canvas supabase',
+      ]
 
   nx-daemon:
     profiles: *app-profiles
     image: tet-node-dev
     working_dir: /repo
-    command: [ "sh", ".docker/apps/nx-daemon-entrypoint.sh" ]
+    command: ['sh', '.docker/apps/nx-daemon-entrypoint.sh']
     init: true
     restart: unless-stopped
     network_mode: host
     pid: host
     environment: &nx-env
-      NX_DAEMON: "true"
+      NX_DAEMON: 'true'
       NX_TUI: ${NX_TUI:-false} # sortie linéaire préfixée (TUI incompatible détaché)
+      NX_CACHE_DIRECTORY: /home/node/.nx-cache
       NX_WORKSPACE_DATA_DIRECTORY: /home/node/.nx-workspace-data
       # limite dure de 95 caractères sur le chemin socket ($NX_SOCKET_DIR/d.sock)
       NX_SOCKET_DIR: /home/node/.nx-workspace-data/sock
@@ -524,7 +513,13 @@ services:
     depends_on:
       deps: { condition: service_completed_successfully }
     healthcheck:
-      test: [ "CMD", "node", "-e", "const s=require('net').connect(process.env.NX_SOCKET_DIR+'/d.sock');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "const s=require('net').connect(process.env.NX_SOCKET_DIR+'/d.sock');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))",
+        ]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -535,32 +530,45 @@ services:
     image: tet-node-dev
     working_dir: /repo
     init: true
-    restart: "no"
+    restart: 'no'
     network_mode: host
     pid: host
     environment: *nx-env
     ulimits:
       nofile: *app-nofile
     volumes: *app-volumes
-    command: [ "pnpm", "exec", "nx", "run-many", "-t", "build-deps", "-p", "app", "site", "panier", "backend", "tools", "--output-style=stream" ]
+    command:
+      [
+        'pnpm',
+        'exec',
+        'nx',
+        'run-many',
+        '-t',
+        'build-deps',
+        '-p',
+        'app',
+        'site',
+        'backend',
+        'tools',
+        '--output-style=stream',
+      ]
     depends_on:
       deps: { condition: service_completed_successfully }
       nx-daemon: { condition: service_healthy }
 
-  # Les 6 apps : même squelette (ancre &app-service), seuls APP, le profil,
+  # Les apps : même squelette (ancre &app-service), seuls APP, le profil,
   # le healthcheck (port) et les dépendances d'infra changent. Entrypoint
   # générique .docker/apps/app-entrypoint.sh → dotenvx (env per-app) + nx dev.
   # start_period généreux : premier boot Next/Turbopack à froid.
-  # Les 6 apps : même squelette (ancre &app-service), seuls APP, le profil,
-  # le port et les dépendances d'infra changent. Le port est interpolé depuis
+  # Le port est interpolé depuis
   # l'environnement appelant (*_PORT, défaut = port standard) : un worktree
   # (make up, projet tet-wt<slot>) source son .env.local et obtient ses ports
   # décalés — le process d'app ET le healthcheck lisent la même variable.
   app: &app-service
-    profiles: [ app ]
+    profiles: [app]
     image: tet-node-dev
     working_dir: /repo
-    command: [ "sh", ".docker/apps/app-entrypoint.sh" ]
+    command: ['sh', '.docker/apps/app-entrypoint.sh']
     init: true
     restart: unless-stopped # encaisse un crash d'app (ex. fuite Turbopack dev)
     network_mode: host
@@ -585,7 +593,13 @@ services:
     # et crash-loop le serveur. Port ouvert = même critère que l'ancien
     # executor @nx/next:server (waitForPortOpen).
     healthcheck:
-      test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.APP_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "const s=require('net').connect(+process.env.APP_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -593,30 +607,25 @@ services:
 
   site:
     <<: *app-service
-    profiles: [ site ]
+    profiles: [site]
     environment:
       <<: *nx-env
       APP: site
       SITE_PORT: ${SITE_PORT:-3001}
+      # Page Démarche PCAET visible en local ; en prod, elle reste masquée tant
+      # que la variable n'est pas posée sur l'hébergeur.
+      PCAET_LAUNCHED: ${PCAET_LAUNCHED:-true}
     depends_on:
       <<: *app-depends
       strapi: { condition: service_started }
     healthcheck:
-      test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.SITE_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
-      interval: 10s
-      timeout: 10s
-      retries: 6
-      start_period: 240s
-
-  panier:
-    <<: *app-service
-    profiles: [ panier ]
-    environment:
-      <<: *nx-env
-      APP: panier
-      PANIER_PORT: ${PANIER_PORT:-3002}
-    healthcheck:
-      test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.PANIER_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "const s=require('net').connect(+process.env.SITE_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -624,7 +633,7 @@ services:
 
   backend:
     <<: *app-service
-    profiles: [ backend ]
+    profiles: [backend]
     environment:
       <<: *nx-env
       APP: backend
@@ -635,7 +644,13 @@ services:
       redis: { condition: service_healthy }
     healthcheck:
       # GET /version : hors préfixe api (main.ts setGlobalPrefix exclude)
-      test: [ "CMD", "node", "-e", "fetch('http://localhost:'+process.env.BACKEND_PORT+'/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))" ]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:'+process.env.BACKEND_PORT+'/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -643,7 +658,7 @@ services:
 
   tools:
     <<: *app-service
-    profiles: [ tools ]
+    profiles: [tools]
     environment:
       <<: *nx-env
       APP: tools
@@ -653,7 +668,13 @@ services:
       db: { condition: service_healthy }
       redis: { condition: service_healthy }
     healthcheck:
-      test: [ "CMD", "node", "-e", "fetch('http://localhost:'+process.env.TOOLS_PORT+'/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))" ]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:'+process.env.TOOLS_PORT+'/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 10s
       retries: 6

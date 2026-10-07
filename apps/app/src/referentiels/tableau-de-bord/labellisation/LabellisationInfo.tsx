@@ -22,8 +22,8 @@ const LabellisationInfo = ({
   score,
 }: LabellisationInfoProps): JSX.Element => {
   const etoiles = parcours?.labellisation?.etoiles ?? 0;
-  const scoreRealise = parcours?.labellisation?.score_realise ?? 0;
-  const dateLabel = parcours?.labellisation?.obtenue_le;
+  const scoreRealise = parcours?.labellisation?.scoreRealise ?? 0;
+  const dateLabel = parcours?.labellisation?.obtenueLe;
 
   return (
     <div className="flex flex-col gap-3 md:items-start items-center mb-4">

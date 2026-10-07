@@ -15,6 +15,7 @@
 // (Node ≥ 23.6) retire les types des .mts, d'où htm plutôt que du JSX.
 import { pathToFileURL } from 'node:url';
 import { render } from 'ink';
+import { addAppToSelection } from './dev-apps.mts';
 import { writeEnvValue } from './env-local.mts';
 import {
   pauseForEnter,
@@ -156,6 +157,7 @@ if (isMain) {
         stack=${stack}
         resolver=${resolver}
         readProfiles=${readStackProfiles}
+        rememberApp=${addAppToSelection}
         initialSelected=${initialSelected}
         onInterlude=${(interlude: Interlude, selected: number) => {
           request.current = { interlude, selected };

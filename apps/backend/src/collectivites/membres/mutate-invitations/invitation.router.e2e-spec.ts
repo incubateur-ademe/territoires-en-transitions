@@ -10,6 +10,7 @@ import {
 } from '@tet/backend/test';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
@@ -48,6 +49,58 @@ describe('Test les invitations', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test(`Rattache un compte existant quelle que soit la casse de l'adresse`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+    const { user: invite } = await addTestUser(databaseService, {
+      role: CollectiviteRole.LECTURE,
+    });
+
+    // Sans normalisation, l'adresse en majuscules ne retrouvait pas le compte
+    // et créait une invitation pour quelqu'un qui en avait déjà un.
+    const invitation =
+      await caller.collectivites.membres.invitations.create({
+        collectiviteId: collectivite.id,
+        email: invite.email.toUpperCase(),
+        role: CollectiviteRole.EDITION,
+      });
+
+    expect(invitation).toBeNull();
+
+    const droits = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invite.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+    expect(droits).toHaveLength(1);
+  });
+
+  test(`Rattache un compte dont la ligne dcp porte une casse mixte`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+    const { user: invite } = await addTestUser(databaseService, {
+      role: CollectiviteRole.LECTURE,
+    });
+
+    // `dcp` hérite son email de `auth.users` : rien ne garantit la casse que
+    // l'appelant saisit, et la comparaison doit tenir des deux côtés.
+    await databaseService.db
+      .update(dcpTable)
+      .set({ email: invite.email.toUpperCase() })
+      .where(eq(dcpTable.id, invite.id));
+
+    const invitation =
+      await caller.collectivites.membres.invitations.create({
+        collectiviteId: collectivite.id,
+        email: invite.email,
+        role: CollectiviteRole.EDITION,
+      });
+
+    expect(invitation).toBeNull();
   });
 
   test(`N'a pas le droit d'inviter`, async () => {
@@ -98,8 +151,8 @@ describe('Test les invitations', () => {
     });
 
     await databaseService.db.insert(ficheActionPiloteTable).values([
-      { ficheId: fiche1.id, tagId: testTag.id },
-      { ficheId: fiche2.id, tagId: testTag.id },
+      { ficheId: fiche1.id, tagId: testTag.id, createdBy: adminUser.id },
+      { ficheId: fiche2.id, tagId: testTag.id, createdBy: adminUser.id },
     ]);
 
     // Vérifie que l'utilisateur n'est pas vérifié
@@ -237,8 +290,8 @@ describe('Test les invitations', () => {
     });
 
     await databaseService.db.insert(ficheActionPiloteTable).values([
-      { ficheId: fiche1.id, tagId: testTag.id },
-      { ficheId: fiche2.id, tagId: testTag.id },
+      { ficheId: fiche1.id, tagId: testTag.id, createdBy: adminUser.id },
+      { ficheId: fiche2.id, tagId: testTag.id, createdBy: adminUser.id },
     ]);
 
     const condition = and(
@@ -350,17 +403,60 @@ describe('Test les invitations', () => {
     expect(access.length).toBe(1);
   });
 
-  test(`Refuse de consommer une invitation avec un email différent`, async () => {
+  test(`Consomme une invitation dont l'email diffère de celui de la session`, async () => {
+    // Le fournisseur d'identité asserte l'email de la session : il n'a aucune
+    // raison d'égaler celui saisi par l'admin. Le lien opaque fait preuve.
     // Fresh fixtures: no auth.users cleanup (FK scans on indicateur_valeur timeout).
-    const { user: wrongUser } = await addTestUser(databaseService);
+    const { user: invitee } = await addTestUser(databaseService, {
+      collectiviteId: undefined,
+      verified: false,
+    });
 
     const [invitationRow] = await databaseService.db
       .insert(invitationTable)
       .values({
         role: CollectiviteRole.LECTURE,
-        email: 'only-for-invited@test.fr',
+        email: 'adresse-saisie-par-admin@test.fr',
         collectiviteId: collectivite.id,
         createdBy: adminUserId,
+      })
+      .returning();
+
+    const inviteeCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(invitee),
+    });
+
+    await inviteeCaller.collectivites.membres.invitations.consume({
+      invitationId: invitationRow.id,
+    });
+
+    const access = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+
+    expect(access.length).toBe(1);
+    expect(access[0].role).toBe(CollectiviteRole.LECTURE);
+  });
+
+  test(`Refuse de consommer une invitation révoquée`, async () => {
+    // Le lien étant la seule preuve désormais, la révocation doit être opposable.
+    // Fresh fixtures: no auth.users cleanup (FK scans on indicateur_valeur timeout).
+    const { user: invitee } = await addTestUser(databaseService);
+
+    const [invitationRow] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        role: CollectiviteRole.LECTURE,
+        email: 'invitation-revoquee@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
+        active: false,
       })
       .returning();
 
@@ -370,15 +466,27 @@ describe('Test les invitations', () => {
         .where(eq(invitationTable.id, invitationRow.id));
     });
 
-    const wrongCaller = router.createCaller({
-      user: getAuthUserFromUserCredentials(wrongUser),
+    const inviteeCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(invitee),
     });
 
     await expect(() =>
-      wrongCaller.collectivites.membres.invitations.consume({
+      inviteeCaller.collectivites.membres.invitations.consume({
         invitationId: invitationRow.id,
       })
-    ).rejects.toThrow(/ne peut être consommée que par/);
+    ).rejects.toThrow(/révoquée/);
+
+    const access = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+
+    expect(access.length).toBe(0);
   });
 
   test(`Supprime une invitation en attente`, async () => {

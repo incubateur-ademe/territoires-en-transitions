@@ -16,19 +16,27 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v7.0.1
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+          persist-credentials: false
 
-      - name: Deploy test app on Koyeb
-        run: >
-          earthly
-          --use-inline-cache
-          +app-destroy-test
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --BRANCH_NAME=${{ github.event.pull_request.head.ref }}
+      - id: test-app-name
+        uses: ./.github/actions/test-app-name
+        with:
+          branch-name: ${{ github.event.pull_request.head.ref }}
 
+      - uses: ./.github/actions/koyeb-cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Supprime l'app de test sur Koyeb
+        env:
+          NAME: ${{ steps.test-app-name.outputs.name }}
+        run: |
+          set -euo pipefail
+          if koyeb apps get "test-app-$NAME" >/dev/null 2>&1; then
+            echo "App de test trouvée sur Koyeb à test-app-$NAME, suppression..."
+            koyeb apps delete "test-app-$NAME"
+          else
+            echo "App de test introuvable sur Koyeb à test-app-$NAME, rien à supprimer."
+          fi

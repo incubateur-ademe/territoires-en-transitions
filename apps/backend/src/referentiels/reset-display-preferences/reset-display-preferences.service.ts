@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import type { CollectivitePreferencesError } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  CollectivitePreferencesErrorEnum,
+  type CollectivitePreferencesError,
+} from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { actionCommentaireTable } from '@tet/backend/referentiels/models/action-commentaire.table';
-import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
-import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Result } from '@tet/backend/utils/result.type';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   collectiviteReferentielPreferenceIds,
@@ -17,14 +18,12 @@ import {
   type CollectivitePreferences,
   type CollectiviteReferentielPreferenceId,
 } from '@tet/domain/collectivites';
-import { and, count, eq, inArray, max } from 'drizzle-orm';
 import { chunk } from 'es-toolkit';
-import { shouldDisplayReferentielByCriteria } from './compute-referentiel-display.rules';
-
-const CAE_ECI_REFERENTIELS = [
-  'cae',
-  'eci',
-] as const satisfies readonly CollectiviteReferentielPreferenceId[];
+import {
+  getEligibiliteType,
+  type EligibiliteType,
+} from '../switch-to-te/switch-to-te.rules';
+import { ComputeReferentielEngagementService } from './compute-referentiel-engagement.service';
 
 export type ResetAllCollectivitesDisplayPreferencesResult = Record<
   CollectiviteReferentielPreferenceId,
@@ -39,16 +38,22 @@ export type ResetAllCollectivitesDisplayPreferencesOutput = {
 /**
  * This service is used to reset the display preferences for a collectivité based on its activities
  * If nothing has been done on ECI, no need to display it but only the new referentiel
+ * Syndicats and DROM are not eligible to the new referentiel: they keep their
+ * legacy referentiels whatever their activity (see `deriveReferentielPreferences`)
  * Temporary need, must be removed once the new referentiel is released
  */
 @Injectable()
 export class ResetDisplayPreferencesService {
+  private readonly logger = new Logger(ResetDisplayPreferencesService.name);
+
   private readonly PARALLEL_COLLECTIVITE_RESET_DISPLAY_PREFERENCES = 10;
 
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly repository: CollectivitePreferencesRepository,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly computeReferentielEngagementService: ComputeReferentielEngagementService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   async resetCollectiviteDisplayPreferences(
@@ -56,7 +61,25 @@ export class ResetDisplayPreferencesService {
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
     // le calcul de l'affichage ne dépend que de l'activité (statuts/commentaires),
     // pas des préférences : on peut le faire hors transaction pour réduire la durée du verrou
-    const display = await this.computeReferentielDisplay(collectiviteId);
+    const displayResult =
+      await this.computeReferentielEngagementService.computeEngagement(
+        collectiviteId
+      );
+    if (!displayResult.success) {
+      return failure(
+        CollectivitePreferencesErrorEnum.DATABASE_ERROR,
+        displayResult.cause
+      );
+    }
+    const display = displayResult.data;
+
+    // le type de collectivité (syndicat / DROM) ne dépend pas non plus des
+    // préférences : lu hors transaction lui aussi
+    const eligibiliteResult = await this.getEligibiliteType(collectiviteId);
+    if (!eligibiliteResult.success) {
+      return eligibiliteResult;
+    }
+    const { isSyndicat, isDrom } = eligibiliteResult.data;
 
     // verrou + revalidation + écriture dans une transaction : la lecture verrouillée
     // (FOR UPDATE) sérialise les resets/bascules concurrents, et on revalide
@@ -86,7 +109,12 @@ export class ResetDisplayPreferencesService {
         collectiviteId,
         {
           referentiels: deriveReferentielPreferences(
-            { caeEngaged: display.cae, eciEngaged: display.eci },
+            {
+              caeEngaged: display.cae,
+              eciEngaged: display.eci,
+              isSyndicat,
+              isDrom,
+            },
             existingPreferences.referentiels
           ),
         },
@@ -95,89 +123,31 @@ export class ResetDisplayPreferencesService {
     });
   }
 
-  private async computeReferentielDisplay(
+  private async getEligibiliteType(
     collectiviteId: number
-  ): Promise<Record<CollectiviteReferentielPreferenceId, boolean>> {
-    const statutRows = await this.databaseService.db
-      .select({
-        referentiel: actionRelationTable.referentiel,
-        actionStatutCount: count(),
-        maxModifiedAt: max(actionStatutTable.modifiedAt),
-      })
-      .from(actionStatutTable)
-      .innerJoin(
-        actionRelationTable,
-        eq(actionStatutTable.actionId, actionRelationTable.id)
-      )
-      .where(
-        and(
-          eq(actionStatutTable.collectiviteId, collectiviteId),
-          inArray(actionRelationTable.referentiel, CAE_ECI_REFERENTIELS)
-        )
-      )
-      .groupBy(actionRelationTable.referentiel);
-
-    const commentaireRows = await this.databaseService.db
-      .select({
-        referentiel: actionRelationTable.referentiel,
-        actionCommentaireCount: count(),
-        maxModifiedAt: max(actionCommentaireTable.modifiedAt),
-      })
-      .from(actionCommentaireTable)
-      .innerJoin(
-        actionRelationTable,
-        eq(actionCommentaireTable.actionId, actionRelationTable.id)
-      )
-      .where(
-        and(
-          eq(actionCommentaireTable.collectiviteId, collectiviteId),
-          inArray(actionRelationTable.referentiel, CAE_ECI_REFERENTIELS)
-        )
-      )
-      .groupBy(actionRelationTable.referentiel);
-
-    const statutByReferentiel = Object.fromEntries(
-      statutRows.map((r) => [
-        r.referentiel,
-        {
-          actionStatutCount: Number(r.actionStatutCount ?? 0),
-          maxModifiedAt: r.maxModifiedAt,
-        },
-      ])
-    );
-    const commentaireByReferentiel = Object.fromEntries(
-      commentaireRows.map((r) => [
-        r.referentiel,
-        {
-          actionCommentaireCount: Number(r.actionCommentaireCount ?? 0),
-          maxModifiedAt: r.maxModifiedAt,
-        },
-      ])
-    );
-
-    const display: Record<CollectiviteReferentielPreferenceId, boolean> = {
-      cae: false,
-      eci: false,
-      te: true,
-    };
-
-    for (const ref of CAE_ECI_REFERENTIELS) {
-      const statut = statutByReferentiel[ref];
-      const commentaire = commentaireByReferentiel[ref];
-      const actionStatutCount = statut?.actionStatutCount ?? 0;
-      const actionCommentaireCount = commentaire?.actionCommentaireCount ?? 0;
-      const lastActivityAt = this.mostRecentDate(
-        statut?.maxModifiedAt,
-        commentaire?.maxModifiedAt
+  ): Promise<Result<EligibiliteType, CollectivitePreferencesError>> {
+    try {
+      const collectivite =
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      return success(getEligibiliteType(collectivite));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return failure(
+          CollectivitePreferencesErrorEnum.COLLECTIVITE_NOT_FOUND,
+          error
+        );
+      }
+      this.logger.error(
+        `Erreur inattendue lors de la lecture du type de la collectivité ${collectiviteId} : ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        error instanceof Error ? error.stack : undefined
       );
-      display[ref] = shouldDisplayReferentielByCriteria({
-        actionStatutCount,
-        actionCommentaireCount,
-        lastActivityAt,
-      });
+      return failure(
+        CollectivitePreferencesErrorEnum.DATABASE_ERROR,
+        error as Error
+      );
     }
-
-    return display;
   }
 
   async resetAllCollectivitesDisplayPreferences(): Promise<ResetAllCollectivitesDisplayPreferencesOutput> {
@@ -217,15 +187,5 @@ export class ResetDisplayPreferencesService {
     }
 
     return { counts, errorCount };
-  }
-
-  private mostRecentDate(
-    ...values: (string | null | undefined)[]
-  ): Date | null {
-    const dates = values
-      .filter((v): v is string => typeof v === 'string' && v.length > 0)
-      .map((v) => new Date(v));
-    if (dates.length === 0) return null;
-    return new Date(Math.max(...dates.map((d) => d.getTime())));
   }
 }

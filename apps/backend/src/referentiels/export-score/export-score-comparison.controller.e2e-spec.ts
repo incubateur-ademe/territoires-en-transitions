@@ -328,12 +328,15 @@ describe('Referentiels scoring routes', () => {
       '',
     ]);
 
-    // vérifie la taille
-    const expectedExportSize = 55.9;
+    // vérifie la taille (borne basse : feuille des scores + feuille
+    // "Personnalisation" ajoutée pour le format excel)
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
-    expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
+    expect(exportFileSize).toBeGreaterThan(55_000);
+
+    // la feuille "Personnalisation" est présente
+    expect(wb.getWorksheet('Personnalisation')).toBeDefined();
   }, 30000);
 
   test(`Export du snapshot avec un score indicatif`, async () => {
@@ -378,11 +381,11 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 221.12;
+    // borne basse : feuille des scores + feuille "Personnalisation"
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
-    expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
+    expect(exportFileSize).toBeGreaterThan(221_000);
 
     const body = responseSnapshotExport.body as ArrayBuffer;
     const wb = new Workbook();
@@ -566,5 +569,119 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
       'Non renseigné',
       '',
     ]);
+  }, 30000);
+
+  test(`Export xlsx : feuille "Personnalisation" listant toutes les questions du référentiel`, async () => {
+    const referentielId: ReferentielId = 'eci';
+    const collectiviteId = collectivite.id;
+    const caller = router.createCaller({ user: editionUser });
+
+    // une réponse binaire connue
+    await caller.collectivites.personnalisations.setReponse({
+      collectiviteId,
+      questionId: 'dechets_1',
+      reponse: false,
+    });
+
+    const snapshotResult = await snapshotsService.computeAndUpsert({
+      collectiviteId,
+      referentielId,
+      jalon: SnapshotJalonEnum.COURANT,
+    });
+    expect(snapshotResult.success).toBe(true);
+
+    const response = await request(app.getHttpServer())
+      .get(
+        `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
+      )
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: [SNAPSHOTS.SCORE_COURANT_REF],
+      })
+      .expect(200)
+      .responseType('blob');
+
+    const wb = new Workbook();
+    await wb.xlsx.load(response.body as ArrayBuffer);
+
+    const ws = wb.getWorksheet('Personnalisation');
+    expect(ws).toBeDefined();
+
+    // en-tête : Thématique | Question | Réponse (un seul snapshot => pas de
+    // libellé) | Mesures affectées
+    const header = ws?.getRow(1).values as CellValue[];
+    expect(header?.[1]).toBe('Thématique');
+    expect(header?.[2]).toBe('Question');
+    expect(header?.[3]).toBe('Réponse');
+    expect(header?.[4]).toBe('Mesures affectées');
+    expect(header?.[5]).toBeUndefined();
+
+    const dataRows = ws?.getRows(2, 5000) ?? [];
+    expect(dataRows.length).toBeGreaterThan(1);
+
+    // la question répondue apparaît avec sa réponse "Non"
+    const answered = dataRows.find(
+      (r) => (r.values as CellValue[])?.[3] === 'Non'
+    );
+    expect(answered).toBeDefined();
+
+    // au moins une question du référentiel sans réponse : cellule réponse vide
+    const unanswered = dataRows.find((r) => {
+      const values = r.values as CellValue[];
+      return (
+        typeof values?.[2] === 'string' &&
+        (values?.[3] === '' || values?.[3] === undefined)
+      );
+    });
+    expect(unanswered).toBeDefined();
+
+    // colonne "Mesures affectées" : quand elle est renseignée, une mesure par
+    // ligne au format "identifiant - libellé"
+    const mesuresCells = dataRows
+      .map((r) => (r.values as CellValue[])?.[4])
+      .filter((v): v is string => typeof v === 'string' && v.length > 0);
+    for (const cell of mesuresCells) {
+      for (const line of cell.split('\n')) {
+        expect(line).toMatch(/ - .+/);
+      }
+    }
+
+    // groupement par thématique : la colonne "Thématique" est triée et contiguë
+    const thematiques = dataRows
+      .map((r) => (r.values as CellValue[])?.[1])
+      .filter((t): t is string => typeof t === 'string' && t.length > 0);
+    const contiguousDistinct = thematiques.filter(
+      (t, i) => i === 0 || t !== thematiques[i - 1]
+    );
+    expect(contiguousDistinct).toEqual([...new Set(thematiques)]);
+    expect(contiguousDistinct).toEqual(
+      [...contiguousDistinct].sort((a, b) =>
+        a.localeCompare(b, 'fr', { sensitivity: 'base' })
+      )
+    );
+  }, 30000);
+
+  test(`Export csv : pas de feuille "Personnalisation"`, async () => {
+    const referentielId: ReferentielId = 'eci';
+    const collectiviteId = collectivite.id;
+
+    const response = await request(app.getHttpServer())
+      .get(
+        `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
+      )
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'csv',
+        isAudit: 'false',
+        snapshotReferences: [SNAPSHOTS.SCORE_COURANT_REF],
+      })
+      .expect(200)
+      .responseType('blob');
+
+    // un CSV est mono-feuille : seule la feuille des scores est sérialisée
+    const csv = (response.body as Buffer).toString('utf-8');
+    expect(csv).not.toContain('Thématique');
   }, 30000);
 });

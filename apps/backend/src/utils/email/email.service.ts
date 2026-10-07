@@ -8,6 +8,14 @@ type Email = {
   to: string;
   subject: string;
   html: string;
+  /**
+   * Adresse à laquelle répondre, quand elle diffère de `SMTP_FROM`.
+   *
+   * Utile pour les messages relayés au nom d'un tiers (formulaire de contact) :
+   * sans elle, répondre depuis la boîte de réception écrit à l'expéditeur
+   * technique, pas au demandeur.
+   */
+  replyTo?: string;
 };
 
 type SMTPOptions = SMTPTransport['options'];

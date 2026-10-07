@@ -24,15 +24,15 @@ export class SignupUserPom {
 
   /**
    * Étape 1 : saisir l'email (et éventuellement le mot de passe), puis soumettre.
-   * Sans `password` → onglet « Compte sans mot de passe ».
+   * Sans `password` → onglet « Recevoir un lien de connexion ».
    */
   async fillStep1(email: string, password?: string) {
     const isPasswordless = password === undefined;
 
     const tab = this.page.getByRole('tab', {
       name: isPasswordless
-        ? 'Compte sans mot de passe'
-        : 'Compte avec mot de passe',
+        ? 'Recevoir un lien de connexion'
+        : 'Connexion avec mot de passe',
     });
     await expect(tab).toBeVisible();
     await tab.click();
@@ -82,7 +82,9 @@ export class SignupUserPom {
       this.page.getByTestId('auth.verify-otp.lien-envoye')
     ).toBeVisible({ timeout: 10000 });
 
-    const submitButton = this.page.getByTestId('auth.verify-otp.valider-button');
+    const submitButton = this.page.getByTestId(
+      'auth.verify-otp.valider-button'
+    );
     await expect(submitButton).toBeEnabled({ timeout: 5000 });
     await submitButton.click();
   }

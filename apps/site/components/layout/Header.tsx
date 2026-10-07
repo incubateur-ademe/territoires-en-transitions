@@ -6,7 +6,12 @@ import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
 import { Header as HeaderTet } from '@tet/ui';
 
-export const Header = () => {
+export const Header = ({
+  showDemarchePcaet,
+}: {
+  /** Entrée masquée tant que la page n'est pas lancée (`PCAET_LAUNCHED`). */
+  showDemarchePcaet: boolean;
+}) => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
 
   const pathname = usePathname();
@@ -24,6 +29,9 @@ export const Header = () => {
             children: 'Programme TETE',
             href: '/programme',
           },
+          ...(showDemarchePcaet
+            ? [{ children: 'Démarche PCAET', href: '/demarche-pcaet' }]
+            : []),
           {
             children: 'Plateforme numérique',
             href: '/plateforme-numerique',

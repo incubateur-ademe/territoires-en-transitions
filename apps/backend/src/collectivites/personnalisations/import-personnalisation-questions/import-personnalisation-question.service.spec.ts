@@ -19,7 +19,10 @@ describe('ImportPersonnalisationQuestionService', () => {
   beforeAll(async () => {
     // Create a minimal instance for testing the pure function
     const moduleRef = await Test.createTestingModule({
-      providers: [ImportPersonnalisationQuestionService],
+      providers: [
+        ImportPersonnalisationQuestionService,
+        PersonnalisationsExpressionService,
+      ],
     })
       .useMocker((token) => {
         if (
@@ -27,8 +30,7 @@ describe('ImportPersonnalisationQuestionService', () => {
           token === SheetService ||
           token === ConfigurationService ||
           token === ListPersonnalisationQuestionsService ||
-          token === VersionService ||
-          token === PersonnalisationsExpressionService
+          token === VersionService
         ) {
           return {};
         }
@@ -359,9 +361,7 @@ describe('ImportPersonnalisationQuestionService', () => {
           [],
           competences
         )
-      ).toThrow(
-        'Competence code 999 not found for question test_question_1'
-      );
+      ).toThrow('Competence code 999 not found for question test_question_1');
     });
 
     it('should validate successfully when question competenceCode matches an imported competence', () => {
@@ -394,6 +394,107 @@ describe('ImportPersonnalisationQuestionService', () => {
           competences
         )
       ).not.toThrow();
+    });
+
+    describe('exprVisible', () => {
+      const questionChoix: ImportPersonnalisationQuestion = {
+        id: 'question_choix',
+        formulation: 'Choisissez',
+        description: '',
+        type: 'choix',
+        ordonnancement: 1,
+        typesCollectivitesConcernees: null,
+      };
+      const choix: ImportPersonnalisationChoix[] = [
+        {
+          id: 'question_choix_a',
+          questionId: 'question_choix',
+          ordonnancement: 1,
+          formulation: 'A',
+        },
+      ];
+
+      function buildQuestion(
+        exprVisible: string
+      ): ImportPersonnalisationQuestion {
+        return {
+          id: 'question_visible',
+          formulation: 'Question conditionnelle',
+          description: '',
+          type: 'binaire',
+          ordonnancement: 2,
+          typesCollectivitesConcernees: null,
+          exprVisible,
+        };
+      }
+
+      it('accepte une référence à une question importée dans le même lot', () => {
+        expect(() =>
+          service.verifyPersonnalisationQuestionsAndChoix(
+            [
+              questionChoix,
+              buildQuestion('reponse(question_choix, question_choix_a)'),
+            ],
+            choix,
+            [],
+            [],
+            []
+          )
+        ).not.toThrow();
+      });
+
+      it('refuse une référence à une question inconnue', () => {
+        expect(() =>
+          service.verifyPersonnalisationQuestionsAndChoix(
+            [questionChoix, buildQuestion('reponse(question_inconnue, OUI)')],
+            choix,
+            [],
+            [],
+            []
+          )
+        ).toThrow(
+          `La question "question_inconnue" utilisée dans l'expression de visibilité de la question question_visible n'existe pas`
+        );
+      });
+
+      it("refuse un choix inconnu et un champ d'identité mal orthographié, dans le même message", () => {
+        expect(() =>
+          service.verifyPersonnalisationQuestionsAndChoix(
+            [
+              questionChoix,
+              buildQuestion(
+                'reponse(question_choix, question_choix_z) et identite(sinoe, touristqiue)'
+              ),
+            ],
+            choix,
+            [],
+            [],
+            []
+          )
+        ).toThrow(/question_choix_z[\s\S]*\n[\s\S]*touristqiue/);
+      });
+
+      it("signale une erreur de syntaxe par un extrait, sans recopier l'expression", () => {
+        expect(() =>
+          service.verifyPersonnalisationQuestionsAndChoix(
+            [
+              questionChoix,
+              { ...buildQuestion('si vrai alors'), id: 'Question_Visible' },
+            ],
+            choix,
+            [],
+            [],
+            []
+          )
+        ).toThrow(
+          [
+            "L'expression de visibilité de la question Question_Visible est invalide (ligne 1, colonne 14) :",
+            '  si vrai alors',
+            '               ^',
+            '',
+          ].join('\n')
+        );
+      });
     });
   });
 });

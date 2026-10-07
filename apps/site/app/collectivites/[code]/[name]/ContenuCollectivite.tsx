@@ -1,26 +1,16 @@
 import TestimonialSlideshow from '@/site/components/slideshow/TestimonialSlideshow';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import type { Temoignage } from '@/site/src/strapi/types';
 import classNames from 'classnames';
+import type { TexteCollectivite } from '../../utils';
 import ActionCollectivite from './ActionCollectivite';
 
 type ContenuCollectiviteProps = {
   contenu: {
-    video: string;
+    video: string | null;
     video_en_haut: boolean;
-    temoignages: {
-      id: number;
-      auteur: string;
-      role: string;
-      temoignage: string;
-      portrait: StrapiItem;
-    }[];
-    actions: {
-      id: number;
-      titre: string;
-      contenu: string;
-      image: StrapiItem;
-    }[];
+    temoignages: Temoignage[];
+    actions: TexteCollectivite[];
   };
 };
 

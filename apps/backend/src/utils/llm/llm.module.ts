@@ -1,12 +1,27 @@
 import { Module } from '@nestjs/common';
-import { GeminiRepository } from './gemini.repository';
-import { LlmRepository } from './llm.repository';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { AlbertRepository } from './repositories/albert/albert.repository';
+import { GeminiRepository } from './repositories/gemini/gemini.repository';
+import { LlmRepository } from './repositories/llm.repository';
 import { LlmService } from './llm.service';
+import { LlmObserver, LoggingLlmObserver } from './llm-observer';
 
 @Module({
   providers: [
     LlmService,
-    { provide: LlmRepository, useClass: GeminiRepository },
+    { provide: LlmObserver, useClass: LoggingLlmObserver },
+    GeminiRepository,
+    AlbertRepository,
+    {
+      provide: LlmRepository,
+      inject: [ConfigurationService, GeminiRepository, AlbertRepository],
+      useFactory: (
+        configService: ConfigurationService,
+        gemini: GeminiRepository,
+        albert: AlbertRepository
+      ): LlmRepository =>
+        configService.get('LLM_PROVIDER') === 'albert' ? albert : gemini,
+    },
   ],
   exports: [LlmService],
 })

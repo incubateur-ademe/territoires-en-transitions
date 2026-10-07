@@ -3,6 +3,7 @@ import {
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
+import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
 import IndicateurExpressionService from './indicateur-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -22,6 +23,14 @@ describe('IndicateurExpressionService', () => {
   });
 
   describe('extractNeededSourceIndicateursFromFormula', () => {
+    test('lève InvalidExpressionError sur un caractère non reconnu', () => {
+      expect(() =>
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'val(cae_1.e) % 2'
+        )
+      ).toThrow(InvalidExpressionError);
+    });
+
     test('Test simple formula', async () => {
       const formula = 'val(Cae_1.e ) + val( cae_1.F)';
       const neededSourceIndicateurs =
@@ -116,6 +125,87 @@ describe('IndicateurExpressionService', () => {
       ]);
     });
 
+    test('Simple formula with est_suivi', async () => {
+      const formula = 'si est_suivi(te_11) alors 1 sinon 0';
+      const neededSourceIndicateurs =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        { identifiant: 'te_11', optional: true, tokens: ['est_suivi'] },
+      ]);
+    });
+
+    test('progression_snbc(id) équivaut à progression_snbc(id, 2015)', () => {
+      const attendu = [
+        {
+          identifiant: 'cae_1.a',
+          optional: false,
+          tokens: ['progression_snbc'],
+          progressions: [{ token: 'progression_snbc', anneeDepart: 2015 }],
+        },
+      ];
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'progression_snbc(cae_1.a)'
+        )
+      ).toEqual(attendu);
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'progression_snbc(cae_1.a, 2015)'
+        )
+      ).toEqual(attendu);
+    });
+
+    test('progression_snbc avec année de départ', () => {
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'min(1, progression_snbc(cae_1.a, 2019))'
+        )
+      ).toEqual([
+        {
+          identifiant: 'cae_1.a',
+          optional: false,
+          tokens: ['progression_snbc'],
+          progressions: [{ token: 'progression_snbc', anneeDepart: 2019 }],
+        },
+      ]);
+    });
+
+    test('reduction à 4 paramètres', () => {
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'reduction(cae_1.a, 2015, 2030, 0.4)'
+        )
+      ).toEqual([
+        {
+          identifiant: 'cae_1.a',
+          optional: false,
+          tokens: ['reduction'],
+          progressions: [
+            {
+              token: 'reduction',
+              anneeDepart: 2015,
+              anneeCible: 2030,
+              reductionCible: 0.4,
+            },
+          ],
+        },
+      ]);
+    });
+
+    test('dédoublonne les progressions identiques et fusionne les autres', () => {
+      const [ref] =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'progression_snbc(cae_1.a) + progression_snbc(cae_1.a, 2015) + progression_snbc(cae_1.a, 2019) + val(cae_1.a)'
+        );
+      expect(ref.tokens).toEqual(['progression_snbc', 'val']);
+      expect(ref.progressions).toEqual([
+        { token: 'progression_snbc', anneeDepart: 2015 },
+        { token: 'progression_snbc', anneeDepart: 2019 },
+      ]);
+    });
+
     test('Simple formula with dash into identifier', async () => {
       const formula = 'opt_val(cae_49.b-hab) + val(cae_49.c-hab)';
       const neededSourceIndicateurs =
@@ -137,6 +227,33 @@ describe('IndicateurExpressionService', () => {
     });
   });
 
+  describe('extractPersonnalisationReferencesFromFormula', () => {
+    test('extrait les appels identite et reponse avec leurs valeurs telles qu’écrites', () => {
+      const references =
+        indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
+          'si identite(population, plus_de_3000) et reponse(dechets_1, oui) alors val(cae_1.a) * reponse(part_1) sinon max(0, cible(cae_1.b))'
+        );
+      expect(references).toEqual({
+        questions: [
+          { questionId: 'dechets_1', valeur: 'oui' },
+          { questionId: 'part_1' },
+        ],
+        identiteFields: [{ champ: 'population', valeur: 'plus_de_3000' }],
+        scores: [],
+        demarches: [],
+      });
+    });
+
+    test('ne renvoie rien pour une formule sans identite ni reponse', () => {
+      const references =
+        indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
+          'val(cae_1.a) + opt_val(cae_1.b)'
+        );
+      expect(references.questions).toEqual([]);
+      expect(references.identiteFields).toEqual([]);
+    });
+  });
+
   describe('parseExpression', () => {
     test('val(cae_1.e) + val(cae_1.f)', async () => {
       expect(
@@ -152,7 +269,12 @@ describe('IndicateurExpressionService', () => {
       } catch (e) {
         expect(e).toBeDefined();
         expect((e as Error).message).toEqual(
-          "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '' <-- (1:13)"
+          [
+            '(ligne 1, colonne 14) :',
+            '  si val(cae_1)',
+            '               ^',
+            "Attendu « alors », trouvé la fin de l'expression.",
+          ].join('\n')
         );
       }
     });
@@ -594,6 +716,186 @@ describe('IndicateurExpressionService', () => {
     });
   });
 
+  describe('est_suivi(...)', () => {
+    const formule = 'si est_suivi(te_11) alors 1 sinon 0';
+
+    it("retourne 1 quand l'indicateur est suivi", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          {},
+          { indicateursSuivis: { te_11: true } }
+        )
+      ).toBe(1);
+    });
+
+    it("retourne 0 quand l'indicateur n'est pas suivi", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          {},
+          { indicateursSuivis: { te_11: false } }
+        )
+      ).toBe(0);
+    });
+
+    it("retourne 0 quand l'indicateur est absent du contexte (indicateur inconnu/non applicable)", () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          {},
+          { indicateursSuivis: {} }
+        )
+      ).toBe(0);
+    });
+
+    it('peut être combiné avec val() dans la même formule', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'si est_suivi(te_11) alors val(te_11) sinon 0',
+          { te_11: 42 },
+          { indicateursSuivis: { te_11: true } }
+        )
+      ).toBe(42);
+    });
+
+    it('retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(formule, {
+          dummy: 1,
+        })
+      ).toBe(0);
+    });
+  });
+
+  describe('progression_snbc(...) et reduction(...)', () => {
+    const evaluate = (
+      formule: string,
+      valeur: number | null,
+      context?: Parameters<
+        IndicateurExpressionService['parseAndEvaluateExpression']
+      >[2]
+    ) =>
+      indicateurExpressionService.parseAndEvaluateExpression(
+        formule,
+        { cae_1: valeur } as Record<string, number>,
+        context
+      );
+
+    const snbc = {
+      anneesUtilisees: { cae_1: 2025 },
+      valeursProgression: {
+        cae_1: {
+          2015: { objectifSnbc: 100 },
+          2025: { objectifSnbc: 80 },
+        },
+      },
+    };
+
+    it('progression_snbc nominal', () => {
+      expect(evaluate('progression_snbc(cae_1)', 90, snbc)).toBe(0.5);
+    });
+
+    it('progression_snbc(id) équivaut à progression_snbc(id, 2015)', () => {
+      expect(evaluate('progression_snbc(cae_1, 2015)', 90, snbc)).toBe(0.5);
+    });
+
+    it('progression_snbc avec une autre année de départ', () => {
+      expect(
+        evaluate('progression_snbc(cae_1, 2019)', 90, {
+          ...snbc,
+          valeursProgression: {
+            cae_1: { 2019: { objectifSnbc: 200 }, 2025: { objectifSnbc: 100 } },
+          },
+        })
+      ).toBe(1.1);
+    });
+
+    it('progression_snbc renvoie null sans année utilisée (calcul programme)', () => {
+      expect(
+        evaluate('progression_snbc(cae_1)', 90, {
+          valeursProgression: snbc.valeursProgression,
+        })
+      ).toBeNull();
+    });
+
+    it('progression_snbc renvoie null si valeur ou objectif manque', () => {
+      expect(evaluate('progression_snbc(cae_1)', null, snbc)).toBeNull();
+      expect(
+        evaluate('progression_snbc(cae_1)', 90, {
+          ...snbc,
+          valeursProgression: { cae_1: { 2015: { objectifSnbc: 100 } } },
+        })
+      ).toBeNull();
+    });
+
+    it('progression_snbc renvoie null si valeurDepart = valeurAttendue, même sous min(1, ...)', () => {
+      const context = {
+        ...snbc,
+        valeursProgression: {
+          cae_1: { 2015: { objectifSnbc: 80 }, 2025: { objectifSnbc: 80 } },
+        },
+      };
+      expect(evaluate('progression_snbc(cae_1)', 90, context)).toBeNull();
+      expect(
+        evaluate('min(1, progression_snbc(cae_1))', 90, context)
+      ).toBeNull();
+    });
+
+    describe('reduction', () => {
+      const formule = 'reduction(cae_1, 2015, 2030, 0.4)';
+      const context = {
+        anneesUtilisees: { cae_1: 2025 },
+        valeursProgression: { cae_1: { 2015: { resultatDepart: 100 } } },
+      };
+
+      it('nominal', () => {
+        expect(evaluate(formule, 90, context)).toBeCloseTo(0.375);
+      });
+
+      it('est bornée à la cible après anneeCible', () => {
+        expect(
+          evaluate(formule, 80, {
+            ...context,
+            anneesUtilisees: { cae_1: 2040 },
+          })
+        ).toBe(0.5);
+      });
+
+      it('renvoie null à anneeDepart ou avant', () => {
+        expect(
+          evaluate(formule, 90, {
+            ...context,
+            anneesUtilisees: { cae_1: 2015 },
+          })
+        ).toBeNull();
+        expect(
+          evaluate(formule, 90, {
+            ...context,
+            anneesUtilisees: { cae_1: 2010 },
+          })
+        ).toBeNull();
+      });
+
+      it('renvoie null si anneeCible <= anneeDepart', () => {
+        expect(
+          evaluate('reduction(cae_1, 2015, 2015, 0.4)', 90, context)
+        ).toBeNull();
+      });
+
+      it('renvoie null si valeurDepart est introuvable ou sans année utilisée', () => {
+        expect(
+          evaluate(formule, 90, { ...context, valeursProgression: {} })
+        ).toBeNull();
+        expect(
+          evaluate(formule, 90, {
+            valeursProgression: context.valeursProgression,
+          })
+        ).toBeNull();
+      });
+    });
+  });
+
   describe("messages d'erreur pour identite()", () => {
     it('lance une erreur avec les enums type et soustype pour un champ inconnu', () => {
       expect(() =>
@@ -611,7 +913,7 @@ describe('IndicateurExpressionService', () => {
         )
       ).toThrow(
         'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
-          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre, sinoe.'
       );
     });
   });

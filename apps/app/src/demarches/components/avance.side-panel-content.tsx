@@ -1,15 +1,12 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import type {
-  DemarcheType,
   DemarchePcaetTransitionEvaluations,
+  DemarcheType,
 } from '@tet/domain/demarches';
-import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
-import type { DemarchePcaet } from '../types';
 import type { DemarcheSectionKey } from '../steps';
-import { HistoriqueDemarchesSection } from './historique.section';
+import type { DemarchePcaet } from '../types';
 import { AvanceDemarcheSection } from './progress.stepper';
 
 export type DemarcheAvanceSidePanelContentProps = {
@@ -24,16 +21,16 @@ export type DemarcheAvanceSidePanelContentProps = {
   /** État serveur des transitions (absent en preview). */
   transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
-  onReprendre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
-  onUnpublish?: () => void;
+  /** Le dossier a été transmis pour avis hors de la plateforme. */
+  horsPlateforme?: boolean;
   isPreview?: boolean;
 };
 
 /**
  * Contenu du panneau latéral global pour l’avancée d’une démarche
- * (stepper, historique, alertes).
+ * (stepper, alertes).
  */
 export const DemarcheAvanceSidePanelContent = ({
   demarcheType,
@@ -45,10 +42,9 @@ export const DemarcheAvanceSidePanelContent = ({
   avisDeadlineAt,
   transitions,
   onTransmettre,
-  onReprendre,
   isPublished = false,
   onPublish,
-  onUnpublish,
+  horsPlateforme = false,
   isPreview = false,
 }: DemarcheAvanceSidePanelContentProps) => (
   <div className="flex flex-col gap-4 p-4">
@@ -62,27 +58,10 @@ export const DemarcheAvanceSidePanelContent = ({
       avisDeadlineAt={avisDeadlineAt}
       transitions={transitions}
       onTransmettre={onTransmettre}
-      onReprendre={onReprendre}
       isPublished={isPublished}
       onPublish={onPublish}
-      onUnpublish={onUnpublish}
+      horsPlateforme={horsPlateforme}
       isPreview={isPreview}
-    />
-
-    <HistoriqueDemarchesSection currentDemarcheId={demarcheId} />
-
-    <VisibleWhen condition={isPublished}>
-      <Alert
-        state="success"
-        title={appLabels.demarcheDetailPublieeTitre}
-        description={appLabels.demarcheDetailPublieeDescription}
-      />
-    </VisibleWhen>
-
-    <Alert
-      state="info"
-      title={appLabels.demarcheDetailVersionProvisoireTitre}
-      description={appLabels.demarcheDetailVersionProvisoireDescription}
     />
   </div>
 );

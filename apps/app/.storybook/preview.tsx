@@ -1,3 +1,7 @@
+// Doit précéder tout import de `@tet/api` : pose la config runtime que
+// Storybook n'a aucun serveur Next pour injecter.
+import './public-env.mock';
+
 import { Preview } from '@storybook/nextjs-vite';
 
 // charge les styles globaux
@@ -5,6 +9,7 @@ import '../app/global.css';
 // surcharge les styles pour la zone de prévisualisation
 import './preview.css';
 
+import { ToastProvider } from '@/app/utils/toast/toast-context';
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProvider, useUserContext } from '@tet/api/users';
@@ -29,6 +34,7 @@ const user: UserWithRolesAndPermissions = {
     {
       collectiviteId: 1,
       collectiviteNom: 'Amberieu-en-Bugey',
+      collectiviteType: 'commune',
       collectiviteAccesRestreint: false,
       collectivitePreferences: defaultCollectivitePreferences,
       role: CollectiviteRole.EDITION,
@@ -57,13 +63,15 @@ const WithMockedUser = ({ children }: { children: ReactNode }) => {
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <SupabaseProvider cookieOptions={null}>
+      <SupabaseProvider cookieOptions={{}}>
         <UserProvider>
           <WithMockedUser>
             <TrpcWithReactQueryProvider>
-              <CollectiviteProvider user={user}>
-                <Story />
-              </CollectiviteProvider>
+              <ToastProvider>
+                <CollectiviteProvider user={user}>
+                  <Story />
+                </CollectiviteProvider>
+              </ToastProvider>
             </TrpcWithReactQueryProvider>
           </WithMockedUser>
         </UserProvider>

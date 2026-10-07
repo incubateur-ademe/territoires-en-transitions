@@ -7,8 +7,8 @@ import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, TableCell, TableRow, Tooltip } from '@tet/ui';
 import { useState } from 'react';
-import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
-import { ConfirmerChangementNiveau } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/ConfirmerChangementNiveau';
+import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(commun)/users/_components/badge-acces';
+import { ConfirmerChangementNiveau } from '../../../../app/(authed)/collectivite/[collectiviteId]/(commun)/users/_components/ConfirmerChangementNiveau';
 import { ConfirmerSuppressionMembre } from '../remove-membre/confirm-remove-membre.modal';
 import LinkMembreToPersonneTagModal from './link-account-to-tag-modal';
 import {
@@ -19,7 +19,7 @@ import {
   TAccesDropdownOption,
 } from './list-membres.table-row.editable-cell';
 
-export type TMembreListTableRowProps = {
+type TMembreListTableRowProps = {
   membre: Membre;
   updateMembre: TUpdateMembre;
   canMutateMembres: boolean;

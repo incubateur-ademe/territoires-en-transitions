@@ -19,8 +19,8 @@ export class DuplicateFicheRouter {
   router = this.trpc.router({
     duplicate: this.trpc.authedProcedure
       .input(duplicateFicheInputSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.service.duplicate(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.service.duplicate(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

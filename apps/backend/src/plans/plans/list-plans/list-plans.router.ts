@@ -18,8 +18,8 @@ export class ListPlansRouter {
   router = this.trpc.router({
     list: this.trpc.authedProcedure
       .input(listPlansInputSchema)
-      .query(async ({ input, ctx }) => {
-        const result = await this.listPlansService.listPlans(input, ctx.user);
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.listPlansService.listPlans(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

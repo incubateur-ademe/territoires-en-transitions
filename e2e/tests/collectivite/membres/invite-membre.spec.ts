@@ -12,6 +12,7 @@ import {
   getOtpFromMailpit,
 } from 'tests/shared/mailpit.utils';
 import { SupabaseClient } from 'tests/shared/supabase-client.utils';
+import { hasActiveOidcProvider } from '../../users/authentications/login-user-with-oidc.helpers';
 import { SignupUserPom } from '../../users/authentications/signup-user.pom';
 import { InviteMembrePom } from './invite-membre.pom';
 
@@ -61,6 +62,10 @@ test.describe('Invitation de membre', () => {
     page,
     context,
   }) => {
+    test.skip(
+      await hasActiveOidcProvider(),
+      'l’invité crée son compte via le fournisseur d’identité, pas par le formulaire'
+    );
     test.setTimeout(60_000);
 
     const inviteEmail = generateTestEmail();
@@ -186,6 +191,10 @@ test.describe('Invitation de membre', () => {
     page,
     context,
   }) => {
+    test.skip(
+      await hasActiveOidcProvider(),
+      'l’invité crée son compte via le fournisseur d’identité, pas par le formulaire'
+    );
     test.setTimeout(60_000);
 
     const inviteEmail = generateTestEmail();
@@ -268,7 +277,7 @@ test.describe('Invitation de membre', () => {
     await clearMailpitMailbox(inviteEmail);
   });
 
-  test('lien d’invitation : utilisateur connecté avec un autre email → redirection vers la connexion', async ({
+  test('lien d’invitation : utilisateur connecté avec un autre email → invitation tout de même consommée', async ({
     collectivites,
     users,
     page,
@@ -303,12 +312,28 @@ test.describe('Invitation de membre', () => {
       );
 
     try {
-      await expect(wrongPage).toHaveURL(/\/login/, { timeout: 15000 });
-      const loginUrl = new URL(wrongPage.url());
-      expect(loginUrl.searchParams.get('email')).toBe(inviteEmail);
-      expect(loginUrl.searchParams.get('redirect_to')).toContain(
-        '/invitation/'
-      );
+      // L'email de la session est asserté par le fournisseur d'identité et n'a
+      // aucune raison d'égaler celui saisi par l'admin : le lien fait seul
+      // preuve, l'utilisateur connecté rejoint donc bien la collectivité.
+      await expect(wrongPage).not.toHaveURL(/error=invitation/, {
+        timeout: 15000,
+      });
+
+      const { db } = databaseService;
+      const [access] = await db
+        .select({ role: utilisateurCollectiviteAccessTable.role })
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          and(
+            eq(utilisateurCollectiviteAccessTable.userId, wrongUser.data.id),
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectivite.data.id
+            )
+          )
+        );
+
+      expect(access?.role).toBe(CollectiviteRole.LECTURE);
     } finally {
       await wrongContext.close();
     }
@@ -356,6 +381,10 @@ test.describe('Invitation de membre', () => {
     page,
     context,
   }) => {
+    test.skip(
+      await hasActiveOidcProvider(),
+      'l’invité crée son compte via le fournisseur d’identité, pas par le formulaire'
+    );
     test.setTimeout(60_000);
 
     const localPart = `case${Date.now()}${Math.random()

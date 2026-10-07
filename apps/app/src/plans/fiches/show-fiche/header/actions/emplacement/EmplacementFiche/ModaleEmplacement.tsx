@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal, Tab, Tabs } from '@tet/ui';
 import { useState } from 'react';
@@ -21,7 +22,7 @@ export const ModaleEmplacement = ({
         setIsOpen: onClose,
       }}
       dataTest="RangerFicheModale"
-      title="Mutualiser l'action dans un autre plan"
+      title={appLabels.ficheEmplacementModalTitle}
       size="xl"
       onClose={() => {
         setActiveTab(0);
@@ -30,10 +31,10 @@ export const ModaleEmplacement = ({
       render={() => (
         <div>
           <Tabs defaultActiveTab={activeTab} onChange={setActiveTab}>
-            <Tab label="Emplacement actuel">
+            <Tab label={appLabels.ficheEmplacementActuel}>
               <EmplacementActuelFiche />
             </Tab>
-            <Tab label="Nouvel emplacement">
+            <Tab label={appLabels.ficheEmplacementAdditionel}>
               <NouvelEmplacementFiche
                 fiche={fiche}
                 onSave={() => setActiveTab(0)}

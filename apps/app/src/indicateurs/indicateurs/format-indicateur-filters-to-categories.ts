@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import { FilterCategory } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 
 export type IndicateurFilterCategoryKey =
   | keyof ListDefinitionsInputFilters
@@ -28,7 +29,7 @@ export const formatIndicateurFiltersToCategories = (
   if (pilotes.length) {
     categories.push({
       key: 'pilotes',
-      title: appLabels.personnePilote,
+      title: appLabels.personnePilote(),
       selectedFilters: pilotes.map(
         (id) => lookupLabels.piloteIds?.(id) ?? id.toString()
       ),
@@ -38,7 +39,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.categorieNoms?.length) {
     categories.push({
       key: 'categorieNoms',
-      title: appLabels.categorie,
+      title: appLabels.indicateurModele,
       selectedFilters: filters.categorieNoms.map(getCategorieLabel),
     });
   }
@@ -56,7 +57,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.participationScore) {
     categories.push({
       key: 'participationScore',
-      title: appLabels.participeAuScoreCae,
+      title: appLabels.indicateurParticipeAuScore,
       selectedFilters: [],
       onlyShowCategory: true,
     });
@@ -65,7 +66,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.estPerso) {
     categories.push({
       key: 'estPerso',
-      title: appLabels.indicateurPersonnaliseSingulier,
+      title: appLabels.indicateursPersonnalises,
       selectedFilters: [],
       onlyShowCategory: true,
     });
@@ -74,7 +75,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.estConfidentiel) {
     categories.push({
       key: 'estConfidentiel',
-      title: appLabels.indicateurPriveSingulier,
+      title: appLabels.indicateursPrives,
       selectedFilters: [],
       onlyShowCategory: true,
     });
@@ -109,7 +110,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.identifiantsReferentiel?.length) {
     categories.push({
       key: 'identifiantsReferentiel',
-      title: appLabels.referentiel,
+      title: capitalize(appLabels.referentiel()),
       selectedFilters: filters.identifiantsReferentiel,
     });
   }
@@ -125,7 +126,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.thematiqueIds?.length) {
     categories.push({
       key: 'thematiqueIds',
-      title: appLabels.thematique,
+      title: appLabels.thematique(),
       selectedFilters: filters.thematiqueIds.map(
         (id) => lookupLabels.thematiqueIds?.(id) ?? id.toString()
       ),
@@ -145,7 +146,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.serviceIds?.length) {
     categories.push({
       key: 'serviceIds',
-      title: appLabels.directionOuServicePilote,
+      title: appLabels.directionOuServicePilote(),
       selectedFilters: filters.serviceIds.map(
         (id) => lookupLabels.serviceIds?.(id) ?? id.toString()
       ),

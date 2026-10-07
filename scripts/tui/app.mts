@@ -30,6 +30,10 @@ interface AppProps {
   // Un thunk, pas les données : relu à chaque appel pour refléter une
   // sauvegarde (x) survenue depuis le dernier rendu.
   readProfiles: () => StackProfiles;
+  // Ajoute une app créée depuis la liste à la sélection mémorisée, sans quoi
+  // le prochain make up l'arrêterait comme composant décoché. Injectée pour la
+  // même raison que readProfiles.
+  rememberApp: (app: string) => void;
   // Demande d'interlude : l'entrée démonte le TUI, exécute, puis remonte une
   // nouvelle instance avec initialSelected pour retrouver la sélection.
   onInterlude: (interlude: Interlude, selected: number) => void;
@@ -40,6 +44,7 @@ export const App = ({
   stack,
   resolver,
   readProfiles,
+  rememberApp,
   onInterlude,
   initialSelected = 0,
 }: AppProps) => {
@@ -75,6 +80,9 @@ export const App = ({
     setPending((prev) => new Map(prev).set(service, action));
     stack
       .run(action, service)
+      .then(() => {
+        if (action === 'create') rememberApp(service);
+      })
       .catch((err: unknown) =>
         setActionError(
           `${action} ${service} : ${

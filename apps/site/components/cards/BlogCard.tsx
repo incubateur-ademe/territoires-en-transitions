@@ -1,4 +1,4 @@
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import Link from 'next/link';
 import BlogCardContent from './BlogCardContent';
 
@@ -6,7 +6,7 @@ export type BlogCardProps = {
   title: string;
   date?: Date;
   description?: string;
-  image?: StrapiItem | undefined;
+  image?: StrapiMedia | null;
   badge?: string;
   categories?: string[];
   href?: string;

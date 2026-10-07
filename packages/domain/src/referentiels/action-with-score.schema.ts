@@ -7,6 +7,7 @@ import {
   ActionId,
   actionIdSchema,
 } from './actions/action-definition.schema';
+import { referentielLabelEnumSchema } from './referentiel-label.enum';
 import {
   actionScoreFinalSchema,
   ScoreFinalFields,
@@ -28,16 +29,25 @@ export const actionPilotesSchema = z.object({
 
 export type ActionPilotes = z.infer<typeof actionPilotesSchema>;
 
+export const actionLabelsSchema = z.object({
+  labels: z.array(referentielLabelEnumSchema),
+});
+
+export type ActionLabels = z.infer<typeof actionLabelsSchema>;
+
 export const actionWithScoreSchema = z.object({
   ...actionDefinitionSchema.shape,
   ...actionPilotesSchema.shape,
+  ...actionLabelsSchema.shape,
   ...actionGenealogySchema.shape,
 
   score: actionScoreFinalSchema,
   childrenIdsWithExprScore: z.array(actionIdSchema),
 });
 
-export type ActionWithDefinitionAndPilotes = ActionDefinition & ActionPilotes;
+export type ActionWithDefinitionAndPilotes = ActionDefinition &
+  ActionPilotes &
+  ActionLabels;
 
 export type Action = ActionWithDefinitionAndPilotes &
   ActionGenealogy &

@@ -1,4 +1,4 @@
-import { getFormattedNumber, roundTo, sumRoundedTo } from './number.utils';
+import { getFormattedNumber, sumRoundedTo } from './number.utils';
 
 describe('number helper', () => {
   describe('getFormattedNumber', () => {
@@ -27,33 +27,31 @@ describe('number helper', () => {
     });
   });
 
-  describe('roundTo', () => {
-    it('roundTo for 1.5625', async () => {
-      expect(roundTo(1.5625, 3)).toBe(1.563);
-    });
-
-    it('roundTo for 0.3375', async () => {
-      expect(roundTo(0.3375, 3)).toBe(0.338);
-    });
-
-    it('roundTo for 0', async () => {
-      expect(roundTo(0, 3)).toBe(0);
-    });
-
-    it('roundTo for 2.0', async () => {
-      expect(roundTo(2.0, 3)).toBe(2);
-    });
-
-    it('roundTo for 2.35', async () => {
-      expect(roundTo(2.35, 1)).toBe(2.4);
-    });
-
-    it('roundTo for 2.55', async () => {
-      expect(roundTo(2.55, 1)).toBe(2.6);
-    });
-  });
-
   describe('sumRoundedTo', () => {
+    it('arrondit 1,5625 à 1,563', () => {
+      expect(sumRoundedTo([1.5625], 3)).toBe(1.563);
+    });
+
+    it('arrondit 0,3375 à 0,338', () => {
+      expect(sumRoundedTo([0.3375], 3)).toBe(0.338);
+    });
+
+    it('laisse 0 à 0', () => {
+      expect(sumRoundedTo([0], 3)).toBe(0);
+    });
+
+    it('laisse 2 à 2', () => {
+      expect(sumRoundedTo([2.0], 3)).toBe(2);
+    });
+
+    it('arrondit 2,35 au supérieur à 2,4', () => {
+      expect(sumRoundedTo([2.35], 1)).toBe(2.4);
+    });
+
+    it('arrondit 2,55 au supérieur à 2,6', () => {
+      expect(sumRoundedTo([2.55], 1)).toBe(2.6);
+    });
+
     it('renvoie 0 sans valeur', () => {
       expect(sumRoundedTo([])).toBe(0);
     });

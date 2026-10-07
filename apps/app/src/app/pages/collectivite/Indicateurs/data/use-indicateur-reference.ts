@@ -6,7 +6,7 @@ type IndicateurReferenceInput =
 export type IndicateurReferenceOutput =
   RouterOutput['indicateurs']['valeurs']['reference'][number];
 
-export const useIndicateursListReferences = (
+const useIndicateursListReferences = (
   input: IndicateurReferenceInput,
   options?: { enabled?: boolean }
 ) => {

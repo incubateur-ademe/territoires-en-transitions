@@ -1,25 +1,30 @@
 import {
-  DemarchePcaetTopicKindEnum,
+  DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   evaluateTransitions,
+  PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+  type DemarcheDocumentEtape,
   type DemarcheDocumentsSnapshot,
-  type DemarchePcaetTopic,
+  type PcaetDiagnostic,
+  type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
 import { describe, expect, it } from 'vitest';
 import {
   getDemarchePcaetCompletion,
-  getDiagnosticTopicStatut,
+  getDiagnosticIndicateurTopicStatut,
+  getDiagnosticVulnerabiliteTopicStatut,
 } from './completion';
 import type { DemarchePcaet } from './types';
 
 /**
  * Modèle documentaire minimal : une section requise, substituable par le
  * document global. La règle de couverture elle-même est testée dans
- * `@tet/domain` (pcaet-documents.rules.spec) — ici on vérifie seulement que
+ * `@tet/domain` (demarche-documents.rules.spec) — ici on vérifie seulement que
  * l'avancement du dossier s'y branche.
  */
 const documentsSnapshot = (
   overrides: Partial<DemarcheDocumentsSnapshot> = {}
 ): DemarcheDocumentsSnapshot => ({
+  config: DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   definitions: [
     {
       id: 'document_global',
@@ -27,10 +32,9 @@ const documentsSnapshot = (
       description: '',
       requis: false,
       ordre: 0,
-      portee: 'global',
       etape: 'amont',
-      couverturePlateforme: null,
       substituts: [],
+      substitutsDeclarables: [],
     },
     {
       id: 'diagnostic',
@@ -38,13 +42,13 @@ const documentsSnapshot = (
       description: '',
       requis: true,
       ordre: 1,
-      portee: 'section',
       etape: 'amont',
-      couverturePlateforme: null,
       substituts: ['document_global'],
+      substitutsDeclarables: [],
     },
   ],
   documents: [],
+  documentsAdditional: [],
   ...overrides,
 });
 
@@ -55,10 +59,9 @@ const deliberationDefinition = {
   description: '',
   requis: true,
   ordre: 10,
-  portee: 'section',
   etape: 'aval',
-  couverturePlateforme: null,
   substituts: [],
+  substitutsDeclarables: [],
 } satisfies DemarcheDocumentsSnapshot['definitions'][number];
 
 const snapshotAvecDeliberation = (
@@ -69,9 +72,13 @@ const snapshotAvecDeliberation = (
     documents,
   });
 
-const documentDepose = (documentId: string) => ({
+const documentDepose = (
+  documentId: string,
+  etape: DemarcheDocumentEtape = 'amont'
+) => ({
   id: 1,
   documentId,
+  etape,
   commentaire: '',
   modifiedAt: '2026-08-05T00:00:00.000Z',
   modifiedBy: null,
@@ -84,93 +91,108 @@ const documentDepose = (documentId: string) => ({
   },
 });
 
-/** Dossier documentaire complet par le seul document global. */
-const completeSnapshot = documentsSnapshot({
-  documents: [documentDepose('document_global')],
+/** Une inclusion déclarée : ligne sans fichier, comme le dépôt la crée. */
+const inclusionDeclaree = (documentId: string) => ({
+  ...documentDepose(documentId),
+  fichier: null,
 });
 
 /**
- * Topics tels que servis par l'API : le référentiel et les valeurs, que la
- * règle du domaine tranche — vulnérabilité comprise.
+ * Dossier documentaire complet : le document global déposé, et l'inclusion du
+ * diagnostic dedans — cochée au dépôt, donc lue en base et non déduite.
  */
-const topicIndicateurs = (isComplete: boolean): DemarchePcaetTopic => ({
-  code: 'profil_energie_climat',
-  label: 'Profil énergie climat',
+const completeSnapshot = documentsSnapshot({
+  documents: [
+    documentDepose('document_global'),
+    inclusionDeclaree('diagnostic'),
+  ],
+});
+
+/**
+ * Topics indicateurs tels que servis par l'API : config parent + valeurs.
+ */
+const parentConfig = (
+  overrides: Partial<PcaetDiagnosticIndicateurParentConfig> = {}
+): PcaetDiagnosticIndicateurParentConfig => ({
+  code: 'emissions_ges',
+  label: 'Émissions GES',
   icon: 'fire-line',
-  kind: DemarchePcaetTopicKindEnum.INDICATEURS,
-  groupLabel: 'Secteur',
-  rowLabel: null,
-  unit: 'kteq CO2',
-  referentielId: 'cae_1.a',
-  horizons: [2030],
-  referenceYear: 2021,
-  extraYears: [],
-  years: [2021, 2030],
-  rows: [
+  indicateurDefinitionId: 'cae_1.a',
+  referenceYearApplyLevel: 'parent',
+  children: [
     {
       label: 'Résidentiel',
-      referentielId: 'cae_1.c',
-      indicateurId: 1,
-      requis: true,
-      rows: [],
+      indicateurDefinitionId: 'cae_1.c',
+      optionalYears: [2050],
     },
   ],
-  valeurs: isComplete
-    ? [
-        {
-          indicateurId: 1,
-          year: 2021,
-          resultat: 12,
-          objectif: null,
-          references: [],
-        },
-        {
-          indicateurId: 1,
-          year: 2030,
-          resultat: null,
-          objectif: 8,
-          references: [],
-        },
-      ]
-    : [],
-  vulnerabilite: null,
+  ...overrides,
 });
 
-const topicVulnerabilite = (isComplete: boolean): DemarchePcaetTopic => ({
-  ...topicIndicateurs(true),
-  code: 'vulnerabilite_territoire',
-  kind: DemarchePcaetTopicKindEnum.VULNERABILITE,
-  groupLabel: null,
-  unit: null,
-  referentielId: null,
-  referenceYear: null,
-  years: [],
-  rows: [],
-  valeurs: [],
-  vulnerabilite: {
-    domaines: [
-      { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
-    ],
-    lignes: [
-      {
-        domaineId: 1,
-        niveauMaintenant: isComplete ? 'non_concerne' : null,
-        niveau2050: isComplete ? 'non_concerne' : null,
-        niveau2100: isComplete ? 'non_concerne' : null,
-        objectifs2050: null,
-        objectifs2100: null,
-      },
-    ],
-  },
-});
+const valeur = ({
+  identifiant,
+  year,
+  resultat = null,
+  objectif = null,
+}: {
+  identifiant: string;
+  year: number;
+  resultat?: number | null;
+  objectif?: number | null;
+}) =>
+  ({
+    indicateurValeur: {
+      indicateurId: 1,
+      dateValeur: `${year}-01-01`,
+      resultat,
+      objectif,
+    },
+    indicateurDefinition: { identifiantReferentiel: identifiant },
+  } as PcaetDiagnostic['indicateurValeurs'][number]);
 
-const completeTopics: DemarchePcaetTopic[] = [
-  topicIndicateurs(true),
-  topicIndicateurs(true),
-  topicIndicateurs(true),
-  topicIndicateurs(true),
-  topicVulnerabilite(true),
+const valeursCompletes = (): PcaetDiagnostic['indicateurValeurs'] => [
+  valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
+  ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map((year) =>
+    valeur({ identifiant: 'cae_1.c', year, objectif: 8 })
+  ),
 ];
+
+const topicVulnerabilite = (): PcaetDiagnostic['vulnerabilite'] => ({
+  code: 'vulnerabilite_territoire',
+  label: 'Vulnérabilité du territoire',
+  icon: 'map-2-line',
+  horizons: [2050, 2100],
+  thematiques: [
+    {
+      id: 1,
+      code: 'eau',
+      label: 'Eau',
+      parentId: null,
+      requis: true,
+      isSocle: true,
+    },
+  ],
+  lignes: [
+    {
+      thematiqueId: 1,
+      niveauMaintenant: null,
+      niveau2050: null,
+      niveau2100: null,
+      objectifs2050: null,
+      objectifs2100: null,
+    },
+  ],
+});
+
+const completeDiagnostic = (
+  overrides: Partial<PcaetDiagnostic> = {}
+): PcaetDiagnostic => ({
+  indicateurParentConfigs: [parentConfig()],
+  indicateurDefinitions: [],
+  indicateurValeurs: valeursCompletes(),
+  vulnerabilite: topicVulnerabilite(),
+  ...overrides,
+});
 
 const completeDemarche: DemarchePcaet = {
   id: 1,
@@ -179,18 +201,22 @@ const completeDemarche: DemarchePcaet = {
   titre: 'PCAET',
   description: 'Présentation du PCAET',
   statut: 'en_elaboration',
+  transmisHorsPlateforme: false,
+  isScotAec: false,
   obligation: 'obligatoire',
   dateCreation: '2026-01-01T00:00:00.000Z',
   dateModification: '2026-01-01T00:00:00.000Z',
   dateLancement: null,
   datePublication: null,
+  dateAdoption: null,
   dateTransmission: null,
   dateEcheanceAvis: null,
   transitions: evaluateTransitions('en_elaboration'),
   amontModifiable: true,
   avalModifiable: false,
   pilotes: [],
-  planActionId: 42,
+  planActionIds: [42],
+  unverifiedPlanActionIds: [],
 };
 
 describe('getDemarchePcaetCompletion', () => {
@@ -198,7 +224,7 @@ describe('getDemarchePcaetCompletion', () => {
     expect(
       getDemarchePcaetCompletion(
         completeDemarche,
-        completeTopics,
+        completeDiagnostic(),
         completeSnapshot
       )
     ).toEqual({
@@ -211,54 +237,84 @@ describe('getDemarchePcaetCompletion', () => {
     });
   });
 
-  it("passe le diagnostic en incomplete des qu'un topic est incomplete", () => {
+  it("passe le diagnostic en incomplete dès qu'un horizon d'objectif requis manque", () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      [
-        ...completeTopics.slice(0, 3),
-        topicIndicateurs(false),
-        topicVulnerabilite(true),
-      ],
+      completeDiagnostic({
+        indicateurValeurs: [
+          valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
+          valeur({ identifiant: 'cae_1.c', year: 2030, objectif: 8 }),
+          // 2036 requis ; 2050 est hors exigence via optionalYears
+        ],
+      }),
       completeSnapshot
     );
 
     expect(completion.diagnostic).toBe('incomplete');
+  });
+
+  it('laisse le diagnostic complete sans 2050 quand optionalYears l’exclut', () => {
+    const completion = getDemarchePcaetCompletion(
+      completeDemarche,
+      completeDiagnostic({
+        indicateurValeurs: [
+          valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
+          valeur({ identifiant: 'cae_1.c', year: 2030, objectif: 8 }),
+          valeur({ identifiant: 'cae_1.c', year: 2036, objectif: 6 }),
+        ],
+      }),
+      completeSnapshot
+    );
+
+    expect(completion.diagnostic).toBe('complete');
   });
 
   it("laisse le diagnostic incomplete tant que les topics ne sont pas chargés : on ne déclare pas complet ce qu'on n'a pas lu", () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      [],
+      null,
       completeSnapshot
     );
 
     expect(completion.diagnostic).toBe('incomplete');
   });
 
-  it('garde le diagnostic incomplet tant que la vulnérabilité du territoire l’est', () => {
+  it('laisse le diagnostic complet même si la vulnérabilité du territoire est vide : rien n’y est exigé', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      [topicIndicateurs(true), topicVulnerabilite(false)],
+      completeDiagnostic({
+        vulnerabilite: topicVulnerabilite(),
+      }),
       completeSnapshot
     );
 
-    expect(completion.diagnostic).toBe('incomplete');
+    expect(completion.diagnostic).toBe('complete');
   });
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
     const completion = getDemarchePcaetCompletion(
-      { ...completeDemarche, planActionId: null },
-      completeTopics,
+      { ...completeDemarche, planActionIds: [] },
+      completeDiagnostic(),
       completeSnapshot
     );
 
     expect(completion.plan).toBe('incomplete');
   });
 
-  it('marque les documents complete dès que le document global est déposé', () => {
+  it('laisse le plan en incomplete tant qu’un plan importé rattaché n’est pas vérifié', () => {
+    const completion = getDemarchePcaetCompletion(
+      { ...completeDemarche, planActionIds: [42, 43], unverifiedPlanActionIds: [43] },
+      completeDiagnostic(),
+      completeSnapshot
+    );
+
+    expect(completion.plan).toBe('incomplete');
+  });
+
+  it('marque les documents complete quand les inclusions du global sont cochées', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      completeTopics,
+      completeDiagnostic(),
       completeSnapshot
     );
 
@@ -268,7 +324,7 @@ describe('getDemarchePcaetCompletion', () => {
   it("passe les documents en incomplete quand une pièce requise n'est pas couverte", () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      completeTopics,
+      completeDiagnostic(),
       documentsSnapshot()
     );
 
@@ -278,7 +334,7 @@ describe('getDemarchePcaetCompletion', () => {
   it('considère les documents incomplete tant que le dossier n’est pas chargé', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      completeTopics
+      completeDiagnostic()
     );
 
     expect(completion.documents).toBe('incomplete');
@@ -289,7 +345,7 @@ describe('getDemarchePcaetCompletion', () => {
   it('suit la pièce aval requise indépendamment du dossier d’élaboration', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      completeTopics,
+      completeDiagnostic(),
       snapshotAvecDeliberation([documentDepose('document_global')])
     );
 
@@ -299,10 +355,10 @@ describe('getDemarchePcaetCompletion', () => {
   it('suit la couverture de la pièce aval requise', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      completeTopics,
+      completeDiagnostic(),
       snapshotAvecDeliberation([
         documentDepose('document_global'),
-        documentDepose('deliberation_adoption'),
+        documentDepose('deliberation_adoption', 'aval'),
       ])
     );
 
@@ -312,7 +368,7 @@ describe('getDemarchePcaetCompletion', () => {
   it('masque la sous-étape documents quand le modèle ne demande rien pour l’étape', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
-      completeTopics,
+      completeDiagnostic(),
       documentsSnapshot({ definitions: [deliberationDefinition] })
     );
 
@@ -322,18 +378,41 @@ describe('getDemarchePcaetCompletion', () => {
   });
 });
 
-describe('getDiagnosticTopicStatut', () => {
-  it('tranche le topic vulnérabilité par la règle du domaine', () => {
-    expect(getDiagnosticTopicStatut(topicVulnerabilite(true))).toBe('complete');
-    expect(getDiagnosticTopicStatut(topicVulnerabilite(false))).toBe(
+describe('getDiagnosticIndicateurTopicStatut', () => {
+  it('annonce optionnel un topic marqué optional', () => {
+    expect(
+      getDiagnosticIndicateurTopicStatut(
+        parentConfig({ optional: true }),
+        [],
+        []
+      )
+    ).toBe('optional');
+  });
+
+  it('reprend la saisie pour un topic à indicateurs', () => {
+    expect(
+      getDiagnosticIndicateurTopicStatut(parentConfig(), valeursCompletes(), [])
+    ).toBe('complete');
+    expect(getDiagnosticIndicateurTopicStatut(parentConfig(), [], [])).toBe(
       'incomplete'
     );
   });
 
-  it('reprend la complétude serveur pour un topic à indicateurs', () => {
-    expect(getDiagnosticTopicStatut(topicIndicateurs(true))).toBe('complete');
-    expect(getDiagnosticTopicStatut(topicIndicateurs(false))).toBe(
-      'incomplete'
-    );
+  it('annonce complet un topic dont la ligne manquante est non applicable', () => {
+    expect(
+      getDiagnosticIndicateurTopicStatut(parentConfig(), [], [
+        {
+          id: 1,
+          identifiantReferentiel: 'cae_1.c',
+          isApplicable: false,
+        },
+      ] as PcaetDiagnostic['indicateurDefinitions'])
+    ).toBe('complete');
+  });
+});
+
+describe('getDiagnosticVulnerabiliteTopicStatut', () => {
+  it('annonce toujours optionnel le topic vulnérabilité', () => {
+    expect(getDiagnosticVulnerabiliteTopicStatut()).toBe('optional');
   });
 });

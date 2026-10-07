@@ -9,10 +9,10 @@ import { hasIndicateursScore } from '../../../app/(authed)/collectivite/[collect
 import { OpenActionStatutDetailleModalButton } from '../actions/action-statut/open-action-statut-detaille-modal.button';
 import { ActionListItem } from '../actions/use-list-actions';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  cell: CellContext<ActionListItem, unknown>;
+  cell: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 export const ReferentielTableStatutDetailleCell = ({ cell }: Props) => {

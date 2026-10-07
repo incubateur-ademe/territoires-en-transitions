@@ -1,9 +1,10 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { AuditLabellisationTabs } from '@/app/referentiels/audit-labellisation/audit-labellisation-tabs';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { isNewReferentiel as isNewReferentielUtil } from '@tet/domain/referentiels';
+import { isNewReferentiel } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
 import {
   Tabs,
@@ -24,21 +25,39 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
   );
 
   const referentielId = useReferentielId();
-  const isNewReferentiel = isNewReferentielUtil(referentielId);
-
   return (
     <Tabs className="grow flex flex-col" size="sm">
       <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
-        <TabsTab href="progression" label="Mesures" />
-        {!isNewReferentiel && <TabsTab href="synthese" label="Synthèse" />}
-        <TabsTab href="evolutions" label="Évolutions du score" />
+        <TabsTab
+          href="progression"
+          label={appLabels.referentielOngletMesures}
+        />
+        {!isNewReferentiel(referentielId) && (
+          <TabsTab
+            href="synthese"
+            label={appLabels.referentielOngletSynthese}
+          />
+        )}
+        <TabsTab
+          href="evolutions"
+          label={appLabels.referentielOngletEvolutions}
+        />
         {canReadComments && (
-          <TabsTab href="commentaires" label="Commentaires" />
+          <TabsTab
+            href="commentaires"
+            label={appLabels.referentielOngletCommentaires}
+          />
         )}
-        {canReadDocuments && !isNewReferentiel && (
-          <TabsTab href="documents" label="Documents" />
+        {canReadDocuments && (
+          <TabsTab
+            href="documents"
+            label={appLabels.referentielOngletDocuments}
+          />
         )}
-        <TabsTab href="historique" label="Journal d'activité" />
+        <TabsTab
+          href="historique"
+          label={appLabels.referentielOngletHistorique}
+        />
         <AuditLabellisationTabs />
       </TabsList>
       <Spacer height={1} />

@@ -86,6 +86,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     referentiels,
     auditLabellisationPom,
   }) => {
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -114,6 +119,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     referentiels,
     auditLabellisationPom,
   }) => {
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -146,6 +156,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     referentiels,
     auditLabellisationPom,
   }) => {
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -180,6 +195,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     referentiels,
     auditLabellisationPom,
   }) => {
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -265,6 +285,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     auditLabellisationPom,
     labellisationPom,
   }) => {
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -295,6 +320,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     auditLabellisationPom,
     labellisationPom,
   }) => {
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,

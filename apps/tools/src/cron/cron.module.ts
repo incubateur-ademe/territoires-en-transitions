@@ -7,12 +7,15 @@ import {
   DEFAULT_JOB_OPTIONS,
 } from './cron.config';
 import { ToolsIndicateursModule } from '../indicateurs/tools-indicateurs.module';
+import { PosthogModule } from '../posthog/posthog.module';
 import { UtilsModule } from '../utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../config/configuration.module';
+import { CronImportPerimetresEpciService } from '../collectivites/cron-import-perimetres-epci.service';
+import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CronService } from './cron.service';
 
@@ -32,8 +35,15 @@ import { CronService } from './cron.service';
     CalendlyModule,
     ConnectModule,
     ToolsIndicateursModule,
+    PosthogModule,
   ],
   controllers: [],
-  providers: [CronService, CronConsumerService, CronNotificationsService],
+  providers: [
+    CronService,
+    CronConsumerService,
+    CronNotificationsService,
+    CronCloreInstructionsService,
+    CronImportPerimetresEpciService,
+  ],
 })
 export class CronModule {}

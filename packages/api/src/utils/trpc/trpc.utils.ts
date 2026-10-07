@@ -3,9 +3,7 @@ import { loggerLink, Operation } from '@trpc/client';
 import { ENV } from '../../environmentVariables';
 
 export function getTrpcUrl() {
-  return `${
-    process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080'
-  }/trpc`;
+  return `${ENV.backend_url ?? 'http://localhost:8080'}/trpc`;
 }
 
 export const getTrpcLoggerLink = () =>

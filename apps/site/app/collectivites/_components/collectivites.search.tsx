@@ -13,7 +13,7 @@ const CollectiviteSearch = () => {
   const { data, isLoading } = useFilteredCollectivites(search);
 
   const filteredCollectivites = (data?.filteredCollectivites.map((c) => ({
-    value: c.code_siren_insee,
+    value: c.codeSirenInsee,
     label: c.nom,
   })) ?? []) as { value: string; label: string }[];
 

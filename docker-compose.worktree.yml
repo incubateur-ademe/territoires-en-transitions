@@ -19,11 +19,6 @@ services:
       deps: { condition: service_completed_successfully }
       nx-daemon: { condition: service_healthy }
       libs: { condition: service_completed_successfully }
-  panier:
-    depends_on: !override
-      deps: { condition: service_completed_successfully }
-      nx-daemon: { condition: service_healthy }
-      libs: { condition: service_completed_successfully }
   backend:
     depends_on: !override
       deps: { condition: service_completed_successfully }

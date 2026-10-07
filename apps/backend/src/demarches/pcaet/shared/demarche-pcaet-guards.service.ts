@@ -1,33 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
   DemarcheTypeEnum,
   evaluateTransitions,
   getRequiredGuards,
   isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
-  isDemarchePcaetDiagnosticComplet,
-  isDemarchePcaetPilote,
   isDemarchePcaetAmontModifiable,
   isDemarchePcaetAvalModifiable,
+  isDemarchePcaetAvisTousRendus,
+  isDemarchePcaetDiagnosticComplet,
+  isDemarchePcaetPilote,
+  type DemandeAvisAchevement,
   type DemarchePcaet,
-  type DemarchePcaetDiagnosticPayload,
   type DemarchePcaetGuardId,
   type DemarchePcaetGuardResults,
   type DemarchePcaetStatus,
+  type PcaetDiagnostic,
 } from '@tet/domain/demarches';
 import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
 import { DemarchePcaetPilotesRepository } from './demarche-pcaet-pilotes.repository';
+import { PcaetAvisRepository } from './pcaet-avis.repository';
 
 /** Démarche dont les guards doivent être évalués. */
 export type DemarchePcaetGuardTarget = {
   id: number;
   collectiviteId: number;
   status: DemarchePcaetStatus;
-  /** Programme d'actions rattaché à la démarche, s'il l'est. */
-  planActionId: number | null;
   /** Échéance de remise des avis, figée à la transmission. */
   avisDeadlineAt: string | null;
   /** Dernière transmission pour avis (null = jamais transmise). */
@@ -41,19 +45,36 @@ export type DemarchePcaetGuardTarget = {
  */
 export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   pilotes: readonly { userId?: string | null }[];
+  /** Plans rattachés au programme d'actions de la démarche. */
+  planActionIds?: readonly number[];
+  /** Parmi eux, les plans importés par IA pas encore vérifiés. */
+  unverifiedPlanActionIds?: readonly number[];
+  /**
+   * Environnements de démonstration : le dossier se passe d'un diagnostic
+   * complet (cf. feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`).
+   * Faux partout ailleurs.
+   */
+  isDiagnosticBypassed?: boolean;
   /** Pièces amont requises couvertes, au sens de la règle documentaire. */
   documentsComplets?: boolean;
   /** Diagnostic tel qu'il est en base ; sert aussi aux photos figées. */
-  diagnosticPayload?: DemarchePcaetDiagnosticPayload;
+  diagnostic?: PcaetDiagnostic;
   /** Pièces aval requises (délibération d'adoption…) déposées. */
   documentsAvalComplets?: boolean;
+  /** Demandes d'avis du dossier et titres déjà validés sur chacune. */
+  demandesAvis?: readonly DemandeAvisAchevement[];
   /** L'évaluation finale du PCAET n'est pas encore modélisée en base. */
   evaluationFinaleDeposee?: boolean;
 };
 
+/**
+ * `user` est nul quand c'est le système qui applique une transition : aucun
+ * guard d'acteur ne peut alors se prononcer, et répondre `undefined` bloque
+ * comme il faut les transitions qui en dépendent.
+ */
 type GuardEvaluator = (
   context: DemarchePcaetGuardContext,
-  user: AuthenticatedUser
+  user: AuthenticatedUser | null
 ) => boolean | undefined;
 
 /**
@@ -62,17 +83,40 @@ type GuardEvaluator = (
  * `undefined` signifie « je ne sais pas », ce qui bloque la transition.
  */
 const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
-  estPilote: (context, user) => isDemarchePcaetPilote(user.id, context.pilotes),
+  estPilote: (context, user) =>
+    user ? isDemarchePcaetPilote(user.id, context.pilotes) : undefined,
 
   // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
   // diagnostic renseigné ET un programme d'actions rattaché.
+  //
+  // Une transmission l'a déjà fait attester : le guard rend alors vrai sans rien
+  // relire. Ce n'est pas un raccourci de performance, c'est la seule lecture
+  // correcte — l'amont est fermé depuis, donc la collectivité ne peut plus rien
+  // y corriger, tandis que ce dont dépend le calcul continue de bouger sous elle
+  // (un plan d'actions supprimé depuis le module plans, une pièce devenue
+  // requise au catalogue, un feature flag de démonstration retiré). Recalculer
+  // ici rendrait le dossier impubliable et sans issue.
+  //
+  // Reste donc à calculer ce qui n'a jamais été transmis : le dépôt hors
+  // plateforme, dont la publication est le premier et seul contrôle.
   dossierComplet: (context) =>
-    context.documentsComplets === undefined ||
-    context.diagnosticPayload === undefined
+    context.transmittedAt !== null
+      ? true
+      : context.documentsComplets === undefined ||
+        context.diagnostic === undefined ||
+        context.planActionIds === undefined ||
+        context.unverifiedPlanActionIds === undefined
       ? undefined
       : context.documentsComplets &&
-        isDemarchePcaetDiagnosticComplet(context.diagnosticPayload) &&
-        context.planActionId !== null,
+        (context.isDiagnosticBypassed === true ||
+          isDemarchePcaetDiagnosticComplet(context.diagnostic)) &&
+        context.planActionIds.length > 0 &&
+        context.unverifiedPlanActionIds.length === 0,
+
+  avisTousRendus: (context) =>
+    context.demandesAvis === undefined
+      ? undefined
+      : isDemarchePcaetAvisTousRendus(context.demandesAvis),
 
   // Le délai d'avis n'a de sens qu'une fois la démarche transmise ; son
   // échéance est figée en base à ce moment-là.
@@ -94,11 +138,55 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
  */
 @Injectable()
 export class DemarchePcaetGuardsService {
+  private readonly logger = new Logger(DemarchePcaetGuardsService.name);
+
   constructor(
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
-    private readonly documentsRepository: DemarcheDocumentsRepository
+    private readonly documentsRepository: DemarcheDocumentsRepository,
+    private readonly planActionsRepository: DemarchePlanActionsRepository,
+    private readonly avisRepository: PcaetAvisRepository,
+    private readonly trackingService: TrackingService,
+    private readonly configurationService: ConfigurationService
   ) {}
+
+  /**
+   * Le contournement s'annonce à chaque évaluation plutôt qu'une fois au
+   * démarrage : un dossier transmis sans diagnostic complet doit être
+   * explicable en lisant les logs de la transmission.
+   *
+   * Piloté par le feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`,
+   * activable par utilisateur ou collectivité depuis l'interface PostHog, ou
+   * par `DEMARCHE_PCAET_BYPASS_DIAGNOSTIC` pour les instances où le flag n'est
+   * pas évaluable — en local, PostHog n'a ni clé ni utilisateur connu.
+   */
+  private async isDiagnosticBypassed(
+    user: AuthenticatedUser | null,
+    collectiviteId: number
+  ): Promise<boolean> {
+    // L'instance entière contourne : pas d'utilisateur à identifier, donc
+    // vérifié avant tout le reste.
+    if (this.configurationService.get('DEMARCHE_PCAET_BYPASS_DIAGNOSTIC')) {
+      this.logger.warn(
+        `DEMARCHE_PCAET_BYPASS_DIAGNOSTIC actif : le diagnostic n'est pas exigé pour compléter le dossier PCAET de la collectivité ${collectiviteId} (démonstration)`
+      );
+      return true;
+    }
+    if (!user) {
+      return false;
+    }
+    const isBypassed = await this.trackingService.isFeatureEnabled(
+      'is-demarche-pcaet-bypass-diagnostic-enabled',
+      user.id,
+      collectiviteId
+    );
+    if (isBypassed) {
+      this.logger.warn(
+        `Feature flag is-demarche-pcaet-bypass-diagnostic-enabled actif pour user ${user.id} / collectivité ${collectiviteId} : le diagnostic n'est pas exigé pour compléter le dossier PCAET (démonstration)`
+      );
+    }
+    return isBypassed;
+  }
 
   /**
    * Lit ce dont dépendent les guards du statut courant, et rien de plus : le
@@ -107,20 +195,38 @@ export class DemarchePcaetGuardsService {
    */
   async loadContext(
     demarche: DemarchePcaetGuardTarget,
+    user: AuthenticatedUser | null,
     tx?: Transaction
   ): Promise<DemarchePcaetGuardContext> {
     const requiredGuards = getRequiredGuards(demarche.status);
     const needsPilotes = requiredGuards.includes('estPilote');
-    const needsDossier = requiredGuards.includes('dossierComplet');
+    // Miroir du court-circuit de `dossierComplet` : sur un dossier transmis, le
+    // guard répond sans rien lire, donc ni snapshot documentaire, ni diagnostic,
+    // ni plans, ni appel PostHog — que `enrichAll` ferait sinon en boucle.
+    const needsDossier =
+      requiredGuards.includes('dossierComplet') &&
+      demarche.transmittedAt === null;
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
+    const needsAvisRendus = requiredGuards.includes('avisTousRendus');
 
-    const [pilotes, documentsSnapshot, diagnosticPayload] = await Promise.all([
+    const [
+      pilotes,
+      documentsSnapshot,
+      diagnostic,
+      planActionIds,
+      unverifiedPlanActionIds,
+      demandesAvis,
+    ] = await Promise.all([
       needsPilotes
         ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
         : Promise.resolve([]),
       needsDossier || needsDocumentsAval
         ? this.documentsRepository.loadSnapshot(
-            { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+            {
+              demarcheId: demarche.id,
+              demarcheType: DemarcheTypeEnum.PCAET,
+              collectiviteId: demarche.collectiviteId,
+            },
             tx
           )
         : Promise.resolve(undefined),
@@ -133,12 +239,30 @@ export class DemarchePcaetGuardsService {
             tx
           )
         : Promise.resolve(undefined),
+      needsDossier
+        ? this.planActionsRepository.listPlanActionIds(demarche.id, tx)
+        : Promise.resolve(undefined),
+      needsDossier
+        ? this.planActionsRepository.listUnverifiedPlanActionIds(
+            demarche.id,
+            tx
+          )
+        : Promise.resolve(undefined),
+      needsAvisRendus
+        ? this.avisRepository.listAchevementDemandes(demarche.id, tx)
+        : Promise.resolve(undefined),
     ]);
 
     return {
       ...demarche,
       pilotes,
-      diagnosticPayload,
+      planActionIds,
+      unverifiedPlanActionIds,
+      demandesAvis,
+      isDiagnosticBypassed: needsDossier
+        ? await this.isDiagnosticBypassed(user, demarche.collectiviteId)
+        : false,
+      diagnostic,
       documentsComplets:
         needsDossier && documentsSnapshot
           ? isDemarcheDossierDocumentsComplet(documentsSnapshot)
@@ -152,7 +276,7 @@ export class DemarchePcaetGuardsService {
 
   computeGuardResults(
     context: DemarchePcaetGuardContext,
-    user: AuthenticatedUser
+    user: AuthenticatedUser | null
   ): DemarchePcaetGuardResults {
     const guardResults: DemarchePcaetGuardResults = {};
     for (const guard of getRequiredGuards(context.status)) {
@@ -167,7 +291,7 @@ export class DemarchePcaetGuardsService {
    */
   computeAvailableActions(
     context: DemarchePcaetGuardContext,
-    user: AuthenticatedUser
+    user: AuthenticatedUser | null
   ): Pick<DemarchePcaet, 'transitions' | 'amontModifiable' | 'avalModifiable'> {
     return {
       transitions: evaluateTransitions(
@@ -182,10 +306,10 @@ export class DemarchePcaetGuardsService {
   /** Complète un DTO avec ce que l'utilisateur peut y faire. */
   async enrich(
     demarche: DemarchePcaet,
-    user: AuthenticatedUser,
+    user: AuthenticatedUser | null,
     tx?: Transaction
   ): Promise<DemarchePcaet> {
-    const context = await this.loadContext(demarche, tx);
+    const context = await this.loadContext(demarche, user, tx);
     return {
       ...demarche,
       ...this.computeAvailableActions(context, user),

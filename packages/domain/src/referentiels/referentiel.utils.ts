@@ -16,16 +16,21 @@ export class ReferentielException extends Error {
   }
 }
 
-export function getReferentielIdFromActionId(actionId: string): ReferentielId {
-  const unsafeReferentielId = actionId.split('_')[0];
+export function tryGetReferentielIdFromActionId(
+  actionId: string
+): ReferentielId | undefined {
+  const parsing = referentielIdEnumSchema.safeParse(actionId.split('_')[0]);
+  return parsing.success ? parsing.data : undefined;
+}
 
-  const parsing = referentielIdEnumSchema.safeParse(unsafeReferentielId);
-  if (parsing.success) {
-    return parsing.data;
+export function getReferentielIdFromActionId(actionId: string): ReferentielId {
+  const referentielId = tryGetReferentielIdFromActionId(actionId);
+  if (referentielId) {
+    return referentielId;
   }
 
   throw new ReferentielException(
-    `Invalid referentielId ${unsafeReferentielId} for actionId '${actionId}'`
+    `Invalid referentielId ${actionId.split('_')[0]} for actionId '${actionId}'`
   );
 }
 
@@ -63,6 +68,13 @@ export function getActionTypeFromActionId(
   }
 
   return orderedActionTypes[level];
+}
+
+export function toActionId(
+  referentielId: ReferentielId,
+  identifiant: string
+): ActionId {
+  return `${referentielId}_${identifiant}`;
 }
 
 export function getIdentifiantFromActionId(actionId: string): string | null {
@@ -113,6 +125,24 @@ export function getParentId({
 }
 
 /**
+ * Indique si la hiérarchie d'un référentiel comporte un niveau `sous-axe`.
+ * Source de vérité : `referentiel_definition.hierarchie`.
+ */
+export function hasSousAxeLevel(hierarchie: ActionType[]): boolean {
+  return hierarchie.includes(ActionTypeEnum.SOUS_AXE);
+}
+
+/** Index (racine = 0) du niveau `action` dans la hiérarchie. */
+export function getActionLevelIndex(hierarchie: ActionType[]): number {
+  return hierarchie.indexOf(ActionTypeEnum.ACTION);
+}
+
+/** Index du niveau `sous-action` dans la hiérarchie. */
+export function getSousActionLevelIndex(hierarchie: ActionType[]): number {
+  return hierarchie.indexOf(ActionTypeEnum.SOUS_ACTION);
+}
+
+/**
  * Remonte un actionId jusqu'au nœud de type `action` lorsque le nœud courant
  * est plus profond dans `hierarchie` (ex. sous-action, tâche).
  */
@@ -120,7 +150,7 @@ export function rollUpActionIdToActionLevel(
   actionId: string,
   hierarchie: ActionType[]
 ): string {
-  const actionLevelIndex = hierarchie.indexOf(ActionTypeEnum.ACTION);
+  const actionLevelIndex = getActionLevelIndex(hierarchie);
   if (actionLevelIndex === -1) {
     return actionId;
   }

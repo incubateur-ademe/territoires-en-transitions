@@ -1,6 +1,6 @@
-import { VignetteFetchedData } from '@/site/app/types';
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchSingle } from '@/site/src/strapi/strapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Seo, Vignette, VignetteAvecMarkdown } from '@/site/src/strapi/types';
 
 export type TTableauBudget = {
   années: {
@@ -13,83 +13,82 @@ export type TTableauBudget = {
   };
 };
 
+/** Single type `page-budget` (strapi/src/api/page-budget). */
+export type PageBudget = {
+  seo?: Seo | null;
+  titre_secondaire: string | null;
+  titre_principal: string;
+  description: string;
+  fonctionnement_titre: string;
+  fonctionnement_description: string;
+  principes_titre: string;
+  principes_description: string | null;
+  principes_liste?: Vignette[];
+  principes_liste_markdown: VignetteAvecMarkdown[];
+  budget_titre: string;
+  budget_description: string;
+  budget_tableau: TTableauBudget;
+  repartition_titre: string;
+  description_titre: string;
+  description_liste: VignetteAvecMarkdown[];
+  tva_titre: string;
+  tva_description: string;
+  performance_titre: string;
+  performance_edl_titre: string;
+  performance_fa_titre: string;
+};
+
 export const getStrapiData = async () => {
-  const data = await fetchSingle('page-budget', [
-    ['populate[0]', 'seo'],
-    ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'principes_liste_markdown'],
-    ['populate[3]', 'principes_liste_markdown.image'],
-    ['populate[4]', 'description_liste'],
-    ['populate[5]', 'description_liste.image'],
+  const data = await fetchSingle<PageBudget>('page-budget', [
+    ['populate[seo][populate]', 'metaImage'],
+    ['populate[principes_liste_markdown][populate]', 'image'],
+    ['populate[description_liste][populate]', 'image'],
   ]);
 
-  if (data) {
-    const budgetData = data.attributes;
-    const seo = budgetData.seo;
+  if (!data) return null;
 
-    const metaImage =
-      (seo?.metaImage?.data as unknown as StrapiItem)?.attributes ?? undefined;
+  const metaImage = data.seo?.metaImage;
 
-    return {
-      seo: {
-        metaTitle: (seo?.metaTitle as unknown as string) ?? undefined,
-        metaDescription:
-          (seo?.metaDescription as unknown as string) ?? undefined,
-        metaImage: metaImage
-          ? {
-              url: metaImage.url as unknown as string,
-              width: metaImage.width as unknown as number,
-              height: metaImage.height as unknown as number,
-              type: metaImage.mime as unknown as string,
-              alt: metaImage.alternativeText as unknown as string,
-            }
-          : undefined,
+  return {
+    seo: {
+      metaTitle: data.seo?.metaTitle ?? undefined,
+      metaDescription: data.seo?.metaDescription ?? undefined,
+      metaImage: toOpenGraphImage(metaImage),
+    },
+    header: {
+      titre_secondaire: data.titre_secondaire,
+      titre_principal: data.titre_principal,
+      description: data.description,
+    },
+    fonctionnement: {
+      titre: data.fonctionnement_titre,
+      description: data.fonctionnement_description,
+    },
+    principes: {
+      titre: data.principes_titre,
+      description: data.principes_description,
+      liste: data.principes_liste_markdown,
+    },
+    budgetConsomme: {
+      titre: data.budget_titre,
+      description: data.budget_description,
+      tableau: data.budget_tableau,
+      repartitionCouts: {
+        titre: data.repartition_titre,
       },
-      header: {
-        titre_secondaire: budgetData.titre_secondaire as unknown as string,
-        titre_principal: budgetData.titre_principal as unknown as string,
-        description: budgetData.description as unknown as string,
+      descriptionCouts: {
+        titre: data.description_titre,
+        liste: data.description_liste,
       },
-      fonctionnement: {
-        titre: budgetData.fonctionnement_titre as unknown as string,
-        description: budgetData.fonctionnement_description as unknown as string,
+      infoTva: {
+        titre: data.tva_titre,
+        description: data.tva_description,
       },
-      principes: {
-        titre: budgetData.principes_titre as unknown as string,
-        description: budgetData.principes_description as unknown as string,
-        liste: (
-          budgetData.principes_liste_markdown as unknown as VignetteFetchedData[]
-        ).map((p) => ({
-          ...p,
-          image: p.image?.data,
-        })),
-      },
-      budgetConsomme: {
-        titre: budgetData.budget_titre as unknown as string,
-        description: budgetData.budget_description as unknown as string,
-        tableau: budgetData.budget_tableau as unknown as TTableauBudget,
-        repartitionCouts: {
-          titre: budgetData.repartition_titre as unknown as string,
-        },
-        descriptionCouts: {
-          titre: budgetData.description_titre as unknown as string,
-          liste: (
-            budgetData.description_liste as unknown as VignetteFetchedData[]
-          ).map((d) => ({
-            ...d,
-            image: d.image?.data,
-          })),
-        },
-        infoTva: {
-          titre: budgetData.tva_titre as unknown as string,
-          description: budgetData.tva_description as unknown as string,
-        },
-      },
-      performanceBudget: {
-        titre: budgetData.performance_titre as unknown as string,
-        titre_edl: budgetData.performance_edl_titre as unknown as string,
-        titre_fa: budgetData.performance_fa_titre as unknown as string,
-      },
-    };
-  } else return null;
+    },
+    performanceBudget: {
+      titre: data.performance_titre,
+      titre_edl: data.performance_edl_titre,
+      titre_fa: data.performance_fa_titre,
+    },
+  };
 };

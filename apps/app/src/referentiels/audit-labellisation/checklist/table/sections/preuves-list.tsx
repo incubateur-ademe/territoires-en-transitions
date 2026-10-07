@@ -1,5 +1,6 @@
 'use client';
 
+import { getDocumentTitle } from '@/app/collectivites/documents/bibliotheque/document-label.utils';
 import { ReactElement } from 'react';
 import { ChecklistPreuve } from './checklist-preuve';
 import { DeletePreuveButton } from './delete-preuve-button';
@@ -13,19 +14,35 @@ const PreuveLine = ({
 }: {
   preuve: ChecklistPreuve;
   canEdit: boolean;
-}): ReactElement => (
-  <li>
-    <DocumentLine filename={preuve.fichier?.filename}>
-      {preuve.fichier && <DownloadPreuveButton fichier={preuve.fichier} />}
-      {canEdit && (
-        <>
-          <RenamePreuveButton preuve={preuve} />
-          <DeletePreuveButton preuveId={preuve.id} />
-        </>
-      )}
-    </DocumentLine>
-  </li>
-);
+}): ReactElement => {
+  const isDownloadable = preuve.type === 'fichier';
+  const isRenamable = canEdit && preuve.type === 'fichier';
+  return (
+    <li>
+      <DocumentLine
+        documentTitle={getDocumentTitle(preuve)}
+        isMissing={preuve.type === 'fichierManquant'}
+      >
+        {isDownloadable && (
+          <DownloadPreuveButton
+            collectiviteId={preuve.collectiviteId}
+            fichierId={preuve.fichier.id}
+          />
+        )}
+        {isRenamable && (
+          <RenamePreuveButton
+            preuve={{
+              collectiviteId: preuve.collectiviteId,
+              preuveType: preuve.preuveType,
+              fichier: preuve.fichier,
+            }}
+          />
+        )}
+        {canEdit && <DeletePreuveButton preuveId={preuve.id} />}
+      </DocumentLine>
+    </li>
+  );
+};
 
 export const PreuvesList = ({
   preuves,

@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import {
+  addTestCollectivite,
   addTestCollectiviteAndUser,
   addTestCollectiviteAndUsers,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -8,18 +9,29 @@ import {
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import type { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { PlanSourceEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
+import { onTestFinished, vi } from 'vitest';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
+import { collectivitePerimetreSecondaireTable } from '@tet/backend/collectivites/shared/models/collectivite-perimetre-secondaire.table';
+import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
+import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import {
   addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
+  cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
-  completeTestVulnerabilitePcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
@@ -29,9 +41,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
-  const freshEditor = async () => {
+  const freshEditor = async (collectivite?: Partial<Collectivite>) => {
     const fixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
+      collectivite,
     });
     const user = getAuthUserFromUserCredentials(fixture.user);
     return {
@@ -61,7 +74,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     };
   });
 
-  test('Transmettre pour avis puis reprendre l’élaboration (journalisé)', async () => {
+  test('Transmettre pour avis, journalisé et sans retour possible', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -85,13 +98,15 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       new Date(transmise.avisDeadlineAt as string).getTime()
     ).toBeGreaterThan(Date.now());
 
-    const reprise = await caller.demarches.pcaet.reprendreElaboration({
+    // Le dossier est entre les mains des instances consultatives : la
+    // collectivité n'a plus aucune action dessus, elle attend. Les deux sorties
+    // restantes sont constatées par le système, et leurs conditions ne sont pas
+    // réunies — ni avis rendus, ni délai écoulé.
+    const apres = await caller.demarches.pcaet.get({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    expect(reprise.status).toBe('en_elaboration');
-    // L'édition du dossier reprend.
-    expect(reprise.amontModifiable).toBe(true);
+    expect(listEnabledTransitions(apres.transitions)).toEqual([]);
 
     const history = await db.db
       .select()
@@ -99,13 +114,12 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       .where(eq(demarcheStatusHistoryTable.demarcheId, created.id));
     expect(history.map((entry) => entry.transition)).toEqual([
       'transmettre_pour_avis',
-      'reprendre_elaboration',
     ]);
     expect(history[0].fromStatus).toBe('en_elaboration');
     expect(history[0].toStatus).toBe('transmis_pour_avis');
   });
 
-  test('Adopter : refusé avant la fin du délai d’avis, accepté après', async () => {
+  test('Clôture d’instruction : sans effet avant la fin du délai, appliquée après', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -119,20 +133,27 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       demarcheId: created.id,
     });
 
-    await expect(
-      caller.demarches.pcaet.adopter({
-        collectiviteId: collectivite.id,
-        demarcheId: created.id,
-      })
-    ).rejects.toThrow('DELAI_AVIS_NON_ECOULE');
+    // Aucune des deux conditions n'est réunie : le service ne fait rien, et
+    // n'échoue pas — c'est ce qui le rend appelable sans condition.
+    const cloreService = app.get(CloreInstructionService);
+    const cible = { collectiviteId: collectivite.id, demarcheId: created.id };
+    const sansEffet = await cloreService.clore(cible);
+    expect(sansEffet).toEqual({ success: true, data: null });
 
     await backdateTransmission(created.id);
 
-    const adoptee = await caller.demarches.pcaet.adopter({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    expect(adoptee.status).toBe('adopte');
+    const close = await cloreService.clore(cible);
+    expect(close.success && close.data?.status).toBe('instruit');
+
+    // Le journal nomme la cause : ici le délai, pas les avis.
+    const history = await db.db
+      .select()
+      .from(demarcheStatusHistoryTable)
+      .where(eq(demarcheStatusHistoryTable.demarcheId, created.id));
+    const derniere = history.at(-1);
+    expect(derniere?.transition).toBe('delai_avis_echu');
+    // Personne ne l'a demandée : le journal ne l'impute à aucun utilisateur.
+    expect(derniere?.createdBy).toBeNull();
   });
 
   test('Archiver reste fermé tant que l’évaluation finale n’est pas modélisée (fail-closed)', async () => {
@@ -148,8 +169,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    await backdateTransmission(created.id);
-    await caller.demarches.pcaet.adopter({
+    await cloreTestInstructionPcaet(app, db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
@@ -176,6 +196,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     await caller.demarches.pcaet.publier({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
+      dateAdoption: '2026-01-15',
     });
 
     // Le dossier est publié : la transition est atteignable, c'est son guard
@@ -245,21 +266,20 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
     expect(transmise.status).toBe('transmis_pour_avis');
 
-    // L'adoption obéit à la même règle : le délai d'avis écoulé ouvre la
-    // transition, mais la décision reste celle du pilote.
-    await backdateTransmission(created.id);
-    await expect(
-      autreEditeurCaller.demarches.pcaet.adopter({
-        collectiviteId: fixture.collectivite.id,
-        demarcheId: created.id,
-      })
-    ).rejects.toThrow('NON_PILOTE');
-
-    const adoptee = await piloteCaller.demarches.pcaet.adopter({
+    // La clôture, elle, n'obéit pas à cette règle : elle n'a pas d'acteur, donc
+    // pas de guard `estPilote`. Le pilote reprend la main à la publication.
+    await cloreTestInstructionPcaet(app, db, {
       collectiviteId: fixture.collectivite.id,
       demarcheId: created.id,
     });
-    expect(adoptee.status).toBe('adopte');
+
+    await expect(
+      autreEditeurCaller.demarches.pcaet.publier({
+        collectiviteId: fixture.collectivite.id,
+        demarcheId: created.id,
+        dateAdoption: '2026-01-15',
+      })
+    ).rejects.toThrow('NON_PILOTE');
   });
 
   test('Le guard dossierComplet exige les pièces requises et le programme d’actions', async () => {
@@ -315,22 +335,159 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       })
     ).rejects.toThrow('DOSSIER_INCOMPLET');
 
-    // Le diagnostic à indicateurs ne suffit pas davantage : la vulnérabilité du
-    // territoire doit être déclarée pour chaque domaine de la liste.
+    // Les trois conditions réunies, la transition s'ouvre : la vulnérabilité
+    // du territoire n'exige rien et ne retient donc pas le dossier.
     await completeTestDiagnosticPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
 
-    const sansVulnerabilite = await caller.demarches.pcaet.get({
+    const transmise = await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    expect(listEnabledTransitions(sansVulnerabilite.transitions)).toEqual([]);
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
 
-    // Les quatre conditions réunies, la transition s'ouvre.
-    await completeTestVulnerabilitePcaet(db, { demarcheId: created.id });
+  test('Un plan importé par IA se rattache, mais retient le dossier tant qu’il n’est pas vérifié', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    const imported = await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      nom: 'Plan importé',
+    });
+    await db.db
+      .update(axeTable)
+      .set({ source: PlanSourceEnum.IMPORT_IA })
+      .where(eq(axeTable.id, imported.id));
 
+    const nonVerifie = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(nonVerifie.planActionIds).toContain(imported.id);
+    expect(nonVerifie.unverifiedPlanActionIds).toEqual([imported.id]);
+    expect(listEnabledTransitions(nonVerifie.transitions)).toEqual([]);
+    await expect(
+      caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).rejects.toThrow('DOSSIER_INCOMPLET');
+
+    await caller.plans.plans.verify({ planId: imported.id });
+
+    const verifie = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(verifie.unverifiedPlanActionIds).toEqual([]);
+    const transmise = await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
+
+  test('Le contournement de démonstration dispense le dossier de son diagnostic', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    // Dossier complet sauf le diagnostic : sans contournement, refusé.
+    await coverTestDocumentsPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await expect(
+      caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).rejects.toThrow('DOSSIER_INCOMPLET');
+
+    // Le bypass est piloté par le feature flag PostHog :
+    const trackingService = app.get(TrackingService);
+    const isFeatureEnabled =
+      trackingService.isFeatureEnabled.bind(trackingService);
+    const spy = vi
+      .spyOn(trackingService, 'isFeatureEnabled')
+      .mockImplementation(async (feature, ...args) =>
+        feature === 'is-demarche-pcaet-bypass-diagnostic-enabled'
+          ? true
+          : isFeatureEnabled(feature, ...args)
+      );
+    onTestFinished(() => {
+      spy.mockRestore();
+    });
+
+    const avecBypass = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(listEnabledTransitions(avecBypass.transitions)).toContain(
+      'transmettre_pour_avis'
+    );
+    const transmise = await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
+
+  test('Le contournement par variable d’environnement dispense aussi le dossier de son diagnostic', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    await coverTestDocumentsPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await expect(
+      caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).rejects.toThrow('DOSSIER_INCOMPLET');
+
+    // DEMARCHE_PCAET_BYPASS_DIAGNOSTIC contourne sans PostHog : en local, le
+    // feature flag n'est pas évaluable (ni clé, ni utilisateur connu du projet).
+    const configurationService = app.get(ConfigurationService);
+    const get = configurationService.get.bind(configurationService);
+    const spy = vi
+      .spyOn(configurationService, 'get')
+      .mockImplementation((key) =>
+        key === 'DEMARCHE_PCAET_BYPASS_DIAGNOSTIC' ? true : get(key)
+      );
+    onTestFinished(() => {
+      spy.mockRestore();
+    });
+
+    const avecBypass = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(listEnabledTransitions(avecBypass.transitions)).toContain(
+      'transmettre_pour_avis'
+    );
     const transmise = await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
@@ -345,10 +502,347 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
 
     await expect(
-      caller.demarches.pcaet.adopter({
+      caller.demarches.pcaet.publier({
         collectiviteId: collectivite.id,
         demarcheId: created.id,
+        dateAdoption: '2026-01-15',
       })
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
+  });
+
+  describe('Saisine des instructeurs à la transmission', () => {
+    /**
+     * Un instructeur de test, dans le périmètre géographique voulu.
+     *
+     * Nettoyé en fin de test : une DREAL est unique par région, donc laisser la
+     * ligne derrière soi rendrait le test infaisable au second passage.
+     */
+    const addInstructeur = async (
+      collectivite: Partial<Collectivite> & { type: CollectiviteType }
+    ) => {
+      const { collectivite: creee, cleanup } = await addTestCollectivite(db, {
+        nom: `${collectivite.type} test saisine`,
+        ...collectivite,
+      });
+      onTestFinished(async () => {
+        await db.db
+          .delete(pcaetDemandeAvisTable)
+          .where(eq(pcaetDemandeAvisTable.instructeurCollectiviteId, creee.id));
+        await cleanup();
+      });
+      return creee;
+    };
+
+    /**
+     * Un territoire couvert en plus du principal. Rien à nettoyer : la ligne
+     * cascade avec la collectivité.
+     */
+    const addPerimetreSecondaire = async (
+      collectiviteId: number,
+      perimetre: { regionCode: string } | { departementCode: string }
+    ) => {
+      await db.db.insert(collectivitePerimetreSecondaireTable).values({
+        collectiviteId,
+        source: 'import_service_etat',
+        ...perimetre,
+      });
+    };
+
+    const listDestinataires = async (demarcheId: number) =>
+      db.db
+        .select({
+          instructeurCollectiviteId:
+            pcaetDemandeAvisTable.instructeurCollectiviteId,
+          source: pcaetDemandeAvisTable.source,
+          perimetre: pcaetDemandeAvisTable.perimetre,
+        })
+        .from(pcaetDemandeAvisTable)
+        .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+
+    // Des codes géographiques qu'aucun instructeur du seed n'occupe, et un par
+    // test : la DREAL est unique par région, deux tests ne peuvent pas se
+    // partager la même.
+    test('atteint les instances régionales par la région, la DDT par le département, un service national partout', async () => {
+      const region = '99';
+      const departement = '99';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: region,
+        departementCode: departement,
+      });
+
+      const dreal = await addInstructeur({ type: 'dreal', regionCode: region });
+      const conseilRegional = await addInstructeur({
+        type: 'region',
+        regionCode: region,
+      });
+      const ddt = await addInstructeur({
+        type: 'ddt',
+        regionCode: region,
+        departementCode: departement,
+      });
+      const drAdeme = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: region,
+      });
+      const national = await addInstructeur({ type: 'service_national' });
+      // Hors périmètre : ni la région ni le département.
+      const drealAilleurs = await addInstructeur({
+        type: 'dreal',
+        regionCode: '98',
+      });
+      const drAdemeAilleurs = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: '98',
+      });
+      const ddtVoisine = await addInstructeur({
+        type: 'ddt',
+        regionCode: region,
+        departementCode: '98',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const destinataires = await listDestinataires(created.id);
+      const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
+
+      expect(saisis).toEqual(
+        expect.arrayContaining([
+          dreal.id,
+          conseilRegional.id,
+          ddt.id,
+          drAdeme.id,
+          national.id,
+        ])
+      );
+      expect(saisis).not.toContain(drealAilleurs.id);
+      expect(saisis).not.toContain(drAdemeAilleurs.id);
+      expect(saisis).not.toContain(ddtVoisine.id);
+      // Le seed n'a pas écrit ces lignes : c'est bien la transmission.
+      expect(destinataires.every((d) => d.source === 'transmission')).toBe(
+        true
+      );
+    });
+
+    /**
+     * Le cas de la DR ADEME Océan Indien : une seule ligne pour deux régions,
+     * la seconde portée par un périmètre secondaire. Sans elle, le service ne
+     * serait jamais saisi pour la moitié de son territoire.
+     */
+    test('saisit un service dont un périmètre secondaire couvre la déposante', async () => {
+      const regionDeposante = 'S1';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: regionDeposante,
+        departementCode: 'S1',
+      });
+
+      // Sa région principale est ailleurs : seul le périmètre secondaire la relie.
+      const drAdemeDeuxRegions = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: 'S2',
+      });
+      await addPerimetreSecondaire(drAdemeDeuxRegions.id, {
+        regionCode: regionDeposante,
+      });
+      const drAdemeAilleurs = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: 'S3',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const destinataires = await listDestinataires(created.id);
+      const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
+      expect(saisis).toContain(drAdemeDeuxRegions.id);
+      expect(saisis).not.toContain(drAdemeAilleurs.id);
+
+      // Le cas symétrique du précédent, et il ne se qualifie pas pareil : c'est
+      // ici le périmètre du *service* qui est secondaire, pas celui de la
+      // déposante. Or la déposante n'a qu'un territoire, son siège, et c'est lui
+      // qui vaut la saisine — la DR ADEME est donc saisie au titre du principal.
+      expect(
+        destinataires.find(
+          (d) => d.instructeurCollectiviteId === drAdemeDeuxRegions.id
+        )?.perimetre
+      ).toBe('principal');
+    });
+
+    /**
+     * Et réciproquement, le cas de Redon Agglomération : un EPCI qui chevauche
+     * plusieurs départements relève des instructeurs de chacun, pas seulement de
+     * ceux de son siège.
+     */
+    test('saisit les instructeurs des territoires secondaires de la déposante', async () => {
+      const { caller, collectivite } = await freshEditor({
+        regionCode: 'S4',
+        departementCode: 'S4',
+      });
+      await addPerimetreSecondaire(collectivite.id, {
+        departementCode: 'S5',
+      });
+      await addPerimetreSecondaire(collectivite.id, { regionCode: 'S5' });
+
+      const ddtDuSiege = await addInstructeur({
+        type: 'ddt',
+        regionCode: 'S4',
+        departementCode: 'S4',
+      });
+      const ddtDebordee = await addInstructeur({
+        type: 'ddt',
+        regionCode: 'S5',
+        departementCode: 'S5',
+      });
+      const drealDebordee = await addInstructeur({
+        type: 'dreal',
+        regionCode: 'S5',
+      });
+      const ddtAilleurs = await addInstructeur({
+        type: 'ddt',
+        regionCode: 'S6',
+        departementCode: 'S6',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const destinataires = await listDestinataires(created.id);
+      const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
+      expect(saisis).toEqual(
+        expect.arrayContaining([
+          ddtDuSiege.id,
+          ddtDebordee.id,
+          drealDebordee.id,
+        ])
+      );
+      expect(saisis).not.toContain(ddtAilleurs.id);
+
+      // Et chacun sait par quel territoire il a été atteint. C'est ce qui
+      // décidera de son droit d'y déposer un avis, et de son poids dans la
+      // clôture : le siège se prononce, les autres lisent.
+      const perimetreDe = (id: number) =>
+        destinataires.find((d) => d.instructeurCollectiviteId === id)
+          ?.perimetre;
+
+      expect(perimetreDe(ddtDuSiege.id)).toBe('principal');
+      expect(perimetreDe(ddtDebordee.id)).toBe('secondaire');
+      expect(perimetreDe(drealDebordee.id)).toBe('secondaire');
+    });
+
+    /**
+     * Un dossier ne se transmet qu'une fois, mais l'écriture doit rester sûre
+     * si elle est rejouée — une transaction reprise après incident ne doit ni
+     * dupliquer les destinataires, ni déplacer la date de leur saisine.
+     */
+    test('saisir deux fois ne duplique pas les destinataires', async () => {
+      const region = '97';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: region,
+        departementCode: '97',
+      });
+      await addInstructeur({ type: 'dreal', regionCode: region });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const apresPremiere = await listDestinataires(created.id);
+      expect(apresPremiere).not.toHaveLength(0);
+
+      await app.get(PcaetInstructeursRepository).saisirInstructeurs({
+        demarcheId: created.id,
+        collectiviteId: collectivite.id,
+      });
+
+      expect(await listDestinataires(created.id)).toEqual(apresPremiere);
+    });
+
+    /**
+     * Le piège que la lecture seule impose : `avisTousRendus` exige de chaque
+     * demande ses titres attendus. Compter celle d'un destinataire en lecture —
+     * dont aucun avis ne peut émaner — fermerait la clôture pour toujours.
+     */
+    test("un destinataire en lecture ne pèse pas dans l'achèvement des avis", async () => {
+      const region = '96';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: region,
+        departementCode: '96',
+      });
+      const dreal = await addInstructeur({ type: 'dreal', regionCode: region });
+      await addInstructeur({ type: 'region', regionCode: region });
+      await addInstructeur({
+        type: 'ddt',
+        regionCode: region,
+        departementCode: '96',
+      });
+      await addInstructeur({ type: 'dr_ademe', regionCode: region });
+      await addInstructeur({ type: 'service_national' });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      // Les destinataires en lecture sont bien saisis…
+      const destinataires = await listDestinataires(created.id);
+      expect(destinataires.map((d) => d.instructeurCollectiviteId)).toContain(
+        dreal.id
+      );
+
+      // …mais seules les deux saisies pour avis pèsent dans l'achèvement, avec
+      // le titre attendu de chacune : le préfet de région pour la DREAL, le
+      // président pour la région.
+      const achevement = await app
+        .get(PcaetAvisRepository)
+        .listAchevementDemandes(created.id);
+      expect(achevement).toHaveLength(2);
+      expect(
+        achevement.map(({ titresAttendus }) => [...titresAttendus].sort())
+      ).toEqual(
+        expect.arrayContaining([['prefet_region'], ['president_region']])
+      );
+    });
   });
 });

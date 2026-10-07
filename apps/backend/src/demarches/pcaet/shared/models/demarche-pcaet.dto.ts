@@ -33,9 +33,11 @@ export const demarchePcaetSelectColumns = {
   obligation: demarcheTable.obligation,
   launchedAt: sqlToNullableDateTimeISO(demarcheTable.launchedAt),
   publishedAt: sqlToNullableDateTimeISO(demarcheTable.publishedAt),
+  adoptedAt: demarcheTable.adoptedAt,
   transmittedAt: sqlToNullableDateTimeISO(demarcheTable.transmittedAt),
+  transmittedOffPlatform: demarcheTable.transmittedOffPlatform,
+  isScotAec: demarcheTable.isScotAec,
   avisDeadlineAt: sqlToNullableDateTimeISO(demarcheTable.avisDeadlineAt),
-  planActionId: demarcheTable.planActionId,
   createdAt: sqlToDateTimeISO(demarcheTable.createdAt),
   modifiedAt: sqlToDateTimeISO(demarcheTable.modifiedAt),
 };
@@ -44,7 +46,9 @@ type DemarchePcaetSelectRow = Omit<DemarcheRow, 'createdBy' | 'modifiedBy'>;
 
 export const toDemarchePcaetDto = (
   row: DemarchePcaetSelectRow,
-  pilotes: PersonneTagOrUser[]
+  pilotes: PersonneTagOrUser[],
+  planActionIds: number[],
+  unverifiedPlanActionIds: number[]
 ): DemarchePcaet => ({
   id: row.id,
   collectiviteId: row.collectiviteId,
@@ -57,9 +61,13 @@ export const toDemarchePcaetDto = (
   obligation: row.obligation,
   launchedAt: row.launchedAt,
   publishedAt: row.publishedAt,
+  adoptedAt: row.adoptedAt,
   transmittedAt: row.transmittedAt,
+  transmittedOffPlatform: row.transmittedOffPlatform,
+  isScotAec: row.isScotAec,
   avisDeadlineAt: row.avisDeadlineAt,
-  planActionId: row.planActionId,
+  planActionIds,
+  unverifiedPlanActionIds,
   pilotes,
   // Évaluations fail-closed par défaut (aucun guard renseigné) ;
   // DemarchePcaetGuardsService.enrich les remplace par celles de l'utilisateur.

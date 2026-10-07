@@ -1,9 +1,5 @@
 import { BrowserContext, Cookie } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '@tet/api';
-
-type FuncName = keyof Database['public']['Functions'];
-type Functions<Name extends FuncName> = Database['public']['Functions'][Name];
 
 export class SupabaseClient {
   private readonly client;
@@ -14,19 +10,7 @@ export class SupabaseClient {
     if (!url || !key) {
       throw new Error('Supabase credentials missing');
     }
-    this.client = createClient<Database>(url, key);
-  }
-
-  // permet d'appeler les fonctions sql de test
-  async rpc<Returns, Name extends FuncName = FuncName>(
-    name: Name,
-    args: Functions<Name>['Args']
-  ) {
-    const { data, error } = await this.client.rpc(name, args);
-    if (error) {
-      throw error;
-    }
-    return data as Returns;
+    this.client = createClient(url, key);
   }
 
   /**

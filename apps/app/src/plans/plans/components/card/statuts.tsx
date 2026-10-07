@@ -118,7 +118,7 @@ export const Statuts = ({
   );
 };
 
-export const PlanStatutsBar = forwardRef<
+const PlanStatutsBar = forwardRef<
   HTMLDivElement,
   {
     statuts?: { width: string; backgroundColor: string }[];

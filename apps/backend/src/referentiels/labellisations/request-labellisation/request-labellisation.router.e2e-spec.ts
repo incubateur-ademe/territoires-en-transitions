@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import {
   addTestCollectiviteAndUsers,
-  setCollectiviteAsCOT,
+  setCollectiviteCotStatus,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   createTRPCClientFromCaller,
@@ -9,7 +9,6 @@ import {
   getTestApp,
   getTestDatabase,
   ISO_OR_SQL_DATE_TIME_REGEX,
-  signInWith,
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -18,7 +17,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
@@ -26,6 +24,8 @@ import {
   updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria,
 } from '../../update-action-statut/referentiel-action-statut.test-fixture';
 import { createTestDemandePreuve } from '../create-preuve/create-preuve.test-fixture';
+import { getRoleMesureIds } from '@tet/domain/referentiels';
+import { seedRoleMesurePilotes } from '../labellisations.test-fixture';
 
 describe('Request Labellisation Router', () => {
   let router: TrpcRouter;
@@ -34,7 +34,6 @@ describe('Request Labellisation Router', () => {
 
   let collectivite: Collectivite;
   let adminUser: AuthenticatedUser;
-  let adminAuthToken: string;
   let lectureUser: AuthenticatedUser;
   let editionFichesIndicateursUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -70,11 +69,6 @@ describe('Request Labellisation Router', () => {
     collectivite = testCollectiviteAndUsersResult.collectivite;
 
     const admin = testCollectiviteAndUsersResult.users[0];
-    const adminUserSignInResponse = await signInWith({
-      email: admin.email,
-      password: admin.password,
-    });
-    adminAuthToken = adminUserSignInResponse.data.session?.access_token ?? '';
     adminUser = getAuthUserFromUserCredentials(admin);
     lectureUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[2]
@@ -93,6 +87,12 @@ describe('Request Labellisation Router', () => {
 
   beforeEach(async () => {
     await cleanupReferentielActionStatutsAndLabellisations(db, collectivite.id);
+    await seedRoleMesurePilotes(
+      createTRPCClientFromCaller(router.createCaller({ user: adminUser })),
+      collectivite.id,
+      ReferentielIdEnum.CAE,
+      adminUser.id
+    );
   });
 
   describe('Request Labellisation - Authentication', () => {
@@ -216,6 +216,32 @@ describe('Request Labellisation Router', () => {
       );
     });
 
+    test("un audit COT sans labellisation n'exige pas de referents designes", async () => {
+      const caller = router.createCaller({ user: adminUser });
+      const trpcClient = createTRPCClientFromCaller(caller);
+      await updateAllNeedReferentielStatutsToCompleteReferentiel(
+        trpcClient,
+        collectivite.id,
+        ReferentielIdEnum.CAE
+      );
+      for (const mesureId of getRoleMesureIds(ReferentielIdEnum.CAE)) {
+        await caller.referentiels.actions.deletePilotes({
+          collectiviteId: collectivite.id,
+          mesureId,
+        });
+      }
+
+      const result =
+        await caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          sujet: 'cot',
+          etoiles: null,
+        });
+
+      expect(result.sujet).toBe('cot');
+    });
+
     test('Can create an audit without labellisation even if score criteria not satisfied (for audit only)', async () => {
       const caller = router.createCaller({ user: adminUser });
       const trpcClient = createTRPCClientFromCaller(caller);
@@ -253,9 +279,9 @@ describe('Request Labellisation Router', () => {
     test('AUDIT_REQUESTED_FOR_COLLECTIVITE_NOT_COT', async () => {
       const caller = router.createCaller({ user: adminUser });
 
-      await setCollectiviteAsCOT(db, collectivite.id, false);
+      await setCollectiviteCotStatus(db, collectivite.id, 'none');
       onTestFinished(async () => {
-        await setCollectiviteAsCOT(db, collectivite.id, true);
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
       });
 
       await expect(
@@ -275,6 +301,26 @@ describe('Request Labellisation Router', () => {
           referentiel: ReferentielIdEnum.CAE,
           sujet: 'labellisation_cot',
           etoiles: 1,
+        })
+      ).rejects.toThrow(
+        'Un audit COT ne peut être demandé par une collectivité non COT.'
+      );
+    });
+
+    test('un COT inactif ne permet pas de demander un audit COT', async () => {
+      const caller = router.createCaller({ user: adminUser });
+
+      await setCollectiviteCotStatus(db, collectivite.id, 'inactive');
+      onTestFinished(async () => {
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
+      });
+
+      await expect(
+        caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          sujet: 'cot',
+          etoiles: null,
         })
       ).rejects.toThrow(
         'Un audit COT ne peut être demandé par une collectivité non COT.'
@@ -331,9 +377,9 @@ describe('Request Labellisation Router', () => {
       const caller = router.createCaller({ user: adminUser });
       const trpcClient = createTRPCClientFromCaller(caller);
 
-      await setCollectiviteAsCOT(db, collectivite.id, false);
+      await setCollectiviteCotStatus(db, collectivite.id, 'none');
       onTestFinished(async () => {
-        await setCollectiviteAsCOT(db, collectivite.id, true);
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
       });
 
       await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -405,9 +451,9 @@ describe('Request Labellisation Router', () => {
       const caller = router.createCaller({ user: adminUser });
       const trpcClient = createTRPCClientFromCaller(caller);
 
-      await setCollectiviteAsCOT(db, collectivite.id, false);
+      await setCollectiviteCotStatus(db, collectivite.id, 'none');
       onTestFinished(async () => {
-        await setCollectiviteAsCOT(db, collectivite.id, true);
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
       });
 
       await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -422,11 +468,9 @@ describe('Request Labellisation Router', () => {
         ReferentielIdEnum.CAE
       );
 
-      const testAgent = request(app.getHttpServer());
       await createTestDemandePreuve(
         trpcClient,
-        testAgent,
-        adminAuthToken,
+        app,
         collectivite.id,
         ReferentielIdEnum.CAE
       );
@@ -519,11 +563,10 @@ describe('Request Labellisation Router', () => {
         /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
       );
 
-      const parcours =
-        await caller.referentiels.labellisations.getParcours({
-          collectiviteId: collectivite.id,
-          referentielId: ReferentielIdEnum.CAE,
-        });
+      const parcours = await caller.referentiels.labellisations.getParcours({
+        collectiviteId: collectivite.id,
+        referentielId: ReferentielIdEnum.CAE,
+      });
 
       expect(parcours.status).toBe('demande_envoyee');
       expect(parcours.demande).toMatchObject({

@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
+import { servicesDeconcentresTypes } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import {
   getAuthUserFromUserCredentials,
@@ -12,6 +15,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import { SQL_CURRENT_TIMESTAMP } from '../../utils/column.utils';
 
 type inputType = inferProcedureInput<
@@ -82,6 +86,43 @@ describe('Test recherches collectivite', () => {
     );
     expect(result.items.length).toEqual(0);
   });
+
+  /**
+   * Un service de l'État est une ligne `collectivite` sans en être : pas de
+   * territoire, pas de référentiel, pas de plan. Il n'a rien à faire dans un
+   * annuaire de collectivités, quel que soit l'onglet — et surtout pas dans une
+   * recherche par nom, où « ADEME » ou « DREAL » les ramènerait tous.
+   */
+  test.each(servicesDeconcentresTypes)(
+    'écarte les collectivités de type %s de la recherche',
+    async (type) => {
+      // Avec un membre actif : la recherche ne montre que les collectivités qui
+      // en ont un, et sans lui le service serait écarté par ce filtre-là — le
+      // test passerait sans rien prouver.
+      const service = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: {
+          type,
+          nom: `Service test recherche ${type}`,
+          // Un service national ne porte aucun code géographique, les autres en
+          // portent un : le tirage évite l'index unique par région.
+          ...(type === 'service_national'
+            ? {}
+            : { regionCode: await pickFreeRegionCode(db, type) }),
+        },
+      });
+      onTestFinished(() => service.cleanup());
+
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parNom = await caller.collectivites.recherches.collectivites({
+        ...input,
+        nom: 'Service test recherche',
+        nbCards: 50,
+      });
+
+      expect(parNom.items).toEqual([]);
+    }
+  );
 
   test('Test tab "Référentiels"', async () => {
     const caller = router.createCaller({ user: authenticatedUser });

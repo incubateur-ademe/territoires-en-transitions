@@ -396,7 +396,6 @@ describe('CollectivitesMetricsRouter', () => {
       const moduleToSave = {
         id: moduleId,
         collectiviteId: editionCollectivite.id,
-        titre: 'Mes actions filtrées',
         type: 'fiche_action.list' as const,
         defaultKey:
           personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],
@@ -414,7 +413,6 @@ describe('CollectivitesMetricsRouter', () => {
       expect(saved).toMatchObject({
         id: moduleId,
         userId: authenticatedUser.id,
-        titre: 'Mes actions filtrées',
         type: 'fiche_action.list',
         defaultKey: 'actions-dont-je-suis-pilote',
       });
@@ -429,15 +427,17 @@ describe('CollectivitesMetricsRouter', () => {
         defaultKey: 'actions-dont-je-suis-pilote',
       });
       expect(fetched.id).toEqual(moduleId);
-      expect(fetched.titre).toEqual('Mes actions filtrées');
 
       // Mise à jour du même module (même id) → pas de doublon
+      const updatedPiloteIds = [authenticatedUser.id, otherEditionUser.id];
       const updated = await caller.metrics.users.upsertModule({
         ...moduleToSave,
-        titre: 'Titre mis à jour',
+        options: { filtre: { utilisateurPiloteIds: updatedPiloteIds } },
       });
       expect(updated.id).toEqual(moduleId);
-      expect(updated.titre).toEqual('Titre mis à jour');
+      expect(updated.options.filtre.utilisateurPiloteIds).toEqual(
+        updatedPiloteIds
+      );
 
       // listPersonnel contient toujours les 4 modules, avec le module personnalisé
       const moduleList = await caller.metrics.users.listModules({
@@ -449,10 +449,7 @@ describe('CollectivitesMetricsRouter', () => {
       const actionsModule = moduleList.find(
         (m) => m.defaultKey === 'actions-dont-je-suis-pilote'
       );
-      expect(actionsModule).toMatchObject({
-        id: moduleId,
-        titre: 'Titre mis à jour',
-      });
+      expect(actionsModule?.id).toEqual(moduleId);
     });
 
     test("ownership: un autre utilisateur ne peut pas modifier le module d'un user", async () => {
@@ -462,7 +459,6 @@ describe('CollectivitesMetricsRouter', () => {
       await caller.metrics.users.upsertModule({
         id: moduleId,
         collectiviteId: editionCollectivite.id,
-        titre: 'Sous-actions de authenticatedUser',
         type: 'fiche_action.list' as const,
         defaultKey:
           personalDefaultModuleKeysSchema.enum[
@@ -481,7 +477,6 @@ describe('CollectivitesMetricsRouter', () => {
         otherCaller.metrics.users.upsertModule({
           id: moduleId,
           collectiviteId: editionCollectivite.id,
-          titre: 'Tentative usurpation',
           type: 'fiche_action.list' as const,
           defaultKey:
             personalDefaultModuleKeysSchema.enum[
@@ -504,7 +499,6 @@ describe('CollectivitesMetricsRouter', () => {
         caller.metrics.users.upsertModule({
           id: crypto.randomUUID(),
           collectiviteId: visitCollectivite.id,
-          titre: 'Interdit',
           type: 'fiche_action.list' as const,
           defaultKey:
             personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],
@@ -524,7 +518,6 @@ describe('CollectivitesMetricsRouter', () => {
         caller.metrics.users.upsertModule({
           id: crypto.randomUUID(),
           collectiviteId: editionCollectivite.id,
-          titre: 'Interdit',
           type: 'fiche_action.list' as const,
           defaultKey:
             personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],

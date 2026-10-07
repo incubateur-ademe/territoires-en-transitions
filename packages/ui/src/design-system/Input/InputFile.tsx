@@ -43,7 +43,7 @@ export const InputFile = forwardRef(
         className={classNames(
           'bg-grey-1 border rounded-lg flex flex-col justify-center items-center',
           {
-            'p-4': displaySize === 'sm',
+            'p-4': displaySize !== 'md',
             'p-5': displaySize === 'md',
             'border-dashed': !isDraggingOver,
             'border-solid border-info-1 shadow-[0_4px_20px_0_rgba(0,0,0,0.05)':
@@ -71,7 +71,7 @@ export const InputFile = forwardRef(
             <Icon icon="upload-line" className="text-grey-5" />
             <p
               className={classNames('mb-2', {
-                'text-sm': displaySize === 'sm',
+                'text-sm': displaySize !== 'md',
               })}
             >
               Glisser votre fichier
@@ -99,7 +99,7 @@ export const InputFile = forwardRef(
           className={classNames(
             'w-fit m-0 border-solid cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8',
             {
-              'text-xs py-2 px-5': displaySize === 'sm',
+              'text-xs py-2 px-5': displaySize !== 'md',
               'text-sm py-2.5 px-6': displaySize === 'md',
             }
           )}

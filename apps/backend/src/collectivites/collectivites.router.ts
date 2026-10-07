@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { AnalysisRouter } from '@tet/backend/collectivites/analysis/analysis.router';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { DiscussionRouter } from '@tet/backend/collectivites/discussions/presentation/discussion.router';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
+import { ImportPerimetresEpciRouter } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.router';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { DocumentsRouter } from './documents/documents.router';
@@ -11,6 +13,8 @@ import { ListCollectivitesRouter } from './list-collectivites/list-collectivites
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { PersonnesRouter } from './personnes.router';
+import { PertinenceLeviersRouter } from './pertinence-leviers/pertinence-leviers.router';
+import { SiteRouter } from './site/site.router';
 import { ListTagsRouter } from './tags/list-tags/list-tags.router';
 import { MutateTagRouter } from './tags/mutate-tag/mutate-tag.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
@@ -29,9 +33,13 @@ export class CollectivitesRouter {
     private readonly mutateTagRouter: MutateTagRouter,
     private readonly listTagsRouter: ListTagsRouter,
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
+    private readonly importPerimetresEpciRouter: ImportPerimetresEpciRouter,
     private readonly discussionRouter: DiscussionRouter,
     private readonly personnalisationsRouter: PersonnalisationsRouter,
-    private readonly collectivitePreferencesRouter: CollectivitePreferencesRouter
+    private readonly collectivitePreferencesRouter: CollectivitePreferencesRouter,
+    private readonly analysisRouter: AnalysisRouter,
+    private readonly pertinenceLeviersRouter: PertinenceLeviersRouter,
+    private readonly siteRouter: SiteRouter
   ) {}
 
   router = this.trpc.router({
@@ -46,8 +54,12 @@ export class CollectivitesRouter {
     personnalisations: this.personnalisationsRouter.router,
     discussions: this.discussionRouter.router,
     relations: this.importCollectiviteRelationsRouter.router,
+    perimetres: this.importPerimetresEpciRouter.router,
     recherches: this.recherchesRouter.router,
     preferences: this.collectivitePreferencesRouter.router,
+    analysis: this.analysisRouter.router,
+    pertinenceLeviers: this.pertinenceLeviersRouter.router,
+    site: this.siteRouter.router,
     tags: this.trpc.mergeRouters(
       this.mutateTagRouter.router,
       this.listTagsRouter.router,

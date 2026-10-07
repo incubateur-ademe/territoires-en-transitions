@@ -1,0 +1,102 @@
+# Affected lint, typecheck, test, and non-e2e builds.
+name: Validate affected projects
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: true
+        type: string
+      nx-cloud-token-secret-type:
+        description: Nx Cloud token access type (read-only or read-write)
+        required: false
+        default: read-only
+        type: string
+      nx-base:
+        required: true
+        type: string
+      nx-head:
+        required: true
+        type: string
+
+jobs:
+  validate-affected-projects:
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          filter: tree:0
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+
+      - parallel:
+          - name: Setup app env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: app
+              json_vars: ${{ toJSON(vars) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+
+          - name: Setup backend env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: backend
+              json_vars: ${{ toJSON(vars) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+              supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
+              supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+              gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+              brevo-api-key: ${{ secrets.BREVO_API_KEY }}
+              supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
+
+          - name: Setup site env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: site
+              json_vars: ${{ toJSON(vars) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Print affected projects
+        run: pnpm nx show projects --affected --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}"
+
+      # Download once before concurrent Nx commands to avoid racing on bundle extraction.
+      # https://github.com/nrwl/nx/issues/35209
+      - name: Download Nx Cloud client
+        run: pnpm nx download-cloud-client
+
+      - name: Lint affected projects
+        run: pnpm nx affected -t lint --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=75% -- --quiet
+        background: true
+
+      - name: Build affected projects
+        run: pnpm nx affected -t build --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=app,backend,e2e --parallel=50%
+
+      # Keep these Nx commands sequential: with the daemon disabled in CI, cache
+      # hits restore shared dependency outputs even when they are already present.
+      # A concurrent restore can overwrite declarations while typecheck reads them.
+      - name: Typecheck affected projects
+        env:
+          SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
+          SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
+        run: |
+          pnpm nx affected -t typecheck --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=50%
+
+      - name: Test affected projects
+        env:
+          SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
+          SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
+        run: |
+          pnpm nx affected -t test --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=backend,api,e2e --parallel=50%
+
+      - wait-all:

@@ -9,11 +9,11 @@ import { useReferentielId } from '../referentiel-context';
  * Statut d'audit du référentiel et de la collectivité courante.
  */
 export const useAudit = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
 
   const { parcours } = useLabellisationParcours({
-    collectiviteId: collectivite_id,
+    collectiviteId,
     referentielId: referentiel,
   });
   const auditEnCours =
@@ -27,26 +27,4 @@ export const useAudit = () => {
 export const useIsAuditeur = () => {
   const collectivite = useCurrentCollectivite();
   return collectivite?.isRoleAuditeur || false;
-};
-
-/** Liste des auditeurs pour la collectivité et le référentiel courant */
-export const useAuditeurs = () => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
-  const { parcours } = useLabellisationParcours({
-    collectiviteId: collectivite_id,
-    referentielId: referentiel,
-  });
-  return { data: parcours?.auditeurs };
-};
-
-/** Détermine si la description de l'action doit être affichée dans la page
- * Action ou dans le panneau d'information */
-export const useShowDescIntoInfoPanel = () => {
-  const { data: audit } = useAudit();
-  const isAuditeur = useIsAuditeur();
-
-  // la description de l'action est affichée dans le panneau uniquement pour
-  // l'auditeur et pour un audit en cours
-  return (audit && audit.date_debut && !audit.valide && isAuditeur) || false;
 };

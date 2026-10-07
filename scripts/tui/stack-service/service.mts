@@ -5,7 +5,7 @@
 // build-services.mts.
 import { APPS } from '../../dev-apps.mts';
 import type { PsRow } from '../docker-stack.mts';
-import { deriveStatus } from './status.mts';
+import { ABSENT_STATE, deriveStatus } from './status.mts';
 import type { StatusGlyph } from './status.mts';
 
 // Conteneurs one-shot : exited(0) est leur état nominal — affichés atténués
@@ -59,6 +59,11 @@ export class StackService {
     return ONE_SHOTS.has(this.name);
   }
 
+  // Aucun conteneur : le toggle le crée (compose up), start n'y pourrait rien.
+  get isAbsent(): boolean {
+    return this.state === ABSENT_STATE;
+  }
+
   // Cible du toggle espace : un service qui tourne (même en redémarrage) se
   // stoppe, tout le reste se démarre.
   get isRunning(): boolean {
@@ -74,7 +79,7 @@ export class StackService {
   }
 
   get dimmed(): boolean {
-    return this.isOneShot;
+    return this.isOneShot || this.isAbsent;
   }
 
   // Glyphe d'affichage dérivé de l'état compose (state + healthcheck).

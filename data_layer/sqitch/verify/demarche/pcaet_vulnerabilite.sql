@@ -1,4 +1,9 @@
 -- Verify tet:demarche/pcaet_vulnerabilite on pg
+--
+-- `deploy --verify` joue ce script juste après ce changement-ci : il décrit
+-- l'état produit ici — vocabulaire « domaine », socle de 16 — et non celui
+-- laissé par les changements suivants (renommage en thématiques, socle recadré
+-- à 9), qui ont leurs propres verify.
 
 BEGIN;
 

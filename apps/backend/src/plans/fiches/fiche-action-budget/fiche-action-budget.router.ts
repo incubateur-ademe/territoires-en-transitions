@@ -17,18 +17,18 @@ export class FicheActionBudgetRouter {
     budgets: {
       upsert: this.trpc.authedProcedure
         .input(z.array(ficheBudgetCreateSchema))
-        .mutation(({ ctx, input }) => {
-          return this.service.upsert(input, ctx.user);
+        .mutation(({ ctx: { user }, input }) => {
+          return this.service.upsert(input, { user });
         }),
       delete: this.trpc.authedProcedure
         .input(deleteBudgetsInputSchema)
-        .mutation(({ ctx, input }) => {
-          return this.service.delete(input.ficheId, input.budgetsIds, ctx.user);
+        .mutation(({ ctx: { user }, input }) => {
+          return this.service.delete(input.ficheId, input.budgetsIds, { user });
         }),
       list: this.trpc.authedProcedure
         .input(getBudgetsRequestSchema)
-        .query(({ ctx, input }) => {
-          return this.service.listBudgets(input, ctx.user);
+        .query(({ ctx: { user }, input }) => {
+          return this.service.listBudgets(input, user);
         }),
     },
   });

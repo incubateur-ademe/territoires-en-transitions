@@ -18,8 +18,8 @@ export class FicheAnnexesRouter {
     ficheAnnexes: this.trpc.authedProcedure
       .input(ficheAnnexesInputSchema)
       .output(ficheAnnexesOutputSchema)
-      .query(async ({ input, ctx }) => {
-        const result = await this.service.listForFiches(input, ctx.user);
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.service.listForFiches(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

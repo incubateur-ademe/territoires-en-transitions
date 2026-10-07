@@ -1,0 +1,467 @@
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
+import { failure, success } from '@tet/backend/utils/result.type';
+import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
+import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { Queue } from 'bullmq';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  AiPlanImportJobRepository,
+  CreateJobInput,
+} from '../ai-plan-import-job.repository';
+import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
+import { AiPlanImportJobData } from '../ai-plan-import.queue';
+import {
+  AiPlanImportJob,
+  AiPlanImportJobOptions,
+  AiPlanImportJobStatusEnum,
+} from '../models/ai-plan-import-job';
+import { initialStepStates } from '../pipeline/run-import-pipeline';
+import { EnqueueImportService } from './enqueue-import.service';
+
+const user = { id: 'user-1' } as AuthenticatedUser;
+
+const options: AiPlanImportJobOptions = {
+  instructions: '',
+  planName: 'Plan importé',
+  withVerifications: true,
+  withSousActions: true,
+  disabledFields: [],
+};
+
+const job: AiPlanImportJob = {
+  id: 'job-1',
+  collectiviteId: 10,
+  createdBy: 'user-1',
+  status: AiPlanImportJobStatusEnum.PENDING,
+  options,
+  stepStates: initialStepStates(),
+  sourcePath: '10/abc',
+  draft: null,
+  error: null,
+  createdPlanId: null,
+  createdAt: '2026-06-11T00:00:00Z',
+  modifiedAt: '2026-06-11T00:00:00Z',
+};
+
+const toCsvFile = () => {
+  const buffer = Buffer.from('axe,titre\n1,Action', 'utf-8');
+  return { buffer, mimeType: 'text/csv', size: buffer.length };
+};
+
+const toPdfDeclaredAsCsv = () => {
+  const buffer = Buffer.from('%PDF-1.7\ncontenu', 'utf-8');
+  return { buffer, mimeType: 'text/csv', size: buffer.length };
+};
+
+const toBinaryDeclaredAsCsv = () => {
+  const buffer = Buffer.from([0x00, 0x01, 0x02, 0x03]);
+  return { buffer, mimeType: 'text/csv', size: buffer.length };
+};
+
+const toTruncatedZip = () => {
+  const buffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+  return { buffer, mimeType: 'application/octet-stream', size: buffer.length };
+};
+
+const toXlsxBomb = () => {
+  const entries = [
+    { name: '[Content_Types].xml', uncompressedBytes: 100 },
+    { name: 'xl/sharedStrings.xml', uncompressedBytes: 4_000_000_000 },
+  ];
+  const localStub = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+  const directory = Buffer.concat(
+    entries.map(({ name, uncompressedBytes }) => {
+      const nameBuffer = Buffer.from(name, 'utf-8');
+      const header = Buffer.alloc(46);
+      header.writeUInt32LE(0x02014b50, 0);
+      header.writeUInt32LE(uncompressedBytes, 24);
+      header.writeUInt16LE(nameBuffer.length, 28);
+      return Buffer.concat([header, nameBuffer]);
+    })
+  );
+  const endOfDirectory = Buffer.alloc(22);
+  endOfDirectory.writeUInt32LE(0x06054b50, 0);
+  endOfDirectory.writeUInt16LE(entries.length, 10);
+  endOfDirectory.writeUInt32LE(directory.length, 12);
+  endOfDirectory.writeUInt32LE(localStub.length, 16);
+  const buffer = Buffer.concat([localStub, directory, endOfDirectory]);
+  return { buffer, mimeType: 'application/octet-stream', size: buffer.length };
+};
+
+type MockOverrides = {
+  isAllowed?: boolean;
+  canImportInParallel?: boolean;
+  countInFlight?: number;
+  planTypes?: { id: number }[];
+  createWithinQuotas?: () => Promise<unknown>;
+  storeDocument?: () => Promise<unknown>;
+  queueAdd?: () => Promise<unknown>;
+};
+
+const buildService = (overrides: MockOverrides = {}) => {
+  const isAllowed = vi.fn(async (_user: unknown, operation: string) =>
+    (
+      operation === 'plans.fiches.import_in_parallel'
+        ? overrides.canImportInParallel ?? false
+        : overrides.isAllowed ?? true
+    )
+      ? { success: true as const, data: undefined }
+      : { success: false as const, error: 'UNAUTHORIZED' as const }
+  );
+  const permissions = { isAllowed } as unknown as PermissionService;
+
+  const createWithinQuotas = vi.fn<
+    (
+      input: CreateJobInput,
+      quotas: { limitUserInFlight: boolean }
+    ) => Promise<unknown>
+  >(overrides.createWithinQuotas ?? (async () => success(job)));
+  const deleteIfPending = vi.fn(async () => success(undefined));
+  const jobRepository = {
+    countInFlight: vi.fn(async () => success(overrides.countInFlight ?? 0)),
+    createWithinQuotas,
+    deleteIfPending,
+  } as unknown as AiPlanImportJobRepository;
+
+  const storeDocument = vi.fn<
+    (
+      input: Parameters<DocumentStorageService['storeDocument']>[0]
+    ) => Promise<unknown>
+  >(overrides.storeDocument ?? (async () => success({ key: 'stored' })));
+  const removeDocument = vi.fn(async () => success(undefined));
+  const documentStorage = {
+    storeDocument,
+    removeDocument,
+  } as unknown as DocumentStorageService;
+
+  const add = vi.fn(overrides.queueAdd ?? (async () => undefined));
+  const queue = { add } as unknown as Queue<AiPlanImportJobData>;
+
+  const listPlanTypes = vi.fn(async () => overrides.planTypes ?? []);
+  const listPlanTypesService = {
+    listPlanTypes,
+  } as unknown as ListPlanTypesService;
+
+  const capture = vi.fn();
+  const trackingService = { capture } as unknown as TrackingService;
+
+  const service = new EnqueueImportService(
+    permissions,
+    jobRepository,
+    documentStorage,
+    listPlanTypesService,
+    trackingService,
+    queue
+  );
+
+  return {
+    service,
+    capture,
+    createWithinQuotas,
+    deleteIfPending,
+    storeDocument,
+    removeDocument,
+    listPlanTypes,
+    add,
+  };
+};
+
+describe('EnqueueImportService', () => {
+  it('retourne le jobId et enfile avec le même id en clé de dédup BullMQ', async () => {
+    const { service, add } = buildService();
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({ success: true, data: { jobId: 'job-1' } });
+    expect(add).toHaveBeenCalledWith(
+      'generate-import-draft',
+      { jobId: 'job-1' },
+      { jobId: 'job-1' }
+    );
+  });
+
+  it("émet l'événement de lancement une fois le job enfilé", async () => {
+    const { service, capture } = buildService();
+
+    await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(capture).toHaveBeenCalledWith({
+      distinctId: user.id,
+      event: 'plans:import-ia:started',
+      properties: expect.objectContaining({
+        collectiviteId: 10,
+        jobId: 'job-1',
+        mimeType: 'text/csv',
+        fileSizeBytes: expect.any(Number),
+      }),
+    });
+  });
+
+  it.each([
+    { canImportInParallel: false, limitUserInFlight: true },
+    { canImportInParallel: true, limitUserInFlight: false },
+  ])(
+    'limite les imports en cours par utilisateur sauf permission import_in_parallel ($canImportInParallel)',
+    async ({ canImportInParallel, limitUserInFlight }) => {
+      const { service, createWithinQuotas } = buildService({
+        canImportInParallel,
+      });
+
+      await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options,
+      });
+
+      expect(createWithinQuotas.mock.calls[0][1]).toEqual({
+        limitUserInFlight,
+      });
+    }
+  );
+
+  it('refuse un type de plan inconnu avant tout stockage ou enfilement', async () => {
+    const { service, createWithinQuotas, storeDocument, add } = buildService({
+      planTypes: [{ id: 1 }],
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options: { ...options, planType: 999 },
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE,
+    });
+    expect(createWithinQuotas).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it('accepte un type de plan existant', async () => {
+    const { service, add } = buildService({ planTypes: [{ id: 4 }] });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options: { ...options, planType: 4 },
+    });
+
+    expect(result).toMatchObject({ success: true });
+    expect(add).toHaveBeenCalled();
+  });
+
+  it('écrit le même sourcePath dans la ligne du job et dans le storage', async () => {
+    const { service, createWithinQuotas, storeDocument } = buildService();
+
+    await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    const createdWith = createWithinQuotas.mock.calls[0][0];
+    expect(createdWith.sourcePath).toMatch(/^10\//);
+    expect(storeDocument).toHaveBeenCalledWith(
+      expect.objectContaining({ key: createdWith.sourcePath })
+    );
+  });
+
+  it('stocke avec le mime détecté dans le contenu, pas le mime déclaré', async () => {
+    const { service, storeDocument } = buildService();
+
+    await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toPdfDeclaredAsCsv(),
+      options,
+    });
+
+    expect(storeDocument).toHaveBeenCalledWith(
+      expect.objectContaining({ contentType: 'application/pdf' })
+    );
+  });
+
+  it('refuse sans permission et sans aucun effet de bord', async () => {
+    const { service, createWithinQuotas, storeDocument, add } = buildService({
+      isAllowed: false,
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.UNAUTHORIZED,
+    });
+    expect(createWithinQuotas).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it('refuse un binaire déclaré csv sans aucun effet de bord', async () => {
+    const { service, createWithinQuotas, storeDocument, add } = buildService();
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toBinaryDeclaredAsCsv(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE,
+    });
+    expect(createWithinQuotas).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it('mappe un zip sans structure xlsx sur UNSUPPORTED_FILE_TYPE', async () => {
+    const { service } = buildService();
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toTruncatedZip(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE,
+    });
+  });
+
+  it('mappe un xlsx déclarant plus de 100 Mo décompressés sur FILE_TOO_LARGE', async () => {
+    const { service } = buildService();
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toXlsxBomb(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.FILE_TOO_LARGE,
+    });
+  });
+
+  it('refuse au-delà de 20 jobs in-flight sans créer de ligne', async () => {
+    const { service, createWithinQuotas } = buildService({
+      countInFlight: 20,
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.TOO_MANY_IN_FLIGHT_JOBS,
+    });
+    expect(createWithinQuotas).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS,
+    AiPlanImportErrorEnum.USER_IN_FLIGHT_JOB_EXISTS,
+    AiPlanImportErrorEnum.DAILY_QUOTA_EXCEEDED,
+  ])('propage le refus %s sans toucher storage ni queue', async (error) => {
+    const { service, storeDocument, add } = buildService({
+      createWithinQuotas: async () => failure(error),
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({ success: false, error });
+    expect(storeDocument).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it("supprime la ligne pending quand l'upload storage échoue", async () => {
+    const { service, deleteIfPending, removeDocument, add } = buildService({
+      storeDocument: async () =>
+        failure(DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR),
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.STORAGE_ERROR,
+    });
+    expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(removeDocument).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it("supprime l'objet storage puis la ligne quand la mise en file d'attente échoue", async () => {
+    const { service, deleteIfPending, removeDocument, storeDocument, capture } =
+      buildService({
+        queueAdd: async () => {
+          throw new Error('redis down');
+        },
+      });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.CREATE_JOB_ERROR,
+    });
+    const storedKey = storeDocument.mock.calls[0][0].key;
+    expect(removeDocument).toHaveBeenCalledWith({
+      bucketId: 'ai-plan-import-sources',
+      key: storedKey,
+    });
+    expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(removeDocument.mock.invocationCallOrder[0]).toBeLessThan(
+      deleteIfPending.mock.invocationCallOrder[0]
+    );
+    expect(capture).not.toHaveBeenCalled();
+  });
+});

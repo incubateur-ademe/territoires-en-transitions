@@ -48,52 +48,52 @@ values ('Permis vélo CM2 école TET 2020-2024',
 ;
 alter table fiche_action enable trigger save_history;
 
-insert into fiche_action_thematique (fiche_id, thematique_id)
+insert into fiche_action_thematique (fiche_id, thematique_id, created_by)
 values
-       (1, 1),
-       (2, 1),
-       (3, 1),
-       (4, 1),
-       (5, 1),
-       (6, 1),
-       (7, 1),
-       (8, 1),
-       (9, 1),
-       (10, 1),
-       (11, 1),
-       (12, 1),
-       (13, 1);
+       (1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (2, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (3, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (4, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (5, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (6, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (7, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (8, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (9, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (10, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (11, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (12, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (13, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
-insert into fiche_action_sous_thematique (fiche_id, thematique_id)
+insert into fiche_action_sous_thematique (fiche_id, thematique_id, created_by)
 values
-       (1, 1),
-       (2, 1),
-       (3, 1),
-       (4, 1),
-       (5, 1),
-       (6, 1),
-       (7, 1),
-       (8, 1),
-       (9, 1),
-       (10, 1),
-       (11, 1),
-       (12, 1),
-       (13, 1);
+       (1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (2, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (3, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (4, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (5, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (6, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (7, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (8, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (9, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (10, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (11, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (12, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+       (13, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
-insert into fiche_action_axe(fiche_id, axe_id)
+insert into fiche_action_axe(fiche_id, axe_id, created_by)
 values
-(1, 9),
-(2, 6),
-(3, 10),
-(4, 4),
-(5, 3),
-(6, 2),
-(7, 20),
-(8, 17),
-(9, 21),
-(10, 15),
-(11, 14),
-(12, 13);
+(1, 9, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(2, 6, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(3, 10, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(4, 4, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(5, 3, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(6, 2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(7, 20, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(8, 17, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(9, 21, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(10, 15, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(11, 14, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+(12, 13, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
 -- Partenaires
 insert into partenaire_tag (nom, collectivite_id)
@@ -179,21 +179,21 @@ values ('Lou Piote', 1),
        ('Harry Cot', 1)
 on conflict (nom, collectivite_id) do nothing;
 
-insert into fiche_action_pilote (fiche_id, user_id, tag_id)
+insert into fiche_action_pilote (fiche_id, user_id, tag_id, created_by)
 values
-    (1, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1)),
-    (1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid, null),
-    (2, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1)),
-    (3, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1)),
-    (4, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1));
+    (1, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid, null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (2, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (3, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (4, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
-insert into fiche_action_referent (fiche_id, user_id, tag_id)
+insert into fiche_action_referent (fiche_id, user_id, tag_id, created_by)
 values
-    (1, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1)),
-    (2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid, null),
-    (4, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1)),
-    (5, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1)),
-    (6, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1));
+    (1, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid, null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (4, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (5, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid),
+    (6, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
 insert into fiche_action_action (fiche_id, action_id)
 values

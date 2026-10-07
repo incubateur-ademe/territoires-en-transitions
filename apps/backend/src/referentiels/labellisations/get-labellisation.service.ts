@@ -11,26 +11,27 @@ import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import {
   ActionScoreFinal,
-  areExpectedDocumentsDeposited,
   ConditionFichiers,
   Etoile,
   EtoileEnum,
   findActionById,
-  getExpectedDocuments,
+  getRoleMesureIds,
   getParcoursLabellisationStatus,
   getParentId,
   getScoreRatios,
-  Labellisation,
+  LabellisationWithProchaineEtoile,
   LabellisationAudit,
   LabellisationDemande,
   ParcoursLabellisation,
   PreuveWithObjet,
   ReferentielId,
+  ReferentRolesDefined,
   ScoreSnapshot,
+  toReferentRolesDefined,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
-import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
+import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { auditTable } from './audit.table';
 import {
@@ -48,11 +49,9 @@ import { labellisationDemandeTable } from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
 import { labellisationTable } from './labellisation.table';
 type TLabellisationAndDemandeAndAudit = {
-  labellisation: ObjectToSnake<
-    Labellisation & { prochaine_etoile: Etoile | null }
-  > | null;
-  audit: ObjectToSnake<LabellisationAudit> | null;
-  demande: ObjectToSnake<LabellisationDemande> | null;
+  labellisation: LabellisationWithProchaineEtoile | null;
+  audit: LabellisationAudit | null;
+  demande: LabellisationDemande | null;
   auditeurs: {
     userId: string;
     nom: string;
@@ -71,7 +70,8 @@ export class GetLabellisationService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly labellisationService: LabellisationService
+    private readonly labellisationService: LabellisationService,
+    private readonly mesurePilotesService: HandleMesurePilotesService
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -242,6 +242,24 @@ export class GetLabellisationService {
     }
   }
 
+  async isAuditeurForAudit(
+    auditId: number,
+    auditeur: string,
+    tx?: Transaction
+  ): Promise<boolean> {
+    const rows = await (tx ?? this.db)
+      .select({ auditId: auditeurTable.auditId })
+      .from(auditeurTable)
+      .where(
+        and(
+          eq(auditeurTable.auditId, auditId),
+          eq(auditeurTable.auditeur, auditeur)
+        )
+      )
+      .limit(1);
+    return rows.length > 0;
+  }
+
   async getCurrentAudit(
     collectiviteId: number,
     referentielId: ReferentielId,
@@ -281,8 +299,8 @@ export class GetLabellisationService {
     collectiviteId: number,
     referentielId: ReferentielId
   ): Promise<{
-    audit: ObjectToSnake<LabellisationAudit>;
-    demande: ObjectToSnake<LabellisationDemande>;
+    audit: LabellisationAudit;
+    demande: LabellisationDemande;
     auditeurs: {
       userId: string;
       nom: string;
@@ -358,48 +376,12 @@ export class GetLabellisationService {
         currentAudit.demandeId = currentDemande.id;
       }
 
-      // Mapping for legacy reasons,
-      // TODO: to be removed when the frontend is updated
       return {
-        audit: {
-          collectivite_id: currentAudit.collectiviteId,
-          date_cnl: currentAudit.dateCnl,
-          date_debut: currentAudit.dateDebut,
-          date_fin: currentAudit.dateFin,
-          demande_id: currentAudit.demandeId,
-          id: currentAudit.id,
-          referentiel_id: currentAudit.referentielId,
-          valide: currentAudit.valide,
-          valide_labellisation: currentAudit.valideLabellisation,
-          clos: currentAudit.clos,
-        },
-        demande: {
-          collectivite_id: currentDemande.collectiviteId,
-          date: currentDemande.date,
-          demandeur: currentDemande.demandeur,
-          en_cours: currentDemande.enCours,
-          envoyee_le: currentDemande.envoyeeLe,
-          etoiles: currentDemande.etoiles as '1' | '2' | '3' | '4' | '5' | null,
-          modified_at: currentDemande.modifiedAt,
-          id: currentDemande.id,
-          referentiel: currentDemande.referentiel,
-          sujet: currentDemande.sujet,
-          associated_collectivite_id: currentDemande.associatedCollectiviteId,
-        },
+        audit: currentAudit,
+        demande: currentDemande,
         auditeurs: auditeursResult,
       };
     });
-  }
-
-  async isCot(collectiviteId: number) {
-    const cotResult = await this.db
-      .select()
-      .from(cotTable)
-      .where(eq(cotTable.collectiviteId, collectiviteId))
-      .limit(1);
-    // CUrrent implementation,
-    // TODO: is that normal that we don't check if the cot is active?
-    return cotResult.length > 0;
   }
 
   /**
@@ -443,11 +425,11 @@ export class GetLabellisationService {
     collectiviteId: number,
     referentielId: ReferentielId
   ): Promise<{
-    demande: { en_cours: boolean } | null;
+    demande: { enCours: boolean } | null;
     audit: {
       valide: boolean;
-      date_debut: string | null;
-      date_fin: string | null;
+      dateDebut: string | null;
+      dateFin: string | null;
     } | null;
   }> {
     const [currentAudit] = await this.db
@@ -482,11 +464,11 @@ export class GetLabellisationService {
       audit: currentAudit
         ? {
             valide: currentAudit.valide,
-            date_debut: currentAudit.dateDebut,
-            date_fin: currentAudit.dateFin,
+            dateDebut: currentAudit.dateDebut,
+            dateFin: currentAudit.dateFin,
           }
         : null,
-      demande: currentDemande ? { en_cours: currentDemande.enCours } : null,
+      demande: currentDemande,
     };
   }
 
@@ -509,7 +491,7 @@ export class GetLabellisationService {
     collectiviteId: number;
     referentielId: ReferentielId;
   }): Promise<TLabellisationAndDemandeAndAudit> {
-    const isCot = await this.isCot(collectiviteId);
+    const isCot = await this.isCotActif(collectiviteId);
     const currentLabellisation = await this.getCurrentLabellisation({
       collectiviteId,
       referentielId,
@@ -531,32 +513,6 @@ export class GetLabellisationService {
       preuvesObjets,
       isCot,
     };
-  }
-
-  getScorePgFunction({ collectiviteId }: { collectiviteId: number }) {
-    const statement = sql`with
-      ref as (select unnest(enum_range(null::referentiel)) as referentiel),
-
-      -- Score JSON en format table SQL
-      scores as (
-        select s.*
-        from ref
-        left join client_scores cs on cs.referentiel = ref.referentiel
-        join private.convert_client_scores(cs.scores) s on true
-        where cs.collectivite_id = ${collectiviteId}
-      )
-
-      select s.referentiel,
-        ss.proportion_fait,
-        ss.proportion_programme,
-        ss.completude,
-        ss.complete
-      from scores s
-      join private.score_summary_of(s) ss on true
-      where s.action_id = s.referentiel::action_id
-    `;
-
-    return this.db.execute(statement);
   }
 
   /**
@@ -591,12 +547,6 @@ export class GetLabellisationService {
       return snapshotResult;
     }
     const snapshot = snapshotResult.data;
-
-    // const snapshot = await this.scoresService.computeScoreForCollectivite(
-    //   ReferentielIdEnum.CAE,
-    //   collectiviteId,
-    //   { mode: ComputeScoreMode.DEPUIS_SAUVEGARDE }
-    // );
 
     const { score } = snapshot.scoresPayload.scores;
     const ratios = getScoreRatios(score);
@@ -659,21 +609,19 @@ from s_etoile s
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }): Promise<
-    (ObjectToSnake<Labellisation> & { prochaine_etoile: Etoile | null }) | null
-  > {
+  }): Promise<LabellisationWithProchaineEtoile | null> {
     return this.db
       .select({
         id: labellisationTable.id,
-        collectivite_id: labellisationTable.collectiviteId,
+        collectiviteId: labellisationTable.collectiviteId,
         referentiel: labellisationTable.referentiel,
-        obtenue_le: labellisationTable.obtenueLe,
+        obtenueLe: labellisationTable.obtenueLe,
         annee: labellisationTable.annee,
         etoiles: labellisationTable.etoiles,
-        score_realise: labellisationTable.scoreRealise,
-        score_programme: labellisationTable.scoreProgramme,
+        scoreRealise: labellisationTable.scoreRealise,
+        scoreProgramme: labellisationTable.scoreProgramme,
 
-        prochaine_etoile: etoileDefinitionTable.prochaineEtoile,
+        prochaineEtoile: etoileDefinitionTable.prochaineEtoile,
       })
       .from(labellisationTable)
       .innerJoin(
@@ -714,56 +662,30 @@ from s_etoile s
     }
     const snapshot = snapshotResult.data;
 
-    // const snapshot = await this.scoresService.computeScoreForCollectivite(
-    //   ReferentielIdEnum.CAE,
-    //   collectiviteId,
-    //   { mode: ComputeScoreMode.DEPUIS_SAUVEGARDE }
-    // );
-
     const { score } = snapshot.scoresPayload.scores;
 
     const scoreRatios = getScoreRatios(score);
 
     const scoresOverview = {
       isCompleted: score.completedTachesCount === score.totalTachesCount,
-      // completude: scoreRatios.ratioTachesCount,
-      // proportion_fait: scoreRatios.ratioFait,
-      // proportion_programme: scoreRatios.ratioProgramme,
-      // referentiel: 'cae',
     };
 
-    const {
-      labellisation,
-      demande,
-      audit,
-      auditeurs,
-      isCot,
-      preuvesObjets,
-    } = await this.getLabellisationAndDemandeAndAudit({
-      collectiviteId,
-      referentielId,
-    });
+    const { labellisation, demande, audit, auditeurs, isCot, preuvesObjets } =
+      await this.getLabellisationAndDemandeAndAudit({
+        collectiviteId,
+        referentielId,
+      });
 
     const etoileCible = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
-      nextEtoile: labellisation?.prochaine_etoile ?? undefined,
+      nextEtoile: labellisation?.prochaineEtoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
     });
 
-    const expectedDocuments = getExpectedDocuments({
-      isCot: await this.isCotActif(collectiviteId),
-      premiereEtoileObtenue: labellisation !== null,
-      etoile: etoileCible.etoile,
-    });
     const conditionFichiers: ConditionFichiers = {
       referentiel: referentielId,
-      preuve_nombre: preuvesObjets.filter(
-        (preuve) => preuve.fichierId !== null
-      ).length,
-      atteint: areExpectedDocumentsDeposited({
-        preuves: preuvesObjets,
-        expectedDocuments,
-      }),
+      preuveNombre: preuvesObjets.filter((preuve) => preuve.fichierId !== null)
+        .length,
     };
 
     const actionConditionDefinitions =
@@ -778,27 +700,28 @@ from s_etoile s
 
     // Équivalent de la fonction PG `labellisation.critere_score_global()`, basée sur `client_scores`.
     const critereScore = {
-      score_a_realiser: etoileCible.minRealiseScore,
-      score_fait: scoreRatios.ratioFait,
+      scoreARealiser: etoileCible.minRealiseScore,
+      scoreFait: scoreRatios.ratioFait,
       atteint: scoreRatios.ratioFait >= etoileCible.minRealiseScore,
       etoiles: etoileCible.etoile,
     };
 
+    const referentRolesDefined = await this.getReferentRolesDefined(
+      collectiviteId,
+      referentielId
+    );
+
     const status = getParcoursLabellisationStatus({ demande, audit });
 
     return success({
-      collectivite_id: collectiviteId,
+      collectiviteId,
       referentiel: referentielId,
       status,
       etoiles: etoileCible.etoile,
-      completude_ok: scoresOverview.isCompleted,
+      completudeOk: scoresOverview.isCompleted,
 
-      critere_score: critereScore,
-      criteres_action: criteresAction.map(objectToSnake),
-      rempli:
-        critereScore.atteint &&
-        criteresAction.every((c) => c.atteint) &&
-        (isCot ? true : conditionFichiers.atteint),
+      critereScore,
+      criteresAction,
 
       labellisation,
       demande,
@@ -807,8 +730,34 @@ from s_etoile s
       score,
 
       isCot,
+      referentRolesDefined,
       conditionFichiers,
       preuvesObjets,
+    });
+  }
+
+  private async getReferentRolesDefined(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<ReferentRolesDefined> {
+    const roleMesureIds = getRoleMesureIds(referentielId);
+    if (roleMesureIds.length === 0) {
+      return toReferentRolesDefined({
+        referentiel: referentielId,
+        mesureIdsWithPilotes: [],
+      });
+    }
+
+    const pilotesByMesureId = await this.mesurePilotesService.listPilotes(
+      collectiviteId,
+      roleMesureIds
+    );
+
+    return toReferentRolesDefined({
+      referentiel: referentielId,
+      mesureIdsWithPilotes: Object.entries(pilotesByMesureId)
+        .filter(([, pilotes]) => pilotes.length > 0)
+        .map(([mesureId]) => mesureId),
     });
   }
 
@@ -837,13 +786,6 @@ from s_etoile s
       maxEligibleEtoile,
       EtoileEnum.PREMIERE_ETOILE
     ) as Etoile;
-
-    // const etoiles = {
-    //   etoile_labellise: labellisation.currentEtoile,
-    //   prochaine_etoile_labellisation: labellisation.nextEtoile,
-    //   etoile_score_possible: maxEligibleEtoile,
-    //   etoile_objectif: nbEtoilesCibles,
-    // };
 
     const etoileCible = etoilesDefinitions.find(
       (etoile) => etoile.etoile === nbEtoilesCibles
@@ -937,10 +879,9 @@ function addIsScoreConditionSatisfied<
     return {
       ...actionCondition,
       atteint: isConditionSatisfied,
-      rempli: isConditionSatisfied,
       proportionFait: actionScore.ratioFait,
       proportionProgramme: actionScore.ratioProgramme,
-      statut_ou_score: statutOrScore,
+      statutOuScore: statutOrScore,
     };
   };
 }

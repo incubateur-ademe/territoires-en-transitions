@@ -1,60 +1,120 @@
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
-import { Button } from '@tet/ui';
+import { isPcaetLaunched } from '@/site/src/utils/is-pcaet-launched';
+import { Badge, Button } from '@tet/ui';
+import classNames from 'classnames';
 import Image from 'next/image';
+import { ReactNode } from 'react';
 
-export const NosServices = () => (
-  <Section
-    className="flex items-center gap-16"
-    containerClassName="bg-primary-0 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
-  >
-    <TitreSection>Nos services</TitreSection>
+export const NosServices = async () => {
+  const pcaetLaunched = await isPcaetLaunched();
 
-    <div className="flex flex-col lg:flex-row-reverse gap-4 lg:gap-24 items-center lg:items-start">
-      <Image
-        src="/pictogrammes/programme.svg"
-        alt=""
-        width={357}
-        height={309}
+  return (
+    <Section
+      className="!gap-12 lg:!gap-10"
+      containerClassName="bg-primary-0 max-md:!py-10 md:max-lg:!py-14 lg:!py-20"
+    >
+      <TitreSection className="!mb-0">Nos services</TitreSection>
+
+      <Service
+        image={
+          <Image
+            src="/pictogrammes/programme.svg"
+            alt=""
+            width={428}
+            height={371}
+            className="w-full max-w-[360px] h-auto"
+          />
+        }
+        imagePosition="right"
+        titre="Le programme Territoire Engagé Transition Écologique (TETE)"
+        description="Planifiez et structurez votre transition écologique, accompagné par un expert. Le programme de référence pour les collectivités, notamment les EPCI, avec un accompagnement personnalisé pour mobiliser vos équipes."
+        action={
+          <Button variant="outlined" href="/programme">
+            Découvrir le programme
+          </Button>
+        }
       />
-      <div className="px-4">
-        <h3 className="font-bold text-primary-10 text-2xl">
-          Le programme Territoire Engagé Transition Écologique
-        </h3>
-        <p>
-          Vous souhaitez planifier votre transition écologique et la structurer
-          ? Vous souhaitez être accompagné par un expert ? Territoire Engagé
-          Transition Écologique, c’est : le programme de référence dédié aux
-          collectivités, notamment aux EPCI, pour faire de la transition
-          écologique une réalité et mobiliser vos équipes avec un accompagnement
-          personnalisé.
-        </p>
-        <Button variant="outlined" href="/programme">
-          Découvrir le programme
-        </Button>
-      </div>
-    </div>
 
-    <div className="flex flex-col lg:flex-row gap-4 lg:gap-24 items-center lg:items-start">
-      <Image
-        src="/pictogrammes/plateforme-numerique.svg"
-        alt=""
-        width={421}
-        height={360}
+      <Service
+        image={
+          <Image
+            src="/pictogrammes/plateforme-numerique.svg"
+            alt=""
+            width={422}
+            height={328}
+            className="w-full max-w-[420px] h-auto"
+          />
+        }
+        imagePosition="left"
+        titre="Une plateforme gratuite pour piloter vos plans"
+        description="Situez votre collectivité dans sa transition écologique, définissez des plans d’actions personnalisés et pilotez vos projets au même endroit."
+        action={
+          <Button variant="outlined" href="/plateforme-numerique">
+            Découvrir la plateforme
+          </Button>
+        }
       />
-      <div className="px-4">
-        <h3 className="font-bold text-primary-10 text-2xl">
-          L’outil opérationnel pour avancer de façon autonome et progressive.
-        </h3>
-        <p>
-          Une plateforme numérique gratuite pour situer et évaluer votre
-          collectivité sur l’avancée de sa transition écologique, définir des
-          plans d’actions personnalisés, et piloter vos projets efficacement.
-        </p>
-        <Button variant="outlined" href="/outil-numerique">
-          La plateforme numérique
-        </Button>
-      </div>{' '}
+
+      {pcaetLaunched && (
+        <Service
+          image={
+            <Image
+              src="/visuel-demarche-pcaet.png"
+              alt=""
+              width={1004}
+              height={787}
+              className="w-full max-w-[530px] h-auto"
+            />
+          }
+          imagePosition="right"
+          badges={
+            <>
+              <Badge title="Nouveau" variant="new" size="sm" />
+              <Badge title="Dépôt réglementaire" variant="info" size="sm" />
+            </>
+          }
+          titre="Votre PCAET, de l’élaboration à l’adoption"
+          description="Que votre démarche soit obligatoire ou volontaire, constituez votre dossier en équipe, transmettez-le pour avis et suivez son avancement."
+          action={
+            <Button variant="primary" href="/demarche-pcaet">
+              Découvrir la démarche PCAET
+            </Button>
+          }
+        />
+      )}
+    </Section>
+  );
+};
+
+const Service = ({
+  image,
+  imagePosition,
+  badges,
+  titre,
+  description,
+  action,
+}: {
+  image: ReactNode;
+  imagePosition: 'left' | 'right';
+  badges?: ReactNode;
+  titre: string;
+  description: string;
+  action: ReactNode;
+}) => (
+  <div className="grid lg:grid-cols-2 gap-6 lg:gap-16 items-center">
+    <div
+      className={classNames('flex justify-center', {
+        'lg:order-last': imagePosition === 'right',
+      })}
+    >
+      {image}
     </div>
-  </Section>
+    <div className="flex flex-col items-start gap-4 max-w-xl">
+      {badges && <div className="flex flex-wrap gap-2">{badges}</div>}
+      <h3 className="m-0 font-bold text-primary-10 text-2xl">{titre}</h3>
+      <p className="m-0">{description}</p>
+      <div className="mt-2">{action}</div>
+    </div>
+  </div>
 );

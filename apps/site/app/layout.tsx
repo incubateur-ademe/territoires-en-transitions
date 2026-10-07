@@ -6,6 +6,7 @@ import { Header } from '../components/layout/Header';
 import { Trackers } from '../providers/posthog';
 import { RootProviders } from '../providers/root-providers';
 import './global.css';
+import { isPcaetLaunched } from '../src/utils/is-pcaet-launched';
 import { getMetaData } from './home/utils';
 
 export const viewport: Viewport = {
@@ -83,6 +84,8 @@ export default async function RootLayout({
     throw new Error('Nonce is required');
   }
 
+  const pcaetLaunched = await isPcaetLaunched();
+
   return (
     <html lang="fr">
       <body className="min-h-screen flex flex-col justify-between">
@@ -95,7 +98,7 @@ export default async function RootLayout({
         >
           <RootProviders>
             <div className="grow flex flex-col">
-              <Header />
+              <Header showDemarchePcaet={pcaetLaunched} />
               <div className="grow flex flex-col">{children}</div>
             </div>
             <Footer />

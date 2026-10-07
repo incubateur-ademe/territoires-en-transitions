@@ -4,7 +4,7 @@ import {
   ActionListItem,
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
-import { useSubActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
+import { useSubActionPreuvesCount } from '@/app/collectivites/documents/use-action-preuves-count';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AccordionControlled, cn, useStickyHeaderHeight } from '@tet/ui';
 import { ActionExplicationField } from '../../action-explication.field';

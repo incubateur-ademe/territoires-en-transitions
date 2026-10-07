@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { type ReferentielResponse } from '@tet/backend/referentiels/get-referentiel/get-referentiel.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -14,6 +15,9 @@ import {
   type CollectiviteReferentielPreferences,
 } from '@tet/domain/collectivites';
 import {
+  ActionTypeEnum,
+  flatMapActionsEnfants,
+  ReferentielIdEnum,
   StatutAvancementEnum,
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
@@ -39,9 +43,9 @@ const MERGE_STATUTS_FIXTURE = {
     teActionId: 'te_1.1.1.2',
     caeOrigineActionId: 'cae_1.1.2.2.1',
   },
-  /** TE 5.1.2.3 ← Cae_5.1.2.3 + Eci_1.1.3.3 (fusion 2→1, pondération 1 chacune) */
+  /** TE 5.1.2.4 ← Cae_5.1.2.3 + Eci_1.1.3.3 (fusion 2→1, pondération 1 chacune) */
   teActionCaeAndEci: {
-    teActionId: 'te_5.1.2.3',
+    teActionId: 'te_5.1.2.4',
     caeOrigineActionId: 'cae_5.1.2.3',
     eciOrigineActionId: 'eci_1.1.3.3',
   },
@@ -304,5 +308,124 @@ describe('mergeStatuts', () => {
         (statut) => statut.actionId === MERGE_STATUTS_FIXTURE.teNativeActionId
       )
     ).toBe(false);
+  });
+
+  // détecte dans l'arbre TE courant une sous-mesure porteuse de
+  // tâches ; à réviser si la structure du CSV TE change (cf. MERGE_STATUTS_FIXTURE).
+  test('sous-mesure TE porteuse de tâches : pas de reprise de statut sur le parent concerné', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const ctxResult = await buildCtx(prefsEligibleCaeAndEci);
+    expect(ctxResult.success).toBe(true);
+    if (!ctxResult.success) {
+      throw new Error('buildSwitchToTeContext a échoué');
+    }
+    const ctx = ctxResult.data;
+    const noeuds = flatMapActionsEnfants(ctx.referentielTe.itemsTree);
+
+    const parentAvecTaches = noeuds.find(
+      (noeud) =>
+        noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
+        (noeud.actionsOrigine?.length ?? 0) > 0 &&
+        (noeud.actionsEnfant ?? []).some(
+          (enfant) => enfant.actionType === ActionTypeEnum.TACHE
+        )
+    );
+
+    if (!parentAvecTaches) {
+      throw new Error(
+        'mergeStatuts e2e : aucune sous-mesure TE avec tâches + origine dans le CSV courant'
+      );
+    }
+
+    const data = mergeStatuts(ctx);
+
+    expect(
+      data.some((statut) => statut.actionId === parentAvecTaches.actionId)
+    ).toBe(false);
+
+    // non-régression : une sous-mesure feuille avec origine reçoit toujours un statut
+    const feuilleAvecOrigine = noeuds.find(
+      (noeud) =>
+        noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
+        (noeud.actionsOrigine?.length ?? 0) > 0 &&
+        !noeud.exprScore?.trim() &&
+        (noeud.actionsEnfant ?? []).every(
+          (enfant) => enfant.actionType !== ActionTypeEnum.TACHE
+        )
+    );
+    if (!feuilleAvecOrigine) {
+      throw new Error(
+        'mergeStatuts e2e : aucune sous-mesure TE feuille avec origine dans le CSV courant'
+      );
+    }
+    expect(
+      data.some((statut) => statut.actionId === feuilleAvecOrigine.actionId)
+    ).toBe(true);
+  });
+
+  // détecte dans l'arbre TE courant une action avec origine selon `predicate` ;
+  // à réviser si la structure du CSV TE change (cf. MERGE_STATUTS_FIXTURE).
+  async function expectAucunStatutMalgreSourceFaite(
+    predicate: (noeud: ReferentielResponse['itemsTree']) => boolean,
+    libelle: string
+  ) {
+    const ctxResultAvantStatut = await buildCtx(prefsEligibleCaeAndEci);
+    expect(ctxResultAvantStatut.success).toBe(true);
+    if (!ctxResultAvantStatut.success) {
+      throw new Error('buildSwitchToTeContext a échoué');
+    }
+    const noeuds = flatMapActionsEnfants(
+      ctxResultAvantStatut.data.referentielTe.itemsTree
+    );
+
+    const cible = noeuds.find(
+      (noeud) => (noeud.actionsOrigine?.length ?? 0) > 0 && predicate(noeud)
+    );
+
+    if (!cible) {
+      throw new Error(
+        `mergeStatuts e2e : aucune ${libelle} avec origine dans le CSV courant`
+      );
+    }
+
+    const caeOrigineActionId = cible.actionsOrigine?.find(
+      (origine) => origine.referentielId === ReferentielIdEnum.CAE
+    )?.actionId;
+    const origineActionId =
+      caeOrigineActionId ?? cible.actionsOrigine?.[0]?.actionId;
+    if (!origineActionId) {
+      throw new Error(`${libelle} sans actionId d’origine exploitable`);
+    }
+
+    await setActionStatut(origineActionId, StatutAvancementEnum.FAIT);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
+
+    expect(data.some((statut) => statut.actionId === cible.actionId)).toBe(
+      false
+    );
+  }
+
+  test('tâche TE avec origine concernée : aucun statut malgré un statut fait sur la source', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    await expectAucunStatutMalgreSourceFaite(
+      (noeud) => noeud.actionType === ActionTypeEnum.TACHE,
+      'tâche TE'
+    );
+  });
+
+  test('sous-mesure TE avec exprScore et origine concernée : aucun statut malgré un statut fait sur la source', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    await expectAucunStatutMalgreSourceFaite(
+      (noeud) =>
+        noeud.actionType === ActionTypeEnum.SOUS_ACTION &&
+        Boolean(noeud.exprScore?.trim()),
+      'sous-mesure TE avec exprScore'
+    );
   });
 });

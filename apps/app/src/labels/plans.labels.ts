@@ -1,0 +1,226 @@
+import { plural } from '@tet/ui/labels/plural';
+
+export const plansLabels = {
+  /** Plan */
+  plan: plural({ one: 'plan', other: 'plans' }),
+  nomPlan: 'Nom du plan',
+  nomPlanRequis: 'Le nom du plan est requis',
+  nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
+  typePlan: 'Type de plan',
+  type: 'Type',
+  axe: plural({ one: 'axe', other: 'axes' }),
+  sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
+
+  sansPlanCardTitle: "Aucun plan d'action renseigné !",
+  sansPlanCardDescription:
+    'Créer un plan sur la plateforme vous permet de piloter vos actions.',
+  sansPlanCardDescriptionSecondLine:
+    "Vous pouvez intégrer n'importe quel plan thématique, déjà approuvé ou en cours d'élaboration.",
+
+  /** Tableau de bord */
+  tdbCreationModulePersonnalise1: 'Étape 1/2 : Paramétrer un module',
+  tdbCreationModulePersonnalise2:
+    'Étape 2/2 : Choisir les conditions applicables aux actions',
+
+  /** Action */
+  action: plural({ one: 'action', other: 'actions' }),
+
+  sousAction: plural({ one: 'sous-action', other: 'sous-actions' }),
+  sousActionSupprimer: 'Supprimer la sous-action',
+  sousActionAjouter: 'Ajouter une sous-action',
+
+  ficheStatut: 'Statut',
+  statutAVenir: 'À venir',
+  statutADiscuter: 'À discuter',
+  statutEnCours: 'En cours',
+  statutRealise: 'Réalisé',
+  statutEnRetard: 'En retard',
+  statutEnPause: 'En pause',
+  statutAbandonne: 'Abandonné',
+  statutBloque: 'Bloqué',
+
+  niveauPriorite: 'Niveau de priorité',
+  prioriteEleve: 'Élevé',
+  prioriteMoyen: 'Moyen',
+  prioriteBas: 'Bas',
+
+  ficheObjectif: plural({ one: 'objectif', other: 'objectifs' }),
+  ficheObjectifWritePlaceholder: 'Saisir un objectif',
+  actionSansPlan: 'Action sans emplacement',
+  ficheEffetsAttendus: plural({
+    one: 'Effet attendu',
+    other: 'Effets attendus',
+  }),
+  ficheLibreTag: plural({
+    one: 'Tag personnalisé',
+    other: 'Tags personnalisés',
+  }),
+  ficheStructurePilote: plural({
+    one: 'Structure pilote',
+    other: 'Structures pilotes',
+  }),
+  fichePartenaire: plural({
+    one: 'Partenaire',
+    other: 'Partenaires',
+  }),
+  ficheCible: plural({
+    one: 'Cible',
+    other: 'Cibles',
+  }),
+  ficheInstanceGouvernance: plural({
+    one: 'Instance de gouvernance',
+    other: 'Instances de gouvernance',
+  }),
+  ficheInstanceGouvernancePlaceholderSelectionner: (
+    isEditionAllowed: boolean
+  ) =>
+    `Sélectionner ${
+      isEditionAllowed ? 'ou créer ' : ''
+    }une instance de gouvernance`,
+  ficheParticipationCitoyenne: plural({
+    one: 'Participation citoyenne',
+    other: 'Participation citoyenne',
+  }),
+  ficheParticipationSans: 'Sans participation citoyenne',
+  participationConsultation: 'Consultation',
+  participationConcertation: 'Concertation',
+  participationCoConstruction: 'Co-construction',
+  information: 'Information',
+  ficheIndicateursAssociesEmptyDescription:
+    "Mesurer les résultats et l'impact de l'action grâce à des indicateurs",
+  ficheOptions: "Plus d'options",
+  ficheEmplacementModalTitle: "Mutualiser l'action dans un autre plan",
+  ficheEmplacementModalAlert:
+    "Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l'emplacement",
+  ficheEmplacementActuel: 'Emplacement actuel',
+  ficheEmplacementAdditionel: 'Emplacement additionnel',
+  ficheEmplacementAucunPlanRattacher:
+    "Il n'existe aucun plan auquel rattacher cette action",
+  ficheEmplacementValiderCetEmplacement: 'Valider cet emplacement',
+  ficheBudget: 'Budget',
+  ficheDetaillerBudgetParAnnee: 'Détailler le budget par année',
+  ficheDetaillerBudgetParAnneeAlert: ({
+    nextMode,
+  }: {
+    nextMode: string;
+  }): string =>
+    `Attention : en passant au mode ${nextMode}, les données budgétaires actuelles seront supprimées.`,
+  ficheSupprimerBudgetDescription:
+    "Ce budget sera supprimé définitivement de l'action. Souhaitez-vous vraiment supprimer ce budget ?",
+
+  /** Filtres */
+  filtreNoObjectif: 'Sans objectif',
+  filtreNoReferent: 'Sans personne élue référente',
+  filtreNoStatut: 'Sans statut',
+  filtreNoPriorite: 'Sans niveau de priorité',
+  filtreTypePeriode: 'Période appliquée à la date',
+  filtreDebutPeriode: 'Du',
+  filtreFinPeriode: 'Au',
+  filtreRestreint: 'Action en mode privé',
+  filtreHasIndicateurLies: 'Indicateurs liés',
+  filtreHasMesuresLiees: 'Mesures des référentiels liées',
+  filtreHasBudget: 'Budgets renseignés',
+  actionRepeteTousLesAns: 'Action se répète tous les ans',
+  filtreFinanceurIds: 'Financeur',
+  filtrePartenaireIds: 'Partenaire',
+  filtreCibles: 'Cible',
+  filtreLibreTagsIds: 'Tags personnalisés',
+  filtreInstanceGouvernanceIds: 'Instance de gouvernance',
+  filtreStructurePiloteIds: 'Structure pilote',
+  filtreFicheIds: 'Action',
+  filtreLinkedFicheIds: 'Action liée',
+  filtreSharedWithCollectivites:
+    "Action mutualisée avec d'autres collectivités",
+  filtreActionsMutualiseesPlusieursPlans:
+    'Action mutualisée dans plusieurs plans',
+  filtreHasAtLeastBeginningOrEndDate: 'Date de début ou de fin',
+  filtreHasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle',
+  filtreNoTag: 'Sans tags personnalisés',
+  filtreNotes: 'Notes',
+  filtreAnneesNotes: 'Années de notes',
+  filtreIndicateurIds: 'Indicateurs',
+  filtreNoDescription: 'Sans description',
+
+  typePeriodeCreation: 'de création',
+  typePeriodeModification: 'de modification',
+  typePeriodeDebut: 'de début',
+  typePeriodeFin: 'de fin prévisionnelle',
+
+  optionDateRenseignee: 'Date renseignée',
+  optionDateNonRenseignee: 'Date non renseignée',
+  optionActionsAvecIndicateurs: 'Actions avec indicateurs liés',
+  optionActionsSansIndicateurs: 'Actions sans indicateurs liés',
+  optionActionsAvecNotes: 'Actions avec notes',
+  optionActionsSansNotes: 'Actions sans notes',
+  optionActionsAvecNotesRecentes: 'Actions avec notes récentes (< 1 an)',
+  optionActionsSansNotesRecentes: 'Actions sans notes récentes (> 1 an)',
+  optionAvecMesuresLiees: 'Avec mesures liées',
+  optionSansMesuresLiees: 'Sans mesures liées',
+  optionActionsAvecBudget: 'Actions avec budget',
+  optionActionsSansBudget: 'Actions sans budget',
+
+  /** Actions utilisateur */
+  editerPlan: 'Éditer ce plan',
+  supprimerPlan: 'Supprimer le plan',
+  dupliquerPlan: 'Dupliquer le plan',
+
+  creerAxe: 'Créer un axe',
+  editerAxe: 'Éditer cet axe',
+  deplacerAxe: 'Déplacer cet axe',
+  supprimerAxe: 'Supprimer cet axe',
+  deplierTousLesAxes: 'Déplier tous les axes',
+  replierTousLesAxes: 'Replier tous les axes',
+  lierIndicateurs: 'Lier des indicateurs',
+  ajouterNouveauTitreAxe: 'Ajouter un nouveau titre/axe',
+
+  creerAction: 'Créer une action',
+  dissocierAction: "Dissocier l'action",
+  lierIndicateurExistant: 'Lier un indicateur existant',
+  lierMesureReferentiels: 'Lier une mesure des référentiels',
+  rechercherIndicateurPlaceholder: 'Rechercher par mots clés',
+  rechercherParNomOuDescription: 'Rechercher par nom ou description',
+  ajouterFinanceur: 'Ajouter un financeur',
+  supprimerFinanceur: 'Supprimer le financeur',
+  ajouterBudget: 'Ajouter un budget',
+  supprimerBudget: 'Supprimer le budget',
+  gererDroitsAcces: "Gérer les droits d'accès",
+
+  ajouterModulePersonnalise: 'Ajouter un module personnalisé',
+  modifierModulePersonnalise: 'Modifier un module personnalisé',
+
+  /** Création et import de plan */
+  creerPlanSousTitre: 'directement sur la plateforme',
+  importPlanModeleSousTitre: 'à partir d’un modèle',
+  importPlanIaContact:
+    "Si l'import ne vous convient pas, contactez-nous à contact@territoiresentransitions.fr en joignant le fichier et en précisant le contexte.",
+  importPlanIaFormatsAcceptes:
+    'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
+  importPlanIaFichierSuggere:
+    "Programme d'actions déposé à l'étape Documents, pré-sélectionné pour vous.",
+  importPlanIaFichierSuggereChargement:
+    "Récupération du programme d'actions déposé…",
+  importPlanIaRetirerFichier: 'Retirer',
+  importPlanIaTypeVerrouille:
+    "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
+  importPlanIaPlanImporte: 'Plan importé',
+  importPlanIaEnCoursCourt: 'Import en cours',
+  planImporteBanniereTitre: 'Plan importé automatiquement (version bêta)',
+  planImporteBanniereAVerifier: 'À vérifier',
+  planImporteBanniereDescription:
+    "Ce plan a été créé à partir de votre fichier. L'import est en version bêta : certains éléments ont pu être manqués ou mal repérés. Relisez votre plan et corrigez-le si besoin.",
+  planImporteBanniereDemoAvant: 'Réservez un créneau pour suivre une',
+  planImporteBanniereDemoLien: 'démo de prise en main',
+  planImporteBanniereSupportAvant: 'ou prenez un',
+  planImporteBanniereSupportLien: 'rendez-vous de support de 15 minutes',
+  planImporteBanniereSupportApres: "s'il y a un problème avec l'import.",
+  planImporteValider: 'Valider le plan',
+  planImporteValiderTitre: 'Valider le plan importé',
+  planImporteValiderAvertissementTitre: 'Vérifiez le plan avant de le valider',
+  planImporteValiderAvertissement:
+    "Comparez le plan à votre document : axes, actions, sous-actions et informations associées. L'import est en version bêta et a pu manquer ou mal repérer certains éléments.",
+  planImporteValiderEngagement:
+    'En validant, vous confirmez que ce plan est conforme au document importé. La validation est enregistrée à votre nom et ne peut pas être annulée.',
+  planImporteValiderConfirmer: 'Je confirme, le plan est conforme',
+  planImporteValide: 'Plan validé',
+  planImporteValidationErreur: 'La validation du plan a échoué',
+};

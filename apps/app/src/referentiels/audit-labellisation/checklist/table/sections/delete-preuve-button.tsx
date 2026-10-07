@@ -1,8 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { useRemovePreuveFromDemande } from '@/app/referentiels/labellisations/useRemovePreuveFromDemande';
-import AlerteSuppression from '@/app/referentiels/preuves/Bibliotheque/AlerteSuppression';
+import { useRemovePreuveFromDemande } from '@/app/referentiels/labellisations/use-remove-preuve-from-demande';
+import { DeleteConfirmationAlert } from '@/app/collectivites/documents/bibliotheque/delete-confirmation.alert';
 import { Button } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 
@@ -23,7 +23,7 @@ export const DeletePreuveButton = ({
         size="xs"
         variant="grey"
       />
-      <AlerteSuppression
+      <DeleteConfirmationAlert
         isOpen={isConfirmOpen}
         setIsOpen={setIsConfirmOpen}
         title={appLabels.supprimerDocument}

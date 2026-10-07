@@ -16,6 +16,11 @@ test.describe("Modale de clôture d'audit", () => {
         collectiviteArgs: { isCOT: true },
       });
     collectiviteId = collectivite.data.id;
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectivite.data.id,
+      referentiel
+    );
     await referentiels.requestLabellisationForCot(
       editeurUser,
       collectivite.data.id,
@@ -150,7 +155,7 @@ test.describe("Modale de clôture d'audit", () => {
     ).not.toBeChecked();
   });
 
-  test("Un seul rapport : la dropzone disparaît une fois le rapport déposé", async ({
+  test('Un seul rapport : la dropzone disparaît une fois le rapport déposé', async ({
     labellisationPom,
     auditLabellisationPom,
   }) => {
@@ -249,8 +254,9 @@ test.describe("Modale de clôture d'audit", () => {
     auditLabellisationPom,
   }) => {
     // Retient l'upload Supabase Storage pendant 1.5 s pour laisser le temps
-    // d'observer le placeholder.
-    await page.route('**/storage/v1/object/**', async (route) => {
+    // d'observer le placeholder. Le motif couvre le POST de création de la
+    // session résumable comme les PATCH de tronçons qui la suivent.
+    await page.route('**/storage/v1/upload/resumable/**', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       await route.continue();
     });
@@ -265,7 +271,9 @@ test.describe("Modale de clôture d'audit", () => {
     // bloquée tant que l'upload n'est pas persisté
     await expect(labellisationPom.cloturerAuditUploadingCard).toBeVisible();
     await expect(
-      labellisationPom.cloturerAuditUploadingCard.getByText(/document_test\.pdf/)
+      labellisationPom.cloturerAuditUploadingCard.getByText(
+        /document_test\.pdf/
+      )
     ).toBeVisible();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
 
@@ -278,5 +286,23 @@ test.describe("Modale de clôture d'audit", () => {
         .getByText(/document_test\.pdf/)
     ).toBeVisible();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeEnabled();
+  });
+
+  test('Refus serveur : un audit clos pendant la saisie fait échouer le rattachement, et le fichier reste dans la bibliothèque', async ({
+    labellisationPom,
+    auditLabellisationPom,
+    referentiels,
+  }) => {
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await labellisationPom.cloturerAuditButton.click();
+
+    await referentiels.closeAudit(collectiviteId, referentiel);
+
+    await labellisationPom.cloturerAuditFileInput.setInputFiles(TEST_PDF_PATH);
+
+    await expect(
+      labellisationPom.cloturerAuditRattachementErrorToast
+    ).toBeVisible();
+    await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
   });
 });

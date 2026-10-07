@@ -10,4 +10,7 @@ export default ({ env }) => ({
       salt: env('TRANSFER_TOKEN_SALT'),
     },
   },
+  secrets: {
+    encryptionKey: env('ENCRYPTION_KEY'),
+  },
 });

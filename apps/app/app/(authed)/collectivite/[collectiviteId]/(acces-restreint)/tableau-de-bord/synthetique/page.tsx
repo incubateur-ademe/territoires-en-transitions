@@ -61,7 +61,7 @@ const Page = () => {
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
                 <h5 className="mb-0">
                   {canCreatePlan
-                    ? "Vous n'avez pas encore créé de plan !"
+                    ? appLabels.sansPlanCardTitle
                     : "Aucun plan n'a été déposé"}
                 </h5>
                 {canCreatePlan && (

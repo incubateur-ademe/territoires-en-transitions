@@ -18,9 +18,10 @@ const referentielFiltersBaseParsers = {
   scoreRealise: parseAsArrayOf(parseAsString),
   scoreProgramme: parseAsArrayOf(parseAsString),
   scorePasFait: parseAsArrayOf(parseAsString),
+  labels: parseAsArrayOf(parseAsString),
 };
 
-export const referentielFiltersParsers = {
+const referentielFiltersParsers = {
   identifiantAndTitre:
     referentielFiltersBaseParsers.identifiantAndTitre.withDefault(''),
   explication: referentielFiltersBaseParsers.explication.withDefault(''),
@@ -31,9 +32,10 @@ export const referentielFiltersParsers = {
   scoreRealise: referentielFiltersBaseParsers.scoreRealise.withDefault([]),
   scoreProgramme: referentielFiltersBaseParsers.scoreProgramme.withDefault([]),
   scorePasFait: referentielFiltersBaseParsers.scorePasFait.withDefault([]),
+  labels: referentielFiltersBaseParsers.labels.withDefault([]),
 };
 
-export const referentielFiltersUrlKeys = {
+const referentielFiltersUrlKeys = {
   identifiantAndTitre: 't',
   explication: 'e',
   statuts: 's',
@@ -43,6 +45,7 @@ export const referentielFiltersUrlKeys = {
   scoreRealise: 'sr',
   scoreProgramme: 'sp',
   scorePasFait: 'spf',
+  labels: 'la',
 } as const;
 
 export const referentielFiltersSerializer = createSerializer(
@@ -65,7 +68,8 @@ export function useGetReferentielTableFiltersState() {
     filters.categories.length > 0 ||
     filters.scoreRealise.length > 0 ||
     filters.scoreProgramme.length > 0 ||
-    filters.scorePasFait.length > 0;
+    filters.scorePasFait.length > 0 ||
+    filters.labels.length > 0;
 
   return { filters, setFilters, hasActiveFilters };
 }

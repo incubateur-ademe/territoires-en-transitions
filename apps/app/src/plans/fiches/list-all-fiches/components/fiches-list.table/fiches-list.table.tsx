@@ -1,10 +1,10 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  RowData,
-  useReactTable,
+  metaHelper,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
@@ -20,19 +20,23 @@ import { FichesListCellTitle } from './cells/fiches-list.cell-title';
 import { FichesListPrioriteCell } from './cells/fiches-list.priorite.cell';
 import { FichesListStatutCell } from './cells/fiches-list.statut.cell';
 
-declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData> {
-    selectedFicheIds?: number[] | 'all';
-    selectAction?: (ficheId: number) => void;
-    onUnlink?: (ficheId: number) => void;
-    collectiviteId?: number;
-  }
-}
+type FichesListTableMeta = {
+  selectedFicheIds?: number[] | 'all';
+  selectAction?: (ficheId: number) => void;
+  onUnlink?: (ficheId: number) => void;
+};
 
-const columnHelper = createColumnHelper<FicheWithRelationsAndCollectivite>();
+const features = tableFeatures({
+  columnVisibilityFeature,
+  tableMeta: metaHelper<FichesListTableMeta>(),
+});
 
-const columns = [
+const columnHelper = createColumnHelper<
+  typeof features,
+  FicheWithRelationsAndCollectivite
+>();
+
+const columns = columnHelper.columns([
   columnHelper.display({
     id: 'select',
     header: () => <TableHeaderCell className="w-12" />,
@@ -87,13 +91,15 @@ const columns = [
   }),
 
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title={appLabels.statut} className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.ficheStatut} className="w-32" />
+    ),
     cell: (info) => <FichesListStatutCell action={info.row.original} />,
   }),
 
   columnHelper.accessor('pilotes', {
     header: () => (
-      <TableHeaderCell title={appLabels.tableauPilote} className="w-44" />
+      <TableHeaderCell title={appLabels.personnePilote()} className="w-44" />
     ),
     cell: (info) => <FichesListCellPilotes action={info.row.original} />,
   }),
@@ -117,7 +123,7 @@ const columns = [
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
     cell: (info) => <FichesListCellActions fiche={info.row.original} />,
   }),
-];
+]);
 
 type Props = {
   collectivite: CollectiviteCurrent;
@@ -147,16 +153,21 @@ export const FichesListTable = ({
   enableSelection = true,
   ...selectionProps
 }: Props) => {
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const showUnlinkColumn = !!onUnlink;
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: fiches,
     state: {
-      columnVisibility,
+      columnVisibility: {
+        select: enableSelection && isGroupedActionsOn,
+        unlink: showUnlinkColumn,
+        actions:
+          hasCollectivitePermission('plans.fiches.update') &&
+          !showUnlinkColumn,
+      },
     },
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
     meta: {
       selectedFicheIds:
         enableSelection && 'selectedFicheIds' in selectionProps
@@ -169,23 +180,6 @@ export const FichesListTable = ({
       onUnlink,
     },
   });
-
-  useEffect(() => {
-    const showUnlinkColumn = !!onUnlink;
-    const showActionsColumn =
-      hasCollectivitePermission('plans.fiches.update') && !showUnlinkColumn;
-    table
-      .getColumn('select')
-      ?.toggleVisibility(enableSelection && isGroupedActionsOn);
-    table.getColumn('unlink')?.toggleVisibility(showUnlinkColumn);
-    table.getColumn('actions')?.toggleVisibility(showActionsColumn);
-  }, [
-    hasCollectivitePermission,
-    enableSelection,
-    isGroupedActionsOn,
-    onUnlink,
-    table,
-  ]);
 
   return (
     <div className="max-xl:overflow-x-auto">

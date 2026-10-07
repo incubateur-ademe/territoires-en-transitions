@@ -3,7 +3,16 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
-import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  getTableColumns,
+  inArray,
+  isNull,
+  sql,
+} from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';
 import { ListPlansInput } from './list-plans.input';
@@ -43,7 +52,7 @@ export class ListPlansRepository {
     tx?: Transaction
   ): Promise<Result<ListPlansRepositoryOutput, ListPlansError>> {
     try {
-      const { collectiviteId, limit, page, sort } = input;
+      const { collectiviteId, typeIds, limit, page, sort } = input;
 
       const db = tx || this.databaseService.db;
 
@@ -56,7 +65,8 @@ export class ListPlansRepository {
         .where(
           and(
             eq(axeTable.collectiviteId, collectiviteId),
-            isNull(axeTable.parent)
+            isNull(axeTable.parent),
+            typeIds?.length ? inArray(axeTable.typeId, typeIds) : undefined
           )
         )
         .orderBy(this.getSortOrderBy(sort))

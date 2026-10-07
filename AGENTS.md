@@ -15,10 +15,17 @@ For side-specific conventions, see:
 nx test backend 'filename.spec.ts'
 nx test backend 'referentiels'
 
-# Database (uses act / GitHub Actions locally)
-act -j db-init        # Init DB with migrations + seed data
-act -j db-restore     # Restore to seed state
+# Database (local stack = docker-compose, driven by the Makefile)
+make db-init          # Services + migrations + référentiels + seed data
+make db-migrate       # Apply sqitch migrations only
+make db-seed          # Load test data if the DB is empty
+make db-reset         # ⚠ Destroy local data, then re-init
+make db-shell         # psql into the local DB
 ```
+
+`act` is only for the workflow-level dev jobs (`.github/workflows/dev.yml`, e.g.
+`act -j db-restore`). Those run against the Supabase-CLI stack used by the CI
+(`supabase_db_tet`), which is separate from the docker-compose stack above.
 
 ## Architecture
 
@@ -35,12 +42,20 @@ Nx monorepo with pnpm. Data flow: Frontend (`useQuery`/`useMutation`) → tRPC R
 
 ### Domain structure (fixed — don't add new domains without team validation)
 
-`users` / `collectivites` (membres, personnalisations, documents) / `referentiels` (définitions, scores, labellisations) / `indicateurs` (trajectoires) / `plans` (plans, fiches, paniers, modeles) / `shared`.
+`users` / `collectivites` (membres, personnalisations, documents) / `referentiels` (définitions, scores, labellisations) / `indicateurs` (trajectoires) / `plans` (plans, fiches, modeles) / `shared`.
 
 ## Testing (cross-cutting)
 
 - Tests are **colocated** with source files.
 - DB tests: pgTAP in `data_layer/tests/`.
+
+## Paid external AI calls — humans only (strict)
+
+**Never trigger, as an agent, an AI feature that calls an external paid API** (Gemini / Vertex AI through `LlmService`: the AI plan import, the collectivité analysis, or anything built on them). Each run can cost a lot, and that spending must stay controlled and started by hand.
+
+- Don't enqueue jobs, don't call the endpoints (`POST …/plans/import-ia`, analysis mutations…), don't run a script or a spec that reaches the real model, not even "to validate" a prompt or a model switch.
+- Automated tests must keep a fake LLM (see `ai-plan-import.full-flow.e2e-spec.ts`). Never wire a real provider into a spec.
+- When a real run is needed, stop and hand it to the human: give the exact command or UI steps and let them launch it. For the AI import, that command is `make ai-import-eval f=<document>` (see `apps/backend/src/plans/ai-plan-import/eval/README.md`).
 
 ## Whole-repo gotchas
 

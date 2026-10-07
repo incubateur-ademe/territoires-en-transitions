@@ -1,38 +1,93 @@
-import { ObjetPreuveEnum } from '@tet/domain/referentiels';
+import { toLegacyDocumentHash } from '@tet/domain/collectivites';
+import { EtoileEnum, ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
-import { ActeEngagementSection } from './acte-engagement.section';
+import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
+import { EMPTY_CYCLE } from '../../../checklist.test-fixture';
+import {
+  ChecklistContext,
+  ChecklistContextValue,
+} from '../../../checklist.context';
+import {
+  ActeEngagementRow,
+  ActeEngagementSection,
+} from './acte-engagement.section';
 import { ChecklistPreuve } from './checklist-preuve';
 
-vi.mock('./upload-preuve-button', () => ({
-  UploadPreuveButton: ({ label }: { label: string }) => (
-    <button>{label}</button>
-  ),
-}));
+vi.mock(
+  '../../../../labellisations/useCycleLabellisation',
+  (): Partial<
+    Record<
+      keyof typeof import('../../../../labellisations/useCycleLabellisation'),
+      unknown
+    >
+  > => ({
+    usePreuvesLabellisation: vi.fn(),
+  })
+);
 
-vi.mock('./download-preuve-button', () => ({
-  DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
-}));
+vi.mock(
+  './upload-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./upload-preuve-button'), unknown>
+  > => ({
+    UploadPreuveButton: ({ label }: { label: string }) => (
+      <button>{label}</button>
+    ),
+  })
+);
 
-vi.mock('./rename-preuve-button', () => ({
-  RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
-}));
+vi.mock(
+  './download-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./download-preuve-button'), unknown>
+  > => ({
+    DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
+  })
+);
 
-vi.mock('./delete-preuve-button', () => ({
-  DeletePreuveButton: () => <button>{'Supprimer'}</button>,
-}));
+vi.mock(
+  './rename-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./rename-preuve-button'), unknown>
+  > => ({
+    RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
+  })
+);
+
+vi.mock(
+  './delete-preuve-button',
+  (): Partial<
+    Record<keyof typeof import('./delete-preuve-button'), unknown>
+  > => ({
+    DeletePreuveButton: () => <button>{'Supprimer'}</button>,
+  })
+);
+
+const toActeIntrouvable = (filename: string, id = 98): ChecklistPreuve => ({
+  id,
+  objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
+  collectiviteId: 1,
+  preuveType: 'labellisation',
+  type: 'fichierManquant',
+  filename,
+});
 
 const toActeDepose = (filename: string, id = 99): ChecklistPreuve => ({
   id,
   objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
-  collectivite_id: 1,
-  preuve_type: 'labellisation',
+  collectiviteId: 1,
+  preuveType: 'labellisation',
+  type: 'fichier',
   fichier: {
+    id,
+    collectiviteId: 1,
     filename,
-    hash: `hash-${id}`,
-    bucket_id: 'bucket',
+    hash: toLegacyDocumentHash(`hash-${id}`),
     confidentiel: false,
+    bucketId: 'bucket',
+    filesize: 1024,
   },
 });
 
@@ -178,5 +233,82 @@ describe('ActeEngagementSection — chargement', () => {
         name: appLabels.ajouterDocument,
       })
     ).toBeNull();
+  });
+});
+
+describe("ActeEngagementRow — qui peut éditer l'acte", () => {
+  const renderRow = ({
+    canUpdateCandidatureDocuments,
+  }: {
+    canUpdateCandidatureDocuments: boolean;
+  }) => {
+    vi.mocked(usePreuvesLabellisation).mockReturnValue({
+      data: [toActeDepose('acte-signe.pdf')],
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePreuvesLabellisation>);
+
+    const checklist: ChecklistContextValue = {
+      cycle: EMPTY_CYCLE,
+      parcours: {
+        etoileObjectif: EtoileEnum.PREMIERE_ETOILE,
+        completude: { done: false },
+        minimumScore: { done: false, seuilPercent: 0 },
+        scoreFait: 0,
+        mesures: [],
+        roleMesures: { eluReferent: null, referentTechnique: null },
+        acteEngagement: { demandeId: 42 },
+      },
+      referentielId: 'cae',
+      premiereEtoileObtenue: false,
+      showActeEngagement: true,
+      showCandidatureDocuments: false,
+      canUpdateCandidatureDocuments,
+    };
+
+    render(
+      <ChecklistContext.Provider value={checklist}>
+        <ActeEngagementRow />
+      </ChecklistContext.Provider>
+    );
+  };
+
+  it("laisse supprimer l'acte quand les documents du cycle sont modifiables", () => {
+    renderRow({ canUpdateCandidatureDocuments: true });
+
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
+    ).toBeDefined();
+  });
+
+  it("refuse la suppression de l'acte quand ils ne le sont pas", () => {
+    renderRow({ canUpdateCandidatureDocuments: false });
+
+    expect(
+      screen.queryByRole('button', { name: appLabels.supprimer })
+    ).toBeNull();
+  });
+});
+
+describe('ActeEngagementSection — acte dont le fichier est introuvable', () => {
+  it('affiche son nom, le signale indisponible, et n offre ni téléchargement ni renommage', () => {
+    render(
+      <ActeEngagementSection
+        actes={[toActeIntrouvable('acte-perdu.pdf')]}
+        isLoading={false}
+        canEdit={true}
+      />
+    );
+
+    expect(screen.getByText('acte-perdu.pdf')).toBeDefined();
+    expect(screen.getByText(appLabels.fichierIndisponible)).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: 'Télécharger le fichier' })
+    ).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Renommer le fichier' })
+    ).toBeNull();
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
+    ).toBeDefined();
   });
 });

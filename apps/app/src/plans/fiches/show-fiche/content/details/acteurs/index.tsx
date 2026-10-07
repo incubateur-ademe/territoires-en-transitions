@@ -131,7 +131,6 @@ export const Acteurs = (): JSX.Element => {
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
-                placeholder="Sélectionner ou créer un·e élu·e référent·e"
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
                 }}

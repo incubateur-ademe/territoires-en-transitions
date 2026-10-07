@@ -75,7 +75,7 @@ export class GetPreuvesArchiveService {
       archive.storagePath !== null &&
       !isExpired
     ) {
-      const signedUrlResult = await this.documentStorage.createDocumentSignedUrl({
+      const signedUrlResult = await this.documentStorage.createSignedDownloadUrl({
         bucketId: PREUVES_ARCHIVES_BUCKET,
         key: archive.storagePath,
         expiresInSeconds: ARCHIVE_DOWNLOAD_TTL_SECONDS,

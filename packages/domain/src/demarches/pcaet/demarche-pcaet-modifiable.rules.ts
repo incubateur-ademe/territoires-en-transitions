@@ -13,9 +13,15 @@ import {
  *   diagnostic, les pièces du dossier d'élaboration. La transmission ferme cet
  *   ensemble d'un coup, parce que les instances consultatives doivent lire un
  *   dossier stable — c'est aussi à ce moment que la photo du diagnostic est
- *   figée.
- * - **aval** — ce qui est attendu après les avis (délibération d'adoption,
- *   évaluations) : ne s'ouvre qu'à l'adoption, et reste ouvert ensuite.
+ *   figée. Un dépôt hors plateforme n'a pas de transmission pour le fermer :
+ *   son amont reste ouvert, en même temps que son aval, et c'est la publication
+ *   qui les ferme tous deux.
+ * - **aval** — ce qui est attendu après les avis (mémoire de réponse,
+ *   délibération d'adoption) : s'ouvre à la clôture de l'instruction, **avant**
+ *   la publication, puisque c'est le dépôt de la délibération d'adoption qui
+ *   rend le dossier publiable. La publication le referme : le PCAET adopté est
+ *   celui que le public consulte, ses pièces ne bougent plus. Une démarche
+ *   archivée, publiée avant de l'être, reste fermée.
  *
  * Ce ne sont pas des permissions utilisateur : celles-ci sont portées par
  * `demarches.pcaet.mutate` et répondent à « cette personne a-t-elle le droit
@@ -32,14 +38,15 @@ export type DemarchePcaetEtapeDossier = 'amont' | 'aval';
 
 export const isDemarchePcaetAmontModifiable = (
   status: DemarchePcaetStatus
-): boolean => status === DemarchePcaetStatusEnum.EN_ELABORATION;
+): boolean =>
+  status === DemarchePcaetStatusEnum.EN_ELABORATION ||
+  status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME;
 
 export const isDemarchePcaetAvalModifiable = (
   status: DemarchePcaetStatus
 ): boolean =>
-  status === DemarchePcaetStatusEnum.ADOPTE ||
-  status === DemarchePcaetStatusEnum.PUBLIE ||
-  status === DemarchePcaetStatusEnum.ARCHIVE;
+  status === DemarchePcaetStatusEnum.INSTRUIT ||
+  status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME;
 
 /** Aiguille sur le bon temps du dossier — l'étape d'une pièce s'y branche. */
 export const isDemarchePcaetEtapeModifiable = (

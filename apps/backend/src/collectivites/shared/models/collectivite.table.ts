@@ -1,4 +1,5 @@
 import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { typologieSinoeTable } from '@tet/backend/collectivites/shared/models/typologie-sinoe.table';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import {
   CollectivitePreferences,
@@ -32,5 +33,8 @@ export const collectiviteTable = pgTable('collectivite', {
   }).references(() => collectiviteBanaticTypeTable.id),
   population: integer('population'),
   dansAireUrbaine: boolean('dans_aire_urbaine'),
+  sinoeId: varchar('sinoe_id', { length: 32 }).references(
+    () => typologieSinoeTable.id
+  ),
   preferences: jsonb('preferences').notNull().$type<CollectivitePreferences>(),
 });

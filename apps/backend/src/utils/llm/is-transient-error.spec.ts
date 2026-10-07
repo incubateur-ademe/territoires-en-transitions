@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isTransientError } from './llm.service';
+import { isTransientError } from './is-transient-error';
 
 describe('isTransientError', () => {
   it('réessaie une limitation de débit', () => {
@@ -7,7 +7,9 @@ describe('isTransientError', () => {
   });
 
   it('réessaie une erreur réseau (sans statut HTTP)', () => {
-    expect(isTransientError({ kind: 'api_error', httpStatus: null })).toBe(true);
+    expect(isTransientError({ kind: 'api_error', httpStatus: null })).toBe(
+      true
+    );
   });
 
   it('réessaie une erreur serveur 5xx', () => {
@@ -20,13 +22,19 @@ describe('isTransientError', () => {
     );
   });
 
+  it("ne réessaie pas une fonctionnalité que le fournisseur n'a pas", () => {
+    expect(isTransientError({ kind: 'unsupported', feature: 'images' })).toBe(
+      false
+    );
+  });
+
   it('ne réessaie pas une réponse tronquée', () => {
     expect(isTransientError({ kind: 'truncated' })).toBe(false);
   });
 
   it('ne réessaie pas un JSON invalide', () => {
-    expect(
-      isTransientError({ kind: 'invalid_json', rawTextLength: 10 })
-    ).toBe(false);
+    expect(isTransientError({ kind: 'invalid_json', rawTextLength: 10 })).toBe(
+      false
+    );
   });
 });

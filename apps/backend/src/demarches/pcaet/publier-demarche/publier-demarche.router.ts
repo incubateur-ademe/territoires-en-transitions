@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { demarchePcaetTransitionInputSchema } from '../shared/demarche-pcaet-transition.input';
 import { publierDemarchePcaetErrorConfig } from './publier-demarche.errors';
+import { publierDemarchePcaetInputSchema } from './publier-demarche.input';
 import { PublierDemarchePcaetService } from './publier-demarche.service';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class PublierDemarchePcaetRouter {
 
   router = this.trpc.router({
     publier: this.trpc.authedProcedure
-      .input(demarchePcaetTransitionInputSchema)
+      .input(publierDemarchePcaetInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.publierService.publier(input, {
           user: ctx.user,

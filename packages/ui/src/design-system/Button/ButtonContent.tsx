@@ -8,12 +8,14 @@ const getIconSize = (
   size: ButtonSize,
   variant: ButtonVariant
 ): IconSize | undefined => {
-  // Les sizes des icônes ne matchent pas celles des boutons
+  // Les sizes des icônes ne matchent pas celles des boutons : les variantes
+  // sans cadre portent une icône d'un cran plus petite, à la mesure du texte.
+  const isTextVariant = variant === 'underlined' || variant === 'link';
   switch (size) {
     case 'xs':
-      return variant === 'underlined' ? 'xs' : 'sm';
+      return isTextVariant ? 'xs' : 'sm';
     case 'sm':
-      return variant === 'underlined' ? 'sm' : 'md';
+      return isTextVariant ? 'sm' : 'md';
     case 'md':
       return 'md';
     case 'xl':

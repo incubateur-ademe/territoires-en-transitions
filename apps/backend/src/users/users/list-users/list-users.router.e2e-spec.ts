@@ -123,6 +123,7 @@ describe('ListUsersRouter', () => {
         {
           collectiviteId: editionCollectivite1.id,
           collectiviteNom: editionCollectivite1.nom,
+          collectiviteType: editionCollectivite1.type,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -132,6 +133,7 @@ describe('ListUsersRouter', () => {
         {
           collectiviteId: editionCollectivite2.id,
           collectiviteNom: editionCollectivite2.nom,
+          collectiviteType: editionCollectivite2.type,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -142,6 +144,7 @@ describe('ListUsersRouter', () => {
           // Collectivité dont l'utilisateur est auditeur (sans rôle direct)
           collectiviteId: auditCollectivite.id,
           collectiviteNom: auditCollectivite.nom,
+          collectiviteType: auditCollectivite.type,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: null,

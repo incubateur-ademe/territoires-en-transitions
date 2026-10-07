@@ -72,11 +72,12 @@ Reference: `apps/backend/src/plans/axes/upsert-axe/upsert-axe-base.repository.ts
 
 - `TransactionManager` at `apps/backend/src/utils/transaction/transaction-manager.service.ts`. Use `transactionManager.executeSingle(async (tx) => { ... })` for a fresh transaction.
 - **Every repository write accepts an optional `tx?: Transaction` as the LAST parameter** and uses `(tx ?? this.databaseService.db)`.
-- Thread the same `tx` across services for atomic multi-step writes. Exemplar: `apps/backend/src/plans/paniers/checkout/checkout.service.ts:54-90`.
+- Thread the same `tx` across services for atomic multi-step writes. Exemplar: `apps/backend/src/demarches/pcaet/create-and-link-plan/create-and-link-plan.service.ts:67-201`.
 - `Transaction` type is derived from `DatabaseService['transaction']` (see `apps/backend/src/utils/database/transaction.utils.ts`), not `PgTransaction` directly.
 
 ## Drizzle / DB boundary
 
+- Use `*.column.ts` for reusable Drizzle column definitions/types, SQL column expressions and selection objects (for example, `collectivite-id.column.ts`, `collectivite-role.column.ts`, `indicateur-periodicite.column.ts`). Do not use `*.sql.ts` for these modules. Complete table definitions use `*.table.ts`; SQL migrations keep their `.sql` extension. See [ADR 0003](../../doc/adr/0003-conventions-de-code.md#suffix-des-fichiers-avec-son-type).
 - Services may call `databaseService.db` directly for simple one-shot queries. The repository pattern is reserved for shared base classes (`UpsertAxeBaseRepository`), `tx`-aware writes, or larger query surfaces.
 - Raw `sql\`\`` is allowed. Use `sql.identifier()` for table/column names. Use `sql.raw()` ONLY for already-validated trusted values.
 - `buildConflictUpdateColumns(table, columns)` from `apps/backend/src/utils/database/conflict.utils.ts` for `.onConflictDoUpdate({...})`.
@@ -103,7 +104,7 @@ Common errors (`SERVER_ERROR`, `UNAUTHORIZED → FORBIDDEN`, `DATABASE_ERROR`, `
 - `private readonly logger = new Logger(<ClassName>.name)` — **never `console.log`**.
 - Every log line auto-attaches `correlationId`, `userId`, `authRole`, `collectiviteId`, `referentielId`, `requestPath`, `trace_id` via AsyncLocalStorage — you don't pass them manually.
 - **Key naming matters for log enrichment:** for `collectiviteId` / `referentielId` to surface in logs, the Zod input field must be named exactly that (constants in `collectivites/collectivite-api.constants.ts` and `referentiels/models/referentiel-api.constants.ts`).
-- Errors auto-forward to Sentry via `AllExceptionsFilter` and the tRPC `onError` hook (UNAUTHORIZED is filtered out).
+- Errors auto-forward to Sentry via `AllExceptionsFilter` and the tRPC `onError` hook (client-fault codes — UNAUTHORIZED, TOO_MANY_REQUESTS — are logged at `warn` and filtered out).
 
 ## Side effects
 

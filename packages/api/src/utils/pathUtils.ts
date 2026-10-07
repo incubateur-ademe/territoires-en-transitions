@@ -51,16 +51,16 @@ export function getAuthUrl(pathname: string, searchParams: URLSearchParams) {
 }
 
 export const getCollectivitePath = (collectivite_id: number) =>
-  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/tableau-de-bord/synthetique`;
+  `${ENV.app_url}/collectivite/${collectivite_id}/tableau-de-bord/synthetique`;
 
 export const getCollectivitePlanPath = (
   collectivite_id: number,
   plan_id: number
 ) =>
-  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/${plan_id}`;
+  `${ENV.app_url}/collectivite/${collectivite_id}/plans/${plan_id}`;
 
 /**
- * URL absolue vers « rejoindre une collectivité » (liens cross-origin, ex. panier).
+ * URL absolue vers « rejoindre une collectivité » (liens cross-origin).
  * Pour la navigation dans l'app, préférer un chemin relatif (`makeRejoindreCollectiviteUrl` dans `paths.ts`).
  */
 export const getRejoindreCollectivitePath = (redirectTo: string) => {

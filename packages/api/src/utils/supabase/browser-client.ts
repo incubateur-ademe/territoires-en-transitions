@@ -1,11 +1,10 @@
 'use client';
 
 import { CookieOptionsWithName, createBrowserClient } from '@supabase/ssr';
-import { Database } from '../../database.types';
 import { ENV } from '../../environmentVariables';
 
 export function createClient(cookieOptions: CookieOptionsWithName) {
-  return createBrowserClient<Database>(
+  return createBrowserClient(
     ENV.supabase_url as string,
     ENV.supabase_anon_key as string,
     {
@@ -18,7 +17,7 @@ export function createClient(cookieOptions: CookieOptionsWithName) {
  * @deprecated Utiliser `createClient` avec les options de cookie à la place
  */
 export function createClientWithoutCookieOptions() {
-  return createBrowserClient<Database>(
+  return createBrowserClient(
     ENV.supabase_url as string,
     ENV.supabase_anon_key as string
   );

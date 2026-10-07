@@ -112,6 +112,6 @@ export const ServiceList = ({
             />`
       )}
       <${Spacer} />
-      <${HelpBar}>↑↓ ←→ · ⏎ logs · t shell · o ouvrir · s start/stop · r relancer · p profiles · x sauver · q quitter<//>
+      <${HelpBar}>↑↓ ←→ · ⏎ logs · t shell · o ouvrir · s start/stop/créer · r relancer · p profiles · x sauver · q quitter<//>
     <//>`;
 };

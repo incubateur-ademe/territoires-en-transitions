@@ -116,7 +116,7 @@ export const TransmisEcheanceProche: Story = {
   },
 };
 
-/** Délai légal de 3 mois écoulé : badge d'erreur, l'adoption devient possible. */
+/** Délai légal écoulé : badge d'erreur, l'adoption devient possible. */
 export const TransmisDelaiEcoule: Story = {
   args: {
     statut: 'transmis_pour_avis',
@@ -137,34 +137,34 @@ export const TransmisNonPilote: Story = {
 };
 
 /**
- * PCAET adopté, non publié : la sous-étape des pièces aval (délibération
- * d'adoption…) reste à compléter — la publication est proposée mais désactivée
- * (tooltip au survol), comme la transmission sur un dossier incomplet.
+ * Instruction close : la sous-étape des pièces aval (délibération d'adoption…)
+ * reste à compléter — la publication est proposée mais désactivée (tooltip au
+ * survol), comme la transmission sur un dossier incomplet.
  */
-export const AdopteNonPublie: Story = {
+export const InstruitNonPublie: Story = {
   args: {
-    statut: 'adopte',
+    statut: 'instruit',
     completion: dossierComplet,
     activeSection: 'documents',
     isPublished: false,
-    transitions: transitionsDe('adopte', PILOTE),
+    transitions: transitionsDe('instruit', PILOTE),
   },
 };
 
-/** Pièces aval déposées : la publication est active. */
-export const AdoptePretAPublier: Story = {
+/** Pièces aval déposées : l'adoption-publication est active. */
+export const InstruitPretAPublier: Story = {
   args: {
-    statut: 'adopte',
+    statut: 'instruit',
     completion: dossierPubliable,
     isPublished: false,
-    transitions: transitionsDe('adopte', {
+    transitions: transitionsDe('instruit', {
       ...PILOTE,
       documentsAvalComplets: true,
     }),
   },
 };
 
-/** PCAET adopté et publié : dépublication proposée. */
+/** PCAET adopté et publié : le dossier est figé, un nouveau cycle peut démarrer. */
 export const AdoptePublie: Story = {
   args: {
     statut: 'publie',

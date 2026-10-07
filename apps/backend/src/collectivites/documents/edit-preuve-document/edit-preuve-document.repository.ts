@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
+import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { labellisationDemandeTable } from '@tet/backend/referentiels/labellisations/labellisation-demande.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
@@ -7,18 +9,23 @@ import {
   CommonErrorEnum,
 } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
-import { LabellisationAudit } from '@tet/domain/referentiels';
+import { LabellisationAudit, ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { DocumentBase } from '../models/document.basetable';
 import { preuveLabellisationTable } from '../models/preuve-labellisation.table';
 import { preuveComplementaireTable } from '../models/preuve-complementaire.table';
 import { preuveTableByType } from '../models/preuve-tables.map';
 
 export type PreuveDocumentPatch = {
+  preuveType: PreuveType;
   lien?: { url: string; titre: string };
   commentaire?: string;
 };
+
+type PreuveDocumentColumns = Partial<
+  Pick<DocumentBase, 'modifiedBy' | 'url' | 'titre' | 'commentaire'>
+>;
 
 @Injectable()
 export class EditPreuveDocumentRepository {
@@ -64,31 +71,64 @@ export class EditPreuveDocumentRepository {
     return row ?? null;
   }
 
+  async findReferentielByLabellisationPreuve(
+    preuveId: number
+  ): Promise<ReferentielId | null> {
+    const [row] = await this.databaseService.db
+      .select({ referentielId: labellisationDemandeTable.referentiel })
+      .from(preuveLabellisationTable)
+      .innerJoin(
+        labellisationDemandeTable,
+        eq(labellisationDemandeTable.id, preuveLabellisationTable.demandeId)
+      )
+      .where(eq(preuveLabellisationTable.id, preuveId))
+      .limit(1);
+    return row?.referentielId ?? null;
+  }
+
+  async isAuditeurForLabellisationPreuve(
+    preuveId: number,
+    auditeur: string
+  ): Promise<boolean> {
+    const [row] = await this.databaseService.db
+      .select({ auditId: auditeurTable.auditId })
+      .from(preuveLabellisationTable)
+      .innerJoin(
+        auditTable,
+        eq(auditTable.demandeId, preuveLabellisationTable.demandeId)
+      )
+      .innerJoin(
+        auditeurTable,
+        and(
+          eq(auditeurTable.auditId, auditTable.id),
+          eq(auditeurTable.auditeur, auditeur)
+        )
+      )
+      .where(eq(preuveLabellisationTable.id, preuveId))
+      .limit(1);
+    return row !== undefined;
+  }
+
   async updateById(
-    preuveType: PreuveType,
     preuveId: number,
     modifiedBy: string,
     patch: PreuveDocumentPatch
   ): Promise<Result<PreuveBase, CommonError>> {
-    const set: {
-      modifiedBy: string;
-      url?: string | null;
-      titre?: string | null;
-      commentaire?: string | null;
-    } = { modifiedBy };
+    const columns: PreuveDocumentColumns = {};
     if (patch.lien !== undefined) {
-      set.url = patch.lien.url.trim();
-      set.titre = patch.lien.titre.trim();
+      columns.modifiedBy = modifiedBy;
+      columns.url = patch.lien.url.trim();
+      columns.titre = patch.lien.titre.trim();
     }
     if (patch.commentaire !== undefined) {
-      set.commentaire = patch.commentaire.trim();
+      columns.modifiedBy = modifiedBy;
+      columns.commentaire = patch.commentaire.trim();
     }
-
     try {
-      const table = preuveTableByType[preuveType];
+      const table = preuveTableByType[patch.preuveType];
       const [row] = await this.databaseService.db
         .update(table)
-        .set(set)
+        .set(columns)
         .where(eq(table.id, preuveId))
         .returning();
       if (!row) {
@@ -98,9 +138,9 @@ export class EditPreuveDocumentRepository {
       return success(this.rowToPreuveBase(row));
     } catch (error) {
       this.logger.error(
-        `Erreur lors de la mise à jour de la preuve ${preuveType} ${preuveId}: ${getErrorMessage(
-          error
-        )}`
+        `Erreur lors de la mise à jour de la preuve ${
+          patch.preuveType
+        } ${preuveId}: ${getErrorMessage(error)}`
       );
       return failure(
         CommonErrorEnum.DATABASE_ERROR,

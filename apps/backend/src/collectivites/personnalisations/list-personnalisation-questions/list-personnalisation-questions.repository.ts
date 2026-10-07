@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { matchesActionOrDescendant } from '@tet/backend/referentiels/action-or-descendant.utils';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -11,7 +12,7 @@ import {
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { and, eq, exists, ilike, inArray, or, SQL, sql } from 'drizzle-orm';
+import { and, eq, exists, inArray, or, SQL, sql } from 'drizzle-orm';
 import type { ListPersonnalisationQuestionsFilters } from './list-personnalisation-questions.input';
 
 @Injectable()
@@ -79,10 +80,12 @@ export class ListPersonnalisationQuestionsRepository {
           and(
             eq(questionActionTable.questionId, questionTable.id),
             or(
-              ...actionIds.flatMap((actionId) => [
-                eq(questionActionTable.actionId, actionId),
-                ilike(questionActionTable.actionId, `${actionId}.%`),
-              ])
+              ...actionIds.map((actionId) =>
+                matchesActionOrDescendant(
+                  questionActionTable.actionId,
+                  actionId
+                )
+              )
             )
           )
         );

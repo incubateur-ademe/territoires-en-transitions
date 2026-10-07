@@ -14,7 +14,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { snapshotTable } from '../../snapshots/snapshot.table';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
 
@@ -78,6 +78,53 @@ describe('ValidateAuditRouter', () => {
     expect(snapshot).toBeDefined();
     expect(snapshot.jalon).toBe(SnapshotJalonEnum.POST_AUDIT);
     expect(snapshot.date).toBe(validatedAudit.dateFin);
+  });
+
+  test('deux audits validés la même année conservent chacun leur snapshot post-audit', async () => {
+    const { collectivite: auditedCollectivite, user } =
+      await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+    const auditeur = getAuthUserFromUserCredentials(user);
+    const caller = router.createCaller({ user: auditeur });
+
+    const validateNewAudit = async () => {
+      const { audit } = await createAuditWithOnTestFinished({
+        databaseService: db,
+        collectiviteId: auditedCollectivite.id,
+        referentielId: ReferentielIdEnum.CAE,
+        withDemande: true,
+      });
+
+      await addAuditeurPermission({
+        databaseService: db,
+        auditId: audit.id,
+        userId: auditeur.id,
+      });
+
+      return caller.referentiels.labellisations.validateAudit({
+        auditId: audit.id,
+      });
+    };
+
+    const firstAudit = await validateNewAudit();
+    const secondAudit = await validateNewAudit();
+
+    const postAuditSnapshots = await db.db
+      .select({ auditId: snapshotTable.auditId })
+      .from(snapshotTable)
+      .where(
+        and(
+          eq(snapshotTable.collectiviteId, auditedCollectivite.id),
+          eq(snapshotTable.jalon, SnapshotJalonEnum.POST_AUDIT)
+        )
+      )
+      .orderBy(snapshotTable.auditId);
+
+    expect(postAuditSnapshots).toEqual([
+      { auditId: firstAudit.id },
+      { auditId: secondAudit.id },
+    ]);
   });
 
   test('un non auditeur ne peut pas valider un audit', async () => {

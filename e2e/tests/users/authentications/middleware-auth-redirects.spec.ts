@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { hasActiveOidcProvider } from './login-user-with-oidc.helpers';
 
 /**
  * Tests du comportement du middleware pour les redirections d'authentification.
@@ -7,12 +8,13 @@ import { expect, test } from '@playwright/test';
  * - Les routes d'auth (/login, /signup, /recover) sont servies sans redirection
  *   pour les utilisateurs non authentifiés.
  * - Les routes protégées (non-auth, non-publiques) redirigent les utilisateurs
- *   non authentifiés loin de la page demandée.
+ *   non authentifiés vers /login, en conservant la destination demandée dans
+ *   `redirect_to` (deep-link).
  *
  * Couvre R2, R8 (plan 2026-06-24-001).
  */
-test.describe('Middleware — redirections d\'authentification', () => {
-  test.describe('Routes d\'auth accessibles sans authentification', () => {
+test.describe("Middleware — redirections d'authentification", () => {
+  test.describe("Routes d'auth accessibles sans authentification", () => {
     test('/login est servi (200) à un utilisateur non authentifié', async ({
       page,
     }) => {
@@ -22,9 +24,26 @@ test.describe('Middleware — redirections d\'authentification', () => {
       await expect(page).toHaveURL(/\/login/);
     });
 
-    test('/signup est servi (200) à un utilisateur non authentifié', async ({
+    test('/signup est servi à un utilisateur non authentifié', async ({
       page,
     }) => {
+      // Un fournisseur d'identité configuré ⇒ /signup part directement sur la
+      // création de compte OIDC. On neutralise l'appel sortant : ce test porte
+      // sur le middleware, pas sur l'aller-retour avec le fournisseur.
+      if (await hasActiveOidcProvider()) {
+        await page.route(/\/api\/v1\/[^/]+\/login\?/, (route) =>
+          route.fulfill({ status: 200, body: 'fournisseur d’identité' })
+        );
+
+        await page.goto('/signup');
+
+        await expect(page).toHaveURL(
+          /\/api\/v1\/[^/]+\/login\?.*intent=creation/
+        );
+        return;
+      }
+
+      // Mode dégradé (aucun provider configuré) : le formulaire est servi.
       await page.goto('/signup');
 
       await expect(page.getByTestId('SignUpPage')).toBeVisible({
@@ -38,28 +57,60 @@ test.describe('Middleware — redirections d\'authentification', () => {
     }) => {
       await page.goto('/recover');
 
-      await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toBeVisible();
+      await expect(
+        page.locator('[data-test="auth.forgotten-password.form"]')
+      ).toBeVisible();
       await expect(page).toHaveURL(/\/recover/);
     });
   });
 
+  /**
+   * Ces tests portent sur la décision du middleware, pas sur la page
+   * d'atterrissage : on n'attend donc pas son `load` (`domcontentloaded`
+   * suffit), certaines pages chargeant des images `next/image` dont
+   * l'optimisation à la première demande dépasse parfois le délai de
+   * navigation en CI.
+   */
   test.describe('Routes protégées inaccessibles sans authentification', () => {
-    test('redirige /profil → accueil pour un utilisateur non authentifié', async ({
+    test('redirige /profil → /login avec redirect_to pour un utilisateur non authentifié', async ({
       page,
     }) => {
-      await page.goto('/profil');
+      await page.goto('/profil', { waitUntil: 'domcontentloaded' });
 
-      await expect(page).toHaveURL('/', { timeout: 10000 });
+      await expect(page).toHaveURL(
+        `/login?redirect_to=${encodeURIComponent('/profil')}`,
+        { timeout: 10000 }
+      );
     });
 
-    test('redirige /collectivite/tableau-de-bord → accueil pour un utilisateur non authentifié', async ({
+    test('redirige /collectivite/tableau-de-bord → /login avec redirect_to pour un utilisateur non authentifié', async ({
       page,
     }) => {
-      await page.goto('/collectivite/tableau-de-bord');
-
-      await expect(page).toHaveURL('/', {
-        timeout: 10000,
+      await page.goto('/collectivite/tableau-de-bord', {
+        waitUntil: 'domcontentloaded',
       });
+
+      await expect(page).toHaveURL(
+        `/login?redirect_to=${encodeURIComponent(
+          '/collectivite/tableau-de-bord'
+        )}`,
+        { timeout: 10000 }
+      );
+    });
+
+    test('préserve la query string de la destination dans redirect_to (deep-link)', async ({
+      page,
+    }) => {
+      await page.goto('/collectivite/tableau-de-bord?openAxes=1', {
+        waitUntil: 'domcontentloaded',
+      });
+
+      await expect(page).toHaveURL(
+        `/login?redirect_to=${encodeURIComponent(
+          '/collectivite/tableau-de-bord?openAxes=1'
+        )}`,
+        { timeout: 10000 }
+      );
     });
   });
 });

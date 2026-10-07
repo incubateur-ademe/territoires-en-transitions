@@ -8,9 +8,16 @@ import type {
 
 // Alias en français des types du header, portés par @tet/domain/demarches.
 export type DemarchePcaetStatut = DemarchePcaetStatus;
-export type DemarchePcaetObligation = DomainObligation;
+type DemarchePcaetObligation = DomainObligation;
 
 export type DemarchePcaetTopicStatut = 'complete' | 'incomplete';
+
+/**
+ * Ce que `DemarcheCompletionBadge` sait annoncer. `optional` : le volet n'exige
+ * aucune saisie, il n'est donc ni en retard ni achevé — l'annoncer « Complété »
+ * ferait croire à un travail fait.
+ */
+export type DemarcheCompletionStatut = DemarchePcaetTopicStatut | 'optional';
 
 export type DemarchePcaet = {
   id: number;
@@ -29,12 +36,28 @@ export type DemarchePcaet = {
   dateModification: string;
   dateLancement: string | null;
   datePublication: string | null;
+  /** Date de la délibération d'adoption (AAAA-MM-JJ), saisie au dépôt final. */
+  dateAdoption: string | null;
   /** Dernière transmission pour avis (null = jamais transmise). */
   dateTransmission: string | null;
+  /**
+   * Le PCAET a été transmis pour avis hors de la plateforme : la démarche a
+   * démarré à l'étape de finalisation, sans circuit d'avis. Figé à la création.
+   */
+  transmisHorsPlateforme: boolean;
+  /**
+   * Le PCAET est porté par un SCoT-AEC : un document unique valant SCoT et
+   * PCAET. Déclaré par la collectivité, corrigeable tant que l'amont est
+   * modifiable.
+   */
+  isScotAec: boolean;
   /** Échéance de remise des avis, figée à la transmission. */
   dateEcheanceAvis: string | null;
   pilotes: PersonneTagOrUser[];
-  planActionId: number | null;
+  /** Plans rattachés au programme d'actions, dans l'ordre de rattachement. */
+  planActionIds: number[];
+  /** Parmi eux, les plans importés par IA pas encore vérifiés. */
+  unverifiedPlanActionIds: number[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur.
    * Le front ne recompose aucune règle : il lit `enabled` et `blockedBy`.
@@ -56,7 +79,8 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'description'
     | 'obligation'
     | 'dateLancement'
-    | 'planActionId'
+    | 'planActionIds'
     | 'pilotes'
+    | 'isScotAec'
   >
 >;

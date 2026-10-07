@@ -5,6 +5,7 @@ import {
   Field,
   FieldMessage,
   Input,
+  LoginMethod,
   ModalFooterOKCancel,
   Tab,
   Tabs,
@@ -14,6 +15,12 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { appLabels } from '@/app/labels/catalog';
+import {
+  OidcRecommendedBlock,
+  Separateur,
+} from '../oidc/login-user-with-oidc/login-user-with-oidc.recommended-block';
+import { useLoginUserWithOidc } from '../oidc/login-user-with-oidc/use-login-user-with-oidc';
+import { LoginUserWithOidcButtons } from '../oidc/login-user-with-oidc/login-user-with-oidc.buttons';
 import { Credentials, LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
@@ -44,35 +51,57 @@ const useLoginForm = (isPasswordless: boolean, email: string) => {
  * (saisir un email et éventuellement un mot de passe)
  */
 export const LoginTabs = (props: LoginPropsWithState) => {
-  const { formState: signupState } = props;
+  const { formState: signupState, redirectTo } = props;
   const { email } = signupState;
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useLoginForm(isPasswordless, email);
   const ongletTracker = useEventTracker();
+  const { backendUrl, recommended, targetProvider } = useLoginUserWithOidc();
 
   return (
-    <Tabs
-      className="justify-center"
-      defaultActiveTab={isPasswordless ? 1 : 0}
-      onChange={(activeTab) => {
-        if (activeTab === 0) {
-          // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
-          setIsPasswordless(false);
-          ongletTracker(Event.auth.viewAvecMdp);
-        } else {
-          form.setValue('password', '');
-          setIsPasswordless(true);
-          ongletTracker(Event.auth.viewSansMdp);
-        }
-      }}
-    >
-      <Tab label="Connexion avec mot de passe">
-        <LoginStep1Form {...props} form={form} />
-      </Tab>
-      <Tab label="Connexion sans mot de passe">
-        <LoginStep1Form {...props} form={form} isPasswordless />
-      </Tab>
-    </Tabs>
+    <>
+      {recommended && targetProvider ? (
+        <>
+          <OidcRecommendedBlock
+            backendUrl={backendUrl}
+            provider={targetProvider}
+            next={redirectTo}
+          />
+          {/* Provider recommandé mis en avant : on garde les autres providers
+              actifs affichés dessous. */}
+          <LoginUserWithOidcButtons
+            idPrefix="connexion"
+            exclude={targetProvider}
+            next={redirectTo}
+          />
+          <Separateur label={appLabels.oidcSeparateurConnexion} />
+        </>
+      ) : (
+        <LoginUserWithOidcButtons idPrefix="connexion" next={redirectTo} />
+      )}
+      <Tabs
+        className="justify-center"
+        defaultActiveTab={isPasswordless ? 1 : 0}
+        onChange={(activeTab) => {
+          if (activeTab === 0) {
+            // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
+            setIsPasswordless(false);
+            ongletTracker(Event.auth.viewAvecMdp);
+          } else {
+            form.setValue('password', '');
+            setIsPasswordless(true);
+            ongletTracker(Event.auth.viewSansMdp);
+          }
+        }}
+      >
+        <Tab label={appLabels.authOngletConnexionAvecMotDePasse}>
+          <LoginStep1Form {...props} form={form} />
+        </Tab>
+        <Tab label={appLabels.authOngletLienDeConnexion}>
+          <LoginStep1Form {...props} form={form} isPasswordless />
+        </Tab>
+      </Tabs>
+    </>
   );
 };
 
@@ -110,6 +139,11 @@ const LoginStep1Form = (
     // envoi les données
     onSubmit(data);
     eventTracker(Event.auth.submitLogin);
+    eventTracker(Event.auth.login.click, {
+      methode: (isPasswordless
+        ? 'lien_magique'
+        : 'mot_de_passe') satisfies LoginMethod,
+    });
   };
 
   return (

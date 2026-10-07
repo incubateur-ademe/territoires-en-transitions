@@ -1,187 +1,61 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from '@tet/ui';
-import { JSX, useCallback, useMemo, useState } from 'react';
-import {
-  fakeCells,
-  fakeCellsForGroups,
-  fakeGridActions,
-  fakeGroups,
-  fakeGroupsInput,
-  fakeReferenceYear,
-  fakeYears,
-  toGridInput,
-} from './grid-fixtures';
+import { fn } from 'storybook/test';
+import { JSX, useState } from 'react';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
+import { IndicateurTableRow } from '../types';
 import {
-  generateCellKey,
-  parseCellKey,
-  toIndicateurId,
-  CellKey,
-  CellValueInput,
-  GridCell,
-  GridRow,
-  IndicateurValuesGridActions,
-  Year,
-} from '../types';
+  fakeReferenceYear,
+  fakeRow,
+  fakeRows,
+  fakeYears,
+} from './grid-fixtures';
 
 const meta: Meta<typeof IndicateurValeursTable> = {
   title: 'Indicateurs/Grille de saisie',
   component: IndicateurValeursTable,
+  args: {
+    demarcheId: 1,
+    rows: fakeRows,
+    years: fakeYears,
+    referenceYear: fakeReferenceYear,
+    title: 'Polluants atmosphériques',
+    unit: 't/an',
+    onReferenceYearChange: fn(),
+    isRequired: true,
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof IndicateurValeursTable>;
 
-const withValues = (
-  previous: Map<CellKey, GridCell>,
-  inputs: CellValueInput[]
-): Map<CellKey, GridCell> => {
-  const next = new Map(previous);
-  inputs.forEach(({ indicateurId, year, field, value }) => {
-    const key = generateCellKey(indicateurId, year);
-    const current = next.get(key) ?? { resultat: null, objectif: null };
-    next.set(key, { ...current, [field]: value });
-  });
-  return next;
+export const Polluants: Story = {};
+
+export const LectureSeule: Story = {
+  args: {
+    isReadonly: true,
+  },
 };
 
-const refetchedReferenceValue = (indicateurId: number, year: number): number =>
-  Math.round(180 + (indicateurId % 6) * 40 + (year % 12) * 9);
-
-const refetchReferenceColumn = ({
-  cells,
-  referenceYear,
-  nextYear,
-}: {
-  cells: Map<CellKey, GridCell>;
-  referenceYear: Year;
-  nextYear: Year;
-}): Map<CellKey, GridCell> =>
-  new Map(
-    Array.from(cells, ([key, cell]) => {
-      const { indicateurId, year } = parseCellKey(key);
-      if (year !== referenceYear) {
-        return [key, cell] as const;
-      }
-      const refetchedCell: GridCell = {
-        resultat: refetchedReferenceValue(indicateurId, nextYear),
-        objectif: cell.objectif,
-      };
-      return [generateCellKey(indicateurId, nextYear), refetchedCell] as const;
-    })
-  );
-
-type GridState = {
-  years: Year[];
-  referenceYear: Year;
-  cells: Map<CellKey, GridCell>;
+export const SansAnneeDeReference: Story = {
+  args: {
+    referenceYear: null,
+    years: fakeYears.filter((year) => year !== fakeReferenceYear),
+  },
 };
 
-const InteractiveGrid = (): JSX.Element => {
-  const [state, setState] = useState<GridState>(() => ({
-    years: fakeYears,
-    referenceYear: fakeReferenceYear,
-    cells: fakeCells(),
-  }));
-
-  const actions = useMemo<IndicateurValuesGridActions>(
-    () => ({
-      ...fakeGridActions,
-      saveCellValue: async (input) => {
-        setState((previous) => ({
-          ...previous,
-          cells: withValues(previous.cells, [input]),
-        }));
-        return { ok: true, value: undefined };
-      },
-      saveCellValues: async (inputs) => {
-        window.alert(
-          `Collage : ${inputs.length} valeur(s) ecrite(s)\n` +
-            inputs
-              .map(
-                (input) =>
-                  `${input.indicateurId} / ${input.year} / ${input.field} = ${input.value}`
-              )
-              .join('\n')
-        );
-        setState((previous) => ({
-          ...previous,
-          cells: withValues(previous.cells, inputs),
-        }));
-        return { ok: true, value: { written: inputs.length, failed: [] } };
-      },
-    }),
-    []
-  );
-
-  const onReferenceYearChange = useCallback((nextYear: Year): void => {
-    setState((previous) => {
-      const isNoOp =
-        nextYear === previous.referenceYear ||
-        previous.years.includes(nextYear);
-      if (isNoOp) {
-        return previous;
-      }
-      return {
-        years: previous.years.map((year) =>
-          year === previous.referenceYear ? nextYear : year
-        ),
-        referenceYear: nextYear,
-        cells: refetchReferenceColumn({
-          cells: previous.cells,
-          referenceYear: previous.referenceYear,
-          nextYear,
-        }),
-      };
-    });
-  }, []);
-
-  const onAddYear = useCallback((year: Year): void => {
-    setState((previous) => {
-      if (previous.years.includes(year)) {
-        return previous;
-      }
-      return {
-        ...previous,
-        years: [...previous.years, year].sort((a, b) => a - b),
-      };
-    });
-  }, []);
-
-  const onRemoveYear = useCallback((year: Year): void => {
-    setState((previous) => ({
-      ...previous,
-      years: previous.years.filter((candidate) => candidate !== year),
-    }));
-  }, []);
-
-  const canRemoveYear = useCallback(
-    (year: Year): boolean => year !== state.referenceYear,
-    [state.referenceYear]
-  );
-
-  return (
-    <IndicateurValeursTable
-      rows={toGridInput(fakeGroups)}
-      years={state.years}
-      referenceYear={state.referenceYear}
-      title="Polluants atmosphériques"
-      unit="t/an"
-      cells={state.cells}
-      actions={actions}
-      notify={(message) => window.alert(message)}
-      onReferenceYearChange={onReferenceYearChange}
-      onAddYear={onAddYear}
-      onRemoveYear={onRemoveYear}
-      canRemoveYear={canRemoveYear}
-    />
-  );
+export const Vide: Story = {
+  args: {
+    rows: fakeRows.map((row) => ({
+      ...row,
+      indicateurValeurs: [],
+    })),
+  },
 };
 
-export const Polluants: Story = {
-  render: () => <InteractiveGrid />,
-};
+const polluantLabels = ['NOx', 'PM10'] as const;
+type PolluantLabel = (typeof polluantLabels)[number];
 
 const secteurLabels = [
   'Résidentiel',
@@ -191,47 +65,18 @@ const secteurLabels = [
   'Industrie',
 ];
 
-const polluantLabels = ['NOx', 'PM10'] as const;
-type PolluantLabel = (typeof polluantLabels)[number];
-
-const secteurRows = (firstIndicateurId: number): GridRow[] =>
-  secteurLabels.map((secteur, index) => ({
-    indicateurId: toIndicateurId(firstIndicateurId + index),
-    label: secteur,
-  }));
-
-const rowsByPolluant: Record<PolluantLabel, GridRow[]> = {
-  NOx: secteurRows(100),
-  PM10: secteurRows(200),
+const rowsByPolluant: Record<PolluantLabel, IndicateurTableRow[]> = {
+  NOx: secteurLabels.map((label, index) =>
+    fakeRow({ indicateurId: 100 + index, indicateurLabel: label })
+  ),
+  PM10: secteurLabels.map((label, index) =>
+    fakeRow({ indicateurId: 200 + index, indicateurLabel: label })
+  ),
 };
 
 const PolluantSwitchGrid = (): JSX.Element => {
   const [selectedPolluant, setSelectedPolluant] =
     useState<PolluantLabel>('NOx');
-  const [cells, setCells] = useState<Map<CellKey, GridCell>>(() =>
-    fakeCellsForGroups(
-      polluantLabels.map((polluant) => ({
-        id: polluant,
-        label: polluant,
-        rows: rowsByPolluant[polluant],
-      }))
-    )
-  );
-
-  const actions = useMemo<IndicateurValuesGridActions>(
-    () => ({
-      ...fakeGridActions,
-      saveCellValue: async (input) => {
-        setCells((previous) => withValues(previous, [input]));
-        return { ok: true, value: undefined };
-      },
-      saveCellValues: async (inputs) => {
-        setCells((previous) => withValues(previous, inputs));
-        return { ok: true, value: { written: inputs.length, failed: [] } };
-      },
-    }),
-    []
-  );
 
   return (
     <div className="flex flex-col items-start gap-2">
@@ -252,14 +97,14 @@ const PolluantSwitchGrid = (): JSX.Element => {
         })}
       </div>
       <IndicateurValeursTable
+        demarcheId={1}
         rows={rowsByPolluant[selectedPolluant]}
         years={fakeYears}
         referenceYear={fakeReferenceYear}
         title="Polluants atmosphériques"
         unit="t/an"
-        cells={cells}
-        actions={actions}
-        notify={(message) => window.alert(message)}
+        onReferenceYearChange={fn()}
+        isRequired
       />
     </div>
   );
@@ -267,17 +112,4 @@ const PolluantSwitchGrid = (): JSX.Element => {
 
 export const SwitchEntrePolluants: Story = {
   render: () => <PolluantSwitchGrid />,
-};
-
-export const Vide: Story = {
-  args: {
-    rows: fakeGroupsInput,
-    years: fakeYears,
-    referenceYear: fakeReferenceYear,
-    title: 'Polluants atmosphériques',
-    unit: 't/an',
-    cells: new Map(),
-    actions: fakeGridActions,
-    notify: (message) => window.alert(message),
-  },
 };

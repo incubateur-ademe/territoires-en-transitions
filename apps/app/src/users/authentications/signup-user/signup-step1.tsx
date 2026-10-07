@@ -5,6 +5,7 @@ import {
   Event,
   Field,
   Input,
+  LoginMethod,
   ModalFooterOKCancel,
   Tab,
   Tabs,
@@ -68,6 +69,10 @@ const useSignupStep1 = (
 /**
  * Affiche l'étape 1 du panneau de création de compte
  * (saisir un email et éventuellement un mot de passe)
+ *
+ * Parcours dégradé : le nominal passe par le fournisseur d'identité, `/signup`
+ * ne rend cet écran que si aucun provider n'est configuré (cf.
+ * `app/(public)/signup/page.tsx`). Inutile d'y proposer des boutons OIDC.
  */
 export const SignupStep1 = (props: SignupPropsWithState) => {
   const { formState, isScoreStrongEnough } = props;
@@ -77,30 +82,28 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
   const ongletTracker = useEventTracker();
 
   return (
-    <>
-      <Tabs
-        className="justify-center"
-        defaultActiveTab={isPasswordless ? 1 : 0}
-        onChange={(activeTab: number) => {
-          if (activeTab === 0) {
-            // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
-            setIsPasswordless(false);
-            ongletTracker(Event.auth.viewAvecMdp);
-          } else {
-            form.setValue('password', '');
-            setIsPasswordless(true);
-            ongletTracker(Event.auth.viewSansMdp);
-          }
-        }}
-      >
-        <Tab label="Compte avec mot de passe">
-          <SignupStep1Form {...props} form={form} />
-        </Tab>
-        <Tab label="Compte sans mot de passe">
-          <SignupStep1Form {...props} form={form} isPasswordless />
-        </Tab>
-      </Tabs>
-    </>
+    <Tabs
+      className="justify-center"
+      defaultActiveTab={isPasswordless ? 1 : 0}
+      onChange={(activeTab: number) => {
+        if (activeTab === 0) {
+          // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
+          setIsPasswordless(false);
+          ongletTracker(Event.auth.viewAvecMdp);
+        } else {
+          form.setValue('password', '');
+          setIsPasswordless(true);
+          ongletTracker(Event.auth.viewSansMdp);
+        }
+      }}
+    >
+      <Tab label={appLabels.authOngletConnexionAvecMotDePasse}>
+        <SignupStep1Form {...props} form={form} />
+      </Tab>
+      <Tab label={appLabels.authOngletLienDeConnexion}>
+        <SignupStep1Form {...props} form={form} isPasswordless />
+      </Tab>
+    </Tabs>
   );
 };
 
@@ -140,6 +143,11 @@ const SignupStep1Form = (
     // envoi les données
     onSubmit(data);
     eventTracker(Event.auth.submitSignup);
+    eventTracker(Event.auth.signup.click, {
+      methode: (isPasswordless
+        ? 'lien_magique'
+        : 'mot_de_passe') satisfies LoginMethod,
+    });
   };
 
   const email = watch('email');

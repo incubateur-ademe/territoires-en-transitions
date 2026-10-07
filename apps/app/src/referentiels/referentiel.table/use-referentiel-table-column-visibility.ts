@@ -1,14 +1,18 @@
 import { appLabels } from '@/app/labels/catalog';
-import { VisibilityState } from '@tanstack/react-table';
+import { ColumnVisibilityState } from '@tanstack/react-table';
 import { useUser } from '@tet/api/users';
+import { isNewReferentiel, ReferentielId } from '@tet/domain/referentiels';
+import { capitalize } from '@tet/ui/labels/plural';
 import { useCallback, useMemo } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
+import { match } from 'ts-pattern';
+import { AuditColumnsScope } from './audit-columns-scope';
 
 const STORAGE_KEY_PREFIX = 'tet_referentiel_table_columns_visibility';
 
 // Ordre de présentation des colonnes dans le sélecteur de visibilité.
 // Garde la colonne "Intitulé" toujours visible en l'excluant de cette liste.
-export const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
+const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'description', label: 'Description', default: false },
   { id: 'categorie', label: 'Phase', default: false },
   { id: 'pointPotentiel', label: 'Potentiel personnalisé', default: true },
@@ -23,15 +27,34 @@ export const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'scorePasFait', label: '% pas fait', default: false },
   { id: 'statut', label: 'Statut', default: true },
   { id: 'explication', label: "État d'avancement", default: true },
-  { id: 'pilotes', label: 'Pilotes', default: false },
-  { id: 'services', label: 'Service ou direction', default: false },
+  {
+    id: 'pilotes',
+    label: capitalize(appLabels.personnePilote({ plural: true })),
+    default: false,
+  },
+  {
+    id: 'services',
+    label: capitalize(appLabels.directionOuServicePilote({ plural: true })),
+    default: false,
+  },
   { id: 'documents', label: 'Documents', default: true },
   { id: 'comments', label: 'Commentaires', default: false },
   { id: 'fiches', label: 'Actions liées', default: false },
 ] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
-const AUDIT_COLUMN_OPTIONS = [
-  { id: 'auditStatut', label: appLabels.auditColonneStatut, default: true },
+const LABELS_COLUMN_OPTION = {
+  id: 'labels',
+  label: appLabels.referentielTableColonneLabels,
+  default: true,
+} as const satisfies { id: string; label: string; default: boolean };
+
+const AUDIT_STATUT_COLUMN_OPTION = {
+  id: 'auditStatut',
+  label: appLabels.auditColonneStatut,
+  default: true,
+} as const satisfies { id: string; label: string; default: boolean };
+
+const AUDIT_CONDUCT_COLUMN_OPTIONS = [
   {
     id: 'auditOrdreDuJour',
     label: appLabels.auditColonneOrdreDuJour,
@@ -40,9 +63,26 @@ const AUDIT_COLUMN_OPTIONS = [
   { id: 'auditNotes', label: appLabels.auditColonneNotes, default: true },
 ] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
+function getAuditColumnOptions(
+  auditColumnsScope: AuditColumnsScope
+): ReferentielTableColumnOption[] {
+  return match<AuditColumnsScope, ReferentielTableColumnOption[]>(
+    auditColumnsScope
+  )
+    .with('none', () => [])
+    .with('statut', () => [AUDIT_STATUT_COLUMN_OPTION])
+    .with('all', () => [
+      AUDIT_STATUT_COLUMN_OPTION,
+      ...AUDIT_CONDUCT_COLUMN_OPTIONS,
+    ])
+    .exhaustive();
+}
+
 export type ReferentielTableColumnId =
   | (typeof REFERENTIEL_TABLE_COLUMN_OPTIONS)[number]['id']
-  | (typeof AUDIT_COLUMN_OPTIONS)[number]['id'];
+  | (typeof LABELS_COLUMN_OPTION)['id']
+  | (typeof AUDIT_STATUT_COLUMN_OPTION)['id']
+  | (typeof AUDIT_CONDUCT_COLUMN_OPTIONS)[number]['id'];
 
 export type ReferentielTableColumnOption = {
   id: ReferentielTableColumnId;
@@ -51,7 +91,7 @@ export type ReferentielTableColumnOption = {
 };
 
 export type ReferentielTableColumnVisibility = {
-  columnVisibility: VisibilityState;
+  columnVisibility: ColumnVisibilityState;
   visibleColumnIds: ReferentielTableColumnId[];
   setVisibleColumnIds: (ids: ReferentielTableColumnId[]) => void;
   columnOptions: ReferentielTableColumnOption[];
@@ -59,7 +99,7 @@ export type ReferentielTableColumnVisibility = {
 
 function getDefaultColumnVisibility(
   options: readonly ReferentielTableColumnOption[]
-): VisibilityState {
+): ColumnVisibilityState {
   return Object.fromEntries(
     options.map(({ id, default: defaultValue }) => [id, defaultValue])
   );
@@ -69,27 +109,52 @@ function getStorageKey(userId: string) {
   return `${STORAGE_KEY_PREFIX}_${userId}`;
 }
 
-export function useReferentielTableColumnVisibility({
-  showAuditRelatedColumns,
-}: {
-  showAuditRelatedColumns: boolean;
-}): ReferentielTableColumnVisibility {
+type StoredColumnVisibility = readonly [
+  ColumnVisibilityState | undefined,
+  (next: ColumnVisibilityState) => void
+];
+
+function useStoredColumnVisibility(): StoredColumnVisibility {
   const user = useUser();
 
-  const columnOptions = useMemo<ReferentielTableColumnOption[]>(
-    () =>
-      showAuditRelatedColumns
-        ? [...REFERENTIEL_TABLE_COLUMN_OPTIONS, ...AUDIT_COLUMN_OPTIONS]
-        : [...REFERENTIEL_TABLE_COLUMN_OPTIONS],
-    [showAuditRelatedColumns]
-  );
-
-  const [stored, setStored] = useLocalStorage<VisibilityState>(
+  const [stored, setStored] = useLocalStorage<ColumnVisibilityState>(
     getStorageKey(user.id),
     getDefaultColumnVisibility(REFERENTIEL_TABLE_COLUMN_OPTIONS)
   );
 
-  const columnVisibility: VisibilityState = {
+  return [stored, setStored];
+}
+
+export function useReferentielTableColumnVisibility({
+  auditColumnsScope,
+  referentielId,
+}: {
+  auditColumnsScope: AuditColumnsScope;
+  referentielId: ReferentielId;
+}): ReferentielTableColumnVisibility {
+  const columnOptions = useMemo<ReferentielTableColumnOption[]>(() => {
+    if (!isNewReferentiel(referentielId)) {
+      return [
+        ...REFERENTIEL_TABLE_COLUMN_OPTIONS,
+        ...getAuditColumnOptions(auditColumnsScope),
+      ];
+    }
+
+    // "Volets" doit apparaître juste après "Phase" dans le sélecteur.
+    const categorieIndex = REFERENTIEL_TABLE_COLUMN_OPTIONS.findIndex(
+      ({ id }) => id === 'categorie'
+    );
+    return [
+      ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(0, categorieIndex + 1),
+      LABELS_COLUMN_OPTION,
+      ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(categorieIndex + 1),
+      ...getAuditColumnOptions(auditColumnsScope),
+    ];
+  }, [auditColumnsScope, referentielId]);
+
+  const [stored, setStored] = useStoredColumnVisibility();
+
+  const columnVisibility: ColumnVisibilityState = {
     ...getDefaultColumnVisibility(columnOptions),
     ...(stored ?? {}),
   };
@@ -118,4 +183,16 @@ export function useReferentielTableColumnVisibility({
     setVisibleColumnIds,
     columnOptions,
   };
+}
+
+export function useShowReferentielTableColumn(): (
+  columnId: ReferentielTableColumnId
+) => void {
+  const [stored, setStored] = useStoredColumnVisibility();
+
+  return useCallback(
+    (columnId: ReferentielTableColumnId) =>
+      setStored({ ...(stored ?? {}), [columnId]: true }),
+    [stored, setStored]
+  );
 }

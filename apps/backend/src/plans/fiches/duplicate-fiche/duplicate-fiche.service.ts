@@ -9,6 +9,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { AxeIdRemapping } from '@tet/backend/plans/plans/duplicate-plan/duplicated-fiche.mapper';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { FicheWithRelations } from '@tet/domain/plans';
 import {
   DuplicateFicheError,
@@ -39,8 +40,7 @@ export class DuplicateFicheService {
 
   async duplicate(
     { ficheId }: DuplicateFicheInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<{ ficheId: number }, DuplicateFicheError>> {
     return this.transactionManager.executeSingle<
       { ficheId: number },

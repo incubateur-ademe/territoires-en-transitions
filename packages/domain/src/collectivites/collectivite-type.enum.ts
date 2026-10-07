@@ -10,6 +10,10 @@ export const collectiviteTypeEnum = {
   PREFECTURE_DEPARTEMENT: 'prefecture_departement',
   SERVICE_PUBLIC: 'service_public',
   STRUCTURE_SANS_STATUT_JURIDIQUE: 'structure_sans_statut_juridique',
+  DREAL: 'dreal',
+  DDT: 'ddt',
+  DR_ADEME: 'dr_ademe',
+  SERVICE_NATIONAL: 'service_national',
 } as const;
 
 export type CollectiviteType =

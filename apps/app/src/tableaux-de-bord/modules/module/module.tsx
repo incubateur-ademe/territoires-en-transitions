@@ -117,7 +117,7 @@ const Module = ({
       <EmptyCard
         picto={() => symbole}
         title={title}
-        description={appLabels.aucunResultat}
+        description={appLabels.resultat({ count: 0 })}
         tags={filterBadges}
         actions={emptyButtons}
         className={className}
@@ -145,7 +145,7 @@ const Module = ({
         {/** Menu */}
         {menuActions && menuActions.length > 0 && (
           <ButtonMenu
-            icon="more-line"
+            icon="filter-line"
             variant="grey"
             size="xs"
             menu={{ actions: menuActions }}

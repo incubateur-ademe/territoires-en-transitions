@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Download, expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
@@ -6,8 +6,8 @@ export type RoleKey = 'eluReferent' | 'referentTechnique';
 
 /** Libellé visible du rôle dans le header (champ vide → forme au singulier) */
 const ROLE_LABEL: Record<RoleKey, string> = {
-  eluReferent: 'Élu·e référent·e',
-  referentTechnique: 'Référent·e technique',
+  eluReferent: 'Personne élue',
+  referentTechnique: 'Responsable technique',
 };
 
 export class AuditLabellisationPom {
@@ -15,6 +15,8 @@ export class AuditLabellisationPom {
   readonly demanderPremiereEtoileButton: Locator;
   readonly acteEngagementRow: Locator;
   readonly ajouterActeEngagementButton: Locator;
+  readonly supprimerActeEngagementButton: Locator;
+  readonly telechargerActeEngagementButton: Locator;
   readonly acteUploadModalTitle: Locator;
   readonly envoyerDemandeButton: Locator;
   readonly successMessage: Locator;
@@ -24,11 +26,16 @@ export class AuditLabellisationPom {
   readonly candidatureDocumentsTitle: Locator;
   readonly candidatureDocumentsRow: Locator;
   readonly ajouterDocumentCandidatureButton: Locator;
+  readonly renommerDocumentCandidatureButton: Locator;
+  readonly supprimerDocumentCandidatureButton: Locator;
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
   readonly auditTypeGroup: Locator;
   readonly auditTypeCotRadio: Locator;
   readonly auditTypeCotAvecLabellisationRadio: Locator;
+  readonly auditTypeLabellisationRadio: Locator;
+  readonly auditTypeRadios: Locator;
+  readonly tooltip: Locator;
   readonly targetStarSelect: Locator;
   readonly envoyerAuditButton: Locator;
   readonly auditSuccessToast: Locator;
@@ -48,6 +55,11 @@ export class AuditLabellisationPom {
     this.ajouterActeEngagementButton = this.acteEngagementRow.getByRole(
       'button',
       { name: 'Ajouter un document' }
+    );
+    this.supprimerActeEngagementButton =
+      this.acteEngagementRow.getByTitle('Supprimer');
+    this.telechargerActeEngagementButton = this.acteEngagementRow.getByTitle(
+      'Télécharger le fichier'
     );
     this.acteUploadModalTitle = page.getByRole('heading', {
       name: "Téléverser l'acte d'engagement signé",
@@ -75,6 +87,10 @@ export class AuditLabellisationPom {
       this.candidatureDocumentsRow.getByRole('button', {
         name: 'Ajouter un document',
       });
+    this.renommerDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByTitle('Renommer le fichier');
+    this.supprimerDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByTitle('Supprimer');
     this.demanderAuditButton = page.getByRole('button', {
       name: 'Demander un audit',
     });
@@ -89,6 +105,12 @@ export class AuditLabellisationPom {
       'radio',
       { name: 'Audit COT avec labellisation' }
     );
+    this.auditTypeLabellisationRadio = this.auditModal.getByRole('radio', {
+      name: 'Audit de labellisation',
+      exact: true,
+    });
+    this.auditTypeRadios = this.auditModal.getByRole('radio');
+    this.tooltip = page.getByRole('tooltip');
     this.targetStarSelect = this.auditModal.getByTestId('target-star');
     this.envoyerAuditButton = this.auditModal.getByRole('button', {
       name: 'Envoyer ma demande',
@@ -141,8 +163,14 @@ export class AuditLabellisationPom {
     await this.documentsPom.setTestDocument();
   }
 
+  async downloadActeEngagement(): Promise<Download> {
+    const downloadPromise = this.page.waitForEvent('download');
+    await this.telechargerActeEngagementButton.click();
+    return downloadPromise;
+  }
+
   async deleteActeEngagement(): Promise<void> {
-    await this.acteEngagementRow.getByTitle('Supprimer').click();
+    await this.supprimerActeEngagementButton.click();
     await expect(
       this.documentsPom.deleteButtonConfirmationModalTitle
     ).toBeVisible();
@@ -158,6 +186,14 @@ export class AuditLabellisationPom {
   async openAuditModal(): Promise<void> {
     await this.demanderAuditButton.click();
     await expect(this.auditModal).toBeVisible();
+  }
+
+  /**
+   * Survole le CTA pour faire apparaitre son tooltip. `force` est necessaire :
+   * le bouton est desactive dans les cas ou le motif nous interesse.
+   */
+  async hoverDemanderAudit(): Promise<void> {
+    await this.demanderAuditButton.hover({ force: true });
   }
 
   async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {

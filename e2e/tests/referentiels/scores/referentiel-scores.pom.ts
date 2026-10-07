@@ -1,9 +1,9 @@
+import { round } from 'es-toolkit';
 import { expect, Locator, Page } from '@playwright/test';
 import {
   ReferentielId,
   StatutAvancementCreate,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
 export class ReferentielScoresPom {
@@ -28,9 +28,9 @@ export class ReferentielScoresPom {
       .getByRole('button', {
         name: 'Document',
       });
-    this.documentsAddPreuveComplementaireButton = page.locator(
-      '[data-test="AddPreuveComplementaire"]'
-    );
+    this.documentsAddPreuveComplementaireButton = page.getByRole('button', {
+      name: 'Ajouter un document complémentaire',
+    });
     this.detaillerAvancementModalTitle = page.getByRole('heading', {
       name: "Détailler l'avancement au pourcentage",
     });
@@ -90,15 +90,15 @@ export class ReferentielScoresPom {
     );
   }
 
-  getPreuveReglementaireButtonLocator(preuveId: string) {
-    return this.page.locator(
-      `[data-test="AddPreuveReglementaire-${preuveId}"]`
-    );
+  getPreuveReglementaireButtonLocator(preuveNom: string): Locator {
+    return this.page.getByRole('button', {
+      name: `Ajouter une preuve pour ${preuveNom}`,
+    });
   }
 
-  async uploadPreuveReglementaire(preuveId: string) {
+  async uploadPreuveReglementaire(preuveNom: string): Promise<void> {
     await this.documentsExpandButton.click();
-    await this.getPreuveReglementaireButtonLocator(preuveId).click();
+    await this.getPreuveReglementaireButtonLocator(preuveNom).click();
     await this.documentsPom.setTestDocument();
   }
 
@@ -253,7 +253,7 @@ export class ReferentielScoresPom {
     await expect(
       this.getScoreRatioLocator(referentielId, actionIdentifiant)
     ).toContainText(
-      `${roundTo(pointFait, 1)} / ${roundTo(pointPotentiel, 1)} points`
+      `${round(pointFait, 1)} / ${round(pointPotentiel, 1)} points`
     );
   }
 

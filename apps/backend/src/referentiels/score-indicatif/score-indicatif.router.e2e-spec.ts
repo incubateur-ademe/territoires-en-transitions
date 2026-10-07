@@ -1,20 +1,28 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
+  deleteActionScoreIndicateurValeursForCollectivite,
+  deleteIndicateurValeursForCollectivite,
   fixturePourScoreIndicatif,
   getAuthUserFromUserCredentials,
   getIndicateurIdByIdentifiant,
+  getSnbcMetadonneeId,
   getTestApp,
   getTestDatabase,
   getTestRouter,
+  insertFixtureAutreActionPourScoreIndicatif,
   insertFixturePourScoreIndicatif,
   insertFixtureScoreAvecExprCible,
+  insertIndicateurValeurs,
   TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
+import { and, eq, isNull } from 'drizzle-orm';
 
 /** Action TE présente en seed, utilisée pour les tests referentiel(te_…). */
 const TE_ACTION_ID = 'te_2.2.5';
@@ -260,6 +268,98 @@ describe('ScoreIndicatifRouter', () => {
     });
   });
 
+  test('Demander un score pour un indicateur marqué non suivi force le résultat à 0, même si des valeurs sont sélectionnées', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    await caller.indicateurs.indicateurs.update({
+      indicateurId: indicateurIdCae7,
+      collectiviteId: testCollectiviteId,
+      indicateurFields: { isSuivi: false },
+    });
+    onTestFinished(async () => {
+      // Supprime la ligne (plutôt que de remettre le flag à false) pour ne
+      // pas laisser de référence à l'utilisateur de test via `modified_by`,
+      // qui empêcherait sa suppression dans le `afterAll` de la suite.
+      await databaseService.db
+        .delete(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, indicateurIdCae7),
+            eq(indicateurCollectiviteTable.collectiviteId, testCollectiviteId)
+          )
+        );
+    });
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: ['cae_1.2.3.3.4'],
+    });
+
+    expect(result).toMatchObject({
+      'cae_1.2.3.3.4': {
+        fait: { score: 0, valeursUtilisees: [] },
+        programme: { score: 0, valeursUtilisees: [] },
+      },
+    });
+  });
+
+  test('Un indicateur non suivi force le score à 0 même pour une formule à seuil où une valeur basse serait "bonne"', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // Cas réel (proche de te_2.3.1.5.a) : une valeur basse est "bonne" pour
+    // cet indicateur. Si on neutralisait l'indicateur non suivi en
+    // forçant `val()` à 0 dans la formule, on obtiendrait 1 (100% fait) au
+    // lieu du 0% attendu, car 0 < cible. Le résultat doit être forcé à 0
+    // sans même évaluer la formule.
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(cae) alors 160 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) < cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 200,
+      objectif: 200,
+    });
+    onTestFinished(() => cleanup());
+
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT
+    );
+    await caller.indicateurs.indicateurs.update({
+      indicateurId,
+      collectiviteId: testCollectiviteId,
+      indicateurFields: { isSuivi: false },
+    });
+    // Nettoyage explicite plutôt que de compter sur la suppression en
+    // cascade de `cleanup()` ci-dessus : `TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT`
+    // est réutilisé par les autres tests de ce fichier, qui partagent
+    // `testCollectiviteId` — un `isSuivi: false` qui fuiterait forcerait
+    // silencieusement leur score à 0.
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurCollectiviteTable)
+        .where(
+          and(
+            eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+            eq(indicateurCollectiviteTable.collectiviteId, testCollectiviteId)
+          )
+        );
+    });
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: { score: 0, valeursUtilisees: [] },
+        programme: { score: 0, valeursUtilisees: [] },
+      },
+    });
+  });
+
   test("Demander un score quand il n'est pas encore calculable (par manque de valeurs sélectionnées)", async () => {
     const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getScoreIndicatif({
@@ -455,6 +555,12 @@ describe('ScoreIndicatifRouter', () => {
             unite: expect.any(String),
           },
         ],
+        calcul: {
+          type: 'valeur_cible_seuil',
+          identifiantReferentiel: 'cae_6.a',
+          cible: 480,
+          seuil: 580,
+        },
         fait: {
           score: 0,
           valeursUtilisees: [
@@ -490,6 +596,336 @@ describe('ScoreIndicatifRouter', () => {
           ],
         },
       },
+    });
+  });
+
+  test('est_suivi(...) évalue à vrai (score à 1) quand une valeur est sélectionnée pour le score', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // `insertFixtureScoreAvecExprCible` sélectionne déjà la valeur insérée
+    // pour le calcul du score (fait et programme).
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(cae) alors 160 sinon 0',
+      exprScore: `si est_suivi(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        calcul: { type: 'presence_absence' },
+        fait: { score: 1 },
+        programme: { score: 1 },
+      },
+    });
+  });
+
+  test("est_suivi(...) évalue à faux (score à 0) quand une valeur résultat existe mais n'est pas sélectionnée pour le score", async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(cae) alors 160 sinon 0',
+      exprScore: `si est_suivi(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT
+    );
+
+    // retire la sélection tout en conservant la valeur : est_suivi(...) ne se
+    // fie qu'à la sélection, pas à la simple existence d'un résultat.
+    await deleteActionScoreIndicateurValeursForCollectivite(
+      databaseService,
+      testCollectiviteId,
+      [indicateurId]
+    );
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    // note : les `valeursUtilisees` de l'action peuvent contenir des valeurs
+    // sélectionnées pour un autre indicateur (cae_7, via la fixture de base) —
+    // seul le score compte ici.
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: { score: 0 },
+        programme: { score: 0 },
+      },
+    });
+  });
+
+  test("est_suivi(...) évalue à faux (score à 0) quand aucune valeur résultat n'existe pour l'indicateur", async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(cae) alors 160 sinon 0',
+      exprScore: `si est_suivi(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT
+    );
+
+    // supprime toute valeur (et sa sélection, en cascade) pour simuler
+    // l'absence de suivi
+    await deleteIndicateurValeursForCollectivite(
+      databaseService,
+      testCollectiviteId,
+      [indicateurId]
+    );
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: { score: 0 },
+        programme: { score: 0 },
+      },
+    });
+  });
+
+  describe('progression_snbc(...) et reduction(...)', () => {
+    const ID = TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT;
+    const METADONNEE_CITEPA = 1;
+
+    // formule + valeur `fait` sélectionnée : 90 en 2025 (citepa) ; la valeur
+    // `programme` (objectif 60, collectivité) sert à vérifier qu'elle donne
+    // `null` (pas d'année utilisée pour les objectifs)
+    const setup = async (exprScore: string) => {
+      const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+        collectiviteId: testCollectiviteId,
+        actionId: fixturePourScoreIndicatif.actionId,
+        exprCible: 'si referentiel(cae) alors 160 sinon 0',
+        exprScore,
+        dateValeur: fixturePourScoreIndicatif.dateValeur,
+        resultat: 90,
+        objectif: 60,
+      });
+      onTestFinished(() => cleanup());
+      const indicateurId = await getIndicateurIdByIdentifiant(
+        databaseService,
+        ID
+      );
+      const snbcId = await getSnbcMetadonneeId(databaseService);
+      const insert = (
+        valeurs: Parameters<typeof insertIndicateurValeurs>[1]['valeurs']
+      ) =>
+        insertIndicateurValeurs(databaseService, {
+          indicateurId,
+          collectiviteId: testCollectiviteId,
+          valeurs,
+        });
+      return { indicateurId, snbcId, insert };
+    };
+
+    const getScore = async () => {
+      const caller = router.createCaller({ user: testUser });
+      const result = await caller.referentiels.actions.getScoreIndicatif({
+        collectiviteId: testCollectiviteId,
+        actionIds: [fixturePourScoreIndicatif.actionId],
+      });
+      return result[fixturePourScoreIndicatif.actionId];
+    };
+
+    test('progression_snbc : score fait de 0.5, programme null', async () => {
+      const { snbcId, insert } = await setup(`progression_snbc(${ID})`);
+      // 2015 à une date qui n'est pas un 1er janvier
+      await insert([
+        { dateValeur: '2015-06-15', metadonneeId: snbcId, objectif: 100 },
+        { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
+      ]);
+
+      const score = await getScore();
+      expect(score.fait?.score).toBeCloseTo(0.5);
+      expect(score.programme).toBeNull();
+      expect(score.calcul).toEqual({
+        type: 'progression_snbc',
+        identifiantReferentiel: ID,
+        anneeDepart: 2015,
+        objectifSnbcDepart: 100,
+        anneeUtilisee: 2025,
+        valeurUtilisee: 90,
+        objectifSnbc: 80,
+      });
+    });
+
+    test('progression_snbc : indicateur non suivi, calcul sans valeur utilisée', async () => {
+      const { indicateurId, snbcId, insert } = await setup(
+        `progression_snbc(${ID})`
+      );
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: snbcId, objectif: 100 },
+        { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
+      ]);
+      const caller = router.createCaller({ user: testUser });
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: testCollectiviteId,
+        indicateurFields: { isSuivi: false },
+      });
+      // `ID` est partagé par les autres tests de ce fichier
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurCollectiviteTable)
+          .where(
+            and(
+              eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+              eq(indicateurCollectiviteTable.collectiviteId, testCollectiviteId)
+            )
+          );
+      });
+
+      const score = await getScore();
+      expect(score.fait).toEqual({ score: 0, valeursUtilisees: [] });
+      expect(score.calcul).toEqual({
+        type: 'progression_snbc',
+        identifiantReferentiel: ID,
+        anneeDepart: 2015,
+        objectifSnbcDepart: 100,
+        anneeUtilisee: null,
+        valeurUtilisee: null,
+        objectifSnbc: null,
+      });
+    });
+
+    test('progression_snbc : valeurs snbc manquantes ou valeurDepart = valeurAttendue', async () => {
+      const { snbcId, insert } = await setup(`min(1, progression_snbc(${ID}))`);
+      expect((await getScore()).fait).toBeNull();
+
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: snbcId, objectif: 80 },
+        { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
+      ]);
+      expect((await getScore()).fait).toBeNull();
+    });
+
+    test('reduction : valeurDepart de la collectivité', async () => {
+      const { insert } = await setup(`reduction(${ID}, 2015, 2030, 0.4)`);
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
+      ]);
+
+      const score = await getScore();
+      expect(score.fait?.score).toBeCloseTo(0.375);
+      expect(score.programme).toBeNull();
+      expect(score.calcul).toMatchObject({
+        type: 'reduction',
+        identifiantReferentiel: ID,
+        anneeDepart: 2015,
+        resultatDepart: 100,
+        anneeCible: 2030,
+        reductionCible: 0.4,
+        anneeUtilisee: 2025,
+        valeurUtilisee: 90,
+      });
+      // 100 * (1 - 0.4 * 10 / 15)
+      expect(
+        score.calcul?.type === 'reduction' ? score.calcul.valeurCible : null
+      ).toBeCloseTo(73.333);
+    });
+
+    test('reduction : repli sur une source open data, puis null sans aucune valeur de départ', async () => {
+      const { insert } = await setup(`reduction(${ID}, 2015, 2030, 0.4)`);
+      expect((await getScore()).fait).toBeNull();
+
+      await insert([
+        {
+          dateValeur: '2015-01-01',
+          metadonneeId: METADONNEE_CITEPA,
+          resultat: 100,
+        },
+      ]);
+      expect((await getScore()).fait?.score).toBeCloseTo(0.375);
+    });
+
+    test('reduction : la trajectoire reste à la cible après anneeCible', async () => {
+      const { insert } = await setup(`reduction(${ID}, 2015, 2020, 0.4)`);
+      await insert([
+        { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
+      ]);
+
+      // valeurAttendue = 60 (cible), résultat 90 : (100 - 90) / (100 - 60)
+      expect((await getScore()).fait?.score).toBeCloseTo(0.25);
+    });
+
+    test("l'année utilisée dépend de l'action (contexte non partagé)", async () => {
+      const autreActionId = 'cae_1.2.3.3.5';
+      const exprScore = `reduction(${ID}, 2015, 2030, 0.4)`;
+      const { indicateurId, insert } = await setup(exprScore);
+      const [, fait2030] = await insert([
+        { dateValeur: '2015-01-01', metadonneeId: null, resultat: 100 },
+        {
+          dateValeur: '2030-01-01',
+          metadonneeId: METADONNEE_CITEPA,
+          resultat: 90,
+        },
+      ]);
+      const [programme] = await databaseService.db
+        .select({ id: indicateurValeurTable.id })
+        .from(indicateurValeurTable)
+        .where(
+          and(
+            eq(indicateurValeurTable.indicateurId, indicateurId),
+            eq(indicateurValeurTable.collectiviteId, testCollectiviteId),
+            eq(
+              indicateurValeurTable.dateValeur,
+              fixturePourScoreIndicatif.dateValeur
+            ),
+            isNull(indicateurValeurTable.metadonneeId)
+          )
+        );
+      const cleanupAutreAction =
+        await insertFixtureAutreActionPourScoreIndicatif(databaseService, {
+          actionId: autreActionId,
+          collectiviteId: testCollectiviteId,
+          indicateurId,
+          exprScore,
+          valeurs: [
+            { id: programme.id, metadonneeId: null },
+            { id: fait2030.id, metadonneeId: METADONNEE_CITEPA },
+          ],
+        });
+      onTestFinished(() => cleanupAutreAction());
+
+      const caller = router.createCaller({ user: testUser });
+      const result = await caller.referentiels.actions.getScoreIndicatif({
+        collectiviteId: testCollectiviteId,
+        actionIds: [fixturePourScoreIndicatif.actionId, autreActionId],
+      });
+
+      // 2025 : avancement 2/3, attendue 73.33 ; 2030 : avancement 1, attendue 60
+      expect(
+        result[fixturePourScoreIndicatif.actionId].fait?.score
+      ).toBeCloseTo(0.375);
+      expect(result[autreActionId].fait?.score).toBeCloseTo(0.25);
     });
   });
 

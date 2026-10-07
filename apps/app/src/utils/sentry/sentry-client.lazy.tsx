@@ -1,5 +1,5 @@
 import type { Client, Scope } from '@sentry/core';
-import { defaultSentryConfig, isSentryEnabled } from './sentry.utils';
+import { getDefaultSentryConfig, isSentryEnabled } from './sentry.utils';
 
 let SentryModule: typeof import('@sentry/nextjs') | undefined;
 let sentryClientPromise: Promise<Client> | undefined;
@@ -17,7 +17,7 @@ async function getSentryClient(): Promise<Client> {
     sentryClientPromise = new Promise((resolve) => {
       getSentryModule().then((Sentry) => {
         const sentryClient = Sentry.init({
-          ...defaultSentryConfig,
+          ...getDefaultSentryConfig(),
 
           // Replay may only be enabled for the client-side
           integrations: [Sentry.replayIntegration()],
@@ -40,7 +40,7 @@ async function getSentryClient(): Promise<Client> {
 }
 
 export function initSentry() {
-  if (!isSentryEnabled) {
+  if (!isSentryEnabled()) {
     return;
   }
 
@@ -54,7 +54,7 @@ export function captureException({
   error: unknown;
   crashId?: string;
 }) {
-  if (!isSentryEnabled) {
+  if (!isSentryEnabled()) {
     return;
   }
 
@@ -75,7 +75,7 @@ export function captureRouterTransitionStart(
   url: string,
   navigationType: 'push' | 'replace' | 'traverse'
 ) {
-  if (!isSentryEnabled) {
+  if (!isSentryEnabled()) {
     return;
   }
 

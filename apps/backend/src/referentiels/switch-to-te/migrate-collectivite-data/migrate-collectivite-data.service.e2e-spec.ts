@@ -49,7 +49,7 @@ const MIGRATE_FIXTURE = {
     caeOrigineActionId: 'cae_1.1.2.2.1',
   },
   teActionCaeAndEci: {
-    teActionId: 'te_5.1.2.3',
+    teActionId: 'te_5.1.2.4',
     caeOrigineActionId: 'cae_5.1.2.3',
     eciOrigineActionId: 'eci_1.1.3.3',
   },

@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import Markdown from '@/app/ui/Markdown';
-import { Valeur } from '@tet/api/indicateurs/domain/valeur.schema';
+import { IndicateurSourceMetadonnee } from '@tet/domain/indicateurs';
 import { Tooltip } from '@tet/ui';
 import { JSX } from 'react';
 
 type DataSourceTooltipProps = {
-  metadonnee: NonNullable<Valeur['source']>;
+  metadonnee: IndicateurSourceMetadonnee;
   calculAuto: boolean;
   nomSource: string;
   children: JSX.Element;

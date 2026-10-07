@@ -1,6 +1,6 @@
 import { PlanNode } from '@tet/domain/plans';
 import { groupBy, maxBy } from 'es-toolkit';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePlanAxesContext } from './plan-axes.context';
 
 function findAxesWithUniqueDepth(
@@ -60,14 +60,11 @@ export const useToggleAxe = (
   setIsOpen: (isOpen: boolean) => void;
   shouldScroll: boolean;
 } => {
-  const [firstRender, setFirstRender] = useState(true);
   const {
     openAxes,
     setIsOpen: setIsOpenInContext,
     isToggleAllActive,
   } = usePlanAxesContext();
-
-  const [shouldScroll, setShouldScroll] = useState(false);
 
   const setIsOpen = (isOpen: boolean): void => {
     setIsOpenInContext(axeId, isOpen);
@@ -75,15 +72,17 @@ export const useToggleAxe = (
 
   const isAxeOpen = openAxes.includes(axeId);
 
-  React.useEffect(() => {
-    if (firstRender === false) {
-      return;
-    }
+  /**
+   * Décidé une fois pour toutes au montage, comme le faisait l'effet gardé par
+   * un drapeau `firstRender`. L'initialiseur paresseux ne s'exécute qu'au
+   * premier rendu : plus d'état intermédiaire à `false` avant que l'effet ne
+   * tranche, donc plus de rendu perdu.
+   */
+  const [shouldScroll] = useState(() => {
     const canBeScrolledTo = getCanBeScrolledTo(axeId, axes, openAxes);
     // Désactiver le scroll si un toggle global vient d'avoir lieu
-    setShouldScroll(isAxeOpen && canBeScrolledTo && !isToggleAllActive);
-    setFirstRender(false);
-  }, [axeId, axes, firstRender, isAxeOpen, openAxes, isToggleAllActive]);
+    return isAxeOpen && canBeScrolledTo && !isToggleAllActive;
+  });
 
   return {
     isOpen: isAxeOpen,

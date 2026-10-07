@@ -12,6 +12,9 @@ export const collectiviteBanatic2025TransfertTable = pgTable(
       .notNull()
       .references(() => banatic2025CompetenceTable.competenceCode),
     natureTransfert: text('nature_transfert'),
+    // Nombre de communes distinctes dont la compétence est transférée via l'EPCI
+    // vers un groupement intermédiaire (numérateur de la délégation totale).
+    nbCommunesTransferees: integer('nb_communes_transferees'),
   },
   (table) => ({
     collectiviteBanatic2025TransfertPkey: primaryKey({

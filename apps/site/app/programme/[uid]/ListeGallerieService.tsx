@@ -1,8 +1,7 @@
 import ButtonsList from '@/site/components/buttons/ButtonsList';
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import Markdown from '@/site/components/markdown/Markdown';
-import ReactIcon from '@/site/components/react-icons/ReactIcon';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { Liste } from './types';
 
 const ListeGallerieService = ({ liste }: { liste: Liste }) => {
@@ -12,16 +11,11 @@ const ListeGallerieService = ({ liste }: { liste: Liste }) => {
         maxCols={2}
         data={liste.map((l) => (
           <div key={l.id} className="rounded-2xl p-8 border border-primary-4">
-            <div className="flex items-center gap-2 mb-3">
-              {!!l.icone && (
-                <ReactIcon icon={l.icone} className="text-4xl text-primary-6" />
-              )}
-              {!!l.preTitre && (
-                <div className="text-xl text-white font-bold bg-primary-6 rounded-full p-1 w-fit min-w-[36px]">
-                  <div className="mx-auto w-fit">{l.preTitre}</div>
-                </div>
-              )}
-            </div>
+            {!!l.preTitre && (
+              <div className="text-xl text-white font-bold bg-primary-6 rounded-full p-1 w-fit min-w-[36px] mb-3">
+                <div className="mx-auto w-fit">{l.preTitre}</div>
+              </div>
+            )}
 
             {!!l.titre && <h4 className="text-primary-8">{l.titre}</h4>}
 
@@ -34,8 +28,9 @@ const ListeGallerieService = ({ liste }: { liste: Liste }) => {
             />
 
             {!!l.image && (
-              <DEPRECATED_StrapiImage
-                data={l.image}
+              <StrapiImage
+                media={l.image}
+                sizes="(min-width: 1440px) 620px, (min-width: 1024px) 50vw, 100vw"
                 className="max-h-[300px] max-w-full mx-auto mt-8"
               />
             )}

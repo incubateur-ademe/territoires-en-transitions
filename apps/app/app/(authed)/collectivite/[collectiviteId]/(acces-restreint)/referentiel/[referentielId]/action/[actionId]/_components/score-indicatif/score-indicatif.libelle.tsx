@@ -2,6 +2,7 @@ import { avancementToLabel } from '@/app/app/labels';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toPercentString } from '@/app/utils/to-percent-string';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -70,7 +71,7 @@ export default ScoreIndicatifLibelle;
 /**
  * Affiche le libellé du score indicatif (fait ou programmé)
  */
-export const LibelleScoreIndicatif = ({
+const LibelleScoreIndicatif = ({
   typeScore,
   donnees,
   unite,
@@ -126,14 +127,14 @@ const LibelleScoreFait = ({ score }: { score: number }) => {
 /**
  * Génère le texte principal pour le score indicatif "programme"
  */
-export function LibelleScoreProgramme({
+function LibelleScoreProgramme({
   score,
   dateValeur,
 }: {
   score: number;
   dateValeur: string;
 }) {
-  const annee = new Date(dateValeur).getFullYear();
+  const annee = getYearFromIsoDate(dateValeur);
   return (
     <>
       {appLabels.scoreIndicatifProgramme({

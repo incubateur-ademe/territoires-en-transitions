@@ -16,7 +16,42 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
 
     await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
     await demarchePcaetPom.createDemarche(collectivite.data.id);
-    await demarchePcaetPom.expectCreatePlanCta(collectivite.data.id);
+    await demarchePcaetPom.expectCreatePlanCta();
+
+    // Le type PCAET est pré-sélectionné dans la modale, et le plan créé est
+    // rattaché automatiquement à la démarche.
+    const planNom = 'PCAET créé depuis la démarche';
+    await demarchePcaetPom.createPlanFromModal(
+      planNom,
+      'Plan Climat Air Énergie Territorial'
+    );
+    await demarchePcaetPom.expectLinkedPlanHeader(planNom);
+  });
+
+  // L'intitulé n'est pas saisi : il se déduit de l'année du lancement. Une
+  // collectivité qui régularise un dépôt ancien doit retrouver son année, pas
+  // celle du jour.
+  test('l’intitulé reprend l’année de lancement, et non l’année courante', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const demarchePcaetPom = new DemarchePcaetPom(page);
+
+    await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
+    // Le 1er janvier : le jour où lire la date par `new Date()` ferait perdre
+    // une année à l'ouest de Greenwich.
+    await demarchePcaetPom.dateLancementInput.fill('2018-01-01');
+    await demarchePcaetPom.createDemarcheButton.click();
+    await demarchePcaetPom.expectOnDetailPage(collectivite.data.id);
+
+    await expect(
+      page.getByRole('heading', { name: 'PCAET réglementaire 2018' })
+    ).toBeVisible();
   });
 
   test('création de démarche puis rattachement manuel à un plan PCAET existant', async ({
@@ -69,11 +104,13 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
       'Agriculture',
       'Déchets',
       'Industrie hors branche énergie',
-      'Branche énergie',
+      'Industrie branche énergie',
     ]) {
       await demarchePcaetPom.expectTopicGridRow(secteur);
     }
-    await demarchePcaetPom.expectNoTopicGridRow('Chauffage / Logement collectif');
+    await demarchePcaetPom.expectNoTopicGridRow(
+      'Chauffage / Logement collectif'
+    );
     await demarchePcaetPom.expectNoTopicGridRow('Autres industries');
   });
 
@@ -101,19 +138,21 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
       await demarchePcaetPom.stepsNavNext.click();
     };
 
-    // Premier item du parcours : pas de « précédente », le panneau est fermé.
+    // Premier item du parcours : pas de « précédente ». Le panneau d'avancée
+    // est ouvert à l'arrivée sur la démarche ; on le ferme pour la suite.
     await expect(page).toHaveURL(/\/documents\/?$/);
+    await demarchePcaetPom.expectProgressPanelOpen(true);
     await demarchePcaetPom.closeProgressPanel();
     await expect(demarchePcaetPom.stepsNavPrevious).toBeHidden();
 
     // Franchir une sous-étape ouvre le panneau d'avancée automatiquement.
-    await clickNextTo(/topic=profil_energie_climat$/);
-    await expect(page).toHaveURL(/\/indicateurs\?topic=profil_energie_climat$/);
-    await demarchePcaetPom.expectActiveTopic('profil_energie_climat');
+    await clickNextTo(/topic=emissions_ges$/);
+    await expect(page).toHaveURL(/\/indicateurs\?topic=emissions_ges$/);
+    await demarchePcaetPom.expectActiveTopic('emissions_ges');
     await demarchePcaetPom.expectProgressPanelOpen(true);
 
     // Naviguer entre topics ne touche pas au panneau. Le parcours suit l'ordre
-    // d'affichage du référentiel : aucun volet ne s'y saute.
+    // réglementaire : émissions → polluants → séquestration → conso → ENR.
     await demarchePcaetPom.closeProgressPanel();
     await clickNextTo(/topic=polluants_atmospheriques$/);
     await expect(page).toHaveURL(/\?topic=polluants_atmospheriques$/);

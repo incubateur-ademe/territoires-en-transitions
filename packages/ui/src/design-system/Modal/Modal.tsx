@@ -53,7 +53,7 @@ export type ModalProps = {
   /** l'élément qui permet d'afficher la modale au click, généralement un bouton */
   children?: JSX.Element;
   /** Titre de la modale, n'est pas affiché si non défini */
-  title?: string;
+  title?: React.ReactNode;
   /** Sous-titre de la modale, n'est pas affiché si non défini */
   subTitle?: string;
   /** Permet de contrôler l'ouverture de la modale */
@@ -92,6 +92,7 @@ export const Modal = ({
   noCloseButton,
   renderFooter,
   backdropBlur,
+  zIndex,
   dataTest = 'Modal',
   scrollableContent,
 }: ModalProps) => {
@@ -142,7 +143,10 @@ export const Modal = ({
                 display: 'grid',
                 placeItems: 'center',
                 background: preset.theme.extend.colors.overlay,
-                zIndex: preset.theme.extend.zIndex.modal,
+                // À défaut, deux modales partagent `zIndex.modal` et c'est la
+                // dernière **ouverte** qui passe devant : le portail n'est créé
+                // qu'à l'ouverture, l'ordre de déclaration n'y change rien.
+                zIndex: zIndex ?? preset.theme.extend.zIndex.modal,
                 backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
               }}
             >

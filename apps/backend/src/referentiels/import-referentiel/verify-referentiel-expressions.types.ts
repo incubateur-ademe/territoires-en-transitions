@@ -9,6 +9,7 @@ export type PersonnalisationExpressionReferences = {
   questions: Array<{ questionId: string; valeur?: string }>;
   identiteFields: Array<{ champ: string; valeur: string }>;
   scores: Array<{ actionId: string }>;
+  demarches: Array<{ champ: string }>;
 };
 
 export type QuestionForVerification = {

@@ -4,6 +4,7 @@ import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useCallback, useEffect, useRef } from 'react';
+import { useOptionalDemarcheVisit } from './avance-panel-visit.context';
 import {
   DemarcheAvanceSidePanelContent,
   type DemarcheAvanceSidePanelContentProps,
@@ -32,7 +33,11 @@ const makeIsDemarchePath = (
 const PANEL_TITLE = appLabels.demarcheAvanceTitre;
 
 type UseDemarcheAvanceSidePanelOptions = {
-  /** Ouvre le panneau au montage (ex. page de création). */
+  /**
+   * Ouvre le panneau à l'arrivée : une seule fois par visite de la démarche
+   * quand un `DemarcheVisitProvider` est là, au montage sinon (page de
+   * création).
+   */
   defaultOpen?: boolean;
 };
 
@@ -45,6 +50,7 @@ export function useDemarcheAvanceSidePanel(
   { defaultOpen = false }: UseDemarcheAvanceSidePanelOptions = {}
 ): { isOpen: boolean; toggle: () => void; open: () => void } {
   const { setPanel, panel } = useSidePanel();
+  const visit = useOptionalDemarcheVisit();
   const contentPropsRef = useRef(contentProps);
 
   useEffect(() => {
@@ -62,21 +68,17 @@ export function useDemarcheAvanceSidePanel(
         props.collectiviteId,
         props.demarcheId
       ),
-      Title: ({ title }) => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl m-0">
-          {title}
-        </h5>
-      ),
       content: <DemarcheAvanceSidePanelContent {...props} />,
     });
   }, [setPanel]);
 
-  // Ouvre le panneau une fois au montage si demandé (page de création).
+  // Une fermeture explicite doit tenir jusqu'à la sortie de la démarche : le
+  // drapeau de visite empêche la réouverture au remontage d'une autre section.
   useEffect(() => {
-    if (defaultOpen) {
-      openPanel();
-    }
-  }, [defaultOpen, openPanel]);
+    if (!defaultOpen) return;
+    if (visit && !visit.claimAvancePanelAutoOpen()) return;
+    openPanel();
+  }, [defaultOpen, openPanel, visit]);
 
   // Rafraîchit le contenu après une navigation persistante ou un changement
   // d’état pertinent (completion, section active…).
@@ -94,6 +96,9 @@ export function useDemarcheAvanceSidePanel(
     contentProps.isPublished,
     contentProps.transitions,
     contentProps.isPreview,
+    // La case « hors plateforme » du formulaire de création redessine le
+    // parcours : le panneau doit suivre la coche, pas seulement l'ouverture.
+    contentProps.horsPlateforme,
     contentProps.completion.documents,
     contentProps.completion.documentsAval,
     contentProps.completion.diagnostic,

@@ -1,6 +1,10 @@
 // Dérivation du glyphe de statut affiché à partir de l'état compose brut
 // (state + healthcheck + code de sortie) — pure et sans dépendance sur
 // StackService, pour raisonner état → glyphe attendu indépendamment du reste.
+// État synthétique d'une app du registre sans conteneur (jamais lancée) :
+// compose ps ne la liste pas, build-services.mts la rajoute sous cet état.
+export const ABSENT_STATE = 'absent';
+
 export interface StatusGlyph {
   symbol: string;
   color: string;
@@ -21,6 +25,8 @@ export const deriveStatus = (
   }
   if (state === 'restarting')
     return { symbol: '◐', color: 'yellow', label: 'restarting' };
+  if (state === ABSENT_STATE)
+    return { symbol: '○', color: 'gray', label: 'non créé' };
   if (state === 'exited') {
     // Toujours gris, y compris code ≠ 0 : docker ne distingue pas un stop
     // manuel d'un crash (un next dev stoppé sort en 1), une croix rouge

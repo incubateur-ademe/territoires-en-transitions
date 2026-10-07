@@ -9,10 +9,9 @@ import {
   Priorite,
   Statut,
 } from '@tet/domain/plans';
-import { roundTo } from '@tet/domain/utils';
 import { preset } from '@tet/ui';
 import type { PieSeriesOption } from 'echarts/charts';
-import { cloneDeep } from 'es-toolkit';
+import { cloneDeep, round } from 'es-toolkit';
 
 const getItemColor = (
   countByProperty: CountByPropertyEnumType,
@@ -142,7 +141,7 @@ export const getChartOption = ({
       trigger: 'item',
       valueFormatter: (value) => {
         if (typeof value === 'number') {
-          return `${value} (${roundTo((value / countByTotal) * 100, 0)}%)`;
+          return `${value} (${round((value / countByTotal) * 100, 0)}%)`;
         }
         return '';
       },

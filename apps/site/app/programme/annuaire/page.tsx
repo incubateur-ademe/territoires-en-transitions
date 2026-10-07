@@ -1,10 +1,11 @@
 'use client';
 
 import Section from '@/site/components/sections/Section';
+import { StrapiEntry } from '@/site/src/strapi/types';
 import { Input, Pagination } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import CarteConseiller from './CarteConseiller';
-import { ConseillerType, getData } from './utils';
+import { Conseiller, getData } from './utils';
 
 const PAGINATION_LIMIT = 12;
 
@@ -12,22 +13,32 @@ const Annuaire = () => {
   const [selectedPage, setSelectPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [total, setTotal] = useState(0);
-  const [data, setData] = useState<ConseillerType[]>([]);
-
-  const getConseillersData = async () => {
-    const { data, pagination } = await getData({
-      page: selectedPage,
-      limit: PAGINATION_LIMIT,
-      search: searchInput,
-    });
-    setData(data);
-    setSelectPage(pagination.start / PAGINATION_LIMIT + 1);
-    setTotal(pagination.total);
-  };
+  const [data, setData] = useState<StrapiEntry<Conseiller>[]>([]);
 
   useEffect(() => {
-    getConseillersData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Le drapeau écarte la réponse d'une recherche abandonnée : sans lui, une
+    // requête lente répondant après une plus récente réaffichait ses résultats.
+    let estAbandonne = false;
+
+    const chargerConseillers = async () => {
+      const { data, pagination } = await getData({
+        page: selectedPage,
+        limit: PAGINATION_LIMIT,
+        search: searchInput,
+      });
+      if (estAbandonne) {
+        return;
+      }
+      setData(data);
+      setSelectPage((pagination.start ?? 0) / PAGINATION_LIMIT + 1);
+      setTotal(pagination.total);
+    };
+
+    void chargerConseillers();
+
+    return () => {
+      estAbandonne = true;
+    };
   }, [selectedPage, searchInput]);
 
   return (
@@ -47,10 +58,7 @@ const Annuaire = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {data.map((carte) => (
-          <CarteConseiller
-            key={`${carte.prenom}-${carte.nom}-${carte.id}`}
-            {...carte}
-          />
+          <CarteConseiller key={carte.documentId} {...carte} />
         ))}
       </div>
 

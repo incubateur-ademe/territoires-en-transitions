@@ -98,6 +98,7 @@ export function useReferentielTableData({
           exemples: '',
           exprScore: null,
           identifiant: index.toString(),
+          labels: [],
           level: 1,
           modifiedAt: '',
           nextId: filteredActions[0]?.actionId,
@@ -127,6 +128,7 @@ export function useReferentielTableData({
           services: [],
           tags: [],
           thematiqueSgpe: thematique,
+          typeCalculScore: null,
         };
       });
     }

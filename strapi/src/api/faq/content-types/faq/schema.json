@@ -28,10 +28,15 @@
       "type": "enumeration",
       "enum": [
         "Le programme Territoire Engagé",
-        "L'outil numérique"
+        "L'outil numérique",
+        "Démarche PCAET"
       ],
       "default": "Le programme Territoire Engagé",
       "required": true
+    },
+    "categorie": {
+      "type": "enumeration",
+      "enum": ["Avant de déposer", "Pendant l'instruction", "Après l'adoption"]
     }
   }
 }

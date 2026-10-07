@@ -3,41 +3,42 @@
 import CollectiviteSearch from '@/site/app/collectivites/_components/collectivites.search';
 import CarteAvecFiltres from '@/site/components/carte/CarteAvecFiltres';
 import { useCarteCollectivitesEngagees } from '@/site/components/carte/useCarteCollectivitesEngagees';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import type { StrapiEntry } from '@/site/src/strapi/types';
 import { natureCollectiviteToLabel } from '@/site/src/utils/labels';
 import CollectiviteCard, { LoadingCard } from './_components/collectivite.card';
+import type { Collectivite } from './utils';
 
 type Props = {
-  collectivitesStrapi: StrapiItem[];
+  collectivitesStrapi: StrapiEntry<Collectivite>[];
 };
 
 const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
   const { data, isLoading } = useCarteCollectivitesEngagees();
 
   const sirenArray = new Set(
-    collectivitesStrapi.map((col) => col.attributes.code_siren_insee)
-  ) as Set<any>;
+    collectivitesStrapi.map((col) => col.code_siren_insee)
+  );
 
   const tempArray =
-    data?.collectivites.filter((col) => sirenArray.has(col.code_siren_insee)) ??
-    [];
+    data?.collectivites.filter(
+      (col) => !!col.codeSirenInsee && sirenArray.has(col.codeSirenInsee)
+    ) ?? [];
 
   const collectivitesALaUne = tempArray?.map((col) => ({
     nom: col.nom ?? '',
-    region: col.region_name,
-    departement: col.departement_name,
-    population: col.population_totale,
-    type: col.nature_collectivite
-      ? natureCollectiviteToLabel[col.nature_collectivite]
-      : col.type_collectivite,
-    etoilesCAE: col.cae_etoiles ?? 0,
-    etoilesECI: col.eci_etoiles ?? 0,
-    siren: col.code_siren_insee,
-    cover: collectivitesStrapi.find(
-      (c) =>
-        (c.attributes.code_siren_insee as unknown as string) ===
-        col.code_siren_insee
-    )?.attributes.couverture.data as unknown as StrapiItem,
+    region: col.regionName,
+    departement: col.departementName,
+    population: col.populationTotale,
+    type: col.natureCollectivite
+      ? natureCollectiviteToLabel[col.natureCollectivite]
+      : col.typeCollectivite,
+    etoilesCAE: col.caeEtoiles ?? 0,
+    etoilesECI: col.eciEtoiles ?? 0,
+    siren: col.codeSirenInsee,
+    cover:
+      collectivitesStrapi.find(
+        (c) => c.code_siren_insee === col.codeSirenInsee
+      )?.couverture ?? null,
   }));
 
   return (

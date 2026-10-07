@@ -1,34 +1,30 @@
-import { availableAuditTypes } from '../available-audit-types/available-audit-types';
-import { SujetDemandeEnum } from '../labellisation-demande.schema';
-import { Etoile } from '../labellisation-etoile.enum.schema';
+import {
+  AuditTypeOption,
+  AuditTypeUnavailableReason,
+} from '../audit-type-options/audit-type-options.rules';
 import { ParcoursLabellisation } from '../parcours-labellisation.schema';
-import {
-  areAuditPrerequisitesMet,
-  ParcoursForAuditPrerequisites,
-} from '../request-labellisation/request-labellisation.rules';
-import {
-  isReferentRoleDefined,
-  ReferentRolesDefined,
-} from '../role-mesures/role-mesures';
+import { ParcoursForAuditPrerequisites } from '../request-labellisation/request-labellisation.rules';
 import { canStartNewAuditCycle } from '../start-new-audit-cycle/start-new-audit-cycle.rules';
 import { StartNewAuditCycleRulesErrors } from '../start-new-audit-cycle/start-new-audit-cycle.rules-errors';
 
 export type ParcoursForAuditRequest = Pick<
   ParcoursLabellisation,
-  'status' | 'demande' | 'labellisation' | 'referentiel'
+  'status' | 'demande' | 'labellisation'
 > &
-  Omit<ParcoursForAuditPrerequisites, 'criteres_action'> & {
-    criteres_action: Pick<
-      ParcoursLabellisation['criteres_action'][number],
-      'atteint' | 'action_id'
-    >[];
-  };
+  ParcoursForAuditPrerequisites;
 
 export type AuditRequestUnavailableReason =
   | { kind: 'cycleUnavailable'; cause: StartNewAuditCycleRulesErrors }
-  | { kind: 'noRequestableAuditType' }
-  | { kind: 'prerequisitesIncomplete' }
-  | { kind: 'referentRolesUndefined' };
+  | { kind: 'auditTypeUnavailable'; cause: AuditTypeUnavailableReason };
+
+type UnavailableAuditTypeOption = Extract<
+  AuditTypeOption,
+  { isRequestable: false }
+>;
+
+const isUnavailableAuditType = (
+  option: AuditTypeOption
+): option is UnavailableAuditTypeOption => !option.isRequestable;
 
 export type AuditRequestAvailability =
   | { canRequest: true; reason: null }
@@ -36,15 +32,7 @@ export type AuditRequestAvailability =
 
 export function getAuditRequestAvailability(
   parcours: ParcoursForAuditRequest,
-  {
-    isCOT,
-    maximumRequestableStar,
-    referentRolesDefined,
-  }: {
-    isCOT: boolean;
-    maximumRequestableStar: Etoile;
-    referentRolesDefined: ReferentRolesDefined;
-  }
+  auditTypeOptions: readonly AuditTypeOption[]
 ): AuditRequestAvailability {
   const cycleAvailability = canStartNewAuditCycle(parcours);
   if (!cycleAvailability.canRequest) {
@@ -54,32 +42,22 @@ export function getAuditRequestAvailability(
     };
   }
 
-  const requestableAuditTypes = availableAuditTypes({
-    isCOT,
-    canRequestLabellisation: maximumRequestableStar >= 2,
-  });
-  if (requestableAuditTypes.length === 0) {
-    return { canRequest: false, reason: { kind: 'noRequestableAuditType' } };
-  }
-
-  const hasSatisfiedPrerequisites = requestableAuditTypes.some(
-    (sujet) =>
-      areAuditPrerequisitesMet(
-        parcours,
-        sujet,
-        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar
-      ).met
+  const hasRequestableAuditType = auditTypeOptions.some(
+    (option) => option.isRequestable
   );
-  if (!hasSatisfiedPrerequisites) {
-    return { canRequest: false, reason: { kind: 'prerequisitesIncomplete' } };
-  }
-
-  const allReferentRolesDefined = parcours.criteres_action.every((critere) =>
-    isReferentRoleDefined(critere, parcours.referentiel, referentRolesDefined)
+  const leastDemandingUnavailableType = auditTypeOptions.find(
+    isUnavailableAuditType
   );
-  if (!allReferentRolesDefined) {
-    return { canRequest: false, reason: { kind: 'referentRolesUndefined' } };
+
+  if (hasRequestableAuditType || !leastDemandingUnavailableType) {
+    return { canRequest: true, reason: null };
   }
 
-  return { canRequest: true, reason: null };
+  return {
+    canRequest: false,
+    reason: {
+      kind: 'auditTypeUnavailable',
+      cause: leastDemandingUnavailableType.reason,
+    },
+  };
 }

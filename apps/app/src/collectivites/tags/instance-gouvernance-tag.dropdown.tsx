@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { TagEnum } from '@tet/domain/collectivites';
 import { TagDropdown, TagDropdownProps } from './tag.dropdown';
 import { useListTags } from './use-list-tags';
@@ -26,9 +27,9 @@ export const InstanceGouvernanceTagDropdown = ({
     <TagDropdown
       {...props}
       placeholder={(isEditionAllowed) =>
-        `Sélectionner ${
-          isEditionAllowed ? 'ou créer ' : ''
-        }une instance de gouvernance`
+        appLabels.ficheInstanceGouvernancePlaceholderSelectionner(
+          isEditionAllowed
+        )
       }
       tagType={TagEnum.InstanceGouvernance}
       optionsListe={data}

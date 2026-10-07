@@ -75,7 +75,9 @@
   font-weight: bold;
 }
 
-.referentiel-table.cae .row.d2 {
+.referentiel-table.cae .row.d2,
+.referentiel-table.te .row.d2,
+.referentiel-table.te-test .row.d2 {
   background-color: var(--color-secondary);
   color: #fff;
   font-weight: bold;

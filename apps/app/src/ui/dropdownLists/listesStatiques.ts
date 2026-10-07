@@ -60,7 +60,7 @@ export const ficheActionNiveauPrioriteOptions: Options<Priorite> = [
 
 export const ficheActionParticipationOptions: Options<ParticipationCitoyenne> =
   [
-    { value: 'pas-de-participation', label: appLabels.participationPas },
+    { value: 'pas-de-participation', label: appLabels.ficheParticipationSans },
     { value: 'information', label: appLabels.information },
     { value: 'consultation', label: appLabels.participationConsultation },
     { value: 'concertation', label: appLabels.participationConcertation },

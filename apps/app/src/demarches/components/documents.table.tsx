@@ -1,16 +1,42 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import {
+  toFileConstraints,
+  type FileConstraints,
+} from '@/app/collectivites/documents/upload/constants';
+import {
+  findDemarcheDocumentSubstitutDepose,
+  getEtapeExigeanteDemarcheDocument,
+  isDemarcheDocumentDeEtape,
+  isDemarcheDocumentsAdditionalAutorise,
+} from '@tet/domain/demarches';
 import type {
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
   DemarcheDocumentEtape,
+  DemarcheDocumentAdditional,
+  DemarcheDocumentsConfig,
   DemarcheType,
 } from '@tet/domain/demarches';
-import { Badge, Button, Checkbox, ChecklistTable, Icon } from '@tet/ui';
-import { ReactElement, useMemo } from 'react';
-import { DemarcheDocumentUploadButton } from './document-upload.button';
+import {
+  Badge,
+  Checkbox,
+  ChecklistTable,
+  Icon,
+  type MenuAction,
+} from '@tet/ui';
+import { ReactElement, useCallback, useMemo } from 'react';
+import {
+  DemarcheDocumentAdditionalAddRow,
+  DemarcheDocumentAdditionalRow,
+} from './document-additional.row';
+import {
+  DemarcheDocumentUploadButton,
+  DemarcheDocumentUploadSplitButton,
+} from './document-upload.button';
+import { FichierDepose } from './fichier-depose';
 
 const SectionRequiredBadge = ({
   requis,
@@ -30,38 +56,14 @@ const SectionRequiredBadge = ({
   />
 );
 
-const FichierDepose = ({
-  document,
-  onDownload,
-}: {
-  document: DemarcheDocumentDepose;
-  onDownload?: (document: DemarcheDocumentDepose) => void;
-}): ReactElement => (
-  <div className="flex items-center gap-2 text-grey-9 min-w-0">
-    <Icon
-      icon="checkbox-circle-fill"
-      size="sm"
-      className="text-success shrink-0"
-    />
-    {onDownload ? (
-      <button
-        type="button"
-        className="font-medium text-primary-8 hover:underline truncate text-left"
-        onClick={() => onDownload(document)}
-      >
-        {document.fichier?.filename}
-      </button>
-    ) : (
-      <span className="font-medium truncate">{document.fichier?.filename}</span>
-    )}
-  </div>
-);
-
-/** Couverture sans dépôt : par le plan d'actions ou par une autre pièce. */
+/** Couverture sans dépôt : la pièce est comprise dans une autre du dossier. */
 const CouvertureSansFichier = ({
-  origine,
+  substitutNom,
+  isInclusionDeclaree = false,
 }: {
-  origine: 'plan_actions' | 'substitut';
+  substitutNom: string;
+  /** Déclarée par la collectivité : la mention reprend le libellé de sa case. */
+  isInclusionDeclaree?: boolean;
 }): ReactElement => (
   <div className="flex items-center gap-2 text-grey-9">
     <Icon
@@ -70,164 +72,196 @@ const CouvertureSansFichier = ({
       className="text-success shrink-0"
     />
     <span className="text-sm">
-      {origine === 'plan_actions'
-        ? appLabels.demarcheDocumentsCouvertViaPlan
-        : appLabels.demarcheDocumentsCouvertViaGlobal}
+      {isInclusionDeclaree
+        ? appLabels.demarcheDocumentsInclusDans({ nom: substitutNom })
+        : appLabels.demarcheDocumentsCouvertPar({ nom: substitutNom })}
     </span>
   </div>
 );
 
-const GlobalDocumentCard = ({
-  demarcheType,
+/**
+ * Nom de la pièce attendue, et ce que le modèle en dit. Le document global est
+ * la seule pièce décrite pour l'instant — sa description explique ce que son
+ * dépôt couvre, elle n'a pas à s'afficher ailleurs que sur sa ligne.
+ */
+const DefinitionLabel = ({
   definition,
-  document,
-  isReadonly,
-  onAddFichier,
-  onRemove,
-  onDownload,
 }: {
-  demarcheType: DemarcheType;
   definition: DemarcheDocumentDefinition;
-  document: DemarcheDocumentDepose | undefined;
-  isReadonly: boolean;
-  onAddFichier: (fichierId: number) => void;
-  onRemove: () => void;
-  onDownload?: (document: DemarcheDocumentDepose) => void;
 }): ReactElement => (
-  <div className="rounded-lg border border-primary-3 bg-primary-0 p-4 flex flex-col gap-3">
-    <div>
-      <div className="flex items-center gap-2">
-        <Icon icon="folder-2-line" size="sm" className="text-primary-8" />
-        <span className="font-medium text-primary-9">{definition.nom}</span>
-      </div>
-      <p className="text-xs text-grey-7 mt-1 m-0">
-        {definition.description || appLabels.demarcheDocumentsGlobalDescription}
-      </p>
-    </div>
-
-    {/* Une pièce sans fichier est une couverture déclarée, pas un dépôt : même
-        distinction que `SectionAnswer`. */}
-    {document?.fichier ? (
-      <div className="flex flex-wrap items-center gap-3">
-        <FichierDepose document={document} onDownload={onDownload} />
-        {!isReadonly && (
-          <div className="flex items-center gap-2">
-            <DemarcheDocumentUploadButton
-              demarcheType={demarcheType}
-              variant="outlined"
-              label={appLabels.demarcheDocumentsGlobalRemplacer}
-              dataTest="demarches.pcaet.documents.remplacer-global"
-              onAddFichier={onAddFichier}
-            />
-            <Button
-              variant="grey"
-              size="xs"
-              icon="delete-bin-line"
-              onClick={onRemove}
-              data-test="demarches.pcaet.documents.retirer-global"
-            >
-              {appLabels.demarcheDocumentsGlobalSupprimer}
-            </Button>
-          </div>
-        )}
-      </div>
-    ) : (
-      !isReadonly && (
-        <DemarcheDocumentUploadButton
-          demarcheType={demarcheType}
-          variant="primary"
-          label={appLabels.demarcheDocumentsGlobalTeleverser}
-          dataTest="demarches.pcaet.documents.deposer-global"
-          onAddFichier={onAddFichier}
-        />
-      )
+  <div className="flex flex-col gap-0.5 min-w-0">
+    <div className="font-medium">{definition.nom}</div>
+    {definition.description && (
+      <p className="m-0 text-xs text-grey-7">{definition.description}</p>
     )}
   </div>
 );
 
-/**
- * Statut affiché pour une pièce attendue. `null` : une pièce optionnelle non
- * couverte n'est pas un manque, la ligne ne porte alors aucune croix.
- */
-const getSectionStatus = (
-  definition: DemarcheDocumentDefinition,
-  coverage: DemarcheDocumentCoverage | undefined
-): boolean | null => {
-  const couvert = coverage?.couvert ?? false;
-  return couvert || definition.requis ? couvert : null;
-};
-
 const SectionAnswer = ({
   demarcheType,
+  fileConstraints,
   definition,
   document,
+  documentOriginal,
   coverage,
+  substitutDeclarable,
+  substitutCouvrantNom,
   isReadonly,
+  isInclusionFigee,
   onAddFichier,
   onRemove,
   onToggleCouverture,
   onDownload,
 }: {
   demarcheType: DemarcheType;
+  fileConstraints: FileConstraints;
   definition: DemarcheDocumentDefinition;
   document: DemarcheDocumentDepose | undefined;
+  /**
+   * Version transmise d'une pièce reprise après les avis. Renseignée seulement
+   * dans l'écran aval, pour une pièce de portée `both` : c'est elle qu'on
+   * affiche tant que la reprise n'est pas déposée, et qu'on garde à portée de
+   * téléchargement ensuite.
+   */
+  documentOriginal: DemarcheDocumentDepose | undefined;
   coverage: DemarcheDocumentCoverage | undefined;
+  /**
+   * Pièce déposée dans laquelle celle-ci peut être déclarée comprise, `null`
+   * s'il n'y en a pas : c'est ce qui fait apparaître la case d'inclusion.
+   */
+  substitutDeclarable: DemarcheDocumentDefinition | null;
+  /** Nom de la pièce qui couvre celle-ci, pour la mention sans case à cocher. */
+  substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
+  /**
+   * L'inclusion se déclare sur la version transmise : une fois le dossier
+   * transmis, elle ne se coche ni ne se décoche plus. Reste à déposer un
+   * fichier dédié, qui devient la version de cette pièce après les avis.
+   */
+  isInclusionFigee: boolean;
   onAddFichier: (fichierId: number) => void;
   onRemove: () => void;
   onToggleCouverture: (couvert: boolean) => void;
   onDownload?: (document: DemarcheDocumentDepose) => void;
 }): ReactElement => {
+  // Reprise après les avis : tant que la nouvelle version n'est pas déposée,
+  // c'est la version transmise qui s'affiche — jamais remplacée.
+  const affiche = document ?? documentOriginal;
+
   // Un dépôt spécifique prime toujours sur les autres modes de couverture.
   // Une pièce sans fichier est une couverture déclarée, pas un dépôt.
-  if (document?.fichier) {
+  if (affiche?.fichier) {
+    /**
+     * On regarde la version transmise, faute de reprise déposée. Ce seul état
+     * gouverne toute la ligne : « Mettre à jour » plutôt que « Remplacer », et
+     * aucune action secondaire — la version transmise ne se retire pas depuis
+     * cette étape, et son lien de téléchargement est déjà sur la ligne. Dès que
+     * la reprise est là, la ligne redevient celle d'un document ordinaire.
+     */
+    const montreVersionOriginale = document === undefined;
+
+    const menuActions: MenuAction[] = montreVersionOriginale
+      ? []
+      : [
+          ...(document?.fichier && documentOriginal?.fichier && onDownload
+            ? [
+                {
+                  icon: 'download-line',
+                  label: appLabels.demarcheDocumentsTelechargerVersionOriginale,
+                  onClick: () => onDownload(documentOriginal),
+                },
+              ]
+            : []),
+          {
+            icon: 'delete-bin-line',
+            label: appLabels.demarcheDocumentsSupprimerDocument,
+            onClick: onRemove,
+          },
+        ];
+
+    const label = montreVersionOriginale
+      ? appLabels.demarcheDocumentsMettreAJourDocument
+      : appLabels.demarcheDocumentsRemplacerDocument;
+
     return (
       <div className="flex flex-wrap items-center gap-3 min-w-0">
-        <FichierDepose document={document} onDownload={onDownload} />
-        {!isReadonly && (
-          <div className="flex items-center gap-2">
+        <FichierDepose
+          filename={affiche.fichier.filename}
+          onDownload={onDownload && (() => onDownload(affiche))}
+        />
+        {!isReadonly &&
+          // Sans action secondaire, un bouton scindé n'ouvrirait qu'un menu
+          // vide : c'est un bouton simple qu'il faut.
+          (menuActions.length > 0 ? (
+            <DemarcheDocumentUploadSplitButton
+              demarcheType={demarcheType}
+              fileConstraints={fileConstraints}
+              label={label}
+              dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
+              menuDataTest={`demarches.pcaet.documents.actions.${definition.id}`}
+              menuActions={menuActions}
+              onAddFichier={onAddFichier}
+            />
+          ) : (
             <DemarcheDocumentUploadButton
               demarcheType={demarcheType}
-              label={appLabels.demarcheDocumentsRemplacerDocument}
+              fileConstraints={fileConstraints}
+              label={label}
+              variant="outlined"
               dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
               onAddFichier={onAddFichier}
             />
-            <Button
-              variant="grey"
-              size="xs"
-              icon="delete-bin-line"
-              onClick={onRemove}
-              data-test={`demarches.pcaet.documents.retirer.${definition.id}`}
-            >
-              {appLabels.demarcheDocumentsSupprimerDocument}
-            </Button>
-          </div>
-        )}
+          ))}
       </div>
     );
   }
 
-  const estCouvertParLePlan = coverage?.origine === 'plan_actions';
+  // Inclusion déclarée : la pièce n'est pas couverte d'office par le document
+  // qui l'accueille, la collectivité dit elle-même qu'elle s'y trouve. La case
+  // n'a de sens que si ce document est déposé — sinon il n'y a rien à cocher, et
+  // le dépôt d'une pièce propre reste la seule issue.
+  if (substitutDeclarable !== null && isInclusionFigee) {
+    return (
+      <SectionFallback
+        demarcheType={demarcheType}
+        fileConstraints={fileConstraints}
+        documentId={definition.id}
+        coverage={coverage}
+        substitutCouvrantNom={substitutCouvrantNom}
+        isReadonly={isReadonly}
+        label={
+          coverage?.origine === 'substitut'
+            ? appLabels.demarcheDocumentsDeposerFichierDedie
+            : undefined
+        }
+        isInclusionDeclaree
+        onAddFichier={onAddFichier}
+      />
+    );
+  }
 
-  // Le modèle de démarche décide quelles pièces peuvent être déclarées prises en
-  // charge par le plan d'actions suivi sur la plateforme.
-  if (definition.couverturePlateforme === 'plan_actions') {
+  if (substitutDeclarable !== null) {
+    const estDeclareInclus = coverage?.origine === 'substitut';
     return (
       <div className="flex flex-col items-start gap-2 min-w-0">
         <Checkbox
           variant="checkbox"
-          size="sm"
-          checked={estCouvertParLePlan}
+          size="xs"
+          checked={estDeclareInclus}
           disabled={isReadonly}
-          label={appLabels.demarcheDocumentsComprisDansPlanSuivi}
+          label={appLabels.demarcheDocumentsInclusDans({
+            nom: substitutDeclarable.nom,
+          })}
           onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
-          data-test={`demarches.pcaet.documents.couverture.${definition.id}`}
+          data-test={`demarches.pcaet.documents.inclusion.${definition.id}`}
         />
-        {!estCouvertParLePlan && (
+        {!estDeclareInclus && (
           <SectionFallback
             demarcheType={demarcheType}
+            fileConstraints={fileConstraints}
             documentId={definition.id}
             coverage={coverage}
+            substitutCouvrantNom={substitutCouvrantNom}
             isReadonly={isReadonly}
             onAddFichier={onAddFichier}
           />
@@ -239,8 +273,10 @@ const SectionAnswer = ({
   return (
     <SectionFallback
       demarcheType={demarcheType}
+      fileConstraints={fileConstraints}
       documentId={definition.id}
       coverage={coverage}
+      substitutCouvrantNom={substitutCouvrantNom}
       isReadonly={isReadonly}
       onAddFichier={onAddFichier}
     />
@@ -253,31 +289,51 @@ const SectionAnswer = ({
  */
 const SectionFallback = ({
   demarcheType,
+  fileConstraints,
   documentId,
   coverage,
+  substitutCouvrantNom,
   isReadonly,
+  label = appLabels.demarcheDocumentsTeleverser,
+  isInclusionDeclaree,
   onAddFichier,
 }: {
   demarcheType: DemarcheType;
+  fileConstraints: FileConstraints;
   documentId: string;
   coverage: DemarcheDocumentCoverage | undefined;
+  substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
+  label?: string;
+  isInclusionDeclaree?: boolean;
   onAddFichier: (fichierId: number) => void;
 }): ReactElement => (
   <div className="flex flex-wrap items-center gap-3 min-w-0">
-    {coverage?.origine === 'substitut' && (
-      <CouvertureSansFichier origine="substitut" />
+    {coverage?.origine === 'substitut' && substitutCouvrantNom && (
+      <CouvertureSansFichier
+        substitutNom={substitutCouvrantNom}
+        isInclusionDeclaree={isInclusionDeclaree}
+      />
     )}
     {!isReadonly && (
       <DemarcheDocumentUploadButton
         demarcheType={demarcheType}
-        label={appLabels.demarcheDocumentsTeleverser}
+        fileConstraints={fileConstraints}
+        variant="outlined"
+        label={label}
         dataTest={`demarches.pcaet.documents.televerser.${documentId}`}
         onAddFichier={onAddFichier}
       />
     )}
   </div>
 );
+
+/**
+ * Les deux moitiés de l'écran de finalisation : les pièces qui viennent après
+ * les avis, jusqu'à la délibération d'adoption, et le dossier qui leur a été
+ * soumis.
+ */
+export type DemarcheDocumentsSection = 'adoption' | 'dossier-transmis';
 
 type Props = {
   /** Type de démarche : les libellés affichés en dépendent. */
@@ -287,116 +343,341 @@ type Props = {
    * pièces produites après les avis (aval) ne se mélangent pas dans une liste.
    */
   etape: DemarcheDocumentEtape;
+  /** Ce que le type de démarche autorise : formats acceptés et dépôt de pièces additionnelles. */
+  config: DemarcheDocumentsConfig;
   definitions: DemarcheDocumentDefinition[];
   documents: DemarcheDocumentDepose[];
+  documentsAdditional: DemarcheDocumentAdditional[];
   coverage: DemarcheDocumentCoverage[];
-  /** Gel par pièce : l'amont et l'aval ne sont pas modifiables aux mêmes statuts. */
-  isDocumentReadonly?: (definition: DemarcheDocumentDefinition) => boolean;
-  onAddFichier: (documentId: string, fichierId: number) => void;
-  onRemoveDocument: (documentId: string) => void;
+  /**
+   * Gel de l'étape entière. Le gel par pièce s'y ajoute et se déduit du modèle :
+   * une pièce affichée hors de son temps reste en lecture seule même quand
+   * l'étape, elle, est ouverte.
+   */
+  isEtapeReadonly?: boolean;
+  /**
+   * Fusionne les deux temps en **une seule liste** : les pièces d'élaboration
+   * d'abord, celles attendues après les avis ensuite. Chaque ligne est alors
+   * ancrée sur le temps où sa pièce est *exigée*, et non sur un temps unique
+   * pour tout le tableau — c'est ce qui fait que son dépôt compte dans la
+   * couverture, qui s'indexe sur ce couple.
+   *
+   * Sert au dépôt hors plateforme, dont le dossier n'a jamais été figé : deux
+   * tableaux y donneraient à lire une coupure d'instruction qui n'a pas eu
+   * lieu. Les deux temps y étant ouverts ensemble, `isEtapeReadonly` vaut pour
+   * les deux.
+   */
+  mergeEtapes?: boolean;
+  /**
+   * Restreint l'écran aval à l'une de ses deux moitiés, chacune sous son propre
+   * titre : sans elle, les pièces nouvelles arrivaient au bas d'une longue
+   * liste de pièces déjà transmises. Seul `adoption` reçoit les pièces libres.
+   * Sans effet en liste fusionnée, ni à l'amont.
+   */
+  section?: DemarcheDocumentsSection;
+  /**
+   * N'affiche que les pièces dont il y a quelque chose à lire : un fichier, ou
+   * la mention de la pièce qui les contient. Pour qui consulte un dossier sans
+   * pouvoir y déposer — le service instructeur, la collectivité une fois son
+   * PCAET adopté —, une ligne vide n'apprend rien et allonge la liste.
+   */
+  hideEmptyRows?: boolean;
+  /**
+   * Le temps de la ligne accompagne le dépôt : en liste fusionnée il varie
+   * d'une pièce à l'autre, et c'est lui qui décide si la pièce est couverte.
+   */
+  onAddFichier: (
+    documentId: string,
+    fichierId: number,
+    etape: DemarcheDocumentEtape
+  ) => void;
+  onRemoveDocument: (documentId: string, etape: DemarcheDocumentEtape) => void;
   onToggleCouverture: (documentId: string, couvert: boolean) => void;
+  onCreateAdditional: (etape: DemarcheDocumentEtape) => void;
+  /** Pièce additionnelle tout juste ouverte : sa ligne s'ouvre en saisie du nom. */
+  documentAdditionalCreeId?: number;
+  onRenameAdditional: (documentAdditionalId: number, titre: string) => void;
+  onAddFichierAdditional: (
+    documentAdditionalId: number,
+    fichierId: number
+  ) => void;
+  onRemoveAdditional: (documentAdditionalId: number) => void;
   onDownload?: (document: DemarcheDocumentDepose) => void;
+  onDownloadAdditional?: (
+    documentAdditional: DemarcheDocumentAdditional
+  ) => void;
 };
 
 /**
  * Dépôt des pièces d'un dossier de démarche. Entièrement piloté par le modèle de
- * démarche : la pièce globale, l'ordre des sections, leur caractère obligatoire
- * et la couverture par substitution viennent des données, pas du composant.
+ * démarche : la pièce globale, l'ordre des sections, leur caractère obligatoire,
+ * la couverture par substitution, les formats acceptés et l'ouverture aux
+ * pièces additionnelles viennent des données, pas du composant.
+ *
+ * Une seule liste, dans l'ordre du modèle : le document global n'a pas de bloc à
+ * lui, il est la première pièce attendue du dossier et se dépose comme les
+ * autres.
  */
 export const DemarcheDocumentsTable = ({
   demarcheType,
   etape,
+  config,
   definitions,
   documents,
+  documentsAdditional,
+  documentAdditionalCreeId,
   coverage,
-  isDocumentReadonly = () => false,
+  isEtapeReadonly = false,
+  mergeEtapes = false,
+  section: sectionDemandee,
+  hideEmptyRows = false,
   onAddFichier,
   onRemoveDocument,
   onToggleCouverture,
+  onCreateAdditional,
+  onRenameAdditional,
+  onAddFichierAdditional,
+  onRemoveAdditional,
   onDownload,
+  onDownloadAdditional,
 }: Props): ReactElement => {
-  const documentByDefinitionId = useMemo(
-    () => new Map(documents.map((document) => [document.documentId, document])),
+  const fileConstraints = useMemo(() => toFileConstraints(config), [config]);
+  const section =
+    etape === 'aval' && !mergeEtapes ? sectionDemandee : undefined;
+  const isDeLaSection = (etapeExigeante: DemarcheDocumentEtape) =>
+    section === undefined ||
+    (section === 'adoption') === (etapeExigeante === 'aval');
+  // Indexé par temps : une pièce de portée `both` a une version par temps, et
+  // l'écran n'affiche que celle qui lui revient.
+  /**
+   * Le temps auquel une ligne se rattache : celui du tableau, ou — en liste
+   * fusionnée — celui où la pièce est exigée. Une pièce de portée `both` y est
+   * donc une seule ligne, tenue à son amont : sa reprise d'aval n'a de sens
+   * qu'après des avis, et un dépôt hors plateforme n'en a pas.
+   */
+  const etapeDe = useCallback(
+    (definition: DemarcheDocumentDefinition): DemarcheDocumentEtape =>
+      mergeEtapes ? getEtapeExigeanteDemarcheDocument(definition.etape) : etape,
+    [mergeEtapes, etape]
+  );
+
+  const documentByEtapeEtId = useMemo(
+    () =>
+      new Map(
+        documents.map((document) => [
+          `${document.etape}|${document.documentId}`,
+          document,
+        ])
+      ),
     [documents]
+  );
+  const documentDe = (definition: DemarcheDocumentDefinition) =>
+    documentByEtapeEtId.get(`${etapeDe(definition)}|${definition.id}`);
+  /**
+   * Versions transmises, pour l'écran aval seulement : c'est ce qu'on montre
+   * d'une pièce reprise tant que sa nouvelle version n'est pas déposée.
+   */
+  const documentOriginalByDefinitionId = useMemo(
+    () =>
+      etape === 'aval' && !mergeEtapes
+        ? new Map(
+            documents
+              .filter((document) => document.etape === 'amont')
+              .map((document) => [document.documentId, document])
+          )
+        : new Map<string, DemarcheDocumentDepose>(),
+    [documents, etape, mergeEtapes]
   );
   const coverageByDefinitionId = useMemo(
     () => new Map(coverage.map((entry) => [entry.documentId, entry])),
     [coverage]
   );
+  // Les pièces se nomment l'une l'autre : l'inclusion s'annonce sous le nom du
+  // document qui l'accueille, tel que le modèle l'écrit.
+  const definitionById = useMemo(
+    () => new Map(definitions.map((definition) => [definition.id, definition])),
+    [definitions]
+  );
 
-  const definitionsForEtape = definitions.filter(
-    (definition) => definition.etape === etape
-  );
-  const global = definitionsForEtape.find(({ portee }) => portee === 'global');
-  const sections = definitionsForEtape.filter(
-    ({ portee }) => portee === 'section'
-  );
+  // Une pièce de portée `both` appartient aux deux temps : elle figure donc
+  // dans les deux écrans, avec sa version propre à chacun.
+  //
+  // L'aval montre en plus les pièces du seul amont : le dossier transmis reste
+  // consultable jusqu'à l'archivage, et une pièce réglementaire comme la
+  // délibération d'arrêt ne doit pas disparaître de la vue une fois
+  // l'instruction close.
+  const definitionsForEtape = mergeEtapes
+    ? // L'ordre du dossier : ce qui le constitue, puis ce qui vient après les
+      // avis. `sort` est stable, donc l'ordre du modèle tient dans chaque groupe.
+      [...definitions].sort(
+        (a, b) =>
+          Number(getEtapeExigeanteDemarcheDocument(a.etape) === 'aval') -
+          Number(getEtapeExigeanteDemarcheDocument(b.etape) === 'aval')
+      )
+    : etape === 'aval'
+    ? definitions.filter((definition) =>
+        isDeLaSection(getEtapeExigeanteDemarcheDocument(definition.etape))
+      )
+    : definitions.filter((definition) =>
+        isDemarcheDocumentDeEtape(definition.etape, etape)
+      );
+
+  const aDuContenu = (definition: DemarcheDocumentDefinition) =>
+    Boolean(
+      (
+        documentDe(definition) ??
+        documentOriginalByDefinitionId.get(definition.id)
+      )?.fichier
+    ) || coverageByDefinitionId.get(definition.id)?.origine === 'substitut';
+  const definitionsAffichees = hideEmptyRows
+    ? definitionsForEtape.filter(aDuContenu)
+    : definitionsForEtape;
+
+  const documentsAdditionalAffiches = documentsAdditional
+    .filter((documentAdditional) =>
+      mergeEtapes
+        ? true
+        : section === undefined
+        ? documentAdditional.etape === etape
+        : isDeLaSection(documentAdditional.etape)
+    )
+    .filter(
+      (documentAdditional) => !hideEmptyRows || documentAdditional.fichier
+    )
+    .sort((a, b) => Number(a.etape === 'aval') - Number(b.etape === 'aval'));
+
+  /** Une pièce hors de son temps se consulte et se télécharge, ne se dépose plus. */
+  const isDefinitionReadonly = (definition: DemarcheDocumentDefinition) =>
+    isEtapeReadonly ||
+    (!mergeEtapes && !isDemarcheDocumentDeEtape(definition.etape, etape));
+
+  /**
+   * Le temps auquel rattacher une pièce hors catalogue. En liste fusionnée elle
+   * rejoint le dossier lui-même — l'amont — mais seulement si le modèle l'y
+   * autorise : le rabattre en dur y interdirait l'ajout sur un modèle qui ne
+   * l'ouvre qu'à l'aval.
+   */
+  const etapeAdditional: DemarcheDocumentEtape = mergeEtapes
+    ? isDemarcheDocumentsAdditionalAutorise(config, 'amont')
+      ? 'amont'
+      : 'aval'
+    : etape;
+
+  const dataTest = `demarches.pcaet.documents.table.${
+    mergeEtapes ? 'fusionnee' : section ?? etape
+  }`;
+
+  if (
+    hideEmptyRows &&
+    definitionsAffichees.length === 0 &&
+    documentsAdditionalAffiches.length === 0
+  ) {
+    return (
+      <p className="m-0 text-sm text-grey-7" data-test={dataTest}>
+        {appLabels.demarcheDocumentsAucunDepot}
+      </p>
+    );
+  }
 
   return (
-    <div
-      className="flex flex-col gap-4"
-      data-test={`demarches.pcaet.documents.table.${etape}`}
-    >
-      {global && (
-        <GlobalDocumentCard
-          demarcheType={demarcheType}
-          definition={global}
-          document={documentByDefinitionId.get(global.id)}
-          isReadonly={isDocumentReadonly(global)}
-          onAddFichier={(fichierId) => onAddFichier(global.id, fichierId)}
-          onRemove={() => onRemoveDocument(global.id)}
-          onDownload={onDownload}
+    <div className="flex flex-col gap-4" data-test={dataTest}>
+      {/* Sans colonne de statut : la réponse de chaque ligne porte déjà le
+          fichier déposé ou la couverture déclarée, avec sa coche. */}
+      <ChecklistTable
+        caption={appLabels.demarcheDocumentsCaption({
+          type: appLabels.demarcheTypeLabels[demarcheType],
+          etape,
+          section,
+        })}
+        hasTagColumn
+        hasStatusColumn={false}
+      >
+        <ChecklistTable.Head
+          labelHeader={appLabels.demarcheDocumentsColonneNom}
+          answerHeader={appLabels.demarcheDocumentsColonneDocuments}
+          tagHeader={appLabels.demarcheDocumentsColonneType}
         />
-      )}
-
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium text-primary-9 m-0">
-          {appLabels.demarcheDocumentsSectionsDetail[etape]}
-        </p>
-        <ChecklistTable
-          caption={appLabels.demarcheDocumentsCaption({
-            type: appLabels.demarcheTypeLabels[demarcheType],
-            etape,
-          })}
-          hasTagColumn
-        >
-          <ChecklistTable.Head
-            labelHeader={appLabels.demarcheDocumentsColonneSection}
-            answerHeader={appLabels.demarcheDocumentsColonneDocuments}
-            tagHeader={appLabels.demarcheDocumentsColonneType}
+        {definitionsAffichees.map((definition) => (
+          <ChecklistTable.Row
+            key={definition.id}
+            tag={<SectionRequiredBadge requis={definition.requis} />}
+            criterion={{ label: <DefinitionLabel definition={definition} /> }}
+            answer={
+              <SectionAnswer
+                demarcheType={demarcheType}
+                fileConstraints={fileConstraints}
+                definition={definition}
+                document={documentDe(definition)}
+                documentOriginal={documentOriginalByDefinitionId.get(
+                  definition.id
+                )}
+                coverage={coverageByDefinitionId.get(definition.id)}
+                substitutDeclarable={
+                  definitionById.get(
+                    findDemarcheDocumentSubstitutDepose(
+                      definition,
+                      documents
+                    ) ?? ''
+                  ) ?? null
+                }
+                substitutCouvrantNom={
+                  definitionById.get(
+                    coverageByDefinitionId.get(definition.id)?.substitutId ?? ''
+                  )?.nom
+                }
+                isReadonly={isDefinitionReadonly(definition)}
+                isInclusionFigee={!mergeEtapes && etape === 'aval'}
+                onAddFichier={(fichierId) =>
+                  onAddFichier(definition.id, fichierId, etapeDe(definition))
+                }
+                onRemove={() =>
+                  onRemoveDocument(definition.id, etapeDe(definition))
+                }
+                onToggleCouverture={(couvert) =>
+                  onToggleCouverture(definition.id, couvert)
+                }
+                onDownload={onDownload}
+              />
+            }
           />
-          {sections.map((definition) => (
-            <ChecklistTable.Row
-              key={definition.id}
-              done={getSectionStatus(
-                definition,
-                coverageByDefinitionId.get(definition.id)
-              )}
-              tag={<SectionRequiredBadge requis={definition.requis} />}
-              criterion={{
-                label: <div className="font-medium">{definition.nom}</div>,
-              }}
-              answer={
-                <SectionAnswer
-                  demarcheType={demarcheType}
-                  definition={definition}
-                  document={documentByDefinitionId.get(definition.id)}
-                  coverage={coverageByDefinitionId.get(definition.id)}
-                  isReadonly={isDocumentReadonly(definition)}
-                  onAddFichier={(fichierId) =>
-                    onAddFichier(definition.id, fichierId)
-                  }
-                  onRemove={() => onRemoveDocument(definition.id)}
-                  onToggleCouverture={(couvert) =>
-                    onToggleCouverture(definition.id, couvert)
-                  }
-                  onDownload={onDownload}
-                />
-              }
+        ))}
+
+        {/* Pièces hors catalogue : elles ferment la liste, après ce que le
+            modèle attend. Celles du dossier transmis s'y consultent. */}
+        {documentsAdditionalAffiches.map((documentAdditional) => (
+          <DemarcheDocumentAdditionalRow
+            key={documentAdditional.id}
+            demarcheType={demarcheType}
+            fileConstraints={fileConstraints}
+            documentAdditional={documentAdditional}
+            isReadonly={
+              isEtapeReadonly ||
+              (!mergeEtapes && documentAdditional.etape !== etape)
+            }
+            isJustCreated={documentAdditional.id === documentAdditionalCreeId}
+            onRename={(titre) =>
+              onRenameAdditional(documentAdditional.id, titre)
+            }
+            onAddFichier={(fichierId) =>
+              onAddFichierAdditional(documentAdditional.id, fichierId)
+            }
+            onRemove={() => onRemoveAdditional(documentAdditional.id)}
+            onDownload={onDownloadAdditional}
+          />
+        ))}
+
+        {/* En liste fusionnée, une pièce hors catalogue rejoint le dossier
+            lui-même : c'est l'amont, seul temps qu'une pièce libre puisse
+            documenter tant qu'aucun avis n'a été rendu. */}
+        {!isEtapeReadonly &&
+          section !== 'dossier-transmis' &&
+          isDemarcheDocumentsAdditionalAutorise(config, etapeAdditional) && (
+            <DemarcheDocumentAdditionalAddRow
+              etape={etapeAdditional}
+              onCreate={() => onCreateAdditional(etapeAdditional)}
             />
-          ))}
-        </ChecklistTable>
-      </div>
+          )}
+      </ChecklistTable>
     </div>
   );
 };

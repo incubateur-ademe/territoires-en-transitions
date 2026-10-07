@@ -96,7 +96,8 @@ export const Description = () => {
         </VisibleWhen>
         <RichTextEditor
           unstyled
-          ariaLabel={appLabels.description}
+          placeholder={appLabels.descriptionWritePlaceholder}
+          ariaLabel={appLabels.description()}
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -108,16 +109,15 @@ export const Description = () => {
       </div>
       <div className="flex flex-col gap-1">
         <MainTitle size="normal">
-          {appLabels.labelDeuxPoints({
-            label: getFieldLabel('objectifs', fiche.objectifs),
-          })}
+          {getFieldLabel('objectifs', fiche.objectifs)}
         </MainTitle>
         <VisibleWhen condition={isReadonly && !initialObjectifs}>
           {appLabels.placeholderARenseigner}
         </VisibleWhen>
         <RichTextEditor
           unstyled
-          ariaLabel={appLabels.objectifs}
+          placeholder={appLabels.ficheObjectifWritePlaceholder}
+          ariaLabel={appLabels.ficheObjectif({ plural: true })}
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -201,6 +201,7 @@ export const Description = () => {
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
                   inlineEdit
+                  placeholder={appLabels.thematiquePlaceholderSelection}
                   openState={openState}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
@@ -226,9 +227,7 @@ export const Description = () => {
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
                 showSousThematiquesTooltip ? (
-                  <Tooltip
-                    label={appLabels.selectionnerThematiqueAvantSousThematique}
-                  >
+                  <Tooltip label={appLabels.sousThematiqueSelectionTooltip}>
                     <span>{appLabels.placeholderARenseigner}</span>
                   </Tooltip>
                 ) : (

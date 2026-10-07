@@ -9,6 +9,7 @@ import {
 } from '@tet/domain/referentiels';
 import {
   isCibleConcernee,
+  listCommentaireCibles,
   listMesuresCibles,
   listSousActionsEtTachesCibles,
 } from './action-cible';
@@ -20,6 +21,11 @@ type TestTreeNode = ActionTreeNode<{
     referentielId: string;
     actionId: string;
     ponderation: number;
+    nom: string | null;
+  }[];
+  actionsOrigineTexte?: {
+    referentielId: string;
+    actionId: string;
     nom: string | null;
   }[];
 }>;
@@ -55,6 +61,18 @@ const eciOrigine = (actionId: string) => ({
   referentielId: ReferentielIdEnum.ECI,
   actionId,
   ponderation: 1,
+  nom: null,
+});
+
+const caeOrigineTexte = (actionId: string) => ({
+  referentielId: ReferentielIdEnum.CAE,
+  actionId,
+  nom: null,
+});
+
+const eciOrigineTexte = (actionId: string) => ({
+  referentielId: ReferentielIdEnum.ECI,
+  actionId,
   nom: null,
 });
 
@@ -153,6 +171,8 @@ describe('listMesuresCibles', () => {
 
     expect(cible?.actionsOrigine).toEqual([caeOrigine('cae_direct')]);
     expect(cible?.originesConcernees).toHaveLength(1);
+    // aDesTachesEnfant n'est renseigné que par listSousActionsEtTachesCibles
+    expect(cible?.aDesTachesEnfant).toBe(false);
   });
 
   it('agrège les origines des descendants', () => {
@@ -266,6 +286,271 @@ describe('listSousActionsEtTachesCibles', () => {
       'te_sous_action',
       'te_tache',
     ]);
+  });
+
+  it('marque aDesTachesEnfant selon la présence de tâches enfant', () => {
+    const treeAvecTaches: TestTreeNode = {
+      actionId: 'te',
+      actionType: ActionTypeEnum.REFERENTIEL,
+      actionsEnfant: [
+        {
+          actionId: 'te_2',
+          actionType: ActionTypeEnum.AXE,
+          actionsEnfant: [
+            {
+              actionId: 'te_2.1',
+              actionType: ActionTypeEnum.SOUS_AXE,
+              actionsEnfant: [
+                {
+                  actionId: 'te_2.1.1',
+                  actionType: ActionTypeEnum.ACTION,
+                  actionsEnfant: [
+                    {
+                      // sous-mesure porteuse d'une tâche + lien origine propre
+                      actionId: 'te_2.1.1.1',
+                      actionType: ActionTypeEnum.SOUS_ACTION,
+                      actionsOrigine: [caeOrigine('cae_sous_action')],
+                      actionsEnfant: [
+                        {
+                          actionId: 'te_2.1.1.1.1',
+                          actionType: ActionTypeEnum.TACHE,
+                          actionsOrigine: [eciOrigine('eci_tache')],
+                          actionsEnfant: [],
+                        },
+                      ],
+                    },
+                    {
+                      // sous-mesure feuille
+                      actionId: 'te_2.1.1.2',
+                      actionType: ActionTypeEnum.SOUS_ACTION,
+                      actionsOrigine: [caeOrigine('cae_sous_action')],
+                      actionsEnfant: [],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const cibles = listSousActionsEtTachesCibles({
+      referentielTe: createReferentielTe(treeAvecTaches),
+      scoreMapsByReferentiel,
+      teScoreMap: new Map(),
+    });
+    const byId = (id: string) => cibles.find((c) => c.actionId === id);
+
+    expect(byId('te_2.1.1.1')?.aDesTachesEnfant).toBe(true);
+    expect(byId('te_2.1.1.1.1')?.aDesTachesEnfant).toBe(false);
+    expect(byId('te_2.1.1.2')?.aDesTachesEnfant).toBe(false);
+  });
+
+  describe('originesCommentaire', () => {
+    it('sans actionsOrigineTexte, égale originesConcernees (non-régression)', () => {
+      const cible = listSousActionsEtTachesCibles({
+        referentielTe: createReferentielTe(tree),
+        scoreMapsByReferentiel,
+        teScoreMap: new Map(),
+      }).find((c) => c.actionId === 'te_sous_action');
+
+      expect(cible?.originesCommentaire).toEqual(cible?.originesConcernees);
+    });
+
+    it('avec actionsOrigineTexte renseigné pointant vers une autre source, ne contient que cette source texte', () => {
+      const treeAvecTexte: TestTreeNode = {
+        ...tree,
+        actionsEnfant: [
+          {
+            ...tree.actionsEnfant[0],
+            actionsEnfant: [
+              {
+                ...tree.actionsEnfant[0].actionsEnfant[0],
+                actionsEnfant: [
+                  {
+                    ...tree.actionsEnfant[0].actionsEnfant[0].actionsEnfant[0],
+                    actionsEnfant: [
+                      {
+                        actionId: 'te_sous_action',
+                        actionType: ActionTypeEnum.SOUS_ACTION,
+                        actionsOrigine: [caeOrigine('cae_sous_action')],
+                        actionsOrigineTexte: [eciOrigineTexte('eci_tache')],
+                        actionsEnfant: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const cible = listSousActionsEtTachesCibles({
+        referentielTe: createReferentielTe(treeAvecTexte),
+        scoreMapsByReferentiel,
+        teScoreMap: new Map(),
+      }).find((c) => c.actionId === 'te_sous_action');
+
+      expect(cible?.originesCommentaire.map((o) => o.actionId)).toEqual([
+        'eci_tache',
+      ]);
+    });
+
+    it('avec actionsOrigineTexte renseigné mais dont la source est filtrée (non concernée), vide sans repli sur action_origine', () => {
+      const scoreMapsAvecCaeSousActionNonConcernee = new Map<
+        ReferentielId,
+        Map<string, ActionScore>
+      >([
+        [
+          ReferentielIdEnum.CAE,
+          new Map([
+            ['cae_sous_action', createActionScore()],
+            [
+              'cae_non_concernee_texte',
+              createActionScore({ concerne: false }),
+            ],
+          ]),
+        ],
+        [ReferentielIdEnum.ECI, new Map([['eci_tache', createActionScore()]])],
+      ]);
+
+      const treeAvecTexteNonConcerne: TestTreeNode = {
+        ...tree,
+        actionsEnfant: [
+          {
+            ...tree.actionsEnfant[0],
+            actionsEnfant: [
+              {
+                ...tree.actionsEnfant[0].actionsEnfant[0],
+                actionsEnfant: [
+                  {
+                    ...tree.actionsEnfant[0].actionsEnfant[0].actionsEnfant[0],
+                    actionsEnfant: [
+                      {
+                        actionId: 'te_sous_action',
+                        actionType: ActionTypeEnum.SOUS_ACTION,
+                        actionsOrigine: [caeOrigine('cae_sous_action')],
+                        actionsOrigineTexte: [
+                          caeOrigineTexte('cae_non_concernee_texte'),
+                        ],
+                        actionsEnfant: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const cible = listSousActionsEtTachesCibles({
+        referentielTe: createReferentielTe(treeAvecTexteNonConcerne),
+        scoreMapsByReferentiel: scoreMapsAvecCaeSousActionNonConcernee,
+        teScoreMap: new Map(),
+      }).find((c) => c.actionId === 'te_sous_action');
+
+      expect(cible?.originesCommentaire).toEqual([]);
+      expect(cible?.originesConcernees).toHaveLength(1);
+    });
+  });
+});
+
+describe('listCommentaireCibles', () => {
+  const tree: TestTreeNode = {
+    actionId: 'te',
+    actionType: ActionTypeEnum.REFERENTIEL,
+    actionsEnfant: [
+      {
+        actionId: 'te_1',
+        actionType: ActionTypeEnum.AXE,
+        actionsEnfant: [
+          {
+            actionId: 'te_1.1',
+            actionType: ActionTypeEnum.SOUS_AXE,
+            actionsEnfant: [
+              {
+                // niveau ACTION avec lien texte uniquement (ex. cae_1.1.2 -> te_1.1.1)
+                actionId: 'te_1.1.1',
+                actionType: ActionTypeEnum.ACTION,
+                actionsOrigineTexte: [caeOrigineTexte('cae_1.1.2')],
+                actionsEnfant: [
+                  {
+                    actionId: 'te_1.1.1.1',
+                    actionType: ActionTypeEnum.SOUS_ACTION,
+                    actionsOrigine: [caeOrigine('cae_sous_action')],
+                    actionsEnfant: [],
+                  },
+                  {
+                    // sous-action avec lien texte seul, sans action_origine
+                    actionId: 'te_1.1.1.2',
+                    actionType: ActionTypeEnum.SOUS_ACTION,
+                    actionsOrigineTexte: [eciOrigineTexte('eci_tache')],
+                    actionsEnfant: [],
+                  },
+                ],
+              },
+              {
+                // niveau ACTION sans aucune origine -> exclu
+                actionId: 'te_1.1.2',
+                actionType: ActionTypeEnum.ACTION,
+                actionsEnfant: [],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  const scoreMapsByReferentiel = new Map<
+    ReferentielId,
+    Map<string, ActionScore>
+  >([
+    [
+      ReferentielIdEnum.CAE,
+      new Map([
+        ['cae_1.1.2', createActionScore()],
+        ['cae_sous_action', createActionScore()],
+      ]),
+    ],
+    [ReferentielIdEnum.ECI, new Map([['eci_tache', createActionScore()]])],
+  ]);
+
+  const listCibles = () =>
+    listCommentaireCibles({
+      referentielTe: createReferentielTe(tree),
+      scoreMapsByReferentiel,
+      teScoreMap: new Map(),
+    });
+
+  it('inclut les cibles de niveau action porteuses d’un action_origine_texte', () => {
+    const cible = listCibles().find((c) => c.actionId === 'te_1.1.1');
+
+    expect(cible?.originesCommentaire.map((o) => o.actionId)).toEqual([
+      'cae_1.1.2',
+    ]);
+  });
+
+  it('inclut les sous-actions dotées d’un action_origine_texte sans action_origine', () => {
+    const cible = listCibles().find((c) => c.actionId === 'te_1.1.1.2');
+
+    expect(cible?.originesCommentaire.map((o) => o.actionId)).toEqual([
+      'eci_tache',
+    ]);
+  });
+
+  it('inclut les sous-actions à origine directe (repli sur originesConcernees)', () => {
+    const cible = listCibles().find((c) => c.actionId === 'te_1.1.1.1');
+
+    expect(cible?.originesCommentaire).toEqual(cible?.originesConcernees);
+    expect(cible?.originesCommentaire).toHaveLength(1);
+  });
+
+  it('exclut les nœuds sans aucune origine', () => {
+    expect(listCibles().map((c) => c.actionId)).not.toContain('te_1.1.2');
   });
 });
 

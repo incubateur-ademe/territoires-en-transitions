@@ -4,10 +4,12 @@ import {
   TCycleLabellisation,
   useCycleLabellisation,
 } from '@/app/referentiels/labellisations/useCycleLabellisation';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionId,
   AuditLabellisationReferentielId,
   EtoileEnum,
+  canUpdateCandidatureDocuments,
   getExpectedDocuments,
   ObjetPreuveEnum,
 } from '@tet/domain/referentiels';
@@ -22,7 +24,6 @@ import {
 } from 'react';
 import { Parcours } from './checklist-view-model';
 import { parcoursToChecklist } from './parcours-to-checklist';
-import { useReferentRolesDefined } from './use-referent-roles-defined';
 
 export type ChecklistContextValue = {
   cycle: TCycleLabellisation;
@@ -31,6 +32,7 @@ export type ChecklistContextValue = {
   premiereEtoileObtenue: boolean;
   showActeEngagement: boolean;
   showCandidatureDocuments: boolean;
+  canUpdateCandidatureDocuments: boolean;
 };
 
 type RoleDropdownContextValue = {
@@ -55,22 +57,14 @@ const ChecklistParcoursProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const cycle = useCycleLabellisation(referentielId);
-  const referentRoles = useReferentRolesDefined(referentielId);
-
-  const parcours = useMemo(
-    () =>
-      cycle.parcours && referentRoles.isLoaded
-        ? parcoursToChecklist(cycle.parcours, referentRoles.referentRolesDefined)
-        : null,
-    [cycle.parcours, referentRoles.isLoaded, referentRoles.referentRolesDefined]
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canMutateLabellisationDocuments = hasCollectivitePermission(
+    'referentiels.labellisations.mutate_documents'
   );
 
-  const cycleWithRolesLoading = useMemo(
-    () => ({
-      ...cycle,
-      isLoading: cycle.isLoading || !referentRoles.isLoaded,
-    }),
-    [cycle, referentRoles.isLoaded]
+  const parcours = useMemo(
+    () => (cycle.parcours ? parcoursToChecklist(cycle.parcours) : null),
+    [cycle.parcours]
   );
 
   const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
@@ -88,20 +82,26 @@ const ChecklistParcoursProvider = ({
 
   const value = useMemo(
     () => ({
-      cycle: cycleWithRolesLoading,
+      cycle,
       parcours,
       referentielId,
       premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
+      canUpdateCandidatureDocuments: canUpdateCandidatureDocuments({
+        isAuditee: cycle.viewerRole === 'auditee',
+        canMutateLabellisationDocuments,
+        audit: cycle.parcours?.audit ?? null,
+      }).canUpdate,
     }),
     [
-      cycleWithRolesLoading,
+      cycle,
       parcours,
       referentielId,
       premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
+      canMutateLabellisationDocuments,
     ]
   );
 

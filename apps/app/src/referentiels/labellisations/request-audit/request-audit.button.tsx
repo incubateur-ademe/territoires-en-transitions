@@ -7,11 +7,11 @@ import {
   AuditLabellisationReferentielId,
   AuditRequestUnavailableReason,
   getAuditRequestAvailability,
+  listAuditTypeOptions,
 } from '@tet/domain/referentiels';
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
 import { match } from 'ts-pattern';
-import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { RequestAuditModal } from './request-audit.modal';
 
@@ -36,16 +36,25 @@ const tooltipForUnavailableReason = (
       getRequestAuditTooltip(cause)
     )
     .with(
-      { kind: 'noRequestableAuditType' },
+      { kind: 'auditTypeUnavailable', cause: 'SCORE_BELOW_AUDITABLE_STAR' },
       () => appLabels.demanderAuditScoreInsuffisant
     )
     .with(
-      { kind: 'prerequisitesIncomplete' },
-      () => appLabels.renseignerCriteresPourDemande
+      { kind: 'auditTypeUnavailable', cause: 'REFERENTIEL_NOT_COMPLETED' },
+      () => appLabels.completudeCritere
     )
     .with(
-      { kind: 'referentRolesUndefined' },
-      () => appLabels.renseignerPilotesPourDemande
+      {
+        kind: 'auditTypeUnavailable',
+        cause: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
+      },
+      {
+        kind: 'auditTypeUnavailable',
+        cause: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
+      },
+      { kind: 'auditTypeUnavailable', cause: 'REFERENT_ROLES_NOT_DEFINED' },
+      { kind: 'auditTypeUnavailable', cause: 'MISSING_FILE' },
+      () => appLabels.renseignerCriteresPourDemande
     )
     .exhaustive();
 
@@ -55,15 +64,9 @@ export const RequestAuditButton = ({
   const { collectiviteId } = useCurrentCollectivite();
   const { parcours, isCOT, maximumRequestableStar, viewerRole } =
     useCycleLabellisation(referentielId);
-  const { referentRolesDefined, isLoaded: referentRolesLoaded } =
-    useReferentRolesDefined(referentielId);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (
-    parcours === null ||
-    maximumRequestableStar === null ||
-    !referentRolesLoaded
-  ) {
+  if (parcours === null || maximumRequestableStar === null) {
     return null;
   }
 
@@ -71,11 +74,11 @@ export const RequestAuditButton = ({
     return null;
   }
 
-  const availability = getAuditRequestAvailability(parcours, {
+  const auditTypeOptions = listAuditTypeOptions(parcours, {
     isCOT,
     maximumRequestableStar,
-    referentRolesDefined,
   });
+  const availability = getAuditRequestAvailability(parcours, auditTypeOptions);
 
   const tooltip = availability.canRequest
     ? null
@@ -100,8 +103,7 @@ export const RequestAuditButton = ({
         openState={{ isOpen, setIsOpen }}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
-        isCOT={isCOT}
-        canRequestLabellisation={maximumRequestableStar >= 2}
+        auditTypeOptions={auditTypeOptions}
         maximumRequestableStar={maximumRequestableStar}
       />
     </>

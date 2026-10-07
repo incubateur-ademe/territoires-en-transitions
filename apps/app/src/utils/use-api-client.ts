@@ -1,8 +1,7 @@
+import { ENV } from '@tet/api/environmentVariables';
 import { useUserContext } from '@tet/api/users';
 import { isNil } from 'es-toolkit';
 import { getFileNameFromResponse } from './get-filename-from-response';
-
-const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
 
 type JSONValue =
   | string
@@ -16,6 +15,7 @@ type JSONValue =
 type API_ARGS = {
   route: string;
   params?: JSONValue;
+  signal?: AbortSignal;
 };
 
 type ResponseError = {
@@ -40,7 +40,7 @@ export const useApiClient = () => {
 
   // construit l'url pour la route et les paramètres donnés
   const makeUrl = ({ route, params }: API_ARGS) => {
-    const url = new URL(`${BASE_URL}${route}`);
+    const url = new URL(`${ENV.backend_url}/api/v1${route}`);
     if (params) {
       Object.entries(params).forEach(([name, value]) => {
         if (!isNil(value))
@@ -56,6 +56,7 @@ export const useApiClient = () => {
   // fait un appel GET
   const get = async <ResponseType>(args: API_ARGS) => {
     const response = await fetch(makeUrl(args), {
+      signal: args.signal,
       headers: {
         'content-type': 'application/json',
         ...authHeaders,
@@ -70,13 +71,14 @@ export const useApiClient = () => {
 
   // fait un appel GET (ou POST) pour télécharger un fichier
   const getAsBlob = async (
-    { route, params }: API_ARGS,
+    { route, params, signal }: API_ARGS,
     method: 'POST' | 'GET' = 'GET'
   ) => {
     const response = await fetch(
       method === 'GET' ? makeUrl({ route, params }) : makeUrl({ route }),
       {
         method,
+        signal,
         headers: {
           'content-type': 'application/json',
           ...authHeaders,
@@ -99,9 +101,10 @@ export const useApiClient = () => {
   // renvoie une fonction permettant de faire une requête d'écriture (POST ou PUT ou DELETE)
   const createWriteRequest =
     (method: 'POST' | 'PUT' | 'DELETE') =>
-    async <ResponseType>({ route, params }: API_ARGS) => {
+    async <ResponseType>({ route, params, signal }: API_ARGS) => {
       const response = await fetch(makeUrl({ route }), {
         method,
+        signal,
         body: JSON.stringify(params),
         headers: {
           'content-type': 'application/json',

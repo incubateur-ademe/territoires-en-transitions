@@ -2,6 +2,7 @@
 
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import { appLabels } from '@/app/labels/catalog';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   PrioriteOrNot,
@@ -10,11 +11,12 @@ import {
 import { TOption } from '@/app/ui/shared/select/commons';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan } from '@tet/domain/plans';
+import { capitalize } from '@tet/ui/labels/plural';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import { FormFilters } from '../data/use-fiches-filters-list/types';
-export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
+type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
 type PlanActionFiltersContextType = {
@@ -48,12 +50,12 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
 );
 
 const filterLabels: Record<keyof FormFilters, string> = {
-  priorites: 'Niveau de priorité',
-  statuts: 'Statut',
-  referents: 'Élu·e référent·e',
-  pilotes: 'Personne pilote',
-  collectiviteId: 'Collectivité',
-  axes: 'Axe',
+  priorites: capitalize(appLabels.niveauPriorite),
+  statuts: capitalize(appLabels.ficheStatut),
+  referents: appLabels.personneElue(),
+  pilotes: appLabels.personnePilote(),
+  collectiviteId: capitalize(appLabels.collectivite()),
+  axes: capitalize(appLabels.axe()),
 };
 
 export const PlanFiltersProvider = ({

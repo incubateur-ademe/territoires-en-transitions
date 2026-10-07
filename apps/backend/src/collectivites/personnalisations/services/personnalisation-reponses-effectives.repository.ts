@@ -4,6 +4,7 @@ import { reponseBinaireTable } from '@tet/backend/collectivites/personnalisation
 import { reponseChoixTable } from '@tet/backend/collectivites/personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '@tet/backend/collectivites/personnalisations/models/reponse-proportion.table';
 import { collectiviteBanatic2025CompetenceTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-competence.table';
+import { collectiviteBanatic2025PerimetreTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-perimetre.table';
 import { collectiviteBanatic2025TransfertTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-transfert.table';
 import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -69,7 +70,21 @@ export class PersonnalisationReponsesEffectivesRepository {
       .select({
         competenceCode: banatic2025CompetenceTable.competenceCode,
         competenceIntitule: banatic2025CompetenceTable.intitule,
-        competenceExercee: collectiviteBanatic2025CompetenceTable.exercice,
+        // Compétence *effectivement* exercée : la valeur brute Banatic
+        // (`collectivite_banatic_2025_competence.exercice`) bascule à `false`
+        // uniquement quand la délégation aux groupements intermédiaires est
+        // totale (toutes les communes membres délèguent la compétence).
+        // cf. plan doc/plans/2026-06-30-001, règle métier « option B — stricte ».
+        competenceExercee: sql<
+          boolean | null
+        >`case
+            when ${collectiviteBanatic2025CompetenceTable.exercice} is null then null
+            when ${collectiviteBanatic2025CompetenceTable.exercice} = false then false
+            when ${collectiviteBanatic2025PerimetreTable.nbCommunesMembres} > 0
+              and ${collectiviteBanatic2025TransfertTable.nbCommunesTransferees} >= ${collectiviteBanatic2025PerimetreTable.nbCommunesMembres}
+              then false
+            else ${collectiviteBanatic2025CompetenceTable.exercice}
+          end`.as('competence_exercee'),
         natureTransfert: collectiviteBanatic2025TransfertTable.natureTransfert,
       })
       .from(banatic2025CompetenceTable)
@@ -98,6 +113,10 @@ export class PersonnalisationReponsesEffectivesRepository {
             banatic2025CompetenceTable.competenceCode
           )
         )
+      )
+      .leftJoin(
+        collectiviteBanatic2025PerimetreTable,
+        eq(collectiviteBanatic2025PerimetreTable.collectiviteId, collectiviteId)
       )
       .as('competence');
   }

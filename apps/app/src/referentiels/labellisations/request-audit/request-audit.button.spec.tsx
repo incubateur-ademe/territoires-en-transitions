@@ -2,14 +2,11 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ObjetPreuveEnum,
   ParcoursForAuditRequest,
-  ROLE_IDENTIFIANTS,
-  ReferentRolesDefined,
 } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuditViewerRole } from '../../audit-labellisation/audit-badge-status/types';
-import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { RequestAuditButton } from './request-audit.button';
 
@@ -17,17 +14,23 @@ vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),
 }));
 
-vi.mock('../useCycleLabellisation', () => ({
-  useCycleLabellisation: vi.fn(),
-}));
+vi.mock(
+  '../useCycleLabellisation',
+  (): Partial<
+    Record<keyof typeof import('../useCycleLabellisation'), unknown>
+  > => ({
+    useCycleLabellisation: vi.fn(),
+  })
+);
 
-vi.mock('../../audit-labellisation/use-referent-roles-defined', () => ({
-  useReferentRolesDefined: vi.fn(),
-}));
-
-vi.mock('./request-audit.modal', () => ({
-  RequestAuditModal: () => null,
-}));
+vi.mock(
+  './request-audit.modal',
+  (): Partial<
+    Record<keyof typeof import('./request-audit.modal'), unknown>
+  > => ({
+    RequestAuditModal: () => null,
+  })
+);
 
 vi.mock('@tet/ui', async (importActual) => {
   const actual = await importActual<typeof import('@tet/ui')>();
@@ -41,24 +44,21 @@ vi.mock('@tet/ui', async (importActual) => {
 
 const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
 const mockedUseCycleLabellisation = vi.mocked(useCycleLabellisation);
-const mockedUseReferentRolesDefined = vi.mocked(useReferentRolesDefined);
 
 const demanderAuditButton = /Demander un audit/;
 
-const ROLES_DEFINIS: ReferentRolesDefined = {
-  eluReferent: true,
-  referentTechnique: true,
+const getRequestAuditButton = (): HTMLButtonElement => {
+  const button = screen.getByRole('button', { name: demanderAuditButton });
+  if (!(button instanceof HTMLButtonElement)) {
+    throw new Error('bouton « Demander un audit » inattendu');
+  }
+  return button;
 };
 
-const eluReferentActionId = `cae_${ROLE_IDENTIFIANTS.cae.eluReferent}`;
-const referentTechniqueActionId = `cae_${ROLE_IDENTIFIANTS.cae.referentTechnique}`;
-
-const setReferentRoles = (
-  referentRolesDefined: ReferentRolesDefined = ROLES_DEFINIS,
-  isLoaded = true
-): void => {
-  mockedUseReferentRolesDefined.mockReturnValue({ referentRolesDefined, isLoaded });
-};
+const getTooltipLabel = (): string | null =>
+  document
+    .querySelector('[data-tooltip-label]')
+    ?.getAttribute('data-tooltip-label') ?? null;
 
 const setCycle = ({
   parcours,
@@ -84,22 +84,23 @@ const requestableCycle = {
     status: 'non_demandee',
     demande: null,
     labellisation: null,
-    referentiel: 'cae',
-    completude_ok: true,
-    critere_score: {
+    completudeOk: true,
+    critereScore: {
       atteint: true,
-      score_fait: 0.4,
-    } as ParcoursForAuditRequest['critere_score'],
+      scoreFait: 0.4,
+    } as ParcoursForAuditRequest['critereScore'],
     isCot: false,
     etoiles: 2,
-    conditionFichiers: { preuve_nombre: 2 },
+    conditionFichiers: { preuveNombre: 2 },
     preuvesObjets: [
       { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
       { objet: ObjetPreuveEnum.CANDIDATURE },
     ],
-    criteres_action: [
-      { atteint: true, action_id: eluReferentActionId },
-      { atteint: true, action_id: referentTechniqueActionId },
+    referentiel: 'cae',
+    referentRolesDefined: { eluReferent: true, referentTechnique: true },
+    criteresAction: [
+      { atteint: true, actionId: 'cae_5.1.2.1.1' },
+      { atteint: true, actionId: 'cae_5.1.1.1.3' },
     ],
   } as ParcoursForAuditRequest,
   maximumRequestableStar: 2,
@@ -110,7 +111,6 @@ beforeEach(() => {
     collectiviteId: 1,
   } as unknown as ReturnType<typeof useCurrentCollectivite>);
   setCycle(requestableCycle);
-  setReferentRoles();
 });
 
 describe('RequestAuditButton — visibilité selon le rôle', () => {
@@ -119,7 +119,9 @@ describe('RequestAuditButton — visibilité selon le rôle', () => {
 
     const { container } = render(<RequestAuditButton referentielId="cae" />);
 
-    expect(screen.queryByRole('button', { name: demanderAuditButton })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: demanderAuditButton })
+    ).toBeNull();
     expect(container.firstChild).toBeNull();
   });
 
@@ -128,7 +130,9 @@ describe('RequestAuditButton — visibilité selon le rôle', () => {
 
     const { container } = render(<RequestAuditButton referentielId="cae" />);
 
-    expect(screen.queryByRole('button', { name: demanderAuditButton })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: demanderAuditButton })
+    ).toBeNull();
     expect(container.firstChild).toBeNull();
   });
 
@@ -148,59 +152,98 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
   it('rend le bouton actif sans tooltip quand la demande est possible', () => {
     render(<RequestAuditButton referentielId="cae" />);
 
-    const button = screen.getByRole('button', { name: demanderAuditButton });
-    if (!(button instanceof HTMLButtonElement)) {
-      throw new Error('bouton « Demander un audit » inattendu');
-    }
-    expect(button.disabled).toBe(false);
-    expect(document.querySelector('[data-tooltip-label]')).toBeNull();
+    expect(getRequestAuditButton().disabled).toBe(false);
+    expect(getTooltipLabel()).toBeNull();
   });
 
-  it("rend le bouton désactivé avec un tooltip quand aucun type d'audit n'est demandable", () => {
-    setCycle({ ...requestableCycle, maximumRequestableStar: 1 });
-
-    render(<RequestAuditButton referentielId="cae" />);
-
-    const button = screen.getByRole('button', { name: demanderAuditButton });
-    if (!(button instanceof HTMLButtonElement)) {
-      throw new Error('bouton « Demander un audit » inattendu');
-    }
-    expect(button.disabled).toBe(true);
-    expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
-  });
-
-  it('rend le bouton désactivé pour un COT quand maximumRequestableStar < 2', () => {
+  const setCotCycleBelowAuditableScore = (completudeOk: boolean): void =>
     setCycle({
       parcours: {
         ...requestableCycle.parcours,
         isCot: true,
         etoiles: 1,
+        completudeOk,
       } as ParcoursForAuditRequest,
       isCOT: true,
       maximumRequestableStar: 1,
     });
 
+  it('COT dont les statuts ne sont pas tous renseignés : bouton désactivé, la complétude manque', () => {
+    setCotCycleBelowAuditableScore(false);
+
     render(<RequestAuditButton referentielId="cae" />);
 
-    const button = screen.getByRole('button', { name: demanderAuditButton });
-    if (!(button instanceof HTMLButtonElement)) {
-      throw new Error('bouton « Demander un audit » inattendu');
-    }
-    expect(button.disabled).toBe(true);
-    expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).toBe(
+      'Renseigner les statuts de toutes les mesures du référentiel'
+    );
+  });
+
+  it("COT dont tous les statuts sont renseignés : bouton actif, l'audit COT seul n'exige rien de plus", () => {
+    setCotCycleBelowAuditableScore(true);
+
+    render(<RequestAuditButton referentielId="cae" />);
+
+    expect(getRequestAuditButton().disabled).toBe(false);
+    expect(getTooltipLabel()).toBeNull();
+  });
+
+  it('motif autre que la complétude : le tooltip reste la phrase générique sur les critères attendus', () => {
+    setCycle({
+      parcours: {
+        ...requestableCycle.parcours,
+        isCot: false,
+        completudeOk: true,
+        criteresAction: [
+          { atteint: true, actionId: 'cae_5.1.2.1.1' },
+          { atteint: false, actionId: 'cae_1.1.1' },
+        ],
+      } as ParcoursForAuditRequest,
+      isCOT: false,
+      maximumRequestableStar: 2,
+    });
+
+    render(<RequestAuditButton referentielId="cae" />);
+
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).toBe(
+      'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation'
+    );
+  });
+
+  it('non-COT dont tous les statuts sont renseignés mais sous 35 % de score : bouton désactivé, le score manque', () => {
+    setCycle({
+      parcours: {
+        ...requestableCycle.parcours,
+        isCot: false,
+        etoiles: 1,
+        completudeOk: true,
+      } as ParcoursForAuditRequest,
+      isCOT: false,
+      maximumRequestableStar: 1,
+    });
+
+    render(<RequestAuditButton referentielId="cae" />);
+
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).toBe(
+      'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.'
+    );
   });
 
   it("rend le bouton désactivé avec un tooltip quand l'élu référent ou le référent technique n'est pas désigné", () => {
-    setReferentRoles({ eluReferent: false, referentTechnique: true });
+    setCycle({
+      ...requestableCycle,
+      parcours: {
+        ...requestableCycle.parcours,
+        referentRolesDefined: { eluReferent: false, referentTechnique: true },
+      } as ParcoursForAuditRequest,
+    });
 
     render(<RequestAuditButton referentielId="cae" />);
 
-    const button = screen.getByRole('button', { name: demanderAuditButton });
-    if (!(button instanceof HTMLButtonElement)) {
-      throw new Error('bouton « Demander un audit » inattendu');
-    }
-    expect(button.disabled).toBe(true);
-    expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).not.toBeNull();
   });
 
   it('rend le bouton désactivé avec un tooltip quand les prérequis de labellisation sont incomplets', () => {
@@ -209,13 +252,15 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         status: 'non_demandee',
         demande: null,
         labellisation: null,
-        completude_ok: false,
+        completudeOk: false,
         etoiles: 2,
         isCot: false,
-        critere_score: { atteint: false },
-        conditionFichiers: { preuve_nombre: 0 },
+        critereScore: { atteint: false },
+        conditionFichiers: { preuveNombre: 0 },
         preuvesObjets: [],
-        criteres_action: [{ atteint: false }],
+        referentiel: 'cae',
+        referentRolesDefined: { eluReferent: true, referentTechnique: true },
+        criteresAction: [{ atteint: false, actionId: 'cae_1.1.1' }],
       },
       isCOT: false,
       maximumRequestableStar: 2,
@@ -224,11 +269,7 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
 
     render(<RequestAuditButton referentielId="cae" />);
 
-    const button = screen.getByRole('button', { name: demanderAuditButton });
-    if (!(button instanceof HTMLButtonElement)) {
-      throw new Error('bouton « Demander un audit » inattendu');
-    }
-    expect(button.disabled).toBe(true);
-    expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).not.toBeNull();
   });
 });

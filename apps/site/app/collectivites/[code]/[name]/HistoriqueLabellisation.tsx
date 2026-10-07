@@ -1,10 +1,10 @@
-import { Labellisations } from '@/site/app/collectivites/utils';
+import { SiteLabellisation } from '@/site/src/trpc/trpc-client';
 import { RedStar } from '@/site/components/labellisation/Star';
 import { referentielToLabel } from '@/site/src/utils/labels';
 
 type HistoriqueLabellisationProps = {
   referentiel: 'cae' | 'eci';
-  historique: Labellisations[];
+  historique: SiteLabellisation[];
 };
 
 const HistoriqueLabellisation = ({
@@ -37,8 +37,8 @@ const HistoriqueLabellisation = ({
             <div className="flex flex-col justify-center items-end">
               {hist.etoiles !== 1 && (
                 <div className="text-primary-10 font-bold">
-                  {hist.score_realise
-                    ? `${Math.round(hist.score_realise)}%`
+                  {hist.scoreRealise
+                    ? `${Math.round(hist.scoreRealise)}%`
                     : null}
                 </div>
               )}

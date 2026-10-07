@@ -32,7 +32,8 @@ import { DemarchePcaetTransitionRepository } from './demarche-pcaet-transition.r
 export type DemarchePcaetTransitionStamps = {
   transmittedAt?: string;
   avisDeadlineAt?: string;
-  publishedAt?: string | null;
+  publishedAt?: string;
+  adoptedAt?: string;
 };
 
 /**
@@ -57,7 +58,7 @@ export type DemarchePcaetTransitionResult = Result<
 >;
 
 /**
- * Socle des six opérations de transition : verrou de ligne, permission,
+ * Socle des cinq opérations de transition : verrou de ligne, permission,
  * évaluation des guards, application du workflow, persistance et journal.
  *
  * Ce qu'il ne fait pas : décider **quelle** transition appliquer, ni ce qu'elle
@@ -82,6 +83,34 @@ export class DemarchePcaetTransitionService {
     { user, tx }: ServiceSecondArg,
     effects?: DemarchePcaetTransitionEffects
   ): Promise<DemarchePcaetTransitionResult> {
+    return this.applyWithActor(input, transition, user, tx, effects);
+  }
+
+  /**
+   * Même socle, mais sans acteur : les transitions constatées par le système
+   * (`avis_tous_rendus`, `delai_avis_echu`) n'ont personne à autoriser. La
+   * permission n'est donc pas vérifiée — ce sont leurs guards métier qui font
+   * autorité — et le journal enregistre `created_by = null` plutôt que
+   * d'imputer la bascule à un utilisateur qui ne l'a pas demandée.
+   *
+   * Pas d'effets ici : une transition système ne tamponne rien d'autre que son
+   * statut.
+   */
+  async applyAsSystem(
+    input: DemarchePcaetTransitionInput,
+    transition: DemarchePcaetTransition,
+    { tx }: { tx?: Transaction }
+  ): Promise<DemarchePcaetTransitionResult> {
+    return this.applyWithActor(input, transition, null, tx);
+  }
+
+  private async applyWithActor(
+    input: DemarchePcaetTransitionInput,
+    transition: DemarchePcaetTransition,
+    user: AuthenticatedUser | null,
+    tx: Transaction | undefined,
+    effects?: DemarchePcaetTransitionEffects
+  ): Promise<DemarchePcaetTransitionResult> {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<DemarchePcaetTransitionResult> => {
@@ -99,20 +128,24 @@ export class DemarchePcaetTransitionService {
       }
 
       // Permission d'édition vérifiée sur le collectiviteId stocké (IDOR) ;
-      // les conditions plus fines (pilote, délais…) sont des guards.
-      const permissionResult = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: demarche.collectiviteId },
-        transaction
-      );
-      if (!permissionResult.success) {
-        return failure('UNAUTHORIZED');
+      // les conditions plus fines (pilote, délais…) sont des guards. Sans
+      // acteur, il n'y a rien à autoriser : cf. `applyAsSystem`.
+      if (user) {
+        const permissionResult = await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
+          ResourceType.COLLECTIVITE,
+          { collectiviteId: demarche.collectiviteId },
+          transaction
+        );
+        if (!permissionResult.success) {
+          return failure('UNAUTHORIZED');
+        }
       }
 
       const guardContext = await this.guardsService.loadContext(
         demarche,
+        user,
         transaction
       );
       const transitionResult = applyTransition(demarche.status, transition, {
@@ -126,15 +159,18 @@ export class DemarchePcaetTransitionService {
       }
       const { toStatus } = transitionResult.data;
 
-      const stamps = effects
-        ? await effects({ demarche, guardContext, user, transaction })
-        : {};
+      // `user` conditionne l'appel autant que `effects` : les effets tamponnent
+      // au nom de quelqu'un, et une transition système n'en déclare aucun.
+      const stamps =
+        effects && user
+          ? await effects({ demarche, guardContext, user, transaction })
+          : {};
 
       const persistResult = await this.transitionRepository.persistTransition(
         demarche,
         toStatus,
         transition,
-        user.id,
+        user?.id ?? null,
         stamps,
         transaction
       );
@@ -143,7 +179,9 @@ export class DemarchePcaetTransitionService {
       }
 
       this.logger.log(
-        `Transition ${transition} applied on demarche PCAET ${demarche.id} (${demarche.status} → ${toStatus}) by user ${user.id}`
+        `Transition ${transition} applied on demarche PCAET ${demarche.id} (${
+          demarche.status
+        } → ${toStatus}) by ${user ? `user ${user.id}` : 'system'}`
       );
 
       const getResult = await this.getDemarchePcaetRepository.getDemarchePcaet(

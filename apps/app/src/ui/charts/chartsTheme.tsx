@@ -61,4 +61,4 @@ export const nivoColorsSet = [
   '#bc80bd',
   '#ccebc5',
   '#ffed6f',
-];
+] as const;

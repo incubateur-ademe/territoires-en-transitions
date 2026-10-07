@@ -7,7 +7,7 @@ import { toPercentString } from '@/app/utils/to-percent-string';
 import { StatutAvancement } from '@tet/domain/referentiels';
 import { Slider } from '@tet/ui';
 
-export type AvancementValues = [number, number, number];
+type AvancementValues = [number, number, number];
 
 type Props = {
   avancement: AvancementValues;

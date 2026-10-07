@@ -1,5 +1,7 @@
-import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { toDocumentHash } from '@tet/domain/collectivites';
+import { DocumentAuditOuLabellisation } from '@/app/collectivites/documents/bibliotheque/types';
 import { describe, expect, test } from 'vitest';
+import { addInfoToEntry } from './preuves-labellisation.list';
 import { groupeParDemande } from './groupeParDemande';
 
 describe('groupeParDemande', () => {
@@ -35,163 +37,254 @@ describe('groupeParDemande', () => {
   });
 });
 
-const preuves_demande1 = [
+const preuves_demande1: DocumentAuditOuLabellisation[] = [
   {
-    preuve_type: 'labellisation',
+    preuveType: 'labellisation',
     id: 8,
-    collectivite_id: 1,
+    collectiviteId: 1,
+    type: 'fichier',
     fichier: {
-      hash: '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee',
+      id: 81,
+      collectiviteId: 1,
+      hash: toDocumentHash(
+        '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee'
+      ),
       filename: 'doc1.pdf',
       filesize: 978700,
-      bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      bucketId: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
-    lien: null,
     commentaire: '',
-    created_at: '2023-02-22T18:35:18.194811+00:00',
-    created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-    created_by_nom: 'Yolo Dodo',
-    action: null,
-    preuve_reglementaire: null,
+    modifiedAt: '2023-02-22T18:35:18.194811+00:00',
+    modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    modifiedByNom: 'Yolo Dodo',
     demande: {
       id: 61,
       date: '2023-02-22T18:34:42.460935+00:00',
       sujet: 'cot',
       etoiles: null,
-      en_cours: true,
+      enCours: true,
       referentiel: 'eci',
-      collectivite_id: 1,
+      collectiviteId: 1,
+      modifiedAt: null,
+      envoyeeLe: null,
+      demandeur: null,
+      associatedCollectiviteId: null,
     },
-    rapport: null,
-    audit: null,
   },
   {
-    preuve_type: 'labellisation',
+    preuveType: 'labellisation',
     id: 7,
-    collectivite_id: 1,
+    collectiviteId: 1,
+    type: 'fichier',
     fichier: {
-      hash: '071a0b09051aa4cacf39f85860ddb775e668336517eaf1ec3cda16fda9028b3f',
+      id: 82,
+      collectiviteId: 1,
+      hash: toDocumentHash(
+        '071a0b09051aa4cacf39f85860ddb775e668336517eaf1ec3cda16fda9028b3f'
+      ),
       filename: 'doc2.pdf',
       filesize: 66632,
-      bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      bucketId: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
-    lien: null,
     commentaire: '',
-    created_at: '2023-02-22T18:35:18.194653+00:00',
-    created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-    created_by_nom: 'Yolo Dodo',
-    action: null,
-    preuve_reglementaire: null,
+    modifiedAt: '2023-02-22T18:35:18.194653+00:00',
+    modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    modifiedByNom: 'Yolo Dodo',
     demande: {
       id: 61,
       date: '2023-02-22T18:34:42.460935+00:00',
       sujet: 'cot',
       etoiles: null,
-      en_cours: true,
+      enCours: true,
       referentiel: 'eci',
-      collectivite_id: 1,
+      collectiviteId: 1,
+      modifiedAt: null,
+      envoyeeLe: null,
+      demandeur: null,
+      associatedCollectiviteId: null,
     },
-    rapport: null,
-    audit: null,
   },
   {
-    preuve_type: 'audit',
+    preuveType: 'audit',
     id: 8,
-    collectivite_id: 1,
+    collectiviteId: 1,
+    type: 'fichier',
     fichier: {
-      hash: '7950d61a98864390bebad094002bcb7a00dabaf8bf2c48dd8d3dc6937aee2a96',
+      id: 83,
+      collectiviteId: 1,
+      hash: toDocumentHash(
+        '7950d61a98864390bebad094002bcb7a00dabaf8bf2c48dd8d3dc6937aee2a96'
+      ),
       filename: 'rapport.pdf',
       filesize: 5468713,
-      bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      bucketId: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
-    lien: null,
     commentaire: '',
-    created_at: '2023-02-22T18:35:18.194653+00:00',
-    created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-    created_by_nom: 'Yolo Dodo',
-    action: null,
-    preuve_reglementaire: null,
+    modifiedAt: '2023-02-22T18:35:18.194653+00:00',
+    modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    modifiedByNom: 'Yolo Dodo',
     demande: {
       id: 61,
       date: '2023-02-22T18:34:42.460935+00:00',
       sujet: 'cot',
       etoiles: null,
-      en_cours: true,
+      enCours: true,
       referentiel: 'eci',
-      collectivite_id: 1,
+      collectiviteId: 1,
+      modifiedAt: null,
+      envoyeeLe: null,
+      demandeur: null,
+      associatedCollectiviteId: null,
     },
-    rapport: null,
     audit: {
-      collectivite_id: 1,
-      date_debut: '2023-02-22T18:34:42.460935+00:00',
-      date_fin: null,
       id: 100,
-      referentiel: 'eci',
+      collectiviteId: 1,
+      demandeId: 61,
+      dateDebut: '2023-02-22T18:34:42.460935+00:00',
+      dateFin: null,
+      clos: false,
       valide: true,
+      referentielId: 'eci',
     },
   },
-] as TPreuveAuditEtLabellisation[];
+];
 
-const preuves_demande2 = [
+const preuves_demande2: DocumentAuditOuLabellisation[] = [
   {
-    preuve_type: 'labellisation',
+    preuveType: 'labellisation',
     id: 9,
-    collectivite_id: 1,
+    collectiviteId: 1,
+    type: 'fichier',
     fichier: {
-      hash: '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee',
+      id: 84,
+      collectiviteId: 1,
+      hash: toDocumentHash(
+        '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee'
+      ),
       filename: 'doc1.pdf',
       filesize: 978700,
-      bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      bucketId: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
-    lien: null,
     commentaire: '',
-    created_at: '2023-02-22T18:35:18.194811+00:00',
-    created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-    created_by_nom: 'Yolo Dodo',
-    action: null,
-    preuve_reglementaire: null,
+    modifiedAt: '2023-02-22T18:35:18.194811+00:00',
+    modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    modifiedByNom: 'Yolo Dodo',
     demande: {
       id: 62,
       date: '2023-02-22T18:34:42.460935+00:00',
       sujet: 'labellisation',
       etoiles: '2',
-      en_cours: true,
+      enCours: true,
       referentiel: 'eci',
-      collectivite_id: 1,
+      collectiviteId: 1,
+      modifiedAt: null,
+      envoyeeLe: null,
+      demandeur: null,
+      associatedCollectiviteId: null,
     },
-    rapport: null,
-    audit: null,
   },
-] as TPreuveAuditEtLabellisation[];
+];
 
-const preuves_audit_sans_demande = [
+const preuves_audit_sans_demande: DocumentAuditOuLabellisation[] = [
   {
-    preuve_type: 'audit',
+    preuveType: 'audit',
     id: 10,
-    collectivite_id: 1,
+    collectiviteId: 1,
+    type: 'fichier',
     fichier: {
-      hash: '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee',
+      id: 85,
+      collectiviteId: 1,
+      hash: toDocumentHash(
+        '63eea835e75300272117b7e926040bf59a1b6c583f6969ea141f6ff9fcb5c6ee'
+      ),
       filename: 'doc1.pdf',
       filesize: 978700,
-      bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      bucketId: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
-    lien: null,
     commentaire: '',
-    created_at: '2023-02-22T18:35:18.194811+00:00',
-    created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-    created_by_nom: 'Yolo Dodo',
-    action: null,
-    preuve_reglementaire: null,
-    demande: null,
-    rapport: null,
+    modifiedAt: '2023-02-22T18:35:18.194811+00:00',
+    modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    modifiedByNom: 'Yolo Dodo',
     audit: {
-      collectivite_id: 1,
-      demande_id: null,
-      date_debut: '2023-02-22T18:34:42.460935+00:00',
-      date_fin: null,
       id: 100,
-      referentiel_id: 'cae',
+      collectiviteId: 1,
+      demandeId: null,
+      dateDebut: '2023-02-22T18:34:42.460935+00:00',
+      dateFin: null,
+      clos: false,
       valide: true,
+      referentielId: 'cae',
+    },
+    demande: null,
+  },
+];
+
+const closedCyclePreuves: DocumentAuditOuLabellisation[] = [
+  {
+    preuveType: 'audit',
+    id: 12,
+    collectiviteId: 1,
+    type: 'fichier',
+    fichier: {
+      id: 86,
+      collectiviteId: 1,
+      hash: toDocumentHash(
+        '9c1185a5c5e9fc54612808977ee8f548b2258d31c3b0f4a9e0e0f0e0f0e0f0e0'
+      ),
+      filename: 'rapport-final.pdf',
+      filesize: 12345,
+      bucketId: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
+    },
+    commentaire: '',
+    modifiedAt: '2024-03-15T10:00:00.000000+00:00',
+    modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    modifiedByNom: 'Yolo Dodo',
+    demande: {
+      id: 63,
+      date: '2024-01-10T00:00:00.000000+00:00',
+      sujet: 'labellisation',
+      etoiles: '3',
+      enCours: false,
+      referentiel: 'eci',
+      collectiviteId: 1,
+      modifiedAt: null,
+      envoyeeLe: null,
+      demandeur: null,
+      associatedCollectiviteId: null,
+    },
+    audit: {
+      id: 101,
+      collectiviteId: 1,
+      demandeId: 63,
+      dateDebut: '2024-02-01T00:00:00.000000+00:00',
+      dateFin: '2024-03-15T00:00:00.000000+00:00',
+      clos: true,
+      valide: true,
+      referentielId: 'eci',
     },
   },
-] as TPreuveAuditEtLabellisation[];
+];
+
+describe('addInfoToEntry', () => {
+  test('derive l’etoile et l’annee depuis la demande quand le cycle n’a pas d’audit', () => {
+    const { info } = addInfoToEntry(['62', preuves_demande2]);
+
+    expect(info.etoile).toBe('2');
+    expect(info.annee).toBe(2023);
+    expect(info.audit).toBeNull();
+  });
+
+  test('date le cycle sur la fin de l’audit plutot que sur son debut ou sur la demande', () => {
+    const { info } = addInfoToEntry(['63', closedCyclePreuves]);
+
+    expect(new Date(info.timestamp).toISOString()).toBe(
+      '2024-03-15T00:00:00.000Z'
+    );
+  });
+});

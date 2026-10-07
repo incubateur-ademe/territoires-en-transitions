@@ -7,6 +7,7 @@
 
 # compiled output
 dist
+apps/backend/eval-out/
 tmp
 out-tsc
 .tsc-trace
@@ -55,11 +56,10 @@ Thumbs.db
 .next
 out
 
-# Earthly
-.arg
-
 # Docker data
 docker-data
+# Journal de la reconstruction en tâche de fond du socle des apps (make up)
+.docker/node-base-build.log
 
 # Environments
 
@@ -67,7 +67,6 @@ docker-data
 !/.env
 !/apps/app/.env
 !/apps/backend/.env
-!/apps/panier/.env
 !/apps/site/.env
 !/apps/tools/.env
 !/e2e/.env
@@ -76,7 +75,7 @@ docker-data
 # Every other .env files
 .env
 # Clé privée de déchiffrement dotenvx — ne JAMAIS committer
-.env.keys
+.env.keys*
 # Surcharges locales
 .env.local
 
@@ -110,3 +109,12 @@ worktrees
 tsconfig.tsbuildinfo
 
 .nx/migrate-runs
+
+# Générateurs de seeds (data_layer/scripts/generate_*.py)
+__pycache__/
+*.pyc
+
+# Listes de correspondants des services de l'État, lues par l'import des
+# membres. Des adresses nominatives d'agents n'ont rien à faire dans un dépôt
+# public : le fichier reçu du métier se dépose ici et n'est jamais versionné.
+/contacts/

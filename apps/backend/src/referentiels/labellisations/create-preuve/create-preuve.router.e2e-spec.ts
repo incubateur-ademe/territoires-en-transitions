@@ -1,6 +1,13 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUsers,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  buildRandomDocumentHash,
+  uploadCreateTestDocument,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { getAuthUserFromUserCredentials, signInWith } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
@@ -8,7 +15,7 @@ import { ObjetPreuveEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
-import request from 'supertest';
+import { onTestFinished } from 'vitest';
 import {
   getTestApp,
   getTestDatabase,
@@ -18,7 +25,15 @@ import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { auditTable } from '../audit.table';
-import { addAuditeurPermission } from '../labellisations.test-fixture';
+import {
+  addAuditeurPermission,
+  validateAudit,
+} from '../labellisations.test-fixture';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 
 type Input = inferProcedureInput<
   AppRouter['referentiels']['labellisations']['createLabellisationPreuve']
@@ -70,15 +85,12 @@ describe('CreatePreuveRouter', () => {
       throw new Error('Failed to sign in editor user: no access token');
     }
 
-    const testAgent = request(app.getHttpServer());
     const createdDocument = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent,
-      token: editorAuthToken,
       fileName: 'test-preuve.pdf',
     });
     createdDocumentId = createdDocument.id;
-
   });
 
   afterAll(async () => {
@@ -111,6 +123,50 @@ describe('CreatePreuveRouter', () => {
       },
     };
   };
+
+  test("le super admin en mode support ajoute un document sur un cycle validé", async () => {
+    const { input, auditId } = await createValidInput();
+    await validateAudit({ databaseService, auditId });
+
+    const { user, cleanup } = await addTestUser(databaseService);
+    onTestFinished(cleanup);
+    const superAdmin = getAuthUserFromUserCredentials(user);
+    const caller = router.createCaller({ user: superAdmin });
+    const superAdminMode = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: superAdmin.id,
+    });
+    onTestFinished(superAdminMode.cleanup);
+
+    const response =
+      await caller.referentiels.labellisations.createLabellisationPreuve(input);
+
+    expect(response).toMatchObject({
+      demandeId: input.demandeId,
+      fichierId: input.fichierId,
+    });
+  });
+
+  test("refuse l'ajout au super admin dont le mode support est éteint", async () => {
+    const { input, auditId } = await createValidInput();
+    await validateAudit({ databaseService, auditId });
+
+    const { user, cleanup } = await addTestUser(databaseService);
+    onTestFinished(cleanup);
+    const supportUser = getAuthUserFromUserCredentials(user);
+    const roleSupport = await addUserRoleSupport({
+      databaseService,
+      userId: supportUser.id,
+    });
+    onTestFinished(roleSupport.cleanup);
+
+    const caller = router.createCaller({ user: supportUser });
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve(input)
+    ).rejects.toThrowError();
+  });
 
   test('a lecteur cannot create a preuve', async () => {
     const caller = router.createCaller({ user: readerUser });
@@ -176,7 +232,7 @@ describe('CreatePreuveRouter', () => {
     ).rejects.toThrowError(/permissions nécessaires/i);
   });
 
-  test('an auditeur can create a preuve if the audit has started', async () => {
+  test("refuse le depot a l'auditeur meme pendant son audit", async () => {
     const caller = router.createCaller({ user: readerUser });
     const { input, auditId } = await createValidInput();
 
@@ -186,17 +242,88 @@ describe('CreatePreuveRouter', () => {
       userId: readerUser.id,
     });
 
-    const response =
-      await caller.referentiels.labellisations.createLabellisationPreuve(input);
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve(input)
+    ).rejects.toThrowError(/permissions nécessaires/i);
+  });
 
-    expect(response).toMatchObject({
-      id: expect.any(Number),
-      collectiviteId: collectivite.id,
-      demandeId: input.demandeId,
-      fichierId: input.fichierId,
-      commentaire: '',
-      modifiedBy: readerUser.id,
+  test("refuse un document de candidature a l'auditeur pendant son audit", async () => {
+    const caller = router.createCaller({ user: readerUser });
+    const { input, auditId } = await createValidInput();
+
+    await addAuditeurPermission({
+      databaseService,
+      auditId,
+      userId: readerUser.id,
     });
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      })
+    ).rejects.toThrowError(/permissions nécessaires/i);
+  });
+
+  const addFichier = async (collectiviteId: number): Promise<number> => {
+    const [fichier] = await databaseService.db
+      .insert(bibliothequeFichierTable)
+      .values({
+        collectiviteId,
+        hash: buildRandomDocumentHash(),
+        filename: 'test-preuve.pdf',
+        confidentiel: false,
+      })
+      .returning();
+
+    return fichier.id;
+  };
+
+  const addFichierForAnotherCollectivite = async (): Promise<number> => {
+    const { collectivite: autreCollectivite, cleanup } =
+      await addTestCollectivite(databaseService);
+    onTestFinished(cleanup);
+
+    return addFichier(autreCollectivite.id);
+  };
+
+  const getDeletedFichierId = async (): Promise<number> => {
+    const fichierId = await addFichier(collectivite.id);
+    await databaseService.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.id, fichierId));
+
+    return fichierId;
+  };
+
+  test('refuse un fichier appartenant à une autre collectivité que celle de la demande', async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input } = await createValidInput();
+    const fichierId = await addFichierForAnotherCollectivite();
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        fichierId,
+      })
+    ).rejects.toThrowError(
+      'Aucun fichier trouvé dans la bibliothèque de la collectivité de cette demande.'
+    );
+  });
+
+  test("refuse un fichier qui n'existe pas", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input } = await createValidInput();
+    const fichierId = await getDeletedFichierId();
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        fichierId,
+      })
+    ).rejects.toThrowError(
+      'Aucun fichier trouvé dans la bibliothèque de la collectivité de cette demande.'
+    );
   });
 
   const validerAudit = async (auditId: number): Promise<void> => {

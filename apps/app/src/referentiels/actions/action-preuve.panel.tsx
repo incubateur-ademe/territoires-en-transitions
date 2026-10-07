@@ -1,14 +1,15 @@
-import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
-import {
-  TActionDef,
-  usePreuvesParType,
-} from '@/app/referentiels/preuves/usePreuves';
+import { appLabels } from '@/app/labels/catalog';
+import { useListDocumentsMesure } from '@/app/collectivites/documents/data/use-list-documents-mesure';
+import { ActionDocuments } from '@/app/collectivites/documents/action-documents.view';
+import { ActionIdentity } from './use-list-actions';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Alert } from '@tet/ui';
 import { ComponentPropsWithoutRef } from 'react';
 
-export interface TActionPreuvePanelProps
-  extends ComponentPropsWithoutRef<'div'> {
+interface TActionPreuvePanelProps extends ComponentPropsWithoutRef<'div'> {
   /** Identifiant de l'action ou de la sous-action concernée */
-  action: TActionDef;
+  action: ActionIdentity;
   /** indique si les preuves associées aux sous-actions sont également chargées */
   withSubActions?: boolean;
   /** indique si l'avertissement "toutes les preuves ajoutées seront
@@ -16,8 +17,6 @@ export interface TActionPreuvePanelProps
   showWarning?: boolean;
   /** indique si l'identifiant de l'action doit être masqué */
   hideIdentifier?: boolean;
-  /** désactive le fetch si renseigné */
-  disableFetch?: boolean;
   /** Affichage sur une colonne pour les preuves dans le panneau latéral */
   displayInPanel?: boolean;
 }
@@ -31,22 +30,30 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     withSubActions,
     showWarning,
     hideIdentifier,
-    disableFetch,
     displayInPanel,
     ...otherProps
   } = props;
-  const { reglementaire, complementaire } = usePreuvesParType({
-    action,
+  const collectiviteId = useCollectiviteId();
+  const documents = useListDocumentsMesure({
+    collectiviteId,
+    actionId: action.actionId,
     withSubActions,
-    disabled: disableFetch,
   });
 
+  if (documents.status === 'loading') {
+    return <SpinnerLoader className="m-auto" />;
+  }
+
+  if (documents.status === 'error') {
+    return <Alert state="error" title={appLabels.erreurChargementDocuments} />;
+  }
+
   return (
-    <PreuvesAction
+    <ActionDocuments
       action={action}
       withSubActions={withSubActions}
-      reglementaires={reglementaire || []}
-      complementaires={complementaire || []}
+      attendus={documents.attendus}
+      complementaires={documents.complementaires}
       showWarning={showWarning}
       hideIdentifier={hideIdentifier}
       displayInPanel={displayInPanel}

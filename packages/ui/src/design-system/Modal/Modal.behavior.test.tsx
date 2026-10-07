@@ -194,3 +194,22 @@ describe('Modal — scrollableContent', () => {
     );
   });
 });
+
+describe('Modal — zIndex', () => {
+  /**
+   * L'overlay porte le z-index. Le prop est resté déclaré et documenté sans
+   * jamais être appliqué : deux modales ouvertes ensemble n'avaient alors aucun
+   * moyen de se départager, et c'était la dernière ouverte qui passait devant.
+   */
+  const overlay = () => screen.getByRole('dialog').parentElement;
+
+  it('empile la modale au niveau du design system par défaut', () => {
+    render(<Modal title="Titre" openState={openState()} />);
+    expect(overlay()).toHaveStyle({ zIndex: '1000' });
+  });
+
+  it('applique le z-index demandé', () => {
+    render(<Modal title="Titre" zIndex={998} openState={openState()} />);
+    expect(overlay()).toHaveStyle({ zIndex: '998' });
+  });
+});

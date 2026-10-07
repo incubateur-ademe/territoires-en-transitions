@@ -3,6 +3,7 @@ import {
   indicateurDefinitionSchema,
   indicateurDefinitionSchemaTiny,
 } from '../definitions/indicateur-definition.schema';
+import { indicateurPeriodiciteSchema } from '../definitions/indicateur-periodicite.schema';
 import { indicateurSourceMetadonneeSchema } from '../shared/indicateur-source-metadonnee.schema';
 import { indicateurSourceSchema } from '../shared/indicateur-source.schema';
 
@@ -11,6 +12,7 @@ export const indicateurValeurSchema = z.object({
   collectiviteId: z.number(),
   indicateurId: z.number(),
   dateValeur: z.string(),
+  periodicite: indicateurPeriodiciteSchema,
   metadonneeId: z.nullable(z.number()),
   resultat: z.nullable(z.number()),
   resultatCommentaire: z.nullable(z.string()),
@@ -29,6 +31,7 @@ export type IndicateurValeur = z.infer<typeof indicateurValeurSchema>;
 
 export const indicateurValeurSchemaCreate = z.partial(indicateurValeurSchema, {
   id: true,
+  periodicite: true,
   metadonneeId: true,
   resultat: true,
   resultatCommentaire: true,
@@ -52,6 +55,7 @@ export const indicateurValeurGroupeeSchema = z.object({
     id: true,
     collectiviteId: true,
     dateValeur: true,
+    periodicite: true,
   }).shape,
 
   ...z.pick(indicateurValeurSchemaCreate, {
@@ -95,6 +99,18 @@ export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
   indicateurIdentifiant?: string | null;
   sourceId?: string | null;
 };
+
+export const indicateurValeurAvecMetadonnesDefinitionSchema = z.object({
+  indicateurValeur: indicateurValeurSchema,
+  indicateurDefinition: z.nullable(indicateurDefinitionSchema),
+  indicateurSourceMetadonnee: z.nullable(indicateurSourceMetadonneeSchema),
+  confidentiel: z.nullish(z.boolean()),
+});
+
+export type IndicateurValeurAvecMetadonnesDefinition = z.infer<
+  typeof indicateurValeurAvecMetadonnesDefinitionSchema
+>;
+
 export type IndicateurAvecValeurs = z.infer<typeof indicateurAvecValeursSchema>;
 export type IndicateurValeursGroupeeParSource = z.infer<
   typeof indicateurValeursGroupeeParSourceSchema

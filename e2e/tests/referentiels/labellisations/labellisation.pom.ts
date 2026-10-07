@@ -20,6 +20,7 @@ export class LabellisationPom {
   readonly cloturerAuditEngagementCheckbox: Locator;
   readonly cloturerAuditObjetField: Locator;
   readonly cloturerAuditFileInput: Locator;
+  readonly cloturerAuditRattachementErrorToast: Locator;
   readonly cloturerAuditUploadingCard: Locator;
   readonly documentsPom: DocumentsPom;
 
@@ -33,6 +34,9 @@ export class LabellisationPom {
     this.cloturerAuditButton = page.getByRole('button', {
       name: "Clôturer l'audit",
     });
+    this.cloturerAuditRattachementErrorToast = page.getByText(
+      "Fichier téléversé mais non rattaché à l'audit, veuillez réessayer"
+    );
     this.cloturerAuditModal = page.getByRole('dialog');
     this.cloturerAuditModalTitle = page.getByRole('heading', {
       name: "Clôturer l'audit",

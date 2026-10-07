@@ -2,46 +2,26 @@ import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
   importerPlanUrl,
+  makeCollectiviteActionsDeReferenceUrl,
   makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
+  makeDemandesAvisUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { CollectiviteCurrent } from '@tet/api/collectivites';
-import {
-  getReferentielDisplayMap,
-  ReferentielDisplayMap,
-} from '@tet/domain/collectivites';
-import {
-  hasRole,
-  isUserVisitor,
-  PlatformRole,
-  UserWithRolesAndPermissions,
-} from '@tet/domain/users';
-import {
-  HeaderProps,
-  isNavDropdown,
-  NavDropdown,
-  NavItem,
-  NavLink,
-} from '@tet/ui';
+import { getReferentielDisplayMap } from '@tet/domain/collectivites';
+import { isTypeInstructeur } from '@tet/domain/demarches';
+import { hasRole, isUserVisitor, PlatformRole } from '@tet/domain/users';
+import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateEdlDropdown } from './generate-edl-dropdown';
 import { generateIndicateursDropdown } from './generate-indicateurs-dropdown';
 import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown';
 import { generateTdbLink } from './generate-tdb-dropdown';
 
-type AddtionalProps = {
-  isVisible?: boolean;
-};
-
-export type CollectiviteNavLink = NavLink & AddtionalProps;
-
-type CollectiviteNavDropdown = NavDropdown &
-  AddtionalProps & {
-    links: CollectiviteNavLink[];
-  };
-
-export type CollectiviteNavItem = CollectiviteNavLink | CollectiviteNavDropdown;
+import type {
+  CollectiviteNavItem,
+  MakeCollectiviteNav,
+} from './make-collectivite-nav.contract';
 
 export const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
   const { isVisible, ...rest } = item;
@@ -61,22 +41,27 @@ export const filterNavItems = (
     )
     .map(cleanButtonProps);
 
-export const makeCollectiviteNav = ({
+export const makeCollectiviteNav: MakeCollectiviteNav = ({
   user,
   currentCollectivite,
   referentielDisplay,
   isDemarchePcaetEnabled,
-}: {
-  user: UserWithRolesAndPermissions;
-  currentCollectivite: CollectiviteCurrent;
-  referentielDisplay?: ReferentielDisplayMap;
-  isDemarchePcaetEnabled: boolean;
-}): HeaderProps['mainNav'] => {
+}) => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
+  const isSuperAdmin = hasRole(user, PlatformRole.SUPER_ADMIN);
+  /**
+   * Membre de cette collectivité, au sens strict du layout d'instruction — un
+   * super-admin qui n'en est pas membre n'y accède pas davantage, la nav ne doit
+   * donc pas le lui proposer.
+   */
+  const estMembreCollectivite = user.collectivites.some(
+    (acces) => acces.collectiviteId === collectiviteId
+  );
 
   const startItems: (CollectiviteNavItem | null)[] = [
     generateTdbLink({
+      user,
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
@@ -100,10 +85,35 @@ export const makeCollectiviteNav = ({
         getReferentielDisplayMap(
           currentCollectivite.collectivitePreferences.referentiels
         ),
+      // `mode` par référentiel : sert à suffixer "(archivé)" dans la nav.
+      // Non pertinent quand l'affichage est forcé (feature flag TE désactivé).
+      referentielsPreferences: referentielDisplay
+        ? undefined
+        : currentCollectivite.collectivitePreferences.referentiels,
+      isDemarchePcaetEnabled,
     }),
     {
-      isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
-      children: appLabels.superAdmin,
+      isVisible: isSuperAdmin,
+      children: appLabels.actionsDeReference,
+      href: makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
+    },
+    {
+      // Une collectivité qui instruit sans être un service déconcentré — le
+      // conseil régional — garde cette nav et atteint l'instruction par ici.
+      // Une DREAL ou une DDT n'a pas cette nav du tout.
+      //
+      // L'appartenance est reprise telle quelle du layout d'instruction, qui
+      // refuse les non-membres : le type de collectivité ne suffit pas, sinon le
+      // lien mènerait un visiteur droit sur une page d'erreur.
+      isVisible:
+        estMembreCollectivite &&
+        isTypeInstructeur(currentCollectivite.collectiviteType),
+      children: appLabels.instructionTitre,
+      href: makeDemandesAvisUrl({ collectiviteId }),
+    },
+    {
+      isVisible: isSuperAdmin,
+      children: appLabels.roleSuperAdmin,
       links: [
         {
           children: appLabels.importerUnPlan,
@@ -137,7 +147,6 @@ export const makeCollectiviteNav = ({
     generateCollectiviteNavItem({
       user,
       currentCollectivite,
-      isDemarchePcaetEnabled,
     }),
   ];
 

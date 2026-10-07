@@ -5,7 +5,7 @@ import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-
 import { ficheActionLibreTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, inArray, or, sql } from 'drizzle-orm';
@@ -30,15 +30,21 @@ export class BulkEditService {
     private readonly notificationsFicheService: NotifyPiloteService
   ) {}
 
-  async bulkEdit(request: BulkEditRequest, user: AuthUser): Promise<void> {
+  async bulkEdit(
+    request: BulkEditRequest,
+    user: AuthenticatedUser
+  ): Promise<void> {
     const filters =
       request.ficheIds === 'all'
         ? request.filters
         : { ficheIds: request.ficheIds };
-    const currentFiches = await this.listFichesService.getFichesActionResumes({
-      collectiviteId: request.collectiviteId,
-      filters,
-    });
+    const currentFiches = await this.listFichesService.getFichesActionResumes(
+      {
+        collectiviteId: request.collectiviteId,
+        filters,
+      },
+      { user }
+    );
     const actualFicheIds = currentFiches.data.map((fiche) => fiche.id);
 
     const { ficheIds, ...params } = request;
@@ -68,10 +74,13 @@ export class BulkEditService {
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );
         const { data: fiches } =
-          await this.listFichesService.getFichesActionResumes({
-            collectiviteId: c.collectiviteId,
-            filters: { ficheIds: c.ficheIds },
-          });
+          await this.listFichesService.getFichesActionResumes(
+            {
+              collectiviteId: c.collectiviteId,
+              filters: { ficheIds: c.ficheIds },
+            },
+            { user }
+          );
         // TODO: Optimize by avoid checking each fiche independently
         const ficheSharingsChecks = fiches.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(
@@ -120,6 +129,7 @@ export class BulkEditService {
               ficheId,
               tagId: pilote.tagId ?? null,
               userId: pilote.userId ?? null,
+              createdBy: user.id,
             }));
           });
 
@@ -189,6 +199,7 @@ export class BulkEditService {
               ficheId,
               tagId: referent.tagId ?? null,
               userId: referent.userId ?? null,
+              createdBy: user.id,
             }));
           });
 
@@ -267,7 +278,8 @@ export class BulkEditService {
         {
           collectiviteId: request.collectiviteId,
           filters,
-        }
+        },
+        { user }
       );
 
       // prépare les paires de fiches (avant/après)

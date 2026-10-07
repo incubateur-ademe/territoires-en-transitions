@@ -1,7 +1,8 @@
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { appLabels } from '@/app/labels/catalog';
 import { Financeur } from '@tet/domain/plans';
@@ -16,7 +17,12 @@ import { FinanceurNameCell } from './financeur-name.cell';
 import { DraftFinanceurRowFormValues, FinanceurRowFormValues } from './types';
 import { useDraftFinanceurs } from './use-draft-financeurs';
 
-const columnHelper = createColumnHelper<Financeur | Partial<Financeur>>();
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<
+  typeof features,
+  Financeur | Partial<Financeur>
+>();
 
 export const FinanceursTable = () => {
   const { fiche, isReadonly, financeurs: financeursState } = useFicheContext();
@@ -70,7 +76,9 @@ export const FinanceursTable = () => {
     () => [
       columnHelper.display({
         id: 'financeur',
-        header: () => <TableHeaderCell title={appLabels.financeurs} className="w-3/6" />,
+        header: () => (
+          <TableHeaderCell title={appLabels.financeurs} className="w-3/6" />
+        ),
         cell: () => (
           <FinanceurNameCell
             fiche={fiche}
@@ -107,7 +115,8 @@ export const FinanceursTable = () => {
     [fiche, usedFinanceurIds, handleDeleteFinanceur]
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: tableData,
     getRowId: (row) => {
@@ -115,7 +124,6 @@ export const FinanceursTable = () => {
         ? (row.draftId as string)
         : `${row.financeurTagId}`;
     },
-    getCoreRowModel: getCoreRowModel(),
   });
 
   const isEmpty = tableData.length === 0;

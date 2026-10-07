@@ -3,7 +3,7 @@ import { Statut } from '@tet/domain/plans';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
-export const statusToVariant: Record<Statut | 'Sans statut', ColorVariant> = {
+const statusToVariant: Record<Statut | 'Sans statut', ColorVariant> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',

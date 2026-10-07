@@ -1,5 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
-import { SujetDemande, SujetDemandeEnum } from '@tet/domain/referentiels';
+import {
+  AuditTypeOption,
+  SujetDemande,
+  SujetDemandeEnum,
+} from '@tet/domain/referentiels';
 import { RadioButton } from '@tet/ui';
 import { ReactNode } from 'react';
 
@@ -10,8 +14,18 @@ const auditTypeLabels: Record<SujetDemande, string> = {
   [SujetDemandeEnum.LABELLISATION]: appLabels.demarrerAuditTypeLabellisation,
 };
 
+const toAuditTypeMessage = (option: AuditTypeOption): string | undefined => {
+  if (!option.isRequestable) {
+    return appLabels.renseignerCriteresPourDemande;
+  }
+  if (option.sujet === SujetDemandeEnum.LABELLISATION_COT) {
+    return `* ${appLabels.demarrerAuditCotAvecLabellisationMessage}`;
+  }
+  return undefined;
+};
+
 type AuditTypeFieldProps = {
-  options: SujetDemande[];
+  options: readonly AuditTypeOption[];
   value: SujetDemande | null;
   onChange: (sujet: SujetDemande) => void;
 };
@@ -26,19 +40,16 @@ export const AuditTypeField = ({
       <legend className="mb-2 p-0 font-medium text-primary-9">
         {appLabels.demarrerAuditChoixType}
       </legend>
-      {options.map((sujet) => (
+      {options.map((option) => (
         <RadioButton
-          key={sujet}
+          key={option.sujet}
           name="audit-type"
-          value={sujet}
-          checked={value === sujet}
-          onChange={() => onChange(sujet)}
-          label={auditTypeLabels[sujet]}
-          message={
-            sujet === SujetDemandeEnum.LABELLISATION_COT
-              ? `* ${appLabels.demarrerAuditCotAvecLabellisationMessage}`
-              : undefined
-          }
+          value={option.sujet}
+          checked={value === option.sujet}
+          disabled={!option.isRequestable}
+          onChange={() => onChange(option.sujet)}
+          label={auditTypeLabels[option.sujet]}
+          message={toAuditTypeMessage(option)}
         />
       ))}
     </fieldset>

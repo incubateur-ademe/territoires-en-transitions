@@ -142,8 +142,8 @@ describe('import-personnalisation-question.controller', () => {
     );
     expect(question).toMatchObject({
       id: 'EP_1',
-      thematiqueId: 'patrimoine',
-      ordonnancement: 1,
+      thematiqueId: 'loger',
+      ordonnancement: 5,
       typesCollectivitesConcernees: null,
       type: 'choix',
       description: '',

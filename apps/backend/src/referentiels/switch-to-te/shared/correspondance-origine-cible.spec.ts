@@ -1,15 +1,16 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import {
+  ActionTypeEnum,
   ReferentielIdEnum,
   type ActionScore,
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { type ActionCible } from './action-cible';
-import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 import {
   buildCorrespondanceIndexes,
   resolveCiblesTeDepuisOrigine,
 } from './correspondance-origine-cible';
+import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 
 const hierarchies = hierarchiesByReferentielIdForTests;
 
@@ -39,9 +40,13 @@ const createCible = (
   overrides: Partial<ActionCible> & Pick<ActionCible, 'actionId'>
 ): ActionCible => ({
   actionId: overrides.actionId,
+  actionType: overrides.actionType ?? ActionTypeEnum.SOUS_ACTION,
   actionsOrigine: overrides.actionsOrigine ?? [],
   originesConcernees: overrides.originesConcernees ?? [],
+  originesCommentaire: overrides.originesCommentaire ?? [],
   concernee: overrides.concernee ?? true,
+  aDesTachesEnfant: overrides.aDesTachesEnfant ?? false,
+  hasExprScore: overrides.hasExprScore ?? false,
 });
 
 describe('buildCorrespondanceIndexes', () => {

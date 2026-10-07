@@ -14,28 +14,55 @@ runs:
   using: composite
 
   steps:
-      - name: Stop/remove previous instance if exists
-        shell: bash
-        run: |
-          docker stop ${{ inputs.container }} || true
-          docker rm ${{ inputs.container }} || true
+    - name: Stop/remove previous instance if exists
+      shell: bash
+      run: |
+        docker stop ${{ inputs.container }} || true
+        docker rm ${{ inputs.container }} || true
 
-      - name: Start redis
-        shell: bash
-        run: >
-          docker run
-          --detach
-          --name ${{ inputs.container }}
-          --publish 6379:6379
-          --network ${{ inputs.network }}
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-          redis
+    - name: Ensure Docker network exists
+      shell: bash
+      run: |
+        docker network inspect ${{ inputs.network }} >/dev/null 2>&1 \
+          || docker network create ${{ inputs.network }} >/dev/null
 
-      - name: Export env
-        shell: bash
-        run: |
-          echo "QUEUE_REDIS_HOST=localhost" >> $GITHUB_ENV
-          echo "QUEUE_REDIS_PORT=6379" >> $GITHUB_ENV
+    - name: Start redis
+      shell: bash
+      run: >
+        docker run
+        --detach
+        --name ${{ inputs.container }}
+        --publish 6379:6379
+        --network ${{ inputs.network }}
+        --health-cmd "redis-cli ping"
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 5
+        redis
+
+    - name: Wait for redis health
+      shell: bash
+      run: |
+        for attempt in {1..30}; do
+          health="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}unknown{{end}}' ${{ inputs.container }})"
+          if [[ "$health" == 'healthy' ]]; then
+            exit 0
+          fi
+
+          if [[ "$health" == 'unhealthy' ]]; then
+            echo 'Redis container reported unhealthy status' >&2
+            break
+          fi
+
+          sleep 2
+        done
+
+        docker logs ${{ inputs.container }} || true
+        echo 'Redis did not become healthy in time' >&2
+        exit 1
+
+    - name: Export env
+      shell: bash
+      run: |
+        echo "QUEUE_REDIS_HOST=localhost" >> $GITHUB_ENV
+        echo "QUEUE_REDIS_PORT=6379" >> $GITHUB_ENV

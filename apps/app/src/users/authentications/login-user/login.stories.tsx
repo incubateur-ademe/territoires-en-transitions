@@ -1,6 +1,6 @@
-import { action } from 'storybook/actions';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 import { Login } from './login';
 import { LoginProps, LoginView } from './type';
 
@@ -22,6 +22,10 @@ const meta: Meta<typeof Login> = {
     getPasswordStrength: (...args) => {
       action('getPasswordStrength')(...args);
       return null;
+    },
+    isScoreStrongEnough: (...args) => {
+      action('isScoreStrongEnough')(...args);
+      return true;
     },
     defaultValues: { email: 'yolo@dodo.com', otp: '' },
   },

@@ -52,6 +52,35 @@ export const JOBS_CONFIG = [
     cronExpression: CronExpression.EVERY_MINUTE,
     data: {},
   },
+  {
+    // Une fois par nuit : la validation du dernier avis clôt le dossier sur le
+    // moment, cette passe n'est là que pour les dossiers restés sans avis
+    // jusqu'à l'échéance — un délai légal de plusieurs mois, insensible à la
+    // latence. Elle rattrape aussi les bascules manquées (statut revenu en
+    // arrière, échec au moment de la validation).
+    name: 'clore-instructions-pcaet',
+    cronExpression: CronExpression.EVERY_DAY_AT_MIDNIGHT,
+    data: {},
+  },
+  {
+    // Re-sync quotidien complet du group type PostHog "collectivite" à partir de
+    // la table `collectivite`.
+    name: 'posthog-collectivites-group-sync',
+    cronExpression: CronExpression.EVERY_DAY_AT_2AM,
+    data: {},
+  },
+  {
+    // Le 1er janvier à 4 h. `CronExpression` n'a pas de valeur annuelle, d'où
+    // l'expression littérale — comme les jobs CRM.
+    //
+    // La source BANATIC est publiée une fois par an et les périmètres des EPCI
+    // à fiscalité propre bougent peu ; le calcul dure une trentaine de secondes
+    // sur la queue partagée, ce qui décale d'autant le `send-notifications` de
+    // la minute concernée, une fois l'an.
+    name: 'import-perimetres-epci',
+    cronExpression: '0 4 1 1 *',
+    data: {},
+  },
   ...CRM_SYNC_JOBS_CONFIG,
 ] as const;
 

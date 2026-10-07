@@ -49,10 +49,13 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   'plans.fiches.update',
   'plans.fiches.bulk_update',
   'plans.fiches.delete',
+  'plans.fiches.import',
   'indicateurs.indicateurs.create',
   'indicateurs.indicateurs.update',
   'indicateurs.indicateurs.delete',
   'indicateurs.valeurs.mutate',
+  'indicateurs.vues.read',
+  'indicateurs.vues.mutate',
   'demarches.pcaet.mutate',
 ];
 
@@ -60,6 +63,7 @@ const collectiviteAdminPermissions: readonly PermissionOperation[] = [
   ...collectiviteEditionPermissions,
 
   'collectivites.membres.mutate',
+  'collectivites.pertinence-leviers.mutate',
 ];
 
 export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
@@ -70,7 +74,9 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     ...collectiviteAdminPermissions,
 
     'collectivites.mutate',
-    'plans.fiches.import',
+    'plans.fiches.import_in_parallel',
+    'referentiels.labellisations.mutate_documents',
+    'shared.actions-de-reference.mutate',
     'utils.banner.mutate',
   ],
   [PlatformRole.ADEME]: [
@@ -81,7 +87,10 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'indicateurs.indicateurs.read_confidentiel',
     'indicateurs.valeurs.read_confidentiel',
   ],
-  [CollectiviteRole.LECTURE]: [...collectiviteLecturePermissions],
+  [CollectiviteRole.LECTURE]: [
+    ...collectiviteLecturePermissions,
+    'indicateurs.vues.read',
+  ],
   [CollectiviteRole.EDITION]: [...collectiviteEditionPermissions],
   [CollectiviteRole.ADMIN]: [...collectiviteAdminPermissions],
   [CollectiviteRole.EDITION_FICHES_INDICATEURS]: [
@@ -92,6 +101,8 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'plans.fiches.update_piloted_by_me',
     'indicateurs.indicateurs.update_piloted_by_me',
     'indicateurs.valeurs.mutate_piloted_by_me',
+    'indicateurs.vues.read',
+    'indicateurs.vues.mutate',
 
     'collectivites.tags.mutate',
     'collectivites.documents.mutate',

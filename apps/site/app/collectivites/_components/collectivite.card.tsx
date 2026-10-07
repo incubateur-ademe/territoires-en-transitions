@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 import { GreyStar, RedStar } from '@/site/components/labellisation/Star';
-import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
+import { StrapiMedia } from '@/site/src/strapi/types';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { Badge } from '@tet/ui';
 
@@ -16,7 +16,7 @@ export type CollectiviteCardProps = {
   type: string | null;
   etoilesCAE: number;
   etoilesECI: number;
-  cover: StrapiItem;
+  cover: StrapiMedia | null;
   siren: string | null;
 };
 
@@ -38,11 +38,15 @@ const CollectiviteCard = ({
       href={`/collectivites/${siren}/${convertNameToSlug(nom)}`}
     >
       <div className="relative w-full">
-        <ImageStrapi
-          strapiImage={cover}
-          size="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
-          imgClassName="w-full object-cover aspect-[5/2] lg:aspect-[3/1]"
-        />
+        {cover ? (
+          <StrapiImage
+            media={cover}
+            sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
+            className="w-full object-cover aspect-[5/2] lg:aspect-[3/1]"
+          />
+        ) : (
+          <div className="w-full aspect-[5/2] lg:aspect-[3/1] bg-grey-1" />
+        )}
         <div className="absolute -bottom-3 right-6 flex gap-4">
           {population && (
             <Badge

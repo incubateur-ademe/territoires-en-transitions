@@ -2,10 +2,18 @@ import { Test } from '@nestjs/testing';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
+  CollectiviteNatureType,
+  CollectiviteResume,
+  collectiviteTypeEnum,
+} from '@tet/domain/collectivites';
+import {
   getIndicateurTrajectoireForValueInput,
+  IndicateurPeriodiciteEnum,
   IndicateurValeur,
+  VerificationTrajectoireStatus,
 } from '@tet/domain/indicateurs';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { AuthUser } from '../../users/models/auth.models';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
@@ -21,11 +29,14 @@ describe('TrajectoiresDataService test', () => {
     })
       .useMocker((token) => {
         // Pour l'instant on ne mocke pas ces services précisemment
-        if (
+        if (token === PermissionService) {
+          return {
+            assertAllowed: vi.fn().mockResolvedValue(undefined),
+          };
+        } else if (
           token === CollectivitesService ||
           token === IndicateurSourcesService ||
           token === CrudValeursService ||
-          token === PermissionService ||
           token === ListCollectivitesService
         ) {
           return {};
@@ -47,6 +58,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640644,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2013-01-01',
           metadonneeId: 4,
           resultat: 9.94,
@@ -65,6 +77,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640645,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2014-01-01',
           metadonneeId: 4,
           resultat: 7.39,
@@ -83,6 +96,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640646,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2016-01-01',
           metadonneeId: 4,
           resultat: 7.47,
@@ -101,6 +115,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640647,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2017-01-01',
           metadonneeId: 4,
           resultat: 7.48,
@@ -138,6 +153,7 @@ describe('TrajectoiresDataService test', () => {
           id: 651923,
           collectiviteId: 3903,
           indicateurId: 360,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2005-01-01',
           metadonneeId: 5,
           resultat: 0,
@@ -156,6 +172,7 @@ describe('TrajectoiresDataService test', () => {
           id: 651924,
           collectiviteId: 3903,
           indicateurId: 360,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2017-01-01',
           metadonneeId: 5,
           resultat: 0,
@@ -174,6 +191,7 @@ describe('TrajectoiresDataService test', () => {
           id: 651925,
           collectiviteId: 3903,
           indicateurId: 360,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2018-01-01',
           metadonneeId: 5,
           resultat: 0,
@@ -213,6 +231,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640644,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2013-01-01',
           metadonneeId: 4,
           resultat: 9.94,
@@ -231,6 +250,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640645,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2014-01-01',
           metadonneeId: 4,
           resultat: 7.39,
@@ -249,6 +269,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640646,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2016-01-01',
           metadonneeId: 4,
           resultat: 7.47,
@@ -267,6 +288,7 @@ describe('TrajectoiresDataService test', () => {
           id: 640647,
           collectiviteId: 3894,
           indicateurId: 304,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
           dateValeur: '2017-01-01',
           metadonneeId: 4,
           resultat: 7.48,
@@ -430,6 +452,48 @@ describe('TrajectoiresDataService test', () => {
         const engineIds = trajectoiresDataService[engineIdsField].flat();
 
         expect(new Set(inputIds)).toEqual(new Set(engineIds));
+      }
+    );
+  });
+
+  describe('verificationDonneesSnbc', () => {
+    const toCollectivite = (
+      natureInsee: CollectiviteNatureType
+    ): CollectiviteResume => ({
+      id: 42,
+      nom: "Territoire d'énergie Loire-Atlantique (TE44)",
+      siren: '200014926',
+      communeCode: null,
+      natureInsee,
+      type: collectiviteTypeEnum.EPCI,
+      activeCOT: false,
+    });
+
+    it.each<CollectiviteNatureType>([
+      'SMF',
+      'SMO',
+      'SIVU',
+      'SIVOM',
+      'POLEM',
+      'PETR',
+      'EPT',
+    ])(
+      'refuse le calcul pour un syndicat de nature %s enregistré avec le type epci',
+      async (natureInsee) => {
+        const collectivite = toCollectivite(natureInsee);
+
+        const verificationResult =
+          await trajectoiresDataService.verificationDonneesSnbc({
+            request: { collectiviteId: collectivite.id },
+            tokenInfo: {} as AuthUser,
+            epci: collectivite,
+          });
+
+        expect(verificationResult).toEqual({
+          status: VerificationTrajectoireStatus.SYNDICAT_NON_SUPPORTE,
+          donneesEntree: null,
+          epci: collectivite,
+        });
       }
     );
   });

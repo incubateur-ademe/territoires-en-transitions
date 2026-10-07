@@ -22,7 +22,10 @@ import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.tabl
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  servicesDeconcentresTypes,
+} from '@tet/domain/collectivites';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
@@ -348,7 +351,15 @@ export default class RecherchesService {
                                                           } IS true)
                    AND c.${collectiviteTable.type.name} != '${
       collectiviteTypeEnum.TEST
-    }'`;
+    }'
+                   AND c.${collectiviteTable.type.name} NOT IN (${
+      // Une DREAL, une DDT, une DR ADEME, un service national sont des lignes
+      // `collectivite` sans en être : pas de territoire, pas de référentiel,
+      // pas de plan. Elles n'ont rien à faire dans un annuaire de collectivités,
+      // et leurs scores y seraient vides. Le conseil régional, lui, reste : il
+      // instruit sans cesser d'être une collectivité de plein exercice.
+      servicesDeconcentresTypes.map((type) => `'${type}'`).join(', ')
+    })`;
 
     // Add conditions
     // Condition collectivite name

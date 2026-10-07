@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { matchesActionOrDescendant } from '@tet/backend/referentiels/action-or-descendant.utils';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -87,7 +88,9 @@ export class DiscussionQueryService {
 
     if (filters?.actionId) {
       // In order to find all sub actions, we need to use a like query with a wildcard
-      conditions.push(like(discussionTable.actionId, `${filters.actionId}%`));
+      conditions.push(
+        matchesActionOrDescendant(discussionTable.actionId, filters.actionId)
+      );
     }
 
     const query = this.databaseService.db

@@ -3,6 +3,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
@@ -22,10 +23,12 @@ export class ListAxesService {
 
   async listAxes(
     input: ListAxesInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<ListAxesOutput, ListAxesError>> {
-    const permissionResult = await this.checkPermission(input.collectiviteId, user);
+    const permissionResult = await this.checkPermission(
+      input.collectiviteId,
+      user
+    );
     if (!permissionResult) {
       return {
         success: false,
@@ -38,20 +41,50 @@ export class ListAxesService {
 
   async listAxesRecursively(
     input: ListAxesInput,
-    user?: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<PlanNode[], ListAxesError>> {
-    if (user) {
-      const permissionResult = await this.checkPermission(input.collectiviteId, user);
-      if (!permissionResult) {
-        return {
-          success: false,
-          error: ListAxesErrorEnum.UNAUTHORIZED,
-        };
-      }
+    const permissionResult = await this.checkPermission(
+      input.collectiviteId,
+      user
+    );
+    if (!permissionResult) {
+      return {
+        success: false,
+        error: ListAxesErrorEnum.UNAUTHORIZED,
+      };
     }
 
-    return this.listAxesRepository.listChildrenRecursively(input, tx);
+    const canReadFichesRestreintes = await this.canReadFichesRestreintes({
+      collectiviteId: input.collectiviteId,
+      user,
+      tx,
+    });
+
+    return this.listAxesRepository.listChildrenRecursively(
+      input,
+      { includeFichesRestreintes: canReadFichesRestreintes },
+      tx
+    );
+  }
+
+  private async canReadFichesRestreintes({
+    collectiviteId,
+    user,
+    tx,
+  }: {
+    collectiviteId: number;
+    user: AuthenticatedUser;
+    tx?: Transaction;
+  }): Promise<boolean> {
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      'plans.fiches.read_confidentiel',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId },
+      tx
+    );
+
+    return permissionResult.success;
   }
 
   private async checkPermission(

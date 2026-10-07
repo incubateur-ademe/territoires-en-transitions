@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
@@ -86,7 +87,7 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
             await copyFile(sourceFilePath, capturedZipPath);
             return { success: true, data: { key } };
           },
-          createDocumentSignedUrl: async () => ({
+          createSignedDownloadUrl: async () => ({
             success: true,
             data: { signedUrl: 'https://fake.test/archive.zip' },
           }),
@@ -192,19 +193,19 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: `hash-mesure-${collectivite.id}`,
+          hash: buildRandomDocumentHash(),
           filename: 'preuve-mesure.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: `hash-demande-${collectivite.id}`,
+          hash: buildRandomDocumentHash(),
           filename: 'rapport-demande.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: `hash-audit-${collectivite.id}`,
+          hash: buildRandomDocumentHash(),
           filename: 'rapport-audit.pdf',
           confidentiel: false,
         },

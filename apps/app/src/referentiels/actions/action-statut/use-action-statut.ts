@@ -25,9 +25,6 @@ export const useSaveActionStatuts = () => {
       onSuccess: async () => {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: ['action_statut', collectiviteId],
-          }),
-          queryClient.invalidateQueries({
             queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey(
               {
                 collectiviteId,
@@ -73,7 +70,7 @@ export const useSaveActionStatuts = () => {
  * Call once at the table/page level, then use `isActionStatutEditDisabled`
  * per row with the action's `score.desactive` value.
  */
-export const useActionStatutEditContext = () => {
+const useActionStatutEditContext = () => {
   const { hasReferentielPermission, collectiviteId } = useCurrentCollectivite();
   const referentielId = useReferentielId();
   const { parcours } = useLabellisationParcours({
@@ -90,11 +87,9 @@ export const useActionStatutEditContext = () => {
   return { parcoursStatus: parcours?.status, isAuditeur, hasPermission };
 };
 
-export type ActionStatutEditContext = ReturnType<
-  typeof useActionStatutEditContext
->;
+type ActionStatutEditContext = ReturnType<typeof useActionStatutEditContext>;
 
-export function isActionStatutEditDisabled(
+function isActionStatutEditDisabled(
   ctx: ActionStatutEditContext,
   desactive: boolean
 ): boolean {

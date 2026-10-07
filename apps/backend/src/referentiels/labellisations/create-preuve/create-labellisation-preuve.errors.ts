@@ -10,6 +10,7 @@ import {
 const specificErrors = [
   'UNAUTHORIZED',
   'DEMANDE_NOT_FOUND',
+  'FICHIER_NOT_FOUND',
   'LABELLISATION_IN_PROGRESS',
   'DATABASE_ERROR',
   ...referentielModeGuardSpecificErrors,
@@ -28,6 +29,11 @@ export const createLabellisationPreuveErrorConfig: TrpcErrorHandlerConfig<Specif
         code: 'BAD_REQUEST',
         message:
           'Aucune demande de labellisation trouvée pour cette collectivité et ce référentiel.',
+      },
+      FICHIER_NOT_FOUND: {
+        code: 'BAD_REQUEST',
+        message:
+          'Aucun fichier trouvé dans la bibliothèque de la collectivité de cette demande.',
       },
       LABELLISATION_IN_PROGRESS: {
         code: 'BAD_REQUEST',

@@ -33,11 +33,13 @@ export const DeleteBudgetButton = ({
         <BaseUpdateFicheModal
           fiche={fiche}
           title={appLabels.supprimerBudget}
-          subTitle={appLabels.budgetAnnee({ year })}
+          subTitle={`${appLabels.ficheBudget} ${year}`}
           openState={{ isOpen, setIsOpen }}
           render={() => (
             <div>
-              <p className="mb-0">{appLabels.supprimerBudgetDescription}</p>
+              <p className="mb-0">
+                {appLabels.ficheSupprimerBudgetDescription}
+              </p>
             </div>
           )}
           renderFooter={({ close }) => (

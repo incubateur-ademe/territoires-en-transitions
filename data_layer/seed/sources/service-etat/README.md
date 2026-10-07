@@ -1,0 +1,160 @@
+# Services de l'État — source de l'import
+
+Les services instructeurs du dépôt PCAET : DREAL, DDT, DR ADEME, services
+nationaux, plus le SIREN des conseils régionaux. Ces CSV sont **la source**, lue
+par `data_layer/scripts/generate_service_etat.py`.
+
+## Provenance
+
+Classeur `ListeServices.xlsx` remis par l'ADEME le 2026-09-02 (pièce jointe de la
+carte Notion TETH-13), converti en CSV le 2026-09-04. Le classeur d'origine reste
+dans Notion : il n'a pas sa place ici, `seed.sh` ne charge que des `*.sql` et un
+xlsx ne se relit pas dans un diff.
+
+## Mettre à jour la liste
+
+Corriger le CSV concerné, puis :
+
+```bash
+make seeds_rebuild_from_source   # regénère le SQL, ne touche pas la base
+git diff data_layer/seed/imports
+```
+
+Le générateur refuse toute anomalie plutôt que de réécrire un SQL douteux : code
+géographique inconnu, SIREN mal formé, doublon sur une clé, SIREN inactif au
+répertoire SIRENE. Mieux vaut un seed daté qu'un seed corrompu.
+
+Le SQL généré est **idempotent** et sert deux fois : `seed.sh` le charge sur une base
+neuve, et un change sqitch porte le même corps pour les bases déjà peuplées
+(staging, production). Deux fichiers, donc deux changes :
+`09-service_etat.sql` par `collectivite/service_etat_import`, et
+`10-service_etat_perimetre_secondaire.sql` par `collectivite/perimetre_secondaire`.
+Ils sont séparés parce que le premier change était déjà déployé quand la table des
+périmètres est arrivée : réunis, ils feraient échouer les migrations d'une base
+neuve, où le change antérieur les jouerait avant que la table existe.
+
+## Les fichiers
+
+| Fichier | Lignes | Devient | Apparié par |
+|---|---|---|---|
+| `ddt.csv` | 92 | `collectivite` type `ddt` | `departement_code` |
+| `dreal.csv` | 18 | type `dreal` | `region_code` |
+| `dr-ademe.csv` | 18 | **17** lignes type `dr_ademe` + 1 périmètre secondaire | `region_code` |
+| `service-national.csv` | 2 | type `service_national` | `nom` |
+| `conseil-regional.csv` | 18 | **update** des `type='region'` existants | `region_code` |
+
+## Les correspondants, eux, ne sont pas ici
+
+Les listes de correspondants — les personnes à rattacher à chaque service —
+**ne sont pas versionnées**. Ce dépôt est public, et ce sont des adresses
+nominatives d'agents.
+
+Le fichier reçu du métier se dépose dans `contacts/` à la racine du dépôt, que
+le `.gitignore` couvre, et l'import se lance depuis un poste : voir
+[le README du script](../../../../apps/tools/src/migrations/import-correspondants-service-etat/README.md).
+
+Le format, en revanche, se documente ici puisqu'il prolonge celui des services.
+Un seul en-tête sert les six familles :
+
+```csv
+type;region_code;departement_code;siret;nom;email;role
+dreal;53;;;DREAL Bretagne;prenom.nom@developpement-durable.gouv.fr;
+ddt;;035;;DDT Ille-et-Vilaine;prenom.nom@ille-et-vilaine.gouv.fr;
+service_national;;;12008701000068;DGEC;prenom.nom@developpement-durable.gouv.fr;lecture
+```
+
+Le `type` dit quelle colonne fait la clé : `region_code` pour une DREAL, une DR
+ADEME ou un conseil régional, `departement_code` pour une DDT, `siret` pour un
+service national. Les autres colonnes clés restent vides ; une ligne qui en
+remplit deux est refusée plutôt que devinée. `nom` sert au contrôle de
+relecture, `role` vide vaut `admin`.
+
+Importer une famille de plus ne coûte donc rien d'autre que déposer son CSV et
+relancer le script.
+
+### Une direction sur deux régions
+
+`dr-ademe.csv` liste dix-huit lignes pour dix-sept directions : l'Océan Indien y
+figure deux fois, une fois par région couverte (La Réunion et Mayotte), avec le
+même nom et le même SIRET.
+
+L'import n'en fait qu'**une** ligne `collectivite`. La première région rencontrée
+devient son périmètre principal, la seconde une ligne de
+`collectivite_perimetre_secondaire`. L'index unique ne portant que sur la région,
+la base tolérerait deux lignes — mais ce serait deux fois le même service : deux
+destinataires pour une transmission, et un SIRET qui ne désigne plus un service en
+particulier, donc un rattachement automatique par ProConnect incapable de trancher.
+
+Le générateur refuse deux dénominations sous un même SIRET : un SIRET est un
+établissement, et deux noms signeraient une erreur de source plutôt qu'un service à
+deux périmètres.
+
+### La colonne `nom_anterieur` de `service-national.csv`
+
+`service_national` est la seule famille appariée sur le nom : elle n'a pas de code
+géographique — c'est précisément ce qui fait son périmètre national — et donc aucun
+index unique sur quoi s'appuyer.
+
+Conséquence : une ligne posée avant cet import sous une forme courte n'est pas
+reconnue sous sa dénomination officielle, et l'import en créerait une seconde. La
+colonne `nom_anterieur` déclare ce nom-là pour que la ligne soit **adoptée** — nom
+aligné, SIREN et NIC renseignés — au lieu d'être doublée. Elle ne vise que les
+lignes encore sans SIREN : un service déjà identifié au répertoire SIRENE n'est
+jamais renommé.
+
+Un seul cas aujourd'hui : le « DGEC » du seed de développement. La colonne reste
+vide pour l'ADEME.
+
+## NIC
+
+Le NIC (numéro interne de classement, 5 chiffres) complète le SIREN pour former le
+SIRET, et c'est lui qui distingue deux services partageant un SIREN — sans quoi le
+rattachement automatique par ProConnect ne peut pas trancher.
+
+- `dr-ademe.csv` et `service-national.csv` portent un **SIRET** : le NIC en est
+  extrait directement. Les DR ADEME partagent le SIREN 385290309 de l'ADEME, seul
+  le NIC les sépare — le NIC ne doit donc **jamais** être cherché ailleurs pour elles
+  (le siège du SIREN 385290309 est Angers, il vaudrait pour toutes).
+- `ddt.csv`, `dreal.csv` et `conseil-regional.csv` ne portent qu'un **SIREN** : le
+  générateur récupère le NIC du siège auprès de `recherche-entreprises.api.gouv.fr`.
+
+Quand un service compte plusieurs implantations, le classeur les liste en
+« Implantation 1..3 » ; c'est la première, le siège de la direction, qui est retenue.
+
+Une fois l'import joué, un SIRET désigne un service et un seul — c'est l'invariant
+que vérifie le `verify` de `collectivite/perimetre_secondaire`, et ce sur quoi
+s'appuie le rattachement automatique.
+
+## Lignes du classeur écartées (11)
+
+Le générateur les rejetterait de toute façon ; elles sont sorties dès la conversion
+pour que les CSV ne contiennent que des services.
+
+| Onglet | Ligne | Motif |
+|---|---|---|
+| DDT | 75, 92, 93, 94 | « Regroupement au sein de la DRIEAT Île-de-France » — pas un service, une note |
+| DDT | 971, 972, 973, 974, 976 | « Regroupement avec la DREAL au sein de la DEAL » — idem |
+| DDT | 975 (DTAM Saint-Pierre-et-Miquelon) | Le département `975` n'existe pas dans `imports.departement` : aucune collectivité TeT n'est dans son périmètre, la DTAM n'aurait rien à instruire. Sa case « Code Région » est d'ailleurs vide. |
+| DR ADEME | « ADEME », sans code région | Doublon exact de la ligne ADEME de l'onglet « Service national ». Une DR ADEME exige un code région. |
+
+## Corrections orthographiques appliquées à la conversion
+
+Le classeur portait des fautes évidentes, corrigées ici plutôt que dans le
+générateur — une correction se relit dans un diff, pas dans une table de
+substitution.
+
+- 15 × `de L'Environnement` → `de l'Environnement` (majuscule parasite)
+- 18 × `l'Amenagement` → `l'Aménagement`
+- 15 × `(Dreal)` → `(DREAL)`, 3 × `(Deal)` → `(DEAL)`
+- Mayotte : apostrophes typographiques `’` → `'`, comme les 17 autres lignes
+- espaces de bord et espaces doubles, dans les libellés comme dans les adresses
+
+Les libellés sont sinon **repris bruts**, sans forme courte dérivée : c'est la
+dénomination officielle du service qui fait foi.
+
+## Codes région
+
+Le classeur stocke les codes de région d'outre-mer en numérique (`1`, `2`, `3`, `4`,
+`6`) ; TeT les écrit sur deux caractères (`01`, `02`, `03`, `04`, `06`, cf.
+`imports.region` et `collectivite.region_code` en `varchar(2)`). Les CSV portent la
+forme TeT.

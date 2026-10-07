@@ -20,20 +20,20 @@ export class GenerateReportsRouter {
   router = this.trpc.router({
     create: this.trpc.authedProcedure
       .input(generateReportInputSchema)
-      .mutation(async ({ input, ctx }) => {
+      .mutation(async ({ input, ctx: { user } }) => {
         const result =
           await this.generateReportsApplicationService.createPendingPlanReportGeneration(
             input,
-            ctx.user
+            { user }
           );
         return this.getResultDataOrThrowError(result);
       }),
     get: this.trpc.authedProcedure
       .input(z.object({ reportId: z.string() }))
-      .query(async ({ input, ctx }) => {
+      .query(async ({ input, ctx: { user } }) => {
         const result = await this.generateReportsApplicationService.get(
           input.reportId,
-          ctx.user
+          { user }
         );
         return this.getResultDataOrThrowError(result);
       }),

@@ -1,8 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Icon, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 
 type FicheCompletionStatusProps = {
   completion?: Completion;
@@ -13,7 +13,7 @@ const DISPLAYED_LABELS: Partial<Record<keyof Fiche, string>> = {
   titre: appLabels.completionTitre,
   description: appLabels.completionDescription,
   statut: appLabels.completionStatut,
-  pilotes: appLabels.completionPilote,
+  pilotes: appLabels.pilote(),
 };
 
 const getFieldLabel = (field: keyof Fiche & string) => {

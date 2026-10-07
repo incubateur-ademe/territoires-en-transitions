@@ -2,9 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  DEMARCHE_PCAET_ACTIVE_STATUSES,
+  DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
   type DemarchePcaetObligation,
+  type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
 import { and, eq, inArray } from 'drizzle-orm';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
@@ -15,6 +16,10 @@ export type InsertDemarchePcaetValues = {
   description: string;
   obligation?: DemarchePcaetObligation;
   launchedAt: string | null;
+  /** Calculé par le domaine : l'élaboration, ou d'emblée la finalisation. */
+  status: DemarchePcaetStatus;
+  transmittedOffPlatform: boolean;
+  isScotAec: boolean;
 };
 
 @Injectable()
@@ -33,7 +38,7 @@ export class CreateDemarchePcaetRepository {
         and(
           eq(demarcheTable.collectiviteId, collectiviteId),
           eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
-          inArray(demarcheTable.status, [...DEMARCHE_PCAET_ACTIVE_STATUSES])
+          inArray(demarcheTable.status, [...DEMARCHE_PCAET_EN_COURS_STATUSES])
         )
       )
       .limit(1);
@@ -60,6 +65,9 @@ export class CreateDemarchePcaetRepository {
           description: values.description,
           obligation: values.obligation,
           launchedAt: values.launchedAt,
+          status: values.status,
+          transmittedOffPlatform: values.transmittedOffPlatform,
+          isScotAec: values.isScotAec,
           createdBy: userId,
           modifiedBy: userId,
         })
@@ -67,8 +75,8 @@ export class CreateDemarchePcaetRepository {
       return success(inserted);
     } catch (error) {
       // Course entre deux créations : l'index unique partiel
-      // demarche_pcaet_active_unique tranche en dernier ressort.
-      if (String(error).includes('demarche_pcaet_active_unique')) {
+      // demarche_active_unique tranche en dernier ressort.
+      if (String(error).includes('demarche_active_unique')) {
         return failure('DEMARCHE_EN_COURS_EXISTANTE');
       }
       this.logger.error(

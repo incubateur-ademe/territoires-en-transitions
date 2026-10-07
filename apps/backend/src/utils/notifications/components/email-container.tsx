@@ -1,8 +1,10 @@
 import {
   Body,
+  Column,
   Container,
   Html,
   Img,
+  Row,
   Tailwind,
   pixelBasedPreset,
 } from '@react-email/components';
@@ -31,9 +33,15 @@ export const EmailContainer = ({ children }: { children: React.ReactNode }) => {
         })}
       >
         <Body className="bg-grey-2 text-grey-10 font-sans text-sm">
-          <Container className="bg-white px-8 py-4">
-            <Img src={URL_BANNIERE} alt="BanniereTET" width="100%" />
-            {children}
+          <Container className="bg-white">
+            {/* Padding sur une cellule : Gmail, Outlook et nombre de webmails
+                ignorent celui posé sur une <table>, dont celle du Container. */}
+            <Row>
+              <Column className="px-8 py-4">
+                <Img src={URL_BANNIERE} alt="BanniereTET" width="100%" />
+                {children}
+              </Column>
+            </Row>
           </Container>
         </Body>
       </Tailwind>

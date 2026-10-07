@@ -1,15 +1,21 @@
+import { toDocumentHash } from '@tet/domain/collectivites';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
-import type { PreuvesByOrigin, PreuvesSource } from '../list-audit-preuves/list-audit-preuves.service';
+import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
 import type {
-  CollectedFilePreuve,
-  CollectedLinkPreuve,
-} from '../list-audit-preuves/collect-preuves.repository';
+  CollectedFile,
+  CollectedLink,
+  CollectedDocuments,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
 import {
   generateArchiveFolderArborescence,
   type GenerateArchiveFolderArborescenceInput,
   type ReferentielTreeNode,
 } from './generate-archive-folder-arborescence';
+
+const HASH_1 = toDocumentHash('1'.repeat(64));
+const HASH_PURGE = toDocumentHash('2'.repeat(64));
+const HASH_WITHOUT_FILENAME = toDocumentHash('3'.repeat(64));
 
 const referentielTree: ReferentielTreeNode = {
   actionId: 'cae',
@@ -59,11 +65,11 @@ const referentielTree: ReferentielTreeNode = {
 };
 
 function makeFile(
-  overrides: Partial<CollectedFilePreuve> = {}
-): CollectedFilePreuve {
+  overrides: Partial<CollectedFile> = {}
+): CollectedFile {
   return {
     bucketId: 'bucket-1',
-    hash: 'hash-1',
+    hash: HASH_1,
     filename: 'doc.pdf',
     filesize: 1024,
     actionId: null,
@@ -72,8 +78,8 @@ function makeFile(
 }
 
 function makeLink(
-  overrides: Partial<CollectedLinkPreuve> = {}
-): CollectedLinkPreuve {
+  overrides: Partial<CollectedLink> = {}
+): CollectedLink {
   return {
     url: 'https://example.org',
     titre: 'Un lien',
@@ -83,17 +89,18 @@ function makeLink(
   };
 }
 
-const empty: PreuvesSource = { files: [], links: [] };
+const empty: CollectedDocuments = { files: [], missingFiles: [], links: [] };
 
 function buildInput(
-  preuves: Partial<PreuvesByOrigin> = {}
+  preuves: Partial<
+    Record<keyof PreuvesByOrigin, Partial<CollectedDocuments>>
+  > = {}
 ): GenerateArchiveFolderArborescenceInput {
   return {
     preuves: {
-      mesure: empty,
-      demande: empty,
-      audit: empty,
-      ...preuves,
+      mesure: { ...empty, ...preuves.mesure },
+      demande: { ...empty, ...preuves.demande },
+      audit: { ...empty, ...preuves.audit },
     },
     referentielTree,
   };
@@ -122,7 +129,7 @@ describe('generateArchiveFolderArborescence', () => {
         ],
         filename: 'a.pdf',
         bucketId: 'bucket-1',
-        hash: 'hash-1',
+        hash: HASH_1,
         filesize: 1024,
       },
     ]);
@@ -175,17 +182,65 @@ describe('generateArchiveFolderArborescence', () => {
     ]);
   });
 
-  it('ignore un fichier trop volumineux et le consigne', () => {
+  it('consigne un fichier absent du stockage dans le dossier de sa mesure', () => {
+    const result = generateArchiveFolderArborescence(
+      buildInput({
+        mesure: {
+          missingFiles: [
+            {
+              hash: HASH_PURGE,
+              filename: 'avis-technique.pdf',
+              actionId: 'cae_1.1.1',
+            },
+          ],
+        },
+      })
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files).toEqual([]);
+    expect(result.data.skippedFiles).toEqual([
+      {
+        filename: 'avis-technique.pdf',
+        emplacement: 'mesures/1 Axe un/1.1 Sous-axe un/1.1.1 Mesure un',
+        raison: 'Fichier introuvable dans le stockage',
+      },
+    ]);
+  });
+
+  it('consigne un fichier absent du stockage sans filename sous son hash', () => {
+    const result = generateArchiveFolderArborescence(
+      buildInput({
+        audit: {
+          missingFiles: [
+            { hash: HASH_WITHOUT_FILENAME, filename: null, actionId: null },
+          ],
+        },
+      })
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.skippedFiles).toEqual([
+      {
+        filename: HASH_WITHOUT_FILENAME,
+        emplacement: 'cycle-labellisation/audit',
+        raison: 'Fichier introuvable dans le stockage',
+      },
+    ]);
+  });
+
+  it('nomme un fichier sans filename par son hash', () => {
     const result = generateArchiveFolderArborescence(
       buildInput({
         mesure: {
           files: [
             makeFile({
               actionId: 'cae_1.1.1',
-              filename: 'gros.zip',
-              filesize: 200 * 1024 * 1024,
+              filename: null,
+              hash: HASH_WITHOUT_FILENAME,
             }),
-            makeFile({ actionId: 'cae_1.1.1', filename: 'ok.pdf' }),
           ],
           links: [],
         },
@@ -194,15 +249,10 @@ describe('generateArchiveFolderArborescence', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.files.map((file) => file.filename)).toEqual(['ok.pdf']);
-    expect(result.data.skippedFiles).toHaveLength(1);
-    expect(result.data.skippedFiles[0]).toMatchObject({
-      filename: 'gros.zip',
-      emplacement: 'mesures/1 Axe un/1.1 Sous-axe un/1.1.1 Mesure un',
-    });
+    expect(result.data.files[0].filename).toBe(HASH_WITHOUT_FILENAME);
   });
 
-  it('ignore un fichier introuvable dans le stockage', () => {
+  it('ignore un fichier dont la taille est inconnue', () => {
     const result = generateArchiveFolderArborescence(
       buildInput({
         mesure: {
@@ -223,7 +273,7 @@ describe('generateArchiveFolderArborescence', () => {
     expect(result.data.files).toEqual([]);
     expect(result.data.skippedFiles[0]).toMatchObject({
       filename: 'sans-taille.pdf',
-      raison: 'Fichier introuvable dans le stockage',
+      raison: 'Taille du fichier inconnue',
     });
   });
 
@@ -287,14 +337,14 @@ describe('generateArchiveFolderArborescence', () => {
           '1.1 Sous-axe un',
           '1.1.1 Mesure un',
         ],
-        liens: [
+        links: [
           { titre: 'Lien A', url: 'https://example.org', commentaire: '' },
           { titre: 'Lien B', url: 'https://example.org', commentaire: '' },
         ],
       },
       {
         folderSegments: ['cycle-labellisation', 'audit'],
-        liens: [
+        links: [
           {
             titre: 'Lien audit',
             url: 'https://example.org',

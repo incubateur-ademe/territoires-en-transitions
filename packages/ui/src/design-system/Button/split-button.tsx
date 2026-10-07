@@ -1,0 +1,87 @@
+import { Placement } from '@floating-ui/react';
+
+import { uiLabels } from '../../labels/catalog';
+import { cn } from '../../utils/cn';
+import { Button } from './Button';
+import { ButtonMenu, MenuAction } from './button-menu';
+import { ButtonProps, ButtonVariant } from './types';
+
+/**
+ * Séparation entre les deux moitiés, sur les variantes dont la bordure se
+ * confond avec le fond. Les variantes détourées (`outlined`, `grey`) ont déjà
+ * un trait visible : leurs bordures se superposent, rien à ajouter.
+ */
+const dividerClassnames: Partial<Record<ButtonVariant, string>> = {
+  primary: 'border-l-primary-7 hover:!border-l-primary-6',
+  secondary: 'border-l-secondary-2 hover:!border-l-secondary-1',
+  white: 'border-l-grey-3 hover:!border-l-grey-3',
+};
+
+/**
+ * Bordure du menu, reprise de celle du bouton : le menu prolonge le bouton, il
+ * n'a pas à retomber sur le trait gris du menu par défaut. Les variantes sans
+ * bordure visible (`white`, `underlined`, `link`, `unstyled`) gardent ce trait, seule
+ * l'ombre détachant alors le menu du fond.
+ */
+const menuBorderClassnames: Partial<Record<ButtonVariant, string>> = {
+  primary: 'border-primary-9',
+  secondary: 'border-secondary-1',
+  outlined: 'border-primary-9',
+  grey: 'border-grey-4',
+};
+
+type Props = {
+  /** Actions secondaires, rangées derrière la flèche. */
+  menuActions: MenuAction[];
+  /** Placement du menu par rapport au bouton, `bottom-end` par défaut. */
+  menuPlacement?: Placement;
+  /** `data-test` de la flèche — l'action principale reçoit `dataTest`. */
+  menuDataTest?: string;
+} & ButtonProps;
+
+/**
+ * Bouton scindé : l'action principale reste à un clic, les actions secondaires
+ * se rangent derrière la flèche. À préférer au `ButtonMenu` quand une action
+ * domine nettement les autres, sinon la principale coûterait deux gestes.
+ */
+export const SplitButton = ({
+  menuActions,
+  menuPlacement,
+  menuDataTest,
+  className,
+  ...props
+}: Props) => {
+  const { variant = 'primary', size = 'md', disabled } = props;
+
+  return (
+    // `items-stretch` : le bouton-icône a son propre padding (`p-2.5` en `sm`
+    // là où la moitié texte fait `py-2.5`), il serait plus court de quelques
+    // pixels s'il ne s'alignait pas sur la hauteur de l'action principale.
+    <div className={cn('flex w-fit items-stretch', className)}>
+      <Button {...props} className="rounded-r-none" />
+      <ButtonMenu
+        variant={variant}
+        size={size}
+        disabled={disabled}
+        icon="arrow-down-s-line"
+        aria-label={uiLabels.autresActions}
+        dataTest={menuDataTest}
+        // `-ml-px` : les deux bordures adjacentes se superposent au lieu de
+        // dessiner un trait de 2px.
+        className={cn('-ml-px rounded-l-none', dividerClassnames[variant])}
+        // Le menu prolonge le bouton : même bordure, écart resserré, et des
+        // items calés sur la même taille — sinon une action secondaire pèse
+        // plus lourd que la principale.
+        menu={{
+          actions: menuActions,
+          placement: menuPlacement,
+          itemSize: size,
+          offset: 4,
+          className: cn(menuBorderClassnames[variant], {
+            'p-1': size === 'xs',
+          }),
+        }}
+      />
+    </div>
+  );
+};

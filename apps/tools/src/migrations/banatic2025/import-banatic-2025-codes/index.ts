@@ -13,8 +13,8 @@
 
 import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { z } from 'zod';
-import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../csv';
-import { getDatabase } from '../db';
+import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../../shared/csv';
+import { getDatabase } from '../../shared/db';
 
 const codeCompetenceSchema = z
   .string()

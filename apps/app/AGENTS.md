@@ -9,7 +9,9 @@ Next.js 16 (App Router) admin dashboard for collectivites's users.
 - Route groups: `app/(authed)/` wraps the user + collectivité providers; `app/(public)/` does not. Nested `(acces-restreint)/` enforces visitor-gate checks.
 - `page.tsx` and `layout.tsx` are intentionally thin (server components by default). Delegate to a `*.view.tsx` in `src/` that carries `'use client'` if needed. Only ~17% of files are client components — keep it that way.
 - `src/` is organised **by domain, not by file type**: `src/plans/`, `src/referentiels/`, `src/indicateurs/`, `src/collectivites/`, `src/users/`, `src/shared/`, `src/labels/`, `src/utils/`, `src/ui/`. Inside a feature folder, React Query hooks live in a `data/` subfolder.
-- `src/` is organised as `domain/subdomain/feature/` with component-type file suffixes: `*.view.tsx`, `*.form.tsx`, `*.table.tsx`, etc (non-exhaustive).
+- `src/` is organised as `domain/subdomain/feature/` with component-type file suffixes: `*.view.tsx`, `*.form.tsx`, `*.table.tsx`, `*.alert.tsx`, etc (non-exhaustive).
+- Frontend files should use kebab-case and keep the suffix aligned with their responsibility/component kind (`documents.view.tsx`, `duplicated-document.alert.tsx`).
+- Keep established domain entities in French (`preuve`, `fiche`, `collectivite`, `referentiel`), but name technical/helper concepts in English (`duplicatedDocument`, `queryKey`, `mutationOptions`).
 
 ## Data fetching & mutations
 
@@ -23,9 +25,11 @@ Next.js 16 (App Router) admin dashboard for collectivites's users.
 **Never call `toast.success(...)` / `toast.error(...)` inside a mutation.** A global subscriber listens to every mutation status change and renders the toast. Configure messages via React Query's `meta`:
 
 ```ts
-useMutation(trpc.x.y.mutationOptions({
-  meta: { success: 'Plan enregistré', error: 'Échec de l\'enregistrement' },
-}));
+useMutation(
+  trpc.x.y.mutationOptions({
+    meta: { success: 'Plan enregistré', error: "Échec de l'enregistrement" },
+  })
+);
 ```
 
 `meta` accepts `success`, `error`, `disableToast`, `autoHideDuration`. Default fallbacks come from `appLabels.mutationSuccess` / `appLabels.mutationError`. See `src/utils/toast/use-mutation-toast.tsx` + `src/utils/react-query/use-mutation-cache-subscriber.tsx`.
@@ -73,10 +77,47 @@ useMutation(trpc.x.y.mutationOptions({
 
 ## Copy & i18n
 
-- The app is **French-only**. All user-facing strings live in `src/labels/catalog.ts` (`appLabels`, 1640 lines, imported by 300+ files).
-- Function-keys for interpolation: `erreurPartageMessageCrash({ crashId })`. French pluralisation via `countedPlural` / `plural` from `@tet/ui/labels/plural`.
-- Always add new strings to `appLabels` instead of inlining them. Inline French strings in existing components are tech debt. **Exception:** Zod error messages.
-- `<html lang="fr" translate="no">` is set in the root layout.
+The app is **French-only**. `<html lang="fr" translate="no">` is set in the root layout.
+
+`src/labels/catalog.ts` is the **only public entry point** (`appLabels`). It spreads domain files.
+
+UI code always `import { appLabels } from '@/app/labels/catalog'`. Do not import domain files from components. Local maps (`filters/labels.ts`, `acteurs/labels.ts`) are fine if they only point at `appLabels`. `@tet/ui` has its own catalog — do not mix the two.
+
+### 1. No inline French in components
+
+Buttons, placeholders, titles, tooltips, toast `meta` and visible copy go through `appLabels`. Inline French in existing components is tech debt. **Exception:** Zod error messages.
+
+ESLint: `react/jsx-no-literals` (error) blocks string children in JSX. `tet/no-hardcoded-ui-copy` (warn) flags string literals on UI props. Off for `src/labels/**`, stories, fixtures, and specs.
+
+### 2. New strings go in the domain file, not `catalog.ts`
+
+Do not add new keys to `catalog.ts` unless they truly have no domain. Check for an existing key first. `catalog.ts` still holds leftover keys (démarches, labellisation, toasts…) — extract them with the recipe below rather than growing it.
+
+### 3. Key families share a prefix
+
+camelCase. Domain terms stay in French (`fiche`, `mesure`, `collectivite`). Interpolation = typed function.
+
+### 4. Pluralisation: only `plural` from `@tet/ui/labels/plural`
+
+`countedPlural` is gone.
+
+```ts
+indicateur: plural({
+  one: 'indicateur',
+  other: 'indicateurs',
+  // zero: 'Aucun indicateur', // optional, returned as-is for count === 0
+}),
+```
+
+Titles that need a capital: `capitalize` from the same module — `capitalize(appLabels.personnePilote({ plural: true }))`.
+
+### Extracting a leftover string
+
+1. Find the hardcoded French (or the key still sitting in `catalog.ts`).
+2. Search the `*.labels.ts` files for an existing key.
+3. If none, add it to the right domain file, with `plural` when it inflects.
+4. Replace usages in the component, unit tests, and e2e POMs.
+5. Do not duplicate the key in `catalog.ts` — the spread already exposes it.
 
 ## Testing
 
@@ -93,7 +134,7 @@ useMutation(trpc.x.y.mutationOptions({
 
 ## Notable utilities
 
-- `src/labels/catalog.ts` — all UI copy.
+- `src/labels/catalog.ts` — public `appLabels` entry (spreads `*.labels.ts` domain files).
 - `src/app/paths.ts` — URL builders.
 - `src/utils/toast/` — toast context + mutation subscriber.
 - `src/utils/error/error.page.tsx` + `error.card.tsx` — error UI + Sentry capture (handles `TRPCClientErrorLike`).

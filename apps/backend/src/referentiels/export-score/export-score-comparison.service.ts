@@ -6,12 +6,14 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { Workbook } from 'exceljs';
+import { buildPersonnalisationRows } from './build-personnalisation-rows';
 import { buildRows } from './build-rows';
 import {
   ExportScoreComparisonError,
   ExportScoreComparisonErrorEnum,
 } from './export-score-comparison.errors';
 import { LoadScoreComparisonService } from './load-score-comparison.service';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 
 @Injectable()
 export class ExportScoreComparisonService {
@@ -24,7 +26,8 @@ export class ExportScoreComparisonService {
   async exportComparisonScore(
     collectiviteId: number,
     referentielId: ReferentielId,
-    query: ExportScoreComparisonRequestQuery
+    query: ExportScoreComparisonRequestQuery,
+    { user }: { user: AuthUser }
   ): Promise<
     Result<{ fileName: string; content: Buffer }, ExportScoreComparisonError>
   > {
@@ -38,7 +41,8 @@ export class ExportScoreComparisonService {
       await this.loadScoreComparisonService.loadScoreComparison(
         collectiviteId,
         referentielId,
-        query
+        query,
+        { user }
       );
     if (!scoreComparisonResult.success) {
       return scoreComparisonResult;
@@ -53,6 +57,10 @@ export class ExportScoreComparisonService {
 
       if (exportFormat === 'csv') {
         sanitizeWorksheetForCsvExport(worksheet);
+      } else {
+        // la feuille "Personnalisation" n'est ajoutée que pour le format excel
+        const personnalisationSheet = workbook.addWorksheet('Personnalisation');
+        buildPersonnalisationRows(scoreComparisonData, personnalisationSheet);
       }
 
       const buffer =

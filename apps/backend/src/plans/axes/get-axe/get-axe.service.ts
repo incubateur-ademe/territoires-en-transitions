@@ -4,6 +4,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
 import { AxeLight } from '@tet/domain/plans';
@@ -25,8 +26,7 @@ export class GetAxeService {
 
   async getAxe(
     input: GetAxeInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<GetAxeOutput, GetAxeError>> {
     const executeInTransaction = async (
       transaction: Transaction
@@ -81,8 +81,7 @@ export class GetAxeService {
 
   async getAxesChemins(
     axeIds: number[],
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<Record<number, AxeLight[]>, GetAxeError>> {
     if (axeIds.length === 0) {
       return { success: true, data: {} };

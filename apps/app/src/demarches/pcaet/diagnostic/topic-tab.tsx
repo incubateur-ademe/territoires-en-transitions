@@ -1,54 +1,38 @@
 'use client';
 
-import { Icon } from '@tet/ui';
-import { cn } from '@tet/ui/utils/cn';
+import { TabsTab } from '@tet/ui/design-system/TabsNext/index';
 import { JSX } from 'react';
-import type { DemarchePcaetTopic } from '@tet/domain/demarches';
-import { DemarcheCompletionBadge } from '../../components/completion.badge';
+import { getDemarcheCompletionBadgeProps } from '../../components/completion.badge';
+import type { DemarcheCompletionStatut } from '../../types';
+import type { DiagnosticTab } from './diagnostic.tabs.utils';
 
 type TopicTabProps = {
-  topic: DemarchePcaetTopic;
+  tab: DiagnosticTab;
   isActive: boolean;
-  isComplete: boolean;
+  statut: DemarcheCompletionStatut;
   onSelect: () => void;
 };
 
+/**
+ * Volet du diagnostic, rendu avec la variante `card` des onglets : le volet
+ * sélectionné vient du paramètre `?topic=`, l'onglet est donc un bouton et non
+ * un lien.
+ */
 export const TopicTab = ({
-  topic,
+  tab,
   isActive,
-  isComplete,
+  statut,
   onSelect,
 }: TopicTabProps): JSX.Element => (
-  <li role="presentation" className="p-0">
-    <button
-      type="button"
-      role="tab"
-      id={`demarche-topic-tab-${topic.code}`}
-      aria-selected={isActive}
-      aria-controls={`demarche-topic-panel-${topic.code}`}
-      onClick={onSelect}
-      className={cn(
-        'group flex h-full w-full flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors cursor-pointer',
-        isActive
-          ? 'border-primary-7 bg-primary-0 border-2'
-          : 'border-grey-3 hover:border-primary-5 hover:bg-primary-0'
-      )}
-      data-test={`demarches.pcaet.diagnostic.topic-${topic.code}`}
-    >
-      <span
-        className={cn(
-          'flex h-8 w-8 items-center justify-center rounded-full',
-          isComplete
-            ? 'bg-success-2 text-success-9'
-            : 'bg-primary-1 text-primary-9'
-        )}
-      >
-        <Icon icon={topic.icon} size="md" />
-      </span>
-      <span className="text-sm font-semibold text-primary-9">
-        {topic.label}
-      </span>
-      <DemarcheCompletionBadge isComplete={isComplete} size="xs" />
-    </button>
-  </li>
+  <TabsTab
+    id={`demarche-topic-tab-${tab.code}`}
+    dataTest={`demarches.pcaet.diagnostic.topic-${tab.code}`}
+    label={tab.label}
+    icon={tab.icon}
+    isActive={isActive}
+    onClick={onSelect}
+    // L'icône du volet est juste au-dessus : la répéter dans le badge déborde
+    // dès que la sidebar est dépliée.
+    badge={getDemarcheCompletionBadgeProps(statut, { withIcon: false })}
+  />
 );

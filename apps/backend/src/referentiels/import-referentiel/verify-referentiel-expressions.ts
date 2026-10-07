@@ -1,13 +1,9 @@
 import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
+import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collectivites/personnalisations/services/verify-personnalisation-expression-references';
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
-import {
-  CollectiviteLocalisationTypeEnum,
-  CollectivitePopulationTypeEnum,
-  CollectiviteSousTypeEnum,
-  CollectiviteTypeEnum,
-  regleTypeEnumValues,
-} from '@tet/domain/collectivites';
+import { regleTypeEnumValues } from '@tet/domain/collectivites';
 import { ActionQuestion, ReferentielId } from '@tet/domain/referentiels';
+import { upperFirst } from 'es-toolkit';
 import { ImportActionDefinition } from './import-action-definition.dto';
 import {
   ExpressionToVerify,
@@ -15,33 +11,15 @@ import {
   IndicateurDefinitionForVerification,
   IndicateurReference,
   ParseExpression,
-  PersonnalisationExpressionReferences,
   QuestionForVerification,
   VerifyReferentielExpressionsInput,
 } from './verify-referentiel-expressions.types';
-
-const ALLOWED_IDENTITY_VALUES_BY_FIELD: Record<string, string[]> = {
-  type: Object.values(CollectiviteTypeEnum).map((value) => value.toLowerCase()),
-  soustype: Object.values(CollectiviteSousTypeEnum).map((value) =>
-    value.toLowerCase()
-  ),
-  population: Object.values(CollectivitePopulationTypeEnum).map((value) =>
-    value.toLowerCase()
-  ),
-  localisation: Object.values(CollectiviteLocalisationTypeEnum).map((value) =>
-    value.toLowerCase()
-  ),
-  dans_aire_urbaine: ['oui', 'non'],
-};
 
 const REGLE_TYPE_LABELS: Record<string, string> = {
   score: 'score',
   desactivation: 'désactivation',
   reduction: 'réduction',
 };
-
-const LEGACY_TYPE_SYNDICAT_VALUE =
-  CollectiviteSousTypeEnum.SYNDICAT.toLowerCase();
 
 function getRuleTypeLabel(ruleType: string): string {
   return REGLE_TYPE_LABELS[ruleType] ?? ruleType;
@@ -230,161 +208,10 @@ function buildCibleLimiteReferences(
   };
 }
 
-function verifyQuestionReference(
-  reference: { questionId: string; valeur?: string },
-  questions: QuestionForVerification[],
-  actionId: string,
-  ruleType: string
-): string | null {
-  const question = questions.find((q) => q.id === reference.questionId);
-  if (!question) {
-    return `La question "${
-      reference.questionId
-    }" utilisée dans l'expression de ${getRuleTypeLabel(
-      ruleType
-    )} de l'action ${actionId} n'existe pas`;
-  }
-
-  if (reference.valeur === undefined) return null;
-
-  const valeur = reference.valeur;
-
-  switch (question.type) {
-    case 'binaire': {
-      if (['OUI', 'NON'].includes(valeur.toUpperCase())) return null;
-      return `La valeur "${valeur}" pour la question "${
-        reference.questionId
-      }" (type binaire) dans l'expression de ${getRuleTypeLabel(
-        ruleType
-      )} de l'action ${actionId} n'est pas valide. Valeurs autorisées : OUI, NON`;
-    }
-    case 'choix': {
-      const validChoiceIds = question.choix?.map((choice) => choice.id) ?? [];
-      if (validChoiceIds.includes(valeur)) return null;
-      const allowedValues = validChoiceIds.length
-        ? `. Valeurs autorisées : ${validChoiceIds.join(', ')}`
-        : '';
-      return `La valeur "${valeur}" pour la question "${
-        reference.questionId
-      }" (type choix) dans l'expression de ${getRuleTypeLabel(
-        ruleType
-      )} de l'action ${actionId} n'est pas valide${allowedValues}`;
-    }
-    case 'proportion':
-      return `La valeur "${valeur}" pour la question "${
-        reference.questionId
-      }" (type proportion) dans l'expression de ${getRuleTypeLabel(
-        ruleType
-      )} de l'action ${actionId} n'est pas valide`;
-  }
-}
-
-function buildIdentiteFieldHint(champ: string): string {
-  const values = ALLOWED_IDENTITY_VALUES_BY_FIELD[champ];
-  if (!values) {
-    return '';
-  }
-  return `Valeurs autorisées pour identite(${champ}, ...) : ${values.join(
-    ', '
-  )}`;
-}
-
-function verifyIdentiteReference(input: {
-  reference: { champ: string; valeur: string };
-  actionId: string;
-  ruleType: string;
-  referentielId: ReferentielId;
-}): string | null {
-  const { reference, actionId, ruleType, referentielId } = input;
-
-  const allowedValues = ALLOWED_IDENTITY_VALUES_BY_FIELD[reference.champ];
-  if (!allowedValues) {
-    const allowedFields = Object.keys(ALLOWED_IDENTITY_VALUES_BY_FIELD).join(
-      ', '
-    );
-    return `Le champ d'identité "${
-      reference.champ
-    }" dans l'expression de ${getRuleTypeLabel(
-      ruleType
-    )} de l'action ${actionId} n'est pas valide. Champs autorisés : ${allowedFields}`;
-  }
-
-  const normalizedValue = reference.valeur.toLowerCase();
-
-  if (allowedValues.includes(normalizedValue)) {
-    return null;
-  }
-
-  const isLegacyTypeSyndicat =
-    reference.champ === 'type' &&
-    normalizedValue === LEGACY_TYPE_SYNDICAT_VALUE &&
-    REFERENTIELS_WITH_LEGACY_TYPE_SYNDICAT.has(referentielId);
-
-  if (isLegacyTypeSyndicat) {
-    return null;
-  }
-
-  return `La valeur "${reference.valeur}" pour identite(${
-    reference.champ
-  }) dans l'expression de ${getRuleTypeLabel(
+function buildRuleExpressionLabel(actionId: string, ruleType: string): string {
+  return `l'expression de ${getRuleTypeLabel(
     ruleType
-  )} de l'action ${actionId} n'est pas valide. ${buildIdentiteFieldHint(
-    reference.champ
-  )}`;
-}
-
-function verifyScoreReference(
-  reference: { actionId: string },
-  actionIds: string[],
-  actionId: string,
-  ruleType: string
-): string | null {
-  if (!actionIds.includes(reference.actionId)) {
-    return `L'action "${
-      reference.actionId
-    }" référencée dans score() de l'expression de ${getRuleTypeLabel(
-      ruleType
-    )} de l'action ${actionId} n'existe pas dans le référentiel`;
-  }
-  return null;
-}
-
-function verifyPersonnalisationReferences(input: {
-  references: PersonnalisationExpressionReferences;
-  questions: QuestionForVerification[];
-  actionIds: string[];
-  actionId: string;
-  ruleType: string;
-  referentielId: ReferentielId;
-}): string[] {
-  const {
-    references,
-    questions,
-    actionIds,
-    actionId,
-    ruleType,
-    referentielId,
-  } = input;
-
-  const questionErrors = references.questions
-    .map((reference) =>
-      verifyQuestionReference(reference, questions, actionId, ruleType)
-    )
-    .filter((error): error is string => error !== null);
-
-  const identiteErrors = references.identiteFields
-    .map((reference) =>
-      verifyIdentiteReference({ reference, actionId, ruleType, referentielId })
-    )
-    .filter((error): error is string => error !== null);
-
-  const scoreErrors = references.scores
-    .map((reference) =>
-      verifyScoreReference(reference, actionIds, actionId, ruleType)
-    )
-    .filter((error): error is string => error !== null);
-
-  return [...questionErrors, ...identiteErrors, ...scoreErrors];
+  )} de l'action ${actionId}`;
 }
 
 function verifyPersonnalisationExpressions(input: {
@@ -407,7 +234,12 @@ function verifyPersonnalisationExpressions(input: {
         accumulator.validExpressions.push(expressionToVerify);
       } else {
         accumulator.syntaxErrors.push(
-          `L'expression de ${expressionToVerify.ruleType} "${expressionToVerify.expression}" de l'action ${expressionToVerify.actionId} contient une erreur de syntaxe : ${result.error}`
+          `${upperFirst(
+            buildRuleExpressionLabel(
+              expressionToVerify.actionId,
+              expressionToVerify.ruleType
+            )
+          )} contient une erreur de syntaxe ${result.error}`
         );
       }
       return accumulator;
@@ -419,13 +251,15 @@ function verifyPersonnalisationExpressions(input: {
     const references = extractReferencesFromExpression(
       expressionToVerify.expression
     );
-    return verifyPersonnalisationReferences({
-      references,
+    return verifyPersonnalisationExpressionReferences(references, {
+      label: buildRuleExpressionLabel(
+        expressionToVerify.actionId,
+        expressionToVerify.ruleType
+      ),
       questions,
       actionIds,
-      actionId: expressionToVerify.actionId,
-      ruleType: expressionToVerify.ruleType,
-      referentielId,
+      allowLegacyTypeSyndicat:
+        REFERENTIELS_WITH_LEGACY_TYPE_SYNDICAT.has(referentielId),
     });
   });
 
@@ -449,7 +283,7 @@ function verifyScoreExpressions(input: {
 
       const actionId = buildActionId(referentielId, action.identifiant);
       return [
-        `L'expression de score "${action.exprScore}" de l'action ${actionId} contient une erreur de syntaxe : ${result.error}`,
+        `L'expression de score de l'action ${actionId} contient une erreur de syntaxe ${result.error}`,
       ];
     });
 }

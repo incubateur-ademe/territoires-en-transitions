@@ -80,11 +80,6 @@ describe('merge-commentaires.rules', () => {
           baseActionScore({ avancement: StatutAvancementEnum.PAS_FAIT })
         )
       ).toBe('PAS FAIT');
-      expect(
-        formatSourceScoreLabel(
-          baseActionScore({ avancement: undefined, pointNonRenseigne: 10 })
-        )
-      ).toBe('NON RENSEIGNÉ');
     });
 
     it('retourne le pourcentage fait arrondi à l inférieur pour detaille', () => {
@@ -98,6 +93,31 @@ describe('merge-commentaires.rules', () => {
           })
         )
       ).toBe('42 % FAIT');
+    });
+
+    it('retourne le score consolidé pour une action sans statut discret (niveau action ou supérieur)', () => {
+      expect(
+        formatSourceScoreLabel(
+          baseActionScore({
+            avancement: undefined,
+            pointFait: 3,
+            pointPasFait: 7,
+            pointNonRenseigne: 0,
+          })
+        )
+      ).toBe('30 % FAIT');
+    });
+
+    it('retourne « 0 % FAIT » quand rien n est fait et qu il n y a pas de statut discret', () => {
+      expect(
+        formatSourceScoreLabel(
+          baseActionScore({
+            avancement: undefined,
+            pointFait: 0,
+            pointNonRenseigne: 10,
+          })
+        )
+      ).toBe('0 % FAIT');
     });
   });
 

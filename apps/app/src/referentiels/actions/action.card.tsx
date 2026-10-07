@@ -18,8 +18,7 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const { collectiviteId, hasReferentielPermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
 
   const referentielId = getReferentielIdFromActionId(id);
 
@@ -95,7 +94,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             {action.services.length > 0 && (
               <ListWithTooltip
                 icon="briefcase-line"
-                title={appLabels.directionOuServicePilote}
+                title={appLabels.directionOuServicePilote()}
                 list={action.services.map((s) => s.nom ?? '')}
               />
             )}

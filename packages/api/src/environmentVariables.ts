@@ -1,14 +1,55 @@
+import { getPublicEnv } from './public-env';
+
+/**
+ * Configuration de l'application.
+ *
+ * Volontairement exposée via des *getters* : la valeur est résolue à chaque
+ * accès, jamais au chargement du module. Un objet littéral serait évalué une
+ * fois pour toutes — et donc potentiellement figé sur l'environnement de build
+ * plutôt que sur celui du conteneur. Cf. `./public-env`.
+ */
 export const ENV = {
-  node_env: process.env.NODE_ENV,
-  logActionsDuration: process.env.NEXT_PUBLIC_LOG_ACTION_DURATION === 'TRUE',
-  supabase_anon_key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  supabase_url: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  sentry_dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  crisp_website_id: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
-  app_url: process.env.NEXT_PUBLIC_APP_URL,
-  git_short_sha: process.env.NEXT_PUBLIC_GIT_COMMIT_SHORT_SHA,
-  git_commit_timestamp: process.env.NEXT_PUBLIC_GIT_COMMIT_TIMESTAMP,
-  application_version: process.env.NEXT_PUBLIC_APPLICATION_VERSION,
-  application_env: process.env.ENV_NAME || process.env.NEXT_PUBLIC_ENV_NAME,
-  deployment_timestamp: process.env.DEPLOYMENT_TIMESTAMP,
+  get node_env() {
+    return process.env.NODE_ENV;
+  },
+  get logActionsDuration() {
+    return getPublicEnv().LOG_ACTION_DURATION === 'TRUE';
+  },
+  get supabase_anon_key() {
+    return getPublicEnv().SUPABASE_ANON_KEY;
+  },
+  get supabase_url() {
+    return getPublicEnv().SUPABASE_URL;
+  },
+  get backend_url() {
+    return getPublicEnv().BACKEND_URL;
+  },
+  get sentry_dsn() {
+    return getPublicEnv().SENTRY_DSN;
+  },
+  get crisp_website_id() {
+    return getPublicEnv().CRISP_WEBSITE_ID;
+  },
+  get app_url() {
+    return getPublicEnv().APP_URL;
+  },
+  get site_url() {
+    return getPublicEnv().SITE_URL;
+  },
+  get git_short_sha() {
+    return getPublicEnv().GIT_SHORT_HASH;
+  },
+  get git_commit_timestamp() {
+    return getPublicEnv().GIT_COMMIT_TIMESTAMP;
+  },
+  get application_version() {
+    return getPublicEnv().APPLICATION_VERSION;
+  },
+  get application_env() {
+    return getPublicEnv().ENV_NAME;
+  },
+  // Posé par le déploiement (Koyeb), lu uniquement côté serveur.
+  get deployment_timestamp() {
+    return process.env.DEPLOYMENT_TIMESTAMP;
+  },
 };

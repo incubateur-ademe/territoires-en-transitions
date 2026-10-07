@@ -23,11 +23,11 @@ export const BudgetTypeChangeModal = ({
 
   return (
     <Modal
-      title={appLabels.modifierTypeBudgetQuestion}
+      title={appLabels.ficheDetaillerBudgetParAnnee}
       render={() => (
         <Alert
           state="warning"
-          title={appLabels.modifierTypeBudgetAlerte({ nextMode })}
+          title={appLabels.ficheDetaillerBudgetParAnneeAlert({ nextMode })}
         />
       )}
       openState={{ isOpen, setIsOpen }}

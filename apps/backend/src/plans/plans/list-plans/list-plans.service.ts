@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
@@ -24,8 +23,7 @@ export class ListPlansService {
 
   async listPlans(
     input: ListPlansInput,
-    user: AuthenticatedUser,
-    tx?: Transaction
+    { user, tx }: ServiceSecondArg
   ): Promise<Result<ListPlansOutput, ListPlansError>> {
     const isAllowed = await this.getPlanService.checkPermission(
       input.collectiviteId,
@@ -57,8 +55,7 @@ export class ListPlansService {
             collectiviteId: rootAxe.collectiviteId,
             parentId: planId,
           },
-          user,
-          tx
+          { user, tx }
         );
 
         if (!axesResult.success) {
@@ -85,6 +82,10 @@ export class ListPlansService {
         // Récupérer le type via getPlan qui inclut le type
         const planResult = await this.getPlanRepository.getPlan({ planId }, tx);
         const type = planResult.success ? planResult.data.type : null;
+        const source = planResult.success ? planResult.data.source : null;
+        const verifiedAt = planResult.success
+          ? planResult.data.verifiedAt
+          : null;
 
         return {
           id: planId,
@@ -95,6 +96,8 @@ export class ListPlansService {
           type,
           collectiviteId: rootAxe.collectiviteId,
           createdAt: rootAxe.createdAt,
+          source,
+          verifiedAt,
         } as Plan;
       })
     );

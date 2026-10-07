@@ -41,7 +41,7 @@ export const HomePage = async () => {
 
       <NosServices />
 
-      {data.temoignages && <Temoignages {...data.temoignages} />}
+      <Temoignages contenu={data.temoignages} />
 
       <ConstructionPlateforme />
 

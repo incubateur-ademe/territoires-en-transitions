@@ -1,5 +1,7 @@
 import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { pcaetDemandeAvisTable } from '@tet/backend/demarches/pcaet/shared/models/pcaet-demande-avis.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
@@ -19,7 +21,7 @@ import {
 } from '@tet/domain/collectivites';
 import { Dcp } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { DatabaseError } from 'pg';
 import { utilisateurCollectiviteAccessTable } from '../../users/authorizations/utilisateur-collectivite-access.table';
 import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichier.table';
@@ -30,14 +32,44 @@ import { justificationTable } from '../personnalisations/models/justification.ta
 import { reponseBinaireTable } from '../personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '../personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '../personnalisations/models/reponse-proportion.table';
+import { collectiviteRelationsTable } from '../shared/models/collectivite-relations.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
+
+/**
+ * Supprime les démarches d'une collectivité. Leurs enfants cascadent, sauf les
+ * demandes d'avis (FK `restrict`), à retirer d'abord.
+ */
+export async function cleanupCollectiviteDemarches(
+  { db }: DatabaseServiceInterface,
+  collectiviteId: number
+): Promise<void> {
+  const demarcheIds = await db
+    .select({ id: demarcheTable.id })
+    .from(demarcheTable)
+    .where(eq(demarcheTable.collectiviteId, collectiviteId))
+    .then((rows) => rows.map(({ id }) => id));
+
+  if (demarcheIds.length === 0) {
+    return;
+  }
+
+  await db
+    .delete(pcaetDemandeAvisTable)
+    .where(inArray(pcaetDemandeAvisTable.demarcheId, demarcheIds));
+  await db.delete(demarcheTable).where(inArray(demarcheTable.id, demarcheIds));
+}
 
 /** Supprime droits et invitations (prérequis avant suppression des users) */
 export async function cleanupCollectivitePrerequisites(
   { db }: DatabaseServiceInterface,
   collectiviteId: number
 ): Promise<void> {
-  // D'abord supprimer les droits (ils référencent invitation_id)
+  // `demarche.created_by` référence `auth.users` en NO ACTION : une démarche
+  // laissée derrière retient son créateur, et le nettoyage échoue en chaîne
+  // (utilisateurs, puis collectivité).
+  await cleanupCollectiviteDemarches({ db }, collectiviteId);
+
+  // Puis supprimer les droits (ils référencent invitation_id)
   await db
     .delete(utilisateurCollectiviteAccessTable)
     .where(
@@ -58,22 +90,24 @@ export async function cleanupCollectivitePrerequisites(
     .where(eq(invitationTable.collectiviteId, collectiviteId));
 }
 
-export async function setCollectiviteAsCOT(
+export type CollectiviteCotStatus = 'active' | 'inactive' | 'none';
+
+export async function setCollectiviteCotStatus(
   { db }: DatabaseServiceInterface,
   collectiviteId: number,
-  isCOT: boolean
+  status: CollectiviteCotStatus
 ): Promise<void> {
-  if (isCOT) {
-    await db.insert(cotTable).values({
-      collectiviteId: collectiviteId,
-      actif: true,
-      signataire: collectiviteId,
-    });
-  } else {
-    await db
-      .delete(cotTable)
-      .where(eq(cotTable.collectiviteId, collectiviteId));
+  await db.delete(cotTable).where(eq(cotTable.collectiviteId, collectiviteId));
+
+  if (status === 'none') {
+    return;
   }
+
+  await db.insert(cotTable).values({
+    collectiviteId: collectiviteId,
+    actif: status === 'active',
+    signataire: collectiviteId,
+  });
 }
 
 // ajoute une collectivité
@@ -105,7 +139,7 @@ export async function addTestCollectivite(
       }));
 
     if (collectiviteArgs.isCOT) {
-      await setCollectiviteAsCOT({ db }, result.id, true);
+      await setCollectiviteCotStatus({ db }, result.id, 'active');
     }
 
     const collectiviteId = result?.id;
@@ -128,6 +162,10 @@ export async function addTestCollectivite(
           await db
             .delete(justificationTable)
             .where(eq(justificationTable.collectiviteId, collectiviteId));
+
+          // La collectivité cascade ses démarches, mais pas les demandes
+          // d'avis qui les référencent (`restrict`).
+          await cleanupCollectiviteDemarches({ db }, collectiviteId);
 
           await db
             .delete(bibliothequeFichierTable)
@@ -188,6 +226,44 @@ export async function addTestCollectivite(
       }: ${getErrorMessage(err)}`
     );
   }
+}
+
+/**
+ * Rattache à un groupement des membres neufs, un par population donnée — des
+ * communes par défaut, ou des EPCI pour composer un syndicat. La composition
+ * d'un groupement se lit dans `collectivite_relations`, comme le fait la fiche
+ * collectivité ; les relations cascadent avec les membres.
+ */
+export async function addTestCommunesMembres(
+  { db }: DatabaseServiceInterface,
+  {
+    parentId,
+    populations,
+    type = collectiviteTypeEnum.COMMUNE,
+  }: { parentId: number; populations: number[]; type?: CollectiviteType }
+): Promise<{ communes: Collectivite[]; cleanup: () => Promise<void> }> {
+  const membres = await Promise.all(
+    populations.map((population) =>
+      addTestCollectivite({ db }, { type, population })
+    )
+  );
+
+  if (membres.length > 0) {
+    await db
+      .insert(collectiviteRelationsTable)
+      .values(
+        membres.map(({ collectivite }) => ({ id: collectivite.id, parentId }))
+      );
+  }
+
+  return {
+    communes: membres.map(({ collectivite }) => collectivite),
+    cleanup: async () => {
+      for (const { cleanup } of membres) {
+        await cleanup();
+      }
+    },
+  };
 }
 
 // ajoute une collectivité et un utilisateur rattaché à celle-ci

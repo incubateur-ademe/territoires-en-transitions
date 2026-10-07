@@ -4,7 +4,7 @@ import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Breadcrumbs, Button, Event, useEventTracker } from '@tet/ui';
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';
@@ -66,20 +66,26 @@ const BarChartCardWithSubrows = ({
   ]);
 
   // Donnée actuellement observée dans le tableau scoreBreadcrumb
-  const [indexBy, setIndexBy] = useState('');
+  const [indexBy, setIndexBy] = useState(
+    score.data[0]?.actionType ? typeToIndexby[score.data[0].actionType] : ''
+  );
 
   // Mode d'affichage du graphe (abolue / relatif)
   const [relativeMode, setRelativeMode] = useState(percentage ?? false);
 
-  // Mise à jour lors du changement de valeur des scores en props
-  useEffect(() => {
+  // Revient à la racine quand les scores changent : le fil d'Ariane pointait
+  // sur des axes de l'ancien référentiel. L'ajuster pendant le rendu, plutôt
+  // que dans un effet, évite de dessiner le graphe avec l'ancien fil d'Ariane.
+  const [previousScoreData, setPreviousScoreData] = useState(score.data);
+  if (previousScoreData !== score.data) {
+    setPreviousScoreData(score.data);
     setScoreBreadcrumb([
       { scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel' },
     ]);
     setIndexBy(
       score.data[0]?.actionType ? typeToIndexby[score.data[0].actionType] : ''
     );
-  }, [score.data]);
+  }
 
   // Affichage de l'axe enfant
   const handleOpenChildIndex = (index: string | number) => {

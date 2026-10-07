@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  areAllReferentRolesDefined,
   isReferentRoleDefined,
   ROLE_IDENTIFIANTS,
   ReferentRolesDefined,
@@ -11,8 +12,8 @@ const TOUS_ROLES_DEFINIS: ReferentRolesDefined = {
   referentTechnique: true,
 };
 
-const toCritere = (identifiant: string): { action_id: string } => ({
-  action_id: `cae_${identifiant}`,
+const toCritere = (identifiant: string): { actionId: string } => ({
+  actionId: `cae_${identifiant}`,
 });
 
 describe('roleKeyByIdentifiant', () => {
@@ -32,7 +33,7 @@ describe('roleKeyByIdentifiant', () => {
     );
   });
 
-  it("ne mappe pas un identifiant absent du référentiel", () => {
+  it('ne mappe pas un identifiant absent du référentiel', () => {
     expect(roleKeyByIdentifiant('cae').get('0.0.0.0')).toBeUndefined();
   });
 });
@@ -40,11 +41,7 @@ describe('roleKeyByIdentifiant', () => {
 describe('isReferentRoleDefined', () => {
   it("considère présent tout critère d'un référentiel hors audit-labellisation", () => {
     expect(
-      isReferentRoleDefined(
-        { action_id: 'te_1.1.1' },
-        'te',
-        TOUS_ROLES_DEFINIS
-      )
+      isReferentRoleDefined({ actionId: 'te_1.1.1' }, 'te', TOUS_ROLES_DEFINIS)
     ).toBe(true);
   });
 
@@ -59,7 +56,7 @@ describe('isReferentRoleDefined', () => {
 
   it("considère présent un critère dont l'action_id n'a pas d'identifiant", () => {
     expect(
-      isReferentRoleDefined({ action_id: 'cae' }, 'cae', {
+      isReferentRoleDefined({ actionId: 'cae' }, 'cae', {
         eluReferent: false,
         referentTechnique: false,
       })
@@ -86,7 +83,7 @@ describe('isReferentRoleDefined', () => {
     ).toBe(false);
   });
 
-  it('est faux quand le référent technique n\'est pas désigné', () => {
+  it("est faux quand le référent technique n'est pas désigné", () => {
     expect(
       isReferentRoleDefined(
         toCritere(ROLE_IDENTIFIANTS.cae.referentTechnique),
@@ -94,5 +91,58 @@ describe('isReferentRoleDefined', () => {
         { eluReferent: true, referentTechnique: false }
       )
     ).toBe(false);
+  });
+});
+
+describe('areAllReferentRolesDefined', () => {
+  const criteresAvecLesDeuxRoles = [
+    toCritere(ROLE_IDENTIFIANTS.cae.eluReferent),
+    toCritere(ROLE_IDENTIFIANTS.cae.referentTechnique),
+  ];
+
+  it('est vrai quand les deux rôles sont désignés', () => {
+    expect(
+      areAllReferentRolesDefined(
+        criteresAvecLesDeuxRoles,
+        'cae',
+        TOUS_ROLES_DEFINIS
+      )
+    ).toBe(true);
+  });
+
+  it("est faux quand aucun élu référent n'est désigné", () => {
+    expect(
+      areAllReferentRolesDefined(criteresAvecLesDeuxRoles, 'cae', {
+        eluReferent: false,
+        referentTechnique: true,
+      })
+    ).toBe(false);
+  });
+
+  it("est faux quand aucun référent technique n'est désigné", () => {
+    expect(
+      areAllReferentRolesDefined(criteresAvecLesDeuxRoles, 'cae', {
+        eluReferent: true,
+        referentTechnique: false,
+      })
+    ).toBe(false);
+  });
+
+  it("est vrai quand aucune mesure de rôle n'est au programme de l'étoile visée", () => {
+    expect(
+      areAllReferentRolesDefined([toCritere('1.1.2.0.1')], 'cae', {
+        eluReferent: false,
+        referentTechnique: false,
+      })
+    ).toBe(true);
+  });
+
+  it('est vrai sur un référentiel sans mesure de rôle', () => {
+    expect(
+      areAllReferentRolesDefined(criteresAvecLesDeuxRoles, 'te', {
+        eluReferent: false,
+        referentTechnique: false,
+      })
+    ).toBe(true);
   });
 });

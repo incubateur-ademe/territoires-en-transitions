@@ -25,7 +25,7 @@ export default class CollectivitesService {
     3000, 5000, 10000, 20000, 50000, 100000,
   ];
   private readonly POPULATION_BORNES_INF = [
-    3000, 20000, 50000, 100000, 300000, 800000,
+    3000, 20000, 45000, 50000, 100000, 300000, 800000,
   ];
 
   constructor(private readonly databaseService: DatabaseService) {}

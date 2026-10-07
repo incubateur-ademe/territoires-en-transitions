@@ -9,16 +9,19 @@ import {
 
 const specificErrors = [
   'REFERENTIEL_TE_DISABLED',
+  'SWITCH_TO_TE_DISABLED',
   'ALREADY_SWITCHED',
   'NOT_ELIGIBLE',
   'COT_ACTIVE',
+  'COLLECTIVITE_IS_SYNDICAT',
+  'COLLECTIVITE_IS_DROM',
   'AUDIT_REQUEST_IN_PROGRESS',
   'AUDIT_IN_PROGRESS',
-  'SWITCH_NOT_IMPLEMENTED',
   'PRE_SWITCH_SNAPSHOT_FAILED',
   'PRE_SWITCH_SNAPSHOT_MISSING',
   'REFERENTIEL_TE_NOT_EMPTY',
   'MIGRATION_FAILED',
+  'POST_SWITCH_RECOMPUTE_FAILED',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
 
@@ -26,6 +29,10 @@ export const switchToTeTrpcErrorEntries = {
   REFERENTIEL_TE_DISABLED: {
     code: 'FORBIDDEN',
     message: "Le référentiel TE n'est pas activé pour cette collectivité",
+  },
+  SWITCH_TO_TE_DISABLED: {
+    code: 'FORBIDDEN',
+    message: "La bascule vers le référentiel TE n'est pas activée",
   },
   ALREADY_SWITCHED: {
     code: 'CONFLICT',
@@ -41,6 +48,16 @@ export const switchToTeTrpcErrorEntries = {
     message:
       "La bascule n'est pas possible : un contrat d'objectif (COT) est actif pour cette collectivité",
   },
+  COLLECTIVITE_IS_SYNDICAT: {
+    code: 'FORBIDDEN',
+    message:
+      "La bascule n'est pas possible : les collectivités de type syndicat ne sont pas éligibles au référentiel TE",
+  },
+  COLLECTIVITE_IS_DROM: {
+    code: 'FORBIDDEN',
+    message:
+      "La bascule n'est pas possible : les collectivités des DROM ne sont pas encore éligibles au référentiel TE",
+  },
   AUDIT_REQUEST_IN_PROGRESS: {
     code: 'CONFLICT',
     message:
@@ -50,10 +67,6 @@ export const switchToTeTrpcErrorEntries = {
     code: 'CONFLICT',
     message:
       "La bascule n'est pas possible : un audit est en cours sur un référentiel CAE/ECI",
-  },
-  SWITCH_NOT_IMPLEMENTED: {
-    code: 'NOT_IMPLEMENTED',
-    message: "La bascule n'est pas encore disponible",
   },
   PRE_SWITCH_SNAPSHOT_FAILED: {
     code: 'INTERNAL_SERVER_ERROR',
@@ -72,6 +85,11 @@ export const switchToTeTrpcErrorEntries = {
   MIGRATION_FAILED: {
     code: 'INTERNAL_SERVER_ERROR',
     message: 'La migration des données vers le référentiel TE a échoué',
+  },
+  POST_SWITCH_RECOMPUTE_FAILED: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message:
+      'La bascule a réussi mais le recalcul des projections post-bascule a échoué',
   },
 } as const;
 

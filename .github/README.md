@@ -10,6 +10,14 @@ La variable d'environnement `ACT` est ajoutée automatiquement ce qui permet de 
 
 Par exemple les images docker construites par les actions ne sont pas tirées ou poussées vers le registre de containers lorsque les workflows associés sont utilisés avec `act`.
 
+### Cache des images de déploiement
+
+L'action `docker-build-push` utilise un [cache BuildKit dans le registre](https://docs.docker.com/build/cache/backends/registry/), sous le tag `buildcache-<cache-scope>` du même package GHCR que l'image. Le cache est partagé entre les branches et les environnements et conserve les couches intermédiaires (`mode=max`), avec compression zstd niveau 1. Il utilise la connexion fournie par `docker-login` ; un échec d'export du cache ne fait pas échouer le déploiement.
+
+Le workflow `cd-app.yml` réutilise l'image d'un commit déjà publié, y compris lors d'une promotion vers un autre environnement ou d'un déploiement d'app de test. Cocher **Reconstruire l'image même si ce commit est déjà publié** pour relancer le build en conservant le cache BuildKit : les étapes déjà en cache peuvent être réutilisées. Cette réutilisation d'image concerne l'app, dont la configuration arrive au runtime ; l'action la désactive par défaut pour les autres images.
+
+Les caches de travail Next.js et Nx de l'app restent dans des mounts locaux au builder et ne sont pas exportés dans les couches Docker. Sur un runner éphémère, le build Next.js reste donc un build à froid lorsque le commit change. Le premier build après ce changement de backend de cache doit également alimenter le cache GHCR.
+
 ### Structure des dossiers
 
 - **`.actrc`** : configuration de `act`
@@ -32,8 +40,6 @@ cp .github/config/.act.secrets.default .github/config/.act.secrets
 # Éditez et complétez les valeurs nécessaires (IDs de spreadsheets, clés API…)
 ```
 
-Il est notamment nécessaire de [créer un token personnel](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) pour permettre l'accès à la registry ghcr.io et d'utiliser ce token pour la variable `GH_TOKEN` dans le fichier `.github/config/.act.secrets`.
-
 ### Exécuter un workflow avec Act
 
 Les exemples donnés ici utilise le workflow `dev` ([`.github/workflows/dev.yml`](./workflows/dev.yml)).
@@ -51,13 +57,13 @@ act -W .github/workflows/dev.yml -l
 - Lancer un job :
 
 ```sh
-act -W .github/workflows/dev.yml -j db-init
+act -W .github/workflows/dev.yml -j prepare-dev-db
 ```
 
 Lorsque le nom du job est unique, il n'est pas nécessaire de spécifier le workflow.
 
 ```sh
-act -j db-init
+act -j prepare-dev-db
 ```
 
 - Voir un graphe d'un workflow :
@@ -75,4 +81,3 @@ Il est alors possible d'éditer son fichier `~/.actrc` pour le définir en dur :
 ```
 --container-daemon-socket unix:///Users/yolododo/.docker/run/docker.sock
 ```
-

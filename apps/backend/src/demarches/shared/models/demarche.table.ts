@@ -1,5 +1,4 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import {
   createdAt,
   createdBy,
@@ -16,6 +15,8 @@ import {
 } from '@tet/domain/demarches';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
+  boolean,
+  date,
   index,
   integer,
   pgTable,
@@ -50,11 +51,20 @@ export const demarcheTable = pgTable(
       .$type<DemarchePcaetObligation>(),
     launchedAt: timestamp('launched_at', TIMESTAMP_OPTIONS),
     publishedAt: timestamp('published_at', TIMESTAMP_OPTIONS),
+    // Date civile de la délibération, pas un instant : la validité du PCAET se
+    // compte en années à partir d'elle.
+    adoptedAt: date('adopted_at', { mode: 'string' }),
     transmittedAt: timestamp('transmitted_at', TIMESTAMP_OPTIONS),
+    // Provenance, non pas état : le statut dit où en est le dossier et oublie
+    // tout une fois publié, ce drapeau dit d'où il vient et ne bouge jamais.
+    transmittedOffPlatform: boolean('transmitted_off_platform')
+      .notNull()
+      .default(false),
+    // Déclaratif : le PCAET est porté par un SCoT-AEC, un document unique
+    // valant SCoT et PCAET. La compétence Banatic 5500 décide si la question
+    // est posée à la collectivité, jamais de sa réponse.
+    isScotAec: boolean('is_scot_aec').notNull().default(false),
     avisDeadlineAt: timestamp('avis_deadline_at', TIMESTAMP_OPTIONS),
-    planActionId: integer('plan_action_id').references(() => axeTable.id, {
-      onDelete: 'set null',
-    }),
     createdAt,
     createdBy,
     modifiedAt,
@@ -62,11 +72,12 @@ export const demarcheTable = pgTable(
   },
   (table) => [
     index('demarche_collectivite_id_idx').on(table.collectiviteId),
-    index('demarche_plan_action_id_idx').on(table.planActionId),
     // Une seule démarche « en cours » par collectivité et par type.
     uniqueIndex('demarche_active_unique')
       .on(table.collectiviteId, table.type)
-      .where(sql`status IN ('en_elaboration', 'transmis_pour_avis')`),
+      .where(
+        sql`status IN ('en_elaboration', 'transmis_pour_avis', 'instruit_hors_plateforme')`
+      ),
   ]
 );
 

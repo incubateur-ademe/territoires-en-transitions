@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { EXPECTED_FORMATS_LIST } from '@/app/referentiels/preuves/upload/constants';
+import { EXPECTED_FORMATS_LIST } from '@/app/collectivites/documents/upload/constants';
 import { Field, Icon, Input, Spacer, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 import { AuditReportUploadState } from '../data/use-upload-audit-report';

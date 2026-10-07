@@ -1,16 +1,16 @@
 'use client';
 
-import { Vignette } from '@/site/app/types';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
+import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 import classNames from 'classnames';
 
 type CalculProps = {
   titre: string;
   description: string;
-  liste: Vignette[];
+  liste: VignetteAvecMarkdown[];
   backgroundColor?: 'bg-primary-0' | 'bg-primary-1';
 };
 
@@ -41,9 +41,9 @@ const Calcul = ({
             style={{ boxShadow: '0px 4px 20px 0px #F0F0FE' }}
           >
             {!!elt.image && (
-              <DEPRECATED_StrapiImage
-                data={elt.image}
-                displayCaption={false}
+              <StrapiImage
+                media={elt.image}
+                sizes="160px"
                 containerClassName="h-20"
                 className="h-full"
               />

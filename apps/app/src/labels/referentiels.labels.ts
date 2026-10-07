@@ -1,0 +1,154 @@
+import { plural } from '@tet/ui/labels/plural';
+
+export const referentielsLabels = {
+  /** Noms */
+  referentielArchiveSuffixe: (nom: string): string => `${nom} (archivé)`,
+  referentielCae: 'Climat Air Énergie',
+  referentielEci: 'Économie Circulaire',
+  referentielCrte: 'Contrat Relance Transition Écologique',
+  referentielTe: 'Climat Ressources',
+  referentielTeTest: 'Climat Ressources (test)',
+
+  /** Statuts */
+  nonRenseigne: 'Non renseigné',
+  nonRenseignable: 'Non renseignable',
+  avancementFait: 'Fait',
+  avancementPasFait: 'Pas fait',
+  avancementDetaille: 'Détaillé au %',
+  avancementDetailleALaTache: 'Détaillé à la tâche',
+  avancementProgramme: 'Programmé',
+  avancementNonConcerne: 'Non concerné',
+
+  /** Types */
+  actionTypeReferentiel: 'référentiel',
+  referentiel: plural({ one: 'référentiel', other: 'référentiels' }),
+  actionTypeAction: 'mesure',
+  mesure: 'Mesure',
+  actionTypeSousAction: 'sous-mesure',
+  sousMesure: plural({
+    one: 'sous-mesure',
+    other: 'sous-mesures',
+  }),
+  actionTypeTache: 'tâche',
+  actionTypeAxe: 'axe',
+  actionTypeSousAxe: 'sous-axe',
+  actionTypeExemple: 'exemple',
+
+  /** Vue tabulaire */
+  referentielTableThematiquesViewsSgpe: 'Planification Écologique',
+  referentielTableThematiquesViewsAxes: 'Axes',
+  referentielTableColonneLabels: 'Volets',
+
+  /** Onglets de la vue référentiel */
+  referentielOngletMesures: 'Mesures',
+  referentielOngletSynthese: 'Synthèse',
+  referentielOngletEvolutions: 'Évolutions du score',
+  referentielOngletCommentaires: 'Commentaires',
+  referentielOngletDocuments: 'Documents',
+  referentielOngletHistorique: "Journal d'activité",
+
+  /** Mesure */
+  actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
+  document: plural({ one: 'document', other: 'documents' }),
+  commentaires: plural({ one: 'commentaire', other: 'commentaires' }),
+  pasDocumentAttenduAction:
+    'Aucun document attendu pour cette mesure du référentiel',
+  documentDerniereModification: ({
+    date,
+    auteur,
+  }: {
+    date?: string;
+    auteur?: string;
+  }): string => {
+    if (date && auteur) {
+      return `Modifié le ${date} par ${auteur}`;
+    }
+    if (date) {
+      return `Modifié le ${date}`;
+    }
+    return auteur ? `Modifié par ${auteur}` : '';
+  },
+
+  /** Sous-mesures */
+  phaseBases: "S'engager",
+  phaseMiseEnOeuvre: 'Concrétiser',
+  phaseEffets: 'Mesurer les effets',
+  pasDocumentAttenduSousAction:
+    'Aucun document attendu pour cette sous-mesure du référentiel',
+
+  /** Labellisation */
+  obtenirDesEtoiles: 'Obtenir des étoiles',
+
+  etoilePremiere: 'première',
+  etoileDeuxieme: 'deuxième',
+  etoileTroisieme: 'troisième',
+  etoileQuatrieme: 'quatrième',
+  etoileCinquieme: 'cinquième',
+
+  auditAudite: 'Audité',
+  auditNonAudite: 'Non audité',
+  auditEnCours: 'Audit en cours',
+  auditDemande: 'Audit demandé',
+  auditAttribue: 'Audit attribué',
+  auditTermine: 'Audit terminé',
+  auditTermineLabellisationEnCours: 'Audit terminé et labellisation en cours',
+  auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
+    `Audit en cours par ${auditeur}`,
+
+  evolutionScoreEnPoints: 'Évolution du score en points',
+
+  /** Personnalisation */
+  afficherLesElementsAffectesEtLesReglesAssociees:
+    'Afficher les mesures affectées et règles associées',
+
+  /** Actions */
+  commencerReferentiel: 'Commencer le référentiel',
+  voirReferentiel: 'Voir le référentiel',
+  figerEtatDesLieux: 'Figer le référentiel',
+  editerReferentiel: 'Éditer le référentiel',
+  telechargerEtatDesLieux: 'Télécharger le référentiel',
+  selectionnerVersionsTelecharger:
+    'Sélectionner la ou les versions à télécharger',
+
+  voirLaMesure: 'Voir la mesure',
+  voirLaSousMesure: 'Voir la sous-mesure',
+  voirLaTache: 'Voir la tâche',
+  ouvrirLaMesure: 'Ouvrir la mesure',
+  dissocierLaMesure: 'Dissocier la mesure',
+  saisirLetatDavancement: "Saisir l'état d'avancement",
+
+  renommerLeFichier: 'Renommer le fichier',
+  supprimerDocument: 'Supprimer le document',
+  telechargerFichier: 'Télécharger le fichier',
+
+  /** Autres */
+  mesuresDesReferentiels: 'Mesures des référentiels',
+  documentsVisiblesAvertissement:
+    'Tous les documents sont visibles par les membres de la communauté Territoires en Transitions, en dehors des documents en mode privé.',
+  fichierModePrive: 'Fichier en mode privé',
+  fichierIndisponible: 'Fichier indisponible',
+  fichierIndisponibleInfo:
+    "Ce document est référencé mais son contenu est introuvable dans l'espace de stockage. Il ne peut pas être téléchargé.",
+  selectionValeurIndicateurNotAvailable: `La sélection des résultats des indicateurs n'est pas encore disponible. En attendant, vous pouvez déjà renseigner vos données directement depuis la fiche de l'indicateur, en cliquant sur "Voir la fiche de l'indicateur". Nous vous informerons dès que la fonctionnalité sera disponible.`,
+  selectionnerResultatPourCalculerScore:
+    'Sélectionnez un résultat ci-dessous pour activer le calcul du score lié à cet indicateur.',
+  sourceResultatSelectionne: (source: string, annee: number): string =>
+    `Source : ${source} (${annee})`,
+  aucunResultatIndicateurDisponible:
+    "Aucun résultat n'a encore été renseigné pour cet indicateur.",
+  resultatsIndicateurErreur:
+    "Les résultats de l'indicateur n'ont pas pu être chargés.",
+  source: 'Source',
+  sources: plural({ one: 'source', other: 'sources' }),
+  scoreIndicatifPasDeDonnee: 'Pas de donnée renseignée',
+  scoreIndicatifDonneeRenseignee: 'Donnée renseignée',
+  scoreIndicatifDonneeRenseigneePositive: 'Donnée renseignée et > 0',
+  scoreIndicatifReference: (valeur: string, annee: string): string =>
+    `Réf : ${valeur} (${annee})`,
+  scoreIndicatifCible: (valeur: string, annee: string): string =>
+    `Cible : ${valeur} (${annee})`,
+  scoreIndicatifCibleSelonResultat: 'Cible : selon le résultat sélectionné',
+  scoreIndicatifAnneeSnbc: (annee: number): string => `SNBC ${annee}`,
+  scoreIndicatifReductionCible: (reduction: string, annee: number): string =>
+    `Objectif de réduction : -${reduction} % en ${annee}`,
+};

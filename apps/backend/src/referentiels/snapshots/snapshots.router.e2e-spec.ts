@@ -318,6 +318,12 @@ describe('SnapshotsRouter', () => {
     const scoresIndicatifs = await getScoresIndicatifsFromSnapshot(snapshot);
     expect(scoresIndicatifs).toMatchObject({
       [fixturePourScoreIndicatif.actionId]: {
+        calcul: {
+          type: 'valeur_cible_seuil',
+          identifiantReferentiel: 'cae_7',
+          cible: expect.any(Number),
+          seuil: expect.any(Number),
+        },
         fait: {
           score: -0.045,
           valeursUtilisees: [
@@ -384,6 +390,7 @@ describe('SnapshotsRouter', () => {
       nom: 'Climat Air Énergie',
       points: 500,
       categorie: null,
+      exprScore: '',
       pourcentage: null,
       level: 0,
       preuves: null,
@@ -782,6 +789,7 @@ describe('SnapshotsRouter', () => {
       nom: 'Climat Air Énergie',
       points: 500,
       categorie: null,
+      exprScore: '',
       pourcentage: null,
       level: 0,
       actionType: ActionTypeEnum.REFERENTIEL,

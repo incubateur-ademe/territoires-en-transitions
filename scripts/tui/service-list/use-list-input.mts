@@ -69,7 +69,7 @@ export const useListInput = ({
     if (key.tab) return jumpSection(key.shift ? -1 : 1);
     if (key.rightArrow) return jumpSection(1);
     if (key.leftArrow) return jumpSection(-1);
-    if (key.return && services[current])
+    if (key.return && services[current] && !services[current].isAbsent)
       return onShowLogs(services[current].name);
     if (input === 'o') {
       const url = services[current]?.url;
@@ -84,21 +84,22 @@ export const useListInput = ({
     }
     if (input === 'p') return onPickProfile();
     if (input === 'x') return onSaveProfile();
-    // s ou ␣ = toggle démarré/stoppé ; r = relance explicite.
+    // s ou ␣ = toggle démarré/stoppé (création si aucun conteneur) ; r =
+    // relance explicite, sans objet sans conteneur.
+    const target = services[current];
     const action: StackAction | undefined =
       input === ' ' || input === 's'
-        ? services[current]?.isRunning
-          ? 'stop'
-          : 'start'
-        : input === 'r'
+        ? target?.isAbsent
+          ? 'create'
+          : target?.isRunning
+            ? 'stop'
+            : 'start'
+        : input === 'r' && !target?.isAbsent
           ? 'restart'
           : undefined;
-    if (action) {
-      const svc = services[current];
-      // Jamais sur les one-shots : les (re)démarrer ré-exécuterait leur
-      // commande (migrations sqitch, seeds…).
-      if (svc && !svc.isOneShot && !pending.has(svc.name))
-        onAction(action, svc.name);
-    }
+    // Jamais sur les one-shots : les (re)démarrer ré-exécuterait leur
+    // commande (migrations sqitch, seeds…).
+    if (action && target && !target.isOneShot && !pending.has(target.name))
+      onAction(action, target.name);
   });
 };

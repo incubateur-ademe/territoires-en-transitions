@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+staged_paths=$(git diff --cached --name-only --diff-filter=ACMR)
+staged_files=$(printf '%s\n' "$staged_paths" | awk '/\.(cjs|cts|js|jsx|mjs|mts|ts|tsx)$/')
+
+if [[ -z "$staged_files" ]]; then
+	exit 0
+fi
+
+unstaged_paths=$(git diff --name-only --diff-filter=ACMR)
+unstaged_files=$(printf '%s\n' "$unstaged_paths" | awk '/\.(cjs|cts|js|jsx|mjs|mts|ts|tsx)$/')
+mixed_files=$(grep -Fxf <(printf '%s\n' "$staged_files") <(printf '%s\n' "$unstaged_files") || true)
+
+if [[ -n "$mixed_files" ]]; then
+	echo "Les fichiers suivants ont des changements indexés et non indexés :"
+	printf '%s\n' "$mixed_files"
+	echo "Le hook lint analyse le contenu du disque. Finalisez ou désindexez ces fichiers avant de commit."
+	exit 1
+fi
+
+echo "Lint sur les fichiers indexés..."
+make --no-print-directory lint files="$(printf '%s' "$staged_files" | tr '\n' ' ')"

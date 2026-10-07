@@ -44,9 +44,14 @@ export const SubactionIndicateurList = ({ subAction }: Props) => {
     <>
       <Divider />
       <span className="text-sm font-medium text-grey-8">
-        {appLabels.indicateursLiesAuScore}
+        {appLabels.indicateursLiesAuScore({
+          plural: actionsToDisplay.length > 1,
+        })}
       </span>
-      <div className="grid sm:grid-cols-2 2xl:grid-cols-3 gap-4">
+      <div
+        data-test={`referentiels.indicateurs-score.list-${subAction.identifiant}`}
+        className="grid sm:grid-cols-2 2xl:grid-cols-3 gap-4"
+      >
         {isLoading ? (
           <SubactionIndicateurSkeleton />
         ) : (

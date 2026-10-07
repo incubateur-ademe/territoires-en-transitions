@@ -1,10 +1,11 @@
 import { EmptyCell } from './empty-cell';
 import { CellContext } from '@tanstack/react-table';
+import { ReferentielTableFeatures } from './utils';
 import { TableCell, Tooltip } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 
 type Props = {
-  info: CellContext<ActionListItem, string>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, string>;
 };
 
 export const ReferentielTableDescriptionCell = ({ info }: Props) => {

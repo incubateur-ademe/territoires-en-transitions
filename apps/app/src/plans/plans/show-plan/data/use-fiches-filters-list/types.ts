@@ -2,8 +2,6 @@ import {
   PrioriteOrNot,
   StatutOrNot,
 } from '@/app/plans/fiches/list-all-fiches/filters/types';
-
-import { Enums } from '@tet/api';
 import {
   listFichesRequestFiltersSchema,
   Priorite,
@@ -12,8 +10,6 @@ import {
   Statut,
 } from '@tet/domain/plans';
 import { z } from 'zod';
-
-type TFicheActionEcheances = Enums<'fiche_action_echeances'>;
 
 export type Filters = {
   collectiviteId: number;
@@ -27,7 +23,6 @@ export type Filters = {
   noStatut?: boolean;
   priorites?: Priorite[];
   noPriorite?: boolean;
-  echeance?: TFicheActionEcheances;
   page?: number;
 };
 
@@ -40,8 +35,8 @@ export type FormFilters = {
   pilotes?: PiloteOrNot[];
 };
 
-export type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
-export type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
+type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
+type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
 
 export const queryPayloadSchema = listFichesRequestFiltersSchema.pick({
   noPilote: true,

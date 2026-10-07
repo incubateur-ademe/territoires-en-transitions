@@ -1,138 +1,105 @@
 import * as z from 'zod/mini';
-import { demarchePcaetTopicKindSchema } from './demarche-pcaet-topic-kind.enum.schema';
-import { demarchePcaetVulnerabiliteSchema } from './demarche-pcaet-vulnerabilite.schema';
-
-/**
- * Jalon du cycle de vie auquel le diagnostic est figé. La photo prise à la
- * transmission est ce que consultent les instances consultatives : les valeurs
- * de la collectivité continuent d'évoluer sans l'affecter.
- */
-export const demarchePcaetDiagnosticJalonValues = ['transmission'] as const;
-
-export const demarchePcaetDiagnosticJalonSchema = z.enum(
-  demarchePcaetDiagnosticJalonValues
-);
-
-export type DemarchePcaetDiagnosticJalon = z.infer<
-  typeof demarchePcaetDiagnosticJalonSchema
->;
-
-/**
- * Valeur de référence issue de l'open data, affichée à côté de la saisie de la
- * collectivité. Elle ne s'y substitue jamais : le dépôt ne retient que ce que
- * la collectivité a renseigné.
- */
-export const demarchePcaetDiagnosticReferenceSchema = z.object({
-  /** Le libellé et la couleur de la source sont résolus à l'affichage. */
-  sourceId: z.string(),
-  /** Version de la source, deux sources ne couvrant pas les mêmes millésimes. */
-  millesime: z.nullable(z.string()),
-  resultat: z.nullable(z.number()),
-});
-
-export type DemarchePcaetDiagnosticReference = z.infer<
-  typeof demarchePcaetDiagnosticReferenceSchema
->;
+import { indicateurDefinitionSchema } from '../../../indicateurs/definitions/indicateur-definition.schema';
+import { indicateurCollectiviteSchema } from '../../../indicateurs/shared/indicateur-collectivite.schema';
+import { indicateurValeurAvecMetadonnesDefinitionSchema } from '../../../indicateurs/valeurs/indicateur-valeur.schema';
+import {
+  demarchePcaetVulnerabiliteLigneSchema,
+  demarchePcaetVulnerabiliteThematiqueSchema,
+} from './demarche-pcaet-vulnerabilite.schema';
 
 /** Une cellule de la grille : la saisie de la collectivité et ses références. */
-export const demarchePcaetDiagnosticValeurSchema = z.object({
+export const pcaetDiagnosticIndicateurValeurSchema = z.object({
   indicateurId: z.number(),
   year: z.number(),
   resultat: z.nullable(z.number()),
   objectif: z.nullable(z.number()),
-  references: z.array(demarchePcaetDiagnosticReferenceSchema),
 });
 
-export type DemarchePcaetDiagnosticValeur = z.infer<
-  typeof demarchePcaetDiagnosticValeurSchema
+export type PcaetDiagnosticIndicateurValeur = z.infer<
+  typeof pcaetDiagnosticIndicateurValeurSchema
 >;
 
-const topicRowBaseSchema = z.object({
+const pcaetDiagnosticIndicateurChildLeafSchema = z.object({
   label: z.string(),
-  /** Identifiant de l'indicateur dont la ligne porte les valeurs. */
-  referentielId: z.nullable(z.string()),
-  /** `null` quand l'identifiant n'a pas de définition : ligne non saisissable. */
-  indicateurId: z.nullable(z.number()),
-  requis: z.boolean(),
+  indicateurDefinitionId: z.string(),
+  optionalYears: z.optional(z.union([z.array(z.number()), z.literal('all')])),
 });
 
-export const demarchePcaetTopicLeafSchema = topicRowBaseSchema;
-
-export type DemarchePcaetTopicLeaf = z.infer<
-  typeof demarchePcaetTopicLeafSchema
+export type PcaetDiagnosticIndicateurChildLeaf = z.infer<
+  typeof pcaetDiagnosticIndicateurChildLeafSchema
 >;
 
-/**
- * Ligne de premier niveau. La profondeur s'arrête là, d'où deux schémas plutôt
- * qu'une récursion : le contrat est explicite.
- */
-export const demarchePcaetTopicRowSchema = z.extend(topicRowBaseSchema, {
-  rows: z.array(demarchePcaetTopicLeafSchema),
+const pcaetDiagnosticIndicateurChildSchema = z.object({
+  ...pcaetDiagnosticIndicateurChildLeafSchema.shape,
+
+  groupBy: z.optional(z.string()),
+  children: z.optional(z.array(pcaetDiagnosticIndicateurChildLeafSchema)),
 });
 
-export type DemarchePcaetTopicRow = z.infer<typeof demarchePcaetTopicRowSchema>;
-
 /**
- * Un onglet du diagnostic : le référentiel attendu et les valeurs constatées,
- * servis ensemble pour que le front et le serveur appliquent les mêmes règles
- * au même objet.
+ * Topic indicateur : référentiel attendu et valeurs constatées, servis ensemble
+ * pour que le front et le serveur appliquent les mêmes règles au même objet.
  */
-export const demarchePcaetTopicSchema = z.object({
+export const pcaetDiagnosticIndicateurParentConfigSchema = z.object({
   code: z.string(),
   label: z.string(),
-  /** Nom d'icône RemixIcon de l'onglet. */
   icon: z.string(),
-  kind: demarchePcaetTopicKindSchema,
-  /** Nom métier du premier niveau (Secteur, Polluant, Vecteur…). */
-  groupLabel: z.nullable(z.string()),
-  /** Nom métier du second niveau, `null` si le topic est à un niveau. */
-  rowLabel: z.nullable(z.string()),
-  unit: z.nullable(z.string()),
-  /** Indicateur agrégé du topic. */
-  referentielId: z.nullable(z.string()),
+  optional: z.optional(z.boolean()),
+
+  indicateurDefinitionId: z.string(),
+  referenceYearApplyLevel: z.enum(['parent', 'child']),
+
+  children: z.array(pcaetDiagnosticIndicateurChildSchema),
+});
+
+export type PcaetDiagnosticIndicateurParentConfig = z.infer<
+  typeof pcaetDiagnosticIndicateurParentConfigSchema
+>;
+
+/**
+ * Topic vulnérabilité : méta d'onglet + saisie (thématiques / lignes).
+ * Hors grille indicateurs.
+ */
+export const pcaetDiagnosticVulnerabiliteSchema = z.object({
+  code: z.string(),
+  label: z.string(),
+  icon: z.string(),
+
   horizons: z.array(z.number()),
-  /** Année de comptabilisation retenue, `null` pour un topic sans grille. */
-  referenceYear: z.nullable(z.number()),
-  /**
-   * Années ajoutées par la collectivité, les seules colonnes supprimables :
-   * l'année de comptabilisation et les horizons réglementaires restent.
-   */
-  extraYears: z.array(z.number()),
-  /** Colonnes de la grille : comptabilisation, horizons et années ajoutées. */
-  years: z.array(z.number()),
-  rows: z.array(demarchePcaetTopicRowSchema),
-  valeurs: z.array(demarchePcaetDiagnosticValeurSchema),
-  /**
-   * Contenu du topic `vulnerabilite`, `null` pour les topics à indicateurs.
-   * Le porter ici plutôt qu'à côté du diagnostic le fait entrer sans effort
-   * dans la photo figée à la transmission. `nullish` et non `nullable` : les
-   * photos prises avant l'arrivée de ce volet n'ont pas la clé du tout.
-   */
-  vulnerabilite: z.nullish(demarchePcaetVulnerabiliteSchema),
+  thematiques: z.array(demarchePcaetVulnerabiliteThematiqueSchema),
+  lignes: z.array(demarchePcaetVulnerabiliteLigneSchema),
 });
 
-export type DemarchePcaetTopic = z.infer<typeof demarchePcaetTopicSchema>;
+export type PcaetDiagnosticVulnerabilite = z.infer<
+  typeof pcaetDiagnosticVulnerabiliteSchema
+>;
 
-/** Ce qui est figé dans une photo : le diagnostic sans son contexte de lecture. */
-export const demarchePcaetDiagnosticPayloadSchema = z.object({
-  topics: z.array(demarchePcaetTopicSchema),
+/**
+ * Définition du référentiel augmentée de ce que la collectivité en a décidé.
+ * Seul `isApplicable` est repris : `collectiviteId`, `modifiedAt` et
+ * `modifiedBy` existent dans les deux schémas avec des sens différents (sur la
+ * définition, `collectiviteId` désigne la collectivité propriétaire d'un
+ * indicateur perso), un merge à plat les écraserait.
+ */
+export const pcaetDiagnosticIndicateurDefinitionSchema = z.object({
+  ...indicateurDefinitionSchema.shape,
+  ...z.pick(indicateurCollectiviteSchema, { isApplicable: true }).shape,
 });
 
-export type DemarchePcaetDiagnosticPayload = z.infer<
-  typeof demarchePcaetDiagnosticPayloadSchema
+export type PcaetDiagnosticIndicateurDefinition = z.infer<
+  typeof pcaetDiagnosticIndicateurDefinitionSchema
 >;
 
-export const demarchePcaetDiagnosticSchema = z.extend(
-  demarchePcaetDiagnosticPayloadSchema,
-  {
-    /**
-     * Date de la photo servie, `null` quand le diagnostic est lu en direct.
-     * Dès la transmission, l'écran montre ce qui a été déposé.
-     */
-    snapshotDate: z.nullable(z.string()),
-  }
-);
+export const pcaetDiagnosticSchema = z.object({
+  indicateurParentConfigs: z.readonly(
+    z.array(pcaetDiagnosticIndicateurParentConfigSchema)
+  ),
+  /** Définitions du référentiel, même sans saisie — pour peupler la grille vide. */
+  indicateurDefinitions: z.array(pcaetDiagnosticIndicateurDefinitionSchema),
+  indicateurValeurs: z.array(indicateurValeurAvecMetadonnesDefinitionSchema),
+  vulnerabilite: pcaetDiagnosticVulnerabiliteSchema,
+});
 
-export type DemarchePcaetDiagnostic = z.infer<
-  typeof demarchePcaetDiagnosticSchema
->;
+export type PcaetDiagnostic = z.infer<typeof pcaetDiagnosticSchema>;
+
+export const demarchePcaetDiagnosticSchema = pcaetDiagnosticSchema;

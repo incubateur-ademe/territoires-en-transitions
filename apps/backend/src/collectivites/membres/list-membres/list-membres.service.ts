@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -17,7 +18,8 @@ export class ListMembresService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   /** Liste les membres de la collectivité */
@@ -26,9 +28,18 @@ export class ListMembresService {
     { user, tx }: { user?: AuthenticatedUser; tx?: Transaction }
   ): Promise<{ membres: Membre[] }> {
     if (user) {
+      // La liste porte l'adresse et le téléphone de chaque membre, lus dans
+      // `dcp`. Sur une collectivité en accès restreint — ce que sont les
+      // services de l'État — ces coordonnées ne relèvent pas du mode visite :
+      // il faut y avoir un rôle. Même arbitrage que les documents et les tags.
+      const accesRestreint = await this.collectivitesService.isPrivate(
+        collectiviteId
+      );
       await this.permissionService.assertAllowed(
         user,
-        'collectivites.membres.read',
+        accesRestreint
+          ? 'collectivites.read_confidentiel'
+          : 'collectivites.membres.read',
         ResourceType.COLLECTIVITE,
         { collectiviteId }
       );

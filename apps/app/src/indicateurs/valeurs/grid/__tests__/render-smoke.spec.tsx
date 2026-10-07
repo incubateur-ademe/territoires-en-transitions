@@ -1,185 +1,253 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { ComponentProps } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { capitalize } from '@tet/ui/labels/plural';
+import { ComponentProps, JSX } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
+import { IndicateurTableRow } from '../types';
 import {
-  CELL_ID_ATTRIBUTE,
-  GridGroups,
-  GridRow,
-  toIndicateurId,
-  toYear,
-} from '../types';
-import {
-  fakeCells,
-  fakeGridActions,
-  fakeGroupsInput,
   fakeReferenceYear,
+  fakeRow,
+  fakeRows,
   fakeYears,
 } from './grid-fixtures';
 
-const notify = vi.fn();
+vi.mock(
+  '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs',
+  () => ({
+    useUpdateDiagnosticIndicateursValeurs: () => ({
+      updateIndicateurValeurs: vi.fn().mockResolvedValue(undefined),
+      isPending: false,
+    }),
+  })
+);
+
+const { setIndicateurApplicable } = vi.hoisted(() => ({
+  setIndicateurApplicable: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock(
+  '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable',
+  () => ({
+    useSetIndicateurApplicable: () => ({
+      setIndicateurApplicable,
+      isPending: false,
+    }),
+  })
+);
+
+const gridElement = (
+  overrides: Partial<ComponentProps<typeof IndicateurValeursTable>> = {}
+): JSX.Element => (
+  <IndicateurValeursTable
+    demarcheId={1}
+    rows={fakeRows}
+    years={fakeYears}
+    referenceYear={fakeReferenceYear}
+    title="Profil énergie CLIMAT"
+    unit="kteq CO2"
+    onReferenceYearChange={vi.fn()}
+    isRequired
+    {...overrides}
+  />
+);
 
 const renderGrid = (
   overrides: Partial<ComponentProps<typeof IndicateurValeursTable>> = {}
-): ReturnType<typeof render> =>
-  render(
-    <IndicateurValeursTable
-      rows={fakeGroupsInput}
-      years={fakeYears}
-      referenceYear={fakeReferenceYear}
-      title="Profil énergie CLIMAT"
-      unit="kteq CO2"
-      cells={fakeCells()}
-      actions={fakeGridActions}
-      notify={notify}
-      {...overrides}
-    />
-  );
+): ReturnType<typeof render> => render(gridElement(overrides));
 
 describe('IndicateurValeursTable smoke', () => {
   it('rend sans lever', () => {
     renderGrid();
   });
+});
 
-  it("n'affiche pas de colonne + sans onAddYear", () => {
-    renderGrid();
+describe('IndicateurValeursTable année de référence', () => {
+  it("place le champ d'année de référence dans l'en-tête du tableau", () => {
+    const { container } = renderGrid({ onReferenceYearChange: vi.fn() });
 
-    expect(
-      screen.queryByRole('button', { name: appLabels.indicateurAjouterAnnee })
-    ).toBeNull();
+    const field = container.querySelector(
+      '[data-test="indicateurs.valeurs.reference-year"]'
+    );
+    const table = container.querySelector('table');
+
+    expect(field).not.toBeNull();
+    expect(table?.contains(field)).toBe(true);
   });
 
-  it('ajoute une année via la colonne + quand onAddYear est fourni', () => {
-    const onAddYear = vi.fn();
-    renderGrid({ onAddYear });
+  it("permet de saisir l'année dans l'en-tête de la première colonne", () => {
+    const onReferenceYearChange = vi.fn();
+    renderGrid({ onReferenceYearChange });
 
     fireEvent.click(
-      screen.getByRole('button', { name: appLabels.indicateurAjouterAnnee })
+      screen.getByRole('button', {
+        name: appLabels.indicateurAnneeReferenceChamp,
+      })
     );
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: '2040' } });
+    const input = screen.getByRole('textbox', {
+      name: appLabels.indicateurAnneeReferenceChamp,
+    });
+    fireEvent.change(input, { target: { value: '2018' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onAddYear).toHaveBeenCalledWith(toYear(2040));
+    expect(onReferenceYearChange).toHaveBeenCalledWith(2018);
   });
 
-  it('aligne la colonne + avec des cellules sticky à droite dans le corps', () => {
-    const { container } = renderGrid({ onAddYear: vi.fn() });
-
-    const stickyTrailingCells = container.querySelectorAll(
-      'tbody td.sticky.right-0'
-    );
-    // 5 group-parent rows + 30 data rows (5 secteurs x 6 polluants).
-    expect(stickyTrailingCells.length).toBe(35);
-    stickyTrailingCells.forEach((cell) => {
-      expect(cell.className).toContain('sticky');
-      expect(cell.className).toContain('right-0');
+  it("affiche un placeholder sans année quand la référence n'est pas saisie", () => {
+    renderGrid({
+      referenceYear: null,
+      years: [2030, 2036, 2050],
+      onReferenceYearChange: vi.fn(),
     });
+
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.indicateurAnneeReferenceChamp,
+      }).textContent
+    ).toBe(appLabels.indicateurAnneeReferencePlaceholder);
+    expect(screen.getByText('2030')).toBeDefined();
   });
 });
 
 describe('IndicateurValeursTable lecture seule', () => {
-  it('affiche les valeurs dans des champs désactivés', () => {
+  it('affiche les valeurs sans ouvrir l’éditeur au clic', () => {
     renderGrid({ isReadonly: true });
 
-    const champs = screen.getAllByLabelText(appLabels.indicateurLegendeResultat);
-    expect(champs.length).toBeGreaterThan(0);
-    champs.forEach((champ) => {
-      expect((champ as HTMLInputElement).disabled).toBe(true);
-    });
+    const firstValue = String(
+      fakeRows[0].indicateurValeurs[0]?.resultat ??
+        fakeRows[0].indicateurValeurs[0]?.objectif
+    );
+    fireEvent.click(screen.getAllByText(firstValue)[0]);
+
+    expect(
+      screen.queryByLabelText(capitalize(appLabels.indicateurResultat()))
+    ).toBeNull();
   });
 
   it('laisse les cellules éditables au clic quand la grille est saisissable', () => {
     renderGrid();
 
-    // Hors lecture seule, la valeur est un texte : aucun champ n'est rendu tant
-    // que la cellule n'est pas ouverte à l'édition.
     expect(
-      screen.queryByLabelText(appLabels.indicateurLegendeResultat)
+      screen.queryByLabelText(capitalize(appLabels.indicateurResultat()))
     ).toBeNull();
-  });
-
-  it('ignore le collage en lecture seule', () => {
-    const saveCellValues = vi.fn();
-    const { container } = renderGrid({
-      isReadonly: true,
-      actions: { ...fakeGridActions, saveCellValues },
-    });
-
-    // Le collage se lit sur la cellule elle-même : viser la table ferait passer
-    // le test sans rien prouver, faute d'atteindre le gestionnaire.
-    const cellule = container.querySelector(`[${CELL_ID_ATTRIBUTE}]`);
-    expect(cellule).not.toBeNull();
-    fireEvent.paste(cellule as Element, {
-      clipboardData: { getData: () => '12\t13' },
-    });
-
-    expect(saveCellValues).not.toHaveBeenCalled();
   });
 });
 
-const secteursDuPolluant: GridRow[] = [
-  { indicateurId: toIndicateurId(1), label: 'Résidentiel' },
-  { indicateurId: toIndicateurId(2), label: 'Transport routier' },
+const secteursDuPolluant: IndicateurTableRow[] = [
+  fakeRow({
+    indicateurId: 1,
+    indicateurLabel: 'Résidentiel',
+    indicateurValeurs: [],
+  }),
+  fakeRow({
+    indicateurId: 2,
+    indicateurLabel: 'Transport routier',
+    indicateurValeurs: [],
+  }),
 ];
 
-const polluantUnique: GridGroups = {
-  nox: { label: 'NOx', rows: secteursDuPolluant },
-};
-
-describe('IndicateurValeursTable groupes repliables', () => {
-  it('affiche le libelle du groupe quand le prop est un objet groupe', () => {
-    renderGrid();
-
-    expect(screen.getByText('Résidentiel')).toBeDefined();
-  });
-
-  it('affiche le libelle du groupe meme quand le groupe est unique', () => {
-    renderGrid({
-      rows: polluantUnique,
-      cells: new Map(),
-    });
-
-    expect(screen.getByText('NOx')).toBeDefined();
-  });
-
-  it('masque la ligne parente de groupe quand le prop est un tableau plat', () => {
+describe('IndicateurValeursTable lignes', () => {
+  it('affiche les libellés de ligne', () => {
     renderGrid({
       rows: secteursDuPolluant,
-      cells: new Map(),
     });
 
-    expect(screen.queryByText('NOx')).toBeNull();
     expect(screen.getByText('Résidentiel')).toBeDefined();
-    expect(
-      screen.queryByRole('button', { name: /Déplier|Replier/ })
-    ).toBeNull();
+    expect(screen.getByText('Transport routier')).toBeDefined();
   });
 
   it('affiche le titre et l’unité dans la cellule haut gauche', () => {
     renderGrid();
 
     expect(screen.getByText('Profil énergie CLIMAT')).toBeDefined();
-    expect(screen.getByText('kteq CO2')).toBeDefined();
+    expect(screen.getByText(/kteq CO2/)).toBeDefined();
+  });
+});
+
+describe('IndicateurValeursTable applicabilité', () => {
+  beforeEach(() => {
+    setIndicateurApplicable.mockClear();
   });
 
-  it('replie et déplie les sous-secteurs d’un groupe', () => {
-    renderGrid({
-      rows: polluantUnique,
-      cells: new Map(),
+  const ligneNonApplicable: IndicateurTableRow[] = [
+    fakeRow({
+      indicateurId: 42,
+      indicateurLabel: 'Branche énergie',
+      isApplicable: false,
+    }),
+  ];
+
+  it('remplace les valeurs par N/A sur une ligne non applicable', () => {
+    renderGrid({ rows: ligneNonApplicable });
+
+    expect(
+      screen.getAllByText(appLabels.pcaetDiagnosticValeurNonApplicable).length
+    ).toBeGreaterThan(0);
+  });
+
+  const TOGGLE_SELECTOR = '[data-test="indicateurs.grid.toggle-applicable"]';
+
+  it('propose la bascule quand la grille est saisissable, pas en lecture seule', () => {
+    const saisissable = renderGrid({ rows: ligneNonApplicable });
+    expect(saisissable.container.querySelector(TOGGLE_SELECTOR)).not.toBeNull();
+    saisissable.unmount();
+
+    const lectureSeule = renderGrid({
+      rows: ligneNonApplicable,
+      isReadonly: true,
+    });
+    expect(lectureSeule.container.querySelector(TOGGLE_SELECTOR)).toBeNull();
+  });
+
+  const nomBascule = appLabels.pcaetDiagnosticIndicateurApplicabiliteBascule({
+    titre: 'Branche énergie',
+  });
+
+  it("nomme la bascule d'après l'indicateur : le Tooltip seul ne lui donnerait pas de libellé", () => {
+    renderGrid({ rows: ligneNonApplicable });
+
+    expect(screen.getByRole('checkbox', { name: nomBascule })).toBeDefined();
+  });
+
+  it('bascule une ligne non applicable vers applicable', () => {
+    renderGrid({ rows: ligneNonApplicable });
+
+    fireEvent.click(screen.getByRole('checkbox', { name: nomBascule }));
+
+    expect(setIndicateurApplicable).toHaveBeenCalledWith({
+      indicateurId: 42,
+      isApplicable: true,
+    });
+  });
+
+  it("dit l'état par la coche et garde le même nom d'un état à l'autre", () => {
+    const { rerender } = renderGrid({
+      rows: [
+        fakeRow({
+          indicateurId: 42,
+          indicateurLabel: 'Branche énergie',
+          isApplicable: true,
+        }),
+      ],
     });
 
-    expect(screen.getByText('Résidentiel')).toBeDefined();
-    expect(screen.getByText('2 sous-secteurs')).toBeDefined();
+    const bascule = screen.getByRole('checkbox', { name: nomBascule });
+    expect((bascule as HTMLInputElement).checked).toBe(true);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Replier NOx' }));
+    fireEvent.click(bascule);
 
-    expect(screen.queryByText('Résidentiel')).toBeNull();
-    expect(screen.getByRole('button', { name: 'Déplier NOx' })).toBeDefined();
+    expect(setIndicateurApplicable).toHaveBeenCalledWith({
+      indicateurId: 42,
+      isApplicable: false,
+    });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Déplier NOx' }));
+    // Le nom ne bouge pas — renommer un contrôle à son activation le ferait
+    // disparaître sous l'utilisateur ; seule la coche suit l'état.
+    rerender(gridElement({ rows: ligneNonApplicable }));
 
-    expect(screen.getByText('Résidentiel')).toBeDefined();
+    const basculeNonApplicable = screen.getByRole('checkbox', {
+      name: nomBascule,
+    });
+    expect((basculeNonApplicable as HTMLInputElement).checked).toBe(false);
   });
 });

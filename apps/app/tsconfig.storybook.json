@@ -3,30 +3,31 @@
   "compilerOptions": {
     "outDir": "out-tsc/storybook",
     "paths": {
-      "@/app/*": [
-        "./src/*"
-      ]
+      "@/app/*": ["./src/*"]
     }
   },
   "include": [
-    "src/**/*.stories.ts",
-    "src/**/*.stories.js",
-    "src/**/*.stories.jsx",
-    "src/**/*.stories.tsx",
+    "*.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx",
+    ".next/types/**/*.ts",
     ".storybook/*.js",
     ".storybook/*.ts",
-    "app/**/*.stories.tsx",
-    ".storybook/preview.tsx",
+    ".storybook/*.tsx",
     "**/fixture.json"
   ],
   "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.js",
-    "src/**/*.test.js",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.jsx",
-    "src/**/*.test.js"
+    "out-tsc/**/*",
+    "vitest.config.mts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.jsx",
+    "**/*.test.jsx"
   ]
 }

@@ -1,29 +1,17 @@
-'use client';
-
+import { AccesRestreintGuard } from '@/app/collectivites/acces-restreint.guard';
+import StandardOnlyLayout from '@/app/collectivites/standard-only.layout';
 import { ReactNode } from 'react';
 
-import { appLabels } from '@/app/labels/catalog';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-
-export default function Layout({ children }: { children: ReactNode }) {
-  const collectivite = useCurrentCollectivite();
-
-  const isVisitor = useIsVisitor();
-
-  /** Vérifie que l'utilisateur peut accéder à la collectivité */
-  const hasNoAccessToCollectivite = collectivite.accesRestreint && isVisitor;
-
-  /** S'il ne peut pas, on affiche un message */
-  if (hasNoAccessToCollectivite) {
-    return (
-      <div className="flex-grow flex">
-        <div className="m-auto text-grey-7">
-          {appLabels.collectiviteInaccessibleEnVisite}
-        </div>
-      </div>
-    );
-  }
-
-  return children;
+export default function Layout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ collectiviteId: string }>;
+}) {
+  return (
+    <StandardOnlyLayout params={params}>
+      <AccesRestreintGuard>{children}</AccesRestreintGuard>
+    </StandardOnlyLayout>
+  );
 }

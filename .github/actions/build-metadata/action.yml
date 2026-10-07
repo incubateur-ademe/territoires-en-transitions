@@ -1,0 +1,28 @@
+name: build-metadata
+description: Calcule les métadonnées de build/déploiement (hash git, version, timestamps)
+
+outputs:
+  git-short-hash:
+    description: Hash court du commit courant
+    value: ${{ steps.meta.outputs.git-short-hash }}
+  git-commit-timestamp:
+    description: Date de commit ISO 8601
+    value: ${{ steps.meta.outputs.git-commit-timestamp }}
+  application-version:
+    description: Version applicative (tag git le plus proche, ou hash court à défaut)
+    value: ${{ steps.meta.outputs.application-version }}
+  deployment-timestamp:
+    description: Date de déploiement ISO 8601 (calculée à l'exécution de l'action)
+    value: ${{ steps.meta.outputs.deployment-timestamp }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: meta
+      shell: bash
+      run: |
+        echo "git-short-hash=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        echo "git-commit-timestamp=$(git show -s --format=%cI HEAD)" >> "$GITHUB_OUTPUT"
+        echo "application-version=$(git describe --tags --always)" >> "$GITHUB_OUTPUT"
+        echo "deployment-timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"

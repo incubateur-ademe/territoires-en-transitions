@@ -1,5 +1,6 @@
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import { useGetAction } from '@/app/referentiels/actions/use-get-action';
+import { useReferentielModeById } from '@/app/referentiels/referentiel-mode/use-referentiel-mode';
 import { getInitials, getModifiedSince } from '@/app/utils/formatUtils';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -7,6 +8,7 @@ import {
   DiscussionMessage,
   discussionStatus as discussionStatusEnum,
 } from '@tet/domain/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button } from '@tet/ui';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -74,6 +76,11 @@ const ActionCommentItem = ({
   const user = useUser();
 
   const canUpdateOrDeleteComment = user?.id === comment.createdBy;
+
+  // référentiel archivé (post-bascule) : on ne peut plus fermer/rouvrir une discussion
+  const isArchived =
+    useReferentielModeById(getReferentielIdFromActionId(actionId)) ===
+    'archived';
 
   const handleUpdateDiscussionStatus = async (
     status: ActionDiscussionStatut
@@ -175,7 +182,7 @@ const ActionCommentItem = ({
                     />
                   </div>
                 )}
-                {isFirstComment && (
+                {isFirstComment && !isArchived && (
                   <Button
                     className={commentActionButtonsClassName}
                     dataTest="ActionDiscussionStatusCommentaireMenu"

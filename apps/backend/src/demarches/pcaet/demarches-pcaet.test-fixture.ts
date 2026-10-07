@@ -1,10 +1,144 @@
+import { INestApplication } from '@nestjs/common';
+import {
+  addTestCollectiviteAndUser,
+  addTestCommunesMembres,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
-import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { randomUUID } from 'crypto';
-import { eq, sql } from 'drizzle-orm';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
+import {
+  DemarchePcaet,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
+  PCAET_DIAGNOSTIC_INDICATEURS,
+  PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+  type PcaetDiagnosticIndicateurParentConfig,
+} from '@tet/domain/demarches';
+import { CollectiviteRole } from '@tet/domain/users';
+import { and, eq, inArray } from 'drizzle-orm';
+import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
+import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
+import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pcaet-source-metadonnee.table';
+
+/**
+ * Toutes les feuilles exigées des topics non optionnels : la complétude juge
+ * chaque ligne (référence + horizons hors optionalYears), pas un seul indicateur
+ * pour tout le volet.
+ */
+const DIAGNOSTIC_COMPLETION_LEAVES = (
+  PCAET_DIAGNOSTIC_INDICATEURS as readonly PcaetDiagnosticIndicateurParentConfig[]
+)
+  .filter((topic) => topic.optional !== true)
+  .flatMap((topic) => listPcaetDiagnosticIndicateurRequiredLeaves(topic));
+
+const DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS = [
+  ...new Set(
+    DIAGNOSTIC_COMPLETION_LEAVES.map((leaf) => leaf.indicateurDefinitionId)
+  ),
+];
+
+const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
+const PCAET_COLLECTIVITE_SOURCE_LABEL = 'PCAET collectivité';
+
+/**
+ * Un code de région libre, pour une collectivité instructrice de test : un index
+ * unique interdit deux DREAL sur la même région, et un code en dur ferait échouer
+ * la seconde exécution sur la collectivité laissée par la première.
+ *
+ * **Deux lettres**, et c'est un espace réservé : les codes réels sont deux
+ * chiffres, et les specs qui figent leur code prennent une lettre puis un chiffre
+ * (`C1`, `L2`…). Les trois espaces sont disjoints, donc ce tirage ne peut pas
+ * tomber sur un code qu'une autre spec s'est réservé.
+ *
+ * Les codes pris sont lus avant de tirer, ce qui laisse une fenêtre de course
+ * entre la lecture et l'insertion.
+ */
+export async function pickFreeRegionCode(
+  { db }: DatabaseServiceInterface,
+  type: CollectiviteType
+): Promise<string> {
+  const rows = await db
+    .select({ regionCode: collectiviteTable.regionCode })
+    .from(collectiviteTable)
+    .where(eq(collectiviteTable.type, type));
+  const pris = new Set(rows.map(({ regionCode }) => regionCode));
+
+  const lettre = () => String.fromCharCode(65 + Math.floor(Math.random() * 26));
+  for (let essai = 0; essai < 100; essai++) {
+    const code = `${lettre()}${lettre()}`;
+    if (!pris.has(code)) {
+      return code;
+    }
+  }
+
+  throw new Error(
+    `Aucun code de région libre pour le type ${type} après 100 tirages ` +
+      `(${pris.size} codes pris) — la base de test doit être nettoyée.`
+  );
+}
+
+/**
+ * Collectivité neuve + utilisateur + démarche PCAET créée via le router.
+ * Une seule démarche active par collectivité : chaque cas part d'ici.
+ */
+export async function createDemarche(
+  db: DatabaseService,
+  router: TrpcRouter,
+  {
+    role = CollectiviteRole.EDITION,
+    collectivite: collectiviteArgs,
+    communesMembres,
+  }: {
+    role?: CollectiviteRole;
+    collectivite?: Partial<Collectivite>;
+    /** Population de chaque commune membre à rattacher au groupement. */
+    communesMembres?: number[];
+  } = {}
+): Promise<{
+  collectivite: Collectivite;
+  collectiviteId: number;
+  user: AuthenticatedUser;
+  caller: ReturnType<TrpcRouter['createCaller']>;
+  demarche: DemarchePcaet;
+}> {
+  const fixture = await addTestCollectiviteAndUser(db, {
+    user: { role },
+    collectivite: collectiviteArgs,
+  });
+  if (communesMembres?.length) {
+    await addTestCommunesMembres(db, {
+      parentId: fixture.collectivite.id,
+      populations: communesMembres,
+    });
+  }
+  const user = getAuthUserFromUserCredentials(fixture.user);
+  const caller = router.createCaller({ user });
+  const demarche = await caller.demarches.pcaet.create({
+    collectiviteId: fixture.collectivite.id,
+  });
+
+  return {
+    collectivite: fixture.collectivite,
+    collectiviteId: fixture.collectivite.id,
+    user,
+    caller,
+    demarche,
+  };
+}
 
 /**
  * Ajoute un fichier dans la bibliothèque de la collectivité, sans passer par le
@@ -24,7 +158,7 @@ export async function addTestBibliothequeFichier(
       collectiviteId,
       // La bibliothèque est dédupliquée par (collectivite, hash) : un hash
       // aléatoire garantit une nouvelle entrée à chaque appel.
-      hash: randomUUID().replaceAll('-', ''),
+      hash: buildRandomDocumentHash(),
       filename,
       confidentiel: false,
     })
@@ -43,30 +177,37 @@ export async function addTestBibliothequeFichier(
 export const PCAET_DOCUMENT_GLOBAL_ID = 'pcaet_document_global';
 
 /**
- * Rattache un programme d'actions à la démarche — l'une des deux conditions du
- * guard `dossierComplet`.
+ * Rattache un plan au programme d'actions de la démarche — l'une des deux
+ * conditions du guard `dossierComplet`. Appelable plusieurs fois : la démarche
+ * en tient autant qu'on lui en rattache.
  */
 export async function attachTestPlanToDemarchePcaet(
   db: DatabaseService,
-  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+  {
+    collectiviteId,
+    demarcheId,
+    nom = 'Programme d’actions du PCAET',
+  }: { collectiviteId: number; demarcheId: number; nom?: string }
 ): Promise<{ id: number }> {
   const [plan] = await db.db
     .insert(axeTable)
-    .values({ nom: 'Programme d’actions du PCAET', collectiviteId })
+    .values({ nom, collectiviteId })
     .returning({ id: axeTable.id });
 
   await db.db
-    .update(demarcheTable)
-    .set({ planActionId: plan.id })
-    .where(eq(demarcheTable.id, demarcheId));
+    .insert(demarchePlanActionTable)
+    .values({ demarcheId, planActionId: plan.id });
 
   return plan;
 }
 
 /**
- * Couvre toutes les sections requises en déposant le seul document global —
- * l'autre condition du guard `dossierComplet`. Écrit directement en base : c'est
- * un raccourci de mise en situation, pas un test du chemin de dépôt.
+ * Couvre toutes les sections requises — l'autre condition du guard
+ * `dossierComplet`. Le PCAET global déposé n'y suffit pas : plus aucune
+ * couverture n'est implicite, chaque pièce qu'il contient porte sa déclaration
+ * d'inclusion — celles que le dépôt coche d'office comme celles qui attendent
+ * la collectivité. Écrit directement en base : c'est un raccourci de mise en
+ * situation, pas un test du chemin de dépôt.
  */
 export async function coverTestDocumentsPcaet(
   db: DatabaseService,
@@ -81,16 +222,45 @@ export async function coverTestDocumentsPcaet(
     collectiviteId,
     demarcheId,
     documentId: PCAET_DOCUMENT_GLOBAL_ID,
+    etape: 'amont',
     fichierId: fichier.id,
     modifiedBy: userId ?? null,
   });
+
+  // Une ligne sans fichier : c'est ainsi qu'une inclusion se déclare. Aucune
+  // couverture n'étant implicite, toutes les pièces que le PCAET global peut
+  // contenir y passent — celles qu'il coche d'office comme celles qui attendent
+  // la déclaration.
+  const declarables = await db.db
+    .selectDistinct({
+      documentId: demarcheDocumentSubstitutionTable.documentId,
+    })
+    .from(demarcheDocumentSubstitutionTable)
+    .where(
+      eq(
+        demarcheDocumentSubstitutionTable.substitutId,
+        PCAET_DOCUMENT_GLOBAL_ID
+      )
+    );
+
+  if (declarables.length > 0) {
+    await db.db.insert(demarcheDocumentTable).values(
+      declarables.map(({ documentId }) => ({
+        collectiviteId,
+        demarcheId,
+        documentId,
+        // Une inclusion se déclare sur le dossier transmis.
+        etape: 'amont' as const,
+        modifiedBy: userId ?? null,
+      }))
+    );
+  }
 }
 
 /**
- * Renseigne chaque ligne requise du diagnostic : un résultat sur l'année de
- * comptabilisation et un objectif sur le premier horizon du topic. Écrit
- * directement dans `indicateur_valeur`, là où vivent les valeurs de la
- * collectivité.
+ * Renseigne le diagnostic au sens du guard : sur chaque feuille exigée, un
+ * résultat sur l'année de référence et un objectif sur chaque horizon requis
+ * (hors `optionalYears`). Écrit via la source dédiée `pcaet-collectivite`.
  */
 export async function completeTestDiagnosticPcaet(
   db: DatabaseService,
@@ -100,61 +270,143 @@ export async function completeTestDiagnosticPcaet(
     referenceYear = 2021,
   }: { collectiviteId: number; demarcheId: number; referenceYear?: number }
 ): Promise<void> {
-  await db.db.execute(sql`
-    insert into demarche_pcaet_diagnostic_state (demarche_id, topic_id, reference_year)
-    select ${demarcheId}, id, ${referenceYear}
-    from demarche_pcaet_topic
-    where kind = 'indicateurs'
-    on conflict (demarche_id, topic_id) do update set reference_year = ${referenceYear}
-  `);
+  const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+    collectiviteId,
+    demarcheId,
+  });
 
-  await db.db.execute(sql`
-    with ligne as (
-        select d.id as indicateur_id, t.horizons[1] as horizon
-        from demarche_pcaet_topic t
-        join demarche_pcaet_topic_row r on r.topic_id = t.id
-        join indicateur_definition d on d.identifiant_referentiel = r.referentiel_id
-        where t.kind = 'indicateurs' and r.requis
+  const definitions = await db.db
+    .select({
+      id: indicateurDefinitionTable.id,
+      identifiantReferentiel: indicateurDefinitionTable.identifiantReferentiel,
+    })
+    .from(indicateurDefinitionTable)
+    .where(
+      inArray(
+        indicateurDefinitionTable.identifiantReferentiel,
+        DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS
+      )
+    );
+
+  const definitionByReferentiel = new Map(
+    definitions.map((definition) => [
+      definition.identifiantReferentiel,
+      definition.id,
+    ])
+  );
+
+  const missing = DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.filter(
+    (id) => !definitionByReferentiel.has(id)
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `Indicateurs absents du référentiel pour saturer le diagnostic : ${missing.join(
+        ', '
+      )}`
+    );
+  }
+
+  await db.db
+    .insert(indicateurValeurTable)
+    .values(
+      DIAGNOSTIC_COMPLETION_LEAVES.flatMap((leaf) => {
+        const indicateurId = definitionByReferentiel.get(
+          leaf.indicateurDefinitionId
+        );
+        if (indicateurId === undefined) {
+          throw new Error(
+            `Indicateur ${leaf.indicateurDefinitionId} absent du référentiel pour saturer le diagnostic`
+          );
+        }
+        const requiredObjectifYears =
+          PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+            (year) => !leaf.optionalYears.includes(year)
+          );
+        return [
+          {
+            indicateurId,
+            collectiviteId,
+            dateValeur: `${referenceYear}-01-01`,
+            metadonneeId,
+            resultat: 100,
+            objectif: null,
+          },
+          ...requiredObjectifYears.map((year) => ({
+            indicateurId,
+            collectiviteId,
+            dateValeur: `${year}-01-01`,
+            metadonneeId,
+            resultat: null,
+            objectif: 80,
+          })),
+        ];
+      })
     )
-    insert into indicateur_valeur
-        (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, objectif)
-    select ligne.indicateur_id, ${collectiviteId}, annee.date_valeur, null,
-           annee.resultat, annee.objectif
-    from ligne
-    cross join lateral (
-        values (make_date(${referenceYear}, 1, 1), 100::double precision, null::double precision),
-               (make_date(ligne.horizon, 1, 1), null, 80::double precision)
-    ) as annee(date_valeur, resultat, objectif)
-    on conflict do nothing
-  `);
+    .onConflictDoNothing();
 }
 
-/**
- * Déclare chaque domaine requis « non concerné » aux trois horizons : le
- * chemin le plus court vers un volet vulnérabilité complet, puisque ce niveau
- * dispense d'objectif.
- */
-export async function completeTestVulnerabilitePcaet(
+/** Métadonnée `pcaet-collectivite` pour une démarche de test. */
+export async function ensureTestPcaetMetadonneeId(
   db: DatabaseService,
-  { demarcheId }: { demarcheId: number }
-): Promise<void> {
-  await db.db.execute(sql`
-    insert into demarche_pcaet_vulnerabilite_valeur
-        (demarche_id, domaine_id, niveau_maintenant, niveau_2050, niveau_2100)
-    select ${demarcheId}, id, 'non_concerne', 'non_concerne', 'non_concerne'
-    from demarche_pcaet_vulnerabilite_domaine
-    where collectivite_id is null and requis
-    on conflict (demarche_id, domaine_id) do update
-        set niveau_maintenant = 'non_concerne',
-            niveau_2050 = 'non_concerne',
-            niveau_2100 = 'non_concerne'
-  `);
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<number> {
+  await db.db
+    .insert(indicateurSourceTable)
+    .values({
+      id: PCAET_COLLECTIVITE_SOURCE_ID,
+      libelle: PCAET_COLLECTIVITE_SOURCE_LABEL,
+      ordreAffichage: null,
+    })
+    .onConflictDoUpdate({
+      target: indicateurSourceTable.id,
+      set: buildConflictUpdateColumns(indicateurSourceTable, ['libelle']),
+    });
+
+  const [existingLink] = await db.db
+    .select({ metadonneeId: demarchePcaetSourceMetadonneeTable.metadonneeId })
+    .from(demarchePcaetSourceMetadonneeTable)
+    .where(
+      and(
+        eq(demarchePcaetSourceMetadonneeTable.demarcheId, demarcheId),
+        eq(demarchePcaetSourceMetadonneeTable.collectiviteId, collectiviteId)
+      )
+    )
+    .limit(1);
+
+  if (existingLink?.metadonneeId !== undefined) {
+    return existingLink.metadonneeId;
+  }
+
+  const [metadonnee] = await db.db
+    .insert(indicateurSourceMetadonneeTable)
+    .values({
+      sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+      dateVersion: new Date().toISOString(),
+      nomDonnees: null,
+      diffuseur: null,
+      producteur: null,
+      methodologie: null,
+      limites: null,
+    })
+    .returning({ id: indicateurSourceMetadonneeTable.id });
+
+  await db.db
+    .insert(demarchePcaetSourceMetadonneeTable)
+    .values({
+      demarcheId,
+      collectiviteId,
+      metadonneeId: metadonnee.id,
+    })
+    .onConflictDoNothing();
+
+  return metadonnee.id;
 }
 
 /**
  * Rend le dossier complet au sens du guard `dossierComplet` : programme
- * d'actions rattaché, pièces requises couvertes, diagnostic renseigné et
- * vulnérabilité déclarée. Les composer séparément permet de tester chacune.
+ * d'actions rattaché, pièces requises couvertes et diagnostic renseigné. Les
+ * composer séparément permet de tester chacune. La vulnérabilité du territoire
+ * n'en fait pas partie : aucune de ses saisies n'est obligatoire.
  */
 export async function completeTestDossierPcaet(
   db: DatabaseService,
@@ -163,5 +415,93 @@ export async function completeTestDossierPcaet(
   await attachTestPlanToDemarchePcaet(db, options);
   await coverTestDocumentsPcaet(db, options);
   await completeTestDiagnosticPcaet(db, options);
-  await completeTestVulnerabilitePcaet(db, options);
+}
+
+/**
+ * Antidate l'échéance d'avis d'un dossier transmis, puis fait constater sa
+ * clôture par le système — le chemin « délai échu ».
+ *
+ * Remplace le couple « antidater + adopter » des tests d'avant la fusion :
+ * l'adoption n'est plus une transition, et la bascule en `instruit` n'est
+ * l'acte de personne. Passe par le service pour exercer le vrai chemin, guards
+ * compris, plutôt que d'écrire le statut à la main.
+ */
+export async function cloreTestInstructionPcaet(
+  app: INestApplication,
+  db: DatabaseService,
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<void> {
+  await db.db
+    .update(demarcheTable)
+    .set({
+      avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+    })
+    .where(eq(demarcheTable.id, demarcheId));
+
+  const result = await app
+    .get(CloreInstructionService)
+    .clore({ collectiviteId, demarcheId });
+
+  if (!result.success) {
+    throw new Error(
+      `Clôture d'instruction impossible sur la démarche ${demarcheId} : ${result.error}`
+    );
+  }
+  if (!result.data) {
+    throw new Error(
+      `Clôture d'instruction sans effet sur la démarche ${demarcheId} : aucune condition réunie`
+    );
+  }
+}
+
+/**
+ * Mène un dossier transmis jusqu'à la publication : clôture de l'instruction,
+ * dépôt de la délibération d'adoption, puis publication.
+ *
+ * Utile aux tests qui ont besoin d'un dossier **terminé** — un dossier
+ * seulement instruit reste « en cours » et bloque la création d'un nouveau
+ * dépôt.
+ */
+export async function publierTestDemarchePcaet(
+  app: INestApplication,
+  db: DatabaseService,
+  caller: {
+    demarches: {
+      pcaet: {
+        documents: {
+          add: (input: {
+            collectiviteId: number;
+            demarcheId: number;
+            documentId: string;
+            fichierId: number;
+          }) => Promise<unknown>;
+        };
+        publier: (input: {
+          collectiviteId: number;
+          demarcheId: number;
+          dateAdoption: string;
+        }) => Promise<unknown>;
+      };
+    };
+  },
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<void> {
+  await cloreTestInstructionPcaet(app, db, { collectiviteId, demarcheId });
+
+  const deliberation = await addTestBibliothequeFichier(db, {
+    collectiviteId,
+    filename: 'deliberation-adoption.pdf',
+  });
+  await caller.demarches.pcaet.documents.add({
+    collectiviteId,
+    demarcheId,
+    documentId: 'pcaet_deliberation_adoption',
+    fichierId: deliberation.id,
+  });
+
+  await caller.demarches.pcaet.publier({
+    collectiviteId,
+    demarcheId,
+    dateAdoption: '2026-01-15',
+  });
 }

@@ -1,12 +1,12 @@
-import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { CstNode } from 'chevrotain';
 import { ExpressionParser } from './expression-parser';
 import { getExpressionVisitor } from './expression-visitor';
+import { tokenizeAndParse } from './tokenize-and-parse';
 
 // Exemple de parser dérivé du parser de base
 class TestParser extends ExpressionParser {
   constructor() {
-    super([]);
+    super([], []);
     try {
       this.performSelfAnalysis();
     } catch (err) {
@@ -28,16 +28,7 @@ class TestVisitor extends getExpressionVisitor(
 const visitor = new TestVisitor();
 
 function parseExpression(inputText: string): CstNode {
-  const lexingResult = parser.lexer.tokenize(inputText);
-  parser.input = lexingResult.tokens;
-  const cst = parser.statement();
-
-  if (parser.errors && parser.errors.length > 0) {
-    throw new Error(getFormmattedErrors(parser.errors), {
-      cause: parser.errors,
-    });
-  }
-  return cst;
+  return tokenizeAndParse(parser, inputText);
 }
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -53,16 +44,25 @@ function parseAndEvaluateExpression(
 
 describe('ExpressionParser', () => {
   describe('parseAndEvaluateExpression', () => {
-    it('formate les erreurs de parsing', () => {
-      // cette forme ne semble pas fonctionner : `expect(() => parseExpression('inconnu')).toThrow()`;
-      // alors on utilise un try/catch
-      try {
-        parseExpression('inconnu');
-      } catch (e) {
-        expect((e as Error).message).toEqual(
-          'NotAllInputParsedException: Redundant input, expecting EOF but found: inconnu (1:7)'
-        );
-      }
+    it('expose les fonctions du parser de base', () => {
+      expect(parser.functionNames).toEqual(['min', 'max']);
+    });
+
+    it('signale une fonction inconnue avec la liste des fonctions du parser', () => {
+      expect(() => parseExpression('moy(1, 2)')).toThrow(
+        [
+          '(ligne 1, colonne 1) :',
+          '  moy(1, 2)',
+          '  ^^^',
+          'Fonction inconnue « moy ». Fonctions disponibles : min, max.',
+        ].join('\n')
+      );
+    });
+
+    it('suggère la fonction du parser de base la plus proche', () => {
+      expect(() => parseExpression('mim(1, 2)')).toThrow(
+        'Fonction inconnue « mim ». Vouliez-vous dire « min » ?'
+      );
     });
 
     it('si VRAI alors 2', async () => {
@@ -226,6 +226,65 @@ describe('ExpressionParser', () => {
 
     it('3 = 4', async () => {
       expect(parseAndEvaluateExpression('3 = 4')).toBe(false);
+    });
+  });
+
+  describe('lexer', () => {
+    function tokenNames(inputText: string): string[] {
+      return parser.lexer
+        .tokenize(inputText)
+        .tokens.map((token) => token.tokenType.name);
+    }
+
+    it.each([
+      'sinoe',
+      'ouvert',
+      'etat',
+      'minimum',
+      'maximum',
+      'nonce',
+      'vraiment',
+      'siret',
+      'alorsx',
+      'fauxfuyant',
+      'score_x',
+    ])(
+      "lit %s comme un seul identifiant, même s'il commence par un mot-clé",
+      (identifiant) => {
+        expect(tokenNames(identifiant)).toEqual(['CNAME']);
+        expect(parseAndEvaluateExpression(identifiant)).toBe(identifiant);
+      }
+    );
+
+    it('lit toujours les mots-clés entiers comme des mots-clés', () => {
+      expect(
+        tokenNames('si oui ou non et vrai alors min(1, 2) sinon max(faux, 3)')
+      ).toEqual([
+        'SI',
+        'OUI',
+        'OU',
+        'NON',
+        'ET',
+        'VRAI',
+        'ALORS',
+        'MIN',
+        'LPAR',
+        'NUMBER',
+        'COMMA',
+        'NUMBER',
+        'RPAR',
+        'SINON',
+        'MAX',
+        'LPAR',
+        'FAUX',
+        'COMMA',
+        'NUMBER',
+        'RPAR',
+      ]);
+    });
+
+    it('si sinoe alors 1 sinon 2', () => {
+      expect(parseAndEvaluateExpression('si sinoe alors 1 sinon 2')).toBe(1);
     });
   });
 });

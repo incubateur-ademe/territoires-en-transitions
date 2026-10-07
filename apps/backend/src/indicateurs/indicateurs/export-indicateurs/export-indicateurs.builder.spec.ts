@@ -1,6 +1,6 @@
+import { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
 import { Workbook } from 'exceljs';
 import { describe, expect, it } from 'vitest';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../../valeurs/indicateur-valeur.table';
 import { buildConsolidatedSheet } from './export-indicateurs.builder';
 
 /**
@@ -16,13 +16,13 @@ function makeValeur(params: {
 }): IndicateurValeurAvecMetadonnesDefinition {
   const { indicateurId, annee, resultat, objectif, sourceId } = params;
   return {
-    indicateur_valeur: {
+    indicateurValeur: {
       dateValeur: `${annee}-01-01`,
       resultat: resultat ?? null,
       objectif: objectif ?? null,
     },
-    indicateur_definition: { id: indicateurId },
-    indicateur_source_metadonnee: sourceId
+    indicateurDefinition: { id: indicateurId },
+    indicateurSourceMetadonnee: sourceId
       ? { id: 1, sourceId, dateVersion: `${annee}-01-01` }
       : null,
   } as unknown as IndicateurValeurAvecMetadonnesDefinition;

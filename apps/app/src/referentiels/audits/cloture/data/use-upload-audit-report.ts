@@ -1,15 +1,18 @@
+import { hashFile } from '@/app/collectivites/documents/upload/hash-file.utils';
+import { useUploadFile } from '@/app/collectivites/documents/upload/use-upload-file';
 import { appLabels } from '@/app/labels/catalog';
-import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
+import { useRemovePreuve } from '@/app/collectivites/documents/bibliotheque/use-edit-preuve';
 import {
   EXPECTED_FORMATS,
-  MAX_FILE_SIZE_MB,
-} from '@/app/referentiels/preuves/upload/constants';
-import { useUploadFileToCollectiviteLibrary } from '@/app/referentiels/preuves/upload/use-upload-file-to-collectivite-library';
-import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
-import { useRemovePreuve } from '@/app/referentiels/preuves/Bibliotheque/useEditPreuve';
-import { useAddPreuveAudit } from '@/app/referentiels/preuves/useAddPreuves';
+  MAX_UPLOAD_SIZE_MB,
+} from '@/app/collectivites/documents/upload/constants';
+import {
+  FileValidationError,
+  validateFile,
+} from '@/app/collectivites/documents/upload/validate-file';
+import { useInvalidateDocuments } from '@/app/collectivites/documents/use-invalidate-documents';
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEffect, useRef, useState } from 'react';
@@ -29,11 +32,23 @@ export type AuditReportUploadState = {
   uploadingReport: UploadingReport | null;
   isUploading: boolean;
   removingReportIds: ReadonlySet<number>;
-  isRemoving: boolean;
   canProceed: boolean;
   uploadReport: (files: FileList | null) => Promise<void>;
   removeReport: (report: AuditReport) => Promise<void>;
   abortUpload: () => void;
+};
+
+const toValidationMessage = (error: FileValidationError): string => {
+  const formats = EXPECTED_FORMATS.join(', ');
+  const messageByError: Record<FileValidationError, string> = {
+    sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_UPLOAD_SIZE_MB }),
+    formatError: appLabels.fichierFormatNonSupporte({ formats }),
+    formatAndSizeError: appLabels.fichierFormatEtTailleInvalides({
+      maxMo: MAX_UPLOAD_SIZE_MB,
+      formats,
+    }),
+  };
+  return messageByError[error];
 };
 
 export const useUploadAuditReport = (
@@ -42,10 +57,16 @@ export const useUploadAuditReport = (
   const collectiviteId = useCollectiviteId();
   const { reports, isLoading: isLoadingReports } =
     useListReportsByAudit(auditId);
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
-  const uploadFileToLibrary = useUploadFileToCollectiviteLibrary();
-  const { mutateAsync: addPreuve } = useAddPreuveAudit();
+  const uploadFile = useUploadFile();
+  const invalidateDocuments = useInvalidateDocuments();
+  const { mutateAsync: addAuditDocument } = useMutation(
+    trpc.referentiels.labellisations.addAuditDocument.mutationOptions({
+      meta: { disableToast: true },
+      onSuccess: () =>
+        invalidateDocuments({ type: 'audit', collectiviteId, auditId }),
+    })
+  );
   const { mutateAsync: removePreuve } = useRemovePreuve();
   const { setToast } = useToastContext();
 
@@ -71,16 +92,7 @@ export const useUploadAuditReport = (
 
     const validationError = validateFile(file);
     if (validationError !== null) {
-      const formats = EXPECTED_FORMATS.join(', ');
-      const messageByError: Record<typeof validationError, string> = {
-        sizeError: appLabels.fichierTropVolumineux({ maxMo: MAX_FILE_SIZE_MB }),
-        formatError: appLabels.fichierFormatNonSupporte({ formats }),
-        formatAndSizeError: appLabels.fichierFormatEtTailleInvalides({
-          maxMo: MAX_FILE_SIZE_MB,
-          formats,
-        }),
-      };
-      setToast('error', messageByError[validationError]);
+      setToast('error', toValidationMessage(validationError));
       return;
     }
 
@@ -88,30 +100,19 @@ export const useUploadAuditReport = (
     uploadAbortRef.current = controller;
     setUploadingReport({ filename: file.name, progress: 0 });
     try {
-      const fichierId = await uploadFileToLibrary({
+      const { fichierId } = await uploadFile({
+        collectiviteId,
         file,
+        hash: await hashFile(file),
         signal: controller.signal,
         onProgress: (progress) => {
           if (controller.signal.aborted) return;
           setUploadingReport({ filename: file.name, progress });
         },
       });
-      if (controller.signal.aborted || fichierId === null) return;
-
-      await addPreuve({
-        auditId,
-        collectiviteId,
-        commentaire: '',
-        fichierId,
-      });
       if (controller.signal.aborted) return;
-      // Attend que la liste des rapports soit re-fetchée avant de libérer
-      // l'état d'upload pour éviter les flickering de refetch
-      await queryClient.refetchQueries({
-        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
-          auditId,
-        }),
-      });
+
+      await addAuditDocument({ auditId, fichierId });
     } catch (error) {
       if (controller.signal.aborted) return;
       console.error(error);
@@ -127,18 +128,9 @@ export const useUploadAuditReport = (
   };
 
   const removeReport = async (report: AuditReport): Promise<void> => {
-    setRemovingReportIds((prev) => {
-      const next = new Set(prev);
-      next.add(report.id);
-      return next;
-    });
+    setRemovingReportIds((prev) => new Set(prev).add(report.id));
     try {
-      await removePreuve(auditReportToPreuve(report));
-      await queryClient.refetchQueries({
-        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
-          auditId,
-        }),
-      });
+      await removePreuve(report);
     } catch (error) {
       console.error(error);
       setToast('error', appLabels.echecSuppressionRapport);
@@ -157,15 +149,17 @@ export const useUploadAuditReport = (
     setUploadingReport(null);
   };
 
-  const isRemoving = removingReportIds.size > 0;
   return {
     reports,
     isLoadingReports,
     uploadingReport,
     isUploading,
     removingReportIds,
-    isRemoving,
-    canProceed: !isLoadingReports && reports.length > 0 && !isUploading && !isRemoving,
+    canProceed:
+      !isLoadingReports &&
+      reports.length > 0 &&
+      !isUploading &&
+      removingReportIds.size === 0,
     uploadReport,
     removeReport,
     abortUpload,

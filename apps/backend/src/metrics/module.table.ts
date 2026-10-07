@@ -16,7 +16,7 @@ export const tableauDeBordModuleTable = pgTable(
     id: uuid('id').defaultRandom().primaryKey().notNull(),
     collectiviteId: integer('collectivite_id').notNull(),
     userId: uuid('user_id'),
-    titre: varchar('titre').notNull(),
+    titre: varchar('titre'),
     defaultKey: varchar('default_key'),
     type: varchar('type').notNull(),
     options: jsonb('options').notNull(),

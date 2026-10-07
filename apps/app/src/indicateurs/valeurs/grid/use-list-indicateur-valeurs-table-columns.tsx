@@ -2,116 +2,109 @@
 
 import { createColumnHelper } from '@tanstack/react-table';
 import { cn, TableCell, TableHeaderCell } from '@tet/ui';
-import { JSX, useMemo } from 'react';
-import { AddYearColumnHeader } from './add-year-column-header';
-import { valueFieldsForYear } from './cell-editability';
-import type { ReferencesVariant } from './cell-references';
-import { columnHasValues } from './column-has-values';
-import { findCell, GridDisplayRow } from './grid-model';
+import { ComponentPropsWithoutRef, JSX, useMemo } from 'react';
+import { valueFieldsForYear as indicateurValeurTypesForYear } from './cell-editability';
 import { IndicateurTitleCell } from './indicateur-title.cell';
 import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
 import { IndicateurValeurYearHeaderCell } from './indicateur-valeur-year.header-cell';
 import { IndicateurValeurCell } from './indicateur-valeur.cell';
-import { CellKey, GridCell, GridRowGroup, ValeurField, Year } from './types';
+import { IndicateurTableRow, isUnsetReferenceYear } from './types';
+import { getTableMeta, IndicateurValeursTableFeatures } from './utils';
 
-const columnHelper = createColumnHelper<GridDisplayRow>();
+const columnHelper = createColumnHelper<
+  IndicateurValeursTableFeatures,
+  IndicateurTableRow
+>();
 
 const EmptyValueCell = ({
-  field,
   className,
-}: {
-  field: ValeurField;
-  className?: string;
-}): JSX.Element => (
+  ...props
+}: ComponentPropsWithoutRef<typeof TableCell>): JSX.Element => (
   <TableCell
-    className={cn(
-      'border-b border-grey-3',
-      field === 'objectif' ? 'border-r border-grey-3' : undefined,
-      className
-    )}
+    className={cn('border-b border-r border-grey-3', className)}
+    {...props}
   />
 );
 
 type ListIndicateurValeursTableColumnsParams = {
-  groups: GridRowGroup[];
-  years: Year[];
-  cells: Map<CellKey, GridCell>;
+  years: number[];
   title: string;
   unit: string;
-  referenceYear: Year | null;
   isReadonly?: boolean;
-  onAddYear?: (year: Year) => void;
-  onRemoveYear?: (year: Year) => void;
-  canRemoveYear?: (year: Year) => boolean;
-  referencesVariant?: ReferencesVariant;
+  referenceYear?: number | null;
+  showRequirementHint?: boolean;
 };
 
-const getColumns = ({
-  groups,
+const listColumns = ({
   years,
-  cells,
   title,
   unit,
-  referenceYear,
   isReadonly,
-  onAddYear,
-  onRemoveYear,
-  canRemoveYear,
-  referencesVariant,
+  referenceYear,
 }: ListIndicateurValeursTableColumnsParams) => {
   const now = new Date().getFullYear();
-  const indicateurIds = groups.flatMap((group) =>
-    group.rows.map((row) => row.indicateurId)
-  );
 
   const titleColumn = columnHelper.display({
     id: 'title',
     header: () => <IndicateurHeaderTitleCell title={title} unit={unit} />,
-    cell: ({ row }) => <IndicateurTitleCell title={row.original.rowLabel} />,
+    cell: ({ row, table }) => {
+      const { setIndicateurApplicable } = getTableMeta(table);
+      const { indicateurId, indicateurLabel, isApplicable } = row.original;
+
+      return (
+        <IndicateurTitleCell
+          title={indicateurLabel}
+          isApplicable={isApplicable}
+          onApplicableChange={
+            isReadonly
+              ? undefined
+              : (next) => {
+                  void setIndicateurApplicable({
+                    indicateurId,
+                    isApplicable: next,
+                  });
+                }
+          }
+        />
+      );
+    },
   });
 
   const yearColumns = years.map((year) => {
-    const fields = valueFieldsForYear(year, now, referenceYear);
-    const canRemove =
-      onRemoveYear !== undefined &&
-      (canRemoveYear?.(year) ?? year !== referenceYear);
-    const hasValues = columnHasValues({ cells, year, indicateurIds });
+    const isUnsetReference = isUnsetReferenceYear(year);
+    const isReference = isUnsetReference || year === referenceYear;
+    const indicateurValeurTypes = indicateurValeurTypesForYear(year, now);
 
     return columnHelper.group({
       id: `year-${year}`,
-      header: ({ header }) => (
-        <IndicateurValeurYearHeaderCell
-          year={year}
-          colSpan={header.colSpan}
-          isReference={year === referenceYear}
-          onRemoveYear={onRemoveYear}
-          canRemove={canRemove}
-          hasValues={hasValues}
-        />
-      ),
-      columns: fields.map((field) =>
-        columnHelper.display({
-          id: `year-${year}-${field}`,
-          meta: { year, field },
-          cell: ({ row }) => {
-            const cell = findCell({
-              cells,
-              indicateurId: row.original.indicateurId,
-              year,
-            });
+      header: ({ header, table }) => {
+        const { onReferenceYearChange } = getTableMeta(table);
 
-            if (cell === null) {
-              return <EmptyValueCell field={field} />;
+        return (
+          <IndicateurValeurYearHeaderCell
+            year={isUnsetReference ? null : year}
+            colSpan={header.colSpan}
+            isReference={isReference}
+            displayedYears={years.filter(
+              (candidate) => !isUnsetReferenceYear(candidate)
+            )}
+            onReferenceYearChange={
+              isReference ? onReferenceYearChange : undefined
             }
-
+          />
+        );
+      },
+      columns: indicateurValeurTypes.map((indicateurValeurType) =>
+        columnHelper.display({
+          id: `year-${year}-${indicateurValeurType}`,
+          meta: { year, indicateurValeurType },
+          cell: (cellContext) => {
             return (
               <IndicateurValeurCell
-                field={field}
-                cell={cell}
-                indicateurId={row.original.indicateurId}
+                cell={cellContext}
+                indicateurValeurType={indicateurValeurType}
                 year={year}
-                isReadonly={isReadonly}
-                referencesVariant={referencesVariant}
+                isReadonly={isReadonly || isUnsetReference}
               />
             );
           },
@@ -120,78 +113,32 @@ const getColumns = ({
     });
   });
 
-  const addYearColumn = columnHelper.display({
-    id: 'addYear',
-    header: () => (
-      <AddYearColumnHeader years={years} onAddYear={onAddYear ?? (() => {})} />
-    ),
-    cell: () => (
-      <TableCell
-        className="sticky right-0 z-10 bg-inherit border-b border-grey-3"
-        aria-hidden
-      />
-    ),
-  });
-
   const widthBufferColumn = columnHelper.display({
     id: 'width-buffer',
     header: () => <TableHeaderCell className="w-auto" aria-hidden />,
-    cell: () => <EmptyValueCell field="objectif" aria-hidden />,
+    cell: () => <EmptyValueCell aria-hidden />,
   });
 
-  return [
-    titleColumn,
-    ...yearColumns,
-    ...(onAddYear !== undefined ? [addYearColumn] : []),
-    widthBufferColumn,
-  ];
+  return columnHelper.columns([titleColumn, ...yearColumns, widthBufferColumn]);
 };
 
-export function useListIndicateurValeursTableColumns(
-  params: ListIndicateurValeursTableColumnsParams
-) {
-  const {
-    groups,
-    years,
-    cells,
-    title,
-    unit,
-    referenceYear,
-    isReadonly,
-    onAddYear,
-    onRemoveYear,
-    canRemoveYear,
-    referencesVariant,
-  } = params;
-
+export function useListIndicateurValeursTableColumns({
+  years,
+  title,
+  unit,
+  isReadonly,
+  referenceYear,
+}: ListIndicateurValeursTableColumnsParams) {
   const columns = useMemo(
     () =>
-      getColumns({
-        groups,
+      listColumns({
         years,
-        cells,
         title,
         unit,
-        referenceYear,
         isReadonly,
-        onAddYear,
-        onRemoveYear,
-        canRemoveYear,
-        referencesVariant,
+        referenceYear,
       }),
-    [
-      groups,
-      years,
-      cells,
-      title,
-      unit,
-      referenceYear,
-      isReadonly,
-      onAddYear,
-      onRemoveYear,
-      canRemoveYear,
-      referencesVariant,
-    ]
+    [years, title, unit, isReadonly, referenceYear]
   );
 
   return { columns };

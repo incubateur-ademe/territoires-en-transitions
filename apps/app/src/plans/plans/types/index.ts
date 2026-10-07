@@ -1,14 +1,7 @@
-import { TAxeRow } from '@/app/types/alias';
-import { Views } from '@tet/api';
+import { PlanNode } from '@tet/domain/plans';
 
-type TPlanActionProfondeur = Views<'plan_action_profondeur'>;
-
-export type TProfondeurPlan = TPlanActionProfondeur & {
-  plan: TProfondeurAxe;
-};
-
-export type TProfondeurAxe = {
-  axe: TAxeRow;
-  profondeur: number;
-  enfants: TProfondeurAxe[];
+export type AxeNode = {
+  axe: Pick<PlanNode, 'id' | 'nom'>;
+  depth: number;
+  enfants: AxeNode[];
 };

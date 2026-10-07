@@ -6,6 +6,7 @@ export const PermissionOperations = [
   'collectivites.read',
   'collectivites.read_confidentiel',
   'collectivites.mutate',
+  'collectivites.pertinence-leviers.mutate',
   // Tableau de bord
   'collectivites.tableau-de-bord.mutate',
   // Tableau de bord personnel (modules propres à l'utilisateur courant)
@@ -29,6 +30,7 @@ export const PermissionOperations = [
   'referentiels.labellisations.start_audit',
   'referentiels.labellisations.validate_audit',
   'referentiels.labellisations.mutate_action_audit_statut',
+  'referentiels.labellisations.mutate_documents',
   'referentiels.discussions.read',
   'referentiels.discussions.mutate',
 
@@ -50,6 +52,7 @@ export const PermissionOperations = [
   'plans.fiches.bulk_update',
   'plans.fiches.delete',
   'plans.fiches.import',
+  'plans.fiches.import_in_parallel',
 
   // Indicateurs
   'indicateurs.indicateurs.read',
@@ -62,12 +65,17 @@ export const PermissionOperations = [
   'indicateurs.valeurs.read_confidentiel',
   'indicateurs.valeurs.mutate',
   'indicateurs.valeurs.mutate_piloted_by_me',
+  'indicateurs.vues.read',
+  'indicateurs.vues.mutate',
 
   // Utilisateurs
   'users.authorizations.mutate_super_admin_role',
 
   // Utils
   'utils.banner.mutate',
+
+  // Shared
+  'shared.actions-de-reference.mutate',
 ] as const;
 
 export const permissionOperationEnumSchema = z.enum(PermissionOperations);

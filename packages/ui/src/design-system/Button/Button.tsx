@@ -36,6 +36,11 @@ export const Button = forwardRef<
   ) => {
     const isIconButton = !children;
 
+    // `underlined` et `link` sont des variantes de texte : pas de cadre, pas de
+    // pastille, la boîte se réduit à ce qui est écrit. Seule `underlined` porte
+    // en plus son trait sous le texte.
+    const isTextVariant = variant === 'underlined' || variant === 'link';
+
     const buttonState = disabled ? 'disabled' : 'default';
 
     const { text, background, border } =
@@ -48,18 +53,16 @@ export const Button = forwardRef<
       'relative w-fit flex items-center border-solid group',
       {
         // Layout du bouton
-        'gap-1': size === 'xs' || (size === 'sm' && variant === 'underlined'),
+        'gap-1': size === 'xs' || (size === 'sm' && isTextVariant),
         'gap-2':
-          (size === 'sm' && variant !== 'underlined') ||
-          size === 'md' ||
-          size === 'xl',
+          (size === 'sm' && !isTextVariant) || size === 'md' || size === 'xl',
         // Styles du curseur
         'cursor-pointer': !disabled,
         'cursor-not-allowed': disabled,
         // Bordures et polices
-        'rounded-lg border font-bold': variant !== 'underlined',
-        'border-b border-t-0 border-x-0 !p-px font-medium':
-          variant === 'underlined',
+        'rounded-lg border font-bold': !isTextVariant,
+        '!p-px font-medium': isTextVariant,
+        'border-b border-t-0 border-x-0': variant === 'underlined',
         'hover:border-b-2 hover:!pb-0': variant === 'underlined' && !disabled,
       },
       text,

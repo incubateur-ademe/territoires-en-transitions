@@ -1,11 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
-import * as dotenv from 'dotenv';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadLocalEnv } from './load-local-env.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-dotenv.config({ path: resolve(__dirname, '.env') });
+// Secrets et URLs de la stack locale, déchiffrés ici pour que n'importe quel
+// lanceur (terminal, --ui, extension de l'IDE) parte du même environnement.
+// Sans effet en CI, qui injecte les variables elle-même.
+loadLocalEnv();
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env.BASE_URL || 'http://localhost:3000';
@@ -42,16 +45,21 @@ export default defineConfig({
 
   // Reporter to use
   reporter: [
-    // generate annotations in CI or prints a line for each test being run in local
-    [process.env.CI ? 'github' : 'list'],
-    // produces a self-contained folder that contains report for the test run
-    [
-      'html',
-      {
-        open: process.env.CI ? 'never' : 'on-failure',
-        outputFolder: resolve(__dirname, reportDir),
-      },
-    ],
+    // Keep GitHub annotations in CI, but use the line reporter there because
+    // it shows the currently running test and is more informative for long
+    // end-to-end runs than the default CI summary output.
+    ...(process.env.CI ? [['github'], ['line']] : [['list']]),
+    ...(process.env.CI
+      ? [['blob']]
+      : [
+          [
+            'html',
+            {
+              open: 'on-failure',
+              outputFolder: resolve(__dirname, reportDir),
+            },
+          ],
+        ]),
   ],
 
   use: {

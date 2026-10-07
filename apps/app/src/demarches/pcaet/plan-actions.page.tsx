@@ -2,13 +2,21 @@
 
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DemarcheShell } from '@/app/demarches/components/shell';
+import { getDemarcheParcours } from '@/app/demarches/steps';
 import {
-  isPcaetPlan,
+  findPcaetPlanType,
   PCAET_PLAN_TYPE_LABEL,
 } from '@/app/demarches/pcaet/constants';
+import type { DemarcheCreatePlanPayload } from '@/app/demarches/components/create-plan.modal';
 import { ProgrammeActionsSection } from '@/app/demarches/components/plan.section';
+import { RappelPlanSection } from '@/app/demarches/pcaet/components/rappel-plan.section';
+import { appLabels } from '@/app/labels/catalog';
+import { useCreateAndLinkPlan } from '@/app/demarches/pcaet/data/use-create-and-link-plan';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
+import { useGetProgrammeActionsFichier } from '@/app/demarches/pcaet/data/use-get-programme-actions-fichier';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
+import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetPlanActionsPage = () => {
@@ -19,11 +27,27 @@ export const DemarchePcaetPlanActionsPage = () => {
     isLoading,
     update,
     transmettrePourAvis,
-    reprendreElaboration,
     publier,
-    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
+
+  const { data: planTypes, isLoading: isLoadingPlanTypes } = useListPlanTypes();
+  const pcaetPlanType = findPcaetPlanType(planTypes);
+  const programmeActionsFichier = useGetProgrammeActionsFichier(demarcheId);
+  const { nom: collectiviteNom } = useCurrentCollectivite();
+
+  // Le rattachement d'office ne vaut que pour le premier plan : la règle vit
+  // côté serveur, le front n'a rien à en déduire.
+  const { mutateAsync: createAndLinkPlan } = useCreateAndLinkPlan(demarcheId);
+  const createPlan = async (payload: DemarcheCreatePlanPayload) => {
+    try {
+      await createAndLinkPlan({ collectiviteId, demarcheId, ...payload });
+      return true;
+    } catch {
+      // Le toast d'erreur global est déjà affiché ; la modale reste ouverte.
+      return false;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -45,18 +69,39 @@ export const DemarchePcaetPlanActionsPage = () => {
       activeSection="plan"
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
-      onReprendre={reprendreElaboration}
       onPublish={publier}
-      onUnpublish={depublier}
     >
-      <ProgrammeActionsSection
-        demarche={demarche}
-        eligibility={{
-          planTypeLabel: PCAET_PLAN_TYPE_LABEL,
-          isEligiblePlan: isPcaetPlan,
-        }}
-        onUpdateAction={update}
-      />
+      {/* Passée la clôture de l'instruction, l'écran change de rôle : il ne
+          sert plus à rattacher un plan mais à relire celui qui a été transmis,
+          dans la vue même que lisent les instructeurs. Le rattachement suit donc
+          l'amont, et non l'aval : un dépôt hors plateforme a les deux ouverts,
+          et c'est encore à lui de rattacher son plan. */}
+      {!getDemarcheParcours(demarche).amontOuvert ? (
+        <RappelPlanSection
+          collectiviteId={collectiviteId}
+          demarcheId={demarcheId}
+          typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
+        />
+      ) : (
+        <ProgrammeActionsSection
+          demarche={demarche}
+          eligibility={{
+            planTypeLabel: PCAET_PLAN_TYPE_LABEL,
+            planTypeId: pcaetPlanType?.id,
+          }}
+          isLoadingEligibility={isLoadingPlanTypes}
+          onUpdateAction={update}
+          onCreatePlan={createPlan}
+          importDefaults={{
+            fichierId: programmeActionsFichier?.id,
+            // AAAA-MM-JJ : l'année se lit sans passer par `Date` (fuseau).
+            planName: appLabels.demarcheProgrammeNomPlanImporte({
+              annee: demarche.dateLancement?.slice(0, 4) ?? null,
+              collectiviteNom,
+            }),
+          }}
+        />
+      )}
     </DemarcheShell>
   );
 };

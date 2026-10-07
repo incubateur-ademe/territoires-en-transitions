@@ -86,7 +86,7 @@ export class FicheExportPayloadService {
       return [];
     }
 
-    const result = await this.getAxeService.getAxesChemins(axeIds, user);
+    const result = await this.getAxeService.getAxesChemins(axeIds, { user });
     if (!result.success) {
       this.logger.warn(
         `Impossible de charger les chemins pour la fiche ${fiche.id} : ${result.error}`
@@ -181,7 +181,7 @@ export class FicheExportPayloadService {
         collectiviteId: fiche.collectiviteId,
         ficheIds: [fiche.id],
       },
-      user
+      { user }
     );
     if (!result.success) {
       this.logger.warn(

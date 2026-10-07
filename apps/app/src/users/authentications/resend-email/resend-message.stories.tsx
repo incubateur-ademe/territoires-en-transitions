@@ -1,5 +1,5 @@
-import {Meta, StoryObj} from '@storybook/nextjs-vite';
-import {action} from 'storybook/actions';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { action } from 'storybook/actions';
 import { ResendMessage } from './resend-message';
 
 const meta: Meta<typeof ResendMessage> = {

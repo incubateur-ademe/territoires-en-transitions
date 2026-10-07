@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { UpdateDemarchePcaetInput } from './update-demarche-pcaet.input';
 
 export type UpdateDemarchePcaetHeaderPatch = Pick<
   UpdateDemarchePcaetInput,
-  'titre' | 'description' | 'obligation' | 'launchedAt' | 'planActionId'
+  'titre' | 'description' | 'obligation' | 'launchedAt' | 'isScotAec'
 >;
 
 @Injectable()
@@ -19,25 +19,31 @@ export class UpdateDemarchePcaetRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  /** Le plan d'action est-il un plan (axe racine) de cette collectivité ? */
-  async isPlanActionOfCollectivite(
-    planActionId: number,
+  /**
+   * Ceux de ces identifiants qui ne sont pas un plan (axe racine) de cette
+   * collectivité — la liste des refusés, pour que l'erreur les nomme.
+   */
+  async findPlanActionsHorsCollectivite(
+    planActionIds: number[],
     collectiviteId: number,
     tx?: Transaction
-  ): Promise<boolean> {
+  ): Promise<number[]> {
+    if (planActionIds.length === 0) {
+      return [];
+    }
     const db = tx || this.databaseService.db;
     const rows = await db
       .select({ id: axeTable.id })
       .from(axeTable)
       .where(
         and(
-          eq(axeTable.id, planActionId),
+          inArray(axeTable.id, planActionIds),
           eq(axeTable.collectiviteId, collectiviteId),
           isNull(axeTable.parent)
         )
-      )
-      .limit(1);
-    return rows.length > 0;
+      );
+    const eligibles = new Set(rows.map((row) => row.id));
+    return planActionIds.filter((id) => !eligibles.has(id));
   }
 
   /**
@@ -66,8 +72,8 @@ export class UpdateDemarchePcaetRepository {
           ...(patch.launchedAt !== undefined
             ? { launchedAt: patch.launchedAt }
             : {}),
-          ...(patch.planActionId !== undefined
-            ? { planActionId: patch.planActionId }
+          ...(patch.isScotAec !== undefined
+            ? { isScotAec: patch.isScotAec }
             : {}),
           modifiedAt: new Date().toISOString(),
           modifiedBy: userId,

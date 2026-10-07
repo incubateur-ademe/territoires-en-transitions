@@ -80,7 +80,9 @@ export const ActeEngagementSection = ({
 }: ActeEngagementSectionProps): ReactElement | null =>
   match(getActeEngagementState({ actes, isLoading, canEdit }))
     .with({ kind: 'loading' }, () => (
-      <DocumentLine filename={appLabels.chargement}>{null}</DocumentLine>
+      <DocumentLine documentTitle={appLabels.chargement} isMissing={false}>
+        {null}
+      </DocumentLine>
     ))
     .with({ kind: 'deposited' }, (state) => (
       <PreuvesList preuves={state.actes} canEdit={state.canEdit} />
@@ -132,10 +134,10 @@ const ActeEngagementRowWithDemande = ({
 };
 
 export const ActeEngagementRow = (): ReactElement => {
-  const { parcours, cycle, referentielId } = useChecklist();
+  const { parcours, referentielId, canUpdateCandidatureDocuments } =
+    useChecklist();
   const demandeId = parcours?.acteEngagement.demandeId ?? null;
   const hasDemande = demandeId !== null;
-  const isAuditee = cycle.viewerRole === 'auditee';
 
   if (!hasDemande) {
     return (
@@ -153,7 +155,7 @@ export const ActeEngagementRow = (): ReactElement => {
     <ActeEngagementRowWithDemande
       referentielId={referentielId}
       demandeId={demandeId}
-      canEdit={isAuditee}
+      canEdit={canUpdateCandidatureDocuments}
     />
   );
 };

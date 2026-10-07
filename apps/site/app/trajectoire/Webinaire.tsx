@@ -8,11 +8,11 @@ type WebinaireProps = {
   titre: string;
   description: string;
   cta: string;
-  url: string;
+  url: string | null;
 };
 
 const Webinaire = ({ titre, description, cta, url }: WebinaireProps) => {
-  if (url === null) return null;
+  if (!url) return null;
 
   return (
     <Section

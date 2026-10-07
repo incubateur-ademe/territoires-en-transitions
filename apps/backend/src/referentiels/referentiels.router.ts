@@ -1,27 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { ScoreIndicatifRouter } from '@tet/backend/referentiels/score-indicatif/score-indicatif.router';
 import { TrpcService } from '../utils/trpc/trpc.service';
+import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
+import { AddPreuveRouter } from './add-preuve/add-preuve.router';
+import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
+import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
+import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { HistoriqueRouter } from './historique/historique.router';
+import { AddAuditDocumentRouter } from './labellisations/add-audit-document/add-audit-document.router';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
-import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
-import { UpdateAuditReportRouter } from './labellisations/update-audit-report/update-audit-report.router';
+import { ListDocumentsAuditRouter } from './documents/list-documents-audit/list-documents-audit.router';
+import { ListDocumentsDemandeLabellisationRouter } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.router';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
+import { UpdateAuditReportRouter } from './labellisations/update-audit-report/update-audit-report.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
-import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
-import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
-import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
+import { SetScoreFromIndicateurRouter } from './set-score-from-indicateur/set-score-from-indicateur.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
+import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
 import { UpdateActionFichesRouter } from './update-action-fiches/update-action-fiches.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
@@ -29,7 +35,9 @@ import { UpdateActionStatutRouter } from './update-action-statut/update-action-s
 export class ReferentielsRouter {
   constructor(
     private readonly trpc: TrpcService,
+    private readonly addPreuveRouter: AddPreuveRouter,
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
+    private readonly setScoreFromIndicateurRouter: SetScoreFromIndicateurRouter,
     private readonly updateActionCommentaireRouter: UpdateActionCommentaireRouter,
     private readonly updateActionFichesRouter: UpdateActionFichesRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
@@ -40,8 +48,12 @@ export class ReferentielsRouter {
     private readonly requestLabellisation: RequestLabellisationRouter,
     private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
-    private readonly listPreuves: ListPreuvesRouter,
+    private readonly listDocumentsAuditRouter: ListDocumentsAuditRouter,
+    private readonly listDocumentsDemandeLabellisationRouter: ListDocumentsDemandeLabellisationRouter,
+    private readonly listDocumentsReferentielRouter: ListDocumentsReferentielRouter,
+    private readonly listDocumentsMesureRouter: ListDocumentsMesureRouter,
     private readonly updateAuditReport: UpdateAuditReportRouter,
+    private readonly addAuditDocument: AddAuditDocumentRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
     private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
@@ -56,17 +68,27 @@ export class ReferentielsRouter {
     private readonly switchToTeRouter: SwitchToTeRouter
   ) {}
 
-  router = this.trpc.router({
+  private readonly actionsMutationsRouter = this.trpc.mergeRouters(
+    this.addPreuveRouter.router,
+    this.updateActionStatutRouter.router,
+    this.setScoreFromIndicateurRouter.router,
+    this.updateActionCommentaireRouter.router,
+    this.updateActionFichesRouter.router,
+    this.listActionStatutRouter.router
+  );
+
+  private readonly actionsSupportRouter = this.trpc.mergeRouters(
+    this.countPreuvesRouter.router,
+    this.assignPilotesRouter.router,
+    this.assignServicesRouter.router,
+    this.scoreIndicatifRouter.router,
+    this.actionPersonnalisationsRouter.router
+  );
+
+  private readonly referentielsSectionsRouter = this.trpc.router({
     actions: this.trpc.mergeRouters(
-      this.updateActionStatutRouter.router,
-      this.updateActionCommentaireRouter.router,
-      this.updateActionFichesRouter.router,
-      this.listActionStatutRouter.router,
-      this.countPreuvesRouter.router,
-      this.assignPilotesRouter.router,
-      this.assignServicesRouter.router,
-      this.scoreIndicatifRouter.router,
-      this.actionPersonnalisationsRouter.router
+      this.actionsMutationsRouter,
+      this.actionsSupportRouter
     ),
 
     snapshots: this.scoreSnapshotsRouter.router,
@@ -78,8 +100,15 @@ export class ReferentielsRouter {
       this.validateAudit.router,
       this.getLabellisation.router,
       this.handleMesureAuditStatutRouter.router,
-      this.listPreuves.router,
-      this.updateAuditReport.router
+      this.updateAuditReport.router,
+      this.addAuditDocument.router
+    ),
+
+    documents: this.trpc.mergeRouters(
+      this.listDocumentsReferentielRouter.router,
+      this.listDocumentsAuditRouter.router,
+      this.listDocumentsDemandeLabellisationRouter.router,
+      this.listDocumentsMesureRouter.router
     ),
 
     definitions: this.getReferentielDefinitionRouter.router,
@@ -93,9 +122,12 @@ export class ReferentielsRouter {
       this.getPreuvesArchiveRouter.router,
       this.listPreuvesArchiveRouter.router
     ),
-
-    switchToTe: this.switchToTeRouter.switchToTe,
   });
+
+  router = this.trpc.mergeRouters(
+    this.referentielsSectionsRouter,
+    this.switchToTeRouter.router
+  );
 
   createCaller = this.trpc.createCallerFactory(this.router);
 }

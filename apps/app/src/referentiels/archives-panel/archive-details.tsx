@@ -104,8 +104,8 @@ function ArchiveDetailsAction({
           size="xs"
           variant="outlined"
           icon="refresh-line"
-          title={appLabels.preuvesTelechargementReessayer}
-          aria-label={appLabels.preuvesTelechargementReessayer}
+          title={appLabels.reessayer}
+          aria-label={appLabels.reessayer}
           onClick={onRetry}
         />
       ) : null;

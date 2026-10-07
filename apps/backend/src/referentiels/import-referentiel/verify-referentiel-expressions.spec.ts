@@ -35,8 +35,9 @@ describe('verifyReferentielExpressions', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0]).toContain('erreur de syntaxe');
-    expect(errors[0]).toContain('invalide !!!');
+    expect(errors[0]).toContain('erreur de syntaxe parse error');
+    // l'erreur de syntaxe porte un extrait : la formule n'est pas recopiée
+    expect(errors[0]).not.toContain('invalide !!!');
     expect(errors[0]).toContain('cae_1.1');
   });
 
@@ -198,6 +199,35 @@ describe('verifyReferentielExpressions', () => {
     });
 
     expect(errors).toEqual([]);
+  });
+
+  it(`accepte identite(sinoe, ...) et identite(commune_membre, plus_de_*) dans une règle d'action`, () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'identite(sinoe, dense)',
+          reduction:
+            'si identite(commune_membre, plus_de_45000) alors 0.5 sinon 1',
+        },
+      ],
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  it(`retourne une erreur quand demarche(...) référence un champ inconnu`, () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      actions: [
+        { identifiant: '1.1', desactivation: 'demarche(renouvelement)' },
+      ],
+    });
+
+    expect(errors).toEqual([
+      `Le champ de démarche "renouvelement" dans l'expression de désactivation de l'action cae_1.1 n'est pas valide. Champs autorisés : renouvellement`,
+    ]);
   });
 
   it('retourne une erreur de syntaxe pour les expressions de score', () => {

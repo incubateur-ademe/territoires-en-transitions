@@ -19,10 +19,12 @@ const IndicateurCategoriesDropdown = (props: Props) => {
     categories && (
       <SelectFilter
         {...props}
-        options={categories.map((categorie) => ({
-          label: getCategorieLabel(categorie.nom),
-          value: categorie.nom,
-        }))}
+        options={categories
+          .map((categorie) => ({
+            label: getCategorieLabel(categorie.nom),
+            value: categorie.nom,
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label, 'fr'))}
         onChange={({ values, selectedValue }) => {
           props.onChange({
             categories: values as string[],

@@ -1,0 +1,108 @@
+# UI Storybook-specific checks and Chromatic publish.
+name: Test UI Storybook
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: true
+        type: string
+      nx-cloud-token-secret-type:
+        description: Nx Cloud token access type (read-only or read-write)
+        required: false
+        default: read-only
+        type: string
+      run-ui:
+        description: Run the UI Storybook build, test and Chromatic publish
+        required: false
+        default: true
+        type: boolean
+      run-app:
+        description: Run the app Storybook build check
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  ui-storybook:
+    if: ${{ inputs.run-ui }}
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - run: pnpm nx build-storybook ui -- --quiet --stats-json
+
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: storybook-static
+          path: packages/ui/storybook-static
+          retention-days: 1
+
+      - uses: ./.github/actions/cache/playwright-browsers
+      - run: pnpm nx test-storybook ui
+
+  publish-storybook:
+    if: ${{ inputs.run-ui }}
+    needs: [ui-storybook]
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          name: storybook-static
+          path: packages/ui/storybook-static
+
+      - name: Publish to Chromatic
+        run: pnpm nx chromatic ui -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+  app-storybook:
+    if: ${{ inputs.run-app }}
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - run: pnpm nx build-storybook app -- --quiet
+
+      - uses: ./.github/actions/cache/playwright-browsers
+      - run: pnpm nx test-storybook app

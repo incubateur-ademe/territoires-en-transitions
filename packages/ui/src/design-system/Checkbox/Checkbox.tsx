@@ -17,8 +17,14 @@ export type CheckboxProps = Omit<
   containerClassname?: string;
   /** Pour styliser le label */
   labelClassname?: string;
-  /** Taille du label */
-  size?: 'sm' | 'md';
+  /** Taille du libellé, et de la case en `xs` */
+  size?: 'xs' | 'sm' | 'md';
+  /**
+   * Couleur de la case cochée. `success` pour une case qui dit qu'un critère est
+   * satisfait — le vert la range avec les autres marques de complétude, là où le
+   * violet ne signale qu'un choix.
+   */
+  checkedColor?: 'primary' | 'success';
 } & FieldMessageProps;
 
 /**
@@ -70,6 +76,7 @@ export const Checkbox = forwardRef(
                   'text-primary-9': !remainingProps.disabled,
                   'text-grey-6': remainingProps.disabled,
                   'text-sm': size === 'sm',
+                  'text-xs': size === 'xs',
                 },
                 labelClassname
               )}

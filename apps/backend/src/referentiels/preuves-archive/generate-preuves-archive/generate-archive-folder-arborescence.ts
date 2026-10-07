@@ -1,50 +1,33 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { groupBy } from 'es-toolkit';
-import type { PreuvesByOrigin } from '../list-audit-preuves/list-audit-preuves.service';
+import type { PreuvesByOrigin } from '../collect-audit-preuves/collect-audit-preuves.service';
 import {
   PreuvesArchiveErrorEnum,
   type PreuvesArchiveError,
 } from '../preuves-archive.errors';
 import type {
-  CollectedFilePreuve,
-  CollectedLinkPreuve,
-} from '../list-audit-preuves/collect-preuves.repository';
-import type { LienPreuve } from '../build-archive/build-liens-csv';
-
-const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
-const MAX_FILE_COUNT = 500;
-const MAX_TOTAL_SIZE_BYTES = 2 * 1024 * 1024 * 1024;
+  CollectedLink,
+  MissingFile,
+} from '@tet/backend/collectivites/documents/list-documents-by-scope/triage-documents';
+import {
+  checkArchiveLimits,
+  type ArchiveLimitsExceeded,
+} from '@tet/backend/utils/archive/check-archive-limits.utils';
+import {
+  splitTriagedArchiveFiles,
+  triageArchiveFile,
+} from '@tet/backend/utils/archive/triage-archive-files.utils';
+import type {
+  ArchiveFolderArborescence,
+  ArchiveLinkFolder,
+  SkippedFile,
+} from '@tet/backend/utils/archive/archive-arborescence.types';
 
 const MESURES_FOLDER = 'mesures';
 const CYCLE_FOLDER = 'cycle-labellisation';
 const DEMANDE_FOLDER = 'demande';
 const AUDIT_FOLDER = 'audit';
-
-export interface ArchiveFile {
-  folderSegments: string[];
-  filename: string;
-  bucketId: string;
-  hash: string;
-  filesize: number;
-}
-
-export interface ArchiveLinkFolder {
-  folderSegments: string[];
-  liens: LienPreuve[];
-}
-
-export interface SkippedFile {
-  filename: string;
-  emplacement: string;
-  raison: string;
-}
-
-export interface ArchiveFolderArborescence {
-  files: ArchiveFile[];
-  linkFolders: ArchiveLinkFolder[];
-  skippedFiles: SkippedFile[];
-}
 
 export interface ReferentielTreeNode {
   actionId: string;
@@ -64,81 +47,27 @@ interface MesureFolder {
   folderSegments: string[];
 }
 
-type FileWithFolder = {
-  file: CollectedFilePreuve;
-  folderSegments: string[];
-};
-
 type LinkWithFolder = {
-  link: CollectedLinkPreuve;
+  link: CollectedLink;
   folderSegments: string[];
 };
 
-type FileTriage =
-  | { kind: 'collected'; file: ArchiveFile }
-  | { kind: 'skipped'; entry: SkippedFile };
+type MissingFileWithFolder = {
+  missingFile: MissingFile;
+  folderSegments: string[];
+};
 
-function triageFile({ file, folderSegments }: FileWithFolder): FileTriage {
-  const emplacement = folderSegments.join('/');
-  const filename = file.filename ?? file.hash;
+const FILE_MISSING_FROM_STORAGE = 'Fichier introuvable dans le stockage';
 
-  if (file.filesize === null || file.bucketId === null) {
-    return {
-      kind: 'skipped',
-      entry: {
-        filename,
-        emplacement,
-        raison: 'Fichier introuvable dans le stockage',
-      },
-    };
-  }
-
-  if (file.filesize > MAX_FILE_SIZE_BYTES) {
-    return {
-      kind: 'skipped',
-      entry: {
-        filename,
-        emplacement,
-        raison: `Fichier trop volumineux (${file.filesize} octets, limite ${MAX_FILE_SIZE_BYTES})`,
-      },
-    };
-  }
-
+function toSkippedMissingFile({
+  missingFile,
+  folderSegments,
+}: MissingFileWithFolder): SkippedFile {
   return {
-    kind: 'collected',
-    file: {
-      folderSegments,
-      filename,
-      bucketId: file.bucketId,
-      hash: file.hash,
-      filesize: file.filesize,
-    },
+    filename: missingFile.filename ?? missingFile.hash,
+    emplacement: folderSegments.join('/'),
+    raison: FILE_MISSING_FROM_STORAGE,
   };
-}
-
-function checkArchiveLimits(
-  files: ArchiveFile[]
-): Result<undefined, PreuvesArchiveError> {
-  if (files.length > MAX_FILE_COUNT) {
-    return failure(
-      PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-      new Error(
-        `Trop de fichiers à archiver (${files.length}, limite ${MAX_FILE_COUNT})`
-      )
-    );
-  }
-
-  const totalSize = files.reduce((sum, file) => sum + file.filesize, 0);
-  if (totalSize > MAX_TOTAL_SIZE_BYTES) {
-    return failure(
-      PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
-      new Error(
-        `Archive trop volumineuse (${totalSize} octets, limite ${MAX_TOTAL_SIZE_BYTES})`
-      )
-    );
-  }
-
-  return success(undefined);
 }
 
 function groupLinksByFolder(links: LinkWithFolder[]): ArchiveLinkFolder[] {
@@ -147,7 +76,7 @@ function groupLinksByFolder(links: LinkWithFolder[]): ArchiveLinkFolder[] {
   );
   return Object.values(grouped).map((items) => ({
     folderSegments: items[0].folderSegments,
-    liens: items.map(({ link }) => ({
+    links: items.map(({ link }) => ({
       titre: link.titre ?? '',
       url: link.url,
       commentaire: link.commentaire ?? '',
@@ -190,10 +119,16 @@ function mesureFolderSegments(
   }
   const match = mesureFolders.find(
     (mesure) =>
-      mesure.actionId === actionId ||
-      actionId.startsWith(`${mesure.actionId}.`)
+      mesure.actionId === actionId || actionId.startsWith(`${mesure.actionId}.`)
   );
   return match ? match.folderSegments : [MESURES_FOLDER];
+}
+
+function toLimitsExceededMessage(limitsCheck: ArchiveLimitsExceeded): string {
+  if (limitsCheck.exceeded === 'fileCount') {
+    return `Trop de fichiers à archiver (${limitsCheck.fileCount}, limite ${limitsCheck.limit})`;
+  }
+  return `Archive trop volumineuse (${limitsCheck.totalSize} octets, limite ${limitsCheck.limit})`;
 }
 
 export function generateArchiveFolderArborescence(
@@ -216,6 +151,21 @@ export function generateArchiveFolderArborescence(
     folderSegments: [CYCLE_FOLDER, AUDIT_FOLDER],
   }));
 
+  const mesureMissingFiles = preuves.mesure.missingFiles.map((missingFile) => ({
+    missingFile,
+    folderSegments: mesureFolderSegments(missingFile.actionId, mesureFolders),
+  }));
+  const demandeMissingFiles = preuves.demande.missingFiles.map(
+    (missingFile) => ({
+      missingFile,
+      folderSegments: [CYCLE_FOLDER, DEMANDE_FOLDER],
+    })
+  );
+  const auditMissingFiles = preuves.audit.missingFiles.map((missingFile) => ({
+    missingFile,
+    folderSegments: [CYCLE_FOLDER, AUDIT_FOLDER],
+  }));
+
   const mesureLinks = preuves.mesure.links.map((link) => ({
     link,
     folderSegments: mesureFolderSegments(link.actionId, mesureFolders),
@@ -229,17 +179,25 @@ export function generateArchiveFolderArborescence(
     folderSegments: [CYCLE_FOLDER, AUDIT_FOLDER],
   }));
 
-  const triaged = [...mesureFiles, ...demandeFiles, ...auditFiles].map(triageFile);
-  const collectedFiles = triaged.flatMap((entry) =>
-    entry.kind === 'collected' ? [entry.file] : []
-  );
-  const skippedFiles = triaged.flatMap((entry) =>
-    entry.kind === 'skipped' ? [entry.entry] : []
-  );
+  const { files: collectedFiles, skippedFiles: triagedSkippedFiles } =
+    splitTriagedArchiveFiles(
+      [...mesureFiles, ...demandeFiles, ...auditFiles].map(triageArchiveFile)
+    );
+  const skippedFiles = [
+    ...triagedSkippedFiles,
+    ...[
+      ...mesureMissingFiles,
+      ...demandeMissingFiles,
+      ...auditMissingFiles,
+    ].map(toSkippedMissingFile),
+  ];
 
-  const limits = checkArchiveLimits(collectedFiles);
-  if (!limits.success) {
-    return limits;
+  const limitsCheck = checkArchiveLimits(collectedFiles);
+  if (!limitsCheck.withinLimits) {
+    return failure(
+      PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
+      new Error(toLimitsExceededMessage(limitsCheck))
+    );
   }
 
   return success({

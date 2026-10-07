@@ -107,87 +107,97 @@ export const AjouterCollectivitePage = () => {
   const selectedType = collectivite.type as string | undefined;
   const isCollectiviteSansRecherche =
     selectedType === collectiviteType.Test ||
+    selectedType === collectiviteType.StructureSansStatutJuridique ||
+    selectedType === collectiviteType.Dreal;
+  const isCollectiviteSansCodesGeo =
+    selectedType === collectiviteType.Test ||
     selectedType === collectiviteType.StructureSansStatutJuridique;
 
   return (
-    <>
-      <h2 className="mb-6">{appLabels.ajouterCollectivite}</h2>
-      <Divider color="primary" className="mb-6" />
-      <div className="flex items-start gap-4">
-        <CollectiviteTypeField
-          type={selectedType ?? collectiviteType.Commune}
-          onSelect={(type) => updateCollectivite('type', type?.value)}
-        />
-        {selectedType == collectiviteType.Commune && (
-          <CodeCommuneField
-            value={collectivite.communeCode ?? ''}
-            onChange={(value) => updateCollectivite('communeCode', value, true)}
+    <div className="space-y-6">
+      <h2>{appLabels.ajouterCollectivite}</h2>
+      <Divider color="primary" />
+      <div>
+        <div className="flex items-start gap-4">
+          <CollectiviteTypeField
+            type={selectedType ?? collectiviteType.Commune}
+            onSelect={(type) => updateCollectivite('type', type?.value)}
           />
-        )}
-        {selectedType == collectiviteType.EPCI && (
-          <SirenField
-            value={collectivite.siren ?? ''}
-            onChange={(value) => updateCollectivite('siren', value, true)}
-          />
-        )}
-        {(selectedType === collectiviteType.Departement ||
-          selectedType === collectiviteType.PrefectureDepartement) && (
-          <CodeDepartementField
-            value={collectivite.departementCode ?? ''}
-            onChange={(value) =>
-              updateCollectivite('departementCode', value, true)
-            }
-          />
-        )}
-        {(selectedType === collectiviteType.Region ||
-          selectedType === collectiviteType.PrefectureRegion) && (
-          <CodeRegionField
-            value={collectivite.regionCode ?? ''}
-            onChange={(value) => updateCollectivite('regionCode', value, true)}
-          />
-        )}
-        {selectedType === collectiviteType.ServicePublic && (
-          <>
+          {selectedType == collectiviteType.Commune && (
+            <CodeCommuneField
+              value={collectivite.communeCode ?? ''}
+              onChange={(value) =>
+                updateCollectivite('communeCode', value, true)
+              }
+            />
+          )}
+          {selectedType == collectiviteType.EPCI && (
             <SirenField
               value={collectivite.siren ?? ''}
               onChange={(value) => updateCollectivite('siren', value, true)}
             />
-            <NicField
-              value={collectivite.nic ?? ''}
-              onChange={(value) => updateCollectivite('nic', value, true)}
+          )}
+          {(selectedType === collectiviteType.Departement ||
+            selectedType === collectiviteType.PrefectureDepartement) && (
+            <CodeDepartementField
+              value={collectivite.departementCode ?? ''}
+              onChange={(value) =>
+                updateCollectivite('departementCode', value, true)
+              }
             />
-          </>
-        )}
+          )}
+          {(selectedType === collectiviteType.Region ||
+            selectedType === collectiviteType.PrefectureRegion) && (
+            <CodeRegionField
+              value={collectivite.regionCode ?? ''}
+              onChange={(value) =>
+                updateCollectivite('regionCode', value, true)
+              }
+            />
+          )}
+          {selectedType === collectiviteType.ServicePublic && (
+            <>
+              <SirenField
+                value={collectivite.siren ?? ''}
+                onChange={(value) => updateCollectivite('siren', value, true)}
+              />
+              <NicField
+                value={collectivite.nic ?? ''}
+                onChange={(value) => updateCollectivite('nic', value, true)}
+              />
+            </>
+          )}
+          {selectedType && !isCollectiviteSansRecherche && (
+            <Button
+              className="self-end"
+              disabled={
+                (selectedType == collectiviteType.Commune &&
+                  collectivite.communeCode?.length != 5) ||
+                (selectedType == collectiviteType.EPCI &&
+                  collectivite.siren?.length != 9) ||
+                ((selectedType == collectiviteType.Departement ||
+                  selectedType == collectiviteType.PrefectureDepartement) &&
+                  !collectivite.departementCode) ||
+                ((selectedType == collectiviteType.Region ||
+                  selectedType == collectiviteType.PrefectureRegion) &&
+                  !collectivite.regionCode) ||
+                (selectedType == collectiviteType.ServicePublic &&
+                  (collectivite.siren?.length != 9 ||
+                    collectivite.nic?.length != 5))
+              }
+              onClick={handleSearch}
+            >
+              {appLabels.formChercherCollectivite}
+            </Button>
+          )}
+        </div>
         {selectedType && !isCollectiviteSansRecherche && (
-          <Button
-            className="self-end"
-            disabled={
-              (selectedType == collectiviteType.Commune &&
-                collectivite.communeCode?.length != 5) ||
-              (selectedType == collectiviteType.EPCI &&
-                collectivite.siren?.length != 9) ||
-              ((selectedType == collectiviteType.Departement ||
-                selectedType == collectiviteType.PrefectureDepartement) &&
-                !collectivite.departementCode) ||
-              ((selectedType == collectiviteType.Region ||
-                selectedType == collectiviteType.PrefectureRegion) &&
-                !collectivite.regionCode) ||
-              (selectedType == collectiviteType.ServicePublic &&
-                (collectivite.siren?.length != 9 ||
-                  collectivite.nic?.length != 5))
-            }
-            onClick={handleSearch}
-          >
-            {appLabels.formChercherCollectivite}
-          </Button>
+          <p className="text-sm italic text-gray-400 text-right mt-2">
+            {appLabels.formChercherInsee}
+          </p>
         )}
       </div>
-      {selectedType && !isCollectiviteSansRecherche && (
-        <p className="text-sm italic text-gray-400 text-right">
-          {appLabels.formChercherInsee}
-        </p>
-      )}
-      <Divider color="primary" className="mb-6" />
+      {!isCollectiviteSansRecherche && <Divider color="primary" />}
       <div className="space-y-6">
         {status === statusSearch.none && !isCollectiviteSansRecherche && (
           <p className="text-blue-500">{appLabels.formLancezRecherche}</p>
@@ -214,7 +224,7 @@ export const AjouterCollectivitePage = () => {
             onChange={(e) => updateCollectivite('nom', e.target.value)}
           />
         </Field>
-        {!isCollectiviteSansRecherche && (
+        {!isCollectiviteSansCodesGeo && (
           <div className="flex items-start gap-4">
             {selectedType == collectiviteType.Commune ? (
               <CodeCommuneField
@@ -222,10 +232,12 @@ export const AjouterCollectivitePage = () => {
                 onChange={(value) => updateCollectivite('communeCode', value)}
               />
             ) : (
-              <SirenField
-                value={collectivite.siren ?? ''}
-                onChange={(value) => updateCollectivite('siren', value)}
-              />
+              selectedType !== collectiviteType.Dreal && (
+                <SirenField
+                  value={collectivite.siren ?? ''}
+                  onChange={(value) => updateCollectivite('siren', value)}
+                />
+              )
             )}
             {selectedType === collectiviteType.ServicePublic && (
               <NicField
@@ -235,6 +247,7 @@ export const AjouterCollectivitePage = () => {
             )}
             {selectedType !== collectiviteType.Region &&
               selectedType !== collectiviteType.PrefectureRegion &&
+              selectedType !== collectiviteType.Dreal &&
               selectedType !== collectiviteType.ServicePublic && (
                 <CodeDepartementField
                   value={collectivite.departementCode ?? ''}
@@ -252,14 +265,16 @@ export const AjouterCollectivitePage = () => {
           </div>
         )}
 
-        <Field title={appLabels.population}>
-          <InputNumber
-            value={collectivite.population?.toString() ?? ''}
-            onValueChange={(e) =>
-              updateCollectivite('population', e.floatValue)
-            }
-          />
-        </Field>
+        {selectedType !== collectiviteType.Dreal && (
+          <Field title={appLabels.population}>
+            <InputNumber
+              value={collectivite.population?.toString() ?? ''}
+              onValueChange={(e) =>
+                updateCollectivite('population', e.floatValue)
+              }
+            />
+          </Field>
+        )}
         <div className="flex items-start gap-4">
           <Button
             className="self-end"
@@ -272,10 +287,11 @@ export const AjouterCollectivitePage = () => {
                 (!collectivite.siren || !collectivite.nic)) ||
               (selectedType !== collectiviteType.Region &&
                 selectedType !== collectiviteType.PrefectureRegion &&
-                !isCollectiviteSansRecherche &&
+                selectedType !== collectiviteType.Dreal &&
+                !isCollectiviteSansCodesGeo &&
                 selectedType !== collectiviteType.ServicePublic &&
                 !collectivite.departementCode) ||
-              (!isCollectiviteSansRecherche &&
+              (!isCollectiviteSansCodesGeo &&
                 selectedType !== collectiviteType.ServicePublic &&
                 !collectivite.regionCode)
             }
@@ -290,6 +306,6 @@ export const AjouterCollectivitePage = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };

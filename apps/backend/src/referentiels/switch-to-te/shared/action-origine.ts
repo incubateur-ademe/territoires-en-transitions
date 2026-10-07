@@ -1,4 +1,3 @@
-import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { type CorrelatedAction } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine.dto';
 import {
   ReferentielIdEnum,
@@ -72,10 +71,10 @@ export const actionScoreToCorrelatedActionScore = (
     : {}),
 });
 
-export const buildCorrelatedActionsWithScore = (
-  actionsOrigine: CorrelatedAction[],
+export const buildCorrelatedActionsWithScore = <T extends ActionOrigineRef>(
+  actionsOrigine: T[],
   scoreMapsByReferentiel: Map<ReferentielId, Map<string, ActionScore>>
-): CorrelatedActionWithScore[] =>
+): (T & { score: ActionScoreWithOnlyPointsAndStatuts | null })[] =>
   actionsOrigine.map((origine) => {
     const scoreMap = scoreMapsByReferentiel.get(
       origine.referentielId as ReferentielId
@@ -90,10 +89,10 @@ export const buildCorrelatedActionsWithScore = (
     };
   });
 
-export const filterOriginesConcernees = (
-  correlatedActions: CorrelatedActionWithScore[],
+export const filterOriginesConcernees = <T extends ActionOrigineRef>(
+  correlatedActions: T[],
   scoreMapsByReferentiel: Map<ReferentielId, Map<string, ActionScore>>
-): CorrelatedActionWithScore[] =>
+): T[] =>
   correlatedActions.filter((origine) => {
     const scoreMap = scoreMapsByReferentiel.get(
       origine.referentielId as ReferentielId

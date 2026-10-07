@@ -2,16 +2,16 @@
 
 import posthog from 'posthog-js';
 
-import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
+import { VignetteAvecMarkdown } from '@/site/src/strapi/types';
 import { Button } from '@tet/ui';
 
 type EtapesProps = {
   titre: string;
-  contenu: Vignette[] | null;
+  contenu: VignetteAvecMarkdown[] | null;
   cta: string;
 };
 
@@ -30,9 +30,9 @@ const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
               description={c.legende ?? ''}
               image={
                 c.image ? (
-                  <DEPRECATED_StrapiImage
-                    data={c.image}
-                    displayCaption={false}
+                  <StrapiImage
+                    media={c.image}
+                    sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
                     className="w-full h-[200px] object-cover"
                   />
                 ) : undefined

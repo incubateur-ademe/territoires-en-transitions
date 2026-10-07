@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { Test } from '@nestjs/testing';
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
@@ -14,7 +15,6 @@ import {
   ActionTypeEnum,
   ScoreFields,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationReponsesRepository } from '../../collectivites/personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
@@ -36,6 +36,7 @@ import { ListActionExplicationsRepository } from '../actions/list-action-explica
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
+import { GetReferentielRepository } from '../get-referentiel/get-referentiel.repository';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { LabellisationService } from '../labellisations/labellisation.service';
 import { caeReferentiel } from '../models/samples/cae-referentiel';
@@ -85,6 +86,7 @@ describe('ReferentielsScoringService', () => {
       .useMocker((token) => {
         if (
           token === DatabaseService ||
+          token === GetReferentielRepository ||
           token === PermissionService ||
           token === CollectivitesService ||
           token === LabellisationService ||
@@ -1788,8 +1790,8 @@ describe('ReferentielsScoringService', () => {
         pointFait: 0,
         pointProgramme: 0,
         pointPasFait: 0,
-        pointNonRenseigne: roundTo((40 / 65) * 70, 3),
-        pointPotentiel: roundTo((40 / 65) * 70, 3),
+        pointNonRenseigne: round((40 / 65) * 70, 3),
+        pointPotentiel: round((40 / 65) * 70, 3),
         pointReferentiel: 40,
         completedTachesCount: 0,
         totalTachesCount: 1,
@@ -1809,8 +1811,8 @@ describe('ReferentielsScoringService', () => {
         pointFait: 0,
         pointProgramme: 0,
         pointPasFait: 0,
-        pointNonRenseigne: roundTo((25 / 65) * 70, 3),
-        pointPotentiel: roundTo((25 / 65) * 70, 3),
+        pointNonRenseigne: round((25 / 65) * 70, 3),
+        pointPotentiel: round((25 / 65) * 70, 3),
         pointReferentiel: 25,
         completedTachesCount: 0,
         totalTachesCount: 1,
@@ -2199,13 +2201,13 @@ describe('ReferentielsScoringService', () => {
       });
 
       expect(
-        roundTo(
+        round(
           (scoresMap['eci_1'].pointFait as number) /
             (scoresMap['eci_1'].pointPotentiel as number),
           5
         )
       ).toEqual(
-        roundTo(
+        round(
           (scoresMap['eci_2'].pointFait as number) /
             (scoresMap['eci_2'].pointPotentiel as number),
           5
@@ -2830,229 +2832,6 @@ describe('ReferentielsScoringService', () => {
 
       expect(scoresMapCas4['cae_3.3.5'].concerne).toEqual(false);
       expect(scoresMapCas4['cae_3.3.5'].pointPotentiel).toEqual(0);
-    });
-  });
-
-  describe('getScoreDiff', () => {
-    it('python rounding issue', async () => {
-      const scoreDiff = referentielsScoringService.getScoreDiff(
-        {
-          actionId: 'cae_6.5.1.2.8',
-          explication: 'test explication',
-          pointReferentiel: 0.338,
-          pointPotentiel: 0.338,
-          pointPotentielPerso: null,
-          pointFait: 0,
-          pointPasFait: 0,
-          pointNonRenseigne: 0.338,
-          pointProgramme: 0,
-          concerne: true,
-          completedTachesCount: 0,
-          totalTachesCount: 1,
-          faitTachesAvancement: 0,
-          programmeTachesAvancement: 0,
-          pasFaitTachesAvancement: 0,
-          pasConcerneTachesAvancement: 0,
-          desactive: false,
-          renseigne: false,
-        },
-        {
-          concerne: true,
-          actionId: 'cae_6.5.1.2.8',
-          desactive: false,
-          renseigne: false,
-          pointFait: 0,
-          pointPasFait: 0,
-          pointPotentiel: 0.337,
-          pointProgramme: 0,
-          pointReferentiel: 0.338,
-          totalTachesCount: 1,
-          pointNonRenseigne: 0.337,
-          pointPotentielPerso: null,
-          completedTachesCount: 0,
-          faitTachesAvancement: 0,
-          pasFaitTachesAvancement: 0,
-          programmeTachesAvancement: 0,
-          pasConcerneTachesAvancement: 0,
-        }
-      );
-      // Even if the difference is 0.001, it should not be considered as a difference because due to python issue
-      expect(scoreDiff).toEqual(null);
-    });
-
-    it('python rounding issue 2', async () => {
-      const scoreDiff = referentielsScoringService.getScoreDiff(
-        {
-          actionId: 'eci',
-          pointReferentiel: 500,
-          pointPotentiel: 500,
-          pointPotentielPerso: null,
-          pointFait: 281.139,
-          pointPasFait: 114.42,
-          pointNonRenseigne: 0,
-          pointProgramme: 104.44,
-          concerne: true,
-          completedTachesCount: 274,
-          totalTachesCount: 274,
-          faitTachesAvancement: 155.4,
-          programmeTachesAvancement: 61.3,
-          pasFaitTachesAvancement: 51.3,
-          pasConcerneTachesAvancement: 6,
-          desactive: false,
-          renseigne: true,
-          etoiles: 3,
-        },
-        {
-          concerne: true,
-          actionId: 'eci',
-          desactive: false,
-          renseigne: true,
-          pointFait: 281.139,
-          pointPasFait: 114.42,
-          pointPotentiel: 500,
-          pointProgramme: 104.44,
-          pointReferentiel: 500,
-          totalTachesCount: 274,
-          pointNonRenseigne: 0,
-          pointPotentielPerso: null,
-          completedTachesCount: 274,
-          faitTachesAvancement: 155.4,
-          pasFaitTachesAvancement: 51.3,
-          programmeTachesAvancement: 61.300000000000004,
-          pasConcerneTachesAvancement: 6,
-        }
-      );
-      // Small difference for programmeTachesAvancement
-      expect(scoreDiff).toEqual(null);
-    });
-
-    it('Nominal difference', async () => {
-      const scoreDiff = referentielsScoringService.getScoreDiff(
-        {
-          actionId: 'eci',
-          pointReferentiel: 500,
-          pointPotentiel: 500,
-          pointPotentielPerso: null,
-          pointFait: 242.925,
-          pointPasFait: 102.42,
-          pointNonRenseigne: 0,
-          pointProgramme: 94.155,
-          concerne: true,
-          completedTachesCount: 274,
-          totalTachesCount: 274,
-          faitTachesAvancement: 138.9,
-          programmeTachesAvancement: 54.8,
-          pasFaitTachesAvancement: 42.3,
-          pasConcerneTachesAvancement: 6,
-          desactive: false,
-          renseigne: true,
-          etoiles: 2,
-        },
-        {
-          concerne: true,
-          actionId: 'eci',
-          desactive: false,
-          renseigne: true,
-          pointFait: 281.139,
-          pointPasFait: 114.42,
-          pointPotentiel: 500,
-          pointProgramme: 104.44,
-          pointReferentiel: 500,
-          totalTachesCount: 274,
-          pointNonRenseigne: 0,
-          pointPotentielPerso: null,
-          completedTachesCount: 274,
-          faitTachesAvancement: 155.4,
-          pasFaitTachesAvancement: 51.3,
-          programmeTachesAvancement: 61.300000000000004,
-          pasConcerneTachesAvancement: 6,
-        }
-      );
-      const expectedScoreDiff = {
-        sauvegarde: {
-          pointFait: 281.139,
-          pointPasFait: 114.42,
-          pointProgramme: 104.44,
-          faitTachesAvancement: 155.4,
-          programmeTachesAvancement: 61.300000000000004,
-          pasFaitTachesAvancement: 51.3,
-        },
-        calcule: {
-          pointFait: 242.925,
-          pointPasFait: 102.42,
-          pointProgramme: 94.155,
-          faitTachesAvancement: 138.9,
-          programmeTachesAvancement: 54.8,
-          pasFaitTachesAvancement: 42.3,
-        },
-      };
-      expect(scoreDiff).toEqual(expectedScoreDiff);
-    });
-
-    it('Concerne difference due to python code', async () => {
-      const scoreDiff = referentielsScoringService.getScoreDiff(
-        {
-          actionId: 'cae_6.2.3.4.3',
-          pointReferentiel: 0.667,
-          pointPotentiel: 0,
-          pointPotentielPerso: null,
-          pointFait: 0,
-          pointPasFait: 0,
-          pointNonRenseigne: 0,
-          pointProgramme: 0,
-          concerne: false,
-          completedTachesCount: 1,
-          totalTachesCount: 1,
-          faitTachesAvancement: 0,
-          programmeTachesAvancement: 0,
-          pasFaitTachesAvancement: 0,
-          pasConcerneTachesAvancement: 1,
-          desactive: false,
-          renseigne: true,
-        },
-        {
-          concerne: true,
-          actionId: 'cae_6.2.3.4.3',
-          desactive: false,
-          renseigne: true,
-          pointFait: 0,
-          pointPasFait: 0,
-          pointPotentiel: 0,
-          pointProgramme: 0,
-          pointReferentiel: 0.667,
-          totalTachesCount: 1,
-          pointNonRenseigne: 0,
-          pointPotentielPerso: null,
-          completedTachesCount: 0,
-          faitTachesAvancement: 0,
-          pasFaitTachesAvancement: 0,
-          programmeTachesAvancement: 0,
-          pasConcerneTachesAvancement: 0,
-        },
-        {
-          'cae_6.2.3.4': {
-            actionId: 'cae_6.2.3.4',
-            pointReferentiel: 2,
-            pointPotentiel: 0,
-            pointPotentielPerso: null,
-            pointFait: 0,
-            pointPasFait: 0,
-            pointNonRenseigne: 0,
-            pointProgramme: 0,
-            concerne: false,
-            completedTachesCount: 3,
-            totalTachesCount: 3,
-            faitTachesAvancement: 0,
-            programmeTachesAvancement: 0,
-            pasFaitTachesAvancement: 0,
-            pasConcerneTachesAvancement: 3,
-            desactive: false,
-            renseigne: true,
-          },
-        }
-      );
-
-      expect(scoreDiff).toEqual(null);
     });
   });
 });

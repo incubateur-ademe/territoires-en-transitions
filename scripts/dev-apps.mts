@@ -24,7 +24,6 @@ interface InfraComponent {
 export const APPS: Record<string, AppDef> = {
   app: { port: 3000, infra: ['supabase'] },
   site: { port: 3001, infra: ['supabase', 'strapi'] },
-  panier: { port: 3002, infra: ['supabase'] },
   backend: { port: 8080, infra: ['supabase', 'redis'] },
   tools: { port: 8081, infra: ['supabase', 'redis'] },
 };
@@ -32,7 +31,7 @@ export const APPS: Record<string, AppDef> = {
 // Apps lancées quand rien n'est précisé (celles de `pnpm dev`) — tools exclu :
 // il exige un env complet (Airtable, Notion…) et reste sélectionnable
 // explicitement.
-export const DEFAULT_APPS: string[] = ['app', 'panier', 'site', 'backend'];
+export const DEFAULT_APPS: string[] = ['app', 'site', 'backend'];
 
 // Composants d'infra proposés par le picker (un profil compose chacun) et
 // dépendances entre profils — docker compose refuse un depends_on vers un
@@ -40,20 +39,15 @@ export const DEFAULT_APPS: string[] = ['app', 'panier', 'site', 'backend'];
 export const INFRA_COMPONENTS: InfraComponent[] = [
   {
     value: 'supabase',
-    title: 'Supabase (db, kong, gotrue, rest, realtime, storage, mailpit)',
+    title: 'Supabase (db, kong, gotrue, storage, mailpit)',
   },
   { value: 'studio', title: 'Supabase Studio (localhost:54323)' },
   { value: 'redis', title: 'Redis (localhost:6379)' },
   { value: 'strapi', title: 'Strapi + sa base Postgres (localhost:1337)' },
-  {
-    value: 'functions',
-    title: 'Edge functions Deno (formulaire de contact du site)',
-  },
 ];
 
 export const REQUIRES: Record<string, string[]> = {
   studio: ['supabase'],
-  functions: ['supabase'],
   ...Object.fromEntries(
     Object.entries(APPS).map(([app, { infra }]) => [app, infra])
   ),
@@ -66,7 +60,9 @@ const appsOrFail = (names: string[]): string[] => {
   const unknown = names.filter((n) => !APPS[n]);
   if (unknown.length) {
     console.error(
-      `✗ app(s) inconnue(s) : ${unknown.join(', ')} — apps : ${Object.keys(APPS).join(', ')}`
+      `✗ app(s) inconnue(s) : ${unknown.join(', ')} — apps : ${Object.keys(
+        APPS
+      ).join(', ')}`
     );
     process.exit(1);
   }
@@ -78,6 +74,15 @@ const savedProfiles = (): string[] =>
     ?.split(',')
     .map((s) => s.trim())
     .filter(Boolean) ?? [];
+
+// Ajoute une app (et l'infra qu'elle exige) à la sélection mémorisée — pour
+// une app créée hors du picker, depuis le TUI.
+export const addAppToSelection = (app: string): void =>
+  writeEnvValue(
+    ENV_LOCAL,
+    'COMPOSE_PROFILES',
+    [...new Set([...savedProfiles(), ...APPS[app].infra, app])].join(',')
+  );
 
 // Composants d'infra cochés EXPLICITEMENT (picker de pick-stack.mts) — par
 // opposition à ceux simplement dérivés des apps sélectionnées (APPS[a].infra).
@@ -115,7 +120,9 @@ const resolveApps = (args: string[]): string[] => {
   const saved = savedProfiles().filter((p) => APPS[p]);
   if (saved.length) return saved;
   if (process.stderr.isTTY) {
-    const picked = spawnSync('node', ['scripts/pick-stack.mts'], {
+    // --ask : on n'arrive ici que faute d'apps dans la sélection mémorisée —
+    // il faut donc bien un choix, pas le rejeu silencieux de pick-stack.
+    const picked = spawnSync('node', ['scripts/pick-stack.mts', '--ask'], {
       stdio: ['inherit', 'pipe', 'inherit'],
       encoding: 'utf8',
     });
@@ -129,14 +136,16 @@ const resolveApps = (args: string[]): string[] => {
     process.exit(1);
   }
   console.error(
-    `✗ pas de TTY et pas de sélection mémorisée — précisez make dev apps=<${Object.keys(APPS).join(',')}…>`
+    `✗ pas de TTY et pas de sélection mémorisée — précisez make dev apps=<${Object.keys(
+      APPS
+    ).join(',')}…>`
   );
   process.exit(1);
 };
 
 // Profils d'infra à démarrer pour ces apps : leurs besoins + les composants
 // d'infra cochés explicitement dans la sélection (ex. studio).
-const infraFor = (apps: string[]): string[] => [
+export const infraFor = (apps: string[]): string[] => [
   ...new Set([
     ...explicitInfra(),
     ...appsOrFail(apps).flatMap((a) => APPS[a].infra),
@@ -183,7 +192,9 @@ const checkPorts = async (apps: string[]): Promise<void> => {
   );
   if (busy.length) {
     console.error(
-      `✗ port(s) déjà occupé(s) : ${busy.join(', ')} — un autre make dev tourne ?`
+      `✗ port(s) déjà occupé(s) : ${busy.join(
+        ', '
+      )} — un autre make dev tourne ?`
     );
     process.exit(1);
   }

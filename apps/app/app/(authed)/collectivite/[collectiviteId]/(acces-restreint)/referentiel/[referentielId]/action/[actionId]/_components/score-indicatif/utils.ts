@@ -1,5 +1,6 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreIndicatifType } from '@tet/domain/referentiels';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import { typeScoreToLabel } from './score-indicatif.labels';
 import {
   ScoreIndicatifAction,
@@ -63,7 +64,7 @@ export function texteValeurUtilisee({
   noYear?: boolean;
 }) {
   const { valeur, dateValeur, sourceLibelle } = valeurUtilisee;
-  const annee = new Date(dateValeur).getFullYear();
+  const annee = getYearFromIsoDate(dateValeur);
 
   return {
     valeurEtUnite: `${valeur} ${unite}`,

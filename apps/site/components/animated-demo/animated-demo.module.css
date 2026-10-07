@@ -1,0 +1,190 @@
+/*
+ * Animations d'entrée des démos scénarisées. Elles se rejouent à chaque montage
+ * de l'élément : la timeline décide quand un élément apparaît, le CSS seulement
+ * comment.
+ */
+
+.fade {
+  animation: fade 0.4s ease-out both;
+}
+
+.fadeFast {
+  animation: fade 0.2s both;
+}
+
+.fly {
+  animation: fly 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.pop {
+  animation: pop 0.3s both;
+}
+
+.spin {
+  animation: spin 0.6s linear infinite;
+}
+
+.drop {
+  animation: drop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.rise {
+  animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.slideIn {
+  animation: slideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.popGlow {
+  animation: pop 0.4s both, glow 1.2s ease-out 0.4s 2;
+}
+
+.confetti {
+  animation: confetti 1.8s cubic-bezier(0.15, 0.7, 0.3, 1) both;
+}
+
+/*
+ * Démo en pause : on fige les animations d'ambiance (spinner, confettis, halo).
+ * Les entrées, courtes, se jouent quand même : figées à leur première image,
+ * elles laisseraient invisible un écran atteint en déplaçant la lecture.
+ */
+.paused .spin,
+.paused .confetti,
+.paused .popGlow {
+  animation-play-state: paused;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fly {
+  0% {
+    opacity: 0;
+    transform: translate(260px, -180px) rotate(-10deg) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-160px) rotate(-6deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(6px) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-78px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(64, 64, 146, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(64, 64, 146, 0);
+  }
+}
+
+/* --dx, --dy et --r sont posés par particule (voir confetti.tsx). */
+@keyframes confetti {
+  /* Invisible au départ : une gerbe figée avant son envol ne se voit pas. */
+  0% {
+    transform: translate(0, 0) rotate(0) scale(0.4);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate(var(--dx), var(--dy)) rotate(calc(var(--r) * 0.4))
+      scale(1);
+    opacity: 1;
+  }
+  /* La gerbe s'éteint sur place plutôt que de retomber. */
+  100% {
+    transform: translate(calc(var(--dx) * 1.15), calc(var(--dy) * 1.15))
+      rotate(var(--r)) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade,
+  .fadeFast,
+  .fly,
+  .pop,
+  .spin,
+  .drop,
+  .rise,
+  .slideIn,
+  .popGlow,
+  .confetti {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+  }
+}

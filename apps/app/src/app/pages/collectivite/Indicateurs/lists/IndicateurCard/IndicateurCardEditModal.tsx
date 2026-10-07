@@ -8,31 +8,34 @@ import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Thematique } from '@tet/domain/shared';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
   indicateur: IndicateurDefinitionListItem;
   openState: OpenState;
 };
 
+type EtatIndicateur = {
+  pilotes: PersonneTagOrUser[];
+  services: Tag[];
+  thematiques: Thematique[];
+};
+
 const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
-  const [state, setState] = useState<{
-    pilotes: PersonneTagOrUser[];
-    services: Tag[];
-    thematiques: Thematique[];
-  }>({
+  const valeursEnregistrees: EtatIndicateur = {
     pilotes: indicateur.pilotes ?? [],
     services: indicateur.services ?? [],
     thematiques: indicateur.thematiques ?? [],
-  });
+  };
 
-  useEffect(() => {
-    setState({
-      pilotes: indicateur.pilotes ?? [],
-      services: indicateur.services ?? [],
-      thematiques: indicateur.thematiques ?? [],
-    });
-  }, [indicateur.pilotes, indicateur.services, indicateur.thematiques]);
+  /**
+   * L'état ne retient que la saisie en cours : tant qu'on n'a rien modifié, il
+   * vaut `null` et les champs affichent l'indicateur enregistré. Un effet
+   * recopiait ces trois champs dans l'état, ce qui écrasait la saisie en cours
+   * dès que la liste se rafraîchissait.
+   */
+  const [brouillon, setBrouillon] = useState<EtatIndicateur | null>(null);
+  const state = brouillon ?? valeursEnregistrees;
 
   // extrait les userId et les tagId
   const pilotesValues = state.pilotes
@@ -47,22 +50,22 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
       title={appLabels.modifierIndicateur}
       render={() => (
         <div className="flex flex-col gap-6">
-          <Field title={appLabels.champPersonnePiloteColon}>
+          <Field title={appLabels.personnePilote()}>
             <PersonneTagDropdown
               values={pilotesValues}
               onChange={({ personnes }) =>
-                setState({
+                setBrouillon({
                   ...state,
                   pilotes: personnes,
                 })
               }
             />
           </Field>
-          <Field title={appLabels.champDirectionServicePiloteColon}>
+          <Field title={appLabels.directionOuServicePilote()}>
             <ServiceTagDropdown
               values={state.services.map((s) => s.id)}
               onChange={({ values: services }) =>
-                setState({
+                setBrouillon({
                   ...state,
                   services,
                 })
@@ -70,11 +73,11 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
             />
           </Field>
           {indicateur.estPerso && (
-            <Field title={appLabels.champThematiqueColon}>
+            <Field title={appLabels.thematique()}>
               <ThematiquesDropdown
                 values={state.thematiques.map((t) => t.id)}
                 onChange={(thematiques) =>
-                  setState({
+                  setBrouillon({
                     ...state,
                     thematiques: thematiques.map((id) => ({ id, nom: '' })),
                   })
@@ -89,11 +92,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             disabled:
-              JSON.stringify({
-                pilotes: indicateur.pilotes ?? [],
-                services: indicateur.services ?? [],
-                thematiques: indicateur.thematiques ?? [],
-              }) === JSON.stringify(state),
+              JSON.stringify(valeursEnregistrees) === JSON.stringify(state),
             onClick: () => {
               updateIndicateur({
                 pilotes: state.pilotes,

@@ -23,7 +23,7 @@ const CiblesDropdown = (props: CiblesDropdownProps) => {
       {...props}
       isSearcheable
       options={ficheActionCiblesOptions}
-      placeholder={props.placeholder ?? appLabels.placeholderSelectionnezCibles}
+      placeholder={props.placeholder ?? appLabels.ciblePlaceholderSelectionner}
       onChange={({ values, selectedValue }) =>
         props.onChange({
           cibles: values ? (values as Cible[]) : [],

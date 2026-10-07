@@ -10,6 +10,7 @@ import {
 } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { toSlug } from '@tet/backend/utils/string.utils';
@@ -25,17 +26,15 @@ import {
   SnapshotJalonEnum,
   SnapshotWithoutPayloads,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
-import { omit } from 'es-toolkit';
+import { omit, round } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
 import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { Transaction } from '../../utils/database/transaction.utils';
-import { isErrorWithCause } from '../../utils/nest/errors.utils';
-import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import { isUniqueViolation } from '../../utils/nest/errors.utils';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
@@ -123,10 +122,12 @@ export class SnapshotsService {
     nom: snapshotNom,
     jalon,
     anneeAudit,
+    auditId,
   }: {
     nom?: string;
     jalon?: SnapshotJalon;
     anneeAudit?: number;
+    auditId?: number;
   }): Result<{ ref: string; nom: string }, SnapshotsError> {
     let ref = '';
     let nom = snapshotNom || '';
@@ -134,22 +135,22 @@ export class SnapshotsService {
     if (
       (jalon === SnapshotJalonEnum.PRE_AUDIT ||
         jalon === SnapshotJalonEnum.POST_AUDIT) &&
-      !anneeAudit
+      (!anneeAudit || !auditId)
     ) {
       this.logger.warn(
-        `L'année de l'audit doit être définie pour le jalon ${jalon}`
+        `L'année et l'identifiant de l'audit doivent être définis pour le jalon ${jalon}`
       );
       return failure(SnapshotsErrorEnum.SNAPSHOT_INVALID_METADATA);
     }
 
     switch (jalon) {
       case SnapshotJalonEnum.PRE_AUDIT:
-        ref = `${SNAPSHOTS.PRE_AUDIT_REF_PREFIX}${anneeAudit}`;
+        ref = `${SNAPSHOTS.PRE_AUDIT_REF_PREFIX}${anneeAudit}-${auditId}`;
         nom = `${anneeAudit}${SNAPSHOTS.PRE_AUDIT_NOM_SUFFIX}`;
         break;
 
       case SnapshotJalonEnum.POST_AUDIT:
-        ref = `${SNAPSHOTS.POST_AUDIT_REF_PREFIX}${anneeAudit}`;
+        ref = `${SNAPSHOTS.POST_AUDIT_REF_PREFIX}${anneeAudit}-${auditId}`;
         nom = `${anneeAudit}${SNAPSHOTS.POST_AUDIT_NOM_SUFFIX}`;
         break;
 
@@ -167,6 +168,11 @@ export class SnapshotsService {
       case SnapshotJalonEnum.PRE_SWITCH_TE:
         ref = SNAPSHOTS.PRE_SWITCH_TE_REF;
         nom = SNAPSHOTS.PRE_SWITCH_TE_NOM;
+        break;
+
+      case SnapshotJalonEnum.POST_SWITCH_TE:
+        ref = SNAPSHOTS.POST_SWITCH_TE_REF;
+        nom = SNAPSHOTS.POST_SWITCH_TE_NOM;
         break;
 
       default:
@@ -207,6 +213,8 @@ export class SnapshotsService {
           snapshotTable.ref,
         ],
         set: {
+          auditId: sql.raw(`excluded.${snapshotTable.auditId.name}`),
+          etoiles: sql.raw(`excluded.${snapshotTable.etoiles.name}`),
           date: sql.raw(`excluded.${snapshotTable.date.name}`),
           pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
           pointPotentiel: sql.raw(
@@ -299,27 +307,18 @@ export class SnapshotsService {
         // Only allow to update current score
         target: [snapshotTable.collectiviteId, snapshotTable.referentielId],
         targetWhere: eq(snapshotTable.jalon, SnapshotJalonEnum.COURANT),
-        set: {
-          date: sql.raw(`excluded.${snapshotTable.date.name}`),
-          pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
-          pointPotentiel: sql.raw(
-            `excluded.${snapshotTable.pointPotentiel.name}`
-          ),
-          pointProgramme: sql.raw(
-            `excluded.${snapshotTable.pointProgramme.name}`
-          ),
-          pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
-          scoresPayload: sql.raw(
-            `excluded.${snapshotTable.scoresPayload.name}`
-          ),
-          personnalisationReponses: sql.raw(
-            `excluded.${snapshotTable.personnalisationReponses.name}`
-          ),
-          referentielVersion: sql.raw(
-            `excluded.${snapshotTable.referentielVersion.name}`
-          ),
-          modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
-        },
+        set: buildConflictUpdateColumns(snapshotTable, [
+          'etoiles',
+          'date',
+          'pointFait',
+          'pointPotentiel',
+          'pointProgramme',
+          'pointPasFait',
+          'scoresPayload',
+          'personnalisationReponses',
+          'referentielVersion',
+          'modifiedBy',
+        ]),
       })
       .returning()
       .then((result) => result[0]);
@@ -391,6 +390,7 @@ export class SnapshotsService {
         nom: snapshotNom,
         jalon: scoresPayload.jalon,
         anneeAudit: scoresPayload.anneeAudit,
+        auditId: scoresPayload.auditId,
       });
 
       if (!metadataResult.success) {
@@ -467,10 +467,7 @@ export class SnapshotsService {
         );
       }
     } catch (error) {
-      if (
-        isErrorWithCause(error) &&
-        error.cause.code === PgIntegrityConstraintViolation.UniqueViolation
-      ) {
+      if (isUniqueViolation(error)) {
         this.logger.error(
           `Unique violation for snapshot ${createScoreSnapshot.ref}: ${error.cause.detail} (${error.cause.code}, ${error.cause.constraint})`
         );
@@ -699,7 +696,7 @@ export class SnapshotsService {
     this.logger.log(
       `ScoreSnapshot ${snapshotRef} modified at ${
         snapshot.modifiedAt
-      }, score: ${snapshot.pointFait}/${snapshot.pointPotentiel} = ${roundTo(
+      }, score: ${snapshot.pointFait}/${snapshot.pointPotentiel} = ${round(
         (snapshot.pointFait * 100) / snapshot.pointPotentiel,
         2
       )}%`
@@ -753,7 +750,7 @@ export class SnapshotsService {
         updatedSnapshot.modifiedAt
       }, score: ${updatedSnapshot.pointFait}/${
         updatedSnapshot.pointPotentiel
-      } = ${roundTo(
+      } = ${round(
         (updatedSnapshot.pointFait * 100) / updatedSnapshot.pointPotentiel,
         2
       )}%`

@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { Injectable, Logger } from '@nestjs/common';
 import { ListCollectiviteInput } from '@tet/backend/collectivites/list-collectivites/list-collectivites.input';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
@@ -12,7 +13,6 @@ import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.tabl
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';
 import { and, eq, or } from 'drizzle-orm/sql';
 import { DateTime } from 'luxon';
@@ -94,14 +94,14 @@ export class ListLabellisationsService {
           etoiles: labellisation.etoiles,
           annee: annee,
           scoreRealise: labellisation.pointPotentiel
-            ? roundTo(
+            ? round(
                 (labellisation.pointFait * 100.0) /
                   labellisation.pointPotentiel,
                 1
               )
             : 0,
           scoreProgramme: labellisation.pointProgramme
-            ? roundTo(
+            ? round(
                 (labellisation.pointProgramme * 100.0) /
                   labellisation.pointPotentiel,
                 1

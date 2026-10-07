@@ -1,0 +1,219 @@
+import { appLabels } from '@/app/labels/catalog';
+import { AuditEnCours } from '@/app/referentiels/audits/types';
+import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
+import { useReplaceAuditReportFile } from '@/app/collectivites/documents/bibliotheque/use-replace-audit-report-file';
+import {
+  DocumentAudit,
+  DocumentAuditOuLabellisation,
+} from '@/app/collectivites/documents/bibliotheque/types';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import {
+  canUpdateAuditReport,
+  canUpdateCandidatureDocuments,
+  Etoile,
+  getParcoursLabellisationStatus,
+} from '@tet/domain/referentiels';
+import {
+  isUserAuditeurForAudit,
+  UserRolesAndPermissions,
+} from '@tet/domain/users';
+import { Fragment } from 'react';
+import { numLabels } from '../labellisations/numLabels';
+
+/**
+ * Affiche les documents d'audit et labellisation du référentiel courant,
+ * groupés par demande de labellisation ou d'audit.
+ */
+export const PreuvesLabellisation = ({
+  demandes,
+}: {
+  demandes: {
+    id: string;
+    docs: DocumentAuditOuLabellisation[];
+    info: TCycleInfo;
+  }[];
+}) => {
+  return (
+    <>
+      {demandes.map(({ id, docs, info }, index) => (
+        <DocsAuditOuLabellisation
+          key={id}
+          preuves={docs}
+          info={info}
+          className={index ? 'mt-6' : undefined}
+        />
+      ))}
+    </>
+  );
+};
+
+/**
+ * Affiche le sous-ensemble des documents d'une demande de labellisation ou
+ * d'audit.
+ */
+const DocsAuditOuLabellisation = (props: {
+  className?: string;
+  preuves: DocumentAuditOuLabellisation[];
+  info: TCycleInfo;
+}) => {
+  const { className, preuves, info } = props;
+
+  return (
+    <Fragment>
+      <h3 className={className}>
+        <Title info={info} />
+      </h3>
+      {preuves.map((preuve) => (
+        <DocAuditOuLabellisation key={preuve.id} preuve={preuve} info={info} />
+      ))}
+    </Fragment>
+  );
+};
+
+const DocAuditOuLabellisation = ({
+  preuve,
+  info,
+}: {
+  preuve: DocumentAuditOuLabellisation;
+  info: TCycleInfo;
+}) => {
+  const { hasCollectivitePermission, hasReferentielPermission } =
+    useCurrentCollectivite();
+  const user = useUser();
+
+  const audit = preuve.preuveType === 'audit' ? preuve.audit : null;
+  const referentielId =
+    preuve.demande?.referentiel ?? audit?.referentielId ?? null;
+
+  const canMutateReferentiels = referentielId
+    ? hasReferentielPermission('referentiels.mutate', referentielId)
+    : hasCollectivitePermission('referentiels.mutate');
+
+  const canUpdate = canUpdateAuditOrLabellisationPreuve({
+    preuve,
+    user,
+    audit: info.audit,
+    canMutateReferentiels,
+    canMutateLabellisationDocuments: hasCollectivitePermission(
+      'referentiels.labellisations.mutate_documents'
+    ),
+  });
+  const replaceAuditReport = useReplaceAuditReportFile(preuve);
+  const isRapportAudit = audit !== null;
+
+  if (!canUpdate) {
+    return <DocumentCard document={preuve} />;
+  }
+
+  return (
+    <DocumentCard
+      document={preuve}
+      actions={{
+        edit: true,
+        comment: true,
+        remove: !isRapportAudit,
+        replace: isRapportAudit
+          ? async (fichierId) => {
+              await replaceAuditReport.mutateAsync({
+                preuveId: preuve.id,
+                fichierId,
+              });
+            }
+          : undefined,
+      }}
+    />
+  );
+};
+
+const canUpdateAuditOrLabellisationPreuve = ({
+  preuve,
+  user,
+  audit,
+  canMutateReferentiels,
+  canMutateLabellisationDocuments,
+}: {
+  preuve: DocumentAuditOuLabellisation;
+  user: UserRolesAndPermissions;
+  audit: AuditEnCours | null;
+  canMutateReferentiels: boolean;
+  canMutateLabellisationDocuments: boolean;
+}): boolean => {
+  if (preuve.preuveType === 'audit') {
+    return canUpdateAuditReport({
+      isAuditeur: isUserAuditeurForAudit(user, preuve.audit.id),
+      canMutateLabellisationDocuments,
+      audit: preuve.audit,
+      now: new Date(),
+    });
+  }
+  const isAuditeur = audit !== null && isUserAuditeurForAudit(user, audit.id);
+  return canUpdateCandidatureDocuments({
+    isAuditee: !isAuditeur && canMutateReferentiels,
+    canMutateLabellisationDocuments,
+    audit,
+  }).canUpdate;
+};
+
+/**
+ * Affiche le titre d'un sous-ensemble de documents d'une demande de
+ * labellisation ou d'audit.
+ */
+const Title = (props: { info: TCycleInfo }) => {
+  const { info } = props;
+  const { etoile, status, annee, audit } = info;
+  const labelEtoile = etoile ? numLabels[parseInt(etoile) as Etoile] : null;
+  const en_cours = status === 'demande_envoyee' || status === 'audit_en_cours';
+  const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
+
+  if (etoile) {
+    return (
+      <>
+        {label}
+        <span className="capitalize">{labelEtoile}</span> {appLabels.etoile}
+      </>
+    );
+  }
+
+  if (audit) {
+    return (
+      <>
+        {label}
+        <span>{appLabels.auditContratObjectifTerritorialCOT}</span>
+      </>
+    );
+  }
+
+  return null;
+};
+
+// donne les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
+const isDocumentAudit = (
+  preuve: DocumentAuditOuLabellisation
+): preuve is DocumentAudit => preuve.preuveType === 'audit';
+
+const getCycleInfo = (preuves: DocumentAuditOuLabellisation[]) => {
+  const demande = preuves.find((preuve) => preuve.demande)?.demande ?? null;
+  const audit = preuves.find(isDocumentAudit)?.audit ?? null;
+  const dateCycle = audit?.dateFin || audit?.dateDebut || demande?.date;
+  const date = dateCycle ? new Date(dateCycle) : new Date();
+  const annee = date.getFullYear();
+  const status = getParcoursLabellisationStatus({ demande, audit });
+  const timestamp = date.getTime();
+
+  const etoile = demande?.etoiles;
+  return { timestamp, annee, audit, demande, etoile, status };
+};
+type TCycleInfo = ReturnType<typeof getCycleInfo>;
+
+// ajoute les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
+export const addInfoToEntry = (
+  entry: [id: string, docs: DocumentAuditOuLabellisation[]]
+) => {
+  const [id, docs] = entry;
+  return {
+    id,
+    docs,
+    info: getCycleInfo(docs),
+  };
+};

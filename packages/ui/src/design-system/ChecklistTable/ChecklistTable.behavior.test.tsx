@@ -72,9 +72,7 @@ describe('ChecklistTable — structure', () => {
 describe('ChecklistTable — accessibilité du statut', () => {
   it('expose critereAtteint via aria-label pour une row done', () => {
     renderTable();
-    expect(
-      screen.getByLabelText(uiLabels.critereAtteint)
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText(uiLabels.critereAtteint)).toBeInTheDocument();
   });
 
   it('expose critereNonAtteint via aria-label pour une row notDone', () => {
@@ -88,6 +86,32 @@ describe('ChecklistTable — accessibilité du statut', () => {
     renderTable();
     // Une seule icône de chaque statut : la troisième row n'en rend aucune.
     expect(screen.getAllByRole('img')).toHaveLength(2);
+  });
+});
+
+describe('ChecklistTable — colonne de statut optionnelle', () => {
+  const renderSansStatut = () =>
+    render(
+      <ChecklistTable hasStatusColumn={false}>
+        {head}
+        <ChecklistTable.Row
+          criterion={{ label: 'Diagnostic' }}
+          answer="diagnostic.pdf"
+        />
+      </ChecklistTable>
+    );
+
+  it('ne rend que les columnheaders label et answer', () => {
+    renderSansStatut();
+    expect(screen.getAllByRole('columnheader')).toHaveLength(2);
+    expect(
+      screen.queryByRole('columnheader', { name: uiLabels.statutDuCritere })
+    ).toBeNull();
+  });
+
+  it('ne rend aucune icône de statut', () => {
+    renderSansStatut();
+    expect(screen.queryAllByRole('img')).toHaveLength(0);
   });
 });
 
@@ -112,6 +136,67 @@ describe('ChecklistTable — action', () => {
   it('ne rend pas de bouton dans la cellule criterion quand action est absent', () => {
     renderTable();
     expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+});
+
+describe('ChecklistTable — ligne de pied', () => {
+  const renderWithFooter = ({
+    hasTagColumn = false,
+    hasStatusColumn = true,
+  }: { hasTagColumn?: boolean; hasStatusColumn?: boolean } = {}) =>
+    render(
+      <ChecklistTable
+        hasTagColumn={hasTagColumn}
+        hasStatusColumn={hasStatusColumn}
+      >
+        <ChecklistTable.Head
+          labelHeader="Critères attendus"
+          answerHeader="Réponses"
+          tagHeader="Type"
+        />
+        <ChecklistTable.Row
+          done={null}
+          criterion={{ label: 'Critère facultatif' }}
+          answer="Sans statut"
+        />
+        <ChecklistTable.FooterRow>
+          <button type="button">+ Ajouter un document</button>
+        </ChecklistTable.FooterRow>
+      </ChecklistTable>
+    );
+
+  const footerCell = () =>
+    screen.getByRole('button', { name: '+ Ajouter un document' }).closest('td');
+
+  it('rend l’action de pied de table', () => {
+    renderWithFooter();
+    expect(
+      screen.getByRole('button', { name: '+ Ajouter un document' })
+    ).toBeInTheDocument();
+  });
+
+  it.each([
+    { colonnes: 'de la table par défaut', props: {}, colspan: '3' },
+    {
+      colonnes: 'de la table avec étiquette',
+      props: { hasTagColumn: true },
+      colspan: '4',
+    },
+    {
+      // Table des documents : étiquette sans colonne de statut.
+      colonnes: 'de la table avec étiquette et sans statut',
+      props: { hasTagColumn: true, hasStatusColumn: false },
+      colspan: '3',
+    },
+    {
+      colonnes: 'de la table sans statut',
+      props: { hasStatusColumn: false },
+      colspan: '2',
+    },
+  ])('traverse les colonnes $colonnes', ({ props, colspan }) => {
+    renderWithFooter(props);
+
+    expect(footerCell()).toHaveAttribute('colspan', colspan);
   });
 });
 

@@ -1,3 +1,4 @@
+import type { StoredDocumentHash } from '@tet/domain/collectivites';
 import {
   boolean,
   integer,
@@ -13,12 +14,14 @@ export const bibliothequeFichierTable = labellisationSchema.table(
   'bibliotheque_fichier',
   {
     id: serial('id'),
-    collectiviteId: integer('collectivite_id').references(
-      () => collectiviteTable.id
-    ),
-    hash: varchar('hash', { length: 160 }),
-    filename: text('filename'),
-    confidentiel: boolean('confidentiel'),
+    collectiviteId: integer('collectivite_id')
+      .notNull()
+      .references(() => collectiviteTable.id),
+    hash: varchar('hash', { length: 160 })
+      .notNull()
+      .$type<StoredDocumentHash>(),
+    filename: text('filename').notNull(),
+    confidentiel: boolean('confidentiel').notNull().default(false),
   },
   (table) => [
     unique('bibliotheque_fichier_collectivite_id_hash_key').on(

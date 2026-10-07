@@ -1,28 +1,32 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
+  createKeywordToken,
   ExpressionParser,
   getExpressionVisitor,
+  getFunctionNames,
+  tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
+import {
+  evaluateDemarche,
+  type DemarcheExpressionContext,
+} from '@tet/backend/utils/expression-parser/evaluate-demarche';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
-import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import {
   matchReferentiel,
   parseReferentielArg,
 } from '@tet/backend/utils/expression-parser/parse-referentiel-arg';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { createToken, CstNode } from 'chevrotain';
+import { CstNode } from 'chevrotain';
 
-const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
-const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
-const SCORE = createToken({ name: 'SCORE', pattern: /score/i });
-const REFERENTIEL = createToken({
-  name: 'REFERENTIEL',
-  pattern: /referentiel/i,
-});
+const IDENTITE = createKeywordToken('IDENTITE', /identite/i);
+const REPONSE = createKeywordToken('REPONSE', /reponse/i);
+const SCORE = createKeywordToken('SCORE', /score/i);
+const REFERENTIEL = createKeywordToken('REFERENTIEL', /referentiel/i);
+const DEMARCHE = createKeywordToken('DEMARCHE', /demarche/i);
 
 // tokens ajoutés au parser de base
-const tokens = [IDENTITE, REPONSE, SCORE, REFERENTIEL];
+const tokens = [IDENTITE, REPONSE, SCORE, REFERENTIEL, DEMARCHE];
 
 export type PersonnalisationReponses = {
   [key: string]: boolean | number | string | null;
@@ -38,11 +42,16 @@ export type PersonnalisationsExpressionContext = {
   identiteCollectivite?: IdentiteCollectivite | null;
   scores?: { [key: string]: number } | null;
   referentielContext?: ReferentielContext | null;
+  /**
+   * Renseigné par les seuls appelants qui évaluent une règle dans le cadre d'une
+   * démarche. Absent ailleurs : `demarche(...)` y répond faux.
+   */
+  demarcheContext?: DemarcheExpressionContext | null;
 };
 
 class PersonnalisationsExpressionParser extends ExpressionParser {
   constructor() {
-    super(tokens);
+    super(tokens, getFunctionNames(tokens));
     try {
       this.performSelfAnalysis();
     } catch (err) {
@@ -56,6 +65,7 @@ class PersonnalisationsExpressionParser extends ExpressionParser {
       { ALT: () => this.SUBRULE(this.reponse) },
       { ALT: () => this.SUBRULE(this.score) },
       { ALT: () => this.SUBRULE(this.referentiel) },
+      { ALT: () => this.SUBRULE(this.demarche) },
       ...this.getCallHandlers.apply(this),
     ]);
   });
@@ -75,6 +85,10 @@ class PersonnalisationsExpressionParser extends ExpressionParser {
   private referentiel = this.RULE('referentiel', () => {
     this.consumeFuncOneParam(REFERENTIEL);
   });
+
+  private demarche = this.RULE('demarche', () => {
+    this.consumeFuncOneParam(DEMARCHE);
+  });
 }
 
 export const parser = new PersonnalisationsExpressionParser();
@@ -86,6 +100,7 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
   identiteCollectivite: IdentiteCollectivite | null = null;
   scores: { [key: string]: number } | null = null;
   referentielContext: ReferentielContext | null = null;
+  demarcheContext: DemarcheExpressionContext | null = null;
 
   constructor() {
     super();
@@ -104,13 +119,17 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
         return this.visit(ctx.score);
       } else if (ctx.referentiel) {
         return this.visit(ctx.referentiel);
+      } else if (ctx.demarche) {
+        return this.visit(ctx.demarche);
       }
     }
   }
 
   identite(ctx: any) {
     const identifier = this.visit(ctx.identifier) as string;
-    const primary = this.visit(ctx.primary) as string;
+    // `primary` rend un nombre pour un littéral numérique : le caster en string
+    // ferait planter les comparaisons de l'évaluateur sur un seuil.
+    const primary = this.visit(ctx.primary) as string | number | boolean;
     return evaluateIdentite(this.identiteCollectivite, identifier, primary);
   }
 
@@ -151,6 +170,11 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
     }
     return matchReferentiel(this.referentielContext, parsed);
   }
+
+  demarche(ctx: any) {
+    const champ = this.visit(ctx.identifier) as string;
+    return evaluateDemarche(this.demarcheContext, champ);
+  }
 }
 
 // Visitor for extracting personnalisation questions and their expected values
@@ -189,6 +213,8 @@ class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
         return this.visit(ctx.score);
       } else if (ctx.referentiel) {
         return this.visit(ctx.referentiel);
+      } else if (ctx.demarche) {
+        return this.visit(ctx.demarche);
       }
     }
   }
@@ -208,7 +234,7 @@ class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
     return null;
   }
 
-  // For identite/score/referentiel we do not collect anything; keep them as no-ops.
+  // For identite/score/referentiel/demarche we do not collect anything; keep them as no-ops.
   identite(_ctx: any) {
     return null;
   }
@@ -218,6 +244,10 @@ class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
   }
 
   referentiel(_ctx: any) {
+    return null;
+  }
+
+  demarche(_ctx: any) {
     return null;
   }
 }
@@ -245,6 +275,8 @@ class ReferentielExtractionVisitor extends getExpressionVisitor(
         return this.visit(ctx.score);
       } else if (ctx.referentiel) {
         return this.visit(ctx.referentiel);
+      } else if (ctx.demarche) {
+        return this.visit(ctx.demarche);
       }
     }
   }
@@ -266,6 +298,10 @@ class ReferentielExtractionVisitor extends getExpressionVisitor(
   score(_ctx: any) {
     return null;
   }
+
+  demarche(_ctx: any) {
+    return null;
+  }
 }
 
 @Injectable()
@@ -273,20 +309,13 @@ export default class PersonnalisationsExpressionService {
   private readonly logger = new Logger(PersonnalisationsExpressionService.name);
 
   parseExpression(inputText: string): CstNode {
-    const lexingResult = parser.lexer.tokenize(inputText);
-    //console.log(JSON.stringify(lexingResult.tokens));
-    parser.input = lexingResult.tokens;
-    const cst = parser.statement();
-
-    if (parser.errors && parser.errors.length > 0) {
+    try {
+      return tokenizeAndParse(parser, inputText);
+    } catch (error) {
       this.logger.error(
-        `Parsing errors detected: ${JSON.stringify(parser.errors)}`
+        `Parsing errors detected: ${JSON.stringify((error as Error).cause)}`
       );
-      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
-        cause: parser.errors,
-      });
-    } else {
-      return cst;
+      throw error;
     }
   }
 
@@ -299,6 +328,7 @@ export default class PersonnalisationsExpressionService {
       identiteCollectivite = null,
       scores = null,
       referentielContext = null,
+      demarcheContext = null,
     } = context ?? {};
 
     const cst = this.parseExpression(inputText);
@@ -307,6 +337,7 @@ export default class PersonnalisationsExpressionService {
     visitor.identiteCollectivite = identiteCollectivite;
     visitor.scores = scores;
     visitor.referentielContext = referentielContext;
+    visitor.demarcheContext = demarcheContext;
     return visitor.visit(cst) as string | number | boolean | null;
   }
 

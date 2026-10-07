@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import {
   MetadataItem,
   MetadataItemPersonne,
@@ -15,7 +16,7 @@ import { useListPlanTypes } from '../use-list-plan-types';
 import { useUpdatePlan } from './data/use-update-plan';
 import { PlanCalendarInlineEditableField } from './plan-calendar.inline-editable-field';
 
-export type UpdatePlanFn = ReturnType<typeof useUpdatePlan>['mutate'];
+type UpdatePlanFn = ReturnType<typeof useUpdatePlan>['mutate'];
 
 type PlanMetadataProps = {
   plan: Plan;
@@ -60,7 +61,7 @@ export const PlanMetadata = ({
           <MetadataItem
             interactive={!isReadOnly}
             icon="folder-2-line"
-            label="Type"
+            label={appLabels.type}
             value={plan.type?.type}
             dataTest="plan-header-type"
           />
@@ -72,7 +73,10 @@ export const PlanMetadata = ({
           dataTest="plan-header-pilote"
           icon="user-line"
           isReadOnly={isReadOnly}
-          label={{ one: 'Pilote', many: 'Pilotes' }}
+          label={{
+            one: appLabels.personnePilote(),
+            many: appLabels.personnePilote({ plural: true }),
+          }}
           personnes={plan.pilotes}
           onChange={(pilotes) => updatePlan({ id, collectiviteId, pilotes })}
         />
@@ -80,7 +84,10 @@ export const PlanMetadata = ({
           dataTest="plan-header-referent"
           icon={<FranceIcon />}
           isReadOnly={isReadOnly}
-          label={{ one: 'Élu·e référent·e', many: 'Élu·es référent·es' }}
+          label={{
+            one: appLabels.personneElue(),
+            many: appLabels.personneElue({ plural: true }),
+          }}
           personnes={plan.referents}
           onChange={(referents) =>
             updatePlan({ id, collectiviteId, referents })

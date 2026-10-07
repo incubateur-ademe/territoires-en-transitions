@@ -1,57 +1,84 @@
-# 🚀 Getting started with Strapi
+# Strapi — CMS du site vitrine
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html) (CLI) which lets you scaffold and manage your project in seconds.
+Strapi 5 (`@strapi/strapi` épinglé dans `package.json`), projet npm isolé du
+monorepo (hors workspace pnpm et Nx). Il alimente `apps/site` via l'API REST,
+lue avec un token API en lecture seule.
 
-### `develop`
+## En local
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-develop)
-
-```
-npm run develop
-# or
-yarn develop
-```
-
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-start)
-
-```
-npm run start
-# or
-yarn start
+```bash
+make up p=strapi      # Strapi + sa base Postgres (localhost:1337), Node 24 en conteneur
+make cms-pull         # ⚠ remplace le contenu local par celui de l'instance distante
 ```
 
-### `build`
+- `docker-compose.yml` fournit les secrets de dev (`APP_KEYS`, `API_TOKEN_SALT`,
+  `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `ENCRYPTION_KEY`) et seede un token
+  API `local-dev-readonly` (`strapi/src/index.ts`). Pour brancher le site dessus,
+  le reporter dans `apps/site/.env.local` (voir `apps/site/README.md`).
+- L'image `tet-strapi` est taguée par version de Node (`tet-strapi:node24`) :
+  compose la reconstruit d'office au changement de version. Le premier démarrage
+  remplace les `node_modules` du volume `strapi-node-modules` (environ une minute).
+- `make cms-pull` enchaîne `strapi transfer` (même version majeure des deux côtés
+  obligatoire) puis `scripts/strapi-localize-uploads.mts`, qui rapatrie les médias.
+- Le bootstrap (`src/index.ts`) joue une seule fois, au premier démarrage :
+  - le référencement de la page Démarche PCAET et les questions de la FAQ
+    « Démarche PCAET », s'ils n'existent pas ;
+  - la copie de l'`id` Strapi 4 de chaque actualité dans le champ caché
+    `legacy_id`, qui permet au site de rediriger les anciennes URLs `/actus/<id>/…`.
 
-Build your admin panel. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-build)
+## Modèle de contenu
 
-```
-npm run build
-# or
-yarn build
-```
+`src/api/*/content-types/*/schema.json` et `src/components/**`. Tous les types
+sont en Draft & Publish : chaque entrée publiée a une version brouillon jumelle,
+et l'API publique ne renvoie que les publiées. Les entrées s'identifient par
+`documentId` : publier recrée la ligne publiée sous un nouvel `id` numérique, qui
+ne doit donc servir ni dans une URL, ni pour un tri.
 
-## ⚙️ Deployment
+## Serveur MCP
 
-Strapi gives you many possible deployment options for your project. Find the one that suits you on the [deployment section of the documentation](https://docs.strapi.io/developer-docs/latest/setup-deployment-guides/deployment.html).
+Le serveur MCP de Strapi (`/mcp`) est activé dans `config/server.ts`. Il permet
+de lire et de modifier les contenus depuis un agent, avec les droits d'un admin
+token. Le serveur `strapi` de `.mcp.json` s'y connecte en déchiffrant à la volée
+`STRAPI_REMOTE_URL` et `STRAPI_MCP_TOKEN` depuis le `.env` racine.
 
-## 📚 Learn more
+Pour l'activer en local :
 
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://docs.strapi.io) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
+1. Dans l'admin de prod, créer un admin token limité aux types de contenu à
+   modifier.
+2. Le chiffrer dans le `.env` racine :
+   `pnpm exec dotenvx set STRAPI_MCP_TOKEN <token> --env-keys-file=.env.keys -f .env`
+3. Relancer Claude Code et approuver le serveur `strapi`.
 
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
+## Déploiement
 
-## ✨ Community
+Strapi Cloud, branché sur la branche `strapi-updates` avec déclenchement manuel
+(« Trigger deployment »). Voir `doc/adr/0009-site-public-administrable.md`.
 
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
+Variables à définir sur Strapi Cloud : `APP_KEYS`, `API_TOKEN_SALT`,
+`ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT` et `ENCRYPTION_KEY` (par exemple
+`openssl rand -base64 32`). `JWT_SECRET` n'est plus lue. La version de Node du
+projet (Settings → Node version) doit être 24, comme ici.
 
----
+### Bascule Strapi 4 → 5 (une seule fois)
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+Le site lit le format de réponse de Strapi 5 : il casse contre un Strapi 4, et
+inversement. `next build` pré-rend les pages contre Strapi : l'image du site se
+construit donc après le passage de Strapi en v5, jamais avant.
+
+1. Geler les éditions dans l'admin de prod, puis faire une sauvegarde
+   manuelle sur Strapi Cloud (onglet Backups).
+2. Vérifier dans l'admin de prod (Content Manager → User) que la collection
+   Users & Permissions est vide ou inutilisée : le plugin est retiré, ses tables
+   `up_*` disparaissent au premier démarrage.
+3. Régler Node 24 et ajouter `ENCRYPTION_KEY` sur Strapi Cloud.
+4. Merger la PR sur `main`, pousser le même commit sur `strapi-updates`, puis
+   « Trigger deployment ». Attendre que l'API réponde au format v5 :
+   `GET /api/faqs?pagination[pageSize]=1` renvoie `data[0].documentId`, sans
+   `attributes`.
+5. Lancer aussitôt le workflow GitHub `cd-site` sur `prod`, puis `staging` et
+   `preprod`, qui lisent le même Strapi. Entre les étapes 4 et 5, le site est
+   en erreur sur les pages non encore en cache.
+6. Dégeler les éditions. `make cms-pull` refonctionne pour tout le monde.
+
+Retour arrière : restaurer la sauvegarde Strapi Cloud, redéployer le dernier
+commit Strapi 4 sur `strapi-updates`, revert de la PR puis `cd-site`.

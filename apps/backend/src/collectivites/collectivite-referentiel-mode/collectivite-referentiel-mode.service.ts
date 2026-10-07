@@ -17,13 +17,15 @@ export class CollectiviteReferentielModeService {
   ) {}
 
   async getReferentielPreferences(
-    collectiviteId: number
+    collectiviteId: number,
+    options: { withLock?: boolean; tx?: Transaction } = {}
   ): Promise<
     Result<CollectiviteReferentielPreferences, CollectiviteReferentielModeError>
   > {
     const result =
       await this.collectivitePreferencesRepository.getPreferencesByCollectiviteId(
-        collectiviteId
+        collectiviteId,
+        options
       );
     if (!result.success) {
       return result;

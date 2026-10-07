@@ -57,7 +57,7 @@ describe('formatToPrintableFilters', () => {
       },
       {
         key: 'doesBelongToSeveralPlans',
-        title: 'Actions mutualisées dans plusieurs plans',
+        title: 'Action mutualisée dans plusieurs plans',
         selectedFilters: ['true'],
         onlyShowCategory: true,
       },
@@ -106,7 +106,7 @@ describe('formatToPrintableFilters', () => {
       {
         key: 'hasIndicateurLies',
         title: filterLabels['hasIndicateurLies'],
-        selectedFilters: ['Actions avec indicateurs'],
+        selectedFilters: ['Actions avec indicateurs liés'],
         onlyShowCategory: false,
       },
       {

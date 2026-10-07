@@ -1,22 +1,22 @@
-import { actionIdToLabel } from '@/app/app/labels';
 import {
   makeMaCollectiviteUrl,
-  makeReferentielLabellisationUrl,
+  makeReferentielAuditLabellisationUrl,
   makeReferentielUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
+import { useReferentielModeById } from '@/app/referentiels/referentiel-mode/use-referentiel-mode';
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import Image from 'next/image';
-import Link from 'next/link';
 import { JSX } from 'react';
 import { AccueilCard } from '../AccueilCard';
 import { getAggregatedScore } from '../utils';
+import { buildScoreDonutTooltip } from './build-score-donut-tooltip';
 import LabellisationInfo from './LabellisationInfo';
 
 type ScoreRempliProps = {
@@ -41,12 +41,23 @@ export const ScoreRempli = ({
   const { parcours, status } = useCycleLabellisation(referentiel);
   const data = getAggregatedScore(axes);
 
+  // référentiel archivé (post-bascule) : plus aucune action de labellisation
+  const isArchived = useReferentielModeById(referentiel) === 'archived';
+
   const chartOption: EChartsOption = {
     tooltip: {
       trigger: 'item',
       formatter: (params) => {
         if (Array.isArray(params)) return '';
-        return `${params.marker} ${params.name}: <b>${params.value} points (${params.percent}%)</b>`;
+        const { marker, name, value, percent } = params;
+        if (
+          typeof marker !== 'string' ||
+          typeof value !== 'number' ||
+          percent === undefined
+        ) {
+          return '';
+        }
+        return buildScoreDonutTooltip({ marker, name, points: value, percent });
       },
       textStyle: {
         color: '#222',
@@ -116,22 +127,25 @@ export const ScoreRempli = ({
         <LabellisationInfo parcours={parcours} score={data} />
 
         {/* Call to action */}
-        <Button
-          onClick={() => tracker(Event.referentiels.viewLabellisation)}
-          href={makeReferentielLabellisationUrl({
-            collectiviteId,
-            referentielId: referentiel,
-            labellisationTab: 'criteres',
-          })}
-          disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
-          size="sm"
-        >
-          {isReadonly
-            ? 'Suivre la labellisation'
-            : status === 'audit_en_cours' || status === 'demande_envoyee'
-            ? 'Demande envoyée'
-            : 'Décrocher les étoiles'}
-        </Button>
+        {!isArchived && (
+          <Button
+            onClick={() => tracker(Event.referentiels.viewLabellisation)}
+            href={makeReferentielAuditLabellisationUrl({
+              collectiviteId,
+              referentielId: referentiel,
+            })}
+            disabled={
+              status === 'audit_en_cours' || status === 'demande_envoyee'
+            }
+            size="sm"
+          >
+            {isReadonly
+              ? 'Suivre la labellisation'
+              : status === 'audit_en_cours' || status === 'demande_envoyee'
+              ? 'Demande envoyée'
+              : appLabels.obtenirDesEtoiles}
+          </Button>
+        )}
       </div>
     </AccueilCard>
   );
@@ -142,7 +156,6 @@ type ScoreVideProps = {
   collectiviteId: number;
   referentiel: ReferentielId;
   title: string;
-  axes: ActionListItem[];
 };
 
 /** Carte "état des lieux" avec 0 statut renseigné */
@@ -151,13 +164,8 @@ export const ScoreVide = ({
   collectiviteId,
   referentiel,
   title,
-  axes,
 }: ScoreVideProps): JSX.Element => {
   const tracker = useEventTracker();
-  const tags = axes.map((action) => ({
-    label: actionIdToLabel[action.actionId] ?? action.nom,
-    axeId: action.actionId,
-  }));
 
   return (
     <AccueilCard className="flex flex-col gap-7">
@@ -171,25 +179,6 @@ export const ScoreVide = ({
         <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
       </div>
 
-      {/* Liste de tags */}
-      <ul className="flex flex-wrap gap-4 mb-0">
-        {tags.map((tag, index) => (
-          <li key={index} className="pb-0">
-            <Link
-              href={makeReferentielUrl({
-                collectiviteId,
-                referentielId: referentiel,
-                referentielTab: 'progression',
-                axeId: tag.axeId,
-              })}
-              className="text-[#ff5655] hover:bg-[#ffcdc1] bg-[#fddfd8] rounded-full px-3 py-1 text-sm"
-            >
-              {tag.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-
       {/* Call to action */}
       <div className="flex flex-col md:flex-row gap-4">
         <Button
@@ -201,7 +190,9 @@ export const ScoreVide = ({
             referentielTab: 'progression',
           })}
         >
-          {isReadonly ? "Voir l'état des lieux" : "Commencer l'état des lieux"}
+          {isReadonly
+            ? appLabels.voirReferentiel
+            : appLabels.commencerReferentiel}
         </Button>
         <Button
           size="sm"

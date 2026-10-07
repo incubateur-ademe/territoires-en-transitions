@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GetLabellisationService } from '@tet/backend/referentiels/labellisations/get-labellisation.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
-  AuthRole,
+  buildRequesterUser,
   type AuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -13,16 +13,17 @@ import {
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetReferentielService } from '../../get-referentiel/get-referentiel.service';
-import { BuildArchiveService } from '../build-archive/build-archive.service';
-import { ListAuditPreuvesService } from '../list-audit-preuves/list-audit-preuves.service';
+import { ArchiveAssemblyService } from '@tet/backend/utils/archive/archive-assembly.service';
+import { CollectAuditPreuvesService } from '../collect-audit-preuves/collect-audit-preuves.service';
 import {
   AuditPreuvesArchiveStatusEnum,
   type AuditPreuvesArchive,
 } from '../models/audit-preuves-archive.table';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
+import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
+import type { ArchiveFolderArborescence } from '@tet/backend/utils/archive/archive-arborescence.types';
 import {
   generateArchiveFolderArborescence,
-  type ArchiveFolderArborescence,
   type ReferentielTreeNode,
 } from './generate-archive-folder-arborescence';
 
@@ -57,15 +58,6 @@ function nonRetryableFailure(
   return failure({ message, retryable: false });
 }
 
-function buildRequesterUser(userId: string): AuthenticatedUser {
-  return {
-    id: userId,
-    role: AuthRole.AUTHENTICATED,
-    isAnonymous: false,
-    jwtPayload: { role: AuthRole.AUTHENTICATED },
-  };
-}
-
 function parseReferentielId(
   raw: string
 ): Result<ReferentielId, GenerateArchiveFailure> {
@@ -82,9 +74,9 @@ export class GeneratePreuvesArchiveService {
 
   constructor(
     private readonly repository: PreuvesArchiveRepository,
-    private readonly listAuditPreuvesService: ListAuditPreuvesService,
+    private readonly collectAuditPreuvesService: CollectAuditPreuvesService,
     private readonly getReferentielService: GetReferentielService,
-    private readonly buildArchiveService: BuildArchiveService,
+    private readonly archiveAssemblyService: ArchiveAssemblyService,
     private readonly getLabellisationService: GetLabellisationService,
     private readonly permissions: PermissionService
   ) {}
@@ -213,7 +205,7 @@ export class GeneratePreuvesArchiveService {
     archive: AuditPreuvesArchive,
     context: JobContext
   ): Promise<Result<ArchiveFolderArborescence, GenerateArchiveFailure>> {
-    const preuvesResult = await this.listAuditPreuvesService.list({
+    const preuvesResult = await this.collectAuditPreuvesService.collect({
       collectiviteId: archive.collectiviteId,
       referentielId: context.referentielId,
       auditId: archive.auditId,
@@ -275,10 +267,10 @@ export class GeneratePreuvesArchiveService {
     }
 
     const storagePath = `${archiveId}.zip`;
-    const buildResult = await this.buildArchiveService.buildAndUpload({
-      archiveId,
+    const buildResult = await this.archiveAssemblyService.assembleZipToStorage({
       arborescence,
-      storagePath,
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      key: storagePath,
       onProgress: (processedFiles) => {
         void this.persistProgress(archiveId, processedFiles, totalFiles);
       },

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 import { IndicateursModule } from '@/app/tableaux-de-bord/indicateurs/indicateurs.module';
+import { useTRPC } from '@tet/api';
 import { ModuleIndicateursSelect } from '@tet/domain/metrics';
 
 import { Event, useEventTracker } from '@tet/ui';
-import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
 import IndicateursDontJeSuisLePiloteModal from './indicateurs-dont-je-suis-le-pilote.modal';
 
@@ -17,6 +17,7 @@ export const IndicateursDontJeSuisLePiloteModule = ({
   module,
   isEditionEnabled,
 }: Props) => {
+  const trpc = useTRPC();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const tracker = useEventTracker();
@@ -39,7 +40,11 @@ export const IndicateursDontJeSuisLePiloteModule = ({
             isOpen: isEditModalOpen,
             setIsOpen: setIsEditModalOpen,
           }}
-          keysToInvalidate={[getQueryKey(module.collectiviteId)]}
+          keysToInvalidate={[
+            trpc.metrics.users.listModules.queryKey({
+              collectiviteId: module.collectiviteId,
+            }),
+          ]}
         />
       )}
     </>

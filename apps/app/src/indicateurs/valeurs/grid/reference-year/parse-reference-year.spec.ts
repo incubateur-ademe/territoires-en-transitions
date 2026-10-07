@@ -4,11 +4,10 @@ import {
   MIN_REFERENCE_YEAR,
   parseReferenceYear,
 } from './parse-reference-year';
-import { toYear } from '../types';
 
 describe('parseReferenceYear', () => {
-  const current = toYear(2020);
-  const years = [toYear(2015), toYear(2020), toYear(2024)];
+  const current = 2020;
+  const years = [2015, 2020, 2024];
 
   it('accepte une année dans la plage', () => {
     expect(
@@ -16,7 +15,7 @@ describe('parseReferenceYear', () => {
         currentReferenceYear: current,
         years,
       })
-    ).toEqual({ ok: true, year: toYear(2018) });
+    ).toEqual({ ok: true, year: 2018 });
   });
 
   it('accepte l’année civile en cours', () => {
@@ -26,7 +25,7 @@ describe('parseReferenceYear', () => {
         currentReferenceYear: current,
         years,
       })
-    ).toEqual({ ok: true, year: toYear(max) });
+    ).toEqual({ ok: true, year: max });
   });
 
   it('accepte l’année de référence actuelle (no-op côté caller)', () => {
@@ -35,7 +34,7 @@ describe('parseReferenceYear', () => {
         currentReferenceYear: current,
         years,
       })
-    ).toEqual({ ok: true, year: toYear(2020) });
+    ).toEqual({ ok: true, year: 2020 });
   });
 
   it('rejette non entier / vide', () => {
@@ -69,5 +68,14 @@ describe('parseReferenceYear', () => {
         years,
       })
     ).toEqual({ ok: false, reason: 'duplicate' });
+  });
+
+  it("accepte une première saisie quand il n'y a pas encore d'année de référence", () => {
+    expect(
+      parseReferenceYear('2018', {
+        currentReferenceYear: null,
+        years: [2030, 2036],
+      })
+    ).toEqual({ ok: true, year: 2018 });
   });
 });

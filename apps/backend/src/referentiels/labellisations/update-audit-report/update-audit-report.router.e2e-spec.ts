@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
@@ -7,7 +8,16 @@ import {
   addAuditeurPermission,
   createAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
-import { getAuthUser, getTestApp } from '@tet/backend/test';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+} from '@tet/backend/test';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
@@ -76,13 +86,13 @@ describe('UpdateAuditReportRouter', () => {
       .values([
         {
           collectiviteId: collectivite.id,
-          hash: `old-${audit.id}`,
+          hash: buildRandomDocumentHash(),
           filename: 'rapport.pdf',
           confidentiel: false,
         },
         {
           collectiviteId: collectivite.id,
-          hash: `new-${audit.id}`,
+          hash: buildRandomDocumentHash(),
           filename: 'rapport-v2.pdf',
           confidentiel: false,
         },
@@ -114,12 +124,25 @@ describe('UpdateAuditReportRouter', () => {
     };
 
     return {
+      audit,
       auditeurUser,
       otherUser,
       preuve,
       newFichier,
       cleanup: cleanupAll,
     };
+  };
+
+  const getPreuveTrace = async (preuveId: number) => {
+    const [row] = await databaseService.db
+      .select({
+        fichierId: preuveAuditTable.fichierId,
+        modifiedBy: preuveAuditTable.modifiedBy,
+        modifiedAt: preuveAuditTable.modifiedAt,
+      })
+      .from(preuveAuditTable)
+      .where(eq(preuveAuditTable.id, preuveId));
+    return row;
   };
 
   const getPreuveFichierId = async (preuveId: number) => {
@@ -145,6 +168,43 @@ describe('UpdateAuditReportRouter', () => {
     });
 
     expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
+  });
+
+  test('le remplacement enregistre son auteur et sa date', async () => {
+    const { audit, otherUser, preuve, newFichier, cleanup } = await seedReport({
+      clos: false,
+      valide: false,
+    });
+    onTestFinished(cleanup);
+
+    const secondAuditeurPermission = await addAuditeurPermission({
+      databaseService,
+      auditId: audit.id,
+      userId: otherUser.id,
+    });
+    onTestFinished(secondAuditeurPermission.cleanup);
+
+    const traceBeforeReplacement = await getPreuveTrace(preuve.id);
+
+    const caller = router.createCaller({ user: await getAuthUser(otherUser) });
+    await caller.referentiels.labellisations.updateAuditReport({
+      preuveId: preuve.id,
+      fichierId: newFichier.id,
+    });
+
+    const trace = await getPreuveTrace(preuve.id);
+
+    expect({
+      fichierId: trace.fichierId,
+      modifiedBy: trace.modifiedBy,
+      isModifiedAtRefreshed:
+        new Date(trace.modifiedAt) >
+        new Date(traceBeforeReplacement.modifiedAt),
+    }).toEqual({
+      fichierId: newFichier.id,
+      modifiedBy: otherUser.id,
+      isModifiedAtRefreshed: true,
+    });
   });
 
   test("l'auditeur remplace le rapport d'un audit pas encore valide", async () => {
@@ -232,6 +292,60 @@ describe('UpdateAuditReportRouter', () => {
     expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
   });
 
+  test("autorise le super admin en mode support sur un audit clos hors fenêtre", async () => {
+    const { preuve, newFichier, cleanup } = await seedReport({
+      clos: true,
+      valide: true,
+      dateFin: new Date(Date.now() - 16 * DAY_IN_MS).toISOString(),
+    });
+    onTestFinished(cleanup);
+
+    const { user, cleanup: cleanupUser } = await addTestUser(databaseService);
+    onTestFinished(cleanupUser);
+    const superAdmin = getAuthUserFromUserCredentials(user);
+    const caller = router.createCaller({ user: superAdmin });
+    const superAdminMode = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: superAdmin.id,
+    });
+    onTestFinished(superAdminMode.cleanup);
+
+    await caller.referentiels.labellisations.updateAuditReport({
+      preuveId: preuve.id,
+      fichierId: newFichier.id,
+    });
+
+    expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
+  });
+
+  test('refuse le super admin dont le mode support est éteint', async () => {
+    const { preuve, newFichier, cleanup } = await seedReport({
+      clos: true,
+      valide: true,
+      dateFin: new Date(Date.now() - 16 * DAY_IN_MS).toISOString(),
+    });
+    onTestFinished(cleanup);
+
+    const { user, cleanup: cleanupUser } = await addTestUser(databaseService);
+    onTestFinished(cleanupUser);
+    const supportUser = getAuthUserFromUserCredentials(user);
+    const roleSupport = await addUserRoleSupport({
+      databaseService,
+      userId: supportUser.id,
+    });
+    onTestFinished(roleSupport.cleanup);
+
+    const caller = router.createCaller({ user: supportUser });
+
+    await expect(
+      caller.referentiels.labellisations.updateAuditReport({
+        preuveId: preuve.id,
+        fichierId: newFichier.id,
+      })
+    ).rejects.toThrow(/réservé à l'auditeur/);
+  });
+
   test("refuse un fichier appartenant à une autre collectivité", async () => {
     const { auditeurUser, preuve, cleanup } = await seedReport({
       clos: false,
@@ -248,7 +362,7 @@ describe('UpdateAuditReportRouter', () => {
       .insert(bibliothequeFichierTable)
       .values({
         collectiviteId: otherCollectivite.id,
-        hash: `other-${preuve.id}`,
+        hash: buildRandomDocumentHash(),
         filename: 'autre.pdf',
         confidentiel: false,
       })

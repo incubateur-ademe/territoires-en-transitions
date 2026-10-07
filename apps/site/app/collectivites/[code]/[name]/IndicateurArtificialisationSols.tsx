@@ -1,4 +1,4 @@
-import { IndicateurArtificialisation } from '@/site/app/collectivites/utils';
+import { SiteIndicateurArtificialisation } from '@/site/src/trpc/trpc-client';
 import { getFormattedNumber } from '@tet/domain/utils';
 import { fluxToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
@@ -6,7 +6,7 @@ import { IndicateurDefaultData } from './IndicateursCollectivite';
 
 type IndicateurArtificialisationSolsProps = {
   defaultData?: IndicateurDefaultData;
-  data: IndicateurArtificialisation | null;
+  data: SiteIndicateurArtificialisation | null;
 };
 
 const getBoxTitle = (total: number, decimals: number, title: string) => {
@@ -31,9 +31,7 @@ const IndicateurArtificialisationSols = ({
   if (!localData) return null;
 
   const formattedData = (Object.keys(localData) as Array<string>)
-    .filter(
-      (d) => d !== 'collectivite_id' && d !== 'total' && localData[d] !== 0
-    )
+    .filter((d) => d !== 'total' && localData[d] !== 0)
     .map((d) => ({
       id: fluxToLabel[d],
       value: localData[d],

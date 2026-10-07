@@ -1,8 +1,13 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "cacheDirectory": ".nx/cache",
   "namedInputs": {
     "default": [
       "{projectRoot}/**/*",
+      "!{projectRoot}/dist/**",
+      "!{projectRoot}/coverage/**",
+      "!{projectRoot}/storybook-static/**",
+      "!{projectRoot}/.next/**",
       "sharedGlobals"
     ],
     "production": [
@@ -25,40 +30,52 @@
       "{projectRoot}/**/*.stories.@(ts|tsx)",
       "{projectRoot}/**/tsconfig.storybook.json"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": [
+      "{workspaceRoot}/.npmrc",
+      "{workspaceRoot}/eslint.config.mjs",
+      "{workspaceRoot}/eslint-frontend.config.mjs",
+      "{workspaceRoot}/eslint-nextjs.config.mjs",
+      "{workspaceRoot}/nx.json",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/pnpm-lock.yaml",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/vitest.config.ts",
+      "{workspaceRoot}/vitest.workspace.ts"
+    ]
   },
-  "neverConnectToCloud": true,
   "tui": {
     "enabled": true
   },
   "targetDefaults": {
     "build": {
-      "cache": true
+      "cache": true,
+      "inputs": ["production", "^production"]
+    },
+    "lint": {
+      "cache": true,
+      "inputs": ["default"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
+    },
+    "typecheck": {
+      "cache": true,
+      "dependsOn": ["^build", "^typecheck"],
+      "inputs": ["default", "^production"]
     },
     "build-storybook": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "@nx/js:tsc": {
       "cache": true
     },
     "@nx/js:swc": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "plugins": [
@@ -151,7 +168,7 @@
   "release": {
     "groups": {
       "platform": {
-        "projects": ["@tet/source", "app", "site", "panier", "backend"],
+        "projects": ["@tet/source", "app", "site", "backend"],
         "projectsRelationship": "fixed"
       }
     },
@@ -169,5 +186,6 @@
   "analytics": false,
   "migrate": {
     "agentic": true
-  }
+  },
+  "nxCloudId": "6a9e7d9ccea3eb186f5d93a4"
 }

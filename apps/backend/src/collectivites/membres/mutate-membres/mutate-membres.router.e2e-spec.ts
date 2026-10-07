@@ -172,6 +172,48 @@ describe('CollectiviteMembresRouter mutate', () => {
       await collCleanup();
     });
 
+    test('refuse une collectivité de service déconcentré, même sans membre', async () => {
+      const { collectivite: dreal, cleanup: drealCleanup } =
+        await addTestCollectivite(db, {
+          type: 'dreal',
+          // Espace disjoint : codes réels à deux chiffres, `pickFreeRegionCode`
+          // à deux lettres, les specs à une lettre puis un chiffre.
+          regionCode: 'M1',
+          nom: 'DREAL test join',
+        });
+      const { user: joiner, cleanup: userCleanup } = await addTestUser(db, {
+        collectiviteId: null,
+      });
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(joiner),
+      });
+
+      await expect(
+        caller.collectivites.membres.join({
+          collectiviteId: dreal.id,
+          fonction: MembreFonctionEnum.TECHNIQUE,
+          detailsFonction: '',
+          champIntervention: [],
+          estReferent: false,
+        })
+      ).rejects.toThrow(/correspondants désignés/);
+
+      const [access] = await db.db
+        .select()
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          and(
+            eq(utilisateurCollectiviteAccessTable.userId, joiner.id),
+            eq(utilisateurCollectiviteAccessTable.collectiviteId, dreal.id)
+          )
+        )
+        .limit(1);
+      expect(access).toBeUndefined();
+
+      await userCleanup();
+      await drealCleanup();
+    });
+
     test('refuse si la collectivité a déjà au moins un membre actif', async () => {
       const { user: joiner, cleanup: userCleanup } = await addTestUser(db, {
         collectiviteId: null,

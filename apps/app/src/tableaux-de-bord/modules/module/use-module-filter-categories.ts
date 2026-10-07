@@ -15,7 +15,12 @@ import {
   isIndicateurModuleFilters,
   ModuleFilters,
 } from '@/app/tableaux-de-bord/modules/module/format-module-filters-to-categories';
+import {
+  getCurrentUserLabel,
+  isPersonneFilterKey,
+} from '@/app/tableaux-de-bord/modules/module/personne-filter-label';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 import { FilterCategory } from '@tet/ui';
 import { useMemo } from 'react';
 
@@ -34,6 +39,7 @@ export const useModuleFilterCategories = ({
   replacePlanFilters,
 }: Args) => {
   const collectiviteId = useCollectiviteId();
+  const user = useUser();
   const { lookupConfig } = useFicheActionFiltersData();
   const { thematiqueListe } = useGetThematiqueOptions();
   const { plans } = useListPlans(collectiviteId);
@@ -49,10 +55,24 @@ export const useModuleFilterCategories = ({
 
     const actionLookups = {
       piloteIds: (id: string | number) =>
+        getCurrentUserLabel(user, id) ??
         personnes?.find((personne) => getPersonneStringId(personne) === `${id}`)
           ?.nom,
       serviceIds: (id: number) =>
         services?.find((service) => service.id === id)?.nom,
+    };
+
+    const getCurrentUserLabelOrFallbackToLookup = (
+      categoryKey: FilterKeys,
+      filterValue: string | number
+    ): string => {
+      if (isPersonneFilterKey(categoryKey)) {
+        const currentUserLabel = getCurrentUserLabel(user, filterValue);
+        if (currentUserLabel) {
+          return currentUserLabel;
+        }
+      }
+      return getFilterValuesLabels(lookupConfig, categoryKey, [filterValue])[0];
     };
 
     const actionCategories = formatModuleFiltersToCategories(
@@ -75,7 +95,9 @@ export const useModuleFilterCategories = ({
             fromFiltersToFormFilters(filtersForBadges),
             {},
             (categoryKey: FilterKeys, values: string[] | number[]) =>
-              getFilterValuesLabels(lookupConfig, categoryKey, values)
+              values.map((filterValue) =>
+                getCurrentUserLabelOrFallbackToLookup(categoryKey, filterValue)
+              )
           ).map((category) => ({ ...category, readonly: true })));
 
     if (!customCategories?.length) {
@@ -92,6 +114,7 @@ export const useModuleFilterCategories = ({
     replacePlanFilters,
     services,
     thematiqueListe,
+    user,
   ]);
 
   const badgeStrings = useMemo(

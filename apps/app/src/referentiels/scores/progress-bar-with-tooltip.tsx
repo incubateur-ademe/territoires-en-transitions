@@ -1,4 +1,4 @@
-import { roundTo } from '@tet/domain/utils';
+import { round } from 'es-toolkit';
 import { Tooltip } from '@tet/ui';
 import ProgressBar, { ProgressBarType } from './progress-bar';
 import { JSX } from 'react';
@@ -113,4 +113,4 @@ const ProgressBarTooltipElement = ({
 const formatAvancementScore = (
   avancementPoint: number,
   maxPoint: number
-): number => (maxPoint ? roundTo((avancementPoint / maxPoint) * 100, 1) : 0);
+): number => (maxPoint ? round((avancementPoint / maxPoint) * 100, 1) : 0);

@@ -18,14 +18,14 @@ export class UpsertAxeRouter {
   router = this.trpc.router({
     create: this.trpc.authedProcedure
       .input(createAxeSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.upsertAxeService.upsertAxe(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.upsertAxeService.upsertAxe(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
     update: this.trpc.authedProcedure
       .input(updateAxeSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.upsertAxeService.upsertAxe(input, ctx.user);
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.upsertAxeService.upsertAxe(input, { user });
         return this.getResultDataOrThrowError(result);
       }),
   });

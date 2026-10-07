@@ -1,5 +1,9 @@
 import { ReferentielId } from '../../referentiel-id.enum';
-import { getIdentifiantFromActionId } from '../../referentiel.utils';
+import { ActionId } from '../../actions/action-definition.schema';
+import {
+  getIdentifiantFromActionId,
+  toActionId,
+} from '../../referentiel.utils';
 import {
   AuditLabellisationReferentielId,
   isAuditLabellisationReferentiel,
@@ -34,17 +38,58 @@ export const roleKeyByIdentifiant = (
 };
 
 export const isReferentRoleDefined = (
-  critere: { action_id: string },
+  critere: { actionId: string },
   referentiel: ReferentielId,
   referentRolesDefined: ReferentRolesDefined
 ): boolean => {
   if (!isAuditLabellisationReferentiel(referentiel)) {
     return true;
   }
-  const identifiant = getIdentifiantFromActionId(critere.action_id);
+  const identifiant = getIdentifiantFromActionId(critere.actionId);
   const roleKey =
     identifiant !== null
       ? roleKeyByIdentifiant(referentiel).get(identifiant)
       : undefined;
   return roleKey === undefined || referentRolesDefined[roleKey];
+};
+
+export const areAllReferentRolesDefined = (
+  criteres: readonly { actionId: string }[],
+  referentiel: ReferentielId,
+  referentRolesDefined: ReferentRolesDefined
+): boolean =>
+  criteres.every((critere) =>
+    isReferentRoleDefined(critere, referentiel, referentRolesDefined)
+  );
+
+export const getRoleMesureIds = (referentiel: ReferentielId): ActionId[] => {
+  if (!isAuditLabellisationReferentiel(referentiel)) {
+    return [];
+  }
+  const mapping = ROLE_IDENTIFIANTS[referentiel];
+  return [mapping.eluReferent, mapping.referentTechnique].map((identifiant) =>
+    toActionId(referentiel, identifiant)
+  );
+};
+
+export const toReferentRolesDefined = ({
+  referentiel,
+  mesureIdsWithPilotes,
+}: {
+  referentiel: ReferentielId;
+  mesureIdsWithPilotes: readonly string[];
+}): ReferentRolesDefined => {
+  if (!isAuditLabellisationReferentiel(referentiel)) {
+    return { eluReferent: false, referentTechnique: false };
+  }
+  const mapping = ROLE_IDENTIFIANTS[referentiel];
+
+  return {
+    eluReferent: mesureIdsWithPilotes.includes(
+      toActionId(referentiel, mapping.eluReferent)
+    ),
+    referentTechnique: mesureIdsWithPilotes.includes(
+      toActionId(referentiel, mapping.referentTechnique)
+    ),
+  };
 };

@@ -3,6 +3,7 @@ import { historiqueJustificationTable } from '@tet/backend/collectivites/personn
 import { historiqueReponseDisplayView } from '@tet/backend/collectivites/personnalisations/models/historique-reponse-display.view';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { matchesActionOrDescendant } from '@tet/backend/referentiels/action-or-descendant.utils';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionNodeView } from '@tet/backend/referentiels/models/action-node.view';
 import { historiqueActionCommentaireTable } from '@tet/backend/referentiels/models/historique-action-commentaire.table';
@@ -17,18 +18,7 @@ import {
   ListHistoriqueInput,
   NB_HISTORIQUE_ITEMS_PER_PAGE,
 } from '@tet/domain/referentiels';
-import {
-  and,
-  desc,
-  eq,
-  gte,
-  inArray,
-  like,
-  lt,
-  or,
-  sql,
-  SQL,
-} from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, lt, or, sql, SQL } from 'drizzle-orm';
 import { alias, unionAll } from 'drizzle-orm/pg-core';
 
 /**
@@ -124,21 +114,15 @@ export class ListHistoriqueRepository {
       eq(historiqueUnion.collectiviteId, collectiviteId),
     ];
     if (actionId) {
-      // On échappe les méta-caractères de LIKE dans actionId avant de
-      // construire le pattern. Le caractère d'échappement par défaut de
-      // Postgres est `\` ; on l'utilise donc pour échapper `\`, `%` et `_`.
-      //
       // Le LIKE est ancré sur le séparateur `.` (`<actionId>.%`) pour ne
       // remonter que les descendants stricts dans la hiérarchie pointée :
       // un préfixe nu (`<actionId>%`) ferait remonter `cae_1.10` en filtrant
       // sur `cae_1.1`. La correspondance exacte est gérée par un `eq`
       // dédié pour couvrir les lignes dont l'actionId est précisément la
       // valeur filtrée.
-      const escapedActionId = actionId.replace(/[\\%_]/g, '\\$&');
       const actionIdFilter = or(
         sql`${historiqueUnion.actionIds} @> array[${actionId}]::varchar(30)[]`,
-        eq(historiqueUnion.actionId, actionId),
-        like(historiqueUnion.actionId, `${escapedActionId}.%`)
+        matchesActionOrDescendant(historiqueUnion.actionId, actionId)
       );
       if (actionIdFilter) conditions.push(actionIdFilter);
     }

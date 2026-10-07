@@ -2,15 +2,17 @@ import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import { makeDemarcheSectionUrl, type DemarcheSectionKey } from '../steps';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
 import {
+  DEMARCHE_PCAET_DELAI_AVIS_MOIS,
   DemarchePcaetStatusEnum,
   getEtapeIndexDemarchePcaet,
+  getIndexEtapeDemarchePcaet,
 } from '@tet/domain/demarches';
 import type {
   DemarcheType,
   DemarchePcaetTransitionEvaluations,
 } from '@tet/domain/demarches';
 import { getTransitionBlocageLabel } from '../transitions';
-import { Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Alert, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
@@ -73,7 +75,11 @@ type SectionStep = {
   key: DemarcheSectionKey;
   label: string;
   description: string;
-  status: DemarchePcaetTopicStatut;
+  /**
+   * `null` pour une sous-étape de simple consultation : un rappel n'a rien à
+   * compléter, une pastille « À compléter » ou « Complété » n'y dirait rien.
+   */
+  status: DemarchePcaetTopicStatut | null;
   href: string;
 };
 
@@ -95,31 +101,55 @@ const SectionStepContent = ({
 }: {
   step: SectionStep;
   isComplete: boolean;
-}) => (
-  <>
-    <div
-      className={[
-        'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
-        isComplete ? 'bg-success text-white' : 'bg-warning-2 text-warning-1',
-      ].join(' ')}
-    >
-      <Icon icon={isComplete ? 'check-line' : 'close-line'} size="sm" />
-    </div>
-    <div className="flex flex-col gap-1 min-w-0 flex-1">
-      <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-primary-9 min-w-0">{step.label}</span>
-        <DemarcheCompletionBadge
-          className="shrink-0"
-          isComplete={isComplete}
-          size="xs"
-          withIcon={false}
-          trim={false}
+}) => {
+  // Une sous-étape à relire ne se mesure pas : ni pastille, ni marque de
+  // complétude, mais la même pastille ronde pour rester alignée avec les
+  // sous-étapes voisines.
+  const estConsultation = step.status === null;
+
+  return (
+    <>
+      <div
+        className={[
+          'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
+          estConsultation
+            ? 'bg-primary-1 text-primary-9'
+            : isComplete
+            ? 'bg-success text-white'
+            : 'bg-warning-2 text-warning-1',
+        ].join(' ')}
+      >
+        <Icon
+          icon={
+            estConsultation
+              ? 'eye-line'
+              : isComplete
+              ? 'check-line'
+              : 'close-line'
+          }
+          size="sm"
         />
       </div>
-      <span className="leading-relaxed text-grey-7">{step.description}</span>
-    </div>
-  </>
-);
+      <div className="flex flex-col gap-1 min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <span className="font-medium text-primary-9 min-w-0">
+            {step.label}
+          </span>
+          {step.status !== null && (
+            <DemarcheCompletionBadge
+              className="shrink-0"
+              statut={step.status}
+              size="xs"
+              withIcon={false}
+              trim={false}
+            />
+          )}
+        </div>
+        <span className="leading-relaxed text-grey-7">{step.description}</span>
+      </div>
+    </>
+  );
+};
 
 const SectionStepRow = ({
   step,
@@ -154,6 +184,17 @@ const SectionStepRow = ({
   );
 };
 
+/**
+ * Rang des étapes qui portent une action, lu dans le domaine : la position de
+ * « finalisation » a déjà bougé une fois, et des index en dur l'avaient suivie
+ * en silence.
+ */
+const ETAPE = {
+  transmis: getIndexEtapeDemarchePcaet('transmis'),
+  finalisation: getIndexEtapeDemarchePcaet('finalisation'),
+  publie: getIndexEtapeDemarchePcaet('publie'),
+} as const;
+
 /** Les étapes du cycle de vie, libellées selon le type de démarche. */
 const buildSteps = (
   type: DemarcheTypeLabels
@@ -165,11 +206,17 @@ const buildSteps = (
   {
     label: appLabels.demarcheAvanceEtapeTransmisLabel,
     description: appLabels.demarcheAvanceEtapeTransmisDescription,
-    info: appLabels.demarcheAvanceEtapeTransmisInfo,
+    info: appLabels.demarcheAvanceEtapeTransmisInfo({
+      mois: DEMARCHE_PCAET_DELAI_AVIS_MOIS,
+    }),
   },
   {
-    label: appLabels.demarcheAvanceEtapeAdopteLabel,
-    description: appLabels.demarcheAvanceEtapeAdopteDescription({ type }),
+    label: appLabels.demarcheAvanceEtapeFinalisationLabel,
+    description: appLabels.demarcheAvanceEtapeFinalisationDescription,
+  },
+  {
+    label: appLabels.demarcheAvanceEtapePublieLabel,
+    description: appLabels.demarcheAvanceEtapePublieDescription({ type }),
   },
   {
     label: appLabels.demarcheAvanceEtapeArchiveLabel,
@@ -257,12 +304,16 @@ type Props = {
    */
   transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
-  onReprendre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
-  onUnpublish?: () => void;
   /** Affiche le stepper sans liens ni actions (page de création). */
   isPreview?: boolean;
+  /**
+   * Le PCAET a été transmis pour avis hors de la plateforme : l'élaboration et
+   * la transmission ont eu lieu ailleurs, et tout le dossier se remplit à
+   * l'étape de finalisation.
+   */
+  horsPlateforme?: boolean;
 };
 
 export const AvanceDemarcheSection = ({
@@ -275,11 +326,10 @@ export const AvanceDemarcheSection = ({
   avisDeadlineAt,
   transitions,
   onTransmettre,
-  onReprendre,
   isPublished,
   onPublish,
-  onUnpublish,
   isPreview = false,
+  horsPlateforme = false,
 }: Props) => {
   const activeIndex = getEtapeIndexDemarchePcaet(statut);
   const transmettre = transitions?.transmettre_pour_avis;
@@ -325,22 +375,85 @@ export const AvanceDemarcheSection = ({
     },
   ];
 
-  // Pièces produites après les avis (délibération d'adoption…), déposées à
-  // l'étape adopté ; leur couverture conditionne la publication.
-  const documentsAvalStep: SectionStep | null =
-    completion.documentsAval !== null
-      ? {
-          key: 'documents',
-          label: appLabels.demarcheDetailDocumentsTitre,
-          description: appLabels.demarcheAvanceSectionDocumentsAvalDescription,
-          status: completion.documentsAval,
-          href: documentsUrl,
-        }
-      : null;
+  /**
+   * Sous-étape « documents » d'un dépôt hors plateforme : une seule, pour les
+   * deux temps — ils se remplissent dans le même écran, sous la même liste.
+   *
+   * Construite à part plutôt que dérivée de `sectionSteps` : le modèle peut
+   * n'attendre aucune pièce amont tout en en exigeant à l'aval, et reprendre la
+   * sous-étape de l'amont ferait alors disparaître de la liste les pièces mêmes
+   * qui conditionnent la publication.
+   */
+  const documentsHorsPlateformeSteps: SectionStep[] =
+    completion.documents === null && completion.documentsAval === null
+      ? []
+      : [
+          {
+            key: 'documents' as const,
+            label: appLabels.demarcheDetailDocumentsTitre,
+            description: appLabels.demarcheAvanceSectionDocumentsDescription,
+            status:
+              completion.documents !== 'incomplete' &&
+              completion.documentsAval !== 'incomplete'
+                ? 'complete'
+                : 'incomplete',
+            href: documentsUrl,
+          },
+        ];
 
-  // Le bloc publication s'affiche dès que l'étape « adopté » est atteinte ;
-  // l'état de la transition n'arme que le bouton.
-  const isPublishStepReached = activeIndex >= 2;
+  // Sous-étapes de la finalisation : les pièces produites après les avis
+  // (délibération d'adoption…), dont la couverture conditionne la publication,
+  // puis les deux rappels du dossier transmis. Ceux-ci mènent aux écrans de
+  // l'élaboration, passés en lecture seule dès la transmission : à ce stade on
+  // relit le dossier pour répondre aux avis, on ne le complète plus.
+  const finalisationSteps: SectionStep[] = [
+    ...(completion.documentsAval !== null
+      ? [
+          {
+            key: 'documents' as const,
+            label: appLabels.demarcheDetailAvisEtDocumentsTitre,
+            description:
+              appLabels.demarcheAvanceSectionDocumentsAvalDescription,
+            status: completion.documentsAval,
+            href: documentsUrl,
+          },
+        ]
+      : []),
+    {
+      key: 'diagnostic',
+      label: appLabels.demarcheAvanceRappelDiagnosticLabel,
+      description: appLabels.demarcheAvanceRappelDiagnosticDescription,
+      status: null,
+      href: makeDemarcheSectionUrl('diagnostic', {
+        collectiviteId,
+        demarcheId,
+      }),
+    },
+    {
+      key: 'plan',
+      label: appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels }),
+      description: appLabels.demarcheAvanceRappelPlanDescription,
+      status: null,
+      href: makeDemarcheSectionUrl('plan', { collectiviteId, demarcheId }),
+    },
+  ];
+
+  // Le bloc de finalisation s'affiche dès que l'étape est atteinte ; l'état de
+  // la transition n'arme que le bouton.
+  const isFinalisationReached = activeIndex >= ETAPE.finalisation;
+
+  /**
+   * Un dépôt hors plateforme n'a pas d'avis à relire : sa finalisation n'est pas
+   * une reprise du dossier mais sa constitution entière. Les sous-étapes sont
+   * donc celles de l'élaboration, avec leur complétude — ce sont elles qui
+   * arment la publication — et non deux rappels en lecture seule.
+   */
+  const etapeFinaleSteps: SectionStep[] = horsPlateforme
+    ? [
+        ...documentsHorsPlateformeSteps,
+        ...sectionSteps.filter((step) => step.key !== 'documents'),
+      ]
+    : finalisationSteps;
 
   const [elaborationStep, ...remainingSteps] = buildSteps(typeLabels);
   const isElaborationActive = !isPreview && activeIndex === 0;
@@ -362,14 +475,23 @@ export const AvanceDemarcheSection = ({
         connectorActive={!isPreview}
       />
 
-      {/* Étape 1 : en cours de dépôt */}
+      {/* Étape 1 : en cours de dépôt. Un dépôt hors plateforme ne l'a pas
+          franchie sur la plateforme : la marquer « faite » laisserait croire
+          qu'elle y a eu lieu, alors qu'elle n'y a simplement pas eu lieu. */}
       <NumberedStep
-        step={elaborationStep}
+        step={
+          horsPlateforme
+            ? {
+                ...elaborationStep,
+                description: appLabels.demarcheAvanceEtapeHorsPlateforme,
+              }
+            : elaborationStep
+        }
         number={1}
-        isDone={!isPreview && activeIndex >= 0}
-        isPast={!isPreview && activeIndex > 0}
+        isDone={!isPreview && !horsPlateforme && activeIndex >= 0}
+        isPast={!isPreview && (horsPlateforme || activeIndex > 0)}
         showConnector
-        connectorActive={activeIndex > 0}
+        connectorActive={!horsPlateforme && activeIndex > 0}
       />
 
       {/* Sous-actions de l'étape 1 : documents, diagnostic, plan */}
@@ -393,9 +515,10 @@ export const AvanceDemarcheSection = ({
               label={getTransitionBlocageLabel(transmettre)}
               activatedBy="hover"
             >
-              <span className="block w-full">
+              {/* Le bouton désactivé n'émet pas d'événement de survol : c'est
+                  ce conteneur qui porte le déclencheur de l'info-bulle. */}
+              <span className="inline-flex">
                 <Button
-                  className="w-full justify-center"
                   variant={transmettre?.enabled ? 'primary' : 'grey'}
                   size="sm"
                   icon="arrow-right-line"
@@ -411,103 +534,109 @@ export const AvanceDemarcheSection = ({
         </div>
       )}
 
-      {/* Étapes suivantes : transmis pour avis, adopté... */}
+      {/* Étapes suivantes : transmis pour avis, finalisation, publié... */}
       {remainingSteps.map((step, i) => {
         const index = i + 1;
-        const isDone = index <= activeIndex;
-        const isPast = index < activeIndex;
+        // Idem pour la transmission : elle a eu lieu ailleurs.
+        const estHorsPlateforme = horsPlateforme && index === ETAPE.transmis;
+        const isDone = !estHorsPlateforme && index <= activeIndex;
+        const isPast = estHorsPlateforme || index < activeIndex;
         const isLast = index === remainingSteps.length;
-        const showNouvelleAction = index === activeIndex && index >= 2;
+        // Un nouveau cycle ne peut démarrer qu'une fois le dossier publié.
+        const showNouvelleAction =
+          index === activeIndex && index >= ETAPE.publie;
 
         return (
           <NumberedStep
             key={step.label}
-            step={step}
+            step={
+              estHorsPlateforme
+                ? {
+                    ...step,
+                    description: appLabels.demarcheAvanceEtapeHorsPlateforme,
+                  }
+                : horsPlateforme && index === ETAPE.finalisation
+                ? {
+                    ...step,
+                    description:
+                      appLabels.demarcheAvanceEtapeFinalisationHorsPlateformeDescription,
+                  }
+                : step
+            }
             number={index + 1}
             isDone={isDone}
             isPast={isPast}
             showConnector={!isLast}
-            connectorActive={index < activeIndex}
+            connectorActive={!estHorsPlateforme && index < activeIndex}
           >
-            {index === 1 &&
+            {index === ETAPE.transmis &&
               statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
               avisDeadlineAt && (
                 <TransmisDeadline avisDeadlineAt={avisDeadlineAt} />
               )}
-            {index === 1 &&
-              statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
-              !isPreview &&
-              transitions?.reprendre_elaboration.enabled !== false && (
-                <div className="mt-2">
-                  <Button
-                    variant="grey"
-                    size="xs"
-                    icon="arrow-left-line"
-                    onClick={onReprendre}
-                  >
-                    {appLabels.demarcheTransitionReprendre}
-                  </Button>
+            {/* Un dépôt hors plateforme n'a pas d'avis à consulter ici : sa
+                finalisation est la constitution de tout le dossier. */}
+            {index === ETAPE.finalisation &&
+              isFinalisationReached &&
+              !isPreview && (
+                <div className="mt-3">
+                  {etapeFinaleSteps.map((step) => (
+                    <SectionStepRow
+                      key={step.key}
+                      step={step}
+                      isActive={
+                        activeIndex === ETAPE.finalisation &&
+                        step.key === activeSection
+                      }
+                    />
+                  ))}
+                  {/* Adoption et publication en un seul acte, mise en avant
+                      comme la transmission pour avis. */}
+                  {!isPublished && (
+                    <Tooltip
+                      label={getTransitionBlocageLabel(publier)}
+                      activatedBy="hover"
+                    >
+                      <span className="inline-flex">
+                        <Button
+                          variant={publier?.enabled ? 'primary' : 'grey'}
+                          size="sm"
+                          icon="arrow-right-line"
+                          iconPosition="right"
+                          onClick={onPublish}
+                          disabled={!publier?.enabled}
+                        >
+                          {appLabels.demarcheTransitionPublier}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                  )}
                 </div>
               )}
-            {index === 2 && isPublishStepReached && !isPreview && (
-              <div className="mt-3">
-                {/* Sous-étape aval : les pièces attendues après les avis */}
-                {documentsAvalStep && (
-                  <SectionStepRow
-                    step={documentsAvalStep}
-                    isActive={
-                      activeIndex === 2 &&
-                      documentsAvalStep.key === activeSection
-                    }
-                  />
-                )}
-                {isPublished ? (
-                  <Button
-                    variant="grey"
-                    size="xs"
-                    icon="eye-off-line"
-                    onClick={onUnpublish}
-                  >
-                    {appLabels.demarcheTransitionDepublier}
-                  </Button>
-                ) : (
-                  // Publication du dossier : même mise en avant que la
-                  // transmission pour avis.
-                  <Tooltip
-                    label={getTransitionBlocageLabel(publier)}
-                    activatedBy="hover"
-                  >
-                    <span className="block w-full">
-                      <Button
-                        className="w-full justify-center"
-                        variant={publier?.enabled ? 'primary' : 'grey'}
-                        size="sm"
-                        icon="arrow-right-line"
-                        iconPosition="right"
-                        onClick={onPublish}
-                        disabled={!publier?.enabled}
-                      >
-                        {appLabels.demarcheTransitionPublier}
-                      </Button>
-                    </span>
-                  </Tooltip>
-                )}
-              </div>
+            {/* Tant que le dossier est à l'étape publiée : une fois archivé, le
+                cycle est clos et la mise en œuvre annoncée ici est derrière. */}
+            {index === activeIndex && index === ETAPE.publie && (
+              <Alert
+                className="mt-3"
+                state="success"
+                title={appLabels.demarcheDetailAdopteeTitre}
+                description={appLabels.demarcheDetailAdopteeDescription}
+              />
             )}
+            {/* Le dossier publié est adopté : rien ne le reprend, un nouveau
+                cycle peut seulement démarrer à côté. */}
             {showNouvelleAction && (
-              <div className="mt-2 -ml-[52px] flex items-center gap-2">
-                <div className="w-8 flex justify-center">
-                  <div className="bg-grey-3 h-px w-3" />
-                </div>
-                <Link
+              <div className="mt-3">
+                <Button
                   href={makeCollectiviteDemarchePcaetNouveauUrl({
                     collectiviteId,
                   })}
+                  variant="primary"
+                  size="xs"
+                  icon="add-line"
                 >
-                  <Button variant="primary" size="xs" icon="add-line">
-                    {appLabels.demarcheAvanceNouvelleDemarche}
-                  </Button>
-                </Link>
+                  {appLabels.demarcheAvanceNouvelleDemarche}
+                </Button>
               </div>
             )}
           </NumberedStep>

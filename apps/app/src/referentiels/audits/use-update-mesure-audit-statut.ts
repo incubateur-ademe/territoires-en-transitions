@@ -91,7 +91,3 @@ export const useUpdateMesureAuditStatut = () => {
     })
   );
 };
-
-export type UpdateMesureAuditStatut = ReturnType<
-  typeof useUpdateMesureAuditStatut
->['mutate'];

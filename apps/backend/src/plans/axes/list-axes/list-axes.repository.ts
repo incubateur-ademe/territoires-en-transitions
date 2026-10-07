@@ -68,10 +68,14 @@ export class ListAxesRepository {
   /** Liste récursivement tous les sous-axes d'un axe (ou d'un plan) */
   async listChildrenRecursively(
     input: ListAxesInput,
+    { includeFichesRestreintes }: { includeFichesRestreintes: boolean },
     tx?: Transaction
   ): Promise<Result<PlanNode[], ListAxesError>> {
     try {
       const { parentId, collectiviteId } = input;
+      const fichesRestreintesCondition = includeFichesRestreintes
+        ? sql.empty()
+        : sql`AND fa.restreint IS NOT TRUE`;
       const result = await (tx || this.databaseService.db).execute(sql`
       WITH RECURSIVE
         parents AS (
@@ -102,7 +106,7 @@ export class ListAxesRepository {
           FROM parents a
           JOIN fiche_action_axe faa ON a.id = faa.axe_id
           JOIN fiche_action fa on fa.id = faa.fiche_id
-          WHERE fa.deleted = false AND fa.parent_id IS NULL
+          WHERE fa.deleted = false AND fa.parent_id IS NULL ${fichesRestreintesCondition}
           GROUP BY a.id
         )
       SELECT id, nom, description, fiches, ancestors, depth, sort_path

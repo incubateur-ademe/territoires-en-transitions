@@ -26,15 +26,16 @@ export class ListFichesRouter {
 
     listFiches: this.trpc.authedProcedure
       .input(listFichesInputSchema)
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
         const { collectiviteId, filters, queryOptions } = input;
 
         return this.service.getFichesActionResumes(
           {
             collectiviteId,
             filters: filters ?? {},
+            queryOptions,
           },
-          queryOptions
+          { user: ctx.user }
         );
       }),
   });

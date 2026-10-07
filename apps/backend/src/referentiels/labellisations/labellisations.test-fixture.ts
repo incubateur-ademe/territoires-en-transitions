@@ -1,4 +1,4 @@
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { seedTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
@@ -9,10 +9,10 @@ import {
   LabellisationDemande,
   ObjetPreuve,
   ReferentielId,
+  getRoleMesureIds,
 } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import { and, eq } from 'drizzle-orm';
-import { randomUUID } from 'node:crypto';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
@@ -21,23 +21,27 @@ import {
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { labellisationTable } from './labellisation.table';
 
+export type CreateAuditArgs = {
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  dateDebut?: string | null;
+  clos?: boolean;
+  dateFin?: string;
+  valide?: boolean;
+  withDemande?: boolean;
+};
+
 export async function createAudit({
   databaseService,
   collectiviteId,
   referentielId,
   dateDebut = new Date('2025-01-01').toISOString(),
   clos = false,
+  dateFin,
   valide = false,
   withDemande = false,
-}: {
-  databaseService: DatabaseServiceInterface;
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  dateDebut?: string | null;
-  clos?: boolean;
-  valide?: boolean;
-  withDemande?: boolean;
-}) {
+}: CreateAuditArgs) {
   const demande = withDemande
     ? await databaseService.db
         .insert(labellisationDemandeTable)
@@ -61,7 +65,7 @@ export async function createAudit({
       dateDebut: dateDebut,
       clos,
       valide,
-      dateFin: clos ? new Date().toISOString() : null,
+      dateFin: clos ? dateFin ?? new Date().toISOString() : null,
     })
     .returning();
 
@@ -182,10 +186,26 @@ export async function addAuditeurPermission({
   };
 }
 
+export async function seedRoleMesurePilotes(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId,
+  piloteUserId: string
+): Promise<void> {
+  for (const mesureId of getRoleMesureIds(referentiel)) {
+    await trpcClient.referentiels.actions.upsertPilotes.mutate({
+      collectiviteId,
+      mesureId,
+      pilotes: [{ userId: piloteUserId }],
+    });
+  }
+}
+
 export async function requestCotAudit(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  piloteUserId?: string
 ): Promise<void> {
   // Fill referentiel
   await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -193,6 +213,15 @@ export async function requestCotAudit(
     collectiviteId,
     referentiel
   );
+  if (piloteUserId) {
+    await seedRoleMesurePilotes(
+      trpcClient,
+      collectiviteId,
+      referentiel,
+      piloteUserId
+    );
+  }
+
   // Request audit
   await trpcClient.referentiels.labellisations.requestLabellisation.mutate({
     referentiel,
@@ -205,7 +234,8 @@ export async function requestCotAudit(
 export async function requestLabellisationForCot(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  piloteUserId?: string
 ): Promise<LabellisationDemande> {
   // Fill referentiel
   await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -227,6 +257,15 @@ export async function requestLabellisationForCot(
       collectiviteId: collectiviteId,
       referentielId: referentiel,
     });
+
+  if (piloteUserId) {
+    await seedRoleMesurePilotes(
+      trpcClient,
+      collectiviteId,
+      referentiel,
+      piloteUserId
+    );
+  }
 
   // Request audit
   const requestLabellisationResponse =
@@ -316,15 +355,11 @@ export async function seedLabellisationPreuve({
     throw new Error('Aucune demande à laquelle rattacher la preuve');
   }
 
-  const [fichier] = await databaseService.db
-    .insert(bibliothequeFichierTable)
-    .values({
-      collectiviteId,
-      hash: randomUUID(),
-      filename: 'test-preuve.pdf',
-      confidentiel: false,
-    })
-    .returning();
+  const fichier = await seedTestDocument({
+    databaseService,
+    collectiviteId,
+    filename: 'test-preuve.pdf',
+  });
 
   await databaseService.db.insert(preuveLabellisationTable).values({
     collectiviteId,
@@ -338,13 +373,23 @@ export async function seedLabellisationPreuve({
 export async function requestLabellisationAudit(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  piloteUserId?: string
 ): Promise<LabellisationDemande> {
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
       collectiviteId,
       referentielId: referentiel,
     });
+
+  if (piloteUserId) {
+    await seedRoleMesurePilotes(
+      trpcClient,
+      collectiviteId,
+      referentiel,
+      piloteUserId
+    );
+  }
 
   return trpcClient.referentiels.labellisations.requestLabellisation.mutate({
     referentiel,

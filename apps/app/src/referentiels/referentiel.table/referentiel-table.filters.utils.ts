@@ -1,7 +1,9 @@
 import { Row } from '@tanstack/react-table';
+import { ReferentielTableFeatures } from './utils';
 import {
   ActionTypeEnum,
   getParentId,
+  ReferentielLabel,
   StatutAvancement,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
@@ -41,7 +43,7 @@ function findNearestActionOfType(
 }
 
 export function getTextFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   _columnId: string,
   filterValue: string
 ) {
@@ -59,7 +61,7 @@ export function getTextFilterFn(
 }
 
 export function getExplicationFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   _columnId: string,
   filterValue: string
 ) {
@@ -72,7 +74,7 @@ export function getExplicationFilterFn(
 }
 
 export function getStatutFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   columnId: string,
   filterValue: string[]
 ) {
@@ -83,7 +85,7 @@ export function getStatutFilterFn(
 
 export function getPilotesFilterFn(actions: Record<string, ActionListItem>) {
   return (
-    row: Row<ActionListItem>,
+    row: Row<ReferentielTableFeatures, ActionListItem>,
     _columnId: string,
     filterValue: string[]
   ) => {
@@ -109,7 +111,7 @@ export function getPilotesFilterFn(actions: Record<string, ActionListItem>) {
 
 export function getCategorieFilterFn(actions: Record<string, ActionListItem>) {
   return (
-    row: Row<ActionListItem>,
+    row: Row<ReferentielTableFeatures, ActionListItem>,
     columnId: string,
     filterValue: string[]
   ) => {
@@ -132,7 +134,7 @@ export function getCategorieFilterFn(actions: Record<string, ActionListItem>) {
 }
 
 export function getScoreRangeFilterFn(
-  row: Row<ActionListItem>,
+  row: Row<ReferentielTableFeatures, ActionListItem>,
   columnId: string,
   filterValue: string[]
 ) {
@@ -153,9 +155,21 @@ export function getScoreRangeFilterFn(
   });
 }
 
+export function getLabelsFilterFn(
+  row: Row<ReferentielTableFeatures, ActionListItem>,
+  columnId: string,
+  filterValue: string[]
+) {
+  // Aucun filtre actif, ou les deux volets sélectionnés : on affiche tout.
+  if (!filterValue?.length || filterValue.length >= 2) return true;
+
+  const labels = row.getValue<ReferentielLabel[]>(columnId) ?? [];
+  return labels.includes(filterValue[0] as ReferentielLabel);
+}
+
 export function getServicesFilterFn(actions: Record<string, ActionListItem>) {
   return (
-    row: Row<ActionListItem>,
+    row: Row<ReferentielTableFeatures, ActionListItem>,
     _columnId: string,
     filterValue: number[]
   ) => {

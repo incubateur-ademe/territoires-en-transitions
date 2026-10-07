@@ -1,47 +1,40 @@
+import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchSingle } from '@/site/src/strapi/strapi';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Seo, StrapiMedia } from '@/site/src/strapi/types';
+
+/** Single type `page-contact` */
+export type PageContact = {
+  seo?: Seo | null;
+  titre: string;
+  description: string | null;
+  couverture: StrapiMedia | null;
+  telephone: string;
+  horaires: string;
+  legende_visible: boolean | null;
+};
 
 export const getStrapiData = async () => {
-  const data = await fetchSingle('page-contact', [
-    ['populate[0]', 'seo'],
-    ['populate[1]', 'seo.metaImage'],
+  const data = await fetchSingle<PageContact>('page-contact', [
+    ['populate[seo][populate]', 'metaImage'],
+    ['populate[couverture]', 'true'],
   ]);
 
-  if (data) {
-    const contactData = data.attributes;
+  if (!data) return null;
 
-    const metaImage =
-      (contactData.seo?.metaImage?.data as unknown as StrapiItem)?.attributes ??
-      (contactData?.attributes?.couverture?.data as unknown as StrapiItem)
-        ?.attributes ??
-      undefined;
+  const metaImage = data.seo?.metaImage ?? data.couverture;
 
-    return {
-      seo: {
-        metaTitle:
-          (contactData.seo?.metaTitle as unknown as string) ?? undefined,
-        metaDescription:
-          (contactData.seo?.metaDescription as unknown as string) ??
-          (contactData.description as unknown as string) ??
-          undefined,
-        metaImage: metaImage
-          ? {
-              url: metaImage.url as unknown as string,
-              width: metaImage.width as unknown as number,
-              height: metaImage.height as unknown as number,
-              type: metaImage.mime as unknown as string,
-              alt: metaImage.alternativeText as unknown as string,
-            }
-          : undefined,
-      },
-      titre: (contactData.titre as unknown as string) ?? undefined,
-      description: (contactData.description as unknown as string) ?? undefined,
-      telephone: (contactData.telephone as unknown as string) ?? undefined,
-      horaires: (contactData.horaires as unknown as string) ?? undefined,
-      couverture:
-        (contactData.couverture?.data as unknown as StrapiItem) ?? undefined,
-      legendeVisible:
-        (contactData.legende_visible as unknown as boolean) ?? false,
-    };
-  } else return null;
+  return {
+    seo: {
+      metaTitle: data.seo?.metaTitle ?? undefined,
+      metaDescription:
+        data.seo?.metaDescription ?? data.description ?? undefined,
+      metaImage: toOpenGraphImage(metaImage),
+    },
+    titre: data.titre,
+    description: data.description ?? undefined,
+    telephone: data.telephone,
+    horaires: data.horaires,
+    couverture: data.couverture ?? undefined,
+    legendeVisible: data.legende_visible ?? false,
+  };
 };

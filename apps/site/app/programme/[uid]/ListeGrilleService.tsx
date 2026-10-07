@@ -1,7 +1,6 @@
 import ButtonsList from '@/site/components/buttons/ButtonsList';
 import Markdown from '@/site/components/markdown/Markdown';
-import ReactIcon from '@/site/components/react-icons/ReactIcon';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/strapi-image';
 import { Liste } from './types';
 
 const ListeGrilleService = ({ liste }: { liste: Liste }) => {
@@ -11,19 +10,11 @@ const ListeGrilleService = ({ liste }: { liste: Liste }) => {
         {liste.map((l) => (
           <div key={l.id} className="rounded-2xl p-12 bg-white">
             <div>
-              <div className="flex items-center gap-2">
-                {!!l.icone && (
-                  <ReactIcon
-                    icon={l.icone}
-                    className="text-2xl text-primary-10"
-                  />
-                )}
-                {!!l.preTitre && (
-                  <div className="text-primary-10 font-bold text-base">
-                    {l.preTitre}
-                  </div>
-                )}
-              </div>
+              {!!l.preTitre && (
+                <div className="text-primary-10 font-bold text-base">
+                  {l.preTitre}
+                </div>
+              )}
               {!!l.titre && (
                 <div className="text-orange-1 uppercase text-5xl font-extrabold mb-4">
                   {l.titre}
@@ -41,8 +32,9 @@ const ListeGrilleService = ({ liste }: { liste: Liste }) => {
               />
 
               {!!l.image && (
-                <DEPRECATED_StrapiImage
-                  data={l.image}
+                <StrapiImage
+                  media={l.image}
+                  sizes="(min-width: 1440px) 590px, (min-width: 768px) 50vw, 100vw"
                   className="max-h-[300px] max-w-full mx-auto mt-8"
                 />
               )}

@@ -1,6 +1,9 @@
 'use client';
 
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
+import { AutoAttachmentWelcomeModal } from '@/app/users/authentications/oidc/auto-attachment/auto-attachment.welcome.modal';
+import { LinkOidcIdentityBanner } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.banner';
+import { LinkOidcIdentityModal } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.modal';
 import { SuperAdminModeProvider } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { CollectiviteProvider } from '@tet/api/collectivites';
@@ -28,8 +31,11 @@ export function AuthedProviders({
       <CollectiviteProvider user={user}>
         <SuperAdminModeProvider>
           <NPSTracker />
+          <AutoAttachmentWelcomeModal />
           <AccepterCGUModal />
+          <LinkOidcIdentityModal />
           <BannerInfo />
+          <LinkOidcIdentityBanner />
           {children}
         </SuperAdminModeProvider>
       </CollectiviteProvider>

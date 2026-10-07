@@ -13,8 +13,8 @@ type SetLigneInput = Omit<
   'collectiviteId' | 'demarcheId'
 >;
 
-/** Motif d'échec d'un ajout de domaine, tel que la modale doit le formuler. */
-export type AddDomaineFailure = 'DOMAINE_DEJA_EXISTANT' | 'AUTRE';
+/** Motif d'échec d'un ajout de thématique, tel que la modale doit le formuler. */
+export type AddThematiqueFailure = 'THEMATIQUE_DEJA_EXISTANT' | 'AUTRE';
 
 /**
  * Clé métier de l'erreur, posée par le formateur d'erreurs tRPC à partir de la
@@ -76,8 +76,8 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
 
   // `mutateAsync` : la modale d'ajout ne se ferme qu'au succès, pour que le
   // libellé refusé reste corrigeable sans ressaisie.
-  const { mutateAsync: addDomaineMutate } = useMutation(
-    trpc.demarches.pcaet.diagnostic.addVulnerabiliteDomaine.mutationOptions({
+  const { mutateAsync: addThematiqueMutate } = useMutation(
+    trpc.demarches.pcaet.diagnostic.addVulnerabiliteThematique.mutationOptions({
       scope,
       // L'échec est rendu dans la modale, au plus près du champ fautif.
       meta: { disableToast: true },
@@ -85,24 +85,28 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
     })
   );
 
-  const { mutate: updateDomaineMutate } = useMutation(
-    trpc.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine.mutationOptions({
-      scope,
-      meta: { error: appLabels.mutationError },
-      onSuccess,
-      onError: () => queryClient.invalidateQueries({ queryKey }),
-    })
+  const { mutate: updateThematiqueMutate } = useMutation(
+    trpc.demarches.pcaet.diagnostic.updateVulnerabiliteThematique.mutationOptions(
+      {
+        scope,
+        meta: { error: appLabels.mutationError },
+        onSuccess,
+        onError: () => queryClient.invalidateQueries({ queryKey }),
+      }
+    )
   );
 
-  const { mutate: removeDomaineMutate } = useMutation(
-    trpc.demarches.pcaet.diagnostic.removeVulnerabiliteDomaine.mutationOptions({
-      scope,
-      meta: {
-        success: appLabels.demarcheVulnerabiliteDomaineSupprime,
-        error: appLabels.mutationError,
-      },
-      onSuccess,
-    })
+  const { mutate: removeThematiqueMutate } = useMutation(
+    trpc.demarches.pcaet.diagnostic.removeVulnerabiliteThematique.mutationOptions(
+      {
+        scope,
+        meta: {
+          success: appLabels.demarcheVulnerabiliteThematiqueSupprime,
+          error: appLabels.mutationError,
+        },
+        onSuccess,
+      }
+    )
   );
 
   return {
@@ -111,30 +115,43 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
         setLigneMutate({ collectiviteId, demarcheId, ...input }),
       [setLigneMutate, collectiviteId, demarcheId]
     ),
-    addDomaine: useCallback(
-      async (label: string): Promise<AddDomaineFailure | null> => {
+    addThematique: useCallback(
+      async (
+        label: string,
+        parentId?: number
+      ): Promise<AddThematiqueFailure | null> => {
         try {
-          await addDomaineMutate({ collectiviteId, demarcheId, label });
+          await addThematiqueMutate({
+            collectiviteId,
+            demarcheId,
+            label,
+            parentId,
+          });
           return null;
         } catch (error) {
           // Sans distinguer le motif, une coupure réseau s'annonçait comme un
           // doublon de libellé.
-          return errorKeyOf(error) === 'DOMAINE_DEJA_EXISTANT'
-            ? 'DOMAINE_DEJA_EXISTANT'
+          return errorKeyOf(error) === 'THEMATIQUE_DEJA_EXISTANT'
+            ? 'THEMATIQUE_DEJA_EXISTANT'
             : 'AUTRE';
         }
       },
-      [addDomaineMutate, collectiviteId, demarcheId]
+      [addThematiqueMutate, collectiviteId, demarcheId]
     ),
-    updateDomaine: useCallback(
-      (domaineId: number, label: string) =>
-        updateDomaineMutate({ collectiviteId, demarcheId, domaineId, label }),
-      [updateDomaineMutate, collectiviteId, demarcheId]
+    updateThematique: useCallback(
+      (thematiqueId: number, label: string) =>
+        updateThematiqueMutate({
+          collectiviteId,
+          demarcheId,
+          thematiqueId,
+          label,
+        }),
+      [updateThematiqueMutate, collectiviteId, demarcheId]
     ),
-    removeDomaine: useCallback(
-      (domaineId: number) =>
-        removeDomaineMutate({ collectiviteId, demarcheId, domaineId }),
-      [removeDomaineMutate, collectiviteId, demarcheId]
+    removeThematique: useCallback(
+      (thematiqueId: number) =>
+        removeThematiqueMutate({ collectiviteId, demarcheId, thematiqueId }),
+      [removeThematiqueMutate, collectiviteId, demarcheId]
     ),
   };
 };

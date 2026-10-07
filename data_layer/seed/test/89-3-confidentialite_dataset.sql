@@ -121,8 +121,6 @@ begin
     -- action_statut
     insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
     values (colid, 'eci_1.1.1.1', 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
-    -- score
-    perform evaluation.update_late_collectivite_scores(20);
     -- pre_audit_scores
     insert into  pre_audit_scores (collectivite_id, referentiel, scores, modified_at, payload_timestamp, audit_id)
     values (colid, 'eci', '[
@@ -448,7 +446,7 @@ begin
     values (colid, colid, 'plan', 1),
            (colid*10, colid, 'plan', 1);
     -- fiche_action_axe
-    insert into fiche_action_axe(fiche_id, axe_id) values (colid, colid);
+    insert into fiche_action_axe(fiche_id, axe_id, created_by) values (colid, colid, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
     -- financeur_tag -> financeur_tag_id (2ème valeur pour un nouveau insert de fiche_action_financeur_tag)
     insert into financeur_tag (id, nom, collectivite_id)
     values (colid, 'financeur', colid),
@@ -478,27 +476,27 @@ begin
     values (colid, 'personne', colid),
            (colid*10, 'personne_', colid);
     -- fiche_action_pilote
-    insert into fiche_action_pilote(fiche_id, user_id, tag_id) values (colid, null, colid);
+    insert into fiche_action_pilote(fiche_id, user_id, tag_id, created_by) values (colid, null, colid, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
     -- fiche_action_referent
-    insert into fiche_action_referent(fiche_id, user_id, tag_id) values (colid, null, colid);
+    insert into fiche_action_referent(fiche_id, user_id, tag_id, created_by) values (colid, null, colid, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
     -- annexe
     insert into annexe (collectivite_id, fichier_id, url, fiche_id, modified_by)
     values (colid, null, '', colid, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
     -- fiche_action_action
     insert into fiche_action_action (fiche_id, action_id) values(colid, 'eci_2.1');
     -- fiche_action_indicateur
-    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
-    values (colid, null, colid);
-    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
-    values (colid, 'eci_5', null);
-    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
-    values (colid*10, 'eci_5', null);
+    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id, created_by)
+    values (colid, null, colid, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
+    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id, created_by)
+    values (colid, 'eci_5', null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
+    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id, created_by)
+    values (colid*10, 'eci_5', null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
     -- fiche_action_lien
     insert into fiche_action_lien(fiche_une, fiche_deux) values (colid*10+1, colid*10+2);
     -- fiche_action_thematique
-    insert into fiche_action_thematique(fiche_id, thematique_id) values (colid, 5);
+    insert into fiche_action_thematique(fiche_id, thematique_id, created_by) values (colid, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
     -- fiche_action_sous_thematique
-    insert into fiche_action_sous_thematique(fiche_id, thematique_id) values (colid, 44);
+    insert into fiche_action_sous_thematique(fiche_id, thematique_id, created_by) values (colid, 44, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
     -- PERSONNALISATION
     -- reponse_binaire

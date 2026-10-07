@@ -14,6 +14,7 @@ import {
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { hasPermission, ResourceType } from '@tet/domain/users';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -37,7 +38,7 @@ export class UpdateDefinitionService {
     private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService
   ) {}
 
-  private async canUpdateDefinition(
+  async canUpdateDefinition(
     user: AuthenticatedUser,
     collectiviteId: number,
     indicateurId: number,
@@ -104,7 +105,7 @@ export class UpdateDefinitionService {
       collectiviteId,
       indicateurFields,
     }: UpdateIndicateurDefinitionInput,
-    user: AuthenticatedUser
+    { user, tx }: ServiceSecondArg
   ): Promise<void> {
     await this.canUpdateDefinition(user, collectiviteId, indicateurId);
 
@@ -116,6 +117,8 @@ export class UpdateDefinitionService {
       commentaire,
       estConfidentiel,
       estFavori,
+      isApplicable,
+      isSuivi,
       titre,
       unite,
       ficheIds,
@@ -124,11 +127,13 @@ export class UpdateDefinitionService {
       thematiques,
     } = indicateurFields;
 
-    await this.databaseService.db.transaction(async (tx) => {
+    await (tx ?? this.databaseService.db).transaction(async (tx) => {
       if (
         commentaire !== undefined ||
         estConfidentiel !== undefined ||
-        estFavori !== undefined
+        estFavori !== undefined ||
+        isApplicable !== undefined ||
+        isSuivi !== undefined
       ) {
         await tx
           .insert(indicateurCollectiviteTable)
@@ -143,6 +148,12 @@ export class UpdateDefinitionService {
             }),
             ...(estFavori !== undefined && {
               favoris: estFavori,
+            }),
+            ...(isApplicable !== undefined && {
+              isApplicable,
+            }),
+            ...(isSuivi !== undefined && {
+              isSuivi,
             }),
             modifiedBy: user.id,
             modifiedAt: SQL_CURRENT_TIMESTAMP,
@@ -161,6 +172,12 @@ export class UpdateDefinitionService {
               }),
               ...(estFavori !== undefined && {
                 favoris: estFavori,
+              }),
+              ...(isApplicable !== undefined && {
+                isApplicable,
+              }),
+              ...(isSuivi !== undefined && {
+                isSuivi,
               }),
               modifiedBy: user.id,
               modifiedAt: SQL_CURRENT_TIMESTAMP,
@@ -198,6 +215,7 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           ficheIds,
+          userId: user.id,
         });
       }
 

@@ -127,7 +127,7 @@ INSERT INTO public.demarche_document_definition
 VALUES
     ('pcaet_document_global', 'pcaet',
      'Document global',
-     'Document unique regroupant l''ensemble des pièces attendues. Son dépôt couvre toutes les sections du dossier.',
+     'Document unique regroupant l''ensemble des pièces attendues.',
      false, 0, 'global', NULL),
     ('pcaet_diagnostic', 'pcaet', 'Diagnostic', '', true, 1, 'section', NULL),
     ('pcaet_strategie_territoriale', 'pcaet', 'Stratégie territoriale', '', true, 2, 'section', NULL),

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { TagEnum } from '@tet/domain/collectivites';
 import { TagDropdown, TagDropdownProps } from './tag.dropdown';
 import { useListServices } from './use-list-services';
@@ -16,21 +17,19 @@ const ServiceTagDropdown = ({
   collectiviteIds,
   onChange,
   placeholder,
+  createProps,
   ...props
 }: Props) => {
   const { data, refetch } = useListServices({
     collectiviteIds,
   });
 
-  const defaultPlaceholder = (isEditionAllowed: boolean) =>
-    `Sélectionner ${
-      isEditionAllowed ? 'ou créer ' : ''
-    }une direction ou service pilote`;
-
   return (
     <TagDropdown
       {...props}
-      placeholder={placeholder ?? defaultPlaceholder}
+      placeholder={
+        placeholder ?? appLabels.directionOuServicePilotePlaceholderSelectionner
+      }
       tagType={TagEnum.Service}
       optionsListe={data}
       refetchOptions={refetch}

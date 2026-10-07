@@ -43,7 +43,6 @@ describe('Lister les plans', () => {
 
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
-
   });
 
   afterAll(async () => {
@@ -356,6 +355,66 @@ describe('Lister les plans', () => {
       const plan2Index = createdPlans.findIndex((p) => p.id === plan2.id);
 
       expect(plan1Index).toBeLessThan(plan2Index);
+    });
+  });
+
+  describe('Lister les plans - Filtre par type', () => {
+    test('Lister uniquement les plans du type demandé', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const planTypes = await caller.plans.plans.listTypes();
+      const pcaetType = planTypes.find(
+        (t) =>
+          t.categorie === 'Plans transverses' &&
+          t.type === 'Plan Climat Air Énergie Territorial'
+      );
+      assert(pcaetType);
+
+      const typedPlan = await caller.plans.plans.create({
+        nom: 'Plan typé PCAET',
+        collectiviteId: collectivite.id,
+        typeId: pcaetType.id,
+      });
+
+      const untypedPlan = await caller.plans.plans.create({
+        nom: 'Plan sans type',
+        collectiviteId: collectivite.id,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId: typedPlan.id });
+        await cleanupCaller.plans.plans.delete({ planId: untypedPlan.id });
+      });
+
+      const result = await caller.plans.plans.list({
+        collectiviteId: collectivite.id,
+        typeIds: [pcaetType.id],
+      });
+
+      expect(result.plans.map((p) => p.id)).toEqual([typedPlan.id]);
+      expect(result.totalCount).toBe(1);
+    });
+
+    test('Un tableau typeIds vide ne filtre pas', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const plan = await caller.plans.plans.create({
+        nom: 'Plan hors filtre',
+        collectiviteId: collectivite.id,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId: plan.id });
+      });
+
+      const result = await caller.plans.plans.list({
+        collectiviteId: collectivite.id,
+        typeIds: [],
+      });
+
+      expect(result.plans.map((p) => p.id)).toContain(plan.id);
     });
   });
 

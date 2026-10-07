@@ -1,12 +1,12 @@
-import { TProfondeurAxe } from '@/app/plans/plans/types';
+import { AxeNode } from '@/app/plans/plans/types';
 import { generateTitle } from '@/app/utils/generate-title';
 import { BoutonTableauEmplacement } from './BoutonTableauEmplacement';
 
 type ColonneTableauEmplacementProps = {
-  axesList: TProfondeurAxe[];
+  axesList: AxeNode[];
   selectedAxesIds: number[];
   maxSelectedDepth: number;
-  onSelectAxe: (axe: TProfondeurAxe) => void;
+  onSelectAxe: (axe: AxeNode) => void;
 };
 
 export const ColonneTableauEmplacement = ({
@@ -15,6 +15,10 @@ export const ColonneTableauEmplacement = ({
   maxSelectedDepth = 0,
   onSelectAxe,
 }: ColonneTableauEmplacementProps) => {
+  if (axesList.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-4 px-3">
       {axesList.map((axe) => (
@@ -22,14 +26,14 @@ export const ColonneTableauEmplacement = ({
           key={axe.axe.id}
           id={axe.axe.id}
           label={generateTitle(axe.axe.nom)}
-          hasChildren={!!axe.enfants}
+          hasChildren={axe.enfants.length > 0}
           isSelected={
             selectedAxesIds.includes(axe.axe.id) &&
-            axe.profondeur === maxSelectedDepth
+            axe.depth === maxSelectedDepth
           }
           containsSelectedAxe={
             selectedAxesIds.includes(axe.axe.id) &&
-            axe.profondeur !== maxSelectedDepth
+            axe.depth !== maxSelectedDepth
           }
           onSelect={() => onSelectAxe(axe)}
         />

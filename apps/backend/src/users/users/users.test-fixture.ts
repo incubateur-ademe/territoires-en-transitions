@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { membreTable } from '@tet/backend/collectivites/membres/membre.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
+import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
@@ -123,6 +124,11 @@ export async function addTestUser(
       .delete(utilisateurCollectiviteAccessTable)
       .where(eq(utilisateurCollectiviteAccessTable.userId, userId));
     await db.delete(membreTable).where(eq(membreTable.userId, userId));
+    // `notification.send_to` référence `auth.users` : toute notification
+    // produite par le test retiendrait son destinataire.
+    await db
+      .delete(notificationTable)
+      .where(eq(notificationTable.sendTo, userId));
     await db.delete(authUsersTable).where(eq(authUsersTable.id, userId));
   };
 

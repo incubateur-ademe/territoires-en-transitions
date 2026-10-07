@@ -159,7 +159,6 @@ export class UsersModulesService {
       .onConflictDoUpdate({
         target: [tableauDeBordModuleTable.id],
         set: {
-          titre: sql.raw(`excluded.${tableauDeBordModuleTable.titre.name}`),
           options: sql.raw(`excluded.${tableauDeBordModuleTable.options.name}`),
         },
       })
@@ -228,7 +227,6 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Actions dont je suis le pilote',
         type: 'fiche_action.list',
         defaultKey,
         options: {
@@ -249,7 +247,6 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Sous actions pilotées',
         type: 'fiche_action.list',
         defaultKey,
         options: {
@@ -271,7 +268,6 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Indicateurs dont je suis le pilote',
         type: 'indicateur.list',
         defaultKey,
         options: {
@@ -292,7 +288,6 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Mesures des référentiels dont je suis le pilote',
         type: 'mesure.list',
         defaultKey,
         options: {

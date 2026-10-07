@@ -1,8 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  addTestCollectiviteAndUser,
-  addTestCollectiviteAndUsers,
-} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -10,64 +7,29 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import {
   attachTestPlanToDemarchePcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
-  completeTestVulnerabilitePcaet,
   coverTestDocumentsPcaet,
+  createDemarche,
 } from '../demarches-pcaet.test-fixture';
+import {
+  ligneOf,
+  thematiqueIdOf,
+  vulnerabiliteOf,
+} from '../shared/demarches-pcaet-vulnerabilite.test-fixture';
 
 describe('Vulnérabilité du territoire', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
-  const freshDemarche = async (role = CollectiviteRole.EDITION) => {
-    const fixture = await addTestCollectiviteAndUser(db, { user: { role } });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
-
-  const vulnerabiliteOf = (diagnostic: DemarchePcaetDiagnostic) => {
-    const topic = diagnostic.topics.find(
-      (t) => t.code === 'vulnerabilite_territoire'
-    );
-    if (!topic?.vulnerabilite) {
-      throw new Error('Le topic vulnerabilite_territoire est absent');
-    }
-    return topic.vulnerabilite;
-  };
-
-  const domaineId = (
-    diagnostic: DemarchePcaetDiagnostic,
-    code: string
-  ): number => {
-    const domaine = vulnerabiliteOf(diagnostic).domaines.find(
-      (d) => d.code === code
-    );
-    if (!domaine) {
-      throw new Error(`Le domaine ${code} est absent du socle`);
-    }
-    return domaine.id;
-  };
-
-  const ligneOf = (diagnostic: DemarchePcaetDiagnostic, id: number) => {
-    const ligne = vulnerabiliteOf(diagnostic).lignes.find(
-      (l) => l.domaineId === id
-    );
-    if (!ligne) {
-      throw new Error(`Le domaine ${id} n'a pas de ligne`);
-    }
-    return ligne;
-  };
+  const thematiqueId = (diagnostic: PcaetDiagnostic, code: string): number =>
+    thematiqueIdOf(diagnostic, code);
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -79,8 +41,8 @@ describe('Vulnérabilité du territoire', () => {
     };
   });
 
-  test('Le socle est servi avec une ligne vierge par domaine', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+  test('Le socle est servi avec une ligne vierge par thématique', async () => {
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
 
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
@@ -88,12 +50,17 @@ describe('Vulnérabilité du territoire', () => {
     });
 
     const vulnerabilite = vulnerabiliteOf(diagnostic);
-    expect(vulnerabilite.domaines).toHaveLength(16);
-    expect(vulnerabilite.domaines.every((d) => d.isSocle && d.requis)).toBe(
+    // Le compte du socle bouge à chaque migration : ce qui doit tenir, c'est
+    // qu'il soit entièrement réglementaire et requis, et que chaque
+    // thématique — sous-thématiques comprises — ait sa ligne.
+    expect(vulnerabilite.thematiques.length).toBeGreaterThan(0);
+    expect(vulnerabilite.thematiques.every((d) => d.isSocle && d.requis)).toBe(
       true
     );
-    expect(vulnerabilite.lignes).toHaveLength(16);
-    expect(ligneOf(diagnostic, domaineId(diagnostic, 'eau'))).toMatchObject({
+    expect(vulnerabilite.lignes).toHaveLength(
+      vulnerabilite.thematiques.length
+    );
+    expect(ligneOf(diagnostic, thematiqueId(diagnostic, 'eau'))).toMatchObject({
       niveauMaintenant: null,
       niveau2050: null,
       niveau2100: null,
@@ -101,62 +68,55 @@ describe('Vulnérabilité du territoire', () => {
     });
   });
 
-  test('Poser le constat actuel pré-remplit les horizons vides, sans écraser une correction', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+  test('Une saisie de niveau ne touche que l’horizon visé', async () => {
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const initial = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
     });
-    const eau = domaineId(initial, 'eau');
+    const eau = thematiqueId(initial, 'eau');
 
-    const cascade =
+    const constat =
       await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: eau,
+        thematiqueId: eau,
         niveau: { horizon: 'maintenant', valeur: 'moyen' },
       });
-    expect(ligneOf(cascade, eau)).toMatchObject({
+    expect(ligneOf(constat, eau)).toMatchObject({
       niveauMaintenant: 'moyen',
-      niveau2050: 'moyen',
-      niveau2100: 'moyen',
+      niveau2050: null,
+      niveau2100: null,
     });
 
-    await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
-      collectiviteId,
-      demarcheId: demarche.id,
-      domaineId: eau,
-      niveau: { horizon: '2100', valeur: 'fort' },
-    });
     const apres = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne(
       {
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: eau,
-        niveau: { horizon: 'maintenant', valeur: 'faible' },
+        thematiqueId: eau,
+        niveau: { horizon: '2100', valeur: 'fort' },
       }
     );
-
     expect(ligneOf(apres, eau)).toMatchObject({
-      niveauMaintenant: 'faible',
-      niveau2050: 'moyen',
+      niveauMaintenant: 'moyen',
+      niveau2050: null,
       niveau2100: 'fort',
     });
   });
 
   test('Un objectif vidé redevient une absence de saisie', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const initial = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
     });
-    const foret = domaineId(initial, 'foret');
+    const foret = thematiqueId(initial, 'foret');
 
     const rempli =
       await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: foret,
+        thematiqueId: foret,
         objectifs2050: '  Limiter les coupes rases  ',
       });
     expect(ligneOf(rempli, foret).objectifs2050).toBe(
@@ -166,44 +126,50 @@ describe('Vulnérabilité du territoire', () => {
     const vide = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
       collectiviteId,
       demarcheId: demarche.id,
-      domaineId: foret,
+      thematiqueId: foret,
       objectifs2050: '   ',
     });
     expect(ligneOf(vide, foret).objectifs2050).toBeNull();
   });
 
-  test('Un domaine d’une autre collectivité n’est pas adressable', async () => {
-    const premiere = await freshDemarche();
-    const seconde = await freshDemarche();
+  test('Une thématique d’une autre collectivité n’est pas adressable', async () => {
+    const premiere = await createDemarche(db, router);
+    const seconde = await createDemarche(db, router);
 
     const diagnostic = await seconde.caller.demarches.pcaet.diagnostic.get({
       collectiviteId: seconde.collectiviteId,
       demarcheId: seconde.demarche.id,
     });
     const ajout =
-      await seconde.caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
-        collectiviteId: seconde.collectiviteId,
-        demarcheId: seconde.demarche.id,
-        label: 'Zones humides',
-      });
-    const zonesHumides = vulnerabiliteOf(ajout).domaines.at(-1);
+      await seconde.caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique(
+        {
+          collectiviteId: seconde.collectiviteId,
+          demarcheId: seconde.demarche.id,
+          label: 'Zones humides',
+        }
+      );
+    const zonesHumides = vulnerabiliteOf(ajout).thematiques.at(-1);
     expect(zonesHumides).toBeDefined();
     expect(zonesHumides?.label).toBe('Zones humides');
-    expect(vulnerabiliteOf(diagnostic).domaines).toHaveLength(16);
+    // La première collectivité ne voit que le socle : l'ajout de la seconde
+    // lui reste étranger.
+    expect(
+      vulnerabiliteOf(diagnostic).thematiques.every((d) => d.isSocle)
+    ).toBe(true);
 
     await expect(
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId: premiere.collectiviteId,
         demarcheId: premiere.demarche.id,
-        domaineId: zonesHumides?.id ?? 42,
+        thematiqueId: zonesHumides?.id ?? 42,
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow(/n'existe pas pour la collectivité/);
   });
 
   test('La démarche d’une autre collectivité reste introuvable', async () => {
-    const premiere = await freshDemarche();
-    const seconde = await freshDemarche();
+    const premiere = await createDemarche(db, router);
+    const seconde = await createDemarche(db, router);
     const diagnostic = await premiere.caller.demarches.pcaet.diagnostic.get({
       collectiviteId: premiere.collectiviteId,
       demarcheId: premiere.demarche.id,
@@ -213,7 +179,7 @@ describe('Vulnérabilité du territoire', () => {
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId: premiere.collectiviteId,
         demarcheId: seconde.demarche.id,
-        domaineId: domaineId(diagnostic, 'eau'),
+        thematiqueId: thematiqueId(diagnostic, 'eau'),
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow();
@@ -240,14 +206,14 @@ describe('Vulnérabilité du territoire', () => {
       lecteur.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: domaineId(diagnostic, 'eau'),
+        thematiqueId: thematiqueId(diagnostic, 'eau'),
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow();
   });
 
   test('Le diagnostic n’est plus modifiable une fois le dossier transmis', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
       demarcheId: demarche.id,
@@ -265,14 +231,14 @@ describe('Vulnérabilité du territoire', () => {
       caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: domaineId(diagnostic, 'eau'),
+        thematiqueId: thematiqueId(diagnostic, 'eau'),
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow();
   });
 
-  test('La vulnérabilité conditionne la complétude du diagnostic', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
+  test('La vulnérabilité ne conditionne pas la complétude du diagnostic', async () => {
+    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     await attachTestPlanToDemarchePcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,
@@ -286,22 +252,13 @@ describe('Vulnérabilité du territoire', () => {
       demarcheId: demarche.id,
     });
 
-    // Tout est renseigné sauf la vulnérabilité : la transmission reste fermée.
-    const avant = await caller.demarches.pcaet.get({
+    // Rien n'est obligatoire dans ce volet : la transmission s'ouvre sans
+    // qu'une seule thématique ait été renseignée.
+    const sansVulnerabilite = await caller.demarches.pcaet.get({
       collectiviteId,
       demarcheId: demarche.id,
     });
-    expect(listEnabledTransitions(avant.transitions)).not.toContain(
-      'transmettre_pour_avis'
-    );
-
-    await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
-
-    const apres = await caller.demarches.pcaet.get({
-      collectiviteId,
-      demarcheId: demarche.id,
-    });
-    expect(listEnabledTransitions(apres.transitions)).toContain(
+    expect(listEnabledTransitions(sansVulnerabilite.transitions)).toContain(
       'transmettre_pour_avis'
     );
   });

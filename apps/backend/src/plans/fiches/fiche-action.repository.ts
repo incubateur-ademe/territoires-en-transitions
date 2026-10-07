@@ -1,4 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  FicheCandidateError,
+  FicheCandidateErrorEnum,
+  FicheTextError,
+  FicheTextErrorEnum,
+} from '@tet/backend/collectivites/analysis/analyze-fiches/analyze-fiches.errors';
+import {
+  FicheCandidateRepository,
+  FicheCandidateSelection,
+} from '@tet/backend/collectivites/analysis/analyze-fiches/fiche-candidate.repository';
+import { FicheTextRepository } from '@tet/backend/collectivites/analysis/analyze-fiches/fiche-text.repository';
+import { ficheActionAnalysisTable } from '@tet/backend/collectivites/analysis/models/fiche-action-analysis.table';
+import {
+  FicheAnalysis,
+  FicheCandidate,
+  FicheText,
+} from '@tet/backend/collectivites/analysis/models/fiche-analysis';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
@@ -6,6 +23,7 @@ import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-t
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { isErrorWithCause } from '@tet/backend/utils/nest/errors.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -16,18 +34,26 @@ import {
   ficheSchemaUpdate,
   FicheWithRelations,
 } from '@tet/domain/plans';
+import { getErrorMessage } from '@tet/domain/utils';
 import {
+  and,
   Column,
   ColumnBaseConfig,
   ColumnDataType,
   eq,
+  gt,
   inArray,
+  isNotNull,
+  isNull,
+  ne,
   or,
+  SQL,
   TableConfig,
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { partition } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
+import { match } from 'ts-pattern';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { ficheActionNoteTable } from './fiche-action-note/fiche-action-note.table';
 import { axeTable } from './shared/models/axe.table';
@@ -56,6 +82,31 @@ export type FicheActionWriteError =
   | 'RELATION_COLLECTIVITE_MISMATCH'
   | 'SERVER_ERROR';
 
+const PROCESSED_STATUS = 'processed' satisfies FicheAnalysis['status'];
+
+const isFicheCandidate = and(
+  isNull(ficheActionTable.parentId),
+  or(
+    eq(ficheActionTable.deleted, false),
+    isNotNull(ficheActionAnalysisTable.ficheId)
+  )
+);
+
+const toSelectionCondition = (
+  selection: FicheCandidateSelection
+): SQL | undefined =>
+  match(selection)
+    .with({ kind: 'every_fiche' }, () => undefined)
+    .with({ kind: 'pending_since' }, ({ since }) =>
+      or(
+        eq(ficheActionTable.deleted, true),
+        isNull(ficheActionAnalysisTable.ficheId),
+        ne(ficheActionAnalysisTable.status, PROCESSED_STATUS),
+        gt(ficheActionTable.modifiedAt, since.toISOString())
+      )
+    )
+    .exhaustive();
+
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
   object,
@@ -77,8 +128,119 @@ type RelationObjectType =
   | { ficheId: number | string; effetAttenduId: number };
 
 @Injectable()
-export class FicheActionRepository {
+export class FicheActionRepository
+  implements FicheCandidateRepository, FicheTextRepository
+{
   private readonly logger = new Logger(FicheActionRepository.name);
+
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async listCollectivitesWithFicheCandidates(): Promise<
+    Result<number[], FicheCandidateError>
+  > {
+    try {
+      const collectiviteRows = await this.databaseService.db
+        .selectDistinct({ collectiviteId: ficheActionTable.collectiviteId })
+        .from(ficheActionTable)
+        .leftJoin(
+          ficheActionAnalysisTable,
+          eq(ficheActionAnalysisTable.ficheId, ficheActionTable.id)
+        )
+        .where(isFicheCandidate)
+        .orderBy(ficheActionTable.collectiviteId);
+
+      return success(
+        collectiviteRows.map(({ collectiviteId }) => collectiviteId)
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not list collectivites with fiche candidates: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        FicheCandidateErrorEnum.LIST_COLLECTIVITES_WITH_FICHE_CANDIDATES_ERROR
+      );
+    }
+  }
+
+  async listFicheCandidates(
+    selection: FicheCandidateSelection
+  ): Promise<Result<FicheCandidate[], FicheCandidateError>> {
+    try {
+      const ficheRows = await this.databaseService.db
+        .select({
+          ficheId: ficheActionTable.id,
+          collectiviteId: ficheActionTable.collectiviteId,
+          titre: ficheActionTable.titre,
+          description: ficheActionTable.description,
+          modifiedAt: ficheActionTable.modifiedAt,
+          deleted: ficheActionTable.deleted,
+        })
+        .from(ficheActionTable)
+        .leftJoin(
+          ficheActionAnalysisTable,
+          eq(ficheActionAnalysisTable.ficheId, ficheActionTable.id)
+        )
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, selection.collectiviteId),
+            isFicheCandidate,
+            toSelectionCondition(selection)
+          )
+        );
+
+      return success(
+        ficheRows.map(({ titre, modifiedAt, deleted, ...fiche }) => ({
+          ...fiche,
+          titre: titre ?? '',
+          modifiedAt: new Date(modifiedAt),
+          isDeleted: deleted === true,
+        }))
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not list fiche candidates of collectivite ${
+          selection.collectiviteId
+        }: ${getErrorMessage(error)}`
+      );
+      return failure(FicheCandidateErrorEnum.LIST_FICHE_CANDIDATES_ERROR);
+    }
+  }
+
+  async listFicheTexts({
+    ficheIds,
+  }: {
+    readonly ficheIds: readonly number[];
+  }): Promise<Result<FicheText[], FicheTextError>> {
+    if (ficheIds.length === 0) {
+      return success([]);
+    }
+    try {
+      const ficheTextRows = await this.databaseService.db
+        .select({
+          ficheId: ficheActionTable.id,
+          titre: ficheActionTable.titre,
+          description: ficheActionTable.description,
+        })
+        .from(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [...ficheIds]));
+
+      return success(
+        ficheTextRows.map(({ titre, ...fiche }) => ({
+          ...fiche,
+          titre: titre ?? '',
+        }))
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not list texts of ${ficheIds.length} fiches: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(FicheTextErrorEnum.LIST_FICHE_TEXTS_ERROR);
+    }
+  }
 
   async applyCreate({
     fiche,
@@ -187,7 +349,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: axeTable.id, collectiviteId: axeTable.collectiviteId })
+              .select({
+                id: axeTable.id,
+                collectiviteId: axeTable.collectiviteId,
+              })
               .from(axeTable)
               .where(inArray(axeTable.id, ids))
         );
@@ -199,7 +364,8 @@ export class FicheActionRepository {
           ficheActionAxeTable,
           ['id'],
           ficheActionAxeTable.ficheId,
-          [ficheActionAxeTable.axeId]
+          [ficheActionAxeTable.axeId],
+          user.id
         );
       }
 
@@ -211,7 +377,8 @@ export class FicheActionRepository {
           ficheActionThematiqueTable,
           ['id'],
           ficheActionThematiqueTable.ficheId,
-          [ficheActionThematiqueTable.thematiqueId]
+          [ficheActionThematiqueTable.thematiqueId],
+          user.id
         );
       }
 
@@ -223,7 +390,8 @@ export class FicheActionRepository {
           ficheActionSousThematiqueTable,
           ['id'],
           ficheActionSousThematiqueTable.ficheId,
-          [ficheActionSousThematiqueTable.thematiqueId]
+          [ficheActionSousThematiqueTable.thematiqueId],
+          user.id
         );
       }
 
@@ -234,7 +402,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: partenaireTagTable.id, collectiviteId: partenaireTagTable.collectiviteId })
+              .select({
+                id: partenaireTagTable.id,
+                collectiviteId: partenaireTagTable.collectiviteId,
+              })
               .from(partenaireTagTable)
               .where(inArray(partenaireTagTable.id, ids))
         );
@@ -257,7 +428,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: structureTagTable.id, collectiviteId: structureTagTable.collectiviteId })
+              .select({
+                id: structureTagTable.id,
+                collectiviteId: structureTagTable.collectiviteId,
+              })
               .from(structureTagTable)
               .where(inArray(structureTagTable.id, ids))
         );
@@ -282,7 +456,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: personneTagTable.id, collectiviteId: personneTagTable.collectiviteId })
+              .select({
+                id: personneTagTable.id,
+                collectiviteId: personneTagTable.collectiviteId,
+              })
               .from(personneTagTable)
               .where(inArray(personneTagTable.id, ids))
         );
@@ -294,7 +471,8 @@ export class FicheActionRepository {
           ficheActionPiloteTable,
           ['tagId', 'userId'],
           ficheActionPiloteTable.ficheId,
-          [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
+          [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId],
+          user.id
         );
       }
 
@@ -307,7 +485,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: personneTagTable.id, collectiviteId: personneTagTable.collectiviteId })
+              .select({
+                id: personneTagTable.id,
+                collectiviteId: personneTagTable.collectiviteId,
+              })
               .from(personneTagTable)
               .where(inArray(personneTagTable.id, ids))
         );
@@ -319,7 +500,8 @@ export class FicheActionRepository {
           ficheActionReferentTable,
           ['tagId', 'userId'],
           ficheActionReferentTable.ficheId,
-          [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
+          [ficheActionReferentTable.tagId, ficheActionReferentTable.userId],
+          user.id
         );
       }
 
@@ -343,7 +525,8 @@ export class FicheActionRepository {
           ficheActionIndicateurTable,
           ['id'],
           ficheActionIndicateurTable.ficheId,
-          [ficheActionIndicateurTable.indicateurId]
+          [ficheActionIndicateurTable.indicateurId],
+          user.id
         );
       }
 
@@ -354,7 +537,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: serviceTagTable.id, collectiviteId: serviceTagTable.collectiviteId })
+              .select({
+                id: serviceTagTable.id,
+                collectiviteId: serviceTagTable.collectiviteId,
+              })
               .from(serviceTagTable)
               .where(inArray(serviceTagTable.id, ids))
         );
@@ -379,7 +565,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: financeurTagTable.id, collectiviteId: financeurTagTable.collectiviteId })
+              .select({
+                id: financeurTagTable.id,
+                collectiviteId: financeurTagTable.collectiviteId,
+              })
               .from(financeurTagTable)
               .where(inArray(financeurTagTable.id, ids))
         );
@@ -452,7 +641,10 @@ export class FicheActionRepository {
           existingFiche.collectiviteId,
           (ids) =>
             tx
-              .select({ id: libreTagTable.id, collectiviteId: libreTagTable.collectiviteId })
+              .select({
+                id: libreTagTable.id,
+                collectiviteId: libreTagTable.collectiviteId,
+              })
               .from(libreTagTable)
               .where(inArray(libreTagTable.id, ids))
         );
@@ -504,7 +696,9 @@ export class FicheActionRepository {
   private async assertIdsInCollectivite(
     ids: number[],
     collectiviteId: number,
-    fetchRows: (ids: number[]) => Promise<{ id: number; collectiviteId: number }[]>
+    fetchRows: (
+      ids: number[]
+    ) => Promise<{ id: number; collectiviteId: number }[]>
   ): Promise<Result<void, 'RELATION_COLLECTIVITE_MISMATCH'>> {
     if (ids.length === 0) return success(undefined);
     const uniqueIds = [...new Set(ids)];
@@ -518,9 +712,7 @@ export class FicheActionRepository {
     return success(undefined);
   }
 
-  private toServerError(
-    error: unknown
-  ): Result<never, FicheActionWriteError> {
+  private toServerError(error: unknown): Result<never, FicheActionWriteError> {
     if (isErrorWithCause(error)) {
       this.logger.error(
         `Error cause: ${error.cause.message} (${error.cause.code}, ${error.cause.constraint})`
@@ -611,6 +803,15 @@ export class FicheActionRepository {
     }
   }
 
+  /**
+   * Ne supprime/insère que les relations qui changent réellement, pour que
+   * created_at/created_by des relations inchangées ne soient pas réinitialisés
+   * à chaque sauvegarde de la fiche (et pour poser created_by sur les
+   * relations effectivement créées : ces tables n'ont plus de défaut
+   * `auth.uid()`, valeur toujours null sous connexion Drizzle — cf
+   * setRestreintForPlanFiches (upsert-plan.repository.ts) — created_by y est donc obligatoire et
+   * posé applicativement).
+   */
   private async updateRelations(
     ficheActionId: number,
     relations: any[] | null,
@@ -618,9 +819,10 @@ export class FicheActionRepository {
     table: PgTable<TableConfig>,
     relationIdKeys: string[],
     ficheIdColumn: ColumnType,
-    relationIdColumns: ColumnType[]
+    relationIdColumns: ColumnType[],
+    userId?: string
   ) {
-    const relationsToUpdate = this.buildRelationsToUpdate(
+    const desiredRelations = this.buildRelationsToUpdate(
       ficheActionId,
       ficheIdColumn,
       relationIdColumns,
@@ -628,13 +830,57 @@ export class FicheActionRepository {
       relationIdKeys
     );
 
-    await tx.delete(table).where(eq(ficheIdColumn, ficheActionId));
+    const existingRows: any[] = await tx
+      .select()
+      .from(table)
+      .where(eq(ficheIdColumn, ficheActionId));
 
-    if (relationsToUpdate.length > 0) {
-      return await tx.insert(table).values(relationsToUpdate).returning();
+    const relationKey = (row: any) =>
+      JSON.stringify(
+        relationIdColumns.map((column) => row[toCamel(column.name)])
+      );
+
+    const existingKeys = new Set(existingRows.map(relationKey));
+    const desiredKeys = new Set(desiredRelations.map(relationKey));
+
+    const rowsToDelete = existingRows.filter(
+      (row) => !desiredKeys.has(relationKey(row))
+    );
+    const rowsToInsert = desiredRelations.filter(
+      (relation) => !existingKeys.has(relationKey(relation))
+    );
+
+    if (rowsToDelete.length > 0) {
+      await tx.delete(table).where(
+        and(
+          eq(ficheIdColumn, ficheActionId),
+          or(
+            ...rowsToDelete.map((row) =>
+              and(
+                ...relationIdColumns.map((column) => {
+                  const value = row[toCamel(column.name)];
+                  return value === null ? isNull(column) : eq(column, value);
+                })
+              )
+            )
+          )
+        )
+      );
     }
 
-    return [];
+    if (rowsToInsert.length === 0) {
+      return [];
+    }
+
+    return await tx
+      .insert(table)
+      .values(
+        rowsToInsert.map((relation) => ({
+          ...relation,
+          ...(userId ? { createdBy: userId } : {}),
+        }))
+      )
+      .returning();
   }
 
   private buildRelationsToUpdate(

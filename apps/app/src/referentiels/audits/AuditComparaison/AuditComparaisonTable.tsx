@@ -1,9 +1,9 @@
-import { divisionOrZero, roundTo } from '@tet/domain/utils';
+import { round } from 'es-toolkit';
+import { divisionOrZero } from '@tet/domain/utils';
 import { useMemo } from 'react';
 import {
   CellProps,
   Column,
-  HeaderProps,
   useExpanded,
   useFlexLayout,
   useTable,
@@ -19,10 +19,7 @@ import { TableData } from './useTableData';
 export type TDetailTacheTableProps = {
   tableData: TableData;
 };
-export type THeaderProps = HeaderProps<TScoreAuditTableRow> & {
-  headerData?: TScoreAuditRowData;
-};
-export type TCellProps = CellProps<TScoreAuditTableRow>;
+type TCellProps = CellProps<TScoreAuditTableRow>;
 export type TColumn = Column<TScoreAuditTableRow>;
 
 /** Vérifie si la valeur courante d'un champ diffère de sa valeur avant audit */
@@ -47,8 +44,8 @@ const getDifference = (
       ? divisionOrZero(courant.pointFait, courant.pointPotentiel)
       : courant[field];
 
-  const previous = roundTo(preAuditValue as number, 3);
-  const current = roundTo(currentValue as number, 3);
+  const previous = round(preAuditValue as number, 3);
+  const current = round(currentValue as number, 3);
 
   if (previous === current) {
     return undefined;

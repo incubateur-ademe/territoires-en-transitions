@@ -6,7 +6,7 @@ import ActionCommentsItemsList from './action-comments.items-list';
 import ActionNewDiscussionInput from './action-new-discussion-input';
 import { useAddDiscussion } from './hooks/use-add-discussion';
 
-export type Props = {
+type Props = {
   discussion: DiscussionWithMessages;
   title: string | undefined;
   isDisplayedAsPanel: boolean;

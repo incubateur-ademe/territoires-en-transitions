@@ -1,0 +1,50 @@
+name: Analyse des fiches action (priorisation des actions)
+
+run-name: Analyse des fiches action des CT ${{ inputs.collectivites }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      collectivites:
+        type: string
+        description: 'CT à analyser : identifiants séparés par des virgules (ex : 12,45,78), ou all pour toutes les CT.'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: analyze-fiches
+  cancel-in-progress: false
+
+jobs:
+  analyze-fiches:
+    name: Passage d'analyse des fiches
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - name: Build du backend
+        run: pnpm nx build backend
+
+      - name: Passage d'analyse
+        env:
+          NODE_ENV: production
+          COLLECTIVITES: ${{ inputs.collectivites }}
+          SUPABASE_DATABASE_URL: ${{ secrets.PROD_DB_URL }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PROD_SUPABASE_SERVICE_ROLE_KEY }}
+          GCLOUD_SERVICE_ACCOUNT_KEY: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_CLOUD_PROJECT: tet-gcloud
+          GOOGLE_CLOUD_LOCATION: eu
+          GEMINI_MODEL: gemini-3.5-flash
+        run: node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js "--collectivites=$COLLECTIVITES"

@@ -12,7 +12,6 @@ export * from './hooks/useOnlineStatus';
 // dossier composants
 export * from './components/DSFRCompliancyComponent';
 export * from './components/EmptyCard/EmptyCard';
-export * from './components/InfoActionImpact';
 export * from './components/layout';
 export * from './components/tracking';
 
@@ -42,6 +41,7 @@ export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
 export * from './design-system/Pagination';
+export * from './design-system/ProConnectButton';
 export * from './design-system/Picto/PictoPadlock';
 export * from './design-system/Picto/PictoWarning';
 export * from './design-system/RadioButton';

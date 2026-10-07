@@ -1,0 +1,727 @@
+import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
+import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
+import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
+import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
+import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
+import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Collectivite, DocumentHash } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
+import { and, eq, inArray, like } from 'drizzle-orm';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { PREUVES_ARCHIVES_BUCKET } from '@tet/backend/referentiels/preuves-archive/preuves-archive.constants';
+import { ListDocumentsByScopeRepository } from './list-documents-by-scope.repository';
+
+const ACTION_ID = 'cae_1.1.3';
+const PREUVE_REGLEMENTAIRE_ID = 'preuve-reglementaire-cloisonnement';
+
+describe('ListDocumentsByScopeRepository - filtre confidentiel (SQL réel)', () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let repository: ListDocumentsByScopeRepository;
+  let collectivite: Collectivite;
+  let adminUserId: string;
+  let cleanupCollectivite: () => Promise<void>;
+
+  let publicHash: DocumentHash;
+  let confidentielHash: DocumentHash;
+  let purgeHash: DocumentHash;
+  let purgeConfidentielHash: DocumentHash;
+
+  let otherCollectivite: Collectivite;
+  let cleanupOtherCollectivite: () => Promise<void>;
+  let otherCollectiviteHash: DocumentHash;
+  let auditId: number;
+  let demandeId: number;
+  let cleanupAudit: () => Promise<void>;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    repository = app.get(ListDocumentsByScopeRepository);
+
+    const collectiviteFixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = collectiviteFixture.collectivite;
+    adminUserId = getAuthUserFromUserCredentials(collectiviteFixture.user).id;
+    cleanupCollectivite = collectiviteFixture.cleanup;
+
+    publicHash = buildRandomDocumentHash();
+    confidentielHash = buildRandomDocumentHash();
+    purgeHash = buildRandomDocumentHash();
+    purgeConfidentielHash = buildRandomDocumentHash();
+
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectivite.id,
+    });
+
+    const fichiers = await db.db
+      .insert(bibliothequeFichierTable)
+      .values([
+        {
+          collectiviteId: collectivite.id,
+          hash: publicHash,
+          filename: 'public.pdf',
+          confidentiel: false,
+        },
+        {
+          collectiviteId: collectivite.id,
+          hash: confidentielHash,
+          filename: 'secret.pdf',
+          confidentiel: true,
+        },
+        {
+          collectiviteId: collectivite.id,
+          hash: purgeHash,
+          filename: 'avis-technique-purge.pdf',
+          confidentiel: false,
+        },
+        {
+          collectiviteId: collectivite.id,
+          hash: purgeConfidentielHash,
+          filename: 'secret-purge.pdf',
+          confidentiel: true,
+        },
+      ])
+      .returning();
+
+    const [fichierPublic] = fichiers;
+
+    await db.db.insert(storageObjectTable).values(
+      fichiers
+        .filter(
+          (fichier) =>
+            fichier.hash !== purgeHash && fichier.hash !== purgeConfidentielHash
+        )
+        .map((fichier) => ({
+          bucketId: PREUVES_ARCHIVES_BUCKET,
+          name: fichier.hash,
+          metadata: { size: 1024 },
+        }))
+    );
+
+    await db.db.insert(preuveComplementaireTable).values([
+      ...fichiers.map((fichier) => ({
+        collectiviteId: collectivite.id,
+        actionId: ACTION_ID,
+        fichierId: fichier.id,
+        modifiedBy: adminUserId,
+      })),
+      {
+        collectiviteId: collectivite.id,
+        actionId: ACTION_ID,
+        url: 'https://exemple.fr/lien-public',
+        titre: 'Lien public',
+        modifiedBy: adminUserId,
+      },
+    ]);
+
+    const otherCollectiviteFixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    otherCollectivite = otherCollectiviteFixture.collectivite;
+    cleanupOtherCollectivite = otherCollectiviteFixture.cleanup;
+    otherCollectiviteHash = buildRandomDocumentHash();
+
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: otherCollectivite.id,
+    });
+
+    const [otherCollectiviteFichier] = await db.db
+      .insert(bibliothequeFichierTable)
+      .values({
+        collectiviteId: otherCollectivite.id,
+        hash: otherCollectiviteHash,
+        filename: 'document-d-une-autre-collectivite.pdf',
+        confidentiel: false,
+      })
+      .returning();
+
+    await db.db.insert(storageObjectTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      name: otherCollectiviteFichier.hash,
+      metadata: { size: 2048 },
+    });
+
+    const auditFixture = await createAudit({
+      databaseService: db,
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      withDemande: true,
+    });
+    auditId = auditFixture.audit.id;
+    cleanupAudit = auditFixture.cleanup;
+    const { demande } = auditFixture;
+    if (!demande) {
+      throw new Error('createAudit with withDemande must produce a demande');
+    }
+    demandeId = demande.id;
+
+    await db.db.insert(preuveReglementaireDefinitionTable).values({
+      id: PREUVE_REGLEMENTAIRE_ID,
+      nom: 'Preuve réglementaire de cloisonnement',
+      description: '',
+    });
+
+    await db.db.insert(preuveActionTable).values({
+      preuveId: PREUVE_REGLEMENTAIRE_ID,
+      actionId: ACTION_ID,
+    });
+
+    await db.db.insert(preuveReglementaireTable).values([
+      {
+        collectiviteId: collectivite.id,
+        preuveId: PREUVE_REGLEMENTAIRE_ID,
+        fichierId: fichierPublic.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        preuveId: PREUVE_REGLEMENTAIRE_ID,
+        fichierId: otherCollectiviteFichier.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+
+    await db.db.insert(preuveLabellisationTable).values([
+      {
+        collectiviteId: collectivite.id,
+        demandeId,
+        fichierId: fichierPublic.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        demandeId,
+        fichierId: otherCollectiviteFichier.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+
+    await db.db.insert(preuveComplementaireTable).values({
+      collectiviteId: collectivite.id,
+      actionId: ACTION_ID,
+      fichierId: otherCollectiviteFichier.id,
+      modifiedBy: adminUserId,
+    });
+
+    await db.db.insert(preuveAuditTable).values([
+      {
+        collectiviteId: collectivite.id,
+        auditId,
+        fichierId: fichierPublic.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        auditId,
+        fichierId: otherCollectiviteFichier.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+  });
+
+  afterAll(async () => {
+    await cleanupAudit();
+    await db.db
+      .delete(preuveActionTable)
+      .where(eq(preuveActionTable.preuveId, PREUVE_REGLEMENTAIRE_ID));
+    await db.db
+      .delete(preuveReglementaireDefinitionTable)
+      .where(
+        eq(preuveReglementaireDefinitionTable.id, PREUVE_REGLEMENTAIRE_ID)
+      );
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          eq(storageObjectTable.name, otherCollectiviteHash)
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, otherCollectivite.id));
+    await cleanupOtherCollectivite();
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          inArray(storageObjectTable.name, [publicHash, confidentielHash])
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
+    await cleanupCollectivite();
+    await app.close();
+  });
+
+  test("une preuve complémentaire pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve d'audit pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
+    const result = await repository.listDocuments({
+      kind: 'audit',
+      collectiviteId: collectivite.id,
+      auditId,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve réglementaire pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
+    const result = await repository.listDocuments({
+      kind: 'reglementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve de labellisation pointant vers le fichier d'une autre collectivité n'entre pas dans l'archive", async () => {
+    const result = await repository.listDocuments({
+      kind: 'labellisation',
+      collectiviteId: collectivite.id,
+      demandeId,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const hashes = result.data.files.map((file) => file.hash);
+    expect(hashes).toContain(publicHash);
+    expect(hashes).not.toContain(otherCollectiviteHash);
+  });
+
+  test("une preuve dont l'objet de stockage a disparu ressort en fichier manquant", async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).not.toContain(purgeHash);
+    expect(result.data.missingFiles).toContainEqual({
+      hash: purgeHash,
+      filename: 'avis-technique-purge.pdf',
+      actionId: ACTION_ID,
+    });
+    expect(result.data.missingFiles.map((file) => file.hash)).toContain(
+      purgeConfidentielHash
+    );
+  });
+
+  test("un fichier public dont l'objet a disparu reste signalé sans droit confidentiel", async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.missingFiles.map((file) => file.hash)).toContain(
+      purgeHash
+    );
+  });
+
+  test("un fichier confidentiel dont l'objet a disparu ne fuite pas son nom sans droit confidentiel", async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.missingFiles.map((file) => file.hash)).not.toContain(
+      purgeConfidentielHash
+    );
+    expect(result.data.missingFiles.map((file) => file.filename)).not.toContain(
+      'secret-purge.pdf'
+    );
+  });
+
+  test('canReadConfidentiel=true : expose le fichier public ET le confidentiel', async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash).sort()).toEqual(
+      [confidentielHash, publicHash].sort()
+    );
+  });
+
+  test('canReadConfidentiel=false : masque le confidentiel, garde le public', async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([publicHash]);
+  });
+
+  test('un lien (sans fichier) reste visible même sans droit confidentiel', async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.links.map((link) => link.url)).toEqual([
+      'https://exemple.fr/lien-public',
+    ]);
+  });
+});
+
+describe('ListDocumentsByScopeRepository - scope par référentiel (SQL réel)', () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let repository: ListDocumentsByScopeRepository;
+  let collectivite: Collectivite;
+  let adminUserId: string;
+  let cleanupCollectivite: () => Promise<void>;
+
+  let caeHash: DocumentHash;
+  let eciHash: DocumentHash;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    repository = app.get(ListDocumentsByScopeRepository);
+
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = fixture.collectivite;
+    adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
+    cleanupCollectivite = fixture.cleanup;
+
+    caeHash = buildRandomDocumentHash();
+    eciHash = buildRandomDocumentHash();
+
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectivite.id,
+    });
+
+    const fichiers = await db.db
+      .insert(bibliothequeFichierTable)
+      .values([
+        {
+          collectiviteId: collectivite.id,
+          hash: caeHash,
+          filename: 'preuve-cae.pdf',
+          confidentiel: false,
+        },
+        {
+          collectiviteId: collectivite.id,
+          hash: eciHash,
+          filename: 'preuve-eci.pdf',
+          confidentiel: false,
+        },
+      ])
+      .returning();
+    const [fichierCae, fichierEci] = fichiers;
+
+    await db.db.insert(storageObjectTable).values(
+      fichiers.map((fichier) => ({
+        bucketId: PREUVES_ARCHIVES_BUCKET,
+        name: fichier.hash,
+        metadata: { size: 1024 },
+      }))
+    );
+
+    await db.db.insert(preuveComplementaireTable).values([
+      {
+        collectiviteId: collectivite.id,
+        actionId: 'cae_1.1.3',
+        fichierId: fichierCae.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        actionId: 'eci_1.1.1',
+        fichierId: fichierEci.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+  });
+
+  afterAll(async () => {
+    await db.db
+      .delete(preuveComplementaireTable)
+      .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          like(storageObjectTable.name, `%${collectivite.id}`)
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
+    await cleanupCollectivite();
+    await app.close();
+  });
+
+  test('referentielId=cae : ne renvoie que la preuve rattachée à une action CAE', async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([caeHash]);
+  });
+
+  test('referentielId=eci : ne renvoie que la preuve rattachée à une action ECI', async () => {
+    const result = await repository.listDocuments({
+      kind: 'complementaire',
+      collectiviteId: collectivite.id,
+      referentielId: 'eci',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([eciHash]);
+  });
+});
+
+const MESURE_PARENT = 'cae_1.1';
+const MESURE_ENFANT = 'cae_1.1.3';
+const MESURE_VOISINE = 'cae_1.2.1';
+const PREUVE_REGLEMENTAIRE_MESURE_ID = 'preuve-reglementaire-mesure';
+
+describe('ListDocumentsByScopeRepository - scope par mesure (SQL réel)', () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let repository: ListDocumentsByScopeRepository;
+  let collectivite: Collectivite;
+  let cleanupCollectivite: () => Promise<void>;
+
+  let parentHash: DocumentHash;
+  let enfantHash: DocumentHash;
+  let voisineHash: DocumentHash;
+  let reglementaireHash: DocumentHash;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    repository = app.get(ListDocumentsByScopeRepository);
+
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = fixture.collectivite;
+    const adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
+    cleanupCollectivite = fixture.cleanup;
+
+    parentHash = buildRandomDocumentHash();
+    enfantHash = buildRandomDocumentHash();
+    voisineHash = buildRandomDocumentHash();
+    reglementaireHash = buildRandomDocumentHash();
+
+    await db.db.insert(collectiviteBucketTable).values({
+      bucketId: PREUVES_ARCHIVES_BUCKET,
+      collectiviteId: collectivite.id,
+    });
+
+    const fichiers = await db.db
+      .insert(bibliothequeFichierTable)
+      .values(
+        [
+          { hash: parentHash, filename: 'parent.pdf' },
+          { hash: enfantHash, filename: 'enfant.pdf' },
+          { hash: voisineHash, filename: 'voisine.pdf' },
+          { hash: reglementaireHash, filename: 'reglementaire.pdf' },
+        ].map(({ hash, filename }) => ({
+          collectiviteId: collectivite.id,
+          hash,
+          filename,
+          confidentiel: false,
+        }))
+      )
+      .returning();
+    const [fichierParent, fichierEnfant, fichierVoisine, fichierReglementaire] =
+      fichiers;
+
+    await db.db.insert(storageObjectTable).values(
+      fichiers.map((fichier) => ({
+        bucketId: PREUVES_ARCHIVES_BUCKET,
+        name: fichier.hash,
+        metadata: { size: 1024 },
+      }))
+    );
+
+    await db.db.insert(preuveComplementaireTable).values([
+      {
+        collectiviteId: collectivite.id,
+        actionId: MESURE_PARENT,
+        fichierId: fichierParent.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        actionId: MESURE_ENFANT,
+        fichierId: fichierEnfant.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        actionId: MESURE_VOISINE,
+        fichierId: fichierVoisine.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+
+    await db.db.insert(preuveReglementaireDefinitionTable).values({
+      id: PREUVE_REGLEMENTAIRE_MESURE_ID,
+      nom: 'Preuve réglementaire de la mesure',
+      description: '',
+    });
+
+    await db.db.insert(preuveActionTable).values({
+      preuveId: PREUVE_REGLEMENTAIRE_MESURE_ID,
+      actionId: MESURE_ENFANT,
+    });
+
+    await db.db.insert(preuveReglementaireTable).values({
+      collectiviteId: collectivite.id,
+      preuveId: PREUVE_REGLEMENTAIRE_MESURE_ID,
+      fichierId: fichierReglementaire.id,
+      modifiedBy: adminUserId,
+    });
+  });
+
+  afterAll(async () => {
+    await db.db
+      .delete(preuveReglementaireTable)
+      .where(eq(preuveReglementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(preuveActionTable)
+      .where(eq(preuveActionTable.preuveId, PREUVE_REGLEMENTAIRE_MESURE_ID));
+    await db.db
+      .delete(preuveReglementaireDefinitionTable)
+      .where(
+        eq(
+          preuveReglementaireDefinitionTable.id,
+          PREUVE_REGLEMENTAIRE_MESURE_ID
+        )
+      );
+    await db.db
+      .delete(preuveComplementaireTable)
+      .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          inArray(storageObjectTable.name, [
+            parentHash,
+            enfantHash,
+            voisineHash,
+            reglementaireHash,
+          ])
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
+    await cleanupCollectivite();
+    await app.close();
+  });
+
+  test('withSubActions=true : rassemble les deux familles de la mesure et de ses sous-mesures', async () => {
+    const result = await repository.listDocuments({
+      kind: 'mesure',
+      collectiviteId: collectivite.id,
+      actionId: MESURE_PARENT,
+      withSubActions: true,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash).sort()).toEqual(
+      [parentHash, enfantHash, reglementaireHash].sort()
+    );
+  });
+
+  test('withSubActions=false : ne rend que les documents portés par la mesure elle-même', async () => {
+    const result = await repository.listDocuments({
+      kind: 'mesure',
+      collectiviteId: collectivite.id,
+      actionId: MESURE_PARENT,
+      withSubActions: false,
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([parentHash]);
+  });
+});

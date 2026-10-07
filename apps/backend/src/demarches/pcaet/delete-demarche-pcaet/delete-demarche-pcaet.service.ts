@@ -52,8 +52,8 @@ export class DeleteDemarchePcaetService {
         return failure(DeleteDemarchePcaetErrorEnum.UNAUTHORIZED);
       }
 
-      // Un dossier déjà transmis est engagé dans le circuit d'avis
-      // (demandes, instruction) : pas de suppression, même après reprise.
+      // Passé l'élaboration, le dossier est engagé dans le circuit d'avis
+      // (demandes, instruction) : il ne se supprime plus.
       if (!canDeleteDemarchePcaet(demarche)) {
         return failure(DeleteDemarchePcaetErrorEnum.DEMARCHE_NON_SUPPRIMABLE);
       }

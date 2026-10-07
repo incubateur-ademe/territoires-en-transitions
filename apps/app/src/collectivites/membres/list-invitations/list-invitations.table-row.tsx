@@ -1,11 +1,11 @@
 'use client';
 
 import { Invitation } from '@/app/collectivites/membres/list-invitations/use-list-pending-invitations';
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { appLabels } from '@/app/labels/catalog';
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button, TableCell, TableRow, Tooltip } from '@tet/ui';
 import { useState } from 'react';
-import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
+import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(commun)/users/_components/badge-acces';
 import { SendInvitationArgs } from '../invite-membre/use-send-invitation';
 import { ConfirmerSuppressionInvitation } from '../remove-invitation/confirm-remove-invitation.modal';
 
@@ -50,7 +50,7 @@ const ListInvitationsTableRow = ({
                   }
                 />
               </Tooltip>
-              <Tooltip label={appLabels.supprimerInvitation}>
+              <Tooltip label={appLabels.annulerInvitation}>
                 <DeleteButton
                   data-test="delete-invitation"
                   size="xs"

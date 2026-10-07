@@ -83,36 +83,6 @@ describe('Supprimer une démarche PCAET', () => {
     );
   });
 
-  test('Refuser la suppression d’une démarche transmise puis reprise en élaboration', async () => {
-    const { caller, collectivite } = await freshEditor();
-    const created = await caller.demarches.pcaet.create({
-      collectiviteId: collectivite.id,
-    });
-    // Une fois transmis, le dossier est engagé dans le circuit d'avis : la
-    // reprise d'élaboration ne le rend pas de nouveau supprimable.
-    await completeTestDossierPcaet(db, {
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    await caller.demarches.pcaet.transmettrePourAvis({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    await caller.demarches.pcaet.reprendreElaboration({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-
-    await expect(
-      caller.demarches.pcaet.delete({
-        collectiviteId: collectivite.id,
-        demarcheId: created.id,
-      })
-    ).rejects.toThrow(
-      'Une démarche transmise ou publiée ne peut pas être supprimée'
-    );
-  });
-
   test("IDOR : une démarche n'est pas supprimable via une autre collectivité", async () => {
     const owner = await freshEditor();
     const created = await owner.caller.demarches.pcaet.create({

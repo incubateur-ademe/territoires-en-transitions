@@ -14,14 +14,17 @@ import { PersonnalisationRegleCreate } from '@tet/domain/collectivites';
 import {
   ActionDefinitionTag,
   ActionOrigine,
+  ActionOrigineTexte,
   ActionQuestion,
   ActionRelationCreate,
   ReferentielDefinition,
   ReferentielId,
   ReferentielIdEnum,
+  ReferentielLabelEnum,
   ReferentielTag,
 } from '@tet/domain/referentiels';
 import { eq, ilike, like } from 'drizzle-orm';
+import { actionOrigineTexteTable } from '../correlated-actions/action-origine-texte.table';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import {
@@ -29,7 +32,6 @@ import {
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
-import { ReferentielLabelEnum } from '../models/referentiel-label.enum';
 import { referentielTagTable } from '../models/referentiel-tag.table';
 import { ImportActionDefinitionCoremeasureType } from './import-action-definition.dto';
 
@@ -39,6 +41,7 @@ export type SaveReferentielInput = {
   actionRelations: ActionRelationCreate[];
   actionDefinitions: ActionDefinitionCreate[];
   actionOrigines: ActionOrigine[];
+  actionOrigineTextes: ActionOrigineTexte[];
   actionTags: ActionDefinitionTag[];
   personnalisationRegles: PersonnalisationRegleCreate[];
   questionActionRelations: ActionQuestion[];
@@ -63,6 +66,7 @@ export class ImportReferentielRepository {
       actionRelations,
       actionDefinitions,
       actionOrigines,
+      actionOrigineTextes,
       actionTags,
       personnalisationRegles,
       questionActionRelations,
@@ -112,6 +116,14 @@ export class ImportReferentielRepository {
 
       if (actionOrigines.length) {
         await tx.insert(actionOrigineTable).values(actionOrigines);
+      }
+
+      await tx
+        .delete(actionOrigineTexteTable)
+        .where(eq(actionOrigineTexteTable.referentielId, referentielId));
+
+      if (actionOrigineTextes.length) {
+        await tx.insert(actionOrigineTexteTable).values(actionOrigineTextes);
       }
 
       // Delete & recreate tags

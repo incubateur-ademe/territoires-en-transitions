@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
-import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import {
   CollectiviteRole,
   permissionsByRole,
@@ -8,6 +11,25 @@ import {
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import request from 'supertest';
+
+/**
+ * Range les rattachements par nom, des deux côtés de l'assertion.
+ *
+ * La liste arrive déjà triée par nom, mais deux services de l'État ne se
+ * départagent que sur la ponctuation — « Direction Régionale (DR) Ademe… »
+ * contre « Direction Régionale de l'Environnement… » — et les collations les
+ * rangent dans un sens ou dans l'autre selon le serveur. Trier ici, en JS,
+ * décroche ce spec de la collation de la base sans rien relâcher : la
+ * comparaison reste exacte, une entrée manquante ou en trop échoue toujours.
+ */
+const parNom = <T extends { collectiviteNom: string }>(collectivites: T[]) =>
+  [...collectivites].sort((a, b) =>
+    a.collectiviteNom === b.collectiviteNom
+      ? 0
+      : a.collectiviteNom < b.collectiviteNom
+      ? -1
+      : 1
+  );
 
 describe("Api pour lister les permissions de l'utilisateur", () => {
   let app: INestApplication;
@@ -39,7 +61,10 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
 
     const userInfoResponse: UserWithRolesAndPermissions = response.body;
 
-    expect(userInfoResponse).toEqual({
+    expect({
+      ...userInfoResponse,
+      collectivites: parNom(userInfoResponse.collectivites),
+    }).toEqual({
       id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       email: 'yolo@dodo.com',
       nom: 'Dodo',
@@ -53,10 +78,11 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         ...permissionsByRole[PlatformRole.VERIFIED],
       ],
 
-      collectivites: [
+      collectivites: parNom([
         {
           collectiviteId: 1,
           collectiviteNom: 'Ambérieu-en-Bugey',
+          collectiviteType: collectiviteTypeEnum.COMMUNE,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
@@ -67,6 +93,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 2,
           collectiviteNom: 'Arbent',
+          collectiviteType: collectiviteTypeEnum.COMMUNE,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -75,8 +102,22 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           audits: [],
         },
         {
+          // Conseil régional, rattaché par le seed des instructeurs : il rend
+          // l'avis du président de région sur les dépôts PCAET de sa région.
+          collectiviteId: 5457,
+          collectiviteNom: 'Auvergne-Rhône-Alpes',
+          collectiviteType: collectiviteTypeEnum.REGION,
+          collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
           collectiviteId: 3895,
           collectiviteNom: 'CA Annonay Rhône Agglo',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.LECTURE,
@@ -87,6 +128,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 3812,
           collectiviteNom: 'CA du Bassin de Bourg-en-Bresse',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -97,6 +139,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 3829,
           collectiviteNom: 'CA du Pays de Laon',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -105,8 +148,73 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           audits: [],
         },
         {
+          // Destinataire en lecture d'une transmission PCAET, créée par le même
+          // seed que la DREAL — identifiant de séquence, donc non comparable.
+          //
+          // Les noms sont ceux de l'import des services
+          // (collectivite/service_etat_import) : la dénomination officielle du
+          // service, pas une forme courte.
+          collectiviteId: expect.any(Number),
+          collectiviteNom:
+            'Direction départementale des territoires (DDT) - Ain',
+          collectiviteType: collectiviteTypeEnum.DDT,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
+          collectiviteId: expect.any(Number),
+          collectiviteNom:
+            "Direction Générale de l'Énergie et du Climat (DGEC)",
+          collectiviteType: collectiviteTypeEnum.SERVICE_NATIONAL,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
+          collectiviteId: expect.any(Number),
+          collectiviteNom:
+            'Direction Régionale (DR) Ademe Auvergne-Rhône-Alpes',
+          collectiviteType: collectiviteTypeEnum.DR_ADEME,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
+          // Collectivité créée par le seed : son identifiant vient d'une
+          // séquence, il n'est pas comparable d'une base à l'autre.
+          collectiviteId: expect.any(Number),
+          collectiviteNom:
+            "Direction Régionale de l'Environnement, de l'Aménagement et du Logement Auvergne-Rhône-Alpes (DREAL)",
+          collectiviteType: collectiviteTypeEnum.DREAL,
+          // Un service déconcentré est toujours en accès restreint : la base le
+          // force (collectivite/service_etat_acces_restreint).
+          collectiviteAccesRestreint: true,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
           collectiviteId: 4936,
           collectiviteNom: 'Eurométropole de Strasbourg',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -114,7 +222,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
 
           audits: [],
         },
-      ],
+      ]),
     });
   });
 

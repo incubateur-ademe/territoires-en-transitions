@@ -6,7 +6,7 @@ import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.servi
 
 const specificErrors = [
   ...demarchePcaetAccessErrors,
-  'DOMAINE_NON_ACCESSIBLE',
+  'THEMATIQUE_NON_ACCESSIBLE',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -22,10 +22,10 @@ export const setVulnerabiliteLigneErrorConfig: TrpcErrorHandlerConfig<SpecificEr
         message:
           "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt",
       },
-      DOMAINE_NON_ACCESSIBLE: {
+      THEMATIQUE_NON_ACCESSIBLE: {
         code: 'NOT_FOUND',
         message:
-          "Ce domaine de vulnérabilité n'existe pas pour la collectivité",
+          "Cette thématique de vulnérabilité n'existe pas pour la collectivité",
       },
     },
   };

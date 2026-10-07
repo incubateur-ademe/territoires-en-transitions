@@ -1,6 +1,6 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { z, ZodType } from 'zod';
-import { LlmError } from './llm.errors';
+import { z, ZodError, ZodType } from 'zod';
+import { LlmError, SchemaIssue } from './llm.errors';
 
 export const parseStructuredResponse = <Schema extends ZodType>(args: {
   completed: boolean;
@@ -24,10 +24,26 @@ export const parseStructuredResponse = <Schema extends ZodType>(args: {
 
   const validated = schema.safeParse(parsed.data);
   if (!validated.success) {
-    return failure({ kind: 'invalid_json', rawTextLength: text.length });
+    return failure({
+      kind: 'invalid_json',
+      rawTextLength: text.length,
+      schemaIssue: toSchemaIssue(validated.error),
+    });
   }
 
   return success(validated.data);
+};
+
+const isJsonPathSegment = (
+  segment: PropertyKey
+): segment is string | number => typeof segment !== 'symbol';
+
+const toSchemaIssue = (error: ZodError): SchemaIssue | undefined => {
+  const [issue] = error.issues;
+  if (!issue) {
+    return undefined;
+  }
+  return { path: issue.path.filter(isJsonPathSegment), code: issue.code };
 };
 
 const tryParseJson = (text: string): Result<unknown, 'invalid'> => {

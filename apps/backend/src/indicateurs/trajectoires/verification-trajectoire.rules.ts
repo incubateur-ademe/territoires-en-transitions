@@ -1,6 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
+import {
+  UnsupportedTrajectoireStatus,
+  VerificationTrajectoireStatus,
+} from '@tet/domain/indicateurs';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
+
+export const EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE =
+  'Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI à fiscalité propre.';
+
+export const UNSUPPORTED_SYNDICAT_MESSAGE =
+  "La méthodologie SNBC territorialisée s'appuie sur le découpage en EPCI à fiscalité propre et n'est pas applicable au périmètre d'un syndicat.";
+
+export const MISSING_COLLECTIVITE_MESSAGE =
+  'Les informations de la collectivité sont absentes du résultat de vérification, impossible de calculer la trajectoire SNBC.';
+
+export const UNSUPPORTED_MESSAGES: Record<
+  UnsupportedTrajectoireStatus,
+  string
+> = {
+  [VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE]:
+    EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE,
+  [VerificationTrajectoireStatus.SYNDICAT_NON_SUPPORTE]:
+    UNSUPPORTED_SYNDICAT_MESSAGE,
+};
 
 @Injectable()
 export class VerificationTrajectoireRules {

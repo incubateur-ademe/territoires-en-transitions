@@ -21,6 +21,7 @@ import {
   IndicateurSource,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
+  IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurCreate,
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
@@ -31,7 +32,7 @@ import {
   PermissionOperationEnum,
   ResourceType,
 } from '@tet/domain/users';
-import { getErrorMessage, roundTo } from '@tet/domain/utils';
+import { getErrorMessage } from '@tet/domain/utils';
 import {
   and,
   eq,
@@ -55,6 +56,8 @@ import {
   omit,
   omitBy,
   partition,
+  round,
+  uniqBy,
 } from 'es-toolkit';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
@@ -63,6 +66,10 @@ import {
   AuthUser,
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
+import {
+  indicateurDefinitionPeriodiciteSelection,
+  indicateurValeurPeriodiciteSelection,
+} from '../definitions/indicateur-periodicite.column';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 import { ListCollectiviteDefinitionsRepository } from '../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
@@ -73,14 +80,42 @@ import { indicateurSourceTable } from '../shared/models/indicateur-source.table'
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
 import { GetIndicateursValeursResponse } from './get-indicateur-valeurs.response';
-import {
-  IndicateurValeurAvecMetadonnesDefinition,
-  indicateurValeurTable,
-} from './indicateur-valeur.table';
+import { indicateurValeurTable } from './indicateur-valeur.table';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
+
+/** Émis après qu'une valeur d'indicateur a été enregistrée via `upsertValeur` */
+export type IndicateurValeurUpsertedEvent = {
+  collectiviteId: number;
+  indicateurId: number;
+  indicateurValeurId: number;
+  user: AuthenticatedUser;
+};
+
+/**
+ * Écouteur invoqué autour de la suppression d'une valeur d'indicateur via
+ * `deleteValeurIndicateur`. La valeur est supprimée avec `ON DELETE CASCADE`
+ * sur ses dépendances (ex : sélection pour le score indicatif) :
+ * `onWillDelete` est donc appelé AVANT la suppression, pendant que ces
+ * dépendances existent encore, et son résultat est retransmis à `onDeleted`
+ * une fois la suppression effectuée.
+ */
+export type IndicateurValeurDeletionListener<TContext = unknown> = {
+  onWillDelete: (event: {
+    collectiviteId: number;
+    indicateurValeurId: number;
+  }) => Promise<TContext>;
+  onDeleted: (
+    context: TContext,
+    event: {
+      collectiviteId: number;
+      indicateurValeurId: number;
+      user: AuthenticatedUser;
+    }
+  ) => Promise<void>;
+};
 
 @Injectable()
 export default class CrudValeursService {
@@ -95,6 +130,13 @@ export default class CrudValeursService {
    */
   static DEFAULT_ROUNDING_PRECISION = DEFAULT_ROUNDING_PRECISION;
 
+  private readonly valeurUpsertedListeners: Array<
+    (event: IndicateurValeurUpsertedEvent) => Promise<void>
+  > = [];
+
+  private readonly valeurDeletionListeners: IndicateurValeurDeletionListener[] =
+    [];
+
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
@@ -106,6 +148,57 @@ export default class CrudValeursService {
     private readonly updateIndicateurService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService
   ) {}
+
+  /**
+   * Permet à un autre domaine (ex : le score indicatif des référentiels) de
+   * réagir à la mise à jour d'une valeur d'indicateur, sans que ce service
+   * n'ait à connaître ce qui en dépend.
+   */
+  registerValeurUpsertedListener(
+    listener: (event: IndicateurValeurUpsertedEvent) => Promise<void>
+  ) {
+    // Keep it simple: listeners are stored for the lifetime of the service instance
+    // (Nest providers are singletons by default).
+    this.valeurUpsertedListeners.push(listener);
+  }
+
+  /**
+   * Permet à un autre domaine de réagir à la suppression d'une valeur
+   * d'indicateur via `deleteValeurIndicateur`, sans que ce service n'ait à
+   * connaître ce qui en dépend.
+   */
+  registerValeurDeletionListener<TContext>(
+    listener: IndicateurValeurDeletionListener<TContext>
+  ) {
+    this.valeurDeletionListeners.push(
+      listener as IndicateurValeurDeletionListener<unknown>
+    );
+  }
+
+  /**
+   * Émet un `IndicateurValeurUpsertedEvent` pour chaque valeur
+   * ajoutée/modifiée, dédupliquée par id.
+   */
+  private async publishValeurUpsertedEvents(
+    valeurs: Pick<IndicateurValeur, 'id' | 'collectiviteId' | 'indicateurId'>[],
+    user: AuthenticatedUser
+  ): Promise<void> {
+    if (!this.valeurUpsertedListeners.length || !valeurs.length) {
+      return;
+    }
+    const uniqueValeurs = uniqBy(valeurs, (v) => v.id);
+    await Promise.all(
+      uniqueValeurs.flatMap((v) => {
+        const event: IndicateurValeurUpsertedEvent = {
+          collectiviteId: v.collectiviteId,
+          indicateurId: v.indicateurId,
+          indicateurValeurId: v.id,
+          user,
+        };
+        return this.valeurUpsertedListeners.map((listener) => listener(event));
+      })
+    );
+  }
 
   private getIndicateurValeursSqlConditions(
     options: ListIndicateurValeursInput
@@ -163,6 +256,11 @@ export default class CrudValeursService {
         );
       }
     }
+    if (options.metadonneeId !== undefined) {
+      conditions.push(
+        eq(indicateurValeurTable.metadonneeId, options.metadonneeId)
+      );
+    }
     return conditions;
   }
 
@@ -179,7 +277,7 @@ export default class CrudValeursService {
     options: ListIndicateurValeursInput,
     ignoreDedoublonnage?: boolean,
     tx?: Transaction
-  ) {
+  ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
         options
@@ -188,60 +286,63 @@ export default class CrudValeursService {
 
     const conditions = this.getIndicateurValeursSqlConditions(options);
 
-    let result: IndicateurValeurAvecMetadonnesDefinition[] =
-      await (tx ?? this.databaseService.db)
-        .select({
-          indicateur_valeur: {
-            ...omit(getTableColumns(indicateurValeurTable), [
-              'createdAt',
-              'modifiedAt',
-            ]),
-            createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
-            modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
-          },
-          indicateur_definition: {
-            ...omit(getTableColumns(indicateurDefinitionTable), [
-              'createdAt',
-              'modifiedAt',
-            ]),
-            createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
-            modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
-          },
-          indicateur_source_metadonnee: getTableColumns(
-            indicateurSourceMetadonneeTable
-          ),
-          confidentiel: indicateurCollectiviteTable.confidentiel,
-        })
-        .from(indicateurValeurTable)
-        .leftJoin(
-          indicateurDefinitionTable,
-          eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
+    let result: IndicateurValeurAvecMetadonnesDefinition[] = await (
+      tx ?? this.databaseService.db
+    )
+      .select({
+        indicateurValeur: {
+          ...indicateurValeurPeriodiciteSelection,
+          ...omit(getTableColumns(indicateurValeurTable), [
+            'createdAt',
+            'modifiedAt',
+          ]),
+          createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
+          modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
+        },
+        indicateurDefinition: {
+          ...indicateurDefinitionPeriodiciteSelection,
+          ...omit(getTableColumns(indicateurDefinitionTable), [
+            'createdAt',
+            'modifiedAt',
+          ]),
+          createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
+          modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
+        },
+        indicateurSourceMetadonnee: getTableColumns(
+          indicateurSourceMetadonneeTable
+        ),
+        confidentiel: indicateurCollectiviteTable.confidentiel,
+      })
+      .from(indicateurValeurTable)
+      .leftJoin(
+        indicateurDefinitionTable,
+        eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        indicateurSourceMetadonneeTable,
+        eq(
+          indicateurValeurTable.metadonneeId,
+          indicateurSourceMetadonneeTable.id
         )
-        .leftJoin(
-          indicateurSourceMetadonneeTable,
+      )
+      .leftJoin(
+        indicateurCollectiviteTable,
+        // `confidentiel` est porté par le couple (collectivité, indicateur) :
+        // sans le prédicat sur la collectivité, la jointure ramène une ligne
+        // par collectivité suivant l'indicateur et retient un drapeau au
+        // hasard, celui d'une autre collectivité le plus souvent.
+        and(
           eq(
-            indicateurValeurTable.metadonneeId,
-            indicateurSourceMetadonneeTable.id
+            indicateurCollectiviteTable.indicateurId,
+            indicateurDefinitionTable.id
+          ),
+          eq(
+            indicateurCollectiviteTable.collectiviteId,
+            indicateurValeurTable.collectiviteId
           )
         )
-        .leftJoin(
-          indicateurCollectiviteTable,
-          // `confidentiel` est porté par le couple (collectivité, indicateur) :
-          // sans le prédicat sur la collectivité, la jointure ramène une ligne
-          // par collectivité suivant l'indicateur et retient un drapeau au
-          // hasard, celui d'une autre collectivité le plus souvent.
-          and(
-            eq(
-              indicateurCollectiviteTable.indicateurId,
-              indicateurDefinitionTable.id
-            ),
-            eq(
-              indicateurCollectiviteTable.collectiviteId,
-              indicateurValeurTable.collectiviteId
-            )
-          )
-        )
-        .where(and(...conditions));
+      )
+      .where(and(...conditions));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
     if (!ignoreDedoublonnage) {
@@ -302,13 +403,12 @@ export default class CrudValeursService {
       const collectivitePrivate = await this.collectiviteService.isPrivate(
         collectiviteId
       );
-      const permissionLectureResult =
-        await this.permissionService.isAllowed(
-          user,
-          'indicateurs.valeurs.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          { collectiviteId }
-        );
+      const permissionLectureResult = await this.permissionService.isAllowed(
+        user,
+        'indicateurs.valeurs.read_confidentiel',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId }
+      );
       const permissionVisiteResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read',
@@ -343,7 +443,7 @@ export default class CrudValeursService {
     const indicateurValeurs = await this.getIndicateursValeurs(options);
 
     const indicateurValeursSeules = indicateurValeurs.map((v) => ({
-      ...v.indicateur_valeur,
+      ...v.indicateurValeur,
       confidentiel: v.confidentiel,
     }));
 
@@ -393,9 +493,9 @@ export default class CrudValeursService {
     } = {};
     const uniqueIndicateurMetadonnees = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        if (v.indicateur_source_metadonnee?.id) {
-          acc[v.indicateur_source_metadonnee.id.toString()] =
-            v.indicateur_source_metadonnee;
+        if (v.indicateurSourceMetadonnee?.id) {
+          acc[v.indicateurSourceMetadonnee.id.toString()] =
+            v.indicateurSourceMetadonnee;
         }
         return acc;
       }, initialMetadonneesAcc)
@@ -523,10 +623,10 @@ export default class CrudValeursService {
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       if (!isNil(data.resultat)) {
-        data.resultat = roundTo(data.resultat, indicateur.precision);
+        data.resultat = round(data.resultat, indicateur.precision);
       }
       if (!isNil(data.objectif)) {
-        data.objectif = roundTo(data.objectif, indicateur.precision);
+        data.objectif = round(data.objectif, indicateur.precision);
       }
 
       const now = new Date().toISOString();
@@ -553,7 +653,10 @@ export default class CrudValeursService {
               isNull(indicateurValeurTable.metadonneeId)
             )
           )
-          .returning();
+          .returning({
+            ...getTableColumns(indicateurValeurTable),
+            ...indicateurValeurPeriodiciteSelection,
+          });
         upsertedIndicateurValeur = updated[0];
       } else if (!isNil(data.dateValeur)) {
         this.logger.log(
@@ -593,7 +696,10 @@ export default class CrudValeursService {
                 modifiedAt: now,
               },
             })
-            .returning();
+            .returning({
+              ...getTableColumns(indicateurValeurTable),
+              ...indicateurValeurPeriodiciteSelection,
+            });
 
           upsertedIndicateurValeur = inserted[0];
         } catch (error) {
@@ -616,9 +722,24 @@ export default class CrudValeursService {
           `${calculatedIndicateurValeurToUpsert.length} valeurs d'indicateurs calculées`
         );
         // WARNING : can recursively call updateCalculatedIndicateurValeurs if the computed indicateur valeur allows to calcule oher ones
-        await this.upsertIndicateurValeurs(
+        const calculatedIndicateurValeurs = await this.upsertIndicateurValeurs(
           calculatedIndicateurValeurToUpsert,
           undefined
+        );
+
+        // Publié après l'opération complète (valeur saisie + cascade de valeurs
+        // calculées) : une action peut référencer l'id d'une valeur calculée,
+        // pas seulement celui de la valeur saisie.
+        await this.publishValeurUpsertedEvents(
+          [
+            {
+              id: upsertedIndicateurValeur.id,
+              collectiviteId,
+              indicateurId,
+            },
+            ...calculatedIndicateurValeurs,
+          ],
+          user
         );
       }
 
@@ -647,6 +768,16 @@ export default class CrudValeursService {
     await this.canMutateValeur(user, collectiviteId, indicateur);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
+      // La valeur est supprimée avec ON DELETE CASCADE sur ses dépendances
+      // (ex : sélection pour le score indicatif) : il faut donc identifier
+      // ce qui en dépend AVANT de la supprimer, sans quoi les écouteurs ne
+      // retrouveraient plus rien après coup.
+      const contexts = await Promise.all(
+        this.valeurDeletionListeners.map((listener) =>
+          listener.onWillDelete({ collectiviteId, indicateurValeurId: id })
+        )
+      );
+
       await this.databaseService.db
         .delete(indicateurValeurTable)
         .where(
@@ -656,6 +787,16 @@ export default class CrudValeursService {
             eq(indicateurValeurTable.id, id)
           )
         );
+
+      await Promise.all(
+        this.valeurDeletionListeners.map((listener, i) =>
+          listener.onDeleted(contexts[i], {
+            collectiviteId,
+            indicateurValeurId: id,
+            user,
+          })
+        )
+      );
     }
 
     // update indicateur definition modifiedBy field
@@ -712,10 +853,10 @@ export default class CrudValeursService {
       const definition = indicateurDefinitionsById[v.indicateurId];
       if (definition) {
         v.resultat = isNotNil(v.resultat)
-          ? roundTo(v.resultat, definition.precision)
+          ? round(v.resultat, definition.precision)
           : null;
         v.objectif = isNotNil(v.objectif)
-          ? roundTo(v.objectif, definition.precision)
+          ? round(v.objectif, definition.precision)
           : null;
       } else {
         throw new BadRequestException(
@@ -779,7 +920,10 @@ export default class CrudValeursService {
                 ),
               },
             })
-            .returning();
+            .returning({
+              ...getTableColumns(indicateurValeurTable),
+              ...indicateurValeurPeriodiciteSelection,
+            });
         indicateurValeursResultat.push(
           ...indicateurValeursAvecMetadonneesResultat
         );
@@ -907,7 +1051,10 @@ export default class CrudValeursService {
                   ),
                 },
               })
-              .returning();
+              .returning({
+                ...getTableColumns(indicateurValeurTable),
+                ...indicateurValeurPeriodiciteSelection,
+              });
           indicateurValeursResultat.push(
             ...indicateurValeursSansMetadonneesResultat
           );
@@ -954,6 +1101,15 @@ export default class CrudValeursService {
           : [];
 
       indicateurValeursResultat.push(...calculatedIndicateurValeur);
+    }
+
+    // Publié uniquement quand `user` est fourni : les appels récursifs
+    // internes (cascade de valeurs calculées) et certains appelants ayant
+    // déjà vérifié les droits par ailleurs passent `undefined` et ne
+    // doivent pas publier une seconde fois ce que l'appel englobant a déjà
+    // accumulé dans `indicateurValeursResultat`.
+    if (user) {
+      await this.publishValeurUpsertedEvents(indicateurValeursResultat, user);
     }
 
     return indicateurValeursResultat;
@@ -1126,20 +1282,20 @@ export default class CrudValeursService {
     } = {};
     const uniqueIndicateurValeurs = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
-          v.indicateur_valeur.collectiviteId
-        }_${v.indicateur_valeur.dateValeur}_${
-          v.indicateur_source_metadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
+        const cleUnicite = `${v.indicateurValeur.indicateurId}_${
+          v.indicateurValeur.collectiviteId
+        }_${v.indicateurValeur.dateValeur}_${
+          v.indicateurSourceMetadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
         } else {
           // On garde la valeur la plus récente en priorité
           if (
-            v.indicateur_source_metadonnee &&
-            acc[cleUnicite].indicateur_source_metadonnee &&
-            v.indicateur_source_metadonnee.dateVersion >
-              acc[cleUnicite].indicateur_source_metadonnee.dateVersion
+            v.indicateurSourceMetadonnee &&
+            acc[cleUnicite].indicateurSourceMetadonnee &&
+            v.indicateurSourceMetadonnee.dateVersion >
+              acc[cleUnicite].indicateurSourceMetadonnee.dateVersion
           ) {
             acc[cleUnicite] = v;
           }
@@ -1176,6 +1332,7 @@ export default class CrudValeursService {
               id: v.id,
               collectiviteId: v.collectiviteId,
               dateValeur: v.dateValeur,
+              periodicite: v.periodicite,
               resultat: v.resultat,
               objectif: v.objectif,
               metadonneeId: null,
@@ -1237,6 +1394,7 @@ export default class CrudValeursService {
               id: v.id,
               collectiviteId: v.collectiviteId,
               dateValeur: v.dateValeur,
+              periodicite: v.periodicite,
               resultat: v.resultat,
               resultatCommentaire: v.resultatCommentaire,
               objectif: v.objectif,

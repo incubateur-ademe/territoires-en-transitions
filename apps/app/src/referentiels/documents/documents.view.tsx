@@ -2,13 +2,21 @@
 
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { appLabels } from '@/app/labels/catalog';
-import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
+import { ReferentielDocumentCard } from '@/app/collectivites/documents/bibliotheque/referentiel-document.card';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { usePreuvesParType } from '../preuves/usePreuves';
-import { useReferentielId } from '../referentiel-context';
-import { AddRapportVisite } from './AddRapportVisite';
+import { Alert } from '@tet/ui';
+import {
+  useGetReferentielDefinitionFromContext,
+  useReferentielId,
+} from '../referentiel-context';
+import { useListDocumentsReferentiel } from './data/use-list-documents-referentiel';
+import { AddRapportVisiteModal } from '@/app/collectivites/documents/add-rapport-visite.modal';
 import { groupeParDemande } from './groupeParDemande';
-import { addInfoToEntry, PreuvesLabellisation } from './PreuveLabellisation';
+import {
+  addInfoToEntry,
+  PreuvesLabellisation,
+} from './preuves-labellisation.list';
 import { PreuvesTable } from './PreuvesTable';
 import { useTableData } from './useTableData';
 
@@ -20,22 +28,20 @@ export const DocumentsView = () => {
   const isReadOnly = !hasCollectivitePermission('referentiels.mutate');
 
   const referentielId = useReferentielId();
+  const hierarchie = useGetReferentielDefinitionFromContext()?.hierarchie ?? [];
   const tableData = useTableData(referentielId);
 
-  const preuves = usePreuvesParType({
-    preuve_types: ['audit', 'labellisation', 'rapport'],
-  });
+  const documents = useListDocumentsReferentiel({ collectiviteId, referentielId });
+  const { labellisation, audit, rapport } =
+    documents.status === 'loaded'
+      ? documents.documents
+      : { labellisation: [], audit: [], rapport: [] };
 
-  const { labellisation, audit, rapport } = preuves;
-  const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];
   const demandesLabellisationEtAudit = Object.entries(
-    groupeParDemande(labellisationEtAudit, referentielId)
+    groupeParDemande([...labellisation, ...audit], referentielId)
   )
     .map(addInfoToEntry)
     .sort((a, b) => b.info.timestamp - a.info.timestamp);
-
-  const isNewReferentiel =
-    referentielId === 'te' || referentielId === 'te-test';
 
   // COT : rapports visibles sur CAE et ECI ; sinon uniquement sur CAE
   const showRapports =
@@ -46,12 +52,15 @@ export const DocumentsView = () => {
 
   const showDocumentsTitle = showDemandesLabellisationEtAudit || showRapports;
 
-  if (isNewReferentiel) {
-    return null;
-  }
+  const showEmptyRapportsMessage =
+    isReadOnly && documents.status === 'loaded' && rapport.length === 0;
 
   return (
     <div data-test="BibliothequeDocs" className="flex flex-col gap-8">
+      {documents.status === 'loading' && <SpinnerLoader className="m-auto" />}
+      {documents.status === 'error' && (
+        <Alert state="error" title={appLabels.erreurChargementDocuments} />
+      )}
       {showDemandesLabellisationEtAudit && (
         <section data-test="labellisation">
           <h2 className="mb-6 text-2xl">
@@ -65,13 +74,13 @@ export const DocumentsView = () => {
           <h2 className="mb-6 text-2xl">
             {appLabels.rapportsDeVisiteAnnuelle}
           </h2>
-          {!isReadOnly && <AddRapportVisite />}
-          {isReadOnly && (!rapport || rapport.length === 0) && (
+          {!isReadOnly && <AddRapportVisiteModal />}
+          {showEmptyRapportsMessage && (
             <p>{appLabels.aucunRapportVisiteAnnuelle}</p>
           )}
-          {rapport?.map((preuve) => (
+          {rapport.map((preuve) => (
             <div className="py-4" key={preuve.id}>
-              <PreuveDoc preuve={preuve} />
+              <ReferentielDocumentCard preuve={preuve} />
             </div>
           ))}
         </section>
@@ -80,7 +89,15 @@ export const DocumentsView = () => {
         {showDocumentsTitle && (
           <h2 className="mb-6 text-2xl">{appLabels.documents}</h2>
         )}
-        <PreuvesTable tableData={tableData} referentielId={referentielId} />
+        {hierarchie.length ? (
+          <PreuvesTable
+            tableData={tableData}
+            referentielId={referentielId}
+            hierarchie={hierarchie}
+          />
+        ) : (
+          <SpinnerLoader className="m-auto" />
+        )}
       </section>
     </div>
   );

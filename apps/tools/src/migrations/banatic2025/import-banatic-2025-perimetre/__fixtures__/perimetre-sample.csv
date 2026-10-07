@@ -1,0 +1,8 @@
+dept;siren;raison_sociale;nature_juridique;mode_financ;nb_membres;total_pop_tot;total_pop_mun;dep_com;insee;siren_membre;nom_membre;ptot_2025;pmun_2025
+76;200023414;Métropole Rouen Normandie;METRO;FPU;3;500000;490000;76;76540;217605400;Rouen;115000;110000
+76;200023414;Métropole Rouen Normandie;METRO;FPU;3;500000;490000;76;76451;217604510;Petit-Quevilly;22000;21000
+76;200023414;Métropole Rouen Normandie;METRO;FPU;3;500000;490000;76;76575;217605753;Sotteville-lès-Rouen;29000;28000
+76;200023414;Métropole Rouen Normandie;METRO;FPU;3;500000;490000;76;76575;217605753;Sotteville-lès-Rouen;29000;28000
+63;200070407;CA Agglo Pays d'Issoire;CA;FPU;2;60000;58000;63;63158;216301589;Issoire;15000;14500
+63;200070407;CA Agglo Pays d'Issoire;CA;FPU;2;60000;58000;63;63005;216300052;Antoingt;120;110
+63;200099999;CC Sans Collectivité;CC;FPU;1;3000;2900;63;63999;216399999;Village-Test;500;480

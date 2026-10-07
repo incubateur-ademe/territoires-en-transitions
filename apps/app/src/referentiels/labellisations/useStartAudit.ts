@@ -14,18 +14,6 @@ export const useStartAudit = () => {
         const { collectiviteId, referentielId } = audit;
 
         queryClient.invalidateQueries({
-          queryKey: ['audit', collectiviteId, referentielId],
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: ['peut_commencer_audit', collectiviteId, referentielId],
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: ['labellisation_parcours', collectiviteId],
-        });
-
-        queryClient.invalidateQueries({
           queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
             collectiviteId,
             referentielId,

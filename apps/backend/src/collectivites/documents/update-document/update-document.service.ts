@@ -6,18 +6,13 @@ import { Result } from '@tet/backend/utils/result.type';
 import { BibliothequeFichier } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
+import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import {
   UpdateDocumentError,
   UpdateDocumentErrorEnum,
 } from './update-document.errors';
-
-export type UpdateDocumentInput = {
-  collectiviteId: number;
-  hash: string;
-  filename?: string;
-  confidentiel?: boolean;
-};
+import { UpdateDocumentInputSchema } from './update-document.schema';
 
 @Injectable()
 export class UpdateDocumentService {
@@ -25,11 +20,12 @@ export class UpdateDocumentService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository
   ) {}
 
   async updateDocument(
-    input: UpdateDocumentInput,
+    input: UpdateDocumentInputSchema,
     user: AuthenticatedUser
   ): Promise<
     Result<BibliothequeFichier, UpdateDocumentError | 'UNAUTHORIZED'>
@@ -47,18 +43,13 @@ export class UpdateDocumentService {
       };
     }
 
-    const existing = await this.databaseService.db
-      .select()
-      .from(bibliothequeFichierTable)
-      .where(
-        and(
-          eq(bibliothequeFichierTable.collectiviteId, input.collectiviteId),
-          eq(bibliothequeFichierTable.hash, input.hash)
-        )
-      )
-      .limit(1);
+    const existingDocument =
+      await this.bibliothequeFichierRepository.findByHash({
+        collectiviteId: input.collectiviteId,
+        hash: input.hash,
+      });
 
-    if (!existing.length) {
+    if (!existingDocument) {
       return {
         success: false,
         error: UpdateDocumentErrorEnum.DOCUMENT_NOT_FOUND,

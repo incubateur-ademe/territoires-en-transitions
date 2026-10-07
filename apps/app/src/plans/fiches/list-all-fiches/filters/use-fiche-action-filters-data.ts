@@ -10,15 +10,9 @@ import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-pla
 import { useGetThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
-import { NOTES_OPTIONS } from './options';
-import { FilterKeys } from './types';
+import { buildLookupConfig } from './build-lookup-config';
 
-export type LookupConfig = {
-  items: any[] | undefined;
-  key: string;
-  valueKey: string;
-  fallbackLabel?: string;
-};
+export type { LookupConfig } from './build-lookup-config';
 
 export const useFicheActionFiltersData = () => {
   const collectiviteId = useCollectiviteId();
@@ -42,75 +36,19 @@ export const useFicheActionFiltersData = () => {
     );
   }, [personnes]);
 
-  const lookupConfig: Partial<Record<FilterKeys, LookupConfig>> = useMemo(
-    () => ({
-      planActionIds: {
-        items: plans,
-        key: 'id',
-        valueKey: 'nom',
-        fallbackLabel: 'Sans titre',
-      },
-      utilisateurPiloteIds: {
-        items: personneOptions,
-        key: 'value',
-        valueKey: 'label',
-      },
-      utilisateurReferentIds: {
-        items: personneOptions,
-        key: 'value',
-        valueKey: 'label',
-      },
-      personnePiloteIds: {
-        items: personneOptions,
-        key: 'value',
-        valueKey: 'label',
-      },
-      personneReferenteIds: {
-        items: personneOptions,
-        key: 'value',
-        valueKey: 'label',
-      },
-      servicePiloteIds: {
-        items: services,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      thematiqueIds: {
-        items: thematiqueListe,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      financeurIds: {
-        items: financeurs,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      structurePiloteIds: {
-        items: structures,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      partenaireIds: {
-        items: partenaires,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      libreTagsIds: {
-        items: tags,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      instanceGouvernanceIds: {
-        items: instanceGouvernanceTags,
-        key: 'id',
-        valueKey: 'nom',
-      },
-      notes: {
-        items: NOTES_OPTIONS,
-        key: 'value',
-        valueKey: 'label',
-      },
-    }),
+  const lookupConfig = useMemo(
+    () =>
+      buildLookupConfig({
+        plans,
+        personneOptions,
+        services,
+        thematiques: thematiqueListe,
+        financeurs,
+        structures,
+        partenaires,
+        libreTags: tags,
+        instanceGouvernanceTags,
+      }),
     [
       plans,
       personneOptions,

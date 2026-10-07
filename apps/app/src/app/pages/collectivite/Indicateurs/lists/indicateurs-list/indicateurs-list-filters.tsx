@@ -5,12 +5,12 @@ import {
   splitPilotePersonnesAndUsers,
 } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
-import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { Checkbox, Field, FormSection } from '@tet/ui';
-import { INDICATEUR_LABELS } from '../../constants';
 
 type Props = {
   searchParams: SearchParams;
@@ -22,20 +22,15 @@ export const IndicateursListFilters = ({
   setSearchParams: setFilters,
 }: Props) => {
   return (
-    <div className="w-96 md:w-[48rem] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8">
-      <FormSection title="Typologie :" className="!grid-cols-1">
-        <Checkbox
-          label="Données Open Data"
-          checked={filters.hasOpenData}
-          onChange={() => {
-            const { hasOpenData, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!hasOpenData ? { hasOpenData: true } : {}),
-            });
-          }}
-        />
-        <Field title="Catégorie">
+    <div
+      className="w-96 md:w-[48rem] max-w-[calc(100vw-2rem)] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8"
+      data-test="indicateurs.list.filters-panel"
+    >
+      <FormSection
+        title={appLabels.indicateurVueTypologie}
+        className="!grid-cols-1"
+      >
+        <Field title={appLabels.indicateurModele}>
           <IndicateurCategoriesDropdown
             values={filters.categorieNoms}
             onChange={({ categories }) => {
@@ -49,7 +44,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Indicateur complété par la collectivité">
+        <Field title={appLabels.indicateurCompleteParCollectivite}>
           <IndicateurCompletsDropdown
             values={
               filters.estRempli === undefined
@@ -72,7 +67,7 @@ export const IndicateursListFilters = ({
           />
         </Field>
         <Checkbox
-          label="Participe au score Climat Air Énergie"
+          label={appLabels.indicateurParticipeAuScore}
           checked={filters.participationScore}
           onChange={() => {
             const { participationScore, ...rest } = filters;
@@ -83,7 +78,18 @@ export const IndicateursListFilters = ({
           }}
         />
         <Checkbox
-          label={INDICATEUR_LABELS.private.plural}
+          label={appLabels.donneesOpenData}
+          checked={filters.hasOpenData}
+          onChange={() => {
+            const { hasOpenData, ...rest } = filters;
+            setFilters({
+              ...rest,
+              ...(!hasOpenData ? { hasOpenData: true } : {}),
+            });
+          }}
+        />
+        <Checkbox
+          label={appLabels.indicateursPrives}
           checked={filters.estConfidentiel}
           onChange={() => {
             const { estConfidentiel, ...rest } = filters;
@@ -94,7 +100,7 @@ export const IndicateursListFilters = ({
           }}
         />
         <Checkbox
-          label={INDICATEUR_LABELS.personalized.plural}
+          label={appLabels.indicateursPersonnalises}
           checked={filters.estPerso}
           onChange={() => {
             const { estPerso, ...rest } = filters;
@@ -106,8 +112,11 @@ export const IndicateursListFilters = ({
         />
       </FormSection>
 
-      <FormSection title="Pilotage :" className="!grid-cols-1">
-        <Field title="Plan">
+      <FormSection
+        title={appLabels.indicateurVuePilotage}
+        className="!grid-cols-1"
+      >
+        <Field title={appLabels.tableauPlan}>
           <PlansActionDropdown
             values={filters.planIds}
             onChange={({ plans }) => {
@@ -119,7 +128,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Personne pilote">
+        <Field title={appLabels.personnePilote()}>
           <PersonneTagDropdown
             values={getPilotesValues(filters)}
             onChange={({ personnes }) => {
@@ -139,7 +148,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Direction ou service pilote">
+        <Field title={appLabels.directionOuServicePilote()}>
           <ServiceTagDropdown
             values={filters.serviceIds}
             onChange={({ values: services }) => {
@@ -151,7 +160,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Thématique">
+        <Field title={appLabels.thematique()}>
           <ThematiquesDropdown
             values={filters.thematiqueIds}
             onChange={(thematiques) => {

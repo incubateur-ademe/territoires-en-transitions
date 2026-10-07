@@ -1,9 +1,13 @@
-import { index, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
+import { boolean, index, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { demarcheDocumentDefinitionTable } from './demarche-document-definition.table';
 
 /**
- * Substitution déclarative entre pièces attendues : déposer `substitutId` couvre
- * `documentId`. C'est ainsi que le document global couvre toutes les sections.
+ * Substitution entre pièces attendues : déposer `substitutId` couvre
+ * `documentId`. C'est ainsi qu'un document global couvre des sections.
+ *
+ * `automatic` distingue les deux sens de lecture : d'office, le dépôt du
+ * substitut suffit ; sinon, il ouvre seulement à la collectivité la possibilité
+ * de déclarer la pièce comprise dedans, pièce par pièce.
  */
 export const demarcheDocumentSubstitutionTable = pgTable(
   'demarche_document_substitution',
@@ -18,6 +22,7 @@ export const demarcheDocumentSubstitutionTable = pgTable(
       .references(() => demarcheDocumentDefinitionTable.id, {
         onDelete: 'cascade',
       }),
+    automatic: boolean('automatic').notNull().default(true),
   },
   (table) => [
     primaryKey({ columns: [table.documentId, table.substitutId] }),

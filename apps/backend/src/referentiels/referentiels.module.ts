@@ -10,8 +10,7 @@ import { LoadScoreComparisonService } from '@tet/backend/referentiels/export-sco
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import { ListLabellisationsController } from '@tet/backend/referentiels/labellisations/list-labellisations.controller';
 import { ListLabellisationsService } from '@tet/backend/referentiels/labellisations/list-labellisations.service';
-import { ScoreIndicatifRouter } from '@tet/backend/referentiels/score-indicatif/score-indicatif.router';
-import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
+import { ScoreIndicatifModule } from '@tet/backend/referentiels/score-indicatif/score-indicatif.module';
 import { ListSnapshotsController } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.controller';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
@@ -20,6 +19,9 @@ import { TrackingModule } from '../utils/tracking/tracking.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { ActionPersonnalisationsService } from './action-personnalisations/action-personnalisations.service';
+import { AddPreuveRepository } from './add-preuve/add-preuve.repository';
+import { AddPreuveRouter } from './add-preuve/add-preuve.router';
+import { AddPreuveService } from './add-preuve/add-preuve.service';
 import ScoresService from './compute-score/scores.service';
 import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { CountPreuvesService } from './count-preuve/count-preuves.service';
@@ -27,6 +29,7 @@ import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-de
 import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
+import { GetReferentielRepository } from './get-referentiel/get-referentiel.repository';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes/handle-mesure-pilotes.service';
@@ -40,6 +43,9 @@ import { ListHistoriqueService } from './historique/list-historique/list-histori
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import { ImportReferentielRepository } from './import-referentiel/import-referentiel.repository';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
+import { AddAuditDocumentRepository } from './labellisations/add-audit-document/add-audit-document.repository';
+import { AddAuditDocumentRouter } from './labellisations/add-audit-document/add-audit-document.router';
+import { AddAuditDocumentService } from './labellisations/add-audit-document/add-audit-document.service';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { CreatePreuveService } from './labellisations/create-preuve/create-preuve.service';
 import { GetAuditEnCoursRepository } from './labellisations/get-audit-en-cours/get-audit-en-cours.repository';
@@ -48,8 +54,21 @@ import { GetLabellisationService } from './labellisations/get-labellisation.serv
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
 import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.service';
 import { LabellisationService } from './labellisations/labellisation.service';
-import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
-import { ListPreuvesService } from './labellisations/list-preuves/list-preuves.service';
+import { ListDocumentsAuditRouter } from './documents/list-documents-audit/list-documents-audit.router';
+import { ListDocumentsDemandeLabellisationRouter } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.router';
+import { ReferentielDocumentsAccessService } from './documents/referentiel-documents-access.service';
+import { ListDocumentsReferentielRepository } from './documents/list-documents-referentiel/list-documents-referentiel.repository';
+import { ListDocumentsReferentielRouter } from './documents/list-documents-referentiel/list-documents-referentiel.router';
+import { ListDocumentsReferentielService } from './documents/list-documents-referentiel/list-documents-referentiel.service';
+import { ListDocumentsMesureRepository } from './documents/list-documents-mesure/list-documents-mesure.repository';
+import { DownloadDocumentsMesureController } from './documents/download-documents-mesure/download-documents-mesure.controller';
+import { DownloadDocumentsMesureService } from './documents/download-documents-mesure/download-documents-mesure.service';
+import { ListDocumentsMesureRouter } from './documents/list-documents-mesure/list-documents-mesure.router';
+import { ListDocumentsMesureService } from './documents/list-documents-mesure/list-documents-mesure.service';
+import { ListDocumentsAuditRepository } from './documents/list-documents-audit/list-documents-audit.repository';
+import { ListDocumentsDemandeLabellisationRepository } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.repository';
+import { ListDocumentsAuditService } from './documents/list-documents-audit/list-documents-audit.service';
+import { ListDocumentsDemandeLabellisationService } from './documents/list-documents-demande-labellisation/list-documents-demande-labellisation.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
@@ -60,14 +79,12 @@ import { ValidateAuditRouter } from './labellisations/validate-audit/validate-au
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
-import { BuildArchiveService } from './preuves-archive/build-archive/build-archive.service';
 import { DeletePreuvesArchiveService } from './preuves-archive/delete-preuves-archive/delete-preuves-archive.service';
 import { GeneratePreuvesArchiveService } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.service';
 import { GeneratePreuvesArchiveWorker } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.worker';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
 import { GetPreuvesArchiveService } from './preuves-archive/get-preuves-archive/get-preuves-archive.service';
-import { CollectPreuvesRepository } from './preuves-archive/list-audit-preuves/collect-preuves.repository';
-import { ListAuditPreuvesService } from './preuves-archive/list-audit-preuves/list-audit-preuves.service';
+import { CollectAuditPreuvesService } from './preuves-archive/collect-audit-preuves/collect-audit-preuves.service';
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import {
@@ -78,7 +95,10 @@ import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repo
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { RequestPreuvesArchiveService } from './preuves-archive/request-preuves-archive/request-preuves-archive.service';
 import { ReferentielsCoreModule } from './referentiels-core.module';
+import { SetScoreFromIndicateurRouter } from './set-score-from-indicateur/set-score-from-indicateur.router';
+import { SetScoreFromIndicateurService } from './set-score-from-indicateur/set-score-from-indicateur.service';
 import { ReferentielsRouter } from './referentiels.router';
+import { ComputeReferentielEngagementService } from './reset-display-preferences/compute-referentiel-engagement.service';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { ResetDisplayPreferencesService } from './reset-display-preferences/reset-display-preferences.service';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
@@ -95,6 +115,7 @@ import { UpdateActionCommentaireRouter } from './update-action-commentaire/updat
 import { UpdateActionCommentaireService } from './update-action-commentaire/update-action-commentaire.service';
 import { UpdateActionFichesRouter } from './update-action-fiches/update-action-fiches.router';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut/update-action-statut-historique.repository';
+import { UpdateActionStatutRepository } from './update-action-statut/update-action-statut.repository';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
@@ -105,6 +126,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     IndicateursModule,
     FichesModule,
     ReferentielsCoreModule,
+    ScoreIndicatifModule,
     TransactionModule,
     TrackingModule,
     BullModule.registerQueue({
@@ -115,11 +137,16 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
   providers: [
     ActionStatutHistoryService,
     GetReferentielService,
+    GetReferentielRepository,
     GetReferentielDefinitionRouter,
     ImportReferentielRepository,
     ImportReferentielService,
     ImportPreuveReglementaireDefinitionService,
     ReferentielsRouter,
+
+    AddPreuveRepository,
+    AddPreuveService,
+    AddPreuveRouter,
 
     ListActionsService,
     ListActionsRouter,
@@ -129,9 +156,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     // Archive ZIP des preuves d'audit
     PreuvesArchiveRepository,
-    CollectPreuvesRepository,
-    ListAuditPreuvesService,
-    BuildArchiveService,
+    CollectAuditPreuvesService,
     DeletePreuvesArchiveService,
     RequestPreuvesArchiveService,
     RequestPreuvesArchiveRouter,
@@ -146,8 +171,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ActionPersonnalisationsService,
     ActionPersonnalisationsRouter,
 
+    UpdateActionStatutRepository,
     UpdateActionStatutService,
     UpdateActionStatutRouter,
+
+    SetScoreFromIndicateurService,
+    SetScoreFromIndicateurRouter,
     UpdateActionCommentaireHistoriqueRepository,
     UpdateActionCommentaireService,
     UpdateActionCommentaireRouter,
@@ -175,10 +204,25 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     RequestLabellisationRouter,
     CreatePreuveService,
     CreatePreuveRouter,
-    ListPreuvesService,
-    ListPreuvesRouter,
+    ReferentielDocumentsAccessService,
+    ListDocumentsAuditRepository,
+    ListDocumentsAuditService,
+    ListDocumentsAuditRouter,
+    ListDocumentsDemandeLabellisationRepository,
+    ListDocumentsDemandeLabellisationService,
+    ListDocumentsDemandeLabellisationRouter,
+    ListDocumentsReferentielRepository,
+    ListDocumentsReferentielService,
+    ListDocumentsReferentielRouter,
+    ListDocumentsMesureRepository,
+    ListDocumentsMesureService,
+    ListDocumentsMesureRouter,
+    DownloadDocumentsMesureService,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
+    AddAuditDocumentRepository,
+    AddAuditDocumentService,
+    AddAuditDocumentRouter,
     ValidateAuditService,
     ValidateAuditRouter,
     HandleMesureAuditStatutService,
@@ -190,9 +234,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     HandleMesureServicesService,
     HandleMesuresServicesRouter,
 
-    ScoreIndicatifService,
-    ScoreIndicatifRouter,
-
+    ComputeReferentielEngagementService,
     ResetDisplayPreferencesService,
     ResetDisplayPreferencesRouter,
 
@@ -222,6 +264,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ImportReferentielController,
     ExportScoreComparisonController,
     ReferentielsScoringController,
+    DownloadDocumentsMesureController,
   ],
 })
 export class ReferentielsModule {}

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -15,7 +16,8 @@ export class ListPendingInvitationsService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   /** Liste les invitations en attente pour la collectivité */
@@ -28,9 +30,16 @@ export class ListPendingInvitationsService {
     );
 
     if (user) {
+      // Une invitation en attente, c'est une adresse en clair : même arbitrage
+      // que la liste des membres, dont elle partage l'écran.
+      const accesRestreint = await this.collectivitesService.isPrivate(
+        collectiviteId
+      );
       await this.permissionService.assertAllowed(
         user,
-        'collectivites.membres.read',
+        accesRestreint
+          ? 'collectivites.read_confidentiel'
+          : 'collectivites.membres.read',
         ResourceType.COLLECTIVITE,
         { collectiviteId }
       );

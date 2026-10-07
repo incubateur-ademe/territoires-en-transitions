@@ -1,6 +1,7 @@
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { integer, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
+import { relationAuditColumns } from './relation-audit.column';
 
 export const ficheActionReferentTable = pgTable(
   'fiche_action_referent',
@@ -8,6 +9,7 @@ export const ficheActionReferentTable = pgTable(
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     tagId: integer('tag_id').references(() => personneTagTable.id),
     userId: uuid('user_id'), // references dcp
+    ...relationAuditColumns,
   },
   (table) => {
     return {

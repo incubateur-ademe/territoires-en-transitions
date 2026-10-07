@@ -4,12 +4,8 @@ import Markdown from '@/site/components/markdown/Markdown';
 import { Accordion, Tab, Tabs } from '@tet/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { FaqData } from './page';
-
-const onglets = [
-  { title: 'Le programme Territoire Engagé', param: 'programme' },
-  { title: "L'outil numérique", param: 'outil-numerique' },
-];
+import { FAQ_TABS } from './faq.tabs';
+import type { FaqData } from './faq.data';
 
 type ListeQuestionsProps = {
   questions: FaqData[];
@@ -20,18 +16,22 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Un onglet sans question n'est pas affiché (la démarche PCAET avant son lancement).
+  const tabs = FAQ_TABS.filter((tab) =>
+    questions.some((question) => question.onglet === tab.title)
+  );
+
   const ongletParam = searchParams.get('onglet');
   const currentTab = ongletParam
-    ? onglets.findIndex((onglet) => onglet.param === ongletParam)
+    ? tabs.findIndex((onglet) => onglet.param === ongletParam)
     : 0;
 
   const handleChangeTab = (activeTab: number) => {
-    router.push(`${pathname}?onglet=${onglets[activeTab].param}`);
+    router.push(`${pathname}?onglet=${tabs[activeTab].param}`);
   };
 
   useEffect(() => {
-    if (currentTab === -1)
-      router.push(`${pathname}?onglet=${onglets[0].param}`);
+    if (currentTab === -1) router.push(`${pathname}?onglet=${tabs[0].param}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -41,7 +41,7 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
       onChange={handleChangeTab}
       tabsListClassName="!flex !w-fit !mx-auto"
     >
-      {onglets.map((onglet, index) => (
+      {tabs.map((onglet, index) => (
         <Tab key={index} label={onglet.title}>
           <div className="flex flex-col gap-4">
             {questions
@@ -49,7 +49,7 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
               .map((q) => (
                 <div key={q.id}>
                   <Accordion
-                    id={q.id.toString()}
+                    id={q.id}
                     title={q.titre}
                     content={
                       <Markdown

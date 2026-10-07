@@ -1,7 +1,7 @@
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { FicheCardSkeleton } from '@/app/plans/fiches/components/card/fiche.skeleton';
-import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   CurrentFiltersKeys,
@@ -15,14 +15,16 @@ const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
 const FilteredResultsSummary = ({ count }: { count: number }) => {
   return (
     <span className="text-sm text-gray-400">
-      {count} {appLabels.resultatPluralWord({ count })}
+      {appLabels.resultat({ count })}
     </span>
   );
 };
 
 const FilteredResultsEmpty = () => {
   return (
-    <div className="mt-16 mb-8">{appLabels.aucuneActionCorrespondRecherche}</div>
+    <div className="mt-16 mb-8">
+      {appLabels.aucuneActionCorrespondRecherche}
+    </div>
   );
 };
 

@@ -23,20 +23,24 @@ test.describe('Page /recover — réinitialisation de mot de passe', () => {
 
     // Le formulaire PasswordRecovery est visible immédiatement
     // (contrairement à /login où il faut cliquer sur "auth.login.forgotten-pwd")
-    await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toBeVisible();
+    await expect(
+      page.locator('[data-test="auth.forgotten-password.form"]')
+    ).toBeVisible();
   });
 
-  test('pré-remplit l\'email depuis le paramètre ?email=', async ({ page }) => {
+  test("pré-remplit l'email depuis le paramètre ?email=", async ({ page }) => {
     const email = 'prefilled@example.com';
     await page.goto(`/recover?email=${encodeURIComponent(email)}`);
 
     await expect(
-      page.locator('[data-test="auth.forgotten-password.form"] input[name=email]')
+      page.locator(
+        '[data-test="auth.forgotten-password.form"] input[name=email]'
+      )
     ).toHaveValue(email);
   });
 
   test(
-    'envoie l\'email de réinitialisation et affiche la confirmation',
+    "envoie l'email de réinitialisation et affiche la confirmation",
     { tag: '@serial' },
     async ({ page }) => {
       await page.goto('/recover');
@@ -45,16 +49,22 @@ test.describe('Page /recover — réinitialisation de mot de passe', () => {
         .locator('[data-test="auth.forgotten-password.form"] input[name=email]')
         .fill(EXISTING_USER_EMAIL);
       await page
-        .locator('[data-test="auth.forgotten-password.form"] button[type=submit]')
+        .locator(
+          '[data-test="auth.forgotten-password.form"] button[type=submit]'
+        )
         .click();
 
-      await expect(page.locator('[data-test="auth.login.msg-init-mdp"]')).toBeVisible();
-      await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toBeHidden();
+      await expect(
+        page.locator('[data-test="auth.login.msg-init-mdp"]')
+      ).toBeVisible();
+      await expect(
+        page.locator('[data-test="auth.forgotten-password.form"]')
+      ).toBeHidden();
     }
   );
 
   test(
-    'affiche un message d\'erreur si la demande de réinitialisation échoue',
+    "affiche un message d'erreur si la demande de réinitialisation échoue",
     { tag: '@serial' },
     async ({ page }) => {
       await page.goto('/recover');
@@ -67,15 +77,17 @@ test.describe('Page /recover — réinitialisation de mot de passe', () => {
         .locator('[data-test="auth.forgotten-password.form"] input[name=email]')
         .fill(EXISTING_USER_EMAIL);
       await page
-        .locator('[data-test="auth.forgotten-password.form"] button[type=submit]')
+        .locator(
+          '[data-test="auth.forgotten-password.form"] button[type=submit]'
+        )
         .click();
 
       await expect(
         page.locator('[data-test="auth.forgotten-password.form"]')
       ).toBeVisible();
-      await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toContainText(
-        "L'envoi du lien de réinitialisation a échoué"
-      );
+      await expect(
+        page.locator('[data-test="auth.forgotten-password.form"]')
+      ).toContainText("L'envoi du lien de réinitialisation a échoué");
     }
   );
 });

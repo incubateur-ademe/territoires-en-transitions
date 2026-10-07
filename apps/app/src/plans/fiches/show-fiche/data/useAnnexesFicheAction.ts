@@ -1,51 +1,49 @@
-import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { toDocumentCollectivite } from '@/app/collectivites/documents/bibliotheque/to-document-collectivite.utils';
+import { DocumentAnnexe } from '@/app/collectivites/documents/bibliotheque/types';
+import { StoredFile } from '@tet/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { AnnexeDocument } from '@tet/domain/plans';
 
-/** adapte une ligne API au format attendu par CarteDocument / openPreuve */
-export function mapListAnnexeRowToDocumentPreuve(row: AnnexeDocument): TPreuve {
-  const base = {
-    id: row.id,
-    collectivite_id: row.collectiviteId,
-    commentaire: row.commentaire,
-    created_at: row.modifiedAt,
-    created_by: null,
-    created_by_nom: row.modifiedByNom,
-    preuve_type: 'annexe' as const,
-    action: null,
-    preuve_reglementaire: null,
-    demande: null,
-    audit: null,
-    rapport: null,
-  };
+type AnnexeFichier = NonNullable<AnnexeDocument['fichier']>;
 
-  if (row.fichier?.bucketId && row.fichier.hash && row.fichier.filename) {
-    return {
-      ...base,
-      fichier: {
-        bucket_id: row.fichier.bucketId,
-        hash: row.fichier.hash,
-        filename: row.fichier.filename,
-        filesize: row.fichier.filesize ?? 0,
-        confidentiel: row.fichier.confidentiel ?? false,
-      },
-      lien: null,
-    };
+const isStoredFile = (
+  fichier: AnnexeFichier
+): fichier is AnnexeFichier & {
+  bucketId: string;
+  hash: string;
+  filename: string;
+} => Boolean(fichier.bucketId && fichier.hash && fichier.filename);
+
+const toAnnexeFichier = (annexe: AnnexeDocument): StoredFile | null => {
+  const { fichier } = annexe;
+  if (!fichier || !isStoredFile(fichier)) {
+    return null;
   }
-
-  if (row.lien) {
-    return {
-      ...base,
-      fichier: null,
-      lien: row.lien,
-    };
-  }
-
   return {
-    ...base,
-    fichier: null,
-    lien: null,
+    id: fichier.id,
+    collectiviteId: annexe.collectiviteId,
+    bucketId: fichier.bucketId,
+    hash: fichier.hash,
+    filename: fichier.filename,
+    filesize: fichier.filesize ?? null,
+    confidentiel: fichier.confidentiel ?? false,
+  };
+};
+
+function toDocumentAnnexe(annexe: AnnexeDocument): DocumentAnnexe {
+  return {
+    ...toDocumentCollectivite({
+      id: annexe.id,
+      collectiviteId: annexe.collectiviteId,
+      commentaire: annexe.commentaire,
+      modifiedAt: annexe.modifiedAt,
+      modifiedBy: null,
+      modifiedByNom: annexe.modifiedByNom,
+      fichier: toAnnexeFichier(annexe),
+      lien: annexe.lien ?? null,
+    }),
+    preuveType: 'annexe',
   };
 }
 
@@ -64,7 +62,7 @@ export const useAnnexesFicheAction = (
       },
       {
         enabled: !!ficheId,
-        select: (rows) => rows.map(mapListAnnexeRowToDocumentPreuve),
+        select: (annexes) => annexes.map(toDocumentAnnexe),
       }
     )
   );

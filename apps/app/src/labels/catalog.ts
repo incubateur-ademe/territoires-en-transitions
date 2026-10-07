@@ -1,206 +1,37 @@
-import type {
-  DemarcheDocumentEtape,
-  DemarchePcaetGuardId,
-  DemarcheType,
-} from '@tet/domain/demarches';
+import { ENV } from '@tet/api/environmentVariables';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { countedPlural, plural } from '@tet/ui/labels/plural';
+import { plural } from '@tet/ui/labels/plural';
+import { collectivitesLabels } from './collectivites.labels';
+import { demarchesLabels } from './demarches.labels';
+import { indicateursLabels } from './indicateurs.labels';
+import { plansLabels } from './plans.labels';
+import { referentielsLabels } from './referentiels.labels';
+import { sharedLabels } from './shared.labels';
+import { trajectoiresSnbcLabels } from './trajectoires-snbc.labels';
+import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
 
-/** Libellés d'un type de démarche, interpolés par les vues partagées. */
-export type DemarcheTypeLabels = {
-  nom: string;
-  complement: string;
-  possessif: string;
-};
+export type { DemarcheTypeLabels } from './demarches.labels';
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
+// Lu à l'appel et non au chargement du module : `appLabels` est importé par des
+// centaines de composants clients, un const figerait la valeur de build.
+const getSiteUrl = () =>
+  ENV.site_url ?? 'https://www.territoiresentransitions.fr';
+
+/** Un seul format autorisé se lit « Format supporté », pas « Formats supportés ». */
+const formatsSupportes = plural({
+  one: 'Format supporté',
+  other: 'Formats supportés',
+});
 
 export const appLabels = {
-  referentielCae: 'Climat Air Énergie',
-  referentielEci: 'Économie Circulaire',
-  referentielCrte: 'Contrat Relance Transition Écologique',
-  referentielTe: 'Climat Ressources',
-  referentielTeTest: 'Climat Ressources (test)',
-
-  nonRenseigne: 'Non renseigné',
-  nonRenseignable: 'Non renseignable',
-  avancementFait: 'Fait',
-  avancementPasFait: 'Pas fait',
-  avancementDetaille: 'Détaillé au %',
-  avancementDetailleALaTache: 'Détaillé à la tâche',
-  avancementProgramme: 'Programmé',
-  avancementNonConcerne: 'Non concerné',
-
-  actionCae3: 'Énergie, eau, assainissement',
-  actionEci1: 'Stratégie globale',
-  actionEci2: 'Réduction, collecte et valorisation des déchets',
-  actionEci3: "Autres piliers de l'ECI",
-  actionEci4: 'Outils financiers',
-
-  membreFonctionTechnique: 'Directions et services techniques',
-  membreFonctionPolitique: 'Équipe politique',
-  membreFonctionConseiller: "Bureau d'études",
-  membreFonctionPartenaire: 'Partenaire',
-
-  membreTeteFonctionTechnique: 'Chef·fe de projet',
-  membreTeteFonctionPolitique: 'Élu·e',
-  membreTeteFonctionConseiller: 'Conseiller·ère',
-  membreTeteFonctionPartenaire: 'Partenaire',
-
-  actionTypeAction: 'mesure',
-  actionTypeSousAction: 'sous-mesure',
-  actionTypeTache: 'tâche',
-  actionTypeReferentiel: 'référentiel',
-  actionTypeAxe: 'axe',
-  actionTypeSousAxe: 'sous-axe',
-  actionTypeExemple: 'exemple',
-
-  referentielTableThematiquesViewsSgpe: 'Planification Écologique',
-  referentielTableThematiquesViewsAxes: 'Axes',
-
-  phaseBases: "S'engager",
-  phaseMiseEnOeuvre: 'Concrétiser',
-  phaseEffets: 'Mesurer les effets',
-
-  etoilePremiere: 'première',
-  etoileDeuxieme: 'deuxième',
-  etoileTroisieme: 'troisième',
-  etoileQuatrieme: 'quatrième',
-  etoileCinquieme: 'cinquième',
-
-  sourceTypeObjectif: 'objectifs',
-  sourceTypeResultat: 'résultats',
-
-  indicateurPersonnaliseSingulier: 'Indicateur personnalisé',
-  indicateurPersonnalisePluriel: 'Indicateurs personnalisés',
-  indicateurFavoriSingulier: 'Indicateur favori',
-  indicateurFavoriPluriel: 'Indicateurs favoris',
-  indicateurFavoriTooltip: 'Indicateurs favoris de la collectivité',
-  indicateurCleSingulier: 'Indicateur clé',
-  indicateurClePluriel: 'Indicateurs clés',
-  indicateurPriveSingulier: 'Indicateur privé',
-  indicateurPrivePluriel: 'Indicateurs privés',
-  indicateurMonSingulier: 'Mon indicateur',
-  indicateurMonPluriel: 'Mes indicateurs',
-  indicateurMonTooltip: 'Indicateurs dont je suis la personne pilote',
-  indicateurTousSingulier: 'Indicateur',
-  indicateurTousPluriel: 'Tous les indicateurs',
-
-  roleAdmin: 'Admin',
-  roleEdition: 'Éditeur',
-  roleContributeur: 'Contributeur',
-  roleLecteur: 'Lecteur',
-  roleAdminDescription:
-    'Peut entièrement configurer, éditer, et inviter de nouveaux membres',
-  roleEditionDescription: 'Peut éditer',
-  roleContributeurDescription:
-    'Peut éditer uniquement les actions & indicateurs dont il est le pilote',
-  roleLecteurDescription: 'Peut uniquement consulter',
-
-  auditNonAudite: 'Non audité',
-  auditEnCours: 'Audit en cours',
-  auditDemande: 'Audit demandé',
-  auditAttribue: 'Audit attribué',
-  auditTermine: 'Audit terminé',
-  auditTermineLabellisationEnCours: 'Audit terminé et labellisation en cours',
-  auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
-    `Audit en cours par ${auditeur}`,
-  auditAudite: 'Audité',
-
-  filtreAxesId: 'Axes',
-  filtreSort: 'Tri',
-  eluReferent: plural({ one: 'Élu·e référent·e', other: 'Élu·es référent·es' }),
-  referentTechnique: plural({
-    one: 'Référent·e technique',
-    other: 'Référent·es techniques',
-  }),
-  statut: 'Statut',
-  actionSansPlan: 'Action sans emplacement',
-  filtreNoPilote: 'Sans pilote',
-  filtreNoReferent: 'Sans référent',
-  filtreNoStatut: 'Sans statut',
-  filtreNoPriorite: 'Sans niveau de priorité',
-  filtreTypePeriode: 'Période appliquée à la date',
-  filtreDebutPeriode: 'Du',
-  filtreFinPeriode: 'Au',
-  filtreRestreint: 'Action en mode privé',
-  filtreHasIndicateurLies: 'Indicateur(s) associé(s)',
-  filtreHasMesuresLiees: 'Actions avec mesure(s) des référentiels liée(s)',
-  filtreHasBudget: 'Budget(s) renseigné(s)',
-  actionRepeteTousLesAns: "L'action se répète tous les ans",
-  filtreFinanceurIds: 'Financeur',
-  filtrePartenaireIds: 'Partenaire',
-  filtreCibles: 'Cible',
-  filtreLibreTagsIds: 'Tags personnalisés',
-  filtreInstanceGouvernanceIds: 'Instance de gouvernance',
-  filtreStructurePiloteIds: 'Structure pilote',
-  filtreFicheIds: 'Action',
-  filtreLinkedFicheIds: 'Action liée',
-  filtreNoServicePilote: 'Sans direction ou service pilote',
-  filtreSharedWithCollectivites:
-    "Action mutualisée avec d'autres collectivités",
-  filtreActionsMutualiseesPlusieursPlans:
-    'Actions mutualisées dans plusieurs plans',
-  filtreHasAtLeastBeginningOrEndDate: 'Date de début ou de fin renseignée',
-  filtreHasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
-  filtreNoTag: 'Sans tags personnalisés',
-  filtreNotes: 'Notes',
-  filtreAnneesNotes: 'Année(s) de notes',
-  filtreIndicateurIds: 'Indicateur(s)',
-  filtreNoDescription: 'Sans description',
-  filtreNoObjectif: 'Sans objectif',
-
-  typePeriodeCreation: 'de création',
-  typePeriodeModification: 'de modification',
-  typePeriodeDebut: 'de début',
-  typePeriodeFin: 'de fin prévisionnelle',
-
-  optionDateRenseignee: 'Date renseignée',
-  optionDateNonRenseignee: 'Date non renseignée',
-  optionActionsAvecIndicateurs: 'Actions avec indicateurs',
-  optionActionsSansIndicateurs: 'Actions sans indicateurs',
-  optionActionsAvecNotes: 'Actions avec notes',
-  optionActionsSansNotes: 'Actions sans notes',
-  optionActionsAvecNotesRecentes: 'Actions avec notes récentes (< 1 an)',
-  optionActionsSansNotesRecentes: 'Actions sans notes récentes (> 1 an)',
-  optionAvecMesuresLiees: 'Avec mesures liées',
-  optionSansMesuresLiees: 'Sans mesures liées',
-  optionActionsAvecBudget: 'Actions avec budget',
-  optionActionsSansBudget: 'Actions sans budget',
-
-  cibleGrandPublic: 'Grand public',
-  cibleAssociations: 'Associations',
-  ciblePublicScolaire: 'Public Scolaire',
-  cibleActeursEconomiques: 'Acteurs économiques',
-  cibleActeursEconomiquesPrimaire: 'Acteurs économiques du secteur primaire',
-  cibleActeursEconomiquesSecondaire:
-    'Acteurs économiques du secteur secondaire',
-  cibleActeursEconomiquesTertiaire: 'Acteurs économiques du secteur tertiaire',
-  ciblePartenaires: 'Partenaires',
-  cibleAutresCollectivites: 'Autres collectivités du territoire',
-  cibleCollectiviteElleMeme: 'Collectivité elle-même',
-  cibleElusLocaux: 'Elus locaux',
-  cibleAgents: 'Agents',
-
-  statutAVenir: 'À venir',
-  statutADiscuter: 'À discuter',
-  statutEnCours: 'En cours',
-  statutRealise: 'Réalisé',
-  statutEnRetard: 'En retard',
-  statutEnPause: 'En pause',
-  statutAbandonne: 'Abandonné',
-  statutBloque: 'Bloqué',
-
-  prioriteEleve: 'Élevé',
-  prioriteMoyen: 'Moyen',
-  prioriteBas: 'Bas',
-
-  participationPas: 'Pas de participation citoyenne',
-  information: 'Information',
-  participationConsultation: 'Consultation',
-  participationConcertation: 'Concertation',
-  participationCoConstruction: 'Co-construction',
+  ...sharedLabels,
+  ...collectivitesLabels,
+  ...demarchesLabels,
+  ...referentielsLabels,
+  ...utilisateursAndEntityLabels,
+  ...plansLabels,
+  ...indicateursLabels,
+  ...trajectoiresSnbcLabels,
 
   historiqueActionStatut: 'Mesure : statut',
   historiqueActionPrecision: 'Mesure : texte',
@@ -242,7 +73,6 @@ export const appLabels = {
   departement: 'Département',
   region: 'Région',
 
-  description: 'Description',
   planOptionGraphiqueIndicateurs: 'Graphique des indicateurs',
 
   indicateurSortCompletude: 'Complétude',
@@ -272,22 +102,8 @@ export const appLabels = {
   completionTitre: 'titre',
   completionDescription: 'description',
   completionStatut: 'statut',
-  completionPilote: 'pilote',
 
-  ajouter: 'Ajouter',
-  annuler: 'Annuler',
-  confirmer: 'Confirmer',
-  selectionner: 'Sélectionner',
-  valider: 'Valider',
-  fermer: 'Fermer',
-  modifier: 'Modifier',
-  supprimer: 'Supprimer',
-  telecharger: 'Télécharger',
-  figerEtatDesLieux: "Figer l'état des lieux",
-  editerReferentiel: 'Éditer le référentiel',
-  enregistrer: 'Enregistrer',
-
-  preuvesTelechargementVoir: 'Voir les téléchargements',
+  telechargerTousLesDocuments: 'Télécharger tous les documents',
   preuvesTelechargementDemarrer: 'Télécharger tous les documents',
   preuvesTelechargementAucun: 'Aucun téléchargement préparé pour le moment.',
   preuvesTelechargementPanelTitre: 'Téléchargement des documents',
@@ -311,7 +127,6 @@ export const appLabels = {
   preuvesTelechargementNombreFichiers: ({ count }: { count: number }): string =>
     `${count} fichier${count > 1 ? 's' : ''}`,
   preuvesTelechargementLien: 'Télécharger le dossier',
-  preuvesTelechargementReessayer: 'Réessayer',
   preuvesTelechargementErreur: 'La préparation des documents a échoué.',
 
   bonjour: 'Bonjour',
@@ -319,20 +134,11 @@ export const appLabels = {
   erreurConnexionReseau:
     "Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
 
-  pasDocumentAttenduAction:
-    "Il n'y a pas de document attendu pour cette action du référentiel.",
-  pasDocumentAttenduSousAction:
-    "Il n'y a pas de document attendu pour cette sous-action du référentiel.",
   documentsComplementaires: 'Documents complémentaires',
-  documentsVisiblesAvertissement:
-    'Tous les documents sont visibles par les membres de la communauté Territoires en Transitions, en dehors des documents confidentiels.',
+
   editerDocument: 'Éditer le document',
   editerLien: 'Éditer le lien',
   commenter: 'Commenter',
-  renommerLeFichier: 'Renommer le fichier',
-  supprimerDocument: 'Supprimer le document',
-  documentModePrive: 'Document en mode privé',
-  telechargerFichier: 'Télécharger le fichier',
   ouvrirLien: 'Ouvrir le lien',
   voirMoins: 'Voir moins',
   voirPlus: 'Voir plus',
@@ -340,8 +146,10 @@ export const appLabels = {
     'Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?',
   ajouterDocumentAttendu: 'Ajouter un document attendu',
   ajouterPreuve: 'Ajouter une preuve',
+  ajouterPreuvePour: (preuveNom: string): string =>
+    `Ajouter une preuve pour ${preuveNom}`,
   ajouterDocumentComplementaire: 'Ajouter un document complémentaire',
-  sousActionAssociee: 'Sous-action associée (obligatoire)',
+  sousActionAssociee: 'Sous-mesure associée (obligatoire)',
   ajouterDocument: 'Ajouter un document',
   ajouterRapportAudit: "Ajouter le rapport d'audit",
 
@@ -358,12 +166,13 @@ export const appLabels = {
     tailleMaxMo: number;
     formats: ReadonlyArray<string>;
   }): string =>
-    `Taille maximale par fichier : ${tailleMaxMo} Mo. Formats supportés : ${formats.join(
-      ', '
-    )}.`,
+    `Taille maximale par fichier : ${tailleMaxMo} Mo. ${
+      formats.length > 1
+        ? formatsSupportes({ plural: true })
+        : formatsSupportes()
+    } : ${formats.join(', ')}.`,
 
   tousLesFichiersCollectivite: 'Tous les fichiers de ma collectivité',
-  rechercherParNom: 'Rechercher par nom',
 
   potentielReduitZero: 'Potentiel réduit : 0 point',
   potentielAugmente: ({ points }: { points: string }): string =>
@@ -388,32 +197,13 @@ export const appLabels = {
     'Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?',
 
   auditCotSansLabellisation: 'Audit COT sans labellisation',
-  auditCotAvecLabellisation: 'Audit COT avec labellisation',
-  auditLabellisation: 'Audit de labellisation',
   envoiEnCours: 'Envoi en cours...',
-  demandeEnvoyee: 'Demande envoyée',
-  auditEnCoursParAuditeurs: ({
-    listeAuditeurs,
-  }: {
-    listeAuditeurs: string;
-  }): string => `Audit en cours, par ${listeAuditeurs}`,
-  labellisationEnCoursParAuditeurs: ({
-    listeAuditeurs,
-  }: {
-    listeAuditeurs: string;
-  }): string => `Labellisation en cours - audité par ${listeAuditeurs}`,
-  labellisationEnCours: 'Labellisation en cours',
-  objectifRenouveler: 'Objectif : renouveler la labellisation',
-  objectifEtoile: ({ etoileLabel }: { etoileLabel: string }): string =>
-    `Objectif : ${etoileLabel} étoile`,
   obtenirPremiereEtoile: 'Obtenir la première étoile',
   demanderAudit: 'Demander un audit',
   demanderAuditScoreInsuffisant:
     'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.',
   renseignerCriteresPourDemande:
     'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation',
-  renseignerPilotesPourDemande:
-    "Désigner l'élu référent et le référent technique pour pouvoir demander un audit.",
   demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
   demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
   demarrerAuditEtoileOption: ({
@@ -427,8 +217,6 @@ export const appLabels = {
     "Sélectionnez un type d'audit et une étoile.",
   demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
   demarrerAuditTypeLabellisation: 'Audit de labellisation',
-  auditSansLabellisationMessage:
-    "Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.",
   notesAuditeur: "Notes de l'auditeur, auditrice",
   notesAuditeurHint:
     "Remarques sur la mesure, questions pour la séance d'audit",
@@ -449,18 +237,10 @@ export const appLabels = {
   raisonRepartition:
     'Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition',
   pilotes: 'Pilotes',
-  directionOuServicePilote: 'Direction ou service pilote',
   modifierAction: "Modifier l'action",
-  personnePilote: 'Personne pilote',
-  selectionnerOuCreerPilote: 'Sélectionner ou créer un pilote',
+  personneInconnue: 'Inconnu',
   dateDebut: 'Date de début',
   dateFin: 'Date de fin',
-
-  supprimerSousAction: 'Supprimer la sous-action',
-  dissocierAction: "Dissocier l'action",
-  validerAudit: "Valider l'audit",
-  validerAuditDescription:
-    "Pour clôturer l'audit, merci de joindre votre rapport définitif (disponible dans la bibliothèque de documents et visible par les membres de la communauté).",
 
   cloturerAudit: "Clôturer l'audit",
   clotureAuditEtape: ({
@@ -556,38 +336,22 @@ export const appLabels = {
     "En passant en public l'ensemble des actions de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité.",
   telechargerPlanExcel: 'Télécharger le plan (Excel)',
   telechargerPlanWord: 'Télécharger le plan (Word)',
-  exporterEnPdf: 'Exporter en PDF',
   parametresExport: "Paramètres de l'export",
   personnaliserSection: 'Personnaliser la section',
   ajouterAExportPdf: 'Ajouter à l’export PDF',
   genererRapportPowerpoint: 'Générer un rapport (PowerPoint)',
   exportEnCours: 'Export en cours',
   generationEnCours: 'Génération en cours',
-  supprimerPlan: 'Supprimer le plan',
-  dupliquerPlan: 'Dupliquer le plan',
-  dupliquerCePlan: 'Dupliquer ce plan',
-  dupliquer: 'Dupliquer',
+
   duplicationEnCours: 'Duplication en cours…',
   planDuplique: 'Le plan a bien été dupliqué',
-  nomDuPlan: 'Nom du plan',
-  nomPlanRequis: 'Le nom du plan est requis',
-  nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   nomCopiePlan: ({ nom }: { nom: string | null }): string =>
     nom ? `${nom} (copie)` : '',
-  editerPlan: 'Éditer ce plan',
   modifierTitre: 'Modifier le titre',
-  creerAxe: 'Créer un axe',
   descriptionsMasquees:
     "Les descriptions sont masquées dans l'affichage global",
-  supprimerDescription: 'Supprimer la description',
-  ajouterDescription: 'Ajouter une description',
+
   indicateursMasques: "Les indicateurs sont masqués dans l'affichage global",
-  lierIndicateur: 'Lier un indicateur',
-  associerIndicateurs: 'Associer des indicateurs',
-  deplacer: 'Déplacer',
-  editerAxe: 'Éditer cet axe',
-  creerAction: 'Créer une action',
-  ajouterNouveauTitreAxe: 'Ajouter un nouveau titre/axe',
   pasDActionNiArborescencePlan:
     "Vous n'avez aucune action ni arborescence de plan !",
   pasDActionNiArborescencePlanLecture:
@@ -612,9 +376,7 @@ export const appLabels = {
     'Les actions liées à un autre plan ou mutualisées ne seront pas impactées.',
 
   mutualiserAction: "Mutualiser l'action dans un autre plan",
-  gererDroitsAcces: "Gérer les droits d'accès de l'action",
   telechargerActionPdf: "Télécharger l'action (PDF)",
-  journalActivite: "Journal d'activité",
   dupliquerLAction: "Dupliquer l'action",
   actionDupliquee: "L'action a bien été dupliquée",
   supprimerAction: "Supprimer l'action",
@@ -636,43 +398,13 @@ export const appLabels = {
   noteCreeePar: ({ prenom, nom }: { prenom: string; nom: string }): string =>
     ` créée par ${prenom} ${nom}`,
 
-  supprimerFinanceur: 'Supprimer le financeur',
-  supprimerBudget: 'Supprimer le budget',
-  ajouterBudget: 'Ajouter un budget',
-  ajouterFinanceur: 'Ajouter un financeur',
-  modifierTypeBudgetQuestion: 'Modifier le type de budget ?',
-  modifierTypeBudgetAlerte: ({ nextMode }: { nextMode: string }): string =>
-    `Attention : en passant au mode ${nextMode}, les données budgétaires actuelles seront supprimées.`,
-  budgetAnnee: ({ year }: { year: number }): string => `Budget ${year}`,
-
-  annulerInvitation: "Annuler l'invitation",
-  invitationDescription:
-    "Cette personne n'a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l'espace de la collectivité.",
-  renvoyerInvitation: "Renvoyer l'invitation",
-  supprimerInvitation: "Supprimer l'invitation",
-  associerCompteTag: 'Associer ce compte utilisateur à un tag',
-  associerCompteTagDescription:
-    'Vous pouvez associer ce compte utilisateur à un ou plusieurs tags afin que les actions, indicateurs et mesures des référentiels soient associés à cet utilisateur.',
-  associerCompteTagChamp:
-    'Associer ce compte utilisateur à un ou plusieurs tags',
-
   filtrerHistorique: "Filtrer l'historique des modifications par",
   aucunHistorique: 'Aucun historique de modification',
-  voirAction: "Voir l'action",
   par: 'Par',
-  referentiel: 'Référentiel',
   masquerDetail: 'Masquer le détail',
   afficherDetail: 'Afficher le détail',
   typeElementModifie: "Type d'élément modifié",
   membre: 'Membre',
-
-  historiqueResultats: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} résultat` : `${count} résultats`,
-
-  collectivitesActives: ({ count }: { count: number }): string =>
-    count <= 1 ? 'collectivité active' : 'collectivités actives',
-  plan: ({ count }: { count: number }): string =>
-    count <= 1 ? 'plan' : 'plans',
 
   visiteEffectuee: ({ dateVisite }: { dateVisite: string }): string =>
     `Visite effectuée le ${dateVisite}`,
@@ -681,7 +413,7 @@ export const appLabels = {
   syntheseDeLaCollectivite: 'Synthèse de la collectivité',
   suiviPersonnel: 'Suivi perso',
   suiviPersonnelDescription:
-    'Vous retrouvez ici les actions, mesures et indicateurs dont vous êtes la personne pilote',
+    'Vous retrouvez ici les actions, sous-actions, mesures et indicateurs dont vous êtes la personne pilote',
   plansEtActions: 'Plans & Actions',
   plans: 'Plans',
   actions: 'Actions',
@@ -692,7 +424,10 @@ export const appLabels = {
   referentielClimatAirEnergie: 'Référentiel Climat Air Énergie',
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
   referentielTransitionEcologique: 'Référentiel Climat Ressources',
-  indicateursLiesAuScore: 'Indicateurs liés au score',
+  indicateursLiesAuScore: plural({
+    one: 'Indicateur lié au score',
+    other: 'Indicateurs liés au score',
+  }),
   scoreCalculAutomatiqueIndicateurs:
     'Le score est calculé automatiquement à partir des indicateurs',
   methodeCalcul: 'Méthode de calcul',
@@ -701,7 +436,7 @@ export const appLabels = {
   identiteEtPersonnalisation: 'Identité et personnalisation',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
   collectivites: 'Collectivités',
-  superAdmin: 'Super Admin',
+
   navEtatDesLieux: 'État des lieux',
   navTableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
   navReferentielClimatAirEnergie: 'Référentiel Climat-Air-Énergie',
@@ -723,101 +458,6 @@ export const appLabels = {
   vueDrealDashboardSousTitre: ({ count }: { count: number }): string =>
     `${count} collectivités suivies · rattachées à votre région`,
   /**
-   * Libellés propres à chaque type de démarche. Les vues partagées (stepper,
-   * documents…) les interpolent au lieu d'écrire « PCAET » en dur : ajouter un
-   * type de démarche suffit à les faire fonctionner.
-   */
-  demarcheTypeLabels: {
-    pcaet: {
-      /** Nom court, employé seul : « PCAET ». */
-      nom: 'PCAET',
-      /** Complément de nom : « du PCAET », « de la labellisation »… */
-      complement: 'du PCAET',
-      /** Nature du dossier : « votre PCAET », « votre labellisation ». */
-      possessif: 'votre PCAET',
-    },
-  } satisfies Record<DemarcheType, DemarcheTypeLabels>,
-
-  demarchePilotesLabel: 'Pilotes :',
-  demarcheAccesDescription: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Ce plan est lié à une démarche ${type.nom} réglementaire.`,
-  demarcheAcceder: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Accéder à la démarche ${type.nom}`,
-  demarcheCreerTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Commencer le dépôt ${type.complement}`,
-  demarcheCreerCadreReglementaire:
-    "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.", // Cadre légal propre au PCAET : non paramétrable.
-  demarcheCreerChampsObligatoiresLegende:
-    'Les champs marqués d’un astérisque (*) sont obligatoires.',
-  demarcheCreerIntitule: 'Intitulé de la démarche *',
-  demarcheCreerPilotes: 'Pilotes *',
-  demarcheCreerRechercherPilote: 'Rechercher un pilote…',
-  demarcheCreerDateDebut: 'Date de début *',
-  demarcheCreerDateDebutRequise: 'La date de début est requise',
-  demarcheCreerSoumettre: 'Commencer le dépôt',
-  demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
-  demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
-  demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
-  demarcheDetailDocumentsDescription:
-    "Déposer les pièces réglementaires obligatoires et d'autres documents optionnels.",
-  demarcheDetailVersionProvisoireTitre: 'Version provisoire',
-  demarcheDetailVersionProvisoireDescription:
-    "Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur.",
-  demarcheDetailPublieeTitre: 'Démarche publiée',
-  demarcheDetailPublieeDescription:
-    'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
-  demarcheContactsTitre: 'Contacts',
-  demarcheContactsDescription:
-    'Interlocuteurs désignés pour le suivi de votre démarche.',
-  demarcheMenuTitre: 'Actions',
-  demarcheContactDreal: 'Contacts DREAL',
-  demarcheContactCr: 'Contacts Conseil régional',
-  demarcheContactDrealSituation:
-    'Dépôt réglementaire, vérification de conformité et suivi administratif de votre PCAET.',
-  demarcheContactCrSituation:
-    'Avis du conseil régional et questions liées à la politique climat-air-énergie régionale.',
-  demarcheAvanceTitre: 'Les étapes de votre démarche',
-  demarcheAvancePanneauBouton: 'Étapes',
-  demarcheAvanceSectionDocumentsDescription:
-    'Déposez les pièces réglementaires du dossier (ou un document global).',
-  demarcheAvanceSectionDocumentsAvalDescription:
-    'Déposez les pièces réglementaires aval du dossier.',
-  demarcheAvanceSectionDiagnosticDescription: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) => `Renseignez les indicateurs et objectifs par volet ${type.complement}.`,
-  demarcheAvanceSectionPlanDescription:
-    "Rattachez ou créez un plan d'actions dans la plateforme.",
-  demarcheAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
-  demarcheAvanceEtapeCreationDescription: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Renseignez l'intitulé, les pilotes et la date de début pour lancer le dépôt de ${type.possessif}.`,
-  demarcheAvanceEtapeElaborationLabel: 'Élaboration',
-  demarcheAvanceEtapeElaborationDescription:
-    "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
-  demarcheAvanceEtapeTransmisLabel: 'Transmis pour avis',
-  demarcheAvanceEtapeTransmisDescription:
-    'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
-  demarcheAvanceEtapeTransmisInfo:
-    'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
-  demarcheAvanceEtapeAdopteLabel: 'Adopté et en cours de mise en œuvre',
-  demarcheAvanceEtapeAdopteDescription: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `${type.nom} en vigueur, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.`,
-  demarcheAvanceEtapeArchiveLabel: 'Archivé',
-  demarcheAvanceEtapeArchiveDescription:
-    'Évaluation finale déposée, cycle clos.',
-  demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
-  demarcheAvanceRepasserBrouillon: 'Repasser en brouillon',
-  demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
-  /**
    * Libellés des codes d'erreur renvoyés par l'API (`data.errorKey`) : le
    * serveur nomme la cause, l'app l'écrit.
    */
@@ -836,104 +476,9 @@ export const appLabels = {
       'Les pièces attendues après les avis (délibération d’adoption…) doivent être déposées pour publier la démarche.',
     DEMARCHE_PCAET_NON_MODIFIABLE:
       'Cette partie du dossier n’est plus modifiable au statut actuel de la démarche.',
+    ACTION_DE_REFERENCE_CONFLICT:
+      'Une action de référence identique existe déjà.',
   } as Record<string, string | undefined>,
-  /**
-   * Ce qui retient une transition, un message par guard du workflow : le
-   * serveur dit lequel bloque, le front le traduit.
-   */
-  demarcheTransitionBlocage: {
-    estPilote: 'Seul un pilote de la démarche peut réaliser cette action.',
-    dossierComplet:
-      'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
-    delaiAvisEcoule:
-      'Le délai légal de remise des avis n’est pas encore écoulé.',
-    evaluationFinaleDeposee:
-      'Déposez l’évaluation finale pour archiver la démarche.',
-    documentsAvalComplets:
-      'Complétez les pièces attendues après les avis (délibération d’adoption…) pour publier votre démarche.',
-  } satisfies Record<DemarchePcaetGuardId, string>,
-  demarcheAvanceTransmisEcheance: 'Échéance remise des avis :',
-  demarcheAvanceTransmisDepasse: 'Délai dépassé',
-  demarcheStepsNavPrevious: 'Étape précédente',
-  demarcheStepsNavNext: 'Étape suivante',
-  /** Étiquette du `<nav>` de la barre d'étapes, lue par les lecteurs d'écran. */
-  demarcheStepsNavAriaLabel: 'Navigation entre les étapes du dépôt',
-  demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
-  demarcheVulnerabiliteDomaines: 'Domaines',
-  demarcheVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
-  demarcheVulnerabiliteDiag2050: 'Diag 2050',
-  demarcheVulnerabiliteDiag2100: 'Diag 2100',
-  demarcheVulnerabiliteObjectifs2050: 'Objectifs 2050 (obligatoire)',
-  demarcheVulnerabiliteObjectifs2100: 'Objectifs 2100 (obligatoire)',
-  /** Aide affichée en infobulle sur les deux colonnes d'objectifs. */
-  demarcheVulnerabiliteObjectifsAide:
-    'Ex. : « Adapter 50 % des exploitations agricoles aux épisodes de sécheresse d’ici 2050 » ou « Réduire de 25 % la consommation d’eau potable en période de tension ». Une phrase concrète, si possible mesurable.',
-  demarcheVulnerabiliteObjectifs: 'Saisir vos objectifs',
-  /** Cellule d'objectif d'un horizon déclaré « non concerné » : rien n'est attendu. */
-  demarcheVulnerabiliteObjectifsNonAttendus: 'Non attendu — saisir si besoin',
-  /** Affordance des cellules de niveau vides, atténuée au repos. */
-  demarcheVulnerabiliteAjouterNiveau: '+ niveau',
-  demarcheVulnerabiliteNiveauNonRenseigne: 'non renseigné',
-  demarcheVulnerabiliteTableauAriaLabel:
-    'Niveaux de vulnérabilité du territoire par domaine',
-  /** Nom accessible d'une cellule de niveau : sans lui, 48 cellules homonymes. */
-  demarcheVulnerabiliteCelluleNiveau: ({
-    domaine,
-    horizon,
-    niveau,
-  }: {
-    domaine: string;
-    horizon: string;
-    niveau: string;
-  }) => `${domaine}, ${horizon} : ${niveau}`,
-  demarcheVulnerabiliteCelluleObjectifs: ({
-    domaine,
-    horizon,
-    renseigne,
-  }: {
-    domaine: string;
-    horizon: string;
-    renseigne: boolean;
-  }) =>
-    `${domaine}, objectifs ${horizon} : ${
-      renseigne ? 'renseignés' : 'non renseignés'
-    }`,
-  demarcheVulnerabiliteCelluleDomaine: ({ label }: { label: string }) =>
-    `Renommer le domaine ${label}`,
-  demarcheVulnerabiliteAjouterDomaine: 'Ajouter un domaine',
-  demarcheVulnerabiliteNomDomaine: 'Nom du domaine',
-  demarcheVulnerabiliteDomaineAjoute: 'Domaine ajouté',
-  demarcheVulnerabiliteDomaineSupprime: 'Domaine supprimé',
-  demarcheVulnerabiliteSupprimerDomaine: 'Supprimer ce domaine',
-  demarcheVulnerabiliteSupprimerDomaineNomme: ({ label }: { label: string }) =>
-    `Supprimer le domaine ${label}`,
-  demarcheVulnerabiliteSupprimerDomaineTitre: 'Retirer ce domaine ?',
-  demarcheVulnerabiliteSupprimerDomaineDescription: ({
-    label,
-  }: {
-    label: string;
-  }) =>
-    `« ${label} » sera retiré de cette démarche, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité le conservent.`,
-  demarcheVulnerabiliteSupprimerDomaineConfirmer: 'Retirer',
-  demarcheVulnerabiliteDomaineDejaExistant:
-    'Un domaine porte déjà ce nom dans cette démarche',
-  demarcheVulnerabiliteDiagMaintenantLegende:
-    '* Diagnostic correspondant à la situation actuelle du territoire.',
-  demarcheVulnerabiliteDescription:
-    'Évaluez le niveau de vulnérabilité du territoire pour chaque domaine, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
-  demarcheDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
-  demarcheDiagnosticDescription:
-    'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
-  /** Complétude d'une étape du dépôt, rendue par `DemarcheCompletionBadge`. */
-  demarcheCompletionComplete: 'Complété',
-  demarcheCompletionAComplete: 'À compléter',
-  demarcheDiagnosticAnneesEnregistrees: 'Années du diagnostic enregistrées',
-  demarcheDiagnosticErreurChargement: 'Impossible de charger le diagnostic',
-  indicateurValeursReferenceTitre: 'Constats des sources extérieures',
-  indicateurValeursReferenceMarqueur: ({ count }: { count: number }): string =>
-    count === 1
-      ? '1 constat d’une source extérieure'
-      : `${count} constats de sources extérieures`,
   indicateurValeurReferenceLigne: ({
     source,
     millesime,
@@ -956,146 +501,6 @@ export const appLabels = {
     millesime === null
       ? `Constat ${source}, affiché à titre de référence`
       : `Constat ${source} (millésime ${millesime}), affiché à titre de référence`,
-  demarcheDiagnosticPhotoTitre: 'Diagnostic transmis pour avis',
-  demarcheDiagnosticPhotoDescription: ({ date }: { date: string }): string =>
-    `Ces données sont celles déposées le ${date}. Les modifications apportées depuis à vos indicateurs n’affectent pas le dossier transmis.`,
-  demarcheHistoriqueTitre: 'Historique des dépôts',
-  demarcheHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
-    `Voir la démarche ${titre}`,
-  demarcheDocumentsBadgeObligatoire: 'Obligatoire',
-  demarcheDocumentsBadgeOptionnel: 'Optionnel',
-  demarcheDocumentsRemplacerDocument: 'Remplacer le document',
-  demarcheDocumentsTeleverser: 'Déposer un document spécifique',
-  demarcheDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
-  demarcheDocumentsComprisDansPlanSuivi: 'Inclus dans le programme d’actions',
-  demarcheDocumentsComprisDansPlanSuiviAide:
-    'Cochez cette case si cette pièce est prise en charge par le plan d’actions suivi dans la plateforme, sans document à déposer.',
-  demarcheDocumentsCaption: ({
-    type,
-    etape,
-  }: {
-    type: DemarcheTypeLabels;
-    etape: DemarcheDocumentEtape;
-  }) =>
-    etape === 'amont'
-      ? `Dépôt des pièces du dossier ${type.nom}`
-      : `Dépôt des pièces du dossier ${type.nom} attendues après les avis`,
-  demarcheDocumentsColonneSection: 'Section',
-  demarcheDocumentsColonneType: 'Type',
-  demarcheDocumentsColonneDocuments: 'Documents liés',
-  demarcheDocumentsGlobalTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Document global ${type.complement}`,
-  demarcheDocumentsGlobalDescription:
-    'Déposez un document unique regroupant l’ensemble des pièces attendues. Les sections obligatoires ci-dessous sont alors considérées comme couvertes ; vous pouvez toujours déposer un document spécifique pour préciser une section.',
-  demarcheDocumentsGlobalTeleverser: 'Déposer un document global',
-  demarcheDocumentsGlobalRemplacer: 'Remplacer le document global',
-  demarcheDocumentsGlobalSupprimer: 'Supprimer le document global',
-  demarcheDocumentsCouvertViaGlobal: 'Couvert par le document global',
-  demarcheDocumentsSectionsDetail: {
-    amont: 'Détail par section attendue',
-    aval: 'Pièces attendues après les avis',
-  } satisfies Record<DemarcheDocumentEtape, string>,
-  demarcheDocumentsSupprimerDocument: 'Supprimer le document',
-  demarcheDocumentsModaleTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Déposer un document du dossier ${type.nom}`,
-  demarcheDocumentsFormatPdf: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Seuls les documents au format PDF sont acceptés dans un dossier ${type.nom}.`,
-  demarcheDocumentsErreurChargement: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Impossible de charger les pièces du dossier ${type.nom}`,
-  demarcheDocumentsDeposeSucces: 'Document déposé',
-  demarcheDocumentsDeposeErreur: 'Échec du dépôt du document',
-  demarcheDocumentsSuppressionSucces: 'Document supprimé',
-  demarcheDocumentsSuppressionErreur: 'Échec de la suppression du document',
-  demarcheDocumentsCouvertureSucces: 'Couverture de la pièce mise à jour',
-  demarcheDocumentsCouvertureErreur:
-    'Échec de la mise à jour de la couverture de la pièce',
-  demarcheProgrammeTitre: 'Renseigner le programme d’actions',
-  demarcheProgrammeChargement:
-    'Chargement des plans existants dans la plateforme…',
-  demarcheProgrammeNoPlanIntro: ({
-    typeLabel,
-  }: {
-    typeLabel: string;
-  }): string =>
-    `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
-  demarcheProgrammeEtape1Titre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `1. Lier votre programme d’actions à un plan ${type.nom} existant dans la plateforme`,
-  demarcheProgrammeEtape1Description: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, liez-le.`,
-  demarcheProgrammeEtape1DescriptionSansPlan: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Aucun plan de type « ${type.nom} » n’existe encore pour cette collectivité.`,
-  demarcheProgrammeEtape2Titre:
-    '2. Aucun plan existant dans la plateforme ne correspond ?',
-  demarcheProgrammeEtape2Description: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) => `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
-  demarcheProgrammeConsulterPlan: 'Consulter le plan',
-  demarcheProgrammeDetacher: 'Détacher',
-  demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
-    `Plan #${id}`,
-  demarcheProgrammeLierCePlan: 'Lier ce plan',
-  demarcheProgrammeColonneNom: 'Nom du plan',
-  demarcheProgrammeColonneType: 'Type',
-  demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan à partir de zéro',
-  demarcheProgrammeCreerNouveauPlanFromDocument: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Créer un plan à partir de votre programme d’actions ${type.complement}`,
-  demarcheStatutControlLabel: 'Statut',
-  demarcheStatutPublieeLe: ({ date }: { date: string }): string =>
-    `Publiée le ${date}`,
-  demarcheHeaderDateDebut: 'Date de début',
-  demarcheHeaderDemarcheCreatedAt: 'Créé le',
-  demarcheHeaderModifieLe: 'Modifié le',
-  demarcheObligationObligatoire: 'Obligatoire',
-  demarcheObligationVolontaire: 'Volontaire',
-  demarcheBadgePubliee: 'Publiée',
-  demarcheHeaderPiloteSingulier: 'Pilote',
-  demarcheHeaderPilotePluriel: 'Pilotes',
-  demarchePilotesTooltip:
-    'Ces personnes recevront les notifications mails liées à la démarche',
-  demarcheListeTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Démarches ${type.nom}`,
-  demarcheListeCommencerDepot: 'Commencer un dépôt',
-  demarcheListeCreationBloquee: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Une démarche est déjà en cours — un nouveau dépôt sera possible une fois ${type.complement.replace(
-      'du ',
-      'le '
-    )} adopté ou archivé`,
-  demarcheListeVideTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Aucune démarche ${type.nom}`,
-  demarcheListeVideDescription: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Commencez le dépôt réglementaire de ${type.possessif} pour suivre ses étapes dans la plateforme.`,
-  demarcheListeColonneTitre: 'Titre',
-  demarcheListeColonnePilotes: 'Pilotes',
-  demarcheListeColonneStatut: 'Statut',
-  demarcheListeColonneCreation: 'Créée le',
-  demarcheListeColonneDebut: 'Début',
-  demarcheListeColonneModification: 'Modifiée le',
-  demarcheListeActionsMenu: 'Actions sur la démarche',
-  demarcheActionContinuerSaisie: 'Continuer la saisie',
-  demarcheActionConsulter: 'Consulter',
-  demarcheActionSupprimer: 'Supprimer',
-  demarcheSupprimerModaleTitre: 'Supprimer la démarche',
-  demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>
-    `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
-  demarcheTransitionReprendre: 'Reprendre l’élaboration',
-  demarcheTransitionAdopter: 'Adopter',
-  demarcheTransitionArchiver: 'Archiver',
-  demarcheTransitionPublier: 'Publier',
-  demarcheTransitionDepublier: 'Repasser en brouillon',
 
   navCollectivites: 'Collectivités',
   navSuperAdmin: 'Super Admin',
@@ -1137,6 +542,7 @@ export const appLabels = {
   formCodeRegion: 'Code région',
   formCodeRegionHint: 'Le code région est composé de 2 chiffres (01 à 99)',
   typeCollectivite: 'Type de collectivité',
+  formTypeDreal: 'DREAL',
   formTypeEpci: 'EPCI',
   formTypePrefectureDepartement: 'Préfecture de département',
   formTypePrefectureRegion: 'Préfecture de région',
@@ -1149,7 +555,6 @@ export const appLabels = {
   formNicHint: 'Le NIC est composé de 5 chiffres',
 
   filtreEngageesRechercher: 'Rechercher par nom de collectivité',
-  filtreEngageesTypePlan: 'Type de plan',
   filtreEngageesCollectivite: 'Collectivité',
   filtreEngageesNiveauLabellisation: 'Niveau de labellisation',
 
@@ -1172,21 +577,16 @@ export const appLabels = {
     annee: number;
   }): string => `Mes ${sourceTypeLabel} (${unite}) : ${annee}`,
   completerTableau: 'Compléter le tableau',
-  inviterMembre: 'Inviter un membre',
   ajouterRapportVisite: 'Ajouter un rapport de visite annuelle',
   supprimerNoteConfirmation:
     "Cette note sera supprimée définitivement de l'action. Souhaitez-vous vraiment supprimer cette note ?",
 
   champNomAction: "Nom de l'action",
-  niveauPriorite: 'Niveau de priorité',
   champDateFinPrevisionnelle: 'Date de fin prévisionnelle',
-  thematique: 'Thématique',
   categorie: 'Catégorie',
-  mesure: 'Mesure',
   favori: 'Favori',
   recherche: 'Recherche',
   donneesOpenData: 'Données Open Data',
-  indicateurCompleteParCollectivite: 'Indicateur complété par la collectivité',
   complet: 'Complet',
   incomplet: 'Incomplet',
   champNomIndicateur: "Nom de l'indicateur",
@@ -1194,8 +594,6 @@ export const appLabels = {
   champDescriptionMethodologie: 'Description et méthodologie de calcul',
   commentaire: 'Commentaire',
   champAnnee: 'Année *',
-  champResultat: 'Résultat',
-  champObjectif: 'Objectif',
   champAjouterCommentaireResultat: 'Ajouter un commentaire sur le résultat',
   champAjouterCommentaireObjectif: "Ajouter un commentaire sur l'objectif",
   champAdresseEmailInvitation: 'Adresse email de la personne à inviter *',
@@ -1212,14 +610,15 @@ export const appLabels = {
   champDetailAfficheParAction: 'Détail affiché par action',
   optionDerniereNoteAction: "Inclure la dernière note de l'action",
   optionSaisieManuelleRapport: 'Inclure une section vide pour saisie libre',
+  rapportFichierIntrouvable:
+    'Le rapport a été généré mais son fichier est introuvable',
+  rapportGenerationEchouee: (reason: string | null): string =>
+    `La génération du rapport a échoué : ${reason ?? 'erreur inconnue'}`,
   apercuLogoAlt: 'Aperçu du logo',
   fichierSelectionne: 'Fichier sélectionné',
-  champPersonnePiloteColon: 'Personne pilote :',
-  champDirectionServicePiloteColon: 'Direction ou service pilote :',
   champThematiqueColon: 'Thématique :',
   tableauTitre: 'Titre',
   tableauPlan: 'Plan',
-  tableauPilote: 'Pilote',
   tableauPriorite: 'Priorité',
   membres: 'Membres',
   membreNomEtAdresseMail: 'Nom et adresse mail',
@@ -1228,32 +627,20 @@ export const appLabels = {
   membreChampIntervention: "Champ d'intervention",
   membreAcces: 'Accès',
 
-  placeholderSelectionnezEluReferent:
-    'Sélectionnez ou créez un·e élu·e référent·e',
-  placeholderSelectionnezCibles: 'Sélectionner une ou plusieurs cibles',
   placeholderSelectionnezStatut: 'Sélectionner un statut',
-  placeholderRecherchezMotsCles: 'Recherchez par mots-clés',
+
   sansTitre: 'Sans titre',
-  placeholderRechercher: 'Rechercher',
   placeholderARenseigner: 'À renseigner',
   placeholderRenseignezCollectivite: 'Renseignez le nom de la collectivité',
   placeholderAjouterMontant: 'Ajouter un montant',
-  placeholderSelectionnezPlusieursPilotes:
-    'Sélectionnez un ou plusieurs pilotes',
-  placeholderSelectionnezPlusieursEluReferent:
-    'Sélectionnez un ou plusieurs élu·e·s référent·e·s',
   supprimerIndicateur: "Supprimer l'indicateur",
   exporterXlsx: 'Exporter au format .xlsx',
   lierAction: 'Lier une action',
   ajouterNote: 'Ajouter une note',
-  validerCompleter: 'Valider et compléter',
   enregistrementEnCours: 'Enregistrement en cours...',
   validerAjouterAnnee: 'Valider et ajouter une année',
   ajouterRapport: 'Ajouter le rapport',
-  resultats: 'Résultats',
-  objectifs: 'Objectifs',
   ajouterAnnee: 'Ajouter une année',
-  ajouterSousAction: 'Ajouter une sous-action',
   creerPlan: 'Créer un plan',
   planDateFinPosterieureDateDebut:
     'La date de fin doit être postérieure ou égale à la date de début',
@@ -1262,33 +649,17 @@ export const appLabels = {
   affichageDiagrammeCirculaire: 'Affichage diagramme circulaire',
   toutesLesActions: 'Toutes les actions',
 
-  editionPiloteTitre: 'Éditer la personne pilote',
-  editionReferentTitre: "Éditer l'élu·e référent·e",
-  editionServiceTitre: 'Éditer la direction ou service pilote',
-  editionAjouterPilote: 'Ajouter une personne pilote',
-  editionDissocierPilote: 'Dissocier une personne pilote',
-  editionAjouterReferent: 'Ajouter un·e élu·e référent·e',
-  editionDissocierReferent: 'Dissocier un·e élu·e référent·e',
-  editionAjouterService: 'Ajouter une direction ou service pilote',
-  editionDissocierService: 'Dissocier une direction ou service pilote',
-
   aucuneActionLiee: "Aucune action de vos plans n'est liée !",
   aucuneActionRecherche: 'Aucune action ne correspond à votre recherche',
   aucuneActionCreee: "Vous n'avez pas encore créé d'actions !",
   aucuneActionCreeeDescription:
     'Une fois vos actions créées, vous les retrouvez toutes dans cette vue où vous pourrez les filtrer sur de nombreux critères.',
   collectiviteSansPlan: "Cette collectivité n'a pas encore de plan",
-  utilisateurSansPlan: "Vous n'avez pas encore créé de plan !",
-  utilisateurSansPlanDescription:
-    "Vous pouvez créer votre plan, qu'il soit déjà voté ou encore en cours d'élaboration.",
-  utilisateurSansPlanDescriptionSuite:
-    'Les actions seront modifiables à tout moment et vous pourrez les piloter depuis cette page !',
   aucuneSousAction: 'Aucune sous-action pour le moment',
   aucuneSousActionDescription:
     'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
   aucunDocumentAssocie: "Aucun document n'est associé à cette action !",
   aucunIndicateurAssocie: 'Aucun indicateur associé !',
-  aucunIndicateur: 'Aucun indicateur',
   neCorrespondPasRecherche: 'ne correspond à votre recherche',
   aucuneMesureLiee: "Aucune mesure des référentiels n'est liée !",
   aucuneNotesSuivi: 'Aucune note de suivi pour le moment',
@@ -1305,9 +676,7 @@ export const appLabels = {
   indicateursAssocies: 'Indicateurs associés',
   indicateursAssociesDescription:
     'Les indicateurs et les données affichées correspondent à ceux de cette collectivité.',
-  indicateursAssociesEmptyDescription:
-    "Mesurez les résultats et l'impact de l'action grâce à des indicateurs",
-  mesuresLiees: 'Mesures des référentiels liées',
+
   mesuresLieesDescription:
     'Les mesures des référentiels liées affichées correspondent à celles de cette collectivité.',
   actionsAssociees: 'Actions associées',
@@ -1318,31 +687,19 @@ export const appLabels = {
     'Ici vous pouvez faire référence à d’autres actions de vos plans',
   mesuresLieesEmptyDescription:
     'Ici vous pouvez lier votre action avec une mesure des référentiels Climat Air Energie et Economie Circulaire de l’ADEME',
-  lierMesureReferentiels: 'Lier une mesure des référentiels',
-  lierIndicateurExistant: 'Lier un indicateur existant',
-  creerIndicateur: 'Créer un indicateur',
+
   dissocierIndicateur: "Dissocier l'indicateur",
   sousActionHeaderActionParente: 'Action parente',
   sousActionActionParenteIntrouvable: 'Action introuvable',
 
   checkboxSansDateFinPrevisionnelle: 'Sans date de fin prévisionnelle',
-  checkboxAjouterIndicateurFavoris:
-    "Ajouter l'indicateur à la sélection d'indicateurs favoris de ma collectivité",
 
-  indicateurAlertDescription:
-    'Les indicateurs personnalisés vous permettent de suivre de manière spécifique les actions menées par votre collectivité. Associez-les à une ou plusieurs actions pour faciliter leur mise à jour !',
   indicateurValidationTitreRequis: 'Un titre est requis',
   indicateurValidationTitreMax: 'Ce champ doit faire au maximum 300 caractères',
 
   confirmDeleteValeur: 'Valeur',
-  confirmDeleteResultatUnite: ({ unite }: { unite: string }): string =>
-    `Résultat (${unite})`,
-  confirmDeleteObjectifUnite: ({ unite }: { unite: string }): string =>
-    `Objectif (${unite})`,
   confirmDeleteAstuceEntree:
     'Astuce : appuyer sur Entrée pour valider et ajouter une autre année rapidement.',
-  supprimerBudgetDescription:
-    "Ce budget sera supprimé définitivement de l'action. Souhaitez-vous vraiment supprimer ce budget ?",
   supprimerFinanceurDescription:
     "Ce financeur sera supprimé définitivement de l'action. Souhaitez-vous vraiment supprimer ce financeur ?",
   confirmDeleteSousActionDescription:
@@ -1353,10 +710,7 @@ export const appLabels = {
   telechargementFichierErreur: 'Erreur de téléchargement',
   telechargementEnCours: 'Téléchargement en cours...',
   annulerTelechargement: 'Annuler le téléchargement',
-  telechargerEtatDesLieux: "Télécharger l'état des lieux",
   etatDesLieuxActuel: 'État des lieux actuel',
-  selectionnerVersionsTelecharger:
-    'Sélectionnez la ou les versions à télécharger :',
   formatTelechargement: 'Format :',
   telechargementDeuxVersionsMaximum:
     'Vous ne pouvez sélectionner que deux versions maximum.',
@@ -1375,21 +729,10 @@ export const appLabels = {
     'Si vous sélectionnez deux versions, elles seront téléchargées dans un même fichier Excel pour comparaison.',
   telechargerTousDocuments: 'Télécharger tous les documents',
   importPlanFichierEnvoiErreur: "Erreur lors de l'envoi du fichier.",
-  filtrer: 'Filtrer',
   filtrerAvecCount: ({ count }: { count: number }): string =>
     `Filtrer (${count})`,
   afficherLesResultats: 'Afficher les résultats',
   referentielsTitre: 'Référentiels',
-  correspondAVotreRecherche: ({
-    count,
-    label,
-  }: {
-    count: number | string;
-    label: string;
-  }): string =>
-    `${count} ${label} ${
-      count === 1 ? 'correspond' : 'correspondent'
-    } à votre recherche`,
   importEnCoursDelai: 'Import en cours, cela peut prendre quelques secondes.',
   questionLabel: 'Question :',
   reponseLorsDeJustificationLabel: 'Réponse (lors de la justification) :',
@@ -1398,7 +741,7 @@ export const appLabels = {
     'Nous mettons à votre disposition automatiquement des données issues de sources vérifiées (CEREMA, RARE, SINOE…).',
   enSavoirPlus: 'en savoir plus',
   indicateurModifieLeLabel: 'Modifié le',
-  indicateurParticipeAuScore: 'Participe au score',
+  indicateurParticipeAuScore: 'Participe au score programme TETE',
   parPrenomNom: ({ prenom, nom }: { prenom?: string; nom?: string }): string =>
     `par ${prenom ?? ''} ${nom ?? ''}`,
   recalculerLaTrajectoire: 'Recalculer la trajectoire',
@@ -1432,17 +775,11 @@ export const appLabels = {
     "L'action se répète tous les ans, sans date de fin prévisionnelle",
   actionNeSeRepetePasTousLesAns: "L'action ne se répète pas tous les ans",
   selectionnerUnFinanceur: 'Sélectionner un financeur',
-  aucunPlanRattacherAction:
-    "Il n'existe aucun plan auquel rattacher cette action",
-  validerCeNouvelEmplacement: 'Valider ce nouvel emplacement',
-  contenuActionSyncQuelQueSoitEmplacement:
-    "Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l'emplacement",
+
   aucuneActionDansCePlan: 'Aucune action dans ce plan',
   completezStatutsActionsPourRepartition:
     'Complétez les statuts de vos actions pour voir la répartition',
   vousSouhaitez: 'Vous souhaitez',
-  resultatPluralWord: ({ count }: { count: number }): string =>
-    count > 1 ? 'résultats' : 'résultat',
   aucuneActionCorrespondRecherche:
     'Aucune action ne correspond à votre recherche',
   actionsMasqueesDansAffichageGlobal:
@@ -1464,25 +801,6 @@ export const appLabels = {
     identifiant: string;
     nom: string;
   }): string => `${identifiant} - ${nom}`,
-  renseignerStatutsReferentiel: 'Renseigner tous les statuts du référentiel',
-  mettreAJour: 'Mettre à jour',
-  atteindreScoreRealiseStatutFait: ({
-    scorePercent,
-  }: {
-    scorePercent: string;
-  }): string =>
-    `Atteindre un score réalisé (statut Fait) d'au moins ${scorePercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
-  premierNiveauLabellisationSansAudit:
-    "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
-  bravoSeuilAtteintEtoileSuivante: ({
-    scorePercent,
-    numLabel,
-  }: {
-    scorePercent: string;
-    numLabel: string;
-  }): string =>
-    `Bravo, vous avez plus de ${scorePercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${numLabel} étoile.`,
-  actionsGroupees: 'Actions groupées',
   vueGrille: 'Grille',
   vueTableau: 'Tableau',
   vueCalendrier: 'Calendrier',
@@ -1493,7 +811,6 @@ export const appLabels = {
     }`,
   actionCountTotal: ({ count }: { count: number }): string =>
     `/ ${count} action${count > 1 ? 's' : ''}`,
-  criteresDeLabellisation: 'Critères de labellisation',
   revenirPreparationAudit: "Revenir à la préparation de l'audit",
   demanderLaPremiereEtoile: 'Demander la première étoile',
   demanderAuditPourEtoile: ({ numLabel }: { numLabel: string }): string =>
@@ -1518,47 +835,42 @@ export const appLabels = {
     "Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l'ADEME.",
   demandeAuditEnvoyee: "Votre demande d'audit a bien été envoyée.",
   commencerLAudit: "Commencer l'audit",
-  etoileDepuisLe: 'étoile depuis le',
   potentielLabel: 'Potentiel',
   scorePotentielPointCount: ({ count }: { count: string }): string =>
     `${count} point${parseFloat(count) > 1 ? 's' : ''}`,
   valeurAbsoluePoints: 'Valeur absolue (points)',
   valeurRelativePourcent: 'Valeur relative (%)',
-  telechargerLeGraphique: 'Télécharger le graphique',
-  detailsLabel: 'Détails',
+  detailsLabel: 'Afficher le détail',
   etape: ({ index }: { index: number }): string => `Étape ${index}`,
   enCliquantIci: 'en cliquant ici.',
   ressources: 'Ressources',
   revenirEtapePrecedente: "Revenir à l'étape précédente",
   importerUnPlan: 'Importer un plan',
-  importPlanIaTitre: "Importer un plan avec l'IA",
-  importPlanIaSousTitre: "à partir d'un document PDF, Excel ou CSV",
+  importPlanIaTitre: 'Importer un plan',
+  importPlanIaSousTitre: 'depuis un fichier PDF, Word ou Excel',
   importPlanIaDescription:
-    "Déposez un document : l'IA en extrait un plan d'action que vous pourrez ensuite réviser et compléter directement sur la plateforme.",
+    'Nous importons les actions, les sous-actions et les personnes pilotes, et parfois davantage lorsque nous parvenons à les repérer automatiquement (descriptions, dates, etc.). Le résultat peut contenir des erreurs : relisez votre plan, et corrigez-le si besoin.',
   importPlanIaChampFichier: 'Document à importer',
-  importPlanIaChampNomPlan: 'Nom du plan',
-  importPlanIaChampTypePlan: 'Type de plan',
   importPlanIaChampInstructions: "Précisions pour l'IA (facultatif)",
   importPlanIaFichierRequis: 'Un document est requis',
   importPlanIaNomRequis: 'Le nom du plan est requis',
   importPlanIaFormatNonSupporte:
-    'Format non supporté (PDF, CSV ou Excel attendu)',
+    'Format non supporté (PDF, Word, Excel .xlsx ou CSV attendu)',
   importPlanIaOptionVerifications: 'Vérifier et consolider les actions',
-  importPlanIaOptionSousActions: 'Générer les sous-actions',
+  importPlanIaOptionSousActions: 'Mon document contient des sous-actions',
   importPlanIaLancer: "Lancer l'import",
-  importPlanIaEnCours: 'Import en cours, cela peut prendre quelques minutes...',
+  importPlanIaEnCours:
+    'Cela peut prendre quelques minutes. Vous pouvez fermer cette fenêtre.',
   importPlanIaErreur: "L'import a échoué",
   importPlanIaReessayer: 'Réessayer',
+  importPlanIaEtapeLecture: 'Lecture du document',
+  importPlanIaEtapeReperage: 'Repérage des fiches action',
   importPlanIaEtapeExtraction: 'Extraction des actions',
-  importPlanIaEtapeVerification: 'Vérification des actions',
-  importPlanIaEtapeConsolidation: 'Consolidation des actions',
-  importPlanIaEtapeEnrichissement: 'Génération des sous-actions',
-  importPlanIaEtapeRevue: 'Revue qualitative',
-  importPlanIaEtapeStatutEnCours: 'En cours',
-  importPlanIaEtapeStatutTermine: 'Terminé',
-  importPlanIaEtapeStatutIgnoree: 'Ignorée',
-  importPlanIaEtapeStatutEnAttente: 'En attente',
-  importPlanIaEtapeEnCoursAnnonce: 'Étape en cours',
+  importPlanIaEtapeHierarchie: 'Mise en cohérence des axes',
+  importPlanIaEtapeVerification: 'Contrôle des actions identifiées',
+  importPlanIaEtapeConsolidation: 'Correction des actions incomplètes',
+  importPlanIaEtapeEnrichissement: 'Identification des sous-actions',
+  importPlanIaEtapeRevue: 'Relecture finale',
   importPlanTelechargerModele: 'Télécharger le modèle',
   importPlanTelechargerModeleEtapeTitre: 'Téléchargez le modèle de plan',
   importPlanModeleStructureFormat:
@@ -1585,28 +897,6 @@ export const appLabels = {
     'Prenez un rendez-vous individuel avec notre équipe',
   labellisationAjouterDocumentsOfficielsCandidature:
     'Ajouter les documents officiels de candidature',
-  labellisationCourrierActeCandidatureLabel: "Courrier d'acte de candidature",
-  labellisationCourrierActeCandidatureDescription: ({
-    referentielName,
-  }: {
-    referentielName: string;
-  }): string =>
-    ` : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique ${referentielName} et coordonnées de la personne référente technique`,
-  labellisationArretePrefectoralEpciLabel:
-    "Arrêté préfectoral de création de l'EPCI",
-  labellisationArretePrefectoralEpciDescription:
-    ' (Établissement public de coopération intercommunale)',
-  labellisationDossierDemandeLabel: 'Dossier de demande de labellisation',
-  labellisationDossierDemandeDescription:
-    ' (et Request for Award pour les candidatures 5 étoiles)',
-  labellisationAutresDocumentsAnnexesLabel: 'Autres documents annexes',
-  labellisationAutresDocumentsAnnexesDescription:
-    " si non renseignés dans la plateforme (programme politique - plan d'action, délibération de la politique climat air énergie, tableau de recueil des indicateurs...)",
-  labellisationSignerActeEngagementDebut: 'Signer un ',
-  labellisationActeEngagementLien: "acte d'engagement",
-  labellisationActeEngagementAdhesion:
-    ' dans le programme affirmant votre adhésion ',
-  labellisationReglementDuLabel: 'au règlement du label',
   toucheShift: '⇧ SHIFT',
   toucheAlt: '⌥ ALT',
   tooltipReplierLignesDebut: 'Cliquer pour replier (tenir',
@@ -1620,11 +910,60 @@ export const appLabels = {
     `${count} indicateur${count > 1 ? 's' : ''} dans ce groupe`,
   sousIndicateurAjoutCount: ({ count }: { count: number }): string =>
     `+${count} sous-indicateur${count > 1 ? 's' : ''}`,
-  participeAuScoreCae: 'Participe au score Climat Air Énergie',
   completerIndicateur: "Compléter l'indicateur",
   derniereValeurIndicateurModePrive:
     'La dernière valeur de cet indicateur est en mode privé',
   informationsDeMonCompte: 'Informations de mon compte',
+  methodesDeConnexion: 'Méthodes de connexion',
+  // Marque unique côté utilisateur : MonCompteAdeme s'affiche AUSSI comme
+  // « ProConnect » (décision produit).
+  oidcProviderProconnect: 'ProConnect',
+  methodeConnexionLiee: 'Lié',
+  methodeConnexionNonLiee: 'Non lié',
+  methodeConnexionLier: 'Lier',
+  methodeConnexionDelier: 'Délier',
+  methodeConnexionConfirmerDeliaisonTitre: 'Délier ce moyen de connexion ?',
+  methodeConnexionConfirmerDeliaisonMessage: ({
+    provider,
+  }: {
+    provider: string;
+  }): string =>
+    `Vous ne pourrez plus vous connecter avec ${provider}. Vous pourrez le relier à tout moment depuis cette page.`,
+  methodeConnexionPourquoiRelierTitre:
+    'Pourquoi relier votre compte à ProConnect ?',
+  methodeConnexionPourquoiRelierMessage:
+    'Un seul clic, aucun mot de passe à retenir : vous vous connectez avec l’identité professionnelle rattachée à votre collectivité, celle que vous utilisez déjà pour vos autres démarches.',
+  methodeConnexionAucunCompteLie:
+    'Aucun compte ProConnect n’est lié à ce compte Territoires en Transitions.',
+  methodeConnexionDelieeSucces: 'Le moyen de connexion a été délié.',
+  methodeConnexionDelierErreurDernierMoyen:
+    "Impossible de délier ce moyen de connexion : c'est le seul qui vous permette de vous connecter (aucun mot de passe défini, aucune autre identité liée).",
+  erreurLiaisonIdentiteDejaLieeAilleurs:
+    'Ce compte est déjà lié à un autre utilisateur. La liaison a été refusée.',
+  erreurLiaisonCompteSupprime:
+    'Votre compte a été supprimé. La liaison a été refusée.',
+  erreurLiaisonGenerique:
+    'Une erreur est survenue lors de la liaison de votre compte. Veuillez réessayer plus tard.',
+
+  // Incitation à lier une identité OIDC. Les clés sont préfixées `oidc*` et non
+  // d'après un provider : ces textes parlent tous de « ProConnect », que la
+  // connexion passe par ProConnect en direct ou par MonCompteAdeme.
+  oidcRecommandeBadge: 'Recommandé',
+  oidcSousTitreConnexion: 'Pas de mot de passe à retenir, connexion en un clic',
+  oidcSeparateurConnexion: 'ou continuer avec votre email',
+  oidcAnnonceTitre: 'Rattachez ProConnect à votre compte',
+  oidcAnnonceMessage:
+    "Connectez-vous en un clic, sans mot de passe, avec une identité professionnelle unique, utilisable sur d'autres services de l'État.",
+  oidcAnnonceLier: 'Rattacher mon compte',
+  oidcIncitationTitre: 'Rattachez ProConnect à votre compte',
+  oidcIncitationMessage:
+    "Connectez-vous en un clic, sans mot de passe, avec une identité professionnelle unique, utilisable sur d'autres services de l'État.",
+  oidcIncitationLier: 'Rattacher ProConnect',
+  oidcIncitationPlusTard: 'Plus tard',
+  oidcIncitationRappel: ({ n }: { n: number }): string => `Rappel ${n} sur 3`,
+  methodeEmailMotDePasse: 'Email et mot de passe',
+  methodeMotDePasseActif: 'Actif',
+
   prenomEtNom: 'Prénom et nom',
   email: 'Email',
   numeroDeTelephone: 'Numéro de téléphone',
@@ -1669,9 +1008,24 @@ export const appLabels = {
   schedulerZoomer: 'Zoomer ou dé-zoomer →',
   schedulerDeplacement: 'Se déplacer dans le temps →',
   aide: 'Aide',
-  fichierAjouteDirectementBibliotheque:
-    'Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé',
-  fichierSousLeNom: ' sous le nom ',
+  fichierDupliqueNomConserve: ({
+    nomFichier,
+    nomEnregistre,
+  }: {
+    nomFichier: string;
+    nomEnregistre: string;
+  }): string =>
+    nomFichier === nomEnregistre
+      ? 'Ce document existe déjà dans votre bibliothèque. Il sera ajouté sans être téléversé à nouveau.'
+      : `Ce document existe déjà dans votre bibliothèque. Pour éviter les doublons, il sera ajouté avec le nom déjà enregistré : "${nomEnregistre}".`,
+  fichierDupliqueCarteInfo: ({
+    nomEnregistreConserve,
+  }: {
+    nomEnregistreConserve: boolean;
+  }): string =>
+    nomEnregistreConserve
+      ? 'Ce document existait déjà dans votre bibliothèque. Son nom déjà enregistré a été conservé pour éviter les doublons.'
+      : 'Ce document existait déjà dans votre bibliothèque. Il a été ajouté sans être téléversé à nouveau.',
   fichierErreurTailleMax:
     'Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée',
   fichierErreurFormat:
@@ -1693,10 +1047,7 @@ export const appLabels = {
   pointsAttentionLimitesLabel: "Points d'attention / Limites :",
   indicateurCalculeAutomatiquementMessage:
     'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.',
-  rechercherParIntituleOuDescription: 'Rechercher par intitulé ou description',
   planDaction: "Plan d'action",
-  resultatCount: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} résultat` : `${count} résultats`,
   actionSelectionneeCount: ({ count }: { count: number }): string =>
     count <= 1
       ? `${count} action sélectionnée`
@@ -1715,20 +1066,10 @@ export const appLabels = {
   reinitialiserSelonRemplissage: 'Réinitialiser selon le remplissage',
   reinitialiserSelonRemplissageDescription:
     'Affiche/cache automatiquement les référentiels CAE et ECI en fonction de leur remplissage.',
-  selectionnerThematiqueAvantSousThematique:
-    "Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques",
   annee: 'Année',
   total: 'TOTAL',
   uniteHt: 'HT',
   uniteEtp: 'ETP',
-  collectiviteEngageePolitiqueAvecPreuves: ({
-    referentielName,
-  }: {
-    referentielName: string;
-  }): string =>
-    `Être une collectivité engagée dans une politique ${referentielName} et le prouver (via les documents preuves ou un texte justificatif)`,
-  sousActionOuTache: 'Sous-action ou tâche',
-  statutOuScoreRequis: 'Statut ou score requis',
   oupsAucunResultat: 'Oups...',
   neCorrespondAVotreRecherche: 'ne correspond à votre recherche !',
   modifierFiltresPourPlusDeResultats:
@@ -1769,10 +1110,6 @@ export const appLabels = {
   creeeLe: 'Créée le',
   derniereModificationLe: 'Dernière modification le',
   sansType: 'Sans type',
-  axeCount: ({ count }: { count: number }): string =>
-    `${count} axe${count > 1 ? 's' : ''}`,
-  sousAxeCount: ({ count }: { count: number }): string =>
-    `${count} sous-axe${count > 1 ? 's' : ''}`,
   actionCount: ({ count }: { count: number }): string =>
     `${count} action${count > 1 ? 's' : ''}`,
   rapportGenerationEnCoursIntro:
@@ -1780,8 +1117,6 @@ export const appLabels = {
   vousRecevrezEmailA: 'Vous recevrez un email à ',
   avecLienTelechargerRapport:
     " avec un lien pour télécharger votre rapport dès qu'il sera prêt.",
-  quelTypeAuditSouhaitezVousDemander:
-    "Quel type d'audit souhaitez-vous demander ?",
   envoyerMaDemande: 'Envoyer ma demande',
   auditEciTachesAvecPreuves:
     "Pour cet audit ECi, l'ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.",
@@ -1800,10 +1135,10 @@ export const appLabels = {
   dateDerniereLabellisation: 'Date de la dernière labellisation :',
   mutationSuccess: 'Modification enregistrée',
   mutationError: "Erreur lors de l'enregistrement",
+  comptesAssocies: 'Vos comptes ont été associés.',
   mutationErreurReseauSauvegarde:
     "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
   aucuneOptionDisponible: 'Aucune option disponible',
-  aucunResultat: 'Aucun résultat',
   tousLesPlans: 'Tous les plans',
   aucunMembreRattacheCollectivite:
     "Aucun membre n'est rattaché à la collectivité",
@@ -1812,6 +1147,8 @@ export const appLabels = {
   erreurChargementPage: 'Erreur lors du chargement de la page !',
   erreurChargementCriteres:
     'Erreur lors du chargement des critères de labellisation.',
+  erreurChargementDocuments:
+    'Erreur lors du chargement des documents. Veuillez réessayer.',
   rechargerPage: 'Recharger la page',
   banniere: 'Bannière',
   banniereType: 'Type',
@@ -1819,6 +1156,7 @@ export const appLabels = {
   banniereContenuAriaLabel: 'Contenu de la bannière',
   banniereActive: 'Bannière active',
   banniereApercu: 'Aperçu',
+  banniereFermer: 'Fermer la bannière',
   avertissement: 'Avertissement',
   erreur: 'Erreur',
   evenement: 'Événement',
@@ -1869,7 +1207,11 @@ export const appLabels = {
     'Méthodologie limitée pour les communes',
   trajectoireMethodologieLimiteeCommunesDescription:
     "La méthodologie de territorialisation de la SNBC est conçue pour les niveaux allant de l'EPCI à la région. Bien que les principes et les calculs soient applicables à l'échelle communale, certaines données nécessaires ne sont pas disponibles pour ce niveau.",
-  trajectoireMethodologieLimiteeCommunesSubtitle:
+  trajectoireMethodologieNonApplicableSyndicats:
+    'Méthodologie non applicable aux syndicats',
+  trajectoireMethodologieNonApplicableSyndicatsDescription:
+    "La méthodologie de territorialisation de la SNBC s'appuie sur le découpage du territoire en EPCI à fiscalité propre. Le périmètre d'un syndicat ne correspond pas à ce découpage : les données nécessaires au calcul ne peuvent pas lui être rattachées.",
+  trajectoireMethodologieMiseADispositionModele:
     "Nous mettons à votre disposition le fichier de calcul et de méthodologie pour vous informer sur les processus et les principes de cette méthode, dans le cas où vous souhaiteriez vous en inspirer. La méthodogie permettant de calculer la trajectoire SNBC territorialisée a été développée pour l'ADEME par Solagro et l'Institut Negawatt. Fruit d'un travail de 18 mois avec la contribution de 13 collectivités pilotes volontaires, elle a permis de construire une méthode de référence pour aider les territoires à définir et à interroger leur trajectoire bas-carbone.",
   trajectoireTelechargerModeleXlsx: 'Télécharger le modèle (.xlsx)',
   trajectoireTelechargerMethodologiePdf: 'Télécharger la méthodologie (.pdf)',
@@ -1934,7 +1276,6 @@ export const appLabels = {
   indicateurVideMesIndicateursDescription:
     'Parcourez les indicateurs pour vous assigner en tant que pilote.\nCela vous facilitera le suivi et la mise à jour !',
   indicateurVideParcourir: 'Parcourir les indicateurs',
-  indicateurVideCreerPersonnalise: 'Créer un indicateur personnalisé',
   indicateurVideAucunResultat:
     'Aucun indicateur ne correspond à votre recherche',
   indicateurVideModifierFiltre: 'Modifier le filtre',
@@ -1944,32 +1285,8 @@ export const appLabels = {
   preuveDocConfidentiel:
     "Nous vous encourageons à partager vos documents : ils permettent à d'autres collectivités de s'inspirer de vos actions, vos pratiques, etc.\n\nSi vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité, votre conseiller, votre auditeur et le service support de la plateforme pourront y accéder",
 
-  planOptionActionsAImpact: 'grâce aux "Actions à Impact"',
+  sousSecteur: plural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
-  ficheDescription: plural({ one: 'Description', other: 'Description' }),
-  ficheObjectifs: plural({ one: 'Objectif(s)', other: 'Objectif(s)' }),
-  ficheEffetsAttendus: plural({
-    one: 'Effet attendu',
-    other: 'Effets attendus',
-  }),
-  ficheThematiques: plural({ one: 'Thématique', other: 'Thématiques' }),
-  ficheSousThematiques: plural({
-    one: 'Sous-thématique',
-    other: 'Sous-thématiques',
-  }),
-  ficheLibreTags: plural({
-    one: 'Tag personnalisé',
-    other: 'Tags personnalisés',
-  }),
-
-  actionLiee: countedPlural({ one: 'action liée', other: 'actions liées' }),
-  document: countedPlural({ one: 'document', other: 'documents' }),
-  indicateur: countedPlural({ one: 'indicateur', other: 'indicateurs' }),
-  commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
-  sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
-  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
-
-  panneauHistorique: 'Historique',
   panneauInformations: 'Informations',
 
   criteres: 'Critères',
@@ -1987,6 +1304,8 @@ export const appLabels = {
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   voirLaMesure: 'Voir la mesure',
+  voirLaQuestion: 'Voir la question',
+  voirLesMesures: 'Voir les mesures',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',
   reponseAvoirPersonneRenseignee: 'Avoir au moins une personne renseignée',
@@ -2028,21 +1347,78 @@ export const appLabels = {
   referentielModeReadonlyTitle: 'Référentiel en lecture seule',
   referentielModeReadonlydDescription:
     "Consultation seule — ce référentiel n'est pas modifiable.",
-  referentielTeModeReadonlyTitle:
-    'Référentiel Climat Ressources accessible en consultation seule',
+  referentielTeModeReadonlyTitle: 'Ce référentiel est en lecture seule',
   referentielTeModeReadonlyDescription:
-    'Vous pouvez explorer sa structure, mais pas le modifier. Des questions ? Cet article peut vous aider :',
-  referentielTeModeReadonlyLinkLabel: "lien vers l'article",
+    "Le référentiel Climat Ressources remplace progressivement les référentiels Climat Air Énergie et Économie Circulaire.\nConsultation libre dès aujourd'hui ; pour y saisir vos données, basculez avec transfert automatique de votre historique.",
+  referentielTeModeReadonlyLinkLabel: "le centre d'aide",
+  referentielTeModeUnauthorizedDescription:
+    "Le référentiel Climat Ressources remplace progressivement les référentiels Climat Air Énergie et Économie Circulaire.\nConsultation libre dès aujourd'hui ; pour y saisir vos données, basculez avec transfert automatique de votre historique.",
+  referentielTeModeUnauthorizedLabel:
+    'Vous ne pouvez pas réaliser la bascule vous-même.',
+  referentielTeModeUnauthorizedContact:
+    'Seul un membre avec le rôle admin ou éditeur peut la déclencher. Rapprochez-vous du référent de votre collectivité.',
+  referentielTeModeBlockedTitle:
+    "La bascule n'est pas disponible pour le moment",
+  referentielTeModeBlockedLabel:
+    'Le référentiel Climat Ressources reste consultable en lecture seule : vous pouvez le parcourir librement.',
+  referentielTeModeBlockedCotDescription:
+    "Un COT est en cours pour votre collectivité. Vous devez clôturer l'audit final avant de réaliser la bascule.",
+  referentielTeModeBlockedAuditEnCoursDescription: `Un audit est en cours. Attendez la fin de l'audit avant de basculer.`,
+  referentielTeModeBlockedAuditDemandeDescription: `Une demande d'audit est en cours. Attendez la fin de l'audit avant de basculer.`,
+  referentielTeModeBlockedSyndicatDescription: `La bascule n'est pas ouverte aux syndicats. Votre référentiel Économie Circulaire reste actif et modifiable.`,
+  referentielTeModeBlockedDromDescription: `La bascule n'est pas encore ouverte aux collectivités des DROM. Vos référentiels Climat Air Énergie et Économie Circulaire restent actifs et modifiables.`,
   referentielModeArchivedTitle: 'Référentiel archivé',
   referentielModeArchivedDescription:
     "Consultation seule — ce référentiel n'est plus modifiable.",
+  switchToTe: 'Basculer vers Climat Ressources',
+  switchToTeConfirmEtapeInfo: 'Étape 1/2 - Ce qui va changer',
+  switchToTeConfirmEtapeConfirmation: 'Étape 2/2 - Confirmation',
+  switchToTeConfirmIntro:
+    'Climat Ressources réunit les référentiels CAE et ECi en un seul, plus simple à renseigner. Voici ce que la bascule change pour votre collectivité.',
+  switchToTeConfirmAutoTitre: 'Repris automatiquement',
+  switchToTeConfirmAutoItems: `- Les **statuts** de vos mesures, convertis et fusionnés jusqu'au niveau mesure ou sous-mesure
+- Vos **explications**, avec la mention de la mesure d'origine jusqu'au niveau mesure ou sous-mesure
+- Les **personnes pilotes et services** rattachés aux mesures
+- Les **liens vers vos actions**`,
+  switchToTeConfirmManuelTitre: 'À reprendre à la main',
+  switchToTeConfirmManuelItems: `- Les **preuves (fichiers)** restent dans votre bibliothèque de documents. Vous devrez les rattacher aux nouvelles mesures.
+- Vos **réponses de personnalisation** sont conservées. Seules les nouvelles questions, et celles restées sans réponse, sont à compléter`,
+  switchToTeConfirmIrreversibleTitre: 'Cette action est irréversible',
+  switchToTeConfirmIrreversibleItems: `- Il sera **impossible de revenir en arrière**.
+- Climat Air Énergie et Économie Circulaire passeront **définitivement en lecture seule**.
+- La bascule ne peut être réalisée **qu'une seule fois**.`,
+  switchToTeConfirmIrreversibleNote:
+    "En cas d'erreur technique pendant la bascule, aucune donnée n'est modifiée : vous retrouvez vos référentiels tels quels.",
+  switchToTeConfirmExportInfo:
+    "Avant de confirmer, nous vous recommandons fortement de télécharger l'export de vos référentiels actuels et de faire des captures d'écran des pages importantes pour vous, notamment de vos réponses de personnalisation. Elles constitueront votre trace de référence.",
+  switchToTeConfirmExportLinkLabel:
+    'Comment télécharger vos référentiels actuels ?',
+  switchToTeConfirmCheckboxLabel:
+    "Je confirme avoir exporté mes référentiels actuels et réalisé les captures d'écran dont j'ai besoin.",
+  switchToTeConfirmInputTitle: 'Confirmation de la bascule',
+  switchToTeConfirmKeyword: 'BASCULER',
+  switchToTeConfirmInputHint: ({ keyword }: { keyword: string }): string =>
+    `Écrivez ${keyword} dans le champ ci-dessous.`,
+  switchToTeConfirmInputErrorMessage: ({
+    keyword,
+  }: {
+    keyword: string;
+  }): string => `Le texte saisi ne correspond pas à « ${keyword} »`,
+  switchToTeConfirmSubmit: 'Basculer définitivement',
+  switchToTeConfirmPrevious: 'Précédent',
+  switchToTeConfirmContinue: 'Continuer',
+  switchToTeConfirmProgressTitre: 'Bascule en cours…',
+  switchToTeConfirmProgressDescription:
+    'Cette opération peut prendre de quelques secondes à quelques minutes. Ne fermez pas cette page.',
+  switchToTeConfirmSuccessTitre: 'La bascule est terminée',
+  switchToTeConfirmSuccessDescription:
+    "Climat Ressources est maintenant votre référentiel actif. Vos données ont été reprises. L'état pré-bascule de vos anciens référentiels reste consultable à tout moment depuis le tableau de bord État des lieux.",
+  switchToTeConfirmSuccessCta: 'Commencer sur Climat Ressources',
+  switchToTeConfirmErrorTitre: 'La bascule a échoué',
+  voirPageLabellisation: 'Voir la page Labellisation',
 
   monCompte: 'Mon compte',
   nombreDePointsInitial: 'Nombre de points initial',
-  ouvrirLaMesure: 'Ouvrir la mesure',
-  rejoindreUneCollectivite: 'Rejoindre une collectivité',
-  rejoindreUneCollectiviteDescription:
-    "Rejoindre l'espace d'une autre collectivité",
 
   urlNonValide: 'URL non valide',
   planNonTrouve: 'Plan non trouvé',
@@ -2050,19 +1426,13 @@ export const appLabels = {
   suiviAvanceePlans: "Suivi de l'avancée des plans",
   voirTousLesPlans: 'Voir tous les plans',
 
-  referentielPasEncoreRenseigne:
-    "Ce référentiel n'est pas encore renseigné pour votre collectivité. Pour commencer à visualiser votre progression, mettez à jour les statuts des mesures.",
   auditEtLabellisation: 'Audit et labellisation',
   auditEtLabellisationIndisponibles:
     "L'audit et la labellisation ne sont pas encore disponibles",
   cyclesEtComparaison: 'Cycles et comparaison',
-  referentielNomme: (nom: string): string => `Référentiel ${nom}`,
-
-  ajouterModulePersonnalise: 'Ajouter un module personnalisé',
 
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
-  evolutionScoreEnPoints: "L'évolution du score en points",
 
   homeTitre: 'À vous de jouer !',
   homeIntroduction:
@@ -2123,17 +1493,13 @@ export const appLabels = {
   tousLesAns: 'Tous les ans',
   confirmationSuppressionFiche:
     'Souhaitez-vous vraiment supprimer cette action ?',
-  resultat: plural({ one: 'résultat', other: 'résultats' }),
-  exportPdf: 'Export PDF',
   sections: 'Sections',
   axeVide: 'Cet axe ne contient aucune action ni axe',
   affichage: 'Affichage',
   tousLesStatuts: 'Tous les statuts',
   trierPar: 'Trier par',
   exemples: 'Exemples',
-  exporter: 'Exporter',
   selectionnerSauvegardesAfficher: 'Sélectionner les sauvegardes à afficher',
-  termine: 'Terminé',
   colonnes: 'Colonnes',
   commentairesTitre: 'Commentaires',
   erreurChangementDonnees: 'Erreur lors du changement des données !',
@@ -2149,6 +1515,8 @@ export const appLabels = {
   collectiviteInaccessibleEnVisite:
     "Cette collectivité n'est pas accessible en mode visite.",
   collectiviteIdInvalide: 'Identifiant de collectivité invalide',
+
+  instructionTitre: 'Suivi des demandes d’avis',
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
@@ -2159,10 +1527,6 @@ export const appLabels = {
     year: number,
     fieldLabel: string
   ): string => `${rowLabel}, ${year} — ${fieldLabel}`,
-  indicateurLegendeResultat: 'Résultat',
-  indicateurLegendeObjectif: 'Objectif',
-  indicateurAjouterResultat: '+ Résultat',
-  indicateurAjouterObjectif: '+ Objectif',
   indicateurVariationReference: (variation: string): string =>
     `${variation} par rapport à l'année de référence`,
   indicateurReordonnerCible: (cible: string): string => `Réordonner ${cible}`,
@@ -2170,6 +1534,12 @@ export const appLabels = {
   indicateurOrdreReinitialise: 'Ordre réinitialisé',
   indicateurAnneeReferenceAbbreviation: 'réf.',
   indicateurAnneeReferenceChamp: 'Année de référence',
+  indicateurAnneeReferencePlaceholder: 'année de référence',
+  indicateurAnneeOptionnelleAbbreviation: 'opt.',
+  indicateurAnneeOptionnelleChamp: 'Année optionnelle',
+  indicateurValeurRequise: 'Requis',
+  pcaetDiagnosticIndicateurValeurRequiseAide:
+    "Les années marquées d'une étoile sont requises.",
   indicateurAjouterAnnee: 'Ajouter une année',
   indicateurAjouterAnneeChamp: 'Année',
   /** Une même année peut porter un résultat et un objectif : le message ne dit
@@ -2200,11 +1570,11 @@ export const appLabels = {
     `${cible} déposé sur ${cursor}.`,
   indicateurReordonnerAnnule: (cible: string): string =>
     `Déplacement de ${cible} annulé.`,
-  indicateurCollageIgnore: countedPlural({
+  indicateurCollageIgnore: plural({
     one: 'valeur ignorée au collage (hors grille ou non numérique)',
     other: 'valeurs ignorées au collage (hors grille ou non numérique)',
   }),
-  indicateurCollageEchec: countedPlural({
+  indicateurCollageEchec: plural({
     one: "valeur n'a pas pu être enregistrée",
     other: "valeurs n'ont pas pu être enregistrées",
   }),
@@ -2215,6 +1585,10 @@ export const appLabels = {
   seConnecter: 'Se connecter',
 
   authContactSupport: 'Contactez le support !',
+  // On nomme le mécanisme : « sans mot de passe » se confondait avec la
+  // promesse ProConnect (« pas de mot de passe à retenir »).
+  authOngletConnexionAvecMotDePasse: 'Connexion avec mot de passe',
+  authOngletLienDeConnexion: 'Recevoir un lien de connexion',
   authMotDePasseOublie: 'Mot de passe oublié ?',
   authChoisissezNouveauMotDePasse: 'Choisissez votre nouveau mot de passe',
   authNouveauMotDePasse: 'Nouveau mot de passe',
@@ -2229,6 +1603,11 @@ export const appLabels = {
   authSignupLienEnvoye1:
     'Pour activer votre compte, veuillez consulter votre boite mail et',
   authSignupLienEnvoye2: 'suivre le lien reçu !',
+  authSignupTitre: 'Créer un compte',
+  authSignupTitreDerniereEtape:
+    'Il nous manque quelques informations sur vous !',
+  authSignupSousTitreVerifiezEmail: 'Vérifiez votre email',
+  authSignupSousTitreDerniereEtape: 'Dernière étape',
   authPasRecuMessage: "Vous n'avez pas reçu de message ?",
   authNouvelEnvoiMessageAdresse: " nouveau d'envoyer le message à l'adresse :",
   authEnvoyer: 'Envoyer',
@@ -2248,7 +1627,7 @@ export const appLabels = {
   authErreurEmailOuMotDePasse:
     "L'email ou le mot de passe ne correspondent pas",
   authErreurConnexionMagicLink:
-    'Impossible de se connecter. Veuillez refaire la manipulation "connexion sans mot de passe". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.',
+    'Impossible de se connecter. Veuillez refaire la manipulation "Recevoir un lien de connexion". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.',
   authErreurConnexionSupport:
     'Impossible de se connecter. Veuillez contacter le support.',
   authErreurChangementMotDePasse:
@@ -2289,6 +1668,70 @@ export const appLabels = {
       te: 'CAE_Reglement_label.pdf',
       'te-test': 'CAE_Reglement_label.pdf',
     };
-    return `${SITE_URL}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
+    return `${getSiteUrl()}/fichiers/reglement/${
+      filenameByReferentiel[referentielId]
+    }`;
   },
+
+  // Parcours de bienvenue ProConnect (aucune correspondance automatique).
+  proconnectBienvenueTitre: 'Bienvenue',
+  // Formulations volontairement neutres sur le point d'entrée : l'écran est
+  // atteint aussi bien depuis « se connecter » que « créer un compte » via
+  // ProConnect, et l'utilisateur ne sait pas forcément laquelle des deux
+  // adresses (ProConnect / ancien compte) est en cause.
+  proconnectBienvenueQuestion:
+    'Aviez-vous déjà un compte Territoires en Transitions ?',
+  proconnectBienvenueQuestionDescription:
+    'L’adresse utilisée avec ProConnect ne correspond à aucun compte Territoires en Transitions connu. Si vous avez déjà un compte avec une autre adresse email, vous pouvez le relier ici pour ne rien perdre de vos données.',
+  proconnectBienvenueOui: 'J’ai déjà un compte',
+  proconnectBienvenueOuiDetail:
+    'Je le rattache à mon compte existant et conserve mes données',
+  proconnectBienvenueNon: 'C’est ma première venue',
+  proconnectBienvenueNonDetail:
+    'Je crée un compte Territoires en Transitions avec mes identifiants ProConnect',
+  proconnectBienvenueRetour: 'Retour',
+  // Écran de reconnexion (cas « Oui ») : on relie l'ancien compte à la nouvelle
+  // identité en se connectant une dernière fois par mot de passe.
+  proconnectBienvenueReconnexionTitre: 'Rattacher votre compte existant',
+  proconnectBienvenueReconnexionDescription:
+    'Connectez-vous une dernière fois avec les identifiants de votre ancien compte. Nous les relierons à votre compte ProConnect. Ensuite, un seul clic suffira.',
+  proconnectBienvenueReconnexionSchemaAncien: 'Ancien compte',
+  proconnectBienvenueReconnexionSchemaNouveau: 'Compte ProConnect',
+  proconnectBienvenueReconnexionInfo:
+    'Vos plans, indicateurs et collectivités seront conservés. Vous vous connecterez ensuite uniquement via ProConnect. Ce mot de passe ne sera plus nécessaire.',
+  proconnectBienvenueReconnexionBouton: 'Rattacher mon compte',
+  champMotDePasse: 'Mot de passe',
+  proconnectBienvenueMotDePasseOublie: 'Mot de passe oublié ?',
+  proconnectBienvenueRattachementQuestion:
+    'Quelle est l’adresse email de votre ancien compte ?',
+  champEmailAncienCompte: 'Adresse email de votre ancien compte',
+  proconnectBienvenueRattachementEnvoyer: 'Envoyer',
+  proconnectBienvenueRattachementAnnuler: 'Annuler',
+  proconnectBienvenueRattachementSucces:
+    'Si un compte existe à cette adresse, un email de confirmation vient d’être envoyé.',
+  proconnectBienvenueRattachementRetourConnexion: 'Retour à la connexion',
+  proconnectBienvenueTicketInvalide:
+    'Ce lien de bienvenue est invalide ou incomplet, merci de recommencer la connexion.',
+  // Email non vérifié (cas 2, rattachement automatique refusé) : un compte
+  // existe pour cette adresse mais ProConnect ne la déclare pas vérifiée.
+  proconnectBienvenueEmailNonVerifieTitre:
+    'Nous ne pouvons pas encore associer votre compte',
+  proconnectBienvenueEmailNonVerifie:
+    'Un compte existe déjà avec cette adresse email, mais elle n’a pas encore été vérifiée. Vérifiez d’abord votre adresse email, puis reconnectez-vous.',
+
+  proconnectConfirmerSessionEnCours: 'Association de vos comptes en cours…',
+  proconnectConfirmerSessionTicketExpire:
+    'Votre session a expiré, reconnectez-vous pour recommencer.',
+  proconnectConfirmerSessionDejaLieeAilleurs:
+    'Cette identité est déjà associée à un autre compte Territoires en Transitions.',
+  proconnectConfirmerSessionCompteSupprime:
+    'Ce compte a été supprimé et ne peut plus être associé.',
+  proconnectConfirmerSessionErreurGenerique:
+    'La liaison de vos comptes a échoué, merci de recommencer la connexion.',
+
+  proconnectConfirmerRattachementEnCours: 'Confirmation de votre demande…',
+  proconnectConfirmerRattachementSucces:
+    'Votre compte a été rattaché. Reconnectez-vous pour continuer.',
+  proconnectConfirmerRattachementEchec:
+    'Ce lien de confirmation est invalide, a déjà été utilisé, ou a expiré. Merci de recommencer la connexion.',
 } as const;

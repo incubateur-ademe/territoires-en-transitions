@@ -21,7 +21,7 @@ export const LoginModal = (props: LoginProps) => {
       dataTest="SignInPage"
       disableDismiss
       backdropBlur
-      size={mdDialog.includes(view) ? 'sm' : 'lg'}
+      size={mdDialog.includes(view) ? 'sm' : 'md'}
       title={getTitle(view)}
       openState={{ isOpen, setIsOpen }}
       onClose={onClose}

@@ -28,7 +28,7 @@ export class MutateDefinitionRouter {
     update: this.trpc.authedProcedure
       .input(updateIndicateurDefinitionInputSchema)
       .mutation(({ ctx, input }) => {
-        return this.updateService.updateDefinition(input, ctx.user);
+        return this.updateService.updateDefinition(input, { user: ctx.user });
       }),
 
     delete: this.trpc.authedProcedure

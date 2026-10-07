@@ -39,7 +39,7 @@ export const MesuresLieesModal = ({
       size="lg"
       disableDismiss
       render={() => (
-        <Field title={appLabels.mesuresLiees}>
+        <Field title={appLabels.mesuresDesReferentiels}>
           <MesuresReferentielsDropdown
             values={editedMesureIds}
             onChange={({ values }) =>

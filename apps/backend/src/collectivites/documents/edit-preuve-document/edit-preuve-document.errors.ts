@@ -20,7 +20,7 @@ export const editPreuveDocumentErrorConfig: TrpcErrorHandlerConfig<SpecificError
       PREUVE_FICHIER: {
         code: 'BAD_REQUEST',
         message:
-          "Cette preuve est un fichier : le lien ne peut pas être modifié via cette opération.",
+          'Cette preuve est un fichier : le lien ne peut pas être modifié via cette opération.',
       },
       LABELLISATION_IN_PROGRESS: {
         code: 'BAD_REQUEST',

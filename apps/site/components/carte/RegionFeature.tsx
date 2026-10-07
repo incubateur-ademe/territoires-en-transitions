@@ -1,16 +1,12 @@
 'use client';
 
-import { Json, Views } from '@tet/api';
+import { SiteCarteRegion } from '@/site/src/trpc/trpc-client';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';
 import { FeatureGroup, GeoJSON } from 'react-leaflet';
 
-type region_w_geojson = Views<'site_region'> & {
-  geojson?: Json;
-};
-
 type RegionFeatureProps = {
-  region: region_w_geojson;
+  region: SiteCarteRegion;
 };
 
 const RegionFeature = ({ region }: RegionFeatureProps) => {

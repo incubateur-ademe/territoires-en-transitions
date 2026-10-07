@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   DemarchePcaetStatusEnum,
+  demarchePcaetStatusValues,
   type DemarchePcaetStatus,
 } from '../demarche-pcaet-status.enum.schema';
-import { DEMARCHE_PCAET_INITIAL_STATUS } from './demarche-pcaet-state';
+import {
+  DEMARCHE_PCAET_ETAPES,
+  DEMARCHE_PCAET_INITIAL_STATUS,
+  getEtapeDemarchePcaet,
+} from './demarche-pcaet-state';
 import { demarchePcaetWorkflow } from './demarche-pcaet.workflow';
 import { demarchePcaetTransitionValues } from './transitions/demarche-pcaet-transition.enum';
 import { DEMARCHE_PCAET_TRANSITIONS } from './transitions/demarche-pcaet.transitions';
@@ -32,13 +37,21 @@ describe('définition du cycle de vie', () => {
     );
   });
 
-  it('toute transition est réservée au pilote', () => {
-    for (const def of DEFINITIONS) {
-      expect(def.guards).toContain('estPilote');
+  // Deux familles, et le nom dit laquelle : infinitif pour un acte de la
+  // collectivité, participe passé pour un événement constaté par le système.
+  it('seules les transitions système sont sans acteur', () => {
+    const SANS_ACTEUR = ['avis_tous_rendus', 'delai_avis_echu'];
+
+    for (const [nom, def] of Object.entries(DEMARCHE_PCAET_TRANSITIONS)) {
+      if (SANS_ACTEUR.includes(nom)) {
+        expect(def.guards).not.toContain('estPilote');
+      } else {
+        expect(def.guards).toContain('estPilote');
+      }
     }
   });
 
-  it('le cycle est linéaire, avec deux retours en arrière', () => {
+  it('le cycle est linéaire, sans retour en arrière', () => {
     const chemin = (status: DemarchePcaetStatus) =>
       demarchePcaetWorkflow
         .getReachableTransitions(status)
@@ -50,19 +63,30 @@ describe('définition du cycle de vie', () => {
         )
         .sort();
 
+    // L'élaboration n'a qu'une sortie, et rien n'y ramène.
     expect(chemin('en_elaboration')).toEqual([
       'transmettre_pour_avis → transmis_pour_avis',
     ]);
+    // Deux chemins vers `instruit` : les avis rendus, ou le délai échu.
     expect(chemin('transmis_pour_avis')).toEqual([
-      'adopter → adopte',
-      'reprendre_elaboration → en_elaboration',
+      'avis_tous_rendus → instruit',
+      'delai_avis_echu → instruit',
     ]);
-    expect(chemin('adopte')).toEqual(['publier → publie']);
-    // On n'archive qu'un dossier publié ; dépublier revient à l'adoption.
-    expect(chemin('publie')).toEqual([
-      'archiver → archive',
-      'depublier → adopte',
-    ]);
+    // L'instruction close ne se défait pas : pas de retour à l'élaboration.
+    expect(chemin('instruit')).toEqual(['publier → publie']);
+    // L'autre entrée de la finalisation rejoint la même suite, et une seule :
+    // rien ne ramène un dépôt hors plateforme dans le circuit d'avis.
+    expect(chemin('instruit_hors_plateforme')).toEqual(['publier → publie']);
+    // Un dossier publié vaut adopté : il ne se reprend pas, il s'archive.
+    expect(chemin('publie')).toEqual(['archiver → archive']);
     expect(chemin('archive')).toEqual([]);
+  });
+
+  // Le parcours affiché n'a que cinq étapes pour six statuts : la finalisation
+  // en porte deux. Sans ce test, ajouter un statut sans l'y rattacher passerait.
+  it('chaque statut mène à une étape du parcours', () => {
+    for (const status of demarchePcaetStatusValues) {
+      expect(DEMARCHE_PCAET_ETAPES).toContain(getEtapeDemarchePcaet(status));
+    }
   });
 });

@@ -1,10 +1,22 @@
+import { AnalysisModule } from './analysis/analysis.module';
 import { Logger, Module } from '@nestjs/common';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
-import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
+import { AddRapportVisiteRepository } from '@tet/backend/collectivites/documents/add-rapport-visite/add-rapport-visite.repository';
+import { AddRapportVisiteRouter } from '@tet/backend/collectivites/documents/add-rapport-visite/add-rapport-visite.router';
+import { AddRapportVisiteService } from '@tet/backend/collectivites/documents/add-rapport-visite/add-rapport-visite.service';
+import { CollectiviteDocumentsAccessService } from '@tet/backend/collectivites/documents/collectivite-documents-access.service';
+import { GetDownloadUrlRepository } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.repository';
+import { GetDownloadUrlRouter } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.router';
+import { GetDownloadUrlService } from '@tet/backend/collectivites/documents/get-download-url/get-download-url.service';
+import { ListBibliothequeDocumentsRepository } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.repository';
+import { ListBibliothequeDocumentsRouter } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.router';
+import { ListBibliothequeDocumentsService } from '@tet/backend/collectivites/documents/list-bibliotheque-documents/list-bibliotheque-documents.service';
+import { CreateUploadTokenRouter } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.router';
+import { CreateUploadTokenService } from '@tet/backend/collectivites/documents/create-upload-token/create-upload-token.service';
 import { EditPreuveDocumentRepository } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.repository';
 import { EditPreuveDocumentRouter } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.router';
 import { EditPreuveDocumentService } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.service';
@@ -14,6 +26,8 @@ import { UpdateDocumentRouter } from '@tet/backend/collectivites/documents/updat
 import { UpdateDocumentService } from '@tet/backend/collectivites/documents/update-document/update-document.service';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.service';
+import { ImportPerimetresEpciRouter } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.router';
+import { ImportPerimetresEpciService } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.service';
 import { ExportConnectService } from '@tet/backend/collectivites/membres/sync-membres-with-crm-connect/export-connect.service';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
@@ -43,7 +57,12 @@ import ListCategoriesService from './handle-categories/list-categories.service';
 
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
+import { ImportCorrespondantsRouter } from './membres/import-correspondants/import-correspondants.router';
+import { ImportCorrespondantsService } from './membres/import-correspondants/import-correspondants.service';
+import { ResolveServiceRepository } from './membres/import-correspondants/resolve-service.repository';
+import { SendInvitationCorrespondantService } from './membres/import-correspondants/send-invitation-correspondant.service';
 import { SendInvitationService } from './membres/invite-membre/send-invitation.service';
+import { ListAdminContactsService } from './membres/list-admin-contacts/list-admin-contacts.service';
 import { ListMembresService } from './membres/list-membres/list-membres.service';
 import { ListPendingInvitationsService } from './membres/list-pending-invitations/list-pending-invitations.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
@@ -52,23 +71,39 @@ import { InvitationsRouter } from './membres/mutate-invitations/invitations.rout
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { PersonnesRouter } from './personnes.router';
+import { PertinenceLeviersModule } from './pertinence-leviers/pertinence-leviers.module';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
+import { GetSiteCollectiviteService } from './site/get-site-collectivite/get-site-collectivite.service';
+import { ListSiteCarteService } from './site/list-site-carte/list-site-carte.service';
+import { SearchSiteCollectivitesService } from './site/search-site-collectivites/search-site-collectivites.service';
+import { SiteRouter } from './site/site.router';
 
 @Module({
   imports: [
+    AnalysisModule,
     CollectivitesCoreModule,
     PersonnalisationsModule,
+    PertinenceLeviersModule,
     TransactionModule,
     NotificationsModule,
   ],
   providers: [
     CollectivitesRouter,
+    SearchSiteCollectivitesService,
+    GetSiteCollectiviteService,
+    ListSiteCarteService,
+    SiteRouter,
     ListMembresService,
+    ListAdminContactsService,
     ListPendingInvitationsService,
     InvitationService,
     SendInvitationService,
     InvitationsRouter,
+    ResolveServiceRepository,
+    SendInvitationCorrespondantService,
+    ImportCorrespondantsService,
+    ImportCorrespondantsRouter,
 
     MutateMembresService,
     CollectiviteMembresRouter,
@@ -79,11 +114,23 @@ import { PersonnesService } from './services/personnes.service';
     ListCategoriesRouter,
     StoreDocumentService,
     StoreDocumentRouter,
+    CollectiviteDocumentsAccessService,
+    CreateUploadTokenService,
+    CreateUploadTokenRouter,
+    GetDownloadUrlRepository,
+    GetDownloadUrlService,
+    GetDownloadUrlRouter,
+    ListBibliothequeDocumentsRepository,
+    ListBibliothequeDocumentsService,
+    ListBibliothequeDocumentsRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
     EditPreuveDocumentRepository,
     EditPreuveDocumentService,
     EditPreuveDocumentRouter,
+    AddRapportVisiteRepository,
+    AddRapportVisiteService,
+    AddRapportVisiteRouter,
     DocumentsRouter,
     DocumentService,
     PersonneTagService,
@@ -103,6 +150,8 @@ import { PersonnesService } from './services/personnes.service';
     RecherchesRouter,
     ImportCollectiviteRelationsService,
     ImportCollectiviteRelationsRouter,
+    ImportPerimetresEpciService,
+    ImportPerimetresEpciRouter,
     CollectivitePreferencesRepository,
     CollectivitePreferencesService,
     CollectivitePreferencesRouter,
@@ -149,6 +198,8 @@ import { PersonnesService } from './services/personnes.service';
     RecherchesRouter,
     ImportCollectiviteRelationsService,
     ImportCollectiviteRelationsRouter,
+    ImportPerimetresEpciService,
+    ImportPerimetresEpciRouter,
     CollectivitePreferencesRepository,
     CollectivitePreferencesRouter,
     CollectivitePreferencesService,
@@ -156,6 +207,6 @@ import { PersonnesService } from './services/personnes.service';
     DiscussionApplicationService,
     DiscussionDomainService,
   ],
-  controllers: [CollectiviteController, DocumentController],
+  controllers: [CollectiviteController],
 })
 export class CollectivitesModule {}

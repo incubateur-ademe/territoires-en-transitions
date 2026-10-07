@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -14,7 +15,6 @@ import {
 } from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { roundTo } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
 import { ReferentielsRouter } from '../../referentiels.router';
 
@@ -101,7 +101,7 @@ describe('ListSnapshotsService', () => {
       pointFait: snapshot.pointFait,
       pointPasFait: snapshot.pointPasFait,
       pointNonRenseigne:
-        roundTo(
+        round(
           snapshot.pointPotentiel -
             (snapshot.pointFait +
               snapshot.pointPasFait +

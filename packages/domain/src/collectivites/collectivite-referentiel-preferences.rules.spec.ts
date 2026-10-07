@@ -65,6 +65,72 @@ describe('deriveReferentielPreferences', () => {
     ).toBe(postSwitchTePreferences);
   });
 
+  it('force te readonly, cae archived et eci write pour un syndicat', () => {
+    expect(
+      deriveReferentielPreferences({
+        caeEngaged: false,
+        eciEngaged: false,
+        isSyndicat: true,
+      })
+    ).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('garde le cae archivé d’un syndicat dans la navigation s’il est engagé', () => {
+    expect(
+      deriveReferentielPreferences({
+        caeEngaged: true,
+        eciEngaged: false,
+        isSyndicat: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('force te readonly, cae et eci write pour un DROM sans référentiel engagé', () => {
+    expect(
+      deriveReferentielPreferences({
+        caeEngaged: false,
+        eciEngaged: false,
+        isDrom: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('applique la règle syndicat quand la collectivité est aussi en DROM', () => {
+    expect(
+      deriveReferentielPreferences({
+        caeEngaged: false,
+        eciEngaged: false,
+        isSyndicat: true,
+        isDrom: true,
+      })
+    ).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('ne modifie pas un syndicat ou un DROM déjà basculé', () => {
+    expect(
+      deriveReferentielPreferences(
+        { caeEngaged: true, eciEngaged: true, isSyndicat: true, isDrom: true },
+        postSwitchTePreferences
+      )
+    ).toBe(postSwitchTePreferences);
+  });
+
   it('respecte l’invariant archived implique display false', () => {
     const result = deriveReferentielPreferences({
       caeEngaged: false,

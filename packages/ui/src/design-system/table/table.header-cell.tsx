@@ -4,16 +4,42 @@ import { Icon } from '../Icon';
 
 type Props = Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'title'> & {
   sortFn?: () => void;
+  /**
+   * Le sens du tri en cours, quand c'est cette colonne qui l'ordonne.
+   *
+   * Sans lui, les deux chevrons se dessinent à l'identique et rien ne dit
+   * laquelle des colonnes trie, ni dans quel sens : un tri chronologique et son
+   * inverse se ressemblent alors exactement.
+   *
+   * `null` ou absent : la colonne est triable mais ne trie pas.
+   */
+  sortDirection?: 'asc' | 'desc' | null;
   icon?: string;
   /** Accepte un noeud pour accoler au libellé une infobulle ou un indicateur. */
   title?: ReactNode;
   titleClassName?: string;
   /** Pins the cell on horizontal scroll (typically the first column). */
   pinnedLeft?: boolean;
+  /**
+   * Alignement du contenu de l'en-tête. Un `th` est centré par défaut en HTML,
+   * ce qui ne convient presque jamais à un tableau : le design-system aligne à
+   * gauche, et les colonnes qui veulent autre chose le disent ici.
+   */
+  align?: 'left' | 'center' | 'right';
   /** Composant de filtre (Select, Input, etc.) affiché sous le titre. */
   filter?: ReactNode;
   /** ClassName du conteneur du filtre (row du dessous) */
   filterClassName?: string;
+};
+
+/**
+ * Le conteneur est un `flex` : `text-*` ne suffit pas à placer l'icône et le
+ * libellé dans la largeur du `th`, il faut aussi les justifier.
+ */
+const alignClassNames: Record<NonNullable<Props['align']>, string> = {
+  left: 'text-left justify-start',
+  center: 'text-center justify-center',
+  right: 'text-right justify-end',
 };
 
 export const pinnedLeftClassName =
@@ -22,6 +48,7 @@ export const pinnedLeftClassName =
 /** Header cell for tables with predefined optional sorting, icon and filter */
 export const TableHeaderCell = ({
   sortFn,
+  sortDirection,
   icon,
   className,
   title,
@@ -29,12 +56,20 @@ export const TableHeaderCell = ({
   filter,
   filterClassName,
   pinnedLeft,
+  align = 'left',
   children,
   ...props
 }: Props) => {
   return (
     <th
       {...props}
+      aria-sort={
+        sortFn && sortDirection
+          ? sortDirection === 'asc'
+            ? 'ascending'
+            : 'descending'
+          : undefined
+      }
       className={cn(
         'px-4 py-3 text-sm text-grey-9 font-medium leading-none align-top',
         { [pinnedLeftClassName]: pinnedLeft },
@@ -43,7 +78,7 @@ export const TableHeaderCell = ({
       )}
     >
       <div className={cn('flex flex-col', filter && 'gap-2')}>
-        <div className="flex items-center gap-2">
+        <div className={cn('flex items-center gap-2', alignClassNames[align])}>
           {icon && (
             <Icon
               icon={icon}
@@ -62,11 +97,19 @@ export const TableHeaderCell = ({
             >
               <Icon
                 icon="arrow-up-s-fill"
-                className="-mb-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]"
+                className={cn(
+                  '-mb-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]',
+                  // Le chevron inactif s'efface au lieu de disparaître : la
+                  // colonne reste visiblement triable dans les deux sens.
+                  sortDirection === 'desc' && 'text-grey-5'
+                )}
               />
               <Icon
                 icon="arrow-down-s-fill"
-                className="-mt-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]"
+                className={cn(
+                  '-mt-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]',
+                  sortDirection === 'asc' && 'text-grey-5'
+                )}
               />
             </div>
           )}

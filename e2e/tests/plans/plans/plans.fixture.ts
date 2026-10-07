@@ -58,19 +58,27 @@ export const testWithPlans = testWithFiches.extend<{
     collectivites.registerCleanupFunc(plans);
     await use(plans);
   },
-  createPlanPom: async ({ page }, use) => {
+  // Les POM dépendent de `plans` — sans quoi un test qui crée un plan par l'UI
+  // sans demander la factory laisse ses axes derrière lui : ils référencent
+  // l'utilisateur (`axe.modified_by`), dont la suppression échoue, et le
+  // nettoyage de la collectivité s'arrête là.
+  createPlanPom: async ({ page, plans }, use) => {
+    void plans;
     const createPlanPom = new CreatePlanPom(page);
     await use(createPlanPom);
   },
-  editPlanPom: async ({ page }, use) => {
+  editPlanPom: async ({ page, plans }, use) => {
+    void plans;
     const showPlanPom = new EditPlanPom(page);
     await use(showPlanPom);
   },
-  editAxePom: async ({ page }, use) => {
+  editAxePom: async ({ page, plans }, use) => {
+    void plans;
     const showPlanPom = new EditAxePom(page);
     await use(showPlanPom);
   },
-  importPlanPom: async ({ page }, use) => {
+  importPlanPom: async ({ page, plans }, use) => {
+    void plans;
     await use(new ImportPlanPom(page));
   },
 });

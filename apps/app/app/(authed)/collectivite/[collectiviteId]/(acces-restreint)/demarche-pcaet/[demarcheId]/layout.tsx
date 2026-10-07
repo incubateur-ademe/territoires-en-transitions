@@ -1,3 +1,4 @@
+import { DemarcheVisitProvider } from '@/app/demarches/components/avance-panel-visit.context';
 import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -10,8 +11,7 @@ export default async function Layout({
   children: ReactNode;
   params: Promise<{ collectiviteId: string; demarcheId: string }>;
 }) {
-  const { collectiviteId: unsafeCollectiviteId, demarcheId } =
-    await params;
+  const { collectiviteId: unsafeCollectiviteId, demarcheId } = await params;
   const collectiviteId = z.coerce.number().safeParse(unsafeCollectiviteId);
 
   if (!collectiviteId.success) {
@@ -26,5 +26,11 @@ export default async function Layout({
 
   await assertCanMutateDemarchePcaet(collectiviteId.data);
 
-  return children;
+  // Le provider dure le temps de la visite de la démarche : il porte l'ouverture
+  // du panneau d'avancée à l'arrivée, une seule fois. La `key` le remonte quand
+  // on passe d'une démarche à une autre — le layout d'un segment dynamique,
+  // lui, reste monté d'un `demarcheId` au suivant.
+  return (
+    <DemarcheVisitProvider key={demarcheId}>{children}</DemarcheVisitProvider>
+  );
 }

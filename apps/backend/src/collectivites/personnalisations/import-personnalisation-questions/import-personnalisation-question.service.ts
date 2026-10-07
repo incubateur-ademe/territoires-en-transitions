@@ -1,5 +1,4 @@
 import {
-  HttpException,
   Injectable,
   Logger,
   UnprocessableEntityException,
@@ -21,8 +20,13 @@ import {
   questionThematiqueSchema,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
+import { getErrorMessage } from '@tet/domain/utils';
 import { sql } from 'drizzle-orm';
+import { upperFirst } from 'es-toolkit';
+import { QuestionForVerification } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
+import { extractReferencesFromExpression } from '../services/personnalisation-expression-reference-extractor';
 import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
+import { verifyPersonnalisationExpressionReferences } from '../services/verify-personnalisation-expression-references';
 import {
   ImportPersonnalisationChoix,
   importPersonnalisationChoixSchema,
@@ -261,21 +265,6 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
         }
       }
 
-      // validate expressions
-      if (question.exprVisible) {
-        try {
-          this.personnalisationsExpressionService.parseExpression(
-            question.exprVisible
-          );
-        } catch (error) {
-          throw new UnprocessableEntityException(
-            `Invalid expression for question ${question.id}: "${
-              (error as HttpException).message
-            }"`
-          );
-        }
-      }
-
       // validate competence codes
       if (
         question.competenceCode != null &&
@@ -287,7 +276,56 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       }
     });
 
+    const expressionErrors = this.verifyExprVisible(
+      questions,
+      choixByQuestionMap
+    );
+    if (expressionErrors.length) {
+      throw new UnprocessableEntityException(expressionErrors.join('\n\n'));
+    }
+
     this.logger.log('Verification complete: all data is valid');
+  }
+
+  /**
+   * Les questions de référence sont celles du lot importé, et non celles de la
+   * base : une question peut en référencer une autre créée dans le même import.
+   */
+  private verifyExprVisible(
+    questions: ImportPersonnalisationQuestion[],
+    choixByQuestionMap: Map<string, ImportPersonnalisationChoix[]>
+  ): string[] {
+    const questionsForVerification: QuestionForVerification[] = questions.map(
+      (question) => ({
+        id: question.id,
+        type: question.type,
+        choix: (choixByQuestionMap.get(question.id.toLowerCase()) ?? []).map(
+          (choice) => ({
+            id: choice.id,
+            ordonnancement: choice.ordonnancement ?? null,
+            formulation: choice.formulation,
+          })
+        ),
+      })
+    );
+
+    return questions.flatMap((question) => {
+      if (!question.exprVisible) {
+        return [];
+      }
+      const label = `l'expression de visibilité de la question ${question.id}`;
+      try {
+        this.personnalisationsExpressionService.parseExpression(
+          question.exprVisible
+        );
+      } catch (error) {
+        return [`${upperFirst(label)} est invalide ${getErrorMessage(error)}`];
+      }
+      return verifyPersonnalisationExpressionReferences(
+        extractReferencesFromExpression(question.exprVisible),
+        { label, questions: questionsForVerification }
+      );
+    });
   }
 
   private async upsertPersonnalisationQuestionsAndChoix(

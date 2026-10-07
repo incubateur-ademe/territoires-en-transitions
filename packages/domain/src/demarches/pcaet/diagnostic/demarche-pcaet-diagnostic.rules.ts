@@ -1,137 +1,178 @@
+import {
+  getYearFromIsoDate,
+  IndicateurValeurAvecMetadonnesDefinition,
+} from '../../../indicateurs';
+import {
+  listPcaetDiagnosticIndicateurRequiredLeaves,
+  PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+} from './demarche-pcaet-diagnostic.config';
 import type {
-  DemarchePcaetDiagnosticPayload,
-  DemarchePcaetTopic,
-  DemarchePcaetTopicLeaf,
+  PcaetDiagnostic,
+  PcaetDiagnosticIndicateurDefinition,
+  PcaetDiagnosticIndicateurParentConfig,
 } from './demarche-pcaet-diagnostic.schema';
-import { DemarchePcaetTopicKindEnum } from './demarche-pcaet-topic-kind.enum.schema';
-import { isDemarchePcaetVulnerabiliteComplete } from './demarche-pcaet-vulnerabilite.rules';
 
 /** Borne basse d'une année saisissable dans le diagnostic. */
-export const REFERENCE_YEAR_MIN = 2010;
+export const REFERENCE_YEAR_MIN = 1990;
 
 /**
- * Plafond du nombre d'années ajoutées. Chaque année ouvre une colonne pour
- * toutes les lignes du topic — 60 pour les polluants — et entre dans la photo
- * transmise : la souplesse reste bornée.
+ * Année de référence déduite des années de résultats déjà saisies : la plus récente
+ * dans les bornes, hors années d'objectifs. Sans constat, le tableau reste sans
+ * année de référence — c'est à la collectivité de la renseigner.
  */
-export const MAX_EXTRA_YEARS = 10;
-
-/** Colonnes de la grille d'un topic. */
-export const buildTopicYears = ({
-  referenceYear,
-  horizons,
-  extraYears = [],
-}: {
-  referenceYear: number;
-  horizons: readonly number[];
-  extraYears?: readonly number[];
-}): number[] =>
-  [...new Set([referenceYear, ...horizons, ...extraYears])].sort(
-    (a, b) => a - b
-  );
-
-/**
- * Une année ajoutée sert soit à porter un résultat — les inventaires ne sortent
- * pas la même année selon les secteurs — soit à se fixer un jalon intermédiaire.
- * Elle vit donc de la borne basse au dernier horizon réglementaire.
- */
-export const isDiagnosticYearInBounds = ({
-  year,
-  horizons,
-}: {
-  year: number;
-  horizons: readonly number[];
-}): boolean =>
-  year >= REFERENCE_YEAR_MIN &&
-  year <= Math.max(...horizons, REFERENCE_YEAR_MIN);
-
-/**
- * Années ajoutées telles qu'elles sont persistées : dédoublonnées, triées, et
- * débarrassées de ce que la grille affiche déjà. Sans quoi déplacer l'année de
- * comptabilisation sur une année ajoutée la rendrait supprimable.
- */
-export const normalizeExtraYears = ({
-  extraYears,
-  referenceYear,
-  horizons,
-}: {
-  extraYears: readonly number[];
-  referenceYear: number;
-  horizons: readonly number[];
-}): number[] =>
-  [...new Set(extraYears)]
-    .filter((year) => year !== referenceYear && !horizons.includes(year))
-    .sort((a, b) => a - b);
-
-/**
- * Année de comptabilisation proposée à défaut de choix de la collectivité : la
- * plus récente pour laquelle un résultat existe. Les inventaires réglementaires
- * ayant deux à trois ans de retard, proposer l'année courante rendrait la
- * complétude inatteignable.
- */
-export const deriveReferenceYear = ({
+export const deriveReferenceYearFromIndicateurValeurYears = ({
   resultYears,
-  currentYear,
+  currentYear = new Date().getFullYear(),
+  excludedYears = PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
 }: {
   resultYears: readonly number[];
-  currentYear: number;
-}): number => {
+  currentYear?: number;
+  excludedYears?: readonly number[];
+}): number | null => {
+  const excluded = new Set(excludedYears);
   const eligible = resultYears.filter(
-    (year) => year >= REFERENCE_YEAR_MIN && year <= currentYear
+    (year) =>
+      year >= REFERENCE_YEAR_MIN && year <= currentYear && !excluded.has(year)
   );
-  return eligible.length === 0 ? currentYear : Math.max(...eligible);
+
+  return eligible.length === 0 ? null : Math.max(...eligible);
 };
 
 /**
- * Lignes des deux niveaux à plat. Une ligne requise sans indicateur résolu ne
- * peut pas être renseignée : elle relève d'un trou du référentiel indicateurs,
- * que le serveur journalise, et ne bloque pas le dépôt.
+ * Une année de référence désigne l'année du constat : elle est révolue, dans
+ * les bornes saisissables, et n'empiète pas sur un horizon d'objectif, qui a
+ * sa propre colonne.
  */
-const requiredRows = (topic: DemarchePcaetTopic): DemarchePcaetTopicLeaf[] =>
-  topic.rows
-    .flatMap((row) => [row, ...row.rows])
-    .filter((row) => row.requis && row.indicateurId !== null);
+export const isPcaetDiagnosticReferenceYear = (
+  year: number,
+  currentYear: number = new Date().getFullYear()
+): boolean =>
+  year >= REFERENCE_YEAR_MIN &&
+  year <= currentYear &&
+  !PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.includes(year);
+
+const isLeafComplet = ({
+  optionalYears,
+  valeurs,
+}: {
+  optionalYears: readonly number[];
+  valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
+}): boolean => {
+  const hasReferenceResultat = valeurs.some(({ indicateurValeur }) => {
+    const year = getYearFromIsoDate(indicateurValeur.dateValeur);
+    return (
+      isPcaetDiagnosticReferenceYear(year) && indicateurValeur.resultat !== null
+    );
+  });
+  if (!hasReferenceResultat) {
+    return false;
+  }
+
+  const requiredObjectifYears =
+    PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
+      (year) => !optionalYears.includes(year)
+    );
+
+  return requiredObjectifYears.every((year) =>
+    valeurs.some(
+      ({ indicateurValeur }) =>
+        getYearFromIsoDate(indicateurValeur.dateValeur) === year &&
+        indicateurValeur.objectif !== null
+    )
+  );
+};
 
 /**
- * Un topic est complet quand chacune de ses lignes requises porte un constat et
- * une cible : un résultat sur l'année de comptabilisation et un objectif sur au
- * moins un horizon. Les années ajoutées ouvrent des colonnes sans rien exiger.
- * Un topic qui n'exige rien est complet — c'est le cas des énergies
- * renouvelables tant que leur mapping n'est pas arrêté.
+ * Identifiants référentiel que la collectivité a déclarés non applicables.
+ * Les définitions servies avec le diagnostic font le pont entre la clé
+ * numérique de `indicateur_collectivite` et les clés `cae_1.c` de la config.
  */
-export const isDemarchePcaetTopicComplet = (
-  topic: DemarchePcaetTopic
-): boolean => {
-  if (topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE) {
-    return isDemarchePcaetVulnerabiliteComplete(topic.vulnerabilite);
+const listPcaetDiagnosticIdentifiantsNonApplicables = (
+  definitions: readonly PcaetDiagnosticIndicateurDefinition[]
+): Set<string> => {
+  const identifiants = new Set<string>();
+  for (const definition of definitions) {
+    const identifiant = definition.identifiantReferentiel;
+    if (!definition.isApplicable && identifiant !== null) {
+      identifiants.add(identifiant);
+    }
   }
-  if (topic.kind !== DemarchePcaetTopicKindEnum.INDICATEURS) {
+  return identifiants;
+};
+
+/**
+ * Un topic indicateur est complet quand chacune de ses lignes requises porte un
+ * constat et une cible : un résultat sur l'année de comptabilisation et un
+ * objectif sur chaque horizon requis (hors `optionalYears`). Les années ajoutées
+ * ouvrent des colonnes sans rien exiger. Un topic optionnel, ou sans aucune
+ * ligne exigée, est complet — sinon il retiendrait le dossier sur une saisie
+ * qu'on ne lui demande pas.
+ */
+export const isPcaetDiagnosticIndicateurComplet = ({
+  config,
+  indicateurs,
+  definitions,
+}: {
+  config: PcaetDiagnosticIndicateurParentConfig;
+  indicateurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
+  definitions: readonly PcaetDiagnosticIndicateurDefinition[];
+}): boolean => {
+  if (config.optional === true) {
     return true;
   }
-  const horizons = new Set(topic.horizons);
-  return requiredRows(topic).every((row) => {
-    const valeurs = topic.valeurs.filter(
-      (valeur) => valeur.indicateurId === row.indicateurId
-    );
-    const hasResultat = valeurs.some(
-      (valeur) =>
-        valeur.year === topic.referenceYear && valeur.resultat !== null
-    );
-    const hasObjectif = valeurs.some(
-      (valeur) => horizons.has(valeur.year) && valeur.objectif !== null
-    );
-    return hasResultat && hasObjectif;
-  });
+
+  const nonApplicables =
+    listPcaetDiagnosticIdentifiantsNonApplicables(definitions);
+
+  // Une ligne déclarée non applicable n'est plus réclamée : elle sort du socle
+  // exigé, comme le fait `non_concerne` pour une thématique de vulnérabilité.
+  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeaves(
+    config
+  ).filter((leaf) => !nonApplicables.has(leaf.indicateurDefinitionId));
+  if (requiredLeaves.length === 0) {
+    return true;
+  }
+
+  // Les valeurs sont servies pour tout le diagnostic : on indexe par
+  // identifiant pour ne juger chaque feuille que sur sa propre saisie.
+  const valeursByIdentifiant = new Map<
+    string,
+    IndicateurValeurAvecMetadonnesDefinition[]
+  >();
+  for (const indicateur of indicateurs) {
+    const identifiant =
+      indicateur.indicateurDefinition?.identifiantReferentiel ?? '';
+    if (identifiant.length === 0) {
+      continue;
+    }
+    const bucket = valeursByIdentifiant.get(identifiant) ?? [];
+    bucket.push(indicateur);
+    valeursByIdentifiant.set(identifiant, bucket);
+  }
+
+  return requiredLeaves.every((leaf) =>
+    isLeafComplet({
+      optionalYears: leaf.optionalYears,
+      valeurs: valeursByIdentifiant.get(leaf.indicateurDefinitionId) ?? [],
+    })
+  );
 };
 
 /**
  * Complétude de l'étape diagnostic du dossier, condition de la transmission
- * pour avis. Tous les topics comptent, y compris la vulnérabilité du
- * territoire : le front et le guard serveur appliquent cette règle au même
- * objet, ils ne peuvent donc pas rendre deux verdicts.
+ * pour avis. Seuls comptent les topics indicateurs qui exigent quelque chose :
+ * le front et le guard serveur appliquent cette règle au même objet, ils ne
+ * peuvent donc pas rendre deux verdicts. La vulnérabilité n'entre pas dans le
+ * calcul.
  */
 export const isDemarchePcaetDiagnosticComplet = (
-  diagnostic: DemarchePcaetDiagnosticPayload
+  diagnostic: PcaetDiagnostic
 ): boolean =>
-  diagnostic.topics.length > 0 &&
-  diagnostic.topics.every(isDemarchePcaetTopicComplet);
+  diagnostic.indicateurParentConfigs.length > 0 &&
+  diagnostic.indicateurParentConfigs.every((config) =>
+    isPcaetDiagnosticIndicateurComplet({
+      config,
+      indicateurs: diagnostic.indicateurValeurs,
+      definitions: diagnostic.indicateurDefinitions,
+    })
+  );

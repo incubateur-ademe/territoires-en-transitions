@@ -1,27 +1,49 @@
 import {
+  CollectiviteLocalisationTypeEnum,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
+  CollectiviteTypeEnum,
   IdentiteCollectivite,
+  TYPOLOGIES_SINOE,
 } from '@tet/domain/collectivites';
 
-type IdentiteField =
+/**
+ * Champs interrogeables par `identite(champ, valeur)`.
+ *
+ * Un nom de champ ne doit pas être exactement un mot-clé du DSL (`si`, `ou`,
+ * `min`…) : à longueur égale, le lexer retient le mot-clé.
+ */
+export type IdentiteField =
   | 'type'
   | 'soustype'
   | 'population'
   | 'localisation'
-  | 'dans_aire_urbaine';
+  | 'dans_aire_urbaine'
+  | 'commune_membre'
+  | 'sinoe';
 
+/**
+ * Le second argument d'`identite(...)` passe par la règle `primary`, qui rend un
+ * nombre pour un littéral numérique et un booléen pour `vrai`/`oui` : le typer
+ * `string` seul serait un mensonge. Une chaîne arrive ici déjà en minuscules
+ * (voir `evaluateIdentite`).
+ */
 type IdentiteEvaluator = (
   identite: IdentiteCollectivite,
-  primary: string
+  primary: string | number | boolean
 ) => boolean;
 
-function isIdentiteField(value: string): value is IdentiteField {
-  return value in IDENTITE_EVALUATORS;
+export function isIdentiteField(value: string): value is IdentiteField {
+  // `in` traverse la chaîne de prototypes : `toString` ou `constructor` y
+  // passeraient pour des champs valides et rendraient une valeur non booléenne.
+  return Object.hasOwn(IDENTITE_EVALUATORS, value);
 }
 
 const LEGACY_TYPE_SYNDICAT_VALUE =
   CollectiviteSousTypeEnum.SYNDICAT.toLowerCase();
+
+const LOCALISATION_DOM_VALUE =
+  CollectiviteLocalisationTypeEnum.DOM.toLowerCase();
 
 /**
  * Compatibilité ascendante des référentiels historiques (cae, eci).
@@ -37,31 +59,89 @@ const LEGACY_TYPE_SYNDICAT_VALUE =
  */
 function matchesLegacyTypeSyndicat(
   identite: IdentiteCollectivite,
-  primary: string
+  primary: string | number | boolean
 ): boolean {
-  const value = primary.toLowerCase();
   return (
-    value === LEGACY_TYPE_SYNDICAT_VALUE &&
+    primary === LEGACY_TYPE_SYNDICAT_VALUE &&
     identite.soustype?.toLowerCase() === LEGACY_TYPE_SYNDICAT_VALUE
   );
 }
 
 const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
   type: (identite, primary) =>
-    identite.type.toLowerCase() === primary.toLowerCase() ||
+    identite.type.toLowerCase() === primary ||
     matchesLegacyTypeSyndicat(identite, primary),
-  soustype: (identite, primary) =>
-    identite.soustype?.toLowerCase() === primary.toLowerCase(),
+  soustype: (identite, primary) => identite.soustype?.toLowerCase() === primary,
   population: (identite, primary) =>
     identite.populationTags.includes(primary as CollectivitePopulationTypeEnum),
-  localisation: (identite, primary) => identite.drom === (primary === 'DOM'),
+  localisation: (identite, primary) =>
+    identite.drom === (primary === LOCALISATION_DOM_VALUE),
   dans_aire_urbaine: (identite, primary) =>
-    identite.dansAireUrbaine === (String(primary).toLowerCase() === 'true'),
+    identite.dansAireUrbaine === (String(primary) === 'true'),
+  commune_membre: (identite, primary) => {
+    // Les tranches sont celles de la commune la plus peuplée : le champ répond
+    // à « au moins une commune de plus de N », et « moins de N » y lirait à
+    // tort « aucune commune de plus de N ».
+    if (!String(primary).startsWith('plus_de_')) {
+      throw new Error(
+        `identite(commune_membre, ${primary}) : seuls les seuils plus_de_* ont un sens sur la commune la plus peuplée`
+      );
+    }
+    // Lever plutôt que répondre « non » : une identité servie sans ses communes
+    // membres (score, indicateurs, établissement public territorial du Grand
+    // Paris) masquerait en silence une pièce requise, alors que l'applicabilité
+    // d'une pièce garde celle dont la condition lève.
+    if (identite.communesMembresPopulationTags === undefined) {
+      throw new Error(
+        `identite(commune_membre, ${primary}) : les communes membres de la collectivité n'ont pas été chargées`
+      );
+    }
+    return identite.communesMembresPopulationTags.includes(
+      primary as CollectivitePopulationTypeEnum
+    );
+  },
+  sinoe: (identite, primary) => {
+    // Lever plutôt que répondre « non » : une identité servie sans sa typologie
+    // masquerait en silence un seuil ou une cible.
+    if (identite.sinoeId === undefined) {
+      throw new Error(
+        `identite(sinoe, ${primary}) : la typologie SINOE de la collectivité n'a pas été chargée`
+      );
+    }
+    // `null` : collectivité sans typologie connue, qui ne répond à aucune.
+    return identite.sinoeId?.toLowerCase() === primary;
+  },
+};
+
+function lower(enumObject: Record<string, string>): string[] {
+  return Object.values(enumObject).map((value) => value.toLowerCase());
+}
+
+/**
+ * Valeurs acceptées à l'import pour le second argument d'`identite(champ, …)`,
+ * en minuscules. Le typage `Record<IdentiteField, …>` fait d'un champ oublié
+ * une erreur de compilation : cette liste suit `IDENTITE_EVALUATORS`.
+ *
+ * L'import compare en minuscules : l'évaluation doit en faire autant, sinon une
+ * valeur acceptée à l'import (`dom`, `PLUS_DE_20000`) vaudrait toujours faux.
+ */
+export const IDENTITE_ALLOWED_VALUES: Record<IdentiteField, readonly string[]> = {
+  type: lower(CollectiviteTypeEnum),
+  soustype: lower(CollectiviteSousTypeEnum),
+  population: lower(CollectivitePopulationTypeEnum),
+  localisation: lower(CollectiviteLocalisationTypeEnum),
+  dans_aire_urbaine: ['oui', 'non'],
+  sinoe: TYPOLOGIES_SINOE.filter(({ id }) => id !== 'non_precise').map(
+    ({ id }) => id
+  ),
+  commune_membre: lower(CollectivitePopulationTypeEnum).filter((value) =>
+    value.startsWith('plus_de_')
+  ),
 };
 
 function buildUnknownFieldErrorMessage(
   identifier: string,
-  primary: string
+  primary: string | number | boolean
 ): string {
   const allowedFields = Object.keys(IDENTITE_EVALUATORS).join(', ');
   return (
@@ -73,7 +153,7 @@ function buildUnknownFieldErrorMessage(
 export function evaluateIdentite(
   identite: IdentiteCollectivite | null,
   identifier: string,
-  primary: string
+  primary: string | number | boolean
 ): boolean {
   if (!identite) {
     throw new Error(
@@ -85,5 +165,7 @@ export function evaluateIdentite(
     throw new Error(buildUnknownFieldErrorMessage(identifier, primary));
   }
 
-  return IDENTITE_EVALUATORS[identifier](identite, primary);
+  // Normalisé ici une fois pour tous les champs, comme à l'import.
+  const value = typeof primary === 'string' ? primary.toLowerCase() : primary;
+  return IDENTITE_EVALUATORS[identifier](identite, value);
 }

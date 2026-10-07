@@ -1,5 +1,7 @@
+import { and, eq } from 'drizzle-orm';
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
+import { LabellisationDocumentsPermissionService } from '@tet/backend/collectivites/documents/labellisation-documents-permission.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -7,7 +9,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import { canUpdateAuditReport } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq } from 'drizzle-orm';
 import { auditTable } from '../audit.table';
 import {
   UpdateAuditReportError,
@@ -19,7 +20,11 @@ import { UpdateAuditReportInput } from './update-audit-report.input';
 export class UpdateAuditReportService {
   private readonly logger = new Logger(UpdateAuditReportService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly labellisationDocumentsPermissionService: LabellisationDocumentsPermissionService
+  ) {}
 
   async updateAuditReport(
     { preuveId, fichierId }: UpdateAuditReportInput,
@@ -52,8 +57,14 @@ export class UpdateAuditReportService {
         };
       }
 
+      const canMutateLabellisationDocuments =
+        await this.labellisationDocumentsPermissionService.canMutate(
+          { collectiviteId: context.collectiviteId },
+          { user }
+        );
       const allowed = canUpdateAuditReport({
         isAuditeur: context.auditeur !== null,
+        canMutateLabellisationDocuments,
         audit: {
           clos: context.clos,
           valide: context.valide,
@@ -69,17 +80,21 @@ export class UpdateAuditReportService {
         };
       }
 
-      const [fichier] = await this.databaseService.db
-        .select({ id: bibliothequeFichierTable.id })
-        .from(bibliothequeFichierTable)
-        .where(
-          and(
-            eq(bibliothequeFichierTable.id, fichierId),
-            eq(bibliothequeFichierTable.collectiviteId, context.collectiviteId)
-          )
-        );
+      const fichierOwnershipResult =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId,
+          collectiviteId: context.collectiviteId,
+        });
 
-      if (!fichier) {
+      if (!fichierOwnershipResult.success) {
+        return {
+          success: false,
+          error: fichierOwnershipResult.error,
+          cause: fichierOwnershipResult.cause,
+        };
+      }
+
+      if (!fichierOwnershipResult.data) {
         return {
           success: false,
           error: UpdateAuditReportErrorEnum.FICHIER_NOT_FOUND,
@@ -88,7 +103,11 @@ export class UpdateAuditReportService {
 
       await this.databaseService.db
         .update(preuveAuditTable)
-        .set({ fichierId })
+        .set({
+          fichierId,
+          modifiedBy: user.id,
+          modifiedAt: new Date().toISOString(),
+        })
         .where(eq(preuveAuditTable.id, preuveId));
 
       return { success: true, data: { preuveId } };

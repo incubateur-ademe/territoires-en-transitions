@@ -1,9 +1,9 @@
+import { round } from 'es-toolkit';
 import {
   PersonnalisationReponse,
   PersonnalisationReponseValue,
   QuestionType,
 } from '@tet/domain/collectivites';
-import { roundTo } from '@tet/domain/utils';
 
 export const transformReponseToWrite = (
   questionType: QuestionType,
@@ -31,8 +31,7 @@ export const transformLoadedReponse = (
   const { questionType, reponse } = row;
 
   if (questionType === 'proportion') {
-    const value =
-      typeof reponse === 'number' ? roundTo(reponse * 100, 0) : null;
+    const value = typeof reponse === 'number' ? round(reponse * 100, 0) : null;
     return { ...row, reponse: value };
   }
 

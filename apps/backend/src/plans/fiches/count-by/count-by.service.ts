@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { countByDateSlots } from '@tet/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import { countByArrayValues } from '@tet/backend/plans/fiches/count-by/utils/count-by-array-value';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
@@ -450,7 +451,8 @@ export class CountByService {
   async countByProperty(
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
-    filters: ListFichesRequestFilters
+    filters: ListFichesRequestFilters,
+    { user }: { user: AuthUser }
   ) {
     this.logger.log(
       `Calcul du count by ${countByProperty} des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
@@ -459,10 +461,10 @@ export class CountByService {
     );
     try {
       const { data: fiches } =
-        await this.ficheActionListService.getFichesActionResumes({
-          collectiviteId,
-          filters,
-        });
+        await this.ficheActionListService.getFichesActionResumes(
+          { collectiviteId, filters },
+          { user }
+        );
       return this.countByPropertyWithFiches(fiches, countByProperty, filters);
     } catch (error) {
       this.logger.error(error);

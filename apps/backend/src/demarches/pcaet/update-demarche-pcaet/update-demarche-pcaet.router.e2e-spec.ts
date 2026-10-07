@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -7,8 +9,14 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import {
+  completeTestDiagnosticPcaet,
+  completeTestDossierPcaet,
+  coverTestDocumentsPcaet,
+  publierTestDemarchePcaet,
+} from '../demarches-pcaet.test-fixture';
 
 describe('Mettre à jour une démarche PCAET', () => {
   let app: INestApplication;
@@ -81,9 +89,9 @@ describe('Mettre à jour une démarche PCAET', () => {
     const updated = await caller.demarches.pcaet.update({
       collectiviteId: localCollectivite.id,
       demarcheId: created.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
-    expect(updated.planActionId).toBe(plan.id);
+    expect(updated.planActionIds).toEqual([plan.id]);
 
     // Un plan d'une autre collectivité est refusé.
     const other = await addTestCollectiviteAndUser(db, {
@@ -101,11 +109,199 @@ describe('Mettre à jour une démarche PCAET', () => {
       caller.demarches.pcaet.update({
         collectiviteId: localCollectivite.id,
         demarcheId: created.id,
-        planActionId: foreignPlan.id,
+        planActionIds: [foreignPlan.id],
       })
     ).rejects.toThrow(
-      'Le plan d’action à rattacher n’existe pas dans cette collectivité'
+      'Un des plans d’action à rattacher n’existe pas dans cette collectivité'
     );
+  });
+
+  test('Refuser un plan tenu par une autre démarche active', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+    });
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan convoité',
+      collectiviteId: localCollectivite.id,
+    });
+
+    // État conflictuel inatteignable via l'API publique (une seule démarche
+    // active par collectivité et par type, plans cloisonnés par collectivité) :
+    // on le seede directement, c'est précisément ce que l'exclusivité couvre.
+    const other = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.EDITION },
+    });
+    const [conflictuelle] = await db.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: other.collectivite.id,
+        type: DemarcheTypeEnum.PCAET,
+        titre: 'Démarche déjà servie',
+      })
+      .returning({ id: demarcheTable.id });
+    await db.db
+      .insert(demarchePlanActionTable)
+      .values({ demarcheId: conflictuelle.id, planActionId: plan.id });
+
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId: localCollectivite.id,
+        demarcheId: created.id,
+        planActionIds: [plan.id],
+      })
+    ).rejects.toThrow(
+      'Ce plan d’action est déjà rattaché à une autre démarche en cours'
+    );
+  });
+
+  test('Re-lier son propre plan est idempotent', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+    });
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan relié deux fois',
+      collectiviteId: localCollectivite.id,
+    });
+
+    await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [plan.id],
+    });
+    const relinked = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [plan.id],
+    });
+    expect(relinked.planActionIds).toEqual([plan.id]);
+  });
+
+  test('Rattacher plusieurs plans, puis n’en détacher qu’un', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+    });
+    const premier = await caller.plans.plans.create({
+      nom: 'Volet mobilité',
+      collectiviteId: localCollectivite.id,
+    });
+    const second = await caller.plans.plans.create({
+      nom: 'Volet bâtiments',
+      collectiviteId: localCollectivite.id,
+    });
+
+    const lies = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [premier.id, second.id],
+    });
+    expect(lies.planActionIds).toEqual([premier.id, second.id]);
+
+    // L'ensemble est remplacé tel quel : ce qui n'y est plus est détaché.
+    const detache = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [second.id],
+    });
+    expect(detache.planActionIds).toEqual([second.id]);
+
+    // Un tableau vide détache tout.
+    const vide = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [],
+    });
+    expect(vide.planActionIds).toEqual([]);
+  });
+
+  test('Une démarche adoptée libère son plan pour le cycle suivant', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const first = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+    });
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan du premier cycle',
+      collectiviteId: localCollectivite.id,
+    });
+    await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: first.id,
+      planActionIds: [plan.id],
+    });
+
+    // Dossier complet sans toucher au plan déjà rattaché (la fixture composée
+    // en rattacherait un nouveau).
+    const options = {
+      collectiviteId: localCollectivite.id,
+      demarcheId: first.id,
+    };
+    await coverTestDocumentsPcaet(db, options);
+    await completeTestDiagnosticPcaet(db, options);
+
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: localCollectivite.id,
+      demarcheId: first.id,
+    });
+    // Jusqu'à la publication : un dossier seulement instruit reste « en cours »
+    // et bloquerait la création de la seconde démarche.
+    await publierTestDemarchePcaet(app, db, caller, {
+      collectiviteId: localCollectivite.id,
+      demarcheId: first.id,
+    });
+
+    const second = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+    });
+    const updated = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: second.id,
+      planActionIds: [plan.id],
+    });
+    expect(updated.planActionIds).toEqual([plan.id]);
+  });
+
+  test('Corriger la déclaration SCoT-AEC tant que l’amont est modifiable', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    // La coche est pré-remplie sur oui à l'étape 0 : une collectivité qui a
+    // validé sans la lire doit pouvoir se reprendre.
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+      isScotAec: true,
+    });
+
+    const updated = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      isScotAec: false,
+    });
+
+    expect(updated.isScotAec).toBe(false);
+  });
+
+  test('Refuser la correction du SCoT-AEC sur une démarche transmise', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+      isScotAec: true,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+    });
+
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId: localCollectivite.id,
+        demarcheId: created.id,
+        isScotAec: false,
+      })
+    ).rejects.toThrow('Une démarche transmise pour avis n’est plus modifiable');
   });
 
   test('Refuser la modification d’une démarche transmise pour avis', async () => {

@@ -3,7 +3,7 @@
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useFichesActionLiees } from '@/app/referentiels/action.show/useFichesActionLiees';
 import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
-import { useActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
+import { useActionPreuvesCount } from '@/app/collectivites/documents/use-action-preuves-count';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 

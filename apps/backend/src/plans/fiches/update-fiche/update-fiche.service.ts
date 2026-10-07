@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ficheActionLienTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-lien.table';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -15,6 +17,7 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
@@ -34,8 +37,42 @@ export default class UpdateFicheService {
     private readonly notificationsFicheService: NotifyPiloteService,
     private readonly ficheActionRepository: FicheActionRepository,
     private readonly transactionManager: TransactionManager,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly databaseService: DatabaseService
   ) {}
+
+  /**
+   * Un lien entre fiches est symétrique : le modifier touche aussi l'autre
+   * fiche. On exige donc les droits d'écriture sur chaque fiche liée, qu'elle
+   * soit ajoutée, conservée ou retirée.
+   */
+  private async assertFichesLieesWritable(
+    ficheId: number,
+    fichesLiees: Array<{ id: number }>,
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<void> {
+    const existingLiens = await (tx ?? this.databaseService.db)
+      .select()
+      .from(ficheActionLienTable)
+      .where(
+        or(
+          eq(ficheActionLienTable.ficheUne, ficheId),
+          eq(ficheActionLienTable.ficheDeux, ficheId)
+        )
+      );
+
+    const affectedFicheIds = new Set<number>(fichesLiees.map((f) => f.id));
+    for (const { ficheUne, ficheDeux } of existingLiens) {
+      if (!isNil(ficheUne)) affectedFicheIds.add(ficheUne);
+      if (!isNil(ficheDeux)) affectedFicheIds.add(ficheDeux);
+    }
+    affectedFicheIds.delete(ficheId);
+
+    for (const ficheLieeId of affectedFicheIds) {
+      await this.fichePermissionService.canWriteFiche(ficheLieeId, user, tx);
+    }
+  }
 
   private async assertMesuresWritable(
     ficheId: number,
@@ -105,6 +142,15 @@ export default class UpdateFicheService {
   }): Promise<UpdateFicheResult<FicheWithRelations, UpdateFicheError>> {
     await this.fichePermissionService.canWriteFiche(ficheId, user, tx);
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
+
+    if (ficheFields.fichesLiees !== undefined) {
+      await this.assertFichesLieesWritable(
+        ficheId,
+        ficheFields.fichesLiees ?? [],
+        user,
+        tx
+      );
+    }
 
     if (ficheFields.mesures !== undefined) {
       const mesuresGuardResult = await this.assertMesuresWritable(

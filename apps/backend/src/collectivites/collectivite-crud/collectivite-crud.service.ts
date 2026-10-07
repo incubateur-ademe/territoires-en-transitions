@@ -182,6 +182,7 @@ export default class CollectiviteCrudService {
         );
         break;
 
+      case collectiviteTypeEnum.DREAL:
       case collectiviteTypeEnum.PREFECTURE_REGION:
         if (!collectivite.regionCode) return null;
         condition.push(

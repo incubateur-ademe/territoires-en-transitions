@@ -55,7 +55,7 @@ export const IndicateursView = () => {
           isReadonly={isReadonly}
           picto={(props) => <DatavizPicto {...props} />}
           title={appLabels.aucunIndicateurAssocie}
-          subTitle={appLabels.indicateursAssociesEmptyDescription}
+          subTitle={appLabels.ficheIndicateursAssociesEmptyDescription}
           actions={[
             {
               ...createIndicateurButtonProps,

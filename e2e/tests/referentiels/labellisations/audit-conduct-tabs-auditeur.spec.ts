@@ -47,6 +47,11 @@ test.describe("Conduite d'audit (onglet Cycles et bandeau vue tableau)", () => {
       role: CollectiviteRole.LECTURE,
       autoLogin: true,
     });
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,

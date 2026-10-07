@@ -1,16 +1,14 @@
 'use client';
 
-import { Json, Views } from '@tet/api';
+import { SiteCarteCollectivite } from '@/site/src/trpc/trpc-client';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';
 import { useRouter } from 'next/navigation';
 import { FeatureGroup, GeoJSON, Tooltip } from 'react-leaflet';
 
-type labellisation_w_geojson = Views<'site_labellisation'> & { geojson?: Json };
-
 type CollectiviteFeatureProps = {
-  collectivite: labellisation_w_geojson;
+  collectivite: SiteCarteCollectivite;
 };
 
 /**
@@ -30,7 +28,7 @@ const CollectiviteFeature = ({ collectivite }: CollectiviteFeatureProps) => {
   };
 
   return (
-    <FeatureGroup key={collectivite.collectivite_id}>
+    <FeatureGroup key={collectivite.collectiviteId}>
       <GeoJSON
         data={geojson}
         style={style}
@@ -38,7 +36,7 @@ const CollectiviteFeature = ({ collectivite }: CollectiviteFeatureProps) => {
           click: () => {
             router.push(
               `/collectivites/${
-                collectivite.code_siren_insee
+                collectivite.codeSirenInsee
               }/${convertNameToSlug(collectivite.nom ?? '')}`
             );
           },

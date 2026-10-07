@@ -1,0 +1,36 @@
+name: get-koyeb-app-url
+description: Détermine l'URL publique d'une app après son déploiement (CLI Koyeb configuré requis)
+
+inputs:
+  app-name:
+    description: Nom de l'app Koyeb déployée
+    required: true
+  public-url:
+    description: URL HTTPS publique à privilégier si elle est configurée
+    required: false
+    default: ''
+
+outputs:
+  url:
+    description: URL publique de l'app déployée
+    value: ${{ steps.url.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - id: url
+      shell: bash
+      env:
+        APP_NAME: ${{ inputs.app-name }}
+        PUBLIC_URL: ${{ inputs.public-url }}
+      run: |
+        set -euo pipefail
+        # Les variables du dépôt ont des valeurs HTTP localhost par défaut.
+        # Sans URL HTTPS d'environnement, utiliser le domaine attribué par Koyeb.
+        if [[ "$PUBLIC_URL" == https://* ]]; then
+          url="$PUBLIC_URL"
+        else
+          domain=$(koyeb apps get "$APP_NAME" --output json | jq -er '.domains[0].name | select(type == "string" and length > 0)')
+          url="https://$domain"
+        fi
+        echo "url=$url" >> "$GITHUB_OUTPUT"

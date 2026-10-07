@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
+import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AxeModule } from '../axes/axe.module';
 import { DeleteAxeRepository } from '../axes/delete-axe/delete-axe.repository';
@@ -41,12 +42,16 @@ import { PlanProgressRules } from './progress/plan-progress.rules';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
+import { PlanVerificationRepository } from './verify-plan/plan-verification.repository';
+import { VerifyPlanRouter } from './verify-plan/verify-plan.router';
+import { VerifyPlanService } from './verify-plan/verify-plan.service';
 
 @Module({
   imports: [
     forwardRef(() => CollectivitesModule),
     forwardRef(() => FichesModule),
     AxeModule,
+    TrackingModule,
     TransactionModule,
   ],
   providers: [
@@ -88,6 +93,9 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ImportExcelPlanApplicationService,
     ImportPlanRouter,
     ResolveEntityService,
+    PlanVerificationRepository,
+    VerifyPlanService,
+    VerifyPlanRouter,
   ],
   exports: [
     PlanRouter,
@@ -99,6 +107,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ComputeBudgetRules,
     ImportPlanService,
     ListPlanTypesService,
+    PlanVerificationRepository,
   ],
 })
 export class PlanModule {}

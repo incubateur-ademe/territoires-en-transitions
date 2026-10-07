@@ -28,7 +28,6 @@ export async function generateMetadata(
   const collectiviteData = await fetchCollectivite(code);
   const strapiData = await getStrapiData(code);
   const strapiDefaultData = await getStrapiDefaultData();
-  const couverture = strapiData?.couverture?.attributes ?? undefined;
 
   if (!collectiviteData || !collectiviteData.collectivite.nom) return metadata;
 
@@ -43,17 +42,7 @@ export async function generateMetadata(
       collectiviteData.collectivite.nom,
     description:
       strapiData?.seo.metaDescription ?? strapiDefaultData?.seo.metaDescription,
-    image: strapiData?.seo.metaImage
-      ? strapiData.seo.metaImage
-      : couverture
-      ? {
-          url: couverture.url as unknown as string,
-          width: couverture.width as unknown as number,
-          height: couverture.height as unknown as number,
-          type: couverture.mime as unknown as string,
-          alt: couverture.alternativeText as unknown as string,
-        }
-      : strapiDefaultData?.seo.metaImage,
+    image: strapiData?.seo.metaImage ?? strapiDefaultData?.seo.metaImage,
   });
 }
 
@@ -90,8 +79,8 @@ const DetailCollectivite = async ({
             ...strapiData,
             type:
               natureCollectiviteToLabel[
-                collectiviteData.collectivite.nature_collectivite
-              ] ?? collectiviteData.collectivite.type_collectivite,
+                collectiviteData.collectivite.natureCollectivite ?? ''
+              ] ?? collectiviteData.collectivite.typeCollectivite,
             couvertureDefaut: strapiDefaultData?.couverture,
             annuaireUrl: collectiviteData.annuaireUrl,
           }}
@@ -108,8 +97,8 @@ const DetailCollectivite = async ({
         {collectiviteData.collectivite.labellisee && (
           <div className="flex flex-col items-center md:rounded-[10px] bg-white pt-6 pb-10 px-2">
             <LabellisationLogo
-              cae={collectiviteData.collectivite.cae_etoiles ?? undefined}
-              eci={collectiviteData.collectivite.eci_etoiles ?? undefined}
+              cae={collectiviteData.collectivite.caeEtoiles ?? undefined}
+              eci={collectiviteData.collectivite.eciEtoiles ?? undefined}
             />
           </div>
         )}
@@ -158,9 +147,9 @@ const DetailCollectivite = async ({
               defaultData={strapiDefaultData.indicateurs}
               indicateurs={{
                 artificialisation_sols:
-                  collectiviteData.collectivite.indicateur_artificialisation,
+                  collectiviteData.collectivite.indicateurArtificialisation,
                 gaz_effet_serre:
-                  collectiviteData.collectivite.indicateurs_gaz_effet_serre,
+                  collectiviteData.collectivite.indicateursGazEffetSerre,
               }}
             />
           ) : null

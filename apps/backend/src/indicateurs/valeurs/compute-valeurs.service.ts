@@ -15,7 +15,6 @@ import {
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
-import { roundTo } from '@tet/domain/utils';
 import {
   and,
   eq,
@@ -26,7 +25,8 @@ import {
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
+import { isNil, round } from 'es-toolkit';
+import { indicateurValeurPeriodiciteSelection } from '../definitions/indicateur-periodicite.column';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
@@ -483,11 +483,11 @@ export default class ComputeValeursService {
               dateValeur: relatedSourceIndicateurInfo.date,
               resultat:
                 computedResultat !== null
-                  ? roundTo(computedResultat, indicateurPrecision)
+                  ? round(computedResultat, indicateurPrecision)
                   : null,
               objectif:
                 computedObjectif !== null
-                  ? roundTo(computedObjectif, indicateurPrecision)
+                  ? round(computedObjectif, indicateurPrecision)
                   : null,
               metadonneeId: relatedSourceIndicateurInfo.metadonneeId,
               calculAuto: true,
@@ -575,6 +575,7 @@ export default class ComputeValeursService {
     const result = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurValeurTable),
+        ...indicateurValeurPeriodiciteSelection,
         indicateurIdentifiant: indicateurDefinitionTable.identifiantReferentiel,
         sourceId: indicateurSourceMetadonneeTable.sourceId,
       })
@@ -779,6 +780,7 @@ export default class ComputeValeursService {
       await this.databaseService.db
         .select({
           ...getTableColumns(indicateurValeurTable),
+          ...indicateurValeurPeriodiciteSelection,
           indicateurIdentifiant:
             indicateurDefinitionTable.identifiantReferentiel,
           sourceId: indicateurSourceMetadonneeTable.sourceId,

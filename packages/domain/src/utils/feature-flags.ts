@@ -1,10 +1,14 @@
 import { createEnumObject } from '@tet/domain/utils';
 
 const FEATURE_FLAGS = [
+  'is-switch-to-te-enabled',
   'is-referentiel-te-enabled',
   'is-share-fiche-enabled',
   'is-action-default-table-view-enabled',
   'is-demarche-pcaet-enabled',
+  'is-demarche-pcaet-bypass-diagnostic-enabled',
+  'is-ai-plan-import-enabled',
+  'is-score-indicateur-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);

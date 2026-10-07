@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { buildFilesizeSql } from '@tet/backend/collectivites/documents/file-info.utils';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
@@ -6,6 +7,7 @@ import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/model
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { StoredDocumentHash } from '@tet/domain/collectivites';
 import { and, asc, eq, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
 
 export type AnnexeListRow = {
@@ -19,7 +21,7 @@ export type AnnexeListRow = {
   lien: { titre: string; url: string } | null;
   filename: string | null;
   confidentiel: boolean | null;
-  hash: string | null;
+  hash: StoredDocumentHash | null;
   bucketId: string | null;
   filesize: number | null;
 };
@@ -64,9 +66,7 @@ export class FicheAnnexesRepository {
         confidentiel: bibliothequeFichierTable.confidentiel,
         hash: bibliothequeFichierTable.hash,
         bucketId: collectiviteBucketTable.bucketId,
-        filesize: sql<
-          number | null
-        >`(${storageObjectTable.metadata}->>'size')::integer`,
+        filesize: buildFilesizeSql(),
       })
       .from(annexeTable)
       .leftJoin(

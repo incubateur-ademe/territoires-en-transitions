@@ -1,6 +1,5 @@
 'use client';
 
-import { EmptyCell } from './empty-cell';
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
@@ -8,10 +7,11 @@ import { CellContext } from '@tanstack/react-table';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
-import { getTableMeta } from './utils';
+import { EmptyCell } from './empty-cell';
+import { getTableMeta, ReferentielTableFeatures } from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 function FichesCellContent({
@@ -19,7 +19,7 @@ function FichesCellContent({
   action,
   cellId,
 }: {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
   action: ActionListItem;
   cellId: string;
 }) {
@@ -28,8 +28,8 @@ function FichesCellContent({
 
   const { setPanel, panel } = useSidePanel();
 
-  const panelKey = `fiches-${action.actionId}`;
-  const isActive = panel.isOpen && panel.title === panelKey;
+  const panelTitle = `${action.identifiant} ${action.nom}`;
+  const isActive = panel.isOpen && panel.title === panelTitle;
 
   const toggleFichesPanel = useCallback(() => {
     if (isActive) {
@@ -39,19 +39,14 @@ function FichesCellContent({
 
     setPanel({
       type: 'open',
-      title: panelKey,
-      Title: () => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl">
-          {action.identifiant} {action.nom}
-        </h5>
-      ),
+      title: panelTitle,
       content: (
         <div className="px-6 py-4">
           <FichesActionLiees actionId={action.actionId} />
         </div>
       ),
     });
-  }, [isActive, setPanel, panelKey, action]);
+  }, [isActive, setPanel, panelTitle, action]);
 
   return (
     <TableCell

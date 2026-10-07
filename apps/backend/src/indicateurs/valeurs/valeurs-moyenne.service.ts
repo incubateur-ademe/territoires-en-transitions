@@ -15,6 +15,7 @@ import {
 } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
 
+import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/backend/demarches/pcaet/shared/demarche-pcaet-source-metadonnee.repository';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
@@ -115,7 +116,10 @@ export default class ValeursMoyenneService {
             sql`${typeCollectiviteExpr} IS NOT DISTINCT FROM ${typeCollectivite}`,
             isNotNull(iv.resultat),
             isNotNull(iv.metadonneeId),
+            // Sources hors moyenne nationale : SNBC (trajectoire) et PCAET
+            // collectivité (valeurs de démarche, pas une source ouverte partagée).
             ne(ism.sourceId, 'snbc'),
+            ne(ism.sourceId, PCAET_COLLECTIVITE_SOURCE_ID),
             eq(iv.indicateurId, indicateurId)
           )
         )

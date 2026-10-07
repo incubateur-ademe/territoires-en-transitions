@@ -69,7 +69,7 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
               />
             </Field>
             <FormSectionGrid>
-              <Field title={appLabels.statut}>
+              <Field title={appLabels.ficheStatut}>
                 <StatutsSelectDropdown
                   values={fiche.statut}
                   onChange={(statut) =>
@@ -92,7 +92,7 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                 />
               </Field>
             </FormSectionGrid>
-            <Field title={appLabels.personnePilote}>
+            <Field title={appLabels.personnePilote()}>
               <PersonneTagDropdown
                 values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
                 onChange={({ personnes }) => {

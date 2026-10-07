@@ -33,7 +33,7 @@ import { ficheActionStructureTagTable } from '@tet/backend/plans/fiches/shared/m
 import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
-import { actionImpactActionTable } from '@tet/backend/plans/paniers/models/action-impact-action.table';
+import { actionImpactActionTable } from '@tet/backend/plans/fiches/shared/models/action-impact-action.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
 import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mise-en-oeuvre.table';
@@ -110,6 +110,21 @@ const sortColumn: Record<ListFichesSortValue, PgColumn> = {
   dateDebut: ficheActionTable.dateDebut,
   titre: ficheActionTable.titre,
 };
+
+export type FichesReadContext = {
+  user: AuthUser;
+  tx?: Transaction;
+};
+
+export type FicheTextFields = {
+  ficheId: number;
+  titre: string | null;
+  description: string | null;
+};
+
+type ReadableFichesFilters =
+  | { kind: 'filters'; filters: ListFichesRequestFilters }
+  | { kind: 'no_readable_fiche' };
 
 @Injectable()
 export default class ListFichesService {
@@ -1595,8 +1610,16 @@ export default class ListFichesService {
     if (filters.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));
     }
-    if (!isNil(filters.restreint)) {
-      conditions.push(eq(ficheActionTable.restreint, filters.restreint));
+    if (filters.restreint === true) {
+      conditions.push(eq(ficheActionTable.restreint, true));
+    }
+    if (filters.restreint === false) {
+      conditions.push(
+        or(
+          isNull(ficheActionTable.restreint),
+          eq(ficheActionTable.restreint, false)
+        )
+      );
     }
 
     if (filters.cibles?.length) {
@@ -1942,6 +1965,32 @@ export default class ListFichesService {
     return result[0]?.count ?? 0;
   }
 
+  private async getReadableFichesFilters(
+    {
+      collectiviteId,
+      filters,
+    }: { collectiviteId: number; filters: ListFichesRequestFilters },
+    { user, tx }: FichesReadContext
+  ): Promise<ReadableFichesFilters> {
+    const canReadFichesRestreintes =
+      await this.fichePermissionService.hasReadFichePermission(
+        { collectiviteId, restreint: true },
+        user,
+        true,
+        tx
+      );
+
+    if (!canReadFichesRestreintes && filters.restreint === true) {
+      return { kind: 'no_readable_fiche' };
+    }
+
+    const readableFilters = canReadFichesRestreintes
+      ? filters
+      : { ...filters, restreint: false };
+
+    return { kind: 'filters', filters: readableFilters };
+  }
+
   /**
    * Get fiches actions resumes from the collectivity matching the given filters.
    * Also returns additional data about fetched fiches actions.
@@ -1954,11 +2003,13 @@ export default class ListFichesService {
     {
       collectiviteId,
       filters,
+      queryOptions,
     }: {
       collectiviteId: number;
       filters: ListFichesRequestFilters;
+      queryOptions?: QueryOptionsSchema;
     },
-    queryOptions?: QueryOptionsSchema
+    { user, tx }: FichesReadContext
   ): Promise<{
     count: number;
     nextPage: number | null;
@@ -1971,10 +2022,19 @@ export default class ListFichesService {
         filterSummary ? `(${filterSummary})` : ''
       }`
     );
+    const readable = await this.getReadableFichesFilters(
+      { collectiviteId, filters },
+      { user, tx }
+    );
+    if (readable.kind === 'no_readable_fiche') {
+      return { count: 0, nextPage: null, nbOfPages: 0, data: [] };
+    }
+
     const { data, count } = await this.listFichesQuery(
       collectiviteId,
-      filters,
-      queryOptions
+      readable.filters,
+      queryOptions,
+      tx
     );
 
     if (queryOptions?.limit === 'all' || queryOptions === undefined) {
@@ -1997,5 +2057,4 @@ export default class ListFichesService {
       data,
     };
   }
-
 }

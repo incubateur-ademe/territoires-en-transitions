@@ -11,7 +11,7 @@ const buildAction = (overrides: Partial<FicheWithRelationsAndCollectivite>) =>
     dateFin: null,
     ameliorationContinue: null,
     ...overrides,
-  }) as unknown as FicheWithRelationsAndCollectivite;
+  } as unknown as FicheWithRelationsAndCollectivite);
 
 describe('ActionDateGenericCell', () => {
   it('affiche la date de fin quand la fiche ne se répète pas', () => {
@@ -39,6 +39,6 @@ describe('ActionDateGenericCell', () => {
     );
 
     expect(screen.queryByText('31/12/2027')).toBeNull();
-    expect(screen.getByText("L'action se répète tous les ans")).toBeTruthy();
+    expect(screen.getByText('Action se répète tous les ans')).toBeTruthy();
   });
 });

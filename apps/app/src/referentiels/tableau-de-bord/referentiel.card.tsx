@@ -56,15 +56,12 @@ export const ReferentielCard = ({
           />
         </>
       ) : (
-        <>
-          <ScoreVide
-            isReadonly={isReadonly}
-            collectiviteId={collectiviteId}
-            referentiel={referentiel}
-            title={title}
-            axes={axes}
-          />
-        </>
+        <ScoreVide
+          isReadonly={isReadonly}
+          collectiviteId={collectiviteId}
+          referentiel={referentiel}
+          title={title}
+        />
       )}
     </div>
   );

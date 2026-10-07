@@ -22,7 +22,7 @@ export type StoreDocumentInput = DocumentLocation & {
   contentType: string;
 } & ({ sourceFilePath: string } | { content: Buffer });
 
-export type CreateDocumentSignedUrlInput = DocumentLocation & {
+export type CreateSignedDownloadUrlInput = DocumentLocation & {
   expiresInSeconds: number;
 };
 
@@ -115,8 +115,8 @@ export class DocumentStorageService {
     }
   }
 
-  async createDocumentSignedUrl(
-    input: CreateDocumentSignedUrlInput
+  async createSignedDownloadUrl(
+    input: CreateSignedDownloadUrlInput
   ): Promise<Result<{ signedUrl: string }, DocumentStorageError>> {
     const { bucketId, key, expiresInSeconds } = input;
     try {
@@ -147,9 +147,43 @@ export class DocumentStorageService {
     }
   }
 
+  async createSignedUpload(
+    input: DocumentLocation
+  ): Promise<Result<{ token: string; path: string }, DocumentStorageError>> {
+    const { bucketId, key } = input;
+    try {
+      const { data, error } = await this.supabase.client.storage
+        .from(bucketId)
+        .createSignedUploadUrl(key, { upsert: false });
+
+      if (error || !data) {
+        this.logger.error(
+          `Signature d'upload impossible pour ${bucketId}/${key}: ${
+            error?.message ?? 'réponse vide'
+          }`
+        );
+        return failure(DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR);
+      }
+
+      return success({ token: data.token, path: data.path });
+    } catch (error) {
+      this.logger.error(
+        `Erreur de signature d'upload pour ${bucketId}/${key}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
   async downloadDocument(
     input: DocumentLocation
-  ): Promise<Result<{ buffer: Buffer; mimeType: string }, DocumentStorageError>> {
+  ): Promise<
+    Result<{ buffer: Buffer; mimeType: string }, DocumentStorageError>
+  > {
     const { bucketId, key } = input;
     try {
       const { data, error } = await this.supabase.client.storage

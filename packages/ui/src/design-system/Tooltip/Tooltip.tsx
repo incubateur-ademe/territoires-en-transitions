@@ -18,7 +18,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import { cloneElement, JSX, useCallback, useRef, useState } from 'react';
+import { cloneElement, JSX, useCallback, useState } from 'react';
 import { preset } from '../../tailwind-preset';
 
 const colorTheme = preset.theme.extend.colors;
@@ -44,9 +44,26 @@ export type TooltipProps = {
   className?: string;
 };
 
-/** Affiche une info bulle */
+/**
+ * Un libellé qui n'a rien à afficher — le cas courant d'un `label` calculé,
+ * comme le motif de blocage d'une action qui n'est pas bloquée.
+ */
+const isLabelVide = (label: TooltipProps['label']): boolean =>
+  label === undefined ||
+  label === null ||
+  label === false ||
+  (typeof label === 'string' && label.trim() === '');
 
-export const Tooltip = ({
+/**
+ * Affiche une info bulle.
+ *
+ * Sans libellé, l'élément est rendu seul : la bulle se réduirait sinon à sa
+ * flèche et à ses bordures, un glitch au survol de l'élément.
+ */
+export const Tooltip = (props: TooltipProps) =>
+  isLabelVide(props.label) ? props.children : <TooltipAvecLabel {...props} />;
+
+const TooltipAvecLabel = ({
   children,
   label,
   offsetValue = 10,
@@ -59,10 +76,22 @@ export const Tooltip = ({
 }: TooltipProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const arrowRef = useRef(null);
+  // `arrow()` accepte aussi une ref, mais la lire pendant le rendu est
+  // justement ce que la règle `react-hooks/refs` interdit : l'élément de la
+  // flèche passe donc par un état, mis à jour à son montage.
+  const [arrowElement, setArrowElement] = useState<SVGSVGElement | null>(null);
 
   // Configuration du comportement de la tooltip
-  const { x, y, refs, strategy, context } = useFloating({
+  const {
+    x,
+    y,
+    elements,
+    strategy,
+    context,
+    // Déstructuré ici : la règle `react-hooks/refs` prend tout ce qui s'appelle
+    // `refs` pour une ref, alors que ce sont deux callbacks de montage.
+    refs: { setReference, setFloating },
+  } = useFloating({
     placement,
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -71,17 +100,18 @@ export const Tooltip = ({
       flip(),
       shift({ padding: 8 }),
       arrow({
-        element: arrowRef,
+        element: arrowElement,
       }),
     ],
     whileElementsMounted: autoUpdate,
   });
 
   // Preserve the consumer's ref
-  const ref = useMergedRefs([refs.setReference, children as never]);
+  const ref = useMergedRefs([setReference, children as never]);
 
-  // Tooltip height
-  const tooltipHeight = refs.floating.current?.clientHeight;
+  // Hauteur de la bulle. `elements.floating` est un état — contrairement à
+  // `refs.floating.current`, qu'il aurait fallu lire pendant le rendu.
+  const tooltipHeight = elements.floating?.clientHeight;
 
   const getStaticOffset = () => {
     if (
@@ -118,7 +148,7 @@ export const Tooltip = ({
       {isOpen && (
         <FloatingPortal>
           <div
-            ref={refs.setFloating}
+            ref={setFloating}
             {...getFloatingProps()}
             style={{
               position: strategy,
@@ -139,7 +169,7 @@ export const Tooltip = ({
           >
             {withArrow && (
               <FloatingArrow
-                ref={arrowRef}
+                ref={setArrowElement}
                 context={context}
                 staticOffset={getStaticOffset()}
                 width={8}

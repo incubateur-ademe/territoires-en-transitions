@@ -1,3 +1,4 @@
+import { PERSONAL_MODULE_TITRES } from '@/app/tableaux-de-bord/modules/personal-module-titres';
 import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
@@ -46,7 +47,7 @@ export const FichesActionModule = ({
 
   return (
     <Module
-      title={module.titre}
+      title={PERSONAL_MODULE_TITRES[module.defaultKey]}
       filters={module.options.filtre}
       menuActions={menuActions}
       symbole={<PictoExpert className="w-16 h-16" />}

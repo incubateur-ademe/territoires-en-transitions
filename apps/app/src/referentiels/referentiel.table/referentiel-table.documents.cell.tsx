@@ -1,13 +1,13 @@
 'use client';
 
-import { EmptyCell } from './empty-cell';
-import { DownloadDocs } from '@/app/referentiels/actions/action-documents.download-button';
+import { DownloadDocumentsButton } from '@/app/referentiels/actions/download-documents.button';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { useActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
+import { useActionPreuvesCount } from '@/app/collectivites/documents/use-action-preuves-count';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CellContext } from '@tanstack/react-table';
+import { ReferentielTableFeatures } from './utils';
 import {
   ActionType,
   ActionTypeEnum,
@@ -15,9 +15,10 @@ import {
 } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
+import { EmptyCell } from './empty-cell';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 function DocumentsCellContent({
@@ -33,8 +34,8 @@ function DocumentsCellContent({
 
   const { setPanel, panel } = useSidePanel();
 
-  const isActive =
-    panel.isOpen && panel.title === `documents-${action.actionId}`;
+  const panelTitle = `${action.identifiant} ${action.nom}`;
+  const isActive = panel.isOpen && panel.title === panelTitle;
 
   const toggleDocumentsPanel = useCallback(() => {
     if (isActive) {
@@ -44,17 +45,12 @@ function DocumentsCellContent({
 
     setPanel({
       type: 'open',
-      title: `documents-${action.actionId}`,
-      Title: () => (
-        <h5 className="text-primary-9 font-bold leading-7 text-xl">
-          {action.identifiant} {action.nom}
-        </h5>
-      ),
+      title: panelTitle,
       content: (
         <div className="px-6 py-4">
           <ReferentielProvider referentielId={referentielId}>
             <section className="flex flex-col gap-5">
-              <DownloadDocs action={action} />
+              <DownloadDocumentsButton key={action.actionId} action={action} />
               <ActionPreuvePanel
                 withSubActions
                 showWarning
@@ -66,7 +62,7 @@ function DocumentsCellContent({
         </div>
       ),
     });
-  }, [isActive, setPanel, action, referentielId]);
+  }, [isActive, setPanel, panelTitle, referentielId, action]);
 
   return (
     <TableCell

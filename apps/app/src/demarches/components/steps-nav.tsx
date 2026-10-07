@@ -1,78 +1,91 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import {
-  DemarchePcaetStatusEnum,
-  type DemarchePcaetTransitionEvaluation,
-} from '@tet/domain/demarches';
-import { getTransitionBlocageLabel } from '../transitions';
+import { type DemarchePcaetTransitionEvaluation } from '@tet/domain/demarches';
 import { Button, Tooltip } from '@tet/ui';
-import { useSearchParams } from 'next/navigation';
 import type { DemarchePcaetCompletion } from '../completion';
-import { useDemarchePcaetDiagnostic } from '../pcaet/diagnostic/data/use-diagnostic';
+import { useGetPcaetDiagnostic } from '../pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import {
-  serializeTopicParam,
-  useDemarcheTopicParam,
-} from '../pcaet/diagnostic/use-topic-param';
-import { DREAL_INSTRUCTEUR_PARAM } from '../pcaet/vue-dreal/components/dreal-context-banner';
+  serializePcaetDiagnosticTabQueryState,
+  usePcaetDiagnosticTabQueryState,
+} from '../pcaet/diagnostic/use-pcaet-diagnostic-tab-query-state';
 import {
   getStepsNavModel,
   makeDemarcheSectionUrl,
+  type DemarcheParcoursEtape,
   type DemarcheSectionKey,
   type DemarcheStepItem,
 } from '../steps';
+import { getTransitionBlocageLabel } from '../transitions';
 import type { DemarchePcaet } from '../types';
+
+/**
+ * L'acte qui clôt le temps parcouru, proposé à la place d'« Étape suivante » sur
+ * le dernier item : la transmission pour avis à l'amont, la validation du dépôt
+ * final à l'aval. `null` quand il n'y a plus rien à valider — un dossier déjà
+ * publié garde son parcours, mais sa dernière étape ne mène plus nulle part.
+ */
+type FinalAction = {
+  /** État serveur de la transition : arme le bouton et explique son blocage. */
+  transition: DemarchePcaetTransitionEvaluation;
+  label: string;
+  dataTest: string;
+  onClick: () => void;
+};
 
 type Props = {
   demarche: DemarchePcaet;
   collectiviteId: number;
   completion: DemarchePcaetCompletion;
   activeSection: DemarcheSectionKey;
-  /** État serveur de la transmission : arme le bouton et explique son blocage. */
-  transmettre: DemarchePcaetTransitionEvaluation;
-  onTransmettre: () => void;
+  etape: DemarcheParcoursEtape;
+  finalAction: FinalAction | null;
   /** Ouvre le panneau « Étapes » quand on franchit une sous-étape. */
   onOpenProgressPanel: () => void;
 };
 
 /**
- * Barre « Étape précédente | Étape suivante » du parcours d'élaboration :
- * traverse documents → topics du diagnostic → plan, puis propose la
- * transmission pour avis sur le dernier item.
+ * Barre « Étape précédente | Étape suivante » d'un temps du dossier : traverse
+ * ses sous-étapes dans l'ordre, puis propose l'acte qui le clôt sur le dernier
+ * item. Le parcours et cet acte diffèrent d'un temps à l'autre, la barre non.
  */
 export const DemarcheStepsNav = ({
   demarche,
   collectiviteId,
   completion,
   activeSection,
-  transmettre,
-  onTransmettre,
+  etape,
+  finalAction,
   onOpenProgressPanel,
 }: Props) => {
-  const searchParams = useSearchParams();
-  const { topics } = useDemarchePcaetDiagnostic(demarche.id);
-  const [topicParam] = useDemarcheTopicParam();
-
-  // Le parcours n'existe que pendant l'élaboration ; l'instructeur DREAL
-  // consulte en lecture seule, sans navigation d'édition.
-  if (demarche.statut !== DemarchePcaetStatusEnum.EN_ELABORATION) return null;
-  if (searchParams.get(DREAL_INSTRUCTEUR_PARAM) === '1') return null;
+  const { tabs } = useGetPcaetDiagnostic(demarche.id);
+  const [topicParam] = usePcaetDiagnosticTabQueryState();
 
   const { prev, next, isLastStep } = getStepsNavModel({
+    etape,
     activeSection,
-    hasDocuments: completion.documents !== null,
-    topicCodes: topics.map((topic) => topic.code),
+    hasDocuments:
+      etape === 'aval'
+        ? completion.documentsAval !== null
+        : completion.documents !== null,
+    topicCodes: tabs.map((tab) => tab.code),
     currentTopicCode: topicParam,
   });
 
-  if (!prev && !next && !isLastStep) return null;
+  // Le dernier item n'a pas de « suivant » : il n'a que son acte de clôture,
+  // et sans lui la barre n'y garde que le retour en arrière.
+  const showFinalAction = isLastStep && finalAction !== null;
+  if (!prev && !next && !showFinalAction) return null;
 
   const ids = { collectiviteId, demarcheId: demarche.id };
   const hrefOf = (item: DemarcheStepItem) =>
     item.section === 'diagnostic' && item.topicCode
-      ? serializeTopicParam(makeDemarcheSectionUrl('diagnostic', ids), {
-          topic: item.topicCode,
-        })
+      ? serializePcaetDiagnosticTabQueryState(
+          makeDemarcheSectionUrl('diagnostic', ids),
+          {
+            topic: item.topicCode,
+          }
+        )
       : makeDemarcheSectionUrl(item.section, ids);
   const crossesSection = (item: DemarcheStepItem) =>
     item.section !== activeSection;
@@ -100,25 +113,25 @@ export const DemarcheStepsNav = ({
         </Button>
       )}
 
-      {isLastStep ? (
+      {showFinalAction && finalAction ? (
         <Tooltip
-          label={getTransitionBlocageLabel(transmettre)}
+          label={getTransitionBlocageLabel(finalAction.transition)}
           activatedBy="hover"
         >
           <span className="block ml-auto">
             <Button
-              dataTest="demarches.steps-nav.transmettre"
-              variant={transmettre.enabled ? 'primary' : 'grey'}
+              dataTest={finalAction.dataTest}
+              variant={finalAction.transition.enabled ? 'primary' : 'grey'}
               size="sm"
               icon="arrow-right-line"
               iconPosition="right"
-              disabled={!transmettre.enabled}
+              disabled={!finalAction.transition.enabled}
               onClick={() => {
                 onOpenProgressPanel();
-                onTransmettre();
+                finalAction.onClick();
               }}
             >
-              {appLabels.demarcheAvanceValiderDepot}
+              {finalAction.label}
             </Button>
           </span>
         </Tooltip>

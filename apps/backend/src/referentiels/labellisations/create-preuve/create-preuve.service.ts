@@ -1,3 +1,5 @@
+import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
+import { LabellisationDocumentsPermissionService } from '@tet/backend/collectivites/documents/labellisation-documents-permission.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -5,7 +7,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result, failure } from '@tet/backend/utils/result.type';
 import { PreuveLabellisation } from '@tet/domain/collectivites';
-import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
+import { canUpdateCandidatureDocuments } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetLabellisationService } from '../get-labellisation.service';
@@ -22,7 +24,9 @@ export class CreatePreuveService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly getLabellisationService: GetLabellisationService
+    private readonly getLabellisationService: GetLabellisationService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly labellisationDocumentsPermissionService: LabellisationDocumentsPermissionService
   ) {}
 
   async createLabellisationPreuve(
@@ -71,17 +75,51 @@ export class CreatePreuveService {
         error: CreateLabellisationPreuveErrorEnum.DATABASE_ERROR,
       };
     }
-    if (
-      auditResult.success &&
-      canModifyCandidatureDocuments({ audit: auditResult.data }) === false
-    ) {
+    const canMutateLabellisationDocuments =
+      await this.labellisationDocumentsPermissionService.canMutate(
+        { collectiviteId: demande.collectiviteId },
+        { user }
+      );
+    const isAuditeur = auditResult.success
+      ? await this.getLabellisationService.isAuditeurForAudit(
+          auditResult.data.id,
+          user.id
+        )
+      : false;
+
+    const preuveCreation = canUpdateCandidatureDocuments({
+      isAuditee: !isAuditeur,
+      canMutateLabellisationDocuments,
+      audit: auditResult.success ? auditResult.data : null,
+    });
+    if (!preuveCreation.canUpdate) {
       return {
         success: false,
-        error: CreateLabellisationPreuveErrorEnum.LABELLISATION_IN_PROGRESS,
+        error:
+          preuveCreation.reason === 'not_auditee'
+            ? CreateLabellisationPreuveErrorEnum.UNAUTHORIZED
+            : CreateLabellisationPreuveErrorEnum.LABELLISATION_IN_PROGRESS,
       };
     }
 
     try {
+      const fichierOwnershipResult =
+        await this.bibliothequeFichierRepository.isFichierOwnedByCollectivite({
+          fichierId,
+          collectiviteId: demande.collectiviteId,
+        });
+
+      if (!fichierOwnershipResult.success) {
+        return failure(
+          fichierOwnershipResult.error,
+          fichierOwnershipResult.cause
+        );
+      }
+
+      if (!fichierOwnershipResult.data) {
+        return failure(CreateLabellisationPreuveErrorEnum.FICHIER_NOT_FOUND);
+      }
+
       const preuve = {
         collectiviteId: demande.collectiviteId,
         demandeId: demandeId,

@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { Injectable } from '@nestjs/common';
 import { CollectiviteReferentielModeService } from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
@@ -9,7 +10,6 @@ import {
   SnapshotJalonEnum,
   snapshotJalonEnumSchema,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import { snapshotTable } from '../snapshot.table';
@@ -122,7 +122,7 @@ export class ListSnapshotsService {
         const baseSnapshot = {
           ...snapshot,
           pointNonRenseigne:
-            roundTo(
+            round(
               snapshot.pointPotentiel -
                 (snapshot.pointFait +
                   snapshot.pointPasFait +

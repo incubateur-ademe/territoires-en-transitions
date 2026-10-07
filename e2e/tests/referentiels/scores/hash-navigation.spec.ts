@@ -220,7 +220,7 @@ test.describe('Panel historique et navigation', () => {
     await page.goto('/');
   });
 
-  test(`Le panel historique reste ouvert après clic sur "Voir l'action"`, async ({
+  test(`Le panel historique reste ouvert après clic sur "Voir la sous-mesure"`, async ({
     page,
     referentielScoresPom,
     referentiels: _,
@@ -236,7 +236,7 @@ test.describe('Panel historique et navigation', () => {
     await toolbar.getByRole('button', { name: 'Historique' }).click();
 
     const voirLaPage = page
-      .getByRole('link', { name: "Voir l'action" })
+      .getByRole('link', { name: 'Voir la sous-mesure' })
       .first();
     await expect(voirLaPage).toBeVisible();
     await voirLaPage.click();
@@ -244,7 +244,7 @@ test.describe('Panel historique et navigation', () => {
     await expect(page).toHaveURL(/panel=historique/);
   });
 
-  test(`"Voir l'action" pour une sous-action : expand et garde le panel ouvert`, async ({
+  test(`"Voir la sous-mesure" pour une sous-action : expand et garde le panel ouvert`, async ({
     page,
     referentielScoresPom,
     referentiels: _,
@@ -260,7 +260,7 @@ test.describe('Panel historique et navigation', () => {
     await toolbar.getByRole('button', { name: 'Historique' }).click();
 
     const voirLaPage = page
-      .getByRole('link', { name: "Voir l'action" })
+      .getByRole('link', { name: 'Voir la sous-mesure' })
       .first();
     await expect(voirLaPage).toBeVisible();
     await voirLaPage.click();
@@ -275,7 +275,7 @@ test.describe('Panel historique et navigation', () => {
     await expect(sousAction).toBeInViewport();
   });
 
-  test(`"Voir l'action" pour une tâche : expand la sous-action parente et garde le panel ouvert`, async ({
+  test(`"Voir la tâche" : expand la sous-action parente et garde le panel ouvert`, async ({
     page,
     referentielScoresPom,
     referentiels: _,
@@ -292,7 +292,7 @@ test.describe('Panel historique et navigation', () => {
     await toolbar.getByRole('button', { name: 'Historique' }).click();
 
     const voirLaPage = page
-      .getByRole('link', { name: "Voir l'action" })
+      .getByRole('link', { name: 'Voir la tâche' })
       .first();
     await expect(voirLaPage).toBeVisible();
     await voirLaPage.click();
@@ -324,7 +324,7 @@ test.describe('Panel historique et navigation', () => {
     await toolbar.getByRole('button', { name: 'Historique' }).click();
 
     const voirLaPage = page
-      .getByRole('link', { name: "Voir l'action" })
+      .getByRole('link', { name: 'Voir la sous-mesure' })
       .first();
     await voirLaPage.click();
 

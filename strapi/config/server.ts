@@ -4,7 +4,8 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
-  webhooks: {
-    populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
+  // Serveur MCP sur /mcp, accessible avec un admin token.
+  mcp: {
+    enabled: true,
   },
 });

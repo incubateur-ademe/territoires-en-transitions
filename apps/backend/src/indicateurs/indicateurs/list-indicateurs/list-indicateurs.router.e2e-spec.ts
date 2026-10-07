@@ -673,6 +673,7 @@ describe('ListIndicateursRouter', () => {
       await database.db.insert(axeIndicateurTable).values({
         indicateurId: indicateurIdLinkedToAxe,
         axeId: axe.id,
+        createdBy: testUser.id,
       });
 
       onTestFinished(async () => {
@@ -755,10 +756,12 @@ describe('ListIndicateursRouter', () => {
         {
           indicateurId: indicateurId1,
           axeId: axe1.id,
+          createdBy: testUser.id,
         },
         {
           indicateurId: indicateurId2,
           axeId: axe2.id,
+          createdBy: testUser.id,
         },
       ]);
 
@@ -1247,6 +1250,30 @@ describe('ListIndicateursRouter', () => {
         result1.forEach((indicateur) => {
           expect(indicateur.identifiantReferentiel).toMatch(/^crte_1/i);
         });
+      });
+
+      test('un _ saisi dans la recherche ne remplace pas un caractère quelconque', async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const exactTitleIndicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: { collectiviteId: 1, titre: 'Indicateur joker_like' },
+        });
+        const lookalikeTitleIndicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: { collectiviteId: 1, titre: 'Indicateur jokerxlike' },
+        });
+
+        const { data: indicateurs } = await caller.indicateurs.indicateurs.list(
+          {
+            collectiviteId: 1,
+            filters: { text: 'joker_like' },
+          }
+        );
+
+        const indicateurIds = indicateurs.map((indicateur) => indicateur.id);
+        expect(indicateurIds).toContain(exactTitleIndicateurId);
+        expect(indicateurIds).not.toContain(lookalikeTitleIndicateurId);
       });
     });
 

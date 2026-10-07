@@ -8,10 +8,13 @@ import { Icon } from '../Icon';
 type ChecklistTableContextValue = {
   /** Active une colonne dédiée (ex. badge/étiquette) après la colonne statut. */
   hasTagColumn: boolean;
+  /** Rend la colonne de statut en tête de ligne. */
+  hasStatusColumn: boolean;
 };
 
 const ChecklistTableContext = createContext<ChecklistTableContextValue>({
   hasTagColumn: false,
+  hasStatusColumn: true,
 });
 
 const StatusCell = ({ done }: { done: boolean | null }) => (
@@ -57,6 +60,14 @@ const CriterionCell = ({
   </td>
 );
 
+/**
+ * Hauteur d'une commande `xs` du design-system — bouton ou champ de saisie :
+ * bordures, `py-2` et interligne du `text-xs`. C'est ce qui donne sa hauteur à
+ * une ligne de contenu, et donc la mesure à laquelle les lignes sans commande
+ * doivent s'aligner.
+ */
+export const CONTROL_HEIGHT_CLASSNAME = 'min-h-[2.125rem]';
+
 const AnswerCell = ({ children }: { children: ReactNode }) => (
   <td className="w-1/3 py-3 px-4 align-middle text-grey-8">{children}</td>
 );
@@ -94,14 +105,16 @@ const Head = ({
   answerHeader,
   tagHeader,
 }: ChecklistTableHeadProps) => {
-  const { hasTagColumn } = useContext(ChecklistTableContext);
+  const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
 
   return (
     <thead>
       <tr>
-        <HeaderCell className="w-12">
-          <span className="sr-only">{uiLabels.statutDuCritere}</span>
-        </HeaderCell>
+        {hasStatusColumn && (
+          <HeaderCell className="w-12">
+            <span className="sr-only">{uiLabels.statutDuCritere}</span>
+          </HeaderCell>
+        )}
         {hasTagColumn && (
           <HeaderCell className="w-40">
             {tagHeader ? (
@@ -125,9 +138,10 @@ const Head = ({
 export type ChecklistTableRowProps = {
   /**
    * `null` : la ligne n'affiche aucun statut. Pour un critère facultatif non
-   * renseigné, l'absence de réponse n'est pas un manque à signaler.
+   * renseigné, l'absence de réponse n'est pas un manque à signaler. Sans objet
+   * — et donc omissible — quand la table tourne sans `hasStatusColumn`.
    */
-  done: boolean | null;
+  done?: boolean | null;
   criterion: {
     label: ReactNode;
     action?: ReactElement;
@@ -137,16 +151,52 @@ export type ChecklistTableRowProps = {
   tag?: ReactNode;
 };
 
-const Row = ({ done, criterion, answer, tag }: ChecklistTableRowProps) => {
-  const { hasTagColumn } = useContext(ChecklistTableContext);
+const Row = ({
+  done = null,
+  criterion,
+  answer,
+  tag,
+}: ChecklistTableRowProps) => {
+  const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
 
   return (
     <tbody>
       <tr className="group text-sm text-primary-9 hover:bg-primary-1 border-t border-grey-3">
-        <StatusCell done={done} />
+        {hasStatusColumn && <StatusCell done={done} />}
         {hasTagColumn && <TagCell>{tag}</TagCell>}
         <CriterionCell {...criterion} />
         <AnswerCell>{answer}</AnswerCell>
+      </tr>
+    </tbody>
+  );
+};
+
+export type ChecklistTableFooterRowProps = {
+  children: ReactNode;
+};
+
+/**
+ * Ligne d'action en pied de table (ex. « + Ajouter un document ») : elle
+ * traverse toute la largeur, n'ayant ni statut ni réponse à afficher.
+ *
+ * Sa hauteur est celle d'une ligne de contenu : `CONTROL_HEIGHT_CLASSNAME`
+ * réserve la place d'une commande `xs` du design-system, sans quoi le pied se
+ * tasserait derrière un simple lien et la table sauterait à chaque ligne
+ * ajoutée.
+ */
+const FooterRow = ({ children }: ChecklistTableFooterRowProps) => {
+  const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
+  // Critère et réponse, plus les colonnes optionnelles de la table.
+  const colSpan = 2 + (hasStatusColumn ? 1 : 0) + (hasTagColumn ? 1 : 0);
+
+  return (
+    <tbody>
+      <tr className="text-sm text-primary-9 border-t border-grey-3">
+        <td className="py-3 px-4" colSpan={colSpan}>
+          <div className={cn('flex items-center', CONTROL_HEIGHT_CLASSNAME)}>
+            {children}
+          </div>
+        </td>
       </tr>
     </tbody>
   );
@@ -162,6 +212,11 @@ export type ChecklistTableProps = {
    * `ChecklistTable.Row`.
    */
   hasTagColumn?: boolean;
+  /**
+   * `false` retire la colonne de statut : la réponse de chaque ligne dit déjà
+   * si elle est servie, une pastille de plus ne ferait que la répéter.
+   */
+  hasStatusColumn?: boolean;
 };
 
 export function ChecklistTable({
@@ -169,9 +224,10 @@ export function ChecklistTable({
   children,
   className,
   hasTagColumn = false,
+  hasStatusColumn = true,
 }: ChecklistTableProps) {
   return (
-    <ChecklistTableContext.Provider value={{ hasTagColumn }}>
+    <ChecklistTableContext value={{ hasTagColumn, hasStatusColumn }}>
       <div
         className={cn(
           'border border-grey-4 rounded-md overflow-x-auto',
@@ -183,9 +239,10 @@ export function ChecklistTable({
           {children}
         </table>
       </div>
-    </ChecklistTableContext.Provider>
+    </ChecklistTableContext>
   );
 }
 
 ChecklistTable.Head = Head;
 ChecklistTable.Row = Row;
+ChecklistTable.FooterRow = FooterRow;

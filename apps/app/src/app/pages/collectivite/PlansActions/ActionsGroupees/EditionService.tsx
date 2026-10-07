@@ -28,7 +28,7 @@ const ModaleEditionService = ({
   return (
     <ActionsGroupeesModale
       openState={openState}
-      title={appLabels.editionServiceTitre}
+      title={appLabels.directionOuServicePiloteEditer}
       onSave={() => {
         tracker(Event.fiches.updateService.multiple);
         onUpdate({
@@ -40,13 +40,19 @@ const ModaleEditionService = ({
       }}
     >
       <>
-        <Field title={appLabels.editionAjouterService} className="col-span-2">
+        <Field
+          title={appLabels.directionOuServicePiloteAjouter}
+          className="col-span-2"
+        >
           <ServiceTagDropdown
             values={servicesToAdd?.map((s) => s.id)}
             onChange={({ values: services }) => setServicesToAdd(services)}
           />
         </Field>
-        <Field title={appLabels.editionDissocierService} className="col-span-2">
+        <Field
+          title={appLabels.directionOuServicePiloteDissocier}
+          className="col-span-2"
+        >
           <ServiceTagDropdown
             disableEdition
             values={servicesToRemove?.map((s) => s.id)}
@@ -73,7 +79,7 @@ const EditionService = ({ onUpdate }: EditionServiceProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        {appLabels.editionServiceTitre}
+        {appLabels.directionOuServicePiloteEditer}
       </Button>
       {isModalOpen && (
         <ModaleEditionService

@@ -12,8 +12,6 @@ values ((select id from collectivite where nom = 'testsql' limit 1), 'eci_2.1', 
 -- action_statut
 insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
 values ((select id from collectivite where nom = 'testsql' limit 1), 'eci_1.1.1.1', 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
--- score
-select evaluation.update_late_collectivite_scores(20);
 -- labellisation
 insert into labellisation (collectivite_id, referentiel, obtenue_le, etoiles, score_realise, score_programme)
 values ((select id from collectivite where nom = 'testsql' limit 1), 'eci', now(), 1, 1.0, 1.0);
@@ -116,7 +114,7 @@ insert into axe (id, collectivite_id, nom)
 values ((select id from collectivite where nom = 'testsql' limit 1), (select id from collectivite where nom = 'testsql' limit 1), 'plan'),
        ((select id from collectivite where nom = 'testsql' limit 1)*10, (select id from collectivite where nom = 'testsql' limit 1), 'plan');
 -- fiche_action_axe
-insert into fiche_action_axe(fiche_id, axe_id) values ((select id from collectivite where nom = 'testsql' limit 1), (select id from collectivite where nom = 'testsql' limit 1));
+insert into fiche_action_axe(fiche_id, axe_id, created_by) values ((select id from collectivite where nom = 'testsql' limit 1), (select id from collectivite where nom = 'testsql' limit 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 -- financeur_tag -> financeur_tag_id (2ème valeur pour un nouveau insert de fiche_action_financeur_tag)
 insert into financeur_tag (id, nom, collectivite_id)
 values ((select id from collectivite where nom = 'testsql' limit 1), 'financeur', (select id from collectivite where nom = 'testsql' limit 1)),
@@ -146,9 +144,9 @@ insert into personne_tag (id, nom, collectivite_id)
 values ((select id from collectivite where nom = 'testsql' limit 1), 'personne', (select id from collectivite where nom = 'testsql' limit 1)),
        ((select id from collectivite where nom = 'testsql' limit 1)*10, 'personne_', (select id from collectivite where nom = 'testsql' limit 1));
 -- fiche_action_pilote
-insert into fiche_action_pilote(fiche_id, user_id, tag_id) values ((select id from collectivite where nom = 'testsql' limit 1), null, (select id from collectivite where nom = 'testsql' limit 1));
+insert into fiche_action_pilote(fiche_id, user_id, tag_id, created_by) values ((select id from collectivite where nom = 'testsql' limit 1), null, (select id from collectivite where nom = 'testsql' limit 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 -- fiche_action_referent
-insert into fiche_action_referent(fiche_id, user_id, tag_id) values ((select id from collectivite where nom = 'testsql' limit 1), null, (select id from collectivite where nom = 'testsql' limit 1));
+insert into fiche_action_referent(fiche_id, user_id, tag_id, created_by) values ((select id from collectivite where nom = 'testsql' limit 1), null, (select id from collectivite where nom = 'testsql' limit 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 -- annexe
 insert into annexe (collectivite_id, fichier_id, url, fiche_id, modified_by)
 values ((select id from collectivite where nom = 'testsql' limit 1), null, '', (select id from collectivite where nom = 'testsql' limit 1), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
@@ -160,9 +158,9 @@ insert into fiche_action_action (fiche_id, action_id) values((select id from col
 -- fiche_action_lien
 insert into fiche_action_lien(fiche_une, fiche_deux) values ((select id from collectivite where nom = 'testsql' limit 1)*10+1, (select id from collectivite where nom = 'testsql' limit 1)*10+2);
 -- fiche_action_thematique
-insert into fiche_action_thematique(fiche_id, thematique_id) values ((select id from collectivite where nom = 'testsql' limit 1), 5);
+insert into fiche_action_thematique(fiche_id, thematique_id, created_by) values ((select id from collectivite where nom = 'testsql' limit 1), 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 -- fiche_action_sous_thematique
-insert into fiche_action_sous_thematique(fiche_id, thematique_id) values ((select id from collectivite where nom = 'testsql' limit 1), 44);
+insert into fiche_action_sous_thematique(fiche_id, thematique_id, created_by) values ((select id from collectivite where nom = 'testsql' limit 1), 44, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 -- PERSONNALISATION
 -- reponse_binaire
 insert into reponse_binaire(collectivite_id, question_id, reponse) values ((select id from collectivite where nom = 'testsql' limit 1), 'dechets_1', true);

@@ -13,7 +13,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, TagEnum, TagType } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import request from 'supertest';
 import { onTestFinished } from 'vitest';
 
 describe('Dupliquer une fiche action', () => {
@@ -45,9 +44,8 @@ describe('Dupliquer une fiche action', () => {
       throw new Error('token éditeur manquant');
     }
     const doc = await uploadCreateTestDocument({
+      app,
       collectiviteId: collectivite.id,
-      testAgent: request(app.getHttpServer()),
-      token,
       fileName: 'preuve-fiche.pdf',
     });
     fichierId = doc.id;

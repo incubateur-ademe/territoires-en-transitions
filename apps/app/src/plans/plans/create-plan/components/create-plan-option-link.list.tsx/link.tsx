@@ -6,7 +6,7 @@ type LinkWithIcon = {
   dataTest?: string;
   url: string;
   icon: React.JSX.Element;
-  title: string;
+  title: React.ReactNode;
   subTitle: string;
   variant?: 'primary';
   onClickCallback?: () => void;

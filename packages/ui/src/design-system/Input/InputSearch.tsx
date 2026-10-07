@@ -42,7 +42,6 @@ export const InputSearch = forwardRef(
       () => (inputRef as MutableRefObject<HTMLInputElement>).current
     );
 
-    // eslint-disable-next-line react-hooks/refs
     const disabled = !(remainingProps.value || inputRef.current?.value);
 
     /** Debounce les appels à `onSearch` */

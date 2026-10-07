@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { useGetReferentielDefinitionFromContext } from '@/app/referentiels/referentiel-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Divider, Spacer, VisibleWhen } from '@tet/ui';
 import { ReactElement } from 'react';
@@ -19,6 +20,7 @@ export const ChecklistView = ({
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
   const { referentielId, cycle } = useChecklist();
+  const hierarchie = useGetReferentielDefinitionFromContext()?.hierarchie ?? [];
 
   const isPremiereEtoile = viewModel.etoileObjectif === 1;
 
@@ -50,6 +52,7 @@ export const ChecklistView = ({
         viewModel={viewModel}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
+        hierarchie={hierarchie}
       />
     </Container>
   );

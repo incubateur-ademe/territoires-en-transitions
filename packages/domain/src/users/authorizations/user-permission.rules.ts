@@ -162,15 +162,37 @@ export function hasCollectiviteRole(
   return false;
 }
 
-export function hasAnyCollectiviteRole(
+function findCollectivite(
+  user: UserRolesAndPermissions,
+  collectiviteId: number
+): CollectiviteRolesAndPermissions | undefined {
+  return user.collectivites.find(
+    (collectivite) => collectivite.collectiviteId === collectiviteId
+  );
+}
+
+export function hasOwnCollectiviteRole(
   user: UserRolesAndPermissions,
   { collectiviteId }: { collectiviteId: number }
-) {
-  return user.collectivites.some(
-    (collectivite) =>
-      collectivite.collectiviteId === collectiviteId &&
-      (collectivite.role !== null ||
-        collectivite.audits.some((audit) => audit.role !== null))
+): boolean {
+  const collectivite = findCollectivite(user, collectiviteId);
+
+  return collectivite !== undefined && collectivite.role !== null;
+}
+
+function hasAnyCollectiviteRole(
+  user: UserRolesAndPermissions,
+  { collectiviteId }: { collectiviteId: number }
+): boolean {
+  const collectivite = findCollectivite(user, collectiviteId);
+
+  if (collectivite === undefined) {
+    return false;
+  }
+
+  return (
+    collectivite.role !== null ||
+    collectivite.audits.some((audit) => audit.role !== null)
   );
 }
 

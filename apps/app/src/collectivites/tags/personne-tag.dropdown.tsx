@@ -1,6 +1,7 @@
 import { useCreateTag } from '@/app/collectivites/tags/use-create-tag';
 import { useDeleteTag } from '@/app/collectivites/tags/use-delete-tag';
 import { useUpdateTag } from '@/app/collectivites/tags/use-update-tag';
+import { appLabels } from '@/app/labels/catalog';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useQueryClient } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
@@ -45,6 +46,7 @@ const PersonneTagDropdown = ({
   onChange,
   values,
   dataTest,
+  placeholder,
   ...props
 }: Props) => {
   const { collectiviteId, hasCollectivitePermission } =
@@ -147,6 +149,10 @@ const PersonneTagDropdown = ({
       isSearcheable={isSearcheable}
       isLoading={isLoading}
       options={options}
+      placeholder={
+        placeholder ??
+        appLabels.personnePiloteSelectOrCreatePlaceholder(isEditionEnabled)
+      }
       onChange={({ values, selectedValue }) =>
         onChange({
           personnes: getSelectedPersonnes(values),
@@ -181,11 +187,11 @@ const PersonneTagDropdown = ({
               },
               onCreate: handleTagCreate,
               updateModal: {
-                title: 'Modifier une personne',
+                title: 'Éditer le tag',
                 fieldTitle: 'Nom de la personne',
               },
               deleteModal: {
-                title: 'Supprimer une personne',
+                title: 'Supprimer le tag',
                 message:
                   'En confirmant la suppression, cela supprimera également l’association de cette personne aux actions, indicateurs et mesures des référentiels.',
               },

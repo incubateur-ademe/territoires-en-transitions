@@ -89,20 +89,20 @@ describe('Test PersonneTagService', () => {
 
     // Setup pilotes: admin on fiche1, tag1 on fiche1+fiche2, tag3 on fiche3+fiche4
     await databaseService.db.insert(ficheActionPiloteTable).values([
-      { ficheId: ficheIds[0], userId: adminUserId },
-      { ficheId: ficheIds[0], tagId: tag1Id },
-      { ficheId: ficheIds[1], tagId: tag1Id },
-      { ficheId: ficheIds[2], tagId: tag3Id },
-      { ficheId: ficheIds[3], tagId: tag3Id },
+      { ficheId: ficheIds[0], userId: adminUserId, createdBy: adminUserId },
+      { ficheId: ficheIds[0], tagId: tag1Id, createdBy: adminUserId },
+      { ficheId: ficheIds[1], tagId: tag1Id, createdBy: adminUserId },
+      { ficheId: ficheIds[2], tagId: tag3Id, createdBy: adminUserId },
+      { ficheId: ficheIds[3], tagId: tag3Id, createdBy: adminUserId },
     ]);
 
     // Setup referents: tag3 on fiche1,fiche5,fiche6; tag1 on fiche4; admin on fiche2
     await databaseService.db.insert(ficheActionReferentTable).values([
-      { ficheId: ficheIds[0], tagId: tag3Id },
-      { ficheId: ficheIds[1], userId: adminUserId },
-      { ficheId: ficheIds[3], tagId: tag1Id },
-      { ficheId: ficheIds[4], tagId: tag3Id },
-      { ficheId: ficheIds[5], tagId: tag3Id },
+      { ficheId: ficheIds[0], tagId: tag3Id, createdBy: adminUserId },
+      { ficheId: ficheIds[1], userId: adminUserId, createdBy: adminUserId },
+      { ficheId: ficheIds[3], tagId: tag1Id, createdBy: adminUserId },
+      { ficheId: ficheIds[4], tagId: tag3Id, createdBy: adminUserId },
+      { ficheId: ficheIds[5], tagId: tag3Id, createdBy: adminUserId },
     ]);
   });
 
@@ -234,12 +234,12 @@ describe('Test PersonneTagService', () => {
 
     // Ajoute des pilotes et référents basés sur les tags créés
     await databaseService.db.insert(ficheActionPiloteTable).values([
-      { ficheId: fiche1.id, tagId: tag1.id },
-      { ficheId: fiche2.id, tagId: tag2.id },
+      { ficheId: fiche1.id, tagId: tag1.id, createdBy: adminUser.id },
+      { ficheId: fiche2.id, tagId: tag2.id, createdBy: adminUser.id },
     ]);
     await databaseService.db.insert(ficheActionReferentTable).values([
-      { ficheId: fiche1.id, tagId: tag1.id },
-      { ficheId: fiche2.id, tagId: tag2.id },
+      { ficheId: fiche1.id, tagId: tag1.id, createdBy: adminUser.id },
+      { ficheId: fiche2.id, tagId: tag2.id, createdBy: adminUser.id },
     ]);
 
     // Vérifie avant la transformation qu'il y a bien 2 pilotes tag pour nos tags

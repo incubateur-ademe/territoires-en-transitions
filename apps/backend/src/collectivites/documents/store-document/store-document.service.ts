@@ -11,12 +11,14 @@ import {
 } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { createHash } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
+import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
+import { CollectiviteBucketRepository } from '../collectivite-bucket.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';
+import { calculateDocumentHash } from './calculate-document-hash.utils';
 import {
   StoreDocumentError,
   StoreDocumentErrorEnum,
@@ -25,6 +27,8 @@ import {
 // Type for multer file upload
 type MulterFile = Express.Multer.File;
 
+export type DocumentToUpload = Omit<BibliothequeFichierCreate, 'hash'>;
+
 @Injectable()
 export class StoreDocumentService {
   private readonly logger = new Logger(StoreDocumentService.name);
@@ -32,19 +36,20 @@ export class StoreDocumentService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly supabaseService: SupabaseService
+    private readonly supabaseService: SupabaseService,
+    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
+    private readonly collectiviteBucketRepository: CollectiviteBucketRepository
   ) {}
 
-  async getCollectiviteBucketId(
+  private async getCollectiviteBucketId(
     collectiviteId: number
   ): Promise<
     Result<string, typeof StoreDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
   > {
-    const buckets = await this.databaseService.db
-      .select({ bucketId: collectiviteBucketTable.bucketId })
-      .from(collectiviteBucketTable)
-      .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId));
-    if (!buckets?.length) {
+    const bucketId = await this.collectiviteBucketRepository.findBucketId(
+      collectiviteId
+    );
+    if (bucketId === undefined) {
       return {
         success: false,
         error: StoreDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND,
@@ -52,12 +57,12 @@ export class StoreDocumentService {
     }
     return {
       success: true,
-      data: buckets[0].bucketId,
+      data: bucketId,
     };
   }
 
   async uploadLocalFile(
-    document: BibliothequeFichierCreate,
+    document: DocumentToUpload,
     localFilePath: string,
     user?: AuthenticatedUser
   ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
@@ -86,14 +91,20 @@ export class StoreDocumentService {
 
     const mimeType = mime.lookup(localFilePath) || undefined;
 
+    const fileBufferResult = await this.readLocalFile(localFilePath);
+    if (!fileBufferResult.success) {
+      return fileBufferResult;
+    }
+    const fileBuffer = fileBufferResult.data;
+    const hash = calculateDocumentHash(fileBuffer);
+
     this.logger.log(
-      `Uploading file ${localFilePath} with mime type ${mimeType} to bucket ${bucketId} with hash ${document.hash}`
+      `Uploading file ${localFilePath} with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
     );
 
-    const fileBuffer = await readFile(localFilePath);
     const saveResult = await this.supabaseService.saveInStorage({
       bucket: bucketId,
-      path: document.hash,
+      path: hash,
       file: fileBuffer,
       mimeType,
     });
@@ -101,7 +112,25 @@ export class StoreDocumentService {
       return saveResult;
     }
 
-    return await this.storeDocument(document, user);
+    return await this.storeDocument({ ...document, hash }, user);
+  }
+
+  private async readLocalFile(
+    localFilePath: string
+  ): Promise<
+    Result<Buffer, typeof StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR>
+  > {
+    try {
+      return { success: true, data: await readFile(localFilePath) };
+    } catch (error) {
+      this.logger.error(
+        `Cannot read local file ${localFilePath}: ${getErrorMessage(error)}`
+      );
+      return {
+        success: false,
+        error: StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
+      };
+    }
   }
 
   async uploadBuffer(
@@ -141,8 +170,7 @@ export class StoreDocumentService {
     }
     const bucketId = bucketResult.data;
 
-    // Compute SHA-256 hash from buffer
-    const hash = createHash('sha256').update(file.buffer).digest('hex');
+    const hash = calculateDocumentHash(file.buffer);
 
     this.logger.log(
       `Uploading buffer with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
@@ -223,12 +251,31 @@ export class StoreDocumentService {
           filename: document.filename,
           confidentiel: document.confidentiel ?? false,
         })
+        .onConflictDoNothing({
+          target: [
+            bibliothequeFichierTable.collectiviteId,
+            bibliothequeFichierTable.hash,
+          ],
+        })
         .returning();
 
-      return {
-        success: true,
-        data: insertedDocument as BibliothequeFichier,
-      };
+      if (insertedDocument) {
+        return {
+          success: true,
+          data: insertedDocument as BibliothequeFichier,
+        };
+      }
+
+      const existingDocument =
+        await this.bibliothequeFichierRepository.findByHash({
+          collectiviteId: document.collectiviteId,
+          hash: document.hash,
+        });
+      if (!existingDocument) {
+        return { success: false, error: 'STORE_DOCUMENT_ERROR' };
+      }
+
+      return { success: true, data: existingDocument };
     } catch (error) {
       this.logger.error(
         `Erreur lors de la création du document ${

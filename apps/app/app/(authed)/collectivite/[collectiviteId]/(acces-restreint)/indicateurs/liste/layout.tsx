@@ -27,7 +27,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
               size="sm"
               onClick={() => setIsNewIndicateurOpen(true)}
             >
-              {appLabels.creerIndicateur}
+              {appLabels.indicateurCreer}
             </Button>
           </PageHeader.Actions>
         )}

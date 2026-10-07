@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
 
@@ -7,8 +7,6 @@ type Args = Partial<{
   invalidatePlanId: number;
   onUpdateCallback: () => void;
 }>;
-
-export type UpdateFicheInput = RouterInput['plans']['fiches']['update'];
 
 export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
@@ -224,12 +222,6 @@ export const useUpdateFiche = (args?: Args) => {
           queryKey: trpc.plans.plans.getPlanCompletion.queryKey(),
         });
 
-        if (ficheFields.axes) {
-          ficheFields.axes.forEach(({ id: axeId }) =>
-            queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })
-          );
-        }
-
         if (args?.invalidatePlanId) {
           queryClient.invalidateQueries({
             queryKey: trpc.plans.plans.get.queryKey({
@@ -242,29 +234,6 @@ export const useUpdateFiche = (args?: Args) => {
             }),
           });
         }
-
-        queryClient.invalidateQueries({ queryKey: ['axe_fiches', null] });
-        queryClient.invalidateQueries({
-          queryKey: ['structures', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['partenaires', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['personnes_pilotes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['personnes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['services_pilotes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['personnes_referentes', collectiviteId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['financeurs', collectiviteId],
-        });
       },
       onSuccess: () => {
         if (args?.onUpdateCallback) {

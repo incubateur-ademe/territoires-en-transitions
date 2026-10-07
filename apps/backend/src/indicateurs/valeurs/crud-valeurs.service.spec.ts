@@ -9,6 +9,7 @@ import {
   IndicateurDefinitionTiny,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
+  IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
 import { cloneDeep } from 'es-toolkit';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -20,7 +21,6 @@ import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-ind
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
-import { IndicateurValeurAvecMetadonnesDefinition } from './indicateur-valeur.table';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -66,6 +66,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: 'annuelle',
           dateValeur: '2016-01-01',
           metadonneeId: 1,
           resultat: null,
@@ -84,6 +85,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10263,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: 'annuelle',
           dateValeur: '2015-01-01',
           metadonneeId: 1,
           resultat: null,
@@ -102,6 +104,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10300,
           collectiviteId: 4936,
           indicateurId: 457,
+          periodicite: 'annuelle',
           dateValeur: '2016-01-01',
           metadonneeId: 1,
           resultat: null,
@@ -132,17 +135,20 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
           },
           valeurs: [
             {
+              periodicite: 'annuelle',
               dateValeur: '2015-01-01',
               collectiviteId: 4936,
               id: 10263,
               objectif: 513.79,
             },
             {
+              periodicite: 'annuelle',
               dateValeur: '2016-01-01',
               collectiviteId: 4936,
               id: 10264,
@@ -158,12 +164,14 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
           },
           valeurs: [
             {
               collectiviteId: 4936,
+              periodicite: 'annuelle',
               dateValeur: '2016-01-01',
               id: 10300,
               objectif: 423.08,
@@ -215,6 +223,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: 'annuelle',
           dateValeur: '2016-01-01',
           metadonneeId: 2,
           resultat: null,
@@ -233,6 +242,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10263,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: 'annuelle',
           dateValeur: '2015-01-01',
           metadonneeId: 2,
           resultat: null,
@@ -251,6 +261,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: 'annuelle',
           dateValeur: '2015-01-01',
           metadonneeId: null,
           resultat: 625,
@@ -269,6 +280,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10300,
           collectiviteId: 4936,
           indicateurId: 457,
+          periodicite: 'annuelle',
           dateValeur: '2016-01-01',
           metadonneeId: 3,
           resultat: null,
@@ -287,6 +299,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           id: 10264,
           collectiviteId: 4936,
           indicateurId: 456,
+          periodicite: 'annuelle',
           dateValeur: '2010-01-01',
           metadonneeId: null,
           resultat: null,
@@ -323,6 +336,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 'Emissions de gaz à effet de serre du secteur résidentiel',
               description: '',
               unite: 'teq CO2',
+              periodicite: 'annuelle',
               borneMin: null,
               borneMax: null,
             } as IndicateurDefinition,
@@ -348,6 +362,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10263,
+                    periodicite: 'annuelle',
                     dateValeur: '2015-01-01',
                     objectif: 513.79,
                     collectiviteId: 4936,
@@ -355,6 +370,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                   },
                   {
                     id: 10264,
+                    periodicite: 'annuelle',
                     dateValeur: '2016-01-01',
                     objectif: 527.25,
                     collectiviteId: 4936,
@@ -370,11 +386,13 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10264,
+                    periodicite: 'annuelle',
                     dateValeur: '2010-01-01',
                     collectiviteId: 4936,
                   },
                   {
                     id: 10264,
+                    periodicite: 'annuelle',
                     dateValeur: '2015-01-01',
                     resultat: 625,
                     collectiviteId: 4936,
@@ -392,6 +410,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 'Emissions de gaz à effet de serre du secteur tertiaire',
               description: '',
               unite: 'teq CO2',
+              periodicite: 'annuelle',
               borneMin: null,
               borneMax: null,
             } as IndicateurDefinition,
@@ -417,6 +436,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10300,
+                    periodicite: 'annuelle',
                     dateValeur: '2016-01-01',
                     objectif: 423.08,
                     collectiviteId: 4936,
@@ -438,10 +458,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même date, Même indicateur mais deux sources différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -456,7 +477,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -466,6 +487,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -482,7 +504,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -494,10 +516,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 2,
             resultat: null,
@@ -512,7 +535,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -522,6 +545,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -538,7 +562,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 2,
             sourceId: 'snbc',
             dateVersion: '2024-07-11T00:00:00.000Z',
@@ -567,10 +591,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même source, Même date mais deux indicateurs différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -585,7 +610,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -595,6 +620,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -611,7 +637,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -623,10 +649,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 18,
             collectiviteId: 4936,
             indicateurId: 9,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 471107,
@@ -641,7 +668,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 9,
             groupementId: null,
             collectiviteId: null,
@@ -650,6 +677,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -666,7 +694,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -695,10 +723,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même date, Même indicateur mais une source et une donnée utilisateur > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -713,7 +742,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -723,6 +752,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -739,7 +769,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -751,10 +781,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: null,
             resultat: null,
@@ -769,7 +800,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -779,6 +810,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -795,7 +827,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: null,
+          indicateurSourceMetadonnee: null,
         },
       ];
       const indicateurValeursDedoublonnees =
@@ -815,10 +847,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même indicateur, Même source, Même date mais deux collectivités différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -833,7 +866,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -843,6 +876,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -859,7 +893,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -871,10 +905,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 2012,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: null,
@@ -889,7 +924,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -899,6 +934,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -915,7 +951,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -944,10 +980,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même indicateur, Même source mais deux dates différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2015-01-01',
             metadonneeId: 1,
             resultat: 447868,
@@ -962,7 +999,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -972,6 +1009,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -988,7 +1026,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -1000,10 +1038,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
+            periodicite: 'annuelle',
             dateValeur: '2014-01-01',
             metadonneeId: 1,
             resultat: null,
@@ -1018,7 +1057,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -1028,6 +1067,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               'Emissions de gaz à effet de serre du secteur résidentiel',
             description: '',
             unite: 'teq CO2',
+            periodicite: 'annuelle',
             borneMin: null,
             borneMax: null,
             participationScore: false,
@@ -1044,7 +1084,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -1072,10 +1112,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
     it('Même source, même date et métadonnées différentes, on prend la plus récente', async () => {
       const indicateurValeur1: IndicateurValeurAvecMetadonnesDefinition = {
-        indicateur_valeur: {
+        indicateurValeur: {
           id: 17,
           collectiviteId: 4936,
           indicateurId: 4,
+          periodicite: 'annuelle',
           dateValeur: '2015-01-01',
           metadonneeId: 1,
           resultat: 447868,
@@ -1090,7 +1131,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
-        indicateur_definition: {
+        indicateurDefinition: {
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1099,6 +1140,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
           participationScore: false,
@@ -1115,7 +1157,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           exprSeuil: null,
           libelleCibleSeuil: null,
         },
-        indicateur_source_metadonnee: {
+        indicateurSourceMetadonnee: {
           id: 1,
           sourceId: 'rare',
           dateVersion: '2024-07-18T00:00:00.000Z',
@@ -1127,10 +1169,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
         },
       };
       const indicateurValeur2: IndicateurValeurAvecMetadonnesDefinition = {
-        indicateur_valeur: {
+        indicateurValeur: {
           id: 875,
           collectiviteId: 4936,
           indicateurId: 4,
+          periodicite: 'annuelle',
           dateValeur: '2015-01-01',
           metadonneeId: 2,
           resultat: null,
@@ -1145,7 +1188,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
-        indicateur_definition: {
+        indicateurDefinition: {
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1154,6 +1197,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
           participationScore: false,
@@ -1170,7 +1214,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           exprSeuil: null,
           libelleCibleSeuil: null,
         },
-        indicateur_source_metadonnee: {
+        indicateurSourceMetadonnee: {
           id: 2,
           sourceId: 'rare',
           dateVersion: '2024-08-01T00:00:00.000Z',
@@ -1209,10 +1253,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
     it("Doublon parfait, on en conserve qu'un", async () => {
       const indicateurValeur1: IndicateurValeurAvecMetadonnesDefinition = {
-        indicateur_valeur: {
+        indicateurValeur: {
           id: 17,
           collectiviteId: 4936,
           indicateurId: 4,
+          periodicite: 'annuelle',
           dateValeur: '2015-01-01',
           metadonneeId: 1,
           resultat: 447868,
@@ -1227,7 +1272,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
-        indicateur_definition: {
+        indicateurDefinition: {
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1236,6 +1281,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
           description: '',
           unite: 'teq CO2',
+          periodicite: 'annuelle',
           borneMin: null,
           borneMax: null,
           participationScore: false,
@@ -1252,7 +1298,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           exprSeuil: null,
           libelleCibleSeuil: null,
         },
-        indicateur_source_metadonnee: {
+        indicateurSourceMetadonnee: {
           id: 1,
           sourceId: 'rare',
           dateVersion: '2024-07-18T00:00:00.000Z',

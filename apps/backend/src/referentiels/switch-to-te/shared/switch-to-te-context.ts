@@ -25,5 +25,7 @@ export type SwitchToTeContext = {
   cibles: {
     mesures: ActionCible[];
     sousActionsEtTaches: ActionCible[];
+    /** cibles tous niveaux (action / sous-action / tâche) pour mergeCommentaires */
+    commentaires: ActionCible[];
   };
 };

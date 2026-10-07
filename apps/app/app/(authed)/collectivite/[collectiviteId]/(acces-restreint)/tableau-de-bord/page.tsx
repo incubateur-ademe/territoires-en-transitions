@@ -1,29 +1,23 @@
 'use client';
 
-import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { makeCollectiviteRootUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+/** Même règle que le redirecteur global : le type décide de la racine. */
 export default function RedirectToTdbPage() {
-  const currentCollectivite = useCurrentCollectivite();
+  const { collectiviteId, collectiviteType } = useCurrentCollectivite();
   const user = useUser();
   const router = useRouter();
 
-  const isUserCollectivite = user.collectivites.some(
-    (c) => c.collectiviteId === currentCollectivite.collectiviteId
-  );
-
   useEffect(() => {
     router.replace(
-      makeTdbCollectiviteUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-        view: isUserCollectivite ? 'personnel' : 'synthetique',
-      })
+      makeCollectiviteRootUrl({ user, collectiviteId, collectiviteType })
     );
-  }, [currentCollectivite.collectiviteId, isUserCollectivite, router]);
+  }, [collectiviteId, collectiviteType, router, user]);
 
   return <SpinnerLoader className="m-auto" />;
 }

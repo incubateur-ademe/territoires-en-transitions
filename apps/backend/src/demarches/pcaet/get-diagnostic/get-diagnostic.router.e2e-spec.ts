@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
   getAuthUserFromUserCredentials,
@@ -12,11 +11,38 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import { and, eq } from 'drizzle-orm';
+import {
+  completeTestDossierPcaet,
+  createDemarche,
+  ensureTestPcaetMetadonneeId,
+} from '../demarches-pcaet.test-fixture';
 
-const CURRENT_YEAR = new Date().getFullYear();
+/** Onglets du diagnostic : parents indicateurs puis vulnérabilité. */
+const listDiagnosticTabCodes = (diagnostic: PcaetDiagnostic): string[] => [
+  ...diagnostic.indicateurParentConfigs.map((config) => config.code),
+  diagnostic.vulnerabilite.code,
+];
+
+const findValeur = (
+  diagnostic: PcaetDiagnostic,
+  {
+    indicateurId,
+    year,
+  }: {
+    indicateurId?: number;
+    year: number;
+  }
+) =>
+  diagnostic.indicateurValeurs.find(
+    ({ indicateurValeur }) =>
+      getYearFromIsoDate(indicateurValeur.dateValeur) === year &&
+      (indicateurId === undefined ||
+        indicateurValeur.indicateurId === indicateurId)
+  );
 
 describe('Récupérer le diagnostic PCAET', () => {
   let app: INestApplication;
@@ -26,21 +52,8 @@ describe('Récupérer le diagnostic PCAET', () => {
   let otherCollectivite: Collectivite;
   let otherEditorUser: AuthenticatedUser;
 
-  /** Le diagnostic dépend des valeurs de la collectivité : une par test. */
-  const freshDemarche = async () => {
-    const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
-    });
-    const user = getAuthUserFromUserCredentials(fixture.user);
-    const caller = router.createCaller({ user });
-    const demarche = await caller.demarches.pcaet.create({
-      collectiviteId: fixture.collectivite.id,
-    });
-    return { collectivite: fixture.collectivite, caller, demarche };
-  };
-
   const getDiagnostic = (
-    caller: Awaited<ReturnType<typeof freshDemarche>>['caller'],
+    caller: ReturnType<TrpcRouter['createCaller']>,
     {
       collectivite,
       demarche,
@@ -82,36 +95,35 @@ describe('Récupérer le diagnostic PCAET', () => {
   });
 
   test('Renvoie les topics du diagnostic dans l’ordre d’affichage', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
 
-    expect(diagnostic.topics.map((topic) => topic.code)).toEqual([
-      'profil_energie_climat',
+    expect(listDiagnosticTabCodes(diagnostic)).toEqual([
+      'emissions_ges',
       'polluants_atmospheriques',
       'sequestration',
       'consommation_energetique',
       'enr',
       'vulnerabilite_territoire',
     ]);
-    expect(diagnostic.snapshotDate).toBeNull();
   });
 
   test('Les émissions de GES s’arrêtent aux secteurs du décret', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
-    const profil = diagnostic.topics.find(
-      (topic) => topic.code === 'profil_energie_climat'
+    const emissions = diagnostic.indicateurParentConfigs.find(
+      (config) => config.code === 'emissions_ges'
     );
 
-    expect(profil).toMatchObject({
-      groupLabel: 'Secteur',
-      rowLabel: null,
-      unit: 'kteq CO2',
-      referentielId: 'cae_1.a',
+    expect(emissions).toMatchObject({
+      indicateurDefinitionId: 'cae_1.a',
+      referenceYearApplyLevel: 'parent',
     });
-    expect(profil?.rows.map((row) => row.referentielId)).toEqual([
+    expect(
+      emissions?.children.map((child) => child.indicateurDefinitionId)
+    ).toEqual([
       'cae_1.c',
       'cae_1.d',
       'cae_1.e',
@@ -121,49 +133,51 @@ describe('Récupérer le diagnostic PCAET', () => {
       'cae_1.i',
       'cae_1.j',
     ]);
-    // Topic à un seul niveau : aucune ligne ne se décompose.
-    expect(profil?.rows.every((row) => row.rows.length === 0)).toBe(true);
-    // Toutes les lignes sont saisissables : aucune ne dépend d'un groupement.
-    expect(profil?.rows.every((row) => row.indicateurId !== null)).toBe(true);
+    expect(
+      emissions?.children.every((child) => child.children === undefined)
+    ).toBe(true);
   });
 
   test('La consommation énergétique finale est un topic à part entière', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const conso = (
       await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'consommation_energetique');
+    ).indicateurParentConfigs.find(
+      (config) => config.code === 'consommation_energetique'
+    );
 
-    expect(conso).toMatchObject({ unit: 'GWh', referentielId: 'cae_2.a' });
-    expect(conso?.rows).toHaveLength(8);
+    expect(conso).toMatchObject({
+      indicateurDefinitionId: 'cae_2.a',
+    });
+    expect(conso?.children).toHaveLength(8);
   });
 
-  test('La séquestration ne rend obligatoires que la forêt et les terres agricoles', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+  test('La séquestration est optionnelle', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const sequestration = (
       await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'sequestration');
+    ).indicateurParentConfigs.find((config) => config.code === 'sequestration');
 
+    expect(sequestration?.optional).toBe(true);
     expect(
-      sequestration?.rows
-        .filter((row) => row.requis)
-        .map((row) => row.referentielId)
-    ).toEqual(['cae_63.b', 'cae_63.c']);
+      sequestration?.children.map((child) => child.indicateurDefinitionId)
+    ).toEqual(['cae_63.b', 'cae_63.c', 'cae_63.e', 'cae_63.d']);
   });
 
   test('Les polluants déclinent chaque total par secteur', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const polluants = (
       await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'polluants_atmospheriques');
+    ).indicateurParentConfigs.find(
+      (config) => config.code === 'polluants_atmospheriques'
+    );
 
-    expect(polluants).toMatchObject({
-      groupLabel: 'Polluant',
-      rowLabel: 'Secteur',
-    });
-    expect(polluants?.rows.map((row) => row.referentielId)).toEqual([
+    expect(
+      polluants?.children.map((child) => child.indicateurDefinitionId)
+    ).toEqual([
       'cae_4.a',
       'cae_4.b',
       'cae_4.c',
@@ -171,114 +185,75 @@ describe('Récupérer le diagnostic PCAET', () => {
       'cae_4.e',
       'cae_4.f',
     ]);
-    expect(polluants?.rows.flatMap((row) => row.rows)).toHaveLength(54);
+    expect(
+      polluants?.children.flatMap((child) => child.children ?? [])
+    ).toHaveLength(48);
   });
 
-  test('Sans valeur, l’année de comptabilisation proposée est l’année courante', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+  test('Sans saisie PCAET, aucune valeur n’est remontée', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
-    const profil = (
-      await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'profil_energie_climat');
+    const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
 
-    expect(profil?.referenceYear).toBe(CURRENT_YEAR);
-    expect(profil?.years).toEqual(
-      [CURRENT_YEAR, 2030, 2036, 2050].filter(
-        (year, index, years) => years.indexOf(year) === index
-      )
-    );
-    expect(profil?.valeurs.every((valeur) => valeur.resultat === null)).toBe(
-      true
-    );
+    expect(diagnostic.indicateurValeurs).toEqual([]);
+    expect(diagnostic.indicateurDefinitions.length).toBeGreaterThan(0);
   });
 
-  test('La saisie de la collectivité fixe l’année proposée et remplit sa cellule', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+  test('La saisie PCAET remplit les valeurs servies', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
+    const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
 
     await db.db.insert(indicateurValeurTable).values([
       {
         collectiviteId: collectivite.id,
         indicateurId,
         dateValeur: '2021-01-01',
+        metadonneeId,
         resultat: 12,
       },
       {
         collectiviteId: collectivite.id,
         indicateurId,
         dateValeur: '2030-01-01',
+        metadonneeId,
         objectif: 8,
       },
     ]);
 
-    const profil = (
-      await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'profil_energie_climat');
+    const diagnostic = await getDiagnostic(caller, { collectivite, demarche });
 
-    expect(profil?.referenceYear).toBe(2021);
-    expect(profil?.years).toEqual([2021, 2030, 2036, 2050]);
     expect(
-      profil?.valeurs.find(
-        (valeur) => valeur.indicateurId === indicateurId && valeur.year === 2021
-      )
-    ).toMatchObject({ resultat: 12, objectif: null, references: [] });
+      findValeur(diagnostic, { indicateurId, year: 2021 })?.indicateurValeur
+    ).toMatchObject({ resultat: 12, objectif: null });
     expect(
-      profil?.valeurs.find(
-        (valeur) => valeur.indicateurId === indicateurId && valeur.year === 2030
-      )
+      findValeur(diagnostic, { indicateurId, year: 2030 })?.indicateurValeur
     ).toMatchObject({ resultat: null, objectif: 8 });
   });
 
-  test('Une valeur open data arrive en référence, sans se substituer à la saisie', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
-    const indicateurId = await getIndicateurId('cae_1.d');
-    const [metadonnee] = await db.db
-      .select({ id: indicateurSourceMetadonneeTable.id })
-      .from(indicateurSourceMetadonneeTable)
-      .where(eq(indicateurSourceMetadonneeTable.sourceId, 'rare'))
-      .limit(1);
-
-    await db.db.insert(indicateurValeurTable).values({
-      collectiviteId: collectivite.id,
-      indicateurId,
-      dateValeur: `${CURRENT_YEAR}-01-01`,
-      metadonneeId: metadonnee.id,
-      resultat: 42,
-    });
-
-    const profil = (
-      await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'profil_energie_climat');
-    const cellule = profil?.valeurs.find(
-      (valeur) =>
-        valeur.indicateurId === indicateurId && valeur.year === CURRENT_YEAR
-    );
-
-    expect(cellule?.resultat).toBeNull();
-    expect(cellule?.references).toEqual([
-      expect.objectContaining({ sourceId: 'rare', resultat: 42 }),
-    ]);
-  });
-
   test('Le topic vulnérabilité n’a pas de grille', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
 
-    const vulnerabilite = (
-      await getDiagnostic(caller, { collectivite, demarche })
-    ).topics.find((topic) => topic.code === 'vulnerabilite_territoire');
+    const { vulnerabilite } = await getDiagnostic(caller, {
+      collectivite,
+      demarche,
+    });
 
     expect(vulnerabilite).toMatchObject({
-      kind: 'vulnerabilite',
-      groupLabel: null,
-      unit: null,
-      referenceYear: null,
+      code: 'vulnerabilite_territoire',
+      label: 'Vulnérabilité du territoire',
+      icon: 'map-2-line',
+      horizons: [2050, 2100],
     });
-    expect(vulnerabilite?.rows).toEqual([]);
-    expect(vulnerabilite?.years).toEqual([]);
+    expect(vulnerabilite.thematiques.length).toBeGreaterThan(0);
+    expect(vulnerabilite.lignes).toHaveLength(vulnerabilite.thematiques.length);
   });
 
-  test('Dès la transmission, l’écran montre la photo du dossier déposé', async () => {
-    const { caller, collectivite, demarche } = await freshDemarche();
+  test('Après transmission, le diagnostic reste live', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
     await completeTestDossierPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -290,59 +265,108 @@ describe('Récupérer le diagnostic PCAET', () => {
     });
 
     const transmis = await getDiagnostic(caller, { collectivite, demarche });
-    expect(transmis.snapshotDate).not.toBeNull();
+    expect(
+      findValeur(transmis, { year: 2021 })?.indicateurValeur.resultat
+    ).toBe(100);
 
-    const profilTransmis = transmis.topics.find(
-      (topic) => topic.code === 'profil_energie_climat'
-    );
-    const resultat = profilTransmis?.valeurs.find(
-      (valeur) => valeur.year === 2021 && valeur.resultat !== null
-    );
-    expect(resultat?.resultat).toBe(100);
-
-    // La collectivité continue de piloter ses indicateurs : la photo ne bouge pas.
+    const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
     await db.db
       .update(indicateurValeurTable)
       .set({ resultat: 999 })
-      .where(eq(indicateurValeurTable.collectiviteId, collectivite.id));
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectivite.id),
+          eq(indicateurValeurTable.metadonneeId, metadonneeId),
+          eq(indicateurValeurTable.dateValeur, '2021-01-01')
+        )
+      );
 
     const relu = await getDiagnostic(caller, { collectivite, demarche });
-    expect(
-      relu.topics
-        .find((topic) => topic.code === 'profil_energie_climat')
-        ?.valeurs.find(
-          (valeur) => valeur.year === 2021 && valeur.resultat !== null
-        )?.resultat
-    ).toBe(100);
+    expect(findValeur(relu, { year: 2021 })?.indicateurValeur.resultat).toBe(
+      999
+    );
   });
 
   test('Les valeurs remontées sont celles de la collectivité de la démarche', async () => {
-    const first = await freshDemarche();
-    const second = await freshDemarche();
+    const first = await createDemarche(db, router);
+    const second = await createDemarche(db, router);
     const indicateurId = await getIndicateurId('cae_1.c');
+    const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+      collectiviteId: first.collectivite.id,
+      demarcheId: first.demarche.id,
+    });
 
     await db.db.insert(indicateurValeurTable).values({
       collectiviteId: first.collectivite.id,
       indicateurId,
       dateValeur: '2019-01-01',
+      metadonneeId,
       resultat: 99,
     });
 
-    const profil = (
-      await getDiagnostic(second.caller, {
-        collectivite: second.collectivite,
-        demarche: second.demarche,
-      })
-    ).topics.find((topic) => topic.code === 'profil_energie_climat');
+    const diagnostic = await getDiagnostic(second.caller, {
+      collectivite: second.collectivite,
+      demarche: second.demarche,
+    });
 
-    expect(profil?.referenceYear).toBe(CURRENT_YEAR);
-    expect(profil?.valeurs.every((valeur) => valeur.resultat === null)).toBe(
-      true
-    );
+    expect(diagnostic.indicateurValeurs).toEqual([]);
+  });
+
+  test('Les définitions portent l’applicabilité décidée par la collectivité', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
+
+    const findDefinition = (
+      diagnostic: PcaetDiagnostic,
+      referentielId: string
+    ) =>
+      diagnostic.indicateurDefinitions.find(
+        (definition) => definition.identifiantReferentiel === referentielId
+      );
+
+    // Sans rien déclarer, il n'y a pas de ligne `indicateur_collectivite` :
+    // c'est le `coalesce` de la lecture qui doit rendre `true`.
+    const avant = await getDiagnostic(caller, { collectivite, demarche });
+    expect(findDefinition(avant, 'cae_1.c')?.isApplicable).toBe(true);
+
+    await caller.indicateurs.indicateurs.update({
+      indicateurId: await getIndicateurId('cae_1.c'),
+      collectiviteId: collectivite.id,
+      indicateurFields: { isApplicable: false },
+    });
+
+    const apres = await getDiagnostic(caller, { collectivite, demarche });
+    expect(findDefinition(apres, 'cae_1.c')?.isApplicable).toBe(false);
+    // Les autres lignes ne bougent pas.
+    expect(findDefinition(apres, 'cae_1.d')?.isApplicable).toBe(true);
+  });
+
+  test('L’applicabilité est propre à chaque collectivité', async () => {
+    const first = await createDemarche(db, router);
+    const second = await createDemarche(db, router);
+
+    await first.caller.indicateurs.indicateurs.update({
+      indicateurId: await getIndicateurId('cae_1.c'),
+      collectiviteId: first.collectivite.id,
+      indicateurFields: { isApplicable: false },
+    });
+
+    const diagnostic = await getDiagnostic(second.caller, {
+      collectivite: second.collectivite,
+      demarche: second.demarche,
+    });
+
+    expect(
+      diagnostic.indicateurDefinitions.find(
+        (definition) => definition.identifiantReferentiel === 'cae_1.c'
+      )?.isApplicable
+    ).toBe(true);
   });
 
   test("IDOR : le diagnostic n'est pas lisible via une autre collectivité", async () => {
-    const { demarche } = await freshDemarche();
+    const { demarche } = await createDemarche(db, router);
 
     const otherCaller = router.createCaller({ user: otherEditorUser });
     await expect(

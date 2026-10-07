@@ -1,0 +1,212 @@
+import { expect, Locator, Page } from '@playwright/test';
+
+export class InstructionPom {
+  readonly banner: Locator;
+  readonly bannerBackToDemandesAvis: Locator;
+  readonly bannerBackToDossier: Locator;
+  readonly dossier: Locator;
+  readonly enElaboration: Locator;
+  readonly finaliser: Locator;
+  readonly accessError: Locator;
+
+  constructor(readonly page: Page) {
+    this.banner = page.getByTestId(
+      'demarches.pcaet.instruction.contexte-banniere'
+    );
+    this.bannerBackToDemandesAvis = page.getByTestId(
+      'demarches.pcaet.instruction.contexte-banniere.retour'
+    );
+    this.bannerBackToDossier = page.getByTestId(
+      'demarches.pcaet.instruction.contexte-banniere.dossier'
+    );
+    this.dossier = page.getByTestId('demarches.pcaet.instruction.dossier');
+    this.enElaboration = page.getByTestId(
+      'demarches.pcaet.instruction.en-elaboration'
+    );
+    this.finaliser = page.getByTestId('demarches.pcaet.instruction.finaliser');
+    this.accessError = page.getByTestId('demarches.pcaet.erreur-acces');
+  }
+
+  /** La liste des dossiers à instruire, sous le service. */
+  async goToDemandesAvis(serviceId: number) {
+    await this.page.goto(`/collectivite/${serviceId}/demandes-avis`);
+  }
+
+  /**
+   * Une ligne de la liste, désignée par la saisine qu'elle porte.
+   *
+   * La clé va du plus précis au plus général : une collectivité sans dépôt n'a
+   * pas de saisine à nommer, d'où `rowSansDepot` et `rowDemarche`.
+   */
+  row(demandeAvisId: number): Locator {
+    return this.page.getByTestId(
+      `demarches.pcaet.instruction.ligne-demande-${demandeAvisId}`
+    );
+  }
+
+  /** Une ligne dont le dépôt existe mais n'a saisi personne — en élaboration. */
+  rowDemarche(demarcheId: number): Locator {
+    return this.page.getByTestId(
+      `demarches.pcaet.instruction.ligne-demarche-${demarcheId}`
+    );
+  }
+
+  /** Une collectivité du territoire qui n'a rien déposé. */
+  rowSansDepot(collectiviteId: number): Locator {
+    return this.page.getByTestId(
+      `demarches.pcaet.instruction.ligne-collectivite-${collectiviteId}`
+    );
+  }
+
+  /** Le filtre de statut, dans l'en-tête de la colonne. */
+  get filtreStatut(): Locator {
+    return this.page.getByTestId('demarches.pcaet.instruction.filtre-statut');
+  }
+
+  /**
+   * Vide la sélection de statuts par « Désélectionner les options ».
+   *
+   * Ce qui ne veut pas dire « ne montre rien » : aucun statut retenu, c'est
+   * l'absence de filtre.
+   */
+  async deselectAllStatuts() {
+    await this.filtreStatut.click();
+    await this.page
+      .getByRole('button', { name: 'Désélectionner les options' })
+      .click();
+    await this.page.keyboard.press('Escape');
+  }
+
+  /**
+   * Ouvre un dossier depuis la liste. Le lien est ciblé par son URL plutôt que
+   * par son libellé : c'est précisément ce que le test vérifie — la liste renvoie
+   * vers la collectivité instruite, pas vers le service.
+   */
+  async openDossier({
+    collectiviteInstruiteId,
+    demandeAvisId,
+  }: {
+    collectiviteInstruiteId: number;
+    demandeAvisId: number;
+  }) {
+    const lien = this.row(demandeAvisId)
+      .locator(
+        `a[href="/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}"]`
+      )
+      .first();
+
+    // Activation au clavier plutôt qu'au pointeur : un portail flottant (le
+    // tooltip du bouton de téléchargement, dans la même ligne) intercepte les
+    // événements de souris au moment du clic. Le lien est de toute façon censé
+    // s'activer ainsi.
+    await lien.focus();
+    await lien.press('Enter');
+  }
+
+  /**
+   * Ouvre un dépôt en élaboration depuis la liste. Il n'a pas de saisine : le
+   * lien porte sa démarche, sous la collectivité instruite.
+   */
+  async openDemarche({
+    collectiviteInstruiteId,
+    demarcheId,
+  }: {
+    collectiviteInstruiteId: number;
+    demarcheId: number;
+  }) {
+    const lien = this.rowDemarche(demarcheId)
+      .locator(
+        `a[href="/collectivite/${collectiviteInstruiteId}/instruction/demarche/${demarcheId}"]`
+      )
+      .first();
+
+    await lien.focus();
+    await lien.press('Enter');
+  }
+
+  /**
+   * Le dossier d'un dépôt en élaboration : l'URL porte la démarche, le panneau
+   * dit d'emblée que rien n'a été transmis, et rien ne se finalise.
+   */
+  async expectDossierEnElaboration({
+    collectiviteInstruiteId,
+    demarcheId,
+    casquette,
+  }: {
+    collectiviteInstruiteId: number;
+    demarcheId: number;
+    casquette: string;
+  }) {
+    await expect(this.page).toHaveURL(
+      `/collectivite/${collectiviteInstruiteId}/instruction/demarche/${demarcheId}`
+    );
+    await expect(this.dossier).toBeVisible();
+    await expect(this.banner).toContainText(casquette);
+    await expect(this.bannerBackToDossier).toBeHidden();
+    await expect(this.enElaboration).toBeVisible();
+    await expect(this.finaliser).toBeHidden();
+  }
+
+  /**
+   * La navigation reste celle de la collectivité visitée : l'agent doit pouvoir
+   * circuler dans ses plans et ses indicateurs. Seule la bannière signale d'où
+   * il vient.
+   */
+  async expectCollectiviteNavigation() {
+    await expect(this.page.getByTestId('nav-pa')).toBeVisible();
+  }
+
+  /**
+   * `casquette` et non le nom du service : la bannière dit à quel titre l'agent
+   * est là (« la DREAL »), le nom propre étant déjà lisible dans le sélecteur de
+   * contexte du header.
+   */
+  async expectContexte({
+    collectiviteInstruiteId,
+    demandeAvisId,
+    casquette,
+  }: {
+    collectiviteInstruiteId: number;
+    demandeAvisId: number;
+    casquette: string;
+  }) {
+    // L'URL porte la collectivité instruite, pas le service : c'est la bascule
+    // de contexte elle-même.
+    await expect(this.page).toHaveURL(
+      `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}`
+    );
+    await expect(this.dossier).toBeVisible();
+    await expect(this.banner).toContainText(casquette);
+    // Sur le dossier lui-même, le raccourci vers le dossier n'a rien à proposer.
+    await expect(this.bannerBackToDossier).toBeHidden();
+  }
+
+  /**
+   * Depuis une page ordinaire de la collectivité, la bannière ramène au dossier
+   * — c'est ce qui rattrape l'agent parti circuler dans les plans.
+   */
+  async goBackToDossier({
+    collectiviteInstruiteId,
+    demandeAvisId,
+  }: {
+    collectiviteInstruiteId: number;
+    demandeAvisId: number;
+  }) {
+    await this.bannerBackToDossier.click();
+    await expect(this.page).toHaveURL(
+      `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}`
+    );
+  }
+
+  /**
+   * @param demandeAvisId Saisine attendue dans la liste : la voir prouve que la
+   * requête a abouti, là où un 403 ne laisserait aucune ligne.
+   */
+  async goBackToDemandesAvis(serviceId: number, demandeAvisId: number) {
+    await this.bannerBackToDemandesAvis.click();
+    await expect(this.page).toHaveURL(
+      `/collectivite/${serviceId}/demandes-avis`
+    );
+    await expect(this.row(demandeAvisId)).toBeVisible();
+  }
+}

@@ -5,8 +5,6 @@ import {
   isAuditLabellisationReferentiel,
   isReferentRoleDefined,
   ParcoursLabellisation,
-  canModifyCandidatureDocuments,
-  ReferentRolesDefined,
   ROLE_IDENTIFIANTS,
   RoleKey,
 } from '@tet/domain/referentiels';
@@ -22,19 +20,17 @@ const EMPTY_ROLE_MESURES: RoleMesures = {
   referentTechnique: null,
 };
 
-const extractRoleMesures = (
-  parcours: ParcoursLabellisation,
-  referentRolesDefined: ReferentRolesDefined
-): RoleMesures => {
+const extractRoleMesures = (parcours: ParcoursLabellisation): RoleMesures => {
+  const referentRolesDefined = parcours.referentRolesDefined;
   if (!isAuditLabellisationReferentiel(parcours.referentiel)) {
     return EMPTY_ROLE_MESURES;
   }
 
   const mappingForReferentiel = ROLE_IDENTIFIANTS[parcours.referentiel];
   const critereByIdentifiant = new Map(
-    parcours.criteres_action.map((critereAction) => [
-      getIdentifiantFromActionId(critereAction.action_id) ??
-        critereAction.action_id,
+    parcours.criteresAction.map((critereAction) => [
+      getIdentifiantFromActionId(critereAction.actionId) ??
+        critereAction.actionId,
       critereAction,
     ])
   );
@@ -48,7 +44,7 @@ const extractRoleMesures = (
       return null;
     }
     return {
-      actionId: critere.action_id,
+      actionId: critere.actionId,
       done: critere.atteint && referentRolesDefined[roleKey],
     };
   };
@@ -63,56 +59,52 @@ const extractRoleMesures = (
 };
 
 const getMinimumScore = (
-  critereScore: ParcoursLabellisation['critere_score'],
+  critereScore: ParcoursLabellisation['critereScore'],
   etoiles: ParcoursLabellisation['etoiles']
 ): MinimumScoreViewModel => {
   if (etoiles > 1) {
     return {
       done: critereScore.atteint,
-      seuilPercent: Math.round(critereScore.score_a_realiser * 100),
+      seuilPercent: Math.round(critereScore.scoreARealiser * 100),
     };
   }
   const seuilDeuxiemeEtoile =
     ETOILE_MIN_REALISE_SCORE[EtoileEnum.DEUXIEME_ETOILE];
   return {
-    done: critereScore.score_fait >= seuilDeuxiemeEtoile,
+    done: critereScore.scoreFait >= seuilDeuxiemeEtoile,
     seuilPercent: Math.round(seuilDeuxiemeEtoile * 100),
   };
 };
 
 export const parcoursToChecklist = (
-  parcours: ParcoursLabellisation,
-  referentRolesDefined: ReferentRolesDefined
+  parcours: ParcoursLabellisation
 ): Parcours => {
   return {
     etoileObjectif: parcours.etoiles,
-    completude: { done: parcours.completude_ok },
-    minimumScore: getMinimumScore(parcours.critere_score, parcours.etoiles),
-    scoreFait: parcours.critere_score.score_fait,
-    mesures: [...parcours.criteres_action]
+    completude: { done: parcours.completudeOk },
+    minimumScore: getMinimumScore(parcours.critereScore, parcours.etoiles),
+    scoreFait: parcours.critereScore.scoreFait,
+    mesures: [...parcours.criteresAction]
       .sort((a, b) => a.priorite - b.priorite)
       .map((critereAction) => ({
-        actionId: critereAction.action_id,
+        actionId: critereAction.actionId,
         identifiant:
-          getIdentifiantFromActionId(critereAction.action_id) ??
-          critereAction.action_id,
+          getIdentifiantFromActionId(critereAction.actionId) ??
+          critereAction.actionId,
         formulation: critereAction.formulation,
         done:
           critereAction.atteint &&
           isReferentRoleDefined(
             critereAction,
             parcours.referentiel,
-            referentRolesDefined
+            parcours.referentRolesDefined
           ),
-        minRealisePercentage: critereAction.min_realise_percentage,
-        minProgrammePercentage: critereAction.min_programme_percentage,
+        minRealisePercentage: critereAction.minRealisePercentage,
+        minProgrammePercentage: critereAction.minProgrammePercentage,
       })),
-    roleMesures: extractRoleMesures(parcours, referentRolesDefined),
+    roleMesures: extractRoleMesures(parcours),
     acteEngagement: {
       demandeId: parcours.demande?.id ?? null,
     },
-    canModifyCandidatureDocuments: canModifyCandidatureDocuments({
-      audit: parcours.audit ? { valide: parcours.audit.valide } : null,
-    }),
   };
 };

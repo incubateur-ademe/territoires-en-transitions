@@ -1,4 +1,4 @@
-import { signInPath, signUpPath } from '@/app/app/paths';
+import { signUpPath } from '@/app/app/paths';
 import { getRequestUrl } from '@tet/api';
 import { getAuthUser } from '@tet/api/utils/supabase/auth-user.server';
 import { trpcInServerFunction } from '@tet/api/utils/trpc/trpc-server-client';
@@ -40,23 +40,10 @@ export async function GET(
     redirect(`${signUpPath}?${searchParams}`, RedirectType.replace);
   }
 
-  // Si l'utilisateur est connecté avec un email différent de celui de l'invitation,
-  // on le redirige vers la page de connexion avec le bon email pré-rempli
-  if (
-    user.email &&
-    user.email.toLowerCase() !== invitationEmail.toLowerCase()
-  ) {
-    const url = getRequestUrl(request);
-
-    const searchParams = new URLSearchParams({
-      email: invitationEmail,
-      redirect_to: `${url.pathname}${url.search}`,
-    });
-
-    redirect(`${signInPath}?${searchParams}`, RedirectType.replace);
-  }
-
-  // Else consume invitation and redirect to the home page
+  // L'email de la session est asserté par le fournisseur d'identité : il n'a
+  // aucune raison d'égaler celui saisi par l'admin (alias, domaine différent,
+  // coquille). Le lien d'invitation — opaque, à usage unique et révocable —
+  // fait donc seul preuve : on consomme quelle que soit l'adresse de la session.
   try {
     await trpcInServerFunction.collectivites.membres.invitations.consume.mutate(
       {

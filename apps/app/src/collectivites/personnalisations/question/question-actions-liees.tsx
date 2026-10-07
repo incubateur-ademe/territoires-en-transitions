@@ -7,6 +7,7 @@ import {
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonnalisationRegle } from '@tet/domain/collectivites';
+import { isNewReferentiel } from '@tet/domain/referentiels';
 import { AccordionControlled, InfoTooltip } from '@tet/ui';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
@@ -37,7 +38,7 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
     <AccordionControlled
       containerClassname="border-none"
       headerClassname="text-grey-8 py-2"
-      title="Afficher les éléments affectés et règles associées"
+      title={appLabels.afficherLesElementsAffectesEtLesReglesAssociees}
       content={
         <ActionsLiees
           actions={actionsLiees}
@@ -81,9 +82,9 @@ const ActionsLiees = ({
         return (
           <div key={actionId} className="flex flex-row gap-2 items-center">
             <Link href={url} className="underline">
-              {`${referentiel} ${
-                referentiel === 'te' ? '' : identifiant
-              } - ${nom}`}
+              {`${
+                isNewReferentiel(referentiel) ? 'CR' : referentiel
+              } ${identifiant} - ${nom}`}
             </Link>
             {!!reglesActions.length && (
               <InfoTooltip

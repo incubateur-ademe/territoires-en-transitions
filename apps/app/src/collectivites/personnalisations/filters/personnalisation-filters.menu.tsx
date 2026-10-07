@@ -1,12 +1,12 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielDisplayMap } from '@tet/domain/collectivites';
 import { ButtonMenu, Field } from '@tet/ui';
 import { usePersonnalisationFilters } from './personnalisation-filters-context';
 import { PersonnalisationThematiquesDropdown } from './personnalisation-thematiques.dropdown';
 import { ReferentielsDropdown } from './referentiels.dropdown';
-import { appLabels } from '@/app/labels/catalog';
 
 export function PersonnalisationFiltersMenu() {
   const currentCollectivite = useCurrentCollectivite();
@@ -14,9 +14,18 @@ export function PersonnalisationFiltersMenu() {
     usePersonnalisationFilters();
 
   const { collectiviteId, collectivitePreferences } = currentCollectivite;
-  const enabledReferentielsCount = Object.values(
-    getReferentielDisplayMap(collectivitePreferences.referentiels)
-  ).filter((v) => !!v).length;
+  const displayMap = getReferentielDisplayMap(
+    collectivitePreferences.referentiels
+  );
+  // Un référentiel archivé reste visible dans la nav mais n'est pas
+  // personnalisable : il n'est pas décompté ici (cf. ReferentielsDropdown).
+  const enabledReferentielsCount = (
+    Object.keys(displayMap) as (keyof typeof displayMap)[]
+  ).filter(
+    (id) =>
+      displayMap[id] &&
+      collectivitePreferences.referentiels[id]?.mode !== 'archived'
+  ).length;
 
   return (
     <ButtonMenu

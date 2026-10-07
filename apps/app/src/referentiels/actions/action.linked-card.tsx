@@ -1,12 +1,14 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
+import { useGetReferentielDefinition } from '@/app/referentiels/definitions/use-get-referentiel-definition';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Action } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
-import { appLabels } from '@/app/labels/catalog';
 
 type ActionCardProps = {
   isReadonly?: boolean;
@@ -25,12 +27,17 @@ const ActionLinkedCard = ({
 }: ActionCardProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
-  const { actionId, identifiant, nom, referentiel } = action;
+  const { actionId, identifiant, nom, referentielId } = action;
+
+  const { data: referentielDefinition } = useGetReferentielDefinition({
+    referentielId,
+  });
 
   const link = makeReferentielTacheUrl({
     collectiviteId: dataCollectiviteId,
     actionId,
-    referentielId: referentiel,
+    referentielId,
+    hierarchie: referentielDefinition?.hierarchie ?? [],
   });
 
   return (
@@ -39,7 +46,7 @@ const ActionLinkedCard = ({
         {!isReadonly && onUnlink && (
           <Button
             icon="link-unlink"
-            title="Dissocier l'action"
+            title={appLabels.dissocierLaMesure}
             variant="grey"
             size="xs"
             onClick={onUnlink}
@@ -56,7 +63,8 @@ const ActionLinkedCard = ({
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">
-          {appLabels.referentiel} {referentielToName[referentiel]}
+          {capitalize(appLabels.referentiel())}{' '}
+          {referentielToName[referentielId]}
         </span>
 
         {/* Identifiant et titre de l'action */}
@@ -81,7 +89,7 @@ const ActionLinkedCard = ({
             {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"
-                title="Pilotes"
+                title={appLabels.pilote()}
                 list={action.pilotes.map((p) => p.nom ?? '')}
               />
             )}
@@ -91,7 +99,7 @@ const ActionLinkedCard = ({
             {action.services.length > 0 && (
               <ListWithTooltip
                 icon="briefcase-line"
-                title="Direction ou service pilote"
+                title={appLabels.directionOuServicePilote()}
                 list={action.services.map((s) => s.nom ?? '')}
               />
             )}

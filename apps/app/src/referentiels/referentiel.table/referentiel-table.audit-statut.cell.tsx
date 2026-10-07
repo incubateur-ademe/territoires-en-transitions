@@ -6,10 +6,14 @@ import { CellContext } from '@tanstack/react-table';
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
 import { AuditInputCell } from './audit-input-cell';
 import { EmptyCell } from './empty-cell';
-import { getTableMeta, isAuditableMesure } from './utils';
+import {
+  getTableMeta,
+  isAuditableMesure,
+  ReferentielTableFeatures,
+} from './utils';
 
 type Props = {
-  info: CellContext<ActionListItem, unknown>;
+  info: CellContext<ReferentielTableFeatures, ActionListItem, unknown>;
 };
 
 export const ReferentielTableAuditStatutCell = ({ info }: Props) => {

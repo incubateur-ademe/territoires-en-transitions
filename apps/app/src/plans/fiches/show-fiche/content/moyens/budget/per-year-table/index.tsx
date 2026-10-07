@@ -1,9 +1,10 @@
 import { getFormattedNumber } from '@tet/domain/utils';
 import { appLabels } from '@/app/labels/catalog';
 import {
+  columnVisibilityFeature,
   createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import {
   Button,
@@ -13,7 +14,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from '@tet/ui';
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
 import { BudgetPerYear } from '../../../../context/types';
 import { getYearsOptions } from '@/app/utils/get-years-options';
@@ -40,7 +41,9 @@ type BudgetTableRow =
       type: 'total';
     };
 
-const columnHelper = createColumnHelper<BudgetTableRow>();
+const features = tableFeatures({ columnVisibilityFeature });
+
+const columnHelper = createColumnHelper<typeof features, BudgetTableRow>();
 
 const TotalTableCell = ({
   children,
@@ -147,12 +150,16 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'etpPrevisionnel',
-        header: () => <TableHeaderCell title={appLabels.budgetEtpPrevisionnel} />,
+        header: () => (
+          <TableHeaderCell title={appLabels.budgetEtpPrevisionnel} />
+        ),
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
               <TotalTableCell>
-                {`${getFormattedNumber(totals.etpPrevisionnel)} ${appLabels.uniteEtp}`}
+                {`${getFormattedNumber(totals.etpPrevisionnel)} ${
+                  appLabels.uniteEtp
+                }`}
               </TotalTableCell>
             );
           }
@@ -192,16 +199,15 @@ export const BudgetPerYearTable = ({
     [allYearsOptions, usedYears, fiche, deleteBudgets, type, totals]
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     columns,
     data: tableData,
     getRowId: (row) => row.id,
-    getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: { actions: !isReadonly },
+    },
   });
-
-  useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isReadonly);
-  }, [isReadonly, table]);
 
   return (
     <div className="p-2 bg-white rounded-lg border border-grey-3">

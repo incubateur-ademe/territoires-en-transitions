@@ -1,4 +1,3 @@
-import { ObjectToSnake } from 'ts-case-convert';
 import { LabellisationAudit } from '../labellisation-audit.schema';
 import {
   LabellisationDemande,
@@ -14,6 +13,7 @@ import {
   ConditionFichiers,
   ParcoursLabellisation,
 } from '../parcours-labellisation.schema';
+import { isReferentRoleDefined } from '../role-mesures/role-mesures';
 import { getMaxRequestableStar } from '../requestable-star';
 import {
   RequestLabellisationRulesErrors,
@@ -21,15 +21,13 @@ import {
 } from './request-labellisation.rules-errors';
 
 // détermine l'état consolidé du cycle
-type TDemandeEtOuAudit = {
-  demande: ObjectToSnake<Pick<LabellisationDemande, 'enCours'>> | null;
-  audit: ObjectToSnake<
-    Pick<LabellisationAudit, 'valide' | 'dateDebut' | 'dateFin'>
-  > | null;
+type DemandeEtOuAudit = {
+  demande: Pick<LabellisationDemande, 'enCours'> | null;
+  audit: Pick<LabellisationAudit, 'valide' | 'dateDebut' | 'dateFin'> | null;
 };
 
 export const getParcoursLabellisationStatus = (
-  demandeEtOuAudit: TDemandeEtOuAudit | null | undefined
+  demandeEtOuAudit: DemandeEtOuAudit | null
 ): ParcoursLabellisationStatus => {
   if (!demandeEtOuAudit) {
     return 'non_demandee';
@@ -38,10 +36,10 @@ export const getParcoursLabellisationStatus = (
   if (audit?.valide) {
     return 'audit_valide';
   }
-  if (audit?.date_debut && !audit?.valide) {
+  if (audit?.dateDebut && !audit?.valide) {
     return 'audit_en_cours';
   }
-  if (demande && !demande.en_cours) {
+  if (demande && !demande.enCours) {
     return 'demande_envoyee';
   }
   return 'non_demandee';
@@ -50,17 +48,19 @@ export const getParcoursLabellisationStatus = (
 export type ParcoursLabellisationForRequest = Pick<
   ParcoursLabellisation,
   | 'status'
-  | 'completude_ok'
-  | 'critere_score'
+  | 'completudeOk'
+  | 'critereScore'
   | 'isCot'
   | 'etoiles'
   | 'labellisation'
   | 'preuvesObjets'
+  | 'referentiel'
+  | 'referentRolesDefined'
 > & {
-  conditionFichiers: Pick<ConditionFichiers, 'preuve_nombre'>;
-  criteres_action: Pick<
-    ParcoursLabellisation['criteres_action'][number],
-    'atteint'
+  conditionFichiers: Pick<ConditionFichiers, 'preuveNombre'>;
+  criteresAction: Pick<
+    ParcoursLabellisation['criteresAction'][number],
+    'atteint' | 'actionId'
   >[];
 };
 
@@ -130,6 +130,7 @@ export type AuditPrerequisitesError = Extract<
   | 'REFERENTIEL_NOT_COMPLETED'
   | 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED'
   | 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED'
+  | 'REFERENT_ROLES_NOT_DEFINED'
   | 'MISSING_FILE'
 >;
 
@@ -137,6 +138,20 @@ export type ParcoursForAuditPrerequisites = Omit<
   ParcoursLabellisationForRequest,
   'status'
 >;
+
+const areAllReferentRolesDefined = (
+  parcours: Pick<
+    ParcoursForAuditPrerequisites,
+    'criteresAction' | 'referentiel' | 'referentRolesDefined'
+  >
+): boolean =>
+  parcours.criteresAction.every((critere) =>
+    isReferentRoleDefined(
+      critere,
+      parcours.referentiel,
+      parcours.referentRolesDefined
+    )
+  );
 
 export function areAuditPrerequisitesMet(
   parcours: ParcoursForAuditPrerequisites,
@@ -146,7 +161,7 @@ export function areAuditPrerequisitesMet(
 ):
   | { met: true; reason: null }
   | { met: false; reason: AuditPrerequisitesError } {
-  if (!parcours.completude_ok) {
+  if (!parcours.completudeOk) {
     return {
       met: false,
       reason: RequestLabellisationRulesErrorsEnum.REFERENTIEL_NOT_COMPLETED,
@@ -159,8 +174,15 @@ export function areAuditPrerequisitesMet(
     return { met: true, reason: null };
   }
 
+  if (!areAllReferentRolesDefined(parcours)) {
+    return {
+      met: false,
+      reason: RequestLabellisationRulesErrorsEnum.REFERENT_ROLES_NOT_DEFINED,
+    };
+  }
+
   // Pour les autres, il faut vérifier les critères de score
-  if ((etoiles ?? 0) > getMaxRequestableStar(parcours.critere_score.score_fait)) {
+  if ((etoiles ?? 0) > getMaxRequestableStar(parcours.critereScore.scoreFait)) {
     return {
       met: false,
       reason:
@@ -168,7 +190,7 @@ export function areAuditPrerequisitesMet(
     };
   }
 
-  if (!parcours.criteres_action.every((c) => c.atteint)) {
+  if (!parcours.criteresAction.every((c) => c.atteint)) {
     return {
       met: false,
       reason:
@@ -196,7 +218,7 @@ export function areAuditPrerequisitesMet(
       preuves: parcours.preuvesObjets,
       expectedDocuments,
     }) ||
-    (allowLegacyDocuments && parcours.conditionFichiers.preuve_nombre > 0);
+    (allowLegacyDocuments && parcours.conditionFichiers.preuveNombre > 0);
 
   if (!expectedDocumentsDeposited) {
     return {
@@ -210,7 +232,7 @@ export function areAuditPrerequisitesMet(
 
 export function isPremiereEtoileDemande(
   demande:
-    | Pick<ObjectToSnake<LabellisationDemande>, 'etoiles' | 'sujet'>
+    | Pick<LabellisationDemande, 'etoiles' | 'sujet'>
     | null
     | undefined
 ): boolean {

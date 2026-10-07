@@ -176,40 +176,4 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
       };
     }
   }
-
-  /**
-   * Lie un plan racine au panier dont il est issu en écrivant `axe.panier_id`.
-   * Utilisé par le checkout panier pour la traçabilité plan ← panier.
-   */
-  async linkToPanier(
-    planId: number,
-    panierId: string,
-    tx?: Transaction
-  ): Promise<Result<undefined, UpsertPlanError>> {
-    try {
-      const updated = await (tx ?? this.databaseService.db)
-        .update(axeTable)
-        .set({ panierId })
-        .where(eq(axeTable.id, planId))
-        .returning({ id: axeTable.id });
-
-      if (updated.length === 0) {
-        this.logger.error(
-          `linkToPanier : axe ${planId} introuvable lors de la mise à jour de panier_id`
-        );
-        return {
-          success: false,
-          error: UpsertPlanErrorEnum.UPDATE_PLAN_ERROR,
-        };
-      }
-
-      return { success: true, data: undefined };
-    } catch (error) {
-      this.logger.error(`Error linking plan ${planId} to panier ${panierId}: ${error}`);
-      return {
-        success: false,
-        error: UpsertPlanErrorEnum.UPDATE_PLAN_ERROR,
-      };
-    }
-  }
 }

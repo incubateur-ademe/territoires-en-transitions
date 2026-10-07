@@ -1,6 +1,7 @@
 'use client';
 
 import { PersonnalisationQuestionReponse } from '@tet/domain/collectivites';
+import { useHighlightedQuestionId } from './data/use-highlighted-question-id';
 import { useSetPersonnalisationReponse } from './data/use-set-personnalisation-reponse';
 import { QuestionReponse } from './question/question-reponse';
 
@@ -14,6 +15,7 @@ export function PersonnalisationQuestionsList({
   questionReponses,
 }: Props) {
   const handleChange = useSetPersonnalisationReponse();
+  const highlightedQuestionId = useHighlightedQuestionId();
 
   const firstProportionIndex = questionReponses.findIndex(
     ({ question }) => question.type === 'proportion'
@@ -29,6 +31,7 @@ export function PersonnalisationQuestionsList({
           canEdit={canEdit}
           onChange={(reponse) => handleChange(question, reponse)}
           hasProportionDescription={index === firstProportionIndex}
+          isHighlighted={question.id === highlightedQuestionId}
         />
       ))}
     </div>

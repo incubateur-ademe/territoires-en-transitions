@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const Collectivite = async () => {
-  const { data: collectivitesStrapi } = await getCollectivitesALaUne();
+  const collectivitesStrapi = await getCollectivitesALaUne();
 
   return <CollectivitesPage collectivitesStrapi={collectivitesStrapi} />;
 };

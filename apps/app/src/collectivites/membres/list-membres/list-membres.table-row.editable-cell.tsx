@@ -13,7 +13,7 @@ import { listUserCollectiviteRoles } from '@/app/users/authorizations/list-user-
 import { MembreFonction } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
+import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(commun)/users/_components/badge-acces';
 
 /**
  * La nouvelle version du composant est dans le fichier membres-liste-table-row.tsx

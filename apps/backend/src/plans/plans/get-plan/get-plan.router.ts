@@ -19,7 +19,9 @@ export class GetPlanRouter {
     get: this.trpc.authedProcedure
       .input(getPlanInputSchema)
       .query(async ({ input, ctx }) => {
-        const result = await this.getPlanService.getPlan(input, ctx.user);
+        const result = await this.getPlanService.getPlan(input, {
+          user: ctx.user,
+        });
         return this.getResultDataOrThrowError(result);
       }),
   });

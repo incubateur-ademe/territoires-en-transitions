@@ -1,0 +1,31 @@
+name: cache-next-app-build
+description: Restore or save the Next.js production build cache for apps/app
+
+outputs:
+  cache-hit:
+    description: Whether the Next.js build cache was restored from an exact key
+    value: ${{ steps.restore.outputs.cache-hit || '' }}
+
+inputs:
+  mode:
+    description: Cache mode (restore or save)
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - id: restore
+      if: ${{ inputs.mode == 'restore' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: apps/app/.next/cache
+        key: ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-
+
+    - if: ${{ inputs.mode == 'save' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: apps/app/.next/cache
+        key: ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}

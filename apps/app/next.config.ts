@@ -3,18 +3,9 @@ import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  typescript: {
-    // We safely disable the internal type checking of Next.js because
-    // all apps are type checked during the first steps of our CI.
-    // This avoids redundancy as well as Next.js
-    // incomplete support for TypeScript project references.
-    ignoreBuildErrors: true,
-    tsconfigPath: 'tsconfig.app.json',
-  },
-
-  transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
-
   experimental: {
+    useTypeScriptCli: false,
+
     optimizePackageImports: [
       '@tet/api',
       '@tet/domain',
@@ -27,6 +18,24 @@ const nextConfig: NextConfig = {
       '@supabase/supabase-js',
       '@supabase/ssr',
     ],
+  },
+
+  typescript: {
+    // We safely disable the internal type checking of Next.js because
+    // all apps are type checked during the first steps of our CI.
+    // This avoids redundancy as well as Next.js
+    // incomplete support for TypeScript project references.
+    ignoreBuildErrors: true,
+    tsconfigPath: 'tsconfig.app.json',
+  },
+
+  transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
+
+  // Next's output file tracing sometimes misses the ESM variant of
+  // @swc/helpers (only copies cjs/), which the standalone server needs
+  // at runtime for the proxy. Force the whole package into the trace.
+  outputFileTracingIncludes: {
+    '/**': ['../../node_modules/@swc/helpers/**/*'],
   },
 
   turbopack: {
@@ -71,8 +80,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   generateBuildId: async () => {
-    // Git hash
-    return process.env.EARTHLY_GIT_SHORT_HASH || uuid4();
+    return process.env.GIT_SHORT_HASH || uuid4();
   },
 
   async redirects() {

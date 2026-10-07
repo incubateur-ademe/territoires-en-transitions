@@ -1,5 +1,6 @@
 import { cn } from '@tet/ui';
 import { PropsWithChildren, ReactNode } from 'react';
+import type { DemarcheCompletionStatut } from '../types';
 import { DemarcheCompletionBadge } from './completion.badge';
 
 type Props = PropsWithChildren<{
@@ -7,7 +8,7 @@ type Props = PropsWithChildren<{
   description?: string;
   action?: ReactNode;
   className?: string;
-  status?: 'complete' | 'incomplete';
+  status?: DemarcheCompletionStatut;
 }>;
 
 export const DemarcheSection = ({
@@ -31,9 +32,7 @@ export const DemarcheSection = ({
             {title ? (
               <h2 className="text-lg font-bold text-primary-9 m-0">{title}</h2>
             ) : null}
-            {status ? (
-              <DemarcheCompletionBadge isComplete={status === 'complete'} />
-            ) : null}
+            {status ? <DemarcheCompletionBadge statut={status} /> : null}
           </div>
           {description ? (
             <p className="text-sm text-grey-7 mt-1">{description}</p>

@@ -1,10 +1,16 @@
 import {
+  ActionDefinitionTag,
   ActionOrigine,
+  ActionOrigineTexte,
   ActionTypeEnum,
   ReferentielDefinition,
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
-import { parseActionsOrigine } from './import-referentiel.service';
+import {
+  buildOrigineTags,
+  parseActionsOrigine,
+  parseActionsOrigineTexte,
+} from './import-referentiel.service';
 
 const refentielDefinitions: ReferentielDefinition[] = [
   {
@@ -159,6 +165,106 @@ Eci_1.3.2.4 (1)`,
         )
       ).toThrow(
         'Invalid ponderation value zero) for origine cae_5.1.4.4.1 (zero) of action te_3.5.4'
+      );
+    });
+  });
+
+  describe('parseActionsOrigineTexte', () => {
+    it('Standard test without ponderation', async () => {
+      const expected: ActionOrigineTexte[] = [
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'eci_3.5.3.6',
+          origineReferentielId: 'eci',
+          referentielId: 'te',
+        },
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'eci_3.5.4.2',
+          origineReferentielId: 'eci',
+          referentielId: 'te',
+        },
+      ];
+      expect(
+        parseActionsOrigineTexte(
+          ReferentielIdEnum.TE,
+          'te_3.5.4',
+          `Eci_3.5.3.6
+Eci_3.5.4.2`,
+          refentielDefinitions
+        )
+      ).toEqual(expected);
+    });
+
+    it('Drops the ponderation even when present in the source text', async () => {
+      const expected: ActionOrigineTexte[] = [
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'cae_5.1.4.4.1',
+          origineReferentielId: 'cae',
+          referentielId: 'te',
+        },
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'cae_5.1.4.4.2',
+          origineReferentielId: 'cae',
+          referentielId: 'te',
+        },
+      ];
+
+      expect(
+        parseActionsOrigineTexte(
+          ReferentielIdEnum.TE,
+          'te_3.5.4',
+          `Cae_5.1.4.4.1 (1)
+Cae_5.1.4.4.2 (0,5)`,
+          refentielDefinitions
+        )
+      ).toEqual(expected);
+    });
+
+    it('Invalid action id', async () => {
+      expect(() =>
+        parseActionsOrigineTexte(
+          ReferentielIdEnum.TE,
+          'te_3.5.4',
+          `Cae 5.1.4.4.1`,
+          refentielDefinitions
+        )
+      ).toThrow('Invalid origine value cae 5.1.4.4.1 for action te_3.5.4');
+    });
+
+    it('New action prefix returns no entry', async () => {
+      expect(
+        parseActionsOrigineTexte(
+          ReferentielIdEnum.TE,
+          'te_3.5.4',
+          `Nouvelle action`,
+          refentielDefinitions
+        )
+      ).toEqual([]);
+    });
+  });
+
+  describe('buildOrigineTags', () => {
+    it('Deduplicates referentiel ids coming from both origine and origineTexte', () => {
+      const expected: ActionDefinitionTag[] = [
+        { referentielId: 'te', actionId: 'te_3.5.4', tagRef: 'cae' },
+        { referentielId: 'te', actionId: 'te_3.5.4', tagRef: 'eci' },
+      ];
+
+      expect(
+        buildOrigineTags(ReferentielIdEnum.TE, 'te_3.5.4', [
+          'cae',
+          'eci',
+          'cae',
+        ])
+      ).toEqual(expected);
+    });
+
+    it('Returns an empty array when there is no origine referentiel', () => {
+      expect(buildOrigineTags(ReferentielIdEnum.TE, 'te_3.5.4', [])).toEqual(
+        []
       );
     });
   });

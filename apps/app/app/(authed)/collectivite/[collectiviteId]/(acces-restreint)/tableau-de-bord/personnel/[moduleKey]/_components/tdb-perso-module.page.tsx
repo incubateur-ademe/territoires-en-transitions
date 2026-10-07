@@ -2,13 +2,11 @@
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { MesuresModulePage } from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
+import { useTRPC } from '@tet/api';
 import { PersonalDefaultModuleKeys } from '@tet/domain/metrics';
 
 import MesuresDontJeSuisLePiloteModal from '../../_components/mesures-dont-je-suis-le-pilote.modal';
-import {
-  getQueryKey as getFetchSingleKey,
-  useTdbPersoFetchSingle,
-} from '../../_hooks/use-tdb-perso-fetch-single';
+import { useTdbPersoFetchSingle } from '../../_hooks/use-tdb-perso-fetch-single';
 
 type Props = {
   moduleKey: PersonalDefaultModuleKeys;
@@ -16,6 +14,8 @@ type Props = {
 };
 
 const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
+  const trpc = useTRPC();
+
   const parentPage = {
     label: 'Mon suivi personnel',
     link: makeTdbCollectiviteUrl({
@@ -39,7 +39,10 @@ const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
             module={module}
             openState={openState}
             keysToInvalidate={[
-              getFetchSingleKey(parseInt(collectiviteId), module.defaultKey),
+              trpc.metrics.users.getModule.queryKey({
+                collectiviteId: module.collectiviteId,
+                defaultKey: moduleKey,
+              }),
             ]}
           />
         )}

@@ -67,16 +67,8 @@ export default class PlanActionsService {
       user
     );
 
-    // pour vérifier si il faut charger ou non les fiches en accès restreint
-    const hasReadPrivateFichePermission =
-      await this.fichePermissionsService.hasReadFichePermission(
-        { collectiviteId, restreint: true },
-        user,
-        true
-      );
-
     // charge le plan et extrait les données dérivées nécessaires à l'export
-    const plan = await this.fetchPlan(input, hasReadPrivateFichePermission);
+    const plan = await this.fetchPlan(input, user);
     const { root } = plan;
     const rows = this.getRows(plan, root);
     const maxDepth = Math.max(...rows.map((r) => r.depth));
@@ -105,22 +97,19 @@ export default class PlanActionsService {
     };
   }
 
-  private async fetchPlan(
-    input: GetPlanRequest,
-    hasReadPrivateFichePermission: boolean
-  ) {
+  private async fetchPlan(input: GetPlanRequest, user: AuthUser) {
     const { collectiviteId, planId } = input;
 
     // charge les données
     const axesEtFicheIds = await this.getAxesEtFicheIds(input);
     const { data: fiches } =
-      await this.listFichesService.getFichesActionResumes({
-        collectiviteId,
-        filters: {
-          planActionIds: [planId],
-          restreint: hasReadPrivateFichePermission ? undefined : false,
+      await this.listFichesService.getFichesActionResumes(
+        {
+          collectiviteId,
+          filters: { planActionIds: [planId] },
         },
-      });
+        { user }
+      );
 
     // extrait et tri les fiches associées à un axe
     const getFiches = ({ ficheIds }: AxeEtFicheIds) =>

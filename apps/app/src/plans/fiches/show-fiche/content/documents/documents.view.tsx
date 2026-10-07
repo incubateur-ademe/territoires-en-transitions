@@ -1,6 +1,7 @@
-import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
+import { DocumentCard } from '@/app/collectivites/documents/bibliotheque/document-card';
+import { useDuplicatedDocumentState } from '@/app/collectivites/documents/duplicated-document-state.utils';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
@@ -8,13 +9,19 @@ import { useFicheContext } from '../../context/fiche-context';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { ContentLayout } from '../content-layout';
 import DocumentPicto from './DocumentPicto';
-import ModaleAjoutDocument from './ModaleAjoutDocument';
+import { AddFicheDocumentModal } from './add-fiche-document.modal';
 
 export const DocumentsView = () => {
   const { fiche, isReadonly, documents } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
+  const { isLoading, addFile, addLink } = useAddAnnexe(fiche.id);
+  const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
+    useDuplicatedDocumentState();
+
+  const mutatingActions = isReadonly
+    ? undefined
+    : { edit: true, comment: true, remove: true };
 
   return (
     <>
@@ -56,21 +63,23 @@ export const DocumentsView = () => {
           }
         >
           {(doc) => (
-            <CarteDocument
+            <DocumentCard
               key={doc.id}
-              isReadonly={isReadonly}
               document={doc}
+              duplicate={getDuplicatedDocumentInformation(doc)}
+              actions={mutatingActions}
             />
           )}
         </ContentLayout.Content>
       </ContentLayout.Root>
 
       {!isReadonly && (
-        <ModaleAjoutDocument
+        <AddFicheDocumentModal
           fiche={fiche}
-          handlers={{ addFileFromLib, addLink }}
+          handlers={{ addFile, addLink }}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
+          onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
         />
       )}
     </>

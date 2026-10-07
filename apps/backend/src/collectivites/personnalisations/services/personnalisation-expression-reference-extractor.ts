@@ -1,8 +1,15 @@
-import { getExpressionVisitor } from '@tet/backend/utils/expression-parser';
+import {
+  getExpressionVisitor,
+  tokenizeAndParse,
+} from '@tet/backend/utils/expression-parser';
 import { PersonnalisationExpressionReferences } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
 import { parser } from './personnalisations-expression.service';
 
-function extractRawTokenValue(primaryNode: any): string {
+/**
+ * Valeur littérale d'un argument `primary`, telle qu'écrite : `oui` reste
+ * `oui` au lieu de devenir le booléen que rendrait le visitor d'évaluation.
+ */
+export function extractRawTokenValue(primaryNode: any): string {
   const children = primaryNode.children;
   if (children.OUI) return String(children.OUI[0].image);
   if (children.NON) return String(children.NON[0].image);
@@ -20,6 +27,7 @@ class PersonnalisationExpressionReferenceExtractor extends getExpressionVisitor(
   public identiteFields: PersonnalisationExpressionReferences['identiteFields'] =
     [];
   public scores: PersonnalisationExpressionReferences['scores'] = [];
+  public demarches: PersonnalisationExpressionReferences['demarches'] = [];
 
   constructor() {
     super();
@@ -38,6 +46,9 @@ class PersonnalisationExpressionReferenceExtractor extends getExpressionVisitor(
       }
       if (ctx.score) {
         return this.visit(ctx.score);
+      }
+      if (ctx.demarche) {
+        return this.visit(ctx.demarche);
       }
     }
   }
@@ -65,14 +76,18 @@ class PersonnalisationExpressionReferenceExtractor extends getExpressionVisitor(
     this.scores.push({ actionId });
     return null;
   }
+
+  demarche(ctx: any) {
+    const champ = String(this.visit(ctx.identifier));
+    this.demarches.push({ champ });
+    return null;
+  }
 }
 
 export function extractReferencesFromExpression(
   formula: string
 ): PersonnalisationExpressionReferences {
-  const lexingResult = parser.lexer.tokenize(formula);
-  parser.input = lexingResult.tokens;
-  const cst = parser.statement();
+  const cst = tokenizeAndParse(parser, formula);
 
   const extractor = new PersonnalisationExpressionReferenceExtractor();
   extractor.visit(cst);
@@ -81,5 +96,6 @@ export function extractReferencesFromExpression(
     questions: extractor.questions,
     identiteFields: extractor.identiteFields,
     scores: extractor.scores,
+    demarches: extractor.demarches,
   };
 }

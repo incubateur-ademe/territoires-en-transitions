@@ -44,6 +44,12 @@ export const Variant: Story = {
   },
 };
 
+export const WithGroupLabel: Story = {
+  args: {
+    label: 'Affichage',
+  },
+};
+
 export const Size: Story = {
   args: {
     size: 'xs',

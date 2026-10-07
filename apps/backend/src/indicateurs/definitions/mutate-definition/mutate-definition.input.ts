@@ -1,5 +1,8 @@
 import { serviceTagSchema } from '@tet/domain/collectivites';
-import { indicateurDefinitionSchemaCreate } from '@tet/domain/indicateurs';
+import {
+  indicateurDefinitionSchemaCreate,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
@@ -8,6 +11,14 @@ import { upsertIndicateurDefinitionPilotesInputSchema } from '../../indicateurs/
 export const createIndicateurDefinitionInputSchema = z.object({
   titre: indicateurDefinitionSchemaCreate.shape.titre,
   unite: z.optional(indicateurDefinitionSchemaCreate.shape.unite),
+  // Compatibilité de l'API historique : l'absence de périodicité est
+  // interprétée une seule fois à la frontière d'entrée. Le service reçoit
+  // toujours une périodicité explicite. Les autres périodicités nécessitent
+  // d'abord la migration du stockage annuel.
+  periodicite: z
+    .literal(IndicateurPeriodiciteEnum.ANNUELLE)
+    .optional()
+    .default(IndicateurPeriodiciteEnum.ANNUELLE),
   collectiviteId: z.number(),
   thematiques: z
     .array(z.object({ id: thematiqueSchema.shape.id }))
@@ -31,6 +42,13 @@ export const createIndicateurDefinitionInputSchema = z.object({
     .describe(
       "Si true, la valeur associée à l'indicateur la plus récente n'est pas consultable en mode visite."
     ),
+  isApplicable: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe(
+      "Si false, l'indicateur est déclaré non applicable à la collectivité : il ne lui est plus réclamé."
+    ),
   ficheId: z
     .number()
     .int()
@@ -53,12 +71,17 @@ export const updateIndicateurDefinitionInputSchema = z.object({
         thematiques: true,
         estFavori: true,
         estConfidentiel: true,
+        isApplicable: true,
       }).shape,
 
-      // Redéfinis sans `.default(false)` pour que le service puisse distinguer
-      // "absent du payload" de "explicitement mis à false".
+      // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
+      // "absent du payload" d'une mise à jour explicite.
+      // La périodicité est immuable dès la création, même sans valeur enregistrée.
+      periodicite: z.never().optional(),
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
+      isApplicable: z.boolean().optional(),
+      isSuivi: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),
       services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),

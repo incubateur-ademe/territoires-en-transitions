@@ -5,21 +5,28 @@ import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Field, Pagination, SelectFilter, SelectOption } from '@tet/ui';
-import { parseAsArrayOf, parseAsInteger, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
 import { useMemo } from 'react';
 import { getData } from './utils';
 
 const PAGINATION_LIMIT = 12;
 const actusSearchParams = {
   selectedPage: parseAsInteger.withDefault(1),
-  selectedCategories: parseAsArrayOf(parseAsInteger).withDefault([]),
+  selectedCategories: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 type ListeActusProps = {
   categories: SelectOption[];
+  /** id numérique → documentId, pour les liens filtrés d'avant Strapi 5. */
+  legacyCategoryIds: Record<string, string>;
 };
 
-const ListeActus = ({ categories }: ListeActusProps) => {
+const ListeActus = ({ categories, legacyCategoryIds }: ListeActusProps) => {
   const [{ selectedPage, selectedCategories }, setSearchParams] =
     useQueryStates(actusSearchParams, {
       urlKeys: {
@@ -27,14 +34,14 @@ const ListeActus = ({ categories }: ListeActusProps) => {
         selectedCategories: 'c',
       },
     });
-  const categoriesFilter = useMemo(
-    () =>
-      (selectedCategories ?? []).filter(
-        (categoryId): categoryId is number =>
-          typeof categoryId === 'number' && Number.isFinite(categoryId)
-      ),
-    [selectedCategories]
-  );
+  // Une valeur inconnue (catégorie supprimée, lien abîmé) est ignorée plutôt
+  // que de vider la liste.
+  const categoriesFilter = useMemo(() => {
+    const knownDocumentIds = new Set(Object.values(legacyCategoryIds));
+    return (selectedCategories ?? [])
+      .map((value) => legacyCategoryIds[value] ?? value)
+      .filter((documentId) => knownDocumentIds.has(documentId));
+  }, [selectedCategories, legacyCategoryIds]);
 
   const {
     data: actusData,
@@ -70,12 +77,12 @@ const ListeActus = ({ categories }: ListeActusProps) => {
       {categories.length > 0 && (
         <Field title="Catégorie" className="w-full sm:w-96 ml-auto mb-6" small>
           <SelectFilter
-            values={selectedCategories}
+            values={categoriesFilter}
             options={categories}
             onChange={({ values }) => {
               // quand le filtre change, on revient sur la page 1
               setSearchParams({
-                selectedCategories: (values as number[]) ?? [],
+                selectedCategories: (values as string[]) ?? [],
                 selectedPage: 1,
               });
             }}
@@ -90,14 +97,16 @@ const ListeActus = ({ categories }: ListeActusProps) => {
           <MasonryGallery
             data={data.map((actu) => (
               <BlogCard
-                key={actu.id}
+                key={actu.documentId}
                 title={actu.titre}
                 date={actu.dateCreation}
                 description={actu.resume}
                 image={actu.couverture}
                 badge={actu.epingle ? 'À la une' : undefined}
                 categories={actu.categories}
-                href={`/actus/${actu.id}/${convertNameToSlug(actu.titre)}`}
+                href={`/actus/${actu.documentId}/${convertNameToSlug(
+                  actu.titre
+                )}`}
               />
             ))}
           />

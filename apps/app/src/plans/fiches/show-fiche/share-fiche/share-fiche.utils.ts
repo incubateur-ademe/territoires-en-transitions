@@ -2,7 +2,7 @@ import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 
-export function isFicheSharedWithCollectivite(
+function isFicheSharedWithCollectivite(
   fiche: Pick<FicheWithRelations, 'sharedWithCollectivites'>,
   collectiviteId: number
 ) {

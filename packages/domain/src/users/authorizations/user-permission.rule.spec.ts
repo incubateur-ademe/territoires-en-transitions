@@ -5,6 +5,7 @@ import {
 } from '../../collectivites/collectivite-preferences.schema';
 import { permissionsByRole } from './permission.models';
 import {
+  hasOwnCollectiviteRole,
   hasPermission,
   isReferentielOperationAllowed,
   isUserVisitor,
@@ -34,6 +35,7 @@ const toUser = ({
           ? [...permissionsByRole[collectiviteRole]]
           : [],
       collectiviteNom: 'Collectivite test',
+      collectiviteType: 'test',
       collectiviteAccesRestreint: false,
       collectivitePreferences: preferences,
       audits: auditRoles.map((role, index) => ({
@@ -73,6 +75,50 @@ describe('isUserVisitor', () => {
     expect(isUserVisitor(user, { collectiviteId: COLLECTIVITE_ID })).toBe(
       false
     );
+  });
+});
+
+describe('hasOwnCollectiviteRole', () => {
+  it("est vrai pour un membre, même sans audit", () => {
+    const user = toUser({
+      collectiviteRole: CollectiviteRole.LECTURE,
+      auditRoles: [],
+    });
+
+    expect(
+      hasOwnCollectiviteRole(user, { collectiviteId: COLLECTIVITE_ID })
+    ).toBe(true);
+  });
+
+  it("est faux pour un auditeur rattaché par son seul audit en cours", () => {
+    const user = toUser({
+      collectiviteRole: null,
+      auditRoles: [AuditRole.AUDITEUR],
+    });
+
+    expect(
+      hasOwnCollectiviteRole(user, { collectiviteId: COLLECTIVITE_ID })
+    ).toBe(false);
+  });
+
+  it("est vrai pour un membre qui est aussi auditeur de sa collectivité", () => {
+    const user = toUser({
+      collectiviteRole: CollectiviteRole.EDITION,
+      auditRoles: [AuditRole.AUDITEUR],
+    });
+
+    expect(
+      hasOwnCollectiviteRole(user, { collectiviteId: COLLECTIVITE_ID })
+    ).toBe(true);
+  });
+
+  it("est faux pour une collectivité à laquelle l'utilisateur n'est pas rattaché", () => {
+    const user = toUser({
+      collectiviteRole: CollectiviteRole.ADMIN,
+      auditRoles: [],
+    });
+
+    expect(hasOwnCollectiviteRole(user, { collectiviteId: 999 })).toBe(false);
   });
 });
 
