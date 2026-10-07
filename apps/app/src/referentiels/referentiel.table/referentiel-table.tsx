@@ -178,8 +178,22 @@ function ReferentielTable({
     if (filters.scorePasFait.length > 0) {
       result.push({ id: 'scorePasFait', value: filters.scorePasFait });
     }
-    if (isNewReferentielUtils(referentielId) && filters.labels.length > 0) {
-      result.push({ id: 'labels', value: filters.labels });
+    if (isNewReferentielUtils(referentielId)) {
+      if (filters.labels.length > 0) {
+        result.push({ id: 'labels', value: filters.labels });
+      }
+      if (filters.adaptation.length > 0) {
+        result.push({ id: 'adaptation', value: filters.adaptation });
+      }
+      if (filters.labellisationGold.length > 0) {
+        result.push({
+          id: 'labellisationGold',
+          value: filters.labellisationGold,
+        });
+      }
+      if (filters.thematiques.length > 0) {
+        result.push({ id: 'thematiques', value: filters.thematiques });
+      }
     }
     return result;
   }, [
@@ -193,9 +207,12 @@ function ReferentielTable({
     filters.scoreProgramme,
     filters.scorePasFait,
     filters.labels,
+    filters.adaptation,
+    filters.labellisationGold,
+    filters.thematiques,
   ]);
 
-  // La colonne `labels` n'existe que pour les nouveaux référentiels : on
+  // Certaines colonnes n'existent que pour les nouveaux référentiels : on
   // dérive `hasActiveFilters` de `columnFilters` (déjà filtré ci-dessus) au
   // lieu de la valeur globale du hook, qui ignore ce cas.
   const hasActiveFilters =
