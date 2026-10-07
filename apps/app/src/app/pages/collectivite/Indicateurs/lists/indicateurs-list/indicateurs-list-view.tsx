@@ -53,6 +53,10 @@ const IndicateursListView = ({
   );
   const hasUnsavedVueChanges =
     vue?.filtres != null && !areIndicateurVueFiltersEqual(filters, vue.filtres);
+  const isUnchangedFavorisView =
+    !vue &&
+    listId === 'collectivite' &&
+    areIndicateurVueFiltersEqual(filters, defaultFilters);
   const resetFilters = () =>
     setSearchParams({
       sortBy: searchParams.sortBy,
@@ -114,16 +118,17 @@ const IndicateursListView = ({
           ) : undefined
         }
         actions={
-          <IndicateurVueActions
-            filters={filters}
-            defaultFilters={defaultFilters}
-            vue={vue}
-            onOpenVue={handleOpenVue}
-            onSaveVueFilters={(saved) => {
-              setIsSettingsOpen(false);
-              setRenameVue(saved);
-            }}
-          />
+          isUnchangedFavorisView ? undefined : (
+            <IndicateurVueActions
+              filters={filters}
+              vue={vue}
+              onOpenVue={handleOpenVue}
+              onSaveVueFilters={(saved) => {
+                setIsSettingsOpen(false);
+                setRenameVue(saved);
+              }}
+            />
+          )
         }
         settingsOpenState={{
           isOpen: isSettingsOpen,
