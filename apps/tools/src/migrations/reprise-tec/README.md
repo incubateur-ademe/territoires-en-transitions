@@ -565,6 +565,30 @@ dossier), l'annexe y pointe et la ligne de l'étape 6 est retirée. « Modifié 
 des fiches est gardé. `correspondance` retient, pour chaque fichier T&C
 (`action_fichier`, `action_image`), sa ligne de bibliothèque.
 
+#### Annuler les pièces des dossiers
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-pieces-dossiers/annuler.ts [--confirm]
+```
+
+Retire, d'après `lignes_ecrites`, les avis, les pièces en case (inclusions
+comprises) et les documents additionnels que l'import a écrits ; remet aux
+fichiers des fiches leur nom de stockage T&C (celui qui avait rejoint une pièce
+de dossier retrouve sa propre ligne, sous un nouveau numéro) ; retire les lignes
+de bibliothèque créées auxquelles plus rien ne pointe, les traces et les écarts.
+Après la transaction, retire du stockage les fichiers des collectivités touchées
+par la reprise (dossiers, fiches, émetteurs des avis) qu'aucune ligne de
+bibliothèque ne référence plus, y compris ceux d'un dépôt dont la transaction a
+échoué ; un fichier redéposé à l'identique par la collectivité reste. En
+simulation, rien n'est retiré du stockage : le script compte. L'annulation des
+pièces des fiches et celle des saisines refusent tant que cette étape a écrit.
+
+**Ce qu'elle laisse** : les lignes de bibliothèque qui existaient avant
+l'import, ou qu'il a créées mais qu'un autre document utilise depuis ; la marque
+confidentielle posée sur une ligne d'émetteur déjà là. **Ce qu'elle emporte** :
+ce que les services ont changé sur les avis repris (le script compte les avis
+modifiés).
+
 #### Ce qui arrête l'import des pièces des dossiers
 
 Avant tout dépôt et toute écriture :
