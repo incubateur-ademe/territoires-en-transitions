@@ -97,9 +97,13 @@ describe('les fiches des axes et la confidentialité', () => {
     return new Set(axes.find((axe) => axe.id === axeId)?.fiches);
   };
 
-  it("ne rend au visiteur vérifié non membre que les fiches non restreintes de l'axe", async () => {
+  it("rend toutes les fiches de l'axe, restreinte comprise, au visiteur vérifié non membre", async () => {
     expect(await listAxeFicheIdsAs(verifiedVisitor)).toEqual(
-      new Set([ficheRestreintFalseId, ficheRestreintNullId])
+      new Set([
+        ficheRestreintTrueId,
+        ficheRestreintFalseId,
+        ficheRestreintNullId,
+      ])
     );
   });
 
@@ -113,12 +117,16 @@ describe('les fiches des axes et la confidentialité', () => {
     );
   });
 
-  it('ne rend pas la fiche restreinte dans les axes du plan lu par le visiteur vérifié', async () => {
+  it('rend la fiche restreinte dans les axes du plan lu par le visiteur vérifié', async () => {
     const plan = await router
       .createCaller({ user: verifiedVisitor })
       .plans.plans.get({ planId });
     expect(new Set(plan.axes.find((axe) => axe.id === axeId)?.fiches)).toEqual(
-      new Set([ficheRestreintFalseId, ficheRestreintNullId])
+      new Set([
+        ficheRestreintTrueId,
+        ficheRestreintFalseId,
+        ficheRestreintNullId,
+      ])
     );
   });
 });

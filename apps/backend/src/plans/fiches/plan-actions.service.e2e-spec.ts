@@ -10,6 +10,7 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -81,5 +82,63 @@ describe('PlanActionsService', () => {
     );
     const hasDeleted = plan.rows.some((r) => r.fiche?.id === ficheDeleted.id);
     expect(hasDeleted).toBe(false);
+  });
+
+  describe('fiche restreinte', () => {
+    let ficheRestreinteId: number;
+    let visiteurVerifie: AuthenticatedUser;
+
+    beforeAll(async () => {
+      const [ficheRestreinte] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          collectiviteId: collectivite.id,
+          titre: 'Fiche restreinte (export)',
+          restreint: true,
+        })
+        .returning();
+      ficheRestreinteId = ficheRestreinte.id;
+
+      await db.db.insert(ficheActionAxeTable).values({
+        ficheId: ficheRestreinteId,
+        axeId: planId,
+        createdBy: user.id,
+      });
+
+      const { user: visiteur } = await addTestUser(db, {
+        collectiviteId: null,
+        role: CollectiviteRole.LECTURE,
+      });
+      visiteurVerifie = getAuthUserFromUserCredentials(visiteur);
+
+      return async () => {
+        await db.db
+          .delete(ficheActionAxeTable)
+          .where(eq(ficheActionAxeTable.ficheId, ficheRestreinteId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, ficheRestreinteId));
+      };
+    });
+
+    const exportedFicheIdsFor = async (
+      exporter: AuthenticatedUser
+    ): Promise<(number | undefined)[]> => {
+      const plan = await planService.getPlan(
+        { collectiviteId: collectivite.id, planId },
+        exporter
+      );
+      return plan.rows.map((row) => row.fiche?.id);
+    };
+
+    it("n'exporte pas la fiche restreinte pour un visiteur vérifié non membre", async () => {
+      expect(await exportedFicheIdsFor(visiteurVerifie)).not.toContain(
+        ficheRestreinteId
+      );
+    });
+
+    it('exporte la fiche restreinte pour un membre qui peut la lire', async () => {
+      expect(await exportedFicheIdsFor(user)).toContain(ficheRestreinteId);
+    });
   });
 });
