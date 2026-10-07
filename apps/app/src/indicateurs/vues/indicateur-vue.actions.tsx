@@ -13,6 +13,7 @@ import { IndicateurVueNameForm } from './indicateur-vue-name.form';
 
 type Props = {
   filters: IndicateurVueFilters;
+  defaultFilters: IndicateurVueFilters;
   vue?: IndicateurVue;
   onOpenVue?: (vue: IndicateurVue) => void;
   onSaveVueFilters?: (vue: IndicateurVue) => void;
@@ -20,6 +21,7 @@ type Props = {
 
 export function IndicateurVueActions({
   filters,
+  defaultFilters,
   vue,
   onOpenVue,
   onSaveVueFilters,
@@ -32,11 +34,13 @@ export function IndicateurVueActions({
 
   if (!hasCollectivitePermission('indicateurs.vues.mutate')) return null;
 
-  const hasUnsavedChanges =
-    vue?.filtres != null && !areIndicateurVueFiltersEqual(filters, vue.filtres);
+  const hasUnsavedChanges = !areIndicateurVueFiltersEqual(
+    filters,
+    vue?.filtres ?? defaultFilters
+  );
   const hasFilters = Object.keys(filters).length > 0;
 
-  if (vue ? !hasUnsavedChanges : !hasFilters) return null;
+  if (!hasUnsavedChanges || (!vue && !hasFilters)) return null;
 
   const isMutating = createMutation.isPending || updateMutation.isPending;
 
