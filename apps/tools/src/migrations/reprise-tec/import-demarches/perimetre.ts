@@ -20,7 +20,14 @@ export type LigneDemarche = {
   receptionProjet: string | null;
 };
 
-export type Motif = 'coquille_vide' | 'sans_etat_invisible' | 'doublon';
+export type Motif =
+  | 'dossier_de_test'
+  | 'coquille_vide'
+  | 'sans_etat_invisible'
+  | 'doublon';
+
+/** Dossiers de T&C saisis pour essai : 2414 « TEST », CA de Sophia Antipolis. */
+const DOSSIERS_DE_TEST: readonly number[] = [2414];
 
 /** Lit les lignes de dossier de T&C et les trie. Passe la session en UTC : à appeler en premier. */
 export const loadPerimetre = async (client: PoolClient) => {
@@ -67,13 +74,16 @@ const listLignesDemarche = async (
   return rows;
 };
 
-/** Règle : écarte les dossiers vides, les sans-état jamais visibles et les doublons. */
+/** Règle : écarte les dossiers de test, les dossiers vides, les sans-état jamais visibles et les doublons. */
 const calculatePerimetre = (lignes: readonly LigneDemarche[]) => {
   const doublons = listDoublons(lignes);
   const contenuParDossier = calculateContenuParDossier(lignes, doublons);
 
   const motifDEcart = (l: LigneDemarche): Motif | null => {
     const dossier = doublons.get(l.id) ?? l.id;
+    if (DOSSIERS_DE_TEST.includes(dossier)) {
+      return 'dossier_de_test';
+    }
     if (contenuParDossier.get(dossier) === 0) {
       return 'coquille_vide';
     }
