@@ -454,15 +454,15 @@ describe('full-flow', () => {
     ).toEqual([1, 2]);
   });
 
-  it('un lancement sur all parcourt toute CT qui a une fiche candidate ou un engagement', async () => {
+  it('un lancement sur all parcourt toute CT de la liste retenue qui a une fiche candidate ou un engagement', async () => {
     const harness = toHarness({
       fiches: [
-        toFiche({ ficheId: 10, collectiviteId: 1 }),
-        toFiche({ ficheId: 20, collectiviteId: 2 }),
+        toFiche({ ficheId: 10, collectiviteId: 3810 }),
+        toFiche({ ficheId: 20, collectiviteId: 3814 }),
       ],
       mobilisations: new Map([
-        [2, { calculatedAt: PAST, ficheIds: [20] }],
-        [3, { calculatedAt: PAST, ficheIds: [] }],
+        [3814, { calculatedAt: PAST, ficheIds: [20] }],
+        [3815, { calculatedAt: PAST, ficheIds: [] }],
       ]),
     });
 
@@ -470,7 +470,35 @@ describe('full-flow', () => {
 
     expect(
       harness.selections.map(({ collectiviteId }) => collectiviteId)
-    ).toEqual([1, 2, 3]);
+    ).toEqual([3810, 3814, 3815]);
+  });
+
+  it('un lancement sur all ignore une CT absente de la liste retenue, même avec une fiche candidate ou un engagement', async () => {
+    const harness = toHarness({
+      fiches: [
+        toFiche({ ficheId: 10, collectiviteId: 1 }),
+        toFiche({ ficheId: 20, collectiviteId: 3810 }),
+      ],
+      mobilisations: new Map([[2, { calculatedAt: PAST, ficheIds: [] }]]),
+    });
+
+    await harness.service.analyzeFiches(onCollectivites('all'));
+
+    expect(
+      harness.selections.map(({ collectiviteId }) => collectiviteId)
+    ).toEqual([3810]);
+  });
+
+  it('un lancement sur une liste de CT parcourt une CT absente de la liste retenue', async () => {
+    const harness = toHarness({
+      fiches: [toFiche({ ficheId: 10, collectiviteId: 1 })],
+    });
+
+    await harness.service.analyzeFiches(onCollectivites([1]));
+
+    expect(
+      harness.selections.map(({ collectiviteId }) => collectiviteId)
+    ).toEqual([1]);
   });
 
   it("termine les fiches, les statuts et l'engagement d'une CT avant de lire les fiches de la suivante", async () => {
