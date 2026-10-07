@@ -604,7 +604,7 @@ Avant tout dépôt et toute écriture :
 | un avis à écrire sans saisine principale de la DREAL ou de la région (seulement une secondaire, ou aucune) | corriger les saisines avant l'import                                                                      |
 | une saisine principale qui a déjà un avis                                                                  | un service a déposé depuis l'import des saisines : décider au cas par cas                                 |
 
-### 8. Importer les pilotes
+### 7. Importer les pilotes
 
 Les pilotes des dossiers et des fiches de T&C deviennent des `personne_tag` :
 un nom sans compte dans la collectivité TeT du dossier, le « tag » que le
