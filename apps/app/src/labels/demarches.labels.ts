@@ -126,7 +126,7 @@ export const demarchesLabels = {
 
   /**
    * L'accueil d'un agent que son fournisseur d'identité vient de rattacher à
-   * son service : personne ne l'a invité, il n'a rien choisi, et rien ne lui
+   * sa collectivité ou à son service : personne ne l'a invité, il n'a rien choisi, et rien ne lui
    * dirait où il est ni ce qu'il peut faire.
    *
    * « ProConnect » et jamais « MonCompteAdeme », même quand c'est ce dernier qui
@@ -158,6 +158,23 @@ export const demarchesLabels = {
     'Avoir une vue d’ensemble de tous les PCAET de vos collectivités',
 
   accueilRattachementAction: 'Découvrir mon espace',
+
+  /** Une collectivité n'instruit rien : l'accueil parle de son propre espace. */
+  accueilRattachementCollectiviteIntro:
+    'Vous pouvez dès à présent travailler dans l’espace de votre collectivité :',
+
+  accueilRattachementCollectivitePlans:
+    'Construire et suivre vos plans d’action',
+
+  accueilRattachementCollectiviteIndicateurs:
+    'Renseigner et suivre vos indicateurs',
+
+  accueilRattachementCollectiviteReferentiels:
+    'Évaluer votre politique avec les référentiels Climat Air Énergie et Économie circulaire',
+
+  /** Le premier arrivé devient administrateur : il doit savoir qu'il ouvre la porte aux autres. */
+  accueilRattachementAdmin:
+    'Premier membre de cet espace, vous en êtes administrateur : c’est à vous d’y inviter vos collègues.',
 
   /**
    * Libellés propres à chaque type de démarche. Les vues partagées (stepper,

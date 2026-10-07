@@ -20,6 +20,7 @@ import { DatabaseModule } from '@tet/backend/utils/database/database.module';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { success } from '@tet/backend/utils/result.type';
+import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, sql } from 'drizzle-orm';
 import {
   afterAll,
@@ -198,14 +199,26 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
     // nettoyage du compte, garde la base propre même si une assertion casse
     // avant : une DREAL laissée derrière soi rend le test infaisable au second
     // passage — elle est unique par région.
-    onTestFinished(async () => {
-      await databaseService.db
-        .delete(utilisateurCollectiviteAccessTable)
-        .where(
-          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
-        );
-    });
+    onTestFinished(() => supprimerDroits(collectivite.id));
     return collectivite;
+  }
+
+  async function addCommune(siren: string, nic: string) {
+    const { collectivite, cleanup } = await addTestCollectivite(
+      databaseService,
+      { type: 'commune', siren, nic }
+    );
+    onTestFinished(cleanup);
+    onTestFinished(() => supprimerDroits(collectivite.id));
+    return collectivite;
+  }
+
+  async function supprimerDroits(collectiviteId: number) {
+    await databaseService.db
+      .delete(utilisateurCollectiviteAccessTable)
+      .where(
+        eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId)
+      );
   }
 
   async function lireDroit(userId: string, collectiviteId: number) {
@@ -407,7 +420,7 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
   });
 
   describe("rattachement automatique à l'organisation du jeton", () => {
-    test("un service de l'État reconnu → droit en édition, compte vérifié, service annoncé", async () => {
+    test("un service de l'État reconnu → premier membre administrateur, compte vérifié, service annoncé", async () => {
       mockCreateUser();
       vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
         success({ hashedToken: 'hashed-token-rattachement' })
@@ -436,7 +449,7 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
 
       const droit = await lireDroit(identite.userId, service_.id);
       expect(droit).toMatchObject({
-        role: 'edition',
+        role: 'admin',
         isActive: true,
         invitationId: null,
       });
@@ -519,17 +532,12 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       cleanupUser(identite.userId);
     });
 
-    /** Rien ne dit qu'un agent public est employé de la commune qu'il désigne. */
-    test("une commune reste sur le parcours d'invitation", async () => {
+    test('une commune sans membre → son premier membre en devient administrateur', async () => {
       mockCreateUser();
       vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
         success({ hashedToken: 'hashed-token-commune' })
       );
-      const { collectivite: commune, cleanup } = await addTestCollectivite(
-        databaseService,
-        { type: 'commune', siren: '999777222', nic: '00042' }
-      );
-      onTestFinished(cleanup);
+      const commune = await addCommune('999777222', '00042');
 
       const claims = buildClaims({
         email: `agent-${crypto.randomUUID()}@ville.fr`,
@@ -540,7 +548,11 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
 
       expect(result.success).toBe(true);
       if (!result.success) return;
-      expect(result.data.rattachement).toBeUndefined();
+      expect(result.data.rattachement).toEqual({
+        collectiviteId: commune.id,
+        nom: commune.nom,
+        type: 'commune',
+      });
 
       const [identite] = await databaseService.db
         .select()
@@ -548,7 +560,53 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
         .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
       cleanupUser(identite.userId);
 
-      expect(await lireDroit(identite.userId, commune.id)).toBeUndefined();
+      expect(await lireDroit(identite.userId, commune.id)).toMatchObject({
+        role: 'admin',
+        isActive: true,
+      });
+    });
+
+    test('une commune qui a déjà des membres → droit en édition', async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-commune-membres' })
+      );
+      const commune = await addCommune('999777333', '00042');
+      const { user: membre, cleanup: cleanupMembre } =
+        await addTestCollectiviteAndUser(databaseService);
+      onTestFinished(cleanupMembre);
+      await databaseService.db
+        .insert(utilisateurCollectiviteAccessTable)
+        .values({
+          userId: membre.id,
+          collectiviteId: commune.id,
+          isActive: true,
+          role: CollectiviteRole.ADMIN,
+        });
+      // Avant le nettoyage du membre : son droit retient son compte.
+      onTestFinished(() => supprimerDroits(commune.id));
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        siret: '99977733300042',
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+      expect(result.data.rattachement?.collectiviteId).toBe(commune.id);
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(await lireDroit(identite.userId, commune.id)).toMatchObject({
+        role: 'edition',
+        isActive: true,
+      });
     });
 
     test('un SIRET que rien ne désigne → aucun droit, le compte est créé', async () => {

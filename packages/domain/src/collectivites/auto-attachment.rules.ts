@@ -4,19 +4,23 @@ import {
 } from './collectivite-type.enum';
 
 /**
- * Les collectivités qu'un agent rejoint sur la seule foi de son identité.
+ * Les collectivités qu'un agent rejoint sur la seule foi de son identité :
+ * l'organisation que son fournisseur d'identité atteste fait foi, pour une
+ * collectivité comme pour un service de l'État.
  *
- * Distinct de `isServiceDeconcentre` (qui exclut le conseil régional) et de
- * `isTypeInstructeur` (qui porte les mêmes types par coïncidence) : s'appuyer
- * sur l'un des deux ouvrirait en silence le rattachement au prochain type
- * qu'on y ajouterait.
+ * Une liste explicite, et non `isServiceDeconcentre` ou `isTypeInstructeur` :
+ * s'appuyer sur l'un des deux ouvrirait en silence le rattachement au prochain
+ * type qu'on y ajouterait.
  */
 const autoAttachableTypes: readonly CollectiviteType[] = [
+  collectiviteTypeEnum.COMMUNE,
+  collectiviteTypeEnum.EPCI,
+  collectiviteTypeEnum.DEPARTEMENT,
+  collectiviteTypeEnum.REGION,
   collectiviteTypeEnum.DREAL,
   collectiviteTypeEnum.DDT,
   collectiviteTypeEnum.DR_ADEME,
   collectiviteTypeEnum.SERVICE_NATIONAL,
-  collectiviteTypeEnum.REGION,
 ];
 
 export const isAutoAttachableType = (type: CollectiviteType): boolean =>

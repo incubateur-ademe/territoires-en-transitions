@@ -483,7 +483,10 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
       expect(capture).toHaveBeenCalledWith({
         distinctId: user.id,
         event: 'auth:oidc:linked',
-        properties: { provider: 'proconnect', origine: 'connexion-automatique' },
+        properties: {
+          provider: 'proconnect',
+          origine: 'connexion-automatique',
+        },
       });
     });
 
@@ -609,6 +612,34 @@ describe('LoginUserWithOidcProviderService — matching des comptes à la connex
           type: 'dreal',
         },
       });
+      // Premier membre du service : il en devient administrateur.
+      expect(await lireDroit(user.id, dreal.id)).toMatchObject({
+        role: 'admin',
+        isActive: true,
+      });
+    });
+
+    test('un service qui a déjà des membres → droit en édition', async () => {
+      const { user, cleanup } = await addTestCollectiviteAndUser(
+        databaseService
+      );
+      onTestFinished(cleanup);
+      const { user: membre, cleanup: cleanupMembre } =
+        await addTestCollectiviteAndUser(databaseService);
+      onTestFinished(cleanupMembre);
+      const dreal = await addService('999555444', '00042');
+
+      await databaseService.db
+        .insert(utilisateurCollectiviteAccessTable)
+        .values({
+          userId: membre.id,
+          collectiviteId: dreal.id,
+          isActive: true,
+          role: CollectiviteRole.ADMIN,
+        });
+
+      await connecterAvecSiret(user.id, user.email, '99955544400042');
+
       expect(await lireDroit(user.id, dreal.id)).toMatchObject({
         role: 'edition',
         isActive: true,

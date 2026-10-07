@@ -7,13 +7,17 @@ import {
   useUserPreferences,
 } from '@/app/users/use-user-preferences';
 import { useUser } from '@tet/api/users';
-import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
+import {
+  isTypeInstructeur,
+  peutDeposerAvisInstructeur,
+} from '@tet/domain/demarches';
+import { CollectiviteRole } from '@tet/domain/users';
 import { Button, Modal, ModalFooter } from '@tet/ui';
 import { useState } from 'react';
 
 /**
- * L'accueil d'un agent que son fournisseur d'identité vient de rattacher à son
- * service. Une seule fois : le backend inscrit le service dans une préférence
+ * L'accueil d'un agent que son fournisseur d'identité vient de rattacher à sa
+ * collectivité ou à son service. Une seule fois : le backend inscrit le service dans une préférence
  * au rattachement, la fermeture la remet à `null`.
  */
 export const AutoAttachmentWelcomeModal = () => {
@@ -47,7 +51,9 @@ export const AutoAttachmentWelcomeModal = () => {
     updatePreferences({ 'oidc.autoAttachedCollectiviteId': null });
   };
 
+  const instructeur = isTypeInstructeur(service.collectiviteType);
   const deposeAvis = peutDeposerAvisInstructeur(service.collectiviteType);
+  const admin = service.role === CollectiviteRole.ADMIN;
 
   return (
     <Modal
@@ -69,13 +75,31 @@ export const AutoAttachmentWelcomeModal = () => {
       zIndex={998}
       render={() => (
         <div>
-          <p className="mb-3">{appLabels.accueilRattachementIntro}</p>
           {/* Tailwind neutralise le `list-style` des `ul`. */}
-          <ul className="mb-0 list-disc pl-4">
-            <li>{appLabels.accueilRattachementConsulter}</li>
-            <li>{appLabels.accueilRattachementSuivre({ deposeAvis })}</li>
-            <li>{appLabels.accueilRattachementVueEnsemble}</li>
-          </ul>
+          {instructeur ? (
+            <>
+              <p className="mb-3">{appLabels.accueilRattachementIntro}</p>
+              <ul className="mb-0 list-disc pl-4">
+                <li>{appLabels.accueilRattachementConsulter}</li>
+                <li>{appLabels.accueilRattachementSuivre({ deposeAvis })}</li>
+                <li>{appLabels.accueilRattachementVueEnsemble}</li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <p className="mb-3">
+                {appLabels.accueilRattachementCollectiviteIntro}
+              </p>
+              <ul className="mb-0 list-disc pl-4">
+                <li>{appLabels.accueilRattachementCollectivitePlans}</li>
+                <li>{appLabels.accueilRattachementCollectiviteIndicateurs}</li>
+                <li>{appLabels.accueilRattachementCollectiviteReferentiels}</li>
+              </ul>
+            </>
+          )}
+          {admin && (
+            <p className="mt-3 mb-0">{appLabels.accueilRattachementAdmin}</p>
+          )}
         </div>
       )}
       renderFooter={() => (
