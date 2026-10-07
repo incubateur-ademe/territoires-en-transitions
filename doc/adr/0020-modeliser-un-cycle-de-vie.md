@@ -1,17 +1,17 @@
-# 17. Modéliser un cycle de vie avec un workflow
+# 20. Modéliser un cycle de vie avec un workflow
 
-Date: 2026-08-17
+Date : 2026-08-17
 
 ## Statut
 
-Nouveau
+Proposé.
 
 ## Contexte
 
 Plusieurs objets métier de la plateforme ont un cycle de vie. Un dépôt PCAET
 (Plan Climat-Air-Énergie Territorial) passe par exemple par les statuts « en
-élaboration », « transmis pour avis », « adopté », « publié » et « archivé ». À
-chaque fois, la même question se pose : _où vit la règle qui dit ce qu'on peut
+élaboration », « transmis pour avis », « instruit », « publié » et « archivé ».
+À chaque fois, la même question se pose : _où vit la règle qui dit ce qu'on peut
 faire, et qui la fait respecter ?_
 
 Pour un cas simple, une colonne `status` en base et des `if` là où on en a
@@ -43,14 +43,22 @@ maintenir.
 
 ## Décision
 
-Tout cycle de vie évolué se déclare avec le moteur de workflow (`createWorkflow`,
-dans `packages/domain/src/utils/workflow/`), selon quatre principes :
+Un cycle de vie se déclare avec le moteur de workflow (`createWorkflow`, dans
+`packages/domain/src/utils/workflow/`) dès qu'**au moins deux** des quatre
+situations du contexte s'appliquent : des guards calculés à plusieurs endroits,
+un front qui doit anticiper le refus, des actions gardées par le statut sans en
+changer, des effets attachés aux transitions. En dessous, une colonne `status`
+et un `if` restent la bonne réponse.
 
-1. **Une table déclarative fait autorité**, dans `packages/domain`, donc
-   partagée front et back. Les statuts, les transitions, ce qui reste
-   modifiable et les noms des conditions y sont écrits une fois.
+Quatre principes :
+
+1. **Le domaine fait autorité**, dans `packages/domain`, donc partagé front et
+   back. Deux déclarations voisines, chacune écrite une fois : la définition du
+   workflow (statuts, transitions, noms des guards) et les règles de
+   modifiabilité (ce que chaque statut laisse encore écrire).
 2. **La machine à états ne décrit que des transitions.** Ce qu'un statut
-   autorise sans en sortir (éditer, déposer) n'en fait pas partie.
+   autorise sans en sortir (éditer, déposer) n'en fait pas partie : c'est la
+   modifiabilité, une fonction pure du statut, déclarée à côté.
 3. **Les guards sont évalués côté serveur uniquement.** Ils sont _nommés_ dans
    le domaine, _calculés_ dans le backend.
 4. **Le front lit une évaluation, il ne la recompose pas.**
@@ -59,8 +67,8 @@ dans `packages/domain/src/utils/workflow/`), selon quatre principes :
 
 | Terme             | Ce que c'est                                                                                               |
 | ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| **statut**        | où en est l'objet (`en_elaboration`, `adopte`…)                                                            |
-| **transition**    | action gardée qui déplace le statut (`adopter`)                                                            |
+| **statut**        | où en est l'objet (`en_elaboration`, `instruit`…)                                                          |
+| **transition**    | action gardée qui déplace le statut (`publier`)                                                            |
 | **guard**         | condition _nommée_ dans le domaine, _évaluée_ côté serveur                                                 |
 | **évaluation**    | ce que le serveur renvoie pour chaque transition : `reachable`, `enabled`, `blockedBy`                     |
 | **modifiabilité** | ce qu'un statut laisse encore écrire sans en sortir (pour le PCAET, les pièces amont puis les pièces aval) |
@@ -70,6 +78,13 @@ dans `packages/domain/src/utils/workflow/`), selon quatre principes :
 Un guard déclaré dont le résultat n'est pas explicitement `true` bloque
 l'action. Oublier de renseigner une condition ferme une porte au lieu d'en
 ouvrir une : une régression visible, pas une faille.
+
+Le contrat tient dans le type des résultats, `WorkflowGuardResults`, un
+`Partial<Record<GuardId, boolean>>`. Un guard peut donc valoir `true`, `false`
+ou être absent, et l'absence n'est pas un oubli toléré : elle veut dire « je ne
+sais pas » (donnée non lue, pas d'acteur pour se prononcer) et refuse comme un
+`false`. Un évaluateur qui ne peut pas trancher renvoie `undefined` plutôt que
+de deviner.
 
 ## Alternatives considérées
 
@@ -106,7 +121,7 @@ déjà.
 
 ## Mode d'emploi
 
-Quatre étapes, du contrat de domaine à l'évaluation des règles.
+Cinq étapes, du contrat de domaine à l'évaluation des règles.
 
 ### 1. Déclarer les statuts
 
@@ -154,7 +169,8 @@ export const demandeWorkflow = createWorkflow<DemandeStatus, DemandeTransition, 
       to: DemandeStatusEnum.ENVOYEE,
       guards: ['estAuteur', 'pieceJointeFournie'],
     },
-    // Retour en arrière : une transition ordinaire, vers l'étape précédente.
+    // Retour en arrière, si le métier en veut un : une transition ordinaire,
+    // vers l'étape précédente (le dépôt PCAET a choisi de n'en avoir aucun).
     reprendre: {
       from: [DemandeStatusEnum.ENVOYEE],
       to: DemandeStatusEnum.BROUILLON,
@@ -169,17 +185,44 @@ seul chemin d'écriture du statut** : tout changement de statut passe par
 `applyTransition`. C'est un chemin unique pour le _statut_, pas pour toutes les
 écritures : les mises à jour ordinaires du dossier restent gardées par la
 modifiabilité, et les guards, eux, n'écrivent rien — ils autorisent ou refusent
-une transition. Trois mécanismes distincts, une seule table qui les déclare.
+une transition. Trois mécanismes distincts, tous déclarés dans le domaine.
 
-### 4. Implémenter les guards
+Le statut d'un objet neuf n'est pas une transition : quand un objet peut
+naître à plusieurs étapes (un PCAET déjà instruit hors plateforme démarre en
+finalisation), c'est une fonction du contexte de création qui le choisit, à
+côté de `initialStatus`.
+
+### 4. Déclarer ce qui reste modifiable
+
+Hors du workflow, à côté de lui : une fonction pure par zone du dossier, qui ne
+dépend que du statut.
+
+```ts
+export const isDemandeContenuModifiable = (status: DemandeStatus): boolean => status === DemandeStatusEnum.BROUILLON;
+```
+
+Le serveur la vérifie sous verrou avant toute écriture ordinaire, le DTO en
+porte le résultat, le front s'y fie pour passer en lecture seule. Aucune de ces
+écritures ne déplace le statut : c'est ce qui la distingue d'une transition.
+
+### 5. Implémenter les guards
 
 Côté backend, chaque guard reçoit son évaluateur. Un `Record` typé sur l'union
 des guards impose l'exhaustivité : déclarer un guard sans savoir le calculer ne
 compile pas.
 
 ```ts
+type DemandeGuardContext = {
+  createdBy: string;
+  /** Non lue (`undefined`) quand aucun guard du statut courant n'en dépend. */
+  pieceJointe?: boolean;
+};
+
+// `undefined` = « je ne sais pas » : la transition est refusée (fail-closed).
+type GuardEvaluator = (context: DemandeGuardContext, user: AuthenticatedUser | null) => boolean | undefined;
+
 const GUARD_EVALUATORS: Record<DemandeGuardId, GuardEvaluator> = {
-  estAuteur: (context, user) => context.createdBy === user.id,
+  estAuteur: (context, user) => (user ? context.createdBy === user.id : undefined),
   pieceJointeFournie: (context) => context.pieceJointe,
 };
 ```
@@ -195,7 +238,8 @@ courant, donc seules ces lectures-là sont faites.
 
 ### Une opération par transition
 
-Chaque transition est une route nommée, avec son dossier de feature
+Chaque transition demandée par un utilisateur est une route nommée, avec son
+dossier de feature
 (`<verbe>-<entité>/`, cf. [ADR 11](0011-architecture-service-ddd.md)) :
 
 ```ts
@@ -217,6 +261,21 @@ guards, `applyTransition` du workflow, effets de l'opération, persistance et
 journal, renvoi du DTO enrichi. La permission générale et les guards sont deux
 choses distinctes : la première dit « cette personne peut écrire sur cette
 collectivité », la seconde « cette action-ci est possible dans cet état ».
+
+### Les transitions sans acteur
+
+Certaines bascules ne sont demandées par personne : le système les constate
+(tous les avis sont rendus, le délai légal est échu). Elles restent des
+transitions du workflow, avec leurs guards, mais :
+
+- elles n'ont pas de route tRPC : c'est le service qui constate l'événement (la
+  validation du dernier avis, une passe planifiée) qui les applique ;
+- elles passent par le même socle, sans acteur (`applyAsSystem`) : pas de
+  permission à vérifier, `created_by` nul au journal, et tout guard d'acteur
+  répond `undefined`, donc refuse ;
+- leur nom le dit : un infinitif pour un acte de l'utilisateur (`publier`), un
+  participe passé pour un événement constaté (`delai_avis_echu`). Le journal
+  garde ainsi la raison de la bascule.
 
 ### Un code d'erreur par cause
 
@@ -284,17 +343,26 @@ l'objet à jour : `onSuccess` écrit ce DTO dans le cache de la query — la
 nouvelle évaluation comprise — et invalide les listes. Le front n'a donc jamais
 à deviner ce qui devient possible après une transition, il le relit.
 
-Le composant lit l'évaluation et branche la mutation correspondante :
+Le composant lit l'évaluation et branche la mutation correspondante. Tant que
+la query n'a pas répondu, il n'y a pas d'évaluation à lire, donc rien à
+afficher :
 
 ```tsx
-const { demande, envoyer } = useDemande(demandeId);
-const evaluation = demande.transitions.envoyer;
+export const EnvoyerDemandeButton = ({ demandeId }: { demandeId: number }) => {
+  const { demande, envoyer } = useDemande(demandeId);
+  if (!demande?.transitions.envoyer.reachable) {
+    return null;
+  }
+  const evaluation = demande.transitions.envoyer;
 
-<Tooltip label={getTransitionBlocageLabel(evaluation)}>
-  <Button disabled={!evaluation.enabled} onClick={() => envoyer()}>
-    {appLabels.demandeEnvoyer}
-  </Button>
-</Tooltip>;
+  return (
+    <Tooltip label={getTransitionBlocageLabel(evaluation)}>
+      <Button disabled={!evaluation.enabled} onClick={() => envoyer()}>
+        {appLabels.demandeEnvoyer}
+      </Button>
+    </Tooltip>
+  );
+};
 ```
 
 `getTransitionBlocageLabel` ne fait que traduire le premier `blockedBy` en
@@ -315,7 +383,8 @@ pas la règle du statut.
 `workflowToMermaid(workflow)` rend la définition en `stateDiagram-v2` :
 transitions en flèches et guards en étiquette. Le diagramme est dérivé de la
 définition, il ne peut donc pas la contredire, contrairement à un schéma dessiné
-à la main dans une doc.
+à la main dans une doc. `make workflow-graph` le produit pour tout
+`*.workflow.ts` du domaine, avec ce même générateur.
 
 À utiliser pour relire un cycle de vie, ses transitions et ses guards. Le dépôt
 PCAET, par exemple :
@@ -324,18 +393,22 @@ PCAET, par exemple :
 stateDiagram-v2
   [*] --> en_elaboration
   en_elaboration --> transmis_pour_avis : transmettre_pour_avis [estPilote, dossierComplet]
-  transmis_pour_avis --> en_elaboration : reprendre_elaboration [estPilote]
-  transmis_pour_avis --> adopte : adopter [estPilote, delaiAvisEcoule]
-  adopte --> publie : publier [estPilote, documentsAvalComplets]
-  publie --> adopte : depublier [estPilote]
+  transmis_pour_avis --> instruit : avis_tous_rendus [avisTousRendus]
+  transmis_pour_avis --> instruit : delai_avis_echu [delaiAvisEcoule]
+  instruit --> publie : publier [estPilote, dossierComplet, documentsAvalComplets]
+  instruit_hors_plateforme --> publie : publier [estPilote, dossierComplet, documentsAvalComplets]
   publie --> archive : archiver [estPilote, evaluationFinaleDeposee]
 ```
+
+`instruit_hors_plateforme` n'a pas de flèche entrante : c'est un statut de
+création, pas l'arrivée d'une transition.
 
 ## Conséquences
 
 ### Bénéfices
 
-- Une seule table de vérité par cycle de vie, partagée front et back.
+- Une seule source de vérité par cycle de vie, le domaine, partagée front et
+  back.
 - Le compilateur interdit un guard sans évaluateur, un guard sans code d'erreur,
   une transition inconnue de l'API.
 - Les messages de refus sont exacts, à l'écriture comme à la lecture.
@@ -350,7 +423,7 @@ stateDiagram-v2
   comme avant tout renvoi de DTO. Un endpoint de liste le paie par élément :
   s'il devient un point chaud, c'est là qu'il faudra un chargement groupé.
 - Modéliser une règle demande de choisir : transition, modifiabilité ou guard.
-  C'est le prix d'une table unique. Deux questions suffisent en général : est-ce
+  C'est le prix d'une source unique. Deux questions suffisent en général : est-ce
   que la règle change le statut (transition) ? Sinon, dépend-elle de qui agit
   (guard) ou seulement du statut (modifiabilité) ?
 
@@ -366,9 +439,11 @@ Le dépôt PCAET, dans l'ordre où on le lit :
 - `apps/backend/src/demarches/pcaet/shared/demarche-pcaet-access.service.ts` :
   le préambule d'écriture sous verrou.
 - `apps/backend/src/demarches/pcaet/shared/demarche-pcaet-transition.service.ts` :
-  le socle des transitions (verrou, guards, journal).
-- les six dossiers d'opération (`transmettre-pour-avis/`, `publier-demarche/`…) :
-  les routes, leurs effets et leurs codes d'erreur.
+  le socle des transitions (verrou, guards, journal), avec ou sans acteur.
+- les dossiers d'opération (`transmettre-pour-avis/`, `publier-demarche/`,
+  `archiver-demarche/`) : les routes, leurs effets et leurs codes d'erreur.
+- `apps/backend/src/demarches/pcaet/clore-instruction/` : les deux transitions
+  sans acteur, appliquées à la validation d'un avis ou par une passe planifiée.
 
 ## Références
 
