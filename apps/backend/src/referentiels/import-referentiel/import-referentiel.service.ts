@@ -1,11 +1,11 @@
 import {
-    ForbiddenException,
-    HttpException,
-    HttpStatus,
-    Injectable,
-    Logger,
-    NotFoundException,
-    UnprocessableEntityException,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
@@ -13,65 +13,65 @@ import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definit
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
-    ImportActionDefinition,
-    ImportActionDefinitionCoremeasureType,
-    importActionDefinitionSchema,
+  ImportActionDefinition,
+  ImportActionDefinitionCoremeasureType,
+  importActionDefinitionSchema,
 } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
+import { Result, success } from '@tet/backend/utils/result.type';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
-    PersonnalisationRegleCreate,
-    regleTypeEnumValues,
+  PersonnalisationRegleCreate,
+  regleTypeEnumValues,
 } from '@tet/domain/collectivites';
 import {
-    ActionDefinitionTag,
-    ActionOrigine,
-    ActionOrigineTexte,
-    ActionRelationCreate,
-    ActionThematiqueSgpe,
-    actionThematiqueSgpeLabels,
-    ActionType,
-    ActionTypeEnum,
-    getActionTypeFromActionId,
-    getParentId,
-    REFERENTIEL_TAG_TYPES_FOR_IMPORT,
-    ReferentielId,
-    ReferentielLabelEnum,
-    referentielLabelEnumSchema,
-    ReferentielTag,
-    ReferentielTagTypeEnum,
+  ActionDefinitionTag,
+  ActionOrigine,
+  ActionOrigineTexte,
+  ActionRelationCreate,
+  ActionThematiqueSgpe,
+  actionThematiqueSgpeLabels,
+  ActionType,
+  ActionTypeEnum,
+  getActionTypeFromActionId,
+  getParentId,
+  REFERENTIEL_TAG_TYPES_FOR_IMPORT,
+  ReferentielId,
+  ReferentielLabelEnum,
+  referentielLabelEnumSchema,
+  ReferentielTag,
+  ReferentielTagTypeEnum,
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { isNil } from 'es-toolkit';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
-    GetReferentielService,
-    ReferentielResponse,
+  GetReferentielService,
+  ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
 import {
-    buildOrigineTags,
-    parseActionsOrigine,
-    parseActionsOrigineTexte,
+  buildOrigineTags,
+  parseActionsOrigine,
+  parseActionsOrigineTexte,
 } from './action-origine.adapter';
 import { BUILTIN_REFERENTIEL_TAGS } from './builtin-referentiel-tags.constants';
 import {
-    ImportReferentielTag,
-    importReferentielTagSchema,
+  ImportReferentielTag,
+  importReferentielTagSchema,
 } from './import-referentiel-tag.dto';
 import {
-    ImportReferentielRepository,
-    type SaveReferentielInput,
+  ImportReferentielRepository,
+  type SaveReferentielInput,
 } from './import-referentiel.repository';
 import {
-    buildActionId,
-    buildIndicateurReferences,
-    buildQuestionActionRelations,
-    normalizeTypeSyndicatExpressions,
-    verifyReferentielExpressions,
+  buildActionId,
+  buildIndicateurReferences,
+  buildQuestionActionRelations,
+  normalizeTypeSyndicatExpressions,
+  verifyReferentielExpressions,
 } from './verify-referentiel-expressions';
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 
@@ -120,8 +120,6 @@ const reservedReferentielTagTypes = new Set<string>(
 export class ImportReferentielService extends BaseSpreadsheetImporterService {
   readonly logger = new Logger(ImportReferentielService.name);
 
-  private readonly getDefinitionReadOrThrow = createControllerErrorHandler();
-
   constructor(
     private readonly config: ConfigurationService,
     private readonly repository: ImportReferentielRepository,
@@ -140,7 +138,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
   async importReferentiel(
     referentielId: ReferentielId
-  ): Promise<ReferentielResponse> {
+  ): Promise<Result<ReferentielResponse, 'DATABASE_ERROR'>> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
     this.logger.log(
       `Import du référentiel ${referentielId} depuis le spreadsheet ${spreadsheetId}`
@@ -187,10 +185,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ['identifiant']
       );
 
-    await this.verifyReferentielExpressions(
+    const verifyResult = await this.verifyReferentielExpressions(
       referentielId,
       importActionDefinitions.data
     );
+    if (!verifyResult.success) {
+      return verifyResult;
+    }
 
     // Seul le spreadsheet du nouveau référentiel dispose d'un onglet `Tags`
     const referentielTags = isNewReferentiel
@@ -462,12 +463,15 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       const identifiants = indicateurIdentifiants.map(
         ({ identifiant }) => identifiant
       );
-      const indicateurIdParIdentifiant = this.getDefinitionReadOrThrow(
+      const indicateurIdParIdentifiantResult =
         await this.listPlatformDefinitionsService.listPlatformDefinitionIdsByIdentifiantReferentiels(
           identifiants,
           { user: null }
-        )
-      );
+        );
+      if (!indicateurIdParIdentifiantResult.success) {
+        return indicateurIdParIdentifiantResult;
+      }
+      const indicateurIdParIdentifiant = indicateurIdParIdentifiantResult.data;
       createIndicateurActions = indicateurIdentifiants
         .map(({ identifiant, actionId }) => ({
           indicateurId: indicateurIdParIdentifiant[identifiant],
@@ -502,14 +506,18 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
     this.logger.log(`Import du référentiel ${referentielId} terminé`);
 
-    return this.referentielService.getReferentielTree(referentielId, {
-      onlyForScoring: false,
-      getActionsOrigine: true,
-      withPreuves: true,
-    });
+    return success(
+      await this.referentielService.getReferentielTree(referentielId, {
+        onlyForScoring: false,
+        getActionsOrigine: true,
+        withPreuves: true,
+      })
+    );
   }
 
-  async verifyReferentiel(referentielId: ReferentielId) {
+  async verifyReferentiel(
+    referentielId: ReferentielId
+  ): Promise<Result<{ ok: true }, 'DATABASE_ERROR'>> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
     this.logger.log(
       `Vérification des formules du référentiel ${referentielId} depuis le spreadsheet ${spreadsheetId}`
@@ -523,10 +531,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ['identifiant']
       );
 
-    await this.verifyReferentielExpressions(
+    const verifyResult = await this.verifyReferentielExpressions(
       referentielId,
       importActionDefinitions.data
     );
+    if (!verifyResult.success) {
+      return verifyResult;
+    }
 
     await this.importPreuveReglementaireDefinitionService.verifyReferentielPreuveReglementaireDefinitionsAndActionRelations(
       referentielId,
@@ -534,7 +545,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       importActionDefinitions.data
     );
 
-    return { ok: true };
+    return success({ ok: true });
   }
 
   async verifyReferentielExpressions(
@@ -550,7 +561,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         | 'indicateurs'
       >
     >
-  ) {
+  ): Promise<Result<true, 'DATABASE_ERROR'>> {
     const questions =
       await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
         []
@@ -570,8 +581,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       },
     });
 
+    const loadResult = await this.loadIndicateurVerificationData(references);
+    if (!loadResult.success) {
+      return loadResult;
+    }
     const { indicateurIdByIdentifiant, indicateurDefinitions } =
-      await this.loadIndicateurVerificationData(references);
+      loadResult.data;
 
     const errors = verifyReferentielExpressions({
       referentielId,
@@ -593,7 +608,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     if (errors.length) {
       throw new UnprocessableEntityException(errors.join('\n\n'));
     }
-    return true;
+    return success(true);
   }
 
   private async loadIndicateurVerificationData(
@@ -608,12 +623,15 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         )
       ),
     ];
-    const indicateurIdByIdentifiant = this.getDefinitionReadOrThrow(
+    const indicateurIdByIdentifiantResult =
       await this.listPlatformDefinitionsService.listPlatformDefinitionIdsByIdentifiantReferentiels(
         identifiants,
         { user: null }
-      )
-    );
+      );
+    if (!indicateurIdByIdentifiantResult.success) {
+      return indicateurIdByIdentifiantResult;
+    }
+    const indicateurIdByIdentifiant = indicateurIdByIdentifiantResult.data;
 
     const indicateurIds = [
       ...new Set(
@@ -622,16 +640,19 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           .filter(Boolean)
       ),
     ];
-    const indicateurDefinitions = this.getDefinitionReadOrThrow(
+    const indicateurDefinitionsResult =
       await this.listPlatformDefinitionsService.listPlatformDefinitions(
         {
           indicateurIds,
         },
         { user: null }
-      )
-    );
+      );
+    if (!indicateurDefinitionsResult.success) {
+      return indicateurDefinitionsResult;
+    }
+    const indicateurDefinitions = indicateurDefinitionsResult.data;
 
-    return { indicateurIdByIdentifiant, indicateurDefinitions };
+    return success({ indicateurIdByIdentifiant, indicateurDefinitions });
   }
 
   private safeParse(
