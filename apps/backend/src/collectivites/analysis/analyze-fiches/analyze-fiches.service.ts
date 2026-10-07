@@ -19,6 +19,7 @@ import { AnalysisRunRepository } from './analysis-run.repository';
 import { buildAnalysisRunPlan } from './build-analysis-run-plan.rules';
 import { calculateFicheFingerprint } from './calculate-fiche-fingerprint.rules';
 import { AnalyzeFichesError } from './analyze-fiches.errors';
+import { ANALYZED_COLLECTIVITE_IDS } from './analyzed-collectivite-ids';
 import { AnalyzeFichesInput } from './analyze-fiches.input';
 import { AnalyzeFichesOutput } from './analyze-fiches.output';
 import {
@@ -127,6 +128,10 @@ const toExplicitCollectiviteIds = (
   }
   return scope.collectivites;
 };
+
+const isRunOnEveryCollectivite = (
+  scope: AnalyzeFichesInput['scope']
+): boolean => scope.kind === 'collectivites' && scope.collectivites === 'all';
 
 const toFicheToClassify = ({
   ficheId,
@@ -268,10 +273,16 @@ export class AnalyzeFichesService {
         cause: mobilisationsResult.error,
       });
     }
+    const collectiviteIds = uniq([
+      ...candidatesResult.data,
+      ...mobilisationsResult.data,
+    ]).toSorted((a, b) => a - b);
     return success(
-      uniq([...candidatesResult.data, ...mobilisationsResult.data]).toSorted(
-        (a, b) => a - b
-      )
+      isRunOnEveryCollectivite(scope)
+        ? collectiviteIds.filter((collectiviteId) =>
+            ANALYZED_COLLECTIVITE_IDS.has(collectiviteId)
+          )
+        : collectiviteIds
     );
   }
 
