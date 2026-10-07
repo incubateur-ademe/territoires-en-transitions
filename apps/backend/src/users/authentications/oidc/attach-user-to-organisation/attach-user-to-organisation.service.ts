@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { UserPreferencesRepository } from '@tet/backend/users/preferences/user-preferences.repository';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
@@ -10,7 +11,7 @@ import {
   isAutoAttachableType,
 } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, sql } from 'drizzle-orm';
 import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 import {
   OidcClaims,
@@ -35,8 +36,9 @@ type AutoAttachmentRefus =
   | 'droit-deja-connu';
 
 /**
- * Le rattachement d'un agent à son service, sur la foi de l'organisation que
- * son fournisseur d'identité atteste.
+ * Le rattachement d'un agent à sa collectivité ou à son service, sur la foi de
+ * l'organisation que son fournisseur d'identité atteste. Le premier arrivé en
+ * devient administrateur, les suivants éditeurs — comme `membres.join`.
  *
  * Le verrou de domaine est volontairement redondant avec le rapprochement par
  * SIRET : en août 2026 MonCompteAdeme renvoyait le SIRET du siège de l'ADEME au
@@ -120,6 +122,15 @@ export class AttachUserToOrganisationService {
       AutoAttachmentOutcome,
       AttachUserToOrganisationError
     >(async (transaction) => {
+      // Sérialise deux premières connexions concurrentes : sans le verrou,
+      // chacune compterait zéro membre et deviendrait administratrice.
+      await transaction.execute(sql`
+        select 1
+        from ${collectiviteTable}
+        where ${collectiviteTable.id} = ${collectivite.collectiviteId}
+        for update
+      `);
+
       const [droitExistant] = await transaction
         .select({ id: utilisateurCollectiviteAccessTable.id })
         .from(utilisateurCollectiviteAccessTable)
@@ -138,16 +149,30 @@ export class AttachUserToOrganisationService {
         return this.refuser(userId, 'droit-deja-connu');
       }
 
+      const [{ membresActifs }] = await transaction
+        .select({ membresActifs: count() })
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          and(
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectivite.collectiviteId
+            ),
+            eq(utilisateurCollectiviteAccessTable.isActive, true)
+          )
+        );
+      const role =
+        membresActifs === 0 ? CollectiviteRole.ADMIN : CollectiviteRole.EDITION;
+
       // Le `select` porte la règle — ne jamais réveiller un droit retiré ;
-      // l'`on conflict` porte la course, deux callbacks concurrents le passant
-      // tous deux.
+      // l'`on conflict` n'est plus qu'un filet derrière le verrou.
       const [droitPose] = await transaction
         .insert(utilisateurCollectiviteAccessTable)
         .values({
           userId,
           collectiviteId: collectivite.collectiviteId,
           isActive: true,
-          role: CollectiviteRole.EDITION,
+          role,
           invitationId: null,
         })
         .onConflictDoNothing({
@@ -167,7 +192,7 @@ export class AttachUserToOrganisationService {
       await this.updateUserRoleService.setIsVerified(userId, true, transaction);
 
       this.logger.log(
-        `Compte ${userId} rattaché à la collectivité #${collectivite.collectiviteId} en ${CollectiviteRole.EDITION}`
+        `Compte ${userId} rattaché à la collectivité #${collectivite.collectiviteId} en ${role}`
       );
 
       return success({

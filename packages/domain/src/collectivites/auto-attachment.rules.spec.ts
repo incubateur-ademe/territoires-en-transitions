@@ -22,12 +22,20 @@ describe('isAutoAttachableType', () => {
     expect(isAutoAttachableType(collectiviteTypeEnum.REGION)).toBe(true);
   });
 
-  /** Rien ne dit qu'un agent public est employé de la commune qu'il désigne. */
-  it('refuses the collectivites that keep the invitation path', () => {
-    expect(isAutoAttachableType(collectiviteTypeEnum.COMMUNE)).toBe(false);
-    expect(isAutoAttachableType(collectiviteTypeEnum.EPCI)).toBe(false);
-    expect(isAutoAttachableType(collectiviteTypeEnum.DEPARTEMENT)).toBe(false);
+  it('accepts the collectivites', () => {
+    expect(isAutoAttachableType(collectiviteTypeEnum.COMMUNE)).toBe(true);
+    expect(isAutoAttachableType(collectiviteTypeEnum.EPCI)).toBe(true);
+    expect(isAutoAttachableType(collectiviteTypeEnum.DEPARTEMENT)).toBe(true);
+  });
+
+  it('refuses the other types', () => {
     expect(isAutoAttachableType(collectiviteTypeEnum.TEST)).toBe(false);
+    expect(isAutoAttachableType(collectiviteTypeEnum.SERVICE_PUBLIC)).toBe(
+      false
+    );
+    expect(
+      isAutoAttachableType(collectiviteTypeEnum.STRUCTURE_SANS_STATUT_JURIDIQUE)
+    ).toBe(false);
   });
 });
 
