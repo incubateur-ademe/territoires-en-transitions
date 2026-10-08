@@ -2,7 +2,7 @@ export const ACTION_STATUT_COUNT_THRESHOLD1 = 50;
 export const ACTION_COMMENTAIRE_COUNT_THRESHOLD1 = 50;
 export const ACTION_STATUT_COUNT_THRESHOLD2 = 150;
 export const ACTION_COMMENTAIRE_COUNT_THRESHOLD2 = 150;
-export const LAST_ACTIVITY_AGE_MS_THRESHOLD = 365 * 24 * 60 * 60 * 1000;
+export const LAST_ACTIVITY_AGE_MS_THRESHOLD = 2 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_CRITERIA_COUNT_TO_DISPLAY = 2;
 
 export interface ReferentielDisplayCriteria {
